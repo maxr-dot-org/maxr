@@ -53,6 +53,7 @@
 #include "input.h"
 #include "unifonts.h"
 #include "menus.h"
+#include "clans.h"
 
 int main ( int argc, char *argv[] )
 {
@@ -570,6 +571,12 @@ int Round ( double dValueToRound )
 	return ( int ) Round ( dValueToRound,0 );
 }
 
+
+//----------------------------------------------------------------------------------
+// ----------- sID Implementation --------------------------------------------------
+//----------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------
 string sID::getText()
 {
 	char tmp[6];
@@ -577,80 +584,184 @@ string sID::getText()
 	return tmp;
 }
 
+//----------------------------------------------------------------------------------
 void sID::generate ( string text )
 {
 	iFirstPart = atoi ( text.substr( 0, text.find( " ", 0 ) ).c_str() );
 	iSecondPart = atoi ( text.substr( text.find( " ", 0 ), text.length() ).c_str() );
 }
 
-sUnitData *sID::getUnitData( cPlayer *Owner )
+//----------------------------------------------------------------------------------
+sUnitData *sID::getUnitDataOriginalVersion( cPlayer *Owner )
 {
 	switch ( iFirstPart )
 	{
-	case 0:
-		if ( Owner )
-		{
-			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
-			{
-				if ( Owner->VehicleData[i].ID == *this ) return &Owner->VehicleData[i];
-			}
-		}
-		else
-		{
-			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
-			{
-				if ( UnitsData.vehicle[i].data.ID == *this ) return &UnitsData.vehicle[i].data;
-			}
-		}
-		break;
-	case 1:
-		if ( Owner )
-		{
-			for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
-			{
-				if ( Owner->BuildingData[i].ID == *this ) return &Owner->BuildingData[i];
-			}
-		}
-		else
-		{
-			for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
-			{
-				if ( UnitsData.building[i].data.ID == *this ) return &UnitsData.building[i].data;
-			}
-		}
-		break;
-	default:
+		case 0:
+			return &(getVehicle (Owner)->data);
+		case 1:
+			return &(getBuilding (Owner)->data);
+		default:
 		return NULL;
 	}
 	return NULL;
 }
 
-sVehicle *sID::getVehicle()
+//----------------------------------------------------------------------------------
+sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner )
+{
+	if (iFirstPart == 0)
+	{
+		for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
+		{
+			if ( Owner->VehicleData[i].ID == *this ) 
+				return &Owner->VehicleData[i];
+		}
+	}
+	else if (iFirstPart == 1)
+	{
+		for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
+		{
+			if ( Owner->BuildingData[i].ID == *this ) 
+				return &Owner->BuildingData[i];
+		}		
+	}
+	return 0;	
+}
+
+//----------------------------------------------------------------------------------
+sVehicle *sID::getVehicle (cPlayer* Owner)
 {
 	if ( iFirstPart != 0 ) return NULL;
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		if ( UnitsData.vehicle[i].data.ID == *this ) return &UnitsData.vehicle[i];
+		sVehicle* result = Owner ? &UnitsData.getVehicle (i, Owner->getClan ()) : &UnitsData.getVehicle (i);
+		if ( result->data.ID == *this ) return result;
 	}
 	return NULL;
 }
 
-sBuilding *sID::getBuilding()
+//----------------------------------------------------------------------------------
+sBuilding *sID::getBuilding (cPlayer* Owner)
 {
 	if ( iFirstPart != 1 ) return NULL;
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( UnitsData.building[i].data.ID == *this ) return &UnitsData.building[i];
+		sBuilding* result = Owner ? &UnitsData.getBuilding (i, Owner->getClan ()) : &UnitsData.getBuilding (i);
+		if ( result->data.ID == *this ) return result;
 	}
 	return NULL;
 }
 
+//----------------------------------------------------------------------------------
 bool sID::operator ==(const sID &ID) const
 {
 	if ( iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart ) return true;
 	return false;
 }
 
+//----------------------------------------------------------------------------------
+cUnitsData::cUnitsData ()
+: initializedClanUnitData (false) 
+{
+}
+
+//----------------------------------------------------------------------------------
+sVehicle& cUnitsData::getVehicle (int nr, int clan)
+{
+	if (initializedClanUnitData == false)
+		initializeClanUnitData ();
+	
+	if (clan < 0 || clan > clanUnitDataVehicles.size ())
+	{
+		return vehicle[nr];
+	}
+	return clanUnitDataVehicles.at (clan).at (nr);//[clan][nr];
+}
+
+//----------------------------------------------------------------------------------
+sBuilding& cUnitsData::getBuilding (int nr, int clan)
+{
+	if (initializedClanUnitData == false)
+		initializeClanUnitData ();
+	
+	if (clan < 0 || clan > clanUnitDataBuildings.size ())
+	{
+		return building[nr];
+	}
+	return clanUnitDataBuildings.at (clan).at (nr);//[clan][nr];
+}
+
+//----------------------------------------------------------------------------------
+void cUnitsData::initializeClanUnitData ()
+{
+	cClanData& clanData = cClanData::instance ();
+	for (int clanIdx = 0; clanIdx < clanData.getNrClans (); clanIdx++)
+	{
+		cClan* clan = clanData.getClan (clanIdx);
+		if (clan == 0)
+			continue; 
+		
+		vector<sVehicle> clanListVehicles;
+		for (int vehicleIdx = 0; vehicleIdx < vehicle.Size (); vehicleIdx++)
+		{
+			// make a copy of the vehicle's stats
+			sVehicle curVehicle = vehicle[vehicleIdx];
+			clanListVehicles.push_back (curVehicle);
+			
+			cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID.iFirstPart, curVehicle.data.ID.iSecondPart);
+			if (changedStat != 0)
+			{
+				if (changedStat->hasModification ("Damage"))
+					clanListVehicles.back ().data.damage = changedStat->getModificationValue ("Damage");
+				if (changedStat->hasModification ("Range"))
+					clanListVehicles.back ().data.range = changedStat->getModificationValue ("Range");
+				if (changedStat->hasModification ("Armor"))
+					clanListVehicles.back ().data.armor = changedStat->getModificationValue ("Armor");
+				if (changedStat->hasModification ("Hitpoints"))
+					clanListVehicles.back ().data.max_hit_points = changedStat->getModificationValue ("Hitpoints");
+				if (changedStat->hasModification ("Scan"))
+					clanListVehicles.back ().data.scan = changedStat->getModificationValue ("Scan");
+				if (changedStat->hasModification ("Speed"))
+					clanListVehicles.back ().data.max_speed = changedStat->getModificationValue ("Speed") * 4;
+				if (changedStat->hasModification ("Built_Costs"))
+					clanListVehicles.back ().data.iBuilt_Costs = changedStat->getModificationValue ("Built_Costs");
+			}
+		}
+		clanUnitDataVehicles.push_back (clanListVehicles);
+		
+		vector<sBuilding> clanListBuildings;
+		for (int buildingIdx = 0; buildingIdx < building.Size (); buildingIdx++)
+		{
+			// make a copy of the building's stats
+			sBuilding curBuilding = building[buildingIdx];
+			clanListBuildings.push_back (curBuilding);
+			
+			cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID.iFirstPart, curBuilding.data.ID.iSecondPart);
+			if (changedStat != 0)
+			{
+				if (changedStat->hasModification ("Damage"))
+					clanListBuildings.back ().data.damage = changedStat->getModificationValue ("Damage");
+				if (changedStat->hasModification ("Range"))
+					clanListBuildings.back ().data.range = changedStat->getModificationValue ("Range");
+				if (changedStat->hasModification ("Armor"))
+					clanListBuildings.back ().data.armor = changedStat->getModificationValue ("Armor");
+				if (changedStat->hasModification ("Hitpoints"))
+					clanListBuildings.back ().data.max_hit_points = changedStat->getModificationValue ("Hitpoints");
+				if (changedStat->hasModification ("Scan"))
+					clanListBuildings.back ().data.scan = changedStat->getModificationValue ("Scan");
+				if (changedStat->hasModification ("Speed"))
+					clanListBuildings.back ().data.max_speed = changedStat->getModificationValue ("Speed") * 4;
+				if (changedStat->hasModification ("Built_Costs"))
+					clanListBuildings.back ().data.iBuilt_Costs = changedStat->getModificationValue ("Built_Costs");
+			}
+		}
+		clanUnitDataBuildings.push_back (clanListBuildings);
+	}
+	initializedClanUnitData = true;
+}
+
+
+//----------------------------------------------------------------------------------
 void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	SDL_Rect temp1, temp2;

@@ -70,6 +70,7 @@
 #define GFXOD_OPTIONS			(SettingsData.sGfxPath + PATH_DELIMITER + "options.pcx").c_str()
 #define GFXOD_SAVELOAD			(SettingsData.sGfxPath + PATH_DELIMITER + "load_save_menu.pcx").c_str()
 #define GFXOD_PLANET_SELECT		(SettingsData.sGfxPath + PATH_DELIMITER + "planet_select.pcx").c_str()
+#define GFXOD_CLAN_SELECT		(SettingsData.sGfxPath + PATH_DELIMITER + "clanselection.pcx").c_str()
 #define GFXOD_PLAYER_SELECT		(SettingsData.sGfxPath + PATH_DELIMITER + "customgame_menu.pcx").c_str()
 #define GFXOD_PLAYERHS_SELECT	(SettingsData.sGfxPath + PATH_DELIMITER + "hotseatplayers.pcx").c_str()
 #define GFXOD_HANGAR			(SettingsData.sGfxPath + PATH_DELIMITER + "hangar.pcx").c_str()

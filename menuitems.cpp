@@ -770,7 +770,34 @@ void cMenuRadioGroup::clicked( void *parent )
 	if ( click ) click(parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) : cMenuItem (0,0), unitID(unitID_), owner(owner_), upgrades(upgrades_)
+cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) 
+: cMenuItem (0,0)
+, unitID(unitID_)
+, unitData(0)
+, owner(owner_)
+, upgrades(upgrades_)
+, displayType(displayType_)
+, fixedResValue(fixedResValue_)
+, parentList(parent)	
+{
+	init ();
+}
+
+cMenuUnitListItem::cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) 
+: cMenuItem (0,0)
+, unitData(unitData_)
+, owner(owner_)
+, upgrades(upgrades_)
+, displayType(displayType_)
+, fixedResValue(fixedResValue_)
+, parentList(parent)	
+{
+	if (unitData != 0)
+		unitID = unitData->ID;
+	init ();
+}
+
+void cMenuUnitListItem::init ()
 {
 	if ( unitID.getVehicle() )
 	{
@@ -799,10 +826,6 @@ cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade
 	resValue = 0;
 	minResValue = -1;
 	fixed = false;
-
-	displayType = displayType_;
-	fixedResValue = fixedResValue_;
-	parentList = parent;
 }
 
 cMenuUnitListItem::~cMenuUnitListItem()
@@ -854,7 +877,7 @@ void cMenuUnitListItem::draw()
 			dest.x = position.x+(32+4);
 			dest.y = position.y+12;
 
-			if ( unitID.getVehicle() ) font->showTextCentered( position.x+position.w-12, dest.y, iToStr(unitID.getUnitData()->iBuilt_Costs), FONT_LATIN_SMALL_YELLOW );
+			if ( unitID.getVehicle() ) font->showTextCentered( position.x+position.w-12, dest.y, iToStr(unitID.getUnitDataCurrentVersion(owner)->iBuilt_Costs), FONT_LATIN_SMALL_YELLOW );
 		}
 		break;
 	default:
@@ -871,7 +894,7 @@ void cMenuUnitListItem::draw()
 int cMenuUnitListItem::drawName( bool withNumber )
 {
 	SDL_Rect dest = { position.x+32+4, position.y+12, position.w-(32+4)-12, 0 };
-	string name = ((string)unitID.getUnitData()->name);
+	string name = ((string)unitID.getUnitDataCurrentVersion(owner)->name);
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
 	if ( withNumber )
@@ -906,12 +929,12 @@ void cMenuUnitListItem::drawCargo( int destY )
 
 	SDL_Rect dest = { position.x+32+4, destY, 0, 0 };
 
-	if ( unitID.getUnitData()->can_transport == TRANS_METAL || unitID.getUnitData()->can_transport == TRANS_OIL /*|| unitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
+	if ( unitID.getUnitDataOriginalVersion()->can_transport == TRANS_METAL || unitID.getUnitDataOriginalVersion()->can_transport == TRANS_OIL /*|| unitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
 	{
 		if( resValue == 0 ) font->showText( dest.x, dest.y+10, "(empty)", FONT_LATIN_SMALL_WHITE );
-		else if( resValue <= unitID.getUnitData()->max_cargo / 4 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitData()->max_cargo) + ")", FONT_LATIN_SMALL_RED );
-		else if( resValue <= unitID.getUnitData()->max_cargo / 2 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitData()->max_cargo) + ")", FONT_LATIN_SMALL_YELLOW );
-		else font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitData()->max_cargo) + ")", FONT_LATIN_SMALL_GREEN );
+		else if( resValue <= unitID.getUnitDataOriginalVersion()->max_cargo / 4 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_RED );
+		else if( resValue <= unitID.getUnitDataOriginalVersion()->max_cargo / 2 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_YELLOW );
+		else font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_GREEN );
 	}
 }
 
@@ -925,6 +948,11 @@ void cMenuUnitListItem::released( void *parent )
 sID cMenuUnitListItem::getUnitID()
 {
 	return unitID;
+}
+
+sUnitData* cMenuUnitListItem::getUnitData()
+{
+	return unitData;
 }
 
 cPlayer *cMenuUnitListItem::getOwner()
@@ -948,7 +976,7 @@ void cMenuUnitListItem::setResValue( int resValue_, bool cargoCheck )
 	resValue = resValue_;
 	if ( resValue < minResValue ) resValue = minResValue;
 	if ( cargoCheck && resValue < 0 ) resValue = 0;
-	if ( cargoCheck && resValue > unitID.getUnitData()->max_cargo ) resValue = unitID.getUnitData()->max_cargo;
+	if ( cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->max_cargo ) resValue = unitID.getUnitDataOriginalVersion()->max_cargo;
 }
 
 void cMenuUnitListItem::setMinResValue ( int minResValue_ )
@@ -1368,8 +1396,10 @@ cMenuUnitDetails::cMenuUnitDetails( int x, int y ) : cMenuItem (x,y)
 void cMenuUnitDetails::draw()
 {
 	if ( !selectedUnit ) return;
-	sUnitData *data = selectedUnit->getUnitID().getUnitData ( selectedUnit->getOwner() );
-	sUnitData *oriData = selectedUnit->getUnitID().getUnitData ();
+	sUnitData *data = selectedUnit->getUnitData ();
+	if (data == 0)
+		data = selectedUnit->getUnitID().getUnitDataCurrentVersion ( selectedUnit->getOwner() );
+	sUnitData *oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion (selectedUnit->getOwner ());
 
 #define DETAIL_COLUMN_1 dest.x+27
 #define DETAIL_COLUMN_2 dest.x+42
@@ -1704,7 +1734,6 @@ void cMenuUpgradeHandler::setSelection ( cMenuUnitListItem *selection_ )
 		return;
 	}
 	sUnitUpgrade *upgrade = selection->getUpgrades();
-	cPlayer *owner = selection->getOwner();
 	for ( int i = 0; i < 8; i++ )
 	{
 		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE ) costsLabel[i]->setText ( iToStr (upgrade[i].nextPrice) );
@@ -1745,15 +1774,14 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgra
 
 void cMenuUpgradeHandler::updateUnitValues ( cMenuUnitListItem *unit )
 {
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size()+UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
 	{
 		sUnitData *data;
-		if ( i < UnitsData.vehicle.Size() ) data = &unit->getOwner()->VehicleData[i];
-		else data = &unit->getOwner()->BuildingData[i-UnitsData.vehicle.Size()];
+		if ( i < UnitsData.getNrVehicles () ) data = &unit->getOwner()->VehicleData[i];
+		else data = &unit->getOwner()->BuildingData[i - UnitsData.getNrVehicles ()];
 
 		if ( data->ID == unit->getUnitID() )
 		{
-			sUnitUpgrade *upgrades = unit->getUpgrades();
 			for ( int j = 0; j < 8; j++ )
 			{
 				sUnitUpgrade *upgrades = unit->getUpgrades();

@@ -3523,7 +3523,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	{
 		MenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
-		cUnitHelpMenu helpMenu ( data.ID, owner );
+		cUnitHelpMenu helpMenu ( &data, owner );
 		helpMenu.show();
 		return;
 	}

@@ -32,16 +32,17 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 , name (Name)
 , color (Color)
 , Nr (nr)
+, clan (-1)
 {
 	// copy the vehicle stats
-	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); i++)
-		VehicleData[i]=UnitsData.vehicle[i].data;
+	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
+	for (size_t i = 0; i < UnitsData.getNrVehicles (); i++)
+		VehicleData[i] = UnitsData.getVehicle (i).data; // get the default (no clan) vehicle data 
 
 	// copy the building stats
-	BuildingData = new sUnitData[UnitsData.building.Size()];
-	for (size_t i = 0; i < UnitsData.building.Size(); i++)
-		BuildingData[i] = UnitsData.building[i].data;
+	BuildingData = new sUnitData[UnitsData.getNrBuildings ()];
+	for (size_t i = 0; i < UnitsData.getNrBuildings (); i++)
+		BuildingData[i] = UnitsData.getBuilding (i).data; // get the default (no clan) building data
 
 	DetectLandMap = NULL;
 	DetectSeaMap = NULL;
@@ -72,13 +73,14 @@ cPlayer::cPlayer(const cPlayer &Player)
 	color = Player.color;
 	Nr = Player.Nr;
 	iSocketNum = Player.iSocketNum;
+	clan = Player.clan;
 
 	// copy vehicle and building datas
-	VehicleData = new sUnitData[UnitsData.vehicle.Size()];
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++)
+	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 		VehicleData[i] = Player.VehicleData[i];
-	BuildingData = new sUnitData[UnitsData.building.Size()];
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++)
+	BuildingData = new sUnitData[UnitsData.getNrBuildings ()];
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 		BuildingData[i] = Player.BuildingData[i];
 
 	DetectLandMap = NULL;
@@ -182,6 +184,21 @@ cPlayer::~cPlayer ()
 		delete LockList[0];
 		LockList.Delete ( 0 );
 	}
+}
+
+//--------------------------------------------------------------------------
+void cPlayer::setClan (int newClan)
+{
+	if (newClan == clan || newClan < -1 || 7 < newClan)
+		return;
+	
+	clan = newClan;
+
+	for (size_t i = 0; i < UnitsData.getNrVehicles (); i++)
+		VehicleData[i] = UnitsData.getVehicle (i, clan).data;
+	
+	for (size_t i = 0; i < UnitsData.getNrBuildings (); i++)
+		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
 }
 
 //--------------------------------------------------------------------------
@@ -693,7 +710,7 @@ void cPlayer::doResearch()
 //--------------------------------------------------------------
 void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas)
 {
-	for (unsigned int i = 0; i < UnitsData.vehicle.Size(); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 	{
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
@@ -704,21 +721,21 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = UnitsData.vehicle[i].data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.vehicle[i].data.max_shots; break;
-				case cResearch::kRangeResearch: startValue = UnitsData.vehicle[i].data.range; break;
-				case cResearch::kArmorResearch: startValue = UnitsData.vehicle[i].data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.vehicle[i].data.max_hit_points; break;
-				case cResearch::kScanResearch: startValue = UnitsData.vehicle[i].data.scan; break;
-				case cResearch::kSpeedResearch: startValue = UnitsData.vehicle[i].data.max_speed; break;
-				case cResearch::kCostResearch: startValue = UnitsData.vehicle[i].data.iBuilt_Costs; break;
+				case cResearch::kAttackResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.damage; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_shots; break;
+				case cResearch::kRangeResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.range; break;
+				case cResearch::kArmorResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.armor; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_hit_points; break;
+				case cResearch::kScanResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.scan; break;
+				case cResearch::kSpeedResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_speed; break;
+				case cResearch::kCostResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.iBuilt_Costs; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																					   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+																					   UnitsData.getVehicle (i, getClan ()).data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																					   UnitsData.vehicle[i].data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+																					   UnitsData.getVehicle (i, getClan ()).data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			if (oldResearchBonus != newResearchBonus)
 			{
 				switch (researchArea)
@@ -742,7 +759,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 			VehicleData[i].version += 1;
 	}
 	
-	for (unsigned int i = 0; i < UnitsData.building.Size(); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 	{
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
@@ -753,13 +770,13 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = UnitsData.building[i].data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.building[i].data.max_shots; break;
-				case cResearch::kRangeResearch: startValue = UnitsData.building[i].data.range; break;
-				case cResearch::kArmorResearch: startValue = UnitsData.building[i].data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.building[i].data.max_hit_points; break;
-				case cResearch::kScanResearch: startValue = UnitsData.building[i].data.scan; break;
-				case cResearch::kCostResearch: startValue = UnitsData.building[i].data.iBuilt_Costs; break;
+				case cResearch::kAttackResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.damage; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.max_shots; break;
+				case cResearch::kRangeResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.range; break;
+				case cResearch::kArmorResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.armor; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.max_hit_points; break;
+				case cResearch::kScanResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.scan; break;
+				case cResearch::kCostResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.iBuilt_Costs; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,

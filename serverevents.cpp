@@ -453,7 +453,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 		message->pushInt16( vehicle->BuildRounds );
 		message->pushInt16( vehicle->BuildingTyp.iSecondPart );
 		message->pushInt16( vehicle->BuildingTyp.iFirstPart );
-		message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+		message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big );
 		message->pushInt16( vehicle->PosY );
 		message->pushInt16( vehicle->PosX );
 	}
@@ -468,7 +468,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 		cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
 		if ( bOK )
 		{
-			message->pushBool ( vehicle->BuildingTyp.getUnitData()->is_big );
+			message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big );
 			message->pushInt16( vehicle->PosY );
 			message->pushInt16( vehicle->PosX );
 		}
@@ -994,6 +994,24 @@ void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<
 		Server->sendNetMessage (message, player);
 		message = NULL;
 	}	
+}
+
+//-------------------------------------------------------------------------------------
+void sendClans ( cList<int>* clans, cPlayer* toPlayer)
+{
+	if (clans == 0 || toPlayer == 0)
+		return;
+	cNetMessage *message = new cNetMessage (GAME_EV_PLAYER_CLANS);	
+	for (int i = clans->Size () - 1; i >= 0; i--)
+		message->pushChar ((*clans)[i]);
+	Server->sendNetMessage (message, toPlayer->Nr);
+}
+
+//-------------------------------------------------------------------------------------
+void sendClansToClients (cList<int>* clans)
+{
+	for (unsigned int n = 1; n < Server->PlayerList->Size(); n++) // 1: don't send to server
+		sendClans (clans, (*Server->PlayerList)[n]);
 }
 
 //-------------------------------------------------------------------------------------

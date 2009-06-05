@@ -132,10 +132,15 @@ public:
 	*@param map map were to store the data of the circle
 	*/
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
+	
+	void setClan (int newClan);
+	int getClan () const { return clan; }
 
 private:
 	cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
 	cBuilding *addBuilding( int posx, int posy, sBuilding *b );
+
+	int clan;
 };
 
 #endif

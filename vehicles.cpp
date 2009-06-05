@@ -900,7 +900,7 @@ int cVehicle::refreshData ()
 				}
 				else
 				{
-					if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
+					if ( BuildingTyp.getUnitDataOriginalVersion()->is_base || BuildingTyp.getUnitDataOriginalVersion()->is_connector)
 					{
 						Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
 						IsBuilding = false;
@@ -912,7 +912,7 @@ int cVehicle::refreshData ()
 			else
 			{
 				//add building immediatly if it doesn't require the engineer to drive away
-				if ( BuildingTyp.getUnitData()->is_base || BuildingTyp.getUnitData()->is_connector)
+				if ( BuildingTyp.getUnitDataOriginalVersion()->is_base || BuildingTyp.getUnitDataOriginalVersion()->is_connector)
 				{
 					IsBuilding = false;
 					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
@@ -1535,7 +1535,7 @@ string cVehicle::getStatusStr ()
 				string sText;
 				sText = lngPack.i18n ( "Text~Comp~Producing" );
 				sText += ": ";
-				sText += ( string ) BuildingTyp.getUnitData ( owner )->name + " (";
+				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
 				sText += iToStr ( BuildRounds );
 				sText += ")";
 
@@ -1543,7 +1543,7 @@ string cVehicle::getStatusStr ()
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" );
 					sText += ":\n";
-					sText += ( string ) BuildingTyp.getUnitData ( owner )->name + " (";
+					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
 					sText += iToStr ( BuildRounds );
 					sText += ")";
 				}
@@ -2017,7 +2017,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	{
 		MenuActive = false;
 		PlayFX ( SoundData.SNDObjectMenu );
-		cUnitHelpMenu helpMenu ( data.ID, owner );
+		cUnitHelpMenu helpMenu ( &data/*.ID*/, owner );
 		helpMenu.show();
 		return;
 	}
@@ -2538,7 +2538,7 @@ void cVehicle::FindNextband ()
 	mouse->GetKachel ( &x, &y );
 
 	//check, which positions are available
-	sUnitData BuildingType = *BuildingTyp.getUnitData();
+	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
 	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY - 1)
 	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
 	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    ) )

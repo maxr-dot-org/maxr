@@ -42,6 +42,7 @@
 #include "unifonts.h"
 #include "keys.h"
 #include "vehicles.h"
+#include "clans.h"
 #include "main.h"
 
 TiXmlDocument LanguageFile;
@@ -87,6 +88,12 @@ static int LoadBuildings();
  * @return 1 on success
  */
 static int LoadVehicles();
+
+/**
+ * Loads the clan values and stores them in the cUnitData class
+ * @return 1 on success
+ */
+static int LoadClans();
 
 /**
  * Loads all Musicfiles
@@ -264,6 +271,15 @@ int LoadData ( void * )
 	}
 	Log.mark();
 
+	// Load Clan Settings
+	if (LoadClans () != 1)
+	{
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}
+	Log.mark();
+	
 	// Load Music
 	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 9 );
 
@@ -3586,6 +3602,85 @@ void ConvertData(int unitnum, bool vehicle)
 		Data->build_by_big = true;
 	else
 		Data->build_by_big = false;
+}
+
+//-------------------------------------------------------------------------------------
+static int LoadClans()
+{
+	TiXmlDocument clansXml;
+	
+	string clansXMLPath = "clans.xml";
+	if (FileExists (clansXMLPath.c_str ()) == false)
+		return 0;
+	if (clansXml.LoadFile (clansXMLPath.c_str ()) == false)
+	{
+		Log.write ("Can't load clans.xml!", LOG_TYPE_ERROR);
+		return 0;
+	}
+	
+	TiXmlNode* xmlNode = clansXml.FirstChildElement ("Clans");
+	if (xmlNode == 0)
+	{
+		Log.write ("Can't read \"Clans\" node!", LOG_TYPE_ERROR);
+		return 0;
+	}
+
+	TiXmlNode* clanNode = 0;
+	while (clanNode = xmlNode->IterateChildren (clanNode))
+	{		
+		TiXmlElement* clanElement = clanNode->ToElement ();
+		if (clanElement)
+		{
+			cClan* newClan = cClanData::instance ().addClan ();
+			string nameAttr = clanElement->Attribute ("Name");
+			newClan->setName (nameAttr);
+			
+			const TiXmlNode* descriptionNode = clanNode->FirstChild ("Description");
+			if (descriptionNode)
+			{
+				string descriptionString = descriptionNode->ToElement ()->GetText ();
+				newClan->setDescription (descriptionString);
+			}
+			
+			TiXmlNode* changedUnitStatsNode = 0;
+			while (changedUnitStatsNode = clanNode->IterateChildren ("ChangedUnitStat", changedUnitStatsNode))
+			{
+				TiXmlElement* statsElement = changedUnitStatsNode->ToElement ();
+				if (statsElement)
+				{
+					const char* idAttr = statsElement->Attribute ("UnitID");
+					if (idAttr == 0)
+					{
+						Log.write ("clans.xml: Couldn't read UnitID for ChangedUnitStat", LOG_TYPE_ERROR);
+						continue;
+					}
+					string idAttrStr (idAttr);
+					int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str ());
+					int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length ()).c_str ());
+					
+					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
+					
+					TiXmlNode* modificationNode = 0;
+					while (modificationNode = changedUnitStatsNode->IterateChildren (modificationNode))
+					{
+						string modName = modificationNode->Value ();
+						TiXmlElement* modificationElement = modificationNode->ToElement ();
+						if (modName != "" && modificationElement)
+						{
+							const char* numAttr = modificationElement->Attribute ("Num");
+							if (numAttr != 0)
+							{
+								int value = atoi (numAttr);
+								newStat->addModification (modName, value);
+							}
+						}
+					}
+				}
+			}
+			
+		}
+	}
+	return 1;
 }
 
 /**

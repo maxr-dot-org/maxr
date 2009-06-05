@@ -29,6 +29,8 @@
 #include "menuevents.h"
 #include "loaddata.h"
 #include "clientevents.h"
+#include "clans.h"
+#include "serverevents.h"
 
 #define MAIN_MENU_BTN_SPACE 35
 
@@ -128,7 +130,14 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 	if ( player == 0 )
 	{
-
+		if (settings->clans == SETTING_CLANS_ON)
+		{
+			cList<int> clans;
+			for (int i =  0; i < players.Size (); i++)
+				clans.Add ( players[i]->getClan () );
+			
+			sendClansToClients ( &clans );
+		}
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
 			Server->makeLanding( landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE );
@@ -174,8 +183,8 @@ void cGameDataContainer::runSavedGame( int player )
 	{
 		clientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
 		// reinit unit values
-		for ( unsigned int j = 0; j < UnitsData.vehicle.Size(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
-		for ( unsigned int j = 0; j < UnitsData.building.Size(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
+		for ( unsigned int j = 0; j < UnitsData.getNrVehicles (); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
+		for ( unsigned int j = 0; j < UnitsData.getNrBuildings (); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
 	}
 	// reinit unitvalues
 	// init client and his player
@@ -202,6 +211,15 @@ void cGameDataContainer::runSavedGame( int player )
 	Server = NULL;
 
 	reloadUnitValues();
+}
+
+void cGameDataContainer::receiveClan ( cNetMessage *message )
+{
+	if ( message->iType != MU_MSG_CLAN ) 
+		return;
+	unsigned int playerNr = message->popInt16();
+	int clanNr = message->popInt16 (); // -1 = no clan
+	players[playerNr]->setClan (clanNr);
 }
 
 void cGameDataContainer::receiveLandingUnits ( cNetMessage *message )
@@ -240,15 +258,15 @@ void cGameDataContainer::receiveUnitUpgrades ( cNetMessage *message )
 		ID.iFirstPart = message->popInt16();
 		ID.iSecondPart = message->popInt16();
 
-		ID.getUnitData ( players[playerNr] )->damage = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->max_shots = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->range = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->max_ammo = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->armor = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->max_hit_points = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->scan = message->popInt16();
-		if ( isVehicle ) ID.getUnitData ( players[playerNr] )->max_speed = message->popInt16();
-		ID.getUnitData ( players[playerNr] )->version++;
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->damage = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_shots = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->range = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_ammo = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->armor = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_hit_points = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->scan = message->popInt16();
+		if ( isVehicle ) ID.getUnitDataCurrentVersion ( players[playerNr] )->max_speed = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->version++;
 	}
 }
 
@@ -279,7 +297,6 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 	}
 
 	//now check the landing positions
-	int lastPlayer = 0;
 	for ( int player = 0; player < (int)landData.Size(); player++ )
 	{
 		eLandingState state = checkLandingState( player );
@@ -570,7 +587,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	{
 		do
 		{
-			unitShow = random((int)UnitsData.building.Size());
+			unitShow = random((int)UnitsData.getNrBuildings ());
 		}
 		while ( unitShow == lastUnitShow );	//make sure we don't show same unit twice
 		surface = UnitsData.building[unitShow].info;
@@ -579,7 +596,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	{
 		do
 		{
-			unitShow = random((int)UnitsData.vehicle.Size());
+			unitShow = random((int)UnitsData.getNrVehicles ());
 		}
 		while ( unitShow == lastUnitShow );	//make sure we don't show same unit twice
 		surface = UnitsData.vehicle[unitShow].info;
@@ -590,7 +607,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 
 void cMainMenu::infoImageReleased( void* parent )
 {
-	cMainMenu *menu = static_cast<cMainMenu*>((cMenu*)parent);
+	cMainMenu *menu = dynamic_cast<cMainMenu*>((cMenu*)parent);
 	// get a new random info image
 	SDL_Surface *surface = ((cMainMenu*)parent)->getRandomInfoImage();
 	// draw the new image
@@ -887,17 +904,26 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	bridgeheadGroup->addButton ( new cMenuCheckButton ( position.x+110+211*2, position.y+86+20, lngPack.i18n( "Text~Option~Definite"), settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( bridgeheadGroup );
 
-	// Aliens field
-	aliensLabel = new cMenuLabel ( position.x+110, position.y+251, lngPack.i18n ("Text~Title~Alien_Tech") );
-	aliensLabel->setCentered ( true );
-	menuItems.Add ( aliensLabel );
-
+	// Other options (AlienTechs and Clans):
+	otherOptionsLabel = new cMenuLabel ( position.x+110, position.y+251, "Other Options"); // TODO: translate
+	otherOptionsLabel->setCentered ( true );
+	menuItems.Add ( otherOptionsLabel );
+	
+	alienTechLabel = new cMenuLabel ( position.x+17, position.y+284, lngPack.i18n ("Text~Title~Alien_Tech") );
+	menuItems.Add ( alienTechLabel );
 	aliensGroup = new cMenuRadioGroup();
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+110, position.y+281, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+110, position.y+281+20, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	aliensGroup->addButton ( new cMenuCheckButton ( position.x+30, position.y+300, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	aliensGroup->addButton ( new cMenuCheckButton ( position.x+75, position.y+300, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( aliensGroup );
-
-	// Resource frequenzcy field
+	
+	clansLabel = new cMenuLabel ( position.x+17, position.y+322, "Clans" ); // TODO: translate
+	menuItems.Add (clansLabel );
+	clansGroup = new cMenuRadioGroup();
+	clansGroup->addButton ( new cMenuCheckButton ( position.x+30, position.y+338, lngPack.i18n( "Text~Option~On"), settings.clans == SETTING_CLANS_ON, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	clansGroup->addButton ( new cMenuCheckButton ( position.x+75, position.y+338, lngPack.i18n( "Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	menuItems.Add ( clansGroup );
+	
+	// Resource frequency field
 	resFrequencyLabel = new cMenuLabel ( position.x+110+210, position.y+251, lngPack.i18n ("Text~Title~Resource_Density") );
 	resFrequencyLabel->setCentered ( true );
 	menuItems.Add ( resFrequencyLabel );
@@ -932,7 +958,9 @@ cSettingsMenu::~cSettingsMenu()
 	delete goldLabel;
 	delete creditsLabel;
 	delete bridgeheadLabel;
-	delete aliensLabel;
+	delete otherOptionsLabel;
+	delete alienTechLabel;
+	delete clansLabel;
 	delete resFrequencyLabel;
 	delete gameTypeLabel;
 
@@ -942,6 +970,7 @@ cSettingsMenu::~cSettingsMenu()
 	delete creditsGroup;
 	delete bridgeheadGroup;
 	delete aliensGroup;
+	delete clansGroup;
 	delete resFrequencyGroup;
 	delete gameTypeGroup;
 }
@@ -1015,6 +1044,9 @@ void cSettingsMenu::updateSettings()
 
 	if ( aliensGroup->buttonIsChecked ( 0 ) ) settings.alienTech = SETTING_ALIENTECH_ON;
 	else settings.alienTech = SETTING_ALIENTECH_OFF;
+
+	if ( clansGroup->buttonIsChecked ( 0 ) ) settings.clans = SETTING_CLANS_ON;
+	else settings.clans = SETTING_CLANS_OFF;
 
 	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_SIMU;
 	else settings.gameType = SETTINGS_GAMETYPE_TURNS;
@@ -1227,7 +1259,13 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 			{
 				cPlayer *player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 				menu->gameDataContainer->players.Add ( player );
-
+				
+				if (menu->gameDataContainer->settings->clans == SETTING_CLANS_ON)
+				{
+					cClanSelectionMenu clanMenu (player);
+					clanMenu.show ();
+				}
+				
 				cStartupHangarMenu startupHangarMenu( menu->gameDataContainer, player );
 				if ( startupHangarMenu.show() == 1 )
 				{
@@ -1283,6 +1321,150 @@ void cPlanetsSelectionMenu::mapReleased( void* parent )
 	menu->okButton->setLocked ( false );
 	menu->draw();
 }
+
+
+//-----------------------------------------------------------------------------------
+// cClanSelectionMenu
+//-----------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------
+cClanSelectionMenu::cClanSelectionMenu( cPlayer *player )
+: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
+, player (player)
+, clan (player->getClan () >= 0 ? player->getClan () : 0)
+{
+	okButton = new cMenuButton ( position.x+390, position.y+440, lngPack.i18n ("Text~Button~OK") );
+	okButton->setReleasedFunction ( &okReleased );
+	menuItems.Add ( okButton );	
+	
+	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, "Choose Clan" );
+	titleLabel->setCentered (true);
+	menuItems.Add (titleLabel);
+	
+	vector<string> clanLogoPaths;
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo1.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo2.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo3.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo4.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo5.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo6.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo7.pcx");
+	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo8.pcx");
+	
+	int xCount = 0;
+	int yCount = 0;
+	for (int i = 0; i < 8; i++, xCount++)
+	{
+		if (i == 4)
+		{
+			xCount = 0;
+			yCount = 1;
+		}
+		SDL_Surface* img = LoadPCX (clanLogoPaths[i].c_str());
+		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0x000000 );
+		clanImages[i] = new cMenuImage (position.x + 88 + xCount * 154 - (img ? (img->w / 2) : 0), position.y + 48 + yCount * 150, img);
+		clanImages[i]->setReleasedFunction (&clanSelected);
+		menuItems.Add (clanImages[i]);
+		
+		clanNames[i] = new cMenuLabel (position.x + 87 + xCount * 154, position.y + 144 + yCount * 150, cClanData::instance ().getClan (i)->getName ());
+		clanNames[i]->setCentered (true);
+		menuItems.Add (clanNames[i]);
+	}
+	clanNames[clan]->setText (">" + cClanData::instance ().getClan (clan)->getName () + "<");
+
+	clanDescription1 = new cMenuLabel (position.x + 47, position.y + 362, "");	
+	menuItems.Add (clanDescription1);
+	clanDescription2 = new cMenuLabel (position.x + 380, position.y + 362, "");
+	menuItems.Add (clanDescription2);
+	clanShortDescription = new cMenuLabel (position.x + 47, position.y + 349, "");
+	menuItems.Add (clanShortDescription);
+	updateClanDescription ();
+}
+
+//-----------------------------------------------------------------------------------
+cClanSelectionMenu::~cClanSelectionMenu ()
+{
+	delete okButton;
+	
+	delete titleLabel;
+	delete clanDescription1;
+	delete clanDescription2;
+	
+	for (int i = 0; i < 8; i++)
+	{
+		delete clanImages[i];
+		delete clanNames[i];
+	}
+}
+
+//-----------------------------------------------------------------------------------
+void cClanSelectionMenu::okReleased (void* parent)
+{
+	cClanSelectionMenu* menu = dynamic_cast<cClanSelectionMenu*>((cMenu*)parent);
+	if (menu == 0)
+		return;
+	menu->player->setClan (menu->clan);
+	menu->end = true;
+}
+
+//-----------------------------------------------------------------------------------
+void cClanSelectionMenu::clanSelected (void* parent)
+{
+	cClanSelectionMenu* menu = dynamic_cast<cClanSelectionMenu*>((cMenu*)parent);
+	if (menu == 0)
+		return;
+
+	int newClan = (mouse->x - menu->position.x - 47) / 154;
+	if (mouse->y > menu->position.y + 48 + 140)
+		newClan += 4;
+	
+	if (0 <= newClan && newClan < 8 && newClan != menu->clan)
+	{
+		menu->clanNames[menu->clan]->setText (cClanData::instance ().getClan (menu->clan)->getName ());
+		menu->clan = newClan;
+		menu->clanNames[menu->clan]->setText (">" + cClanData::instance ().getClan (menu->clan)->getName () + "<");	
+		menu->updateClanDescription ();
+		menu->draw();
+	}
+}
+
+//-----------------------------------------------------------------------------------
+void cClanSelectionMenu::updateClanDescription ()
+{
+	cClan* clanInfo = cClanData::instance ().getClan (clan);
+	if (clanInfo)
+	{
+		vector<string> strings = clanInfo->getClanStatsDescription ();
+		
+		string desc1;
+		for (int i = 0; i < 4 && i < strings.size (); i++)
+		{
+			desc1.append (strings[i]);
+			desc1.append ("\n");
+		}
+		clanDescription1->setText (desc1);
+
+		string desc2;
+		for (int i = 4; i < strings.size (); i++)
+		{
+			desc2.append (strings[i]);
+			desc2.append ("\n");
+		}
+		clanDescription2->setText (desc2);
+		
+		clanShortDescription->setText (clanInfo->getDescription ());
+	}
+	else
+	{
+		clanDescription1->setText ("Unknown");
+		clanDescription1->setText ("");
+	}
+}
+
+
+//-----------------------------------------------------------------------------------
+// cHangarMenu
+//-----------------------------------------------------------------------------------
 
 cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_ ) : cMenu (background_), player(player_)
 {
@@ -1342,16 +1524,16 @@ cHangarMenu::~cHangarMenu()
 void cHangarMenu::drawUnitInformation()
 {
 	if ( !selectedUnit ) return;
-	if ( selectedUnit->getUnitID().getVehicle() )
+	if ( selectedUnit->getUnitID().getVehicle(player) )
 	{
-		infoImage->setImage ( selectedUnit->getUnitID().getVehicle()->info );
-		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getVehicle()->text );
+		infoImage->setImage ( selectedUnit->getUnitID().getVehicle(player)->info );
+		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getVehicle(player)->text );
 		else infoText->setText ( "" );
 	}
-	else if ( selectedUnit->getUnitID().getBuilding() )
+	else if ( selectedUnit->getUnitID().getBuilding(player) )
 	{
-		infoImage->setImage ( selectedUnit->getUnitID().getBuilding()->info );
-		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getBuilding()->text );
+		infoImage->setImage ( selectedUnit->getUnitID().getBuilding(player)->info );
+		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getBuilding(player)->text );
 		else infoText->setText ( "" );
 	}
 }
@@ -1433,7 +1615,7 @@ bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *paren
 	if ( !menu ) return false;
 	if ( menu->selectedUnit && menu->selectedUnit == menu->selectionList->getSelectedUnit() )
 	{
-		sVehicle *vehicle = menu->selectedUnit->getUnitID().getVehicle();
+		sVehicle *vehicle = menu->selectedUnit->getUnitID().getVehicle(menu->player);
 		if ( vehicle && menu->checkAddOk ( menu->selectedUnit ) )
 		{
 			menu->secondList->addUnit ( vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue() );
@@ -1509,7 +1691,7 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	{
 		for ( int i = 0; i < selectionList->getSize(); i++ )
 		{
-			sVehicle *vehicle = selectionList->getItem ( i )->getUnitID().getVehicle();
+			sVehicle *vehicle = selectionList->getItem ( i )->getUnitID().getVehicle(player);
 			if ( !vehicle ) continue;
 			if ( vehicle->data.can_build == BUILD_BIG || vehicle->data.can_build == BUILD_SMALL || vehicle->data.can_survey )
 			{
@@ -1555,6 +1737,7 @@ void cStartupHangarMenu::doneReleased( void* parent )
 	menu->gameDataContainer->landingUnits.Add ( landingUnits );
 	if ( menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->player->Nr != 0 )
 	{
+		sendClan ( menu->player->getClan (), menu->player->Nr );
 		sendLandingUnits ( landingUnits, menu->player->Nr );
 		sendUnitUpgrades ( menu->player );
 	}
@@ -1617,10 +1800,10 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( !menu ) return;
-	if ( menu->secondList->getSelectedUnit() && menu->secondList->getSelectedUnit()->getUnitID().getVehicle() )
+	if ( menu->secondList->getSelectedUnit() && menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int newCargo = (int)((float)(menu->position.y+301+115-mouse->y)/115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitData()->max_cargo );
+		int newCargo = (int)((float)(menu->position.y+301+115-mouse->y)/115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion(menu->player)->max_cargo );
 		if ( newCargo%5 < 3 ) newCargo -= newCargo%5;
 		else newCargo += 5-newCargo%5;
 
@@ -1658,25 +1841,25 @@ void cStartupHangarMenu::generateSelectionList()
 
 	if ( buy ) plane = ship = build = false;
 
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( !tank && !ship && !plane ) continue;
-		sUnitData &data = UnitsData.vehicle[i].data;
+		sUnitData &data = UnitsData.getVehicle(i, player->getClan()).data;
 		if ( data.is_alien && buy ) continue;
 		if ( data.is_human && buy ) continue;
 		if ( tnt && !data.can_attack ) continue;
 		if ( data.can_drive == DRIVE_AIR && !plane ) continue;
 		if ( data.can_drive == DRIVE_SEA && !ship ) continue;
 		if ( ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA ) && !tank ) continue;
-		selectionList->addUnit ( UnitsData.vehicle[i].data.ID, player, unitUpgrades[i] );
+		selectionList->addUnit ( data.ID, player, unitUpgrades[i] );
 	}
 
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( !build ) continue;
-		sUnitData &data = UnitsData.building[i].data;
+		sUnitData &data = UnitsData.getBuilding(i, player->getClan()).data;
 		if ( tnt && !data.can_attack ) continue;
-		selectionList->addUnit ( UnitsData.building[i].data.ID, player, unitUpgrades[UnitsData.vehicle.Size()+i] );
+		selectionList->addUnit ( data.ID, player, unitUpgrades[UnitsData.getNrVehicles ()+i] );
 	}
 
 	for ( int i = 0; i < selectionList->getSize(); i++ )
@@ -1701,7 +1884,7 @@ bool cStartupHangarMenu::isInLandingList( cMenuUnitListItem *item )
 
 bool cStartupHangarMenu::checkAddOk ( cMenuUnitListItem *item )
 {
-	sVehicle *vehicle = item->getUnitID().getVehicle();
+	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return false;
 
 	if ( vehicle->data.can_drive != DRIVE_LAND && vehicle->data.can_drive != DRIVE_LANDnSEA ) return false;
@@ -1712,7 +1895,7 @@ bool cStartupHangarMenu::checkAddOk ( cMenuUnitListItem *item )
 
 void cStartupHangarMenu::addedCallback ( cMenuUnitListItem *item )
 {
-	sVehicle *vehicle = item->getUnitID().getVehicle();
+	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return;
 
 	credits -= vehicle->data.iBuilt_Costs;
@@ -1722,7 +1905,7 @@ void cStartupHangarMenu::addedCallback ( cMenuUnitListItem *item )
 
 void cStartupHangarMenu::removedCallback ( cMenuUnitListItem *item )
 {
-	sVehicle *vehicle = item->getUnitID().getVehicle();
+	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return;
 
 	credits += vehicle->data.iBuilt_Costs + item->getResValue()/5;
@@ -1733,6 +1916,9 @@ void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
 	{
+	case MU_MSG_CLAN:
+		gameDataContainer->receiveClan ( message );
+		break;
 	case MU_MSG_LANDING_VEHICLES:
 		gameDataContainer->receiveLandingUnits ( message );
 		break;
@@ -1752,7 +1938,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	if ( !menu ) menu = dynamic_cast<cStartupHangarMenu*>((cStartupHangarMenu*)parent);
 	if ( !menu ) return;
 	sVehicle *vehicle;
-	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle() ) &&
+	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) ) &&
 		( vehicle->data.can_transport == TRANS_METAL || vehicle->data.can_transport == TRANS_OIL || vehicle->data.can_transport == TRANS_GOLD ) )
 	{
 		menu->materialBar->setMaximalValue ( vehicle->data.max_cargo );
@@ -1941,6 +2127,9 @@ void cLandingMenu::handleNetMessage( cNetMessage *message )
 	// will receive and handle the messages directly
 	switch ( message->iType )
 	{
+	case MU_MSG_CLAN:
+		gameDataContainer->receiveClan ( message );
+		break;
 	case MU_MSG_LANDING_VEHICLES:
 		gameDataContainer->receiveLandingUnits ( message );
 		break;
@@ -2131,6 +2320,7 @@ void cNetworkMenu::showSettingsText()
 			text += lngPack.i18n ( "Text~Title~Credits" )  + ": " + iToStr( settings->credits ) + "\n";
 			text += lngPack.i18n ( "Text~Title~BridgeHead" ) + ": " + ( settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ( "Text~Option~Definite" ) : lngPack.i18n ( "Text~Option~Mobile" ) ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
+			text += string ("Clans") + ": " + ( settings->clans == SETTING_CLANS_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n"; // TODO: translate
 			text += lngPack.i18n ( "Text~Title~Game_Type" ) + ": " + ( settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ( "Text~Option~Type_Turns" ) : lngPack.i18n ( "Text~Option~Type_Simu" ) ) + "\n";
 		}
 		else if ( gameDataContainer.savegame.empty() ) text += lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) + "\n";
@@ -2388,6 +2578,12 @@ void cNetworkHostMenu::okReleased( void* parent )
 			menu->gameDataContainer.players.Add ( player );
 		}
 
+		if (menu->gameDataContainer.settings->clans == SETTING_CLANS_ON)
+		{
+			cClanSelectionMenu clanMenu (menu->gameDataContainer.players[0]);
+			clanMenu.show ();
+		}
+		
 		cStartupHangarMenu hangarMenu( &menu->gameDataContainer, menu->gameDataContainer.players[0] ) ;
 		hangarMenu.show();
 	}
@@ -2555,8 +2751,8 @@ void cNetworkHostMenu::runSavedGame()
 		unsigned int j;
 		for ( j = 0; j < Server->PlayerList->Size(); j++ )
 		{
-			cPlayer *Player = (*Server->PlayerList)[j];
-			if ( players[i]->name == (*Server->PlayerList)[j]->name ) break;
+			if ( players[i]->name == (*Server->PlayerList)[j]->name ) 
+				break;
 		}
 		// the player isn't in the list when the loop has gone trough all players and no match was found
 		if ( j == Server->PlayerList->Size() )
@@ -2606,11 +2802,12 @@ void cNetworkHostMenu::runSavedGame()
 	cPlayer *localPlayer;
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
-		clientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
+		cPlayer* addedPlayer = new cPlayer( *(*Server->PlayerList)[i] );
+		clientPlayerList.Add( addedPlayer );
 		if ( (*Server->PlayerList)[i]->iSocketNum == MAX_CLIENTS ) localPlayer = clientPlayerList[i];
 		// reinit unit values
-		for ( unsigned int j = 0; j < UnitsData.vehicle.Size(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
-		for ( unsigned int j = 0; j < UnitsData.building.Size(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
+		for ( unsigned int j = 0; j < UnitsData.getNrVehicles (); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan ()).data;
+		for ( unsigned int j = 0; j < UnitsData.getNrBuildings (); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan ()).data;
 	}
 	// init client and his player
 	Client = new cClient( &clientMap, &clientPlayerList );
@@ -2754,9 +2951,10 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				settings->oil = (eSettingResourceValue)message->popChar();
 				settings->gold = (eSettingResourceValue)message->popChar();
 				settings->resFrequency = (eSettingResFrequency)message->popChar();
-				settings->credits = (eSettingsCredits)message->popChar();
+				settings->credits = (eSettingsCredits)message->popInt16();
 				settings->bridgeHead = (eSettingsBridgeHead)message->popChar();
 				settings->alienTech = (eSettingsAlienTech)message->popChar();
+				settings->clans = (eSettingsClans)message->popChar();
 				settings->gameType = (eSettingsGameType)message->popChar();
 			}
 			else if ( gameDataContainer.settings )
@@ -2810,6 +3008,12 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			}
 			else
 			{
+				if (gameDataContainer.settings->clans == SETTING_CLANS_ON)
+				{
+					cClanSelectionMenu clanMenu (gameDataContainer.players[actPlayer->nr]);
+					clanMenu.show ();
+				}
+				
 				cStartupHangarMenu hangarMenu( &gameDataContainer, gameDataContainer.players[actPlayer->nr] ) ;
 				hangarMenu.show();
 			}
@@ -3181,7 +3385,7 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 
 void cBuildingsBuildMenu::generateSelectionList()
 {
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( UnitsData.building[i].data.is_expl_mine )continue;
 
@@ -3189,7 +3393,7 @@ void cBuildingsBuildMenu::generateSelectionList()
 
 		selectionList->addUnit ( UnitsData.building[i].data.ID, player );
 
-		if ( vehicle->data.cargo < UnitsData.building[i].data.iBuilt_Costs ) selectionList->getItem ( selectionList->getSize()-1 )->setMarked ( true );
+		if ( vehicle->data.cargo < player->BuildingData[i].iBuilt_Costs) selectionList->getItem ( selectionList->getSize()-1 )->setMarked ( true );
 	}
 
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
@@ -3239,7 +3443,7 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 	if ( !menu ) menu = dynamic_cast<cBuildingsBuildMenu*>((cBuildingsBuildMenu*)parent);
 	if ( !menu->selectedUnit ) return;
 
-	sUnitData *buildingData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );
+	sUnitData *buildingData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion ( menu->player );
 	int turboBuildTurns[3], turboBuildCosts[3];
 	menu->vehicle->calcTurboBuild ( turboBuildTurns, turboBuildCosts, buildingData->iBuilt_Costs, buildingData->iBuilt_Costs_Max );
 
@@ -3311,9 +3515,9 @@ cVehiclesBuildMenu::~cVehiclesBuildMenu()
 
 void cVehiclesBuildMenu::generateSelectionList()
 {
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		const sVehicle& vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.getVehicle (i, player->getClan ());
 
 		bool land = false, water = false;
 
@@ -3403,7 +3607,7 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 
 	if ( !menu->selectedUnit ) return;
 
-	sUnitData *vehicleData = menu->selectedUnit->getUnitID().getUnitData ( menu->player );
+	sUnitData *vehicleData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion ( menu->player );
 	int turboBuildTurns[3], turboBuildCosts[3];
 	menu->building->CalcTurboBuild ( turboBuildTurns, turboBuildCosts, vehicleData->iBuilt_Costs, menu->selectedUnit->getResValue() );
 
@@ -3413,6 +3617,10 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), owner )
 {
 	upgradeFilter = new cMenuUpgradeFilter ( position.x+467, position.y+411, this );
+	upgradeFilter->setTankChecked (true);
+	upgradeFilter->setPlaneChecked (true);
+	upgradeFilter->setShipChecked (true);
+	upgradeFilter->setBuildingChecked (true);
 	menuItems.Add ( upgradeFilter );
 
 	upgradeButtons = new cMenuUpgradeHandler ( position.x+283, position.y+293, this );
@@ -3439,20 +3647,20 @@ cUpgradeHangarMenu::~cUpgradeHangarMenu()
 }
 void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 {
-	unitUpgrades = new sUnitUpgrade[UnitsData.vehicle.Size()+UnitsData.building.Size()][8];
-	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.vehicle.Size()+UnitsData.building.Size(); unitIndex++ )
+	unitUpgrades = new sUnitUpgrade[UnitsData.getNrVehicles () + UnitsData.getNrBuildings ()][8];
+	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); unitIndex++ )
 	{
 		sUnitData *data;
 		sUnitData *oriData;
-		if ( unitIndex < UnitsData.vehicle.Size() )
+		if ( unitIndex < UnitsData.getNrVehicles () )
 		{
-			oriData = &UnitsData.vehicle[unitIndex].data;
+			oriData = &UnitsData.getVehicle (unitIndex, player->getClan ()).data;
 			data = &player->VehicleData[unitIndex];
 		}
 		else
 		{
-			oriData = &UnitsData.building[unitIndex-UnitsData.vehicle.Size()].data;
-			data = &player->BuildingData[unitIndex-UnitsData.vehicle.Size()];
+			oriData = &UnitsData.getBuilding (unitIndex - UnitsData.getNrVehicles (), player->getClan ()).data;
+			data = &player->BuildingData[unitIndex - UnitsData.getNrVehicles ()];
 		}
 
 		cResearch& researchLevel = player->researchLevel;
@@ -3567,7 +3775,12 @@ cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), 
 	goldBar->setCurrentValue ( credits );
 
 	generateSelectionList();
-
+	if (selectedUnit != 0)
+	{
+		unitDetails->setSelection (selectedUnit);
+		upgradeButtons->setSelection (selectedUnit);
+	}
+	
 	selectionChangedFunc = &selectionChanged;
 }
 
@@ -3602,9 +3815,13 @@ void cUpgradeMenu::selectionChanged ( void *parent )
 
 void cUpgradeMenu::generateSelectionList()
 {
-	sID oldSelectdUnit;
-	sBuilding *oldSelectdBuilding = NULL;
-	if ( selectionList->getSelectedUnit() ) oldSelectdUnit = selectionList->getSelectedUnit()->getUnitID();
+	sID oldSelectedUnit;
+	bool selectOldSelectedUnit = false;
+	if ( selectionList->getSelectedUnit() )
+	{
+		oldSelectedUnit = selectionList->getSelectedUnit()->getUnitID();
+		selectOldSelectedUnit = true;
+	}
 
 	selectionList->clear();
 	bool tank = upgradeFilter->TankIsChecked();
@@ -3613,44 +3830,59 @@ void cUpgradeMenu::generateSelectionList()
 	bool build = upgradeFilter->BuildingIsChecked();
 	bool tnt = upgradeFilter->TNTIsChecked();
 
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( !tank && !ship && !plane ) continue;
-		sUnitData &data = UnitsData.vehicle[i].data;
+		sUnitData &data = UnitsData.getVehicle (i, player->getClan ()).data;
 		if ( tnt && !data.can_attack ) continue;
 		if ( data.can_drive == DRIVE_AIR && !plane ) continue;
 		if ( data.can_drive == DRIVE_SEA && !ship ) continue;
 		if ( ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA ) && !tank ) continue;
-		selectionList->addUnit ( UnitsData.vehicle[i].data.ID, player, unitUpgrades[i] );
+		selectionList->addUnit ( data.ID, player, unitUpgrades[i] );
 	}
 
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( !build ) continue;
-		sUnitData &data = UnitsData.building[i].data;
+		sUnitData &data = UnitsData.getBuilding (i, player->getClan ()).data;
 		if ( tnt && !data.can_attack ) continue;
-		selectionList->addUnit ( UnitsData.building[i].data.ID, player, unitUpgrades[UnitsData.vehicle.Size()+i] );
+		selectionList->addUnit ( data.ID, player, unitUpgrades[UnitsData.getNrVehicles () + i] );
 	}
 
-	for ( int i = 0; i < selectionList->getSize(); i++ )
+	if (selectOldSelectedUnit)
 	{
-		if ( oldSelectdUnit == selectionList->getItem( i )->getUnitID() )
+		for ( int i = 0; i < selectionList->getSize(); i++ )
 		{
-			selectionList->setSelection ( selectionList->getItem( i ) );
-			break;
+			if ( oldSelectedUnit == selectionList->getItem( i )->getUnitID() )
+			{
+				selectionList->setSelection ( selectionList->getItem( i ) );
+				break;
+			}
 		}
 	}
-	if ( selectionList->getSelectedUnit() == NULL && selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem( 0 ) );
+	if ( selectOldSelectedUnit == false && selectionList->getSize() > 0 ) 
+		selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 
+
 cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ) )
+{
+	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
+	init (unitID);
+}
+
+cUnitHelpMenu::cUnitHelpMenu( sUnitData* unitData, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ) )
+{
+	unit = new cMenuUnitListItem ( unitData, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
+	init (unitData->ID);
+}
+
+void cUnitHelpMenu::init(sID unitID)
 {
 	titleLabel = new cMenuLabel ( position.x+406, position.y+11, lngPack.i18n( "Text~Title~Unitinfo" ) );
 	titleLabel->setCentered ( true );
 	menuItems.Add ( titleLabel );
-
-	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
-
+	
 	doneButton = new cMenuButton ( position.x+474, position.y+452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	doneButton->setReleasedFunction ( &doneReleased );
 	menuItems.Add ( doneButton );
@@ -3915,7 +4147,6 @@ int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
 {
 	int maxX = canStorePlanes ? 2 : 3;
 
-	cVehicle *vehicle = NULL;
 	for ( int x = 0; x < maxX; x++ )
 	{
 		for ( int y = 0; y < 2; y++ )

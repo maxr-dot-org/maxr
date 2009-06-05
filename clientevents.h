@@ -33,6 +33,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_DEL_VEHICLE,			// deletes a vehicle
 	GAME_EV_ADD_ENEM_BUILDING,		// adds a enemy building with current data
 	GAME_EV_ADD_ENEM_VEHICLE,		// adds a vehicle with current data
+	GAME_EV_PLAYER_CLANS,			// data about the clans of the players
 	GAME_EV_CHAT_SERVER,			// a chat message from server to client
 	GAME_EV_MAKE_TURNEND,			// a player has to do actions for a turn ending
 	GAME_EV_FINISHED_TURN,			// a player has finished his turn

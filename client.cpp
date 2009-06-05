@@ -533,12 +533,12 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	{
 		if (( overVehicle && overVehicle == SelectedVehicle ) || ( overPlane && overPlane == SelectedVehicle ))
 		{
-			cUnitHelpMenu helpMenu ( SelectedVehicle->data.ID, SelectedVehicle->owner );
+			cUnitHelpMenu helpMenu ( &SelectedVehicle->data, SelectedVehicle->owner );
 			helpMenu.show();
 		}
 		else if (( overBuilding && overBuilding == SelectedBuilding ) || ( overBaseBuilding && overBaseBuilding == SelectedBuilding ) )
 		{
-			cUnitHelpMenu helpMenu ( SelectedBuilding->data.ID, SelectedBuilding->owner );
+			cUnitHelpMenu helpMenu ( &SelectedBuilding->data, SelectedBuilding->owner );
 			helpMenu.show();
 		}
 		else if ( OverUnitField ) selectUnit ( OverUnitField, true );
@@ -662,7 +662,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
 			SelectedVehicle->PlaceBand = false;
-			if ( SelectedVehicle->BuildingTyp.getUnitData()->is_big )
+			if ( SelectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big )
 			{
 				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false, 0 );
 			}
@@ -816,22 +816,22 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		{
 			if ( overPlane )
 			{
-				cUnitHelpMenu helpMenu ( overPlane->data.ID, overPlane->owner );
+				cUnitHelpMenu helpMenu ( &overPlane->data, overPlane->owner );
 				helpMenu.show();
 			}
 			else if ( overVehicle )
 			{
-				cUnitHelpMenu helpMenu ( overVehicle->data.ID, overVehicle->owner );
+				cUnitHelpMenu helpMenu ( &overVehicle->data, overVehicle->owner );
 				helpMenu.show();
 			}
 			else if ( overBuilding )
 			{
-				cUnitHelpMenu helpMenu ( overBuilding->data.ID, overBuilding->owner );
+				cUnitHelpMenu helpMenu ( &overBuilding->data, overBuilding->owner );
 				helpMenu.show();
 			}
 			else if ( overBaseBuilding )
 			{
-				cUnitHelpMenu helpMenu ( overBaseBuilding->data.ID, overBaseBuilding->owner );
+				cUnitHelpMenu helpMenu ( &overBaseBuilding->data, overBaseBuilding->owner );
 				helpMenu.show();
 			}
 			bHelpActive = false;
@@ -1100,12 +1100,12 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedVehicle )
 	{
-		cUnitHelpMenu helpMenu ( SelectedVehicle->data.ID, SelectedVehicle->owner );
+		cUnitHelpMenu helpMenu ( &SelectedVehicle->data, SelectedVehicle->owner );
 		helpMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuInfo && SelectedBuilding )
 	{
-		cUnitHelpMenu helpMenu ( SelectedBuilding->data.ID, SelectedBuilding->owner );
+		cUnitHelpMenu helpMenu ( &SelectedBuilding->data, SelectedBuilding->owner );
 		helpMenu.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking && !bWaitForOthers )
@@ -3654,6 +3654,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			break;
 		}
 		break;
+	case GAME_EV_PLAYER_CLANS:
+			for (int playerIdx = 0; playerIdx < PlayerList->Size (); playerIdx++)
+			{
+				int clan = message->popChar ();
+				(*PlayerList)[playerIdx]->setClan (clan);
+			}
+		break;
 	case GAME_EV_ADD_BUILDING:
 		{
 			cBuilding *AddedBuilding;
@@ -3665,7 +3672,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedBuilding = Player->addBuilding( PosX, PosY, UnitID.getBuilding() );
+			AddedBuilding = Player->addBuilding( PosX, PosY, UnitID.getBuilding(Player) );
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
@@ -3686,7 +3693,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int PosY = message->popInt16();
 			int PosX = message->popInt16();
 
-			AddedVehicle = Player->AddVehicle(PosX, PosY, UnitID.getVehicle());
+			AddedVehicle = Player->AddVehicle(PosX, PosY, UnitID.getVehicle(Player));
 			AddedVehicle->iID = message->popInt16();
 			bool bAddToMap = message->popBool();
 
@@ -3731,7 +3738,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			UnitID.iSecondPart = message->popInt16();
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
-			AddedVehicle = Player->AddVehicle(iPosX, iPosY, UnitID.getVehicle() );
+			AddedVehicle = Player->AddVehicle(iPosX, iPosY, UnitID.getVehicle(Player) );
 
 			AddedVehicle->dir = message->popInt16();
 			AddedVehicle->iID = message->popInt16();
@@ -3755,7 +3762,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iPosY = message->popInt16();
 			int iPosX = message->popInt16();
 
-			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding() );
+			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding(Player) );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 
@@ -4291,7 +4298,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				sID UnitID;
 				UnitID.iFirstPart = message->popInt16();
 				UnitID.iSecondPart = message->popInt16();
-				BuildListItem->typ = UnitID.getVehicle();
+				BuildListItem->typ = UnitID.getVehicle(ActivePlayer);
 				BuildListItem->metall_remaining = message->popInt16();
 				Building->BuildList->Add ( BuildListItem );
 			}
@@ -4335,8 +4342,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int iAnz = message->popInt16();
 				if ( iCount ) sReportMsg += ", ";
 				iCount += iAnz;
-				sTmp = iToStr( iAnz ) + " " + Type.getUnitData()->name;
-				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitData()->name;
+				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->name;
+				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
 				iReportAnz--;
 			}
 
@@ -4776,7 +4783,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sUnitData *Data;
 			ID.iFirstPart = message->popInt16();
 			ID.iSecondPart = message->popInt16();
-			Data = ID.getUnitData ( ActivePlayer );
+			Data = ID.getUnitDataCurrentVersion ( ActivePlayer );
 			if ( Data != NULL )
 			{
 				Data->version = message->popInt16();

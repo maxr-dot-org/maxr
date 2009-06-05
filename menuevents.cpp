@@ -64,9 +64,10 @@ void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPl
 	if ( gameData->settings )
 	{
 		message->pushChar ( gameData->settings->gameType );
+		message->pushChar ( gameData->settings->clans );
 		message->pushChar ( gameData->settings->alienTech );
 		message->pushChar ( gameData->settings->bridgeHead );
-		message->pushChar ( gameData->settings->credits );
+		message->pushInt16 ( gameData->settings->credits );
 		message->pushChar ( gameData->settings->resFrequency );
 		message->pushChar ( gameData->settings->gold );
 		message->pushChar ( gameData->settings->oil );
@@ -91,6 +92,23 @@ void sendIdentification ( sMenuPlayer *player )
 	message->pushInt16( player->color );
 	message->pushInt16( player->nr );
 	cMenu::sendMessage ( message );
+}
+
+void sendClan ( int clanNr, int ownerNr )
+{
+	cNetMessage *message = new cNetMessage ( MU_MSG_CLAN );
+	
+	message->pushInt16( clanNr );
+	message->pushInt16( ownerNr );
+	
+	// the host has not to send the message over tcpip and since he has
+	// always the playernumber 0 we can handle the message directly
+	if ( ownerNr == 0 && ActiveMenu )
+	{
+		ActiveMenu->handleNetMessage ( message );
+		delete message;
+	}
+	else cMenu::sendMessage ( message );	
 }
 
 void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr )
@@ -122,20 +140,20 @@ void sendUnitUpgrades ( cPlayer *player )
 	int count = 0;
 
 	// send vehicles
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+	for (size_t i = 0; i < UnitsData.getNrVehicles (); ++i)
 	{
 		if ( message == NULL )
 		{
 			message = new cNetMessage ( MU_MSG_UPGRADES );
 		}
-		if ( player->VehicleData[i].damage != UnitsData.vehicle[i].data.damage ||
-			player->VehicleData[i].max_shots != UnitsData.vehicle[i].data.max_shots ||
-			player->VehicleData[i].range != UnitsData.vehicle[i].data.range ||
-			player->VehicleData[i].max_ammo != UnitsData.vehicle[i].data.max_ammo ||
-			player->VehicleData[i].armor != UnitsData.vehicle[i].data.armor ||
-			player->VehicleData[i].max_hit_points != UnitsData.vehicle[i].data.max_hit_points ||
-			player->VehicleData[i].scan != UnitsData.vehicle[i].data.scan ||
-			player->VehicleData[i].max_speed != UnitsData.vehicle[i].data.max_speed )
+		if ( player->VehicleData[i].damage != UnitsData.getVehicle (i, player->getClan ()).data.damage ||
+			player->VehicleData[i].max_shots != UnitsData.getVehicle (i, player->getClan ()).data.max_shots ||
+			player->VehicleData[i].range != UnitsData.getVehicle (i, player->getClan ()).data.range ||
+			player->VehicleData[i].max_ammo != UnitsData.getVehicle (i, player->getClan ()).data.max_ammo ||
+			player->VehicleData[i].armor != UnitsData.getVehicle (i, player->getClan ()).data.armor ||
+			player->VehicleData[i].max_hit_points != UnitsData.getVehicle (i, player->getClan ()).data.max_hit_points ||
+			player->VehicleData[i].scan != UnitsData.getVehicle (i, player->getClan ()).data.scan ||
+			player->VehicleData[i].max_speed != UnitsData.getVehicle (i, player->getClan ()).data.max_speed )
 		{
 			message->pushInt16( player->VehicleData[i].max_speed );
 			message->pushInt16( player->VehicleData[i].scan );
@@ -181,19 +199,19 @@ void sendUnitUpgrades ( cPlayer *player )
 	}
 
 	// send buildings
-	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+	for (size_t i = 0; i < UnitsData.getNrBuildings (); ++i)
 	{
 		if ( message == NULL )
 		{
 			message = new cNetMessage ( MU_MSG_UPGRADES );
 		}
-		if ( player->BuildingData[i].damage != UnitsData.building[i].data.damage ||
-			player->BuildingData[i].max_shots != UnitsData.building[i].data.max_shots ||
-			player->BuildingData[i].range != UnitsData.building[i].data.range ||
-			player->BuildingData[i].max_ammo != UnitsData.building[i].data.max_ammo ||
-			player->BuildingData[i].armor != UnitsData.building[i].data.armor ||
-			player->BuildingData[i].max_hit_points != UnitsData.building[i].data.max_hit_points ||
-			player->BuildingData[i].scan != UnitsData.building[i].data.scan )
+		if ( player->BuildingData[i].damage != UnitsData.getBuilding (i, player->getClan ()).data.damage ||
+			player->BuildingData[i].max_shots != UnitsData.getBuilding (i, player->getClan ()).data.max_shots ||
+			player->BuildingData[i].range != UnitsData.getBuilding (i, player->getClan ()).data.range ||
+			player->BuildingData[i].max_ammo != UnitsData.getBuilding (i, player->getClan ()).data.max_ammo ||
+			player->BuildingData[i].armor != UnitsData.getBuilding (i, player->getClan ()).data.armor ||
+			player->BuildingData[i].max_hit_points != UnitsData.getBuilding (i, player->getClan ()).data.max_hit_points ||
+			player->BuildingData[i].scan != UnitsData.getBuilding (i, player->getClan ()).data.scan )
 		{
 			message->pushInt16( player->BuildingData[i].scan );
 			message->pushInt16( player->BuildingData[i].max_hit_points );
@@ -294,7 +312,7 @@ void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 
-	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.vehicle.Size()+UnitsData.building.Size(); unitIndex++ )
+	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); unitIndex++ )
 	{
 		sUnitUpgrade *curUpgrade = unitUpgrades[unitIndex];
 		bool purchased = false;
@@ -316,8 +334,8 @@ void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 			}
 			
 			sUnitData *currentVersion;
-			if ( unitIndex < UnitsData.vehicle.Size() ) currentVersion = &player->VehicleData[unitIndex];
-			else currentVersion = &player->BuildingData[unitIndex-UnitsData.vehicle.Size()];
+			if ( unitIndex < UnitsData.getNrVehicles () ) currentVersion = &player->VehicleData[unitIndex];
+			else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles ()];
 
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->max_speed));
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion->scan));

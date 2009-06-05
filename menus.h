@@ -94,6 +94,12 @@ enum eSettingsAlienTech
 	SETTING_ALIENTECH_OFF
 };
 
+enum eSettingsClans
+{
+	SETTING_CLANS_ON,
+	SETTING_CLANS_OFF
+};
+
 enum eSettingsGameType
 {
 	SETTINGS_GAMETYPE_SIMU,
@@ -111,10 +117,11 @@ struct sSettings
 	eSettingsCredits credits;
 	eSettingsBridgeHead bridgeHead;
 	eSettingsAlienTech alienTech;
+	eSettingsClans clans;
 	eSettingsGameType gameType;
 
 	sSettings() : metal(SETTING_RESVAL_LOW), oil(SETTING_RESVAL_LOW), gold(SETTING_RESVAL_LOW), resFrequency(SETTING_RESFREQ_THIN), credits(SETTING_CREDITS_LOW),
-		bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), gameType(SETTINGS_GAMETYPE_SIMU) {}
+	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_OFF), gameType(SETTINGS_GAMETYPE_SIMU) {}
 
 	string getResValString ( eSettingResourceValue type );
 	string getResFreqString();
@@ -160,15 +167,22 @@ public:
 	 *@author alzi
 	 */
 	void runGame( int player, bool reconnect = false );
-	/** handles incomming landing units
+
+	/** handles incoming clan information 
+	 *  @author pagra */
+	void receiveClan ( cNetMessage *message );
+
+	/** handles incoming landing units
 	 *@author alzi
 	 */
 	void receiveLandingUnits ( cNetMessage *message );
-	/** handles incomming unit upgrades
+
+	/** handles incoming unit upgrades
 	 *@author alzi
 	 */
 	void receiveUnitUpgrades ( cNetMessage *message );
-	/** handles an incomming landing position
+	
+	/** handles an incoming landing position
 	 *@author alzi
 	 */
 	void receiveLandingPosition ( cNetMessage *message );
@@ -197,25 +211,25 @@ protected:
 	 * Should be used when the menu is closed by ok or done.
 	 */
 	bool end;
-	/** When this is true the show-loop will be end and give 1 as return.
+	/** When this is true the show-loop will be ended and give 1 as return.
 	 * Should be used when the menu is closed by abort or back.
 	 */
 	bool terminate;
 
-	/** The background of the menu. Can be smaller then the screen*/
+	/** The background of the menu. Can be smaller than the screen. */
 	SDL_Surface *background;
-	/** The position of the menu on the screen when it is smaller then the screen. The position will be
-	 * calculated in the constructor of cMenu und set the the center of the screen.
+	/** The position of the menu on the screen when it is smaller than the screen. The position will be
+	 * calculated in the constructor of cMenu und set to the center of the screen.
 	 */
 	SDL_Rect position;
 
-	/** The list with all menuitems (buttons, images, etc.) of this menu.*/
+	/** The list with all menuitems (buttons, images, etc.) of this menu. */
 	cList<cMenuItem*> menuItems;
-	/** Pointer to the currently active menuitem. This one will receive keyboard input*/
+	/** Pointer to the currently active menuitem. This one will receive keyboard input. */
 	cMenuItem *activeItem;
 
 	/**
-	 * initialises members and calculates the menu position on the screen.
+	 * initializes members and calculates the menu position on the screen.
 	 *@author alzi
 	 *@param background_ The background of the surface
 	 */
@@ -239,12 +253,12 @@ public:
 	int show();
 
 	/**
-	 * handles mouseclicks, gives them to the matching menuitem and handles the activity of the menuitems.
+	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.
 	 *@author alzi
 	 */
 	void handleMouseInput( sMouseState mouseState );
 	/**
-	 * gives the keyinput to the active menuitem.
+	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
 	 */
 	virtual void handleKeyInput( SDL_keysym keysym, string ch );
@@ -255,8 +269,8 @@ public:
 	 */
 	static void sendMessage ( cNetMessage *message, sMenuPlayer *player = NULL );
 	/**
-	 * this procedure will receive the menu-net-messages when this menu is active in the moment the message
-	 * has been received. If the message should be handles overwrite this virtual function.
+	 * this method will receive the menu-net-messages when this menu is active in the moment the message
+	 * has been received. If the message should be handled overwrite this virtual method.
 	 *@author alzi
 	 */
 	virtual void handleNetMessage( cNetMessage *message ) {}
@@ -266,7 +280,7 @@ public:
 EX cMenu *ActiveMenu;
 
 /**
- * A main menu with unit info image and a credits label on the bottom.
+ * A main menu with unit info image and a credits label at the bottom.
  *@author alzi
  */
 class cMainMenu : public cMenu
@@ -326,7 +340,7 @@ public:
 };
 
 /**
- * A the multiplayer menu.
+ * The multiplayer menu.
  *@author alzi
  */
 class cMultiPlayersMenu : public cMainMenu
@@ -368,7 +382,9 @@ protected:
 	cMenuLabel *goldLabel;
 	cMenuLabel *creditsLabel;
 	cMenuLabel *bridgeheadLabel;
-	cMenuLabel *aliensLabel;
+	cMenuLabel *otherOptionsLabel;
+	cMenuLabel *alienTechLabel;
+	cMenuLabel *clansLabel;
 	cMenuLabel *resFrequencyLabel;
 	cMenuLabel *gameTypeLabel;
 
@@ -378,6 +394,7 @@ protected:
 	cMenuRadioGroup *creditsGroup;
 	cMenuRadioGroup *bridgeheadGroup;
 	cMenuRadioGroup *aliensGroup;
+	cMenuRadioGroup *clansGroup;
 	cMenuRadioGroup *resFrequencyGroup;
 	cMenuRadioGroup *gameTypeGroup;
 
@@ -426,6 +443,37 @@ public:
 	static void arrowDownReleased( void* parent );
 	static void arrowUpReleased( void* parent );
 	static void mapReleased( void* parent );
+};
+
+
+/**
+ * The clan selection.
+ * @author pagra
+ */
+class cClanSelectionMenu : public cMenu
+{
+protected:
+	cMenuLabel *titleLabel;
+	
+	cMenuImage *clanImages[8];
+	cMenuLabel *clanNames[8];
+	cMenuLabel *clanDescription1;
+	cMenuLabel *clanDescription2;
+	cMenuLabel *clanShortDescription;
+	
+	cMenuButton *okButton;
+
+	cPlayer *player;
+	int clan;
+	
+	void updateClanDescription ();
+
+public:
+	cClanSelectionMenu (cPlayer *player);
+	~cClanSelectionMenu ();
+	
+	static void clanSelected (void* parent);
+	static void okReleased (void* parent);
 };
 
 /**
@@ -497,7 +545,7 @@ public:
 };
 
 /**
- * A upgrade hangar menu with filter checkbuttons for the unit selection list, goldbar and buttons for
+ * An upgrade hangar menu with filter checkbuttons for the unit selection list, goldbar and buttons for
  * upgrading units.
  *@author alzi
  */
@@ -522,7 +570,7 @@ public:
 };
 
 /**
- * The hangar menu where you selected your landind units in the beginning of a new game.
+ * The hangar menu where you select your landing units in the beginning of a new game.
  *@author alzi
  */
 class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
@@ -862,8 +910,12 @@ protected:
 	cMenuButton *doneButton;
 
 	cMenuUnitListItem *unit;
+
+	void init(sID unitID);
 public:
 	cUnitHelpMenu( sID unitID, cPlayer *owner );
+	cUnitHelpMenu( sUnitData* unitData, cPlayer *owner );
+	
 	~cUnitHelpMenu();
 
 	static void doneReleased( void *parent );

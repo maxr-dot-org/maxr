@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
+		9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
+		9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
 		9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
 		9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
+		9F80D8940FB495F6002FE83F /* clans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F80D8930FB495F6002FE83F /* clans.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
@@ -27,7 +31,6 @@
 		9FC0DBD80EE2B17400F23D2C /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9A0EE2B17400F23D2C /* log.cpp */; };
 		9FC0DBD90EE2B17400F23D2C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9C0EE2B17400F23D2C /* main.cpp */; };
 		9FC0DBDA0EE2B17400F23D2C /* map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9E0EE2B17400F23D2C /* map.cpp */; };
-		9FC0DBDB0EE2B17400F23D2C /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA00EE2B17400F23D2C /* menu.cpp */; };
 		9FC0DBDD0EE2B17400F23D2C /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA40EE2B17400F23D2C /* mouse.cpp */; };
 		9FC0DBDE0EE2B17400F23D2C /* movejobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA60EE2B17400F23D2C /* movejobs.cpp */; };
 		9FC0DBDF0EE2B17400F23D2C /* netmessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA80EE2B17400F23D2C /* netmessage.cpp */; };
@@ -75,10 +78,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuevents.cpp; path = ../menuevents.cpp; sourceTree = SOURCE_ROOT; };
+		9F5DA1400FB8B74100CC2B17 /* menuevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuevents.h; path = ../menuevents.h; sourceTree = SOURCE_ROOT; };
+		9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuitems.cpp; path = ../menuitems.cpp; sourceTree = SOURCE_ROOT; };
+		9F5DA1420FB8B74100CC2B17 /* menuitems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuitems.h; path = ../menuitems.h; sourceTree = SOURCE_ROOT; };
+		9F5DA1430FB8B74100CC2B17 /* menus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menus.cpp; path = ../menus.cpp; sourceTree = SOURCE_ROOT; };
+		9F5DA1440FB8B74100CC2B17 /* menus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menus.h; path = ../menus.h; sourceTree = SOURCE_ROOT; };
 		9F7E432B0EFD1D2200021440 /* mveplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mveplayer.cpp; path = ../mveplayer.cpp; sourceTree = SOURCE_ROOT; };
 		9F7E432C0EFD1D2200021440 /* mveplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mveplayer.h; path = ../mveplayer.h; sourceTree = SOURCE_ROOT; };
 		9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = drawingcache.cpp; path = ../drawingcache.cpp; sourceTree = SOURCE_ROOT; };
 		9F7F33D00F8F814C00B00D61 /* drawingcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = drawingcache.h; path = ../drawingcache.h; sourceTree = SOURCE_ROOT; };
+		9F80D8920FB495F6002FE83F /* clans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = clans.h; path = ../clans.h; sourceTree = SOURCE_ROOT; };
+		9F80D8930FB495F6002FE83F /* clans.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clans.cpp; path = ../clans.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -119,8 +130,6 @@
 		9FC0DB9D0EE2B17400F23D2C /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = main.h; path = ../main.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB9E0EE2B17400F23D2C /* map.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = map.cpp; path = ../map.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB9F0EE2B17400F23D2C /* map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = map.h; path = ../map.h; sourceTree = SOURCE_ROOT; };
-		9FC0DBA00EE2B17400F23D2C /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menu.cpp; path = ../menu.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DBA10EE2B17400F23D2C /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menu.h; path = ../menu.h; sourceTree = SOURCE_ROOT; };
 		9FC0DBA40EE2B17400F23D2C /* mouse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mouse.cpp; path = ../mouse.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DBA50EE2B17400F23D2C /* mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mouse.h; path = ../mouse.h; sourceTree = SOURCE_ROOT; };
 		9FC0DBA60EE2B17400F23D2C /* movejobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = movejobs.cpp; path = ../movejobs.cpp; sourceTree = SOURCE_ROOT; };
@@ -208,6 +217,8 @@
 				9FC0DB780EE2B17400F23D2C /* buildings.h */,
 				9FC0DB790EE2B17400F23D2C /* buttons.cpp */,
 				9FC0DB7A0EE2B17400F23D2C /* buttons.h */,
+				9F80D8930FB495F6002FE83F /* clans.cpp */,
+				9F80D8920FB495F6002FE83F /* clans.h */,
 				9FC0DB7B0EE2B17400F23D2C /* client.cpp */,
 				9FC0DB7C0EE2B17400F23D2C /* client.h */,
 				9FC0DB7D0EE2B17400F23D2C /* clientevents.cpp */,
@@ -241,8 +252,12 @@
 				9FC0DB9D0EE2B17400F23D2C /* main.h */,
 				9FC0DB9E0EE2B17400F23D2C /* map.cpp */,
 				9FC0DB9F0EE2B17400F23D2C /* map.h */,
-				9FC0DBA00EE2B17400F23D2C /* menu.cpp */,
-				9FC0DBA10EE2B17400F23D2C /* menu.h */,
+				9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */,
+				9F5DA1400FB8B74100CC2B17 /* menuevents.h */,
+				9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */,
+				9F5DA1420FB8B74100CC2B17 /* menuitems.h */,
+				9F5DA1430FB8B74100CC2B17 /* menus.cpp */,
+				9F5DA1440FB8B74100CC2B17 /* menus.h */,
 				9FC0DBA40EE2B17400F23D2C /* mouse.cpp */,
 				9FC0DBA50EE2B17400F23D2C /* mouse.h */,
 				9FC0DBA60EE2B17400F23D2C /* movejobs.cpp */,
@@ -395,7 +410,6 @@
 				9FC0DBD80EE2B17400F23D2C /* log.cpp in Sources */,
 				9FC0DBD90EE2B17400F23D2C /* main.cpp in Sources */,
 				9FC0DBDA0EE2B17400F23D2C /* map.cpp in Sources */,
-				9FC0DBDB0EE2B17400F23D2C /* menu.cpp in Sources */,
 				9FC0DBDD0EE2B17400F23D2C /* mouse.cpp in Sources */,
 				9FC0DBDE0EE2B17400F23D2C /* movejobs.cpp in Sources */,
 				9FC0DBDF0EE2B17400F23D2C /* netmessage.cpp in Sources */,
@@ -418,6 +432,10 @@
 				9FC2DCBD0F17B2D60022714E /* input.cpp in Sources */,
 				9FC2DCBE0F17B2D60022714E /* unifonts.cpp in Sources */,
 				9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */,
+				9F80D8940FB495F6002FE83F /* clans.cpp in Sources */,
+				9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */,
+				9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */,
+				9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

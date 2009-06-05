@@ -335,6 +335,8 @@ string cNetMessage::getTypeAsString()
 		return string("MU_MSG_OPTINS");
 	case MU_MSG_GO:
 		return string("MU_MSG_GO");
+	case MU_MSG_CLAN:
+		return string("MU_MSG_CLAN");
 	case MU_MSG_LANDING_VEHICLES:
 		return string("MU_MSG_LANDING_VEHICLES");
 	case MU_MSG_UPGRADES:
@@ -345,7 +347,8 @@ string cNetMessage::getTypeAsString()
 		return string("MU_MSG_RESELECT_LANDING");
 	case MU_MSG_ALL_LANDED:
 		return string("MU_MSG_ALL_LANDED");
-
+	case GAME_EV_PLAYER_CLANS:
+		return string("GAME_EV_PLAYER_CLANS");
 	case GAME_EV_ADD_BUILDING:
 		return string("GAME_EV_ADD_BUILDING");
 	case GAME_EV_ADD_VEHICLE:

@@ -294,6 +294,7 @@ void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, un
 void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<int>& newAreasForResearchCenters, int player);
 void sendResearchLevel(cResearch* researchLevel, int player);
 void sendRefreshResearchCount ( int player );
+void sendClansToClients (cList<int>* clans);
 void sendSetAutomoving ( cVehicle *Vehicle );
 /**
 * sends the result of a infiltrating action to the client

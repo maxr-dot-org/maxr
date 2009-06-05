@@ -541,12 +541,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			sID BuildingTyp;
 			BuildingTyp.iFirstPart = message->popInt16();
 			BuildingTyp.iSecondPart = message->popInt16();
-			if ( BuildingTyp.getUnitData() == NULL )
+			if ( BuildingTyp.getUnitDataOriginalVersion() == NULL )
 			{
 				Log.write(" Server: invalid unit: " + iToStr(BuildingTyp.iFirstPart) + "."  + iToStr(BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-			const sUnitData& Data = *BuildingTyp.getUnitData();
+			const sUnitData& Data = *BuildingTyp.getUnitDataOriginalVersion();
 			iBuildSpeed = message->popInt16();
 			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
@@ -596,7 +596,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BandY = iPathOff/Map->size;
 
 
-			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitData( Vehicle->owner )->iBuilt_Costs_Max );
+			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->iBuilt_Costs_Max );
 
 			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.cargo || iTurboBuildRounds[iBuildSpeed] <= 0 )
 			{
@@ -839,7 +839,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( Building->BuildList->Size() > 0 && i == 0 && Type.getVehicle() == (*Building->BuildList)[0]->typ )
 				{
 					//recalculate costs, because build speed could have beed changed
-					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitData ( Building->owner )->iBuilt_Costs, (*Building->BuildList)[0]->metall_remaining );
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion ( Building->owner )->iBuilt_Costs, (*Building->BuildList)[0]->metall_remaining );
 					sBuildList *BuildListItem = new sBuildList;
 					BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 					BuildListItem->typ = (*Building->BuildList)[0]->typ;
@@ -848,23 +848,23 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				// check whether this building can build this unit
-				if ( Type.getUnitData()->can_drive == DRIVE_SEA && !bWater )
+				if ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_SEA && !bWater )
 					continue;
-				else if ( Type.getUnitData()->can_drive == DRIVE_LAND && !bLand )
-					continue;
-
-				if ( Building->data.can_build == BUILD_AIR && Type.getUnitData()->can_drive != DRIVE_AIR )
-					continue;
-				else if ( Building->data.can_build == BUILD_BIG && !Type.getUnitData()->build_by_big )
-					continue;
-				else if ( Building->data.can_build == BUILD_SEA && Type.getUnitData()->can_drive != DRIVE_SEA )
-					continue;
-				else if ( Building->data.can_build == BUILD_SMALL && ( Type.getUnitData()->can_drive == DRIVE_AIR || Type.getUnitData()->can_drive == DRIVE_SEA || Type.getUnitData()->build_by_big || Type.getUnitData()->is_human ) )
-					continue;
-				else if ( Building->data.can_build == BUILD_MAN && !Type.getUnitData()->is_human )
+				else if ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_LAND && !bLand )
 					continue;
 
-				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitData( Building->owner )->iBuilt_Costs );
+				if ( Building->data.can_build == BUILD_AIR && Type.getUnitDataOriginalVersion()->can_drive != DRIVE_AIR )
+					continue;
+				else if ( Building->data.can_build == BUILD_BIG && !Type.getUnitDataOriginalVersion()->build_by_big )
+					continue;
+				else if ( Building->data.can_build == BUILD_SEA && Type.getUnitDataOriginalVersion()->can_drive != DRIVE_SEA )
+					continue;
+				else if ( Building->data.can_build == BUILD_SMALL && ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_AIR || Type.getUnitDataOriginalVersion()->can_drive == DRIVE_SEA || Type.getUnitDataOriginalVersion()->build_by_big || Type.getUnitDataOriginalVersion()->is_human ) )
+					continue;
+				else if ( Building->data.can_build == BUILD_MAN && !Type.getUnitDataOriginalVersion()->is_human )
+					continue;
+
+				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion( Building->owner )->iBuilt_Costs );
 
 				sBuildList *BuildListItem = new sBuildList;
 				BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
@@ -1509,7 +1509,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int newMaxSpeed = 0;
 				if ( ID.iFirstPart == 0 ) newMaxSpeed = message->popInt16();
 				
-				sUnitData* upgradedUnit = ID.getUnitData (player);
+				sUnitData* upgradedUnit = ID.getUnitDataCurrentVersion (player);
 				if (upgradedUnit == 0)
 					continue; // skip this upgrade, because there is no such unitData
 
@@ -1774,8 +1774,8 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints, 
 							  int newScan, int newMaxSpeed)
 {
-	sUnitData* currentVersion = ID.getUnitData (player);
-	sUnitData* startVersion = ID.getUnitData ();
+	sUnitData* currentVersion = ID.getUnitDataCurrentVersion (player);
+	sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
 	if (currentVersion == 0 || startVersion == 0)
 		return 1000000; // error (unbelievably high cost...)
 	
@@ -1910,8 +1910,8 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 						}
 
 						// place buildings:
-						addUnit(iX + k,     iY + i + 1, &UnitsData.building[BNrSmallGen], Player, true);
-						addUnit(iX + k + 1, iY + i,     &UnitsData.building[BNrMine],     Player, true);
+						addUnit(iX + k,     iY + i + 1, &UnitsData.getBuilding (BNrSmallGen, Player->getClan ()), Player, true);
+						addUnit(iX + k + 1, iY + i,     &UnitsData.getBuilding (BNrMine, Player->getClan ()), Player, true);
 						break;
 					}
 				}
@@ -2791,7 +2791,7 @@ void cServer::handleMoveJobs ()
 			//continue path building
 			if ( Vehicle && Vehicle->BuildPath )
 			{
-				if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitData(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
+				if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
 				{
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
@@ -3203,6 +3203,13 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		}
 		sendDeleteEverything ( Player->Nr );
 	}
+	//if (settings->clans == SETTING_CLANS_ON)
+	{
+		cList<int> clans;
+		for (int i =  0; i < PlayerList->Size (); i++)
+			clans.Add ( (*PlayerList)[i]->getClan () );
+		sendClansToClients ( &clans );
+	}
 	sendTurn ( iTurn, Player );
 	if ( iDeadlineStartTime > 0 ) sendTurnFinished ( -1, iTurnDeadline - Round( ( SDL_GetTicks() - iDeadlineStartTime )/1000 ), Player );
 	sendResources ( Player );
@@ -3239,16 +3246,16 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	Player->DoScan();
 	checkPlayerUnits();
 	// send upgrades
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( Player->VehicleData[i].version > 1 
-			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.vehicle[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.getVehicle (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
 	}
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( Player->BuildingData[i].version > 1 
-			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.building[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.getBuilding (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}
 	// send credits

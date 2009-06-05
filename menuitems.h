@@ -144,7 +144,7 @@ protected:
 	 */
 	virtual bool preReleased();
 	/**
-	 * Function that will be called when the hovers onto the item.
+	 * Function that will be called when the mouse hovers onto the item.
 	 *@author alzi
 	 *@return if 'false' the hoverOn-pointer-function will not be called.
 	 */
@@ -181,32 +181,32 @@ public:
 	virtual bool overItem( int x, int y ) const;
 
 	/**
-	 * This function will be called by the menus when the item has been clicked. Regular the parent pointer
-	 * should point to the calling object becouse this pointer will be overgiven to the click-pointer-function.
+	 * This function will be called by the menus when the item has been clicked. Regularly the parent pointer
+	 * should point to the calling object because this pointer will be passed to the click-pointer-function.
 	 *@author alzi
 	 */
 	virtual void clicked( void *parent );
 	/**
-	 * This function will be called by the menus when the item has been released. Regular the parent pointer
-	 * should point to the calling object becouse this pointer will be overgiven to the release-pointer-function.
+	 * This function will be called by the menus when the item has been released. Regularly the parent pointer
+	 * should point to the calling object because this pointer will be passed to the release-pointer-function.
 	 *@author alzi
 	 */
 	virtual void released( void *parent );
 	/**
-	 * This function will be called by the menus when the mouse hovered on this item. Regular the parent pointer
-	 * should point to the calling object becouse this pointer will be overgiven to the hoverOn-pointer-function.
+	 * This function will be called by the menus when the mouse hovered on this item. Regularly the parent pointer
+	 * should point to the calling object because this pointer will be passed to the hoverOn-pointer-function.
 	 *@author alzi
 	 */
 	virtual void hoveredOn( void *parent );
 	/**
-	 * This function will be called by the menus when the mouse hovered away from this item. Regular the parent pointer
-	 * should point to the calling object becouse this pointer will be overgiven to the hoverAway-pointer-function.
+	 * This function will be called by the menus when the mouse hovered away from this item. Regularly the parent pointer
+	 * should point to the calling object because this pointer will be passed to the hoverAway-pointer-function.
 	 *@author alzi
 	 */
 	virtual void hoveredAway( void *parent );
 	/**
-	 * This function will be called by the menus when the mouse has moved over the item. Regular the parent pointer
-	 * should point to the calling object becouse this pointer will be overgiven to the moveMouseOver-pointer-function.
+	 * This function will be called by the menus when the mouse has moved over the item. Regularly the parent pointer
+	 * should point to the calling object because this pointer will be passed to the moveMouseOver-pointer-function.
 	 *@author alzi
 	 */
 	virtual void movedMouseOver( int lastMouseX, int lastMouseY, void *parent );
@@ -304,8 +304,8 @@ protected:
 
 public:
 	/**
-	 * ATTENTION: the image surface you overgive to this konstruktor will be freed with SDL_FreeSurface in the destructor,
-	 * so have in mind that you will not free it twice.
+	 * ATTENTION: the image surface you pass to this constructor will be freed with SDL_FreeSurface in the destructor,
+	 * so have in mind that you must not free it twice.
 	 *@author alzi
 	 */
 	cMenuImage ( int x, int y, SDL_Surface *image_ = NULL );
@@ -493,6 +493,7 @@ protected:
 	cMenuUnitsList* parentList;
 
 	sID unitID;
+	sUnitData* unitData;
 	cPlayer *owner;
 
 	SDL_Surface *surface;
@@ -510,12 +511,15 @@ protected:
 	void drawCargo( int destY );
 
 	void released( void *parent );
+	void init ();
 public:
 	cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
+	cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
 	~cMenuUnitListItem();
 	void draw();
 
 	sID getUnitID();
+	sUnitData *getUnitData();
 	cPlayer *getOwner();
 
 	/**
@@ -692,7 +696,7 @@ public:
 };
 
 /**
- * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetils item.
+ * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetails item.
  *@author alzi
  */
 class cMenuUpgradeHandler : public cMenuItemContainer
@@ -716,7 +720,7 @@ public:
 };
 
 /**
- * The little dot that displays where the current prosition of a scrollbar is.
+ * The little dot that displays where the current position of a scrollbar is.
  *@author alzi
  */
 class cMenuScroller : public cMenuItem
@@ -900,7 +904,7 @@ public:
 };
 
 /**
- * three buttons and labels that display the diffrent buildspeeds of unit.
+ * three buttons and labels that display the different buildspeeds of a unit.
  *@author alzi
  */
 class cMenuBuildSpeedHandler : public cMenuItemContainer
@@ -921,7 +925,7 @@ public:
 };
 
 /**
- * one chackbox each for tank, plane, ship, building or TNT to control the units displayed in a unitlist.
+ * one checkbox each for tank, plane, ship, building or TNT to control the units displayed in a unitlist.
  *@author alzi
  */
 class cMenuUpgradeFilter : public cMenuItemContainer

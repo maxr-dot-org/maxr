@@ -1085,7 +1085,7 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			cLoadSaveMenu loadSaveMenu ( new cGameDataContainer );
+			cLoadSaveMenu loadSaveMenu ( new cGameDataContainer ); // TODO: memory leak?
 			if ( loadSaveMenu.show() != 1 ) Client->bExit = true;
 			Client->bFlagDrawHud = true;
 			DateiButton ( false );
@@ -1382,12 +1382,12 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Vehicles:
 	factor = ( float ) ( Zoom/64.0 );
-	for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+	for (size_t i = 0; i < UnitsData.getNrVehicles (); ++i)
 	{
 		UnitsData.vehicle[i].scaleSurfaces( factor );
 	}
 	// Buildings:
-	for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+	for (size_t i = 0; i < UnitsData.getNrBuildings (); ++i)
 	{
 		UnitsData.building[i].scaleSurfaces ( factor );
 	}

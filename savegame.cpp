@@ -77,11 +77,11 @@ int cSavegame::save( string saveName )
 		Rubble = Rubble->next;
 	}
 
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size()+UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
 	{
 		sUnitData *Data;
-		if ( i < UnitsData.vehicle.Size() ) Data = &UnitsData.vehicle[i].data;
-		else Data = &UnitsData.building[i-UnitsData.vehicle.Size()].data;
+		if ( i < UnitsData.getNrVehicles () ) Data = &UnitsData.vehicle[i].data;
+		else Data = &UnitsData.building[i - UnitsData.getNrVehicles ()].data;
 		writeStandardUnitValues ( Data, i );
 	}
 
@@ -261,6 +261,11 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 	Player->InitMaps ( map->size, map );
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
+
+	int clan = -1;
+	playerNode->FirstChildElement ("Clan" )->Attribute ( "num", &clan );
+	Player->setClan (clan);
+
 	string resourceMap = playerNode->FirstChildElement( "ResourceMap" )->Attribute ( "data" );
 	convertStringToScanMap ( resourceMap, Player->ResourceMap );
 
@@ -299,13 +304,13 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 			if ( ID.iFirstPart == 0 )
 			{
 				unsigned int num;
-				for ( num = 0; num < UnitsData.vehicle.Size(); num++ ) if ( UnitsData.vehicle[num].data.ID == ID ) break;
+				for ( num = 0; num < UnitsData.getNrVehicles (); num++ ) if ( UnitsData.vehicle[num].data.ID == ID ) break;
 				loadUpgrade ( upgradeNode, &Player->VehicleData[num] );
 			}
 			else
 			{
 				unsigned int num;
-				for ( num = 0; num < UnitsData.building.Size(); num++ ) if ( UnitsData.building[num].data.ID == ID ) break;
+				for ( num = 0; num < UnitsData.getNrBuildings (); num++ ) if ( UnitsData.building[num].data.ID == ID ) break;
 				loadUpgrade ( upgradeNode, &Player->BuildingData[num] );
 			}
 			upgradenum++;
@@ -476,14 +481,14 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
 	int tmpinteger, number, x, y;
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( UnitsData.vehicle[i].data.ID == ID )
 		{
 			number = i;
 			break;
 		}
-		if ( i == UnitsData.vehicle.Size()-1 ) return;
+		if ( i == UnitsData.getNrVehicles () - 1 ) return;
 	}
 	unitNode->FirstChildElement( "Owner" )->Attribute ( "num", &tmpinteger );
 	cPlayer *owner = getPlayerFromNumber ( Server->PlayerList, tmpinteger );
@@ -604,14 +609,14 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
 	int tmpinteger, number, x, y;
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( UnitsData.building[i].data.ID == ID )
 		{
 			number = i;
 			break;
 		}
-		if ( i == UnitsData.building.Size()-1 ) return;
+		if ( i == UnitsData.getNrBuildings () - 1 ) return;
 	}
 	unitNode->FirstChildElement( "Owner" )->Attribute ( "num", &tmpinteger );
 	cPlayer *owner = getPlayerFromNumber ( Server->PlayerList, tmpinteger );
@@ -690,7 +695,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 			{
 				sID BuildID;
 				BuildID.generate ( element->Attribute ( "type_id" ) );
-				for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+				for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 				{
 					if ( BuildID == UnitsData.vehicle[i].data.ID )
 					{
@@ -789,7 +794,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	ID.generate ( unitNode->FirstChildElement( "ID" )->Attribute ( "string" ) );
 	if ( ID.iFirstPart == 0 )
 	{
-		for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+		for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 		{
 			if ( UnitsData.vehicle[i].data.ID == ID )
 			{
@@ -802,7 +807,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	}
 	else if ( ID.iFirstPart == 1 )
 	{
-		for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+		for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 		{
 			if ( UnitsData.building[i].data.ID == ID )
 			{
@@ -1061,6 +1066,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	// write the main information
 	addAttributeElement ( playerNode, "Name", "string", Player->name );
 	addAttributeElement ( playerNode, "Credits", "num", iToStr ( Player->Credits ) );
+	addAttributeElement ( playerNode, "Clan", "num", iToStr ( Player->getClan () ) );
 	addAttributeElement ( playerNode, "Color", "num", iToStr ( GetColorNr ( Player->color ) ) );
 	addAttributeElement ( playerNode, "Number", "num", iToStr ( Player->Nr ) );
 	addAttributeElement ( playerNode, "ResourceMap", "data", convertScanMapToString ( Player->ResourceMap, Server->Map->size*Server->Map->size ) );
@@ -1091,21 +1097,21 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	// write data of upgraded units
 	TiXmlElement *upgradesNode = addMainElement ( playerNode, "Upgrades" );
 	int upgrades = 0;
-	for ( unsigned int i = 0; i < UnitsData.vehicle.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( Player->VehicleData[i].version > 1 
-			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.vehicle[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.getVehicle (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 		{
-			writeUpgrade ( upgradesNode, upgrades, &Player->VehicleData[i], &UnitsData.vehicle[i].data );
+			writeUpgrade ( upgradesNode, upgrades, &Player->VehicleData[i], &UnitsData.getVehicle (i, Player->getClan ()).data );
 			upgrades++;
 		}
 	}
-	for ( unsigned int i = 0; i < UnitsData.building.Size(); i++ )
+	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( Player->BuildingData[i].version > 1 
-			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.building[i].data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.getBuilding (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
 		{
-			writeUpgrade ( upgradesNode, upgrades, &Player->BuildingData[i], &UnitsData.building[i].data );
+			writeUpgrade ( upgradesNode, upgrades, &Player->BuildingData[i], &UnitsData.getBuilding (i, Player->getClan ()).data );
 			upgrades++;
 		}
 	}

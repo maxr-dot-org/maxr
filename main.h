@@ -34,6 +34,7 @@
 // Includes ///////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <vector>
 #include <time.h>
 #include <SDL.h>
 #include "tinyxml.h"
@@ -79,8 +80,8 @@ struct sVehicle;
 #define SPLASHHEIGHT 420
 #define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
 #define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
-#define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises für Land
-#define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises für Luft
+#define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises fÂ¸r Land
+#define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises fÂ¸r Luft
 #define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
 #define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
 #define MOVE_SPEED         7       // Geschwindigkeit der Fahrzeuge
@@ -125,12 +126,6 @@ EX int BNrSeaMine ZERO;
 EX int BNrMine ZERO;
 EX int BNrSmallGen ZERO;
 
-// Initvalues for Research ////////////////////////////////////////////////////
-#ifdef __main__
-int ResearchInits[8]={16,16,33,8,8,16,33,33};
-#else
-extern int ResearchInits[8];
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Structures
@@ -140,7 +135,7 @@ extern int ResearchInits[8];
 
 struct sUnitData;
 
-// Struktur für die IDs
+// Struktur fÂ¸r die IDs
 struct sID
 {
 	sID () : iFirstPart(0), iSecondPart(0) {};
@@ -149,14 +144,26 @@ struct sID
 	int iSecondPart;
 	string getText();
 	void generate( string text );
-	sUnitData *getUnitData( cPlayer *Owner = NULL );
-	sVehicle *getVehicle();
-	sBuilding *getBuilding();
+	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
+		units will have these values. */
+	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner);
+	/** Get the basic version of a unit.
+		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
+					 If no owner is given, the basic version without any clan modifications is returned.
+		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
+	sUnitData *getUnitDataOriginalVersion (cPlayer *Owner = NULL);
+	
+	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
+		into consideration for modifications of the unit's values. */
+	sVehicle *getVehicle (cPlayer* Owner = NULL);
+	/** Returns the original version of a building as stored in UnitsData. If Owner is given, his clan will be taken
+		into consideration for modifications of the unit's values. */
+	sBuilding *getBuilding (cPlayer* Owner = NULL);
 
 	bool operator==(const sID &ID) const;
 };
 
-// Struktur für die Waffen
+// Struktur fÂ¸r die Waffen
 struct sWeaponData{
 	int iMuzzleType;
 #define MUZZLE_TYPE_NONE 0
@@ -205,7 +212,7 @@ struct sWeaponData{
 	int iMovement_Allowed;
 };
 
-// Struktur für die Eigenschaften der Vehicles:
+// Struktur fÂ¸r die Eigenschaften der Vehicles:
 struct sUnitData{
 	// Main info
 	sID ID;
@@ -409,7 +416,7 @@ struct sUnitData{
 #define ATTACK_AIR      3
 #define ATTACK_AIRnLAND 4
 
-  // Der Style des Mündungsfeuers:
+  // Der Style des MÂ¸ndungsfeuers:
   int muzzle_typ;
 #define MUZZLE_BIG 0
 #define MUZZLE_ROCKET 1
@@ -569,7 +576,7 @@ public:
 	string sBuildingsPath;			// Path to the buildings
 	string sMVEPath;			// Path to the in-game movies (*.mve)
 
-	unsigned int Checksum;		// Die Checksumme über alle Eigenschaften - NOT IN XML-file (yet?)!
+	unsigned int Checksum;		// Die Checksumme Â¸ber alle Eigenschaften - NOT IN XML-file (yet?)!
 } EX SettingsData;
 
 // GraphicsData - Class containing all normal graphic surfaces ////////////////
@@ -675,11 +682,20 @@ public:
 class cUnitsData
 {
 public:
+	cUnitsData ();
+
 	// Vehicles
-	cList<sVehicle> vehicle;
+	cList<sVehicle> vehicle; // the standard version without clan modifications
 
 	// Buildings
-	cList<sBuilding> building;
+	cList<sBuilding> building;  // the standard version without clan modifications
+	
+	sVehicle& getVehicle (int nr, int clan = -1); ///< -1: game without clans
+	sBuilding& getBuilding (int nr, int clan = -1); ///< -1: game without clans
+	
+	int getNrVehicles () const { return vehicle.Size (); } 
+	int getNrBuildings () const { return building.Size (); } 
+	
 
 	SDL_Surface *dirt_small_org;
 	SDL_Surface *dirt_small;
@@ -696,6 +712,15 @@ public:
 	SDL_Surface *ptr_connector_org;
 	SDL_Surface *ptr_connector_shw;
 	SDL_Surface *ptr_connector_shw_org;
+	
+//------------------------------------------------------------
+private:
+	void initializeClanUnitData ();
+	
+	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans 
+	std::vector<std::vector<sBuilding> > clanUnitDataBuildings; // cotains the modified versions for the clans
+	bool initializedClanUnitData;
+	
 } EX UnitsData;
 
 // OtherData - Class containing the rest of surfaces //////////////////////////
