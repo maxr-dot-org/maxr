@@ -171,6 +171,7 @@ private:
 	PriceMap attackSpeed_14;
 	PriceMap attackSpeed_15;
 	PriceMap attackSpeed_16;
+	PriceMap attackSpeed_17;
 	PriceMap attackSpeed_18;
 	PriceMap attackSpeed_20;
 	PriceMap attackSpeed_22;

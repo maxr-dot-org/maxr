@@ -348,6 +348,18 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_16 [32] = 416;
 	attackSpeed_16 [34] = 611;
 
+	attackSpeed_17 [17] = 5; // TODO: these are not the real values! Rocketlauncher, attack, Clan Ayer's Hand
+	attackSpeed_17 [19] = 11;
+	attackSpeed_17 [21] = 19;
+	attackSpeed_17 [23] = 35;
+	attackSpeed_17 [25] = 55;
+	attackSpeed_17 [27] = 94;
+	attackSpeed_17 [29] = 152;
+	attackSpeed_17 [31] = 229;
+	attackSpeed_17 [33] = 331;
+	attackSpeed_17 [35] = 483;
+	attackSpeed_17 [37] = 694;
+	
 	attackSpeed_18 [18] = 4;
 	attackSpeed_18 [20] = 10;
 	attackSpeed_18 [22] = 16;
@@ -630,6 +642,7 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 				case 14: price = lookupPrice (attackSpeed_14, curValue); break;
 				case 15: price = lookupPrice (attackSpeed_15, curValue); break;
 				case 16: price = lookupPrice (attackSpeed_16, curValue); break;
+				case 17: price = lookupPrice (attackSpeed_17, curValue); break;
 				case 18: price = lookupPrice (attackSpeed_18, curValue); break;
 				case 20: price = lookupPrice (attackSpeed_20, curValue); break;
 				case 22: price = lookupPrice (attackSpeed_22, curValue); break;
