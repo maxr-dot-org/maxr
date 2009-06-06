@@ -90,11 +90,12 @@
 #define PLAYERCOLORS		8
 //^-- make sure that given amount of colors is loaded too
 
-#define MAX_XML               "max.xml"
+#define MAX_XML			"max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"
-#define KEYS_XML              (SettingsData.sDataDir + "keys.xml").c_str()
-#define SPLASH_BACKGROUND     (SettingsData.sDataDir + "init.pcx").c_str()
+#define CLANS_XML		(SettingsData.sDataDir + "clans.xml").c_str()
+#define KEYS_XML		(SettingsData.sDataDir + "keys.xml").c_str()
+#define SPLASH_BACKGROUND	(SettingsData.sDataDir + "init.pcx").c_str()
 #ifdef MAC
 	#define MAXR_ICON             (SettingsData.sDataDir + "maxr_mac.bmp").c_str()
 #else

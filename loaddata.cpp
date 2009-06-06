@@ -271,21 +271,11 @@ int LoadData ( void * )
 	}
 	Log.mark();
 
+	MakeLog ( lngPack.i18n ( "Text~Init~Clans" ), 0, 9 );
+
 	// Load Clan Settings
 	if (LoadClans () != 1)
 	{
-		SDL_Delay(5000);
-		LoadingData = LOAD_ERROR;
-		return -1;
-	}
-	Log.mark();
-	
-	// Load Music
-	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 9 );
-
-	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
-	{
-		MakeLog("",-1,9);
 		SDL_Delay(5000);
 		LoadingData = LOAD_ERROR;
 		return -1;
@@ -295,11 +285,11 @@ int LoadData ( void * )
 		MakeLog ( "", 1, 9 );
 	}
 	Log.mark();
+	
+	// Load Music
+	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
 
-	// Load Sounds
-	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 10 );
-
-	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
+	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,10);
 		SDL_Delay(5000);
@@ -312,10 +302,10 @@ int LoadData ( void * )
 	}
 	Log.mark();
 
-	// Load Voices
-	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 11 );
+	// Load Sounds
+	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 11 );
 
-	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
+	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
 	{
 		MakeLog("",-1,11);
 		SDL_Delay(5000);
@@ -325,6 +315,22 @@ int LoadData ( void * )
 	else
 	{
 		MakeLog ( "", 1, 11 );
+	}
+	Log.mark();
+
+	// Load Voices
+	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 12 );
+
+	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
+	{
+		MakeLog("",-1,12);
+		SDL_Delay(5000);
+		LoadingData = LOAD_ERROR;
+		return -1;
+	}
+	else
+	{
+		MakeLog ( "", 1, 12 );
 	}
 	Log.mark();
 
@@ -3609,12 +3615,12 @@ static int LoadClans()
 {
 	TiXmlDocument clansXml;
 	
-	string clansXMLPath = "clans.xml";
+	string clansXMLPath = CLANS_XML;
 	if (FileExists (clansXMLPath.c_str ()) == false)
 		return 0;
 	if (clansXml.LoadFile (clansXMLPath.c_str ()) == false)
 	{
-		Log.write ("Can't load clans.xml!", LOG_TYPE_ERROR);
+		Log.write ("Can't load "+clansXMLPath, LOG_TYPE_ERROR);
 		return 0;
 	}
 	
@@ -3651,7 +3657,7 @@ static int LoadClans()
 					const char* idAttr = statsElement->Attribute ("UnitID");
 					if (idAttr == 0)
 					{
-						Log.write ("clans.xml: Couldn't read UnitID for ChangedUnitStat", LOG_TYPE_ERROR);
+						Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR);
 						continue;
 					}
 					string idAttrStr (idAttr);
