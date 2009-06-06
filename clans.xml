@@ -221,7 +221,7 @@
       Extra constructors and eingineers (depends on budget)
     </Description>
     <ChangedUnitStat UnitID="1 11">
-      <Built_Costs Num="36"/>
+      <Built_Costs Num="32"/>
     </ChangedUnitStat>
     <ChangedUnitStat UnitID="1 13">
       <Built_Costs Num="16"/>
