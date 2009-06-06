@@ -1361,7 +1361,7 @@ cClanSelectionMenu::cClanSelectionMenu( cPlayer *player )
 			yCount = 1;
 		}
 		SDL_Surface* img = LoadPCX (clanLogoPaths[i].c_str());
-		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0x000000 );
+		SDL_SetColorKey ( img, SDL_SRCCOLORKEY, 0xFF00FF );
 		clanImages[i] = new cMenuImage (position.x + 88 + xCount * 154 - (img ? (img->w / 2) : 0), position.y + 48 + yCount * 150, img);
 		clanImages[i]->setReleasedFunction (&clanSelected);
 		menuItems.Add (clanImages[i]);
