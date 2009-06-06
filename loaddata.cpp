@@ -671,6 +671,18 @@ int ReadMaxXml()
 		Log.write ( "Can't load PreScale-Mode from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.bPreScale = false;
 	}
+
+	// MaxCacheSize for prescaling of units
+	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","CacheSize", NULL)))
+		Log.write ( "Can't find CacheSize-Node in max.xml", LOG_TYPE_WARNING );
+	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+		SettingsData.iCacheSize = atoi(sTmpString.c_str());
+	else
+	{
+		Log.write ( "Can't load CacheSize-Node from max.xml: using default value", LOG_TYPE_WARNING );
+		SettingsData.iCacheSize=400;
+	}
+
 	// Language
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Language", NULL)))
 		Log.write ( "Can't find Language-Node in max.xml", LOG_TYPE_WARNING );
@@ -1076,6 +1088,7 @@ int ReadMaxXml()
 		Log.write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bPreScale?SON:SOFF;
 		Log.write ("PreScale      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
+		Log.write ("CacheSize     == "+ iToStr(SettingsData.iCacheSize), cLog::eLOG_TYPE_DEBUG);
 		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
 		//Log.write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bAutoSave?SON:SOFF;
@@ -1202,6 +1215,10 @@ int GenerateMaxXml()
 
 	element = new TiXmlElement ( "PreScale" );
 	element->SetAttribute ( "YN", "No");	
+	startnode->LinkEndChild(element);
+
+	element = new TiXmlElement ( "CacheSize" );
+	element->SetAttribute ( "Num", "400");	
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Language" );
@@ -3831,6 +3848,10 @@ int SaveOption ( int iTyp )
 	case SAVETYPE_RESOLUTION:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL);
 		SaveValue ( pXmlNode, "Text", false, 0, iToStr(SettingsData.iScreenW)+"."+iToStr(SettingsData.iScreenH));
+		break;
+	case SAVETYPE_CACHESIZE:
+		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","CacheSize", NULL);
+		SaveValue ( pXmlNode, "Num",false,SettingsData.iCacheSize,"");
 		break;
 	}
 	MaxXml.SaveFile(); // Write the new values to the file

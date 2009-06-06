@@ -62,6 +62,7 @@
 #define SAVETYPE_WINDOW						18
 #define SAVETYPE_RESOLUTION					19
 #define SAVETYPE_COLOR						20
+#define SAVETYPE_CACHESIZE					21
 
 #define NECESSARY_FILE_FAILURE { Log.write ( "Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR ); LoadingData=LOAD_ERROR; return 0; }
 

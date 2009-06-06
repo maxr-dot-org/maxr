@@ -505,10 +505,12 @@ public:
 	bool bWindowMode;
 	/**start in fastmode */
 	bool bFastMode;
-	/**start in fastmode */
+	/**prescale gfx */
 	bool bPreScale;
-	/**start in fastmode */
+	/**translation file*/
 	string sLanguage;
+	/**cache size*/
+	unsigned int iCacheSize;
 
 	//GAME-Node
 	/** enable debug*/

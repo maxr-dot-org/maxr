@@ -117,7 +117,7 @@ cDrawingCache::cDrawingCache()
 	cacheMisses = 0;
 	notCached = 0;
 	cacheSize = 0;
-	maxCacheSize = 400;
+	maxCacheSize = SettingsData.iCacheSize; //set cache size from config
 	cachedImages = new sDrawingCacheEntry[maxCacheSize];
 
 };
