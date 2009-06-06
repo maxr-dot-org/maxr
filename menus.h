@@ -121,7 +121,7 @@ struct sSettings
 	eSettingsGameType gameType;
 
 	sSettings() : metal(SETTING_RESVAL_LOW), oil(SETTING_RESVAL_LOW), gold(SETTING_RESVAL_LOW), resFrequency(SETTING_RESFREQ_THIN), credits(SETTING_CREDITS_LOW),
-	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_OFF), gameType(SETTINGS_GAMETYPE_SIMU) {}
+	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU) {}
 
 	string getResValString ( eSettingResourceValue type );
 	string getResFreqString();
