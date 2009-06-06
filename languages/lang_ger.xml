@@ -71,7 +71,7 @@
 			<Updates ENG="Updatemenu" localized="Updatemenü"/>
 			<Build ENG="Buildmenu" localized="Baumenü"/>
 			<Labs ENG="Researchmenu" localized="Forschungsmenü"/>
-			<Mine ENG="Minemanager" localized="Mienenmanager"/>
+			<Mine ENG="Minemanager" localized="Minenmanager"/>
 			<Unitinfo ENG="Unitinformations" localized="Einheitendetails"/>
 			<Savegame ENG="Savegame" localized="Spielstand"/>
 			<Players ENG="Players:" localized="Spieler:"/>
