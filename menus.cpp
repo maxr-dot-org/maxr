@@ -1696,9 +1696,61 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 			if ( vehicle->data.can_build == BUILD_BIG || vehicle->data.can_build == BUILD_SMALL || vehicle->data.can_survey )
 			{
 				cMenuUnitListItem *unit = secondList->addUnit ( vehicle->data.ID, player, selectionList->getItem ( i )->getUpgrades() );
-				if ( vehicle->data.can_build == BUILD_BIG ) unit->setMinResValue ( 40 );
-				else if ( vehicle->data.can_build == BUILD_SMALL ) unit->setMinResValue ( 20 );
+				if ( vehicle->data.can_build == BUILD_BIG ) 
+					unit->setMinResValue ( 40 );
+				else if ( vehicle->data.can_build == BUILD_SMALL ) 
+					unit->setMinResValue ( 20 );
 				unit->setFixed ( true );
+			}
+		}			
+		if ( gameDataContainer->settings->clans == SETTING_CLANS_ON && player->getClan () == 7) // Additional Units for Axis Inc. Clan
+		{
+			int startCredits = gameDataContainer->settings->credits;
+			int numAddConstructors = 0;
+			int numAddEngineers = 0;
+			if (startCredits < 100)
+				numAddEngineers = 1;
+			else if (startCredits < 150)
+			{
+				numAddEngineers = 1;
+				numAddConstructors = 1;
+			}
+			else if (startCredits < 200)
+			{
+				numAddEngineers = 2;
+				numAddConstructors = 1;
+			}
+			else if (startCredits < 300)
+			{
+				numAddEngineers = 2;
+				numAddConstructors = 2;
+			}
+			else
+			{
+				numAddEngineers = 3;
+				numAddConstructors = 2;				
+			}
+			for (int i = 0; i < selectionList->getSize (); i++)
+			{
+				sVehicle *vehicle = selectionList->getItem (i)->getUnitID ().getVehicle (player);
+				if ( !vehicle ) continue;
+				
+				if (vehicle->data.can_build == BUILD_BIG)
+				{
+					for (int j = 0; j < numAddConstructors; j++)
+					{
+						cMenuUnitListItem *unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades ());
+						unit->setFixed (true);
+					}
+				}
+				if (vehicle->data.can_build == BUILD_SMALL)
+				{
+					for (int j = 0; j < numAddEngineers; j++)
+					{
+						cMenuUnitListItem *unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades ());
+						unit->setFixed (true);
+					}
+				}
 			}
 		}
 	}
@@ -1734,7 +1786,10 @@ void cStartupHangarMenu::doneReleased( void* parent )
 		landingUnit.cargo = menu->secondList->getItem ( i )->getResValue();
 		landingUnits->Add ( landingUnit );
 	}
-	menu->gameDataContainer->landingUnits.Add ( landingUnits );
+	if (menu->gameDataContainer->landingUnits.Size () == 0) // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
+		menu->gameDataContainer->landingUnits.Add ( landingUnits ); // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
+	else
+		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if ( menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->player->Nr != 0 )
 	{
 		sendClan ( menu->player->getClan (), menu->player->Nr );
