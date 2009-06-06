@@ -41,6 +41,7 @@
 			<Music ENG="Loading music..."/>
 			<Sounds ENG="Loading sounds..."/>
 			<Voices ENG="Loading voices..."/>
+			<Clans ENG="Loading clans..."/>
 		</Init>
 		<Title>
 			<MainMenu ENG="Main Menu"/>

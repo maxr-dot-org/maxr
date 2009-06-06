@@ -37,6 +37,7 @@
                         <Music ENG="Loading music..." localized="Lade Musik..."/>
                         <Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
 			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
+			<Clans ENG="Loading clans..." localized="Lade Clans..."/>
 		</Init>
 		<Title>
 			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
