@@ -1068,18 +1068,13 @@ int ReadMaxXml()
 
 	if(SettingsData.bDebug) //Print settingslist to log
 	{
-		stringstream strStream;
 		string sTmp;
 
 		#define SON "Enabled"
 		#define SOFF "Disabled"
 		Log.mark();
 		Log.write ("I read the following settings:", cLog::eLOG_TYPE_DEBUG);
-		strStream << "Screensize    == " << SettingsData.iScreenW << "x" << SettingsData.iScreenH << "x" << SettingsData.iColourDepth << "bpp";
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Screensize    == " + iToStr(SettingsData.iScreenW) + "x" + iToStr(SettingsData.iScreenH) + "x" + iToStr(SettingsData.iColourDepth) + "bpp", cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bIntro?SON:SOFF;
 		Log.write ("Intro         == "+sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bWindowMode?SON:SOFF;
@@ -1088,7 +1083,7 @@ int ReadMaxXml()
 		Log.write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bPreScale?SON:SOFF;
 		Log.write ("PreScale      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("CacheSize     == "+ iToStr(SettingsData.iCacheSize), cLog::eLOG_TYPE_DEBUG);
+		Log.write ("CacheSize     == "+ iToStr(SettingsData.iCacheSize), cLog::eLOG_TYPE_DEBUG)	;
 		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
 		//Log.write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bAutoSave?SON:SOFF;
@@ -1108,57 +1103,21 @@ int ReadMaxXml()
 		sTmp =  SettingsData.bShowDescription?SON:SOFF;
 		Log.write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
-
-		strStream << "Scrollspeed   == " << SettingsData.iScrollSpeed;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Scrollspeed   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
-
-		strStream << "Port          == " << SettingsData.iPort;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Port          == " + iToStr(SettingsData.iPort), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
-
-		strStream << "Playercolor   == " << SettingsData.iColor;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Playercolor   == " + iToStr(SettingsData.iColor), cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
 		Log.write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-
-		strStream << "Chunksize     == " << SettingsData.iChunkSize;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
-		strStream << "Frequency     == " << SettingsData.iFrequency;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Chunksize     == " + iToStr(SettingsData.iChunkSize), cLog::eLOG_TYPE_DEBUG);		
+		Log.write ("Frequency     == " + iToStr(SettingsData.iFrequency), cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.MusicMute?SON:SOFF;
-		strStream << "Musicvolume   == " << SettingsData.MusicVol << " Mute: " << sTmp;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Musicvolume   == " + iToStr(SettingsData.MusicVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.SoundMute?SON:SOFF;
-		strStream << "Soundvolume   == " << SettingsData.SoundVol << " Mute: " << sTmp;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Soundvolume   == " + iToStr(SettingsData.SoundVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.VoiceMute?SON:SOFF;
-		strStream << "Voicevolume   == " << SettingsData.VoiceVol << " Mute: " << sTmp;
-		Log.write (strStream.str(), cLog::eLOG_TYPE_DEBUG);
-		strStream.str(""); //reset sequence
-		strStream.clear(stringstream::goodbit); //reset goodbit
-
+		Log.write ("Voicevolume   == " + iToStr(SettingsData.VoiceVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
 		Log.mark();
 
 	}
