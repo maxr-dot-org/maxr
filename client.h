@@ -109,6 +109,7 @@ private:
 	friend class cPlayer;
 	friend class cBuilding;
 	friend class cVehicle;
+  friend class cUnit;
 
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
