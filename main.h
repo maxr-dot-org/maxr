@@ -695,8 +695,8 @@ public:
 	sVehicle& getVehicle (int nr, int clan = -1); ///< -1: game without clans
 	sBuilding& getBuilding (int nr, int clan = -1); ///< -1: game without clans
 	
-	int getNrVehicles () const { return vehicle.Size (); } 
-	int getNrBuildings () const { return building.Size (); } 
+	unsigned int getNrVehicles () const { return (int) vehicle.Size (); } 
+	unsigned int getNrBuildings () const { return (int) building.Size (); } 
 	
 
 	SDL_Surface *dirt_small_org;

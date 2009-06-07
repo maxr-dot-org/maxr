@@ -1002,7 +1002,7 @@ void sendClans ( cList<int>* clans, cPlayer* toPlayer)
 	if (clans == 0 || toPlayer == 0)
 		return;
 	cNetMessage *message = new cNetMessage (GAME_EV_PLAYER_CLANS);	
-	for (int i = clans->Size () - 1; i >= 0; i--)
+	for (int i = (int) clans->Size () - 1; i >= 0; i--)
 		message->pushChar ((*clans)[i]);
 	Server->sendNetMessage (message, toPlayer->Nr);
 }

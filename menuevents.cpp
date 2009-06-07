@@ -140,7 +140,7 @@ void sendUnitUpgrades ( cPlayer *player )
 	int count = 0;
 
 	// send vehicles
-	for (size_t i = 0; i < UnitsData.getNrVehicles (); ++i)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); ++i)
 	{
 		if ( message == NULL )
 		{
@@ -199,7 +199,7 @@ void sendUnitUpgrades ( cPlayer *player )
 	}
 
 	// send buildings
-	for (size_t i = 0; i < UnitsData.getNrBuildings (); ++i)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); ++i)
 	{
 		if ( message == NULL )
 		{

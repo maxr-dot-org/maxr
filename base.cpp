@@ -232,7 +232,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 	{
 		n = sb->buildings[i];
 		if ( n==b ) continue;
-		AddBuilding ( n );
+		AddBuilding ( n );		//TODO: this causes a lot of unnessesary net traffic, when deleting a building from a big subbase
 	}
 	if (b->IsWorking && b->data.can_research)
 		b->owner->stopAResearch (b->researchArea);

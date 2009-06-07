@@ -115,7 +115,7 @@ string cClanUnitStat::getClanStatsDescription () const
 //--------------------------------------------------
 cClan::~cClan ()
 {
-	for (int i = 0; i < stats.Size (); i++)
+	for (unsigned int i = 0; i < stats.Size (); i++)
 	{
 		if (stats[i] != 0)
 		{
@@ -128,14 +128,14 @@ cClan::~cClan ()
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
 {
-	for (int statIdx = 0; statIdx < stats.Size (); statIdx++)
+	for (unsigned int statIdx = 0; statIdx < stats.Size (); statIdx++)
 		if (stats[statIdx]->getUnitIdFirstPart () == idFirstPart && stats[statIdx]->getUnitIdSecPart () == idSecPart)
 			return stats[statIdx];
 	return 0;
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (int index) const
+cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
 	if (0 <= index && index < stats.Size ())
 		return stats[index];
@@ -184,7 +184,7 @@ cClanData& cClanData::instance()
 //--------------------------------------------------
 cClanData::~cClanData ()
 {
-	for (int i = 0; i < clans.Size (); i++)
+	for (unsigned int i = 0; i < clans.Size (); i++)
 	{
 		if (clans[i] != 0)
 		{
@@ -197,14 +197,16 @@ cClanData::~cClanData ()
 //--------------------------------------------------
 cClan* cClanData::addClan ()
 {
-	cClan* clan = new cClan (clans.Size ());
+	cClan* clan = new cClan ( (int) clans.Size ());
 	clans.Add (clan);
 	return clan;
 }
 
 //--------------------------------------------------
-cClan* cClanData::getClan (int num)
+cClan* cClanData::getClan (unsigned int num)
 {
  if (0 <= num && num <= clans.Size ())
 	 return clans[num];
+
+ return NULL;
 }

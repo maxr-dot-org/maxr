@@ -64,9 +64,9 @@ public:
 	const std::string& getName () const { return name; }
 	
 	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
-	cClanUnitStat* getUnitStat (int index) const;
+	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
-	int getNrUnitStats () const { return stats.Size (); }
+	int getNrUnitStats () const { return (int) stats.Size (); }
 
 	//-------------------------------------------------------------------------
 private:
@@ -84,8 +84,8 @@ public:
 	virtual ~cClanData ();
 	
 	cClan* addClan ();
-	cClan* getClan (int num);
-	int getNrClans () const { return clans.Size (); }
+	cClan* getClan (unsigned int num);
+	int getNrClans () const { return (int) clans.Size (); }
 	
 	//-------------------------------------------------------------------------
 private:

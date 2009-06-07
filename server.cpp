@@ -57,7 +57,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 	iActiveTurnPlayerNr = 0;
 	iTurn = 1;
 	iDeadlineStartTime = 0;
-	iTurnDeadline = 90; // just temporary set to 45 seconds
+	iTurnDeadline = 90; // just temporary set to 90 seconds
 	iNextUnitID = 1;
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
@@ -3206,7 +3206,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
 		cList<int> clans;
-		for (int i =  0; i < PlayerList->Size (); i++)
+		for (unsigned int i =  0; i < PlayerList->Size (); i++)
 			clans.Add ( (*PlayerList)[i]->getClan () );
 		sendClansToClients ( &clans );
 	}

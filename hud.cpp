@@ -1382,12 +1382,12 @@ void cHud::ScaleSurfaces ( void )
 	}
 	// Vehicles:
 	factor = ( float ) ( Zoom/64.0 );
-	for (size_t i = 0; i < UnitsData.getNrVehicles (); ++i)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); ++i)
 	{
 		UnitsData.vehicle[i].scaleSurfaces( factor );
 	}
 	// Buildings:
-	for (size_t i = 0; i < UnitsData.getNrBuildings (); ++i)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); ++i)
 	{
 		UnitsData.building[i].scaleSurfaces ( factor );
 	}

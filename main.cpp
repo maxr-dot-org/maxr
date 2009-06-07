@@ -671,7 +671,7 @@ sVehicle& cUnitsData::getVehicle (int nr, int clan)
 	if (initializedClanUnitData == false)
 		initializeClanUnitData ();
 	
-	if (clan < 0 || clan > clanUnitDataVehicles.size ())
+	if (clan < 0 || clan > (int) clanUnitDataVehicles.size ())
 	{
 		return vehicle[nr];
 	}
@@ -684,7 +684,7 @@ sBuilding& cUnitsData::getBuilding (int nr, int clan)
 	if (initializedClanUnitData == false)
 		initializeClanUnitData ();
 	
-	if (clan < 0 || clan > clanUnitDataBuildings.size ())
+	if (clan < 0 || clan > (int) clanUnitDataBuildings.size ())
 	{
 		return building[nr];
 	}
@@ -702,7 +702,7 @@ void cUnitsData::initializeClanUnitData ()
 			continue; 
 		
 		vector<sVehicle> clanListVehicles;
-		for (int vehicleIdx = 0; vehicleIdx < vehicle.Size (); vehicleIdx++)
+		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.Size (); vehicleIdx++)
 		{
 			// make a copy of the vehicle's stats
 			sVehicle curVehicle = vehicle[vehicleIdx];
@@ -730,7 +730,7 @@ void cUnitsData::initializeClanUnitData ()
 		clanUnitDataVehicles.push_back (clanListVehicles);
 		
 		vector<sBuilding> clanListBuildings;
-		for (int buildingIdx = 0; buildingIdx < building.Size (); buildingIdx++)
+		for (unsigned int buildingIdx = 0; buildingIdx < building.Size (); buildingIdx++)
 		{
 			// make a copy of the building's stats
 			sBuilding curBuilding = building[buildingIdx];

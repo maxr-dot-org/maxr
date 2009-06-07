@@ -3655,7 +3655,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	case GAME_EV_PLAYER_CLANS:
-			for (int playerIdx = 0; playerIdx < PlayerList->Size (); playerIdx++)
+			for (unsigned int playerIdx = 0; playerIdx < PlayerList->Size (); playerIdx++)
 			{
 				int clan = message->popChar ();
 				(*PlayerList)[playerIdx]->setClan (clan);

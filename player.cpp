@@ -36,12 +36,12 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 {
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
-	for (size_t i = 0; i < UnitsData.getNrVehicles (); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 		VehicleData[i] = UnitsData.getVehicle (i).data; // get the default (no clan) vehicle data 
 
 	// copy the building stats
 	BuildingData = new sUnitData[UnitsData.getNrBuildings ()];
-	for (size_t i = 0; i < UnitsData.getNrBuildings (); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 		BuildingData[i] = UnitsData.getBuilding (i).data; // get the default (no clan) building data
 
 	DetectLandMap = NULL;
@@ -194,10 +194,10 @@ void cPlayer::setClan (int newClan)
 	
 	clan = newClan;
 
-	for (size_t i = 0; i < UnitsData.getNrVehicles (); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 		VehicleData[i] = UnitsData.getVehicle (i, clan).data;
 	
-	for (size_t i = 0; i < UnitsData.getNrBuildings (); i++)
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
 }
 

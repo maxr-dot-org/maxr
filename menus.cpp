@@ -133,7 +133,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		if (settings->clans == SETTING_CLANS_ON)
 		{
 			cList<int> clans;
-			for (int i =  0; i < players.Size (); i++)
+			for (unsigned int i =  0; i < players.Size (); i++)
 				clans.Add ( players[i]->getClan () );
 			
 			sendClansToClients ( &clans );
@@ -1437,7 +1437,7 @@ void cClanSelectionMenu::updateClanDescription ()
 		vector<string> strings = clanInfo->getClanStatsDescription ();
 		
 		string desc1;
-		for (int i = 0; i < 4 && i < strings.size (); i++)
+		for ( unsigned int i = 0; i < 4 && i < strings.size (); i++)
 		{
 			desc1.append (strings[i]);
 			desc1.append ("\n");
@@ -1445,7 +1445,7 @@ void cClanSelectionMenu::updateClanDescription ()
 		clanDescription1->setText (desc1);
 
 		string desc2;
-		for (int i = 4; i < strings.size (); i++)
+		for (unsigned int i = 4; i < strings.size (); i++)
 		{
 			desc2.append (strings[i]);
 			desc2.append ("\n");
