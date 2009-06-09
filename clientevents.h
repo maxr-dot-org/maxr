@@ -55,7 +55,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				// the buildlist of a building
-	GAME_EV_PRODUCE_VALUES,			// the produce values of a building
+	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine
 	GAME_EV_TURN_REPORT,			// the turnstartreport of a player
 	GAME_EV_MARK_LOG,				// marks a position in the logfile
 	GAME_EV_SUPPLY,					// rearms or repairs a unit

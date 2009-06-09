@@ -49,10 +49,268 @@ sSubBase::sSubBase( int iNextID ) :
 	iID( iNextID )
 {}
 
+sSubBase::sSubBase( const sSubBase& sb ) :
+	buildings(),
+	MaxMetal( sb.MaxMetal ),
+	Metal( sb.Metal ),
+	MaxOil( sb.MaxOil ),
+	Oil( sb.Oil ),
+	MaxGold( sb.MaxGold ),
+	Gold( sb.Gold ),
+	MaxEnergyProd( sb.MaxEnergyProd ),
+	EnergyProd( sb.EnergyProd ),
+	MaxEnergyNeed( sb.MaxEnergyNeed ),
+	EnergyNeed( sb.EnergyNeed ),
+	MetalNeed( sb.MetalNeed ),
+	OilNeed( sb.OilNeed ),
+	GoldNeed( sb.GoldNeed ),
+	MaxMetalNeed( sb.MaxMetalNeed ),
+	MaxOilNeed( sb.MaxOilNeed ),
+	MaxGoldNeed( sb.MaxGoldNeed ),
+	MetalProd( sb.MetalProd ),
+	OilProd( sb.OilProd ),
+	GoldProd( sb.GoldProd ),
+	HumanProd( sb.HumanProd ),
+	HumanNeed( sb.HumanNeed ),
+	MaxHumanNeed( sb.MaxHumanNeed ),
+	iID( sb.iID )
+{
+	for ( unsigned int i = 0; i < sb.buildings.Size(); i++ )
+	{
+		buildings.Add( sb.buildings[i] );
+	}
+}
+
+int sSubBase::getMaxMetalProd()
+{
+	return calcMaxProd(RES_METAL);
+}
+
+int sSubBase::getMaxGoldProd()
+{
+	return calcMaxProd(RES_GOLD);
+}
+
+int sSubBase::getMaxOilProd()
+{
+	return calcMaxProd(RES_OIL);
+}
+
+int sSubBase::getMaxAllowedMetalProd()
+{
+	return calcMaxAllowedProd( RES_METAL );
+}
+
+int sSubBase::getMaxAllowedGoldProd()
+{
+	return calcMaxAllowedProd( RES_GOLD );
+}
+
+int sSubBase::getMaxAllowedOilProd()
+{
+	return calcMaxAllowedProd( RES_OIL );
+}
+
+
+int sSubBase::getMetalProd()
+{
+	return MetalProd;
+}
+
+int sSubBase::getGoldProd()
+{
+	return GoldProd;
+}
+
+int sSubBase::getOilProd()
+{
+	return OilProd;
+}
+
+void sSubBase::setMetalProd( int i )
+{
+	int max = getMaxAllowedMetalProd();
+
+	if ( i < 0 ) 
+		i = 0;
+
+	if ( i > max ) 
+		i = max;
+
+	MetalProd = i;
+}
+
+void sSubBase::setGoldProd( int i )
+{
+	int max = getMaxAllowedGoldProd();
+
+	if ( i < 0 ) 
+		i = 0;
+
+	if ( i > max ) 
+		i = max;
+
+	GoldProd = i;
+}
+
+void sSubBase::setOilProd( int i )
+{
+	int max = getMaxAllowedOilProd();
+
+	if ( i < 0 ) 
+		i = 0;
+
+	if ( i > max ) 
+		i = max;
+
+	OilProd = i;
+}
+
+void sSubBase::changeMetalProd( int i )
+{
+	setMetalProd( MetalProd + i );
+}
+
+void sSubBase::changeOilProd( int i )
+{
+	setOilProd( OilProd + i );
+}
+
+void sSubBase::changeGoldProd( int i )
+{
+	setGoldProd( GoldProd + i );
+}
 
 sSubBase::~sSubBase()
 {}
 
+int sSubBase::calcMaxProd( int ressourceType )
+{
+	int maxProd = 0;
+	for ( unsigned int i = 0; i < buildings.Size(); i++ )
+	{
+		cBuilding* building = buildings[i];
+
+		if ( !(building->data.is_mine && building->IsWorking) ) continue;
+		
+		switch ( ressourceType )
+		{
+		case RES_METAL:
+			maxProd += building->MaxMetalProd;
+			break;
+		case RES_OIL:
+			maxProd += building->MaxOilProd;
+			break;
+		case RES_GOLD:
+			maxProd += building->MaxGoldProd;
+			break;
+		}
+	}
+
+	return maxProd;
+}
+
+int sSubBase::calcMaxAllowedProd( int ressourceType )
+{
+	//initialise needed Variables and element pointers, so the algorithm itself is independent from the ressouce type
+	int maxAllowedProd;
+	int ressourceToDistributeB;
+	int ressourceToDistributeC;
+
+	int cBuilding::* ressourceProdA;
+	int cBuilding::* ressourceProdB;
+	int cBuilding::* ressourceProdC;
+
+	switch ( ressourceType )
+	{
+	case RES_METAL:
+		maxAllowedProd = getMaxMetalProd();
+		ressourceToDistributeB = GoldProd;
+		ressourceToDistributeC = OilProd;
+		ressourceProdA = &cBuilding::MaxMetalProd;
+		ressourceProdB = &cBuilding::MaxGoldProd;
+		ressourceProdC = &cBuilding::MaxOilProd;
+		break;
+	case RES_OIL:
+		maxAllowedProd = getMaxOilProd();
+		ressourceToDistributeB = MetalProd;
+		ressourceToDistributeC = GoldProd;
+		ressourceProdA = &cBuilding::MaxOilProd;
+		ressourceProdB = &cBuilding::MaxMetalProd;
+		ressourceProdC = &cBuilding::MaxGoldProd;
+		break;
+	case RES_GOLD:
+		maxAllowedProd = getMaxGoldProd();
+		ressourceToDistributeB = MetalProd;
+		ressourceToDistributeC = OilProd;
+		ressourceProdA = &cBuilding::MaxGoldProd;
+		ressourceProdB = &cBuilding::MaxMetalProd;
+		ressourceProdC = &cBuilding::MaxOilProd;
+		break;
+	default:
+		return 0;
+	}
+
+
+	//when calculating the maximum allowed production for ressource A, the algo tries to distribute 
+	// the ressources B and C so that the maximum possible production capacity is left over for A.
+	//the actual production values of each mine are not saved, because they are not needed.
+
+	//step one:
+	//distribute ressources, that do not decrease the possible production of the others
+	for ( unsigned int i = 0; i < buildings.Size(); i++ )
+	{
+		cBuilding* building = buildings[i];
+
+		if ( !(building->data.is_mine && building->IsWorking )) continue;
+
+		//how much of B can be produced in this mine, without decreasing the possible production of A and C?
+		int amount = min( building->*ressourceProdB, MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC );
+		if ( amount > 0 ) ressourceToDistributeB -= amount;
+
+		//how much of C can be produced in this mine, without decreasing the possible production of A and B?
+		amount = min( building->*ressourceProdC, MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB );
+		if ( amount > 0 ) ressourceToDistributeC -= amount;
+		
+	}
+
+	if ( ressourceToDistributeB < 0 ) ressourceToDistributeB = 0;
+	if ( ressourceToDistributeC < 0 ) ressourceToDistributeC = 0;
+
+	//step two:
+	//distribute ressources, that do not decrease the possible production of A
+	for ( unsigned int i = 0; i < buildings.Size(); i++ )
+	{
+		cBuilding* building = buildings[i];
+
+		if ( !(building->data.is_mine && building->IsWorking )) continue;
+
+		int mineFree;	//the amount of B and C, that can be distibuted to this mine in this step
+		mineFree = MAX_MINE_PROD - building->*ressourceProdA;
+		//substract values from step 1
+		mineFree -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC, 0), building->*ressourceProdB);
+		mineFree -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB, 0), building->*ressourceProdC);
+
+		if ( ressourceToDistributeB > 0 )
+		{
+			int value = min( mineFree, ressourceToDistributeB );
+			mineFree -= value;
+			ressourceToDistributeB -= value;
+		}
+		if ( ressourceToDistributeC > 0 )
+		{
+			ressourceToDistributeC -= min( mineFree, ressourceToDistributeC );
+		}
+	}
+
+	//step three:
+	//the remaining amount of B and C have to be subtracted from the maximum allowed production of A
+	maxAllowedProd -= ( ressourceToDistributeB + ressourceToDistributeC );
+
+	if ( maxAllowedProd < 0 ) maxAllowedProd = 0;
+
+	return maxAllowedProd;
+}
 
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase ( cPlayer *Owner )
@@ -157,6 +415,9 @@ void cBase::AddBuilding ( cBuilding *Building )
 					SubBaseBuilding->SubBase = NewSubBase;
 					SubBase->buildings.Delete ( 0 );
 				}
+
+				//FIXME: with deleting the old subbase, the ressouce configuration is lost and will be set to a default distribution
+
 				// delete the subbase from the subbase list
 				for (unsigned int i = 0; i < SubBases.Size(); i++)
 				{
@@ -228,6 +489,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 		}
 	}
 	// add all the buildings again
+	//FIXME: with deleting the old subbase, the ressouce configuration is lost and will be set to a default distribution
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		n = sb->buildings[i];
@@ -301,9 +563,14 @@ void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 	// Rohstoffproduktion ausrechnen:
 	if ( b->data.is_mine&&b->IsWorking )
 	{
-		sb->MetalProd+=b->MetalProd;
-		sb->OilProd+=b->OilProd;
-		sb->GoldProd+=b->GoldProd;
+		int mineFree = MAX_MINE_PROD;
+		sb->changeMetalProd( b->MaxMetalProd );
+		mineFree -= b->MaxMetalProd;
+
+		sb->changeOilProd( min ( b->MaxOilProd, mineFree));
+		mineFree -= min ( b->MaxOilProd, mineFree);
+
+		sb->changeGoldProd( min ( b->MaxGoldProd, mineFree));
 	}
 	// Human-Haushalt ausrechnen:
 	if ( b->data.human_prod )

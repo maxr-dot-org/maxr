@@ -4308,7 +4308,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Building->RepeatBuild = message->popBool();
 		}
 		break;
-	case GAME_EV_PRODUCE_VALUES:
+	case GAME_EV_MINE_PRODUCE_VALUES:
 		{
 			int iID = message->popInt16();
 			cBuilding *Building = getBuildingFromID ( iID );
@@ -4319,11 +4319,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 
-			Building->MetalProd = message->popInt16();
 			Building->MaxMetalProd = message->popInt16();
-			Building->OilProd = message->popInt16();
 			Building->MaxOilProd = message->popInt16();
-			Building->GoldProd = message->popInt16();
 			Building->MaxGoldProd = message->popInt16();
 		}
 		break;
@@ -5506,7 +5503,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "metal_prod: " + iToStr ( Building->MetalProd ) + " oil_prod: " + iToStr ( Building->OilProd ) + " gold_prod: +" + iToStr ( Building->GoldProd ) + " max_metal_p: " + iToStr ( Building->MaxMetalProd ) + " max_oil_p: " + iToStr (Building->MaxOilProd ) + " max_gold_p: " + iToStr (Building->MaxGoldProd );
+	sTmp = " max_metal_p: " + iToStr ( Building->MaxMetalProd ) + " max_oil_p: " + iToStr (Building->MaxOilProd ) + " max_gold_p: " + iToStr (Building->MaxGoldProd );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 

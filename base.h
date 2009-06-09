@@ -30,37 +30,71 @@ class cMap;
 struct sSubBase{
 public:
 	sSubBase( int iNextID );
+	sSubBase( const sSubBase& sb );
 	~sSubBase();
 
-public:
-  cList<cBuilding*> buildings;
+	cList<cBuilding*> buildings;
 
-  int iID;
-  int MaxMetal;
-  int Metal;
-  int MaxOil;
-  int Oil;
-  int MaxGold;
-  int Gold;
+	int iID;
+	int MaxMetal;
+	int Metal;
+	int MaxOil;
+	int Oil;
+	int MaxGold;
+	int Gold;
 
-  int MaxEnergyProd;
-  int EnergyProd;
-  int MaxEnergyNeed;
-  int EnergyNeed;
-  int MetalNeed;
-  int OilNeed;
-  int GoldNeed;
-  int MaxMetalNeed;
-  int MaxOilNeed;
-  int MaxGoldNeed;
+	int MaxEnergyProd;
+	int EnergyProd;
+	int MaxEnergyNeed;
+	int EnergyNeed;
+	int MetalNeed;
+	int OilNeed;
+	int GoldNeed;
+	int MaxMetalNeed;
+	int MaxOilNeed;
+	int MaxGoldNeed;
 
-  int MetalProd;
-  int OilProd;
-  int GoldProd;
+ 
+	int HumanProd;
+	int HumanNeed;
+	int MaxHumanNeed;
 
-  int HumanProd;
-  int HumanNeed;
-  int MaxHumanNeed;
+	//------------------------------------
+	//ressource management:
+
+	/** returns the maximum production of a ressource */
+	int getMaxMetalProd();
+	int getMaxGoldProd();
+	int getMaxOilProd();
+
+	/** returns the maximum allowed production (without dereasing one of the other ones) of a ressource */
+	int getMaxAllowedMetalProd();
+	int getMaxAllowedGoldProd();
+	int getMaxAllowedOilProd();
+
+	/** returns the current production of a ressource */
+	int getMetalProd();
+	int getGoldProd();
+	int getOilProd();
+
+	/** sets the production of a ressource. If i is bigger then maxAllowed, it will be reduced to the maximum allowed value */
+	void setMetalProd( int i );
+	void setGoldProd( int i );
+	void setOilProd( int i );
+
+	/** changes the production of a ressource by i. */
+	void changeMetalProd( int i );
+	void changeGoldProd( int i );
+	void changeOilProd( int i );
+
+//TODO: private:
+	int MetalProd;
+	int OilProd;
+	int GoldProd;
+private:
+	int calcMaxAllowedProd( int ressourceType );
+	int calcMaxProd( int ressourceType );
+
 };
 
 
@@ -75,8 +109,8 @@ public:
   cList<sSubBase*> SubBases;
   cMap *map;
 
-  void AddBuilding(cBuilding *b);
-  void DeleteBuilding(cBuilding *b);
+  void AddBuilding(cBuilding *Building);
+  void DeleteBuilding(cBuilding *Building);
   void AddBuildingToSubBase(cBuilding *b,sSubBase *sb);
   void AddMetal(sSubBase *sb,int value);
   void AddOil(sSubBase *sb,int value);

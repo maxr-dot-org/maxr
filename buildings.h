@@ -78,7 +78,6 @@ struct sBuilding{
 
 class cPlayer;
 class cBase;
-struct sUpgradeStruct;
 
 // enum for the upgrade symbols
 #ifndef D_eSymbols
@@ -118,19 +117,7 @@ enum ResourceKind
 	TYPE_GOLD  = 2
 };
 
-//--------------------------------------------------------------------------
-struct sMineValues
-{
-	int& GetProd(ResourceKind);
-
-	int GetMaxProd(ResourceKind) const;
-
-	int iMetalProd, iOilProd, iGoldProd;
-	int iMaxMetalProd, iMaxOilProd, iMaxGoldProd;
-
-	int iBuildingID;
-};
-
+#define MAX_MINE_PROD 16
 
 //--------------------------------------------------------------------------
 /** Class cBuilding for one building. */
@@ -170,7 +157,6 @@ public:
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	bool bSentryStatus;		/** true if the building is on sentry */
 	bool Transfer;   // Gibt an, ob ein Transfer statfinden soll
-	int MetalProd,OilProd,GoldProd; // the production of the building
 	int MaxMetalProd,MaxOilProd,MaxGoldProd; // the maximum possible production of the building
 	int dir;         // ?Frame of the building?
 	bool Attacking;  // Gibt an, ob das Building gerade angreift
@@ -227,9 +213,6 @@ public:
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
 	void showMineManager();
-	void doMineInc(ResourceKind, cList<sMineValues*>& Mines);
-	void doMineDec(ResourceKind, cList<sMineValues*>& Mines);
-	void calcMineFree ( cList<sMineValues*> *Mines, int *iFreeM, int *iFreeO, int *iFreeG );
 	void MakeMineBars(int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG);
 	void DrawMineBar(int typ,int value,int max_value,int offy,bool number,int fixed);
 	bool IsInRange(int off, cMap *Map);

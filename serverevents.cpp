@@ -586,13 +586,10 @@ void sendBuildList ( cBuilding *Building )
 //-------------------------------------------------------------------------------------
 void sendProduceValues ( cBuilding *Building )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_PRODUCE_VALUES );
+	cNetMessage* message = new cNetMessage( GAME_EV_MINE_PRODUCE_VALUES );
 	message->pushInt16 ( Building->MaxGoldProd );
-	message->pushInt16 ( Building->GoldProd );
 	message->pushInt16 ( Building->MaxOilProd );
-	message->pushInt16 ( Building->OilProd );
 	message->pushInt16 ( Building->MaxMetalProd );
-	message->pushInt16 ( Building->MetalProd );
 	message->pushInt16 ( Building->iID );
 	Server->sendNetMessage( message, Building->owner->Nr );
 }

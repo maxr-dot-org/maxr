@@ -19,6 +19,7 @@
 
 #include "drawingcache.h"
 #include "client.h"
+#include "loaddata.h"
 
 sDrawingCacheEntry::sDrawingCacheEntry()
 {
@@ -345,6 +346,8 @@ void cDrawingCache::setMaxCacheSize( unsigned int newSize )
 	cachedImages = new sDrawingCacheEntry[newSize];
 	maxCacheSize = newSize;
 	cacheSize = 0;
+
+	SaveOption( SAVETYPE_CACHESIZE );
 };
 
 int cDrawingCache::getCacheSize()

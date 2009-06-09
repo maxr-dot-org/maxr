@@ -939,131 +939,27 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_CHANGE_RESOURCES:
 		{
 			sSubBase *SubBase;
-			int iMaxMetal = 0, iMaxOil = 0, iMaxGold = 0;
-			int iFreeMetal = 0, iFreeOil = 0, iFreeGold = 0;
-			int iTempSBMetalProd, iTempSBOilProd, iTempSBGoldProd;
-
+			
 			cBuilding *Building = getBuildingFromID ( message->popInt16() );
 			if ( Building == NULL ) break;
 
-			int iMetalProd = message->popInt16();
-			int iOilProd = message->popInt16();
-			int iGoldProd = message->popInt16();
+			unsigned int iMetalProd = message->popInt16();
+			unsigned int iOilProd = message->popInt16();
+			unsigned int iGoldProd = message->popInt16();
 
 			SubBase = Building->SubBase;
 
-			cList<sMineValues*> Mines;
-			for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++ )
-			{
-				cBuilding* const Mine = SubBase->buildings[i];
-				if (Mine->data.is_mine && Mine->IsWorking)
-				{
-					sMineValues *MineValues = new sMineValues;
-					MineValues->iMetalProd = Mine->MetalProd;
-					MineValues->iOilProd = Mine->OilProd;
-					MineValues->iGoldProd = Mine->GoldProd;
+			SubBase->setMetalProd( 0 );
+			SubBase->setOilProd( 0 );
+			SubBase->setGoldProd( 0 );
 
-					MineValues->iMaxMetalProd = Mine->MaxMetalProd;
-					MineValues->iMaxOilProd = Mine->MaxOilProd;
-					MineValues->iMaxGoldProd = Mine->MaxGoldProd;
+			//no need to verify the values. They will be reduced automatically, if nessesary
+			SubBase->setMetalProd( iMetalProd );
+			SubBase->setGoldProd( iGoldProd );
+			SubBase->setOilProd( iOilProd );
 
-					MineValues->iBuildingID = Mine->iID;
-
-					Mines.Add ( MineValues );
-
-					iMaxMetal += Mine->MaxMetalProd;
-					iMaxOil += Mine->MaxOilProd;
-					iMaxGold += Mine->MaxGoldProd;
-				}
-			}
-
-			iTempSBMetalProd = SubBase->MetalProd;
-			iTempSBOilProd = SubBase->OilProd;
-			iTempSBGoldProd = SubBase->GoldProd;
-
-			if ( iMetalProd > iMaxMetal || iOilProd > iMaxOil || iGoldProd > iMaxGold ) break;
-
-			Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-
-			bool bDone = false;
-			while ( iTempSBMetalProd != iMetalProd || iTempSBOilProd != iOilProd || iTempSBGoldProd != iGoldProd )
-			{
-				if ( iTempSBMetalProd > iMetalProd )
-				{
-					Building->doMineDec(TYPE_METAL, Mines);
-					iTempSBMetalProd--;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-				if ( iTempSBMetalProd < iMetalProd && iFreeMetal )
-				{
-					Building->doMineInc(TYPE_METAL, Mines);
-					iTempSBMetalProd++;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-
-				if ( iTempSBOilProd > iOilProd )
-				{
-					Building->doMineDec(TYPE_OIL, Mines);
-					iTempSBOilProd--;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-				if ( iTempSBOilProd < iOilProd && iFreeOil )
-				{
-					Building->doMineInc(TYPE_OIL, Mines);
-					iTempSBOilProd++;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-
-				if ( iTempSBGoldProd > iGoldProd )
-				{
-					Building->doMineDec(TYPE_GOLD, Mines);
-					iTempSBGoldProd--;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-				if ( iTempSBGoldProd < iGoldProd && iFreeGold )
-				{
-					Building->doMineInc(TYPE_GOLD, Mines);
-					iTempSBGoldProd++;
-					Building->calcMineFree ( &Mines, &iFreeMetal, &iFreeOil, &iFreeGold );
-					bDone = true;
-				}
-
-				// if in one turn nothing has been done the client values have to be wrong
-				if (!bDone) break;
-				// bDone must stay true when the server has reached the client values
-				else if ( iTempSBMetalProd != iMetalProd || iTempSBOilProd != iOilProd || iTempSBGoldProd != iGoldProd ) bDone = false;
-			}
-
-			// set new values
-			if ( bDone )
-			{
-				for ( unsigned int i = 0; i < Mines.Size(); i++ )
-				{
-					sMineValues *MineValues = Mines[i];
-					cBuilding *Mine = getBuildingFromID ( MineValues->iBuildingID );
-
-					Mine->MetalProd = MineValues->iMetalProd;
-					Mine->OilProd = MineValues->iOilProd;
-					Mine->GoldProd = MineValues->iGoldProd;
-
-					Mine->MaxMetalProd = MineValues->iMaxMetalProd;
-					Mine->MaxOilProd = MineValues->iMaxOilProd;
-					Mine->MaxGoldProd = MineValues->iMaxGoldProd;
-
-					sendProduceValues ( Mine );
-				}
-
-				SubBase->MetalProd = iTempSBMetalProd;
-				SubBase->OilProd = iTempSBOilProd;
-				SubBase->GoldProd = iTempSBGoldProd;
-
-				sendSubbaseValues ( SubBase, Building->owner->Nr );
-			}
+			sendSubbaseValues ( SubBase, Building->owner->Nr );
+		
 		}
 		break;
 	case GAME_EV_WANT_CHANGE_SENTRY:
@@ -3231,7 +3127,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
 		}
 		sendUnitData ( Building, Player->Nr );
-		if ( Building->IsWorking && Building->data.is_mine ) sendProduceValues ( Building );
+		if ( Building->data.is_mine ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
 		Building = Building->next;
 	}

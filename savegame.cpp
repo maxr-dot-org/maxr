@@ -675,10 +675,6 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	}
 	if ( unitNode->FirstChildElement( "HasBeenAttacked" ) ) building->hasBeenAttacked = true;
 
-	if ( element = unitNode->FirstChildElement( "MetalProd" ) ) element->Attribute ( "num", &building->MetalProd );
-	if ( element = unitNode->FirstChildElement( "GoldProd" ) ) element->Attribute ( "num", &building->GoldProd );
-	if ( element = unitNode->FirstChildElement( "OilProd" ) ) element->Attribute ( "num", &building->OilProd );
-
 	if ( element = unitNode->FirstChildElement( "Building" ) )
 	{
 		TiXmlElement *buildNode = element;
@@ -1322,10 +1318,6 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	}
 	if ( Building->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
 	if ( Building->hasBeenAttacked ) addMainElement ( unitNode, "HasBeenAttacked" );
-
-	if ( Building->MetalProd > 0 ) addAttributeElement ( unitNode, "MetalProd", "num", iToStr ( Building->MetalProd ) );
-	if ( Building->GoldProd > 0 ) addAttributeElement ( unitNode, "GoldProd", "num", iToStr ( Building->GoldProd ) );
-	if ( Building->OilProd > 0 ) addAttributeElement ( unitNode, "OilProd", "num", iToStr ( Building->OilProd ) );
 
 	// write the buildlist
 	if ( Building->BuildList && Building->BuildList->Size() > 0 )

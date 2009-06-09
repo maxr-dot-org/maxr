@@ -429,8 +429,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_BUILDLIST");
 	case GAME_EV_WANT_EXIT_FIN_VEH:
 		return string("GAME_EV_WANT_EXIT_FIN_VEH");
-	case GAME_EV_PRODUCE_VALUES:
-		return string("GAME_EV_PRODUCE_VALUES");
+	case GAME_EV_MINE_PRODUCE_VALUES:
+		return string("GAME_EV_MINE_PRODUCE_VALUES");
 	case GAME_EV_CHANGE_RESOURCES:
 		return string("GAME_EV_CHANGE_RESOURCES");
 	case GAME_EV_ATTACKJOB_IMPACT:
