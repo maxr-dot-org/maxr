@@ -2369,8 +2369,8 @@ void cNetworkMenu::showSettingsText()
 		{
 			sSettings *settings = gameDataContainer.settings;
 			text += lngPack.i18n ( "Text~Title~Metal" ) + ": " + settings->getResValString ( settings->metal ) + "\n";
-			text += lngPack.i18n ( "Text~Title~Oil" ) + ": " + settings->getResValString ( settings->metal ) + "\n";
-			text += lngPack.i18n ( "Text~Title~Gold" ) + ": " + settings->getResValString ( settings->metal ) + "\n";
+			text += lngPack.i18n ( "Text~Title~Oil" ) + ": " + settings->getResValString ( settings->oil ) + "\n";
+			text += lngPack.i18n ( "Text~Title~Gold" ) + ": " + settings->getResValString ( settings->gold ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Resource_Density" ) + ": " + settings->getResFreqString() + "\n";
 			text += lngPack.i18n ( "Text~Title~Credits" )  + ": " + iToStr( settings->credits ) + "\n";
 			text += lngPack.i18n ( "Text~Title~BridgeHead" ) + ": " + ( settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ( "Text~Option~Definite" ) : lngPack.i18n ( "Text~Option~Mobile" ) ) + "\n";
