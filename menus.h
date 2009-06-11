@@ -198,6 +198,13 @@ private:
 	void runSavedGame( int player );
 };
 
+enum eMenuBackgrounds
+{
+	MNU_BG_BLACK,
+	MNU_BG_ALPHA,
+	MNU_BG_TRANSPARENT
+};
+
 /**
  * The main menu class. This class handles the background, the position, the input from mouse and keyboard
  * and all the menu items as buttons, images, labels, etc. All menuclasses in maxr should be a child of
@@ -218,6 +225,8 @@ protected:
 
 	/** The background of the menu. Can be smaller than the screen. */
 	SDL_Surface *background;
+	/** The type of the background behind the menu background image, when the image is smaller then the screen. */
+	eMenuBackgrounds backgroundType;
 	/** The position of the menu on the screen when it is smaller than the screen. The position will be
 	 * calculated in the constructor of cMenu und set to the center of the screen.
 	 */
@@ -233,7 +242,7 @@ protected:
 	 *@author alzi
 	 *@param background_ The background of the surface
 	 */
-	cMenu( SDL_Surface *background_ );
+	cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
 	/**
 	 * frees the background surface. This destructor does not delete the menuitems!
 	 *@author alzi
@@ -245,7 +254,7 @@ public:
 	 * redraws the menu background, the cursor and all menuitems.
 	 *@author alzi
 	 */
-	void draw();
+	void draw( bool firstDraw = false );
 	/**
 	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
 	 *@author alzi
@@ -505,7 +514,7 @@ protected:
 
 	void (*selectionChangedFunc)(void *);
 public:
-	cHangarMenu( SDL_Surface *background_, cPlayer *player_ );
+	cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
 	~cHangarMenu();
 
 	static void infoCheckBoxClicked( void* parent );
@@ -793,7 +802,7 @@ protected:
 	void displaySaves();
 
 public:
-	cLoadMenu( cGameDataContainer *gameDataContainer_ );
+	cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
 	~cLoadMenu();
 
 	static void backReleased( void* parent );

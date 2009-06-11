@@ -262,8 +262,9 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
 
+	TiXmlElement *element;
 	int clan = -1;
-	playerNode->FirstChildElement ("Clan" )->Attribute ( "num", &clan );
+	if ( element = playerNode->FirstChildElement ("Clan" ) ) element->Attribute ( "num", &clan );
 	Player->setClan (clan);
 
 	string resourceMap = playerNode->FirstChildElement( "ResourceMap" )->Attribute ( "data" );

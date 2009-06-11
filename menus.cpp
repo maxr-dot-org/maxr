@@ -416,7 +416,7 @@ eLandingState cGameDataContainer::checkLandingState( int playerNr )
 	return newState;
 }
 
-cMenu::cMenu( SDL_Surface *background_ ) : background (background_)
+cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) : background (background_), backgroundType(backgroundType_)
 {
 	end = false;
 	terminate = false;
@@ -442,13 +442,24 @@ cMenu::~cMenu()
 	if ( background ) SDL_FreeSurface ( background );
 }
 
-void cMenu::draw()
+void cMenu::draw( bool firstDraw )
 {
-	// fill the hole screen with black to prevent old garbage from menus
-	// that don't support resolutions > 640x480
-	SDL_FillRect( buffer, NULL, 0x000000 );
+	switch ( backgroundType )
+	{
+	case MNU_BG_BLACK:
+		// fill the hole screen with black to prevent old garbage from menus
+		// that don't support resolutions > 640x480
+		SDL_FillRect( buffer, NULL, 0x000000 );
+		break;
+	case MNU_BG_ALPHA:
+		if ( SettingsData.bAlphaEffects && firstDraw ) SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+		break;
+	case MNU_BG_TRANSPARENT:
+		// do nothing here
+		break;
+	}
 
-	// draw the manu background
+	// draw the menu background
 	if ( background ) SDL_BlitSurface ( background, NULL, buffer, &position );
 
 	//show mouse
@@ -468,7 +479,7 @@ void cMenu::draw()
 
 int cMenu::show()
 {
-	draw();
+	draw( true );
 
 	cMenu *lastActiveMenu = ActiveMenu;
 	ActiveMenu = this;
@@ -1466,7 +1477,7 @@ void cClanSelectionMenu::updateClanDescription ()
 // cHangarMenu
 //-----------------------------------------------------------------------------------
 
-cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_ ) : cMenu (background_), player(player_)
+cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackgrounds backgroundType_ ) : cMenu (background_, backgroundType_), player(player_)
 {
 	selectionChangedFunc = NULL;
 
@@ -3128,7 +3139,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 	}
 }
 
-cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX ( GFXOD_SAVELOAD ) ), gameDataContainer ( gameDataContainer_ )
+cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ ) : cMenu ( LoadPCX ( GFXOD_SAVELOAD ), backgroundType_ ), gameDataContainer ( gameDataContainer_ )
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+12, lngPack.i18n ("Text~Title~Load") );
 	titleLabel->setCentered( true );
@@ -3321,7 +3332,7 @@ void cLoadMenu::slotClicked( void* parent )
 }
 
 
-cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMenu ( gameDataContainer_ )
+cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMenu ( gameDataContainer_, MNU_BG_ALPHA )
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+12, lngPack.i18n ("Text~Title~Load") );
 	titleLabel->setCentered( true );
@@ -3389,7 +3400,7 @@ void cLoadSaveMenu::extendedSlotClicked( int oldSelection )
 	saveSlots[selected-offset]->getNameEdit()->setReadOnly ( false );
 }
 
-cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ ) : cHangarMenu ( LoadPCX ( GFXOD_BUILD_SCREEN ), player_ )
+cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ ) : cHangarMenu ( LoadPCX ( GFXOD_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
 {
 	if ( !Client ) terminate = true;
 
@@ -3517,7 +3528,7 @@ bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *par
 	return true;
 }
 
-cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_ ), cAdvListHangarMenu ( NULL, player_ )
+cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_, MNU_BG_ALPHA ), cAdvListHangarMenu ( NULL, player_ )
 {
 	if ( !Client ) terminate = true;
 
@@ -3819,7 +3830,7 @@ int cUpgradeHangarMenu::getCredits()
 	return credits;
 }
 
-cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), player )
+cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), player, MNU_BG_ALPHA )
 {
 	credits = player->Credits;
 
@@ -3920,13 +3931,13 @@ void cUpgradeMenu::generateSelectionList()
 }
 
 
-cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ) )
+cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
 	init (unitID);
 }
 
-cUnitHelpMenu::cUnitHelpMenu( sUnitData* unitData, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ) )
+cUnitHelpMenu::cUnitHelpMenu( sUnitData* unitData, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitData, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
 	init (unitData->ID);
@@ -3987,7 +3998,7 @@ void cUnitHelpMenu::doneReleased( void *parent )
 	menu->end = true;
 }
 
-cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building ) : cMenu ( LoadPCX ( GFXOD_STORAGE ) ), storageList(storageList_), ownerVehicle( vehicle ), ownerBuilding(building)
+cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building ) : cMenu ( LoadPCX ( GFXOD_STORAGE ), MNU_BG_ALPHA ), storageList(storageList_), ownerVehicle( vehicle ), ownerBuilding(building)
 {
 	if ( ownerVehicle ) unitData = ownerVehicle->data;
 	else if ( ownerBuilding )
