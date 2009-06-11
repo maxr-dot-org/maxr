@@ -2652,22 +2652,33 @@ void cBuilding::MakeMineBars ( int iTempSBMetalProd, int iTempSBOilProd, int iTe
 	SDL_Rect rDialog = { SettingsData.iScreenW / 2 - DIALOG_W / 2, SettingsData.iScreenH / 2 - DIALOG_H / 2, DIALOG_W, DIALOG_H };
 	string sTmp1 = "";
 	string sTmp2 = " / " + lngPack.i18n ( "Text~Comp~Turn" ) + ")";
+	int iPerTurn; //tmp value to hold resource player gets per turn
+
 	DrawMineBar ( TRANS_METAL, iTempSBMetalProd, MaxM, 0, true, MaxM - iTempSBMetalProd - *FreeM );
 	DrawMineBar ( TRANS_OIL, iTempSBOilProd, MaxO, 0, true, MaxO - iTempSBOilProd - *FreeO );
 	DrawMineBar ( TRANS_GOLD, iTempSBGoldProd, MaxG, 0, true, MaxG - iTempSBGoldProd - *FreeG );
 
 	DrawMineBar ( TRANS_METAL, SubBase->MetalNeed, SubBase->MaxMetalNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->MetalNeed ) + " (" + iToStr ( iTempSBMetalProd - SubBase->MetalNeed );
+	iPerTurn = iTempSBMetalProd - SubBase->MetalNeed;
+	sTmp1 = iToStr ( SubBase->MetalNeed ) + " (";
+	if(iPerTurn >= 0) sTmp1 +="+";
+	sTmp1 += iToStr ( iPerTurn );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 70 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 
 	DrawMineBar ( TRANS_OIL, SubBase->OilNeed, SubBase->MaxOilNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->OilNeed ) + " (" + iToStr ( iTempSBOilProd - SubBase->OilNeed );
+	iPerTurn = iTempSBOilProd - SubBase->OilNeed;
+	sTmp1 = iToStr ( SubBase->OilNeed ) + " (";
+	if(iPerTurn >= 0) sTmp1 +="+";
+	sTmp1 += iToStr ( iPerTurn );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 190 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 
 	DrawMineBar ( TRANS_GOLD, SubBase->GoldNeed, SubBase->MaxGoldNeed, 1, false, 0 );
-	sTmp1 = iToStr ( SubBase->GoldNeed ) + " (" + iToStr ( iTempSBGoldProd - SubBase->GoldNeed );
+	iPerTurn = iTempSBGoldProd - SubBase->GoldNeed;
+	sTmp1 = iToStr ( SubBase->GoldNeed ) + " (";
+	if(iPerTurn >= 0) sTmp1 +="+";
+	sTmp1 += iToStr ( iPerTurn );
 
 	font->showTextCentered ( rDialog.x + 174 + 120, rDialog.y + 310 + 8 + 37, sTmp1 + sTmp2, FONT_LATIN_BIG );
 }
