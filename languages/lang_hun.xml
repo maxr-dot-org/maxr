@@ -5,22 +5,21 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="hun" encoding="iso-8859-15" direction="left-to-right">
+<MAX_Language_File lang="hun" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="klei">
-			<Editor name="klei" time="2007-12-30 16:45:00"/>
-			<Editor name="klei" time="2008-10-25 20:50:00"/>
+			<Editor name="klei" time="2009-06-12 21:31:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Version ENG="version v%s" localized="Verzió V%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönch's M.A.X. (Eredeti az Interplay-től)"/>
-			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake DoctorDeath-től)"/>
-			<Credits_Reloaded ENG="M.A.X.R based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R készült az Interplay M.A.X. című játéka alapján"/>
+			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönch's M.A.X. (Remake DoctorDeath-től)"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. készült az Interplay M.A.X. című játéka alapján"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) még nincs implementálva"/>
 			</Remarks>
@@ -37,6 +36,7 @@
             <Music ENG="Loading music..." localized="Zene betöltése..."/>
             <Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
 			<Voices ENG="Loading voices..." localized="Hangok betöltése..."/>
+			<Clans ENG="Loading clans..." localized="Hangok betöltése..."/>
 		</Init>
 		<Title>
 			<MainMenu ENG="Main Menu" localized="Főmenü"/>
@@ -56,6 +56,7 @@
 			<Computer ENG="Computer" localized="Számítógép"/>
 			<Nobody ENG="Nobody" localized="Senki"/>
 			<Clan ENG="Clan" localized="Klán"/>
+			<Clans ENG="Clans" localized="Klánok"/>
 			<Cargo ENG="Cargo" localized="Rakomány"/>
 			<Choose_Planet ENG="Choose planet" localized="Bolygóválasztás"/>
 			<Options ENG="Options" localized="Beállítások"/>
