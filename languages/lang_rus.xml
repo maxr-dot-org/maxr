@@ -14,11 +14,11 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized=""/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized=""/>
+			<Game_Title ENG="M.A.X. R." localized="M.A.X. R."/>
+			<Game_Subtitle localized="Mechanized Assault and Exploration (TM)"/>
 			<Version ENG="version v%s" localized="версия %s"/>
-			<Credits_MM ENG="Michael M?nch's M.A.X. (Original by Interplay)" localized=""/>
-			<Credits_Doc ENG="Michael M?nch's M.A.X. (Remake by DoctorDeath)" localized=""/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
+			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
 			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded основывается на M.A.X. от Interplay"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) ещё не реализовано"/>
@@ -36,9 +36,10 @@
 			<Music ENG="Loading music..." localized="Загрузка музыки..."/>
 			<Sounds ENG="Loading sounds..." localized="Загрузка звуков..."/>
 			<Voices ENG="Loading voices..." localized="Загрузка голосов..."/>
+			<Clans ENG="Loading clans..." localized="Загрузка кланов..."/>
 		</Init>
 		<Title>
-			<MainMenu localized="Главное меню"/>
+			<MainMenu ENG="Main Menu" localized="Главное меню"/>
 			<Credits ENG="Credits" localized="Деньги"/>
 			<Gold ENG="Gold" localized="Золото"/>
 			<Metal ENG="Materials" localized="Сырьё"/>
@@ -71,6 +72,8 @@
 			<Labs ENG="Research menu" localized="Исследование"/>
 			<Mine ENG="Allocation menu" localized="Распределение ресурсов"/>
 			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
+			<Savegame ENG="Savegame" localized="Сохранение"/>
+			<Players ENG="Players:" localized="Игроки:"/>
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
@@ -232,9 +235,9 @@
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
+			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>"
+			<Player_Left ENG="%s has left" localized="%s покидает игру"/>"
 		</Multiplayer>
-		<Player_Joined ENG="%s подключился"/>
-		<Player_Left ENG="%s отключился"/>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Атака"/>
 			<Shoots ENG="Shoots" localized="Выстр."/>
@@ -270,7 +273,8 @@
 			<Finished ENG="is finished" localized="- готово"/>
 			<Finished2 ENG="are finished" localized="- готовы"/>
 			<Detected ENG="detected" localized="повреждено"/>
-			<Attacked ENG="is under attack" localized=" - атакуется!"/>
+			<Stolen ENG="stolen" localized="захвачено"/>
+			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
 			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
 			<Turn_Start ENG="Start turn" localized="Начался ход"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Подождите пока закончатся все перемещения"/>
@@ -295,7 +299,10 @@
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
 			<Laying ENG="laying mines" localized="устанавливает мины"/>
 			<Greenhorn ENG="Greenhorn" localized="Молокосос"/>
+		        <Average ENG="Average" localized="Среднячок"/>
 			<Veteran ENG="Veteran" localized="Ветеран"/>
+			<Expert ENG="Expert" localized="Эксперт"/>
+			<Elite ENG="Elite" localized="Элита"/>
 			<Description ENG="Description" localized="Описание"/>
 			<Repeat ENG="Again" localized="Ещё раз"/>
 			<Dated ENG="dated" localized="устаревший"/>
@@ -388,9 +395,7 @@
 		<Unit ID="1 34" ENG="Training Hall" localized="Тренировочный зал">Тренировочный зал\n\nОбучает шпионов, которые могут саботировать работу вражеской техники или захватить её, а также пехоту для защиты от шпионов. Тренировочный зал требует колонистов из Жилищ и энергию для работы.</Unit>
 	</Units>
 	<Graphic>
-		<Dummy localized=""/>
 	</Graphic>
 	<Speech>
-		<Dummy localized=""/>
 	</Speech>
 </MAX_Language_File>
