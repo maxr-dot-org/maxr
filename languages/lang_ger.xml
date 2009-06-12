@@ -57,6 +57,7 @@
 			<Computer ENG="Computer" localized="Computer"/>
 			<Nobody ENG="Nobody" localized="Niemand"/>
 			<Clan ENG="Clan" localized="Clan"/>
+			<Clans ENG="Clans" localized="Clans"/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
 			<Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
 			<Options ENG="Options" localized="Optionen"/>
