@@ -4329,6 +4329,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			string sReportMsg = "";
 			string sTmp;
 			int iCount = 0;
+			bool playVoice = false;
 
 			int iReportAnz = message->popInt16();
 			while ( iReportAnz )
@@ -4341,24 +4342,22 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iCount += iAnz;
 				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->name;
 				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
+				if ( !Type.getUnitDataOriginalVersion()->is_base && !Type.getUnitDataOriginalVersion()->is_connector ) playVoice = true;
 				iReportAnz--;
 			}
 
 			bool bFinishedResearch = message->popBool();
 			ActivePlayer->reportResearchFinished = bFinishedResearch;
-			if ( iCount == 0 )
-			{
-				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartNone );
-			}
-			else if ( iCount == 1 )
+			if ( ( iCount == 0  || !playVoice ) && !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartNone );
+			if ( iCount == 1 )
 			{
 				sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished") + ".";
-				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartOne );
+				if ( !bFinishedResearch && playVoice ) PlayVoice ( VoiceData.VOIStartOne );
 			}
-			else
+			else if ( iCount > 1 )
 			{
 				sReportMsg += " " + lngPack.i18n( "Text~Comp~Finished2") + ".";
-				if ( !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartMore );
+				if ( !bFinishedResearch && playVoice ) PlayVoice ( VoiceData.VOIStartMore );
 			}
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
 			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
