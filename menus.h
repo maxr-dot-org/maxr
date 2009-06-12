@@ -120,7 +120,7 @@ struct sSettings
 	eSettingsClans clans;
 	eSettingsGameType gameType;
 
-	sSettings() : metal(SETTING_RESVAL_LOW), oil(SETTING_RESVAL_LOW), gold(SETTING_RESVAL_LOW), resFrequency(SETTING_RESFREQ_THIN), credits(SETTING_CREDITS_LOW),
+	sSettings() : metal(SETTING_RESVAL_NORMAL), oil(SETTING_RESVAL_NORMAL), gold(SETTING_RESVAL_NORMAL), resFrequency(SETTING_RESFREQ_NORMAL), credits(SETTING_CREDITS_NORMAL),
 	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU) {}
 
 	string getResValString ( eSettingResourceValue type );
@@ -385,14 +385,12 @@ protected:
 	cMenuButton *okButton;
 	cMenuButton *backButton;
 
-	cMenuLabel *resourcesLabel;
 	cMenuLabel *metalLabel;
 	cMenuLabel *oilLabel;
 	cMenuLabel *goldLabel;
 	cMenuLabel *creditsLabel;
 	cMenuLabel *bridgeheadLabel;
-	cMenuLabel *otherOptionsLabel;
-	cMenuLabel *alienTechLabel;
+	//cMenuLabel *alienTechLabel;
 	cMenuLabel *clansLabel;
 	cMenuLabel *resFrequencyLabel;
 	cMenuLabel *gameTypeLabel;
@@ -402,7 +400,7 @@ protected:
 	cMenuRadioGroup *goldGroup;
 	cMenuRadioGroup *creditsGroup;
 	cMenuRadioGroup *bridgeheadGroup;
-	cMenuRadioGroup *aliensGroup;
+	//cMenuRadioGroup *aliensGroup;
 	cMenuRadioGroup *clansGroup;
 	cMenuRadioGroup *resFrequencyGroup;
 	cMenuRadioGroup *gameTypeGroup;

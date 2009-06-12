@@ -843,8 +843,12 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 {
 	if ( gameDataContainer->settings ) settings = (*gameDataContainer->settings);
 
+	int iCurrentLine = 57;
+	int iLineHeight = 16; //pixels after we start a new line
+	//black window screen on gfx is 510 width. calculation for most option fields starts at px 240x. and is 347 width. 
+
 	// Titel
-	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~Game_Options") );
+	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+13, lngPack.i18n ("Text~Button~Game_Options") );
 	titleLabel->setCentered( true );
 	menuItems.Add ( titleLabel );
 
@@ -858,103 +862,110 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	backButton->setReleasedFunction ( &backReleased );
 	menuItems.Add ( backButton );
 
-	// Resources field
-	resourcesLabel = new cMenuLabel ( position.x+110, position.y+56, lngPack.i18n ("Text~Title~Resource") );
-	resourcesLabel->setCentered ( true );
-	menuItems.Add ( resourcesLabel );
 
-	metalLabel = new cMenuLabel ( position.x+17, position.y+86, lngPack.i18n ("Text~Title~Metal") );
+	// Resources field
+	metalLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Metal") +":" );
 	menuItems.Add ( metalLabel );
 	metalGroup = new cMenuRadioGroup();
-	metalGroup->addButton ( new cMenuCheckButton ( position.x+38, position.y+86+16, lngPack.i18n( "Text~Option~Low"), settings.metal == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	metalGroup->addButton ( new cMenuCheckButton ( position.x+38+45, position.y+86+16, lngPack.i18n( "Text~Option~Normal"), settings.metal == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	metalGroup->addButton ( new cMenuCheckButton ( position.x+38+45*2, position.y+86+16, lngPack.i18n( "Text~Option~Much"), settings.metal == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	metalGroup->addButton ( new cMenuCheckButton ( position.x+38+45*3, position.y+86+16, lngPack.i18n( "Text~Option~Most"), settings.metal == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	metalGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Low"), settings.metal == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	metalGroup->addButton ( new cMenuCheckButton ( position.x+240+86, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Normal"), settings.metal == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	metalGroup->addButton ( new cMenuCheckButton ( position.x+240+86*2, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Much"), settings.metal == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	metalGroup->addButton ( new cMenuCheckButton ( position.x+240+86*3, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most"), settings.metal == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( metalGroup );
+	iCurrentLine += iLineHeight;
 
-	oilLabel = new cMenuLabel ( position.x+17, position.y+124, lngPack.i18n ("Text~Title~Oil") );
+	oilLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Oil") +":" );
 	menuItems.Add ( oilLabel );
 	oilGroup = new cMenuRadioGroup();
-	oilGroup->addButton ( new cMenuCheckButton ( position.x+38, position.y+124+16, lngPack.i18n( "Text~Option~Low"), settings.oil == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	oilGroup->addButton ( new cMenuCheckButton ( position.x+38+45, position.y+124+16, lngPack.i18n( "Text~Option~Normal"), settings.oil == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	oilGroup->addButton ( new cMenuCheckButton ( position.x+38+45*2, position.y+124+16, lngPack.i18n( "Text~Option~Much"), settings.oil == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	oilGroup->addButton ( new cMenuCheckButton ( position.x+38+45*3, position.y+124+16, lngPack.i18n( "Text~Option~Most"), settings.oil == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	oilGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Low"), settings.oil == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	oilGroup->addButton ( new cMenuCheckButton ( position.x+240+86, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Normal"), settings.oil == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	oilGroup->addButton ( new cMenuCheckButton ( position.x+240+86*2, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Much"), settings.oil == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	oilGroup->addButton ( new cMenuCheckButton ( position.x+240+86*3, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most"), settings.oil == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( oilGroup );
+	iCurrentLine += iLineHeight;
 
-	goldLabel = new cMenuLabel ( position.x+17, position.y+162, lngPack.i18n ("Text~Title~Gold") );
+	goldLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Gold") +":" );
 	menuItems.Add ( goldLabel );
 	goldGroup = new cMenuRadioGroup();
-	goldGroup->addButton ( new cMenuCheckButton ( position.x+38, position.y+162+16, lngPack.i18n( "Text~Option~Low"), settings.gold == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	goldGroup->addButton ( new cMenuCheckButton ( position.x+38+45, position.y+162+16, lngPack.i18n( "Text~Option~Normal"), settings.gold == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	goldGroup->addButton ( new cMenuCheckButton ( position.x+38+45*2, position.y+162+16, lngPack.i18n( "Text~Option~Much"), settings.gold == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	goldGroup->addButton ( new cMenuCheckButton ( position.x+38+45*3, position.y+162+16, lngPack.i18n( "Text~Option~Most"), settings.gold == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	goldGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Low"), settings.gold == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	goldGroup->addButton ( new cMenuCheckButton ( position.x+240+86, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Normal"), settings.gold == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	goldGroup->addButton ( new cMenuCheckButton ( position.x+240+86*2, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Much"), settings.gold == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	goldGroup->addButton ( new cMenuCheckButton ( position.x+240+86*3, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most"), settings.gold == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( goldGroup );
+	iCurrentLine += iLineHeight;
 
-	// Credits field
-	creditsLabel = new cMenuLabel ( position.x+110+211, position.y+56, lngPack.i18n ("Text~Title~Credits") );
-	creditsLabel->setCentered ( true );
-	menuItems.Add ( creditsLabel );
-
-	creditsGroup = new cMenuRadioGroup();
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86, lngPack.i18n( "Text~Option~Lowest"), settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20, lngPack.i18n( "Text~Option~Lower"), settings.credits == SETTING_CREDITS_LOWER, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20*2, lngPack.i18n( "Text~Option~Low"), settings.credits == SETTING_CREDITS_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20*3, lngPack.i18n( "Text~Option~Normal"), settings.credits == SETTING_CREDITS_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20*4, lngPack.i18n( "Text~Option~Much"), settings.credits == SETTING_CREDITS_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20*5, lngPack.i18n( "Text~Option~More"), settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+110+211, position.y+86+20*6, lngPack.i18n( "Text~Option~Most"), settings.credits == SETTING_CREDITS_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.Add ( creditsGroup );
-
-	// Bridgehead field
-	bridgeheadLabel = new cMenuLabel ( position.x+110+211*2, position.y+56, lngPack.i18n ("Text~Title~BridgeHead") );
-	bridgeheadLabel->setCentered ( true );
-	menuItems.Add ( bridgeheadLabel );
-
-	bridgeheadGroup = new cMenuRadioGroup();
-	bridgeheadGroup->addButton ( new cMenuCheckButton ( position.x+110+211*2, position.y+86, lngPack.i18n( "Text~Option~Mobile"), settings.bridgeHead == SETTING_BRIDGEHEAD_MOBILE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	bridgeheadGroup->addButton ( new cMenuCheckButton ( position.x+110+211*2, position.y+86+20, lngPack.i18n( "Text~Option~Definite"), settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.Add ( bridgeheadGroup );
-
-	// Other options (AlienTechs and Clans):
-	otherOptionsLabel = new cMenuLabel ( position.x+110, position.y+251, "Other Options"); // TODO: translate
-	otherOptionsLabel->setCentered ( true );
-	menuItems.Add ( otherOptionsLabel );
-	
-	alienTechLabel = new cMenuLabel ( position.x+17, position.y+284, lngPack.i18n ("Text~Title~Alien_Tech") );
-	menuItems.Add ( alienTechLabel );
-	aliensGroup = new cMenuRadioGroup();
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+30, position.y+300, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+75, position.y+300, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.Add ( aliensGroup );
-	
-	clansLabel = new cMenuLabel ( position.x+17, position.y+322, "Clans" ); // TODO: translate
-	menuItems.Add (clansLabel );
-	clansGroup = new cMenuRadioGroup();
-	clansGroup->addButton ( new cMenuCheckButton ( position.x+30, position.y+338, lngPack.i18n( "Text~Option~On"), settings.clans == SETTING_CLANS_ON, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	clansGroup->addButton ( new cMenuCheckButton ( position.x+75, position.y+338, lngPack.i18n( "Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, false, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.Add ( clansGroup );
-	
 	// Resource frequency field
-	resFrequencyLabel = new cMenuLabel ( position.x+110+210, position.y+251, lngPack.i18n ("Text~Title~Resource_Density") );
-	resFrequencyLabel->setCentered ( true );
+	resFrequencyLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Resource_Density") +":" );
 	menuItems.Add ( resFrequencyLabel );
 
 	resFrequencyGroup = new cMenuRadioGroup();
-	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+110+210, position.y+281, lngPack.i18n( "Text~Option~Thin"), settings.resFrequency == SETTING_RESFREQ_THIN, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+110+210, position.y+281+20, lngPack.i18n( "Text~Option~Normal"), settings.resFrequency == SETTING_RESFREQ_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+110+210, position.y+281+20*2, lngPack.i18n( "Text~Option~Thick"), settings.resFrequency == SETTING_RESFREQ_THICK, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+110+210, position.y+281+20*3, lngPack.i18n( "Text~Option~Most"), settings.resFrequency == SETTING_RESFREQ_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Thin"), settings.resFrequency == SETTING_RESFREQ_THIN, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+240+86, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Normal"), settings.resFrequency == SETTING_RESFREQ_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+240+86*2, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Thick"), settings.resFrequency == SETTING_RESFREQ_THICK, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	resFrequencyGroup->addButton ( new cMenuCheckButton ( position.x+240+86*3, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most"), settings.resFrequency == SETTING_RESFREQ_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( resFrequencyGroup );
+	iCurrentLine += iLineHeight*3;
+
+	// Bridgehead field
+	bridgeheadLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~BridgeHead") +":" );
+	menuItems.Add ( bridgeheadLabel );
+
+	bridgeheadGroup = new cMenuRadioGroup();
+	bridgeheadGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Mobile"), settings.bridgeHead == SETTING_BRIDGEHEAD_MOBILE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	bridgeheadGroup->addButton ( new cMenuCheckButton ( position.x+240+173, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Definite"), settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	menuItems.Add ( bridgeheadGroup );
+	iCurrentLine += iLineHeight;
 
 	// Game type field
-	gameTypeLabel = new cMenuLabel ( position.x+110+210*2, position.y+251, lngPack.i18n ("Text~Title~Game_Type") );
-	gameTypeLabel->setCentered ( true );
+	gameTypeLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Game_Type") +":" );
 	menuItems.Add ( gameTypeLabel );
 
 	gameTypeGroup = new cMenuRadioGroup();
-	gameTypeGroup->addButton ( new cMenuCheckButton ( position.x+110+210*2, position.y+281, lngPack.i18n( "Text~Option~Type_Simu"), settings.gameType == SETTINGS_GAMETYPE_SIMU, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	gameTypeGroup->addButton ( new cMenuCheckButton ( position.x+110+210*2, position.y+281+20, lngPack.i18n( "Text~Option~Type_Turns"), settings.gameType == SETTINGS_GAMETYPE_TURNS, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	gameTypeGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Type_Turns"), settings.gameType == SETTINGS_GAMETYPE_TURNS, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	gameTypeGroup->addButton ( new cMenuCheckButton ( position.x+240+173, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Type_Simu"), settings.gameType == SETTINGS_GAMETYPE_SIMU, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( gameTypeGroup );
+	iCurrentLine += iLineHeight*3;
+
+	// Other options (AlienTechs and Clans):
+	/** //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
+	alienTechLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") +":" );
+	menuItems.Add ( alienTechLabel );
+	aliensGroup = new cMenuRadioGroup();
+	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	menuItems.Add ( aliensGroup );
+	iCurrentLine += iLineHeight;
+	*/
+
+	clansLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n( "Text~Title~Clans") +":" );
+	menuItems.Add (clansLabel );
+	clansGroup = new cMenuRadioGroup();
+	clansGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~On"), settings.clans == SETTING_CLANS_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	clansGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	menuItems.Add ( clansGroup );
+	iCurrentLine += iLineHeight*3;
+
+	// Credits field - this is where the money goes
+	creditsLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Credits") +":" );
+	menuItems.Add ( creditsLabel );
+	iCurrentLine += iLineHeight;
+	creditsGroup = new cMenuRadioGroup();
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Lowest") + " ("+iToStr(SETTING_CREDITS_LOWEST)+")", settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Lower") + " ("+iToStr(SETTING_CREDITS_LOWER)+")", settings.credits == SETTING_CREDITS_LOWER, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Low") + " ("+iToStr(SETTING_CREDITS_LOW)+")", settings.credits == SETTING_CREDITS_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Normal") + " ("+iToStr(SETTING_CREDITS_NORMAL)+")", settings.credits == SETTING_CREDITS_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Much") + " ("+iToStr(SETTING_CREDITS_MUCH)+")", settings.credits == SETTING_CREDITS_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~More") + " ("+iToStr(SETTING_CREDITS_MORE)+")", settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	iCurrentLine += iLineHeight;
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most") + " ("+iToStr(SETTING_CREDITS_MOST)+")", settings.credits == SETTING_CREDITS_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	menuItems.Add ( creditsGroup );
+	iCurrentLine += iLineHeight;
+
 }
 
 cSettingsMenu::~cSettingsMenu()
@@ -963,14 +974,12 @@ cSettingsMenu::~cSettingsMenu()
 	delete okButton;
 	delete backButton;
 
-	delete resourcesLabel;
 	delete metalLabel;
 	delete oilLabel;
 	delete goldLabel;
 	delete creditsLabel;
 	delete bridgeheadLabel;
-	delete otherOptionsLabel;
-	delete alienTechLabel;
+	//delete alienTechLabel;
 	delete clansLabel;
 	delete resFrequencyLabel;
 	delete gameTypeLabel;
@@ -980,7 +989,7 @@ cSettingsMenu::~cSettingsMenu()
 	delete goldGroup;
 	delete creditsGroup;
 	delete bridgeheadGroup;
-	delete aliensGroup;
+	//delete aliensGroup;
 	delete clansGroup;
 	delete resFrequencyGroup;
 	delete gameTypeGroup;
@@ -1053,8 +1062,11 @@ void cSettingsMenu::updateSettings()
 	if ( bridgeheadGroup->buttonIsChecked ( 0 ) ) settings.bridgeHead = SETTING_BRIDGEHEAD_MOBILE;
 	else settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
 
+	/** //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
 	if ( aliensGroup->buttonIsChecked ( 0 ) ) settings.alienTech = SETTING_ALIENTECH_ON;
 	else settings.alienTech = SETTING_ALIENTECH_OFF;
+	*/
+	settings.alienTech = SETTING_ALIENTECH_OFF;
 
 	if ( clansGroup->buttonIsChecked ( 0 ) ) settings.clans = SETTING_CLANS_ON;
 	else settings.clans = SETTING_CLANS_OFF;
@@ -4361,3 +4373,4 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 	
 	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
 }
+
