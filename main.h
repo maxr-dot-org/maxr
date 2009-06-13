@@ -352,7 +352,7 @@ struct sUnitData{
   int version; // Version des Vehicles
 
   //FIXME: this cries for seg fault! -- beko
-  char name[25];
+  //char name[25];
   // Grunddaten:
   int max_speed;
   int speed;

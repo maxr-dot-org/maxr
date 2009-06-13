@@ -795,7 +795,7 @@ void cVehicle::GenerateName ()
 		name += rome;
 		name += " ";
 		// object name
-		name += ( string ) data.name;
+		name += ( string ) data.szName;
 	}
 	else
 	{
@@ -1535,7 +1535,7 @@ string cVehicle::getStatusStr ()
 				string sText;
 				sText = lngPack.i18n ( "Text~Comp~Producing" );
 				sText += ": ";
-				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
+				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->szName + " (";
 				sText += iToStr ( BuildRounds );
 				sText += ")";
 
@@ -1543,7 +1543,7 @@ string cVehicle::getStatusStr ()
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" );
 					sText += ":\n";
-					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
+					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->szName + " (";
 					sText += iToStr ( BuildRounds );
 					sText += ")";
 				}

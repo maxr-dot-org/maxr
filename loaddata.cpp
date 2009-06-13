@@ -3309,7 +3309,6 @@ void ConvertData(int unitnum, bool vehicle)
 		UnitsData.building[unitnum].text = new char [strlen(Data->szDescribtion)+1];
 		strcpy(UnitsData.building[unitnum].text,Data->szDescribtion);
 	}
-	strcpy(Data->name, Data->szName);
 	Data->version = Data->iVersion;
 	Data->max_speed = Data->iMovement_Max;
 	Data->speed = Data->iMovement_Sum;

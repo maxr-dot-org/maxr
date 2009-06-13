@@ -894,7 +894,7 @@ void cMenuUnitListItem::draw()
 int cMenuUnitListItem::drawName( bool withNumber )
 {
 	SDL_Rect dest = { position.x+32+4, position.y+12, position.w-(32+4)-12, 0 };
-	string name = ((string)unitID.getUnitDataCurrentVersion(owner)->name);
+	string name = ((string)unitID.getUnitDataCurrentVersion(owner)->szName);
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
 	if ( withNumber )

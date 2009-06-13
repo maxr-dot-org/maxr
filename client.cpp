@@ -4340,8 +4340,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int iAnz = message->popInt16();
 				if ( iCount ) sReportMsg += ", ";
 				iCount += iAnz;
-				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->name;
-				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
+				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->szName;
+				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->szName;
 				if ( !Type.getUnitDataOriginalVersion()->is_base && !Type.getUnitDataOriginalVersion()->is_connector ) playVoice = true;
 				iReportAnz--;
 			}
@@ -5540,7 +5540,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		for (unsigned int i = 0; i < Building->BuildList->Size(); i++)
 		{
 			BuildingList = (*Building->BuildList)[i];
-			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", FONT_LATIN_SMALL_WHITE);
+			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.szName+"\"", FONT_LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
 	}
@@ -5684,13 +5684,13 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	SDL_FreeSurface ( img );
 
 	// show texts:
-	if ( SrcBuilding ) font->showTextCentered ( 102 + 166, 64 + 159, SrcBuilding->typ->data.name );
-	else font->showTextCentered ( 102 + 166, 64 + 159, SrcVehicle->typ->data.name );
+	if ( SrcBuilding ) font->showTextCentered ( 102 + 166, 64 + 159, SrcBuilding->typ->data.szName );
+	else font->showTextCentered ( 102 + 166, 64 + 159, SrcVehicle->typ->data.szName );
 
 
 	if ( DestBuilding )
 	{
-		font->showTextCentered ( 208 + 166, 64 + 159, DestBuilding->typ->data.name );
+		font->showTextCentered ( 208 + 166, 64 + 159, DestBuilding->typ->data.szName );
 
 		if ( SrcVehicle )
 		{
@@ -5728,7 +5728,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	}
 	else
 	{
-		font->showTextCentered ( 208 + 166, 64 + 159, DestVehicle->typ->data.name );
+		font->showTextCentered ( 208 + 166, 64 + 159, DestVehicle->typ->data.szName );
 
 		iMaxDestCargo = DestVehicle->data.max_cargo;
 		iDestCargo = DestVehicle->data.cargo;

@@ -54,7 +54,7 @@ string cClanUnitStat::getClanStatsDescription () const
 	string result = "Unknown";
 	if (data)
 	{
-		result = string (data->name) + ": ";
+		result = string (data->szName) + ": ";
 		
 		bool first = true;
 		if (hasModification ("Damage")) 
