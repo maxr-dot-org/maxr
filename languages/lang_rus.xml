@@ -56,6 +56,7 @@
 			<Computer ENG="Computer" localized="Компьютер"/>
 			<Nobody ENG="Nobody" localized="Никто"/>
 			<Clan ENG="Clan" localized="Клан"/>
+			<Clans ENG="Clans" localized="Кланы"/>
 			<Cargo ENG="Cargo" localized="Груз"/>
 			<Choose_Planet ENG="Planetchoosing" localized="Выбор карты"/>
 			<Options ENG="Options" localized="Опции"/>
@@ -217,6 +218,7 @@
 			<Network_Connected ENG="Connected" localized="Соединено"/>
 			<Network_Connected_Not ENG="Not connected" localized="Не соединино"/>
 			<Network_Closed ENG="Connection closed" localized="Соединение закрыто"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Идёт синхронизация..."/>
 			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
 			<Option_NoSet ENG="--no options set--" localized="--не выбраны опции--"/>
 			<Go ENG="Let's go" localized="Поехали"/>
