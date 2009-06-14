@@ -272,8 +272,12 @@
 			<Energy_Insufficient ENG="Cannot turn on, power needed"/>
 			<Energy_ToLow ENG="More power needed, generator turned on."/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed."/>
+			<Metal_Insufficient ENG="Cannot start, metal needed."/>
+			<Gold_Insufficient ENG="Cannot start, gold needed."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed."/>
-			<Adjustments_Made ENG="Adjustments made: fuel mining increased by "/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by "/>
 			<Cheat ENG="used cheat"/>
 			<Destroyed ENG="destroyed"/>
 			<Defeated ENG="defeated"/>

@@ -268,8 +268,13 @@
 			<Energy_Insufficient localized="Nicht genug Energie zum Einschalten vorhanden!"/>
 			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
 			<Fuel_Insufficient localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
+			<Metal_Insufficient localized="Nicht genug Metall zum Einschalten vorhanden!"/>
+			<Gold_Insufficient localized="Nicht genug Gold zum Einschalten vorhanden!"/>
 			<Energy_IsNeeded localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
 			<Adjustments_Made localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
+			<Adjustments_Fuel_Increased localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
+			<Adjustments_Metal_Decreased localized="Änderungen vorgenommen: Metallproduktion verringert um "/>
+			<Adjustments_Gold_Decreased localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Destroyed ENG="destroyed" localized="zerstört"/>
 			<Defeated ENG="defeated" localized="besiegt"/>
