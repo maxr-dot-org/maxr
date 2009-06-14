@@ -2522,6 +2522,8 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 			iTurboBuildRounds[2]--;
 			iTurboBuildCosts[2] += 8;
 
+			if ( (iTurboBuildRounds[2]-1)*2 < iTurboBuildRounds[1] )
+				break;
 			if ( iTurboBuildCosts[2] + 8 > iBuild_Costs_Max )
 				break;
 		}
