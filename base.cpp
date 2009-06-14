@@ -312,6 +312,104 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 	return maxAllowedProd;
 }
 
+bool sSubBase::increaseEnergyProd( int i )
+{
+	
+	cList<cBuilding*> onlineStations;
+	cList<cBuilding*> onlineGenerators;
+	cList<cBuilding*> offlineStations;
+	cList<cBuilding*> offlineGenerators;
+	int availableStations = 0;
+	int availableGenerators = 0;
+
+	//generate lists with energy producers
+	for ( unsigned int n = 0; n < buildings.Size(); n++ )
+	{
+		cBuilding* b = buildings[n];
+
+		if ( !b->data.energy_prod ) continue;
+
+		if ( b->data.energy_prod == 1 )
+		{
+			availableGenerators++;
+
+			if ( b->IsWorking )
+				onlineGenerators.Add( b );
+			else
+				offlineGenerators.Add( b );
+		}
+		else
+		{
+			availableStations++;
+
+			if ( b->IsWorking )
+				onlineStations.Add( b );
+			else
+				offlineStations.Add( b );
+		}
+
+	}
+
+	//calc the optimum amount of energy stations and generators
+	//TODO: the energy producion and fuel consumption of generators and stations are hardcoded here.
+	int energy = EnergyProd + i;
+
+	int stations   = min( (energy + 3) / 6, availableStations );
+	int generators = max(  energy - stations * 6, 0 );
+
+	if ( generators > availableGenerators )
+	{
+		stations++;
+		generators = 0;
+	}
+	
+	if ( stations > availableStations )
+	{
+		return false;	//not enough free energy production capacity
+	}
+
+	//check available fuel
+	int neededFuel = stations * 6 + generators * 2;
+	if ( neededFuel > Oil + getMaxOilProd() ) 
+	{
+		sendChatMessageToClient("Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, buildings[0]->owner->Nr );
+		return false;  //not possible to produce enough fuel
+	}
+
+	//increase oil production if nessesary
+	if ( neededFuel > Oil + OilProd )
+	{
+		//reduce metal production
+		//TODO: should  this be done by startWork() ???
+	}
+
+	//stop unneeded buildings
+	for ( int i = onlineStations.Size() - stations; i > 0; i-- )
+	{
+		onlineStations[0]->ServerStopWork(true);
+		onlineStations.Delete(0);
+	}
+	for ( int i = onlineGenerators.Size() - generators; i > 0; i-- )
+	{
+		onlineGenerators[0]->ServerStopWork(true);
+		onlineGenerators.Delete(0);
+	}
+
+	//start needed buildings
+	for ( int i = stations - onlineStations.Size(); i > 0; i-- )
+	{
+		offlineStations[0]->ServerStartWork();
+		offlineStations.Delete(0);
+	}
+	for ( int i = generators - onlineGenerators.Size(); i > 0; i-- )
+	{
+		offlineGenerators[0]->ServerStartWork();
+		offlineGenerators.Delete(0);
+	}
+
+	return true;
+}
+
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase ( cPlayer *Owner )
 {

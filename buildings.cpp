@@ -1117,13 +1117,13 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 //--------------------------------------------------------------------------
 void cBuilding::ServerStartWork ()
 {
-	cBuilding *b;
-
 	if ( IsWorking )
 	{
 		sendDoStartWork(this);
 		return;
 	}
+
+	//-- first check all requirements
 
 	if ( Disabled )
 	{
@@ -1132,251 +1132,67 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// needs human workers:
-	if ( data.human_need )
+	if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
 	{
-		if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
-		{
-			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
-			return;
-		}
-		SubBase->HumanNeed += data.human_need;
+		sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
+		return;
 	}
 
-	// Energiegeneratoren / Energy generators:
-	if ( data.energy_prod )
+	// needs gold:
+	if ( data.gold_need + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
+	{
+		sendChatMessageToClient( "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+		return;
+	}
+
+	// needs raw material:
+	if ( data.metal_need )
+	{
+		if ( SubBase->MetalNeed + min(MetalPerRound, (*BuildList)[0]->metall_remaining) > SubBase->MetalProd + SubBase->Metal )
+		{
+			sendChatMessageToClient( "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+			return;
+		}
+	}
+
+	// needs oil:
+	if ( data.oil_need )
 	{
 		// check if there is enough Oil for the generators (current prodiction + reserves)
-		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->OilProd )
+		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->getMaxOilProd() )
 		{
-//TODO: rewrite this
-#if 0
-			int MaxSubBaseOilProd = 0; // maximal possible Oil Production in the current SubBase
-			// not enough Oil, so check if Oil production in current SubBase can be adjusted or not
-			for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-			{
-				// search for active mines in the SubBase
-				if ( !SubBase->buildings[i]->data.is_mine || !SubBase->buildings[i]->IsWorking )
-					continue;
-
-				// store SubBase Oil production information
-				MaxSubBaseOilProd += SubBase->buildings[i]->MaxOilProd;
-			}
-			// will adjusted Oil production help?
-			if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + MaxSubBaseOilProd )
-			{
-				// not enough Oil even with adjustments - so give up
-				if(Client)if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
-				{
-					sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
-				}
-				return;
-			}
-			else
-			{
-				// with adjustments, there will be enough Oil to burn - so make adjustments
-
-				int FreeProdPower = 0; // local var - unexploited mining power
-				int FreeOilProdPower = 0; // local var - unexploited Oil mining power
-				int NeededOilAdj = 0; // local var - needed adjustments to Oil production
-				int OrigNeededOilAdj = 0; // local temp variable to hold original NeededOilAdj variable's contents
-
-				OrigNeededOilAdj = NeededOilAdj = data.oil_need + SubBase->OilNeed - SubBase->Oil - SubBase->OilProd;
-				// try to exploit currently unexploited mining power first
-				for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-				{
-					// if made the needed adjustments, exit from the loop cycle
-					if ( NeededOilAdj == 0 )
-						break;
-
-					b = SubBase->buildings[i];
-					// search for active mines in the SubBase
-					if ( !b->data.is_mine || !b->IsWorking )
-						continue;
-
-					// is there unexploited mining power? (max is 16 per mine)
-					FreeProdPower = 16 - b->OilProd - b->MetalProd -b->GoldProd;
-					// possible to increase Oil mining in the current mine?
-					FreeOilProdPower = b->MaxOilProd - b->OilProd;
-					// do checks and make adjustments
-					while ( FreeProdPower > 0 && FreeOilProdPower > 0 && NeededOilAdj > 0 )
-					{
-						FreeProdPower--;
-						FreeOilProdPower--;
-						NeededOilAdj--;
-						b->OilProd++;
-						SubBase->OilProd++;
-					}
-				}
-				// need to make more adjustments? By trying to reduce RAW material production (decrease Metal production first as Gold is more valuable)
-				if ( NeededOilAdj > 0 )
-				{
-					// try to reduce RAW material production
-					for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-					{
-						// if made the needed adjustments, exit from the loop cycle
-						if ( NeededOilAdj == 0 )
-							break;
-
-						b = SubBase->buildings[i];
-						// search for active mines in the SubBase
-						if ( !b->data.is_mine || !b->IsWorking )
-							continue;
-
-						// possible to increase Oil mining in the current mine?
-						FreeOilProdPower = b->MaxOilProd - b->OilProd;
-
-						// do checks and make adjustments
-						while ( FreeOilProdPower > 0 && b->MetalProd > 0 && NeededOilAdj > 0 )
-						{
-							b->MetalProd--; // decrease Metal Production
-							SubBase->MetalProd--;
-							FreeOilProdPower--; // decrease Free Oil production power counter
-							NeededOilAdj--; // decrease needed Adjustments to Oil production in SubBase counter
-							b->OilProd++; // increase Oil production
-							SubBase->OilProd++;
-						}
-					}
-				}
-				// need to make further adjustments? By decreasing even the Gold production?
-/*
-				if ( NeededOilAdj > 0 )
-				{
-					// Who cares... this is relatively imossible to occure - TODO
-				}
-*/
-				// need to make even further adjustments??? - then it's time to give up
-				if ( NeededOilAdj > 0 )
-				{
-					// and send warning message to Client only if actual adjustments has been made
-					if ( OrigNeededOilAdj - NeededOilAdj != 0 ) 
-					{
-						sendChatMessageToClient ( "Text~Comp~Adjustments_Made", SERVER_ERROR_MESSAGE, owner->Nr );
-					}
-					else
-					{
-						sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
-					}
-					return;
-				}
-				else
-				{
-					// adjustments successed so send warning message to Client about Adjustments and change EnergyProd and oilNeed info
-					sendChatMessageToClient ( "Text~Comp~Adjustments_Made", SERVER_ERROR_MESSAGE, owner->Nr );
-
-					SubBase->EnergyProd += data.energy_prod;
-					SubBase->OilNeed += data.oil_need;
-				}
-				
-			}
-#endif
-			//SubBase->EnergyProd += data.energy_prod;
-			//SubBase->OilNeed += data.oil_need;
 			sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
-		else
+		else if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->getOilProd() )
 		{
-			SubBase->EnergyProd += data.energy_prod;
-			SubBase->OilNeed += data.oil_need;
+			//increase oil production
+			int missingOil = data.oil_need + SubBase->OilNeed - (SubBase->Oil + SubBase->getOilProd());
+
+			int metal = SubBase->getMetalProd();
+			int gold = SubBase->getGoldProd();
+
+			SubBase->setMetalProd(0);	//temporay decrease metal and gold production
+			SubBase->setGoldProd(0);
+
+			SubBase->changeOilProd( missingOil );
+
+			SubBase->setGoldProd( gold );		
+			SubBase->setMetalProd( metal );
+
+			sendChatMessageToClient ( "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->Nr, iToStr(missingOil) );
+			if ( SubBase->getMetalProd() < metal )
+				sendChatMessageToClient ( "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr(metal - SubBase->getMetalProd()) );
+			if ( SubBase->getGoldProd() < gold )
+				sendChatMessageToClient ( "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr(gold - SubBase->getGoldProd()) );
 		}
 	}
 
-	// Energieverbraucher / Energy consumers:
-	else
-		if ( data.energy_need )
-		{
-			if ( data.energy_need + SubBase->EnergyNeed > SubBase->MaxEnergyProd )
-			{	
-				sendChatMessageToClient ( "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
-				return;
-			}
-			else
-			{
-				if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
-				{
-					if(Client)if(Client->iTurn != 1) //HACK to prevent warning from being shown after auto start of factory in first turn
-					{
-						sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
-					}
-					/*
-					 * Workaround for powering up Mining stations when there's not enough power and Oil.
-					 *	Check unpowered generators, and Oil production limits in current mine.
-					 *	If the circumstances are acceptable, then lie to the offline power generator
-					 *	before calling ServerStartWork() and correct our lies after it powered up.
-					 */
-
-					for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-					{
-						b = SubBase->buildings[i];
-						// in first round, only search for turned off small generators
-						if ( !b->data.energy_prod || b->data.is_big || b->IsWorking )
-							continue;
-
-						// try to start an offline small generator if found
-						b->ServerStartWork();
-
-						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
-							break;
-
-						/* Code execution reached this point, so there IS an offline power generator,
-						 * but it could not be started, possibly due to lack of Oil. Now it's time to
-						 * check if we are trying to start an offline mine or something else.
-						 */
-
-						// check if this is an offline mine that has enough Oil production power to start a new small generator or not
-						if ( this->data.is_mine && !this->IsWorking && (this->MaxOilProd >= 2) )
-						{
-							// let's fake the SubBase booking about current Oil production while we starting the new small generator
-							SubBase->OilProd += 2; // we want to start a small generator, that needs 2 barrels of Oil
-							// now try to start the offline small generator we found earlier
-							b->ServerStartWork();
-							// correct the SubBase booking
-							SubBase->OilProd -= 2;
-							// break the loop cycle if we successed this time
-							if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
-								break;
-						}
-					}
-
-					for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-					{
-						if ( data.energy_need + SubBase->EnergyNeed <= SubBase->EnergyProd )
-							break;
-
-						b = SubBase->buildings[i];
-						// search for turned off generators
-						if ( !b->data.energy_prod || b->IsWorking )
-							continue;
-
-						b->ServerStartWork();
-					}
-					// something went wrong
-					if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
-					{
-						sendChatMessageToClient("Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr);
-						return;
-					}
-
-					SubBase->EnergyNeed += data.energy_need;
-				}
-				else
-				{
-					SubBase->EnergyNeed += data.energy_need;
-				}
-			}
-		}
-
-	// raw material conumer:
-	if ( data.metal_need )
-		SubBase->MetalNeed += min(MetalPerRound, (*BuildList)[0]->metall_remaining);
-
-	// gold consumer:
-	if ( data.gold_need )
-		SubBase->GoldNeed += data.gold_need;
-
+	// IsWorking is set to true before checking the energy production. So if an energy generator has to be started,
+	// it can use the fuel production of this building (when this building is a mine).
 	IsWorking = true;
 
-	// Minen:
+	//set mine values. This has to be undone, if the energy is insufficient
 	if ( data.is_mine )
 	{
 		int mineFree = MAX_MINE_PROD;
@@ -1384,11 +1200,61 @@ void cBuilding::ServerStartWork ()
 		SubBase->changeMetalProd( MaxMetalProd );
 		mineFree -= MaxMetalProd;
 
-		SubBase->changeGoldProd( min ( MaxGoldProd, mineFree));
-		mineFree -= min ( MaxGoldProd, mineFree);
+		SubBase->changeGoldProd( min(MaxGoldProd, mineFree) );
+		mineFree-= min ( MaxGoldProd, mineFree );
 
-		SubBase->changeOilProd( min ( MaxOilProd, mineFree ));
+		SubBase->changeOilProd( min( MaxOilProd, mineFree) );
 	}
+
+	// Energy consumers:
+	if ( data.energy_need )
+	{
+		if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
+		{
+			//try to increase energy production
+			if ( !SubBase->increaseEnergyProd( data.energy_need + SubBase->EnergyNeed - SubBase->EnergyProd ) )
+			{
+				IsWorking = false;
+
+				//reset mine values
+				if ( data.is_mine )
+				{
+					int metal = SubBase->getMetalProd();
+					int oil =  SubBase->getOilProd();
+					int gold = SubBase->getGoldProd();
+
+					SubBase->setMetalProd(0);
+					SubBase->setOilProd(0);
+					SubBase->setGoldProd(0);
+
+					SubBase->setMetalProd( min(metal, SubBase->getMaxAllowedMetalProd()) );
+					SubBase->setGoldProd( min(gold, SubBase->getMaxAllowedGoldProd()) );
+					SubBase->setOilProd( min(oil, SubBase->getMaxAllowedOilProd()) );
+				}
+
+				sendChatMessageToClient ( "Text~Comp~Energy_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+				return;
+			}
+			sendChatMessageToClient ( "Text~Comp~Energy_ToLow", SERVER_INFO_MESSAGE, owner->Nr );
+		}
+	}
+
+	//-- everything is ready to start the building
+
+	SubBase->EnergyProd += data.energy_prod;
+	SubBase->EnergyNeed += data.energy_need;
+
+	SubBase->HumanNeed += data.human_need;
+	SubBase->HumanProd += data.human_prod;
+
+	SubBase->OilNeed += data.oil_need;
+
+	// raw material consumer:
+	if ( data.metal_need )
+		SubBase->MetalNeed += min(MetalPerRound, (*BuildList)[0]->metall_remaining);
+
+	// gold consumer:
+	SubBase->GoldNeed += data.gold_need;
 
 	// research building
 	if ( data.can_research )

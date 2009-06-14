@@ -59,6 +59,7 @@ public:
 	int HumanNeed;
 	int MaxHumanNeed;
 
+	bool increaseEnergyProd( int i );
 	//------------------------------------
 	//ressource management:
 
