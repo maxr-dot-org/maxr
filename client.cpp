@@ -4364,7 +4364,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( bFinishedResearch ) 
 			{
 				PlayVoice ( VoiceData.VOIResearchComplete );
-				addMessage ("Research Finished"); // TODO: translate
+				//FIXME: Ticket #196 
+				addMessage (lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished"));
 			}			
 			
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now

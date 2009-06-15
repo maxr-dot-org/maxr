@@ -1726,7 +1726,7 @@ void cBuilding::ShowResearchSliders (int newResearchSettings[cResearch::kNrResea
 		// display the current nr of research centers for this area
 		font->showTextCentered (dest.x + 21 + 2, dest.y + 1, iToStr (newResearchSettings[area]));
 		// display the current research level of this area
-		font->showTextCentered (258 + rDialog.x, dest.y + 1, iToStr (owner->researchLevel.getCurResearchLevel(area)));
+		font->showTextCentered (258 + rDialog.x, dest.y + 1, "+"+iToStr (owner->researchLevel.getCurResearchLevel(area))+"%");
 
 		if (newResearchSettings[area] > 0)
 			font->showTextCentered (rDialog.x + 313, dest.y + 1, iToStr (owner->researchLevel.getRemainingTurns (area, newResearchSettings[area])));
