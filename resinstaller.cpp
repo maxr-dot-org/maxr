@@ -1914,7 +1914,7 @@ int installBuildingGraphics()
 
 	//research
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
-	copyFileFromRes("RESEARCH", path + "img.pcx");
+	copyFileFromRes_rpc("RESEARCH", path + "img.pcx");
 	copyFileFromRes("S_RESEAR", path + "shw.pcx");
 	copyFileFromRes("P_RESEAR", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "RESEARCH.FLC", path + "video.pcx");
