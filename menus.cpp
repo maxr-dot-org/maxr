@@ -547,20 +547,17 @@ void cMenu::handleKeyInput( SDL_keysym keysym, string ch )
 	if ( activeItem ) activeItem->handleKeyInput ( keysym, ch, this );
 }
 
-void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player )
+void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPlayerNr )
 {
 	if ( !network ) return;
+	
+	// Attention: The playernumber will only be the real player number when it is passed to this function explicitly.
+	//			Otherwise it is only -1!
+	message->iPlayerNr = fromPlayerNr;
 
-	if ( player == NULL )
-	{
-		message->iPlayerNr = -1;
-		network->send ( message->iLength, message->serialize() );
-	}
-	else
-	{
-		message->iPlayerNr = player->nr;
-		network->sendTo ( player->socket, message->iLength, message->serialize() );
-	}
+	if ( player == NULL ) network->send ( message->iLength, message->serialize() );
+	else network->sendTo ( player->socket, message->iLength, message->serialize() );
+
 	Log.write("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	delete message;
 }
@@ -2534,7 +2531,7 @@ void cNetworkMenu::sendReleased( void* parent )
 		menu->chatLine->setText ( "" );
 		menu->chatBox->addLine ( chatText );
 		menu->draw();
-		sendMenuChatMessage ( chatText );
+		sendMenuChatMessage ( chatText, NULL, menu->actPlayer->nr );
 	}
 }
 

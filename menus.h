@@ -276,7 +276,7 @@ public:
 	 * sends a netmessage to the given player.
 	 *@author alzi
 	 */
-	static void sendMessage ( cNetMessage *message, sMenuPlayer *player = NULL );
+	static void sendMessage ( cNetMessage *message, sMenuPlayer *player = NULL, int fromPlayerNr = -1 );
 	/**
 	 * this method will receive the menu-net-messages when this menu is active in the moment the message
 	 * has been received. If the message should be handled overwrite this virtual method.
