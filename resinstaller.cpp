@@ -2396,8 +2396,9 @@ int installFX()
 int installGfx()
 {
 	string path;
+	char szNum[13];
 	SDL_Surface *surface, *output;
-	iTotalFiles = 34;
+	iTotalFiles = 42;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	
@@ -2409,6 +2410,20 @@ int installGfx()
 	cout << "Gfx\n";
 
 	path = sOutputPath + "gfx" + PATH_DELIMITER;
+
+	//clan logos
+	for ( int i = 1; i <= 8; i++ )
+	{
+		try
+		{
+			sprintf( szNum, "%d", i);
+			output = getImageFromRes(string("CLN") + szNum + "LOGO");
+			setColor( output, 0, 255, 0, 255 );
+			savePCX( output, path + "clanlogo" + szNum + ".pcx" );
+			SDL_FreeSurface( output );
+		}
+		END_INSTALL_FILE( path + "clanlogo" + szNum + ".pcx" );
+	}
 
 	//activate
 	try
@@ -3758,7 +3773,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << endl;
 	#ifdef EIKO
-		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX\\";
+		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX\\";
 	#else
 		// read the path from cin
 		char temp[1024];
