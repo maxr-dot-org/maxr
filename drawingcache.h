@@ -38,6 +38,7 @@ struct sDrawingCacheEntry
 	bool BaseW;
 	bool BaseBW;
 	sBuilding* buildingTyp;
+	int clan;
 
 	//vehicle properties
 	sVehicle* vehicleTyp;

@@ -95,6 +95,7 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	owner = building->owner;
 	buildingTyp = building->typ;
 	vehicleTyp = NULL;
+	clan = building->owner->getClan();
 
 	zoom = Client->Hud.Zoom;
 	lastUsed = Client->iFrame;
@@ -160,6 +161,8 @@ SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 			if ( entry.dir != building->dir ) continue;
 		}
 		if ( entry.zoom != Client->Hud.Zoom ) continue;
+
+		if ( building->data.is_mine && building->owner->getClan() != entry.clan ) continue;
 
 		//cache hit!
 		cacheHits++;

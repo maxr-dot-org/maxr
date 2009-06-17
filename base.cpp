@@ -372,15 +372,9 @@ bool sSubBase::increaseEnergyProd( int i )
 	int neededFuel = stations * 6 + generators * 2;
 	if ( neededFuel > Oil + getMaxOilProd() ) 
 	{
+		//not possible to produce enough fuel
 		sendChatMessageToClient("Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, buildings[0]->owner->Nr );
-		return false;  //not possible to produce enough fuel
-	}
-
-	//increase oil production if nessesary
-	if ( neededFuel > Oil + OilProd )
-	{
-		//reduce metal production
-		//TODO: should  this be done by startWork() ???
+		return false;
 	}
 
 	//stop unneeded buildings

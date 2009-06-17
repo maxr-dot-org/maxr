@@ -793,6 +793,19 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 
 			src.x = 0;
 		}
+		else if ( data.is_mine )
+		{
+			CHECK_SCALING( typ->img, typ->img_org, factor);
+			src.x = 0;
+			src.y = 0;
+			src.w = (int) (128 * factor);
+			src.h = (int) (128 * factor);
+			//select clan image
+			if ( owner->getClan() != -1 )
+				src.x = (int) ((owner->getClan() + 1) * 128 * factor);
+			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
+		
+		}
 		else
 		{
 			CHECK_SCALING( typ->img, typ->img_org, factor);
