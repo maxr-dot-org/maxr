@@ -616,7 +616,6 @@ public:
 	SDL_Surface *gfx_big_beton;
 	SDL_Surface *gfx_Ctransf;
 	SDL_Surface *gfx_transfer;
-	SDL_Surface *gfx_mine_manager;
 	SDL_Surface *gfx_Cload;
 	SDL_Surface *gfx_Cactivate;
 	SDL_Surface *gfx_storage;

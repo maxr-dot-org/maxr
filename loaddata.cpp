@@ -1610,7 +1610,6 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_big_beton_org,path,"big_beton.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_big_beton,path,"big_beton.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_transfer,path,"transfer.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_mine_manager,path,"mine_manager.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_storage,path,"storage.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_storage_ground,path,"storage_ground.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_dialog,path,"dialog.pcx" );

@@ -4371,3 +4371,241 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
 }
 
+cMineManagerMenu::cMineManagerMenu( cBuilding *building_ ) : cMenu ( LoadPCX(GFXOD_MINEMANAGER), MNU_BG_ALPHA ), subBase( *building_->SubBase ), building(building_)
+{
+	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Title~Mine") );
+	titleLabel->setCentered( true );
+	menuItems.Add ( titleLabel );
+
+	doneButton = new cMenuButton ( position.x+514, position.y+430, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_HUGE );
+	doneButton->setReleasedFunction ( doneReleased );
+	menuItems.Add ( doneButton );
+
+	for ( int i = 0; i < 3; i++ )
+	{
+		incButtons[i] = new cMenuButton ( position.x+421, position.y+70+120*i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_BIG );
+		incButtons[i]->setReleasedFunction ( &increaseReleased );
+		menuItems.Add ( incButtons[i] );
+		decButtons[i] = new cMenuButton ( position.x+139, position.y+70+120*i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_BIG );
+		decButtons[i]->setReleasedFunction ( &decreseReleased );
+		menuItems.Add ( decButtons[i] );
+
+		if ( i == 0 ) resourceLabels[i] = new cMenuLabel ( position.x+81, position.y+78, lngPack.i18n ( "Text~Title~Metal" ) );
+		else if ( i == 1 ) resourceLabels[i] = new cMenuLabel ( position.x+81, position.y+78+121, lngPack.i18n ( "Text~Title~Oil" ) );
+		else  resourceLabels[i] = new cMenuLabel ( position.x+81, position.y+78+121*2, lngPack.i18n ( "Text~Title~Gold" ) );
+		resourceLabels[i]->setCentered ( true );
+		menuItems.Add ( resourceLabels[i] );
+
+		usageLabels[i] = new cMenuLabel ( position.x+81, position.y+78+37+121*i, lngPack.i18n ( "Text~Vehicles~Usage" ) );
+		usageLabels[i]->setCentered ( true );
+		menuItems.Add ( usageLabels[i] );
+
+		reserveLabels[i] = new cMenuLabel ( position.x+81, position.y+78+37*2+121*i, lngPack.i18n ( "Text~Comp~Reserve" ) );
+		reserveLabels[i]->setCentered ( true );
+		menuItems.Add ( reserveLabels[i] );
+
+		metalBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+37*i, position.x+174+120, position.y+70+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_BIG, false, false );
+		menuItems.Add ( metalBars[i] );
+		oilBars[i] = new cMenuMaterialBar ( position.x+174, position.y+190+37*i, position.x+174+120, position.y+190+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_BIG, false, false );
+		menuItems.Add ( oilBars[i] );
+		goldBars[i] = new cMenuMaterialBar ( position.x+174, position.y+310+37*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_BIG, false, false );
+		menuItems.Add ( goldBars[i] );
+
+		noneBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+120*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG, true, false );
+		menuItems.Add ( noneBars[i] );
+
+		metalBarLabels[i] = new cMenuLabel ( position.x+174+120, position.y+70+8+37*i, "", FONT_LATIN_BIG );
+		metalBarLabels[i]->setCentered ( true );
+		menuItems.Add ( metalBarLabels[i] );
+
+		oilBarLabels[i] = new cMenuLabel ( position.x+174+120, position.y+190+8+37*i, "", FONT_LATIN_BIG );
+		oilBarLabels[i]->setCentered ( true );
+		menuItems.Add ( oilBarLabels[i] );
+
+		goldBarLabels[i] = new cMenuLabel ( position.x+174+120, position.y+310+8+37*i, "", FONT_LATIN_BIG );
+		goldBarLabels[i]->setCentered ( true );
+		menuItems.Add ( goldBarLabels[i] );
+	}
+	metalBars[0]->setClickedFunction ( &barReleased );
+	oilBars[0]->setClickedFunction ( &barReleased );
+	goldBars[0]->setClickedFunction ( &barReleased );
+
+	setBarValues();
+	setBarLabels();
+}
+
+cMineManagerMenu::~cMineManagerMenu()
+{
+	delete titleLabel;
+	delete doneButton;
+
+	if ( Client ) Client->bFlagDrawHud = true;
+
+	for ( int i = 0; i < 3; i++ )
+	{
+		delete incButtons[i];
+		delete decButtons[i];
+
+		delete resourceLabels[i];
+		delete usageLabels[i];
+		delete reserveLabels[i];
+
+		delete metalBars[i];
+		delete oilBars[i];
+		delete goldBars[i];
+
+		delete metalBarLabels[i];
+		delete oilBarLabels[i];
+		delete goldBarLabels[i];
+
+		delete noneBars[i];
+	}
+}
+
+void cMineManagerMenu::setBarValues()
+{
+	metalBars[0]->setMaximalValue ( subBase.getMaxMetalProd() );
+	metalBars[0]->setCurrentValue ( subBase.getMetalProd() );
+	metalBars[1]->setMaximalValue ( subBase.MaxMetalNeed );
+	metalBars[1]->setCurrentValue ( subBase.MetalNeed );
+	metalBars[2]->setMaximalValue ( subBase.MaxMetal );
+	metalBars[2]->setCurrentValue ( subBase.Metal );
+	if ( subBase.getMaxMetalProd() == 0 )
+	{
+		noneBars[0]->setMaximalValue ( 1 );
+		noneBars[0]->setCurrentValue ( 1 );
+	}
+	else
+	{
+		noneBars[0]->setMaximalValue ( subBase.getMaxMetalProd() );
+		noneBars[0]->setCurrentValue ( subBase.getMaxMetalProd() - subBase.getMaxAllowedMetalProd() );
+	}
+
+	oilBars[0]->setMaximalValue ( subBase.getMaxOilProd() );
+	oilBars[0]->setCurrentValue ( subBase.getOilProd() );
+	oilBars[1]->setMaximalValue ( subBase.MaxOilNeed );
+	oilBars[1]->setCurrentValue ( subBase.OilNeed );
+	oilBars[2]->setMaximalValue ( subBase.MaxOil );
+	oilBars[2]->setCurrentValue ( subBase.Oil );
+	if ( subBase.getMaxOilProd() == 0 )
+	{
+		noneBars[1]->setMaximalValue ( 1 );
+		noneBars[1]->setCurrentValue ( 1 );
+	}
+	else
+	{
+		noneBars[1]->setMaximalValue ( subBase.getMaxOilProd() );
+		noneBars[1]->setCurrentValue ( subBase.getMaxOilProd() - subBase.getMaxAllowedOilProd() );
+	}
+
+	goldBars[0]->setMaximalValue ( subBase.getMaxGoldProd() );
+	goldBars[0]->setCurrentValue ( subBase.getGoldProd() );
+	goldBars[1]->setMaximalValue ( subBase.MaxGoldNeed );
+	goldBars[1]->setCurrentValue ( subBase.GoldNeed );
+	goldBars[2]->setMaximalValue ( subBase.MaxGold );
+	goldBars[2]->setCurrentValue ( subBase.Gold );
+	if ( subBase.getMaxGoldProd() == 0 )
+	{
+		noneBars[2]->setMaximalValue ( 1 );
+		noneBars[2]->setCurrentValue ( 1 );
+	}
+	else
+	{
+		noneBars[2]->setMaximalValue ( subBase.getMaxGoldProd() );
+		noneBars[2]->setCurrentValue ( subBase.getMaxGoldProd() - subBase.getMaxAllowedGoldProd() );
+	}
+}
+
+void cMineManagerMenu::setBarLabels()
+{
+	metalBarLabels[0]->setText ( iToStr ( subBase.getMetalProd() ) );
+	metalBarLabels[1]->setText ( secondBarText ( subBase.getMetalProd(), subBase.MetalNeed ) );
+	metalBarLabels[2]->setText ( iToStr ( subBase.Metal ) );
+
+	oilBarLabels[0]->setText ( iToStr ( subBase.getOilProd() ) );
+	oilBarLabels[1]->setText ( secondBarText ( subBase.getOilProd(), subBase.OilNeed ) );
+	oilBarLabels[2]->setText ( iToStr ( subBase.Oil ) );
+
+	goldBarLabels[0]->setText ( iToStr ( subBase.getGoldProd() ) );
+	goldBarLabels[1]->setText ( secondBarText ( subBase.getGoldProd(), subBase.GoldNeed ) );
+	goldBarLabels[2]->setText ( iToStr ( subBase.Gold ) );
+}
+
+string cMineManagerMenu::secondBarText( int prod, int need )
+{
+	int perTurn = prod - need;
+	string text = iToStr ( need ) + " (";
+	if ( perTurn > 0 ) text += "+";
+	text += iToStr ( perTurn ) + " / " + lngPack.i18n ( "Text~Comp~Turn" ) + ")";
+	return text;
+}
+
+void cMineManagerMenu::doneReleased( void *parent )
+{
+	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
+	sendChangeResources ( menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd() );
+	menu->end = true;
+}
+
+void cMineManagerMenu::increaseReleased( void *parent )
+{
+	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
+	if ( menu->incButtons[0]->overItem ( mouse->x, mouse->y ) && menu->subBase.getMaxAllowedMetalProd() - menu->subBase.getMetalProd() > 0 )
+	{
+		menu->subBase.changeMetalProd( +1 );
+	}
+	else if ( menu->incButtons[1]->overItem ( mouse->x, mouse->y ) && menu->subBase.getMaxAllowedOilProd() - menu->subBase.getOilProd() > 0 )
+	{
+		menu->subBase.changeOilProd( +1 );
+	}
+	else if ( menu->incButtons[2]->overItem ( mouse->x, mouse->y ) && menu->subBase.getMaxAllowedGoldProd() - menu->subBase.getGoldProd() > 0 )
+	{
+		menu->subBase.changeGoldProd( +1 );
+	}
+	menu->setBarValues();
+	menu->setBarLabels();
+	menu->draw();
+}
+
+void cMineManagerMenu::decreseReleased( void *parent )
+{
+	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
+	if ( menu->decButtons[0]->overItem ( mouse->x, mouse->y ) && menu->subBase.getMetalProd() > 0 )
+	{
+		menu->subBase.changeMetalProd( -1 );
+	}
+	else if ( menu->decButtons[1]->overItem ( mouse->x, mouse->y ) && menu->subBase.getOilProd() > 0 )
+	{
+		menu->subBase.changeOilProd( -1 );
+	}
+	else if ( menu->decButtons[2]->overItem ( mouse->x, mouse->y ) && menu->subBase.getGoldProd() > 0 )
+	{
+		menu->subBase.changeGoldProd( -1 );
+	}
+	menu->setBarValues();
+	menu->setBarLabels();
+	menu->draw();
+}
+
+void cMineManagerMenu::barReleased( void *parent )
+{
+	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
+	if ( menu->metalBars[0]->overItem ( mouse->x, mouse->y ) )
+	{
+		int metal =  Round ( ( mouse->x - menu->metalBars[0]->getPosition().x ) * ( menu->subBase.getMaxMetalProd() / (float)menu->metalBars[0]->getPosition().w ) );
+		menu->subBase.setMetalProd ( metal );
+	}
+	else if ( menu->oilBars[0]->overItem ( mouse->x, mouse->y ) )
+	{
+		int oil =  Round ( ( mouse->x - menu->oilBars[0]->getPosition().x ) * ( menu->subBase.getMaxOilProd() / (float)menu->oilBars[0]->getPosition().w ) );
+		menu->subBase.setOilProd ( oil );
+	}
+	else if ( menu->goldBars[0]->overItem ( mouse->x, mouse->y ) )
+	{
+		int gold =  Round ( ( mouse->x - menu->goldBars[0]->getPosition().x ) * ( menu->subBase.getMaxGoldProd() / (float)menu->goldBars[0]->getPosition().w ) );
+		menu->subBase.setGoldProd ( gold );
+	}
+	menu->setBarValues();
+	menu->setBarLabels();
+	menu->draw();
+}

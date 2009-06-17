@@ -384,24 +384,24 @@ bool sSubBase::increaseEnergyProd( int i )
 	}
 
 	//stop unneeded buildings
-	for ( int i = onlineStations.Size() - stations; i > 0; i-- )
+	for ( int i = (int)onlineStations.Size() - stations; i > 0; i-- )
 	{
 		onlineStations[0]->ServerStopWork(true);
 		onlineStations.Delete(0);
 	}
-	for ( int i = onlineGenerators.Size() - generators; i > 0; i-- )
+	for ( int i = (int)onlineGenerators.Size() - generators; i > 0; i-- )
 	{
 		onlineGenerators[0]->ServerStopWork(true);
 		onlineGenerators.Delete(0);
 	}
 
 	//start needed buildings
-	for ( int i = stations - onlineStations.Size(); i > 0; i-- )
+	for ( int i = stations - (int)onlineStations.Size(); i > 0; i-- )
 	{
 		offlineStations[0]->ServerStartWork();
 		offlineStations.Delete(0);
 	}
-	for ( int i = generators - onlineGenerators.Size(); i > 0; i-- )
+	for ( int i = generators - (int)onlineGenerators.Size(); i > 0; i-- )
 	{
 		offlineGenerators[0]->ServerStartWork();
 		offlineGenerators.Delete(0);

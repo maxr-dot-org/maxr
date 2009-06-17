@@ -391,6 +391,18 @@ void cMenuButton::renewButtonSurface()
 		position.w = src.w = 28;
 		position.h = src.h = 29;
 		break;
+	case BUTTON_TYPE_ARROW_LEFT_BIG:
+		src.x = isClicked ? 293 : 265;
+		src.y = 157;
+		position.w = src.w = 28;
+		position.h = src.h = 29;
+		break;
+	case BUTTON_TYPE_ARROW_RIGHT_BIG:
+		src.x = isClicked ? 237 : 209;
+		src.y = 157;
+		position.w = src.w = 28;
+		position.h = src.h = 29;
+		break;
 	case BUTTON_TYPE_ARROW_UP_SMALL:
 		position.w = src.w = 18;
 		position.h = src.h = 17;
@@ -476,6 +488,8 @@ int cMenuButton::getTextYOffset()
 		return 11;
 	case BUTTON_TYPE_ARROW_UP_BIG:
 	case BUTTON_TYPE_ARROW_DOWN_BIG:
+	case BUTTON_TYPE_ARROW_LEFT_BIG:
+	case BUTTON_TYPE_ARROW_RIGHT_BIG:
 	case BUTTON_TYPE_ARROW_UP_SMALL:
 	case BUTTON_TYPE_ARROW_DOWN_SMALL:
 	case BUTTON_TYPE_ARROW_LEFT_SMALL:
@@ -1571,15 +1585,43 @@ void cMenuUnitDetails::setSelection(cMenuUnitListItem *selectedUnit_)
 	draw();
 }
 
-cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_ ) : cMenuItem ( x, y )
+cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_, bool showLabel_ ) : cMenuItem ( x, y )
 {
 	setReleaseSound ( SoundData.SNDObjectMenu );
 	currentValue = maxValue = maxValue_;
 	materialType = materialType_;
-	position.w = 20;
-	position.h = 115;
+	inverted = inverted_;
+	showLabel = showLabel_;
 	valueLabel = new cMenuLabel ( labelX, labelY, iToStr( currentValue ) );
 	valueLabel->setCentered ( true );
+
+	switch ( materialType )
+	{
+	default:
+	case MAT_BAR_TYPE_METAL:
+	case MAT_BAR_TYPE_OIL:
+	case MAT_BAR_TYPE_GOLD:
+		position.w = 20;
+		position.h = 115;
+		horizontal = false;
+		break;
+	case MAT_BAR_TYPE_METAL_HORI_BIG:
+	case MAT_BAR_TYPE_OIL_HORI_BIG:
+	case MAT_BAR_TYPE_GOLD_HORI_BIG:
+	case MAT_BAR_TYPE_NONE_HORI_BIG:
+		position.w = 240;
+		position.h = 30;
+		horizontal = true;
+		break;
+	case MAT_BAR_TYPE_METAL_HORI_SMALL:
+	case MAT_BAR_TYPE_OIL_HORI_SMALL:
+	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
+		position.w = 20;
+		position.h = 115;
+		horizontal = true;
+		break;
+	}
+
 	generateSurface();
 }
 
@@ -1592,17 +1634,48 @@ cMenuMaterialBar::~cMenuMaterialBar()
 void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	SDL_FillRect ( surface, NULL, 0xFF00FF );
 
 	switch ( materialType )
 	{
+	case MAT_BAR_TYPE_METAL_HORI_BIG:
+		src.x = 156;
+		src.y = 339;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		break;
+	case MAT_BAR_TYPE_OIL_HORI_BIG:
+		src.x = 156;
+		src.y = 369;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		break;
+	case MAT_BAR_TYPE_GOLD_HORI_BIG:
+		src.x = 156;
+		src.y = 400;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		break;
+	case MAT_BAR_TYPE_NONE_HORI_BIG:
+		src.x = 156;
+		src.y = 307;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		break;
+	case MAT_BAR_TYPE_METAL_HORI_SMALL:
+		break;
+	case MAT_BAR_TYPE_OIL_HORI_SMALL:
+		break;
+	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
+		break;
 	default:
 	case MAT_BAR_TYPE_METAL:
 	case MAT_BAR_TYPE_OIL:
-		src.x += src.w+1;
+		src.x = 114+src.w+1;
+		src.y = 336;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_GOLD:
+		src.x = 114;
+		src.y = 336;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	}
@@ -1611,12 +1684,25 @@ void cMenuMaterialBar::generateSurface()
 void cMenuMaterialBar::draw()
 {
 	if ( currentValue <= 0 && maxValue <= 0 ) return;
-	int height = (int)((float)currentValue/maxValue*surface->h);
-	SDL_Rect src = { 0, 0, surface->w, height };
-	SDL_Rect dest = { position.x, position.y+(surface->h-height), surface->w, height };
+	SDL_Rect src;
+	src.h = horizontal ? surface->h : (int)((float)currentValue/maxValue*surface->h );
+	src.w = horizontal ? (int)((float)currentValue/maxValue*surface->w ) : surface->w;
+	src.x = horizontal ? surface->w-src.w : 0;
+	src.y = 0;
+	SDL_Rect dest;
+	dest.h = dest.w = 0;
+	dest.x = position.x;
+	dest.y = position.y + ( horizontal ? 0 : surface->h-src.h );
+
+	if ( inverted && horizontal )
+	{
+		dest.x += surface->w-src.w;
+		src.x = 0;
+	}
+
 	SDL_BlitSurface ( surface, &src, buffer, &dest );
 
-	valueLabel->draw();
+	if ( showLabel ) valueLabel->draw();
 }
 
 void cMenuMaterialBar::setMaximalValue( int maxValue_ )
@@ -1628,6 +1714,11 @@ void cMenuMaterialBar::setCurrentValue( int currentValue_ )
 {
 	currentValue = currentValue_;
 	valueLabel->setText( iToStr ( currentValue ) );
+}
+
+SDL_Rect cMenuMaterialBar::getPosition()
+{
+	return position;
 }
 
 cMenuUpgradeHandler::cMenuUpgradeHandler ( int x, int y, cUpgradeHangarMenu *parent ) : cMenuItemContainer ( x, y ), parentMenu(parent)

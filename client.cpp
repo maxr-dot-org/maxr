@@ -1026,7 +1026,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			SelectedVehicle->autoMJob = NULL;
 		}
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		sendWantStartWork( SelectedBuilding );
 	}
@@ -1110,7 +1110,8 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
-		SelectedBuilding->showMineManager();
+		cMineManagerMenu mineManager ( SelectedBuilding );
+		mineManager.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{

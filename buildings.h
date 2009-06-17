@@ -212,9 +212,6 @@ public:
 	void ClientStopWork();
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	void showMineManager();
-	void MakeMineBars(int iTempSBMetalProd, int iTempSBOilProd, int iTempSBGoldProd, int MaxM,int MaxO,int MaxG,int *FreeM,int *FreeO,int *FreeG);
-	void DrawMineBar(int typ,int value,int max_value,int offy,bool number,int fixed);
 	bool IsInRange(int off, cMap *Map);
 	/*
 	* checks if the unit can attack the offset

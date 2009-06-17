@@ -991,4 +991,45 @@ public:
 	static void upgradeAllReleased ( void *parent );
 };
 
+class cMineManagerMenu : public cMenu
+{
+	cBuilding *building;
+	sSubBase subBase;
+
+	cMenuLabel *titleLabel;
+	cMenuButton *doneButton;
+
+	cMenuMaterialBar *metalBars[3];
+	cMenuMaterialBar *oilBars[3];
+	cMenuMaterialBar *goldBars[3];
+
+	cMenuLabel *metalBarLabels[3];
+	cMenuLabel *oilBarLabels[3];
+	cMenuLabel *goldBarLabels[3];
+
+	cMenuMaterialBar *noneBars[3];
+
+	cMenuLabel *resourceLabels[3];
+	cMenuLabel *usageLabels[3];
+	cMenuLabel *reserveLabels[3];
+
+	cMenuButton *incButtons[3];
+	cMenuButton *decButtons[3];
+
+	void setBarValues();
+	void setBarLabels();
+
+	string secondBarText( int prod, int need );
+public:
+	cMineManagerMenu( cBuilding *building_ );
+	~cMineManagerMenu();
+
+	static void doneReleased( void *parent );
+
+	static void increaseReleased( void *parent );
+	static void decreseReleased( void *parent );
+
+	static void barReleased( void *parent );
+};
+
 #endif //menusH

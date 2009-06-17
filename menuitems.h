@@ -360,6 +360,8 @@ public:
 		BUTTON_TYPE_HUGE,
 		BUTTON_TYPE_ARROW_UP_BIG,
 		BUTTON_TYPE_ARROW_DOWN_BIG,
+		BUTTON_TYPE_ARROW_LEFT_BIG,
+		BUTTON_TYPE_ARROW_RIGHT_BIG,
 		BUTTON_TYPE_ARROW_UP_SMALL,
 		BUTTON_TYPE_ARROW_DOWN_SMALL,
 		BUTTON_TYPE_ARROW_LEFT_SMALL,
@@ -674,7 +676,14 @@ public:
 	{
 		MAT_BAR_TYPE_METAL,
 		MAT_BAR_TYPE_OIL,
-		MAT_BAR_TYPE_GOLD
+		MAT_BAR_TYPE_GOLD,
+		MAT_BAR_TYPE_METAL_HORI_BIG,
+		MAT_BAR_TYPE_OIL_HORI_BIG,
+		MAT_BAR_TYPE_GOLD_HORI_BIG,
+		MAT_BAR_TYPE_NONE_HORI_BIG,
+		MAT_BAR_TYPE_METAL_HORI_SMALL,
+		MAT_BAR_TYPE_OIL_HORI_SMALL,
+		MAT_BAR_TYPE_GOLD_HORI_SMALL
 	};
 
 protected:
@@ -684,15 +693,20 @@ protected:
 	cMenuLabel *valueLabel;
 
 	int maxValue, currentValue;
+	bool inverted;
+	bool horizontal;
+	bool showLabel;
 
 	void generateSurface();
 public:
-	cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_ );
+	cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_ = false, bool showLabel_ = true );
 	~cMenuMaterialBar();
 	void draw();
 
 	void setMaximalValue( int maxValue_ );
 	void setCurrentValue( int currentValue_ );
+
+	SDL_Rect getPosition();
 };
 
 /**
