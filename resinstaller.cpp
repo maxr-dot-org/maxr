@@ -3240,7 +3240,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "SBOATSTP" + waveExtension, path + "stop_water.wav");
-	copyWAV( sMAXPath + "CORVT14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "FANTI14" + waveExtension, path + "attack.wav");
 		
 	//fighter
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
