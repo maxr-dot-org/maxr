@@ -1834,22 +1834,32 @@ int installBuildingGraphics()
 
 	//mine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine" + PATH_DELIMITER;
-	for ( int i = 0; i < 8; i++ )
-	{
-		sprintf( szNum, "%d", i+1);
-		copyFileFromRes_rpc("MININGST", path + "img" + szNum + ".pcx", i*2);
-	}
+	
 	try
 	{
-		output = getImageFromRes("MININGST");
+		output = getImageFromRes("MININGST", 0);
+		removePlayerColor( output );
+		resizeSurface(output, 0, 0, 128 * 9, 128 );
+		
+		for ( int i = 0; i < 8; i++ )
+		{
+			surface = getImageFromRes("MININGST", i*2 );
+			removePlayerColor( surface );
+			dst_rect.x = i * 128 + 128;
+			dst_rect.y = 0;
+			SDL_BlitSurface(surface, NULL, output, &dst_rect );
+			SDL_FreeSurface( surface );
+		}
+
+		//remove the clan logo from the first image
 		surface = loadPCX(path + "roof.pcx" );
 		surface->pitch = surface->w;					//workaround for an SDL-Bug
 		dst_rect.x = 32;
 		dst_rect.y = 40;
-		SDL_BlitSurface(surface, NULL, output, &dst_rect );
-		savePCX(output, path + "img.pcx");
+		SDL_BlitSurface( surface, NULL, output, &dst_rect );
+
+		savePCX( output, path + "img.pcx" );
 		SDL_FreeSurface( output );
-		SDL_FreeSurface( surface );
 	}
 	END_INSTALL_FILE(path + "img.pcx");
 
