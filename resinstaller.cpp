@@ -227,7 +227,7 @@ int installVehicleGraphics()
 		{
 			surface = getImageFromRes("BOMBER", i);
 			removePlayerColor( surface );
-			resizeSurface( surface, 14, 18, 64, 64);
+			resizeSurface( surface, 14, 14, 64, 64);
 			savePCX(surface, path + "img" + szNum + ".pcx");
 			SDL_FreeSurface( surface );
 		}
