@@ -1315,7 +1315,8 @@ int installVehicleGraphics()
 int installBuildingGraphics()
 {	
 	string path;
-	iTotalFiles = 156;
+	char szNum[13];
+	iTotalFiles = 164;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	SDL_Surface* surface;
@@ -1551,8 +1552,6 @@ int installBuildingGraphics()
 	copyFileFromRes("P_DEPOT", path + "info.pcx");
 	copyFileFromRes("S_DEPOT", path + "shw.pcx", 1);
 	copyImageFromFLC( sMAXPath + "DPBG_S.FLC", path + "video.pcx");
-
-
 
 	//dock
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "dock" + PATH_DELIMITER;
@@ -1835,8 +1834,26 @@ int installBuildingGraphics()
 
 	//mine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine" + PATH_DELIMITER;
-	copyFileFromRes_rpc("MININGST", path + "img.pcx");	//this is temorary!
-														//until the clans will be implemented
+	for ( int i = 0; i < 8; i++ )
+	{
+		sprintf( szNum, "%d", i+1);
+		copyFileFromRes_rpc("MININGST", path + "img" + szNum + ".pcx", i*2);
+	}
+	try
+	{
+		output = getImageFromRes("MININGST");
+		surface = loadPCX(path + "roof.pcx" );
+		surface->pitch = surface->w;					//workaround for an SDL-Bug
+		dst_rect.x = 32;
+		dst_rect.y = 40;
+		SDL_BlitSurface(surface, NULL, output, &dst_rect );
+		savePCX(output, path + "img.pcx");
+		SDL_FreeSurface( output );
+		SDL_FreeSurface( surface );
+	}
+	END_INSTALL_FILE(path + "img.pcx");
+
+
 	copyFileFromRes("S_MINING", path + "shw.pcx");
 	copyFileFromRes("P_MINING", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "MSTRSTAT.FLC", path + "video.pcx");
