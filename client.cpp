@@ -5639,7 +5639,8 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 	}
 	dest.x = 88 + 166;
 	dest.y = 20 + 159;
-	SDL_BlitSurface ( img, NULL, buffer, &dest );
+	SDL_Rect src = {0, 0, 32, 32};
+	SDL_BlitSurface ( img, &src, buffer, &dest );
 	SDL_FreeSurface ( img );
 
 	if ( DestBuilding )
@@ -5682,7 +5683,7 @@ void cClient::showTransfer( cBuilding *SrcBuilding, cVehicle *SrcVehicle, cBuild
 
 	dest.x = 192 + 166;
 	dest.y = 20 + 159;
-	SDL_BlitSurface ( img, NULL, buffer, &dest );
+	SDL_BlitSurface ( img, &src, buffer, &dest );
 	SDL_FreeSurface ( img );
 
 	// show texts:
