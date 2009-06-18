@@ -1484,15 +1484,24 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (upgradedBuildings.Size() > 0)
 			{
 				bool scanNecessary = false;
+				bool refreshSentry = false;
 				for (unsigned int i = 0; i < upgradedBuildings.Size(); i++)
 				{
 					if (!scanNecessary && upgradedBuildings[i]->data.scan < upgradedVersion.scan)
 						scanNecessary = true; // Scan range was upgraded. So trigger a scan.
+					if ( upgradedBuildings[i]->bSentryStatus && upgradedBuildings[i]->data.range < upgradedVersion.range )
+						refreshSentry = true;
+
 					upgradedBuildings[i]->upgradeToCurrentVersion();
 				}
 				sendUpgradeBuildings(upgradedBuildings, totalCosts, player->Nr);
 				if (scanNecessary)
 					player->DoScan();
+				if (refreshSentry)
+				{
+					player->refreshSentryAir();
+					player->refreshSentryGround();
+				}
 			}
 		}
 		break;
