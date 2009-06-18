@@ -60,6 +60,17 @@ void cUpgradeCalculator::setupLookupTables()
 	hitpointsArmorAmmo_6 [13] = 491;
 	hitpointsArmorAmmo_6 [14] = 780;
 
+	hitpointsArmorAmmo_7 [7]  = 3; // TODO: this are only dummy values right now
+	hitpointsArmorAmmo_7 [8]  = 9;
+	hitpointsArmorAmmo_7 [9]  = 15;
+	hitpointsArmorAmmo_7 [10] = 35;
+	hitpointsArmorAmmo_7 [11] = 58;
+	hitpointsArmorAmmo_7 [12] = 100;
+	hitpointsArmorAmmo_7 [13] = 164;
+	hitpointsArmorAmmo_7 [14] = 257;
+	hitpointsArmorAmmo_7 [15] = 390;
+	hitpointsArmorAmmo_7 [16] = 542;
+	
 	hitpointsArmorAmmo_8  [8]  = 2;
 	hitpointsArmorAmmo_8  [9]  = 6;
 	hitpointsArmorAmmo_8  [10] = 11;
@@ -607,6 +618,7 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 				case 2:  price = lookupPrice (hitpointsArmorAmmo_2,  curValue); break;
 				case 4:  price = lookupPrice (hitpointsArmorAmmo_4,  curValue); break;
 				case 6:  price = lookupPrice (hitpointsArmorAmmo_6,  curValue); break;
+				case 7:  price = lookupPrice (hitpointsArmorAmmo_7,  curValue); break;
 				case 8:  price = lookupPrice (hitpointsArmorAmmo_8,  curValue); break;
 				case 9:  price = lookupPrice (hitpointsArmorAmmo_9,  curValue); break;
 				case 10: price = lookupPrice (hitpointsArmorAmmo_10, curValue); break;

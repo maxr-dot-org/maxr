@@ -144,6 +144,7 @@ private:
 	PriceMap hitpointsArmorAmmo_2;
 	PriceMap hitpointsArmorAmmo_4;
 	PriceMap hitpointsArmorAmmo_6;
+	PriceMap hitpointsArmorAmmo_7;
 	PriceMap hitpointsArmorAmmo_8;
 	PriceMap hitpointsArmorAmmo_9;
 	PriceMap hitpointsArmorAmmo_10;
