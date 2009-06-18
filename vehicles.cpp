@@ -2493,7 +2493,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	}
 
 	//step 2x
-	if ( ( iTurboBuildRounds[0] > 1 ) && ( iTurboBuildCosts[0] + 4 <= iBuild_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[0] + 4 ) )
+	if ( ( iTurboBuildRounds[0] > 1 ) && ( data.cargo >= iTurboBuildCosts[0] + 4 ) )
 	{
 		iTurboBuildRounds[1] = iTurboBuildRounds[0];
 		iTurboBuildCosts[1] = iTurboBuildCosts[0];
@@ -2505,14 +2505,11 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 
 			if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0] )
 				break;
-
-			if ( iTurboBuildCosts[1] + 4 > iBuild_Costs_Max )
-				break;
 		}
 	}
 
 	//step 4x
-	if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= iBuild_Costs_Max ) && ( data.cargo >= iTurboBuildCosts[1] + 8 ) )
+	if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= 56 ) && ( data.cargo >= iTurboBuildCosts[1] + 8 ) )
 	{
 		iTurboBuildRounds[2] = iTurboBuildRounds[1];
 		iTurboBuildCosts[2] = iTurboBuildCosts[1];
@@ -2524,8 +2521,16 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 
 			if ( (iTurboBuildRounds[2]-1)*2 < iTurboBuildRounds[1] )
 				break;
-			if ( iTurboBuildCosts[2] + 8 > iBuild_Costs_Max )
+			if ( iTurboBuildCosts[2] + 8 > 56 )
 				break;
+		}
+		if ( iTurboBuildCosts[0] > 12 )
+		{
+			if ( iTurboBuildCosts[2] < 48 ) iTurboBuildCosts[2] = 48;
+		}
+		else if ( iTurboBuildCosts[0] > 4 )
+		{
+			if ( iTurboBuildCosts[2] < 24 ) iTurboBuildCosts[2] = 24;
 		}
 	}
 }
