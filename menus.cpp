@@ -523,6 +523,7 @@ int cMenu::show()
 void cMenu::handleMouseInput( sMouseState mouseState )
 {
 	mouse->GetPos();
+	mouse->isDoubleClick = mouseState.isDoubleClick;
 
 	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 	{
@@ -3339,6 +3340,11 @@ void cLoadMenu::slotClicked( void* parent )
 	menu->displaySaves();
 	menu->extendedSlotClicked( oldSelection );
 	menu->draw();
+	
+	if (mouse->isDoubleClick)
+	{
+		loadReleased( parent );	
+	}
 }
 
 

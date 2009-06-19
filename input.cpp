@@ -123,8 +123,46 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	}
 }
 
-void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
+bool cInput::IsDoubleClicked (void)
 {
+    //static long LastClickTicks;
+			long CurrentClickTicks;
+
+    /* First time this function is called, LastClickTicks
+        has not been initialised yet. */
+
+    if (! LastClickTicks)
+    {
+        LastClickTicks = SDL_GetTicks ();
+        return (false);
+    }
+
+    else
+    {
+        CurrentClickTicks = SDL_GetTicks ();
+
+        /* If the period between the two clicks is smaller
+            or equal to a pre-defined number, we report a
+            DoubleClick event. */
+
+        if (CurrentClickTicks - LastClickTicks <= 500)
+        {
+            /* Update LastClickTicks and signal a DoubleClick. */
+
+            LastClickTicks = CurrentClickTicks;
+            return (true);
+        }
+
+        /* Update LastClickTicks and signal a SingleClick. */
+
+        LastClickTicks = CurrentClickTicks;
+        return (false);
+    }
+}
+
+
+void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
+{	
 	if ( button.state == SDL_PRESSED )
 	{
 		if ( button.button == SDL_BUTTON_LEFT )
@@ -150,6 +188,15 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 			MouseState.wheelDown = true;
 			MouseState.leftButtonReleased = false;
 			MouseState.rightButtonReleased = false;
+		}
+		
+		if( IsDoubleClicked() == true )
+		{
+			MouseState.isDoubleClick = true;
+		}
+		else
+		{
+			MouseState.isDoubleClick = false;
 		}
 	}
 	else if ( button.state == SDL_RELEASED )
@@ -302,4 +349,3 @@ bool cInput::checkHasBeenInput()
 	}
 	return false;
 }
-

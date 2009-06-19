@@ -35,6 +35,7 @@ public:
   SDL_Surface *cur; // Der aktuelle Cursor.
   SDL_Surface *back; // Zum Speichern des Maushintergrundes.
   int x,y; // Die Position der Maus.
+  bool isDoubleClick;
   int LastX,LastY; // Die letzte Position der Maus.
   int DrawX,DrawY; // Die Position, an die die Maus gezeichnet werden soll.
   bool MoveCallback; // Gibt an, ob die MoveCallback-Funktion aufgerufen werden soll.

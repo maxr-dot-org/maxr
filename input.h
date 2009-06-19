@@ -47,6 +47,7 @@ struct sMouseState
 	bool rightButtonReleased;
 	bool wheelUp;
 	bool wheelDown;
+	bool isDoubleClick;
 };
 
 /**
@@ -87,8 +88,12 @@ public:
 	 * @author alzi alias DoctorDeath
 	 * @param keysym SDL_keysym with pressed key information.
 	 */
+	 
+	long LastClickTicks;
 	void inputkey ( SDL_keysym &keysym );
 	void inputMouseButton ( SDL_MouseButtonEvent &button );
+	bool IsDoubleClicked (void);
+
 	/**
 	 * sets the input string.
 	 * @author alzi alias DoctorDeath
