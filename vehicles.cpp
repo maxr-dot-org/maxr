@@ -2514,8 +2514,13 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 		iTurboBuildRounds[2] = iTurboBuildRounds[1];
 		iTurboBuildCosts[2] = iTurboBuildCosts[1];
 
+		int oldCosts = iTurboBuildCosts[2];
+		int oldRounds = iTurboBuildRounds[2];
 		while ( ( data.cargo >= iTurboBuildCosts[2] + 8 ) && ( iTurboBuildRounds[2] > 1 ) )
 		{
+			oldCosts = iTurboBuildCosts[2];
+			oldRounds = iTurboBuildRounds[2];
+
 			iTurboBuildRounds[2]--;
 			iTurboBuildCosts[2] += 8;
 
@@ -2524,13 +2529,14 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 			if ( iTurboBuildCosts[2] + 8 > 56 )
 				break;
 		}
-		if ( iTurboBuildCosts[0] > 12 )
+		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24 > iTurboBuildCosts[2] )
+			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24;
+
+		// take care the low border wont break cargo limit:
+		if ( iTurboBuildCosts[2] > data.cargo )
 		{
-			if ( iTurboBuildCosts[2] < 48 ) iTurboBuildCosts[2] = 48;
-		}
-		else if ( iTurboBuildCosts[0] > 4 )
-		{
-			if ( iTurboBuildCosts[2] < 24 ) iTurboBuildCosts[2] = 24;
+			iTurboBuildCosts[2] = oldCosts;
+			iTurboBuildRounds[2] = oldRounds;
 		}
 	}
 }
