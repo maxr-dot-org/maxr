@@ -1143,17 +1143,22 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// needs human workers:
-	if ( SubBase->HumanProd < SubBase->HumanNeed + data.human_need )
-	{
-		sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
-		return;
-	}
+	if ( data.human_need )
+		if ( SubBase->HumanNeed + data.human_need > SubBase->HumanProd )
+		{
+			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
+			return;
+		}
+}
 
 	// needs gold:
-	if ( data.gold_need + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
+	if ( data.gold_need )
 	{
-		sendChatMessageToClient( "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
-		return;
+		if ( data.gold_need + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
+		{
+			sendChatMessageToClient( "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
+			return;
+		}
 	}
 
 	// needs raw material:
