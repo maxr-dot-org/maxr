@@ -132,6 +132,46 @@ public:
 	static void cancelReleased( void *parent );
 };
 
+class cDialogTransfer : public cMenu
+{
+	cBuilding *srcBuilding, *destBuilding;
+	cVehicle *srcVehicle, *destVehicle;
+
+	cMenuMaterialBar::eMaterialBarTypes transferType;
+	int srcCargo, maxSrcCargo;
+	int destCargo, maxDestCargo;
+	int transferValue;
+
+	cMenuButton *doneButton;
+	cMenuButton *cancelButton;
+
+	cMenuButton *incButton;
+	cMenuButton *decButton;
+
+	cMenuMaterialBar *resBar;
+
+	cMenuImage *unitImages[2];
+
+	cMenuLabel *unitNameLabels[2];
+	cMenuLabel *unitCargoLabels[2];
+	cMenuLabel *transferLabel;
+
+	void getTransferType();
+	void getNamesNCargoNImages();
+	void setCargos();
+public:
+	cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
+	~cDialogTransfer();
+
+	static void doneReleased( void *parent );
+	static void cancelReleased( void *parent );
+
+	static void incReleased( void *parent );
+	static void decReleased( void *parent );
+
+	static void barClicked( void *parent );
+};
+
 /** Draws a context menu item
  * @author beko
  * @param sText Text to display on item

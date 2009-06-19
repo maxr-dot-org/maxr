@@ -30,6 +30,7 @@
 #include "events.h"
 #include "client.h"
 #include "input.h"
+#include "clientevents.h"
 
 cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ), MNU_BG_ALPHA )
 {
@@ -466,6 +467,329 @@ void cDialogPreferences::cancelReleased( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
 	menu->terminate = true;
+}
+
+cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_  ) :
+	cMenu ( LoadPCX(GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA ),
+	srcBuilding ( srcBuilding_ ),
+	srcVehicle ( srcVehicle_ ),
+	destBuilding ( destBuilding_ ),
+	destVehicle ( destVehicle_ )
+{
+	// TODO: add changing arrow direction!
+
+	getTransferType();
+
+	incButton = new cMenuButton ( position.x+279, position.y+159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL );
+	incButton->setReleasedFunction ( &incReleased );
+	menuItems.Add ( incButton );
+
+	decButton = new cMenuButton ( position.x+17, position.y+159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL );
+	decButton->setReleasedFunction ( &decReleased );
+	menuItems.Add ( decButton );
+
+	resBar = new cMenuMaterialBar ( position.x+43, position.y+159, 0, 0, 223, transferType, false, false );
+	resBar->setClickedFunction ( &barClicked );
+	menuItems.Add ( resBar );
+
+	doneButton = new cMenuButton ( position.x+71, position.y+200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	cancelButton = new cMenuButton ( position.x+159, position.y+200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	cancelButton->setReleasedFunction ( &cancelReleased );
+	menuItems.Add ( cancelButton );
+
+	unitNameLabels[0] = new cMenuLabel ( position.x+70, position.y+105 );
+	unitNameLabels[0]->setCentered ( true );
+	menuItems.Add ( unitNameLabels[0] );
+
+	unitNameLabels[1] = new cMenuLabel ( position.x+240, position.y+105 );
+	unitNameLabels[1]->setCentered ( true );
+	menuItems.Add ( unitNameLabels[1] );
+
+	unitCargoLabels[0] = new cMenuLabel ( position.x+30, position.y+60 );
+	unitCargoLabels[0]->setCentered ( true );
+	menuItems.Add ( unitCargoLabels[0] );
+
+	unitCargoLabels[1] = new cMenuLabel ( position.x+280, position.y+60 );
+	unitCargoLabels[1]->setCentered ( true );
+	menuItems.Add ( unitCargoLabels[1] );
+
+	transferLabel = new cMenuLabel ( position.x+157, position.y+49, "", FONT_LATIN_BIG );
+	transferLabel->setCentered ( true );
+	menuItems.Add ( transferLabel );
+
+	unitImages[0] = new cMenuImage ( position.x+39, position.y+26 );
+	menuItems.Add ( unitImages[0] );
+
+	unitImages[1] = new cMenuImage ( position.x+208, position.y+26 );
+	menuItems.Add ( unitImages[1] );
+
+	getNamesNCargoNImages();
+	setCargos();
+}
+
+cDialogTransfer::~cDialogTransfer()
+{
+	delete doneButton;
+	delete cancelButton;
+
+	delete incButton;
+	delete decButton;
+
+	delete resBar;
+
+	delete transferLabel;
+
+	for ( int i = 0; i < 2; i++ )
+	{
+		delete unitImages[i];
+
+		delete unitNameLabels[i];
+		delete unitCargoLabels[i];
+	}
+
+	float fNewZoom = (float)(Client->Hud.Zoom / 64.0);
+
+	if ( srcBuilding != NULL )
+	{
+		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, ( int ) ( srcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( srcBuilding->typ->img_org->h* fNewZoom ) );
+		srcBuilding->Transfer = false;
+	}
+	else
+	{
+		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], ( int ) ( srcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) (srcVehicle->typ->img_org[0]->h* fNewZoom ) );
+		srcVehicle->Transfer = false;
+	}
+
+	if ( destBuilding ) scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, ( int ) ( destBuilding->typ->img_org->w* fNewZoom ), ( int ) ( destBuilding->typ->img_org->h* fNewZoom ) );
+	else scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], ( int ) ( destVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( destVehicle->typ->img_org[0]->h* fNewZoom ) );
+
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cDialogTransfer::getTransferType()
+{
+	int tmpTransferType;
+
+	if ( srcVehicle ) tmpTransferType = srcVehicle->data.can_transport;
+	else if ( destVehicle ) tmpTransferType = destVehicle->data.can_transport;
+	else
+	{
+		if ( srcBuilding->data.can_load != destBuilding->data.can_load )
+		{
+			end = true;
+			return;
+		}
+		else tmpTransferType = destBuilding->data.can_load;
+	}
+
+	switch ( tmpTransferType )
+	{
+	case TRANS_METAL:
+		transferType = cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_SMALL;
+		break;
+	case TRANS_OIL:
+		transferType = cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_SMALL;
+		break;
+	case TRANS_GOLD:
+		transferType = cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_SMALL;
+		break;
+	}
+}
+
+void cDialogTransfer::getNamesNCargoNImages ()
+{
+	SDL_Surface *unitImage1, *unitImage2;
+
+	if ( srcBuilding )
+	{
+		if ( srcBuilding->data.is_mine )
+		{
+			SDL_Rect src = { 0, 0, 64, 64 };
+			scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, srcBuilding->typ->img_org->w / srcBuilding->typ->img->h * 64, 64 );
+			unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, 64, srcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
+			if ( srcBuilding->owner->getClan() != -1 ) src.x = (srcBuilding->owner->getClan()+1) * 64;
+			SDL_BlitSurface ( srcBuilding->typ->img, &src, unitImage1, NULL );
+		}
+		else
+		{
+			scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, 64, 64 );
+			unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcBuilding->typ->img->w, srcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
+			SDL_BlitSurface ( srcBuilding->typ->img, NULL, unitImage1, NULL );
+		}
+
+		unitNameLabels[0]->setText ( srcBuilding->data.szName );
+		if ( destVehicle )
+		{
+			switch ( destVehicle->data.can_transport )
+			{
+			case TRANS_METAL:
+				maxSrcCargo = srcBuilding->SubBase->MaxMetal;
+				srcCargo = srcBuilding->SubBase->Metal;
+				break;
+			case TRANS_OIL:
+				maxSrcCargo = srcBuilding->SubBase->MaxOil;
+				srcCargo = srcBuilding->SubBase->Oil;
+				break;
+			case TRANS_GOLD:
+				maxSrcCargo = srcBuilding->SubBase->MaxGold;
+				srcCargo = srcBuilding->SubBase->Gold;
+				break;
+			}
+		}
+		else
+		{
+			maxSrcCargo = srcBuilding->data.max_cargo;
+			srcCargo = srcBuilding->data.cargo;
+		}
+	}
+	else if ( srcVehicle )
+	{
+		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], 64, 64 );
+		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
+		SDL_BlitSurface ( srcVehicle->owner->color, NULL, unitImage1, NULL );
+		SDL_BlitSurface ( srcVehicle->typ->img[0], NULL, unitImage1, NULL );
+
+		unitNameLabels[0]->setText ( srcVehicle->data.szName );
+		maxSrcCargo = srcVehicle->data.max_cargo;
+		srcCargo = srcVehicle->data.cargo;
+	}
+
+	if ( destBuilding )
+	{
+		if ( destBuilding->data.is_mine )
+		{
+			SDL_Rect src = { 0, 0, 64, 64 };
+			scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, destBuilding->typ->img_org->w / destBuilding->typ->img->h * 64, 64 );
+			unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, 64, destBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
+			if ( destBuilding->owner->getClan() != -1 ) src.x = (destBuilding->owner->getClan()+1) * 64;
+			SDL_BlitSurface ( destBuilding->typ->img, &src, unitImage2, NULL );
+		}
+		else
+		{
+			scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, 64, 64 );
+			unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destBuilding->typ->img->w, destBuilding->typ->img->h, 32, 0, 0, 0, 0 );
+			SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
+			SDL_BlitSurface ( destBuilding->typ->img, NULL, unitImage2, NULL );
+		}
+
+		unitNameLabels[1]->setText ( destBuilding->data.szName );
+		if ( srcVehicle )
+		{
+			switch ( srcVehicle->data.can_transport )
+			{
+			case TRANS_METAL:
+				maxDestCargo = destBuilding->SubBase->MaxMetal;
+				destCargo = destBuilding->SubBase->Metal;
+				break;
+			case TRANS_OIL:
+				maxDestCargo = destBuilding->SubBase->MaxOil;
+				destCargo = destBuilding->SubBase->Oil;
+				break;
+			case TRANS_GOLD:
+				maxDestCargo = destBuilding->SubBase->MaxGold;
+				destCargo = destBuilding->SubBase->Gold;
+				break;
+			}
+		}
+		else
+		{
+			maxDestCargo = destBuilding->data.max_cargo;
+			destCargo = destBuilding->data.cargo;
+		}
+	}
+	else
+	{
+		scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], 64, 64 );
+		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
+		SDL_BlitSurface ( destVehicle->owner->color, NULL, unitImage2, NULL );
+		SDL_BlitSurface ( destVehicle->typ->img[0], NULL, unitImage2, NULL );
+
+		unitNameLabels[1]->setText ( destVehicle->data.szName );
+		maxDestCargo = destVehicle->data.max_cargo;
+		destCargo = destVehicle->data.cargo;
+	}
+
+	unitImages[0]->setImage ( unitImage1 );
+	unitImages[1]->setImage ( unitImage2 );
+	transferValue = maxDestCargo;
+}
+
+void cDialogTransfer::setCargos()
+{
+	if ( srcCargo - transferValue < 0 ) transferValue += srcCargo - transferValue;
+	if ( destCargo + transferValue < 0 ) transferValue -= destCargo + transferValue;
+	if ( destCargo + transferValue > maxDestCargo ) transferValue -= ( destCargo + transferValue ) - maxDestCargo;
+	if ( srcCargo - transferValue > maxSrcCargo ) transferValue += ( srcCargo - transferValue ) - maxSrcCargo;
+
+	unitCargoLabels[0]->setText ( iToStr (srcCargo - transferValue) );
+	unitCargoLabels[1]->setText ( iToStr (destCargo + transferValue) );
+
+	transferLabel->setText ( iToStr ( abs(transferValue) ) );
+
+	resBar->setCurrentValue ( (int)( 223 * (float)(destCargo+transferValue) / maxDestCargo ) );
+}
+
+void cDialogTransfer::doneReleased( void *parent )
+{
+	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+
+	if ( menu->transferValue != 0 )
+	{
+		if ( menu->srcBuilding )
+		{
+			if ( menu->destBuilding ) sendWantTransfer ( false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.can_load );
+			else sendWantTransfer ( false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.can_load );
+		}
+		else
+		{
+			if ( menu->destBuilding ) sendWantTransfer ( true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.can_transport );
+			else sendWantTransfer ( true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.can_transport );
+		}
+	}
+
+	menu->end = true;
+}
+
+void cDialogTransfer::cancelReleased( void *parent )
+{
+	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	menu->terminate = true;
+}
+
+void cDialogTransfer::incReleased( void *parent )
+{
+	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	menu->transferValue++;
+	menu->setCargos();
+	menu->draw();
+}
+
+void cDialogTransfer::decReleased( void *parent )
+{
+	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	menu->transferValue--;
+	menu->setCargos();
+	menu->draw();
+}
+
+void cDialogTransfer::barClicked( void *parent )
+{
+	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	menu->transferValue = Round ( (mouse->x-menu->resBar->getPosition().x) * ( menu->maxDestCargo / 223.0 ) - menu->destCargo );
+	menu->setCargos();
+	menu->draw();
 }
 
 void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)

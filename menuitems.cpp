@@ -1606,8 +1606,8 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 	case MAT_BAR_TYPE_METAL_HORI_SMALL:
 	case MAT_BAR_TYPE_OIL_HORI_SMALL:
 	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
-		position.w = 20;
-		position.h = 115;
+		position.w = 223;
+		position.h = 16;
 		horizontal = true;
 		break;
 	}
@@ -1651,10 +1651,19 @@ void cMenuMaterialBar::generateSurface()
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_METAL_HORI_SMALL:
+		src.x = 156;
+		src.y = 256;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_OIL_HORI_SMALL:
+		src.x = 156;
+		src.y = 290;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
+		src.x = 156;
+		src.y = 307;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	default:
 	case MAT_BAR_TYPE_METAL:
