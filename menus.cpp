@@ -1883,15 +1883,17 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 		else newCargo += 5-newCargo%5;
 
 		menu->secondList->getSelectedUnit()->setResValue ( newCargo );
-		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
 
 		newCargo = menu->secondList->getSelectedUnit()->getResValue();
 		int costs = (newCargo-oldCargo)/5;
 		if ( costs > menu->credits )
 		{
 			costs = menu->credits;
-			newCargo = costs * 5;
+			newCargo = costs * 5 + oldCargo;
 		}
+
+		menu->secondList->getSelectedUnit()->setResValue ( newCargo );
+		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
 
 		menu->credits -= costs;
 		menu->goldBar->setCurrentValue ( menu->credits );
