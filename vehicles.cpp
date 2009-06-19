@@ -2488,8 +2488,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	if ( data.cargo >= iBuild_Costs )
 	{
 		iTurboBuildCosts[0] = iBuild_Costs;
-
-		iTurboBuildRounds[0] = iTurboBuildCosts[0] / data.iNeeds_Metal;
+		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
 	}
 
 	//step 2x
@@ -2509,35 +2508,30 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	}
 
 	//step 4x
-	if ( ( iTurboBuildRounds[1] > 1 ) && ( iTurboBuildCosts[1] + 8 <= 56 ) && ( data.cargo >= iTurboBuildCosts[1] + 8 ) )
+	if (
+		( iTurboBuildRounds[1] > 1 )
+		&& ( iTurboBuildCosts[1] <= 48 )
+		&& ( data.cargo >= iTurboBuildCosts[1] + 8 )
+		&& ( data.cargo >= 24 )
+		)
 	{
 		iTurboBuildRounds[2] = iTurboBuildRounds[1];
 		iTurboBuildCosts[2] = iTurboBuildCosts[1];
 
-		int oldCosts = iTurboBuildCosts[2];
-		int oldRounds = iTurboBuildRounds[2];
-		while ( ( data.cargo >= iTurboBuildCosts[2] + 8 ) && ( iTurboBuildRounds[2] > 1 ) )
+		while (
+			( data.cargo >= iTurboBuildCosts[2] + 8 )
+			&& ( iTurboBuildRounds[2] > 1 )
+			&& ( iTurboBuildCosts[2] <= 48 )
+			&& ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] )
+			&& ( data.cargo >= (iTurboBuildRounds[1] - iTurboBuildRounds[2] + 1) * 24 )
+			)
 		{
-			oldCosts = iTurboBuildCosts[2];
-			oldRounds = iTurboBuildRounds[2];
-
 			iTurboBuildRounds[2]--;
 			iTurboBuildCosts[2] += 8;
 
-			if ( (iTurboBuildRounds[2]-1)*2 < iTurboBuildRounds[1] )
-				break;
-			if ( iTurboBuildCosts[2] + 8 > 56 )
-				break;
 		}
 		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24 > iTurboBuildCosts[2] )
 			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24;
-
-		// take care the low border wont break cargo limit:
-		if ( iTurboBuildCosts[2] > data.cargo )
-		{
-			iTurboBuildCosts[2] = oldCosts;
-			iTurboBuildRounds[2] = oldRounds;
-		}
 	}
 }
 

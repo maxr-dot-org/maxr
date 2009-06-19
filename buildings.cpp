@@ -1149,7 +1149,6 @@ void cBuilding::ServerStartWork ()
 			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
-}
 
 	// needs gold:
 	if ( data.gold_need )
@@ -2289,88 +2288,50 @@ void cBuilding::RotateTo ( int Dir )
 //--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
-	//first calc costs for a new Vehical
-	iTurboBuildCosts[0] = iVehicleCosts;
+	// calculate building time and costs
 
-	iTurboBuildCosts[1] = iTurboBuildCosts[0];
+	//prevent division by zero
+	if ( data.iNeeds_Metal == 0 ) data.iNeeds_Metal = 1;
 
-	while ( iTurboBuildCosts[1] + ( 2 * data.iNeeds_Metal ) <= 2*iTurboBuildCosts[0] )
-	{
-		iTurboBuildCosts[1] += 2 * data.iNeeds_Metal;
-	}
+	//step 1x
+	iTurboBuildCosts[0] = iRemainingMetal;
+	if ( iTurboBuildCosts[0] <= 0 ) iTurboBuildCosts[0] = iVehicleCosts;
+	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
 
-	iTurboBuildCosts[2] = iTurboBuildCosts[1];
-
-	while ( iTurboBuildCosts[2] + ( 4 * data.iNeeds_Metal ) <= 3*iTurboBuildCosts[0] )
-	{
-		iTurboBuildCosts[2] += 4 * data.iNeeds_Metal;
-	}
-
-	//now this is a litle bit tricky ...
-	//trying to calculate a plausible value, if we are changing the speed of an already started build-job
-	if ( iRemainingMetal >= 0 )
-	{
-		float WorkedRounds;
-
-		switch ( BuildSpeed )  //BuildSpeed here is the previous build speed
-		{
-
-			case 0:
-				WorkedRounds = ( iTurboBuildCosts[0] - iRemainingMetal ) / ( float ) ( 1 * data.iNeeds_Metal );
-				iTurboBuildCosts[0] -= ( int ) ( 1    *  1 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[1] -= ( int ) ( 0.5  *  4 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[2] -= ( int ) ( 0.25 * 12 * data.iNeeds_Metal * WorkedRounds );
-				break;
-
-			case 1:
-				WorkedRounds = ( iTurboBuildCosts[1] - iRemainingMetal ) / ( float ) ( 4 * data.iNeeds_Metal );
-				iTurboBuildCosts[0] -= ( int ) ( 2   *  1 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[1] -= ( int ) ( 1   *  4 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[2] -= ( int ) ( 0.5 * 12 * data.iNeeds_Metal * WorkedRounds );
-				break;
-
-			case 2:
-				WorkedRounds = ( iTurboBuildCosts[2] - iRemainingMetal ) / ( float ) ( 12 * data.iNeeds_Metal );
-				iTurboBuildCosts[0] -= ( int ) ( 4 *  1 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[1] -= ( int ) ( 2 *  4 * data.iNeeds_Metal * WorkedRounds );
-				iTurboBuildCosts[2] -= ( int ) ( 1 * 12 * data.iNeeds_Metal * WorkedRounds );
-				break;
-		}
-	}
-
-
-	//calc needed Rounds
-	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( 1 * data.iNeeds_Metal ) );
+	iTurboBuildRounds[1] = 0;
+	iTurboBuildRounds[2] = 0;
 
 	if ( data.can_build != BUILD_MAN )
 	{
-		iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) ( 4 * data.iNeeds_Metal ) );
-		iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) ( 12 * data.iNeeds_Metal ) );
-	}
-	else
-	{
-		iTurboBuildRounds[1] = 0;
-		iTurboBuildRounds[2] = 0;
-	}
+		//step 2x
+		if ( iTurboBuildRounds[0] > 1 )
+		{
+			iTurboBuildRounds[1] = iTurboBuildRounds[0];
+			iTurboBuildCosts[1] = iTurboBuildCosts[0];
 
-	//now avoid different costs at the same number of rounds
+			while ( ( iTurboBuildRounds[1] > 1 ) && ( (iTurboBuildRounds[1]-1)*2 >= iTurboBuildRounds[0] ) )
+			{
+				iTurboBuildRounds[1]--;
+				iTurboBuildCosts[1] += 2 * data.iNeeds_Metal;
+			}
+		}
 
-	/* macht mehr Probleme, als dass es hilft
-	switch (BuildSpeed) //old buildspeed
-	{
-		case 0:
-			if (iTurboBuildRounds[1] == iTurboBuildRounds[0]) iTurboBuildCosts[1] = iTurboBuildCosts[0];
-			if (iTurboBuildRounds[2] == iTurboBuildRounds[0]) iTurboBuildCosts[2] = iTurboBuildCosts[0];
-			break;
-		case 1:
-			if (iTurboBuildRounds[0] == iTurboBuildRounds[1]) iTurboBuildCosts[0] = iTurboBuildCosts[1];
-			if (iTurboBuildRounds[2] == iTurboBuildRounds[1]) iTurboBuildCosts[2] = iTurboBuildCosts[1];
-			break;
-		case 2:
-			if (iTurboBuildRounds[0] == iTurboBuildRounds[2]) iTurboBuildCosts[1] = iTurboBuildCosts[2];
-			if (iTurboBuildRounds[1] == iTurboBuildRounds[2]) iTurboBuildCosts[2] = iTurboBuildCosts[2];
-			break;
-	}*/
+		//step 4x
+		if ( ( iTurboBuildRounds[1] > 1 ) )
+		{
+			iTurboBuildRounds[2] = iTurboBuildRounds[1];
+			iTurboBuildCosts[2] = iTurboBuildCosts[1];
+
+			while ( ( iTurboBuildRounds[2] > 1 ) && ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] ) )
+			{
+				iTurboBuildRounds[2]--;
+				iTurboBuildCosts[2] += 4 * data.iNeeds_Metal;
+
+			}
+			if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.iNeeds_Metal ) * 12 > iTurboBuildCosts[2] )
+				iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.iNeeds_Metal ) * 12;
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
