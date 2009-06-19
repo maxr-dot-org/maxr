@@ -739,15 +739,27 @@ public:
  */
 class cMenuScroller : public cMenuItem
 {
-friend class cMenuScrollBar;
+public:
+	enum eMenuScrollerTypes
+	{
+		SCROLLER_TYPE_HORI,
+		SCROLLER_TYPE_VERT
+	};
+private:
+	cMenuItem *parent;
+	eMenuScrollerTypes scrollerType;
 	SDL_Surface *surface;
 
+	void (*movedCallback)(void *);
 public:
-	cMenuScroller ( int x, int y );
+	cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) = NULL );
 	~cMenuScroller();
 	void draw();
 
-	void move ( int y );
+	SDL_Rect getPosition();
+	void move ( int value );
+
+	void movedMouseOver( int lastMouseX, int lastMouseY, void *parent );
 };
 
 /**
@@ -981,6 +993,29 @@ public:
 	void draw();
 
 	void setUnitData ( sUnitData *unitData_ );
+};
+
+class cMenuSlider : public cMenuItem
+{
+protected:
+	int maxValue;
+	int curValue;
+
+	SDL_Surface *surface;
+	cMenu *parent;
+
+public:
+	cMenuSlider( int x, int y, int maxValue_, cMenu *parent_ );
+	~cMenuSlider();
+
+	cMenuScroller *scroller;
+
+	void draw();
+
+	void setValue( int value );
+	int getValue();
+
+	static void scrollerMoved( void *parent );
 };
 
 #endif // menuitemsH

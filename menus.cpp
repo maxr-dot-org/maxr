@@ -31,6 +31,7 @@
 #include "clientevents.h"
 #include "clans.h"
 #include "serverevents.h"
+#include "dialog.h"
 
 #define MAIN_MENU_BTN_SPACE 35
 
@@ -683,18 +684,16 @@ void cStartMenu::multiPlayerReleased( void* parent )
 void cStartMenu::preferencesReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
-	ActiveMenu = NULL;
-	showPreferences();
-	ActiveMenu = menu;
+	cDialogPreferences preferencesDialog;
+	preferencesDialog.show();
 	menu->draw();
 }
 
 void cStartMenu::licenceReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
-	ActiveMenu = NULL;
-	showLicence();
-	ActiveMenu = menu;
+	cDialogLicence licenceDialog;
+	licenceDialog.show();
 	menu->draw();
 }
 
@@ -2189,7 +2188,8 @@ void cLandingMenu::handleKeyInput( SDL_keysym keysym, string ch )
 	{
 		ActiveMenu = NULL;
 		// TODO: may use another text here
-		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game" ), false ) ) terminate = true;
+		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+		if ( yesNoDialog.show() == 0  ) terminate = true;
 		else draw();
 		ActiveMenu = this;
 	}
@@ -3096,9 +3096,10 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		}
 		break;
 	case GAME_EV_REQ_IDENT:
-		if ( ShowYesNo ( lngPack.i18n ( "Text~Multiplayer~Reconnect" ), false ) )
 		{
-			sendGameIdentification ( actPlayer, message->popInt16() );
+			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+			if ( yesNoDialog.show() == 0  ) sendGameIdentification ( actPlayer, message->popInt16() );
+			else draw();
 		}
 		break;
 	case GAME_EV_OK_RECONNECT:
@@ -3374,7 +3375,13 @@ void cLoadSaveMenu::saveReleased( void* parent )
 {
 	cLoadSaveMenu *menu = static_cast<cLoadSaveMenu*>((cMenu*)parent);
 	if (  menu->selected < 0 ||  menu->selected > 99 ) return;
-	if ( !Server ) ShowOK ( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
+	if ( !Server )
+	{
+		cDialogOK okDialog( lngPack.i18n ( "Text~Multiplayer~Save_Only_Host" ) );
+		okDialog.show();
+		menu->draw();
+		return;
+	}
 
 	cSavegame savegame( menu->selected+1 );
 	savegame.save ( menu->saveSlots[menu->selected-menu->offset]->getNameEdit()->getText() );

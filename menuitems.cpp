@@ -635,25 +635,15 @@ void cMenuCheckButton::renewButtonSurface()
 
 bool cMenuCheckButton::preClicked()
 {
-	switch ( buttonType )
+	if ( group )
 	{
-	default:
-	case CHECKBOX_TYPE_STANDARD:
-	case CHECKBOX_TYPE_TANK:
-	case CHECKBOX_TYPE_PLANE:
-	case CHECKBOX_TYPE_SHIP:
-	case CHECKBOX_TYPE_BUILD:
-	case CHECKBOX_TYPE_TNT:
+		checked = true;
+		group->checkedButton ( this );
+	}
+	else
+	{
 		checked = !checked;
 		renewButtonSurface();
-		break;
-	case RADIOBTN_TYPE_BTN_ROUND:
-	case RADIOBTN_TYPE_TEXT_ONLY:
-	case RADIOBTN_TYPE_ANGULAR_BUTTON:
-		checked = true;
-		if ( group ) group->checkedButton ( this );
-		else renewButtonSurface();
-		break;
 	}
 	draw();
 	SHOW_SCREEN
@@ -1912,14 +1902,34 @@ void cMenuUpgradeHandler::updateUnitValues ( cMenuUnitListItem *unit )
 	}
 }
 
-cMenuScroller::cMenuScroller ( int x, int y ) : cMenuItem ( x, y )
+cMenuScroller::cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) ) :
+	cMenuItem ( x, y ),
+	scrollerType(scrollerType_),
+	parent(parent_),
+	movedCallback(movedCallback_)
 {
-	position.w = 17;
-	position.h = 14;
+	SDL_Rect src;
+	src.y = 35;
+	switch ( scrollerType )
+	{
+	case SCROLLER_TYPE_VERT:
+		src.x = 201;
+		src.w = 17;
+		src.h = 14;
+		break;
+	case SCROLLER_TYPE_HORI:
+		src.x = 218;
+		src.w = 14;
+		src.h = 17;
+		break;
+	}
+	position.w = src.w;
+	position.h = src.h;
 
-	SDL_Rect src = { 201, 35, position.w, position.h };
-	surface = SDL_CreateRGBSurface( SDL_HWSURFACE, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 }
 
 cMenuScroller::~cMenuScroller()
@@ -1932,10 +1942,38 @@ void cMenuScroller::draw()
 	SDL_BlitSurface ( surface, NULL, buffer, &position );
 }
 
-void cMenuScroller::move ( int y )
+void cMenuScroller::movedMouseOver( int lastMouseX, int lastMouseY, void *parent_ )
 {
-	position.y = y;
-};
+	if ( !isClicked ) return;
+	switch ( scrollerType )
+	{
+	case SCROLLER_TYPE_VERT:
+		position.y = mouse->y-(lastMouseY-position.y);
+		break;
+	case SCROLLER_TYPE_HORI:
+		position.x = mouse->x-(lastMouseX-position.x);
+		break;
+	}
+	if ( movedCallback ) movedCallback( parent );
+}
+
+SDL_Rect cMenuScroller::getPosition()
+{
+	return position;
+}
+
+void cMenuScroller::move ( int value )
+{
+	switch ( scrollerType )
+	{
+	case SCROLLER_TYPE_VERT:
+		position.y = value;
+		break;
+	case SCROLLER_TYPE_HORI:
+		position.x = value;
+		break;
+	}
+}
 
 cMenuScrollBar::cMenuScrollBar ( int x, int y, int h, int pageSteps_, cMenu *parentMenu_, cMenuItem *parentItem_ ) : cMenuItemContainer ( x, y ), pageSteps(pageSteps_), parentMenu(parentMenu_), parentItem(parentItem_)
 {
@@ -1953,7 +1991,7 @@ cMenuScrollBar::cMenuScrollBar ( int x, int y, int h, int pageSteps_, cMenu *par
 	downButton = new cMenuButton ( position.x, position.y+position.h-17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
 	downButton->setReleasedFunction( &downButtonReleased );
 	itemList.Add ( downButton );
-	scroller = new cMenuScroller ( position.x, position.y+17 );
+	scroller = new cMenuScroller ( position.x, position.y+17, cMenuScroller::SCROLLER_TYPE_VERT, this );
 	itemList.Add ( upButton );
 }
 
@@ -1987,8 +2025,8 @@ void cMenuScrollBar::draw()
 	SDL_BlitSurface ( surface, NULL, buffer, &dest );
 	upButton->draw();
 	downButton->draw();
-	scroller->position.y = position.y+17+offset*scrollerSteps;
-	if ( scroller->position.y > position.y+position.h-17-14 ) scroller->position.y = position.y+position.h-17-14;
+	scroller->move ( position.y+17+offset*scrollerSteps );
+	if ( scroller->getPosition().y > position.y+position.h-17-14 ) scroller->move ( position.y+position.h-17-14 );
 	scroller->draw();
 }
 
@@ -2637,4 +2675,60 @@ void cMenuStoredUnitDetails::drawNumber ( int value, int maximalValue, int index
 	if ( value > maximalValue / 2 )	font->showTextCentered ( position.x+16, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_GREEN, buffer );
 	else if ( value > maximalValue / 4 ) font->showTextCentered ( position.x+16, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_YELLOW, buffer );
 	else font->showTextCentered ( position.x+25, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_RED, buffer );
+}
+
+cMenuSlider::cMenuSlider ( int x, int y, int maxValue_, cMenu *parent_ ) : cMenuItem ( x, y ), maxValue(maxValue_), parent(parent_)
+{
+	curValue = 0;
+
+	SDL_Rect src = { 201, 53, 58, 3 };
+	position.w = src.w;
+	position.h = src.h;
+
+	surface = SDL_CreateRGBSurface( SDL_HWSURFACE, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+
+	scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
+}
+
+cMenuSlider::~cMenuSlider()
+{
+	delete scroller;
+	SDL_FreeSurface ( surface );
+}
+
+void cMenuSlider::draw()
+{
+	SDL_BlitSurface ( surface, NULL, buffer, &position );
+	cMenuSlider::scroller->draw();
+}
+
+void cMenuSlider::setValue( int value )
+{
+	curValue = value;
+	int pos = position.x + Round ( ((float)position.w / maxValue) * curValue );
+	scroller->move ( pos-7 );
+}
+
+int cMenuSlider::getValue()
+{
+	return curValue;
+}
+
+void cMenuSlider::scrollerMoved( void *parent_ )
+{
+	cMenuSlider *This = (cMenuSlider*)parent_;
+	int pos = This->scroller->getPosition().x - This->position.x + 7;
+	if ( pos < 0 )
+	{
+		pos = 0;
+		This->scroller->move ( This->position.x-7 );
+	}
+	if ( pos > This->position.w )
+	{
+		pos = This->position.w-7;
+		This->scroller->move ( This->position.x+This->position.w-7 );
+	}
+	This->curValue = Round ( (This->maxValue / (float)This->position.w) * pos );
+	((cMenu*)This->parent)->draw();
 }

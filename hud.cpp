@@ -877,9 +877,8 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 			PlayFX ( SoundData.SNDHudButton );
 			Client->bChangeObjectName=false;
 			Client->bChatInput=false;
-			Client->isInMenu = true;
-			showPreferences();
-			Client->isInMenu = false;
+			cDialogPreferences preferencesDialog;
+			preferencesDialog.show();
 			PraeferenzenButton ( false );
 		}
 	}

@@ -30,6 +30,7 @@
 #include "server.h"
 #include "upgradecalculator.h"
 #include "menus.h"
+#include "dialog.h"
 
 
 //--------------------------------------------------------------------------
@@ -939,10 +940,7 @@ bool cBuilding::MouseOverMenu (int mx, int my)
 //--------------------------------------------------------------------------
 void cBuilding::SelfDestructionMenu ()
 {
-	if (showSelfdestruction())
-	{
-		//TODO: self destruction
-	}
+	//TODO: self destruction dialog and destruction code
 	Client->bFlagDrawHud = true;
 }
 

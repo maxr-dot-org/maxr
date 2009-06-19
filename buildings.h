@@ -23,7 +23,6 @@
 #include "main.h"
 #include <SDL.h>
 #include "base.h"
-#include "dialog.h"
 #include "map.h"
 #include "input.h"
 #include "upgradecalculator.h"

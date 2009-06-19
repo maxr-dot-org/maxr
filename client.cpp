@@ -31,6 +31,7 @@
 #include "attackJobs.h"
 #include "buttons.h"
 #include "menus.h"
+#include "dialog.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -860,7 +861,8 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	if ( keysym.sym == KeysList.KeyExit )
 	{
 		isInMenu = true;
-		if ( ShowYesNo ( lngPack.i18n( "Text~Comp~End_Game") ) )
+		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+		if ( yesNoDialog.show() == 0  )
 		{
 			drawMap ( false );
 			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
@@ -5130,9 +5132,8 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	SDL_BlitSurface ( GraphicsData.gfx_hud,NULL,buffer,NULL );
 	SDL_BlitSurface ( sf,&scr,buffer,&scr );
 
-	isInMenu = true;
-	ShowOK ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn"), true );
-	isInMenu = false;
+	cDialogOK okDialog ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn") );
+	okDialog.show();
 }
 
 void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )

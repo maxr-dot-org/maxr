@@ -19,70 +19,118 @@
 #ifndef dialogH
 #define dialogH
 #include "defines.h"
-#include "main.h"
+#include "menus.h"
 
-void ShowDialog(string text,bool bPurgeHud,string path,int SaveLoad=-1);
-
-//void ShowDialogList(cList *list,int offset);
-
-/** Shows localized Yes/No dialog
- * @param text Text to show on button
- * @return true on Yes<br>false on No
+/**
+ Shows localized Yes/No dialog. The show function returns 0 for yes and 1 for no.
  */
-bool ShowYesNo(string text,bool bPurgeHud = true);
-int ShowNumberInput(string text, int iMaxValue, int iDefaultValue);
- /**
+class cDialogYesNow : public cMenu
+{
+	cMenuLabel *textLabel;
+	cMenuButton *yesButton;
+	cMenuButton *noButton;
+public:
+	cDialogYesNow( string text );
+	~cDialogYesNow();
+
+	static void yesReleased( void *parent );
+	static void noReleased( void *parent );
+};
+
+/**
  * Shows dialogbox with localized OK button
- * @param sText Text to show on button
- * @param bPurgeHud Clean hud (infoscreens) and black out gamewindow
  */
-void ShowOK(string sText,bool bPurgeHud=false);
-/** Shows selfdestruction dialog with safe feature. User has to click twice to blow something up
- * @author beko
- * @return true on blast<br>false on cancel
+class cDialogOK : public cMenu
+{
+	cMenuLabel *textLabel;
+	cMenuButton *okButton;
+public:
+	cDialogOK( string text );
+	~cDialogOK();
+
+	static void okReleased( void *parent );
+};
+
+/**
+ * Shows licence infobox refering to hardcoded GPL-notation and warranty information
  */
-bool showSelfdestruction(void);
- /** Shows licence infobox refering to hardcoded GPL-notation and warranty information
- * @author beko
- */
-void showLicence();
- /** Shows localized preferences dialog
- * @author beko
- */
-void showPreferences(void);
+class cDialogLicence : public cMenu
+{
+	string sLicence1;
+	string sLicence2;
+	string sLicence3;
+ 	string sLicence4;
+	int offset;
+
+	cMenuLabel *maxrLabel;
+	cMenuLabel *headerLabel;
+	cMenuLabel *textLabel;
+
+	cMenuButton *okButton;
+	cMenuButton *upButton;
+	cMenuButton *downButton;
+
+	void generateLicenceTexts();
+	void resetText();
+public:
+	cDialogLicence();
+	~cDialogLicence();
+
+	static void okReleased( void *parent );
+	static void upReleased( void *parent );
+	static void downReleased( void *parent );
+};
+
  /**
- *
+ * Shows localized preferences dialog
  */
-void drawDialogArrow(SDL_Surface *surface, SDL_Rect *dest, int type);
-/**
- * Draws a sliderbar with a slider
- * @author beko
- * @param *sfDialog SDL_Surface of dialog for proper redrawing background
- * @param offx
- * @param offy
- * @param value 0 - 255 for sliderposition
- * @param *surface SDL_Surface to draw on
- */
-void drawSlider(SDL_Surface *sfDialog, int offx,int offy,int value, SDL_Surface *surface);
-/**
- * Draws a checkbox
- * @author beko
- * @param offx
- * @param offy
- * @param set clickstatus
- * @param *surface SDL_Surface to draw on
- */
-void drawCheckbox(int offx,int offy,bool set, SDL_Surface *surface);
-/** Draws a button<br>
- * Size is 77x23
- * @author beko
- * @param sText Text displayed centered on button
- * @param bPressed clickstatus
- * @param x x position
- * @param y y position
- * @param *surface SDL_Surface to draw on
- */
-void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
+class cDialogPreferences : public cMenu
+{
+	string resolutions[6];
+
+	cMenuLabel *titleLabel;
+
+	cMenuLabel *volumeLabel;
+	cMenuLabel *musicLabel;
+	cMenuLabel *effectsLabel;
+	cMenuLabel *voicesLabel;
+	cMenuCheckButton *disableMusicChBox;
+	cMenuCheckButton *disableEffectsChBox;
+	cMenuCheckButton *disableVoicesChBox;
+	cMenuSlider *musicSlider;
+	cMenuSlider *effectsSlider;
+	cMenuSlider *voicesSlider;
+
+	cMenuLabel *nameLabel;
+	cMenuLineEdit *nameEdit;
+
+	cMenuCheckButton *animationChBox;
+	cMenuCheckButton *shadowsChBox;
+	cMenuCheckButton *alphaChBox;
+	cMenuCheckButton *demageBuilChBox;
+	cMenuCheckButton *demageVehChBox;
+	cMenuCheckButton *tracksChBox;
+
+	cMenuLabel *scrollSpeedLabel;
+	cMenuSlider *scrollSpeedSlider;
+
+	cMenuCheckButton *autosaveChBox;
+	cMenuCheckButton *introChBox;
+	cMenuCheckButton *windowChBox;
+
+	cMenuRadioGroup *resoulutionGroup;
+
+	cMenuButton *okButton;
+	cMenuButton *cancelButton;
+
+	void saveValues();
+public:
+	cDialogPreferences();
+	~cDialogPreferences();
+
+	static void okReleased( void *parent );
+	static void cancelReleased( void *parent );
+};
 
 /** Draws a context menu item
  * @author beko
@@ -93,11 +141,5 @@ void drawButton(std::string sText, bool bPressed, int x, int y, SDL_Surface *sur
  * @param *surface SDL_Surface to draw on
 */
 void drawContextItem(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
-
-enum ARROW_TYPE
-{
-	ARROW_TYPE_UP = 0,
-	ARROW_TYPE_DOWN = 1,
-};
 
 #endif
