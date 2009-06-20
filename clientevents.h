@@ -234,5 +234,6 @@ void sendSetAutoStatus( int unitID, bool set );
 */
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
 void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll );
+void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr );
 
 #endif // clienteventsH

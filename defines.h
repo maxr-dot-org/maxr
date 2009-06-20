@@ -87,6 +87,7 @@
 #define GFXOD_DIALOG5			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()
 #define GFXOD_DIALOG6			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
 #define GFXOD_DIALOG_TRANSFER	(SettingsData.sGfxPath + PATH_DELIMITER + "transfer.pcx").c_str()
+#define GFXOD_DIALOG_RESEARCH	(SettingsData.sGfxPath + PATH_DELIMITER + "research.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
 #define PLAYERCOLORS		8

@@ -1018,4 +1018,22 @@ public:
 	static void scrollerMoved( void *parent );
 };
 
+class cMenuScrollerHandler : public cMenuItem
+{
+	int maxValue;
+	int currentValue;
+
+	cMenuScroller *scroller;
+
+public:
+	cMenuScrollerHandler( int x, int y, int w, int maxValue_ );
+	~cMenuScrollerHandler();
+
+	void draw();
+
+	void setValue( int value );
+
+	SDL_Rect getPosition();
+};
+
 #endif // menuitemsH

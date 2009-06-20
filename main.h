@@ -625,7 +625,6 @@ public:
 	SDL_Surface *gfx_edepot;
 	SDL_Surface *gfx_Cmuni;
 	SDL_Surface *gfx_Crepair;
-	SDL_Surface *gfx_research;
 	SDL_Surface *gfx_panel_top;
 	SDL_Surface *gfx_panel_bottom;
 	SDL_Surface *gfx_Csteal;

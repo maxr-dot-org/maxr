@@ -284,3 +284,14 @@ void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll )
 	message->pushBool ( upgradeAll );
 	Client->sendNetMessage ( message );
 }
+
+void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_RESEARCH_CHANGE);
+	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
+	{
+		message->pushInt16 ( newResearchSettings[i] );
+	}
+	message->pushInt16 ( ownerNr );
+	Client->sendNetMessage ( message );
+}

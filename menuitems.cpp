@@ -2741,3 +2741,35 @@ void cMenuSlider::scrollerMoved( void *parent_ )
 	This->curValue = Round ( (This->maxValue / (float)This->position.w) * pos );
 	((cMenu*)This->parent)->draw();
 }
+
+cMenuScrollerHandler::cMenuScrollerHandler(int x, int y, int w, int maxValue_) : cMenuItem (x, y), maxValue(maxValue_)
+{
+	position.h = 17;
+	position.w = w;
+
+	scroller = new cMenuScroller ( position.x, position.y, cMenuScroller::SCROLLER_TYPE_HORI, this );
+
+	currentValue = 0;
+}
+
+cMenuScrollerHandler::~cMenuScrollerHandler()
+{
+	delete scroller;
+}
+
+void cMenuScrollerHandler::draw()
+{
+	scroller->draw();
+}
+
+void cMenuScrollerHandler::setValue( int value )
+{
+	currentValue = value;
+	int pos = position.x + (position.w-14) / maxValue * currentValue;
+	scroller->move ( pos );
+}
+
+SDL_Rect cMenuScrollerHandler::getPosition()
+{
+	return position;
+}

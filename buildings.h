@@ -227,10 +227,6 @@ public:
 	bool canLoad( cVehicle *Vehicle );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
-	void ShowResearch();
-	void ShowResearchSliders(int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
-	void handleResearchSliderMouseClick(int mouseX, int mouseY, int newResearchSettings[cResearch::kNrResearchAreas], int startResearchCenters);
-	void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas]);
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
 	

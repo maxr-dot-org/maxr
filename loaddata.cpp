@@ -1615,7 +1615,6 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_edock,path,"edock.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_edepot,path,"edepot.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_ehangar,path,"ehangar.pcx" );
-	LoadGraphicToSurface ( GraphicsData.gfx_research,path,"research.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_pc,path,"player_pc.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_human,path,"player_human.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_none,path,"player_none.pcx" );

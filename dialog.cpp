@@ -803,3 +803,177 @@ void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *sur
 
 	return;
 }
+
+cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA ), owner(owner_)
+{
+	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+19, lngPack.i18n( "Text~Title~Labs" ) );
+	titleLabel->setCentered ( true );
+	menuItems.Add ( titleLabel );
+
+	centersLabel = new cMenuLabel ( position.x+58, position.y+52, lngPack.i18n( "Text~Comp~Labs" ) );
+	centersLabel->setCentered ( true );
+	menuItems.Add ( centersLabel );
+
+	themeLabel = new cMenuLabel ( position.x+200, position.y+52, lngPack.i18n( "Text~Comp~Themes" ) );
+	themeLabel->setCentered ( true );
+	menuItems.Add ( themeLabel );
+
+	turnsLabel = new cMenuLabel ( position.x+313, position.y+52, lngPack.i18n( "Text~Comp~Turns" ) );
+	turnsLabel->setCentered ( true );
+	menuItems.Add ( turnsLabel );
+
+	doneButton = new cMenuButton ( position.x+193, position.y+294, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	cancelButton = new cMenuButton ( position.x+91, position.y+294, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	cancelButton->setReleasedFunction ( &cancelReleased );
+	menuItems.Add ( cancelButton );
+
+	string themeNames[8] = {
+		lngPack.i18n ( "Text~Vehicles~Damage" ),
+		lngPack.i18n ( "Text~Hud~Shots" ),
+		lngPack.i18n ( "Text~Hud~Range" ),
+		lngPack.i18n ( "Text~Hud~Armor" ),
+		lngPack.i18n ( "Text~Hud~Hitpoints" ),
+		lngPack.i18n ( "Text~Hud~Speed" ),
+		lngPack.i18n ( "Text~Hud~Scan" ),
+		lngPack.i18n ( "Text~Vehicles~Costs" ) };
+
+	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+	{
+		centerCountLabels[i] = new cMenuLabel ( position.x+43, position.y+71+28*i, "0" );
+		centerCountLabels[i]->setCentered ( true );
+		menuItems.Add ( centerCountLabels[i] );
+
+		themeNameLabels[i] = new cMenuLabel ( position.x+183, position.y+71+28*i, themeNames[i] );
+		menuItems.Add ( themeNameLabels[i] );
+
+		percentageLabels[i] = new cMenuLabel ( position.x+258, position.y+71+28*i, "+"+iToStr (owner->researchLevel.getCurResearchLevel(i))+"%" );
+		percentageLabels[i]->setCentered ( true );
+		menuItems.Add ( percentageLabels[i] );
+
+		turnsLabels[i] = new cMenuLabel ( position.x+313, position.y+71+28*i, "" );
+		turnsLabels[i]->setCentered ( true );
+		menuItems.Add ( turnsLabels[i] );
+
+		incButtons[i] = new cMenuButton ( position.x+143, position.y+70+28*i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL );
+		incButtons[i]->setReleasedFunction ( &incReleased );
+		menuItems.Add ( incButtons[i] );
+
+		decButtons[i] = new cMenuButton ( position.x+71, position.y+70+28*i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL );
+		decButtons[i]->setReleasedFunction ( &decReleased );
+		menuItems.Add ( decButtons[i] );
+
+		scroller[i] = new cMenuScrollerHandler ( position.x+90, position.y+70+28*i, 51, owner->ResearchCount );
+		scroller[i]->setClickedFunction ( &sliderClicked );
+		menuItems.Add ( scroller[i] );
+	}
+
+	unusedResearch = owner->ResearchCount;
+	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+	{
+		newResearchSettings[i] = owner->researchCentersWorkingOnArea[i];
+		unusedResearch -= newResearchSettings[i];
+	}
+
+	setData();
+}
+
+cDialogResearch::~cDialogResearch()
+{
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cDialogResearch::setData()
+{
+	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+	{
+		centerCountLabels[i]->setText ( iToStr ( newResearchSettings[i] ) );
+		scroller[i]->setValue ( newResearchSettings[i] );
+
+		turnsLabels[i]->setText ( iToStr ( owner->researchLevel.getRemainingTurns (i, newResearchSettings[i]) ) );
+
+		incButtons[i]->setLocked ( unusedResearch <= 0 );
+		decButtons[i]->setLocked ( newResearchSettings[i] <= 0 );
+	}
+}
+
+void cDialogResearch::doneReleased( void *parent )
+{
+	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	sendWantResearchChange ( menu->newResearchSettings, menu->owner->Nr );
+	menu->end = true;
+}
+
+void cDialogResearch::cancelReleased( void *parent )
+{
+	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	menu->terminate = true;
+}
+
+void cDialogResearch::incReleased( void *parent )
+{
+	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	if ( menu->unusedResearch > 0 )
+	{
+		menu->unusedResearch--;
+		for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+		{
+			if ( menu->incButtons[i]->overItem( mouse->x, mouse->y ) )
+			{
+				menu->newResearchSettings[i]++;
+				break;
+			}
+		}
+		menu->setData();
+		menu->draw();
+	}
+}
+
+void cDialogResearch::decReleased( void *parent )
+{
+	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	if ( menu->unusedResearch < menu->owner->ResearchCount )
+	{
+		menu->unusedResearch++;
+		for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+		{
+			if ( menu->decButtons[i]->overItem( mouse->x, mouse->y ) )
+			{
+				menu->newResearchSettings[i]--;
+				break;
+			}
+		}
+		menu->setData();
+		menu->draw();
+	}
+}
+
+void cDialogResearch::sliderClicked( void *parent )
+{
+	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+	{
+		if ( menu->scroller[i]->overItem( mouse->x, mouse->y ) )
+		{
+			int posX = mouse->x - menu->scroller[i]->getPosition().x;
+			int wantResearch = Round ( (float)menu->owner->ResearchCount / menu->scroller[i]->getPosition().w * posX );
+			if (wantResearch <= menu->newResearchSettings[i])
+			{
+				menu->unusedResearch += menu->newResearchSettings[i] - wantResearch;
+				menu->newResearchSettings[i] = wantResearch;
+			}
+			else
+			{
+				int wantIncrement = wantResearch - menu->newResearchSettings[i];
+				int possibleIncrement = (wantIncrement >= menu->unusedResearch) ? menu->unusedResearch : wantIncrement;
+				menu->newResearchSettings[i] += possibleIncrement;
+				menu->unusedResearch -= possibleIncrement;
+			}
+			break;
+		}
+	}
+	menu->setData();
+	menu->draw();
+}

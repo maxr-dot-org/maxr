@@ -1133,7 +1133,8 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
-		SelectedBuilding->ShowResearch();
+		cDialogResearch researchDialog ( SelectedBuilding->owner );
+		researchDialog.show();
 	}
 	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{

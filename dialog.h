@@ -172,6 +172,45 @@ public:
 	static void barClicked( void *parent );
 };
 
+class cDialogResearch : public cMenu
+{
+	cPlayer *owner;
+	int newResearchSettings[cResearch::kNrResearchAreas];
+	int unusedResearch;
+
+	cMenuLabel *titleLabel;
+
+	cMenuLabel *centersLabel;
+	cMenuLabel *themeLabel;
+	cMenuLabel *turnsLabel;
+
+	cMenuButton *doneButton;
+	cMenuButton *cancelButton;
+
+	cMenuButton *incButtons[cResearch::kNrResearchAreas];
+	cMenuButton *decButtons[cResearch::kNrResearchAreas];
+
+	cMenuScrollerHandler *scroller[cResearch::kNrResearchAreas];
+
+	cMenuLabel *centerCountLabels[cResearch::kNrResearchAreas];
+	cMenuLabel *themeNameLabels[cResearch::kNrResearchAreas];
+	cMenuLabel *percentageLabels[cResearch::kNrResearchAreas];
+	cMenuLabel *turnsLabels[cResearch::kNrResearchAreas];
+
+	void setData();
+public:
+	cDialogResearch( cPlayer *owner_ );
+	~cDialogResearch();
+
+	static void doneReleased( void *parent );
+	static void cancelReleased( void *parent );
+
+	static void incReleased( void *parent );
+	static void decReleased( void *parent );
+
+	static void sliderClicked( void *parent );
+};
+
 /** Draws a context menu item
  * @author beko
  * @param sText Text to display on item
