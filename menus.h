@@ -469,6 +469,7 @@ protected:
 	cMenuLabel *clanShortDescription;
 	
 	cMenuButton *okButton;
+	cMenuButton *backButton;
 
 	cPlayer *player;
 	int clan;
@@ -476,11 +477,12 @@ protected:
 	void updateClanDescription ();
 
 public:
-	cClanSelectionMenu (cPlayer *player);
+	cClanSelectionMenu (cPlayer *player, bool noReturn );
 	~cClanSelectionMenu ();
 	
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
+	static void backReleased (void* parent);
 };
 
 /**
@@ -600,7 +602,7 @@ protected:
 	void addedCallback ( cMenuUnitListItem *item );
 	void removedCallback ( cMenuUnitListItem *item );
 public:
-	cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_ );
+	cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_, bool noReturn );
 	~cStartupHangarMenu();
 
 	static void selectionChanged( void* parent );
@@ -736,7 +738,7 @@ protected:
 	cMenuButton *startButton;
 
 	int checkAllPlayersReady();
-	void runSavedGame();
+	bool runSavedGame();
 
 public:
 	cNetworkHostMenu();
