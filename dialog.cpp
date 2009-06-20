@@ -38,11 +38,11 @@ cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ),
 	textLabel->setBox ( position.w-40, position.h-150 );
 	menuItems.Add ( textLabel );
 
-	yesButton = new cMenuButton ( position.x+67, position.y+185, lngPack.i18n ("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	yesButton = new cMenuButton ( position.x+155, position.y+185, lngPack.i18n ("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	yesButton->setReleasedFunction ( &yesReleased );
 	menuItems.Add ( yesButton );
 
-	noButton = new cMenuButton ( position.x+155, position.y+185, lngPack.i18n ("Text~Button~No"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	noButton = new cMenuButton ( position.x+67, position.y+185, lngPack.i18n ("Text~Button~No"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	noButton->setReleasedFunction ( &noReleased );
 	menuItems.Add ( noButton );
 }
@@ -492,11 +492,11 @@ cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_
 	resBar->setClickedFunction ( &barClicked );
 	menuItems.Add ( resBar );
 
-	doneButton = new cMenuButton ( position.x+71, position.y+200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton = new cMenuButton ( position.x+159, position.y+200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	doneButton->setReleasedFunction ( &doneReleased );
 	menuItems.Add ( doneButton );
 
-	cancelButton = new cMenuButton ( position.x+159, position.y+200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	cancelButton = new cMenuButton ( position.x+71, position.y+200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	cancelButton->setReleasedFunction ( &cancelReleased );
 	menuItems.Add ( cancelButton );
 
