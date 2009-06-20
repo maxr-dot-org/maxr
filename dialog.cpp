@@ -18,7 +18,6 @@
  ***************************************************************************/
 #include <SDL.h>
 #include <sstream>
-#include "buttons.h"
 #include "dialog.h"
 #include "mouse.h"
 #include "unifonts.h"

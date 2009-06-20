@@ -29,7 +29,6 @@
 #include "netmessage.h"
 #include "main.h"
 #include "attackJobs.h"
-#include "buttons.h"
 #include "menus.h"
 #include "dialog.h"
 
