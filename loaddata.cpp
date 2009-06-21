@@ -160,6 +160,7 @@ int LoadData ( void * )
 	sTmpString += "lang_";
 	sTmpString += sLang;
 	sTmpString += ".xml";
+	Log.write("Using langfile: " + sTmpString, cLog::eLOG_TYPE_DEBUG );
 	if ( LoadLanguage()!=1 || !FileExists( sTmpString.c_str() ) )
 	{
 		MakeLog("",-1,2);
