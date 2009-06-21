@@ -6,7 +6,6 @@ maxr_SOURCES = attackJobs.cpp \
 automjobs.cpp \
 base.cpp \
 buildings.cpp \
-buttons.cpp \
 clans.cpp \
 client.cpp \
 clientevents.cpp \
