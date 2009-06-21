@@ -4429,6 +4429,20 @@ cMineManagerMenu::cMineManagerMenu( cBuilding *building_ ) : cMenu ( LoadPCX(GFX
 	doneButton->setReleasedFunction ( doneReleased );
 	menuItems.Add ( doneButton );
 
+	// add the bars before the labels so that the bars will be drawn under the labels
+	for ( int i = 0; i < 3; i++ )
+	{
+		metalBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+37*i, position.x+174+120, position.y+70+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_BIG, false, false );
+		menuItems.Add ( metalBars[i] );
+		oilBars[i] = new cMenuMaterialBar ( position.x+174, position.y+190+37*i, position.x+174+120, position.y+190+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_BIG, false, false );
+		menuItems.Add ( oilBars[i] );
+		goldBars[i] = new cMenuMaterialBar ( position.x+174, position.y+310+37*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_BIG, false, false );
+		menuItems.Add ( goldBars[i] );
+
+		noneBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+120*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG, true, false );
+		menuItems.Add ( noneBars[i] );
+	}
+
 	for ( int i = 0; i < 3; i++ )
 	{
 		incButtons[i] = new cMenuButton ( position.x+421, position.y+70+120*i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_BIG );
@@ -4451,16 +4465,6 @@ cMineManagerMenu::cMineManagerMenu( cBuilding *building_ ) : cMenu ( LoadPCX(GFX
 		reserveLabels[i] = new cMenuLabel ( position.x+81, position.y+78+37*2+121*i, lngPack.i18n ( "Text~Comp~Reserve" ) );
 		reserveLabels[i]->setCentered ( true );
 		menuItems.Add ( reserveLabels[i] );
-
-		metalBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+37*i, position.x+174+120, position.y+70+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_BIG, false, false );
-		menuItems.Add ( metalBars[i] );
-		oilBars[i] = new cMenuMaterialBar ( position.x+174, position.y+190+37*i, position.x+174+120, position.y+190+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_BIG, false, false );
-		menuItems.Add ( oilBars[i] );
-		goldBars[i] = new cMenuMaterialBar ( position.x+174, position.y+310+37*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_BIG, false, false );
-		menuItems.Add ( goldBars[i] );
-
-		noneBars[i] = new cMenuMaterialBar ( position.x+174, position.y+70+120*i, position.x+174+120, position.y+310+15+37*i, 0, cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG, true, false );
-		menuItems.Add ( noneBars[i] );
 
 		metalBarLabels[i] = new cMenuLabel ( position.x+174+120, position.y+70+8+37*i, "", FONT_LATIN_BIG );
 		metalBarLabels[i]->setCentered ( true );
