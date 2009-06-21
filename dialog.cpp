@@ -604,24 +604,15 @@ void cDialogTransfer::getNamesNCargoNImages ()
 
 	if ( srcBuilding )
 	{
-		if ( srcBuilding->data.is_mine )
-		{
-			SDL_Rect src = { 0, 0, 64, 64 };
-			scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, srcBuilding->typ->img_org->w / srcBuilding->typ->img->h * 64, 64 );
-			unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, 64, srcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
-			SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
-			if ( srcBuilding->owner->getClan() != -1 ) src.x = (srcBuilding->owner->getClan()+1) * 64;
-			SDL_BlitSurface ( srcBuilding->typ->img, &src, unitImage1, NULL );
-		}
-		else
-		{
-			scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, 64, 64 );
-			unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcBuilding->typ->img->w, srcBuilding->typ->img->h, 32, 0, 0, 0, 0 );
-			SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
-			SDL_BlitSurface ( srcBuilding->typ->img, NULL, unitImage1, NULL );
-		}
+		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, Round ( (float)srcBuilding->typ->img_org->w / srcBuilding->typ->img_org->h ) * 64, 64 );
+		SDL_Rect src = { 0, 0, srcBuilding->typ->img->w, srcBuilding->typ->img->h };
+		if ( srcBuilding->data.has_frames ) src.w /= srcBuilding->data.has_frames;
+		if ( srcBuilding->data.is_connector || srcBuilding->data.is_mine ) src.w = src.h;
+		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		SDL_FillRect ( unitImage1, NULL, 0xFF00FF );
+		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
+		if ( !srcBuilding->data.is_connector ) SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
+		SDL_BlitSurface ( srcBuilding->typ->img, &src, unitImage1, NULL );
 
 		unitNameLabels[0]->setText ( srcBuilding->data.szName );
 		if ( destVehicle )
@@ -650,8 +641,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	}
 	else if ( srcVehicle )
 	{
-		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], 64, 64 );
-		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], Round ( (float)srcVehicle->typ->img_org[0]->w / srcVehicle->typ->img_org[0]->h ) * 64, 64 );
+		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( srcVehicle->owner->color, NULL, unitImage1, NULL );
 		SDL_BlitSurface ( srcVehicle->typ->img[0], NULL, unitImage1, NULL );
@@ -663,24 +654,15 @@ void cDialogTransfer::getNamesNCargoNImages ()
 
 	if ( destBuilding )
 	{
-		if ( destBuilding->data.is_mine )
-		{
-			SDL_Rect src = { 0, 0, 64, 64 };
-			scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, destBuilding->typ->img_org->w / destBuilding->typ->img->h * 64, 64 );
-			unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, 64, destBuilding->typ->img->h, 32, 0, 0, 0, 0 );
-			SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
-			if ( destBuilding->owner->getClan() != -1 ) src.x = (destBuilding->owner->getClan()+1) * 64;
-			SDL_BlitSurface ( destBuilding->typ->img, &src, unitImage2, NULL );
-		}
-		else
-		{
-			scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, 64, 64 );
-			unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destBuilding->typ->img->w, destBuilding->typ->img->h, 32, 0, 0, 0, 0 );
-			SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
-			SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
-			SDL_BlitSurface ( destBuilding->typ->img, NULL, unitImage2, NULL );
-		}
+		scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, Round ( (float)destBuilding->typ->img_org->w / destBuilding->typ->img_org->h ) * 64, 64 );
+		SDL_Rect src = { 0, 0, destBuilding->typ->img->w, destBuilding->typ->img->h };
+		if ( destBuilding->data.has_frames ) src.w /= destBuilding->data.has_frames;
+		if ( destBuilding->data.is_connector || destBuilding->data.is_mine ) src.w = src.h;
+		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		SDL_FillRect ( unitImage2, NULL, 0xFF00FF );
+		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
+		if ( !destBuilding->data.is_connector ) SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
+		SDL_BlitSurface ( destBuilding->typ->img, &src, unitImage2, NULL );
 
 		unitNameLabels[1]->setText ( destBuilding->data.szName );
 		if ( srcVehicle )
@@ -709,8 +691,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	}
 	else
 	{
-		scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], 64, 64 );
-		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, 32, 0, 0, 0, 0 );
+		scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], Round ( (float)destVehicle->typ->img_org[0]->w / destVehicle->typ->img_org[0]->h ) * 64, 64 );
+		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( destVehicle->owner->color, NULL, unitImage2, NULL );
 		SDL_BlitSurface ( destVehicle->typ->img[0], NULL, unitImage2, NULL );

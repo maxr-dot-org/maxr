@@ -1657,12 +1657,12 @@ void cMenuMaterialBar::generateSurface()
 		break;
 	case MAT_BAR_TYPE_OIL_HORI_SMALL:
 		src.x = 156;
-		src.y = 290;
+		src.y = 273;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
 		src.x = 156;
-		src.y = 307;
+		src.y = 290;
 		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	default:
