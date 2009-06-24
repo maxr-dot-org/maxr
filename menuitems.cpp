@@ -1826,14 +1826,20 @@ void cMenuUpgradeHandler::setSelection ( cMenuUnitListItem *selection_ )
 	sUnitUpgrade *upgrade = selection->getUpgrades();
 	for ( int i = 0; i < 8; i++ )
 	{
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE ) costsLabel[i]->setText ( iToStr (upgrade[i].nextPrice) );
-		else costsLabel[i]->setText ( "" );
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable ) 
+			costsLabel[i]->setText ( iToStr (upgrade[i].nextPrice) );
+		else 
+			costsLabel[i]->setText ( "" );
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice ) increaseButtons[i]->setLocked ( false );
-		else increaseButtons[i]->setLocked ( true );
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable ) 
+			increaseButtons[i]->setLocked ( false );
+		else 
+			increaseButtons[i]->setLocked ( true );
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0 ) decreaseButtons[i]->setLocked ( false );
-		else decreaseButtons[i]->setLocked ( true );
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0 ) 
+			decreaseButtons[i]->setLocked ( false );
+		else 
+			decreaseButtons[i]->setLocked ( true );
 	}
 }
 
