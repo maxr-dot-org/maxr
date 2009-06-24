@@ -17,7 +17,6 @@
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
 		9FC0DBC80EE2B17400F23D2C /* buildings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB770EE2B17400F23D2C /* buildings.cpp */; };
-		9FC0DBC90EE2B17400F23D2C /* buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB790EE2B17400F23D2C /* buttons.cpp */; };
 		9FC0DBCA0EE2B17400F23D2C /* client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB7B0EE2B17400F23D2C /* client.cpp */; };
 		9FC0DBCB0EE2B17400F23D2C /* clientevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB7D0EE2B17400F23D2C /* clientevents.cpp */; };
 		9FC0DBCC0EE2B17400F23D2C /* dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB820EE2B17400F23D2C /* dialog.cpp */; };
@@ -99,8 +98,6 @@
 		9FC0DB760EE2B17400F23D2C /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = base.h; path = ../base.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB770EE2B17400F23D2C /* buildings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buildings.cpp; path = ../buildings.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB780EE2B17400F23D2C /* buildings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buildings.h; path = ../buildings.h; sourceTree = SOURCE_ROOT; };
-		9FC0DB790EE2B17400F23D2C /* buttons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buttons.cpp; path = ../buttons.cpp; sourceTree = SOURCE_ROOT; };
-		9FC0DB7A0EE2B17400F23D2C /* buttons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buttons.h; path = ../buttons.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB7B0EE2B17400F23D2C /* client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = client.cpp; path = ../client.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB7C0EE2B17400F23D2C /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = client.h; path = ../client.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB7D0EE2B17400F23D2C /* clientevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clientevents.cpp; path = ../clientevents.cpp; sourceTree = SOURCE_ROOT; };
@@ -215,8 +212,6 @@
 				9FC0DB760EE2B17400F23D2C /* base.h */,
 				9FC0DB770EE2B17400F23D2C /* buildings.cpp */,
 				9FC0DB780EE2B17400F23D2C /* buildings.h */,
-				9FC0DB790EE2B17400F23D2C /* buttons.cpp */,
-				9FC0DB7A0EE2B17400F23D2C /* buttons.h */,
 				9F80D8930FB495F6002FE83F /* clans.cpp */,
 				9F80D8920FB495F6002FE83F /* clans.h */,
 				9FC0DB7B0EE2B17400F23D2C /* client.cpp */,
@@ -396,7 +391,6 @@
 				9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */,
 				9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */,
 				9FC0DBC80EE2B17400F23D2C /* buildings.cpp in Sources */,
-				9FC0DBC90EE2B17400F23D2C /* buttons.cpp in Sources */,
 				9FC0DBCA0EE2B17400F23D2C /* client.cpp in Sources */,
 				9FC0DBCB0EE2B17400F23D2C /* clientevents.cpp in Sources */,
 				9FC0DBCC0EE2B17400F23D2C /* dialog.cpp in Sources */,
