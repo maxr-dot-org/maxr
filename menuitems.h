@@ -569,6 +569,7 @@ public:
 	bool getFixedStatus();
 
 	sUnitUpgrade *getUpgrades();
+	sUnitUpgrade *getUpgrade( sUnitUpgrade::eUpgradeTypes type );
 };
 
 /**
@@ -723,7 +724,6 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 	cMenuLabel *costsLabel[8];
 
 	cUpgradeCalculator::UpgradeTypes getUpgradeType( sUnitUpgrade upgrade );
-	void updateUnitValues ( cMenuUnitListItem *unit );
 
 	static void buttonReleased( void* parent );
 public:

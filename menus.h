@@ -601,6 +601,8 @@ protected:
 	bool checkAddOk ( cMenuUnitListItem *item );
 	void addedCallback ( cMenuUnitListItem *item );
 	void removedCallback ( cMenuUnitListItem *item );
+
+	void updateUnitData();
 public:
 	cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_, bool noReturn );
 	~cStartupHangarMenu();

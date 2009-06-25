@@ -1015,6 +1015,17 @@ sUnitUpgrade *cMenuUnitListItem::getUpgrades()
 	return upgrades;
 }
 
+
+sUnitUpgrade *cMenuUnitListItem::getUpgrade( sUnitUpgrade::eUpgradeTypes type )
+{
+	if ( !upgrades ) return NULL;
+	for ( int i = 0; i < 8; i++ )
+	{
+		if ( upgrades[i].type == type ) return &upgrades[i];
+	}
+	return NULL;
+}
+
 cMenuUnitsList::cMenuUnitsList( int x, int y, int w, int h, cHangarMenu *parent, eMenuUnitListDisplayTypes displayType_ ) : cMenuItem (x, y), parentMenu(parent), displayType(displayType_)
 {
 	resize ( w, h );
@@ -1414,32 +1425,38 @@ void cMenuUnitDetails::draw()
 	int y;
 	y = dest.y;
 
+	sUnitUpgrade *upgrade = NULL;
+
 	if ( data->can_attack )
 	{
 		// Damage:
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->damage ) );
+		upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_DAMAGE );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->damage ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Damage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, data->damage, oriData->damage );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, upgrade ? upgrade->curValue : data->damage, oriData->damage );
 		DETAIL_DOLINEBREAK
 
 		if ( !data->is_expl_mine )
 		{
 			// Shots:
-			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->max_shots ) );
+			upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_SHOTS );
+			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_shots ) );
 			font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Shoots" ) );
-			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, data->max_shots, oriData->max_shots );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->max_shots, oriData->max_shots );
 			DETAIL_DOLINEBREAK
 
 			// Range:
-			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->range ) );
+			upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_RANGE );
+			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->range ) );
 			font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Range" ) );
-			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, 160, true, data->range, oriData->range );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->range, oriData->range );
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
-			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->max_ammo ) );
+			upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_AMMO );
+			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_ammo ) );
 			font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Ammo" ) );
-			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, data->max_ammo, oriData->max_ammo );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->max_ammo, oriData->max_ammo );
 			DETAIL_DOLINEBREAK
 		}
 	}
@@ -1497,32 +1514,36 @@ void cMenuUnitDetails::draw()
 	}
 
 	// Armor:
-	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->armor ) );
+	upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_ARMOR );
+	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->armor ) );
 	font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Armor" ) );
-	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, 160, true, data->armor, oriData->armor );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->armor, oriData->armor );
 	DETAIL_DOLINEBREAK
 
 	// Hitpoints:
-	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->max_hit_points ) );
+	upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_HITS );
+	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_hit_points ) );
 	font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Hitpoints" ) );
-	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, data->max_hit_points, oriData->max_hit_points );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->max_hit_points, oriData->max_hit_points );
 	DETAIL_DOLINEBREAK
 
 	// Scan:
 	if ( data->scan )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->scan ) );
+		upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_SCAN );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->scan ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Scan" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3 , y - 2, 160, true, data->scan, oriData->scan );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3 , y - 2, 160, true, upgrade ? upgrade->curValue : data->scan, oriData->scan );
 		DETAIL_DOLINEBREAK
 	}
 
 	// Speed:
 	if ( data->max_speed )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->max_speed / 4 ) ); //FIXME: might crash if e.g. max_speed = 3
+		upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_SPEED );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->max_speed) / 4 ) ); //FIXME: might crash if e.g. max_speed = 3
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Speed" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, data->max_speed / 4, oriData->max_speed / 4 );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, (upgrade ? upgrade->curValue : data->max_speed) / 4, oriData->max_speed / 4 );
 		DETAIL_DOLINEBREAK
 	}
 
@@ -1571,7 +1592,6 @@ void cMenuUnitDetails::draw()
 void cMenuUnitDetails::setSelection(cMenuUnitListItem *selectedUnit_)
 {
 	selectedUnit = selectedUnit_;
-	//parentMenu->selectionChanged();
 	draw();
 }
 
@@ -1781,7 +1801,6 @@ void cMenuUpgradeHandler::buttonReleased( void* parent )
 			}
 
 			upgrades[i].purchased++;
-			This->updateUnitValues( This->selection );
 
 			This->setSelection ( This->selection );
 			This->parentMenu->draw();
@@ -1801,7 +1820,6 @@ void cMenuUpgradeHandler::buttonReleased( void* parent )
 
 			This->parentMenu->setCredits (  This->parentMenu->getCredits()+upgrades[i].nextPrice );
 
-			This->updateUnitValues( This->selection );
 			upgrades[i].purchased--;
 
 			This->setSelection ( This->selection );
@@ -1866,55 +1884,6 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgra
 	}
 	// default
 	return cUpgradeCalculator::kAttack;
-}
-
-void cMenuUpgradeHandler::updateUnitValues ( cMenuUnitListItem *unit )
-{
-	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
-	{
-		sUnitData *data;
-		if ( i < UnitsData.getNrVehicles () ) data = &unit->getOwner()->VehicleData[i];
-		else data = &unit->getOwner()->BuildingData[i - UnitsData.getNrVehicles ()];
-
-		if ( data->ID == unit->getUnitID() )
-		{
-			for ( int j = 0; j < 8; j++ )
-			{
-				sUnitUpgrade *upgrades = unit->getUpgrades();
-				if ( upgrades[j].purchased > 0 )
-				{
-					switch ( upgrades[j].type )
-					{
-						case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
-							data->damage = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-							data->max_shots = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_RANGE:
-							data->range = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-							data->max_ammo = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
-							data->armor = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_HITS:
-							data->max_hit_points = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_SCAN:
-							data->scan = upgrades[j].curValue;
-							break;
-						case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-							data->max_speed = upgrades[j].curValue;
-							break;
-					}
-				}
-			}
-			break;
-		}
-	}
 }
 
 cMenuScroller::cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) ) :

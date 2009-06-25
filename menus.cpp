@@ -1805,6 +1805,48 @@ cStartupHangarMenu::~cStartupHangarMenu()
 	delete materialBarDownButton;
 }
 
+void cStartupHangarMenu::updateUnitData()
+{
+	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
+	{
+		sUnitData *data;
+		if ( i < UnitsData.getNrVehicles () ) data = &player->VehicleData[i];
+		else data = &player->BuildingData[i - UnitsData.getNrVehicles ()];
+
+		for ( int j = 0; j < 8; j++ )
+		{
+			sUnitUpgrade *upgrades = unitUpgrades[i];
+			switch ( upgrades[j].type )
+			{
+				case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
+					data->damage = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
+					data->max_shots = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_RANGE:
+					data->range = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_AMMO:
+					data->max_ammo = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
+					data->armor = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_HITS:
+					data->max_hit_points = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_SCAN:
+					data->scan = upgrades[j].curValue;
+					break;
+				case sUnitUpgrade::UPGRADE_TYPE_SPEED:
+					data->max_speed = upgrades[j].curValue;
+					break;
+			}
+		}
+	}
+}
+
 void cStartupHangarMenu::backReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -1816,6 +1858,9 @@ void cStartupHangarMenu::doneReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( !menu ) return;
+
+	menu->updateUnitData();
+
 	cList<sLandingUnit> *landingUnits  = new cList<sLandingUnit>;
 	for ( int i = 0; i < menu->secondList->getSize(); i++ )
 	{
@@ -1832,6 +1877,7 @@ void cStartupHangarMenu::doneReleased( void* parent )
 	{
 		sendClan ( menu->player->getClan (), menu->player->Nr );
 		sendLandingUnits ( landingUnits, menu->player->Nr );
+
 		sendUnitUpgrades ( menu->player );
 	}
 	cLandingMenu landingMenu ( menu->gameDataContainer, menu->player );
