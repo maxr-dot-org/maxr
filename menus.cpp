@@ -1286,7 +1286,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 				{
 					if (menu->gameDataContainer->settings->clans == SETTING_CLANS_ON)
 					{
-						cClanSelectionMenu clanMenu (player, false);
+						cClanSelectionMenu clanMenu (menu->gameDataContainer, player, false);
 						if ( clanMenu.show() != 0 )
 						{
 							menu->draw();
@@ -1353,8 +1353,9 @@ void cPlanetsSelectionMenu::mapReleased( void* parent )
 //-----------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------
-cClanSelectionMenu::cClanSelectionMenu( cPlayer *player, bool noReturn )
+cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, cPlayer *player, bool noReturn )
 : cMenu (LoadPCX (GFXOD_CLAN_SELECT))
+, gameDataContainer (gameDataContainer_)
 , player (player)
 , clan (player->getClan () >= 0 ? player->getClan () : 0)
 {
@@ -1498,6 +1499,27 @@ void cClanSelectionMenu::updateClanDescription ()
 		clanDescription1->setText ("");
 	}
 }
+
+//-----------------------------------------------------------------------------------
+void cClanSelectionMenu::handleNetMessage( cNetMessage *message )
+{
+	switch ( message->iType )
+	{
+		case MU_MSG_CLAN:
+			gameDataContainer->receiveClan ( message );
+			break;
+		case MU_MSG_LANDING_VEHICLES:
+			gameDataContainer->receiveLandingUnits ( message );
+			break;
+		case MU_MSG_UPGRADES:
+			gameDataContainer->receiveUnitUpgrades ( message );
+			break;
+		case MU_MSG_LANDING_COORDS:
+			gameDataContainer->receiveLandingPosition ( message );
+			break;
+	}
+}
+
 
 
 //-----------------------------------------------------------------------------------
@@ -2730,7 +2752,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 		{
 			if (menu->gameDataContainer.settings->clans == SETTING_CLANS_ON)
 			{
-				cClanSelectionMenu clanMenu (menu->gameDataContainer.players[0], true);
+				cClanSelectionMenu clanMenu (&menu->gameDataContainer, menu->gameDataContainer.players[0], true);
 				clanMenu.show ();
 			}
 			
@@ -3167,7 +3189,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				{
 					if (gameDataContainer.settings->clans == SETTING_CLANS_ON)
 					{
-						cClanSelectionMenu clanMenu (gameDataContainer.players[actPlayer->nr], true);
+						cClanSelectionMenu clanMenu (&gameDataContainer, gameDataContainer.players[actPlayer->nr], true);
 						clanMenu.show ();
 					}
 					

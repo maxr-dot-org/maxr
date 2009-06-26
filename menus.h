@@ -460,6 +460,8 @@ public:
 class cClanSelectionMenu : public cMenu
 {
 protected:
+	cGameDataContainer *gameDataContainer;
+
 	cMenuLabel *titleLabel;
 	
 	cMenuImage *clanImages[8];
@@ -477,12 +479,14 @@ protected:
 	void updateClanDescription ();
 
 public:
-	cClanSelectionMenu (cPlayer *player, bool noReturn );
+	cClanSelectionMenu (cGameDataContainer* gameDataContainer_, cPlayer *player, bool noReturn );
 	~cClanSelectionMenu ();
-	
+		
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
 	static void backReleased (void* parent);
+
+	void handleNetMessage( cNetMessage *message );
 };
 
 /**
