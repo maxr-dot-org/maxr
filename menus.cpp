@@ -1068,8 +1068,9 @@ void cSettingsMenu::updateSettings()
 	if ( clansGroup->buttonIsChecked ( 0 ) ) settings.clans = SETTING_CLANS_ON;
 	else settings.clans = SETTING_CLANS_OFF;
 
-	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_SIMU;
-	else settings.gameType = SETTINGS_GAMETYPE_TURNS;
+	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_TURNS;
+	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
+	
 }
 
 cPlanetsSelectionMenu::cPlanetsSelectionMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX ( GFXOD_PLANET_SELECT ) ), gameDataContainer(gameDataContainer_)
