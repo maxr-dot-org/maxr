@@ -495,6 +495,13 @@ void cBase::AddBuilding ( cBuilding *Building )
 			Building->SubBase = NewSubBase;
 			AddBuildingToSubBase ( Building, NewSubBase );
 			SubBases.Add( NewSubBase );
+
+			//store the mine produktion values, to restore them after merging the subbases
+			int metalProd = NewSubBase->getMetalProd();
+			int oilProd = NewSubBase->getOilProd();
+			int goldProd = NewSubBase->getGoldProd();
+
+
 			sendNewSubbase ( NewSubBase, Building->owner->Nr );
 			// go through all found subbases
 			while (NeighbourList.Size())
@@ -509,7 +516,10 @@ void cBase::AddBuilding ( cBuilding *Building )
 					SubBase->buildings.Delete ( 0 );
 				}
 
-				//FIXME: with deleting the old subbase, the ressouce configuration is lost and will be set to a default distribution
+				//store the mine produktion values, to restore them after merging the subbases
+				metalProd += SubBase->getMetalProd();
+				oilProd   += SubBase->getOilProd();
+				goldProd  += SubBase->getGoldProd();
 
 				// delete the subbase from the subbase list
 				for (unsigned int i = 0; i < SubBases.Size(); i++)
@@ -524,6 +534,15 @@ void cBase::AddBuilding ( cBuilding *Building )
 				delete SubBase;
 				NeighbourList.Delete( 0 );
 			}
+
+			//restore mine production values
+			NewSubBase->setMetalProd(0);
+			NewSubBase->setOilProd(0);
+			NewSubBase->setGoldProd(0);
+			NewSubBase->setMetalProd( metalProd );
+			NewSubBase->setOilProd( oilProd );
+			NewSubBase->setGoldProd( goldProd );
+
 			sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
 			sendSubbaseValues ( NewSubBase, Building->owner->Nr );
 		}
