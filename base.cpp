@@ -285,21 +285,22 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 
 		if ( !(building->data.is_mine && building->IsWorking )) continue;
 
-		int mineFree;	//the amount of B and C, that can be distibuted to this mine in this step
-		mineFree = MAX_MINE_PROD - building->*ressourceProdA;
+		int freeB = min ( MAX_MINE_PROD - building->*ressourceProdA, building->*ressourceProdB);
+		int freeC = min ( MAX_MINE_PROD - building->*ressourceProdA, building->*ressourceProdC);
+
 		//substract values from step 1
-		mineFree -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC, 0), building->*ressourceProdB);
-		mineFree -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB, 0), building->*ressourceProdC);
+		freeB -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC, 0), building->*ressourceProdB);
+		freeC -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB, 0), building->*ressourceProdC);
 
 		if ( ressourceToDistributeB > 0 )
 		{
-			int value = min( mineFree, ressourceToDistributeB );
-			mineFree -= value;
+			int value = min( freeB, ressourceToDistributeB );
+			freeC -= value;
 			ressourceToDistributeB -= value;
 		}
 		if ( ressourceToDistributeC > 0 )
 		{
-			ressourceToDistributeC -= min( mineFree, ressourceToDistributeC );
+			ressourceToDistributeC -= min( freeC, ressourceToDistributeC );
 		}
 	}
 
