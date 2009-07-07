@@ -1278,7 +1278,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 		{
 		case GAME_TYPE_SINGLE:
 			{
-				cPlayer *player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 1, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
+				cPlayer *player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 				menu->gameDataContainer->players.Add ( player );
 				
 				bool started = false;
@@ -1900,9 +1900,10 @@ void cStartupHangarMenu::doneReleased( void* parent )
 	{
 		sendClan ( menu->player->getClan (), menu->player->Nr );
 		sendLandingUnits ( landingUnits, menu->player->Nr );
-
-		sendUnitUpgrades ( menu->player );
 	}
+
+	sendUnitUpgrades ( menu->player );
+
 	cLandingMenu landingMenu ( menu->gameDataContainer, menu->player );
 	if ( landingMenu.show() == 1 && menu->gameDataContainer->type != GAME_TYPE_TCPIP)
 	{

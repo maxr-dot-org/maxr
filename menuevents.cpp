@@ -188,12 +188,12 @@ void sendUnitUpgrades ( cPlayer *player )
 	{
 		message->pushInt16 ( count );
 		message->pushInt16 ( player->Nr );
-			if ( player->Nr == 0 && ActiveMenu )
-			{
-				ActiveMenu->handleNetMessage ( message );
-				delete message;
-			}
-			else cMenu::sendMessage ( message );
+		if ( player->Nr == 0 && ActiveMenu )
+		{
+			ActiveMenu->handleNetMessage ( message );
+			delete message;
+		}
+		else cMenu::sendMessage ( message );
 		message = NULL;
 		count = 0;
 	}
