@@ -4344,7 +4344,7 @@ int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
 	{
 		for ( int y = 0; y < 2; y++ )
 		{
-			int index = offset*x*y + x + y*maxX;
+			int index = offset*maxX*2 + x + y*maxX;
 			if ( index >= (int)storageList.Size() ) break;
 
 			if ( buttons[x+y*maxX]->overItem ( mouse->x, mouse->y ) ) return index;
