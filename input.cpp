@@ -48,6 +48,7 @@ void cInput::inputkey ( SDL_KeyboardEvent &key )
 	// if input is active write the characters to the inputstring
 	if ( inputactive )
 	{
+		if ( key.state != SDL_PRESSED ) return;
 		// handle special keys separate, but all other keys in the default-section.
 		switch ( key.keysym.sym )
 		{
@@ -119,7 +120,7 @@ void cInput::inputkey ( SDL_KeyboardEvent &key )
 	{
 		// when input isn't active the client will handle the input as hotkey
 		if ( ActiveMenu ) ActiveMenu->handleKeyInput ( key, getUTF16Char ( key.keysym.unicode ) );
-		else if ( Client ) Client->handleHotKey ( key.keysym );
+		else if ( Client && key.state == SDL_PRESSED ) Client->handleHotKey ( key.keysym );
 	}
 }
 

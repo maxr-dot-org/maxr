@@ -659,7 +659,7 @@ public:
 	static void mapClicked( void* parent );
 	static void mouseMoved( void* parent );
 
-	void handleKeyInput( SDL_keysym keysym, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 	void handleNetMessage( cNetMessage *message );
 };
 

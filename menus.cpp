@@ -546,7 +546,7 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 
 void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
-	if ( activeItem ) activeItem->handleKeyInput ( key.keysym, ch, this );
+	if ( activeItem && key.state == SDL_PRESSED ) activeItem->handleKeyInput ( key.keysym, ch, this );
 }
 
 void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPlayerNr )
@@ -2273,9 +2273,9 @@ void cLandingMenu::mouseMoved( void* parent )
 	else mouse->SetCursor ( CNo );
 }
 
-void cLandingMenu::handleKeyInput( SDL_keysym keysym, string ch )
+void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
-	if ( keysym.sym == SDLK_ESCAPE )
+	if ( key.keysym.sym == SDLK_ESCAPE && key.state == SDL_PRESSED )
 	{
 		ActiveMenu = NULL;
 		// TODO: may use another text here
