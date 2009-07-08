@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <sstream>
 #include "dialog.h"
 #include "mouse.h"
@@ -30,6 +31,7 @@
 #include "client.h"
 #include "input.h"
 #include "clientevents.h"
+#include "sound.h"
 
 cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ), MNU_BG_ALPHA )
 {
@@ -280,27 +282,33 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	musicLabel = new cMenuLabel ( position.x+25, position.y+56+20, lngPack.i18n( "Text~Settings~Music" ) );
 	menuItems.Add ( musicLabel );
 	disableMusicChBox = new cMenuCheckButton ( position.x+210, position.y+73, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.MusicMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableMusicChBox->setClickedFunction ( &musicMuteChanged );
 	menuItems.Add ( disableMusicChBox );
 	musicSlider = new cMenuSlider ( position.x+140, position.y+81, 128, this );
 	musicSlider->setValue ( SettingsData.MusicVol );
+	musicSlider->setMoveCallback ( &musicVolumeChanged );
 	menuItems.Add ( musicSlider );
 	menuItems.Add ( musicSlider->scroller );
 
 	effectsLabel = new cMenuLabel ( position.x+25, position.y+56+20*2, lngPack.i18n( "Text~Settings~Effects" ) );
 	menuItems.Add ( effectsLabel );
 	disableEffectsChBox = new cMenuCheckButton ( position.x+210, position.y+73+20, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.SoundMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableEffectsChBox->setClickedFunction ( &effectsMuteChanged );
 	menuItems.Add ( disableEffectsChBox );
 	effectsSlider = new cMenuSlider ( position.x+140, position.y+81+20, 128, this );
 	effectsSlider->setValue ( SettingsData.SoundVol );
+	effectsSlider->setMoveCallback ( &effectsVolumeChanged );
 	menuItems.Add ( effectsSlider );
 	menuItems.Add ( effectsSlider->scroller );
 
 	voicesLabel = new cMenuLabel ( position.x+25, position.y+56+20*3, lngPack.i18n( "Text~Settings~Voices" ) );
 	menuItems.Add ( voicesLabel );
 	disableVoicesChBox = new cMenuCheckButton ( position.x+210, position.y+73+20*2, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.VoiceMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableVoicesChBox->setClickedFunction ( &voicesMuteChanged );
 	menuItems.Add ( disableVoicesChBox );
 	voicesSlider = new cMenuSlider ( position.x+140, position.y+81+20*2, 128, this );
 	voicesSlider->setValue ( SettingsData.VoiceVol );
+	voicesSlider->setMoveCallback ( &voicesVolumeChanged );
 	menuItems.Add ( voicesSlider );
 	menuItems.Add ( voicesSlider->scroller );
 
@@ -379,6 +387,15 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	cancelButton = new cMenuButton ( position.x+118, position.y+383, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	cancelButton->setReleasedFunction ( &cancelReleased );
 	menuItems.Add ( cancelButton );
+
+	// save old volumes
+	oldMusicVolume = SettingsData.MusicVol;
+	oldEffectsVolume = SettingsData.SoundVol;
+	oldVoicesVolume = SettingsData.VoiceVol;
+
+	oldMusicMute = SettingsData.MusicMute;
+	oldEffectsMute = SettingsData.SoundMute;
+	oldVoicesMute = SettingsData.VoiceMute;
 }
 
 cDialogPreferences::~cDialogPreferences()
@@ -426,10 +443,6 @@ void cDialogPreferences::saveValues()
 
 	SettingsData.sPlayerName = nameEdit->getText();
 	if ( Client) Client->ActivePlayer->name = SettingsData.sPlayerName;
-	
-	SettingsData.MusicMute = disableMusicChBox->isChecked();
-	SettingsData.SoundMute = disableEffectsChBox->isChecked();
-	SettingsData.VoiceMute = disableVoicesChBox->isChecked();
 
 	SettingsData.bAutoSave = autosaveChBox->isChecked();
 	SettingsData.bAnimations = animationChBox->isChecked();
@@ -441,9 +454,6 @@ void cDialogPreferences::saveValues()
 	SettingsData.bWindowMode = windowChBox->isChecked();
 	SettingsData.bShadows = shadowsChBox->isChecked();
 
-	SettingsData.MusicVol = musicSlider->getValue();
-	SettingsData.SoundVol = effectsSlider->getValue();
-	SettingsData.VoiceVol = voicesSlider->getValue();
 	SettingsData.iScrollSpeed = scrollSpeedSlider->getValue();
 
 	// Save new settings to max.xml
@@ -499,7 +509,62 @@ void cDialogPreferences::okReleased( void *parent )
 void cDialogPreferences::cancelReleased( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+
+	// restore old volumes
+	SettingsData.MusicVol = menu->oldMusicVolume;
+	SettingsData.SoundVol = menu->oldEffectsVolume;
+	SettingsData.VoiceVol = menu->oldVoicesVolume;
+	Mix_VolumeMusic ( SettingsData.MusicVol );
+	Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+
+	bool wasMusicMute = SettingsData.MusicMute;
+	SettingsData.MusicMute = menu->oldMusicMute;
+	if ( wasMusicMute && !menu->oldMusicMute ) StartMusic();
+	SettingsData.SoundMute = menu->oldEffectsMute;
+	SettingsData.VoiceMute = menu->oldVoicesMute;
+
 	menu->terminate = true;
+}
+
+void cDialogPreferences::musicVolumeChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	SettingsData.MusicVol = menu->musicSlider->getValue();
+	Mix_VolumeMusic ( SettingsData.MusicVol );
+}
+
+void cDialogPreferences::effectsVolumeChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	SettingsData.SoundVol = menu->effectsSlider->getValue();
+	Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+}
+
+void cDialogPreferences::voicesVolumeChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	SettingsData.VoiceVol = menu->voicesSlider->getValue();
+}
+
+void cDialogPreferences::musicMuteChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	bool wasMute = SettingsData.MusicMute;
+	SettingsData.MusicMute = menu->disableMusicChBox->isChecked();
+	if ( SettingsData.MusicMute ) StopMusic ();
+	if ( !SettingsData.MusicMute && wasMute ) StartMusic();
+}
+
+void cDialogPreferences::effectsMuteChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	SettingsData.SoundMute = menu->disableEffectsChBox->isChecked();
+}
+
+void cDialogPreferences::voicesMuteChanged( void *parent )
+{
+	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	SettingsData.VoiceMute = menu->disableVoicesChBox->isChecked();
 }
 
 cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_  ) :

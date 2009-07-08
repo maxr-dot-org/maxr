@@ -1010,6 +1010,7 @@ protected:
 	SDL_Surface *surface;
 	cMenu *parent;
 
+	void (*movedCallback)(void *);
 public:
 	cMenuSlider( int x, int y, int maxValue_, cMenu *parent_ );
 	~cMenuSlider();
@@ -1020,6 +1021,7 @@ public:
 
 	void setValue( int value );
 	int getValue();
+	void setMoveCallback ( void (*movedCallback_)(void *) );
 
 	static void scrollerMoved( void *parent );
 };

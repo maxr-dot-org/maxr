@@ -32,6 +32,15 @@ extern DECLSPEC void SDLCALL Mix_FreeChunk(struct Mix_Chunk *chunk);
 }
 #endif
 
+// Volumes ///////////////////////////////////////////////////////////////////
+#define SOUND_CHANNEL_MIN	0
+#define SOUND_CHANNEL_MAX	2
+#define VOICE_CHANNEL_MIN	SOUND_CHANNEL_MAX+1
+#define VOICE_CHANNEL_MAX	5
+EX int SoundChannel;
+EX int VoiceChannel;
+EX int SoundLoopChannel;
+
 // Musik /////////////////////////////////////////////////////////////////////
 EX int MusicAnz;
 EX string MainMusicFile;

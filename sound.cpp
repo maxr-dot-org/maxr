@@ -29,13 +29,6 @@
 
 // Globales //////////////////////////////////////////////////////////////////
 Mix_Music *music_stream = NULL;
-#define SOUND_CHANNEL_MIN 0
-#define SOUND_CHANNEL_MAX 2
-int SoundChannel=SOUND_CHANNEL_MIN;
-#define VOICE_CHANNEL_MIN 3
-#define VOICE_CHANNEL_MAX 5
-int VoiceChannel=VOICE_CHANNEL_MIN;
-int SoundLoopChannel=6;
 
 // Lokale Prototypen /////////////////////////////////////////////////////////
 void MusicFinished ( void );
@@ -58,6 +51,9 @@ int InitSound ( int frequency,int chunksize )
 	// Callback für Musik installieren:
 	Mix_HookMusicFinished ( MusicFinished );
 
+	SoundChannel = SOUND_CHANNEL_MIN;
+	VoiceChannel = VOICE_CHANNEL_MIN;
+	SoundLoopChannel = VOICE_CHANNEL_MAX+1;
 	return 1;
 }
 

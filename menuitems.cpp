@@ -2678,6 +2678,8 @@ cMenuSlider::cMenuSlider ( int x, int y, int maxValue_, cMenu *parent_ ) : cMenu
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
 	scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
+
+	movedCallback = NULL;
 }
 
 cMenuSlider::~cMenuSlider()
@@ -2704,6 +2706,11 @@ int cMenuSlider::getValue()
 	return curValue;
 }
 
+void cMenuSlider::setMoveCallback ( void (*movedCallback_)(void *) )
+{
+	movedCallback = movedCallback_;
+}
+
 void cMenuSlider::scrollerMoved( void *parent_ )
 {
 	cMenuSlider *This = (cMenuSlider*)parent_;
@@ -2719,7 +2726,9 @@ void cMenuSlider::scrollerMoved( void *parent_ )
 		This->scroller->move ( This->position.x+This->position.w-7 );
 	}
 	This->curValue = Round ( (This->maxValue / (float)This->position.w) * pos );
-	((cMenu*)This->parent)->draw();
+	This->parent->draw();
+
+	if ( This->movedCallback ) This->movedCallback ( This->parent );
 }
 
 cMenuScrollerHandler::cMenuScrollerHandler(int x, int y, int w, int maxValue_) : cMenuItem (x, y), maxValue(maxValue_)

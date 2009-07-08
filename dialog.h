@@ -93,6 +93,8 @@ public:
 class cDialogPreferences : public cMenu
 {
 	string resolutions[6];
+	int oldMusicVolume, oldEffectsVolume, oldVoicesVolume;
+	bool oldMusicMute, oldEffectsMute, oldVoicesMute;
 
 	cMenuLabel *titleLabel;
 
@@ -136,6 +138,14 @@ public:
 
 	static void okReleased( void *parent );
 	static void cancelReleased( void *parent );
+
+	static void musicVolumeChanged( void *parent );
+	static void effectsVolumeChanged( void *parent );
+	static void voicesVolumeChanged( void *parent );
+
+	static void musicMuteChanged( void *parent );
+	static void effectsMuteChanged( void *parent );
+	static void voicesMuteChanged( void *parent );
 };
 
 class cDialogTransfer : public cMenu
