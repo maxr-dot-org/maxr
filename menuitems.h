@@ -267,6 +267,12 @@ public:
 	 *@author alzi
 	 */
 	void setWasKeyInputFunction ( void (*wasKeyInput_)(void *) );
+
+	/**
+	 * returns the status of the isClicked variable.
+	 *@author alzi
+	 */
+	bool getIsClicked();
 };
 
 /**

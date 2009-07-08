@@ -90,7 +90,7 @@ public:
 	 */
 	 
 	long LastClickTicks;
-	void inputkey ( SDL_keysym &keysym );
+	void inputkey ( SDL_KeyboardEvent &key );
 	void inputMouseButton ( SDL_MouseButtonEvent &button );
 	bool IsDoubleClicked (void);
 

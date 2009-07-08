@@ -270,7 +270,7 @@ public:
 	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
 	 */
-	virtual void handleKeyInput( SDL_keysym keysym, string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	/**
 	 * sends a netmessage to the given player.

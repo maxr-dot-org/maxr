@@ -153,6 +153,11 @@ void cMenuItem::setWasKeyInputFunction ( void (*wasKeyInput_)(void *) )
 	wasKeyInput = wasKeyInput_;
 }
 
+bool cMenuItem::getIsClicked()
+{
+	return isClicked;
+}
+
 cMenuItemContainer::cMenuItemContainer( int x, int y ) : cMenuItem ( x, y )
 {
 	position.w = 0;

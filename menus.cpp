@@ -544,9 +544,9 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 	}
 }
 
-void cMenu::handleKeyInput( SDL_keysym keysym, string ch )
+void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
-	if ( activeItem ) activeItem->handleKeyInput ( keysym, ch, this );
+	if ( activeItem ) activeItem->handleKeyInput ( key.keysym, ch, this );
 }
 
 void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPlayerNr )

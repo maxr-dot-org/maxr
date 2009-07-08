@@ -33,6 +33,8 @@ public:
 	cDialogYesNow( string text );
 	~cDialogYesNow();
 
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+
 	static void yesReleased( void *parent );
 	static void noReleased( void *parent );
 };
@@ -47,6 +49,8 @@ class cDialogOK : public cMenu
 public:
 	cDialogOK( string text );
 	~cDialogOK();
+
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void okReleased( void *parent );
 };
@@ -75,6 +79,8 @@ class cDialogLicence : public cMenu
 public:
 	cDialogLicence();
 	~cDialogLicence();
+
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void okReleased( void *parent );
 	static void upReleased( void *parent );
@@ -163,6 +169,8 @@ public:
 	cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
 	~cDialogTransfer();
 
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );
 
@@ -201,6 +209,8 @@ class cDialogResearch : public cMenu
 public:
 	cDialogResearch( cPlayer *owner_ );
 	~cDialogResearch();
+
+	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );

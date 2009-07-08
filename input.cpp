@@ -43,17 +43,17 @@ cInput::cInput()
 	lastShownCursorTime = 0;
 }
 
-void cInput::inputkey ( SDL_keysym &keysym )
+void cInput::inputkey ( SDL_KeyboardEvent &key )
 {
 	// if input is active write the characters to the inputstring
 	if ( inputactive )
 	{
 		// handle special keys separate, but all other keys in the default-section.
-		switch ( keysym.sym )
+		switch ( key.keysym.sym )
 		{
 			case SDLK_RETURN:
 				// return will be handled from the client like a hotkey
-				if ( Client ) Client->handleHotKey ( keysym );
+				if ( Client ) Client->handleHotKey ( key.keysym );
 				break;
 			case SDLK_LEFT:
 				// makes the cursor go left
@@ -104,10 +104,10 @@ void cInput::inputkey ( SDL_keysym &keysym )
 				}
 				break;
 			default: // no special key - handle as normal character:
-				if ( keysym.unicode >= 32 )
+				if ( key.keysym.unicode >= 32 )
 				{
 					// write to inputstr when it is a normal character
-					string str = getUTF16Char ( keysym.unicode );
+					string str = getUTF16Char ( key.keysym.unicode );
 					inputStr.insert ( stringpos, str );
 					stringpos += (int)str.length();
 				}
@@ -118,8 +118,8 @@ void cInput::inputkey ( SDL_keysym &keysym )
 	else
 	{
 		// when input isn't active the client will handle the input as hotkey
-		if ( ActiveMenu ) ActiveMenu->handleKeyInput ( keysym, getUTF16Char ( keysym.unicode ) );
-		else if ( Client ) Client->handleHotKey ( keysym );
+		if ( ActiveMenu ) ActiveMenu->handleKeyInput ( key, getUTF16Char ( key.keysym.unicode ) );
+		else if ( Client ) Client->handleHotKey ( key.keysym );
 	}
 }
 

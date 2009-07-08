@@ -55,6 +55,22 @@ cDialogYesNow::~cDialogYesNow()
 	if ( Client ) Client->bFlagDrawHud = true;
 }
 
+void cDialogYesNow::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	switch ( key.keysym.sym )
+	{
+	case SDLK_RETURN:
+		if ( key.state == SDL_PRESSED && !yesButton->getIsClicked() ) yesButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && yesButton->getIsClicked() ) yesButton->released ( this );
+		break;
+	case SDLK_ESCAPE:
+		if ( key.state == SDL_PRESSED && !noButton->getIsClicked() ) noButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && noButton->getIsClicked() ) noButton->released ( this );
+		break;
+	}
+}
+
+
 void cDialogYesNow::yesReleased( void *parent )
 {
 	cDialogYesNow* menu = static_cast<cDialogYesNow*>((cMenu*)parent);
@@ -84,6 +100,15 @@ cDialogOK::~cDialogOK()
 	delete okButton;
 
 	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	if ( key.keysym.sym == SDLK_RETURN )
+	{
+		if ( key.state == SDL_PRESSED && !okButton->getIsClicked() ) okButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && okButton->getIsClicked() ) okButton->released ( this );
+	}
 }
 
 void cDialogOK::okReleased( void *parent )
@@ -207,6 +232,15 @@ void cDialogLicence::resetText()
 		break;
 	}
 	draw();
+}
+
+void cDialogLicence::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	if ( key.keysym.sym == SDLK_RETURN )
+	{
+		if ( key.state == SDL_PRESSED && !okButton->getIsClicked() ) okButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && okButton->getIsClicked() ) okButton->released ( this );
+	}
 }
 
 void cDialogLicence::okReleased( void *parent )
@@ -722,6 +756,21 @@ void cDialogTransfer::setCargos()
 	resBar->setCurrentValue ( (int)( 223 * (float)(destCargo+transferValue) / maxDestCargo ) );
 }
 
+void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	switch ( key.keysym.sym )
+	{
+	case SDLK_RETURN:
+		if ( key.state == SDL_PRESSED && !doneButton->getIsClicked() ) doneButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && doneButton->getIsClicked() ) doneButton->released ( this );
+		break;
+	case SDLK_ESCAPE:
+		if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released ( this );
+		break;
+	}
+}
+
 void cDialogTransfer::doneReleased( void *parent )
 {
 	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
@@ -877,6 +926,21 @@ void cDialogResearch::setData()
 
 		incButtons[i]->setLocked ( unusedResearch <= 0 );
 		decButtons[i]->setLocked ( newResearchSettings[i] <= 0 );
+	}
+}
+
+void cDialogResearch::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	switch ( key.keysym.sym )
+	{
+	case SDLK_RETURN:
+		if ( key.state == SDL_PRESSED && !doneButton->getIsClicked() ) doneButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && doneButton->getIsClicked() ) doneButton->released ( this );
+		break;
+	case SDLK_ESCAPE:
+		if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released ( this );
+		break;
 	}
 }
 

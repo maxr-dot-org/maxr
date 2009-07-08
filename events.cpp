@@ -39,14 +39,15 @@ void cEventHandling::HandleEvents()
 		switch ( event.type )
 		{
 		case SDL_KEYDOWN:
-			if ( event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
+		case SDL_KEYUP:
+			if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
 			{
 				SettingsData.bWindowMode = !SettingsData.bWindowMode;
 				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
 				SHOW_SCREEN
 			}
 			// Screenshot
-			else if ( event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT )
+			else if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT )
 			{
 				time_t tTime;
 				tm *tmTime;
@@ -69,7 +70,7 @@ void cEventHandling::HandleEvents()
 			}
 			else
 			{
-				InputHandler->inputkey ( event.key.keysym );
+				InputHandler->inputkey ( event.key );
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
