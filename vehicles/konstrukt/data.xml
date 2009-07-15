@@ -2,163 +2,40 @@
 <Unit ID="0 19" name="konstrukt">
   <Header>
     <Author name="Someone">
-    <Editor name="Rocky" time="2007-10-25 13:00:00"/>
-    <Editor name="Someone" time="2007-09-30 13:05:00"/>
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
-    <Game_Version text="00.00.00.00"/>
+    <Game_Version text="0.2.5"/>
   </Header>
   <Description lang="ENG">
     Constructor\n\nLarge construction vehicle for creating large buildings, such as mines and factories. A constructor consumes two materials per turn while operating.
   </Description>
-  <General_Info>
-    <Is_Controllable YN="Yes"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
-    <Size_Length Num="1"/>
-    <Size_Width Num="1"/>
-  </General_Info>
-  <Defence>
-    <Is_Target_Land YN="Yes"/>
-    <Is_Target_Sea YN="Yes"/>
-    <Is_Target_Air YN="No"/>
-    <Is_Target_Underwater YN="No"/>
-    <Is_Target_Mine YN="No"/>
-    <Is_Target_Building YN="No"/>
-    <Is_Target_Satellite YN="No"/>
-    <Is_Target_WMD YN="No"/>
-    <Armor Num="6"/>
-    <Hitpoints Num="24"/>
-  </Defence>
+  
   <Production>
     <Built_Costs Num="24"/>
-    <Built_Costs_Max Num="96"/>
-    <Is_Produced_by>
-      <Unit ID="1 11"/>
-    </Is_Produced_by>
+    <Can_Build String="BigBuilding"/>
+    <Build_As String="BigGroundVehicle"/>
+    <Max_Build_Factor Num="3"/>
   </Production>
-
-  <Weapons>
-    <Weapon>
-      <Muzzle_Type Const="None"/>
-      <Turret_Gfx Text="none" Num="0"/>
-      <Shot_Trajectory Const="straight"/>
-      <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="0"/>
-      <Allowed_Targets>
-        <Target_Land>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Land>
-        <Target_Sea>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Sea>
-        <Target_Air>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Air>
-        <Target_Mine>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Mine>
-        <Target_Submarine>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Submarine>
-        <Target_Infantry>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_Infantry>
-        <Target_WMD>
-          <Damage Num="0"/>
-          <Range Fd="0"/>
-        </Target_WMD>
-      </Allowed_Targets>
-      <Shots Num="0"/>
-      <Destination_Area Num="1"/>
-      <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="0"/>  
-    </Weapon>
-  </Weapons>
-
-  <Abilities>
-    <Can_Clear_Area YN="No"/>
-    <Gets_Experience YN="No"/>
-    <Can_Disable YN="No"/>
-    <Can_Capture YN="No"/>
-    <Can_Dive YN="No"/>
-    <Landing_Type Const="OnlyGarage"/>
-    <Can_Upgrade YN="No"/>
-    <Can_Repair YN="No"/>
-    <Can_Rearm YN="No"/>
-    <Can_Research YN="No"/>
-    <Is_Kamikaze YN="No"/>
-    <Is_Infrastructure YN="No"/>
-    <Can_Place_Mines YN="No"/>
-    <Makes_Tracks Fd="3"/>
-    <Self_Repair_Type Const="None"/>
-    <Converts_Gold Num="0"/>
-    <Needs_Energy Num="0"/>
-    <Needs_Oil Num="0"/>
-    <Needs_Metal Num="2"/>
-    <Needs_Humans Num="0"/>
-    <Mines_Resources Num="0"/>
-    <Can_Launch_SRBM YN="No"/>
-    <Energy_Shield_Strength Num="0"/>
-    <Energy_Shield_Size Num="0"/>
-  </Abilities>
-
-  <Scan_Abilities>
-    <Range_Sight Fd="3"/>
-    <Range_Air Fd="0"/>
-    <Range_Ground Fd="0"/>
-    <Range_Sea Fd="0"/>
-    <Range_Submarine Fd="0"/>
-    <Range_Mine Fd="0"/>
-    <Range_Infantry Fd="0"/>
-    <Range_Resources Fd="0"/>
-    <Range_Jammer Fd="0"/>
-  </Scan_Abilities>
 
   <Movement>
     <Movement_Sum Num="6"/>
-    <Costs_Air Num="0.0"/>
-    <Costs_Sea Num="1"/>
-    <Costs_Submarine Num="0.0"/>
-    <Costs_Ground Num="1"/>
-    <Factor_Water Num="0.0"/>
-    <Factor_Coast Num="0.0"/>
-    <Factor_Wood Num="0.0"/>
-    <Factor_Road Num="0.0"/>
-    <Factor_Bridge Num="0.0"/>
-    <Factor_Platform Num="0.0"/>
-    <Factor_Monorail Num="0.0"/>
-    <Factor_Wreck Num="0.0"/>
-    <Factor_Mountains Num="0.0"/>
-    <Factor_Land_TakeOff Num="0.0"/>
-    <Factor_Dive Num="0.0"/>
+    <Factor_Ground Num="1"/>
+    <Factor_Sea Num="3"/>
+    <Factor_Coast Num="1"/>
   </Movement>
 
+  <Abilities>
+    <Armor Num="6"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="3"/>
+    <Can_Be_Captured YN="Yes"/>
+    <Can_Be_Disabled YN="Yes"/>
+    <Needs_Metal Num="2"/>
+  </Abilities>
+
   <Storage>
-    <Is_Garage YN="No"/>
-    <Capacity_Metal Num="60"/>
-    <Capacity_Oil Num="0"/>
-    <Capacity_Gold Num="0"/>
-    <Capacity_Energy Num="0"/>
-    <Capacity_Units_Air Num="0"/>
-    <Capacity_Units_Sea Num="0"/>
-    <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="0"/>
-    <Can_Use_Unit_As_Garage>
-      <Unit ID="0 0" Size="0"/>
-    </Can_Use_Unit_As_Garage>
+    <Capacity_Resources Num="60"/>
+    <Capacity_Res_Type Const="Metal"/>
+    <Is_Storage_Type String="Ground"/>
   </Storage>
-  <Graphic>
-    <Has_Overlay YN="No"/>
-    <Animations>
-      <Build_Up YN="Yes"/>
-      <Movement YN="No"/>
-      <Power_On YN="No"/>
-    </Animations>
-  </Graphic>
 </Unit>
