@@ -1,163 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Unit ID="1 15" name="antiaircraft">
   <Header>
-    <Author name="DoctorDeath">
-      <Editor name="DoctorDeath" time="2007-11-02 17:00:00"/>
+    <Author name="Someone">
+      <Editor name="Someone" time="2007-09-30 13:05:00"/>
     </Author>
-    <Game_Version text="00.00.00.00"/>
+    <Game_Version text="0.2.5"/>
   </Header>
   <Description lang="ENG">
     Anti Aircraft\n\nLow caliber, high speed anti aircraft cannon. Anti aircraft make short work of planes, but cannot attack ground units.
   </Description>
-  <General_Info>
-    <Is_Controllable YN="No"/>
-    <Can_Be_Captured YN="No"/>
-    <Can_Be_Disabled YN="No"/>
-    <Size_Length Num="1"/>
-    <Size_Width Num="1"/>
-  </General_Info>
-  <Defence>
-    <Is_Target_Land YN="Yes"/>
-    <Is_Target_Sea YN="No"/>
-    <Is_Target_Air YN="No"/>
-    <Is_Target_Underwater YN="No"/>
-    <Is_Target_Mine YN="No"/>
-    <Is_Target_Building YN="Yes"/>
-    <Is_Target_Satellite YN="No"/>
-    <Is_Target_WMD YN="No"/>
-    <Armor Num="8"/>
-    <Hitpoints Num="24"/>
-  </Defence>
+
+  <Weapon>
+    <Muzzle_Type Const="Med_Long"/>
+    <Ammo_Quantity Num="20"/>
+    <Can_Attack Num="1"/>
+    <Shots Num="2"/>
+    <Range Num="8"/>
+    <Damage Num="16"/>
+  </Weapon>
+  
   <Production>
     <Built_Costs Num="12"/>
-    <Built_Costs_Max Num="32"/>
-    <Is_Produced_by>
-      <Unit ID="0 24"/>
-    </Is_Produced_by>
+    <Build_As String="SmallBuilding"/>
   </Production>
-  <Weapons>
-    <Weapon>
-      <Muzzle_Type Const="Med_Long"/>
-      <Turret_Gfx Text="none" Num="0"/>
-      <Shot_Trajectory Const="straight"/>
-      <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="20"/>
-      <Allowed_Targets>
-	      <Target_Land>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Land>
-	      <Target_Sea>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Sea>
-	      <Target_Air>
-	        <Damage Num="16"/>
-	        <Range Fd="8"/>
-	      </Target_Air>
-	      <Target_Mine>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Mine>
-	      <Target_Submarine>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Submarine>
-	      <Target_Infantry>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Infantry>
-	      <Target_WMD>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_WMD>
-      </Allowed_Targets>
-      <Shots Num="2"/>
-      <Destination_Area Num="1"/>
-      <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="0"/>
-    </Weapon>
-  </Weapons>
-  <Abilities>
-    <Can_Clear_Area YN="No"/>
-    <Gets_Experience YN="No"/>
-    <Can_Disable YN="No"/>
-    <Can_Capture YN="No"/>
-    <Can_Dive YN="No"/>
-    <Landing_Type Const="None"/>
-    <Can_Upgrade YN="No"/>
-    <Can_Repair YN="No"/>
-    <Can_Rearm YN="No"/>
-    <Can_Research YN="No"/>
-    <Is_Kamikaze YN="No"/>
-    <Is_Infrastructure YN="No"/>
-    <Can_Place_Mines YN="No"/>
-    <Makes_Tracks Fd="0"/>
-    <Self_Repair_Type Const="None"/>
-    <Converts_Gold Num="0"/>
-    <Needs_Energy Num="0"/>
-    <Needs_Oil Num="0"/>
-    <Needs_Metal Num="0"/>
-    <Needs_Humans Num="0"/>
-    <Mines_Resources Num="0"/>
-    <Can_Launch_SRBM YN="No"/>
-    <Energy_Shield_Strength Num="0"/>
-    <Energy_Shield_Size Num="0"/>
-  </Abilities>
-
-  <Scan_Abilities>
-    <Range_Sight Fd="4"/>
-    <Range_Air Fd="0"/>
-    <Range_Ground Fd="0"/>
-    <Range_Sea Fd="0"/>
-    <Range_Submarine Fd="0"/>
-    <Range_Mine Fd="0"/>
-    <Range_Infantry Fd="0"/>
-    <Range_Resources Fd="0"/>
-    <Range_Jammer Fd="0"/>
-  </Scan_Abilities>
 
   <Movement>
-    <Movement_Sum Num="0"/>
-    <Costs_Air Num="0"/>
-    <Costs_Sea Num="0"/>
-    <Costs_Submarine Num="0"/>
-    <Costs_Ground Num="0"/>
-    <Factor_Water Num="0.0"/>
-    <Factor_Coast Num="0.0"/>
-    <Factor_Wood Num="0.0"/>
-    <Factor_Road Num="0.0"/>
-    <Factor_Bridge Num="0.0"/>
-    <Factor_Platform Num="0.0"/>
-    <Factor_Monorail Num="0.0"/>
-    <Factor_Wreck Num="0.0"/>
-    <Factor_Mountains Num="0.0"/>
-    <Factor_Land_TakeOff Num="0.0"/>
-    <Factor_Dive Num="0.0"/>
+    <Factor_Ground Num="1"/>
   </Movement>
 
-  <Storage>
-    <Is_Garage YN="No"/>
-    <Capacity_Metal Num="0"/>
-    <Capacity_Oil Num="0"/>
-    <Capacity_Gold Num="0"/>
-    <Capacity_Energy Num="0"/>
-    <Capacity_Units_Air Num="0"/>
-    <Capacity_Units_Sea Num="0"/>
-    <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="0"/>
-    <Can_Use_Unit_As_Garage>
-      <Unit ID="0 0" Size="1"/>
-    </Can_Use_Unit_As_Garage>
-  </Storage>
-  <Graphic>
-    <Has_Overlay YN="No"/>
-    <Animations>
-      <Build_Up YN="No"/>
-      <Movement YN="No"/>
-      <Power_On YN="No"/>
-    </Animations>
-  </Graphic>
+  <Abilities>
+    <Connects_To_Base YN="Yes"/>
+    <Armor Num="8"/>
+    <Hitpoints Num="24"/>
+    <Scan_Range Num="4"/>
+  </Abilities>
 </Unit>
 
 

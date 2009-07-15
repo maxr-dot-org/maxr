@@ -9,155 +9,26 @@
   <Description lang="ENG">
     Sea Mine\n\nSmall, hard to detect explosive device. Only surveyors, minelayers, and infiltratoers can spot mines. Once spotted, almost any damage will destroy it.
   </Description>
-  <General_Info>
-    <Is_Controllable YN="No"/>
-    <Can_Be_Captured YN="No"/>
-    <Can_Be_Disabled YN="No"/>
-    <Size_Length Num="1"/>
-    <Size_Width Num="1"/>
-  </General_Info>
-  <Defence>
-    <Is_Target_Land YN="No"/>
-    <Is_Target_Sea YN="No"/>
-    <Is_Target_Air YN="No"/>
-    <Is_Target_Underwater YN="No"/>
-    <Is_Target_Mine YN="Yes"/>
-    <Is_Target_Building YN="No"/>
-    <Is_Target_Satellite YN="No"/>
-    <Is_Target_WMD YN="No"/>
-    <Armor Num="1"/>
-    <Hitpoints Num="2"/>
-  </Defence>
-  <Production>
-    <Built_Costs Num="1"/>
-    <Built_Costs_Max Num="4"/>
-    <Is_Produced_by>
-      <Unit ID="0 24"/>
-    </Is_Produced_by>
-  </Production>
-  <Weapons>
-    <Weapon>
-      <Muzzle_Type Const="None"/>
-      <Turret_Gfx Text="none" Num="0"/>
-      <Shot_Trajectory Const="straight"/>
-      <Ammo_Type Const="Standard"/>
-      <Ammo_Quantity Num="0"/>
-      <Allowed_Targets>
-	      <Target_Land>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Land>
-	      <Target_Sea>
-	        <Damage Num="28"/>
-	        <Range Fd="0"/>
-	      </Target_Sea>
-	      <Target_Air>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Air>
-	      <Target_Mine>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Mine>
-	      <Target_Submarine>
-	        <Damage Num="28"/>
-	        <Range Fd="0"/>
-	      </Target_Submarine>
-	      <Target_Infantry>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_Infantry>
-	      <Target_WMD>
-	        <Damage Num="0"/>
-	        <Range Fd="0"/>
-	      </Target_WMD>
-      </Allowed_Targets>
-      <Shots Num="0"/>
-      <Destination_Area Num="1"/>
-      <Destination_Type Const="Point"/>
-      <Movement_Allowed Num="0"/>
-    </Weapon>
-  </Weapons>
-  <Abilities>
-    <Can_Clear_Area YN="No"/>
-    <Gets_Experience YN="No"/>
-    <Can_Disable YN="No"/>
-    <Can_Capture YN="No"/>
-    <Can_Dive YN="No"/>
-    <Landing_Type Const="None"/>
-    <Can_Upgrade YN="No"/>
-    <Can_Repair YN="No"/>
-    <Can_Rearm YN="No"/>
-    <Can_Research YN="No"/>
-    <Is_Kamikaze YN="Yes"/>
-    <Is_Infrastructure YN="No"/>
-    <Can_Place_Mines YN="No"/>
-    <Makes_Tracks Fd="0"/>
-    <Self_Repair_Type Const="None"/>
-    <Converts_Gold Num="0"/>
-    <Needs_Energy Num="0"/>
-    <Needs_Oil Num="0"/>
-    <Needs_Metal Num="0"/>
-    <Needs_Humans Num="0"/>
-    <Mines_Resources Num="0"/>
-    <Can_Launch_SRBM YN="No"/>
-    <Energy_Shield_Strength Num="0"/>
-    <Energy_Shield_Size Num="0"/>
-  </Abilities>
 
-  <Scan_Abilities>
-    <Range_Sight Fd="1"/>
-    <Range_Air Fd="0"/>
-    <Range_Ground Fd="0"/>
-    <Range_Sea Fd="0"/>
-    <Range_Submarine Fd="0"/>
-    <Range_Mine Fd="0"/>
-    <Range_Infantry Fd="0"/>
-    <Range_Resources Fd="0"/>
-    <Range_Jammer Fd="0"/>
-  </Scan_Abilities>
+  <Weapon>
+    <Can_Attack Num="10"/>
+    <Damage Num="28"/>
+  </Weapon>
 
   <Movement>
-    <Movement_Sum Num="0"/>
-    <Costs_Air Num="0"/>
-    <Costs_Sea Num="0"/>
-    <Costs_Submarine Num="0"/>
-    <Costs_Ground Num="0"/>
-    <Factor_Water Num="0.0"/>
-    <Factor_Coast Num="0.0"/>
-    <Factor_Wood Num="0.0"/>
-    <Factor_Road Num="0.0"/>
-    <Factor_Bridge Num="0.0"/>
-    <Factor_Platform Num="0.0"/>
-    <Factor_Monorail Num="0.0"/>
-    <Factor_Wreck Num="0.0"/>
-    <Factor_Mountains Num="0.0"/>
-    <Factor_Land_TakeOff Num="0.0"/>
-    <Factor_Dive Num="0.0"/>
+    <Factor_Sea Num="1"/>
   </Movement>
 
-  <Storage>
-    <Is_Garage YN="No"/>
-    <Capacity_Metal Num="0"/>
-    <Capacity_Oil Num="0"/>
-    <Capacity_Gold Num="0"/>
-    <Capacity_Energy Num="0"/>
-    <Capacity_Units_Air Num="0"/>
-    <Capacity_Units_Sea Num="0"/>
-    <Capacity_Units_Ground Num="0"/>
-    <Capacity_Units_Infantry Num="0"/>
-    <Can_Use_Unit_As_Garage>
-      <Unit ID="0 0" Size="1"/>
-    </Can_Use_Unit_As_Garage>
-  </Storage>
-  <Graphic>
-    <Has_Overlay YN="No"/>
-    <Animations>
-      <Build_Up YN="No"/>
-      <Movement YN="No"/>
-      <Power_On YN="No"/>
-    </Animations>
-  </Graphic>
+  <Abilities>
+    <Armor Num="1"/>
+    <Hitpoints Num="2"/>
+    <Scan_Range Num="1"/>
+
+    <Can_Be_Overbuild Const="YesNRemove"/>
+    <Is_Stealth_On Num="32"/>
+    <Surface_Position Const="Beneath"/>
+    <Explodes_On_Contact YN="Yes"/>
+  </Abilities>
 </Unit>
 
 

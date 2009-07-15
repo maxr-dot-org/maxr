@@ -8,11 +8,20 @@
 		<Last_Change time="2007-10-03 21:05:00"/>
 	</Header>
 	<Buildings>
+    <!-- There have to be set 6 special buildings by adding a "special"-Attrbut.  -->
+    <!-- The Vales have to be:                                                    -->
+    <!--  - "mine",                                                               -->
+    <!--  - "energy",                                                             -->
+    <!--  - "connector",                                                          -->
+    <!--  - "landmine",                                                           -->
+    <!--  - "seamine" or                                                          -->
+    <!--  - "smallBeton"                                                          -->
+    
     <Storage_Metal directory="storage_metal" num="32"/>
     <Storage_Oil directory="storage_oil" num="33"/>
     <Storage_Gold directory="storage_gold" num="31"/>
-    <Energy_Small directory="energy_small" num="8"/>
-    <Connector directory="connector" num="4"/>
+    <Energy_Small directory="energy_small" num="8" special="energy"/>
+    <Connector directory="connector" num="4" special="connector"/>
     <Radar directory="radar" num="26"/>
     <Gun_Turret directory="gun_turret" num="18"/>
     <Gun_AA directory="gun_aa" num="15"/>
@@ -22,10 +31,10 @@
     <Bridge directory="bridge" num="3"/>
     <Platform directory="platform" num="25"/>
     <Block directory="block" num="2"/>
-    <Road directory="road" num="28"/>
-    <Landmine directory="landmine" num="21"/>
-    <Seamine directory="seamine" num="29"/>
-    <Mine directory="mine" num="22"/>
+    <Road directory="road" num="28" special="smallBeton"/>
+    <Landmine directory="landmine" num="21" special="landmine"/>
+    <Seamine directory="seamine" num="29" special="seamine"/>
+    <Mine directory="mine" num="22" special="mine"/>
     <Energy_Big directory="energy_big" num="7"/>
     <Factory_Small directory="fac_small" num="13"/>
     <Factory_Big directory="fac_big" num="11"/>
