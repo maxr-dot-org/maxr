@@ -397,7 +397,7 @@ public:
 	/** flag if the minimap has to be drawn  */
 	bool bFlagDrawMMap;
 
-	/** drawing cache to speed up the graphic engine */
+	/** drawing cache to speedCur up the graphic engine */
 	cDrawingCache dCache;
 
 	/**

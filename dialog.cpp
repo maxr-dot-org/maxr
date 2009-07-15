@@ -336,7 +336,7 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	tracksChBox = new cMenuCheckButton ( position.x+210, position.y+193+20*2, lngPack.i18n( "Text~Settings~Tracks" ), SettingsData.bMakeTracks, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( tracksChBox );
 
-	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
+	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~ScrollspeedCur" ) );
 	menuItems.Add ( scrollSpeedLabel );
 	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 50, this );
 	scrollSpeedSlider->setValue ( SettingsData.iScrollSpeed );
@@ -669,29 +669,29 @@ cDialogTransfer::~cDialogTransfer()
 
 void cDialogTransfer::getTransferType()
 {
-	int tmpTransferType;
+	sUnitData::eStorageResType tmpTransferType;
 
-	if ( srcVehicle ) tmpTransferType = srcVehicle->data.can_transport;
-	else if ( destVehicle ) tmpTransferType = destVehicle->data.can_transport;
+	if ( srcVehicle ) tmpTransferType = srcVehicle->data.storeResType;
+	else if ( destVehicle ) tmpTransferType = destVehicle->data.storeResType;
 	else
 	{
-		if ( srcBuilding->data.can_load != destBuilding->data.can_load )
+		if ( srcBuilding->data.storeResType != destBuilding->data.storeResType )
 		{
 			end = true;
 			return;
 		}
-		else tmpTransferType = destBuilding->data.can_load;
+		else tmpTransferType = destBuilding->data.storeResType;
 	}
 
 	switch ( tmpTransferType )
 	{
-	case TRANS_METAL:
+	case sUnitData::STORE_RES_METAL:
 		transferType = cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_SMALL;
 		break;
-	case TRANS_OIL:
+	case sUnitData::STORE_RES_OIL:
 		transferType = cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_SMALL;
 		break;
-	case TRANS_GOLD:
+	case sUnitData::STORE_RES_GOLD:
 		transferType = cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_SMALL;
 		break;
 	}
@@ -705,28 +705,28 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	{
 		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, Round ( (float)srcBuilding->typ->img_org->w / srcBuilding->typ->img_org->h ) * 64, 64 );
 		SDL_Rect src = { 0, 0, srcBuilding->typ->img->w, srcBuilding->typ->img->h };
-		if ( srcBuilding->data.has_frames ) src.w /= srcBuilding->data.has_frames;
-		if ( srcBuilding->data.is_connector || srcBuilding->data.is_mine ) src.w = src.h;
+		if ( srcBuilding->data.hasFrames ) src.w /= srcBuilding->data.hasFrames;
+		if ( srcBuilding->data.isConnectorGraphic || srcBuilding->data.hasClanLogos ) src.w = src.h;
 		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_FillRect ( unitImage1, NULL, 0xFF00FF );
 		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( !srcBuilding->data.is_connector ) SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
+		if ( srcBuilding->data.hasPlayerColor ) SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
 		SDL_BlitSurface ( srcBuilding->typ->img, &src, unitImage1, NULL );
 
-		unitNameLabels[0]->setText ( srcBuilding->data.szName );
+		unitNameLabels[0]->setText ( srcBuilding->data.name );
 		if ( destVehicle )
 		{
-			switch ( destVehicle->data.can_transport )
+			switch ( destVehicle->data.storeResType )
 			{
-			case TRANS_METAL:
+			case sUnitData::STORE_RES_METAL:
 				maxSrcCargo = srcBuilding->SubBase->MaxMetal;
 				srcCargo = srcBuilding->SubBase->Metal;
 				break;
-			case TRANS_OIL:
+			case sUnitData::STORE_RES_OIL:
 				maxSrcCargo = srcBuilding->SubBase->MaxOil;
 				srcCargo = srcBuilding->SubBase->Oil;
 				break;
-			case TRANS_GOLD:
+			case sUnitData::STORE_RES_GOLD:
 				maxSrcCargo = srcBuilding->SubBase->MaxGold;
 				srcCargo = srcBuilding->SubBase->Gold;
 				break;
@@ -734,8 +734,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		}
 		else
 		{
-			maxSrcCargo = srcBuilding->data.max_cargo;
-			srcCargo = srcBuilding->data.cargo;
+			maxSrcCargo = srcBuilding->data.storageResMax;
+			srcCargo = srcBuilding->data.storageResCur;
 		}
 	}
 	else if ( srcVehicle )
@@ -746,37 +746,37 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		SDL_BlitSurface ( srcVehicle->owner->color, NULL, unitImage1, NULL );
 		SDL_BlitSurface ( srcVehicle->typ->img[0], NULL, unitImage1, NULL );
 
-		unitNameLabels[0]->setText ( srcVehicle->data.szName );
-		maxSrcCargo = srcVehicle->data.max_cargo;
-		srcCargo = srcVehicle->data.cargo;
+		unitNameLabels[0]->setText ( srcVehicle->data.name );
+		maxSrcCargo = srcVehicle->data.storageResMax;
+		srcCargo = srcVehicle->data.storageResCur;
 	}
 
 	if ( destBuilding )
 	{
 		scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, Round ( (float)destBuilding->typ->img_org->w / destBuilding->typ->img_org->h ) * 64, 64 );
 		SDL_Rect src = { 0, 0, destBuilding->typ->img->w, destBuilding->typ->img->h };
-		if ( destBuilding->data.has_frames ) src.w /= destBuilding->data.has_frames;
-		if ( destBuilding->data.is_connector || destBuilding->data.is_mine ) src.w = src.h;
+		if ( destBuilding->data.hasFrames ) src.w /= destBuilding->data.hasFrames;
+		if ( destBuilding->data.isConnectorGraphic || destBuilding->data.hasClanLogos ) src.w = src.h;
 		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_FillRect ( unitImage2, NULL, 0xFF00FF );
 		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( !destBuilding->data.is_connector ) SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
+		if ( destBuilding->data.hasPlayerColor ) SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
 		SDL_BlitSurface ( destBuilding->typ->img, &src, unitImage2, NULL );
 
-		unitNameLabels[1]->setText ( destBuilding->data.szName );
+		unitNameLabels[1]->setText ( destBuilding->data.name );
 		if ( srcVehicle )
 		{
-			switch ( srcVehicle->data.can_transport )
+			switch ( srcVehicle->data.storeResType )
 			{
-			case TRANS_METAL:
+			case sUnitData::STORE_RES_METAL:
 				maxDestCargo = destBuilding->SubBase->MaxMetal;
 				destCargo = destBuilding->SubBase->Metal;
 				break;
-			case TRANS_OIL:
+			case sUnitData::STORE_RES_OIL:
 				maxDestCargo = destBuilding->SubBase->MaxOil;
 				destCargo = destBuilding->SubBase->Oil;
 				break;
-			case TRANS_GOLD:
+			case sUnitData::STORE_RES_GOLD:
 				maxDestCargo = destBuilding->SubBase->MaxGold;
 				destCargo = destBuilding->SubBase->Gold;
 				break;
@@ -784,8 +784,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		}
 		else
 		{
-			maxDestCargo = destBuilding->data.max_cargo;
-			destCargo = destBuilding->data.cargo;
+			maxDestCargo = destBuilding->data.storageResMax;
+			destCargo = destBuilding->data.storageResCur;
 		}
 	}
 	else
@@ -796,9 +796,9 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		SDL_BlitSurface ( destVehicle->owner->color, NULL, unitImage2, NULL );
 		SDL_BlitSurface ( destVehicle->typ->img[0], NULL, unitImage2, NULL );
 
-		unitNameLabels[1]->setText ( destVehicle->data.szName );
-		maxDestCargo = destVehicle->data.max_cargo;
-		destCargo = destVehicle->data.cargo;
+		unitNameLabels[1]->setText ( destVehicle->data.name );
+		maxDestCargo = destVehicle->data.storageResMax;
+		destCargo = destVehicle->data.storageResCur;
 	}
 
 	unitImages[0]->setImage ( unitImage1 );
@@ -844,13 +844,13 @@ void cDialogTransfer::doneReleased( void *parent )
 	{
 		if ( menu->srcBuilding )
 		{
-			if ( menu->destBuilding ) sendWantTransfer ( false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.can_load );
-			else sendWantTransfer ( false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.can_load );
+			if ( menu->destBuilding ) sendWantTransfer ( false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType );
+			else sendWantTransfer ( false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType );
 		}
 		else
 		{
-			if ( menu->destBuilding ) sendWantTransfer ( true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.can_transport );
-			else sendWantTransfer ( true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.can_transport );
+			if ( menu->destBuilding ) sendWantTransfer ( true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType );
+			else sendWantTransfer ( true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType );
 		}
 	}
 

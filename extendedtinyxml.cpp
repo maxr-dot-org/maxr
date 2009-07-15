@@ -37,7 +37,7 @@
 #include "log.h"
 
 void debugToLog( std::string szMsg);
-void debugToLog( void * pointer , const char * pszName);
+void debugToLog( void * pointer , const char * pname);
 
 ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char * pszCurrent, ... )
 {
@@ -318,10 +318,10 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 }
 
 /*
-void debugToLog( void * pointer , const char * pszName)
+void debugToLog( void * pointer , const char * pname)
 {
 	char szMsg[256] = ""; //JCK
-	sprintf(szMsg , "%s = %p", pszName, pointer);
+	sprintf(szMsg , "%s = %p", pname, pointer);
 
 	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };

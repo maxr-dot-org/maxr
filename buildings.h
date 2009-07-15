@@ -28,7 +28,7 @@
 #include "upgradecalculator.h"
 
 //--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. max_hit_points) */
+/** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
 //--------------------------------------------------------------------------
 struct sUpgrade {
   bool active; // is this upgrade buyable for the player
@@ -40,7 +40,7 @@ struct sUpgrade {
 };
 
 //--------------------------------------------------------------------------
-/** Struct for one upgrade (one kind of value, e.g. max_hit_points)
+/** Struct for one upgrade (one kind of value, e.g. hitpointsMax)
 	When the hangar is made nice code, too, the sUpgradeNew and the sUpgrade have to be united, again. */
 //--------------------------------------------------------------------------
 struct sUpgradeNew {
@@ -64,7 +64,6 @@ struct sBuilding{
   char id[4];          // ID dieses Elements
   int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
-  char *text;          // Infotext
 
   // Die Sounds:
   struct Mix_Chunk *Start;
@@ -115,8 +114,6 @@ enum ResourceKind
 	TYPE_OIL   = 1,
 	TYPE_GOLD  = 2
 };
-
-#define MAX_MINE_PROD 16
 
 //--------------------------------------------------------------------------
 /** Class cBuilding for one building. */
@@ -185,7 +182,7 @@ public:
 	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
 	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	/**
-	* refreshes the shots of this building
+	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath
 	*@return 1 if there has been refreshed something, else 0.
 	*/

@@ -224,7 +224,7 @@ void sendTurnReport ( cPlayer *Player );
 *@author alzi alias DoctorDeath
 *@param iDestID the ID of the destination unit
 *@param bDestVehicle true if the destination unit is a vehicle
-*@param iValue the new ammo or hitpoint value to be set
+*@param iValue the new ammoCur or hitpoint value to be set
 *@param iType SUPPLY_TYPE_REARM or SUPPLY_TYPE_REPAIR
 *@param iPlayerNum number of the player, who will receive the message
 */

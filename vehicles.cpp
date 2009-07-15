@@ -67,8 +67,8 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	groupSelected = false;
 	owner = Owner;
 	data = owner->VehicleData[typ->nr];
-	data.hit_points = data.max_hit_points;
-	data.ammo = data.max_ammo;
+	data.hitpointsCur = data.hitpointsMax;
+	data.ammoCur = data.ammoMax;
 	ClientMoveJob = NULL;
 	ServerMoveJob = NULL;
 	autoMJob = NULL;
@@ -177,19 +177,19 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//make damage effect
-	if ( Client->iTimer1 && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->iTimer1 && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
-		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hit_points / data.max_hit_points ) );
+		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
 	}
 
 	//make landing and take off of planes
-	if ( data.can_drive == DRIVE_AIR && Client->iTimer0 )
+	if ( data.factorAir > 0 && Client->iTimer0 )
 	{
 		// check, if the plane should land
 		cBuilding *b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
 
-		if ( b && b->owner == owner && b->data.is_pad && !ClientMoveJob && !moving && !Attacking )
+		if ( b && b->owner == owner && b->data.canBeLandedOn && !ClientMoveJob && !moving && !Attacking )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -224,7 +224,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//rotate vehicles to the right direction for building/clearing
 	if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
 	{
-		if ( data.is_big ) 
+		if ( data.isBig ) 
 			dir = 0;
 		else
 			RotateTo ( 0 );
@@ -240,8 +240,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && 
-				 DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -304,7 +303,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// draw overlay if necessary:
-	if ( data.has_overlay && SettingsData.bAnimations )
+	if ( data.hasOverlay && SettingsData.bAnimations )
 	{
 		SDL_Rect src;
 
@@ -337,7 +336,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		int max, nr;
 		nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
 
-		if ( data.is_big )
+		if ( data.isBig )
 			max = ( Client->Hud.Zoom * 2) - 3;
 		else
 			max = Client->Hud.Zoom - 3;
@@ -370,7 +369,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		int max, nr;
 		nr = * ( unsigned int* ) owner->color->pixels;
 
-		if ( data.is_big )
+		if ( data.isBig )
 			max = ( Client->Hud.Zoom - 1 ) * 2;
 		else
 			max = Client->Hud.Zoom - 1;
@@ -431,7 +430,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		SDL_Rect d, t;
 		int len, max;
 
-		if ( ( IsBuilding || IsClearing ) && data.is_big )
+		if ( ( IsBuilding || IsClearing ) && data.isBig )
 			max = Client->Hud.Zoom * 2;
 		else
 			max = Client->Hud.Zoom;
@@ -479,8 +478,8 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	if ( Client->Hud.Treffer )
 		drawHealthBar();
 
-	//draw ammo bar
-	if ( Client->Hud.Munition && data.can_attack)
+	//draw ammoCur bar
+	if ( Client->Hud.Munition && data.canAttack)
 		DrawMunBar();
 
 	//draw status info
@@ -506,11 +505,11 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	float factor = (float) (Client->Hud.Zoom/64.0);
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || ( IsClearing && data.is_big )) && dir == 0 )
+	if ( (IsBuilding || ( IsClearing && data.isBig )) && dir == 0 )
 	{
 		//draw beton if nessesary
 		tmp = dest;
-		if ( IsBuilding && data.is_big && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
+		if ( IsBuilding && data.isBig && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
 		{
 			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
 			CHECK_SCALING(GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor );
@@ -539,7 +538,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		return;
 	}
 
-	if ( ( IsClearing && !data.is_big ) && dir == 0 )
+	if ( ( IsClearing && !data.isBig ) && dir == 0 )
 	{
 		// draw shadow
 		tmp = dest;
@@ -572,12 +571,10 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 	// draw shadow
 	tmp = dest;
-	if ( SettingsData.bShadows && ! ( data.is_stealth_sea && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
+	if ( SettingsData.bShadows && ! ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
 	{
-		if ( StartUp && SettingsData.bAlphaEffects )
-			SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
-		else
-			SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
+		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
+		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
 
 		
 		// draw shadow
@@ -589,7 +586,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, factor );
 		}
-		else if ( data.is_human )
+		else if ( data.animationMovement )
 		{
 			SDL_Rect r;
 			r.h = r.w = (int) (typ->img_org[dir]->h*factor);
@@ -604,7 +601,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	// draw player color
 	SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-	if ( data.is_human )
+	if ( data.animationMovement )
 	{
 		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*factor);
 		tmp.x = WalkFrame * tmp.w;
@@ -630,13 +627,10 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 		//because the vehicle will drive on the bridge
 		cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
-		if ( building && data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+		if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
 
-		if ( data.is_stealth_sea && water && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
-		else
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-
+		if ( (data.isStealthOn&TERRAIN_SEA) && water && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
+		else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 	}
 
 	blittAlphaSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
@@ -794,7 +788,7 @@ void cVehicle::GenerateName ()
 		name += rome;
 		name += " ";
 		// object name
-		name += ( string ) data.szName;
+		name += ( string ) data.name;
 	}
 	else
 	{
@@ -841,19 +835,19 @@ void cVehicle::GenerateName ()
 int cVehicle::refreshData ()
 {
 	int iReturn = 0;
-	if ( data.speed < data.max_speed || data.shots < data.max_shots )
+	if ( data.speedCur < data.speedMax || data.shotsCur < data.shotsMax )
 	{
-		data.speed = data.max_speed;
+		data.speedCur = data.speedMax;
 
-		if ( data.ammo >= data.max_shots )
-			data.shots = data.max_shots;
+		if ( data.ammoCur >= data.shotsMax )
+			data.shotsCur = data.shotsMax;
 		else
-			data.shots = data.ammo;
+			data.shotsCur = data.ammoCur;
 
 		/*// Regenerieren:
-		if ( data.is_alien && data.hit_points < data.max_hit_points )
+		if ( data.is_alien && data.hitpointsCur < data.hitpointsMax )
 		{
-			data.hit_points++;
+			data.hitpointsCur++;
 		}*/
 		iReturn = 1;
 	}
@@ -862,10 +856,10 @@ int cVehicle::refreshData ()
 	if ( IsBuilding && BuildRounds )
 	{
 
-		data.cargo -= ( BuildCosts / BuildRounds );
+		data.storageResCur -= ( BuildCosts / BuildRounds );
 		BuildCosts -= ( BuildCosts / BuildRounds );
 
-		if ( data.cargo < 0 ) data.cargo = 0;
+		if ( data.storageResCur < 0 ) data.storageResCur = 0;
 
 		BuildRounds--;
 
@@ -899,7 +893,7 @@ int cVehicle::refreshData ()
 				}
 				else
 				{
-					if ( BuildingTyp.getUnitDataOriginalVersion()->is_base || BuildingTyp.getUnitDataOriginalVersion()->is_connector)
+					if ( BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_NORMAL )
 					{
 						Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
 						IsBuilding = false;
@@ -911,7 +905,7 @@ int cVehicle::refreshData ()
 			else
 			{
 				//add building immediatly if it doesn't require the engineer to drive away
-				if ( BuildingTyp.getUnitDataOriginalVersion()->is_base || BuildingTyp.getUnitDataOriginalVersion()->is_connector)
+				if ( BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition )
 				{
 					IsBuilding = false;
 					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
@@ -931,7 +925,7 @@ int cVehicle::refreshData ()
 		{
 			IsClearing = false;
 			cBuilding *Rubble = Server->Map->fields[PosX+PosY*Server->Map->size].getRubble();
-			if ( data.is_big )
+			if ( data.isBig )
 			{
 				Server->Map->moveVehicle ( this, BuildBigSavedPos );
 				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
@@ -948,8 +942,8 @@ int cVehicle::refreshData ()
 					sendStopClear ( this, -1, SeenByPlayerList[i]->Nr );
 				}
 			}
-			data.cargo += Rubble->RubbleValue;
-			if ( data.cargo > data.max_cargo ) data.cargo = data.max_cargo;
+			data.storageResCur += Rubble->RubbleValue;
+			if ( data.storageResCur > data.storageResMax) data.storageResCur = data.storageResMax;
 			Server->deleteRubble ( Rubble );
 		}
 
@@ -973,65 +967,73 @@ void cVehicle::ShowDetails ()
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
-	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
+	DrawNumber ( 31, 177, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
 
 	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
+	DrawSymbol ( SHits, 88, 174, 70, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
 	// Den Speed anzeigen:
-	DrawNumber ( 31, 201, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
+	DrawNumber ( 31, 201, data.speedCur / 4, data.speedMax / 4, GraphicsData.gfx_hud );
 
 	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-	DrawSymbol ( SSpeed, 88, 199, 70, data.speed / 4, data.max_speed / 4, GraphicsData.gfx_hud );
+	DrawSymbol ( SSpeed, 88, 199, 70, data.speedCur / 4, data.speedMax / 4, GraphicsData.gfx_hud );
 	// additional values
 
-	if ( data.can_transport && owner == Client->ActivePlayer )
+	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
 	{
-		// Transport:
-		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-
 		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-		switch ( data.can_transport )
+		if ( data.storeResType > 0 )
 		{
-
-			case TRANS_METAL:
-				DrawSymbol ( SMetal, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
+			DrawNumber ( 31, 189, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+			switch ( data.storeResType )
+			{
+			case sUnitData::STORE_RES_METAL:
+				DrawSymbol ( SMetal, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
 				break;
-
-			case TRANS_OIL:
-				DrawSymbol ( SOil, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
+			case sUnitData::STORE_RES_OIL:
+				DrawSymbol ( SOil, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
 				break;
-
-			case TRANS_GOLD:
-				DrawSymbol ( SGold, 88, 187, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
+			case sUnitData::STORE_RES_GOLD:
+				DrawSymbol ( SGold, 88, 187, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
 				break;
+			}
+		}
+		else
+		{
+			DrawNumber ( 31, 189, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
 
-			case TRANS_VEHICLES:
-				DrawSymbol ( STrans, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
+			switch ( data.storeUnitsImageType )
+			{
+			case sUnitData::STORE_UNIT_IMG_TANK:
+			case sUnitData::STORE_UNIT_IMG_SHIP:
+				DrawSymbol ( STrans, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
 				break;
-
-			case TRANS_MEN:
-				DrawSymbol ( SHuman, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
+			case sUnitData::STORE_UNIT_IMG_PLANE:
+				DrawSymbol ( SAir, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
 				break;
+			case sUnitData::STORE_UNIT_IMG_HUMAN:
+				DrawSymbol ( SHuman, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				break;
+			}
 		}
 	}
-	else if ( data.can_attack )
+	else if ( data.canAttack )
 	{
 		if ( owner == Client->ActivePlayer )
 		{
 			// Munition:
-			DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
+			DrawNumber ( 31, 189, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 
 			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-			DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 		}
 
-		// shots
-		DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
+		// shotsCur
+		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 
 		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-		DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
+		DrawSymbol ( SShots, 88, 212, 70, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 	}
 
 	Client->bFlagDrawHud = true;
@@ -1415,7 +1417,7 @@ void cVehicle::DrawPath ()
 		return;
 	}
 
-	sp = data.speed;
+	sp = data.speedCur;
 
 	if ( sp )
 	{
@@ -1449,7 +1451,7 @@ void cVehicle::DrawPath ()
 		if ( sp == 0 )
 		{
 			ClientMoveJob->drawArrow ( dest, &ndest, true );
-			sp += data.max_speed + save;
+			sp += data.speedMax + save;
 			save = 0;
 		}
 		else
@@ -1534,7 +1536,7 @@ string cVehicle::getStatusStr ()
 				string sText;
 				sText = lngPack.i18n ( "Text~Comp~Producing" );
 				sText += ": ";
-				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->szName + " (";
+				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
 				sText += iToStr ( BuildRounds );
 				sText += ")";
 
@@ -1542,7 +1544,7 @@ string cVehicle::getStatusStr ()
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" );
 					sText += ":\n";
-					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->szName + " (";
+					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
 					sText += iToStr ( BuildRounds );
 					sText += ")";
 				}
@@ -1568,7 +1570,7 @@ string cVehicle::getStatusStr ()
 		else
 			return lngPack.i18n ( "Text~Comp~Clearing_Fin" );
 	}
-	else if ( data.is_commando && owner == Client->ActivePlayer )
+	else if ( ( data.canCapture || data.canDisable ) && owner == Client->ActivePlayer )
 	{
 		string sTmp = lngPack.i18n ( "Text~Comp~Waits" ) + "\n";
 
@@ -1598,13 +1600,13 @@ string cVehicle::getStatusStr ()
 int cVehicle::playStream ()
 {
 	cBuilding *building = (*Client->Map)[PosX + PosY*Client->Map->size].getBaseBuilding();
-	bool water = Client->Map->IsWater ( PosX+PosY*Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
+	bool water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
 
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	else if ( IsClearing )
 		return PlayFXLoop ( SoundData.SNDClearing );
-	else if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA )
+	else if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
 		return PlayFXLoop ( typ->WaitWater );
 	else
 		return PlayFXLoop ( typ->Wait );
@@ -1620,18 +1622,18 @@ void cVehicle::StartMoveSound ()
 	MenuActive = false;
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
-	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
+	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
 	StopFXLoop ( Client->iObjectStream );
 
 	if ( !MoveJobActive )
 	{
-		if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA  )
+		if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
 			PlayFX ( typ->StartWater );
 		else
 			PlayFX ( typ->Start );
 	}
 
-	if ( ( water && data.can_drive != DRIVE_AIR ) || data.can_drive == DRIVE_SEA  )
+	if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
 		Client->iObjectStream = PlayFXLoop ( typ->DriveWater );
 	else
 		Client->iObjectStream = PlayFXLoop ( typ->Drive );
@@ -1670,7 +1672,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 		}
 
 	// Angriff:
-	if ( data.can_attack && data.shots )
+	if ( data.canAttack && data.shotsCur )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1692,7 +1694,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Bauen:
-	if ( data.can_build && !IsBuilding )
+	if ( !data.canBuild.empty() && !IsBuilding )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1715,7 +1717,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Transfer:
-	if ( ( data.can_transport == TRANS_METAL || data.can_transport == TRANS_OIL || data.can_transport == TRANS_GOLD ) && !IsBuilding && !IsClearing )
+	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1735,7 +1737,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Auto
-	if ( data.can_survey )
+	if ( data.canSurvey )
 	{
 		if ( ( autoMJob == NULL && SelMenu == nr ) || ( autoMJob != NULL && SelMenu != nr ) )
 		{
@@ -1803,7 +1805,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Entfernen:
-	if ( data.can_clear && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
+	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1824,7 +1826,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Sentry:
-	if ( bSentryStatus || data.can_attack )
+	if ( bSentryStatus || data.canAttack )
 	{
 		bSelection = SelMenu == nr || bSentryStatus;
 
@@ -1843,7 +1845,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aktivieren/Laden:
-	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
+	if ( data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
 		if ( SelMenu == nr ) bSelection = true;
@@ -1883,7 +1885,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aufaden:
-	if ( data.can_reload && data.cargo >= 2 )
+	if ( data.canRearm && data.storageResCur >= 2 )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1903,7 +1905,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Reparatur:
-	if ( data.can_repair && data.cargo >= 2 )
+	if ( data.canRepair && data.storageResCur >= 2 )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -1923,7 +1925,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Minen legen:
-	if ( data.can_lay_mines && data.cargo > 0 )
+	if ( data.canPlaceMines && data.storageResCur > 0 )
 	{
 		if ( SelMenu == nr || LayMines )
 			bSelection = true;
@@ -1947,7 +1949,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Minen sammeln:
-	if ( data.can_lay_mines && data.cargo < data.max_cargo )
+	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
 	{
 		if ( SelMenu == nr || ClearMines )
 			bSelection = true;
@@ -1970,8 +1972,8 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 		nr++;
 	}
 
-	// Commando-Funktionen:
-	if ( data.is_commando && data.shots )
+	// Sabotage:
+	if ( data.canDisable && data.shotsCur )
 	{
 		// Sabotage:
 		if ( SelMenu == nr ) { bSelection = true; }
@@ -1989,8 +1991,11 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 
 		dest.y += 22;
 		nr++;
-		// Stehlen:
+	}
 
+	// Stehlen:
+	if ( data.canCapture && data.shotsCur )
+	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
 
@@ -2047,44 +2052,47 @@ int cVehicle::GetMenuPointAnz ()
 {
 	int nr = 2;
 
-	if ( data.can_build && !IsBuilding )
+	if ( !data.canBuild.empty() && !IsBuilding )
 		nr++;
 
-	if ( data.can_survey )
+	if ( data.canSurvey )
 		nr++;
 
-	if ( ( data.can_transport == TRANS_METAL || data.can_transport == TRANS_OIL || data.can_transport == TRANS_GOLD ) && !IsBuilding && !IsClearing )
+	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 		nr++;
 
-	if ( data.can_attack && data.shots )
+	if ( data.canAttack && data.shotsCur )
 		nr++;
 
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 		nr++;
 
-	if ( data.can_clear && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
+	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 		nr++;
 
-	if ( bSentryStatus || data.can_attack )
+	if ( bSentryStatus || data.canAttack )
 		nr++;
 
-	if ( data.can_transport == TRANS_VEHICLES || data.can_transport == TRANS_MEN )
+	if ( data.storageUnitsMax > 0 )
 		nr += 2;
 
-	if ( data.can_reload && data.cargo >= 2 )
+	if ( data.canRearm && data.storageResCur >= 2 )
 		nr++;
 
-	if ( data.can_repair && data.cargo >= 2 )
+	if ( data.canRepair && data.storageResCur >= 2 )
 		nr++;
 
-	if ( data.can_lay_mines && data.cargo > 0 )
+	if ( data.canPlaceMines && data.storageResCur > 0 )
 		nr++;
 
-	if ( data.can_lay_mines && data.cargo < data.max_cargo )
+	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
 		nr++;
 
-	if ( data.is_commando && data.shots )
-		nr += 2;
+	if ( data.canCapture && data.shotsCur )
+		nr++;
+
+	if ( data.canDisable && data.shotsCur )
+		nr++;
 
 	return nr;
 }
@@ -2102,7 +2110,7 @@ SDL_Rect cVehicle::GetMenuSize ()
 	dest.w = 42;
 	size = Client->Hud.Zoom;
 
-	if ( IsBuilding && data.can_build == BUILD_BIG )
+	if ( IsBuilding && BuildingTyp.getUnitDataOriginalVersion()->isBig )
 		size *= 2;
 
 	if ( dest.x + size + 42 >= SettingsData.iScreenW - 12 )
@@ -2144,21 +2152,21 @@ bool cVehicle::MouseOverMenu ( int mx, int my )
 }
 
 //-----------------------------------------------------------------------------
-/** Reduces the remaining speed and shots during movement */
+/** Reduces the remaining speedCur and shotsCur during movement */
 //-----------------------------------------------------------------------------
 void cVehicle::DecSpeed ( int value )
 {
-	data.speed -= value;
+	data.speedCur -= value;
 
-	if ( data.can_attack )
+	if ( data.canAttack )
 	{
 		float f;
 		int s;
-		f = ( ( float ) data.max_shots / data.max_speed );
-		s = ( int ) ( data.speed * f );
+		f = ( ( float ) data.shotsMax / data.speedMax );
+		s = ( int ) ( data.speedCur * f );
 
-		if ( !data.can_drive_and_fire && s < data.shots && s >= 0 )
-			data.shots = s;
+		if ( !data.canDriveAndFire && s < data.shotsCur && s >= 0 )
+			data.shotsCur = s;
 	}
 
 	if ( Client->SelectedVehicle == this )
@@ -2185,15 +2193,15 @@ void cVehicle::DrawMunBar() const
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_ammo ) * data.ammo );
+	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.ammoMax ) * data.ammoCur );
 
 	SDL_FillRect ( buffer, &r1, 0 );
 
-	if ( data.ammo > data.max_ammo / 2 )
+	if ( data.ammoCur > data.ammoMax / 2 )
 	{
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
-	else if ( data.ammo > data.max_ammo / 4 )
+	else if ( data.ammoCur > data.ammoMax / 4 )
 	{
 		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
 	}
@@ -2220,15 +2228,15 @@ void cVehicle::drawHealthBar() const
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_hit_points ) * data.hit_points );
+	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.hitpointsMax ) * data.hitpointsCur );
 
 	SDL_FillRect ( buffer, &r1, 0 );
 
-	if ( data.hit_points > data.max_hit_points / 2 )
+	if ( data.hitpointsCur > data.hitpointsMax / 2 )
 	{
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
-	else if ( data.hit_points > data.max_hit_points / 4 )
+	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
 	{
 		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
 	}
@@ -2242,8 +2250,8 @@ void cVehicle::drawHealthBar() const
 void cVehicle::drawStatus() const
 {
 	SDL_Rect dest;
-	SDL_Rect speedSymbol = {244, 97, 8, 10 };
-	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
+	SDL_Rect speedCurSymbol = {244, 97, 8, 10 };
+	SDL_Rect shotsCurSymbol = {254, 97, 5, 10 };
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
 	if ( Disabled )
@@ -2257,22 +2265,22 @@ void cVehicle::drawStatus() const
 		{
 		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
-		if ( data.is_big )
+		if ( data.isBig )
 		{
 			dest.y += (Client->Hud.Zoom/2);
 			dest.x += (Client->Hud.Zoom/2);
 		}
-		if ( data.speed >= 4 )
+		if ( data.speedCur >= 4 )
 		{
-			if ( data.shots ) dest.x -= Client->Hud.Zoom/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
+			if ( data.shotsCur ) dest.x -= Client->Hud.Zoom/4;
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedCurSymbol, buffer, &dest );
 		}
 
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
-		if ( data.shots )
+		if ( data.shotsCur )
 		{
-			if ( data.speed ) dest.x += Client->Hud.Zoom/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
+			if ( data.speedCur ) dest.x += Client->Hud.Zoom/4;
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsCurSymbol, buffer, &dest );
 		}
 	}
 }
@@ -2299,13 +2307,13 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( Loaded )
 		return false;
 
-	if ( !data.can_attack )
+	if ( !data.canAttack )
 		return false;
 
-	if ( !data.shots )
+	if ( !data.shotsCur )
 		return false;
 
-	if ( !data.ammo )
+	if ( !data.ammoCur )
 		return false;
 
 	if ( Attacking )
@@ -2320,7 +2328,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( !IsInRange ( off, Map ) )
 		return false;
 
-	if ( data.muzzle_typ == MUZZLE_TORPEDO && !Map->IsWater( off ) )
+	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->IsWater( off ) )
 		return false;
 
 	if ( !owner->ScanMap[off] )
@@ -2329,7 +2337,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( override )
 		return true;
 
-	selectTarget(v, b, off, data.can_attack, Map );
+	selectTarget(v, b, off, data.canAttack, Map );
 	
 	if ( v )
 	{
@@ -2376,7 +2384,7 @@ void cVehicle::DrawAttackCursor ( int offset )
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, offset, data.can_attack, Client->Map );
+	selectTarget(v, b, offset, data.canAttack, Client->Map );
 
 	if ( !(v || b) || ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
 	{
@@ -2389,16 +2397,16 @@ void cVehicle::DrawAttackCursor ( int offset )
 	}
 
 	if ( v )
-		t = v->data.hit_points;
+		t = v->data.hitpointsCur;
 	else
-		t = b->data.hit_points;
+		t = b->data.hitpointsCur;
 
 	if ( t )
 	{
 		if ( v )
-			wc = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
+			wc = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
 		else
-			wc = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
+			wc = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -2413,9 +2421,9 @@ void cVehicle::DrawAttackCursor ( int offset )
 	if ( t )
 	{
 		if ( v )
-			wp = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
+			wp = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
 		else
-			wp = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
+			wp = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -2460,7 +2468,7 @@ int cVehicle::CalcHelth ( int damage )
 	}
 
 	int hp;
-	hp = data.hit_points - damage;
+	hp = data.hitpointsCur - damage;
 
 	if ( hp < 0 )
 	{
@@ -2472,7 +2480,7 @@ int cVehicle::CalcHelth ( int damage )
 
 
 //-----------------------------------------------------------------------------
-void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs, int iBuild_Costs_Max )
+void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs )
 {
 	// calculate building time and costs
 
@@ -2481,22 +2489,22 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	iTurboBuildRounds[2] = 0;
 
 	//prevent division by zero
-	if ( data.iNeeds_Metal == 0 ) data.iNeeds_Metal = 1;
+	if ( data.needsMetal == 0 ) data.needsMetal = 1;
 
 	//step 1x
-	if ( data.cargo >= iBuild_Costs )
+	if ( data.storageResCur >= iBuild_Costs )
 	{
 		iTurboBuildCosts[0] = iBuild_Costs;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
+		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
 	}
 
 	//step 2x
-	if ( ( iTurboBuildRounds[0] > 1 ) && ( data.cargo >= iTurboBuildCosts[0] + 4 ) )
+	if ( ( iTurboBuildRounds[0] > 1 ) && ( data.storageResCur >= iTurboBuildCosts[0] + 4 ) )
 	{
 		iTurboBuildRounds[1] = iTurboBuildRounds[0];
 		iTurboBuildCosts[1] = iTurboBuildCosts[0];
 
-		while ( ( data.cargo >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
+		while ( ( data.storageResCur >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
 		{
 			iTurboBuildRounds[1]--;
 			iTurboBuildCosts[1] += 4;
@@ -2510,19 +2518,19 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	if (
 		( iTurboBuildRounds[1] > 1 )
 		&& ( iTurboBuildCosts[1] <= 48 )
-		&& ( data.cargo >= iTurboBuildCosts[1] + 8 )
-		&& ( data.cargo >= 24 )
+		&& ( data.storageResCur >= iTurboBuildCosts[1] + 8 )
+		&& ( data.storageResCur >= 24 )
 		)
 	{
 		iTurboBuildRounds[2] = iTurboBuildRounds[1];
 		iTurboBuildCosts[2] = iTurboBuildCosts[1];
 
 		while (
-			( data.cargo >= iTurboBuildCosts[2] + 8 )
+			( data.storageResCur >= iTurboBuildCosts[2] + 8 )
 			&& ( iTurboBuildRounds[2] > 1 )
 			&& ( iTurboBuildCosts[2] <= 48 )
 			&& ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] )
-			&& ( data.cargo >= (iTurboBuildRounds[1] - iTurboBuildRounds[2] + 1) * 24 )
+			&& ( data.storageResCur >= (iTurboBuildRounds[1] - iTurboBuildRounds[2] + 1) * 24 )
 			)
 		{
 			iTurboBuildRounds[2]--;
@@ -2631,7 +2639,7 @@ void cVehicle::FindNextband ()
 		return;
 	}
 
-	if ( data.can_build != BUILD_BIG )
+	if ( BuildingTyp.getUnitDataOriginalVersion()->isBig )
 	{
 		BandX = PosX;
 		BandY = PosY;
@@ -2675,10 +2683,10 @@ void cVehicle::MakeReport ()
 		// Disabled:
 		PlayVoice ( VoiceData.VOIDisabled );
 	}
-	else if ( data.hit_points > data.max_hit_points / 2 )
+	else if ( data.hitpointsCur > data.hitpointsMax / 2 )
 	{
 		// Status green
-		if ( data.speed == 0 )
+		if ( data.speedCur == 0 )
 		{
 			// no more movement
 			PlayVoice ( VoiceData.VOINoSpeed );
@@ -2703,9 +2711,9 @@ void cVehicle::MakeReport ()
 			else
 				PlayVoice ( VoiceData.VOIOK2 );
 		}
-		else if ( data.can_attack && !data.ammo )
+		else if ( data.canAttack && !data.ammoCur )
 		{
-			// no ammo
+			// no ammoCur
 			if (random(2))
 				PlayVoice ( VoiceData.VOILowAmmo1 );
 			else
@@ -2734,7 +2742,7 @@ void cVehicle::MakeReport ()
 				PlayVoice ( VoiceData.VOIOK3 );
 		}
 	}
-	else if ( data.hit_points > data.max_hit_points / 4 )
+	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
 		// Status yellow:
 		PlayVoice ( VoiceData.VOIStatusYellow );
 	else
@@ -2765,7 +2773,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 		if ( v->owner != Client->ActivePlayer )
 			return false;
 
-		if ( v->data.can_transport != data.can_transport )
+		if ( v->data.storeResType != data.storeResType )
 			return false;
 
 		if ( v->IsBuilding || v->IsClearing )
@@ -2781,13 +2789,13 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 			if ( b->owner != Client->ActivePlayer )
 				return false;
 
-			if ( data.can_transport == TRANS_METAL && b->SubBase->MaxMetal == 0 )
+			if ( data.storeResType == sUnitData::STORE_RES_METAL && b->SubBase->MaxMetal == 0 )
 				return false;
 
-			if ( data.can_transport == TRANS_OIL && b->SubBase->MaxOil == 0 )
+			if ( data.storeResType == sUnitData::STORE_RES_OIL && b->SubBase->MaxOil == 0 )
 				return false;
 
-			if ( data.can_transport == TRANS_GOLD && b->SubBase->MaxGold == 0 )
+			if ( data.storeResType == sUnitData::STORE_RES_GOLD && b->SubBase->MaxGold == 0 )
 				return false;
 
 			return true;
@@ -2811,10 +2819,9 @@ bool cVehicle::InSentryRange ()
 
 		if ( Player == owner ) continue;
 
-		if ( data.is_stealth_land && !isDetectedByPlayer( Player ) ) continue;	//check next player
-		if ( data.is_stealth_sea  && !isDetectedByPlayer( Player ) ) continue;	//check next player
+		if ( data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer( Player ) ) continue;	//check next player
 
-		if ( data.can_drive == DRIVE_AIR )
+		if ( data.factorAir > 0 )
 		{
 			if ( ! ( Player->SentriesMapAir[iOff] && Player->ScanMap[iOff] ) ) continue; //check next player
 
@@ -2826,7 +2833,7 @@ bool cVehicle::InSentryRange ()
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.can_attack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
@@ -2844,7 +2851,7 @@ bool cVehicle::InSentryRange ()
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.can_attack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
@@ -2871,7 +2878,7 @@ bool cVehicle::InSentryRange ()
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.can_attack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
@@ -2889,7 +2896,7 @@ bool cVehicle::InSentryRange ()
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.can_attack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
@@ -2933,7 +2940,7 @@ void cVehicle::DrawExitPoints(sVehicle* const typ) const
 bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
 	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
-	if ( data.can_drive == DRIVE_AIR && ( x != PosX || y != PosY ) ) return false;
+	if ( data.factorAir > 0 && ( x != PosX || y != PosY ) ) return false;
 	if ( !isNextTo(x, y) ) return false;
 
 	return true;
@@ -2954,15 +2961,20 @@ bool cVehicle::canLoad ( cVehicle *Vehicle )
 
 	if ( Vehicle->Loaded ) return false;
 
-	if ( data.cargo >= data.max_cargo )	return false;
+	if ( data.storageUnitsCur >= data.storageUnitsMax )	return false;
 
 	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
-	if ( data.can_drive == DRIVE_AIR && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
+	if ( data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
-	if ( data.can_drive != DRIVE_AIR && Vehicle->data.can_drive == DRIVE_SEA ) return false;
+	if ( data.factorAir > 0 && (Vehicle->data.factorSea > 0 && data.factorGround == 0 ) ) return false;
 
-	if ( data.can_transport == TRANS_MEN && !Vehicle->data.is_human ) return false;
+	int i;
+	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
+	{
+		if ( data.storeUnitsTypes[i].compare ( Vehicle->data.isStorageType ) == 0 ) break;
+	}
+	if ( i == data.storeUnitsTypes.size() ) return false;
 
 	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
@@ -2984,9 +2996,9 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 	Vehicle->Loaded = true;
 
 	StoredVehicles.Add ( Vehicle );
-	data.cargo++;
+	data.storageUnitsCur++;
 
-	if ( data.can_drive == DRIVE_AIR || data.cargo == data.max_cargo ) LoadActive = false;
+	if ( data.factorAir > 0 || data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
 
 	owner->DoScan();
 }
@@ -3006,7 +3018,7 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 		if ( i == StoredVehicles.Size()-1 ) return;
 	}
 
-	data.cargo--;
+	data.storageUnitsCur--;
 
 	ActivatingVehicle = false;
 
@@ -3015,7 +3027,7 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 	Vehicle->PosX = offset % Map->size;
 	Vehicle->PosY = offset / Map->size;
 	Vehicle->Loaded = false;
-	//Vehicle->data.shots = 0;
+	//Vehicle->data.shotsCur = 0;
 
 	owner->DoScan();
 }
@@ -3040,19 +3052,19 @@ bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 {
 	if ( !Vehicle ) return false;
 
-	if ( data.cargo <= 0 ) return false;
+	if ( data.storageResCur <= 0 ) return false;
 
 	if ( Vehicle->PosX > PosX+1 || Vehicle->PosX < PosX-1 || Vehicle->PosY > PosY+1 || Vehicle->PosY < PosY-1 ) return false;
 
-	if ( Vehicle->data.can_drive == DRIVE_AIR && Vehicle->FlightHigh > 0 ) return false;
+	if ( Vehicle->data.factorAir > 0 && Vehicle->FlightHigh > 0 ) return false;
 
 	switch ( iType )
 	{
 	case SUPPLY_TYPE_REARM:
-		if ( Vehicle == this || !Vehicle->data.can_attack || Vehicle->data.ammo >= Vehicle->data.max_ammo || Vehicle->moving || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || !Vehicle->data.canAttack || Vehicle->data.ammoCur >= Vehicle->data.ammoMax || Vehicle->moving || Vehicle->Attacking ) return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if ( Vehicle == this || Vehicle->data.hit_points >= Vehicle->data.max_hit_points || Vehicle->moving || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || Vehicle->data.hitpointsCur >= Vehicle->data.hitpointsMax || Vehicle->moving || Vehicle->Attacking ) return false;
 		break;
 	default:
 		return false;
@@ -3064,9 +3076,9 @@ bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply( cBuilding *Building, int iType )
 {
-	if ( data.cargo <= 0 ) return false;
+	if ( data.storageResCur <= 0 ) return false;
 
-	if ( !Building->data.is_big )
+	if ( !Building->data.isBig )
 	{
 		if ( Building->PosX > PosX+1 || Building->PosX < PosX-1 || Building->PosY > PosY+1 || Building->PosY < PosY-1 ) return false;
 	}
@@ -3078,10 +3090,10 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 	switch ( iType )
 	{
 	case SUPPLY_TYPE_REARM:
-		if ( !Building->data.can_attack || Building->data.ammo >= Building->data.max_ammo ) return false;
+		if ( !Building->data.canAttack || Building->data.ammoCur >= Building->data.ammoMax ) return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if ( Building->data.hit_points >= Building->data.max_hit_points ) return false;
+		if ( Building->data.hitpointsCur >= Building->data.hitpointsMax ) return false;
 		break;
 	default:
 		return false;
@@ -3094,22 +3106,22 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 void cVehicle::upgradeToCurrentVersion ()
 {
 	sUnitData& upgradeVersion = owner->VehicleData[typ->nr];
-	data.version = upgradeVersion.version; // TODO: iVersion?
+	data.version = upgradeVersion.version;
 	
-	if (data.hit_points == data.max_hit_points)
-		data.hit_points = upgradeVersion.max_hit_points; // TODO: check behaviour in original
-	data.max_hit_points = upgradeVersion.max_hit_points;
+	if (data.hitpointsCur == data.hitpointsMax)
+		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
+	data.hitpointsMax = upgradeVersion.hitpointsMax;
 	
-	data.max_ammo = upgradeVersion.max_ammo; // don't change the current ammo-amount!
+	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammoCur-amount!
 	
-	data.max_speed = upgradeVersion.max_speed;
+	data.speedMax = upgradeVersion.speedMax;
 	
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
 	data.range = upgradeVersion.range;
-	data.max_shots = upgradeVersion.max_shots; // TODO: check behaviour in original
+	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
-	data.iBuilt_Costs = upgradeVersion.iBuilt_Costs;
+	data.buildCosts = upgradeVersion.buildCosts;
 	
 	GenerateName();
 }
@@ -3117,21 +3129,21 @@ void cVehicle::upgradeToCurrentVersion ()
 //-----------------------------------------------------------------------------
 bool cVehicle::layMine ()
 {
-	if ( data.cargo <= 0 ) return false;
+	if ( data.storageResCur <= 0 ) return false;
 	
-	if (data.can_drive == DRIVE_SEA) 
+	if ( ( data.factorSea > 0 && data.factorGround == 0 ) ) 
 	{
-		if ( !Server->Map->possiblePlaceBuilding( UnitsData.building[BNrSeaMine].data, PosX, PosY, this)) return false;
-		Server->addUnit(PosX, PosY, &UnitsData.building[BNrSeaMine], owner, false);
+		if ( !Server->Map->possiblePlaceBuilding( *specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		Server->addUnit(PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
 	}
 	else 
 	{
-		if ( !Server->Map->possiblePlaceBuilding( UnitsData.building[BNrLandMine].data, PosX, PosY, this)) return false;
-		Server->addUnit(PosX, PosY, &UnitsData.building[BNrLandMine], owner, false);
+		if ( !Server->Map->possiblePlaceBuilding( *specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		Server->addUnit(PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
 	}
-	data.cargo--;
+	data.storageResCur--;
 
-	if ( data.cargo <= 0 ) LayMines = false;
+	if ( data.storageResCur <= 0 ) LayMines = false;
 
 	return true;
 }
@@ -3141,12 +3153,12 @@ bool cVehicle::clearMine ()
 {
 	cBuilding* Mine = Server->Map->fields[PosX+PosY*Server->Map->size].getMine();
 
-	if ( !Mine || Mine->owner != owner || data.cargo >= data.max_cargo ) return false;
+	if ( !Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax ) return false;
 
 	Server->deleteUnit ( Mine );
-	data.cargo++;
+	data.storageResCur++;
 
-	if ( data.cargo >= data.max_cargo ) ClearMines = false;
+	if ( data.storageResCur >= data.storageResMax ) ClearMines = false;
 
 	return true;
 }
@@ -3161,20 +3173,23 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 	boff = PosX + PosY * map->size;
 
 	if ( !isNextTo ( x, y ) ) return false;
-	if ( !data.shots ) return false;
+	if ( !data.shotsCur ) return false;
 
 	cVehicle*  vehicle  = map->fields[off].getVehicles();
 	cBuilding* building = map->fields[off].getBuildings();
 
-	if ( vehicle && vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh > 0 ) return false;
-	if ( vehicle && vehicle->data.is_human ) return false;
-	if ( steal && vehicle && vehicle->StoredVehicles.Size() ) return false;
+	if ( steal && vehicle && !vehicle->data.canBeCaptured ) return false;
+	if ( steal && building && !building->data.canBeCaptured ) return false;
+	if ( !steal && vehicle && !vehicle->data.canBeDisabled ) return false;
+	if ( !steal && building && !building->data.canBeDisabled ) return false;
 
-	if ( steal && !vehicle ) return false;
+	if ( vehicle && vehicle->data.factorAir > 0 && vehicle->FlightHigh > 0 ) return false;
+
+	if ( steal && vehicle && vehicle->StoredVehicles.Size() ) return false;
+	if ( steal && building && building->StoredVehicles.Size() ) return false;
 
 	if ( steal && vehicle && vehicle->owner != owner ) return true;
-
-	if ( building && !building->data.can_attack && !building->data.can_work && !(building->data.range > 10 ) ) return false;
+	if ( steal && building && vehicle->owner != owner ) return true;
 
 	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) ) return true;
 
@@ -3227,8 +3242,8 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 
 	if ( !destVehicle && !destBuilding ) return 0;
 
-	if ( destVehicle ) destTurn = destVehicle->data.iBuilt_Costs/3;
-	else if ( destBuilding ) destTurn = destBuilding->data.iBuilt_Costs/3;
+	if ( destVehicle ) destTurn = destVehicle->data.buildCosts/3;
+	else if ( destBuilding ) destTurn = destBuilding->data.buildCosts/3;
 
 	factor = steal ? 1 : 4;
 	srcLevel = (int)CommandoRank+7;
@@ -3253,13 +3268,13 @@ int cVehicle::calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding 
 
 	if ( destVehicle )
 	{
-		destTurn = destVehicle->data.iBuilt_Costs/3;
+		destTurn = destVehicle->data.buildCosts/3;
 		srcLevel = (int)CommandoRank;
 		if ( destTurn > 0 && destTurn < 13 ) srcLevel += vehiclesTable[destTurn];
 	}
 	else if ( destBuilding )
 	{
-		destTurn = destBuilding->data.iBuilt_Costs/2;
+		destTurn = destBuilding->data.buildCosts/2;
 		srcLevel = (int)CommandoRank+8;
 	}
 	else return 1;
@@ -3339,7 +3354,7 @@ void cVehicle::resetDetectedByPlayer( cPlayer* player )
 void cVehicle::makeDetection()
 {
 	//check whether the vehicle has been detected by others
-	if ( data.is_stealth_land || data.is_stealth_sea )
+	if ( data.isStealthOn != TERRAIN_NONE )
 	{
 		int offset = PosX + PosY * Server->Map->size;
 		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
@@ -3347,7 +3362,7 @@ void cVehicle::makeDetection()
 			cPlayer* player = (*Server->PlayerList)[i];
 			if ( player == owner ) continue;
 
-			if ( data.is_stealth_land && ( player->DetectLandMap[offset] || Server->Map->IsWater(offset) ))
+			if ( (data.isStealthOn&TERRAIN_GROUND) && ( player->DetectLandMap[offset] || Server->Map->IsWater(offset) ))
 			{
 				setDetectedByPlayer( player );
 			}
@@ -3356,9 +3371,9 @@ void cVehicle::makeDetection()
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
 			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
-			if ( data.can_drive != DRIVE_SEA && building && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
+			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
 
-			if ( data.is_stealth_sea && ( player->DetectSeaMap[offset] || !water ))
+			if ( (data.isStealthOn&TERRAIN_SEA) && ( player->DetectSeaMap[offset] || !water ))
 			{
 				setDetectedByPlayer( player );
 			}
@@ -3366,7 +3381,7 @@ void cVehicle::makeDetection()
 	}
 		
 	//detect other units
-	if ( data.can_detect_land || data.can_detect_sea || data.can_detect_mines )
+	if ( data.canDetectStealthOn )
 	{
 		for ( int x = PosX - data.scan; x < PosX + data.scan; x++)
 		{
@@ -3381,18 +3396,18 @@ void cVehicle::makeDetection()
 
 				if ( vehicle && vehicle->owner != owner )
 				{
-					if ( data.can_detect_land && owner->DetectLandMap[offset] && vehicle->data.is_stealth_land )
+					if ( (data.canDetectStealthOn&TERRAIN_GROUND) && owner->DetectLandMap[offset] && (vehicle->data.isStealthOn&TERRAIN_GROUND) )
 					{
 						vehicle->setDetectedByPlayer( owner );
 					}
-					if ( data.can_detect_sea && owner->DetectSeaMap[offset] && vehicle->data.is_stealth_sea )
+					if ( (data.canDetectStealthOn&TERRAIN_SEA) && owner->DetectSeaMap[offset] && (vehicle->data.isStealthOn&TERRAIN_SEA) )
 					{
 						vehicle->setDetectedByPlayer( owner );
 					}
 				}
 				if ( building && building->owner != owner )
 				{
-					if ( data.can_detect_mines && owner->DetectMinesMap[offset] && building->data.is_expl_mine )
+					if ( (data.canDetectStealthOn&AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn&AREA_EXP_MINE) )
 					{
 						building->setDetectedByPlayer( owner );
 					}
@@ -3407,7 +3422,7 @@ bool cVehicle::isNextTo( int x, int y) const
 {
 	if ( x + 1 < PosX || y + 1 < PosY ) return false;
 
-	if ( data.is_big )
+	if ( data.isBig )
 	{
 		if ( x - 2 > PosX || y - 2 > PosY ) return false;
 	}

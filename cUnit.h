@@ -41,16 +41,16 @@ class cUnit {
   public:
     struct sAttacking {
       unsigned int  maxAmmo;
-      unsigned int  ammo;
+      unsigned int  ammoCur;
       unsigned int  maxShots;
-      unsigned int  shots;
+      unsigned int  shotsCur;
       unsigned int  range;
       bool          shotDecreaseMovement;
     }; // struct sAttacking
     struct sProducing{
       cList<unsigned int> *lProducingUnits;   // List of units this unit can produce
       unsigned int        iProducingMPR;      // How many metall per round does it consume
-      unsigned int        iProducingMaxMult;  // Maximal production speed
+      unsigned int        iProducingMaxMult;  // Maximal production speedCur
     }; // struct sProducing
     struct sTransport{
       cList<unsigned int> *lTransport;        // List of units this unit can transport
@@ -178,7 +178,7 @@ class cUnit {
       private:
         cUnit               *unit;      // The unit this class belongs to
         cList<sBuildList*>  *lBuildList;
-        unsigned int iMult;             // current production speed
+        unsigned int iMult;             // current production speedCur
     }; // class cIProducing
     class cIAttacking{
       public:

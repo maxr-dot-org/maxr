@@ -88,7 +88,6 @@ struct sVehicle{
   char id[4];          // ID dieses Elements
   int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
-  char *text;          // Infotext
 
   // Die Sounds:
   struct Mix_Chunk *Wait;
@@ -186,7 +185,7 @@ public:
 	void ShowDetails();
 	void GenerateName();
 	/**
-	* refreshes speed and shots and continues building or clearing
+	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
 	*@return 1 if there has been refreshed something else 0.
 	*/
@@ -237,7 +236,7 @@ public:
 	bool canSupply( cBuilding *Building, int iType );
 	/** Upgrades the unit data of this vehicle to the current, upgraded version of the player. */
 	void upgradeToCurrentVersion();
-	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs, int iBuilt_Costs_Max );
+	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs );
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath

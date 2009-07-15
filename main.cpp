@@ -597,8 +597,10 @@ sUnitData *sID::getUnitDataOriginalVersion( cPlayer *Owner )
 	switch ( iFirstPart )
 	{
 		case 0:
+			if ( !getVehicle (Owner) ) return NULL;
 			return &(getVehicle (Owner)->data);
 		case 1:
+			if ( !getBuilding (Owner) ) return NULL;
 			return &(getBuilding (Owner)->data);
 		default:
 		return NULL;
@@ -718,13 +720,13 @@ void cUnitsData::initializeClanUnitData ()
 				if (changedStat->hasModification ("Armor"))
 					clanListVehicles.back ().data.armor = changedStat->getModificationValue ("Armor");
 				if (changedStat->hasModification ("Hitpoints"))
-					clanListVehicles.back ().data.max_hit_points = changedStat->getModificationValue ("Hitpoints");
+					clanListVehicles.back ().data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
 				if (changedStat->hasModification ("Scan"))
 					clanListVehicles.back ().data.scan = changedStat->getModificationValue ("Scan");
 				if (changedStat->hasModification ("Speed"))
-					clanListVehicles.back ().data.max_speed = changedStat->getModificationValue ("Speed") * 4;
+					clanListVehicles.back ().data.speedMax = changedStat->getModificationValue ("Speed") * 4;
 				if (changedStat->hasModification ("Built_Costs"))
-					clanListVehicles.back ().data.iBuilt_Costs = changedStat->getModificationValue ("Built_Costs");
+					clanListVehicles.back ().data.buildCosts = changedStat->getModificationValue ("Built_Costs");
 			}
 		}
 		clanUnitDataVehicles.push_back (clanListVehicles);
@@ -746,13 +748,13 @@ void cUnitsData::initializeClanUnitData ()
 				if (changedStat->hasModification ("Armor"))
 					clanListBuildings.back ().data.armor = changedStat->getModificationValue ("Armor");
 				if (changedStat->hasModification ("Hitpoints"))
-					clanListBuildings.back ().data.max_hit_points = changedStat->getModificationValue ("Hitpoints");
+					clanListBuildings.back ().data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
 				if (changedStat->hasModification ("Scan"))
 					clanListBuildings.back ().data.scan = changedStat->getModificationValue ("Scan");
 				if (changedStat->hasModification ("Speed"))
-					clanListBuildings.back ().data.max_speed = changedStat->getModificationValue ("Speed") * 4;
+					clanListBuildings.back ().data.speedMax = changedStat->getModificationValue ("Speed") * 4;
 				if (changedStat->hasModification ("Built_Costs"))
-					clanListBuildings.back ().data.iBuilt_Costs = changedStat->getModificationValue ("Built_Costs");
+					clanListBuildings.back ().data.buildCosts = changedStat->getModificationValue ("Built_Costs");
 			}
 		}
 		clanUnitDataBuildings.push_back (clanListBuildings);
@@ -760,6 +762,18 @@ void cUnitsData::initializeClanUnitData ()
 	initializedClanUnitData = true;
 }
 
+//----------------------------------------------------------------------------------
+sUnitData::sUnitData()
+{
+	version = 0;
+	isConnectorGraphic = false;
+	ammoCur = 0;
+	speedCur = 0;
+	shotsCur = 0;
+	storageResCur = 0;
+	storageUnitsCur = 0;
+	hitpointsCur = 0;
+}
 
 //----------------------------------------------------------------------------------
 void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)

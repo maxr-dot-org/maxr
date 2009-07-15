@@ -147,21 +147,21 @@ void sendUnitUpgrades ( cPlayer *player )
 			message = new cNetMessage ( MU_MSG_UPGRADES );
 		}
 		if ( player->VehicleData[i].damage != UnitsData.getVehicle (i, player->getClan ()).data.damage ||
-			player->VehicleData[i].max_shots != UnitsData.getVehicle (i, player->getClan ()).data.max_shots ||
+			player->VehicleData[i].shotsMax != UnitsData.getVehicle (i, player->getClan ()).data.shotsMax ||
 			player->VehicleData[i].range != UnitsData.getVehicle (i, player->getClan ()).data.range ||
-			player->VehicleData[i].max_ammo != UnitsData.getVehicle (i, player->getClan ()).data.max_ammo ||
+			player->VehicleData[i].ammoMax != UnitsData.getVehicle (i, player->getClan ()).data.ammoMax ||
 			player->VehicleData[i].armor != UnitsData.getVehicle (i, player->getClan ()).data.armor ||
-			player->VehicleData[i].max_hit_points != UnitsData.getVehicle (i, player->getClan ()).data.max_hit_points ||
+			player->VehicleData[i].hitpointsMax != UnitsData.getVehicle (i, player->getClan ()).data.hitpointsMax ||
 			player->VehicleData[i].scan != UnitsData.getVehicle (i, player->getClan ()).data.scan ||
-			player->VehicleData[i].max_speed != UnitsData.getVehicle (i, player->getClan ()).data.max_speed )
+			player->VehicleData[i].speedMax != UnitsData.getVehicle (i, player->getClan ()).data.speedMax )
 		{
-			message->pushInt16( player->VehicleData[i].max_speed );
+			message->pushInt16( player->VehicleData[i].speedMax );
 			message->pushInt16( player->VehicleData[i].scan );
-			message->pushInt16( player->VehicleData[i].max_hit_points );
+			message->pushInt16( player->VehicleData[i].hitpointsMax );
 			message->pushInt16( player->VehicleData[i].armor );
-			message->pushInt16( player->VehicleData[i].max_ammo );
+			message->pushInt16( player->VehicleData[i].ammoMax );
 			message->pushInt16( player->VehicleData[i].range );
-			message->pushInt16( player->VehicleData[i].max_shots );
+			message->pushInt16( player->VehicleData[i].shotsMax );
 			message->pushInt16( player->VehicleData[i].damage );
 			message->pushInt16( player->VehicleData[i].ID.iSecondPart );
 			message->pushInt16( player->VehicleData[i].ID.iFirstPart );
@@ -206,19 +206,19 @@ void sendUnitUpgrades ( cPlayer *player )
 			message = new cNetMessage ( MU_MSG_UPGRADES );
 		}
 		if ( player->BuildingData[i].damage != UnitsData.getBuilding (i, player->getClan ()).data.damage ||
-			player->BuildingData[i].max_shots != UnitsData.getBuilding (i, player->getClan ()).data.max_shots ||
+			player->BuildingData[i].shotsMax != UnitsData.getBuilding (i, player->getClan ()).data.shotsMax ||
 			player->BuildingData[i].range != UnitsData.getBuilding (i, player->getClan ()).data.range ||
-			player->BuildingData[i].max_ammo != UnitsData.getBuilding (i, player->getClan ()).data.max_ammo ||
+			player->BuildingData[i].ammoMax != UnitsData.getBuilding (i, player->getClan ()).data.ammoMax ||
 			player->BuildingData[i].armor != UnitsData.getBuilding (i, player->getClan ()).data.armor ||
-			player->BuildingData[i].max_hit_points != UnitsData.getBuilding (i, player->getClan ()).data.max_hit_points ||
+			player->BuildingData[i].hitpointsMax != UnitsData.getBuilding (i, player->getClan ()).data.hitpointsMax ||
 			player->BuildingData[i].scan != UnitsData.getBuilding (i, player->getClan ()).data.scan )
 		{
 			message->pushInt16( player->BuildingData[i].scan );
-			message->pushInt16( player->BuildingData[i].max_hit_points );
+			message->pushInt16( player->BuildingData[i].hitpointsMax );
 			message->pushInt16( player->BuildingData[i].armor );
-			message->pushInt16( player->BuildingData[i].max_ammo );
+			message->pushInt16( player->BuildingData[i].ammoMax );
 			message->pushInt16( player->BuildingData[i].range );
-			message->pushInt16( player->BuildingData[i].max_shots );
+			message->pushInt16( player->BuildingData[i].shotsMax );
 			message->pushInt16( player->BuildingData[i].damage );
 			message->pushInt16( player->BuildingData[i].ID.iSecondPart );
 			message->pushInt16( player->BuildingData[i].ID.iFirstPart );
@@ -337,13 +337,13 @@ void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 			if ( unitIndex < UnitsData.getNrVehicles () ) currentVersion = &player->VehicleData[unitIndex];
 			else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles ()];
 
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->max_speed));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->speedMax));
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion->scan));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion->max_hit_points));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion->hitpointsMax));
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion->armor));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion->max_ammo));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion->ammoMax));
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion->range));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion->max_shots));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion->shotsMax));
 			msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion->damage));
 			msg->pushInt16 (currentVersion->ID.iSecondPart);
 			msg->pushInt16 (currentVersion->ID.iFirstPart);

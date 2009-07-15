@@ -54,7 +54,7 @@ string cClanUnitStat::getClanStatsDescription () const
 	string result = "Unknown";
 	if (data)
 	{
-		result = string (data->szName) + ": ";
+		result = string (data->name) + ": ";
 		
 		bool first = true;
 		if (hasModification ("Damage")) 
@@ -82,7 +82,7 @@ string cClanUnitStat::getClanStatsDescription () const
 		{
 			if (first == false)
 				result += ", ";
-			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->max_hit_points);
+			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
 			first = false;
 		}
 		if (hasModification ("Scan")) 
@@ -96,7 +96,7 @@ string cClanUnitStat::getClanStatsDescription () const
 		{
 			if (first == false)
 				result += ", ";
-			result += "Speed +" + iToStr (getModificationValue ("Speed") - (data->max_speed / 4));
+			result += "Speed +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
 			first = false;
 		}
 		if (hasModification ("Built_Costs"))

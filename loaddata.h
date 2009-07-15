@@ -103,22 +103,20 @@ int SaveOption (int iTyp);
  * Loades the unitdata from the data.xml in the unitfolder
  * @param directory Unitdirectory , relativ to the main game directory
  */
-void LoadUnitData(sUnitData*, char const* directory, int iID);
+void LoadUnitData( sUnitData*, char const* directory, int iID );
 
-/**
-* Sets all unitdata to default values
-*/
-void SetDefaultUnitData(sUnitData*);
+void LoadUnitGraphicData( sUnitData*, char const* directory );
+
+int getXMLNodeInt( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
+float getXMLNodeFloat( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
+string getXMLNodeString( TiXmlDocument &document, const char *attribut, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
+bool getXMLNodeBool( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL, const char *path3 = NULL );
 
 /**
 * Gets the name and the description for the unit from the selected language file
 * @param ID Id of the unit
 */
 void translateUnitData(sID ID, bool vehicle);
-
-// i18ns the loaded data to the old data structure.
-// This should be just used temporarily while the game doesn't undestand new structure.
-void ConvertData(int unitnum, bool vehicle);
 
 void reloadUnitValues ();
 

@@ -678,7 +678,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		else if ( bChange && SelectedVehicle && SelectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
 			SelectedVehicle->PlaceBand = false;
-			if ( SelectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big )
+			if ( SelectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
 				sendWantBuild ( SelectedVehicle->iID, SelectedVehicle->BuildingTyp, SelectedVehicle->BuildRounds, SelectedVehicle->BandX+SelectedVehicle->BandY*Map->size, false, 0 );
 			}
@@ -705,8 +705,8 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
-			if ( SelectedBuilding->data.can_load != TRANS_AIR && overVehicle ) sendWantLoad ( SelectedBuilding->iID, false, overVehicle->iID );
-			else if ( SelectedBuilding->data.can_load == TRANS_AIR && overPlane ) sendWantLoad ( SelectedBuilding->iID, false, overPlane->iID );
+			if ( SelectedBuilding->canLoad( overVehicle ) ) sendWantLoad ( SelectedBuilding->iID, false, overVehicle->iID );
+			else if ( SelectedBuilding->canLoad( overPlane ) ) sendWantLoad ( SelectedBuilding->iID, false, overPlane->iID );
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
@@ -743,7 +743,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					int targetId = 0;
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedVehicle->data.can_attack, Client->Map);
+					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedVehicle->data.canAttack, Client->Map);
 					if ( vehicle ) targetId = vehicle->iID;
 
 					Log.write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
@@ -755,7 +755,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					int targetId = 0;
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedBuilding->data.can_attack, Client->Map);
+					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedBuilding->data.canAttack, Client->Map);
 					if ( vehicle ) targetId = vehicle->iID;
 
 					int offset = SelectedBuilding->PosX + SelectedBuilding->PosY * Map->size;
@@ -763,15 +763,11 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Csteal && SelectedVehicle )
 				{
-					// TODO: add commando steal
-					//addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 					if ( overVehicle ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, true );
 					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, true );
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cdisable && SelectedVehicle )
 				{
-					// TODO: add commando disable
-					//addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 					if ( overVehicle ) sendWantComAction ( SelectedVehicle->iID, overVehicle->iID, true, false );
 					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( SelectedVehicle->iID, overPlane->iID, true, false );
 					else if ( overBuilding ) sendWantComAction ( SelectedVehicle->iID, overBuilding->iID, false, false );
@@ -1003,38 +999,38 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		Hud.DoScroll ( 0 );
 	}
 	// Hotkeys for the unit menues
-	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedVehicle && SelectedVehicle->data.can_attack && SelectedVehicle->data.shots && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedVehicle && SelectedVehicle->data.canAttack && SelectedVehicle->data.shotsCur && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->AttackMode = true;
 		Hud.CheckScroll();
 		mouseMoveCallback ( true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedBuilding && SelectedBuilding->data.can_attack && SelectedBuilding->data.shots && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAttack && SelectedBuilding && SelectedBuilding->data.canAttack && SelectedBuilding->data.shotsCur && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		SelectedBuilding->AttackMode = true;
 		Hud.CheckScroll();
 		mouseMoveCallback ( true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && SelectedVehicle->data.can_build && !SelectedVehicle->IsBuilding && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedVehicle && !SelectedVehicle->data.canBuild.empty() && !SelectedVehicle->IsBuilding && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		sendWantStopMove ( SelectedVehicle->iID );
 		cBuildingsBuildMenu buildMenu ( ActivePlayer, SelectedVehicle );
 		buildMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && SelectedBuilding->data.can_build && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuBuild && SelectedBuilding && !SelectedBuilding->data.canBuild.empty() && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cVehiclesBuildMenu buildMenu ( ActivePlayer, SelectedBuilding );
 		buildMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_METAL || SelectedVehicle->data.can_transport == TRANS_OIL || SelectedVehicle->data.can_transport == TRANS_GOLD ) && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedVehicle && SelectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !SelectedVehicle->IsBuilding && !SelectedVehicle->IsClearing && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->Transfer = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedBuilding && ( SelectedBuilding->data.can_transport == TRANS_METAL || SelectedBuilding->data.can_transport == TRANS_OIL || SelectedBuilding->data.can_transport == TRANS_GOLD ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuTransfer && SelectedBuilding && SelectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		SelectedBuilding->Transfer = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuAutomove && SelectedVehicle && SelectedVehicle->data.can_survey && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuAutomove && SelectedVehicle && SelectedVehicle->data.canSurvey && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		if ( SelectedVehicle->autoMJob == NULL ) SelectedVehicle->autoMJob = new cAutoMJob ( SelectedVehicle );
 		else
@@ -1043,7 +1039,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			SelectedVehicle->autoMJob = NULL;
 		}
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.can_work && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.can_build == BUILD_NONE ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuStart && SelectedBuilding && SelectedBuilding->data.canWork && !SelectedBuilding->IsWorking && ( (SelectedBuilding->BuildList && SelectedBuilding->BuildList->Size()) || SelectedBuilding->data.canBuild.empty() ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		sendWantStartWork( SelectedBuilding );
 	}
@@ -1057,61 +1053,61 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 	{
 		sendWantStopWork( SelectedBuilding );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.can_clear && Map->fields[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].getRubble() && !SelectedVehicle->IsClearing && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuClear && SelectedVehicle && SelectedVehicle->data.canClearArea && Map->fields[SelectedVehicle->PosX+SelectedVehicle->PosY*Map->size].getRubble() && !SelectedVehicle->IsClearing && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		sendWantStartClear ( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedVehicle && ( SelectedVehicle->bSentryStatus || SelectedVehicle->data.can_attack ) && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedVehicle && ( SelectedVehicle->bSentryStatus || SelectedVehicle->data.canAttack ) && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		sendChangeSentry ( SelectedVehicle->iID, true );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedBuilding && ( SelectedBuilding->bSentryStatus || SelectedBuilding->data.can_attack ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuSentry && SelectedBuilding && ( SelectedBuilding->bSentryStatus || SelectedBuilding->data.canAttack ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		sendChangeSentry ( SelectedBuilding->iID, false );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedVehicle && SelectedVehicle->data.storageUnitsMax > 0 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		cStorageMenu storageMenu ( SelectedVehicle->StoredVehicles, SelectedVehicle, NULL );
 		storageMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuActivate && SelectedBuilding && SelectedBuilding->data.storageUnitsMax > 0 && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cStorageMenu storageMenu ( SelectedBuilding->StoredVehicles, NULL, SelectedBuilding );
 		storageMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && ( SelectedVehicle->data.can_transport == TRANS_VEHICLES || SelectedVehicle->data.can_transport == TRANS_MEN ) && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedVehicle && SelectedVehicle->data.storageUnitsMax > 0 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->LoadActive = !SelectedVehicle->LoadActive;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedBuilding && ( SelectedBuilding->data.can_load == TRANS_VEHICLES || SelectedBuilding->data.can_load == TRANS_MEN || SelectedBuilding->data.can_load == TRANS_AIR ) && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLoad && SelectedBuilding && SelectedBuilding->data.storageUnitsMax > 0 && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		SelectedBuilding->LoadActive = !SelectedBuilding->LoadActive;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuReload && SelectedVehicle && SelectedVehicle->data.can_reload && SelectedVehicle->data.cargo >= 2 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuReload && SelectedVehicle && SelectedVehicle->data.canRearm && SelectedVehicle->data.storageResCur >= 2 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->MuniActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuRepair && SelectedVehicle && SelectedVehicle->data.can_repair && SelectedVehicle->data.cargo >= 2 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuRepair && SelectedVehicle && SelectedVehicle->data.canRepair && SelectedVehicle->data.storageResCur >= 2 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->RepairActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuLayMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo > 0 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuLayMine && SelectedVehicle && SelectedVehicle->data.canPlaceMines && SelectedVehicle->data.storageResCur > 0 && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->LayMines = !SelectedVehicle->LayMines;
 		SelectedVehicle->ClearMines = false;
 		sendMineLayerStatus( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuClearMine && SelectedVehicle && SelectedVehicle->data.can_lay_mines && SelectedVehicle->data.cargo < SelectedVehicle->data.max_cargo && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuClearMine && SelectedVehicle && SelectedVehicle->data.canPlaceMines && SelectedVehicle->data.storageResCur < SelectedVehicle->data.storageResMax && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->ClearMines = !SelectedVehicle->ClearMines;
 		SelectedVehicle->LayMines = false;
 		sendMineLayerStatus ( SelectedVehicle );
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDisable && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDisable && SelectedVehicle && SelectedVehicle->data.canDisable && SelectedVehicle->data.shotsCur && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->DisableActive = true;
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuSteal && SelectedVehicle && SelectedVehicle->data.is_commando && SelectedVehicle->data.shots && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuSteal && SelectedVehicle && SelectedVehicle->data.canCapture && SelectedVehicle->data.shotsCur && !bWaitForOthers && SelectedVehicle->owner == ActivePlayer )
 	{
 		SelectedVehicle->StealActive = true;
 	}
@@ -1125,22 +1121,22 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		cUnitHelpMenu helpMenu ( &SelectedBuilding->data, SelectedBuilding->owner );
 		helpMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.is_mine && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDistribute && SelectedBuilding && SelectedBuilding->data.canMineMaxRes > 0 && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cMineManagerMenu mineManager ( SelectedBuilding );
 		mineManager.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.can_research && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.canReasearch && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cDialogResearch researchDialog ( SelectedBuilding->owner );
 		researchDialog.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.gold_need && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuUpgrade && SelectedBuilding && SelectedBuilding->data.convertsGold && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cUpgradeMenu upgradeMenu ( SelectedBuilding->owner );
 		upgradeMenu.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && !SelectedBuilding->data.is_road && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuDestroy && SelectedBuilding && SelectedBuilding->data.canSelfDestroy && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
 	}
@@ -1223,7 +1219,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( OverUnitField->getTopBuilding() && ( base || ( ( !OverUnitField->getTopBuilding()->data.is_connector || !SelectedVehicle ) && ( !OverUnitField->getTopBuilding()->data.is_pad || ( !SelectedVehicle || SelectedVehicle->data.can_drive != DRIVE_AIR ) ) ) ) )
+	else if ( OverUnitField->getTopBuilding() && ( base || ( ( OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !SelectedVehicle ) && ( !OverUnitField->getTopBuilding()->data.canBeLandedOn || ( !SelectedVehicle || SelectedVehicle->data.factorAir == 0 ) ) ) ) )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
@@ -1357,7 +1353,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset, cList<cVehicle*> *g
 {
 	if ( vehicle->bIsBeeingAttacked ) return;
 
-	cClientMoveJob *MoveJob = new cClientMoveJob ( vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.can_drive == DRIVE_AIR, vehicle );
+	cClientMoveJob *MoveJob = new cClientMoveJob ( vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.factorAir > 0, vehicle );
 	if ( MoveJob->calcPath( group ) )
 	{
 		sendMoveJob ( MoveJob );
@@ -1546,10 +1542,10 @@ void cClient::drawMap( bool bPure )
 			while ( !bi.end ) bi++;
 			bi--;
 
-			while ( !bi.rend && !bi->data.is_bridge && ( bi->data.is_base || !bi->owner ) )
+			while ( !bi.rend && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || !bi->owner ) )
 			{
 				if ( ActivePlayer->ScanMap[iPos]||
-					( bi->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
+					( bi->data.isBig && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
 				{
 					if ( bi->PosX == iX && bi->PosY == iY )
 					{
@@ -1573,11 +1569,11 @@ void cClient::drawMap( bool bPure )
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
 			cBuilding* building = Map->fields[iPos].getBuildings();
-			if ( building && !building->data.is_base && building->owner && !building->data.is_connector )
+			if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_NORMAL  )
 			{
 
 				if ( ActivePlayer->ScanMap[iPos]||
-						( building->data.is_big && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
+						( building->data.isBig && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
 				{
 					if ( building->PosX == iX && building->PosY == iY )	//make sure a big building is drawn only once
 					{
@@ -1589,7 +1585,7 @@ void cClient::drawMap( bool bPure )
 							tmp=dest;
 							if ( tmp.h>8 ) tmp.h=8;
 							tmp.w = Hud.Zoom;
-							if ( building->data.is_big ) tmp.w*=2;
+							if ( building->data.isBig ) tmp.w*=2;
 							sb = building->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
@@ -1610,7 +1606,7 @@ void cClient::drawMap( bool bPure )
 							tmp=dest;
 							if ( tmp.h>8 ) tmp.h=8;
 							tmp.w = Hud.Zoom;
-							if ( building->data.is_big ) tmp.w*=2;
+							if ( building->data.isBig ) tmp.w*=2;
 							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
@@ -1653,13 +1649,13 @@ void cClient::drawMap( bool bPure )
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
-				if ( vehicle && vehicle->data.can_drive == DRIVE_SEA )
+				if ( vehicle && vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0 )
 				{
 					vehicle->draw ( dest );
 				}
 
 				cBuilding* building = Map->fields[iPos].getBaseBuilding();
-				if ( building && building->data.is_bridge )
+				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
 				{
 					building->draw ( &dest );
 				}
@@ -1682,7 +1678,7 @@ void cClient::drawMap( bool bPure )
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
-				if ( vehicle && vehicle->data.can_drive != DRIVE_SEA && !vehicle->IsBuilding && !vehicle->IsClearing )
+				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
 					vehicle->draw ( dest );
 				}
@@ -1705,7 +1701,7 @@ void cClient::drawMap( bool bPure )
 			if ( ActivePlayer->ScanMap[iPos] )
 			{				
 				cBuilding* building = Map->fields[iPos].getTopBuilding();
-				if ( building && building->data.is_connector )
+				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 				{
 					building->draw ( &dest );
 				}
@@ -1742,7 +1738,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 	// draw the resources:
-	if ( Hud.Studie|| ( SelectedVehicle&&SelectedVehicle->owner==ActivePlayer&&SelectedVehicle->data.can_survey ) )
+	if ( Hud.Studie || ( SelectedVehicle && SelectedVehicle->owner == ActivePlayer && SelectedVehicle->data.canSurvey ) )
 	{
 		scr.y=0;
 		scr.h=scr.w=iZoom;
@@ -1980,7 +1976,7 @@ void cClient::drawMiniMap()
 			cBuilding* building = field.getBuildings();
 			if ( building && building->owner )
 			{
-				if ( !Hud.TNT || building->data.can_attack )
+				if ( !Hud.TNT || building->data.canAttack )
 				{
 					unsigned int color = *( (unsigned int*) building->owner->color->pixels );
 					SDL_FillRect( minimapSurface, &rect, color);
@@ -1991,7 +1987,7 @@ void cClient::drawMiniMap()
 			cVehicle* vehicle = field.getVehicles();
 			if ( vehicle )
 			{
-				if ( !Hud.TNT || vehicle->data.can_attack )
+				if ( !Hud.TNT || vehicle->data.canAttack )
 				{
 					unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
 					SDL_FillRect( minimapSurface, &rect, color);
@@ -2002,7 +1998,7 @@ void cClient::drawMiniMap()
 			vehicle = field.getPlanes();
 			if ( vehicle )
 			{
-				if ( !Hud.TNT || vehicle->data.can_attack )
+				if ( !Hud.TNT || vehicle->data.canAttack )
 				{
 					unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
 					SDL_FillRect( minimapSurface, &rect, color);
@@ -2583,7 +2579,7 @@ void cClient::drawUnitCircles ()
 		int const spy = v.GetScreenPosY();
 		if (Hud.Scan)
 		{
-			if ( v.data.is_big )
+			if ( v.data.isBig )
 			{
 				drawCircle ( spx+ Hud.Zoom, spy + Hud.Zoom, v.data.scan * Hud.Zoom, SCAN_COLOR, buffer );
 			}
@@ -2594,18 +2590,8 @@ void cClient::drawUnitCircles ()
 		}
 		if (Hud.Reichweite)
 		{
-			switch (v.data.can_attack)
-			{
-				case ATTACK_LAND:
-				case ATTACK_SUB_LAND:
-				case ATTACK_AIRnLAND:
-					drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 1, RANGE_GROUND_COLOR, buffer);
-					break;
-
-				case ATTACK_AIR:
-					drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 2, RANGE_AIR_COLOR, buffer);
-					break;
-			}
+			if (v.data.canAttack & TERRAIN_AIR) drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 2, RANGE_AIR_COLOR, buffer);
+			else drawCircle(spx + Hud.Zoom / 2, spy + Hud.Zoom / 2, v.data.range * Hud.Zoom + 1, RANGE_GROUND_COLOR, buffer);
 		}
 		if (v.owner == ActivePlayer &&
 				(
@@ -2613,7 +2599,7 @@ void cClient::drawUnitCircles ()
 					v.IsClearing && v.ClearingRounds == 0
 					) && !v.BuildPath )
 		{
-			if ( v.data.is_big )
+			if ( v.data.isBig )
 			{
 				if ( Map->possiblePlace(&v, v.PosX - 1, v.PosY - 1)) drawExitPoint(spx - Hud.Zoom,     spy - Hud.Zoom);
 				if ( Map->possiblePlace(&v, v.PosX    , v.PosY - 1)) drawExitPoint(spx,                spy - Hud.Zoom);
@@ -2642,7 +2628,7 @@ void cClient::drawUnitCircles ()
 		}
 		if (v.PlaceBand)
 		{
-			if (v.data.can_build == BUILD_BIG)
+			if ( v.BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
 				SDL_Rect dest;
 				dest.x = 180 - (int)(Hud.OffX / (64.0 / Hud.Zoom)) + Hud.Zoom * v.BandX;
@@ -2684,7 +2670,7 @@ void cClient::drawUnitCircles ()
 		spy=SelectedBuilding->GetScreenPosY();
 		if ( Hud.Scan )
 		{
-			if ( SelectedBuilding->data.is_big )
+			if ( SelectedBuilding->data.isBig )
 			{
 				drawCircle ( spx+Hud.Zoom,
 				             spy+Hud.Zoom,
@@ -2697,13 +2683,13 @@ void cClient::drawUnitCircles ()
 				             SelectedBuilding->data.scan*Hud.Zoom,SCAN_COLOR,buffer );
 			}
 		}
-		if ( Hud.Reichweite&& ( SelectedBuilding->data.can_attack==ATTACK_LAND||SelectedBuilding->data.can_attack==ATTACK_SUB_LAND ) &&!SelectedBuilding->data.is_expl_mine )
+		if ( Hud.Reichweite && (SelectedBuilding->data.canAttack & TERRAIN_GROUND) && !SelectedBuilding->data.explodesOnContact )
 		{
 			drawCircle ( spx+Hud.Zoom/2,
 			             spy+Hud.Zoom/2,
 			             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
 		}
-		if ( Hud.Reichweite&&SelectedBuilding->data.can_attack==ATTACK_AIR )
+		if ( Hud.Reichweite && (SelectedBuilding->data.canAttack & TERRAIN_AIR) )
 		{
 			drawCircle ( spx+Hud.Zoom/2,
 			             spy+Hud.Zoom/2,
@@ -3375,7 +3361,7 @@ void cClient::doCommand ( string sCmd )
 		sPlayerCheat = ActivePlayer->name + " " + lngPack.i18n( "Text~Comp~Cheat");
 		sPlayerCheat += " \"Load\"";
 
-		/*if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammo=SelectedVehicle->data.max_ammo;SelectedVehicle->ShowDetails();}
+		/*if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammoCur=SelectedVehicle->data.ammoMax;SelectedVehicle->ShowDetails();}
 		else if ( SelectedBuilding )
 		{
 			if ( SelectedBuilding->data.can_load==TRANS_METAL )
@@ -3396,7 +3382,7 @@ void cClient::doCommand ( string sCmd )
 				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
 				SelectedBuilding->SubBase->Gold+=SelectedBuilding->data.cargo;
 			}
-			SelectedBuilding->data.ammo=SelectedBuilding->data.max_ammo;SelectedBuilding->ShowDetails();
+			SelectedBuilding->data.ammoCur=SelectedBuilding->data.ammoMax;SelectedBuilding->ShowDetails();
 		}*/
 		return;
 	}
@@ -3697,8 +3683,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addUnit ( PosX, PosY, AddedBuilding, Init );
 
 			// play placesound if it is a mine
-			if ( UnitID.getBuilding()->nr == BNrLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
-			else if ( UnitID.getBuilding()->nr == BNrSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMinePlace );
+			if ( UnitID == specialIDLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
+			else if ( UnitID == specialIDSeaMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDSeaMinePlace );
 		}
 		break;
 	case GAME_EV_ADD_VEHICLE:
@@ -3728,8 +3714,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( Building )
 			{
 				// play clearsound if it is a mine
-				if ( Building->owner && Building->typ->nr == BNrLandMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
-				else if ( Building->owner && Building->typ->nr == BNrSeaMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
+				if ( Building->owner && Building->data.ID == specialIDLandMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDLandMineClear );
+				else if ( Building->owner && Building->data.ID == specialIDSeaMine && Building->owner == ActivePlayer ) PlayFX ( SoundData.SNDSeaMineClear );
 
 				deleteUnit ( Building );
 			}
@@ -3900,7 +3886,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// TODO: Request sync of vehicle
 					break;
 				}
-				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY || Vehicle->data.is_big != bBig )
+				if ( Vehicle->PosX != iPosX || Vehicle->PosY != iPosY || Vehicle->data.isBig != bBig )
 				{
 					// if the vehicle is moving it is normal that the positions are not the same,
 					// when the vehicle was building it is also normal that the position should be changed
@@ -3954,30 +3940,32 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data = &Building->data;
 			}
 
-			Data->iBuilt_Costs = message->popInt16();
-			Data->ammo = message->popInt16();
-			Data->max_ammo = message->popInt16();
-			Data->cargo = message->popInt16();
-			Data->max_cargo = message->popInt16();
+			Data->buildCosts = message->popInt16();
+			Data->ammoCur = message->popInt16();
+			Data->ammoMax = message->popInt16();
+			Data->storageResCur = message->popInt16();
+			Data->storageResMax = message->popInt16();
+			Data->storageUnitsCur = message->popInt16();
+			Data->storageUnitsMax = message->popInt16();
 			Data->damage = message->popInt16();
-			Data->shots = message->popInt16();
-			Data->max_shots = message->popInt16();
+			Data->shotsCur = message->popInt16();
+			Data->shotsMax = message->popInt16();
 			Data->range = message->popInt16();
 			Data->scan = message->popInt16();
 			Data->armor = message->popInt16();
-			Data->hit_points = message->popInt16();
-			Data->max_hit_points = message->popInt16();
+			Data->hitpointsCur = message->popInt16();
+			Data->hitpointsMax = message->popInt16();
 			Data->version = message->popInt16();
 
 			if ( bVehicle )
 			{
-				if ( Data->can_lay_mines )
+				if ( Data->canPlaceMines )
 				{
-					if ( Data->cargo <= 0 ) Vehicle->LayMines = false;
-					if ( Data->cargo >= Data->max_cargo ) Vehicle->ClearMines = false;
+					if ( Data->storageResCur <= 0 ) Vehicle->LayMines = false;
+					if ( Data->storageResCur >= Data->storageResMax ) Vehicle->ClearMines = false;
 				}
-				Data->speed = message->popInt16();
-				Data->max_speed = message->popInt16();
+				Data->speedCur = message->popInt16();
+				Data->speedMax = message->popInt16();
 
 				if ( Vehicle == SelectedVehicle ) Vehicle->ShowDetails();
 				if ( bWasBuilding && !Vehicle->IsBuilding ) StopFXLoop ( iObjectStream );
@@ -4083,7 +4071,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_ATTACKJOB_IMPACT:
 		{
-			int attackMode = message->popInt16();
+			char attackMode = message->popChar();
 			int remainingHP = message->popInt16();
 			int offset = message->popInt32();
 			cClientAttackJob::makeImpact( offset, remainingHP, attackMode );
@@ -4182,7 +4170,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			int iNewPos = message->popInt32();
 
-			if ( Vehicle->data.can_build == BUILD_BIG )
+			if ( Vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
 				Map->moveVehicle(Vehicle, iNewPos );
 				Vehicle->owner->DoScan();
@@ -4359,9 +4347,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int iAnz = message->popInt16();
 				if ( iCount ) sReportMsg += ", ";
 				iCount += iAnz;
-				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->szName;
-				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->szName;
-				if ( !Type.getUnitDataOriginalVersion()->is_base && !Type.getUnitDataOriginalVersion()->is_connector ) playVoice = true;
+				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->name;
+				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
+				if ( Type.getUnitDataOriginalVersion()->surfacePosition == sUnitData::SURFACE_POS_NORMAL ) playVoice = true;
 				iReportAnz--;
 			}
 
@@ -4419,8 +4407,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// TODO: Request sync of vehicle
 					break;
 				}
-				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = message->popInt16();
-				else DestVehicle->data.hit_points = message->popInt16();
+				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammoCur = message->popInt16();
+				else DestVehicle->data.hitpointsCur = message->popInt16();
 				if ( DestVehicle->Loaded )
 				{
 					// get the building which has loaded the unit
@@ -4460,8 +4448,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// TODO: Request sync of building
 					break;
 				}
-				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = message->popInt16();
-				else DestBuilding->data.hit_points = message->popInt16();
+				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammoCur = message->popInt16();
+				else DestBuilding->data.hitpointsCur = message->popInt16();
 			}
 			if ( iType == SUPPLY_TYPE_REARM )
 			{
@@ -4483,7 +4471,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			neutralBuildings = rubble;
 			rubble->prev = NULL;
 
-			rubble->data.is_big = message->popBool();
+			rubble->data.isBig = message->popBool();
 			rubble->RubbleTyp = message->popInt16();
 			rubble->RubbleValue = message->popInt16();
 			rubble->iID = message->popInt16();
@@ -4806,12 +4794,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->scan = message->popInt16();
 				Data->range = message->popInt16();
 				Data->damage = message->popInt16();
-				Data->iBuilt_Costs = message->popInt16();
+				Data->buildCosts = message->popInt16();
 				Data->armor = message->popInt16();
-				Data->max_speed = message->popInt16();
-				Data->max_shots = message->popInt16();
-				Data->max_ammo = message->popInt16();
-				Data->max_hit_points = message->popInt16();
+				Data->speedMax = message->popInt16();
+				Data->shotsMax = message->popInt16();
+				Data->ammoMax = message->popInt16();
+				Data->hitpointsMax = message->popInt16();
 			}
 		}
 		break;
@@ -4837,7 +4825,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					building->upgradeToCurrentVersion();
 					if (i == 0)
 					{
-						buildingName = building->data.szName;
+						buildingName = building->data.name;
 						if (buildingsInMsg > 1)
 							buildingName.append(1,'s');
 					}
@@ -4866,7 +4854,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					vehicle->upgradeToCurrentVersion();
 					if (i == 0)
 					{
-						vehicleName = vehicle->data.szName;
+						vehicleName = vehicle->data.name;
 						if (vehiclesInMsg > 1)
 							vehicleName = "units"; // TODO: translated
 					}
@@ -4898,7 +4886,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					int buildingID = message->popInt32();
 					int newArea = message->popChar();
 					cBuilding* building = getBuildingFromID(buildingID);
-					if (building && building->data.can_research && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
+					if (building && building->data.canReasearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
 						building->researchArea = newArea;
 				}
 			}
@@ -4943,7 +4931,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else PlayVoice ( VoiceData.VOICommandoDetected );
 			cVehicle *srcUnit = getVehicleFromID ( message->popInt16() );
-			if ( srcUnit && !srcUnit->data.shots && srcUnit == SelectedVehicle )
+			if ( srcUnit && !srcUnit->data.shotsCur && srcUnit == SelectedVehicle )
 			{
 				srcUnit->DisableActive = false;
 				srcUnit->StealActive = false;
@@ -5367,7 +5355,7 @@ void cClient::handleMoveJobs ()
 		if ( Vehicle == NULL ) continue;
 
 
-		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speed )
+		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur )
 		{
 			// rotate vehicle
 			if ( iTimer1 ) Vehicle->RotateTo ( MoveJob->iNextDir );
@@ -5446,7 +5434,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speed ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speedCur: " + iToStr ( Vehicle->data.speedCur ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -5462,7 +5450,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = " is_clearing: " + iToStr ( Vehicle->IsClearing ) + " clearing_rounds: +" + iToStr ( Vehicle->ClearingRounds ) + " clear_big: " + iToStr ( Vehicle->data.is_big ) + " loaded: " + iToStr (Vehicle->Loaded );
+	sTmp = " is_clearing: " + iToStr ( Vehicle->IsClearing ) + " clearing_rounds: +" + iToStr ( Vehicle->ClearingRounds ) + " clear_big: " + iToStr ( Vehicle->data.isBig ) + " loaded: " + iToStr (Vehicle->Loaded );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -5517,7 +5505,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->RubbleValue ) + " big_dirt: " + iToStr ( Building->data.is_big ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );
+	sTmp = "attacking: " + iToStr ( Building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( Building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( Building->RubbleValue ) + " big_dirt: " + iToStr ( Building->data.isBig ) + " is_working: " + iToStr (Building->IsWorking ) + " transfer: " + iToStr (Building->Transfer );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -5547,7 +5535,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	}
 
 	sTmp =
-		"build_speed: "        + iToStr(Building->BuildSpeed)  +
+		"build_speedCur: "        + iToStr(Building->BuildSpeed)  +
 		" repeat_build: "      + iToStr(Building->RepeatBuild) +
 		" build_list_count: +" + iToStr(Building->BuildList ? (int)Building->BuildList->Size() : 0);
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
@@ -5559,7 +5547,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 		for (unsigned int i = 0; i < Building->BuildList->Size(); i++)
 		{
 			BuildingList = (*Building->BuildList)[i];
-			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.szName+"\"", FONT_LATIN_SMALL_WHITE);
+			font->showText(iX, *iY, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", FONT_LATIN_SMALL_WHITE);
 			*iY+=8;
 		}
 	}
@@ -5608,11 +5596,11 @@ sSubBase *cClient::getSubBaseFromID ( int iID )
 void cClient::destroyUnit( cVehicle* vehicle )
 {
 	//play explosion
-	if ( vehicle->data.is_big )
+	if ( vehicle->data.isBig )
 	{
 		Client->addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
 	}
-	else if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh != 0 )
+	else if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0 )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
@@ -5625,7 +5613,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 		Client->addFX( fxExploSmall, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 
-	if ( vehicle->data.is_human )
+	if ( vehicle->data.hasCorpse )
 	{
 		//add corpse
 		Client->addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
@@ -5636,7 +5624,7 @@ void cClient::destroyUnit(cBuilding *building)
 {
 	//play explosion animation
 	cBuilding* topBuilding = Map->fields[building->PosX + building->PosY*Map->size].getBuildings();
-	if ( topBuilding && topBuilding->data.is_big )
+	if ( topBuilding && topBuilding->data.isBig )
 	{
 		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
 	}

@@ -38,10 +38,10 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	isBuilding = vehicle->IsBuilding;
 	isClearing = vehicle->IsClearing;
 	flightHigh = vehicle->FlightHigh;
-	big = vehicle->data.is_big;
+	big = vehicle->data.isBig;
 	vehicleTyp = vehicle->typ;
 	buildingTyp = NULL;
-	if ( vehicle->data.is_human )
+	if ( vehicle->data.animationMovement )
 		frame = vehicle->WalkFrame;
 	else
 		frame = Client->iFrame % 4;
@@ -50,8 +50,8 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-	if ( building && vehicle->data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
-	if ( vehicle->data.is_stealth_sea && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+	if ( vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
+	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
 		stealth = true;
 	else
 		stealth = false;
@@ -104,7 +104,7 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	float factor = (float)(Client->Hud.Zoom/64.0);
 	int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
 	int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-	if ( building->data.has_frames ) width = (int) (building->typ->shw_org->w*factor);
+	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*factor);
 
 	if ( surface ) SDL_FreeSurface( surface );
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
@@ -147,7 +147,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 				 building->BaseS != entry.BaseS ||
 				 building->BaseW != entry.BaseW ) continue;
 
-			if ( building->data.is_big )
+			if ( building->data.isBig )
 			{
 				if ( building->BaseBN != entry.BaseBN ||
 					 building->BaseBE != entry.BaseBE ||
@@ -156,13 +156,13 @@ SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 			}
 
 		}
-		if ( building->data.has_frames && !building->data.is_annimated )
+		if ( building->data.hasFrames && !building->data.isAnimated )
 		{
 			if ( entry.dir != building->dir ) continue;
 		}
 		if ( entry.zoom != Client->Hud.Zoom ) continue;
 
-		if ( building->data.is_mine && building->owner->getClan() != entry.clan ) continue;
+		if ( building->data.hasClanLogos && building->owner->getClan() != entry.clan ) continue;
 
 		//cache hit!
 		cacheHits++;
@@ -186,14 +186,14 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		//check wether the entrys properties are equal to the building
 		if ( entry.vehicleTyp != vehicle->typ ) continue;
 		if ( entry.owner != vehicle->owner ) continue;
-		if ( entry.big != vehicle->data.is_big ) continue;
+		if ( entry.big != vehicle->data.isBig ) continue;
 		if ( entry.isBuilding != vehicle->IsBuilding ) continue;
 		if ( entry.isClearing != vehicle->IsClearing ) continue;
 		
 		if ( entry.flightHigh != vehicle->FlightHigh ) continue;
 		if ( entry.dir != vehicle->dir ) continue;
 		
-		if ( vehicle->data.is_human )
+		if ( vehicle->data.animationMovement )
 		{
 			if ( entry.frame != vehicle->WalkFrame ) continue;
 		}
@@ -207,8 +207,8 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		bool stealth = false;
 		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
 		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-		if ( building && vehicle->data.can_drive != DRIVE_SEA && ( building->data.is_bridge || building->data.is_platform || building->data.is_road )) water = false;
-		if ( vehicle->data.is_stealth_sea && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+		if ( vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
+		if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
 			stealth = true;
 		
 		if ( entry.stealth != stealth ) continue;
@@ -300,7 +300,7 @@ bool cDrawingCache::canCache( cBuilding* building )
 {
 	if ( !building->owner   ||
 		  building->StartUp ||
-		  building->data.is_annimated )
+		  building->data.isAnimated )
 	{
 		notCached++;
 		return false;
@@ -323,7 +323,7 @@ bool cDrawingCache::canCache( cVehicle* vehicle )
 		return false;
 	}
 
-	if ( vehicle->IsBuilding && vehicle->data.is_big && vehicle->BigBetonAlpha < 255 )
+	if ( vehicle->IsBuilding && vehicle->data.isBig && vehicle->BigBetonAlpha < 255 )
 	{
 		notCached++;
 		return false;

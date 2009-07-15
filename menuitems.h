@@ -936,13 +936,13 @@ public:
 };
 
 /**
- * three buttons and labels that display the different buildspeeds of a unit.
+ * three buttons and labels that display the different buildspeedCurs of a unit.
  *@author alzi
  */
 class cMenuBuildSpeedHandler : public cMenuItemContainer
 {
-	cMenuCheckButton *speedButtons[3];
-	cMenuRadioGroup *speedGroup;
+	cMenuCheckButton *speedCurButtons[3];
+	cMenuRadioGroup *speedCurGroup;
 
 	cMenuLabel *turnsLabels[3];
 	cMenuLabel *costsLabels[3];

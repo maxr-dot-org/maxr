@@ -120,13 +120,6 @@ EX cLanguage lngPack;
 EX SDL_Surface *screen ZERO;	// Der Bildschirm
 EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
 
-// Nummbers of buildings //////////////////////////////////////////////////////
-EX int BNrLandMine ZERO;
-EX int BNrSeaMine ZERO;
-EX int BNrMine ZERO;
-EX int BNrSmallGen ZERO;
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // Structures
 // ------------------------
@@ -163,305 +156,175 @@ struct sID
 	bool operator==(const sID &ID) const;
 };
 
-// Struktur f¸r die Waffen
-struct sWeaponData{
-	int iMuzzleType;
-#define MUZZLE_TYPE_NONE 0
-#define MUZZLE_TYPE_BIG 1
-#define MUZZLE_TYPE_ROCKET 2
-#define MUZZLE_TYPE_SMALL 3
-#define MUZZLE_TYPE_MED 4
-#define MUZZLE_TYPE_MED_LONG 5
-#define MUZZLE_TYPE_ROCKET_CLUSTER 6
-#define MUZZLE_TYPE_TORPEDO 7
-#define MUZZLE_TYPE_SNIPER 8
-	const char *szTurret_Gfx;
-	int iSequence;
-	int iShot_Trajectory;
-#define SHOT_TRAJECTURY_STRAIGHT 0
-#define SHOT_TRAJECTURY_BALISTIC 1
-#define SHOT_TRAJECTURY_CONTROLED 2
-	int iAmmo_Type;
-#define AMMO_TYPE_STANDARD 0
-#define AMMO_TYPE_ENERGY 1
-	int iAmmo_Quantity;
-	int iAmmo_Quantity_Max;
-
-	int iTarget_Land_Damage;
-	int iTarget_Land_Range;
-	int iTarget_Sea_Damage;
-	int iTarget_Sea_Range;
-	int iTarget_Air_Damage;
-	int iTarget_Air_Range;
-	int iTarget_Mine_Damage;
-	int iTarget_Mine_Range;
-	int iTarget_Submarine_Damage;
-	int iTarget_Submarine_Range;
-	int iTarget_Infantry_Damage;
-	int iTarget_Infantry_Range;
-	int iTarget_WMD_Damage;
-	int iTarget_WMD_Range;
-
-	int iShots;
-	int iShots_Max;
-	int iDestination_Area;
-	int iDestination_Type;
-#define DESTINATION_TYPE_POINT 0
-#define DESTINATION_TYPE_MIRV 1
-#define DESTINATION_TYPE_SCATTER 2
-	int iMovement_Allowed;
-};
+// Nummbers of buildings //////////////////////////////////////////////////////
+EX sID specialIDLandMine;
+EX sID specialIDSeaMine;
+EX sID specialIDMine;
+EX sID specialIDSmallGen;
+EX sID specialIDConnector;
+EX sID specialIDSmallBeton;
 
 // Struktur f¸r die Eigenschaften der Vehicles:
-struct sUnitData{
-	// Main info
+struct sUnitData
+{
+	sUnitData();
+#define TERRAIN_NONE		0
+#define TERRAIN_AIR			1
+#define TERRAIN_SEA			2
+#define TERRAIN_GROUND		4
+#define TERRAIN_COAST		8
+#define AREA_SUB			16
+#define AREA_EXP_MINE		32
+
+	// Main
 	sID ID;
-	const char *szName;
-	const char *szDescribtion;
-	int iVersion;
+	string name;
+	string description;
+	int version;
 
-	// General info
-	bool bIs_Controllable;
-	bool bCan_Be_Captured;
-	bool bCan_Be_Disabled;
-	int iSize_Length;
-	int iSize_Width;
+	// Attack
+	enum eMuzzleType
+	{
+		MUZZLE_TYPE_NONE,
+		MUZZLE_TYPE_BIG,
+		MUZZLE_TYPE_ROCKET,
+		MUZZLE_TYPE_SMALL,
+		MUZZLE_TYPE_MED,
+		MUZZLE_TYPE_MED_LONG,
+		MUZZLE_TYPE_ROCKET_CLUSTER,
+		MUZZLE_TYPE_TORPEDO,
+		MUZZLE_TYPE_SNIPER
+	};
+	eMuzzleType muzzleType;
 
-	// Defence
-	bool bIs_Target_Land;
-	bool bIs_Target_Sea;
-	bool bIs_Target_Air;
-	bool bIs_Target_Underwater;
-	bool bIs_Target_Mine;
-	bool bIs_Target_Building;
-	bool bIs_Target_Satellite;
-	bool bIs_Target_WMD;
-	int iArmor;
-	int iHitpoints;
-	int iHitpoints_Max;
+	int ammoMax;
+	int ammoCur;
+	int shotsMax;
+	int shotsCur;
+	int range;
+	int damage;
+
+	char canAttack;
+
+	bool canDriveAndFire;
 
 	// Production
-	int iBuilt_Costs;
-	int iBuilt_Costs_Max;
-	sID *iIs_Produced_by_ID;
+	int buildCosts;
+	string canBuild;
+	string buildAs;
 
-	// Weapons
-	int iWeaponsCount;
-	sWeaponData *Weapons;
+	int maxBuildFactor;
 
-	// Abilities
-	bool bIs_Base;
-	bool bCan_Clear_Area;
-	bool bGets_Experience;
-	bool bCan_Disable;
-	bool bCan_Capture;
-	bool bCan_Dive;
-	int iLanding_Type;
-#define LANDING_TYPE_ONLY_GARAGE 0
-#define LANDING_TYPE_GARAGE_AND_PLATFORM 1
-#define LANDING_TYPE_EVERYWHERE 2
-	bool bCan_Upgrade;
-	bool bCan_Repair;
-	bool bCan_Rearm;
-	bool bCan_Research;
-	bool bIs_Kamikaze;
-	bool bIs_Infrastructure;
-	bool bCan_Place_Mines;
-	int iMakes_Tracks;
-	int iSelf_Repair_Type;
-#define SELF_REPAIR_TYPE_NONE 0
-#define SELF_REPAIR_TYPE_AUTOMATIC 1
-#define SELF_REPAIR_TYPE_NORMAL 2
-	int iConverts_Gold;
-	int iNeeds_Energy;
-	int iNeeds_Oil;
-	int iNeeds_Metal;
-	int iNeeds_Humans;
-	int iMines_Resources;
-	bool bCan_Launch_SRBM;
-	int iEnergy_Shield_Strength_Max;
-	int iEnergy_Shield_Strength;
-	int iEnergy_Shield_Size;
-	bool bHas_Connector;
-	bool bCan_Be_Passed;
-	int iChanges_Terrain;
-#define CHANGES_TERRAIN_TYPE_NONE 0
-#define CHANGES_TERRAIN_TYPE_STREET 0
-#define CHANGES_TERRAIN_TYPE_PLATTFORM 0
-#define CHANGES_TERRAIN_TYPE_BRIDGE 0
-#define CHANGES_TERRAIN_TYPE_MINE 0
-#define CHANGES_TERRAIN_TYPE_CONNECTOR 0
-
-
-	// Scan_Abilities
-	int iScan_Range_Sight;
-	int iScan_Range_Air;
-	int iScan_Range_Ground;
-	int iScan_Range_Sea;
-	int iScan_Range_Submarine;
-	int iScan_Range_Mine;
-	int iScan_Range_Infantry;
-	int iScan_Range_Resources;
-	int iScan_Range_Jammer;
+	bool canBuildPath;
+	bool canBuildRepeat;
+	bool buildIntern;
 
 	// Movement
-	int iMovement_Sum;
-	int iMovement_Max;
-	float fCosts_Air;
-	float fCosts_Sea;
-	float fCosts_Submarine;
-	float fCosts_Ground;
-	float fFactor_Coast;
-	float fFactor_Wood;
-	float fFactor_Road;
-	float fFactor_Bridge;
-	float fFactor_Platform;
-	float fFactor_Monorail;
-	float fFactor_Wreck;
-	float fFactor_Mountains;
+	int speedMax;
+	int speedCur;
+
+	float factorGround;
+	float factorSea;
+	float factorAir;
+	float factorCoast;
+
+	// Abilities
+	bool isBig;
+	bool connectsToBase;
+	int armor;
+	int hitpointsMax;
+	int hitpointsCur;
+	int scan;
+	float modifiesSpeed;
+	bool canClearArea;
+	bool canBeCaptured;
+	bool canBeDisabled;
+	bool canCapture;
+	bool canDisable;
+	bool canRepair;
+	bool canRearm;
+	bool canReasearch;
+	bool canPlaceMines;
+	bool canSurvey;
+	bool doesSelfRepair;
+	int convertsGold;
+	bool canSelfDestroy;
+
+	int canMineMaxRes;
+
+	int needsMetal;
+	int needsOil;
+	int needsEnergy;
+	int needsHumans;
+	int produceEnergy;
+	int produceHumans;
+
+	char isStealthOn;
+	char canDetectStealthOn;
+
+	enum eSurfacePosition
+	{
+		SURFACE_POS_NORMAL,
+		SURFACE_POS_BENEATH,
+		SURFACE_POS_ABOVE,
+		SURFACE_POS_ABOVENBENEATH
+	};
+	eSurfacePosition surfacePosition;
+
+	enum eOverbuildType
+	{
+		OVERBUILD_TYPE_NO,
+		OVERBUILD_TYPE_YES,
+		OVERBUILD_TYPE_YESNREMOVE
+	};
+	eOverbuildType canBeOverbuild;
+
+	bool canBeLandedOn;
+	bool canWork;
+	bool explodesOnContact;
+	bool isHuman;
 
 	// Storage
-	bool bIs_Garage;
-	int iCapacity_Metal_Max;
-	int iCapacity_Oil_Max;
-	int iCapacity_Gold_Max;
-	int iCapacity_Energy_Max;
-	int iCapacity_Units_Air_Max;
-	int iCapacity_Units_Sea_Max;
-	int iCapacity_Units_Ground_Max;
-	int iCapacity_Units_Infantry_Max;
-	int iCapacity_Metal;
-	int iCapacity_Oil;
-	int iCapacity_Gold;
-	int iCapacity_Energy;
-	int iCapacity_Units_Air;
-	int iCapacity_Units_Sea;
-	int iCapacity_Units_Ground;
-	int iCapacity_Units_Infantry;
-	sID *iCan_Use_Unit_As_Garage_ID;
+	int storageResMax;
+	int storageResCur;
+	enum eStorageResType
+	{
+		STORE_RES_NONE,
+		STORE_RES_METAL,
+		STORE_RES_OIL,
+		STORE_RES_GOLD
+	};
+	eStorageResType storeResType;
 
-	// Grafics
-	bool bHas_Overlay;
-	bool bBuild_Up_Grafic;
-	bool bAnimation_Movement;
-	bool bPower_On_Grafic;
+	int storageUnitsMax;
+	int storageUnitsCur;
+	enum eStorageUnitsImageType
+	{
+		STORE_UNIT_IMG_TANK,
+		STORE_UNIT_IMG_PLANE,
+		STORE_UNIT_IMG_SHIP,
+		STORE_UNIT_IMG_HUMAN
+	};
+	eStorageUnitsImageType storeUnitsImageType;
+	vector<string> storeUnitsTypes;
+	string isStorageType;
 
-	//////
-	// Old-Stuff!
-	//////
-  int version; // Version des Vehicles
+	// Graphic
+	bool hasClanLogos;
+	bool hasCorpse;
+	bool hasDamageEffect;
+	bool hasBetonUnderground;
+	bool hasPlayerColor;
+	bool hasOverlay;
 
-  //FIXME: this cries for seg fault! -- beko
-  //char name[25];
-  // Grunddaten:
-  int max_speed;
-  int speed;
-  int max_hit_points;
-  int hit_points;
-  int armor;
-  int scan;
-  int range;
-  int max_shots;
-  int shots;
-  int damage;
-  int max_cargo;
-  int cargo;
-  int max_ammo;
-  int ammo;
-  //int costs;
+	bool buildUpGraphic;
+	bool animationMovement;
+	bool powerOnGraphic;
+	bool isAnimated;
+	bool makeTracks;
 
-  int energy_prod;
-  int oil_need;
-  int energy_need;
-  int metal_need;
-  int human_prod;
-  int human_need;
-  int gold_need;
-  int shield;
-  int max_shield;
-
-  // Die Bau-Eigenschaft:
-  int can_build;
-#define BUILD_NONE  0
-#define BUILD_SMALL 1
-#define BUILD_BIG   2
-
-#define BUILD_SEA 3
-#define BUILD_AIR 4
-#define BUILD_MAN 5
-
-  // Die Fahr-Eigenschaft:
-  int can_drive;
-#define DRIVE_LAND     0
-#define DRIVE_SEA      1
-#define DRIVE_LANDnSEA 2
-#define DRIVE_AIR      3
-
-  // die Transport-Eigenschaft:
-  int can_load;
-  int can_transport;
-#define TRANS_NONE     0
-#define TRANS_METAL    1
-#define TRANS_OIL      2
-#define TRANS_GOLD     3
-#define TRANS_VEHICLES 4
-#define TRANS_MEN      5
-#define TRANS_AIR	   6
-
-  // Die Attack-Eigenschaft:
-  int can_attack;
-#define ATTACK_NONE     0
-#define ATTACK_LAND     1
-#define ATTACK_SUB_LAND 2
-#define ATTACK_AIR      3
-#define ATTACK_AIRnLAND 4
-
-  // Der Style des M¸ndungsfeuers:
-  int muzzle_typ;
-#define MUZZLE_BIG 0
-#define MUZZLE_ROCKET 1
-#define MUZZLE_SMALL 2
-#define MUZZLE_MED 3
-#define MUZZLE_MED_LONG 4
-#define MUZZLE_ROCKET_CLUSTER 5
-#define MUZZLE_TORPEDO 6
-#define MUZZLE_SNIPER 7
-
-  // weitere Eigenschaften:
-  bool can_reload;
-  bool can_repair;
-  bool can_drive_and_fire;
-  bool is_stealth_land;
-  bool is_stealth_sea;
-  bool is_human;
-  bool can_survey;
-  bool can_clear;
-  bool has_overlay;
-  bool build_by_big;
-  bool can_lay_mines;
-  bool can_detect_mines;
-  bool can_detect_sea;
-  bool can_detect_land;
-  bool make_tracks;
-  bool is_commando;
-  bool is_alien;
-
-  bool is_base;
-  bool is_big;
-  bool is_road;
-  bool is_connector;
-  bool has_effect;
-  bool can_work;
-  bool is_mine;
-  int has_frames;
-  bool is_annimated;
-  bool is_bridge;
-  bool is_platform;
-  bool build_on_water;
-  bool is_pad;
-  bool is_expl_mine;
-  bool can_research;
-  bool build_alien;
+	bool isConnectorGraphic;
+	int hasFrames;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -531,7 +394,7 @@ public:
 	bool bDamageEffectsVehicles;
 	/**enable tracks (units leave tracks on the floor) */
 	bool bMakeTracks;
-	/**scrollspeed on map */
+	/**scrollspeedCur on map */
 	int iScrollSpeed;
 
 	//NET

@@ -519,7 +519,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
-			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff(), Client->Map ) && !( selectedVehicle->data.muzzle_typ == MUZZLE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
+			if ( selectedVehicle->IsInRange ( mouse->GetKachelOff(), Client->Map ) && !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
 				if ( mouse->SetCursor ( CAttack ))
 				{
@@ -615,11 +615,11 @@ void cHud::CheckScroll ( bool pure )
 					selectedVehicle->owner != Client->ActivePlayer ||
 					(
 						(
-							selectedVehicle->data.can_drive == DRIVE_AIR ||
+							selectedVehicle->data.factorAir > 0 ||
 							Client->OverUnitField->getVehicles() ||
 							(
 								Client->OverUnitField->getTopBuilding() &&
-								!Client->OverUnitField->getTopBuilding()->data.is_connector
+								Client->OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
 							) ||
 							(
 								MouseStyle == OldSchool &&
@@ -627,7 +627,7 @@ void cHud::CheckScroll ( bool pure )
 							)
 						) &&
 						(
-							selectedVehicle->data.can_drive != DRIVE_AIR ||
+							selectedVehicle->data.factorAir == 0 ||
 							Client->OverUnitField->getPlanes() ||
 							(
 								MouseStyle == OldSchool &&
@@ -635,8 +635,8 @@ void cHud::CheckScroll ( bool pure )
 									Client->OverUnitField->getVehicles() ||
 									(
 										Client->OverUnitField->getTopBuilding() &&
-										!Client->OverUnitField->getTopBuilding()->data.is_connector &&
-										!Client->OverUnitField->getTopBuilding()->data.is_pad
+										Client->OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+										!Client->OverUnitField->getTopBuilding()->data.canBeLandedOn
 									)
 								)
 							)
@@ -986,7 +986,7 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			if ( Client->SelectedVehicle&&Client->SelectedVehicle->ClientMoveJob&&Client->SelectedVehicle->ClientMoveJob->bSuspended&&Client->SelectedVehicle->data.speed )
+			if ( Client->SelectedVehicle&&Client->SelectedVehicle->ClientMoveJob&&Client->SelectedVehicle->ClientMoveJob->bSuspended&&Client->SelectedVehicle->data.speedCur )
 			{
 				Client->SelectedVehicle->ClientMoveJob->calcNextDir();
 				//TODO: no engine!

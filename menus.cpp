@@ -260,13 +260,13 @@ void cGameDataContainer::receiveUnitUpgrades ( cNetMessage *message )
 		ID.iSecondPart = message->popInt16();
 
 		ID.getUnitDataCurrentVersion ( players[playerNr] )->damage = message->popInt16();
-		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_shots = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->shotsMax = message->popInt16();
 		ID.getUnitDataCurrentVersion ( players[playerNr] )->range = message->popInt16();
-		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_ammo = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->ammoMax = message->popInt16();
 		ID.getUnitDataCurrentVersion ( players[playerNr] )->armor = message->popInt16();
-		ID.getUnitDataCurrentVersion ( players[playerNr] )->max_hit_points = message->popInt16();
+		ID.getUnitDataCurrentVersion ( players[playerNr] )->hitpointsMax = message->popInt16();
 		ID.getUnitDataCurrentVersion ( players[playerNr] )->scan = message->popInt16();
-		if ( isVehicle ) ID.getUnitDataCurrentVersion ( players[playerNr] )->max_speed = message->popInt16();
+		if ( isVehicle ) ID.getUnitDataCurrentVersion ( players[playerNr] )->speedMax = message->popInt16();
 		ID.getUnitDataCurrentVersion ( players[playerNr] )->version++;
 	}
 }
@@ -589,28 +589,29 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	// since a chance of 50:50 is boring (and
 	// vehicles are way more cool so I prefer
 	// them to be shown) -- beko 
-	static int lastUnitShow = 0;
+	static int lastUnitShow = -1;
 	int unitShow;
 	SDL_Surface *surface = NULL;
 
-	if ( showBuilding == 1 ) //that's a 33% chance that we show a building on 1
+	if ( showBuilding == 1 && UnitsData.getNrBuildings () > 0 ) //that's a 33% chance that we show a building on 1
 	{
 		do
 		{
-			unitShow = random((int)UnitsData.getNrBuildings ());
+			unitShow = random((int)UnitsData.getNrBuildings ()-1);
 		}
-		while ( unitShow == lastUnitShow );	//make sure we don't show same unit twice
+		while ( unitShow == lastUnitShow && UnitsData.getNrBuildings () > 1 );	//make sure we don't show same unit twice
 		surface = UnitsData.building[unitShow].info;
 	}
-	else //and a 66% chance to show a vehicle on 0 or 2
+	else if ( UnitsData.getNrVehicles () > 0 ) //and a 66% chance to show a vehicle on 0 or 2
 	{
 		do
 		{
-			unitShow = random((int)UnitsData.getNrVehicles ());
+			unitShow = random((int)UnitsData.getNrVehicles ()-1);
 		}
-		while ( unitShow == lastUnitShow );	//make sure we don't show same unit twice
+		while ( unitShow == lastUnitShow && UnitsData.getNrVehicles () > 1 );	//make sure we don't show same unit twice
 		surface = UnitsData.vehicle[unitShow].info;
 	}
+	else surface = NULL;
 	lastUnitShow = unitShow; //store shown unit
 	return surface;
 }
@@ -1297,6 +1298,12 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 					
 					cStartupHangarMenu startupHangarMenu( menu->gameDataContainer, player, false );
 					if ( startupHangarMenu.show() == 0 ) started = true;
+					else if ( menu->gameDataContainer->settings->clans == SETTING_CLANS_OFF )
+					{
+						menu->draw();
+						menu->gameDataContainer->players.Delete ( 0 );
+						return;
+					}
 				}
 			}
 			break;
@@ -1587,13 +1594,13 @@ void cHangarMenu::drawUnitInformation()
 	if ( selectedUnit->getUnitID().getVehicle(player) )
 	{
 		infoImage->setImage ( selectedUnit->getUnitID().getVehicle(player)->info );
-		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getVehicle(player)->text );
+		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getVehicle(player)->data.description );
 		else infoText->setText ( "" );
 	}
 	else if ( selectedUnit->getUnitID().getBuilding(player) )
 	{
 		infoImage->setImage ( selectedUnit->getUnitID().getBuilding(player)->info );
-		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getBuilding(player)->text );
+		if ( infoTextCheckBox->isChecked() ) infoText->setText ( selectedUnit->getUnitID().getBuilding(player)->data.description );
 		else infoText->setText ( "" );
 	}
 }
@@ -1754,12 +1761,12 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 		{
 			sVehicle *vehicle = selectionList->getItem ( i )->getUnitID().getVehicle(player);
 			if ( !vehicle ) continue;
-			if ( vehicle->data.can_build == BUILD_BIG || vehicle->data.can_build == BUILD_SMALL || vehicle->data.can_survey )
+			if ( vehicle->data.canBuild.compare( "BigBuilding" )==0 || vehicle->data.canBuild.compare( "SmallBuilding" )==0 || vehicle->data.canSurvey )
 			{
 				cMenuUnitListItem *unit = secondList->addUnit ( vehicle->data.ID, player, selectionList->getItem ( i )->getUpgrades() );
-				if ( vehicle->data.can_build == BUILD_BIG ) 
+				if ( vehicle->data.canBuild.compare( "BigBuilding" )==0 ) 
 					unit->setMinResValue ( 40 );
-				else if ( vehicle->data.can_build == BUILD_SMALL ) 
+				else if ( vehicle->data.canBuild.compare( "SmallBuilding" )==0 ) 
 					unit->setMinResValue ( 20 );
 				unit->setFixed ( true );
 			}
@@ -1796,7 +1803,7 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 				sVehicle *vehicle = selectionList->getItem (i)->getUnitID ().getVehicle (player);
 				if ( !vehicle ) continue;
 				
-				if (vehicle->data.can_build == BUILD_BIG)
+				if (vehicle->data.canBuild.compare( "BigBuilding" )==0)
 				{
 					for (int j = 0; j < numAddConstructors; j++)
 					{
@@ -1804,7 +1811,7 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 						unit->setFixed (true);
 					}
 				}
-				if (vehicle->data.can_build == BUILD_SMALL)
+				if (vehicle->data.canBuild.compare( "SmallBuilding" )==0)
 				{
 					for (int j = 0; j < numAddEngineers; j++)
 					{
@@ -1845,25 +1852,25 @@ void cStartupHangarMenu::updateUnitData()
 					data->damage = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SHOTS:
-					data->max_shots = upgrades[j].curValue;
+					data->shotsMax = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_RANGE:
 					data->range = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_AMMO:
-					data->max_ammo = upgrades[j].curValue;
+					data->ammoMax = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_ARMOR:
 					data->armor = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_HITS:
-					data->max_hit_points = upgrades[j].curValue;
+					data->hitpointsMax = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SCAN:
 					data->scan = upgrades[j].curValue;
 					break;
 				case sUnitUpgrade::UPGRADE_TYPE_SPEED:
-					data->max_speed = upgrades[j].curValue;
+					data->speedMax = upgrades[j].curValue;
 					break;
 			}
 		}
@@ -1966,7 +1973,7 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 	if ( menu->secondList->getSelectedUnit() && menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int newCargo = (int)((float)(menu->position.y+301+115-mouse->y)/115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion(menu->player)->max_cargo );
+		int newCargo = (int)((float)(menu->position.y+301+115-mouse->y)/115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion(menu->player)->storageResMax );
 		if ( newCargo%5 < 3 ) newCargo -= newCargo%5;
 		else newCargo += 5-newCargo%5;
 
@@ -2010,12 +2017,11 @@ void cStartupHangarMenu::generateSelectionList()
 	{
 		if ( !tank && !ship && !plane ) continue;
 		sUnitData &data = UnitsData.getVehicle(i, player->getClan()).data;
-		if ( data.is_alien && buy ) continue;
-		if ( data.is_human && buy ) continue;
-		if ( tnt && !data.can_attack ) continue;
-		if ( data.can_drive == DRIVE_AIR && !plane ) continue;
-		if ( data.can_drive == DRIVE_SEA && !ship ) continue;
-		if ( ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA ) && !tank ) continue;
+		if ( data.isHuman && buy ) continue;
+		if ( tnt && !data.canAttack ) continue;
+		if ( data.factorAir > 0 && !plane ) continue;
+		if ( data.factorSea > 0 && data.factorGround == 0 && !ship ) continue;
+		if ( data.factorGround > 0 && !tank ) continue;
 		selectionList->addUnit ( data.ID, player, unitUpgrades[i] );
 	}
 
@@ -2023,7 +2029,7 @@ void cStartupHangarMenu::generateSelectionList()
 	{
 		if ( !build ) continue;
 		sUnitData &data = UnitsData.getBuilding(i, player->getClan()).data;
-		if ( tnt && !data.can_attack ) continue;
+		if ( tnt && !data.canAttack ) continue;
 		selectionList->addUnit ( data.ID, player, unitUpgrades[UnitsData.getNrVehicles ()+i] );
 	}
 
@@ -2052,9 +2058,9 @@ bool cStartupHangarMenu::checkAddOk ( cMenuUnitListItem *item )
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return false;
 
-	if ( vehicle->data.can_drive != DRIVE_LAND && vehicle->data.can_drive != DRIVE_LANDnSEA ) return false;
-	if ( vehicle->data.is_human || vehicle->data.is_alien ) return false;
-	if ( vehicle->data.iBuilt_Costs > credits ) return false;
+	if ( vehicle->data.factorGround == 0 ) return false;
+	if ( vehicle->data.isHuman ) return false;
+	if ( vehicle->data.buildCosts > credits ) return false;
 	return true;
 }
 
@@ -2063,7 +2069,7 @@ void cStartupHangarMenu::addedCallback ( cMenuUnitListItem *item )
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return;
 
-	credits -= vehicle->data.iBuilt_Costs;
+	credits -= vehicle->data.buildCosts;
 	goldBar->setCurrentValue ( credits );
 	selectionChanged( this );
 }
@@ -2073,7 +2079,7 @@ void cStartupHangarMenu::removedCallback ( cMenuUnitListItem *item )
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
 	if ( !vehicle  ) return;
 
-	credits += vehicle->data.iBuilt_Costs + item->getResValue()/5;
+	credits += vehicle->data.buildCosts + item->getResValue()/5;
 	goldBar->setCurrentValue ( credits );
 }
 
@@ -2103,10 +2109,9 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	if ( !menu ) menu = dynamic_cast<cStartupHangarMenu*>((cStartupHangarMenu*)parent);
 	if ( !menu ) return;
 	sVehicle *vehicle;
-	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) ) &&
-		( vehicle->data.can_transport == TRANS_METAL || vehicle->data.can_transport == TRANS_OIL || vehicle->data.can_transport == TRANS_GOLD ) )
+	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) ) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
-		menu->materialBar->setMaximalValue ( vehicle->data.max_cargo );
+		menu->materialBar->setMaximalValue ( vehicle->data.storageResMax );
 		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
 	}
 	else
@@ -3548,15 +3553,15 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 	selListDownButton->move ( position.x+491, position.y+440 );
 	selectionList->setDoubleClickedFunction ( &selListDoubleClicked );
 
-	if ( vehicle->data.can_build != BUILD_BIG )
+	if ( vehicle->data.canBuildPath )
 	{
 		pathButton = new cMenuButton ( position.x+338, position.y+428, lngPack.i18n ( "Text~Button~Path" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 		pathButton->setReleasedFunction ( &pathReleased );
 		menuItems.Add ( pathButton );
 	}
 
-	speedHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
-	menuItems.Add ( speedHandler );
+	speedCurHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
+	menuItems.Add ( speedCurHandler );
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -3569,9 +3574,9 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 {
 	delete titleLabel;
 
-	if ( vehicle->data.can_build != BUILD_BIG ) delete pathButton;
+	if ( vehicle->data.canBuildPath ) delete pathButton;
 
-	delete speedHandler;
+	delete speedCurHandler;
 
 	if ( Client ) Client->bFlagDrawHud = true;
 }
@@ -3580,13 +3585,13 @@ void cBuildingsBuildMenu::generateSelectionList()
 {
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( UnitsData.building[i].data.is_expl_mine )continue;
+		if ( UnitsData.building[i].data.explodesOnContact )continue;
 
-		if ( ( vehicle->data.can_build == BUILD_BIG ) != UnitsData.building[i].data.is_big ) continue;
+		if ( vehicle->data.canBuild.compare ( UnitsData.building[i].data.buildAs ) != 0 ) continue;
 
 		selectionList->addUnit ( UnitsData.building[i].data.ID, player );
 
-		if ( vehicle->data.cargo < player->BuildingData[i].iBuilt_Costs) selectionList->getItem ( selectionList->getSize()-1 )->setMarked ( true );
+		if ( vehicle->data.storageResCur < player->BuildingData[i].buildCosts) selectionList->getItem ( selectionList->getSize()-1 )->setMarked ( true );
 	}
 
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
@@ -3595,9 +3600,9 @@ void cBuildingsBuildMenu::generateSelectionList()
 void cBuildingsBuildMenu::doneReleased ( void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
-	if ( menu->vehicle->data.can_build != BUILD_BIG )
+	if ( !menu->selectedUnit->getUnitData()->isBig )
 	{
-		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
+		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedCurHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
 	}
 	else
 	{
@@ -3606,7 +3611,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
+		menu->vehicle->BuildRounds = menu->speedCurHandler->getBuildSpeed();
 
 		menu->vehicle->FindNextband();
 	}
@@ -3618,7 +3623,7 @@ void cBuildingsBuildMenu::pathReleased ( void *parent )
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
+	menu->vehicle->BuildRounds = menu->speedCurHandler->getBuildSpeed();
 
 	menu->vehicle->PlaceBand = true;
 	menu->end = true;
@@ -3638,14 +3643,14 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 
 	sUnitData *buildingData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion ( menu->player );
 	int turboBuildTurns[3], turboBuildCosts[3];
-	menu->vehicle->calcTurboBuild ( turboBuildTurns, turboBuildCosts, buildingData->iBuilt_Costs, buildingData->iBuilt_Costs_Max );
+	menu->vehicle->calcTurboBuild ( turboBuildTurns, turboBuildCosts, buildingData->buildCosts );
 
 	if ( turboBuildTurns[0] == 0 )
 	{
-		turboBuildCosts[0] = buildingData->iBuilt_Costs;
-		turboBuildTurns[0] = buildingData->iBuilt_Costs / menu->vehicle->data.iNeeds_Metal;
+		turboBuildCosts[0] = buildingData->buildCosts;
+		turboBuildTurns[0] = buildingData->buildCosts / menu->vehicle->data.needsMetal;
 	}
-	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
+	menu->speedCurHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
 bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *parent )
@@ -3681,9 +3686,9 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 	secondListUpButton->move ( position.x+327, position.y+293 );
 	secondListDownButton->move ( position.x+348, position.y+293 );
 
-	speedHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
-	speedHandler->setBuildSpeed ( building->BuildSpeed );
-	menuItems.Add ( speedHandler );
+	speedCurHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
+	speedCurHandler->setBuildSpeed ( building->BuildSpeed );
+	menuItems.Add ( speedCurHandler );
 
 	repeatButton = new cMenuCheckButton ( position.x+447, position.y+322, lngPack.i18n ( "Text~Comp~Repeat" ), building->RepeatBuild, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD, cMenuCheckButton::TEXT_ORIENT_LEFT );
 	menuItems.Add ( repeatButton );
@@ -3699,7 +3704,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 cVehiclesBuildMenu::~cVehiclesBuildMenu()
 {
 	delete titleLabel;
-	delete speedHandler;
+	delete speedCurHandler;
 
 	delete repeatButton;
 
@@ -3730,22 +3735,22 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 			int off = x + y * Client->Map->size;
 			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
-			while ( bi && (bi->data.is_connector || bi->data.is_expl_mine) ) bi++;
+			while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) ) bi++;
 
-			if ( !Client->Map->IsWater ( off, true, true ) || bi && (( bi->data.is_road || bi->data.is_bridge || bi->data.is_platform ) )) land = true;
-			else water = true;
+			if ( !Client->Map->IsWater ( off ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) ) land = true;
+			else if ( Client->Map->IsWater ( off ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
+			{
+				land = true;
+				water = true;
+				break;
+			}
+			else if ( Client->Map->IsWater ( off ) ) water = true;
 		}
 
-		if ( vehicle.data.can_drive == DRIVE_SEA && !water ) continue;
-		else if ( vehicle.data.can_drive == DRIVE_LAND && !land ) continue;
+		if ( vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water ) continue;
+		else if ( vehicle.data.factorGround > 0 && vehicle.data.factorSea == 0 && !land ) continue;
 
-		if ( building->data.can_build == BUILD_AIR && vehicle.data.can_drive != DRIVE_AIR ) continue;
-		else if ( building->data.can_build == BUILD_BIG && !vehicle.data.build_by_big ) continue;
-		else if ( building->data.can_build == BUILD_SEA && vehicle.data.can_drive != DRIVE_SEA ) continue;
-		else if ( building->data.can_build == BUILD_SMALL && ( vehicle.data.can_drive == DRIVE_AIR ||vehicle.data.can_drive == DRIVE_SEA || vehicle.data.build_by_big || vehicle.data.is_human ) ) continue;
-		else if ( building->data.can_build == BUILD_MAN && !vehicle.data.is_human ) continue;
-		else if ( !building->data.build_alien && vehicle.data.is_alien ) continue;
-		else if ( building->data.build_alien && !vehicle.data.is_alien ) continue;
+		if ( building->data.canBuild.compare ( vehicle.data.buildAs ) != 0 ) continue;
 
 		selectionList->addUnit ( vehicle.data.ID, player, NULL, false, false );
 		selectionList->getItem ( selectionList->getSize()-1 )->setResValue ( -1, false );
@@ -3780,7 +3785,7 @@ void cVehiclesBuildMenu::doneReleased ( void *parent )
 		buildItem->metall_remaining = menu->secondList->getItem ( i )->getResValue();
 		buildList.Add ( buildItem );
 	}
-	menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();
+	menu->building->BuildSpeed = menu->speedCurHandler->getBuildSpeed();
 	sendWantBuildList ( menu->building, buildList, menu->repeatButton->isChecked() );
 	menu->end = true;
 }
@@ -3802,9 +3807,9 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 
 	sUnitData *vehicleData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion ( menu->player );
 	int turboBuildTurns[3], turboBuildCosts[3];
-	menu->building->CalcTurboBuild ( turboBuildTurns, turboBuildCosts, vehicleData->iBuilt_Costs, menu->selectedUnit->getResValue() );
+	menu->building->CalcTurboBuild ( turboBuildTurns, turboBuildCosts, vehicleData->buildCosts, menu->selectedUnit->getResValue() );
 
-	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
+	menu->speedCurHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
 cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), owner )
@@ -3861,7 +3866,7 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 		sUnitUpgrade *upgrade = unitUpgrades[unitIndex];
 		int i = 0;
 
-		if ( data->can_attack )
+		if ( data->canAttack )
 		{
 			// Damage:
 			upgrade[i].active = true;
@@ -3870,13 +3875,13 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->damage, oriData->damage, cUpgradeCalculator::kAttack, researchLevel);
 			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_DAMAGE;
 			i++;
-			if ( !data->is_expl_mine )
+			if ( !data->explodesOnContact )
 			{
 				// Shots:
 				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->max_shots;
-				upgrade[i].curValue = data->max_shots;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_shots, oriData->max_shots, cUpgradeCalculator::kShots, researchLevel);
+				upgrade[i].startValue = oriData->shotsMax;
+				upgrade[i].curValue = data->shotsMax;
+				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->shotsMax, oriData->shotsMax, cUpgradeCalculator::kShots, researchLevel);
 				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SHOTS;
 				i++;
 				// Range:
@@ -3888,23 +3893,22 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 				i++;
 				// Ammo:
 				upgrade[i].active = true;
-				upgrade[i].startValue = oriData->max_ammo;
-				upgrade[i].curValue = data->max_ammo;
-				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_ammo, oriData->max_ammo, cUpgradeCalculator::kAmmo, researchLevel);
+				upgrade[i].startValue = oriData->ammoMax;
+				upgrade[i].curValue = data->ammoMax;
+				upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->ammoMax, oriData->ammoMax, cUpgradeCalculator::kAmmo, researchLevel);
 				upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_AMMO;
 				i++;
 			}
 		}
 
-		if ( data->can_transport == TRANS_METAL || data->can_transport == TRANS_OIL || data->can_transport == TRANS_GOLD ||
-			data->can_load == TRANS_METAL || data->can_load == TRANS_OIL || data->can_load == TRANS_GOLD )
+		if ( data->storeResType != sUnitData::STORE_RES_NONE )
 		{
 			i++;
 		}
 
-		if ( data->energy_prod ) i += 2;
+		if ( data->produceEnergy ) i += 2;
 
-		if ( data->human_prod ) i++;
+		if ( data->produceHumans ) i++;
 
 		// Armor:
 		upgrade[i].active = true;
@@ -3916,9 +3920,9 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 
 		// Hitpoints:
 		upgrade[i].active = true;
-		upgrade[i].startValue = oriData->max_hit_points;
-		upgrade[i].curValue = data->max_hit_points;
-		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_hit_points, oriData->max_hit_points, cUpgradeCalculator::kHitpoints, researchLevel);
+		upgrade[i].startValue = oriData->hitpointsMax;
+		upgrade[i].curValue = data->hitpointsMax;
+		upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->hitpointsMax, oriData->hitpointsMax, cUpgradeCalculator::kHitpoints, researchLevel);
 		upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_HITS;
 		i++;
 
@@ -3934,12 +3938,12 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 		}
 
 		// Speed:
-		if ( data->max_speed )
+		if ( data->speedMax )
 		{
 			upgrade[i].active = true;
-			upgrade[i].startValue = oriData->max_speed;
-			upgrade[i].curValue = data->max_speed;
-			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->max_speed / 4, oriData->max_speed / 4, cUpgradeCalculator::kSpeed, researchLevel);
+			upgrade[i].startValue = oriData->speedMax;
+			upgrade[i].curValue = data->speedMax;
+			upgrade[i].nextPrice = cUpgradeCalculator::instance().calcPrice (data->speedMax / 4, oriData->speedMax / 4, cUpgradeCalculator::kSpeed, researchLevel);
 			upgrade[i].type = sUnitUpgrade::UPGRADE_TYPE_SPEED;
 			i++;
 		}
@@ -4027,10 +4031,10 @@ void cUpgradeMenu::generateSelectionList()
 	{
 		if ( !tank && !ship && !plane ) continue;
 		sUnitData &data = UnitsData.getVehicle (i, player->getClan ()).data;
-		if ( tnt && !data.can_attack ) continue;
-		if ( data.can_drive == DRIVE_AIR && !plane ) continue;
-		if ( data.can_drive == DRIVE_SEA && !ship ) continue;
-		if ( ( data.can_drive == DRIVE_LAND || data.can_drive == DRIVE_LANDnSEA ) && !tank ) continue;
+		if ( tnt && !data.canAttack ) continue;
+		if ( data.factorAir > 0 && !plane ) continue;
+		if ( data.factorSea > 0 && data.factorGround == 0 && !ship ) continue;
+		if ( data.factorGround > 0 && !tank ) continue;
 		selectionList->addUnit ( data.ID, player, unitUpgrades[i] );
 	}
 
@@ -4038,7 +4042,7 @@ void cUpgradeMenu::generateSelectionList()
 	{
 		if ( !build ) continue;
 		sUnitData &data = UnitsData.getBuilding (i, player->getClan ()).data;
-		if ( tnt && !data.can_attack ) continue;
+		if ( tnt && !data.canAttack ) continue;
 		selectionList->addUnit ( data.ID, player, unitUpgrades[UnitsData.getNrVehicles () + i] );
 	}
 
@@ -4094,12 +4098,12 @@ void cUnitHelpMenu::init(sID unitID)
 	if ( unitID.getVehicle() )
 	{
 		infoImage->setImage ( unitID.getVehicle()->info );
-		infoText->setText ( unitID.getVehicle()->text );
+		infoText->setText ( unitID.getVehicle()->data.description );
 	}
 	else if ( unitID.getBuilding() )
 	{
 		infoImage->setImage ( unitID.getBuilding()->info );
-		infoText->setText ( unitID.getBuilding()->text );
+		infoText->setText ( unitID.getBuilding()->data.description );
 	}
 }
 
@@ -4136,8 +4140,8 @@ cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, 
 	else return;
 
 	offset = 0;
-	canStorePlanes = unitData.can_load == TRANS_AIR;
-	canStoreShips = unitData.iCapacity_Units_Sea_Max > 0;
+	canStorePlanes = unitData.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_PLANE;
+	canStoreShips = unitData.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_SHIP;
 	canRepairReloadUpgrade = ownerBuilding != NULL;
 
 	metalValue = ownerBuilding ? subBase->Metal : 0;
@@ -4256,9 +4260,9 @@ void cStorageMenu::resetInfos()
 				unitInfo[pos]->setUnitData ( &vehicle->data );
 
 				activateButtons[pos]->setLocked ( false );
-				if ( vehicle->data.ammo != vehicle->data.max_ammo && metalValue >= 2 ) relaodButtons[pos]->setLocked ( false );
+				if ( vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 2 ) relaodButtons[pos]->setLocked ( false );
 				else relaodButtons[pos]->setLocked ( true );
-				if ( vehicle->data.hit_points != vehicle->data.max_hit_points && metalValue >= 2 ) repairButtons[pos]->setLocked ( false );
+				if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 2 ) repairButtons[pos]->setLocked ( false );
 				else repairButtons[pos]->setLocked ( true );
 				if ( vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 2 ) upgradeButtons[pos]->setLocked ( false );
 				else upgradeButtons[pos]->setLocked ( true );
@@ -4295,8 +4299,8 @@ void cStorageMenu::resetInfos()
 		for ( unsigned int i = 0; i < storageList.Size(); i++ )
 		{
 			cVehicle *vehicle = storageList[i];
-			if ( vehicle->data.ammo != vehicle->data.max_ammo ) reloadAllButton->setLocked ( false );
-			if ( vehicle->data.hit_points != vehicle->data.max_hit_points ) repairAllButton->setLocked ( false );
+			if ( vehicle->data.ammoCur != vehicle->data.ammoMax ) reloadAllButton->setLocked ( false );
+			if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax ) repairAllButton->setLocked ( false );
 			if ( vehicle->data.version != vehicle->owner->VehicleData[vehicle->typ->nr].version ) upgradeAllButton->setLocked ( false );
 		}
 	}
@@ -4307,7 +4311,7 @@ void cStorageMenu::resetInfos()
 		metalBar->setCurrentValue ( metalValue );
 	}
 
-	if ( (offset+1)*maxX*2 < unitData.max_cargo && (offset+1)*maxX*2 < (int)storageList.Size() ) downButton->setLocked ( false );
+	if ( (offset+1)*maxX*2 < unitData.storageResMax && (offset+1)*maxX*2 < (int)storageList.Size() ) downButton->setLocked ( false );
 	else downButton->setLocked ( true );
 
 	if ( offset > 0 ) upButton->setLocked ( false );
@@ -4362,7 +4366,7 @@ void cStorageMenu::activateReleased ( void *parent )
 	if ( menu->ownerVehicle )
 	{
 		menu->ownerVehicle->VehicleToActivate = index;
-		if ( menu->unitData.can_drive == DRIVE_AIR ) sendWantActivate ( menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY );
+		if ( menu->unitData.factorAir > 0 ) sendWantActivate ( menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY );
 		else menu->ownerVehicle->ActivatingVehicle = true;
 	}
 	else if ( menu->ownerBuilding )
@@ -4412,7 +4416,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 	int unitXPos = menu->ownerBuilding ? menu->ownerBuilding->PosX : menu->ownerVehicle->PosX;
 	int unitYPos = menu->ownerBuilding ? menu->ownerBuilding->PosY : menu->ownerVehicle->PosY;
 	int id = menu->ownerBuilding ? menu->ownerBuilding->iID : menu->ownerVehicle->iID;
-	bool isBig = menu->unitData.is_big;
+	bool isBig = menu->unitData.isBig;
 
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
@@ -4423,7 +4427,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 			if ( ypos < 0 || ypos >= Client->Map->size ) continue;
 			for ( int xpos = unitXPos-1; xpos <= unitXPos+(isBig ? 2 : 1); xpos++, poscount++ )
 			{
-				if ( xpos < 0 || xpos >= Client->Map->size || ( ( ( ypos == unitYPos && menu->unitData.can_drive != DRIVE_AIR ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.can_drive != DRIVE_AIR ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
+				if ( xpos < 0 || xpos >= Client->Map->size || ( ( ( ypos == unitYPos && menu->unitData.factorAir == 0 ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.factorAir == 0 ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
 				if ( ( ( menu->ownerBuilding && menu->ownerBuilding->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) ||
 					( menu->ownerVehicle && menu->ownerVehicle->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) )
 					&& !hasCheckedPlace[poscount] )
@@ -4450,7 +4454,7 @@ void cStorageMenu::reloadAllReleased ( void *parent )
 	{
 		if ( resources < 1 ) break;
 		cVehicle *vehicle = menu->storageList[i];
-		if ( vehicle->data.ammo != vehicle->data.max_ammo )
+		if ( vehicle->data.ammoCur != vehicle->data.ammoMax )
 		{
 			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
 			resources--;
@@ -4468,13 +4472,13 @@ void cStorageMenu::repairAllReleased ( void *parent )
 	{
 		if ( resources < 1 ) break;
 		cVehicle *vehicle = menu->storageList[i];
-		if ( vehicle->data.hit_points != vehicle->data.max_hit_points )
+		if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax )
 		{
 			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
-			int value = vehicle->data.hit_points;
-			while ( value < vehicle->data.max_hit_points )
+			int value = vehicle->data.hitpointsCur;
+			while ( value < vehicle->data.hitpointsMax )
 			{
-				value += Round(((float)vehicle->data.max_hit_points/vehicle->data.iBuilt_Costs)*4);
+				value += Round(((float)vehicle->data.hitpointsMax/vehicle->data.buildCosts)*4);
 				resources--;
 			}
 		}

@@ -820,11 +820,11 @@ void cMenuUnitListItem::init ()
 	else if ( unitID.getBuilding() )
 	{
 		sBuilding *building = unitID.getBuilding();
-		if ( building->data.is_big ) scaleSurface ( building->img_org, building->img, building->img_org->w/4, building->img_org->h/4 );
+		if ( building->data.isBig ) scaleSurface ( building->img_org, building->img, building->img_org->w/4, building->img_org->h/4 );
 		else scaleSurface ( building->img_org, building->img, building->img_org->w/2, building->img_org->h/2 );
 		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, building->img->w, building->img->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( !building->data.is_connector && !building->data.is_road ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
+		if ( building->data.hasPlayerColor ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
 		else SDL_FillRect ( surface, NULL, 0xFF00FF );
 		SDL_BlitSurface ( building->img, NULL, surface, NULL );
 	}
@@ -886,7 +886,7 @@ void cMenuUnitListItem::draw()
 			dest.x = position.x+(32+4);
 			dest.y = position.y+12;
 
-			if ( unitID.getVehicle() ) font->showTextCentered( position.x+position.w-12, dest.y, iToStr(unitID.getUnitDataCurrentVersion(owner)->iBuilt_Costs), FONT_LATIN_SMALL_YELLOW );
+			if ( unitID.getVehicle() ) font->showTextCentered( position.x+position.w-12, dest.y, iToStr(unitID.getUnitDataCurrentVersion(owner)->buildCosts), FONT_LATIN_SMALL_YELLOW );
 		}
 		break;
 	default:
@@ -903,7 +903,7 @@ void cMenuUnitListItem::draw()
 int cMenuUnitListItem::drawName( bool withNumber )
 {
 	SDL_Rect dest = { position.x+32+4, position.y+12, position.w-(32+4)-12, 0 };
-	string name = ((string)unitID.getUnitDataCurrentVersion(owner)->szName);
+	string name = ((string)unitID.getUnitDataCurrentVersion(owner)->name);
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
 	if ( withNumber )
@@ -938,12 +938,14 @@ void cMenuUnitListItem::drawCargo( int destY )
 
 	SDL_Rect dest = { position.x+32+4, destY, 0, 0 };
 
-	if ( unitID.getUnitDataOriginalVersion()->can_transport == TRANS_METAL || unitID.getUnitDataOriginalVersion()->can_transport == TRANS_OIL /*|| unitID.getUnitData()->can_transport == TRANS_GOLD*/ ) // don't allow buying gold
+	if ( unitID.getUnitDataOriginalVersion()->storeResType != sUnitData::STORE_RES_NONE )
 	{
+		if ( unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD ) return; // don't allow buying gold
+
 		if( resValue == 0 ) font->showText( dest.x, dest.y+10, "(empty)", FONT_LATIN_SMALL_WHITE );
-		else if( resValue <= unitID.getUnitDataOriginalVersion()->max_cargo / 4 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_RED );
-		else if( resValue <= unitID.getUnitDataOriginalVersion()->max_cargo / 2 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_YELLOW );
-		else font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->max_cargo) + ")", FONT_LATIN_SMALL_GREEN );
+		else if( resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 4 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_RED );
+		else if( resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 2 ) font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_YELLOW );
+		else font->showText( dest.x, dest.y+10, " (" + iToStr(resValue) + "/" + iToStr(unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_GREEN );
 	}
 }
 
@@ -961,6 +963,7 @@ sID cMenuUnitListItem::getUnitID()
 
 sUnitData* cMenuUnitListItem::getUnitData()
 {
+	if ( !unitData ) return unitID.getUnitDataOriginalVersion();
 	return unitData;
 }
 
@@ -985,7 +988,7 @@ void cMenuUnitListItem::setResValue( int resValue_, bool cargoCheck )
 	resValue = resValue_;
 	if ( resValue < minResValue ) resValue = minResValue;
 	if ( cargoCheck && resValue < 0 ) resValue = 0;
-	if ( cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->max_cargo ) resValue = unitID.getUnitDataOriginalVersion()->max_cargo;
+	if ( cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->storageResMax ) resValue = unitID.getUnitDataOriginalVersion()->storageResMax;
 }
 
 void cMenuUnitListItem::setMinResValue ( int minResValue_ )
@@ -1432,7 +1435,7 @@ void cMenuUnitDetails::draw()
 
 	sUnitUpgrade *upgrade = NULL;
 
-	if ( data->can_attack )
+	if ( data->canAttack )
 	{
 		// Damage:
 		upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_DAMAGE );
@@ -1441,13 +1444,13 @@ void cMenuUnitDetails::draw()
 		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, upgrade ? upgrade->curValue : data->damage, oriData->damage );
 		DETAIL_DOLINEBREAK
 
-		if ( !data->is_expl_mine )
+		if ( !data->explodesOnContact )
 		{
 			// Shots:
 			upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_SHOTS );
-			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_shots ) );
+			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->shotsMax ) );
 			font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Shoots" ) );
-			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->max_shots, oriData->max_shots );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax );
 			DETAIL_DOLINEBREAK
 
 			// Range:
@@ -1459,62 +1462,59 @@ void cMenuUnitDetails::draw()
 
 			// Ammo:
 			upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_AMMO );
-			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_ammo ) );
+			font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->ammoMax ) );
 			font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Ammo" ) );
-			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->max_ammo, oriData->max_ammo );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax );
 			DETAIL_DOLINEBREAK
 		}
 	}
 
-	int transport;
-	if ( selectedUnit->getUnitID().getVehicle() ) transport = data->can_transport;
-	else transport = data->can_load;
+	sUnitData::eStorageResType transport;
+	if ( selectedUnit->getUnitID().getVehicle() ) transport = data->storeResType;
+	else transport = data->storeResType;
 
-	if ( transport == TRANS_METAL || transport == TRANS_OIL || transport == TRANS_GOLD )
+	if ( transport != sUnitData::STORE_RES_NONE )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->max_cargo ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->storageResMax ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Cargo" ) );
 
 		switch ( transport )
 		{
-
-			case TRANS_METAL:
-				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->max_cargo, oriData->max_cargo );
+			case sUnitData::STORE_RES_METAL:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
 				break;
-
-			case TRANS_OIL:
-				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3 , y - 2, 160, true, data->max_cargo, oriData->max_cargo );
+			case sUnitData::STORE_RES_OIL:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
 				break;
-
-			case TRANS_GOLD:
-				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->max_cargo, oriData->max_cargo );
+			case sUnitData::STORE_RES_GOLD:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
 				break;
 		}
 
 		DETAIL_DOLINEBREAK
 	}
 
-	if ( data->energy_prod )
+	if ( data->produceEnergy )
 	{
 		// Eneryproduction:
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->energy_prod ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->produceEnergy ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->energy_prod, oriData->energy_prod );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->produceEnergy, oriData->produceEnergy );
 		DETAIL_DOLINEBREAK
 
 		// Oil consumption:
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->oil_need ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->needsOil ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, 160, true, data->oil_need, oriData->oil_need );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsOil, oriData->needsOil );
 		DETAIL_DOLINEBREAK
 	}
 
-	if ( data->human_prod )
+	if ( data->produceHumans )
 	{
 		// Humanproduction:
-		font->showText ( DETAIL_COLUMN_1, y, iToStr ( data->human_prod ) );
+		font->showText ( DETAIL_COLUMN_1, y, iToStr ( data->produceHumans ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Produce" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->human_prod, oriData->human_prod );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->produceHumans, oriData->produceHumans );
 		DETAIL_DOLINEBREAK
 	}
 
@@ -1527,9 +1527,9 @@ void cMenuUnitDetails::draw()
 
 	// Hitpoints:
 	upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_HITS );
-	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->max_hit_points ) );
+	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( upgrade ? upgrade->curValue : data->hitpointsMax ) );
 	font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Hitpoints" ) );
-	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->max_hit_points, oriData->max_hit_points );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax );
 	DETAIL_DOLINEBREAK
 
 	// Scan:
@@ -1543,55 +1543,55 @@ void cMenuUnitDetails::draw()
 	}
 
 	// Speed:
-	if ( data->max_speed )
+	if ( data->speedMax )
 	{
 		upgrade = selectedUnit->getUpgrade ( sUnitUpgrade::UPGRADE_TYPE_SPEED );
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->max_speed) / 4 ) ); //FIXME: might crash if e.g. max_speed = 3
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->speedMax) / 4 ) ); //FIXME: might crash if e.g. speedMax = 3
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Speed" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, (upgrade ? upgrade->curValue : data->max_speed) / 4, oriData->max_speed / 4 );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, (upgrade ? upgrade->curValue : data->speedMax) / 4, oriData->speedMax / 4 );
 		DETAIL_DOLINEBREAK
 	}
 
 	// energy consumption:
-	if ( data->energy_need )
+	if ( data->needsEnergy )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->energy_need ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->needsEnergy ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->energy_need, oriData->energy_need );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->needsEnergy, oriData->needsEnergy );
 		DETAIL_DOLINEBREAK
 	}
 
 	// humans needed:
-	if ( data->human_need )
+	if ( data->needsHumans )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->human_need ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->needsHumans ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->human_need, oriData->human_need );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->needsHumans, oriData->needsHumans );
 		DETAIL_DOLINEBREAK
 	}
 
 	// raw material consumption:
-	if ( data->metal_need )
+	if ( data->needsMetal )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->metal_need ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->needsMetal ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, 160, true, data->metal_need, oriData->metal_need );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsMetal, oriData->needsMetal );
 		DETAIL_DOLINEBREAK
 	}
 
 	// gold consumption:
-	if ( data->gold_need )
+	if ( data->convertsGold )
 	{
-		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->gold_need ) );
+		font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->convertsGold ) );
 		font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->gold_need, oriData->gold_need );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->convertsGold, oriData->convertsGold );
 		DETAIL_DOLINEBREAK
 	}
 	
 	// Costs:
-	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->iBuilt_Costs ) );
+	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->buildCosts ) );
 	font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Costs" ) );
-	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->iBuilt_Costs, oriData->iBuilt_Costs );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->buildCosts, oriData->buildCosts );
 }
 
 void cMenuUnitDetails::setSelection(cMenuUnitListItem *selectedUnit_)
@@ -2464,7 +2464,7 @@ cMenuLineEdit *cMenuSaveSlot::getNameEdit ()
 
 cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContainer ( x, y )
 {
-	speedGroup = new cMenuRadioGroup ();
+	speedCurGroup = new cMenuRadioGroup ();
 
 	for ( int i = 0; i < 3; i++ )
 	{
@@ -2474,12 +2474,12 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContai
 		costsLabels[i] = new cMenuLabel ( position.x+137, position.y+25*i+5 );
 		turnsLabels[i]->setCentered ( true );
 		costsLabels[i]->setCentered ( true );
-		speedButtons[i] =  new cMenuCheckButton ( position.x, position.y+25*i, lngPack.i18n ( "Text~Button~Build" ) + " x" + iToStr ( factor ), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON );
-		speedGroup->addButton ( speedButtons[i] );
+		speedCurButtons[i] =  new cMenuCheckButton ( position.x, position.y+25*i, lngPack.i18n ( "Text~Button~Build" ) + " x" + iToStr ( factor ), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON );
+		speedCurGroup->addButton ( speedCurButtons[i] );
 		addItem ( turnsLabels[i] );
 		addItem ( costsLabels[i] );
 	}
-	addItem ( speedGroup );
+	addItem ( speedCurGroup );
 	position.w = 77;
 	position.h = 75;
 }
@@ -2491,7 +2491,7 @@ cMenuBuildSpeedHandler::~cMenuBuildSpeedHandler()
 		delete turnsLabels[i];
 		delete costsLabels[i];
 	}
-	delete speedGroup;
+	delete speedCurGroup;
 }
 
 void cMenuBuildSpeedHandler::setValues ( int *turboBuildTurns, int *turboBuildCosts )
@@ -2503,42 +2503,42 @@ void cMenuBuildSpeedHandler::setValues ( int *turboBuildTurns, int *turboBuildCo
 	{
 		turnsLabels[1]->setText ( iToStr ( turboBuildTurns[1] ) );
 		costsLabels[1]->setText ( iToStr ( turboBuildCosts[1] ) );
-		speedButtons[1]->setLocked ( false );
+		speedCurButtons[1]->setLocked ( false );
 	}
 	else
 	{
 		turnsLabels[1]->setText ( "" );
 		costsLabels[1]->setText ( "" );
-		speedButtons[1]->setLocked ( true );
-		if ( !speedGroup->buttonIsChecked ( 0 ) ) speedButtons[0]->setChecked ( true );
+		speedCurButtons[1]->setLocked ( true );
+		if ( !speedCurGroup->buttonIsChecked ( 0 ) ) speedCurButtons[0]->setChecked ( true );
 	}
 
 	if ( turboBuildTurns[2] > 0 )
 	{
 		turnsLabels[2]->setText ( iToStr ( turboBuildTurns[2] ) );
 		costsLabels[2]->setText ( iToStr ( turboBuildCosts[2] ) );
-		speedButtons[2]->setLocked ( false );
+		speedCurButtons[2]->setLocked ( false );
 	}
 	else
 	{
 		turnsLabels[2]->setText ( "" );
 		costsLabels[2]->setText ( "" );
-		speedButtons[2]->setLocked ( true );
-		if ( speedGroup->buttonIsChecked ( 2 ) ) speedButtons[1]->setChecked ( true );
+		speedCurButtons[2]->setLocked ( true );
+		if ( speedCurGroup->buttonIsChecked ( 2 ) ) speedCurButtons[1]->setChecked ( true );
 	}
 }
 
 void cMenuBuildSpeedHandler::setBuildSpeed( int buildSpeed )
 {
 	if ( buildSpeed < 0 && buildSpeed >= 3 ) return;
-	speedButtons[buildSpeed]->setChecked ( true );
+	speedCurButtons[buildSpeed]->setChecked ( true );
 }
 
 int cMenuBuildSpeedHandler::getBuildSpeed()
 {
 	for ( int i = 0; i < 3; i++ )
 	{
-		if ( speedGroup->buttonIsChecked ( i ) ) return i;
+		if ( speedCurGroup->buttonIsChecked ( i ) ) return i;
 	}
 	return 0;
 }
@@ -2647,15 +2647,15 @@ void cMenuStoredUnitDetails::draw()
 {
 	if ( !unitData ) return;
 
-	drawNumber ( unitData->hit_points, unitData->max_hit_points, 0 );
+	drawNumber ( unitData->hitpointsCur, unitData->hitpointsMax, 0 );
 	font->showText ( position.x+30, position.y+12, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE );
-	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+63, position.y+12, 58, false, unitData->hit_points, unitData->max_hit_points );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+63, position.y+12, 58, false, unitData->hitpointsCur, unitData->hitpointsMax );
 
-	if ( unitData->can_attack )
+	if ( unitData->canAttack )
 	{
-		drawNumber ( unitData->ammo, unitData->max_ammo, 1 );
+		drawNumber ( unitData->ammoCur, unitData->ammoMax, 1 );
 		font->showText ( position.x+30, position.y+27, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE );
-		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x+63, position.y+27, 58, false, unitData->ammo, unitData->max_ammo );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x+63, position.y+27, 58, false, unitData->ammoCur, unitData->ammoMax );
 	}
 }
 

@@ -191,7 +191,7 @@ int sSubBase::calcMaxProd( int ressourceType )
 	{
 		cBuilding* building = buildings[i];
 
-		if ( !(building->data.is_mine && building->IsWorking) ) continue;
+		if ( !(building->data.canMineMaxRes > 0 && building->IsWorking) ) continue;
 		
 		switch ( ressourceType )
 		{
@@ -262,14 +262,14 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 	{
 		cBuilding* building = buildings[i];
 
-		if ( !(building->data.is_mine && building->IsWorking )) continue;
+		if ( !(building->data.canMineMaxRes > 0 && building->IsWorking )) continue;
 
 		//how much of B can be produced in this mine, without decreasing the possible production of A and C?
-		int amount = min( building->*ressourceProdB, MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC );
+		int amount = min( building->*ressourceProdB, building->data.canMineMaxRes - building->*ressourceProdA - building->*ressourceProdC );
 		if ( amount > 0 ) ressourceToDistributeB -= amount;
 
 		//how much of C can be produced in this mine, without decreasing the possible production of A and B?
-		amount = min( building->*ressourceProdC, MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB );
+		amount = min( building->*ressourceProdC, building->data.canMineMaxRes - building->*ressourceProdA - building->*ressourceProdB );
 		if ( amount > 0 ) ressourceToDistributeC -= amount;
 		
 	}
@@ -283,14 +283,14 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 	{
 		cBuilding* building = buildings[i];
 
-		if ( !(building->data.is_mine && building->IsWorking )) continue;
+		if ( !(building->data.canMineMaxRes > 0 && building->IsWorking )) continue;
 
-		int freeB = min ( MAX_MINE_PROD - building->*ressourceProdA, building->*ressourceProdB);
-		int freeC = min ( MAX_MINE_PROD - building->*ressourceProdA, building->*ressourceProdC);
+		int freeB = min ( building->data.canMineMaxRes - building->*ressourceProdA, building->*ressourceProdB);
+		int freeC = min ( building->data.canMineMaxRes - building->*ressourceProdA, building->*ressourceProdC);
 
 		//substract values from step 1
-		freeB -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdC, 0), building->*ressourceProdB);
-		freeC -= min( max(MAX_MINE_PROD - building->*ressourceProdA - building->*ressourceProdB, 0), building->*ressourceProdC);
+		freeB -= min( max(building->data.canMineMaxRes - building->*ressourceProdA - building->*ressourceProdC, 0), building->*ressourceProdB);
+		freeC -= min( max(building->data.canMineMaxRes - building->*ressourceProdA - building->*ressourceProdB, 0), building->*ressourceProdC);
 
 		if ( ressourceToDistributeB > 0 )
 		{
@@ -328,9 +328,9 @@ bool sSubBase::increaseEnergyProd( int i )
 	{
 		cBuilding* b = buildings[n];
 
-		if ( !b->data.energy_prod ) continue;
+		if ( !b->data.produceEnergy ) continue;
 
-		if ( b->data.energy_prod == 1 )
+		if ( b->data.produceEnergy == 1 )
 		{
 			availableGenerators++;
 
@@ -439,12 +439,12 @@ sSubBase *cBase::checkNeighbour ( int iOff, cBuilding *Building )
 void cBase::AddBuilding ( cBuilding *Building )
 {
 	int pos;
-	if ( Building->data.is_base ) return;
+	if ( !Building->data.connectsToBase ) return;
 	pos = Building->PosX+Building->PosY*map->size;
 	cList<sSubBase*> NeighbourList;
 	Building->SubBase = ( sSubBase* ) 1;
 	// Prüfen, ob ein Gebäude in in der Nähe steht:
-	if ( !Building->data.is_big )
+	if ( !Building->data.isBig )
 	{
 		// small building
 		sSubBase *SubBase;
@@ -585,7 +585,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 {
 	sSubBase *sb;
 	cBuilding *n;
-	if ( b->data.is_road||b->data.is_platform||b->data.is_bridge||b->data.is_expl_mine ) return;
+	if ( !b->data.connectsToBase ) return;
 	sb=b->SubBase;
 	// Alle SubBases auf NULL setzen:
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
@@ -608,7 +608,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 		if ( n==b ) continue;
 		AddBuilding ( n );		//TODO: this causes a lot of unnessesary net traffic, when deleting a building from a big subbase
 	}
-	if (b->IsWorking && b->data.can_research)
+	if (b->IsWorking && b->data.canReasearch)
 		b->owner->stopAResearch (b->researchArea);
 	delete sb;
 }
@@ -618,64 +618,62 @@ void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 {
 	sb->buildings.Add ( b );
 	// Ladung ausrechnen:
-	switch ( b->data.can_load )
+	switch ( b->data.storeResType )
 	{
-		case TRANS_NONE:
-			break;
-		case TRANS_METAL:
-			sb->MaxMetal+=b->data.max_cargo;
-			sb->Metal+=b->data.cargo;
-			break;
-		case TRANS_OIL:
-			sb->MaxOil+=b->data.max_cargo;
-			sb->Oil+=b->data.cargo;
-			break;
-		case TRANS_GOLD:
-			sb->MaxGold+=b->data.max_cargo;
-			sb->Gold+=b->data.cargo;
-			break;
+	case sUnitData::STORE_RES_METAL:
+		sb->MaxMetal += b->data.storageResMax;
+		sb->Metal += b->data.storageResCur;
+		break;
+	case sUnitData::STORE_RES_OIL:
+		sb->MaxOil += b->data.storageResMax;
+		sb->Oil += b->data.storageResCur;
+		break;
+	case sUnitData::STORE_RES_GOLD:
+		sb->MaxGold += b->data.storageResMax;
+		sb->Gold += b->data.storageResCur;
+		break;
 	}
 	// Energiehaushalt ausrechnen:
-	if ( b->data.energy_prod )
+	if ( b->data.produceEnergy )
 	{
-		sb->MaxEnergyProd+=b->data.energy_prod;
-		sb->MaxOilNeed+=b->data.oil_need;
+		sb->MaxEnergyProd+=b->data.produceEnergy;
+		sb->MaxOilNeed+=b->data.needsOil;
 		if ( b->IsWorking )
 		{
-			sb->EnergyProd+=b->data.energy_prod;
-			sb->OilNeed+=b->data.oil_need;
+			sb->EnergyProd+=b->data.produceEnergy;
+			sb->OilNeed+=b->data.needsOil;
 		}
 	}
-	else if ( b->data.energy_need )
+	else if ( b->data.needsEnergy )
 	{
-		sb->MaxEnergyNeed+=b->data.energy_need;
+		sb->MaxEnergyNeed+=b->data.needsEnergy;
 		if ( b->IsWorking )
 		{
-			sb->EnergyNeed+=b->data.energy_need;
+			sb->EnergyNeed+=b->data.needsEnergy;
 		}
 	}
 	// Rohstoffhaushalt ausrechnen:
-	if ( b->data.metal_need )
+	if ( b->data.needsMetal )
 	{
-		sb->MaxMetalNeed+=b->data.metal_need*12;
+		sb->MaxMetalNeed+=b->data.needsMetal*12;
 		if ( b->IsWorking )
 		{
 			sb->MetalNeed += min(b->MetalPerRound, (*b->BuildList)[0]->metall_remaining);
 		}
 	}
 	// Goldhaushalt ausrechnen:
-	if ( b->data.gold_need )
+	if ( b->data.convertsGold )
 	{
-		sb->MaxGoldNeed+=b->data.gold_need;
+		sb->MaxGoldNeed+=b->data.convertsGold;
 		if ( b->IsWorking )
 		{
-			sb->GoldNeed+=b->data.gold_need;
+			sb->GoldNeed+=b->data.convertsGold;
 		}
 	}
 	// Rohstoffproduktion ausrechnen:
-	if ( b->data.is_mine&&b->IsWorking )
+	if ( b->data.canMineMaxRes > 0 && b->IsWorking )
 	{
-		int mineFree = MAX_MINE_PROD;
+		int mineFree = b->data.canMineMaxRes;
 		sb->changeMetalProd( b->MaxMetalProd );
 		mineFree -= b->MaxMetalProd;
 
@@ -685,16 +683,16 @@ void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
 		sb->changeGoldProd( min ( b->MaxGoldProd, mineFree));
 	}
 	// Human-Haushalt ausrechnen:
-	if ( b->data.human_prod )
+	if ( b->data.produceHumans )
 	{
-		sb->HumanProd+=b->data.human_prod;
+		sb->HumanProd+=b->data.produceHumans;
 	}
-	if ( b->data.human_need )
+	if ( b->data.needsHumans )
 	{
-		sb->MaxHumanNeed+=b->data.human_need;
+		sb->MaxHumanNeed+=b->data.needsHumans;
 		if ( b->IsWorking )
 		{
-			sb->HumanNeed+=b->data.human_need;
+			sb->HumanNeed+=b->data.needsHumans;
 		}
 	}
 }
@@ -710,32 +708,32 @@ void cBase::AddMetal ( sSubBase *sb,int value )
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		b = sb->buildings[i];
-		if ( b->data.can_load!=TRANS_METAL ) continue;
+		if ( b->data.storeResType != sUnitData::STORE_RES_METAL ) continue;
 		int iStartValue = value;
 		if ( value<0 )
 		{
-			if ( b->data.cargo>-value )
+			if ( b->data.storageResCur>-value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value+=b->data.cargo;
-				b->data.cargo=0;
+				value+=b->data.storageResCur;
+				b->data.storageResCur=0;
 			}
 		}
 		else
 		{
-			if ( b->data.max_cargo-b->data.cargo>value )
+			if ( b->data.storageResMax-b->data.storageResCur>value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value-=b->data.max_cargo-b->data.cargo;
-				b->data.cargo=b->data.max_cargo;
+				value-=b->data.storageResMax-b->data.storageResCur;
+				b->data.storageResCur=b->data.storageResMax;
 			}
 		}
 		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
@@ -755,32 +753,32 @@ void cBase::AddOil ( sSubBase *sb,int value )
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		b = sb->buildings[i];
-		if ( b->data.can_load!=TRANS_OIL ) continue;
+		if ( b->data.storeResType != sUnitData::STORE_RES_OIL ) continue;
 		int iStartValue = value;
 		if ( value<0 )
 		{
-			if ( b->data.cargo>-value )
+			if ( b->data.storageResCur>-value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value+=b->data.cargo;
-				b->data.cargo=0;
+				value+=b->data.storageResCur;
+				b->data.storageResCur=0;
 			}
 		}
 		else
 		{
-			if ( b->data.max_cargo-b->data.cargo>value )
+			if ( b->data.storageResMax-b->data.storageResCur>value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value-=b->data.max_cargo-b->data.cargo;
-				b->data.cargo=b->data.max_cargo;
+				value-=b->data.storageResMax-b->data.storageResCur;
+				b->data.storageResCur=b->data.storageResMax;
 			}
 		}
 		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
@@ -800,32 +798,32 @@ void cBase::AddGold ( sSubBase *sb,int value )
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		b = sb->buildings[i];
-		if ( b->data.can_load!=TRANS_GOLD ) continue;
+		if ( b->data.storeResType != sUnitData::STORE_RES_GOLD ) continue;
 		int iStartValue = value;
 		if ( value<0 )
 		{
-			if ( b->data.cargo>-value )
+			if ( b->data.storageResCur>-value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value+=b->data.cargo;
-				b->data.cargo=0;
+				value+=b->data.storageResCur;
+				b->data.storageResCur=0;
 			}
 		}
 		else
 		{
-			if ( b->data.max_cargo-b->data.cargo>value )
+			if ( b->data.storageResMax-b->data.storageResCur>value )
 			{
-				b->data.cargo+=value;
+				b->data.storageResCur+=value;
 				value=0;
 			}
 			else
 			{
-				value-=b->data.max_cargo-b->data.cargo;
-				b->data.cargo=b->data.max_cargo;
+				value-=b->data.storageResMax-b->data.storageResCur;
+				b->data.storageResCur=b->data.storageResMax;
 			}
 		}
 		if ( iStartValue != value ) sendUnitData ( b, owner->Nr );
@@ -850,7 +848,7 @@ void cBase::handleTurnend ()
 			{
 				cBuilding *Building;
 				Building = SubBase->buildings[k];
-				if ( !Building->data.energy_prod ) continue;
+				if ( !Building->data.produceEnergy ) continue;
 				Building->ServerStopWork ( true );
 				if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 ) continue;
 				break;
@@ -865,7 +863,7 @@ void cBase::handleTurnend ()
 			{
 				cBuilding *Building;
 				Building = SubBase->buildings[k];
-				if ( !Building->data.energy_need ) continue;
+				if ( !Building->data.needsEnergy ) continue;
 				Building->ServerStopWork ( true );
 				if ( SubBase->EnergyNeed>SubBase->EnergyProd ) continue;
 				break;
@@ -880,7 +878,7 @@ void cBase::handleTurnend ()
 			{
 				cBuilding *Building;
 				Building = SubBase->buildings[k];
-				if ( !Building->data.metal_need ) continue;
+				if ( !Building->data.needsMetal ) continue;
 				Building->ServerStopWork ( true );
 				if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) < 0 ) continue;
 				break;
@@ -897,7 +895,7 @@ void cBase::handleTurnend ()
 			{
 				cBuilding *Building;
 				Building = SubBase->buildings[k];
-				if ( !Building->data.gold_need ) continue;
+				if ( !Building->data.convertsGold ) continue;
 				Building->ServerStopWork ( true );
 				if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 ) continue;
 				break;
@@ -920,7 +918,7 @@ void cBase::handleTurnend ()
 			{
 				cBuilding *Building;
 				Building = SubBase->buildings[k];
-				if ( !Building->data.human_need ) continue;
+				if ( !Building->data.needsHumans ) continue;
 				Building->ServerStopWork ( true );
 				if ( SubBase->HumanNeed > SubBase->HumanProd ) continue;
 				break;
@@ -938,14 +936,14 @@ void cBase::handleTurnend ()
 		{
 			cBuilding *Building = SubBase->buildings[k];
 			// repair:
-			if ( Building->data.hit_points < Building->data.max_hit_points && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
+			if ( Building->data.hitpointsCur < Building->data.hitpointsMax && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
 			{
 				// do not repair buildings that have been attacked in this turn
 				if ( !Building->hasBeenAttacked )
 				{
 					// calc new hitpoints
-					Building->data.hit_points += Round ( ((float)Building->data.max_hit_points/Building->data.iBuilt_Costs)*4 );
-					if ( Building->data.hit_points > Building->data.max_hit_points ) Building->data.hit_points = Building->data.max_hit_points;
+					Building->data.hitpointsCur += Round ( ((float)Building->data.hitpointsMax/Building->data.buildCosts)*4 );
+					if ( Building->data.hitpointsCur > Building->data.hitpointsMax ) Building->data.hitpointsCur = Building->data.hitpointsMax;
 					// first use overproduced metal to repair units, and use the stored metal afterwards
 					if ( overproducedMetal > 0 ) overproducedMetal--;
 					else AddMetal ( SubBase, -1 );
@@ -957,9 +955,9 @@ void cBase::handleTurnend ()
 				}
 			}
 			// reload:
-			if ( Building->data.can_attack && Building->data.ammo == 0 && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
+			if ( Building->data.canAttack && Building->data.ammoCur == 0 && ( SubBase->Metal > 0 || overproducedMetal > 0 ) )
 			{
-				Building->data.ammo = Building->data.max_ammo;
+				Building->data.ammoCur = Building->data.ammoMax;
 				// first use overproduced metal to reload units
 				if ( overproducedMetal > 0 ) overproducedMetal--;
 				else AddMetal ( SubBase, -1 );
@@ -972,7 +970,7 @@ void cBase::handleTurnend ()
 			if ( Building->hasBeenAttacked ) Building->hasBeenAttacked = false;
 
 			// build:
-			if (Building->IsWorking && Building->data.can_build && Building->BuildList->Size() && SubBase->Metal )
+			if (Building->IsWorking && !Building->data.canBuild.empty() && Building->BuildList->Size() && SubBase->Metal )
 			{
 				sBuildList *BuildListItem;
 				BuildListItem = (*Building->BuildList)[0];
@@ -1015,9 +1013,9 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	{
 		cBuilding *b;
 		b = sb->buildings[i];
-		if ( !b->data.energy_prod ) continue;
+		if ( !b->data.produceEnergy ) continue;
 
-		if (b->data.energy_prod == 1) es.Add(b);
+		if (b->data.produceEnergy == 1) es.Add(b);
 		else eb.Add(b);
 	}
 

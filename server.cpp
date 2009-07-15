@@ -441,7 +441,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				int oldOffset = targetOffset;
 				//the target offset doesn't need to match the vehicle position, when it is big
-				if ( !targetVehicle->data.is_big ) 
+				if ( !targetVehicle->data.isBig ) 
 				{
 					targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
 				}
@@ -554,10 +554,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int buildX = iBuildOff % Map->size;
 			int buildY = iBuildOff / Map->size;
 
-			if ( Data.is_big )
-			{
-				if ( Vehicle->data.can_build != BUILD_BIG ) break;
+			if ( Vehicle->data.canBuild.compare ( Data.buildAs ) != 0 ) break;
 
+			if ( Data.isBig )
+			{
 				sideStepStealthUnit( buildX    , buildY    , Vehicle, iBuildOff );
 				sideStepStealthUnit( buildX + 1, buildY    , Vehicle, iBuildOff );
 				sideStepStealthUnit( buildX    , buildY + 1, Vehicle, iBuildOff );
@@ -596,9 +596,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->BandY = iPathOff/Map->size;
 
 
-			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->iBuilt_Costs, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->iBuilt_Costs_Max );
+			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->buildCosts );
 
-			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.cargo || iTurboBuildRounds[iBuildSpeed] <= 0 )
+			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0 )
 			{
 				sendBuildAnswer ( false, Vehicle );
 				break;
@@ -641,7 +641,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 
 			// set the vehicle to the border
-			if ( Vehicle->data.can_build == BUILD_BIG )
+			if ( Vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
 				int x = Vehicle->PosX;
 				int y = Vehicle->PosY;
@@ -696,75 +696,75 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					if ( SrcBuilding->SubBase != DestBuilding->SubBase ) break;
 					if ( SrcBuilding->owner != DestBuilding->owner ) break;
-					if ( SrcBuilding->data.can_load != iType ) break;
-					if ( SrcBuilding->data.can_load != DestBuilding->data.can_load ) break;
-					if ( DestBuilding->data.cargo+iTranfer > DestBuilding->data.max_cargo || DestBuilding->data.cargo+iTranfer < 0 ) break;
-					if ( SrcBuilding->data.cargo-iTranfer > SrcBuilding->data.max_cargo || SrcBuilding->data.cargo-iTranfer < 0 ) break;
+					if ( SrcBuilding->data.storeResType != iType ) break;
+					if ( SrcBuilding->data.storeResType != DestBuilding->data.storeResType ) break;
+					if ( DestBuilding->data.storageResCur+iTranfer > DestBuilding->data.storageResMax || DestBuilding->data.storageResCur+iTranfer < 0 ) break;
+					if ( SrcBuilding->data.storageResCur-iTranfer > SrcBuilding->data.storageResMax || SrcBuilding->data.storageResCur-iTranfer < 0 ) break;
 
-					DestBuilding->data.cargo+=iTranfer;
-					SrcBuilding->data.cargo-=iTranfer;
+					DestBuilding->data.storageResCur+=iTranfer;
+					SrcBuilding->data.storageResCur-=iTranfer;
 					sendUnitData ( DestBuilding, DestBuilding->owner->Nr );
 					sendUnitData ( SrcBuilding, SrcBuilding->owner->Nr );
 				}
 				else
 				{
 					if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
-					if ( DestVehicle->data.can_transport != iType ) break;
-					if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
+					if ( DestVehicle->data.storeResType != iType ) break;
+					if ( DestVehicle->data.storageResCur+iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur+iTranfer < 0 ) break;
 					switch ( iType )
 					{
-						case TRANS_METAL:
-							{
-								if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
-							}
-							break;
-						case TRANS_OIL:
-							{
-								if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
-							}
-							break;
-						case TRANS_GOLD:
-							{
-								if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
-							}
-							break;
+					case sUnitData::STORE_RES_METAL:
+						{
+							if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
+					case sUnitData::STORE_RES_OIL:
+						{
+							if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
+					case sUnitData::STORE_RES_GOLD:
+						{
+							if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
+						}
+						break;
 					}
 					if ( bBreakSwitch ) break;
 					sendSubbaseValues ( SrcBuilding->SubBase, SrcBuilding->owner->Nr );
-					DestVehicle->data.cargo += iTranfer;
+					DestVehicle->data.storageResCur += iTranfer;
 					sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
 				}
 			}
 			else
 			{
-				if ( SrcVehicle->data.can_transport != iType ) break;
-				if ( SrcVehicle->data.cargo-iTranfer > SrcVehicle->data.max_cargo || SrcVehicle->data.cargo-iTranfer < 0 ) break;
+				if ( SrcVehicle->data.storeResType != iType ) break;
+				if ( SrcVehicle->data.storageResCur-iTranfer > SrcVehicle->data.storageResMax || SrcVehicle->data.storageResCur-iTranfer < 0 ) break;
 				if ( DestBuilding )
 				{
 					bool bBreakSwitch = false;
 					switch ( iType )
 					{
-						case TRANS_METAL:
-							{
-								if ( DestBuilding->SubBase->Metal+iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal+iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) DestBuilding->owner->base.AddMetal ( DestBuilding->SubBase, iTranfer );
-							}
-							break;
-						case TRANS_OIL:
-							{
-								if ( DestBuilding->SubBase->Oil+iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil+iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) DestBuilding->owner->base.AddOil ( DestBuilding->SubBase, iTranfer );
-							}
-							break;
-						case TRANS_GOLD:
-							{
-								if ( DestBuilding->SubBase->Gold+iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold+iTranfer < 0 ) bBreakSwitch = true;
-								if ( !bBreakSwitch ) DestBuilding->owner->base.AddGold ( DestBuilding->SubBase, iTranfer );
-							}
-							break;
+					case sUnitData::STORE_RES_METAL:
+						{
+							if ( DestBuilding->SubBase->Metal+iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal+iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) DestBuilding->owner->base.AddMetal ( DestBuilding->SubBase, iTranfer );
+						}
+						break;
+					case sUnitData::STORE_RES_OIL:
+						{
+							if ( DestBuilding->SubBase->Oil+iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil+iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) DestBuilding->owner->base.AddOil ( DestBuilding->SubBase, iTranfer );
+						}
+						break;
+					case sUnitData::STORE_RES_GOLD:
+						{
+							if ( DestBuilding->SubBase->Gold+iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold+iTranfer < 0 ) bBreakSwitch = true;
+							if ( !bBreakSwitch ) DestBuilding->owner->base.AddGold ( DestBuilding->SubBase, iTranfer );
+						}
+						break;
 					}
 					if ( bBreakSwitch ) break;
 					sendSubbaseValues ( DestBuilding->SubBase, DestBuilding->owner->Nr );
@@ -772,12 +772,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else
 				{
 					if ( DestVehicle->IsBuilding || DestVehicle->IsClearing ) break;
-					if ( DestVehicle->data.can_transport != iType ) break;
-					if ( DestVehicle->data.cargo+iTranfer > DestVehicle->data.max_cargo || DestVehicle->data.cargo+iTranfer < 0 ) break;
-					DestVehicle->data.cargo += iTranfer;
+					if ( DestVehicle->data.storeResType != iType ) break;
+					if ( DestVehicle->data.storageResCur+iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur+iTranfer < 0 ) break;
+					DestVehicle->data.storageResCur += iTranfer;
 					sendUnitData ( DestVehicle, DestVehicle->owner->Nr );
 				}
-				SrcVehicle->data.cargo -= iTranfer;
+				SrcVehicle->data.storageResCur -= iTranfer;
 				sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );
 			}
 		}
@@ -810,9 +810,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				int iOff = iX + iY * Map->size;
 
-				cBuilding* building = Map->fields[iOff].getBaseBuilding();
-				if ( !Map->IsWater ( iOff, true, true ) || ( building && ( building->data.is_bridge || building->data.is_platform || building->data.is_road ) ) ) bLand = true;
-				else bWater = true;
+				cBuildingIterator bi = Map->fields[iOff].getBuildings();
+				while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) ) bi++;
+
+				if ( !Map->IsWater ( iOff ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) ) bLand = true;
+				else if ( Map->IsWater ( iOff ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
+				{
+					bLand = true;
+					bWater = true;
+					break;
+				}
+				else if ( Map->IsWater ( iOff ) ) bWater = true;
+
 			}
 
 			// reset building status
@@ -822,9 +831,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			int iBuildSpeed = message->popInt16();
-			if ( iBuildSpeed == 0 ) Building->MetalPerRound =  1 * Building->data.iNeeds_Metal;
-			if ( iBuildSpeed == 1 ) Building->MetalPerRound =  4 * Building->data.iNeeds_Metal;
-			if ( iBuildSpeed == 2 ) Building->MetalPerRound = 12 * Building->data.iNeeds_Metal;
+			if ( iBuildSpeed == 0 ) Building->MetalPerRound =  1 * Building->data.needsMetal;
+			if ( iBuildSpeed == 1 ) Building->MetalPerRound =  4 * Building->data.needsMetal;
+			if ( iBuildSpeed == 2 ) Building->MetalPerRound = 12 * Building->data.needsMetal;
 
 			cList<sBuildList*> *NewBuildList = new cList<sBuildList*>;
 
@@ -838,8 +847,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// if the first unit hasn't changed copy it to the new buildlist
 				if ( Building->BuildList->Size() > 0 && i == 0 && Type.getVehicle() == (*Building->BuildList)[0]->typ )
 				{
-					//recalculate costs, because build speed could have beed changed
-					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion ( Building->owner )->iBuilt_Costs, (*Building->BuildList)[0]->metall_remaining );
+					//recalculate costs, because build speedCur could have beed changed
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion ( Building->owner )->buildCosts, (*Building->BuildList)[0]->metall_remaining );
 					sBuildList *BuildListItem = new sBuildList;
 					BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 					BuildListItem->typ = (*Building->BuildList)[0]->typ;
@@ -848,23 +857,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				// check whether this building can build this unit
-				if ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_SEA && !bWater )
+				if ( Type.getUnitDataOriginalVersion()->factorSea > 0 && Type.getUnitDataOriginalVersion()->factorGround == 0 && !bWater )
 					continue;
-				else if ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_LAND && !bLand )
-					continue;
-
-				if ( Building->data.can_build == BUILD_AIR && Type.getUnitDataOriginalVersion()->can_drive != DRIVE_AIR )
-					continue;
-				else if ( Building->data.can_build == BUILD_BIG && !Type.getUnitDataOriginalVersion()->build_by_big )
-					continue;
-				else if ( Building->data.can_build == BUILD_SEA && Type.getUnitDataOriginalVersion()->can_drive != DRIVE_SEA )
-					continue;
-				else if ( Building->data.can_build == BUILD_SMALL && ( Type.getUnitDataOriginalVersion()->can_drive == DRIVE_AIR || Type.getUnitDataOriginalVersion()->can_drive == DRIVE_SEA || Type.getUnitDataOriginalVersion()->build_by_big || Type.getUnitDataOriginalVersion()->is_human ) )
-					continue;
-				else if ( Building->data.can_build == BUILD_MAN && !Type.getUnitDataOriginalVersion()->is_human )
+				else if ( Type.getUnitDataOriginalVersion()->factorGround > 0 && Type.getUnitDataOriginalVersion()->factorSea == 0 && !bLand )
 					continue;
 
-				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion( Building->owner )->iBuilt_Costs );
+				if ( Building->data.canBuild.compare (  Type.getUnitDataOriginalVersion()->buildAs ) != 0 )
+					continue;
+
+				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion( Building->owner )->buildCosts );
 
 				sBuildList *BuildListItem = new sBuildList;
 				BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
@@ -922,7 +923,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Building->BuildList->Delete( 0 );
 				int iTurboBuildCosts[3];
 				int iTurboBuildRounds[3];
-				Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.iBuilt_Costs);
+				Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.buildCosts);
 				BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
 				Building->BuildList->Add( BuildingListItem );
 				Building->ServerStartWork();
@@ -1028,20 +1029,20 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// do the supply
 				if ( iType == SUPPLY_TYPE_REARM )
 				{
-					SrcVehicle->data.cargo--;
-					iValue = DestVehicle ? DestVehicle->data.max_ammo : DestBuilding->data.max_ammo;
+					SrcVehicle->data.storageResCur--;
+					iValue = DestVehicle ? DestVehicle->data.ammoMax : DestBuilding->data.ammoMax;
 				}
 				else
 				{
 					sUnitData *DestData = DestVehicle ? &DestVehicle->data : &DestBuilding->data;
 					// reduce cargo for repair and calculate maximal repair value
-					iValue = DestData->hit_points;
-					while ( SrcVehicle->data.cargo > 0 && iValue < DestData->max_hit_points )
+					iValue = DestData->hitpointsCur;
+					while ( SrcVehicle->data.storageResCur > 0 && iValue < DestData->hitpointsMax )
 					{
-						iValue += Round(((float)DestData->max_hit_points/DestData->iBuilt_Costs)*4);
-						SrcVehicle->data.cargo--;
+						iValue += Round(((float)DestData->hitpointsMax/DestData->buildCosts)*4);
+						SrcVehicle->data.storageResCur--;
 					}
-					if ( iValue > DestData->max_hit_points ) iValue = DestData->max_hit_points;
+					if ( iValue > DestData->hitpointsMax ) iValue = DestData->hitpointsMax;
 				}
 				sendUnitData ( SrcVehicle, SrcVehicle->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
@@ -1055,18 +1056,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					if ( SrcBuilding->SubBase->Metal < 1 ) break;
 					SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
-					iValue = DestVehicle->data.max_ammo;
+					iValue = DestVehicle->data.ammoMax;
 				}
 				else
 				{
 					// reduce cargo for repair and calculate maximal repair value
-					iValue = DestVehicle->data.hit_points;
-					while ( SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.max_hit_points )
+					iValue = DestVehicle->data.hitpointsCur;
+					while ( SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax )
 					{
-						iValue += Round(((float)DestVehicle->data.max_hit_points/DestVehicle->data.iBuilt_Costs)*4);
+						iValue += Round(((float)DestVehicle->data.hitpointsMax/DestVehicle->data.buildCosts)*4);
 						SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
 					}
-					if ( iValue > DestVehicle->data.max_hit_points ) iValue = DestVehicle->data.max_hit_points;
+					if ( iValue > DestVehicle->data.hitpointsMax ) iValue = DestVehicle->data.hitpointsMax;
 				}
 				sendUnitData ( SrcBuilding, SrcBuilding->owner->Nr );	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 			}
@@ -1074,8 +1075,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// repair or reload the destination unit
 			if ( DestVehicle )
 			{
-				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammo = DestVehicle->data.max_ammo;
-				else DestVehicle->data.hit_points = iValue;
+				if ( iType == SUPPLY_TYPE_REARM ) DestVehicle->data.ammoCur = DestVehicle->data.ammoMax;
+				else DestVehicle->data.hitpointsCur = iValue;
 
 				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
 				
@@ -1085,8 +1086,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
-				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammo = DestBuilding->data.max_ammo;
-				else DestBuilding->data.hit_points = iValue;
+				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammoCur = DestBuilding->data.ammoMax;
+				else DestBuilding->data.hitpointsCur = iValue;
 
 				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
 								
@@ -1120,7 +1121,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					if (vehicle->data.version >= upgradedVersion.version)
 						continue; // already uptodate
 					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-					int upgradeCost = uc.getMaterialCostForUpgrading(upgradedVersion.iBuilt_Costs);
+					int upgradeCost = uc.getMaterialCostForUpgrading(upgradedVersion.buildCosts);
 
 					if (availableMetal >= totalCosts + upgradeCost)
 					{
@@ -1160,7 +1161,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			int rubbleoffset = -1;
-			if ( building->data.is_big )
+			if ( building->data.isBig )
 			{
 				rubbleoffset = building->PosX+building->PosY*Map->size;
 
@@ -1207,7 +1208,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Vehicle->IsClearing = false;
 				Vehicle->ClearingRounds = 0;
 
-				if ( Vehicle->data.is_big )
+				if ( Vehicle->data.isBig )
 				{
 					Map->moveVehicle ( Vehicle, Vehicle->BuildBigSavedPos );
 					sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr );
@@ -1338,7 +1339,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
-					if ( StoredVehicle->data.can_survey ) 
+					if ( StoredVehicle->data.canSurvey ) 
 					{
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
@@ -1363,7 +1364,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
-					if ( StoredVehicle->data.can_survey ) 
+					if ( StoredVehicle->data.canSurvey ) 
 					{
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
@@ -1414,13 +1415,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					// update the unitData of the player and send an ack-msg for this upgrade to the player
 					upgradedUnit->damage = newDamage;
-					upgradedUnit->max_shots = newMaxShots;
+					upgradedUnit->shotsMax = newMaxShots;
 					upgradedUnit->range = newRange;
-					upgradedUnit->max_ammo = newMaxAmmo;
+					upgradedUnit->ammoMax = newMaxAmmo;
 					upgradedUnit->armor = newArmor;
-					upgradedUnit->max_hit_points = newMaxHitPoints;
+					upgradedUnit->hitpointsMax = newMaxHitPoints;
 					upgradedUnit->scan = newScan;
-					if ( ID.iFirstPart == 0 ) upgradedUnit->max_speed = newMaxSpeed;
+					if ( ID.iFirstPart == 0 ) upgradedUnit->speedMax = newMaxSpeed;
 					upgradedUnit->version++;
 					
 					player->Credits -= costs;
@@ -1449,7 +1450,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (building->data.version >= upgradedVersion.version)
 				break; // already uptodate
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-			int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading(upgradedVersion.iBuilt_Costs);
+			int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading(upgradedVersion.buildCosts);
 			int totalCosts = 0;
 			cList<cBuilding*> upgradedBuildings;
 			
@@ -1532,7 +1533,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int centersToAssign = newResearchSettings[newArea];
 				while (centersToAssign > 0 && curBuilding != 0)
 				{
-					if (curBuilding->data.can_research && curBuilding->IsWorking)
+					if (curBuilding->data.canReasearch && curBuilding->IsWorking)
 					{
 						researchCentersToChangeArea.Add(curBuilding);
 						newAreasForResearchCenters.Add(newArea);
@@ -1548,7 +1549,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			while (curBuilding != 0) // shut down unused research centers
 			{
-				if (curBuilding->data.can_research && curBuilding->IsWorking)
+				if (curBuilding->data.canReasearch && curBuilding->IsWorking)
 					researchCentersToStop.Add(curBuilding);
 				curBuilding = curBuilding->next;
 			}
@@ -1585,9 +1586,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// check whether the commando action is possible
 			if ( !( ( destVehicle && srcVehicle->canDoCommandoAction ( destVehicle->PosX, destVehicle->PosY, Client->Map, steal ) ) ||
 				( destBuilding && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY+1, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.is_big && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Client->Map, steal ) ) ) ) break;
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY+1, Client->Map, steal ) ) ||
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY, Client->Map, steal ) ) ||
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Client->Map, steal ) ) ) ) break;
 
 			// check whether the action is successfull or not
 			int chance = srcVehicle->calcCommandoChance ( destVehicle, destBuilding, steal );
@@ -1615,8 +1616,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					{
 						// stop the vehicle and make it disabled
 						destVehicle->Disabled = strength;
-						destVehicle->data.speed = 0;
-						destVehicle->data.shots = 0;
+						destVehicle->data.speedCur = 0;
+						destVehicle->data.shotsCur = 0;
 						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
 						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
 						sendUnitData ( destVehicle, destVehicle->owner->Nr );
@@ -1631,7 +1632,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					{
 						// stop the vehicle and make it disabled
 						destBuilding->Disabled = strength;
-						destBuilding->data.shots = 0;
+						destBuilding->data.shotsCur = 0;
 						destBuilding->ServerStopWork( true );
 						sendDoStopWork ( destBuilding );
 						sendUnitData ( destBuilding, destBuilding->owner->Nr );
@@ -1659,7 +1660,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				checkPlayerUnits();
 				srcVehicle->InSentryRange();
 			}
-			srcVehicle->data.shots--;
+			srcVehicle->data.shotsCur--;
 			sendUnitData ( srcVehicle, srcVehicle->owner->Nr );
 			sendCommandoAnswer ( success, steal, srcVehicle, srcVehicle->owner->Nr );
 		}
@@ -1694,9 +1695,9 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxShots > currentVersion->max_shots)
+	if (newMaxShots > currentVersion->shotsMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_shots, currentVersion->max_shots, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1710,9 +1711,9 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxAmmo > currentVersion->max_ammo)
+	if (newMaxAmmo > currentVersion->ammoMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_ammo, currentVersion->max_ammo, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1726,9 +1727,9 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (newMaxHitPoints > currentVersion->max_hit_points)
+	if (newMaxHitPoints > currentVersion->hitpointsMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_hit_points, currentVersion->max_hit_points, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1742,9 +1743,9 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	if (bVehicle && newMaxSpeed > currentVersion->max_speed)
+	if (bVehicle && newMaxSpeed > currentVersion->speedMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->max_speed / 4, currentVersion->max_speed / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
+		int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -1791,11 +1792,11 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 			{
 				for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 				{
-					if ( Map->possiblePlaceBuilding( UnitsData.building[BNrSmallGen].data, iX + k    , iY + i + 1) &&
-						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 1, iY + i    ) &&
-						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 2, iY + i    ) &&
-						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 2, iY + i + 1) &&
-						 Map->possiblePlaceBuilding( UnitsData.building[BNrMine    ].data, iX + k + 1, iY + i + 1) )
+					if ( Map->possiblePlaceBuilding( *specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1) &&
+						Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    ) &&
+						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    ) &&
+						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1) &&
+						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1) )
 					{
 						bPlaced = true;
 						// TODO: the starting resources under a mine should depend on the game Options, like in org MAX
@@ -1815,8 +1816,8 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 						}
 
 						// place buildings:
-						addUnit(iX + k,     iY + i + 1, &UnitsData.getBuilding (BNrSmallGen, Player->getClan ()), Player, true);
-						addUnit(iX + k + 1, iY + i,     &UnitsData.getBuilding (BNrMine, Player->getClan ()), Player, true);
+						addUnit(iX + k,     iY + i + 1, &UnitsData.getBuilding (specialIDSmallGen.getBuilding()->nr, Player->getClan ()), Player, true);
+						addUnit(iX + k + 1, iY + i,     &UnitsData.getBuilding (specialIDMine.getBuilding()->nr, Player->getClan ()), Player, true);
 						break;
 					}
 				}
@@ -1842,7 +1843,7 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 		}
 		if ( Landing.cargo && Vehicle )
 		{
-			Vehicle->data.cargo = Landing.cargo;
+			Vehicle->data.storageResCur = Landing.cargo;
 			sendUnitData ( Vehicle, Vehicle->owner->Nr );
 		}
 	}
@@ -1861,7 +1862,7 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 	if ( bAddToMap ) Map->addVehicle( AddedVehicle, iPosX, iPosY );
 
 	// scan with surveyor:
-	if ( AddedVehicle->data.can_survey )
+	if ( AddedVehicle->data.canSurvey )
 	{
 		sendVehicleResources( AddedVehicle, Map );
 		AddedVehicle->doSurvey();
@@ -1881,7 +1882,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	cBuilding *AddedBuilding;
 	// generate the building:
 	AddedBuilding = Player->addBuilding ( iPosX, iPosY, Building );
-	if ( AddedBuilding->data.is_mine ) AddedBuilding->CheckRessourceProd();
+	if ( AddedBuilding->data.canMineMaxRes > 0 ) AddedBuilding->CheckRessourceProd();
 	if ( AddedBuilding->bSentryStatus ) Player->addSentryBuilding ( AddedBuilding );
 
 	AddedBuilding->iID = iNextUnitID;
@@ -1890,14 +1891,14 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	int iOff = iPosX + Map->size*iPosY;
 	
 	//if this is a top building, delete connectors, mines and roads
-	if ( !AddedBuilding->data.is_base )
+	if ( AddedBuilding->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && AddedBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH )
 	{
-		if ( AddedBuilding->data.is_big )
+		if ( AddedBuilding->data.isBig )
 		{
 			cBuildingIterator building = Map->fields[iOff].getBuildings();
 			while ( building )
 			{
-				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 				{
 					deleteUnit ( building );
 					building--;
@@ -1908,7 +1909,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 			building = Map->fields[iOff].getBuildings();
 			while ( building )
 			{
-				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 				{
 					deleteUnit ( building );
 					building--;
@@ -1919,7 +1920,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 			building = Map->fields[iOff].getBuildings();
 			while ( building )
 			{
-				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 				{
 					deleteUnit ( building );
 					building--;
@@ -1930,7 +1931,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 			building = Map->fields[iOff].getBuildings();
 			while ( building )
 			{
-				if ( building->data.is_road || building->data.is_expl_mine || building->data.is_connector )
+				if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 				{
 					deleteUnit ( building );
 					building--;
@@ -1941,12 +1942,12 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 		else
 		{
 			deleteUnit ( Map->fields[iOff].getTopBuilding() );
-			if ( !AddedBuilding->data.is_connector )
+			if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 			{
 				cBuildingIterator building = Map->fields[iOff].getBuildings();
 				while ( building )
 				{
-					if ( building->data.is_road || building->data.is_expl_mine )
+					if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 					{
 						deleteUnit ( building );
 						building--;
@@ -1963,7 +1964,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 
 	// integrate the building to the base:
 	Player->base.AddBuilding ( AddedBuilding );
-	if ( AddedBuilding->data.is_mine )
+	if ( AddedBuilding->data.canMineMaxRes > 0 )
 	{
 		sendProduceValues ( AddedBuilding );
 		AddedBuilding->ServerStartWork();
@@ -2083,7 +2084,7 @@ void cServer::checkPlayerUnits ()
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
 				int iOff = NextVehicle->PosX+NextVehicle->PosY*Map->size;
 
-				bool stealthUnit = NextVehicle->data.is_stealth_land || NextVehicle->data.is_stealth_sea;
+				bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
 				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) && !NextVehicle->Loaded )
 				{
 					unsigned int i;
@@ -2123,7 +2124,7 @@ void cServer::checkPlayerUnits ()
 				if ( iMapPlayerNum == iUnitPlayerNum ) continue;
 				MapPlayer = (*PlayerList)[iMapPlayerNum];
 				int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
-				bool stealthUnit = NextBuilding->data.is_expl_mine;
+				bool stealthUnit = NextBuilding->data.isStealthOn != TERRAIN_NONE;
 
 				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) )
 				{
@@ -2363,7 +2364,7 @@ bool cServer::checkEndActions ( int iPlayer )
 			NextVehicle = (*PlayerList)[i]->VehicleList;
 			while ( NextVehicle != NULL )
 			{
-				if ( NextVehicle->ServerMoveJob && NextVehicle->data.speed > 0 && !NextVehicle->moving )
+				if ( NextVehicle->ServerMoveJob && NextVehicle->data.speedCur > 0 && !NextVehicle->moving )
 				{
 					// restart movejob
 					NextVehicle->ServerMoveJob->calcNextDir();
@@ -2428,7 +2429,7 @@ void cServer::makeTurnEnd ()
 					continue;
 				}
 			}
-			if ( Building->data.can_attack && Building->refreshData() )
+			if ( Building->data.canAttack && Building->refreshData() )
 			{
 				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
 				{
@@ -2543,19 +2544,19 @@ void cServer::checkDefeats ()
 			cVehicle *Vehicle = Player->VehicleList;
 			while ( Vehicle )
 			{
-				if ( Vehicle->data.can_attack || 
-					Vehicle->data.can_build ) break;
+				if ( Vehicle->data.canAttack || !Vehicle->data.canBuild.empty() ) break;
 				Vehicle = Vehicle->next;
 			}
 			if ( Vehicle != NULL ) continue;
 			while ( Building )
 			{
-				if ( !Building->data.is_bridge &&
-					!Building->data.is_connector &&
-					!Building->data.is_expl_mine &&
-					!Building->data.is_pad &&
-					!Building->data.is_platform &&
-					!Building->data.is_road ) break;
+				/*if ( //!Building->data.is_bridge &&
+					!Building->data.is_connector
+//					!Building->data.is_expl_mine &&
+//					!Building->data.is_pad
+//					!Building->data.is_platform
+//					!Building->data.is_road
+					)break;*/
 				Building = Building->next;
 			}
 			if ( Building != NULL ) continue;
@@ -2696,7 +2697,7 @@ void cServer::handleMoveJobs ()
 			//continue path building
 			if ( Vehicle && Vehicle->BuildPath )
 			{
-				if ( Vehicle->data.cargo >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
+				if ( Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding( *Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle ))
 				{
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
@@ -2806,7 +2807,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	int value = 0;
 	bool bigRubble = false;
 
-	if ( vehicle->data.can_drive == DRIVE_AIR && vehicle->FlightHigh != 0 )
+	if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0 )
 	{
 		deleteUnit( vehicle );
 		return;
@@ -2814,58 +2815,58 @@ void cServer::destroyUnit( cVehicle* vehicle )
 
 	//delete all buildings on the field, except connectors
 	cBuildingIterator bi = (*Map)[offset].getBuildings();
-	if ( bi && bi->data.is_connector ) bi++;
+	if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 	
 	while ( !bi.end )
 	{
 		if (!bi->owner) 
 		{
 			value += bi->RubbleValue*2;	
-			if ( bi->data.is_big ) bigRubble = true;
+			if ( bi->data.isBig ) bigRubble = true;
 		}
 		else
 		{
-			value += bi->data.iBuilt_Costs;
+			value += bi->data.buildCosts;
 		}
 		deleteUnit( bi );
 		bi++;
 	}
 
-	if ( vehicle->data.is_big )
+	if ( vehicle->data.isBig )
 	{
 		bigRubble = true;
 		bi = (*Map)[offset + 1].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
+		if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		while ( !bi.end )
 		{
-			value += bi->data.iBuilt_Costs;
+			value += bi->data.buildCosts;
 			deleteUnit( bi );
 			bi++;
 		}
 
 		bi = (*Map)[offset + Map->size].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
+		if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		while ( !bi.end )
 		{
-			value += bi->data.iBuilt_Costs;
+			value += bi->data.buildCosts;
 			deleteUnit( bi );
 			bi++;
 		}
 
 		bi = (*Map)[offset + 1 + Map->size].getBuildings();
-		if ( bi && bi->data.is_connector ) bi++;
+		if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		while ( !bi.end )
 		{
-			value += bi->data.iBuilt_Costs;
+			value += bi->data.buildCosts;
 			deleteUnit( bi );
 			bi++;
 		}
 	}
 
 
-	if ( !vehicle->data.is_human )
+	if ( !vehicle->data.hasCorpse )
 	{
-		value+= vehicle->data.iBuilt_Costs;
+		value += vehicle->data.buildCosts;
 	}
 	if ( value > 0 )
 	{
@@ -2881,10 +2882,9 @@ void cServer::destroyUnit(cBuilding *b)
 	int offset = b->PosX + b->PosY * Map->size;
 	int value = 0;
 	bool big = false;
-	bool isConnector = b->data.is_connector;
 
 	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
-	if ( topBuilding && topBuilding->data.is_big )
+	if ( topBuilding && topBuilding->data.isBig )
 	{
 		big = true;
 		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
@@ -2892,7 +2892,7 @@ void cServer::destroyUnit(cBuilding *b)
 		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
 		while ( building.size() > 0 )
 		{
-			if ( building->owner ) value += building->data.iBuilt_Costs;
+			if ( building->owner ) value += building->data.buildCosts;
 			else value += building->RubbleValue*2;
 			deleteUnit( building );
 		}
@@ -2900,7 +2900,7 @@ void cServer::destroyUnit(cBuilding *b)
 		building = Map->fields[offset + Map->size].getBuildings();
 		while ( building.size() > 0 )
 		{
-			if ( building->owner ) value += building->data.iBuilt_Costs;
+			if ( building->owner ) value += building->data.buildCosts;
 			else value += building->RubbleValue*2;
 			deleteUnit( building );
 		}
@@ -2908,7 +2908,7 @@ void cServer::destroyUnit(cBuilding *b)
 		building = Map->fields[offset + Map->size + 1].getBuildings();
 		while ( building.size() > 0 )
 		{
-			if ( building->owner ) value += building->data.iBuilt_Costs;
+			if ( building->owner ) value += building->data.buildCosts;
 			else value += building->RubbleValue*2;
 			deleteUnit( building );
 		}
@@ -2917,12 +2917,12 @@ void cServer::destroyUnit(cBuilding *b)
 	cBuildingIterator building = Map->fields[offset].getBuildings();
 	while ( building.size() > 0 )
 	{
-		if ( building->owner ) value += building->data.iBuilt_Costs;
+		if ( building->owner ) value += building->data.buildCosts;
 		else value += building->RubbleValue*2;
 		deleteUnit( building );
 	}
 
-	if ( !isConnector || value > 2 )
+	if ( b->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || value > 2 )
 	{
 		addRubble( offset, value/2, big );
 	}
@@ -2987,7 +2987,7 @@ void cServer::addRubble( int offset, int value, bool big )
 	rubble->PosX = offset % Map->size;
 	rubble->PosY = offset / Map->size;
 
-	rubble->data.is_big = big;
+	rubble->data.isBig = big;
 	rubble->RubbleValue = value;
 
 	Map->addBuilding( rubble, offset );
@@ -3048,7 +3048,7 @@ void cServer::deletePlayer( cPlayer *Player )
 		Vehicle = UnitPlayer->VehicleList;
 		while ( Vehicle )
 		{
-			if ( ( Vehicle->data.is_stealth_land || Vehicle->data.is_stealth_sea ) && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
+			if ( Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
 			Vehicle = Vehicle->next;
 		}
 	}
@@ -3136,7 +3136,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
 		}
 		sendUnitData ( Building, Player->Nr );
-		if ( Building->data.is_mine ) sendProduceValues ( Building );
+		if ( Building->data.canMineMaxRes > 0 ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
 		Building = Building->next;
 	}
@@ -3154,13 +3154,13 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( Player->VehicleData[i].version > 1 
-			|| Player->VehicleData[i].iBuilt_Costs != UnitsData.getVehicle (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
 	}
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( Player->BuildingData[i].version > 1 
-			|| Player->BuildingData[i].iBuilt_Costs != UnitsData.getBuilding (i, Player->getClan ()).data.iBuilt_Costs )  // if only costs were researched, the version is not incremented
+			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}
 	// send credits
@@ -3195,7 +3195,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 //--------------------------------------------------------------------------
 bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 {
-	bool bIsAir = ( vehicle->data.can_drive == DRIVE_AIR );
+	bool bIsAir = ( vehicle->data.factorAir > 0 );
 	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, bIsAir, vehicle );
 	if ( !MoveJob->calcPath() )
 	{
@@ -3263,7 +3263,7 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	checkPlayerUnits();
 
 	// let the unit work for his new owner
-	if ( vehicle->data.can_survey )
+	if ( vehicle->data.canSurvey )
 	{
 		sendVehicleResources( vehicle, Map );
 		vehicle->doSurvey();
@@ -3281,7 +3281,7 @@ void cServer::stopVehicleBuilding ( cVehicle *vehicle )
 	vehicle->IsBuilding = false;
 	vehicle->BuildPath = false;
 
-	if ( vehicle->data.can_build == BUILD_BIG )
+	if ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 	{
 		Map->moveVehicle( vehicle, vehicle->BuildBigSavedPos );
 		iPos = vehicle->BuildBigSavedPos;
@@ -3303,13 +3303,13 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 {
 	//TODO: make sure, the stealth vehicle takes the direct diagonal move. Also when two straight moves would be shorter.
 
-	if ( vehicleData.can_drive == DRIVE_AIR ) return;
+	if ( vehicleData.factorAir > 0 ) return;
 
 	//first look for an undetected stealth unit
 	cVehicle* stealthVehicle = Map->fields[PosX+PosY*Server->Map->size].getVehicles();
 	if ( !stealthVehicle ) return;
 	if ( stealthVehicle->owner == vehicleOwner ) return;
-	if ( !stealthVehicle->data.is_stealth_land && !stealthVehicle->data.is_stealth_sea ) return;
+	if ( stealthVehicle->data.isStealthOn == TERRAIN_NONE ) return;
 	if ( stealthVehicle->isDetectedByPlayer( vehicleOwner )) return;
 
 	//make sure a running movement is finished, before starting the side step move
@@ -3344,11 +3344,11 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 			//check costs of the move
 			cPathCalculator pathCalculator(0, 0, 0, 0, Map, stealthVehicle );
 			int costs = pathCalculator.calcNextCost(PosX, PosY, x, y);
-			if ( costs > stealthVehicle->data.speed ) continue;
+			if ( costs > stealthVehicle->data.speedCur ) continue;
 
 			//check whether the vehicle would be detected on the destination field
 			bool detectOnDest = false;
-			if ( stealthVehicle->data.is_stealth_land )
+			if ( stealthVehicle->data.isStealthOn&TERRAIN_GROUND )
 			{
 				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 				{
@@ -3357,7 +3357,7 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 				}
 				if ( Server->Map->IsWater(x+y*Map->size,true) ) detectOnDest = true;
 			}
-			if ( stealthVehicle->data.is_stealth_sea )
+			if ( stealthVehicle->data.isStealthOn&TERRAIN_SEA )
 			{
 				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 				{
@@ -3366,10 +3366,10 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 				}
 				if ( !Server->Map->IsWater(x+y*Map->size, true) ) detectOnDest = true;
 
-				if ( stealthVehicle->data.can_drive == DRIVE_LANDnSEA )
+				if ( stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0 )
 				{
 					cBuilding* b = Map->fields[x+y*Map->size].getBaseBuilding();
-					if ( b && (b->data.is_road || b->data.is_bridge || b->data.is_platform )) detectOnDest = true;
+					if ( b && ( b->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) ) detectOnDest = true;
 				}
 			}
 			if ( detectOnDest ) continue;

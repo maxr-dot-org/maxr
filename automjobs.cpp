@@ -103,7 +103,7 @@ void cAutoMJob::DoAutoMove()
 		{
 			playerMJob = true;
 		}
-		if ( vehicle->ClientMoveJob->bSuspended && vehicle->data.speed )
+		if ( vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur )
 		{
 			Client->addMoveJob( vehicle, vehicle->ClientMoveJob->DestX + vehicle->ClientMoveJob->DestY * Client->Map->size);
 			lastMoveJob = vehicle->ClientMoveJob;

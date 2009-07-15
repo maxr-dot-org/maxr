@@ -35,8 +35,8 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 	this->Map = Map;
 	this->Vehicle = Vehicle;
 	this->group = group;
-	bPlane = Vehicle->data.can_drive == DRIVE_AIR;
-	bShip = Vehicle->data.can_drive == DRIVE_SEA;
+	bPlane = Vehicle->data.factorAir > 0;
+	bShip = Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0;
 
 	Waypoints = NULL;
 	MemBlocks = NULL;
@@ -164,7 +164,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 					bool isInGroup = false;
 					// get the blocking unit
 					cVehicle *blockingUnit;
-					if ( Vehicle->data.can_drive == DRIVE_AIR ) blockingUnit = (*Map)[x+y*Map->size].getPlanes();
+					if ( Vehicle->data.factorAir > 0 ) blockingUnit = (*Map)[x+y*Map->size].getPlanes();
 					else blockingUnit = (*Map)[x+y*Map->size].getVehicles();
 					// check whether the blocking unit is the group
 					for ( unsigned int i = 0; i < group->Size(); i++ )
@@ -306,21 +306,25 @@ int cPathCalculator::heuristicCost ( int srcX, int srcY )
 int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 {
 	int costs, offset;
-	// costs of planes and ships can't be modified
-	if ( bPlane || bShip )
+	// first we check whether the unit can fly
+	if ( Vehicle->data.factorAir > 0 )
 	{
-		if ( srcX != destX && srcY != destY ) return (int)(4*1.5);
-		else return 4;
+		if ( srcX != destX && srcY != destY ) return (int)(4*Vehicle->data.factorAir*1.5);
+		else return (int)(4*Vehicle->data.factorAir);
 	}
-	costs = 4;
 	offset = destX+destY*Map->size;
 	cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
-	if ( Map->IsWater ( offset ) && !building ) costs = 12;
+	if ( Map->terrain[Map->Kacheln[offset]].water && !building && Vehicle->data.factorSea > 0 ) costs = (int)(4*Vehicle->data.factorSea);
+	else if ( Map->terrain[Map->Kacheln[offset]].coast && !building && Vehicle->data.factorCoast > 0 ) costs = (int)(4*Vehicle->data.factorCoast);
+	else if ( Vehicle->data.factorGround > 0 ) costs = (int)(4*Vehicle->data.factorGround);
+	else
+	{
+		Log.write ( "Where can this unit move?", cLog::eLOG_TYPE_NET_WARNING );
+		costs = 4;
+	}
 	// moving on a road is cheaper
-	else if ( building && building->data.is_road ) costs = 2;
-	// for surveyers moving can't be more expensive then 4
-	if ( Vehicle->data.can_survey && costs > 4 ) costs = 4;
+	if ( building && building->data.modifiesSpeed != 0 ) costs = (int)(costs*building->data.modifiesSpeed);
 
 	// mutliplicate with the factor 1.5 for diagonal movements
 	if ( srcX != destX && srcY != destY ) costs = (int)(costs*1.5);
@@ -445,18 +449,18 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 	//check whether the vehicle has to be hided
 	//we check here the next waypoint of the vehicle, so other payers will not see in which direction the vehicle was driving
-	if ( Waypoints && Waypoints->next && Vehicle->data.speed && Server->Map->possiblePlace(Vehicle, Waypoints->next->X, Waypoints->next->Y) )
+	if ( Waypoints && Waypoints->next && Vehicle->data.speedCur && Server->Map->possiblePlace(Vehicle, Waypoints->next->X, Waypoints->next->Y) )
 	{
 		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
 		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
 		{
 			cPlayer* player = Vehicle->DetectedByPlayerList[i];
-			if ( Vehicle->data.is_stealth_land && ( !player->DetectLandMap[offset] && !Server->Map->IsWater(offset) ))
+			if ( (Vehicle->data.isStealthOn&TERRAIN_GROUND) && ( !player->DetectLandMap[offset] && !Server->Map->IsWater(offset) ))
 			{
 				Vehicle->resetDetectedByPlayer( player );
 				i--;
 			}
-			else if ( Vehicle->data.is_stealth_sea && ( !player->DetectSeaMap[offset] && Server->Map->IsWater(offset) ))
+			else if ( (Vehicle->data.isStealthOn&TERRAIN_SEA) && ( !player->DetectSeaMap[offset] && Server->Map->IsWater(offset) ))
 			{
 				Vehicle->resetDetectedByPlayer( player );
 				i--;
@@ -506,11 +510,11 @@ bool cServerMoveJob::checkMove()
 	}
 
 	// not enough waypoints for this move?
-	if ( Vehicle->data.speed < Waypoints->next->Costs )
+	if ( Vehicle->data.speedCur < Waypoints->next->Costs )
 	{
 		Log.write( " Server: Vehicle has not enough waypoints for the next move -> EndForNow: ID: " + iToStr ( Vehicle->iID ) + ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), LOG_TYPE_NET_DEBUG );
-		iSavedSpeed += Vehicle->data.speed;
-		Vehicle->data.speed = 0;
+		iSavedSpeed += Vehicle->data.speedCur;
+		Vehicle->data.speedCur = 0;
 		bEndForNow = true;
 		return true;
 	}
@@ -560,17 +564,17 @@ void cServerMoveJob::moveVehicle()
 {
 	int iSpeed;
 	if ( !Vehicle ) return;
-	if ( Vehicle->data.is_human )
+	if ( Vehicle->data.animationMovement )
 	{
 		iSpeed = MOVE_SPEED/2;
 	}
-	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
+	else if ( !(Vehicle->data.factorAir > 0) && !(Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0) )
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
-		if ( Waypoints && Waypoints->next && building && building->data.is_road ) iSpeed *= 2;
+		if ( Waypoints && Waypoints->next && building && building->data.modifiesSpeed ) iSpeed = (int)(iSpeed/building->data.modifiesSpeed);
 	}
-	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
+	else if ( Vehicle->data.factorAir > 0 ) iSpeed = MOVE_SPEED*2;
 	else iSpeed = MOVE_SPEED;
 
 	setOffset(Vehicle, iNextDir, iSpeed );
@@ -598,7 +602,7 @@ void cServerMoveJob::doEndMoveVehicle()
 		bFinished = true;
 	}
 
-	Vehicle->data.speed += iSavedSpeed;
+	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed ( Waypoints->Costs );
 
@@ -606,14 +610,14 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	// make mines explode if necessary
 	cBuilding* mine = Map->fields[Vehicle->PosX+Vehicle->PosY*Map->size].getMine();
-	if ( Vehicle->data.can_drive != DRIVE_AIR && mine && mine->owner != Vehicle->owner )
+	if ( Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner )
 	{
 		Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size ));
 		bEndForNow = true;
 	}
 
 	// search for resources if necessary
-	if ( Vehicle->data.can_survey )
+	if ( Vehicle->data.canSurvey )
 	{
 		sendVehicleResources( Vehicle, Map );
 		Vehicle->doSurvey();
@@ -629,7 +633,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	Vehicle->InSentryRange();
 
 	// lay/clear mines if necessary
-	if ( Vehicle->data.can_lay_mines )
+	if ( Vehicle->data.canPlaceMines )
 	{
 		bool bResult = false;
 		if ( Vehicle->LayMines ) bResult = Vehicle->layMine();
@@ -650,7 +654,7 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	//workaround for repairing/reloading
 	cBuilding* b = (*Server->Map)[Vehicle->PosX+Vehicle->PosY*Server->Map->size].getBuildings();
-	if ( Vehicle->data.can_drive == DRIVE_AIR && b && b->owner == Vehicle->owner && b->data.is_pad )
+	if ( Vehicle->data.factorAir > 0 && b && b->owner == Vehicle->owner && b->data.canBeLandedOn )
 	{
 		Vehicle->FlightHigh = 0;
 	}
@@ -948,7 +952,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			setVehicleToCoords( iServerPositionX, iServerPositionY );
 			if ( bEndForNow ) Client->addActiveMoveJob(this);
 			this->iSavedSpeed = iSavedSpeed;
-			Vehicle->data.speed = 0;
+			Vehicle->data.speedCur = 0;
 			if ( Vehicle == Client->SelectedVehicle ) Vehicle->ShowDetails();
 			bSuspended = true;
 			bEndForNow = true;
@@ -1005,8 +1009,8 @@ void cClientMoveJob::moveVehicle()
 
 	if (!Vehicle->moving)
 	{
-		//check remaining speed
-		if ( Vehicle->data.speed < Waypoints->next->Costs )
+		//check remaining speedCur
+		if ( Vehicle->data.speedCur < Waypoints->next->Costs )
 		{
 			bSuspended = true;
 			bEndForNow = true;
@@ -1024,23 +1028,23 @@ void cClientMoveJob::moveVehicle()
 	}
 
 	int iSpeed;
-	if ( Vehicle->data.is_human )
+	if ( Vehicle->data.animationMovement )
 	{
 		Vehicle->WalkFrame++;
 		if ( Vehicle->WalkFrame >= 13 ) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED/2;
 	}
-	else if ( !(Vehicle->data.can_drive == DRIVE_AIR) && !(Vehicle->data.can_drive == DRIVE_SEA) )
+	else if ( !(Vehicle->data.factorAir > 0) && !(Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0) )
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
-		if ( Waypoints && Waypoints->next && building && building->data.is_road ) iSpeed *= 2;
+		if ( Waypoints && Waypoints->next && building && building->data.modifiesSpeed ) iSpeed = (int)(iSpeed/building->data.modifiesSpeed);
 	}
-	else if ( Vehicle->data.can_drive == DRIVE_AIR ) iSpeed = MOVE_SPEED*2;
+	else if ( Vehicle->data.factorAir > 0 ) iSpeed = MOVE_SPEED*2;
 	else iSpeed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( SettingsData.bMakeTracks && Vehicle->data.make_tracks && !Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size,false ) &&!
+	if ( SettingsData.bMakeTracks && Vehicle->data.makeTracks && !Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size,false ) &&!
 	        ( Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X+Waypoints->next->Y*Map->size]].water ) &&
 	        ( Vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
 	{
@@ -1115,7 +1119,7 @@ void cClientMoveJob::doEndMoveVehicle ()
 		return;
 	}
 
-	Vehicle->data.speed += iSavedSpeed;
+	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed ( Waypoints->next->Costs );
 	Vehicle->moving = false;
@@ -1192,10 +1196,10 @@ void cClientMoveJob::stopMoveSound()
 	if ( Vehicle == Client->SelectedVehicle )
 	{
 		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
-		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size ) && ! ( building && ( building->data.is_platform || building->data.is_bridge || building->data.is_road || ( building->data.is_expl_mine && !building->data.build_on_water ) ) );
+		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size );
 
 		StopFXLoop ( Client->iObjectStream );
-		if ( water ) PlayFX ( Vehicle->typ->StopWater );
+		if ( water && Vehicle->data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || Vehicle->data.factorGround == 0 ) ) ) ) PlayFX ( Vehicle->typ->StopWater );
 		else PlayFX ( Vehicle->typ->Stop );
 
 		Client->iObjectStream = Vehicle->playStream();

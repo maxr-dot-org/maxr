@@ -245,7 +245,7 @@ cBuilding* cMapField::getTopBuilding()
 	cBuildingIterator buildingIterator( &buildings );
 
 
-	if ( buildingIterator && !buildingIterator->data.is_base && buildingIterator->owner )
+	if ( buildingIterator && buildingIterator->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && buildingIterator->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH && buildingIterator->owner )
 	{
 		return buildingIterator;
 	}
@@ -261,7 +261,7 @@ cBuilding* cMapField::getBaseBuilding()
 	
 	while ( !building.end )
 	{
-		if ( building->data.is_base ) return building;
+		if ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) return building;
 		building++;
 	}
 	
@@ -283,7 +283,7 @@ cBuilding* cMapField::getRubble()
 cBuilding* cMapField::getMine()
 {
 	cBuildingIterator building(&buildings);
-	while ( building && !building->data.is_expl_mine ) building++;
+	while ( building && !building->data.explodesOnContact ) building++;
 
 	return building;
 }
@@ -309,21 +309,10 @@ cMapField& cMap::operator[]( unsigned int offset ) const
 // Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
 bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
 {
-	if ( !terrain[Kacheln[off]].water&&!terrain[Kacheln[off]].coast ) return false;
+	if ( !terrain[Kacheln[off]].water && !terrain[Kacheln[off]].coast ) return false;
 
-
-//  if(game->ActivePlayer->ScanMap[off]&&GO[off].base&&(GO[off].base->data.is_platform||GO[off].base->data.is_bridge)){
-	/*if(game->ActivePlayer->ScanMap[off]&&GO[off].base&&(GO[off].base->data.is_platform||(is_ship?0:GO[off].base->data.is_bridge))){
-	  return false;
-	}*/
-	if ( not_coast )
-	{
-		return terrain[Kacheln[off]].water;
-	}
-	else
-	{
-		return terrain[Kacheln[off]].water||terrain[Kacheln[off]].coast;
-	}
+	if ( not_coast ) return terrain[Kacheln[off]].water;
+	else return terrain[Kacheln[off]].water||terrain[Kacheln[off]].coast;
 }
 
 // Struktur zum laden:
@@ -762,22 +751,22 @@ int cMap::getMapLevel( cBuilding* building ) const
 {
 	const sUnitData& data = building->data;
 
-	if ( data.build_on_water && data.is_expl_mine ) return 9;
-	if ( data.is_bridge ) return 7;
-	if ( data.is_platform ) return 6;
-	if ( data.is_road ) return 5;
-	if ( !building->owner ) return 4;
-	if ( data.is_expl_mine ) return 3;
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.factorSea > 0 && data.explodesOnContact ) return 9;		// seamine
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) return 7;	// bridge
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.canBeOverbuild ) return 6;	// platform
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) return 5;	// road
+	if ( !building->owner ) return 4;	// rubble
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.factorGround > 0 && data.explodesOnContact ) return 3;	// landmine
 
-	return 1;
+	return 1;	// other buildings
 }
 
 int cMap::getMapLevel( cVehicle* vehicle ) const
 {
-	if ( vehicle->data.can_drive == DRIVE_SEA ) return 8;
-	if ( vehicle->data.can_drive == DRIVE_AIR ) return 0;
+	if ( vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0 ) return 8;	// ships
+	if ( vehicle->data.factorAir > 0 ) return 0;	// planes
 
-	return 2;
+	return 2;	// other vehicles
 }
 
 void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
@@ -787,9 +776,9 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 
 void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
-	if ( building->data.is_base && building->data.is_big ) return; //big base building are not implemented
+	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_NORMAL && building->data.isBig ) return; //big base building are not implemented
 
-	if ( building->data.is_big )
+	if ( building->data.isBig )
 	{
 		//assumption: there is no rubble under a top building
 		//so a big building will always be the first one
@@ -819,7 +808,7 @@ void cMap::addVehicle(cVehicle *vehicle, unsigned int x, unsigned int y )
 
 void cMap::addVehicle(cVehicle *vehicle, unsigned int offset )
 {
-	if ( vehicle->data.can_drive == DRIVE_AIR )
+	if ( vehicle->data.factorAir > 0 )
 	{
 		fields[offset].planes.Insert(0, vehicle );
 	}
@@ -839,7 +828,7 @@ void cMap::deleteBuilding( cBuilding* building )
 		if ( (*buildings)[i] == building ) buildings->Delete(i);
 	}
 
-	if ( building->data.is_big )
+	if ( building->data.isBig )
 	{
 		//big building must be a top building or rubble
 		//assumption: there is no rubble under a top building
@@ -863,7 +852,7 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 {
 	int offset = vehicle->PosX + vehicle->PosY *size;
 
-	if ( vehicle->data.can_drive == DRIVE_AIR )
+	if ( vehicle->data.factorAir > 0 )
 	{
 		cList<cVehicle*>& planes = fields[offset].planes;
 		if ( planes.Size() <= 0 ) return;
@@ -885,7 +874,7 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 			fields[offset].vehicles.Delete(0);
 
 			//check, whether the vehicle is centered on 4 map fields
-			if ( vehicle->data.is_big )
+			if ( vehicle->data.isBig )
 			{
 				offset++;
 				fields[offset].vehicles.Delete(0);
@@ -911,7 +900,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 	vehicle->PosX = newOffset % size;
 	vehicle->PosY = newOffset / size;
 
-	if ( vehicle->data.can_drive == DRIVE_AIR )
+	if ( vehicle->data.factorAir > 0 )
 	{
 		cList<cVehicle*>& planes = fields[oldOffset].planes;
 		for ( unsigned int i = 0; i < planes.Size(); i++ )
@@ -929,7 +918,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 		}
 
 		//check, whether the vehicle is centered on 4 map fields
-		if ( vehicle->data.is_big )
+		if ( vehicle->data.isBig )
 		{
 			oldOffset++;
 			fields[oldOffset].vehicles.Delete(0);
@@ -938,7 +927,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 			oldOffset--;
 			fields[oldOffset].vehicles.Delete(0);
 
-			vehicle->data.is_big = false;
+			vehicle->data.isBig = false;
 		}
 
 		fields[newOffset].vehicles.Insert(0, vehicle );
@@ -952,11 +941,11 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 {
-	if ( vehicle->data.is_big ) 
+	if ( vehicle->data.isBig ) 
 	{
 		Log.write("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR );
 		//calling this this function twice is allways an error.
-		//nevertheless try to proceed by resetting the data.is_big flag
+		//nevertheless try to proceed by resetting the data.isBig flag
 		moveVehicle(vehicle, offset);
 	}
 
@@ -974,7 +963,7 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 	offset--;
 	fields[offset].vehicles.Insert(0, vehicle );
 
-	vehicle->data.is_big = true;
+	vehicle->data.isBig = true;
 }
 
 bool cMap::possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player ) const
@@ -1000,68 +989,49 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 	//search first building, that is not a connector
 	cBuildingIterator building = fields[offset].getBuildings();
-	if ( building && building->data.is_connector ) building++;
+	if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) building++;
 
-	switch ( vehicleData.can_drive )
+	if ( vehicleData.factorAir > 0 )
 	{
-		case DRIVE_AIR:
+		if ( player && !player->ScanMap[offset] ) return true;
+		//only one plane per field for now
+		if ( fields[offset].planes.Size() > 0 ) return false;
+	}
+	if ( vehicleData.factorGround > 0 )
+	{
+		if ( terrain[Kacheln[offset]].blocked ) return false;
+		
+		if ( ( terrain[Kacheln[offset]].water && vehicleData.factorSea == 0  ) || ( terrain[Kacheln[offset]].coast && vehicleData.factorCoast == 0 ) )
 		{
-			if ( player && !player->ScanMap[offset] ) return true;
-			//only one plane per field for now
-			if ( fields[offset].planes.Size() > 0 ) return false;
-			break;
+			if ( player && !player->ScanMap[offset] ) return false;
+
+			//vehicle can drive on water, if there is a bridge, platform or road
+			if ( !building ) return false;
+			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) ) return false;
 		}
-		case DRIVE_LAND:
+		if ( player && !player->ScanMap[offset] ) return true;			
+
+		if ( fields[offset].vehicles.Size() > 0 ) return false;
+		if ( building )
 		{
-			if ( terrain[Kacheln[offset]].blocked ) return false;
-			
-			if ( terrain[Kacheln[offset]].water || (terrain[Kacheln[offset]].coast && !vehicleData.fFactor_Coast) )
-			{
-				if ( player && !player->ScanMap[offset] ) return false;
-
-				//vehicle can drive on water, if there is a bridge, platform or road
-				if ( !building ) return false;
-				if ( !( building->data.is_road || building->data.is_bridge || building->data.is_platform || ( building->data.is_expl_mine && !building->data.build_on_water ))) return false;
-			}
-			if ( player && !player->ScanMap[offset] ) return true;			
-
-			if ( fields[offset].vehicles.Size() > 0 ) return false;
-			if ( building )
-			{
-				//only base buildings and rubbe is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
-				if ( !(building->data.is_base || !building->owner ) ) return false;
-			}
-			break;
+			//only base buildings and rubbe is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
+			if ( !(building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH || !building->owner ) ) return false;
 		}
-		case DRIVE_LANDnSEA:
+	}
+	else if ( vehicleData.factorSea > 0 )
+	{
+		if ( terrain[Kacheln[offset]].blocked ) return false;
+
+		if ( !terrain[Kacheln[offset]].water && ( !terrain[Kacheln[offset]].coast || vehicleData.factorCoast == 0 ) ) return false;
+
+		if ( player && !player->ScanMap[offset] ) return true;
+
+		if ( fields[offset].vehicles.Size() > 0 ) return false;
+
+		if ( building && building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH )
 		{
-			if ( terrain[Kacheln[offset]].blocked ) return false;
-			if ( player && !player->ScanMap[offset] ) return true;
-
-			if ( fields[offset].vehicles.Size() > 0 ) return false;
-
-			if ( building )
-			{
-				//only base buildings and rubble is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
-				if ( !( building->data.is_base || !building->owner ) ) return false;
-			}
-			break;
-		}
-		case DRIVE_SEA:
-		{
-			if ( terrain[Kacheln[offset]].blocked ) return false;
-
-			if ( !terrain[Kacheln[offset]].water && (!terrain[Kacheln[offset]].coast || !vehicleData.fFactor_Coast ) ) return false;
-
-			if ( player && !player->ScanMap[offset] ) return true;
-
-			if ( fields[offset].vehicles.Size() > 0 ) return false;
-			if ( building )
-			{
-				//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
-				if ( !( building->data.is_bridge || building->data.is_expl_mine ) ) return false;
-			}
-			break;
+			//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
+			if ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || building->data.factorSea == 0 || !building->data.explodesOnContact ) return false;
 		}
 	}
 
@@ -1081,53 +1051,46 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 	cMapField& field = fields[offset];	
 
 	cBuildingIterator bi = field.getBuildings();
-	if ( !bi.end && bi->data.is_connector )
+	if ( !bi.end && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 	{
 		//can not build connectors on connectors
-		if ( buildingData.is_connector ) return false;
+		if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) return false;
 
 		//use next building under the connector for the next checks
 		bi++;
 	}
 
-	//don't check terrain for connectors
-	if ( !buildingData.is_connector )
+	if ( buildingData.factorSea )
 	{
-		if ( buildingData.build_on_water )
-		{
-			if ( !buildingData.is_bridge && !buildingData.is_platform && !terrain[Kacheln[offset]].water ) return false;
-			if ( !terrain[Kacheln[offset]].water && !terrain[Kacheln[offset]].coast ) return false;
+		if ( !terrain[Kacheln[offset]].water && buildingData.factorGround == 0 && buildingData.factorCoast == 0 ) return false;
+		if ( terrain[Kacheln[offset]].coast && buildingData.factorCoast == 0 ) return false;
 
-			if ( !bi.end )
-			{
-				// only brigde and mine can be together on the same field
-				if ( !buildingData.is_expl_mine ) return false;
-				if ( !bi->data.is_bridge ) return false;
-			}	
-		}
-		else 
+		if ( !bi.end )
 		{
-			if ( terrain[Kacheln[offset]].water || terrain[Kacheln[offset]].coast )
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
+		}	
+	}
+	else if ( buildingData.factorGround )
+	{
+		if ( terrain[Kacheln[offset]].water || ( terrain[Kacheln[offset]].coast && buildingData.factorCoast == 0 ) )
+		{
+			//can not be built on water, but terrain is water
+			//so a base building is required
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && ( !bi || bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
+		}
+		
+		if ( !bi.end )
+		{
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE )
 			{
-				//can not be built on water, but terrain is water
-				//so a base building is required
-				if ( !bi ) return false;
+				// cannot build normal buildings over normal buildings
+				if ( ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) || ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
 			}
 		}
-		//can build normal buildings only on platforms and roads
-		if ( bi && !( bi->data.is_road || bi->data.is_platform ) ) return false;
 	}
-	else
-	{
-		//can build connectors on platforms, roads, bridges and explodemines as well
-		if ( bi && !( bi->data.is_road || bi->data.is_platform || bi->data.is_expl_mine || bi->data.is_bridge ) ) return false;
-	}
-
-	//can not build a road on a road
-	if ( bi && bi->data.is_road && buildingData.is_road ) return false;
 	
 	//can not build on rubble
-	if (bi && !bi->owner ) return false;
+	if (bi && !bi->owner && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE ) return false;
 
 	if ( field.vehicles.Size() > 0 )
 	{

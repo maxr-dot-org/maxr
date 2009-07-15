@@ -92,23 +92,23 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	RepeatBuild = false;
 	hasBeenAttacked = false;
 
-	if ( data.can_attack != ATTACK_NONE ) bSentryStatus = true;
+	if ( data.canAttack != TERRAIN_NONE ) bSentryStatus = true;
 	else bSentryStatus = false;
 	
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
 	Disabled = 0;
-	data.hit_points = data.max_hit_points;
-	data.ammo = data.max_ammo;
+	data.hitpointsCur = data.hitpointsMax;
+	data.ammoCur = data.ammoMax;
 	SubBase = NULL;
 	BuildSpeed = 0;
 	BuildList = NULL;
 
-	if ( data.can_build )
+	if ( !data.canBuild.empty() )
 		BuildList = new cList<sBuildList*>;
 
-	if ( data.is_big )
+	if ( data.isBig )
 	{
 		DamageFXPointX  = random(64) + 32;
 		DamageFXPointY  = random(64) + 32;
@@ -204,7 +204,7 @@ string cBuilding::getStatusStr ()
 	if ( IsWorking )
 	{
 		// Factory:
-		if (data.can_build && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
+		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
 		{
 			sBuildList *ptr;
 			ptr = (*BuildList)[0];
@@ -216,13 +216,13 @@ string cBuilding::getStatusStr ()
 
 				iRound = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
 				sText = lngPack.i18n ( "Text~Comp~Producing" ) + ": ";
-				sText += ( string ) owner->VehicleData[ptr->typ->nr].szName + " (";
+				sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 				sText += iToStr ( iRound ) + ")";
 
 				if ( font->getTextWide ( sText, FONT_LATIN_SMALL_WHITE ) > 126 )
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" ) + ":\n";
-					sText += ( string ) owner->VehicleData[ptr->typ->nr].szName + " (";
+					sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
 					sText += iToStr ( iRound ) + ")";
 				}
 
@@ -235,7 +235,7 @@ string cBuilding::getStatusStr ()
 		}
 
 		// Research Center
-		if (data.can_research && owner == Client->ActivePlayer)
+		if (data.canReasearch && owner == Client->ActivePlayer)
 		{
 			string sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -260,7 +260,7 @@ string cBuilding::getStatusStr ()
 		}
 
 		// Goldraffinerie:
-		if ( data.gold_need && owner == Client->ActivePlayer )
+		if ( data.convertsGold && owner == Client->ActivePlayer )
 		{
 			string sText;
 			sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
@@ -292,12 +292,12 @@ string cBuilding::getStatusStr ()
 //--------------------------------------------------------------------------
 int cBuilding::refreshData ()
 {
-	if ( data.shots < data.max_shots )
+	if ( data.shotsCur < data.shotsMax )
 	{
-		if ( data.ammo >= data.max_shots )
-			data.shots = data.max_shots;
+		if ( data.ammoCur >= data.shotsMax )
+			data.shotsCur = data.shotsMax;
 		else
-			data.shots = data.ammo;
+			data.shotsCur = data.ammoCur;
 		return 1;
 	}
 	return 0;
@@ -389,7 +389,7 @@ void cBuilding::GenerateName ()
 		name += rome;
 		name += " ";
 		// object name
-		name += ( string ) data.szName;
+		name += ( string ) data.name;
 	}
 	else
 	{
@@ -437,12 +437,12 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	float factor = (float)(Client->Hud.Zoom/64.0);
 	
 	// draw the damage effects
-	if ( Client->iTimer1 && !data.is_base && !data.is_connector && data.hit_points < data.max_hit_points && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->iTimer1 && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
-		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hit_points / data.max_hit_points ) );
+		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
 
-		if ( data.is_big && intense > 50 )
+		if ( data.isBig && intense > 50 )
 		{
 			intense -= 50;
 			Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX2, PosY*64 + DamageFXPointY2, intense );
@@ -493,7 +493,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw the effect if necessary
-	if ( data.has_effect && SettingsData.bAnimations && ( IsWorking || !data.can_work ) )
+	if ( data.powerOnGraphic && SettingsData.bAnimations && ( IsWorking || !data.canWork ) )
 	{
 		tmp = dest;
 		SDL_SetAlpha ( typ->eff, SDL_SRCALPHA, EffectAlpha );
@@ -559,7 +559,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	{
 		SDL_Rect d, t;
 		int nr = *((unsigned int*)(owner->color->pixels));
-		int max = data.is_big ? (Client->Hud.Zoom - 1) * 2 : Client->Hud.Zoom - 1;
+		int max = data.isBig ? (Client->Hud.Zoom - 1) * 2 : Client->Hud.Zoom - 1;
 
 		d.x = dest.x + 1;
 		d.y = dest.y + 1;
@@ -586,7 +586,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	if ( selected )
 	{
 		SDL_Rect d, t;
-		int max = data.is_big ? Client->Hud.Zoom * 2 : Client->Hud.Zoom;
+		int max = data.isBig ? Client->Hud.Zoom * 2 : Client->Hud.Zoom;
 		int len = max / 4;
 
 		d.x = dest.x + 1;
@@ -630,8 +630,8 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	if ( Client->Hud.Treffer )
 		DrawHelthBar();
 
-	//draw ammo bar
-	if ( Client->Hud.Munition && data.can_attack && data.max_ammo > 0 )
+	//draw ammoCur bar
+	if ( Client->Hud.Munition && data.canAttack && data.ammoMax > 0 )
 		DrawMunBar();
 
 	//draw status
@@ -662,7 +662,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	// check, if it is dirt:
 	if ( !owner )
 	{
-		if ( data.is_big )
+		if ( data.isBig )
 		{
 			if ( !UnitsData.dirt_big ) return;
 			src.w = src.h = (int)(UnitsData.dirt_big_org->h*factor);
@@ -680,7 +680,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		// draw the shadows
 		if ( SettingsData.bShadows )
 		{
-			if ( data.is_big )
+			if ( data.isBig )
 			{
 				CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, factor );
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, surface, &tmp );
@@ -695,7 +695,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		// draw the building
 		tmp = dest;
 
-		if ( data.is_big )
+		if ( data.isBig )
 		{
 			CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, factor);
 			SDL_BlitSurface ( UnitsData.dirt_big, &src, surface, &tmp );
@@ -710,7 +710,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	}
 
 	// read the size:
-	if ( data.has_frames )
+	if ( data.hasFrames )
 	{
 		src.w = Client->Hud.Zoom;
 		src.h = Client->Hud.Zoom;
@@ -723,9 +723,9 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	
 	// draw the concrete
 	tmp = dest;
-	if ( !data.build_on_water && !data.is_expl_mine )
+	if ( data.hasBetonUnderground )
 	{
-		if ( data.is_big )
+		if ( data.isBig )
 		{
 			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
 
@@ -739,29 +739,27 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		else
 		{
 			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
-			if ( !data.is_road && !data.is_connector )
-			{
-				if ( StartUp && SettingsData.bAlphaEffects )
-					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
-				else
-					SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
-
-				SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, surface, &tmp );
+			if ( StartUp && SettingsData.bAlphaEffects )
+				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
+			else
 				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
-			}
+
+			SDL_BlitSurface ( UnitsData.ptr_small_beton, NULL, surface, &tmp );
+			SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
 		}
 	}
 
 	tmp = dest;
  
 	// draw the connector slots:
-	if ( (this->SubBase && !StartUp) || data.is_connector )
+	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic )
 	{
 		drawConnectors (  surface, dest );
+		if ( data.isConnectorGraphic ) return;
 	}
 
 	// draw the shadows
-	if ( SettingsData.bShadows && !data.is_connector )
+	if ( SettingsData.bShadows )
 	{
 		if ( StartUp && SettingsData.bAlphaEffects ) 
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
@@ -772,50 +770,41 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		blittAlphaSurface ( typ->shw, NULL, surface, &tmp );
 	}
 
-	// blit the players color
-	if ( !data.is_road && !data.is_connector )
+	// blit the players color and building graphic
+	if ( data.hasPlayerColor ) SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+	else SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
+
+	if ( data.hasFrames )
 	{
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-
-		if ( data.has_frames )
+		if ( data.isAnimated && SettingsData.bAnimations && !Disabled )
 		{
-			if ( data.is_annimated && SettingsData.bAnimations && !Disabled )
-			{
-				src.x = ( Client->iFrame % data.has_frames ) * Client->Hud.Zoom;
-			}
-			else
-			{
-				src.x = dir * Client->Hud.Zoom;
-			}
-
-			CHECK_SCALING( typ->img, typ->img_org, factor);
-			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
-
-			src.x = 0;
-		}
-		else if ( data.is_mine )
-		{
-			CHECK_SCALING( typ->img, typ->img_org, factor);
-			src.x = 0;
-			src.y = 0;
-			src.w = (int) (128 * factor);
-			src.h = (int) (128 * factor);
-			//select clan image
-			if ( owner->getClan() != -1 )
-				src.x = (int) ((owner->getClan() + 1) * 128 * factor);
-			SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
-		
+			src.x = ( Client->iFrame % data.hasFrames ) * Client->Hud.Zoom;
 		}
 		else
 		{
-			CHECK_SCALING( typ->img, typ->img_org, factor);
-			SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
+			src.x = dir * Client->Hud.Zoom;
 		}
-	}
-	else if ( !data.is_connector )
-	{
-		SDL_FillRect ( GraphicsData.gfx_tmp, NULL, 0xFF00FF );
 
+		CHECK_SCALING( typ->img, typ->img_org, factor);
+		SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
+
+		src.x = 0;
+	}
+	else if ( data.hasClanLogos )
+	{
+		CHECK_SCALING( typ->img, typ->img_org, factor);
+		src.x = 0;
+		src.y = 0;
+		src.w = (int) (128 * factor);
+		src.h = (int) (128 * factor);
+		//select clan image
+		if ( owner->getClan() != -1 )
+			src.x = (int) ((owner->getClan() + 1) * 128 * factor);
+		SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
+	
+	}
+	else
+	{
 		CHECK_SCALING( typ->img, typ->img_org, factor);
 		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 	}
@@ -826,15 +815,10 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	src.x = 0;
 	src.y = 0;
 	
-	if ( !data.is_connector )
-	{
-		if ( StartUp && SettingsData.bAlphaEffects )
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
-		else
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+	if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+	else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
-	}
+	SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
 }
 
 //--------------------------------------------------------------------------
@@ -844,37 +828,37 @@ int cBuilding::GetMenuPointAnz ()
 {
 	int nr = 2;
 
-	if ( !typ->data.is_road )
+	if ( typ->data.canSelfDestroy )
 		nr++;
 
-	if ( typ->data.can_build )
+	if ( !typ->data.canBuild.empty() )
 		nr++;
 
-	if ( typ->data.can_load == TRANS_METAL || typ->data.can_load == TRANS_OIL || typ->data.can_load == TRANS_GOLD )
+	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 		nr++;
 
-	if ( typ->data.can_attack && data.shots )
+	if ( typ->data.canAttack && data.shotsCur )
 		nr++;
 
-	if ( typ->data.can_work && ( IsWorking || typ->data.can_build == BUILD_NONE ) )
+	if ( typ->data.canWork && ( IsWorking || typ->data.canBuild.empty() ) )
 		nr++;
 
-	if ( typ->data.is_mine )
+	if ( typ->data.canMineMaxRes > 0 )
 		nr++;
 
-	if ( bSentryStatus || data.can_attack )
+	if ( bSentryStatus || data.canAttack )
 		nr++;
 
-	if ( typ->data.can_load == TRANS_VEHICLES || typ->data.can_load == TRANS_MEN || typ->data.can_load == TRANS_AIR )
+	if ( typ->data.storageUnitsMax > 0 )
 		nr += 2;
 
-	if ( typ->data.can_research && IsWorking )
+	if ( typ->data.canReasearch && IsWorking )
 		nr++;
 
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
 		nr += 2;
 
-	if ( data.gold_need )
+	if ( data.convertsGold )
 		nr++;
 
 	return nr;
@@ -893,7 +877,7 @@ SDL_Rect cBuilding::GetMenuSize ()
 	dest.w = 42;
 	size = Client->Hud.Zoom;
 
-	if ( data.is_big )
+	if ( data.isBig )
 		size *= 2;
 
 	if ( dest.x + size + 42 >= SettingsData.iScreenW - 12 )
@@ -947,7 +931,7 @@ void cBuilding::SelfDestructionMenu ()
 void cBuilding::updateNeighbours (cMap *Map)
 {
 	int iPosOff = PosX+PosY*Map->size;
-	if ( !data.is_big )
+	if ( !data.isBig )
 	{
 		owner->base.checkNeighbour ( iPosOff-Map->size, this );
 		owner->base.checkNeighbour ( iPosOff+1, this );
@@ -981,7 +965,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 			{m=true;}else{m=false;}							\
 	}														\
 
-	if ( !data.is_big )
+	if ( !data.isBig )
 	{
 		CHECK_NEIGHBOUR ( PosX    , PosY - 1, BaseN )
 		CHECK_NEIGHBOUR ( PosX + 1, PosY    , BaseE )
@@ -1023,7 +1007,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 	src.x = 0;
 	src.h = src.w = UnitsData.ptr_connector->h;
 	
-	if ( !data.is_big )
+	if ( !data.isBig )
 	{
 		if      (  BaseN &&  BaseE &&  BaseS &&  BaseW ) src.x = 15;
 		else if (  BaseN &&  BaseE &&  BaseS && !BaseW ) src.x = 13; 
@@ -1043,7 +1027,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		else if ( !BaseN && !BaseE && !BaseS && !BaseW ) src.x =  0;
 		src.x *= src.h;
 
-		if ( src.x != 0 || data.is_connector )
+		if ( src.x != 0 || data.isConnectorGraphic )
 		{
 			//blit shadow
 			temp = dest;
@@ -1142,17 +1126,17 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// needs human workers:
-	if ( data.human_need )
-		if ( SubBase->HumanNeed + data.human_need > SubBase->HumanProd )
+	if ( data.needsHumans )
+		if ( SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd )
 		{
 			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
 
 	// needs gold:
-	if ( data.gold_need )
+	if ( data.convertsGold )
 	{
-		if ( data.gold_need + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
+		if ( data.convertsGold + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
 		{
 			sendChatMessageToClient( "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
@@ -1160,7 +1144,7 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// needs raw material:
-	if ( data.metal_need )
+	if ( data.needsMetal )
 	{
 		if ( SubBase->MetalNeed + min(MetalPerRound, (*BuildList)[0]->metall_remaining) > SubBase->MetalProd + SubBase->Metal )
 		{
@@ -1170,18 +1154,18 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// needs oil:
-	if ( data.oil_need )
+	if ( data.needsOil )
 	{
 		// check if there is enough Oil for the generators (current prodiction + reserves)
-		if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->getMaxOilProd() )
+		if ( data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getMaxOilProd() )
 		{
 			sendChatMessageToClient ( "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
-		else if ( data.oil_need + SubBase->OilNeed > SubBase->Oil + SubBase->getOilProd() )
+		else if ( data.needsOil + SubBase->OilNeed > SubBase->Oil + SubBase->getOilProd() )
 		{
 			//increase oil production
-			int missingOil = data.oil_need + SubBase->OilNeed - (SubBase->Oil + SubBase->getOilProd());
+			int missingOil = data.needsOil + SubBase->OilNeed - (SubBase->Oil + SubBase->getOilProd());
 
 			int metal = SubBase->getMetalProd();
 			int gold = SubBase->getGoldProd();
@@ -1207,9 +1191,9 @@ void cBuilding::ServerStartWork ()
 	IsWorking = true;
 
 	//set mine values. This has to be undone, if the energy is insufficient
-	if ( data.is_mine )
+	if ( data.canMineMaxRes > 0 )
 	{
-		int mineFree = MAX_MINE_PROD;
+		int mineFree = data.canMineMaxRes;
 
 		SubBase->changeMetalProd( MaxMetalProd );
 		mineFree -= MaxMetalProd;
@@ -1221,17 +1205,17 @@ void cBuilding::ServerStartWork ()
 	}
 
 	// Energy consumers:
-	if ( data.energy_need )
+	if ( data.needsEnergy )
 	{
-		if ( data.energy_need + SubBase->EnergyNeed > SubBase->EnergyProd )
+		if ( data.needsEnergy + SubBase->EnergyNeed > SubBase->EnergyProd )
 		{
 			//try to increase energy production
-			if ( !SubBase->increaseEnergyProd( data.energy_need + SubBase->EnergyNeed - SubBase->EnergyProd ) )
+			if ( !SubBase->increaseEnergyProd( data.needsEnergy + SubBase->EnergyNeed - SubBase->EnergyProd ) )
 			{
 				IsWorking = false;
 
 				//reset mine values
-				if ( data.is_mine )
+				if ( data.canMineMaxRes > 0 )
 				{
 					int metal = SubBase->getMetalProd();
 					int oil =  SubBase->getOilProd();
@@ -1255,23 +1239,23 @@ void cBuilding::ServerStartWork ()
 
 	//-- everything is ready to start the building
 
-	SubBase->EnergyProd += data.energy_prod;
-	SubBase->EnergyNeed += data.energy_need;
+	SubBase->EnergyProd += data.produceEnergy;
+	SubBase->EnergyNeed += data.needsEnergy;
 
-	SubBase->HumanNeed += data.human_need;
-	SubBase->HumanProd += data.human_prod;
+	SubBase->HumanNeed += data.needsHumans;
+	SubBase->HumanProd += data.produceHumans;
 
-	SubBase->OilNeed += data.oil_need;
+	SubBase->OilNeed += data.needsOil;
 
 	// raw material consumer:
-	if ( data.metal_need )
+	if ( data.needsMetal )
 		SubBase->MetalNeed += min(MetalPerRound, (*BuildList)[0]->metall_remaining);
 
 	// gold consumer:
-	SubBase->GoldNeed += data.gold_need;
+	SubBase->GoldNeed += data.convertsGold;
 
 	// research building
-	if ( data.can_research )
+	if ( data.canReasearch )
 	{
 		owner->ResearchCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
@@ -1298,7 +1282,7 @@ void cBuilding::ClientStartWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails();
 	}
-	if (data.can_research) 
+	if (data.canReasearch) 
 		owner->startAResearch (researchArea);
 }
 
@@ -1314,38 +1298,38 @@ void cBuilding::ServerStopWork ( bool override )
 	}
 
 	// energy generators
-	if ( data.energy_prod )
+	if ( data.produceEnergy )
 	{
-		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.energy_prod && !override )
+		if ( SubBase->EnergyNeed > SubBase->EnergyProd - data.produceEnergy && !override )
 		{
 			sendChatMessageToClient ( "Text~Comp~Energy_IsNeeded", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
 
-		SubBase->EnergyProd -= data.energy_prod;
-		SubBase->OilNeed -= data.oil_need;
+		SubBase->EnergyProd -= data.produceEnergy;
+		SubBase->OilNeed -= data.needsOil;
 	}
 
 	IsWorking = false;
 
 	// Energy consumers:
-	if ( data.energy_need )
-		SubBase->EnergyNeed -= data.energy_need;
+	if ( data.needsEnergy )
+		SubBase->EnergyNeed -= data.needsEnergy;
 
 	// raw material consumer:
-	if ( data.metal_need )
+	if ( data.needsMetal )
 		SubBase->MetalNeed -= min(MetalPerRound, (*BuildList)[0]->metall_remaining);
 
 	// gold consumer
-	if ( data.gold_need )
-		SubBase->GoldNeed -= data.gold_need;
+	if ( data.convertsGold )
+		SubBase->GoldNeed -= data.convertsGold;
 
 	// human consumer
-	if ( data.human_need )
-		SubBase->HumanNeed -= data.human_need;
+	if ( data.needsHumans )
+		SubBase->HumanNeed -= data.needsHumans;
 
 	// Minen:
-	if ( data.is_mine )
+	if ( data.canMineMaxRes > 0 )
 	{
 		int metal = SubBase->getMetalProd();
 		int oil =  SubBase->getOilProd();
@@ -1361,7 +1345,7 @@ void cBuilding::ServerStopWork ( bool override )
 
 	}
 	
-	if ( data.can_research )
+	if ( data.canReasearch )
 	{
 		owner->ResearchCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
@@ -1386,7 +1370,7 @@ void cBuilding::ClientStopWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails ();
 	}
-	if (data.can_research) 
+	if (data.canReasearch) 
 		owner->stopAResearch (researchArea);
 }
 
@@ -1405,7 +1389,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 		if ( v->owner != Client->ActivePlayer )
 			return false;
 
-		if ( v->data.can_transport != data.can_load )
+		if ( v->data.storeResType != data.storeResType )
 			return false;
 
 		if ( v->IsBuilding || v->IsClearing )
@@ -1415,7 +1399,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 		{
 			b = SubBase->buildings[i];
 
-			if ( b->data.is_big )
+			if ( b->data.isBig )
 			{
 				if ( x < b->PosX - 1 || x > b->PosX + 2 || y < b->PosY - 1 || y > b->PosY + 2 )
 					continue;
@@ -1445,7 +1429,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 			if ( b->owner != Client->ActivePlayer )
 				return false;
 
-			if ( data.can_load != b->data.can_load )
+			if ( data.storeResType != b->data.storeResType )
 				return false;
 
 			return true;
@@ -1459,7 +1443,7 @@ bool cBuilding::isNextTo( int x, int y) const
 {
 	if ( x + 1 < PosX || y + 1 < PosY ) return false;
 
-	if ( data.is_big )
+	if ( data.isBig )
 	{
 		if ( x - 2 > PosX || y - 2 > PosY ) return false;
 	}
@@ -1533,8 +1517,8 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 {
 	if ( offset < 0 || offset > Map->size*Map->size ) return false;
 
-	if ( data.can_load == TRANS_AIR ) return canLoad ( Map->fields[offset].getPlanes() );
-	if ( data.can_load != TRANS_AIR ) return canLoad ( Map->fields[offset].getVehicles() );
+	if ( canLoad ( Map->fields[offset].getPlanes() ) ) return true;
+	else return canLoad ( Map->fields[offset].getVehicles() );
 
 	return false;
 }
@@ -1548,15 +1532,16 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 
 	if ( Vehicle->Loaded ) return false;
 
-	if ( data.cargo == data.max_cargo ) return false;
+	if ( data.storageUnitsCur == data.storageUnitsMax ) return false;
 
 	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
-	if ( data.can_load == TRANS_MEN && !Vehicle->data.is_human ) return false;
-
-	if ( data.can_load != TRANS_MEN && Vehicle->data.is_human ) return false;
-
-	if ( !( data.build_on_water ? ( Vehicle->data.can_drive == DRIVE_SEA ) : ( Vehicle->data.can_drive != DRIVE_SEA ) ) ) return false;
+	int i;
+	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
+	{
+		if ( data.storeUnitsTypes[i].compare ( Vehicle->data.isStorageType ) == 0 ) break;
+	}
+	if ( i == data.storeUnitsTypes.size() ) return false;
 
 	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
@@ -1580,9 +1565,9 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 	Vehicle->Loaded = true;
 
 	StoredVehicles.Add ( Vehicle );
-	data.cargo++;
+	data.storageUnitsCur++;
 
-	if ( data.cargo == data.max_cargo ) LoadActive = false;
+	if ( data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
 
 	owner->DoScan();
 }
@@ -1601,7 +1586,7 @@ void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 		if ( i == StoredVehicles.Size()-1 ) return;
 	}
 
-	data.cargo--;
+	data.storageUnitsCur--;
 
 	ActivatingVehicle = false;
 
@@ -1832,9 +1817,9 @@ void cBuilding::CheckRessourceProd ( void )
 		MaxGoldProd += Server->Map->Resources[pos].value;
 	}
 
-	MaxMetalProd = min(MaxMetalProd, MAX_MINE_PROD);
-	MaxGoldProd  = min(MaxGoldProd,  MAX_MINE_PROD);
-	MaxOilProd   = min(MaxOilProd,   MAX_MINE_PROD);
+	MaxMetalProd = min(MaxMetalProd, data.canMineMaxRes);
+	MaxGoldProd  = min(MaxGoldProd,  data.canMineMaxRes);
+	MaxOilProd   = min(MaxOilProd,   data.canMineMaxRes);
 }
 
 //--------------------------------------------------------------------------
@@ -1864,13 +1849,13 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 	cVehicle *v = NULL;
 	cBuilding *b = NULL;
 
-	if ( !data.can_attack )
+	if ( !data.canAttack )
 		return false;
 
-	if ( !data.shots )
+	if ( !data.shotsCur )
 		return false;
 
-	if ( !data.ammo )
+	if ( !data.ammoCur )
 		return false;
 
 	if ( Attacking )
@@ -1891,7 +1876,7 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( override )
 		return true;
 
-	selectTarget(v, b, off, data.can_attack, Map );
+	selectTarget(v, b, off, data.canAttack, Map );
 
 	if ( v )
 	{
@@ -1919,7 +1904,7 @@ void cBuilding::DrawAttackCursor ( int offset )
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, offset, data.can_attack, Client->Map );
+	selectTarget(v, b, offset, data.canAttack, Client->Map );
 
 	if ( !(v || b) || ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
 	{
@@ -1932,16 +1917,16 @@ void cBuilding::DrawAttackCursor ( int offset )
 	}
 
 	if ( v )
-		t = v->data.hit_points;
+		t = v->data.hitpointsCur;
 	else if ( b )
-		t = b->data.hit_points;
+		t = b->data.hitpointsCur;
 
 	if ( t )
 	{
 		if ( v )
-			wc = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
+			wc = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
 		else  if ( b )
-			wc = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
+			wc = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -1956,9 +1941,9 @@ void cBuilding::DrawAttackCursor ( int offset )
 	if ( t )
 	{
 		if ( v )
-			wp = ( int ) ( ( float ) t / v->data.max_hit_points * 35 );
+			wp = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
 		else  if ( b )
-			wp = ( int ) ( ( float ) t / b->data.max_hit_points * 35 );
+			wp = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -2028,77 +2013,77 @@ void cBuilding::RotateTo ( int Dir )
 }
 
 //--------------------------------------------------------------------------
-/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
+/** calculates the costs and the duration of the 3 buildspeedCurs for the vehicle with the given id
 	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
 	//prevent division by zero
-	if ( data.iNeeds_Metal == 0 ) data.iNeeds_Metal = 1;
+	if ( data.needsMetal == 0 ) data.needsMetal = 1;
 
 	// init
 	iTurboBuildRounds[0] = 0;
 	iTurboBuildRounds[1] = 0;
 	iTurboBuildRounds[2] = 0;
 	// for buildings with no 2x and 4x
-	if ( data.can_build == BUILD_MAN )
+	if ( data.maxBuildFactor == 1 )
 	{
 		if ( iRemainingMetal > 0 )
 			iTurboBuildCosts[0] = iRemainingMetal;
 		else
 			iTurboBuildCosts[0] = iVehicleCosts;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
+		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
 		return;
 	}
 	// if work is already started
 	if ( iRemainingMetal > 0 )
 	{
-		// check if previous speed is suitable
-		if ( ( iRemainingMetal < 12 * data.iNeeds_Metal ) && BuildSpeed == 2 ) BuildSpeed--;
-		if ( ( iRemainingMetal < 4 * data.iNeeds_Metal ) && BuildSpeed == 1 ) BuildSpeed--;
+		// check if previous speedCur is suitable
+		if ( ( iRemainingMetal < 12 * data.needsMetal ) && BuildSpeed == 2 ) BuildSpeed--;
+		if ( ( iRemainingMetal < 4 * data.needsMetal ) && BuildSpeed == 1 ) BuildSpeed--;
 		int limit;
 		double temp;
 
-		switch ( BuildSpeed )  //BuildSpeed here is the previous build speed
+		switch ( BuildSpeed )  //BuildSpeed here is the previous build speedCur
 		{
 			case 2:
 				iTurboBuildCosts[2] = iRemainingMetal;
-				temp = iTurboBuildCosts[2] / ( double ) ( 12 * data.iNeeds_Metal );
+				temp = iTurboBuildCosts[2] / ( double ) ( 12 * data.needsMetal );
 				iTurboBuildRounds[2] = ( int ) ceil ( temp );
-				limit = ( ( ( int ) floor ( temp ) ) * 8 + 4 ) * data.iNeeds_Metal;
+				limit = ( ( ( int ) floor ( temp ) ) * 8 + 4 ) * data.needsMetal;
 				iTurboBuildCosts[1] = iTurboBuildCosts[2];
 				iTurboBuildRounds[1] = iTurboBuildRounds[2];
 
 				while ((iTurboBuildRounds[1] < 2 * iTurboBuildRounds[2])
 					&& (iTurboBuildCosts[1] > limit ))
 				{
-					iTurboBuildCosts[1] -= 4 * data.iNeeds_Metal;
+					iTurboBuildCosts[1] -= 4 * data.needsMetal;
 					iTurboBuildRounds[1]++;
 				}
 				// reverse the special case
-				if ((iTurboBuildCosts[2] % (12 * data.iNeeds_Metal))&&(iVehicleCosts % 2))
-					iTurboBuildCosts[1] -= 3 * data.iNeeds_Metal;
+				if ((iTurboBuildCosts[2] % (12 * data.needsMetal))&&(iVehicleCosts % 2))
+					iTurboBuildCosts[1] -= 3 * data.needsMetal;
 				// no break!
 			case 1:
 				// no break, so check is needed
 				if ( BuildSpeed == 1 ) iTurboBuildCosts[1] = iRemainingMetal;
 
-				temp = iTurboBuildCosts[1] / ( double ) ( 4 * data.iNeeds_Metal );
+				temp = iTurboBuildCosts[1] / ( double ) ( 4 * data.needsMetal );
 				iTurboBuildRounds[1] = ( int ) ( ceil ( temp ) );
-				limit = ( ( iTurboBuildRounds[1] - 1 ) * 2 + 1 ) * data.iNeeds_Metal;
+				limit = ( ( iTurboBuildRounds[1] - 1 ) * 2 + 1 ) * data.needsMetal;
 				iTurboBuildCosts[0] = iTurboBuildCosts[1];
 				iTurboBuildRounds[0] = iTurboBuildRounds[1];
 
 				while ((iTurboBuildRounds[0] < 2 * iTurboBuildRounds[1])
 					&& (iTurboBuildCosts[0] > limit  ))
 				{
-					iTurboBuildCosts[0] -= 2 * data.iNeeds_Metal;
+					iTurboBuildCosts[0] -= 2 * data.needsMetal;
 					iTurboBuildRounds[0]++;
 				}
 				break;
 			case 0:
 				iTurboBuildCosts[0] = iRemainingMetal;
-				iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
+				iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
 				break;
 		}
 	}
@@ -2109,7 +2094,7 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	if ( iTurboBuildRounds[0] == 0 )
 	{
 		iTurboBuildCosts[0] = iVehicleCosts;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.iNeeds_Metal ) );
+		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
 	}
 
 	//step 2x
@@ -2121,7 +2106,7 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 		while ( ( iTurboBuildRounds[1] > 1 ) && ( (iTurboBuildRounds[1]-1)*2 >= iTurboBuildRounds[0] ) )
 		{
 			iTurboBuildRounds[1]--;
-			iTurboBuildCosts[1] += 2 * data.iNeeds_Metal;
+			iTurboBuildCosts[1] += 2 * data.needsMetal;
 		}
 	}
 
@@ -2134,12 +2119,12 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 		while ( ( iTurboBuildRounds[2] > 1 ) && ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] ) )
 		{
 			iTurboBuildRounds[2]--;
-			iTurboBuildCosts[2] += 4 * data.iNeeds_Metal;
+			iTurboBuildCosts[2] += 4 * data.needsMetal;
 		}
 		// handle the special case
-		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.iNeeds_Metal ) * 12 > iTurboBuildCosts[2] )
+		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.needsMetal ) * 12 > iTurboBuildCosts[2] )
 		{
-			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.iNeeds_Metal ) * 12;
+			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.needsMetal ) * 12;
 		}
 	}
 }
@@ -2174,7 +2159,7 @@ int cBuilding::CalcHelth ( int damage )
 	}
 
 	int hp;
-	hp = data.hit_points - damage;
+	hp = data.hitpointsCur - damage;
 
 	if ( hp < 0 )
 	{
@@ -2224,7 +2209,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		}
 
 	// Angriff:
-	if ( typ->data.can_attack && data.shots )
+	if ( typ->data.canAttack && data.shotsCur )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -2247,7 +2232,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Bauen:
-	if ( typ->data.can_build )
+	if ( !typ->data.canBuild.empty() )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -2268,7 +2253,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Verteilen:
-	if ( typ->data.is_mine && IsWorking )
+	if ( typ->data.canMineMaxRes > 0 && IsWorking )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -2289,7 +2274,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Transfer:
-	if ( typ->data.can_load == TRANS_METAL || typ->data.can_load == TRANS_OIL || typ->data.can_load == TRANS_GOLD )
+	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
 		else { bSelection = false; }
@@ -2309,11 +2294,11 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Start:
-	if (typ->data.can_work &&
+	if (typ->data.canWork &&
 			!IsWorking         &&
 			(
 				(BuildList && BuildList->Size()) ||
-				typ->data.can_build == BUILD_NONE
+				typ->data.canBuild.empty()
 			))
 	{
 		if ( SelMenu == nr ) { bSelection = true; }
@@ -2354,7 +2339,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Sentry status:
-	if ( bSentryStatus || data.can_attack )
+	if ( bSentryStatus || data.canAttack )
 	{
 		bSelection = SelMenu == nr || bSentryStatus;
 
@@ -2373,7 +2358,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aktivieren/Laden:
-	if ( typ->data.can_load == TRANS_VEHICLES || typ->data.can_load == TRANS_MEN || typ->data.can_load == TRANS_AIR )
+	if ( typ->data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
 		if ( SelMenu == nr ) bSelection = true;
@@ -2412,7 +2397,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// research
-	if (typ->data.can_research && IsWorking)
+	if (typ->data.canReasearch && IsWorking)
 	{
 		bSelection = (SelMenu == nr);
 		if (ExeNr == nr)
@@ -2429,7 +2414,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// upgradescreen
-	if (data.gold_need)
+	if (data.convertsGold)
 	{
 		// update this
 		bSelection = (SelMenu == nr);
@@ -2477,7 +2462,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Self destruct
-	if (!data.is_road)
+	if ( data.canSelfDestroy )
 	{
 		bSelection = (SelMenu == nr);
 		if (ExeNr == nr)
@@ -2541,20 +2526,20 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 void cBuilding::upgradeToCurrentVersion ()
 {
 	sUnitData& upgradeVersion = owner->BuildingData[typ->nr];
-	data.version = upgradeVersion.version; // TODO: iVersion?
+	data.version = upgradeVersion.version;
 	
-	if (data.hit_points == data.max_hit_points)
-		data.hit_points = upgradeVersion.max_hit_points; // TODO: check behaviour in original
-	data.max_hit_points = upgradeVersion.max_hit_points;
+	if (data.hitpointsCur == data.hitpointsMax)
+		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
+	data.hitpointsMax = upgradeVersion.hitpointsMax;
 
-	data.max_ammo = upgradeVersion.max_ammo; // don't change the current ammo-amount!
+	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammoCur-amount!
 	
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
 	data.range = upgradeVersion.range;
-	data.max_shots = upgradeVersion.max_shots; // TODO: check behaviour in original
+	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
-	data.iBuilt_Costs = upgradeVersion.iBuilt_Costs;
+	data.buildCosts = upgradeVersion.buildCosts;
 
 	GenerateName();
 
@@ -2594,15 +2579,15 @@ void cBuilding::DrawMunBar ( void ) const
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) ) / data.max_ammo  * data.ammo );
+	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) ) / data.ammoMax  * data.ammoCur );
 
 	SDL_FillRect ( buffer, &r1, 0 );
 
-	if ( data.ammo > data.max_ammo / 2 )
+	if ( data.ammoCur > data.ammoMax / 2 )
 	{
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
-	else if ( data.ammo > data.max_ammo / 4 )
+	else if ( data.ammoCur > data.ammoMax / 4 )
 	{
 		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
 	}
@@ -2623,7 +2608,7 @@ void cBuilding::DrawHelthBar ( void ) const
 	r1.h = Client->Hud.Zoom / 8;
 	r1.y = GetScreenPosY() + Client->Hud.Zoom/10;
 
-	if ( data.is_big )
+	if ( data.isBig )
 	{
 		r1.w += Client->Hud.Zoom;
 		r1.h *= 2;
@@ -2635,15 +2620,15 @@ void cBuilding::DrawHelthBar ( void ) const
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.max_hit_points ) * data.hit_points );
+	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.hitpointsMax ) * data.hitpointsCur );
 
 	SDL_FillRect ( buffer, &r1, 0 );
 
-	if ( data.hit_points > data.max_hit_points / 2 )
+	if ( data.hitpointsCur > data.hitpointsMax / 2 )
 	{
 		SDL_FillRect ( buffer, &r2, 0x04AE04 );
 	}
-	else if ( data.hit_points > data.max_hit_points / 4 )
+	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
 	{
 		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
 	}
@@ -2657,7 +2642,7 @@ void cBuilding::DrawHelthBar ( void ) const
 void cBuilding::drawStatus() const
 {
 	SDL_Rect dest;
-	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
+	SDL_Rect shotsCurSymbol = {254, 97, 5, 10 };
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
 	if ( Disabled )
@@ -2671,9 +2656,9 @@ void cBuilding::drawStatus() const
 	{
 		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
-		if ( data.shots )
+		if ( data.shotsCur )
 		{
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsCurSymbol, buffer, &dest );
 		}
 	}
 }
@@ -2735,96 +2720,85 @@ void cBuilding::ShowDetails ()
 	dest.y = 171;
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	// Die Hitpoints anzeigen:
-	DrawNumber ( 31, 177, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
+	DrawNumber ( 31, 177, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
 	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-	DrawSymbol ( SHits, 88, 174, 70, data.hit_points, data.max_hit_points, GraphicsData.gfx_hud );
+	DrawSymbol ( SHits, 88, 174, 70, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
 	// additional values:
 
-	if ( data.can_load && owner == Client->ActivePlayer )
+	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
 	{
-		// Load:
-		DrawNumber ( 31, 189, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
 		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-
-		switch ( data.can_load )
+				
+		if ( data.storeResType > 0 )
 		{
+			DrawNumber ( 31, 189, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
 
-			case TRANS_METAL:
-				DrawSymbol ( SMetal, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-
-			case TRANS_OIL:
-				DrawSymbol ( SOil, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-
-			case TRANS_GOLD:
-				DrawSymbol ( SGold, 88, 187, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-
-			case TRANS_VEHICLES:
-				DrawSymbol ( STrans, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-
-			case TRANS_MEN:
-				DrawSymbol ( SHuman, 88, 186, 70, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-
-			case TRANS_AIR:
-				DrawSymbol ( SAir, 88, 186, 50, data.cargo, data.max_cargo, GraphicsData.gfx_hud );
-				break;
-		}
-
-		// Gesamt:
-		if ( data.can_load == TRANS_METAL || data.can_load == TRANS_OIL || data.can_load == TRANS_GOLD )
-		{
 			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-			switch ( data.can_load )
+			switch ( data.storeResType )
 			{
+			case sUnitData::STORE_RES_METAL:
+				DrawSymbol ( SMetal, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawNumber ( 31, 201, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
+				DrawSymbol ( SMetal, 88, 198, 70, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
+				break;
+			case sUnitData::STORE_RES_OIL:
+				DrawSymbol ( SOil, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawNumber ( 31, 201, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
+				DrawSymbol ( SOil, 88, 198, 70, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
+				break;
+			case sUnitData::STORE_RES_GOLD:
+				DrawSymbol ( SGold, 88, 187, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawNumber ( 31, 201, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
+				DrawSymbol ( SGold, 88, 199, 70, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
+				break;
+			}
+		}
+		else
+		{
+			DrawNumber ( 31, 189, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
 
-				case TRANS_METAL:
-					DrawNumber ( 31, 201, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
-					DrawSymbol ( SMetal, 88, 198, 70, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
-					break;
-
-				case TRANS_OIL:
-					DrawNumber ( 31, 201, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
-					DrawSymbol ( SOil, 88, 198, 70, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
-					break;
-
-				case TRANS_GOLD:
-					DrawNumber ( 31, 201, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
-					DrawSymbol ( SGold, 88, 199, 70, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
-					break;
+			switch ( data.storeUnitsImageType )
+			{
+			case sUnitData::STORE_UNIT_IMG_TANK:
+			case sUnitData::STORE_UNIT_IMG_SHIP:
+				DrawSymbol ( STrans, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				break;
+			case sUnitData::STORE_UNIT_IMG_PLANE:
+				DrawSymbol ( SAir, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				break;
+			case sUnitData::STORE_UNIT_IMG_HUMAN:
+				DrawSymbol ( SHuman, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				break;
 			}
 		}
 	}
-	else if ( data.can_attack && !data.is_expl_mine )
+	else if ( data.canAttack && !data.explodesOnContact )
 	{
 		if ( owner == Client->ActivePlayer )
 		{
 			// Munition:
-			DrawNumber ( 31, 189, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
+			DrawNumber ( 31, 189, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-			DrawSymbol ( SAmmo, 88, 187, 70, data.ammo, data.max_ammo, GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 		}
 
-		// shots:
-		DrawNumber ( 31, 212, data.shots, data.max_shots, GraphicsData.gfx_hud );
+		// shotsCur:
+		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 
 		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-		DrawSymbol ( SShots, 88, 212, 70, data.shots, data.max_shots, GraphicsData.gfx_hud );
+		DrawSymbol ( SShots, 88, 212, 70, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 	}
-	else if ( data.energy_prod )
+	else if ( data.produceEnergy )
 	{
 		// EnergieProduktion:
-		DrawNumber ( 31, 189, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
+		DrawNumber ( 31, 189, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, GraphicsData.gfx_hud );
 		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-		DrawSymbol ( SEnergy, 88, 187, 70, ( IsWorking ? data.energy_prod : 0 ), data.energy_prod, GraphicsData.gfx_hud );
+		DrawSymbol ( SEnergy, 88, 187, 70, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, GraphicsData.gfx_hud );
 
 		if ( owner == Client->ActivePlayer )
 		{
@@ -2840,13 +2814,13 @@ void cBuilding::ShowDetails ()
 			DrawSymbol ( SEnergy, 88, 212, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
 		}
 	}
-	else if ( data.human_prod )
+	else if ( data.produceHumans )
 	{
 		// HumanProduktion:
-		DrawNumber ( 31, 189, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
+		DrawNumber ( 31, 189, data.produceHumans, data.produceHumans, GraphicsData.gfx_hud );
 		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-		DrawSymbol ( SHuman, 88, 187, 70, data.human_prod, data.human_prod, GraphicsData.gfx_hud );
+		DrawSymbol ( SHuman, 88, 187, 70, data.produceHumans, data.produceHumans, GraphicsData.gfx_hud );
 
 		if ( owner == Client->ActivePlayer )
 		{
@@ -2862,22 +2836,22 @@ void cBuilding::ShowDetails ()
 			DrawSymbol ( SHuman, 88, 210, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
 		}
 	}
-	else if ( data.human_need )
+	else if ( data.needsHumans )
 	{
 		// HumanNeed:
 		if ( IsWorking )
 		{
-			DrawNumber ( 31, 189, data.human_need, data.human_need, GraphicsData.gfx_hud );
+			DrawNumber ( 31, 189, data.needsHumans, data.needsHumans, GraphicsData.gfx_hud );
 			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-			DrawSymbol ( SHuman, 88, 187, 70, data.human_need, data.human_need, GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman, 88, 187, 70, data.needsHumans, data.needsHumans, GraphicsData.gfx_hud );
 		}
 		else
 		{
-			DrawNumber ( 31, 189, 0, data.human_need, GraphicsData.gfx_hud );
+			DrawNumber ( 31, 189, 0, data.needsHumans, GraphicsData.gfx_hud );
 			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
-			DrawSymbol ( SHuman, 88, 187, 70, 0, data.human_need, GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman, 88, 187, 70, 0, data.needsHumans, GraphicsData.gfx_hud );
 		}
 
 		if ( owner == Client->ActivePlayer )
@@ -3093,16 +3067,19 @@ void cBuilding::resetDetectedByPlayer( cPlayer* player )
 void cBuilding::makeDetection()
 {
 	//check whether the building has been detected by others
-	if ( !data.is_expl_mine ) return;
+	if ( data.isStealthOn == TERRAIN_NONE ) return;
 
-	int offset = PosX + PosY * Server->Map->size;
-	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	if ( data.isStealthOn&AREA_EXP_MINE )
 	{
-		cPlayer* player = (*Server->PlayerList)[i];
-		if ( player == owner ) continue;
-		if ( player->DetectMinesMap[offset] )
+		int offset = PosX + PosY * Server->Map->size;
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
-			setDetectedByPlayer( player );
+			cPlayer* player = (*Server->PlayerList)[i];
+			if ( player == owner ) continue;
+			if ( player->DetectMinesMap[offset] )
+			{
+				setDetectedByPlayer( player );
+			}
 		}
 	}
 }

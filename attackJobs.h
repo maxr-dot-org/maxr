@@ -24,7 +24,7 @@
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, int attackMode, cMap* map);
+void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, char attackMode, cMap* map);
 
 class cServerAttackJob
 {
@@ -37,7 +37,7 @@ public:
 	bool bMuzzlePlayed;
 	int iTargetOff;
 	int damage;
-	int attackMode;
+	char attackMode;
 	cList<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
 	cList<cBuilding*> buildingTargets;
 
@@ -57,7 +57,7 @@ public:
 	void clientFinished( int playerNr );
 	void makeImpact(int x, int y );
 	void makeImpactCluster();
-	void sendAttackJobImpact(int offset, int remainingHP, int attackMode );
+	void sendAttackJobImpact(int offset, int remainingHP, char attackMode );
 
 };
 
@@ -84,7 +84,7 @@ public:
 	*/
 	static void lockTarget( cNetMessage* message );
 	static void handleAttackJobs();
-	static void makeImpact(int offset, int remainingHP, int attackMode);
+	static void makeImpact(int offset, int remainingHP, char attackMode);
 
 	cClientAttackJob( cNetMessage* message );
 

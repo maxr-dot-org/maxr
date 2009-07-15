@@ -220,9 +220,9 @@ cVehicle *cPlayer::AddVehicle (int posx, int posy, sVehicle *v)
 	VehicleList=n;
 	n->GenerateName();
 	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
-	if ( n->data.can_detect_land ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
-	if ( n->data.can_detect_sea  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize )  );
-	if ( n->data.can_detect_mines)
+	if ( n->data.canDetectStealthOn&TERRAIN_GROUND ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
+	if ( n->data.canDetectStealthOn&TERRAIN_SEA  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize )  );
+	if ( n->data.canDetectStealthOn&AREA_EXP_MINE )
 	{
 		for ( int x = n->PosX - 1; x <= n->PosX + 1; x++ )
 		{
@@ -286,7 +286,7 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 	Building->GenerateName();
 	if ( Building->data.scan )
 	{
-		if ( Building->data.is_big ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
+		if ( Building->data.isBig ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
 		else drawSpecialCircle ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
 	}
 	return Building;
@@ -296,28 +296,21 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 void cPlayer::addSentryVehicle ( cVehicle *v )
 {
 	sSentry *n;
-	n=new sSentry;
-	n->b=NULL;
-	n->v=v;
-	if ( v->data.can_attack==ATTACK_AIR )
+	if ( v->data.canAttack & TERRAIN_AIR )
 	{
+		n = new sSentry;
+		n->b = NULL;
+		n->v = v;
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( v->PosX, v->PosY, v->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 	}
-	else if ( v->data.can_attack==ATTACK_AIRnLAND )
+	if ( ( v->data.canAttack & TERRAIN_GROUND ) || ( v->data.canAttack & TERRAIN_SEA ) )
 	{
-		SentriesAir.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
-		n=new sSentry;
-		n->b=NULL;
-		n->v=v;
+		n = new sSentry;
+		n->b = NULL;
+		n->v = v;
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
-	}
-	else
-	{
-		SentriesGround.Add ( n );
-		drawSpecialCircle ( v->PosX,v->PosY,v->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( v->PosX, v->PosY, v->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
 
@@ -325,28 +318,21 @@ void cPlayer::addSentryVehicle ( cVehicle *v )
 void cPlayer::addSentryBuilding ( cBuilding *b )
 {
 	sSentry *n;
-	n=new sSentry;
-	n->b=b;
-	n->v=NULL;
-	if ( b->data.can_attack==ATTACK_AIR )
+	if ( b->data.canAttack & TERRAIN_AIR )
 	{
+		n = new sSentry;
+		n->b = b;
+		n->v = NULL;
 		SentriesAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( b->PosX, b->PosY, b->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 	}
-	else if ( b->data.can_attack==ATTACK_AIRnLAND )
+	if ( ( b->data.canAttack & TERRAIN_GROUND ) || ( b->data.canAttack & TERRAIN_SEA ) )
 	{
-		SentriesAir.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapAir, (int)sqrt ( (double)MapSize ) );
-		n=new sSentry;
-		n->b=b;
-		n->v=NULL;
+		n = new sSentry;
+		n->b = b;
+		n->v = NULL;
 		SentriesGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
-	}
-	else
-	{
-		SentriesGround.Add ( n );
-		drawSpecialCircle ( b->PosX,b->PosY,b->data.range,SentriesMapGround, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( b->PosX, b->PosY, b->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
 
@@ -354,7 +340,7 @@ void cPlayer::addSentryBuilding ( cBuilding *b )
 void cPlayer::deleteSentryVehicle ( cVehicle *v )
 {
 	sSentry *ptr;
-	if ( v->data.can_attack == ATTACK_AIR )
+	if ( v->data.canAttack & TERRAIN_AIR )
 	{
 		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
@@ -368,32 +354,7 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 		}
 		refreshSentryAir();
 	}
-	else if ( v->data.can_attack==ATTACK_AIRnLAND )
-	{
-		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
-		{
-			ptr = SentriesAir[i];
-			if ( ptr->v == v )
-			{
-				SentriesAir.Delete ( i );
-				delete ptr;
-				break;
-			}
-		}
-		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
-		{
-			ptr = SentriesGround[i];
-			if ( ptr->v == v )
-			{
-				SentriesGround.Delete ( i );
-				delete ptr;
-				break;
-			}
-		}
-		refreshSentryAir();
-		refreshSentryGround();
-	}
-	else
+	else if ( (v->data.canAttack & TERRAIN_GROUND) || (v->data.canAttack & TERRAIN_SEA) )
 	{
 		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
@@ -413,7 +374,7 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 void cPlayer::deleteSentryBuilding ( cBuilding *b )
 {
 	sSentry *ptr;
-	if ( b->data.can_attack == ATTACK_AIR )
+	if ( b->data.canAttack & TERRAIN_AIR )
 	{
 		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
 		{
@@ -427,32 +388,7 @@ void cPlayer::deleteSentryBuilding ( cBuilding *b )
 		}
 		refreshSentryAir();
 	}
-	else if ( b->data.can_attack==ATTACK_AIRnLAND )
-	{
-		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
-		{
-			ptr = SentriesAir[i];
-			if ( ptr->b == b )
-			{
-				SentriesAir.Delete ( i );
-				delete ptr;
-				break;
-			}
-		}
-		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
-		{
-			ptr = SentriesGround[i];
-			if ( ptr->b == b )
-			{
-				SentriesGround.Delete ( i );
-				delete ptr;
-				break;
-			}
-		}
-		refreshSentryAir();
-		refreshSentryGround();
-	}
-	else
+	if ( (b->data.canAttack & TERRAIN_GROUND) || (b->data.canAttack & TERRAIN_SEA) )
 	{
 		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
 		{
@@ -535,17 +471,15 @@ void cPlayer::DoScan ()
 			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )] = 1;
 		else
 		{
-			if ( vp->data.is_big )
+			if ( vp->data.isBig )
 				drawSpecialCircleBig ( vp->PosX, vp->PosY, vp->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );
 			else
 				drawSpecialCircle ( vp->PosX,vp->PosY,vp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 
 			//detection maps
-			if ( vp->data.can_detect_land )
-				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
-			else if ( vp->data.can_detect_sea )
-				drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize ) );
-			if ( vp->data.can_detect_mines )
+			if ( vp->data.canDetectStealthOn&TERRAIN_GROUND ) drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
+			else if ( vp->data.canDetectStealthOn&TERRAIN_SEA ) drawSpecialCircle ( vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize ) );
+			if ( vp->data.canDetectStealthOn&AREA_EXP_MINE )
 			{
 				for ( int x = vp->PosX - 1; x <= vp->PosX + 1; x++ )
 				{
@@ -574,7 +508,7 @@ void cPlayer::DoScan ()
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.is_big ) 
+				if ( bp->data.isBig ) 
 					drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 				else 
 					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
@@ -605,7 +539,7 @@ cVehicle *cPlayer::GetNextVehicle ()
 	v = start;
 	do
 	{
-		if ( !next && ( v->data.speed||v->data.shots ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
 			return v;
 		next = false;
 		if ( v->next )
@@ -636,7 +570,7 @@ cVehicle *cPlayer::GetPrevVehicle ()
 	v = start;
 	do
 	{
-		if ( !next && (v->data.speed || v->data.shots) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
 			return v;
 		next = false;
 		if ( v->prev )
@@ -722,32 +656,32 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 			switch (researchArea)
 			{
 				case cResearch::kAttackResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_shots; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.shotsMax; break;
 				case cResearch::kRangeResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.range; break;
 				case cResearch::kArmorResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_hit_points; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.hitpointsMax; break;
 				case cResearch::kScanResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.scan; break;
-				case cResearch::kSpeedResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.max_speed; break;
-				case cResearch::kCostResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.iBuilt_Costs; break;
+				case cResearch::kSpeedResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.speedMax; break;
+				case cResearch::kCostResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																					   UnitsData.getVehicle (i, getClan ()).data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+																					   UnitsData.getVehicle (i, getClan ()).data.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-																					   UnitsData.getVehicle (i, getClan ()).data.is_human ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+																					   UnitsData.getVehicle (i, getClan ()).data.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			if (oldResearchBonus != newResearchBonus)
 			{
 				switch (researchArea)
 				{
 					case cResearch::kAttackResearch: VehicleData[i].damage += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kShotsResearch: VehicleData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: VehicleData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kRangeResearch: VehicleData[i].range += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kArmorResearch: VehicleData[i].armor += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kHitpointsResearch: VehicleData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: VehicleData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kScanResearch: VehicleData[i].scan += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kSpeedResearch: VehicleData[i].max_speed += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kCostResearch: VehicleData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kSpeedResearch: VehicleData[i].speedMax += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kCostResearch: VehicleData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch) // don't increment the version, if the only change are the costs
 					incrementVersion = true;
@@ -771,12 +705,12 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 			switch (researchArea)
 			{
 				case cResearch::kAttackResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.max_shots; break;
+				case cResearch::kShotsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.shotsMax; break;
 				case cResearch::kRangeResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.range; break;
 				case cResearch::kArmorResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.max_hit_points; break;
+				case cResearch::kHitpointsResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.hitpointsMax; break;
 				case cResearch::kScanResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.scan; break;
-				case cResearch::kCostResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.iBuilt_Costs; break;
+				case cResearch::kCostResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
@@ -789,12 +723,12 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				switch (researchArea)
 				{
 					case cResearch::kAttackResearch: BuildingData[i].damage += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kShotsResearch: BuildingData[i].max_shots += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kShotsResearch: BuildingData[i].shotsMax += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kRangeResearch: BuildingData[i].range += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kArmorResearch: BuildingData[i].armor += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kHitpointsResearch: BuildingData[i].max_hit_points += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kHitpointsResearch: BuildingData[i].hitpointsMax += newResearchBonus - oldResearchBonus; break;
 					case cResearch::kScanResearch: BuildingData[i].scan += newResearchBonus - oldResearchBonus; break;
-					case cResearch::kCostResearch: BuildingData[i].iBuilt_Costs += newResearchBonus - oldResearchBonus; break;
+					case cResearch::kCostResearch: BuildingData[i].buildCosts += newResearchBonus - oldResearchBonus; break;
 				}
 				if (researchArea != cResearch::kCostResearch) // don't increment the version, if the only change are the costs
 					incrementVersion = true;
@@ -816,7 +750,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	cBuilding* curBuilding = BuildingList;
 	while (curBuilding)
 	{
-		if (curBuilding->data.can_research && curBuilding->IsWorking)
+		if (curBuilding->data.canReasearch && curBuilding->IsWorking)
 		{
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;
@@ -973,20 +907,20 @@ void cPlayer::DrawLockList (cHud const& hud)
 
 			if ( hud.Scan )
 			{
-				if ( elem->v->data.is_big )
+				if ( elem->v->data.isBig )
 					drawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
 				else
 					drawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
 			}
-			if ( hud.Reichweite&& ( elem->v->data.can_attack==ATTACK_LAND||elem->v->data.can_attack==ATTACK_SUB_LAND ) )
+			if ( hud.Reichweite && (elem->v->data.canAttack & TERRAIN_GROUND) )
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
-			if ( hud.Reichweite&&elem->v->data.can_attack==ATTACK_AIR )
+			if ( hud.Reichweite && (elem->v->data.canAttack & TERRAIN_AIR) )
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->v->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			if ( hud.Munition&&elem->v->data.can_attack )
+			if ( hud.Munition&&elem->v->data.canAttack )
 				elem->v->DrawMunBar();
 			if ( hud.Treffer )
 				elem->v->drawHealthBar();
@@ -1005,7 +939,7 @@ void cPlayer::DrawLockList (cHud const& hud)
 
 			if ( hud.Scan )
 			{
-				if ( elem->b->data.is_big )
+				if ( elem->b->data.isBig )
 					drawCircle ( spx+hud.Zoom,
 					             spy+hud.Zoom,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
@@ -1014,16 +948,16 @@ void cPlayer::DrawLockList (cHud const& hud)
 					             spy+hud.Zoom/2,
 					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
 			}
-			if ( hud.Reichweite&& ( elem->b->data.can_attack==ATTACK_LAND||elem->b->data.can_attack==ATTACK_SUB_LAND ) &&!elem->b->data.is_expl_mine )
+			if ( hud.Reichweite && (elem->b->data.canAttack & TERRAIN_GROUND) &&!elem->b->data.explodesOnContact )
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
-			if ( hud.Reichweite&&elem->b->data.can_attack==ATTACK_AIR )
+			if ( hud.Reichweite && (elem->b->data.canAttack & TERRAIN_AIR) )
 				drawCircle ( spx+hud.Zoom/2,
 				             spy+hud.Zoom/2,
 				             elem->b->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 
-			if ( hud.Munition&&elem->b->data.can_attack&&!elem->b->data.is_expl_mine )
+			if ( hud.Munition && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
 				elem->b->DrawMunBar();
 			if ( hud.Treffer )
 				elem->b->DrawHelthBar();

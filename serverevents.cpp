@@ -55,7 +55,7 @@ void sendAddRubble( cBuilding* building, int iPlayer )
 	message->pushInt16( building->iID );
 	message->pushInt16( building->RubbleValue );
 	message->pushInt16( building->RubbleTyp );
-	message->pushBool( building->data.is_big );
+	message->pushBool( building->data.isBig );
 
 	Server->sendNetMessage( message, iPlayer );
 }
@@ -174,23 +174,25 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
 
 	// The unit data values
-	message->pushInt16( Vehicle->data.max_speed );
-	message->pushInt16( Vehicle->data.speed );
+	message->pushInt16( Vehicle->data.speedMax );
+	message->pushInt16( Vehicle->data.speedCur );
 
 	message->pushInt16( Vehicle->data.version );
-	message->pushInt16( Vehicle->data.max_hit_points );
-	message->pushInt16( Vehicle->data.hit_points );
+	message->pushInt16( Vehicle->data.hitpointsMax );
+	message->pushInt16( Vehicle->data.hitpointsCur );
 	message->pushInt16( Vehicle->data.armor );
 	message->pushInt16( Vehicle->data.scan );
 	message->pushInt16( Vehicle->data.range );
-	message->pushInt16( Vehicle->data.max_shots );
-	message->pushInt16( Vehicle->data.shots );
+	message->pushInt16( Vehicle->data.shotsMax );
+	message->pushInt16( Vehicle->data.shotsCur );
 	message->pushInt16( Vehicle->data.damage );
-	message->pushInt16( Vehicle->data.max_cargo );
-	message->pushInt16( Vehicle->data.cargo );
-	message->pushInt16( Vehicle->data.max_ammo );
-	message->pushInt16( Vehicle->data.ammo );
-	message->pushInt16( Vehicle->data.iBuilt_Costs );
+	message->pushInt16( Vehicle->data.storageUnitsMax );
+	message->pushInt16( Vehicle->data.storageUnitsCur );
+	message->pushInt16( Vehicle->data.storageResMax );
+	message->pushInt16( Vehicle->data.storageResCur );
+	message->pushInt16( Vehicle->data.ammoMax );
+	message->pushInt16( Vehicle->data.ammoCur );
+	message->pushInt16( Vehicle->data.buildCosts );
 
 	// Current state of the unit
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
@@ -206,7 +208,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushString ( Vehicle->name );
 
 	// Data for identifying the unit by the client
-	message->pushBool( Vehicle->data.is_big );
+	message->pushBool( Vehicle->data.isBig );
 	message->pushInt16( Vehicle->PosX );
 	message->pushInt16( Vehicle->PosY );
 	message->pushBool( true );	// true for vehicles
@@ -237,19 +239,21 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 
 	// The unit data values
 	message->pushInt16( Building->data.version );
-	message->pushInt16( Building->data.max_hit_points );
-	message->pushInt16( Building->data.hit_points );
+	message->pushInt16( Building->data.hitpointsMax );
+	message->pushInt16( Building->data.hitpointsCur );
 	message->pushInt16( Building->data.armor );
 	message->pushInt16( Building->data.scan );
 	message->pushInt16( Building->data.range );
-	message->pushInt16( Building->data.max_shots );
-	message->pushInt16( Building->data.shots );
+	message->pushInt16( Building->data.shotsMax );
+	message->pushInt16( Building->data.shotsCur );
 	message->pushInt16( Building->data.damage );
-	message->pushInt16( Building->data.max_cargo );
-	message->pushInt16( Building->data.cargo );
-	message->pushInt16( Building->data.max_ammo );
-	message->pushInt16( Building->data.ammo );
-	message->pushInt16( Building->data.iBuilt_Costs );
+	message->pushInt16( Building->data.storageUnitsMax );
+	message->pushInt16( Building->data.storageUnitsCur );
+	message->pushInt16( Building->data.storageResMax );
+	message->pushInt16( Building->data.storageResCur );
+	message->pushInt16( Building->data.ammoMax );
+	message->pushInt16( Building->data.ammoCur );
+	message->pushInt16( Building->data.buildCosts );
 
 	// Current state of the unit
 	message->pushBool ( Building->bSentryStatus );
@@ -453,7 +457,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 		message->pushInt16( vehicle->BuildRounds );
 		message->pushInt16( vehicle->BuildingTyp.iSecondPart );
 		message->pushInt16( vehicle->BuildingTyp.iFirstPart );
-		message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big );
+		message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig );
 		message->pushInt16( vehicle->PosY );
 		message->pushInt16( vehicle->PosX );
 	}
@@ -468,7 +472,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 		cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
 		if ( bOK )
 		{
-			message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->is_big );
+			message->pushBool ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig );
 			message->pushInt16( vehicle->PosY );
 			message->pushInt16( vehicle->PosX );
 		}
@@ -868,12 +872,12 @@ void sendRefreshResearchCount ( int player )
 void sendUnitUpgrades ( sUnitData *Data, int player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_UNIT_UPGRADE_VALUES );
-	message->pushInt16 ( Data->max_hit_points );
-	message->pushInt16 ( Data->max_ammo );
-	message->pushInt16 ( Data->max_shots );
-	message->pushInt16 ( Data->max_speed );
+	message->pushInt16 ( Data->hitpointsMax );
+	message->pushInt16 ( Data->ammoMax );
+	message->pushInt16 ( Data->shotsMax );
+	message->pushInt16 ( Data->speedMax );
 	message->pushInt16 ( Data->armor );
-	message->pushInt16 ( Data->iBuilt_Costs );
+	message->pushInt16 ( Data->buildCosts );
 	message->pushInt16 ( Data->damage );
 	message->pushInt16 ( Data->range );
 	message->pushInt16 ( Data->scan );

@@ -1104,7 +1104,7 @@ int ReadMaxXml()
 		sTmp =  SettingsData.bShowDescription?SON:SOFF;
 		Log.write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Scrollspeed   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
+		Log.write ("ScrollspeedCur   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Port          == " + iToStr(SettingsData.iPort), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
@@ -1881,23 +1881,17 @@ static int LoadVehicles()
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.vehicle.Add(sVehicle());
+		UnitsData.vehicle.Add( sVehicle() );
+		sVehicle &v = UnitsData.vehicle[i];
 
-
-		Log.write("Setting default values", cLog::eLOG_TYPE_DEBUG);
-		sVehicle& v = UnitsData.vehicle.Back();
-		SetDefaultUnitData(&v.data);
 		Log.write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList[i].c_str()));
 		translateUnitData(v.data.ID, true);
 
-		// Convert loaded data to old data. THIS IS YUST TEMPORARY!
-		ConvertData((int)UnitsData.vehicle.Size() - 1, true);
-
 		Log.write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
 		// laod infantery graphics
-		if (v.data.bAnimation_Movement)
+		if (v.data.animationMovement)
 		{
 			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
@@ -2042,7 +2036,7 @@ static int LoadVehicles()
 
 		// load overlaygraphics if necessary
 		Log.write("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.bHas_Overlay)
+		if (v.data.hasOverlay)
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
@@ -2056,7 +2050,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.overlay_org       = NULL;
 				v.overlay           = NULL;
-				v.data.bHas_Overlay = false;
+				v.data.hasOverlay = false;
 			}
 		}
 		else
@@ -2067,7 +2061,7 @@ static int LoadVehicles()
 
 		// load buildgraphics if necessary
 		Log.write("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.bBuild_Up_Grafic)
+		if (v.data.buildUpGraphic)
 		{
 			// load image
 			sTmpString = sVehiclePath;
@@ -2084,7 +2078,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.build_org             = NULL;
 				v.build                 = NULL;
-				v.data.bBuild_Up_Grafic = false;
+				v.data.buildUpGraphic = false;
 			}
 			// load shadow
 			sTmpString = sVehiclePath;
@@ -2100,7 +2094,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.build_shw_org         = NULL;
 				v.build_shw             = NULL;
-				v.data.bBuild_Up_Grafic = false;
+				v.data.buildUpGraphic = false;
 			}
 		}
 		else
@@ -2112,7 +2106,7 @@ static int LoadVehicles()
 		}
 		// load cleargraphics if necessary
 		Log.write("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.bCan_Clear_Area)
+		if (v.data.canClearArea)
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
@@ -2129,7 +2123,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.clear_small_org      = NULL;
 				v.clear_small          = NULL;
-				v.data.bCan_Clear_Area = false;
+				v.data.canClearArea = false;
 			}
 			// load shadow (small)
 			sTmpString = sVehiclePath;
@@ -2145,7 +2139,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.clear_small_shw_org  = NULL;
 				v.clear_small_shw      = NULL;
-				v.data.bCan_Clear_Area = false;
+				v.data.canClearArea = false;
 			}
 			// load image (big)
 			sTmpString = sVehiclePath;
@@ -2162,7 +2156,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.build_org            = NULL;
 				v.build                = NULL;
-				v.data.bCan_Clear_Area = false;
+				v.data.canClearArea = false;
 			}
 			// load shadow (big)
 			sTmpString = sVehiclePath;
@@ -2178,7 +2172,7 @@ static int LoadVehicles()
 				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
 				v.build_shw_org        = NULL;
 				v.build_shw            = NULL;
-				v.data.bCan_Clear_Area = false;
+				v.data.canClearArea = false;
 			}
 		}
 		else
@@ -2242,26 +2236,17 @@ void translateUnitData(sID ID, bool vehicle)
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
-			{
-				sTmpString = pXmlNode->ToElement()->Attribute( "localized" );
-			}
-			else
-			{
-				sTmpString = pXmlNode->ToElement()->Attribute( "ENG" );
-			}
-			Data->szName = new char[sTmpString.length()+1];
-			strcpy( (char *)Data->szName, sTmpString.c_str() );
+			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 ) Data->name = pXmlNode->ToElement()->Attribute( "localized" );
+			else Data->name = pXmlNode->ToElement()->Attribute( "ENG" );
 
 			sTmpString = pXmlNode->ToElement()->GetText();
 			int iPosition = (int)sTmpString.find("\\n",0);
 			while(iPosition != string::npos)
 			{
-				sTmpString.replace(iPosition,2,"\n");
+				sTmpString.replace( iPosition, 2, "\n" );
 				iPosition = (int)sTmpString.find("\\n",iPosition);
 			}
-			Data->szDescribtion = new char[sTmpString.length()+1];
-			strcpy( (char *)Data->szDescribtion, sTmpString.c_str() );
+			Data->description =  sTmpString;
 		}
 		pXmlNode = pXmlNode->NextSibling();
 	}
@@ -2298,6 +2283,11 @@ static int LoadBuildings()
 	cList<string> BuildingList;
 	cList<string> IDList;
 	pXmlNode = pXmlNode->FirstChildElement();
+	if ( !pXmlNode )
+	{
+		Log.write("There are no buildings in the buildings.xml defined",LOG_TYPE_ERROR);
+		return 1;
+	}
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
 	{
@@ -2319,6 +2309,19 @@ static int LoadBuildings()
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		}
+
+		pszTmp = pXmlNode->ToElement()->Attribute( "special" );
+		if ( pszTmp != 0 )
+		{
+			string specialString = pszTmp;
+			if ( specialString.compare ( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else Log.write ( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
 		}
 	}
 	else
@@ -2349,7 +2352,29 @@ static int LoadBuildings()
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
 		}
+
+		pszTmp = pXmlNode->ToElement()->Attribute( "special" );
+		if ( pszTmp != 0 )
+		{
+			string specialString = pszTmp;
+			if ( specialString.compare ( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else if ( specialString.compare ( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
+			else Log.write ( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
+		}
 	}
+
+	if ( specialIDMine.iSecondPart == 0 ) Log.write ( "special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSmallGen.iSecondPart == 0 ) Log.write ( "special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDConnector.iSecondPart == 0 ) Log.write ( "special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDLandMine.iSecondPart == 0 ) Log.write ( "special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSeaMine.iSecondPart == 0 ) Log.write ( "special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSmallBeton.iSecondPart == 0 ) Log.write ( "special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING );
+
+	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
 	// load found units
 	UnitsData.building.Reserve(0);
 	for( unsigned int i = 0; i < BuildingList.Size(); i++)
@@ -2363,12 +2388,8 @@ static int LoadBuildings()
 		UnitsData.building.Add(sBuilding());
 
 		sBuilding& b = UnitsData.building.Back();
-		SetDefaultUnitData(&b.data);
 		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList[i].c_str()));
 		translateUnitData(b.data.ID, false);
-
-		// Convert loaded data to old data. THIS IS JUST TEMPORARY!
-		ConvertData((int)UnitsData.building.Size() - 1, false);
 
 		// load img
 		sTmpString = sBuildingPath;
@@ -2408,7 +2429,7 @@ static int LoadBuildings()
 			b.info = LoadPCX(sTmpString.c_str());
 
 		// load effectgraphics if necessary
-		if (b.data.bPower_On_Grafic)
+		if (b.data.powerOnGraphic)
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
@@ -2432,8 +2453,9 @@ static int LoadBuildings()
 		LoadUnitSoundfile(b.Attack,  sBuildingPath.c_str(), "attack.wav");
 
 		// Get Ptr if necessary:
-		if (b.data.is_connector)
+		if ( b.data.ID == specialIDConnector )
 		{
+			b.data.isConnectorGraphic = true;
 			UnitsData.ptr_connector = b.img;
 			UnitsData.ptr_connector_org = b.img_org;
 			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
@@ -2441,7 +2463,7 @@ static int LoadBuildings()
 			UnitsData.ptr_connector_shw_org = b.shw_org;
 			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
 		}
-		else if (b.data.is_road)
+		else if (b.data.ID == specialIDSmallBeton )
 		{
 			UnitsData.ptr_small_beton = b.img;
 			UnitsData.ptr_small_beton_org = b.img_org;
@@ -2450,11 +2472,8 @@ static int LoadBuildings()
 
 		// Check if there is more than one frame
 		// use 129 here becouse some images from the res_installer are one pixel to large
-		if (b.img_org->w > 129 && !b.data.is_connector && !b.data.is_mine)
-		{
-			b.data.has_frames = b.img_org->w / b.img_org->h;
-		}
-		else b.data.has_frames = 0;
+		if (b.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos ) b.data.hasFrames = b.img_org->w / b.img_org->h;
+		else b.data.hasFrames = 0;
 	}
 
 	// Dirtsurfaces
@@ -2469,1118 +2488,368 @@ static int LoadBuildings()
 	if ( UnitsData.dirt_small_shw ) SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
 	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
 
-	// Get numbers of important buildings + set building numbers
+	// set building numbers
 	for (unsigned int i = 0; i < UnitsData.building.Size(); ++i)
 	{
 		UnitsData.building[i].nr = (int)i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 22) BNrMine=(int)i;
-		if(UnitsData.building[i].data.ID.iSecondPart == 8) BNrSmallGen=(int)i;
-		if(!UnitsData.building[i].data.is_expl_mine) continue;
-		if(UnitsData.building[i].data.build_on_water) BNrSeaMine = (int)i;
-		else BNrLandMine = (int)i;
 	}
-
 	return 1;
 }
 
+//-------------------------------------------------------------------------------------
+int getXMLNodeInt( TiXmlDocument &document, const char *path0, const char *path1,const char *path2 )
+{
+	string tmpString;
+	ExTiXmlNode *pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+	
+	string pathText = "";
+	if ( path0 ) pathText += (string)path0;
+	if ( path1 ) pathText += (string)"~" + path1;
+	if ( path2 ) pathText += (string)"~" + path2;
+
+	if ( pExXmlNode == NULL )
+	{
+		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		return 0;
+	}
+	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) ) return atoi ( tmpString.c_str() );
+	else
+	{
+		Log.write( ((string)"Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		return 0;
+	}
+}
+
+//-------------------------------------------------------------------------------------
+float getXMLNodeFloat( TiXmlDocument &document, const char *path0, const char *path1,const char *path2 )
+{
+	string tmpString;
+	ExTiXmlNode *pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+	
+	double tmpDouble;
+	string pathText = "";
+	if ( path0 ) pathText += (string)path0;
+	if ( path1 ) pathText += (string)"~" + path1;
+	if ( path2 ) pathText += (string)"~" + path2;
+
+	if ( pExXmlNode == NULL )
+	{
+		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		return 0;
+	}
+	if ( pExXmlNode->ToElement()->Attribute( "Num", &tmpDouble ) ) return (float)( tmpDouble );
+	else
+	{
+		Log.write( ((string)"Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		return 0;
+	}
+}
+
+//-------------------------------------------------------------------------------------
+string getXMLNodeString( TiXmlDocument &document, const char *attribut, const char *path0, const char *path1,const char *path2 )
+{
+	string tmpString;
+	ExTiXmlNode *pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+
+	string pathText = "";
+	if ( path0 ) pathText += (string)path0;
+	if ( path1 ) pathText += (string)"~" + path1;
+	if ( path2 ) pathText += (string)"~" + path2;
+
+	if ( pExXmlNode == NULL )
+	{
+		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		return "";
+	}
+	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, attribut ) ) return tmpString;
+	else
+	{
+		Log.write( ((string)"Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		return "";
+	}
+}
+
+//-------------------------------------------------------------------------------------
+bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *path1,const char *path2, const char *path3 )
+{
+	string tmpString;
+	ExTiXmlNode *pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, path3, NULL );
+
+	string pathText = "";
+	if ( path0 ) pathText += (string)path0;
+	if ( path1 ) pathText += (string)"~" + path1;
+	if ( path2 ) pathText += (string)"~" + path2;
+	if ( path3 ) pathText += (string)"~" + path3;
+
+	if ( pExXmlNode == NULL )
+	{
+		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		return false;
+	}
+	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "YN" ) )
+	{
+		if ( tmpString.compare ( "Yes" ) == 0 ) return true;
+		else return false;
+	}
+	else
+	{
+		Log.write( ((string)"Can't read \"YN\" from \"") + pathText +"\"", cLog::eLOG_TYPE_WARNING );
+		return false;
+	}
+}
+
+//-------------------------------------------------------------------------------------
 void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
 {
-	const char *DataStructure[] = {
-		// General
-		"Unit","General_Info","Is_Controllable", NULL,
-		"Unit","General_Info","Can_Be_Captured", NULL,
-		"Unit","General_Info","Can_Be_Disabled", NULL,
-		"Unit","General_Info","Size_Length", NULL,
-		"Unit","General_Info","Size_Width", NULL,
-
-		// Defence
-		"Unit","Defence","Is_Target_Land", NULL,
-		"Unit","Defence","Is_Target_Sea", NULL,
-		"Unit","Defence","Is_Target_Air", NULL,
-		"Unit","Defence","Is_Target_Underwater", NULL,
-		"Unit","Defence","Is_Target_Mine", NULL,
-		"Unit","Defence","Is_Target_Building", NULL,
-		"Unit","Defence","Is_Target_Satellite", NULL,
-		"Unit","Defence","Is_Target_WMD", NULL,
-		"Unit","Defence","Armor", NULL,
-		"Unit","Defence","Hitpoints", NULL,
-
-		// Production
-		"Unit","Production","Built_Costs", NULL,
-		"Unit","Production","Built_Costs_Max", NULL,
-		"Unit","Production","Is_Produced_by", NULL,
-
-		// Weapons
-		"Unit","Weapons","Weapon","Muzzle_Type", NULL,
-		"Unit","Weapons","Weapon","Turret_Gfx", NULL,
-		"Unit","Weapons","Weapon","Shot_Trajectory", NULL,
-		"Unit","Weapons","Weapon","Ammo_Type", NULL,
-		"Unit","Weapons","Weapon","Ammo_Quantity", NULL,
-
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Land","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Land","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Sea","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Sea","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Air","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Air","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Mine","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Mine","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Submarine","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Submarine","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Infantry","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_Infantry","Range", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_WMD","Damage", NULL,
-		"Unit","Weapons","Weapon","Allowed_Targets","Target_WMD","Range", NULL,
-
-		"Unit","Weapons","Weapon","Shots", NULL,
-		"Unit","Weapons","Weapon","Destination_Area", NULL,
-		"Unit","Weapons","Weapon","Destination_Type", NULL,
-		"Unit","Weapons","Weapon","Movement_Allowed", NULL,
-
-		// Abilities
-		"Unit","Abilities","Can_Clear_Area", NULL,
-		"Unit","Abilities","Gets_Experience", NULL,
-		"Unit","Abilities","Can_Disable", NULL,
-		"Unit","Abilities","Can_Capture", NULL,
-		"Unit","Abilities","Can_Dive", NULL,
-		"Unit","Abilities","Landing_Type", NULL,
-		"Unit","Abilities","Can_Upgrade", NULL,
-		"Unit","Abilities","Can_Repair", NULL,
-		"Unit","Abilities","Can_Research", NULL,
-		"Unit","Abilities","Can_Rearm", NULL,
-		"Unit","Abilities","Is_Kamikaze", NULL,
-		"Unit","Abilities","Is_Infrastructure", NULL,
-		"Unit","Abilities","Can_Place_Mines", NULL,
-		"Unit","Abilities","Makes_Tracks", NULL,
-		"Unit","Abilities","Self_Repair_Type", NULL,
-		"Unit","Abilities","Converts_Gold", NULL,
-		"Unit","Abilities","Needs_Energy", NULL,
-		"Unit","Abilities","Needs_Oil", NULL,
-		"Unit","Abilities","Needs_Metal", NULL,
-		"Unit","Abilities","Needs_Humans", NULL,
-		"Unit","Abilities","Mines_Resources", NULL,
-		"Unit","Abilities","Can_Launch_SRBM", NULL,
-		"Unit","Abilities","Energy_Shield_Strength", NULL,
-		"Unit","Abilities","Energy_Shield_Size", NULL,
-
-		// Scan_Abilities
-		"Unit","Scan_Abilities","Range_Sight", NULL,
-		"Unit","Scan_Abilities","Range_Air", NULL,
-		"Unit","Scan_Abilities","Range_Ground", NULL,
-		"Unit","Scan_Abilities","Range_Sea", NULL,
-		"Unit","Scan_Abilities","Range_Submarine", NULL,
-		"Unit","Scan_Abilities","Range_Mine", NULL,
-		"Unit","Scan_Abilities","Range_Infantry", NULL,
-		"Unit","Scan_Abilities","Range_Resources", NULL,
-		"Unit","Scan_Abilities","Range_Jammer", NULL,
-
-		// Movement
-		"Unit","Movement","Movement_Sum", NULL,
-		"Unit","Movement","Costs_Air", NULL,
-		"Unit","Movement","Costs_Sea", NULL,
-		"Unit","Movement","Costs_Submarine", NULL,
-		"Unit","Movement","Costs_Ground", NULL,
-		"Unit","Movement","Factor_Coast", NULL,
-		"Unit","Movement","Factor_Wood", NULL,
-		"Unit","Movement","Factor_Road", NULL,
-		"Unit","Movement","Factor_Bridge", NULL,
-		"Unit","Movement","Factor_Platform", NULL,
-		"Unit","Movement","Factor_Monorail", NULL,
-		"Unit","Movement","Factor_Wreck", NULL,
-		"Unit","Movement","Factor_Mountains", NULL,
-
-		// Storage
-		"Unit","Storage","Is_Garage", NULL,
-		"Unit","Storage","Capacity_Metal", NULL,
-		"Unit","Storage","Capacity_Oil", NULL,
-		"Unit","Storage","Capacity_Gold", NULL,
-		"Unit","Storage","Capacity_Energy", NULL,
-		"Unit","Storage","Capacity_Units_Air", NULL,
-		"Unit","Storage","Capacity_Units_Sea", NULL,
-		"Unit","Storage","Capacity_Units_Ground", NULL,
-		"Unit","Storage","Capacity_Units_Infantry", NULL,
-		"Unit","Storage","Can_Use_Unit_As_Garage", NULL,
-
-		// Grafics
-		"Unit","Graphic","Has_Overlay", NULL,
-		"Unit","Graphic","Animations","Build_Up", NULL,
-		"Unit","Graphic","Animations","Movement", NULL,
-		"Unit","Graphic","Animations","Power_On", NULL
-	};
-	int n, arraycount;
-	string sTmpString, sVehicleDataPath, sNodePath="";
-	char szTmp[100];
-	TiXmlDocument VehicleDataXml;
+	TiXmlDocument unitDataXml;
 	ExTiXmlNode *pExXmlNode = NULL;
 
-	sVehicleDataPath = directory;
-	sVehicleDataPath += "data.xml";
-	if( !FileExists( sVehicleDataPath.c_str() ) )
-		return ;
+	string path = directory;
+	path += "data.xml";
+	if( !FileExists( path.c_str() ) ) return ;
 
-	if ( !VehicleDataXml.LoadFile ( sVehicleDataPath.c_str() ) )
+	if ( !unitDataXml.LoadFile ( path.c_str() ) )
 	{
-		sTmpString = "Can't load data.xml in ";
-		sTmpString += directory;
-		Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+		Log.write( "Can't load " + path,LOG_TYPE_WARNING);
 		return ;
 	}
-	// Read minimal game version, id, name and desciption first!
-	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Header", "Game_Version", NULL))
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"text"))
-		{
-			//TODO: Check game version
-		}
-	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", NULL))
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
-		{
-			Data->ID.iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-			if(Data->ID.iFirstPart == 0)
-			{
-				for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
-				{
-					if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
-					{
-						sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
-						Log.write(szTmp,LOG_TYPE_WARNING);
-						return ;
-					}
-				}
-			}
-			else
-			{
-				for (size_t i = 0; i < UnitsData.building.Size(); ++i)
-				{
-					if( UnitsData.building[i].data.ID.iSecondPart == atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
-					{
-						sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
-						Log.write(szTmp,LOG_TYPE_WARNING);
-						return ;
-					}
-				}
-			}
-			Data->ID.iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
+	// Read minimal game version
+	string gameVersion = getXMLNodeString ( unitDataXml, "text", "Unit", "Header", "Game_Version" );
 
-			if(iID != atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()))
+	//TODO check game version
+
+	//read id
+	string idString = getXMLNodeString ( unitDataXml, "ID", "Unit" );
+	char szTmp[100];
+	// check whether the id exists twice
+	Data->ID.iFirstPart = atoi(idString.substr(0,idString.find(" ",0)).c_str());
+	if(Data->ID.iFirstPart == 0)
+	{
+		for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+		{
+			if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 			{
-				sprintf( szTmp, "ID %0.2d %0.2d isn't equal with ID for unit \"%s\" ", atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str()), atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()), directory);
+				sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write(szTmp,LOG_TYPE_WARNING);
 				return ;
 			}
-			else
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+		{
+			if( UnitsData.building[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 			{
-				sprintf( szTmp, "ID %0.2d %0.2d verified", atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str()), atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str()), directory);
-				Log.write(szTmp,LOG_TYPE_DEBUG);
+				sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				Log.write(szTmp,LOG_TYPE_WARNING);
+				return ;
 			}
 		}
-	if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"name"))
-	{
-		Data->szName = new char[sTmpString.length()+1]; //+1 for \0 termination of string especially on *nix
-		if(!Data->szName) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy( (char *)Data->szName, sTmpString.c_str());
-
 	}
-	if(pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,"Unit", "Description", NULL))
+	Data->ID.iSecondPart = atoi(idString.substr(idString.find(" ",0),idString.length()).c_str());
+
+	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
+	if(iID != atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 	{
-		sTmpString = pExXmlNode->ToElement()->GetText();
-		int iPosition = (int)sTmpString.find("\\n",0);
+		sprintf( szTmp, "ID %0.2d %0.2d isn't equal with ID for unit \"%s\" ", atoi(idString.substr(0,idString.find(" ",0)).c_str()), atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()), directory);
+		Log.write(szTmp,LOG_TYPE_WARNING);
+		return ;
+	}
+	else
+	{
+		sprintf( szTmp, "ID %0.2d %0.2d verified", atoi(idString.substr(0,idString.find(" ",0)).c_str()), atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()), directory);
+		Log.write(szTmp,LOG_TYPE_DEBUG);
+	}
+	//read name
+	Data->name = getXMLNodeString ( unitDataXml, "name", "Unit" );
+	//read description
+	if(pExXmlNode = pExXmlNode->XmlGetFirstNode( unitDataXml, "Unit", "Description", NULL) )
+	{
+		Data->description = pExXmlNode->ToElement()->GetText();
+		int iPosition = (int)Data->description.find("\\n",0);
 		while(iPosition != string::npos)
 		{
-			sTmpString.replace(iPosition,2,"\n");
-			iPosition = (int)sTmpString.find("\\n",iPosition);
-		}
-		Data->szDescribtion = new char[sTmpString.length()+1];
-		if(!Data->szDescribtion) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy( (char *) Data->szDescribtion, sTmpString.c_str());
-	}
-
-	// get array count
-	int i = sizeof(DataStructure);
-	arraycount = 0;
-	while(i)
-	{
-		i -= sizeof(DataStructure[arraycount]);
-		arraycount++;
-	}
-
-	// Read infos
-	for( i = 0; i < arraycount; i += n )
-	{
-		n = 0;
-		while(DataStructure[i+n] != NULL)
-			n++;
-
-		pExXmlNode = pExXmlNode->XmlGetFirstNode(VehicleDataXml,DataStructure[i], DataStructure[i+1], DataStructure[i+2],
-												 DataStructure[i+3], DataStructure[i+4], DataStructure[i+5], DataStructure[i+6]);
-		sNodePath="";
-		for(int j = 0; j<n;j++)
-		{
-			sNodePath += DataStructure[i+j];
-			sNodePath += ";";
-		}
-
-#define GENERAL_NODE (string)"Unit;General_Info;"
-#define DEFENCE_NODE (string)"Unit;Defence;"
-#define PRODUCTION_NODE (string)"Unit;Production;"
-#define WEAPONS_NODE (string)"Unit;Weapons;Weapon;"
-#define ABILITIES_NODE (string)"Unit;Abilities;"
-#define SCAN_ABILITIES_NODE (string)"Unit;Scan_Abilities;"
-#define MOVEMENT_NODE (string)"Unit;Movement;"
-#define STORAGE_NODE (string)"Unit;Storage;"
-#define GRAFIC_NODE (string)"Unit;Graphic;"
-
-		//Log.write(sNodePath, cLog::eLOG_TYPE_DEBUG);
-		// is bool?
-		if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		{
-			// General
-			if(sNodePath.compare(GENERAL_NODE + "Is_Controllable;") == 0)
-				Data->bIs_Controllable = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(GENERAL_NODE + "Can_Be_Captured;") == 0)
-				Data->bCan_Be_Captured = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(GENERAL_NODE + "Can_Be_Disabled;") == 0)
-				Data->bCan_Be_Disabled = pExXmlNode->XmlDataToBool(sTmpString);
-			// Defence
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Land;") == 0)
-				Data->bIs_Target_Land = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Sea;") == 0)
-				Data->bIs_Target_Sea = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Air;") == 0)
-				Data->bIs_Target_Air = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Underwater;") == 0)
-				Data->bIs_Target_Underwater = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Mine;") == 0)
-				Data->bIs_Target_Mine = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Building;") == 0)
-				Data->bIs_Target_Building = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_Satellite;") == 0)
-				Data->bIs_Target_Satellite = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(DEFENCE_NODE + "Is_Target_WMD;") == 0)
-				Data->bIs_Target_WMD = pExXmlNode->XmlDataToBool(sTmpString);
-			// Abilities
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Clear_Area;") == 0)
-				Data->bCan_Clear_Area = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Gets_Experience;") == 0)
-				Data->bGets_Experience = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Disable;") == 0)
-				Data->bCan_Disable = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Capture;") == 0)
-				Data->bCan_Capture = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Dive;") == 0)
-				Data->bCan_Dive = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Upgrade;") == 0)
-				Data->bCan_Upgrade = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Repair;") == 0)
-				Data->bCan_Repair = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Rearm;") == 0)
-				Data->bCan_Rearm = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Research;") == 0)
-				Data->bCan_Research = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Is_Kamikaze;") == 0)
-				Data->bIs_Kamikaze = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Is_Infrastructure;") == 0)
-				Data->bIs_Infrastructure = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Place_Mines;") == 0)
-				Data->bCan_Place_Mines = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Launch_SRBM;") == 0)
-				Data->bCan_Launch_SRBM = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Has_Connector;") == 0)
-				Data->bHas_Connector = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(ABILITIES_NODE + "Can_Be_Passed;") == 0)
-				Data->bCan_Be_Passed = pExXmlNode->XmlDataToBool(sTmpString);
-			// Storage
-			else if(sNodePath.compare(STORAGE_NODE + "Is_Garage;") == 0)
-				Data->bIs_Garage = pExXmlNode->XmlDataToBool(sTmpString);
-			// Grafic
-			else if(sNodePath.compare(GRAFIC_NODE + "Has_Overlay;") == 0)
-				Data->bHas_Overlay = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Build_Up;") == 0)
-				Data->bBuild_Up_Grafic = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Movement;") == 0)
-				Data->bAnimation_Movement = pExXmlNode->XmlDataToBool(sTmpString);
-			else if(sNodePath.compare(GRAFIC_NODE + "Animations;Power_On;") == 0)
-				Data->bPower_On_Grafic = pExXmlNode->XmlDataToBool(sTmpString);
-			n++;
-		}
-		// is int?
-		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		{
-			// General
-			if(sNodePath.compare(GENERAL_NODE + "Size_Length;") == 0)
-				Data->iSize_Length = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(GENERAL_NODE + "Size_Width;") == 0)
-				Data->iSize_Width = atoi(sTmpString.c_str());
-			// Defence
-			else if(sNodePath.compare(DEFENCE_NODE + "Armor;") == 0)
-				Data->iArmor = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(DEFENCE_NODE + "Hitpoints;") == 0)
-				Data->iHitpoints_Max = atoi(sTmpString.c_str());
-			// Production
-			else if(sNodePath.compare(PRODUCTION_NODE + "Built_Costs;") == 0)
-				Data->iBuilt_Costs = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(PRODUCTION_NODE + "Built_Costs_Max;") == 0)
-				Data->iBuilt_Costs_Max = atoi(sTmpString.c_str());
-			// Weapons
-			else if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iSequence = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Quantity;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Air;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Air_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Mine;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Submarine;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Infantry;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_WMD;Damage;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Shots;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iShots_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Movement_Allowed;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iMovement_Allowed = atoi(sTmpString.c_str());
-			// Abilities
-			else if(sNodePath.compare(ABILITIES_NODE + "Converts_Gold;") == 0)
-				Data->iConverts_Gold = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Energy;") == 0)
-				Data->iNeeds_Energy = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Oil;") == 0)
-				Data->iNeeds_Oil = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Metal;") == 0)
-				Data->iNeeds_Metal = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Needs_Humans;") == 0)
-				Data->iNeeds_Humans = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Mines_Resources;") == 0)
-				Data->iMines_Resources = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Strength;") == 0)
-				Data->iEnergy_Shield_Strength_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(ABILITIES_NODE + "Energy_Shield_Size;") == 0)
-				Data->iEnergy_Shield_Size = atoi(sTmpString.c_str());
-			// Movement
-			else if(sNodePath.compare(MOVEMENT_NODE + "Movement_Sum;") == 0)
-				Data->iMovement_Max = 4*atoi(sTmpString.c_str());
-			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Air;") == 0)
-				Data->fCosts_Air = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Sea;") == 0)
-				Data->fCosts_Sea = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Submarine;") == 0)
-				Data->fCosts_Submarine = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Costs_Ground;") == 0)
-				Data->fCosts_Ground = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Coast;") == 0)
-				Data->fFactor_Coast = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Wood;") == 0)
-				Data->fFactor_Wood = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Road;") == 0)
-				Data->fFactor_Road = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Bridge;") == 0)
-				Data->fFactor_Bridge = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Platform;") == 0)
-				Data->fFactor_Platform = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Monorail;") == 0)
-				Data->fFactor_Monorail = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Wreck;") == 0)
-				Data->fFactor_Wreck = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			else if(sNodePath.compare(MOVEMENT_NODE + "Factor_Mountains;") == 0)
-				Data->fFactor_Mountains = (float) pExXmlNode->XmlDataToDouble(sTmpString);
-			// Storage
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Metal;") == 0)
-				Data->iCapacity_Metal_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Oil;") == 0)
-				Data->iCapacity_Oil_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Gold;") == 0)
-				Data->iCapacity_Gold_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Energy;") == 0)
-				Data->iCapacity_Energy_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Air;") == 0)
-				Data->iCapacity_Units_Air_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Sea;") == 0)
-				Data->iCapacity_Units_Sea_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Ground;") == 0)
-				Data->iCapacity_Units_Ground_Max = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(STORAGE_NODE + "Capacity_Units_Infantry;") == 0)
-				Data->iCapacity_Units_Infantry_Max = atoi(sTmpString.c_str());
-			n++;
-		}
-		// is text?
-		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		{
-			// Weapon
-			if(sNodePath.compare(WEAPONS_NODE + "Turret_Gfx;") == 0)
-			{
-				Data->Weapons[Data->iWeaponsCount].szTurret_Gfx = (char *)sTmpString.c_str();
-				Log.write(Data->Weapons[Data->iWeaponsCount].szTurret_Gfx, cLog::eLOG_TYPE_DEBUG);
-			}
-			n++;
-		}
-		// is fd?
-		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Fd"))
-		{
-			// Weapons
-			if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Land;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Sea;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Air;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Air_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Mine;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Submarine;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_Infantry;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Allowed_Targets;Target_WMD;Range;") == 0)
-				Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Range = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(WEAPONS_NODE + "Destination_Area") == 0)
-				Data->Weapons[Data->iWeaponsCount].iDestination_Area = atoi(sTmpString.c_str());
-			// Abilities
-			else if(sNodePath.compare(ABILITIES_NODE + "Makes_Tracks;") == 0)
-				Data->iMakes_Tracks = atoi(sTmpString.c_str());
-			// Scan-Abilities
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Sight;") == 0)
-				Data->iScan_Range_Sight = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Air;") == 0)
-				Data->iScan_Range_Air = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Ground;") == 0)
-				Data->iScan_Range_Ground = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Sea;") == 0)
-				Data->iScan_Range_Sea = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Submarine;") == 0)
-				Data->iScan_Range_Submarine = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Mine;") == 0)
-				Data->iScan_Range_Mine = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Infantry;") == 0)
-				Data->iScan_Range_Infantry = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Resources;") == 0)
-				Data->iScan_Range_Resources = atoi(sTmpString.c_str());
-			else if(sNodePath.compare(SCAN_ABILITIES_NODE + "Range_Jammer;") == 0)
-				Data->iScan_Range_Jammer = atoi(sTmpString.c_str());
-			n++;
-		}
-		// is const?
-		else if(pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Const"))
-		{
-			// Weapons
-			if(sNodePath.compare(WEAPONS_NODE + "Muzzle_Type;") == 0)
-			{
-				if(sTmpString.compare("None") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_NONE;
-				}
-				else if(sTmpString.compare("Big") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_BIG;
-				}
-				else if(sTmpString.compare("Rocket") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_ROCKET;
-				}
-				else if(sTmpString.compare("Small") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_SMALL;
-				}
-				else if(sTmpString.compare("Med") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_MED;
-				}
-				else if(sTmpString.compare("Med_Long") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_MED_LONG;
-				}
-				else if(sTmpString.compare("Rocket_Cluster") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_ROCKET_CLUSTER;
-				}
-				else if(sTmpString.compare("Torpedo") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_TORPEDO;
-				}
-				else if(sTmpString.compare("Sniper") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iMuzzleType = MUZZLE_TYPE_SNIPER;
-				}
-			}
-			else if(sNodePath.compare(WEAPONS_NODE + "Shot_Trajectory;") == 0)
-			{
-				if(sTmpString.compare("straight") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
-				}
-				else if(sTmpString.compare("ballistic") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_BALISTIC;
-				}
-				else if(sTmpString.compare("controlled") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_CONTROLED;
-				}
-			}
-			else if(sNodePath.compare(WEAPONS_NODE + "Ammo_Type;") == 0)
-			{
-				if(sTmpString.compare("Standard") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_STANDARD;
-				}
-				else if(sTmpString.compare("Energy") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_ENERGY;
-				}
-			}
-			else if(sNodePath.compare(WEAPONS_NODE + "Destination_Type;") == 0)
-			{
-				if(sTmpString.compare("Point") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_POINT;
-				}
-				else if(sTmpString.compare("MIRV") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_MIRV;
-				}
-				else if(sTmpString.compare("Scatter") == 0)
-				{
-					Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_SCATTER;
-				}
-			}
-			// Abilities
-			else if(sNodePath.compare(ABILITIES_NODE + "Landing_Type;") == 0)
-			{
-				if(sTmpString.compare("OnlyGarage") == 0)
-					Data->iLanding_Type = LANDING_TYPE_ONLY_GARAGE;
-				else if(sTmpString.compare("GarageAndPlatform") == 0)
-					Data->iLanding_Type = LANDING_TYPE_GARAGE_AND_PLATFORM;
-				else if(sTmpString.compare("Everywhere") == 0)
-					Data->iLanding_Type = LANDING_TYPE_EVERYWHERE;
-			}
-			else if(sNodePath.compare(ABILITIES_NODE + "Self_Repair_Type;") == 0)
-			{
-				if(sTmpString.compare("None") == 0)
-					Data->iSelf_Repair_Type = SELF_REPAIR_TYPE_NONE;
-				else if(sTmpString.compare("Automatic") == 0)
-					Data->iSelf_Repair_Type = SELF_REPAIR_TYPE_AUTOMATIC;
-				else if(sTmpString.compare("Normal") == 0)
-					Data->iSelf_Repair_Type = SELF_REPAIR_TYPE_NORMAL;
-			}
-			else if(sNodePath.compare(ABILITIES_NODE + "Changes_Terrain;") == 0)
-			{
-				if(sTmpString.compare("None") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_NONE;
-				else if(sTmpString.compare("Street") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_STREET;
-				else if(sTmpString.compare("Plattform") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_PLATTFORM;
-				else if(sTmpString.compare("Bridge") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_BRIDGE;
-				else if(sTmpString.compare("Mine") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_MINE;
-				else if(sTmpString.compare("Connector") == 0)
-					Data->iSelf_Repair_Type = CHANGES_TERRAIN_TYPE_CONNECTOR;
-			}
-			n++;
-		}
-		// is id?
-		else if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;") == 0 || sNodePath.compare(STORAGE_NODE + "Can_Use_Unit_As_Garage;") == 0)
-		{
-			// Production
-			if(sNodePath.compare(PRODUCTION_NODE + "Is_Produced_by;") == 0)
-			{
-				//int k = 0;
-				pExXmlNode = pExXmlNode->XmlGetFirstNodeChild();
-				while(pExXmlNode)
-				{
-					if(!pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
-						break;
-					Data->iIs_Produced_by_ID->iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-					Data->iIs_Produced_by_ID->iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
-					pExXmlNode = pExXmlNode->XmlGetNextNodeSibling();
-					//k++;
-				}
-			}
-			// Storage
-			else if(sNodePath.compare(STORAGE_NODE + "Can_Use_Unit_As_Garage;") == 0)
-			{
-				int k = 0;
-				pExXmlNode = pExXmlNode->XmlGetFirstNodeChild();
-				while(pExXmlNode)
-				{
-					if(!pExXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"ID"))
-						break;
-					Data->iCan_Use_Unit_As_Garage_ID[0].iFirstPart = atoi(sTmpString.substr(0,sTmpString.find(" ",0)).c_str());
-					Data->iCan_Use_Unit_As_Garage_ID[0].iSecondPart = atoi(sTmpString.substr(sTmpString.find(" ",0),sTmpString.length()).c_str());
-					pExXmlNode = pExXmlNode->XmlGetNextNodeSibling();
-					k++;
-				}
-			}
-			n++;
-		}
-		// is nothing known: cannot be readed!
-		else
-		{
-			sTmpString = "Can't read -Node in ";
-			sTmpString.insert(sTmpString.length()-9,DataStructure[i+n-1]);
-			sTmpString += sVehicleDataPath;
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
-			n++;
+			Data->description.replace(iPosition,2,"\n");
+			iPosition = (int)Data->description.find("\\n",iPosition);
 		}
 	}
-	if(Data->Weapons[0].iShots > 0) Data->iWeaponsCount = 1;
-	Log.write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
-	if(SettingsData.bDebug) Log.mark();
-	return ;
-}
 
-void SetDefaultUnitData(sUnitData* const Data)
-{
-	// Main info
-	Data->ID.iFirstPart = -1;
-	Data->ID.iSecondPart = -1;
-	Data->szName = "unknown";
-	Data->szDescribtion = "Default";
-	Data->iVersion = 1;
+	// Weapon
+	string muzzleType = getXMLNodeString ( unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type" );
+	if ( muzzleType.compare ( "Big" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_BIG;
+	else if ( muzzleType.compare ( "Rocket" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET;
+	else if ( muzzleType.compare ( "Small" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_SMALL;
+	else if ( muzzleType.compare ( "Med" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED;
+	else if ( muzzleType.compare ( "Med_Long" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED_LONG;
+	else if ( muzzleType.compare ( "Rocket_Cluster" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER;
+	else if ( muzzleType.compare ( "Torpedo" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_TORPEDO;
+	else if ( muzzleType.compare ( "Sniper" ) == 0 ) Data->muzzleType =sUnitData:: MUZZLE_TYPE_SNIPER;
+	else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
 
-	// General info
-	Data->bIs_Controllable = true;
-	Data->bCan_Be_Captured = true;
-	Data->bCan_Be_Disabled = true;
-	Data->iSize_Length = 1;
-	Data->iSize_Width = 1;
+	Data->ammoMax = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Ammo_Quantity" );
+	Data->shotsMax = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Shots" );
+	Data->range = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Range" );
+	Data->damage = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Damage" );
+	Data->canAttack = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Can_Attack" );
 
-	// Defence
-	Data->bIs_Target_Land = true;
-	Data->bIs_Target_Sea = false;
-	Data->bIs_Target_Air = false;
-	Data->bIs_Target_Underwater = false;
-	Data->bIs_Target_Mine = true;
-	Data->bIs_Target_Building = true;
-	Data->bIs_Target_Satellite = false;
-	Data->bIs_Target_WMD = false;
-	Data->iArmor = 1;
-	Data->iHitpoints_Max = 1;
-	Data->iHitpoints = 0;
+	// TODO: make the code differ between attacking sea units and land units.
+	// until this is done being able to attack sea units means being able to attack ground units.
+	if ( Data->canAttack & TERRAIN_SEA ) Data->canAttack |= TERRAIN_GROUND;
+
+	Data->canDriveAndFire = getXMLNodeBool ( unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire" );
 
 	// Production
-	Data->iBuilt_Costs = 1;
-	Data->iBuilt_Costs_Max = 1;
-	Data->iIs_Produced_by_ID = new sID;
-	if(!Data->iIs_Produced_by_ID) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	Data->iIs_Produced_by_ID->iFirstPart = -1;
-	Data->iIs_Produced_by_ID->iSecondPart = -1;
-	//Data->iIs_Produced_by_ID[0].iFirstPart = -1;
-	//Data->iIs_Produced_by_ID[0].iSecondPart = -1;
+	Data->buildCosts = getXMLNodeInt ( unitDataXml, "Unit", "Production", "Built_Costs" );
 
-	// Weapons
-	Data->iWeaponsCount = 0;
-	Data->Weapons = new sWeaponData;
-	if(!Data->Weapons) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	Data->Weapons[Data->iWeaponsCount].szTurret_Gfx = "None";
-	Data->Weapons[Data->iWeaponsCount].iSequence = 0;
-	Data->Weapons[Data->iWeaponsCount].iShot_Trajectory = SHOT_TRAJECTURY_STRAIGHT;
-	Data->Weapons[Data->iWeaponsCount].iAmmo_Type = AMMO_TYPE_STANDARD;
-	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity_Max = 0;
-	Data->Weapons[Data->iWeaponsCount].iAmmo_Quantity = 0;
+	Data->canBuild = getXMLNodeString ( unitDataXml, "String", "Unit", "Production", "Can_Build" );
+	Data->buildAs = getXMLNodeString ( unitDataXml, "String", "Unit", "Production", "Build_As" );
 
-	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Land_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Sea_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Air_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Mine_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Submarine_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_Infantry_Range = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Damage = 0;
-	Data->Weapons[Data->iWeaponsCount].iTarget_WMD_Range = 0;
+	Data->maxBuildFactor = getXMLNodeInt ( unitDataXml, "Unit", "Production", "Max_Build_Factor" );
 
-	Data->Weapons[Data->iWeaponsCount].iShots_Max = 0;
-	Data->Weapons[Data->iWeaponsCount].iShots = 0;
-	Data->Weapons[Data->iWeaponsCount].iDestination_Area = 1;
-	Data->Weapons[Data->iWeaponsCount].iDestination_Type = DESTINATION_TYPE_POINT;
-	Data->Weapons[Data->iWeaponsCount].iMovement_Allowed = 0;
-
-	// Abilities
-	Data->bIs_Base = false;
-	Data->bCan_Clear_Area = false;
-	Data->bGets_Experience = false;
-	Data->bCan_Disable = false;
-	Data->bCan_Capture = false;
-	Data->bCan_Dive = false;
-	Data->iLanding_Type = LANDING_TYPE_GARAGE_AND_PLATFORM;
-	Data->bCan_Upgrade = false;
-	Data->bCan_Repair = false;
-	Data->bCan_Rearm = false;
-	Data->bCan_Research = false;
-	Data->bIs_Kamikaze = false;
-	Data->bIs_Infrastructure = false;
-	Data->bCan_Place_Mines = false;
-	Data->iMakes_Tracks = 3;
-	Data->iSelf_Repair_Type = SELF_REPAIR_TYPE_NONE;
-	Data->iConverts_Gold = 0;
-	Data->iNeeds_Energy = 0;
-	Data->iNeeds_Oil = 0;
-	Data->iNeeds_Metal = 0;
-	Data->iNeeds_Humans = 0;
-	Data->iMines_Resources = 0;
-	Data->bCan_Launch_SRBM = false;
-	Data->iEnergy_Shield_Strength_Max = 0;
-	Data->iEnergy_Shield_Strength = 0;
-	Data->iEnergy_Shield_Size = 0;
-	Data->bHas_Connector = false;
-	Data->bCan_Be_Passed = false;
-	Data->iChanges_Terrain = CHANGES_TERRAIN_TYPE_NONE;
-
-	// Scan_Abilities
-	Data->iScan_Range_Sight = 1;
-	Data->iScan_Range_Air = 0;
-	Data->iScan_Range_Ground = 0;
-	Data->iScan_Range_Sea = 0;
-	Data->iScan_Range_Submarine = 0;
-	Data->iScan_Range_Mine = 0;
-	Data->iScan_Range_Infantry = 0;
-	Data->iScan_Range_Resources = 0;
-	Data->iScan_Range_Jammer = 0;
+	Data->canBuildPath = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Can_Build_Path" );
+	Data->canBuildRepeat = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Can_Build_Repeat" );
+	Data->buildIntern = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Builds_Intern" );
 
 	// Movement
-	Data->iMovement_Sum = 0;
-	Data->iMovement_Max = 0;
-	Data->fCosts_Air = 0;
-	Data->fCosts_Sea = 0;
-	Data->fCosts_Submarine = 0;
-	Data->fCosts_Ground = 1;
-	Data->fFactor_Coast = 1.5;
-	Data->fFactor_Wood = 1.5;
-	Data->fFactor_Road = 0.5;
-	Data->fFactor_Bridge = 1;
-	Data->fFactor_Platform = 1;
-	Data->fFactor_Monorail = 0;
-	Data->fFactor_Wreck = 1;
-	Data->fFactor_Mountains = 0;
+	Data->speedMax = getXMLNodeInt ( unitDataXml, "Unit", "Movement", "Movement_Sum" );
+	Data->speedMax *= 4;
+
+	Data->factorGround = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Ground" );
+	Data->factorSea = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Sea" );
+	Data->factorAir = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Air" );
+	Data->factorCoast = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Coast" );
+
+	// Abilities
+	Data->isBig = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Big" );
+	Data->connectsToBase = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Connects_To_Base" );
+	Data->armor = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Armor" );
+	Data->hitpointsMax = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Hitpoints" );
+	Data->scan = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Scan_Range" );
+	Data->modifiesSpeed = getXMLNodeFloat ( unitDataXml, "Unit", "Abilities", "Modifies_Speed" );
+	Data->canClearArea = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Clear_Area" );
+	Data->canBeCaptured = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Captured" );
+	Data->canBeDisabled = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Disabled" );
+	Data->canCapture = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Capture" );
+	Data->canDisable = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Disable" );
+	Data->canRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Repair" );
+	Data->canRearm = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Rearm" );
+	Data->canReasearch = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Research" );
+	Data->canPlaceMines = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Place_Mines" );
+	Data->canSurvey = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Survey" );
+	Data->doesSelfRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Does_Self_Repair" );
+	Data->convertsGold = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Converts_Gold" );
+	Data->canSelfDestroy = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Self_Destroy" );
+
+	Data->canMineMaxRes = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource" );
+
+	Data->needsMetal = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Metal" );
+	Data->needsOil = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Oil" );
+	Data->needsEnergy = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Energy" );
+	Data->needsHumans = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Humans" );
+	if ( Data->needsEnergy < 0 )
+	{
+		Data->produceEnergy = abs( Data->needsEnergy );
+		Data->needsEnergy = 0;
+	} else Data->produceEnergy = 0;
+	if ( Data->needsHumans < 0 )
+	{
+		Data->produceHumans = abs( Data->needsHumans );
+		Data->needsHumans = 0;
+	} else Data->produceHumans = 0;
+	
+	Data->isStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Is_Stealth_On" );
+	Data->canDetectStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On" );
+
+	string surfacePosString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Surface_Position" );
+	if ( surfacePosString.compare ( "Beneath" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH;
+	else if ( surfacePosString.compare ( "Above" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE;
+	else if ( surfacePosString.compare ( "BeneathNAbove" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVENBENEATH;
+	else Data->surfacePosition = sUnitData::SURFACE_POS_NORMAL;
+
+	string overbuildString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild" );
+	if ( overbuildString.compare ( "Yes" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YES;
+	else if ( overbuildString.compare ( "YesNRemove" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YESNREMOVE;
+	else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
+
+	Data->canBeLandedOn = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On" );
+	Data->canWork = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Activatable" );
+	Data->explodesOnContact = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Explodes_On_Contact" );
+	Data->isHuman = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Human" );
 
 	// Storage
-	Data->bIs_Garage = false;
-	Data->iCapacity_Metal_Max = 0;
-	Data->iCapacity_Oil_Max = 0;
-	Data->iCapacity_Gold_Max = 0;
-	Data->iCapacity_Energy_Max = 0;
-	Data->iCapacity_Units_Air_Max = 0;
-	Data->iCapacity_Units_Sea_Max = 0;
-	Data->iCapacity_Units_Ground_Max = 0;
-	Data->iCapacity_Units_Infantry_Max = 0;
-	Data->iCapacity_Metal = 0;
-	Data->iCapacity_Oil = 0;
-	Data->iCapacity_Gold = 0;
-	Data->iCapacity_Energy = 0;
-	Data->iCapacity_Units_Air = 0;
-	Data->iCapacity_Units_Sea = 0;
-	Data->iCapacity_Units_Ground = 0;
-	Data->iCapacity_Units_Infantry = 0;
-	Data->iCan_Use_Unit_As_Garage_ID = new sID;
-	if(!Data->iCan_Use_Unit_As_Garage_ID) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	Data->iCan_Use_Unit_As_Garage_ID[0].iFirstPart = -1;
-	Data->iCan_Use_Unit_As_Garage_ID[0].iSecondPart = -1;
+	Data->storageResMax = getXMLNodeInt ( unitDataXml, "Unit", "Storage", "Capacity_Resources" );
 
-	// Grafics
-	Data->bHas_Overlay = false;
-	Data->bBuild_Up_Grafic = false;
-	Data->bAnimation_Movement = false;
-	Data->bPower_On_Grafic = false;
+	string storeResString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type" );
+	if ( storeResString.compare ( "Metal" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_METAL;
+	else if ( storeResString.compare ( "Oil" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_OIL;
+	else if ( storeResString.compare ( "Gold" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_GOLD;
+	else Data->storeResType = sUnitData::STORE_RES_NONE;
+
+	Data->storageUnitsMax = getXMLNodeInt ( unitDataXml, "Unit", "Storage", "Capacity_Units" );
+
+	string storeUnitImgString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type" );
+	if ( storeUnitImgString.compare ( "Plane" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_PLANE;
+	else if ( storeUnitImgString.compare ( "Human" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_HUMAN;
+	else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
+
+	string storeUnitsString = getXMLNodeString ( unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type" );
+	if ( storeUnitsString.length() > 0 )
+	{
+		int pos = -1;
+		do
+		{
+			int lastpos = pos;
+			pos = storeUnitsString.find_first_of ( "+", pos+1 );
+			if ( pos == string::npos ) pos = storeUnitsString.length();
+			Data->storeUnitsTypes.push_back ( storeUnitsString.substr ( lastpos+1, pos-(lastpos+1) ) );
+		}
+		while ( pos < (int)storeUnitsString.length() );
+	}
+
+	Data->isStorageType = getXMLNodeString ( unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type" );
+
+	// load graphics.xml
+	LoadUnitGraphicData ( Data, directory );
+
+	// finish
+	Log.write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
+	if( SettingsData.bDebug ) Log.mark();
 	return ;
 }
 
-void ConvertData(int unitnum, bool vehicle)
+//-------------------------------------------------------------------------------------
+void LoadUnitGraphicData( sUnitData *Data, char const* directory )
 {
-	sUnitData *Data;
-	if(vehicle)
+	TiXmlDocument unitGraphicsXml;
+	ExTiXmlNode *pExXmlNode = NULL;
+
+	string path = directory;
+	path += "graphics.xml";
+	if( !FileExists( path.c_str() ) ) return ;
+
+	if ( !unitGraphicsXml.LoadFile ( path.c_str() ) )
 	{
-		Data = &UnitsData.vehicle[unitnum].data;
-		UnitsData.vehicle[unitnum].text = new char [strlen(Data->szDescribtion)+1];
-		strcpy(UnitsData.vehicle[unitnum].text,Data->szDescribtion);
+		Log.write( "Can't load " + path, LOG_TYPE_WARNING );
+		return ;
 	}
-	else
-	{
-		Data = &UnitsData.building[unitnum].data;
-		UnitsData.building[unitnum].text = new char [strlen(Data->szDescribtion)+1];
-		strcpy(UnitsData.building[unitnum].text,Data->szDescribtion);
-	}
-	Data->version = Data->iVersion;
-	Data->max_speed = Data->iMovement_Max;
-	Data->speed = Data->iMovement_Sum;
-	Data->max_hit_points = Data->iHitpoints_Max;
-	Data->hit_points = Data->iHitpoints;
-	Data->armor = Data->iArmor;
-	Data->scan = Data->iScan_Range_Sight;
-	Data->muzzle_typ = Data->Weapons[0].iMuzzleType-1;
-	if ( Data->muzzle_typ < 0 ) Data->muzzle_typ = 0;
-	if(Data->Weapons[0].iTarget_Air_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Air_Range;
-	else if(Data->Weapons[0].iTarget_Infantry_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Infantry_Range;
-	else if(Data->Weapons[0].iTarget_Land_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Land_Range;
-	else if(Data->Weapons[0].iTarget_Mine_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Mine_Range;
-	else if(Data->Weapons[0].iTarget_Sea_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Sea_Range;
-	else if(Data->Weapons[0].iTarget_Submarine_Range > 0)
-		Data->range = Data->Weapons[0].iTarget_Submarine_Range;
-	else
-		Data->range = 0;
-	Data->max_shots = Data->Weapons[0].iShots_Max;
-	Data->shots = Data->Weapons[0].iShots;
-	if(Data->Weapons[0].iTarget_Air_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Air_Damage;
-	else if(Data->Weapons[0].iTarget_Infantry_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Infantry_Damage;
-	else if(Data->Weapons[0].iTarget_Land_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Land_Damage;
-	else if(Data->Weapons[0].iTarget_Mine_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Mine_Damage;
-	else if(Data->Weapons[0].iTarget_Sea_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Sea_Damage;
-	else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
-		Data->damage = Data->Weapons[0].iTarget_Submarine_Damage;
-	else
-		Data->damage = 0;
 
-	if ( Data->iCapacity_Metal_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Metal_Max;
-	else if ( Data->iCapacity_Oil_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Oil_Max;
-	else if ( Data->iCapacity_Gold_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Gold_Max;
-	else if ( Data->iCapacity_Units_Air_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Units_Air_Max;
-	else if ( Data->iCapacity_Units_Sea_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Units_Sea_Max;
-	else if ( Data->iCapacity_Units_Ground_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Units_Ground_Max;
-	else if ( Data->iCapacity_Units_Infantry_Max > 0 )
-		Data->max_cargo = Data->iCapacity_Units_Infantry_Max;
-	else Data->max_cargo = 0;
+	Data->hasClanLogos = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos" );
+	Data->hasCorpse = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Corpse" );
+	Data->hasDamageEffect = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect" );
+	Data->hasBetonUnderground = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground" );
+	Data->hasPlayerColor = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color" );
+	Data->hasOverlay = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Overlay" );
 
-	Data->cargo = 0;
-	Data->max_ammo = Data->Weapons[0].iAmmo_Quantity_Max;
-	Data->ammo = Data->Weapons[0].iAmmo_Quantity;
-
-	if(Data->iNeeds_Energy < 0)
-	{
-		Data->energy_prod = -Data->iNeeds_Energy;
-		Data->energy_need = 0;
-	}
-	else
-	{
-		Data->energy_prod = 0;
-		Data->energy_need = Data->iNeeds_Energy;
-	}
-	if(Data->iNeeds_Humans < 0)
-	{
-		Data->human_prod = -Data->iNeeds_Humans;
-		Data->human_need = 0;
-	}
-	else
-	{
-		Data->human_prod = 0;
-		Data->human_need = Data->iNeeds_Humans;
-	}
-	Data->oil_need = Data->iNeeds_Oil;
-	Data->metal_need = Data->iNeeds_Metal;
-	Data->gold_need = Data->iConverts_Gold;
-
-	Data->max_shield = Data->iEnergy_Shield_Strength_Max;
-	Data->shield = Data->iEnergy_Shield_Strength;
-
-	if(Data->fCosts_Ground > 0.0)
-		if(Data->fCosts_Sea > 0.0)
-			Data->can_drive = DRIVE_LANDnSEA;
-		else
-			Data->can_drive = DRIVE_LAND;
-	else if(Data->fCosts_Sea > 0.0)
-		Data->can_drive = DRIVE_SEA;
-	if(Data->fCosts_Air > 0.0)
-		Data->can_drive = DRIVE_AIR;
-
-	if(Data->iCapacity_Metal_Max > 0)
-		Data->can_transport = TRANS_METAL;
-	else if(Data->iCapacity_Oil_Max > 0)
-		Data->can_transport = TRANS_OIL;
-	else if(Data->iCapacity_Gold_Max > 0)
-		Data->can_transport = TRANS_GOLD;
-	else if(Data->iCapacity_Units_Sea_Max > 0 || Data->iCapacity_Units_Ground_Max > 0)
-		Data->can_transport = TRANS_VEHICLES;
-	else if(Data->iCapacity_Units_Infantry_Max > 0)
-		Data->can_transport = TRANS_MEN;
-	else if(Data->iCapacity_Units_Air_Max > 0)
-		Data->can_transport = TRANS_AIR;
-	else
-		Data->can_transport = TRANS_NONE;
-	Data->can_load = Data->can_transport;
-
-	if(Data->Weapons[0].iTarget_Land_Damage > 0)
-		if(Data->Weapons[0].iTarget_Air_Damage > 0)
-			Data->can_attack = ATTACK_AIRnLAND;
-		else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
-			Data->can_attack = ATTACK_SUB_LAND;
-		else
-			Data->can_attack = ATTACK_LAND;
-	else if(Data->Weapons[0].iTarget_Air_Damage > 0)
-		Data->can_attack = ATTACK_AIR;
-	else if(Data->Weapons[0].iTarget_Submarine_Damage > 0)
-			Data->can_attack = ATTACK_SUB_LAND;
-	else
-		Data->can_attack = ATTACK_NONE;
-
-	Data->can_repair = Data->bCan_Repair;
-	if(Data->iScan_Range_Resources > 0)
-		Data->can_survey = true;
-	else
-		Data->can_survey = false;
-	Data->can_clear = Data->bCan_Clear_Area;
-	Data->has_overlay = Data->bHas_Overlay;
-	Data->can_lay_mines = Data->bCan_Place_Mines;
-	if(Data->iScan_Range_Mine > 0)
-		Data->can_detect_mines = true;
-	else
-		Data->can_detect_mines = false;
-	if(Data->iScan_Range_Submarine > 0)
-		Data->can_detect_sea = true;
-	else
-		Data->can_detect_sea = false;
-	if(Data->iScan_Range_Infantry > 0)
-		Data->can_detect_land = true;
-	else
-		Data->can_detect_land = false;
-	if(Data->iMakes_Tracks > 0)
-		Data->make_tracks = true;
-	else
-		Data->make_tracks = false;
-	Data->is_human = Data->bAnimation_Movement;
-
-	if(Data->iSize_Length > 1)
-		Data->is_big = true;
-	else
-		Data->is_big = false;
-
-	Data->has_effect = Data->bPower_On_Grafic;
-	Data->can_research = Data->bCan_Research;
-	Data->can_reload = Data->bCan_Rearm;
-
-	if(Data->Weapons[0].iMovement_Allowed*4 == Data->iMovement_Max)
-		Data->can_drive_and_fire = true;
-	else
-		Data->can_drive_and_fire = false;
-
-	if(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 13 ) // Infiltrator
-		Data->is_commando = true;
-	else
-		Data->is_commando = false;
-	Data->is_stealth_land = Data->is_commando;
-
-	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 6 ) || (Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 30 )) // Apc & Submarine
-		Data->is_stealth_sea = true;
-	else
-		Data->is_stealth_sea = false;
-
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 4 ) // Connector
-		Data->is_connector = true;
-	else
-		Data->is_connector = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 28 ) // Road
-		Data->is_road = true;
-	else
-		Data->is_road = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) // Bridge
-		Data->is_bridge = true;
-	else
-		Data->is_bridge = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) // Platform
-		Data->is_platform = true;
-	else
-		Data->is_platform = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 24 ) // Pad
-		Data->is_pad = true;
-	else
-		Data->is_pad = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 22 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 23 )) // Mine & Alien Mine
-		Data->is_mine = true;
-	else
-		Data->is_mine = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 21 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Landmine & Seamine
-		Data->is_expl_mine = true;
-	else
-		Data->is_expl_mine = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 26 ) // Radar
-		Data->is_annimated = true;
-	else
-		Data->is_annimated = false;
-	if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) // Alienfactory
-		Data->build_alien = true;
-	else
-		Data->build_alien = false;
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 6 ) || // Dock
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 12 ) || // Shipfactory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) || // Bridge
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) || // Platform
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 )) // Seamine
-		Data->build_on_water = true;
-	else
-		Data->build_on_water = false;
-	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 5 ) || // Alientank
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2 ) || // Alienassault
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) || // Alienfactory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 30 ) || // Alienshield
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 23 )) // Alienmine
-		Data->is_alien = true;
-	else
-		Data->is_alien = false;
-	if(Data->energy_prod || Data->energy_need)
-		Data->can_work=true;
-	else
-		Data->can_work=false;
-
-	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 19 ) || // Constructor
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 11 ) || // Big-factory
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 10 ) ) // Alien-factory
-		Data->can_build = BUILD_BIG;
-	else if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 24 ) || (Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 13 ) ) // Pionier & Small-factory
-		Data->can_build = BUILD_SMALL;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 12 ) // Ship-factory
-		Data->can_build = BUILD_SEA;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 9 ) // Air-factory
-		Data->can_build = BUILD_AIR;
-	else if(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 34 ) // Training
-		Data->can_build = BUILD_MAN;
-	else
-		Data->can_build = BUILD_NONE;
-
-	if((Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 28) || // Road
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 3 ) || // Bridge
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 25 ) || // Platform
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 21 ) || // Landmine
-		(Data->ID.iFirstPart == 1 && Data->ID.iSecondPart == 29 ) ) // Seamine
-		Data->is_base = true;
-	else
-		Data->is_base = false;
-
-	if((Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 2) || // Alienassault
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 3 ) || // Alienplane
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 4 ) || // Alienship
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 5 ) || // Alientank
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 7 ) || // Assault
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 12 ) || // Cluster
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 19 ) || // Konstrukt
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 21 ) || // Missel
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 26 ) || // Scanner
-		(Data->ID.iFirstPart == 0 && Data->ID.iSecondPart == 32 ) ) // Tank
-		Data->build_by_big = true;
-	else
-		Data->build_by_big = false;
+	Data->buildUpGraphic = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up" );
+	Data->animationMovement = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement" );
+	Data->powerOnGraphic = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On" );
+	Data->isAnimated = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated" );
+	Data->makeTracks = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks" );
 }
 
 //-------------------------------------------------------------------------------------
@@ -3828,10 +3097,8 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		SetDefaultUnitData ( &UnitsData.vehicle[i].data );
 		LoadUnitData ( &UnitsData.vehicle[i].data, (SettingsData.sVehiclesPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
 		translateUnitData( UnitsData.vehicle[i].data.ID, true );
-		ConvertData ( i, true );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
@@ -3847,10 +3114,8 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		SetDefaultUnitData ( &UnitsData.building[i].data );
 		LoadUnitData ( &UnitsData.building[i].data, (SettingsData.sBuildingsPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
 		translateUnitData( UnitsData.building[i].data.ID, false );
-		ConvertData ( i, false );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
