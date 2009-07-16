@@ -38,7 +38,7 @@ int cSavegame::save( string saveName )
 	SaveFile = new TiXmlDocument;
 
 	TiXmlElement *rootnode = new TiXmlElement ( "MAXR_SAVE_FILE" );
-	rootnode->SetAttribute ( "version", SAVE_FORMAT_VERSION );
+	rootnode->SetAttribute ( "version", (SAVE_FORMAT_VERSION).c_str() );
 	SaveFile->LinkEndChild ( rootnode );
 
 	writeHeader( saveName );
@@ -101,23 +101,32 @@ int cSavegame::load()
 	}
 	if ( !SaveFile->RootElement() ) return 0;
 
-	if ( ((string)SaveFile->RootElement()->Attribute ( "version" )).compare ( SAVE_FORMAT_VERSION ) )
+	version = SaveFile->RootElement()->Attribute ( "version" );
+	if ( version.compare ( SAVE_FORMAT_VERSION ) )
 	{
 		Log.write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING );
 	}
 
 	// load standard unit values
-	TiXmlElement *unitValuesNode = SaveFile->RootElement()->FirstChildElement( "UnitValues" );
-	if ( unitValuesNode != NULL )
+	if ( atoi ( version.substr ( 0, version.find_first_of ( "." ) ).c_str() ) == 0 &&
+		atoi ( version.substr ( version.find_first_of ( "." ), version.length()-version.find_first_of ( "." ) ).c_str() ) <= 2 )
 	{
-		int unitnum = 0;
-		TiXmlElement *unitNode = unitValuesNode->FirstChildElement( "UnitVal_0" );
-		while ( unitNode )
+		Log.write ( "Skiping loading standard unit values becouse savegame has version 0.2 or older.", LOG_TYPE_DEBUG );
+	}
+	else
+	{
+		TiXmlElement *unitValuesNode = SaveFile->RootElement()->FirstChildElement( "UnitValues" );
+		if ( unitValuesNode != NULL )
 		{
-			loadStandardUnitValues ( unitNode );
+			int unitnum = 0;
+			TiXmlElement *unitNode = unitValuesNode->FirstChildElement( "UnitVal_0" );
+			while ( unitNode )
+			{
+				loadStandardUnitValues ( unitNode );
 
-			unitnum++;
-			unitNode = unitValuesNode->FirstChildElement( ("UnitVal_" + iToStr ( unitnum )).c_str() );
+				unitnum++;
+				unitNode = unitValuesNode->FirstChildElement( ("UnitVal_" + iToStr ( unitnum )).c_str() );
+			}
 		}
 	}
 
@@ -794,7 +803,6 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	int unitNum;
 	bool isVehicle;
 
-
 	// get the unit data
 	sID ID;
 	ID.generate ( unitNode->FirstChildElement( "ID" )->Attribute ( "string" ) );
@@ -829,87 +837,107 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 
 	Data->ID = ID;
 
-	// TODO: read unit values again
+	Data->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	unitNode->FirstChildElement( "Version" )->Attribute ( "num", &Data->version );
 
-	/*Data->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
-
-	unitNode->FirstChildElement( "Hitpoints" )->Attribute ( "num", &Data->iHitpoints_Max );
-	unitNode->FirstChildElement( "Armor" )->Attribute ( "num", &Data->iArmor );
+	unitNode->FirstChildElement( "Hitpoints" )->Attribute ( "num", &Data->hitpointsMax );
+	unitNode->FirstChildElement( "Armor" )->Attribute ( "num", &Data->armor );
 	unitNode->FirstChildElement( "Built_Costs" )->Attribute ( "num", &Data->buildCosts );
-	unitNode->FirstChildElement( "Built_Costs_Max" )->Attribute ( "num", &Data->buildCosts_Max );
-	if ( Element = unitNode->FirstChildElement( "Shield" ) ) Element->Attribute ( "num", &Data->iEnergy_Shield_Strength_Max );
 
-	if ( Element = unitNode->FirstChildElement( "Scan_Range_Sight" ) ) Element->Attribute ( "num", &Data->iScan_Range_Sight );
-	if ( Element = unitNode->FirstChildElement( "Scan_Range_Mine" ) ) Element->Attribute ( "num", &Data->iScan_Range_Mine );
-	if ( Element = unitNode->FirstChildElement( "Scan_Range_Resource" ) ) Element->Attribute ( "num", &Data->iScan_Range_Resources );
-	if ( Element = unitNode->FirstChildElement( "Scan_Range_Submarine" ) ) Element->Attribute ( "num", &Data->iScan_Range_Submarine );
-	if ( Element = unitNode->FirstChildElement( "Scan_Range_Infantry" ) ) Element->Attribute ( "num", &Data->iScan_Range_Infantry );
+	if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan ); else Data->scan = 0;
+	if ( Element = unitNode->FirstChildElement( "Movement" ) ) Element->Attribute ( "num", &Data->speedMax ); else Data->speedMax = 0;
+	Data->speedMax *= 4;
+	
+	int tmpInt;
 
-	if ( Element = unitNode->FirstChildElement( "Movement" ) ) Element->Attribute ( "num", &Data->iMovement_Max );
-	Data->iMovement_Max *= 4;
-	if ( Element = unitNode->FirstChildElement( "Makes_Tracks" ) ) Element->Attribute ( "num", &Data->iMakes_Tracks );
+	if ( Element = unitNode->FirstChildElement( "MuzzleType" ) ) { Element->Attribute ( "num", &tmpInt ); Data->muzzleType = (sUnitData::eMuzzleType)tmpInt; } else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
+	if ( Element = unitNode->FirstChildElement( "Shots" ) ) Element->Attribute ( "num", &Data->shotsMax ); else Data->shotsMax = 0;
+	if ( Element = unitNode->FirstChildElement( "Ammo" ) ) Element->Attribute ( "num", &Data->ammoMax ); else Data->ammoMax = 0;
+	if ( Element = unitNode->FirstChildElement( "Range" ) ) Element->Attribute ( "num", &Data->range ); else Data->range = 0;
+	if ( Element = unitNode->FirstChildElement( "Damage" ) ) Element->Attribute ( "num", &Data->damage ); else Data->damage = 0;
+	if ( Element = unitNode->FirstChildElement( "Can_Attack" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canAttack = tmpInt; } else Data->canAttack = TERRAIN_NONE;
 
-	if ( Element = unitNode->FirstChildElement( "Movement_Allowed" ) ) Element->Attribute ( "num", &Data->Weapons[0].iMovement_Allowed );
-	if ( Element = unitNode->FirstChildElement( "MuzzleType" ) ) Element->Attribute ( "num", &Data->Weapons[0].iMuzzleType );
-	if ( Element = unitNode->FirstChildElement( "Shots" ) ) Element->Attribute ( "num", &Data->Weapons[0].iShots_Max );
-	if ( Element = unitNode->FirstChildElement( "Ammo" ) ) Element->Attribute ( "num", &Data->Weapons[0].iAmmo_Quantity_Max );
+	if ( Element = unitNode->FirstChildElement( "Can_Build" ) ) Data->canBuild = Element->Attribute ( "string" ); else Data->canBuild = "";
+	if ( Element = unitNode->FirstChildElement( "Build_As" ) ) Data->buildAs = Element->Attribute ( "string" ); else Data->buildAs = "";
+	if ( Element = unitNode->FirstChildElement( "Max_Build_Factor" ) ) Element->Attribute ( "num", &Data->maxBuildFactor ); else Data->maxBuildFactor = 0;
 
-	if ( Element = unitNode->FirstChildElement( "Air_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Air_Range );
-	if ( Element = unitNode->FirstChildElement( "Infantry_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Infantry_Range );
-	if ( Element = unitNode->FirstChildElement( "Land_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Land_Range );
-	if ( Element = unitNode->FirstChildElement( "Mine_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Mine_Range );
-	if ( Element = unitNode->FirstChildElement( "Sea_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Sea_Range );
-	if ( Element = unitNode->FirstChildElement( "Submarine_Range" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Submarine_Range );
+	if ( Element = unitNode->FirstChildElement( "Storage_Res_Max" ) ) Element->Attribute ( "num", &Data->storageResMax ); else Data->storageResMax = 0;
+	if ( Element = unitNode->FirstChildElement( "Storage_Units_Max" ) ) Element->Attribute ( "num", &Data->storageUnitsMax ); else Data->storageUnitsMax = 0;
+	if ( Element = unitNode->FirstChildElement( "Store_Res_Type" ) ) { Element->Attribute ( "num", &tmpInt ); Data->storeResType = (sUnitData::eStorageResType)tmpInt; } else Data->storeResType = sUnitData::STORE_RES_NONE;
+	if ( Element = unitNode->FirstChildElement( "StoreUnits_Image_Type" ) ) { Element->Attribute ( "num", &tmpInt ); Data->storeUnitsImageType = (sUnitData::eStorageUnitsImageType)tmpInt; } else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_NONE;
+	if ( Element = unitNode->FirstChildElement( "Is_Storage_Type" ) ) Data->isStorageType = Element->Attribute ( "string" ); else Data->isStorageType = "";
+	if ( Element = unitNode->FirstChildElement( "StoreUnitsTypes" ) )
+	{
+		string storeUnitsString = Element->Attribute ( "string" );
+		if ( storeUnitsString.length() > 0 )
+		{
+			int pos = -1;
+			do
+			{
+				int lastpos = pos;
+				pos = storeUnitsString.find_first_of ( "+", pos+1 );
+				if ( pos == string::npos ) pos = storeUnitsString.length();
+				Data->storeUnitsTypes.push_back ( storeUnitsString.substr ( lastpos+1, pos-(lastpos+1) ) );
+			}
+			while ( pos < (int)storeUnitsString.length() );
+		}
+	}
+	
+	if ( Element = unitNode->FirstChildElement( "Needs_Energy" ) ) Element->Attribute ( "num", &Data->needsEnergy ); else Data->needsEnergy = 0;
+	if ( Element = unitNode->FirstChildElement( "Needs_Humans" ) ) Element->Attribute ( "num", &Data->needsHumans ); else Data->needsHumans = 0;
+	if ( Element = unitNode->FirstChildElement( "Needs_Oil" ) ) Element->Attribute ( "num", &Data->needsOil ); else Data->needsOil = 0;
+	if ( Element = unitNode->FirstChildElement( "Needs_Metal" ) ) Element->Attribute ( "num", &Data->needsMetal ); else Data->needsMetal = 0;
+	if ( Element = unitNode->FirstChildElement( "Converts_Gold" ) ) Element->Attribute ( "num", &Data->convertsGold ); else Data->convertsGold = 0;
+	if ( Element = unitNode->FirstChildElement( "Can_Mine_Max_Res" ) ) Element->Attribute ( "num", &Data->canMineMaxRes ); else Data->canMineMaxRes = 0;
+	if ( Data->needsEnergy < 0 )
+	{
+		Data->produceEnergy = abs( Data->needsEnergy );
+		Data->needsEnergy = 0;
+	} else Data->produceEnergy = 0;
+	if ( Data->needsHumans < 0 )
+	{
+		Data->produceHumans = abs( Data->needsHumans );
+		Data->needsHumans = 0;
+	} else Data->produceHumans = 0;
 
-	if ( Element = unitNode->FirstChildElement( "Air_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Air_Damage );
-	if ( Element = unitNode->FirstChildElement( "Infantry_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Infantry_Damage );
-	if ( Element = unitNode->FirstChildElement( "Land_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Land_Damage );
-	if ( Element = unitNode->FirstChildElement( "Mine_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Mine_Damage );
-	if ( Element = unitNode->FirstChildElement( "Sea_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Sea_Damage );
-	if ( Element = unitNode->FirstChildElement( "Submarine_Damage" ) ) Element->Attribute ( "num", &Data->Weapons[0].iTarget_Submarine_Damage );
+	if ( Element = unitNode->FirstChildElement( "Is_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->isStealthOn = tmpInt; } else Data->isStealthOn = TERRAIN_NONE;
+	if ( Element = unitNode->FirstChildElement( "Can_Detect_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canDetectStealthOn = tmpInt; } else Data->canDetectStealthOn = TERRAIN_NONE;
 
-	if ( Element = unitNode->FirstChildElement( "Capacity_Metal" ) ) Element->Attribute ( "num", &Data->iCapacity_Metal_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Oil" ) ) Element->Attribute ( "num", &Data->iCapacity_Oil_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Gold" ) ) Element->Attribute ( "num", &Data->iCapacity_Gold_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Units_Air" ) ) Element->Attribute ( "num", &Data->iCapacity_Units_Air_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Units_Sea" ) ) Element->Attribute ( "num", &Data->iCapacity_Units_Sea_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Units_Ground" ) ) Element->Attribute ( "num", &Data->iCapacity_Units_Ground_Max );
-	if ( Element = unitNode->FirstChildElement( "Capacity_Units_Infantry" ) ) Element->Attribute ( "num", &Data->iCapacity_Units_Infantry_Max );
-
-	if ( Element = unitNode->FirstChildElement( "Needs_Energy" ) ) Element->Attribute ( "num", &Data->iNeeds_Energy );
-	if ( Element = unitNode->FirstChildElement( "Needs_Humans" ) ) Element->Attribute ( "num", &Data->iNeeds_Humans );
-	if ( Element = unitNode->FirstChildElement( "Needs_Oil" ) ) Element->Attribute ( "num", &Data->iNeeds_Oil );
-	if ( Element = unitNode->FirstChildElement( "Needs_Metal" ) ) Element->Attribute ( "num", &Data->needsMetal );
-	if ( Element = unitNode->FirstChildElement( "Converts_Gold" ) ) Element->Attribute ( "num", &Data->iConverts_Gold );
+	if ( Element = unitNode->FirstChildElement( "Surface_Position" ) ) { Element->Attribute ( "num", &tmpInt ); Data->surfacePosition = (sUnitData::eSurfacePosition)tmpInt; } else Data->surfacePosition = sUnitData::SURFACE_POS_NORMAL;
+	if ( Element = unitNode->FirstChildElement( "Can_Be_Overbuild" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canBeOverbuild = (sUnitData::eOverbuildType)tmpInt; } else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
 
 	double tmpdouble;
-	if ( Element = unitNode->FirstChildElement( "Costs_Ground" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Ground = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Costs_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Sea = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Costs_Air" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Air = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Costs_Submarine" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fCosts_Submarine = (float)tmpdouble; }
+	if ( Element = unitNode->FirstChildElement( "Factor_Air" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorAir = (float)tmpdouble; } else Data->factorAir = 0;
+	if ( Element = unitNode->FirstChildElement( "Factor_Coast" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorCoast = (float)tmpdouble; } else Data->factorCoast = 0;
+	if ( Element = unitNode->FirstChildElement( "Factor_Ground" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorGround = (float)tmpdouble; } else Data->factorGround = 0;
+	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorSea = (float)tmpdouble; } else Data->factorSea = 0;
+	
+	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->modifiesSpeed = (float)tmpdouble; } else Data->modifiesSpeed = 0;
 
-	if ( Element = unitNode->FirstChildElement( "Factor_Coast" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Coast = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Wood" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Wood = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Road" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Road = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Bridge" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Bridge = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Platform" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Platform = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Monorail" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Monorail = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Wreck" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Wreck = (float)tmpdouble; }
-	if ( Element = unitNode->FirstChildElement( "Factor_Mountains" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->fFactor_Mountains = (float)tmpdouble; }
+	Data->canBuildPath = unitNode->FirstChildElement( "Can_Build_Path" ) != NULL;
+	Data->canBuildRepeat = unitNode->FirstChildElement( "Can_Build_Repeat" ) != NULL;
+	Data->buildIntern = unitNode->FirstChildElement( "Build_Intern" ) != NULL;
+	Data->connectsToBase = unitNode->FirstChildElement( "Connects_To_Base" ) != NULL;
+	
+	Data->canBeCaptured = unitNode->FirstChildElement( "Can_Be_Captured" ) != NULL;
+	Data->canBeDisabled = unitNode->FirstChildElement( "Can_Be_Disabled" ) != NULL;
+	Data->canCapture = unitNode->FirstChildElement( "Can_Capture" ) != NULL;
+	Data->canDisable = unitNode->FirstChildElement( "Can_Disable" ) != NULL;
+	Data->canSurvey = unitNode->FirstChildElement( "Can_Survey" ) != NULL;
+	Data->doesSelfRepair = unitNode->FirstChildElement( "Does_Self_Repair" ) != NULL;
+	Data->canSelfDestroy = unitNode->FirstChildElement( "Can_Self_Destroy" ) != NULL;
+	Data->explodesOnContact = unitNode->FirstChildElement( "Explodes_On_Contact" ) != NULL;
+	Data->isHuman = unitNode->FirstChildElement( "Is_Human" ) != NULL;
+	Data->canBeLandedOn = unitNode->FirstChildElement( "Can_Be_Landed_On" ) != NULL;
+	Data->canWork = unitNode->FirstChildElement( "Can_Work" ) != NULL;
 
-	if ( Element = unitNode->FirstChildElement( "Size_Length" ) ) Element->Attribute ( "num", &Data->iSize_Length );
-	if ( Element = unitNode->FirstChildElement( "Size_Width" ) ) Element->Attribute ( "num", &Data->iSize_Width );
-
-	if ( unitNode->FirstChildElement( "Can_Repair" ) ) Data->bCan_Repair = true;
-	if ( unitNode->FirstChildElement( "Can_Rearm" ) ) Data->bCan_Rearm = true;
-	if ( unitNode->FirstChildElement( "Can_Research" ) ) Data->bCan_Research = true;
-	if ( unitNode->FirstChildElement( "Can_Clear" ) ) Data->canClearArea = true;
-	if ( unitNode->FirstChildElement( "Can_Place_Mines" ) ) Data->bCan_Place_Mines = true;
-	if ( unitNode->FirstChildElement( "Has_Animation_Movement" ) ) Data->bAnimation_Movement = true;
-	if ( unitNode->FirstChildElement( "Has_Power_On_Grafic" ) ) Data->powerOnGraphic = true;
-	if ( unitNode->FirstChildElement( "Has_Overlay" ) ) Data->hasOverlay = true;*/
-
-	translateUnitData ( Data->ID, ID.iFirstPart == 0 );
+	Data->isBig = unitNode->FirstChildElement( "Is_Big" ) != NULL;
+	Data->canRepair = unitNode->FirstChildElement( "Can_Repair" ) != NULL;
+	Data->canRearm = unitNode->FirstChildElement( "Can_Rearm" ) != NULL;
+	Data->canResearch = unitNode->FirstChildElement( "Can_Research" ) != NULL;
+	Data->canClearArea = unitNode->FirstChildElement( "Can_Clear" ) != NULL;
+	Data->canPlaceMines = unitNode->FirstChildElement( "Can_Place_Mines" ) != NULL;
+	Data->canDriveAndFire = unitNode->FirstChildElement( "Can_Drive_And_Fire" ) != NULL;
 }
 
 //--------------------------------------------------------------------------
@@ -1425,82 +1453,88 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	TiXmlElement *unitNode = addMainElement ( unitValuesNode, "UnitVal_" + iToStr( unitnum ) );
 	addAttributeElement ( unitNode, "ID", "string", Data->ID.getText() );
 	addAttributeElement ( unitNode, "Name", "string", Data->name );
+	addAttributeElement ( unitNode, "Version", "num", iToStr ( Data->version ) );
 
-	// TODO: write unit values again
-
-	/*addAttributeElement ( unitNode, "Hitpoints", "num", iToStr ( Data->iHitpoints_Max ) );
-	addAttributeElement ( unitNode, "Armor", "num", iToStr ( Data->iArmor ) );
+	addAttributeElement ( unitNode, "Hitpoints", "num", iToStr ( Data->hitpointsMax ) );
+	addAttributeElement ( unitNode, "Armor", "num", iToStr ( Data->armor ) );
 	addAttributeElement ( unitNode, "Built_Costs", "num", iToStr ( Data->buildCosts ) );
-	addAttributeElement ( unitNode, "Built_Costs_Max", "num", iToStr ( Data->buildCosts_Max ) );
-	if ( Data->iEnergy_Shield_Strength_Max > 0 ) addAttributeElement ( unitNode, "Shield", "num", iToStr ( Data->iEnergy_Shield_Strength_Max ) );
 
-	if ( Data->iScan_Range_Sight > 1 ) addAttributeElement ( unitNode, "Scan_Range_Sight", "num", iToStr ( Data->iScan_Range_Sight ) );
-	if ( Data->iScan_Range_Mine > 0 ) addAttributeElement ( unitNode, "Scan_Range_Mine", "num", iToStr ( Data->iScan_Range_Mine ) );
-	if ( Data->iScan_Range_Resources > 0 ) addAttributeElement ( unitNode, "Scan_Range_Resource", "num", iToStr ( Data->iScan_Range_Resources ) );
-	if ( Data->iScan_Range_Submarine > 0 ) addAttributeElement ( unitNode, "Scan_Range_Submarine", "num", iToStr ( Data->iScan_Range_Submarine ) );
-	if ( Data->iScan_Range_Infantry > 0 ) addAttributeElement ( unitNode, "Scan_Range_Infantry", "num", iToStr ( Data->iScan_Range_Infantry ) );
+	if ( Data->scan > 0 ) addAttributeElement ( unitNode, "Scan", "num", iToStr ( Data->scan ) );
 
-	if ( Data->iMovement_Max > 0 ) addAttributeElement ( unitNode, "Movement", "num", iToStr ( Data->iMovement_Max/4 ) );
-	if ( Data->iMakes_Tracks != 3 ) addAttributeElement ( unitNode, "Makes_Tracks", "num", iToStr ( Data->iMakes_Tracks ) );
+	if ( Data->speedMax > 0 ) addAttributeElement ( unitNode, "Movement", "num", iToStr ( Data->speedMax/4 ) );
 
-	if ( Data->Weapons[0].iMovement_Allowed > 0 ) addAttributeElement ( unitNode, "Movement_Allowed", "num", iToStr ( Data->Weapons[0].iMovement_Allowed ) );
-	if ( Data->Weapons[0].iMuzzleType > 0 ) addAttributeElement ( unitNode, "MuzzleType", "num", iToStr ( Data->Weapons[0].iMuzzleType ) );
-	if ( Data->Weapons[0].iShots_Max > 0 ) addAttributeElement ( unitNode, "Shots", "num", iToStr ( Data->Weapons[0].iShots_Max ) );
-	if ( Data->Weapons[0].iAmmo_Quantity_Max > 0 ) addAttributeElement ( unitNode, "Ammo", "num", iToStr ( Data->Weapons[0].iAmmo_Quantity_Max ) );
+	if ( Data->muzzleType > 0 ) addAttributeElement ( unitNode, "MuzzleType", "num", iToStr ( Data->muzzleType ) );
+	if ( Data->shotsMax > 0 ) addAttributeElement ( unitNode, "Shots", "num", iToStr ( Data->shotsMax ) );
+	if ( Data->ammoMax > 0 ) addAttributeElement ( unitNode, "Ammo", "num", iToStr ( Data->ammoMax ) );
+	if ( Data->range > 0 ) addAttributeElement ( unitNode, "Range", "num", iToStr ( Data->range ) );
+	if ( Data->damage > 0 ) addAttributeElement ( unitNode, "Damage", "num", iToStr ( Data->damage ) );
+	if ( Data->canAttack != TERRAIN_NONE ) addAttributeElement ( unitNode, "Can_Attack", "num", iToStr ( Data->canAttack ) );
 
-	if ( Data->Weapons[0].iTarget_Air_Range > 0 ) addAttributeElement ( unitNode, "Air_Range", "num", iToStr ( Data->Weapons[0].iTarget_Air_Range ) );
-	if ( Data->Weapons[0].iTarget_Infantry_Range > 0 ) addAttributeElement ( unitNode, "Infantry_Range", "num", iToStr ( Data->Weapons[0].iTarget_Infantry_Range ) );
-	if ( Data->Weapons[0].iTarget_Land_Range > 0 ) addAttributeElement ( unitNode, "Land_Range", "num", iToStr ( Data->Weapons[0].iTarget_Land_Range ) );
-	if ( Data->Weapons[0].iTarget_Mine_Range > 0 ) addAttributeElement ( unitNode, "Mine_Range", "num", iToStr ( Data->Weapons[0].iTarget_Mine_Range ) );
-	if ( Data->Weapons[0].iTarget_Sea_Range > 0 ) addAttributeElement ( unitNode, "Sea_Range", "num", iToStr ( Data->Weapons[0].iTarget_Sea_Range ) );
-	if ( Data->Weapons[0].iTarget_Submarine_Range > 0 ) addAttributeElement ( unitNode, "Submarine_Range", "num", iToStr ( Data->Weapons[0].iTarget_Submarine_Range ) );
+	if ( !Data->canBuild.empty() ) addAttributeElement ( unitNode, "Can_Build", "string", Data->canBuild );
+	if ( !Data->buildAs.empty() ) addAttributeElement ( unitNode, "Build_As", "string", Data->buildAs );
+	if ( Data->maxBuildFactor > 0 ) addAttributeElement ( unitNode, "Max_Build_Factor", "num", iToStr ( Data->maxBuildFactor) );
 
-	if ( Data->Weapons[0].iTarget_Air_Damage > 0 ) addAttributeElement ( unitNode, "Air_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Air_Damage ) );
-	if ( Data->Weapons[0].iTarget_Infantry_Damage > 0 ) addAttributeElement ( unitNode, "Infantry_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Infantry_Damage ) );
-	if ( Data->Weapons[0].iTarget_Land_Damage > 0 ) addAttributeElement ( unitNode, "Land_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Land_Damage ) );
-	if ( Data->Weapons[0].iTarget_Mine_Damage > 0 ) addAttributeElement ( unitNode, "Mine_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Mine_Damage ) );
-	if ( Data->Weapons[0].iTarget_Sea_Damage > 0 ) addAttributeElement ( unitNode, "Sea_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Sea_Damage ) );
-	if ( Data->Weapons[0].iTarget_Submarine_Damage > 0 ) addAttributeElement ( unitNode, "Submarine_Damage", "num", iToStr ( Data->Weapons[0].iTarget_Submarine_Damage ) );
+	if ( Data->storageResMax > 0 ) addAttributeElement ( unitNode, "Storage_Res_Max", "num", iToStr ( Data->storageResMax ) );
+	if ( Data->storageUnitsMax > 0 ) addAttributeElement ( unitNode, "Storage_Units_Max", "num", iToStr ( Data->storageUnitsMax ) );
+	if ( Data->storeResType != sUnitData::STORE_RES_NONE ) addAttributeElement ( unitNode, "Store_Res_Type", "num", iToStr ( Data->storeResType ) );
+	if ( Data->storeUnitsImageType != sUnitData::STORE_UNIT_IMG_NONE ) addAttributeElement ( unitNode, "StoreUnits_Image_Type", "num", iToStr ( Data->storeUnitsImageType ) );
+	if ( !Data->isStorageType.empty() ) addAttributeElement ( unitNode, "Is_Storage_Type", "string", Data->isStorageType );
+	if ( !Data->storeUnitsTypes.empty() )
+	{
+		string storeUnitsTypes = Data->storeUnitsTypes[0];
+		for ( unsigned int i = 1; i < Data->storeUnitsTypes.size(); i++ )
+		{
+			storeUnitsTypes += "+" + Data->storeUnitsTypes[i];
+		}
+		addAttributeElement ( unitNode, "StoreUnitsTypes", "string", storeUnitsTypes );
+	}
 
-	if ( Data->iCapacity_Metal_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Metal", "num", iToStr ( Data->iCapacity_Metal_Max ) );
-	if ( Data->iCapacity_Oil_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Oil", "num", iToStr ( Data->iCapacity_Oil_Max ) );
-	if ( Data->iCapacity_Gold_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Gold", "num", iToStr ( Data->iCapacity_Gold_Max ) );
-	if ( Data->iCapacity_Units_Air_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Units_Air", "num", iToStr ( Data->iCapacity_Units_Air_Max ) );
-	if ( Data->iCapacity_Units_Sea_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Units_Sea", "num", iToStr ( Data->iCapacity_Units_Sea_Max ) );
-	if ( Data->iCapacity_Units_Ground_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Units_Ground", "num", iToStr ( Data->iCapacity_Units_Ground_Max ) );
-	if ( Data->iCapacity_Units_Infantry_Max > 0 ) addAttributeElement ( unitNode, "Capacity_Units_Infantry", "num", iToStr ( Data->iCapacity_Units_Infantry_Max ) );
-
-	if ( Data->iNeeds_Energy != 0 ) addAttributeElement ( unitNode, "Needs_Energy", "num", iToStr ( Data->iNeeds_Energy ) );
-	if ( Data->iNeeds_Humans != 0 ) addAttributeElement ( unitNode, "Needs_Humans", "num", iToStr ( Data->iNeeds_Humans ) );
-	if ( Data->iNeeds_Oil != 0 ) addAttributeElement ( unitNode, "Needs_Oil", "num", iToStr ( Data->iNeeds_Oil ) );
+	if ( Data->needsEnergy != 0 ) addAttributeElement ( unitNode, "Needs_Energy", "num", iToStr ( Data->needsEnergy ) );
+	if ( Data->produceEnergy != 0 ) addAttributeElement ( unitNode, "Needs_Energy", "num", iToStr ( -Data->produceEnergy ) );
+	if ( Data->needsHumans != 0 ) addAttributeElement ( unitNode, "Needs_Humans", "num", iToStr ( Data->needsHumans ) );
+	if ( Data->produceHumans != 0 ) addAttributeElement ( unitNode, "Needs_Humans", "num", iToStr ( -Data->produceHumans ) );
+	if ( Data->needsOil != 0 ) addAttributeElement ( unitNode, "Needs_Oil", "num", iToStr ( Data->needsOil ) );
 	if ( Data->needsMetal != 0 ) addAttributeElement ( unitNode, "Needs_Metal", "num", iToStr ( Data->needsMetal ) );
-	if ( Data->iConverts_Gold != 0 ) addAttributeElement ( unitNode, "Converts_Gold", "num", iToStr ( Data->iConverts_Gold ) );
+	if ( Data->convertsGold != 0 ) addAttributeElement ( unitNode, "Converts_Gold", "num", iToStr ( Data->convertsGold ) );
+	if ( Data->canMineMaxRes != 0 ) addAttributeElement ( unitNode, "Can_Mine_Max_Res", "num", iToStr ( Data->canMineMaxRes ) );
+	
+	if ( Data->isStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Is_Stealth_On", "num", iToStr ( Data->isStealthOn ) );
+	if ( Data->canDetectStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Can_Detect_Stealth_On", "num", iToStr ( Data->canDetectStealthOn ) );
+	
+	if ( Data->surfacePosition != sUnitData::SURFACE_POS_NORMAL ) addAttributeElement ( unitNode, "Surface_Position", "num", iToStr ( Data->surfacePosition ) );
+	if ( Data->canBeOverbuild != sUnitData::OVERBUILD_TYPE_NO ) addAttributeElement ( unitNode, "Can_Be_Overbuild", "num", iToStr ( Data->canBeOverbuild ) );
 
-	if( Data->fCosts_Ground != 1.0 ) addAttributeElement ( unitNode, "Costs_Ground", "num", dToStr ( Data->fCosts_Ground ) );
-	if( Data->fCosts_Sea != 0.0 ) addAttributeElement ( unitNode, "Costs_Sea", "num", dToStr ( Data->fCosts_Sea ) );
-	if( Data->fCosts_Air != 0.0 ) addAttributeElement ( unitNode, "Costs_Air", "num", dToStr ( Data->fCosts_Air ) );
-	if( Data->fCosts_Submarine != 0.0 ) addAttributeElement ( unitNode, "Costs_Submarine", "num", dToStr ( Data->fCosts_Submarine ) );
+	if( Data->factorAir != 0.0 ) addAttributeElement ( unitNode, "Factor_Air", "num", dToStr ( Data->factorAir ) );
+	if( Data->factorCoast != 0.0 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->factorCoast ) );
+	if( Data->factorGround != 0.0 ) addAttributeElement ( unitNode, "Factor_Ground", "num", dToStr ( Data->factorGround ) );
+	if( Data->factorSea != 0.0 ) addAttributeElement ( unitNode, "Factor_Sea", "num", dToStr ( Data->factorSea ) );
+	
+	if( Data->modifiesSpeed != 0.0 ) addAttributeElement ( unitNode, "Factor_Sea", "num", dToStr ( Data->modifiesSpeed ) );
 
-	if( Data->fFactor_Coast != 1.5 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->fFactor_Coast ) );
-	if( Data->fFactor_Wood != 1.5 ) addAttributeElement ( unitNode, "Factor_Wood", "num", dToStr ( Data->fFactor_Wood ) );
-	if( Data->fFactor_Road != 0.5 ) addAttributeElement ( unitNode, "Factor_Road", "num", dToStr ( Data->fFactor_Road ) );
-	if( Data->fFactor_Bridge != 1.0 ) addAttributeElement ( unitNode, "Factor_Bridge", "num", dToStr ( Data->fFactor_Bridge ) );
-	if( Data->fFactor_Platform != 1.0 ) addAttributeElement ( unitNode, "Factor_Platform", "num", dToStr ( Data->fFactor_Platform ) );
-	if( Data->fFactor_Monorail != 0.0 ) addAttributeElement ( unitNode, "Factor_Monorail", "num", dToStr ( Data->fFactor_Monorail ) );
-	if( Data->fFactor_Wreck != 1.0 ) addAttributeElement ( unitNode, "Factor_Wreck", "num", dToStr ( Data->fFactor_Wreck ) );
-	if( Data->fFactor_Mountains != 0.0 ) addAttributeElement ( unitNode, "Factor_Mountains", "num", dToStr ( Data->fFactor_Mountains ) );
+	if( Data->canBuildPath ) addMainElement ( unitNode, "Can_Build_Path" );
+	if( Data->canBuildRepeat ) addMainElement ( unitNode, "Can_Build_Repeat" );
+	if( Data->buildIntern ) addMainElement ( unitNode, "Build_Intern" );
+	if( Data->connectsToBase ) addMainElement ( unitNode, "Connects_To_Base" );
+	
+	if( Data->canBeCaptured ) addMainElement ( unitNode, "Can_Be_Captured" );
+	if( Data->canBeDisabled ) addMainElement ( unitNode, "Can_Be_Disabled" );
+	if( Data->canCapture ) addMainElement ( unitNode, "Can_Capture" );
+	if( Data->canDisable ) addMainElement ( unitNode, "Can_Disable" );
+	if( Data->canSurvey ) addMainElement ( unitNode, "Can_Survey" );
+	if( Data->doesSelfRepair ) addMainElement ( unitNode, "Does_Self_Repair" );
+	if( Data->canSelfDestroy ) addMainElement ( unitNode, "Can_Self_Destroy" );
+	if( Data->explodesOnContact ) addMainElement ( unitNode, "Explodes_On_Contact" );
+	if( Data->isHuman ) addMainElement ( unitNode, "Is_Human" );
+	if( Data->canBeLandedOn ) addMainElement ( unitNode, "Can_Be_Landed_On" );
+	if( Data->canWork ) addMainElement ( unitNode, "Can_Work" );
 
-	if( Data->iSize_Length != 1 ) addAttributeElement ( unitNode, "Size_Length", "num", iToStr ( Data->iSize_Length ) );
-	if( Data->iSize_Width != 1 ) addAttributeElement ( unitNode, "Size_Width", "num", iToStr ( Data->iSize_Width ) );
-
-	if( Data->bCan_Repair ) addMainElement ( unitNode, "Can_Repair" );
-	if( Data->bCan_Rearm ) addMainElement ( unitNode, "Can_Rearm" );
-	if( Data->bCan_Research ) addMainElement ( unitNode, "Can_Research" );
+	if( Data->isBig ) addMainElement ( unitNode, "Is_Big" );
+	if( Data->canRepair ) addMainElement ( unitNode, "Can_Repair" );
+	if( Data->canRearm ) addMainElement ( unitNode, "Can_Rearm" );
+	if( Data->canResearch ) addMainElement ( unitNode, "Can_Research" );
 	if( Data->canClearArea ) addMainElement ( unitNode, "Can_Clear" );
-	if( Data->bCan_Place_Mines ) addMainElement ( unitNode, "Can_Place_Mines" );
-	if( Data->bAnimation_Movement ) addMainElement ( unitNode, "Has_Animation_Movement" );
-	if( Data->powerOnGraphic ) addMainElement ( unitNode, "Has_Power_On_Grafic" );
-	if( Data->hasOverlay ) addMainElement ( unitNode, "Has_Overlay" );*/
+	if( Data->canPlaceMines ) addMainElement ( unitNode, "Can_Place_Mines" );
+	if( Data->canDriveAndFire ) addMainElement ( unitNode, "Can_Drive_And_Fire" );
 }
 
 //--------------------------------------------------------------------------

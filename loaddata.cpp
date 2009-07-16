@@ -2510,7 +2510,7 @@ int getXMLNodeInt( TiXmlDocument &document, const char *path0, const char *path1
 
 	if ( pExXmlNode == NULL )
 	{
-		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) ) return atoi ( tmpString.c_str() );
@@ -2536,7 +2536,7 @@ float getXMLNodeFloat( TiXmlDocument &document, const char *path0, const char *p
 
 	if ( pExXmlNode == NULL )
 	{
-		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
 	if ( pExXmlNode->ToElement()->Attribute( "Num", &tmpDouble ) ) return (float)( tmpDouble );
@@ -2561,7 +2561,7 @@ string getXMLNodeString( TiXmlDocument &document, const char *attribut, const ch
 
 	if ( pExXmlNode == NULL )
 	{
-		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return "";
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, attribut ) ) return tmpString;
@@ -2587,7 +2587,7 @@ bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *pat
 
 	if ( pExXmlNode == NULL )
 	{
-		if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		//if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return false;
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "YN" ) )
@@ -2795,6 +2795,8 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	string storeUnitImgString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type" );
 	if ( storeUnitImgString.compare ( "Plane" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_PLANE;
 	else if ( storeUnitImgString.compare ( "Human" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_HUMAN;
+	else if ( storeUnitImgString.compare ( "Tank" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
+	else if ( storeUnitImgString.compare ( "Ship" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_SHIP;
 	else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
 
 	string storeUnitsString = getXMLNodeString ( unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type" );

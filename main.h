@@ -300,6 +300,7 @@ struct sUnitData
 	int storageUnitsCur;
 	enum eStorageUnitsImageType
 	{
+		STORE_UNIT_IMG_NONE,
 		STORE_UNIT_IMG_TANK,
 		STORE_UNIT_IMG_PLANE,
 		STORE_UNIT_IMG_SHIP,

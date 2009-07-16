@@ -26,7 +26,7 @@
 
 class cResearch;
 
-#define SAVE_FORMAT_VERSION		"0.2"
+#define SAVE_FORMAT_VERSION		((string)"0.3")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad
@@ -72,6 +72,8 @@ private:
 	char numberstr[4];
 	/* the xml save document */
 	TiXmlDocument *SaveFile;
+	/* the version of a loaded savegame */
+	string version;
 
 	/* list with loaded movejobs */
 	cList<sMoveJobLoad*> MoveJobsLoad;
