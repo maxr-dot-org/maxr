@@ -2648,7 +2648,7 @@ void cVehicle::FindNextband ()
 		return;
 	}
 
-	PlaceBand = false;
+	//PlaceBand = false;
 }
 
 //-----------------------------------------------------------------------------
