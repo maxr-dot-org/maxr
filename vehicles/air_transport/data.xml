@@ -41,7 +41,7 @@
       <!-- - Air: 1 -->
       <!-- - Sea: 2 -->
       <!-- - Ground: 4 -->
-      <!-- - Sub: 16 -->
+      <!-- - Sub: 16 (Einheiten die auf see unsichtbar sind)-->
       <!-- Kombinationen sind möglich. Z.b. 3 für Air+Sea oder 20 für Ground+Sub -->
 
       <Shots Num="0"/>
@@ -65,6 +65,7 @@
 
     <Can_Build String="None"/>
     <Build_As String="Plane"/>
+    <!-- Standardvorschläge: -->
     <!-- - BigBuilding -->
     <!-- - SmallBuilding -->
     <!-- - BigGroundVehicle -->
@@ -120,10 +121,10 @@
     <!--Wie weit guckt die Einheit mit normalen "Kameraaugen"-->
 
     <Modifies_Speed Num="0"/>
-    <!-- In Prozent -->
+    <!-- mit welchem Faktor werden die kosten für bewegungen auf diesem feld multipliziert. ( 0 steht für keine multiplikation ) -->
       
     <Can_Clear_Area YN="No"/>
-    <!--Kann die Einheit Wracks und Bäume beseitigen? (Später eventuell auch Gelände modifizieren) -->
+    <!--Kann die Einheit Schutt beseitigen? -->
 
     <Can_Be_Captured YN="Yes"/>
     <!-- Kann die Einheit gefangen genommen werden? Gebäude z.B. Nein -->
@@ -153,13 +154,13 @@
     <!--Kann die Einheit Resourcen aufspüren-->
     
     <Does_Self_Repair YN="No"/>
-    <!-- Repariert sich die Einheit selber mit Metall? -->
+    <!-- Repariert sich die Einheit selbst mit Metall? -->
      
     <Converts_Gold Num="0"/>
     <!-- Wird hier Gold raffiniert. Wenn ja wie viel pro Runde? -->
 
     <Can_Mine_Max_Resource Num="0"/>
-    <!-- Wieviel kann die Einheit maximal von welchem Material fördern? -->
+    <!-- Wieviel kann die Einheit maximal an Materialien fördern? -->
     
     <Needs_Energy Num="0"/>
     <!-- Negativ für Erzeugung -->
@@ -173,7 +174,7 @@
      
     <Needs_Humans Num="0"/>
     <!-- Negativ für Erzeugung -->
-    <!-- Stellt die Einheit Arebiter zur Verfügung bzw. benötigt sie Arbeiter -->
+    <!-- Stellt die Einheit Arbeiter zur Verfügung bzw. benötigt sie Arbeiter -->
 
     <Is_Stealth_On Num="0"/>
     <Can_Detect_Stealth_On Num="0"/>
@@ -187,10 +188,12 @@
     
     <Surface_Position Const="Normal"/>
     <!-- Auf welcher Höhe befindet sich die Einheit -->
-    <!-- - Normal (Blockiert auf eigener Ebene[Flugzeuge blockieren Flugzeuge, Boden/Wassereinheiten untereinander])-->
-    <!-- - Beneath -->
-    <!-- - Above -->
-    <!-- - BeneathNAbove (Für Brücken die sowohl über als auch unter Standard(Normal)-einheiten sein können)-->
+    <!-- - BeneathSea (Seeminen)-->
+    <!-- - AboveSea (Brücken) -->
+    <!-- - Base (Wasserplattform/Straße)-->
+    <!-- - AboveBase (Landminen) -->
+    <!-- - Normal (Normale Einheiten. Dies ist der standardwert, welcher genommen wird wenn hier keine expliziete auswahl getätigt wird) -->
+    <!-- - Above (Konnektoren) -->
     
     <Can_Be_Overbuild Const="No"/>
     <!-- - No -->
@@ -201,7 +204,7 @@
     <!-- Können Flugzeuge hier landen -->
 
     <Is_Activatable YN="No"/>
-    <!-- Kann diese Einheit aktiviert werden -->
+    <!-- Kann diese Einheit aktiviert werden/arbeiten -->
 
     <Explodes_On_Contact YN="No"/>
     <!-- Explodiert die Einheit bei Kontakt mit einer anderen feindlichen Einheit? (Minen) -->
@@ -210,7 +213,7 @@
     <!-- Verfügt die Einheit über eine Selbstzerstörung? -->
 
     <Is_Human YN="No"/>
-    <!-- Menschen bekommen eine andere Upgradeberechnung und können im startmenü nicht hinzugefügt werden -->
+    <!-- Menschen bekommen eine andere Upgradeberechnung und können im Startmenü nicht hinzugefügt werden -->
   </Abilities>
 
   <Storage>
@@ -230,14 +233,16 @@
     <!--Wieviele andere Einheiten kann diese Einheit speichern-->
 
     <Capacity_Units_Image_Type Const="Tank"/>
-    <!-- Welche Graphic soll für die Anzeige der geladenen Eineheiten verwendet werden? -->
+    <!-- Welche Grafik soll für die Anzeige der geladenen Einheiten im Hud bzw. im Auslademenü verwendet werden? -->
     <!-- - Tank -->
     <!-- - Plane -->
     <!-- - Human -->
+    <!-- - Ship -->
 
     <Capacity_Units_Type String="Ground+Human"/>
     <!--Welche Einheitentypen kann diese Einheit laden? Muss bei der Zieleinheit mit "Is_Storage_Type" übereinstimmen. -->
     <!--Kombinationen sind mit "+" möglich-->
+    <!--Standardwerte: -->
     <!-- -Ground -->
     <!-- -Human -->
     <!-- -Plane -->
