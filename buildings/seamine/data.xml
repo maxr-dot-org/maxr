@@ -26,7 +26,7 @@
 
     <Can_Be_Overbuild Const="YesNRemove"/>
     <Is_Stealth_On Num="32"/>
-    <Surface_Position Const="Beneath"/>
+    <Surface_Position Const="BeneathSea"/>
     <Explodes_On_Contact YN="Yes"/>
   </Abilities>
 </Unit>

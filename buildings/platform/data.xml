@@ -25,7 +25,7 @@
     <Hitpoints Num="10"/>
     <Scan_Range Num="1"/>
 
-    <Surface_Position Const="Beneath"/>
+    <Surface_Position Const="Base"/>
     <Can_Be_Overbuild Const="Yes"/>
   </Abilities>
 </Unit>

@@ -27,7 +27,7 @@
 
     <Modifies_Speed Num="0.5"/>
 
-    <Surface_Position Const="Beneath"/>
+    <Surface_Position Const="Base"/>
   </Abilities>
 
 </Unit>

@@ -25,7 +25,7 @@
     <Hitpoints Num="20"/>
     <Scan_Range Num="1"/>
 
-    <Surface_Position Const="BeneathNAbove"/>
+    <Surface_Position Const="AboveSea"/>
   </Abilities>
 </Unit>
 
