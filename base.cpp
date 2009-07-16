@@ -608,7 +608,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 		if ( n==b ) continue;
 		AddBuilding ( n );		//TODO: this causes a lot of unnessesary net traffic, when deleting a building from a big subbase
 	}
-	if (b->IsWorking && b->data.canReasearch)
+	if (b->IsWorking && b->data.canResearch)
 		b->owner->stopAResearch (b->researchArea);
 	delete sb;
 }

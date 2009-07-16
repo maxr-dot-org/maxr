@@ -1322,7 +1322,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 
 	// write additional stauts information
 	if ( Building->IsWorking ) addMainElement ( unitNode, "IsWorking" );
-	if ( Building->data.canReasearch )
+	if ( Building->data.canResearch )
 	{
 		TiXmlElement *researchNode = addMainElement ( unitNode, "ResearchArea" );
 		researchNode->SetAttribute ( "area", iToStr(Building->researchArea).c_str() );

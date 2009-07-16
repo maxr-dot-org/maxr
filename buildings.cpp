@@ -235,7 +235,7 @@ string cBuilding::getStatusStr ()
 		}
 
 		// Research Center
-		if (data.canReasearch && owner == Client->ActivePlayer)
+		if (data.canResearch && owner == Client->ActivePlayer)
 		{
 			string sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -852,7 +852,7 @@ int cBuilding::GetMenuPointAnz ()
 	if ( typ->data.storageUnitsMax > 0 )
 		nr += 2;
 
-	if ( typ->data.canReasearch && IsWorking )
+	if ( typ->data.canResearch && IsWorking )
 		nr++;
 
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
@@ -1255,7 +1255,7 @@ void cBuilding::ServerStartWork ()
 	SubBase->GoldNeed += data.convertsGold;
 
 	// research building
-	if ( data.canReasearch )
+	if ( data.canResearch )
 	{
 		owner->ResearchCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
@@ -1282,7 +1282,7 @@ void cBuilding::ClientStartWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails();
 	}
-	if (data.canReasearch) 
+	if (data.canResearch) 
 		owner->startAResearch (researchArea);
 }
 
@@ -1345,7 +1345,7 @@ void cBuilding::ServerStopWork ( bool override )
 
 	}
 	
-	if ( data.canReasearch )
+	if ( data.canResearch )
 	{
 		owner->ResearchCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
@@ -1370,7 +1370,7 @@ void cBuilding::ClientStopWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails ();
 	}
-	if (data.canReasearch) 
+	if (data.canResearch) 
 		owner->stopAResearch (researchArea);
 }
 
@@ -2397,7 +2397,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// research
-	if (typ->data.canReasearch && IsWorking)
+	if (typ->data.canResearch && IsWorking)
 	{
 		bSelection = (SelMenu == nr);
 		if (ExeNr == nr)

@@ -750,7 +750,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	cBuilding* curBuilding = BuildingList;
 	while (curBuilding)
 	{
-		if (curBuilding->data.canReasearch && curBuilding->IsWorking)
+		if (curBuilding->data.canResearch && curBuilding->IsWorking)
 		{
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;

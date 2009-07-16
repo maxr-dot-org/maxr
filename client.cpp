@@ -1126,7 +1126,7 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 		cMineManagerMenu mineManager ( SelectedBuilding );
 		mineManager.show();
 	}
-	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.canReasearch && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
+	else if ( keysym.sym == KeysList.KeyUnitMenuResearch && SelectedBuilding && SelectedBuilding->data.canResearch && SelectedBuilding->IsWorking && !bWaitForOthers && SelectedBuilding->owner == ActivePlayer )
 	{
 		cDialogResearch researchDialog ( SelectedBuilding->owner );
 		researchDialog.show();
@@ -4886,7 +4886,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					int buildingID = message->popInt32();
 					int newArea = message->popChar();
 					cBuilding* building = getBuildingFromID(buildingID);
-					if (building && building->data.canReasearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
+					if (building && building->data.canResearch && 0 <= newArea && newArea <= cResearch::kNrResearchAreas)
 						building->researchArea = newArea;
 				}
 			}

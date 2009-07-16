@@ -243,7 +243,7 @@ struct sUnitData
 	bool canDisable;
 	bool canRepair;
 	bool canRearm;
-	bool canReasearch;
+	bool canResearch;
 	bool canPlaceMines;
 	bool canSurvey;
 	bool doesSelfRepair;

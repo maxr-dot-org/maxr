@@ -1533,7 +1533,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int centersToAssign = newResearchSettings[newArea];
 				while (centersToAssign > 0 && curBuilding != 0)
 				{
-					if (curBuilding->data.canReasearch && curBuilding->IsWorking)
+					if (curBuilding->data.canResearch && curBuilding->IsWorking)
 					{
 						researchCentersToChangeArea.Add(curBuilding);
 						newAreasForResearchCenters.Add(newArea);
@@ -1549,7 +1549,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			while (curBuilding != 0) // shut down unused research centers
 			{
-				if (curBuilding->data.canReasearch && curBuilding->IsWorking)
+				if (curBuilding->data.canResearch && curBuilding->IsWorking)
 					researchCentersToStop.Add(curBuilding);
 				curBuilding = curBuilding->next;
 			}

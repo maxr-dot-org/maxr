@@ -2738,7 +2738,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	Data->canDisable = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Disable" );
 	Data->canRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Repair" );
 	Data->canRearm = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Rearm" );
-	Data->canReasearch = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Research" );
+	Data->canResearch = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Research" );
 	Data->canPlaceMines = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Place_Mines" );
 	Data->canSurvey = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Survey" );
 	Data->doesSelfRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Does_Self_Repair" );
