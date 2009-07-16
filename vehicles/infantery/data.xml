@@ -35,8 +35,9 @@
     <Armor Num="2"/>
     <Hitpoints Num="8"/>
     <Scan_Range Num="4"/>
-    <Can_Be_Captured YN="Yes"/>
-    <Can_Be_Disabled YN="Yes"/>
+    <Is_Human YN="Yes"/>
+
+    <Can_Detect_Stealth_On Num="12"/>
   </Abilities>
 
   <Storage>

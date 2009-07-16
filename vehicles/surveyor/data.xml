@@ -30,6 +30,8 @@
     <Can_Be_Disabled YN="Yes"/>
     <Can_Detect_Mines YN="Yes"/>
     <Can_Survey YN="Yes"/>
+
+    <Can_Detect_Stealth_On Num="32"/>
   </Abilities>
 
   <Storage>
