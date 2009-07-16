@@ -903,7 +903,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	if ( Element = unitNode->FirstChildElement( "Is_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->isStealthOn = tmpInt; } else Data->isStealthOn = TERRAIN_NONE;
 	if ( Element = unitNode->FirstChildElement( "Can_Detect_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canDetectStealthOn = tmpInt; } else Data->canDetectStealthOn = TERRAIN_NONE;
 
-	if ( Element = unitNode->FirstChildElement( "Surface_Position" ) ) { Element->Attribute ( "num", &tmpInt ); Data->surfacePosition = (sUnitData::eSurfacePosition)tmpInt; } else Data->surfacePosition = sUnitData::SURFACE_POS_NORMAL;
+	if ( Element = unitNode->FirstChildElement( "Surface_Position" ) ) { Element->Attribute ( "num", &tmpInt ); Data->surfacePosition = (sUnitData::eSurfacePosition)tmpInt; } else Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
 	if ( Element = unitNode->FirstChildElement( "Can_Be_Overbuild" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canBeOverbuild = (sUnitData::eOverbuildType)tmpInt; } else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
 
 	double tmpdouble;
@@ -1501,7 +1501,7 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if ( Data->isStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Is_Stealth_On", "num", iToStr ( Data->isStealthOn ) );
 	if ( Data->canDetectStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Can_Detect_Stealth_On", "num", iToStr ( Data->canDetectStealthOn ) );
 	
-	if ( Data->surfacePosition != sUnitData::SURFACE_POS_NORMAL ) addAttributeElement ( unitNode, "Surface_Position", "num", iToStr ( Data->surfacePosition ) );
+	if ( Data->surfacePosition != sUnitData::SURFACE_POS_GROUND ) addAttributeElement ( unitNode, "Surface_Position", "num", iToStr ( Data->surfacePosition ) );
 	if ( Data->canBeOverbuild != sUnitData::OVERBUILD_TYPE_NO ) addAttributeElement ( unitNode, "Can_Be_Overbuild", "num", iToStr ( Data->canBeOverbuild ) );
 
 	if( Data->factorAir != 0.0 ) addAttributeElement ( unitNode, "Factor_Air", "num", dToStr ( Data->factorAir ) );

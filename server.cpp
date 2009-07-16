@@ -811,10 +811,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int iOff = iX + iY * Map->size;
 
 				cBuildingIterator bi = Map->fields[iOff].getBuildings();
-				while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) ) bi++;
+				while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
 
-				if ( !Map->IsWater ( iOff ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) ) bLand = true;
-				else if ( Map->IsWater ( iOff ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
+				if ( !Map->IsWater ( iOff ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) bLand = true;
+				else if ( Map->IsWater ( iOff ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 				{
 					bLand = true;
 					bWater = true;
@@ -1891,7 +1891,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	int iOff = iPosX + Map->size*iPosY;
 	
 	//if this is a top building, delete connectors, mines and roads
-	if ( AddedBuilding->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && AddedBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH )
+	if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND )
 	{
 		if ( AddedBuilding->data.isBig )
 		{
@@ -1942,18 +1942,15 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 		else
 		{
 			deleteUnit ( Map->fields[iOff].getTopBuilding() );
-			if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
+			cBuildingIterator building = Map->fields[iOff].getBuildings();
+			while ( building )
 			{
-				cBuildingIterator building = Map->fields[iOff].getBuildings();
-				while ( building )
+				if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
 				{
-					if ( building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE )
-					{
-						deleteUnit ( building );
-						building--;
-					}
-					building++;
+					deleteUnit ( building );
+					building--;
 				}
+				building++;
 			}
 		}
 	}
@@ -3369,7 +3366,7 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 				if ( stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0 )
 				{
 					cBuilding* b = Map->fields[x+y*Map->size].getBaseBuilding();
-					if ( b && ( b->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) ) detectOnDest = true;
+					if ( b && ( b->data.surfacePosition == sUnitData::SURFACE_POS_BASE || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) detectOnDest = true;
 				}
 			}
 			if ( detectOnDest ) continue;

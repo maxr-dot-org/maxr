@@ -1542,7 +1542,7 @@ void cClient::drawMap( bool bPure )
 			while ( !bi.end ) bi++;
 			bi--;
 
-			while ( !bi.rend && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || !bi->owner ) )
+			while ( !bi.rend && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || !bi->owner ) )
 			{
 				if ( ActivePlayer->ScanMap[iPos]||
 					( bi->data.isBig && ( ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) ) )
@@ -1569,7 +1569,7 @@ void cClient::drawMap( bool bPure )
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
 			cBuilding* building = Map->fields[iPos].getBuildings();
-			if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_NORMAL  )
+			if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND  )
 			{
 
 				if ( ActivePlayer->ScanMap[iPos]||
@@ -1654,11 +1654,15 @@ void cClient::drawMap( bool bPure )
 					vehicle->draw ( dest );
 				}
 
-				cBuilding* building = Map->fields[iPos].getBaseBuilding();
-				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
+				cBuildingIterator building = Map->fields[iPos].getBuildings();
+				do
 				{
-					building->draw ( &dest );
-				}
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
+					{
+						building->draw ( &dest );
+					}
+					building++;
+				} while ( !building.end );
 
 			}
 			iPos++;
@@ -1667,7 +1671,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 
-	//draw vehicles
+	//draw vehicles and landmines
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1677,6 +1681,16 @@ void cClient::drawMap( bool bPure )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
 			{
+				cBuildingIterator building = Map->fields[iPos].getBuildings();
+				do
+				{
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
+					{
+						building->draw ( &dest );
+					}
+					building++;
+				} while ( !building.end );
+
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
 				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
@@ -4349,7 +4363,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iCount += iAnz;
 				sTmp = iToStr( iAnz ) + " " + Type.getUnitDataOriginalVersion()->name;
 				sReportMsg += iAnz > 1 ? sTmp : Type.getUnitDataOriginalVersion()->name;
-				if ( Type.getUnitDataOriginalVersion()->surfacePosition == sUnitData::SURFACE_POS_NORMAL ) playVoice = true;
+				if ( Type.getUnitDataOriginalVersion()->surfacePosition == sUnitData::SURFACE_POS_GROUND ) playVoice = true;
 				iReportAnz--;
 			}
 

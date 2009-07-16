@@ -627,7 +627,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 		//because the vehicle will drive on the bridge
 		cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
-		if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
+		if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
 		if ( (data.isStealthOn&TERRAIN_SEA) && water && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
 		else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
@@ -893,7 +893,7 @@ int cVehicle::refreshData ()
 				}
 				else
 				{
-					if ( BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_NORMAL )
+					if ( BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND )
 					{
 						Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
 						IsBuilding = false;
@@ -1601,12 +1601,13 @@ int cVehicle::playStream ()
 {
 	cBuilding *building = (*Client->Map)[PosX + PosY*Client->Map->size].getBaseBuilding();
 	bool water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
+	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	else if ( IsClearing )
 		return PlayFXLoop ( SoundData.SNDClearing );
-	else if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
+	else if ( water && data.factorSea > 0 )
 		return PlayFXLoop ( typ->WaitWater );
 	else
 		return PlayFXLoop ( typ->Wait );
@@ -1623,17 +1624,18 @@ void cVehicle::StartMoveSound ()
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
 	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
+	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 	StopFXLoop ( Client->iObjectStream );
 
 	if ( !MoveJobActive )
 	{
-		if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
+		if ( water && data.factorSea != 0 )
 			PlayFX ( typ->StartWater );
 		else
 			PlayFX ( typ->Start );
 	}
 
-	if ( water && data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || data.factorGround == 0 ) ) ) )
+	if ( water && data.factorSea != 0 )
 		Client->iObjectStream = PlayFXLoop ( typ->DriveWater );
 	else
 		Client->iObjectStream = PlayFXLoop ( typ->Drive );
@@ -3154,6 +3156,8 @@ bool cVehicle::clearMine ()
 	cBuilding* Mine = Server->Map->fields[PosX+PosY*Server->Map->size].getMine();
 
 	if ( !Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax ) return false;
+	if ( Mine->data.factorGround > 0 && data.factorGround == 0 ) return false;
+	if ( Mine->data.factorSea > 0 && data.factorSea == 0 ) return false;
 
 	Server->deleteUnit ( Mine );
 	data.storageResCur++;
@@ -3371,7 +3375,7 @@ void cVehicle::makeDetection()
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
 			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
-			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH) ) water = false;
+			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
 			if ( (data.isStealthOn&TERRAIN_SEA) && ( player->DetectSeaMap[offset] || !water ))
 			{

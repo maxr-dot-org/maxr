@@ -315,12 +315,12 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	offset = destX+destY*Map->size;
 	cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
-	if ( Map->terrain[Map->Kacheln[offset]].water && !building && Vehicle->data.factorSea > 0 ) costs = (int)(4*Vehicle->data.factorSea);
+	if ( Map->terrain[Map->Kacheln[offset]].water && ( !building || ( building->data.explodesOnContact && building->data.factorSea > 0 ) )&& Vehicle->data.factorSea > 0 ) costs = (int)(4*Vehicle->data.factorSea);
 	else if ( Map->terrain[Map->Kacheln[offset]].coast && !building && Vehicle->data.factorCoast > 0 ) costs = (int)(4*Vehicle->data.factorCoast);
 	else if ( Vehicle->data.factorGround > 0 ) costs = (int)(4*Vehicle->data.factorGround);
 	else
 	{
-		Log.write ( "Where can this unit move?", cLog::eLOG_TYPE_NET_WARNING );
+		Log.write ( "Where can this unit move? " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_WARNING );
 		costs = 4;
 	}
 	// moving on a road is cheaper
@@ -1197,9 +1197,10 @@ void cClientMoveJob::stopMoveSound()
 	{
 		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
 		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size );
+		if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 		StopFXLoop ( Client->iObjectStream );
-		if ( water && Vehicle->data.factorAir != 0 && ( !building || ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && ( building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH || Vehicle->data.factorGround == 0 ) ) ) ) PlayFX ( Vehicle->typ->StopWater );
+		if ( water && Vehicle->data.factorSea > 0 ) PlayFX ( Vehicle->typ->StopWater );
 		else PlayFX ( Vehicle->typ->Stop );
 
 		Client->iObjectStream = Vehicle->playStream();

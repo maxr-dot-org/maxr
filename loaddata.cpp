@@ -2766,10 +2766,12 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	Data->canDetectStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On" );
 
 	string surfacePosString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Surface_Position" );
-	if ( surfacePosString.compare ( "Beneath" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH;
+	if ( surfacePosString.compare ( "BeneathSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH_SEA;
+	else if ( surfacePosString.compare ( "AboveSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_SEA;
+	else if ( surfacePosString.compare ( "Base" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BASE;
+	else if ( surfacePosString.compare ( "AboveBase" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_BASE;
 	else if ( surfacePosString.compare ( "Above" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE;
-	else if ( surfacePosString.compare ( "BeneathNAbove" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVENBENEATH;
-	else Data->surfacePosition = sUnitData::SURFACE_POS_NORMAL;
+	else Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
 
 	string overbuildString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild" );
 	if ( overbuildString.compare ( "Yes" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YES;

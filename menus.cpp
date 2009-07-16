@@ -3735,10 +3735,10 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 			int off = x + y * Client->Map->size;
 			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
-			while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) ) bi++;
+			while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
 
-			if ( !Client->Map->IsWater ( off ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) ) land = true;
-			else if ( Client->Map->IsWater ( off ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH )
+			if ( !Client->Map->IsWater ( off ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) land = true;
+			else if ( Client->Map->IsWater ( off ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 			{
 				land = true;
 				water = true;

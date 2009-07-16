@@ -245,7 +245,7 @@ cBuilding* cMapField::getTopBuilding()
 	cBuildingIterator buildingIterator( &buildings );
 
 
-	if ( buildingIterator && buildingIterator->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && buildingIterator->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH && buildingIterator->owner )
+	if ( buildingIterator && ( buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND || buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ) && buildingIterator->owner )
 	{
 		return buildingIterator;
 	}
@@ -261,7 +261,7 @@ cBuilding* cMapField::getBaseBuilding()
 	
 	while ( !building.end )
 	{
-		if ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) return building;
+		if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND ) return building;
 		building++;
 	}
 	
@@ -751,12 +751,12 @@ int cMap::getMapLevel( cBuilding* building ) const
 {
 	const sUnitData& data = building->data;
 
-	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.factorSea > 0 && data.explodesOnContact ) return 9;		// seamine
-	if ( data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) return 7;	// bridge
-	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.canBeOverbuild ) return 6;	// platform
-	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH ) return 5;	// road
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA ) return 9;		// seamine
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) return 7;	// bridge
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BASE && data.canBeOverbuild ) return 6;	// platform
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_BASE ) return 5;	// road
 	if ( !building->owner ) return 4;	// rubble
-	if ( data.surfacePosition == sUnitData::SURFACE_POS_BENEATH && data.factorGround > 0 && data.explodesOnContact ) return 3;	// landmine
+	if ( data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return 3;	// landmine
 
 	return 1;	// other buildings
 }
@@ -776,7 +776,7 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 
 void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
-	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_NORMAL && building->data.isBig ) return; //big base building are not implemented
+	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig ) return; //big base building are not implemented
 
 	if ( building->data.isBig )
 	{
@@ -1007,7 +1007,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if ( !building ) return false;
-			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH ) ) return false;
+			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) return false;
 		}
 		if ( player && !player->ScanMap[offset] ) return true;			
 
@@ -1015,7 +1015,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 		if ( building )
 		{
 			//only base buildings and rubbe is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
-			if ( !(building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVENBENEATH || !building->owner ) ) return false;
+			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || !building->owner ) ) return false;
 		}
 	}
 	else if ( vehicleData.factorSea > 0 )
@@ -1028,10 +1028,16 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 		if ( fields[offset].vehicles.Size() > 0 ) return false;
 
-		if ( building && building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH )
+		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
+		if ( building && !( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA ) )
 		{
-			//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
-			if ( building->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH || building->data.factorSea == 0 || !building->data.explodesOnContact ) return false;
+			// if the building is a landmine, we have to check whether it's on a bridge or not
+			if ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
+			{
+				building++;
+				if ( building.end || building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA ) return false;
+			}
+			else return false;
 		}
 	}
 
@@ -1048,7 +1054,8 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 {
 	if ( offset < 0 || offset >= size*size ) return false;
 	if ( terrain[Kacheln[offset]].blocked ) return false;
-	cMapField& field = fields[offset];	
+	cMapField& field = fields[offset];
+	bool checkBeneathSea = false, checkAboveBase = false;
 
 	cBuildingIterator bi = field.getBuildings();
 	if ( !bi.end && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
@@ -1067,7 +1074,8 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 
 		if ( !bi.end )
 		{
-			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA && ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
+			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA ) checkBeneathSea = true;
 		}	
 	}
 	else if ( buildingData.factorGround )
@@ -1076,16 +1084,18 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 		{
 			//can not be built on water, but terrain is water
 			//so a base building is required
-			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && ( !bi || bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE && ( !bi || bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
+			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) checkAboveBase = true;
 		}
 		
 		if ( !bi.end )
 		{
-			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE )
+			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE )
 			{
 				// cannot build normal buildings over normal buildings
-				if ( ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVENBENEATH ) || ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO && !buildingData.explodesOnContact ) ) return false;
+				if ( ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) || ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
 			}
+			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE && !( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) return false;
 		}
 	}
 	
@@ -1096,6 +1106,17 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 	{
 		if ( !vehicle ) return false;
 		if ( vehicle != field.vehicles[0] ) return false;
+	}
+
+	if ( checkBeneathSea || checkAboveBase )
+	{
+		do
+		{
+			if ( checkBeneathSea && bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA ) return false;
+			if ( checkAboveBase && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return false;
+			bi++;
+		}
+		while ( !bi.end );
 	}
 
 	return true;
