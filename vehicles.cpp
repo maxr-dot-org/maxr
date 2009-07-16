@@ -2969,8 +2969,6 @@ bool cVehicle::canLoad ( cVehicle *Vehicle )
 
 	if ( data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
-	if ( data.factorAir > 0 && Vehicle->data.factorGround == 0 ) return false;
-
 	int i;
 	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
 	{

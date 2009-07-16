@@ -245,7 +245,7 @@ cBuilding* cMapField::getTopBuilding()
 	cBuildingIterator buildingIterator( &buildings );
 
 
-	if ( buildingIterator && ( buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND || buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ) && buildingIterator->owner )
+	if ( buildingIterator && ( buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND || buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) && buildingIterator->owner )
 	{
 		return buildingIterator;
 	}
