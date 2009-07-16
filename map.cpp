@@ -1095,12 +1095,12 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 				// cannot build normal buildings over normal buildings
 				if ( ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA && bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) || ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
 			}
-			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE && !( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) return false;
+			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE && bi->owner && !( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) return false;
 		}
 	}
 	
 	//can not build on rubble
-	if (bi && !bi->owner && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE ) return false;
+	if (bi && !bi->owner && ! ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE || buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )) return false;
 
 	if ( field.vehicles.Size() > 0 )
 	{
