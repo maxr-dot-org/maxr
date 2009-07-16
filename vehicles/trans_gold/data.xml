@@ -30,7 +30,7 @@
 
   <Storage>
     <Capacity_Resources Num="50"/>
-    <Capacity_Res_Type Const="Metal"/>
-    <Is_Storage_Type String="Gold"/>
+    <Capacity_Res_Type Const="Gold"/>
+    <Is_Storage_Type String="Ground"/>
   </Storage>
 </Unit>
