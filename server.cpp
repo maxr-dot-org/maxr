@@ -2848,7 +2848,8 @@ void cServer::destroyUnit( cVehicle* vehicle )
 			value += bi->data.buildCosts;
 		}
 		deleteUnit( bi );
-		bi++;
+		bi = (*Map)[offset].getBuildings();
+		if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 	}
 
 	if ( vehicle->data.isBig )
@@ -2860,7 +2861,8 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		{
 			value += bi->data.buildCosts;
 			deleteUnit( bi );
-			bi++;
+			bi = (*Map)[offset].getBuildings();
+			if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		}
 
 		bi = (*Map)[offset + Map->size].getBuildings();
@@ -2869,7 +2871,8 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		{
 			value += bi->data.buildCosts;
 			deleteUnit( bi );
-			bi++;
+			bi = (*Map)[offset].getBuildings();
+			if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		}
 
 		bi = (*Map)[offset + 1 + Map->size].getBuildings();
@@ -2878,7 +2881,8 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		{
 			value += bi->data.buildCosts;
 			deleteUnit( bi );
-			bi++;
+			bi = (*Map)[offset].getBuildings();
+			if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
 		}
 	}
 
