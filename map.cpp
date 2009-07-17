@@ -520,8 +520,6 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 {
 
 	if ( size<16 ) size=16;
-	if ( size>256 ) size=256;
-
 	DeleteMap();
 	this->size=size;
 	Kacheln = new int[size*size];
