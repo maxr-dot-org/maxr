@@ -1630,7 +1630,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 
-	//draw ships and bridges
+	//draw ships
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1645,17 +1645,6 @@ void cClient::drawMap( bool bPure )
 				{
 					vehicle->draw ( dest );
 				}
-
-				cBuildingIterator building = Map->fields[iPos].getBuildings();
-				do
-				{
-					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
-					{
-						building->draw ( &dest );
-					}
-					building++;
-				} while ( !building.end );
-
 			}
 			iPos++;
 			dest.x+=iZoom;
@@ -1663,7 +1652,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 
-	//draw (working) vehicles and landmines
+	// draw bridges, landmines and working vehicles
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1676,13 +1665,23 @@ void cClient::drawMap( bool bPure )
 				cBuildingIterator building = Map->fields[iPos].getBuildings();
 				do
 				{
-					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 					{
 						building->draw ( &dest );
 					}
 					building++;
 				} while ( !building.end );
 
+				building = Map->fields[iPos].getBuildings();
+				do
+				{
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
+					{
+						building->draw ( &dest );
+					}
+					building++;
+				} while ( !building.end );
+				
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
 				if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( ActivePlayer->ScanMap[iPos] || ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) )
 				{
@@ -1691,7 +1690,25 @@ void cClient::drawMap( bool bPure )
 						vehicle->draw ( dest );
 					}
 				}
-				else if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
+			}
+			iPos++;
+			dest.x+=iZoom;
+		}
+		dest.y+=iZoom;
+	}
+
+	//draw vehicles
+	dest.y=18-iOffY+iZoom*iStartY;
+	for ( iY=iStartY;iY<=iEndY;iY++ )
+	{
+		dest.x=180-iOffX+iZoom*iStartX;
+		iPos=iY*Map->size+iStartX;
+		for ( iX=iStartX;iX<=iEndX;iX++ )
+		{
+			if ( ActivePlayer->ScanMap[iPos] )
+			{
+				cVehicle* vehicle = Map->fields[iPos].getVehicles();
+				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
 					vehicle->draw ( dest );
 				}
