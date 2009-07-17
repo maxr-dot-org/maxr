@@ -3208,7 +3208,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_REQ_IDENT:
 		{
-			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~Reconnect") );
 			if ( yesNoDialog.show() == 0  ) sendGameIdentification ( actPlayer, message->popInt16() );
 			else draw();
 		}
