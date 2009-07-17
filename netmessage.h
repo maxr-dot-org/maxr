@@ -22,7 +22,6 @@
 
 #include <SDL.h>
 #include <string>
-#include "main.h"
 
 /**
 * This class represents a message between server and client
@@ -111,13 +110,13 @@ public:
 	* @author Eiko
 	* @param s the string to push to the message
 	*/
-	void pushString( string s );
+	void pushString( std::string s );
 
 	/** pops a string from the end of the netMessage
 	* @author Eiko
 	* @return the string poped from the message
 	*/
-	string popString();
+	std::string popString();
 
 	/** pushes a bool to the end of the netMessage
 	* @author Eiko
@@ -149,12 +148,12 @@ public:
 	* this is only for better readability of the netlog
 	* @author Eiko
 	*/
-	string getTypeAsString();
+	std::string getTypeAsString();
 
 	/** returns the serial hexadecimal representation of the netMessage
 	* @author Eiko
 	*/
-	string getHexDump();
+	std::string getHexDump();
 };
 
 #endif //#ifndef _net_message_h
