@@ -4285,13 +4285,16 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				int iBuildingID =  message->popInt16();
 				cBuilding *Building = getBuildingFromID ( iBuildingID );
-				if ( Building != NULL )
+				if ( !Building )
 				{
-					SubBase->buildings.Add ( Building );
-					Building->SubBase = SubBase;
-
-					Building->updateNeighbours( Map );
+					Log.write("Building not found. ID: " + iToStr(iBuildingID ), cLog::eLOG_TYPE_NET_ERROR );
+					continue;
 				}
+				SubBase->buildings.Add ( Building );
+				Building->SubBase = SubBase;
+
+				Building->updateNeighbours( Map );
+				
 			}
 		}
 		break;
