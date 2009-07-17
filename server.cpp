@@ -1346,6 +1346,17 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					}
 					StoredVehicle->InSentryRange();
 				}
+
+				//workaround for setting flight height
+				cBuilding* b = (*Server->Map)[x + y*Server->Map->size].getBuildings();
+				if ( StoredVehicle->data.factorAir > 0 && b && b->owner == StoredVehicle->owner && b->data.canBeLandedOn )
+				{
+					StoredVehicle->FlightHigh = 0;
+				}
+				else
+				{
+					StoredVehicle->FlightHigh = 64;
+				}
 			}
 			else
 			{
@@ -1868,6 +1879,17 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 		AddedVehicle->doSurvey();
 	}
 	if ( !bInit ) AddedVehicle->InSentryRange();
+
+	//workaround for setting flight height
+	cBuilding* b = (*Server->Map)[iPosX + iPosY*Server->Map->size].getBuildings();
+	if ( AddedVehicle->data.factorAir > 0 && b && b->owner == AddedVehicle->owner && b->data.canBeLandedOn )
+	{
+		AddedVehicle->FlightHigh = 0;
+	}
+	else
+	{
+		AddedVehicle->FlightHigh = 64;
+	}
 
 	sendAddUnit ( iPosX, iPosY, AddedVehicle->iID, true, Vehicle->data.ID, Player->Nr, bInit );
 
