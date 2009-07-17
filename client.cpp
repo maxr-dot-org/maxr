@@ -3701,6 +3701,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sID UnitID;
 			bool Init = message->popBool();
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( !Player )
+			{
+				Log.write("Player not found", cLog::eLOG_TYPE_NET_ERROR );
+				break;
+			}
 			UnitID.iFirstPart = message->popInt16();
 			UnitID.iSecondPart = message->popInt16();
 			int PosY = message->popInt16();
@@ -3722,6 +3727,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			sID UnitID;
 			bool Init = message->popBool();
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( !Player )
+			{
+				Log.write("Player not found", cLog::eLOG_TYPE_NET_ERROR );
+				break;
+			}
+
 			UnitID.iFirstPart = message->popInt16();
 			UnitID.iSecondPart = message->popInt16();
 			int PosY = message->popInt16();
@@ -3766,6 +3777,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cVehicle *AddedVehicle;
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( !Player )
+			{
+				Log.write("Player not found", cLog::eLOG_TYPE_NET_ERROR );
+				break;
+			}
 			sID UnitID;
 
 			UnitID.iFirstPart = message->popInt16();
@@ -3789,6 +3805,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			cBuilding *AddedBuilding;
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			if ( !Player )
+			{
+				Log.write("Player not found", cLog::eLOG_TYPE_NET_ERROR );
+				break;
+			}
 			sID UnitID;
 
 			UnitID.iFirstPart = message->popInt16();
