@@ -763,7 +763,7 @@ void cClientAttackJob::playMuzzle()
 			{
 				Client->addFX ( fxMuzzleBig,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
 			}
-			else
+			else if ( building )
 			{
 				Client->addFX ( fxMuzzleBig,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
 			}
@@ -778,7 +778,7 @@ void cClientAttackJob::playMuzzle()
 			{
 				Client->addFX ( fxMuzzleSmall,vehicle->PosX*64,vehicle->PosY*64,iFireDir );
 			}
-			else
+			else if ( building )
 			{
 				Client->addFX ( fxMuzzleSmall,building->PosX*64,building->PosY*64,iFireDir );
 			}
@@ -838,7 +838,7 @@ void cClientAttackJob::playMuzzle()
 				{
 					Client->addFX ( fxMuzzleMed,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
 				}
-				else
+				else if ( building )
 				{
 					Client->addFX ( fxMuzzleMed,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
 				}
@@ -849,7 +849,7 @@ void cClientAttackJob::playMuzzle()
 				{
 					Client->addFX ( fxMuzzleMedLong,vehicle->PosX*64+offx,vehicle->PosY*64+offy,iFireDir );
 				}
-				else
+				else if ( building )
 				{
 					Client->addFX ( fxMuzzleMedLong,building->PosX*64+offx,building->PosY*64+offy,iFireDir );
 				}
