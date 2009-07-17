@@ -385,6 +385,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 	if ( targetBuilding ) buildingTargets.Add( targetBuilding );
 
 	int remainingHP = 0;
+	int id = 0;
 	cPlayer* owner = NULL;
 	bool isAir = ( targetVehicle && targetVehicle->data.factorAir > 0 );
 
@@ -412,6 +413,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 			Server->checkPlayerUnits();
 		}
 
+		id = targetVehicle->iID;
 		targetVehicle->data.hitpointsCur = targetVehicle->CalcHelth( damage );
 		remainingHP = targetVehicle->data.hitpointsCur;
 		owner = targetVehicle->owner;
@@ -432,6 +434,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 			Server->checkPlayerUnits();
 		}
 
+		id = targetBuilding->iID;
 		targetBuilding->data.hitpointsCur = targetBuilding->CalcHelth( damage );
 		remainingHP = targetBuilding->data.hitpointsCur;
 		owner = targetBuilding->owner;
@@ -444,7 +447,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 	//make sure, the owner gets the impact message
 	if ( owner ) owner->ScanMap[offset] = 1;
 
-	sendAttackJobImpact( offset, remainingHP, attackMode );
+	sendAttackJobImpact( offset, remainingHP, id );
 
 	//remove the destroyed units
 	if ( targetBuilding && targetBuilding->data.hitpointsCur <= 0 )
@@ -512,7 +515,7 @@ void cServerAttackJob::makeImpactCluster()
 
 }
 
-void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, char attackMode )
+void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, int id )
 {
 	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
@@ -521,11 +524,10 @@ void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, char att
 		//targed in sight?
 		if ( player->ScanMap[offset] == 0 ) continue;
 
-		//TODO: when multible planes on a field are implemented, the ID of the target plane have to be sent, too
 		cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_IMPACT );
 		message->pushInt32( offset );
 		message->pushInt16( remainingHP );
-		message->pushChar( attackMode );
+		message->pushInt16( id );
 
 		Server->sendNetMessage( message, player->Nr );
 
@@ -912,7 +914,7 @@ void cClientAttackJob::updateAgressorData()
 	}
 }
 
-void cClientAttackJob::makeImpact(int offset, int remainingHP, char attackMode )
+void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 {
 	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )
 	{
@@ -920,9 +922,8 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, char attackMode )
 		return;
 	}
 
-	cVehicle* targetVehicle;
-	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, offset, attackMode, Client->Map);
+	cVehicle* targetVehicle = Client->getVehicleFromID( id );
+	cBuilding* targetBuilding = Client->getBuildingFromID( id );
 
 	bool playImpact = false;
 	bool ownUnit = false;

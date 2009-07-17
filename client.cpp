@@ -4100,10 +4100,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_ATTACKJOB_IMPACT:
 		{
-			char attackMode = message->popChar();
+			int id = message->popInt16();
 			int remainingHP = message->popInt16();
 			int offset = message->popInt32();
-			cClientAttackJob::makeImpact( offset, remainingHP, attackMode );
+			cClientAttackJob::makeImpact( offset, remainingHP, id );
 			break;
 		}
 	case GAME_EV_RESOURCES:

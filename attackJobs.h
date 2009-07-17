@@ -57,7 +57,7 @@ public:
 	void clientFinished( int playerNr );
 	void makeImpact(int x, int y );
 	void makeImpactCluster();
-	void sendAttackJobImpact(int offset, int remainingHP, char attackMode );
+	void sendAttackJobImpact(int offset, int remainingHP, int id );
 
 };
 
@@ -84,7 +84,7 @@ public:
 	*/
 	static void lockTarget( cNetMessage* message );
 	static void handleAttackJobs();
-	static void makeImpact(int offset, int remainingHP, char attackMode);
+	static void makeImpact(int offset, int remainingHP, int id);
 
 	cClientAttackJob( cNetMessage* message );
 
