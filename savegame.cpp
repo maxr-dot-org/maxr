@@ -642,7 +642,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	TiXmlElement *element;
 	int subbaseID;
-	if ( element = unitNode->FirstChildElement( "SubBase" ) )
+	if ( (element = unitNode->FirstChildElement( "SubBase" )) && building->data.connectsToBase )
 	{
 		element->Attribute ( "num", &subbaseID );
 		for ( unsigned int i = 0; i < SubBasesLoad.Size(); i++ )
