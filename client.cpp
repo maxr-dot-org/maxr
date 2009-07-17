@@ -1560,7 +1560,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 
-	//draw top buildings (except connectors), and working vehicles
+	//draw top buildings (except connectors)
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1624,14 +1624,6 @@ void cClient::drawMap( bool bPure )
 					}
 				}
 			}
-			cVehicle* vehicle = Map->fields[iPos].getVehicles();
-			if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( ActivePlayer->ScanMap[iPos] || ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) )
-			{
-				if ( vehicle->PosX == iX && vehicle->PosY == iY )	//make sure a big vehicle is drawn only once
-				{
-					vehicle->draw ( dest );
-				}
-			}
 			iPos++;
 			dest.x+=iZoom;
 		}
@@ -1671,7 +1663,7 @@ void cClient::drawMap( bool bPure )
 		dest.y+=iZoom;
 	}
 
-	//draw vehicles and landmines
+	//draw (working) vehicles and landmines
 	dest.y=18-iOffY+iZoom*iStartY;
 	for ( iY=iStartY;iY<=iEndY;iY++ )
 	{
@@ -1692,11 +1684,17 @@ void cClient::drawMap( bool bPure )
 				} while ( !building.end );
 
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
-				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
+				if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( ActivePlayer->ScanMap[iPos] || ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) )
+				{
+					if ( vehicle->PosX == iX && vehicle->PosY == iY )	//make sure a big vehicle is drawn only once
+					{
+						vehicle->draw ( dest );
+					}
+				}
+				else if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
 					vehicle->draw ( dest );
 				}
-
 			}
 			iPos++;
 			dest.x+=iZoom;
