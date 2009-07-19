@@ -5088,6 +5088,12 @@ void cClient::deleteUnit( cBuilding *Building )
 		SelectedBuilding = NULL;
 	}
 
+	for ( unsigned int i = 0; i < Building->SubBase->buildings.Size(); i++ )
+	{
+		if ( Building->SubBase->buildings[i] == Building )  
+			Building->SubBase->buildings.Delete(i);
+	}
+
 	cPlayer* owner = Building->owner;
 	delete Building;
 
