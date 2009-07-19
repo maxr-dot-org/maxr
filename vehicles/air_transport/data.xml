@@ -63,7 +63,7 @@
     <Built_Costs Num="18"/>
     <!-- Baukosten bei einfacher Baugeschwindigkeit -->
 
-    <Can_Build String="None"/>
+    <Can_Build String=""/>
     <Build_As String="Plane"/>
     <!-- Standardvorschläge: -->
     <!-- - BigBuilding -->

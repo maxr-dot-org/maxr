@@ -31,6 +31,8 @@
   </Abilities>
 
   <Storage>
+    <Capacity_Resources Num="30"/>
+    <Capacity_Res_Type Const="Metal"/>
     <Is_Storage_Type String="Ground"/>
   </Storage>
 </Unit>
