@@ -828,6 +828,8 @@ int cBuilding::GetMenuPointAnz ()
 {
 	int nr = 2;
 
+	if ( typ == NULL ) return 0;
+
 	if ( typ->data.canSelfDestroy )
 		nr++;
 
@@ -2666,6 +2668,8 @@ void cBuilding::drawStatus() const
 //--------------------------------------------------------------------------
 void cBuilding::Select ()
 {
+	if ( !owner ) return;
+
 	selected = true;
 	// Das Video laden:
 	if ( Client->FLC != NULL )

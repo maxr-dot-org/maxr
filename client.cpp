@@ -820,7 +820,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			else if ( bChange && SelectedBuilding&&SelectedBuilding->owner==ActivePlayer&&mouse->x>=10&&mouse->y>=29&&mouse->x<10+128&&mouse->y<29+10 )
 			{
 				bChangeObjectName = true;
-				InputHandler->setInputStr ( SelectedVehicle->name );
+				InputHandler->setInputStr ( SelectedBuilding->name );
 				InputHandler->setInputState ( true );
 			}
 		}
@@ -1251,7 +1251,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() )
+	else if ( ( base || !SelectedVehicle )&& OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != NULL )
 	{
 		bChangeObjectName = false;
 		if ( !bChatInput ) InputHandler->setInputState ( false );
@@ -4228,6 +4228,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			Vehicle->IsBuilding = false;
 			Vehicle->BuildPath = false;
+
+			for ( int i = 0; i < UnitsData.building.Size(); i++ )
+			{
+				sBuilding *building = &UnitsData.building[i];
+
+				int hallo = 0;
+			}
 
 			if ( SelectedVehicle == Vehicle )
 			{
