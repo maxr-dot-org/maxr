@@ -2937,6 +2937,8 @@ void cServer::destroyUnit(cBuilding *b)
 		}
 	}
  
+	sUnitData::eSurfacePosition surfacePosition = b->data.surfacePosition;
+
 	cBuildingIterator building = Map->fields[offset].getBuildings();
 	while ( building.size() > 0 )
 	{
@@ -2945,7 +2947,7 @@ void cServer::destroyUnit(cBuilding *b)
 		deleteUnit( building );
 	}
 
-	if ( b->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || value > 2 )
+	if ( surfacePosition != sUnitData::SURFACE_POS_ABOVE && value > 2 )
 	{
 		addRubble( offset, value/2, big );
 	}

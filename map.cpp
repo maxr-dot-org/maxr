@@ -774,7 +774,7 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 
 void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
-	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig ) return; //big base building are not implemented
+	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig && building->owner ) return; //big base building are not implemented
 
 	if ( building->data.isBig )
 	{
