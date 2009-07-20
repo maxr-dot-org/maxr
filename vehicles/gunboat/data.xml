@@ -14,7 +14,7 @@
     <Muzzle_Type Const="Big"/>
     <Ammo_Quantity Num="14"/>
     <Can_Attack Num="6"/>
-    <Shots Num="1"/>
+    <Shots Num="2"/>
     <Range Num="7"/>
     <Damage Num="20"/>
   </Weapon>

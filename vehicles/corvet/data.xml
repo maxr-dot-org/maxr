@@ -14,7 +14,7 @@
     <Muzzle_Type Const="Torpedo"/>
     <Ammo_Quantity Num="14"/>
     <Can_Attack Num="18"/>
-    <Shots Num="1"/>
+    <Shots Num="2"/>
     <Range Num="5"/>
     <Damage Num="14"/>
   </Weapon>
