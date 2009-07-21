@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <assert.h>
 
 
 #define MALLOCN(type, count)  static_cast<type*>(malloc(sizeof(type) * (count)))
@@ -20,8 +21,8 @@ template<typename T> class cList
 		T&       Back()       { return v_[size_ - 1]; }
 		T const& Back() const { return v_[size_ - 1]; }
 
-		T&       operator [](size_t const idx)       { return v_[idx]; }
-		T const& operator [](size_t const idx) const { return v_[idx]; }
+		T&       operator [](size_t const idx)       { assert( idx < size_ ); return v_[idx]; }
+		T const& operator [](size_t const idx) const { assert( idx < size_ ); return v_[idx]; }
 
 		void Add(T const& elem);
 
