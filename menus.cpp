@@ -4319,7 +4319,7 @@ void cStorageMenu::resetInfos()
 		metalBar->setCurrentValue ( metalValue );
 	}
 
-	if ( (offset+1)*maxX*2 < unitData.storageResMax && (offset+1)*maxX*2 < (int)storageList.Size() ) downButton->setLocked ( false );
+	if ( (offset+1)*maxX*2 < unitData.storageUnitsMax && (offset+1)*maxX*2 < (int)storageList.Size() ) downButton->setLocked ( false );
 	else downButton->setLocked ( true );
 
 	if ( offset > 0 ) upButton->setLocked ( false );
