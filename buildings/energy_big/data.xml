@@ -11,7 +11,7 @@
   </Description>
 
   <Production>
-    <Built_Costs Num="20"/>
+    <Built_Costs Num="24"/>
     <Build_As String="BigBuilding"/>
   </Production>
 
