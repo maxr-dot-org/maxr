@@ -3597,7 +3597,7 @@ void cBuildingsBuildMenu::generateSelectionList()
 
 		if ( vehicle->data.canBuild.compare ( UnitsData.building[i].data.buildAs ) != 0 ) continue;
 
-		selectionList->addUnit ( UnitsData.building[i].data.ID, player );
+		selectionList->addUnit ( &vehicle->owner->BuildingData[i], player );
 
 		if ( vehicle->data.storageResCur < player->BuildingData[i].buildCosts) selectionList->getItem ( selectionList->getSize()-1 )->setMarked ( true );
 	}
@@ -3760,7 +3760,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 		if ( building->data.canBuild.compare ( vehicle.data.buildAs ) != 0 ) continue;
 
-		selectionList->addUnit ( vehicle.data.ID, player, NULL, false, false );
+		selectionList->addUnit ( &player->VehicleData[i], player, NULL, false, false );
 		selectionList->getItem ( selectionList->getSize()-1 )->setResValue ( -1, false );
 	}
 

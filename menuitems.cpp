@@ -1146,9 +1146,8 @@ void cMenuUnitsList::setSelection ( cMenuUnitListItem *selectedUnit_ )
 	parentMenu->setSelectedUnit ( selectedUnit );
 }
 
-cMenuUnitListItem *cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades, bool scroll, bool fixedCargo )
+void cMenuUnitsList::addUnit ( cMenuUnitListItem *unitItem, bool scroll )
 {
-	cMenuUnitListItem *unitItem = new cMenuUnitListItem( unitID, owner, upgrades, displayType, this, fixedCargo );
 	unitItem->setReleaseSound ( SoundData.SNDObjectMenu );
 	unitItem->position.h = 32;
 	unitItem->position.w = position.w-20;
@@ -1157,6 +1156,19 @@ cMenuUnitListItem *cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUp
 	selectedUnit = unitItem;
 	selectedUnit->selected = true;
 	if ( scroll && (int)unitsList.Size() > offset+maxDisplayUnits ) scrollDown();
+}
+
+cMenuUnitListItem *cMenuUnitsList::addUnit ( sUnitData *unitData, cPlayer *owner, sUnitUpgrade *upgrades, bool scroll, bool fixedCargo )
+{
+	cMenuUnitListItem *unitItem = new cMenuUnitListItem( unitData, owner, upgrades, displayType, this, fixedCargo );
+	addUnit ( unitItem, scroll );
+	return unitItem;
+}
+
+cMenuUnitListItem *cMenuUnitsList::addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades, bool scroll, bool fixedCargo )
+{
+	cMenuUnitListItem *unitItem = new cMenuUnitListItem( unitID, owner, upgrades, displayType, this, fixedCargo );
+	addUnit ( unitItem, scroll );
 	return unitItem;
 }
 

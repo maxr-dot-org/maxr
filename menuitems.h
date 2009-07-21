@@ -598,6 +598,7 @@ protected:
 	int maxDisplayUnits;
 
 	void released( void *parent );
+	void addUnit ( cMenuUnitListItem *unitItem, bool scroll = false );
 
 public:
 	cMenuUnitsList( int x, int y, int w, int h, cHangarMenu *parent, eMenuUnitListDisplayTypes displayType_ );
@@ -623,6 +624,7 @@ public:
 	 *@param fixedCargo if this is true the new unit will set with a fixed cargo.
 	 */
 	cMenuUnitListItem *addUnit ( sID unitID, cPlayer *owner, sUnitUpgrade *upgrades = NULL, bool scroll = false, bool fixedCargo = false );
+	cMenuUnitListItem *addUnit ( sUnitData *unitData, cPlayer *owner, sUnitUpgrade *upgrades = NULL, bool scroll = false, bool fixedCargo = false );
 	void removeUnit ( cMenuUnitListItem *item );
 	void clear();
 	void setDisplayType ( eMenuUnitListDisplayTypes displayType_ );
