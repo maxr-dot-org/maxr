@@ -498,6 +498,11 @@ int cMenu::show()
 	while ( !end )
 	{
 		EventHandler->HandleEvents();
+		if ( Client )
+		{
+			Client->doGameActions();
+			if ( Client->iTimer1 ) Client->iFrame++;
+		}
 
 		mouse->GetPos();
 		if ( mouse->moved() )
@@ -3605,6 +3610,11 @@ void cBuildingsBuildMenu::generateSelectionList()
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
 }
 
+void cBuildingsBuildMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedVehicle == vehicle ) terminate = true;
+}
+
 void cBuildingsBuildMenu::doneReleased ( void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
@@ -3765,6 +3775,11 @@ void cVehiclesBuildMenu::generateSelectionList()
 	}
 
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
+}
+
+void cVehiclesBuildMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedBuilding == building ) terminate = true;
 }
 
 void cVehiclesBuildMenu::createBuildList()
@@ -4069,7 +4084,6 @@ void cUpgradeMenu::generateSelectionList()
 		selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 
-
 cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
@@ -4135,6 +4149,11 @@ void cUnitHelpMenu::doneReleased( void *parent )
 {
 	cUnitHelpMenu *menu = dynamic_cast<cUnitHelpMenu*>((cMenu*)parent);
 	menu->end = true;
+}
+
+void cUnitHelpMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData() ) terminate = true;
 }
 
 cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building ) : cMenu ( LoadPCX ( GFXOD_STORAGE ), MNU_BG_ALPHA ), storageList(storageList_), ownerVehicle( vehicle ), ownerBuilding(building)
@@ -4501,6 +4520,11 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
 }
 
+void cStorageMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedBuilding == ownerBuilding || destroyedVehicle == ownerVehicle ) terminate = true;
+}
+
 cMineManagerMenu::cMineManagerMenu( cBuilding *building_ ) : cMenu ( LoadPCX(GFXOD_MINEMANAGER), MNU_BG_ALPHA ), subBase( *building_->SubBase ), building(building_)
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Title~Mine") );
@@ -4742,4 +4766,9 @@ void cMineManagerMenu::barReleased( void *parent )
 	menu->setBarValues();
 	menu->setBarLabels();
 	menu->draw();
+}
+
+void cMineManagerMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedBuilding == building ) terminate = true;
 }

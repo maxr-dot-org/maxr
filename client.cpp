@@ -5037,6 +5037,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	if( !Building ) return;
 	bFlagDrawMMap = true;
 
+	if ( ActiveMenu ) ActiveMenu->handleDestroyUnit ( Building );
 	Map->deleteBuilding( Building );
 
 	if ( !Building->owner )
@@ -5108,6 +5109,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 {
 	if( !Vehicle ) return;
 
+	if ( ActiveMenu ) ActiveMenu->handleDestroyUnit ( NULL, Vehicle );
 	Map->deleteVehicle( Vehicle );
 
 	for ( unsigned int i = 0; i < attackJobs.Size(); i++)

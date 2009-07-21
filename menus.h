@@ -283,6 +283,7 @@ public:
 	 *@author alzi
 	 */
 	virtual void handleNetMessage( cNetMessage *message ) {}
+	virtual void handleDestroyUnit( cBuilding *building = NULL, cVehicle *vehicle = NULL ) {}
 };
 
 /** pointer to the currently active menu or NULL if no menu is active */
@@ -866,6 +867,7 @@ public:
 	static bool selListDoubleClicked ( cMenuUnitsList* list, void *parent );
 
 	void generateSelectionList();
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 /**
@@ -892,6 +894,7 @@ public:
 	static void selectionChanged ( void *parent );
 
 	void generateSelectionList();
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 /**
@@ -934,6 +937,7 @@ public:
 	~cUnitHelpMenu();
 
 	static void doneReleased( void *parent );
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 class cStorageMenu : public cMenu
@@ -997,6 +1001,8 @@ public:
 	static void reloadAllReleased ( void *parent );
 	static void repairAllReleased ( void *parent );
 	static void upgradeAllReleased ( void *parent );
+
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 class cMineManagerMenu : public cMenu
@@ -1038,6 +1044,8 @@ public:
 	static void decreseReleased( void *parent );
 
 	static void barReleased( void *parent );
+
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 #endif //menusH
