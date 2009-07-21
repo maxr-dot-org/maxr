@@ -3178,13 +3178,13 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send upgrades
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		if ( Player->VehicleData[i].version > 1 
+		if ( Player->VehicleData[i].version > 0 
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
 	}
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( Player->BuildingData[i].version > 1 
+		if ( Player->BuildingData[i].version > 0 
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}

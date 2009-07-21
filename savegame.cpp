@@ -838,7 +838,6 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	Data->ID = ID;
 
 	Data->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
-	unitNode->FirstChildElement( "Version" )->Attribute ( "num", &Data->version );
 
 	unitNode->FirstChildElement( "Hitpoints" )->Attribute ( "num", &Data->hitpointsMax );
 	unitNode->FirstChildElement( "Armor" )->Attribute ( "num", &Data->armor );
@@ -1134,7 +1133,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	int upgrades = 0;
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		if ( Player->VehicleData[i].version > 1 
+		if ( Player->VehicleData[i].version > 0 
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->VehicleData[i], &UnitsData.getVehicle (i, Player->getClan ()).data );
@@ -1143,7 +1142,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	}
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( Player->BuildingData[i].version > 1 
+		if ( Player->BuildingData[i].version > 0 
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->BuildingData[i], &UnitsData.getBuilding (i, Player->getClan ()).data );
@@ -1425,7 +1424,7 @@ void cSavegame::writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnit
 	if ( Data->shotsCur != Data->shotsMax ) addAttributeElement ( unitNode, "Shots", "num", iToStr ( Data->shotsCur ) );
 
 	// write upgrade values that differ from the acctual unit values of the owner
-	if ( OwnerData->version > 1 )
+	if ( OwnerData->version > 0 )
 	{
 		addAttributeElement ( unitNode, "Version", "num", iToStr ( Data->version ) );
 		if ( Data->hitpointsMax != OwnerData->hitpointsMax ) addAttributeElement ( unitNode, "Max_Hitpoints", "num", iToStr ( Data->hitpointsMax ) );
@@ -1453,7 +1452,6 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	TiXmlElement *unitNode = addMainElement ( unitValuesNode, "UnitVal_" + iToStr( unitnum ) );
 	addAttributeElement ( unitNode, "ID", "string", Data->ID.getText() );
 	addAttributeElement ( unitNode, "Name", "string", Data->name );
-	addAttributeElement ( unitNode, "Version", "num", iToStr ( Data->version ) );
 
 	addAttributeElement ( unitNode, "Hitpoints", "num", iToStr ( Data->hitpointsMax ) );
 	addAttributeElement ( unitNode, "Armor", "num", iToStr ( Data->armor ) );
