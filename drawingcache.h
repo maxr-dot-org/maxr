@@ -48,6 +48,7 @@ struct sDrawingCacheEntry
 	bool isBuilding;
 	bool isClearing;
 	bool stealth;
+	bool water;
 
 	//common properties
 	cPlayer* owner;

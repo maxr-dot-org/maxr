@@ -46,7 +46,7 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		frame = Client->iFrame % 4;
 
-	bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+	water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
@@ -203,9 +203,15 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( entry.zoom != Client->Hud.Zoom ) continue;
 
+		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+		if ( vehicle->IsBuilding )
+		{
+			if ( water != entry.water ) continue;
+		}
+
 		//check the stealth flag
 		bool stealth = false;
-		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+		
 		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 		if ( vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 		if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && water && vehicle->DetectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
