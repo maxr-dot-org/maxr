@@ -3219,8 +3219,8 @@ void cClient::doCommand ( string sCmd )
 				playerNum = atoi ( sCmd.substr ( 6, sCmd.length() ).c_str() );
 			}
 
-			//since atoi is too stupid to report an error, do an extra check, when the number is 0
-			if ( playerNum == 0 && sCmd[6] != '0' ) return;
+			//server cannot be kicked
+			if ( playerNum == 0 ) return;
 			
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
@@ -3288,8 +3288,8 @@ void cClient::doCommand ( string sCmd )
 				playerNum = atoi ( sCmd.substr ( 12, sCmd.length() ).c_str() );
 			}
 
-			//since atoi is too stupid to report an error, do an extra check, when the number is 0
-			if ( playerNum == 0 && sCmd[12] != '0' ) return;
+			//server cannot be disconnected
+			if ( playerNum == 0 ) return;
 			
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
