@@ -1549,6 +1549,8 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 
 	if ( Vehicle->owner == owner && !Vehicle->IsBuilding && !Vehicle->IsClearing ) return true;
 
+	if ( Vehicle->bIsBeeingAttacked ) return false;
+
 	return false;
 }
 
