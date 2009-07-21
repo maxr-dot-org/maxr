@@ -21,7 +21,7 @@
 
   <Production>
     <Built_Costs Num="18"/>
-    <Build_As String="BigGroundVehicle"/>
+    <Build_As String="SmallGroundVehicle"/>
   </Production>
 
   <Movement>
