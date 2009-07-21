@@ -34,8 +34,8 @@ class cResearch;
 	If you research armor till you have 50% you will have armor 15. But the first
 	gold upgrade step will still cost 5 gold. And it will go up from 15 to 16.
 	Other example:
-	If you have gold-upgraded the speedCur of an awac from 18 to 32 and do now
-	a speedCur research, then you will still get only an additional bonus of 1
+	If you have gold-upgraded the speed of an awac from 18 to 32 and do now
+	a speed research, then you will still get only an additional bonus of 1
 	for the first research (and not 3). This is because the research benefit 
 	is	always calculated on the basis of the start value and not of the current 
 	value.
@@ -197,8 +197,8 @@ private:
 	PriceMap rangeScan_20;
 	PriceMap rangeScan_24;
 
-	PriceMap shotsCur_1;
-	PriceMap shotsCur_2;
+	PriceMap shots_1;
+	PriceMap shots_2;
 
 	int lookupPrice(const PriceMap& prices, int value) const;
 	void setupLookupTables();

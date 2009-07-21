@@ -4229,13 +4229,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			Vehicle->IsBuilding = false;
 			Vehicle->BuildPath = false;
 
-			for ( int i = 0; i < UnitsData.building.Size(); i++ )
-			{
-				sBuilding *building = &UnitsData.building[i];
-
-				int hallo = 0;
-			}
-
 			if ( SelectedVehicle == Vehicle )
 			{
 				StopFXLoop ( iObjectStream );
@@ -5503,7 +5496,7 @@ void cClient::traceVehicle ( cVehicle *Vehicle, int *iY, int iX )
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
-	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speedCur: " + iToStr ( Vehicle->data.speedCur ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
+	sTmp = "dir: " + iToStr ( Vehicle->dir ) + " selected: " + iToStr ( Vehicle->selected ) + " moving: +" + iToStr ( Vehicle->moving ) + " mjob: "  + pToStr ( Vehicle->ClientMoveJob ) + " speed: " + iToStr ( Vehicle->data.speedCur ) + " mj_active: " + iToStr ( Vehicle->MoveJobActive ) + " menu_active: " + iToStr ( Vehicle->MenuActive );
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);
 	*iY+=8;
 
@@ -5604,7 +5597,7 @@ void cClient::traceBuilding ( cBuilding *Building, int *iY, int iX )
 	}
 
 	sTmp =
-		"build_speedCur: "        + iToStr(Building->BuildSpeed)  +
+		"build_speed: "        + iToStr(Building->BuildSpeed)  +
 		" repeat_build: "      + iToStr(Building->RepeatBuild) +
 		" build_list_count: +" + iToStr(Building->BuildList ? (int)Building->BuildList->Size() : 0);
 	font->showText(iX,*iY, sTmp, FONT_LATIN_SMALL_WHITE);

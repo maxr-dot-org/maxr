@@ -3560,8 +3560,8 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 		menuItems.Add ( pathButton );
 	}
 
-	speedCurHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
-	menuItems.Add ( speedCurHandler );
+	speedHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
+	menuItems.Add ( speedHandler );
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -3576,7 +3576,7 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 
 	if ( vehicle->data.canBuildPath ) delete pathButton;
 
-	delete speedCurHandler;
+	delete speedHandler;
 
 	if ( Client ) Client->bFlagDrawHud = true;
 }
@@ -3602,7 +3602,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 	if ( !menu->selectedUnit->getUnitData()->isBig )
 	{
-		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedCurHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
+		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
 	}
 	else
 	{
@@ -3611,7 +3611,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-		menu->vehicle->BuildRounds = menu->speedCurHandler->getBuildSpeed();
+		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
 		menu->vehicle->FindNextband();
 	}
@@ -3623,7 +3623,7 @@ void cBuildingsBuildMenu::pathReleased ( void *parent )
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
-	menu->vehicle->BuildRounds = menu->speedCurHandler->getBuildSpeed();
+	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
 	menu->vehicle->PlaceBand = true;
 	menu->end = true;
@@ -3650,7 +3650,7 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 		turboBuildCosts[0] = buildingData->buildCosts;
 		turboBuildTurns[0] = buildingData->buildCosts / menu->vehicle->data.needsMetal;
 	}
-	menu->speedCurHandler->setValues ( turboBuildTurns, turboBuildCosts );
+	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
 bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *parent )
@@ -3686,9 +3686,9 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 	secondListUpButton->move ( position.x+327, position.y+293 );
 	secondListDownButton->move ( position.x+348, position.y+293 );
 
-	speedCurHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
-	speedCurHandler->setBuildSpeed ( building->BuildSpeed );
-	menuItems.Add ( speedCurHandler );
+	speedHandler = new cMenuBuildSpeedHandler ( position.x+292, position.y+345 );
+	speedHandler->setBuildSpeed ( building->BuildSpeed );
+	menuItems.Add ( speedHandler );
 
 	repeatButton = new cMenuCheckButton ( position.x+447, position.y+322, lngPack.i18n ( "Text~Comp~Repeat" ), building->RepeatBuild, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD, cMenuCheckButton::TEXT_ORIENT_LEFT );
 	menuItems.Add ( repeatButton );
@@ -3704,7 +3704,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 cVehiclesBuildMenu::~cVehiclesBuildMenu()
 {
 	delete titleLabel;
-	delete speedCurHandler;
+	delete speedHandler;
 
 	delete repeatButton;
 
@@ -3785,7 +3785,7 @@ void cVehiclesBuildMenu::doneReleased ( void *parent )
 		buildItem->metall_remaining = menu->secondList->getItem ( i )->getResValue();
 		buildList.Add ( buildItem );
 	}
-	menu->building->BuildSpeed = menu->speedCurHandler->getBuildSpeed();
+	menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();
 	sendWantBuildList ( menu->building, buildList, menu->repeatButton->isChecked() );
 	menu->end = true;
 }
@@ -3809,7 +3809,7 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 	int turboBuildTurns[3], turboBuildCosts[3];
 	menu->building->CalcTurboBuild ( turboBuildTurns, turboBuildCosts, vehicleData->buildCosts, menu->selectedUnit->getResValue() );
 
-	menu->speedCurHandler->setValues ( turboBuildTurns, turboBuildCosts );
+	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
 cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), owner )

@@ -336,7 +336,7 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	tracksChBox = new cMenuCheckButton ( position.x+210, position.y+193+20*2, lngPack.i18n( "Text~Settings~Tracks" ), SettingsData.bMakeTracks, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( tracksChBox );
 
-	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~ScrollspeedCur" ) );
+	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
 	menuItems.Add ( scrollSpeedLabel );
 	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 50, this );
 	scrollSpeedSlider->setValue ( SettingsData.iScrollSpeed );

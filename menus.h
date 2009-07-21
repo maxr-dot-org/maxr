@@ -853,7 +853,7 @@ protected:
 
 	cMenuLabel *titleLabel;
 	cMenuButton *pathButton;
-	cMenuBuildSpeedHandler *speedCurHandler;
+	cMenuBuildSpeedHandler *speedHandler;
 
 public:
 	cBuildingsBuildMenu( cPlayer *player_, cVehicle *vehicle_ );
@@ -878,7 +878,7 @@ protected:
 	cBuilding *building;
 
 	cMenuLabel *titleLabel;
-	cMenuBuildSpeedHandler *speedCurHandler;
+	cMenuBuildSpeedHandler *speedHandler;
 
 	cMenuCheckButton *repeatButton;
 

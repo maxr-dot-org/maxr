@@ -847,7 +847,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				// if the first unit hasn't changed copy it to the new buildlist
 				if ( Building->BuildList->Size() > 0 && i == 0 && Type.getVehicle() == (*Building->BuildList)[0]->typ )
 				{
-					//recalculate costs, because build speedCur could have beed changed
+					//recalculate costs, because build speed could have beed changed
 					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion ( Building->owner )->buildCosts, (*Building->BuildList)[0]->metall_remaining );
 					sBuildList *BuildListItem = new sBuildList;
 					BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];

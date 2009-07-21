@@ -397,7 +397,7 @@ public:
 	bool bDamageEffectsVehicles;
 	/**enable tracks (units leave tracks on the floor) */
 	bool bMakeTracks;
-	/**scrollspeedCur on map */
+	/**scrollspeed on map */
 	int iScrollSpeed;
 
 	//NET

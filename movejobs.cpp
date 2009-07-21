@@ -1009,7 +1009,7 @@ void cClientMoveJob::moveVehicle()
 
 	if (!Vehicle->moving)
 	{
-		//check remaining speedCur
+		//check remaining speed
 		if ( Vehicle->data.speedCur < Waypoints->next->Costs )
 		{
 			bSuspended = true;

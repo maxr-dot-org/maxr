@@ -630,7 +630,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	if ( Client->Hud.Treffer )
 		DrawHelthBar();
 
-	//draw ammoCur bar
+	//draw ammo bar
 	if ( Client->Hud.Munition && data.canAttack && data.ammoMax > 0 )
 		DrawMunBar();
 
@@ -2015,7 +2015,7 @@ void cBuilding::RotateTo ( int Dir )
 }
 
 //--------------------------------------------------------------------------
-/** calculates the costs and the duration of the 3 buildspeedCurs for the vehicle with the given id
+/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
 	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
@@ -2040,13 +2040,13 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	// if work is already started
 	if ( iRemainingMetal > 0 )
 	{
-		// check if previous speedCur is suitable
+		// check if previous speed is suitable
 		if ( ( iRemainingMetal < 12 * data.needsMetal ) && BuildSpeed == 2 ) BuildSpeed--;
 		if ( ( iRemainingMetal < 4 * data.needsMetal ) && BuildSpeed == 1 ) BuildSpeed--;
 		int limit;
 		double temp;
 
-		switch ( BuildSpeed )  //BuildSpeed here is the previous build speedCur
+		switch ( BuildSpeed )  //BuildSpeed here is the previous build speed
 		{
 			case 2:
 				iTurboBuildCosts[2] = iRemainingMetal;
@@ -2534,7 +2534,7 @@ void cBuilding::upgradeToCurrentVersion ()
 		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
 	data.hitpointsMax = upgradeVersion.hitpointsMax;
 
-	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammoCur-amount!
+	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
 	
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
@@ -2644,7 +2644,7 @@ void cBuilding::DrawHelthBar ( void ) const
 void cBuilding::drawStatus() const
 {
 	SDL_Rect dest;
-	SDL_Rect shotsCurSymbol = {254, 97, 5, 10 };
+	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
 	if ( Disabled )
@@ -2660,7 +2660,7 @@ void cBuilding::drawStatus() const
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
 		if ( data.shotsCur )
 		{
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsCurSymbol, buffer, &dest );
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
 		}
 	}
 }
@@ -2782,14 +2782,14 @@ void cBuilding::ShowDetails ()
 	{
 		if ( owner == Client->ActivePlayer )
 		{
-			// Munition:
+			// ammo:
 			DrawNumber ( 31, 189, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
 
 			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 		}
 
-		// shotsCur:
+		// shots:
 		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 
 		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );

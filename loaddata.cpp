@@ -1104,7 +1104,7 @@ int ReadMaxXml()
 		sTmp =  SettingsData.bShowDescription?SON:SOFF;
 		Log.write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("ScrollspeedCur   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
+		Log.write ("Scrollspeed   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Port          == " + iToStr(SettingsData.iPort), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);

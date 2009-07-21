@@ -2464,7 +2464,7 @@ cMenuLineEdit *cMenuSaveSlot::getNameEdit ()
 
 cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContainer ( x, y )
 {
-	speedCurGroup = new cMenuRadioGroup ();
+	speedGroup = new cMenuRadioGroup ();
 
 	for ( int i = 0; i < 3; i++ )
 	{
@@ -2474,12 +2474,12 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContai
 		costsLabels[i] = new cMenuLabel ( position.x+137, position.y+25*i+5 );
 		turnsLabels[i]->setCentered ( true );
 		costsLabels[i]->setCentered ( true );
-		speedCurButtons[i] =  new cMenuCheckButton ( position.x, position.y+25*i, lngPack.i18n ( "Text~Button~Build" ) + " x" + iToStr ( factor ), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON );
-		speedCurGroup->addButton ( speedCurButtons[i] );
+		speedButtons[i] =  new cMenuCheckButton ( position.x, position.y+25*i, lngPack.i18n ( "Text~Button~Build" ) + " x" + iToStr ( factor ), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON );
+		speedGroup->addButton ( speedButtons[i] );
 		addItem ( turnsLabels[i] );
 		addItem ( costsLabels[i] );
 	}
-	addItem ( speedCurGroup );
+	addItem ( speedGroup );
 	position.w = 77;
 	position.h = 75;
 }
@@ -2491,7 +2491,7 @@ cMenuBuildSpeedHandler::~cMenuBuildSpeedHandler()
 		delete turnsLabels[i];
 		delete costsLabels[i];
 	}
-	delete speedCurGroup;
+	delete speedGroup;
 }
 
 void cMenuBuildSpeedHandler::setValues ( int *turboBuildTurns, int *turboBuildCosts )
@@ -2503,42 +2503,42 @@ void cMenuBuildSpeedHandler::setValues ( int *turboBuildTurns, int *turboBuildCo
 	{
 		turnsLabels[1]->setText ( iToStr ( turboBuildTurns[1] ) );
 		costsLabels[1]->setText ( iToStr ( turboBuildCosts[1] ) );
-		speedCurButtons[1]->setLocked ( false );
+		speedButtons[1]->setLocked ( false );
 	}
 	else
 	{
 		turnsLabels[1]->setText ( "" );
 		costsLabels[1]->setText ( "" );
-		speedCurButtons[1]->setLocked ( true );
-		if ( !speedCurGroup->buttonIsChecked ( 0 ) ) speedCurButtons[0]->setChecked ( true );
+		speedButtons[1]->setLocked ( true );
+		if ( !speedGroup->buttonIsChecked ( 0 ) ) speedButtons[0]->setChecked ( true );
 	}
 
 	if ( turboBuildTurns[2] > 0 )
 	{
 		turnsLabels[2]->setText ( iToStr ( turboBuildTurns[2] ) );
 		costsLabels[2]->setText ( iToStr ( turboBuildCosts[2] ) );
-		speedCurButtons[2]->setLocked ( false );
+		speedButtons[2]->setLocked ( false );
 	}
 	else
 	{
 		turnsLabels[2]->setText ( "" );
 		costsLabels[2]->setText ( "" );
-		speedCurButtons[2]->setLocked ( true );
-		if ( speedCurGroup->buttonIsChecked ( 2 ) ) speedCurButtons[1]->setChecked ( true );
+		speedButtons[2]->setLocked ( true );
+		if ( speedGroup->buttonIsChecked ( 2 ) ) speedButtons[1]->setChecked ( true );
 	}
 }
 
 void cMenuBuildSpeedHandler::setBuildSpeed( int buildSpeed )
 {
 	if ( buildSpeed < 0 && buildSpeed >= 3 ) return;
-	speedCurButtons[buildSpeed]->setChecked ( true );
+	speedButtons[buildSpeed]->setChecked ( true );
 }
 
 int cMenuBuildSpeedHandler::getBuildSpeed()
 {
 	for ( int i = 0; i < 3; i++ )
 	{
-		if ( speedCurGroup->buttonIsChecked ( i ) ) return i;
+		if ( speedGroup->buttonIsChecked ( i ) ) return i;
 	}
 	return 0;
 }

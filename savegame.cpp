@@ -394,7 +394,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	int value;
 	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "attack", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kAttackResearch );
-	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "shotsCur", &value );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "shots", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kShotsResearch );
 	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "range", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kRangeResearch );
@@ -402,7 +402,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	researchLevel.setCurResearchLevel( value, cResearch::kArmorResearch );
 	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "hitpoints", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kHitpointsResearch );
-	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "speedCur", &value );
+	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "speed", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kSpeedResearch );
 	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "scan", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kScanResearch );
@@ -411,7 +411,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "attack", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kAttackResearch );
-	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "shotsCur", &value );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "shots", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kShotsResearch );
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "range", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kRangeResearch );
@@ -419,7 +419,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	researchLevel.setCurResearchPoints( value, cResearch::kArmorResearch );
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "hitpoints", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kHitpointsResearch );
-	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "speedCur", &value );
+	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "speed", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kSpeedResearch );
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "scan", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kScanResearch );
@@ -433,7 +433,7 @@ void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersW
 	int value;
 	researchCentersWorkingOnAreaNode->Attribute ( "attack", &value );
 	player->researchCentersWorkingOnArea[cResearch::kAttackResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ( "shotsCur", &value );
+	researchCentersWorkingOnAreaNode->Attribute ( "shots", &value );
 	player->researchCentersWorkingOnArea[cResearch::kShotsResearch] = value;
 	researchCentersWorkingOnAreaNode->Attribute ( "range", &value );
 	player->researchCentersWorkingOnArea[cResearch::kRangeResearch] = value;
@@ -441,7 +441,7 @@ void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersW
 	player->researchCentersWorkingOnArea[cResearch::kArmorResearch] = value;
 	researchCentersWorkingOnAreaNode->Attribute ( "hitpoints", &value );
 	player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ( "speedCur", &value );
+	researchCentersWorkingOnAreaNode->Attribute ( "speed", &value );
 	player->researchCentersWorkingOnArea[cResearch::kSpeedResearch] = value;
 	researchCentersWorkingOnAreaNode->Attribute ( "scan", &value );
 	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
@@ -1208,21 +1208,21 @@ void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& 
 {
 	TiXmlElement *levelNode = addMainElement ( researchLevelNode, "Level" );
 	levelNode->SetAttribute( "attack", iToStr (researchLevel.getCurResearchLevel (cResearch::kAttackResearch)).c_str() );
-	levelNode->SetAttribute( "shotsCur", iToStr (researchLevel.getCurResearchLevel (cResearch::kShotsResearch)).c_str() );
+	levelNode->SetAttribute( "shots", iToStr (researchLevel.getCurResearchLevel (cResearch::kShotsResearch)).c_str() );
 	levelNode->SetAttribute( "range", iToStr (researchLevel.getCurResearchLevel (cResearch::kRangeResearch)).c_str() );
 	levelNode->SetAttribute( "armor", iToStr (researchLevel.getCurResearchLevel (cResearch::kArmorResearch)).c_str() );
 	levelNode->SetAttribute( "hitpoints", iToStr (researchLevel.getCurResearchLevel (cResearch::kHitpointsResearch)).c_str() );
-	levelNode->SetAttribute( "speedCur", iToStr (researchLevel.getCurResearchLevel (cResearch::kSpeedResearch)).c_str() );
+	levelNode->SetAttribute( "speed", iToStr (researchLevel.getCurResearchLevel (cResearch::kSpeedResearch)).c_str() );
 	levelNode->SetAttribute( "scan", iToStr (researchLevel.getCurResearchLevel (cResearch::kScanResearch)).c_str() );
 	levelNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchLevel (cResearch::kCostResearch)).c_str() );
 
 	TiXmlElement *curPointsNode = addMainElement ( researchLevelNode, "CurPoints" );
 	curPointsNode->SetAttribute( "attack", iToStr (researchLevel.getCurResearchPoints (cResearch::kAttackResearch)).c_str() );
-	curPointsNode->SetAttribute( "shotsCur", iToStr (researchLevel.getCurResearchPoints (cResearch::kShotsResearch)).c_str() );
+	curPointsNode->SetAttribute( "shots", iToStr (researchLevel.getCurResearchPoints (cResearch::kShotsResearch)).c_str() );
 	curPointsNode->SetAttribute( "range", iToStr (researchLevel.getCurResearchPoints (cResearch::kRangeResearch)).c_str() );
 	curPointsNode->SetAttribute( "armor", iToStr (researchLevel.getCurResearchPoints (cResearch::kArmorResearch)).c_str() );
 	curPointsNode->SetAttribute( "hitpoints", iToStr (researchLevel.getCurResearchPoints (cResearch::kHitpointsResearch)).c_str() );
-	curPointsNode->SetAttribute( "speedCur", iToStr (researchLevel.getCurResearchPoints (cResearch::kSpeedResearch)).c_str() );
+	curPointsNode->SetAttribute( "speed", iToStr (researchLevel.getCurResearchPoints (cResearch::kSpeedResearch)).c_str() );
 	curPointsNode->SetAttribute( "scan", iToStr (researchLevel.getCurResearchPoints (cResearch::kScanResearch)).c_str() );
 	curPointsNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchPoints (cResearch::kCostResearch)).c_str() );	
 }
@@ -1231,11 +1231,11 @@ void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& 
 void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player)
 {
 	researchCentersWorkingOnAreaNode->SetAttribute( "attack", iToStr (player->researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str() );
-	researchCentersWorkingOnAreaNode->SetAttribute( "shotsCur", iToStr (player->researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "shots", iToStr (player->researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "range", iToStr (player->researchCentersWorkingOnArea[cResearch::kRangeResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "armor", iToStr (player->researchCentersWorkingOnArea[cResearch::kArmorResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "hitpoints", iToStr (player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch]).c_str() );
-	researchCentersWorkingOnAreaNode->SetAttribute( "speedCur", iToStr (player->researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str() );
+	researchCentersWorkingOnAreaNode->SetAttribute( "speed", iToStr (player->researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "scan", iToStr (player->researchCentersWorkingOnArea[cResearch::kScanResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );		
 }

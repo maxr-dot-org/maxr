@@ -478,7 +478,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	if ( Client->Hud.Treffer )
 		drawHealthBar();
 
-	//draw ammoCur bar
+	//draw ammo bar
 	if ( Client->Hud.Munition && data.canAttack)
 		DrawMunBar();
 
@@ -1028,7 +1028,7 @@ void cVehicle::ShowDetails ()
 			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
 		}
 
-		// shotsCur
+		// shots
 		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
 
 		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
@@ -2252,8 +2252,8 @@ void cVehicle::drawHealthBar() const
 void cVehicle::drawStatus() const
 {
 	SDL_Rect dest;
-	SDL_Rect speedCurSymbol = {244, 97, 8, 10 };
-	SDL_Rect shotsCurSymbol = {254, 97, 5, 10 };
+	SDL_Rect speedSymbol = {244, 97, 8, 10 };
+	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
 	if ( Disabled )
@@ -2275,14 +2275,14 @@ void cVehicle::drawStatus() const
 		if ( data.speedCur >= 4 )
 		{
 			if ( data.shotsCur ) dest.x -= Client->Hud.Zoom/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedCurSymbol, buffer, &dest );
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
 		}
 
 		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
 		if ( data.shotsCur )
 		{
 			if ( data.speedCur ) dest.x += Client->Hud.Zoom/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsCurSymbol, buffer, &dest );
+			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
 		}
 	}
 }
@@ -2715,7 +2715,7 @@ void cVehicle::MakeReport ()
 		}
 		else if ( data.canAttack && !data.ammoCur )
 		{
-			// no ammoCur
+			// no ammo
 			if (random(2))
 				PlayVoice ( VoiceData.VOILowAmmo1 );
 			else
@@ -3112,7 +3112,7 @@ void cVehicle::upgradeToCurrentVersion ()
 		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
 	data.hitpointsMax = upgradeVersion.hitpointsMax;
 	
-	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammoCur-amount!
+	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
 	
 	data.speedMax = upgradeVersion.speedMax;
 	

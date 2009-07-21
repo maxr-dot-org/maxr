@@ -583,10 +583,10 @@ void cUpgradeCalculator::setupLookupTables()
 	rangeScan_24 [50] = 673;
 
 	// ------------------------------ SHOTS
-	shotsCur_1 [1] = 720;
+	shots_1 [1] = 720;
 
-	shotsCur_2 [2] = 79;
-	shotsCur_2 [3] = 641;
+	shots_2 [2] = 79;
+	shots_2 [3] = 641;
 
 	// finished....
 	setupDone = true;
@@ -694,8 +694,8 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 		case kShots:
 		{
 			switch (orgValue) {
-				case 1:  price = lookupPrice (shotsCur_1,  curValue); break;
-				case 2:  price = lookupPrice (shotsCur_2,  curValue); break;
+				case 1:  price = lookupPrice (shots_1,  curValue); break;
+				case 2:  price = lookupPrice (shots_2,  curValue); break;
 				default: break;
 			}
 			break;
