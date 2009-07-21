@@ -93,6 +93,14 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		runSavedGame ( player );
 		return;
 	}
+
+	cPlayer *actPlayer = NULL;
+	for ( unsigned int i = 0; i < players.Size(); i++ )
+	{
+		if ( players[i]->Nr == player ) actPlayer = players[i];
+	}
+	if ( actPlayer == NULL ) return;
+
 	cMap serverMap;
 	cList<cPlayer*> serverPlayers;
 	if ( player == 0 )
@@ -123,11 +131,11 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 	// init client and his players
 	Client = new cClient( map, &players );
-	Client->initPlayer ( players[player] );
 	for ( unsigned int i = 0; i < players.Size(); i++ )
 	{
 		players[i]->InitMaps ( map->size, map );
 	}
+	Client->initPlayer ( actPlayer );
 
 	if ( player == 0 )
 	{
@@ -3208,7 +3216,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_REQ_IDENT:
 		{
-			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~Reconnect") );
+			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Multiplayer~Reconnect") );
 			if ( yesNoDialog.show() == 0  ) sendGameIdentification ( actPlayer, message->popInt16() );
 			else draw();
 		}
