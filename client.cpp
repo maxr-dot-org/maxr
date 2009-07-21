@@ -4220,7 +4220,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			int iNewPos = message->popInt32();
 
-			if ( Vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
+			if ( Vehicle->data.isBig )
 			{
 				Map->moveVehicle(Vehicle, iNewPos );
 				Vehicle->owner->DoScan();
