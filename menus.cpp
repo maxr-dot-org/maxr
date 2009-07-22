@@ -2937,51 +2937,63 @@ bool cNetworkHostMenu::runSavedGame()
 {
 	cSavegame savegame ( gameDataContainer.savegameNum );
 	if ( savegame.load() != 1 ) return false;
-	// romve all players that do not belong to the save
-	for ( unsigned int i = 0; i < players.Size(); i++ )
-	{
-		unsigned int j;
-		for ( j = 0; j < Server->PlayerList->Size(); j++ )
-		{
-			if ( players[i]->name == (*Server->PlayerList)[j]->name ) 
-				break;
-		}
-		// the player isn't in the list when the loop has gone trough all players and no match was found
-		if ( j == Server->PlayerList->Size() )
-		{
-			network->close ( players[i]->socket );
-			for ( unsigned int k = 0; k < players.Size(); k++ )
-			{
-				if ( players[k]->socket > players[i]->socket && players[k]->socket < MAX_CLIENTS ) players[k]->socket--;
-			}
-			delete players[i];
-			players.Delete ( i );
-		}
-	}
-	// set sockets
+
+	// first we check whether all necessary players are connected
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
-		if ( (*Server->PlayerList)[i]->name == actPlayer->name ) (*Server->PlayerList)[i]->iSocketNum = MAX_CLIENTS;
-		else
+		for ( unsigned int j = 0; j < players.Size(); j++ )
 		{
-			for ( unsigned int j = 0; j < players.Size(); j++ )
+			if ( (*Server->PlayerList)[i]->name == players[j]->name ) break;
+			// stop when a player is missing
+			if ( j == players.Size()-1 )
 			{
-				if ( (*Server->PlayerList)[i]->name == players[j]->name )
-				{
-					(*Server->PlayerList)[i]->iSocketNum = players[j]->socket;
-					break;
-				}
-				// stop when a player is missing
-				if ( j == players.Size()-1 )
-				{
-					chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
-					draw();
-					return false;
-				}
+				chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Wrong" ) );
+				draw();
+				return false;
 			}
 		}
 	}
+	// then remove all players that do not belong to the save
+	for ( unsigned int i = 0; i < players.Size(); i++ )
+	{
+		for ( unsigned int j = 0; j < Server->PlayerList->Size(); j++ )
+		{
+			if ( players[i]->name == (*Server->PlayerList)[j]->name ) break;
+
+			// the player isn't in the list when the loop has gone trough all players and no match was found
+			if ( j == Server->PlayerList->Size()-1 )
+			{
+				// TODO: send message to disconnected player
+				network->close ( players[i]->socket );
+				for ( unsigned int k = 0; k < players.Size(); k++ )
+				{
+					if ( players[k]->socket > players[i]->socket && players[k]->socket < MAX_CLIENTS ) players[k]->socket--;
+				}
+				delete players[i];
+				players.Delete ( i );
+			}
+		}
+	}
+	// and now set sockets, playernumbers and colors
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		for ( unsigned int j = 0; j < players.Size(); j++ )
+		{
+			if ( (*Server->PlayerList)[i]->name == players[j]->name )
+			{
+				// set the sockets in the servers PlayerList
+				if ( (*Server->PlayerList)[i]->name == actPlayer->name ) (*Server->PlayerList)[i]->iSocketNum = MAX_CLIENTS;
+				else (*Server->PlayerList)[i]->iSocketNum = players[j]->socket;
+				// set the numbers and colors in the menues players-list
+				players[j]->nr = (*Server->PlayerList)[i]->Nr;
+				players[j]->color = GetColorNr ( (*Server->PlayerList)[i]->color );
+				break;
+			}
+		}
+	}
+	// now we can send the menus players-list with the right numbers and colors of each player.
 	sendPlayerList ( &players );
+
 	// send client that the game has to be started
 	sendGo();
 
