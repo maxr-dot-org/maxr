@@ -24,7 +24,6 @@
     <Armor Num="8"/>
     <Hitpoints Num="18"/>
     <Scan_Range Num="18"/>
-
     <Can_Be_Disabled YN="Yes"/>
   </Abilities>
 </Unit>
