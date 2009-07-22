@@ -3054,7 +3054,7 @@ void cServer::deletePlayer( cPlayer *Player )
 {
 	//remove units
 	cVehicle *Vehicle = Player->VehicleList;
-	while ( Player->VehicleList )
+	while ( Vehicle )
 	{
 		cVehicle *nextVehicle = Vehicle->next;
 		if ( !Vehicle->Loaded ) deleteUnit( Vehicle );
