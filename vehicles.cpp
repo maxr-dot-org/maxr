@@ -3182,20 +3182,31 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 	cVehicle*  vehicle  = map->fields[off].getVehicles();
 	cBuilding* building = map->fields[off].getBuildings();
 
-	if ( steal && vehicle && !vehicle->data.canBeCaptured ) return false;
-	if ( steal && building && !building->data.canBeCaptured ) return false;
-	if ( !steal && vehicle && !vehicle->data.canBeDisabled ) return false;
-	if ( !steal && building && !building->data.canBeDisabled ) return false;
+	bool result = true;
+	if ( vehicle )
+	{
+		if ( steal && !vehicle->data.canBeCaptured ) result = false;
+		if ( !steal && !vehicle->data.canBeDisabled ) result = false;
 
-	if ( vehicle && vehicle->data.factorAir > 0 && vehicle->FlightHigh > 0 ) return false;
+		if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh > 0 ) result = false;
+		if ( steal && vehicle->StoredVehicles.Size() ) result = false;
 
-	if ( steal && vehicle && vehicle->StoredVehicles.Size() ) return false;
-	if ( steal && building && building->StoredVehicles.Size() ) return false;
+		if ( vehicle->owner == owner ) result = false;
 
-	if ( steal && vehicle && vehicle->owner != owner ) return true;
-	if ( steal && building && vehicle->owner != owner ) return true;
+		if ( result == true ) return true;
+	}
+	
+	if ( building )
+	{
+		if ( !building->owner ) result = false;
+		if ( steal && !building->data.canBeCaptured ) result = false;
+		if ( !steal && !building->data.canBeDisabled ) result = false;
 
-	if ( !steal && ( ( vehicle && vehicle->owner != owner ) || ( building && building->owner != owner ) ) ) return true;
+		if ( steal && building->StoredVehicles.Size() ) result = false;
+		if ( building->owner == owner ) result = false;
+
+		if ( result == true ) return true;
+	}
 
 	return false;
 }
