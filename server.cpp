@@ -3055,11 +3055,11 @@ void cServer::deletePlayer( cPlayer *Player )
 	//remove units
 	while ( Player->VehicleList )
 	{
-		deleteUnit( Vehicle );
+		deleteUnit( Player->VehicleList );
 	}
 	while ( Player->BuildingList )
 	{
-		deleteUnit( Building );
+		deleteUnit( Player->BuildingList );
 	}
 
 	// remove the player of all detected by player lists
@@ -3067,7 +3067,7 @@ void cServer::deletePlayer( cPlayer *Player )
 	{
 		cPlayer *UnitPlayer = (*PlayerList)[playerNum];
 		if ( UnitPlayer == Player ) continue;
-		Vehicle = UnitPlayer->VehicleList;
+		cVehicle* Vehicle = UnitPlayer->VehicleList;
 		while ( Vehicle )
 		{
 			if ( Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
