@@ -887,6 +887,12 @@ void cDialogTransfer::barClicked( void *parent )
 	menu->draw();
 }
 
+void cDialogTransfer::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedBuilding == srcBuilding || destroyedVehicle == srcVehicle ||
+		 destroyedBuilding == destBuilding || destroyedVehicle == destVehicle ) terminate = true;
+}
+
 void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)
 {
 	SDL_Rect dest={x,y,42,21};
@@ -1121,4 +1127,9 @@ void cDialogResearch::sliderClicked( void *parent )
 	}
 	menu->setData();
 	menu->draw();
+}
+
+void cDialogResearch::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
+{
+	if ( destroyedBuilding && destroyedBuilding->data.canResearch && destroyedBuilding->owner == owner && destroyedBuilding->IsWorking ) terminate = true;
 }

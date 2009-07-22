@@ -188,6 +188,8 @@ public:
 	static void decReleased( void *parent );
 
 	static void barClicked( void *parent );
+	
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 class cDialogResearch : public cMenu
@@ -229,6 +231,8 @@ public:
 	static void decReleased( void *parent );
 
 	static void sliderClicked( void *parent );
+	
+	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
 /** Draws a context menu item
