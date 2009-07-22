@@ -3053,9 +3053,12 @@ void cServer::deleteRubble( cBuilding* rubble )
 void cServer::deletePlayer( cPlayer *Player )
 {
 	//remove units
+	cVehicle *Vehicle = Player->VehicleList;
 	while ( Player->VehicleList )
 	{
-		deleteUnit( Player->VehicleList );
+		cVehicle *nextVehicle = Vehicle->next;
+		if ( !Vehicle->Loaded ) deleteUnit( Vehicle );
+		Vehicle = nextVehicle;
 	}
 	while ( Player->BuildingList )
 	{
@@ -3067,7 +3070,7 @@ void cServer::deletePlayer( cPlayer *Player )
 	{
 		cPlayer *UnitPlayer = (*PlayerList)[playerNum];
 		if ( UnitPlayer == Player ) continue;
-		cVehicle* Vehicle = UnitPlayer->VehicleList;
+		Vehicle = UnitPlayer->VehicleList;
 		while ( Vehicle )
 		{
 			if ( Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
