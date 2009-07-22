@@ -935,6 +935,41 @@ cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIAL
 		lngPack.i18n ( "Text~Hud~Scan" ),
 		lngPack.i18n ( "Text~Vehicles~Costs" ) };
 
+	SDL_Rect attackSymbol = { 27, 109, 10, 14 };
+	SDL_Rect shotsSymbol = { 37, 109, 15, 7 };
+	SDL_Rect rangeSymbol = { 52, 109, 13, 13 };
+	SDL_Rect armorSymbol = { 65, 109, 11, 14 };
+	SDL_Rect hitpointsSymbol = { 11, 109, 7, 11 };
+	SDL_Rect speedSymbol = { 0, 109, 11, 12 };
+	SDL_Rect scanSymbol = { 76, 109, 13, 13 };
+	SDL_Rect costsSymbol = { 112, 109, 13, 10 };
+	SDL_Rect dest;
+
+	dest.x = 167;
+	dest.y = 70;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &attackSymbol, background, &dest );
+	dest.x = 165;
+	dest.y = 102;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, background, &dest );
+	dest.x = 166;
+	dest.y = 127;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &rangeSymbol, background, &dest );
+	dest.x = 167;
+	dest.y = 154;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &armorSymbol, background, &dest );
+	dest.x = 169;
+	dest.y = 184;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &hitpointsSymbol, background, &dest );
+	dest.x = 167;
+	dest.y = 212;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, background, &dest );
+	dest.x = 166;
+	dest.y = 239;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &scanSymbol, background, &dest );
+	dest.x = 166;
+	dest.y = 268;
+	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &costsSymbol, background, &dest );
+
 	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
 	{
 		centerCountLabels[i] = new cMenuLabel ( position.x+43, position.y+71+28*i, "0" );
