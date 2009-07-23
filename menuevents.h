@@ -30,7 +30,6 @@ enum eMenuMessages
 	MU_MSG_IDENTIFIKATION,		// player send his idenetification
 	MU_MSG_DEL_PLAYER,			// a player should be deleted
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
-	MU_MSG_SAVED_PLAYERLIST,	// a list with all players and their data of a savegame
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_GO,					// host wants to start the game
 	MU_MSG_CLAN,				// a player sends his clan
@@ -49,8 +48,6 @@ void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player = NULL, int fromP
 void sendRequestIdentification ( sMenuPlayer *player );
 
 void sendPlayerList ( cList<sMenuPlayer*> *players );
-
-void sendSavedPlayerList ( cList<cPlayer*> *players );
 
 void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPlayer *player = NULL );
 
