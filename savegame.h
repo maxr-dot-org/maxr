@@ -38,9 +38,10 @@ struct sMoveJobLoad
 //--------------------------------------------------------------------------
 struct sSubBaseLoad
 {
-	sSubBaseLoad() : SubBase(0) {};
-	sSubBase SubBase;
-	cPlayer *Player;
+	int buildingID;
+	int metalProd;
+	int oilProd;
+	int goldProd;
 };
 
 //--------------------------------------------------------------------------
@@ -206,6 +207,11 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void loadStandardUnitValues ( TiXmlElement *unitNode );
+	/**
+	* recalculates the subbase values after loading all units
+	*@author eiko
+	*/
+	void recalcSubbases();
 	/**
 	* calculates and adds the movejobs after all units has been loaded
 	*@author alzi alias DoctorDeath

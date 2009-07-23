@@ -59,7 +59,20 @@ public:
 	int HumanNeed;
 	int MaxHumanNeed;
 
+	void addBuilding( cBuilding *b );
+
+	/**
+	* recalculates the values of all subbases
+	* @author eiko
+	*/
+	void refresh();
+
+	/**
+	* inreases the energy production of the subbase by starting offline generators/stations
+	* @author eiko	
+	*/
 	bool increaseEnergyProd( int i );
+
 	//------------------------------------
 	//ressource management:
 
@@ -100,26 +113,30 @@ private:
 
 
 // Die Base Klasse ///////////////////////////////////////////////////////////
-class cBase{
+class cBase
+{
 public:
-  cBase(cPlayer *Owner);
-  ~cBase(void);
+	cBase(cPlayer *Owner);
+	~cBase(void);
 
-  cPlayer *owner;
-  int iNextSubBaseID;
-  cList<sSubBase*> SubBases;
-  cMap *map;
+	cPlayer *owner;
+	int iNextSubBaseID;
+	cList<sSubBase*> SubBases;
+	cMap *map;
 
-  void AddBuilding(cBuilding *Building);
-  void DeleteBuilding(cBuilding *Building);
-  void AddBuildingToSubBase(cBuilding *b,sSubBase *sb);
-  void AddMetal(sSubBase *sb,int value);
-  void AddOil(sSubBase *sb,int value);
-  void AddGold(sSubBase *sb,int value);
-  void handleTurnend();
-  bool OptimizeEnergy(sSubBase *sb);
-  void RefreshSubbases(void);
-  sSubBase *checkNeighbour ( int iOff, cBuilding *Building );
+	void AddBuilding(cBuilding *Building);
+	void DeleteBuilding(cBuilding *Building);
+	void AddMetal(sSubBase *sb,int value);
+	void AddOil(sSubBase *sb,int value);
+	void AddGold(sSubBase *sb,int value);
+	void handleTurnend();
+	bool OptimizeEnergy(sSubBase *sb);
+	/**
+	* recalculates the values of all subbases
+	*@author eiko
+	*/
+	void refreshSubbases();
+	sSubBase *checkNeighbour ( int iOff, cBuilding *Building );
 };
 
 #endif

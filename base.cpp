@@ -405,6 +405,48 @@ bool sSubBase::increaseEnergyProd( int i )
 	return true;
 }
 
+void sSubBase::refresh()
+{
+	//copy buildings list
+	cList<cBuilding*> buildingsCopy;
+	for ( unsigned int i = 0; i < buildings.Size(); i++ )
+	{
+		buildingsCopy.Add( buildings[i] );
+	}
+
+	//reset subbase
+	while ( buildings.Size() ) buildings.Delete( buildings.Size() - 1 );
+	MaxMetal = 0;
+	Metal = 0;
+	MaxOil = 0;
+	Oil = 0;
+	MaxGold = 0;
+	Gold = 0;
+	MaxEnergyProd = 0;
+	EnergyProd = 0;
+	MaxEnergyNeed = 0;
+	EnergyNeed = 0;
+	MetalNeed = 0;
+	OilNeed = 0;
+	GoldNeed = 0;
+	MaxMetalNeed = 0;
+	MaxOilNeed = 0;
+	MaxGoldNeed = 0;
+	MetalProd = 0;
+	OilProd = 0;
+	GoldProd = 0;
+	HumanProd = 0;
+	HumanNeed = 0;
+	MaxHumanNeed = 0;
+
+	//readd all buildings
+	for ( int i = 0; i < buildingsCopy.Size(); i++ )
+	{
+		addBuilding( buildingsCopy[i] );
+	}
+
+}
+
 // Funktionen der Base Klasse ////////////////////////////////////////////////
 cBase::cBase ( cPlayer *Owner )
 {
@@ -493,7 +535,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 			NewSubBase = new sSubBase( iNextSubBaseID );
 			iNextSubBaseID++;
 			Building->SubBase = NewSubBase;
-			AddBuildingToSubBase ( Building, NewSubBase );
+			NewSubBase->addBuilding( Building );
 			SubBases.Add( NewSubBase );
 
 			//store the mine produktion values, to restore them after merging the subbases
@@ -511,7 +553,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 				while (SubBase->buildings.Size())
 				{
 					SubBaseBuilding = SubBase->buildings[0];
-					AddBuildingToSubBase ( SubBaseBuilding, NewSubBase );
+					NewSubBase->addBuilding( SubBaseBuilding );
 					SubBaseBuilding->SubBase = NewSubBase;
 					SubBase->buildings.Delete ( 0 );
 				}
@@ -550,7 +592,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 		{
 			// just add the building to the subbase
 			sSubBase* const SubBase = NeighbourList[0];
-			AddBuildingToSubBase ( Building, SubBase );
+			SubBase->addBuilding( Building );
 			Building->SubBase = SubBase;
 			sendAddSubbaseBuildings ( Building, SubBase, Building->owner->Nr );
 			sendSubbaseValues ( SubBase, Building->owner->Nr );
@@ -572,7 +614,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 		NewSubBase = new sSubBase ( iNextSubBaseID );
 		iNextSubBaseID++;
 		Building->SubBase = NewSubBase;
-		AddBuildingToSubBase ( Building, NewSubBase );
+		NewSubBase->addBuilding( Building );
 		SubBases.Add( NewSubBase );
 		sendNewSubbase ( NewSubBase, Building->owner->Nr );
 		sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
@@ -614,85 +656,85 @@ void cBase::DeleteBuilding ( cBuilding *b )
 }
 
 // Fügt ein Gebäude in eine Subbase ein:
-void cBase::AddBuildingToSubBase ( cBuilding *b,sSubBase *sb )
+void sSubBase::addBuilding( cBuilding *b )
 {
-	sb->buildings.Add ( b );
+	buildings.Add ( b );
 	// Ladung ausrechnen:
 	switch ( b->data.storeResType )
 	{
 	case sUnitData::STORE_RES_METAL:
-		sb->MaxMetal += b->data.storageResMax;
-		sb->Metal += b->data.storageResCur;
+		MaxMetal += b->data.storageResMax;
+		Metal += b->data.storageResCur;
 		break;
 	case sUnitData::STORE_RES_OIL:
-		sb->MaxOil += b->data.storageResMax;
-		sb->Oil += b->data.storageResCur;
+		MaxOil += b->data.storageResMax;
+		Oil += b->data.storageResCur;
 		break;
 	case sUnitData::STORE_RES_GOLD:
-		sb->MaxGold += b->data.storageResMax;
-		sb->Gold += b->data.storageResCur;
+		MaxGold += b->data.storageResMax;
+		Gold += b->data.storageResCur;
 		break;
 	}
 	// Energiehaushalt ausrechnen:
 	if ( b->data.produceEnergy )
 	{
-		sb->MaxEnergyProd+=b->data.produceEnergy;
-		sb->MaxOilNeed+=b->data.needsOil;
+		MaxEnergyProd += b->data.produceEnergy;
+		MaxOilNeed += b->data.needsOil;
 		if ( b->IsWorking )
 		{
-			sb->EnergyProd+=b->data.produceEnergy;
-			sb->OilNeed+=b->data.needsOil;
+			EnergyProd += b->data.produceEnergy;
+			OilNeed += b->data.needsOil;
 		}
 	}
 	else if ( b->data.needsEnergy )
 	{
-		sb->MaxEnergyNeed+=b->data.needsEnergy;
+		MaxEnergyNeed += b->data.needsEnergy;
 		if ( b->IsWorking )
 		{
-			sb->EnergyNeed+=b->data.needsEnergy;
+			EnergyNeed += b->data.needsEnergy;
 		}
 	}
 	// Rohstoffhaushalt ausrechnen:
 	if ( b->data.needsMetal )
 	{
-		sb->MaxMetalNeed+=b->data.needsMetal*12;
+		MaxMetalNeed += b->data.needsMetal*12;
 		if ( b->IsWorking )
 		{
-			sb->MetalNeed += min(b->MetalPerRound, (*b->BuildList)[0]->metall_remaining);
+			MetalNeed += min(b->MetalPerRound, (*b->BuildList)[0]->metall_remaining);
 		}
 	}
 	// Goldhaushalt ausrechnen:
 	if ( b->data.convertsGold )
 	{
-		sb->MaxGoldNeed+=b->data.convertsGold;
+		MaxGoldNeed += b->data.convertsGold;
 		if ( b->IsWorking )
 		{
-			sb->GoldNeed+=b->data.convertsGold;
+			GoldNeed += b->data.convertsGold;
 		}
 	}
 	// Rohstoffproduktion ausrechnen:
 	if ( b->data.canMineMaxRes > 0 && b->IsWorking )
 	{
 		int mineFree = b->data.canMineMaxRes;
-		sb->changeMetalProd( b->MaxMetalProd );
+		changeMetalProd( b->MaxMetalProd );
 		mineFree -= b->MaxMetalProd;
 
-		sb->changeOilProd( min ( b->MaxOilProd, mineFree));
+		changeOilProd( min ( b->MaxOilProd, mineFree));
 		mineFree -= min ( b->MaxOilProd, mineFree);
 
-		sb->changeGoldProd( min ( b->MaxGoldProd, mineFree));
+		changeGoldProd( min ( b->MaxGoldProd, mineFree));
 	}
 	// Human-Haushalt ausrechnen:
 	if ( b->data.produceHumans )
 	{
-		sb->HumanProd+=b->data.produceHumans;
+		HumanProd += b->data.produceHumans;
 	}
 	if ( b->data.needsHumans )
 	{
-		sb->MaxHumanNeed+=b->data.needsHumans;
+		MaxHumanNeed += b->data.needsHumans;
 		if ( b->IsWorking )
 		{
-			sb->HumanNeed+=b->data.needsHumans;
+			HumanNeed += b->data.needsHumans;
 		}
 	}
 }
@@ -840,7 +882,7 @@ void cBase::handleTurnend ()
 	{
 		sSubBase* const SubBase = SubBases[i];
 		// produce/reduce oil
-		if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 )
+		if ( SubBase->getOilProd() - SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->getOilProd() - SubBase->OilNeed ) < 0 )
 		{
 			// generator has to stop work
 			sendChatMessageToClient ( "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->Nr );
@@ -850,11 +892,11 @@ void cBase::handleTurnend ()
 				Building = SubBase->buildings[k];
 				if ( !Building->data.produceEnergy ) continue;
 				Building->ServerStopWork ( true );
-				if ( SubBase->OilProd-SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->OilProd-SubBase->OilNeed ) < 0 ) continue;
+				if ( SubBase->getOilProd() - SubBase->OilNeed < 0 && SubBase->Oil + ( SubBase->getOilProd() - SubBase->OilNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		AddOil ( SubBase, SubBase->OilProd-SubBase->OilNeed );
+		AddOil ( SubBase, SubBase->getOilProd() - SubBase->OilNeed );
 		// check energy consumers
 		if ( SubBase->EnergyNeed > SubBase->EnergyProd )
 		{
@@ -871,7 +913,7 @@ void cBase::handleTurnend ()
 		}
 
 		// produce/reduce metal
-		if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) <0 )
+		if ( SubBase->Metal + ( SubBase->getMetalProd() - SubBase->MetalNeed ) <0 )
 		{
 			sendChatMessageToClient ( "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
@@ -880,15 +922,15 @@ void cBase::handleTurnend ()
 				Building = SubBase->buildings[k];
 				if ( !Building->data.needsMetal ) continue;
 				Building->ServerStopWork ( true );
-				if ( SubBase->Metal + ( SubBase->MetalProd-SubBase->MetalNeed ) < 0 ) continue;
+				if ( SubBase->Metal + ( SubBase->getMetalProd() - SubBase->MetalNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		int overproducedMetal = SubBase->MetalProd-SubBase->MetalNeed+SubBase->Metal-SubBase->MaxMetal;
-		AddMetal ( SubBase, SubBase->MetalProd-SubBase->MetalNeed );
+		int overproducedMetal = SubBase->getMetalProd() - SubBase->MetalNeed + SubBase->Metal - SubBase->MaxMetal;
+		AddMetal ( SubBase, SubBase->getMetalProd() - SubBase->MetalNeed );
 
 		// produce/reduce gold
-		if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 )
+		if ( SubBase->Gold + ( SubBase->getGoldProd() - SubBase->GoldNeed ) < 0 )
 		{
 			sendChatMessageToClient ( "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr );
 			for (unsigned int k = 0; k < SubBase->buildings.Size(); k++)
@@ -897,11 +939,11 @@ void cBase::handleTurnend ()
 				Building = SubBase->buildings[k];
 				if ( !Building->data.convertsGold ) continue;
 				Building->ServerStopWork ( true );
-				if ( SubBase->Gold + ( SubBase->GoldProd-SubBase->GoldNeed ) < 0 ) continue;
+				if ( SubBase->Gold + ( SubBase->getGoldProd() - SubBase->GoldNeed ) < 0 ) continue;
 				break;
 			}
 		}
-		AddGold ( SubBase, SubBase->GoldProd-SubBase->GoldNeed );
+		AddGold ( SubBase, SubBase->getGoldProd() - SubBase->GoldNeed );
 		
 		// get credits
 		if (SubBase->GoldNeed > 0)
@@ -1108,36 +1150,11 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 	return changed;
 }
 
-// Berechnet alle Subbases neu (für ein Load):
-void cBase::RefreshSubbases ( void )
+// recalculates all subbase values (after a load)
+void cBase::refreshSubbases ( void )
 {
-	cBuilding *n;
-
-	cList<sSubBase*> OldSubBases;
-	while (SubBases.Size() != 0)
+	for ( int i = 0; i < SubBases.Size(); i++ )
 	{
-		sSubBase* const sb = SubBases[0];
-		OldSubBases.Add(sb);
-		SubBases.Delete(0);
-	}
-
-	while (OldSubBases.Size() != 0)
-	{
-		sSubBase* const sb = OldSubBases[0];
-
-		// Alle SubBases auf NULL setzen:
-		for (unsigned int i = 0; i < sb->buildings.Size(); i++)
-		{
-			sb->buildings[i]->SubBase=NULL;
-		}
-		// Alle Gebäude neu einsetzen:
-		for (unsigned int i = 0; i < sb->buildings.Size(); i++)
-		{
-			n=sb->buildings[i];
-			AddBuilding ( n );
-		}
-
-		delete sb;
-		OldSubBases.Delete(0);
+		SubBases[i]->refresh();
 	}
 }
