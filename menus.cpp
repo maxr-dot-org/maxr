@@ -2492,7 +2492,7 @@ void cNetworkMenu::showSettingsText()
 
 	text += "\n";
 
-	if ( gameDataContainer.savegame.empty() )
+	if ( gameDataContainer.savegame.empty() && saveGameString.empty())
 	{
 		if ( gameDataContainer.settings )
 		{
@@ -2507,7 +2507,7 @@ void cNetworkMenu::showSettingsText()
 			text += string ("Clans") + ": " + ( settings->clans == SETTING_CLANS_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n"; // TODO: translate
 			text += lngPack.i18n ( "Text~Title~Game_Type" ) + ": " + ( settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ( "Text~Option~Type_Turns" ) : lngPack.i18n ( "Text~Option~Type_Simu" ) ) + "\n";
 		}
-		else if ( gameDataContainer.savegame.empty() ) text += lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) + "\n";
+		else text += lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) + "\n";
 	}
 	settingsText->setText ( text );
 }
