@@ -26,6 +26,7 @@
 #include "movejobs.h"
 #include "upgradecalculator.h"
 #include "menus.h"
+#include "settings.h"
 
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)

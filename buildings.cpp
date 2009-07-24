@@ -30,7 +30,7 @@
 #include "upgradecalculator.h"
 #include "menus.h"
 #include "dialog.h"
-
+#include "settings.h"
 
 //--------------------------------------------------------------------------
 // cBuilding Implementation

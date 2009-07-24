@@ -19,7 +19,6 @@
 #ifndef mapH
 #define mapH
 #include "defines.h"
-#include "main.h"
 #include "vehicles.h"
 #include "buildings.h"
 #include "clist.h"
@@ -144,7 +143,7 @@ public:
 	*/
 	cMapField* fields;
 	sResources *Resources; // field with the ressource data
-	string MapName;  // name of the currend map
+	string MapName;  // name of the current map
 
 	SDL_Color palette[256];	//Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];

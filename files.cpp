@@ -16,17 +16,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
+#include <SDL.h>
+
 #include "files.h"
 #include "log.h"
-#include "string.h"
+#include "settings.h"
 
 #ifdef _WIN32
-#include <io.h>
+	#include <io.h>
 #else
-#include <dirent.h>
+	#include <dirent.h>
 #endif
 
-// Prüft ob die Datei 'name' existiert
+#ifdef WIN32
+#else
+	#include <sys/stat.h>
+	#include <unistd.h>
+#endif
+
+
+// PrÂ¸ft ob die Datei 'name' existiert
 bool FileExists ( const char* name )
 {
 	SDL_RWops *file;
@@ -42,7 +52,7 @@ bool FileExists ( const char* name )
 
 int CheckFile(const char* directory, const char* filename)
 {
-	string filepath;
+	std::string filepath;
 	if(strcmp(directory,""))
 	{
 		filepath = directory;
@@ -54,9 +64,9 @@ int CheckFile(const char* directory, const char* filename)
 	return 1;
 }
 
-cList<string> *getFilesOfDirectory(string sDirectory)
+cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 {
-	cList<string> *List = new cList<string>;
+	cList<std::string> *List = new cList<std::string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
 	long lFile = (long)_findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
@@ -121,4 +131,27 @@ cList<string> *getFilesOfDirectory(string sDirectory)
 	}
 #endif
 	return List;
+}
+
+std::string getUserMapsDir()
+{
+#ifdef WIN32
+	return "";
+#else
+	#ifdef __amigaos4__
+		return "";
+	#else
+		if (SettingsData.sHome.empty ())
+			return "";
+		std::string mapFolder = SettingsData.sHome + "maps";
+		if (FileExists (mapFolder.c_str ()) == false)
+		{
+			if (mkdir (mapFolder.c_str (), 0755) == 0)
+				return mapFolder + PATH_DELIMITER;
+			return "";
+		}
+		return mapFolder + PATH_DELIMITER;
+	#endif
+#endif
+	return "";
 }

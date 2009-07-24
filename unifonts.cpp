@@ -20,6 +20,7 @@
 #include "pcx.h"
 #include "files.h"
 #include "log.h"
+#include "settings.h"
 
 cUnicodeFont::cUnicodeFont()
 {

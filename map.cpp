@@ -19,6 +19,8 @@
 
 #include "map.h"
 #include "player.h"
+#include "settings.h"
+#include "files.h"
 
 sTerrain::sTerrain()
 	:sf(NULL),
@@ -379,7 +381,7 @@ void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 	SDL_SetColors( terrain[iNum].shw, palette_shw,0, 256);
 }
 
-// Läd das Mapfile:
+/** Loads a map file */
 bool cMap::LoadMap ( string filename )
 {
 	SDL_RWops *fpMapFile;
@@ -390,10 +392,22 @@ bool cMap::LoadMap ( string filename )
 
 	// Open File
 	MapName = filename;
-	Log.write("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
-	filename = SettingsData.sMapsPath + PATH_DELIMITER + filename;
-	fpMapFile = SDL_RWFromFile ( filename.c_str(),"rb" );
-	if ( !fpMapFile )
+	Log.write ("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
+
+	// first try in the factory maps directory
+	filename = SettingsData.sMapsPath + PATH_DELIMITER + MapName;
+	fpMapFile = SDL_RWFromFile (filename.c_str (), "rb");
+	if (fpMapFile == 0)
+	{
+		// now try in the user's map directory
+		string userMapsDir = getUserMapsDir ();
+		if (userMapsDir.empty () == false)
+		{
+			filename = userMapsDir + MapName;
+			fpMapFile = SDL_RWFromFile (filename.c_str (), "rb");
+		}
+	}
+	if (fpMapFile == 0)
 	{
 		Log.write("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;

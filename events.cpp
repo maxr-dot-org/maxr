@@ -24,6 +24,7 @@
 #include "input.h"
 #include "log.h"
 #include "menus.h"
+#include "settings.h"
 
 void cEventHandling::pushEvent(SDL_Event* const e)
 {

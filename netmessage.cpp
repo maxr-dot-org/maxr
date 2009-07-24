@@ -347,6 +347,16 @@ string cNetMessage::getTypeAsString()
 		return string("MU_MSG_RESELECT_LANDING");
 	case MU_MSG_ALL_LANDED:
 		return string("MU_MSG_ALL_LANDED");
+	case MU_MSG_START_MAP_DOWNLOAD:
+		return string("MU_MSG_START_MAP_DOWNLOAD");
+	case MU_MSG_MAP_DOWNLOAD_DATA:
+		return string("MU_MSG_MAP_DOWNLOAD_DATA");
+	case MU_MSG_CANCELED_MAP_DOWNLOAD:
+		return string("MU_MSG_CANCELED_MAP_DOWNLOAD");
+	case MU_MSG_FINISHED_MAP_DOWNLOAD:
+		return string("MU_MSG_FINISHED_MAP_DOWNLOAD");
+	case MU_MSG_REQUEST_MAP:
+		return string("MU_MSG_REQUEST_MAP");
 	case GAME_EV_PLAYER_CLANS:
 		return string("GAME_EV_PLAYER_CLANS");
 	case GAME_EV_ADD_BUILDING:

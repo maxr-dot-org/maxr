@@ -44,6 +44,7 @@
 #include "vehicles.h"
 #include "clans.h"
 #include "main.h"
+#include "settings.h"
 
 TiXmlDocument LanguageFile;
 
@@ -3135,10 +3136,31 @@ void setPaths()
 	SettingsData.sHome="";
 
 	#if MAC 
-		 //this is where mac user should set their %HOME%
-		//this is also a good place to find out where the executable is located
-		SettingsData.sConfig = MAX_XML; //assume config in current working directory
-		return;
+	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
+	char * cHome = getenv("HOME"); //get $HOME on mac
+	if(cHome != NULL)
+		SettingsData.sHome = cHome;
+	if (SettingsData.sHome.empty() == false)
+	{
+		SettingsData.sHome += PATH_DELIMITER;
+		SettingsData.sHome += ".maxr";
+		SettingsData.sHome += PATH_DELIMITER;
+	
+		// check whether home dir is set up and readable
+		if (FileExists (SettingsData.sHome.c_str ()) == false) // under mac everything is a file
+		{
+			if (mkdir (SettingsData.sHome.c_str (), 0755) == 0)
+				cout << "\n(II): Created new config directory " << SettingsData.sHome;
+			else
+			{
+				cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
+				SettingsData.sHome = ""; //reset $HOME since we can't create our config directory
+			}
+		}
+	}
+	//this is also a good place to find out where the executable is located
+	SettingsData.sConfig = MAX_XML; //assume config in current working directory
+	return;
 	#elif WIN32 
 		//this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located
@@ -3157,7 +3179,7 @@ void setPaths()
 		SettingsData.sHome = cHome; //get $HOME on linux
 	}
 
-	if(SettingsData.sHome.empty() != 1)
+	if(SettingsData.sHome.empty() == false)
 	{
 		SettingsData.sHome += PATH_DELIMITER;
 		SettingsData.sHome += ".maxr";

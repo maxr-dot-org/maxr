@@ -20,6 +20,7 @@
 #include "drawingcache.h"
 #include "client.h"
 #include "loaddata.h"
+#include "settings.h"
 
 sDrawingCacheEntry::sDrawingCacheEntry()
 {

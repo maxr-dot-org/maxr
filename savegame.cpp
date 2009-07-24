@@ -23,6 +23,7 @@
 #include "loaddata.h"
 #include "upgradecalculator.h"
 #include "menus.h"
+#include "settings.h"
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )

@@ -31,6 +31,7 @@
 #include "clientevents.h"
 #include "attackJobs.h"
 #include "menus.h"
+#include "settings.h"
 
 
 //-----------------------------------------------------------------------------
@@ -3257,8 +3258,8 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 
 	if ( !destVehicle && !destBuilding ) return 0;
 
-	if ( destVehicle ) destTurn = destVehicle->data.buildCosts/3;
-	else if ( destBuilding ) destTurn = destBuilding->data.buildCosts/3;
+	if ( destVehicle ) destTurn = destVehicle->data.buildCosts/3; // TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
+	else if ( destBuilding ) destTurn = destBuilding->data.buildCosts/3; // TODO: Bug? /3? or correctly /2, because constructing buildings takes two resources per turn?
 
 	factor = steal ? 1 : 4;
 	srcLevel = (int)CommandoRank+7;

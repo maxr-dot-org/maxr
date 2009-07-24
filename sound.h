@@ -43,9 +43,9 @@ EX int SoundLoopChannel;
 
 // Musik /////////////////////////////////////////////////////////////////////
 EX int MusicAnz;
-EX string MainMusicFile;
-EX string CreditsMusicFile;
-EX cList<string> MusicFiles;
+EX std::string MainMusicFile;
+EX std::string CreditsMusicFile;
+EX cList<std::string> MusicFiles;
 
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData

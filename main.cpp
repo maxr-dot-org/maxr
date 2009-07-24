@@ -54,6 +54,7 @@
 #include "unifonts.h"
 #include "menus.h"
 #include "clans.h"
+#include "settings.h"
 
 int main ( int argc, char *argv[] )
 {

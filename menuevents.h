@@ -31,8 +31,13 @@ enum eMenuMessages
 	MU_MSG_DEL_PLAYER,			// a player should be deleted
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
+	MU_MSG_START_MAP_DOWNLOAD,  // the host start a map upload to the client
+	MU_MSG_MAP_DOWNLOAD_DATA,   // the host sends map data to the client
+	MU_MSG_CANCELED_MAP_DOWNLOAD, // the host canceled the map upload to the client
+	MU_MSG_FINISHED_MAP_DOWNLOAD, // the host finished uploading the map
 	MU_MSG_GO,					// host wants to start the game
 	MU_MSG_CLAN,				// a player sends his clan
+	MU_MSG_REQUEST_MAP,			// a player wants to download a map from the server
 	MU_MSG_LANDING_VEHICLES,	// the list of purchased vehicles
 	MU_MSG_UPGRADES,			// data of upgraded units
 	GAME_EV_REQ_IDENT,			// a server of a running game requests an identification
@@ -70,6 +75,8 @@ void sendAllLanded ();
 void sendGameIdentification ( sMenuPlayer *player, int socket );
 
 void sendReconnectionSuccess( int playerNr );
+
+void sendRequestMap (string mapName, int playerNr);
 
 void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player );
 

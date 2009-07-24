@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include "menuitems.h"
 #include "menus.h"
+#include "settings.h"
 
 cMenuItem::cMenuItem ( int x, int y )
 {

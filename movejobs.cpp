@@ -25,6 +25,7 @@
 #include "client.h"
 #include "vehicles.h"
 #include "math.h"
+#include "settings.h"
 
 cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group )
 {

@@ -16,49 +16,68 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef filesH
-#define filesH
+
+#ifndef mapdownloadH
+#define mapdownloadH
 
 #include <string>
-#include "defines.h"
-#include "clist.h"
+#include <SDL.h>
 
-#ifndef PATH_DELIMITER
-#	define PATH_DELIMITER "/"
-#endif
+class cNetMessage;
+class cNetworkHostMenu;
+int mapSenderThreadFunction (void* data);
 
+namespace MapDownload
+{
+	bool isMapOriginal (std::string mapName);
+};
 
-/**
-* Checks whether a file exists or not
-* @author beko
-* @param name Filename to check for
-* @return true if exists (as in readable)
-* @return false if does not exist (as in not readable)
-*/
-bool FileExists(const char* name);
+//-------------------------------------------------------------------------------
+class cMapReceiver 
+{
+public:
+	cMapReceiver (std::string mapName, int mapSize);
+	virtual ~cMapReceiver ();
 
-/**
-* Checks whether a file exits
-* @author alzi
-* @param directory Directory of the file
-* @param filename Name of the file
-* @return 1 on success
-*/
-int CheckFile(const char* directory, const char* filename);
+	bool receiveData (cNetMessage* message, int bytesInMsg);
+	bool finished ();
 
-/**
-* Gets the filenames of all files in the directory
-* @author alzi
-* @param sDirectory Directory in which to search
-* @return A new list with all filenames (the caller is owner of the list)
-*/
-cList<std::string> *getFilesOfDirectory(std::string sDirectory);
+	std::string getMapName () const { return mapName; }
+	int getMapSize () const { return mapSize; }
+	int getBytesReceived () const { return bytesReceived; }
+	
+	
+//-------------------------------------------------------------------------------
+private:
+	std::string mapName;
+	int mapSize;
+	int bytesReceived;
+	char* readBuffer;
+};
 
-/**
-* Gets the map folder of the user's custom maps.
-* @author pagra
-* @return an absolute path to the user's maps directory or empty string, if no user maps folder is defined on the system
-*/
-std::string getUserMapsDir();
+//-------------------------------------------------------------------------------
+class cMapSender
+{
+public:
+	cMapSender (int toSocket, std::string mapName);
+	virtual ~cMapSender ();
+	
+	void runInThread (cNetworkHostMenu* hostMenu);
+//-------------------------------------------------------------------------------
+private:
+	int toSocket;
+	std::string mapName;
+	int mapSize;
+	int bytesSent;
+	char* sendBuffer;
+	cNetworkHostMenu* hostMenu;
+	
+	SDL_Thread* thread;
 
-#endif
+	friend int mapSenderThreadFunction (void* data);
+	
+	void run ();
+	bool sendMsg (cNetMessage* msg);
+};
+
+#endif // mapdownloadH

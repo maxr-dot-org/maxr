@@ -30,6 +30,7 @@
 #include "language.h"
 #include "main.h"
 #include "log.h"
+#include "settings.h"
 
 cLanguage::cLanguage(void)
 {

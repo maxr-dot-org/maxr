@@ -19,8 +19,8 @@
 
 #include <iostream>
 #include "log.h"
-#include "main.h"
 #include "cmutex.h"
+#include "settings.h"
 
 #define LOGFILE SettingsData.sLog.c_str()
 #define NETLOGFILE SettingsData.sNetLog.c_str()
@@ -52,7 +52,7 @@ bool cLog::open(int TYPE)
 		tm * tmTime = localtime ( &tTime );
 		char timestr[25];
 		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
-		string sTime = timestr;
+		std::string sTime = timestr;
 		SettingsData.sNetLog.erase(SettingsData.sNetLog.size() - 4, SettingsData.sNetLog.size());
 		SettingsData.sNetLog += sTime;
 		bFirstRun = false;
@@ -126,7 +126,7 @@ int cLog::write ( std::string str, int TYPE )
 			case LOG_TYPE_NET_WARNING :
 			case LOG_TYPE_WARNING : str = str.insert ( 0 , WW ); break;
 			case LOG_TYPE_NET_ERROR :
-			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); cout << str << "\n"; break;
+			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); std::cout << str << "\n"; break;
 			case LOG_TYPE_NET_DEBUG :
 			case LOG_TYPE_DEBUG :   str = str.insert ( 0 , DD ); break;
 			case LOG_TYPE_INFO :    str = str.insert ( 0 , II ); break;

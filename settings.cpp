@@ -16,49 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef filesH
-#define filesH
 
-#include <string>
-#include "defines.h"
-#include "clist.h"
+#include "settings.h"
 
-#ifndef PATH_DELIMITER
-#	define PATH_DELIMITER "/"
-#endif
-
-
-/**
-* Checks whether a file exists or not
-* @author beko
-* @param name Filename to check for
-* @return true if exists (as in readable)
-* @return false if does not exist (as in not readable)
-*/
-bool FileExists(const char* name);
-
-/**
-* Checks whether a file exits
-* @author alzi
-* @param directory Directory of the file
-* @param filename Name of the file
-* @return 1 on success
-*/
-int CheckFile(const char* directory, const char* filename);
-
-/**
-* Gets the filenames of all files in the directory
-* @author alzi
-* @param sDirectory Directory in which to search
-* @return A new list with all filenames (the caller is owner of the list)
-*/
-cList<std::string> *getFilesOfDirectory(std::string sDirectory);
-
-/**
-* Gets the map folder of the user's custom maps.
-* @author pagra
-* @return an absolute path to the user's maps directory or empty string, if no user maps folder is defined on the system
-*/
-std::string getUserMapsDir();
-
-#endif
+cSettings SettingsData;

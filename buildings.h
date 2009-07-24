@@ -211,7 +211,7 @@ public:
 	bool IsInRange(int off, cMap *Map);
 	/*
 	* checks if the unit can attack the offset
-	* when override is false, the funktion only returns true, when there is an enemy unit
+	* when override is false, the function only returns true, if there is an enemy unit
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
 	bool CanAttackObject(int off, cMap *Map, bool override=false);

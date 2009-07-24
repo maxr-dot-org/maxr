@@ -20,6 +20,7 @@
 #include "extendedtinyxml.h"
 #include "keys.h"
 #include "log.h"
+#include "settings.h"
 
 // Funktionen ////////////////////////////////////////////////////////////////
 int LoadKeys ()

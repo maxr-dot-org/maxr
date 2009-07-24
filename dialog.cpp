@@ -32,6 +32,7 @@
 #include "input.h"
 #include "clientevents.h"
 #include "sound.h"
+#include "settings.h"
 
 cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ), MNU_BG_ALPHA )
 {

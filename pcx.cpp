@@ -19,9 +19,9 @@
 #include "pcx.h"
 #include "log.h"
 #include "files.h"
-#include "main.h"
+#include "settings.h"
 
-#include <string.h>
+#include <string>
 
 SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 {

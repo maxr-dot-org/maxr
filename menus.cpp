@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <math.h>
+#include <sstream>
 
 #include "menus.h"
 #include "mouse.h"
@@ -32,6 +33,8 @@
 #include "clans.h"
 #include "serverevents.h"
 #include "dialog.h"
+#include "mapdownload.h"
+#include "settings.h"
 
 #define MAIN_MENU_BTN_SPACE 35
 
@@ -1155,6 +1158,15 @@ cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
 void cPlanetsSelectionMenu::loadMaps()
 {
 	maps = getFilesOfDirectory ( SettingsData.sMapsPath );
+	if (getUserMapsDir ().empty () == false)
+	{
+		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir ());
+		for (unsigned int i = 0; userMaps != 0 && i < userMaps->Size (); i++)
+		{
+			if (maps->Contains ((*userMaps)[i]) == false)
+				maps->Add ((*userMaps)[i]);
+		}
+	}
 	for ( unsigned int i = 0; i < maps->Size(); i++ )
 	{
 		string const& map = (*maps)[i];
@@ -1174,7 +1186,10 @@ void cPlanetsSelectionMenu::showMaps()
 		{
 			string mapName = (*maps)[i + offset];
 			string mapPath = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
-
+			// if no factory map of that name exists, try the custom user maps
+			if (FileExists (mapPath.c_str ()) == false && getUserMapsDir ().empty () == false)
+				mapPath = getUserMapsDir () + mapName;
+			
 			if ( FileExists ( mapPath.c_str() ) )
 			{
 				SDL_RWops *mapFile = SDL_RWFromFile ( mapPath.c_str(), "rb" );
@@ -2519,7 +2534,9 @@ void cNetworkMenu::showMap()
 	if ( !gameDataContainer.map ) return;
 	SDL_Surface *surface = NULL;
 	int size;
-	SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(),"rb" );
+	SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(), "rb" );
+	if (fp == 0 && getUserMapsDir ().empty () == false)
+		fp = SDL_RWFromFile ( (getUserMapsDir () + gameDataContainer.map->MapName ).c_str(), "rb" );
 	if ( fp != NULL )
 	{
 		SDL_RWseek ( fp, 5, SEEK_SET );
@@ -2686,6 +2703,12 @@ void cNetworkMenu::portIpChanged( void* parent )
 	if ( menu->ipLine->getText().compare ( "-" ) != 0 ) menu->ip = menu->ipLine->getText();
 }
 
+
+//-----------------------------------------------------------------------------------------
+// cNetworkHostMenu implementation
+//-----------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------
 cNetworkHostMenu::cNetworkHostMenu()
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Host") );
@@ -2716,6 +2739,7 @@ cNetworkHostMenu::cNetworkHostMenu()
 	ipLine->setReadOnly ( true );
 }
 
+//-----------------------------------------------------------------------------------------
 cNetworkHostMenu::~cNetworkHostMenu()
 {
 	delete titleLabel;
@@ -2726,8 +2750,15 @@ cNetworkHostMenu::~cNetworkHostMenu()
 	delete settingsButton;
 	delete loadButton;
 	delete startButton;
+	
+	for (int i = 0; i < mapSenders.size (); i++)
+	{
+		if (mapSenders[i] != 0)
+			delete mapSenders[i];
+	}
 }
 
+//-----------------------------------------------------------------------------------------
 int cNetworkHostMenu::checkAllPlayersReady()
 {
 	for ( unsigned int i = 0; i < players.Size(); i++ )
@@ -2737,6 +2768,7 @@ int cNetworkHostMenu::checkAllPlayersReady()
 	return -1;
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::okReleased( void* parent )
 {
 	cNetworkHostMenu *menu = static_cast<cNetworkHostMenu*>((cMenu*)parent);
@@ -2790,6 +2822,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 	menu->end = true;
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::mapReleased( void* parent )
 {
 	cNetworkHostMenu *menu = static_cast<cNetworkHostMenu*>((cMenu*)parent);
@@ -2801,6 +2834,7 @@ void cNetworkHostMenu::mapReleased( void* parent )
 	menu->draw();
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::settingsReleased( void* parent )
 {
 	cNetworkHostMenu *menu = static_cast<cNetworkHostMenu*>((cMenu*)parent);
@@ -2811,6 +2845,7 @@ void cNetworkHostMenu::settingsReleased( void* parent )
 	menu->draw();
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::loadReleased( void* parent )
 {
 	cNetworkHostMenu *menu = static_cast<cNetworkHostMenu*>((cMenu*)parent);
@@ -2836,6 +2871,7 @@ void cNetworkHostMenu::loadReleased( void* parent )
 	menu->draw();
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::startReleased( void* parent )
 {
 	cNetworkHostMenu *menu = static_cast<cNetworkHostMenu*>((cMenu*)parent);
@@ -2858,11 +2894,13 @@ void cNetworkHostMenu::startReleased( void* parent )
 	}
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::playerSettingsChanged ()
 {
 	sendPlayerList ( &players );
 }
 
+//-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 {
 	Log.write("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
@@ -2941,9 +2979,30 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			sendGameData( &gameDataContainer, saveGameString, players[playerNr] );
 		}
 		break;
+	case MU_MSG_REQUEST_MAP:
+		{
+			if (gameDataContainer.map != 0 && MapDownload::isMapOriginal (gameDataContainer.map->MapName) == false)
+			{
+				int receiverNr = message->popInt16 ();
+				if (receiverNr >= 0 && receiverNr < players.Size ())
+				{
+					int socketNr = players[receiverNr]->socket;
+					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName);
+					mapSenders.push_back (mapSender);
+					mapSender->runInThread (this);
+					string displayMsg = "Upload map to "; // TODO: translate
+					displayMsg += players[receiverNr]->name;
+					displayMsg += "...";
+					chatBox->addLine (displayMsg);
+					draw();
+				}
+			}
+		}
+		break;
 	}
 }
 
+//-----------------------------------------------------------------------------------------
 bool cNetworkHostMenu::runSavedGame()
 {
 	cSavegame savegame ( gameDataContainer.savegameNum );
@@ -3060,7 +3119,14 @@ bool cNetworkHostMenu::runSavedGame()
 	return true;
 }
 
+
+//-----------------------------------------------------------------------------------------
+// cNetworkClientMenu implementation
+//-----------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------
 cNetworkClientMenu::cNetworkClientMenu()
+: mapReceiver (0)
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Client") );
 	titleLabel->setCentered( true );
@@ -3077,6 +3143,8 @@ cNetworkClientMenu::~cNetworkClientMenu()
 {
 	delete titleLabel;
 	delete connectButton;
+	if (mapReceiver != 0)
+		delete mapReceiver;
 }
 
 void cNetworkClientMenu::connectReleased( void* parent )
@@ -3209,6 +3277,17 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 							playerSettingsChanged();
 						}
 						triedLoadMap = mapName;
+						if (MapDownload::isMapOriginal (mapName) == false)
+						{
+							sendRequestMap (mapName, actPlayer->nr);
+							chatBox->addLine (string ("Map not available: Requesting to download custom"));
+							chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
+						}
+						else
+						{
+							chatBox->addLine (string ("Map not available: Not allowed to download"));
+							chatBox->addLine (string ("M.A.X. original map \"") + mapName + "\" from server!"); // TODO: translate
+						}
 						delete map;
 						gameDataContainer.map = NULL;
 					}
@@ -3229,6 +3308,27 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			draw();
 		}
 		break;
+	case MU_MSG_START_MAP_DOWNLOAD:
+		{
+			initMapDownload (message);
+			break;
+		}
+	case MU_MSG_MAP_DOWNLOAD_DATA:
+		{
+			receiveMapData (message);
+			break;
+		}
+	case MU_MSG_CANCELED_MAP_DOWNLOAD:
+		{
+			canceledMapDownload (message);
+			break;
+		}
+	case MU_MSG_FINISHED_MAP_DOWNLOAD:
+		{
+			finishedMapDownload (message);
+			break;
+		}
+			
 	case MU_MSG_GO:
 		{
 			saveOptions ();
@@ -3314,7 +3414,79 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 	}
 }
 
-cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ ) : cMenu ( LoadPCX ( GFXOD_SAVELOAD ), backgroundType_ ), gameDataContainer ( gameDataContainer_ )
+//-----------------------------------------------------------------------------------------
+void cNetworkClientMenu::initMapDownload (cNetMessage* message)
+{
+	int mapSize = message->popInt32 ();
+	string mapName = message->popString ();
+	
+	if (mapReceiver != 0)
+		delete mapReceiver;
+	mapReceiver = new cMapReceiver (mapName, mapSize);
+}
+
+//-----------------------------------------------------------------------------------------
+void cNetworkClientMenu::receiveMapData (cNetMessage* message)
+{
+	if (mapReceiver == 0)
+		return;
+	
+	int nrBytesInMsg = message->popInt32 ();
+	mapReceiver->receiveData (message, nrBytesInMsg);
+	
+	int size = mapReceiver->getMapSize ();
+	int received = mapReceiver->getBytesReceived ();
+	int finished = (received * 100) / size;
+	ostringstream os;
+	os << "Map Download: " << finished << "%"; // TODO: translated
+	mapLabel->setText (os.str ());
+	draw ();
+}
+
+//-----------------------------------------------------------------------------------------
+void cNetworkClientMenu::canceledMapDownload (cNetMessage* message)
+{
+	if (mapReceiver == 0)
+		return;
+	
+	delete mapReceiver;
+	mapReceiver = 0;
+		
+	mapLabel->setText ("Canceled!"); // TODO: translated
+	draw ();
+}
+
+//-----------------------------------------------------------------------------------------
+void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
+{
+	if (mapReceiver == 0)
+		return;
+	
+	mapReceiver->finished ();
+	
+	cMap *map = new cMap;
+	if (map->LoadMap (mapReceiver->getMapName ())) 
+		gameDataContainer.map = map;
+	else
+		delete map;
+	showSettingsText ();
+	showMap ();
+	draw ();
+	
+	delete mapReceiver;
+	mapReceiver = 0;
+}
+
+
+
+//-----------------------------------------------------------------------------------------
+// cLoadMenu implementation
+//-----------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------
+cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ ) 
+: cMenu ( LoadPCX ( GFXOD_SAVELOAD ), backgroundType_ )
+, gameDataContainer ( gameDataContainer_ )
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+12, lngPack.i18n ("Text~Title~Load") );
 	titleLabel->setCentered( true );

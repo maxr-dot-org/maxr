@@ -239,7 +239,7 @@ public:
 	bool isHost();
 
 	/**
-	* Thread funktion which new incomming connections and data.
+	* Thread function which handles new incoming connections and data.
 	*@author alzi alias DoctorDeath
 	*/
 	void HandleNetworkThread();

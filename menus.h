@@ -23,7 +23,10 @@
 #include "input.h"
 #include "server.h"
 
+// forward declarations
 int GetColorNr(SDL_Surface *sf);
+class cMapReceiver;
+class cMapSender;
 
 struct sColor
 {
@@ -747,6 +750,8 @@ protected:
 
 	int checkAllPlayersReady();
 	bool runSavedGame();
+	
+	std::vector<cMapSender*> mapSenders;
 
 public:
 	cNetworkHostMenu();
@@ -771,6 +776,12 @@ class cNetworkClientMenu : public cNetworkMenu
 	cMenuLabel *titleLabel;
 	cMenuButton *connectButton;
 
+	cMapReceiver* mapReceiver;
+	void initMapDownload (cNetMessage* message);
+	void receiveMapData (cNetMessage* message);
+	void canceledMapDownload (cNetMessage* message);
+	void finishedMapDownload (cNetMessage* message);
+	
 public:
 	cNetworkClientMenu();
 	~cNetworkClientMenu();

@@ -30,6 +30,7 @@
 #include "pcx.h"
 #include "player.h"
 #include "menus.h"
+#include "settings.h"
 
 
 // Funktionen der Hud-Klasse /////////////////////////////////////////////////

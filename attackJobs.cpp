@@ -23,6 +23,7 @@
 #include "client.h"
 #include "serverevents.h"
 #include "netmessage.h"
+#include "settings.h"
 
 void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, char attackMode, cMap* map)
 {

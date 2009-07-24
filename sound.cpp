@@ -24,8 +24,7 @@
 
 #include "sound.h"
 #include "log.h"
-// #include "credits.h"
-//#include "SDL_thread.h"
+#include "settings.h"
 
 // Globales //////////////////////////////////////////////////////////////////
 Mix_Music *music_stream = NULL;

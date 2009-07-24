@@ -19,6 +19,7 @@
 #include "mouse.h"
 #include "main.h"
 #include "client.h"
+#include "settings.h"
 
 // Funktionen der Maus-Klasse ////////////////////////////////////////////////
 cMouse::cMouse ( void )

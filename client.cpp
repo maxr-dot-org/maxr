@@ -31,6 +31,7 @@
 #include "attackJobs.h"
 #include "menus.h"
 #include "dialog.h"
+#include "settings.h"
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {

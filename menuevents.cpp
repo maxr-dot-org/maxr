@@ -308,6 +308,14 @@ void sendReconnectionSuccess( int playerNr )
 	cMenu::sendMessage ( message );
 }
 
+void sendRequestMap (string mapName, int playerNr)
+{
+	cNetMessage* msg = new cNetMessage (MU_MSG_REQUEST_MAP);
+	msg->pushString (mapName);
+	msg->pushInt16 (playerNr);
+	cMenu::sendMessage (msg);
+}
+
 void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 {
 	cNetMessage* msg = NULL;
