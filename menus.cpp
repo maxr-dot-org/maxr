@@ -2993,7 +2993,7 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 
 	// send the correct player numbers to client
-	for ( int i = 0; i < players.Size(); i++ )
+	for ( unsigned int i = 0; i < players.Size(); i++ )
 		sendRequestIdentification( players[i] ); 
 
 	// now we can send the menus players-list with the right numbers and colors of each player.

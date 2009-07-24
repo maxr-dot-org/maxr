@@ -440,7 +440,7 @@ void sSubBase::refresh()
 	MaxHumanNeed = 0;
 
 	//readd all buildings
-	for ( int i = 0; i < buildingsCopy.Size(); i++ )
+	for ( unsigned int i = 0; i < buildingsCopy.Size(); i++ )
 	{
 		addBuilding( buildingsCopy[i] );
 	}
@@ -1153,7 +1153,7 @@ bool cBase::OptimizeEnergy ( sSubBase *sb )
 // recalculates all subbase values (after a load)
 void cBase::refreshSubbases ( void )
 {
-	for ( int i = 0; i < SubBases.Size(); i++ )
+	for ( unsigned int i = 0; i < SubBases.Size(); i++ )
 	{
 		SubBases[i]->refresh();
 	}
