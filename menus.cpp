@@ -2751,7 +2751,7 @@ cNetworkHostMenu::~cNetworkHostMenu()
 	delete loadButton;
 	delete startButton;
 	
-	for (int i = 0; i < mapSenders.size (); i++)
+	for (unsigned int i = 0; i < mapSenders.size (); i++)
 	{
 		if (mapSenders[i] != 0)
 			delete mapSenders[i];
@@ -2984,7 +2984,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			if (gameDataContainer.map != 0 && MapDownload::isMapOriginal (gameDataContainer.map->MapName) == false)
 			{
 				int receiverNr = message->popInt16 ();
-				if (receiverNr >= 0 && receiverNr < players.Size ())
+				if (receiverNr >= 0 && receiverNr < (int)players.Size ())
 				{
 					int socketNr = players[receiverNr]->socket;
 					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName);

@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <time.h>
 #include "log.h"
 #include "cmutex.h"
 #include "settings.h"
