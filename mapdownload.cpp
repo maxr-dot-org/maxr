@@ -34,7 +34,6 @@
 bool MapDownload::isMapOriginal (std::string mapName)
 {
 	return (mapName == "Bottleneck.wrl"
-			|| mapName == "Delta.wrl"
 			|| mapName == "Flash Point.wrl"
 			|| mapName == "Freckles.wrl"
 			|| mapName == "Frigia.wrl"
@@ -55,7 +54,6 @@ bool MapDownload::isMapOriginal (std::string mapName)
 			|| mapName == "Snowcrab.wrl"
 			|| mapName == "Splatterscape.wrl"
 			|| mapName == "The Cooler.wrl"
-			|| mapName == "Three Isles.wrl"
 			|| mapName == "Three Rings.wrl"
 			|| mapName == "Ultima Thule.wrl"
 			|| mapName == "Valentine's Planet.wrl");
