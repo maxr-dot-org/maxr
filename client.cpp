@@ -2170,7 +2170,9 @@ void cClient::runFX()
 					sFXRocketInfos *ri= fx->rocketInfo;
 					if ( abs ( fx->PosX - ri->DestX ) <64&&abs ( fx->PosY-ri->DestY ) <64 )
 					{
+						_CrtCheckMemory();
 						ri->aj->state = cClientAttackJob::FINISHED;
+						_CrtCheckMemory();
 						delete fx;
 						FXList.Delete ( i );
 						return;
@@ -5062,7 +5064,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	{
 		if ( attackJobs[i]->building == Building )
 		{
-			attackJobs[i]->state = cClientAttackJob::FINISHED;
+			attackJobs[i]->building = NULL;
 		}
 	}
 
@@ -5116,7 +5118,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	{
 		if ( attackJobs[i]->vehicle == Vehicle )
 		{
-			attackJobs[i]->state = cClientAttackJob::FINISHED;
+			attackJobs[i]->vehicle = NULL;
 		}
 	}
 
