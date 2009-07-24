@@ -3202,7 +3202,6 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 					}
 					else
 					{
-						// TODO: Translate
 						if ( triedLoadMap.compare ( mapName ) != 0 ) chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
 						if ( actPlayer->ready )
 						{
