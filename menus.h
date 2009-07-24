@@ -705,6 +705,7 @@ protected:
 
 	cGameDataContainer gameDataContainer;
 	string saveGameString;
+	string triedLoadMap;
 
 	void showSettingsText();
 	void showMap();

@@ -43,7 +43,7 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1 );
+void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
 
 void sendRequestIdentification ( sMenuPlayer *player );
 

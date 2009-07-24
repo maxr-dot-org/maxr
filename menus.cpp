@@ -2440,6 +2440,8 @@ cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
 	gameDataContainer.type = GAME_TYPE_TCPIP;
 
 	network = new cTCP;
+
+	triedLoadMap = "";
 }
 
 cNetworkMenu::~cNetworkMenu()
@@ -2619,7 +2621,13 @@ void cNetworkMenu::saveOptions()
 void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 {
 	if ( player != actPlayer ) return;
-	player->ready = !player->ready;
+	PlayFX ( SoundData.SNDHudButton );
+	if ( !gameDataContainer.map && !triedLoadMap.empty() )
+	{
+		if ( !player->ready ) chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", triedLoadMap ) );
+		player->ready = false;
+	}
+	else player->ready = !player->ready;
 	playerSettingsChanged();
 }
 
@@ -2862,12 +2870,15 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 	{
 	case MU_MSG_CHAT:
 		{
+			bool translationText = message->popBool();
 			string chatText = message->popString();
-			chatBox->addLine ( chatText );
+			if ( translationText ) chatBox->addLine ( lngPack.i18n ( chatText ) );
+			else chatBox->addLine ( chatText );
+			// send to other clients
 			for ( unsigned int i = 1; i < players.Size(); i++ )
 			{
 				if ( players[i]->nr == message->iPlayerNr ) continue;
-				sendMenuChatMessage ( chatText, players[i] );
+				sendMenuChatMessage ( chatText, players[i], -1, translationText );
 			}
 			draw();
 		}
@@ -2963,7 +2974,7 @@ bool cNetworkHostMenu::runSavedGame()
 			// the player isn't in the list when the loop has gone trough all players and no match was found
 			if ( j == Server->PlayerList->Size()-1 )
 			{
-				// TODO: send message to disconnected player
+				sendMenuChatMessage ( "Text~Multiplayer~Disconnect_Not_In_Save", players[i], -1, true );
 				network->close ( players[i]->socket );
 				for ( unsigned int k = 0; k < players.Size(); k++ )
 				{
@@ -3109,8 +3120,10 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 	{
 	case MU_MSG_CHAT:
 		{
+			bool translationText = message->popBool();
 			string chatText = message->popString();
-			chatBox->addLine ( chatText );
+			if ( translationText ) chatBox->addLine ( lngPack.i18n ( chatText ) );
+			else chatBox->addLine ( chatText );
 			draw();
 		}
 		break;
@@ -3182,9 +3195,21 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				{
 					if ( gameDataContainer.map ) delete gameDataContainer.map;
 					cMap *map = new cMap;
-					if ( map->LoadMap ( mapName ) ) gameDataContainer.map = map;
+					if ( map->LoadMap ( mapName ) )
+					{
+						gameDataContainer.map = map;
+						triedLoadMap = "";
+					}
 					else
 					{
+						// TODO: Translate
+						if ( triedLoadMap.compare ( mapName ) != 0 ) chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
+						if ( actPlayer->ready )
+						{
+							actPlayer->ready = false;
+							playerSettingsChanged();
+						}
+						triedLoadMap = mapName;
 						delete map;
 						gameDataContainer.map = NULL;
 					}

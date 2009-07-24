@@ -21,10 +21,11 @@
 #include "serverevents.h"
 #include "client.h"
 
-void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player, int fromPlayerNr )
+void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player, int fromPlayerNr, bool translationText )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_CHAT );
 	message->pushString ( chatMsg );
+	message->pushBool ( translationText );
 	cMenu::sendMessage ( message, player, fromPlayerNr );
 }
 
