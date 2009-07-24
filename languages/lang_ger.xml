@@ -240,6 +240,8 @@
 			<Save_Only_Host ENG="Only the host can save games." localized="Nur der Server kann Spielstände speichern"/>
       <Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
       <Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
+      <No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Du kannst nicht bereit gehen."/>
+      <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Du wirst getrennt, da du nicht im Spielstand aufgeführt bist."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Damage" localized="Angriff"/>

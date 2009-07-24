@@ -244,6 +244,8 @@
 			<Save_Only_Host ENG="Only the host can save games."/>
 			<Player_Joined ENG="%s has joined"/>
 			<Player_Left ENG="%s has left"/>
+      <No_Map_No_Ready ENG="Can not load map %s. You can not go ready."/>
+      <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame."/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
