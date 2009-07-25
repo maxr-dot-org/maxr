@@ -36,34 +36,38 @@
 #endif
 
 
-// Pr¸ft ob die Datei 'name' existiert
-bool FileExists ( const char* name )
+//--------------------------------------------------------------
+/** @return exists a file at path */
+//--------------------------------------------------------------
+bool FileExists ( const char* path )
 {
 	SDL_RWops *file;
-	file=SDL_RWFromFile ( name, "r" );
+	file = SDL_RWFromFile ( path, "r" );
 	if ( file==NULL )
 	{
-		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 	SDL_RWclose ( file );
 	return true;
 }
 
-int CheckFile(const char* directory, const char* filename)
+//--------------------------------------------------------------
+int CheckFile (const char* directory, const char* filename)
 {
 	std::string filepath;
-	if(strcmp(directory,""))
+	if (strcmp(directory,""))
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
 	}
 	filepath += filename;
-	if(!FileExists(filepath.c_str()))
+	if (!FileExists (filepath.c_str()))
 		return 0;
 	return 1;
 }
 
+//--------------------------------------------------------------
 cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 {
 	cList<std::string> *List = new cList<std::string>;
@@ -71,18 +75,14 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 	_finddata_t DataFile;
 	long lFile = (long)_findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
 
-	if( lFile == -1 )
-	{
+	if ( lFile == -1 )
 		_findclose ( lFile );
-	}
 	else
 	{
 		do
 		{
 			if ( !( DataFile.attrib & _A_SUBDIR ) && DataFile.name[0] != '.' )
-			{
 				List->Add( DataFile.name );
-			}
 		}
 		while ( _findnext ( lFile, &DataFile ) == 0 );
 		_findclose ( lFile );
@@ -112,18 +112,14 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 	DIR* hDir = opendir ( sDirectory.c_str() );
 	struct dirent* entry;
 	if( hDir == NULL )
-	{
 		closedir( hDir );
-	}
 	else
 	{
 		do
 		{
 			entry = readdir ( hDir );
 			if( entry != NULL && entry->d_name[0] != '.' )
-			{
 				List->Add( entry->d_name );
-			}
 		}
 		while ( entry != NULL );
 
@@ -133,6 +129,7 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 	return List;
 }
 
+//--------------------------------------------------------------
 std::string getUserMapsDir()
 {
 #ifdef WIN32
@@ -155,3 +152,30 @@ std::string getUserMapsDir()
 #endif
 	return "";
 }
+
+//--------------------------------------------------------------
+// Feel free to implement a prettier algorithm (as long as it is big and little endianness compatible and the checksum is not stored anywhere, yet)!
+Sint32 calcCheckSum (char* data, int dataSize)
+{
+	Uint32 checksum = 0;
+	for (int i = 0; i < dataSize; i++)
+	{
+		if (checksum >= 2147483648u) // 2^31; if true, then the highest bit is set 
+		{
+			checksum *= 2; // shift all bits by one to the left (but don't use the << operator because of endianess issues)
+			checksum += 1; // then set the lowest bit
+		}
+		else
+			checksum *= 2; // the highest bit was not set, so don't rotate it in at the lowest bit; only shift all bits one to the left
+
+		checksum += data[i];
+
+		// prettier and faster checksum algorithm, but not working the same way on big and little endian machines...
+		//		checksum = (checksum >> 1) + ((checksum & 1) << 30); // don't get in the area 
+		//		checksum += data[i];
+		//		checksum &= 0xffffffff;       // Keep it within bounds.
+	}
+	Sint32 result = (checksum >= 2147483648u) ? (Sint32)(checksum - 2147483648u) : (Sint32)checksum;
+	return result;
+}
+

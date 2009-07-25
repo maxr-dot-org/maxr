@@ -19,6 +19,8 @@
 #ifndef filesH
 #define filesH
 
+#include <SDL.h>
+
 #include <string>
 #include "defines.h"
 #include "clist.h"
@@ -31,11 +33,11 @@
 /**
 * Checks whether a file exists or not
 * @author beko
-* @param name Filename to check for
+* @param path Filename to check for
 * @return true if exists (as in readable)
 * @return false if does not exist (as in not readable)
 */
-bool FileExists(const char* name);
+bool FileExists(const char* path);
 
 /**
 * Checks whether a file exits
@@ -60,5 +62,11 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory);
 * @return an absolute path to the user's maps directory or empty string, if no user maps folder is defined on the system
 */
 std::string getUserMapsDir();
+
+/**
+* @author pagra
+* @return a checksum of all bytes in the given data chunk
+*/
+Sint32 calcCheckSum (char* data, int dataSize);
 
 #endif

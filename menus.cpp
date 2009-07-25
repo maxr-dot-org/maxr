@@ -3269,18 +3269,24 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			if ( message->popBool() )
 			{
 				string mapName = message->popString();
+				Sint32 mapCheckSum = message->popInt32();
 				if ( !gameDataContainer.map || gameDataContainer.map->MapName != mapName )
 				{
 					if ( gameDataContainer.map ) 
 						delete gameDataContainer.map;
+					
+					bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
 					cMap *map = new cMap;
-					if ( map->LoadMap ( mapName ) )
+					if (mapCheckSumsEqual && map->LoadMap ( mapName ) )
 					{
 						gameDataContainer.map = map;
 						triedLoadMap = "";
 					}
 					else
 					{
+						delete map;
+						gameDataContainer.map = NULL;
+						
 						if ( actPlayer->ready )
 						{
 							chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
@@ -3288,23 +3294,34 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 							playerSettingsChanged();
 						}
 						triedLoadMap = mapName;
-						if (MapDownload::isMapOriginal (mapName) == false)
+						
+						string existingMapFilePath = MapDownload::getExistingMapFilePath (mapName);
+						bool existsMap = (existingMapFilePath.empty () == false);
+						if (mapCheckSumsEqual == false && existsMap)
 						{
-							if (mapName != lastRequestedMap)
-							{
-								lastRequestedMap = mapName;
-								sendRequestMap (mapName, actPlayer->nr);
-								chatBox->addLine (string ("Map not available: Requesting to download custom"));
-								chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
-							}
+							chatBox->addLine ("You have an incompatible version of the");
+							chatBox->addLine (string ("map \"") + mapName + "\" at");
+							chatBox->addLine (string ("\"") + existingMapFilePath + "\" !");
+							chatBox->addLine ("Move it away or delete it, then reconnect.");
 						}
 						else
 						{
-							chatBox->addLine (string ("Map not available: Not allowed to download"));
-							chatBox->addLine (string ("M.A.X. original map \"") + mapName + "\" from server!"); // TODO: translate
+							if (MapDownload::isMapOriginal (mapName) == false)
+							{
+								if (mapName != lastRequestedMap)
+								{
+									lastRequestedMap = mapName;
+									sendRequestMap (mapName, actPlayer->nr);
+									chatBox->addLine (string ("Map not available: Requesting to download custom"));
+									chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
+								}
+							}
+							else
+							{
+								chatBox->addLine (string ("Map not available: Not allowed to download"));
+								chatBox->addLine (string ("M.A.X. original map \"") + mapName + "\" from server!"); // TODO: translate
+							}
 						}
-						delete map;
-						gameDataContainer.map = NULL;
 					}
 					showMap();
 				}

@@ -29,7 +29,14 @@ int mapSenderThreadFunction (void* data);
 
 namespace MapDownload
 {
+	/** @return is this a map that originates from the original M.A.X. ?*/
 	bool isMapOriginal (std::string mapName);
+
+	/** @return the path to the map (in user or factory maps directory), or empty string if not found */
+	std::string getExistingMapFilePath (std::string mapName);
+	
+	/** @return a 32 bit checksum of the given map */
+	Sint32 calculateCheckSum (std::string mapName);
 };
 
 //-------------------------------------------------------------------------------

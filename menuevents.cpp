@@ -20,6 +20,7 @@
 #include "netmessage.h"
 #include "serverevents.h"
 #include "client.h"
+#include "mapdownload.h"
 
 void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player, int fromPlayerNr, bool translationText )
 {
@@ -59,7 +60,11 @@ void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPl
 	if ( !gameData->savegame.empty() ) message->pushString ( saveGameString );
 	message->pushBool ( !gameData->savegame.empty() );
 
-	if ( gameData->map ) message->pushString ( gameData->map->MapName );
+	if ( gameData->map ) 
+	{
+		message->pushInt32 (MapDownload::calculateCheckSum (gameData->map->MapName));
+		message->pushString ( gameData->map->MapName );
+	}
 	message->pushBool ( gameData->map != NULL );
 
 	if ( gameData->settings )

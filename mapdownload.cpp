@@ -60,31 +60,47 @@ bool MapDownload::isMapOriginal (std::string mapName)
 			|| mapName == "Valentine's Planet.wrl");
 }
 
-
 //-------------------------------------------------------------------------------
-/** @return a 32 bit checksum of the given data */
-//-------------------------------------------------------------------------------
-/*Sint32 calcCheckSum (char* data, int dataSize)
+std::string MapDownload::getExistingMapFilePath (std::string mapName)
 {
-	Sint32 checksum = 0;
-	for (int i = 0; i < dataSize; i++)
+	string filenameFactory = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
+	if (FileExists(filenameFactory.c_str()))
+		return filenameFactory;
+	if (getUserMapsDir ().empty () == false)
 	{
-		if (checksum > 1073741824) // 2^30
-		{
-			checksum *= 2;
-			checksum += 1;
-		}
-		else
-			checksum *= 2;
-		checksum += data[i];
-
-// pretty checksum, but not working the same way on big and little endian machines...
-//		checksum = (checksum >> 1) + ((checksum & 1) << 30); // don't get in the area 
-//		checksum += data[i];
-//		checksum &= 0xffffffff;       // Keep it within bounds.
+		string filenameUser = getUserMapsDir () + mapName;
+		if (FileExists(filenameUser.c_str ()))
+			return filenameUser;
 	}
-	return checksum;
-}*/
+	return "";
+}
+
+//-------------------------------------------------------------------------------
+Sint32 MapDownload::calculateCheckSum (std::string mapName)
+{
+	Sint32 result = 0;
+	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
+	ifstream* file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
+	if (file->is_open () == false && getUserMapsDir ().empty () == false)
+	{
+		// try to open the map from the user's maps dir
+		filename = getUserMapsDir () + mapName.c_str ();
+		delete file;
+		file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
+	}
+	if (file->is_open ())
+	{
+		int mapSize = (int) file->tellg ();
+		char* data = new char [mapSize];
+		file->seekg (0, ios::beg);
+		file->read (data, mapSize);
+		file->close ();
+		result = calcCheckSum (data, mapSize);
+		delete[] data;
+	}
+	delete file;
+	return result;
+}
 
 //-------------------------------------------------------------------------------
 // cMapReceiver implementation
@@ -191,7 +207,7 @@ cMapSender::~cMapSender ()
 		// send a canceled msg to the client
 		cNetMessage* msg = new cNetMessage (MU_MSG_CANCELED_MAP_DOWNLOAD);
 		sendMsg (msg);
-		Log.write ("MapSender: Canceling an unfinsed upload thread", cLog::eLOG_TYPE_DEBUG);
+		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLOG_TYPE_DEBUG);
 	}
 }
 
@@ -207,21 +223,29 @@ void cMapSender::run ()
 	if (canceled) return;
 	
 	// read map file in memory
-	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName.c_str();
-	
-	ifstream file (filename.c_str(), ios::in | ios::binary | ios::ate);
-	if (file.is_open ())
+	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName.c_str ();
+	ifstream* file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
+	if (file->is_open () == false && getUserMapsDir ().empty () == false)
 	{
-		mapSize = (int) file.tellg();
+		// try to open the map from the user's maps dir
+		filename = getUserMapsDir () + mapName.c_str ();
+		delete file;
+		file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate); 
+	}
+	if (file->is_open ())
+	{
+		mapSize = (int) file->tellg ();
 		sendBuffer = new char [mapSize];
-		file.seekg (0, ios::beg);
-		file.read (sendBuffer, mapSize);
-		file.close();
+		file->seekg (0, ios::beg);
+		file->read (sendBuffer, mapSize);
+		file->close ();
+		delete file;
 		Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
 	}
 	else 
 	{
 		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
+		delete file;
 		return;
 	}
 
