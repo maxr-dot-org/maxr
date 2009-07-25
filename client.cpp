@@ -706,14 +706,48 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedBuilding && SelectedBuilding->LoadActive )
 		{
-			if ( SelectedBuilding->canLoad( overVehicle ) ) sendWantLoad ( SelectedBuilding->iID, false, overVehicle->iID );
-			else if ( SelectedBuilding->canLoad( overPlane ) ) sendWantLoad ( SelectedBuilding->iID, false, overPlane->iID );
+			if ( overVehicle )
+			{
+				if ( SelectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( SelectedBuilding->iID, false, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, SelectedBuilding, NULL, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+			else if ( overPlane )
+			{
+				if ( SelectedBuilding->isNextTo ( overPlane->PosX, overPlane->PosY ) ) sendWantLoad ( SelectedBuilding->iID, false, overPlane->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, SelectedBuilding, NULL, NULL, overPlane );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cload && SelectedVehicle && SelectedVehicle->LoadActive )
 		{
-			if ( overVehicle )
+			if ( SelectedVehicle->data.factorAir > 0 && overVehicle )
 			{
-				sendWantLoad ( SelectedVehicle->iID, true, overVehicle->iID );
+				if ( overVehicle->PosX == SelectedVehicle->PosX && overVehicle->PosY == SelectedVehicle->PosY ) sendWantLoad ( SelectedVehicle->iID, true, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_LOAD, NULL, SelectedVehicle, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+			else if ( overVehicle )
+			{
+				if ( SelectedVehicle->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( SelectedVehicle->iID, true, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, NULL, SelectedVehicle, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
 			}
 		}
 		else if ( bChange && mouse->cur == GraphicsData.gfx_Cmuni && SelectedVehicle && SelectedVehicle->MuniActive )
@@ -5398,7 +5432,7 @@ void cClient::handleMoveJobs ()
 				Vehicle->ClientMoveJob = NULL;
 				Vehicle->moving = false;
 				Vehicle->MoveJobActive = false;
-
+				if ( MoveJob->endMoveAction ) MoveJob->endMoveAction->execute();
 			}
 			else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.Delete ( i );

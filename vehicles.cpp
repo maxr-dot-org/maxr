@@ -110,6 +110,7 @@ cVehicle::~cVehicle ()
 	{
 		ClientMoveJob->release();
 		ClientMoveJob->Vehicle = NULL;
+		if ( ClientMoveJob->endMoveAction ) ClientMoveJob->endMoveAction->handleDelVehicle ( this );
 	}
 	if ( ServerMoveJob )
 	{
@@ -151,6 +152,12 @@ cVehicle::~cVehicle ()
 		}
 	}
 
+	while( passiveEndMoveActions.Size() )
+	{
+		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
+		passiveEndMoveActions.Delete ( 0 );
+		delete endMoveAction;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -2950,15 +2957,15 @@ bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVeh
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( int off, cMap *Map )
+bool cVehicle::canLoad ( int off, cMap *Map, bool checkPosition )
 {
 	if ( off < 0 || off > Map->size*Map->size ) return false;
 
-	return canLoad ( Map->fields[off].getVehicles() );
+	return canLoad ( Map->fields[off].getVehicles(), checkPosition );
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( cVehicle *Vehicle )
+bool cVehicle::canLoad ( cVehicle *Vehicle, bool checkPosition )
 {
 	if ( !Vehicle ) return false;
 
@@ -2966,9 +2973,9 @@ bool cVehicle::canLoad ( cVehicle *Vehicle )
 
 	if ( data.storageUnitsCur >= data.storageUnitsMax )	return false;
 
-	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
+	if ( checkPosition && !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
-	if ( data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
+	if ( checkPosition && data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
 	int i;
 	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
@@ -3001,7 +3008,7 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 	StoredVehicles.Add ( Vehicle );
 	data.storageUnitsCur++;
 
-	if ( data.factorAir > 0 || data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
+	if ( data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
 
 	owner->DoScan();
 }

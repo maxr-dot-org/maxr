@@ -163,6 +163,44 @@ public:
 	void calcNextDir();
 };
 
+enum eEndMoveActionType
+{
+	EMAT_LOAD,
+	EMAT_GET_IN,
+	EMAT_ATTACK
+};
+
+class cEndMoveAction
+{
+	cBuilding *srcBuilding;
+	cVehicle *srcVehicle;
+
+	cBuilding *destBuilding;
+	cVehicle *destVehicle;
+
+	bool success;
+
+	eEndMoveActionType endMoveActionType;
+
+	cClientMoveJob *moveJob;
+
+	void generateLoadAction();
+	void generateGetInAction();
+	void generateAttackAction();
+
+	void executeLoadAction();
+	void executeGetInAction();
+	void executeAttackAction();
+public:
+	cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
+	~cEndMoveAction();
+
+	void execute();
+	bool getSuccess();
+
+	void handleDelVehicle( cVehicle *delVehicle );
+};
+
 class cClientMoveJob
 {
 public:
@@ -170,6 +208,7 @@ public:
 	~cClientMoveJob ();
 	cMap *Map;
 	cVehicle *Vehicle;
+	cEndMoveAction *endMoveAction;
 
 	int ScrX, ScrY;
 	int DestX, DestY;

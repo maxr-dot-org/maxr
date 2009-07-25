@@ -194,6 +194,13 @@ cBuilding::~cBuilding ()
 			if ( Client->attackJobs[i]->building == this ) Client->attackJobs[i]->building = NULL;
 		}
 	}
+
+	while( passiveEndMoveActions.Size() )
+	{
+		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
+		passiveEndMoveActions.Delete ( 0 );
+		delete endMoveAction;
+	}
 }
 
 //----------------------------------------------------
@@ -1515,12 +1522,12 @@ bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVe
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad ( int offset, cMap *Map )
+bool cBuilding::canLoad ( int offset, cMap *Map, bool checkPosition )
 {
 	if ( offset < 0 || offset > Map->size*Map->size ) return false;
 
-	if ( canLoad ( Map->fields[offset].getPlanes() ) ) return true;
-	else return canLoad ( Map->fields[offset].getVehicles() );
+	if ( canLoad ( Map->fields[offset].getPlanes(), checkPosition ) ) return true;
+	else return canLoad ( Map->fields[offset].getVehicles(), checkPosition );
 
 	return false;
 }
@@ -1528,7 +1535,7 @@ bool cBuilding::canLoad ( int offset, cMap *Map )
 //--------------------------------------------------------------------------
 /** returns, if the vehicle can be loaded from its position: */
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad ( cVehicle *Vehicle )
+bool cBuilding::canLoad ( cVehicle *Vehicle, bool checkPosition )
 {
 	if ( !Vehicle ) return false;
 
@@ -1536,7 +1543,7 @@ bool cBuilding::canLoad ( cVehicle *Vehicle )
 
 	if ( data.storageUnitsCur == data.storageUnitsMax ) return false;
 
-	if ( !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
+	if ( checkPosition && !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
 	int i;
 	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )

@@ -30,6 +30,7 @@ class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
+class cEndMoveAction;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -171,6 +172,7 @@ public:
 	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
+	cList<cEndMoveAction*> passiveEndMoveActions;
 
 	cVehicle *next,*prev; // Verkettungselemente
 	sUnitData data;    // Daten des Vehicles
@@ -225,8 +227,8 @@ public:
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool canLoad( int off, cMap *Map );
-	bool canLoad( cVehicle *Vehicle );
+	bool canLoad( int off, cMap *Map, bool checkPosition = true );
+	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 #define SUPPLY_TYPE_REARM	0

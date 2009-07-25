@@ -76,6 +76,7 @@ struct sBuilding{
 
 class cPlayer;
 class cBase;
+class cEndMoveAction;
 
 // enum for the upgrade symbols
 #ifndef D_eSymbols
@@ -169,6 +170,8 @@ public:
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
 	int wantRedrawedStoredOffset;
 	bool hasBeenAttacked;
+	cList<cEndMoveAction*> passiveEndMoveActions;
+
 	/**
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
 	*/
@@ -220,8 +223,8 @@ public:
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool canLoad( int offset, cMap *Map );
-	bool canLoad( cVehicle *Vehicle );
+	bool canLoad( int offset, cMap *Map, bool checkPosition = true );
+	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 	void upgradeToCurrentVersion ();
