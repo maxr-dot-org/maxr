@@ -21,6 +21,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include "mapdownload.h"
 #include "netmessage.h"
@@ -117,21 +118,23 @@ bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
 		readBuffer[bytesReceived + i] = message->popChar ();
 	
 	bytesReceived += bytesInMsg;
-	cout << "Received Data: " << bytesReceived << "/" << mapSize;
+	std::ostringstream os;
+	os << "MapReceiver: Received Data for map " << mapName << ": " << bytesReceived << "/" << mapSize;
+	Log.write (os.str (), cLog::eLOG_TYPE_DEBUG);
 	return true;
 }
 
 //-------------------------------------------------------------------------------
 bool cMapReceiver::finished ()
 {
-	cout << "Received Complete Map";
+	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
 	if (bytesReceived != mapSize)
 		return false;
 	
 	std::string mapsFolder = getUserMapsDir ();
 	if (mapsFolder.empty ())
 		mapsFolder = SettingsData.sMapsPath + PATH_DELIMITER;
-	std::string filename = mapsFolder + mapName.c_str();
+	std::string filename = mapsFolder + mapName;
 	std::ofstream newMapFile;
 	newMapFile.open (filename.c_str(), ios::out | ios::binary);
 	if (newMapFile.bad ())
@@ -168,12 +171,19 @@ cMapSender::cMapSender (int toSocket, std::string mapName)
 , sendBuffer (0)
 , hostMenu (0)
 , thread (0)
+, canceled (false)
 {
 }
 
 //-------------------------------------------------------------------------------
 cMapSender::~cMapSender ()
 {
+	if (thread != 0)
+	{
+		canceled = true;
+		SDL_WaitThread (thread, NULL);
+		thread = 0;
+	}
 	if (sendBuffer != 0)
 	{
 		delete[] sendBuffer;
@@ -183,8 +193,6 @@ cMapSender::~cMapSender ()
 		sendMsg (msg);
 		Log.write ("MapSender: Canceling an unfinsed upload thread", cLog::eLOG_TYPE_DEBUG);
 	}
-	if (thread != 0)
-		SDL_KillThread (thread);
 }
 
 //-------------------------------------------------------------------------------
@@ -196,6 +204,8 @@ void cMapSender::runInThread (cNetworkHostMenu* hostMenu)
 //-------------------------------------------------------------------------------
 void cMapSender::run ()
 {
+	if (canceled) return;
+	
 	// read map file in memory
 	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName.c_str();
 	
@@ -215,13 +225,18 @@ void cMapSender::run ()
 		return;
 	}
 
+	if (canceled) return;
+
 	cNetMessage* msg = new cNetMessage (MU_MSG_START_MAP_DOWNLOAD);
 	msg->pushString (mapName.c_str());
 	msg->pushInt32 (mapSize);
 	sendMsg (msg);
 	
+	int msgCount = 0;
 	while (bytesSent < mapSize)
 	{
+		if (canceled) return;
+
 		msg = new cNetMessage (MU_MSG_MAP_DOWNLOAD_DATA);
 		int bytesToSend = mapSize - bytesSent;
 		if (msg->iLength + bytesToSend + 4 > PACKAGE_LENGTH)
@@ -231,7 +246,10 @@ void cMapSender::run ()
 		bytesSent += bytesToSend;
 		msg->pushInt32 (bytesToSend);
 		sendMsg (msg);
-		SDL_Delay (10);
+		
+		msgCount++;
+		if (msgCount % 10 == 0)
+			SDL_Delay (100);
 	}
 	
 	// finished

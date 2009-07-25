@@ -62,6 +62,8 @@ public:
 	cMapSender (int toSocket, std::string mapName);
 	virtual ~cMapSender ();
 	
+	int getToSocket () const { return toSocket; }
+	
 	void runInThread (cNetworkHostMenu* hostMenu);
 //-------------------------------------------------------------------------------
 private:
@@ -73,6 +75,7 @@ private:
 	cNetworkHostMenu* hostMenu;
 	
 	SDL_Thread* thread;
+	bool canceled;
 
 	friend int mapSenderThreadFunction (void* data);
 	

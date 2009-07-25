@@ -777,6 +777,7 @@ class cNetworkClientMenu : public cNetworkMenu
 	cMenuButton *connectButton;
 
 	cMapReceiver* mapReceiver;
+	string lastRequestedMap;
 	void initMapDownload (cNetMessage* message);
 	void receiveMapData (cNetMessage* message);
 	void canceledMapDownload (cNetMessage* message);

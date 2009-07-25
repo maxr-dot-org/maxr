@@ -2987,6 +2987,15 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 				if (receiverNr >= 0 && receiverNr < (int)players.Size ())
 				{
 					int socketNr = players[receiverNr]->socket;
+					// check, if there is already a map sender, that uploads to the same socketNr. If yes, terminate the old map sender.
+					for (int i = (int) mapSenders.size () - 1; i >= 0; i--)
+					{
+						if (mapSenders[i] != 0 && mapSenders[i]->getToSocket () == socketNr)
+						{
+							delete mapSenders[i];
+							mapSenders.erase (mapSenders.begin () + i);
+						}
+					}
 					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName);
 					mapSenders.push_back (mapSender);
 					mapSender->runInThread (this);
@@ -3127,6 +3136,7 @@ bool cNetworkHostMenu::runSavedGame()
 //-----------------------------------------------------------------------------------------
 cNetworkClientMenu::cNetworkClientMenu()
 : mapReceiver (0)
+, lastRequestedMap ("")
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Client") );
 	titleLabel->setCentered( true );
@@ -3261,7 +3271,8 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				string mapName = message->popString();
 				if ( !gameDataContainer.map || gameDataContainer.map->MapName != mapName )
 				{
-					if ( gameDataContainer.map ) delete gameDataContainer.map;
+					if ( gameDataContainer.map ) 
+						delete gameDataContainer.map;
 					cMap *map = new cMap;
 					if ( map->LoadMap ( mapName ) )
 					{
@@ -3270,18 +3281,22 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 					}
 					else
 					{
-						if ( triedLoadMap.compare ( mapName ) != 0 ) chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
 						if ( actPlayer->ready )
 						{
+							chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
 							actPlayer->ready = false;
 							playerSettingsChanged();
 						}
 						triedLoadMap = mapName;
 						if (MapDownload::isMapOriginal (mapName) == false)
 						{
-							sendRequestMap (mapName, actPlayer->nr);
-							chatBox->addLine (string ("Map not available: Requesting to download custom"));
-							chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
+							if (mapName != lastRequestedMap)
+							{
+								lastRequestedMap = mapName;
+								sendRequestMap (mapName, actPlayer->nr);
+								chatBox->addLine (string ("Map not available: Requesting to download custom"));
+								chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
+							}
 						}
 						else
 						{
