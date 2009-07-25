@@ -23,7 +23,7 @@
     <Connects_To_Base YN="Yes"/>
     <Armor Num="8"/>
     <Hitpoints Num="14"/>
-    <Scan_Range Num="4"/>
+    <Scan_Range Num="3"/>
   </Abilities>
 
   <Storage>
