@@ -216,7 +216,7 @@ public:
 	* when override is false, the funktion only returns true, when there is an enemy unit
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
-	bool CanAttackObject(int off, cMap *Map, bool override=false);
+	bool CanAttackObject(int off, cMap *Map, bool override=false, bool checkRange = true);
 	bool IsInRange(int off, cMap *Map);
 	void DrawAttackCursor( int offset );
 	int CalcHelth(int damage);

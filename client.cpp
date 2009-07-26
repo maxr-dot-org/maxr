@@ -773,15 +773,25 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 				// check, if the player wants to attack:
 				if ( bChange && mouse->cur==GraphicsData.gfx_Cattack&&SelectedVehicle&&!SelectedVehicle->Attacking&&!SelectedVehicle->MoveJobActive )
 				{
-					//find target ID
-					int targetId = 0;
 					cVehicle* vehicle;
 					cBuilding* building;
 					selectTarget( vehicle, building, mouse->GetKachelOff(), SelectedVehicle->data.canAttack, Client->Map);
-					if ( vehicle ) targetId = vehicle->iID;
 
-					Log.write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
-					sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
+					if ( SelectedVehicle->IsInRange ( mouse->GetKachelOff(), Map ) )
+					{
+						//find target ID
+						int targetId = 0;
+						if ( vehicle ) targetId = vehicle->iID;
+
+						Log.write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
+						sendWantAttack( targetId, mouse->GetKachelOff(), SelectedVehicle->iID, true );
+					}
+					else
+					{
+						// the constructor does everything for us
+						cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_ATTACK, NULL, SelectedVehicle, building, vehicle, mouse->GetKachelOff()%Map->size, mouse->GetKachelOff()/Map->size );
+						if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					}
 				}
 				else if ( bChange && mouse->cur == GraphicsData.gfx_Cattack && SelectedBuilding && !SelectedBuilding->Attacking )
 				{

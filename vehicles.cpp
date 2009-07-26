@@ -2309,11 +2309,9 @@ void cVehicle::Center ()
 //-----------------------------------------------------------------------------
 /** Checks, if the vehicle can attack the object */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
-{
-	cVehicle *v = NULL;
-	cBuilding *b = NULL;
 
+bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRange )
+{
 	if ( Loaded )
 		return false;
 
@@ -2335,7 +2333,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !IsInRange ( off, Map ) )
+	if ( checkRange && !IsInRange ( off, Map ) )
 		return false;
 
 	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->IsWater( off ) )
@@ -2346,17 +2344,20 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override )
 
 	if ( override )
 		return true;
-
-	selectTarget(v, b, off, data.canAttack, Map );
 	
-	if ( v )
+	cVehicle *targetVehicle = NULL;
+	cBuilding *targetBuilding = NULL;
+
+	selectTarget( targetVehicle, targetBuilding, off, data.canAttack, Map );
+
+	if ( targetVehicle )
 	{
-		if ( Client && ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer ) )
+		if ( Client && ( targetVehicle == Client->SelectedVehicle || targetVehicle->owner == Client->ActivePlayer ) )
 			return false;
 	}
-	else if ( b )
+	else if ( targetBuilding )
 	{
-		if ( Client && ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer ) )
+		if ( Client && ( targetBuilding == Client->SelectedBuilding || targetBuilding->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else

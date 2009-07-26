@@ -46,7 +46,9 @@ bool cPathDestHandler::hasReachedDestination( int x, int y )
 		return ( ( destBuilding && destBuilding->isNextTo ( x, y ) ) ||
 				( destVehicle && destVehicle->isNextTo ( x, y ) ) );
 	case PATH_DEST_TYPE_ATTACK:
-		return true;
+		x -= destX;
+		y -= destY;
+		return ( sqrt ( ( double ) ( x*x + y*y ) ) <= srcVehicle->data.range );
 	default:
 		return true;
 	}
@@ -81,6 +83,12 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 cPathCalculator::cPathCalculator( int ScrX, int ScrY, cVehicle *destVehicle, cBuilding *destBuilding, cMap *Map, cVehicle *Vehicle, bool load )
 {
 	destHandler = new cPathDestHandler ( load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, 0, 0, Vehicle, destBuilding, destVehicle );
+	init ( ScrX, ScrY, Map, Vehicle, NULL );
+}
+
+cPathCalculator::cPathCalculator( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, int attackX, int attackY )
+{
+	destHandler = new cPathDestHandler ( PATH_DEST_TYPE_ATTACK, attackX, attackY, Vehicle, NULL, NULL );
 	init ( ScrX, ScrY, Map, Vehicle, NULL );
 }
 
@@ -726,12 +734,14 @@ void cServerMoveJob::calcNextDir()
 	else TESTXY_CND ( >,> ) iNextDir = 7;
 }
 
-cEndMoveAction::cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ ) :
+cEndMoveAction::cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_, int destX_, int destY_ ) :
 	endMoveActionType ( endMoveActionType_ ),
 	srcBuilding ( srcBuilding_ ),
 	srcVehicle ( srcVehicle_ ),
-	destBuilding ( destBuilding_ ),
 	destVehicle ( destVehicle_ ),
+	destBuilding ( destBuilding_ ),
+	destX ( destX_ ),
+	destY ( destY_ ),
 	moveJob ( NULL ),
 	success ( false )
 {
@@ -767,7 +777,7 @@ cEndMoveAction::~cEndMoveAction()
 	{
 		if ( destVehicle->passiveEndMoveActions[i] == this ) destVehicle->passiveEndMoveActions.Delete ( i );
 	}
-	for ( unsigned int i = 0; destBuilding&& i < destBuilding->passiveEndMoveActions.Size(); i++ )
+	for ( unsigned int i = 0; destBuilding && i < destBuilding->passiveEndMoveActions.Size(); i++ )
 	{
 		if ( destBuilding->passiveEndMoveActions[i] == this ) destBuilding->passiveEndMoveActions.Delete ( i );
 	}
@@ -839,7 +849,34 @@ void cEndMoveAction::generateGetInAction()
 
 void cEndMoveAction::generateAttackAction()
 {
-	// TODO: add funtionality
+	// only vehicles can move to fire
+	if ( !srcVehicle ) return;
+	// we need a target unit
+	if ( !destVehicle && !destBuilding) return;
+	// and we need a target field
+	if ( destX == -1 || destY == -1 ) return;
+
+	// check whether the srcVehicle can attack the dest field
+	if ( !srcVehicle->CanAttackObject ( destX+destY*Client->Map->size, Client->Map, true, false ) ) return;
+
+	// calculate path unit the destination fiel is in range
+	cPathCalculator PathCalculator( srcVehicle->PosX, srcVehicle->PosY, Client->Map, srcVehicle, destX, destY );
+	sWaypoint *waypoints = PathCalculator.calcPath();
+
+	// generate the Movejob
+	int srcOffset = srcVehicle->PosX+srcVehicle->PosY*Client->Map->size;
+	if ( waypoints )
+	{
+		// create the movejob with the calculated path
+		moveJob = new cClientMoveJob ( srcOffset, waypoints, srcVehicle->data.factorAir > 0, srcVehicle );
+		// add the endMoveAction and send the movejob
+		success = true;
+		moveJob->endMoveAction = this;
+		if ( destVehicle ) destVehicle->passiveEndMoveActions.Add ( this );
+		if ( destBuilding ) destBuilding->passiveEndMoveActions.Add ( this );
+		sendMoveJob ( moveJob );
+		Log.write(" Client: Added new movejob with endMoveAction: VehicleID: " + iToStr ( srcVehicle->iID ) + ", SrcX: " + iToStr ( srcVehicle->PosX ) + ", SrcY: " + iToStr ( srcVehicle->PosY ) + ", DestX: " + iToStr ( moveJob->DestX ) + ", DestY: " + iToStr ( moveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+	}
 }
 
 void cEndMoveAction::execute()
@@ -881,7 +918,30 @@ void cEndMoveAction::executeGetInAction()
 
 void cEndMoveAction::executeAttackAction()
 {
-	// TODO: add funtionality
+	// we need a source unit
+	if ( !srcVehicle ) return;
+	// we need a target
+	if ( !destVehicle && !destBuilding ) return;
+
+	int targetId = 0;
+	int offset = destX+destY*Client->Map->size;
+
+	// check whether the target unit is still at the target position
+	cVehicle *targetVehicle;
+	cBuilding *targetBuilding;
+	selectTarget ( targetVehicle, targetBuilding, offset, srcVehicle->data.canAttack, Client->Map );
+	if ( destVehicle )
+	{
+		if ( targetVehicle != destVehicle ) return;
+		targetId = destVehicle->iID;
+	}
+	else if ( destBuilding && destBuilding != targetBuilding ) return;
+
+	// check whether we can realy attack this offset now
+	if ( !srcVehicle->CanAttackObject ( offset, Client->Map, true ) ) return;
+
+	Log.write(" Client: want to attack on endMoveAction offset " + iToStr( offset ) + ", Vehicle ID: " + iToStr( targetId ), cLog::eLOG_TYPE_NET_DEBUG );
+	sendWantAttack( targetId, offset, srcVehicle->iID, true );
 }
 
 bool cEndMoveAction::getSuccess()

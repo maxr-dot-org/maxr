@@ -84,6 +84,7 @@ class cPathCalculator
 public:
 	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group = NULL );
 	cPathCalculator( int ScrX, int ScrY, cVehicle *destVehicle, cBuilding *destBuilding, cMap *Map, cVehicle *Vehicle, bool load );
+	cPathCalculator( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, int attackX, int attackY );
 	~cPathCalculator();
 
 	/**
@@ -189,8 +190,9 @@ class cEndMoveAction
 	cBuilding *srcBuilding;
 	cVehicle *srcVehicle;
 
-	cBuilding *destBuilding;
 	cVehicle *destVehicle;
+	cBuilding *destBuilding;
+	int destX, destY;
 
 	bool success;
 
@@ -206,7 +208,7 @@ class cEndMoveAction
 	void executeGetInAction();
 	void executeAttackAction();
 public:
-	cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
+	cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_, int destX_ = -1, int destY_ = -1 );
 	~cEndMoveAction();
 
 	void execute();
