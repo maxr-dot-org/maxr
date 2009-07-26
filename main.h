@@ -64,7 +64,6 @@ struct sLockElem;
 struct sSubBase;
 struct sBuildStruct;
 struct sFX;
-struct sPathCalc;
 struct sTurnstartReport;
 struct sVehicle;
 

@@ -33,15 +33,6 @@ enum MJOB_TYPES
 };
 
 // structures for the calculation of the path
-struct sPathCalc
-{
-	sPathCalc *prev;
-	int X,Y;
-	int WayCosts;
-	int CostsGes;
-	bool road;
-};
-
 struct sWaypoint
 {
 	sWaypoint *next;
@@ -63,10 +54,36 @@ struct sPathNode
 	int fieldCosts;
 };
 
+enum ePathDestinationTypes
+{
+	PATH_DEST_TYPE_POS,
+	PATH_DEST_TYPE_LOAD,
+	PATH_DEST_TYPE_ATTACK
+};
+
+class cPathDestHandler
+{
+	ePathDestinationTypes type;
+
+	cVehicle *srcVehicle;
+
+	cBuilding *destBuilding;
+	cVehicle *destVehicle;
+	int destX, destY;
+public:
+	cPathDestHandler ( ePathDestinationTypes type_, int destX, int destY, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
+
+	bool hasReachedDestination( int x, int y );
+	int heuristicCost ( int srcX, int srcY );
+};
+
 class cPathCalculator
 {
+	void init( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group );
+
 public:
 	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group = NULL );
+	cPathCalculator( int ScrX, int ScrY, cVehicle *destVehicle, cBuilding *destBuilding, cMap *Map, cVehicle *Vehicle, bool load );
 	~cPathCalculator();
 
 	/**
@@ -84,10 +101,12 @@ public:
 	cMap *Map;
 	/* the moving vehicle */
 	cVehicle *Vehicle;
+	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
 	cList<cVehicle*> *group;
 	/* source and destination coords */
-	int ScrX, ScrY, DestX, DestY;
+	int ScrX, ScrY;
 	bool bPlane, bShip;
+	cPathDestHandler *destHandler;
 
 
 private:
@@ -108,11 +127,6 @@ private:
 	sPathNode **closedList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
 	int heapCount;
-	/**
-	* calculates the heuristic costs from the sourcefield to the total path destination
-	*@author alzi alias DoctorDeath
-	*/
-	int heuristicCost ( int srcX, int srcY );
 	/**
 	* expands the nodes around the overgiven one
 	*@author alzi alias DoctorDeath
@@ -203,8 +217,10 @@ public:
 
 class cClientMoveJob
 {
+	void init ( int iSrcOff, bool bPlane, cVehicle *Vehicle );
 public:
 	cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle );
+	cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane, cVehicle *Vehicle );
 	~cClientMoveJob ();
 	cMap *Map;
 	cVehicle *Vehicle;

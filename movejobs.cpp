@@ -27,10 +27,65 @@
 #include "math.h"
 #include "settings.h"
 
+cPathDestHandler::cPathDestHandler ( ePathDestinationTypes type_, int destX_, int destY_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ ) :
+	type ( type_ ),
+	destX ( destX_ ),
+	destY ( destY_ ),
+	srcVehicle ( srcVehicle_ ),
+	destBuilding ( destBuilding_ ),
+	destVehicle ( destVehicle_ )
+{ }
+
+bool cPathDestHandler::hasReachedDestination( int x, int y )
+{
+	switch ( type )
+	{
+	case PATH_DEST_TYPE_POS:
+		return ( x == destX && y == destY );
+	case PATH_DEST_TYPE_LOAD:
+		return ( ( destBuilding && destBuilding->isNextTo ( x, y ) ) ||
+				( destVehicle && destVehicle->isNextTo ( x, y ) ) );
+	case PATH_DEST_TYPE_ATTACK:
+		return true;
+	default:
+		return true;
+	}
+	return false;
+}
+
+int cPathDestHandler::heuristicCost ( int srcX, int srcY )
+{
+	switch ( type )
+	{
+	case PATH_DEST_TYPE_POS:
+	case PATH_DEST_TYPE_LOAD:
+		return 0;
+	case PATH_DEST_TYPE_ATTACK:
+	default:
+		{
+			int deltaX = destX - srcX;
+			int deltaY = destY - srcY;
+
+			return Round ( sqrt ( (double)deltaX*deltaX + deltaY*deltaY ) );
+		}
+	}
+}
+
 cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group )
 {
-	this->DestX = DestX;
-	this->DestY = DestY;
+	destHandler = new cPathDestHandler ( PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL, NULL );
+	init ( ScrX, ScrY, Map, Vehicle, group );
+}
+
+
+cPathCalculator::cPathCalculator( int ScrX, int ScrY, cVehicle *destVehicle, cBuilding *destBuilding, cMap *Map, cVehicle *Vehicle, bool load )
+{
+	destHandler = new cPathDestHandler ( load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, 0, 0, Vehicle, destBuilding, destVehicle );
+	init ( ScrX, ScrY, Map, Vehicle, NULL );
+}
+
+void cPathCalculator::init( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group )
+{
 	this->ScrX = ScrX;
 	this->ScrY = ScrY;
 	this->Map = Map;
@@ -52,6 +107,7 @@ cPathCalculator::cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap
 
 cPathCalculator::~cPathCalculator()
 {
+	delete destHandler;
 	if ( MemBlocks != NULL )
 	{
 		for ( int i = 0; i < blocknum; i++ )
@@ -80,7 +136,7 @@ sWaypoint* cPathCalculator::calcPath ()
 	StartNode->x = ScrX;
 	StartNode->y = ScrY;
 	StartNode->costG = 0;
-	StartNode->costH = heuristicCost ( ScrX, ScrY );
+	StartNode->costH = destHandler->heuristicCost ( ScrX, ScrY );
 	StartNode->costF = StartNode->costG+StartNode->costH;
 
 	StartNode->prev = NULL;
@@ -98,7 +154,7 @@ sWaypoint* cPathCalculator::calcPath ()
 		deleteFirstFromHeap();
 
 		// generate waypoints when destination has been reached
-		if ( CurrentNode->x == DestX && CurrentNode->y == DestY )
+		if ( destHandler->hasReachedDestination ( CurrentNode->x, CurrentNode->y ) )
 		{
 			sWaypoint *NextWaypoint;
 			Waypoints = new sWaypoint;
@@ -189,7 +245,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 				NewNode->x = x;
 				NewNode->y = y;
 				NewNode->costG = calcNextCost( ParentNode->x, ParentNode->y, x, y ) + ParentNode->costG;
-				NewNode->costH = heuristicCost ( x, y );
+				NewNode->costH = destHandler->heuristicCost ( x, y );
 				NewNode->costF = NewNode->costG+NewNode->costH;
 				NewNode->prev = ParentNode;
 				openList[x+y*Map->size] = NewNode;
@@ -200,7 +256,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 				// modify existing node
 				int costG, costH, costF;
 				costG = calcNextCost( ParentNode->x, ParentNode->y, x,y ) + ParentNode->costG;
-				costH = heuristicCost ( x, y );
+				costH = destHandler->heuristicCost ( x, y );
 				costF = costG+costH;
 				if ( costF < openList[x+y*Map->size]->costF )
 				{
@@ -293,15 +349,6 @@ void cPathCalculator::deleteFirstFromHeap()
 		}
 		else break;
 	}
-}
-
-int cPathCalculator::heuristicCost ( int srcX, int srcY )
-{
-	// calculate the minimal costs with the theorem of pythagoras
-	int deltaX = DestX - srcX;
-	int deltaY = DestY - srcY;
-
-	return Round ( sqrt ( (double)deltaX*deltaX + deltaY*deltaY ) );
 }
 
 int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
@@ -772,62 +819,14 @@ void cEndMoveAction::generateGetInAction()
 	if ( ( srcVehicle && !srcVehicle->canLoad ( destVehicle, false ) ) ||
 		 ( srcBuilding && !srcBuilding->canLoad ( destVehicle, false ) ) ) return;
 
-	bool big;
-	int posX, posY;
-	if ( srcVehicle )
-	{
-		big = srcVehicle->data.isBig;
-		posX = srcVehicle->PosX;
-		posY = srcVehicle->PosY;
-	}
-	else
-	{
-		big = srcBuilding->data.isBig;
-		posX = srcBuilding->PosX;
-		posY = srcBuilding->PosY;
-	}
-
-	// TODO: use a modified A*-algo here instead
-	// find the nearest free position
-	int endX = big ? posX+2 : posX+1;
-	int endY = big ? posY+2 : posY+1;
-	int nearestOffset = -1;
-	int lastShortestCosts = (Client->Map->size+Client->Map->size)*3;	// first we take the maximum costs which would be able on this map;
-	for ( int x = posX-1; x <= endX; x++ )
-	{
-		for ( int y = posY-1; y <= endY; y++ )
-		{
-			if ( x < 0 || y < 0 || x >= Client->Map->size || y >= Client->Map->size ) continue;
-			if ( !Client->Map->possiblePlaceVehicle ( destVehicle->data, x, y ) ) continue;
-
-			cPathCalculator pathCalc ( destVehicle->PosX, destVehicle->PosY, x, y, Client->Map, destVehicle );
-			sWaypoint *waypoints = pathCalc.calcPath();
-			if ( waypoints )
-			{
-				int costs = 0;
-				while ( waypoints )
-				{
-					sWaypoint *NextWaypoint = waypoints->next;
-					costs += waypoints->Costs;
-					delete waypoints;
-					waypoints = NextWaypoint;
-				}
-				if ( costs < lastShortestCosts )
-				{
-					lastShortestCosts = costs;
-					nearestOffset = x+y*Client->Map->size;
-				}
-			}
-		}
-	}
-
-	if ( nearestOffset == -1 ) return;	// no possible loading place has been found
+	cPathCalculator PathCalculator( destVehicle->PosX, destVehicle->PosY, srcVehicle, srcBuilding, Client->Map, destVehicle, true );
+	sWaypoint *waypoints = PathCalculator.calcPath();
 
 	// generate the Movejob
 	int srcOffset = destVehicle->PosX+destVehicle->PosY*Client->Map->size;
-	moveJob = new cClientMoveJob ( srcOffset, nearestOffset, destVehicle->data.factorAir > 0, destVehicle );
-	if ( moveJob->calcPath() )
+	if ( waypoints )
 	{
+		moveJob = new cClientMoveJob ( srcOffset, waypoints, destVehicle->data.factorAir > 0, destVehicle );
 		// add the endMoveAction and send the movejob
 		success = true;
 		moveJob->endMoveAction = this;
@@ -835,13 +834,6 @@ void cEndMoveAction::generateGetInAction()
 		if ( srcBuilding ) srcBuilding->passiveEndMoveActions.Add ( this );
 		sendMoveJob ( moveJob );
 		Log.write(" Client: Added new movejob with endMoveAction: VehicleID: " + iToStr ( destVehicle->iID ) + ", SrcX: " + iToStr ( destVehicle->PosX ) + ", SrcY: " + iToStr ( destVehicle->PosY ) + ", DestX: " + iToStr ( moveJob->DestX ) + ", DestY: " + iToStr ( moveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
-	}
-	else
-	{
-		// no path found so delete the movejob
-		if ( moveJob->Vehicle ) moveJob->Vehicle->ClientMoveJob = NULL;
-		delete moveJob;
-		moveJob = NULL;
 	}
 }
 
@@ -904,6 +896,32 @@ void cEndMoveAction::handleDelVehicle( cVehicle *delVehicle )
 }
 
 cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
+{	
+	DestX = iDestOff%Client->Map->size;
+	DestY = iDestOff/Client->Map->size;
+	init ( iSrcOff, bPlane, Vehicle );
+}
+
+cClientMoveJob::cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane, cVehicle *Vehicle )
+{
+	this->Waypoints = Waypoints;
+	sWaypoint *nextWaypoint = Waypoints;
+	while ( nextWaypoint )
+	{
+		if ( !nextWaypoint->next )
+		{
+			DestX = nextWaypoint->X;
+			DestY = nextWaypoint->Y;
+		}
+		nextWaypoint = nextWaypoint->next;
+	}
+
+	if ( Waypoints ) calcNextDir();
+	
+	init ( iSrcOff, bPlane, Vehicle );
+}
+
+void cClientMoveJob::init( int iSrcOff, bool bPlane, cVehicle *Vehicle )
 {
 	if ( !Client ) return;
 
@@ -911,14 +929,11 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	this->Vehicle = Vehicle;
 	ScrX = iSrcOff%Map->size;
 	ScrY = iSrcOff/Map->size;
-	DestX = iDestOff%Map->size;
-	DestY = iDestOff/Map->size;
 	this->bPlane = bPlane;
 	bFinished = false;
 	bEndForNow = false;
 	bSoundRunning = false;
 	iSavedSpeed = 0;
-	Waypoints = NULL;
 	lastWaypoints = NULL;
 	bSuspended = false;
 
