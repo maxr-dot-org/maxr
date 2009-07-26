@@ -391,6 +391,14 @@ void cClient::run()
 		// display the buffer:
 		if ( bFlagDraw )
 		{
+			CHECK_MEMORY;
+			SHOW_SCREEN
+			mouse->restoreBack( buffer ); //remove the mouse cursor, to keep the buffer mouse free
+			bFlagDraw = false;
+			bFlagDrawHud = false;
+			bFlagDrawMap = false;
+			bFlagDrawMMap = false;
+
 			if ( bStartup )
 			{
 				int hudzoom = Hud.Zoom;
@@ -405,20 +413,9 @@ void cClient::run()
 					if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
 					else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
 					bStartupHud = false;
-				}
-				drawMap();
-				drawMiniMap();
-				SHOW_SCREEN
-				
+				}				
 				bStartup = false;
 			}
-			CHECK_MEMORY;
-			SHOW_SCREEN
-			mouse->restoreBack( buffer ); //remove the mouse cursor, to keep the buffer mouse free
-			bFlagDraw = false;
-			bFlagDrawHud = false;
-			bFlagDrawMap = false;
-			bFlagDrawMMap = false;
 		}
 		else if ( !SettingsData.bFastMode )
 		{
