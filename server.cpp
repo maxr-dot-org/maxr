@@ -2570,13 +2570,7 @@ void cServer::checkDefeats ()
 			if ( Vehicle != NULL ) continue;
 			while ( Building )
 			{
-				/*if ( //!Building->data.is_bridge &&
-					!Building->data.is_connector
-//					!Building->data.is_expl_mine &&
-//					!Building->data.is_pad
-//					!Building->data.is_platform
-//					!Building->data.is_road
-					)break;*/
+				if ( Building->data.canAttack || !Building->data.canBuild.empty() ) break;
 				Building = Building->next;
 			}
 			if ( Building != NULL ) continue;

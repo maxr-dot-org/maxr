@@ -4662,6 +4662,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Log.write ( "Client: Cannot find defeated player!", LOG_TYPE_NET_WARNING );
 				break;
 			}
+			Player->isDefeated = true;
 			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
