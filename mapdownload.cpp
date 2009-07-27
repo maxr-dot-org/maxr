@@ -93,9 +93,19 @@ Sint32 MapDownload::calculateCheckSum (std::string mapName)
 		int mapSize = (int) file->tellg ();
 		char* data = new char [mapSize];
 		file->seekg (0, ios::beg);
-		file->read (data, mapSize);
+		
+		file->read (data, 9); // read only header
+		int width = data[5] + data[6] * 256;
+		int height = data[7] + data[8] * 256;
+		int relevantMapDataSize = width * height * 3; // the information after this is only for graphic stuff and not necessary for comparing two maps
+		
+		if (relevantMapDataSize + 9 <= mapSize)
+		{
+			file->read (data + 9, relevantMapDataSize);
+			if (file->bad () == false && file->eof () == false)
+				result = calcCheckSum (data, relevantMapDataSize + 9);
+		}
 		file->close ();
-		result = calcCheckSum (data, mapSize);
 		delete[] data;
 	}
 	delete file;
