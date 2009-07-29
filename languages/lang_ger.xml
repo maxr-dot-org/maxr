@@ -112,6 +112,20 @@
 			<Upgrade ENG="Upgrade" localized="Verbessern"/>
 			<Reload ENG="Reload" localized="Aufladen"/>
 			<Host_Start ENG="Start Host" localized="Starte Host"/>
+      <Units ENG="Units" localized="Einheiten"/>
+      <Disadvantages ENG="Disadvantages" localized="Schäden"/>
+      <Score ENG="Score" localized="Spielstand"/>
+      <Reports ENG="Reports" localized="Nachrichten"/>
+      <Included ENG="Included" localized="Einbezogen"/>
+      <Limited_To ENG="Limited to" localized="Begrenzt auf"/>
+      <Air_Units ENG="Airunits" localized="Lufteinheiten"/>
+      <Ground_Units ENG="Landunits" localized="Landeinheiten"/>
+      <Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
+      <Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
+      <Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
+      <Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
+      <Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
+      <Stealth_Units ENG="Stealth units" localized="Getarnte Einheiten"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear" localized="Entf."/>

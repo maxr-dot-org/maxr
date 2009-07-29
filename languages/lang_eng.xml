@@ -116,6 +116,20 @@
 			<Upgrade ENG="Upgrade"/>
 			<Reload ENG="Reload"/>
 			<Host_Start ENG="Start Host"/>
+      <Units ENG="Units"/>
+      <Disadvantages ENG="Disadvantages"/>
+      <Score ENG="Score"/>
+      <Reports ENG="Reports"/>
+      <Included ENG="Included"/>
+      <Limited_To ENG="Limited to"/>
+      <Air_Units ENG="Airunits"/>
+      <Ground_Units ENG="Landunits"/>
+      <Sea_Units ENG="Seaunits"/>
+      <Stationary_Units ENG="Stationary Units"/>
+      <Produce_Units ENG="Producing units"/>
+      <Fight_Units ENG="Fighting units"/>
+      <Damaged_Units ENG="Damaged units"/>
+      <Stealth_Units ENG="Stealth units"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear"/>
