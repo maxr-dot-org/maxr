@@ -458,20 +458,7 @@ void cMenuButton::renewButtonSurface()
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
-	text = shortenStringToSize ( text, position.w-12 );
-}
-
-string cMenuButton::shortenStringToSize ( string str, int size )
-{
-	if ( font->getTextWide ( str, fontType ) > size )
-	{
-		while ( font->getTextWide ( str + "." ) > size )
-		{
-			str.erase ( str.length()-1, str.length() );
-		}
-		str += ".";
-	}
-	return str;
+	text = font->shortenStringToSize ( text, position.w-12, fontType );
 }
 
 void cMenuButton::redraw()
@@ -566,6 +553,8 @@ cMenuCheckButton::cMenuCheckButton ( int x, int y, string text_, bool checked_, 
 	centered = centered_;
 	text = text_;
 	group = NULL;
+	textLimitWight = -1;
+
 	renewButtonSurface();
 	if ( centered ) position.x -= position.w/2;
 }
@@ -629,6 +618,7 @@ void cMenuCheckButton::renewButtonSurface()
 		position.h = src.h = 23;
 		src.x = checked ? src.w : 0;
 		src.y = 196;
+		textLimitWight = position.w-17;
 		break;
 	}
 	if ( src.w > 0 )
@@ -637,6 +627,8 @@ void cMenuCheckButton::renewButtonSurface()
 		surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	}
+
+	if ( textLimitWight != -1 ) text = font->shortenStringToSize ( text, textLimitWight, fontType );
 }
 
 bool cMenuCheckButton::preClicked()
@@ -724,6 +716,21 @@ void cMenuCheckButton::setChecked ( bool checked_ )
 bool cMenuCheckButton::isChecked()
 {
 	return checked;
+}
+
+void cMenuCheckButton::limitTextSize ( int w )
+{
+	textLimitWight = w;
+	text = font->shortenStringToSize ( text, textLimitWight, fontType );
+}
+
+cMenuRadioGroup::~cMenuRadioGroup()
+{
+	while ( buttonList.Size() )
+	{
+		delete buttonList[0];
+		buttonList.Delete ( 0 );
+	}
 }
 
 void cMenuRadioGroup::draw()
@@ -2774,4 +2781,233 @@ void cMenuScrollerHandler::setValue( int value )
 SDL_Rect cMenuScrollerHandler::getPosition()
 {
 	return position;
+}
+
+cMenuReportsUnitScreen::cMenuReportsUnitScreen( int x, int y, int w, int h, cVehicle *vehicles_, cBuilding *buildings_, cReportsMenu *parentMenu_ ) :
+	cMenuItem ( x, y ),
+	vehicles ( vehicles_ ),
+	buildings ( buildings_ ),
+	parentMenu ( parentMenu_ )
+{
+	position.w = w;
+	position.h = h;
+
+	index = 0;
+	selected = -1;
+	filterPlanes = filterGround = filterSea = filterBuilding = false;
+	filterBuild = filterAttack = filterDamaged = filterStealth = false;
+
+	maxItems = ((position.h-25) / 55);
+}
+
+void cMenuReportsUnitScreen::draw()
+{
+	goThroughUnits ( true );
+
+	if ( selected >= index*maxItems && selected < (index+1)*maxItems )
+	{
+		int selIndex = selected-index*maxItems;
+		SDL_Rect selDest = { position.x+13, position.y+26+55*selIndex, 8, 1 };
+
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.x += 30;
+		SDL_FillRect ( buffer, &selDest ,0xE0E0E0 );
+		selDest.y += 38;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.x -= 30;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.y = position.y+26+55*selIndex;
+		selDest.w = 1;
+		selDest.h = 8;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.x += 38;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.y += 31;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		selDest.x -= 38;
+		SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+	}
+}
+
+bool cMenuReportsUnitScreen::checkFilter ( sUnitData &data, bool checkInclude )
+{
+	if ( checkInclude )
+	{
+		if ( data.factorAir > 0 && !filterPlanes ) return false;
+		if ( data.factorGround > 0 && ( data.factorSea == 0 || !filterSea ) && !filterGround ) return false;
+		if ( data.factorSea > 0 && ( data.factorGround == 0 || !filterGround ) && !filterSea ) return false;
+	}
+
+	if ( data.canBuild.empty() && filterBuild ) return false;
+	if ( !data.canAttack && filterAttack ) return false;
+	if ( data.hitpointsCur >= data.hitpointsMax && filterDamaged ) return false;
+	if ( !data.isStealthOn && filterStealth ) return false;
+
+	if ( data.surfacePosition != sUnitData::SURFACE_POS_GROUND ) return false;
+
+	return true;
+}
+
+
+bool cMenuReportsUnitScreen::goThroughUnits ( bool draw, int *count_, cVehicle **vehicle, cBuilding **building )
+{
+	bool deleteCount = false;
+	int minCount = (index)*maxItems;
+	int maxCount = (index+1)*maxItems;
+	if ( !count_ )
+	{
+		count_ = new int;
+		deleteCount = true;
+	}
+	int &count = (*count_);
+	count = 0;
+
+	SDL_Rect src = { 0, 0, 32, 32 };
+	SDL_Rect dest = { position.x+17, position.y+30, 0, 0 };
+	SDL_Rect nameDest = { position.x+54, position.y+25, 75, 30 };
+
+	cVehicle *nextVehicle = vehicles;
+	while ( nextVehicle && count < maxCount )
+	{
+		bool inFilter = checkFilter ( nextVehicle->data, true );
+		if ( !inFilter || count < minCount )
+		{
+			nextVehicle = nextVehicle->next;
+			if ( inFilter ) count++;
+			continue;
+		}
+		if ( draw )
+		{
+			SDL_Surface *surface = generateUnitSurface ( nextVehicle->typ->img_org[0], nextVehicle->data );
+			SDL_BlitSurface ( surface, &src, buffer, &dest );
+			SDL_FreeSurface ( surface );
+
+			font->showTextAsBlock ( nameDest, nextVehicle->name );
+			nextVehicle->ShowDetails( false, dest.x+110, dest.y-13, buffer );
+
+			font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextVehicle->PosX ) + "," + iToStr ( nextVehicle->PosY ) );
+			font->showText ( position.x+343, position.y+35+56*(count-minCount), nextVehicle->getStatusStr() );
+			dest.y += 55; nameDest.y += 55;
+		}
+		if ( vehicle && count == selected ) (*vehicle) = nextVehicle;
+		count++;
+		nextVehicle = nextVehicle->next;
+	}
+
+	cBuilding *nextBuilding = buildings;
+	if ( filterBuilding )
+	{
+		while ( nextBuilding && count < maxCount )
+		{
+			bool inFilter = checkFilter ( nextBuilding->data, false );
+			if ( !inFilter || count < minCount )
+			{
+				nextBuilding = nextBuilding->next;
+				if ( inFilter ) count++;
+				continue;
+			}
+			if ( draw )
+			{
+				SDL_Surface *surface = generateUnitSurface ( nextBuilding->typ->img_org, nextBuilding->data );
+				SDL_BlitSurface ( surface, &src, buffer, &dest );
+				SDL_FreeSurface ( surface );
+				
+				font->showTextAsBlock ( nameDest, nextBuilding->name );
+				nextBuilding->ShowDetails( false, dest.x+110, dest.y-13, buffer );
+
+				font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextBuilding->PosX ) + "," + iToStr ( nextBuilding->PosY ) );
+				font->showText ( position.x+343, position.y+35+56*(count-minCount), nextBuilding->getStatusStr() );
+
+				dest.y += 55; nameDest.y += 55;
+			}
+			if ( building && count == selected ) (*building) = nextBuilding;
+			count++;
+			nextBuilding = nextBuilding->next;
+		}
+	}
+
+	if ( count == maxCount && ( nextVehicle || nextBuilding ) )
+	{
+		if ( deleteCount ) delete count_;	
+		return true;
+	}
+	if ( deleteCount ) delete count_;
+	return false;
+}
+
+void cMenuReportsUnitScreen::setIncludeFilter(bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_)
+{
+	filterPlanes = filterPlanes_;
+	filterGround = filterGround_;
+	filterSea = filterSea_;
+	filterBuilding = filterBuilding_;
+
+	index = 0;
+	selected = -1;
+	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
+};
+
+void cMenuReportsUnitScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
+{
+	filterBuild = filterBuild_;
+	filterAttack = filterAttack_;
+	filterDamaged = filterDamaged_;
+	filterStealth = filterStealth_;
+
+	index = 0;
+	selected = -1;
+	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
+}
+
+SDL_Surface *cMenuReportsUnitScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
+{
+	int factor = 2;
+	if ( data.isBig ) factor = 4;
+
+	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *tmpSurface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
+	scaleSurface ( oriSurface, tmpSurface, tmpSurface->w, tmpSurface->h );
+
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	if ( data.hasPlayerColor ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
+	else SDL_FillRect ( surface, NULL, 0xFF00FF );
+
+	SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
+
+	SDL_FreeSurface ( tmpSurface );
+
+	return surface;
+}
+
+void cMenuReportsUnitScreen::scrollDown()
+{
+	if ( goThroughUnits ( false ) ) index++;
+	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
+}
+
+void cMenuReportsUnitScreen::scrollUp()
+{
+	if ( index > 0 ) index--;
+	parentMenu->scrollCallback ( index > 0, goThroughUnits( false ) );
+}
+
+void cMenuReportsUnitScreen::released( void *parent )
+{
+	int clickedIndex = Round ( (mouse->y-position.x-17)/55.0 )+index*maxItems;
+	if ( clickedIndex >= (index+1)*maxItems ) clickedIndex = (index+1)*maxItems-1;
+
+	int maxDisplayedUnits;
+	cVehicle *vehicle = NULL;
+	cBuilding *building = NULL;
+	goThroughUnits ( false, &maxDisplayedUnits, &vehicle, &building );
+	if ( clickedIndex == selected )
+	{
+		parentMenu->doubleClicked ( vehicle, building );
+		return;
+	}
+	if ( clickedIndex >= maxDisplayedUnits ) return;
+
+	selected = clickedIndex;
+	parentMenu->draw();
 }

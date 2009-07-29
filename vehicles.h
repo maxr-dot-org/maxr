@@ -184,7 +184,7 @@ public:
 	void draw(SDL_Rect screenPosition );
 	void Select();
 	void Deselct();
-	void ShowDetails();
+	void ShowDetails( bool hud = true, int x = -1, int y = -1, SDL_Surface *destSurface = NULL );
 	void GenerateName();
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing

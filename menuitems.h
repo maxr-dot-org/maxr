@@ -31,6 +31,7 @@ class cUpgradeHangarMenu;
 class cNetworkMenu;
 class cMenuRadioGroup;
 class cMenuUnitsList;
+class cReportsMenu;
 
 /**
  * A struct that contains information of a savegame.
@@ -393,8 +394,6 @@ protected:
 	bool preHoveredAway();
 
 	bool preSetLocked( bool locked_ );
-
-	string shortenStringToSize ( string str, int size );
 public:
 	cMenuButton ( int x, int y, string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
 	~cMenuButton();
@@ -442,6 +441,7 @@ protected:
 
 	bool centered;
 	bool checked;
+	int textLimitWight;
 
 	void renewButtonSurface();
 
@@ -453,6 +453,8 @@ public:
 
 	void setChecked ( bool checked_ );
 	bool isChecked();
+
+	void limitTextSize ( int w );
 };
 
 /**
@@ -472,6 +474,7 @@ protected:
 	void clicked ( void *parent );
 public:
 	cMenuRadioGroup () : cMenuItem ( 0, 0 ) {}
+	~cMenuRadioGroup();
 	void draw();
 
 	void addButton( cMenuCheckButton* button );
@@ -1044,6 +1047,41 @@ public:
 	void setValue( int value );
 
 	SDL_Rect getPosition();
+};
+
+class cMenuReportsUnitScreen : public cMenuItem
+{
+	cReportsMenu *parentMenu;
+
+	cVehicle *vehicles;
+	cBuilding *buildings;
+
+	int index;
+	int selected;
+
+	int maxItems;
+
+	bool filterPlanes, filterGround, filterSea, filterBuilding;
+	bool filterBuild, filterAttack, filterDamaged, filterStealth;
+
+	bool checkFilter ( sUnitData &data, bool checkInclude );
+
+	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
+
+	SDL_Surface *generateUnitSurface ( SDL_Surface *oriSurface, sUnitData &data );
+
+public:
+	cMenuReportsUnitScreen ( int x, int y, int w, int h, cVehicle *vehicles_, cBuilding *buildings_, cReportsMenu *parentMenu_ );
+
+	void draw();
+
+	void setIncludeFilter ( bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_ );
+	void setBorderedFilter ( bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_ );
+
+	void scrollDown();
+	void scrollUp();
+
+	void released( void *parent );
 };
 
 #endif // menuitemsH

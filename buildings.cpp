@@ -2721,68 +2721,78 @@ void cBuilding::Deselct ()
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::ShowDetails ()
+void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
 {
 	SDL_Rect src, dest;
-	// Den Hintergrund wiederherstellen:
-	src.x = 0;
-	src.y = 215;
-	src.w = 155;
-	src.h = 48;
-	dest.x = 8;
-	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
-	// Die Hitpoints anzeigen:
-	DrawNumber ( 31, 177, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
-	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+	if ( hud )
+	{
+		// Den Hintergrund wiederherstellen:
+		src.x = 0;
+		src.y = 215;
+		src.w = 155;
+		src.h = 48;
+		dest.x = 8;
+		dest.y = 171;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
+		destSurface = GraphicsData.gfx_hud;
+	}
+	else
+	{
+		dest.x = x;
+		dest.y = y;
+		if ( !destSurface ) return;
+	}
 
-	DrawSymbol ( SHits, 88, 174, 70, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
+	// Die Hitpoints anzeigen:
+	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );
+	font->showText ( dest.x+47, dest.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, destSurface );
+	DrawSymbol ( SHits, dest.x+80, dest.y+3, 70, data.hitpointsCur, data.hitpointsMax, destSurface );
 	// additional values:
 
 	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
 	{
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, destSurface );
 				
 		if ( data.storeResType > 0 )
 		{
-			DrawNumber ( 31, 189, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.storageResCur, data.storageResMax, destSurface );
 
-			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
 			switch ( data.storeResType )
 			{
 			case sUnitData::STORE_RES_METAL:
-				DrawSymbol ( SMetal, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
-				DrawNumber ( 31, 201, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
-				DrawSymbol ( SMetal, 88, 198, 70, SubBase->Metal, SubBase->MaxMetal, GraphicsData.gfx_hud );
+				DrawSymbol ( SMetal, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
+				DrawNumber ( dest.x+23, dest.y+30, SubBase->Metal, SubBase->MaxMetal, destSurface );
+				DrawSymbol ( SMetal, dest.x+80, dest.y+27, 70, SubBase->Metal, SubBase->MaxMetal, destSurface );
 				break;
 			case sUnitData::STORE_RES_OIL:
-				DrawSymbol ( SOil, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
-				DrawNumber ( 31, 201, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
-				DrawSymbol ( SOil, 88, 198, 70, SubBase->Oil, SubBase->MaxOil, GraphicsData.gfx_hud );
+				DrawSymbol ( SOil, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
+				DrawNumber ( dest.x+23, dest.y+30, SubBase->Oil, SubBase->MaxOil, destSurface );
+				DrawSymbol ( SOil, dest.x+80, dest.y+27, 70, SubBase->Oil, SubBase->MaxOil, destSurface );
 				break;
 			case sUnitData::STORE_RES_GOLD:
-				DrawSymbol ( SGold, 88, 187, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
-				DrawNumber ( 31, 201, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
-				DrawSymbol ( SGold, 88, 199, 70, SubBase->Gold, SubBase->MaxGold, GraphicsData.gfx_hud );
+				DrawSymbol ( SGold, dest.x+80, dest.y+16, 70, data.storageResCur, data.storageResMax, destSurface );
+				DrawNumber ( dest.x+23, dest.y+30, SubBase->Gold, SubBase->MaxGold, destSurface );
+				DrawSymbol ( SGold, dest.x+80,  dest.y+28, 70, SubBase->Gold, SubBase->MaxGold, destSurface );
 				break;
 			}
 		}
 		else
 		{
-			DrawNumber ( 31, 189, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 
 			switch ( data.storeUnitsImageType )
 			{
 			case sUnitData::STORE_UNIT_IMG_TANK:
 			case sUnitData::STORE_UNIT_IMG_SHIP:
-				DrawSymbol ( STrans, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( STrans, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			case sUnitData::STORE_UNIT_IMG_PLANE:
-				DrawSymbol ( SAir, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SAir, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			case sUnitData::STORE_UNIT_IMG_HUMAN:
-				DrawSymbol ( SHuman, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SHuman, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			}
 		}
@@ -2792,61 +2802,61 @@ void cBuilding::ShowDetails ()
 		if ( owner == Client->ActivePlayer )
 		{
 			// ammo:
-			DrawNumber ( 31, 189, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
-			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.ammoCur, data.ammoMax, destSurface );
+			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
+			DrawSymbol ( SAmmo, dest.x+80, dest.y+16, 70, data.ammoCur, data.ammoMax, destSurface );
 		}
 
 		// shots:
-		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
+		DrawNumber ( dest.x+23,  dest.y+41, data.shotsCur, data.shotsMax, destSurface );
 
-		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-		DrawSymbol ( SShots, 88, 212, 70, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
+		DrawSymbol ( SShots, dest.x+80,  dest.y+41, 70, data.shotsCur, data.shotsMax, destSurface );
 	}
 	else if ( data.produceEnergy )
 	{
 		// EnergieProduktion:
-		DrawNumber ( 31, 189, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		DrawNumber ( dest.x+23, dest.y+18, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, destSurface );
+		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-		DrawSymbol ( SEnergy, 88, 187, 70, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, GraphicsData.gfx_hud );
+		DrawSymbol ( SEnergy, dest.x+80, dest.y+16, 70, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, destSurface );
 
 		if ( owner == Client->ActivePlayer )
 		{
 			// Gesammt:
-			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawNumber ( 31, 201, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
-			DrawSymbol ( SEnergy, 88, 199, 70, SubBase->EnergyProd, SubBase->MaxEnergyProd, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+30, SubBase->EnergyProd, SubBase->MaxEnergyProd, destSurface );
+			DrawSymbol ( SEnergy, dest.x+80,  dest.y+28, 70, SubBase->EnergyProd, SubBase->MaxEnergyProd, destSurface );
 			// Verbrauch:
-			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawNumber ( 31, 212, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
-			DrawSymbol ( SEnergy, 88, 212, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23,  dest.y+41, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, destSurface );
+			DrawSymbol ( SEnergy, dest.x+80,  dest.y+41, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, destSurface );
 		}
 	}
 	else if ( data.produceHumans )
 	{
 		// HumanProduktion:
-		DrawNumber ( 31, 189, data.produceHumans, data.produceHumans, GraphicsData.gfx_hud );
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		DrawNumber ( dest.x+23, dest.y+18, data.produceHumans, data.produceHumans, destSurface );
+		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-		DrawSymbol ( SHuman, 88, 187, 70, data.produceHumans, data.produceHumans, GraphicsData.gfx_hud );
+		DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, data.produceHumans, data.produceHumans, destSurface );
 
 		if ( owner == Client->ActivePlayer )
 		{
 			// Gesammt:
-			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawNumber ( 31, 201, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
-			DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanProd, SubBase->HumanProd, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+30, SubBase->HumanProd, SubBase->HumanProd, destSurface );
+			DrawSymbol ( SHuman, dest.x+80,  dest.y+28, 70, SubBase->HumanProd, SubBase->HumanProd, destSurface );
 			// Verbrauch:
-			font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawNumber ( 31, 212, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
-			DrawSymbol ( SHuman, 88, 210, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23,  dest.y+41, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
+			DrawSymbol ( SHuman, dest.x+80, dest.y+39, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
 		}
 	}
 	else if ( data.needsHumans )
@@ -2854,26 +2864,26 @@ void cBuilding::ShowDetails ()
 		// HumanNeed:
 		if ( IsWorking )
 		{
-			DrawNumber ( 31, 189, data.needsHumans, data.needsHumans, GraphicsData.gfx_hud );
-			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.needsHumans, data.needsHumans, destSurface );
+			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawSymbol ( SHuman, 88, 187, 70, data.needsHumans, data.needsHumans, GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, data.needsHumans, data.needsHumans, destSurface );
 		}
 		else
 		{
-			DrawNumber ( 31, 189, 0, data.needsHumans, GraphicsData.gfx_hud );
-			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, 0, data.needsHumans, destSurface );
+			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawSymbol ( SHuman, 88, 187, 70, 0, data.needsHumans, GraphicsData.gfx_hud );
+			DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, 0, data.needsHumans, destSurface );
 		}
 
 		if ( owner == Client->ActivePlayer )
 		{
 			// Gesammt:
-			font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-			DrawNumber ( 31, 201, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
-			DrawSymbol ( SHuman, 88, 199, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+30, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
+			DrawSymbol ( SHuman, dest.x+80,  dest.y+28, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
 		}
 	}
 	Client->bFlagDrawHud = true;

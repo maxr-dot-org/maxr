@@ -963,64 +963,74 @@ int cVehicle::refreshData ()
 //-----------------------------------------------------------------------------
 /** Shows the unit stats of the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::ShowDetails ()
+void cVehicle::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
 {
 	SDL_Rect src, dest;
-	// Den Hintergrund wiederherstellen:
-	src.x = 0;
-	src.y = 215;
-	src.w = 155;
-	src.h = 48;
-	dest.x = 8;
-	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
+	if ( hud )
+	{
+		// Den Hintergrund wiederherstellen:
+		src.x = 0;
+		src.y = 215;
+		src.w = 155;
+		src.h = 48;
+		dest.x = 8;
+		dest.y = 171;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
+		destSurface = GraphicsData.gfx_hud;
+	}
+	else
+	{
+		dest.x = x;
+		dest.y = y;
+		if ( !destSurface ) return;
+	}
 	// Die Hitpoints anzeigen:
-	DrawNumber ( 31, 177, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
+	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );
 
-	font->showText ( 55, 177, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-	DrawSymbol ( SHits, 88, 174, 70, data.hitpointsCur, data.hitpointsMax, GraphicsData.gfx_hud );
+	font->showText ( dest.x+47, dest.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, destSurface );
+	DrawSymbol ( SHits, dest.x+80, dest.y+3, 70, data.hitpointsCur, data.hitpointsMax, destSurface );
 	// Den Speed anzeigen:
-	DrawNumber ( 31, 201, data.speedCur / 4, data.speedMax / 4, GraphicsData.gfx_hud );
+	DrawNumber ( dest.x+23, dest.y+30, data.speedCur / 4, data.speedMax / 4, destSurface );
 
-	font->showText ( 55, 201, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-	DrawSymbol ( SSpeed, 88, 199, 70, data.speedCur / 4, data.speedMax / 4, GraphicsData.gfx_hud );
+	font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, destSurface );
+	DrawSymbol ( SSpeed, dest.x+80, dest.y+28, 70, data.speedCur / 4, data.speedMax / 4, destSurface );
 	// additional values
 
 	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
 	{
-		font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
 		if ( data.storeResType > 0 )
 		{
-			DrawNumber ( 31, 189, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.storageResCur, data.storageResMax, destSurface );
 			switch ( data.storeResType )
 			{
 			case sUnitData::STORE_RES_METAL:
-				DrawSymbol ( SMetal, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SMetal, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
 				break;
 			case sUnitData::STORE_RES_OIL:
-				DrawSymbol ( SOil, 88, 186, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SOil, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
 				break;
 			case sUnitData::STORE_RES_GOLD:
-				DrawSymbol ( SGold, 88, 187, 70, data.storageResCur, data.storageResMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SGold, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
 				break;
 			}
 		}
 		else
 		{
-			DrawNumber ( 31, 189, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 
 			switch ( data.storeUnitsImageType )
 			{
 			case sUnitData::STORE_UNIT_IMG_TANK:
 			case sUnitData::STORE_UNIT_IMG_SHIP:
-				DrawSymbol ( STrans, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( STrans, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			case sUnitData::STORE_UNIT_IMG_PLANE:
-				DrawSymbol ( SAir, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SAir, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			case sUnitData::STORE_UNIT_IMG_HUMAN:
-				DrawSymbol ( SHuman, 88, 186, 70, data.storageUnitsCur, data.storageUnitsMax, GraphicsData.gfx_hud );
+				DrawSymbol ( SHuman, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
 				break;
 			}
 		}
@@ -1030,18 +1040,18 @@ void cVehicle::ShowDetails ()
 		if ( owner == Client->ActivePlayer )
 		{
 			// Munition:
-			DrawNumber ( 31, 189, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
+			DrawNumber ( dest.x+23, dest.y+18, data.ammoCur, data.ammoMax, destSurface );
 
-			font->showText ( 55, 189, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
-			DrawSymbol ( SAmmo, 88, 187, 70, data.ammoCur, data.ammoMax, GraphicsData.gfx_hud );
+			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, destSurface );
+			DrawSymbol ( SAmmo, dest.x+80, dest.y+16, 70, data.ammoCur, data.ammoMax, destSurface );
 		}
 
 		// shots
-		DrawNumber ( 31, 212, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
+		DrawNumber ( dest.x+23, dest.y+41, data.shotsCur, data.shotsMax, destSurface );
 
-		font->showText ( 55, 212, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, GraphicsData.gfx_hud );
+		font->showText ( dest.x+47, dest.y+41, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, destSurface );
 
-		DrawSymbol ( SShots, 88, 212, 70, data.shotsCur, data.shotsMax, GraphicsData.gfx_hud );
+		DrawSymbol ( SShots, dest.x+80, dest.y+41, 70, data.shotsCur, data.shotsMax, destSurface );
 	}
 
 	Client->bFlagDrawHud = true;

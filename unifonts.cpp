@@ -624,6 +624,20 @@ int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 	return 0;
 }
 
+
+string cUnicodeFont::shortenStringToSize ( string str, int size, eUnicodeFontType fonttype )
+{
+	if ( font->getTextWide ( str, fonttype ) > size )
+	{
+		while ( font->getTextWide ( str + "." ) > size )
+		{
+			str.erase ( str.length()-1, str.length() );
+		}
+		str += ".";
+	}
+	return str;
+}
+
 Uint16 cUnicodeFont::encodeUTF8Char ( unsigned char *pch, int *increase )
 {
 	// encode the UTF-8 character to his unicode position

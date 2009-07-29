@@ -1061,4 +1061,45 @@ public:
 	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
+class cReportsMenu : public cMenu
+{
+	cPlayer *owner;
+
+	cMenuRadioGroup *typeButtonGroup;
+
+	cMenuLabel *includedLabel;
+	cMenuCheckButton *planesCheckBtn;
+	cMenuCheckButton *groundCheckBtn;
+	cMenuCheckButton *seaCheckBtn;
+	cMenuCheckButton *stationaryCheckBtn;
+
+	cMenuLabel *borderedLabel;
+	cMenuCheckButton *buildCheckBtn;
+	cMenuCheckButton *fightCheckBtn;
+	cMenuCheckButton *damagedCheckBtn;
+	cMenuCheckButton *stealthCheckBtn;
+
+	cMenuButton *doneButton;
+	cMenuButton *upButton;
+	cMenuButton *downButton;
+
+	cMenuReportsUnitScreen *unitsScreen;
+public:
+	cReportsMenu( cPlayer *owner_ );
+	~cReportsMenu();
+
+	static void doneReleased( void *parent );
+
+	static void upReleased( void *parent );
+	static void downReleased( void *parent );
+
+	static void typeChanged( void *parent );
+	
+	static void filterClicked( void *parent );
+
+	void scrollCallback ( bool upPossible, bool downPossible );
+
+	void doubleClicked ( cVehicle *vehicle, cBuilding *building );
+};
+
 #endif //menusH

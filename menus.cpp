@@ -5017,3 +5017,172 @@ void cMineManagerMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle
 {
 	if ( destroyedBuilding == building ) terminate = true;
 }
+
+cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
+	cMenu ( LoadPCX ( GFXOD_REPORTS ), MNU_BG_ALPHA ),
+	owner ( owner_ )
+{
+	typeButtonGroup = new cMenuRadioGroup();
+	menuItems.Add ( typeButtonGroup );
+
+	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71, lngPack.i18n ("Text~Button~Units"), true, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
+	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29, lngPack.i18n ("Text~Button~Disadvantages"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
+	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*2, lngPack.i18n ("Text~Button~Score"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
+	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*3, lngPack.i18n ("Text~Button~Reports"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
+	
+	includedLabel = new cMenuLabel ( position.x+497, position.y+207, lngPack.i18n ("Text~Button~Included") + ":" );
+	menuItems.Add ( includedLabel );
+
+	planesCheckBtn = new cMenuCheckButton ( position.x+496, position.y+218, lngPack.i18n ("Text~Button~Air_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	planesCheckBtn->setClickedFunction ( &filterClicked );
+	planesCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( planesCheckBtn );
+	groundCheckBtn = new cMenuCheckButton ( position.x+496, position.y+218+18, lngPack.i18n ("Text~Button~Ground_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	groundCheckBtn->setClickedFunction ( &filterClicked );
+	groundCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( groundCheckBtn );
+	seaCheckBtn = new cMenuCheckButton ( position.x+496, position.y+218+18*2, lngPack.i18n ("Text~Button~Sea_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	seaCheckBtn->setClickedFunction ( &filterClicked );
+	seaCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( seaCheckBtn );
+	stationaryCheckBtn = new cMenuCheckButton ( position.x+496, position.y+218+18*3, lngPack.i18n ("Text~Button~Stationary_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	stationaryCheckBtn->setClickedFunction ( &filterClicked );
+	stationaryCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( stationaryCheckBtn );
+
+	borderedLabel = new cMenuLabel ( position.x+497, position.y+299, lngPack.i18n ("Text~Button~Limited_To") + ":" );
+	menuItems.Add ( borderedLabel );
+
+	buildCheckBtn = new cMenuCheckButton ( position.x+496, position.y+312, lngPack.i18n ("Text~Button~Produce_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	buildCheckBtn->setClickedFunction ( &filterClicked );
+	buildCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( buildCheckBtn );
+	fightCheckBtn = new cMenuCheckButton ( position.x+496, position.y+312+18, lngPack.i18n ("Text~Button~Fight_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	fightCheckBtn->setClickedFunction ( &filterClicked );
+	fightCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( fightCheckBtn );
+	damagedCheckBtn = new cMenuCheckButton ( position.x+496, position.y+312+18*2, lngPack.i18n ("Text~Button~Damaged_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	damagedCheckBtn->setClickedFunction ( &filterClicked );
+	damagedCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( damagedCheckBtn );
+	stealthCheckBtn = new cMenuCheckButton ( position.x+496, position.y+312+18*3, lngPack.i18n ("Text~Button~Stealth_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	stealthCheckBtn->setClickedFunction ( &filterClicked );
+	stealthCheckBtn->limitTextSize ( 123 );
+	menuItems.Add ( stealthCheckBtn );
+
+	doneButton = new cMenuButton ( position.x+524, position.y+398, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	// its important that the screen will be added before the up and down buttons
+	unitsScreen = new cMenuReportsUnitScreen ( position.x+7, position.y+6, 479, 467, owner->VehicleList, owner->BuildingList, this );
+	menuItems.Add ( unitsScreen );
+
+	upButton = new cMenuButton ( position.x+492, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG );
+	upButton->setReleasedFunction ( &upReleased );
+	menuItems.Add ( upButton );
+
+	downButton = new cMenuButton ( position.x+525, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG );
+	downButton->setReleasedFunction ( &downReleased );
+	menuItems.Add ( downButton );
+
+	filterClicked ( this );
+}
+
+cReportsMenu::~cReportsMenu()
+{
+	delete typeButtonGroup;
+
+	delete includedLabel;
+	delete planesCheckBtn;
+	delete groundCheckBtn;
+	delete seaCheckBtn;
+	delete stationaryCheckBtn;
+	
+	delete borderedLabel;
+	delete buildCheckBtn;
+	delete fightCheckBtn;
+	delete damagedCheckBtn;
+	delete stealthCheckBtn;
+
+	delete doneButton;
+	delete upButton;
+	delete downButton;
+
+	delete unitsScreen;
+
+	if ( Client ) Client->bFlagDrawHud = true;
+}
+
+void cReportsMenu::doneReleased(void *parent)
+{
+	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	menu->end = true;
+}
+
+void cReportsMenu::upReleased(void *parent)
+{
+	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	menu->unitsScreen->scrollUp();
+	menu->draw();
+}
+
+void cReportsMenu::downReleased(void *parent)
+{
+	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	menu->unitsScreen->scrollDown();
+	menu->draw();
+}
+
+void cReportsMenu::typeChanged(void *parent)
+{
+	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+}
+
+void cReportsMenu::filterClicked( void *parent )
+{
+	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+
+	menu->unitsScreen->setIncludeFilter ( menu->planesCheckBtn->isChecked(), menu->groundCheckBtn->isChecked(), menu->seaCheckBtn->isChecked(), menu->stationaryCheckBtn->isChecked() );
+	menu->unitsScreen->setBorderedFilter ( menu->buildCheckBtn->isChecked(), menu->fightCheckBtn->isChecked(), menu->damagedCheckBtn->isChecked(), menu->stealthCheckBtn->isChecked() );
+}
+
+void cReportsMenu::scrollCallback ( bool upPossible, bool downPossible )
+{
+	upButton->setLocked ( !upPossible );
+	downButton->setLocked ( !downPossible );
+}
+
+void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
+{
+	if ( !vehicle && !building ) return;
+
+	if ( Client->SelectedVehicle )
+	{
+		Client->SelectedVehicle->Deselct();
+		Client->SelectedVehicle = NULL;
+		StopFXLoop ( Client->iObjectStream );
+	}
+	else if ( Client->SelectedBuilding )
+	{
+		Client->SelectedBuilding->Deselct();
+		Client->SelectedBuilding = NULL;
+		StopFXLoop ( Client->iObjectStream );
+	}
+
+	if ( vehicle )
+	{
+		Client->SelectedVehicle = vehicle;
+		vehicle->Select();
+		vehicle->Center();
+		Client->iObjectStream = vehicle->playStream();
+	}
+	else if ( building )
+	{
+		Client->SelectedBuilding = building;
+		building->Select();
+		building->Center();
+		Client->iObjectStream = building->playStream();
+	}
+	end = true;
+}

@@ -956,8 +956,8 @@ void cHud::CheckMouseOver ( sMouseState &MouseState )
 		else if ( lb )
 		{
 			PlayFX ( SoundData.SNDHudButton );
-			//TODO: Log-Menü aufrufen...
-			Client->addMessage ( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented") );
+			cReportsMenu reportMenu ( Client->ActivePlayer );
+			reportMenu.show();
 
 			LogButton ( false );
 		}

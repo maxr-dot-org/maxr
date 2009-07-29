@@ -82,6 +82,7 @@
 #define GFXOD_STORAGE_GROUND	(SettingsData.sGfxPath + PATH_DELIMITER + "storage_ground.pcx").c_str()
 #define GFXOD_MULT				(SettingsData.sGfxPath + PATH_DELIMITER + "multi.pcx").c_str()
 #define GFXOD_MINEMANAGER		(SettingsData.sGfxPath + PATH_DELIMITER + "mine_manager.pcx").c_str()
+#define GFXOD_REPORTS			(SettingsData.sGfxPath + PATH_DELIMITER + "reports.pcx").c_str()
 #define GFXOD_DIALOG2			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx").c_str()
 #define GFXOD_DIALOG4			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog4.pcx").c_str()
 #define GFXOD_DIALOG5			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog5.pcx").c_str()

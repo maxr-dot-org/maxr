@@ -137,6 +137,8 @@ class cUnicodeFont
 		 * @return Height of fonttype in pixels
 		 */
 		int getFontHeight( eUnicodeFontType fonttype = FONT_LATIN_NORMAL );
+
+		string shortenStringToSize ( string str, int size, eUnicodeFontType fonttype );
 	private:
 		// character surfaces. Since SDL maximal gives us the unicodes from BMP we maximaly need 0xFFFF surfaces
 		SDL_Surface *charsNormal[0xFFFF];
