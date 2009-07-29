@@ -612,6 +612,13 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else if (Client->OverUnitField && 
 				(
+					Client->OverUnitField->getVehicles() ||
+					(
+						Client->OverUnitField->getBuildings() &&
+						Client->OverUnitField->getBuildings()->owner
+					)
+				) &&
+				(
 					!selectedVehicle                               ||
 					selectedVehicle->owner != Client->ActivePlayer ||
 					(
@@ -659,7 +666,8 @@ void cHud::CheckScroll ( bool pure )
 						!selectedBuilding->LoadActive &&
 						!selectedBuilding->ActivatingVehicle
 					)
-				))
+				)
+				)
 		{
 			mouse->SetCursor ( CSelect );
 		}
