@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0A673E10112657005D7516 /* mapdownload.cpp */; };
 		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
 		9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
 		9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
 		9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
 		9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
 		9F80D8940FB495F6002FE83F /* clans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F80D8930FB495F6002FE83F /* clans.cpp */; };
+		9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F87B6C6101A43EA00A119FC /* settings.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
@@ -77,6 +79,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9F0A673E10112657005D7516 /* mapdownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdownload.cpp; path = ../mapdownload.cpp; sourceTree = SOURCE_ROOT; };
+		9F0A67421011267D005D7516 /* mapdownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapdownload.h; path = ../mapdownload.h; sourceTree = SOURCE_ROOT; };
 		9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuevents.cpp; path = ../menuevents.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA1400FB8B74100CC2B17 /* menuevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuevents.h; path = ../menuevents.h; sourceTree = SOURCE_ROOT; };
 		9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuitems.cpp; path = ../menuitems.cpp; sourceTree = SOURCE_ROOT; };
@@ -89,6 +93,8 @@
 		9F7F33D00F8F814C00B00D61 /* drawingcache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = drawingcache.h; path = ../drawingcache.h; sourceTree = SOURCE_ROOT; };
 		9F80D8920FB495F6002FE83F /* clans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = clans.h; path = ../clans.h; sourceTree = SOURCE_ROOT; };
 		9F80D8930FB495F6002FE83F /* clans.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clans.cpp; path = ../clans.cpp; sourceTree = SOURCE_ROOT; };
+		9F87B6C5101A43EA00A119FC /* settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = settings.h; path = ../settings.h; sourceTree = SOURCE_ROOT; };
+		9F87B6C6101A43EA00A119FC /* settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = settings.cpp; path = ../settings.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -247,6 +253,8 @@
 				9FC0DB9D0EE2B17400F23D2C /* main.h */,
 				9FC0DB9E0EE2B17400F23D2C /* map.cpp */,
 				9FC0DB9F0EE2B17400F23D2C /* map.h */,
+				9F0A673E10112657005D7516 /* mapdownload.cpp */,
+				9F0A67421011267D005D7516 /* mapdownload.h */,
 				9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */,
 				9F5DA1400FB8B74100CC2B17 /* menuevents.h */,
 				9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */,
@@ -276,6 +284,8 @@
 				9FC0DBB60EE2B17400F23D2C /* server.h */,
 				9FC0DBB70EE2B17400F23D2C /* serverevents.cpp */,
 				9FC0DBB80EE2B17400F23D2C /* serverevents.h */,
+				9F87B6C6101A43EA00A119FC /* settings.cpp */,
+				9F87B6C5101A43EA00A119FC /* settings.h */,
 				9FC0DBB90EE2B17400F23D2C /* sound.cpp */,
 				9FC0DBBA0EE2B17400F23D2C /* sound.h */,
 				9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */,
@@ -430,6 +440,8 @@
 				9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */,
 				9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */,
 				9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */,
+				9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */,
+				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
