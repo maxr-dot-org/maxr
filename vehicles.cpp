@@ -3395,17 +3395,18 @@ void cVehicle::makeDetection()
 		{
 			cPlayer* player = (*Server->PlayerList)[i];
 			if ( player == owner ) continue;
-
-			if ( (data.isStealthOn&TERRAIN_GROUND) && ( player->DetectLandMap[offset] || Server->Map->IsWater(offset) ))
-			{
-				setDetectedByPlayer( player );
-			}
-			
 			bool water = Server->Map->IsWater(offset, true);
+			bool coast = Server->Map->IsWater(offset) && !water;
+
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
 			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
-			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
+			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = coast = false;
+
+			if ( (data.isStealthOn&TERRAIN_GROUND) && ( player->DetectLandMap[offset] || ( !(data.isStealthOn&TERRAIN_COAST) && coast ) || water ))
+			{
+				setDetectedByPlayer( player );
+			}
 
 			if ( (data.isStealthOn&TERRAIN_SEA) && ( player->DetectSeaMap[offset] || !water ))
 			{

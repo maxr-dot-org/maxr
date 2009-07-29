@@ -511,12 +511,16 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
 		{
 			cPlayer* player = Vehicle->DetectedByPlayerList[i];
-			if ( (Vehicle->data.isStealthOn&TERRAIN_GROUND) && ( !player->DetectLandMap[offset] && !Server->Map->IsWater(offset) ))
-			{
-				Vehicle->resetDetectedByPlayer( player );
-				i--;
-			}
-			else if ( (Vehicle->data.isStealthOn&TERRAIN_SEA) && ( !player->DetectSeaMap[offset] && Server->Map->IsWater(offset) ))
+
+			bool water = Server->Map->IsWater(offset, true);
+			bool coast = Server->Map->IsWater(offset) && !water;
+			
+			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
+			if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = coast = false;
+
+			if ( ( (Vehicle->data.isStealthOn&TERRAIN_GROUND) && !player->DetectLandMap[offset] && !water && !coast )||
+				 ( (Vehicle->data.isStealthOn&TERRAIN_COAST) && !player->DetectLandMap[offset] && coast ) ||
+				 ( (Vehicle->data.isStealthOn&TERRAIN_SEA) && !player->DetectSeaMap[offset] && water ) )
 			{
 				Vehicle->resetDetectedByPlayer( player );
 				i--;
