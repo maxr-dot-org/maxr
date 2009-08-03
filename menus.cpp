@@ -5075,7 +5075,7 @@ cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
 	menuItems.Add ( doneButton );
 
 	// its important that the screen will be added before the up and down buttons
-	unitsScreen = new cMenuReportsUnitScreen ( position.x+7, position.y+6, 479, 467, owner->VehicleList, owner->BuildingList, this );
+	unitsScreen = new cMenuReportsUnitScreen ( position.x+7, position.y+6, 479, 467, owner, this );
 	menuItems.Add ( unitsScreen );
 
 	upButton = new cMenuButton ( position.x+492, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG );

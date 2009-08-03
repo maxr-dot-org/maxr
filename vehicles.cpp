@@ -1674,44 +1674,43 @@ void cVehicle::StartMoveSound ()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawMenu ( sMouseState *mouseState )
 {
-	int nr = 0, SelMenu = -1, ExeNr = -1;
-	static int LastNr = -1;
+	int nr = 0, ExeNr = -1;
+	static int SelMenu = -1;
+	static int LastSelMenu = -1;
 	bool bSelection = false;
 	SDL_Rect dest;
 	dest = GetMenuSize();
-	Transfer = false;
 
 	if ( moving || bIsBeeingAttacked )
 		return;
 
-	if ( mouseState && mouseState->leftButtonReleased && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( SelMenu == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
-		LastNr = SelMenu;
 	}
-	else
-		if ( MouseOverMenu ( mouse->x, mouse->y ) )
-		{
-			ExeNr = LastNr;
-			LastNr = -1;
-		}
-		else
-		{
-			SelMenu = -1;
-			LastNr = -1;
-		}
+	else if ( mouseState && mouseState->leftButtonReleased )
+	{
+		if ( MouseOverMenu ( mouse->x, mouse->y ) ) ExeNr = ( mouse->y - dest.y ) / 22;
+		if ( ExeNr != SelMenu ) ExeNr = -1;
+		SelMenu = -1;
+		LastSelMenu = -1;
+	}
+	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && SelMenu != -1 && SelMenu != ( mouse->y - dest.y ) / 22 )
+	{
+		LastSelMenu = SelMenu;
+		SelMenu = -1;
+	}
 
 	// Angriff:
 	if ( data.canAttack && data.shotsCur )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || AttackMode;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			AttackMode = true;
+			AttackMode = !AttackMode;
 			Client->Hud.CheckScroll();
 			Client->mouseMoveCallback ( true );
 			return;
@@ -1726,8 +1725,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Bauen:
 	if ( !data.canBuild.empty() && !IsBuilding )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -1749,14 +1747,13 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || Transfer;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Transfer = true;
+			Transfer = !Transfer;
 			return;
 		}
 
@@ -1805,8 +1802,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stop:
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -1837,8 +1833,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Entfernen:
 	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -1878,8 +1873,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	if ( data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr ) bSelection = true;
-		else bSelection = false;
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -1897,9 +1891,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 		// Laden:
-
-		if ( SelMenu == nr || LoadActive ) bSelection = true;
-		else bSelection = false;
+		bSelection = SelMenu == nr || LoadActive;
 
 		if ( ExeNr == nr )
 		{
@@ -1917,14 +1909,13 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Aufaden:
 	if ( data.canRearm && data.storageResCur >= 2 )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || MuniActive;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			MuniActive = true;
+			MuniActive = !MuniActive;
 			return;
 		}
 
@@ -1937,14 +1928,13 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Reparatur:
 	if ( data.canRepair && data.storageResCur >= 2 )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || RepairActive;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			RepairActive = true;
+			RepairActive = !RepairActive;
 			return;
 		}
 
@@ -1957,10 +1947,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen legen:
 	if ( data.canPlaceMines && data.storageResCur > 0 )
 	{
-		if ( SelMenu == nr || LayMines )
-			bSelection = true;
-		else
-			bSelection = false;
+		bSelection = SelMenu == nr || LayMines;
 
 		if ( ExeNr == nr )
 		{
@@ -1981,10 +1968,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen sammeln:
 	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
 	{
-		if ( SelMenu == nr || ClearMines )
-			bSelection = true;
-		else
-			bSelection = false;
+		bSelection = SelMenu == nr || ClearMines;
 
 		if ( ExeNr == nr )
 		{
@@ -2005,15 +1989,14 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sabotage:
 	if ( data.canDisable && data.shotsCur )
 	{
-		// Sabotage:
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || DisableActive;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			DisableActive = true;
+			DisableActive = !DisableActive;
+			StealActive = false;
 			return;
 		}
 
@@ -2026,14 +2009,14 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stehlen:
 	if ( data.canCapture && data.shotsCur )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || StealActive;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			StealActive = true;
+			StealActive = !StealActive;
+			DisableActive = false;
 			return;
 		}
 
@@ -2044,8 +2027,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Info:
-	if ( SelMenu == nr ) { bSelection = true; }
-	else { bSelection = false; }
+	bSelection = SelMenu == nr;
 
 	if ( ExeNr == nr )
 	{
@@ -2062,8 +2044,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	nr++;
 	// Fertig:
 
-	if ( SelMenu == nr ) { bSelection = true; }
-	else { bSelection = false; }
+	bSelection = SelMenu == nr;
 
 	if ( ExeNr == nr )
 	{

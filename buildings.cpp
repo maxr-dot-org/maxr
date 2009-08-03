@@ -2185,8 +2185,9 @@ int cBuilding::CalcHelth ( int damage )
 //--------------------------------------------------------------------------
 void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
-	int nr = 0, SelMenu = -1, ExeNr = -1;
-	static int LastNr = -1;
+	int nr = 0, ExeNr = -1;
+	static int SelMenu = -1;
+	static int LastSelMenu = -1;
 	bool bSelection = false;
 	SDL_Rect dest;
 	dest = GetMenuSize();
@@ -2199,38 +2200,36 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		return;
 	}
 
-	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0)
-		return;
+	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
-	if ( mouseState && mouseState->leftButtonReleased && MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( SelMenu == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
 	{
 		SelMenu = ( mouse->y - dest.y ) / 22;
-		LastNr = SelMenu;
 	}
-	else
-		if ( MouseOverMenu ( mouse->x, mouse->y ) )
-		{
-			ExeNr = LastNr;
-			LastNr = -1;
-		}
-		else
-		{
-			SelMenu = -1;
-			LastNr = -1;
-		}
+	else if ( mouseState && mouseState->leftButtonReleased )
+	{
+		if ( MouseOverMenu ( mouse->x, mouse->y ) ) ExeNr = ( mouse->y - dest.y ) / 22;
+		if ( ExeNr != SelMenu ) ExeNr = -1;
+		SelMenu = -1;
+		LastSelMenu = -1;
+	}
+	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && SelMenu != -1 && SelMenu != ( mouse->y - dest.y ) / 22 )
+	{
+		LastSelMenu = SelMenu;
+		SelMenu = -1;
+	}
 
 	// Angriff:
 	if ( typ->data.canAttack && data.shotsCur )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || AttackMode;
 
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			AttackMode = true;
+			AttackMode = !AttackMode;
 			Client->Hud.CheckScroll();
 			Client->mouseMoveCallback ( true );
 			return;
@@ -2245,8 +2244,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Bauen:
 	if ( !typ->data.canBuild.empty() )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -2266,8 +2264,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Verteilen:
 	if ( typ->data.canMineMaxRes > 0 && IsWorking )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -2287,14 +2284,13 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr || Transfer;
 
 		if ( ExeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Transfer = true;
+			Transfer = !Transfer;
 			return;
 		}
 
@@ -2312,8 +2308,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 				typ->data.canBuild.empty()
 			))
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -2332,8 +2327,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Stop:
 	if ( IsWorking )
 	{
-		if ( SelMenu == nr ) { bSelection = true; }
-		else { bSelection = false; }
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -2372,8 +2366,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( typ->data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		if ( SelMenu == nr ) bSelection = true;
-		else bSelection = false;
+		bSelection = SelMenu == nr;
 
 		if ( ExeNr == nr )
 		{
@@ -2389,9 +2382,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 		// Laden:
-
-		if ( SelMenu == nr || LoadActive ) bSelection = true;
-		else bSelection = false;
+		bSelection = SelMenu == nr || LoadActive;
 
 		if ( ExeNr == nr )
 		{

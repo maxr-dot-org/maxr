@@ -1051,6 +1051,7 @@ public:
 
 class cMenuReportsUnitScreen : public cMenuItem
 {
+	cPlayer *owner;
 	cReportsMenu *parentMenu;
 
 	cVehicle *vehicles;
@@ -1064,14 +1065,13 @@ class cMenuReportsUnitScreen : public cMenuItem
 	bool filterPlanes, filterGround, filterSea, filterBuilding;
 	bool filterBuild, filterAttack, filterDamaged, filterStealth;
 
+	bool drawUnirScreen;
 	bool checkFilter ( sUnitData &data, bool checkInclude );
-
 	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
-
 	SDL_Surface *generateUnitSurface ( SDL_Surface *oriSurface, sUnitData &data );
 
 public:
-	cMenuReportsUnitScreen ( int x, int y, int w, int h, cVehicle *vehicles_, cBuilding *buildings_, cReportsMenu *parentMenu_ );
+	cMenuReportsUnitScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
 
 	void draw();
 

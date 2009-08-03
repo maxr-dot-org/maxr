@@ -343,11 +343,11 @@ void cClient::run()
 		// display the object menu:
 		if ( bFlagDrawMap && SelectedVehicle && SelectedVehicle->MenuActive )
 		{
-			SelectedVehicle->DrawMenu();
+			SelectedVehicle->DrawMenu( &clientMouseState );
 		}
 		if ( bFlagDrawMap && SelectedBuilding && SelectedBuilding->MenuActive )
 		{
-			SelectedBuilding->DrawMenu();
+			SelectedBuilding->DrawMenu( &clientMouseState );
 		}
 		// check whether the hud has to be drawn:
 		if ( bFlagDrawHud || bFlagDrawMMap )
@@ -517,17 +517,9 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		overBaseBuilding = OverUnitField->getBaseBuilding();
 	}
 
-	// give the mouse input to the unit menu if one is active
-	if ( SelectedVehicle && SelectedVehicle->MenuActive && SelectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
-	{
-		SelectedVehicle->DrawMenu ( &mouseState );
-		return;
-	}
-	if ( SelectedBuilding && SelectedBuilding->MenuActive && SelectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
-	{
-		SelectedBuilding->DrawMenu ( &mouseState );
-		return;
-	}
+	if ( SelectedVehicle && SelectedVehicle->MenuActive ||
+		SelectedBuilding && SelectedBuilding->MenuActive ) return;
+
 	// handle input on the map
 	if ( MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && OverUnitField )
 	{

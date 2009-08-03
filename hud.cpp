@@ -532,6 +532,20 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
+		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		{
+			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
+			{
+				if ( mouse->SetCursor ( CDisable ) )
+				{
+					selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
+				}
+			}
+			else
+			{
+				mouse->SetCursor ( CNo );
+			}
+		}
 		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
@@ -546,18 +560,18 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false )&& ( !Client->OverUnitField->getVehicles() || !Client->OverUnitField->getVehicles()->Disabled ) )
 		{
-			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
+			if ( mouse->SetCursor ( CDisable ) )
 			{
-				if ( mouse->SetCursor ( CDisable ) )
-				{
-					selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
-				}
+				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
 			}
-			else
+		}
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
+		{
+			if ( mouse->SetCursor ( CSteal ) )
 			{
-				mouse->SetCursor ( CNo );
+				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), true );
 			}
 		}
 		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )

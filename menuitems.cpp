@@ -2783,15 +2783,16 @@ SDL_Rect cMenuScrollerHandler::getPosition()
 	return position;
 }
 
-cMenuReportsUnitScreen::cMenuReportsUnitScreen( int x, int y, int w, int h, cVehicle *vehicles_, cBuilding *buildings_, cReportsMenu *parentMenu_ ) :
+cMenuReportsUnitScreen::cMenuReportsUnitScreen( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ ) :
 	cMenuItem ( x, y ),
-	vehicles ( vehicles_ ),
-	buildings ( buildings_ ),
+	owner ( owner_ ),
 	parentMenu ( parentMenu_ )
 {
 	position.w = w;
 	position.h = h;
 
+	vehicles = owner->VehicleList;
+	buildings = owner->BuildingList;
 	index = 0;
 	selected = -1;
 	filterPlanes = filterGround = filterSea = filterBuilding = false;
