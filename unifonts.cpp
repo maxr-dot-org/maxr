@@ -388,93 +388,54 @@ void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fontty
 
 int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
-	int k;
-	int lastK = 0;
+	string drawString = "";
 
-	SDL_Rect rLenght = {0,0,0,0};
-	string sTmp = sText;
-	string sTextShortened;
-
-	rLenght = getTextSize ( sText, fonttype, encode );
-
-	if ( rLenght.w > rDest.w ) //text is longer than dest-width - let's snip it
+	while ( getTextWide ( sText, fonttype, encode ) > rDest.w )
 	{
+		// get the position of the end of as many words from the text as fit in rDest.w
+		int pos = 0, lastPos = 0;
 		do
 		{
-			k = ( int ) sTmp.find ( " " ); //search spaces/blanks
-
-			if ( k == string::npos ) //reached the end but leftovers might be to long
-			{
-				rLenght = getTextSize ( sText, fonttype, encode ); //test new string lenght
-				if ( rLenght.w > rDest.w ) //if leftover is to long snip it too
-				{
-					sTextShortened = sText; //get total leftover again
-
-					if ( lastK > 0 )
-					{
-						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
-						sText.erase ( 0, lastK + 1 ); //erase txt from original that we just copied to tmp including leading blank
-					}
-					else
-					{
-						sTextShortened.erase ( sText.size() / 2 - 1 , sTextShortened.size() ); //erase everything longer than line
-						sTextShortened += "-";
-						sText.erase ( 0, sText.size() / 2 - 1 ); //erase txt from original that we just copied to tmp
-					}
-
-					showText ( rDest, sTextShortened, fonttype, surface, encode ); //blit part of text
-					rDest.y += getFontHeight ( fonttype ); //and add a linebreak
-				}
-
-				showText ( rDest, sText, fonttype, surface, encode ); //draw last part of
-				rDest.y += getFontHeight ( fonttype ); //and add a linebreak text
-			}
-
-			if ( k != string::npos )
-			{
-				sTmp.erase ( k, 1 ); //replace spaces with # so we don't find them again next search
-				sTmp.insert ( k, "#" );
-				sTextShortened = sText; //copy clean text to tmp string
-				sTextShortened.erase ( k, sTextShortened.size() ); //erase everything longer than line
-
-				rLenght = getTextSize ( sTextShortened, fonttype, encode ); //test new string lenght
-				if ( rLenght.w > rDest.w )
-				{
-					//found important lastK to snip text since text is now to long
-					sTextShortened = sText; //copy text to tmp string
-
-					if ( lastK > 0 )
-					{
-						sTextShortened.erase ( lastK, sTextShortened.size() ); //erase everything longer than line
-						sText.erase ( 0, lastK + 1 ); //erase txt from original that we just copied to tmp including leading blank
-					}
-					else
-					{
-						int erase = (int)sText.size() / 2 - 1;
-						if ( erase < 1 ) erase = 1;
-						sTextShortened.erase ( erase, sTextShortened.size() ); //erase everything longer than line
-						sTextShortened += "-";
-						sText.erase ( 0, erase ); //erase txt from original that we just copied to tmp
-
-					}
-
-					sTmp = sText; //copy snipped original sText to sTmp to start searching again
-					showText ( rDest, sTextShortened, fonttype, surface, encode ); //blit part of text
-					rDest.y += getFontHeight ( fonttype ); //and add a linebreak
-				}
-				else
-				{
-					lastK = k; //seek more, couldn't find korrekt lastK
-				}
-			}
+			lastPos = pos;
+			pos = sText.find ( " ", pos+1 );
 		}
-		while ( k != string::npos );
+		while ( getTextWide ( sText.substr ( 0, pos ), fonttype, encode ) < rDest.w && pos != string::npos );
+
+		// get the words. If there was no " " in the text we get the hole text string
+		if ( lastPos != 0 ) drawString = sText.substr ( 0, lastPos );
+		else drawString = sText;
+
+		// if there is only one word in the string it is possible that this word is to long.
+		// we will check this, and cut it if necessary
+		while ( getTextWide ( drawString, fonttype, encode ) > rDest.w )
+		{
+			string stringPart = drawString;
+
+			// delete as many chars as it is needed to fit into the line
+			while ( getTextWide ( stringPart, fonttype, encode ) + getTextWide ( "-", fonttype, encode ) > rDest.w ) stringPart.erase ( stringPart.length()-1, 1 );
+			stringPart += "-";
+
+			// show the part of the word
+			showText ( rDest, stringPart, fonttype, surface, encode );
+			rDest.y += getFontHeight ( fonttype );
+
+			// erase the part from the line and from the hole text
+			drawString.erase ( 0, stringPart.length()-1 );
+			sText.erase ( 0, stringPart.length()-1 );
+		}
+		
+		// draw the rest of the line
+		showText ( rDest, drawString, fonttype, surface, encode );
+		rDest.y += getFontHeight ( fonttype );
+
+		sText.erase ( 0, drawString.length() );
+		if ( lastPos != 0 ) sText.erase ( 0, 1 );
 	}
-	else
-	{
-		showText ( rDest, sText, fonttype, surface, encode ); //nothing to shorten, just blit text
-		rDest.y += getFontHeight ( fonttype ); //and add a linebreak
-	}
+
+	// draw the rest of the text
+	showText ( rDest, sText, fonttype, surface, encode );
+	rDest.y += getFontHeight ( fonttype );
+
 	return rDest.y;
 }
 
