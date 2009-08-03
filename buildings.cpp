@@ -2721,7 +2721,7 @@ void cBuilding::Deselct ()
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
+void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface, bool drawLines )
 {
 	SDL_Rect src, dest;
 	if ( hud )
@@ -2743,6 +2743,15 @@ void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
 		if ( !destSurface ) return;
 	}
 
+	if ( drawLines )
+	{
+		SDL_Rect lineRect = { dest.x+2, dest.y+14, 153, 1 };
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
+	}
 	// Die Hitpoints anzeigen:
 	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );
 	font->showText ( dest.x+47, dest.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, destSurface );

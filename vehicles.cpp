@@ -963,7 +963,7 @@ int cVehicle::refreshData ()
 //-----------------------------------------------------------------------------
 /** Shows the unit stats of the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
+void cVehicle::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface, bool drawLines )
 {
 	SDL_Rect src, dest;
 	if ( hud )
@@ -983,6 +983,16 @@ void cVehicle::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface )
 		dest.x = x;
 		dest.y = y;
 		if ( !destSurface ) return;
+	}
+
+	if ( drawLines )
+	{
+		SDL_Rect lineRect = { dest.x+2, dest.y+14, 153, 1 };
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
 	}
 	// Die Hitpoints anzeigen:
 	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );

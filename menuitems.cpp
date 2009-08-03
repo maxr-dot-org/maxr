@@ -2883,7 +2883,7 @@ bool cMenuReportsUnitScreen::goThroughUnits ( bool draw, int *count_, cVehicle *
 			SDL_FreeSurface ( surface );
 
 			font->showTextAsBlock ( nameDest, nextVehicle->name );
-			nextVehicle->ShowDetails( false, dest.x+110, dest.y-13, buffer );
+			nextVehicle->ShowDetails( false, dest.x+110, dest.y-13, buffer, true );
 
 			font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextVehicle->PosX ) + "," + iToStr ( nextVehicle->PosY ) );
 			font->showText ( position.x+343, position.y+35+56*(count-minCount), nextVehicle->getStatusStr() );
@@ -2913,7 +2913,7 @@ bool cMenuReportsUnitScreen::goThroughUnits ( bool draw, int *count_, cVehicle *
 				SDL_FreeSurface ( surface );
 				
 				font->showTextAsBlock ( nameDest, nextBuilding->name );
-				nextBuilding->ShowDetails( false, dest.x+110, dest.y-13, buffer );
+				nextBuilding->ShowDetails( false, dest.x+110, dest.y-13, buffer, true );
 
 				font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextBuilding->PosX ) + "," + iToStr ( nextBuilding->PosY ) );
 				font->showText ( position.x+343, position.y+35+56*(count-minCount), nextBuilding->getStatusStr() );

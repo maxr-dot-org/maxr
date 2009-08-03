@@ -178,7 +178,7 @@ public:
 	void draw(SDL_Rect *dest);
 	void Select();
 	void Deselct();
-	void ShowDetails( bool hud = true, int x = -1, int y = -1, SDL_Surface *destSurface = NULL );
+	void ShowDetails( bool hud = true, int x = -1, int y = -1, SDL_Surface *destSurface = NULL, bool drawLines = false );
 	void GenerateName();
 	int playStream();
 	std::string getStatusStr();
