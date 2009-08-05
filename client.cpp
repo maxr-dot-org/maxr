@@ -517,8 +517,8 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		overBaseBuilding = OverUnitField->getBaseBuilding();
 	}
 
-	if ( SelectedVehicle && SelectedVehicle->MenuActive ||
-		SelectedBuilding && SelectedBuilding->MenuActive ) return;
+	if ( SelectedVehicle && SelectedVehicle->MenuActive && SelectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) ||
+		SelectedBuilding && SelectedBuilding->MenuActive && SelectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) ) return;
 
 	// handle input on the map
 	if ( MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && OverUnitField )
@@ -3597,7 +3597,7 @@ void cClient::addMessage ( string sMsg )
 }
 
 // displays a message with 'goto' coordinates
-void cClient::addCoords (const string msg,int x,int y )
+string cClient::addCoords (const string msg,int x,int y )
 {
  	stringstream strStream;
  	//e.g. [85,22] missel MK I is under attack (F1)
@@ -3605,6 +3605,7 @@ void cClient::addCoords (const string msg,int x,int y )
 	Client->addMessage ( strStream.str() );
 	iMsgCoordsX=x;
 	iMsgCoordsY=y;
+	return strStream.str();
 }
 
 void cClient::handleMessages()
@@ -3701,25 +3702,40 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		checkVehiclePositions( message );
 		break;
 	case GAME_EV_LOST_CONNECTION:
-		addMessage( lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" ) );
+		{
+			string msgString = lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" );
+			addMessage( msgString );
+			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+		}
 		break;
 	case GAME_EV_CHAT_SERVER:
 		switch (message->popChar())
 		{
 		case USER_MESSAGE:
-			PlayFX ( SoundData.SNDChat );
-			addMessage( message->popString() );
+			{
+				PlayFX ( SoundData.SNDChat );
+				string msgString = message->popString();
+				addMessage( msgString );
+				ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_CHAT );
+			}
 			break;
 		case SERVER_ERROR_MESSAGE:
-			PlayFX ( SoundData.SNDQuitsch );
-			addMessage( lngPack.i18n( message->popString() ) );
+			{
+				PlayFX ( SoundData.SNDQuitsch );
+				string msgString = lngPack.i18n( message->popString() );
+				addMessage( msgString );
+				ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+			}
 			break;
 		case SERVER_INFO_MESSAGE:
 			{
 				string translationpath = message->popString();
 				string inserttext = message->popString();
-				if ( !inserttext.compare ( "" ) ) addMessage( lngPack.i18n( translationpath ) );
-				else addMessage( lngPack.i18n( translationpath, inserttext ) );
+				string msgString;
+				if ( !inserttext.compare ( "" ) ) msgString = lngPack.i18n( translationpath );
+				else msgString = lngPack.i18n( translationpath, inserttext );
+				addMessage( msgString );
+				ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			}
 			break;
 		}
@@ -3832,7 +3848,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 
 			// make report
-			addCoords ( AddedVehicle->name + " " + lngPack.i18n ( "Text~Comp~Detected" ), iPosX, iPosY );
+			string message = AddedVehicle->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
+			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, UnitID, iPosX, iPosY );
 			if ( random( 2 ) == 0 ) PlayVoice ( VoiceData.VOIDetected1 );
 			else PlayVoice ( VoiceData.VOIDetected2 );
 		}
@@ -3937,11 +3954,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( iTimeDelay != -1 )
 			{
-				if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) ) );
+				if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  )
+				{
+					string msgString = Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) );
+					addMessage( msgString );
+					ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+				}
 				iTurnTime = iTimeDelay;
 				iStartTurnTime = SDL_GetTicks();
 			}
-			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  ) addMessage( Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") );
+			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  )
+			{
+				string msgString = Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End");
+				addMessage( msgString );
+				ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+			}
 		}
 		break;
 	case GAME_EV_UNIT_DATA:
@@ -4193,7 +4220,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( !bOK )
 			{
 				// TODO: translate
-				if ( !Vehicle->BuildPath && Vehicle->owner == ActivePlayer ) addMessage ( "Buildposition is blocked" );
+				if ( !Vehicle->BuildPath && Vehicle->owner == ActivePlayer )
+				{
+					string msgString = "Buildposition is blocked";
+					addMessage( msgString );
+					ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+				}
 				Vehicle->BuildRounds = 0;
 				Vehicle->BuildingTyp.iFirstPart = 0;
 				Vehicle->BuildingTyp.iSecondPart = 0;
@@ -4462,7 +4494,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				PlayVoice ( VoiceData.VOIResearchComplete );
 				//FIXME: Ticket #196 
 				addMessage (lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished"));
-			}			
+			}
+
+			// Save the report
+			string msgString = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) + "\n";
+			if ( sReportMsg.length() > 0 ) msgString += sReportMsg + "\n";
+			if ( bFinishedResearch ) msgString += lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished") + "\n";
+			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -4664,7 +4702,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 			Player->isDefeated = true;
-			addMessage ( lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated") );
+			string msgString = lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated");
+			addMessage ( msgString );
+			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				if ( Player == (*PlayerList)[i] )
@@ -4694,7 +4734,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				Log.write ( "Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR );
 			}
-			addMessage ( Player->name + " has left the game." );
+			// TODO: translate
+			string msgString = Player->name + " has left the game.";
+			addMessage ( msgString );
+			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				if ( Player == (*PlayerList)[i] )
@@ -4924,6 +4967,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				os << "Upgraded " << buildingsInMsg << " " << buildingName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
 				string printStr(os.str());
 				addMessage (printStr);
+				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
 				if (scanNecessary)
 					ActivePlayer->DoScan(); 
 			}
@@ -4963,6 +5007,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
 				string printStr(os.str());
 				addMessage (printStr);
+				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
 			}
 		}
 		break;

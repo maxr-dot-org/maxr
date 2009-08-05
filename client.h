@@ -260,10 +260,6 @@ private:
 	*/
 	void rotateBlinkColor();
 	/**
-	* Adds an message to be displayed in the game
-	*/
-	void addMessage ( string sMsg );
-	/**
 	* handles the game messages
 	*@author alzi alias DoctorDeath
 	*/
@@ -496,8 +492,12 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void Timer();
+	/**
+	* Adds an message to be displayed in the game
+	*/
+	void addMessage ( string sMsg );
 	/** displays a message with 'goto' coordinates */
-	void addCoords (const string msg,int x,int y );
+	string addCoords (const string msg,int x,int y );
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit

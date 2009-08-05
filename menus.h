@@ -262,7 +262,11 @@ public:
 	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
 	 *@author alzi
 	 */
-	int show();
+	int show();/**
+	 * sets end to true an what will close the menu.
+	 *@author alzi
+	 */
+	void close();
 
 	/**
 	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.
@@ -1083,7 +1087,7 @@ class cReportsMenu : public cMenu
 	cMenuButton *upButton;
 	cMenuButton *downButton;
 
-	cMenuReportsUnitScreen *unitsScreen;
+	cMenuReportsScreen *dataScreen;
 public:
 	cReportsMenu( cPlayer *owner_ );
 	~cReportsMenu();

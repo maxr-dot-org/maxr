@@ -932,6 +932,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 	bool isAir = false;
 	string name;
 	int offX = 0, offY = 0;
+	sID unitID;
 
 	//no target found
 	if ( !targetBuilding && !targetVehicle )
@@ -943,6 +944,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 
 		if ( targetVehicle )
 		{
+			unitID = targetVehicle->data.ID;
 			isAir = ( targetVehicle->data.factorAir > 0 );
 			targetVehicle->data.hitpointsCur = remainingHP;
 
@@ -967,6 +969,8 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		}
 		else
 		{
+			
+			unitID = targetBuilding->data.ID;
 			targetBuilding->data.hitpointsCur = remainingHP;
 
 			Log.write(" Client: building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
@@ -1003,15 +1007,14 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		if ( destroyed )
 		{
 			message = name + " " + lngPack.i18n("Text~Comp~Destroyed");
-			Client->addCoords( message, x, y );
 			PlayVoice( VoiceData.VOIDestroyedUs );
 		}
 		else
 		{
 			message = name + " " + lngPack.i18n("Text~Comp~Attacked");
-			Client->addCoords( message, x, y );
 			PlayVoice( VoiceData.VOIAttackingUs );
 		}
+		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y );
 	}
 
 	//clean up

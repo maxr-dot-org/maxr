@@ -287,13 +287,15 @@ void cAutoMJob::PlanLongMove()
 		lastMoveJob = vehicle->ClientMoveJob;
 		if ( !lastMoveJob || lastMoveJob->bFinished )
 		{
-			Client->addCoords( "Surveyor AI: I'm totally confused. Don't know what to do...", vehicle->PosX, vehicle->PosY );
+			string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
+			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, vehicle->PosX, vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY );
 			finished = true;
 		}
 	}
 	else
 	{
-		Client->addCoords( "Surveyor AI: My life is so senseless. I've nothing to do...", vehicle->PosX, vehicle->PosY );
+		string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
+		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, vehicle->PosX, vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY );
 		finished = true;
 	}
 }

@@ -536,6 +536,11 @@ int cMenu::show()
 	return 0;
 }
 
+void cMenu::close()
+{
+	end = true;
+}
+
 void cMenu::handleMouseInput( sMouseState mouseState )
 {
 	mouse->GetPos();
@@ -5029,6 +5034,7 @@ cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
 	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29, lngPack.i18n ("Text~Button~Disadvantages"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
 	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*2, lngPack.i18n ("Text~Button~Score"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
 	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*3, lngPack.i18n ("Text~Button~Reports"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
+	typeButtonGroup->setClickedFunction ( &typeChanged );
 	
 	includedLabel = new cMenuLabel ( position.x+497, position.y+207, lngPack.i18n ("Text~Button~Included") + ":" );
 	menuItems.Add ( includedLabel );
@@ -5075,8 +5081,8 @@ cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
 	menuItems.Add ( doneButton );
 
 	// its important that the screen will be added before the up and down buttons
-	unitsScreen = new cMenuReportsUnitScreen ( position.x+7, position.y+6, 479, 467, owner, this );
-	menuItems.Add ( unitsScreen );
+	dataScreen = new cMenuReportsScreen ( position.x+7, position.y+6, 479, 467, owner, this );
+	menuItems.Add ( dataScreen );
 
 	upButton = new cMenuButton ( position.x+492, position.y+426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG );
 	upButton->setReleasedFunction ( &upReleased );
@@ -5109,7 +5115,7 @@ cReportsMenu::~cReportsMenu()
 	delete upButton;
 	delete downButton;
 
-	delete unitsScreen;
+	delete dataScreen;
 
 	if ( Client ) Client->bFlagDrawHud = true;
 }
@@ -5123,28 +5129,29 @@ void cReportsMenu::doneReleased(void *parent)
 void cReportsMenu::upReleased(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
-	menu->unitsScreen->scrollUp();
+	menu->dataScreen->scrollUp();
 	menu->draw();
 }
 
 void cReportsMenu::downReleased(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
-	menu->unitsScreen->scrollDown();
+	menu->dataScreen->scrollDown();
 	menu->draw();
 }
 
 void cReportsMenu::typeChanged(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	menu->dataScreen->setType ( menu->typeButtonGroup->buttonIsChecked( 0 ), menu->typeButtonGroup->buttonIsChecked( 1 ), menu->typeButtonGroup->buttonIsChecked( 2 ), menu->typeButtonGroup->buttonIsChecked( 3 ) );
 }
 
 void cReportsMenu::filterClicked( void *parent )
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
 
-	menu->unitsScreen->setIncludeFilter ( menu->planesCheckBtn->isChecked(), menu->groundCheckBtn->isChecked(), menu->seaCheckBtn->isChecked(), menu->stationaryCheckBtn->isChecked() );
-	menu->unitsScreen->setBorderedFilter ( menu->buildCheckBtn->isChecked(), menu->fightCheckBtn->isChecked(), menu->damagedCheckBtn->isChecked(), menu->stealthCheckBtn->isChecked() );
+	menu->dataScreen->setIncludeFilter ( menu->planesCheckBtn->isChecked(), menu->groundCheckBtn->isChecked(), menu->seaCheckBtn->isChecked(), menu->stationaryCheckBtn->isChecked() );
+	menu->dataScreen->setBorderedFilter ( menu->buildCheckBtn->isChecked(), menu->fightCheckBtn->isChecked(), menu->damagedCheckBtn->isChecked(), menu->stealthCheckBtn->isChecked() );
 }
 
 void cReportsMenu::scrollCallback ( bool upPossible, bool downPossible )

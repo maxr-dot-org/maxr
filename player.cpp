@@ -1060,3 +1060,17 @@ void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int 
 
 	}
 }
+
+//--------------------------------------------------------------------------
+void cPlayer::addSavedReport ( string message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr )
+{
+	sSavedReportMessage savedReport;
+	savedReport.message = message;
+	savedReport.type = type;
+	savedReport.xPos = xPos;
+	savedReport.yPos = yPos;
+	savedReport.unitID = unitID;
+	savedReport.colorNr = colorNr;
+
+	savedReportsList.Add ( savedReport );
+}

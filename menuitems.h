@@ -1049,7 +1049,7 @@ public:
 	SDL_Rect getPosition();
 };
 
-class cMenuReportsUnitScreen : public cMenuItem
+class cMenuReportsScreen : public cMenuItem
 {
 	cPlayer *owner;
 	cReportsMenu *parentMenu;
@@ -1065,18 +1065,33 @@ class cMenuReportsUnitScreen : public cMenuItem
 	bool filterPlanes, filterGround, filterSea, filterBuilding;
 	bool filterBuild, filterAttack, filterDamaged, filterStealth;
 
-	bool drawUnirScreen;
+	enum eReportScreenTypes
+	{
+		REP_SCR_TYPE_UNITS,
+		REP_SCR_TYPE_DISADVA,
+		REP_SCR_TYPE_SCORE,
+		REP_SCR_TYPE_REPORTS
+	};
+
+	eReportScreenTypes screenType;
+
 	bool checkFilter ( sUnitData &data, bool checkInclude );
 	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
 	SDL_Surface *generateUnitSurface ( SDL_Surface *oriSurface, sUnitData &data );
 
+	void drawUnitsScreen();
+	void drawDisadvantagesScreen();
+	void drawScoreScreen();
+	void drawReportsScreen();
+
 public:
-	cMenuReportsUnitScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
+	cMenuReportsScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
 
 	void draw();
 
 	void setIncludeFilter ( bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_ );
 	void setBorderedFilter ( bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_ );
+	void setType ( bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked );
 
 	void scrollDown();
 	void scrollUp();

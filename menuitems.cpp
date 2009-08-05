@@ -19,6 +19,7 @@
 #include "menuitems.h"
 #include "menus.h"
 #include "settings.h"
+#include "client.h"
 
 cMenuItem::cMenuItem ( int x, int y )
 {
@@ -2783,7 +2784,7 @@ SDL_Rect cMenuScrollerHandler::getPosition()
 	return position;
 }
 
-cMenuReportsUnitScreen::cMenuReportsUnitScreen( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ ) :
+cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ ) :
 	cMenuItem ( x, y ),
 	owner ( owner_ ),
 	parentMenu ( parentMenu_ )
@@ -2799,9 +2800,30 @@ cMenuReportsUnitScreen::cMenuReportsUnitScreen( int x, int y, int w, int h, cPla
 	filterBuild = filterAttack = filterDamaged = filterStealth = false;
 
 	maxItems = ((position.h-25) / 55);
+
+	screenType = REP_SCR_TYPE_UNITS;
 }
 
-void cMenuReportsUnitScreen::draw()
+void cMenuReportsScreen::draw()
+{
+	switch ( screenType )
+	{
+	case REP_SCR_TYPE_UNITS:
+		drawUnitsScreen();
+		break;
+	case REP_SCR_TYPE_DISADVA:
+		drawDisadvantagesScreen();
+		break;
+	case REP_SCR_TYPE_SCORE:
+		drawScoreScreen();
+		break;
+	case REP_SCR_TYPE_REPORTS:
+		drawReportsScreen();
+		break;
+	}
+}
+
+void cMenuReportsScreen::drawUnitsScreen()
 {
 	goThroughUnits ( true );
 
@@ -2830,7 +2852,71 @@ void cMenuReportsUnitScreen::draw()
 	}
 }
 
-bool cMenuReportsUnitScreen::checkFilter ( sUnitData &data, bool checkInclude )
+void cMenuReportsScreen::drawDisadvantagesScreen()
+{
+	font->showText ( position.x+17, position.y+30, lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+}
+
+void cMenuReportsScreen::drawScoreScreen()
+{
+	font->showText ( position.x+17, position.y+30, lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+}
+
+void cMenuReportsScreen::drawReportsScreen()
+{
+	SDL_Rect textDest = { position.x+54, position.y+25, 410, 30 };
+	for ( unsigned int i = (index)*maxItems; i < owner->savedReportsList.Size(); i++ )
+	{
+		if ( (int)i >= (index+1)*maxItems ) break;
+		sSavedReportMessage &savedReport = owner->savedReportsList[i];
+
+		switch ( savedReport.type )
+		{
+		case sSavedReportMessage::REPORT_TYPE_COMP:
+			// TODO: draw computer symbol
+			break;
+		case sSavedReportMessage::REPORT_TYPE_UNIT:
+			{
+				SDL_Surface *orgSurface;
+				SDL_Rect src = { 0, 0, 32, 32 };
+				SDL_Rect dest = { position.x+17, position.y+30+(i-(index)*maxItems)*55, 0, 0 };
+
+				if ( savedReport.unitID.getVehicle() ) orgSurface = savedReport.unitID.getVehicle()->img_org[0];
+				else if ( savedReport.unitID.getBuilding() ) orgSurface = savedReport.unitID.getBuilding()->img_org;
+				else break;
+
+				SDL_Surface *surface = generateUnitSurface ( orgSurface, *savedReport.unitID.getUnitDataOriginalVersion() );
+				SDL_BlitSurface ( surface, &src, buffer, &dest );
+				SDL_FreeSurface ( surface );
+			}
+			break;
+		case sSavedReportMessage::REPORT_TYPE_CHAT:
+			// TODO: draw player color;
+			break;
+		}
+
+		font->showTextAsBlock ( textDest, savedReport.message );
+		textDest.y += 55;
+
+		if ( selected == (int)i )
+		{
+			int selIndex = selected-index*maxItems;
+			SDL_Rect selDest = { position.x+15, position.y+23+55*selIndex, 1, 53 };
+
+			SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+			selDest.x += 450;
+			SDL_FillRect ( buffer, &selDest ,0xE0E0E0 );
+			selDest.x -= 450;
+			selDest.w = 450;
+			selDest.h = 1;
+			SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+			selDest.y += 53;
+			SDL_FillRect ( buffer, &selDest, 0xE0E0E0 );
+		}
+	}
+}
+
+bool cMenuReportsScreen::checkFilter ( sUnitData &data, bool checkInclude )
 {
 	if ( checkInclude )
 	{
@@ -2850,7 +2936,7 @@ bool cMenuReportsUnitScreen::checkFilter ( sUnitData &data, bool checkInclude )
 }
 
 
-bool cMenuReportsUnitScreen::goThroughUnits ( bool draw, int *count_, cVehicle **vehicle, cBuilding **building )
+bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **vehicle, cBuilding **building )
 {
 	bool deleteCount = false;
 	int minCount = (index)*maxItems;
@@ -2936,8 +3022,10 @@ bool cMenuReportsUnitScreen::goThroughUnits ( bool draw, int *count_, cVehicle *
 	return false;
 }
 
-void cMenuReportsUnitScreen::setIncludeFilter(bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_)
+void cMenuReportsScreen::setIncludeFilter(bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_)
 {
+	if ( screenType != REP_SCR_TYPE_UNITS ) return;
+
 	filterPlanes = filterPlanes_;
 	filterGround = filterGround_;
 	filterSea = filterSea_;
@@ -2948,8 +3036,10 @@ void cMenuReportsUnitScreen::setIncludeFilter(bool filterPlanes_, bool filterGro
 	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 };
 
-void cMenuReportsUnitScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
+void cMenuReportsScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
 {
+	if ( screenType != REP_SCR_TYPE_UNITS ) return;
+
 	filterBuild = filterBuild_;
 	filterAttack = filterAttack_;
 	filterDamaged = filterDamaged_;
@@ -2960,7 +3050,21 @@ void cMenuReportsUnitScreen::setBorderedFilter(bool filterBuild_, bool filterAtt
 	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 }
 
-SDL_Surface *cMenuReportsUnitScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
+void cMenuReportsScreen::setType ( bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked )
+{
+	if ( unitsChecked ) screenType = REP_SCR_TYPE_UNITS;
+	else if ( disadvaChecked ) screenType = REP_SCR_TYPE_DISADVA;
+	else if ( scoreChecked ) screenType = REP_SCR_TYPE_SCORE;
+	else if ( reportsChecked ) screenType = REP_SCR_TYPE_REPORTS;
+
+	index = 0;
+	selected = -1;
+
+	// we use scrollUp to update the scroll buttons
+	scrollUp();
+}
+
+SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
 {
 	int factor = 2;
 	if ( data.isBig ) factor = 4;
@@ -2981,33 +3085,90 @@ SDL_Surface *cMenuReportsUnitScreen::generateUnitSurface(SDL_Surface *oriSurface
 	return surface;
 }
 
-void cMenuReportsUnitScreen::scrollDown()
+void cMenuReportsScreen::scrollDown()
 {
-	if ( goThroughUnits ( false ) ) index++;
-	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
+	switch ( screenType )
+	{
+	case REP_SCR_TYPE_UNITS:
+		if ( goThroughUnits ( false ) ) index++;
+		parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
+		break;
+	case REP_SCR_TYPE_DISADVA:
+		parentMenu->scrollCallback ( false, false );
+		break;
+	case REP_SCR_TYPE_SCORE:
+		parentMenu->scrollCallback ( false, false );
+		break;
+	case REP_SCR_TYPE_REPORTS:
+		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) index++;
+		parentMenu->scrollCallback ( index > 0, (index+1)*maxItems < (int)owner->savedReportsList.Size() );
+		break;
+	}
 }
 
-void cMenuReportsUnitScreen::scrollUp()
+void cMenuReportsScreen::scrollUp()
 {
 	if ( index > 0 ) index--;
-	parentMenu->scrollCallback ( index > 0, goThroughUnits( false ) );
+	switch ( screenType )
+	{
+	case REP_SCR_TYPE_UNITS:
+		parentMenu->scrollCallback ( index > 0, goThroughUnits( false ) );
+		break;
+	case REP_SCR_TYPE_DISADVA:
+		parentMenu->scrollCallback ( false, false );
+		break;
+	case REP_SCR_TYPE_SCORE:
+		parentMenu->scrollCallback ( false, false );
+		break;
+	case REP_SCR_TYPE_REPORTS:
+		parentMenu->scrollCallback ( index > 0, (index+1)*maxItems < (int)owner->savedReportsList.Size() );
+		break;
+	}
 }
 
-void cMenuReportsUnitScreen::released( void *parent )
+void cMenuReportsScreen::released( void *parent )
 {
 	int clickedIndex = Round ( (mouse->y-position.x-17)/55.0 )+index*maxItems;
 	if ( clickedIndex >= (index+1)*maxItems ) clickedIndex = (index+1)*maxItems-1;
 
-	int maxDisplayedUnits;
-	cVehicle *vehicle = NULL;
-	cBuilding *building = NULL;
-	goThroughUnits ( false, &maxDisplayedUnits, &vehicle, &building );
-	if ( clickedIndex == selected )
+	switch ( screenType )
 	{
-		parentMenu->doubleClicked ( vehicle, building );
-		return;
+	case REP_SCR_TYPE_UNITS:
+		{
+			int maxDisplayedUnits;
+			cVehicle *vehicle = NULL;
+			cBuilding *building = NULL;
+			goThroughUnits ( false, &maxDisplayedUnits, &vehicle, &building );
+			if ( clickedIndex == selected )
+			{
+				parentMenu->doubleClicked ( vehicle, building );
+				return;
+			}
+			if ( clickedIndex >= maxDisplayedUnits ) return;
+		}
+		break;
+	case REP_SCR_TYPE_DISADVA:
+		break;
+	case REP_SCR_TYPE_SCORE:
+		break;
+	case REP_SCR_TYPE_REPORTS:
+		if ( clickedIndex > (int)owner->savedReportsList.Size() ) return;
+		if ( clickedIndex == selected )
+		{
+			sSavedReportMessage &savedReport = owner->savedReportsList[clickedIndex];
+			parentMenu->close();
+			Client->addMessage ( savedReport.message );
+			if ( savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT )
+			{
+				Client->Hud.OffX = savedReport.xPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+				Client->Hud.OffY = savedReport.yPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
+				Client->bFlagDrawMap=true;
+				Client->Hud.DoScroll ( 0 );
+			}
+			return;
+		}
+		break;
 	}
-	if ( clickedIndex >= maxDisplayedUnits ) return;
 
 	selected = clickedIndex;
 	parentMenu->draw();

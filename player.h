@@ -47,6 +47,22 @@ struct sLockElem{
   cBuilding *b;
 };
 
+struct sSavedReportMessage
+{
+	enum eReportTypes
+	{
+		REPORT_TYPE_COMP,
+		REPORT_TYPE_UNIT,
+		REPORT_TYPE_CHAT
+	};
+
+	string message;
+	eReportTypes type;
+	sID unitID;
+	int xPos, yPos;
+	int colorNr;
+};
+
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
@@ -84,6 +100,7 @@ public:
 	cHud HotHud;               // Gespeichertes Hud f¸r Hot-Seat-Spiele.
 	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
+	cList<sSavedReportMessage> savedReportsList;
 	bool reportResearchFinished; ///< stores, if just a research was finished
 	cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
 	int iSocketNum;			// Number of socket over which this player is connected in network game
@@ -132,6 +149,8 @@ public:
 	*@param map map were to store the data of the circle
 	*/
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
+
+	void addSavedReport ( string message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
 	
 	void setClan (int newClan);
 	int getClan () const { return clan; }
