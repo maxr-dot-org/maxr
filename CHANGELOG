@@ -1,3 +1,15 @@
+M.A.X. Reloaded SVN
+=======================================================================
+-new features:
+	*clans
+	*automatic mapdownload
+	*reports screen
+-complete new code for menus
+-new structure for units data.xmls
+-fixed infiltrators
+-fixed mine distribution-algo
+-tons of bugs fixed
+
 M.A.X. Reloaded 0.2.5
 =======================================================================
 -new features:
