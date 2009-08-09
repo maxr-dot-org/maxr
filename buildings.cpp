@@ -319,7 +319,7 @@ void cBuilding::GenerateName ()
 	int nr, tmp;
 	string::size_type tmp_name_idx;
 	rome = "";
-	nr = data.version;
+	nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
 
 	// generate the roman versionnumber (correct until 899)
 
