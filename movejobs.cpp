@@ -1259,13 +1259,17 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			{
 				sendMoveJob ( this );
 			}
-			else if ( Vehicle == Client->SelectedVehicle ) 
+			else 
 			{
 				bFinished = true;
-				if ( random(2) )
-					PlayVoice ( VoiceData.VOINoPath1 );
-				else
-					PlayVoice ( VoiceData.VOINoPath2 );
+
+				if ( Vehicle == Client->SelectedVehicle ) 
+				{				
+					if ( random(2) )
+						PlayVoice ( VoiceData.VOINoPath1 );
+					else
+						PlayVoice ( VoiceData.VOINoPath2 );
+				}
 			}
 		}
 		break;
