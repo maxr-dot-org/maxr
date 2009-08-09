@@ -371,7 +371,7 @@ int cPathCalculator::calcNextCost( int srcX, int srcY, int destX, int destY )
 	offset = destX+destY*Map->size;
 	cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
-	if ( Map->terrain[Map->Kacheln[offset]].water && ( !building || ( building->data.explodesOnContact && building->data.factorSea > 0 ) )&& Vehicle->data.factorSea > 0 ) costs = (int)(4*Vehicle->data.factorSea);
+	if ( Map->terrain[Map->Kacheln[offset]].water && ( !building || ( building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) )&& Vehicle->data.factorSea > 0 ) costs = (int)(4*Vehicle->data.factorSea);
 	else if ( Map->terrain[Map->Kacheln[offset]].coast && !building && Vehicle->data.factorCoast > 0 ) costs = (int)(4*Vehicle->data.factorCoast);
 	else if ( Vehicle->data.factorGround > 0 ) costs = (int)(4*Vehicle->data.factorGround);
 	else

@@ -3182,6 +3182,9 @@ bool cVehicle::clearMine ()
 //-----------------------------------------------------------------------------
 bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 {
+	if ( steal && !data.canCapture ) return false;
+	if ( !steal && !data.canDisable ) return false;
+
 	int off, boff;
 	off = x + y * map->size; 
 	boff = PosX + PosY * map->size;
