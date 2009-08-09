@@ -503,33 +503,6 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	}
 	calcNextDir ();
 
-	//check whether the vehicle has to be hided
-	//we check here the next waypoint of the vehicle, so other payers will not see in which direction the vehicle was driving
-	if ( Waypoints && Waypoints->next && Vehicle->data.speedCur && Server->Map->possiblePlace(Vehicle, Waypoints->next->X, Waypoints->next->Y) )
-	{
-		int offset = Waypoints->next->X + Waypoints->next->Y * Server->Map->size;
-		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
-		{
-			cPlayer* player = Vehicle->DetectedByPlayerList[i];
-
-			bool water = Server->Map->IsWater(offset, true);
-			bool coast = Server->Map->IsWater(offset) && !water;
-			
-			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
-			if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = coast = false;
-
-			if ( ( (Vehicle->data.isStealthOn&TERRAIN_GROUND) && !player->DetectLandMap[offset] && !water && !coast )||
-				 ( (Vehicle->data.isStealthOn&TERRAIN_COAST) && !player->DetectLandMap[offset] && coast ) ||
-				 ( (Vehicle->data.isStealthOn&TERRAIN_SEA) && !player->DetectSeaMap[offset] && water ) )
-			{
-				Vehicle->resetDetectedByPlayer( player );
-				i--;
-			}
-		}
-
-		Server->checkPlayerUnits();
-	}
-
 	return true;
 }
 
@@ -682,9 +655,6 @@ void cServerMoveJob::doEndMoveVehicle()
 		sendVehicleResources( Vehicle, Map );
 		Vehicle->doSurvey();
 	}
-
-	//hide vehicle
-	while ( Vehicle->DetectedByPlayerList.Size() ) Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0]);
 
 	//handle detection
 	Vehicle->makeDetection();
