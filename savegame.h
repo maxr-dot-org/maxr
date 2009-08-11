@@ -65,6 +65,12 @@ public:
 	string getMapName();
 	string getPlayerNames();
 
+	/**
+	* ---
+	*@author alzi alias DoctorDeath
+	*/
+	void writeAdditionalInfo ( cHud *hud, cList<sSavedReportMessage> &list, cPlayer *player );
+
 //--------------------------------------------------------------------------
 private:
 	/* the number of the savefile */

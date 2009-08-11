@@ -26,6 +26,7 @@
 #include "hud.h"
 
 class cResearch;
+struct sSavedReportMessage;
 
 enum SERVER_EVENT_TYPES
 {
@@ -63,6 +64,9 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_WANT_BUILDING_UPGRADE,	// a client wants to upgrade one or more buildings to the newest version
 	GAME_EV_WANT_RESEARCH_CHANGE,	// a client wants to change the research assignments of his research centers
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
+	GAME_EV_SAVE_HUD_INFO,			// the current hud settings
+	GAME_EV_SAVE_REPORT_INFO,		// a saved report
+	GAME_EV_FIN_SEND_SAVE_INFO,		// a unit has been set to automoving
 	GAME_EV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
 };
 
@@ -301,6 +305,8 @@ void sendSetAutomoving ( cVehicle *Vehicle );
 *@author alzi alias DoctorDeath
 */
 void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player );
+void sendRequestSaveInfo ( int saveingID );
+void sendSavedReport ( sSavedReportMessage &savedReport );
 
 
 #endif // servereventsH

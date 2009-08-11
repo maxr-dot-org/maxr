@@ -326,8 +326,29 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 		if ( hudNode->FirstChildElement( "MinimapZoom" ) ) Player->HotHud.MinimapZoom = true;
 		if ( hudNode->FirstChildElement( "TNT" ) ) Player->HotHud.TNT = true;
 		if ( hudNode->FirstChildElement( "Lock" ) ) Player->HotHud.Lock = true;
-		if ( hudNode->FirstChildElement( "SelectedVehicle" ) ) hudNode->FirstChildElement( "SelectedVehicle" )->Attribute ( "num", &Player->HotHud.tmpSelectedUnitID );
-		else if ( hudNode->FirstChildElement( "SelectedBuilding" ) ) hudNode->FirstChildElement( "SelectedBuilding" )->Attribute ( "num", &Player->HotHud.tmpSelectedUnitID );
+		if ( hudNode->FirstChildElement( "SelectedUnit" ) ) hudNode->FirstChildElement( "SelectedUnit" )->Attribute ( "num", &Player->HotHud.tmpSelectedUnitID );
+	}
+
+	// read reports
+	TiXmlElement *reportsNode = playerNode->FirstChildElement( "Reports" );
+	if ( reportsNode )
+	{
+		TiXmlElement *reportElement = reportsNode->FirstChildElement( "Report" );
+		while ( reportElement )
+		{
+			if ( reportElement->Parent() != reportsNode ) break;
+			sSavedReportMessage savedReport;
+			savedReport.message = reportElement->Attribute ( "msg" );
+			int tmpInt;
+			reportElement->Attribute ( "type", &tmpInt );
+			savedReport.type = (sSavedReportMessage::eReportTypes)tmpInt;
+			reportElement->Attribute ( "xPos", &savedReport.xPos );
+			reportElement->Attribute ( "yPos", &savedReport.yPos );
+			savedReport.unitID.generate ( reportElement->Attribute ( "id" ) );
+			reportElement->Attribute ( "colorNr", &savedReport.colorNr );
+			Player->savedReportsList.Add( savedReport );
+			reportElement = reportElement->NextSiblingElement();
+		}
 	}
 
 	TiXmlElement *upgradesNode = playerNode->FirstChildElement( "Upgrades" );
@@ -1103,29 +1124,6 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	addAttributeElement ( playerNode, "Number", "num", iToStr ( Player->Nr ) );
 	addAttributeElement ( playerNode, "ResourceMap", "data", convertScanMapToString ( Player->ResourceMap, Server->Map->size*Server->Map->size ) );
 
-	// write the hud settings
-	if ( Client && Client->ActivePlayer->Nr == Player->Nr )
-	{
-		// TODO: save hudoptions of non-local players
-		TiXmlElement *hudNode = addMainElement ( playerNode, "Hud" );
-		addAttributeElement ( hudNode, "Offset", "x", iToStr ( Client->Hud.OffX ), "y", iToStr ( Client->Hud.OffY ) );
-		addAttributeElement ( hudNode, "Zoom", "num", iToStr ( Client->Hud.Zoom ) );
-		if ( Client->Hud.Farben ) addMainElement ( hudNode, "Colors" );
-		if ( Client->Hud.Gitter ) addMainElement ( hudNode, "Grid" );
-		if ( Client->Hud.Munition ) addMainElement ( hudNode, "Ammo" );
-		if ( Client->Hud.Nebel ) addMainElement ( hudNode, "Fog" );
-		if ( Client->Hud.Reichweite ) addMainElement ( hudNode, "Range" );
-		if ( Client->Hud.Scan ) addMainElement ( hudNode, "Scan" );
-		if ( Client->Hud.Status ) addMainElement ( hudNode, "Status" );
-		if ( Client->Hud.Studie ) addMainElement ( hudNode, "Survey" );
-		if ( Client->Hud.Treffer ) addMainElement ( hudNode, "Hitpoints" );
-		if ( Client->Hud.MinimapZoom ) addMainElement ( hudNode, "MinimapZoom" );
-		if ( Client->Hud.TNT ) addMainElement ( hudNode, "TNT" );
-		if ( Client->Hud.Lock ) addMainElement ( hudNode, "Colors" );
-		if ( Client->SelectedVehicle ) addAttributeElement ( hudNode, "SelectedVehicle", "num", iToStr ( Client->SelectedVehicle->iID ) );
-		else if ( Client->SelectedBuilding ) addAttributeElement ( hudNode, "SelectedBuilding", "num", iToStr ( Client->SelectedBuilding->iID ) );
-	}
-
 	// write data of upgraded units
 	TiXmlElement *upgradesNode = addMainElement ( playerNode, "Upgrades" );
 	int upgrades = 0;
@@ -1518,6 +1516,64 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if( Data->canClearArea ) addMainElement ( unitNode, "Can_Clear" );
 	if( Data->canPlaceMines ) addMainElement ( unitNode, "Can_Place_Mines" );
 	if( Data->canDriveAndFire ) addMainElement ( unitNode, "Can_Drive_And_Fire" );
+}
+
+//--------------------------------------------------------------------------
+void cSavegame::writeAdditionalInfo ( cHud *hud, cList<sSavedReportMessage> &list, cPlayer *player )
+{
+	SaveFile = new TiXmlDocument ();
+	if ( !SaveFile->LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
+	if ( !SaveFile->RootElement() ) return;
+
+	// first get the players node
+	TiXmlElement *playersNode = SaveFile->RootElement()->FirstChildElement( "Players" );
+	int playernum = 0;
+	TiXmlElement *playerNode = NULL;
+	do
+	{
+		playerNode = playersNode->FirstChildElement( ("Player_" + iToStr ( playernum )).c_str() );
+		if ( !playerNode ) return;
+		int number;
+		playerNode->FirstChildElement( "Number" )->Attribute ( "num", &number );
+		if ( number == player->Nr ) break;
+		playernum++;
+	}
+	while ( playerNode != NULL );
+
+	// write the hud settings
+	TiXmlElement *hudNode = addMainElement ( playerNode, "Hud" );
+	addAttributeElement ( hudNode, "SelectedUnit", "num", iToStr ( hud->tmpSelectedUnitID ) );
+	addAttributeElement ( hudNode, "Offset", "x", iToStr ( hud->OffX ), "y", iToStr ( hud->OffY ) );
+	addAttributeElement ( hudNode, "Zoom", "num", iToStr ( hud->Zoom ) );
+	if ( hud->Farben ) addMainElement ( hudNode, "Colors" );
+	if ( hud->Gitter ) addMainElement ( hudNode, "Grid" );
+	if ( hud->Munition ) addMainElement ( hudNode, "Ammo" );
+	if ( hud->Nebel ) addMainElement ( hudNode, "Fog" );
+	if ( hud->MinimapZoom ) addMainElement ( hudNode, "MinimapZoom" );
+	if ( hud->Reichweite ) addMainElement ( hudNode, "Range" );
+	if ( hud->Scan ) addMainElement ( hudNode, "Scan" );
+	if ( hud->Status ) addMainElement ( hudNode, "Status" );
+	if ( hud->Studie ) addMainElement ( hudNode, "Survey" );
+	if ( hud->Lock ) addMainElement ( hudNode, "Lock" );
+	if ( hud->Treffer ) addMainElement ( hudNode, "Hitpoints" );
+	if ( hud->TNT ) addMainElement ( hudNode, "TNT" );
+
+	// add reports
+	TiXmlElement *reportsNode = addMainElement ( playerNode, "Reports" );
+	
+	while ( list.Size() )
+	{
+		TiXmlElement *reportElement = addMainElement ( reportsNode, "Report" );
+		reportElement->SetAttribute ( "msg", list[0].message.c_str() );
+		reportElement->SetAttribute ( "type", iToStr ( list[0].type ).c_str() );
+		reportElement->SetAttribute ( "xPos", iToStr ( list[0].xPos ).c_str() );
+		reportElement->SetAttribute ( "yPos", iToStr ( list[0].yPos ).c_str() );
+		reportElement->SetAttribute ( "id", list[0].unitID.getText().c_str() );
+		reportElement->SetAttribute ( "colorNr", iToStr ( list[0].colorNr ).c_str() );
+		list.Delete ( 0 );
+	}
+
+	SaveFile->SaveFile( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
 }
 
 //--------------------------------------------------------------------------

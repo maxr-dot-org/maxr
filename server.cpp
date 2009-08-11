@@ -63,6 +63,8 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
 	TimerID = SDL_AddTimer ( 50, ServerTimerCallback, this );
+	savingID = 0;
+	savingIndex = -1;
 
 	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
@@ -1677,6 +1679,60 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			sendCommandoAnswer ( success, steal, srcVehicle, srcVehicle->owner->Nr );
 		}
 		break;
+	case GAME_EV_SAVE_HUD_INFO:
+		{
+			int msgSaveingID = message->popInt16();
+			if ( msgSaveingID != savingID ) break;
+			cPlayer *player = getPlayerFromNumber ( message->popInt16() );
+			if ( player == NULL ) break;
+
+			player->HotHud.tmpSelectedUnitID = message->popInt16();
+			player->HotHud.OffX = message->popInt16();
+			player->HotHud.OffY = message->popInt16();
+			player->HotHud.Zoom = message->popInt16();
+			player->HotHud.Farben = message->popBool();
+			player->HotHud.Gitter = message->popBool();
+			player->HotHud.Munition= message->popBool();
+			player->HotHud.Nebel = message->popBool();
+			player->HotHud.MinimapZoom = message->popBool();
+			player->HotHud.Reichweite = message->popBool();
+			player->HotHud.Scan = message->popBool();
+			player->HotHud.Status = message->popBool();
+			player->HotHud.Studie = message->popBool();
+			player->HotHud.Lock = message->popBool();
+			player->HotHud.Treffer = message->popBool();
+			player->HotHud.TNT = message->popBool();
+		}
+		break;
+	case GAME_EV_SAVE_REPORT_INFO:
+		{
+			int msgSaveingID = message->popInt16();
+			if ( msgSaveingID != savingID ) break;
+			cPlayer *player = getPlayerFromNumber ( message->popInt16() );
+			if ( player == NULL ) break;
+
+			sSavedReportMessage savedReport;
+			savedReport.message = message->popString();
+			savedReport.type = (sSavedReportMessage::eReportTypes)message->popInt16();
+			savedReport.xPos = message->popInt16();
+			savedReport.yPos = message->popInt16();
+			savedReport.unitID.iFirstPart = message->popInt16();
+			savedReport.unitID.iSecondPart = message->popInt16();
+			savedReport.colorNr = message->popInt16();
+
+			player->savedReportsList.Add ( savedReport );
+		}
+		break;
+	case GAME_EV_FIN_SEND_SAVE_INFO:
+		{
+			int msgSaveingID = message->popInt16();
+			if ( msgSaveingID != savingID ) break;
+			cPlayer *player = getPlayerFromNumber ( message->popInt16() );
+			if ( player == NULL ) break;
+
+			cSavegame savegame ( savingIndex );
+			savegame.writeAdditionalInfo ( &player->HotHud, player->savedReportsList, player );
+		}
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2545,6 +2601,7 @@ void cServer::makeTurnEnd ()
 	{
 		cSavegame Savegame ( 10 );	// autosaves are always in slot 10
 		Savegame.save ( lngPack.i18n ( "Text~Settings~Autosave") + " " + lngPack.i18n ( "Text~Comp~Turn") + " " + iToStr ( iTurn ) );
+		makeAdditionalSaveRequest ( 10 );
 	}
 
 	checkDefeats();
@@ -3188,9 +3245,6 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send research
 	sendResearchLevel( &(Player->researchLevel), Player->Nr );
 	sendRefreshResearchCount (Player->Nr);
-	
-	// FIXME: sending hudsettings doesn't work form yet
-	//sendHudSettings ( &Player->HotHud, Player );
 
 	Log.write(" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
@@ -3416,4 +3470,11 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 	//sidestepping failed. Uncover the vehicle.
 	stealthVehicle->setDetectedByPlayer( vehicleOwner );
 	Server->checkPlayerUnits();
+}
+
+void cServer::makeAdditionalSaveRequest ( int saveNum )
+{
+	savingID++;
+	savingIndex = saveNum;
+	sendRequestSaveInfo ( savingID );
 }

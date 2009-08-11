@@ -394,6 +394,7 @@ void cClient::run()
 			if ( bStartup )
 			{
 				int hudzoom = Hud.Zoom;
+				int oldXOff = Hud.OffX, oldYOff = Hud.OffY;
 				Hud.SetZoom(1);
 				drawMap();
 				SHOW_SCREEN
@@ -405,7 +406,12 @@ void cClient::run()
 					if ( ActivePlayer->BuildingList) ActivePlayer->BuildingList->Center();
 					else if (ActivePlayer->VehicleList) ActivePlayer->VehicleList->Center();
 					bStartupHud = false;
-				}				
+				}
+				else
+				{
+					Hud.OffX = oldXOff;
+					Hud.OffY = oldYOff;
+				}
 				bStartup = false;
 			}
 			else
@@ -5073,6 +5079,33 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 		}
 		break;
+	case GAME_EV_REQ_SAVE_INFO:
+		{
+			int saveingID = message->popInt16();
+			if ( SelectedVehicle ) sendSaveHudInfo ( &Hud, SelectedVehicle->iID, ActivePlayer->Nr, saveingID );
+			else if ( SelectedBuilding ) sendSaveHudInfo ( &Hud, SelectedBuilding->iID, ActivePlayer->Nr, saveingID );
+			else sendSaveHudInfo ( &Hud, -1, ActivePlayer->Nr, saveingID );
+
+			for ( unsigned int i = ActivePlayer->savedReportsList.Size()-50; i < ActivePlayer->savedReportsList.Size(); i++ )
+			{
+				if ( i < 0 ) i = 0;
+				sendSaveReportInfo ( &ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID );
+			}
+			sendFinishedSendSaveInfo ( ActivePlayer->Nr, saveingID );
+		}
+		break;
+	case GAME_EV_SAVED_REPORT:
+		{
+			sSavedReportMessage savedReport;
+			savedReport.message = message->popString();
+			savedReport.type = (sSavedReportMessage::eReportTypes)message->popInt16();
+			savedReport.xPos = message->popInt16();
+			savedReport.yPos = message->popInt16();
+			savedReport.unitID.iFirstPart = message->popInt16();
+			savedReport.unitID.iSecondPart = message->popInt16();
+			savedReport.colorNr = message->popInt16();
+			ActivePlayer->savedReportsList.Add ( savedReport );
+		}
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

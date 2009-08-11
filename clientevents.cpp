@@ -295,3 +295,50 @@ void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas
 	message->pushInt16 ( ownerNr );
 	Client->sendNetMessage ( message );
 }
+
+void sendSaveHudInfo ( cHud *Hud, int selectedUnitID, int ownerNr, int savingID )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_SAVE_HUD_INFO );
+	message->pushBool ( Hud->TNT );
+	message->pushBool ( Hud->Treffer );
+	message->pushBool ( Hud->Lock );
+	message->pushBool ( Hud->Studie );
+	message->pushBool ( Hud->Status );
+	message->pushBool ( Hud->Scan );
+	message->pushBool ( Hud->Reichweite );
+	message->pushBool ( Hud->MinimapZoom );
+	message->pushBool ( Hud->Nebel );
+	message->pushBool ( Hud->Munition );
+	message->pushBool ( Hud->Gitter );
+	message->pushBool ( Hud->Farben );
+	message->pushInt16 ( Hud->Zoom );
+	message->pushInt16 ( Hud->OffY );
+	message->pushInt16 ( Hud->OffX );
+	message->pushInt16 ( selectedUnitID );
+	message->pushInt16 ( ownerNr );
+	message->pushInt16 ( savingID );
+	Client->sendNetMessage ( message );
+}
+
+void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int savingID )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_SAVE_REPORT_INFO );
+	message->pushInt16 ( savedReport->colorNr );
+	message->pushInt16 ( savedReport->unitID.iSecondPart );
+	message->pushInt16 ( savedReport->unitID.iFirstPart );
+	message->pushInt16 ( savedReport->yPos );
+	message->pushInt16 ( savedReport->xPos );
+	message->pushInt16 ( savedReport->type );
+	message->pushString ( savedReport->message );
+	message->pushInt16 ( ownerNr );
+	message->pushInt16 ( savingID );
+	Client->sendNetMessage ( message );
+}
+
+void sendFinishedSendSaveInfo ( int ownerNr, int savingID )
+{
+	cNetMessage* message = new cNetMessage ( GAME_EV_FIN_SEND_SAVE_INFO );
+	message->pushInt16 ( ownerNr );
+	message->pushInt16 ( savingID );
+	Client->sendNetMessage ( message );
+}

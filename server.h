@@ -129,7 +129,10 @@ private:
 	bool openMapDefeat;
 	/** List with disconnected players */
 	cList<cPlayer*> DisconnectedPlayerList;
-
+	/** a sequential id for identifying additional save information from clients */
+	int savingID;
+	/** the index of the saveslot where additional save info should be added */
+	int savingIndex;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -374,6 +377,8 @@ public:
 	  
 	void sideStepStealthUnit( int PosX, int PosY, cVehicle* vehicle, int bigOffset = -1 );
 	void sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1 );
+
+	void makeAdditionalSaveRequest ( int saveNum );
 
 } EX *Server;
 

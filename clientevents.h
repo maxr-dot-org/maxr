@@ -24,6 +24,9 @@
 #include "serverevents.h"
 #include "movejobs.h"
 
+class cHud;
+struct sSavedReportMessage;
+
 enum CLIENT_EVENT_TYPES
 {
 	// Types between FIRST_CLIENT_MESSAGE and FIRST_MENU_MESSAGE are for the client
@@ -81,6 +84,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_REFRESH_RESEARCH_COUNT,	// the client has to refresh the researchCount and the research sums for the areas after a resync
 	GAME_EV_SET_AUTOMOVE,			// a unit has to enable automoving
 	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action
+	GAME_EV_REQ_SAVE_INFO,			// request the hud state and the saved reports from a client
+	GAME_EV_SAVED_REPORT,			// sends saved reports to a client
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -235,5 +240,8 @@ void sendSetAutoStatus( int unitID, bool set );
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
 void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll );
 void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr );
+void sendSaveHudInfo ( cHud *Hud, int selectedUnitID, int ownerNr, int savingID );
+void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int savingID );
+void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
 #endif // clienteventsH

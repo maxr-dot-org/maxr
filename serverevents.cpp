@@ -1033,3 +1033,24 @@ void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int play
 	Server->sendNetMessage( message, player );
 }
 
+//-------------------------------------------------------------------------------------
+void sendRequestSaveInfo ( int saveingID )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_REQ_SAVE_INFO );
+	message->pushInt16 ( saveingID );
+	Server->sendNetMessage( message );
+}
+
+//-------------------------------------------------------------------------------------
+void sendSavedReport ( sSavedReportMessage &savedReport )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_SAVED_REPORT );
+	message->pushInt16 ( savedReport.colorNr );
+	message->pushInt16 ( savedReport.unitID.iSecondPart );
+	message->pushInt16 ( savedReport.unitID.iFirstPart );
+	message->pushInt16 ( savedReport.yPos );
+	message->pushInt16 ( savedReport.xPos );
+	message->pushInt16 ( savedReport.type );
+	message->pushString ( savedReport.message );
+	Server->sendNetMessage( message );
+}

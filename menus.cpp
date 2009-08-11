@@ -212,6 +212,17 @@ void cGameDataContainer::runSavedGame( int player )
 	(*Server->PlayerList)[player]->iSocketNum = MAX_CLIENTS;
 	sendRequestResync( (*Server->PlayerList)[player]->Nr );
 
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		sendHudSettings ( &(*Server->PlayerList)[i]->HotHud, (*Server->PlayerList)[i] );
+		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
+		while ( reportList.Size() )
+		{
+			sendSavedReport ( reportList[0] );
+			reportList.Delete ( 0 );
+		}
+	}
+
 	// exit menu and start game
 	Server->bStarted = true;
 	Client->isInMenu = false;
@@ -3116,6 +3127,13 @@ bool cNetworkHostMenu::runSavedGame()
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		sendRequestResync( (*Server->PlayerList)[i]->Nr );
+		sendHudSettings ( &(*Server->PlayerList)[i]->HotHud, (*Server->PlayerList)[i] );
+		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
+		while ( reportList.Size() )
+		{
+			sendSavedReport ( reportList[0] );
+			reportList.Delete ( 0 );
+		}
 	}
 
 	// exit menu and start game
@@ -3764,6 +3782,7 @@ void cLoadSaveMenu::saveReleased( void* parent )
 
 	cSavegame savegame( menu->selected+1 );
 	savegame.save ( menu->saveSlots[menu->selected-menu->offset]->getNameEdit()->getText() );
+	Server->makeAdditionalSaveRequest( menu->selected+1 );
 
 	delete menu->files;
 	menu->files = getFilesOfDirectory ( SettingsData.sSavesPath );
