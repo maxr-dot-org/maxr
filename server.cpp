@@ -553,6 +553,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			iBuildSpeed = message->popInt16();
 			if ( iBuildSpeed > 2 || iBuildSpeed < 0 ) break;
 			iBuildOff = message->popInt32();
+
+			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->buildCosts );
+
+			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0 )
+			{
+				// TODO: differ between diffrent aborting types ( buildposition blocked, not enough material, ... )
+				sendBuildAnswer ( false, Vehicle );
+				break;
+			}
+
 			if ( iBuildOff < 0 || iBuildOff >= Map->size*Map->size ) break;
 			int buildX = iBuildOff % Map->size;
 			int buildY = iBuildOff / Map->size;
@@ -597,15 +607,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( iPathOff < 0 || iPathOff >= Map->size*Map->size ) break;
 			Vehicle->BandX = iPathOff%Map->size;
 			Vehicle->BandY = iPathOff/Map->size;
-
-
-			Vehicle->calcTurboBuild( iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion( Vehicle->owner )->buildCosts );
-
-			if ( iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0 )
-			{
-				sendBuildAnswer ( false, Vehicle );
-				break;
-			}
 
 			Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
 			Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
