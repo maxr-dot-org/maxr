@@ -22,6 +22,7 @@ loaddata.cpp \
 log.cpp \
 main.cpp \
 map.cpp \
+mapdownload.cpp \
 menuevents.cpp \
 menuitems.cpp \
 menus.cpp \
@@ -36,6 +37,7 @@ savegame.cpp \
 SDL_flic.c \
 server.cpp \
 serverevents.cpp \
+settings.cpp \
 sound.cpp \
 tinystr.cpp \
 tinyxml.cpp \
