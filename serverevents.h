@@ -306,7 +306,7 @@ void sendSetAutomoving ( cVehicle *Vehicle );
 */
 void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player );
 void sendRequestSaveInfo ( int saveingID );
-void sendSavedReport ( sSavedReportMessage &savedReport );
+void sendSavedReport ( sSavedReportMessage &savedReport, int player );
 
 
 #endif // servereventsH

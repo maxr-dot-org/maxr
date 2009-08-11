@@ -837,7 +837,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					{
 						if ( !SelectedVehicle->moving && SelectedVehicle->owner == ActivePlayer )
 						{
-							SelectedVehicle->MenuActive = true;
+							SelectedVehicle->MenuActive = !SelectedVehicle->MenuActive;
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
@@ -845,7 +845,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 					{
 						if ( SelectedBuilding->owner == ActivePlayer )
 						{
-							SelectedBuilding->MenuActive = true;
+							SelectedBuilding->MenuActive = !SelectedBuilding->MenuActive;
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
@@ -1205,7 +1205,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
 			{
-				SelectedVehicle->MenuActive = true;
+				SelectedVehicle->MenuActive = !SelectedVehicle->MenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -1237,7 +1237,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( SelectedVehicle->owner == ActivePlayer )
 			{
-				SelectedVehicle->MenuActive = true;
+				SelectedVehicle->MenuActive = !SelectedVehicle->MenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -1269,7 +1269,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
 			{
-				SelectedBuilding->MenuActive = true;
+				SelectedBuilding->MenuActive = !SelectedBuilding->MenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -1301,7 +1301,7 @@ bool cClient::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( SelectedBuilding->owner == ActivePlayer )
 			{
-				SelectedBuilding->MenuActive = true;
+				SelectedBuilding->MenuActive = !SelectedBuilding->MenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -5086,7 +5086,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			else if ( SelectedBuilding ) sendSaveHudInfo ( &Hud, SelectedBuilding->iID, ActivePlayer->Nr, saveingID );
 			else sendSaveHudInfo ( &Hud, -1, ActivePlayer->Nr, saveingID );
 
-			for ( unsigned int i = ActivePlayer->savedReportsList.Size()-50; i < ActivePlayer->savedReportsList.Size(); i++ )
+			for ( int i = ActivePlayer->savedReportsList.Size()-50; i < (int)ActivePlayer->savedReportsList.Size(); i++ )
 			{
 				if ( i < 0 ) i = 0;
 				sendSaveReportInfo ( &ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID );

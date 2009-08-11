@@ -1042,7 +1042,7 @@ void sendRequestSaveInfo ( int saveingID )
 }
 
 //-------------------------------------------------------------------------------------
-void sendSavedReport ( sSavedReportMessage &savedReport )
+void sendSavedReport ( sSavedReportMessage &savedReport, int player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_SAVED_REPORT );
 	message->pushInt16 ( savedReport.colorNr );
@@ -1052,5 +1052,5 @@ void sendSavedReport ( sSavedReportMessage &savedReport )
 	message->pushInt16 ( savedReport.xPos );
 	message->pushInt16 ( savedReport.type );
 	message->pushString ( savedReport.message );
-	Server->sendNetMessage( message );
+	Server->sendNetMessage( message, player );
 }

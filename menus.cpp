@@ -218,7 +218,7 @@ void cGameDataContainer::runSavedGame( int player )
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
 		while ( reportList.Size() )
 		{
-			sendSavedReport ( reportList[0] );
+			sendSavedReport ( reportList[0], (*Server->PlayerList)[i]->Nr );
 			reportList.Delete ( 0 );
 		}
 	}
@@ -3131,7 +3131,7 @@ bool cNetworkHostMenu::runSavedGame()
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
 		while ( reportList.Size() )
 		{
-			sendSavedReport ( reportList[0] );
+			sendSavedReport ( reportList[0], (*Server->PlayerList)[i]->Nr );
 			reportList.Delete ( 0 );
 		}
 	}
