@@ -112,13 +112,13 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		serverMap.NewMap( map->size, map->iNumberOfTerrains );
 		serverMap.MapName = map->MapName;
 		memcpy ( serverMap.Kacheln, map->Kacheln, sizeof ( int )*map->size*map->size );
-		serverMap.PlaceRessources ( settings->metal, settings->oil, settings->gold, settings->resFrequency );
 		for ( int i = 0; i < map->iNumberOfTerrains; i++ )
 		{
 			serverMap.terrain[i].blocked = map->terrain[i].blocked;
 			serverMap.terrain[i].coast = map->terrain[i].coast;
 			serverMap.terrain[i].water = map->terrain[i].water;
 		}
+		serverMap.PlaceRessources ( settings->metal, settings->oil, settings->gold, settings->resFrequency );
 
 		// playerlist for server
 		for ( unsigned int i = 0; i < players.Size(); i++ )

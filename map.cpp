@@ -82,7 +82,7 @@ cVehicleIterator cVehicleIterator::operator++(int)
 {
 	cVehicleIterator vehicles = *this;
 	if (end) return vehicles;
-	
+
 	if (rend)
 	{
 		rend = false;
@@ -101,7 +101,7 @@ cVehicleIterator cVehicleIterator::operator--(int)
 {
 	cVehicleIterator vehicles = *this;
 	if (rend) return vehicles;
-	
+
 	if ( end )
 	{
 		index = (int)vehicleList->Size() - 1;
@@ -172,7 +172,7 @@ cBuildingIterator cBuildingIterator::operator++(int)
 {
 	cBuildingIterator buildings = *this;
 	if (end) return buildings;
-	
+
 	if (rend)
 	{
 		rend = false;
@@ -183,7 +183,7 @@ cBuildingIterator cBuildingIterator::operator++(int)
 		index++;
 	}
 	if ( index >= (int)buildingList->Size() ) end = true;
-	
+
 	return buildings;
 }
 
@@ -191,8 +191,8 @@ cBuildingIterator cBuildingIterator::operator--(int)
 {
 	cBuildingIterator buildings = *this;
 	if (rend) return buildings;
-	
-	if ( end ) 
+
+	if ( end )
 	{
 		end = false;
 		index = (int)buildingList->Size() - 1;
@@ -260,14 +260,14 @@ cBuilding* cMapField::getTopBuilding()
 cBuilding* cMapField::getBaseBuilding()
 {
 	cBuildingIterator building (&buildings);
-	
+
 	while ( !building.end )
 	{
 		if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND ) return building;
 		building++;
 	}
-	
-	return NULL; 
+
+	return NULL;
 }
 
 cBuilding* cMapField::getRubble()
@@ -480,7 +480,7 @@ bool cMap::LoadMap ( string filename )
 		{
 		case 0:
 			//normal terrain without special property
-			break; 
+			break;
 		case 1:
 			terrain[iNum].water = true;
 			break;
@@ -522,7 +522,7 @@ bool cMap::LoadMap ( string filename )
 				SDL_RWclose( fpMapFile );
 				return false;
 			}
-			Kacheln[iY*size+iX] = Kachel; 
+			Kacheln[iY*size+iX] = Kachel;
 		}
 	}
 	SDL_RWclose( fpMapFile );
@@ -583,179 +583,69 @@ void cMap::generateNextAnimationFrame()
 		SDL_SetColors( terrain[i].sf, palette + 96, 96, 127);
 		//SDL_SetColors( TerrainInUse[i]->sf_org, palette + 96, 96, 127);
 		SDL_SetColors( terrain[i].shw, palette_shw + 96, 96, 127);
-		//SDL_SetColors( TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);	
+		//SDL_SetColors( TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
 	}
 }
 
 // Platziert die Ressourcen (0-wenig,3-viel):
-void cMap::PlaceRessources ( int Metal,int Oil,int Gold,int Dichte )
+void cMap::PlaceRessources ( int metal,int oil,int gold,int dichte )
 {
-	int *GaussMap;
-	int amount;
-	int PosMap[10];
-	int i,k,pos,index;
-	int next=0;
-	int x,y;
-	int nest=0;
-
 	memset ( Resources,0,sizeof ( sResources ) *size*size );
-	if ( Metal>3 ) Metal=3;
-	if ( Oil>3 ) Oil=3;
-	if ( Gold>3 ) Gold=3;
-	if ( Dichte>3 ) Dichte=3;
-	GaussMap = new int[size*size];
-	memset ( GaussMap,0,sizeof ( int ) *size*size );
 
-	// Dafür sorgen, dass mehr Rohstoffe auf dem Land sind:
-	for ( i=0;i<size*size;i++ )
-	{
-		if ( terrain[Kacheln[i]].water ) GaussMap[i]=5;
-	}
+	int frequencies[4];
 
-	// Berechnen, wieviele Quellen es geben soll:
-	if ( Dichte==0 ) amount=size/14;
-	else if ( Dichte==1 ) amount=size/10;
-	else if ( Dichte==2 ) amount=size/8;
-	else amount=size/6;
-	amount*=amount;
-	if ( amount<4 ) amount=4;
+	frequencies[RES_METAL] = metal;
+	frequencies[RES_OIL] = oil;
+	frequencies[RES_GOLD] = gold;
 
-	// Rohstoffe platzieren:
-	while ( amount-- )
-	{
-		for ( i=0;i<10;i++ )
-		{
-			PosMap[i] = random(size * size - 1);
-		}
-		pos=GaussMap[PosMap[0]];
-		index=0;
-		for ( i=1;i<10;i++ )
-		{
-			if ( GaussMap[PosMap[i]]<pos )
-			{
-				pos=GaussMap[PosMap[i]];
-				index=i;
-			}
-		}
-		pos=PosMap[index];
+	int blockSize = 12;
 
-		if ( terrain[Kacheln[pos]].blocked )
-		{
-			amount++;
-			continue;
-		}
+	for(int baseY = 1; baseY < size-1; baseY += blockSize){
+		for(int baseX = 1; baseX < size-1; baseX += blockSize){
+			int innerSizeX = min(size - 1 - baseX, blockSize);
+			int innerSizeY = min(size - 1 - baseY, blockSize);
+			double spotsF = (int)(innerSizeX*innerSizeY*0.005*(1.5+dichte));
+			int spots = (int)spotsF;
+			if((spotsF-spots)*1000 < random(1000))spots++;
 
-		// Ggf ein Nest erstellen:
-		if (random(15) == 0)
-			nest = random(3) + 1;
+			for(int i = 0; i < spots; i++)
+			{
+				int posX;
+				int posY;
 
-		do
-		{
-			if ( next==0 )
-			{
-				Resources[pos].typ=RES_METAL;
-				Resources[pos].value += 4 * Metal + 4 + random(5) - 2;
-			}
-			else if ( next==1 )
-			{
-				Resources[pos].typ=RES_OIL;
-				Resources[pos].value += 4 * Oil + 4 + random(5) - 2;
-			}
-			else
-			{
-				Resources[pos].typ=RES_GOLD;
-				Resources[pos].value += 4 * Gold + 4 + random(5) - 2;
-			}
-			if ( Resources[pos].value>16 )
-			{
-				Resources[pos].value=16;
-			}
-			next++;
-			if ( next>2 ) next=0;
-
-			// Ressurcen dumherum platzieren:
-			x=pos%size;
-			y=pos/size;
-			if ( x>0&&y>0 )
-			{
-				x--;y--;
-				Resources[x + y * size].typ    = random(3) + 1;
-				Resources[x + y * size].value += random(4);
-				if ( Resources[x+y*size].value>16 )
-				{
-					Resources[x+y*size].value=16;
-				}
-				x++;y++;
-			}
-			if ( x<size-1&&y>0 )
-			{
-				x++;y--;
-				Resources[x + y * size].typ    = random(3) + 1;
-				Resources[x + y * size].value += random(4);
-				if ( Resources[x+y*size].value>16 )
-				{
-					Resources[x+y*size].value=16;
-				}
-				x--;y++;
-			}
-			if ( x>0&&y<size-1 )
-			{
-				x--;y++;
-				Resources[x + y * size].typ    = random(3) + 1;
-				Resources[x + y * size].value += random(4);
-				if ( Resources[x+y*size].value>16 )
-				{
-					Resources[x+y*size].value=16;
-				}
-				x++;y--;
-			}
-			if ( x<size-1&&y<size-1 )
-			{
-				x++;y++;
-				Resources[x + y * size].typ   = random(3) + 1;
-				Resources[x + y * size].value = random(4) + 1;
-				x--;y--;
-			}
-
-			if ( nest )
-			{
-				int old=pos;
+				bool hasGold = random(100) < 50; // Gold should be rare
+				int mainType;
 				do
 				{
-					pos=old;
-					pos += random(6) - 3;
-					pos += (random(6) - 3) *size;
+					posX = random(innerSizeX);
+					posY = random(innerSizeY);
+					mainType = (((baseY+posY)%2)*2) + ((baseX+posX)%2);
 				}
-				while ( pos<0||pos>=size*size );
+				while(mainType == RES_NONE || (!hasGold && mainType == RES_GOLD));
+
+
+				for(int iY = posY-1; iY <= posY+1; iY++)
+				{
+					for(int iX = posX-1; iX <= posX+1; iX++)
+					{
+						int absPosX = baseX+iX;
+						int absPosY = baseY+iY;
+						int type = (absPosY%2)*2 + (absPosX%2);
+
+						int index = absPosY*size+absPosX;
+						if(type != RES_NONE && (hasGold || type != RES_GOLD) && !terrain[Kacheln[index]].blocked) // TODO: does the block work?
+						{
+							Resources[index].typ = type;
+							Resources[index].value = 1 + random(2 + frequencies[type]*2);
+							if(iX == posX && iY == posY)Resources[index].value += 3 + random(4 + frequencies[type]*2);
+
+							if(Resources[index].value > 16)Resources[index].value = 16;
+						}
+					}
+				}
 			}
 		}
-		while ( ( nest-- ) >0 );
-
-		// GaussMap machen:
-		int dick;
-		dick=4*6- ( Dichte+1 ) *6;
-		for ( i=1;i<dick;i++ )
-		{
-			x=pos%size;
-			for ( k=1;k<dick;k++ )
-			{
-				y=pos/size;
-				if ( y-k>=0 )
-				{
-					if ( x+i<size ) GaussMap[x+i+ ( y-k ) *size]+=4*4-k;
-					if ( x-i>=0 ) GaussMap[x-i+ ( y-k ) *size]+=4*4-k;
-				}
-				if ( y+k<size )
-				{
-					if ( x+i<size ) GaussMap[x+i+ ( y+k ) *size]+=4*4-k;
-					if ( x-i>=0 ) GaussMap[x-i+ ( y+k ) *size]+=4*4-k;
-				}
-			}
-		}
-		GaussMap[pos]+=999;
-
 	}
-	delete [] GaussMap;
 }
 
 
@@ -848,15 +738,15 @@ void cMap::deleteBuilding( cBuilding* building )
 		offset++;
 		buildings = &fields[offset].buildings;
 		if ( (*buildings)[0] == building ) buildings->Delete(0);
-		
+
 		offset += size;
 		buildings = &fields[offset].buildings;
 		if ( (*buildings)[0] == building ) buildings->Delete(0);
-		
+
 		offset--;
 		buildings = &fields[offset].buildings;
 		if ( (*buildings)[0] == building ) buildings->Delete(0);
-		
+
 	}
 }
 
@@ -908,7 +798,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y )
 void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 {
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
-	
+
 	vehicle->PosX = newOffset % size;
 	vehicle->PosY = newOffset / size;
 
@@ -953,7 +843,7 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 {
-	if ( vehicle->data.isBig ) 
+	if ( vehicle->data.isBig )
 	{
 		Log.write("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR );
 		//calling this this function twice is allways an error.
@@ -1012,7 +902,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 	if ( vehicleData.factorGround > 0 )
 	{
 		if ( terrain[Kacheln[offset]].blocked ) return false;
-		
+
 		if ( ( terrain[Kacheln[offset]].water && vehicleData.factorSea == 0  ) || ( terrain[Kacheln[offset]].coast && vehicleData.factorCoast == 0 ) )
 		{
 			if ( player && !player->ScanMap[offset] ) return false;
@@ -1021,7 +911,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 			if ( !building ) return false;
 			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) return false;
 		}
-		if ( player && !player->ScanMap[offset] ) return true;			
+		if ( player && !player->ScanMap[offset] ) return true;
 
 		if ( fields[offset].vehicles.Size() > 0 ) return false;
 		if ( building )
@@ -1088,7 +978,7 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 		{
 			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA && ( bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
 			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA ) checkBeneathSea = true;
-		}	
+		}
 	}
 	else if ( buildingData.factorGround )
 	{
@@ -1099,7 +989,7 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE && ( !bi || bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO ) ) return false;
 			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) checkAboveBase = true;
 		}
-		
+
 		if ( !bi.end )
 		{
 			if ( buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE && buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE )
@@ -1110,7 +1000,7 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 			if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE && bi->owner && !( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) return false;
 		}
 	}
-	
+
 	//can not build on rubble
 	if (bi && !bi->owner && ! ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE || buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )) return false;
 
