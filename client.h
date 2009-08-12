@@ -92,6 +92,7 @@ struct sMouseBox
 {
 	float startX, startY;
 	float endX, endY;
+	bool isTooSmall();
 };
 
 /**
@@ -183,6 +184,7 @@ private:
 	sMouseState clientMouseState;
 	/** the currently by the mouse pulled box */
 	sMouseBox mouseBox;
+	sMouseBox rightMouseBox;
 
 	bool selectUnit( cMapField *OverUnitField, bool base );
 	/**
@@ -506,7 +508,7 @@ public:
 	void destroyUnit( cBuilding* building );
 
 	void checkVehiclePositions( cNetMessage* message );
-	void handleHotKey ( SDL_keysym &keysym ); 
+	void handleHotKey ( SDL_keysym &keysym );
 	void handleMouseInput ( sMouseState mouseState );
 	sMouseState getMouseState();
 

@@ -306,7 +306,7 @@ void cHud::SetZoom ( int zoom,int DestY )
 	static int lastz=64;
 	SDL_Rect scr,dest;
 //  if(zoom<448/Client->Map->size)zoom=448/Client->Map->size;
-	
+
 	Zoom=zoom;
 //  zoom-=((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size));
 	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) );
@@ -349,6 +349,7 @@ void cHud::SetZoom ( int zoom,int DestY )
 	if ( SettingsData.bPreScale ) ScaleSurfaces();
 }
 
+
 void cHud::CheckButtons ( void )
 {
 	int x,y;
@@ -357,7 +358,7 @@ void cHud::CheckButtons ( void )
 	if ( x<170 )
 	{
 		if ( x>=136&&x<=136+27&&y>=413&&y<=413+28 ) {SwitchTNT ( !TNT );return;}
-		if ( x>=136&&x<=136+27&&y>=439&&y<=439+28 ) 
+		if ( x>=136&&x<=136+27&&y>=439&&y<=439+28 )
 		{
 			SwitchPlayers( !bShowPlayers );
 			reset();
@@ -396,7 +397,7 @@ void cHud::DoAllHud ( void )
 	bool s;
 	s=SettingsData.bSoundEnabled;
 	SettingsData.bSoundEnabled=false;
-	
+
 	EndeButton(EndePressed);
 	DateiButton(false);
 	PraeferenzenButton(false);
@@ -502,7 +503,7 @@ void cHud::CheckScroll ( bool pure )
 		if ( y<2+21&&y>=2&&x>=390&&x<390+72 )
 		{
 			mouse->SetCursor ( CHand );
-			
+
 			Client->OverUnitField = NULL;
 			LastOverEnde=true;
 			return;
@@ -624,7 +625,7 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if (Client->OverUnitField && 
+		else if (Client->OverUnitField &&
 				(
 					Client->OverUnitField->getVehicles() ||
 					(
@@ -730,7 +731,7 @@ void cHud::CheckScroll ( bool pure )
 			{
 				int x, y;
 				mouse->GetKachel( &x, &y );
-				if ( ( ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds == 0 ) || 
+				if ( ( ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds == 0 ) ||
 					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds == 0 ) ) &&
 					 Client->Map->possiblePlace( selectedVehicle, mouse->GetKachelOff()) && selectedVehicle->isNextTo(x, y))
 				{
@@ -798,7 +799,6 @@ void cHud::CheckScroll ( bool pure )
 
 void cHud::DoScroll ( int dir )
 {
-	static int lx=0,ly=0;
 	int step;
 	if ( Client->SelectedBuilding )
 	{
@@ -807,48 +807,59 @@ void cHud::DoScroll ( int dir )
 	cHud& hud = Client->Hud;
 	step=64/Zoom;
 	step*=SettingsData.iScrollSpeed;
+	int posX = hud.OffX;
+	int posY = hud.OffY;
 	switch ( dir )
 	{
 		case 1:
-			hud.OffX-=step;
-			hud.OffY+=step;
+			posX-=step;
+			posY+=step;
 			break;
 		case 2:
-			hud.OffY+=step;
+			posY+=step;
 			break;
 		case 3:
-			hud.OffX+=step;
-			hud.OffY+=step;
+			posX+=step;
+			posY+=step;
 			break;
 		case 4:
-			hud.OffX-=step;
+			posX-=step;
 			break;
 		case 6:
-			hud.OffX+=step;
+			posX+=step;
 			break;
 		case 7:
-			hud.OffX-=step;
-			hud.OffY-=step;
+			posX-=step;
+			posY-=step;
 			break;
 		case 8:
-			hud.OffY-=step;
+			posY-=step;
 			break;
 		case 9:
-			hud.OffX+=step;
-			hud.OffY-=step;
+			posX+=step;
+			posY-=step;
 			break;
 	}
-	if ( hud.OffX<0 ) hud.OffX=0;
-	if ( hud.OffY<0 ) hud.OffY=0;
-	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
-	if ( hud.OffX>=step ) hud.OffX=step;
-	step=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
-	if ( hud.OffY>=step ) hud.OffY=step;
-	if ( lx==OffX&&ly==OffY ) return;
+	setScrollPos(posX, posY);
+}
+
+void cHud::setScrollPos(int x,int y)
+{
+	static int lx=0,ly=0;
+	if ( x<0 ) x=0;
+	if ( y<0 ) y=0;
+	int sizeX = Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+	if ( x>=sizeX ) x=sizeX;
+	int sizeY = Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
+	if ( y>=sizeY ) y=sizeY;
+	if ( lx==x&&ly==y ) return;
 	Client->bFlagDrawMap=true;
 	Client->bFlagDrawMMap=true;
+	OffX = x;
+	OffY = y;
 	lx=OffX;ly=OffY;
 }
+
 
 void cHud::DoMinimapClick ( int x,int y )
 {
@@ -1462,11 +1473,11 @@ void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, 
 		//draw players beside minimap
 		SDL_Rect rDest;
 		SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
-		
+
 		if(SettingsData.iScreenH >= 768) //draw players under minimap if screenres is big enough
 		{
 			rSrc.x = 18; //skip eyecandy spit before playerbar
-	
+
 			rDest.x = 3;
 			rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
 		}
@@ -1475,11 +1486,11 @@ void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, 
 			rDest.x = 161;
 			rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
 		}
-	
-	
+
+
 		SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
 		SDL_Rect rDotDest = { rDest.x + 23 - rSrc.x, rDest.y + 6, rDot.w, rDot.h };
-	
+
 		SDL_Rect rColorSrc = { 0, 0, 10, 12 };
 		SDL_Rect rColorDest = { rDest.x + 40 - rSrc.x, rDest.y + 6, rColorSrc.w, rColorSrc.h };
 		//END PREP WORK
@@ -1489,7 +1500,7 @@ void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, 
 		{
 			rDot.x = 0; //red dot
 		}
-		if(bActive) 
+		if(bActive)
 		{
 			SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, GraphicsData.gfx_hud, &rDotDest ); //blit dot
 			SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, GraphicsData.gfx_hud, &rColorDest ); //blit color

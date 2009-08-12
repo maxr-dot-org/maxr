@@ -63,7 +63,9 @@ public:
   void SwitchLock(bool set);
   void DoZoom(int x,int y=274);
   void SetZoom(int zoom,int DestY=274);
+  void changeZoom(double f);
   void DoScroll(int dir);
+  void setScrollPos(int x,int y);
   void DoMinimapClick(int x,int y);
   void PraeferenzenButton(bool set);
   void PauseButton(bool set);

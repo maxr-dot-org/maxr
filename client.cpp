@@ -106,6 +106,12 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	return interval;
 }
 
+bool sMouseBox::isTooSmall()
+{
+	return !(endX > startX+(10/64.0) || endX < startX-(10/64.0) || endY > startY+(10/64.0) || endY < startY-(10/64.0));
+}
+
+
 cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 {
 	this->Map = Map;
@@ -171,6 +177,9 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 
 	mouseBox.startX = mouseBox.startY = -1;
 	mouseBox.endX = mouseBox.endY = -1;
+
+	rightMouseBox.startX = rightMouseBox.startY = -1;
+	rightMouseBox.endX = rightMouseBox.endY = -1;
 }
 
 cClient::~cClient()
@@ -271,7 +280,7 @@ void cClient::run()
 		if ( bDefeated ) break;
 		// get events
 		EventHandler->HandleEvents();
-		// check mouse moves 
+		// check mouse moves
 		mouse->GetPos();
 		CHECK_MEMORY;
 		// check hud
@@ -283,6 +292,16 @@ void cClient::run()
 		{
 			mouseBox.endX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
 			mouseBox.endY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
+		}
+		if ( clientMouseState.rightButtonPressed && !clientMouseState.leftButtonPressed && rightMouseBox.startX != -1 && mouse->x > 180 )
+		{
+			rightMouseBox.endX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
+			rightMouseBox.endY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
+		}
+		// Scroll with right mouse Button
+		if((clientMouseState.rightButtonPressed || clientMouseState.rightButtonReleased) && !rightMouseBox.isTooSmall()){
+			int speed = 5;
+			Hud.setScrollPos(Hud.OffX + (mouse->DrawX - mouse->LastX)*speed, Hud.OffY + (mouse->DrawY - mouse->LastY)*speed);
 		}
 		// check length of input strings
 		if ( bChangeObjectName && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( 128 );
@@ -304,10 +323,10 @@ void cClient::run()
 			displayDebugOutput();
 
 			//restore hud
-			SDL_Rect bottomDisplay = {240, SettingsData.iScreenH - 30, 400, 30}; 
+			SDL_Rect bottomDisplay = {240, SettingsData.iScreenH - 30, 400, 30};
 			SDL_BlitSurface ( GraphicsData.gfx_hud, &bottomDisplay, buffer, &bottomDisplay );
 
-			SDL_Rect topDisplay = {380, 5, 220, 25}; 
+			SDL_Rect topDisplay = {380, 5, 220, 25};
 			SDL_BlitSurface ( GraphicsData.gfx_hud, &topDisplay, buffer, &topDisplay );
 
 			if ( Hud.bShowPlayers )
@@ -472,12 +491,12 @@ void cClient::run()
 			static Uint32 iLastTicks = 0;
 			static Uint32 iLastFrame = 0;
 			static Uint32 iCycles = 0;
-			static Uint32 iInverseLoad = 0; //this is 10*(100% - load) 
+			static Uint32 iInverseLoad = 0; //this is 10*(100% - load)
 			static Uint32 iLastTickLoad = 0;
 
 			iCycles++;
 			Uint32 iTicks = SDL_GetTicks();
-			
+
 			if ( iTicks != iLastTickLoad ) iInverseLoad++;
 			iLastTickLoad = iTicks;
 
@@ -541,7 +560,7 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 		}
 		else if ( OverUnitField ) selectUnit ( OverUnitField, true );
 	}
-	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed ) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
+	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
 	{
 		if ( bHelpActive )
 		{
@@ -640,10 +659,21 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			}
 		}
 	}
+
+	if ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed )
+	{
+		rightMouseBox.startX = rightMouseBox.startY = -1;
+		rightMouseBox.endX = rightMouseBox.endY = -1;
+	}
+	else if ( mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouse->x > 180 && mouse->y > 20 )
+	{
+		rightMouseBox.startX = (float)( ((mouse->x-180)+Hud.OffX / (64.0/Hud.Zoom)) / Hud.Zoom );
+		rightMouseBox.startY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
+	}
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
 		if ( OverUnitField && Hud.Lock ) ActivePlayer->ToggelLock ( OverUnitField );
-		if ( mouseBox.endX > mouseBox.startX+(10/64.0) || mouseBox.endX < mouseBox.startX-(10/64.0) || mouseBox.endY > mouseBox.startY+(10/64.0) || mouseBox.endY < mouseBox.startY-(10/64.0) )
+		if ( !mouseBox.isTooSmall() )
 		{
 			selectBoxVehicles( mouseBox );
 		}
@@ -931,11 +961,11 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			string s = InputHandler->getInputStr( CURSOR_DISABLED );
 			if ( !s.empty() )
 			{
-				if ( s[0] == '/' ) 
+				if ( s[0] == '/' )
 				{
 					doCommand( s );
 				}
-				else 
+				else
 				{
 					sendChatMessageToServer( ActivePlayer->name+": " + s );
 				}
@@ -1455,7 +1485,7 @@ void cClient::startGroupMove()
 		int destOffset = mainDestX+vehicle->PosX-mainPosX+(mainDestY+vehicle->PosY-mainPosY)*Map->size;
 		addMoveJob ( vehicle, destOffset, &SelectedVehicles );
 		// delete the unit from the copyed list
-		group.Delete ( shortestWayVehNum ); 
+		group.Delete ( shortestWayVehNum );
 	}
 }
 
@@ -1553,7 +1583,7 @@ void cClient::drawMap( bool bPure )
 			dest.x+=iZoom;
 		}
 	}
-	if ( bPure ) 
+	if ( bPure )
 	{
 		SDL_SetClipRect( buffer, NULL );
 		return;
@@ -1723,7 +1753,7 @@ void cClient::drawMap( bool bPure )
 					}
 					building++;
 				} while ( !building.end );
-				
+
 				cVehicle* vehicle = Map->fields[iPos].getVehicles();
 				if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( ActivePlayer->ScanMap[iPos] || ( iX < iEndX && ActivePlayer->ScanMap[iPos+1] ) || ( iY < iEndY && ActivePlayer->ScanMap[iPos+Map->size] ) || ( iX < iEndX && iY < iEndY&&ActivePlayer->ScanMap[iPos+Map->size+1] ) ) )
 				{
@@ -1770,7 +1800,7 @@ void cClient::drawMap( bool bPure )
 		for ( iX=iStartX;iX<=iEndX;iX++ )
 		{
 			if ( ActivePlayer->ScanMap[iPos] )
-			{				
+			{
 				cBuilding* building = Map->fields[iPos].getTopBuilding();
 				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 				{
@@ -1914,7 +1944,7 @@ void cClient::drawMap( bool bPure )
 		Uint32 color = 0xFFFF00;
 		SDL_Rect d;
 		int mouseStartX = (int)(min(mouseBox.startX, mouseBox.endX)*Hud.Zoom);
-		int mouseStartY = (int)(min(mouseBox.startY, mouseBox.endY)*Hud.Zoom); 
+		int mouseStartY = (int)(min(mouseBox.startY, mouseBox.endY)*Hud.Zoom);
 		int mouseEndX = (int)(max(mouseBox.startX, mouseBox.endX)*Hud.Zoom);
 		int mouseEndY = (int)(max(mouseBox.startY, mouseBox.endY)*Hud.Zoom);
 
@@ -1950,8 +1980,8 @@ void cClient::drawMiniMap()
 {
 
 	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
-	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );	
-		
+	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );
+
 	//set zoom factor
 	int zoomFactor = 1;
 	if ( Hud.MinimapZoom )
@@ -1978,7 +2008,7 @@ void cClient::drawMiniMap()
 	//draw the landscape
 	for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
 	{
-		//calculate the field on the map	
+		//calculate the field on the map
 		int terrainx = (miniMapX * Map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
 		if ( terrainx >= Map->size ) terrainx = Map->size - 1;
 
@@ -2022,18 +2052,18 @@ void cClient::drawMiniMap()
 	//draw the units
 	//here we go through each map field instead of through each minimap pixel,
 	//to make sure, that every unit is diplayed and has the same size on the minimap.
-	
+
 	//the size of the rect, that is drawn for each unit
 	int size = (int) ceil((float) MINIMAP_SIZE * zoomFactor / Map->size);
 	if ( size < 2 ) size = 2;
-	SDL_Rect rect;	
+	SDL_Rect rect;
 	rect.h = size;
 	rect.w = size;
-			
+
 	for ( int mapx = 0; mapx < Map->size; mapx++ )
 	{
 		rect.x = ( (mapx - minimapOffsetX) * MINIMAP_SIZE * zoomFactor ) / Map->size;
-		if ( rect.x < 0 || rect.x >= MINIMAP_SIZE ) continue; 
+		if ( rect.x < 0 || rect.x >= MINIMAP_SIZE ) continue;
 		for ( int mapy = 0; mapy < Map->size; mapy++ )
 		{
 			rect.y = ( (mapy - minimapOffsetY) * MINIMAP_SIZE * zoomFactor ) / Map->size;
@@ -2113,11 +2143,11 @@ void cClient::drawMiniMap()
 			minimap[endy * MINIMAP_SIZE + x] = MINIMAP_COLOR;
 		}
 	}
-	
+
 	//ready. blitt the map to screen
 	SDL_Rect minimapPos = { MINIMAP_POS_X, MINIMAP_POS_Y, 0, 0 };
 	SDL_BlitSurface(minimapSurface, NULL, GraphicsData.gfx_hud, &minimapPos );
-	SDL_FreeSurface( minimapSurface );	
+	SDL_FreeSurface( minimapSurface );
 }
 
 void cClient::drawFLC()
@@ -2217,7 +2247,7 @@ void cClient::runFX()
 						FXList.Delete ( i );
 						return;
 					}
-				
+
 					for ( int k=0; k < 64; k += 8 )
 					{
 						if ( SettingsData.bAlphaEffects )
@@ -2271,7 +2301,7 @@ void cClient::runFX()
 			default:
 				break;
 		}
-			
+
 	}
 }
 
@@ -2462,13 +2492,13 @@ void cClient::drawFX( int iNum )
 			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], factor );
 			sFXRocketInfos *ri;
 			ri= fx->rocketInfo;
-			
+
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
-			
+
 			if ( ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] )
 				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
 
@@ -2542,13 +2572,13 @@ void cClient::drawFXBottom( int iNum )
 			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], factor );
 			sFXRocketInfos *ri;
 			ri = fx->rocketInfo;
-			
+
 			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
 			scr.y=0;
 			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) / ( 64.0/Hud.Zoom ) ) );
-			
+
 			if ( ActivePlayer->ScanMap[fx->PosX/64+fx->PosY/64*Map->size] )
 			{
 				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
@@ -2566,7 +2596,7 @@ void cClient::drawFXBottom( int iNum )
 				FXListBottom.Delete ( iNum );
 				return;
 			}
-			
+
 			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
 			if ( iTimer0 )
 			{
@@ -2579,7 +2609,7 @@ void cClient::drawFXBottom( int iNum )
 			scr.x=tri->dir*scr.w;
 			dest.x=180- ( ( int ) ( ( Hud.OffX- ( fx->PosX ) ) / ( 64.0/Hud.Zoom ) ) );
 			dest.y=18- ( ( int ) ( ( Hud.OffY- ( fx->PosY ) ) / ( 64.0/Hud.Zoom ) ) );
-			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );			
+			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );
 			break;
 		}
 		case fxBubbles:
@@ -2766,7 +2796,7 @@ void cClient::drawUnitCircles ()
 			             spy+Hud.Zoom/2,
 			             SelectedBuilding->data.range*Hud.Zoom+2,RANGE_AIR_COLOR,buffer );
 		}
-		
+
 		if (SelectedBuilding->BuildList                              &&
 				SelectedBuilding->BuildList->Size()                      &&
 				!SelectedBuilding->IsWorking                             &&
@@ -2821,7 +2851,7 @@ void cClient::displayDebugOutput()
 			}
 
 			SDL_BlitSurface ( (*PlayerList)[i]->color, &rSrc, buffer, &rDest );
-			if ( (*PlayerList)[i] == ActivePlayer ) 
+			if ( (*PlayerList)[i] == ActivePlayer )
 			{
 				string sTmpLine = " " + (*PlayerList)[i]->name + ", nr: " + iToStr ( (*PlayerList)[i]->Nr ) + " << you! ";
 				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
@@ -3263,10 +3293,10 @@ void cClient::doCommand ( string sCmd )
 
 			//server cannot be kicked
 			if ( playerNum == 0 ) return;
-			
+
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
-			
+
 			// close the socket
 			if ( network ) network->close ( Player->iSocketNum );
 			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
@@ -3300,7 +3330,7 @@ void cClient::doCommand ( string sCmd )
 
 			//since atoi is too stupid to report an error, do an extra check, when the number is 0
 			if ( playerNum == 0 ) return;
-			
+
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
 
@@ -3332,7 +3362,7 @@ void cClient::doCommand ( string sCmd )
 
 			//server cannot be disconnected
 			if ( playerNum == 0 ) return;
-			
+
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
 
@@ -3634,7 +3664,7 @@ void cClient::handleMessages()
 		iHeight += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
 	}
 	if (messages.Size() == 0) return;
-	
+
 	scr.x = 0; scr.y = 0;
 	dest.x = 180; dest.y = 30;
 	scr.w = SettingsData.iScreenW - 200;
@@ -3647,7 +3677,7 @@ void cClient::handleMessages()
 	dest.x = 180+2; dest.y = 34;
 	dest.w = SettingsData.iScreenW - 204;
 	dest.h = iHeight;
-	
+
 	for (unsigned int i = 0; i < messages.Size(); i++)
 	{
 		message = messages[i];
@@ -3692,13 +3722,13 @@ void cClient::handleMessages()
 		{
 			dest.y = font->showTextAsBlock( dest, sMsg );
 		}
-		
+
 		dest.y += 5;
 	}
 }
 
 int cClient::HandleNetMessage( cNetMessage* message )
-{	
+{
 	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS )		//do not pollute log file with debug events
 		Log.write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
@@ -3944,7 +3974,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			//HACK SHOWFINISHEDPLAYERS player finished his turn
-			if ( Player ) 
+			if ( Player )
 			{
 				Player->bFinishedTurn=true;
 				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -4051,7 +4081,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->name = message->popString();
 				bool bWasDisabled = Building->Disabled > 0;
 				Building->Disabled = message->popInt16();
-				Building->researchArea = message->popInt16(); 
+				Building->researchArea = message->popInt16();
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
 
@@ -4246,7 +4276,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iBuildX = message->popInt16();
 			int iBuildY = message->popInt16();
 			bool bBuildBig = message->popBool();
-			
+
 			if ( bBuildBig )
 			{
 				Map->moveVehicleBig(Vehicle, iBuildX, iBuildY );
@@ -4267,7 +4297,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->BuildRounds = message->popInt16();
 				Vehicle->BuildPath = message->popBool();
 				Vehicle->BandX = message->popInt16();
-				Vehicle->BandY = message->popInt16();	
+				Vehicle->BandY = message->popInt16();
 			}
 
 			Vehicle->IsBuilding = true;
@@ -4368,7 +4398,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->SubBase = SubBase;
 
 				Building->updateNeighbours( Map );
-				
+
 			}
 		}
 		break;
@@ -4495,10 +4525,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
 			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
-			if ( bFinishedResearch ) 
+			if ( bFinishedResearch )
 			{
 				PlayVoice ( VoiceData.VOIResearchComplete );
-				//FIXME: Ticket #196 
+				//FIXME: Ticket #196
 				addMessage (lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished"));
 			}
 
@@ -4507,7 +4537,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( sReportMsg.length() > 0 ) msgString += sReportMsg + "\n";
 			if ( bFinishedResearch ) msgString += lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished") + "\n";
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
-			
+
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
@@ -4530,7 +4560,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_SUPPLY:
 		{
 			int iType = message->popChar ();
-			if ( message->popBool () ) 
+			if ( message->popBool () )
 			{
 				int iID = message->popInt16();
 				cVehicle *DestVehicle = getVehicleFromID ( iID );
@@ -4610,7 +4640,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			rubble->iID = message->popInt16();
 			rubble->PosY = message->popInt16();
 			rubble->PosX = message->popInt16();
-			
+
 			Map->addBuilding( rubble, rubble->PosX, rubble->PosY);
 		}
 		break;
@@ -4873,7 +4903,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				cPlayer *const Player = (*PlayerList)[i];
-				
+
 				cVehicle *vehicle = Player->VehicleList;
 				while ( vehicle )
 				{
@@ -4915,7 +4945,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
-			// Normally there shouldn't be any pointers left after deleting all units, but a resync is not 
+			// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
 			// executed in normal situations and there are situations, when this happens.
 			Map->reset();
 		}
@@ -4970,12 +5000,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 				ostringstream os;
-				os << "Upgraded " << buildingsInMsg << " " << buildingName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
+				os << "Upgraded " << buildingsInMsg << " " << buildingName << " for " << totalCosts << " raw materials"; // TODO: translated? check original
 				string printStr(os.str());
 				addMessage (printStr);
 				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
 				if (scanNecessary)
-					ActivePlayer->DoScan(); 
+					ActivePlayer->DoScan();
 			}
 		}
 		break;
@@ -5010,7 +5040,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 				ostringstream os;
-				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original 
+				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original
 				string printStr(os.str());
 				addMessage (printStr);
 				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
@@ -5040,7 +5070,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			for (int area = cResearch::kNrResearchAreas - 1; area >= 0; area--)
 			{
 				int newCurPoints = message->popInt16();
-				int newLevel = message->popInt16();				
+				int newLevel = message->popInt16();
 				ActivePlayer->researchLevel.setCurResearchLevel(newLevel, area);
 				ActivePlayer->researchLevel.setCurResearchPoints(newCurPoints, area);
 			}
@@ -5208,7 +5238,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	{
 		for ( unsigned int i = 0; i < Building->SubBase->buildings.Size(); i++ )
 		{
-			if ( Building->SubBase->buildings[i] == Building )  
+			if ( Building->SubBase->buildings[i] == Building )
 				Building->SubBase->buildings.Delete(i);
 		}
 	}
@@ -5270,7 +5300,7 @@ void cClient::handleEnd()
 {
 	if ( bWaitForOthers ) return;
 	bWantToEnd = true;
-	sendWantToEndTurn();	
+	sendWantToEndTurn();
 }
 
 void cClient::makeHotSeatEnd( int iNextPlayerNum )
@@ -5330,7 +5360,7 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 	{
 		EventHandler->HandleEvents();
 
-		// check mouse moves 
+		// check mouse moves
 		mouse->GetPos();
 		// check hud
 		if ( mouseBox.startX == -1 ) Hud.CheckMouseOver( clientMouseState );
@@ -5495,9 +5525,9 @@ void cClient::handleMoveJobs ()
 
 		MoveJob = ActiveMJobs[i];
 		Vehicle = MoveJob->Vehicle;
-		
-		//suspend movejobs of attacked vehicles 
-		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue; 
+
+		//suspend movejobs of attacked vehicles
+		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue;
 
 		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{
@@ -5592,7 +5622,7 @@ void cClient::trace ()
 
 	mouse->GetKachel ( &iX, &iY );
 	if ( iX < 0 || iY < 0 ) return;
-	
+
 	if ( bDebugTraceServer ) field = Server->Map->fields + ( Server->Map->size*iY+iX );
 	else field = Map->fields + ( Map->size*iY+iX );
 
@@ -5811,12 +5841,12 @@ void cClient::destroyUnit(cBuilding *building)
 	{
 		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
-	
+
 }
 
 void cClient::checkVehiclePositions(cNetMessage *message)
 {
-	
+
 	static cList<cVehicle*>  vehicleList;
 	bool lastMessagePart = message->popBool();
 
@@ -5849,7 +5879,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 
 		if ( PosX != -1 && PosY != -1 && ( vehicle->PosX != PosX || vehicle->PosY != PosY ) && !vehicle->ClientMoveJob )
 		{
-			Log.write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR); 
+			Log.write("   --wrong position, ID: " + iToStr(id) + ", is: "+iToStr(vehicle->PosX)+":"+iToStr(vehicle->PosY)+", should: "+iToStr(PosX)+":"+iToStr(PosY) , cLog::eLOG_TYPE_NET_ERROR);
 		}
 
 		//remove vehicle from list

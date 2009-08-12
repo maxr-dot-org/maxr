@@ -53,7 +53,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 		dest.x=LastX;
 		dest.y=LastY;
 		SDL_BlitSurface ( back,NULL,sf,&dest );
-		
+
 		SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
 	}
 
