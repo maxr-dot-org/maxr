@@ -672,7 +672,11 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	}
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
-		if ( OverUnitField && Hud.Lock ) ActivePlayer->ToggelLock ( OverUnitField );
+		// Store the currently selected unit to determine if the lock state of the clicked unit maybe has to be changed. 
+		// If the selected unit changes during the click handling, then the newly selected unit has to be added / removed from the "locked units" list.
+		cVehicle* oldSelectedVehicleForLock = SelectedVehicle;
+		cBuilding* oldSelectedBuildingForLock = SelectedBuilding;
+		
 		if ( !mouseBox.isTooSmall() )
 		{
 			selectBoxVehicles( mouseBox );
@@ -920,6 +924,16 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 			}
 			bHelpActive = false;
 		}
+		
+		// toggle the lock state of an enemy unit, if it is newly selected / deselected
+		if ( OverUnitField && Hud.Lock )
+		{
+			if (SelectedVehicle && SelectedVehicle != oldSelectedVehicleForLock && SelectedVehicle->owner != ActivePlayer)
+				ActivePlayer->ToggelLock ( OverUnitField );
+			else if (SelectedBuilding && SelectedBuilding != oldSelectedBuildingForLock && SelectedBuilding->owner != ActivePlayer)
+				ActivePlayer->ToggelLock ( OverUnitField );
+		}
+		
 		mouseBox.startX = mouseBox.startY = -1;
 		mouseBox.endX = mouseBox.endY = -1;
 	}
