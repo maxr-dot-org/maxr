@@ -258,7 +258,7 @@ void cClient::initPlayer( cPlayer *Player )
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
 		if ( (*PlayerList)[i] == ActivePlayer ) continue;
-		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1) ) );
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1), (*PlayerList)[i]) );
 	}
 }
 
@@ -1651,11 +1651,11 @@ void cClient::drawMap( bool bPure )
 					{
 						building->draw ( &dest );
 
-						if ( bDebugBaseClient )
+						if ( bDebugBaseClient && building->SubBase )
 						{
 							sSubBase *sb;
 							tmp=dest;
-							if ( tmp.h>8 ) tmp.h=8;
+							tmp.h=8;
 							tmp.w = Hud.Zoom;
 							if ( building->data.isBig ) tmp.w*=2;
 							sb = building->SubBase;
@@ -1672,11 +1672,11 @@ void cClient::drawMap( bool bPure )
 							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
 							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
 						}
-						if ( bDebugBaseServer )
+						if ( bDebugBaseServer && building->SubBase )
 						{
 							sSubBase *sb;
 							tmp=dest;
-							if ( tmp.h>8 ) tmp.h=8;
+							tmp.h=8;
 							tmp.w = Hud.Zoom;
 							if ( building->data.isBig ) tmp.w*=2;
 							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
@@ -4344,7 +4344,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			sSubBase *NewSubBase;
 			// generate new subbase
-			NewSubBase = new sSubBase ( message->popInt16() );
+			NewSubBase = new sSubBase ( message->popInt16(), ActivePlayer );
 			ActivePlayer->base.SubBases.Add( NewSubBase );
 		}
 		break;

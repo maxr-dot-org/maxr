@@ -720,19 +720,19 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					case sUnitData::STORE_RES_METAL:
 						{
 							if ( SrcBuilding->SubBase->Metal-iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -iTranfer );
+							if ( !bBreakSwitch ) SrcBuilding->SubBase->addMetal ( -iTranfer );
 						}
 						break;
 					case sUnitData::STORE_RES_OIL:
 						{
 							if ( SrcBuilding->SubBase->Oil-iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddOil ( SrcBuilding->SubBase, -iTranfer );
+							if ( !bBreakSwitch ) SrcBuilding->SubBase->addOil( -iTranfer );
 						}
 						break;
 					case sUnitData::STORE_RES_GOLD:
 						{
 							if ( SrcBuilding->SubBase->Gold-iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold-iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) SrcBuilding->owner->base.AddGold ( SrcBuilding->SubBase, -iTranfer );
+							if ( !bBreakSwitch ) SrcBuilding->SubBase->addGold( -iTranfer );
 						}
 						break;
 					}
@@ -754,19 +754,19 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					case sUnitData::STORE_RES_METAL:
 						{
 							if ( DestBuilding->SubBase->Metal+iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal+iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) DestBuilding->owner->base.AddMetal ( DestBuilding->SubBase, iTranfer );
+							if ( !bBreakSwitch ) DestBuilding->SubBase->addMetal( iTranfer );
 						}
 						break;
 					case sUnitData::STORE_RES_OIL:
 						{
 							if ( DestBuilding->SubBase->Oil+iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil+iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) DestBuilding->owner->base.AddOil ( DestBuilding->SubBase, iTranfer );
+							if ( !bBreakSwitch ) DestBuilding->SubBase->addOil( iTranfer );
 						}
 						break;
 					case sUnitData::STORE_RES_GOLD:
 						{
 							if ( DestBuilding->SubBase->Gold+iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold+iTranfer < 0 ) bBreakSwitch = true;
-							if ( !bBreakSwitch ) DestBuilding->owner->base.AddGold ( DestBuilding->SubBase, iTranfer );
+							if ( !bBreakSwitch ) DestBuilding->SubBase->addGold( iTranfer );
 						}
 						break;
 					}
@@ -1059,7 +1059,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( iType == SUPPLY_TYPE_REARM )
 				{
 					if ( SrcBuilding->SubBase->Metal < 1 ) break;
-					SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
+					SrcBuilding->SubBase->addMetal( -1 );
 					iValue = DestVehicle->data.ammoMax;
 				}
 				else
@@ -1069,7 +1069,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					while ( SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax )
 					{
 						iValue += Round(((float)DestVehicle->data.hitpointsMax/DestVehicle->data.buildCosts)*4);
-						SrcBuilding->owner->base.AddMetal ( SrcBuilding->SubBase, -1 );
+						SrcBuilding->SubBase->addMetal( -1 );
 					}
 					if ( iValue > DestVehicle->data.hitpointsMax ) iValue = DestVehicle->data.hitpointsMax;
 				}
@@ -1138,7 +1138,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (upgradedVehicles.Size() > 0)
 			{
 				if (totalCosts > 0)
-					storingBuilding->owner->base.AddMetal (storingBuilding->SubBase, -totalCosts);
+					storingBuilding->SubBase->addMetal( -totalCosts);
 				for (unsigned int i = 0; i < upgradedVehicles.Size(); i++)
 					upgradedVehicles[i]->upgradeToCurrentVersion();
 				sendUpgradeVehicles(upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->Nr);
@@ -1496,7 +1496,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			if (totalCosts > 0)
-				player->base.AddMetal (building->SubBase, -totalCosts);
+				building->SubBase->addMetal( -totalCosts);
 			if (upgradedBuildings.Size() > 0)
 			{
 				bool scanNecessary = false;

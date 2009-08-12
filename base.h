@@ -29,11 +29,12 @@ class cMap;
 // Die SubBase Struktur //////////////////////////////////////////////////////
 struct sSubBase{
 public:
-	sSubBase( int iNextID );
+	sSubBase( int iNextID, cPlayer* owner_ );
 	sSubBase( const sSubBase& sb );
 	~sSubBase();
 
 	cList<cBuilding*> buildings;
+	cPlayer* owner;
 
 	int iID;
 	int MaxMetal;
@@ -61,6 +62,15 @@ public:
 
 	void addBuilding( cBuilding *b );
 
+	/*
+	* adds/substracts a ressource to/from the subbase
+	* @author eiko
+	*/
+	void addMetal( int i );
+	void addOil( int i );
+	void addGold( int i );
+
+
 	/**
 	* recalculates the values of all subbases
 	* @author eiko
@@ -72,6 +82,43 @@ public:
 	* @author eiko	
 	*/
 	bool increaseEnergyProd( int i );
+
+	//-----------------------------------
+	//turn end manangement:
+	
+	/**
+	* checks if consumers have to be switched off, due to a lack of ressources
+	* @return returns true, if consumers have been shut down
+	* @author eiko
+	*/
+	bool checkGoldConsumer();
+	bool checkHumanConsumer();
+	bool checkMetalConsumer();
+	/**
+	* - switch off unneeded fuel consumers(=energy producers)
+	* - sets the optimal amount of generators and stations to minimize fuel consumption
+	* - increases oil production, if nessesary
+	* - switches off oil consumers, if to few oil is available
+	* @return: returns true, if oil consumers have been shut down, due to a lack of oil
+	* @author eiko
+	*/
+	bool checkOil();
+	/**
+	* switch off energy consumers, if nessesary
+	* @return returns true, if a energy consumers have been shut down
+	* @author eiko
+	*/
+	bool checkEnergy();
+	/**
+	* checks, if there a consumers, that havt to be shut down, due to a lack of a ressource
+	* @author eiko
+	*/
+	void prepareTurnend();
+	/**
+	* produce ressources, rapair/reload buildings etc.
+	* @author eiko
+	*/
+	void makeTurnend();
 
 	//------------------------------------
 	//ressource management:
@@ -106,31 +153,37 @@ public:
 	int OilProd;
 	int GoldProd;
 private:
+	/**
+	* calcs the maximum allowed production of a ressource, without decreasing the production of the other two
+	* @author eiko
+	*/
 	int calcMaxAllowedProd( int ressourceType );
+	/**
+	* calcs the maximum possible production of a ressource
+	* @author eiko
+	*/
 	int calcMaxProd( int ressourceType );
+	/**
+	* adds/substracts ressourcec of the type storeResType  to/from the subbase
+	* @author eiko
+	*/
+	void addRessouce( sUnitData::eStorageResType storeResType, int value );
 
 };
 
-
-// Die Base Klasse ///////////////////////////////////////////////////////////
 class cBase
 {
 public:
 	cBase(cPlayer *Owner);
 	~cBase(void);
 
-	cPlayer *owner;
 	int iNextSubBaseID;
 	cList<sSubBase*> SubBases;
 	cMap *map;
 
 	void AddBuilding(cBuilding *Building);
 	void DeleteBuilding(cBuilding *Building);
-	void AddMetal(sSubBase *sb,int value);
-	void AddOil(sSubBase *sb,int value);
-	void AddGold(sSubBase *sb,int value);
 	void handleTurnend();
-	bool OptimizeEnergy(sSubBase *sb);
 	/**
 	* recalculates the values of all subbases
 	*@author eiko

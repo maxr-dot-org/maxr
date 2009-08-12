@@ -47,7 +47,9 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		frame = Client->iFrame % 4;
 
-	water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+	water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+
+	bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size );
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();

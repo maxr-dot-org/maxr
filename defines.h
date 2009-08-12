@@ -117,7 +117,7 @@
 	#ifdef RELEASE 
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2239"
+		#define PACKAGE_REV "SVN Rev 2349"
 	#endif
 #endif
 

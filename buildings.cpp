@@ -484,7 +484,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		dest = *screenPos;
 		SDL_BlitSurface( drawingSurface, NULL, buffer, &dest );
 
-		//all folling graphic operations are drawn directly to buffer
+		//all following graphic operations are drawn directly to buffer
 		dest = *screenPos;
 	}
 
@@ -1138,7 +1138,7 @@ void cBuilding::ServerStartWork ()
 	if ( data.needsHumans )
 		if ( SubBase->HumanNeed + data.needsHumans > SubBase->HumanProd )
 		{
-			sendChatMessageToClient ( "Text~Comp~Team_Low", SERVER_ERROR_MESSAGE, owner->Nr );
+			sendChatMessageToClient ( "Text~Comp~Team_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
 		}
 

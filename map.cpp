@@ -633,7 +633,7 @@ void cMap::PlaceRessources ( int metal,int oil,int gold,int dichte )
 						int type = (absPosY%2)*2 + (absPosX%2);
 
 						int index = absPosY*size+absPosX;
-						if(type != RES_NONE && (hasGold || type != RES_GOLD) && !terrain[Kacheln[index]].blocked) // TODO: does the block work?
+						if(type != RES_NONE && (hasGold || type != RES_GOLD) && !terrain[Kacheln[index]].blocked)
 						{
 							Resources[index].typ = type;
 							Resources[index].value = 1 + random(2 + frequencies[type]*2);

@@ -1402,7 +1402,6 @@ void cClientMoveJob::doEndMoveVehicle ()
 	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed ( Waypoints->next->Costs );
-	Vehicle->moving = false;
 	Vehicle->WalkFrame = 0;
 
 	sWaypoint *Waypoint = Waypoints;
