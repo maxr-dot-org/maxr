@@ -64,6 +64,13 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory);
 std::string getUserMapsDir();
 
 /**
+ * Gets the folder, where screenshots made by the user should be saved.
+ * @author pagra
+ * @return an absolute path to the user's screenshots directory or empty string, if no user screenshots folder is defined on the system
+ */
+std::string getUserScreenshotsDir();
+
+/**
 * @author pagra
 * @return a checksum of all bytes in the given data chunk
 */

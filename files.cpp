@@ -154,6 +154,34 @@ std::string getUserMapsDir()
 }
 
 //--------------------------------------------------------------
+std::string getUserScreenshotsDir()
+{
+#ifdef WIN32
+	return "";
+#endif
+#ifdef __amigaos4__
+	return "";
+#endif
+	
+	std::string screenshotsFolder = "";
+#ifdef MAC
+	char * cHome = getenv("HOME"); //get $HOME on mac
+	if(cHome == NULL)
+		return "";
+	std::string homeFolder = cHome;
+	if (homeFolder.empty())
+		return "";
+	// store screenshots directly on the desktop of the user
+	screenshotsFolder = homeFolder + PATH_DELIMITER + "Desktop" + PATH_DELIMITER;
+	return screenshotsFolder;
+#endif
+	if (SettingsData.sHome.empty ())
+		return "";
+	screenshotsFolder = SettingsData.sHome + PATH_DELIMITER;
+	return screenshotsFolder;
+}
+
+//--------------------------------------------------------------
 // Feel free to implement a prettier algorithm (as long as it is big and little endianness compatible and the checksum is not stored anywhere, yet)!
 Sint32 calcCheckSum (char* data, int dataSize)
 {

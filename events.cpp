@@ -25,6 +25,7 @@
 #include "log.h"
 #include "menus.h"
 #include "settings.h"
+#include "files.h"
 
 void cEventHandling::pushEvent(SDL_Event* const e)
 {
@@ -58,16 +59,12 @@ void cEventHandling::HandleEvents()
 				tmTime = localtime ( &tTime );
 				strftime( timestr, 16, "%d.%m.%y-%H%M%S", tmTime );
 
-				string screenshotfile ="";
-				#ifdef WIN32
-					screenshotfile = (string)"Screen_" + timestr + ".bmp";
-				#elif __amigaos4__
-					screenshotfile = (string)"Screen_" + timestr + ".bmp";
-				#else
-					screenshotfile = SettingsData.sHome+PATH_DELIMITER+"Screen_" + timestr + ".bmp";
-				#endif
-				Log.write ( "Screenshot saved to "+screenshotfile, cLog::eLOG_TYPE_INFO );
+				string screenshotfile = getUserScreenshotsDir();
+				screenshotfile.append ((string)"Screen_" + timestr + ".bmp");
+				Log.write ( "Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO );
 				SDL_SaveBMP ( screen, screenshotfile.c_str() );
+				if (Client != 0)
+					Client->addMessage("Screenshot saved to " + screenshotfile); // TODO: translate
 			}
 			else
 			{
