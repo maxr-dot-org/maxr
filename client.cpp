@@ -160,7 +160,6 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList)
 	bDebugCache = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
-	isInMenu = false;
 
 	SDL_Rect rSrc = {0,0,170,224};
 	SDL_Surface *SfTmp = LoadPCX((SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx").c_str());
@@ -529,7 +528,6 @@ void cClient::handleMouseInput( sMouseState mouseState  )
 	mouse->GetPos();
 	clientMouseState = mouseState;
 
-	if ( isInMenu ) return;
 	cVehicle* overVehicle = NULL;
 	cVehicle* overPlane = NULL;
 	cBuilding* overBuilding = NULL;
@@ -954,10 +952,8 @@ sMouseState cClient::getMouseState()
 
 void cClient::handleHotKey ( SDL_keysym &keysym )
 {
-	if ( isInMenu ) return;
 	if ( keysym.sym == KeysList.KeyExit )
 	{
-		isInMenu = true;
 		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
 		if ( yesNoDialog.show() == 0  )
 		{
@@ -965,7 +961,6 @@ void cClient::handleHotKey ( SDL_keysym &keysym )
 			SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, buffer, NULL );
 			bExit = true;
 		}
-		isInMenu = false;
 	}
 	else if ( keysym.sym == SDLK_RETURN && ( bChatInput || bChangeObjectName ) )
 	{
@@ -2267,7 +2262,7 @@ void cClient::runFX()
 						if ( SettingsData.bAlphaEffects )
 						{
 							addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-							if (!isInMenu) drawFX((int)FXList.Size() - 1);
+							drawFX((int)FXList.Size() - 1);
 						}
 						ri->fpx+=ri->mx*8;
 						ri->fpy-=ri->my*8;
@@ -2303,7 +2298,7 @@ void cClient::runFX()
 					if ( SettingsData.bAlphaEffects )
 					{
 						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
-						if (!isInMenu) drawFXBottom((int)FXListBottom.Size() - 1);
+						drawFXBottom((int)FXListBottom.Size() - 1);
 					}
 					ri->fpx+=ri->mx*8;
 					ri->fpy-=ri->my*8;
@@ -5368,7 +5363,6 @@ void cClient::waitForOtherPlayer( int iPlayerNum, bool bStartup )
 	if ( !bWaitForOthers ) return;
 	int iLastX = -1, iLastY = -1;
 	bool aborted = false;
-	isInMenu = false;
 
 	while ( bWaitForOthers )
 	{

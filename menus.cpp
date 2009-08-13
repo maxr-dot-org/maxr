@@ -201,7 +201,6 @@ void cGameDataContainer::runSavedGame( int player )
 	// reinit unitvalues
 	// init client and his player
 	Client = new cClient( &clientMap, &clientPlayerList );
-	Client->isInMenu = true;
 	Client->initPlayer ( clientPlayerList[player] );
 	for ( unsigned int i = 0; i < clientPlayerList.Size(); i++ )
 	{
@@ -225,7 +224,6 @@ void cGameDataContainer::runSavedGame( int player )
 
 	// exit menu and start game
 	Server->bStarted = true;
-	Client->isInMenu = false;
 	Client->run();
 
 	delete Client;
@@ -3116,7 +3114,6 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 	// init client and his player
 	Client = new cClient( &clientMap, &clientPlayerList );
-	Client->isInMenu = true;
 	Client->initPlayer ( localPlayer );
 	for ( unsigned int i = 0; i < clientPlayerList.Size(); i++ )
 	{
@@ -3138,7 +3135,6 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// exit menu and start game
 	Server->bStarted = true;
-	Client->isInMenu = false;
 	Client->run();
 
 	delete Client;

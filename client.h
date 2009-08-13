@@ -381,8 +381,6 @@ public:
 	int iTimer0, iTimer1, iTimer2;
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
-	/** true, when the client is in a menu */
-	bool isInMenu;
 	/** Object that is under the mouse cursor */
 	cMapField *OverUnitField;
 
