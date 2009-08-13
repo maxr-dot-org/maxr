@@ -628,6 +628,7 @@ void cHud::CheckScroll ( bool pure )
 		else if (Client->OverUnitField &&
 				(
 					Client->OverUnitField->getVehicles() ||
+					Client->OverUnitField->getPlanes() ||
 					(
 						Client->OverUnitField->getBuildings() &&
 						Client->OverUnitField->getBuildings()->owner
