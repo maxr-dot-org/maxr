@@ -298,9 +298,22 @@ void cClient::run()
 			rightMouseBox.endY = (float)( ((mouse->y-18)+Hud.OffY / (64.0/Hud.Zoom)) / Hud.Zoom );
 		}
 		// Scroll with right mouse Button
-		if((clientMouseState.rightButtonPressed || clientMouseState.rightButtonReleased) && !rightMouseBox.isTooSmall()){
+		static int mousePrevX = 0; // TODO: Jaja, statische Variablen sind scheisse. Noch dmlicher ist allerdings die Mausimplmentation hier. Ich berufe mich auf Notwehr. (Xoc)
+		static int mousePrevY = 0;
+		if((clientMouseState.rightButtonPressed || clientMouseState.rightButtonReleased) && !rightMouseBox.isTooSmall())
+		{
 			int speed = 5;
-			Hud.setScrollPos(Hud.OffX + (mouse->DrawX - mouse->LastX)*speed, Hud.OffY + (mouse->DrawY - mouse->LastY)*speed);
+			int offX = (mouse->x - mousePrevX)*speed;
+			int offY = (mouse->y - mousePrevY)*speed;
+			if(offX != 0 || offY != 0){
+				Hud.setScrollPos(Hud.OffX + offX, Hud.OffY + offY);
+				mouse->setPos(mousePrevX, mousePrevY);
+		}
+		}
+		else
+		{
+			mousePrevX = mouse->x;
+			mousePrevY = mouse->y;
 		}
 		// check length of input strings
 		if ( bChangeObjectName && InputHandler->checkHasBeenInput () ) InputHandler->cutToLength ( 128 );

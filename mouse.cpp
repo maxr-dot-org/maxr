@@ -182,35 +182,61 @@ void cMouse::GetPos ()
 {
 	SDL_GetMouseState( &x, &y);
 
+	//string m = string() + "m: " + iToStr(x) + ", " + iToStr(y);
+	//if(Client != NULL)Client->addMessage(m);
+
 	// Cursor Offset bestimmen:
-	if ( cur==GraphicsData.gfx_Cselect||cur==GraphicsData.gfx_Chelp||cur==GraphicsData.gfx_Cmove||cur==GraphicsData.gfx_Cno||cur==GraphicsData.gfx_Ctransf||cur==GraphicsData.gfx_Cband||cur==GraphicsData.gfx_Cload||cur==GraphicsData.gfx_Cmuni||cur==GraphicsData.gfx_Crepair )
+	int offX;
+	int offY;
+
+	getCursorOffset(offX, offY);
+
+	if ( x>SettingsData.iScreenW-cur->w )
 	{
-		DrawX=x-12;
-		DrawY=y-12;
+		x=SettingsData.iScreenW-cur->w;
+		SDL_WarpMouse ( x, y );
 	}
-	else if ( cur==GraphicsData.gfx_Cattack||cur==GraphicsData.gfx_Csteal||cur==GraphicsData.gfx_Cdisable )
+	if ( y>SettingsData.iScreenH-cur->h )
 	{
-		DrawX=x-19;
-		DrawY=y-16;
+		y=SettingsData.iScreenH-cur->h;
+		SDL_WarpMouse ( x, y );
 	}
-	else
-	{
-		if ( x>SettingsData.iScreenW-cur->w )
-		{
-			x=SettingsData.iScreenW-cur->w;
-			SDL_WarpMouse ( x, y );
-		}
-		if ( y>SettingsData.iScreenH-cur->h )
-		{
-			y=SettingsData.iScreenH-cur->h;
-			SDL_WarpMouse ( x, y );
-		}
-		DrawX=x;
-		DrawY=y;
-	}
+
+	DrawX=x+offX;
+	DrawY=y+offY;
+
 	if ( MoveCallback )
 	{
 		Client->mouseMoveCallback ( false );
+	}
+}
+// sets the mouse cursor to the given coordinates in windowspace
+void cMouse::setPos(int px, int py)
+{
+	//int offX;
+	//int offY;
+
+	//getCursorOffset(offX, offY);
+
+	SDL_WarpMouse(px, py);
+}
+
+
+// gets the cursor offset. transforms screenspace to clickspace
+void cMouse::getCursorOffset(int &x, int &y)
+{
+	if ( cur==GraphicsData.gfx_Cselect||cur==GraphicsData.gfx_Chelp||cur==GraphicsData.gfx_Cmove||cur==GraphicsData.gfx_Cno||cur==GraphicsData.gfx_Ctransf||cur==GraphicsData.gfx_Cband||cur==GraphicsData.gfx_Cload||cur==GraphicsData.gfx_Cmuni||cur==GraphicsData.gfx_Crepair )
+	{
+		x = -12;
+		y = -12;
+	}
+	else if ( cur==GraphicsData.gfx_Cattack||cur==GraphicsData.gfx_Csteal||cur==GraphicsData.gfx_Cdisable )
+	{
+		x = -19;
+		y = -16;
+	}else{
+		x = 0;
+		y = 0;
 	}
 }
 
