@@ -767,13 +767,98 @@ void cUnitsData::initializeClanUnitData ()
 sUnitData::sUnitData()
 {
 	version = 0;
-	isConnectorGraphic = false;
+	muzzleType = MUZZLE_TYPE_NONE;
+
+	ammoMax = 0;
 	ammoCur = 0;
-	speedCur = 0;
+	shotsMax = 0;
 	shotsCur = 0;
-	storageResCur = 0;
-	storageUnitsCur = 0;
+	range = 0;
+	damage = 0;	
+	canAttack = 0;
+	canDriveAndFire = false;
+
+	buildCosts = 0;
+	maxBuildFactor = 0;
+	
+	canBuildPath = false;
+	canBuildRepeat = false;
+	buildIntern = false;
+	
+	// Movement
+	speedMax = 0;
+	speedCur = 0;
+	
+	factorGround = 0.0f;
+	factorSea = 0.0f;
+	factorAir = 0.0f;
+	factorCoast = 0.0f;
+	
+	// Abilities
+	isBig = false;
+	connectsToBase = false;
+	armor = 0;
+	hitpointsMax = 0;
 	hitpointsCur = 0;
+	scan = 0;
+	modifiesSpeed = 0.0f;
+	canClearArea = false;
+	canBeCaptured = false;
+	canBeDisabled = false;
+	canCapture = false;
+	canDisable = false;
+	canRepair = false;
+	canRearm = false;
+	canResearch = false;
+	canPlaceMines = false;
+	canSurvey = false;
+	doesSelfRepair = false;
+	convertsGold = 0;
+	canSelfDestroy = false;
+		
+	canMineMaxRes = 0;		
+	needsMetal = 0;
+	needsOil = 0;
+	needsEnergy = 0;
+	needsHumans = 0;
+	produceEnergy = 0;
+	produceHumans = 0;
+		
+	isStealthOn = 0;
+	canDetectStealthOn = 0;
+
+	surfacePosition = SURFACE_POS_BENEATH_SEA;
+	canBeOverbuild = OVERBUILD_TYPE_NO;
+		
+	canBeLandedOn = false;
+	canWork = false;
+	explodesOnContact = false;
+	isHuman = false;
+		
+	// Storage
+	storageResMax = 0;
+	storageResCur = 0;
+	storeResType = STORE_RES_NONE;		
+	storageUnitsMax = 0;
+	storageUnitsCur = 0;
+	storeUnitsImageType = STORE_UNIT_IMG_NONE;
+
+	// Graphic
+	hasClanLogos = false;
+	hasCorpse = false;
+	hasDamageEffect = false;
+	hasBetonUnderground = false;
+	hasPlayerColor = false;
+	hasOverlay = false;
+		
+	buildUpGraphic = false;
+	animationMovement = false;
+	powerOnGraphic = false;
+	isAnimated = false;
+	makeTracks = false;
+		
+	isConnectorGraphic = false;
+	hasFrames = 0;
 }
 
 //----------------------------------------------------------------------------------

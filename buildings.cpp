@@ -60,10 +60,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 		{
 			data = b->data;
 		}
-		else
-		{
-			memset ( &data, 0, sizeof ( sUnitData ) );
-		}
 
 		BuildList = NULL;
 
