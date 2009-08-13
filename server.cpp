@@ -1188,7 +1188,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			Vehicle->IsClearing = true;
-			Vehicle->ClearingRounds = building->RubbleValue/4+1;
+			Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
 
 			sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
@@ -2877,6 +2877,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 {
 	int offset = vehicle->PosX + vehicle->PosY*Map->size;
 	int value = 0;
+	int oldRubbleValue = 0;
 	bool bigRubble = false;
 
 	if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0 )
@@ -2891,15 +2892,14 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	
 	while ( !bi.end )
 	{
-		if (!bi->owner) 
+		if (bi->owner == 0 && bi->RubbleValue > 0) // this seems to be rubble
 		{
-			value += bi->RubbleValue*2;	
-			if ( bi->data.isBig ) bigRubble = true;
+			oldRubbleValue += bi->RubbleValue;
+			if ( bi->data.isBig ) 
+				bigRubble = true;
 		}
-		else
-		{
+		else // normal unit
 			value += bi->data.buildCosts;
-		}
 		deleteUnit( bi );
 		bi = (*Map)[offset].getBuildings();
 		if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
@@ -2939,24 +2939,43 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		}
 	}
 
-
 	if ( !vehicle->data.hasCorpse )
 	{
 		value += vehicle->data.buildCosts;
+		if (vehicle->data.storeResType == sUnitData::STORE_RES_METAL)
+			value += vehicle->data.storageResCur * 2; // stored material is always added completely to the rubble
 	}
-	if ( value > 0 )
-	{
-		addRubble( offset, value/2, bigRubble );
-	}
+	
+	if ( value > 0 || oldRubbleValue > 0 )
+		addRubble( offset, value/2 + oldRubbleValue, bigRubble );
 
 	deleteUnit( vehicle );
+}
+
+//-------------------------------------------------------------------------------------
+int cServer::deleteBuildings(cBuildingIterator building)
+{
+	int rubble = 0;
+	while ( building.size() > 0 )
+	{
+		if ( building->owner ) 
+		{
+			rubble += building->data.buildCosts;
+			if (building->data.storeResType == sUnitData::STORE_RES_METAL)
+				rubble += building->data.storageResCur * 2; // stored material is always added completely to the rubble
+		}
+		else 
+			rubble += building->RubbleValue*2;
+		deleteUnit( building );
+	}
+	return rubble;
 }
 
 //-------------------------------------------------------------------------------------
 void cServer::destroyUnit(cBuilding *b)
 {
 	int offset = b->PosX + b->PosY * Map->size;
-	int value = 0;
+	int rubble = 0;
 	bool big = false;
 
 	cBuilding* topBuilding = Map->fields[offset].getTopBuilding();
@@ -2966,44 +2985,22 @@ void cServer::destroyUnit(cBuilding *b)
 		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
 
 		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
-		while ( building.size() > 0 )
-		{
-			if ( building->owner ) value += building->data.buildCosts;
-			else value += building->RubbleValue*2;
-			deleteUnit( building );
-		}
+		rubble += deleteBuildings(building);
 
 		building = Map->fields[offset + Map->size].getBuildings();
-		while ( building.size() > 0 )
-		{
-			if ( building->owner ) value += building->data.buildCosts;
-			else value += building->RubbleValue*2;
-			deleteUnit( building );
-		}
+		rubble += deleteBuildings(building);
 
 		building = Map->fields[offset + Map->size + 1].getBuildings();
-		while ( building.size() > 0 )
-		{
-			if ( building->owner ) value += building->data.buildCosts;
-			else value += building->RubbleValue*2;
-			deleteUnit( building );
-		}
+		rubble += deleteBuildings(building);
 	}
  
 	sUnitData::eSurfacePosition surfacePosition = b->data.surfacePosition;
 
 	cBuildingIterator building = Map->fields[offset].getBuildings();
-	while ( building.size() > 0 )
-	{
-		if ( building->owner ) value += building->data.buildCosts;
-		else value += building->RubbleValue*2;
-		deleteUnit( building );
-	}
+	rubble += deleteBuildings(building);
 
-	if ( surfacePosition != sUnitData::SURFACE_POS_ABOVE && value > 2 )
-	{
-		addRubble( offset, value/2, big );
-	}
+	if ( surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2 )
+		addRubble( offset, rubble/2, big );
 }
 
 //-------------------------------------------------------------------------------------

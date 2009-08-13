@@ -240,6 +240,12 @@ private:
 	*/
 	void stopVehicleBuilding ( cVehicle *vehicle );
 
+	/** 
+	 * Helper for destroyUnit(cBuilding) that deletes all buildings in the iterator and returns the generated rubble value.
+	 * @author Paul Grathwohl
+	 */
+	int deleteBuildings(cBuildingIterator building);
+
 public:
 	/** the map */
 	cMap *Map;
