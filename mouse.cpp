@@ -182,28 +182,28 @@ void cMouse::GetPos ()
 {
 	SDL_GetMouseState( &x, &y);
 
-	//string m = string() + "m: " + iToStr(x) + ", " + iToStr(y);
-	//if(Client != NULL)Client->addMessage(m);
-
 	// Cursor Offset bestimmen:
 	int offX;
 	int offY;
 
 	getCursorOffset(offX, offY);
 
-	if ( x>SettingsData.iScreenW-cur->w )
+	if(offX == 0 && offY == 0)
 	{
-		x=SettingsData.iScreenW-cur->w;
-		SDL_WarpMouse ( x, y );
-	}
-	if ( y>SettingsData.iScreenH-cur->h )
-	{
-		y=SettingsData.iScreenH-cur->h;
-		SDL_WarpMouse ( x, y );
+		if ( x > SettingsData.iScreenW - cur->w )
+		{
+			x = SettingsData.iScreenW - cur->w;
+			SDL_WarpMouse ( x, y );
+		}
+		if ( y > SettingsData.iScreenH - cur->h )
+		{
+			y = SettingsData.iScreenH - cur->h;
+			SDL_WarpMouse ( x, y );
+		}
 	}
 
-	DrawX=x+offX;
-	DrawY=y+offY;
+	DrawX = x + offX;
+	DrawY = y + offY;
 
 	if ( MoveCallback )
 	{
