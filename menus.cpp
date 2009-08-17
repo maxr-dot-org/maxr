@@ -118,7 +118,6 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 			serverMap.terrain[i].coast = map->terrain[i].coast;
 			serverMap.terrain[i].water = map->terrain[i].water;
 		}
-		serverMap.PlaceRessources ( settings->metal, settings->oil, settings->gold, settings->resFrequency );
 
 		// playerlist for server
 		for ( unsigned int i = 0; i < players.Size(); i++ )
@@ -130,6 +129,14 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 		// init server
 		Server = new cServer( &serverMap, &serverPlayers, type, false );
+
+		// place resources
+		for ( unsigned int i = 0; i < players.Size(); i++ )
+		{
+			Server->correctLandingPos(landData[i]->iLandX, landData[i]->iLandY);
+			serverMap.placeRessourcesAddPlayer( landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency );
+		}
+		serverMap.placeRessources ( settings->metal, settings->oil, settings->gold );
 	}
 
 	// init client and his players
@@ -147,7 +154,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 			cList<int> clans;
 			for (unsigned int i =  0; i < players.Size (); i++)
 				clans.Add ( players[i]->getClan () );
-			
+
 			sendClansToClients ( &clans );
 		}
 		for ( unsigned int i = 0; i < players.Size(); i++ )
@@ -236,7 +243,7 @@ void cGameDataContainer::runSavedGame( int player )
 
 void cGameDataContainer::receiveClan ( cNetMessage *message )
 {
-	if ( message->iType != MU_MSG_CLAN ) 
+	if ( message->iType != MU_MSG_CLAN )
 		return;
 	unsigned int playerNr = message->popInt16();
 	int clanNr = message->popInt16 (); // -1 = no clan
@@ -337,7 +344,7 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 
 		if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
 		{
-			sMenuPlayer *menuPlayer = new sMenuPlayer ( players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum ); 
+			sMenuPlayer *menuPlayer = new sMenuPlayer ( players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum );
 			sendReselectLanding ( state, menuPlayer );
 			delete menuPlayer;
 		}
@@ -376,7 +383,7 @@ eLandingState cGameDataContainer::checkLandingState( int playerNr )
 
 		int distance = (int) sqrt( pow( (float) c->iLandX - posX, 2) + pow( (float) c->iLandY - posY, 2) );
 
-		if ( distance < LANDING_DISTANCE_TOO_CLOSE ) 
+		if ( distance < LANDING_DISTANCE_TOO_CLOSE )
 		{
 			bPositionTooClose = true;
 		}
@@ -385,9 +392,9 @@ eLandingState cGameDataContainer::checkLandingState( int playerNr )
 			bPositionWarning = true;
 		}
 	}
-	
-	//now set the new landing state, 
-	//depending on the last state, the last position, the current position, bPositionTooClose and bPositionWarning 
+
+	//now set the new landing state,
+	//depending on the last state, the last position, the current position, bPositionTooClose and bPositionWarning
 	eLandingState lastState = landData[playerNr]->landingState;
 	eLandingState newState = LANDING_STATE_UNKNOWN;
 
@@ -582,7 +589,7 @@ void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPlayerNr )
 {
 	if ( !network ) return;
-	
+
 	// Attention: The playernumber will only be the real player number when it is passed to this function explicitly.
 	//			Otherwise it is only -1!
 	message->iPlayerNr = fromPlayerNr;
@@ -618,7 +625,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	// I want 3 possible random numbers
 	// since a chance of 50:50 is boring (and
 	// vehicles are way more cool so I prefer
-	// them to be shown) -- beko 
+	// them to be shown) -- beko
 	static int lastUnitShow = -1;
 	int unitShow;
 	SDL_Surface *surface = NULL;
@@ -763,7 +770,7 @@ cSinglePlayerMenu::~cSinglePlayerMenu()
 }
 
 void cSinglePlayerMenu::newGameReleased( void* parent )
-{	
+{
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	cGameDataContainer gameDataContainer;
 	cSettingsMenu settingsMenu ( &gameDataContainer );
@@ -873,7 +880,7 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 
 	int iCurrentLine = 57;
 	int iLineHeight = 16; //pixels after we start a new line
-	//black window screen on gfx is 510 width. calculation for most option fields starts at px 240x. and is 347 width. 
+	//black window screen on gfx is 510 width. calculation for most option fields starts at px 240x. and is 347 width.
 
 	// Titel
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+13, lngPack.i18n ("Text~Button~Game_Options") );
@@ -1101,7 +1108,7 @@ void cSettingsMenu::updateSettings()
 
 	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
-	
+
 }
 
 cPlanetsSelectionMenu::cPlanetsSelectionMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX ( GFXOD_PLANET_SELECT ) ), gameDataContainer(gameDataContainer_)
@@ -1203,7 +1210,7 @@ void cPlanetsSelectionMenu::showMaps()
 			// if no factory map of that name exists, try the custom user maps
 			if (FileExists (mapPath.c_str ()) == false && getUserMapsDir ().empty () == false)
 				mapPath = getUserMapsDir () + mapName;
-			
+
 			if ( FileExists ( mapPath.c_str() ) )
 			{
 				SDL_RWops *mapFile = SDL_RWFromFile ( mapPath.c_str(), "rb" );
@@ -1244,7 +1251,7 @@ void cPlanetsSelectionMenu::showMaps()
 
 					#define MAPWINSIZE 112
 					if( mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE ) // resize map
-					{ 
+					{
 						SDL_Surface *scaledMap = scaleSurface ( mapSurface, NULL, MAPWINSIZE, MAPWINSIZE );
 						SDL_FreeSurface ( mapSurface );
 						mapSurface = scaledMap;
@@ -1323,7 +1330,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 			{
 				cPlayer *player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 				menu->gameDataContainer->players.Add ( player );
-				
+
 				bool started = false;
 				while ( !started )
 				{
@@ -1337,7 +1344,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 							return;
 						}
 					}
-					
+
 					cStartupHangarMenu startupHangarMenu( menu->gameDataContainer, player, false );
 					if ( startupHangarMenu.show() == 0 ) started = true;
 					else if ( menu->gameDataContainer->settings->clans == SETTING_CLANS_OFF )
@@ -1416,11 +1423,11 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 	backButton->setReleasedFunction ( &backReleased );
 	if ( noReturn ) backButton->setLocked ( true );
 	menuItems.Add ( backButton );
-	
+
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, "Choose Clan" );
 	titleLabel->setCentered (true);
 	menuItems.Add (titleLabel);
-	
+
 	vector<string> clanLogoPaths;
 	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo1.pcx");
 	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo2.pcx");
@@ -1430,7 +1437,7 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo6.pcx");
 	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo7.pcx");
 	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo8.pcx");
-	
+
 	int xCount = 0;
 	int yCount = 0;
 	for (int i = 0; i < 8; i++, xCount++)
@@ -1445,14 +1452,14 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 		clanImages[i] = new cMenuImage (position.x + 88 + xCount * 154 - (img ? (img->w / 2) : 0), position.y + 48 + yCount * 150, img);
 		clanImages[i]->setReleasedFunction (&clanSelected);
 		menuItems.Add (clanImages[i]);
-		
+
 		clanNames[i] = new cMenuLabel (position.x + 87 + xCount * 154, position.y + 144 + yCount * 150, cClanData::instance ().getClan (i)->getName ());
 		clanNames[i]->setCentered (true);
 		menuItems.Add (clanNames[i]);
 	}
 	clanNames[clan]->setText (">" + cClanData::instance ().getClan (clan)->getName () + "<");
 
-	clanDescription1 = new cMenuLabel (position.x + 47, position.y + 362, "");	
+	clanDescription1 = new cMenuLabel (position.x + 47, position.y + 362, "");
 	menuItems.Add (clanDescription1);
 	clanDescription2 = new cMenuLabel (position.x + 380, position.y + 362, "");
 	menuItems.Add (clanDescription2);
@@ -1466,11 +1473,11 @@ cClanSelectionMenu::~cClanSelectionMenu ()
 {
 	delete okButton;
 	delete backButton;
-	
+
 	delete titleLabel;
 	delete clanDescription1;
 	delete clanDescription2;
-	
+
 	for (int i = 0; i < 8; i++)
 	{
 		delete clanImages[i];
@@ -1505,12 +1512,12 @@ void cClanSelectionMenu::clanSelected (void* parent)
 	int newClan = (mouse->x - menu->position.x - 47) / 154;
 	if (mouse->y > menu->position.y + 48 + 140)
 		newClan += 4;
-	
+
 	if (0 <= newClan && newClan < 8 && newClan != menu->clan)
 	{
 		menu->clanNames[menu->clan]->setText (cClanData::instance ().getClan (menu->clan)->getName ());
 		menu->clan = newClan;
-		menu->clanNames[menu->clan]->setText (">" + cClanData::instance ().getClan (menu->clan)->getName () + "<");	
+		menu->clanNames[menu->clan]->setText (">" + cClanData::instance ().getClan (menu->clan)->getName () + "<");
 		menu->updateClanDescription ();
 		menu->draw();
 	}
@@ -1523,7 +1530,7 @@ void cClanSelectionMenu::updateClanDescription ()
 	if (clanInfo)
 	{
 		vector<string> strings = clanInfo->getClanStatsDescription ();
-		
+
 		string desc1;
 		for ( unsigned int i = 0; i < 4 && i < strings.size (); i++)
 		{
@@ -1539,7 +1546,7 @@ void cClanSelectionMenu::updateClanDescription ()
 			desc2.append ("\n");
 		}
 		clanDescription2->setText (desc2);
-		
+
 		clanShortDescription->setText (clanInfo->getDescription ());
 	}
 	else
@@ -1806,13 +1813,13 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 			if ( vehicle->data.canBuild.compare( "BigBuilding" )==0 || vehicle->data.canBuild.compare( "SmallBuilding" )==0 || vehicle->data.canSurvey )
 			{
 				cMenuUnitListItem *unit = secondList->addUnit ( vehicle->data.ID, player, selectionList->getItem ( i )->getUpgrades() );
-				if ( vehicle->data.canBuild.compare( "BigBuilding" )==0 ) 
+				if ( vehicle->data.canBuild.compare( "BigBuilding" )==0 )
 					unit->setMinResValue ( 40 );
-				else if ( vehicle->data.canBuild.compare( "SmallBuilding" )==0 ) 
+				else if ( vehicle->data.canBuild.compare( "SmallBuilding" )==0 )
 					unit->setMinResValue ( 20 );
 				unit->setFixed ( true );
 			}
-		}			
+		}
 		if ( gameDataContainer->settings->clans == SETTING_CLANS_ON && player->getClan () == 7) // Additional Units for Axis Inc. Clan
 		{
 			int startCredits = gameDataContainer->settings->credits;
@@ -1838,13 +1845,13 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 			else
 			{
 				numAddEngineers = 3;
-				numAddConstructors = 2;				
+				numAddConstructors = 2;
 			}
 			for (int i = 0; i < selectionList->getSize (); i++)
 			{
 				sVehicle *vehicle = selectionList->getItem (i)->getUnitID ().getVehicle (player);
 				if ( !vehicle ) continue;
-				
+
 				if (vehicle->data.canBuild.compare( "BigBuilding" )==0)
 				{
 					for (int j = 0; j < numAddConstructors; j++)
@@ -2207,7 +2214,7 @@ void cLandingMenu::createHud()
 	SDL_SetColorKey ( hudSurface, SDL_SRCCOLORKEY, 0xFF00FF );
 
 	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, hudSurface, NULL );
-	
+
 	SDL_Rect top, bottom;
 	top.x=0;
 	top.y= ( SettingsData.iScreenH/2 )-479;
@@ -2513,7 +2520,7 @@ void cNetworkMenu::showSettingsText()
 	text += "Checksum: " + iToStr( SettingsData.Checksum ) + "\n\n";
 
 	if ( !saveGameString.empty() ) text += lngPack.i18n ( "Text~Title~Savegame" ) + ":\n  " + saveGameString + "\n";
-	
+
 	if ( gameDataContainer.map )
 	{
 		text += lngPack.i18n ( "Text~Title~Map" ) + ": " + gameDataContainer.map->MapName;
@@ -2599,7 +2606,7 @@ void cNetworkMenu::showMap()
 		SDL_Rect rSrc = { 0, 0, dest.w, dest.h };
 		#define MAPWINSIZE 112
 		if( surface->w != MAPWINSIZE || surface->h != MAPWINSIZE) // resize map
-		{ 
+		{
 			SDL_Surface *scaledMap = scaleSurface ( surface, NULL, MAPWINSIZE, MAPWINSIZE );
 			SDL_FreeSurface ( surface );
 			surface = scaledMap;
@@ -2764,7 +2771,7 @@ cNetworkHostMenu::~cNetworkHostMenu()
 	delete settingsButton;
 	delete loadButton;
 	delete startButton;
-	
+
 	for (unsigned int i = 0; i < mapSenders.size (); i++)
 	{
 		if (mapSenders[i] != 0)
@@ -2828,7 +2835,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 				cClanSelectionMenu clanMenu (&menu->gameDataContainer, menu->gameDataContainer.players[0], true);
 				clanMenu.show ();
 			}
-			
+
 			cStartupHangarMenu hangarMenu( &menu->gameDataContainer, menu->gameDataContainer.players[0], menu->gameDataContainer.settings->clans == SETTING_CLANS_OFF ) ;
 			if ( hangarMenu.show() == 0 ) started = true;
 		}
@@ -2987,7 +2994,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			players[playerNr]->ready = message->popBool();
 
 			if ( freshJoined ) chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Joined", players[playerNr]->name ) );
-			
+
 			draw();
 			sendPlayerList( &players );
 			sendGameData( &gameDataContainer, saveGameString, players[playerNr] );
@@ -3087,7 +3094,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// send the correct player numbers to client
 	for ( unsigned int i = 0; i < players.Size(); i++ )
-		sendRequestIdentification( players[i] ); 
+		sendRequestIdentification( players[i] );
 
 	// now we can send the menus players-list with the right numbers and colors of each player.
 	sendPlayerList ( &players );
@@ -3291,9 +3298,9 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				Sint32 mapCheckSum = message->popInt32();
 				if ( !gameDataContainer.map || gameDataContainer.map->MapName != mapName )
 				{
-					if ( gameDataContainer.map ) 
+					if ( gameDataContainer.map )
 						delete gameDataContainer.map;
-					
+
 					bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
 					cMap *map = new cMap;
 					if (mapCheckSumsEqual && map->LoadMap ( mapName ) )
@@ -3305,7 +3312,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 					{
 						delete map;
 						gameDataContainer.map = NULL;
-						
+
 						if ( actPlayer->ready )
 						{
 							chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", mapName ) );
@@ -3313,7 +3320,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 							playerSettingsChanged();
 						}
 						triedLoadMap = mapName;
-						
+
 						string existingMapFilePath = MapDownload::getExistingMapFilePath (mapName);
 						bool existsMap = (existingMapFilePath.empty () == false);
 						if (mapCheckSumsEqual == false && existsMap)
@@ -3379,7 +3386,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			finishedMapDownload (message);
 			break;
 		}
-			
+
 	case MU_MSG_GO:
 		{
 			saveOptions ();
@@ -3403,7 +3410,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 						cClanSelectionMenu clanMenu (&gameDataContainer, gameDataContainer.players[actPlayer->nr], true);
 						clanMenu.show ();
 					}
-					
+
 					cStartupHangarMenu hangarMenu( &gameDataContainer, gameDataContainer.players[actPlayer->nr], gameDataContainer.settings->clans == SETTING_CLANS_OFF ) ;
 					if ( hangarMenu.show() == 0 ) started = true;
 				}
@@ -3470,7 +3477,7 @@ void cNetworkClientMenu::initMapDownload (cNetMessage* message)
 {
 	int mapSize = message->popInt32 ();
 	string mapName = message->popString ();
-	
+
 	if (mapReceiver != 0)
 		delete mapReceiver;
 	mapReceiver = new cMapReceiver (mapName, mapSize);
@@ -3481,10 +3488,10 @@ void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 {
 	if (mapReceiver == 0)
 		return;
-	
+
 	int nrBytesInMsg = message->popInt32 ();
 	mapReceiver->receiveData (message, nrBytesInMsg);
-	
+
 	int size = mapReceiver->getMapSize ();
 	int received = mapReceiver->getBytesReceived ();
 	int finished = (received * 100) / size;
@@ -3499,10 +3506,10 @@ void cNetworkClientMenu::canceledMapDownload (cNetMessage* message)
 {
 	if (mapReceiver == 0)
 		return;
-	
+
 	delete mapReceiver;
 	mapReceiver = 0;
-		
+
 	mapLabel->setText ("Canceled!"); // TODO: translated
 	draw ();
 }
@@ -3512,18 +3519,18 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 {
 	if (mapReceiver == 0)
 		return;
-	
+
 	mapReceiver->finished ();
-	
+
 	cMap *map = new cMap;
-	if (map->LoadMap (mapReceiver->getMapName ())) 
+	if (map->LoadMap (mapReceiver->getMapName ()))
 		gameDataContainer.map = map;
 	else
 		delete map;
 	showSettingsText ();
 	showMap ();
 	draw ();
-	
+
 	delete mapReceiver;
 	mapReceiver = 0;
 }
@@ -3535,7 +3542,7 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 //-----------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------
-cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ ) 
+cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds backgroundType_ )
 : cMenu ( LoadPCX ( GFXOD_SAVELOAD ), backgroundType_ )
 , gameDataContainer ( gameDataContainer_ )
 {
@@ -3727,10 +3734,10 @@ void cLoadMenu::slotClicked( void* parent )
 	menu->displaySaves();
 	menu->extendedSlotClicked( oldSelection );
 	menu->draw();
-	
+
 	if (mouse->isDoubleClick)
 	{
-		loadReleased( parent );	
+		loadReleased( parent );
 	}
 }
 
@@ -4014,7 +4021,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 			else if ( j == 5 || j == 7 ) x += 3;
 			else x++;
 
-			if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) continue; 
+			if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) continue;
 
 			int off = x + y * Client->Map->size;
 			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
@@ -4265,7 +4272,7 @@ cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), 
 		unitDetails->setSelection (selectedUnit);
 		upgradeButtons->setSelection (selectedUnit);
 	}
-	
+
 	selectionChangedFunc = &selectionChanged;
 }
 
@@ -4345,7 +4352,7 @@ void cUpgradeMenu::generateSelectionList()
 			}
 		}
 	}
-	if ( selectOldSelectedUnit == false && selectionList->getSize() > 0 ) 
+	if ( selectOldSelectedUnit == false && selectionList->getSize() > 0 )
 		selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 
@@ -4366,7 +4373,7 @@ void cUnitHelpMenu::init(sID unitID)
 	titleLabel = new cMenuLabel ( position.x+406, position.y+11, lngPack.i18n( "Text~Title~Unitinfo" ) );
 	titleLabel->setCentered ( true );
 	menuItems.Add ( titleLabel );
-	
+
 	doneButton = new cMenuButton ( position.x+474, position.y+452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	doneButton->setReleasedFunction ( &doneReleased );
 	menuItems.Add ( doneButton );
@@ -4677,7 +4684,7 @@ void cStorageMenu::reloadReleased ( void *parent )
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	int index = menu->getClickedButtonVehIndex ( menu->relaodButtons );
 	if ( index == -1 || !menu->ownerBuilding ) return;
-	
+
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
 }
 
@@ -4686,7 +4693,7 @@ void cStorageMenu::repairReleased ( void *parent )
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	int index = menu->getClickedButtonVehIndex ( menu->repairButtons );
 	if ( index == -1 || !menu->ownerBuilding ) return;
-	
+
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
 }
 
@@ -4740,7 +4747,7 @@ void cStorageMenu::reloadAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	if ( !menu->ownerBuilding ) return;
-	
+
 	int resources = menu->metalValue;
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
@@ -4758,7 +4765,7 @@ void cStorageMenu::repairAllReleased ( void *parent )
 {
 	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
 	if ( !menu->ownerBuilding ) return;
-	
+
 	int resources = menu->metalValue;
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
@@ -4781,7 +4788,7 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	if ( !menu->ownerBuilding ) return;
-	
+
 	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
 }
 
@@ -5050,7 +5057,7 @@ cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
 	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*2, lngPack.i18n ("Text~Button~Score"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
 	typeButtonGroup->addButton ( new cMenuCheckButton ( position.x+524, position.y+71+29*3, lngPack.i18n ("Text~Button~Reports"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON ) );
 	typeButtonGroup->setClickedFunction ( &typeChanged );
-	
+
 	includedLabel = new cMenuLabel ( position.x+497, position.y+207, lngPack.i18n ("Text~Button~Included") + ":" );
 	menuItems.Add ( includedLabel );
 
@@ -5119,7 +5126,7 @@ cReportsMenu::~cReportsMenu()
 	delete groundCheckBtn;
 	delete seaCheckBtn;
 	delete stationaryCheckBtn;
-	
+
 	delete borderedLabel;
 	delete buildCheckBtn;
 	delete fightCheckBtn;

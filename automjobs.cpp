@@ -161,7 +161,7 @@ void cAutoMJob::PlanNextMove()
 float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
 	//TODO: prevent the surveyor from driveing onto enemy mines
-	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY )) return FIELD_BLOCKED;
+	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY )) return (float)FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -221,13 +221,13 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 		if ( i == iNumber ) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
 		// take note (maybe will be useful somewhere): sqrt(pow(A,B)) = pow(A,B*0.5);
-		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , 2) );
-		newDistancesSurv += pow( temp, EXP);
+		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , (float)2.0) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , (float)2.0) );
+		newDistancesSurv += pow( (float)temp, (float)EXP);
 	}
 
 	//and now calc the "importance-factor"
 
-	if (NrSurvFields == 0) return FIELD_BLOCKED;
+	if (NrSurvFields == 0) return (float)FIELD_BLOCKED;
 
 	float factor = (float)(A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv);
 
@@ -263,14 +263,14 @@ void cAutoMJob::PlanLongMove()
 			{
 				// skip our selves and other Players' surveyors
 				if (i == iNumber || autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-				temp = sqrt( pow( (float) x - autoMJobs[i]->vehicle->PosX , 2) + pow( (float) y - autoMJobs[i]->vehicle->PosY , 2) );
-				distancesSurv += pow( temp, EXP2);
+				temp = sqrt( pow( (float) x - autoMJobs[i]->vehicle->PosX , (float)2.0) + pow( (float) y - autoMJobs[i]->vehicle->PosY , (float)2.0) );
+				distancesSurv += pow( (float)temp, (float)EXP2);
 			}
 
 			distanceOP = sqrt( pow( (float) x - OPX , 2) + pow( (float) y - OPY , 2) );
 			distanceSurv = sqrt( pow( (float) x - vehicle->PosX , 2) + pow( (float) y - vehicle->PosY , 2) );
 			//TODO: take into account the length of the path to the coordinates too (I seen a case, when a surveyor took 7 additional senseless steps just to avoid or by-pass an impassable rocky terrain)
-			factor = D * distanceOP + E * distanceSurv + F * distancesSurv;
+			factor = (float)(D * distanceOP + E * distanceSurv + F * distancesSurv);
 
 			if ( (factor < minValue) || (minValue == 0) )
 			{

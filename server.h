@@ -163,7 +163,7 @@ private:
 	*@return NULL if the vehicle could not be landed, else a pointer to the vehicle.
 	*/
 	cVehicle *landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player );
-	
+
 	/**
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
@@ -221,13 +221,13 @@ private:
 	*@param iID The ID of the building
 	*/
 	cBuilding *getBuildingFromID ( int iID );
-	
+
 	/**
 	* Calculates the cost, that this upgrade would have for the given player.
 	*@author Paul Grathwohl
 	*/
-	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
-						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo, 
+	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
+						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
 	/**
 	* changes the owner of a vehicle
@@ -240,7 +240,7 @@ private:
 	*/
 	void stopVehicleBuilding ( cVehicle *vehicle );
 
-	/** 
+	/**
 	 * Helper for destroyUnit(cBuilding) that deletes all buildings in the iterator and returns the generated rubble value.
 	 * @author Paul Grathwohl
 	 */
@@ -338,6 +338,10 @@ public:
 	*/
 	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> *List, bool bFixed );
 	/**
+	 *
+	 */
+	void correctLandingPos( int &iX, int &iY);
+	/**
 	* increments the iTimeTimer.
 	*@author alzi alias DoctorDeath
 	*/
@@ -380,7 +384,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void deletePlayer( cPlayer *Player );
-	  
+
 	void sideStepStealthUnit( int PosX, int PosY, cVehicle* vehicle, int bigOffset = -1 );
 	void sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1 );
 

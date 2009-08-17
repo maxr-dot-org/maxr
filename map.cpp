@@ -296,6 +296,7 @@ cMap::cMap ( void )
 	Kacheln=NULL;
 	NewMap ( 32, 32 );
 	MapName="";
+	resSpots = NULL;
 }
 
 cMap::~cMap ( void )
@@ -587,65 +588,140 @@ void cMap::generateNextAnimationFrame()
 	}
 }
 
+// Platziert die Ressourcen für einen Spieler.
+void cMap::placeRessourcesAddPlayer ( int x, int y, int frequency )
+{
+	if(resSpots == NULL)
+	{
+		resSpotCount = (int)(size*size*0.003*(1.5+frequency));
+		resCurrentSpotCount = 0;
+		resSpots = new T_2<int>[resSpotCount];
+		resSpotTypes = new int[resSpotCount];
+	}
+	resSpotTypes[resCurrentSpotCount] = RES_METAL;
+	resSpots[resCurrentSpotCount] = T_2<int>((x&~1) + (RES_METAL%2),(y&~1) + ((RES_METAL/2)%2));
+	resCurrentSpotCount++;
+}
+
 // Platziert die Ressourcen (0-wenig,3-viel):
-void cMap::PlaceRessources ( int metal,int oil,int gold,int dichte )
+void cMap::placeRessources ( int metal,int oil,int gold)
 {
 	memset ( Resources,0,sizeof ( sResources ) *size*size );
 
-	int frequencies[4];
+	int frequencies[RES_COUNT];
 
 	frequencies[RES_METAL] = metal;
 	frequencies[RES_OIL] = oil;
 	frequencies[RES_GOLD] = gold;
 
-	int blockSize = 12;
+	int playerCount = resCurrentSpotCount;
+	// Restliche Positionen erzeugen
+	while(resCurrentSpotCount < resSpotCount)
+	{
+		T_2<int> pos;
 
-	for(int baseY = 1; baseY < size-1; baseY += blockSize){
-		for(int baseX = 1; baseX < size-1; baseX += blockSize){
-			int innerSizeX = min(size - 1 - baseX, blockSize);
-			int innerSizeY = min(size - 1 - baseY, blockSize);
-			double spotsF = (int)(innerSizeX*innerSizeY*0.005*(1.5+dichte));
-			int spots = (int)spotsF;
-			if((spotsF-spots)*1000 < random(1000))spots++;
-
-			for(int i = 0; i < spots; i++)
+		pos.x = 2+random(size-4);
+		pos.y = 2+random(size-4);
+		resSpots[resCurrentSpotCount] = pos;
+		resCurrentSpotCount++;
+	}
+	// Resourcen gleichmässiger verteilen
+	for(int j = 0; j < 3; j++){
+		for(int i = playerCount; i < resSpotCount; i++)
+		{
+			T_2<double> d;
+			for(int j = 0; j < resSpotCount; j++)if(i != j)
 			{
-				int posX;
-				int posY;
-
-				bool hasGold = random(100) < 50; // Gold should be rare
-				int mainType;
-				do
+				int diffx1 = resSpots[i].x - resSpots[j].x;
+				int diffx2 = diffx1 + (size-4);
+				int diffx3 = diffx1 - (size-4);
+				int diffy1 = resSpots[i].y - resSpots[j].y;
+				int diffy2 = diffy1 + (size-4);
+				int diffy3 = diffy1 - (size-4);
+				if(abs(diffx2) < abs(diffx1))diffx1 = diffx2;
+				if(abs(diffx3) < abs(diffx1))diffx1 = diffx3;
+				if(abs(diffy2) < abs(diffy1))diffy1 = diffy2;
+				if(abs(diffy3) < abs(diffy1))diffy1 = diffy3;
+				T_2<double> diff(diffx1, diffy1);
+				if(diff == T_2<double>::Zero)
 				{
-					posX = random(innerSizeX);
-					posY = random(innerSizeY);
-					mainType = (((baseY+posY)%2)*2) + ((baseX+posX)%2);
+					diff.x += 1;
 				}
-				while(mainType == RES_NONE || (!hasGold && mainType == RES_GOLD));
+				double dist = diff.dist();
+				d += diff*(10/(dist*dist));
 
+			}
+			resSpots[i] += T_2<int>(Round(d.x), Round(d.y));
+			if(resSpots[i].x < 2)resSpots[i].x += size-4;
+			if(resSpots[i].y < 2)resSpots[i].y += size-4;
+			if(resSpots[i].x > size-3)resSpots[i].x -= size-4;
+			if(resSpots[i].y > size-3)resSpots[i].y -= size-4;
 
-				for(int iY = posY-1; iY <= posY+1; iY++)
+		}
+	}
+	// Resourcen Typ bestimmen
+	for(int i = playerCount; i < resSpotCount; i++)
+	{
+		double amount[RES_COUNT] = {0,0,0,0};
+		for(int j = 0; j < i; j++)
+		{
+			const double maxDist = 40;
+			double dist = sqrt((float)resSpots[i].distSqr(resSpots[j]));
+			if(dist < maxDist)amount[resSpotTypes[j]] += 1-sqrt(dist/maxDist);
+		}
+
+		amount[RES_METAL] /= 1.0;
+		amount[RES_OIL] /= 0.8;
+		amount[RES_GOLD] /= 0.4;
+
+		int type = RES_METAL;
+		if(amount[RES_OIL] < amount[type])type = RES_OIL;
+		if(amount[RES_GOLD] < amount[type])type = RES_GOLD;
+
+		resSpots[i].x &= ~1;
+		resSpots[i].y &= ~1;
+		resSpots[i].x += type%2;
+		resSpots[i].y += (type/2)%2;
+
+		resSpotTypes[i] = ((resSpots[i].y%2)*2) + (resSpots[i].x%2);
+	}
+	// Resourcen platzieren
+	for(int i = 0; i < resSpotCount; i++)
+	{
+		T_2<int> pos = resSpots[i];
+		T_2<int> p;
+		bool hasGold = random(100) < 40;
+		for(p.y = pos.y-1; p.y <= pos.y+1; p.y++)
+		{
+			for(p.x = pos.x-1; p.x <= pos.x+1; p.x++)
+			{
+				T_2<int> absPos = p;
+				int type = (absPos.y%2)*2 + (absPos.x%2);
+
+				int index = absPos.y*size+absPos.x;
+				if(type != RES_NONE && ((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) && !terrain[Kacheln[index]].blocked)
 				{
-					for(int iX = posX-1; iX <= posX+1; iX++)
+					Resources[index].typ = type;
+					if(i >= playerCount)
 					{
-						int absPosX = baseX+iX;
-						int absPosY = baseY+iY;
-						int type = (absPosY%2)*2 + (absPosX%2);
-
-						int index = absPosY*size+absPosX;
-						if(type != RES_NONE && (hasGold || type != RES_GOLD) && !terrain[Kacheln[index]].blocked)
-						{
-							Resources[index].typ = type;
-							Resources[index].value = 1 + random(2 + frequencies[type]*2);
-							if(iX == posX && iY == posY)Resources[index].value += 3 + random(4 + frequencies[type]*2);
-
-							if(Resources[index].value > 16)Resources[index].value = 16;
-						}
+						Resources[index].value = 1 + random(2 + frequencies[type]*2);
+						if(p == pos)Resources[index].value += 3 + random(4 + frequencies[type]*2);
 					}
+					else
+					{
+						Resources[index].value = 1 + 4 + frequencies[type];
+						if(p == pos)Resources[index].value += 3 + 2 + frequencies[type];
+					}
+
+					if(Resources[index].value > 16)Resources[index].value = 16;
 				}
 			}
 		}
+
 	}
+	delete[] resSpots;
+	delete[] resSpotTypes;
+	resSpots = NULL;
 }
 
 

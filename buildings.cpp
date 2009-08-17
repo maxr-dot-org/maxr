@@ -90,7 +90,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	if ( data.canAttack != TERRAIN_NONE ) bSentryStatus = true;
 	else bSentryStatus = false;
-	
+
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
@@ -438,7 +438,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 {
 	SDL_Rect dest, tmp;
 	float factor = (float)(Client->Hud.Zoom/64.0);
-	
+
 	// draw the damage effects
 	if ( Client->iTimer1 && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
@@ -468,7 +468,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		dest = *screenPos;
 		drawingSurface = buffer;
 	}
-		
+
 	if ( bDraw )
 	{
 		render ( drawingSurface, dest );
@@ -529,7 +529,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		}
 	}
 
-	// draw the mark, when a build order is finished 
+	// draw the mark, when a build order is finished
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
 	{
 		SDL_Rect d, t;
@@ -654,7 +654,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 }
 
 void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
-{	
+{
 	//Note: when changing something in this function, make sure to update the caching rules!
 	SDL_Rect src, tmp;
 	src.x = 0;
@@ -723,7 +723,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		src.w = (int)(typ->img_org->w*factor);
 		src.h = (int)(typ->img_org->h*factor);
 	}
-	
+
 	// draw the concrete
 	tmp = dest;
 	if ( data.hasBetonUnderground )
@@ -736,7 +736,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
 			else
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255 );
-			
+
 			SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, surface, &tmp );
 		}
 		else
@@ -753,7 +753,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	}
 
 	tmp = dest;
- 
+
 	// draw the connector slots:
 	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic )
 	{
@@ -764,7 +764,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	// draw the shadows
 	if ( SettingsData.bShadows )
 	{
-		if ( StartUp && SettingsData.bAlphaEffects ) 
+		if ( StartUp && SettingsData.bAlphaEffects )
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 		else
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
@@ -804,7 +804,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		if ( owner->getClan() != -1 )
 			src.x = (int) ((owner->getClan() + 1) * 128 * factor);
 		SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
-	
+
 	}
 	else
 	{
@@ -812,12 +812,12 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 	}
 
-	// draw the building 
+	// draw the building
 	tmp = dest;
 
 	src.x = 0;
 	src.y = 0;
-	
+
 	if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
 	else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 
@@ -979,7 +979,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 	}
 	else
 	{
-		
+
 		CHECK_NEIGHBOUR ( PosX    , PosY - 1, BaseN  )
 		CHECK_NEIGHBOUR ( PosX + 1, PosY - 1, BaseBN )
 		CHECK_NEIGHBOUR ( PosX + 2, PosY    , BaseE  )
@@ -1011,11 +1011,11 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 	src.y = 0;
 	src.x = 0;
 	src.h = src.w = UnitsData.ptr_connector->h;
-	
+
 	if ( !data.isBig )
 	{
 		if      (  BaseN &&  BaseE &&  BaseS &&  BaseW ) src.x = 15;
-		else if (  BaseN &&  BaseE &&  BaseS && !BaseW ) src.x = 13; 
+		else if (  BaseN &&  BaseE &&  BaseS && !BaseW ) src.x = 13;
 		else if (  BaseN &&  BaseE && !BaseS &&  BaseW ) src.x = 12;
 		else if (  BaseN &&  BaseE && !BaseS && !BaseW ) src.x =  8;
 		else if (  BaseN && !BaseE &&  BaseS &&  BaseW ) src.x = 11;
@@ -1180,7 +1180,7 @@ void cBuilding::ServerStartWork ()
 
 			SubBase->changeOilProd( missingOil );
 
-			SubBase->setGoldProd( gold );		
+			SubBase->setGoldProd( gold );
 			SubBase->setMetalProd( metal );
 
 			sendChatMessageToClient ( "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->Nr, iToStr(missingOil) );
@@ -1265,8 +1265,8 @@ void cBuilding::ServerStartWork ()
 		owner->ResearchCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
 	}
-	
-	
+
+
 	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStartWork(this);
 }
@@ -1276,7 +1276,7 @@ void cBuilding::ServerStartWork ()
 //------------------------------------------------------------
 void cBuilding::ClientStartWork()
 {
-	if (IsWorking) 
+	if (IsWorking)
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
@@ -1287,7 +1287,7 @@ void cBuilding::ClientStartWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails();
 	}
-	if (data.canResearch) 
+	if (data.canResearch)
 		owner->startAResearch (researchArea);
 }
 
@@ -1349,13 +1349,13 @@ void cBuilding::ServerStopWork ( bool override )
 		SubBase->setOilProd( min(oil, SubBase->getMaxAllowedOilProd()) );
 
 	}
-	
+
 	if ( data.canResearch )
 	{
 		owner->ResearchCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
 	}
-	
+
 	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStopWork(this);
 }
@@ -1365,7 +1365,7 @@ void cBuilding::ServerStopWork ( bool override )
 //------------------------------------------------------------
 void cBuilding::ClientStopWork()
 {
-	if (!IsWorking) 
+	if (!IsWorking)
 		return;
 	IsWorking = false;
 	if (selected)
@@ -1375,7 +1375,7 @@ void cBuilding::ClientStopWork()
 		Client->iObjectStream = playStream ();
 		ShowDetails ();
 	}
-	if (data.canResearch) 
+	if (data.canResearch)
 		owner->stopAResearch (researchArea);
 }
 
@@ -1735,7 +1735,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 	dest.x = x;
 
 	dest.y = y;
-	
+
 	for ( i = 0;i < value;i++ )
 	{
 		if ( i == orgvalue )
@@ -2504,10 +2504,10 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 
 //------------------------------------------------------------------------
 void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
-{	
+{
 	if (building == 0 || building->owner == 0)
 		return;
-	
+
 	sUnitData& currentVersion = building->data;
 	sUnitData& upgradedVersion = building->owner->BuildingData[building->typ->nr];
 	if (currentVersion.version >= upgradedVersion.version)
@@ -2516,8 +2516,8 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
 	msg->pushBool (upgradeAll);
 	msg->pushInt32 (building->iID);
-	
-	Client->sendNetMessage (msg);	
+
+	Client->sendNetMessage (msg);
 }
 
 //------------------------------------------------------------------------
@@ -2525,13 +2525,13 @@ void cBuilding::upgradeToCurrentVersion ()
 {
 	sUnitData& upgradeVersion = owner->BuildingData[typ->nr];
 	data.version = upgradeVersion.version;
-	
+
 	if (data.hitpointsCur == data.hitpointsMax)
 		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
 	data.hitpointsMax = upgradeVersion.hitpointsMax;
 
 	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
-	
+
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
 	data.range = upgradeVersion.range;
@@ -2748,7 +2748,7 @@ void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface, 
 	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
 	{
 		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, destSurface );
-				
+
 		if ( data.storeResType > 0 )
 		{
 			DrawNumber ( dest.x+23, dest.y+18, data.storageResCur, data.storageResMax, destSurface );
@@ -3019,7 +3019,7 @@ void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, in
 
 	dest.x = x;
 	dest.y = y;
-	
+
 	for ( i = 0;i < to;i++ )
 	{
 		if ( value > 0 )

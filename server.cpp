@@ -308,7 +308,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_WANT_STOP_WORK:
 		{
 			int iID = message->popInt32();
-			
+
 			cBuilding* building = getBuildingFromID( iID );
 			if ( building == NULL || building->owner->Nr != message->iPlayerNr ) break;
 
@@ -355,7 +355,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
 				break;
 			}
-			
+
 			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
 			if ( !MoveJob->generateFromMessage ( message ) )
 			{
@@ -377,7 +377,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 			if ( Vehicle == NULL ) break;
 			if ( Vehicle->ServerMoveJob == NULL ) break;
-			
+
 			Vehicle->ServerMoveJob->release();
 		}
 		break;
@@ -391,7 +391,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				int ID = message->popInt32();
 				attackingVehicle = getVehicleFromID( ID );
-				if ( attackingVehicle == NULL ) 
+				if ( attackingVehicle == NULL )
 				{
 					Log.write(" Server: vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -406,7 +406,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			else
 			{
 				int offset = message->popInt32();
-				if ( offset < 0 || offset > Map->size * Map->size ) 
+				if ( offset < 0 || offset > Map->size * Map->size )
 				{
 					Log.write(" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -444,7 +444,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				int oldOffset = targetOffset;
 				//the target offset doesn't need to match the vehicle position, when it is big
-				if ( !targetVehicle->data.isBig ) 
+				if ( !targetVehicle->data.isBig )
 				{
 					targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
 				}
@@ -810,7 +810,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					if ( i == 5 || i == 7 ) iX += 3;
 					else iX++;
 				}
-				if ( iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size ) continue; 
+				if ( iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size ) continue;
 
 				int iOff = iX + iY * Map->size;
 
@@ -944,7 +944,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_CHANGE_RESOURCES:
 		{
 			sSubBase *SubBase;
-			
+
 			cBuilding *Building = getBuildingFromID ( message->popInt16() );
 			if ( Building == NULL ) break;
 
@@ -964,7 +964,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			SubBase->setOilProd( iOilProd );
 
 			sendSubbaseValues ( SubBase, Building->owner->Nr );
-		
+
 		}
 		break;
 	case GAME_EV_WANT_CHANGE_SENTRY:
@@ -1083,7 +1083,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else DestVehicle->data.hitpointsCur = iValue;
 
 				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
-				
+
 				//send unitdata to the players who are not the owner
 				for ( unsigned int i = 0; i < DestVehicle->SeenByPlayerList.Size(); i++)
 					sendUnitData( DestVehicle, DestVehicle->SeenByPlayerList[i]->Nr );
@@ -1094,7 +1094,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else DestBuilding->data.hitpointsCur = iValue;
 
 				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
-								
+
 				//send unitdata to the players who are not the owner
 				for ( unsigned int i = 0; i < DestBuilding->SeenByPlayerList.Size(); i++)
 					sendUnitData( DestBuilding, DestBuilding->SeenByPlayerList[i]->Nr );
@@ -1113,7 +1113,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			int totalCosts = 0;
 			int availableMetal = storingBuilding->SubBase->Metal;
-			
+
 			cList<cVehicle*> upgradedVehicles;
 			for (unsigned int i = 0; i < storingBuilding->StoredVehicles.Size(); i++)
 			{
@@ -1121,7 +1121,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					cVehicle* vehicle = storingBuilding->StoredVehicles[i];
 					sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
-					
+
 					if (vehicle->data.version >= upgradedVersion.version)
 						continue; // already uptodate
 					cUpgradeCalculator& uc = cUpgradeCalculator::instance();
@@ -1134,7 +1134,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					}
 				}
 			}
-			
+
 			if (upgradedVehicles.Size() > 0)
 			{
 				if (totalCosts > 0)
@@ -1182,7 +1182,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					sendClearAnswer ( 1, Vehicle, 0, -1, Vehicle->owner->Nr );
 					break;
 				}
-				
+
 				Vehicle->BuildBigSavedPos = off;
 				Map->moveVehicleBig ( Vehicle, rubbleoffset );
 			}
@@ -1233,7 +1233,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_ABORT_WAITING:
 		{
-			if ( DisconnectedPlayerList.Size() < 1 ) break; 
+			if ( DisconnectedPlayerList.Size() < 1 ) break;
 			// only server player can abort the waiting
 			cPlayer *LocalPlayer;
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -1343,7 +1343,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr );
-					if ( StoredVehicle->data.canSurvey ) 
+					if ( StoredVehicle->data.canSurvey )
 					{
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
@@ -1370,7 +1370,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
 				if ( !StoringBuilding->isNextTo(x, y )) break;
-				
+
 				//sidestep stealth units if nessesary
 				sideStepStealthUnit(x, y, StoredVehicle);
 
@@ -1379,7 +1379,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
 					//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 					sendActivateVehicle ( StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr );
-					if ( StoredVehicle->data.canSurvey ) 
+					if ( StoredVehicle->data.canSurvey )
 					{
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
@@ -1403,7 +1403,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				break;
 
 			bool updateCredits = false;
-			
+
 			int iCount = message->popInt16(); // get the number of upgrades in this message
 			for (int i = 0; i < iCount; i++)
 			{
@@ -1420,7 +1420,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int newScan = message->popInt16();
 				int newMaxSpeed = 0;
 				if ( ID.iFirstPart == 0 ) newMaxSpeed = message->popInt16();
-				
+
 				sUnitData* upgradedUnit = ID.getUnitDataCurrentVersion (player);
 				if (upgradedUnit == 0)
 					continue; // skip this upgrade, because there is no such unitData
@@ -1438,10 +1438,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					upgradedUnit->scan = newScan;
 					if ( ID.iFirstPart == 0 ) upgradedUnit->speedMax = newMaxSpeed;
 					upgradedUnit->version++;
-					
+
 					player->Credits -= costs;
 					updateCredits = true;
-					
+
 					sendUnitUpgrades (upgradedUnit, iPlayerNr);
 				}
 			}
@@ -1458,7 +1458,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cPlayer* player = ((building != 0) ? building->owner : 0);
 			if (player == 0)
 				break;
-			
+
 			int availableMetal = building->SubBase->Metal;
 
 			sUnitData& upgradedVersion = player->BuildingData[building->typ->nr];
@@ -1468,14 +1468,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading(upgradedVersion.buildCosts);
 			int totalCosts = 0;
 			cList<cBuilding*> upgradedBuildings;
-			
+
 			// in any case update the selected building
 			if (availableMetal >= totalCosts + upgradeCostPerBuilding)
 			{
 				upgradedBuildings.Add(building);
 				totalCosts += upgradeCostPerBuilding;
 			}
-			
+
 			if (upgradeAll)
 			{
 				sSubBase* subBase = building->SubBase;
@@ -1536,10 +1536,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			if (newUsedResearch > player->ResearchCount)
 				break; // can't turn on research centers automatically!
-			
+
 			cList<cBuilding*> researchCentersToStop; // needed, if newUsedResearch < player->ResearchCount
 			cList<cBuilding*> researchCentersToChangeArea;
-			cList<int> newAreasForResearchCenters;			
+			cList<int> newAreasForResearchCenters;
 
 			bool error = false;
 			cBuilding* curBuilding = player->BuildingList;
@@ -1570,10 +1570,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			if (error)
 				break;
-			
+
 			for (unsigned int i = 0; i < researchCentersToStop.Size(); i++)
 				researchCentersToStop[i]->ServerStopWork(false);
-			
+
 			for (unsigned int i = 0; i < researchCentersToChangeArea.Size(); i++)
 				researchCentersToChangeArea[i]->researchArea = newAreasForResearchCenters[i];
 			player->refreshResearchCentersWorkingOnArea();
@@ -1669,7 +1669,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					cPlayer* player = (*PlayerList)[i];
 					if ( player == srcVehicle->owner ) continue;
 					if ( !player->ScanMap[srcVehicle->PosX+srcVehicle->PosY*Map->size] ) continue;
-					
+
 					srcVehicle->setDetectedByPlayer( player );
 				}
 				checkPlayerUnits();
@@ -1737,23 +1737,23 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
-	
+
 	if ( bDebugCheckPos ) sendCheckVehiclePositions();
 	CHECK_MEMORY;
 	return 0;
 }
 
 //-------------------------------------------------------------------------------------
-int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle, 
-							  int newDamage, int newMaxShots, int newRange, 
-							  int newMaxAmmo, int newArmor, int newMaxHitPoints, 
+int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
+							  int newDamage, int newMaxShots, int newRange,
+							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)
 {
 	sUnitData* currentVersion = ID.getUnitDataCurrentVersion (player);
 	sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
 	if (currentVersion == 0 || startVersion == 0)
 		return 1000000; // error (unbelievably high cost...)
-	
+
 	int cost = 0;
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	if (newDamage > currentVersion->damage)
@@ -1820,7 +1820,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 		else
 			return 1000000; // error, invalid values received from client
 	}
-	
+
 	return cost;
 }
 
@@ -1832,7 +1832,7 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 	{
 		for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 		{
-			
+
 			if ( !Map->possiblePlaceVehicle( Vehicle->data, iX+k, iY+i )) continue;
 
 			addUnit ( iX+k, iY+i, Vehicle, Player, true );
@@ -1852,49 +1852,19 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 	// Find place for mine if bridgehead is fixed
 	if ( bFixed )
 	{
-		bool bPlaced = false;
-		iWidth = 2;
-		iHeight = 2;
-		while ( !bPlaced )
+		if ( Map->possiblePlaceBuilding( *specialIDSmallGen.getUnitDataOriginalVersion(), iX - 1    , iY - 1 + 1) &&
+			Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1    ) &&
+			 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1    ) &&
+			 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1 + 1) &&
+			 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1 + 1) )
 		{
-			for ( int i = -iHeight / 2; i < iHeight / 2; i++ )
-			{
-				for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
-				{
-					if ( Map->possiblePlaceBuilding( *specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1) &&
-						Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    ) &&
-						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    ) &&
-						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1) &&
-						 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1) )
-					{
-						bPlaced = true;
-						// TODO: the starting resources under a mine should depend on the game Options, like in org MAX
-						// Rohstoffe platzieren / place resources under players' base based on resource density:
-						Map->Resources[iX+k+1+ ( iY+i ) *Map->size].value = 10;
-						Map->Resources[iX+k+1+ ( iY+i ) *Map->size].typ = RES_METAL;
-						Map->Resources[iX+k+2+ ( iY+i+1 ) *Map->size].value = 6;
-						Map->Resources[iX+k+2+ ( iY+i+1 ) *Map->size].typ = RES_OIL;
-						Map->Resources[iX+k+ ( iY+i+1 ) *Map->size].value = 4;
-						Map->Resources[iX+k+ ( iY+i+1 ) *Map->size].typ = RES_OIL;
-						if ( iY+i-1 >= 0 )
-						{
-							Map->Resources[iX+k+ ( iY+i-1 ) *Map->size].value = 3;
-							Map->Resources[iX+k+ ( iY+i-1 ) *Map->size].typ = RES_METAL;
-							Map->Resources[iX+k+2+ ( iY+i-1 ) *Map->size].value = 1;
-							Map->Resources[iX+k+2+ ( iY+i-1 ) *Map->size].typ = RES_GOLD;
-						}
-
-						// place buildings:
-						addUnit(iX + k,     iY + i + 1, &UnitsData.getBuilding (specialIDSmallGen.getBuilding()->nr, Player->getClan ()), Player, true);
-						addUnit(iX + k + 1, iY + i,     &UnitsData.getBuilding (specialIDMine.getBuilding()->nr, Player->getClan ()), Player, true);
-						break;
-					}
-				}
-				if ( bPlaced ) break;
-			}
-			if ( bPlaced ) break;
-			iWidth += 2;
-			iHeight += 2;
+			// place buildings:
+			addUnit(iX - 1,     iY - 1 + 1, &UnitsData.getBuilding (specialIDSmallGen.getBuilding()->nr, Player->getClan ()), Player, true);
+			addUnit(iX - 1 + 1, iY - 1,     &UnitsData.getBuilding (specialIDMine.getBuilding()->nr, Player->getClan ()), Player, true);
+		}
+		else
+		{
+			Log.write("couldn't place player start mine: " + Player->name, cLog::eLOG_TYPE_ERROR);
 		}
 	}
 
@@ -1919,6 +1889,34 @@ void cServer::makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> 
 }
 
 //-------------------------------------------------------------------------------------
+void cServer::correctLandingPos( int &iX, int &iY)
+{
+	int iWidth = 2;
+	int iHeight = 2;
+	while ( true )
+	{
+		for ( int i = -iHeight / 2; i < iHeight / 2; i++ )
+		{
+			for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
+			{
+				if ( Map->possiblePlaceBuilding( *specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1) &&
+					Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    ) &&
+					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    ) &&
+					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1) &&
+					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1) )
+				{
+					iX += k+1;
+					iY += i+1;
+					return;
+				}
+			}
+		}
+		iWidth += 2;
+		iHeight += 2;
+	}
+}
+
+//-------------------------------------------------------------------------------------
 cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit, bool bAddToMap )
 {
 	cVehicle *AddedVehicle;
@@ -1926,7 +1924,7 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 	AddedVehicle = Player->AddVehicle ( iPosX, iPosY, Vehicle );
 	AddedVehicle->iID = iNextUnitID;
 	iNextUnitID++;
-	
+
 	// place the vehicle:
 	if ( bAddToMap ) Map->addVehicle( AddedVehicle, iPosX, iPosY );
 
@@ -1969,7 +1967,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	iNextUnitID++;
 
 	int iOff = iPosX + Map->size*iPosY;
-	
+
 	//if this is a top building, delete connectors, mines and roads
 	if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND )
 	{
@@ -2235,7 +2233,7 @@ void cServer::checkPlayerUnits ()
 			NextBuilding = NextBuilding->next;
 		}
 	}
-	
+
 	//check the neutral objects
 	cBuilding *building = neutralBuildings;
 	while ( building != NULL )
@@ -2244,7 +2242,7 @@ void cServer::checkPlayerUnits ()
 		{
 			MapPlayer = (*PlayerList)[iMapPlayerNum];
 			int iOff = building->PosX + building->PosY * Map->size;
-			
+
 			if ( MapPlayer->ScanMap[iOff] == 1 )
 			{
 				unsigned int i;
@@ -2741,7 +2739,7 @@ void cServer::handleMoveJobs ()
 		Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
-		if ( Vehicle && Vehicle->bIsBeeingAttacked ) 
+		if ( Vehicle && Vehicle->bIsBeeingAttacked )
 			continue;
 
 		// stop the job
@@ -2889,13 +2887,13 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	//delete all buildings on the field, except connectors
 	cBuildingIterator bi = (*Map)[offset].getBuildings();
 	if ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) bi++;
-	
+
 	while ( !bi.end )
 	{
 		if (bi->owner == 0 && bi->RubbleValue > 0) // this seems to be rubble
 		{
 			oldRubbleValue += bi->RubbleValue;
-			if ( bi->data.isBig ) 
+			if ( bi->data.isBig )
 				bigRubble = true;
 		}
 		else // normal unit
@@ -2945,7 +2943,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		if (vehicle->data.storeResType == sUnitData::STORE_RES_METAL)
 			value += vehicle->data.storageResCur * 2; // stored material is always added completely to the rubble
 	}
-	
+
 	if ( value > 0 || oldRubbleValue > 0 )
 		addRubble( offset, value/2 + oldRubbleValue, bigRubble );
 
@@ -2958,13 +2956,13 @@ int cServer::deleteBuildings(cBuildingIterator building)
 	int rubble = 0;
 	while ( building.size() > 0 )
 	{
-		if ( building->owner ) 
+		if ( building->owner )
 		{
 			rubble += building->data.buildCosts;
 			if (building->data.storeResType == sUnitData::STORE_RES_METAL)
 				rubble += building->data.storageResCur * 2; // stored material is always added completely to the rubble
 		}
-		else 
+		else
 			rubble += building->RubbleValue*2;
 		deleteUnit( building );
 	}
@@ -2993,7 +2991,7 @@ void cServer::destroyUnit(cBuilding *b)
 		building = Map->fields[offset + Map->size + 1].getBuildings();
 		rubble += deleteBuildings(building);
 	}
- 
+
 	sUnitData::eSurfacePosition surfacePosition = b->data.surfacePosition;
 
 	cBuildingIterator building = Map->fields[offset].getBuildings();
@@ -3228,13 +3226,13 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send upgrades
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		if ( Player->VehicleData[i].version > 0 
+		if ( Player->VehicleData[i].version > 0
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->VehicleData[i], Player->Nr );
 	}
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( Player->BuildingData[i].version > 0 
+		if ( Player->BuildingData[i].version > 0
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 			sendUnitUpgrades ( &Player->BuildingData[i], Player->Nr );
 	}

@@ -22,6 +22,7 @@
 #include "vehicles.h"
 #include "buildings.h"
 #include "clist.h"
+#include "t_2.h"
 
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources{
@@ -29,10 +30,11 @@ struct sResources{
   unsigned char typ;
 };
 // Die Resorces-Typen:
-#define RES_NONE  0
-#define RES_METAL 1
-#define RES_OIL   2
-#define RES_GOLD  3
+const int RES_NONE  = 0;
+const int RES_METAL = 1;
+const int RES_OIL   = 2;
+const int RES_GOLD  = 3;
+const int RES_COUNT = 4;
 
 
 class cVehicleIterator
@@ -93,8 +95,8 @@ private:
 	/**the list with all vehicles on this field
 	* the top vehicle is always stored at fist position */
 	cList<cVehicle*> planes;
-	
-	
+
+
 public:
 
 	cMapField();
@@ -147,7 +149,7 @@ public:
 
 	SDL_Color palette[256];	//Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
-	
+
 	int iNumberOfTerrains;		// Number of terrain graphics for this map
 	sTerrain *terrain; // Terrain graphics
 
@@ -156,7 +158,8 @@ public:
 	void DeleteMap(void);
 	bool SaveMap(string filename,SDL_Surface *preview);
 	bool LoadMap(string filename);
-	void PlaceRessources(int Metal,int Oil,int Gold,int Dichte);
+	void placeRessourcesAddPlayer(int x, int y, int frequency);
+	void placeRessources(int Metal,int Oil,int Gold);
 	void generateNextAnimationFrame();
 	/**
 	* Access to a map field
@@ -169,7 +172,7 @@ public:
 	void addBuilding( cBuilding* building, unsigned int offset );
 	void addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
 	void addVehicle( cVehicle* vehicle, unsigned int offset );
-	
+
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
@@ -189,7 +192,7 @@ public:
 	int getMapLevel( cBuilding* building ) const;
 	int getMapLevel( cVehicle* vehicle ) const;
 
-	/** 
+	/**
 	* checks, whether the given field is an allowed place for the vehicle
 	* if a player is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	* note, that the function can only check for map border overflows, if you pass xy coordinates instead of an offset
@@ -217,6 +220,11 @@ private:
 
 	SDL_Surface *LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum );
 	void CopySrfToTerData ( SDL_Surface *surface, int iNum  );
+
+	T_2<int> *resSpots;
+	int *resSpotTypes;
+	int resSpotCount;
+	int resCurrentSpotCount;
 };
 
 #endif

@@ -19,25 +19,25 @@
 #ifndef automjobsH
 #define automjobsH
 
-#define FIELD_BLOCKED -10000
-#define WAIT_FRAMES 4
+const int FIELD_BLOCKED = -10000;
+const int WAIT_FRAMES = 4;
 
 //main tuning knobs of the AI:
-#define A 1.0	//how important is it, to survey as much fields as possible with each move
-#define B 1.49  //how important is it, to stay near the operation point
-#define C 9.0	//how important is it, to hold a distance to other surveyors
-#define EXP -2	//an negative integer; the influence of other surveyors is falling over the distance with x^EXP
+const double A = 1.0;	//how important is it, to survey as much fields as possible with each move
+const double B = 1.49;  //how important is it, to stay near the operation point
+const double C = 9.0;	//how important is it, to hold a distance to other surveyors
+const double EXP = -2;	//an negative integer; the influence of other surveyors is falling over the distance with x^EXP
 
 				//when there are no fields to survey next to the surveyor, where should the surveyor resume?
 				//if the surveyor seems to plan long senseless moves, rebalancing the following factors might help
-#define D 1		//more likely near the operation point
-#define E 3		//more likely near his position
-#define EXP2 -2
-#define F 100	//more likely far away from other surveyors
-#define G 1.8	// how important is to go to directions where resources has been found already
+const double D = 1;		//more likely near the operation point
+const double E = 3;		//more likely near his position
+const double EXP2 = -2;
+const double F = 100;	//more likely far away from other surveyors
+const double G = 1.8;	// how important is to go to directions where resources has been found already
 
-#define MAX_DISTANCE_OP 19 //when the distance to the OP exceeds this value, the OP is changed
-#define DISTANCE_NEW_OP 7 //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
+const double MAX_DISTANCE_OP = 19; //when the distance to the OP exceeds this value, the OP is changed
+const double DISTANCE_NEW_OP = 7; //the new OP will be between the surveyor and the old OP and has distance of DISTANCE_NEW_OP to the surveyor
 
 
 

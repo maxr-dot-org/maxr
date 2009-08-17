@@ -12,7 +12,7 @@
 template<typename T> class cList
 {
 	public:
-		cList() : v_(), size_(), capacity_() {}
+		cList() : v_(), capacity_(), size_() {}
 
 		~cList() { Reserve(0); }
 
@@ -33,7 +33,7 @@ template<typename T> class cList
 		void PopBack();
 
 		void Reserve(size_t n);
-	
+
 		bool Contains(const T& e);
 
 	private:
@@ -62,7 +62,7 @@ template<typename T> void cList<T>::Insert( size_t const i, T const& e )
 
 template<typename T> void cList<T>::Delete(size_t const idx)
 {
-	if (idx >= size_) 
+	if (idx >= size_)
 		return; // XXX should throw exception
 
 	for (size_t i = idx; i < size_ - 1; ++i) v_[i] = v_[i + 1];
