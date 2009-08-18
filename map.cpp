@@ -615,7 +615,7 @@ void cMap::placeRessources ( int metal,int oil,int gold)
 	frequencies[RES_GOLD] = gold;
 
 	int playerCount = resCurrentSpotCount;
-	// Restliche Positionen erzeugen
+	// create remaining resource possitions
 	while(resCurrentSpotCount < resSpotCount)
 	{
 		T_2<int> pos;
