@@ -849,7 +849,7 @@ void cHud::setScrollPos(int x,int y)
 	static int lx=0,ly=0;
 	if ( x<0 ) x=0;
 	if ( y<0 ) y=0;
-	int sizeX = Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
+	int sizeX = Client->Map->size*64 - ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
 	if ( x>=sizeX ) x=sizeX;
 	int sizeY = Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
 	if ( y>=sizeY ) y=sizeY;
@@ -871,6 +871,12 @@ void cHud::DoMinimapClick ( int x,int y )
 	OffY = minimapOffsetY * 64 + ((y - MINIMAP_POS_Y) * Client->Map->size * 64) / (MINIMAP_SIZE * minimapZoomFactor);
 	OffX -= (SettingsData.iScreenW - 192) * 64 / (Zoom * 2);
 	OffY -= (SettingsData.iScreenH -  32) * 64 / (Zoom * 2);
+
+	//check map borders
+	OffX = max( OffX, 0);
+	OffY = max( OffY, 0);
+	OffX = min (OffX, Client->Map->size * 64 - ( (SettingsData.iScreenW - 192) * 64) / Zoom);
+	OffY = min (OffY, Client->Map->size * 64 - ( (SettingsData.iScreenH -  32) * 64) / Zoom);
 
 	//workaround for click and hold on the minimap while it is zoomed:
 	//we warp the mouse so that it stays over the position of the screen
