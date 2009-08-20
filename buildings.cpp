@@ -2020,119 +2020,73 @@ void cBuilding::RotateTo ( int Dir )
 }
 
 //--------------------------------------------------------------------------
-/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given id
+/** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given base costs
 	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
-	//prevent division by zero
-	if ( data.needsMetal == 0 ) data.needsMetal = 1;
+	//first calc costs for a new Vehical
+	iTurboBuildCosts[0] = iVehicleCosts;
 
-	// init
-	iTurboBuildRounds[0] = 0;
-	iTurboBuildRounds[1] = 0;
-	iTurboBuildRounds[2] = 0;
-	// for buildings with no 2x and 4x
-	if ( data.maxBuildFactor == 1 )
+	iTurboBuildCosts[1] = iTurboBuildCosts[0];
+
+	while ( iTurboBuildCosts[1] + ( 2 * data.needsMetal ) <= 2*iTurboBuildCosts[0] )
 	{
-		if ( iRemainingMetal > 0 )
-			iTurboBuildCosts[0] = iRemainingMetal;
-		else
-			iTurboBuildCosts[0] = iVehicleCosts;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
-		return;
+		iTurboBuildCosts[1] += 2 * data.needsMetal;
 	}
-	// if work is already started
-	if ( iRemainingMetal > 0 )
+
+	iTurboBuildCosts[2] = iTurboBuildCosts[1];
+
+	while ( iTurboBuildCosts[2] + ( 4 * data.needsMetal ) <= 3*iTurboBuildCosts[0] )
 	{
-		// check if previous speed is suitable
-		if ( ( iRemainingMetal < 12 * data.needsMetal ) && BuildSpeed == 2 ) BuildSpeed--;
-		if ( ( iRemainingMetal < 4 * data.needsMetal ) && BuildSpeed == 1 ) BuildSpeed--;
-		int limit;
-		double temp;
+		iTurboBuildCosts[2] += 4 * data.needsMetal;
+	}
+
+	//now this is a litle bit tricky ...
+	//trying to calculate a plausible value, if we are changing the speed of an already started build-job
+	if ( iRemainingMetal >= 0 )
+	{
+		float WorkedRounds;
 
 		switch ( BuildSpeed )  //BuildSpeed here is the previous build speed
 		{
-			case 2:
-				iTurboBuildCosts[2] = iRemainingMetal;
-				temp = iTurboBuildCosts[2] / ( double ) ( 12 * data.needsMetal );
-				iTurboBuildRounds[2] = ( int ) ceil ( temp );
-				limit = ( ( ( int ) floor ( temp ) ) * 8 + 4 ) * data.needsMetal;
-				iTurboBuildCosts[1] = iTurboBuildCosts[2];
-				iTurboBuildRounds[1] = iTurboBuildRounds[2];
 
-				while ((iTurboBuildRounds[1] < 2 * iTurboBuildRounds[2])
-					&& (iTurboBuildCosts[1] > limit ))
-				{
-					iTurboBuildCosts[1] -= 4 * data.needsMetal;
-					iTurboBuildRounds[1]++;
-				}
-				// reverse the special case
-				if ((iTurboBuildCosts[2] % (12 * data.needsMetal))&&(iVehicleCosts % 2))
-					iTurboBuildCosts[1] -= 3 * data.needsMetal;
-				// no break!
-			case 1:
-				// no break, so check is needed
-				if ( BuildSpeed == 1 ) iTurboBuildCosts[1] = iRemainingMetal;
-
-				temp = iTurboBuildCosts[1] / ( double ) ( 4 * data.needsMetal );
-				iTurboBuildRounds[1] = ( int ) ( ceil ( temp ) );
-				limit = ( ( iTurboBuildRounds[1] - 1 ) * 2 + 1 ) * data.needsMetal;
-				iTurboBuildCosts[0] = iTurboBuildCosts[1];
-				iTurboBuildRounds[0] = iTurboBuildRounds[1];
-
-				while ((iTurboBuildRounds[0] < 2 * iTurboBuildRounds[1])
-					&& (iTurboBuildCosts[0] > limit  ))
-				{
-					iTurboBuildCosts[0] -= 2 * data.needsMetal;
-					iTurboBuildRounds[0]++;
-				}
-				break;
 			case 0:
-				iTurboBuildCosts[0] = iRemainingMetal;
-				iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
+				WorkedRounds = ( iTurboBuildCosts[0] - iRemainingMetal ) / ( float ) ( 1 * data.needsMetal );
+				iTurboBuildCosts[0] -= ( int ) ( 1    *  1 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[1] -= ( int ) ( 0.5  *  4 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[2] -= ( int ) ( 0.25 * 12 * data.needsMetal * WorkedRounds );
+				break;
+
+			case 1:
+				WorkedRounds = ( iTurboBuildCosts[1] - iRemainingMetal ) / ( float ) ( 4 * data.needsMetal );
+				iTurboBuildCosts[0] -= ( int ) ( 2   *  1 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[1] -= ( int ) ( 1   *  4 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[2] -= ( int ) ( 0.5 * 12 * data.needsMetal * WorkedRounds );
+				break;
+
+			case 2:
+				WorkedRounds = ( iTurboBuildCosts[2] - iRemainingMetal ) / ( float ) ( 12 * data.needsMetal );
+				iTurboBuildCosts[0] -= ( int ) ( 4 *  1 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[1] -= ( int ) ( 2 *  4 * data.needsMetal * WorkedRounds );
+				iTurboBuildCosts[2] -= ( int ) ( 1 * 12 * data.needsMetal * WorkedRounds );
 				break;
 		}
 	}
 
 
-	// calculate missing building time and costs
-	//step 1x
-	if ( iTurboBuildRounds[0] == 0 )
+	//calc needed Rounds
+	iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( 1 * data.needsMetal ) );
+
+	if ( data.maxBuildFactor > 1 )
 	{
-		iTurboBuildCosts[0] = iVehicleCosts;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
+		iTurboBuildRounds[1] = ( int ) ceil ( iTurboBuildCosts[1] / ( double ) ( 4 * data.needsMetal ) );
+		iTurboBuildRounds[2] = ( int ) ceil ( iTurboBuildCosts[2] / ( double ) ( 12 * data.needsMetal ) );
 	}
-
-	//step 2x
-	if (( iTurboBuildRounds[0] > 1 ) && ( iTurboBuildRounds[1] == 0 ))
+	else
 	{
-		iTurboBuildRounds[1] = iTurboBuildRounds[0];
-		iTurboBuildCosts[1] = iTurboBuildCosts[0];
-
-		while ( ( iTurboBuildRounds[1] > 1 ) && ( (iTurboBuildRounds[1]-1)*2 >= iTurboBuildRounds[0] ) )
-		{
-			iTurboBuildRounds[1]--;
-			iTurboBuildCosts[1] += 2 * data.needsMetal;
-		}
-	}
-
-	//step 4x
-	if ( ( iTurboBuildRounds[1] > 1 ) && (iTurboBuildRounds[2] == 0) )
-	{
-		iTurboBuildRounds[2] = iTurboBuildRounds[1];
-		iTurboBuildCosts[2] = iTurboBuildCosts[1];
-
-		while ( ( iTurboBuildRounds[2] > 1 ) && ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] ) )
-		{
-			iTurboBuildRounds[2]--;
-			iTurboBuildCosts[2] += 4 * data.needsMetal;
-		}
-		// handle the special case
-		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.needsMetal ) * 12 > iTurboBuildCosts[2] )
-		{
-			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * ( data.needsMetal ) * 12;
-		}
+		iTurboBuildRounds[1] = 0;
+		iTurboBuildRounds[2] = 0;
 	}
 }
 
