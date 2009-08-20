@@ -11,9 +11,9 @@ http://www.cdosabandonware.com/std_games_details.php?gameid=1979
 Linux:
 
 To run resinstaller simply execute ./src/resinstaller or use the
-following syntax: ./src/resinstaller $SOURCE $DEST
+following syntax: ./src/resinstaller $SOURCE $DEST $LANG
 
-Example: ./src/resinstaller /media/cdrom/ /home/foo/games/maxr/
+Example: ./src/resinstaller /media/cdrom/ /home/foo/games/maxr/ german
 
 Windows:
 
@@ -23,4 +23,4 @@ data from CD or M.A.X. installation and the path to your maxr
 installation. Then just click on Run for starting the copying of data.
 
 You can also start resinstaller.exe directly or with the following
-syntax: resinstaller.exe $SOURCE $DEST
+syntax: resinstaller.exe $SOURCE $DEST $LANG
