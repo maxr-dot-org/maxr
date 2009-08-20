@@ -5140,7 +5140,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			for ( int i = ActivePlayer->savedReportsList.Size()-50; i < (int)ActivePlayer->savedReportsList.Size(); i++ )
 			{
-				if ( i < 0 ) i = 0;
+				if ( i < 0 ) continue;
 				sendSaveReportInfo ( &ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID );
 			}
 			sendFinishedSendSaveInfo ( ActivePlayer->Nr, saveingID );
