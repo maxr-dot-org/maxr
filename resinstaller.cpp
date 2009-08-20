@@ -4009,13 +4009,17 @@ int main ( int argc, char* argv[] )
 	initialize ();
 	showIntroduction ();
 	createLogFile ();
-	wasError = 0;
+	wasError = false;
 
 	// look for paths in argv[]
 	if (argc > 1) sMAXPath = argv[1];
 	else sMAXPath = "";
+	
 	if (argc > 2) sOutputPath = argv[2];
 	else sOutputPath = "";
+	
+	if (argc > 3) sLanguage = argv[3];
+	else sLanguage = "";
 	
 	sMAXPath = getMAXPathFromUser (sMAXPath); // if the user cancled, sMAXPath will be empty (at least on MAC)
 	if (sMAXPath.size () == 0)
@@ -4049,6 +4053,36 @@ int main ( int argc, char* argv[] )
 		//we are not installing from CD
 		sVoicePath = sMAXPath;
 	}
+	//we got the language parameter from commandline
+	else if ( !sLanguage.empty() )
+	{
+		writeLog("Language argument from command line: " + sLanguage );
+		if ( sLanguage.compare("english") == 0 )
+		{
+			sVoicePath = sMAXPath;
+		}
+		else if ( sLanguage.compare("german") == 0 && german )
+		{
+			if ( uppercase ) sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+			else sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
+		}
+		else if ( sLanguage.compare("french") == 0 && french )
+		{
+			if ( uppercase ) sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
+			else sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
+		}
+		else if ( sLanguage.compare("italian") == 0 && italian )
+		{
+			if ( uppercase ) sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
+			else sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
+		}
+		else
+		{
+			sVoicePath = sMAXPath;
+			writeLog("Language is not available");
+		}
+	}
+	//ask the user, which language to install
 	else
 	{
 #if MAC
