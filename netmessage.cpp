@@ -533,6 +533,16 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_WANT_COM_ACTION");
 	case GAME_EV_COMMANDO_ANSWER:
 		return string("GAME_EV_COMMANDO_ANSWER");
+	case GAME_EV_REQ_SAVE_INFO:
+		return string("GAME_EV_REQ_SAVE_INFO");
+	case GAME_EV_SAVED_REPORT:
+		return string("GAME_EV_SAVED_REPORT");
+	case GAME_EV_SAVE_HUD_INFO:
+		return string("GAME_EV_SAVE_HUD_INFO");
+	case GAME_EV_SAVE_REPORT_INFO:
+		return string("GAME_EV_SAVE_REPORT_INFO");
+	case GAME_EV_FIN_SEND_SAVE_INFO:
+		return string("GAME_EV_FIN_SEND_SAVE_INFO");
 	default:
 		return iToStr( iType );
 	}

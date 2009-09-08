@@ -5158,6 +5158,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			savedReport.colorNr = message->popInt16();
 			ActivePlayer->savedReportsList.Add ( savedReport );
 		}
+		break;
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

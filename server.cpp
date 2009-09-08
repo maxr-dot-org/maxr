@@ -1734,6 +1734,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cSavegame savegame ( savingIndex );
 			savegame.writeAdditionalInfo ( &player->HotHud, player->savedReportsList, player );
 		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
