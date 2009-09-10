@@ -1661,9 +1661,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				success = true;
 			}
-			else
+			// disabled units fail to detect infiltrator even if he screws up
+			else if( (destBuilding && !destBuilding->Disabled) || (destVehicle && !destVehicle->Disabled) )
 			{
 				// detect the infiltrator on failed action and let enemy units fire on him
+				//TODO: uncover the infiltrator for all players, or only for the owner of the target unit? --eiko
 				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 				{
 					cPlayer* player = (*PlayerList)[i];
