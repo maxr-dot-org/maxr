@@ -715,6 +715,7 @@ public:
 	~cMenuMaterialBar();
 	void draw();
 
+	void setType(eMaterialBarTypes);
 	void setMaximalValue( int maxValue_ );
 	void setCurrentValue( int currentValue_ );
 

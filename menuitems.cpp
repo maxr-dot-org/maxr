@@ -1625,12 +1625,28 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 {
 	setReleaseSound ( SoundData.SNDObjectMenu );
 	currentValue = maxValue = maxValue_;
-	materialType = materialType_;
 	inverted = inverted_;
 	showLabel = showLabel_;
 	valueLabel = new cMenuLabel ( labelX, labelY, iToStr( currentValue ) );
 	valueLabel->setCentered ( true );
+	surface = 0;
 
+	setType(materialType_);
+}
+
+cMenuMaterialBar::~cMenuMaterialBar()
+{
+	if ( surface ) SDL_FreeSurface ( surface );
+	delete valueLabel;
+}
+
+void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
+{
+	if(surface && materialType == materialType_)
+		return;
+	
+	materialType = materialType_;
+	
 	switch ( materialType )
 	{
 	default:
@@ -1657,18 +1673,15 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 		horizontal = true;
 		break;
 	}
-
+	
 	generateSurface();
-}
-
-cMenuMaterialBar::~cMenuMaterialBar()
-{
-	if ( surface ) SDL_FreeSurface ( surface );
-	delete valueLabel;
 }
 
 void cMenuMaterialBar::generateSurface()
 {
+	if(surface) 
+		SDL_FreeSurface(surface);
+	
 	SDL_Rect src = { 114, 336, position.w, position.h };
 	surface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -1679,51 +1692,46 @@ void cMenuMaterialBar::generateSurface()
 	case MAT_BAR_TYPE_METAL_HORI_BIG:
 		src.x = 156;
 		src.y = 339;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_OIL_HORI_BIG:
 		src.x = 156;
 		src.y = 369;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_GOLD_HORI_BIG:
 		src.x = 156;
 		src.y = 400;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_NONE_HORI_BIG:
 		src.x = 156;
 		src.y = 307;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_METAL_HORI_SMALL:
 		src.x = 156;
 		src.y = 256;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_OIL_HORI_SMALL:
 		src.x = 156;
 		src.y = 273;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	case MAT_BAR_TYPE_GOLD_HORI_SMALL:
 		src.x = 156;
 		src.y = 290;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	default:
 	case MAT_BAR_TYPE_METAL:
-	case MAT_BAR_TYPE_OIL:
 		src.x = 114+src.w+1;
 		src.y = 336;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		break;
+	case MAT_BAR_TYPE_OIL:
+		src.x = 400;
+		src.y = 348;
 		break;
 	case MAT_BAR_TYPE_GOLD:
 		src.x = 114;
 		src.y = 336;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		break;
 	}
+	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 }
 
 void cMenuMaterialBar::draw()

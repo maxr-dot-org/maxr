@@ -2162,6 +2162,15 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	{
 		menu->materialBar->setMaximalValue ( vehicle->data.storageResMax );
 		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
+		
+		cMenuMaterialBar::eMaterialBarTypes type;
+		switch(vehicle->data.storeResType) 
+		{
+			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
+			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
+			case sUnitData::STORE_RES_GOLD:  type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break;
+		}
+		menu->materialBar->setType(type);
 	}
 	else
 	{
