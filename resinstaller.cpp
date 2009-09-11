@@ -2969,7 +2969,17 @@ int installGfx()
 		dst_rect.y = 336;
 		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
 		SDL_FreeSurface( surface );
-
+		
+		surface = getImageFromRes("VERTFUEL");
+		setColor( surface, 0, 255, 0, 255 );
+		src_rect.w = 20;
+		src_rect.h = 115;
+		src_rect.x = 0;
+		src_rect.y = 0;
+		dst_rect.x = 400;
+		dst_rect.y = 348;
+		SDL_BlitSurface( surface, &src_rect, output, &dst_rect );
+		SDL_FreeSurface( surface );
 
 		savePCX( output, path + "hud_stuff.pcx");
 	}
