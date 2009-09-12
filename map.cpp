@@ -1035,14 +1035,30 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 	cMapField& field = fields[offset];
 	bool checkBeneathSea = false, checkAboveBase = false;
 
+    bool can_over_build = false;
+
+    // Check all buildings in this field for a building of the same type. This
+    // will prevent roads, connectors and water platforms from building on top
+    // of themselves.
 	cBuildingIterator bi = field.getBuildings();
+    while ( !bi.end )
+    {
+        if (bi->data.ID == buildingData.ID)
+        {
+            return false;
+        }
+
+        bi++;
+    }
+
+    // Reset the iterator.
+    bi = field.getBuildings();
+
+    // If this building is a connector, skip the building iterator by one for the
+    // rest of the checks.
 	if ( !bi.end && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 	{
-		//can not build connectors on connectors
-		if ( buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE ) return false;
-
-		//use next building under the connector for the next checks
-		bi++;
+        bi++;
 	}
 
 	if ( buildingData.factorSea )
