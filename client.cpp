@@ -321,6 +321,9 @@ void cClient::run()
 		// end truth save/load menu
 		if ( bExit )
 		{
+			// HACK for ticket 272.
+			iTurn = 1; 
+			Hud.ShowRunde(); 
 			drawMap();
 			SHOW_SCREEN
 			makePanel ( false );
