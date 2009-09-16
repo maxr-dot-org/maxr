@@ -2551,7 +2551,7 @@ void cNetworkMenu::showSettingsText()
 			text += lngPack.i18n ( "Text~Title~Credits" )  + ": " + iToStr( settings->credits ) + "\n";
 			text += lngPack.i18n ( "Text~Title~BridgeHead" ) + ": " + ( settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ( "Text~Option~Definite" ) : lngPack.i18n ( "Text~Option~Mobile" ) ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
-			text += string ("Clans") + ": " + ( settings->clans == SETTING_CLANS_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n"; // TODO: translate
+			text += string ("Clans") + ": " + ( settings->clans == SETTING_CLANS_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Game_Type" ) + ": " + ( settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ( "Text~Option~Type_Turns" ) : lngPack.i18n ( "Text~Option~Type_Simu" ) ) + "\n";
 		}
 		else text += lngPack.i18n ( "Text~Multiplayer~Option_NoSet" ) + "\n";
@@ -3029,10 +3029,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName);
 					mapSenders.push_back (mapSender);
 					mapSender->runInThread (this);
-					string displayMsg = "Upload map to "; // TODO: translate
-					displayMsg += players[receiverNr]->name;
-					displayMsg += "...";
-					chatBox->addLine (displayMsg);
+					chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
 					draw();
 				}
 			}
@@ -3347,14 +3344,14 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 								{
 									lastRequestedMap = mapName;
 									sendRequestMap (mapName, actPlayer->nr);
-									chatBox->addLine (string ("Map not available: Requesting to download custom"));
-									chatBox->addLine (string ("map \"") + mapName + "\" from server..."); // TODO: translate
+									chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_DownloadRequest"));
+									chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_Download", mapName));
 								}
 							}
 							else
 							{
-								chatBox->addLine (string ("Map not available: Not allowed to download"));
-								chatBox->addLine (string ("M.A.X. original map \"") + mapName + "\" from server!"); // TODO: translate
+								chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_DownloadRequestInvalid"));
+								chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_DownloadInvalid", mapName));
 							}
 						}
 					}
@@ -3505,7 +3502,8 @@ void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 	int received = mapReceiver->getBytesReceived ();
 	int finished = (received * 100) / size;
 	ostringstream os;
-	os << "Map Download: " << finished << "%"; // TODO: translated
+	
+	os << lngPack.i18n ( "Text~Multiplayer~MapDL_Percent", iToStr(finished) );
 	mapLabel->setText (os.str ());
 	draw ();
 }
@@ -3519,7 +3517,7 @@ void cNetworkClientMenu::canceledMapDownload (cNetMessage* message)
 	delete mapReceiver;
 	mapReceiver = 0;
 
-	mapLabel->setText ("Canceled!"); // TODO: translated
+	mapLabel->setText (lngPack.i18n ( "Text~Multiplayer~MapDL_Cancel" ));
 	draw ();
 }
 
