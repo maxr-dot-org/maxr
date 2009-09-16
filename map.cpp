@@ -328,7 +328,7 @@ struct sTuple
 SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum )
 {
 	// Create new surface and copy palette
-	SDL_Surface *surface = SDL_CreateRGBSurface(OtherData.iSurface, 64, 64,8,0,0,0,0);
+	SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
 	surface->pitch = surface->w;
 
 	SDL_SetColors( surface, Palette, 0, 256 );

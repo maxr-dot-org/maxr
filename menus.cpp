@@ -1226,7 +1226,7 @@ void cPlanetsSelectionMenu::showMaps()
 					SDL_RWseek ( mapFile, 64*64*sGraphCount, SEEK_CUR );
 					SDL_RWread ( mapFile, &Palette, 1, 768 );
 
-					SDL_Surface *mapSurface = SDL_CreateRGBSurface( OtherData.iSurface, size, size, 8, 0, 0, 0, 0 );
+					SDL_Surface *mapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
 					mapSurface->pitch = mapSurface->w;
 
 					mapSurface->format->palette->ncolors = 256;
@@ -2579,7 +2579,7 @@ void cNetworkMenu::showMap()
 		SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
 		SDL_RWread ( fp, &Palette, 1, 768 );
 
-		surface = SDL_CreateRGBSurface( OtherData.iSurface, size, size, 8, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
 
 		if ( SDL_MUSTLOCK ( surface ) ) SDL_LockSurface ( surface );
 		surface->pitch = surface->w;
