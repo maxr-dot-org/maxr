@@ -267,9 +267,10 @@ int initSound()
 		return 1;
 	}
 
-	if ( SDL_Init ( SDL_INIT_AUDIO ) == -1 ) //start sound
+	if ( SDL_Init ( SDL_INIT_AUDIO ) < 0 ) //start sound
 	{
-		Log.write ( "Could not init SDL_INIT_AUDIO\nSound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Could not init SDL_INIT_AUDIO",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Sound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
 		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		SettingsData.bSoundEnabled=false;
 		return -1;
@@ -277,6 +278,9 @@ int initSound()
 
 	if ( !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
         {
+		Log.write ( "Could not access mixer",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Sound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		SettingsData.bSoundEnabled = false;
                 return -1;
         }
 	Log.write ( "Sound started", cLog::eLOG_TYPE_INFO);
