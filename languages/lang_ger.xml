@@ -112,20 +112,20 @@
 			<Upgrade ENG="Upgrade" localized="Verbessern"/>
 			<Reload ENG="Reload" localized="Aufladen"/>
 			<Host_Start ENG="Start Host" localized="Starte Host"/>
-      <Units ENG="Units" localized="Einheiten"/>
-      <Disadvantages ENG="Disadvantages" localized="Schäden"/>
-      <Score ENG="Score" localized="Spielstand"/>
-      <Reports ENG="Reports" localized="Nachrichten"/>
-      <Included ENG="Included" localized="Einbezogen"/>
-      <Limited_To ENG="Limited to" localized="Begrenzt auf"/>
-      <Air_Units ENG="Airunits" localized="Lufteinheiten"/>
-      <Ground_Units ENG="Landunits" localized="Landeinheiten"/>
-      <Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
-      <Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
-      <Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
-      <Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
-      <Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
-      <Stealth_Units ENG="Stealth units" localized="Getarnte Einheiten"/>
+			<Units ENG="Units" localized="Einheiten"/>
+			<Disadvantages ENG="Disadvantages" localized="Schäden"/>
+			<Score ENG="Score" localized="Spielstand"/>
+			<Reports ENG="Reports" localized="Nachrichten"/>
+			<Included ENG="Included" localized="Einbezogen"/>
+			<Limited_To ENG="Limited to" localized="Begrenzt auf"/>
+			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
+			<Ground_Units ENG="Landunits" localized="Landeinheiten"/>
+			<Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
+			<Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
+			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
+			<Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
+			<Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
+			<Stealth_Units ENG="Stealth units" localized="Getarnte Einheiten"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear" localized="Entf."/>
@@ -252,10 +252,17 @@
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, drücke F2 um das Warten abzubrechen"/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Nur der Server kann Spielstände speichern"/>
-      <Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
-      <Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
-      <No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Du kannst nicht bereit gehen."/>
-      <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Du wirst getrennt, da du nicht im Spielstand aufgeführt bist."/>
+			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
+			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Du kannst nicht bereit gehen."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Du wirst getrennt, da du nicht im Spielstand aufgeführt bist."/>
+			<MapDL_Cancel localized="Abgebrochen"/>
+			<MapDL_Percent localized="Lade Karte: %s%"/>
+			<MapDL_Upload localized="Kopiere Karte für %s..."/>
+			<MapDL_DownloadRequest localized="Karte nicht installiert: Fordere die "/>
+			<MapDL_Download localized="Karte %s vom Server an."/>
+			<MapDL_DownloadRequestInvalid localized="Karte nicht installiert: Die Karte %s"/>
+			<MapDL_DownloadInvalid localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Damage" localized="Angriff"/>

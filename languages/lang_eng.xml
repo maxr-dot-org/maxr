@@ -116,20 +116,20 @@
 			<Upgrade ENG="Upgrade"/>
 			<Reload ENG="Reload"/>
 			<Host_Start ENG="Start Host"/>
-      <Units ENG="Units"/>
-      <Disadvantages ENG="Disadvantages"/>
-      <Score ENG="Score"/>
-      <Reports ENG="Reports"/>
-      <Included ENG="Included"/>
-      <Limited_To ENG="Limited to"/>
-      <Air_Units ENG="Airunits"/>
-      <Ground_Units ENG="Landunits"/>
-      <Sea_Units ENG="Seaunits"/>
-      <Stationary_Units ENG="Stationary Units"/>
-      <Produce_Units ENG="Producing units"/>
-      <Fight_Units ENG="Fighting units"/>
-      <Damaged_Units ENG="Damaged units"/>
-      <Stealth_Units ENG="Stealth units"/>
+			<Units ENG="Units"/>
+			<Disadvantages ENG="Disadvantages"/>
+			<Score ENG="Score"/>
+			<Reports ENG="Reports"/>
+			<Included ENG="Included"/>
+			<Limited_To ENG="Limited to"/>
+			<Air_Units ENG="Airunits"/>
+			<Ground_Units ENG="Landunits"/>
+			<Sea_Units ENG="Seaunits"/>
+			<Stationary_Units ENG="Stationary Units"/>
+			<Produce_Units ENG="Producing units"/>
+			<Fight_Units ENG="Fighting units"/>
+			<Damaged_Units ENG="Damaged units"/>
+			<Stealth_Units ENG="Stealth units"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear"/>
@@ -258,8 +258,16 @@
 			<Save_Only_Host ENG="Only the host can save games."/>
 			<Player_Joined ENG="%s has joined"/>
 			<Player_Left ENG="%s has left"/>
-      <No_Map_No_Ready ENG="Can not load map %s. You can not go ready."/>
-      <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame."/>
+			<MapDL_Cancel ENG="Aborted"/>
+			<MapDL_Percent ENG="Map download: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..."/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom"/>
+			<MapDL_Download ENG="map %s from server."/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
+			
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
