@@ -153,21 +153,11 @@ int main ( int argc, char *argv[] )
 	}
 
 	SDL_WaitThread ( DataThread, NULL );
-//	SDL_Delay ( 3000 ); //debug only
-
-	//screen = SDL_SetVideoMode(640,480,8,SDL_FULLSCREEN);
 
 	showGameWindow(); //start game-window
-
-	// Die Maus erzeugen:
 	mouse = new cMouse;
 	InputHandler = new cInput;
-
 	EventHandler = new cEventHandling;
-
-	// Das Menu starten:
-	//RunMainMenu();
-
 	cStartMenu mainMenu;
 	mainMenu.show();
 
@@ -178,23 +168,12 @@ int main ( int argc, char *argv[] )
 // generate SplashScreen
 void showSplash()
 {
-	buffer = LoadPCX(SPLASH_BACKGROUND, false); //load splash with SDL_HWSURFACE
-	if (buffer == NULL)
-	{ //TODO: at flag for gamewide handling of SDL_HWSURFACE in case it doesn't work
-		Log.write("Couldn't use hardware acceleration for images", cLog::eLOG_TYPE_ERROR);
-		Log.write("This is currently not supported. Expect M.A.X. to crash!", cLog::eLOG_TYPE_ERROR);
-		buffer = LoadPCX(SPLASH_BACKGROUND, true);
-		if (buffer == NULL)
-		{
-			Log.write("Couldn't use software acceleration, too", cLog::eLOG_TYPE_ERROR);
-			Log.write("That's it. Tried my best. Bye!", cLog::eLOG_TYPE_ERROR);
-			Quit();
-		}
-
-	}
-
-	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL ); //JCK: Icon for frame and taskmanager is set
-
+        const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
+        Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
+	
+	buffer = LoadPCX(SPLASH_BACKGROUND);
+	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL );
+	
 	//set window to center of screen.
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
@@ -202,8 +181,13 @@ void showSplash()
 		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
 	}
 
-	//made it - enough to start game
-	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, SDL_HWSURFACE|SDL_NOFRAME );
+	if(SettingsData.iColourDepth > (Uint32)uBpp)
+	{
+	  Log.write("Requested colordepth from config is higher than the display has!", cLog::eLOG_TYPE_WARNING);
+	}
+	
+	//made it far enough to start game
+	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, OtherData.iSurface|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
 	
 	string sVersion = PACKAGE_NAME; sVersion += " ";
@@ -216,7 +200,7 @@ void showSplash()
 void showGameWindow()
 {
 	SDL_FreeSurface(buffer); //delete splash image
-	buffer=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
+	buffer=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
 
 	//set window to center of screen.
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
@@ -225,7 +209,7 @@ void showGameWindow()
 		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
 	}
 
-	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
+	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,OtherData.iSurface|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
 
 	if ( screen == NULL )
 	{
@@ -437,7 +421,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 {
 	SDL_Surface *sf;
 	float fak;
-	sf=SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,size,size,SettingsData.iColourDepth,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,size,size,SettingsData.iColourDepth,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFF00FF );
 	SDL_LockSurface ( sf );

@@ -20,10 +20,11 @@
 #include "log.h"
 #include "files.h"
 #include "settings.h"
+#include "main.h"
 
 #include <string>
 
-SDL_Surface *LoadPCX ( const char *name,bool NoHW )
+SDL_Surface *LoadPCX ( const char *name )
 {
 	unsigned int *_ptr;
 	unsigned char temp;
@@ -42,13 +43,13 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	else
 	{
 		//file not found - creating empty surface
-		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		sf = SDL_CreateRGBSurface ( OtherData.iSurface,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return sf;
 	}
 	if ( file==NULL )
 	{
 		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
-		sf = SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		sf = SDL_CreateRGBSurface ( OtherData.iSurface,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return sf;
 	}
 
@@ -57,7 +58,7 @@ SDL_Surface *LoadPCX ( const char *name,bool NoHW )
 	x = SDL_ReadLE16 ( file );
 	y = SDL_ReadLE16 ( file );
 	x++;y++;
-	sf=SDL_CreateRGBSurface ( NoHW?SDL_SWSURFACE:SDL_SWSURFACE|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	if ( sf == NULL )
 	{
@@ -131,13 +132,13 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	else
 	{
 		//file not found - creating empty surface
-		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		sf = SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return -1;
 	}
 	if ( file==NULL )
 	{
 		Log.write ( SDL_GetError(), cLog::eLOG_TYPE_WARNING ); //error with img  - creating empty surface
-		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
+		sf = SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,100, 20, SettingsData.iColourDepth,0,0,0,0 );
 		return -1;
 	}
 
@@ -149,7 +150,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	x++;y++;
 	if( sf == NULL)
 	{
-		sf = SDL_CreateRGBSurface ( SDL_HWSURFACE|SDL_SRCCOLORKEY,1, 1, SettingsData.iColourDepth,0,0,0,0 ); //temporairy surface so sf is not null any more
+		sf = SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,1, 1, SettingsData.iColourDepth,0,0,0,0 ); //temporairy surface so sf is not null any more
 	}
 
 	if ( sf == NULL ) //ops, couldn't create temp. surface

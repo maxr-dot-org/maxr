@@ -45,7 +45,7 @@ void cEventHandling::HandleEvents()
 			if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
 			{
 				SettingsData.bWindowMode = !SettingsData.bWindowMode;
-				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,SDL_HWSURFACE|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
+				screen = SDL_SetVideoMode(SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,OtherData.iSurface|(SettingsData.bWindowMode?0:SDL_FULLSCREEN));
 				SHOW_SCREEN
 			}
 			// Screenshot

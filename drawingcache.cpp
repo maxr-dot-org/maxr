@@ -78,7 +78,7 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 		height *= 2;
 	}
 	if ( surface ) SDL_FreeSurface( surface );
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
+	surface = SDL_CreateRGBSurface(OtherData.iSurface, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
 
 	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
 	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );
@@ -110,7 +110,7 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*factor);
 
 	if ( surface ) SDL_FreeSurface( surface );
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
+	surface = SDL_CreateRGBSurface(OtherData.iSurface, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
 	
 	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
 	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );

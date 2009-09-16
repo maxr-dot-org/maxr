@@ -1071,12 +1071,12 @@ int ReadMaxXml()
 
 
 	//BEGIN SANITY CHECK SCREEN RES
-	//TODO: make maxr honor the check of SDL_HWSURFACE/SDL_SWSURFACE
+	
 	const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
 	Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
 	
 	SDL_Rect** rModes;
-	/* Get available fullscreen/hardware modes */ 
+	/* Get available fullscreen/hardware modes. Check for HWSURFACE first. If that doesn't work use a SWSURFACE instead. If that doesn't work.. die.*/ 
 	if(!SettingsData.bWindowMode)
 	  rModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|SDL_HWSURFACE); //try with HWSURFACE
 	else
@@ -1095,10 +1095,12 @@ int ReadMaxXml()
 	      Log.write("No video modes available", cLog::eLOG_TYPE_ERROR);
 	      return -1;
 	    }
+	    OtherData.iSurface = SDL_SWSURFACE;
 	    Log.write("Switched to SDL_SWSURFACE", cLog::eLOG_TYPE_WARNING);
 	}
 	else
 	{
+	  OtherData.iSurface = SDL_HWSURFACE;
 	  Log.write("Switched to SDL_HWSURFACE", cLog::eLOG_TYPE_DEBUG);
 	}
 	/* Check if our resolution is restricted */
@@ -1733,9 +1735,9 @@ static int LoadGraphics(const char* path)
 	// Hud:
 	Log.write ( "Hudgraphics...", LOG_TYPE_DEBUG );
 	SDL_Rect scr,dest;
-	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
+	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
 		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	GraphicsData.gfx_hud_backup = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
+	GraphicsData.gfx_hud_backup = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
 		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
 	SDL_FillRect ( GraphicsData.gfx_hud_backup, NULL, 0xFF00FF );
@@ -1824,11 +1826,11 @@ static int LoadGraphics(const char* path)
 
 	Log.write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
 	// Shadow:
-	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW,
+	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
 		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_shadow, NULL, 0x0 );
 	SDL_SetAlpha ( GraphicsData.gfx_shadow, SDL_SRCALPHA, 50 );
-	GraphicsData.gfx_tmp = SDL_CreateRGBSurface ( SDL_HWSURFACE, 128, 128, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	GraphicsData.gfx_tmp = SDL_CreateRGBSurface ( OtherData.iSurface, 128, 128, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF );
 
 	// Glas:
@@ -1995,7 +1997,7 @@ static int LoadVehicles()
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				v.img[n] = SDL_CreateRGBSurface (SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.img[n] = SDL_CreateRGBSurface (OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
 				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				SDL_FillRect(v.img[n], NULL, 0xFF00FF);
 
@@ -2023,15 +2025,15 @@ static int LoadVehicles()
 						SDL_FreeSurface ( sfTempSurface );
 					}
 				}
-				v.img_org[n] = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				v.img_org[n] = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
 				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				SDL_FillRect(v.img_org[n], NULL, 0xFFFFFF);
 				SDL_BlitSurface(v.img[n], NULL, v.img_org[n], NULL);
 
-				v.shw[n] = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.shw[n] = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
 				SDL_SetColorKey(v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF);
 				SDL_FillRect(v.shw[n], NULL, 0xFF00FF);
-				v.shw_org[n] = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.shw_org[n] = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
 				SDL_SetColorKey(v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF);
 				SDL_FillRect(v.shw_org[n], NULL, 0xFF00FF);
 

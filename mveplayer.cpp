@@ -26,6 +26,7 @@
 */
 #include "mveplayer.h"
 #include <assert.h>
+#include "main.h"
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -74,7 +75,7 @@ typedef struct BUFSTRUCT
 {
 	Uint32 length;
 	Uint8 *data;
-} buffer;
+} mvebuffer;
 
 /********************/
 /* global variables */
@@ -89,7 +90,7 @@ Uint8 TIMER_CREATED	= 0, TIMER_INIT = 0;
 /* audio flags */
 Uint8 AUDIO_PLAYING = 0, AUDIO_COMPRESSED = 0, AUDIO_STEREO = 0, SAMPLESIZE16 = 0;
 
-/* screen buffers */
+/* screen mvebuffers */
 Uint8 *v_backbuf = NULL, *frame_hot = NULL, *frame_cold = NULL;
 
 /* target time between frames */
@@ -100,7 +101,7 @@ float ms_per_frame = 0;
 /***********************/
 #ifndef NOAUDIO
 void MVEPlayerAudioCB(void *userdata, Uint8 *stream, Sint32 len);
-void MVEPlayerDecodeAudio(buffer *input);
+void MVEPlayerDecodeAudio(mvebuffer *input);
 #endif
 void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 *video_data, Uint8 *decoding_map);
 void MVEPlayerEventHandler();
@@ -128,10 +129,10 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	/* audio variables */
 	SDL_AudioSpec *desired = NULL;
 	Uint16 file_audio_flags = 0;
-	buffer audio_buffer, audio_data_read, temp_audio_buffer;
+	mvebuffer audio_mvebuffer, audio_data_read, temp_audio_mvebuffer;
 
 	/* video variables */
-	Uint32 screen_buffer_size = 0;
+	Uint32 screen_mvebuffer_size = 0;
 	Uint16 width_blocks = 0, height_blocks = 0, width = 0, height = 0;
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
 	SDL_Surface *screen = NULL, *frame_buf = NULL;
@@ -148,13 +149,13 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	/* a counting var */
 	Uint16 i = 0;
 
-	/* initialize audio buffers */
-	audio_buffer.data = NULL;
-	audio_buffer.length = 0;
+	/* initialize audio mvebuffers */
+	audio_mvebuffer.data = NULL;
+	audio_mvebuffer.length = 0;
 	audio_data_read.data = NULL;
 	audio_data_read.length = 0;
-	temp_audio_buffer.data = NULL;
-	temp_audio_buffer.length = 0;
+	temp_audio_mvebuffer.data = NULL;
+	temp_audio_mvebuffer.length = 0;
 
 	/******************************************/
 	/* validate MVE, init SDL, and begin read */
@@ -288,7 +289,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* fill the known audiospec values */
 			desired->samples = 4096;
 			desired->callback = MVEPlayerAudioCB;
-			desired->userdata = &audio_buffer;
+			desired->userdata = &audio_mvebuffer;
 
 			/* fill values gotten from the file audio flags */
 			desired->channels = (file_audio_flags & 0x01 ? 2 : 1);
@@ -356,38 +357,38 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				}
 			}
 
-			/* if we have already allocated a buffer */
+			/* if we have already allocated a mvebuffer */
 			if(frame_buf)
 				SDL_FreeSurface(frame_buf);
 				
-			/* initialize video buffer to the actual movie dimensions */
-			frame_buf = SDL_CreateRGBSurface(SDL_SWSURFACE, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
+			/* initialize video mvebuffer to the actual movie dimensions */
+			frame_buf = SDL_CreateRGBSurface(OtherData.iSurface, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
 
 			/* init movie screen rect for fullscreen purposes */
 			movie_screen.x = (screen->w - frame_buf->w) >> 1;
 			movie_screen.y = (screen->h - frame_buf->h) >> 1;
 
-			/* erase old video backbuffer */
+			/* erase old video backmvebuffer */
 			if(v_backbuf)
 				free(v_backbuf);
 
-			/* allocate memory for the backbuffers sufficient for the screen pixel buffer */
-			screen_buffer_size = frame_buf->h * frame_buf->w;
+			/* allocate memory for the backmvebuffers sufficient for the screen pixel mvebuffer */
+			screen_mvebuffer_size = frame_buf->h * frame_buf->w;
 
-			v_backbuf = (Uint8 *)calloc(1, screen_buffer_size << 1);
+			v_backbuf = (Uint8 *)calloc(1, screen_mvebuffer_size << 1);
 			assert(v_backbuf);
 
 			frame_hot = v_backbuf;
-			frame_cold = v_backbuf + screen_buffer_size;
+			frame_cold = v_backbuf + screen_mvebuffer_size;
 
 			break;
 
 		case SEND_BUFFER_TO_DISPLAY:
 
 			/* write the decoded data to the frame_buf */
-			memcpy(frame_buf->pixels, frame_hot, screen_buffer_size);
+			memcpy(frame_buf->pixels, frame_hot, screen_mvebuffer_size);
 
-			/* send the buffer to the screen buffer */
+			/* send the mvebuffer to the screen mvebuffer */
 			if(SDL_MUSTLOCK(screen))
 				SDL_LockSurface(screen);
 			
@@ -430,7 +431,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			SDL_ReadLE16(mve);
 			SDL_ReadLE16(mve);
 
-			/* lock SDL out of the audio_buffer; we'll release at the end */
+			/* lock SDL out of the audio_mvebuffer; we'll release at the end */
 			SDL_LockAudio();
 
 			if(AUDIO_COMPRESSED)
@@ -460,31 +461,31 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			}
 			/* at this point, we have uncompressed audio in audio_data_read, along with appropriate lengths */
 
-			/* create temp_audio_buffer the size of old audio buffer + new audio data */
-			temp_audio_buffer.length = audio_data_read.length + audio_buffer.length;
-			temp_audio_buffer.data = (Uint8 *)malloc(temp_audio_buffer.length);
-			assert(temp_audio_buffer.data != NULL);
+			/* create temp_audio_mvebuffer the size of old audio mvebuffer + new audio data */
+			temp_audio_mvebuffer.length = audio_data_read.length + audio_mvebuffer.length;
+			temp_audio_mvebuffer.data = (Uint8 *)malloc(temp_audio_mvebuffer.length);
+			assert(temp_audio_mvebuffer.data != NULL);
 
-			/* copy old audio buffer to temp_audio_buffer */
-			memcpy(temp_audio_buffer.data, audio_buffer.data, audio_buffer.length);
+			/* copy old audio mvebuffer to temp_audio_mvebuffer */
+			memcpy(temp_audio_mvebuffer.data, audio_mvebuffer.data, audio_mvebuffer.length);
 
-			/* append new data to temp_audio_buffer */
-			memcpy(temp_audio_buffer.data + audio_buffer.length, audio_data_read.data, audio_data_read.length);
+			/* append new data to temp_audio_mvebuffer */
+			memcpy(temp_audio_mvebuffer.data + audio_mvebuffer.length, audio_data_read.data, audio_data_read.length);
 
-			/* free audio buffer */
-			if(audio_buffer.data)
-				free(audio_buffer.data);
+			/* free audio mvebuffer */
+			if(audio_mvebuffer.data)
+				free(audio_mvebuffer.data);
 
-			/* temp_audio_buffer has the requested data, and audio_buffer needs to have it. */
-			audio_buffer.data = temp_audio_buffer.data;
-			audio_buffer.length = temp_audio_buffer.length;
+			/* temp_audio_mvebuffer has the requested data, and audio_mvebuffer needs to have it. */
+			audio_mvebuffer.data = temp_audio_mvebuffer.data;
+			audio_mvebuffer.length = temp_audio_mvebuffer.length;
 
-			/* let SDL have access to the audio_buffer */
+			/* let SDL have access to the audio_mvebuffer */
 			SDL_UnlockAudio();
 
-			/* close off temp_audio_buffer */
-			temp_audio_buffer.data = NULL;
-			temp_audio_buffer.length = 0;
+			/* close off temp_audio_mvebuffer */
+			temp_audio_mvebuffer.data = NULL;
+			temp_audio_mvebuffer.length = 0;
 
 			/* close off audio_data_read */
 			if(audio_data_read.data)
@@ -504,9 +505,9 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				SDL_FreeSurface(screen);
 			
 			if(fullscreen)
-				screen = SDL_SetVideoMode(dwidth, dheight, 8, SDL_SWSURFACE|SDL_FULLSCREEN);
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, OtherData.iSurface|SDL_FULLSCREEN);
 			else
-				screen = SDL_SetVideoMode(dwidth, dheight, 8, SDL_SWSURFACE);
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, OtherData.iSurface);
 
 			SDL_WM_SetCaption(filename, NULL);
 
@@ -629,15 +630,15 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			SDL_CloseAudio();
 		}
 
-		/* free audio buffers */
-		if(audio_buffer.data)
-			free(audio_buffer.data);
+		/* free audio mvebuffers */
+		if(audio_mvebuffer.data)
+			free(audio_mvebuffer.data);
 
 		if(audio_data_read.data)
 			free(audio_data_read.data);
 
-		if(temp_audio_buffer.data)
-			free(temp_audio_buffer.data);
+		if(temp_audio_mvebuffer.data)
+			free(temp_audio_mvebuffer.data);
 
 		/* free the audio_spec */
 		if(desired)
@@ -652,7 +653,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	if(video)
 		free(video);
 
-	/* free the video buffers */
+	/* free the video mvebuffers */
 	if(v_backbuf)
 		free(v_backbuf);
 
@@ -681,37 +682,37 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 {
 	Uint8 * temp;
-	buffer *audio_buffer = (buffer *)userdata;
+	mvebuffer *audio_mvebuffer = (mvebuffer *)userdata;
 
-	if((Uint32)len > audio_buffer->length)
+	if((Uint32)len > audio_mvebuffer->length)
 	{
 		/* give SDL what we have */
-		memcpy(stream, audio_buffer->data, audio_buffer->length);
+		memcpy(stream, audio_mvebuffer->data, audio_mvebuffer->length);
 		/* and now we have nothing */
-		audio_buffer->length = 0;
+		audio_mvebuffer->length = 0;
 	}
 	else
 	{
 		/* copy len bytes to stream */
-		memcpy(stream, audio_buffer->data, len);
+		memcpy(stream, audio_mvebuffer->data, len);
 
-		/* our buffer length is now whatever we started with minus len */
-		audio_buffer->length -= len;
+		/* our mvebuffer length is now whatever we started with minus len */
+		audio_mvebuffer->length -= len;
 
 		/* now we need to store the data that wasn't read */
-		temp = (Uint8 *)malloc(audio_buffer->length);
+		temp = (Uint8 *)malloc(audio_mvebuffer->length);
 		assert(temp != NULL);
 
 		/* copy from data address + len length bytes 
 		(which should be the start of the data that wasn't copied to stream) */
-		memcpy(temp, audio_buffer->data + len, audio_buffer->length);
+		memcpy(temp, audio_mvebuffer->data + len, audio_mvebuffer->length);
 
-		/* free the memory of the audio_buffer */
-		if(audio_buffer->data)
-			free(audio_buffer->data);
+		/* free the memory of the audio_mvebuffer */
+		if(audio_mvebuffer->data)
+			free(audio_mvebuffer->data);
 
-		/* assign the address of our stored data to the audio_buffer's data */
-		audio_buffer->data = temp;
+		/* assign the address of our stored data to the audio_mvebuffer's data */
+		audio_mvebuffer->data = temp;
 		
 		/* close off temp */
 		temp = NULL;
@@ -742,14 +743,14 @@ Sint16 interplay_delta_table[256] =
 /*****************************/
 /* audio decoder entry point */
 /*****************************/
-void MVEPlayerDecodeAudio(buffer * in)
+void MVEPlayerDecodeAudio(mvebuffer * in)
 {
 	/* this only works for stereo dpcm at present */
 
 	Sint16 sample[2];
 	Uint16 in_pos = 0, out_pos = 0;
 	Uint8 channel = 0;
-	buffer out;
+	mvebuffer out;
 
 	/* in->data includes initial stream-len word */
 	/* uncompressed streamlen is stream-len bytes */
@@ -758,9 +759,9 @@ void MVEPlayerDecodeAudio(buffer * in)
 	out.data = (Uint8 *)malloc(out.length);
 	assert(out.data != NULL);
 
-	/* each byte in the input buffer after the first four (two words: initial L and R values)
-	will be expanded to fill a word in the return buffer after decompression. 
-	The initial two words will be stored in return buffer as-is. */
+	/* each byte in the input mvebuffer after the first four (two words: initial L and R values)
+	will be expanded to fill a word in the return mvebuffer after decompression. 
+	The initial two words will be stored in return mvebuffer as-is. */
 	sample[0] = LE16(in->data + in_pos);
 	in_pos += 2;
 	*(Sint16 *)(out.data + out_pos) = sample[0];
@@ -778,11 +779,11 @@ void MVEPlayerDecodeAudio(buffer * in)
 		channel = !channel;
 	}
 
-	/* free the original buffer*/
+	/* free the original mvebuffer*/
 	if(in->data)
 		free(in->data);
 
-	/* assign the incoming buffer the outgoing data for return */
+	/* assign the incoming mvebuffer the outgoing data for return */
 	in->data = out.data;
 	in->length = out.length;
 }
@@ -809,8 +810,8 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 		/* for each column (of 8x8 pixel blocks) */
 		for (x = 0; x < wblocks; x++) 
 		{
-			/* assign the frame buffer pointers to the addresses of the screen 
-			buffers so we can do pointer arithmetic on them such as incrementing. 
+			/* assign the frame mvebuffer pointers to the addresses of the screen 
+			mvebuffers so we can do pointer arithmetic on them such as incrementing. 
 			current is the frame currently onscreen; new_frame is the frame under construction. */
 
 			new_frame = frame_hot;

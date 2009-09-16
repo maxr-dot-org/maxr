@@ -2004,7 +2004,7 @@ void cClient::drawMap( bool bPure )
 void cClient::drawMiniMap()
 {
 
-	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
+	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( OtherData.iSurface, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
 	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );
 
 	//set zoom factor

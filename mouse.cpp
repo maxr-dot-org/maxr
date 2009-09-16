@@ -61,7 +61,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	if ( !back || back->h != cur->h || back->w != cur->w )
 	{
 		if ( back ) SDL_FreeSurface( back );
-		back = SDL_CreateRGBSurface( SDL_HWSURFACE, cur->w, cur->h,32, 0, 0, 0, 0 );
+		back = SDL_CreateRGBSurface( OtherData.iSurface, cur->w, cur->h,32, 0, 0, 0, 0 );
 	}
 
 	// store new background

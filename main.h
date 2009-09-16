@@ -481,7 +481,7 @@ class cOtherData
 {
 public:
 	SDL_Surface **colors;
-
+	Uint32 iSurface;
 	SDL_Surface *WayPointPfeile[8][60];
 	SDL_Surface *WayPointPfeileSpecial[8][60];
 } EX OtherData;

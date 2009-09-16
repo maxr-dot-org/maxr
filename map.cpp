@@ -328,7 +328,7 @@ struct sTuple
 SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum )
 {
 	// Create new surface and copy palette
-	SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
+	SDL_Surface *surface = SDL_CreateRGBSurface(OtherData.iSurface, 64, 64,8,0,0,0,0);
 	surface->pitch = surface->w;
 
 	SDL_SetColors( surface, Palette, 0, 256 );
@@ -360,20 +360,20 @@ void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
-	terrain[iNum].sf_org = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].sf_org = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].sf_org, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].sf_org, NULL );
 
-	terrain[iNum].sf = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].sf = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].sf, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].sf, NULL );
 
 	//copy the terrains with fog
-	terrain[iNum].shw_org = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].shw_org = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].shw_org, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].shw_org, NULL );
 
-	terrain[iNum].shw = SDL_CreateRGBSurface( SDL_HWSURFACE , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].shw = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].shw, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].shw, NULL );
 
@@ -492,9 +492,10 @@ bool cMap::LoadMap ( string filename )
 			terrain[iNum].blocked = true;
 			break;
 		default:
-			Log.write("unknown terrain type found", cLog::eLOG_TYPE_WARNING );
-			SDL_RWclose( fpMapFile );
-			return false;
+			Log.write("unknown terrain type "+ iToStr(cByte)+" on tile "+ iToStr(iNum)+" found. Handled as blocked!", cLog::eLOG_TYPE_WARNING );
+			terrain[iNum].blocked = true;
+			//SDL_RWclose( fpMapFile );
+			//return false;
 		}
 
 
@@ -519,7 +520,7 @@ bool cMap::LoadMap ( string filename )
 			int Kachel = SDL_ReadLE16( fpMapFile );
 			if ( Kachel >= iNumberOfTerrains )
 			{
-				Log.write("a map field referred to a nonexisting terrain", cLog::eLOG_TYPE_WARNING );
+				Log.write("a map field referred to a nonexisting terrain: "+iToStr(Kachel), cLog::eLOG_TYPE_WARNING );
 				SDL_RWclose( fpMapFile );
 				return false;
 			}

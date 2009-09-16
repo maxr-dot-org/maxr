@@ -1226,7 +1226,7 @@ void cPlanetsSelectionMenu::showMaps()
 					SDL_RWseek ( mapFile, 64*64*sGraphCount, SEEK_CUR );
 					SDL_RWread ( mapFile, &Palette, 1, 768 );
 
-					SDL_Surface *mapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
+					SDL_Surface *mapSurface = SDL_CreateRGBSurface( OtherData.iSurface, size, size, 8, 0, 0, 0, 0 );
 					mapSurface->pitch = mapSurface->w;
 
 					mapSurface->format->palette->ncolors = 256;
@@ -1259,7 +1259,7 @@ void cPlanetsSelectionMenu::showMaps()
 
 	#define SELECTED 0x00C000
 	#define UNSELECTED 0x000000
-					SDL_Surface *imageSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MAPWINSIZE+8, MAPWINSIZE+8, SettingsData.iColourDepth, 0, 0, 0, 0 );
+					SDL_Surface *imageSurface = SDL_CreateRGBSurface( OtherData.iSurface, MAPWINSIZE+8, MAPWINSIZE+8, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 					if ( selectedMapIndex == i+offset )
 					{
@@ -2217,7 +2217,7 @@ cLandingMenu::~cLandingMenu()
 void cLandingMenu::createHud()
 {
 	if ( hudSurface ) SDL_FreeSurface ( hudSurface );
-	hudSurface = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	hudSurface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	SDL_FillRect ( hudSurface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( hudSurface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -2238,7 +2238,7 @@ void cLandingMenu::createHud()
 void cLandingMenu::createMap()
 {
 	if ( mapSurface ) SDL_FreeSurface ( mapSurface );
-	mapSurface = SDL_CreateRGBSurface( SDL_HWSURFACE, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	mapSurface = SDL_CreateRGBSurface( OtherData.iSurface, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if ( SDL_MUSTLOCK(mapSurface) ) SDL_LockSurface ( mapSurface );
 	for ( int x = 0; x < mapSurface->w; x++ )
@@ -2307,7 +2307,7 @@ void cLandingMenu::mapClicked( void* parent )
 	menu->landData.iLandY = (int) ( ( mouse->y-18  ) / ( 448.0/menu->map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
 	menu->landData.landingState = LANDING_POSITION_OK;
 
-	SDL_Surface *circleSurface = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *circleSurface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( circleSurface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( circleSurface, SDL_SRCCOLORKEY, 0xFF00FF );
 
@@ -2579,7 +2579,7 @@ void cNetworkMenu::showMap()
 		SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
 		SDL_RWread ( fp, &Palette, 1, 768 );
 
-		surface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface( OtherData.iSurface, size, size, 8, 0, 0, 0, 0 );
 
 		if ( SDL_MUSTLOCK ( surface ) ) SDL_LockSurface ( surface );
 		surface->pitch = surface->w;
@@ -2643,7 +2643,7 @@ void cNetworkMenu::showMap()
 void cNetworkMenu::setColor( int color )
 {
 	SDL_Rect src = { 0, 0, 83, 10 };
-	SDL_Surface *colorSurface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *colorSurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_BlitSurface ( OtherData.colors[color], &src, colorSurface, NULL );
 	colorImage->setImage ( colorSurface );
 	SDL_FreeSurface ( colorSurface );
@@ -4589,7 +4589,7 @@ void cStorageMenu::resetInfos()
 				upgradeButtons[pos]->setLocked ( true );
 			}
 
-			SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, srcSurface->w, srcSurface->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+			SDL_Surface *surface = SDL_CreateRGBSurface ( OtherData.iSurface, srcSurface->w, srcSurface->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 			SDL_BlitSurface ( srcSurface, NULL, surface, NULL );
 			unitImages[pos]->setImage ( surface );
 

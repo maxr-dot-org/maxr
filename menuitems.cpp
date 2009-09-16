@@ -274,7 +274,7 @@ void cMenuImage::setImage(SDL_Surface *image_)
 
 	if ( image_ != NULL )
 	{
-		image = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, image_->w, image_->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		image = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, image_->w, image_->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 		SDL_FillRect ( image, NULL, 0xFF00FF );
 		SDL_SetColorKey ( image, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -454,7 +454,7 @@ void cMenuButton::renewButtonSurface()
 		break;
 	}
 	if ( surface ) SDL_FreeSurface ( surface );
-	surface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
@@ -625,7 +625,7 @@ void cMenuCheckButton::renewButtonSurface()
 	if ( src.w > 0 )
 	{
 		if ( surface ) SDL_FreeSurface ( surface );
-		surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface ( OtherData.iSurface, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 		SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	}
 
@@ -1683,7 +1683,7 @@ void cMenuMaterialBar::generateSurface()
 		SDL_FreeSurface(surface);
 	
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 
@@ -1944,7 +1944,7 @@ cMenuScroller::cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, c
 	position.w = src.w;
 	position.h = src.h;
 
-	surface = SDL_CreateRGBSurface( SDL_HWSURFACE | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -2025,7 +2025,7 @@ void cMenuScrollBar::createSurface()
 {
 	SDL_Rect src = { 234, 1, 16, 48};
 	SDL_Rect dest = { 0, 0, 0, 0 };
-	surface = SDL_CreateRGBSurface( SDL_HWSURFACE, 16, position.h-28, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( OtherData.iSurface, 16, position.h-28, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	do
 	{
 		if ( position.h-28-dest.y < 48 ) src.h = position.h-28-dest.x;
@@ -2374,13 +2374,13 @@ void cMenuPlayersBox::draw()
 {
 	SDL_Rect src = { 10, 0, 10, 10 };
 
-	SDL_Surface *readySurface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *readySurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( readySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( readySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, readySurface, NULL );
 
 	src.x -= 10;
-	SDL_Surface *notReadySurface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *notReadySurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( notReadySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, notReadySurface, NULL );
@@ -2392,7 +2392,7 @@ void cMenuPlayersBox::draw()
 			if ( (*players)[i]->ready ) playerReadys[i-scrollBar->offset]->setImage ( readySurface );
 			else playerReadys[i-scrollBar->offset]->setImage ( notReadySurface );
 
-			SDL_Surface *colorSurface = SDL_CreateRGBSurface ( SDL_HWSURFACE | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+			SDL_Surface *colorSurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 			SDL_BlitSurface ( OtherData.colors[(*players)[i]->color], &src, colorSurface, NULL );
 			playerColors[i-scrollBar->offset]->setImage ( colorSurface );
 			SDL_FreeSurface ( colorSurface );
@@ -2703,7 +2703,7 @@ cMenuSlider::cMenuSlider ( int x, int y, int maxValue_, cMenu *parent_ ) : cMenu
 	position.w = src.w;
 	position.h = src.h;
 
-	surface = SDL_CreateRGBSurface( SDL_HWSURFACE, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( OtherData.iSurface, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
 	scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
