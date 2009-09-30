@@ -30,6 +30,7 @@ cMenuItem::cMenuItem ( int x, int y )
 	isClicked = false;
 	wasClicked = false;
 	locked = false;
+	disabled = false;
 
 	active = false;
 
@@ -46,8 +47,8 @@ cMenuItem::cMenuItem ( int x, int y )
 
 bool cMenuItem::overItem( int x, int y ) const
 {
-	if ( x >= position.x && x <= position.x+position.w &&
-		y >= position.y && y <= position.y+position.h )
+	if ( x >= position.x && x < position.x+position.w &&
+		y >= position.y && y < position.y+position.h )
 	{
 		return true;
 	}
@@ -70,10 +71,11 @@ void cMenuItem::released(void *parent)
 	if ( locked ) return;
 	if ( preReleased() )
 	{
+		if ( releaseSound ) PlayFX ( releaseSound );
+		if ( release ) release( parent );
+		postReleased();
 		isClicked = false;
 		wasClicked = false;
-		if ( releaseSound ) PlayFX ( releaseSound );
-		if ( release ) release(parent);
 	}
 }
 
@@ -123,6 +125,11 @@ void cMenuItem::setLocked( bool locked_ )
 		locked = locked_;
 		isClicked = locked;
 	}
+}
+
+void cMenuItem::setDisabled( bool disabled_ )
+{
+	disabled = disabled_;
 }
 
 void cMenuItem::setClickSound ( sSOUND *clickSound_ )
@@ -258,19 +265,19 @@ void cMenuItemContainer::removeItem ( cMenuItem* item )
 }
 
 
-cMenuImage::cMenuImage ( int x, int y, SDL_Surface *image_ ) : cMenuItem( x, y ), image (NULL)
+cMenuImage::cMenuImage ( int x, int y, SDL_Surface *image_, bool freeImages_ ) : cMenuItem( x, y ), image (NULL), freeImages(freeImages_)
 {
 	setImage ( image_ );
 }
 
 cMenuImage::~cMenuImage()
 {
-	if ( image ) SDL_FreeSurface ( image );
+	if ( freeImages && image ) SDL_FreeSurface ( image );
 }
 
 void cMenuImage::setImage(SDL_Surface *image_)
 {
-	if ( image_ != image && image != NULL ) SDL_FreeSurface ( image );
+	if ( freeImages && image_ != image && image != NULL ) SDL_FreeSurface ( image );
 
 	if ( image_ != NULL )
 	{
@@ -329,7 +336,7 @@ void cMenuLabel::setFontType ( eUnicodeFontType fontType_ )
 	fontType = fontType_;
 }
 
-void cMenuLabel::setCentered( bool centered )
+void cMenuLabel::setCentered ( bool centered )
 {
 	flagCentered = centered;
 	if ( flagCentered ) position.x = textPosition.x-textPosition.w/2;
@@ -452,14 +459,87 @@ void cMenuButton::renewButtonSurface()
 		src.x = isClicked ? src.w : 0;
 		src.y = 196;
 		break;
+	case BUTTON_TYPE_HUD_HELP:
+		position.w = src.w = 26;
+		position.h = src.h = 24;
+		src.x = isClicked ? 366 : 268;
+		src.y = isClicked ? 0 : 151;
+		break;
+	case BUTTON_TYPE_HUD_CENTER:
+		position.w = src.w = 21;
+		position.h = src.h = 22;
+		src.x = isClicked ? 0 : 139;
+		src.y = isClicked ? 21 : 149;
+		break;
+	case BUTTON_TYPE_HUD_REPORT:
+		position.w = src.w = 49;
+		position.h = src.h = 20;
+		src.x = isClicked ? 210 : 245;
+		src.y = isClicked ? 21 : 130;
+		break;
+	case BUTTON_TYPE_HUD_CHAT:
+		position.w = src.w = 49;
+		position.h = src.h = 20;
+		src.x = isClicked ? 160 : 196;
+		src.y = isClicked ? 21 : 129;
+		break;
+	case BUTTON_TYPE_HUD_NEXT:
+		position.w = src.w = 39;
+		position.h = src.h = 23;
+		src.x = isClicked ? 288 : 158;
+		src.y = isClicked ? 0 : 172;
+		break;
+	case BUTTON_TYPE_HUD_PREV:
+		position.w = src.w = 38;
+		position.h = src.h = 23;
+		src.x = isClicked ? 327 : 198;
+		src.y = isClicked ? 0 : 172;
+		break;
+	case BUTTON_TYPE_HUD_DONE:
+		position.w = src.w = 26;
+		position.h = src.h = 24;
+		src.x = isClicked ? 262 : 132;
+		src.y = isClicked ? 0 : 172;
+		break;
+	case BUTTON_TYPE_HUD_END:
+		position.w = src.w = 70;
+		position.h = src.h = 17;
+		src.x = isClicked ? 22 : 0;
+		src.y = isClicked ? 21 : 151;
+		break;
+	case BUTTON_TYPE_HUD_PREFERENCES:
+		position.w = src.w = 67;
+		position.h = src.h = 20;
+		src.x = isClicked ? 195 : 0;
+		src.y = isClicked ? 0 : 169;
+		break;
+	case BUTTON_TYPE_HUD_FILES:
+		position.w = src.w = 67;
+		position.h = src.h = 20;
+		src.x = isClicked ? 93 : 71;
+		src.y = isClicked ? 21 : 151;
+		break;
+	case BUTTON_TYPE_HUD_PLAY:
+		position.w = src.w = 19;
+		position.h = src.h = 18;
+		src.x = isClicked ? 157 : 0;
+		src.y = isClicked ? 0 : 132;
+		break;
+	case BUTTON_TYPE_HUD_STOP:
+		position.w = src.w = 19;
+		position.h = src.h = 19;
+		src.x = isClicked ? 176 : 19;
+		src.y = isClicked ? 0 : 132;
+		break;
 	}
 	if ( surface ) SDL_FreeSurface ( surface );
 	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
-	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+	if ( buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+	else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
-	text = font->shortenStringToSize ( text, position.w-12, fontType );
+	text = font->shortenStringToSize ( text, position.w-getBordersSize(), fontType );
 }
 
 void cMenuButton::redraw()
@@ -492,9 +572,33 @@ int cMenuButton::getTextYOffset()
 	case BUTTON_TYPE_ARROW_DOWN_BAR:
 		return -1;
 	case BUTTON_TYPE_ANGULAR:
-		if ( isClicked ) return 5;
+		if ( isClicked || locked ) return 5;
 		else return 4;
+	case BUTTON_TYPE_HUD_NEXT:
+	case BUTTON_TYPE_HUD_PREV:
+	case BUTTON_TYPE_HUD_DONE:
+		return 9;
+	case BUTTON_TYPE_HUD_END:
+		if ( isClicked || locked ) return 3;
+		else return 2;
+	case BUTTON_TYPE_HUD_REPORT:
+	case BUTTON_TYPE_HUD_CHAT:
+	case BUTTON_TYPE_HUD_PREFERENCES:
+	case BUTTON_TYPE_HUD_FILES:
+		return 6;
 	}
+}
+
+int cMenuButton::getBordersSize()
+{
+	switch ( buttonType )
+	{
+	case BUTTON_TYPE_HUD_DONE:
+		return 0;
+	default:
+		return 12;
+	}
+
 }
 
 bool cMenuButton::preClicked()
@@ -505,13 +609,14 @@ bool cMenuButton::preClicked()
 
 bool cMenuButton::preReleased()
 {
-	if ( isClicked || wasClicked )
-	{
-		isClicked = false;
-		redraw();
-		return true;
-	}
+	if ( isClicked || wasClicked ) return true;
 	return false;
+}
+
+void cMenuButton::postReleased()
+{
+	if ( !locked ) isClicked = false;
+	redraw();
 }
 
 bool cMenuButton::preHoveredOn()
@@ -522,7 +627,7 @@ bool cMenuButton::preHoveredOn()
 
 bool cMenuButton::preHoveredAway()
 {
-	if ( isClicked ) preReleased();
+	if ( isClicked ) postReleased();
 	return true;
 }
 
@@ -531,7 +636,14 @@ void cMenuButton::draw()
 	if ( surface )
 	{
 		SDL_BlitSurface ( surface, NULL, buffer, &position );
-		font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset(), text, fontType );
+
+		if ( buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES ) 
+		{
+			if ( isClicked ) font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset(), text, FONT_LATIN_SMALL_GREEN );
+			else font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset()-1, text, FONT_LATIN_SMALL_RED );
+			font->showTextCentered ( position.x+position.w/2-1, position.y+getTextYOffset()-1+(isClicked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE );
+		}
+		else font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset(), text, fontType );
 	}
 }
 
@@ -563,6 +675,13 @@ cMenuCheckButton::cMenuCheckButton ( int x, int y, string text_, bool checked_, 
 void cMenuCheckButton::renewButtonSurface()
 {
 	SDL_Rect src = {0,0,0,0};
+
+	if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_INDEX_22 )
+	{
+		src.y = 44;
+		position.w = src.w = 55;
+		position.h = 0;
+	}
 	switch ( buttonType )
 	{
 	default:
@@ -621,12 +740,57 @@ void cMenuCheckButton::renewButtonSurface()
 		src.y = 196;
 		textLimitWight = position.w-17;
 		break;
+	case CHECKBOX_HUD_INDEX_22:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_21:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_20:
+		src.h = position.h = 18;
+		src.y += 18+16;
+		if ( !checked ) src.x += 167;
+		break;
+	case CHECKBOX_HUD_INDEX_12:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_11:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_10:
+		src.h = position.h = 16;
+		src.y += 18;
+		if ( !checked ) src.x += 167;
+		break;
+	case CHECKBOX_HUD_INDEX_02:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_01:
+		src.x += src.w;
+	case CHECKBOX_HUD_INDEX_00:
+		src.h = position.h = 18;
+		if ( !checked ) src.x += 167;
+		break;
+	case CHECKBOX_HUD_LOCK:
+		position.w = src.w = 21;
+		position.h = src.h = 22;
+		src.x = 397;
+		src.y = checked ? 298 : 321;
+		break;
+	case CHECKBOX_HUD_TNT:
+		position.w = src.w = 27;
+		position.h = src.h = 28;
+		src.x = checked ? 362 : 334;
+		src.y = 24;
+		break;
+	case CHECKBOX_HUD_2X:
+		position.w = src.w = 27;
+		position.h = src.h = 28;
+		src.x = checked ? 362 : 334;
+		src.y = 53;
+		break;
 	}
 	if ( src.w > 0 )
 	{
 		if ( surface ) SDL_FreeSurface ( surface );
 		surface = SDL_CreateRGBSurface ( OtherData.iSurface, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
-		SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_2X ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	}
 
 	if ( textLimitWight != -1 ) text = font->shortenStringToSize ( text, textLimitWight, fontType );
@@ -652,10 +816,10 @@ bool cMenuCheckButton::preClicked()
 
 void cMenuCheckButton::draw()
 {
-	SDL_Rect textDest;
+	SDL_Rect textDest = { -1, -1, -1, -1 };
 	if ( surface )
 	{
-		switch ( this->textOrientation )
+		switch ( textOrientation )
 		{
 		case TEXT_ORIENT_RIGHT:
 			textDest.x = position.x+surface->w+2;
@@ -703,6 +867,23 @@ void cMenuCheckButton::draw()
 		SDL_BlitSurface ( surface, NULL, buffer, &position );
 		if ( checked ) font->showTextCentered ( position.x+position.w/2, position.y+5, text, fontType );
 		else font->showTextCentered ( position.x+position.w/2, position.y+4, text, fontType );
+		break;
+	case CHECKBOX_HUD_INDEX_00:
+	case CHECKBOX_HUD_INDEX_01:
+	case CHECKBOX_HUD_INDEX_02:
+		textDest.y = 7;
+	case CHECKBOX_HUD_INDEX_10:
+	case CHECKBOX_HUD_INDEX_11:
+	case CHECKBOX_HUD_INDEX_12:
+		if ( textDest.y != 7 ) textDest.y = 6;
+	case CHECKBOX_HUD_INDEX_20:
+	case CHECKBOX_HUD_INDEX_21:
+	case CHECKBOX_HUD_INDEX_22:
+		if ( textDest.y != 6 && textDest.y != 7 ) textDest.y = 5;
+		SDL_BlitSurface ( surface, NULL, buffer, &position );
+		if ( checked ) font->showTextCentered ( position.x+position.w/2, position.y+textDest.y, text, FONT_LATIN_SMALL_GREEN );
+		else font->showTextCentered ( position.x+position.w/2, position.y+textDest.y-1, text, FONT_LATIN_SMALL_RED );
+		font->showTextCentered ( position.x+position.w/2-1, position.y+textDest.y-1+(checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE );
 		break;
 	}
 }
@@ -1291,6 +1472,13 @@ void cUnitDataSymbolHandler::drawSymbols ( eUnitDataSymbols symType, int x, int 
 	}
 }
 
+void cUnitDataSymbolHandler::drawNumber ( int x, int y, int value, int maximalValue )
+{
+	if ( value > maximalValue / 2 )	font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_GREEN, buffer );
+	else if ( value > maximalValue / 4 ) font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_YELLOW, buffer );
+	else font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_RED, buffer );
+}
+
 SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition ( eUnitDataSymbols symType )
 {
 	SDL_Rect src = {0, 109, 0, 0};
@@ -1430,14 +1618,224 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition ( eUnitDataSymbols symTy
 	return src;
 }
 
-cMenuUnitDetails::cMenuUnitDetails( int x, int y ) : cMenuItem (x,y)
+cMenuUnitDetails::cMenuUnitDetails( int x, int y, bool drawLines_, cPlayer *owner_ ) :
+	cMenuItem (x,y),
+	drawLines(drawLines_),
+	owner(owner_)
+{
+	position.w = 246;
+	position.h = 176;
+	vehicle = NULL;
+	building = NULL;
+}
+
+void cMenuUnitDetails::draw()
+{
+	if ( drawLines )
+	{
+		SDL_Rect lineRect = { position.x+2, position.y+14, 153, 1 };
+		SDL_FillRect ( buffer ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( buffer ,&lineRect, 0x743904 );
+		lineRect.y += 12;
+		SDL_FillRect ( buffer ,&lineRect, 0x743904 );
+	}
+
+	sUnitData *data;
+	cPlayer *unitOwner;
+	if ( vehicle )
+	{
+		data = &vehicle->data;
+		unitOwner = vehicle->owner;
+	}
+	else if ( building )
+	{
+		data = &building->data;
+		unitOwner = building->owner;
+	}
+	else return;
+
+	// Die Hitpoints anzeigen:
+	cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+6, data->hitpointsCur, data->hitpointsMax );
+	font->showText ( position.x+47, position.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, buffer );
+	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+80, position.y+3, 70, false, data->hitpointsCur, data->hitpointsMax );
+	
+	// Den Speed anzeigen:
+	if ( data->speedCur > 0 )
+	{
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, data->speedCur / 4, data->speedMax / 4 );
+		font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x+80, position.y+28, 70, false, data->speedCur / 4, data->speedMax / 4 );
+	}
+
+	// additional values
+	if ( ( data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0 ) && unitOwner == owner )
+	{
+		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, buffer );
+
+		if ( data->storeResType > 0 )
+		{
+			if ( building )
+			{
+				cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->storageResCur, data->storageResMax );
+
+				font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+
+				switch ( data->storeResType )
+				{
+				case sUnitData::STORE_RES_METAL:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->Metal, building->SubBase->MaxMetal );
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x+80, position.y+27, 70, false, building->SubBase->Metal, building->SubBase->MaxMetal );
+					break;
+				case sUnitData::STORE_RES_OIL:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->Oil, building->SubBase->MaxOil );
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x+80, position.y+27, 70, false, building->SubBase->Oil, building->SubBase->MaxOil );
+					break;
+				case sUnitData::STORE_RES_GOLD:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x+80, position.y+16, 70, false, data->storageResCur, data->storageResMax );
+					cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->Gold, building->SubBase->MaxGold );
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x+80,  position.y+28, 70, false, building->SubBase->Gold, building->SubBase->MaxGold );
+					break;
+				}
+			}
+			else
+			{
+				cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->storageResCur, data->storageResMax );
+				switch ( data->storeResType )
+				{
+				case sUnitData::STORE_RES_METAL:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					break;
+				case sUnitData::STORE_RES_OIL:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					break;
+				case sUnitData::STORE_RES_GOLD:
+					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					break;
+				}
+			}
+		}
+		else
+		{
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->storageUnitsCur, data->storageUnitsMax );
+
+			switch ( data->storeUnitsImageType )
+			{
+			case sUnitData::STORE_UNIT_IMG_TANK:
+			case sUnitData::STORE_UNIT_IMG_SHIP:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x+80, position.y+15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+				break;
+			case sUnitData::STORE_UNIT_IMG_PLANE:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x+80, position.y+15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+				break;
+			case sUnitData::STORE_UNIT_IMG_HUMAN:
+				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+				break;
+			}
+		}
+	}
+	else if ( data->canAttack && !data->explodesOnContact )
+	{
+		if ( unitOwner == owner )
+		{
+			// Munition:
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->ammoCur, data->ammoMax );
+			font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x+80, position.y+16, 70, false, data->ammoCur, data->ammoMax );
+		}
+
+		// shots
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+41, data->shotsCur, data->shotsMax );
+		font->showText ( position.x+47, position.y+41, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x+80, position.y+41, 70, false, data->shotsCur, data->shotsMax );
+	}
+	else if ( data->produceEnergy && building )
+	{
+		// EnergieProduktion:
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, ( building->IsWorking ? data->produceEnergy : 0 ), data->produceEnergy );
+		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x+80, position.y+16, 70, false, ( building->IsWorking ? data->produceEnergy : 0 ), data->produceEnergy );
+
+		if ( unitOwner == owner )
+		{
+			// Gesammt:
+			font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x+80,  position.y+28, 70, false, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd );
+
+			// Verbrauch:
+			font->showText ( position.x+47,  position.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawNumber ( position.x+23,  position.y+41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x+80,  position.y+41, 70, false, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed );
+		}
+	}
+	else if ( data->produceHumans && building )
+	{
+		// HumanProduktion:
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->produceHumans, data->produceHumans );
+		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+16, 70, false, data->produceHumans, data->produceHumans );
+
+		if ( unitOwner == owner )
+		{
+			// Gesammt:
+			font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->HumanProd, building->SubBase->HumanProd );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80,  position.y+28, 70, false, building->SubBase->HumanProd, building->SubBase->HumanProd );
+
+			// Verbrauch:
+			font->showText ( position.x+47,  position.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawNumber ( position.x+23,  position.y+41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+39, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+		}
+	}
+	else if ( data->needsHumans && building )
+	{
+		// HumanNeed:
+		if ( building->IsWorking )
+		{
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, data->needsHumans, data->needsHumans );
+			font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+16, 70, false, data->needsHumans, data->needsHumans );
+		}
+		else
+		{
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, 0, data->needsHumans );
+			font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+16, 70, false, 0, data->needsHumans );
+		}
+
+		if ( unitOwner == owner )
+		{
+			// Gesammt:
+			font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+			cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+			cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80,  position.y+28, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+		}
+	}
+}
+
+void cMenuUnitDetails::setOwner ( cPlayer *owner_ )
+{
+	owner = owner_;
+}
+
+void cMenuUnitDetails::setSelection( cVehicle *vehicle_, cBuilding *building_ )
+{
+	vehicle = vehicle_;
+	building = building_;
+}
+
+cMenuUnitDetailsBig::cMenuUnitDetailsBig( int x, int y ) : cMenuItem (x,y)
 {
 	position.w = 246;
 	position.h = 176;
 	selectedUnit = NULL;
 }
 
-void cMenuUnitDetails::draw()
+void cMenuUnitDetailsBig::draw()
 {
 	if ( !selectedUnit ) return;
 	sUnitData *data = selectedUnit->getUnitData ();
@@ -1615,7 +2013,7 @@ void cMenuUnitDetails::draw()
 	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->buildCosts, oriData->buildCosts );
 }
 
-void cMenuUnitDetails::setSelection(cMenuUnitListItem *selectedUnit_)
+void cMenuUnitDetailsBig::setSelection(cMenuUnitListItem *selectedUnit_)
 {
 	selectedUnit = selectedUnit_;
 	draw();
@@ -1629,9 +2027,10 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 	showLabel = showLabel_;
 	valueLabel = new cMenuLabel ( labelX, labelY, iToStr( currentValue ) );
 	valueLabel->setCentered ( true );
-	surface = 0;
 
-	setType(materialType_);
+	surface = NULL;
+
+	setType ( materialType_ );
 }
 
 cMenuMaterialBar::~cMenuMaterialBar()
@@ -1640,13 +2039,12 @@ cMenuMaterialBar::~cMenuMaterialBar()
 	delete valueLabel;
 }
 
-void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
-{
-	if(surface && materialType == materialType_)
-		return;
-	
+void cMenuMaterialBar::setType(eMaterialBarTypes materialType_) 
+ { 
+	if( surface && materialType == materialType_ ) return;
+
 	materialType = materialType_;
-	
+
 	switch ( materialType )
 	{
 	default:
@@ -1673,15 +2071,14 @@ void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
 		horizontal = true;
 		break;
 	}
-	
+
 	generateSurface();
 }
 
 void cMenuMaterialBar::generateSurface()
 {
-	if(surface) 
-		SDL_FreeSurface(surface);
-	
+	if ( surface ) SDL_FreeSurface ( surface );
+
 	SDL_Rect src = { 114, 336, position.w, position.h };
 	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -1731,6 +2128,7 @@ void cMenuMaterialBar::generateSurface()
 		src.y = 336;
 		break;
 	}
+	
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 }
 
@@ -1940,13 +2338,20 @@ cMenuScroller::cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, c
 		src.w = 14;
 		src.h = 17;
 		break;
+	case SCROLLER_TYPE_HUD_ZOOM:
+		src.x = 132;
+		src.y = 0;
+		src.w = 25;
+		src.h = 15;
+		break;
 	}
 	position.w = src.w;
 	position.h = src.h;
 
 	surface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
-	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+	if ( scrollerType == SCROLLER_TYPE_HUD_ZOOM ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+	else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 }
 
@@ -1968,6 +2373,7 @@ void cMenuScroller::movedMouseOver( int lastMouseX, int lastMouseY, void *parent
 	case SCROLLER_TYPE_VERT:
 		position.y = mouse->y-(lastMouseY-position.y);
 		break;
+	case SCROLLER_TYPE_HUD_ZOOM:
 	case SCROLLER_TYPE_HORI:
 		position.x = mouse->x-(lastMouseX-position.x);
 		break;
@@ -1987,6 +2393,7 @@ void cMenuScroller::move ( int value )
 	case SCROLLER_TYPE_VERT:
 		position.y = value;
 		break;
+	case SCROLLER_TYPE_HUD_ZOOM:
 	case SCROLLER_TYPE_HORI:
 		position.x = value;
 		break;
@@ -2190,7 +2597,7 @@ void cMenuLineEdit::setText ( string text_ )
 	startOffset = 0;
 	endOffset = (int)text.length();
 	cursorPos = endOffset;
-	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-12 ) doPosDecrease ( endOffset );
+	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 }
 
 string cMenuLineEdit::getText ()
@@ -2231,10 +2638,10 @@ void cMenuLineEdit::scrollLeft( bool changeCursor )
 	if ( cursorPos > 0 ) while ( cursorPos-1 < startOffset ) doPosDecrease ( startOffset );
 	else while ( cursorPos < startOffset ) doPosDecrease ( startOffset );
 
-	if ( font->getTextWide( text.substr( startOffset, text.length()-startOffset ) ) > position.w-12 )
+	if ( font->getTextWide( text.substr( startOffset, text.length()-startOffset ) ) > position.w-getBorderSize() )
 	{
 		endOffset = (int)text.length();
-		while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-12 ) doPosDecrease ( endOffset );
+		while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 	}
 }
 
@@ -2243,7 +2650,7 @@ void cMenuLineEdit::scrollRight()
 	// makes the cursor go right
 	if ( cursorPos < (int)text.length() ) doPosIncrease ( cursorPos, cursorPos );
 	while ( cursorPos > endOffset ) doPosIncrease ( endOffset, endOffset );
-	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-12 ) doPosIncrease ( startOffset, startOffset );
+	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
 }
 
 void cMenuLineEdit::deleteLeft()
@@ -2278,9 +2685,14 @@ void cMenuLineEdit::deleteRight()
 	}
 }
 
-void cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
+int cMenuLineEdit::getBorderSize()
 {
-	if ( readOnly ) return;
+	return 12;
+}
+
+bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
+{
+	if ( readOnly ) return false;
 
 	switch ( keysym.sym )
 	{
@@ -2319,11 +2731,11 @@ void cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
 			if ( cursorPos >= endOffset )
 			{
 				doPosIncrease ( endOffset, endOffset );
-				while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-12 ) doPosIncrease ( startOffset, startOffset );
+				while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
 			}
 			else
 			{
-				if ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-12 ) doPosDecrease ( endOffset );
+				if ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 				else doPosIncrease ( endOffset, cursorPos );
 			}
 			if ( wasKeyInput ) wasKeyInput ( parent );
@@ -2331,11 +2743,68 @@ void cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
 		break;
 	}
 	parentMenu->draw();
+	return true;
 }
 
 void cMenuLineEdit::setReturnPressedFunc( void (*returnPressed_)(void *) )
 {
 	returnPressed = returnPressed_;
+}
+
+cMenuChatBox::cMenuChatBox ( int x, int y, cMenu *parentMenu_ ) :
+	cMenuLineEdit ( x, y, SettingsData.iScreenW-HUD_TOTAL_WIDTH, 21, parentMenu_ ),
+	surface ( NULL )
+{
+	generateSurface();
+}
+
+void cMenuChatBox::generateSurface()
+{
+	if ( SettingsData.iScreenW-HUD_TOTAL_WIDTH-20 < 60 ) return;
+
+	surface = SDL_CreateRGBSurface( OtherData.iSurface, SettingsData.iScreenW-HUD_TOTAL_WIDTH-20, 48, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_FillRect ( surface, NULL, 0xFF00FF );
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+
+	SDL_Rect src = { 0, 0, 30, 48 };
+	SDL_Rect dest = { 0, 0, 0, 0 };
+
+	// blit the beginning
+	SDL_BlitSurface ( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+	// blit the end
+	src.x = 40;
+	dest.x = surface->w-30;
+	SDL_BlitSurface ( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+
+	int restWidth = surface->w-60;
+	src.x = 30;
+	dest.x = 30;
+	while ( restWidth > 0 )
+	{
+		src.w = 10;
+		if ( restWidth < 10 ) src.w = restWidth;
+		SDL_BlitSurface ( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+		dest.x += src.w;
+		restWidth -= src.w;
+	}
+}
+
+int cMenuChatBox::getBorderSize()
+{
+	return 38;
+}
+
+void cMenuChatBox::draw()
+{
+	if ( disabled ) return;
+
+	if ( surface )
+	{
+		SDL_BlitSurface ( surface, NULL, buffer, &position );
+	}
+
+	font->showText ( position.x+28, position.y+5, text.substr ( startOffset, endOffset-startOffset ) );
+	if ( active && !readOnly ) font->showText ( position.x+28+font->getTextWide( text.substr( startOffset, cursorPos-startOffset ) ), position.y+5, "|" );
 }
 
 cMenuPlayersBox::cMenuPlayersBox ( int x, int y, int w, int h, cNetworkMenu *parentMenu_ ) : cMenuItemContainer(x, y), parentMenu(parentMenu_)
@@ -2676,37 +3145,51 @@ void cMenuStoredUnitDetails::draw()
 {
 	if ( !unitData ) return;
 
-	drawNumber ( unitData->hitpointsCur, unitData->hitpointsMax, 0 );
+	cUnitDataSymbolHandler::drawNumber ( position.x+16, position.y+12, unitData->hitpointsCur, unitData->hitpointsMax );
 	font->showText ( position.x+30, position.y+12, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE );
 	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+63, position.y+12, 58, false, unitData->hitpointsCur, unitData->hitpointsMax );
 
 	if ( unitData->canAttack )
 	{
-		drawNumber ( unitData->ammoCur, unitData->ammoMax, 1 );
+		cUnitDataSymbolHandler::drawNumber ( position.x+16, position.y+12+15, unitData->ammoCur, unitData->ammoMax );
 		font->showText ( position.x+30, position.y+27, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE );
 		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x+63, position.y+27, 58, false, unitData->ammoCur, unitData->ammoMax );
 	}
 }
 
-void cMenuStoredUnitDetails::drawNumber ( int value, int maximalValue, int index )
+cMenuSlider::cMenuSlider ( int x, int y, float minValue_, float maxValue_, cMenu *parent_, int wight, eSliderType type_, eSliderDirection direction_ ) :
+	cMenuItem ( x, y ),
+	parent(parent_),
+	type (type_),
+	direction (direction_)
 {
-	if ( value > maximalValue / 2 )	font->showTextCentered ( position.x+16, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_GREEN, buffer );
-	else if ( value > maximalValue / 4 ) font->showTextCentered ( position.x+16, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_YELLOW, buffer );
-	else font->showTextCentered ( position.x+25, position.y+12+15*index, iToStr ( value ) + "/" + iToStr ( maximalValue ), FONT_LATIN_SMALL_RED, buffer );
-}
+	minValue = min ( minValue_, maxValue_ );
+	maxValue = max ( minValue_, maxValue_ );
+	curValue = minValue;
 
-cMenuSlider::cMenuSlider ( int x, int y, int maxValue_, cMenu *parent_ ) : cMenuItem ( x, y ), maxValue(maxValue_), parent(parent_)
-{
-	curValue = 0;
-
-	SDL_Rect src = { 201, 53, 58, 3 };
-	position.w = src.w;
-	position.h = src.h;
+	switch ( type )
+	{
+	case SLIDER_TYPE_NORMAL:
+		{
+			SDL_Rect src = { 201, 53, 58, 3 };
+			position.w = src.w;
+			position.h = src.h;
 
 	surface = SDL_CreateRGBSurface( OtherData.iSurface, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
-	scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
+			scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
+		}
+		break;
+	case SLIDER_TYPE_HUD_ZOOM:
+		position.w = wight;
+		position.h = 14;
+
+		surface = NULL;
+
+		scroller = new cMenuScroller ( x, y, cMenuScroller::SCROLLER_TYPE_HUD_ZOOM, this, &scrollerMoved );
+		break;
+	}
 
 	movedCallback = NULL;
 }
@@ -2719,18 +3202,25 @@ cMenuSlider::~cMenuSlider()
 
 void cMenuSlider::draw()
 {
-	SDL_BlitSurface ( surface, NULL, buffer, &position );
+	if ( surface ) SDL_BlitSurface ( surface, NULL, buffer, &position );
 	cMenuSlider::scroller->draw();
 }
 
-void cMenuSlider::setValue( int value )
+void cMenuSlider::setValue( float value )
 {
 	curValue = value;
-	int pos = position.x + Round ( ((float)position.w / maxValue) * curValue );
-	scroller->move ( pos-7 );
+	switch ( direction )
+	{
+	case SLIDER_DIR_LEFTMIN:
+		scroller->move ( ( (minValue+curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) );
+		break;
+	case SLIDER_DIR_RIGHTMIN:
+		scroller->move ( ( (maxValue-curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) );
+		break;
+	}
 }
 
-int cMenuSlider::getValue()
+float cMenuSlider::getValue()
 {
 	return curValue;
 }
@@ -2743,18 +3233,26 @@ void cMenuSlider::setMoveCallback ( void (*movedCallback_)(void *) )
 void cMenuSlider::scrollerMoved( void *parent_ )
 {
 	cMenuSlider *This = (cMenuSlider*)parent_;
-	int pos = This->scroller->getPosition().x - This->position.x + 7;
+	int pos = This->scroller->getPosition().x - This->position.x + (( This->type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7);
 	if ( pos < 0 )
 	{
 		pos = 0;
-		This->scroller->move ( This->position.x-7 );
+		This->scroller->move ( This->position.x-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) );
 	}
-	if ( pos > This->position.w )
+	if ( pos > This->position.w-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0) )
 	{
-		pos = This->position.w-7;
-		This->scroller->move ( This->position.x+This->position.w-7 );
+		pos = This->position.w-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 7);
+		This->scroller->move ( This->position.x+This->position.w-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 7) );
 	}
-	This->curValue = Round ( (This->maxValue / (float)This->position.w) * pos );
+	switch ( This->direction )
+	{
+	case SLIDER_DIR_LEFTMIN:
+		This->curValue = This->minValue + ((This->maxValue-This->minValue) / (float)(This->position.w-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0))) * (float)pos;
+		break;
+	case SLIDER_DIR_RIGHTMIN:
+		This->curValue = This->maxValue - ((This->maxValue-This->minValue) / (float)(This->position.w-(( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0))) * (float)pos;
+		break;
+	}
 	This->parent->draw();
 
 	if ( This->movedCallback ) This->movedCallback ( This->parent );
@@ -2809,7 +3307,20 @@ cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer *own
 
 	maxItems = ((position.h-25) / 55);
 
+	unitDetails = new cMenuUnitDetails*[maxItems];
+	for ( int i = 0; i < maxItems; i++ )
+	{
+		unitDetails[i] = new cMenuUnitDetails( position.x+127, position.y+17+55*i, true, owner );
+	}
 	screenType = REP_SCR_TYPE_UNITS;
+}
+
+cMenuReportsScreen::~cMenuReportsScreen()
+{
+	for ( int i = 0; i < maxItems; i++ )
+	{
+		delete unitDetails[i];
+	}
 }
 
 void cMenuReportsScreen::draw()
@@ -2978,7 +3489,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			SDL_FreeSurface ( surface );
 
 			font->showTextAsBlock ( nameDest, nextVehicle->name );
-			nextVehicle->ShowDetails( false, dest.x+110, dest.y-13, buffer, true );
+			unitDetails[count]->setSelection ( nextVehicle, NULL );
 
 			font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextVehicle->PosX ) + "," + iToStr ( nextVehicle->PosY ) );
 			font->showText ( position.x+343, position.y+35+56*(count-minCount), nextVehicle->getStatusStr() );
@@ -3008,7 +3519,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 				SDL_FreeSurface ( surface );
 				
 				font->showTextAsBlock ( nameDest, nextBuilding->name );
-				nextBuilding->ShowDetails( false, dest.x+110, dest.y-13, buffer, true );
+				unitDetails[count]->setSelection ( NULL, nextBuilding );
 
 				font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextBuilding->PosX ) + "," + iToStr ( nextBuilding->PosY ) );
 				font->showText ( position.x+343, position.y+35+56*(count-minCount), nextBuilding->getStatusStr() );
@@ -3019,6 +3530,11 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			count++;
 			nextBuilding = nextBuilding->next;
 		}
+	}
+
+	for ( int i = 0; i < count; i++ )
+	{
+		unitDetails[i]->draw();
 	}
 
 	if ( count == maxCount && ( nextVehicle || nextBuilding ) )
@@ -3168,10 +3684,9 @@ void cMenuReportsScreen::released( void *parent )
 			Client->addMessage ( savedReport.message );
 			if ( savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT )
 			{
-				Client->Hud.OffX = savedReport.xPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-				Client->Hud.OffY = savedReport.yPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-				Client->bFlagDrawMap=true;
-				Client->Hud.DoScroll ( 0 );
+				int offX = savedReport.xPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+				int offY = savedReport.yPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+				Client->gameGUI.setOffsetPosition ( offX, offY );
 			}
 			return;
 		}

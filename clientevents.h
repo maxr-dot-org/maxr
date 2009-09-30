@@ -24,7 +24,6 @@
 #include "serverevents.h"
 #include "movejobs.h"
 
-class cHud;
 struct sSavedReportMessage;
 
 enum CLIENT_EVENT_TYPES
@@ -240,7 +239,7 @@ void sendSetAutoStatus( int unitID, bool set );
 void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
 void sendWantUpgrade ( int buildingID, int storageSlot, bool upgradeAll );
 void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr );
-void sendSaveHudInfo ( cHud *Hud, int selectedUnitID, int ownerNr, int savingID );
+void sendSaveHudInfo ( int selectedUnitID, int ownerNr, int savingID );
 void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int savingID );
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 

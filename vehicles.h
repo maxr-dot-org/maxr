@@ -173,6 +173,7 @@ public:
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
 	cList<cEndMoveAction*> passiveEndMoveActions;
+	int selMenuNr;
 
 	cVehicle *next,*prev; // Verkettungselemente
 	sUnitData data;    // Daten des Vehicles
@@ -184,7 +185,6 @@ public:
 	void draw(SDL_Rect screenPosition );
 	void Select();
 	void Deselct();
-	void ShowDetails( bool hud = true, int x = -1, int y = -1, SDL_Surface *destSurface = NULL, bool drawLines = false );
 	void GenerateName();
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
@@ -192,9 +192,6 @@ public:
 	*@return 1 if there has been refreshed something else 0.
 	*/
 	int refreshData();
-	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
-	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
-	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	int GetScreenPosX() const;
 	int GetScreenPosY() const;
 	void DrawPath();
@@ -203,6 +200,7 @@ public:
 	int playStream();
 	void StartMoveSound();
 	void DrawMenu( sMouseState *mouseState = NULL );
+	void menuReleased ();
 	int GetMenuPointAnz();
 	SDL_Rect GetMenuSize();
 	bool MouseOverMenu(int mx,int my);

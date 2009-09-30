@@ -23,10 +23,11 @@
 #include "network.h"
 #include "clientevents.h"
 #include "map.h"
-#include "hud.h"
 
 class cResearch;
+class cHud;
 struct sSavedReportMessage;
+struct sHudStateContainer;
 
 enum SERVER_EVENT_TYPES
 {
@@ -287,7 +288,7 @@ void sendRequestIdentification ( int iSocket );
 */
 void sendOKReconnect ( cPlayer *Player );
 void sendTurn ( int turn, cPlayer *Player );
-void sendHudSettings ( cHud *Hud, cPlayer *Player );
+void sendHudSettings ( sHudStateContainer hudStates, cPlayer *Player );
 void sendStoreVehicle ( int unitid, bool vehicle, int storedunitid, int player );
 void sendActivateVehicle ( int unitid, bool vehicle, int activatunitid, int x, int y, int player );
 void sendDeleteEverything ( int player );

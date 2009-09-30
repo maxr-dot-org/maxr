@@ -25,6 +25,7 @@
 #include "player.h"
 
 class cResearch;
+struct sHudStateContainer;
 
 #define SAVE_FORMAT_VERSION		((string)"0.3")
 
@@ -69,7 +70,7 @@ public:
 	* ---
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo ( cHud *hud, cList<sSavedReportMessage> &list, cPlayer *player );
+	void writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedReportMessage> &list, cPlayer *player );
 
 //--------------------------------------------------------------------------
 private:

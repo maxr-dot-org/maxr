@@ -24,6 +24,7 @@
 #include "movejobs.h"
 #include "upgradecalculator.h"
 #include "menuevents.h"
+#include "hud.h"
 
 //-------------------------------------------------------------------------------------
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap )
@@ -798,25 +799,25 @@ void sendTurn ( int turn, cPlayer *Player )
 }
 
 //-------------------------------------------------------------------------------------
-void sendHudSettings ( cHud *Hud, cPlayer *Player )
+void sendHudSettings ( sHudStateContainer hudStates, cPlayer *Player )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_HUD_SETTINGS );
-	message->pushBool ( Hud->TNT );
-	message->pushBool ( Hud->Treffer );
-	message->pushBool ( Hud->Lock );
-	message->pushBool ( Hud->Studie );
-	message->pushBool ( Hud->Status );
-	message->pushBool ( Hud->Scan );
-	message->pushBool ( Hud->Reichweite );
-	message->pushBool ( Hud->MinimapZoom );
-	message->pushBool ( Hud->Nebel );
-	message->pushBool ( Hud->Munition );
-	message->pushBool ( Hud->Gitter );
-	message->pushBool ( Hud->Farben );
-	message->pushInt16 ( Hud->Zoom );
-	message->pushInt16 ( Hud->OffY );
-	message->pushInt16 ( Hud->OffX );
-	message->pushInt16 ( Hud->tmpSelectedUnitID );
+	message->pushBool ( hudStates.tntChecked );
+	message->pushBool ( hudStates.hitsChecked );
+	message->pushBool ( hudStates.lockChecked );
+	message->pushBool ( hudStates.surveyChecked );
+	message->pushBool ( hudStates.statusChecked );
+	message->pushBool ( hudStates.scanChecked );
+	message->pushBool ( hudStates.rangeChecked );
+	message->pushBool ( hudStates.twoXChecked );
+	message->pushBool ( hudStates.fogChecked );
+	message->pushBool ( hudStates.ammoChecked );
+	message->pushBool ( hudStates.gridChecked );
+	message->pushBool ( hudStates.colorsChecked );
+	message->pushFloat ( hudStates.zoom );
+	message->pushInt16 ( hudStates.offY );
+	message->pushInt16 ( hudStates.offX );
+	message->pushInt16 ( hudStates.selUnitID );
 	Server->sendNetMessage( message, Player->Nr );
 }
 

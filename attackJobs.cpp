@@ -898,20 +898,12 @@ void cClientAttackJob::updateAgressorData()
 		vehicle->data.ammoCur--;
 		if ( !vehicle->data.shotsCur ) vehicle->AttackMode = false;
 		if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur -= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
-		if ( Client->SelectedVehicle == vehicle )
-		{
-			vehicle->ShowDetails();
-		}
 	}
 	else if ( building )
 	{
 		building->data.shotsCur--;
 		building->data.ammoCur--;
 		if ( !building->data.shotsCur ) building->AttackMode = false;
-		if ( Client->SelectedBuilding == building )
-		{
-			building->ShowDetails();
-		}
 	}
 }
 
@@ -964,7 +956,6 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 				playImpact = true;
 				offX = targetVehicle->OffX;
 				offY = targetVehicle->OffY;
-				if ( Client->SelectedVehicle == targetVehicle ) targetVehicle->ShowDetails();
 			}
 		}
 		else
@@ -987,10 +978,9 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			else
 			{
 				playImpact = true;
-				if ( Client->SelectedBuilding == targetBuilding ) targetBuilding->ShowDetails();
 			}
 		}
-		Client->mouseMoveCallback( true );
+		Client->gameGUI.updateMouseCursor();
 	}
 
 	int x = offset % Client->Map->size;

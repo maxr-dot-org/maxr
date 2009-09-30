@@ -20,6 +20,7 @@
 #include "network.h"
 #include "events.h"
 #include "client.h"
+#include "hud.h"
 
 void sendChatMessageToServer ( string sMsg )
 {
@@ -296,24 +297,24 @@ void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas
 	Client->sendNetMessage ( message );
 }
 
-void sendSaveHudInfo ( cHud *Hud, int selectedUnitID, int ownerNr, int savingID )
+void sendSaveHudInfo ( int selectedUnitID, int ownerNr, int savingID )
 {
 	cNetMessage* message = new cNetMessage ( GAME_EV_SAVE_HUD_INFO );
-	message->pushBool ( Hud->TNT );
-	message->pushBool ( Hud->Treffer );
-	message->pushBool ( Hud->Lock );
-	message->pushBool ( Hud->Studie );
-	message->pushBool ( Hud->Status );
-	message->pushBool ( Hud->Scan );
-	message->pushBool ( Hud->Reichweite );
-	message->pushBool ( Hud->MinimapZoom );
-	message->pushBool ( Hud->Nebel );
-	message->pushBool ( Hud->Munition );
-	message->pushBool ( Hud->Gitter );
-	message->pushBool ( Hud->Farben );
-	message->pushInt16 ( Hud->Zoom );
-	message->pushInt16 ( Hud->OffY );
-	message->pushInt16 ( Hud->OffX );
+	message->pushBool ( Client->gameGUI.tntChecked() );
+	message->pushBool ( Client->gameGUI.hitsChecked() );
+	message->pushBool ( Client->gameGUI.lockChecked() );
+	message->pushBool ( Client->gameGUI.surveyChecked() );
+	message->pushBool ( Client->gameGUI.statusChecked() );
+	message->pushBool ( Client->gameGUI.scanChecked() );
+	message->pushBool ( Client->gameGUI.rangeChecked() );
+	message->pushBool ( Client->gameGUI.twoXChecked() );
+	message->pushBool ( Client->gameGUI.fogChecked() );
+	message->pushBool ( Client->gameGUI.ammoChecked() );
+	message->pushBool ( Client->gameGUI.gridChecked() );
+	message->pushBool ( Client->gameGUI.colorChecked() );
+	message->pushFloat ( Client->gameGUI.getZoom() );
+	message->pushInt16 ( Client->gameGUI.getOffsetY() );
+	message->pushInt16 ( Client->gameGUI.getOffsetX() );
 	message->pushInt16 ( selectedUnitID );
 	message->pushInt16 ( ownerNr );
 	message->pushInt16 ( savingID );

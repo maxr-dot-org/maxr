@@ -53,7 +53,7 @@ struct sDrawingCacheEntry
 	//common properties
 	cPlayer* owner;
 	int dir;
-	int zoom;
+	float zoom;
 
 	int lastUsed;
 	SDL_Surface* surface;

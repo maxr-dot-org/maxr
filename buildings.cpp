@@ -31,6 +31,7 @@
 #include "menus.h"
 #include "dialog.h"
 #include "settings.h"
+#include "hud.h"
 
 //--------------------------------------------------------------------------
 // cBuilding Implementation
@@ -437,10 +438,10 @@ void cBuilding::GenerateName ()
 void cBuilding::draw ( SDL_Rect *screenPos )
 {
 	SDL_Rect dest, tmp;
-	float factor = (float)(Client->Hud.Zoom/64.0);
+	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// draw the damage effects
-	if ( Client->iTimer1 && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
@@ -454,12 +455,12 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = Client->dCache.getCachedImage(this);
+	SDL_Surface* drawingSurface = Client->gameGUI.getDCache()->getCachedImage(this);
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = Client->dCache.createNewEntry(this);
+		drawingSurface = Client->gameGUI.getDCache()->createNewEntry(this);
 	}
 
 	if ( drawingSurface == NULL )
@@ -488,7 +489,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	if ( StartUp )
 	{
-		if ( Client->iTimer0 )
+		if ( Client->timer50ms )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )
@@ -504,7 +505,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		CHECK_SCALING( typ->eff, typ->eff_org, factor);
 		SDL_BlitSurface ( typ->eff, NULL, buffer, &tmp );
 
-		if ( Client->iTimer0 )
+		if ( Client->timer100ms )
 		{
 			if ( EffectInc )
 			{
@@ -534,8 +535,8 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
-		max = ( Client->Hud.Zoom - 2 ) * 2;
+		nr = 0xFF00 - ( ( ANIMATION_SPEED % 0x8 ) * 0x1000 );
+		max = (int)( Client->gameGUI.getTileSize() - 2 ) * 2;
 		d.x = dest.x + 2;
 		d.y = dest.y + 2;
 		d.w = max;
@@ -558,11 +559,11 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw a colored frame if necessary
-	if ( Client->Hud.Farben )
+	if ( Client->gameGUI.colorChecked() )
 	{
 		SDL_Rect d, t;
 		int nr = *((unsigned int*)(owner->color->pixels));
-		int max = data.isBig ? (Client->Hud.Zoom - 1) * 2 : Client->Hud.Zoom - 1;
+		int max = data.isBig ? ((int)(Client->gameGUI.getTileSize()) - 1) * 2 : (int)(Client->gameGUI.getTileSize()) - 1;
 
 		d.x = dest.x + 1;
 		d.y = dest.y + 1;
@@ -589,7 +590,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	if ( selected )
 	{
 		SDL_Rect d, t;
-		int max = data.isBig ? Client->Hud.Zoom * 2 : Client->Hud.Zoom;
+		int max = data.isBig ? (int)(Client->gameGUI.getTileSize()) * 2 : (int)(Client->gameGUI.getTileSize());
 		int len = max / 4;
 
 		d.x = dest.x + 1;
@@ -597,52 +598,52 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x = dest.x + 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y = dest.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x = dest.x + 1;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 	}
 
 	//draw health bar
-	if ( Client->Hud.Treffer )
+	if ( Client->gameGUI.hitsChecked() )
 		DrawHelthBar();
 
 	//draw ammo bar
-	if ( Client->Hud.Munition && data.canAttack && data.ammoMax > 0 )
+	if ( Client->gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0 )
 		DrawMunBar();
 
 	//draw status
-	if ( Client->Hud.Status )
+	if ( Client->gameGUI.statusChecked() )
 		drawStatus();
 
 	//attack job debug output
-	if ( Client->bDebugAjobs )
+	if ( Client->gameGUI.getAJobDebugStatus() )
 	{
 		cBuilding* serverBuilding = NULL;
 		if ( Server ) serverBuilding = Server->Map->fields[PosX + PosY*Server->Map->size].getBuildings();
@@ -660,7 +661,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	src.x = 0;
 	src.y = 0;
 
-	float factor = (float)(Client->Hud.Zoom/64.0);
+	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// check, if it is dirt:
 	if ( !owner )
@@ -715,8 +716,8 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	// read the size:
 	if ( data.hasFrames )
 	{
-		src.w = Client->Hud.Zoom;
-		src.h = Client->Hud.Zoom;
+		src.w = (int)(Client->gameGUI.getTileSize());
+		src.h = (int)(Client->gameGUI.getTileSize());
 	}
 	else
 	{
@@ -781,11 +782,11 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	{
 		if ( data.isAnimated && SettingsData.bAnimations && !Disabled )
 		{
-			src.x = ( Client->iFrame % data.hasFrames ) * Client->Hud.Zoom;
+			src.x = ( ANIMATION_SPEED % data.hasFrames ) * (int)(Client->gameGUI.getTileSize());
 		}
 		else
 		{
-			src.x = dir * Client->Hud.Zoom;
+			src.x = dir * (int)(Client->gameGUI.getTileSize());
 		}
 
 		CHECK_SCALING( typ->img, typ->img_org, factor);
@@ -880,7 +881,7 @@ SDL_Rect cBuilding::GetMenuSize ()
 	dest.y = GetScreenPosY();
 	dest.h = i = GetMenuPointAnz() * 22;
 	dest.w = 42;
-	size = Client->Hud.Zoom;
+	size = Client->gameGUI.getTileSize();
 
 	if ( data.isBig )
 		size *= 2;
@@ -929,7 +930,6 @@ bool cBuilding::MouseOverMenu (int mx, int my)
 void cBuilding::SelfDestructionMenu ()
 {
 	//TODO: self destruction dialog and destruction code
-	Client->bFlagDrawHud = true;
 }
 
 //--------------------------------------------------------------------------
@@ -997,16 +997,13 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 {
 	SDL_Rect src, temp;
-	int zoom = Client->Hud.Zoom;
-	float factor = (float)(zoom/64.0);
+	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	CHECK_SCALING( UnitsData.ptr_connector, UnitsData.ptr_connector_org, factor);
 	CHECK_SCALING( UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, factor);
 
-	if ( StartUp )
-		SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, StartUp );
-	else
-		SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, 255 );
+	if ( StartUp ) SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, StartUp );
+	else SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, 255 );
 
 	src.y = 0;
 	src.x = 0;
@@ -1063,7 +1060,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 
 		//upper right field
 		src.x = 0;
-		dest.x += zoom;
+		dest.x += Client->gameGUI.getTileSize();
 		if      (  BaseBN &&  BaseE ) src.x = 8;
 		else if (  BaseBN && !BaseE ) src.x = 1;
 		else if ( !BaseBN &&  BaseE ) src.x = 2;
@@ -1079,7 +1076,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 
 		//lower right field
 		src.x = 0;
-		dest.y += zoom;
+		dest.y += Client->gameGUI.getTileSize();
 		if      (  BaseBE &&  BaseBS ) src.x = 9;
 		else if (  BaseBE && !BaseBS ) src.x = 2;
 		else if ( !BaseBE &&  BaseBS ) src.x = 3;
@@ -1095,7 +1092,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 
 		//lower left field
 		src.x = 0;
-		dest.x -= zoom;
+		dest.x -= Client->gameGUI.getTileSize();
 		if      (  BaseS &&  BaseBW ) src.x = 10;
 		else if (  BaseS && !BaseBW ) src.x =  3;
 		else if ( !BaseS &&  BaseBW ) src.x =  4;
@@ -1285,7 +1282,6 @@ void cBuilding::ClientStartWork()
 		StopFXLoop (Client->iObjectStream);
 		PlayFX (typ->Start);
 		Client->iObjectStream = playStream ();
-		ShowDetails();
 	}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
@@ -1373,7 +1369,6 @@ void cBuilding::ClientStopWork()
 		StopFXLoop (Client->iObjectStream);
 		PlayFX (typ->Stop);
 		Client->iObjectStream = playStream ();
-		ShowDetails ();
 	}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
@@ -1471,41 +1466,18 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 	spy = GetScreenPosY();
 	size = Client->Map->size;
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX + 2, PosY - 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy - Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
-
-	if ( canExitTo ( PosX + 2, PosY    , Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy );
-
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX + 2, PosY + 1, Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom );
-
-	if ( canExitTo ( PosX - 1, PosY + 2, Client->Map, typ ) )
-		Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
-
-	if ( canExitTo ( PosX    , PosY + 2, Client->Map, typ ) )
-		Client->drawExitPoint ( spx, spy + Client->Hud.Zoom*2 );
-
-	if ( canExitTo ( PosX + 1, PosY + 2, Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom*2 );
-
-	if ( canExitTo ( PosX + 2, PosY + 2, Client->Map, typ ) )
-		Client->drawExitPoint ( spx + Client->Hud.Zoom*2, spy + Client->Hud.Zoom*2 );
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 2, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX + 2, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy );
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 2, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX    , PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX + 1, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX + 2, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize()*2 );
 }
 
 //--------------------------------------------------------------------------
@@ -1887,12 +1859,12 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 
 	if ( v )
 	{
-		if ( Client && ( v == Client->SelectedVehicle || v->owner == Client->ActivePlayer ) )
+		if ( Client && ( v == Client->gameGUI.getSelVehicle() || v->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else if ( b )
 	{
-		if ( Client && ( b == Client->SelectedBuilding || b->owner == Client->ActivePlayer ) )
+		if ( Client && ( b == Client->gameGUI.getSelBuilding() || b->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else
@@ -1913,7 +1885,7 @@ void cBuilding::DrawAttackCursor ( int offset )
 
 	selectTarget(v, b, offset, data.canAttack, Client->Map );
 
-	if ( !(v || b) || ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
+	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{
 		r.x = 1;
 		r.y = 29;
@@ -2095,7 +2067,7 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 //--------------------------------------------------------------------------
 int cBuilding::GetScreenPosX () const
 {
-	return 180 - ( ( int ) ( ( Client->Hud.OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
+	return 180 - ( ( int ) ( ( Client->gameGUI.getOffsetX() ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosX;
 }
 
 //--------------------------------------------------------------------------
@@ -2103,7 +2075,7 @@ int cBuilding::GetScreenPosX () const
 //--------------------------------------------------------------------------
 int cBuilding::GetScreenPosY () const
 {
-	return 18 - ( ( int ) ( ( Client->Hud.OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
+	return 18 - ( ( int ) ( ( Client->gameGUI.getOffsetY() ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosY;
 }
 
 //--------------------------------------------------------------------------
@@ -2130,13 +2102,236 @@ int cBuilding::CalcHelth ( int damage )
 	return hp;
 }
 
+void cBuilding::menuReleased()
+{
+	int nr = 0, exeNr;
+	SDL_Rect dest = GetMenuSize();
+	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
+	if ( exeNr != selMenuNr ) return;
+
+	if ( bIsBeeingAttacked ) return;
+	
+	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
+
+	// Angriff:
+	if ( typ->data.canAttack && data.shotsCur )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			AttackMode = !AttackMode;
+			Client->gameGUI.updateMouseCursor ();
+			return;
+		}
+		nr++;
+	}
+
+	// Bauen:
+	if ( !typ->data.canBuild.empty() )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			cVehiclesBuildMenu buildMenu ( owner, this );
+			buildMenu.show();
+			return;
+		}
+		nr++;
+	}
+
+	// Verteilen:
+	if ( typ->data.canMineMaxRes > 0 && IsWorking )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			cMineManagerMenu mineManager ( this );
+			mineManager.show();
+			return;
+		}
+		dest.y += 22;
+		nr++;
+	}
+
+	// Transfer:
+	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			Transfer = !Transfer;
+			return;
+		}
+		nr++;
+	}
+
+	// Start:
+	if (typ->data.canWork &&
+			!IsWorking         &&
+			(
+				(BuildList && BuildList->Size()) ||
+				typ->data.canBuild.empty()
+			))
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendWantStartWork(this);
+			return;
+		}
+		nr++;
+	}
+
+	// Stop:
+	if ( IsWorking )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendWantStopWork(this);
+			return;
+		}
+		nr++;
+	}
+
+	// Sentry status:
+	if ( bSentryStatus || data.canAttack )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendChangeSentry ( iID, false );
+			return;
+		}
+		nr++;
+	}
+
+	// Aktivieren/Laden:
+	if ( typ->data.storageUnitsMax > 0 )
+	{
+		// Aktivieren:
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			cStorageMenu storageMenu ( StoredVehicles, NULL, this );
+			storageMenu.show();
+			return;
+		}
+		nr++;
+
+		// Laden:
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			LoadActive = !LoadActive;
+			return;
+		}
+		nr++;
+	}
+
+	// research
+	if (typ->data.canResearch && IsWorking)
+	{
+		if (exeNr == nr)
+		{
+			MenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			cDialogResearch researchDialog ( owner );
+			researchDialog.show();
+			return;
+		}
+		nr++;
+	}
+
+	// upgradescreen
+	if (data.convertsGold)
+	{
+		// update this
+		if (exeNr == nr)
+		{
+			MenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			cUpgradeMenu upgradeMenu ( owner );
+			upgradeMenu.show();
+			return;
+		}
+		nr++;
+	}
+
+	// Updates:
+	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
+	{
+		// Update all buildings of this type in this subbase
+		if (exeNr == nr)
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendUpgradeBuilding (this, true);
+			return;
+		}
+		nr++;
+
+		// update this building
+		if (exeNr == nr)
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendUpgradeBuilding (this, false);
+			return;
+		}
+		nr++;
+	}
+
+	// Self destruct
+	if ( data.canSelfDestroy )
+	{
+		if (exeNr == nr)
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			//TODO: implement self destruction
+			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+			//SelfDestructionMenu();
+			return;
+		}
+		nr++;
+	}
+
+	// Info:
+	if (exeNr == nr)
+	{
+		MenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		cUnitHelpMenu helpMenu ( &data, owner );
+		helpMenu.show();
+		return;
+	}
+	nr++;
+
+	// Done:
+	if (exeNr == nr)
+	{
+		MenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		return;
+	}
+}
+
 //--------------------------------------------------------------------------
 /** draws the building menu */
 //--------------------------------------------------------------------------
 void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
-	int nr = 0, ExeNr = -1;
-	static int SelMenu = -1;
+	int nr = 0;
 	static int LastSelMenu = -1;
 	bool bSelection = false;
 	SDL_Rect dest;
@@ -2152,38 +2347,20 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( SelMenu == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( selMenuNr == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
 	{
-		SelMenu = ( mouse->y - dest.y ) / 22;
+		selMenuNr = ( mouse->y - dest.y ) / 22;
 	}
-	else if ( mouseState && mouseState->leftButtonReleased )
+	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && selMenuNr != -1 && selMenuNr != ( mouse->y - dest.y ) / 22 )
 	{
-		if ( MouseOverMenu ( mouse->x, mouse->y ) ) ExeNr = ( mouse->y - dest.y ) / 22;
-		if ( ExeNr != SelMenu ) ExeNr = -1;
-		SelMenu = -1;
-		LastSelMenu = -1;
-	}
-	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && SelMenu != -1 && SelMenu != ( mouse->y - dest.y ) / 22 )
-	{
-		LastSelMenu = SelMenu;
-		SelMenu = -1;
+		LastSelMenu = selMenuNr;
+		selMenuNr = -1;
 	}
 
 	// Angriff:
 	if ( typ->data.canAttack && data.shotsCur )
 	{
-		bSelection = SelMenu == nr || AttackMode;
-
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			AttackMode = !AttackMode;
-			Client->Hud.CheckScroll();
-			Client->mouseMoveCallback ( true );
-			return;
-		}
+		bSelection = selMenuNr == nr || AttackMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2194,16 +2371,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Bauen:
 	if ( !typ->data.canBuild.empty() )
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cVehiclesBuildMenu buildMenu ( owner, this );
-			buildMenu.show();
-			return;
-		}
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2214,16 +2382,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Verteilen:
 	if ( typ->data.canMineMaxRes > 0 && IsWorking )
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cMineManagerMenu mineManager ( this );
-			mineManager.show();
-			return;
-		}
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Dist" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2234,15 +2393,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
-		bSelection = SelMenu == nr || Transfer;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Transfer = !Transfer;
-			return;
-		}
+		bSelection = selMenuNr == nr || Transfer;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2258,15 +2409,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 				typ->data.canBuild.empty()
 			))
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendWantStartWork(this);
-			return;
-		}
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Start" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2277,15 +2420,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Stop:
 	if ( IsWorking )
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendWantStopWork(this);
-			return;
-		}
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2296,15 +2431,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Sentry status:
 	if ( bSentryStatus || data.canAttack )
 	{
-		bSelection = SelMenu == nr || bSentryStatus;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeSentry ( iID, false );
-			return;
-		}
+		bSelection = selMenuNr == nr || bSentryStatus;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2316,31 +2443,15 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( typ->data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cStorageMenu storageMenu ( StoredVehicles, NULL, this );
-			storageMenu.show();
-			return;
-		}
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
-		// Laden:
-		bSelection = SelMenu == nr || LoadActive;
 
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			LoadActive = !LoadActive;
-			return;
-		}
+		// Laden:
+		bSelection = selMenuNr == nr || LoadActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2351,15 +2462,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// research
 	if (typ->data.canResearch && IsWorking)
 	{
-		bSelection = (SelMenu == nr);
-		if (ExeNr == nr)
-		{
-			MenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cDialogResearch researchDialog ( owner );
-			researchDialog.show();
-			return;
-		}
+		bSelection = (selMenuNr == nr);
 		drawContextItem (lngPack.i18n ("Text~Context~Research"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -2369,15 +2472,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if (data.convertsGold)
 	{
 		// update this
-		bSelection = (SelMenu == nr);
-		if (ExeNr == nr)
-		{
-			MenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cUpgradeMenu upgradeMenu ( owner );
-			upgradeMenu.show();
-			return;
-		}
+		bSelection = (selMenuNr == nr);
 		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -2387,27 +2482,13 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
 	{
 		// Update all buildings of this type in this subbase
-		bSelection = (SelMenu == nr);
-		if (ExeNr == nr)
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendUpgradeBuilding (this, true);
-			return;
-		}
+		bSelection = (selMenuNr == nr);
 		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
 		// update this building
-		bSelection = (SelMenu == nr);
-		if (ExeNr == nr)
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendUpgradeBuilding (this, false);
-			return;
-		}
+		bSelection = (selMenuNr == nr);
 		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -2416,43 +2497,20 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Self destruct
 	if ( data.canSelfDestroy )
 	{
-		bSelection = (SelMenu == nr);
-		if (ExeNr == nr)
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			//TODO: implement self destruction
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//SelfDestructionMenu();
-			return;
-		}
+		bSelection = (selMenuNr == nr);
 		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), bSelection, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	bSelection = (SelMenu == nr);
-	if (ExeNr == nr)
-	{
-		MenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		cUnitHelpMenu helpMenu ( &data, owner );
-		helpMenu.show();
-		return;
-	}
+	bSelection = (selMenuNr == nr);
 	drawContextItem (lngPack.i18n ("Text~Context~Info"), bSelection, dest.x, dest.y, buffer);
 	dest.y += 22;
 	nr++;
 
 	// Done:
-	bSelection = (SelMenu == nr);
-	if (ExeNr == nr)
-	{
-		MenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		return;
-	}
+	bSelection = (selMenuNr == nr);
 	drawContextItem (lngPack.i18n ("Text~Context~Done"), bSelection, dest.x, dest.y, buffer);
 }
 
@@ -2494,9 +2552,6 @@ void cBuilding::upgradeToCurrentVersion ()
 	data.buildCosts = upgradeVersion.buildCosts;
 
 	GenerateName();
-
-	if (this == Client->SelectedBuilding)
-		ShowDetails();
 }
 
 
@@ -2505,10 +2560,9 @@ void cBuilding::upgradeToCurrentVersion ()
 //--------------------------------------------------------------------------
 void cBuilding::Center ()
 {
-	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-	Client->bFlagDrawMap = true;
-	Client->Hud.DoScroll ( 0 );
+	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	Client->gameGUI.setOffsetPosition ( offX, offY );
 }
 
 //------------------------------------------------------------------------
@@ -2517,10 +2571,10 @@ void cBuilding::Center ()
 void cBuilding::DrawMunBar ( void ) const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
-	r1.w = Client->Hud.Zoom * 8 / 10 ;
-	r1.h = Client->Hud.Zoom / 8;
-	r1.y = GetScreenPosY() + Client->Hud.Zoom/10 + Client->Hud.Zoom / 8;
+	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize() / 8;
+	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
 
 	if ( r1.h <= 2 )
 	{
@@ -2555,14 +2609,14 @@ void cBuilding::DrawMunBar ( void ) const
 void cBuilding::DrawHelthBar ( void ) const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
-	r1.w = Client->Hud.Zoom * 8 / 10 ;
-	r1.h = Client->Hud.Zoom / 8;
-	r1.y = GetScreenPosY() + Client->Hud.Zoom/10;
+	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize() / 8;
+	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10;
 
 	if ( data.isBig )
 	{
-		r1.w += Client->Hud.Zoom;
+		r1.w += Client->gameGUI.getTileSize();
 		r1.h *= 2;
 	}
 
@@ -2599,15 +2653,15 @@ void cBuilding::drawStatus() const
 
 	if ( Disabled )
 	{
-		if ( Client->Hud.Zoom < 25 ) return;
-		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 12;
-		dest.y = GetScreenPosY() + Client->Hud.Zoom/2 - 12;
+		if ( Client->gameGUI.getTileSize() < 25 ) return;
+		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
 		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
 	}
 	else
 	{
-		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
-		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize() - 11;
+		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.shotsCur )
 		{
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
@@ -2622,20 +2676,19 @@ void cBuilding::Select ()
 
 	selected = true;
 	// Das Video laden:
-	if ( Client->FLC != NULL )
+	if ( Client->gameGUI.getFLC() != NULL )
 	{
-		FLI_Close ( Client->FLC );
-		Client->FLC = NULL;
-		Client->sFLCname = "";
+		FLI_Close ( Client->gameGUI.getFLC() );
+		Client->gameGUI.setFLC( NULL );
 	}
-	Client->video = typ->video;
+	Client->gameGUI.setVideoSurface( typ->video );
 
 	// Sound abspielen:
 	if ( !IsWorking )
 		PlayFX ( SoundData.SNDHudButton );
 
 	// Die Eigenschaften anzeigen:
-	ShowDetails();
+	Client->gameGUI.setUnitDetailsData ( NULL, this );
 }
 
 //--------------------------------------------------------------------------
@@ -2658,345 +2711,8 @@ void cBuilding::Deselct ()
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
-	Client->bFlagDrawHud = true;
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface, bool drawLines )
-{
-	SDL_Rect src, dest;
-	if ( hud )
-	{
-		// Den Hintergrund wiederherstellen:
-		src.x = 0;
-		src.y = 215;
-		src.w = 155;
-		src.h = 48;
-		dest.x = 8;
-		dest.y = 171;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
-		destSurface = GraphicsData.gfx_hud;
-	}
-	else
-	{
-		dest.x = x;
-		dest.y = y;
-		if ( !destSurface ) return;
-	}
-
-	if ( drawLines )
-	{
-		SDL_Rect lineRect = { dest.x+2, dest.y+14, 153, 1 };
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-		lineRect.y += 12;
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-		lineRect.y += 12;
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-	}
-	// Die Hitpoints anzeigen:
-	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );
-	font->showText ( dest.x+47, dest.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, destSurface );
-	DrawSymbol ( SHits, dest.x+80, dest.y+3, 70, data.hitpointsCur, data.hitpointsMax, destSurface );
-	// additional values:
-
-	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
-	{
-		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		if ( data.storeResType > 0 )
-		{
-			DrawNumber ( dest.x+23, dest.y+18, data.storageResCur, data.storageResMax, destSurface );
-
-			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			switch ( data.storeResType )
-			{
-			case sUnitData::STORE_RES_METAL:
-				DrawSymbol ( SMetal, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
-				DrawNumber ( dest.x+23, dest.y+30, SubBase->Metal, SubBase->MaxMetal, destSurface );
-				DrawSymbol ( SMetal, dest.x+80, dest.y+27, 70, SubBase->Metal, SubBase->MaxMetal, destSurface );
-				break;
-			case sUnitData::STORE_RES_OIL:
-				DrawSymbol ( SOil, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
-				DrawNumber ( dest.x+23, dest.y+30, SubBase->Oil, SubBase->MaxOil, destSurface );
-				DrawSymbol ( SOil, dest.x+80, dest.y+27, 70, SubBase->Oil, SubBase->MaxOil, destSurface );
-				break;
-			case sUnitData::STORE_RES_GOLD:
-				DrawSymbol ( SGold, dest.x+80, dest.y+16, 70, data.storageResCur, data.storageResMax, destSurface );
-				DrawNumber ( dest.x+23, dest.y+30, SubBase->Gold, SubBase->MaxGold, destSurface );
-				DrawSymbol ( SGold, dest.x+80,  dest.y+28, 70, SubBase->Gold, SubBase->MaxGold, destSurface );
-				break;
-			}
-		}
-		else
-		{
-			DrawNumber ( dest.x+23, dest.y+18, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-
-			switch ( data.storeUnitsImageType )
-			{
-			case sUnitData::STORE_UNIT_IMG_TANK:
-			case sUnitData::STORE_UNIT_IMG_SHIP:
-				DrawSymbol ( STrans, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			case sUnitData::STORE_UNIT_IMG_PLANE:
-				DrawSymbol ( SAir, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			case sUnitData::STORE_UNIT_IMG_HUMAN:
-				DrawSymbol ( SHuman, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			}
-		}
-	}
-	else if ( data.canAttack && !data.explodesOnContact )
-	{
-		if ( owner == Client->ActivePlayer )
-		{
-			// ammo:
-			DrawNumber ( dest.x+23, dest.y+18, data.ammoCur, data.ammoMax, destSurface );
-			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawSymbol ( SAmmo, dest.x+80, dest.y+16, 70, data.ammoCur, data.ammoMax, destSurface );
-		}
-
-		// shots:
-		DrawNumber ( dest.x+23,  dest.y+41, data.shotsCur, data.shotsMax, destSurface );
-
-		font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		DrawSymbol ( SShots, dest.x+80,  dest.y+41, 70, data.shotsCur, data.shotsMax, destSurface );
-	}
-	else if ( data.produceEnergy )
-	{
-		// EnergieProduktion:
-		DrawNumber ( dest.x+23, dest.y+18, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, destSurface );
-		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		DrawSymbol ( SEnergy, dest.x+80, dest.y+16, 70, ( IsWorking ? data.produceEnergy : 0 ), data.produceEnergy, destSurface );
-
-		if ( owner == Client->ActivePlayer )
-		{
-			// Gesammt:
-			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawNumber ( dest.x+23, dest.y+30, SubBase->EnergyProd, SubBase->MaxEnergyProd, destSurface );
-			DrawSymbol ( SEnergy, dest.x+80,  dest.y+28, 70, SubBase->EnergyProd, SubBase->MaxEnergyProd, destSurface );
-			// Verbrauch:
-			font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawNumber ( dest.x+23,  dest.y+41, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, destSurface );
-			DrawSymbol ( SEnergy, dest.x+80,  dest.y+41, 70, SubBase->EnergyNeed, SubBase->MaxEnergyNeed, destSurface );
-		}
-	}
-	else if ( data.produceHumans )
-	{
-		// HumanProduktion:
-		DrawNumber ( dest.x+23, dest.y+18, data.produceHumans, data.produceHumans, destSurface );
-		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, data.produceHumans, data.produceHumans, destSurface );
-
-		if ( owner == Client->ActivePlayer )
-		{
-			// Gesammt:
-			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawNumber ( dest.x+23, dest.y+30, SubBase->HumanProd, SubBase->HumanProd, destSurface );
-			DrawSymbol ( SHuman, dest.x+80,  dest.y+28, 70, SubBase->HumanProd, SubBase->HumanProd, destSurface );
-			// Verbrauch:
-			font->showText ( dest.x+47,  dest.y+41, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawNumber ( dest.x+23,  dest.y+41, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
-			DrawSymbol ( SHuman, dest.x+80, dest.y+39, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
-		}
-	}
-	else if ( data.needsHumans )
-	{
-		// HumanNeed:
-		if ( IsWorking )
-		{
-			DrawNumber ( dest.x+23, dest.y+18, data.needsHumans, data.needsHumans, destSurface );
-			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, data.needsHumans, data.needsHumans, destSurface );
-		}
-		else
-		{
-			DrawNumber ( dest.x+23, dest.y+18, 0, data.needsHumans, destSurface );
-			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawSymbol ( SHuman, dest.x+80, dest.y+16, 70, 0, data.needsHumans, destSurface );
-		}
-
-		if ( owner == Client->ActivePlayer )
-		{
-			// Gesammt:
-			font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-			DrawNumber ( dest.x+23, dest.y+30, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
-			DrawSymbol ( SHuman, dest.x+80,  dest.y+28, 70, SubBase->HumanNeed, SubBase->MaxHumanNeed, destSurface );
-		}
-	}
-	Client->bFlagDrawHud = true;
-}
-
-//--------------------------------------------------------------------------
-/** draws a row of symbols */
-//--------------------------------------------------------------------------
-void cBuilding::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, int maxvalue, SDL_Surface *sf )
-{
-	SDL_Rect full, empty, dest;
-	int i, to, step, offx;
-
-	switch ( sym )
-	{
-		case SSpeed:
-			full.x = 0;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 7;
-			empty.x = 7;
-			break;
-
-		case SHits:
-			empty.y = full.y = 98;
-			empty.w = full.w = 6;
-			empty.h = full.h = 9;
-
-			if ( value > maxvalue / 2 )
-			{
-				full.x = 14;
-				empty.x = 20;
-			}
-			else
-				if ( value > maxvalue / 4 )
-				{
-					full.x = 26;
-					empty.x = 32;
-				}
-				else
-				{
-					full.x = 38;
-					empty.x = 44;
-				}
-
-			break;
-
-		case SAmmo:
-			full.x = 50;
-			empty.y = full.y = 98;
-			empty.w = full.w = 5;
-			empty.h = full.h = 7;
-			empty.x = 55;
-			break;
-
-		case SMetal:
-			full.x = 60;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 10;
-			empty.x = 67;
-			break;
-
-		case SEnergy:
-			full.x = 74;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 7;
-			empty.x = 81;
-			break;
-
-		case SShots:
-			full.x = 88;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 4;
-			empty.x = 96;
-			break;
-
-		case SOil:
-			full.x = 104;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 9;
-			empty.x = 112;
-			break;
-
-		case SGold:
-			full.x = 120;
-			empty.y = full.y = 98;
-			empty.w = full.w = 9;
-			empty.h = full.h = 8;
-			empty.x = 129;
-			break;
-
-		case STrans:
-			full.x = 138;
-			empty.y = full.y = 98;
-			empty.w = full.w = 16;
-			empty.h = full.h = 8;
-			empty.x = 154;
-			break;
-
-		case SHuman:
-			full.x = 170;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 9;
-			empty.x = 178;
-			break;
-
-		case SAir:
-			full.x = 186;
-			empty.y = full.y = 98;
-			empty.w = full.w = 21;
-			empty.h = full.h = 8;
-			empty.x = 207;
-			break;
-	}
-
-	to = maxvalue;
-
-	step = 1;
-	offx = full.w;
-
-	while ( offx*to > maxx )
-	{
-		offx--;
-
-		if ( offx < 4 )
-		{
-			to /= 2;
-			step *= 2;
-			offx = full.w;
-		}
-	}
-
-	dest.x = x;
-	dest.y = y;
-
-	for ( i = 0;i < to;i++ )
-	{
-		if ( value > 0 )
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &full, sf, &dest );
-		else
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &empty, sf, &dest );
-
-		dest.x += offx;
-		value -= step;
-	}
-}
-
-//--------------------------------------------------------------------------
-/** Draws a number/number on the surface */
-//--------------------------------------------------------------------------
-void cBuilding::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *sf )
-{
-	if ( value > maxvalue / 2 )
-		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_GREEN, sf );
-	else if ( value > maxvalue / 4 )
-		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_YELLOW, sf );
-	else
-		font->showTextCentered ( x, y, iToStr ( value ) + "/" + iToStr ( maxvalue ), FONT_LATIN_SMALL_RED, sf );
+	Client->gameGUI.setVideoSurface ( NULL );
+	Client->gameGUI.setUnitDetailsData ( NULL, NULL );
 }
 
 //----------------------------------------------------------------

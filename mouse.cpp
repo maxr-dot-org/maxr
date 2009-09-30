@@ -20,12 +20,12 @@
 #include "main.h"
 #include "client.h"
 #include "settings.h"
+#include "hud.h"
 
 // Funktionen der Maus-Klasse ////////////////////////////////////////////////
 cMouse::cMouse ( void )
 {
 	visible=false;
-	MoveCallback=false;
 	back=NULL;
 	cur=NULL;
 	LastX=-100;
@@ -204,20 +204,10 @@ void cMouse::GetPos ()
 
 	DrawX = x + offX;
 	DrawY = y + offY;
-
-	if ( MoveCallback )
-	{
-		Client->mouseMoveCallback ( false );
-	}
 }
 // sets the mouse cursor to the given coordinates in windowspace
 void cMouse::setPos(int px, int py)
 {
-	//int offX;
-	//int offY;
-
-	//getCursorOffset(offX, offY);
-
 	SDL_WarpMouse(px, py);
 }
 
@@ -259,21 +249,25 @@ int cMouse::GetMouseButton ( )
 // Liefert die Koordinaten der Kachel unter der Maus:
 void cMouse::GetKachel ( int *X,int *Y )
 {
-	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) {*X=-1;*Y=-1;return;}
-	cHud const& hud = Client->Hud;
-	*X= (int)(( ( x-180 ) +hud.OffX/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
-	*Y= (int)(( ( y-18 ) +hud.OffY/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
-	if ( *X>=Client->Map->size ) *X=Client->Map->size-1;
-	if ( *Y>=Client->Map->size ) *Y=Client->Map->size-1;
+	if ( x < 180 || y < 18 || x > 180 + ( SettingsData.iScreenW-192 ) || y > 18 + ( SettingsData.iScreenH-32 ) )
+	{
+		*X = -1;
+		*Y = -1;
+		return;
+	}
+	float zoom = Client->gameGUI.getZoom();
+	*X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	*Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	if ( *X >= Client->Map->size ) *X = Client->Map->size-1;
+	if ( *Y >= Client->Map->size ) *Y = Client->Map->size-1;
 }
 
 // Liefert den Offset der Kachel unter der Maus:
 int cMouse::GetKachelOff ( void )
 {
 	int ret;
-	if ( x<180||y<18||x>180+ ( SettingsData.iScreenW-192 ) ||y>18+ ( SettingsData.iScreenH-32 ) ) return -1;
-	cHud const& hud=Client->Hud;
-	ret= (int)(( ( x-180 ) +hud.OffX/ ( 64.0/hud.Zoom ) ) /hud.Zoom);
-	ret+= ( ( int ) ( ( ( y-18 ) +hud.OffY/ ( 64.0/hud.Zoom ) ) /hud.Zoom ) ) *Client->Map->size;
+	if ( x < 180 || y < 18 || x > 180 + ( SettingsData.iScreenW-192 ) || y > 18 + ( SettingsData.iScreenH-32 ) ) return -1;
+	ret = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	ret += (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() ) * Client->Map->size;
 	return ret;
 }

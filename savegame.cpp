@@ -24,6 +24,7 @@
 #include "upgradecalculator.h"
 #include "menus.h"
 #include "settings.h"
+#include "hud.h"
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )
@@ -310,23 +311,25 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 	TiXmlElement *hudNode = playerNode->FirstChildElement( "Hud" );
 	if ( hudNode )
 	{
+		double tmpDouble;
 		// save the loaded hudoptions to the "HotHud" of the player so that the server can send them later to the clients
-		hudNode->FirstChildElement( "Offset" )->Attribute ( "x", &Player->HotHud.OffX );
-		hudNode->FirstChildElement( "Offset" )->Attribute ( "y", &Player->HotHud.OffY );
-		hudNode->FirstChildElement( "Zoom" )->Attribute ( "num", &Player->HotHud.Zoom );
-		if ( hudNode->FirstChildElement( "Colors" ) ) Player->HotHud.Farben = true;
-		if ( hudNode->FirstChildElement( "Grid" ) ) Player->HotHud.Gitter = true;
-		if ( hudNode->FirstChildElement( "Ammo" ) ) Player->HotHud.Munition = true;
-		if ( hudNode->FirstChildElement( "Fog" ) ) Player->HotHud.Nebel = true;
-		if ( hudNode->FirstChildElement( "Range" ) ) Player->HotHud.Reichweite = true;
-		if ( hudNode->FirstChildElement( "Scan" ) ) Player->HotHud.Scan = true;
-		if ( hudNode->FirstChildElement( "Status" ) ) Player->HotHud.Status = true;
-		if ( hudNode->FirstChildElement( "Survey" ) ) Player->HotHud.Studie = true;
-		if ( hudNode->FirstChildElement( "Hitpoints" ) ) Player->HotHud.Treffer = true;
-		if ( hudNode->FirstChildElement( "MinimapZoom" ) ) Player->HotHud.MinimapZoom = true;
-		if ( hudNode->FirstChildElement( "TNT" ) ) Player->HotHud.TNT = true;
-		if ( hudNode->FirstChildElement( "Lock" ) ) Player->HotHud.Lock = true;
-		if ( hudNode->FirstChildElement( "SelectedUnit" ) ) hudNode->FirstChildElement( "SelectedUnit" )->Attribute ( "num", &Player->HotHud.tmpSelectedUnitID );
+		hudNode->FirstChildElement( "Offset" )->Attribute ( "x", &Player->savedHud->offX );
+		hudNode->FirstChildElement( "Offset" )->Attribute ( "y", &Player->savedHud->offY );
+		hudNode->FirstChildElement( "Zoom" )->Attribute ( "num", &tmpDouble );
+		Player->savedHud->zoom = (float)tmpDouble;
+		if ( hudNode->FirstChildElement( "Colors" ) ) Player->savedHud->colorsChecked = true;
+		if ( hudNode->FirstChildElement( "Grid" ) ) Player->savedHud->gridChecked = true;
+		if ( hudNode->FirstChildElement( "Ammo" ) ) Player->savedHud->ammoChecked = true;
+		if ( hudNode->FirstChildElement( "Fog" ) ) Player->savedHud->fogChecked = true;
+		if ( hudNode->FirstChildElement( "Range" ) ) Player->savedHud->rangeChecked = true;
+		if ( hudNode->FirstChildElement( "Scan" ) ) Player->savedHud->scanChecked = true;
+		if ( hudNode->FirstChildElement( "Status" ) ) Player->savedHud->statusChecked = true;
+		if ( hudNode->FirstChildElement( "Survey" ) ) Player->savedHud->surveyChecked = true;
+		if ( hudNode->FirstChildElement( "Hitpoints" ) ) Player->savedHud->hitsChecked = true;
+		if ( hudNode->FirstChildElement( "MinimapZoom" ) ) Player->savedHud->twoXChecked = true;
+		if ( hudNode->FirstChildElement( "TNT" ) ) Player->savedHud->tntChecked = true;
+		if ( hudNode->FirstChildElement( "Lock" ) ) Player->savedHud->lockChecked = true;
+		if ( hudNode->FirstChildElement( "SelectedUnit" ) ) hudNode->FirstChildElement( "SelectedUnit" )->Attribute ( "num", &Player->savedHud->selUnitID );
 	}
 
 	// read reports
@@ -1519,7 +1522,7 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeAdditionalInfo ( cHud *hud, cList<sSavedReportMessage> &list, cPlayer *player )
+void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedReportMessage> &list, cPlayer *player )
 {
 	SaveFile = new TiXmlDocument ();
 	if ( !SaveFile->LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
@@ -1542,21 +1545,21 @@ void cSavegame::writeAdditionalInfo ( cHud *hud, cList<sSavedReportMessage> &lis
 
 	// write the hud settings
 	TiXmlElement *hudNode = addMainElement ( playerNode, "Hud" );
-	addAttributeElement ( hudNode, "SelectedUnit", "num", iToStr ( hud->tmpSelectedUnitID ) );
-	addAttributeElement ( hudNode, "Offset", "x", iToStr ( hud->OffX ), "y", iToStr ( hud->OffY ) );
-	addAttributeElement ( hudNode, "Zoom", "num", iToStr ( hud->Zoom ) );
-	if ( hud->Farben ) addMainElement ( hudNode, "Colors" );
-	if ( hud->Gitter ) addMainElement ( hudNode, "Grid" );
-	if ( hud->Munition ) addMainElement ( hudNode, "Ammo" );
-	if ( hud->Nebel ) addMainElement ( hudNode, "Fog" );
-	if ( hud->MinimapZoom ) addMainElement ( hudNode, "MinimapZoom" );
-	if ( hud->Reichweite ) addMainElement ( hudNode, "Range" );
-	if ( hud->Scan ) addMainElement ( hudNode, "Scan" );
-	if ( hud->Status ) addMainElement ( hudNode, "Status" );
-	if ( hud->Studie ) addMainElement ( hudNode, "Survey" );
-	if ( hud->Lock ) addMainElement ( hudNode, "Lock" );
-	if ( hud->Treffer ) addMainElement ( hudNode, "Hitpoints" );
-	if ( hud->TNT ) addMainElement ( hudNode, "TNT" );
+	addAttributeElement ( hudNode, "SelectedUnit", "num", iToStr ( hudState.selUnitID ) );
+	addAttributeElement ( hudNode, "Offset", "x", iToStr ( hudState.offX ), "y", iToStr ( hudState.offY ) );
+	addAttributeElement ( hudNode, "Zoom", "num", dToStr ( hudState.zoom ) );
+	if ( hudState.colorsChecked ) addMainElement ( hudNode, "Colors" );
+	if ( hudState.gridChecked ) addMainElement ( hudNode, "Grid" );
+	if ( hudState.ammoChecked ) addMainElement ( hudNode, "Ammo" );
+	if ( hudState.fogChecked ) addMainElement ( hudNode, "Fog" );
+	if ( hudState.twoXChecked ) addMainElement ( hudNode, "MinimapZoom" );
+	if ( hudState.rangeChecked ) addMainElement ( hudNode, "Range" );
+	if ( hudState.scanChecked ) addMainElement ( hudNode, "Scan" );
+	if ( hudState.statusChecked ) addMainElement ( hudNode, "Status" );
+	if ( hudState.surveyChecked ) addMainElement ( hudNode, "Survey" );
+	if ( hudState.lockChecked ) addMainElement ( hudNode, "Lock" );
+	if ( hudState.hitsChecked ) addMainElement ( hudNode, "Hitpoints" );
+	if ( hudState.tntChecked ) addMainElement ( hudNode, "TNT" );
 
 	// add reports
 	TiXmlElement *reportsNode = addMainElement ( playerNode, "Reports" );

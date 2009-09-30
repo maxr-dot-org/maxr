@@ -1081,8 +1081,8 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 	
 	calcNextDir();
 	Vehicle->owner->DoScan();
-	Client->mouseMoveCallback(true);
-	Client->bFlagDrawMMap = true; 
+	Client->gameGUI.updateMouseCursor();
+	Client->gameGUI.callMiniMapDraw(); 
 	Vehicle->moving = false;
 	Vehicle->OffX = Vehicle->OffY = 0;
 
@@ -1229,7 +1229,6 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			if ( bEndForNow ) Client->addActiveMoveJob(this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
-			if ( Vehicle == Client->SelectedVehicle ) Vehicle->ShowDetails();
 			bSuspended = true;
 			bEndForNow = true;
 		}
@@ -1263,7 +1262,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			{
 				bFinished = true;
 
-				if ( Vehicle == Client->SelectedVehicle ) 
+				if ( Vehicle == Client->gameGUI.getSelVehicle() ) 
 				{				
 					if ( random(2) )
 						PlayVoice ( VoiceData.VOINoPath1 );
@@ -1345,14 +1344,10 @@ void cClientMoveJob::moveVehicle()
 					Client->addFX ( fxTracks,Vehicle->PosX*64-10+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,2 );
 					break;
 				case 1:
-					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,1 );
-					break;
 				case 5:
 					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,1 );
 					break;
 				case 3:
-					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,3 );
-					break;
 				case 7:
 					Client->addFX ( fxTracks,Vehicle->PosX*64+Vehicle->OffX,Vehicle->PosY*64+Vehicle->OffY,3 );
 					break;
@@ -1415,8 +1410,8 @@ void cClientMoveJob::doEndMoveVehicle ()
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 	
-	Client->bFlagDrawMMap = true; 
-	Client->mouseMoveCallback( true ); 
+	Client->gameGUI.callMiniMapDraw(); 
+	Client->gameGUI.updateMouseCursor(); 
 
 	calcNextDir();
 }
@@ -1452,17 +1447,17 @@ void cClientMoveJob::drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezia
 
 	if ( bSpezial )
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[iIndex][64-Client->Hud.Zoom], NULL, buffer, &Dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[iIndex][64-Client->gameGUI.getTileSize()], NULL, buffer, &Dest );
 	}
 	else
 	{
-		SDL_BlitSurface ( OtherData.WayPointPfeile[iIndex][64-Client->Hud.Zoom], NULL, buffer, &Dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeile[iIndex][64-Client->gameGUI.getTileSize()], NULL, buffer, &Dest );
 	}
 }
 
 void cClientMoveJob::startMoveSound()
 {
-	if ( Vehicle == Client->SelectedVehicle) Vehicle->StartMoveSound();
+	if ( Vehicle == Client->gameGUI.getSelVehicle()) Vehicle->StartMoveSound();
 	bSoundRunning = true;
 }
 
@@ -1472,7 +1467,7 @@ void cClientMoveJob::stopMoveSound()
 
 	bSoundRunning = false;
 
-	if ( Vehicle == Client->SelectedVehicle )
+	if ( Vehicle == Client->gameGUI.getSelVehicle() )
 	{
 		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
 		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size );

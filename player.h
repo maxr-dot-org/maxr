@@ -21,7 +21,6 @@
 #include "defines.h"
 #include "main.h"
 #include <SDL.h>
-#include "hud.h"
 #include "buildings.h"
 #include "vehicles.h"
 #include "base.h"
@@ -33,7 +32,8 @@ struct sUnitData;
 struct sBuilding;
 class cVehicle;
 class cBuilding;
-class cEngine;
+class cHud;
+struct sHudStateContainer;
 
 struct sSentry
 {
@@ -97,7 +97,7 @@ public:
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area	
 	int ResearchCount;         ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
-	cHud HotHud;               // Gespeichertes Hud f¸r Hot-Seat-Spiele.
+	sHudStateContainer *savedHud;
 	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	cList<sSavedReportMessage> savedReportsList;
@@ -130,7 +130,7 @@ public:
 	bool InLockList(cBuilding *b);
 	bool InLockList(cVehicle *v);
 	void ToggelLock(cMapField *OverUnitField);
-	void DrawLockList(cHud const&);
+	void DrawLockList();
 	/**
 	* draws a circle on the map for the fog
 	*@author alzi alias DoctorDeath

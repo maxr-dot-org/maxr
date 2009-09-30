@@ -128,7 +128,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		}
 
 		// init server
-		Server = new cServer( &serverMap, &serverPlayers, type, false );
+		Server = new cServer( &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS );
 
 		// place resources
 		for ( unsigned int i = 0; i < players.Size(); i++ )
@@ -168,7 +168,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 	}
 
 	if ( reconnect ) sendReconnectionSuccess ( player );
-	Client->run();
+	Client->gameGUI.show();
 
 	for ( unsigned int i = 0; i < players.Size(); i++ )
 	{
@@ -220,7 +220,7 @@ void cGameDataContainer::runSavedGame( int player )
 
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
-		sendHudSettings ( &(*Server->PlayerList)[i]->HotHud, (*Server->PlayerList)[i] );
+		sendHudSettings ( *(*Server->PlayerList)[i]->savedHud, (*Server->PlayerList)[i] );
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
 		while ( reportList.Size() )
 		{
@@ -231,7 +231,7 @@ void cGameDataContainer::runSavedGame( int player )
 
 	// exit menu and start game
 	Server->bStarted = true;
-	Client->run();
+	Client->gameGUI.show();
 
 	delete Client;
 	Client = NULL;
@@ -470,7 +470,7 @@ cMenu::~cMenu()
 	if ( background ) SDL_FreeSurface ( background );
 }
 
-void cMenu::draw( bool firstDraw )
+void cMenu::draw( bool firstDraw, bool showScreen )
 {
 	switch ( backgroundType )
 	{
@@ -487,12 +487,13 @@ void cMenu::draw( bool firstDraw )
 		break;
 	}
 
+	preDrawFunction();
+
 	// draw the menu background
 	if ( background ) SDL_BlitSurface ( background, NULL, buffer, &position );
 
 	//show mouse
 	mouse->Show();
-	mouse->SetCursor ( CHand );
 
 	// draw all menu items
 	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
@@ -500,13 +501,16 @@ void cMenu::draw( bool firstDraw )
 		menuItems[i]->draw();
 	}
 
-	SHOW_SCREEN
-
-	mouse->draw ( false, screen );
+	if ( showScreen )
+	{
+		SHOW_SCREEN
+		mouse->draw ( false, screen );
+	}
 }
 
 int cMenu::show()
 {
+	mouse->SetCursor ( CHand );
 	draw( true );
 
 	cMenu *lastActiveMenu = ActiveMenu;
@@ -520,7 +524,7 @@ int cMenu::show()
 		if ( Client )
 		{
 			Client->doGameActions();
-			if ( Client->iTimer1 ) Client->iFrame++;
+			if ( Client->timer100ms ) Client->gameGUI.incFrame();
 		}
 
 		mouse->GetPos();
@@ -543,18 +547,24 @@ int cMenu::show()
 
 		if ( terminate )
 		{
-			ActiveMenu = lastActiveMenu;
+			if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
 			return 1;
 		}
 	}
 
-	ActiveMenu = lastActiveMenu;
+	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
 	return 0;
 }
 
 void cMenu::close()
 {
 	end = true;
+}
+
+void cMenu::returnToCallback()
+{
+	ActiveMenu = this;
+	mouse->SetCursor( CHand );
 }
 
 void cMenu::handleMouseInput( sMouseState mouseState )
@@ -579,6 +589,8 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 			else menuItem->somewhereReleased();
 		}
 	}
+
+	handleMouseInputExtended( mouseState );
 }
 
 void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
@@ -1603,7 +1615,7 @@ cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackg
 	infoTextCheckBox->setClickedFunction ( &infoCheckBoxClicked );
 	menuItems.Add ( infoTextCheckBox );
 
-	unitDetails = new cMenuUnitDetails ( position.x+16, position.y+297 );
+	unitDetails = new cMenuUnitDetailsBig ( position.x+16, position.y+297 );
 	menuItems.Add ( unitDetails );
 
 	selectionList = new cMenuUnitsList ( position.x+477,  position.y+50, 154, 326, this, MUL_DIS_TYPE_COSTS );
@@ -3137,7 +3149,7 @@ bool cNetworkHostMenu::runSavedGame()
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		sendRequestResync( (*Server->PlayerList)[i]->Nr );
-		sendHudSettings ( &(*Server->PlayerList)[i]->HotHud, (*Server->PlayerList)[i] );
+		sendHudSettings ( *(*Server->PlayerList)[i]->savedHud, (*Server->PlayerList)[i] );
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
 		while ( reportList.Size() )
 		{
@@ -3148,7 +3160,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// exit menu and start game
 	Server->bStarted = true;
-	Client->run();
+	Client->gameGUI.show();
 
 	delete Client;
 	Client = NULL;
@@ -3869,8 +3881,6 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 	if ( vehicle->data.canBuildPath ) delete pathButton;
 
 	delete speedHandler;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cBuildingsBuildMenu::generateSelectionList()
@@ -4004,8 +4014,6 @@ cVehiclesBuildMenu::~cVehiclesBuildMenu()
 	delete speedHandler;
 
 	delete repeatButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cVehiclesBuildMenu::generateSelectionList()
@@ -4283,11 +4291,6 @@ cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), 
 	selectionChangedFunc = &selectionChanged;
 }
 
-cUpgradeMenu::~cUpgradeMenu()
-{
-	if ( Client ) Client->bFlagDrawHud = true;
-}
-
 void cUpgradeMenu::doneReleased ( void *parent )
 {
 	cUpgradeMenu *menu = dynamic_cast<cUpgradeMenu*>((cMenu*)parent);
@@ -4392,7 +4395,7 @@ void cUnitHelpMenu::init(sID unitID)
 	infoText->setBox ( 269, 176 );
 	menuItems.Add ( infoText );
 
-	unitDetails = new cMenuUnitDetails ( position.x+16, position.y+297 );
+	unitDetails = new cMenuUnitDetailsBig ( position.x+16, position.y+297 );
 	unitDetails->setSelection ( unit );
 	menuItems.Add ( unitDetails );
 
@@ -4420,8 +4423,6 @@ cUnitHelpMenu::~cUnitHelpMenu()
 	delete doneButton;
 
 	delete unit;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cUnitHelpMenu::doneReleased( void *parent )
@@ -4498,8 +4499,6 @@ cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, 
 cStorageMenu::~cStorageMenu()
 {
 	delete doneButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cStorageMenu::generateItems()
@@ -4680,9 +4679,6 @@ void cStorageMenu::activateReleased ( void *parent )
 		menu->ownerBuilding->VehicleToActivate = index;
 		menu->ownerBuilding->ActivatingVehicle = true;
 	}
-
-	Client->OverUnitField = NULL;
-	mouse->MoveCallback = true;
 	menu->end = true;
 }
 
@@ -4875,8 +4871,6 @@ cMineManagerMenu::~cMineManagerMenu()
 {
 	delete titleLabel;
 	delete doneButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 
 	for ( int i = 0; i < 3; i++ )
 	{
@@ -5145,8 +5139,6 @@ cReportsMenu::~cReportsMenu()
 	delete downButton;
 
 	delete dataScreen;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cReportsMenu::doneReleased(void *parent)
@@ -5193,29 +5185,29 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 {
 	if ( !vehicle && !building ) return;
 
-	if ( Client->SelectedVehicle )
+	if ( Client->gameGUI.getSelVehicle() )
 	{
-		Client->SelectedVehicle->Deselct();
-		Client->SelectedVehicle = NULL;
+		Client->gameGUI.getSelVehicle()->Deselct();
+		Client->gameGUI.setSelVehicle( NULL );
 		StopFXLoop ( Client->iObjectStream );
 	}
-	else if ( Client->SelectedBuilding )
+	else if ( Client->gameGUI.getSelBuilding() )
 	{
-		Client->SelectedBuilding->Deselct();
-		Client->SelectedBuilding = NULL;
+		Client->gameGUI.getSelBuilding()->Deselct();
+		Client->gameGUI.setSelBuilding( NULL );
 		StopFXLoop ( Client->iObjectStream );
 	}
 
 	if ( vehicle )
 	{
-		Client->SelectedVehicle = vehicle;
+		Client->gameGUI.setSelVehicle( vehicle );
 		vehicle->Select();
 		vehicle->Center();
 		Client->iObjectStream = vehicle->playStream();
 	}
 	else if ( building )
 	{
-		Client->SelectedBuilding = building;
+		Client->gameGUI.setSelBuilding( building );
 		building->Select();
 		building->Center();
 		Client->iObjectStream = building->playStream();

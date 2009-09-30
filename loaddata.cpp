@@ -1724,6 +1724,7 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_player_select,path,"customgame_menu.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_menu_buttons,path,"menu_buttons.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_player_ready,path,"player_ready.pcx" );
+	LoadGraphicToSurface ( GraphicsData.gfx_hud_chatbox,path,"hud_chatbox.pcx" );
 
 	GraphicsData.DialogPath = SettingsData.sGfxPath + PATH_DELIMITER + "dialog.pcx";
 	GraphicsData.Dialog2Path = SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx";
@@ -1737,12 +1738,8 @@ static int LoadGraphics(const char* path)
 	SDL_Rect scr,dest;
 	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
 		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	GraphicsData.gfx_hud_backup = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
-		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
-	SDL_FillRect ( GraphicsData.gfx_hud_backup, NULL, 0xFF00FF );
 	SDL_SetColorKey ( GraphicsData.gfx_hud, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_SetColorKey ( GraphicsData.gfx_hud_backup, SDL_SRCCOLORKEY, 0xFF00FF );
 
 	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_left.pcx" ))
 		return 0;
@@ -1807,8 +1804,6 @@ static int LoadGraphics(const char* path)
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,NULL,GraphicsData.gfx_hud,&dest );
 		SDL_FreeSurface ( GraphicsData.gfx_tmp );
 	}
-
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, GraphicsData.gfx_hud_backup, NULL);
 
 	Log.write ( "Colourgraphics...", LOG_TYPE_DEBUG );
 	// Farben:

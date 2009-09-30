@@ -23,12 +23,11 @@
 #include "main.h"
 #include "player.h"
 #include "map.h"
-#include "hud.h"
 #include "netmessage.h"
 #include "attackJobs.h"
 #include "input.h"
 #include "drawingcache.h"
-
+#include "hud.h"
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -88,13 +87,6 @@ struct sFX
 		sFXTracks* trackInfo;
 };
 
-struct sMouseBox
-{
-	float startX, startY;
-	float endX, endY;
-	bool isTooSmall();
-};
-
 /**
 * Client class which handles the in and output for a player
 *@author alzi alias DoctorDeath
@@ -106,36 +98,18 @@ public:
 	~cClient();
 
 private:
-	friend class cHud;
+	friend class cGameGUI;
 	friend class cPlayer;
 	friend class cBuilding;
 	friend class cVehicle;
-  friend class cUnit;
+	friend class cUnit;
 
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
-	/** if a player has entered a chat */
-	string sPlayerCheat;
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** ID of the timer */
 	SDL_TimerID TimerID;
-	/** will be incremented by the Timer */
-	unsigned int iTimerTime;
-	/** the acctual blink color */
-	unsigned int iBlinkColor;
-	/** the FLC-Animation */
-	FLI_Animation *FLC;
-	/** name of the FLC-Animation */
-	string sFLCname;
-	/** videosurface for buildings */
-	SDL_Surface *video;
-	/** true if the help cursor should be shown */
-	bool bHelpActive;
-	/** true if the name of a unit is being changed */
-	bool bChangeObjectName;
-	/** true if a chat message is being entered */
-	bool bChatInput;
 	/** list with all messages */
 	cList<sMessage*> messages;
 	/** number of current turn */
@@ -143,135 +117,27 @@ private:
 	/** lists with all FX-Animation */
 	cList<sFX*> FXList;
 	cList<sFX*> FXListBottom;
-	/** direction from which the wind is comming */
-	float fWindDir;
 	/** flags what should be displaxed in the raffinery */
 	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT;
 	/** Coordinates to a important message */
 	int iMsgCoordsX, iMsgCoordsY;
 	/** true if the player has been defeated */
 	bool bDefeated;
-	/** show infos about the running attackjobs */
-	bool bDebugAjobs;
-	/** show infos about the bases of the server. Only works on the host */
-	bool bDebugBaseServer;
-	/** show infos about the bases of the client */
-	bool bDebugBaseClient;
-	/** show infos about the sentries */
-	bool bDebugSentry;
-	/** show FX-infos */
-	bool bDebugFX;
-	/** show infos from the server about the unit under the mouse */
-	bool bDebugTraceServer;
-	/** show infos from the client about the unit under the mouse */
-	bool bDebugTraceClient;
-	/** show infos from the client about the unit under the mouse */
-	bool bDebugPlayers;
-	/** show FPS information */
-	bool bShowFPS;
-	/** show drawing cache debug information */
-	bool bDebugCache;
-	/** offset for the debug informations on the top of the gamewindow */
-	int iDebugOff;
 	/** how many seconds will be left for this turn */
 	int iTurnTime;
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
-	bool bStartupHud;
-	/** Saved positions for hotkeys F5-F8 */
-	sHudPosition SavedPositions[4];
-	/** the mouse state which the client reseived by event for the menus */
-	sMouseState clientMouseState;
-	/** the currently by the mouse pulled box */
-	sMouseBox mouseBox;
-	sMouseBox rightMouseBox;
 
-	bool selectUnit( cMapField *OverUnitField, bool base );
-	/**
-	* selects all vehicles which are within the mousebox
-	*@author alzi alias DoctorDeath
-	*/
-	void selectBoxVehicles ( sMouseBox &box );
-	/**
-	* deselects all group selected vehicles
-	*@author alzi alias DoctorDeath
-	*/
-	void deselectGroup ();
-	/**
-	* draws the minimap in the hud
-	*@author alzi alias DoctorDeath
-	*/
-	void drawMiniMap();
-	/**
-	* draws the video in the hud
-	*@author alzi alias DoctorDeath
-	*/
-	void drawFLC();
-	/**
-	* displays the effects
-	*@author alzi alias DoctorDeath
-	*/
-	void displayFX();
-	/**
-	* displays the bottom-effects
-	*@author alzi alias DoctorDeath
-	*/
-	void displayFXBottom();
-	/**
-	* draws an effect
-	*@author alzi alias DoctorDeath
-	*@param iNum Number of effect to draw
-	*/
-	void drawFX( int iNum );
-	/**
-	* draws an bottom-effect
-	*@author alzi alias DoctorDeath
-	*@param iNum Number of effect to draw
-	*/
-	void drawFXBottom( int iNum );
 	/**
 	* handles the game relevant actions (for example moving the current position of a rocket)
 	* of the fx-effects, so that they are handled also, when the effects are not drawn.
 	*/
 	void runFX();
 	/**
-	* draws an exitpoint on the ground
-	*@author alzi alias DoctorDeath
-	*@param iX X coordinate
-	*@param iY Y coordinate
-	*/
-	void drawExitPoint( int iX, int iY );
-	void drawUnitCircles ();
-	void displayDebugOutput();
-	void displayChatInput();
-	/**
-	* sets a new wind direction
-	*@author alzi alias DoctorDeath
-	*@param iDir new direction
-	*/
-	void setWind( int iDir );
-	/**
-	* opens or closes the panal over the hud
-	*@author alzi alias DoctorDeath
-	*@param bOpen if true the panal will be opened, else closed
-	*/
-	void makePanel( bool bOpen );
-	/**
-	* sets the next blink color for effects
-	*@author alzi alias DoctorDeath
-	*/
-	void rotateBlinkColor();
-	/**
 	* handles the game messages
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMessages();
-	/**
-	* checks whether the input is a comman
-	*@author alzi alias DoctorDeath
-	*@param sCmd the input string
-	*/
-	void doCommand ( string sCmd );
 
 	/**
 	* adds the unit to the map and player.
@@ -304,12 +170,6 @@ private:
 	*/
 	void makeHotSeatEnd( int iNextPlayerNum );
 	/**
-	* waits until this player gets a message, that he can stop waiting. This function is not finished!
-	*@author alzi alias DoctorDeath
-	*@param iPlayerNum Number of player for who this player has to wait
-	*/
-	void waitForOtherPlayer( int iPlayerNum, bool bStartup = false );
-	/**
 	* handles the rest-time of the current turn
 	*@author alzi alias DoctorDeath
 	*/
@@ -320,27 +180,6 @@ private:
 	*/
 	void handleMoveJobs ();
 	/**
-	* shows the information for the field under the mouse
-	*@author alzi alias DoctorDeath
-	*/
-	void trace ();
-	/**
-	* displays information about the vehicle on the screen
-	*@author alzi alias DoctorDeath
-	*@param Vehicle The vehicle for that the information should be displayed
-	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
-	*@param iX The X coords where the text should be drawn
-	*/
-	void traceVehicle ( cVehicle *Vehicle, int *iY, int iX );
-	/**
-	* displays information about the building on the screen
-	*@author alzi alias DoctorDeath
-	*@param Building The building for that the information should be displayed
-	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
-	*@param iX The X coords where the text should be drawn
-	*/
-	void traceBuilding ( cBuilding *Building, int *iY, int iX );
-	/**
 	* gets the subbase with the id
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase
@@ -349,13 +188,6 @@ private:
 public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
-	/** framecounter for the animations */
-	unsigned int iFrame;
-	/** number of drawn frames per second */
-	float fFPS;
-	/** number of main loop executions per second */
-	float fCPS;
-	Uint32 iLoad;
 	/** the active Player */
 	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
@@ -365,39 +197,20 @@ public:
 	/** the map */
 	cMap *Map;
 	/** the hud */
-	cHud Hud;
-	/** the currently selected vehicle */
-	cVehicle *SelectedVehicle;
-	cList<cVehicle*> SelectedVehicles;
-	/** the currently selected building */
-	cBuilding *SelectedBuilding;
+	cGameGUI gameGUI;
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
-	/** true if the client should end */
-	bool bExit;
+	/** will be incremented by the Timer */
+	unsigned int iTimerTime;
 	/** diffrent timers */
-	int iTimer0, iTimer1, iTimer2;
+	bool timer50ms, timer100ms, timer400ms;
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
-	/** Object that is under the mouse cursor */
-	cMapField *OverUnitField;
-
-	/** flag if the hud has to be drawn */
-	bool bFlagDrawHud;
-	/** flag if the map has to be drawn */
-	bool bFlagDrawMap;
-	/** flag if anything has to be drawn  */
-	bool bFlagDraw;
-	/** flag if the minimap has to be drawn  */
-	bool bFlagDrawMMap;
-
-	/** drawing cache to speed up the graphic engine */
-	cDrawingCache dCache;
 
 	/**
-	* handles the timers iTimer0, iTimer1 and iTimer2
+	* handles the timers timer50ms, timer100ms and timer400ms
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();
@@ -436,12 +249,6 @@ public:
 	*/
 	cVehicle *getVehicleFromID ( int iID );
 	cBuilding *getBuildingFromID ( int iID );
-	/**
-	* draws the map and everything on it
-	*@author alzi alias DoctorDeath
-	*@param bPure if true the map is drawn without the things on it.
-	*/
-	void drawMap( bool bPure = false );
 
 	/**
 	* initialises this client for the player.
@@ -449,17 +256,6 @@ public:
 	*@param Player The player.
 	*/
 	void initPlayer( cPlayer *Player );
-	/**
-	* will be called when the mouse is moved.
-	*@author alzi alias DoctorDeath
-	*@param bForce force to redraw the mouse even when the mouse has not been moved.
-	*/
-	void mouseMoveCallback ( bool bForce );
-	/**
-	* runs the client.
-	*@author alzi alias DoctorDeath
-	*/
-	void run();
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
@@ -506,10 +302,6 @@ public:
 	void destroyUnit( cBuilding* building );
 
 	void checkVehiclePositions( cNetMessage* message );
-	void handleHotKey ( SDL_keysym &keysym );
-	void handleMouseInput ( sMouseState mouseState );
-	sMouseState getMouseState();
-
 } EX *Client;
 
 #endif

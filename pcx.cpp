@@ -22,9 +22,7 @@
 #include "settings.h"
 #include "main.h"
 
-#include <string>
-
-SDL_Surface *LoadPCX ( const char *name )
+SDL_Surface *LoadPCX ( std::string name )
 {
 	unsigned int *_ptr;
 	unsigned char temp;
@@ -36,9 +34,9 @@ SDL_Surface *LoadPCX ( const char *name )
 	SDL_RWops *file;
 
 	// Die Datei öffnen:
-	if(FileExists(name))
+	if(FileExists(name.c_str()))
 	{
-		file=SDL_RWFromFile ( name,"rb" );
+		file=SDL_RWFromFile ( name.c_str(),"rb" );
 	}
 	else
 	{

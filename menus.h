@@ -252,27 +252,37 @@ protected:
 	 */
 	~cMenu();
 
+	virtual void preDrawFunction() {};
+
 public:
 	/**
 	 * redraws the menu background, the cursor and all menuitems.
 	 *@author alzi
 	 */
-	void draw( bool firstDraw = false );
+	void draw( bool firstDraw = false, bool showScreen = true );
 	/**
 	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
 	 *@author alzi
 	 */
-	int show();/**
-	 * sets end to true an what will close the menu.
+	virtual int show();
+	/**
+	 * sets end to true what will close the menu.
 	 *@author alzi
 	 */
 	void close();
+	virtual void returnToCallback();
 
 	/**
 	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.
 	 *@author alzi
 	 */
 	void handleMouseInput( sMouseState mouseState );
+	/**
+	 * gives the opinion to handle the mouse input to childclasses.
+	 * This function is called at the end of handleMouseInput().
+	 *@author alzi
+	 */
+	virtual void handleMouseInputExtended( sMouseState mouseState ) {}
 	/**
 	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
@@ -511,7 +521,7 @@ protected:
 	cMenuLabel *infoText;
 	cMenuCheckButton *infoTextCheckBox;
 
-	cMenuUnitDetails *unitDetails;
+	cMenuUnitDetailsBig *unitDetails;
 
 	cMenuUnitsList *selectionList;
 	cMenuUnitListItem *selectedUnit;
@@ -923,7 +933,6 @@ class cUpgradeMenu : public cUpgradeHangarMenu
 protected:
 public:
 	cUpgradeMenu( cPlayer *player );
-	~cUpgradeMenu();
 
 	static void doneReleased ( void *parent );
 	static void backReleased ( void *parent );
@@ -940,7 +949,7 @@ protected:
 	cMenuImage *infoImage;
 	cMenuLabel *infoText;
 
-	cMenuUnitDetails *unitDetails;
+	cMenuUnitDetailsBig *unitDetails;
 
 	cMenuButton *doneButton;
 

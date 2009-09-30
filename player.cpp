@@ -21,6 +21,7 @@
 #include "client.h"
 #include "server.h"
 #include "serverevents.h"
+#include "hud.h"
 
 //-----------------------------------------------------------------------
 // Implementation cPlayer class
@@ -63,6 +64,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = false;
+
+	savedHud = new sHudStateContainer;
 }
 
 //-----------------------------------------------------------------------
@@ -107,6 +110,8 @@ cPlayer::cPlayer(const cPlayer &Player)
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
+
+	savedHud = new sHudStateContainer;
 }
 
 //-----------------------------------------------------------------------
@@ -184,6 +189,8 @@ cPlayer::~cPlayer ()
 		delete LockList[0];
 		LockList.Delete ( 0 );
 	}
+
+	delete savedHud;
 }
 
 //--------------------------------------------------------------------------
@@ -526,9 +533,9 @@ cVehicle *cPlayer::GetNextVehicle ()
 {
 	cVehicle *v, *start;
 	bool next = false;
-	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner == this )
+	if ( Client->gameGUI.getSelVehicle() && Client->gameGUI.getSelVehicle()->owner == this )
 	{
-		start = Client->SelectedVehicle;
+		start = Client->gameGUI.getSelVehicle();
 		next = true;
 	}
 	else
@@ -558,9 +565,9 @@ cVehicle *cPlayer::GetPrevVehicle ()
 {
 	cVehicle *v, *start;
 	bool next = false;
-	if ( Client->SelectedVehicle && Client->SelectedVehicle->owner == this )
+	if ( Client->gameGUI.getSelVehicle() && Client->gameGUI.getSelVehicle()->owner == this )
 	{
-		start = Client->SelectedVehicle;
+		start = Client->gameGUI.getSelVehicle();
 		next = true;
 	}
 	else
@@ -884,12 +891,13 @@ void cPlayer::ToggelLock ( cMapField *OverUnitField )
 //--------------------------------------------------------------------------
 /** Draws all entries, that are in the lock list. */
 //--------------------------------------------------------------------------
-void cPlayer::DrawLockList (cHud const& hud)
+void cPlayer::DrawLockList ()
 {
-	if ( !hud.Lock ) return;
+	if ( !Client->gameGUI.lockChecked() ) return;
 	sLockElem *elem;
 	int spx, spy, off;
 
+	
 	for ( unsigned int i = 0; i < LockList.Size(); i++ )
 	{
 		elem = LockList[i];
@@ -905,24 +913,24 @@ void cPlayer::DrawLockList (cHud const& hud)
 			spx=elem->v->GetScreenPosX();
 			spy=elem->v->GetScreenPosY();
 
-			if ( hud.Scan )
+			if ( Client->gameGUI.scanChecked() )
 			{
 				if ( elem->v->data.isBig )
-					drawCircle ( spx+ hud.Zoom, spy + hud.Zoom, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+					drawCircle ( spx+ Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize(), elem->v->data.scan * Client->gameGUI.getTileSize(), SCAN_COLOR, buffer );
 				else
-					drawCircle ( spx + hud.Zoom/2, spy + hud.Zoom/2, elem->v->data.scan * hud.Zoom, SCAN_COLOR, buffer );
+					drawCircle ( spx + Client->gameGUI.getTileSize()/2, spy + Client->gameGUI.getTileSize()/2, elem->v->data.scan * Client->gameGUI.getTileSize(), SCAN_COLOR, buffer );
 			}
-			if ( hud.Reichweite && (elem->v->data.canAttack & TERRAIN_GROUND) )
-				drawCircle ( spx+hud.Zoom/2,
-				             spy+hud.Zoom/2,
-				             elem->v->data.range*hud.Zoom+1,RANGE_GROUND_COLOR,buffer );
-			if ( hud.Reichweite && (elem->v->data.canAttack & TERRAIN_AIR) )
-				drawCircle ( spx+hud.Zoom/2,
-				             spy+hud.Zoom/2,
-				             elem->v->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
-			if ( hud.Munition&&elem->v->data.canAttack )
+			if ( Client->gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND) )
+				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
+				             spy+Client->gameGUI.getTileSize()/2,
+				             elem->v->data.range*Client->gameGUI.getTileSize()+1,RANGE_GROUND_COLOR,buffer );
+			if ( Client->gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR) )
+				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
+				             spy+Client->gameGUI.getTileSize()/2,
+				             elem->v->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
+			if ( Client->gameGUI.ammoChecked()&&elem->v->data.canAttack )
 				elem->v->DrawMunBar();
-			if ( hud.Treffer )
+			if ( Client->gameGUI.hitsChecked() )
 				elem->v->drawHealthBar();
 		}
 		else if ( elem->b )
@@ -937,29 +945,29 @@ void cPlayer::DrawLockList (cHud const& hud)
 			spx=elem->b->GetScreenPosX();
 			spy=elem->b->GetScreenPosY();
 
-			if ( hud.Scan )
+			if ( Client->gameGUI.scanChecked() )
 			{
 				if ( elem->b->data.isBig )
-					drawCircle ( spx+hud.Zoom,
-					             spy+hud.Zoom,
-					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
+					drawCircle ( spx+Client->gameGUI.getTileSize(),
+					             spy+Client->gameGUI.getTileSize(),
+					             elem->b->data.scan*Client->gameGUI.getTileSize(),SCAN_COLOR,buffer );
 				else
-					drawCircle ( spx+hud.Zoom/2,
-					             spy+hud.Zoom/2,
-					             elem->b->data.scan*hud.Zoom,SCAN_COLOR,buffer );
+					drawCircle ( spx+Client->gameGUI.getTileSize()/2,
+					             spy+Client->gameGUI.getTileSize()/2,
+					             elem->b->data.scan*Client->gameGUI.getTileSize(),SCAN_COLOR,buffer );
 			}
-			if ( hud.Reichweite && (elem->b->data.canAttack & TERRAIN_GROUND) &&!elem->b->data.explodesOnContact )
-				drawCircle ( spx+hud.Zoom/2,
-				             spy+hud.Zoom/2,
-				             elem->b->data.range*hud.Zoom+2,RANGE_GROUND_COLOR,buffer );
-			if ( hud.Reichweite && (elem->b->data.canAttack & TERRAIN_AIR) )
-				drawCircle ( spx+hud.Zoom/2,
-				             spy+hud.Zoom/2,
-				             elem->b->data.range*hud.Zoom+2,RANGE_AIR_COLOR,buffer );
+			if ( Client->gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) &&!elem->b->data.explodesOnContact )
+				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
+				             spy+Client->gameGUI.getTileSize()/2,
+				             elem->b->data.range*Client->gameGUI.getTileSize()+2,RANGE_GROUND_COLOR,buffer );
+			if ( Client->gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR) )
+				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
+				             spy+Client->gameGUI.getTileSize()/2,
+				             elem->b->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
 
-			if ( hud.Munition && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
+			if ( Client->gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
 				elem->b->DrawMunBar();
-			if ( hud.Treffer )
+			if ( Client->gameGUI.hitsChecked() )
 				elem->b->DrawHelthBar();
 		}
 	}

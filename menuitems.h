@@ -131,6 +131,8 @@ protected:
 	bool isClicked;
 	/** if this is true, the item is always in clicked state and no clicked, release, etc. functions will be called anymore */
 	bool locked;
+	/** if this is true the menu will not handle any clicks or keys on this item */
+	bool disabled;
 
 	/**
 	 * Function that will be called when the item has been clicked.
@@ -139,11 +141,16 @@ protected:
 	 */
 	virtual bool preClicked() { return true; }
 	/**
-	 * Function that will be called when the mouse has been released over this item.
+	 * Function that will be called when the mouse has been released over this item before calling the release-pointer-function.
 	 *@author alzi
 	 *@return if 'false' the release-pointer-function will not be called.
 	 */
 	virtual bool preReleased();
+	/**
+	 * Function that will be called when the mouse has been released over this item after calling the release-pointer-function.
+	 *@author alzi
+	 */
+	virtual void postReleased() {}
 	/**
 	 * Function that will be called when the mouse hovers onto the item.
 	 *@author alzi
@@ -225,7 +232,7 @@ public:
 	 *@param ch the encoded key
 	 *@param parent pointer to the calling menu
 	 */
-	virtual void handleKeyInput( SDL_keysym keysym, string ch, void *parent ) {}
+	virtual bool handleKeyInput( SDL_keysym keysym, string ch, void *parent ) { return false; }
 
 	/**
 	 * sets a new position of the item
@@ -233,10 +240,15 @@ public:
 	 */
 	void move ( int x, int y );
 	/**
-	 * locks the item.
+	 * locks or unlocks the item.
 	 *@author alzi
 	 */
 	void setLocked( bool locked_ );
+	/**
+	 * disables or enables the item.
+	 *@author alzi
+	 */
+	void setDisabled( bool disabled_ );
 	/**
 	 * sets a new clicked sound.
 	 *@author alzi
@@ -274,6 +286,11 @@ public:
 	 *@author alzi
 	 */
 	bool getIsClicked();
+	/**
+	 * returns whether the item is disabled or not.
+	 *@author alzi
+	 */
+	bool isDisabled() { return disabled; }
 };
 
 /**
@@ -308,6 +325,7 @@ class cMenuImage : public cMenuItem
 {
 protected:
 	SDL_Surface *image;
+	bool freeImages;
 
 public:
 	/**
@@ -315,7 +333,7 @@ public:
 	 * so have in mind that you must not free it twice.
 	 *@author alzi
 	 */
-	cMenuImage ( int x, int y, SDL_Surface *image_ = NULL );
+	cMenuImage ( int x, int y, SDL_Surface *image_ = NULL, bool freeImages_ = true );
 	~cMenuImage();
 	void setImage( SDL_Surface *image_ );
 	void draw();
@@ -376,6 +394,20 @@ public:
 		BUTTON_TYPE_ARROW_UP_BAR,
 		BUTTON_TYPE_ARROW_DOWN_BAR,
 		BUTTON_TYPE_ANGULAR,
+
+		BUTTON_TYPE_HUD_HELP,
+		BUTTON_TYPE_HUD_CENTER,
+		BUTTON_TYPE_HUD_NEXT,
+		BUTTON_TYPE_HUD_PREV,
+		BUTTON_TYPE_HUD_DONE,
+		BUTTON_TYPE_HUD_REPORT,
+		BUTTON_TYPE_HUD_CHAT,
+
+		BUTTON_TYPE_HUD_PREFERENCES,
+		BUTTON_TYPE_HUD_FILES,
+		BUTTON_TYPE_HUD_END,
+		BUTTON_TYPE_HUD_PLAY,
+		BUTTON_TYPE_HUD_STOP,
 	};
 protected:
 
@@ -387,9 +419,11 @@ protected:
 	void renewButtonSurface();
 	void redraw();
 	int getTextYOffset();
+	int getBordersSize();
 
 	bool preClicked();
 	bool preReleased();
+	void postReleased();
 	bool preHoveredOn();
 	bool preHoveredAway();
 
@@ -421,6 +455,21 @@ public:
 		CHECKBOX_TYPE_SHIP,
 		CHECKBOX_TYPE_BUILD,
 		CHECKBOX_TYPE_TNT,
+
+		CHECKBOX_HUD_INDEX_00,
+		CHECKBOX_HUD_INDEX_01,
+		CHECKBOX_HUD_INDEX_02,
+		CHECKBOX_HUD_INDEX_10,
+		CHECKBOX_HUD_INDEX_11,
+		CHECKBOX_HUD_INDEX_12,
+		CHECKBOX_HUD_INDEX_20,
+		CHECKBOX_HUD_INDEX_21,
+		CHECKBOX_HUD_INDEX_22,
+
+		CHECKBOX_HUD_LOCK,
+		
+		CHECKBOX_HUD_TNT,
+		CHECKBOX_HUD_2X
 	};
 
 	/** deffines whether the text will be displayed at the left or the right of the item.
@@ -655,6 +704,7 @@ public:
 		MENU_SYMBOLS_TRANS_TANK,
 		MENU_SYMBOLS_TRANS_AIR
 	};
+	static void drawNumber ( int x, int y, int value, int maximalValue );
 	static void drawSymbols ( eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2 );
 
 	static SDL_Rect getBigSymbolPosition ( eUnitDataSymbols symType );
@@ -662,16 +712,37 @@ public:
 };
 
 /**
- * an item that displays the data-values (attack, range, scan, etc.) of unit with the corresponding symbols.
+ * an item that displays the data-values (attack, range, scan, etc.) of unit with the corresponding symbols for the hud.
  *@author alzi
  */
 class cMenuUnitDetails : public cMenuItem
 {
 protected:
+	cVehicle *vehicle;
+	cBuilding *building;
+
+	cPlayer *owner;
+	bool drawLines;
+
+public:
+	cMenuUnitDetails( int x, int y, bool drawLines_, cPlayer *owner_ );
+	void draw();
+
+	void setOwner ( cPlayer *owner_ );
+	void setSelection ( cVehicle *vehicle_, cBuilding *building_ );
+};
+
+/**
+ * an item that displays the data-values (attack, range, scan, etc.) of a unit with the corresponding symbols.
+ *@author alzi
+ */
+class cMenuUnitDetailsBig : public cMenuItem
+{
+protected:
 	cMenuUnitListItem *selectedUnit;
 
 public:
-	cMenuUnitDetails( int x, int y );
+	cMenuUnitDetailsBig( int x, int y );
 	void draw();
 
 	void setSelection ( cMenuUnitListItem *selectedUnit_ );
@@ -723,7 +794,7 @@ public:
 };
 
 /**
- * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetails item.
+ * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetailsBig item.
  *@author alzi
  */
 class cMenuUpgradeHandler : public cMenuItemContainer
@@ -755,7 +826,8 @@ public:
 	enum eMenuScrollerTypes
 	{
 		SCROLLER_TYPE_HORI,
-		SCROLLER_TYPE_VERT
+		SCROLLER_TYPE_VERT,
+		SCROLLER_TYPE_HUD_ZOOM
 	};
 private:
 	cMenuItem *parent;
@@ -839,6 +911,7 @@ public:
  */
 class cMenuLineEdit : public cMenuItem
 {
+protected:
 	void (*returnPressed)(void *);
 
 	cMenu *parentMenu;
@@ -855,6 +928,8 @@ class cMenuLineEdit : public cMenuItem
 	void scrollRight();
 	void deleteLeft();
 	void deleteRight();
+
+	virtual int getBorderSize();
 public:
 	cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_ );
 	void draw();
@@ -871,9 +946,20 @@ public:
 	void setTaking ( bool takeChars_, bool takeNumerics_ );
 	void setText ( string text_ );
 	string getText ();
-	void handleKeyInput( SDL_keysym keysym, string ch, void *parent );
+	bool handleKeyInput( SDL_keysym keysym, string ch, void *parent );
 
 	void setReturnPressedFunc( void (*returnPressed_)(void *) );
+};
+
+class cMenuChatBox : public cMenuLineEdit
+{
+	SDL_Surface *surface;
+
+	void generateSurface();
+	int getBorderSize();
+public:
+	cMenuChatBox ( int x, int y, cMenu *parentMenu_ );
+	void draw();
 };
 
 /**
@@ -998,8 +1084,6 @@ class cMenuStoredUnitDetails : public cMenuItem
 {
 protected:
 	sUnitData *unitData;
-
-	void drawNumber ( int value, int maximalValue, int index );
 public:
 	cMenuStoredUnitDetails( int x, int y, sUnitData *unitData_ = NULL );
 	void draw();
@@ -1009,24 +1093,39 @@ public:
 
 class cMenuSlider : public cMenuItem
 {
+public:
+	enum eSliderType
+	{
+		SLIDER_TYPE_NORMAL,
+		SLIDER_TYPE_HUD_ZOOM,
+	};
+	enum eSliderDirection
+	{
+		SLIDER_DIR_LEFTMIN,
+		SLIDER_DIR_RIGHTMIN,
+	};
 protected:
-	int maxValue;
-	int curValue;
+	float minValue;
+	float maxValue;
+	float curValue;
+
+	eSliderType type;
+	eSliderDirection direction;
 
 	SDL_Surface *surface;
 	cMenu *parent;
 
 	void (*movedCallback)(void *);
 public:
-	cMenuSlider( int x, int y, int maxValue_, cMenu *parent_ );
+	cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu *parent_, int wight = 58, eSliderType type_ = SLIDER_TYPE_NORMAL, eSliderDirection direction_ = SLIDER_DIR_LEFTMIN );
 	~cMenuSlider();
 
 	cMenuScroller *scroller;
 
 	void draw();
 
-	void setValue( int value );
-	int getValue();
+	void setValue( float value );
+	float getValue();
 	void setMoveCallback ( void (*movedCallback_)(void *) );
 
 	static void scrollerMoved( void *parent );
@@ -1074,6 +1173,8 @@ class cMenuReportsScreen : public cMenuItem
 		REP_SCR_TYPE_REPORTS
 	};
 
+	cMenuUnitDetails **unitDetails;
+
 	eReportScreenTypes screenType;
 
 	bool checkFilter ( sUnitData &data, bool checkInclude );
@@ -1087,6 +1188,7 @@ class cMenuReportsScreen : public cMenuItem
 
 public:
 	cMenuReportsScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
+	~cMenuReportsScreen();
 
 	void draw();
 

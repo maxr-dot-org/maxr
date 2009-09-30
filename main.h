@@ -77,17 +77,17 @@ struct sVehicle;
 #define SPLASHWIDTH 500
 /** Slashscreen height  */
 #define SPLASHHEIGHT 420
-#define GRID_COLOR         0x305C04 // Farbe der Gitternetzlinien
-#define SCAN_COLOR         0xE3E300 // Farbe des Scan-Kreises
-#define RANGE_GROUND_COLOR 0xE20000 // Farbe des Reichweiten Kreises f¸r Land
-#define RANGE_AIR_COLOR    0xFCA800 // Farbe des Reichweiten Kreises f¸r Luft
-#define PFEIL_COLOR        0x00FF00 // Farbe eines Pfeiles
-#define PFEILS_COLOR       0x0000FF // Farbe eines speziellen Pfeiles
-#define MOVE_SPEED         7       // Geschwindigkeit der Fahrzeuge
-#define MSG_FRAMES         300      // Anzahl an Frames, die eine Nachricht zu sehen ist
-#define USER_WARPMOUSE		SDL_USEREVENT+0	// An Event for moving the mouse; this is the first UserEvent
-#define LANDING_DISTANCE_WARNING 28
-#define LANDING_DISTANCE_TOO_CLOSE 10
+#define GRID_COLOR			0x305C04	// color of the grid
+#define SCAN_COLOR			0xE3E300	// color of scan circles
+#define RANGE_GROUND_COLOR	0xE20000	// color of range circles for ground attack
+#define RANGE_AIR_COLOR		0xFCA800	// color of range circles for air attack
+#define PFEIL_COLOR			0x00FF00	// color of a waypointarrow
+#define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
+#define MOVE_SPEED			7			// speed of vehcilemovements
+#define MSG_TICKS			3000		// number of ticks for how long a message will be displayed
+#define ANIMATION_SPEED		((int)(Client->iTimerTime/(2)))		// this means every 100ms becouse Client->iTimerTime will increase every 50ms.
+#define LANDING_DISTANCE_WARNING	28
+#define LANDING_DISTANCE_TOO_CLOSE	10
 
 //minimap configuration
 #define MINIMAP_COLOR		0xFC0000 //color of the screen borders on the minimap
@@ -340,7 +340,6 @@ class cGraphicsData
 {
 public:
 	SDL_Surface *gfx_hud;
-	SDL_Surface *gfx_hud_backup;
 	SDL_Surface *gfx_Chand;
 	SDL_Surface *gfx_Cno;
 	SDL_Surface *gfx_Cselect;
@@ -393,6 +392,7 @@ public:
 	SDL_Surface *gfx_exitpoints;
 	SDL_Surface *gfx_menu_buttons;
 	SDL_Surface *gfx_player_ready;
+	SDL_Surface *gfx_hud_chatbox;
 
 	string DialogPath;
 	string Dialog2Path;

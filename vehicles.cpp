@@ -32,6 +32,7 @@
 #include "attackJobs.h"
 #include "menus.h"
 #include "settings.h"
+#include "hud.h"
 
 
 //-----------------------------------------------------------------------------
@@ -185,14 +186,14 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//make damage effect
-	if ( Client->iTimer1 && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
 	}
 
 	//make landing and take off of planes
-	if ( data.factorAir > 0 && Client->iTimer0 )
+	if ( data.factorAir > 0 && Client->timer50ms )
 	{
 		// check, if the plane should land
 		cBuilding *b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
@@ -210,9 +211,10 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// make the dithering
-	if ( FlightHigh > 0 && Client->iTimer0 )
+	if ( FlightHigh > 0 && Client->timer100ms )
 	{
-		if ( moving || Client->iFrame % 10 == 0 )
+
+		if ( moving || ANIMATION_SPEED % 10 == 0 )
 		{
 			ditherX = 0;
 			ditherY = 0;
@@ -230,7 +232,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//rotate vehicles to the right direction for building/clearing
-	if ( ( IsBuilding || IsClearing ) && Client->iTimer0 )
+	if ( ( IsBuilding || IsClearing ) && Client->timer100ms )
 	{
 		if ( data.isBig ) 
 			dir = 0;
@@ -241,7 +243,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//run start up effect
 	if ( StartUp )
 	{
-		if ( Client->iTimer0 )
+		if ( Client->timer50ms )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )
@@ -256,18 +258,16 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 
 	if ( IsBuilding && dir == 0 && BigBetonAlpha < 255 )
 	{
-		if ( Client->iTimer0 )
+		if ( Client->timer50ms )
 			BigBetonAlpha += 25;
 
 		if ( BigBetonAlpha > 255 )
 			BigBetonAlpha = 255;
 	}
 
-	float factor = (float) (Client->Hud.Zoom/64.0);
-
 	//calculate screen position
-	int ox = (int) (OffX * factor);
-	int oy = (int) (OffY * factor);
+	int ox = (int) (OffX * Client->gameGUI.getZoom());
+	int oy = (int) (OffY * Client->gameGUI.getZoom());
 	
 	if ( !IsBuilding && !IsClearing )
 	{
@@ -283,12 +283,12 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = Client->dCache.getCachedImage(this);
+	SDL_Surface* drawingSurface = Client->gameGUI.getDCache()->getCachedImage(this);
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = Client->dCache.createNewEntry(this);
+		drawingSurface = Client->gameGUI.getDCache()->createNewEntry(this);
 	}
 
 	if ( drawingSurface == NULL )
@@ -316,18 +316,18 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		SDL_Rect src;
 
 		tmp = screenPosition;
-		src.h = src.w = (int)(typ->overlay_org->h*factor);
-		tmp.x += Client->Hud.Zoom / 2 - src.h / 2;
-		tmp.y += Client->Hud.Zoom / 2 - src.h / 2;
+		src.h = src.w = (int)(typ->overlay_org->h*Client->gameGUI.getZoom());
+		tmp.x += (int)(Client->gameGUI.getTileSize()) / 2 - src.h / 2;
+		tmp.y += (int)(Client->gameGUI.getTileSize()) / 2 - src.h / 2;
 		src.y = 0;
-		src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( Client->iFrame % ( (int)(typ->overlay_org->w*factor) / src.h ) ) ) ) * factor );
+		src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( ANIMATION_SPEED % ( (int)(typ->overlay_org->w*Client->gameGUI.getZoom()) / src.h ) ) ) ) * Client->gameGUI.getZoom() );
 
 		if ( StartUp && SettingsData.bAlphaEffects )
 			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
 		else
 			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
 
-		blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, factor );
+		blitWithPreScale ( typ->overlay_org, typ->overlay, &src, buffer, &tmp, Client->gameGUI.getZoom() );
 	}
 
 	//remove the dithering for the following operations
@@ -342,12 +342,12 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ( ( Client->iFrame % 0x8 ) * 0x1000 );
+		nr = 0xFF00 - ( ( ANIMATION_SPEED % 0x8 ) * 0x1000 );
 
 		if ( data.isBig )
-			max = ( Client->Hud.Zoom * 2) - 3;
+			max = ( Client->gameGUI.getTileSize() * 2) - 3;
 		else
-			max = Client->Hud.Zoom - 3;
+			max = Client->gameGUI.getTileSize() - 3;
 
 		d.x = screenPosition.x + 2;
 		d.y = screenPosition.y + 2;
@@ -371,16 +371,14 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// Draw the colored frame if necessary
-	if ( Client->Hud.Farben )
+	if ( Client->gameGUI.colorChecked() )
 	{
 		SDL_Rect d, t;
 		int max, nr;
 		nr = * ( unsigned int* ) owner->color->pixels;
 
-		if ( data.isBig )
-			max = ( Client->Hud.Zoom - 1 ) * 2;
-		else
-			max = Client->Hud.Zoom - 1;
+		if ( data.isBig ) max = ( (int)(Client->gameGUI.getTileSize()) - 1 ) * 2;
+		else max = (int)(Client->gameGUI.getTileSize()) - 1;
 
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
@@ -409,27 +407,27 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		Uint32 color = 0xFFFF00;
 		SDL_Rect d;
 
-		d.w = Client->Hud.Zoom-2;
+		d.w = (int)(Client->gameGUI.getTileSize())-2;
 		d.h = 1;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
-		d.w = Client->Hud.Zoom-2;
+		d.w = (int)(Client->gameGUI.getTileSize())-2;
 		d.h = 1;
 		d.x = screenPosition.x + 1;
-		d.y = screenPosition.y + Client->Hud.Zoom-1;
+		d.y = screenPosition.y + (int)(Client->gameGUI.getTileSize())-1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
-		d.h = Client->Hud.Zoom-2;
+		d.h = (int)(Client->gameGUI.getTileSize())-2;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
-		d.h = Client->Hud.Zoom-2;
-		d.x = screenPosition.x + Client->Hud.Zoom-1;
+		d.h = (int)(Client->gameGUI.getTileSize())-2;
+		d.x = screenPosition.x + (int)(Client->gameGUI.getTileSize())-1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 	}
@@ -438,10 +436,8 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		SDL_Rect d, t;
 		int len, max;
 
-		if ( ( IsBuilding || IsClearing ) && data.isBig )
-			max = Client->Hud.Zoom * 2;
-		else
-			max = Client->Hud.Zoom;
+		if ( ( IsBuilding || IsClearing ) && data.isBig ) max = (int)(Client->gameGUI.getTileSize()) * 2;
+		else max = (int)(Client->gameGUI.getTileSize());
 
 		len = max / 4;
 
@@ -450,52 +446,52 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
-		SDL_FillRect ( buffer, &d, Client->iBlinkColor );
+		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 	}
 	
 	//draw health bar
-	if ( Client->Hud.Treffer )
+	if ( Client->gameGUI.hitsChecked() )
 		drawHealthBar();
 
 	//draw ammo bar
-	if ( Client->Hud.Munition && data.canAttack)
+	if ( Client->gameGUI.ammoChecked() && data.canAttack)
 		DrawMunBar();
 
 	//draw status info
-	if ( Client->Hud.Status )
+	if ( Client->gameGUI.statusChecked() )
 		drawStatus();
 
 	//attack job debug output
-	if ( Client->bDebugAjobs )
+	if ( Client->gameGUI.getAJobDebugStatus() )
 	{
 		cVehicle* serverVehicle = NULL;
 		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
@@ -510,7 +506,8 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 {
 	//Note: when changing something in this function, make sure to update the caching rules!
 	SDL_Rect src, tmp;
-	float factor = (float) (Client->Hud.Zoom/64.0);
+
+	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	//draw working engineers and bulldozers:
 	if ( (IsBuilding || ( IsClearing && data.isBig )) && dir == 0 )
@@ -526,13 +523,12 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 		// draw shadow
 		tmp = dest;
-		if ( SettingsData.bShadows )
-			blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, factor );
+		if ( SettingsData.bShadows ) blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, factor );
 
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int)(typ->build_org->h*factor);
-		src.x = ( Client->iFrame % 4 ) * src.w;
+		src.x = ( ANIMATION_SPEED % 4 ) * src.w;
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 		blitWithPreScale ( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
 
@@ -556,7 +552,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int)(typ->clear_small_org->h*factor);
-		src.x = ( Client->iFrame % 4 ) * src.w;
+		src.x = ( ANIMATION_SPEED % 4 ) * src.w;
 		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
 		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, factor, 4 );
@@ -574,8 +570,8 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	//draw all other vehicles:
 
 	// read the size:
-	src.w = (int)(typ->img_org[dir]->w*factor);
-	src.h = (int)(typ->img_org[dir]->h*factor);
+	src.w = (int)(typ->img_org[dir]->w*Client->gameGUI.getZoom());
+	src.h = (int)(typ->img_org[dir]->h*Client->gameGUI.getZoom());
 
 	// draw shadow
 	tmp = dest;
@@ -588,22 +584,22 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		// draw shadow
 		if ( FlightHigh > 0 )
 		{
-			int high = ( ( int ) ( Client->Hud.Zoom * ( FlightHigh / 64.0 ) ) );
+			int high = ( ( int ) ( (int)(Client->gameGUI.getTileSize()) * ( FlightHigh / 64.0 ) ) );
 			tmp.x += high;
 			tmp.y += high;
 
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, factor );
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, Client->gameGUI.getZoom() );
 		}
 		else if ( data.animationMovement )
 		{
 			SDL_Rect r;
-			r.h = r.w = (int) (typ->img_org[dir]->h*factor);
+			r.h = r.w = (int) (typ->img_org[dir]->h*Client->gameGUI.getZoom());
 			r.x = r.w * WalkFrame;
 			r.y = 0;
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, factor );
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, Client->gameGUI.getZoom() );
 		}
 		else
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, factor );
+			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, Client->gameGUI.getZoom() );
 	}
 
 	// draw player color
@@ -611,13 +607,13 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 	if ( data.animationMovement )
 	{
-		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*factor);
+		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*Client->gameGUI.getZoom());
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, factor );
+		blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, Client->gameGUI.getZoom() );
 	}
 	else
-		blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, factor );
+		blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, Client->gameGUI.getZoom() );
 
 
 	// draw the vehicle
@@ -650,34 +646,21 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 //-----------------------------------------------------------------------------
 void cVehicle::Select ()
 {
-	int error;
 	selected = true;
 	// load the video
-	if ( Client->FLC != NULL )
-		FLI_Close ( Client->FLC );
-	Client->FLC = NULL;
-	Client->sFLCname = "";
-	Client->video = NULL;	
-	if(FileExists(typ->FLCFile))
+	if ( Client->gameGUI.getFLC() != NULL ) FLI_Close ( Client->gameGUI.getFLC() );
+	if( FileExists(typ->FLCFile) )
 	{
-		Client->FLC = FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), &error );
-		Client->sFLCname = typ->FLCFile;
+		Client->gameGUI.setFLC ( FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), NULL ) );
 	}
 	else
 	{	//in case the flc video doesn't exist we use the storage image instead
-		Client->video = typ->storage;
-	}
-
-	if ( error != 0 )
-		Client->Hud.ResetVideoMonitor();
-	else
-	{
-		FLI_Rewind ( Client->FLC );
-		FLI_NextFrame ( Client->FLC );
+		Client->gameGUI.setFLC ( NULL );
+		Client->gameGUI.setVideoSurface ( typ->storage );
 	}
 
 	MakeReport();
-	ShowDetails();
+	Client->gameGUI.setUnitDetailsData ( this, NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -709,7 +692,8 @@ void cVehicle::Deselct ()
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
-	Client->bFlagDrawHud = true;
+	Client->gameGUI.setFLC ( NULL );
+	Client->gameGUI.setUnitDetailsData ( NULL, NULL );
 }
 
 //-----------------------------------------------------------------------------
@@ -961,422 +945,11 @@ int cVehicle::refreshData ()
 }
 
 //-----------------------------------------------------------------------------
-/** Shows the unit stats of the vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::ShowDetails ( bool hud, int x, int y, SDL_Surface *destSurface, bool drawLines )
-{
-	SDL_Rect src, dest;
-	if ( hud )
-	{
-		// Den Hintergrund wiederherstellen:
-		src.x = 0;
-		src.y = 215;
-		src.w = 155;
-		src.h = 48;
-		dest.x = 8;
-		dest.y = 171;
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
-		destSurface = GraphicsData.gfx_hud;
-	}
-	else
-	{
-		dest.x = x;
-		dest.y = y;
-		if ( !destSurface ) return;
-	}
-
-	if ( drawLines )
-	{
-		SDL_Rect lineRect = { dest.x+2, dest.y+14, 153, 1 };
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-		lineRect.y += 12;
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-		lineRect.y += 12;
-		SDL_FillRect ( destSurface ,&lineRect, 0x743904 );
-	}
-	// Die Hitpoints anzeigen:
-	DrawNumber ( dest.x+23, dest.y+6, data.hitpointsCur, data.hitpointsMax, destSurface );
-
-	font->showText ( dest.x+47, dest.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, destSurface );
-	DrawSymbol ( SHits, dest.x+80, dest.y+3, 70, data.hitpointsCur, data.hitpointsMax, destSurface );
-	// Den Speed anzeigen:
-	DrawNumber ( dest.x+23, dest.y+30, data.speedCur / 4, data.speedMax / 4, destSurface );
-
-	font->showText ( dest.x+47, dest.y+30, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, destSurface );
-	DrawSymbol ( SSpeed, dest.x+80, dest.y+28, 70, data.speedCur / 4, data.speedMax / 4, destSurface );
-	// additional values
-
-	if ( ( data.storeResType != sUnitData::STORE_RES_NONE || data.storageUnitsMax > 0 ) && owner == Client->ActivePlayer )
-	{
-		font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		if ( data.storeResType > 0 )
-		{
-			DrawNumber ( dest.x+23, dest.y+18, data.storageResCur, data.storageResMax, destSurface );
-			switch ( data.storeResType )
-			{
-			case sUnitData::STORE_RES_METAL:
-				DrawSymbol ( SMetal, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
-				break;
-			case sUnitData::STORE_RES_OIL:
-				DrawSymbol ( SOil, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
-				break;
-			case sUnitData::STORE_RES_GOLD:
-				DrawSymbol ( SGold, dest.x+80, dest.y+15, 70, data.storageResCur, data.storageResMax, destSurface );
-				break;
-			}
-		}
-		else
-		{
-			DrawNumber ( dest.x+23, dest.y+18, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-
-			switch ( data.storeUnitsImageType )
-			{
-			case sUnitData::STORE_UNIT_IMG_TANK:
-			case sUnitData::STORE_UNIT_IMG_SHIP:
-				DrawSymbol ( STrans, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			case sUnitData::STORE_UNIT_IMG_PLANE:
-				DrawSymbol ( SAir, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			case sUnitData::STORE_UNIT_IMG_HUMAN:
-				DrawSymbol ( SHuman, dest.x+80, dest.y+15, 70, data.storageUnitsCur, data.storageUnitsMax, destSurface );
-				break;
-			}
-		}
-	}
-	else if ( data.canAttack )
-	{
-		if ( owner == Client->ActivePlayer )
-		{
-			// Munition:
-			DrawNumber ( dest.x+23, dest.y+18, data.ammoCur, data.ammoMax, destSurface );
-
-			font->showText ( dest.x+47, dest.y+18, lngPack.i18n ( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, destSurface );
-			DrawSymbol ( SAmmo, dest.x+80, dest.y+16, 70, data.ammoCur, data.ammoMax, destSurface );
-		}
-
-		// shots
-		DrawNumber ( dest.x+23, dest.y+41, data.shotsCur, data.shotsMax, destSurface );
-
-		font->showText ( dest.x+47, dest.y+41, lngPack.i18n ( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, destSurface );
-
-		DrawSymbol ( SShots, dest.x+80, dest.y+41, 70, data.shotsCur, data.shotsMax, destSurface );
-	}
-
-	Client->bFlagDrawHud = true;
-}
-
-//-----------------------------------------------------------------------------
-/** Draws a row of symbols */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawSymbol ( eSymbols sym, int x, int y, int maxx, int value, int maxvalue, SDL_Surface *sf )
-{
-	SDL_Rect full, empty, dest;
-	int i, to, step, offx;
-
-	switch ( sym )
-	{
-
-		case SSpeed:
-			full.x = 0;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 7;
-			empty.x = 7;
-			break;
-
-		case SHits:
-			empty.y = full.y = 98;
-			empty.w = full.w = 6;
-			empty.h = full.h = 9;
-
-			if ( value > maxvalue / 2 )
-			{
-				full.x = 14;
-				empty.x = 20;
-			}
-			else
-				if ( value > maxvalue / 4 )
-				{
-					full.x = 26;
-					empty.x = 32;
-				}
-				else
-				{
-					full.x = 38;
-					empty.x = 44;
-				}
-
-			break;
-
-		case SAmmo:
-			full.x = 50;
-			empty.y = full.y = 98;
-			empty.w = full.w = 5;
-			empty.h = full.h = 7;
-			empty.x = 55;
-			break;
-
-		case SMetal:
-			full.x = 60;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 10;
-			empty.x = 67;
-			break;
-
-		case SEnergy:
-			full.x = 74;
-			empty.y = full.y = 98;
-			empty.w = full.w = 7;
-			empty.h = full.h = 7;
-			empty.x = 81;
-			break;
-
-		case SShots:
-			full.x = 88;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 4;
-			empty.x = 96;
-			break;
-
-		case SOil:
-			full.x = 104;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 9;
-			empty.x = 112;
-			break;
-
-		case SGold:
-			full.x = 120;
-			empty.y = full.y = 98;
-			empty.w = full.w = 9;
-			empty.h = full.h = 8;
-			empty.x = 129;
-			break;
-
-		case STrans:
-			full.x = 138;
-			empty.y = full.y = 98;
-			empty.w = full.w = 16;
-			empty.h = full.h = 8;
-			empty.x = 154;
-			break;
-
-		case SHuman:
-			full.x = 170;
-			empty.y = full.y = 98;
-			empty.w = full.w = 8;
-			empty.h = full.h = 9;
-			empty.x = 178;
-			break;
-	}
-
-	to = maxvalue;
-
-	step = 1;
-	offx = full.w;
-
-	while ( offx*to > maxx )
-	{
-		offx--;
-
-		if ( offx < 4 )
-		{
-			to /= 2;
-			step *= 2;
-			offx = full.w;
-		}
-	}
-
-	dest.x = x;
-
-	dest.y = y;
-
-	for ( i = 0;i < to;i++ )
-	{
-		if ( value > 0 )
-		{
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &full, sf, &dest );
-		}
-		else
-		{
-			SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &empty, sf, &dest );
-		}
-
-		dest.x += offx;
-
-		value -= step;
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Drwas a number on the surface */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawNumber ( int x, int y, int value, int maxvalue, SDL_Surface *sf )
-{
-	string sTmp = iToStr ( value ) + "/" + iToStr ( maxvalue );
-
-	if ( value > maxvalue / 2 )
-	{
-
-		font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_GREEN, sf );
-	}
-	else
-		if ( value > maxvalue / 4 )
-		{
-
-			font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_YELLOW, sf );
-		}
-		else
-		{
-
-			font->showTextCentered ( x, y, sTmp , FONT_LATIN_SMALL_RED, sf );
-		}
-}
-
-//-----------------------------------------------------------------------------
-/** draws big symbols for the info window */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface *sf )
-{
-	SDL_Rect src, dest;
-	int i, offx;
-
-	switch ( sym )
-	{
-
-		case SBSpeed:
-			src.x = 0;
-			src.y = 109;
-			src.w = 11;
-			src.h = 12;
-			break;
-
-		case SBHits:
-			src.x = 11;
-			src.y = 109;
-			src.w = 7;
-			src.h = 11;
-			break;
-
-		case SBAmmo:
-			src.x = 18;
-			src.y = 109;
-			src.w = 9;
-			src.h = 14;
-			break;
-
-		case SBAttack:
-			src.x = 27;
-			src.y = 109;
-			src.w = 10;
-			src.h = 14;
-			break;
-
-		case SBShots:
-			src.x = 37;
-			src.y = 109;
-			src.w = 15;
-			src.h = 7;
-			break;
-
-		case SBRange:
-			src.x = 52;
-			src.y = 109;
-			src.w = 13;
-			src.h = 13;
-			break;
-
-		case SBArmor:
-			src.x = 65;
-			src.y = 109;
-			src.w = 11;
-			src.h = 14;
-			break;
-
-		case SBScan:
-			src.x = 76;
-			src.y = 109;
-			src.w = 13;
-			src.h = 13;
-			break;
-
-		case SBMetal:
-			src.x = 89;
-			src.y = 109;
-			src.w = 12;
-			src.h = 15;
-			break;
-
-		case SBOil:
-			src.x = 101;
-			src.y = 109;
-			src.w = 11;
-			src.h = 12;
-			break;
-
-		case SBGold:
-			src.x = 112;
-			src.y = 109;
-			src.w = 13;
-			src.h = 10;
-			break;
-	}
-
-	maxx -= src.w;
-
-	if ( orgvalue < value )
-	{
-		maxx -= src.w + 3;
-	}
-
-	offx = src.w;
-
-	while ( offx*value > maxx )
-	{
-		offx--;
-
-		if ( offx < 4 )
-		{
-			value /= 2;
-			orgvalue /= 2;
-			offx = src.w;
-		}
-	}
-
-	dest.x = x;
-
-	dest.y = y;
-
-	for ( i = 0;i < value;i++ )
-	{
-		if ( i == orgvalue )
-		{
-			SDL_Rect mark;
-			dest.x += src.w + 3;
-			mark.x = dest.x - src.w / 2;
-			mark.y = dest.y;
-			mark.w = 1;
-			mark.h = src.h;
-			SDL_FillRect ( sf, &mark, 0xFC0000 );
-		}
-
-		SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, sf, &dest );
-
-		dest.x += offx;
-	}
-}
-
-//-----------------------------------------------------------------------------
 /** Returns the x-position of the vehicle on the screen */
 //-----------------------------------------------------------------------------
 int cVehicle::GetScreenPosX() const
 {
-	return 180 - ( ( int ) ( ( Client->Hud.OffX - OffX ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosX;
+	return 180 - ( ( int ) ( ( Client->gameGUI.getOffsetX() - OffX ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosX;
 }
 
 //-----------------------------------------------------------------------------
@@ -1384,7 +957,7 @@ int cVehicle::GetScreenPosX() const
 //-----------------------------------------------------------------------------
 int cVehicle::GetScreenPosY() const
 {
-	return 18 - ( ( int ) ( ( Client->Hud.OffY - OffY ) / ( 64.0 / Client->Hud.Zoom ) ) ) + Client->Hud.Zoom*PosY;
+	return 18 - ( ( int ) ( ( Client->gameGUI.getOffsetY() - OffY ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosY;
 }
 
 //-----------------------------------------------------------------------------
@@ -1392,19 +965,15 @@ int cVehicle::GetScreenPosY() const
 //-----------------------------------------------------------------------------
 void cVehicle::DrawPath ()
 {
-	int zoom, mx, my, sp, save;
+	int mx = 0, my = 0, sp, save;
 	SDL_Rect dest, ndest;
 	sWaypoint *wp;
 
 	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->ActivePlayer )
 	{
-		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand )
-			return;
-
-		zoom = Client->Hud.Zoom;
+		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand ) return;
 
 		mx = PosX;
-
 		my = PosY;
 
 		if ( mx < BandX )
@@ -1420,10 +989,10 @@ void cVehicle::DrawPath ()
 
 		while ( mx != BandX || my != BandY )
 		{
-			dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
-			dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
+			dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * mx;
+			dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * my;
 
-			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
+			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-Client->gameGUI.getTileSize()], NULL, buffer, &dest );
 
 			if ( mx < BandX )
 				mx++;
@@ -1438,10 +1007,10 @@ void cVehicle::DrawPath ()
 					my--;
 		}
 
-		dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * mx;
-
-		dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * my;
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-zoom], NULL, buffer, &dest );
+		dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * mx;
+		dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * my;
+		
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-Client->gameGUI.getTileSize()], NULL, buffer, &dest );
 		return;
 	}
 
@@ -1452,23 +1021,19 @@ void cVehicle::DrawPath ()
 		save = 0;
 		sp += ClientMoveJob->iSavedSpeed;
 	}
-	else
-		save = ClientMoveJob->iSavedSpeed;
+	else save = ClientMoveJob->iSavedSpeed;
 
-	zoom = Client->Hud.Zoom;
-	dest.x = 180 - ( int ) ( Client->Hud.OffX / ( 64.0 / zoom ) ) + zoom * PosX;
-	dest.y = 18 - ( int ) ( Client->Hud.OffY / ( 64.0 / zoom ) ) + zoom * PosY;
+	dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * PosX;
+	dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * PosY;
 	wp = ClientMoveJob->Waypoints;
-	dest.x += mx = wp->X * zoom - ClientMoveJob->Waypoints->X * zoom;
-	dest.y += my = wp->Y * zoom - ClientMoveJob->Waypoints->Y * zoom;
 	ndest = dest;
 
 	while ( wp )
 	{
 		if ( wp->next )
 		{
-			ndest.x += mx = wp->next->X * zoom - wp->X * zoom;
-			ndest.y += my = wp->next->Y * zoom - wp->Y * zoom;
+			ndest.x += mx = wp->next->X * Client->gameGUI.getTileSize() - wp->X * Client->gameGUI.getTileSize();
+			ndest.y += my = wp->next->Y * Client->gameGUI.getTileSize() - wp->Y * Client->gameGUI.getTileSize();
 		}
 		else
 		{
@@ -1669,65 +1234,33 @@ void cVehicle::StartMoveSound ()
 		Client->iObjectStream = PlayFXLoop ( typ->Drive );
 }
 
-//-----------------------------------------------------------------------------
-/** Draws the vehicle menu: */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawMenu ( sMouseState *mouseState )
+void cVehicle::menuReleased ()
 {
-	int nr = 0, ExeNr = -1;
-	static int SelMenu = -1;
-	static int LastSelMenu = -1;
-	bool bSelection = false;
-	SDL_Rect dest;
-	dest = GetMenuSize();
+	int nr = 0, exeNr;
+	SDL_Rect dest = GetMenuSize();
+	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
+	if ( exeNr != selMenuNr ) return;
 
-	if ( moving || bIsBeeingAttacked )
-		return;
+	if ( moving || bIsBeeingAttacked ) return;
 
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( SelMenu == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
-	{
-		SelMenu = ( mouse->y - dest.y ) / 22;
-	}
-	else if ( mouseState && mouseState->leftButtonReleased )
-	{
-		if ( MouseOverMenu ( mouse->x, mouse->y ) ) ExeNr = ( mouse->y - dest.y ) / 22;
-		if ( ExeNr != SelMenu ) ExeNr = -1;
-		SelMenu = -1;
-		LastSelMenu = -1;
-	}
-	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && SelMenu != -1 && SelMenu != ( mouse->y - dest.y ) / 22 )
-	{
-		LastSelMenu = SelMenu;
-		SelMenu = -1;
-	}
-
-	// Angriff:
+	// attack:
 	if ( data.canAttack && data.shotsCur )
 	{
-		bSelection = SelMenu == nr || AttackMode;
-
-		if ( ExeNr == nr )
+		if ( exeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = !AttackMode;
-			Client->Hud.CheckScroll();
-			Client->mouseMoveCallback ( true );
+			Client->gameGUI.updateMouseCursor ();
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
-
-		dest.y += 22;
 		nr++;
 	}
 
-	// Bauen:
+	// build:
 	if ( !data.canBuild.empty() && !IsBuilding )
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
+		if ( exeNr == nr )
 		{
 			if ( ClientMoveJob ) sendWantStopMove ( iID );
 
@@ -1737,45 +1270,26 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 			buildMenu.show();
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
-
-		dest.y += 22;
 		nr++;
 	}
 
-	// Transfer:
+	// transfer:
 	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 	{
-		bSelection = SelMenu == nr || Transfer;
-
-		if ( ExeNr == nr )
+		if ( exeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Transfer = !Transfer;
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
-
-		dest.y += 22;
 		nr++;
 	}
 
-	// Auto
+	// auto
 	if ( data.canSurvey )
 	{
-		if ( ( autoMJob == NULL && SelMenu == nr ) || ( autoMJob != NULL && SelMenu != nr ) )
-		{
-			bSelection = true;
-		}
-		else
-		{
-			bSelection = false;
-		}
-
-		if ( ExeNr == nr )
+		if ( exeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -1792,19 +1306,13 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 
 			return;
 		}
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), bSelection, dest.x, dest.y, buffer );
-
-		dest.y += 22;
 		nr++;
 	}
 
-	// Stop:
+	// stop:
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 	{
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
+		if ( exeNr == nr )
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
@@ -1823,6 +1331,243 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 
 			return;
 		}
+		nr++;
+	}
+
+	// clear:
+	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+
+			sendWantStartClear ( this );
+			return;
+		}
+		nr++;
+	}
+
+	// sentry:
+	if ( bSentryStatus || data.canAttack )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendChangeSentry ( iID, true );
+			return;
+		}
+		nr++;
+	}
+
+	// activate/load:
+	if ( data.storageUnitsMax > 0 )
+	{
+		// activatew:
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			
+			cStorageMenu storageMenu ( StoredVehicles, this, NULL );
+			storageMenu.show();
+			return;
+		}
+		nr++;
+
+		// load:
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			LoadActive = !LoadActive;
+			return;
+		}
+		nr++;
+	}
+
+	// rearm:
+	if ( data.canRearm && data.storageResCur >= 2 )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			MuniActive = !MuniActive;
+			return;
+		}
+		nr++;
+	}
+
+	// repair:
+	if ( data.canRepair && data.storageResCur >= 2 )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			RepairActive = !RepairActive;
+			return;
+		}
+		nr++;
+	}
+
+	// lay mines:
+	if ( data.canPlaceMines && data.storageResCur > 0 )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			LayMines = !LayMines;
+			ClearMines = false;
+			sendMineLayerStatus( this );
+			return;
+		}
+		nr++;
+	}
+
+	// clear mines:
+	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			ClearMines = !ClearMines;
+			LayMines = false;
+			sendMineLayerStatus ( this );
+			return;
+		}
+		nr++;
+	}
+
+	// disable:
+	if ( data.canDisable && data.shotsCur )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			DisableActive = !DisableActive;
+			StealActive = false;
+			return;
+		}
+		nr++;
+	}
+
+	// steal:
+	if ( data.canCapture && data.shotsCur )
+	{
+		if ( exeNr == nr )
+		{
+			MenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			StealActive = !StealActive;
+			DisableActive = false;
+			return;
+		}
+		nr++;
+	}
+
+	// help:
+	if ( exeNr == nr )
+	{
+		MenuActive = false;
+		PlayFX ( SoundData.SNDObjectMenu );
+		cUnitHelpMenu helpMenu ( &data, owner );
+		helpMenu.show();
+		return;
+	}
+	nr++;
+
+	// done:
+	if ( exeNr == nr )
+	{
+		MenuActive = false;
+		PlayFX ( SoundData.SNDObjectMenu );
+		return;
+	}
+}
+
+//-----------------------------------------------------------------------------
+/** Draws the vehicle menu: */
+//-----------------------------------------------------------------------------
+void cVehicle::DrawMenu ( sMouseState *mouseState )
+{
+	int nr = 0;
+	static int LastselMenuNr = -1;
+	bool bSelection = false;
+	SDL_Rect dest = GetMenuSize();
+
+	if ( moving || bIsBeeingAttacked ) return;
+
+	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( selMenuNr == -1 && LastselMenuNr == -1 ) || LastselMenuNr == ( mouse->y - dest.y ) / 22 ) )
+	{
+		selMenuNr = ( mouse->y - dest.y ) / 22;
+	}
+	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && selMenuNr != -1 && selMenuNr != ( mouse->y - dest.y ) / 22 )
+	{
+		LastselMenuNr = selMenuNr;
+		selMenuNr = -1;
+	}
+
+	// Angriff:
+	if ( data.canAttack && data.shotsCur )
+	{
+		bSelection = selMenuNr == nr || AttackMode;
+
+		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
+
+		dest.y += 22;
+		nr++;
+	}
+
+	// Bauen:
+	if ( !data.canBuild.empty() && !IsBuilding )
+	{
+		bSelection = selMenuNr == nr;
+
+		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
+
+		dest.y += 22;
+		nr++;
+	}
+
+	// Transfer:
+	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
+	{
+		bSelection = selMenuNr == nr || Transfer;
+
+		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
+
+		dest.y += 22;
+		nr++;
+	}
+
+	// Auto
+	if ( data.canSurvey )
+	{
+		if ( ( autoMJob == NULL && selMenuNr == nr ) || ( autoMJob != NULL && selMenuNr != nr ) )
+		{
+			bSelection = true;
+		}
+		else
+		{
+			bSelection = false;
+		}
+
+		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), bSelection, dest.x, dest.y, buffer );
+
+		dest.y += 22;
+		nr++;
+	}
+
+	// Stop:
+	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
+	{
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1833,16 +1578,8 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Entfernen:
 	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 	{
-		bSelection = SelMenu == nr;
+		bSelection = selMenuNr == nr;
 
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-
-			sendWantStartClear ( this );
-			return;
-		}
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1853,15 +1590,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sentry:
 	if ( bSentryStatus || data.canAttack )
 	{
-		bSelection = SelMenu == nr || bSentryStatus;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeSentry ( iID, true );
-			return;
-		}
+		bSelection = selMenuNr == nr || bSentryStatus;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1873,33 +1602,14 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	if ( data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		bSelection = SelMenu == nr;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			
-			cStorageMenu storageMenu ( StoredVehicles, this, NULL );
-			storageMenu.show();
-			return;
-		}
-
+		bSelection = selMenuNr == nr;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
 		// Laden:
-		bSelection = SelMenu == nr || LoadActive;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			LoadActive = !LoadActive;
-			return;
-		}
+		bSelection = selMenuNr == nr || LoadActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 		dest.y += 22;
@@ -1909,15 +1619,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Aufaden:
 	if ( data.canRearm && data.storageResCur >= 2 )
 	{
-		bSelection = SelMenu == nr || MuniActive;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			MuniActive = !MuniActive;
-			return;
-		}
+		bSelection = selMenuNr == nr || MuniActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1928,15 +1630,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Reparatur:
 	if ( data.canRepair && data.storageResCur >= 2 )
 	{
-		bSelection = SelMenu == nr || RepairActive;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			RepairActive = !RepairActive;
-			return;
-		}
+		bSelection = selMenuNr == nr || RepairActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Repair" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1947,17 +1641,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen legen:
 	if ( data.canPlaceMines && data.storageResCur > 0 )
 	{
-		bSelection = SelMenu == nr || LayMines;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			LayMines = !LayMines;
-			ClearMines = false;
-			sendMineLayerStatus( this );
-			return;
-		}
+		bSelection = selMenuNr == nr || LayMines;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Seed" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1968,17 +1652,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen sammeln:
 	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
 	{
-		bSelection = SelMenu == nr || ClearMines;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			ClearMines = !ClearMines;
-			LayMines = false;
-			sendMineLayerStatus ( this );
-			return;
-		}
+		bSelection = selMenuNr == nr || ClearMines;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1989,16 +1663,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sabotage:
 	if ( data.canDisable && data.shotsCur )
 	{
-		bSelection = SelMenu == nr || DisableActive;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			DisableActive = !DisableActive;
-			StealActive = false;
-			return;
-		}
+		bSelection = selMenuNr == nr || DisableActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2009,16 +1674,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stehlen:
 	if ( data.canCapture && data.shotsCur )
 	{
-		bSelection = SelMenu == nr || StealActive;
-
-		if ( ExeNr == nr )
-		{
-			MenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			StealActive = !StealActive;
-			DisableActive = false;
-			return;
-		}
+		bSelection = selMenuNr == nr || StealActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2027,32 +1683,13 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Info:
-	bSelection = SelMenu == nr;
-
-	if ( ExeNr == nr )
-	{
-		MenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
-		cUnitHelpMenu helpMenu ( &data/*.ID*/, owner );
-		helpMenu.show();
-		return;
-	}
-
+	bSelection = selMenuNr == nr;
 	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), bSelection, dest.x, dest.y, buffer );
-
 	dest.y += 22;
 	nr++;
+
 	// Fertig:
-
-	bSelection = SelMenu == nr;
-
-	if ( ExeNr == nr )
-	{
-		MenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
-		return;
-	}
-
+	bSelection = selMenuNr == nr;
 	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
 }
 
@@ -2119,7 +1756,7 @@ SDL_Rect cVehicle::GetMenuSize ()
 	dest.y = GetScreenPosY();
 	dest.h = i = GetMenuPointAnz() * 22;
 	dest.w = 42;
-	size = Client->Hud.Zoom;
+	size = Client->gameGUI.getTileSize();
 
 	if ( IsBuilding && BuildingTyp.getUnitDataOriginalVersion()->isBig )
 		size *= 2;
@@ -2179,9 +1816,6 @@ void cVehicle::DecSpeed ( int value )
 		if ( !data.canDriveAndFire && s < data.shotsCur && s >= 0 )
 			data.shotsCur = s;
 	}
-
-	if ( Client->SelectedVehicle == this )
-		ShowDetails();
 }
 
 //-----------------------------------------------------------------------------
@@ -2190,10 +1824,10 @@ void cVehicle::DecSpeed ( int value )
 void cVehicle::DrawMunBar() const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
-	r1.w = Client->Hud.Zoom * 8 / 10 ;
-	r1.h = Client->Hud.Zoom / 8;
-	r1.y = GetScreenPosY() + Client->Hud.Zoom/10 + Client->Hud.Zoom / 8;
+	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize() / 8;
+	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
 
 	if ( r1.h <= 2  )
 	{
@@ -2228,10 +1862,10 @@ void cVehicle::DrawMunBar() const
 void cVehicle::drawHealthBar() const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->Hud.Zoom/10 + 1;
-	r1.w = Client->Hud.Zoom * 8 / 10 ;
-	r1.h = Client->Hud.Zoom / 8;
-	r1.y = GetScreenPosY() + Client->Hud.Zoom/10;
+	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.w = Client->gameGUI.getTileSize()* 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize() / 8;
+	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10;
 
 	if ( r1.h <= 2  )
 		r1.h = 3;
@@ -2267,30 +1901,30 @@ void cVehicle::drawStatus() const
 
 	if ( Disabled )
 	{
-		if ( Client->Hud.Zoom < 25 ) return;
-		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 12;
-		dest.y = GetScreenPosY() + Client->Hud.Zoom/2 - 12;
+		if ( Client->gameGUI.getTileSize() < 25 ) return;
+		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
 		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
 	}
 	else
 		{
-		dest.y = GetScreenPosY() + Client->Hud.Zoom - 11;
-		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize() - 11;
+		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.isBig )
 		{
-			dest.y += (Client->Hud.Zoom/2);
-			dest.x += (Client->Hud.Zoom/2);
+			dest.y += (Client->gameGUI.getTileSize()/2);
+			dest.x += (Client->gameGUI.getTileSize()/2);
 		}
 		if ( data.speedCur >= 4 )
 		{
-			if ( data.shotsCur ) dest.x -= Client->Hud.Zoom/4;
+			if ( data.shotsCur ) dest.x -= Client->gameGUI.getTileSize()/4;
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
 		}
 
-		dest.x = GetScreenPosX() + Client->Hud.Zoom/2 - 4;
+		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.shotsCur )
 		{
-			if ( data.speedCur ) dest.x += Client->Hud.Zoom/4;
+			if ( data.speedCur ) dest.x += Client->gameGUI.getTileSize()/4;
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
 		}
 	}
@@ -2301,10 +1935,9 @@ void cVehicle::drawStatus() const
 //-----------------------------------------------------------------------------
 void cVehicle::Center ()
 {
-	Client->Hud.OffX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-	Client->Hud.OffY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->Hud.Zoom) ) * 64 ) ) + 32;
-	Client->bFlagDrawMap = true;
-	Client->Hud.DoScroll ( 0 );
+	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	Client->gameGUI.setOffsetPosition ( offX, offY );
 }
 
 //-----------------------------------------------------------------------------
@@ -2353,12 +1986,12 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 
 	if ( targetVehicle )
 	{
-		if ( Client && ( targetVehicle == Client->SelectedVehicle || targetVehicle->owner == Client->ActivePlayer ) )
+		if ( Client && ( targetVehicle == Client->gameGUI.getSelVehicle() || targetVehicle->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else if ( targetBuilding )
 	{
-		if ( Client && ( targetBuilding == Client->SelectedBuilding || targetBuilding->owner == Client->ActivePlayer ) )
+		if ( Client && ( targetBuilding == Client->gameGUI.getSelBuilding() || targetBuilding->owner == Client->ActivePlayer ) )
 			return false;
 	}
 	else
@@ -2398,7 +2031,7 @@ void cVehicle::DrawAttackCursor ( int offset )
 
 	selectTarget(v, b, offset, data.canAttack, Client->Map );
 
-	if ( !(v || b) || ( v && v == Client->SelectedVehicle ) || ( b && b == Client->SelectedBuilding ) )
+	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{
 		r.x = 1;
 		r.y = 29;
@@ -2938,14 +2571,14 @@ void cVehicle::DrawExitPoints(sVehicle* const typ) const
 	spy = GetScreenPosY();
 	size = Client->Map->size;
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy - Client->Hud.Zoom );
-	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx, spy - Client->Hud.Zoom );
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy - Client->Hud.Zoom );
-	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy );
-	if ( canExitTo ( PosX + 1, PosY    , Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy );
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx - Client->Hud.Zoom, spy + Client->Hud.Zoom );
-	if ( canExitTo ( PosX    , PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx, spy + Client->Hud.Zoom );
-	if ( canExitTo ( PosX + 1, PosY + 1, Client->Map, typ ) ) Client->drawExitPoint ( spx + Client->Hud.Zoom, spy + Client->Hud.Zoom );
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX + 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
 }
 
 //-----------------------------------------------------------------------------

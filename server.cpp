@@ -1689,22 +1689,22 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cPlayer *player = getPlayerFromNumber ( message->popInt16() );
 			if ( player == NULL ) break;
 
-			player->HotHud.tmpSelectedUnitID = message->popInt16();
-			player->HotHud.OffX = message->popInt16();
-			player->HotHud.OffY = message->popInt16();
-			player->HotHud.Zoom = message->popInt16();
-			player->HotHud.Farben = message->popBool();
-			player->HotHud.Gitter = message->popBool();
-			player->HotHud.Munition= message->popBool();
-			player->HotHud.Nebel = message->popBool();
-			player->HotHud.MinimapZoom = message->popBool();
-			player->HotHud.Reichweite = message->popBool();
-			player->HotHud.Scan = message->popBool();
-			player->HotHud.Status = message->popBool();
-			player->HotHud.Studie = message->popBool();
-			player->HotHud.Lock = message->popBool();
-			player->HotHud.Treffer = message->popBool();
-			player->HotHud.TNT = message->popBool();
+			player->savedHud->selUnitID = message->popInt16();
+			player->savedHud->offX = message->popInt16();
+			player->savedHud->offY = message->popInt16();
+			player->savedHud->zoom = message->popFloat();
+			player->savedHud->colorsChecked = message->popBool();
+			player->savedHud->gridChecked = message->popBool();
+			player->savedHud->ammoChecked= message->popBool();
+			player->savedHud->fogChecked = message->popBool();
+			player->savedHud->twoXChecked = message->popBool();
+			player->savedHud->rangeChecked = message->popBool();
+			player->savedHud->scanChecked = message->popBool();
+			player->savedHud->statusChecked = message->popBool();
+			player->savedHud->surveyChecked = message->popBool();
+			player->savedHud->lockChecked = message->popBool();
+			player->savedHud->hitsChecked = message->popBool();
+			player->savedHud->tntChecked = message->popBool();
 		}
 		break;
 	case GAME_EV_SAVE_REPORT_INFO:
@@ -1734,7 +1734,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( player == NULL ) break;
 
 			cSavegame savegame ( savingIndex );
-			savegame.writeAdditionalInfo ( &player->HotHud, player->savedReportsList, player );
+			savegame.writeAdditionalInfo ( *player->savedHud, player->savedReportsList, player );
 		}
 		break;
 	default:
@@ -2415,7 +2415,7 @@ void cServer::handleEnd ( int iPlayerNum )
 //-------------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
-	if ( !iTimer0 ) return;
+	if ( !timer50ms ) return;
 	if ( iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2 )
 	{
 		for ( unsigned int i = 0; i < PlayerEndList.Size(); i++ )
@@ -2690,7 +2690,7 @@ void cServer::addReport ( sID Type, bool bVehicle, int iPlayerNum )
 void cServer::checkDeadline ()
 {
 	static int lastCheckTime = SDL_GetTicks();
-	if ( !iTimer0 ) return;
+	if ( !timer50ms ) return;
 	if ( iTurnDeadline >= 0 && iDeadlineStartTime > 0 )
 	{
 		// stop time when waiting for reconnection
@@ -2805,12 +2805,12 @@ void cServer::handleMoveJobs ()
 		if ( MoveJob->iNextDir != Vehicle->dir )
 		{
 			// rotate vehicle
-			if ( iTimer1 ) Vehicle->RotateTo ( MoveJob->iNextDir );
+			if ( timer100ms ) Vehicle->RotateTo ( MoveJob->iNextDir );
 		}
 		else
 		{
 			//move the vehicle
-			if ( iTimer0 ) MoveJob->moveVehicle ();
+			if ( timer50ms ) MoveJob->moveVehicle ();
 		}
 	}
 }
@@ -2824,20 +2824,20 @@ void cServer::Timer()
 //-------------------------------------------------------------------------------------
 void cServer::handleTimer()
 {
-	//iTimer0: 50ms
-	//iTimer1: 100ms
-	//iTimer2: 400ms
+	//timer50ms: 50ms
+	//timer100ms: 100ms
+	//timer400ms: 400ms
 
 	static unsigned int iLast = 0;
-	iTimer0 = 0 ;
-	iTimer1 = 0;
-	iTimer2 = 0;
+	timer50ms = false;
+	timer100ms = false;
+	timer400ms = false;
 	if ( iTimerTime != iLast )
 	{
 		iLast = iTimerTime;
-		iTimer0 = 1;
-		if (   iTimerTime & 0x1 ) iTimer1 = 1;
-		if ( ( iTimerTime & 0x3 ) == 3 ) iTimer2 = 1;
+		timer50ms = true;
+		if (   iTimerTime & 0x1 ) timer100ms = true;
+		if ( ( iTimerTime & 0x3 ) == 3 ) timer400ms = true;
 	}
 }
 

@@ -122,7 +122,7 @@ private:
 	/** will be incremented by the Timer */
 	unsigned int iTimerTime;
 	/** diffrent timers */
-	int iTimer0, iTimer1, iTimer2;
+	bool timer50ms, timer100ms, timer400ms;
 	/** ID of the timer */
 	SDL_TimerID TimerID;
 	/** if this is true the map will be opened for a defeated player */
@@ -199,7 +199,7 @@ private:
 	*/
 	void checkDeadline ();
 	/**
-	* handles the timers iTimer0, iTimer1 and iTimer2
+	* handles the timers timer50ms, timer100ms and timer400ms
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTimer();

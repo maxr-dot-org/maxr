@@ -45,7 +45,7 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	if ( vehicle->data.animationMovement )
 		frame = vehicle->WalkFrame;
 	else
-		frame = Client->iFrame % 4;
+		frame = ANIMATION_SPEED % 4;
 
 	water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 
@@ -59,16 +59,15 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		stealth = false;
 
-	zoom = Client->Hud.Zoom;
-	lastUsed = Client->iFrame;
+	zoom = Client->gameGUI.getZoom();
+	lastUsed = Client->gameGUI.getFrame();
 
 	//determine needed size of the surface
-	float factor = (float)(Client->Hud.Zoom/64.0);
-	int height = (int) max(vehicle->typ->img_org[vehicle->dir]->h*factor, vehicle->typ->shw_org[vehicle->dir]->h*factor);
-	int width  = (int) max(vehicle->typ->img_org[vehicle->dir]->w*factor, vehicle->typ->shw_org[vehicle->dir]->w*factor);
+	int height = (int) max(vehicle->typ->img_org[vehicle->dir]->h*zoom, vehicle->typ->shw_org[vehicle->dir]->h*zoom);
+	int width  = (int) max(vehicle->typ->img_org[vehicle->dir]->w*zoom, vehicle->typ->shw_org[vehicle->dir]->w*zoom);
 	if ( vehicle->FlightHigh > 0 )
 	{
-		int shwOff = ( ( int ) ( Client->Hud.Zoom * ( vehicle->FlightHigh / 64.0 ) ) );
+		int shwOff = ( ( int ) ( Client->gameGUI.getTileSize() * ( vehicle->FlightHigh / 64.0 ) ) );
 		height += shwOff;
 		width  += shwOff;
 	}
@@ -100,14 +99,13 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	vehicleTyp = NULL;
 	clan = building->owner->getClan();
 
-	zoom = Client->Hud.Zoom;
-	lastUsed = Client->iFrame;
+	zoom = Client->gameGUI.getZoom();
+	lastUsed = Client->gameGUI.getFrame();
 
 	//determine needed size of the surface
-	float factor = (float)(Client->Hud.Zoom/64.0);
-	int height = (int) max(building->typ->img_org->h*factor, building->typ->shw_org->h*factor);
-	int width  = (int) max(building->typ->img_org->w*factor, building->typ->shw_org->w*factor);
-	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*factor);
+	int height = (int) max(building->typ->img_org->h*zoom, building->typ->shw_org->h*zoom);
+	int width  = (int) max(building->typ->img_org->w*zoom, building->typ->shw_org->w*zoom);
+	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*zoom);
 
 	if ( surface ) SDL_FreeSurface( surface );
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000); 
@@ -163,13 +161,13 @@ SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 		{
 			if ( entry.dir != building->dir ) continue;
 		}
-		if ( entry.zoom != Client->Hud.Zoom ) continue;
+		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
 		if ( building->data.hasClanLogos && building->owner->getClan() != entry.clan ) continue;
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = Client->iFrame;
+		entry.lastUsed = Client->gameGUI.getFrame();
 		return entry.surface;
 	}
 
@@ -202,9 +200,9 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( vehicle->IsBuilding || vehicle->IsClearing )
 		{
-			if ( entry.frame != Client->iFrame % 4 ) continue;
+			if ( entry.frame != ANIMATION_SPEED % 4 ) continue;
 		}
-		if ( entry.zoom != Client->Hud.Zoom ) continue;
+		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
 		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
 		if ( vehicle->IsBuilding )
@@ -225,7 +223,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = Client->iFrame;
+		entry.lastUsed = Client->gameGUI.getFrame();
 		return entry.surface;
 
 	}
@@ -253,7 +251,7 @@ SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
 	//try to find an old entry to reuse
 	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
-		if ( Client->iFrame - cachedImages[i].lastUsed < 5 )  continue;
+		if ( Client->gameGUI.getFrame() - cachedImages[i].lastUsed < 5 )  continue;
 		//entry has not been used for 5 frames. Use it for the new entry.
 
 		sDrawingCacheEntry& entry = cachedImages[i];
@@ -286,7 +284,7 @@ SDL_Surface* cDrawingCache::createNewEntry(cVehicle* vehicle)
 	//try to find an old entry to reuse
 	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
-		if ( Client->iFrame - cachedImages[i].lastUsed < 5 )  continue;
+		if ( Client->gameGUI.getFrame() - cachedImages[i].lastUsed < 5 )  continue;
 		
 		//entry has not been used for 5 frames. Use it for the new entry.
 		sDrawingCacheEntry& entry = cachedImages[i];

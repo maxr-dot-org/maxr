@@ -29,432 +29,883 @@
 #include "input.h"
 #include "pcx.h"
 #include "player.h"
-#include "menus.h"
 #include "settings.h"
+#include "events.h"
 
-
-// Funktionen der Hud-Klasse /////////////////////////////////////////////////
-cHud::cHud ( void )
+bool sMouseBox::isTooSmall()
 {
-	TNT=false;
-	bShowPlayers=false;
-	MinimapZoom=false;
-	Nebel=false;
-	Gitter=false;
-	Scan=false;
-	Reichweite=false;
-	Munition=false;
-	Treffer=false;
-	Farben=false;
-	Status=false;
-	Studie=false;
-	LastOverEnde=false;
-	Lock=false;
-	Zoom=64;
-	LastZoom=64;
-	OffX=0;
-	OffY=0;
-	minimapOffsetX = 0;
-	minimapOffsetY = 0;
-	minimapZoomFactor = 0;
-	Praeferenzen=false;
-	PlayFLC=true;
-	PausePressed=false;PlayPressed=false;
-	HelpPressed=false;ChatPressed=false;
-	EndePressed=false;ErledigenPressed=false;
-	NextPressed=false;PrevPressed=false;
-	CenterPressed=false;DateiPressed=false;
-	LogPressed=false;
+	if ( startX == -1 || startY == -1 || endX == -1 || endY == -1 ) return true;
+	return !(endX > startX+(10/64.0) || endX < startX-(10/64.0) || endY > startY+(10/64.0) || endY < startY-(10/64.0));
 }
 
-cHud::~cHud ( void )
-{}
-
-void cHud::SwitchTNT ( bool set )
+cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
+	cMenu ( generateSurface() ),
+	player ( player_ ),
+	map ( map_ )
 {
-	SDL_Rect scr={334,24,27,28},dest={136,413,27,28};
-	if ( set )
-		{
-			scr.x=362;
-			scr.y=24;
-		}
+	frame = 0;
+	zoom = 1.0;
+	offX = offY = 0;
+	framesPerSecond = cyclesPerSecond = 0;
+	loadValue = 0;
+	panelTopGraphic = NULL, panelBottomGraphic = NULL;
+	activeItem = NULL;
+	overUnitField = NULL;
+	helpActive = false;
+	blinkColor = 0xFFFFFF;
+	FLC = NULL;
+	playFLC = true;
 
-	BlitButton(scr, dest, "", false);
-	TNT=set;
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMMap=true;
-	PlayFX ( SoundData.SNDHudSwitch );
+	debugAjobs = false;
+	debugBaseServer = false;
+	debugBaseClient = false;
+	debugSentry = false;
+	debugFX = false;
+	debugTraceServer = false;
+	debugTraceClient = false;
+	debugPlayers = false;
+	showFPS = false;
+	debugCache = false;
+
+	selectedVehicle = NULL;
+	selectedBuilding = NULL;
+
+	minZoom = (float)(( max(SettingsData.iScreenH - HUD_TOTAL_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
+	minZoom = max ( minZoom, ((int)( 64.0*minZoom )+( minZoom >= 1.0 ? 0 : 1 )) / (float)64.0 );
+
+	generateSurface();
+
+	setWind(random(360));
+
+	closed = false;
+
+	zoomSlider = new cMenuSlider ( 20, 274, minZoom, 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN  );
+	zoomSlider->setMoveCallback ( &zoomSliderMoved );
+	menuItems.Add ( zoomSlider );
+	menuItems.Add ( zoomSlider->scroller );
+
+	// generate checkbuttons
+	surveyButton = new cMenuCheckButton ( 2, 296, lngPack.i18n( "Text~Hud~Survey"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( surveyButton );
+	hitsButton = new cMenuCheckButton ( 57, 296, lngPack.i18n( "Text~Hud~Hitpoints"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( hitsButton );
+	scanButton = new cMenuCheckButton ( 112, 296, lngPack.i18n( "Text~Hud~Scan"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( scanButton );
+	statusButton = new cMenuCheckButton ( 2, 296+18, lngPack.i18n( "Text~Hud~Status"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( statusButton );
+	ammoButton = new cMenuCheckButton ( 57, 296+18, lngPack.i18n( "Text~Hud~Ammo"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( ammoButton );
+	gridButton = new cMenuCheckButton ( 112, 296+18, lngPack.i18n( "Text~Hud~Grid"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( gridButton );
+	colorButton = new cMenuCheckButton ( 2, 296+18+16, lngPack.i18n( "Text~Hud~Color"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( colorButton );
+	rangeButton = new cMenuCheckButton ( 57, 296+18+16, lngPack.i18n( "Text~Hud~Range"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( rangeButton );
+	fogButton = new cMenuCheckButton ( 112, 296+18+16, lngPack.i18n( "Text~Hud~Fog"), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( fogButton );
+
+	lockButton = new cMenuCheckButton ( 32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	menuItems.Add ( lockButton );
+
+	TNTButton = new cMenuCheckButton ( 136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	TNTButton->setClickedFunction ( &changedMiniMap );
+	menuItems.Add ( TNTButton );
+	twoXButton = new cMenuCheckButton ( 136,387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	twoXButton->setClickedFunction ( &changedMiniMap );
+	menuItems.Add ( twoXButton );
+
+	helpButton = new cMenuButton ( 20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP );
+	helpButton->setReleasedFunction ( &helpReleased );
+	menuItems.Add ( helpButton );
+	centerButton = new cMenuButton ( 4,227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER );
+	centerButton->setReleasedFunction ( &centerReleased );
+	menuItems.Add ( centerButton );
+	
+	reportsButton = new cMenuButton ( 101, 252, lngPack.i18n( "Text~Hud~Log"), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE );
+	reportsButton->setReleasedFunction ( &reportsReleased );
+	menuItems.Add ( reportsButton );
+	chatButton = new cMenuButton ( 51, 252, lngPack.i18n( "Text~Hud~Chat"), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE );
+	chatButton->setReleasedFunction ( &chatReleased );
+	menuItems.Add ( chatButton );
+	
+	nextButton = new cMenuButton ( 124, 227, ">>", cMenuButton::BUTTON_TYPE_HUD_NEXT, FONT_LATIN_SMALL_WHITE );
+	nextButton->setReleasedFunction ( &nextReleased );
+	menuItems.Add ( nextButton );
+	prevButton = new cMenuButton ( 60, 227, "<<", cMenuButton::BUTTON_TYPE_HUD_PREV, FONT_LATIN_SMALL_WHITE );
+	prevButton->setReleasedFunction ( &prevReleased );
+	menuItems.Add ( prevButton );
+	doneButton = new cMenuButton ( 99, 227, lngPack.i18n( "Text~Hud~Proceed"), cMenuButton::BUTTON_TYPE_HUD_DONE, FONT_LATIN_SMALL_WHITE );
+	doneButton->setReleasedFunction ( &doneReleased );
+	menuItems.Add ( doneButton );
+
+	miniMapImage = new cMenuImage ( MINIMAP_POS_X, MINIMAP_POS_Y, generateMiniMapSurface() );
+	miniMapImage->setClickedFunction ( &miniMapClicked );
+	miniMapImage->setMovedOverFunction ( &miniMapMovedOver );
+	menuItems.Add ( miniMapImage );
+
+	coordsLabel = new cMenuLabel ( 265+32, (SettingsData.iScreenH-21)+3 );
+	coordsLabel->setCentered ( true );
+	menuItems.Add ( coordsLabel );
+
+	unitNameLabel = new cMenuLabel ( 343+106, (SettingsData.iScreenH-21)+3 );
+	unitNameLabel->setCentered ( true );
+	menuItems.Add ( unitNameLabel );
+
+	turnLabel = new cMenuLabel ( 498, 7 );
+	turnLabel->setCentered ( true );
+	menuItems.Add ( turnLabel );
+
+	timeLabel = new cMenuLabel ( 564, 7 );
+	timeLabel->setCentered ( true );
+	menuItems.Add ( timeLabel );
+
+	endButton = new cMenuButton ( 391, 4, lngPack.i18n( "Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL );
+	endButton->setReleasedFunction ( &endReleased );
+	menuItems.Add ( endButton );
+
+	preferencesButton = new cMenuButton ( 86, 4, lngPack.i18n( "Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE );
+	preferencesButton->setReleasedFunction ( &preferencesReleased );
+	menuItems.Add ( preferencesButton );
+	filesButton = new cMenuButton ( 17, 3, lngPack.i18n( "Text~Hud~Files"), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE );
+	filesButton->setReleasedFunction ( &filesReleased );
+	menuItems.Add ( filesButton );
+
+	playButton = new cMenuButton ( 146, 123, "", cMenuButton::BUTTON_TYPE_HUD_PLAY );
+	playButton->setReleasedFunction ( &playReleased );
+	menuItems.Add ( playButton );
+	stopButton = new cMenuButton ( 146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP );
+	stopButton->setReleasedFunction ( &stopReleased );
+	menuItems.Add ( stopButton );
+
+	FLCImage = new cMenuImage ( 10, 29, NULL, false );
+	menuItems.Add ( FLCImage );
+
+	unitDetails = new cMenuUnitDetails ( 8, 171, false, player );
+	menuItems.Add ( unitDetails );
+
+	chatBox = new cMenuChatBox ( HUD_LEFT_WIDTH+5, SettingsData.iScreenH-48, this );
+	chatBox->setDisabled ( true );
+	chatBox->setReturnPressedFunc ( &chatBoxReturnPressed );
+	menuItems.Add ( chatBox );
+	
+	updateTurn( 1 );
 }
 
-void cHud::SwitchPlayers ( bool set )
+cGameGUI::~cGameGUI()
 {
-	SDL_Rect scr={317,478,27,28},dest={136,439,27,28};
-	if ( set )
-		{
-			scr.x=344;
-			scr.y=478;
-		}
+	zoom = 1.0;
+	scaleSurfaces();
 
-	BlitButton(scr, dest, "", false);
-	bShowPlayers=set;
+	if ( FLC ) FLI_Close ( FLC );
 
-	if(Client)
+	delete surveyButton;
+	delete hitsButton;
+	delete scanButton;
+	delete statusButton;
+	delete ammoButton;
+	delete gridButton;
+	delete colorButton;
+	delete rangeButton;
+	delete fogButton;
+
+	delete lockButton;
+
+	delete TNTButton;
+	delete twoXButton;
+
+	delete helpButton;
+	delete centerButton;
+	delete reportsButton;
+	delete chatButton;
+	delete nextButton;
+	delete prevButton;
+	delete doneButton;
+}
+
+int cGameGUI::show()
+{
+	cMenu *lastActiveMenu = ActiveMenu;
+	ActiveMenu = this;
+
+	// do startup actions
+	makePanel( true );
+	startup = true;
+
+	int lastMouseX = 0, lastMouseY = 0;
+
+	while ( !end )
 	{
-		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+		EventHandler->HandleEvents();
+
+		mouse->GetPos();
+		if ( mouse->moved() )
 		{
-			cPlayer* const Player = (*Client->PlayerList)[i];
-			if (Player)
+			handleMouseMove();
+
+			mouse->draw ( true, screen );
+
+			for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 			{
-				ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
-			}
-			else
-			{ //should not happen
-				ExtraPlayers("~disabled~", 0, i, false, false);
+				cMenuItem *menuItem = menuItems[i];
+				if ( menuItem->overItem( lastMouseX, lastMouseY ) && !menuItem->overItem( mouse->x, mouse->y ) ) menuItem->hoveredAway( this );
+				else if ( !menuItem->overItem( lastMouseX, lastMouseY ) && menuItem->overItem( mouse->x, mouse->y ) ) menuItem->hoveredOn( this );
+				else if ( menuItem->overItem( lastMouseX, lastMouseY ) && menuItem->overItem( mouse->x, mouse->y ) ) menuItem->movedMouseOver( lastMouseX, lastMouseY, this );
 			}
 		}
-		Client->bFlagDrawHud=true;
-		Client->bFlagDrawMMap=true;
+
+		lastMouseX = mouse->x;
+		lastMouseY = mouse->y;
+
+		if ( !SettingsData.bFastMode ) SDL_Delay ( 10 );
+
+		Client->doGameActions();
+
+		if ( startup )
+		{
+			if ( player->BuildingList ) player->BuildingList->Center();
+			else if ( player->VehicleList ) player->VehicleList->Center();
+			startup = false;
+		}
+
+		checkScroll();
+		changeWindDir();
+
+		if ( needMiniMapDraw )
+		{
+			miniMapImage->setImage ( generateMiniMapSurface() );
+			needMiniMapDraw = false;
+		}
+		if ( Client->timer100ms )
+		{
+			if ( FLC != NULL && playFLC )
+			{
+				FLI_NextFrame ( FLC );
+				FLCImage->setImage ( FLC->surface );
+			}
+			rotateBlinkColor();
+		}
+
+		draw();
+		frame++;
+
+		handleFramesPerSecond();
+
+		if ( terminate )
+		{
+			if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
+			return 1;
+		}
 	}
-	PlayFX ( SoundData.SNDHudSwitch );
+
+	makePanel ( false );
+
+	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
+	return 0;
 }
 
-void cHud::SwitchMinimapZoom ( bool set )
+void cGameGUI::returnToCallback()
 {
-	SDL_Rect scr={334,53,27,26},dest={136,387,27,26};
-	if ( set )
+	ActiveMenu = this;
+}
+
+SDL_Surface *cGameGUI::generateSurface()
+{
+	SDL_Surface *tmpSurface;
+	SDL_Rect scr, dest;
+	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+
+	SDL_FillRect ( surface, NULL, 0xFF00FF );
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+
+	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx" ) )
+	{
+		SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
+		SDL_FreeSurface ( tmpSurface );
+	}
+
+	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx" ) )
+	{
+		scr.x = 0;
+		scr.y = 0;
+		scr.w = tmpSurface->w;
+		scr.h = tmpSurface->h;
+		dest.x = HUD_LEFT_WIDTH;
+		dest.y = 0;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		scr.x = 1275;
+		scr.w = 18;
+		scr.h = HUD_TOP_HIGHT;
+		dest.x = surface->w-HUD_TOP_HIGHT;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		SDL_FreeSurface ( tmpSurface );
+	}
+
+	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx" ) )
+	{
+		scr.x = 0;
+		scr.y = 0;
+		scr.w = tmpSurface->w;
+		scr.h = tmpSurface->h;
+		dest.x = surface->w-HUD_RIGHT_WIDTH;
+		dest.y = HUD_TOP_HIGHT;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		SDL_FreeSurface ( tmpSurface );
+	}
+
+	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx" ) )
+	{
+		scr.x = 0;
+		scr.y = 0;
+		scr.w = tmpSurface->w;
+		scr.h = tmpSurface->h;
+		dest.x = HUD_LEFT_WIDTH;
+		dest.y = surface->h-24;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		scr.x = 1275;
+		scr.w = 23;
+		scr.h = 24;
+		dest.x = surface->w-23;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		scr.x = 1299;
+		scr.w = 16;
+		scr.h = 22;
+		dest.x = HUD_LEFT_WIDTH-16;
+		dest.y = surface->h-22;
+		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
+		SDL_FreeSurface ( tmpSurface );
+	}
+
+	if ( SettingsData.iScreenH > 480 )
+	{
+		if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx" ) )
 		{
-			scr.x=362;
-			scr.y=53;
+			dest.x = 9;
+			dest.y = SettingsData.iScreenH-HUD_TOTAL_HIGHT-15;
+			SDL_BlitSurface ( tmpSurface, NULL, surface, &dest );
+			SDL_FreeSurface ( tmpSurface );
+		}
+	}
+	return surface;
+}
+
+SDL_Surface *cGameGUI::generateMiniMapSurface()
+{
+	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
+	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );
+
+	//set getZoom() factor
+	int zoomFactor = 1;
+	if ( twoXChecked() ) zoomFactor = MINIMAP_ZOOM_FACTOR;
+
+	//set drawing offset, to center the minimap on the screen position
+	int minimapOffsetX = 0, minimapOffsetY = 0;	//position of the upper left edge on the map
+	if ( zoomFactor > 1 )
+	{
+		int centerPosX = (int) (offX / 64.0 + (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / ((int)(getZoom()*64.0) * 2));
+		int centerPosY = (int) (offY / 64.0 + (SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / ((int)(getZoom()*64.0) * 2));
+		minimapOffsetX = centerPosX - (map->size / (zoomFactor * 2));
+		minimapOffsetY = centerPosY - (map->size / (zoomFactor * 2));
+
+		if ( minimapOffsetX < 0 ) minimapOffsetX = 0;
+		if ( minimapOffsetY < 0 ) minimapOffsetY = 0;
+		if ( minimapOffsetX > map->size - (map->size / zoomFactor) ) minimapOffsetX = map->size - (map->size / zoomFactor);
+		if ( minimapOffsetY > map->size - (map->size / zoomFactor) ) minimapOffsetY = map->size - (map->size / zoomFactor);
+	}
+	miniMapOffX = minimapOffsetX;
+	miniMapOffY = minimapOffsetY;
+
+	//draw the landscape
+	for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
+	{
+		//calculate the field on the map
+		int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+		if ( terrainx >= map->size ) terrainx = map->size - 1;
+
+		//calculate the position within the terrain graphic (for better rendering of maps < 112)
+		int offsetx  = ((miniMapX * map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+
+		for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
+		{
+			int terrainy =  (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+			if ( terrainy >= map->size ) terrainy = map->size - 1;
+			int offsety  = ((miniMapY * map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+
+			SDL_Color sdlcolor;
+			Uint8* terrainPixels = (Uint8*) map->terrain[map->Kacheln[terrainx+terrainy*map->size]].sf_org->pixels;
+			Uint8 index = terrainPixels[offsetx + offsety*64];
+			sdlcolor = map->terrain[map->Kacheln[terrainx+terrainy*map->size]].sf_org->format->palette->colors[index];
+			Uint32 color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
+
+			minimap[miniMapX+miniMapY*MINIMAP_SIZE] = color;
+		}
+	}
+
+	if ( player )
+	{
+		//draw the fog
+		for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
+		{
+			int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+			for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
+			{
+				int terrainy = (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+
+				if ( !player->ScanMap[terrainx + terrainy * map->size] )
+				{
+					Uint8* color = (Uint8*) &minimap[miniMapX+miniMapY*MINIMAP_SIZE];
+					color[0] = (Uint8) ( color[0] * 0.6 );
+					color[1] = (Uint8) ( color[1] * 0.6 );
+					color[2] = (Uint8) ( color[2] * 0.6 );
+				}
+			}
 		}
 
-	BlitButton(scr, dest, "", false);
-	MinimapZoom=set;
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMMap=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
+		//draw the units
+		//here we go through each map field instead of through each minimap pixel,
+		//to make sure, that every unit is diplayed and has the same size on the minimap.
 
-void cHud::SwitchNebel ( bool set )
-{
-	SDL_Rect scr={277,78,55,18},dest={112,330,55,18};
-	if ( set )
+		//the size of the rect, that is drawn for each unit
+		int size = (int) ceil((float) MINIMAP_SIZE * zoomFactor / map->size);
+		if ( size < 2 ) size = 2;
+		SDL_Rect rect;
+		rect.h = size;
+		rect.w = size;
+
+		for ( int mapx = 0; mapx < map->size; mapx++ )
 		{
-			scr.x=110;
-			scr.y=78;
+			rect.x = ( (mapx - minimapOffsetX) * MINIMAP_SIZE * zoomFactor ) / map->size;
+			if ( rect.x < 0 || rect.x >= MINIMAP_SIZE ) continue;
+			for ( int mapy = 0; mapy < map->size; mapy++ )
+			{
+				rect.y = ( (mapy - minimapOffsetY) * MINIMAP_SIZE * zoomFactor ) / map->size;
+				if ( rect.y < 0 || rect.y >= MINIMAP_SIZE ) continue;
+
+				if ( !player->ScanMap[mapx + mapy * map->size] ) continue;
+
+				cMapField& field = (*map)[mapx + mapy * map->size];
+
+				//draw building
+				cBuilding* building = field.getBuildings();
+				if ( building && building->owner )
+				{
+					if ( !tntChecked() || building->data.canAttack )
+					{
+						unsigned int color = *( (unsigned int*) building->owner->color->pixels );
+						SDL_FillRect( minimapSurface, &rect, color);
+					}
+				}
+
+				//draw vehicle
+				cVehicle* vehicle = field.getVehicles();
+				if ( vehicle )
+				{
+					if ( !tntChecked() || vehicle->data.canAttack )
+					{
+						unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
+						SDL_FillRect( minimapSurface, &rect, color);
+					}
+				}
+
+				//draw plane
+				vehicle = field.getPlanes();
+				if ( vehicle )
+				{
+					if ( !tntChecked() || vehicle->data.canAttack )
+					{
+						unsigned int color = *( (unsigned int*) vehicle->owner->color->pixels );
+						SDL_FillRect( minimapSurface, &rect, color);
+					}
+				}
+			}
 		}
+	}
 
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Fog"),  set, true);
-	Nebel=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
 
-void cHud::SwitchGitter ( bool set )
-{
-	SDL_Rect scr={277,61,55,17},dest={112,313,55,17};
-	if ( set )
+	//draw the screen borders
+	int startx, starty, endx, endy;
+	startx = (int) ((((offX / 64.0) - minimapOffsetX) * MINIMAP_SIZE * zoomFactor) / map->size);
+	starty = (int) ((((offY / 64.0) - minimapOffsetY) * MINIMAP_SIZE * zoomFactor) / map->size);
+	endx = (int) ( startx + ((SettingsData.iScreenW - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
+	endy = (int) ( starty + ((SettingsData.iScreenH -  HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
+
+	if ( endx == MINIMAP_SIZE ) endx = MINIMAP_SIZE - 1; //workaround
+	if ( endy == MINIMAP_SIZE ) endy = MINIMAP_SIZE - 1;
+
+	for ( int y = starty; y <= endy; y++ )
+	{
+		if ( y < 0 || y >= MINIMAP_SIZE ) continue;
+		if ( startx >= 0 && startx < MINIMAP_SIZE )
 		{
-			scr.x=110;
-			scr.y=61;
+			minimap[y*MINIMAP_SIZE + startx] = MINIMAP_COLOR;
 		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Grid"), set, true);
-	Gitter=set;
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMap=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::SwitchScan ( bool set )
-{
-	SDL_Rect scr={277,44,55,18},dest={112,296,55,18};
-	if ( set )
+		if ( endx >= 0 && endx < MINIMAP_SIZE )
 		{
-			scr.x=110;
-			scr.y=44;
+			minimap[y*MINIMAP_SIZE + endx] = MINIMAP_COLOR;
 		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Scan"), set, true);
-	Scan=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::SwitchReichweite ( bool set )
-{
-	SDL_Rect scr={222,78,55,18},dest={57,330,55,18};
-	if ( set )
+	}
+	for ( int x = startx; x <= endx; x++ )
+	{
+		if ( x < 0 || x >= MINIMAP_SIZE ) continue;
+		if ( starty >= 0 && starty < MINIMAP_SIZE )
 		{
-			scr.x=55;
-			scr.y=78;
+			minimap[starty * MINIMAP_SIZE + x] = MINIMAP_COLOR;
 		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Range"), set, true);
-	Reichweite=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::SwitchMunition ( bool set )
-{
-	SDL_Rect scr={222,61,55,17},dest={57,313,55,17};
-	if ( set )
+		if ( endy >= 0 && endy < MINIMAP_SIZE )
 		{
-			scr.x=55;
-			scr.y=61;
+			minimap[endy * MINIMAP_SIZE + x] = MINIMAP_COLOR;
 		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Ammo"),  set, true);
-	Munition=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
+	}
+	return minimapSurface;
 }
 
-void cHud::SwitchTreffer ( bool set )
+void cGameGUI::setOffsetPosition ( int x, int y )
 {
-	SDL_Rect scr={222,44,55,18},dest={57,296,55,18};
-	if ( set )
-		{
-			scr.x=55;
-			scr.y=44;
-		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Hitpoints"), set, true);
-	Treffer=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
+	offX = x;
+	offY = y;
 }
 
-void cHud::SwitchFarben ( bool set )
+void cGameGUI::setZoom( float newZoom, bool setScroller )
 {
-	SDL_Rect scr={167,78,55,18},dest={2,330,55,18};
-	if ( set )
-		{
-			scr.x=0;
-			scr.y=78;
-		}
+	zoom = newZoom;
+	if ( zoom < minZoom ) zoom = minZoom;
+	if ( zoom > 1.0 ) zoom = 1.0;
 
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Color"),  set, true);
-	Farben=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
+	if ( setScroller ) this->zoomSlider->setValue ( zoom );
 
-void cHud::SwitchStatus ( bool set )
-{
-	SDL_Rect scr={167,61,55,17},dest={2,313,55,17};
-	if ( set )
-		{
-			scr.x=0;
-			scr.y=61;
-		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Status"),  set, true);
-	Status=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::SwitchStudie ( bool set )
-{
-	SDL_Rect scr={167,44,55,18},dest={2,296,55,18};
-	if ( set )
-		{
-			scr.x=0;
-			scr.y=44;
-		}
-
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Survey"), set, true);
-	Studie=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::SwitchLock ( bool set )
-{
-	SDL_Rect scr={397,321,21,22},dest={32,227,21,22};
-	if ( set )
-		{
-			scr.x=397;
-			scr.y=298;
-		}
-
-	BlitButton(scr, dest, "", false);
-	Lock=set;
-	Client->bFlagDrawHud=true;
-	PlayFX ( SoundData.SNDHudSwitch );
-}
-
-void cHud::DoZoom ( int x,int y )
-{
-	if ( x<=12 ) x=0;else x-=12;
-	if ( x>104 ) x=104;
-	x=64- ( int ) ( x* ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) ) /104 );
-	if ( x<1 ) x=1;
-	SetZoom ( x,y );
-}
-
-void cHud::SetZoom ( int zoom,int DestY )
-{
-	//check for minimum and maximum zoom factor
-	int iMinZoom = (int) ceil( (float) max(SettingsData.iScreenH - 32, SettingsData.iScreenW - 192) / Client->Map->size);
-
-	if ( zoom < iMinZoom ) zoom = iMinZoom;
-	if ( zoom < 5 ) zoom = 5;
-	else if ( zoom > 64 ) zoom = 64;
-
-	static int lastz=64;
-	SDL_Rect scr,dest;
-//  if(zoom<448/Client->Map->size)zoom=448/Client->Map->size;
-
-	Zoom=zoom;
-//  zoom-=((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size));
-	zoom-= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) );
-	scr.x=0;
-	scr.y=0;
-	dest.x=19;
-	dest.y=DestY;
-	scr.w=132;
-	scr.h=20;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-//  zoom=106-(int)(zoom*106.0/(64-((448.0/Client->Map->size)<5?5:(448.0/Client->Map->size))));
-	zoom=106- ( int ) ( zoom*106.0/ ( 64- ( ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) <5?5: ( ( SettingsData.iScreenW-192.0 ) /Client->Map->size ) ) ) );
-	scr.x=132;
-	scr.y=1;
-	dest.x=20+zoom;
-	dest.y=DestY+1;
-	scr.w=25;
-	scr.h=14;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMap=true;
-	Client->bFlagDrawMMap=true;
-
-	if ( lastz!=Zoom )
+	static float lastZoom = 1.0;
+	if ( lastZoom != getZoom() )
 	{
 		int off;
-//    off=(int)(((448.0/(float)lastz*64)-(448.0/(float)Zoom*64))/2);
-		off= ( int ) ( ( ( ( SettingsData.iScreenW-192.0 ) / ( float ) lastz*64 )- ( ( SettingsData.iScreenW-192.0 ) / ( float ) Zoom*64 ) ) /2 );
-		lastz=Zoom;
+		int lastScreenPixel = (int)( (float)( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / lastZoom );
+		int newScreenPixel = (int)( (float)( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / getZoom() );
+		off = (lastScreenPixel-newScreenPixel)/2 ;
+		lastZoom = getZoom();
 
-		OffX+=off;
-		OffY+=off;
-//    off=Client->Map->size*64-(int)((448.0/Zoom)*64);
-		off=Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
-		if ( OffX > off ) OffX = off;
-		if ( OffY > off ) OffY = off;
-		if ( OffX < 0   ) OffX = 0;
-		if ( OffY < 0   ) OffY = 0;
+		offX += off;
+		offY += off;
 	}
-	if ( SettingsData.bPreScale ) ScaleSurfaces();
+	if ( SettingsData.bPreScale ) scaleSurfaces();
+	doScroll ( 0 );
 }
 
-
-void cHud::CheckButtons ( void )
+float cGameGUI::getZoom()
 {
-	int x,y;
-	x=mouse->x;
-	y=mouse->y;
-	if ( x<170 )
+	return ( getTileSize()/(float)64.0 );
+}
+
+int cGameGUI::getTileSize()
+{
+	return Round( 64.0*zoom );
+}
+
+void cGameGUI::setVideoSurface ( SDL_Surface *videoSurface )
+{
+	FLCImage->setImage ( videoSurface );
+}
+
+void cGameGUI::setFLC ( FLI_Animation *FLC_ )
+{
+	FLC = FLC_;
+	if ( FLC )
 	{
-		if ( x>=136&&x<=136+27&&y>=413&&y<=413+28 ) {SwitchTNT ( !TNT );return;}
-		if ( x>=136&&x<=136+27&&y>=439&&y<=439+28 )
+		FLI_Rewind ( FLC );
+		FLI_NextFrame ( FLC );
+		FLCImage->setImage ( FLC->surface );
+	}
+	else FLCImage->setImage ( NULL );
+}
+
+void cGameGUI::setPlayer ( cPlayer *player_ )
+{
+	player = player_;
+	unitDetails->setOwner ( player );
+}
+
+void cGameGUI::setUnitDetailsData ( cVehicle *vehicle, cBuilding *building )
+{
+	unitDetails->setSelection ( vehicle, building );
+}
+
+void cGameGUI::updateTurn ( int turn )
+{
+	turnLabel->setText ( iToStr ( turn ) );
+}
+
+void cGameGUI::updateTurnTime ( int time )
+{
+	if ( time < 0 ) timeLabel->setText ( "" );
+	else timeLabel->setText ( iToStr ( time ) );
+}
+
+void cGameGUI::callMiniMapDraw()
+{
+	needMiniMapDraw = true;
+}
+
+void cGameGUI::unlockEndButton()
+{
+	endButton->setLocked( false );
+}
+
+void cGameGUI::handleFramesPerSecond()
+{
+	static Uint32 lastTicks = 0;
+	static Uint32 lastFrame = 0;
+	static Uint32 cycles = 0;
+	static Uint32 inverseLoad = 0; //this is 10*(100% - load)
+	static Uint32 lastTickLoad = 0;
+
+	cycles++;
+	Uint32 ticks = SDL_GetTicks();
+
+	if ( ticks != lastTickLoad ) inverseLoad++;
+	lastTickLoad = ticks;
+
+	if ( ticks > lastTicks + 1000 )
+	{
+		float a = 0.5f;	//low pass filter coefficient
+
+		framesPerSecond = (1-a)*(frame - lastFrame)*1000/(float)(ticks - lastTicks) + a*framesPerSecond;
+		lastFrame = frame;
+
+		cyclesPerSecond = (1-a)*cycles*1000 / (float) (ticks - lastTicks) + a*cyclesPerSecond;
+		cycles = 0;
+
+		loadValue = Round((1-a)*(1000 - inverseLoad) + a*loadValue);
+		inverseLoad = 0;
+
+		lastTicks = ticks;
+	}
+}
+
+void cGameGUI::rotateBlinkColor()
+{
+	static bool dec = true;
+	if ( dec )
+	{
+		blinkColor -= 0x0A0A0A;
+		if ( blinkColor <= 0xA0A0A0 ) dec = false;
+	}
+	else
+	{
+		blinkColor += 0x0A0A0A;
+		if ( blinkColor >= 0xFFFFFF ) dec = true;
+	}
+}
+
+bool cGameGUI::checkScroll()
+{
+	if ( mouse->x <= 0 && mouse->y > 30 && mouse->y < SettingsData.iScreenH-30-18 )
+	{
+		mouse->SetCursor ( CPfeil4 );
+		doScroll ( 4 );
+		return true;
+	}
+	else if ( mouse->x >= SettingsData.iScreenW-18 && mouse->y > 30 && mouse->y < SettingsData.iScreenH-30-18 )
+	{
+		mouse->SetCursor ( CPfeil6 );
+		doScroll ( 6 );
+		return true;
+	}
+	else if ( ( mouse->x <= 0 && mouse->y <= 30 ) || ( mouse->y <= 0 && mouse->x <= 30 ) )
+	{
+		mouse->SetCursor ( CPfeil7 );
+		doScroll ( 7 );
+		return true;
+	}
+	else if ( ( mouse->x >= SettingsData.iScreenW-18 && mouse->y <= 30 ) || ( mouse->y<=0&&mouse->x>=SettingsData.iScreenW-30-18 ) )
+	{
+		mouse->SetCursor ( CPfeil9 );
+		doScroll ( 9 );
+		return true;
+	}
+	else if ( mouse->y <= 0 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 )
+	{
+		mouse->SetCursor ( CPfeil8 );
+		doScroll ( 8 );
+		return true;
+	}
+	else if ( mouse->y >= SettingsData.iScreenH-18 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 ) 
+	{
+		mouse->SetCursor ( CPfeil2 );
+		doScroll ( 2 );
+		return true;
+	}
+	else if ( ( mouse->x <= 0 && mouse->y >= SettingsData.iScreenH-30-18 ) || ( mouse->y >= SettingsData.iScreenH-18 && mouse->x <= 30 ) )
+	{
+		mouse->SetCursor ( CPfeil1 );
+		doScroll ( 1 );
+		return true;
+	}
+	else if ( ( mouse->x >= SettingsData.iScreenW-18 && mouse->y >= SettingsData.iScreenH-30-18 ) || ( mouse->y >= SettingsData.iScreenH-18 && mouse->x >= SettingsData.iScreenW-30-18 ) )
+	{
+		mouse->SetCursor ( CPfeil3 );
+		doScroll ( 3 );
+		return true;
+	}
+	return false;
+}
+
+void cGameGUI::updateUnderMouseObject()
+{
+	static int lastX = -1, lastY = -1;
+	int x, y;
+
+	mouse->GetKachel ( &x, &y );
+
+	lastX = x;
+	lastY = y;
+
+	if ( x == -1 ) return;
+
+	// draw the coordinates:
+	/*array to get map coords in sceme XXX-YYY\0 = 8 characters
+	a case where I accept an array since I don't know a better
+	method to format x and y easily with leading 0 -- beko */
+	char str[8];
+	sprintf ( str, "%0.3d-%0.3d", x, y );
+	coordsLabel->setText ( str );
+
+	if ( !player->ScanMap[x+y*map->size] )
+	{
+		overUnitField = NULL;
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
-			SwitchPlayers( !bShowPlayers );
-			reset();
-			return;
+			SDL_Rect r;
+			r.x = 1; r.y = 29;
+			r.h = 3; r.w = 35;
+			SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
 		}
-		if ( x>=136&&x<=136+27&&y>=387&&y<=387+28 ) {SwitchMinimapZoom ( !MinimapZoom );return;}
-		if ( x>=112&&x<=112+55&&y>=332&&y<=332+17 ) {SwitchNebel ( !Nebel );return;}
-		if ( x>=112&&x<=112+55&&y>=314&&y<=314+17 ) {SwitchGitter ( !Gitter );return;}
-		if ( x>=112&&x<=112+55&&y>=296&&y<=296+17 ) {SwitchScan ( !Scan );return;}
-		if ( x>=57&&x<=57+55&&y>=332&&y<=332+17 ) {SwitchReichweite ( !Reichweite );return;}
-		if ( x>=57&&x<=57+55&&y>=314&&y<=314+17 ) {SwitchMunition ( !Munition );return;}
-		if ( x>=57&&x<=57+55&&y>=296&&y<=296+17 ) {SwitchTreffer ( !Treffer );return;}
-		if ( x>=0&&x<=55&&y>=332&&y<=332+17 ) {SwitchFarben ( !Farben );return;}
-		if ( x>=0&&x<=55&&y>=314&&y<=314+17 ) {SwitchStatus ( !Status );return;}
-		if ( x>=0&&x<=55&&y>=296&&y<=296+17 ) {SwitchStudie ( !Studie );return;}
-		if ( x>=32&&x<=52&&y>=227&&y<=248 ) {SwitchLock ( !Lock );return;}
-	}
-}
-
-void cHud::CheckOneClick ( void )
-{
-	static int lastX=-1;
-	int x,y;
-	x=mouse->x;
-	y=mouse->y;
-	if ( x<170&&y<296 )
-	{
-		if ( x!=lastX&&x>=20&&y>=272&&x<=150&&y<=292 ) {DoZoom ( x-20 );lastX=x;return;}
-	}
-	if ( x>=15&&x<15+112&&y>=356&&y<356+112 ){DoMinimapClick ( x,y );return;}
-	lastX=x;
-}
-
-void cHud::DoAllHud ( void )
-{
-	bool s;
-	s=SettingsData.bSoundEnabled;
-	SettingsData.bSoundEnabled=false;
-
-	EndeButton(EndePressed);
-	DateiButton(false);
-	PraeferenzenButton(false);
-	PrevButton(false);
-	ErledigenButton(false);
-	NextButton(false);
-	LogButton(false);
-	ChatButton(false);
-	DateiButton(false);
-	SwitchTNT ( TNT );
-	SwitchPlayers( bShowPlayers );
-	SwitchMinimapZoom ( MinimapZoom );
-	SwitchNebel ( Nebel );
-	SwitchGitter ( Gitter );
-	SwitchScan ( Scan );
-	SwitchReichweite ( Reichweite );
-	SwitchMunition ( Munition );
-	SwitchTreffer ( Treffer );
-	SwitchFarben ( Farben );
-	SwitchStatus ( Status );
-	SwitchStudie ( Studie );
-	SwitchLock ( Lock );
-	SetZoom ( Zoom );
-	SettingsData.bSoundEnabled=s;
-	ShowRunde();
-}
-
-void cHud::CheckScroll ( bool pure )
-{
-	int x,y;
-	x=mouse->x;
-	y=mouse->y;
-
-	if ( x<=0&&y>30&&y<SettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil4 );DoScroll ( 4 );return;}
-	if ( x>=SettingsData.iScreenW-18&&y>30&&y<SettingsData.iScreenH-30-18 ) {mouse->SetCursor ( CPfeil6 );DoScroll ( 6 );return;}
-
-	if ( ( x<=0&&y<=30 ) || ( y<=0&&x<=30 ) ) {mouse->SetCursor ( CPfeil7 );DoScroll ( 7 );return;}
-	if ( ( x>=SettingsData.iScreenW-18&&y<=30 ) || ( y<=0&&x>=SettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil9 );DoScroll ( 9 );return;}
-
-	if ( y<=0&&x>30&&x<SettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil8 );DoScroll ( 8 );return;}
-	if ( y>=SettingsData.iScreenH-18&&x>30&&x<SettingsData.iScreenW-30-18 ) {mouse->SetCursor ( CPfeil2 );DoScroll ( 2 );return;}
-
-	if ( ( x<=0&&y>=SettingsData.iScreenH-30-18 ) || ( y>=SettingsData.iScreenH-18&&x<=30 ) ) {mouse->SetCursor ( CPfeil1 );DoScroll ( 1 );return;}
-	if ( ( x>=SettingsData.iScreenW-18&&y>=SettingsData.iScreenH-30-18 ) || ( y>=SettingsData.iScreenH-18&&x>=SettingsData.iScreenW-30-18 ) ) {mouse->SetCursor ( CPfeil3 );DoScroll ( 3 );return;}
-
-	if ( pure )
-	{
-		mouse->SetCursor ( CHand );
 		return;
 	}
-
-	cVehicle* selectedVehicle = Client->SelectedVehicle;
-	cBuilding* selectedBuilding = Client->SelectedBuilding;
-
-	if ( selectedVehicle&&selectedVehicle->PlaceBand&&selectedVehicle->owner==Client->ActivePlayer )
+	// check wether there is a unit under the mouse:
+	overUnitField = map->fields + (x + y * map->size);
+	if ( mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle )
 	{
-		if ( x>=180 )
+		selectedVehicle->drawCommandoCursor ( map->size*y+x, true );
+	}
+	else if ( mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle )
+	{
+		selectedVehicle->drawCommandoCursor ( map->size*y+x, false );
+	}
+	if ( overUnitField->getVehicles() != NULL )
+	{
+		unitNameLabel->setText ( overUnitField->getVehicles()->name );
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->DrawAttackCursor ( map->size*y+x );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->DrawAttackCursor ( map->size*y+x );
+			}
+		}
+	}
+	else if ( overUnitField->getPlanes() != NULL )
+	{
+		unitNameLabel->setText ( overUnitField->getPlanes()->name );
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->DrawAttackCursor ( map->size*y+x );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->DrawAttackCursor ( map->size*y+x );
+			}
+		}
+	}
+	else if ( overUnitField->getTopBuilding() != NULL )
+	{
+		unitNameLabel->setText ( overUnitField->getTopBuilding()->name );
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->DrawAttackCursor ( map->size*y+x );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->DrawAttackCursor ( map->size*y+x );
+			}
+		}
+	}
+	else if ( overUnitField->getBaseBuilding() != NULL )
+	{
+		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name );
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->DrawAttackCursor ( map->size*y+x );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->DrawAttackCursor ( map->size*y+x );
+			}
+		}
+	}
+	else
+	{
+		unitNameLabel->setText ( "" );
+		if ( mouse->cur == GraphicsData.gfx_Cattack )
+		{
+			SDL_Rect r;
+			r.x = 1; r.y = 29;
+			r.h = 3; r.w = 35;
+			SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
+		}
+		overUnitField = NULL;
+	}
+	// place band:
+	if ( selectedVehicle && selectedVehicle->PlaceBand )
+	{
+		selectedVehicle->FindNextband();
+	}
+}
+
+void cGameGUI::incFrame()
+{
+	frame++;
+}
+
+void cGameGUI::setStartup ( bool startup_ )
+{
+	startup = startup_;
+}
+
+void cGameGUI::setSelVehicle( cVehicle *vehicle )
+{
+	selectedVehicle = vehicle;
+}
+
+void cGameGUI::setSelBuilding( cBuilding *building )
+{
+	selectedBuilding = building;
+}
+
+void cGameGUI::updateMouseCursor()
+{
+	updateUnderMouseObject();
+
+	int x = mouse->x;
+	int y = mouse->y;
+
+	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
+	{
+		if ( menuItems[i]->overItem( x, y ) && !menuItems[i]->isDisabled() )
+		{
+			mouse->SetCursor ( CHand );
+			return;
+		}
+	}
+
+	if ( selectedVehicle && selectedVehicle->PlaceBand && selectedVehicle->owner == Client->ActivePlayer )
+	{
+		if ( x >= HUD_LEFT_WIDTH )
 		{
 			mouse->SetCursor ( CBand );
 		}
@@ -463,11 +914,11 @@ void cHud::CheckScroll ( bool pure )
 			mouse->SetCursor ( CNo );
 		}
 	}
-	else if ( ( selectedVehicle&&selectedVehicle->Transfer&&selectedVehicle->owner==Client->ActivePlayer ) || ( selectedBuilding&&selectedBuilding->Transfer&&selectedBuilding->owner==Client->ActivePlayer ) )
+	else if ( ( selectedVehicle && selectedVehicle->Transfer && selectedVehicle->owner == Client->ActivePlayer ) || ( selectedBuilding && selectedBuilding->Transfer && selectedBuilding->owner == Client->ActivePlayer ) )
 	{
 		if ( selectedVehicle )
 		{
-			if ( Client->OverUnitField && selectedVehicle->CanTransferTo ( Client->OverUnitField ) )
+			if ( overUnitField && selectedVehicle->CanTransferTo ( overUnitField ) )
 			{
 				mouse->SetCursor ( CTransf );
 			}
@@ -478,7 +929,7 @@ void cHud::CheckScroll ( bool pure )
 		}
 		else
 		{
-			if ( Client->OverUnitField && selectedBuilding->CanTransferTo ( Client->OverUnitField ) )
+			if ( overUnitField && selectedBuilding->CanTransferTo ( overUnitField ) )
 			{
 				mouse->SetCursor ( CTransf );
 			}
@@ -488,38 +939,23 @@ void cHud::CheckScroll ( bool pure )
 			}
 		}
 	}
-	else if ( !Client->bHelpActive )
+	else if ( !helpActive )
 	{
-
-		if ( x<180 )
+		if ( x < HUD_LEFT_WIDTH )
 		{
 			if ( mouse->SetCursor ( CHand ) )
 			{
-				Client->OverUnitField = NULL;
+				overUnitField = NULL;
 			}
 			return;
 		}
 
-		if ( y<2+21&&y>=2&&x>=390&&x<390+72 )
-		{
-			mouse->SetCursor ( CHand );
-
-			Client->OverUnitField = NULL;
-			LastOverEnde=true;
-			return;
-		}
-		else if ( LastOverEnde )
-		{
-			LastOverEnde=false;
-			Client->mouseMoveCallback ( true );
-		}
-
-		if ( ( selectedVehicle&&selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( x,y ) ) ||
-		        ( selectedBuilding&&selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( x,y ) ) )
+		if ( ( selectedVehicle && selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( x,y ) ) ||
+		        ( selectedBuilding && selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( x,y ) ) )
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
@@ -533,7 +969,7 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
 			{
@@ -547,7 +983,7 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 			{
@@ -561,21 +997,21 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false )&& ( !Client->OverUnitField->getVehicles() || !Client->OverUnitField->getVehicles()->Disabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->Disabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 		{
 			if ( mouse->SetCursor ( CSteal ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), true );
 			}
 		}
-		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=180&&y>=18&&x<SettingsData.iScreenW-12&&y<SettingsData.iScreenH-14 )
+		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff(), Client->Map ) )
 			{
@@ -625,13 +1061,13 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if (Client->OverUnitField &&
+		else if (overUnitField &&
 				(
-					Client->OverUnitField->getVehicles() ||
-					Client->OverUnitField->getPlanes() ||
+					overUnitField->getVehicles() ||
+					overUnitField->getPlanes() ||
 					(
-						Client->OverUnitField->getBuildings() &&
-						Client->OverUnitField->getBuildings()->owner
+						overUnitField->getBuildings() &&
+						overUnitField->getBuildings()->owner
 					)
 				) &&
 				(
@@ -640,27 +1076,27 @@ void cHud::CheckScroll ( bool pure )
 					(
 						(
 							selectedVehicle->data.factorAir > 0 ||
-							Client->OverUnitField->getVehicles() ||
+							overUnitField->getVehicles() ||
 							(
-								Client->OverUnitField->getTopBuilding() &&
-								Client->OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
+								overUnitField->getTopBuilding() &&
+								overUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
 							) ||
 							(
 								MouseStyle == OldSchool &&
-								Client->OverUnitField->getPlanes()
+								overUnitField->getPlanes()
 							)
 						) &&
 						(
 							selectedVehicle->data.factorAir == 0 ||
-							Client->OverUnitField->getPlanes() ||
+							overUnitField->getPlanes() ||
 							(
 								MouseStyle == OldSchool &&
 								(
-									Client->OverUnitField->getVehicles() ||
+									overUnitField->getVehicles() ||
 									(
-										Client->OverUnitField->getTopBuilding() &&
-										Client->OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
-										!Client->OverUnitField->getTopBuilding()->data.canBeLandedOn
+										overUnitField->getTopBuilding() &&
+										overUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+										!overUnitField->getTopBuilding()->data.canBeLandedOn
 									)
 								)
 							)
@@ -711,7 +1147,7 @@ void cHud::CheckScroll ( bool pure )
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=180&&y>=18&&x<180+ ( SettingsData.iScreenW-192 ) && y<18+ ( SettingsData.iScreenH-32 ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) )
 		{
 			if ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle )
 			{
@@ -798,92 +1234,1319 @@ void cHud::CheckScroll ( bool pure )
 	}
 }
 
-void cHud::DoScroll ( int dir )
+void cGameGUI::handleMouseMove()
+{
+	if ( checkScroll() ) return;
+
+	updateMouseCursor();
+
+	// update mouseboxes
+	if ( savedMouseState.leftButtonPressed && !savedMouseState.rightButtonPressed && mouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH )
+	{
+		mouseBox.endX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		mouseBox.endY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+	}
+	if ( savedMouseState.rightButtonPressed && !savedMouseState.leftButtonPressed && rightMouseBox.startX != -1 && mouse->x > HUD_LEFT_WIDTH )
+	{
+		rightMouseBox.endX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		rightMouseBox.endY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+	}
+}
+
+void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
+{
+	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
+	{
+		if ( !menuItems[i]->isDisabled() && menuItems[i]->overItem( mouse->x, mouse->y ) ) return;
+	}
+
+	bool changeAllowed = !Client->bWaitForOthers;
+
+	savedMouseState = mouseState;
+
+	cVehicle* overVehicle = NULL;
+	cVehicle* overPlane = NULL;
+	cBuilding* overBuilding = NULL;
+	cBuilding* overBaseBuilding = NULL;
+	if ( overUnitField )
+	{
+		overVehicle  = overUnitField->getVehicles();
+		overPlane    = overUnitField->getPlanes();
+		overBuilding = overUnitField->getTopBuilding();
+		overBaseBuilding = overUnitField->getBaseBuilding();
+	}
+
+	if ( selectedVehicle && selectedVehicle->MenuActive && selectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
+	{
+		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
+		return;
+	}
+	else if ( selectedBuilding && selectedBuilding->MenuActive && selectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
+	{
+		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
+		return;
+	}
+
+	// handle input on the map
+	if ( MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && overUnitField )
+	{
+		if (( overVehicle && overVehicle == selectedVehicle ) || ( overPlane && overPlane == selectedVehicle ))
+		{
+			cUnitHelpMenu helpMenu ( &selectedVehicle->data, selectedVehicle->owner );
+			helpMenu.show();
+		}
+		else if (( overBuilding && overBuilding == selectedBuilding ) || ( overBaseBuilding && overBaseBuilding == selectedBuilding ) )
+		{
+			cUnitHelpMenu helpMenu ( &selectedBuilding->data, selectedBuilding->owner );
+			helpMenu.show();
+		}
+		else if ( overUnitField ) selectUnit ( overUnitField, true );
+	}
+	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
+	{
+		if ( helpActive )
+		{
+			helpActive = false;
+		}
+		else
+		{
+			deselectGroup();
+			if ( overUnitField && (
+			            ( selectedVehicle && ( overVehicle == selectedVehicle || overPlane == selectedVehicle ) ) ||
+			            ( selectedBuilding && ( overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding ) ) ) )
+			{
+				int next = -1;
+
+				if ( selectedVehicle )
+				{
+					if ( overPlane == selectedVehicle )
+					{
+						if ( overVehicle ) next = 'v';
+						else if ( overBuilding ) next = 't';
+						else if ( overBaseBuilding ) next = 'b';
+					}
+					else
+					{
+						if ( overBuilding ) next = 't';
+						else if ( overBaseBuilding ) next = 'b';
+						else if ( overPlane ) next = 'p';
+					}
+
+					selectedVehicle->Deselct();
+					selectedVehicle = NULL;
+					StopFXLoop ( Client->iObjectStream );
+				}
+				else if ( selectedBuilding )
+				{
+					if ( overBuilding == selectedBuilding )
+					{
+						if ( overBaseBuilding ) next = 'b';
+						else if ( overPlane ) next = 'p';
+						else if ( overUnitField->getVehicles() ) next = 'v';
+					}
+					else
+					{
+						if ( overPlane ) next = 'p';
+						else if ( overUnitField->getVehicles() ) next = 'v';
+						else if ( overBuilding ) next = 't';
+					}
+
+					selectedBuilding->Deselct();
+					selectedBuilding = NULL;
+					StopFXLoop ( Client->iObjectStream );
+				}
+				switch ( next )
+				{
+					case 't':
+						selectedBuilding = overBuilding ;
+						selectedBuilding->Select();
+						Client->iObjectStream=selectedBuilding->playStream();
+						break;
+					case 'b':
+						selectedBuilding = overBaseBuilding;
+						selectedBuilding->Select();
+						Client->iObjectStream=selectedBuilding->playStream();
+						break;
+					case 'v':
+						selectedVehicle = overVehicle;
+						selectedVehicle->Select();
+						Client->iObjectStream = selectedVehicle->playStream();
+						break;
+					case 'p':
+						selectedVehicle = overPlane;
+						selectedVehicle->Select();
+						Client->iObjectStream = selectedVehicle->playStream();
+						break;
+				}
+			}
+			else if ( selectedVehicle != NULL )
+			{
+				selectedVehicle->Deselct();
+				selectedVehicle = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			else if ( selectedBuilding!=NULL )
+			{
+				selectedBuilding->Deselct();
+				selectedBuilding = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+		}
+	}
+
+	if ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed )
+	{
+		rightMouseBox.startX = rightMouseBox.startY = -1;
+		rightMouseBox.endX = rightMouseBox.endY = -1;
+	}
+	else if ( mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouse->x > HUD_LEFT_WIDTH && mouse->y > 20 )
+	{
+		rightMouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + offX ) / 64.0 );
+		rightMouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + offY ) / 64.0 );
+	}
+	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
+	{
+		// Store the currently selected unit to determine if the lock state of the clicked unit maybe has to be changed. 
+		// If the selected unit changes during the click handling, then the newly selected unit has to be added / removed from the "locked units" list.
+		cVehicle* oldSelectedVehicleForLock = selectedVehicle;
+		cBuilding* oldSelectedBuildingForLock = selectedBuilding;
+		
+		if ( !mouseBox.isTooSmall() )
+		{
+			selectBoxVehicles( mouseBox );
+		}
+		else if ( changeAllowed && selectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf )
+		{
+			if ( overVehicle )
+			{
+				cDialogTransfer transferDialog ( NULL, selectedVehicle, NULL, overVehicle );
+				transferDialog.show();
+			}
+			else if ( overBuilding )
+			{
+				cDialogTransfer transferDialog ( NULL, selectedVehicle, overBuilding, NULL );
+				transferDialog.show();
+			}
+		}
+		else if ( changeAllowed && selectedBuilding && mouse->cur == GraphicsData.gfx_Ctransf )
+		{
+			if ( overVehicle )
+			{
+				cDialogTransfer transferDialog ( selectedBuilding, NULL, NULL, overVehicle );
+				transferDialog.show();
+			}
+			else if ( overBuilding )
+			{
+				cDialogTransfer transferDialog ( selectedBuilding, NULL, overBuilding, NULL );
+				transferDialog.show();
+			}
+		}
+		else if ( changeAllowed && selectedVehicle && selectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
+		{
+			selectedVehicle->PlaceBand = false;
+			if ( selectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
+			{
+				sendWantBuild ( selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->BandX+selectedVehicle->BandY*map->size, false, 0 );
+			}
+			else
+			{
+				sendWantBuild ( selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX+selectedVehicle->PosY*map->size, true, selectedVehicle->BandX+selectedVehicle->BandY*map->size );
+			}
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->ActivatingVehicle )
+		{
+			sendWantActivate ( selectedBuilding->iID, false, selectedBuilding->StoredVehicles[selectedBuilding->VehicleToActivate]->iID, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
+			updateMouseCursor();
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedVehicle && selectedVehicle->ActivatingVehicle )
+		{
+			sendWantActivate ( selectedVehicle->iID, true, selectedVehicle->StoredVehicles[selectedVehicle->VehicleToActivate]->iID, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
+			updateMouseCursor();
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->Size())
+		{
+			int iX, iY;
+			mouse->GetKachel ( &iX, &iY );
+			sendWantExitFinishedVehicle ( selectedBuilding, iX, iY );
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && selectedBuilding->LoadActive )
+		{
+			if ( overVehicle )
+			{
+				if ( selectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+			else if ( overPlane )
+			{
+				if ( selectedBuilding->isNextTo ( overPlane->PosX, overPlane->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overPlane->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overPlane );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedVehicle && selectedVehicle->LoadActive )
+		{
+			if ( selectedVehicle->data.factorAir > 0 && overVehicle )
+			{
+				if ( overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_LOAD, NULL, selectedVehicle, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+			else if ( overVehicle )
+			{
+				if ( selectedVehicle->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
+				else
+				{
+					// the constructor does everything for us
+					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, NULL, selectedVehicle, NULL, overVehicle );
+					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+				}
+			}
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni && selectedVehicle && selectedVehicle->MuniActive )
+		{
+			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if ( overBuilding ) sendWantSupply ( overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+		}
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Crepair && selectedVehicle && selectedVehicle->RepairActive )
+		{
+			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if ( overBuilding ) sendWantSupply ( overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+		}
+		else if ( !helpActive )
+		{
+			//Hud.CheckButtons();
+			// check whether the mouse is over an unit menu:
+			if ( ( selectedVehicle&&selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( mouse->x,mouse->y ) ) ||
+			        ( selectedBuilding&&selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( mouse->x,mouse->y ) ) )
+			{
+			}
+			else
+				// check, if the player wants to attack:
+				if ( changeAllowed && mouse->cur==GraphicsData.gfx_Cattack&&selectedVehicle&&!selectedVehicle->Attacking&&!selectedVehicle->MoveJobActive )
+				{
+					cVehicle* vehicle;
+					cBuilding* building;
+					selectTarget( vehicle, building, mouse->GetKachelOff(), selectedVehicle->data.canAttack, Client->Map);
+
+					if ( selectedVehicle->IsInRange ( mouse->GetKachelOff(), map ) )
+					{
+						//find target ID
+						int targetId = 0;
+						if ( vehicle ) targetId = vehicle->iID;
+
+						Log.write(" Client: want to attack offset " + iToStr(mouse->GetKachelOff()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
+						sendWantAttack( targetId, mouse->GetKachelOff(), selectedVehicle->iID, true );
+					}
+					else
+					{
+						// the constructor does everything for us
+						cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_ATTACK, NULL, selectedVehicle, building, vehicle, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
+						if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					}
+				}
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->Attacking )
+				{
+					//find target ID
+					int targetId = 0;
+					cVehicle* vehicle;
+					cBuilding* building;
+					selectTarget( vehicle, building, mouse->GetKachelOff(), selectedBuilding->data.canAttack, Client->Map);
+					if ( vehicle ) targetId = vehicle->iID;
+
+					int offset = selectedBuilding->PosX + selectedBuilding->PosY * map->size;
+					sendWantAttack( targetId, mouse->GetKachelOff(), offset, false );
+				}
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle )
+				{
+					if ( overVehicle ) sendWantComAction ( selectedVehicle->iID, overVehicle->iID, true, true );
+					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( selectedVehicle->iID, overVehicle->iID, true, true );
+				}
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle )
+				{
+					if ( overVehicle ) sendWantComAction ( selectedVehicle->iID, overVehicle->iID, true, false );
+					else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantComAction ( selectedVehicle->iID, overPlane->iID, true, false );
+					else if ( overBuilding ) sendWantComAction ( selectedVehicle->iID, overBuilding->iID, false, false );
+				}
+				else if ( MouseStyle == OldSchool && overUnitField && selectUnit ( overUnitField, false ) )
+				{}
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmove && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->Attacking )
+				{
+					if ( selectedVehicle->IsBuilding )
+					{
+						int iX, iY;
+						mouse->GetKachel ( &iX, &iY );
+						sendWantEndBuilding ( selectedVehicle, iX, iY );
+					}
+					else
+					{
+						if ( selectedVehiclesGroup.Size() > 1 ) Client->startGroupMove();
+						else Client->addMoveJob( selectedVehicle, mouse->GetKachelOff() );
+					}
+				}
+				else if ( overUnitField )
+				{
+					// open unit menu
+					if ( changeAllowed && selectedVehicle && ( overPlane == selectedVehicle || overVehicle == selectedVehicle ) )
+					{
+						if ( !selectedVehicle->moving && selectedVehicle->owner == player )
+						{
+							selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
+							if ( selectedVehicle->MenuActive ) selectedVehicle->selMenuNr = -1;
+							PlayFX ( SoundData.SNDHudButton );
+						}
+					}
+					else if ( changeAllowed && selectedBuilding&& ( overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding ) )
+					{
+						if ( selectedBuilding->owner == player )
+						{
+							selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
+							if ( selectedBuilding->MenuActive ) selectedBuilding->selMenuNr = -1;
+							PlayFX ( SoundData.SNDHudButton );
+						}
+					}
+					// select unit when using modern style
+					else if ( MouseStyle == Modern ) selectUnit ( overUnitField, true );
+				}
+		}
+		else if ( overUnitField )
+		{
+			if ( overPlane )
+			{
+				cUnitHelpMenu helpMenu ( &overPlane->data, overPlane->owner );
+				helpMenu.show();
+			}
+			else if ( overVehicle )
+			{
+				cUnitHelpMenu helpMenu ( &overVehicle->data, overVehicle->owner );
+				helpMenu.show();
+			}
+			else if ( overBuilding )
+			{
+				cUnitHelpMenu helpMenu ( &overBuilding->data, overBuilding->owner );
+				helpMenu.show();
+			}
+			else if ( overBaseBuilding )
+			{
+				cUnitHelpMenu helpMenu ( &overBaseBuilding->data, overBaseBuilding->owner );
+				helpMenu.show();
+			}
+			helpActive = false;
+		}
+		
+		// toggle the lock state of an enemy unit, if it is newly selected / deselected
+		if ( overUnitField && lockChecked() )
+		{
+			if (selectedVehicle && selectedVehicle != oldSelectedVehicleForLock && selectedVehicle->owner != player)
+				player->ToggelLock ( overUnitField );
+			else if (selectedBuilding && selectedBuilding != oldSelectedBuildingForLock && selectedBuilding->owner != player)
+				player->ToggelLock ( overUnitField );
+		}
+		
+		mouseBox.startX = mouseBox.startY = -1;
+		mouseBox.endX = mouseBox.endY = -1;
+	}
+	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouse->x > HUD_LEFT_WIDTH && mouse->y > 20 )
+	{
+		mouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		mouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+	}
+
+	// check getZoom() via mousewheel
+	if ( mouseState.wheelUp ) setZoom ( getZoom()+(float)0.05, true );
+	else if ( mouseState.wheelDown ) setZoom ( getZoom()-(float)0.05, true );
+}
+
+void cGameGUI::doScroll( int dir )
 {
 	int step;
-	if ( Client->SelectedBuilding )
-	{
-		Client->SelectedBuilding->MenuActive=false;
-	}
-	cHud& hud = Client->Hud;
-	step=64/Zoom;
-	step*=SettingsData.iScrollSpeed;
-	int posX = hud.OffX;
-	int posY = hud.OffY;
+	step = SettingsData.iScrollSpeed;
 	switch ( dir )
 	{
 		case 1:
-			posX-=step;
-			posY+=step;
+			offX -= step;
+			offY += step;
 			break;
 		case 2:
-			posY+=step;
+			offY += step;
 			break;
 		case 3:
-			posX+=step;
-			posY+=step;
+			offX += step;
+			offY += step;
 			break;
 		case 4:
-			posX-=step;
+			offX -= step;
 			break;
 		case 6:
-			posX+=step;
+			offX += step;
 			break;
 		case 7:
-			posX-=step;
-			posY-=step;
+			offX -= step;
+			offY -= step;
 			break;
 		case 8:
-			posY-=step;
+			offY -= step;
 			break;
 		case 9:
-			posX+=step;
-			posY-=step;
+			offX += step;
+			offY -= step;
 			break;
 	}
-	setScrollPos(posX, posY);
+
+	static int lx = 0, ly = 0;
+	if ( offX < 0 ) offX = 0;
+	if ( offY < 0 ) offY = 0;
+	int maxX = map->size*64-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom());
+	int maxY = map->size*64-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom());
+	if ( offX > maxX ) offX = maxX;
+	if ( offY > maxY ) offY = maxY;
+
+	callMiniMapDraw();
 }
 
-void cHud::setScrollPos(int x,int y)
+void cGameGUI::doCommand( string cmd )
 {
-	static int lx=0,ly=0;
-	if ( x<0 ) x=0;
-	if ( y<0 ) y=0;
-	int sizeX = Client->Map->size*64 - ( int ) ( ( ( SettingsData.iScreenW-192.0 ) /Zoom ) *64 );
-	if ( x>=sizeX ) x=sizeX;
-	int sizeY = Client->Map->size*64- ( int ) ( ( ( SettingsData.iScreenH-32.0 ) /Zoom ) *64 );
-	if ( y>=sizeY ) y=sizeY;
-	if ( lx==x&&ly==y ) return;
-	Client->bFlagDrawMap=true;
-	Client->bFlagDrawMMap=true;
-	OffX = x;
-	OffY = y;
-	lx=OffX;ly=OffY;
+	if ( cmd.compare( "/fps on" ) == 0 ) { showFPS = true; return;}
+	if ( cmd.compare( "/fps off" ) == 0 ) { showFPS = false; return;}
+	if ( cmd.compare( "/base client" ) == 0 ) { debugBaseClient = true; debugBaseServer = false; return; }
+	if ( cmd.compare( "/base server" ) == 0 ) { if (Server) debugBaseServer = true; debugBaseClient = false; return; }
+	if ( cmd.compare( "/base off" ) == 0 ) { debugBaseServer = false; debugBaseClient = false; return; }
+	if ( cmd.compare( "/sentry server" ) == 0 ) { if (Server) debugSentry = true; return; }
+	if ( cmd.compare( "/sentry off" ) == 0 ) { debugSentry = false; return; }
+	if ( cmd.compare( "/fx on" ) == 0 ) { debugFX = true; return; }
+	if ( cmd.compare( "/fx off" ) == 0 ) { debugFX = false; return; }
+	if ( cmd.compare( "/trace server" ) == 0 ) { if ( Server ) debugTraceServer = true; debugTraceClient = false; return; }
+	if ( cmd.compare( "/trace client" ) == 0 ) { debugTraceClient = true; debugTraceServer = false; return; }
+	if ( cmd.compare( "/trace off" ) == 0 ) { debugTraceServer = false; debugTraceClient = false; return; }
+	if ( cmd.compare( "/ajobs on" ) == 0 ) { debugAjobs = true; return; }
+	if ( cmd.compare( "/ajobs off" ) == 0 ) { debugAjobs = false; return; }
+	if ( cmd.compare( "/checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return; }
+	if ( cmd.compare( "/checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return; }
+	if ( cmd.compare( "/checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return; }
+	if ( cmd.compare( "/players on" ) == 0 ) { debugPlayers = true; return; }
+	if ( cmd.compare( "/players off" ) == 0 ) { debugPlayers = false; return; }
+	if ( cmd.substr( 0, 12 ).compare( "/cache size " ) == 0 )
+	{
+		int size = atoi ( cmd.substr ( 12, cmd.length() ).c_str() );
+		//since atoi is too stupid to report an error, do an extra check, when the number is 0
+		if ( size == 0 && cmd[12] != '0' ) return;
+
+		getDCache()->setMaxCacheSize( size );
+	}
+	if ( cmd.compare("/cache flush") == 0 )
+	{
+		getDCache()->flush();
+	}
+	if ( cmd.compare("/cache debug on") == 0 )
+	{
+		debugCache = true;
+	}
+	if ( cmd.compare("/cache debug off") == 0 )
+	{
+		debugCache = false;
+	}
+
+	if ( cmd.substr( 0, 6 ).compare( "/kick " ) == 0 )
+	{
+		if ( cmd.length() > 6 && Server )
+		{
+			int playerNum = -1;
+			//first try to find player by name
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->name.compare( cmd.substr ( 6, cmd.length() )) == 0 )
+				{
+					playerNum = (*Server->PlayerList)[i]->Nr;
+				}
+			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( cmd.substr ( 6, cmd.length() ).c_str() );
+			}
+
+			//server cannot be kicked
+			if ( playerNum == 0 ) return;
+
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+
+			// close the socket
+			if ( network ) network->close ( Player->iSocketNum );
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList)[i]->iSocketNum < MAX_CLIENTS ) (*Server->PlayerList)[i]->iSocketNum--;
+			}
+			// delete the player
+			Server->deletePlayer ( Player );
+		}
+	}
+	if ( cmd.substr( 0, 9 ).compare( "/credits " ) == 0 )
+	{
+		if ( cmd.length() > 9 && Server )
+		{
+			int playerNum = -1;
+			string playerStr = cmd.substr ( 9, cmd.find_first_of ( " ", 9 )-9 );
+			string creditsStr = cmd.substr ( cmd.find_first_of ( " ", 9 )+1, cmd.length() );
+			//first try to find player by name
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->name.compare( playerStr ) == 0 )
+				{
+					playerNum = (*Server->PlayerList)[i]->Nr;
+				}
+			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( playerStr.c_str() );
+			}
+
+			//since atoi is too stupid to report an error, do an extra check, when the number is 0
+			if ( playerNum == 0 ) return;
+
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+
+			int credits = atoi ( creditsStr.c_str() );
+
+			Player->Credits = credits;
+
+			sendCredits ( credits, Player->Nr );
+		}
+	}
+	if ( cmd.substr( 0, 12 ).compare( "/disconnect " ) == 0 )
+	{
+		if ( cmd.length() > 12 && Server )
+		{
+			int playerNum = -1;
+			//first try to find player by name
+			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			{
+				if ( (*Server->PlayerList)[i]->name.compare( cmd.substr ( 12, cmd.length() )) == 0 )
+				{
+					playerNum = (*Server->PlayerList)[i]->Nr;
+				}
+			}
+			//then by number
+			if ( playerNum == -1 )
+			{
+				playerNum = atoi ( cmd.substr ( 12, cmd.length() ).c_str() );
+			}
+
+			//server cannot be disconnected
+			if ( playerNum == 0 ) return;
+
+			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
+			if ( !Player ) return;
+
+			//can not disconnect local players
+			if ( Player->iSocketNum == MAX_CLIENTS ) return;
+
+			SDL_Event* event = new SDL_Event;
+			event->type = NETWORK_EVENT;
+			event->user.code = TCP_CLOSEEVENT;
+			event->user.data1 = new Sint16[1];
+			((Sint16*)event->user.data1)[0] = Player->iSocketNum;
+			Server->pushEvent ( event );
+		}
+	}
+	if ( cmd.substr( 0, 9 ).compare( "/deadline"  ) == 0 )
+	{
+		if(cmd.length() > 9  && Server)
+		{
+			int i = 90;
+			i = atoi ( cmd.substr ( 9, cmd.length() ).c_str());
+			Server->setDeadline(i);
+			Log.write("Deadline changed to "  + iToStr( i ) , cLog::eLOG_TYPE_INFO);
+		}
+		return;
+	}
+	if ( cmd.substr( 0, 7 ).compare( "/resync" ) == 0 )
+	{
+		if ( cmd.length() > 7 && Server )
+		{
+			unsigned int playernum = atoi ( cmd.substr ( 7, 8 ).c_str() );
+			sendRequestResync( playernum );
+		}
+		else
+		{
+			if ( Server )
+			{
+				for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+				{
+					sendRequestResync( 	(*Server->PlayerList)[i]->Nr );
+				}
+			}
+			else
+			{
+				sendRequestResync( Client->ActivePlayer->Nr );
+			}
+		}
+		return;
+	}
+	if ( cmd.substr( 0, 5 ).compare( "/mark"  ) == 0 )
+	{
+		cmd.erase(0, 5 );
+		cNetMessage* message = new cNetMessage( GAME_EV_WANT_MARK_LOG );
+		message->pushString( cmd );
+		Client->sendNetMessage( message );
+		return;
+	}
+	if ( cmd.substr( 0, 7 ).compare( "/color " ) == 0 ) {
+		int cl=0;sscanf ( cmd.c_str(),"color %d",&cl );cl%=8;player->color=OtherData.colors[cl];return;}
+	if ( cmd.compare( "/fog off" ) == 0 && Server )
+	{
+		memset ( Server->getPlayerFromNumber(player->Nr)->ScanMap,1,map->size*map->size );
+		memset ( player->ScanMap,1,map->size*map->size );
+		return;
+	}
+
+	if ( cmd.compare( "/survey" ) == 0 )
+	{
+		if ( network && !network->isHost() ) return;
+		memcpy ( map->Resources , Server->Map->Resources, map->size*map->size*sizeof ( sResources ) );
+		memset ( player->ResourceMap,1,map->size*map->size );
+		return;
+	}
+
+	if ( cmd.compare( "/credits" ) == 0 )
+	{
+		return;
+	}
+	if ( cmd.substr( 0, 5 ).compare( "/kill " ) == 0 )
+	{
+		int x,y;
+		sscanf ( cmd.c_str(),"kill %d,%d",&x,&y );
+		/*engine->DestroyObject ( x+y*map->size,false );
+		engine->DestroyObject ( x+y*map->size,true );*/
+		return;
+	}
+	if ( cmd.compare( "/load" ) == 0 )
+	{
+		/*if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammoCur=SelectedVehicle->data.ammoMax;SelectedVehicle->ShowDetails();}
+		else if ( SelectedBuilding )
+		{
+			if ( SelectedBuilding->data.can_load==TRANS_METAL )
+			{
+				SelectedBuilding->SubBase->Metal-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Metal+=SelectedBuilding->data.cargo;
+			}
+			else if ( SelectedBuilding->data.can_load==TRANS_OIL )
+			{
+				SelectedBuilding->SubBase->Oil-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Oil+=SelectedBuilding->data.cargo;
+			}
+			else if ( SelectedBuilding->data.can_load==TRANS_GOLD )
+			{
+				SelectedBuilding->SubBase->Gold-=SelectedBuilding->data.cargo;
+				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
+				SelectedBuilding->SubBase->Gold+=SelectedBuilding->data.cargo;
+			}
+			SelectedBuilding->data.ammoCur=SelectedBuilding->data.ammoMax;SelectedBuilding->ShowDetails();
+		}*/
+		return;
+	}
 }
 
-
-void cHud::DoMinimapClick ( int x,int y )
+void cGameGUI::setWind( int dir )
 {
-	static int lx=0,ly=0;
-	if ( lx==x&&ly==y ) return;
+	windDir = (float)(dir/57.29577);
+}
 
-	OffX = minimapOffsetX * 64 + ((x - MINIMAP_POS_X) * Client->Map->size * 64) / (MINIMAP_SIZE * minimapZoomFactor);
-	OffY = minimapOffsetY * 64 + ((y - MINIMAP_POS_Y) * Client->Map->size * 64) / (MINIMAP_SIZE * minimapZoomFactor);
-	OffX -= (SettingsData.iScreenW - 192) * 64 / (Zoom * 2);
-	OffY -= (SettingsData.iScreenH -  32) * 64 / (Zoom * 2);
+bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
+{
+	deselectGroup();
+	if ( OverUnitField->getPlanes() && !OverUnitField->getPlanes()->moving )
+	{
+		// TOFIX: add that the unit renaming will be aborted here when active
+		if ( selectedVehicle == OverUnitField->getPlanes() )
+		{
+			if ( selectedVehicle->owner == player )
+			{
+				selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->Deselct();
+				selectedVehicle = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->Deselct();
+				selectedBuilding = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			selectedVehicle = OverUnitField->getPlanes();
+			selectedVehicle->Select();
+			Client->iObjectStream = selectedVehicle->playStream();
+		}
+		return true;
+	}
+	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !( OverUnitField->getPlanes() && ( OverUnitField->getVehicles()->MenuActive || OverUnitField->getVehicles()->owner != player ) ) )
+	{
+		// TOFIX: add that the unit renaming will be aborted here when active
+		if ( selectedVehicle == OverUnitField->getVehicles() )
+		{
+			if ( selectedVehicle->owner == player )
+			{
+				selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->Deselct();
+				selectedVehicle = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->Deselct();
+				selectedBuilding = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			selectedVehicle = OverUnitField->getVehicles();
+			selectedVehicle->Select();
+			Client->iObjectStream = selectedVehicle->playStream();
+		}
+		return true;
+	}
+	else if ( OverUnitField->getTopBuilding() && ( base || ( ( OverUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle ) && ( !OverUnitField->getTopBuilding()->data.canBeLandedOn || ( !selectedVehicle || selectedVehicle->data.factorAir == 0 ) ) ) ) )
+	{
+		// TOFIX: add that the unit renaming will be aborted here when active
+		if ( selectedBuilding == OverUnitField->getTopBuilding() )
+		{
+			if ( selectedBuilding->owner == player )
+			{
+				selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->Deselct();
+				selectedVehicle = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->Deselct();
+				selectedBuilding = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			selectedBuilding = OverUnitField->getTopBuilding();
+			selectedBuilding->Select();
+			Client->iObjectStream = selectedBuilding->playStream();
+		}
+		return true;
+	}
+	else if ( ( base || !selectedVehicle )&& OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != NULL )
+	{
+		// TOFIX: add that the unit renaming will be aborted here when active
+		if ( selectedBuilding == OverUnitField->getBaseBuilding() )
+		{
+			if ( selectedBuilding->owner == player )
+			{
+				selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
+				PlayFX ( SoundData.SNDHudButton );
+			}
+		}
+		else
+		{
+			if ( selectedVehicle )
+			{
+				selectedVehicle->Deselct();
+				selectedVehicle = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			else if ( selectedBuilding )
+			{
+				selectedBuilding->Deselct();
+				selectedBuilding = NULL;
+				StopFXLoop ( Client->iObjectStream );
+			}
+			selectedBuilding = OverUnitField->getBaseBuilding();
+			selectedBuilding->Select();
+			Client->iObjectStream = selectedBuilding->playStream();
+		}
+		return true;
+	}
+	return false;
+}
+
+void cGameGUI::selectBoxVehicles ( sMouseBox &box )
+{
+	if ( box.startX < 0 || box.startY < 0 || box.endX < 0 || box.endY < 0 ) return;
+	int startFieldX, startFieldY;
+	int endFieldX, endFieldY;
+	startFieldX = (int)min ( box.startX, box.endX );
+	startFieldY = (int)min ( box.startY, box.endY );
+	endFieldX = (int)max ( box.startX, box.endX );
+	endFieldY = (int)max ( box.startY, box.endY );
+
+	deselectGroup();
+
+	bool newSelected = true;
+	for ( int x = startFieldX; x <= endFieldX; x++ )
+	{
+		for ( int y = startFieldY; y <= endFieldY; y++ )
+		{
+			int offset = x+y*map->size;
+
+			cVehicle *vehicle;
+			vehicle = (*map)[offset].getVehicles();
+			if ( !vehicle || vehicle->owner != player ) vehicle = (*map)[offset].getPlanes();
+
+			if ( vehicle && vehicle->owner == player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving )
+			{
+				if ( vehicle == selectedVehicle )
+				{
+					newSelected = false;
+					selectedVehiclesGroup.Insert( 0, vehicle );
+				}
+				else selectedVehiclesGroup.Add ( vehicle );
+				vehicle->groupSelected = true;
+			}
+		}
+	}
+	if ( newSelected && selectedVehiclesGroup.Size() > 0 )
+	{
+		if ( selectedVehicle ) selectedVehicle->Deselct();
+		selectedVehicle = selectedVehiclesGroup[0];
+		selectedVehicle->Select();
+	}
+	if ( selectedVehiclesGroup.Size() == 1 )
+	{
+		selectedVehiclesGroup[0]->groupSelected = false;
+		selectedVehiclesGroup.Delete( 0 );
+	}
+
+	if ( selectedBuilding )
+	{
+		selectedBuilding->Deselct();
+		selectedBuilding = NULL;
+	}
+}
+
+void cGameGUI::deselectGroup ()
+{
+	while ( selectedVehiclesGroup.Size() )
+	{
+		selectedVehiclesGroup[0]->groupSelected = false;
+		selectedVehiclesGroup.Delete ( 0 );
+	}
+}
+
+void cGameGUI::changeWindDir()
+{
+	if ( Client->timer400ms && SettingsData.bDamageEffects )
+	{
+		static int nextChange = 25, nextDirChange = 25, dir = 90, change = 3;
+		if ( nextChange == 0 )
+		{
+			nextChange = 10 + random(20);
+			dir += change;
+			setWind ( dir );
+			if ( dir >= 360 ) dir -= 360;
+			else if ( dir < 0 ) dir += 360;
+
+			if ( nextDirChange == 0 )
+			{
+				nextDirChange = random(25) + 10;
+				change        = random(11) -  5;
+			}
+			else nextDirChange--;
+
+		}
+		else nextChange--;
+	}
+}
+
+bool cGameGUI::loadPanelGraphics()
+{
+	if ( !panelTopGraphic ) panelTopGraphic = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "panel_top.pcx" );
+	if ( !panelBottomGraphic ) panelBottomGraphic = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "panel_top.pcx" );
+
+	if ( !panelTopGraphic || !panelBottomGraphic ) return false;
+	return true;
+}
+
+void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+{
+	// first check whether the end key was pressed
+	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && key.keysym.sym == KeysList.KeyEndTurn && !Client->bWaitForOthers )
+	{
+		if ( key.state == SDL_PRESSED && !endButton->getIsClicked() ) endButton->clicked ( this );
+		else if ( key.state == SDL_RELEASED && endButton->getIsClicked() && !Client->bWantToEnd ) endButton->released ( this );
+		return;
+	}
+
+	// we will handle only pressed keys for all other hotkeys
+	if ( key.state != SDL_PRESSED ) return;
+
+	if ( key.keysym.sym == KeysList.KeyExit )
+	{
+		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+		if ( yesNoDialog.show() == 0  ) end = true;
+	}
+	else if ( activeItem && !activeItem->isDisabled() && activeItem->handleKeyInput ( key.keysym, ch, this ) )
+	{}
+	else if ( key.keysym.sym == KeysList.KeyJumpToAction )
+	{
+		if ( Client->iMsgCoordsX != -1 )
+		{
+			offX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			offY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			Client->iMsgCoordsX = -1;
+		}
+	}
+	else if ( key.keysym.sym == KeysList.KeyChat )
+	{
+		if ( !(key.keysym.mod & KMOD_ALT) )
+		{
+			if ( chatBox->isDisabled() ) chatBox->setDisabled( false );
+			activeItem = chatBox;
+			chatBox->setActivity ( true );
+		}
+	}
+	// scroll and getZoom() hotkeys
+	else if ( key.keysym.sym == KeysList.KeyScroll1 ) doScroll ( 1 );
+	else if ( key.keysym.sym == KeysList.KeyScroll3 ) doScroll ( 3 );
+	else if ( key.keysym.sym == KeysList.KeyScroll7 ) doScroll ( 7 );
+	else if ( key.keysym.sym == KeysList.KeyScroll9 ) doScroll ( 9 );
+	else if ( key.keysym.sym == KeysList.KeyScroll2a || key.keysym.sym == KeysList.KeyScroll2b ) doScroll ( 2 );
+	else if ( key.keysym.sym == KeysList.KeyScroll4a || key.keysym.sym == KeysList.KeyScroll4b ) doScroll ( 4 );
+	else if ( key.keysym.sym == KeysList.KeyScroll6a || key.keysym.sym == KeysList.KeyScroll6b ) doScroll ( 6 );
+	else if ( key.keysym.sym == KeysList.KeyScroll8a || key.keysym.sym == KeysList.KeyScroll8b ) doScroll ( 8 );
+	else if ( key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb ) setZoom ( (float)(getZoom()+0.05), true );
+	else if ( key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb ) setZoom ( (float)(getZoom()-0.05), true );
+	// position handling hotkeys
+	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle ) selectedVehicle->Center();
+	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding ) selectedBuilding->Center();
+	else if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT )
+	{
+		savedPositions[0].offsetX = offX;
+		savedPositions[0].offsetY = offY;
+	}
+	else if ( key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT )
+	{
+		savedPositions[1].offsetX = offX;
+		savedPositions[1].offsetY = offY;
+	}
+	else if ( key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT )
+	{
+		savedPositions[2].offsetX = offX;
+		savedPositions[2].offsetY = offY;
+	}
+	else if ( key.keysym.sym == SDLK_F8 && key.keysym.mod & KMOD_ALT )
+	{
+		savedPositions[3].offsetX = offX;
+		savedPositions[3].offsetY = offY;
+	}
+	else if ( key.keysym.sym == SDLK_F5 && savedPositions[0].offsetX >= 0 && savedPositions[0].offsetY >= 0 )
+	{
+		offX = savedPositions[0].offsetX;
+		offY = savedPositions[0].offsetY;
+	}
+	else if ( key.keysym.sym == SDLK_F6 && savedPositions[1].offsetX >= 0 && savedPositions[1].offsetY >= 0 )
+	{
+		offX = savedPositions[1].offsetX;
+		offY = savedPositions[1].offsetY;
+	}
+	else if ( key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0 )
+	{
+		offX = savedPositions[2].offsetX;
+		offY = savedPositions[2].offsetY;
+	}
+	else if ( key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0 )
+	{
+		offX = savedPositions[3].offsetX;
+		offY = savedPositions[3].offsetY;
+	}
+	// Hotkeys for the unit menues
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->AttackMode = true;
+		updateMouseCursor();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		selectedBuilding->AttackMode = true;
+		updateMouseCursor();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		sendWantStopMove ( selectedVehicle->iID );
+		cBuildingsBuildMenu buildMenu ( player, selectedVehicle );
+		buildMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		cVehiclesBuildMenu buildMenu ( player, selectedBuilding );
+		buildMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->Transfer = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		selectedBuilding->Transfer = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		if ( selectedVehicle->autoMJob == NULL ) selectedVehicle->autoMJob = new cAutoMJob ( selectedVehicle );
+		else
+		{
+			delete selectedVehicle->autoMJob;
+			selectedVehicle->autoMJob = NULL;
+		}
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty() ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		sendWantStartWork( selectedBuilding );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && ( selectedVehicle->ClientMoveJob || ( selectedVehicle->IsBuilding && selectedVehicle->BuildRounds ) || ( selectedVehicle->IsClearing && selectedVehicle->ClearingRounds ) ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		if ( selectedVehicle->ClientMoveJob ) sendWantStopMove ( selectedVehicle->iID );
+		else if ( selectedVehicle->IsBuilding ) sendWantStopBuilding ( selectedVehicle->iID );
+		else if ( selectedVehicle->IsClearing ) sendWantStopClear ( selectedVehicle );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		sendWantStopWork( selectedBuilding );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX+selectedVehicle->PosY*map->size].getRubble() && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		sendWantStartClear ( selectedVehicle );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && ( selectedVehicle->bSentryStatus || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		sendChangeSentry ( selectedVehicle->iID, true );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->bSentryStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		sendChangeSentry ( selectedBuilding->iID, false );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		cStorageMenu storageMenu ( selectedVehicle->StoredVehicles, selectedVehicle, NULL );
+		storageMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		cStorageMenu storageMenu ( selectedBuilding->StoredVehicles, NULL, selectedBuilding );
+		storageMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->LoadActive = !selectedVehicle->LoadActive;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		selectedBuilding->LoadActive = !selectedBuilding->LoadActive;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->MuniActive = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->RepairActive = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->LayMines = !selectedVehicle->LayMines;
+		selectedVehicle->ClearMines = false;
+		sendMineLayerStatus( selectedVehicle );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->ClearMines = !selectedVehicle->ClearMines;
+		selectedVehicle->LayMines = false;
+		sendMineLayerStatus ( selectedVehicle );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->DisableActive = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		selectedVehicle->StealActive = true;
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedVehicle )
+	{
+		cUnitHelpMenu helpMenu ( &selectedVehicle->data, selectedVehicle->owner );
+		helpMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedBuilding )
+	{
+		cUnitHelpMenu helpMenu ( &selectedBuilding->data, selectedBuilding->owner );
+		helpMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		cMineManagerMenu mineManager ( selectedBuilding );
+		mineManager.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		cDialogResearch researchDialog ( selectedBuilding->owner );
+		researchDialog.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		cUpgradeMenu upgradeMenu ( selectedBuilding->owner );
+		upgradeMenu.show();
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+	}
+	// Hotkeys for the hud
+	else if ( key.keysym.sym == KeysList.KeyFog ) setFog ( !fogChecked() );
+	else if ( key.keysym.sym == KeysList.KeyGrid ) setGrid ( !gridChecked() );
+	else if ( key.keysym.sym == KeysList.KeyScan ) setScan ( !scanChecked() );
+	else if ( key.keysym.sym == KeysList.KeyRange ) setRange ( !rangeChecked() );
+	else if ( key.keysym.sym == KeysList.KeyAmmo ) setAmmo ( !ammoChecked() );
+	else if ( key.keysym.sym == KeysList.KeyHitpoints ) setHits ( !hitsChecked() );
+	else if ( key.keysym.sym == KeysList.KeyColors ) setColor ( !colorChecked() );
+	else if ( key.keysym.sym == KeysList.KeyStatus ) setStatus ( !statusChecked() );
+	else if ( key.keysym.sym == KeysList.KeySurvey ) setSurvey ( !surveyChecked() );
+}
+
+void cGameGUI::helpReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->helpActive = !gui->helpActive;
+	gui->updateMouseCursor();
+}
+
+void cGameGUI::centerReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	if ( gui->selectedVehicle ) gui->selectedVehicle->Center();
+	else if ( gui->selectedBuilding ) gui->selectedBuilding->Center();
+}
+
+void cGameGUI::reportsReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	cReportsMenu reportMenu ( gui->player );
+	reportMenu.show();
+}
+
+void cGameGUI::chatReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->chatBox->setDisabled ( !gui->chatBox->isDisabled() );
+	if ( gui->activeItem ) gui->activeItem->setActivity ( false );
+	gui->activeItem = gui->chatBox;
+	gui->chatBox->setActivity ( true );
+}
+
+void cGameGUI::nextReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	cVehicle *v = gui->player->GetNextVehicle();
+	if ( v )
+	{
+		if ( gui->selectedVehicle )
+		{
+			gui->selectedVehicle->Deselct();
+			StopFXLoop ( Client->iObjectStream );
+		}
+		v->Select();
+		v->Center();
+		Client->iObjectStream = v->playStream();
+		gui->selectedVehicle = v;
+	}
+}
+
+void cGameGUI::prevReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	cVehicle *v = gui->player->GetPrevVehicle();
+	if ( v )
+	{
+		if ( gui->selectedVehicle )
+		{
+			gui->selectedVehicle->Deselct();
+			StopFXLoop ( Client->iObjectStream );
+		}
+		v->Select();
+		v->Center();
+		Client->iObjectStream = v->playStream();
+		gui->selectedVehicle = v;
+	}
+}
+
+void cGameGUI::doneReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	if ( gui->selectedVehicle && gui->selectedVehicle->ClientMoveJob && gui->selectedVehicle->ClientMoveJob->bSuspended && gui->selectedVehicle->data.speedCur )
+	{
+		gui->selectedVehicle->ClientMoveJob->calcNextDir();
+	}
+}
+
+void cGameGUI::changedMiniMap( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->callMiniMapDraw();
+}
+
+void cGameGUI::miniMapClicked( void *parent )
+{
+	static int lastX = 0, lastY = 0;
+	int x = mouse->x;
+	int y = mouse->y;
+	if ( lastX == x && lastY == y ) return;
+
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+
+	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * gui->map->size * 64) / (MINIMAP_SIZE * (gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1) );
+	gui->offY = gui->miniMapOffY * 64 + ((y - MINIMAP_POS_Y) * gui->map->size * 64) / (MINIMAP_SIZE * (gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1) );
+	gui->offX -= (int)( (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (gui->getZoom() * 2.0) );
+	gui->offY -= (int)( (SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / (gui->getZoom() * 2.0) );
 
 	//check map borders
-	OffX = max( OffX, 0);
-	OffY = max( OffY, 0);
-	OffX = min (OffX, Client->Map->size * 64 - ( (SettingsData.iScreenW - 192) * 64) / Zoom);
-	OffY = min (OffY, Client->Map->size * 64 - ( (SettingsData.iScreenH -  32) * 64) / Zoom);
+	gui->offX = max ( gui->offX, 0 );
+	gui->offY = max ( gui->offY, 0 );
+	gui->offX = min ( gui->offX, gui->map->size * 64 - (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / gui->getZoom()) );
+	gui->offY = min ( gui->offY, gui->map->size * 64 - (int)((SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / gui->getZoom()) );
 
 	//workaround for click and hold on the minimap while it is zoomed:
 	//we warp the mouse so that it stays over the position of the screen
 	//does not work as intended in some cases --Eiko
-	int lastMinimapOffsetX = minimapOffsetX;
-	int lastMinimapOffsetY = minimapOffsetY;
-	Client->drawMiniMap();
+	/*int lastMinimapOffsetX = gui->miniMapOffX;
+	int lastMinimapOffsetY = gui->miniMapOffY;
 	if ( lastMinimapOffsetX != minimapOffsetX )
 	{
 		x = MINIMAP_POS_X + MINIMAP_SIZE/2;
@@ -892,568 +2555,1161 @@ void cHud::DoMinimapClick ( int x,int y )
 	{
 		y = MINIMAP_POS_Y - 1 + MINIMAP_SIZE/2;
 	}
-	SDL_WarpMouse( x, y );
-	lx = x;
-	ly = y;
+	SDL_WarpMouse( x, y );*/
+	lastX = x;
+	lastY = y;
 
-	Client->bFlagDrawHud=true;
-	Client->bFlagDrawMap=true;
-	DoScroll ( 0 );
+	gui->doScroll ( 0 );
 }
 
-void cHud::CheckMouseOver ( sMouseState &MouseState )
+void cGameGUI::miniMapMovedOver( void *parent )
 {
-	static int lb=0;
-	int x,y,b;
-	x=mouse->x;
-	y=mouse->y;
-	b = MouseState.leftButtonPressed;
-	if ( y>274|| ( x>179&&y>22 ) ) return;
-	// Der Präferenzen-Button:
-	if ( x>=86&&x<=86+67&&y>=4&&y<=4+18 )
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	if ( gui->miniMapImage->getIsClicked() )
 	{
-		if ( b ) PraeferenzenButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			Client->bChangeObjectName=false;
-			Client->bChatInput=false;
-			cDialogPreferences preferencesDialog;
-			preferencesDialog.show();
-			PraeferenzenButton ( false );
-		}
+		gui->miniMapClicked ( parent );
 	}
-	else if ( Praeferenzen )
-	{
-		PraeferenzenButton ( false );
-	}
-	// Der Pause-Button:
-	if ( x>=146&&x<164&&y>=143&&y<161 )
-	{
-		if ( b ) PauseButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			PlayFLC=false;
-			PauseButton ( false );
-		}
-	}
-	else if ( PausePressed )
-	{
-		PauseButton ( false );
-	}
-	// Der Play-Button:
-	if ( x>=146&&x<164&&y>=123&&y<140 )
-	{
-		if ( b ) PlayButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			PlayFLC=true;
-			PlayButton ( false );
-		}
-	}
-	else if ( PlayPressed )
-	{
-		PlayButton ( false );
-	}
-	// Der Hilfe-Button:
-	if ( x>=20&&x<46&&y>=250&&y<274 )
-	{
-		if ( b ) HelpButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			Client->bHelpActive=true;
-			HelpButton ( false );
-		}
-	}
-	else if ( HelpPressed )
-	{
-		HelpButton ( false );
-	}
-	// Der Chat-Button:
-	if ( x>=51&&x<100&&y>=252&&y<272 )
-	{
-		if ( b ) ChatButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			Client->bChatInput=true;
-			InputHandler->setInputStr ( "" );
-			InputHandler->setInputState ( true );
-			ChatButton ( false );
-		}
-	}
-	else if ( ChatPressed )
-	{
-		ChatButton ( false );
-	}
-	// Der Log-Button:
-	if ( x>=102&&x<150&&y>=252&&y<272 )
-	{
-		if ( b ) LogButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			cReportsMenu reportMenu ( Client->ActivePlayer );
-			reportMenu.show();
+}
 
-			LogButton ( false );
-		}
-	}
-	else if ( LogPressed )
+void cGameGUI::zoomSliderMoved( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->setZoom ( abs( gui->zoomSlider->getValue() ), false );
+}
+
+void cGameGUI::endReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->endButton->setLocked( true );
+	Client->handleEnd();
+}
+
+void cGameGUI::preferencesReleased( void *parent )
+{
+	cDialogPreferences preferencesDialog;
+	preferencesDialog.show();
+}
+
+void cGameGUI::filesReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	cLoadSaveMenu loadSaveMenu ( new cGameDataContainer ); // TODO: memory leak?
+	if ( loadSaveMenu.show() != 1 ) gui->end = true;
+}
+
+void cGameGUI::playReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->playFLC = true;
+}
+
+void cGameGUI::stopReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->playFLC = false;
+}
+
+void cGameGUI::chatBoxReturnPressed( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	string chatString = gui->chatBox->getText();
+	if ( !chatString.empty() )
 	{
-		LogButton ( false );
+		if ( chatString[0] == '/' ) gui->doCommand( chatString );
+		else sendChatMessageToServer( gui->player->name + ": " + chatString );
+		gui->chatBox->setText ( "" );
 	}
-	// the end-button:
-	if ( x>=392&&x<460&&y>=5&&y<20 )
+	gui->chatBox->setActivity ( false );
+	gui->activeItem = NULL;
+}
+
+void cGameGUI::preDrawFunction()
+{
+	// draw the map screen with everything on it
+	int zoomOffX = (int)(offX*getZoom());
+	int zoomOffY = (int)(offY*getZoom());
+
+	int startX = ((offX-1)/64)-1 < 0 ? 0 : ((offX-1)/64)-1;
+	int startY = ((offY-1)/64)-1 < 0 ? 0 : ((offY-1)/64)-1;
+
+	int endX = offY/64 + ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / getTileSize()+1;
+	if ( endX >= map->size ) endX = map->size-1;
+	int endY = offY/64+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / getTileSize()+1;
+	if ( endY >= map->size ) endY = map->size-1;
+
+	if ( Client->timer400ms ) map->generateNextAnimationFrame();
+
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_SetClipRect( buffer, &clipRect );
+
+	drawTerrain( zoomOffX, zoomOffY );
+	if ( gridChecked() ) drawGrid( zoomOffX, zoomOffY );
+
+	displayBottomFX();
+
+	dCache.resetStatistics();
+
+	drawBaseUnits ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawTopBuildings ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawShips ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawAboveSeaBaseUnits ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawVehicles ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawConnectors ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	drawPlanes ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	
+	if ( surveyChecked() || ( selectedVehicle && selectedVehicle->owner == player && selectedVehicle->data.canSurvey ) )
 	{
-		if ( b ) EndeButton ( true );
-		else if ( lb&&!Client->bWantToEnd&&!Client->bWaitForOthers )
+		drawResources ( startX, startY, endX, endY, zoomOffX, zoomOffY );
+	}
+
+	if ( selectedVehicle && ( ( selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended ) || selectedVehicle->BuildPath ) )
+	{
+		selectedVehicle->DrawPath();
+	}
+
+	drawDebugOutput();
+
+	drawSelectionBox( zoomOffX, zoomOffY );
+
+	SDL_SetClipRect( buffer, NULL );
+
+	drawUnitCircles();
+
+	if ( selectedVehicle && selectedVehicle->MenuActive ) selectedVehicle->DrawMenu( &savedMouseState );
+	else if ( selectedBuilding && selectedBuilding->MenuActive ) selectedBuilding->DrawMenu( &savedMouseState );
+
+	displayFX();
+
+	displayMessages();
+}
+
+void cGameGUI::drawTerrain( int zoomOffX, int zoomOffY )
+{
+	int tileSize = Client->gameGUI.getTileSize();
+	SDL_Rect dest, tmp;
+	dest.y = HUD_TOP_HIGHT-zoomOffY;
+	// draw the terrain
+	struct sTerrain *terr;
+	for ( int y = 0; y < map->size; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX;
+		if ( dest.y >= HUD_TOP_HIGHT-tileSize )
 		{
-			PlayFX ( SoundData.SNDHudButton );
-			Client->handleEnd ();
-		}
-	}
-	else if ( EndePressed&&!Client->bWantToEnd&&!Client->bWaitForOthers )
-	{
-		EndeButton ( false );
-	}
-	// Der Erledigen-Button:
-	if ( x>=99&&x<124&&y>=227&&y<251 )
-	{
-		if ( b ) ErledigenButton ( true );
-		else if ( lb )
-		{
-			PlayFX ( SoundData.SNDHudButton );
-			if ( Client->SelectedVehicle&&Client->SelectedVehicle->ClientMoveJob&&Client->SelectedVehicle->ClientMoveJob->bSuspended&&Client->SelectedVehicle->data.speedCur )
+			int pos = y*map->size;
+			for ( int x = 0 ; x < map->size; x++ )
 			{
-				Client->SelectedVehicle->ClientMoveJob->calcNextDir();
-				//TODO: no engine!
-				//Client->engine->AddActiveMoveJob ( Client->SelectedVehicle->mjob );
-			}
-			ErledigenButton ( false );
-		}
-	}
-	else if ( ErledigenPressed )
-	{
-		ErledigenButton ( false );
-	}
-	// Der Next-Button:
-	if ( x>=124&&x<163&&y>=227&&y<250 )
-	{
-		if ( b ) NextButton ( true );
-		else if ( lb )
-		{
-			cVehicle *v;
-			PlayFX ( SoundData.SNDHudButton );
-			v=Client->ActivePlayer->GetNextVehicle();
-			if ( v )
-			{
-				if ( Client->SelectedVehicle )
+				if ( dest.x >= HUD_LEFT_WIDTH-tileSize )
 				{
-					Client->SelectedVehicle->Deselct();
-					StopFXLoop ( Client->iObjectStream );
+					tmp = dest;
+					terr = map->terrain+map->Kacheln[pos];
+
+					// draw the fog:
+					if ( fogChecked() && !player->ScanMap[pos] )
+					{
+						if ( !SettingsData.bPreScale && ( terr->shw->w != tileSize || terr->shw->h != tileSize ) ) scaleSurface ( terr->shw_org, terr->shw, tileSize, tileSize );
+						SDL_BlitSurface ( terr->shw,NULL,buffer,&tmp );
+					}
+					else
+					{
+						if ( !SettingsData.bPreScale && ( terr->sf->w != tileSize || terr->sf->h != tileSize ) ) scaleSurface ( terr->sf_org, terr->sf, tileSize, tileSize );
+						SDL_BlitSurface ( terr->sf,NULL,buffer,&tmp );
+					}
 				}
-				v->Select();
-				v->Center();
-				Client->iObjectStream=v->playStream();
-				Client->SelectedVehicle=v;
+				pos++;
+				dest.x += tileSize;
+				if ( dest.x > SettingsData.iScreenW-13 ) break;
 			}
-			NextButton ( false );
+		}
+		dest.y += tileSize;
+		if ( dest.y > SettingsData.iScreenH-15 ) break;
+	}
+}
+
+void cGameGUI::drawGrid( int zoomOffX, int zoomOffY )
+{
+	int tileSize = Client->gameGUI.getTileSize();
+	SDL_Rect dest;
+	dest.x = HUD_LEFT_WIDTH;
+	dest.y = HUD_TOP_HIGHT+tileSize-(zoomOffY%tileSize);
+	dest.w = SettingsData.iScreenW-HUD_TOTAL_WIDTH;
+	dest.h = 1;
+	for ( int y = 0; y < ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / tileSize+1; y++ )
+	{
+		SDL_FillRect ( buffer, &dest, GRID_COLOR );
+		dest.y += tileSize;
+	}
+	dest.x = HUD_LEFT_WIDTH+tileSize-(zoomOffX%tileSize);
+	dest.y = HUD_TOP_HIGHT;
+	dest.w = 1;
+	dest.h = SettingsData.iScreenH-HUD_TOTAL_HIGHT;
+	for ( int x = 0; x < ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) /tileSize+1; x++ )
+	{
+		SDL_FillRect ( buffer, &dest, GRID_COLOR );
+		dest.x += tileSize;
+	}
+}
+
+void cGameGUI::displayFX()
+{
+	if ( !Client->FXList.Size() ) return;
+
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_SetClipRect( buffer, &clipRect );
+
+	for ( int i = (int)Client->FXList.Size() - 1; i >= 0; i-- )
+	{
+		drawFX ( i );
+	}
+	SDL_SetClipRect( buffer, NULL );
+}
+
+void cGameGUI::drawFX( int num )
+{
+	SDL_Rect scr,dest;
+	sFX *fx;
+
+	fx = Client->FXList[num];
+	if ( !player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] && fx->typ != fxRocket ) return;
+
+	switch ( fx->typ )
+	{
+		case fxMuzzleBig:
+			if ( !EffectsData.fx_muzzle_big ) break;
+			CHECK_SCALING( EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], getZoom() );
+			if ( frame - fx->StartFrame > 2 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)*fx->param;
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_muzzle_big[1],&scr,buffer,&dest );
+			break;
+		case fxMuzzleSmall:
+			if ( !EffectsData.fx_muzzle_small ) break;
+			CHECK_SCALING( EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], getZoom() );
+			if ( frame - fx->StartFrame > 2 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)*fx->param;
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_muzzle_small[1],&scr,buffer,&dest );
+			break;
+		case fxMuzzleMed:
+			if ( !EffectsData.fx_muzzle_med ) break;
+			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
+			if ( frame - fx->StartFrame > 2 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)*fx->param;
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
+			break;
+		case fxMuzzleMedLong:
+			if ( !EffectsData.fx_muzzle_med ) break;
+			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
+			if ( frame - fx->StartFrame > 5 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)*fx->param;
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_muzzle_med[1],&scr,buffer,&dest );
+			break;
+		case fxHit:
+			if ( !EffectsData.fx_hit ) break;
+			CHECK_SCALING( EffectsData.fx_hit[1], EffectsData.fx_hit[0], getZoom() );
+			if ( frame - fx->StartFrame > 5 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)* ( frame-fx->StartFrame );
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_hit[1],&scr,buffer,&dest );
+			break;
+		case fxExploSmall:
+			if ( !EffectsData.fx_explo_small ) break;
+			CHECK_SCALING( EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], getZoom() );
+			if ( frame - fx->StartFrame > 14 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( frame - fx->StartFrame ) / 64.0);
+			scr.y = 0;
+			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
+			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
+			dest.x = HUD_LEFT_WIDTH - ( (int) ( ( offX- ( fx->PosX - 57 ) ) * getZoom() ) );
+			dest.y = HUD_TOP_HIGHT -  ( (int) ( ( offY- ( fx->PosY - 54 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_small[1], &scr, buffer, &dest );
+			break;
+		case fxExploBig:
+			if ( !EffectsData.fx_explo_big ) break;
+			CHECK_SCALING( EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], getZoom() );
+			if ( frame - fx->StartFrame > 28 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x = (int) ((int)(getZoom()*64.0) * 307 * ( frame - fx->StartFrame ) / 64.0);
+			scr.y = 0;
+			scr.w = (int) ((int)(getZoom()*64.0) * 307 / 64.0);
+			scr.h = (int) ((int)(getZoom()*64.0) * 194 / 64.0);
+			dest.x = HUD_LEFT_WIDTH- ( (int) ( ( offX- ( fx->PosX - 134 ) ) * getZoom() ) );
+			dest.y = HUD_TOP_HIGHT-  ( (int) ( ( offY- ( fx->PosY - 85 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_big[1], &scr, buffer, &dest );
+			break;
+		case fxExploWater:
+			if ( !EffectsData.fx_explo_water ) break;
+			CHECK_SCALING( EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], getZoom() );
+			if ( frame - fx->StartFrame > 14 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( frame - fx->StartFrame ) / 64.0);
+			scr.y = 0;
+			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
+			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
+			dest.x = HUD_LEFT_WIDTH- ( (int) ( ( offX- ( fx->PosX - 57 ) ) * getZoom() ) );
+			dest.y = HUD_TOP_HIGHT-  ( (int) ( ( offY- ( fx->PosY - 54 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_water[1],&scr,buffer,&dest );
+			break;
+		case fxExploAir:
+			if ( !EffectsData.fx_explo_air ) break;
+			CHECK_SCALING( EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], getZoom() );
+			if ( frame - fx->StartFrame > 14 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x = (int) ((int)(getZoom()*64.0) * 137 * ( frame - fx->StartFrame ) / 64.0);
+			scr.y = 0;
+			scr.w = (int) ((int)(getZoom()*64.0) * 137 / 64.0);
+			scr.h = (int) ((int)(getZoom()*64.0) * 121 / 64.0);
+			dest.x = HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( fx->PosX - 61 ) ) * getZoom() ) );
+			dest.y = HUD_TOP_HIGHT-  ( ( int ) ( ( offY- ( fx->PosY - 68 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_explo_air[1],&scr,buffer,&dest );
+			break;
+		case fxSmoke:
+			if ( !EffectsData.fx_smoke ) break;
+			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
+			if ( frame-fx->StartFrame>100/4 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( frame-fx->StartFrame ) *4 );
+			scr.y=scr.x=0;
+			scr.w=EffectsData.fx_smoke[1]->h;
+			scr.h=EffectsData.fx_smoke[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
+			break;
+		case fxRocket:
+		{
+			if ( !EffectsData.fx_rocket ) break;
+			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], getZoom() );
+			sFXRocketInfos *ri;
+			ri= fx->rocketInfo;
+
+			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
+			scr.y=0;
+			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) * getZoom() ) );
+
+			if ( player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] )
+				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+
+			break;
+		}
+		case fxDarkSmoke:
+		{
+			if ( !EffectsData.fx_dark_smoke ) break;
+			CHECK_SCALING( EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], getZoom() );
+			sFXDarkSmoke *dsi;
+			dsi = fx->smokeInfo;
+			if ( frame-fx->StartFrame>50||dsi->alpha<=1 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x= ( int ) ( 0.375*(int)(getZoom()*64.0) ) * ( frame-fx->StartFrame );
+			scr.y=0;
+			scr.w=EffectsData.fx_dark_smoke[1]->h;
+			scr.h=EffectsData.fx_dark_smoke[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( ( int ) dsi->fx ) ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY- ( ( int ) dsi->fy ) ) * getZoom() ) );
+
+			SDL_SetAlpha ( EffectsData.fx_dark_smoke[1],SDL_SRCALPHA,dsi->alpha );
+			SDL_BlitSurface ( EffectsData.fx_dark_smoke[1],&scr,buffer,&dest );
+
+			if ( Client->timer50ms )
+			{
+				dsi->fx+=dsi->dx;
+				dsi->fy+=dsi->dy;
+				dsi->alpha-=3;
+				if ( dsi->alpha<=0 ) dsi->alpha=1;
+			}
+			break;
+		}
+		case fxAbsorb:
+		{
+			if ( !EffectsData.fx_absorb ) break;
+			CHECK_SCALING( EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], getZoom() );
+			if ( frame-fx->StartFrame>10 )
+			{
+				delete fx;
+				Client->FXList.Delete ( num );
+				return;
+			}
+			scr.x=(int)(getZoom()*64.0)* ( frame-fx->StartFrame );
+			scr.y=0;
+			scr.w=(int)(getZoom()*64.0);
+			scr.h=(int)(getZoom()*64.0);
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_absorb[1],&scr,buffer,&dest );
+			break;
 		}
 	}
-	else if ( NextPressed )
+}
+
+void cGameGUI::displayBottomFX()
+{
+	if ( !Client->FXListBottom.Size() ) return;
+
+	SDL_Rect oldClipRect = buffer->clip_rect;
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_SetClipRect( buffer, &clipRect );
+
+	for ( int i = (int)Client->FXListBottom.Size() - 1; i >= 0; i-- )
 	{
-		NextButton ( false );
+		drawBottomFX ( i );
 	}
-	// Der Prev-Button:
-	if ( x>=60&&x<98&&y>=227&&y<250 )
+	SDL_SetClipRect( buffer, &oldClipRect );
+}
+
+void cGameGUI::drawBottomFX( int num )
+{
+	SDL_Rect scr, dest;
+
+	sFX *fx = Client->FXListBottom[num];
+	if ( ( !player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) && fx->typ != fxTorpedo && fx->typ != fxTracks ) return;
+	switch ( fx->typ )
 	{
-		if ( b ) PrevButton ( true );
-		else if ( lb )
+		case fxTorpedo:
 		{
-			cVehicle *v;
-			PlayFX ( SoundData.SNDHudButton );
-			v=Client->ActivePlayer->GetPrevVehicle();
-			if ( v )
+			CHECK_SCALING( EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], getZoom() );
+			sFXRocketInfos *ri;
+			ri = fx->rocketInfo;
+
+			scr.x=ri->dir*EffectsData.fx_rocket[1]->h;
+			scr.y=0;
+			scr.h=scr.w=EffectsData.fx_rocket[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( fx->PosX-EffectsData.fx_rocket[0]->h/2+32 ) ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY- ( fx->PosY-EffectsData.fx_rocket[0]->h/2+32 ) ) * getZoom() ) );
+
+			if ( player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] )
 			{
-				if ( Client->SelectedVehicle )
+				SDL_BlitSurface ( EffectsData.fx_rocket[1],&scr,buffer,&dest );
+			}
+			break;
+		}
+		case fxTracks:
+		{
+			CHECK_SCALING( EffectsData.fx_tracks[1], EffectsData.fx_tracks[0], getZoom() );
+			sFXTracks *tri;
+			tri = fx->trackInfo;
+			if ( tri->alpha<=1 )
+			{
+				delete fx;
+				Client->FXListBottom.Delete ( num );
+				return;
+			}
+
+			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
+			if ( Client->timer50ms )
+			{
+				tri->alpha--;
+			}
+
+			if ( !player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) return;
+			scr.y=0;
+			scr.w=scr.h=EffectsData.fx_tracks[1]->h;
+			scr.x=tri->dir*scr.w;
+			dest.x = HUD_LEFT_WIDTH - (int)( (offX-fx->PosX) * getZoom() );
+			dest.y = HUD_TOP_HIGHT - (int)( (offY-fx->PosY) * getZoom() );
+			SDL_BlitSurface ( EffectsData.fx_tracks[1],&scr,buffer,&dest );
+			break;
+		}
+		case fxBubbles:
+			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
+			if ( frame-fx->StartFrame>100/4 )
+			{
+				delete fx;
+				Client->FXListBottom.Delete ( num );
+				return;
+			}
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( frame-fx->StartFrame ) *4 );
+			scr.y=scr.x=0;
+			scr.w=EffectsData.fx_smoke[1]->h;
+			scr.h=EffectsData.fx_smoke[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX- ( fx->PosX-EffectsData.fx_smoke[0]->h/2+32 ) ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY- ( fx->PosY-EffectsData.fx_smoke[0]->h/2+32 ) ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_smoke[1],&scr,buffer,&dest );
+			break;
+		case fxCorpse:
+			CHECK_SCALING( EffectsData.fx_corpse[1], EffectsData.fx_corpse[0], getZoom() );
+			SDL_SetAlpha ( EffectsData.fx_corpse[1],SDL_SRCALPHA,fx->param-- );
+			scr.y=scr.x=0;
+			scr.w=EffectsData.fx_corpse[1]->h;
+			scr.h=EffectsData.fx_corpse[1]->h;
+			dest.x=HUD_LEFT_WIDTH- ( ( int ) ( ( offX-fx->PosX ) * getZoom() ) );
+			dest.y=HUD_TOP_HIGHT- ( ( int ) ( ( offY-fx->PosY ) * getZoom() ) );
+			SDL_BlitSurface ( EffectsData.fx_corpse[1],&scr,buffer,&dest );
+
+			if ( fx->param<=0 )
+			{
+				delete fx;
+				Client->FXListBottom.Delete ( num );
+				return;
+			}
+			break;
+	}
+}
+
+void cGameGUI::drawBaseUnits( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	int tileSize = Client->gameGUI.getTileSize();
+	SDL_Rect dest;
+	//draw rubble and all base buildings (without bridges)
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startX;
+
+	for ( int y = startX; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			cBuildingIterator bi = map->fields[pos].getBuildings();
+			while ( !bi.end ) bi++;
+			bi--;
+
+			while ( !bi.rend && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || !bi->owner ) )
+			{
+				if ( player->ScanMap[pos]||
+					( bi->data.isBig && ( ( x < endX && player->ScanMap[pos+1] ) || ( y < endY && player->ScanMap[pos+map->size] ) || ( x < endX && y < endY && player->ScanMap[pos+map->size+1] ) ) ) )
 				{
-					Client->SelectedVehicle->Deselct();
-					StopFXLoop ( Client->iObjectStream );
+					if ( bi->PosX == x && bi->PosY == y )
+					{
+						bi->draw ( &dest );
+					}
 				}
-				v->Select();
-				v->Center();
-				Client->iObjectStream=v->playStream();
-				Client->SelectedVehicle=v;
+				bi--;
 			}
-			PrevButton ( false );
+			pos++;
+			dest.x += tileSize;
 		}
+		dest.y += tileSize;
 	}
-	else if ( PrevPressed )
+}
+
+void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	//draw top buildings (except connectors)
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
 	{
-		PrevButton ( false );
-	}
-	// Der Center-Button:
-	if ( x>=4&&x<26&&y>=227&&y<249 )
-	{
-		if ( b ) CenterButton ( true );
-		else if ( lb )
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for (  int x = startX; x <= endX; x++ )
 		{
-			PlayFX ( SoundData.SNDHudButton );
-			if ( Client->SelectedVehicle )
+			cBuilding* building = map->fields[pos].getBuildings();
+			if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND  )
 			{
-				Client->SelectedVehicle->Center();
+
+				if ( player->ScanMap[pos]||
+						( building->data.isBig && ( ( x < endX && player->ScanMap[pos+1] ) || ( y < endY && player->ScanMap[pos+map->size] ) || ( x < endX && y < endY && player->ScanMap[pos+map->size+1] ) ) ) )
+				{
+					if ( building->PosX == x && building->PosY == y )	//make sure a big building is drawn only once
+					{
+						building->draw ( &dest );
+
+						/*if ( bDebugBaseClient && building->SubBase )
+						{
+							sSubBase *sb;
+							tmp = dest;
+							tmp.h = 8;
+							tmp.w = Hud.Zoom;
+							if ( building->data.isBig ) tmp.w *= 2;
+							sb = building->SubBase;
+							// the VS compiler gives a warning on casting a pointer to long.
+							// therfore we will first cast to long long and then cut this to Unit32 again.
+							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
+							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
+							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
+
+							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+
+							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+						}
+						if ( bDebugBaseServer && building->SubBase )
+						{
+							sSubBase *sb;
+							tmp=dest;
+							tmp.h=8;
+							tmp.w = Hud.Zoom;
+							if ( building->data.isBig ) tmp.w*=2;
+							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
+							// the VS compiler gives a warning on casting a pointer to long.
+							// therfore we will first cast to long long and then cut this to Unit32 again.
+							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
+							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
+							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
+
+							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+
+							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+						}*/
+					}
+				}
 			}
-			else if ( Client->SelectedBuilding )
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawShips( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ScanMap[pos] )
 			{
-				Client->SelectedBuilding->Center();
+				cVehicle* vehicle = map->fields[pos].getVehicles();
+				if ( vehicle && vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0 )
+				{
+					vehicle->draw ( dest );
+				}
 			}
-			CenterButton ( false );
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ScanMap[pos] )
+			{
+				cBuildingIterator building = map->fields[pos].getBuildings();
+				do
+				{
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
+					{
+						building->draw ( &dest );
+					}
+					building++;
+				} while ( !building.end );
+
+				building = map->fields[pos].getBuildings();
+				do
+				{
+					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
+					{
+						building->draw ( &dest );
+					}
+					building++;
+				} while ( !building.end );
+
+				cVehicle* vehicle = map->fields[pos].getVehicles();
+				if ( vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && ( player->ScanMap[pos] || ( x < endX && player->ScanMap[pos+1] ) || ( y < endY && player->ScanMap[pos+map->size] ) || ( x < endX && y < endY && player->ScanMap[pos+map->size+1] ) ) )
+				{
+					if ( vehicle->PosX == x && vehicle->PosY == y )	//make sure a big vehicle is drawn only once
+					{
+						vehicle->draw ( dest );
+					}
+				}
+			}
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawVehicles( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ScanMap[pos] )
+			{
+				cVehicle* vehicle = map->fields[pos].getVehicles();
+				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
+				{
+					vehicle->draw ( dest );
+				}
+			}
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawConnectors( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ScanMap[pos] )
+			{
+				cBuilding* building = map->fields[pos].getTopBuilding();
+				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
+				{
+					building->draw ( &dest );
+				}
+			}
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawPlanes( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	SDL_Rect dest;
+	int tileSize = Client->gameGUI.getTileSize();
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ScanMap[pos] )
+			{
+				cVehicle* plane = map->fields[pos].getPlanes();
+				if ( plane )
+				{
+					plane->draw ( dest );
+				}
+			}
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawResources( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
+{
+	int tileSize = Client->gameGUI.getTileSize();
+	SDL_Rect dest, tmp, src = { 0, 0, tileSize, tileSize };
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
+	for ( int y = startY; y <= endY; y++ )
+	{
+		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
+		int pos = y*map->size+startX;
+		for ( int x = startX; x <= endX; x++ )
+		{
+			if ( player->ResourceMap[pos] )
+			{
+				if ( map->Resources[pos].typ == RES_NONE )
+				{
+					src.x = 0;
+					tmp = dest;
+					if ( !SettingsData.bPreScale && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
+					SDL_BlitSurface ( ResourceData.res_metal,&src,buffer,&tmp );
+				}
+				else
+				{
+					src.x = map->Resources[pos].value*tileSize;
+					tmp = dest;
+					if ( map->Resources[pos].typ == RES_METAL )
+					{
+						if ( !SettingsData.bPreScale && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
+						SDL_BlitSurface ( ResourceData.res_metal, &src, buffer, &tmp );
+					}
+					else if ( map->Resources[pos].typ == RES_OIL )
+					{
+						if ( !SettingsData.bPreScale && ( ResourceData.res_oil->w != ResourceData.res_oil_org->w/64*tileSize || ResourceData.res_oil->h != tileSize ) ) scaleSurface ( ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w/64*tileSize, tileSize );
+						SDL_BlitSurface ( ResourceData.res_oil, &src, buffer, &tmp );
+					}
+					else
+					{
+						if ( !SettingsData.bPreScale && ( ResourceData.res_gold->w != ResourceData.res_gold_org->w/64*tileSize || ResourceData.res_gold->h != tileSize ) ) scaleSurface ( ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w/64*tileSize, tileSize );
+						SDL_BlitSurface ( ResourceData.res_gold, &src, buffer, &tmp );
+					}
+				}
+			}
+			pos++;
+			dest.x += tileSize;
+		}
+		dest.y += tileSize;
+	}
+}
+
+void cGameGUI::drawDebugSentry()
+{
+}
+
+void cGameGUI::drawSelectionBox( int zoomOffX, int zoomOffY )
+{
+	if ( mouseBox.startX == -1 || mouseBox.startY == -1 || mouseBox.endX == -1 || mouseBox.endY == -1 ) return;
+
+	Uint32 color = 0xFFFF00;
+	SDL_Rect d;
+
+	int mouseStartX = (int)(min(mouseBox.startX, mouseBox.endX)*getTileSize());
+	int mouseStartY = (int)(min(mouseBox.startY, mouseBox.endY)*getTileSize());
+	int mouseEndX = (int)(max(mouseBox.startX, mouseBox.endX)*getTileSize());
+	int mouseEndY = (int)(max(mouseBox.startY, mouseBox.endY)*getTileSize());
+
+	d.h = 1;
+	d.w = mouseEndX-mouseStartX;
+	d.x = mouseStartX-zoomOffX+HUD_LEFT_WIDTH;
+	d.y = mouseEndY-zoomOffY+20;
+	SDL_FillRect ( buffer, &d, color );
+
+	d.h = 1;
+	d.w = mouseEndX-mouseStartX;
+	d.x = mouseStartX-zoomOffX+HUD_LEFT_WIDTH;
+	d.y = mouseStartY-zoomOffY+20;
+	SDL_FillRect ( buffer, &d, color );
+
+	d.h = mouseEndY-mouseStartY;
+	d.w = 1;
+	d.x = mouseStartX-zoomOffX+HUD_LEFT_WIDTH;
+	d.y = mouseStartY-zoomOffY+20;
+	SDL_FillRect ( buffer, &d, color );
+
+	d.h = mouseEndY-mouseStartY;
+	d.w = 1;
+	d.x = mouseEndX-zoomOffX+HUD_LEFT_WIDTH;
+	d.y = mouseStartY-zoomOffY+20;
+	SDL_FillRect ( buffer, &d, color );
+}
+
+void cGameGUI::drawDebugOutput()
+{
+	#define DEBUGOUT_X_POS		(SettingsData.iScreenW-140)
+
+	int debugOff = 30;
+
+	if ( debugPlayers )
+	{
+		font->showText(DEBUGOUT_X_POS, debugOff, "Players: " + iToStr( (int)Client->PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+
+		SDL_Rect rDest = { DEBUGOUT_X_POS, debugOff, 20, 10 };
+		SDL_Rect rSrc = { 0, 0, 20, 10 };
+		SDL_Rect rDotDest = {DEBUGOUT_X_POS-10, debugOff, 10, 10 };
+		SDL_Rect rBlackOut = {DEBUGOUT_X_POS+20, debugOff, 0, 10 };
+		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+		{
+			//HACK SHOWFINISHEDPLAYERS
+			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
+
+			if( (*Client->PlayerList)[i]->bFinishedTurn && (*Client->PlayerList)[i] != player)
+			{
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+			else if(  (*Client->PlayerList)[i] == player && Client->bWantToEnd )
+			{
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+			else
+			{
+				rDot.x = 0; //for red dot
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}
+
+			SDL_BlitSurface ( (*Client->PlayerList)[i]->color, &rSrc, buffer, &rDest );
+			if ( (*Client->PlayerList)[i] == player )
+			{
+				string sTmpLine = " " + (*Client->PlayerList)[i]->name + ", nr: " + iToStr ( (*Client->PlayerList)[i]->Nr ) + " << you! ";
+				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
+				SDL_FillRect(buffer, &rBlackOut, 0x000000);
+				font->showText(rBlackOut.x, debugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
+			}
+			else
+			{
+				string sTmpLine = " " + (*Client->PlayerList)[i]->name + ", nr: " + iToStr ( (*Client->PlayerList)[i]->Nr ) + " ";
+				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
+				SDL_FillRect(buffer, &rBlackOut, 0x000000);
+				font->showText(rBlackOut.x, debugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
+			}
+			debugOff += 10; //use 10 for pixel high of dots instead of text high
+			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
+
 		}
 	}
-	else if ( CenterPressed )
+
+	if ( debugAjobs )
 	{
-		CenterButton ( false );
-	}
-	// Der Datei-Button:
-	if ( x>=17&&x<84&&y>=3&&y<23 )
-	{
-		if ( b ) DateiButton ( true );
-		else if ( lb )
+		font->showText(DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		if ( Server )
 		{
-			PlayFX ( SoundData.SNDHudButton );
-			cLoadSaveMenu loadSaveMenu ( new cGameDataContainer ); // TODO: memory leak?
-			if ( loadSaveMenu.show() != 1 ) Client->bExit = true;
-			Client->bFlagDrawHud = true;
-			DateiButton ( false );
+			font->showText(DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr((int)Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		}
 	}
-	else if ( DateiPressed )
-	{
-		DateiButton ( false );
-	}
-	lb=b;
-}
 
-void cHud::PraeferenzenButton ( bool set )
-{
-	SDL_Rect scr={0,169,67,20},dest={86,4,67,20};
-	if ( set )
+	if ( debugBaseClient )
+	{
+		font->showText(DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr((int)player->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
+	}
+
+	if ( debugBaseServer )
+	{
+		cPlayer* serverPlayer = Server->getPlayerFromNumber(player->Nr);
+		font->showText(DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr((int)serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
+	}
+
+	if ( debugSentry )
+	{
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
-			scr.x=195;
-			scr.y=0;
-			Praeferenzen=true;
+			cPlayer *Player = (*Server->PlayerList)[i];
+			font->showText(DEBUGOUT_X_POS, debugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS, debugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		}
-	else
-	{
-		Praeferenzen=false;
 	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Settings"), set, true );
+
+	if ( debugFX )
+	{
+		/*font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);*/
+	}
+	if ( debugTraceServer || debugTraceClient )
+	{
+		trace();
+	}
+	if ( debugCache )
+	{
+		font->showText(DEBUGOUT_X_POS, debugOff, "Max cache size: " + iToStr(dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "cache size: " + iToStr(dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "cache hits: " + iToStr(dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "cache misses: " + iToStr(dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "not cached: " + iToStr(dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+	}
+
+	if ( showFPS )
+	{
+		font->showText(DEBUGOUT_X_POS, debugOff, "FPS: " + iToStr( Round( framesPerSecond ) ), FONT_LATIN_SMALL_WHITE );
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "Cycles/s: " + iToStr( Round( cyclesPerSecond ) ), FONT_LATIN_SMALL_WHITE );
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "Load: " + iToStr( loadValue/10 ) + "." + iToStr( loadValue%10 ) + "%", FONT_LATIN_SMALL_WHITE );
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+	}
 }
 
-// Setzt den Monitor zurück:
-void cHud::ResetVideoMonitor ( void )
+void cGameGUI::displayMessages()
 {
-	SDL_Rect scr,dest;
-	scr.x=295;
-	scr.y=98;
-	dest.x=10;
-	dest.y=29;
-	scr.w=128;
-	scr.h=128;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-}
+	if ( Client->messages.Size() == 0 ) return;
 
-void cHud::PauseButton ( bool set )
-{
-	SDL_Rect scr={19,132,19,19},dest={146,143,19,19};
-	if ( set )
+	sMessage *message;
+	int height = 0;
+	for ( int i = (int)Client->messages.Size() - 1; i >= 0; i-- )
+	{
+		message = Client->messages[i];
+		height += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
+	}
+	SDL_Rect scr = { 0, 0, SettingsData.iScreenW - 200, height+6 };
+	SDL_Rect dest = { 180, 30, 0, 0 };
+
+	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
+	dest.x = 180+2; dest.y = 34;
+	dest.w = SettingsData.iScreenW - 204;
+	dest.h = height;
+
+	for ( unsigned int i = 0; i < Client->messages.Size(); i++ )
+	{
+		message = Client->messages[i];
+		string msgString = message->msg;
+		//HACK TO SHOW PLAYERCOLOR IN CHAT
+		int color = -1;
+		for(unsigned int i = 0; i < msgString.length(); i++)
 		{
-			scr.x=176;
-			scr.y=0;
-			PausePressed=true;
+			if(msgString[i] == ':') //scan for chatmessages from _players_
+			{
+				string tmpString = msgString.substr( 0, i );
+				for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+				{
+					cPlayer* const Player = (*Client->PlayerList)[i];
+					if (Player)
+					{
+						if(tmpString.compare( Player->name ) == 0)
+						{
+							color = GetColorNr(Player->color);
+							break;
+						}
+					}
+				}
+				break;
+			}
 		}
-	else
-	{
-		PausePressed=false;
-	}
-	BlitButton(scr, dest, "", set );
-}
-
-void cHud::PlayButton ( bool set )
-{
-	SDL_Rect scr={0,132,19,18},dest={146,123,19,18};
-	if ( set )
+		if(color != -1)
 		{
-			scr.x=157;
-			scr.y=0;
-			PlayPressed=true;
-		}
-	else
-	{
-		PlayPressed=false;
-	}
-	BlitButton(scr, dest, "", set );
-}
-
-void cHud::HelpButton ( bool set )
-{
-	SDL_Rect scr={268,151,26,24},dest={20,250,26,24};
-	if ( set )
-		{
-			scr.x=366;
-			scr.y=0;
-			HelpPressed=true;
-		}
-	else
-	{
-		HelpPressed=false;
-	}
-	BlitButton(scr, dest, "", set );
-}
-
-void cHud::ChatButton ( bool set )
-{
-	SDL_Rect scr={245,130,49,20},dest={51,252,49,20};
-	if ( set )
-		{
-			scr.x=210;
-			scr.y=21;
-			ChatPressed=true;
-		}
-	else
-	{
-		ChatPressed=false;
-	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Chat"), set, true );
-}
-
-void cHud::LogButton ( bool set )
-{
-	SDL_Rect scr={196,129,49,20},dest={101,252,49,20};
-	if ( set )
-		{
-			scr.x=160;
-			scr.y=21;
-			LogPressed=true;
-		}
-	else
-	{
-		LogPressed=false;
-	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Log"), set, true );
-}
-
-void cHud::EndeButton ( bool set )
-{
-	SDL_Rect scr={0,151,70,17},dest={391,4,70,17};
-	if ( set )
-		{
-			scr.x=22;
-			scr.y=21;
-			EndePressed=true;
-		}
-	else
-	{
-		EndePressed=false;
-	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~End"), set );
-}
-
-void cHud::ShowRunde ( void )
-{
-	SDL_Rect scr,dest;
-	scr.x=156;
-	scr.y=215;
-	scr.w=55;
-	scr.h=15;
-	dest.x=471;
-	dest.y=5;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	font->showTextCentered(498,7, iToStr(Client->iTurn), FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
-	Client->bFlagDrawHud=true;
-}
-
-void cHud::showTurnTime ( int iTime )
-{
-	SDL_Rect scr,dest;
-	scr.x=156;
-	scr.y=215;
-	scr.w=55;
-	scr.h=15;
-	dest.x=537;
-	dest.y=5;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff,&scr,GraphicsData.gfx_hud,&dest );
-	if ( iTime != -1 ) font->showTextCentered(564,7, iToStr( iTime ), FONT_LATIN_NORMAL, GraphicsData.gfx_hud);
-}
-
-void cHud::ErledigenButton ( bool set )
-{
-	SDL_Rect scr={132,172,25,24},dest={99,227,25,24};
-	if ( set )
-		{
-			scr.x=262;
-			scr.y=0;
-			ErledigenPressed=true;
-		}
-	else
-	{
-		ErledigenPressed=false;
-	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Proceed"), set );
-}
-
-void cHud::NextButton ( bool set )
-{
-	SDL_Rect scr={158,172,39,23},dest={124,227,39,23};
-	if ( set )
-		{
-			scr.x=288;
-			scr.y=0;
-			NextPressed=true;
-		}
-	else
-	{
-		NextPressed=false;
-	}
-	BlitButton(scr, dest, ">>  ", set );
-}
-
-void cHud::PrevButton ( bool set )
-{
-	SDL_Rect scr={198,172,38,23},dest={60,227,38,23};
-	if ( set )
-		{
-			scr.x=327;
-			scr.y=0;
-			PrevPressed=true;
-		}
-	else
-	{
-		PrevPressed=false;
-	}
-	BlitButton(scr, dest, "  <<", set );
-}
-
-void cHud::CenterButton ( bool set )
-{
-	SDL_Rect scr={139,149,21,22},dest={4,227,21,22};
-	if ( set )
-		{
-			scr.x=0;
-			scr.y=21;
-			CenterPressed=true;
-		}
-	else
-	{
-		CenterPressed=false;
-	}
-	BlitButton(scr, dest, "", set);
-}
-
-void cHud::DateiButton ( bool set )
-{
-	SDL_Rect scr={71,151,67,20},dest={17,3,67,20};
-
-	if ( set )
-		{
-			scr.x=93; //change source position
-			scr.y=21;
-			DateiPressed=true;
-		}
-	else
-	{
-		DateiPressed=false;
-	}
-	BlitButton(scr, dest, lngPack.i18n( "Text~Hud~Files"), set, true);
-}
-
-int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed)
-{
-	return BlitButton(GraphicsData.gfx_hud_stuff,scr,GraphicsData.gfx_hud,dest, sText, bPressed, false);
-}
-
-int cHud::BlitButton(SDL_Rect scr, SDL_Rect dest, string sText, bool bPressed, bool bSmallFont)
-{
-	return BlitButton(GraphicsData.gfx_hud_stuff,scr,GraphicsData.gfx_hud,dest, sText, bPressed, bSmallFont);
-}
-
-int cHud::BlitButton(SDL_Surface *sfSrc, SDL_Rect scr, SDL_Surface *sfDest, SDL_Rect dest, string sText, bool bPressed, bool bSmallFont)
-{
-	int iPx = 3;  //for moving fonts 1 pixel down on click
-	if(bPressed) iPx += 1;
-	SDL_BlitSurface ( sfSrc,&scr,sfDest,&dest );
-	if(!bSmallFont)
-	{
-		font->showTextCentered(dest.x+dest.w/2,dest.y+iPx, sText, FONT_LATIN_NORMAL, sfDest);
-	}
-	else
-	{
-		if(bPressed)
-		{
-			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+2, sText, FONT_LATIN_SMALL_GREEN, sfDest);
-			//iPx only +2 because small buttons aren't big enough for moving text on them
+			#define CELLSPACE 3
+			SDL_Rect rColorSrc = { 0, 0, 10, font->getFontHeight() };
+			SDL_Rect rDest = dest;
+			rDest.w = rColorSrc.w;
+			rDest.h = rColorSrc.h;
+			SDL_BlitSurface(OtherData.colors[color], &rColorSrc, buffer, &rDest ); //blit color
+			dest.x += rColorSrc.w + CELLSPACE; //add border for color
+			dest.w -= rColorSrc.w + CELLSPACE;
+			dest.y = font->showTextAsBlock( dest, msgString );
+			dest.x -= rColorSrc.w + CELLSPACE; //reset border from color
+			dest.w += rColorSrc.w + CELLSPACE;
 		}
 		else
 		{
-			font->showTextCentered(dest.x+dest.w/2,dest.y+iPx+3, sText, FONT_LATIN_SMALL_RED, sfDest);
+			dest.y = font->showTextAsBlock( dest, msgString );
 		}
-		font->showTextCentered(dest.x+dest.w/2-1,dest.y+iPx+2, sText, FONT_LATIN_SMALL_WHITE, sfDest);
+
+		dest.y += 5;
 	}
-	return 0;
 }
 
-void cHud::ScaleSurfaces ( void )
+void cGameGUI::scaleSurfaces ()
 {
-	float factor;
-	if ( Zoom==LastZoom ) return;
-
 	// Terrain:
-	sTerrain*& tlist = Client->Map->terrain;
-	int numberOfTerrains = Client->Map->iNumberOfTerrains;
+	sTerrain*& tlist = map->terrain;
+	int numberOfTerrains = map->iNumberOfTerrains;
 	for (int i = 0; i < numberOfTerrains; ++i)
 	{
 		sTerrain& t = tlist[i];
-		scaleSurface ( t.sf_org, t.sf, Zoom, Zoom );
-		scaleSurface ( t.shw_org, t.shw, Zoom, Zoom );
+		scaleSurface ( t.sf_org, t.sf, getTileSize(), getTileSize() );
+		scaleSurface ( t.shw_org, t.shw, getTileSize(), getTileSize() );
 	}
 	// Vehicles:
-	factor = ( float ) ( Zoom/64.0 );
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); ++i)
 	{
-		UnitsData.vehicle[i].scaleSurfaces( factor );
+		UnitsData.vehicle[i].scaleSurfaces( getZoom() );
 	}
 	// Buildings:
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); ++i)
 	{
-		UnitsData.building[i].scaleSurfaces ( factor );
+		UnitsData.building[i].scaleSurfaces ( getZoom() );
 	}
 
-	if ( UnitsData.dirt_small_org && UnitsData.dirt_small ) scaleSurface ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) ( UnitsData.dirt_small_org->w * factor ), (int) ( UnitsData.dirt_small_org->h * factor ) );
-	if ( UnitsData.dirt_small_shw_org && UnitsData.dirt_small_shw ) scaleSurface ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) ( UnitsData.dirt_small_shw_org->w * factor ), (int) ( UnitsData.dirt_small_shw_org->h * factor ) );
-	if ( UnitsData.dirt_big_org && UnitsData.dirt_big ) scaleSurface ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * factor ), (int) ( UnitsData.dirt_big_org->h * factor ) );
-	if ( UnitsData.dirt_big_shw_org && UnitsData.dirt_big_shw ) scaleSurface ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * factor ), (int) ( UnitsData.dirt_big_shw_org->h * factor ) );
+	if ( UnitsData.dirt_small_org && UnitsData.dirt_small ) scaleSurface ( UnitsData.dirt_small_org,UnitsData.dirt_small, (int) ( UnitsData.dirt_small_org->w * getZoom() ), (int) ( UnitsData.dirt_small_org->h * getZoom() ) );
+	if ( UnitsData.dirt_small_shw_org && UnitsData.dirt_small_shw ) scaleSurface ( UnitsData.dirt_small_shw_org,UnitsData.dirt_small_shw, (int) ( UnitsData.dirt_small_shw_org->w * getZoom() ), (int) ( UnitsData.dirt_small_shw_org->h * getZoom() ) );
+	if ( UnitsData.dirt_big_org && UnitsData.dirt_big ) scaleSurface ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * getZoom() ), (int) ( UnitsData.dirt_big_org->h * getZoom() ) );
+	if ( UnitsData.dirt_big_shw_org && UnitsData.dirt_big_shw ) scaleSurface ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * getZoom() ), (int) ( UnitsData.dirt_big_shw_org->h * getZoom() ) );
 
 	// Bänder:
-	if ( GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small ) scaleSurface ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,Zoom,Zoom );
-	if ( GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big ) scaleSurface ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,Zoom*2,Zoom*2 );
+	if ( GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small ) scaleSurface ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,getTileSize(),getTileSize() );
+	if ( GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big ) scaleSurface ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,getTileSize()*2,getTileSize()*2 );
 
 	// Resources:
-	if ( ResourceData.res_metal_org && ResourceData.res_metal ) scaleSurface ( ResourceData.res_metal_org,ResourceData.res_metal,ResourceData.res_metal_org->w/64*Zoom,Zoom );
-	if ( ResourceData.res_oil_org && ResourceData.res_oil ) scaleSurface ( ResourceData.res_oil_org,ResourceData.res_oil,ResourceData.res_oil_org->w/64*Zoom,Zoom );
-	if ( ResourceData.res_gold_org && ResourceData.res_gold ) scaleSurface ( ResourceData.res_gold_org,ResourceData.res_gold,ResourceData.res_gold_org->w/64*Zoom,Zoom );
+	if ( ResourceData.res_metal_org && ResourceData.res_metal ) scaleSurface ( ResourceData.res_metal_org,ResourceData.res_metal,ResourceData.res_metal_org->w/64*getTileSize(),getTileSize() );
+	if ( ResourceData.res_oil_org && ResourceData.res_oil ) scaleSurface ( ResourceData.res_oil_org,ResourceData.res_oil,ResourceData.res_oil_org->w/64*getTileSize(),getTileSize() );
+	if ( ResourceData.res_gold_org && ResourceData.res_gold ) scaleSurface ( ResourceData.res_gold_org,ResourceData.res_gold,ResourceData.res_gold_org->w/64*getTileSize(),getTileSize() );
 
 	// Big Beton:
-	if ( GraphicsData.gfx_big_beton_org && GraphicsData.gfx_big_beton ) scaleSurface ( GraphicsData.gfx_big_beton_org,GraphicsData.gfx_big_beton,Zoom*2,Zoom*2 );
+	if ( GraphicsData.gfx_big_beton_org && GraphicsData.gfx_big_beton ) scaleSurface ( GraphicsData.gfx_big_beton_org,GraphicsData.gfx_big_beton,getTileSize()*2,getTileSize()*2 );
 
 	// Andere:
-	if ( GraphicsData.gfx_exitpoints_org && GraphicsData.gfx_exitpoints ) scaleSurface ( GraphicsData.gfx_exitpoints_org,GraphicsData.gfx_exitpoints,GraphicsData.gfx_exitpoints_org->w/64*Zoom,Zoom );
+	if ( GraphicsData.gfx_exitpoints_org && GraphicsData.gfx_exitpoints ) scaleSurface ( GraphicsData.gfx_exitpoints_org,GraphicsData.gfx_exitpoints,GraphicsData.gfx_exitpoints_org->w/64*getTileSize(),getTileSize() );
 
 	// FX:
-#define SCALE_FX(a) if (a) scaleSurface(a[0],a[1], (a[0]->w * Zoom)/64 , (a[0]->h * Zoom)/64);
+#define SCALE_FX(a) if (a) scaleSurface(a[0],a[1], (a[0]->w * getTileSize())/64 , (a[0]->h * getTileSize())/64);
 	SCALE_FX ( EffectsData.fx_explo_small );
 	SCALE_FX ( EffectsData.fx_explo_big );
 	SCALE_FX ( EffectsData.fx_explo_water );
@@ -1468,11 +3724,380 @@ void cHud::ScaleSurfaces ( void )
 	SCALE_FX ( EffectsData.fx_tracks );
 	SCALE_FX ( EffectsData.fx_corpse );
 	SCALE_FX ( EffectsData.fx_absorb );
-
-	LastZoom=Zoom;
 }
 
-void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, bool bActive)
+void cGameGUI::makePanel( bool open )
+{
+	SDL_Rect tmp;
+	if ( open )
+	{
+		PlayFX ( SoundData.SNDPanelOpen );
+		SDL_Rect top = { 0, ( SettingsData.iScreenH/2 )-479, 171, 479 };
+		SDL_Rect bottom = { 0, ( SettingsData.iScreenH/2 ) , 171, 481 };
+		SDL_BlitSurface ( GraphicsData.gfx_panel_top, NULL, buffer, &tmp );
+		tmp = bottom;
+		SDL_BlitSurface ( GraphicsData.gfx_panel_bottom ,NULL, buffer, &tmp );
+		while ( top.y > -479 )
+		{
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+			SDL_Delay ( 10 );
+			top.y -= 10;
+			bottom.y += 10;
+			draw( false, false );
+			tmp = top;
+			SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&tmp );
+			SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&bottom );
+		}
+	}
+	else
+	{
+		PlayFX ( SoundData.SNDPanelClose );
+		SDL_Rect top = { 0, -480, 171, 479 };
+		SDL_Rect bottom = { 0, SettingsData.iScreenH , 171, 481 };
+		while ( bottom.y>SettingsData.iScreenH/2 )
+		{
+			SHOW_SCREEN
+			mouse->draw ( false, screen );
+			SDL_Delay ( 10 );
+			top.y += 10;
+			if ( top.y> ( SettingsData.iScreenH/2 )-479-9 ) top.y = ( SettingsData.iScreenH/2 )-479;
+			bottom.y -= 10;
+			if ( bottom.y < SettingsData.iScreenH/2+9 ) bottom.y = SettingsData.iScreenH/2;
+			draw( false, false );
+			tmp = top;
+			SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&tmp );
+			tmp = bottom;
+			SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&tmp );
+		}
+		SHOW_SCREEN
+		mouse->draw ( false, screen );
+		SDL_Delay ( 100 );
+	}
+}
+
+void cGameGUI::trace ()
+{
+	int y, x;
+	cMapField* field;
+
+	mouse->GetKachel ( &x, &y );
+	if ( x < 0 || y < 0 ) return;
+
+	if ( debugTraceServer ) field = Server->Map->fields + ( Server->Map->size*y+x );
+	else field = map->fields + ( map->size*y+x );
+
+	y = 18+5+8;
+	x = 180+5;
+
+	if ( field->getVehicles() ) { traceVehicle ( field->getVehicles(), &y, x ); y += 20; }
+	if ( field->getPlanes() ) { traceVehicle ( field->getPlanes(), &y, x ); y += 20; }
+	cBuildingIterator bi = field->getBuildings();
+	while ( !bi.end ) { traceBuilding ( bi, &y, x ); y += 20; bi++;}
+}
+
+void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
+{
+	string tmpString;
+
+	tmpString = "name: \"" + vehicle->name + "\" id: \"" + iToStr ( vehicle->iID ) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr ( vehicle->PosX ) + " posY: " + iToStr ( vehicle->PosY ) + " offX: " + iToStr ( vehicle->OffX ) + " offY: " + iToStr ( vehicle->OffY );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "dir: " + iToStr ( vehicle->dir ) + " selected: " + iToStr ( vehicle->selected ) + " moving: +" + iToStr ( vehicle->moving ) + " mjob: "  + pToStr ( vehicle->ClientMoveJob ) + " speed: " + iToStr ( vehicle->data.speedCur ) + " mj_active: " + iToStr ( vehicle->MoveJobActive ) + " menu_active: " + iToStr ( vehicle->MenuActive );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "attack_mode: " + iToStr ( vehicle->AttackMode ) + " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " transfer: " + iToStr ( vehicle->Transfer ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "is_building: " + iToStr ( vehicle->IsBuilding ) + " building_typ: " + vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr ( vehicle->BuildCosts ) + " build_rounds: " + iToStr ( vehicle->BuildRounds ) + " build_round_start: " + iToStr (vehicle->BuildRoundsStart );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "place_band: " + iToStr ( vehicle->PlaceBand ) + " bandx: " + iToStr ( vehicle->BandX ) + " bandy: +" + iToStr ( vehicle->BandY ) + " build_big_saved_pos: " + iToStr ( vehicle->BuildBigSavedPos ) + " build_path: " + iToStr (vehicle->BuildPath );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = " is_clearing: " + iToStr ( vehicle->IsClearing ) + " clearing_rounds: +" + iToStr ( vehicle->ClearingRounds ) + " clear_big: " + iToStr ( vehicle->data.isBig ) + " loaded: " + iToStr (vehicle->Loaded );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " steal_active: " + iToStr ( vehicle->StealActive ) + " disable_active: +" + iToStr ( vehicle->DisableActive ) + " disabled: " + iToStr ( vehicle->Disabled ) /*+ " detection_override: " + iToStr (vehicle->detection_override )*/;
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + /*" detected: " + iToStr ( vehicle->detected ) +*/ " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive ) + " muni_active: " + iToStr (vehicle->MuniActive );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString =
+		"load_active: "            + iToStr(vehicle->LoadActive) +
+		" activating_vehicle: "    + iToStr(vehicle->ActivatingVehicle) +
+		" vehicle_to_activate: +"  + iToStr(vehicle->VehicleToActivate) +
+		" stored_vehicles_count: " + iToStr((int)vehicle->StoredVehicles.Size());
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	if ( vehicle->StoredVehicles.Size() )
+	{
+		cVehicle *StoredVehicle;
+		for (unsigned int i = 0; i < vehicle->StoredVehicles.Size(); i++)
+		{
+			StoredVehicle = vehicle->StoredVehicles[i];
+			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
+			*y += 8;
+		}
+	}
+
+	if ( debugTraceServer )
+	{
+		tmpString = "seen by players: owner";
+		for (unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
+		{
+			tmpString += ", \"" + vehicle->SeenByPlayerList[i]->name + "\"";
+		}
+		font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+		*y+=8;
+	}
+}
+
+void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
+{
+	string tmpString;
+
+	tmpString = "name: \"" + building->name + "\" id: \"" + iToStr ( building->iID ) + "\" owner: \"" + ( building->owner?building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( building->PosX ) + " posY: " + iToStr ( building->PosY ) + " selected: " + iToStr ( building->selected );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "dir: " + iToStr ( building->dir ) + " menu_active: " + iToStr ( building->MenuActive ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " attacking_mode: +" + iToStr ( building->AttackMode ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "attacking: " + iToStr ( building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( building->RubbleValue ) + " big_dirt: " + iToStr ( building->data.isBig ) + " is_working: " + iToStr (building->IsWorking ) + " transfer: " + iToStr (building->Transfer );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = " max_metal_p: " + iToStr ( building->MaxMetalProd ) + " max_oil_p: " + iToStr (building->MaxOilProd ) + " max_gold_p: " + iToStr (building->MaxGoldProd );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString = "is_locked: " + iToStr ( building->IsLocked ) + " disabled: " + iToStr ( building->Disabled ) /*+ " detected: +" + iToStr ( building->detected )*/ + " activating_vehicle: " + iToStr ( building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	tmpString =
+		"load_active: "            + iToStr(building->LoadActive) +
+		" stored_vehicles_count: " + iToStr((int)building->StoredVehicles.Size());
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	if (building->StoredVehicles.Size())
+	{
+		cVehicle *StoredVehicle;
+		for (unsigned int i = 0; i < building->StoredVehicles.Size(); i++)
+		{
+			StoredVehicle = building->StoredVehicles[i];
+			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
+			*y+=8;
+		}
+	}
+
+	tmpString =
+		"build_speed: "        + iToStr(building->BuildSpeed)  +
+		" repeat_build: "      + iToStr(building->RepeatBuild) +
+		" build_list_count: +" + iToStr(building->BuildList ? (int)building->BuildList->Size() : 0);
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
+
+	if (building->BuildList && building->BuildList->Size())
+	{
+		sBuildList *BuildingList;
+		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
+		{
+			BuildingList = (*building->BuildList)[i];
+			font->showText(x, *y, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", FONT_LATIN_SMALL_WHITE);
+			*y+=8;
+		}
+	}
+
+	if ( debugTraceServer )
+	{
+		tmpString = "seen by players: owner";
+		for (unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++)
+		{
+			tmpString += ", \"" + building->SeenByPlayerList[i]->name + "\"";
+		}
+		font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+		*y+=8;
+	}
+}
+
+void cGameGUI::drawUnitCircles()
+{
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_SetClipRect( buffer, &clipRect );
+
+	if ( selectedVehicle )
+	{
+		cVehicle& v   = *selectedVehicle; // XXX not const is suspicious
+		int const spx = v.GetScreenPosX();
+		int const spy = v.GetScreenPosY();
+		if ( scanChecked() )
+		{
+			if ( v.data.isBig )
+			{
+				drawCircle ( spx+ getTileSize(), spy + getTileSize(), v.data.scan * getTileSize(), SCAN_COLOR, buffer );
+			}
+			else
+			{
+				drawCircle ( spx + getTileSize()/2, spy + getTileSize()/2, v.data.scan * getTileSize(), SCAN_COLOR, buffer );
+			}
+		}
+		if ( rangeChecked() )
+		{
+			if (v.data.canAttack & TERRAIN_AIR) drawCircle(spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 2, RANGE_AIR_COLOR, buffer);
+			else drawCircle(spx + getTileSize() / 2, spy + getTileSize() / 2, v.data.range * getTileSize() + 1, RANGE_GROUND_COLOR, buffer);
+		}
+		if (v.owner == player &&
+				(
+					v.IsBuilding && v.BuildRounds    == 0 ||
+					v.IsClearing && v.ClearingRounds == 0
+					) && !v.BuildPath )
+		{
+			if ( v.data.isBig )
+			{
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY - 1)) drawExitPoint(spx - getTileSize(),     spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX    , v.PosY - 1)) drawExitPoint(spx,                spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY - 1)) drawExitPoint(spx + getTileSize(),     spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX + 2, v.PosY - 1)) drawExitPoint(spx + getTileSize() * 2, spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY    )) drawExitPoint(spx - getTileSize(),     spy);
+				if ( map->possiblePlace(&v, v.PosX + 2, v.PosY    )) drawExitPoint(spx + getTileSize() * 2, spy);
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY + 1)) drawExitPoint(spx - getTileSize(),     spy + getTileSize());
+				if ( map->possiblePlace(&v, v.PosX + 2, v.PosY + 1)) drawExitPoint(spx + getTileSize() * 2, spy + getTileSize());
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY + 2)) drawExitPoint(spx - getTileSize(),     spy + getTileSize() * 2);
+				if ( map->possiblePlace(&v, v.PosX    , v.PosY + 2)) drawExitPoint(spx,                spy + getTileSize() * 2);
+				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY + 2)) drawExitPoint(spx + getTileSize(),     spy + getTileSize() * 2);
+				if ( map->possiblePlace(&v, v.PosX + 2, v.PosY + 2)) drawExitPoint(spx + getTileSize() * 2, spy + getTileSize() * 2);
+			}
+			else
+			{
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY - 1)) drawExitPoint(spx - getTileSize(), spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX    , v.PosY - 1)) drawExitPoint(spx,            spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY - 1)) drawExitPoint(spx + getTileSize(), spy - getTileSize());
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY    )) drawExitPoint(spx - getTileSize(), spy			);
+				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY    )) drawExitPoint(spx + getTileSize(), spy			);
+				if ( map->possiblePlace(&v, v.PosX - 1, v.PosY + 1)) drawExitPoint(spx - getTileSize(), spy + getTileSize());
+				if ( map->possiblePlace(&v, v.PosX    , v.PosY + 1)) drawExitPoint(spx,            spy + getTileSize());
+				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY + 1)) drawExitPoint(spx + getTileSize(), spy + getTileSize());
+			}
+		}
+		if (v.PlaceBand)
+		{
+			if ( v.BuildingTyp.getUnitDataOriginalVersion()->isBig )
+			{
+				SDL_Rect dest;
+				dest.x = HUD_LEFT_WIDTH - (int)( offX * getZoom() ) + getTileSize() * v.BandX;
+				dest.y =  HUD_TOP_HIGHT - (int)( offY * getZoom() ) + getTileSize() * v.BandY;
+				CHECK_SCALING( GraphicsData.gfx_band_big, GraphicsData.gfx_band_big_org, (float) getTileSize()/64.0 );
+				SDL_BlitSurface(GraphicsData.gfx_band_big, NULL, buffer, &dest);
+			}
+			else
+			{
+				int x;
+				int y;
+				mouse->GetKachel(&x, &y);
+				if (x == v.PosX || y == v.PosY)
+				{
+					SDL_Rect dest;
+					dest.x = HUD_LEFT_WIDTH - (int)( offX * getZoom() ) + getTileSize() * x;
+					dest.y =  HUD_TOP_HIGHT - (int)( offY * getZoom() ) + getTileSize() * y;
+					CHECK_SCALING( GraphicsData.gfx_band_small, GraphicsData.gfx_band_small_org, (float) getTileSize()/64.0 );
+					SDL_BlitSurface(GraphicsData.gfx_band_small, NULL, buffer, &dest);
+					v.BandX     = x;
+					v.BandY     = y;
+				}
+				else
+				{
+					v.BandX = v.PosX;
+					v.BandY = v.PosY;
+				}
+			}
+		}
+		if (v.ActivatingVehicle && v.owner == player)
+		{
+			v.DrawExitPoints(v.StoredVehicles[v.VehicleToActivate]->typ);
+		}
+	}
+	else if ( selectedBuilding )
+	{
+		int spx,spy;
+		spx=selectedBuilding->GetScreenPosX();
+		spy=selectedBuilding->GetScreenPosY();
+		if ( scanChecked() )
+		{
+			if ( selectedBuilding->data.isBig )
+			{
+				drawCircle ( spx+getTileSize(),
+				             spy+getTileSize(),
+				             selectedBuilding->data.scan*getTileSize(),SCAN_COLOR,buffer );
+			}
+			else
+			{
+				drawCircle ( spx+getTileSize()/2,
+				             spy+getTileSize()/2,
+				             selectedBuilding->data.scan*getTileSize(),SCAN_COLOR,buffer );
+			}
+		}
+		if ( rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_GROUND) && !selectedBuilding->data.explodesOnContact )
+		{
+			drawCircle ( spx+getTileSize()/2,
+			             spy+getTileSize()/2,
+			             selectedBuilding->data.range*getTileSize()+2,RANGE_GROUND_COLOR,buffer );
+		}
+		if ( rangeChecked() && (selectedBuilding->data.canAttack & TERRAIN_AIR) )
+		{
+			drawCircle ( spx+getTileSize()/2,
+			             spy+getTileSize()/2,
+			             selectedBuilding->data.range*getTileSize()+2,RANGE_AIR_COLOR,buffer );
+		}
+
+		if (selectedBuilding->BuildList                              &&
+				selectedBuilding->BuildList->Size()                      &&
+				!selectedBuilding->IsWorking                             &&
+				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
+				selectedBuilding->owner == player)
+		{
+			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->typ);
+		}
+		if ( selectedBuilding->ActivatingVehicle&&selectedBuilding->owner==player )
+		{
+			selectedBuilding->DrawExitPoints(selectedBuilding->StoredVehicles[selectedBuilding->VehicleToActivate]->typ);
+		}
+	}
+	player->DrawLockList();
+
+	SDL_SetClipRect( buffer, NULL );
+}
+
+void cGameGUI::drawExitPoint ( int x, int y )
+{
+	SDL_Rect dest, scr;
+	int nr = ANIMATION_SPEED%5;
+	scr.y = 0;
+	scr.h = scr.w = getTileSize();
+	scr.x = getTileSize()*nr;
+	dest.x = x;
+	dest.y = y;
+	float factor = (float)(getTileSize()/64.0);
+
+	CHECK_SCALING( GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, factor );
+	SDL_BlitSurface ( GraphicsData.gfx_exitpoints, &scr, buffer, &dest );
+}
+
+
+/*void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, bool bActive)
 {
 	if(bShowPlayers)
 	{
@@ -1519,15 +4144,4 @@ void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, 
 		font->showText(rDest.x+= (59 - rSrc.x), rDest.y+6, sPlayer , FONT_LATIN_NORMAL, GraphicsData.gfx_hud); //blit name
 		//END DRAW PLAYERS
 	}
-
-
-}
-
-void cHud::reset()
-{
-	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
-	SDL_BlitSurface ( GraphicsData.gfx_hud_backup, NULL, GraphicsData.gfx_hud, NULL);
-	DoAllHud();
-	if ( Client && Client->SelectedVehicle ) Client->SelectedVehicle->ShowDetails();
-	if ( Client && Client->SelectedBuilding ) Client->SelectedBuilding->ShowDetails();
-}
+}*/

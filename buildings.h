@@ -171,6 +171,7 @@ public:
 	int wantRedrawedStoredOffset;
 	bool hasBeenAttacked;
 	cList<cEndMoveAction*> passiveEndMoveActions;
+	int selMenuNr;
 
 	/**
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
@@ -178,12 +179,9 @@ public:
 	void draw(SDL_Rect *dest);
 	void Select();
 	void Deselct();
-	void ShowDetails( bool hud = true, int x = -1, int y = -1, SDL_Surface *destSurface = NULL, bool drawLines = false );
 	void GenerateName();
 	int playStream();
 	std::string getStatusStr();
-	void DrawSymbol(eSymbols sym,int x,int y,int maxx,int value,int maxvalue,SDL_Surface *sf);
-	void DrawNumber(int x,int y,int value,int maxvalue,SDL_Surface *sf);
 	/**
 	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath
@@ -198,6 +196,7 @@ public:
 	int GetScreenPosX() const;
 	int GetScreenPosY() const;
 	int CalcHelth(int damage);
+	void menuReleased();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	int GetMenuPointAnz();
 	SDL_Rect GetMenuSize();

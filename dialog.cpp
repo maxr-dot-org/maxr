@@ -54,8 +54,6 @@ cDialogYesNow::~cDialogYesNow()
 	delete textLabel;
 	delete yesButton;
 	delete noButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cDialogYesNow::handleKeyInput( SDL_KeyboardEvent &key, string ch )
@@ -101,8 +99,6 @@ cDialogOK::~cDialogOK()
 {
 	delete textLabel;
 	delete okButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, string ch )
@@ -161,8 +157,6 @@ cDialogLicence::~cDialogLicence()
 	delete okButton;
 	delete upButton;
 	delete downButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cDialogLicence::generateLicenceTexts()
@@ -285,8 +279,8 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	disableMusicChBox = new cMenuCheckButton ( position.x+210, position.y+73, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.MusicMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableMusicChBox->setClickedFunction ( &musicMuteChanged );
 	menuItems.Add ( disableMusicChBox );
-	musicSlider = new cMenuSlider ( position.x+140, position.y+81, 128, this );
-	musicSlider->setValue ( SettingsData.MusicVol );
+	musicSlider = new cMenuSlider ( position.x+140, position.y+81, 0, 128, this );
+	musicSlider->setValue ( (float)SettingsData.MusicVol );
 	musicSlider->setMoveCallback ( &musicVolumeChanged );
 	menuItems.Add ( musicSlider );
 	menuItems.Add ( musicSlider->scroller );
@@ -296,8 +290,8 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	disableEffectsChBox = new cMenuCheckButton ( position.x+210, position.y+73+20, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.SoundMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableEffectsChBox->setClickedFunction ( &effectsMuteChanged );
 	menuItems.Add ( disableEffectsChBox );
-	effectsSlider = new cMenuSlider ( position.x+140, position.y+81+20, 128, this );
-	effectsSlider->setValue ( SettingsData.SoundVol );
+	effectsSlider = new cMenuSlider ( position.x+140, position.y+81+20, 0, 128, this );
+	effectsSlider->setValue ( (float)SettingsData.SoundVol );
 	effectsSlider->setMoveCallback ( &effectsVolumeChanged );
 	menuItems.Add ( effectsSlider );
 	menuItems.Add ( effectsSlider->scroller );
@@ -307,8 +301,8 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	disableVoicesChBox = new cMenuCheckButton ( position.x+210, position.y+73+20*2, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.VoiceMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableVoicesChBox->setClickedFunction ( &voicesMuteChanged );
 	menuItems.Add ( disableVoicesChBox );
-	voicesSlider = new cMenuSlider ( position.x+140, position.y+81+20*2, 128, this );
-	voicesSlider->setValue ( SettingsData.VoiceVol );
+	voicesSlider = new cMenuSlider ( position.x+140, position.y+81+20*2, 0, 128, this );
+	voicesSlider->setValue ( (float)SettingsData.VoiceVol );
 	voicesSlider->setMoveCallback ( &voicesVolumeChanged );
 	menuItems.Add ( voicesSlider );
 	menuItems.Add ( voicesSlider->scroller );
@@ -339,8 +333,8 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 
 	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
 	menuItems.Add ( scrollSpeedLabel );
-	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 50, this );
-	scrollSpeedSlider->setValue ( SettingsData.iScrollSpeed );
+	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 0, 50, this );
+	scrollSpeedSlider->setValue ( (float)SettingsData.iScrollSpeed );
 	menuItems.Add ( scrollSpeedSlider );
 	menuItems.Add ( scrollSpeedSlider->scroller );
 
@@ -435,8 +429,6 @@ cDialogPreferences::~cDialogPreferences()
 
 	delete okButton;
 	delete cancelButton;
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cDialogPreferences::saveValues()
@@ -455,7 +447,7 @@ void cDialogPreferences::saveValues()
 	SettingsData.bWindowMode = windowChBox->isChecked();
 	SettingsData.bShadows = shadowsChBox->isChecked();
 
-	SettingsData.iScrollSpeed = scrollSpeedSlider->getValue();
+	SettingsData.iScrollSpeed = (int)scrollSpeedSlider->getValue();
 
 	// Save new settings to max.xml
 	SaveOption ( SAVETYPE_MUSICMUTE );
@@ -530,21 +522,21 @@ void cDialogPreferences::cancelReleased( void *parent )
 void cDialogPreferences::musicVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.MusicVol = menu->musicSlider->getValue();
+	SettingsData.MusicVol = (int)menu->musicSlider->getValue();
 	Mix_VolumeMusic ( SettingsData.MusicVol );
 }
 
 void cDialogPreferences::effectsVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.SoundVol = menu->effectsSlider->getValue();
+	SettingsData.SoundVol = (int)menu->effectsSlider->getValue();
 	Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
 }
 
 void cDialogPreferences::voicesVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.VoiceVol = menu->voicesSlider->getValue();
+	SettingsData.VoiceVol = (int)menu->voicesSlider->getValue();
 }
 
 void cDialogPreferences::musicMuteChanged( void *parent )
@@ -649,7 +641,7 @@ cDialogTransfer::~cDialogTransfer()
 		delete unitCargoLabels[i];
 	}
 
-	float fNewZoom = (float)(Client->Hud.Zoom / 64.0);
+	float fNewZoom = Client->gameGUI.getZoom();
 
 	if ( srcBuilding != NULL )
 	{
@@ -664,8 +656,6 @@ cDialogTransfer::~cDialogTransfer()
 
 	if ( destBuilding ) scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, ( int ) ( destBuilding->typ->img_org->w* fNewZoom ), ( int ) ( destBuilding->typ->img_org->h* fNewZoom ) );
 	else scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], ( int ) ( destVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( destVehicle->typ->img_org[0]->h* fNewZoom ) );
-
-	if ( Client ) Client->bFlagDrawHud = true;
 }
 
 void cDialogTransfer::getTransferType()
@@ -1019,7 +1009,25 @@ cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIAL
 
 cDialogResearch::~cDialogResearch()
 {
-	if ( Client ) Client->bFlagDrawHud = true;
+	delete centersLabel;
+	delete themeLabel;
+	delete turnsLabel;
+
+	delete doneButton;
+	delete cancelButton;
+
+	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
+	{
+		delete incButtons[i];
+		delete decButtons[i];
+
+		delete scroller[i];
+
+		delete centerCountLabels[i];
+		delete themeNameLabels[i];
+		delete percentageLabels[i];
+		delete turnsLabels[i];
+	}
 }
 
 void cDialogResearch::setData()
