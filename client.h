@@ -208,6 +208,7 @@ public:
 	bool timer50ms, timer100ms, timer400ms;
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
+	bool waitReconnect;
 
 	/**
 	* handles the timers timer50ms, timer100ms and timer400ms

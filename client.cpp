@@ -1610,9 +1610,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_FREEZE:
 		bWaitForOthers = true;
+		waitReconnect = true;
+		gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ) );
 		break;
 	case GAME_EV_DEFREEZE:
 		bWaitForOthers = false;
+		waitReconnect = false;
+		gameGUI.setInfoTexts ( "", "" );
 		break;
 	case GAME_EV_DEL_PLAYER:
 		{

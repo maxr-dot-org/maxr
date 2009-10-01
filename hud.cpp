@@ -193,7 +193,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	infoTextLabel->setDisabled ( true );
 	menuItems.Add ( infoTextLabel );
 	
-	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "", FONT_LATIN_BIG );
+	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "" );
 	infoTextAdditionalLabel->setCentered ( true );
 	infoTextAdditionalLabel->setDisabled ( true );
 	menuItems.Add ( infoTextAdditionalLabel );
@@ -2228,6 +2228,12 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 
 	// we will handle only pressed keys for all other hotkeys
 	if ( key.state != SDL_PRESSED ) return;
+
+	// check whether the player wants to abort waiting
+	if ( Client->bWaitForOthers && Client->waitReconnect && key.keysym.sym == SDLK_F2 )
+	{
+		sendAbortWaiting ();
+	}
 
 	if ( key.keysym.sym == KeysList.KeyExit )
 	{
