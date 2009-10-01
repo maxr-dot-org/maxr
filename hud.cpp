@@ -2574,7 +2574,7 @@ void cGameGUI::miniMapMovedOver( void *parent )
 void cGameGUI::zoomSliderMoved( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	gui->setZoom ( abs( (int)gui->zoomSlider->getValue() ), false );
+	gui->setZoom ( gui->zoomSlider->getValue(), false );
 }
 
 void cGameGUI::endReleased( void *parent )
