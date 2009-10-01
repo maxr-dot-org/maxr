@@ -300,6 +300,8 @@ class cGameGUI : public cMenu
 
 	cMenuChatBox *chatBox;
 
+	cMenuLabel *infoTextLabel, *infoTextAdditionalLabel;
+
 	static void helpReleased( void *parent );
 	static void centerReleased( void *parent );
 	static void reportsReleased( void *parent );
@@ -424,6 +426,8 @@ public:
 
 	void setSelVehicle( cVehicle *vehicle );
 	void setSelBuilding( cBuilding *building );
+
+	void setInfoTexts ( string infoText, string additionalInfoText );
 };
 
 #endif

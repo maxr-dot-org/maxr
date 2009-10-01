@@ -804,10 +804,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( bWaitForNextPlayer )
 			{
-				if ( iNextPlayerNum != ActivePlayer->Nr ) bWaitForOthers = true;
+				if ( iNextPlayerNum != ActivePlayer->Nr )
+				{
+					bWaitForOthers = true;
+					gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( iNextPlayerNum )->name ), "" );
+				}
 				else
 				{
 					bWaitForOthers = false;
+					gameGUI.setInfoTexts ( "", "" );
 					gameGUI.unlockEndButton();
 				}
 			}

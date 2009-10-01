@@ -3212,10 +3212,10 @@ void cMenuSlider::setValue( float value )
 	switch ( direction )
 	{
 	case SLIDER_DIR_LEFTMIN:
-		scroller->move ( ( (minValue+curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) );
+		scroller->move ( (int)( ( (minValue+curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) ) );
 		break;
 	case SLIDER_DIR_RIGHTMIN:
-		scroller->move ( ( (maxValue-curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) );
+		scroller->move ( (int)( ( (maxValue-curValue)*(position.w-(( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0) ) ) / (maxValue-minValue) + position.x - (( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7) ) );
 		break;
 	}
 }

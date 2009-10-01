@@ -187,7 +187,17 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	chatBox->setDisabled ( true );
 	chatBox->setReturnPressedFunc ( &chatBoxReturnPressed );
 	menuItems.Add ( chatBox );
+
+	infoTextLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235, "", FONT_LATIN_BIG );
+	infoTextLabel->setCentered ( true );
+	infoTextLabel->setDisabled ( true );
+	menuItems.Add ( infoTextLabel );
 	
+	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "", FONT_LATIN_BIG );
+	infoTextAdditionalLabel->setCentered ( true );
+	infoTextAdditionalLabel->setDisabled ( true );
+	menuItems.Add ( infoTextAdditionalLabel );
+
 	updateTurn( 1 );
 }
 
@@ -230,6 +240,7 @@ int cGameGUI::show()
 	// do startup actions
 	makePanel( true );
 	startup = true;
+	if ( Client->bWaitForOthers ) setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Until", Client->getPlayerFromNumber( 0 )->name ), "" );
 
 	int lastMouseX = 0, lastMouseY = 0;
 
@@ -885,6 +896,14 @@ void cGameGUI::setSelVehicle( cVehicle *vehicle )
 void cGameGUI::setSelBuilding( cBuilding *building )
 {
 	selectedBuilding = building;
+}
+
+void cGameGUI::setInfoTexts ( string infoText, string additionalInfoText )
+{
+	infoTextLabel->setText ( infoText );
+	infoTextLabel->setDisabled ( infoText.empty() );
+	infoTextAdditionalLabel->setText ( additionalInfoText );
+	infoTextAdditionalLabel->setDisabled ( additionalInfoText.empty() );
 }
 
 void cGameGUI::updateMouseCursor()
@@ -2632,9 +2651,9 @@ void cGameGUI::preDrawFunction()
 	int startX = ((offX-1)/64)-1 < 0 ? 0 : ((offX-1)/64)-1;
 	int startY = ((offY-1)/64)-1 < 0 ? 0 : ((offY-1)/64)-1;
 
-	int endX = offY/64 + ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / getTileSize()+1;
+	int endX = offX/64 + ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / (getTileSize()+1);
 	if ( endX >= map->size ) endX = map->size-1;
-	int endY = offY/64+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / getTileSize()+1;
+	int endY = offY/64+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / (getTileSize()+1);
 	if ( endY >= map->size ) endY = map->size-1;
 
 	if ( Client->timer400ms ) map->generateNextAnimationFrame();

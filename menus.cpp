@@ -141,6 +141,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 	// init client and his players
 	Client = new cClient( map, &players );
+	if ( settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0 ) Client->bWaitForOthers = true;
 	for ( unsigned int i = 0; i < players.Size(); i++ )
 	{
 		players[i]->InitMaps ( map->size, map );
