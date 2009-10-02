@@ -2801,7 +2801,7 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleBig:
 			if ( !EffectsData.fx_muzzle_big ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], getZoom() );
-			if ( frame - fx->StartFrame > 2 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
@@ -2818,7 +2818,7 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleSmall:
 			if ( !EffectsData.fx_muzzle_small ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], getZoom() );
-			if ( frame - fx->StartFrame > 2 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
@@ -2835,7 +2835,7 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleMed:
 			if ( !EffectsData.fx_muzzle_med ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
-			if ( frame - fx->StartFrame > 2 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
@@ -2852,7 +2852,7 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleMedLong:
 			if ( !EffectsData.fx_muzzle_med ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
-			if ( frame - fx->StartFrame > 5 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 5 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
@@ -2869,13 +2869,13 @@ void cGameGUI::drawFX( int num )
 		case fxHit:
 			if ( !EffectsData.fx_hit ) break;
 			CHECK_SCALING( EffectsData.fx_hit[1], EffectsData.fx_hit[0], getZoom() );
-			if ( frame - fx->StartFrame > 5 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 5 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x=(int)(getZoom()*64.0)* ( frame-fx->StartFrame );
+			scr.x=(int)(getZoom()*64.0)* ((Client->iTimerTime-fx->StartTime)/2);
 			scr.y=0;
 			scr.w=(int)(getZoom()*64.0);
 			scr.h=(int)(getZoom()*64.0);
@@ -2886,13 +2886,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploSmall:
 			if ( !EffectsData.fx_explo_small ) break;
 			CHECK_SCALING( EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], getZoom() );
-			if ( frame - fx->StartFrame > 14 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( frame - fx->StartFrame ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
@@ -2903,13 +2903,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploBig:
 			if ( !EffectsData.fx_explo_big ) break;
 			CHECK_SCALING( EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], getZoom() );
-			if ( frame - fx->StartFrame > 28 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 28 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 307 * ( frame - fx->StartFrame ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 307 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 307 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 194 / 64.0);
@@ -2920,13 +2920,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploWater:
 			if ( !EffectsData.fx_explo_water ) break;
 			CHECK_SCALING( EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], getZoom() );
-			if ( frame - fx->StartFrame > 14 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( frame - fx->StartFrame ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
@@ -2937,13 +2937,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploAir:
 			if ( !EffectsData.fx_explo_air ) break;
 			CHECK_SCALING( EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], getZoom() );
-			if ( frame - fx->StartFrame > 14 )
+			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 137 * ( frame - fx->StartFrame ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 137 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 137 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 121 / 64.0);
@@ -2954,13 +2954,13 @@ void cGameGUI::drawFX( int num )
 		case fxSmoke:
 			if ( !EffectsData.fx_smoke ) break;
 			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
-			if ( frame-fx->StartFrame>100/4 )
+			if ( (Client->iTimerTime-fx->StartTime)/2 > 100/4 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( frame-fx->StartFrame ) *4 );
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (Client->iTimerTime-fx->StartTime)/2 ) *4 );
 			scr.y=scr.x=0;
 			scr.w=EffectsData.fx_smoke[1]->h;
 			scr.h=EffectsData.fx_smoke[1]->h;
@@ -2992,13 +2992,13 @@ void cGameGUI::drawFX( int num )
 			CHECK_SCALING( EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], getZoom() );
 			sFXDarkSmoke *dsi;
 			dsi = fx->smokeInfo;
-			if ( frame-fx->StartFrame>50||dsi->alpha<=1 )
+			if ( (Client->iTimerTime-fx->StartTime)/2 > 50 || dsi->alpha <= 1 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x= ( int ) ( 0.375*(int)(getZoom()*64.0) ) * ( frame-fx->StartFrame );
+			scr.x= ( int ) ( 0.375*(int)(getZoom()*64.0) ) * ( (Client->iTimerTime-fx->StartTime)/2 );
 			scr.y=0;
 			scr.w=EffectsData.fx_dark_smoke[1]->h;
 			scr.h=EffectsData.fx_dark_smoke[1]->h;
@@ -3021,13 +3021,13 @@ void cGameGUI::drawFX( int num )
 		{
 			if ( !EffectsData.fx_absorb ) break;
 			CHECK_SCALING( EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], getZoom() );
-			if ( frame-fx->StartFrame>10 )
+			if ( (Client->iTimerTime-fx->StartTime)/2 > 10 )
 			{
 				delete fx;
 				Client->FXList.Delete ( num );
 				return;
 			}
-			scr.x=(int)(getZoom()*64.0)* ( frame-fx->StartFrame );
+			scr.x=(int)(getZoom()*64.0)* ( (Client->iTimerTime-fx->StartTime)/2 );
 			scr.y=0;
 			scr.w=(int)(getZoom()*64.0);
 			scr.h=(int)(getZoom()*64.0);
@@ -3109,13 +3109,13 @@ void cGameGUI::drawBottomFX( int num )
 		}
 		case fxBubbles:
 			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
-			if ( frame-fx->StartFrame>100/4 )
+			if ( (Client->iTimerTime-fx->StartTime)/2 > 100/4 )
 			{
 				delete fx;
 				Client->FXListBottom.Delete ( num );
 				return;
 			}
-			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( frame-fx->StartFrame ) *4 );
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (Client->iTimerTime-fx->StartTime)/2 ) *4 );
 			scr.y=scr.x=0;
 			scr.w=EffectsData.fx_smoke[1]->h;
 			scr.h=EffectsData.fx_smoke[1]->h;

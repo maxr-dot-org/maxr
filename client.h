@@ -80,7 +80,7 @@ struct sFX
 
 		eFXTyps typ;
 		int PosX,PosY;
-		int StartFrame;
+		int StartTime;
 		int param;
 		sFXRocketInfos* rocketInfo;
 		sFXDarkSmoke* smokeInfo;

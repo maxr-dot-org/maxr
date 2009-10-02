@@ -55,7 +55,7 @@ sFX::sFX( eFXTyps typ, int x, int y )
 	this->typ = typ;
 	PosX = x;
 	PosY = y;
-	StartFrame = Client->gameGUI.getFrame();
+	StartTime = Client->iTimerTime;
 	param = 0;
 	rocketInfo = NULL;
 	smokeInfo = NULL;
@@ -294,6 +294,7 @@ void cClient::handleTimer()
 
 void cClient::runFX()
 {
+	if ( !timer100ms ) return;
 	for ( unsigned int i = 0; i < FXList.Size(); i++ )
 	{
 		sFX* fx = FXList[i];
