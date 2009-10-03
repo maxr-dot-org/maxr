@@ -32,11 +32,10 @@
 #include "log.h"
 #include "settings.h"
 
-cLanguage::cLanguage(void)
-{
-	m_bLeftToRight = true;
-	m_bErrorMsgTranslationLoaded = false;
-}
+cLanguage::cLanguage(void) :
+	m_bLeftToRight(true),
+	m_bErrorMsgTranslationLoaded(false)
+{}
 
 cLanguage::~cLanguage(void)
 {
