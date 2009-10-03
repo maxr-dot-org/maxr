@@ -18,6 +18,8 @@
  ***************************************************************************/
 #ifndef menuitemsH
 #define menuitemsH
+
+#include "autosurface.h"
 #include "defines.h"
 #include "main.h"
 #include "mouse.h"
@@ -411,7 +413,7 @@ public:
 	};
 protected:
 
-	SDL_Surface* surface;
+	AutoSurface surface;
 	string text;
 	eUnicodeFontType fontType;
 	eButtonTypes buttonType;
@@ -430,7 +432,6 @@ protected:
 	bool preSetLocked( bool locked_ );
 public:
 	cMenuButton ( int x, int y, string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
-	~cMenuButton();
 	void draw();
 };
 

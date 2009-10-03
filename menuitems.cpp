@@ -359,18 +359,12 @@ void cMenuLabel::draw()
 
 cMenuButton::cMenuButton(int x, int y, string text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
 	cMenuItem(x, y),
-	surface(0),
 	text(text_),
 	fontType(fontType_),
 	buttonType(buttonType_)
 {
 	clickSound = clickSound_;
 	renewButtonSurface();
-}
-
-cMenuButton::~cMenuButton()
-{
-	if ( surface ) SDL_FreeSurface ( surface );
 }
 
 void cMenuButton::renewButtonSurface()
@@ -536,7 +530,6 @@ void cMenuButton::renewButtonSurface()
 		src.y = isClicked ? 0 : 132;
 		break;
 	}
-	if ( surface ) SDL_FreeSurface ( surface );
 	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
