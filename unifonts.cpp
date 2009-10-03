@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "autosurface.h"
 #include "unifonts.h"
 #include "pcx.h"
 #include "files.h"
@@ -86,14 +87,13 @@ cUnicodeFont::~cUnicodeFont()
 
 void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
-	SDL_Surface *surface;
 	SDL_Surface **chars;
 	const unsigned short *iso8859_to_uni;
 	int currentChar, highcount;
 	int cellW, cellH;
 	int pX, pY;
 
-	surface = loadCharsetSurface ( charset, fonttype );
+	AutoSurface surface(loadCharsetSurface(charset, fonttype));
 	if ( !surface )
 	{
 		// LOG: error while loading font
@@ -199,7 +199,6 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			currentChar++;
 		}
 	}
-	SDL_FreeSurface ( surface );
 }
 
 Uint32 cUnicodeFont::getPixel32(int x, int y, SDL_Surface *surface)
