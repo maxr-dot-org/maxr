@@ -2062,7 +2062,6 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 void cStartupHangarMenu::generateSelectionList()
 {
 	sID oldSelectdUnit;
-	sBuilding *oldSelectdBuilding = NULL;
 	if ( selectionList->getSelectedUnit() ) oldSelectdUnit = selectionList->getSelectedUnit()->getUnitID();
 
 	selectionList->clear();
@@ -2626,11 +2625,6 @@ void cNetworkMenu::showMap()
 	}
 	if ( surface != NULL )
 	{
-		SDL_Rect dest;
-		dest.x = 33;
-		dest.y = 106;
-		dest.w = dest.h = 112;
-		SDL_Rect rSrc = { 0, 0, dest.w, dest.h };
 		#define MAPWINSIZE 112
 		if( surface->w != MAPWINSIZE || surface->h != MAPWINSIZE) // resize map
 		{

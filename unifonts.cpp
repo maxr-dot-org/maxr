@@ -127,8 +127,6 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			Rect.h = cellH;
 			Rect.w = cellW;
 
-			if ( currentChar == 68 )
-				int stop = 0;
 			//go through pixels to find offset x
 			for( int pCol = 0; pCol < cellH; pCol++)
 			{

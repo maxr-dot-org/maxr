@@ -872,6 +872,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_UNIT_DATA:
 		{
 			cPlayer *Player = getPlayerFromNumber ( message->popInt16() );
+			(void)Player; // TODO use me
 			sUnitData *Data;
 
 			bool bWasBuilding = false;

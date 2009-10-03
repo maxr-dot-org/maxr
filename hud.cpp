@@ -1725,7 +1725,6 @@ void cGameGUI::doScroll( int dir )
 			break;
 	}
 
-	static int lx = 0, ly = 0;
 	if ( offX < 0 ) offX = 0;
 	if ( offY < 0 ) offY = 0;
 	int maxX = map->size*64-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom());

@@ -1036,8 +1036,6 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 	cMapField& field = fields[offset];
 	bool checkBeneathSea = false, checkAboveBase = false;
 
-    bool can_over_build = false;
-
     // Check all buildings in this field for a building of the same type. This
     // will prevent roads, connectors and water platforms from building on top
     // of themselves.

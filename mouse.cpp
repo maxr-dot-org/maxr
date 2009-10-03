@@ -255,7 +255,6 @@ void cMouse::GetKachel ( int *X,int *Y )
 		*Y = -1;
 		return;
 	}
-	float zoom = Client->gameGUI.getZoom();
 	*X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
 	*Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
 	if ( *X >= Client->Map->size ) *X = Client->Map->size-1;

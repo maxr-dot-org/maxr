@@ -2924,7 +2924,6 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 void LoadUnitGraphicData( sUnitData *Data, char const* directory )
 {
 	TiXmlDocument unitGraphicsXml;
-	ExTiXmlNode *pExXmlNode = NULL;
 
 	string path = directory;
 	path += "graphics.xml";
