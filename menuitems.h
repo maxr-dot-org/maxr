@@ -327,15 +327,9 @@ class cMenuImage : public cMenuItem
 {
 protected:
 	SDL_Surface *image;
-	bool freeImages;
 
 public:
-	/**
-	 * ATTENTION: the image surface you pass to this constructor will be freed with SDL_FreeSurface in the destructor,
-	 * so have in mind that you must not free it twice.
-	 *@author alzi
-	 */
-	cMenuImage ( int x, int y, SDL_Surface *image_ = NULL, bool freeImages_ = true );
+	cMenuImage(int x, int y, SDL_Surface* image_ = NULL);
 	~cMenuImage();
 	void setImage( SDL_Surface *image_ );
 	void draw();

@@ -265,19 +265,19 @@ void cMenuItemContainer::removeItem ( cMenuItem* item )
 }
 
 
-cMenuImage::cMenuImage ( int x, int y, SDL_Surface *image_, bool freeImages_ ) : cMenuItem( x, y ), image (NULL), freeImages(freeImages_)
+cMenuImage::cMenuImage(int x, int y, SDL_Surface* image_) : cMenuItem(x, y), image (NULL)
 {
 	setImage ( image_ );
 }
 
 cMenuImage::~cMenuImage()
 {
-	if ( freeImages && image ) SDL_FreeSurface ( image );
+	if (image) SDL_FreeSurface(image);
 }
 
 void cMenuImage::setImage(SDL_Surface *image_)
 {
-	if ( freeImages && image_ != image && image != NULL ) SDL_FreeSurface ( image );
+	if (image_ != image && image != NULL) SDL_FreeSurface(image);
 
 	if ( image_ != NULL )
 	{
