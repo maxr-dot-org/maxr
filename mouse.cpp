@@ -65,85 +65,36 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
 }
 
-// sets a new cursor
-bool cMouse::SetCursor ( eCursor typ )
+bool cMouse::SetCursor(eCursor const typ)
 {
-	SDL_Surface *lastCur = cur;
-
-	switch ( typ )
+	SDL_Surface* const lastCur = cur;
+	switch (typ)
 	{
-		case CHand:
-			cur=GraphicsData.gfx_Chand;
-			break;
-		case CNo:
-			cur=GraphicsData.gfx_Cno;
-			break;
-		case CSelect:
-			cur=GraphicsData.gfx_Cselect;
-			break;
-		case CMove:
-			cur=GraphicsData.gfx_Cmove;
-			break;
-		case CPfeil1:
-			cur=GraphicsData.gfx_Cpfeil1;
-			break;
-		case CPfeil2:
-			cur=GraphicsData.gfx_Cpfeil2;
-			break;
-		case CPfeil3:
-			cur=GraphicsData.gfx_Cpfeil3;
-			break;
-		case CPfeil4:
-			cur=GraphicsData.gfx_Cpfeil4;
-			break;
-		case CPfeil6:
-			cur=GraphicsData.gfx_Cpfeil6;
-			break;
-		case CPfeil7:
-			cur=GraphicsData.gfx_Cpfeil7;
-			break;
-		case CPfeil8:
-			cur=GraphicsData.gfx_Cpfeil8;
-			break;
-		case CPfeil9:
-			cur=GraphicsData.gfx_Cpfeil9;
-			break;
-		case CHelp:
-			cur=GraphicsData.gfx_Chelp;
-			break;
-		case CAttack:
-			cur=GraphicsData.gfx_Cattack;
-			break;
-		case CBand:
-			cur=GraphicsData.gfx_Cband;
-			break;
-		case CTransf:
-			cur=GraphicsData.gfx_Ctransf;
-			break;
-		case CLoad:
-			cur=GraphicsData.gfx_Cload;
-			break;
-		case CMuni:
-			cur=GraphicsData.gfx_Cmuni;
-			break;
-		case CRepair:
-			cur=GraphicsData.gfx_Crepair;
-			break;
-		case CSteal:
-			cur=GraphicsData.gfx_Csteal;
-			break;
-		case CDisable:
-			cur=GraphicsData.gfx_Cdisable;
-			break;
-		case CActivate:
-			cur=GraphicsData.gfx_Cactivate;
-			break;
 		default:
-			cur=GraphicsData.gfx_Chand;
-			break;
+		case CHand:     cur = GraphicsData.gfx_Chand;     break;
+		case CNo:       cur = GraphicsData.gfx_Cno;       break;
+		case CSelect:   cur = GraphicsData.gfx_Cselect;   break;
+		case CMove:     cur = GraphicsData.gfx_Cmove;     break;
+		case CPfeil1:   cur = GraphicsData.gfx_Cpfeil1;   break;
+		case CPfeil2:   cur = GraphicsData.gfx_Cpfeil2;   break;
+		case CPfeil3:   cur = GraphicsData.gfx_Cpfeil3;   break;
+		case CPfeil4:   cur = GraphicsData.gfx_Cpfeil4;   break;
+		case CPfeil6:   cur = GraphicsData.gfx_Cpfeil6;   break;
+		case CPfeil7:   cur = GraphicsData.gfx_Cpfeil7;   break;
+		case CPfeil8:   cur = GraphicsData.gfx_Cpfeil8;   break;
+		case CPfeil9:   cur = GraphicsData.gfx_Cpfeil9;   break;
+		case CHelp:     cur = GraphicsData.gfx_Chelp;     break;
+		case CAttack:   cur = GraphicsData.gfx_Cattack;   break;
+		case CBand:     cur = GraphicsData.gfx_Cband;     break;
+		case CTransf:   cur = GraphicsData.gfx_Ctransf;   break;
+		case CLoad:     cur = GraphicsData.gfx_Cload;     break;
+		case CMuni:     cur = GraphicsData.gfx_Cmuni;     break;
+		case CRepair:   cur = GraphicsData.gfx_Crepair;   break;
+		case CSteal:    cur = GraphicsData.gfx_Csteal;    break;
+		case CDisable:  cur = GraphicsData.gfx_Cdisable;  break;
+		case CActivate: cur = GraphicsData.gfx_Cactivate; break;
 	}
-
-	return (lastCur != cur);
+	return lastCur != cur;
 }
 
 // Liest den Hintergrund in das Back-Surface ein:

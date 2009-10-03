@@ -41,7 +41,10 @@ public:
   int DrawX,DrawY; // Die Position, an die die Maus gezeichnet werden soll.
 
   void draw(bool draw_back,SDL_Surface *sf);
-  bool SetCursor(eCursor typ);
+
+	// Set a new cursor.
+	bool SetCursor(eCursor);
+
   void GetBack(SDL_Surface *sf);
   /**
   * Draws the currently stored background to sf
