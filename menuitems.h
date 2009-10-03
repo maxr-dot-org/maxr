@@ -325,14 +325,13 @@ public:
  */
 class cMenuImage : public cMenuItem
 {
-protected:
-	SDL_Surface *image;
-
 public:
 	cMenuImage(int x, int y, SDL_Surface* image_ = NULL);
-	~cMenuImage();
 	void setImage( SDL_Surface *image_ );
 	void draw();
+
+private:
+	AutoSurface image;
 };
 
 /**

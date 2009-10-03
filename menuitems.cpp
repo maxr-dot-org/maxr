@@ -265,20 +265,13 @@ void cMenuItemContainer::removeItem ( cMenuItem* item )
 }
 
 
-cMenuImage::cMenuImage(int x, int y, SDL_Surface* image_) : cMenuItem(x, y), image (NULL)
+cMenuImage::cMenuImage(int x, int y, SDL_Surface* image_) : cMenuItem(x, y)
 {
 	setImage ( image_ );
 }
 
-cMenuImage::~cMenuImage()
-{
-	if (image) SDL_FreeSurface(image);
-}
-
 void cMenuImage::setImage(SDL_Surface *image_)
 {
-	if (image_ != image && image != NULL) SDL_FreeSurface(image);
-
 	if ( image_ != NULL )
 	{
 		image = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, image_->w, image_->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
