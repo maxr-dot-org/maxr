@@ -2235,7 +2235,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 
 	if ( key.keysym.sym == KeysList.KeyExit )
 	{
-		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+		cDialogYesNo yesNoDialog(lngPack.i18n("Text~Comp~End_Game"));
 		if ( yesNoDialog.show() == 0  ) end = true;
 	}
 	else if ( activeItem && !activeItem->isDisabled() && activeItem->handleKeyInput ( key.keysym, ch, this ) )

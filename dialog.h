@@ -24,14 +24,14 @@
 /**
  Shows localized Yes/No dialog. The show function returns 0 for yes and 1 for no.
  */
-class cDialogYesNow : public cMenu
+class cDialogYesNo : public cMenu
 {
 	cMenuLabel *textLabel;
 	cMenuButton *yesButton;
 	cMenuButton *noButton;
 public:
-	cDialogYesNow( string text );
-	~cDialogYesNow();
+	cDialogYesNo(string text);
+	~cDialogYesNo();
 
 	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 

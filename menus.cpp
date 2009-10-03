@@ -2359,7 +2359,7 @@ void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		ActiveMenu = NULL;
 		// TODO: may use another text here
-		cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Comp~End_Game") );
+		cDialogYesNo yesNoDialog(lngPack.i18n("Text~Comp~End_Game"));
 		if ( yesNoDialog.show() == 0  ) terminate = true;
 		else draw();
 		ActiveMenu = this;
@@ -3438,7 +3438,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_REQ_IDENT:
 		{
-			cDialogYesNow yesNoDialog ( lngPack.i18n( "Text~Multiplayer~Reconnect") );
+			cDialogYesNo yesNoDialog(lngPack.i18n("Text~Multiplayer~Reconnect"));
 			if ( yesNoDialog.show() == 0  ) sendGameIdentification ( actPlayer, message->popInt16() );
 			else draw();
 		}

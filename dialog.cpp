@@ -34,7 +34,7 @@
 #include "sound.h"
 #include "settings.h"
 
-cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ), MNU_BG_ALPHA )
+cDialogYesNo::cDialogYesNo(string text) : cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA)
 {
 	textLabel = new cMenuLabel ( position.x+20, position.y+20, text );
 	textLabel->setBox ( position.w-40, position.h-150 );
@@ -49,14 +49,14 @@ cDialogYesNow::cDialogYesNow( string text ) : cMenu ( LoadPCX ( GFXOD_DIALOG2 ),
 	menuItems.Add ( noButton );
 }
 
-cDialogYesNow::~cDialogYesNow()
+cDialogYesNo::~cDialogYesNo()
 {
 	delete textLabel;
 	delete yesButton;
 	delete noButton;
 }
 
-void cDialogYesNow::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, string ch)
 {
 	switch ( key.keysym.sym )
 	{
@@ -72,15 +72,15 @@ void cDialogYesNow::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 }
 
 
-void cDialogYesNow::yesReleased( void *parent )
+void cDialogYesNo::yesReleased(void* parent)
 {
-	cDialogYesNow* menu = static_cast<cDialogYesNow*>((cMenu*)parent);
+	cDialogYesNo* menu = static_cast<cDialogYesNo*>((cMenu*)parent);
 	menu->end = true;
 }
 
-void cDialogYesNow::noReleased( void *parent )
+void cDialogYesNo::noReleased(void* parent)
 {
-	cDialogYesNow* menu = static_cast<cDialogYesNow*>((cMenu*)parent);
+	cDialogYesNo* menu = static_cast<cDialogYesNo*>((cMenu*)parent);
 	menu->terminate = true;
 }
 
