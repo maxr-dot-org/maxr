@@ -26,18 +26,8 @@
 cMouse::cMouse ( void )
 {
 	visible=false;
-	back=NULL;
 	cur=NULL;
 	LastX=-100;
-}
-
-cMouse::~cMouse ( void )
-{
-	if ( back!=NULL )
-	{
-		SDL_FreeSurface ( back );
-		SDL_FreeSurface ( cur ) ;
-	}
 }
 
 // Malt die Maus, und wenn draw_back gesetzt ist, auch den alten Hintergrund:
@@ -60,7 +50,6 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	//change size of back surface if nessesary, e.g. when the mouse curor was changed
 	if ( !back || back->h != cur->h || back->w != cur->w )
 	{
-		if ( back ) SDL_FreeSurface( back );
 		back = SDL_CreateRGBSurface( OtherData.iSurface, cur->w, cur->h,32, 0, 0, 0, 0 );
 	}
 

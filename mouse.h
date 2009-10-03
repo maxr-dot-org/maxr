@@ -18,6 +18,8 @@
  ***************************************************************************/
 #ifndef mouseH
 #define mouseH
+
+#include "autosurface.h"
 #include "defines.h"
 #include <SDL.h>
 
@@ -28,11 +30,10 @@ enum eCursor{CHand,CNo,CSelect,CMove,CPfeil1,CPfeil2,CPfeil3,CPfeil4,CPfeil6,CPf
 class cMouse{
 public:
 	cMouse();
-	~cMouse();
 
   bool visible; // Gibt an, ob die Maus angezeigt werden soll.
   SDL_Surface *cur; // Der aktuelle Cursor.
-  SDL_Surface *back; // Zum Speichern des Maushintergrundes.
+  AutoSurface back; // Zum Speichern des Maushintergrundes.
   int x,y; // Die Position der Maus.
   bool isDoubleClick;
   int prevScreenX,prevScreenY;
