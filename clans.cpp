@@ -59,49 +59,49 @@ string cClanUnitStat::getClanStatsDescription () const
 		bool first = true;
 		if (hasModification ("Damage"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Attack +" + iToStr (getModificationValue ("Damage") - data->damage);
 			first = false;
 		}
 		if (hasModification ("Range"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Range +" + iToStr (getModificationValue ("Range") - data->range);
 			first = false;
 		}
 		if (hasModification ("Armor"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Armor +" + iToStr (getModificationValue ("Armor") - data->armor);
 			first = false;
 		}
 		if (hasModification ("Hitpoints"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
 			first = false;
 		}
 		if (hasModification ("Scan"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Scan +" + iToStr (getModificationValue ("Scan") - data->scan);
 			first = false;
 		}
 		if (hasModification ("Speed"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			result += "Speed +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
 			first = false;
 		}
 		if (hasModification ("Built_Costs"))
 		{
-			if (first == false)
+			if (!first)
 				result += ", ";
 			int nrTurns = (getModificationValue ("Built_Costs")) / (unitIdFirstPart == 0 ? 3 : 2);
 			result += iToStr (nrTurns) + " Turns";

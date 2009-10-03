@@ -2839,7 +2839,7 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 
 		if ( vehicle->owner == owner ) result = false;
 
-		if ( result == true ) return true;
+		if (result) return true;
 	}
 
 	if ( building )
@@ -2851,7 +2851,7 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 		if ( steal && building->StoredVehicles.Size() ) result = false;
 		if ( building->owner == owner ) result = false;
 
-		if ( result == true ) return true;
+		if (result) return true;
 	}
 
 	return false;

@@ -111,7 +111,7 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 			MouseState.rightButtonReleased = false;
 		}
 
-		if( IsDoubleClicked() == true )
+		if (IsDoubleClicked())
 		{
 			MouseState.isDoubleClick = true;
 		}

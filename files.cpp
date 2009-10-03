@@ -141,7 +141,7 @@ std::string getUserMapsDir()
 		if (SettingsData.sHome.empty ())
 			return "";
 		std::string mapFolder = SettingsData.sHome + "maps";
-		if (FileExists (mapFolder.c_str ()) == false)
+		if (!FileExists(mapFolder.c_str()))
 		{
 			if (mkdir (mapFolder.c_str (), 0755) == 0)
 				return mapFolder + PATH_DELIMITER;

@@ -66,7 +66,7 @@ std::string MapDownload::getExistingMapFilePath (std::string mapName)
 	string filenameFactory = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
 	if (FileExists(filenameFactory.c_str()))
 		return filenameFactory;
-	if (getUserMapsDir ().empty () == false)
+	if (!getUserMapsDir().empty())
 	{
 		string filenameUser = getUserMapsDir () + mapName;
 		if (FileExists(filenameUser.c_str ()))
@@ -81,7 +81,7 @@ Sint32 MapDownload::calculateCheckSum (std::string mapName)
 	Sint32 result = 0;
 	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
 	ifstream* file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
-	if (file->is_open () == false && getUserMapsDir ().empty () == false)
+	if (!file->is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = getUserMapsDir () + mapName.c_str ();
@@ -102,7 +102,7 @@ Sint32 MapDownload::calculateCheckSum (std::string mapName)
 		if (relevantMapDataSize + 9 <= mapSize)
 		{
 			file->read (data + 9, relevantMapDataSize);
-			if (file->bad () == false && file->eof () == false)
+			if (!file->bad () && !file->eof())
 				result = calcCheckSum (data, relevantMapDataSize + 9);
 		}
 		file->close ();
@@ -235,7 +235,7 @@ void cMapSender::run ()
 	// read map file in memory
 	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName.c_str ();
 	ifstream* file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
-	if (file->is_open () == false && getUserMapsDir ().empty () == false)
+	if (!file->is_open() && !getUserMapsDir().empty())
 	{
 		// try to open the map from the user's maps dir
 		filename = getUserMapsDir () + mapName.c_str ();

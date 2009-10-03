@@ -1192,12 +1192,12 @@ cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
 void cPlanetsSelectionMenu::loadMaps()
 {
 	maps = getFilesOfDirectory ( SettingsData.sMapsPath );
-	if (getUserMapsDir ().empty () == false)
+	if (!getUserMapsDir().empty())
 	{
 		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir ());
 		for (unsigned int i = 0; userMaps != 0 && i < userMaps->Size (); i++)
 		{
-			if (maps->Contains ((*userMaps)[i]) == false)
+			if (!maps->Contains((*userMaps)[i]))
 				maps->Add ((*userMaps)[i]);
 		}
 	}
@@ -1221,7 +1221,7 @@ void cPlanetsSelectionMenu::showMaps()
 			string mapName = (*maps)[i + offset];
 			string mapPath = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
 			// if no factory map of that name exists, try the custom user maps
-			if (FileExists (mapPath.c_str ()) == false && getUserMapsDir ().empty () == false)
+			if (!FileExists(mapPath.c_str()) && !getUserMapsDir().empty())
 				mapPath = getUserMapsDir () + mapName;
 
 			if ( FileExists ( mapPath.c_str() ) )
@@ -2578,7 +2578,7 @@ void cNetworkMenu::showMap()
 	SDL_Surface *surface = NULL;
 	int size;
 	SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(), "rb" );
-	if (fp == 0 && getUserMapsDir ().empty () == false)
+	if (fp == 0 && !getUserMapsDir().empty())
 		fp = SDL_RWFromFile ( (getUserMapsDir () + gameDataContainer.map->MapName ).c_str(), "rb" );
 	if ( fp != NULL )
 	{
@@ -2833,7 +2833,7 @@ void cNetworkHostMenu::okReleased( void* parent )
 	if( !menu->gameDataContainer.savegame.empty() )
 	{
 		ActiveMenu = NULL;
-		if ( menu->runSavedGame() == false )
+		if (!menu->runSavedGame())
 		{
 			ActiveMenu = menu;
 			return;
@@ -3024,7 +3024,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case MU_MSG_REQUEST_MAP:
 		{
-			if (gameDataContainer.map != 0 && MapDownload::isMapOriginal (gameDataContainer.map->MapName) == false)
+			if (gameDataContainer.map != 0 && !MapDownload::isMapOriginal(gameDataContainer.map->MapName))
 			{
 				int receiverNr = message->popInt16 ();
 				if (receiverNr >= 0 && receiverNr < (int)players.Size ())
@@ -3341,8 +3341,8 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 						triedLoadMap = mapName;
 
 						string existingMapFilePath = MapDownload::getExistingMapFilePath (mapName);
-						bool existsMap = (existingMapFilePath.empty () == false);
-						if (mapCheckSumsEqual == false && existsMap)
+						bool existsMap = !existingMapFilePath.empty();
+						if (!mapCheckSumsEqual && existsMap)
 						{
 							chatBox->addLine ("You have an incompatible version of the");
 							chatBox->addLine (string ("map \"") + mapName + "\" at");
@@ -3351,7 +3351,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 						}
 						else
 						{
-							if (MapDownload::isMapOriginal (mapName) == false)
+							if (!MapDownload::isMapOriginal(mapName))
 							{
 								if (mapName != lastRequestedMap)
 								{
@@ -4363,7 +4363,7 @@ void cUpgradeMenu::generateSelectionList()
 			}
 		}
 	}
-	if ( selectOldSelectedUnit == false && selectionList->getSize() > 0 )
+	if (!selectOldSelectedUnit && selectionList->getSize() > 0)
 		selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 

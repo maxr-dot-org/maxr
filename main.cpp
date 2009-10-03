@@ -659,7 +659,7 @@ cUnitsData::cUnitsData ()
 //----------------------------------------------------------------------------------
 sVehicle& cUnitsData::getVehicle (int nr, int clan)
 {
-	if (initializedClanUnitData == false)
+	if (!initializedClanUnitData)
 		initializeClanUnitData ();
 
 	if (clan < 0 || clan > (int) clanUnitDataVehicles.size ())
@@ -672,7 +672,7 @@ sVehicle& cUnitsData::getVehicle (int nr, int clan)
 //----------------------------------------------------------------------------------
 sBuilding& cUnitsData::getBuilding (int nr, int clan)
 {
-	if (initializedClanUnitData == false)
+	if (!initializedClanUnitData)
 		initializeClanUnitData ();
 
 	if (clan < 0 || clan > (int) clanUnitDataBuildings.size ())

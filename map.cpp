@@ -402,7 +402,7 @@ bool cMap::LoadMap ( string filename )
 	{
 		// now try in the user's map directory
 		string userMapsDir = getUserMapsDir ();
-		if (userMapsDir.empty () == false)
+		if (!userMapsDir.empty())
 		{
 			filename = userMapsDir + MapName;
 			fpMapFile = SDL_RWFromFile (filename.c_str (), "rb");

@@ -2957,9 +2957,9 @@ static int LoadClans()
 	TiXmlDocument clansXml;
 
 	string clansXMLPath = CLANS_XML;
-	if (FileExists (clansXMLPath.c_str ()) == false)
+	if (!FileExists(clansXMLPath.c_str()))
 		return 0;
-	if (clansXml.LoadFile (clansXMLPath.c_str ()) == false)
+	if (!clansXml.LoadFile(clansXMLPath.c_str()))
 	{
 		Log.write ("Can't load "+clansXMLPath, LOG_TYPE_ERROR);
 		return 0;
@@ -3234,14 +3234,14 @@ void setPaths()
 	char * cHome = getenv("HOME"); //get $HOME on mac
 	if(cHome != NULL)
 		SettingsData.sHome = cHome;
-	if (SettingsData.sHome.empty() == false)
+	if (!SettingsData.sHome.empty())
 	{
 		SettingsData.sHome += PATH_DELIMITER;
 		SettingsData.sHome += ".maxr";
 		SettingsData.sHome += PATH_DELIMITER;
 
 		// check whether home dir is set up and readable
-		if (FileExists (SettingsData.sHome.c_str ()) == false) // under mac everything is a file
+		if (!FileExists(SettingsData.sHome.c_str())) // under mac everything is a file
 		{
 			if (mkdir (SettingsData.sHome.c_str (), 0755) == 0)
 				cout << "\n(II): Created new config directory " << SettingsData.sHome;
@@ -3273,7 +3273,7 @@ void setPaths()
 		SettingsData.sHome = cHome; //get $HOME on linux
 	}
 
-	if(SettingsData.sHome.empty() == false)
+	if (!SettingsData.sHome.empty())
 	{
 		SettingsData.sHome += PATH_DELIMITER;
 		SettingsData.sHome += ".maxr";
