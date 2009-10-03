@@ -3385,9 +3385,8 @@ void cMenuReportsScreen::drawReportsScreen()
 				else if ( savedReport.unitID.getBuilding() ) orgSurface = savedReport.unitID.getBuilding()->img_org;
 				else break;
 
-				SDL_Surface *surface = generateUnitSurface ( orgSurface, *savedReport.unitID.getUnitDataOriginalVersion() );
+				AutoSurface surface(generateUnitSurface(orgSurface, *savedReport.unitID.getUnitDataOriginalVersion()));
 				SDL_BlitSurface ( surface, &src, buffer, &dest );
-				SDL_FreeSurface ( surface );
 			}
 			break;
 		case sSavedReportMessage::REPORT_TYPE_CHAT:
