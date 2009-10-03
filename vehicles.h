@@ -80,8 +80,8 @@ struct sVehicle{
   SDL_Surface *shw[8],*shw_org[8]; // 8 Surfaces des Schattens
   SDL_Surface *build,*build_org;         // Surfaces beim Bauen
   SDL_Surface *build_shw,*build_shw_org; // Surfaces beim Bauen (Schatten)
-  SDL_Surface *clear_small,*clear_small_org;         // Surfaces beim Clearen (die groï¬‚e wird in build geladen)
-  SDL_Surface *clear_small_shw,*clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die groï¬‚e wird in build geladen)
+  SDL_Surface *clear_small,*clear_small_org;         // Surfaces beim Clearen (die groÃŸe wird in build geladen)
+  SDL_Surface *clear_small_shw,*clear_small_shw_org; // Surfaces beim Clearen (Schatten) (die groÃŸe wird in build geladen)
   SDL_Surface *overlay,*overlay_org;     // Overlays
   SDL_Surface *storage; // Bild des Vehicles im Lager
   char *FLCFile;       // FLC-Video
@@ -122,41 +122,41 @@ public:
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
-	int OffX,OffY;   // Offset während der Bewegung
+	int OffX,OffY;   // Offset wÃ¤hrend der Bewegung
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
-	bool selected;   // Gibt an, ob das Fahrzeug ausgewählt ist
+	bool selected;   // Gibt an, ob das Fahrzeug ausgewÃ¤hlt ist
 	bool groupSelected;
 	string name; // Name des Vehicles
-	cPlayer *owner;  // Eigentümer des Vehicles
+	cPlayer *owner;  // EigentÃ¼mer des Vehicles
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
 	cAutoMJob *autoMJob; //the auto move AI of the vehicle
 	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
-	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
-	bool MenuActive; // Gibt an, ob das Menü aktiv ist
+	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgefÃ¼hrt wird
+	bool MenuActive; // Gibt an, ob das MenÃ¼ aktiv ist
 	bool AttackMode; // Gibt an, ob der Attack-Modus aktiv ist
 	bool Attacking;  // Gibt an, ob das Fahrzeug gerade angreift
 	bool bIsBeeingAttacked; /** true when an attack on this vehicle is running */
-	int ditherX,ditherY; // Dithering für Flugzeuge
+	int ditherX,ditherY; // Dithering fÃ¼r Flugzeuge
 	bool IsBuilding;  // Gibt an ob was gebaut wird
 	sID BuildingTyp;  // Gibt an, was gebaut wird
 	int BuildCosts;   // Die verbleibenden Baukosten
 	int BuildRounds;  // Die verbleibenden Baurunden
-	int BuildRoundsStart; // Startwert der Baurunden (fürs Pfadbauen)
-	int BuildCostsStart;  // Startwert der Baukosten (fürs Pfadbauen)
+	int BuildRoundsStart; // Startwert der Baurunden (fÃ¼rs Pfadbauen)
+	int BuildCostsStart;  // Startwert der Baukosten (fÃ¼rs Pfadbauen)
 	bool PlaceBand;   // Gibt an, ob grad ein Band platziert wird
-	int BandX,BandY;  // X,Y Position für das Band
+	int BandX,BandY;  // X,Y Position fÃ¼r das Band
 	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll
-	bool IsClearing;  // Gibt an, ob einn Feld geräumt wird
-	int ClearingRounds; // Gibt an, wie lange ein Feld noch geräumt wird
-	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
+	bool IsClearing;  // Gibt an, ob einn Feld gerÃ¤umt wird
+	int ClearingRounds; // Gibt an, wie lange ein Feld noch gerÃ¤umt wird
+	unsigned int BigBetonAlpha; // AlphaWert des groÃŸen Betons
 	bool bSentryStatus;		/** true if the vehicle is on sentry */
 	bool Transfer;    // Gibt an, ob gerade ein Transfer statfinden soll
-	int StartUp;      // Zähler für die Startupannimation
-	int FlightHigh;   // Die Flughöhe des Flugzeugs
+	int StartUp;      // ZÃ¤hler fÃ¼r die Startupannimation
+	int FlightHigh;   // Die FlughÃ¶he des Flugzeugs
 	bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
@@ -164,13 +164,13 @@ public:
 	bool MuniActive;   // Gibt an, ob grad Munition aufgeladen werden soll
 	bool RepairActive; // Gibt an, ob grad repariert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
-	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
+	bool ClearMines;  // Gibt an, ob Minen gerÃ¤umt werden sollen
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde
-	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
+	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschÃ¤digung aufsteigen wird
 	int WalkFrame;    // Frame der Geh-Annimation
 	float CommandoRank; // Rang des Commandos
 	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
-	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
+	int Disabled;     // Gibt an, fÃ¼r wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
 	cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;

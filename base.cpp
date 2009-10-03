@@ -912,7 +912,7 @@ sSubBase *cBase::checkNeighbour ( int iOff, cBuilding *Building )
 	else return NULL;
 }
 
-// Fügt ein neues Building in die Base ein:
+// FÃ¼gt ein neues Building in die Base ein:
 void cBase::AddBuilding ( cBuilding *Building )
 {
 	int pos;
@@ -920,7 +920,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 	pos = Building->PosX+Building->PosY*map->size;
 	cList<sSubBase*> NeighbourList;
 	Building->SubBase = ( sSubBase* ) 1;
-	// Prüfen, ob ein Gebäude in in der Nähe steht:
+	// PrÃ¼fen, ob ein GebÃ¤ude in in der NÃ¤he steht:
 	if ( !Building->data.isBig )
 	{
 		// small building
@@ -1057,7 +1057,7 @@ void cBase::AddBuilding ( cBuilding *Building )
 	}
 }
 
-// Löscht ein Building aus der Base:
+// LÃ¶scht ein Building aus der Base:
 void cBase::DeleteBuilding ( cBuilding *b )
 {
 	sSubBase *sb;
@@ -1090,7 +1090,7 @@ void cBase::DeleteBuilding ( cBuilding *b )
 	delete sb;
 }
 
-// Fügt ein Gebäude in eine Subbase ein:
+// FÃ¼gt ein GebÃ¤ude in eine Subbase ein:
 void sSubBase::addBuilding( cBuilding *b )
 {
 	buildings.Add ( b );

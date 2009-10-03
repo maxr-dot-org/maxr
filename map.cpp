@@ -309,7 +309,7 @@ cMapField& cMap::operator[]( unsigned int offset ) const
 	return fields[offset];
 }
 
-// Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
+// Gibt zurÃ¼ck, ob eine Kachel als Wasser gilt, oder nicht:
 bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
 {
 	if ( !terrain[Kacheln[off]].water && !terrain[Kacheln[off]].coast ) return false;
@@ -548,7 +548,7 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 	terrain = new sTerrain[iTerrainGrphCount];
 }
 
-// Löscht die aktuelle Map:
+// LÃ¶scht die aktuelle Map:
 void cMap::DeleteMap ( void )
 {
 	if ( !Kacheln ) return;
@@ -589,7 +589,7 @@ void cMap::generateNextAnimationFrame()
 	}
 }
 
-// Platziert die Ressourcen für einen Spieler.
+// Platziert die Ressourcen fÃ¼r einen Spieler.
 void cMap::placeRessourcesAddPlayer ( int x, int y, int frequency )
 {
 	if(resSpots == NULL)
@@ -626,7 +626,7 @@ void cMap::placeRessources ( int metal,int oil,int gold)
 		resSpots[resCurrentSpotCount] = pos;
 		resCurrentSpotCount++;
 	}
-	// Resourcen gleichmässiger verteilen
+	// Resourcen gleichmÃ¤ssiger verteilen
 	for(int j = 0; j < 3; j++){
 		for(int i = playerCount; i < resSpotCount; i++)
 		{

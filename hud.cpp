@@ -3716,7 +3716,7 @@ void cGameGUI::scaleSurfaces ()
 	if ( UnitsData.dirt_big_org && UnitsData.dirt_big ) scaleSurface ( UnitsData.dirt_big_org,UnitsData.dirt_big, (int) ( UnitsData.dirt_big_org->w * getZoom() ), (int) ( UnitsData.dirt_big_org->h * getZoom() ) );
 	if ( UnitsData.dirt_big_shw_org && UnitsData.dirt_big_shw ) scaleSurface ( UnitsData.dirt_big_shw_org,UnitsData.dirt_big_shw, (int) ( UnitsData.dirt_big_shw_org->w * getZoom() ), (int) ( UnitsData.dirt_big_shw_org->h * getZoom() ) );
 
-	// Bänder:
+	// BÃ¤nder:
 	if ( GraphicsData.gfx_band_small_org && GraphicsData.gfx_band_small ) scaleSurface ( GraphicsData.gfx_band_small_org,GraphicsData.gfx_band_small,getTileSize(),getTileSize() );
 	if ( GraphicsData.gfx_band_big_org && GraphicsData.gfx_band_big ) scaleSurface ( GraphicsData.gfx_band_big_org,GraphicsData.gfx_band_big,getTileSize()*2,getTileSize()*2 );
 

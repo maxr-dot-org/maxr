@@ -47,7 +47,7 @@ int InitSound ( int frequency,int chunksize )
 	}
 	Mix_QuerySpec ( &audio_rate, &audio_format, &audio_channels );
 
-	// Callback für Musik installieren:
+	// Callback fÃ¼r Musik installieren:
 	Mix_HookMusicFinished ( MusicFinished );
 
 	SoundChannel = SOUND_CHANNEL_MIN;
@@ -56,7 +56,7 @@ int InitSound ( int frequency,int chunksize )
 	return 1;
 }
 
-// Schließt den Sound:
+// SchlieÃŸt den Sound:
 void CloseSound ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
@@ -84,7 +84,7 @@ void PlayFX ( sSOUND *snd )
 	if ( SoundChannel>SOUND_CHANNEL_MAX ) SoundChannel=SOUND_CHANNEL_MIN;
 }
 
-// Spielt die übergebene ogg/wav/mod-Datei:
+// Spielt die Ã¼bergebene ogg/wav/mod-Datei:
 void PlayMusic(char const* const file)
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.MusicMute ) return;
