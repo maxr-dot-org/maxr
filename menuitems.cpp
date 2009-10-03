@@ -3574,7 +3574,7 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sU
 	if ( data.isBig ) factor = 4;
 
 	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SDL_Surface *tmpSurface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	AutoSurface tmpSurface(SDL_CreateRGBSurface(SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0));
 
 	scaleSurface ( oriSurface, tmpSurface, tmpSurface->w, tmpSurface->h );
 
@@ -3583,8 +3583,6 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sU
 	else SDL_FillRect ( surface, NULL, 0xFF00FF );
 
 	SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
-
-	SDL_FreeSurface ( tmpSurface );
 
 	return surface;
 }
