@@ -126,7 +126,6 @@ void MusicFinished ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
 	if ( MusicFiles.Size() == 0 ) return;
-	srand ( ( unsigned ) time ( NULL ) );
 	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
 
