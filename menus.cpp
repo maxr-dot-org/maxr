@@ -2312,19 +2312,19 @@ void cLandingMenu::mapClicked( void* parent )
 	menu->landData.iLandY = (int) ( ( mouse->y-18  ) / ( 448.0/menu->map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
 	menu->landData.landingState = LANDING_POSITION_OK;
 
-	SDL_Surface *circleSurface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	SDL_FillRect ( circleSurface, NULL, 0xFF00FF );
-	SDL_SetColorKey ( circleSurface, SDL_SRCCOLORKEY, 0xFF00FF );
+	{ AutoSurface circleSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32, SettingsData.iColourDepth, 0, 0, 0, 0));
+		SDL_FillRect(circleSurface, NULL, 0xFF00FF);
+		SDL_SetColorKey(circleSurface, SDL_SRCCOLORKEY, 0xFF00FF);
 
-	int posX = (int)(menu->landData.iLandX * fakx);
-	int posY = (int)(menu->landData.iLandY * faky);
-	//for non 4:3 screen resolutions, the size of the circles is
-	//only correct in x dimension, because I don't draw an ellipse
-	drawCircle( posX, posY, (int)((LANDING_DISTANCE_WARNING/2)*fakx), SCAN_COLOR, circleSurface );
-	drawCircle( posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE/2)*fakx), RANGE_GROUND_COLOR, circleSurface );
+		int posX = (int)(menu->landData.iLandX * fakx);
+		int posY = (int)(menu->landData.iLandY * faky);
+		//for non 4:3 screen resolutions, the size of the circles is
+		//only correct in x dimension, because I don't draw an ellipse
+		drawCircle(posX, posY, (int)((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
+		drawCircle(posX, posY, (int)((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
 
-	menu->circlesImage->setImage ( circleSurface );
-	SDL_FreeSurface ( circleSurface );
+		menu->circlesImage->setImage(circleSurface);
+	}
 
 	SHOW_SCREEN
 	mouse->SetCursor ( CHand );
