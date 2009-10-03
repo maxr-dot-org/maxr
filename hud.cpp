@@ -179,7 +179,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	stopButton->setReleasedFunction ( &stopReleased );
 	menuItems.Add ( stopButton );
 
-	FLCImage = new cMenuImage ( 10, 29, NULL, false );
+	FLCImage = new cMenuImage(10, 29, NULL);
 	menuItems.Add ( FLCImage );
 
 	unitDetails = new cMenuUnitDetails ( 8, 171, false, player );
