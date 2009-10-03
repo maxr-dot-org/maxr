@@ -22,23 +22,11 @@
 #include "settings.h"
 #include "files.h"
 
-sTerrain::sTerrain()
-	:sf(NULL),
-	sf_org(NULL),
-	shw(NULL),
-	shw_org(NULL),
+sTerrain::sTerrain() :
 	water(false),
 	coast(false),
 	blocked(false)
 {};
-
-sTerrain::~sTerrain()
-{
-	if ( sf )		SDL_FreeSurface ( sf );
-	if ( sf_org )	SDL_FreeSurface ( sf_org );
-	if ( shw )		SDL_FreeSurface ( shw );
-	if ( shw_org )	SDL_FreeSurface ( shw_org );
-}
 
 cVehicleIterator::cVehicleIterator(cList<cVehicle*>* list)
 {
