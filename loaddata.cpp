@@ -383,8 +383,6 @@ void MakeLog ( string sTxt,int ok,int pos )
 		SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
 		SDL_UpdateRect ( screen, rDest2.x, rDest2.y + rDest2.h*pos, rDest2.w, rDest2.h );
 	}
-
-	return;
 }
 
 /**
@@ -3249,7 +3247,6 @@ void setPaths()
 	}
 	//this is also a good place to find out where the executable is located
 	SettingsData.sConfig = MAX_XML; //assume config in current working directory
-	return;
 	#elif WIN32
 		//this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located

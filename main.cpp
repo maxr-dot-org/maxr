@@ -323,7 +323,6 @@ template<typename Type> void drawStetchedLine ( Type *srcPixelData, int srcWidth
 		}
 		while ( i >= destWidth );
 	};
-	return;
 }
 
 SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int height )

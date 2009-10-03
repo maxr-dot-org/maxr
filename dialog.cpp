@@ -890,8 +890,6 @@ void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *sur
 
 	SDL_BlitSurface ( GraphicsData.gfx_context_menu, &src, surface, &dest );
 	font->showTextCentered ( dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight(FONT_LATIN_SMALL_WHITE) / 2) +1, sText, FONT_LATIN_SMALL_WHITE );
-
-	return;
 }
 
 cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA ), owner(owner_)

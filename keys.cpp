@@ -760,5 +760,4 @@ void GenerateKeysXml()
 {
 	//TODO: add generation of key xml
 	Log.write("GenerateKeysXML not yet implemented", cLog::eLOG_TYPE_WARNING);
-	return;
 }

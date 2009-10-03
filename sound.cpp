@@ -61,7 +61,6 @@ void CloseSound ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
 	Mix_CloseAudio();
-	return;
 }
 
 // Spielt einen Voice-Sound:
