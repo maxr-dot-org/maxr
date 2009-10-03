@@ -2970,7 +2970,7 @@ static int LoadClans()
 		return 0;
 	}
 
-	while (TiXmlNode* const clanNode = xmlNode->IterateChildren(clanNode))
+	for (TiXmlNode* clanNode = 0; (clanNode = xmlNode->IterateChildren(clanNode));)
 	{
 		TiXmlElement* clanElement = clanNode->ToElement ();
 		if (clanElement)
@@ -2986,7 +2986,7 @@ static int LoadClans()
 				newClan->setDescription (descriptionString);
 			}
 
-			while (TiXmlNode* const changedUnitStatsNode = clanNode->IterateChildren("ChangedUnitStat", changedUnitStatsNode))
+			for (TiXmlNode* changedUnitStatsNode = 0; (changedUnitStatsNode = clanNode->IterateChildren("ChangedUnitStat", changedUnitStatsNode));)
 			{
 				TiXmlElement* statsElement = changedUnitStatsNode->ToElement ();
 				if (statsElement)
@@ -3003,7 +3003,7 @@ static int LoadClans()
 
 					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
 
-					while (TiXmlNode* const modificationNode = changedUnitStatsNode->IterateChildren(modificationNode))
+					for (TiXmlNode* modificationNode = 0; (modificationNode = changedUnitStatsNode->IterateChildren(modificationNode));)
 					{
 						string modName = modificationNode->Value ();
 						TiXmlElement* modificationElement = modificationNode->ToElement ();
