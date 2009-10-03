@@ -2017,14 +2017,11 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 	valueLabel = new cMenuLabel ( labelX, labelY, iToStr( currentValue ) );
 	valueLabel->setCentered ( true );
 
-	surface = NULL;
-
 	setType ( materialType_ );
 }
 
 cMenuMaterialBar::~cMenuMaterialBar()
 {
-	if ( surface ) SDL_FreeSurface ( surface );
 	delete valueLabel;
 }
 
@@ -2066,8 +2063,6 @@ void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
 
 void cMenuMaterialBar::generateSurface()
 {
-	if ( surface ) SDL_FreeSurface ( surface );
-
 	SDL_Rect src = { 114, 336, position.w, position.h };
 	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );

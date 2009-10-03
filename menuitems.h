@@ -770,7 +770,7 @@ public:
 	};
 
 protected:
-	SDL_Surface *surface;
+	AutoSurface surface;
 	eMaterialBarTypes materialType;
 
 	cMenuLabel *valueLabel;
