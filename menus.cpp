@@ -2643,10 +2643,9 @@ void cNetworkMenu::showMap()
 void cNetworkMenu::setColor( int color )
 {
 	SDL_Rect src = { 0, 0, 83, 10 };
-	SDL_Surface *colorSurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	AutoSurface colorSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
 	SDL_BlitSurface ( OtherData.colors[color], &src, colorSurface, NULL );
 	colorImage->setImage ( colorSurface );
-	SDL_FreeSurface ( colorSurface );
 }
 
 
