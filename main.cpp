@@ -56,6 +56,13 @@
 #include "clans.h"
 #include "settings.h"
 
+static void Quit();
+static int  initNet();
+static int  initSDL();
+static int  initSound();
+static void showGameWindow();
+static void showSplash();
+
 int main ( int argc, char *argv[] )
 {
 	setPaths(); //first thing: figure out paths
@@ -165,8 +172,10 @@ int main ( int argc, char *argv[] )
 	return 0;
 }
 
-// generate SplashScreen
-void showSplash()
+/**
+ *Shows splashscreen
+ */
+static void showSplash()
 {
         const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
         Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
@@ -197,7 +206,10 @@ void showSplash()
 	SDL_UpdateRect ( screen,0,0,0,0 );
 }
 
-void showGameWindow()
+/**
+ *Shows gamewindow
+ */
+static void showGameWindow()
 {
 	SDL_FreeSurface(buffer); //delete splash image
 	buffer=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
@@ -226,7 +238,12 @@ void showGameWindow()
 	SDL_ShowCursor ( 0 );
 }
 
-int initSDL()
+/**
+ *Inits SDL
+ *@author beko
+ *@return -1 on error<br>0 on success<br>1 with warnings
+ */
+static int initSDL()
 {
 	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
 	{
@@ -243,7 +260,12 @@ int initSDL()
 	}
 }
 
-int initSound()
+/**
+ *Inits SDL_sound
+ *@author beko
+ *@return -1 on error<br>0 on success<br>1 with warnings
+ */
+static int initSound()
 {
 	if (!SettingsData.bSoundEnabled)
 	{
@@ -271,7 +293,12 @@ int initSound()
 	return 0;
 }
 
-int initNet()
+/**
+ *Inits SDL_net
+ *@author beko
+ *@return -1 on error<br>0 on success<br>1 with warnings
+ */
+static int initNet()
 {
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
@@ -283,7 +310,11 @@ int initNet()
 	return 0;
 }
 
-void Quit()
+/**
+ *Terminates app
+ *@author beko
+ */
+static void Quit()
 {
 	delete mouse;
 	delete font;
