@@ -557,8 +557,6 @@ double Round(double num, unsigned int n);
 */
 int Round ( double num );
 
-int runEventChecker( void *);
-
 /**
 * Works like SDL_BlittSurface. But unlike SDL it respects the destination alpha channel of the surface.
 * This function is only designed to blitt from a surface with per surface alpha value to a surface with alpha channel.
