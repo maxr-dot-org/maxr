@@ -69,7 +69,6 @@ class cLanguage
 {
 public:
 	cLanguage(void);
-	~cLanguage(void);
 protected:
 	TiXmlDocument m_XmlDoc;
 	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )

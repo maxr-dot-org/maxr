@@ -37,10 +37,6 @@ cLanguage::cLanguage(void) :
 	m_bErrorMsgTranslationLoaded(false)
 {}
 
-cLanguage::~cLanguage(void)
-{
-}
-
 std::string cLanguage::GetCurrentLanguage(void)
 {
 	return m_szLanguage;
