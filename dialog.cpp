@@ -561,11 +561,11 @@ void cDialogPreferences::voicesMuteChanged( void *parent )
 }
 
 cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_  ) :
-	cMenu ( LoadPCX(GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA ),
-	srcBuilding ( srcBuilding_ ),
-	srcVehicle ( srcVehicle_ ),
-	destBuilding ( destBuilding_ ),
-	destVehicle ( destVehicle_ )
+	cMenu(LoadPCX(GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
+	srcBuilding(srcBuilding_),
+	destBuilding(destBuilding_),
+	srcVehicle(srcVehicle_),
+	destVehicle(destVehicle_)
 {
 	// TODO: add changing arrow direction!
 

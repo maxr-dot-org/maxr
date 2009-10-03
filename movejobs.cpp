@@ -27,14 +27,14 @@
 #include "math.h"
 #include "settings.h"
 
-cPathDestHandler::cPathDestHandler ( ePathDestinationTypes type_, int destX_, int destY_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ ) :
-	type ( type_ ),
-	destX ( destX_ ),
-	destY ( destY_ ),
-	srcVehicle ( srcVehicle_ ),
-	destBuilding ( destBuilding_ ),
-	destVehicle ( destVehicle_ )
-{ }
+cPathDestHandler::cPathDestHandler(ePathDestinationTypes type_, int destX_, int destY_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+	type(type_),
+	srcVehicle(srcVehicle_),
+	destBuilding(destBuilding_),
+	destVehicle(destVehicle_),
+	destX(destX_),
+	destY(destY_)
+{}
 
 bool cPathDestHandler::hasReachedDestination( int x, int y )
 {
@@ -708,16 +708,16 @@ void cServerMoveJob::calcNextDir()
 	else TESTXY_CND ( >,> ) iNextDir = 7;
 }
 
-cEndMoveAction::cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_, int destX_, int destY_ ) :
-	endMoveActionType ( endMoveActionType_ ),
-	srcBuilding ( srcBuilding_ ),
-	srcVehicle ( srcVehicle_ ),
-	destVehicle ( destVehicle_ ),
-	destBuilding ( destBuilding_ ),
-	destX ( destX_ ),
-	destY ( destY_ ),
-	moveJob ( NULL ),
-	success ( false )
+cEndMoveAction::cEndMoveAction(eEndMoveActionType endMoveActionType_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_, int destX_, int destY_) :
+	srcBuilding(srcBuilding_),
+	srcVehicle(srcVehicle_),
+	destVehicle(destVehicle_),
+	destBuilding(destBuilding_),
+	destX(destX_),
+	destY(destY_),
+	success(false),
+	endMoveActionType(endMoveActionType_),
+	moveJob(NULL)
 {
 	if ( !srcVehicle && !srcBuilding ) return;
 	if ( !destVehicle && !destBuilding ) return;

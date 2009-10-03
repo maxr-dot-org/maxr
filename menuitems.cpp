@@ -357,10 +357,14 @@ void cMenuLabel::draw()
 	else font->showText ( textPosition, text, fontType );
 }
 
-cMenuButton::cMenuButton ( int x, int y, string text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND *clickSound_ ) : cMenuItem( x, y ), fontType( fontType_ ), buttonType( buttonType_ ), surface( NULL )
+cMenuButton::cMenuButton(int x, int y, string text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
+	cMenuItem(x, y),
+	surface(0),
+	text(text_),
+	fontType(fontType_),
+	buttonType(buttonType_)
 {
 	clickSound = clickSound_;
-	text = text_;
 	renewButtonSurface();
 }
 
@@ -654,19 +658,19 @@ bool cMenuButton::preSetLocked( bool locked_ )
 	return true;
 }
 
-cMenuCheckButton::cMenuCheckButton ( int x, int y, string text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_ )
-: cMenuItem( x, y ),
-  fontType( fontType_ ),
-  buttonType( buttonType_ ),
-  textOrientation ( textOrientation_ ),
-  surface( NULL )
+cMenuCheckButton::cMenuCheckButton(int x, int y, string text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_) :
+	cMenuItem(x, y),
+	text(text_),
+  surface(),
+  fontType(fontType_),
+  buttonType(buttonType_),
+  textOrientation(textOrientation_),
+	group(),
+	centered(centered_),
+	checked(checked_),
+	textLimitWight(-1)
 {
 	clickSound = clickSound_;
-	checked = checked_;
-	centered = centered_;
-	text = text_;
-	group = NULL;
-	textLimitWight = -1;
 
 	renewButtonSurface();
 	if ( centered ) position.x -= position.w/2;
@@ -969,27 +973,27 @@ void cMenuRadioGroup::clicked( void *parent )
 	if ( click ) click(parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ )
-: cMenuItem (0,0)
-, unitID(unitID_)
-, unitData(0)
-, owner(owner_)
-, upgrades(upgrades_)
-, displayType(displayType_)
-, fixedResValue(fixedResValue_)
-, parentList(parent)
+cMenuUnitListItem::cMenuUnitListItem(sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+	cMenuItem (0, 0),
+	displayType(displayType_),
+	parentList(parent),
+	unitID(unitID_),
+	unitData(0),
+	owner(owner_),
+	upgrades(upgrades_),
+	fixedResValue(fixedResValue_)
 {
 	init ();
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ )
-: cMenuItem (0,0)
-, unitData(unitData_)
-, owner(owner_)
-, upgrades(upgrades_)
-, displayType(displayType_)
-, fixedResValue(fixedResValue_)
-, parentList(parent)
+cMenuUnitListItem::cMenuUnitListItem(sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+	cMenuItem (0, 0),
+	displayType(displayType_),
+	parentList(parent),
+	unitData(unitData_),
+	owner(owner_),
+	upgrades(upgrades_),
+	fixedResValue(fixedResValue_)
 {
 	if (unitData != 0)
 		unitID = unitData->ID;
@@ -1618,10 +1622,10 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition ( eUnitDataSymbols symTy
 	return src;
 }
 
-cMenuUnitDetails::cMenuUnitDetails( int x, int y, bool drawLines_, cPlayer *owner_ ) :
-	cMenuItem (x,y),
-	drawLines(drawLines_),
-	owner(owner_)
+cMenuUnitDetails::cMenuUnitDetails(int x, int y, bool drawLines_, cPlayer* owner_) :
+	cMenuItem (x, y),
+	owner(owner_),
+	drawLines(drawLines_)
 {
 	position.w = 246;
 	position.h = 176;
@@ -2318,10 +2322,10 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgra
 	return cUpgradeCalculator::kAttack;
 }
 
-cMenuScroller::cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) ) :
-	cMenuItem ( x, y ),
-	scrollerType(scrollerType_),
+cMenuScroller::cMenuScroller(int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem* parent_, void (*movedCallback_)(void*)) :
+	cMenuItem(x, y),
 	parent(parent_),
+	scrollerType(scrollerType_),
 	movedCallback(movedCallback_)
 {
 	SDL_Rect src;
@@ -2400,7 +2404,11 @@ void cMenuScroller::move ( int value )
 	}
 }
 
-cMenuScrollBar::cMenuScrollBar ( int x, int y, int h, int pageSteps_, cMenu *parentMenu_, cMenuItem *parentItem_ ) : cMenuItemContainer ( x, y ), pageSteps(pageSteps_), parentMenu(parentMenu_), parentItem(parentItem_)
+cMenuScrollBar::cMenuScrollBar(int x, int y, int h, int pageSteps_, cMenu* parentMenu_, cMenuItem* parentItem_) :
+	cMenuItemContainer(x, y),
+	parentMenu(parentMenu_),
+	parentItem(parentItem_),
+	pageSteps(pageSteps_)
 {
 	maximalScroll = position.h = h;
 	position.w = 17;
@@ -2494,7 +2502,10 @@ void cMenuScrollBar::downButtonReleased( void* parent )
 	}
 }
 
-cMenuListBox::cMenuListBox ( int x, int y, int w, int h, int maxLines_, cMenu *parentMenu_ ) : cMenuItemContainer ( x, y ), maxLines(maxLines_), parentMenu(parentMenu_)
+cMenuListBox::cMenuListBox(int x, int y, int w, int h, int maxLines_, cMenu* parentMenu_) :
+	cMenuItemContainer(x, y),
+	parentMenu(parentMenu_),
+	maxLines(maxLines_)
 {
 	position.w = w;
 	position.h = h;
@@ -3157,11 +3168,11 @@ void cMenuStoredUnitDetails::draw()
 	}
 }
 
-cMenuSlider::cMenuSlider ( int x, int y, float minValue_, float maxValue_, cMenu *parent_, int wight, eSliderType type_, eSliderDirection direction_ ) :
-	cMenuItem ( x, y ),
-	parent(parent_),
-	type (type_),
-	direction (direction_)
+cMenuSlider::cMenuSlider(int x, int y, float minValue_, float maxValue_, cMenu* parent_, int wight, eSliderType type_, eSliderDirection direction_) :
+	cMenuItem(x, y),
+	type(type_),
+	direction(direction_),
+	parent(parent_)
 {
 	minValue = min ( minValue_, maxValue_ );
 	maxValue = max ( minValue_, maxValue_ );

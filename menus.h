@@ -51,8 +51,8 @@ enum eLandingState
 struct sClientLandData
 {
 	int iLandX, iLandY;
-	eLandingState landingState;
 	int iLastLandX, iLastLandY;
+	eLandingState landingState;
 	bool receivedOK;
 
 	sClientLandData() : iLandX(0), iLandY(0), iLastLandX(0), iLastLandY(0), landingState ( LANDING_STATE_UNKNOWN ), receivedOK(true) {}
@@ -161,7 +161,13 @@ public:
 	cList<sClientLandData*> landData;
 
 
-	cGameDataContainer() : settings(NULL), map(NULL), type(GAME_TYPE_SINGLE), savegameNum(-1) {}
+	cGameDataContainer() :
+		type(GAME_TYPE_SINGLE),
+		savegameNum(-1),
+		settings(0),
+		map(0)
+	{}
+
 	~cGameDataContainer();
 
 	/** Runs the game. If player is 0, which means that he is the host, a server will be started.

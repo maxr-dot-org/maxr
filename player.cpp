@@ -28,12 +28,12 @@
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
-cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
-: base(this)
-, name (Name)
-, color (Color)
-, Nr (nr)
-, clan (-1)
+cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
+	name(Name),
+	color(Color),
+	Nr(nr),
+	base(this),
+	clan(-1)
 {
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];

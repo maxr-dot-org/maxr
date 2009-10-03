@@ -2194,7 +2194,12 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	menu->draw();
 }
 
-cLandingMenu::cLandingMenu ( cGameDataContainer *gameDataContainer_, cPlayer *player_ ) : cMenu ( NULL ), hudSurface (NULL), mapSurface(NULL), gameDataContainer(gameDataContainer_), player(player_)
+cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_) :
+	cMenu(0),
+	gameDataContainer(gameDataContainer_),
+	player(player_),
+	hudSurface(),
+	mapSurface()
 {
 	map = gameDataContainer->map;
 
@@ -4272,7 +4277,9 @@ int cUpgradeHangarMenu::getCredits()
 	return credits;
 }
 
-cUpgradeMenu::cUpgradeMenu ( cPlayer *player ) : cUpgradeHangarMenu ( player ), cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), player, MNU_BG_ALPHA )
+cUpgradeMenu::cUpgradeMenu(cPlayer* player) :
+	cHangarMenu(LoadPCX(GFXOD_UPGRADE), player, MNU_BG_ALPHA),
+	cUpgradeHangarMenu(player)
 {
 	credits = player->Credits;
 
@@ -4437,7 +4444,11 @@ void cUnitHelpMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *d
 	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData() ) terminate = true;
 }
 
-cStorageMenu::cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building ) : cMenu ( LoadPCX ( GFXOD_STORAGE ), MNU_BG_ALPHA ), storageList(storageList_), ownerVehicle( vehicle ), ownerBuilding(building)
+cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
+	cMenu(LoadPCX(GFXOD_STORAGE), MNU_BG_ALPHA),
+	ownerVehicle(vehicle),
+	ownerBuilding(building),
+	storageList(storageList_)
 {
 	if ( ownerVehicle ) unitData = ownerVehicle->data;
 	else if ( ownerBuilding )
@@ -4801,7 +4812,10 @@ void cStorageMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *de
 	if ( destroyedBuilding == ownerBuilding || destroyedVehicle == ownerVehicle ) terminate = true;
 }
 
-cMineManagerMenu::cMineManagerMenu( cBuilding *building_ ) : cMenu ( LoadPCX(GFXOD_MINEMANAGER), MNU_BG_ALPHA ), subBase( *building_->SubBase ), building(building_)
+cMineManagerMenu::cMineManagerMenu(cBuilding* building_) :
+	cMenu(LoadPCX(GFXOD_MINEMANAGER), MNU_BG_ALPHA),
+	building(building_),
+	subBase(*building_->SubBase)
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Title~Mine") );
 	titleLabel->setCentered( true );
