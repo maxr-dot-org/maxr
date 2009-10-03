@@ -569,7 +569,7 @@ int Round ( double dValueToRound )
 string sID::getText()
 {
 	char tmp[6];
-	sprintf ( tmp, "%0.2d %0.2d", iFirstPart, iSecondPart );
+	sprintf(tmp, "%.2d %.2d", iFirstPart, iSecondPart);
 	return tmp;
 }
 

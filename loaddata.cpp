@@ -1999,7 +1999,7 @@ static int LoadVehicles()
 				for ( int j = 0; j < 13; j++ )
 				{
 					sTmpString = sVehiclePath;
-					sprintf(sztmp,"img%d_%0.2d.pcx",n,j);
+					sprintf(sztmp, "img%d_%.2d.pcx", n, j);
 					sTmpString += sztmp;
 
 
@@ -2728,7 +2728,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 		{
 			if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 			{
-				sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				sprintf(szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write(szTmp,LOG_TYPE_WARNING);
 				return ;
 			}
@@ -2740,7 +2740,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 		{
 			if( UnitsData.building[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 			{
-				sprintf( szTmp, "unit with id %0.2d %0.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				sprintf(szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
 				Log.write(szTmp,LOG_TYPE_WARNING);
 				return ;
 			}
@@ -2751,13 +2751,13 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
 	if(iID != atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
 	{
-		sprintf( szTmp, "ID %0.2d %0.2d isn't equal with ID for unit \"%s\" ", atoi(idString.substr(0,idString.find(" ",0)).c_str()), atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()), directory);
+		sprintf(szTmp, "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi(idString.substr(0, idString.find(" ", 0)).c_str()), atoi(idString.substr(idString.find(" ", 0), idString.length()).c_str()), directory);
 		Log.write(szTmp,LOG_TYPE_WARNING);
 		return ;
 	}
 	else
 	{
-		sprintf( szTmp, "ID %0.2d %0.2d verified", atoi(idString.substr(0,idString.find(" ",0)).c_str()), atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()), directory);
+		sprintf(szTmp, "ID %.2d %.2d verified", atoi(idString.substr(0, idString.find(" ", 0)).c_str()), atoi(idString.substr(idString.find(" ", 0), idString.length()).c_str()));
 		Log.write(szTmp,LOG_TYPE_DEBUG);
 	}
 	//read name

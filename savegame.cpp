@@ -31,7 +31,7 @@ cSavegame::cSavegame ( int number )
 {
 	this->number = number;
 	if ( number > 100 ) return;
-	sprintf ( numberstr, "%0.3d", number );
+	sprintf(numberstr, "%.3d", number);
 }
 
 //--------------------------------------------------------------------------
