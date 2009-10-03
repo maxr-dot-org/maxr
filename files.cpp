@@ -59,10 +59,7 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 #ifdef _WIN32
 	_finddata_t DataFile;
 	long lFile = (long)_findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
-
-	if ( lFile == -1 )
-		_findclose ( lFile );
-	else
+	if (lFile != -1)
 	{
 		do
 		{
