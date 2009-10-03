@@ -40,15 +40,6 @@
 bool FileExists(const char* path);
 
 /**
-* Checks whether a file exits
-* @author alzi
-* @param directory Directory of the file
-* @param filename Name of the file
-* @return 1 on success
-*/
-int CheckFile(const char* directory, const char* filename);
-
-/**
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search

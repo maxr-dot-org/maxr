@@ -53,21 +53,6 @@ bool FileExists ( const char* path )
 }
 
 //--------------------------------------------------------------
-int CheckFile (const char* directory, const char* filename)
-{
-	std::string filepath;
-	if (strcmp(directory,""))
-	{
-		filepath = directory;
-		filepath += PATH_DELIMITER;
-	}
-	filepath += filename;
-	if (!FileExists (filepath.c_str()))
-		return 0;
-	return 1;
-}
-
-//--------------------------------------------------------------
 cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 {
 	cList<std::string> *List = new cList<std::string>;
