@@ -1111,7 +1111,7 @@ protected:
 	eSliderType type;
 	eSliderDirection direction;
 
-	SDL_Surface *surface;
+	AutoSurface surface;
 	cMenu *parent;
 
 	void (*movedCallback)(void *);

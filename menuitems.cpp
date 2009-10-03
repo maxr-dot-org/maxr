@@ -3179,7 +3179,6 @@ cMenuSlider::cMenuSlider(int x, int y, float minValue_, float maxValue_, cMenu* 
 cMenuSlider::~cMenuSlider()
 {
 	delete scroller;
-	SDL_FreeSurface ( surface );
 }
 
 void cMenuSlider::draw()
