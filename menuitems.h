@@ -832,12 +832,11 @@ public:
 private:
 	cMenuItem *parent;
 	eMenuScrollerTypes scrollerType;
-	SDL_Surface *surface;
+	AutoSurface surface;
 
 	void (*movedCallback)(void *);
 public:
 	cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) = NULL );
-	~cMenuScroller();
 	void draw();
 
 	SDL_Rect getPosition();

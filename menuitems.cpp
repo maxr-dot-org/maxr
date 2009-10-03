@@ -2339,11 +2339,6 @@ cMenuScroller::cMenuScroller(int x, int y, eMenuScrollerTypes scrollerType_, cMe
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 }
 
-cMenuScroller::~cMenuScroller()
-{
-	if ( surface ) SDL_FreeSurface ( surface );
-}
-
 void cMenuScroller::draw()
 {
 	SDL_BlitSurface ( surface, NULL, buffer, &position );
