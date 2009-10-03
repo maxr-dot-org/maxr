@@ -68,32 +68,32 @@ class cLanguage
 public:
 	cLanguage(void);
 
-protected:
+	std::string GetCurrentLanguage(void);
+	int         SetCurrentLanguage(std::string szLanguageCode);
+	std::string i18n(std::string szInputText);
+	std::string i18n(std::string szMainText, std::string szInsertText); // Translation with replace %s
+	int         ReadLanguagePack();
+	int         CheckCurrentLanguagePack(bool bInsertMissingEntries);
+
+private:
 	typedef std::map<std::string, std::string> StrStrMap;
 
+	int         ReadSingleTranslation(std::string& strResult, char const* pszCurrent, ...);
+	std::string ReadSingleTranslation(std::string strInput);
+	int         ReadLanguagePackHeader();
+	int         ReadLanguagePackHeader(std::string szLanguageCode);
+	int         ReadLanguageMaster();
+	int         ReadRecursiveLanguagePack(ExTiXmlNode* pXmlStartingNode, std::string strNodePath);
+
 	TiXmlDocument m_XmlDoc;
-	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )
-	std::string m_szLanguage;
-	std::string m_szLanguageFile;
-	std::string m_szLanguageFileMaster;
-	std::string m_szEncoding;
-	std::string m_szLastEditor;
-	bool m_bLeftToRight;
-	bool m_bErrorMsgTranslationLoaded;
-	StrStrMap m_mpLanguage;
-	int ReadSingleTranslation( std::string & strResult, const char * pszCurrent, ... );
-	std::string ReadSingleTranslation( std::string strInput );
-	int ReadLanguagePackHeader( );
-	int ReadLanguagePackHeader( std::string szLanguageCode );
-	int ReadLanguageMaster();
-	int ReadRecursiveLanguagePack( ExTiXmlNode * pXmlStartingNode , std::string strNodePath );
-public:
-	std::string GetCurrentLanguage(void);
-	int SetCurrentLanguage(std::string szLanguageCode);
-	std::string i18n(std::string szInputText);
-	std::string i18n(std::string szMainText, std::string szInsertText); 	// Translation with replace %s
-	int ReadLanguagePack();
-	int CheckCurrentLanguagePack(bool bInsertMissingEntries);
+	std::string   m_szLanguage; // Use ISO 639-2 codes to identify languages (http://www.loc.gov/standards/iso639-2/php/code_list.php)
+	std::string   m_szLanguageFile;
+	std::string   m_szLanguageFileMaster;
+	std::string   m_szEncoding;
+	std::string   m_szLastEditor;
+	StrStrMap     m_mpLanguage;
+	bool          m_bLeftToRight;
+	bool          m_bErrorMsgTranslationLoaded;
 };
 
 #endif
