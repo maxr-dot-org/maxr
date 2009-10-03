@@ -20,6 +20,7 @@
 #ifndef drawingcacheH
 #define drawingcacheH
 
+#include "autosurface.h"
 #include "main.h"
 
 /**
@@ -56,10 +57,8 @@ struct sDrawingCacheEntry
 	float zoom;
 
 	int lastUsed;
-	SDL_Surface* surface;
+	AutoSurface surface;
 
-	sDrawingCacheEntry();
-	~sDrawingCacheEntry();
 	/**
 	* sets all properties and initialises the surface.
 	*/

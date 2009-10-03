@@ -22,16 +22,6 @@
 #include "loaddata.h"
 #include "settings.h"
 
-sDrawingCacheEntry::sDrawingCacheEntry()
-{
-	surface = NULL;
-}
-
-sDrawingCacheEntry::~sDrawingCacheEntry()
-{
-	if ( surface ) SDL_FreeSurface( surface );
-}
-
 void sDrawingCacheEntry::init( cVehicle* vehicle)
 {
 	dir = vehicle->dir;
@@ -76,7 +66,6 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 		width  *= 2;
 		height *= 2;
 	}
-	if ( surface ) SDL_FreeSurface( surface );
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
 	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
@@ -107,7 +96,6 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	int width  = (int) max(building->typ->img_org->w*zoom, building->typ->shw_org->w*zoom);
 	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*zoom);
 
-	if ( surface ) SDL_FreeSurface( surface );
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
 	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
