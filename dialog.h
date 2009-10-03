@@ -44,15 +44,16 @@ public:
  */
 class cDialogOK : public cMenu
 {
-	cMenuLabel *textLabel;
-	cMenuButton *okButton;
 public:
-	cDialogOK( string text );
-	~cDialogOK();
+	cDialogOK(string text);
 
 	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void okReleased( void *parent );
+
+private:
+	cMenuLabel  textLabel;
+	cMenuButton okButton;
 };
 
 /**

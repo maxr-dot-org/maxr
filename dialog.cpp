@@ -84,29 +84,27 @@ void cDialogYesNow::noReleased( void *parent )
 	menu->terminate = true;
 }
 
-cDialogOK::cDialogOK( string text ) : cMenu ( LoadPCX( GFXOD_DIALOG2 ), MNU_BG_ALPHA )
+cDialogOK::cDialogOK(string text) :
+	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
+	textLabel(position.x + 20, position.y + 20, text),
+	okButton(position.x + 111, position.y + 185, lngPack.i18n("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
-	textLabel = new cMenuLabel ( position.x+20, position.y+20, text );
-	textLabel->setBox ( position.w-40, position.h-150 );
-	menuItems.Add ( textLabel );
+	textLabel.setBox(position.w - 40, position.h - 150);
+	menuItems.Add(&textLabel);
 
-	okButton = new cMenuButton ( position.x+111, position.y+185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	okButton->setReleasedFunction ( &okReleased );
-	menuItems.Add ( okButton );
-}
-
-cDialogOK::~cDialogOK()
-{
-	delete textLabel;
-	delete okButton;
+	okButton.setReleasedFunction(&okReleased);
+	menuItems.Add(&okButton);
 }
 
 void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
 	if ( key.keysym.sym == SDLK_RETURN )
 	{
-		if ( key.state == SDL_PRESSED && !okButton->getIsClicked() ) okButton->clicked ( this );
-		else if ( key.state == SDL_RELEASED && okButton->getIsClicked() ) okButton->released ( this );
+		switch (key.state)
+		{
+			case SDL_PRESSED:  if (!okButton.getIsClicked()) okButton.clicked(this);  break;
+			case SDL_RELEASED: if (okButton.getIsClicked())  okButton.released(this); break;
+		}
 	}
 }
 
