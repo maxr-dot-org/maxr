@@ -2405,7 +2405,6 @@ cMenuScrollBar::cMenuScrollBar(int x, int y, int h, int pageSteps_, cMenu* paren
 
 cMenuScrollBar::~cMenuScrollBar()
 {
-	if ( surface ) SDL_FreeSurface ( surface );
 	delete upButton;
 	delete downButton;
 	delete scroller;

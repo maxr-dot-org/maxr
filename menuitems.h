@@ -857,7 +857,7 @@ protected:
 	cMenu *parentMenu;
 	cMenuItem *parentItem;
 
-	SDL_Surface *surface;
+	AutoSurface surface;
 
 	int maximalScroll;
 	int pageSteps;
