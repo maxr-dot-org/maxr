@@ -2828,13 +2828,13 @@ void cMenuPlayersBox::draw()
 {
 	SDL_Rect src = { 10, 0, 10, 10 };
 
-	SDL_Surface *readySurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	AutoSurface readySurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
 	SDL_SetColorKey ( readySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( readySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, readySurface, NULL );
 
 	src.x -= 10;
-	SDL_Surface *notReadySurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	AutoSurface notReadySurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
 	SDL_SetColorKey ( notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( notReadySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, notReadySurface, NULL );
@@ -2846,10 +2846,9 @@ void cMenuPlayersBox::draw()
 			if ( (*players)[i]->ready ) playerReadys[i-scrollBar->offset]->setImage ( readySurface );
 			else playerReadys[i-scrollBar->offset]->setImage ( notReadySurface );
 
-			SDL_Surface *colorSurface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+			AutoSurface colorSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
 			SDL_BlitSurface ( OtherData.colors[(*players)[i]->color], &src, colorSurface, NULL );
 			playerColors[i-scrollBar->offset]->setImage ( colorSurface );
-			SDL_FreeSurface ( colorSurface );
 
 			playerNames[i-scrollBar->offset]->setText ( (*players)[i]->name );
 		}
@@ -2864,8 +2863,6 @@ void cMenuPlayersBox::draw()
 		playerNames[i-scrollBar->offset]->draw();
 		playerReadys[i-scrollBar->offset]->draw();
 	}
-	SDL_FreeSurface ( readySurface );
-	SDL_FreeSurface ( notReadySurface );
 	scrollBar->draw();
 }
 
