@@ -63,13 +63,14 @@
 #include "tinyxml.h"
 #include "extendedtinyxml.h"
 
-typedef std::map < std::string, std::string > StrStrMap;
-
 class cLanguage
 {
 public:
 	cLanguage(void);
+
 protected:
+	typedef std::map<std::string, std::string> StrStrMap;
+
 	TiXmlDocument m_XmlDoc;
 	// please use the ISO 639-2 Codes to identify a language ( http://www.loc.gov/standards/iso639-2/php/code_list.php )
 	std::string m_szLanguage;
