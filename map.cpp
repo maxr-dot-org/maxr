@@ -459,8 +459,6 @@ bool cMap::LoadMap ( string filename )
 	// Load necessary Terrain Graphics
 	for ( int iNum = 0; iNum < iNumberOfTerrains; iNum++ )
 	{
-		SDL_Surface *surface;	// Temporary surface for fresh loaded graphic
-
 		// load terrain type info
 		SDL_RWseek ( fpMapFile, iInfoPos+iNum, SEEK_SET );
 		SDL_RWread ( fpMapFile, &cByte, 1, 1 );
@@ -488,7 +486,7 @@ bool cMap::LoadMap ( string filename )
 
 
 		//load terrain graphic
-		surface = LoadTerrGraph ( fpMapFile, iGraphicsPos, palette, iNum );
+		AutoSurface surface(LoadTerrGraph(fpMapFile, iGraphicsPos, palette, iNum));
 		if ( surface == NULL )
 		{
 			Log.write("EOF while loading terrain number " + iToStr(iNum), cLog::eLOG_TYPE_WARNING );
@@ -496,7 +494,6 @@ bool cMap::LoadMap ( string filename )
 			return false;
 		}
 		CopySrfToTerData ( surface, iNum );
-		SDL_FreeSurface ( surface );
 	}
 
 	// Load map data
