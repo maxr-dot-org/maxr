@@ -2191,9 +2191,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_) :
 	cMenu(0),
 	gameDataContainer(gameDataContainer_),
-	player(player_),
-	hudSurface(),
-	mapSurface()
+	player(player_)
 {
 	map = gameDataContainer->map;
 
@@ -2221,14 +2219,10 @@ cLandingMenu::~cLandingMenu()
 	delete mapImage;
 	delete circlesImage;
 	delete infoLabel;
-
-	if ( hudSurface ) SDL_FreeSurface ( hudSurface );
-	if ( mapSurface ) SDL_FreeSurface ( mapSurface );
 }
 
 void cLandingMenu::createHud()
 {
-	if ( hudSurface ) SDL_FreeSurface ( hudSurface );
 	hudSurface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	SDL_FillRect ( hudSurface, NULL, 0xFF00FF );
@@ -2249,7 +2243,6 @@ void cLandingMenu::createHud()
 
 void cLandingMenu::createMap()
 {
-	if ( mapSurface ) SDL_FreeSurface ( mapSurface );
 	mapSurface = SDL_CreateRGBSurface( OtherData.iSurface, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	if ( SDL_MUSTLOCK(mapSurface) ) SDL_LockSurface ( mapSurface );

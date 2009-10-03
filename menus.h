@@ -660,8 +660,8 @@ protected:
 
 	cMap *map;
 
-	SDL_Surface *hudSurface;
-	SDL_Surface *mapSurface;
+	AutoSurface hudSurface;
+	AutoSurface mapSurface;
 
 	cMenuImage *hudImage;
 	cMenuImage *mapImage;
