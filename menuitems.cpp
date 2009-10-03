@@ -3464,9 +3464,9 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		}
 		if ( draw )
 		{
-			SDL_Surface *surface = generateUnitSurface ( nextVehicle->typ->img_org[0], nextVehicle->data );
-			SDL_BlitSurface ( surface, &src, buffer, &dest );
-			SDL_FreeSurface ( surface );
+			{ AutoSurface surface(generateUnitSurface(nextVehicle->typ->img_org[0], nextVehicle->data));
+				SDL_BlitSurface(surface, &src, buffer, &dest);
+			}
 
 			font->showTextAsBlock ( nameDest, nextVehicle->name );
 			unitDetails[count-minCount]->setSelection ( nextVehicle, NULL );
@@ -3494,9 +3494,9 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			}
 			if ( draw )
 			{
-				SDL_Surface *surface = generateUnitSurface ( nextBuilding->typ->img_org, nextBuilding->data );
-				SDL_BlitSurface ( surface, &src, buffer, &dest );
-				SDL_FreeSurface ( surface );
+				{ AutoSurface surface(generateUnitSurface(nextBuilding->typ->img_org, nextBuilding->data));
+					SDL_BlitSurface(surface, &src, buffer, &dest);
+				}
 
 				font->showTextAsBlock ( nameDest, nextBuilding->name );
 				unitDetails[count-minCount]->setSelection ( NULL, nextBuilding );
