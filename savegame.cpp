@@ -228,14 +228,13 @@ void cSavegame::loadGameInfo()
 	TiXmlElement *gameInfoNode = SaveFile->RootElement()->FirstChildElement( "Game" );
 	if ( !gameInfoNode ) return;
 
-	TiXmlElement *element;
 	gameInfoNode->FirstChildElement( "Turn" )->Attribute ( "num", &Server->iTurn );
-	if ( element = gameInfoNode->FirstChildElement( "Hotseat" ) )
+	if (TiXmlElement* const element = gameInfoNode->FirstChildElement("Hotseat"))
 	{
 		Server->bHotSeat = true;
 		element->Attribute ( "activeplayer", &Server->iHotSeatPlayer );
 	}
-	if ( element = gameInfoNode->FirstChildElement( "PlayTurns" ) )
+	if (TiXmlElement* const element = gameInfoNode->FirstChildElement("PlayTurns"))
 	{
 		Server->bPlayTurns = true;
 		element->Attribute ( "activeplayer", &Server->iActiveTurnPlayerNr );
@@ -300,9 +299,8 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
 
-	TiXmlElement *element;
 	int clan = -1;
-	if ( element = playerNode->FirstChildElement ("Clan" ) ) element->Attribute ( "num", &clan );
+	if (TiXmlElement* const element = playerNode->FirstChildElement("Clan")) element->Attribute("num", &clan);
 	Player->setClan (clan);
 
 	string resourceMap = playerNode->FirstChildElement( "ResourceMap" )->Attribute ( "data" );
@@ -392,8 +390,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 			loadResearchCentersWorkingOnArea( researchCentersWorkingOnAreaNode, Player );
 	}
 
-	TiXmlElement *subbasesNode;
-	if ( subbasesNode = playerNode->FirstChildElement( "Subbases" ) )
+	if (TiXmlElement* const subbasesNode = playerNode->FirstChildElement("Subbases"))
 	{
 		int subbasenum = 0;
 		TiXmlElement *subbaseNode = subbasesNode->FirstChildElement( "Subbase_0" );
@@ -422,16 +419,15 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 void cSavegame::loadUpgrade ( TiXmlElement *upgradeNode, sUnitData *data )
 {
 	upgradeNode->FirstChildElement( "Version" )->Attribute ( "num", &data->version );
-	TiXmlElement *element;
-	if ( element = upgradeNode->FirstChildElement( "Ammo" ) ) element->Attribute ( "num", &data->ammoMax );
-	if ( element = upgradeNode->FirstChildElement( "HitPoints" ) ) element->Attribute ( "num", &data->hitpointsMax );
-	if ( element = upgradeNode->FirstChildElement( "Shots" ) ) element->Attribute ( "num", &data->shotsMax );
-	if ( element = upgradeNode->FirstChildElement( "Speed" ) ) element->Attribute ( "num", &data->speedMax );
-	if ( element = upgradeNode->FirstChildElement( "Armor" ) ) element->Attribute ( "num", &data->armor );
-	if ( element = upgradeNode->FirstChildElement( "Costs" ) ) element->Attribute ( "num", &data->buildCosts );
-	if ( element = upgradeNode->FirstChildElement( "Damage" ) ) element->Attribute ( "num", &data->damage );
-	if ( element = upgradeNode->FirstChildElement( "Range" ) ) element->Attribute ( "num", &data->range );
-	if ( element = upgradeNode->FirstChildElement( "Scan" ) ) element->Attribute ( "num", &data->scan );
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Ammo"))      element->Attribute("num", &data->ammoMax);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("HitPoints")) element->Attribute("num", &data->hitpointsMax);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Shots"))     element->Attribute("num", &data->shotsMax);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Speed"))     element->Attribute("num", &data->speedMax);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Armor"))     element->Attribute("num", &data->armor);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Costs"))     element->Attribute("num", &data->buildCosts);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Damage"))    element->Attribute("num", &data->damage);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Range"))     element->Attribute("num", &data->range);
+	if (TiXmlElement* const element = upgradeNode->FirstChildElement("Scan"))      element->Attribute("num", &data->scan);
 }
 
 //--------------------------------------------------------------------------
@@ -560,10 +556,13 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	loadUnitValues ( unitNode, &vehicle->data );
 
-	TiXmlElement *element;
 	unitNode->FirstChildElement( "Direction" )->Attribute ( "num", &vehicle->dir );
 	double tmpdouble;
-	if ( element = unitNode->FirstChildElement( "CommandoRank" ) ) { element->Attribute ( "num", &tmpdouble ); vehicle->CommandoRank = (float)tmpdouble; }
+	if (TiXmlElement* const element = unitNode->FirstChildElement("CommandoRank"))
+	{
+		element->Attribute("num", &tmpdouble);
+		vehicle->CommandoRank = (float)tmpdouble;
+	}
 	if ( unitNode->FirstChildElement( "IsBig" ) ) Server->Map->moveVehicleBig( vehicle, x, y );
 	if ( unitNode->FirstChildElement( "Disabled" ) ) vehicle->Disabled = true;
 	if ( unitNode->FirstChildElement( "LayMines" ) ) vehicle->LayMines = true;
@@ -574,7 +573,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		owner->addSentryVehicle ( vehicle );
 	}
 
-	if ( element = unitNode->FirstChildElement( "Building" ) )
+	if (TiXmlElement* const element = unitNode->FirstChildElement("Building"))
 	{
 		vehicle->IsBuilding = true;
 		if ( element->Attribute ( "type_id" ) != NULL )
@@ -599,14 +598,14 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 			element->Attribute ( "endy", &vehicle->BandY );
 		}
 	}
-	if ( element = unitNode->FirstChildElement( "Clearing" ) )
+	if (TiXmlElement* const element = unitNode->FirstChildElement("Clearing"))
 	{
 		vehicle->IsClearing = true;
 		element->Attribute ( "turns", &vehicle->ClearingRounds );
 		element->Attribute ( "savedpos", &vehicle->BuildBigSavedPos );
 	}
 
-	if ( element = unitNode->FirstChildElement( "Movejob" ) )
+	if (TiXmlElement* const element = unitNode->FirstChildElement("Movejob"))
 	{
 		sMoveJobLoad *MoveJob = new sMoveJobLoad;
 		MoveJob->vehicle = vehicle;
@@ -617,11 +616,10 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	}
 
 	// read the players which have detected this unit
-	TiXmlElement *detectedNode;
-	if ( detectedNode = unitNode->FirstChildElement( "IsDetectedByPlayers" ) )
+	if (TiXmlElement* const detectedNode = unitNode->FirstChildElement("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while ( element = detectedNode->FirstChildElement ( ("Player_" + iToStr( playerNodeNum )).c_str() ) )
+		while (TiXmlElement* const element = detectedNode->FirstChildElement(("Player_" + iToStr(playerNodeNum)).c_str()))
 		{
 			int playerNum;
 			element->Attribute ( "nr", &playerNum );
@@ -635,7 +633,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	}
 
 	// since we write all stored vehicles imediatly after the storing unit we can be sure that this one has been loaded yet
-	if ( element = unitNode->FirstChildElement( "Stored_In" ) )
+	if (TiXmlElement* const element = unitNode->FirstChildElement("Stored_In"))
 	{
 		int storedInID;
 		int isVehicle;
@@ -686,8 +684,6 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) )
 		building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
-	TiXmlElement *element;
-
 	loadUnitValues ( unitNode, &building->data );
 
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
@@ -707,15 +703,15 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	}
 	if ( unitNode->FirstChildElement( "HasBeenAttacked" ) ) building->hasBeenAttacked = true;
 
-	if ( element = unitNode->FirstChildElement( "Building" ) )
+	if (TiXmlElement* const element = unitNode->FirstChildElement("Building"))
 	{
 		TiXmlElement *buildNode = element;
-		if ( element = buildNode->FirstChildElement( "BuildSpeed" ) ) element->Attribute ( "num", &building->BuildSpeed );
-		if ( element = buildNode->FirstChildElement( "MetalPerRound" ) ) element->Attribute ( "num", &building->MetalPerRound );
+		if (TiXmlElement* const element = buildNode->FirstChildElement("BuildSpeed"))    element->Attribute("num", &building->BuildSpeed);
+		if (TiXmlElement* const element = buildNode->FirstChildElement("MetalPerRound")) element->Attribute("num", &building->MetalPerRound);
 		if ( buildNode->FirstChildElement( "RepeatBuild" ) ) building->RepeatBuild = true;
 
 		int itemnum = 0;
-		element = buildNode->FirstChildElement( "BuildList" )->FirstChildElement( "Item_0" );
+		TiXmlElement* element = buildNode->FirstChildElement("BuildList")->FirstChildElement("Item_0");
 		while ( element )
 		{
 			sBuildList *listitem = new sBuildList;
@@ -748,11 +744,10 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	}
 
 	// read the players which have detected this unit
-	TiXmlElement *detectedNode;
-	if ( detectedNode = unitNode->FirstChildElement( "IsDetectedByPlayers" ) )
+	if (TiXmlElement* const detectedNode = unitNode->FirstChildElement("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while ( element = detectedNode->FirstChildElement ( ("Player_" + iToStr( playerNodeNum )).c_str() ) )
+		while (TiXmlElement* const element = detectedNode->FirstChildElement(("Player_" + iToStr(playerNodeNum)).c_str()))
 		{
 			int playerNum;
 			element->Attribute ( "nr", &playerNum );
@@ -784,35 +779,34 @@ void cSavegame::loadRubble( TiXmlElement *rubbleNode )
 //--------------------------------------------------------------------------
 void cSavegame::loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data )
 {
-	TiXmlElement *Element;
-	if ( Element = unitNode->FirstChildElement( "Version" ) ) Element->Attribute ( "num", &Data->version );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Version")) Element->Attribute("num", &Data->version);
 
-	if ( Element = unitNode->FirstChildElement( "Max_Hitpoints" ) ) Element->Attribute ( "num", &Data->hitpointsMax );
-	if ( Element = unitNode->FirstChildElement( "Max_Ammo" ) ) Element->Attribute ( "num", &Data->ammoMax );
-	if ( Element = unitNode->FirstChildElement( "Max_Speed" ) ) Element->Attribute ( "num", &Data->speedMax );
-	if ( Element = unitNode->FirstChildElement( "Max_Shots" ) ) Element->Attribute ( "num", &Data->shotsMax );
-	if ( Element = unitNode->FirstChildElement( "Armor" ) ) Element->Attribute ( "num", &Data->armor );
-	if ( Element = unitNode->FirstChildElement( "Damage" ) ) Element->Attribute ( "num", &Data->damage );
-	if ( Element = unitNode->FirstChildElement( "Range" ) ) Element->Attribute ( "num", &Data->range );
-	if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Max_Hitpoints")) Element->Attribute("num", &Data->hitpointsMax);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Max_Ammo"))      Element->Attribute("num", &Data->ammoMax);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Max_Speed"))     Element->Attribute("num", &Data->speedMax);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Max_Shots"))     Element->Attribute("num", &Data->shotsMax);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Armor"))         Element->Attribute("num", &Data->armor);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Damage"))        Element->Attribute("num", &Data->damage);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Range"))         Element->Attribute("num", &Data->range);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Scan"))          Element->Attribute("num", &Data->scan);
 
-	if ( Element = unitNode->FirstChildElement( "Hitpoints" ) ) Element->Attribute ( "num", &Data->hitpointsCur );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Hitpoints")) Element->Attribute("num", &Data->hitpointsCur);
 	else Data->hitpointsCur = Data->hitpointsMax;
-	if ( Element = unitNode->FirstChildElement( "Ammo" ) ) Element->Attribute ( "num", &Data->ammoCur );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Ammo")) Element->Attribute("num", &Data->ammoCur);
 	else Data->ammoCur = Data->ammoMax;
 
-	if ( Element = unitNode->FirstChildElement( "ResCargo" ) ) Element->Attribute ( "num", &Data->storageResCur );
-	if ( Element = unitNode->FirstChildElement( "UnitCargo" ) ) Element->Attribute ( "num", &Data->storageUnitsCur );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("ResCargo"))  Element->Attribute("num", &Data->storageResCur);
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("UnitCargo")) Element->Attribute("num", &Data->storageUnitsCur);
 	// look for "Cargo" to be savegamecompatible
-	if ( Element = unitNode->FirstChildElement( "Cargo" ) )
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Cargo"))
 	{
 		Element->Attribute ( "num", &Data->storageResCur );
 		Data->storageUnitsCur = Data->storageResCur;
 	}
 
-	if ( Element = unitNode->FirstChildElement( "Speed" ) ) Element->Attribute ( "num", &Data->speedCur );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Speed")) Element->Attribute("num", &Data->speedCur);
 	else Data->speedCur = Data->speedMax;
-	if ( Element = unitNode->FirstChildElement( "Shots" ) ) Element->Attribute ( "num", &Data->shotsCur );
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Shots")) Element->Attribute("num", &Data->shotsCur);
 	else Data->shotsCur = Data->shotsMax;
 }
 
@@ -820,7 +814,6 @@ void cSavegame::loadUnitValues ( TiXmlElement *unitNode, sUnitData *Data )
 void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 {
 	if ( unitNode == NULL ) return;
-	TiXmlElement *Element;
 	sUnitData *Data = NULL;
 	int unitNum;
 	bool isVehicle;
@@ -865,29 +858,61 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	unitNode->FirstChildElement( "Armor" )->Attribute ( "num", &Data->armor );
 	unitNode->FirstChildElement( "Built_Costs" )->Attribute ( "num", &Data->buildCosts );
 
-	if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan ); else Data->scan = 0;
-	if ( Element = unitNode->FirstChildElement( "Movement" ) ) Element->Attribute ( "num", &Data->speedMax ); else Data->speedMax = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Scan"))     Element->Attribute("num", &Data->scan);     else Data->scan     = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Movement")) Element->Attribute("num", &Data->speedMax); else Data->speedMax = 0;
 	Data->speedMax *= 4;
 
 	int tmpInt;
 
-	if ( Element = unitNode->FirstChildElement( "MuzzleType" ) ) { Element->Attribute ( "num", &tmpInt ); Data->muzzleType = (sUnitData::eMuzzleType)tmpInt; } else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
-	if ( Element = unitNode->FirstChildElement( "Shots" ) ) Element->Attribute ( "num", &Data->shotsMax ); else Data->shotsMax = 0;
-	if ( Element = unitNode->FirstChildElement( "Ammo" ) ) Element->Attribute ( "num", &Data->ammoMax ); else Data->ammoMax = 0;
-	if ( Element = unitNode->FirstChildElement( "Range" ) ) Element->Attribute ( "num", &Data->range ); else Data->range = 0;
-	if ( Element = unitNode->FirstChildElement( "Damage" ) ) Element->Attribute ( "num", &Data->damage ); else Data->damage = 0;
-	if ( Element = unitNode->FirstChildElement( "Can_Attack" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canAttack = tmpInt; } else Data->canAttack = TERRAIN_NONE;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("MuzzleType"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->muzzleType = (sUnitData::eMuzzleType)tmpInt;
+	}
+	else
+	{
+		Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Shots"))  Element->Attribute("num", &Data->shotsMax); else Data->shotsMax = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Ammo"))   Element->Attribute("num", &Data->ammoMax);  else Data->ammoMax  = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Range"))  Element->Attribute("num", &Data->range);    else Data->range    = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Damage")) Element->Attribute("num", &Data->damage);   else Data->damage   = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Can_Attack"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->canAttack = tmpInt;
+	}
+	else
+	{
+		Data->canAttack = TERRAIN_NONE;
+	}
 
-	if ( Element = unitNode->FirstChildElement( "Can_Build" ) ) Data->canBuild = Element->Attribute ( "string" ); else Data->canBuild = "";
-	if ( Element = unitNode->FirstChildElement( "Build_As" ) ) Data->buildAs = Element->Attribute ( "string" ); else Data->buildAs = "";
-	if ( Element = unitNode->FirstChildElement( "Max_Build_Factor" ) ) Element->Attribute ( "num", &Data->maxBuildFactor ); else Data->maxBuildFactor = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Can_Build"))        Data->canBuild = Element->Attribute("string");    else Data->canBuild = "";
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Build_As"))         Data->buildAs  = Element->Attribute("string");    else Data->buildAs = "";
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Max_Build_Factor")) Element->Attribute("num", &Data->maxBuildFactor); else Data->maxBuildFactor = 0;
 
-	if ( Element = unitNode->FirstChildElement( "Storage_Res_Max" ) ) Element->Attribute ( "num", &Data->storageResMax ); else Data->storageResMax = 0;
-	if ( Element = unitNode->FirstChildElement( "Storage_Units_Max" ) ) Element->Attribute ( "num", &Data->storageUnitsMax ); else Data->storageUnitsMax = 0;
-	if ( Element = unitNode->FirstChildElement( "Store_Res_Type" ) ) { Element->Attribute ( "num", &tmpInt ); Data->storeResType = (sUnitData::eStorageResType)tmpInt; } else Data->storeResType = sUnitData::STORE_RES_NONE;
-	if ( Element = unitNode->FirstChildElement( "StoreUnits_Image_Type" ) ) { Element->Attribute ( "num", &tmpInt ); Data->storeUnitsImageType = (sUnitData::eStorageUnitsImageType)tmpInt; } else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_NONE;
-	if ( Element = unitNode->FirstChildElement( "Is_Storage_Type" ) ) Data->isStorageType = Element->Attribute ( "string" ); else Data->isStorageType = "";
-	if ( Element = unitNode->FirstChildElement( "StoreUnitsTypes" ) )
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Storage_Res_Max"))   Element->Attribute("num", &Data->storageResMax);   else Data->storageResMax   = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Storage_Units_Max")) Element->Attribute("num", &Data->storageUnitsMax); else Data->storageUnitsMax = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Store_Res_Type"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->storeResType = (sUnitData::eStorageResType)tmpInt;
+	}
+	else
+	{
+		Data->storeResType = sUnitData::STORE_RES_NONE;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("StoreUnits_Image_Type"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->storeUnitsImageType = (sUnitData::eStorageUnitsImageType)tmpInt;
+	}
+	else
+	{
+		Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_NONE;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Is_Storage_Type")) Data->isStorageType = Element->Attribute("string"); else Data->isStorageType = "";
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("StoreUnitsTypes"))
 	{
 		string storeUnitsString = Element->Attribute ( "string" );
 		if ( storeUnitsString.length() > 0 )
@@ -904,12 +929,12 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 		}
 	}
 
-	if ( Element = unitNode->FirstChildElement( "Needs_Energy" ) ) Element->Attribute ( "num", &Data->needsEnergy ); else Data->needsEnergy = 0;
-	if ( Element = unitNode->FirstChildElement( "Needs_Humans" ) ) Element->Attribute ( "num", &Data->needsHumans ); else Data->needsHumans = 0;
-	if ( Element = unitNode->FirstChildElement( "Needs_Oil" ) ) Element->Attribute ( "num", &Data->needsOil ); else Data->needsOil = 0;
-	if ( Element = unitNode->FirstChildElement( "Needs_Metal" ) ) Element->Attribute ( "num", &Data->needsMetal ); else Data->needsMetal = 0;
-	if ( Element = unitNode->FirstChildElement( "Converts_Gold" ) ) Element->Attribute ( "num", &Data->convertsGold ); else Data->convertsGold = 0;
-	if ( Element = unitNode->FirstChildElement( "Can_Mine_Max_Res" ) ) Element->Attribute ( "num", &Data->canMineMaxRes ); else Data->canMineMaxRes = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Needs_Energy"))     Element->Attribute("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Needs_Humans"))     Element->Attribute("num", &Data->needsHumans);   else Data->needsHumans   = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Needs_Oil"))        Element->Attribute("num", &Data->needsOil);      else Data->needsOil      = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Needs_Metal"))      Element->Attribute("num", &Data->needsMetal);    else Data->needsMetal    = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Converts_Gold"))    Element->Attribute("num", &Data->convertsGold);  else Data->convertsGold  = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Can_Mine_Max_Res")) Element->Attribute("num", &Data->canMineMaxRes); else Data->canMineMaxRes = 0;
 	if ( Data->needsEnergy < 0 )
 	{
 		Data->produceEnergy = abs( Data->needsEnergy );
@@ -921,19 +946,91 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 		Data->needsHumans = 0;
 	} else Data->produceHumans = 0;
 
-	if ( Element = unitNode->FirstChildElement( "Is_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->isStealthOn = tmpInt; } else Data->isStealthOn = TERRAIN_NONE;
-	if ( Element = unitNode->FirstChildElement( "Can_Detect_Stealth_On" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canDetectStealthOn = tmpInt; } else Data->canDetectStealthOn = TERRAIN_NONE;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Is_Stealth_On"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->isStealthOn = tmpInt;
+	}
+	else
+	{
+		Data->isStealthOn = TERRAIN_NONE;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Can_Detect_Stealth_On"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->canDetectStealthOn = tmpInt;
+	}
+	else
+	{
+		Data->canDetectStealthOn = TERRAIN_NONE;
+	}
 
-	if ( Element = unitNode->FirstChildElement( "Surface_Position" ) ) { Element->Attribute ( "num", &tmpInt ); Data->surfacePosition = (sUnitData::eSurfacePosition)tmpInt; } else Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
-	if ( Element = unitNode->FirstChildElement( "Can_Be_Overbuild" ) ) { Element->Attribute ( "num", &tmpInt ); Data->canBeOverbuild = (sUnitData::eOverbuildType)tmpInt; } else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Surface_Position"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->surfacePosition = (sUnitData::eSurfacePosition)tmpInt;
+	}
+	else
+	{
+		Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Can_Be_Overbuild"))
+	{
+		Element->Attribute("num", &tmpInt);
+		Data->canBeOverbuild = (sUnitData::eOverbuildType)tmpInt;
+	}
+	else
+	{
+		Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
+	}
 
 	double tmpdouble;
-	if ( Element = unitNode->FirstChildElement( "Factor_Air" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorAir = (float)tmpdouble; } else Data->factorAir = 0;
-	if ( Element = unitNode->FirstChildElement( "Factor_Coast" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorCoast = (float)tmpdouble; } else Data->factorCoast = 0;
-	if ( Element = unitNode->FirstChildElement( "Factor_Ground" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorGround = (float)tmpdouble; } else Data->factorGround = 0;
-	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorSea = (float)tmpdouble; } else Data->factorSea = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Factor_Air"))
+	{
+		Element->Attribute("num", &tmpdouble);
+		Data->factorAir = (float)tmpdouble;
+	}
+	else
+	{
+		Data->factorAir = 0;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Factor_Coast"))
+	{
+		Element->Attribute("num", &tmpdouble);
+		Data->factorCoast = (float)tmpdouble;
+	}
+	else
+	{
+		Data->factorCoast = 0;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Factor_Ground"))
+	{
+		Element->Attribute("num", &tmpdouble);
+		Data->factorGround = (float)tmpdouble;
+	}
+	else
+	{
+		Data->factorGround = 0;
+	}
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Factor_Sea"))
+	{
+		Element->Attribute("num", &tmpdouble);
+		Data->factorSea = (float)tmpdouble;
+	}
+	else
+	{
+		Data->factorSea = 0;
+	}
 
-	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->modifiesSpeed = (float)tmpdouble; } else Data->modifiesSpeed = 0;
+	if (TiXmlElement* const Element = unitNode->FirstChildElement("Factor_Sea"))
+	{
+		Element->Attribute("num", &tmpdouble);
+		Data->modifiesSpeed = (float)tmpdouble;
+	}
+	else
+	{
+		Data->modifiesSpeed = 0;
+	}
 
 	Data->canBuildPath = unitNode->FirstChildElement( "Can_Build_Path" ) != NULL;
 	Data->canBuildRepeat = unitNode->FirstChildElement( "Can_Build_Repeat" ) != NULL;

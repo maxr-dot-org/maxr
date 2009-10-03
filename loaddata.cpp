@@ -2701,7 +2701,6 @@ bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *pat
 void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
 {
 	TiXmlDocument unitDataXml;
-	ExTiXmlNode *pExXmlNode = NULL;
 
 	string path = directory;
 	path += "data.xml";
@@ -2763,7 +2762,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	//read name
 	Data->name = getXMLNodeString ( unitDataXml, "name", "Unit" );
 	//read description
-	if(pExXmlNode = pExXmlNode->XmlGetFirstNode( unitDataXml, "Unit", "Description", NULL) )
+	if (ExTiXmlNode* const pExXmlNode = pExXmlNode->XmlGetFirstNode(unitDataXml, "Unit", "Description", NULL))
 	{
 		Data->description = pExXmlNode->ToElement()->GetText();
 		int iPosition = (int)Data->description.find("\\n",0);
@@ -2972,8 +2971,7 @@ static int LoadClans()
 		return 0;
 	}
 
-	TiXmlNode* clanNode = 0;
-	while (clanNode = xmlNode->IterateChildren (clanNode))
+	while (TiXmlNode* const clanNode = xmlNode->IterateChildren(clanNode))
 	{
 		TiXmlElement* clanElement = clanNode->ToElement ();
 		if (clanElement)
@@ -2989,8 +2987,7 @@ static int LoadClans()
 				newClan->setDescription (descriptionString);
 			}
 
-			TiXmlNode* changedUnitStatsNode = 0;
-			while (changedUnitStatsNode = clanNode->IterateChildren ("ChangedUnitStat", changedUnitStatsNode))
+			while (TiXmlNode* const changedUnitStatsNode = clanNode->IterateChildren("ChangedUnitStat", changedUnitStatsNode))
 			{
 				TiXmlElement* statsElement = changedUnitStatsNode->ToElement ();
 				if (statsElement)
@@ -3007,8 +3004,7 @@ static int LoadClans()
 
 					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
 
-					TiXmlNode* modificationNode = 0;
-					while (modificationNode = changedUnitStatsNode->IterateChildren (modificationNode))
+					while (TiXmlNode* const modificationNode = changedUnitStatsNode->IterateChildren(modificationNode))
 					{
 						string modName = modificationNode->Value ();
 						TiXmlElement* modificationElement = modificationNode->ToElement ();

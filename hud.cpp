@@ -321,20 +321,19 @@ void cGameGUI::returnToCallback()
 
 SDL_Surface *cGameGUI::generateSurface()
 {
-	SDL_Surface *tmpSurface;
 	SDL_Rect scr, dest;
 	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
 
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx" ) )
+	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx"))
 	{
 		SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
 		SDL_FreeSurface ( tmpSurface );
 	}
 
-	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx" ) )
+	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx"))
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -351,7 +350,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		SDL_FreeSurface ( tmpSurface );
 	}
 
-	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx" ) )
+	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx"))
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -363,7 +362,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		SDL_FreeSurface ( tmpSurface );
 	}
 
-	if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx" ) )
+	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx"))
 	{
 		scr.x = 0;
 		scr.y = 0;
@@ -388,7 +387,7 @@ SDL_Surface *cGameGUI::generateSurface()
 
 	if ( SettingsData.iScreenH > 480 )
 	{
-		if( tmpSurface = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx" ) )
+		if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx"))
 		{
 			dest.x = 9;
 			dest.y = SettingsData.iScreenH-HUD_TOTAL_HIGHT-15;
