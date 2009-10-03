@@ -557,7 +557,7 @@ protected:
 	sUnitData* unitData;
 	cPlayer *owner;
 
-	SDL_Surface *surface;
+	AutoSurface surface;
 
 	int resValue;
 	int minResValue;
@@ -576,7 +576,6 @@ protected:
 public:
 	cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
 	cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
-	~cMenuUnitListItem();
 	void draw();
 
 	sID getUnitID();

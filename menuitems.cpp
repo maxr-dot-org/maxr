@@ -1021,11 +1021,6 @@ void cMenuUnitListItem::init ()
 	fixed = false;
 }
 
-cMenuUnitListItem::~cMenuUnitListItem()
-{
-	if ( surface ) SDL_FreeSurface ( surface );
-}
-
 void cMenuUnitListItem::draw()
 {
 	SDL_Rect src = { 0, 0, 32, 32 };
