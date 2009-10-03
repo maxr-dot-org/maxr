@@ -2737,8 +2737,7 @@ void cMenuLineEdit::setReturnPressedFunc( void (*returnPressed_)(void *) )
 }
 
 cMenuChatBox::cMenuChatBox ( int x, int y, cMenu *parentMenu_ ) :
-	cMenuLineEdit ( x, y, SettingsData.iScreenW-HUD_TOTAL_WIDTH, 21, parentMenu_ ),
-	surface ( NULL )
+	cMenuLineEdit(x, y, SettingsData.iScreenW - HUD_TOTAL_WIDTH, 21, parentMenu_)
 {
 	generateSurface();
 }

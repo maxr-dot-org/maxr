@@ -952,7 +952,7 @@ public:
 
 class cMenuChatBox : public cMenuLineEdit
 {
-	SDL_Surface *surface;
+	AutoSurface surface;
 
 	void generateSurface();
 	int getBorderSize();
