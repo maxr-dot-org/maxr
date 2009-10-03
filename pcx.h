@@ -28,11 +28,4 @@
  */
 SDL_Surface* LoadPCX(std::string name);
 
-/** Draws an image to a surface
- * @param name path to img
- * @param sf surface to load to
- * @return 0 on success
- */
-int LoadPCXtoSF(const char *name,SDL_Surface *sf);
-
 #endif
