@@ -34,11 +34,7 @@
 
 cLanguage::cLanguage(void)
 {
-	m_szLanguage = "";
-	m_szLanguageFile = "";
-	m_szEncoding = "";
 	m_bLeftToRight = true;
-	m_szLastEditor = "";
 	m_bErrorMsgTranslationLoaded = false;
 }
 
