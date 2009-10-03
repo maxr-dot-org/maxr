@@ -1234,7 +1234,7 @@ void cPlanetsSelectionMenu::showMaps()
 					SDL_RWseek ( mapFile, 64*64*sGraphCount, SEEK_CUR );
 					SDL_RWread ( mapFile, &Palette, 1, 768 );
 
-					SDL_Surface *mapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
+					AutoSurface mapSurface(SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
 					mapSurface->pitch = mapSurface->w;
 
 					mapSurface->format->palette->ncolors = 256;
@@ -1260,14 +1260,12 @@ void cPlanetsSelectionMenu::showMaps()
 					#define MAPWINSIZE 112
 					if( mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE ) // resize map
 					{
-						SDL_Surface *scaledMap = scaleSurface ( mapSurface, NULL, MAPWINSIZE, MAPWINSIZE );
-						SDL_FreeSurface ( mapSurface );
-						mapSurface = scaledMap;
+						mapSurface = scaleSurface(mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
 					}
 
 	#define SELECTED 0x00C000
 	#define UNSELECTED 0x000000
-					SDL_Surface *imageSurface = SDL_CreateRGBSurface( OtherData.iSurface, MAPWINSIZE+8, MAPWINSIZE+8, SettingsData.iColourDepth, 0, 0, 0, 0 );
+					AutoSurface imageSurface(SDL_CreateRGBSurface(OtherData.iSurface, MAPWINSIZE + 8, MAPWINSIZE + 8, SettingsData.iColourDepth, 0, 0, 0, 0));
 
 					if ( selectedMapIndex == i+offset )
 					{
@@ -1299,10 +1297,8 @@ void cPlanetsSelectionMenu::showMaps()
 					}
 					SDL_Rect dest = { 4, 4, MAPWINSIZE, MAPWINSIZE };
 					SDL_BlitSurface ( mapSurface, NULL, imageSurface, &dest );
-					SDL_FreeSurface ( mapSurface );
 
 					planetImages[i]->setImage ( imageSurface );
-					SDL_FreeSurface ( imageSurface );
 					planetTitles[i]->setText ( mapName );
 				}
 			}
