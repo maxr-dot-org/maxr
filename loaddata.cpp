@@ -32,7 +32,7 @@
 	#include <unistd.h>
 #endif
 
-
+#include "autosurface.h"
 #include "buildings.h"
 #include "extendedtinyxml.h"
 #include "loaddata.h"
@@ -1986,7 +1986,6 @@ static int LoadVehicles()
 		// laod infantery graphics
 		if (v.data.animationMovement)
 		{
-			SDL_Surface *sfTempSurface;
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
@@ -2004,7 +2003,7 @@ static int LoadVehicles()
 
 					if(FileExists(sTmpString.c_str()))
 					{
-						sfTempSurface = LoadPCX(sTmpString.c_str());
+						AutoSurface sfTempSurface(LoadPCX(sTmpString.c_str()));
 						if(!sfTempSurface)
 						{
 							Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -2015,7 +2014,6 @@ static int LoadVehicles()
 							rcDest.y = 32 - sfTempSurface->h/2;
 							SDL_BlitSurface(sfTempSurface, NULL, v.img[n], &rcDest);
 						}
-						SDL_FreeSurface ( sfTempSurface );
 					}
 				}
 				v.img_org[n] = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
