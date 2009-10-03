@@ -466,11 +466,6 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) : bac
 	}
 }
 
-cMenu::~cMenu()
-{
-	if ( background ) SDL_FreeSurface ( background );
-}
-
 void cMenu::draw( bool firstDraw, bool showScreen )
 {
 	switch ( backgroundType )

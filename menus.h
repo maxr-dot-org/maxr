@@ -18,6 +18,8 @@
  ***************************************************************************/
 #ifndef menusH
 #define menusH
+
+#include "autosurface.h"
 #include "defines.h"
 #include "menuitems.h"
 #include "input.h"
@@ -233,7 +235,7 @@ protected:
 	bool terminate;
 
 	/** The background of the menu. Can be smaller than the screen. */
-	SDL_Surface *background;
+	AutoSurface background;
 	/** The type of the background behind the menu background image, when the image is smaller then the screen. */
 	eMenuBackgrounds backgroundType;
 	/** The position of the menu on the screen when it is smaller than the screen. The position will be
@@ -249,14 +251,10 @@ protected:
 	/**
 	 * initializes members and calculates the menu position on the screen.
 	 *@author alzi
-	 *@param background_ The background of the surface
+	 *@param background_ The background of the surface. Automatically gets deleted
+	 *                   when the menu is destroyed.
 	 */
 	cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
-	/**
-	 * frees the background surface. This destructor does not delete the menuitems!
-	 *@author alzi
-	 */
-	~cMenu();
 
 	virtual void preDrawFunction() {};
 
