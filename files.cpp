@@ -73,21 +73,15 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 		_findclose ( lFile );
 	}
 #else
-	DIR* hDir = opendir ( sDirectory.c_str() );
-	struct dirent* entry;
-	if (hDir)
+	if (DIR* const dir = opendir(sDirectory.c_str()))
 	{
-		do
+		while (struct dirent* const entry = readdir(dir))
 		{
-			entry = readdir ( hDir );
-			if( entry != NULL && entry->d_name[0] != '.' )
-			{
-				List->Add( entry->d_name );
-			}
+			char const* const name = entry->d_name;
+			if (name[0] == '.') continue;
+			List->Add(name);
 		}
-		while ( entry != NULL );
-
-		closedir( hDir );
+		closedir(dir);
 	}
 #endif
 	return List;
