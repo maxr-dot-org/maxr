@@ -42,7 +42,6 @@ EX int VoiceChannel;
 EX int SoundLoopChannel;
 
 // Musik /////////////////////////////////////////////////////////////////////
-EX int MusicAnz;
 EX std::string MainMusicFile;
 EX std::string CreditsMusicFile;
 EX cList<std::string> MusicFiles;

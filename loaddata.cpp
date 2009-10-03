@@ -1550,14 +1550,12 @@ static int LoadMusic(const char* path)
 
 
 	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Game","bkgcount", NULL);
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		MusicAnz = atoi(sTmpString.c_str());
-	else
+	if (!pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
 	{
 		Log.write ( "Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR );
 		return 0;
 	}
-
+	int const MusicAnz = atoi(sTmpString.c_str());
 	for ( int i=1;i <= MusicAnz; i++ )
 	{
 		sprintf ( sztmp,"%d",i );
