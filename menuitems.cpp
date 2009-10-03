@@ -654,7 +654,6 @@ bool cMenuButton::preSetLocked( bool locked_ )
 cMenuCheckButton::cMenuCheckButton(int x, int y, string text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_) :
 	cMenuItem(x, y),
 	text(text_),
-  surface(),
   fontType(fontType_),
   buttonType(buttonType_),
   textOrientation(textOrientation_),
@@ -689,7 +688,6 @@ void cMenuCheckButton::renewButtonSurface()
 		src.y = 93;
 		break;
 	case RADIOBTN_TYPE_TEXT_ONLY:
-		if ( surface ) SDL_FreeSurface ( surface );
 		surface = NULL;
 		position.w = font->getTextWide ( text, fontType );
 		position.h = font->getFontHeight ( fontType );
@@ -784,7 +782,6 @@ void cMenuCheckButton::renewButtonSurface()
 	}
 	if ( src.w > 0 )
 	{
-		if ( surface ) SDL_FreeSurface ( surface );
 		surface = SDL_CreateRGBSurface ( OtherData.iSurface, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
 		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_2X ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );

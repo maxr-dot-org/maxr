@@ -482,7 +482,7 @@ public:
 	};
 protected:
 	string text;
-	SDL_Surface* surface;
+	AutoSurface surface;
 	eUnicodeFontType fontType;
 	eCheckButtonTypes buttonType;
 	eCheckButtonTextOriantation textOrientation;
