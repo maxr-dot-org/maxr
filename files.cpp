@@ -58,16 +58,17 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 	cList<std::string> *List = new cList<std::string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	long lFile = (long)_findfirst ( (sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile );
+	intptr_t const lFile = _findfirst((sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile);
 	if (lFile != -1)
 	{
 		do
 		{
-			if ( !( DataFile.attrib & _A_SUBDIR ) && DataFile.name[0] != '.' )
-				List->Add( DataFile.name );
+			if (DataFile.attrib & _A_SUBDIR) continue;
+			if (DataFile.name[0] == '.')     continue;
+			List->Add(DataFile.name);
 		}
-		while ( _findnext ( lFile, &DataFile ) == 0 );
-		_findclose ( lFile );
+		while (_findnext(lFile, &DataFile) == 0);
+		_findclose(lFile);
 	}
 #else
 	if (DIR* const dir = opendir(sDirectory.c_str()))
