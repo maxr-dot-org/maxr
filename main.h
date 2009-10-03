@@ -498,15 +498,6 @@ public:
 		scaleSurface ( (surface_org), (surface), (int)((surface_org)->w * (factor)), (int)((surface_org)->h * (factor)) );
 
 /**
- * draws one line of the source surface scaled to the destination surface.
- * @author alzi alias DoctorDeath
- * @param srcPixelData pointer to the first byte of the line in the pixeldate of the source surface.
- * @param srcWidth width of the line in the sourcesurface.
- * @param destPixelData pointer to the first byte where in the pixeldate of the source surface the line should be drawn.
- * @param destWidth Directory width of the line how it should be drawn to the destination surface.
- */
-template<typename Type> void drawStetchedLine ( Type *srcPixelData, int srcWidth, Type *destPixelData, int destWidth );
-/**
  * scale a surface to the overgiven sice. The scaled surface will be drawn to the destination surface.
  * If the destiniation surface is NULL a new surface will be created.
  * @author alzi alias DoctorDeath
