@@ -22,93 +22,87 @@
 #include "settings.h"
 #include "main.h"
 
-SDL_Surface *LoadPCX ( std::string name )
+SDL_Surface* LoadPCX(std::string name)
 {
-	unsigned int *_ptr;
-	unsigned char temp;
-	char tmp[2];
-	int k=0,i=0,z,j;
-	int colors[256];
-	SDL_Surface *sf;
-	Uint16 x,y;
-	SDL_RWops *file;
-
-	// Die Datei öffnen:
-	if(FileExists(name.c_str()))
-	{
-		file=SDL_RWFromFile ( name.c_str(),"rb" );
-	}
-	else
-	{
-		//file not found - creating empty surface
-		sf = SDL_CreateRGBSurface ( OtherData.iSurface,100, 20, SettingsData.iColourDepth,0,0,0,0 );
-		return sf;
-	}
-	if ( file==NULL )
-	{
-		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); //img corrupted - creating empty surface
-		sf = SDL_CreateRGBSurface ( OtherData.iSurface,100, 20, SettingsData.iColourDepth,0,0,0,0 );
-		return sf;
+	// Open the file.
+	if (!FileExists(name.c_str()))
+	{ // File not found, create empty surface.
+		SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface, 100, 20, SettingsData.iColourDepth, 0, 0, 0, 0);
+		return s;
 	}
 
-	// Die Datei laden:
-	SDL_RWseek ( file,8,SEEK_SET );
-	x = SDL_ReadLE16 ( file );
-	y = SDL_ReadLE16 ( file );
-	x++;y++;
-	sf=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,x,y,32,0,0,0,0 );
-	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
-	if ( sf == NULL )
+	SDL_RWops* const f = SDL_RWFromFile(name.c_str(), "rb");
+	if (!f)
 	{
-		Log.write(SDL_GetError(), cLog::eLOG_TYPE_ERROR); //sdl f*cked up
-		SDL_RWclose ( file );
+		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); // Image corrupted, create empty surface.
+		SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface, 100, 20, SettingsData.iColourDepth, 0, 0, 0, 0);
+		return s;
+	}
+
+	// Load the image.
+	SDL_RWseek(f, 8, SEEK_SET);
+	Uint16       const x = SDL_ReadLE16(f) + 1;
+	Uint16       const y = SDL_ReadLE16(f) + 1;
+	SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, x, y, 32, 0, 0, 0, 0);
+	if (!s)
+	{
+		Log.write(SDL_GetError(), cLog::eLOG_TYPE_ERROR);
+		SDL_RWclose(f);
 		return NULL; //app will crash using this
 	}
-	_ptr= ( ( unsigned int* ) sf->pixels );
-	SDL_RWseek ( file,128,SEEK_SET );
+	SDL_SetColorKey(s, SDL_SRCCOLORKEY, 0xFF00FF);
+
+	Uint32* const buf = static_cast<Uint32*>(s->pixels);
+	SDL_RWseek(f, 128, RW_SEEK_SET);
+	int k = 0;
+	int i = 0;
 	do
 	{
-		SDL_RWread ( file,tmp,1,1 );
-		temp=tmp[0];
-		if ( temp>191 )
+		char tmp[2];
+		SDL_RWread(f, tmp, 1, 1);
+		unsigned char const temp = tmp[0];
+		if (temp >= 0xC0)
 		{
-			z=temp-192;
-			if ( z+k>x )
-				z=x-k;
-			SDL_RWread ( file,tmp,1,1 );
-			temp=tmp[0];
-			for ( j=0;j<z;j++ )
+			int z = temp - 192;
+			if (z + k > x)
+				z = x - k;
+			SDL_RWread(f, tmp, 1, 1);
+			unsigned char const temp = tmp[0];
+			for (int j = 0; j < z; ++j)
 			{
-				_ptr[k+i*x]=temp;
-				k++;
-				if ( k==x ) break;
+				buf[k + i * x] = temp;
+				++k;
+				if (k == x) break;
 			}
 		}
 		else
 		{
-			_ptr[k+i*x]=temp;
-			k++;
+			buf[k + i * x] = temp;
+			++k;
 		}
-		if ( k==x ) {k=0;i++;}
+		if (k == x)
+		{
+			k = 0;
+			++i;
+		}
 	}
-	while ( i!=y );
-	// Nun noch die Farbtabelle anpassen:
-	SDL_RWseek ( file, -768, SEEK_END );
+	while (i != y);
 
-	Uint8 r, g, b;
-	for ( i=0;i<256;i++ )
+	// Convert from palette to true colour.
+	int colors[256];
+	SDL_RWseek(f, -768, SEEK_END);
+	for (int i = 0; i != 256; ++i)
 	{
-		SDL_RWread ( file,&r,1,1 );
-		SDL_RWread ( file,&g,1,1 );
-		SDL_RWread ( file,&b,1,1 );
-		colors[i] = SDL_MapRGB( sf->format, r, g, b);
+		Uint8 rgb[3];
+		SDL_RWread(f, rgb, sizeof(rgb), 1);
+		colors[i] = SDL_MapRGB(s->format, rgb[0], rgb[1], rgb[2]);
 	}
-	for ( i=0; i < x*y; i++ )
+	for (int i = 0; i != x * y; ++i)
 	{
-		_ptr[i] = colors[_ptr[i]];
+		buf[i] = colors[buf[i]];
 	}
-	SDL_RWclose ( file );
-	return sf;
+	SDL_RWclose(f);
+	return s;
 }
 
 // Läd eine PCX-Datei in das Surface:
@@ -125,7 +119,7 @@ int LoadPCXtoSF (const char *name,SDL_Surface *sf )
 	// Die Datei öffnen:
 	if(FileExists(name))
 	{
-		file=SDL_RWFromFile ( name,"rb" );
+		file=SDL_RWFromFile (name,"rb" );
 	}
 	else
 	{

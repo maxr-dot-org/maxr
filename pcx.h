@@ -26,7 +26,8 @@
  * @param name path to img
  * @return surface with img<br>or empty surface on error<br>or <b>NULL</b> if SDL couldn't create a surface
  */
-SDL_Surface *LoadPCX(std::string name);
+SDL_Surface* LoadPCX(std::string name);
+
 /** Draws an image to a surface
  * @param name path to img
  * @param sf surface to load to
