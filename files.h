@@ -74,6 +74,6 @@ std::string getUserScreenshotsDir();
 * @author pagra
 * @return a checksum of all bytes in the given data chunk
 */
-Sint32 calcCheckSum (char* data, int dataSize);
+Sint32 calcCheckSum(const char* data, size_t dataSize);
 
 #endif
