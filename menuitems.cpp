@@ -3500,7 +3500,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			SDL_FreeSurface ( surface );
 
 			font->showTextAsBlock ( nameDest, nextVehicle->name );
-			unitDetails[count]->setSelection ( nextVehicle, NULL );
+			unitDetails[count-minCount]->setSelection ( nextVehicle, NULL );
 
 			font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextVehicle->PosX ) + "," + iToStr ( nextVehicle->PosY ) );
 			font->showText ( position.x+343, position.y+35+56*(count-minCount), nextVehicle->getStatusStr() );
@@ -3530,7 +3530,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 				SDL_FreeSurface ( surface );
 
 				font->showTextAsBlock ( nameDest, nextBuilding->name );
-				unitDetails[count]->setSelection ( NULL, nextBuilding );
+				unitDetails[count-minCount]->setSelection ( NULL, nextBuilding );
 
 				font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextBuilding->PosX ) + "," + iToStr ( nextBuilding->PosY ) );
 				font->showText ( position.x+343, position.y+35+56*(count-minCount), nextBuilding->getStatusStr() );
@@ -3543,7 +3543,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		}
 	}
 
-	for ( int i = 0; i < count; i++ )
+	for ( int i = 0; i < count-minCount; i++ )
 	{
 		unitDetails[i]->draw();
 	}
