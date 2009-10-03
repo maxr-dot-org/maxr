@@ -108,7 +108,7 @@ class cGameGUI : public cMenu
 	/** number of main loop executions per second */
 	float cyclesPerSecond;
 	unsigned int loadValue;
-	
+
 	/** the acctual blink color */
 	unsigned int blinkColor;
 
@@ -314,7 +314,7 @@ class cGameGUI : public cMenu
 
 	static void miniMapClicked( void *parent );
 	static void miniMapMovedOver( void *parent );
-	
+
 	static void zoomSliderMoved( void *parent );
 
 	static void endReleased( void *parent );

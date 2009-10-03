@@ -287,7 +287,7 @@ int LoadData ( void * )
 		MakeLog ( "", 1, 9 );
 	}
 	Log.mark();
-	
+
 	// Load Music
 	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
 
@@ -623,7 +623,7 @@ int ReadMaxXml()
 		SettingsData.iScreenW = 640;
 		SettingsData.iScreenH = 480;
 	}
-	
+
 	// ColourDepth
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", NULL)))
 		Log.write ( "Can't find ColourDepth-Node in max.xml", LOG_TYPE_WARNING );
@@ -862,7 +862,7 @@ int ReadMaxXml()
 	{
 		Log.write ( "Can't load playercolor from max.xml: using default value", LOG_TYPE_WARNING );
 		SettingsData.iColor = 0;
-	}	
+	}
 
 	// GAME-SOUND Options
 	// Enabled
@@ -1071,26 +1071,26 @@ int ReadMaxXml()
 
 
 	//BEGIN SANITY CHECK SCREEN RES
-	
+
 	const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
 	Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
-	
+
 	SDL_Rect** rModes;
-	/* Get available fullscreen/hardware modes. Check for HWSURFACE first. If that doesn't work use a SWSURFACE instead. If that doesn't work.. die.*/ 
+	/* Get available fullscreen/hardware modes. Check for HWSURFACE first. If that doesn't work use a SWSURFACE instead. If that doesn't work.. die.*/
 	if(!SettingsData.bWindowMode)
 	  rModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|SDL_HWSURFACE); //try with HWSURFACE
 	else
 	  rModes = SDL_ListModes(vInfo->vfmt, SDL_HWSURFACE);
 	/* Check if there are any modes available */
-	if (rModes == (SDL_Rect**)0) 
+	if (rModes == (SDL_Rect**)0)
 	{
 	  if(!SettingsData.bWindowMode)
 	    rModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|SDL_SWSURFACE); //HWSURFACE didn't work. Try with SWSURFACE
 	  else
 	    rModes = SDL_ListModes(vInfo->vfmt, SDL_HWSURFACE);
-	
+
 	    //we really can't use HWSURFACE or SWSURFACE :(
-	    if (rModes == (SDL_Rect**)0) 
+	    if (rModes == (SDL_Rect**)0)
 	    {
 	      Log.write("No video modes available", cLog::eLOG_TYPE_ERROR);
 	      return -1;
@@ -1122,13 +1122,13 @@ int ReadMaxXml()
 		bRequestedMode=true;
 		Log.write(" => Found requested video mode :)", cLog::eLOG_TYPE_DEBUG);
 	      }
-	      
+
 	      if(rModes[i]->w == 640 && rModes[i]->h == 480)
 	      {
 		bFoundMinimalRes=true; //and we even found our default mode
 	      }
 	    }
-	    
+
 	    if(!bRequestedMode)
 	    {
 	      bool bFoundAlternate=false;
@@ -1141,7 +1141,7 @@ int ReadMaxXml()
 	      }
 	      else //uuh, we can't use our minimal video mode. let's hope we find a mode > 640x480 instead
 	      {
-		
+
 		for (int i=0; rModes[i]; ++i)
 		{
 		    if(rModes[i]->w > 640 && rModes[i]->h > 480)
@@ -1164,7 +1164,7 @@ int ReadMaxXml()
 	      }
 	    }
 	}
-	
+
 	//END SANITY CHECK SCREEN RES
 
 	if(SettingsData.bDebug) //Print settingslist to log
@@ -1211,7 +1211,7 @@ int ReadMaxXml()
 		Log.write ("Playercolor   == " + iToStr(SettingsData.iColor), cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
 		Log.write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Chunksize     == " + iToStr(SettingsData.iChunkSize), cLog::eLOG_TYPE_DEBUG);		
+		Log.write ("Chunksize     == " + iToStr(SettingsData.iChunkSize), cLog::eLOG_TYPE_DEBUG);
 		Log.write ("Frequency     == " + iToStr(SettingsData.iFrequency), cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.MusicMute?SON:SOFF;
 		Log.write ("Musicvolume   == " + iToStr(SettingsData.MusicVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
@@ -1258,27 +1258,27 @@ int GenerateMaxXml()
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "ColourDepth" );
-	element->SetAttribute ( "Num", "32");	
+	element->SetAttribute ( "Num", "32");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Intro" );
-	element->SetAttribute ( "YN", "Yes");	
+	element->SetAttribute ( "YN", "Yes");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Windowmode" );
-	element->SetAttribute ( "YN", "Yes");	
+	element->SetAttribute ( "YN", "Yes");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Fastmode" );
-	element->SetAttribute ( "YN", "Yes");	
+	element->SetAttribute ( "YN", "Yes");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PreScale" );
-	element->SetAttribute ( "YN", "No");	
+	element->SetAttribute ( "YN", "No");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "CacheSize" );
-	element->SetAttribute ( "Num", "400");	
+	element->SetAttribute ( "Num", "400");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Language" );
@@ -1360,7 +1360,7 @@ int GenerateMaxXml()
 		sUser = cHome;
 	}
 
-	
+
 	if(sUser.empty() != 1)
 	{
 		element->SetAttribute ( "Text", sUser.c_str());
@@ -1369,8 +1369,8 @@ int GenerateMaxXml()
 	{
 		element->SetAttribute ( "Text", "Commander");
 	}
-	
-	element->SetAttribute ( "Num", "0"); //default playercolor	
+
+	element->SetAttribute ( "Num", "0"); //default playercolor
 
 	netnode->LinkEndChild(element);
 
@@ -1413,7 +1413,7 @@ int GenerateMaxXml()
 	string sTmp ="";
 
 	SettingsData.sDataDir = searchData();
-	
+
 	sTmp = SettingsData.sDataDir;
 	element = new TiXmlElement ( "Gamedata" );
 	element->SetAttribute ( "Text", sTmp.c_str());
@@ -1450,7 +1450,7 @@ int GenerateMaxXml()
 	element = new TiXmlElement ( "Saves" );
 	element->SetAttribute ( "Text", sTmp.c_str());
 	pathsnode->LinkEndChild(element);
-	
+
 	element = new TiXmlElement ( "Sounds" );
 	element->SetAttribute ( "Text", "sounds");
 	pathsnode->LinkEndChild(element);
@@ -2597,7 +2597,7 @@ int getXMLNodeInt( TiXmlDocument &document, const char *path0, const char *path1
 	string tmpString;
 	ExTiXmlNode *pExXmlNode = NULL;
 	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
-	
+
 	string pathText = "";
 	if ( path0 ) pathText += (string)path0;
 	if ( path1 ) pathText += (string)"~" + path1;
@@ -2622,7 +2622,7 @@ float getXMLNodeFloat( TiXmlDocument &document, const char *path0, const char *p
 	string tmpString;
 	ExTiXmlNode *pExXmlNode = NULL;
 	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
-	
+
 	double tmpDouble;
 	string pathText = "";
 	if ( path0 ) pathText += (string)path0;
@@ -2856,7 +2856,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 		Data->produceHumans = abs( Data->needsHumans );
 		Data->needsHumans = 0;
 	} else Data->produceHumans = 0;
-	
+
 	Data->isStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Is_Stealth_On" );
 	Data->canDetectStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On" );
 
@@ -2955,7 +2955,7 @@ void LoadUnitGraphicData( sUnitData *Data, char const* directory )
 static int LoadClans()
 {
 	TiXmlDocument clansXml;
-	
+
 	string clansXMLPath = CLANS_XML;
 	if (FileExists (clansXMLPath.c_str ()) == false)
 		return 0;
@@ -2964,7 +2964,7 @@ static int LoadClans()
 		Log.write ("Can't load "+clansXMLPath, LOG_TYPE_ERROR);
 		return 0;
 	}
-	
+
 	TiXmlNode* xmlNode = clansXml.FirstChildElement ("Clans");
 	if (xmlNode == 0)
 	{
@@ -2974,21 +2974,21 @@ static int LoadClans()
 
 	TiXmlNode* clanNode = 0;
 	while (clanNode = xmlNode->IterateChildren (clanNode))
-	{		
+	{
 		TiXmlElement* clanElement = clanNode->ToElement ();
 		if (clanElement)
 		{
 			cClan* newClan = cClanData::instance ().addClan ();
 			string nameAttr = clanElement->Attribute ("Name");
 			newClan->setName (nameAttr);
-			
+
 			const TiXmlNode* descriptionNode = clanNode->FirstChild ("Description");
 			if (descriptionNode)
 			{
 				string descriptionString = descriptionNode->ToElement ()->GetText ();
 				newClan->setDescription (descriptionString);
 			}
-			
+
 			TiXmlNode* changedUnitStatsNode = 0;
 			while (changedUnitStatsNode = clanNode->IterateChildren ("ChangedUnitStat", changedUnitStatsNode))
 			{
@@ -3004,9 +3004,9 @@ static int LoadClans()
 					string idAttrStr (idAttr);
 					int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str ());
 					int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length ()).c_str ());
-					
+
 					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
-					
+
 					TiXmlNode* modificationNode = 0;
 					while (modificationNode = changedUnitStatsNode->IterateChildren (modificationNode))
 					{
@@ -3024,7 +3024,7 @@ static int LoadClans()
 					}
 				}
 			}
-			
+
 		}
 	}
 	return 1;
@@ -3229,7 +3229,7 @@ void setPaths()
 	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
 	SettingsData.sHome="";
 
-	#if MAC 
+	#if MAC
 	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
 	char * cHome = getenv("HOME"); //get $HOME on mac
 	if(cHome != NULL)
@@ -3239,7 +3239,7 @@ void setPaths()
 		SettingsData.sHome += PATH_DELIMITER;
 		SettingsData.sHome += ".maxr";
 		SettingsData.sHome += PATH_DELIMITER;
-	
+
 		// check whether home dir is set up and readable
 		if (FileExists (SettingsData.sHome.c_str ()) == false) // under mac everything is a file
 		{
@@ -3255,7 +3255,7 @@ void setPaths()
 	//this is also a good place to find out where the executable is located
 	SettingsData.sConfig = MAX_XML; //assume config in current working directory
 	return;
-	#elif WIN32 
+	#elif WIN32
 		//this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
@@ -3266,7 +3266,7 @@ void setPaths()
 	#else
 	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
 	bool bCreateConfigDir = false;
-	
+
 	char * cHome = getenv("HOME"); //get $HOME on linux
 	if(cHome != NULL)
 	{
@@ -3306,7 +3306,7 @@ void setPaths()
 		SettingsData.sHome="";
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
 	}
-	
+
 	//set new place for logs
 	SettingsData.sLog = SettingsData.sHome + SettingsData.sLog;
 	SettingsData.sNetLog = SettingsData.sHome + SettingsData.sNetLog;
@@ -3335,12 +3335,12 @@ void setPaths()
 				if(cPathToExe[i] == '/') //snip garbage after last PATH_DELIMITER + executable itself (is reported on some linux systems as well using /proc/self/exe
 					iPos = i;
 				if(cPathToExe[i] == '\0') //skip garbage that might lunger on heap after 0 termination
-					i = 255;	
+					i = 255;
 			}
-			
-			
+
+
 			SettingsData.sExePath = cPathToExe;
-			SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos); 
+			SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos);
 			SettingsData.sExePath += PATH_DELIMITER;
 
 			if(FileExists( (SettingsData.sExePath+"maxr").c_str() )) //check for binary itself in bin folder
@@ -3353,13 +3353,13 @@ void setPaths()
 				if(cPathToExe[iPos-1] == 'r' && cPathToExe[iPos-2] == 'x' && cPathToExe[iPos-3] == 'a' && cPathToExe[iPos-4] == 'm' )
 				{
 					SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos-5);
-					if(FileExists( (SettingsData.sExePath+"maxr").c_str() )) 
+					if(FileExists( (SettingsData.sExePath+"maxr").c_str() ))
 					{
 						Log.write("Path to binary is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
 					}
 				}
 			}
-			
+
 		}
 	}
 	else
@@ -3371,9 +3371,9 @@ void setPaths()
 	if(bCreateConfigDir)
 	{
 		//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
-		if(ReadMaxXml()==0) 
+		if(ReadMaxXml()==0)
 		{
-			
+
 		}
 		else
 		{
@@ -3387,7 +3387,7 @@ void setPaths()
 		else
 		{
 			Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
-		}	
+		}
 	}
 
 	cout << "\n";
@@ -3397,7 +3397,7 @@ void setPaths()
 string searchData(string sDataDirFromConf)
 {
 	string sPathToGameData = "";
-	#if MAC 
+	#if MAC
 		sPathToGameData =  SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
 	#elif WIN32
 		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
@@ -3406,9 +3406,9 @@ string searchData(string sDataDirFromConf)
 	#else
 	//BEGIN crude path validation to find gamedata
 	Log.write ( "Probing for data paths using default values:", cLog::eLOG_TYPE_INFO );
-	
+
 	#define PATHCOUNT 11
-	string sPathArray[PATHCOUNT] = { 
+	string sPathArray[PATHCOUNT] = {
 		BUILD_DATADIR, //most important position holds value of configure --prefix to gamedata in %prefix%/$(datadir)/maxr or default path if autoversion.h wasn't used
 		"/usr/local/share/maxr",
 		"/usr/games/maxr",
@@ -3423,7 +3423,7 @@ string searchData(string sDataDirFromConf)
 	};
 
 	/*
-	* Logic is: 
+	* Logic is:
 	* BUILD_DATADIR is default search path
 	* sDataDirFromConf overrides BUILD_DATADIR
 	* "$MAXRDATA overrides both
@@ -3455,14 +3455,14 @@ string searchData(string sDataDirFromConf)
 		string sInitFile = sPathArray[i];
 		sInitFile += PATH_DELIMITER;
 		sInitFile += "init.pcx";
-		if(FileExists( sInitFile.c_str() )) 
+		if(FileExists( sInitFile.c_str() ))
 		{
 			sPathToGameData = sPathArray[i];
 			sPathToGameData += PATH_DELIMITER;
 			break;
 		}
 	}
-	
+
 	if(sPathToGameData.empty()) //still empty? cry for mama - we couldn't locate any typical data folder
 	{
 		Log.write("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);

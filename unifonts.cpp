@@ -423,7 +423,7 @@ int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFont
 			drawString.erase ( 0, stringPart.length()-1 );
 			sText.erase ( 0, stringPart.length()-1 );
 		}
-		
+
 		// draw the rest of the line
 		showText ( rDest, drawString, fonttype, surface, encode );
 		rDest.y += getFontHeight ( fonttype );

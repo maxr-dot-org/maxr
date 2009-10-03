@@ -30,15 +30,15 @@ class cClanUnitStat
 {
 public:
 	cClanUnitStat (int unitIdFirstPart, int unitIdSecPart) : unitIdFirstPart (unitIdFirstPart), unitIdSecPart (unitIdSecPart) {}
-	
+
 	void addModification (std::string area, int value);
 
 	int getUnitIdFirstPart () const { return unitIdFirstPart; }
 	int getUnitIdSecPart () const { return unitIdSecPart; }
-	
+
 	int getModificationValue (std::string key) const;
 	bool hasModification (std::string key) const;
-	
+
 	std::string getClanStatsDescription () const;
 
 	//-------------------------------------------------------------------------
@@ -54,15 +54,15 @@ class cClan
 public:
 	cClan (int num) : num (num) {}
 	virtual ~cClan ();
-	
+
 	void setDescription (std::string newDescription);
 	const std::string& getDescription () const { return description; }
-	
+
 	std::vector<std::string> getClanStatsDescription () const;
 
 	void setName (std::string newName);
 	const std::string& getName () const { return name; }
-	
+
 	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
 	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
@@ -82,16 +82,16 @@ class cClanData
 public:
 	static cClanData& instance ();
 	virtual ~cClanData ();
-	
+
 	cClan* addClan ();
 	cClan* getClan (unsigned int num);
 	int getNrClans () const { return (int) clans.Size (); }
-	
+
 	//-------------------------------------------------------------------------
 private:
 	cClanData () {}
-	
-	cList<cClan*> clans;	
+
+	cList<cClan*> clans;
 };
 
 

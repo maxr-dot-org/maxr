@@ -2110,7 +2110,7 @@ void cBuilding::menuReleased()
 	if ( exeNr != selMenuNr ) return;
 
 	if ( bIsBeeingAttacked ) return;
-	
+
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
 	// Angriff:

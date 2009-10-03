@@ -234,7 +234,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//rotate vehicles to the right direction for building/clearing
 	if ( ( IsBuilding || IsClearing ) && Client->timer100ms )
 	{
-		if ( data.isBig ) 
+		if ( data.isBig )
 			dir = 0;
 		else
 			RotateTo ( 0 );
@@ -268,7 +268,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//calculate screen position
 	int ox = (int) (OffX * Client->gameGUI.getZoom());
 	int oy = (int) (OffY * Client->gameGUI.getZoom());
-	
+
 	if ( !IsBuilding && !IsClearing )
 	{
 		screenPosition.x += ox;
@@ -297,7 +297,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		dest = screenPosition;
 		drawingSurface = buffer;
 	}
-	
+
 	if ( bDraw )
 	{
 		render ( drawingSurface, dest );
@@ -477,7 +477,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		d.x = screenPosition.x + 1;
 		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
 	}
-	
+
 	//draw health bar
 	if ( Client->gameGUI.hitsChecked() )
 		drawHealthBar();
@@ -538,7 +538,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		tmp = dest;
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
-		
+
 		return;
 	}
 
@@ -580,7 +580,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
 		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
 
-		
+
 		// draw shadow
 		if ( FlightHigh > 0 )
 		{
@@ -638,7 +638,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	}
 
 	blittAlphaSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -858,7 +858,7 @@ int cVehicle::refreshData ()
 		if ( BuildRounds == 0 )
 		{
 			Server->addReport ( BuildingTyp, false, owner->Nr );
-			
+
 			//handle pathbuilding
 			//here the new building is added (if possible) and the move job to the next field is generated
 			//the new build event is generated in cServer::handleMoveJobs()
@@ -1009,7 +1009,7 @@ void cVehicle::DrawPath ()
 
 		dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * mx;
 		dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * my;
-		
+
 		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-Client->gameGUI.getTileSize()], NULL, buffer, &dest );
 		return;
 	}
@@ -1369,7 +1369,7 @@ void cVehicle::menuReleased ()
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			
+
 			cStorageMenu storageMenu ( StoredVehicles, this, NULL );
 			storageMenu.show();
 			return;
@@ -1978,7 +1978,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 
 	if ( override )
 		return true;
-	
+
 	cVehicle *targetVehicle = NULL;
 	cBuilding *targetBuilding = NULL;
 
@@ -2204,7 +2204,7 @@ void cVehicle::FindNextband ()
 	{
 		pos[0] = true;
 	}
-	
+
 	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
 	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY - 1)
 	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    ) )
@@ -2453,7 +2453,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 bool cVehicle::InSentryRange ()
 {
 	sSentry *Sentry;
-	int iOff; 
+	int iOff;
 	cPlayer *Player;
 
 	iOff = PosX + PosY * Server->Map->size;
@@ -2752,22 +2752,22 @@ void cVehicle::upgradeToCurrentVersion ()
 {
 	sUnitData& upgradeVersion = owner->VehicleData[typ->nr];
 	data.version = upgradeVersion.version;
-	
+
 	if (data.hitpointsCur == data.hitpointsMax)
 		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
 	data.hitpointsMax = upgradeVersion.hitpointsMax;
-	
+
 	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
-	
+
 	data.speedMax = upgradeVersion.speedMax;
-	
+
 	data.armor = upgradeVersion.armor;
 	data.scan = upgradeVersion.scan;
 	data.range = upgradeVersion.range;
 	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
 	data.buildCosts = upgradeVersion.buildCosts;
-	
+
 	GenerateName();
 }
 
@@ -2775,13 +2775,13 @@ void cVehicle::upgradeToCurrentVersion ()
 bool cVehicle::layMine ()
 {
 	if ( data.storageResCur <= 0 ) return false;
-	
-	if ( ( data.factorSea > 0 && data.factorGround == 0 ) ) 
+
+	if ( ( data.factorSea > 0 && data.factorGround == 0 ) )
 	{
 		if ( !Server->Map->possiblePlaceBuilding( *specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
 		Server->addUnit(PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
 	}
-	else 
+	else
 	{
 		if ( !Server->Map->possiblePlaceBuilding( *specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
 		Server->addUnit(PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
@@ -2819,7 +2819,7 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 	if ( !steal && !data.canDisable ) return false;
 
 	int off, boff;
-	off = x + y * map->size; 
+	off = x + y * map->size;
 	boff = PosX + PosY * map->size;
 
 	if ( !isNextTo ( x, y ) ) return false;
@@ -2841,7 +2841,7 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 
 		if ( result == true ) return true;
 	}
-	
+
 	if ( building )
 	{
 		if ( !building->owner ) result = false;
@@ -3041,7 +3041,7 @@ void cVehicle::makeDetection()
 			}
 		}
 	}
-		
+
 	//detect other units
 	if ( data.canDetectStealthOn )
 	{
@@ -3051,7 +3051,7 @@ void cVehicle::makeDetection()
 			for ( int y = PosY - data.scan; y < PosY + data.scan; y++)
 			{
 				if ( y < 0 || y >= Server->Map->size ) continue;
-				
+
 				int offset = x + y * Server->Map->size;
 				cVehicle* vehicle = Server->Map->fields[offset].getVehicles();
 				cBuilding* building = Server->Map->fields[offset].getMine();

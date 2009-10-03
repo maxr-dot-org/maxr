@@ -34,13 +34,13 @@ namespace MapDownload
 
 	/** @return the path to the map (in user or factory maps directory), or empty string if not found */
 	std::string getExistingMapFilePath (std::string mapName);
-	
+
 	/** @return a 32 bit checksum of the given map */
 	Sint32 calculateCheckSum (std::string mapName);
 };
 
 //-------------------------------------------------------------------------------
-class cMapReceiver 
+class cMapReceiver
 {
 public:
 	cMapReceiver (std::string mapName, int mapSize);
@@ -52,8 +52,8 @@ public:
 	std::string getMapName () const { return mapName; }
 	int getMapSize () const { return mapSize; }
 	int getBytesReceived () const { return bytesReceived; }
-	
-	
+
+
 //-------------------------------------------------------------------------------
 private:
 	std::string mapName;
@@ -68,9 +68,9 @@ class cMapSender
 public:
 	cMapSender (int toSocket, std::string mapName);
 	virtual ~cMapSender ();
-	
+
 	int getToSocket () const { return toSocket; }
-	
+
 	void runInThread (cNetworkHostMenu* hostMenu);
 //-------------------------------------------------------------------------------
 private:
@@ -80,12 +80,12 @@ private:
 	int bytesSent;
 	char* sendBuffer;
 	cNetworkHostMenu* hostMenu;
-	
+
 	SDL_Thread* thread;
 	bool canceled;
 
 	friend int mapSenderThreadFunction (void* data);
-	
+
 	void run ();
 	bool sendMsg (cNetMessage* msg);
 };

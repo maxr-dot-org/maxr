@@ -60,7 +60,7 @@ void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPl
 	if ( !gameData->savegame.empty() ) message->pushString ( saveGameString );
 	message->pushBool ( !gameData->savegame.empty() );
 
-	if ( gameData->map ) 
+	if ( gameData->map )
 	{
 		message->pushInt32 (MapDownload::calculateCheckSum (gameData->map->MapName));
 		message->pushString ( gameData->map->MapName );
@@ -103,10 +103,10 @@ void sendIdentification ( sMenuPlayer *player )
 void sendClan ( int clanNr, int ownerNr )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_CLAN );
-	
+
 	message->pushInt16( clanNr );
 	message->pushInt16( ownerNr );
-	
+
 	// the host has not to send the message over tcpip and since he has
 	// always the playernumber 0 we can handle the message directly
 	if ( ownerNr == 0 && ActiveMenu )
@@ -114,7 +114,7 @@ void sendClan ( int clanNr, int ownerNr )
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
 	}
-	else cMenu::sendMessage ( message );	
+	else cMenu::sendMessage ( message );
 }
 
 void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr )
@@ -280,7 +280,7 @@ void sendReselectLanding ( eLandingState state, sMenuPlayer *player )
 {
 	cNetMessage* message = new cNetMessage(MU_MSG_RESELECT_LANDING);
 	message->pushChar( state );
-	
+
 	if ( player->nr == 0 && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
@@ -346,7 +346,7 @@ void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 				msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
 				iCount = 0;
 			}
-			
+
 			sUnitData *currentVersion;
 			if ( unitIndex < UnitsData.getNrVehicles () ) currentVersion = &player->VehicleData[unitIndex];
 			else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles ()];
@@ -363,16 +363,16 @@ void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player )
 			msg->pushInt16 (currentVersion->ID.iFirstPart);
 
 			iCount++; // msg contains one more upgrade struct
-			
+
 			// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
-			if (msg->iLength + 38 > PACKAGE_LENGTH) 
+			if (msg->iLength + 38 > PACKAGE_LENGTH)
 			{
 				msg->pushInt16 (iCount);
 				msg->pushInt16 (player->Nr);
 				Client->sendNetMessage (msg);
 				msg = NULL;
 			}
-			
+
 		}
 	}
 	if (msg != NULL)

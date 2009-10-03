@@ -205,7 +205,7 @@ EX cUnicodeFont *font;
  * The pages to assign the iso glyphes to their unicode matches have
  * been taken from the "libiconv" project.
  * The author is "Bruno Haible" <bruno@clisp.org>
- * To get more information about libiconv vist 
+ * To get more information about libiconv vist
  * http://www.gnu.org/software/libiconv/
  */
 

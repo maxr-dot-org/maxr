@@ -42,7 +42,7 @@ public:
 	std::string sNetLog;
 	/**sHome is where the user has his $HOME dir - set in setPaths() **/
 	std::string sHome;
-	
+
 	//START-Node
 	/**screen width in pixels */
 	int iScreenW;
@@ -62,7 +62,7 @@ public:
 	std::string sLanguage;
 	/**cache size*/
 	unsigned int iCacheSize;
-	
+
 	//GAME-Node
 	/** enable debug*/
 	bool bDebug;
@@ -84,7 +84,7 @@ public:
 	bool bMakeTracks;
 	/**scrollspeed on map */
 	int iScrollSpeed;
-	
+
 	//NET
 	/**Last/default ip used for network game */
 	std::string sIP; //string? why not int array? --beko
@@ -94,7 +94,7 @@ public:
 	std::string sPlayerName;
 	/**Last color choosen by player*/
 	int iColor;
-	
+
 	//SOUND
 	/**sound enabled*/
 	bool bSoundEnabled;
@@ -114,7 +114,7 @@ public:
 	bool SoundMute;
 	/**mute voices */
 	bool VoiceMute;	// Muteeigenschaften der Sounds
-	
+
 	//PATHS
 	std::string sFontPath;			// Path to the fonts
 	std::string sFxPath;				// Path to the effects
@@ -128,7 +128,7 @@ public:
 	std::string sVehiclesPath;			// Path to the vehicles
 	std::string sBuildingsPath;			// Path to the buildings
 	std::string sMVEPath;			// Path to the in-game movies (*.mve)
-	
+
 	unsigned int Checksum;		// Die Checksumme ¬∏ber alle Eigenschaften - NOT IN XML-file (yet?)!
 };
 

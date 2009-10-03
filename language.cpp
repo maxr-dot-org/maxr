@@ -371,10 +371,10 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 		szLanguageCode = "eng";
 	}else
 	{
-		strFileName = m_szLanguageFile;	
+		strFileName = m_szLanguageFile;
 	}
 
-	
+
 
 	// Load the file
 	if( !m_XmlDoc.LoadFile( strFileName.c_str() ))

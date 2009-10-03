@@ -175,7 +175,7 @@ void cDialogLicence::generateLicenceTexts()
 	You should have received a copy of the GNU General Public License \
 	along with this program; if not, write to the Free Software \
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA";
-	
+
 	//open AUTHOR
 	string sAuthors;
 #ifdef WIN32
@@ -187,7 +187,7 @@ void cDialogLicence::generateLicenceTexts()
 #else
 		sAuthors = SettingsData.sDataDir + PATH_DELIMITER + "AUTHORS";
 #endif
-	
+
 	sLicence4 = "";
 	char line[72];
 
@@ -466,7 +466,7 @@ void cDialogPreferences::saveValues()
 	SaveOption ( SAVETYPE_TRACKS );
 	// TODO: remove game
 	SaveOption ( SAVETYPE_NAME );
-	SaveOption ( SAVETYPE_INTRO );	
+	SaveOption ( SAVETYPE_INTRO );
 	SaveOption ( SAVETYPE_WINDOW );
 
 	// save resolution

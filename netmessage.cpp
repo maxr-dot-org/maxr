@@ -84,13 +84,13 @@ SDL_Event* cNetMessage::getGameEvent()
 void cNetMessage::pushChar( char c)
 {
 	if ( iLength > PACKAGE_LENGTH - 1 )
-	{ 
+	{
 		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
 
 	data[iLength] = c;
-	iLength ++;	
+	iLength ++;
 }
 
 char cNetMessage::popChar()
@@ -107,7 +107,7 @@ char cNetMessage::popChar()
 void cNetMessage::pushInt16( Sint16 i )
 {
 	if ( iLength > PACKAGE_LENGTH - 2 )
-	{ 
+	{
 		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
@@ -130,7 +130,7 @@ Sint16 cNetMessage::popInt16()
 void cNetMessage::pushInt32( Sint32 i )
 {
 	if ( iLength > PACKAGE_LENGTH - 4 )
-	{ 
+	{
 		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
@@ -155,7 +155,7 @@ void cNetMessage::pushString( string s )
 	int stringLength = (int) s.length() + 2;
 
 	if ( iLength > PACKAGE_LENGTH - stringLength )
-	{ 
+	{
 		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
@@ -170,7 +170,7 @@ void cNetMessage::pushString( string s )
 	const char* c = s.c_str();
 	memcpy( data + iLength, c, stringLength );
 
-	iLength += stringLength;	
+	iLength += stringLength;
 }
 
 string cNetMessage::popString()
@@ -201,7 +201,7 @@ void cNetMessage::pushBool( bool b )
 {
 
 	if ( iLength > PACKAGE_LENGTH - 1 )
-	{ 
+	{
 		Log.write( "Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR );
 		return;
 	}
@@ -512,19 +512,19 @@ string cNetMessage::getTypeAsString()
 	case GAME_EV_UPGRADED_VEHICLES:
 		return string("GAME_EV_UPGRADED_VEHICLES");
 	case GAME_EV_RESEARCH_SETTINGS:
-		return string("GAME_EV_RESEARCH_SETTINGS");			
+		return string("GAME_EV_RESEARCH_SETTINGS");
 	case GAME_EV_RESEARCH_LEVEL:
 		return string("GAME_EV_RESEARCH_LEVEL");
 	case GAME_EV_REFRESH_RESEARCH_COUNT:
 		return string("GAME_EV_REFRESH_RESEARCH_COUNT");
 	case GAME_EV_WANT_VEHICLE_UPGRADE:
-		return string("GAME_EV_WANT_VEHICLE_UPGRADE");			
+		return string("GAME_EV_WANT_VEHICLE_UPGRADE");
 	case GAME_EV_WANT_BUY_UPGRADES:
-		return string("GAME_EV_WANT_BUY_UPGRADES");			
+		return string("GAME_EV_WANT_BUY_UPGRADES");
 	case GAME_EV_WANT_BUILDING_UPGRADE:
-		return string("GAME_EV_WANT_BUILDING_UPGRADE");			
+		return string("GAME_EV_WANT_BUILDING_UPGRADE");
 	case GAME_EV_WANT_RESEARCH_CHANGE:
-		return string("GAME_EV_WANT_RESEARCH_CHANGE");			
+		return string("GAME_EV_WANT_RESEARCH_CHANGE");
 	case GAME_EV_AUTOMOVE_STATUS:
 		return string("GAME_EV_AUTOMOVE_STATUS");
 	case GAME_EV_SET_AUTOMOVE:

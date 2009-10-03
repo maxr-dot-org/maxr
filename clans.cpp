@@ -55,44 +55,44 @@ string cClanUnitStat::getClanStatsDescription () const
 	if (data)
 	{
 		result = string (data->name) + ": ";
-		
+
 		bool first = true;
-		if (hasModification ("Damage")) 
+		if (hasModification ("Damage"))
 		{
 			if (first == false)
 				result += ", ";
 			result += "Attack +" + iToStr (getModificationValue ("Damage") - data->damage);
 			first = false;
 		}
-		if (hasModification ("Range")) 
+		if (hasModification ("Range"))
 		{
 			if (first == false)
 				result += ", ";
 			result += "Range +" + iToStr (getModificationValue ("Range") - data->range);
 			first = false;
 		}
-		if (hasModification ("Armor")) 
+		if (hasModification ("Armor"))
 		{
 			if (first == false)
 				result += ", ";
 			result += "Armor +" + iToStr (getModificationValue ("Armor") - data->armor);
 			first = false;
 		}
-		if (hasModification ("Hitpoints")) 
+		if (hasModification ("Hitpoints"))
 		{
 			if (first == false)
 				result += ", ";
 			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
 			first = false;
 		}
-		if (hasModification ("Scan")) 
+		if (hasModification ("Scan"))
 		{
 			if (first == false)
 				result += ", ";
 			result += "Scan +" + iToStr (getModificationValue ("Scan") - data->scan);
 			first = false;
 		}
-		if (hasModification ("Speed")) 
+		if (hasModification ("Speed"))
 		{
 			if (first == false)
 				result += ", ";
@@ -110,7 +110,7 @@ string cClanUnitStat::getClanStatsDescription () const
 	}
 	return result;
 }
-			 			 
+
 
 //--------------------------------------------------
 cClan::~cClan ()

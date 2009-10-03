@@ -71,14 +71,14 @@ int main ( int argc, char *argv[] )
 		Log.write ( sBuild , cLog::eLOG_TYPE_INFO );
 		#if HAVE_AUTOVERSION_H
 			string sBuildVerbose = "On: ";
-			sBuildVerbose += BUILD_UNAME_S; 
-			sBuildVerbose += " "; 
+			sBuildVerbose += BUILD_UNAME_S;
+			sBuildVerbose += " ";
 			sBuildVerbose += BUILD_UNAME_R;
 			Log.write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
 
 			sBuildVerbose = "From: ";
 			sBuildVerbose += BUILD_USER;
-			sBuildVerbose += " at "; 
+			sBuildVerbose += " at ";
 			sBuildVerbose += BUILD_UNAME_N;
 			Log.write ( sBuildVerbose, cLog::eLOG_TYPE_INFO );
 		#endif
@@ -170,10 +170,10 @@ void showSplash()
 {
         const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
         Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
-	
+
 	buffer = LoadPCX(SPLASH_BACKGROUND);
 	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL );
-	
+
 	//set window to center of screen.
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
@@ -185,11 +185,11 @@ void showSplash()
 	{
 	  Log.write("Requested colordepth from config is higher than the display has!", cLog::eLOG_TYPE_WARNING);
 	}
-	
+
 	//made it far enough to start game
 	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, OtherData.iSurface|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-	
+
 	string sVersion = PACKAGE_NAME; sVersion += " ";
 	sVersion += PACKAGE_VERSION; sVersion += " ";
 	sVersion += PACKAGE_REV; sVersion += " ";
@@ -323,7 +323,7 @@ template<typename Type> void drawStetchedLine ( Type *srcPixelData, int srcWidth
 		}
 		while ( i >= destWidth );
 	};
-	return; 
+	return;
 }
 
 SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int height )
@@ -512,7 +512,7 @@ void setPixel( SDL_Surface* surface, int x, int y, int iColor )
 	if ( x < 0 || x >= surface->w || y < 0 || y >= surface->h ) return;
 	//check the clip rect
 	if ( x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w || y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h ) return;
-	
+
 	((unsigned int*) surface->pixels)[x + y * surface->w] = iColor;
 }
 
@@ -604,7 +604,7 @@ sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner )
 	{
 		for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 		{
-			if ( Owner->VehicleData[i].ID == *this ) 
+			if ( Owner->VehicleData[i].ID == *this )
 				return &Owner->VehicleData[i];
 		}
 	}
@@ -612,11 +612,11 @@ sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner )
 	{
 		for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 		{
-			if ( Owner->BuildingData[i].ID == *this ) 
+			if ( Owner->BuildingData[i].ID == *this )
 				return &Owner->BuildingData[i];
-		}		
+		}
 	}
-	return 0;	
+	return 0;
 }
 
 //----------------------------------------------------------------------------------
@@ -652,7 +652,7 @@ bool sID::operator ==(const sID &ID) const
 
 //----------------------------------------------------------------------------------
 cUnitsData::cUnitsData ()
-: initializedClanUnitData (false) 
+: initializedClanUnitData (false)
 {
 }
 
@@ -661,7 +661,7 @@ sVehicle& cUnitsData::getVehicle (int nr, int clan)
 {
 	if (initializedClanUnitData == false)
 		initializeClanUnitData ();
-	
+
 	if (clan < 0 || clan > (int) clanUnitDataVehicles.size ())
 	{
 		return vehicle[nr];
@@ -674,7 +674,7 @@ sBuilding& cUnitsData::getBuilding (int nr, int clan)
 {
 	if (initializedClanUnitData == false)
 		initializeClanUnitData ();
-	
+
 	if (clan < 0 || clan > (int) clanUnitDataBuildings.size ())
 	{
 		return building[nr];
@@ -690,15 +690,15 @@ void cUnitsData::initializeClanUnitData ()
 	{
 		cClan* clan = clanData.getClan (clanIdx);
 		if (clan == 0)
-			continue; 
-		
+			continue;
+
 		vector<sVehicle> clanListVehicles;
 		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.Size (); vehicleIdx++)
 		{
 			// make a copy of the vehicle's stats
 			sVehicle curVehicle = vehicle[vehicleIdx];
 			clanListVehicles.push_back (curVehicle);
-			
+
 			cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID.iFirstPart, curVehicle.data.ID.iSecondPart);
 			if (changedStat != 0)
 			{
@@ -719,14 +719,14 @@ void cUnitsData::initializeClanUnitData ()
 			}
 		}
 		clanUnitDataVehicles.push_back (clanListVehicles);
-		
+
 		vector<sBuilding> clanListBuildings;
 		for (unsigned int buildingIdx = 0; buildingIdx < building.Size (); buildingIdx++)
 		{
 			// make a copy of the building's stats
 			sBuilding curBuilding = building[buildingIdx];
 			clanListBuildings.push_back (curBuilding);
-			
+
 			cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID.iFirstPart, curBuilding.data.ID.iSecondPart);
 			if (changedStat != 0)
 			{
@@ -762,26 +762,26 @@ sUnitData::sUnitData()
 	shotsMax = 0;
 	shotsCur = 0;
 	range = 0;
-	damage = 0;	
+	damage = 0;
 	canAttack = 0;
 	canDriveAndFire = false;
 
 	buildCosts = 0;
 	maxBuildFactor = 0;
-	
+
 	canBuildPath = false;
 	canBuildRepeat = false;
 	buildIntern = false;
-	
+
 	// Movement
 	speedMax = 0;
 	speedCur = 0;
-	
+
 	factorGround = 0.0f;
 	factorSea = 0.0f;
 	factorAir = 0.0f;
 	factorCoast = 0.0f;
-	
+
 	// Abilities
 	isBig = false;
 	connectsToBase = false;
@@ -803,30 +803,30 @@ sUnitData::sUnitData()
 	doesSelfRepair = false;
 	convertsGold = 0;
 	canSelfDestroy = false;
-		
-	canMineMaxRes = 0;		
+
+	canMineMaxRes = 0;
 	needsMetal = 0;
 	needsOil = 0;
 	needsEnergy = 0;
 	needsHumans = 0;
 	produceEnergy = 0;
 	produceHumans = 0;
-		
+
 	isStealthOn = 0;
 	canDetectStealthOn = 0;
 
 	surfacePosition = SURFACE_POS_BENEATH_SEA;
 	canBeOverbuild = OVERBUILD_TYPE_NO;
-		
+
 	canBeLandedOn = false;
 	canWork = false;
 	explodesOnContact = false;
 	isHuman = false;
-		
+
 	// Storage
 	storageResMax = 0;
 	storageResCur = 0;
-	storeResType = STORE_RES_NONE;		
+	storeResType = STORE_RES_NONE;
 	storageUnitsMax = 0;
 	storageUnitsCur = 0;
 	storeUnitsImageType = STORE_UNIT_IMG_NONE;
@@ -838,13 +838,13 @@ sUnitData::sUnitData()
 	hasBetonUnderground = false;
 	hasPlayerColor = false;
 	hasOverlay = false;
-		
+
 	buildUpGraphic = false;
 	animationMovement = false;
 	powerOnGraphic = false;
 	isAnimated = false;
 	makeTracks = false;
-		
+
 	isConnectorGraphic = false;
 	hasFrames = 0;
 }
@@ -922,7 +922,7 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 	}
 
 
-	if ( width <= 0 || height <= 0 ) 
+	if ( width <= 0 || height <= 0 )
 	{
 		dstrect->w = 0;
 		dstrect->h = 0;
@@ -931,7 +931,7 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 
 	if ( SDL_MUSTLOCK(src) ) SDL_LockSurface( src );
 	if ( SDL_MUSTLOCK(dst) ) SDL_LockSurface( dst );
-	
+
 	//setup needed variables
 	Uint32 srcAlpha = src->format->alpha;
 	int srmask = src->format->Rmask;
@@ -948,7 +948,7 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 	Uint32 colorKey = src->format->colorkey;
 	bool useColorKey = (src->flags & SDL_SRCCOLORKEY) != 0;
 
-	
+
 	Uint32* dstPixel = ((Uint32*)dst->pixels) + dstrect->x + dstrect->y * dst->w;
 	Uint32* srcPixel = ((Uint32*)src->pixels) + srcrect->x + srcrect->y * src->w;
 
@@ -983,7 +983,7 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 				g /= a;
 				b /= a;
 			}
-			
+
 			r = r & drmask;
 			g = g & dgmask;
 			b = b & dbmask;

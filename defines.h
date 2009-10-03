@@ -40,7 +40,7 @@
 #ifdef _MSC_VER
 	#define CHECK_MEMORY //_CrtCheckMemory();
 #else
-	#define CHECK_MEMORY 
+	#define CHECK_MEMORY
 #endif
 
 #endif
@@ -114,7 +114,7 @@
 	#define BUILD_DATADIR "/usr/share/maxr"
 	// Builddate: Mmm DD YYYY HH:MM:SS
 	#define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
-	#ifdef RELEASE 
+	#ifdef RELEASE
 		#define PACKAGE_REV "Releaseversion"
 	#else
 		#define PACKAGE_REV "SVN Rev 2398"

@@ -2175,9 +2175,9 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	{
 		menu->materialBar->setMaximalValue ( vehicle->data.storageResMax );
 		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
-		
+
 		cMenuMaterialBar::eMaterialBarTypes type;
-		switch(vehicle->data.storeResType) 
+		switch(vehicle->data.storeResType)
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
 			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
@@ -3515,7 +3515,7 @@ void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 	int received = mapReceiver->getBytesReceived ();
 	int finished = (received * 100) / size;
 	ostringstream os;
-	
+
 	os << lngPack.i18n ( "Text~Multiplayer~MapDL_Percent", iToStr(finished) );
 	mapLabel->setText (os.str ());
 	draw ();

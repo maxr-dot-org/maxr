@@ -45,7 +45,7 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 		if ( targetVehicle && targetVehicle->FlightHigh > 0 ) targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
-	
+
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
 	}
 	else if ( attackMode & TERRAIN_GROUND )
@@ -170,7 +170,7 @@ void cServerAttackJob::lockTarget(int offset)
 		else
 			attackMode = TERRAIN_GROUND;
 	}
-	
+
 	if ( !isAir )
 	{
 		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
@@ -210,7 +210,7 @@ void cServerAttackJob::lockTarget(int offset)
 			message->pushInt32 ( 0 );
 		}
 		message->pushInt32( offset );
-		message->pushBool ( isAir ); 
+		message->pushBool ( isAir );
 
 		Server->sendNetMessage( message, player->Nr );
 	}
@@ -232,7 +232,7 @@ void cServerAttackJob::lockTargetCluster()
 		}
 	}
 }
-			
+
 
 void cServerAttackJob::sendFireCommand()
 {
@@ -241,7 +241,7 @@ void cServerAttackJob::sendFireCommand()
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 		if ( !player->ScanMap[iAgressorOff] ) continue;
-		
+
 		if ( vehicle )
 		{
 			if ( vehicle->owner == player ) continue;
@@ -251,7 +251,7 @@ void cServerAttackJob::sendFireCommand()
 		else
 		{
 			if ( building->owner == player ) continue;
-			
+
 			building->setDetectedByPlayer( player );
 		}
 	}
@@ -333,7 +333,7 @@ void cServerAttackJob::sendFireCommand()
 			message->pushChar ( vehicle?vehicle->data.muzzleType:building->data.muzzleType );
 			message->pushInt32( 0 ); //don't send ID, because agressor is not in sight
 			message->pushInt16( iID );
-			
+
 			Server->sendNetMessage( message, player->Nr );
 		}
 	}
@@ -346,7 +346,7 @@ void cServerAttackJob::clientFinished( int playerNr )
 		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
 	}
 
-	Log.write( " Server: waiting for " + iToStr((int)executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG ); 
+	Log.write( " Server: waiting for " + iToStr((int)executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG );
 
 	if (executingClients.Size() == 0)
 	{
@@ -467,7 +467,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
 
 	if ( !isAir )
-	{	
+	{
 		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
@@ -509,7 +509,7 @@ void cServerAttackJob::makeImpactCluster()
 
 	// 1/3 damage
 	damage = clusterDamage / 3;
-	makeImpact( PosX - 2, PosY     );	
+	makeImpact( PosX - 2, PosY     );
 	makeImpact( PosX + 2, PosY     );
 	makeImpact( PosX    , PosY - 2 );
 	makeImpact( PosX    , PosY + 2 );
@@ -543,14 +543,14 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 	if ( ID != 0 )
 	{
 		cVehicle* vehicle = Client->getVehicleFromID( ID );
-		if ( vehicle == NULL ) 
+		if ( vehicle == NULL )
 		{
 			Log.write(" Client: vehicle with ID " + iToStr(ID) + " not found", cLog::eLOG_TYPE_NET_ERROR );
 			return;	//we are out of sync!!!
 		}
 
 		vehicle->bIsBeeingAttacked = true;
-		
+
 		//synchonize position
 		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
 		{
@@ -790,11 +790,11 @@ void cClientAttackJob::playMuzzle()
 		case sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
 		{
 			if ( wait++!=0 ) return;
-			
+
 			int PosX = iAgressorOffset%Client->Map->size;
 			int PosY = iAgressorOffset/Client->Map->size;
 			Client->addFX ( fxRocket, PosX*64, PosY*64, this, iTargetOffset, iFireDir );
-			
+
 			break;
 		}
 		case sUnitData::MUZZLE_TYPE_MED:
@@ -960,7 +960,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		}
 		else
 		{
-			
+
 			unitID = targetBuilding->data.ID;
 			targetBuilding->data.hitpointsCur = remainingHP;
 
@@ -1009,7 +1009,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 
 	//clean up
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
-	
+
 	if ( !isAir )
 	{
 		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();

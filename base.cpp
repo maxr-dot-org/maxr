@@ -133,10 +133,10 @@ void sSubBase::setMetalProd( int i )
 {
 	int max = getMaxAllowedMetalProd();
 
-	if ( i < 0 ) 
+	if ( i < 0 )
 		i = 0;
 
-	if ( i > max ) 
+	if ( i > max )
 		i = max;
 
 	MetalProd = i;
@@ -146,10 +146,10 @@ void sSubBase::setGoldProd( int i )
 {
 	int max = getMaxAllowedGoldProd();
 
-	if ( i < 0 ) 
+	if ( i < 0 )
 		i = 0;
 
-	if ( i > max ) 
+	if ( i > max )
 		i = max;
 
 	GoldProd = i;
@@ -159,10 +159,10 @@ void sSubBase::setOilProd( int i )
 {
 	int max = getMaxAllowedOilProd();
 
-	if ( i < 0 ) 
+	if ( i < 0 )
 		i = 0;
 
-	if ( i > max ) 
+	if ( i > max )
 		i = max;
 
 	OilProd = i;
@@ -194,7 +194,7 @@ int sSubBase::calcMaxProd( int ressourceType )
 		cBuilding* building = buildings[i];
 
 		if ( !(building->data.canMineMaxRes > 0 && building->IsWorking) ) continue;
-		
+
 		switch ( ressourceType )
 		{
 		case RES_METAL:
@@ -254,7 +254,7 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 	}
 
 
-	//when calculating the maximum allowed production for ressource A, the algo tries to distribute 
+	//when calculating the maximum allowed production for ressource A, the algo tries to distribute
 	// the ressources B and C so that the maximum possible production capacity is left over for A.
 	//the actual production values of each mine are not saved, because they are not needed.
 
@@ -273,7 +273,7 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 		//how much of C can be produced in this mine, without decreasing the possible production of A and B?
 		amount = min( building->*ressourceProdC, building->data.canMineMaxRes - building->*ressourceProdA - building->*ressourceProdB );
 		if ( amount > 0 ) ressourceToDistributeC -= amount;
-		
+
 	}
 
 	if ( ressourceToDistributeB < 0 ) ressourceToDistributeB = 0;
@@ -317,7 +317,7 @@ int sSubBase::calcMaxAllowedProd( int ressourceType )
 
 bool sSubBase::increaseEnergyProd( int i )
 {
-	
+
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
 	cList<cBuilding*> onlineStations;
 	cList<cBuilding*> onlineGenerators;
@@ -365,7 +365,7 @@ bool sSubBase::increaseEnergyProd( int i )
 		stations++;
 		generators = 0;
 	}
-	
+
 	if ( stations > availableStations )
 	{
 		return false;	//not enough free energy production capacity
@@ -373,7 +373,7 @@ bool sSubBase::increaseEnergyProd( int i )
 
 	//check available fuel
 	int neededFuel = stations * 6 + generators * 2;
-	if ( neededFuel > Oil + getMaxOilProd() ) 
+	if ( neededFuel > Oil + getMaxOilProd() )
 	{
 		//not possible to produce enough fuel
 		sendChatMessageToClient("Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
@@ -803,12 +803,12 @@ void sSubBase::prepareTurnend()
 void sSubBase::makeTurnend()
 {
 	prepareTurnend();
-	
+
 	//produce ressources
 	addOil ( OilProd - OilNeed );
 	addMetal (MetalProd - MetalNeed );
 	addGold ( GoldProd - GoldNeed );
-	
+
 	//produce credits
 	if ( GoldNeed )
 	{
@@ -844,7 +844,7 @@ void sSubBase::makeTurnend()
 			//ammo is not visible to enemies. So only send to the owner
 			sendUnitData ( Building, owner->Nr );
 		}
-		
+
 		// build:
 		if (Building->IsWorking && !Building->data.canBuild.empty() && Building->BuildList->Size() )
 		{
@@ -1176,7 +1176,7 @@ void sSubBase::addBuilding( cBuilding *b )
 
 void cBase::handleTurnend ()
 {
-	
+
 	for (unsigned int i = 0; i < SubBases.Size(); ++i)
 	{
 		SubBases[i]->makeTurnend();

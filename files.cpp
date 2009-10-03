@@ -162,7 +162,7 @@ std::string getUserScreenshotsDir()
 #ifdef __amigaos4__
 	return "";
 #endif
-	
+
 	std::string screenshotsFolder = "";
 #ifdef MAC
 	char * cHome = getenv("HOME"); //get $HOME on mac
@@ -188,7 +188,7 @@ Sint32 calcCheckSum (char* data, int dataSize)
 	Uint32 checksum = 0;
 	for (int i = 0; i < dataSize; i++)
 	{
-		if (checksum >= 2147483648u) // 2^31; if true, then the highest bit is set 
+		if (checksum >= 2147483648u) // 2^31; if true, then the highest bit is set
 		{
 			checksum *= 2; // shift all bits by one to the left (but don't use the << operator because of endianess issues)
 			checksum += 1; // then set the lowest bit
@@ -199,11 +199,10 @@ Sint32 calcCheckSum (char* data, int dataSize)
 		checksum += data[i];
 
 		// prettier and faster checksum algorithm, but not working the same way on big and little endian machines...
-		//		checksum = (checksum >> 1) + ((checksum & 1) << 30); // don't get in the area 
+		//		checksum = (checksum >> 1) + ((checksum & 1) << 30); // don't get in the area
 		//		checksum += data[i];
 		//		checksum &= 0xffffffff;       // Keep it within bounds.
 	}
 	Sint32 result = (checksum >= 2147483648u) ? (Sint32)(checksum - 2147483648u) : (Sint32)checksum;
 	return result;
 }
-

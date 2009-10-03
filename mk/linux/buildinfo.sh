@@ -83,5 +83,3 @@ echo "#define BUILD_UNAME_S \"$BUILD_UNAME_S\"" >> $VERSION
 echo "#define BUILD_UNAME_V \"$BUILD_UNAME_V\"" >> $VERSION
 echo "#define BUILD_UNAME_SRM \"$BUILD_UNAME_SRM\"" >> $VERSION
 echo "#define BUILD_USER \"$BUILD_USER\"" >> $VERSION
-
-

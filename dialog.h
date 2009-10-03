@@ -188,7 +188,7 @@ public:
 	static void decReleased( void *parent );
 
 	static void barClicked( void *parent );
-	
+
 	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 
@@ -231,7 +231,7 @@ public:
 	static void decReleased( void *parent );
 
 	static void sliderClicked( void *parent );
-	
+
 	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 

@@ -481,7 +481,7 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	int iReceivedCount = message->popInt16();
 
 	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
-	
+
 	// Add the waypoints
 	sWaypoint *Waypoint = new sWaypoint;
 	Waypoints = Waypoint;
@@ -558,7 +558,7 @@ bool cServerMoveJob::checkMove()
 	{
 		Server->sideStepStealthUnit( Waypoints->next->X, Waypoints->next->Y, Vehicle );
 	}
-	
+
 	//when the next field is still blocked, inform the client
 	if ( !Server->Map->possiblePlace( Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange ) //TODO: bInSentryRange?? Why?
 	{
@@ -629,7 +629,7 @@ void cServerMoveJob::doEndMoveVehicle()
 
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
-	
+
 	if ( Waypoints->next == NULL )
 	{
 		bFinished = true;
@@ -770,7 +770,7 @@ void cEndMoveAction::generateLoadAction()
 	if ( !srcVehicle->canLoad ( destVehicle, false ) ) return;
 
 	// generate the Movejob
-	int srcOffset = srcVehicle->PosX+srcVehicle->PosY*Client->Map->size; 
+	int srcOffset = srcVehicle->PosX+srcVehicle->PosY*Client->Map->size;
 	int destOffset = destVehicle->PosX+destVehicle->PosY*Client->Map->size;
 	moveJob = new cClientMoveJob ( srcOffset, destOffset, srcVehicle->data.factorAir > 0, srcVehicle );
 	if ( moveJob->calcPath() )
@@ -887,7 +887,7 @@ void cEndMoveAction::executeGetInAction()
 
 	// execute the loading if possible
 	if ( srcVehicle && srcVehicle->canLoad ( destVehicle ) ) sendWantLoad ( srcVehicle->iID, true, destVehicle->iID );
-	else if ( srcBuilding && srcBuilding->canLoad ( destVehicle ) ) sendWantLoad ( srcBuilding->iID, false, destVehicle->iID ); 
+	else if ( srcBuilding && srcBuilding->canLoad ( destVehicle ) ) sendWantLoad ( srcBuilding->iID, false, destVehicle->iID );
 }
 
 void cEndMoveAction::executeAttackAction()
@@ -930,7 +930,7 @@ void cEndMoveAction::handleDelVehicle( cVehicle *delVehicle )
 }
 
 cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
-{	
+{
 	DestX = iDestOff%Client->Map->size;
 	DestY = iDestOff/Client->Map->size;
 	init ( iSrcOff, bPlane, Vehicle );
@@ -951,7 +951,7 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane,
 	}
 
 	if ( Waypoints ) calcNextDir();
-	
+
 	init ( iSrcOff, bPlane, Vehicle );
 }
 
@@ -1011,7 +1011,7 @@ cClientMoveJob::~cClientMoveJob()
 
 	for ( unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++ )
 	{
-		if ( Client->ActiveMJobs[i] == this ) 
+		if ( Client->ActiveMJobs[i] == this )
 		{
 			Client->ActiveMJobs.Delete(i);
 			i--;
@@ -1063,10 +1063,10 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 	}
 	else
 	{
-		
+
 		Waypoint = lastWaypoints;
 		while ( Waypoint )
-		{	
+		{
 			Vehicle->DecSpeed( -Waypoints->Costs );
 			lastWaypoints = lastWaypoints->next;
 			Waypoint->next = Waypoints;
@@ -1078,11 +1078,11 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 			Waypoint = lastWaypoints;
 		}
 	}
-	
+
 	calcNextDir();
 	Vehicle->owner->DoScan();
 	Client->gameGUI.updateMouseCursor();
-	Client->gameGUI.callMiniMapDraw(); 
+	Client->gameGUI.callMiniMapDraw();
 	Vehicle->moving = false;
 	Vehicle->OffX = Vehicle->OffY = 0;
 
@@ -1189,7 +1189,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		}
 		else
 		{
-			//the client is more than one field faster, than the server. 
+			//the client is more than one field faster, than the server.
 			//So wait, until the server reaches the current position.
 			Log.write ( " Client: Client is faster (one or more fields) deactivating movejob; Vehicle-ID: " + iToStr ( Vehicle->iID ), cLog::eLOG_TYPE_NET_DEBUG );
 			// just stop the vehicle and wait for the next commando of the server
@@ -1247,7 +1247,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			setVehicleToCoords( iServerPositionX, iServerPositionY );
 			Log.write(" Client: next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if ( Vehicle->owner != Client->ActivePlayer ) 
+			if ( Vehicle->owner != Client->ActivePlayer )
 			{
 				bFinished = true;
 				break;
@@ -1258,12 +1258,12 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			{
 				sendMoveJob ( this );
 			}
-			else 
+			else
 			{
 				bFinished = true;
 
-				if ( Vehicle == Client->gameGUI.getSelVehicle() ) 
-				{				
+				if ( Vehicle == Client->gameGUI.getSelVehicle() )
+				{
 					if ( random(2) )
 						PlayVoice ( VoiceData.VOINoPath1 );
 					else
@@ -1280,7 +1280,7 @@ void cClientMoveJob::moveVehicle()
 	if ( Vehicle == NULL || Vehicle->ClientMoveJob != this ) return;
 
 	// do not move the vehicle, if the movejob hasn't got any more waypoints
-	if ( Waypoints == NULL || Waypoints->next == NULL ) 
+	if ( Waypoints == NULL || Waypoints->next == NULL )
 	{
 		stopMoveSound();
 		return;
@@ -1409,9 +1409,9 @@ void cClientMoveJob::doEndMoveVehicle ()
 
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
-	
-	Client->gameGUI.callMiniMapDraw(); 
-	Client->gameGUI.updateMouseCursor(); 
+
+	Client->gameGUI.callMiniMapDraw();
+	Client->gameGUI.updateMouseCursor();
 
 	calcNextDir();
 }

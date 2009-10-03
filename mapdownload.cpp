@@ -93,12 +93,12 @@ Sint32 MapDownload::calculateCheckSum (std::string mapName)
 		int mapSize = (int) file->tellg ();
 		char* data = new char [mapSize];
 		file->seekg (0, ios::beg);
-		
+
 		file->read (data, 9); // read only header
 		int width = data[5] + data[6] * 256;
 		int height = data[7] + data[8] * 256;
 		int relevantMapDataSize = width * height * 3; // the information after this is only for graphic stuff and not necessary for comparing two maps
-		
+
 		if (relevantMapDataSize + 9 <= mapSize)
 		{
 			file->read (data + 9, relevantMapDataSize);
@@ -139,10 +139,10 @@ bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
 {
 	if (readBuffer == 0 || message == 0 || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
 		return false;
-	
+
 	for (int i = bytesInMsg - 1; i >= 0; i--)
 		readBuffer[bytesReceived + i] = message->popChar ();
-	
+
 	bytesReceived += bytesInMsg;
 	std::ostringstream os;
 	os << "MapReceiver: Received Data for map " << mapName << ": " << bytesReceived << "/" << mapSize;
@@ -156,7 +156,7 @@ bool cMapReceiver::finished ()
 	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
 	if (bytesReceived != mapSize)
 		return false;
-	
+
 	std::string mapsFolder = getUserMapsDir ();
 	if (mapsFolder.empty ())
 		mapsFolder = SettingsData.sMapsPath + PATH_DELIMITER;
@@ -171,7 +171,7 @@ bool cMapReceiver::finished ()
 	newMapFile.close();
 	if (newMapFile.bad ())
 		return false;
-	
+
 	return true;
 }
 
@@ -231,7 +231,7 @@ void cMapSender::runInThread (cNetworkHostMenu* hostMenu)
 void cMapSender::run ()
 {
 	if (canceled) return;
-	
+
 	// read map file in memory
 	string filename = SettingsData.sMapsPath + PATH_DELIMITER + mapName.c_str ();
 	ifstream* file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
@@ -240,7 +240,7 @@ void cMapSender::run ()
 		// try to open the map from the user's maps dir
 		filename = getUserMapsDir () + mapName.c_str ();
 		delete file;
-		file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate); 
+		file = new ifstream (filename.c_str (), ios::in | ios::binary | ios::ate);
 	}
 	if (file->is_open ())
 	{
@@ -252,7 +252,7 @@ void cMapSender::run ()
 		delete file;
 		Log.write (string ("MapSender: read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_DEBUG);
 	}
-	else 
+	else
 	{
 		Log.write (string ("MapSender: could not read the map \"") + filename + "\" into memory.", cLog::eLOG_TYPE_WARNING);
 		delete file;
@@ -265,7 +265,7 @@ void cMapSender::run ()
 	msg->pushString (mapName.c_str());
 	msg->pushInt32 (mapSize);
 	sendMsg (msg);
-	
+
 	int msgCount = 0;
 	while (bytesSent < mapSize)
 	{
@@ -280,12 +280,12 @@ void cMapSender::run ()
 		bytesSent += bytesToSend;
 		msg->pushInt32 (bytesToSend);
 		sendMsg (msg);
-		
+
 		msgCount++;
 		if (msgCount % 10 == 0)
 			SDL_Delay (100);
 	}
-	
+
 	// finished
 	delete[] sendBuffer;
 	sendBuffer = 0;
@@ -296,15 +296,14 @@ void cMapSender::run ()
 //-------------------------------------------------------------------------------
 bool cMapSender::sendMsg (cNetMessage* msg)
 {
-	if (network == 0) 
+	if (network == 0)
 		return false;
-	
+
 	msg->iPlayerNr = -1;
 	network->sendTo (toSocket, msg->iLength, msg->serialize ());
 
 	Log.write ("MapSender: <-- " + msg->getTypeAsString() + ", Hexdump: " + msg->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	delete msg;
-	
+
 	return true;
 }
-

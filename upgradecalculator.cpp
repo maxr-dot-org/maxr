@@ -70,7 +70,7 @@ void cUpgradeCalculator::setupLookupTables()
 	hitpointsArmorAmmo_7 [14] = 257;
 	hitpointsArmorAmmo_7 [15] = 390;
 	hitpointsArmorAmmo_7 [16] = 542;
-	
+
 	hitpointsArmorAmmo_8  [8]  = 2;
 	hitpointsArmorAmmo_8  [9]  = 6;
 	hitpointsArmorAmmo_8  [10] = 11;
@@ -319,7 +319,7 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_11 [17] = 137;
 	attackSpeed_11 [19] = 269;
 	attackSpeed_11 [21] = 500;
-	
+
 	attackSpeed_12 [12] = 8;
 	attackSpeed_12 [14] = 22;
 	attackSpeed_12 [16] = 49;
@@ -370,7 +370,7 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_17 [33] = 331;
 	attackSpeed_17 [35] = 483;
 	attackSpeed_17 [37] = 694;
-	
+
 	attackSpeed_18 [18] = 4;
 	attackSpeed_18 [20] = 10;
 	attackSpeed_18 [22] = 16;
@@ -606,7 +606,7 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 {
 	int bonusByResearch = calcChangeByResearch(orgValue, researchLevel.getCurResearchLevel (researchLevel.getResearchArea (upgradeType)));
 	curValue -= bonusByResearch;
-	
+
 	int price = kNoPriceAvailable;
 	switch (upgradeType) {
 
@@ -840,7 +840,7 @@ int cUpgradeCalculator::calcIncreaseByUpgrade(int startValue) const
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLevel, 
+int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLevel,
 											 int upgradeType, int unitType) const
 {
 	if (curResearchLevel <= 0) // no research done yet...
@@ -857,7 +857,7 @@ int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLeve
 		// cost makes a decrease based on the formula 1/x (where x is the research level)
 		double realCost = startValue / ((100.0f + curResearchLevel) / 100.0f);
 
-		// now the real cost is rounded to the next possible cost value 
+		// now the real cost is rounded to the next possible cost value
 		// (Unit factories: steps of 3, Building construction: steps of 2, Infantry training: steps of 1)
 		int costRounded = startValue;
 		if (unitType == kBuilding)
@@ -888,7 +888,7 @@ int cUpgradeCalculator::getNearestPossibleCost(double realCost, int costDifferen
 		return (int) realCost;
 
 	int intCost = (int) realCost;
-	int nearestLowerCost = intCost - (intCost % costDifference); 
+	int nearestLowerCost = intCost - (intCost % costDifference);
 	int result;
 	if (realCost - nearestLowerCost < (costDifference / 2.0f))
 		result = nearestLowerCost;
@@ -1025,7 +1025,7 @@ void cUpgradeCalculator::printToLog(const char* str, int value) const
 
 
 /*
-// This is the old code (from JCK?) for calculating the upgrade cost. 
+// This is the old code (from JCK?) for calculating the upgrade cost.
 // Interesting is the formula used for calculating (although it doesn't produce
 // the exact same results - but nearly).
 // Maybe the formula could be used for interpolating costs for "non M.A.X." upgrades,
@@ -1386,7 +1386,7 @@ bool cResearch::doResearch (int researchPoints, int researchArea)
 		{
 			curResearchPoints[researchArea] = 0;
 			curResearchLevel[researchArea] += 10;
-			neededResearchPoints[researchArea] = cUpgradeCalculator::instance ().calcResearchTurns (curResearchLevel[researchArea], 
+			neededResearchPoints[researchArea] = cUpgradeCalculator::instance ().calcResearchTurns (curResearchLevel[researchArea],
 																									getUpgradeCalculatorUpgradeType (researchArea));
 			return true;
 		}
@@ -1426,6 +1426,5 @@ int cResearch::getResearchArea (int upgradeCalculatorType) const
 		case cUpgradeCalculator::kScan: return kScanResearch;
 		case cUpgradeCalculator::kCost: return kCostResearch;
 	}
-	return 0;	
+	return 0;
 }
-

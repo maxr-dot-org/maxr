@@ -73,11 +73,11 @@ public:
 	cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
 	~cPlayer();
 	cPlayer(const cPlayer &Player);
-	
+
 	string name;
 	SDL_Surface *color;
 	int Nr;
-	
+
 	sUnitData *VehicleData; // Daten aller Vehicles f¸r diesen Player.
 	cVehicle *VehicleList;     // Liste aller Vehicles des Spielers.
 	sUnitData *BuildingData; // Daten aller Buildings f¸r diesen Player.
@@ -94,7 +94,7 @@ public:
 	char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
 	char *DetectMinesMap;				/** the area where the player can detect mines */
 	cResearch researchLevel;	///< stores the current research level of the player
-	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area	
+	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
 	int ResearchCount;         ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
 	sHudStateContainer *savedHud;
@@ -107,7 +107,7 @@ public:
 	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
 	bool isDefeated;			// true if the player has been defeated
-	
+
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
 	cVehicle *GetNextVehicle();
@@ -151,7 +151,7 @@ public:
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
 
 	void addSavedReport ( string message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
-	
+
 	void setClan (int newClan);
 	int getClan () const { return clan; }
 

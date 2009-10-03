@@ -120,14 +120,14 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	centerButton = new cMenuButton ( 4,227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER );
 	centerButton->setReleasedFunction ( &centerReleased );
 	menuItems.Add ( centerButton );
-	
+
 	reportsButton = new cMenuButton ( 101, 252, lngPack.i18n( "Text~Hud~Log"), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE );
 	reportsButton->setReleasedFunction ( &reportsReleased );
 	menuItems.Add ( reportsButton );
 	chatButton = new cMenuButton ( 51, 252, lngPack.i18n( "Text~Hud~Chat"), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE );
 	chatButton->setReleasedFunction ( &chatReleased );
 	menuItems.Add ( chatButton );
-	
+
 	nextButton = new cMenuButton ( 124, 227, ">>", cMenuButton::BUTTON_TYPE_HUD_NEXT, FONT_LATIN_SMALL_WHITE );
 	nextButton->setReleasedFunction ( &nextReleased );
 	menuItems.Add ( nextButton );
@@ -192,7 +192,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	infoTextLabel->setCentered ( true );
 	infoTextLabel->setDisabled ( true );
 	menuItems.Add ( infoTextLabel );
-	
+
 	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "" );
 	infoTextAdditionalLabel->setCentered ( true );
 	infoTextAdditionalLabel->setDisabled ( true );
@@ -736,7 +736,7 @@ bool cGameGUI::checkScroll()
 		doScroll ( 8 );
 		return true;
 	}
-	else if ( mouse->y >= SettingsData.iScreenH-18 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 ) 
+	else if ( mouse->y >= SettingsData.iScreenH-18 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 )
 	{
 		mouse->SetCursor ( CPfeil2 );
 		doScroll ( 2 );
@@ -1425,11 +1425,11 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	}
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
-		// Store the currently selected unit to determine if the lock state of the clicked unit maybe has to be changed. 
+		// Store the currently selected unit to determine if the lock state of the clicked unit maybe has to be changed.
 		// If the selected unit changes during the click handling, then the newly selected unit has to be added / removed from the "locked units" list.
 		cVehicle* oldSelectedVehicleForLock = selectedVehicle;
 		cBuilding* oldSelectedBuildingForLock = selectedBuilding;
-		
+
 		if ( !mouseBox.isTooSmall() )
 		{
 			selectBoxVehicles( mouseBox );
@@ -1666,7 +1666,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 			}
 			helpActive = false;
 		}
-		
+
 		// toggle the lock state of an enemy unit, if it is newly selected / deselected
 		if ( overUnitField && lockChecked() )
 		{
@@ -1675,7 +1675,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 			else if (selectedBuilding && selectedBuilding != oldSelectedBuildingForLock && selectedBuilding->owner != player)
 				player->ToggelLock ( overUnitField );
 		}
-		
+
 		mouseBox.startX = mouseBox.startY = -1;
 		mouseBox.endX = mouseBox.endY = -1;
 	}
@@ -2681,7 +2681,7 @@ void cGameGUI::preDrawFunction()
 	drawVehicles ( startX, startY, endX, endY, zoomOffX, zoomOffY );
 	drawConnectors ( startX, startY, endX, endY, zoomOffX, zoomOffY );
 	drawPlanes ( startX, startY, endX, endY, zoomOffX, zoomOffY );
-	
+
 	if ( surveyChecked() || ( selectedVehicle && selectedVehicle->owner == player && selectedVehicle->data.canSurvey ) )
 	{
 		drawResources ( startX, startY, endX, endY, zoomOffX, zoomOffY );

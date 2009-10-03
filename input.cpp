@@ -83,7 +83,7 @@ bool cInput::IsDoubleClicked (void)
 
 
 void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
-{	
+{
 	if ( button.state == SDL_PRESSED )
 	{
 		if ( button.button == SDL_BUTTON_LEFT )
@@ -110,7 +110,7 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 			MouseState.leftButtonReleased = false;
 			MouseState.rightButtonReleased = false;
 		}
-		
+
 		if( IsDoubleClicked() == true )
 		{
 			MouseState.isDoubleClick = true;

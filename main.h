@@ -144,7 +144,7 @@ struct sID
 					 If no owner is given, the basic version without any clan modifications is returned.
 		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
 	sUnitData *getUnitDataOriginalVersion (cPlayer *Owner = NULL);
-	
+
 	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
 	sVehicle *getVehicle (cPlayer* Owner = NULL);
@@ -442,13 +442,13 @@ public:
 
 	// Buildings
 	cList<sBuilding> building;  // the standard version without clan modifications
-	
+
 	sVehicle& getVehicle (int nr, int clan = -1); ///< -1: game without clans
 	sBuilding& getBuilding (int nr, int clan = -1); ///< -1: game without clans
-	
-	unsigned int getNrVehicles () const { return (int) vehicle.Size (); } 
-	unsigned int getNrBuildings () const { return (int) building.Size (); } 
-	
+
+	unsigned int getNrVehicles () const { return (int) vehicle.Size (); }
+	unsigned int getNrBuildings () const { return (int) building.Size (); }
+
 
 	SDL_Surface *dirt_small_org;
 	SDL_Surface *dirt_small;
@@ -465,15 +465,15 @@ public:
 	SDL_Surface *ptr_connector_org;
 	SDL_Surface *ptr_connector_shw;
 	SDL_Surface *ptr_connector_shw_org;
-	
+
 //------------------------------------------------------------
 private:
 	void initializeClanUnitData ();
-	
-	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans 
+
+	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans
 	std::vector<std::vector<sBuilding> > clanUnitDataBuildings; // cotains the modified versions for the clans
 	bool initializedClanUnitData;
-	
+
 } EX UnitsData;
 
 // OtherData - Class containing the rest of surfaces //////////////////////////

@@ -637,7 +637,7 @@ void cMenuButton::draw()
 	{
 		SDL_BlitSurface ( surface, NULL, buffer, &position );
 
-		if ( buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES ) 
+		if ( buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES )
 		{
 			if ( isClicked ) font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset(), text, FONT_LATIN_SMALL_GREEN );
 			else font->showTextCentered ( position.x+position.w/2, position.y+getTextYOffset()-1, text, FONT_LATIN_SMALL_RED );
@@ -969,7 +969,7 @@ void cMenuRadioGroup::clicked( void *parent )
 	if ( click ) click(parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) 
+cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ )
 : cMenuItem (0,0)
 , unitID(unitID_)
 , unitData(0)
@@ -977,19 +977,19 @@ cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer *owner_, sUnitUpgrade
 , upgrades(upgrades_)
 , displayType(displayType_)
 , fixedResValue(fixedResValue_)
-, parentList(parent)	
+, parentList(parent)
 {
 	init ();
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) 
+cMenuUnitListItem::cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ )
 : cMenuItem (0,0)
 , unitData(unitData_)
 , owner(owner_)
 , upgrades(upgrades_)
 , displayType(displayType_)
 , fixedResValue(fixedResValue_)
-, parentList(parent)	
+, parentList(parent)
 {
 	if (unitData != 0)
 		unitID = unitData->ID;
@@ -1659,7 +1659,7 @@ void cMenuUnitDetails::draw()
 	cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+6, data->hitpointsCur, data->hitpointsMax );
 	font->showText ( position.x+47, position.y+6, lngPack.i18n ( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, buffer );
 	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+80, position.y+3, 70, false, data->hitpointsCur, data->hitpointsMax );
-	
+
 	// Den Speed anzeigen:
 	if ( data->speedCur > 0 )
 	{
@@ -2006,7 +2006,7 @@ void cMenuUnitDetailsBig::draw()
 		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->convertsGold, oriData->convertsGold );
 		DETAIL_DOLINEBREAK
 	}
-	
+
 	// Costs:
 	font->showTextCentered ( DETAIL_COLUMN_1, y, iToStr ( data->buildCosts ) );
 	font->showText ( DETAIL_COLUMN_2, y, lngPack.i18n ( "Text~Vehicles~Costs" ) );
@@ -2039,8 +2039,8 @@ cMenuMaterialBar::~cMenuMaterialBar()
 	delete valueLabel;
 }
 
-void cMenuMaterialBar::setType(eMaterialBarTypes materialType_) 
- { 
+void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
+ {
 	if( surface && materialType == materialType_ ) return;
 
 	materialType = materialType_;
@@ -2128,7 +2128,7 @@ void cMenuMaterialBar::generateSurface()
 		src.y = 336;
 		break;
 	}
-	
+
 	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 }
 
@@ -2276,19 +2276,19 @@ void cMenuUpgradeHandler::setSelection ( cMenuUnitListItem *selection_ )
 	sUnitUpgrade *upgrade = selection->getUpgrades();
 	for ( int i = 0; i < 8; i++ )
 	{
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable ) 
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable )
 			costsLabel[i]->setText ( iToStr (upgrade[i].nextPrice) );
-		else 
+		else
 			costsLabel[i]->setText ( "" );
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable ) 
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable )
 			increaseButtons[i]->setLocked ( false );
-		else 
+		else
 			increaseButtons[i]->setLocked ( true );
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0 ) 
+		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0 )
 			decreaseButtons[i]->setLocked ( false );
-		else 
+		else
 			decreaseButtons[i]->setLocked ( true );
 	}
 }
@@ -3517,7 +3517,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 				SDL_Surface *surface = generateUnitSurface ( nextBuilding->typ->img_org, nextBuilding->data );
 				SDL_BlitSurface ( surface, &src, buffer, &dest );
 				SDL_FreeSurface ( surface );
-				
+
 				font->showTextAsBlock ( nameDest, nextBuilding->name );
 				unitDetails[count]->setSelection ( NULL, nextBuilding );
 
@@ -3539,7 +3539,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 
 	if ( count == maxCount && ( nextVehicle || nextBuilding ) )
 	{
-		if ( deleteCount ) delete count_;	
+		if ( deleteCount ) delete count_;
 		return true;
 	}
 	if ( deleteCount ) delete count_;

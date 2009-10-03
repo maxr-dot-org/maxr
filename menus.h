@@ -171,7 +171,7 @@ public:
 	 */
 	void runGame( int player, bool reconnect = false );
 
-	/** handles incoming clan information 
+	/** handles incoming clan information
 	 *  @author pagra */
 	void receiveClan ( cNetMessage *message );
 
@@ -184,7 +184,7 @@ public:
 	 *@author alzi
 	 */
 	void receiveUnitUpgrades ( cNetMessage *message );
-	
+
 	/** handles an incoming landing position
 	 *@author alzi
 	 */
@@ -481,25 +481,25 @@ protected:
 	cGameDataContainer *gameDataContainer;
 
 	cMenuLabel *titleLabel;
-	
+
 	cMenuImage *clanImages[8];
 	cMenuLabel *clanNames[8];
 	cMenuLabel *clanDescription1;
 	cMenuLabel *clanDescription2;
 	cMenuLabel *clanShortDescription;
-	
+
 	cMenuButton *okButton;
 	cMenuButton *backButton;
 
 	cPlayer *player;
 	int clan;
-	
+
 	void updateClanDescription ();
 
 public:
 	cClanSelectionMenu (cGameDataContainer* gameDataContainer_, cPlayer *player, bool noReturn );
 	~cClanSelectionMenu ();
-		
+
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
 	static void backReleased (void* parent);
@@ -651,7 +651,7 @@ class cLandingMenu : public cMenu
 {
 protected:
 	cGameDataContainer *gameDataContainer;
-	
+
 	cPlayer *player;
 
 	cMap *map;
@@ -764,7 +764,7 @@ protected:
 
 	int checkAllPlayersReady();
 	bool runSavedGame();
-	
+
 	std::vector<cMapSender*> mapSenders;
 
 public:
@@ -796,7 +796,7 @@ class cNetworkClientMenu : public cNetworkMenu
 	void receiveMapData (cNetMessage* message);
 	void canceledMapDownload (cNetMessage* message);
 	void finishedMapDownload (cNetMessage* message);
-	
+
 public:
 	cNetworkClientMenu();
 	~cNetworkClientMenu();
@@ -959,7 +959,7 @@ protected:
 public:
 	cUnitHelpMenu( sID unitID, cPlayer *owner );
 	cUnitHelpMenu( sUnitData* unitData, cPlayer *owner );
-	
+
 	~cUnitHelpMenu();
 
 	static void doneReleased( void *parent );
@@ -1012,7 +1012,7 @@ protected:
 public:
 	cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building );
 	~cStorageMenu();
-	
+
 	static void doneReleased( void *parent );
 
 	static void upReleased( void *parent );
@@ -1107,7 +1107,7 @@ public:
 	static void downReleased( void *parent );
 
 	static void typeChanged( void *parent );
-	
+
 	static void filterClicked( void *parent );
 
 	void scrollCallback ( bool upPossible, bool downPossible );

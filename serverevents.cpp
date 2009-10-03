@@ -603,7 +603,7 @@ void sendProduceValues ( cBuilding *Building )
 void sendTurnReport ( cPlayer *Player )
 {
 	// TODO: make sure, that the message size is not exceeded!
-	
+
 	cNetMessage* message = new cNetMessage( GAME_EV_TURN_REPORT );
 	int iCount = 0;
 	sTurnstartReport *Report;
@@ -909,7 +909,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 			message = new cNetMessage (GAME_EV_UPGRADED_BUILDINGS);
 			buildingsInMsg = 0;
 		}
-		
+
 		message->pushInt32(upgradedBuildings[i]->iID);
 		buildingsInMsg++;
 		if (message->iLength + 8 > PACKAGE_LENGTH)
@@ -927,12 +927,12 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 		Server->sendNetMessage (message, player);
 		message = NULL;
 	}
-	
+
 	// send to other players
 	for (unsigned int n = 0; n < Server->PlayerList->Size(); n++)
 	{
 		cPlayer* curPlayer = (*Server->PlayerList)[n];
-		if (curPlayer == 0 || curPlayer->Nr == player) // don't send to the owner of the buildings 
+		if (curPlayer == 0 || curPlayer->Nr == player) // don't send to the owner of the buildings
 			continue;
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
@@ -947,7 +947,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
 {
 	if (upgradedVehicles.Size() * 4 > PACKAGE_LENGTH - 50)
-	{	
+	{
 		Log.write("Server: sendUpgradeVehicles: Message would exceed messagesize!!!", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
@@ -960,7 +960,7 @@ void sendUpgradeVehicles (cList<cVehicle*>& upgradedVehicles, int totalCosts, un
 	message->pushInt16(totalCosts);
 	message->pushInt16((int)upgradedVehicles.Size());
 	Server->sendNetMessage (message, player);
-	
+
 	//TODO: send to other players as well?
 }
 
@@ -979,7 +979,7 @@ void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<
 			message = new cNetMessage (GAME_EV_RESEARCH_SETTINGS);
 			buildingsInMsg = 0;
 		}
-		
+
 		message->pushChar(newAreasForResearchCenters[i]);
 		message->pushInt32(researchCentersToChangeArea[i]->iID);
 		buildingsInMsg++;
@@ -995,7 +995,7 @@ void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<
 		message->pushInt16(buildingsInMsg);
 		Server->sendNetMessage (message, player);
 		message = NULL;
-	}	
+	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -1003,7 +1003,7 @@ void sendClans ( cList<int>* clans, cPlayer* toPlayer)
 {
 	if (clans == 0 || toPlayer == 0)
 		return;
-	cNetMessage *message = new cNetMessage (GAME_EV_PLAYER_CLANS);	
+	cNetMessage *message = new cNetMessage (GAME_EV_PLAYER_CLANS);
 	for (int i = (int) clans->Size () - 1; i >= 0; i--)
 		message->pushChar ((*clans)[i]);
 	Server->sendNetMessage (message, toPlayer->Nr);

@@ -111,7 +111,7 @@ void MVEPlayerEventHandler();
 /********************************/
 
 int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int audio)
-{	
+{
 	/*************************/
 	/* variable declarations */
 	/*************************/
@@ -160,32 +160,32 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	/******************************************/
 	/* validate MVE, init SDL, and begin read */
 	/******************************************/
-	
+
 	/* initialize file access structure */
 	mve = SDL_RWFromFile(filename, "rb");
 
 	/* confirm MVE file open */
-	if(!mve) 
+	if(!mve)
 		return UNABLE_TO_OPEN_FILE;
 
 	/* read the first 26 bytes */
-	if(SDL_RWread(mve, fileTestString, sizeof(char), idlen) < 0) 
+	if(SDL_RWread(mve, fileTestString, sizeof(char), idlen) < 0)
 		return FILE_TOO_SHORT;
 
 	/* validate MVE idstring */
-	if(SDL_memcmp(fileTestString, idstring, idlen) != 0) 
+	if(SDL_memcmp(fileTestString, idstring, idlen) != 0)
 		return NOT_MVE_FILE;
-	
+
 	/* open first chunk */
-	if(!SDL_RWread(mve, &ch, sizeof(ch), 1)) 
+	if(!SDL_RWread(mve, &ch, sizeof(ch), 1))
 		return CHUNK_READ_FAILED;
 
 	/* read opcode (initial read) */
-	if(!SDL_RWread(mve, &op, sizeof(op), 1)) 
+	if(!SDL_RWread(mve, &op, sizeof(op), 1))
 		return OPCODE_READ_FAILED;
 
 	/* are opcode parameters within known bounds? */
-	if(op.type > 0x15 || op.version > 3) 
+	if(op.type > 0x15 || op.version > 3)
 		return MVE_CORRUPT;
 
 	//set window to center of screen
@@ -213,7 +213,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	// hide mouse in fullscreen
 	if( fullscreen )
 		SDL_ShowCursor( SDL_DISABLE );
-	
+
 	/*************/
 	/* main loop */
 	/*************/
@@ -222,7 +222,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		/* poll for input from user */
 		MVEPlayerEventHandler();
 
-		if(PAUSED || QUITTING) 
+		if(PAUSED || QUITTING)
 			continue;
 
 		if(TIMER_INIT)
@@ -244,7 +244,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 		case FETCH_NEXT_CHUNK:
 
-			if(!SDL_RWread(mve, &ch, sizeof(ch), 1)) 
+			if(!SDL_RWread(mve, &ch, sizeof(ch), 1))
 				return CHUNK_READ_FAILED;
 
 			break;
@@ -294,7 +294,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* fill values gotten from the file audio flags */
 			desired->channels = (file_audio_flags & 0x01 ? 2 : 1);
 			desired->format = (file_audio_flags & 0x02 ? AUDIO_S16 : AUDIO_U8);
-			
+
 			if(desired->channels == 2)
 				AUDIO_STEREO = 1;
 
@@ -305,12 +305,12 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			if(SDL_OpenAudio(desired, NULL) < 0)
 			{
 				return COULD_NOT_OPEN_AUDIO;
-			}				
+			}
 
 			/* set the compressed flag if necessary */
 			if(op.version == 1)
 				AUDIO_COMPRESSED = (file_audio_flags & 0x04 ? 1 : 0);
-			
+
 			/* we're going to abort if is compressed and (not stereo or not AUDIO_S16) because we don't know what to do */
 			/* besides, we've never seen such an MVE before... */
 			if(AUDIO_COMPRESSED && (!AUDIO_STEREO || !SAMPLESIZE16))
@@ -338,7 +338,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 		case INIT_VIDEO_BUFFERS:
 
-			/* get the requested dimensions 
+			/* get the requested dimensions
 			note: this is in 8x8 pixel chunks so multiply by 8 to get requested screen pixels*/
 			width_blocks = SDL_ReadLE16(mve);
 			height_blocks = SDL_ReadLE16(mve);
@@ -360,7 +360,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* if we have already allocated a mvebuffer */
 			if(frame_buf)
 				SDL_FreeSurface(frame_buf);
-				
+
 			/* initialize video mvebuffer to the actual movie dimensions */
 			frame_buf = SDL_CreateRGBSurface(OtherData.iSurface, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
 
@@ -391,7 +391,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* send the mvebuffer to the screen mvebuffer */
 			if(SDL_MUSTLOCK(screen))
 				SDL_LockSurface(screen);
-			
+
 			if(fullscreen)
 				SDL_SoftStretch(frame_buf, NULL, screen, NULL);
 			else
@@ -405,7 +405,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 			/* what time is it now? */
 			current_time = SDL_GetTicks();
-			
+
 			/* if there's time to next scheduled update, force delay to our target output time */
 			if(current_time < start_time)
 				SDL_Delay((Uint32)(start_time - current_time));
@@ -503,7 +503,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* if we've been here before */
 			if(screen)
 				SDL_FreeSurface(screen);
-			
+
 			if(fullscreen)
 				screen = SDL_SetVideoMode(dwidth, dheight, 8, OtherData.iSurface|SDL_FULLSCREEN);
 			else
@@ -523,7 +523,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 				/* get # of first entry to fill */
 				palette_start = SDL_ReadLE16(mve);
-				
+
 				/* get number of entries in palette */
 				numPalColors = SDL_ReadLE16(mve);
 
@@ -553,7 +553,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 					frame_buf->format->palette->colors[i].b = b;
 					frame_buf->format->palette->colors[i].unused = 0;
 				}
-				
+
 			/* install the palette in the screen surface */
 			SDL_SetColors(screen, frame_buf->format->palette->colors, 0, 256);
 
@@ -566,7 +566,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			/* kill previous map */
 			if(map)
 				free(map);
-			
+
 			/* get new map */
 			map = (Uint8 *)malloc(sizeof(Uint8) * op.length);
 			assert(map != NULL);
@@ -599,7 +599,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		default:
 
 			/* are opcode parameters within known bounds? */
-			if(op.type > 0x15 || op.version > 3) 
+			if(op.type > 0x15 || op.version > 3)
 				return MVE_CORRUPT;
 
 			/* strip opcode data; don't know how to catch errors here */
@@ -611,9 +611,9 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		/************************/
 		/* end opcode handling */
 		/************************/
-		
+
 		/* read opcode (trailing read) */
-		if(!SDL_RWread(mve, &op, sizeof(op), 1)) 
+		if(!SDL_RWread(mve, &op, sizeof(op), 1))
 			return OPCODE_READ_FAILED;
 
 	}
@@ -703,7 +703,7 @@ void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 		temp = (Uint8 *)malloc(audio_mvebuffer->length);
 		assert(temp != NULL);
 
-		/* copy from data address + len length bytes 
+		/* copy from data address + len length bytes
 		(which should be the start of the data that wasn't copied to stream) */
 		memcpy(temp, audio_mvebuffer->data + len, audio_mvebuffer->length);
 
@@ -713,7 +713,7 @@ void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 
 		/* assign the address of our stored data to the audio_mvebuffer's data */
 		audio_mvebuffer->data = temp;
-		
+
 		/* close off temp */
 		temp = NULL;
 	}
@@ -760,7 +760,7 @@ void MVEPlayerDecodeAudio(mvebuffer * in)
 	assert(out.data != NULL);
 
 	/* each byte in the input mvebuffer after the first four (two words: initial L and R values)
-	will be expanded to fill a word in the return mvebuffer after decompression. 
+	will be expanded to fill a word in the return mvebuffer after decompression.
 	The initial two words will be stored in return mvebuffer as-is. */
 	sample[0] = LE16(in->data + in_pos);
 	in_pos += 2;
@@ -805,27 +805,27 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 	pitch = wblocks << 3;
 
 	/* for each row (of 8x8 pixel blocks) */
-    for(y = 0; y < hblocks; y++) 
+    for(y = 0; y < hblocks; y++)
 	{
 		/* for each column (of 8x8 pixel blocks) */
-		for (x = 0; x < wblocks; x++) 
+		for (x = 0; x < wblocks; x++)
 		{
-			/* assign the frame mvebuffer pointers to the addresses of the screen 
-			mvebuffers so we can do pointer arithmetic on them such as incrementing. 
+			/* assign the frame mvebuffer pointers to the addresses of the screen
+			mvebuffers so we can do pointer arithmetic on them such as incrementing.
 			current is the frame currently onscreen; new_frame is the frame under construction. */
 
 			new_frame = frame_hot;
 			current = frame_cold;
 
 			/* increment pixel pointer past the rendered area on the screen
-			y = number of rows, wblocks = number of blocks per row, 8 * 8 = pixel area of the block; 
+			y = number of rows, wblocks = number of blocks per row, 8 * 8 = pixel area of the block;
 			y * wblocks * 8 * 8 = all the complete rows of 8x8 pixel blocks rendered.
-			x * 8 = upper left pixel of the 8x8 block in this new row to be rendered at this time. 
+			x * 8 = upper left pixel of the 8x8 block in this new row to be rendered at this time.
 			I felt like replacing the multiplications throughout this function with shift operations. */
 
 			new_frame += (y * wblocks << 6) + (x << 3);
 			current += (y * wblocks << 6) + (x << 3);
-				
+
 			/* get the decoding map info for this block; low 4 bits if x is even, high 4 bits if x is odd */
 			encoding = (*map >> ((x & 1) << 2)) & 0x0f;
 
@@ -845,7 +845,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 				break;
 
 			case 0x1:
-				
+
 				break;
 
 			case 0x2:
@@ -966,9 +966,9 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 								mask = 0x01;
 							for(i = 0; i < 4; i++, mask <<= 1)
 							{
-								new_frame[i << 1] = 
+								new_frame[i << 1] =
 									new_frame[(i << 1) + 1] =
-									new_frame[(i << 1) + pitch] = 
+									new_frame[(i << 1) + pitch] =
 									new_frame[(i << 1) + 1 + pitch] = p[!!(b[j >> 1] & mask)];
 							}
 							new_frame += pitch << 1;
@@ -1064,7 +1064,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 								}
 							}
 						}
-					} /* end if/else block */					
+					} /* end if/else block */
 				} /* end case block */
 
 				break;
@@ -1228,7 +1228,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 									{
 										if(i == 4)
 											mask = 3;
-										new_frame[i] = p[((b[(j << 1) + (i > 3 ? 1 : 0) + (k << 3)] & mask) 
+										new_frame[i] = p[((b[(j << 1) + (i > 3 ? 1 : 0) + (k << 3)] & mask)
 											>> ((i % 4) << 1)) + (k << 2)];
 									}
 									new_frame += pitch;
@@ -1293,7 +1293,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 
 			case 0xE:
 
-				for(j = 0; j < 8; j++) 
+				for(j = 0; j < 8; j++)
 				{
 					memset(new_frame + j * pitch, *data, 8);
 				}
@@ -1322,7 +1322,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 /*************************************/
 void MVEPlayerEventHandler()
 {
-	/* event vars for determining pause, quit, or speed commands from user; declared static 
+	/* event vars for determining pause, quit, or speed commands from user; declared static
 	so they retain their values between calls to MVEPlayerEventHandler (else nothing happens) */
 
 	static Uint8 keyin = 0;
@@ -1344,13 +1344,13 @@ void MVEPlayerEventHandler()
 					PAUSED = !PAUSED;
 					if(PAUSED)
 					{
-						if(AUDIO_PLAYING) 
+						if(AUDIO_PLAYING)
 							SDL_PauseAudio(1);
 						if(TIMER_CREATED)
 							TIMER_INIT = 1;
 					}
-					else if(AUDIO_PLAYING) 
-						SDL_PauseAudio(0);						
+					else if(AUDIO_PLAYING)
+						SDL_PauseAudio(0);
 					break;
 				/* ToggleFullScreen does not work on my system so I cannot test it */
 				/*case SDLK_f:

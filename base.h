@@ -55,7 +55,7 @@ public:
 	int MaxOilNeed;
 	int MaxGoldNeed;
 
- 
+
 	int HumanProd;
 	int HumanNeed;
 	int MaxHumanNeed;
@@ -79,13 +79,13 @@ public:
 
 	/**
 	* inreases the energy production of the subbase by starting offline generators/stations
-	* @author eiko	
+	* @author eiko
 	*/
 	bool increaseEnergyProd( int i );
 
 	//-----------------------------------
 	//turn end manangement:
-	
+
 	/**
 	* checks if consumers have to be switched off, due to a lack of ressources
 	* @return returns true, if consumers have been shut down

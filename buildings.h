@@ -228,7 +228,7 @@ public:
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
-	
+
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath

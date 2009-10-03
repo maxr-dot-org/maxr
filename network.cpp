@@ -449,4 +449,3 @@ int cTCP::getFreeSocket()
 
 	return iNum;
 }
-

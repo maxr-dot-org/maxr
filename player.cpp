@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
-cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) 
+cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 : base(this)
 , name (Name)
 , color (Color)
@@ -38,7 +38,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
-		VehicleData[i] = UnitsData.getVehicle (i).data; // get the default (no clan) vehicle data 
+		VehicleData[i] = UnitsData.getVehicle (i).data; // get the default (no clan) vehicle data
 
 	// copy the building stats
 	BuildingData = new sUnitData[UnitsData.getNrBuildings ()];
@@ -54,13 +54,13 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 	VehicleList = NULL;
 	BuildingList = NULL;
 	ResourceMap = NULL;
-	
+
 	ResearchCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
-		researchCentersWorkingOnArea[i] = 0;	
+		researchCentersWorkingOnArea[i] = 0;
 	Credits=0;
 	reportResearchFinished = false;
-	
+
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = false;
@@ -69,7 +69,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum)
 }
 
 //-----------------------------------------------------------------------
-cPlayer::cPlayer(const cPlayer &Player) 
+cPlayer::cPlayer(const cPlayer &Player)
 : base(this)
 {
 	name = Player.name;
@@ -95,7 +95,7 @@ cPlayer::cPlayer(const cPlayer &Player)
 	VehicleList = NULL;
 	BuildingList = NULL;
 	ResourceMap = NULL;
-	
+
 	Credits = Player.Credits;
 	ResearchCount = Player.ResearchCount;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -103,7 +103,7 @@ cPlayer::cPlayer(const cPlayer &Player)
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 	{
 		researchLevel.setCurResearchLevel(Player.researchLevel.getCurResearchLevel(i), i);
-		researchLevel.setCurResearchPoints(Player.researchLevel.getCurResearchPoints(i), i);		
+		researchLevel.setCurResearchPoints(Player.researchLevel.getCurResearchPoints(i), i);
 	}
 	reportResearchFinished = Player.reportResearchFinished;
 
@@ -198,12 +198,12 @@ void cPlayer::setClan (int newClan)
 {
 	if (newClan == clan || newClan < -1 || 7 < newClan)
 		return;
-	
+
 	clan = newClan;
 
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles (); i++)
 		VehicleData[i] = UnitsData.getVehicle (i, clan).data;
-	
+
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
 }
@@ -463,7 +463,7 @@ void cPlayer::DoScan ()
 	memset ( DetectLandMap, 0, MapSize );
 	memset ( DetectSeaMap,  0, MapSize );
 	memset ( DetectMinesMap,0, MapSize );
-	
+
 	// iterate the vehicle list
 	vp = VehicleList;
 	while ( vp )
@@ -494,7 +494,7 @@ void cPlayer::DoScan ()
 						continue;
 					for ( int y = vp->PosY - 1; y <= vp->PosY + 1; y++ )
 					{
-						if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) ) 
+						if ( y < 0 || y >= (int)sqrt ( (double)MapSize ) )
 							continue;
 						DetectMinesMap[x + (int)sqrt ( (double)MapSize )*y] = 1;
 					}
@@ -515,9 +515,9 @@ void cPlayer::DoScan ()
 		{
 			if ( bp->data.scan )
 			{
-				if ( bp->data.isBig ) 
+				if ( bp->data.isBig )
 					drawSpecialCircleBig ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
-				else 
+				else
 					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
@@ -541,12 +541,12 @@ cVehicle *cPlayer::GetNextVehicle ()
 	else
 		start = VehicleList;
 
-	if ( !start ) 
+	if ( !start )
 		return NULL;
 	v = start;
 	do
 	{
-		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded )
 			return v;
 		next = false;
 		if ( v->next )
@@ -572,12 +572,12 @@ cVehicle *cPlayer::GetPrevVehicle ()
 	}
 	else
 		start = VehicleList;
-	if ( !start ) 
+	if ( !start )
 		return NULL;
 	v = start;
 	do
 	{
-		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded ) 
+		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded )
 			return v;
 		next = false;
 		if ( v->prev )
@@ -623,7 +623,7 @@ void cPlayer::stopAResearch (int researchArea)
 void cPlayer::doResearch()
 {
 	bool researchFinished = false;
-	cList<sUnitData*> upgradedUnitDatas; 
+	cList<sUnitData*> upgradedUnitDatas;
 	cList<int> areasReachingNextLevel;
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
@@ -639,12 +639,12 @@ void cPlayer::doResearch()
 	if (researchFinished)
 	{
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
-		
+
 		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
 			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
 	}
 	sendResearchLevel (&researchLevel, Nr);
-	
+
 	reportResearchFinished = researchFinished;
 }
 
@@ -658,7 +658,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 		{
 			int researchArea = areasReachingNextLevel[areaCounter];
 			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
-		
+
 			int startValue = 0;
 			switch (researchArea)
 			{
@@ -671,7 +671,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				case cResearch::kSpeedResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.speedMax; break;
 				case cResearch::kCostResearch: startValue = UnitsData.getVehicle (i, getClan ()).data.buildCosts; break;
 			}
-			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10,
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
 																					   UnitsData.getVehicle (i, getClan ()).data.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
@@ -699,7 +699,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 		if (incrementVersion)
 			VehicleData[i].version += 1;
 	}
-	
+
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings (); i++)
 	{
 		bool incrementVersion = false;
@@ -707,7 +707,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 		{
 			int researchArea = areasReachingNextLevel[areaCounter];
 			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
-			
+
 			int startValue = 0;
 			switch (researchArea)
 			{
@@ -719,7 +719,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				case cResearch::kScanResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.scan; break;
 				case cResearch::kCostResearch: startValue = UnitsData.getBuilding (i, getClan ()).data.buildCosts; break;
 			}
-			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10, 
+			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel - 10,
 																					   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
 																					   cUpgradeCalculator::kBuilding);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch(startValue, newResearchLevel,
@@ -840,7 +840,7 @@ bool cPlayer::InLockList (cBuilding *b)
 	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		elem = LockList[i];
-		if (elem->b == b) 
+		if (elem->b == b)
 			return true;
 	}
 	return false;
@@ -897,7 +897,7 @@ void cPlayer::DrawLockList ()
 	sLockElem *elem;
 	int spx, spy, off;
 
-	
+
 	for ( unsigned int i = 0; i < LockList.Size(); i++ )
 	{
 		elem = LockList[i];

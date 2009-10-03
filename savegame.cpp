@@ -169,9 +169,9 @@ void cSavegame::recalcSubbases()
 	{
 		cBuilding* building = Server->getBuildingFromID( SubBasesLoad[i]->buildingID );
 		if (!building ) continue;
-		
+
 		sSubBase& sb = *building->SubBase;
-		
+
 		sb.setMetalProd(0);
 		sb.setOilProd(0);
 		sb.setGoldProd(0);
@@ -399,7 +399,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 		TiXmlElement *subbaseNode = subbasesNode->FirstChildElement( "Subbase_0" );
 		while ( subbaseNode )
 		{
-			
+
 			TiXmlElement *buildingIDNode = subbaseNode->FirstChildElement( "buildingID" );
 			if ( buildingIDNode )
 			{
@@ -454,7 +454,7 @@ void cSavegame::loadResearchLevel ( TiXmlElement *researchLevelNode, cResearch& 
 	researchLevel.setCurResearchLevel( value, cResearch::kScanResearch );
 	researchLevelNode->FirstChildElement( "Level" )->Attribute ( "cost", &value );
 	researchLevel.setCurResearchLevel( value, cResearch::kCostResearch );
-	
+
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "attack", &value );
 	researchLevel.setCurResearchPoints( value, cResearch::kAttackResearch );
 	researchLevelNode->FirstChildElement( "CurPoints" )->Attribute ( "shots", &value );
@@ -492,7 +492,7 @@ void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersW
 	researchCentersWorkingOnAreaNode->Attribute ( "scan", &value );
 	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
 	researchCentersWorkingOnAreaNode->Attribute ( "cost", &value );
-	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;	
+	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;
 }
 
 //--------------------------------------------------------------------------
@@ -555,7 +555,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) 
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) )
 		vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	loadUnitValues ( unitNode, &vehicle->data );
@@ -581,7 +581,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		{
 			vehicle->BuildingTyp.generate ( element->Attribute ( "type_id" ) );
 		}
-		// be downward compatible and looke for 'type' too 
+		// be downward compatible and looke for 'type' too
 		else if ( element->Attribute ( "type" ) != NULL )
 		{
 			//element->Attribute ( "type", &vehicle->BuildingTyp );
@@ -683,11 +683,11 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	building->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) ) 
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) )
 		building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
 
 	TiXmlElement *element;
-	
+
 	loadUnitValues ( unitNode, &building->data );
 
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
@@ -732,7 +732,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 					}
 				}
 			}
-			// be downward compatible and looke for 'type' too 
+			// be downward compatible and looke for 'type' too
 			else if ( element->Attribute ( "type" ) != NULL )
 			{
 				int typenr;
@@ -868,7 +868,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	if ( Element = unitNode->FirstChildElement( "Scan" ) ) Element->Attribute ( "num", &Data->scan ); else Data->scan = 0;
 	if ( Element = unitNode->FirstChildElement( "Movement" ) ) Element->Attribute ( "num", &Data->speedMax ); else Data->speedMax = 0;
 	Data->speedMax *= 4;
-	
+
 	int tmpInt;
 
 	if ( Element = unitNode->FirstChildElement( "MuzzleType" ) ) { Element->Attribute ( "num", &tmpInt ); Data->muzzleType = (sUnitData::eMuzzleType)tmpInt; } else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
@@ -903,7 +903,7 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 			while ( pos < (int)storeUnitsString.length() );
 		}
 	}
-	
+
 	if ( Element = unitNode->FirstChildElement( "Needs_Energy" ) ) Element->Attribute ( "num", &Data->needsEnergy ); else Data->needsEnergy = 0;
 	if ( Element = unitNode->FirstChildElement( "Needs_Humans" ) ) Element->Attribute ( "num", &Data->needsHumans ); else Data->needsHumans = 0;
 	if ( Element = unitNode->FirstChildElement( "Needs_Oil" ) ) Element->Attribute ( "num", &Data->needsOil ); else Data->needsOil = 0;
@@ -932,14 +932,14 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 	if ( Element = unitNode->FirstChildElement( "Factor_Coast" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorCoast = (float)tmpdouble; } else Data->factorCoast = 0;
 	if ( Element = unitNode->FirstChildElement( "Factor_Ground" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorGround = (float)tmpdouble; } else Data->factorGround = 0;
 	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->factorSea = (float)tmpdouble; } else Data->factorSea = 0;
-	
+
 	if ( Element = unitNode->FirstChildElement( "Factor_Sea" ) ) { Element->Attribute ( "num", &tmpdouble ); Data->modifiesSpeed = (float)tmpdouble; } else Data->modifiesSpeed = 0;
 
 	Data->canBuildPath = unitNode->FirstChildElement( "Can_Build_Path" ) != NULL;
 	Data->canBuildRepeat = unitNode->FirstChildElement( "Can_Build_Repeat" ) != NULL;
 	Data->buildIntern = unitNode->FirstChildElement( "Build_Intern" ) != NULL;
 	Data->connectsToBase = unitNode->FirstChildElement( "Connects_To_Base" ) != NULL;
-	
+
 	Data->canBeCaptured = unitNode->FirstChildElement( "Can_Be_Captured" ) != NULL;
 	Data->canBeDisabled = unitNode->FirstChildElement( "Can_Be_Disabled" ) != NULL;
 	Data->canCapture = unitNode->FirstChildElement( "Can_Capture" ) != NULL;
@@ -1132,7 +1132,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	int upgrades = 0;
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
-		if ( Player->VehicleData[i].version > 0 
+		if ( Player->VehicleData[i].version > 0
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->VehicleData[i], &UnitsData.getVehicle (i, Player->getClan ()).data );
@@ -1141,7 +1141,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	}
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
-		if ( Player->BuildingData[i].version > 0 
+		if ( Player->BuildingData[i].version > 0
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan ()).data.buildCosts )  // if only costs were researched, the version is not incremented
 		{
 			writeUpgrade ( upgradesNode, upgrades, &Player->BuildingData[i], &UnitsData.getBuilding (i, Player->getClan ()).data );
@@ -1155,7 +1155,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	writeResearchLevel( researchLevelNode, Player->researchLevel );
 	TiXmlElement *researchCentersWorkingOnAreaNode = addMainElement ( researchNode, "CentersWorkingOnArea" );
 	writeResearchCentersWorkingOnArea( researchCentersWorkingOnAreaNode, Player );
-	
+
 
 	// write subbases
 	TiXmlElement *subbasesNode = addMainElement ( playerNode, "Subbases" );
@@ -1211,7 +1211,7 @@ void cSavegame::writeResearchLevel( TiXmlElement *researchLevelNode, cResearch& 
 	curPointsNode->SetAttribute( "hitpoints", iToStr (researchLevel.getCurResearchPoints (cResearch::kHitpointsResearch)).c_str() );
 	curPointsNode->SetAttribute( "speed", iToStr (researchLevel.getCurResearchPoints (cResearch::kSpeedResearch)).c_str() );
 	curPointsNode->SetAttribute( "scan", iToStr (researchLevel.getCurResearchPoints (cResearch::kScanResearch)).c_str() );
-	curPointsNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchPoints (cResearch::kCostResearch)).c_str() );	
+	curPointsNode->SetAttribute( "cost", iToStr (researchLevel.getCurResearchPoints (cResearch::kCostResearch)).c_str() );
 }
 
 //--------------------------------------------------------------------------
@@ -1224,7 +1224,7 @@ void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCenters
 	researchCentersWorkingOnAreaNode->SetAttribute( "hitpoints", iToStr (player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "speed", iToStr (player->researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "scan", iToStr (player->researchCentersWorkingOnArea[cResearch::kScanResearch]).c_str() );
-	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );		
+	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );
 }
 
 //--------------------------------------------------------------------------
@@ -1402,7 +1402,7 @@ void cSavegame::writeUnitValues ( TiXmlElement *unitNode, sUnitData *Data, sUnit
 	// write the standard status values
 	if ( Data->hitpointsCur != Data->hitpointsMax ) addAttributeElement ( unitNode, "Hitpoints", "num", iToStr ( Data->hitpointsCur ) );
 	if ( Data->ammoCur != Data->ammoMax ) addAttributeElement ( unitNode, "Ammo", "num", iToStr ( Data->ammoCur ) );
-	
+
 	if ( Data->storageResCur > 0 ) addAttributeElement ( unitNode, "ResCargo", "num", iToStr ( Data->storageResCur ) );
 	if ( Data->storageUnitsCur > 0 ) addAttributeElement ( unitNode, "UnitCargo", "num", iToStr ( Data->storageUnitsCur ) );
 
@@ -1481,10 +1481,10 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if ( Data->needsMetal != 0 ) addAttributeElement ( unitNode, "Needs_Metal", "num", iToStr ( Data->needsMetal ) );
 	if ( Data->convertsGold != 0 ) addAttributeElement ( unitNode, "Converts_Gold", "num", iToStr ( Data->convertsGold ) );
 	if ( Data->canMineMaxRes != 0 ) addAttributeElement ( unitNode, "Can_Mine_Max_Res", "num", iToStr ( Data->canMineMaxRes ) );
-	
+
 	if ( Data->isStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Is_Stealth_On", "num", iToStr ( Data->isStealthOn ) );
 	if ( Data->canDetectStealthOn != TERRAIN_NONE ) addAttributeElement ( unitNode, "Can_Detect_Stealth_On", "num", iToStr ( Data->canDetectStealthOn ) );
-	
+
 	if ( Data->surfacePosition != sUnitData::SURFACE_POS_GROUND ) addAttributeElement ( unitNode, "Surface_Position", "num", iToStr ( Data->surfacePosition ) );
 	if ( Data->canBeOverbuild != sUnitData::OVERBUILD_TYPE_NO ) addAttributeElement ( unitNode, "Can_Be_Overbuild", "num", iToStr ( Data->canBeOverbuild ) );
 
@@ -1492,14 +1492,14 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 	if( Data->factorCoast != 0.0 ) addAttributeElement ( unitNode, "Factor_Coast", "num", dToStr ( Data->factorCoast ) );
 	if( Data->factorGround != 0.0 ) addAttributeElement ( unitNode, "Factor_Ground", "num", dToStr ( Data->factorGround ) );
 	if( Data->factorSea != 0.0 ) addAttributeElement ( unitNode, "Factor_Sea", "num", dToStr ( Data->factorSea ) );
-	
+
 	if( Data->modifiesSpeed != 0.0 ) addAttributeElement ( unitNode, "Factor_Sea", "num", dToStr ( Data->modifiesSpeed ) );
 
 	if( Data->canBuildPath ) addMainElement ( unitNode, "Can_Build_Path" );
 	if( Data->canBuildRepeat ) addMainElement ( unitNode, "Can_Build_Repeat" );
 	if( Data->buildIntern ) addMainElement ( unitNode, "Build_Intern" );
 	if( Data->connectsToBase ) addMainElement ( unitNode, "Connects_To_Base" );
-	
+
 	if( Data->canBeCaptured ) addMainElement ( unitNode, "Can_Be_Captured" );
 	if( Data->canBeDisabled ) addMainElement ( unitNode, "Can_Be_Disabled" );
 	if( Data->canCapture ) addMainElement ( unitNode, "Can_Capture" );
@@ -1563,7 +1563,7 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 
 	// add reports
 	TiXmlElement *reportsNode = addMainElement ( playerNode, "Reports" );
-	
+
 	while ( list.Size() )
 	{
 		TiXmlElement *reportElement = addMainElement ( reportsNode, "Report" );

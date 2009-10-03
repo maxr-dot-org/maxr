@@ -29,7 +29,7 @@ int LoadKeys ()
 	TiXmlDocument KeysXml;
 	ExTiXmlNode * pXmlNode = NULL;
 	string sTmpString;
-		
+
 	if (!FileExists(KEYS_XML))
 	{
 		Log.write ( "generating new file", LOG_TYPE_WARNING );
