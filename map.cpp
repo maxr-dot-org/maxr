@@ -306,13 +306,6 @@ bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
 	else return terrain[Kacheln[off]].water||terrain[Kacheln[off]].coast;
 }
 
-// Struktur zum laden:
-struct sTuple
-{
-	int from;
-	int to;
-};
-
 SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum )
 {
 	// Create new surface and copy palette
