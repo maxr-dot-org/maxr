@@ -17,6 +17,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <math.h>
+
+#include "autosurface.h"
 #include "hud.h"
 #include "main.h"
 #include "mouse.h"
@@ -327,72 +329,76 @@ SDL_Surface *cGameGUI::generateSurface()
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx"))
-	{
-		SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
-		SDL_FreeSurface ( tmpSurface );
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx"));
+		if (tmpSurface)
+		{
+			SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
+		}
 	}
 
-	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx"))
-	{
-		scr.x = 0;
-		scr.y = 0;
-		scr.w = tmpSurface->w;
-		scr.h = tmpSurface->h;
-		dest.x = HUD_LEFT_WIDTH;
-		dest.y = 0;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		scr.x = 1275;
-		scr.w = 18;
-		scr.h = HUD_TOP_HIGHT;
-		dest.x = surface->w-HUD_TOP_HIGHT;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		SDL_FreeSurface ( tmpSurface );
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx"));
+		if (tmpSurface)
+		{
+			scr.x = 0;
+			scr.y = 0;
+			scr.w = tmpSurface->w;
+			scr.h = tmpSurface->h;
+			dest.x = HUD_LEFT_WIDTH;
+			dest.y = 0;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+			scr.x = 1275;
+			scr.w = 18;
+			scr.h = HUD_TOP_HIGHT;
+			dest.x = surface->w-HUD_TOP_HIGHT;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+		}
 	}
 
-	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx"))
-	{
-		scr.x = 0;
-		scr.y = 0;
-		scr.w = tmpSurface->w;
-		scr.h = tmpSurface->h;
-		dest.x = surface->w-HUD_RIGHT_WIDTH;
-		dest.y = HUD_TOP_HIGHT;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		SDL_FreeSurface ( tmpSurface );
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx"));
+		if (tmpSurface)
+		{
+			scr.x = 0;
+			scr.y = 0;
+			scr.w = tmpSurface->w;
+			scr.h = tmpSurface->h;
+			dest.x = surface->w-HUD_RIGHT_WIDTH;
+			dest.y = HUD_TOP_HIGHT;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+		}
 	}
 
-	if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx"))
-	{
-		scr.x = 0;
-		scr.y = 0;
-		scr.w = tmpSurface->w;
-		scr.h = tmpSurface->h;
-		dest.x = HUD_LEFT_WIDTH;
-		dest.y = surface->h-24;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		scr.x = 1275;
-		scr.w = 23;
-		scr.h = 24;
-		dest.x = surface->w-23;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		scr.x = 1299;
-		scr.w = 16;
-		scr.h = 22;
-		dest.x = HUD_LEFT_WIDTH-16;
-		dest.y = surface->h-22;
-		SDL_BlitSurface ( tmpSurface, &scr, surface, &dest );
-		SDL_FreeSurface ( tmpSurface );
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx"));
+		if (tmpSurface)
+		{
+			scr.x = 0;
+			scr.y = 0;
+			scr.w = tmpSurface->w;
+			scr.h = tmpSurface->h;
+			dest.x = HUD_LEFT_WIDTH;
+			dest.y = surface->h-24;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+			scr.x = 1275;
+			scr.w = 23;
+			scr.h = 24;
+			dest.x = surface->w-23;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+			scr.x = 1299;
+			scr.w = 16;
+			scr.h = 22;
+			dest.x = HUD_LEFT_WIDTH-16;
+			dest.y = surface->h-22;
+			SDL_BlitSurface(tmpSurface, &scr, surface, &dest);
+		}
 	}
 
 	if ( SettingsData.iScreenH > 480 )
 	{
-		if (SDL_Surface* const tmpSurface = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx"))
+		AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx"));
+		if (tmpSurface)
 		{
 			dest.x = 9;
 			dest.y = SettingsData.iScreenH-HUD_TOTAL_HIGHT-15;
 			SDL_BlitSurface ( tmpSurface, NULL, surface, &dest );
-			SDL_FreeSurface ( tmpSurface );
 		}
 	}
 	return surface;
