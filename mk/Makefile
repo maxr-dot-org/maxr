@@ -68,8 +68,8 @@ SRCS += unifonts.cpp
 SRCS += upgradecalculator.cpp
 SRCS += vehicles.cpp
 
-DEPS = $(filter %.d, $(SRCS:.c=.d) $(SRCS:.cpp=.d))
 OBJS = $(filter %.o, $(SRCS:.c=.o) $(SRCS:.cpp=.o))
+DEPS = $(OBJS:.o=.d)
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .d .o
@@ -78,13 +78,7 @@ Q ?= @
 
 all: $(BINARY)
 
-ifndef NO_DEPS
-depend: $(DEPS)
-
-ifeq ($(findstring $(MAKECMDGOALS), clean depend deinstall distclean),)
 -include $(DEPS)
-endif
-endif
 
 $(BINARY): $(OBJS)
 	@echo '===> LD $@'
@@ -92,20 +86,11 @@ $(BINARY): $(OBJS)
 
 .c.o:
 	@echo '===> CC $<'
-	$(Q)$(CC) $(CCFLAGS) -c $< -o $@
+	$(Q)$(CC) $(CCFLAGS) -c -MMD -o $@ $<
 
 .cpp.o:
 	@echo '===> CXX $<'
-	$(Q)$(CXX) $(CXXFLAGS) -c $< -o $@
-
-.c.d:
-	@echo '===> DEP $<'
-	$(Q)$(CC) $(CCFLAGS) -MM $< | sed 's#^$(@F:%.d=%.o):#$@ $(@:%.d=%.o):#' > $@
-
-.cpp.d:
-	@echo '===> DEP $<'
-	$(Q)$(CXX) $(CXXFLAGS) -MM $< | sed 's#^$(@F:%.d=%.o):#$@ $(@:%.d=%.o):#' > $@
-
+	$(Q)$(CXX) $(CXXFLAGS) -c -MMD -o $@ $<
 
 clean distclean:
 	@echo '===> CLEAN'
