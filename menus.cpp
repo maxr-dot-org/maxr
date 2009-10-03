@@ -2567,7 +2567,6 @@ void cNetworkMenu::showSettingsText()
 void cNetworkMenu::showMap()
 {
 	if ( !gameDataContainer.map ) return;
-	SDL_Surface *surface = NULL;
 	int size;
 	SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(), "rb" );
 	if (fp == 0 && !getUserMapsDir().empty())
@@ -2584,7 +2583,7 @@ void cNetworkMenu::showMap()
 		SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
 		SDL_RWread ( fp, &Palette, 1, 768 );
 
-		surface = SDL_CreateRGBSurface( SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0 );
+		AutoSurface surface(SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
 
 		if ( SDL_MUSTLOCK ( surface ) ) SDL_LockSurface ( surface );
 		surface->pitch = surface->w;
@@ -2610,18 +2609,13 @@ void cNetworkMenu::showMap()
 		if ( SDL_MUSTLOCK ( surface ) ) SDL_UnlockSurface ( surface );
 
 		SDL_RWclose ( fp );
-	}
-	if ( surface != NULL )
-	{
-		#define MAPWINSIZE 112
+
+#define MAPWINSIZE 112
 		if( surface->w != MAPWINSIZE || surface->h != MAPWINSIZE) // resize map
 		{
-			SDL_Surface *scaledMap = scaleSurface ( surface, NULL, MAPWINSIZE, MAPWINSIZE );
-			SDL_FreeSurface ( surface );
-			surface = scaledMap;
+			surface = scaleSurface(surface, NULL, MAPWINSIZE, MAPWINSIZE);
 		}
 		mapImage->setImage ( surface );
-		SDL_FreeSurface ( surface );
 	}
 
 	string mapName = gameDataContainer.map->MapName;
