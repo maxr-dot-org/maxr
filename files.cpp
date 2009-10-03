@@ -75,11 +75,7 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 #else
 	DIR* hDir = opendir ( sDirectory.c_str() );
 	struct dirent* entry;
-	if( hDir == NULL )
-	{
-		closedir( hDir );
-	}
-	else
+	if (hDir)
 	{
 		do
 		{
