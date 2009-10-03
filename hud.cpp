@@ -285,7 +285,8 @@ int cGameGUI::show()
 
 		if ( needMiniMapDraw )
 		{
-			miniMapImage->setImage ( generateMiniMapSurface() );
+			AutoSurface mini(generateMiniMapSurface());
+			miniMapImage->setImage(mini);
 			needMiniMapDraw = false;
 		}
 		if ( Client->timer100ms )
