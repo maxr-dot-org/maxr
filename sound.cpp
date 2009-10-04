@@ -26,13 +26,10 @@
 #include "log.h"
 #include "settings.h"
 
-// Globales //////////////////////////////////////////////////////////////////
-Mix_Music *music_stream = NULL;
+static Mix_Music* music_stream = NULL;
 
-// Lokale Prototypen /////////////////////////////////////////////////////////
-void MusicFinished ( void );
+static void MusicFinished(void);
 
-// Funktionen ////////////////////////////////////////////////////////////////
 // Initialisiert den Sound:
 int InitSound ( int frequency,int chunksize )
 {
@@ -122,7 +119,7 @@ void StartMusic ( void )
 }
 
 // Callback, wenn Musik am Ende:
-void MusicFinished ( void )
+static void MusicFinished(void)
 {
 	if ( !SettingsData.bSoundEnabled ) return;
 	if ( MusicFiles.Size() == 0 ) return;
