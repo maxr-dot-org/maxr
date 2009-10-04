@@ -711,14 +711,14 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 		if ( buildNode->FirstChildElement( "RepeatBuild" ) ) building->RepeatBuild = true;
 
 		int itemnum = 0;
-		TiXmlElement* element = buildNode->FirstChildElement("BuildList")->FirstChildElement("Item_0");
-		while ( element )
+		TiXmlElement *itemElement = buildNode->FirstChildElement("BuildList")->FirstChildElement("Item_0");
+		while ( itemElement )
 		{
 			sBuildList *listitem = new sBuildList;
-			if ( element->Attribute ( "type_id" ) != NULL )
+			if ( itemElement->Attribute ( "type_id" ) != NULL )
 			{
 				sID BuildID;
-				BuildID.generate ( element->Attribute ( "type_id" ) );
+				BuildID.generate ( itemElement->Attribute ( "type_id" ) );
 				for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 				{
 					if ( BuildID == UnitsData.vehicle[i].data.ID )
@@ -729,17 +729,17 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 				}
 			}
 			// be downward compatible and looke for 'type' too
-			else if ( element->Attribute ( "type" ) != NULL )
+			else if ( itemElement->Attribute ( "type" ) != NULL )
 			{
 				int typenr;
-				element->Attribute ( "type", &typenr );
+				itemElement->Attribute ( "type", &typenr );
 				listitem->typ = &UnitsData.vehicle[typenr];
 			}
-			element->Attribute ( "metall_remaining", &listitem->metall_remaining );
+			itemElement->Attribute ( "metall_remaining", &listitem->metall_remaining );
 			building->BuildList->Add ( listitem );
 
 			itemnum++;
-			element = buildNode->FirstChildElement( "BuildList" )->FirstChildElement( ("Item_" + iToStr ( itemnum )).c_str() );
+			itemElement = buildNode->FirstChildElement( "BuildList" )->FirstChildElement( ("Item_" + iToStr ( itemnum )).c_str() );
 		}
 	}
 
