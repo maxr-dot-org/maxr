@@ -65,7 +65,7 @@ public:
 	};
 
 	/// Get the first Node with a matching path
-	ExTiXmlNode* XmlGetFirstNode( TiXmlDocument & rTiXmlDoc, const char * pszCurrent, ... );
+	static ExTiXmlNode* XmlGetFirstNode( TiXmlDocument & rTiXmlDoc, const char * pszCurrent, ... );
 
 	/// Navigate to a child node.
 	ExTiXmlNode* XmlGetFirstNodeChild();

@@ -2756,7 +2756,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	//read name
 	Data->name = getXMLNodeString ( unitDataXml, "name", "Unit" );
 	//read description
-	if (ExTiXmlNode* const pExXmlNode = pExXmlNode->XmlGetFirstNode(unitDataXml, "Unit", "Description", NULL))
+	if (ExTiXmlNode* const pExXmlNode = ExTiXmlNode::XmlGetFirstNode(unitDataXml, "Unit", "Description", NULL))
 	{
 		Data->description = pExXmlNode->ToElement()->GetText();
 		int iPosition = (int)Data->description.find("\\n",0);
