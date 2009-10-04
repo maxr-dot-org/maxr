@@ -114,47 +114,37 @@ void cDialogOK::okReleased( void *parent )
 	menu->end = true;
 }
 
-cDialogLicence::cDialogLicence() : cMenu ( LoadPCX( GFXOD_DIALOG4 ), MNU_BG_ALPHA )
+cDialogLicence::cDialogLicence() :
+	cMenu(LoadPCX(GFXOD_DIALOG4), MNU_BG_ALPHA),
+	maxrLabel(  position.x + position.w / 2, position.y +  30, "\"M.A.X. Reloaded\"" ),
+	headerLabel(position.x + position.w / 2, position.y +  30 + font->getFontHeight(), "(C) 2007 by its authors"),
+	textLabel(  position.x +  35,            position.y +  30 + 3 * font->getFontHeight()),
+	okButton(   position.x + 111,            position.y + 185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	upButton(   position.x + 241,            position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL),
+	downButton( position.x + 261,            position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL)
 {
 	generateLicenceTexts();
 
-	maxrLabel = new cMenuLabel ( position.x+position.w/2, position.y+30, "\"M.A.X. Reloaded\"" );
-	maxrLabel->setCentered ( true );
-	menuItems.Add ( maxrLabel );
+	maxrLabel.setCentered(true);
+	menuItems.Add(&maxrLabel);
 
-	headerLabel = new cMenuLabel ( position.x+position.w/2, position.y+30+font->getFontHeight(), "(C) 2007 by its authors" );
-	headerLabel->setCentered ( true );
-	menuItems.Add ( headerLabel );
+	headerLabel.setCentered(true);
+	menuItems.Add(&headerLabel);
 
-	textLabel = new cMenuLabel ( position.x+35, position.y+30+3*font->getFontHeight() );
-	textLabel->setBox ( 232, 142 );
-	menuItems.Add ( textLabel );
+	textLabel.setBox(232, 142);
+	menuItems.Add(&textLabel);
 
-	okButton = new cMenuButton ( position.x+111, position.y+185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	okButton->setReleasedFunction ( &okReleased );
-	menuItems.Add ( okButton );
+	okButton.setReleasedFunction(&okReleased);
+	menuItems.Add(&okButton);
 
-	upButton = new cMenuButton ( position.x+241, position.y+187, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL );
-	upButton->setReleasedFunction ( &upReleased );
-	menuItems.Add ( upButton );
+	upButton.setReleasedFunction(&upReleased);
+	menuItems.Add(&upButton);
 
-	downButton = new cMenuButton ( position.x+261, position.y+187, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL );
-	downButton->setReleasedFunction ( &downReleased );
-	menuItems.Add ( downButton );
+	downButton.setReleasedFunction(&downReleased);
+	menuItems.Add(&downButton);
 
 	offset = 0;
 	resetText();
-}
-
-cDialogLicence::~cDialogLicence()
-{
-	delete maxrLabel;
-	delete headerLabel;
-	delete textLabel;
-
-	delete okButton;
-	delete upButton;
-	delete downButton;
 }
 
 void cDialogLicence::generateLicenceTexts()
@@ -206,24 +196,24 @@ void cDialogLicence::resetText()
 	switch ( offset )
 	{
 	case 0:
-		textLabel->setText ( sLicence1 );
-		upButton->setLocked ( true );
+		textLabel.setText(sLicence1);
+		upButton.setLocked(true);
 		break;
 	case 1:
-		textLabel->setText ( sLicence2 );
-		upButton->setLocked ( false );
+		textLabel.setText(sLicence2);
+		upButton.setLocked(false);
 		break;
 	case 2:
-		textLabel->setText ( sLicence3 );
-		textLabel->setFontType ( FONT_LATIN_NORMAL );
-		downButton->setLocked ( false );
-		headerLabel->setText ( "(C) 2007 by its authors" );
+		textLabel.setText(sLicence3);
+		textLabel.setFontType(FONT_LATIN_NORMAL);
+		downButton.setLocked(false);
+		headerLabel.setText("(C) 2007 by its authors");
 		break;
 	case 3:
-		textLabel->setText ( sLicence4 );
-		textLabel->setFontType ( FONT_LATIN_SMALL_WHITE );
-		downButton->setLocked ( true );
-		headerLabel->setText ( "AUTHORS:" );
+		textLabel.setText(sLicence4);
+		textLabel.setFontType(FONT_LATIN_SMALL_WHITE);
+		downButton.setLocked(true);
+		headerLabel.setText("AUTHORS:");
 		break;
 	}
 	draw();
@@ -233,8 +223,11 @@ void cDialogLicence::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
 	if ( key.keysym.sym == SDLK_RETURN )
 	{
-		if ( key.state == SDL_PRESSED && !okButton->getIsClicked() ) okButton->clicked ( this );
-		else if ( key.state == SDL_RELEASED && okButton->getIsClicked() ) okButton->released ( this );
+		switch (key.state)
+		{
+			case SDL_PRESSED:  if (!okButton.getIsClicked()) okButton.clicked(this);  break;
+			case SDL_RELEASED: if (okButton.getIsClicked())  okButton.released(this); break;
+		}
 	}
 }
 

@@ -62,31 +62,32 @@ private:
  */
 class cDialogLicence : public cMenu
 {
-	string sLicence1;
-	string sLicence2;
-	string sLicence3;
- 	string sLicence4;
-	int offset;
-
-	cMenuLabel *maxrLabel;
-	cMenuLabel *headerLabel;
-	cMenuLabel *textLabel;
-
-	cMenuButton *okButton;
-	cMenuButton *upButton;
-	cMenuButton *downButton;
-
-	void generateLicenceTexts();
-	void resetText();
 public:
 	cDialogLicence();
-	~cDialogLicence();
 
 	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void okReleased( void *parent );
 	static void upReleased( void *parent );
 	static void downReleased( void *parent );
+
+private:
+	string sLicence1;
+	string sLicence2;
+	string sLicence3;
+	string sLicence4;
+	int offset;
+
+	cMenuLabel maxrLabel;
+	cMenuLabel headerLabel;
+	cMenuLabel textLabel;
+
+	cMenuButton okButton;
+	cMenuButton upButton;
+	cMenuButton downButton;
+
+	void generateLicenceTexts();
+	void resetText();
 };
 
  /**
