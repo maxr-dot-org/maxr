@@ -26,17 +26,18 @@
  */
 class cDialogYesNo : public cMenu
 {
-	cMenuLabel *textLabel;
-	cMenuButton *yesButton;
-	cMenuButton *noButton;
 public:
 	cDialogYesNo(string text);
-	~cDialogYesNo();
 
 	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
 
 	static void yesReleased( void *parent );
 	static void noReleased( void *parent );
+
+private:
+	cMenuLabel  textLabel;
+	cMenuButton yesButton;
+	cMenuButton noButton;
 };
 
 /**

@@ -34,26 +34,20 @@
 #include "sound.h"
 #include "settings.h"
 
-cDialogYesNo::cDialogYesNo(string text) : cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA)
+cDialogYesNo::cDialogYesNo(string text) :
+	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
+	textLabel(position.x +  20, position.y +  20, text),
+	yesButton(position.x + 155, position.y + 185, lngPack.i18n("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	noButton( position.x +  67, position.y + 185, lngPack.i18n("Text~Button~No"),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
-	textLabel = new cMenuLabel ( position.x+20, position.y+20, text );
-	textLabel->setBox ( position.w-40, position.h-150 );
-	menuItems.Add ( textLabel );
+	textLabel.setBox(position.w - 40, position.h - 150);
+	menuItems.Add(&textLabel);
 
-	yesButton = new cMenuButton ( position.x+155, position.y+185, lngPack.i18n ("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	yesButton->setReleasedFunction ( &yesReleased );
-	menuItems.Add ( yesButton );
+	yesButton.setReleasedFunction(&yesReleased);
+	menuItems.Add(&yesButton);
 
-	noButton = new cMenuButton ( position.x+67, position.y+185, lngPack.i18n ("Text~Button~No"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	noButton->setReleasedFunction ( &noReleased );
-	menuItems.Add ( noButton );
-}
-
-cDialogYesNo::~cDialogYesNo()
-{
-	delete textLabel;
-	delete yesButton;
-	delete noButton;
+	noButton.setReleasedFunction(&noReleased);
+	menuItems.Add(&noButton);
 }
 
 void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, string ch)
@@ -61,12 +55,18 @@ void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, string ch)
 	switch ( key.keysym.sym )
 	{
 	case SDLK_RETURN:
-		if ( key.state == SDL_PRESSED && !yesButton->getIsClicked() ) yesButton->clicked ( this );
-		else if ( key.state == SDL_RELEASED && yesButton->getIsClicked() ) yesButton->released ( this );
+		switch (key.state)
+		{
+			case SDL_PRESSED:  if (!yesButton.getIsClicked()) yesButton.clicked(this);  break;
+			case SDL_RELEASED: if (yesButton.getIsClicked())  yesButton.released(this); break;
+		}
 		break;
 	case SDLK_ESCAPE:
-		if ( key.state == SDL_PRESSED && !noButton->getIsClicked() ) noButton->clicked ( this );
-		else if ( key.state == SDL_RELEASED && noButton->getIsClicked() ) noButton->released ( this );
+		switch (key.state)
+		{
+			case SDL_PRESSED:  if (!noButton.getIsClicked()) noButton.clicked(this);  break;
+			case SDL_RELEASED: if (noButton.getIsClicked())  noButton.released(this); break;
+		}
 		break;
 	}
 }
