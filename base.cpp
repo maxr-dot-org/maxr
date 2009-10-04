@@ -183,9 +183,6 @@ void sSubBase::changeGoldProd( int i )
 	setGoldProd( GoldProd + i );
 }
 
-sSubBase::~sSubBase()
-{}
-
 int sSubBase::calcMaxProd( int ressourceType )
 {
 	int maxProd = 0;

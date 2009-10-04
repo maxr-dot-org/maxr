@@ -31,7 +31,6 @@ struct sSubBase{
 public:
 	sSubBase( int iNextID, cPlayer* owner_ );
 	sSubBase( const sSubBase& sb );
-	~sSubBase();
 
 	cList<cBuilding*> buildings;
 	cPlayer* owner;
