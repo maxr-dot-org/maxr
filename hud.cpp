@@ -236,6 +236,8 @@ cGameGUI::~cGameGUI()
 
 int cGameGUI::show()
 {
+	drawnEveryFrame = true;
+
 	cMenu *lastActiveMenu = ActiveMenu;
 	ActiveMenu = this;
 
@@ -255,7 +257,7 @@ int cGameGUI::show()
 		{
 			handleMouseMove();
 
-			mouse->draw ( true, screen );
+//			mouse->draw ( true, screen );
 
 			for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 			{

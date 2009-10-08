@@ -225,6 +225,7 @@ enum eMenuBackgrounds
 class cMenu
 {
 protected:
+	bool drawnEveryFrame;
 	/** When this is true the show-loop will be end and give 0 as return.
 	 * Should be used when the menu is closed by ok or done.
 	 */

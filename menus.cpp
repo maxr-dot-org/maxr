@@ -445,7 +445,9 @@ eLandingState cGameDataContainer::checkLandingState( int playerNr )
 	return newState;
 }
 
-cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) : background (background_), backgroundType(backgroundType_)
+cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
+	background (background_),
+	backgroundType(backgroundType_)
 {
 	end = false;
 	terminate = false;
@@ -499,13 +501,16 @@ void cMenu::draw( bool firstDraw, bool showScreen )
 
 	if ( showScreen )
 	{
+		if ( drawnEveryFrame ) mouse->draw ( true, buffer );
 		SHOW_SCREEN
-		mouse->draw ( false, screen );
+		if ( !drawnEveryFrame ) mouse->draw ( false, screen ); 
 	}
 }
 
 int cMenu::show()
 {
+	drawnEveryFrame = false;
+
 	mouse->SetCursor ( CHand );
 	draw( true );
 

@@ -193,7 +193,7 @@ static void showSplash()
 
 	if(SettingsData.iColourDepth > (Uint32)uBpp)
 	{
-	  Log.write("Requested colordepth from config is higher than the display has!", cLog::eLOG_TYPE_WARNING);
+		Log.write("Requested colordepth from config is higher than the display has!", cLog::eLOG_TYPE_WARNING);
 	}
 
 	//made it far enough to start game
