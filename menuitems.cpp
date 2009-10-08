@@ -299,14 +299,16 @@ void cMenuImage::draw()
 	}
 }
 
-cMenuLabel::cMenuLabel ( int x, int y, string text_, eUnicodeFontType fontType_ ) : cMenuItem( x, y ), fontType( fontType_ )
+cMenuLabel::cMenuLabel(int x, int y, string text_, eUnicodeFontType fontType_) :
+	cMenuItem(x, y),
+	fontType(fontType_),
+	flagCentered(false),
+	flagBox(false)
 {
 	textPosition.x = position.x;
 	textPosition.y = position.y;
 	textPosition.w = textPosition.h = 0;
 	setText ( text_ );
-	flagCentered = false;
-	flagBox = false;
 }
 
 void cMenuLabel::setText( string text_ )
