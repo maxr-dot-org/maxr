@@ -30,7 +30,8 @@ sMouseState::sMouseState()
 	wheelDown = false;
 }
 
-cInput::cInput()
+cInput::cInput() :
+	LastClickTicks(0)
 {
 	// enables that SDL puts the unicode values to the keyevents.
 	SDL_EnableUNICODE ( 1 );
