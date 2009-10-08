@@ -29,6 +29,7 @@
 #include <SDL_getenv.h>
 
 #define __main__
+#include "autosurface.h"
 #include "defines.h"
 #include "main.h"
 #include "files.h"
@@ -181,7 +182,7 @@ static void showSplash()
         Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
 
 	buffer = LoadPCX(SPLASH_BACKGROUND);
-	SDL_WM_SetIcon ( SDL_LoadBMP ( MAXR_ICON ), NULL );
+	SDL_WM_SetIcon(AutoSurface(SDL_LoadBMP(MAXR_ICON)), NULL);
 
 	//set window to center of screen.
 	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
