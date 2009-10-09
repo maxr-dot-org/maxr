@@ -173,6 +173,8 @@ int main ( int argc, char *argv[] )
 	return 0;
 }
 
+static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
+
 /**
  *Shows splashscreen
  */
@@ -185,7 +187,6 @@ static void showSplash()
 	SDL_WM_SetIcon(AutoSurface(SDL_LoadBMP(MAXR_ICON)), NULL);
 
 	//set window to center of screen.
-	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
 	{
 		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
@@ -216,7 +217,6 @@ static void showGameWindow()
 	buffer=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
 
 	//set window to center of screen.
-	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
 	if(putenv( cVideoPos)!=0)
 	{
 		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);

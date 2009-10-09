@@ -189,7 +189,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		return MVE_CORRUPT;
 
 	//set window to center of screen
-	char cVideoPos[21] = "SDL_VIDEO_CENTERED=1";
+	static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
 	putenv( cVideoPos);
 
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
