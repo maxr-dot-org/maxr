@@ -935,7 +935,6 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 {
 	DestX = iDestOff%Client->Map->size;
 	DestY = iDestOff/Client->Map->size;
-	Waypoints = NULL;
 	init ( iSrcOff, bPlane, Vehicle );
 }
 
