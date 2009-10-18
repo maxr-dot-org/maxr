@@ -489,7 +489,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	if ( StartUp )
 	{
-		if ( Client->timer50ms )
+		if ( Client->timer100ms )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )

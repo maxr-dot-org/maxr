@@ -1607,8 +1607,8 @@ cMenuUnitDetails::cMenuUnitDetails(int x, int y, bool drawLines_, cPlayer* owner
 	owner(owner_),
 	drawLines(drawLines_)
 {
-	position.w = 246;
-	position.h = 176;
+	position.w = 155;
+	position.h = 25;
 	vehicle = NULL;
 	building = NULL;
 }

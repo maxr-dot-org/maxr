@@ -2664,9 +2664,9 @@ void cGameGUI::preDrawFunction()
 	int startX = ((offX-1)/64)-1 < 0 ? 0 : ((offX-1)/64)-1;
 	int startY = ((offY-1)/64)-1 < 0 ? 0 : ((offY-1)/64)-1;
 
-	int endX = offX/64 + ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / (getTileSize()+1);
+	int endX = Round(offX/64.0) + ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / (getTileSize()+1);
 	if ( endX >= map->size ) endX = map->size-1;
-	int endY = offY/64+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / (getTileSize()+1);
+	int endY = Round(offY/64.0) + ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / (getTileSize()+1);
 	if ( endY >= map->size ) endY = map->size-1;
 
 	if ( Client->timer400ms ) map->generateNextAnimationFrame();
