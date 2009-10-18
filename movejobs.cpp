@@ -929,10 +929,13 @@ void cEndMoveAction::handleDelVehicle( cVehicle *delVehicle )
 	if ( delVehicle == destVehicle ) destVehicle = NULL;
 }
 
-cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
+cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle ) :
+	Waypoints(NULL),
+	lastWaypoints(NULL)
 {
 	DestX = iDestOff%Client->Map->size;
 	DestY = iDestOff/Client->Map->size;
+	Waypoints = NULL;
 	init ( iSrcOff, bPlane, Vehicle );
 }
 
