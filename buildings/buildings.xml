@@ -49,6 +49,7 @@
     <Training directory="training" num="34"/>
     <Barracks directory="barracks" num="1"/>
     <!--<Factory_Alien directory="fac_alien" num="10"/>-->
+    <Ecosphere directory="ecosphere" num="35"/>
   </Buildings>
 </BuildingsData>
 

@@ -181,6 +181,7 @@
 			<Energy ENG="Power"/>
 			<Usage ENG="Usage"/>
 			<Teams ENG="Teams"/>
+			<Score ENG="Score"/>
 		</Hud>
 		<Option>
 			<Lowest ENG="Least"/>
@@ -292,12 +293,12 @@
 			<Gold_Low ENG="More gold needed, refinery turned off."/>
 			<Team_Low ENG="Workers needed, building turned off."/>
 			<Building_Disabled ENG="Building disabled"/>
-			<Energy_Optimize ENG="Power generator turned on."/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed"/>
 			<Energy_ToLow ENG="More power needed, generator turned on."/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed."/>
 			<Metal_Insufficient ENG="Cannot start, metal needed."/>
 			<Gold_Insufficient ENG="Cannot start, gold needed."/>
+			<Team_Insufficient ENG="Cannot start, workers needed."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed."/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by "/>
@@ -349,6 +350,13 @@
 			<Surveying ENG="surveying"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config"/>
+			<Point ENG="point"/>
+			<Points ENG="points"/>
+			<EcoSphere ENG="eco-sphere"/>
+			<EcoSpheres ENG="eco-spheres"/>
+			<GameEndsAt ENG="Game ends at"/>
+			<NoLimit ENG="Fight to the death!"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>
