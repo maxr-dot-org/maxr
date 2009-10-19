@@ -74,7 +74,7 @@ public:
 
 	/**
 	* This method looks for a cached image, that matches the properties of the passed building.
-	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matchong cache entry exists.
+	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matching cache entry exists.
 	*/
 	SDL_Surface* getCachedImage(cBuilding* building );
 	SDL_Surface* getCachedImage(cVehicle* vehicle );

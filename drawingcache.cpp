@@ -63,8 +63,8 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	}
 	if ( vehicle->IsClearing || vehicle->IsBuilding )
 	{
-		width  *= 2;
-		height *= 2;
+		width  = 130;
+		height = 130;
 	}
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 
