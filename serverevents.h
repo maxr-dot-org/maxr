@@ -309,5 +309,10 @@ void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int play
 void sendRequestSaveInfo ( int saveingID );
 void sendSavedReport ( sSavedReportMessage &savedReport, int player );
 
+void sendScore(cPlayer *Subject, int turn, cPlayer *Receiver = 0);
+void sendNumEcos(cPlayer *Subject, cPlayer *Receiver = 0);
+void sendUnitScore(cBuilding *);  
+void sendVictoryConditions(int turnLimit, int scoreLimit, cPlayer *receiver=0);
+
 
 #endif // servereventsH

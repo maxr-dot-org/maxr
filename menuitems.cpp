@@ -16,10 +16,76 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
+#include <sstream>
+#include <cmath>
+#include <algorithm>
 #include "menuitems.h"
 #include "menus.h"
 #include "settings.h"
 #include "client.h"
+
+namespace
+{
+	std::string plural(int n, const std::string &sing, const std::string &plu)
+	{
+		std::stringstream ss;
+		ss << n << " ";
+		ss << lngPack.i18n(n == 1 ? sing : plu);
+		return ss.str();
+	}
+	
+	Uint32 getPlayerColour(cPlayer *p)
+	{
+		return ((Uint32*)(p->color->pixels))[0];
+	}
+	
+	void plot(SDL_Surface *s, int x, int y, Uint32 colour)
+	{
+		SDL_Rect rect = {x, y, 1, 1};
+		SDL_FillRect(s, &rect, colour); 
+	}
+	
+	void drawLine(SDL_Surface *s, int x0, int y0, int x1, int y1, Uint32 colour)
+	{
+		bool steep = abs(y1 - y0) > abs(x1 - x0);
+		if(steep) {
+			std::swap(x0, y0);
+			std::swap(x1, y1);
+		}
+		if(x0 > x1) {
+			std::swap(x0, x1);
+			std::swap(y0, y1);
+		}
+		
+		int dx = x1 - x0;
+		int dy = abs(y1 - y0);
+		int er = dx / 2;
+		int ys = y0 < y1 ? 1 : -1;
+		int y = y0;
+		
+		for(int x=x0; x<x1; x++)
+		{
+			if(steep) plot(s, y, x, colour);
+			else plot(s, x, y, colour);
+			er -= dy;
+			if(er < 0) {
+				y += ys;
+				er += dx;
+			}
+		}
+	}
+	
+	int extrapolateScore(const cPlayer *p, int turn)
+	{
+		const int now = Client->getTurn();
+		
+		if(turn <= now)
+			return p->getScore(turn);
+		else
+			return p->getScore(now) + p->numEcos * (turn - now);
+	}
+}
 
 cMenuItem::cMenuItem ( int x, int y )
 {
@@ -1653,7 +1719,21 @@ void cMenuUnitDetails::draw()
 	}
 
 	// additional values
-	if ( ( data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0 ) && unitOwner == owner )
+	if(data->canScore)
+	{
+		int score = building->points;
+		int tot = building->owner->getScore(Client->getTurn());
+		int lim = 400;
+		
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, score, score );
+		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Score" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+16, 70, false, score, score);
+		
+		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, tot, lim );
+		font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+		cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+28, 70, false, tot, lim);
+	}
+	else if ( ( data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0 ) && unitOwner == owner )
 	{
 		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, buffer );
 
@@ -3353,7 +3433,175 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 
 void cMenuReportsScreen::drawScoreScreen()
 {
-	font->showText ( position.x+17, position.y+30, lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+	int turnLimit, scoreLimit;
+	Client->getVictoryConditions(&turnLimit, &scoreLimit);
+	{
+		std::stringstream ss;
+		if(turnLimit) 
+		{
+			ss << lngPack.i18n("Text~Comp~GameEndsAt") << " " <<
+			plural(turnLimit, "Text~Comp~Turn", "Text~Comp~Turns");
+		}
+		else if(scoreLimit)
+		{
+			ss << lngPack.i18n("Text~Comp~GameEndsAt") << " " <<
+			plural(scoreLimit, "Text~Comp~Point", "Text~Comp~Points");
+		}
+		else 
+			ss << lngPack.i18n("Text~Comp~NoLimit");
+		
+		font->showText(position.x+25, position.y+20, ss.str());
+	}
+	
+	for (unsigned n=0, y=36; n < Client->PlayerList->Size(); n++, y+=16)
+	{
+		cPlayer *p = (*Client->PlayerList)[n];
+		int score = p->getScore(Client->getTurn());
+		int ecos = p->numEcos;
+		
+		SDL_Rect r = {position.x + 24, position.y + y + 3, 8, 8};
+		SDL_FillRect(buffer, &r, getPlayerColour(p));
+		
+		std::stringstream ss;
+		ss << p->name << ": " 
+			<< plural(score, "Text~Comp~Point", "Text~Comp~Points") << ", "
+			<< plural(ecos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
+		
+		font->showText(position.x+42, position.y+y, ss.str());
+	}
+	
+	drawScoreGraph();
+}
+
+void cMenuReportsScreen::drawScoreGraph()
+{
+	const Uint32 axis_colour = SDL_MapRGB(buffer->format, 164, 164, 164);
+	const Uint32 limit_colour = SDL_MapRGB(buffer->format, 128, 128, 128);
+	
+	const int px = position.x;
+	const int py = position.y;
+	
+	const int w = 400;
+	const int h = 300;
+	
+	const int x0 = px +  40, x1 = x0 + w;
+	const int y0 = py + 130, y1 = y0 + h;
+	
+	/*
+		Calculate time axis
+	*/
+	const int pix_per_turn = 5;
+	
+	const int now = Client->getTurn();
+	
+	const int num_turns = w / pix_per_turn;
+	int max_turns = now + 10;
+	int min_turns = max_turns - num_turns;
+	
+	if(min_turns < 1)
+	{
+		const int over = 1 - min_turns;
+		min_turns += over;
+		max_turns += over;
+	}
+	
+	const int now_x = x0 + (now - min_turns) * pix_per_turn;
+	
+	/*
+		Calculate points axis
+	*/
+	int highest_score = 0;
+	int lowest_score = 0x7FFFFFFF; 
+	for(unsigned n=0; n < Client->PlayerList->Size(); n++)
+	{
+		for(int turn = min_turns; turn < max_turns; turn++)
+		{
+			cPlayer *p = (*Client->PlayerList)[n];
+			int score = extrapolateScore(p, turn);
+			if(score > highest_score)
+				highest_score = score;
+			if(score < lowest_score)
+				lowest_score = score;
+		}
+	}
+	
+	const int max_points = highest_score;
+	const int min_points = lowest_score;
+	const int num_points = max_points - min_points;
+	
+	const int max_pix_per_point = 5;
+	int pix_per_point;
+	if(num_points) {
+		pix_per_point = h / num_points;
+		if(pix_per_point > max_pix_per_point)
+			pix_per_point = max_pix_per_point;
+	}
+	else
+		pix_per_point = max_pix_per_point;
+	
+	/*
+		Draw Limits
+	*/
+	drawLine(buffer, now_x, y0, now_x, y1, limit_colour);
+	
+	int turn_lim, points_lim;
+	Client->getVictoryConditions(&turn_lim, &points_lim);
+	
+	if(turn_lim && turn_lim > min_turns && turn_lim < max_turns) 
+	{
+		int x = x0 + (turn_lim - min_turns) * pix_per_turn;
+		
+		drawLine(buffer, x, y0, x, y1, limit_colour); 
+		font->showTextCentered(x, y1 + 8, iToStr(turn_lim), FONT_LATIN_SMALL_WHITE);
+	}
+	if(points_lim && points_lim > min_points && points_lim < max_points)
+	{
+		int y = y1 - (points_lim - min_points) * pix_per_point;
+		
+		drawLine(buffer, x0, y, x1, y, limit_colour);
+		font->showText(x0 - 16, y - 3, iToStr(points_lim), FONT_LATIN_SMALL_WHITE);
+	}
+	
+	/*
+		Draw Labels
+	*/
+	font->showTextCentered(x0,    y1 + 8, iToStr(min_turns), FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered(now_x, y1 + 8, iToStr(now),       FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered(x1,    y1 + 8, iToStr(max_turns), FONT_LATIN_SMALL_WHITE);
+	
+	font->showText(x0 - 16, y1 - 3, iToStr(min_points), FONT_LATIN_SMALL_WHITE);
+	font->showText(x0 - 16, y0 - 3, iToStr(max_points), FONT_LATIN_SMALL_WHITE);
+	
+	/*
+		Draw Score Lines
+	*/
+	for(unsigned n=0, y=40; n < Client->PlayerList->Size(); n++, y+=25)
+	{
+		cPlayer *p = (*Client->PlayerList)[n];
+		Uint32 player_colour = getPlayerColour(p);
+		
+		int lx, ly;
+		
+		for(int turn = min_turns; turn < max_turns; turn++)
+		{
+			int points = extrapolateScore(p, turn);
+			
+			int x = x0 + pix_per_turn * (turn - min_turns);
+			int y = y1 - pix_per_point * (points - min_points);
+			
+			if(turn != min_turns)
+				drawLine(buffer, lx, ly, x, y, player_colour);
+			
+			lx = x;
+			ly = y;
+		}
+	}
+	
+	/*
+		Draw Axes
+	*/
+	drawLine(buffer, x0, y0, x0, y1, axis_colour);
+	drawLine(buffer, x0, y1, x1, y1, axis_colour);
 }
 
 void cMenuReportsScreen::drawReportsScreen()

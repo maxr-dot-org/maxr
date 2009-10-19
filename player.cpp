@@ -33,7 +33,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	color(Color),
 	Nr(nr),
 	base(this),
-	clan(-1)
+	clan(-1),
+	numEcos(0)
 {
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
@@ -60,7 +61,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 		researchCentersWorkingOnArea[i] = 0;
 	Credits=0;
 	reportResearchFinished = false;
-
+	
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = false;
@@ -77,6 +78,8 @@ cPlayer::cPlayer(const cPlayer &Player)
 	Nr = Player.Nr;
 	iSocketNum = Player.iSocketNum;
 	clan = Player.clan;
+	pointsHistory = Player.pointsHistory;
+	numEcos = Player.numEcos;
 
 	// copy vehicle and building datas
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
@@ -646,6 +649,59 @@ void cPlayer::doResearch()
 	sendResearchLevel (&researchLevel, Nr);
 
 	reportResearchFinished = researchFinished;
+}
+
+void cPlayer::accumulateScore()
+{
+	const int now = Server->getTurn();
+	int deltaScore = 0;
+	
+	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
+	{
+		if ( bp->typ->data.canScore && bp->IsWorking )
+		{
+			bp->points ++;
+			deltaScore ++;
+			
+			sendUnitScore(bp);
+		}
+	}
+	setScore(getScore(now) + deltaScore, now);
+	sendScore(this, now);
+}
+
+void cPlayer::CountEcoSpheres()
+{
+	numEcos = 0;
+	
+	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
+	{
+		if ( bp->typ->data.canScore && bp->IsWorking )
+			numEcos ++;
+	}
+}
+
+void cPlayer::setScore(int s, int turn)
+{
+	int t = turn ? turn : (Client ? Client->iTurn : 1);
+	
+	if(pointsHistory.size() < t)
+		pointsHistory.resize(t);
+	pointsHistory[t - 1] = s;
+}
+
+int cPlayer::getScore(int turn) const
+{
+	int t = turn;
+	
+	if(pointsHistory.size() < t) 
+	{
+		int score = pointsHistory.empty() ?
+			0 : pointsHistory[pointsHistory.size() - 1];
+		pointsHistory.resize(t);
+		pointsHistory[t - 1] = score;
+	}
+	return pointsHistory[t - 1];
 }
 
 //--------------------------------------------------------------

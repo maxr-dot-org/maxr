@@ -111,6 +111,20 @@ enum eSettingsGameType
 	SETTINGS_GAMETYPE_TURNS
 };
 
+enum eSettingsVictoryType
+{
+	SETTINGS_VICTORY_TURNS,
+	SETTINGS_VICTORY_POINTS,
+	SETTINGS_VICTORY_ANNIHILATION
+};
+
+enum eSettingsDuration
+{
+	SETTINGS_DUR_SHORT = 100,
+	SETTINGS_DUR_MEDIUM = 200,
+	SETTINGS_DUR_LONG = 400
+};
+
 /**
  * A class that containes all settings for a new game.
  *@author alzi
@@ -124,12 +138,16 @@ struct sSettings
 	eSettingsAlienTech alienTech;
 	eSettingsClans clans;
 	eSettingsGameType gameType;
+	eSettingsVictoryType victoryType;
+	eSettingsDuration duration;
 
 	sSettings() : metal(SETTING_RESVAL_NORMAL), oil(SETTING_RESVAL_NORMAL), gold(SETTING_RESVAL_NORMAL), resFrequency(SETTING_RESFREQ_NORMAL), credits(SETTING_CREDITS_NORMAL),
-	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU) {}
+	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU), victoryType(SETTINGS_VICTORY_POINTS),
+	duration(SETTINGS_DUR_MEDIUM) {}
 
 	string getResValString ( eSettingResourceValue type );
 	string getResFreqString();
+	string getVictoryConditionString();
 
 };
 
@@ -417,6 +435,7 @@ protected:
 	cMenuLabel *clansLabel;
 	cMenuLabel *resFrequencyLabel;
 	cMenuLabel *gameTypeLabel;
+	cMenuLabel *victoryLabel;
 
 	cMenuRadioGroup *metalGroup;
 	cMenuRadioGroup *oilGroup;
@@ -427,6 +446,7 @@ protected:
 	cMenuRadioGroup *clansGroup;
 	cMenuRadioGroup *resFrequencyGroup;
 	cMenuRadioGroup *gameTypeGroup;
+	cMenuRadioGroup *victoryGroup;
 
 	void updateSettings();
 public:

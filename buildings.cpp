@@ -54,6 +54,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	typ = b;
 	owner = Owner;
 	base = Base;
+	points = 0;
 
 	if ( Owner == NULL || b == NULL )
 	{
@@ -1262,7 +1263,11 @@ void cBuilding::ServerStartWork ()
 		owner->ResearchCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
 	}
-
+	
+	if( data.canScore )
+	{
+		sendNumEcos(owner);
+	}
 
 	sendSubbaseValues(SubBase, owner->Nr);
 	sendDoStartWork(this);
@@ -1350,6 +1355,11 @@ void cBuilding::ServerStopWork ( bool override )
 	{
 		owner->ResearchCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
+	}
+	
+	if( data.canScore )
+	{
+		sendNumEcos(owner);
 	}
 
 	sendSubbaseValues(SubBase, owner->Nr);

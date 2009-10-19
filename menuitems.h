@@ -1176,6 +1176,7 @@ class cMenuReportsScreen : public cMenuItem
 	void drawUnitsScreen();
 	void drawDisadvantagesScreen();
 	void drawScoreScreen();
+	void drawScoreGraph();
 	void drawReportsScreen();
 
 public:

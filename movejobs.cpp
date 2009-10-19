@@ -973,18 +973,6 @@ void cClientMoveJob::init( int iSrcOff, bool bPlane, cVehicle *Vehicle )
 	lastWaypoints = NULL;
 	bSuspended = false;
 
-	/*if ( Vehicle->PosX != ScrX || Vehicle->PosY != ScrY )
-	{
-		Log.write(" Client: Vehicle with id " + iToStr ( Vehicle->iID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (ScrX) + "x" + iToStr (ScrY) + " to " + iToStr (DestX) + "x" + iToStr (DestY) + "resetting to right position", cLog::eLOG_TYPE_NET_WARNING);
-		// set vehicle to correct position
-		if  ( !bPlane && Vehicle == Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = NULL;
-		else if ( bPlane && Vehicle == Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = NULL;
-		Vehicle->PosX = ScrX;
-		Vehicle->PosY = ScrY;
-		if ( !bPlane ) Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].vehicle = Vehicle;
-		else Map->GO[Vehicle->PosX+Vehicle->PosY*Map->size].plane = Vehicle;
-	}*/
-
 	if ( Vehicle->ClientMoveJob )
 	{
 		Vehicle->ClientMoveJob->release();

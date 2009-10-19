@@ -16,6 +16,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <cassert>
+#include <set>
 #include "server.h"
 #include "client.h"
 #include "events.h"
@@ -44,8 +46,12 @@ int CallbackRunServerThread( void *arg )
 }
 
 //-------------------------------------------------------------------------------------
-cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns)
+cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 {
+	assert(!(turnLimit && scoreLimit));
+	
+	this->turnLimit = turnLimit;
+	this->scoreLimit = scoreLimit;
 	bDebugCheckPos = false;
 	Map = map;
 	this->PlayerList = PlayerList;
@@ -2091,6 +2097,16 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 			if ( AJobs[i]->building == Building ) AJobs[i]->building = NULL;
 		}
 	}
+	
+	// lose eco points
+	if(Building->points)
+	{
+		Building->owner->setScore(
+			Building->owner->getScore(iTurn) - Building->points,
+			iTurn
+		);
+		sendScore(Building->owner, iTurn);
+	}
 
 	Map->deleteBuilding( Building );
 
@@ -2581,6 +2597,12 @@ void cServer::makeTurnEnd ()
 	// do research:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		(*PlayerList)[i]->doResearch();
+	
+	// eco-spheres:
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+	{
+		(*PlayerList)[i]->accumulateScore();
+	}
 
 	// Gun'em down:
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -2614,11 +2636,30 @@ void cServer::makeTurnEnd ()
 //-------------------------------------------------------------------------------------
 void cServer::checkDefeats ()
 {
+	std::set<cPlayer *> winners, losers;
+	int best_score = 0;
+	
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
 		cPlayer *Player = (*PlayerList)[i];
 		if ( !Player->isDefeated )
 		{
+			int score = Player->getScore(iTurn);
+			if(
+				(scoreLimit && score >= scoreLimit) ||
+				(turnLimit && iTurn >= turnLimit)
+			){
+				if(score >= best_score)
+				{
+					if(score > best_score)
+					{
+						winners.clear();
+						best_score = score;
+					}
+					winners.insert(Player);
+				}
+			}
+			
 			cBuilding *Building = Player->BuildingList;
 			cVehicle *Vehicle = Player->VehicleList;
 			while ( Vehicle )
@@ -2634,16 +2675,45 @@ void cServer::checkDefeats ()
 			}
 			if ( Building != NULL ) continue;
 
-			Player->isDefeated = true;
-			sendDefeated ( Player );
-
-			if ( openMapDefeat && Player->iSocketNum != -1 )
-			{
-				memset ( Player->ScanMap, 1, Map->size*Map->size );
-				checkPlayerUnits();
-				sendNoFog ( Player->Nr );
-			}
+			losers.insert(Player);
 		}
+	}
+	
+	// If some players have won, anyone who hasn't won has lost.
+	if(!winners.empty())
+		for(unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			cPlayer *Player = (*PlayerList)[i];
+			
+			if(winners.find(Player) == winners.end())
+				losers.insert(Player);
+		}
+		
+	// Defeat all players who have lost.
+	for(std::set<cPlayer *>::iterator i = losers.begin(); i != losers.end(); ++i)
+	{
+		cPlayer *Player = *i;
+		
+		Player->isDefeated = true;
+		sendDefeated ( Player );
+
+		if ( openMapDefeat && Player->iSocketNum != -1 )
+		{
+			memset ( Player->ScanMap, 1, Map->size*Map->size );
+			checkPlayerUnits();
+			sendNoFog ( Player->Nr );
+		}
+	}
+	
+	/*
+		Handle the case where there is more than one winner. Original MAX calls
+		a draw and displays the results screen. For now we will have sudden
+		death, i.e. first player to get ahead in score wins.
+	*/
+	if(winners.size() > 1)
+	{
+		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			sendChatMessageToClient("Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
 	}
 }
 
@@ -3244,6 +3314,17 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send research
 	sendResearchLevel( &(Player->researchLevel), Player->Nr );
 	sendRefreshResearchCount (Player->Nr);
+	
+	// send all players' score histories & eco-counts
+	for(int t=1; t<=iTurn; t++)
+		for(unsigned int i = 0; i < PlayerList->Size(); i++ )
+		{
+			cPlayer *subj = (*PlayerList)[i]; 
+			sendScore(subj, t, Player);
+			sendNumEcos(subj, Player);
+		}
+		
+	sendVictoryConditions(turnLimit, scoreLimit, Player);
 
 	Log.write(" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
@@ -3477,3 +3558,9 @@ void cServer::makeAdditionalSaveRequest ( int saveNum )
 	savingIndex = saveNum;
 	sendRequestSaveInfo ( savingID );
 }
+
+int cServer::getTurn() const
+{
+	return iTurn;
+}
+

@@ -18,6 +18,7 @@
  ***************************************************************************/
 #include <math.h>
 #include <sstream>
+#include <cassert>
 
 #include "menus.h"
 #include "mouse.h"
@@ -83,6 +84,19 @@ string sSettings::getResFreqString()
 	return "";
 }
 
+string sSettings::getVictoryConditionString()
+{
+	string r = iToStr(duration) + " ";
+	
+	switch(victoryType)
+	{
+		case SETTINGS_VICTORY_TURNS:  r += lngPack.i18n("Text~Comp~Turns");  break;
+		case SETTINGS_VICTORY_POINTS: r += lngPack.i18n("Text~Comp~Points"); break;
+		case SETTINGS_VICTORY_ANNIHILATION: return lngPack.i18n("Text~Comp~NoLimit");
+	}
+	return r;
+}
+
 cGameDataContainer::~cGameDataContainer()
 {
 	if ( settings ) delete settings;
@@ -119,7 +133,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 			serverMap.terrain[i].water = map->terrain[i].water;
 		}
 
-		// playerlist for server
+		// copy playerlist for server
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
 			serverPlayers.Add ( new cPlayer ( (*players[i]) ) );
@@ -128,8 +142,20 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		}
 
 		// init server
-		Server = new cServer( &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS );
+		int nTurns, nScore;
+		switch(settings->victoryType)
+		{
+			case SETTINGS_VICTORY_TURNS: nTurns = settings->duration; nScore = 0; break;
+			case SETTINGS_VICTORY_POINTS: nScore = settings->duration; nTurns = 0; break;
+			case SETTINGS_VICTORY_ANNIHILATION: nTurns = nScore = 0; break;
+			default: assert(0);
+		}
+		Server = new cServer( &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore );
 
+		//send victroy conditions to clients
+		for(unsigned n = 0; n < players.Size(); n++)
+			sendVictoryConditions( nTurns, nScore, players[n]);
+	
 		// place resources
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
@@ -150,6 +176,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 	if ( player == 0 )
 	{
+		//send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
 		{
 			cList<int> clans;
@@ -158,6 +185,8 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 			sendClansToClients ( &clans );
 		}
+		
+		//make the landing
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
 			Server->makeLanding( landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE );
@@ -992,6 +1021,8 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	clansGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( clansGroup );
 	iCurrentLine += iLineHeight*3;
+	
+	int tmpLine = iCurrentLine;
 
 	// Credits field - this is where the money goes
 	creditsLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Credits") +":" );
@@ -1012,8 +1043,43 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	iCurrentLine += iLineHeight;
 	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most") + " ("+iToStr(SETTING_CREDITS_MOST)+")", settings.credits == SETTING_CREDITS_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( creditsGroup );
-	iCurrentLine += iLineHeight;
-
+	
+	iCurrentLine = tmpLine;
+	
+	// Victory condition
+	const bool bTurns = settings.victoryType == SETTINGS_VICTORY_TURNS;
+	const bool bPoints = settings.victoryType == SETTINGS_VICTORY_POINTS;
+	const bool bAnnih = settings.victoryType == SETTINGS_VICTORY_ANNIHILATION;
+	
+	const bool bShort = settings.duration == SETTINGS_DUR_SHORT;
+	const bool bMedi = settings.duration == SETTINGS_DUR_MEDIUM;
+	const bool bLong = settings.duration == SETTINGS_DUR_LONG;
+	
+	const std::string strTurns = lngPack.i18n("Text~Comp~Turns");
+	const std::string strPoints = lngPack.i18n("Text~Comp~Points");
+	const std::string strNoLimit = lngPack.i18n("Text~Comp~NoLimit");
+	
+	victoryLabel = new cMenuLabel(
+		position.x+300, position.y+iCurrentLine, 
+		lngPack.i18n("Text~Comp~GameEndsAt")
+	);
+	menuItems.Add(victoryLabel );
+	
+	tmpLine = iCurrentLine += iLineHeight;
+	
+	victoryGroup = new cMenuRadioGroup();
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "100 "+strTurns, bTurns && bShort, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "200 "+strTurns, bTurns && bMedi,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "400 "+strTurns, bTurns && bLong,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	
+	iCurrentLine = tmpLine;
+	
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "100 "+strPoints, bPoints && bShort, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "200 "+strPoints, bPoints && bMedi,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "400 "+strPoints, bPoints && bLong,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	
+	victoryGroup->addButton(new cMenuCheckButton(position.x + 440, position.y+iCurrentLine, strNoLimit, bAnnih, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
+	menuItems.Add(victoryGroup);
 }
 
 cSettingsMenu::~cSettingsMenu()
@@ -1031,6 +1097,7 @@ cSettingsMenu::~cSettingsMenu()
 	delete clansLabel;
 	delete resFrequencyLabel;
 	delete gameTypeLabel;
+	delete victoryLabel;
 
 	delete metalGroup;
 	delete oilGroup;
@@ -1041,6 +1108,7 @@ cSettingsMenu::~cSettingsMenu()
 	delete clansGroup;
 	delete resFrequencyGroup;
 	delete gameTypeGroup;
+	delete victoryGroup;
 }
 
 void cSettingsMenu::backReleased( void* parent )
@@ -1121,6 +1189,26 @@ void cSettingsMenu::updateSettings()
 
 	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
+	
+	if(victoryGroup->buttonIsChecked(7)) 
+		settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
+	else for(int i=0; i<6; i++)
+	{
+		if(victoryGroup->buttonIsChecked(i))
+		{
+			if(i < 3)
+				settings.victoryType = SETTINGS_VICTORY_TURNS;
+			else
+			{
+				settings.victoryType = SETTINGS_VICTORY_POINTS;
+				i -= 3;
+			}
+			if(i == 0) settings.duration = SETTINGS_DUR_SHORT;
+			else if(i == 1) settings.duration = SETTINGS_DUR_MEDIUM;
+			else if(i == 2) settings.duration = SETTINGS_DUR_LONG;
+			break;
+		}
+	}
 
 }
 
@@ -2550,13 +2638,14 @@ void cNetworkMenu::showSettingsText()
 		if ( gameDataContainer.settings )
 		{
 			sSettings *settings = gameDataContainer.settings;
+			text += lngPack.i18n ( "Text~Comp~GameEndsAt" ) + " " + settings->getVictoryConditionString() + "\n";
 			text += lngPack.i18n ( "Text~Title~Metal" ) + ": " + settings->getResValString ( settings->metal ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Oil" ) + ": " + settings->getResValString ( settings->oil ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Gold" ) + ": " + settings->getResValString ( settings->gold ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Resource_Density" ) + ": " + settings->getResFreqString() + "\n";
 			text += lngPack.i18n ( "Text~Title~Credits" )  + ": " + iToStr( settings->credits ) + "\n";
 			text += lngPack.i18n ( "Text~Title~BridgeHead" ) + ": " + ( settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE ? lngPack.i18n ( "Text~Option~Definite" ) : lngPack.i18n ( "Text~Option~Mobile" ) ) + "\n";
-			text += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
+			//text += lngPack.i18n ( "Text~Title~Alien_Tech" ) + ": " + ( settings->alienTech == SETTING_ALIENTECH_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
 			text += string ("Clans") + ": " + ( settings->clans == SETTING_CLANS_ON ? lngPack.i18n ( "Text~Option~On" ) : lngPack.i18n ( "Text~Option~Off" ) ) + "\n";
 			text += lngPack.i18n ( "Text~Title~Game_Type" ) + ": " + ( settings->gameType == SETTINGS_GAMETYPE_TURNS ? lngPack.i18n ( "Text~Option~Type_Turns" ) : lngPack.i18n ( "Text~Option~Type_Simu" ) ) + "\n";
 		}
@@ -3276,11 +3365,13 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				if ( !gameDataContainer.settings ) gameDataContainer.settings = new sSettings;
 				sSettings *settings = gameDataContainer.settings;
 
+				settings->duration = (eSettingsDuration)message->popInt16();
+				settings->victoryType = (eSettingsVictoryType)message->popChar();
 				settings->metal = (eSettingResourceValue)message->popChar();
 				settings->oil = (eSettingResourceValue)message->popChar();
 				settings->gold = (eSettingResourceValue)message->popChar();
 				settings->resFrequency = (eSettingResFrequency)message->popChar();
-				settings->credits = (eSettingsCredits)message->popInt16();
+				settings->credits = (eSettingsCredits)message->popInt16(); 
 				settings->bridgeHead = (eSettingsBridgeHead)message->popChar();
 				settings->alienTech = (eSettingsAlienTech)message->popChar();
 				settings->clans = (eSettingsClans)message->popChar();

@@ -78,6 +78,8 @@ void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPl
 		message->pushChar ( gameData->settings->gold );
 		message->pushChar ( gameData->settings->oil );
 		message->pushChar ( gameData->settings->metal );
+		message->pushChar ( gameData->settings->victoryType );
+		message->pushInt16 ( gameData->settings->duration );
 	}
 	message->pushBool ( gameData->settings != NULL );
 

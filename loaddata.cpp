@@ -2832,6 +2832,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	Data->doesSelfRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Does_Self_Repair" );
 	Data->convertsGold = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Converts_Gold" );
 	Data->canSelfDestroy = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Self_Destroy" );
+	Data->canScore = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Score" );
 
 	Data->canMineMaxRes = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource" );
 

@@ -248,6 +248,7 @@ struct sUnitData
 	bool doesSelfRepair;
 	int convertsGold;
 	bool canSelfDestroy;
+	bool canScore;
 
 	int canMineMaxRes;
 

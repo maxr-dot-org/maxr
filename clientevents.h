@@ -85,6 +85,10 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_COMMANDO_ANSWER,		// information about the result of a commando action
 	GAME_EV_REQ_SAVE_INFO,			// request the hud state and the saved reports from a client
 	GAME_EV_SAVED_REPORT,			// sends saved reports to a client
+	GAME_EV_SCORE,                  // sends a player's score to a client
+	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
+	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
+	GAME_EV_VICTORY_CONDITIONS,     // the game's victory conditions
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 

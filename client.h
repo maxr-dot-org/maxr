@@ -104,8 +104,6 @@ private:
 	friend class cVehicle;
 	friend class cUnit;
 
-	/** List with all players */
-	cList<cPlayer*> *PlayerList;
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** ID of the timer */
@@ -127,6 +125,8 @@ private:
 	int iTurnTime;
 	/** Ticks when the TurnTime has been started */
 	unsigned int iStartTurnTime;
+	/** this client's copy of the victory conditions **/
+	int turnLimit, scoreLimit;
 
 	/**
 	* handles the game relevant actions (for example moving the current position of a rocket)
@@ -209,6 +209,9 @@ public:
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
 	bool waitReconnect;
+	
+	/** List with all players */
+	cList<cPlayer*> *PlayerList;
 
 	/**
 	* handles the timers timer50ms, timer100ms and timer400ms
@@ -302,7 +305,11 @@ public:
 	void destroyUnit( cVehicle* vehicle );
 	void destroyUnit( cBuilding* building );
 
-	void checkVehiclePositions( cNetMessage* message );
+	void checkVehiclePositions(cNetMessage* message);
+	void getVictoryConditions(int *turnLimit, int *scoreLimit) const;
+	int getTurn() const;
+	
+	
 } EX *Client;
 
 #endif

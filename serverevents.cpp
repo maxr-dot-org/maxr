@@ -257,6 +257,7 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	message->pushInt16( Building->data.buildCosts );
 
 	// Current state of the unit
+	message->pushInt16 ( Building->points );
 	message->pushBool ( Building->bSentryStatus );
 	message->pushBool ( Building->IsWorking );
 	message->pushInt16 ( Building->researchArea );
@@ -442,6 +443,62 @@ void sendResources( cPlayer *Player )
 	{
 		message->pushInt16( iCount );
 		Server->sendNetMessage( message, Player->Nr );
+	}
+}
+
+//-------------------------------------------------------------------------------------
+void sendScore( cPlayer *Subject, int turn, cPlayer *Receiver)
+{
+	if(!Receiver)
+		for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
+			sendScore(Subject, turn, (*Server->PlayerList)[n]);
+	else
+	{
+		cNetMessage *msg = new cNetMessage( GAME_EV_SCORE );
+		msg->pushInt16( Subject->getScore(turn));
+		msg->pushInt16( turn );
+		msg->pushInt16( Subject->Nr );
+	
+		Server->sendNetMessage(msg, Receiver->Nr);
+	}
+}
+
+void sendUnitScore(cBuilding *b)
+{
+	cNetMessage *msg = new cNetMessage( GAME_EV_UNIT_SCORE );
+	msg->pushInt16(b->points);
+	msg->pushInt16(b->iID);
+	Server->sendNetMessage(msg, b->owner->Nr);
+}
+
+void sendNumEcos(cPlayer *Subject, cPlayer *Receiver)
+{
+	Subject->CountEcoSpheres();
+	
+	if(!Receiver)
+		for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
+			sendNumEcos(Subject, (*Server->PlayerList)[n]);
+	else
+	{
+		cNetMessage *msg = new cNetMessage( GAME_EV_NUM_ECOS );
+		msg->pushInt16( Subject->numEcos );
+		msg->pushInt16( Subject->Nr );
+	
+		Server->sendNetMessage(msg, Receiver->Nr);
+	}
+}
+
+void sendVictoryConditions(int turnLimit, int scoreLimit, cPlayer *Receiver)
+{
+	if(!Receiver)
+		for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
+			sendVictoryConditions(turnLimit, scoreLimit, (*Server->PlayerList)[n]);
+	else
+	{
+		cNetMessage *msg = new cNetMessage( GAME_EV_VICTORY_CONDITIONS );
+		msg->pushInt16( turnLimit );
+		msg->pushInt16( scoreLimit );
+		Server->sendNetMessage(msg, Receiver->Nr);
 	}
 }
 

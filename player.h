@@ -18,6 +18,7 @@
  ***************************************************************************/
 #ifndef playerH
 #define playerH
+#include <vector>
 #include "defines.h"
 #include "main.h"
 #include <SDL.h>
@@ -63,6 +64,8 @@ struct sSavedReportMessage
 	int colorNr;
 };
 
+typedef std::vector<int> PointsHistory;
+
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer{
@@ -97,6 +100,7 @@ public:
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
 	int ResearchCount;         ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
+	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	sHudStateContainer *savedHud;
 	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
@@ -107,7 +111,8 @@ public:
 	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
 	bool isDefeated;			// true if the player has been defeated
-
+	int numEcos;                // number of ecospheres. call CountEcoSpheres on server to update.
+	
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
 	cVehicle *GetNextVehicle();
@@ -121,6 +126,7 @@ public:
 	void startAResearch (int researchArea);
 	void stopAResearch (int researchArea);
 	void doResearch (); ///< proceed with the research at turn end
+	void accumulateScore(); // at turn end
 	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void AddLock(cBuilding *b);
@@ -131,6 +137,10 @@ public:
 	bool InLockList(cVehicle *v);
 	void ToggelLock(cMapField *OverUnitField);
 	void DrawLockList();
+	void CountEcoSpheres();
+	int getScore(int turn) const;
+	void setScore(int score, int turn);
+	
 	/**
 	* draws a circle on the map for the fog
 	*@author alzi alias DoctorDeath

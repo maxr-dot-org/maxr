@@ -239,6 +239,10 @@ void cSavegame::loadGameInfo()
 		Server->bPlayTurns = true;
 		element->Attribute ( "activeplayer", &Server->iActiveTurnPlayerNr );
 	}
+	
+	TiXmlElement *e;
+	if(e = gameInfoNode->FirstChildElement("TurnLimit")) e->Attribute("num", &Server->turnLimit);
+	if(e = gameInfoNode->FirstChildElement("ScoreLimit")) e->Attribute("num", &Server->scoreLimit);
 }
 
 //--------------------------------------------------------------------------
@@ -289,6 +293,7 @@ cList<cPlayer*> * cSavegame::loadPlayers( cMap *map )
 cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 {
 	int number, color;
+	TiXmlElement *e;
 
 	string name = playerNode->FirstChildElement( "Name" )->Attribute ( "string" );
 	playerNode->FirstChildElement( "Number" )->Attribute ( "num", &number );
@@ -298,6 +303,24 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 	Player->InitMaps ( map->size, map );
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
+	
+	if(e = playerNode->FirstChildElement("ScoreHistory"))
+	{
+		TiXmlElement *s = e->FirstChildElement("Score");
+		int num=0, i=0;
+		while(s)
+		{
+			s->Attribute("num", &num);
+			Player->pointsHistory.resize(i + 1);
+			Player->pointsHistory[i] = num;
+			i++;
+			s = s->NextSiblingElement("Score");
+		}
+		// add current turn
+		Player->pointsHistory.push_back(num);
+	}
+	else
+		number = 0;
 
 	int clan = -1;
 	if (TiXmlElement* const element = playerNode->FirstChildElement("Clan")) element->Attribute("num", &clan);
@@ -688,6 +711,7 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
 	if ( unitNode->FirstChildElement( "ResearchArea" ) ) unitNode->FirstChildElement( "ResearchArea" )->Attribute( "area", &(building->researchArea) );
+	if ( unitNode->FirstChildElement( "Score" ) ) unitNode->FirstChildElement( "Score" )->Attribute( "num", &(building->points) );
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
 		if ( !building->bSentryStatus )
@@ -1193,6 +1217,9 @@ void cSavegame::writeGameInfo()
 	addAttributeElement ( gemeinfoNode, "Turn", "num", iToStr ( Server->iTurn ) );
 	if ( Server->bHotSeat ) addAttributeElement ( gemeinfoNode, "Hotseat", "activeplayer", iToStr ( Server->iHotSeatPlayer ) );
 	if ( Server->bPlayTurns ) addAttributeElement ( gemeinfoNode, "PlayTurns", "activeplayer", iToStr ( Server->iActiveTurnPlayerNr ) );
+	
+	addAttributeElement ( gemeinfoNode, "TurnLimit", "num", iToStr ( Server->turnLimit ) );
+	addAttributeElement ( gemeinfoNode, "ScoreLimit", "num", iToStr ( Server->scoreLimit ) );
 }
 
 //--------------------------------------------------------------------------
@@ -1223,7 +1250,15 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	addAttributeElement ( playerNode, "Color", "num", iToStr ( GetColorNr ( Player->color ) ) );
 	addAttributeElement ( playerNode, "Number", "num", iToStr ( Player->Nr ) );
 	addAttributeElement ( playerNode, "ResourceMap", "data", convertScanMapToString ( Player->ResourceMap, Server->Map->size*Server->Map->size ) );
-
+	
+	// player score
+	TiXmlElement *scoreNode = addMainElement(playerNode, "ScoreHistory");
+	for(int i=0; i<Player->pointsHistory.size(); i++)
+	{
+		TiXmlElement *e = addMainElement(scoreNode, "Score");
+		e->SetAttribute("num", iToStr(Player->pointsHistory[i]).c_str());
+	}
+	
 	// write data of upgraded units
 	TiXmlElement *upgradesNode = addMainElement ( playerNode, "Upgrades" );
 	int upgrades = 0;
@@ -1436,6 +1471,10 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	{
 		TiXmlElement *researchNode = addMainElement ( unitNode, "ResearchArea" );
 		researchNode->SetAttribute ( "area", iToStr(Building->researchArea).c_str() );
+	}
+	if ( Building->data.canScore )
+	{
+		addAttributeElement( unitNode, "Score", "num", iToStr(Building->points));
 	}
 	if ( Building->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
 	if ( Building->hasBeenAttacked ) addMainElement ( unitNode, "HasBeenAttacked" );

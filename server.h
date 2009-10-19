@@ -69,13 +69,16 @@ class cServer
 	friend class cSavegame;
 public:
 	/**
-	 * initialises the server class
+	 * initialises the server class. turnLimit and scoreLimit should not
+	 both be set. If both are zero, it's last man standing.
 	 *@author alzi alias DoctorDeath
 	 *@param map The Map for the game
 	 *@param PlayerList The list with all players
 	 *@param iGameType The type of the game. Can be GAME_TYPE_SINGLE, GAME_TYPE_HOTSEAT or GAME_TYPE_TCPIP
+	 *@param turnLimit Game ends after this many turns
+	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer(cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns);
+	cServer(cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit=0, int scoreLimit=0);
 	void setDeadline(int iDeadline);
 	~cServer();
 
@@ -133,6 +136,9 @@ private:
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
+	
+	/** victory conditions. One or both must be zero. **/
+	int turnLimit, scoreLimit;
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -389,6 +395,8 @@ public:
 	void sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1 );
 
 	void makeAdditionalSaveRequest ( int saveNum );
+	
+	int getTurn() const;
 
 } EX *Server;
 

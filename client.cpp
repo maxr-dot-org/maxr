@@ -130,6 +130,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList) : gameGUI (
 	bAlienTech = false;
 	bWaitForOthers = false;
 	iTurnTime = 0;
+	scoreLimit = turnLimit = 0;
 }
 
 cClient::~cClient()
@@ -947,6 +948,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->researchArea = message->popInt16();
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
+				Building->points = message->popInt16();
 
 				if ( Building->Disabled > 0 != bWasDisabled ) Building->owner->DoScan();
 				Data = &Building->data;
@@ -1994,6 +1996,35 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			ActivePlayer->savedReportsList.Add ( savedReport );
 		}
 		break;
+	case GAME_EV_SCORE:
+		{
+			int pn = message->popInt16();
+			int turn = message->popInt16();
+			int n = message->popInt16();
+			
+			getPlayerFromNumber(pn)->setScore(n, turn);
+		}
+		break;
+	case GAME_EV_NUM_ECOS:
+		{
+			int pn = message->popInt16();
+			int n = message->popInt16();
+			
+			getPlayerFromNumber(pn)->numEcos = n;
+		}
+		break;
+	case GAME_EV_UNIT_SCORE:
+		{
+			cBuilding *b = getBuildingFromID(message->popInt16());
+			b->points = message->popInt16();
+		}
+		break;
+	case GAME_EV_VICTORY_CONDITIONS:
+		{
+			scoreLimit = message->popInt16();
+			turnLimit = message->popInt16();
+		}
+		break;
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -2462,4 +2493,15 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 			vehicleList.Delete(0);
 		}
 	}
+}
+
+int cClient::getTurn() const
+{
+	return iTurn;
+}
+
+void cClient::getVictoryConditions(int *turnLimit, int *scoreLimit) const
+{
+	*turnLimit = this->turnLimit;
+	*scoreLimit = this->scoreLimit;
 }

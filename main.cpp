@@ -842,6 +842,7 @@ sUnitData::sUnitData()
 	doesSelfRepair = false;
 	convertsGold = 0;
 	canSelfDestroy = false;
+	canScore = false;
 
 	canMineMaxRes = 0;
 	needsMetal = 0;

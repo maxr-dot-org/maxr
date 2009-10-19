@@ -109,7 +109,7 @@ public:
 	*/
 	bool checkEnergy();
 	/**
-	* checks, if there a consumers, that havt to be shut down, due to a lack of a ressource
+	* checks, if there are consumers, that have to be shut down, due to a lack of a ressources
 	* @author eiko
 	*/
 	void prepareTurnend();

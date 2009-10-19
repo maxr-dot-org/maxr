@@ -172,6 +172,7 @@ public:
 	bool hasBeenAttacked;
 	cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
+	int points;     // accumulated eco-sphere points
 
 	/**
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
