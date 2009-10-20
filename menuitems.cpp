@@ -1711,7 +1711,7 @@ void cMenuUnitDetails::draw()
 	cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x+80, position.y+3, 70, false, data->hitpointsCur, data->hitpointsMax );
 
 	// Den Speed anzeigen:
-	if ( data->speedCur > 0 )
+	if ( data->speedMax > 0 )
 	{
 		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, data->speedCur / 4, data->speedMax / 4 );
 		font->showText ( position.x+47, position.y+30, lngPack.i18n ( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, buffer );
