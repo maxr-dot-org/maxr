@@ -211,24 +211,27 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// make the dithering
-	if ( FlightHigh > 0 && Client->timer100ms )
+	if ( Client->timer100ms )
 	{
+		if ( FlightHigh > 0 )
+		{
 
-		if ( moving || ANIMATION_SPEED % 10 == 0 )
+			if ( moving || ANIMATION_SPEED % 10 == 0 )
+			{
+				ditherX = 0;
+				ditherY = 0;
+			}
+			else
+			{
+				ditherX = random(2) - 1;
+				ditherY = random(2) - 1;
+			}
+		}
+		else
 		{
 			ditherX = 0;
 			ditherY = 0;
 		}
-		else
-		{
-			ditherX = random(2) - 1;
-			ditherY = random(2) - 1;
-		}
-	}
-	else
-	{
-		ditherX = 0;
-		ditherY = 0;
 	}
 
 	//rotate vehicles to the right direction for building/clearing
