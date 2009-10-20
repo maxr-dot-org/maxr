@@ -175,6 +175,7 @@ void cMenuItem::movedMouseOver( int lastMouseX, int lastMouseY, void *parent )
 void cMenuItem::somewhereReleased()
 {
 	if ( locked ) return;
+	isClicked = false;
 	wasClicked = false;
 }
 
@@ -2406,6 +2407,7 @@ cMenuScroller::cMenuScroller(int x, int y, eMenuScrollerTypes scrollerType_, cMe
 	}
 	position.w = src.w;
 	position.h = src.h;
+	mouseXOff = mouseYOff = 0;
 
 	surface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
@@ -2419,17 +2421,42 @@ void cMenuScroller::draw()
 	SDL_BlitSurface ( surface, NULL, buffer, &position );
 }
 
-void cMenuScroller::movedMouseOver( int lastMouseX, int lastMouseY, void *parent_ )
+bool cMenuScroller::preClicked()
+{
+	mouseXOff = mouse->x - position.x;
+	mouseYOff = mouse->y - position.y;
+	return true;
+}
+
+void cMenuScroller::hoveredAway(void *parent)
+{
+	if ( locked ) return;
+	if ( preHoveredAway() && hoverAway ) hoverAway(parent);
+}
+
+void cMenuScroller::movedMouseOver( int lastMouseX, int lastMouseY, void *parent )
 {
 	if ( !isClicked ) return;
+	mouseMoved( false );
+}
+
+void cMenuScroller::somewhereMoved()
+{
+	if ( !isClicked ) return;
+	mouseMoved( false );
+}
+
+
+void cMenuScroller::mouseMoved( bool center )
+{
 	switch ( scrollerType )
 	{
 	case SCROLLER_TYPE_VERT:
-		position.y = mouse->y-(lastMouseY-position.y);
+		position.y = mouse->y - (center ? (position.h/2) : mouseYOff);
 		break;
 	case SCROLLER_TYPE_HUD_ZOOM:
 	case SCROLLER_TYPE_HORI:
-		position.x = mouse->x-(lastMouseX-position.x);
+		position.x = mouse->x - (center ? (position.w/2) : mouseXOff);
 		break;
 	}
 	if ( movedCallback ) movedCallback( parent );
@@ -3311,6 +3338,12 @@ void cMenuSlider::scrollerMoved( void *parent_ )
 	This->parent->draw();
 
 	if ( This->movedCallback ) This->movedCallback ( This->parent );
+}
+
+bool cMenuSlider::preClicked()
+{
+	scroller->mouseMoved( true );
+	return true;
 }
 
 cMenuScrollerHandler::cMenuScrollerHandler(int x, int y, int w, int maxValue_) : cMenuItem (x, y), maxValue(maxValue_)

@@ -226,6 +226,12 @@ public:
 	 *@author alzi
 	 */
 	virtual void somewhereReleased();
+	/**
+	 * This function will be called by the menus when this item is the active one and the mouse has been moved
+	 * somewhere on the screen, but not over this item.
+	 *@author alzi
+	 */
+	virtual void somewhereMoved() {}
 
 	/**
 	 * function that will be called when this item is the currently active one and there has been keyboard input.
@@ -827,6 +833,8 @@ private:
 	eMenuScrollerTypes scrollerType;
 	AutoSurface surface;
 
+	int mouseXOff, mouseYOff;
+
 	void (*movedCallback)(void *);
 public:
 	cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) = NULL );
@@ -834,8 +842,13 @@ public:
 
 	SDL_Rect getPosition();
 	void move ( int value );
+	
+	void mouseMoved( bool center );
 
+	bool preClicked();
+	void hoveredAway(void *parent);
 	void movedMouseOver( int lastMouseX, int lastMouseY, void *parent );
+	void somewhereMoved();
 };
 
 /**
@@ -1121,6 +1134,8 @@ public:
 	void setMoveCallback ( void (*movedCallback_)(void *) );
 
 	static void scrollerMoved( void *parent );
+
+	bool preClicked();
 };
 
 class cMenuScrollerHandler : public cMenuItem

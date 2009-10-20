@@ -257,14 +257,13 @@ int cGameGUI::show()
 		{
 			handleMouseMove();
 
-//			mouse->draw ( true, screen );
-
 			for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 			{
 				cMenuItem *menuItem = menuItems[i];
 				if ( menuItem->overItem( lastMouseX, lastMouseY ) && !menuItem->overItem( mouse->x, mouse->y ) ) menuItem->hoveredAway( this );
 				else if ( !menuItem->overItem( lastMouseX, lastMouseY ) && menuItem->overItem( mouse->x, mouse->y ) ) menuItem->hoveredOn( this );
 				else if ( menuItem->overItem( lastMouseX, lastMouseY ) && menuItem->overItem( mouse->x, mouse->y ) ) menuItem->movedMouseOver( lastMouseX, lastMouseY, this );
+				else if ( menuItem == activeItem ) menuItem->somewhereMoved();
 			}
 		}
 
