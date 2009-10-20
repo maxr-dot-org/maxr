@@ -1316,7 +1316,7 @@ int installBuildingGraphics()
 {	
 	string path;
 	char szNum[13];
-	iTotalFiles = 164;
+	iTotalFiles = 161;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	SDL_Surface* surface;
@@ -1559,6 +1559,16 @@ int installBuildingGraphics()
 	copyFileFromRes("S_DOCK", path + "shw.pcx");
 	copyFileFromRes("P_DOCK", path + "info.pcx");
 	copyImageFromFLC( sMAXPath + "DOCK.FLC", path + "video.pcx");
+
+	
+	//eco-sphere
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "ecosphere" + PATH_DELIMITER;
+	copyFileFromRes_rpc("GREENHSE", path + "img.pcx");
+	copyFileFromRes("S_GREENH", path + "shw.pcx");
+	copyFileFromRes("P_GREENH", path + "info.pcx");
+	copyImageFromFLC( sMAXPath + "GRNHOUSE.FLC", path + "video.pcx");
+	copyFile( path + "effect_org.pcx", path + "effect.pcx");
+
 
 	//energy big
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "energy_big" + PATH_DELIMITER;
@@ -3003,7 +3013,7 @@ int installGfx()
 int installBuildingSounds()
 {
 	string path;
-	iTotalFiles = 42;
+	iTotalFiles = 46;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 0;
@@ -3089,6 +3099,12 @@ int installBuildingSounds()
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
 
+	//ecosphere
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "ecosphere" + PATH_DELIMITER;
+	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
+	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
+	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
+
 	//mine deep
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
@@ -3096,8 +3112,8 @@ int installBuildingSounds()
 	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
 	
 	//radar
-	//path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
-	//copyWAV( sMAXPath + "RADAR13" + waveExtension, path + "running.wav");
+	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
+	copyWAV( sMAXPath + "RADAR13" + waveExtension, path + "running.wav");
 	
 	//research
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;

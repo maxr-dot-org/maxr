@@ -277,7 +277,7 @@ SDL_Surface *loadPCX ( string name )
 	
 	if ( file == NULL )
 	{
-		throw InstallException( string( "Couldn't open file") + TEXT_FILE_LF );
+		throw InstallException( string( "Couldn't open file") + name + TEXT_FILE_LF );
 	}	
 	
 	//load data
