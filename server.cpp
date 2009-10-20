@@ -3316,13 +3316,13 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	sendRefreshResearchCount (Player->Nr);
 	
 	// send all players' score histories & eco-counts
-	for(int t=1; t<=iTurn; t++)
-		for(unsigned int i = 0; i < PlayerList->Size(); i++ )
-		{
-			cPlayer *subj = (*PlayerList)[i]; 
+	for(unsigned int i = 0; i < PlayerList->Size(); i++ )
+	{
+		cPlayer *subj = (*PlayerList)[i];
+		for(int t=1; t<=iTurn; t++)
 			sendScore(subj, t, Player);
-			sendNumEcos(subj, Player);
-		}
+		sendNumEcos(subj, Player);
+	}
 		
 	sendVictoryConditions(turnLimit, scoreLimit, Player);
 

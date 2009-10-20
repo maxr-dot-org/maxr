@@ -1724,7 +1724,9 @@ void cMenuUnitDetails::draw()
 	{
 		int score = building->points;
 		int tot = building->owner->getScore(Client->getTurn());
-		int lim = 400;
+		int turnLim, scoreLim;
+		Client->getVictoryConditions(&turnLim, &scoreLim);
+		int lim = scoreLim ? scoreLim : tot;
 		
 		cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+18, score, score );
 		font->showText ( position.x+47, position.y+18, lngPack.i18n ( "Text~Hud~Score" ), FONT_LATIN_SMALL_WHITE, buffer );
@@ -3528,7 +3530,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	const int now = Client->getTurn();
 	
 	const int num_turns = w / pix_per_turn;
-	int max_turns = now + 10;
+	int max_turns = now + 40;
 	int min_turns = max_turns - num_turns;
 	
 	if(min_turns < 1)
@@ -3562,15 +3564,15 @@ void cMenuReportsScreen::drawScoreGraph()
 	const int min_points = lowest_score;
 	const int num_points = max_points - min_points;
 	
-	const int max_pix_per_point = 5;
-	int pix_per_point;
+	const float default_pix_per_point = 5;
+	float pix_per_point;
 	if(num_points) {
-		pix_per_point = h / num_points;
-		if(pix_per_point > max_pix_per_point)
-			pix_per_point = max_pix_per_point;
+		pix_per_point = (float) h / num_points;
+		if(pix_per_point > default_pix_per_point)
+			pix_per_point = default_pix_per_point;
 	}
 	else
-		pix_per_point = max_pix_per_point;
+		pix_per_point = default_pix_per_point;
 	
 	/*
 		Draw Limits
@@ -3598,12 +3600,14 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Labels
 	*/
+	int my = y1 - (max_points - min_points) * pix_per_point;
+	
 	font->showTextCentered(x0,    y1 + 8, iToStr(min_turns), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered(now_x, y1 + 8, iToStr(now),       FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered(x1,    y1 + 8, iToStr(max_turns), FONT_LATIN_SMALL_WHITE);
 	
 	font->showText(x0 - 16, y1 - 3, iToStr(min_points), FONT_LATIN_SMALL_WHITE);
-	font->showText(x0 - 16, y0 - 3, iToStr(max_points), FONT_LATIN_SMALL_WHITE);
+	font->showText(x0 - 16, my - 3, iToStr(max_points), FONT_LATIN_SMALL_WHITE);
 	
 	/*
 		Draw Score Lines

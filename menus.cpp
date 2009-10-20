@@ -285,7 +285,7 @@ void cGameDataContainer::receiveLandingUnits ( cNetMessage *message )
 	if ( message->iType != MU_MSG_LANDING_VEHICLES ) return;
 
 	unsigned int playerNr = message->popInt16();
-
+	
 	for ( unsigned int i = (unsigned int)landingUnits.Size(); i < players.Size(); i++ )
 	{
 		landingUnits.Add ( NULL );
@@ -1191,7 +1191,7 @@ void cSettingsMenu::updateSettings()
 	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
 	
-	if(victoryGroup->buttonIsChecked(7)) 
+	if(victoryGroup->buttonIsChecked(6)) 
 		settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
 	else for(int i=0; i<6; i++)
 	{
