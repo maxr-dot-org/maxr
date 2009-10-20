@@ -568,4 +568,7 @@ void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL
 * Works like SDL_BlittSurface. This function choses the right blitt function to use for blitting.
 */
 void blittAlphaSurface (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+
+void Quit();
+
 #endif

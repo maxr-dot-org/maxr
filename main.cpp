@@ -57,7 +57,6 @@
 #include "clans.h"
 #include "settings.h"
 
-static void Quit();
 static int  initNet();
 static int  initSDL();
 static int  initSound();
@@ -315,7 +314,7 @@ static int initNet()
  *Terminates app
  *@author beko
  */
-static void Quit()
+void Quit()
 {
 	delete mouse;
 	delete font;

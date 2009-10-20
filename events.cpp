@@ -150,6 +150,11 @@ void cEventHandling::HandleEvents()
 				if ( Client) Client->HandleNetMessage( &message );
 				break;
 			}
+		case SDL_QUIT:
+			{
+				Quit();
+				break;
+			}
 
 		default:
 			break;
