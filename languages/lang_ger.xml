@@ -177,6 +177,7 @@
 			<Energy ENG="Energy" localized="Energie"/>
 			<Usage ENG="Usage" localized="Verbr."/>
 			<Teams ENG="Teams" localized="Teams"/>
+      <Score ENG="Score" localized="Punkte"/>
 		</Hud>
 		<Option>
 			<Lowest ENG="lowest" localized="kaum"/>
@@ -287,14 +288,13 @@
 			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
 			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
 			<Building_Disabled ENG="Building disabled" localized="Gebäude abgeschaltet"/>
-			<Energy_Optimize ENG="Energygeneration optimized" localized="Energieoptimierungen vorgenommen"/>
 			<Energy_Insufficient localized="Nicht genug Energie zum Einschalten vorhanden!"/>
 			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
 			<Fuel_Insufficient localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
 			<Metal_Insufficient localized="Nicht genug Metall zum Einschalten vorhanden!"/>
 			<Gold_Insufficient localized="Nicht genug Gold zum Einschalten vorhanden!"/>
+			<Team_Insufficient localized="Nicht genug Teams zum Einschalten vorhanden!"/>
 			<Energy_IsNeeded localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
-			<Adjustments_Made localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
 			<Adjustments_Fuel_Increased localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
 			<Adjustments_Metal_Decreased localized="Änderungen vorgenommen: Metallproduktion verringert um "/>
 			<Adjustments_Gold_Decreased localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
@@ -345,7 +345,14 @@
 			<Surveying ENG="surveying" localized="vermesse"/>
 			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um Änderungen in der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning localized="Achtung: Gelesene Auflösung ungültig"/>
-		</Comp>
+      <Point ENG="point" localized="Punkt"/>
+      <Points ENG="points" localized="Punkte"/>
+      <EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
+      <EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
+      <GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
+      <NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod"/>
+      <SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
+    </Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
@@ -424,6 +431,7 @@
 		<Unit ID="1 32" localized="Lagereinheit">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
 		<Unit ID="1 33" localized="Treibstofftank">Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein.</Unit>
 		<Unit ID="1 34" localized="Trainingshalle">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
+		<Unit ID="1 35" localized="Ökosphäre">Ökosphäre\n\nGewölbtes Gebäude, das eine erdenähnliche Umgebung enthält. Ihr ultimatives Ziel ist es, Ihre Kolonisten mit so vielen Ökosphären wie möglich zu versorgen. Jede Runde, die eine Ökosphäre läuft, verbessert Ihren Punktestand. Wenn sie zerstört wird, verlieren sie alle Punkte, die diese Ökosphäre bisher erzeugt hat. Ökosphären benötigen Kolonisten einer Behausung und Energie.</Unit>
 	</Units>
 	<Graphic>
 	</Graphic>
