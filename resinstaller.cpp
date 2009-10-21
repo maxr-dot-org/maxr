@@ -50,7 +50,7 @@ int installMVEs()
 	cout << "MVE files\n";
 	
 	path = sOutputPath + "mve" + PATH_DELIMITER;
-	copyFile(sMAXPath + "MAXINT.MVE", path + "MAXINT.MVE");
+	copyFile(sVoicePath + "MAXINT.MVE", path + "MAXINT.MVE");
 	copyFile(sMAXPath + "MAXMVE1.MVE", path + "MAXMVE1.MVE");
 	copyFile(sMAXPath + "MAXMVE2.MVE", path + "MAXMVE2.MVE");
 	
@@ -3825,7 +3825,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	while (1)
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << endl;
-	#ifdef EIKO
+	#ifndef EIKO
 		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX\\";
 	#else
 		// read the path from cin
