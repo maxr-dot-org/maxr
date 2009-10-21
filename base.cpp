@@ -877,6 +877,8 @@ void sSubBase::makeTurnend()
 	if ( Metal < 0 ) Metal = 0;
 	if ( Oil   < 0 ) Oil   = 0;
 	if ( Gold  < 0 ) Gold  = 0;
+
+	sendSubbaseValues( this, owner->Nr );
 }
 
 
