@@ -3222,7 +3222,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		cPlayer *UnitPlayer;
 
 		//FIXME: Why are the seen-by-flags deleted here? This breaks the stealth functionality 
-		// Detecet units become invisible, when executing a resync.  --eiko
+		// Deteceted units become invisible, when executing a resync.  --eiko
 		for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 		{
 			UnitPlayer = (*PlayerList)[i];

@@ -1814,6 +1814,17 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( OtherData.colors[cl_purple],path,"cl_purple.pcx" );
 	LoadGraphicToSurface ( OtherData.colors[cl_aqua],path,"cl_aqua.pcx" );
 
+	OtherData.colors_org = new SDL_Surface*[PLAYERCOLORS];
+	if(!OtherData.colors) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
+	LoadGraphicToSurface ( OtherData.colors_org[cl_red],path,"cl_red.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_blue],path,"cl_blue.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_green],path,"cl_green.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_grey],path,"cl_grey.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_orange],path,"cl_orange.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_yellow],path,"cl_yellow.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_purple],path,"cl_purple.pcx" );
+	LoadGraphicToSurface ( OtherData.colors_org[cl_aqua],path,"cl_aqua.pcx" );
+
 
 	Log.write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
 	// Shadow:

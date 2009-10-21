@@ -603,6 +603,8 @@ void cGameGUI::setZoom( float newZoom, bool setScroller )
 		offY += off;
 	}
 	if ( SettingsData.bPreScale ) scaleSurfaces();
+	scaleColors();
+
 	doScroll ( 0 );
 }
 
@@ -3694,6 +3696,14 @@ void cGameGUI::displayMessages()
 		}
 
 		dest.y += 5;
+	}
+}
+
+void cGameGUI::scaleColors()
+{
+	for ( int i = 0; i < PLAYERCOLORS; i++ )
+	{
+		scaleSurface( OtherData.colors_org[i], OtherData.colors[i], (int) (OtherData.colors_org[i]->w * getZoom()), (int) (OtherData.colors_org[i]->h * getZoom()) );
 	}
 }
 

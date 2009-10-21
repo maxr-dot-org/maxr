@@ -178,6 +178,7 @@ class cGameGUI : public cMenu
 	void displayMessages();
 
 	void scaleSurfaces();
+	void scaleColors();
 
 	/**
 	* opens or closes the panal over the hud
