@@ -3825,7 +3825,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	while (1)
 	{
 		cout << "Please enter full path to existing M.A.X. installation or mounted cd:" << endl;
-	#ifndef EIKO
+	#ifdef EIKO
 		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX\\";
 	#else
 		// read the path from cin
