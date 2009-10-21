@@ -5126,7 +5126,7 @@ void cMineManagerMenu::barReleased( void *parent )
 
 void cMineManagerMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
-	if ( destroyedBuilding == building ) terminate = true;
+	if ( destroyedBuilding->SubBase == building->SubBase ) terminate = true;
 }
 
 cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
