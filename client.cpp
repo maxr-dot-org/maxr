@@ -1795,6 +1795,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Player->BuildingList = building;
 				}
 			}
+
+			//delete subbases
+			while ( ActivePlayer->base.SubBases.Size() )
+			{
+				ActivePlayer->base.SubBases.Delete(0);
+			}
+
 			while ( neutralBuildings )
 			{
 				cBuilding* nextBuilding = neutralBuildings->next;
