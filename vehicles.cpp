@@ -2429,25 +2429,27 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 
 		return true;
 	}
-	else
-		if ( OverUnitField->getTopBuilding() )
-		{
-			b = OverUnitField->getTopBuilding();
+	else if ( OverUnitField->getTopBuilding() )
+	{
+		b = OverUnitField->getTopBuilding();
 
-			if ( b->owner != Client->ActivePlayer )
-				return false;
+		if ( b->owner != Client->ActivePlayer )
+			return false;
 
-			if ( data.storeResType == sUnitData::STORE_RES_METAL && b->SubBase->MaxMetal == 0 )
-				return false;
+		if ( !b->SubBase )
+			return false;
 
-			if ( data.storeResType == sUnitData::STORE_RES_OIL && b->SubBase->MaxOil == 0 )
-				return false;
+		if ( data.storeResType == sUnitData::STORE_RES_METAL && b->SubBase->MaxMetal == 0 )
+			return false;
 
-			if ( data.storeResType == sUnitData::STORE_RES_GOLD && b->SubBase->MaxGold == 0 )
-				return false;
+		if ( data.storeResType == sUnitData::STORE_RES_OIL && b->SubBase->MaxOil == 0 )
+			return false;
 
-			return true;
-		}
+		if ( data.storeResType == sUnitData::STORE_RES_GOLD && b->SubBase->MaxGold == 0 )
+			return false;
+
+		return true;
+	}
 
 	return false;
 }
