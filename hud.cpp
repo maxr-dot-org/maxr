@@ -3210,12 +3210,10 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 					{
 						building->draw ( &dest );
 
-						/*if ( bDebugBaseClient && building->SubBase )
+						if ( debugBaseClient && building->SubBase )
 						{
 							sSubBase *sb;
-							tmp = dest;
-							tmp.h = 8;
-							tmp.w = Hud.Zoom;
+							SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
 							if ( building->data.isBig ) tmp.w *= 2;
 							sb = building->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
@@ -3231,14 +3229,12 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
 							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
 						}
-						if ( bDebugBaseServer && building->SubBase )
+						if ( debugBaseServer && building->SubBase )
 						{
 							sSubBase *sb;
-							tmp=dest;
-							tmp.h=8;
-							tmp.w = Hud.Zoom;
+							SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
 							if ( building->data.isBig ) tmp.w*=2;
-							sb = Server->Map->fields[iPos].getBuildings()->SubBase;
+							sb = Server->Map->fields[pos].getBuildings()->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
 							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
@@ -3251,7 +3247,7 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 
 							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
 							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
-						}*/
+						}
 					}
 				}
 			}
