@@ -49,7 +49,7 @@ int CallbackRunServerThread( void *arg )
 cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 {
 	assert(!(turnLimit && scoreLimit));
-	
+
 	this->turnLimit = turnLimit;
 	this->scoreLimit = scoreLimit;
 	bDebugCheckPos = false;
@@ -1904,17 +1904,18 @@ void cServer::correctLandingPos( int &iX, int &iY)
 {
 	int iWidth = 2;
 	int iHeight = 2;
+	int margin = 1;
 	while ( true )
 	{
 		for ( int i = -iHeight / 2; i < iHeight / 2; i++ )
 		{
 			for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 			{
-				if ( Map->possiblePlaceBuilding( *specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1) &&
-					Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    ) &&
-					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    ) &&
-					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1) &&
-					 Map->possiblePlaceBuilding( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1) )
+				if ( Map->possiblePlaceBuildingWithMargin( *specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1, margin) &&
+					Map->possiblePlaceBuildingWithMargin( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    , margin) &&
+					 Map->possiblePlaceBuildingWithMargin( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    , margin) &&
+					 Map->possiblePlaceBuildingWithMargin( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1, margin) &&
+					 Map->possiblePlaceBuildingWithMargin( *specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1, margin) )
 				{
 					iX += k+1;
 					iY += i+1;
@@ -2100,7 +2101,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 			if ( AJobs[i]->building == Building ) AJobs[i]->building = NULL;
 		}
 	}
-	
+
 	// lose eco points
 	if(Building->points)
 	{
@@ -2600,7 +2601,7 @@ void cServer::makeTurnEnd ()
 	// do research:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		(*PlayerList)[i]->doResearch();
-	
+
 	// eco-spheres:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
@@ -2641,7 +2642,7 @@ void cServer::checkDefeats ()
 {
 	std::set<cPlayer *> winners, losers;
 	int best_score = 0;
-	
+
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
 		cPlayer *Player = (*PlayerList)[i];
@@ -2662,7 +2663,7 @@ void cServer::checkDefeats ()
 					winners.insert(Player);
 				}
 			}
-			
+
 			cBuilding *Building = Player->BuildingList;
 			cVehicle *Vehicle = Player->VehicleList;
 			while ( Vehicle )
@@ -2681,22 +2682,22 @@ void cServer::checkDefeats ()
 			losers.insert(Player);
 		}
 	}
-	
+
 	// If some players have won, anyone who hasn't won has lost.
 	if(!winners.empty())
 		for(unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
 			cPlayer *Player = (*PlayerList)[i];
-			
+
 			if(winners.find(Player) == winners.end())
 				losers.insert(Player);
 		}
-		
+
 	// Defeat all players who have lost.
 	for(std::set<cPlayer *>::iterator i = losers.begin(); i != losers.end(); ++i)
 	{
 		cPlayer *Player = *i;
-		
+
 		Player->isDefeated = true;
 		sendDefeated ( Player );
 
@@ -2707,7 +2708,7 @@ void cServer::checkDefeats ()
 			sendNoFog ( Player->Nr );
 		}
 	}
-	
+
 	/*
 		Handle the case where there is more than one winner. Original MAX calls
 		a draw and displays the results screen. For now we will have sudden
@@ -3315,7 +3316,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send research
 	sendResearchLevel( &(Player->researchLevel), Player->Nr );
 	sendRefreshResearchCount (Player->Nr);
-	
+
 	// send all players' score histories & eco-counts
 	for(unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
@@ -3324,7 +3325,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 			sendScore(subj, t, Player);
 		sendNumEcos(subj, Player);
 	}
-		
+
 	sendVictoryConditions(turnLimit, scoreLimit, Player);
 
 	Log.write(" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);

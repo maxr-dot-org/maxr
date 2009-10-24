@@ -207,9 +207,10 @@ public:
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
-	* note, that the function can only check for map border overflows, if you pass xy coordinates instead of an offset
+	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
 	*/
 	bool possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL ) const;
+	bool possiblePlaceBuildingWithMargin( const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle = NULL ) const;
 	bool possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL ) const;
 
 	/**

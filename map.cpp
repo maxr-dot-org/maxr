@@ -1003,7 +1003,13 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, cVehicle* vehicle ) const
 {
-	if ( x < 0 || x >= size || y < 0 || y >= size ) return false;
+	return possiblePlaceBuildingWithMargin( buildingData, x, y, 0, vehicle );
+}
+
+// can't place it too near to the map border
+bool cMap::possiblePlaceBuildingWithMargin( const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle ) const
+{
+	if ( x < margin || x >= size-margin || y < margin || y >= size-margin ) return false;
 	return possiblePlaceBuilding( buildingData, x + y * size, vehicle );
 }
 
