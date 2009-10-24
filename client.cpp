@@ -2397,6 +2397,8 @@ void cClient::doGameActions()
 	cAutoMJob::handleAutoMoveJobs();
 	//run effects
 	runFX();
+
+	handleTurnTime();
 }
 
 sSubBase *cClient::getSubBaseFromID ( int iID )
