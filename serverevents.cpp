@@ -550,53 +550,6 @@ void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  )
 }
 
 //-------------------------------------------------------------------------------------
-void sendNewSubbase ( sSubBase *SubBase, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_NEW_SUBBASE );
-	message->pushInt16 ( SubBase->iID );
-	Server->sendNetMessage( message, iPlayer );
-}
-
-//-------------------------------------------------------------------------------------
-void sendDeleteSubbase ( sSubBase *SubBase, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_DELETE_SUBBASE );
-	message->pushInt16 ( SubBase->iID );
-	Server->sendNetMessage( message, iPlayer );
-}
-
-//-------------------------------------------------------------------------------------
-void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage( GAME_EV_SUBBASE_BUILDINGS );
-	int iCount = 0;
-	if ( Building == NULL )
-	{
-		for ( unsigned int i = 0; i < SubBase->buildings.Size(); i++ )
-		{
-			if ( message->iLength+14 > PACKAGE_LENGTH )
-			{
-				message->pushInt16 ( iCount );
-				message->pushInt16 ( SubBase->iID );
-				Server->sendNetMessage( message, iPlayer );
-				iCount = 0;
-				message = new cNetMessage( GAME_EV_SUBBASE_BUILDINGS );
-			}
-			message->pushInt16(SubBase->buildings[i]->iID);
-			iCount++;
-		}
-	}
-	else
-	{
-		message->pushInt16 ( Building->iID );
-		iCount++;
-	}
-	message->pushInt16 ( iCount );
-	message->pushInt16 ( SubBase->iID );
-	Server->sendNetMessage( message, iPlayer );
-}
-
-//-------------------------------------------------------------------------------------
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_SUBBASE_VALUES );
@@ -609,21 +562,21 @@ void sendSubbaseValues ( sSubBase *SubBase, int iPlayer )
 	message->pushInt16 ( SubBase->MaxMetal );
 	message->pushInt16 ( SubBase->MetalNeed );
 	message->pushInt16 ( SubBase->MaxMetalNeed );
-	message->pushInt16 ( SubBase->MetalProd );
+	message->pushInt16 ( SubBase->getMetalProd() );
 	message->pushInt16 ( SubBase->Gold );
 	message->pushInt16 ( SubBase->MaxGold );
 	message->pushInt16 ( SubBase->GoldNeed );
 	message->pushInt16 ( SubBase->MaxGoldNeed );
-	message->pushInt16 ( SubBase->GoldProd );
+	message->pushInt16 ( SubBase->getGoldProd() );
 	message->pushInt16 ( SubBase->Oil );
 	message->pushInt16 ( SubBase->MaxOil );
 	message->pushInt16 ( SubBase->OilNeed );
 	message->pushInt16 ( SubBase->MaxOilNeed );
-	message->pushInt16 ( SubBase->OilProd );
+	message->pushInt16 ( SubBase->getOilProd() );
 	message->pushInt16 ( SubBase->HumanNeed );
 	message->pushInt16 ( SubBase->MaxHumanNeed );
 	message->pushInt16 ( SubBase->HumanProd );
-	message->pushInt16 ( SubBase->iID );
+	message->pushInt16 ( SubBase->getID() );
 	Server->sendNetMessage( message, iPlayer );
 }
 

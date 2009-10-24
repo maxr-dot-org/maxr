@@ -52,9 +52,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_RESOURCES,				// a message with new scaned resources for a client
 	GAME_EV_BUILD_ANSWER,			// the answer of the server to a build request of a client
 	GAME_EV_STOP_BUILD,				// a vehicle has to stop building
-	GAME_EV_NEW_SUBBASE,			// a new subbase
-	GAME_EV_DELETE_SUBBASE,			// delete a subbase
-	GAME_EV_SUBBASE_BUILDINGS,		// a message with all building-ids of a subbase
 	GAME_EV_SUBBASE_VALUES,			// the values of a subbase
 	GAME_EV_BUILDLIST,				// the buildlist of a building
 	GAME_EV_MINE_PRODUCE_VALUES,	// the produce values of a mine

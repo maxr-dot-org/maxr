@@ -2049,7 +2049,8 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit );
 
 	// integrate the building to the base:
-	Player->base.AddBuilding ( AddedBuilding );
+	Player->base.addBuilding ( AddedBuilding, true );
+
 	if ( AddedBuilding->data.canMineMaxRes > 0 )
 	{
 		sendProduceValues ( AddedBuilding );
@@ -2088,7 +2089,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	}
 	if( Building->base )
 	{
-		Building->base->DeleteBuilding( Building );
+		Building->base->deleteBuilding( Building, true );
 	}
 
 	//detach from attack job
@@ -3291,8 +3292,6 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	// send all subbases
 	for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
 	{
-		sendNewSubbase ( Player->base.SubBases[i], Player->Nr );
-		sendAddSubbaseBuildings ( NULL, Player->base.SubBases[i], Player->Nr );
 		sendSubbaseValues ( Player->base.SubBases[i], Player->Nr );
 	}
 	// refresh enemy units

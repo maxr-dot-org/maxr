@@ -16,16 +16,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <assert.h>
 #include "base.h"
 #include "map.h"
 #include "serverevents.h"
 #include "server.h"
 
 
-sSubBase::sSubBase( int iNextID, cPlayer* owner_ ) :
+
+sSubBase::sSubBase( cPlayer* owner_ ) :
 	buildings(),
 	owner(owner_),
-	iID(iNextID),
 	MaxMetal(),
 	Metal(),
 	MaxOil(),
@@ -53,7 +54,6 @@ sSubBase::sSubBase( int iNextID, cPlayer* owner_ ) :
 sSubBase::sSubBase( const sSubBase& sb ) :
 	buildings(),
 	owner(sb.owner),
-	iID(sb.iID),
 	MaxMetal(sb.MaxMetal),
 	Metal(sb.Metal),
 	MaxOil(sb.MaxOil),
@@ -792,9 +792,6 @@ void sSubBase::prepareTurnend()
 
 	if ( checkGoldConsumer() )
 		sendChatMessageToClient("Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr );
-
-
-
 }
 
 void sSubBase::makeTurnend()
@@ -881,12 +878,140 @@ void sSubBase::makeTurnend()
 	sendSubbaseValues( this, owner->Nr );
 }
 
-
-// Funktionen der Base Klasse ////////////////////////////////////////////////
-cBase::cBase ( cPlayer *Owner )
+void sSubBase::merge(sSubBase* sb )
 {
-	iNextSubBaseID = 0;
+	//merge ressource allocation
+	int metal = MetalProd;
+	int oil = OilProd;
+	int gold = GoldProd;
+
+	metal += sb->getMetalProd();
+	gold  += sb->getGoldProd();
+	oil   += sb->getOilProd();
+
+	//merge buildings
+	while( sb->buildings.Size() )
+	{
+		cBuilding* building = sb->buildings[0];
+		addBuilding( building );
+		building->SubBase = this;
+		sb->buildings.Delete ( 0 );
+	}
+
+	//set ressource allocation
+	setMetalProd(0);
+	setOilProd(0);
+	setGoldProd(0);
+
+	setMetalProd(metal);
+	setGoldProd(gold);
+	setOilProd(oil);
+
+	// delete the subbase from the subbase list
+	cList<sSubBase*>& SubBases = owner->base.SubBases;
+	for (unsigned int i = 0; i < SubBases.Size(); i++)
+	{
+		if (SubBases[i] == sb)
+		{
+			SubBases.Delete( i );
+			break;
+		}
+	}
 }
+
+int sSubBase::getID()
+{
+	assert( buildings.Size() );
+	
+	return buildings[0]->iID;
+}
+
+void sSubBase::addBuilding( cBuilding *b )
+{
+	buildings.Add ( b );
+	// calculate storage level
+	switch ( b->data.storeResType )
+	{
+	case sUnitData::STORE_RES_METAL:
+		MaxMetal += b->data.storageResMax;
+		Metal += b->data.storageResCur;
+		break;
+	case sUnitData::STORE_RES_OIL:
+		MaxOil += b->data.storageResMax;
+		Oil += b->data.storageResCur;
+		break;
+	case sUnitData::STORE_RES_GOLD:
+		MaxGold += b->data.storageResMax;
+		Gold += b->data.storageResCur;
+		break;
+	}
+	// calculate energy
+	if ( b->data.produceEnergy )
+	{
+		MaxEnergyProd += b->data.produceEnergy;
+		MaxOilNeed += b->data.needsOil;
+		if ( b->IsWorking )
+		{
+			EnergyProd += b->data.produceEnergy;
+			OilNeed += b->data.needsOil;
+		}
+	}
+	else if ( b->data.needsEnergy )
+	{
+		MaxEnergyNeed += b->data.needsEnergy;
+		if ( b->IsWorking )
+		{
+			EnergyNeed += b->data.needsEnergy;
+		}
+	}
+	// calculate ressource consumption
+	if ( b->data.needsMetal )
+	{
+		MaxMetalNeed += b->data.needsMetal*12;
+		if ( b->IsWorking )
+		{
+			MetalNeed += min(b->MetalPerRound, (*b->BuildList)[0]->metall_remaining);
+		}
+	}
+	// calculate gold
+	if ( b->data.convertsGold )
+	{
+		MaxGoldNeed += b->data.convertsGold;
+		if ( b->IsWorking )
+		{
+			GoldNeed += b->data.convertsGold;
+		}
+	}
+	// calculate ressource production
+	if ( b->data.canMineMaxRes > 0 && b->IsWorking )
+	{
+		int mineFree = b->data.canMineMaxRes;
+		changeMetalProd( b->MaxMetalProd );
+		mineFree -= b->MaxMetalProd;
+
+		changeOilProd( min ( b->MaxOilProd, mineFree));
+		mineFree -= min ( b->MaxOilProd, mineFree);
+
+		changeGoldProd( min ( b->MaxGoldProd, mineFree));
+	}
+	// calculate humans
+	if ( b->data.produceHumans )
+	{
+		HumanProd += b->data.produceHumans;
+	}
+	if ( b->data.needsHumans )
+	{
+		MaxHumanNeed += b->data.needsHumans;
+		if ( b->IsWorking )
+		{
+			HumanNeed += b->data.needsHumans;
+		}
+	}
+}
+
+
+cBase::cBase(): map()
+{};
 
 cBase::~cBase ( void )
 {
@@ -911,159 +1036,79 @@ sSubBase *cBase::checkNeighbour ( int iOff, cBuilding *Building )
 	else return NULL;
 }
 
-// Fügt ein neues Building in die Base ein:
-void cBase::AddBuilding ( cBuilding *Building )
+void cBase::addBuilding ( cBuilding *building, bool bServer )
 {
 	int pos;
-	if ( !Building->data.connectsToBase ) return;
-	pos = Building->PosX+Building->PosY*map->size;
+	if ( !building->data.connectsToBase ) return;
+	pos = building->PosX + building->PosY * map->size;
 	cList<sSubBase*> NeighbourList;
-	Building->SubBase = ( sSubBase* ) 1;
-	// Prüfen, ob ein Gebäude in in der Nähe steht:
-	if ( !Building->data.isBig )
+
+	//check for neighbours
+	if ( !building->data.isBig )
 	{
 		// small building
 		sSubBase *SubBase;
-		if ( ( SubBase = checkNeighbour ( pos-map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos-1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( (SubBase = checkNeighbour( pos-map->size, building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+1        , building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+map->size, building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos-1        , building )) ) NeighbourList.Add( SubBase );
 	}
 	else
 	{
 		// big building
 		sSubBase *SubBase;
-		if ( ( SubBase = checkNeighbour ( pos-map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos-map->size+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+2, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+2+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+map->size*2, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos+map->size*2+1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos-1, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
-		if ( ( SubBase = checkNeighbour ( pos-1+map->size, Building ) ) != NULL ) NeighbourList.Add ( SubBase );
+		if ( (SubBase = checkNeighbour( pos-map->size,     building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos-map->size+1,   building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+2,             building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+2+map->size,   building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+map->size*2,   building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos+map->size*2+1, building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos-1,             building )) ) NeighbourList.Add( SubBase );
+		if ( (SubBase = checkNeighbour( pos-1+map->size,   building )) ) NeighbourList.Add( SubBase );
 	}
-	if (NeighbourList.Size() > 0)
+	building->CheckNeighbours( map );
+
+	NeighbourList.RemoveDuplicates();
+
+	if (NeighbourList.Size() == 0)
 	{
-		// found neighbours
-		Building->CheckNeighbours( map );
-		// remove duplicate entrys
-		for (unsigned int i = 0; i < NeighbourList.Size(); i++)
-		{
-			for (unsigned int k = i + 1; k < NeighbourList.Size(); k++)
-			{
-				if (NeighbourList[i] == NeighbourList[k])
-				{
-					NeighbourList.Delete(i);
-					i--;
-					break;
-				}
-			}
-		}
-		// check whether there have to merge subbases
-		if (NeighbourList.Size() > 1)
-		{
-			// merge the subbases to one
-			sSubBase *NewSubBase;
-			cBuilding *SubBaseBuilding;
-			// generate new subbase
-			NewSubBase = new sSubBase( iNextSubBaseID, Building->owner );
-			iNextSubBaseID++;
-			Building->SubBase = NewSubBase;
-			NewSubBase->addBuilding( Building );
-			SubBases.Add( NewSubBase );
-
-			//store the mine produktion values, to restore them after merging the subbases
-			int metalProd = NewSubBase->getMetalProd();
-			int oilProd = NewSubBase->getOilProd();
-			int goldProd = NewSubBase->getGoldProd();
-
-
-			sendNewSubbase ( NewSubBase, Building->owner->Nr );
-			// go through all found subbases
-			while (NeighbourList.Size())
-			{
-				sSubBase* const SubBase = NeighbourList[0];
-				// go through all buildings of the subbases
-				while (SubBase->buildings.Size())
-				{
-					SubBaseBuilding = SubBase->buildings[0];
-					NewSubBase->addBuilding( SubBaseBuilding );
-					SubBaseBuilding->SubBase = NewSubBase;
-					SubBase->buildings.Delete ( 0 );
-				}
-
-				//store the mine produktion values, to restore them after merging the subbases
-				metalProd += SubBase->getMetalProd();
-				oilProd   += SubBase->getOilProd();
-				goldProd  += SubBase->getGoldProd();
-
-				// delete the subbase from the subbase list
-				for (unsigned int i = 0; i < SubBases.Size(); i++)
-				{
-					if (SubBases[i] == SubBase)
-					{
-						SubBases.Delete( i );
-						break;
-					}
-				}
-				sendDeleteSubbase ( SubBase, Building->owner->Nr );
-				delete SubBase;
-				NeighbourList.Delete( 0 );
-			}
-
-			//restore mine production values
-			NewSubBase->setMetalProd(0);
-			NewSubBase->setOilProd(0);
-			NewSubBase->setGoldProd(0);
-			NewSubBase->setMetalProd( metalProd );
-			NewSubBase->setOilProd( oilProd );
-			NewSubBase->setGoldProd( goldProd );
-
-			sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
-			sendSubbaseValues ( NewSubBase, Building->owner->Nr );
-		}
-		else
-		{
-			// just add the building to the subbase
-			sSubBase* const SubBase = NeighbourList[0];
-			SubBase->addBuilding( Building );
-			Building->SubBase = SubBase;
-			sendAddSubbaseBuildings ( Building, SubBase, Building->owner->Nr );
-			sendSubbaseValues ( SubBase, Building->owner->Nr );
-		}
-	}
-	else
-	{
+		// no neigbours found, just generate new subbase and add the building
 		sSubBase *NewSubBase;
-		// no neigbours found
-		Building->BaseBE = false;
-		Building->BaseBN = false;
-		Building->BaseBS = false;
-		Building->BaseBW = false;
-		Building->BaseE = false;
-		Building->BaseN = false;
-		Building->BaseS = false;
-		Building->BaseW = false;
-		// generate new subbase
-		NewSubBase = new sSubBase ( iNextSubBaseID, Building->owner );
-		iNextSubBaseID++;
-		Building->SubBase = NewSubBase;
-		NewSubBase->addBuilding( Building );
+		NewSubBase = new sSubBase ( building->owner );
+		building->SubBase = NewSubBase;
+		NewSubBase->addBuilding( building );
 		SubBases.Add( NewSubBase );
-		sendNewSubbase ( NewSubBase, Building->owner->Nr );
-		sendAddSubbaseBuildings ( NULL, NewSubBase, Building->owner->Nr );
-		sendSubbaseValues ( NewSubBase, Building->owner->Nr );
+			
+		if ( bServer ) sendSubbaseValues ( NewSubBase, NewSubBase->owner->Nr );
+
+		return;
 	}
+
+	// found neighbours, so add the building to the first neighbour subbase
+	sSubBase* const firstNeighbour = NeighbourList[0];
+	firstNeighbour->addBuilding( building );
+	building->SubBase = firstNeighbour;
+	NeighbourList.Delete(0);
+
+	// now merge the other neigbours to the first one, if nessesary
+	while (NeighbourList.Size() > 0)
+	{
+		sSubBase* const SubBase = NeighbourList[0];
+		firstNeighbour->merge( SubBase );
+		
+		delete SubBase;
+		NeighbourList.Delete(0);
+	}
+
+	if ( bServer ) sendSubbaseValues ( firstNeighbour, building->owner->Nr );
 }
 
-// Löscht ein Building aus der Base:
-void cBase::DeleteBuilding ( cBuilding *b )
+void cBase::deleteBuilding ( cBuilding *building, bool bServer )
 {
-	sSubBase *sb;
-	cBuilding *n;
-	if ( !b->data.connectsToBase ) return;
-	sb=b->SubBase;
-	// Alle SubBases auf NULL setzen:
+	if ( !building->data.connectsToBase ) return;
+	sSubBase *sb = building->SubBase;
+
+	// remove the current subbase
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
 		sb->buildings[i]->SubBase = NULL;
@@ -1076,102 +1121,58 @@ void cBase::DeleteBuilding ( cBuilding *b )
 			break;
 		}
 	}
+
+	//save ressource allocation
+	int metal = sb->getMetalProd();
+	int gold = sb->getGoldProd();
+	int oil = sb->getOilProd();
+
 	// add all the buildings again
-	//FIXME: with deleting the old subbase, the ressouce configuration is lost and will be set to a default distribution
 	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
 	{
-		n = sb->buildings[i];
-		if ( n==b ) continue;
-		AddBuilding ( n );		//TODO: this causes a lot of unnessesary net traffic, when deleting a building from a big subbase
+		cBuilding *n = sb->buildings[i];
+		if ( n == building ) continue;
+		addBuilding ( n, false );
 	}
-	if (b->IsWorking && b->data.canResearch)
-		b->owner->stopAResearch (b->researchArea);
+
+	//generate list, with the new subbases
+	cList<sSubBase*> newSubBases;
+	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
+	{
+		cBuilding *n = sb->buildings[i];
+		if ( n == building ) continue;
+		newSubBases.Add(n->SubBase);
+	}
+	newSubBases.RemoveDuplicates();
+
+	//try to restore ressource allocation
+	for ( unsigned int i = 0; i < newSubBases.Size(); i++ )
+	{
+		newSubBases[i]->setMetalProd(metal);
+		newSubBases[i]->setGoldProd(gold);
+		newSubBases[i]->setOilProd(oil);
+		
+		metal -= newSubBases[i]->getMetalProd();
+		gold -= newSubBases[i]->getGoldProd();
+		oil -= newSubBases[i]->getOilProd();
+	}
+	
+	if ( building->IsWorking && building->data.canResearch )
+		building->owner->stopAResearch(building->researchArea);
+
+	if ( bServer )
+	{
+		//send subbase values to client
+		for ( unsigned int i = 0; i < newSubBases.Size(); i++ )
+		{
+			sendSubbaseValues( newSubBases[i], building->owner->Nr);
+		}
+	}
+
 	delete sb;
 }
 
-// Fügt ein Gebäude in eine Subbase ein:
-void sSubBase::addBuilding( cBuilding *b )
-{
-	buildings.Add ( b );
-	// Ladung ausrechnen:
-	switch ( b->data.storeResType )
-	{
-	case sUnitData::STORE_RES_METAL:
-		MaxMetal += b->data.storageResMax;
-		Metal += b->data.storageResCur;
-		break;
-	case sUnitData::STORE_RES_OIL:
-		MaxOil += b->data.storageResMax;
-		Oil += b->data.storageResCur;
-		break;
-	case sUnitData::STORE_RES_GOLD:
-		MaxGold += b->data.storageResMax;
-		Gold += b->data.storageResCur;
-		break;
-	}
-	// Energiehaushalt ausrechnen:
-	if ( b->data.produceEnergy )
-	{
-		MaxEnergyProd += b->data.produceEnergy;
-		MaxOilNeed += b->data.needsOil;
-		if ( b->IsWorking )
-		{
-			EnergyProd += b->data.produceEnergy;
-			OilNeed += b->data.needsOil;
-		}
-	}
-	else if ( b->data.needsEnergy )
-	{
-		MaxEnergyNeed += b->data.needsEnergy;
-		if ( b->IsWorking )
-		{
-			EnergyNeed += b->data.needsEnergy;
-		}
-	}
-	// Rohstoffhaushalt ausrechnen:
-	if ( b->data.needsMetal )
-	{
-		MaxMetalNeed += b->data.needsMetal*12;
-		if ( b->IsWorking )
-		{
-			MetalNeed += min(b->MetalPerRound, (*b->BuildList)[0]->metall_remaining);
-		}
-	}
-	// Goldhaushalt ausrechnen:
-	if ( b->data.convertsGold )
-	{
-		MaxGoldNeed += b->data.convertsGold;
-		if ( b->IsWorking )
-		{
-			GoldNeed += b->data.convertsGold;
-		}
-	}
-	// Rohstoffproduktion ausrechnen:
-	if ( b->data.canMineMaxRes > 0 && b->IsWorking )
-	{
-		int mineFree = b->data.canMineMaxRes;
-		changeMetalProd( b->MaxMetalProd );
-		mineFree -= b->MaxMetalProd;
 
-		changeOilProd( min ( b->MaxOilProd, mineFree));
-		mineFree -= min ( b->MaxOilProd, mineFree);
-
-		changeGoldProd( min ( b->MaxGoldProd, mineFree));
-	}
-	// Human-Haushalt ausrechnen:
-	if ( b->data.produceHumans )
-	{
-		HumanProd += b->data.produceHumans;
-	}
-	if ( b->data.needsHumans )
-	{
-		MaxHumanNeed += b->data.needsHumans;
-		if ( b->IsWorking )
-		{
-			HumanNeed += b->data.needsHumans;
-		}
-	}
-}
 
 void cBase::handleTurnend ()
 {

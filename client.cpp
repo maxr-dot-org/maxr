@@ -202,7 +202,7 @@ void cClient::initPlayer( cPlayer *Player )
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 	{
 		if ( (*PlayerList)[i] == ActivePlayer ) continue;
-		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ( -(int)(i+1), (*PlayerList)[i]) );
+		(*PlayerList)[i]->base.SubBases.Add ( new sSubBase ((*PlayerList)[i]) );
 	}
 }
 
@@ -674,6 +674,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding->iID = message->popInt16();
 
 			addUnit ( PosX, PosY, AddedBuilding, Init );
+
+			Player->base.addBuilding( AddedBuilding, false );
 
 			// play placesound if it is a mine
 			if ( UnitID == specialIDLandMine && Player == ActivePlayer ) PlayFX ( SoundData.SNDLandMinePlace );
@@ -1212,68 +1214,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				StopFXLoop ( iObjectStream );
 				iObjectStream = Vehicle->playStream();
-			}
-		}
-		break;
-	case GAME_EV_NEW_SUBBASE:
-		{
-			sSubBase *NewSubBase;
-			// generate new subbase
-			NewSubBase = new sSubBase ( message->popInt16(), ActivePlayer );
-			ActivePlayer->base.SubBases.Add( NewSubBase );
-		}
-		break;
-	case GAME_EV_DELETE_SUBBASE:
-		{
-			int iID = message->popInt16();
-			sSubBase *SubBase = NULL;
-			for (unsigned int i = 0; i < ActivePlayer->base.SubBases.Size(); i++)
-			{
-				if (ActivePlayer->base.SubBases[i]->iID == iID)
-				{
-					SubBase = ActivePlayer->base.SubBases[i];
-					ActivePlayer->base.SubBases.Delete ( i );
-					break;
-				}
-			}
-			if ( SubBase == NULL )
-			{
-				Log.write(" Client: Can't delete subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
-				// TODO: Request sync of subbases
-				break;
-			}
-			for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
-			{
-				SubBase->buildings[i]->SubBase = NULL;
-			}
-			delete SubBase;
-		}
-		break;
-	case GAME_EV_SUBBASE_BUILDINGS:
-		{
-			int iID = message->popInt16();
-			sSubBase *SubBase = getSubBaseFromID ( iID );
-			if ( SubBase == NULL )
-			{
-				Log.write(" Client: Can't add buildings to subbase: Unknown subbase with ID: "  + iToStr( iID ) , cLog::eLOG_TYPE_NET_WARNING);
-				// TODO: Request sync of subbases
-				break;
-			}
-			int iCount = message->popInt16();
-			for ( int i = 0; i < iCount; i++ )
-			{
-				int iBuildingID =  message->popInt16();
-				cBuilding *Building = getBuildingFromID ( iBuildingID );
-				if ( !Building )
-				{
-					Log.write("Building not found. ID: " + iToStr(iBuildingID ), cLog::eLOG_TYPE_NET_ERROR );
-					continue;
-				}
-				SubBase->buildings.Add ( Building );
-				Building->SubBase = SubBase;
-
-				Building->updateNeighbours( Map );
-
 			}
 		}
 		break;
@@ -2069,6 +2009,7 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 	// place the building
 	Map->addBuilding( AddedBuilding, iPosX, iPosY);
 
+
 	if ( !bInit ) AddedBuilding->StartUp = 10;
 
 	gameGUI.updateMouseCursor();
@@ -2142,14 +2083,8 @@ void cClient::deleteUnit( cBuilding *Building )
 		gameGUI.setSelBuilding( NULL );
 	}
 
-	if ( Building->SubBase )
-	{
-		for ( unsigned int i = 0; i < Building->SubBase->buildings.Size(); i++ )
-		{
-			if ( Building->SubBase->buildings[i] == Building )
-				Building->SubBase->buildings.Delete(i);
-		}
-	}
+	if ( Building->owner == ActivePlayer )
+		Building->owner->base.deleteBuilding(Building, false );
 
 	cPlayer* owner = Building->owner;
 	delete Building;
@@ -2403,16 +2338,11 @@ void cClient::doGameActions()
 
 sSubBase *cClient::getSubBaseFromID ( int iID )
 {
-	sSubBase *SubBase = NULL;
-	for (unsigned int i = 0; i < ActivePlayer->base.SubBases.Size(); i++)
-	{
-		if (ActivePlayer->base.SubBases[i]->iID == iID)
-		{
-			SubBase = ActivePlayer->base.SubBases[i];
-			break;
-		}
-	}
-	return SubBase;
+	cBuilding* building = Client->getBuildingFromID( iID );
+	if ( building )
+		return building->SubBase;
+
+	return NULL;
 }
 
 void cClient::destroyUnit( cVehicle* vehicle )

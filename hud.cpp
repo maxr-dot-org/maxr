@@ -3231,34 +3231,37 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 							// the VS compiler gives a warning on casting a pointer to long.
 							// therfore we will first cast to long long and then cut this to Unit32 again.
 							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb));
-							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
-							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
+							font->showText(dest.x+1,dest.y+1, iToStr( sb->getID() ), FONT_LATIN_SMALL_WHITE);
+							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->getMetalProd()-sb->MetalNeed);
 							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
+							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->getOilProd()-sb->OilNeed);
 							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
 
-							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
+							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->getGoldProd()-sb->GoldNeed);
 							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
 						}
 						if ( debugBaseServer && building->SubBase )
 						{
-							sSubBase *sb;
-							SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
-							if ( building->data.isBig ) tmp.w*=2;
-							sb = Server->Map->fields[pos].getBuildings()->SubBase;
-							// the VS compiler gives a warning on casting a pointer to long.
-							// therfore we will first cast to long long and then cut this to Unit32 again.
-							SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
-							font->showText(dest.x+1,dest.y+1, iToStr( sb->iID ), FONT_LATIN_SMALL_WHITE);
-							string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->MetalProd-sb->MetalNeed);
-							font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
+							sSubBase *sb = Server->Map->fields[pos].getBuildings()->SubBase;;
+							if ( sb )
+							{
+								SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
+								if ( building->data.isBig ) tmp.w*=2;
+								
+								// the VS compiler gives a warning on casting a pointer to long.
+								// therfore we will first cast to long long and then cut this to Unit32 again.
+								SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
+								font->showText(dest.x+1,dest.y+1, iToStr( sb->getID() ), FONT_LATIN_SMALL_WHITE);
+								string sTmp = "m "+iToStr(sb->Metal)+"/"+iToStr(sb->MaxMetal)+" +"+iToStr(sb->getMetalProd()-sb->MetalNeed);
+								font->showText(dest.x+1,dest.y+1+8, sTmp, FONT_LATIN_SMALL_WHITE);
 
-							sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->OilProd-sb->OilNeed);
-							font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
+								sTmp = "o "+iToStr(sb->Oil)+"/"+iToStr(sb->MaxOil)+" +"+iToStr(sb->getOilProd()-sb->OilNeed);
+								font->showText(dest.x+1,dest.y+1+16, sTmp, FONT_LATIN_SMALL_WHITE);
 
-							sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->GoldProd-sb->GoldNeed);
-							font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+								sTmp = "g "+iToStr(sb->Gold)+"/"+iToStr(sb->MaxGold)+" +"+iToStr(sb->getGoldProd()-sb->GoldNeed);
+								font->showText(dest.x+1,dest.y+1+24, sTmp, FONT_LATIN_SMALL_WHITE);
+							}
 						}
 					}
 				}

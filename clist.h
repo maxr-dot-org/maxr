@@ -36,6 +36,8 @@ template<typename T> class cList
 
 		bool Contains(const T& e);
 
+		void RemoveDuplicates();
+
 	private:
 		T*     v_;
 		size_t capacity_;
@@ -112,6 +114,22 @@ template<typename T> bool cList<T>::Contains(const T& e)
 			return true;
 	}
 	return false;
+}
+
+template<typename T> void cList<T>::RemoveDuplicates()
+{
+	for (unsigned int i = 0; i < size_; i++)
+	{
+		for (unsigned int k = i + 1; k < size_; k++)
+		{
+			if (v_[i] == v_[k])
+			{
+				Delete(i);
+				i--;
+				break;
+			}
+		}
+	}
 }
 
 #endif

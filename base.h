@@ -26,16 +26,15 @@ class cPlayer;
 class cBuilding;
 class cMap;
 
-// Die SubBase Struktur //////////////////////////////////////////////////////
-struct sSubBase{
+struct sSubBase
+{
 public:
-	sSubBase( int iNextID, cPlayer* owner_ );
+	sSubBase( cPlayer* owner_ );
 	sSubBase( const sSubBase& sb );
 
 	cList<cBuilding*> buildings;
 	cPlayer* owner;
 
-	int iID;
 	int MaxMetal;
 	int Metal;
 	int MaxOil;
@@ -59,9 +58,21 @@ public:
 	int HumanNeed;
 	int MaxHumanNeed;
 
+	/**
+	* integrates all building of the given subbase in the own one
+	* @author eiko
+	*/
+	void merge(sSubBase* sb );
+
+	/**
+	* returns an unique number to identify the subbase
+	* @author eiko
+	*/
+	int getID();
+
 	void addBuilding( cBuilding *b );
 
-	/*
+	/**
 	* adds/substracts a ressource to/from the subbase
 	* @author eiko
 	*/
@@ -173,15 +184,26 @@ private:
 class cBase
 {
 public:
-	cBase(cPlayer *Owner);
+	cBase();
 	~cBase(void);
 
-	int iNextSubBaseID;
 	cList<sSubBase*> SubBases;
 	cMap *map;
 
-	void AddBuilding(cBuilding *Building);
-	void DeleteBuilding(cBuilding *Building);
+	/**
+	* adds a building to the base and updates the subbase structures
+	* @param building the building, that is added to the base
+	* @param bServer when true, the resulting subbase values are sent to the client
+	* @author eiko
+	*/
+	void addBuilding(cBuilding *building, bool bServer );
+	/**
+	* deletes a building from the base and updates the subbase structures
+	* @param building the building, that is deleted to the base
+	* @param bServer when true, the resulting subbase values are sent to the client
+	* @author eiko
+	*/
+	void deleteBuilding(cBuilding *building, bool bServer);
 	void handleTurnend();
 	/**
 	* recalculates the values of all subbases

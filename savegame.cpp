@@ -1299,9 +1299,9 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 		//write the ID of the first building, to identify the subbase at load time
 		addAttributeElement ( subbaseNode, "buildingID", "num", iToStr ( SubBase->buildings[0]->iID ) );
 		TiXmlElement *element = addMainElement ( subbaseNode, "Production" );
-		element->SetAttribute ( "metal", iToStr ( SubBase->MetalProd ).c_str() );
-		element->SetAttribute ( "oil", iToStr ( SubBase->OilProd ).c_str() );
-		element->SetAttribute ( "gold", iToStr ( SubBase->GoldProd ).c_str() );
+		element->SetAttribute ( "metal", iToStr ( SubBase->getMetalProd() ).c_str() );
+		element->SetAttribute ( "oil", iToStr ( SubBase->getOilProd() ).c_str() );
+		element->SetAttribute ( "gold", iToStr ( SubBase->getGoldProd() ).c_str() );
 	}
 }
 

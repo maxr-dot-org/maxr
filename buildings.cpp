@@ -967,7 +967,7 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
 	{														\
 		cBuilding* b = Map->fields[(x) + (y) * Map->size].getTopBuilding();		\
-		if ( b && b->owner == owner && b->SubBase )			\
+		if ( b && b->owner == owner && b->data.connectsToBase )			\
 			{m=true;}else{m=false;}							\
 	}														\
 
@@ -1139,7 +1139,7 @@ void cBuilding::ServerStartWork ()
 	// needs gold:
 	if ( data.convertsGold )
 	{
-		if ( data.convertsGold + SubBase->GoldNeed > SubBase->GoldProd + SubBase->Gold )
+		if ( data.convertsGold + SubBase->GoldNeed > SubBase->getGoldProd() + SubBase->Gold )
 		{
 			sendChatMessageToClient( "Text~Comp~Gold_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;
@@ -1149,7 +1149,7 @@ void cBuilding::ServerStartWork ()
 	// needs raw material:
 	if ( data.needsMetal )
 	{
-		if ( SubBase->MetalNeed + min(MetalPerRound, (*BuildList)[0]->metall_remaining) > SubBase->MetalProd + SubBase->Metal )
+		if ( SubBase->MetalNeed + min(MetalPerRound, (*BuildList)[0]->metall_remaining) > SubBase->getMetalProd() + SubBase->Metal )
 		{
 			sendChatMessageToClient( "Text~Comp~Metal_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr );
 			return;

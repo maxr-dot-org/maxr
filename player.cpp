@@ -32,7 +32,6 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	name(Name),
 	color(Color),
 	Nr(nr),
-	base(this),
 	clan(-1),
 	numEcos(0)
 {
@@ -71,7 +70,6 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 
 //-----------------------------------------------------------------------
 cPlayer::cPlayer(const cPlayer &Player)
-: base(this)
 {
 	name = Player.name;
 	color = Player.color;

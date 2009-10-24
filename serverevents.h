@@ -182,25 +182,6 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle );
 */
 void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  );
 /**
-* send information about a new subbase.
-*@author alzi alias DoctorDeath
-*@param SubBase the new subbase
-*/
-void sendNewSubbase ( sSubBase *SubBase, int iPlayer );
-/**
-* sends the client a message that he has to delete this subbase.
-*@author alzi alias DoctorDeath
-*@param SubBase the subbase that should be deleted
-*/
-void sendDeleteSubbase ( sSubBase *SubBase, int iPlayer );
-/**
-* sends information of all buildings or just one new building that should be added to a subbase.
-*@author alzi alias DoctorDeath
-*@param Building if only one building should be added to the subbase, this parameter has to be this building.
-*@param SubBase the subbase to which the buildings will be added. If Building == NULL then all buildings of the subbase will be send
-*/
-void sendAddSubbaseBuildings ( cBuilding *Building, sSubBase *SubBase, int iPlayer );
-/**
 * send the values if a subbase.
 *@author alzi alias DoctorDeath
 *@param SubBase the subbase which values should be send
