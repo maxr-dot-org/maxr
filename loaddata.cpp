@@ -519,12 +519,12 @@ static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* 
 	if(!SoundData.DummySound)
 	{
 		string sTmpString;
-		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER + "dummy.wav";
+		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER + "dummy.ogg";
 		if(FileExists(sTmpString.c_str()))
 		{
 			SoundData.DummySound = Mix_LoadWAV(sTmpString.c_str());
 			if(!SoundData.DummySound)
-				Log.write("Can't load dummy.wav", LOG_TYPE_WARNING);
+				Log.write("Can't load dummy.ogg", LOG_TYPE_WARNING);
 		}
 	}
 	// Not using FileExists to avoid unnecessary warnings in log file
@@ -1586,38 +1586,38 @@ static int LoadSounds(const char* path)
 {
 	Log.write ( "Loading Sounds", LOG_TYPE_INFO );
 
-	LoadSoundfile ( SoundData.SNDHudSwitch, path, "HudSwitch.wav" );
-	LoadSoundfile ( SoundData.SNDHudButton, path, "HudButton.wav" );
-	LoadSoundfile ( SoundData.SNDMenuButton, path, "MenuButton.wav" );
-	LoadSoundfile ( SoundData.SNDChat, path, "Chat.wav" );
-	LoadSoundfile ( SoundData.SNDObjectMenu, path, "ObjectMenu.wav" );
-	LoadSoundfile ( SoundData.EXPBigWet0, path, "exp_big_wet0.wav" );
-	LoadSoundfile ( SoundData.EXPBigWet1, path, "exp_big_wet1.wav" );
-	LoadSoundfile ( SoundData.EXPBig0, path, "exp_big0.wav" );
-	LoadSoundfile ( SoundData.EXPBig1, path, "exp_big1.wav" );
-	LoadSoundfile ( SoundData.EXPBig2, path, "exp_big2.wav" );
-	LoadSoundfile ( SoundData.EXPBig3, path, "exp_big3.wav" );
-	LoadSoundfile ( SoundData.EXPSmallWet0, path, "exp_small_wet0.wav" );
-	LoadSoundfile ( SoundData.EXPSmallWet1, path, "exp_small_wet1.wav" );
-	LoadSoundfile ( SoundData.EXPSmallWet2, path, "exp_small_wet2.wav" );
-	LoadSoundfile ( SoundData.EXPSmall0, path, "exp_small0.wav" );
-	LoadSoundfile ( SoundData.EXPSmall1, path, "exp_small1.wav" );
-	LoadSoundfile ( SoundData.EXPSmall2, path, "exp_small2.wav" );
-	LoadSoundfile ( SoundData.SNDArm, path, "arm.wav" );
-	LoadSoundfile ( SoundData.SNDBuilding, path, "building.wav" );
-	LoadSoundfile ( SoundData.SNDClearing, path, "clearing.wav" );
-	LoadSoundfile ( SoundData.SNDQuitsch, path, "quitsch.wav" );
-	LoadSoundfile ( SoundData.SNDActivate, path, "activate.wav" );
-	LoadSoundfile ( SoundData.SNDLoad, path, "load.wav" );
-	LoadSoundfile ( SoundData.SNDReload, path, "reload.wav" );
-	LoadSoundfile ( SoundData.SNDRepair, path, "repair.wav" );
-	LoadSoundfile ( SoundData.SNDLandMinePlace, path, "land_mine_place.wav" );
-	LoadSoundfile ( SoundData.SNDLandMineClear, path, "land_mine_clear.wav" );
-	LoadSoundfile ( SoundData.SNDSeaMinePlace, path, "sea_mine_place.wav" );
-	LoadSoundfile ( SoundData.SNDSeaMineClear, path, "sea_mine_clear.wav" );
-	LoadSoundfile ( SoundData.SNDPanelOpen, path, "panel_open.wav" );
-	LoadSoundfile ( SoundData.SNDPanelClose, path, "panel_close.wav" );
-	LoadSoundfile ( SoundData.SNDAbsorb, path, "absorb.wav" );
+	LoadSoundfile ( SoundData.SNDHudSwitch, path, "HudSwitch.ogg" );
+	LoadSoundfile ( SoundData.SNDHudButton, path, "HudButton.ogg" );
+	LoadSoundfile ( SoundData.SNDMenuButton, path, "MenuButton.ogg" );
+	LoadSoundfile ( SoundData.SNDChat, path, "Chat.ogg" );
+	LoadSoundfile ( SoundData.SNDObjectMenu, path, "ObjectMenu.ogg" );
+	LoadSoundfile ( SoundData.EXPBigWet0, path, "exp_big_wet0.ogg" );
+	LoadSoundfile ( SoundData.EXPBigWet1, path, "exp_big_wet1.ogg" );
+	LoadSoundfile ( SoundData.EXPBig0, path, "exp_big0.ogg" );
+	LoadSoundfile ( SoundData.EXPBig1, path, "exp_big1.ogg" );
+	LoadSoundfile ( SoundData.EXPBig2, path, "exp_big2.ogg" );
+	LoadSoundfile ( SoundData.EXPBig3, path, "exp_big3.ogg" );
+	LoadSoundfile ( SoundData.EXPSmallWet0, path, "exp_small_wet0.ogg" );
+	LoadSoundfile ( SoundData.EXPSmallWet1, path, "exp_small_wet1.ogg" );
+	LoadSoundfile ( SoundData.EXPSmallWet2, path, "exp_small_wet2.ogg" );
+	LoadSoundfile ( SoundData.EXPSmall0, path, "exp_small0.ogg" );
+	LoadSoundfile ( SoundData.EXPSmall1, path, "exp_small1.ogg" );
+	LoadSoundfile ( SoundData.EXPSmall2, path, "exp_small2.ogg" );
+	LoadSoundfile ( SoundData.SNDArm, path, "arm.ogg" );
+	LoadSoundfile ( SoundData.SNDBuilding, path, "building.ogg" );
+	LoadSoundfile ( SoundData.SNDClearing, path, "clearing.ogg" );
+	LoadSoundfile ( SoundData.SNDQuitsch, path, "quitsch.ogg" );
+	LoadSoundfile ( SoundData.SNDActivate, path, "activate.ogg" );
+	LoadSoundfile ( SoundData.SNDLoad, path, "load.ogg" );
+	LoadSoundfile ( SoundData.SNDReload, path, "reload.ogg" );
+	LoadSoundfile ( SoundData.SNDRepair, path, "repair.ogg" );
+	LoadSoundfile ( SoundData.SNDLandMinePlace, path, "land_mine_place.ogg" );
+	LoadSoundfile ( SoundData.SNDLandMineClear, path, "land_mine_clear.ogg" );
+	LoadSoundfile ( SoundData.SNDSeaMinePlace, path, "sea_mine_place.ogg" );
+	LoadSoundfile ( SoundData.SNDSeaMineClear, path, "sea_mine_clear.ogg" );
+	LoadSoundfile ( SoundData.SNDPanelOpen, path, "panel_open.ogg" );
+	LoadSoundfile ( SoundData.SNDPanelClose, path, "panel_close.ogg" );
+	LoadSoundfile ( SoundData.SNDAbsorb, path, "absorb.ogg" );
 
 	return 1;
 }
@@ -1626,38 +1626,38 @@ static int LoadVoices(const char* path)
 {
 	Log.write ( "Loading Voices", LOG_TYPE_INFO );
 
-	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.wav" );
-	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.wav" );
-	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.wav" );
-	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.wav" );
-	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.wav" );
-	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.wav" );
-	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.wav" );
-	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.wav" );
-	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.wav" );
-	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.wav" );
-	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.wav" );
-	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.wav" );
-	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.wav" );
-	LoadSoundfile ( VoiceData.VOIWachposten,path, "wachposten.wav" );
-	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.wav" );
-	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.wav" );
-	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.wav" );
-	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.wav" );
-	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.wav" );
-	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.wav" );
-	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.wav" );
-	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.wav" );
-	LoadSoundfile ( VoiceData.VOICommandoDetected,path, "commando_detected.wav" );
-	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.wav" );
-	LoadSoundfile ( VoiceData.VOISaved,path, "saved.wav" );
-	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.wav" );
-	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.wav" );
-	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.wav" );
-	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.wav" );
-	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.wav" );
-	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.wav" );
-	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.wav" );
+	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.ogg" );
+	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.ogg" );
+	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.ogg" );
+	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.ogg" );
+	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.ogg" );
+	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.ogg" );
+	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.ogg" );
+	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.ogg" );
+	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.ogg" );
+	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.ogg" );
+	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.ogg" );
+	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.ogg" );
+	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.ogg" );
+	LoadSoundfile ( VoiceData.VOIWachposten,path, "wachposten.ogg" );
+	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.ogg" );
+	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.ogg" );
+	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.ogg" );
+	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.ogg" );
+	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.ogg" );
+	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.ogg" );
+	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.ogg" );
+	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.ogg" );
+	LoadSoundfile ( VoiceData.VOICommandoDetected,path, "commando_detected.ogg" );
+	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.ogg" );
+	LoadSoundfile ( VoiceData.VOISaved,path, "saved.ogg" );
+	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.ogg" );
+	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.ogg" );
+	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.ogg" );
+	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.ogg" );
+	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.ogg" );
+	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.ogg" );
+	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.ogg" );
 
 	return 1;
 }
@@ -2285,15 +2285,15 @@ static int LoadVehicles()
 
 		// load sounds
 		Log.write("Loading sounds", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitSoundfile(v.Wait,       sVehiclePath.c_str(), "wait.wav");
-		LoadUnitSoundfile(v.WaitWater,  sVehiclePath.c_str(), "wait_water.wav");
-		LoadUnitSoundfile(v.Start,      sVehiclePath.c_str(), "start.wav");
-		LoadUnitSoundfile(v.StartWater, sVehiclePath.c_str(), "start_water.wav");
-		LoadUnitSoundfile(v.Stop,       sVehiclePath.c_str(), "stop.wav");
-		LoadUnitSoundfile(v.StopWater,  sVehiclePath.c_str(), "stop_water.wav");
-		LoadUnitSoundfile(v.Drive,      sVehiclePath.c_str(), "drive.wav");
-		LoadUnitSoundfile(v.DriveWater, sVehiclePath.c_str(), "drive_water.wav");
-		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.wav");
+		LoadUnitSoundfile(v.Wait,       sVehiclePath.c_str(), "wait.ogg");
+		LoadUnitSoundfile(v.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
+		LoadUnitSoundfile(v.Start,      sVehiclePath.c_str(), "start.ogg");
+		LoadUnitSoundfile(v.StartWater, sVehiclePath.c_str(), "start_water.ogg");
+		LoadUnitSoundfile(v.Stop,       sVehiclePath.c_str(), "stop.ogg");
+		LoadUnitSoundfile(v.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
+		LoadUnitSoundfile(v.Drive,      sVehiclePath.c_str(), "drive.ogg");
+		LoadUnitSoundfile(v.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
+		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
 	for (unsigned int i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = (int)i;
@@ -2547,10 +2547,10 @@ static int LoadBuildings()
 		}
 
 		// load sounds
-		LoadUnitSoundfile(b.Start,   sBuildingPath.c_str(), "start.wav");
-		LoadUnitSoundfile(b.Running, sBuildingPath.c_str(), "running.wav");
-		LoadUnitSoundfile(b.Stop,    sBuildingPath.c_str(), "stop.wav");
-		LoadUnitSoundfile(b.Attack,  sBuildingPath.c_str(), "attack.wav");
+		LoadUnitSoundfile(b.Start,   sBuildingPath.c_str(), "start.ogg");
+		LoadUnitSoundfile(b.Running, sBuildingPath.c_str(), "running.ogg");
+		LoadUnitSoundfile(b.Stop,    sBuildingPath.c_str(), "stop.ogg");
+		LoadUnitSoundfile(b.Attack,  sBuildingPath.c_str(), "attack.ogg");
 
 		// Get Ptr if necessary:
 		if ( b.data.ID == specialIDConnector )
