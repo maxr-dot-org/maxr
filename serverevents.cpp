@@ -805,6 +805,14 @@ void sendFreeze ( int iPlayer )
 }
 
 //-------------------------------------------------------------------------------------
+void sendWaitFor ( int waitForPlayerNr, int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WAIT_FOR );
+	message->pushInt16 ( waitForPlayerNr );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+//-------------------------------------------------------------------------------------
 void sendDefreeze ( int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_DEFREEZE );

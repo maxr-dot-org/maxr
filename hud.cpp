@@ -666,9 +666,9 @@ void cGameGUI::callMiniMapDraw()
 	needMiniMapDraw = true;
 }
 
-void cGameGUI::unlockEndButton()
+void cGameGUI::setEndButtonLock( bool locked )
 {
-	endButton->setLocked( false );
+	endButton->setLocked( locked );
 }
 
 void cGameGUI::handleFramesPerSecond()

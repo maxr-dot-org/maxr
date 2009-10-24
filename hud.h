@@ -390,7 +390,7 @@ public:
 	*/
 	void drawExitPoint ( int x, int y );
 	void callMiniMapDraw();
-	void unlockEndButton();
+	void setEndButtonLock( bool locked );
 
 	void setOffsetPosition ( int x, int y );
 	int getOffsetX() { return offX; }

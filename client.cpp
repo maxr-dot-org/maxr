@@ -787,6 +787,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding->updateNeighbours( Map );
 		}
 		break;
+	case GAME_EV_WAIT_FOR:
+		{
+			int nextPlayerNum = message->popInt16();
+
+			if ( nextPlayerNum != ActivePlayer->Nr )
+			{
+				bWaitForOthers = true;
+				gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Until", getPlayerFromNumber( nextPlayerNum )->name ), "" );
+				gameGUI.setEndButtonLock ( true );
+			}
+		}
+		break;
 	case GAME_EV_MAKE_TURNEND:
 		{
 			int iNextPlayerNum = message->popInt16();
@@ -798,7 +810,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iTurn++;
 				iTurnTime = 0;
 				gameGUI.updateTurn( iTurn );
-				if (!bWaitForNextPlayer ) gameGUI.unlockEndButton();
+				if (!bWaitForNextPlayer ) gameGUI.setEndButtonLock( false );
 				bWantToEnd = false;
 				gameGUI.updateTurnTime ( -1 );
 				Log.write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
@@ -815,7 +827,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					bWaitForOthers = false;
 					gameGUI.setInfoTexts ( "", "" );
-					gameGUI.unlockEndButton();
+					gameGUI.setEndButtonLock( false );
 				}
 			}
 			else if ( iNextPlayerNum != -1 )

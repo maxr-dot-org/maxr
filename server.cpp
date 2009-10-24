@@ -1259,6 +1259,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				DisconnectedPlayerList.Delete( i );
 			}
 			sendDefreeze();
+			if ( bPlayTurns ) sendWaitFor ( iActiveTurnPlayerNr );
 		}
 		break;
 	case GAME_EV_IDENTIFICATION:
@@ -1292,6 +1293,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			resyncPlayer ( Player );
 
 			sendDefreeze ();
+			if ( bPlayTurns ) sendWaitFor ( iActiveTurnPlayerNr );
 		}
 		break;
 	case GAME_EV_WANT_LOAD:

@@ -555,6 +555,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_UNIT_SCORE");
 	case GAME_EV_VICTORY_CONDITIONS:
 		return string("GAME_EV_VICTORY_CONDITIONS");
+	case GAME_EV_WAIT_FOR:
+		return string("GAME_EV_WAIT_FOR");
 	default:
 		return iToStr( iType );
 	}

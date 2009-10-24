@@ -268,6 +268,11 @@ void sendDefeated ( cPlayer *Player, int iPlayerNum = -1 );
 */
 void sendFreeze ( int iPlayer = -1 );
 /**
+* sends that a client has to wait for another player to end his turn
+*@author alzi alias DoctorDeath
+*/
+void sendWaitFor ( int waitForPlayerNr, int iPlayer = -1 );
+/**
 * sends that the client can abort waiting
 *@author alzi alias DoctorDeath
 */
