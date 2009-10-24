@@ -2665,6 +2665,7 @@ void cGameGUI::chatBoxReturnPressed( void *parent )
 	}
 	gui->chatBox->setActivity ( false );
 	gui->activeItem = NULL;
+	gui->chatBox->setDisabled ( true );
 }
 
 void cGameGUI::preDrawFunction()
