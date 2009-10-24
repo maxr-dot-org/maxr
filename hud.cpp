@@ -200,6 +200,9 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	infoTextAdditionalLabel->setDisabled ( true );
 	menuItems.Add ( infoTextAdditionalLabel );
 
+	selUnitStatusStr = new cMenuLabel ( 10, 40, "", FONT_LATIN_SMALL_WHITE );
+	menuItems.Add ( selUnitStatusStr );
+
 	updateTurn( 1 );
 }
 
@@ -283,6 +286,7 @@ int cGameGUI::show()
 
 		checkScroll();
 		changeWindDir();
+		updateStatusText();
 
 		if ( needMiniMapDraw )
 		{
@@ -2179,6 +2183,13 @@ void cGameGUI::selectBoxVehicles ( sMouseBox &box )
 		selectedBuilding->Deselct();
 		selectedBuilding = NULL;
 	}
+}
+
+void cGameGUI::updateStatusText()
+{
+	if ( selectedVehicle ) selUnitStatusStr->setText ( selectedVehicle->getStatusStr() );
+	else if ( selectedBuilding ) selUnitStatusStr->setText ( selectedBuilding->getStatusStr() );
+	else selUnitStatusStr->setText ( "" );
 }
 
 void cGameGUI::deselectGroup ()

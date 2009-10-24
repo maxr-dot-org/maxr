@@ -256,6 +256,8 @@ class cGameGUI : public cMenu
 	*/
 	void deselectGroup ();
 
+	void updateStatusText();
+
 	cMenuSlider *zoomSlider;
 
 	cMenuButton *endButton;
@@ -302,6 +304,9 @@ class cGameGUI : public cMenu
 	cMenuChatBox *chatBox;
 
 	cMenuLabel *infoTextLabel, *infoTextAdditionalLabel;
+
+	cMenuLabel *selUnitStatusStr;
+	cMenuLineEdit *selUnitNameEdit;
 
 	static void helpReleased( void *parent );
 	static void centerReleased( void *parent );
