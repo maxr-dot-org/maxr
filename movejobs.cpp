@@ -581,6 +581,19 @@ bool cServerMoveJob::checkMove()
 	Vehicle->MoveJobActive = true;
 	Vehicle->moving = true;
 
+	//reset detected flag, when a water stealth unit drives into the water
+	if ( Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround )
+	{
+		bool wasOnLand = !Server->Map->IsWater(Waypoints->X + Waypoints->Y*Server->Map->size, true);
+		bool driveIntoWater = Server->Map->IsWater(Waypoints->next->X + Waypoints->next->Y*Server->Map->size, true);
+
+		if ( wasOnLand && driveIntoWater )
+		{
+			while( Vehicle->DetectedByPlayerList.Size() )
+				Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0] );
+		}
+	}
+
 	// send move command to all players who can see the unit
 	sendNextMove ( Vehicle, MJOB_OK );
 
@@ -622,6 +635,7 @@ void cServerMoveJob::moveVehicle()
 void cServerMoveJob::doEndMoveVehicle()
 {
 	Log.write(" Server: Vehicle reached the next field: ID: " + iToStr ( Vehicle->iID )+ ", X: " + iToStr ( Waypoints->next->X ) + ", Y: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
+
 	sWaypoint *Waypoint;
 	Waypoint = Waypoints->next;
 	delete Waypoints;
