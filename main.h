@@ -84,7 +84,7 @@ struct sVehicle;
 #define PFEIL_COLOR			0x00FF00	// color of a waypointarrow
 #define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
 #define MOVE_SPEED			7			// speed of vehcilemovements
-#define MSG_TICKS			3000		// number of ticks for how long a message will be displayed
+#define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
 #define ANIMATION_SPEED		((int)(Client->iTimerTime/(2)))		// this means every 100ms becouse Client->iTimerTime will increase every 50ms.
 #define LANDING_DISTANCE_WARNING	28
 #define LANDING_DISTANCE_TOO_CLOSE	10
