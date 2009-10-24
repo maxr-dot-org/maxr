@@ -3016,7 +3016,7 @@ int installBuildingSounds()
 	iTotalFiles = 46;
 	iErrors = 0;
 	iInstalledFiles = 0;
-	oggEncode = 0;
+	oggEncode = 1;
 
 #if MAC
 	updateProgressWindow ("Building sounds", iTotalFiles, iInstalledFiles);
@@ -3153,7 +3153,7 @@ int installVehicleSounds()
 	iTotalFiles = 173;
 	iErrors = 0;
 	iInstalledFiles = 0;
-	oggEncode = 0;
+	oggEncode = 1;
 	
 #if MAC
 	updateProgressWindow ("Vehicle sounds", iTotalFiles, iInstalledFiles);
@@ -3575,7 +3575,7 @@ void installSounds()
 	iTotalFiles = 29;
 	iErrors = 0;
 	iInstalledFiles = 0;
-	oggEncode = 0;
+	oggEncode = 1;
 
 #if MAC
 	updateProgressWindow ("Sounds", iTotalFiles, iInstalledFiles);
