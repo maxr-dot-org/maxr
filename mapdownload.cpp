@@ -22,6 +22,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm> // std::transform
+#include <cctype> // std::tolower
 
 #include "mapdownload.h"
 #include "netmessage.h"
@@ -32,32 +34,34 @@
 #include "log.h"
 #include "files.h"
 
+//-------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (std::string mapName)
 {
-	return (mapName == "Bottleneck.wrl"
-			|| mapName == "Flash Point.wrl"
-			|| mapName == "Freckles.wrl"
-			|| mapName == "Frigia.wrl"
-			|| mapName == "Great Circle.wrl"
-			|| mapName == "Great divide.wrl"
-			|| mapName == "Hammerhead.wrl"
-			|| mapName == "High Impact.wrl"
-			|| mapName == "Ice Berg.wrl"
-			|| mapName == "Iron Cross.wrl"
-			|| mapName == "Islandia.wrl"
-			|| mapName == "Long Floes.wrl"
-			|| mapName == "Long Passage.wrl"
-			|| mapName == "Middle Sea.wrl"
-			|| mapName == "New Luzon.wrl"
-			|| mapName == "Peak-a-boo.wrl"
-			|| mapName == "Sanctuary.wrl"
-			|| mapName == "Sandspit.wrl"
-			|| mapName == "Snowcrab.wrl"
-			|| mapName == "Splatterscape.wrl"
-			|| mapName == "The Cooler.wrl"
-			|| mapName == "Three Rings.wrl"
-			|| mapName == "Ultima Thule.wrl"
-			|| mapName == "Valentine's Planet.wrl");
+	std::transform(mapName.begin(), mapName.end(), mapName.begin(), static_cast<int (*)(int)>(std::tolower));
+	return (mapName == "bottleneck.wrl"
+			|| mapName == "flash point.wrl"
+			|| mapName == "freckles.wrl"
+			|| mapName == "frigia.wrl"
+			|| mapName == "great circle.wrl"
+			|| mapName == "great divide.wrl"
+			|| mapName == "hammerhead.wrl"
+			|| mapName == "high impact.wrl"
+			|| mapName == "ice berg.wrl"
+			|| mapName == "iron cross.wrl"
+			|| mapName == "islandia.wrl"
+			|| mapName == "long floes.wrl"
+			|| mapName == "long passage.wrl"
+			|| mapName == "middle sea.wrl"
+			|| mapName == "new luzon.wrl"
+			|| mapName == "peak-a-boo.wrl"
+			|| mapName == "sanctuary.wrl"
+			|| mapName == "sandspit.wrl"
+			|| mapName == "snowcrab.wrl"
+			|| mapName == "splatterscape.wrl"
+			|| mapName == "the cooler.wrl"
+			|| mapName == "three rings.wrl"
+			|| mapName == "ultima thule.wrl"
+			|| mapName == "valentine's planet.wrl");
 }
 
 //-------------------------------------------------------------------------------
