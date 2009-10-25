@@ -252,14 +252,17 @@ void cServer::run()
 		}
 
 		// don't do anything if games hasn't been started yet!
-		if ( !bStarted ) { SDL_Delay( 10 ); continue; }
+		if ( bStarted )
+		{
 
-		checkPlayerUnits();
-		checkDeadline();
-		handleMoveJobs ();
-		handleTimer();
-		handleWantEnd();
-		SDL_Delay( 10 );
+			checkPlayerUnits();
+			checkDeadline();
+			handleMoveJobs ();
+			handleTimer();
+			handleWantEnd();
+		}
+
+		if ( !event ) SDL_Delay( 10 );
 	}
 }
 
