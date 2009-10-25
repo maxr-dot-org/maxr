@@ -2091,11 +2091,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 			Building->next->prev = NULL;
 		}
 	}
-	if( Building->base )
-	{
-		Building->base->deleteBuilding( Building, true );
-	}
-
+	
 	//detach from attack job
 	if (Building->Attacking)
 	{
@@ -2118,6 +2114,11 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	Map->deleteBuilding( Building );
 
 	if ( notifyClient ) sendDeleteUnit( Building, -1 );
+
+	if( Building->base )
+	{
+		Building->base->deleteBuilding( Building, true );
+	}
 
 	cPlayer* owner = Building->owner;
 	delete Building;
