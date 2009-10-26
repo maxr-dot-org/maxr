@@ -734,25 +734,32 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig && building->owner ) return; //big base building are not implemented
+	
+	int mapLevel = getMapLevel( building );	
+	unsigned int i = 0;
 
 	if ( building->data.isBig )
 	{
-		//assumption: there is no rubble under a top building
-		//so a big building will always be the first one
-		fields[offset           ].buildings.Insert(0, building );
-		fields[offset + 1       ].buildings.Insert(0, building );
-		fields[offset + size    ].buildings.Insert(0, building );
-		fields[offset + size + 1].buildings.Insert(0, building );
+		i = 0;
+		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
+		fields[offset           ].buildings.Insert(i, building );
+
+		i = 0;
+		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
+		fields[offset + 1       ].buildings.Insert(i, building );
+
+		i = 0;
+		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
+		fields[offset + size    ].buildings.Insert(i, building );
+
+		i = 0;
+		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
+		fields[offset + size + 1].buildings.Insert(i, building );
 	}
 	else
 	{
-		unsigned int i = 0;
-		int mapLevel = getMapLevel( building );
-		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel )
-		{
-			i++;
-		}
-
+		
+		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
 		fields[offset].buildings.Insert(i, building);
 	}
 }
@@ -781,26 +788,24 @@ void cMap::deleteBuilding( cBuilding* building )
 
 	cList<cBuilding*>* buildings = &fields[offset].buildings;
 	for ( unsigned int i = 0; i < buildings->Size(); i++ )
-	{
 		if ( (*buildings)[i] == building ) buildings->Delete(i);
-	}
 
 	if ( building->data.isBig )
 	{
-		//big building must be a top building or rubble
-		//assumption: there is no rubble under a top building
-		//so only check the first building
 		offset++;
 		buildings = &fields[offset].buildings;
-		if ( (*buildings)[0] == building ) buildings->Delete(0);
+		for ( unsigned int i = 0; i < buildings->Size(); i++ )
+			if ( (*buildings)[i] == building ) buildings->Delete(i);
 
 		offset += size;
 		buildings = &fields[offset].buildings;
-		if ( (*buildings)[0] == building ) buildings->Delete(0);
+		for ( unsigned int i = 0; i < buildings->Size(); i++ )
+			if ( (*buildings)[i] == building ) buildings->Delete(i);
 
 		offset--;
 		buildings = &fields[offset].buildings;
-		if ( (*buildings)[0] == building ) buildings->Delete(0);
+		for ( unsigned int i = 0; i < buildings->Size(); i++ )
+			if ( (*buildings)[i] == building ) buildings->Delete(i);
 
 	}
 }

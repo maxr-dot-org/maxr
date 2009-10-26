@@ -3087,8 +3087,7 @@ void cServer::addRubble( int offset, int value, bool big )
 {
 	if ( value <= 0 ) value = 1;
 
-	if ( Map->IsWater(offset) ||
-		 Map->fields[offset].getBuildings() )
+	if ( Map->IsWater(offset))
 	{
 		if ( big )
 		{
@@ -3099,9 +3098,8 @@ void cServer::addRubble( int offset, int value, bool big )
 		return;
 	}
 
-	if ( big && (
-		 Map->IsWater(offset + 1) ||
-		 Map->fields[offset + 1].getBuildings() ))
+	if ( big && 
+		 Map->IsWater(offset + 1))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + Map->size, value/4, false);
@@ -3109,9 +3107,8 @@ void cServer::addRubble( int offset, int value, bool big )
 		return;
 	}
 
-	if ( big && (
-		Map->IsWater(offset + Map->size ) ||
-		Map->fields[offset + Map->size].getBuildings() ))
+	if ( big &&
+		Map->IsWater(offset + Map->size ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);
@@ -3119,9 +3116,8 @@ void cServer::addRubble( int offset, int value, bool big )
 		return;
 	}
 
-	if ( big && (
-		Map->IsWater(offset + Map->size + 1 ) ||
-		Map->fields[offset + Map->size + 1].getBuildings() ))
+	if ( big &&
+		Map->IsWater(offset + Map->size + 1 ))
 	{
 		addRubble( offset, value/4, false);
 		addRubble( offset + 1, value/4, false);
