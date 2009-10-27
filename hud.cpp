@@ -814,7 +814,8 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	if ( overUnitField->getVehicles() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getVehicles()->name );
+		//FIXME: displaying ownername to unit name may cause an overdraw on the infobox. This needs either a seperate infobox or a length check in the future. that goes for unitnames itself too. -- beko
+		unitNameLabel->setText ( overUnitField->getVehicles()->name + " (" +overUnitField->getVehicles()->owner->name+")");
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -829,7 +830,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getPlanes() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getPlanes()->name );
+		unitNameLabel->setText ( overUnitField->getPlanes()->name + " (" +overUnitField->getPlanes()->owner->name+")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -844,7 +845,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getTopBuilding() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getTopBuilding()->name );
+		unitNameLabel->setText ( overUnitField->getTopBuilding()->name + " (" +overUnitField->getTopBuilding()->owner->name+")"  );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -859,7 +860,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getBaseBuilding() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name );
+		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name + " (" +overUnitField->getBaseBuilding()->owner->name+")"   );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
