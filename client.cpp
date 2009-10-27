@@ -757,7 +757,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 
 			// make report
-			string message = AddedVehicle->name + " " + lngPack.i18n ( "Text~Comp~Detected" );
+			string message = AddedVehicle->name + " (" + Player->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
 			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, UnitID, iPosX, iPosY );
 			if ( random( 2 ) == 0 ) PlayVoice ( VoiceData.VOIDetected1 );
 			else PlayVoice ( VoiceData.VOIDetected2 );
