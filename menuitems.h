@@ -325,6 +325,63 @@ public:
 	void removeItem ( cMenuItem* item );
 };
 
+class cMenuTimerBase
+{
+public:
+	virtual void callback() = 0;
+	bool getState();
+
+protected:
+	static Uint32 sdlTimerCallback( Uint32 intervall, void* param);
+
+	bool state;
+	cMenuTimerBase(Uint32 intervall);
+	~cMenuTimerBase();
+	SDL_TimerID timerID;
+	
+};
+
+/**
+* a timer class for adding timers to menus. 
+* This class is for adding timers with a
+* callback on a non static member function.
+*@author eiko
+*/
+template <typename T> class cMenuTimer : public cMenuTimerBase
+{
+public:
+	/**
+	* creates a new menu timer. After creation, the timer must be added to the menus timer list by calling menuTimers.Add()
+	*@param obj_ the object, on which the callback will be called
+	*@param method a pointer to the method, which will be executed
+	*@intervall the timer intervall in milliseconds
+	*@author eiko
+	*/
+	cMenuTimer(T& obj_, void (T::*method_)(), Uint32  intervall);
+
+	/**
+	* this function will be called by the menu to run the callback.
+	*/
+	void callback();
+
+private:
+	T& object;
+	void (T::*method)();
+};
+
+
+template <typename T> cMenuTimer<T>::cMenuTimer(T& obj_, void (T::*method_)(), Uint32 intervall) :
+	cMenuTimerBase(intervall),
+	object(obj_),
+	method(method_)
+{}
+
+template <typename T> void cMenuTimer<T>::callback()
+{
+	(object.*method)();
+}
+
+
 /**
  * a simple image.
  *@author alzi

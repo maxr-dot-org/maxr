@@ -332,6 +332,36 @@ void cMenuItemContainer::removeItem ( cMenuItem* item )
 }
 
 
+cMenuTimerBase::cMenuTimerBase(Uint32 intervall) :
+	state(false)
+{
+	timerID = SDL_AddTimer(intervall, &sdlTimerCallback, this);
+}
+
+cMenuTimerBase::~cMenuTimerBase()
+{
+	SDL_RemoveTimer(timerID);
+}
+
+bool cMenuTimerBase::getState()
+{
+	if ( state )
+	{
+		state = false;
+		return true;
+	}
+	return false;
+}
+
+Uint32 cMenuTimerBase::sdlTimerCallback(Uint32 intervall, void* param)
+{
+	cMenuTimerBase *timer = (cMenuTimerBase*) param;
+	timer->state = true;
+
+	return intervall;
+}
+
+
 cMenuImage::cMenuImage(int x, int y, SDL_Surface* image_) : cMenuItem(x, y)
 {
 	setImage ( image_ );

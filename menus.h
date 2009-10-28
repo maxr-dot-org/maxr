@@ -262,6 +262,7 @@ protected:
 	 */
 	SDL_Rect position;
 
+	cList<cMenuTimerBase*> menuTimers;
 	/** The list with all menuitems (buttons, images, etc.) of this menu. */
 	cList<cMenuItem*> menuItems;
 	/** Pointer to the currently active menuitem. This one will receive keyboard input. */

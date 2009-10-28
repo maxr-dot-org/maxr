@@ -572,6 +572,10 @@ int cMenu::show()
 			}
 		}
 
+		//run timer callbacks
+		for ( int i = 0; i < menuTimers.Size(); i++ )
+			if (menuTimers[i]->getState() ) menuTimers[i]->callback();
+
 		lastMouseX = mouse->x;
 		lastMouseY = mouse->y;
 		SDL_Delay ( 1 );
