@@ -672,8 +672,11 @@ void cMap::placeRessources ( int metal,int oil,int gold)
 		bool hasGold = random(100) < 40;
 		for(p.y = pos.y-1; p.y <= pos.y+1; p.y++)
 		{
+			if ( p.y < 0 || p.y > size ) continue;
 			for(p.x = pos.x-1; p.x <= pos.x+1; p.x++)
 			{
+				if ( p.x < 0 || p.x > size ) continue;
+
 				T_2<int> absPos = p;
 				int type = (absPos.y%2)*2 + (absPos.x%2);
 
@@ -817,36 +820,35 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	if ( vehicle->data.factorAir > 0 )
 	{
 		cList<cVehicle*>& planes = fields[offset].planes;
-		if ( planes.Size() <= 0 ) return;
 		for ( unsigned int i = 0; i < planes.Size(); i++ )
-		{
-			if ( planes[i] == vehicle )
-			{
-				planes.Delete(i);
-				break;
-			}
-			if ( i == planes.Size()-1 ) return;
-		}
+			if ( planes[i] == vehicle ) { planes.Delete(i); break; }
 	}
 	else
 	{
-		if ( fields[offset].vehicles.Size() > 0 && fields[offset].vehicles[0] == vehicle )
-		{
-			//only one vehicle per field allowed
-			fields[offset].vehicles.Delete(0);
+		cList<cVehicle*> vehicles = fields[offset].vehicles;
+		for ( unsigned int i = 0; i < vehicles.Size(); i++ )
+			if ( vehicles[i] == vehicle ) { vehicles.Delete(i); break; }
 
-			//check, whether the vehicle is centered on 4 map fields
-			if ( vehicle->data.isBig )
-			{
-				offset++;
-				fields[offset].vehicles.Delete(0);
-				offset += size;
-				fields[offset].vehicles.Delete(0);
-				offset--;
-				fields[offset].vehicles.Delete(0);
-			}
+		if ( vehicle->data.isBig )
+		{
+			offset++;
+			vehicles = fields[offset].vehicles;
+			for ( unsigned int i = 0; i < vehicles.Size(); i++ )
+				if ( vehicles[i] == vehicle ) { vehicles.Delete(i); break; }
+
+			
+			offset += size;
+			vehicles = fields[offset].vehicles;
+			for ( unsigned int i = 0; i < vehicles.Size(); i++ )
+			if ( vehicles[i] == vehicle ) { vehicles.Delete(i); break; }
+
+			
+			offset--;
+			vehicles = fields[offset].vehicles;
+			for ( unsigned int i = 0; i < vehicles.Size(); i++ )
+				if ( vehicles[i] == vehicle ) { vehicles.Delete(i); break; }
 		}
-		else return;
+
 	}
 }
 
