@@ -24,7 +24,7 @@
     <Armor Num="6"/>
     <Hitpoints Num="10"/>
     <Scan_Range Num="1"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Surface_Position Const="Base"/>
     <Can_Be_Overbuild Const="Yes"/>
   </Abilities>

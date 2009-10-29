@@ -24,7 +24,7 @@
     <Armor Num="8"/>
     <Hitpoints Num="20"/>
     <Scan_Range Num="1"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Surface_Position Const="AboveSea"/>
   </Abilities>
 </Unit>

@@ -23,7 +23,7 @@
     <Armor Num="1"/>
     <Hitpoints Num="2"/>
     <Scan_Range Num="1"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Can_Be_Overbuild Const="YesNRemove"/>
     <Is_Stealth_On Num="32"/>
     <Surface_Position Const="AboveBase"/>

@@ -31,6 +31,7 @@
     <Needs_Oil Num="2"/>
 
     <Is_Activatable YN="Yes"/>
+    <Can_Self_Destroy YN="Yes"/>
   </Abilities>
 </Unit>
 

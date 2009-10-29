@@ -27,7 +27,7 @@
     <Hitpoints Num="14"/>
     <Scan_Range Num="1"/>
     <Does_Self_Repair YN="Yes"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Surface_Position Const="Above"/>
 
     <Can_Be_Overbuild Const="YesNRemove"/>

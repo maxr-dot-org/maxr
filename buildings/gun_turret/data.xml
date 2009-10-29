@@ -34,6 +34,7 @@
     <Armor Num="12"/>
     <Hitpoints Num="24"/>
     <Scan_Range Num="4"/>
+    <Can_Self_Destroy YN="Yes"/>
   </Abilities>
 </Unit>
 

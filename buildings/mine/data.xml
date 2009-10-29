@@ -33,6 +33,7 @@
     <Needs_Energy Num="1"/>
 
     <Is_Activatable YN="Yes"/>
+    <Can_Self_Destroy YN="Yes"/>
   </Abilities>
 
   <Storage>

@@ -23,7 +23,7 @@
     <Armor Num="8"/>
     <Hitpoints Num="24"/>
     <Scan_Range Num="3"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Can_Be_Landed_On YN="Yes"/>
   </Abilities>
 </Unit>

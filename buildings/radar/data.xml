@@ -25,6 +25,7 @@
     <Hitpoints Num="18"/>
     <Scan_Range Num="18"/>
     <Can_Be_Disabled YN="Yes"/>
+    <Can_Self_Destroy YN="Yes"/>
   </Abilities>
 </Unit>
 

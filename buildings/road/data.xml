@@ -24,7 +24,7 @@
     <Armor Num="1"/>
     <Hitpoints Num="2"/>
     <Scan_Range Num="1"/>
-
+    <Can_Self_Destroy YN="Yes"/>
     <Modifies_Speed Num="0.5"/>
 
     <Surface_Position Const="Base"/>
