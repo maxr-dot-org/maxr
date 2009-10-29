@@ -114,6 +114,44 @@ void cDialogOK::okReleased( void *parent )
 	menu->end = true;
 }
 
+cDestructMenu::cDestructMenu() :
+	cMenu(LoadPCX(GFXOD_DESTRUCTION), MNU_BG_ALPHA),
+	armButton(position.x + 88, position.y + 14, lngPack.i18n("Text~Button~Hot"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	cancelButton(position.x + 88, position.y + 46, lngPack.i18n("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	destroyButton( position.x + 15, position.y + 13, this )
+{
+	cancelButton.setReleasedFunction( &cancelReleased );
+	menuItems.Add(&cancelButton);
+
+	armButton.setReleasedFunction( &armReleased );
+	menuItems.Add(&armButton);
+
+	destroyButton.setReleasedFunction( &destroyReleased );
+	destroyButton.setReleaseSound( SoundData.SNDMenuButton );
+	menuItems.Add(&destroyButton);
+	
+}
+
+void cDestructMenu::cancelReleased( void *parent )
+{
+	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	menu->terminate = true;
+}
+
+void cDestructMenu::armReleased( void *parent )
+{
+	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	menu->armButton.setLocked(true);
+	menu->destroyButton.opening = true;
+}
+
+void cDestructMenu::destroyReleased( void *parent )
+{
+	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	Client->addMessage("Not implemented yet");
+	menu->end = true;
+}
+
 cDialogLicence::cDialogLicence() :
 	cMenu(LoadPCX(GFXOD_DIALOG4), MNU_BG_ALPHA),
 	maxrLabel(  position.x + position.w / 2, position.y +  30, "\"M.A.X. Reloaded\"" ),

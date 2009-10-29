@@ -2308,9 +2308,8 @@ void cBuilding::menuReleased()
 		{
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			//TODO: implement self destruction
-			Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
-			//SelfDestructionMenu();
+			cDestructMenu destructMenu;
+			destructMenu.show();
 			return;
 		}
 		nr++;

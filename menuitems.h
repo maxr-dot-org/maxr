@@ -492,6 +492,34 @@ public:
 };
 
 /**
+ * the big red destroy botton
+ *@author eiko
+ */
+class cMenuDestroyButton : public cMenuItem
+{
+
+protected:
+	int glassHeight;
+	cMenuTimer<cMenuDestroyButton>* timer;
+
+	void animationCallback();
+
+	bool preClicked();
+	bool preReleased();
+	void postReleased();
+	bool preHoveredOn();
+	bool preHoveredAway();
+	bool preSetLocked( bool locked_ );
+
+public:
+	cMenuDestroyButton ( int x, int y, cMenu* menu );
+	~cMenuDestroyButton();
+	void draw();
+
+	bool opening;
+};
+
+/**
  * a simple checkbox or radiobutton.
  *@author alzi
  */

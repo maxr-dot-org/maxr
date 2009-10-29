@@ -325,6 +325,8 @@ public:
 	 */
 	virtual void handleNetMessage( cNetMessage *message ) {}
 	virtual void handleDestroyUnit( cBuilding *building = NULL, cVehicle *vehicle = NULL ) {}
+
+	void addTimer(cMenuTimerBase* timer);
 };
 
 /** pointer to the currently active menu or NULL if no menu is active */

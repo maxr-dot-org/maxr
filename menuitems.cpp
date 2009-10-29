@@ -743,6 +743,98 @@ bool cMenuButton::preSetLocked( bool locked_ )
 	return true;
 }
 
+cMenuDestroyButton::cMenuDestroyButton(int x, int y, cMenu* menu) : 
+	cMenuItem(x, y),
+	opening(false),
+	glassHeight(0)
+{
+	position.w = 59;
+	position.h = 56;
+
+	setLocked(true);
+
+	timer = new cMenuTimer<cMenuDestroyButton> (*this, &cMenuDestroyButton::animationCallback, 10 );
+	menu->addTimer(timer);
+}
+
+cMenuDestroyButton::~cMenuDestroyButton()
+{
+	delete timer;
+}
+
+bool cMenuDestroyButton::preClicked()
+{
+	draw();
+	return (glassHeight>=56);
+}
+
+bool cMenuDestroyButton::preReleased()
+{
+	if ( isClicked || wasClicked ) return true;
+	return false;
+}
+
+void cMenuDestroyButton::postReleased()
+{
+	if ( !locked ) isClicked = false;
+	draw();
+}
+
+bool cMenuDestroyButton::preHoveredOn()
+{
+	if ( wasClicked ) preClicked();
+	return true;
+}
+
+bool cMenuDestroyButton::preHoveredAway()
+{
+	if ( isClicked ) postReleased();
+	return true;
+}
+
+bool cMenuDestroyButton::preSetLocked( bool locked_ )
+{
+	locked = locked_;
+	return false;
+}
+
+void cMenuDestroyButton::draw()
+{
+	if ( isClicked )
+	{
+		SDL_Rect src = {6, 269, 59, 56};
+		SDL_BlitSurface(GraphicsData.gfx_hud_stuff, &src, buffer, &position);
+	}
+	else
+	{
+		SDL_Rect src = {15, 13, 59, 56};
+		SDL_BlitSurface(GraphicsData.gfx_destruction, &src, buffer, &position);
+	}
+
+	if ( glassHeight < 56 )
+	{
+		SDL_Rect src = { 0, glassHeight, 59, 56 - glassHeight };
+		SDL_BlitSurface(GraphicsData.gfx_destruction_glas, &src, buffer, &position);
+	}
+
+	SHOW_SCREEN
+	mouse->draw ( false, screen );
+}
+
+void cMenuDestroyButton::animationCallback()
+{
+	if ( opening && glassHeight < 56 )
+	{
+		glassHeight += 1;
+		draw();
+	
+		if ( glassHeight >= 56 )
+		{
+			setLocked(false);
+		}
+	}
+}
+
 cMenuCheckButton::cMenuCheckButton(int x, int y, string text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_) :
 	cMenuItem(x, y),
 	text(text_),

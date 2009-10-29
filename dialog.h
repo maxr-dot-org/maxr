@@ -57,6 +57,21 @@ private:
 	cMenuButton okButton;
 };
 
+class cDestructMenu : public cMenu
+{
+public:
+	cDestructMenu();
+
+	static void armReleased( void *parent );
+	static void cancelReleased( void *parent );
+	static void destroyReleased( void *parent );
+
+private:
+	cMenuButton armButton;
+	cMenuButton cancelButton;
+	cMenuDestroyButton destroyButton;
+};
+
 /**
  * Shows licence infobox refering to hardcoded GPL-notation and warranty information
  */

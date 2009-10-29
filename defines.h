@@ -89,6 +89,7 @@
 #define GFXOD_DIALOG6			(SettingsData.sGfxPath + PATH_DELIMITER + "dialog6.pcx").c_str()
 #define GFXOD_DIALOG_TRANSFER	(SettingsData.sGfxPath + PATH_DELIMITER + "transfer.pcx").c_str()
 #define GFXOD_DIALOG_RESEARCH	(SettingsData.sGfxPath + PATH_DELIMITER + "research.pcx").c_str()
+#define GFXOD_DESTRUCTION		(SettingsData.sGfxPath + PATH_DELIMITER + "destruction.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
 #define PLAYERCOLORS		8
@@ -117,7 +118,7 @@
 	#ifdef RELEASE
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2511"
+		#define PACKAGE_REV "SVN Rev 2528"
 	#endif
 #endif
 

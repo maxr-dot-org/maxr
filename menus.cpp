@@ -648,6 +648,11 @@ void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPla
 	delete message;
 }
 
+void cMenu::addTimer(cMenuTimerBase* timer)
+{
+	menuTimers.Add(timer);
+}
+
 cMainMenu::cMainMenu(): cMenu ( LoadPCX ( GFXOD_MAIN ) )
 {
 	infoImage = new cMenuImage( position.x+16, position.y+182, getRandomInfoImage() );
