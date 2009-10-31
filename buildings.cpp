@@ -2309,7 +2309,8 @@ void cBuilding::menuReleased()
 			MenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cDestructMenu destructMenu;
-			destructMenu.show();
+			if ( destructMenu.show() == 0 )
+				sendWantSelfDestroy(this);
 			return;
 		}
 		nr++;

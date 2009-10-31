@@ -1984,6 +1984,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			turnLimit = message->popInt16();
 		}
 		break;
+	case GAME_EV_SELFDESTROY:
+		{
+			cBuilding* building = getBuildingFromID(message->popInt16());
+			if ( !building ) break;
+
+			destroyUnit(building);
+		}
+		break;
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

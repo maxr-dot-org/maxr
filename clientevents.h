@@ -87,6 +87,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_NUM_ECOS,               // sends a player's ecosphere count to a client
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
 	GAME_EV_VICTORY_CONDITIONS,     // the game's victory conditions
+	GAME_EV_SELFDESTROY,
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -244,5 +245,7 @@ void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas
 void sendSaveHudInfo ( int selectedUnitID, int ownerNr, int savingID );
 void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int savingID );
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
+
+void sendWantSelfDestroy( cBuilding* building );
 
 #endif // clienteventsH

@@ -795,6 +795,7 @@ bool cMenuDestroyButton::preHoveredAway()
 bool cMenuDestroyButton::preSetLocked( bool locked_ )
 {
 	locked = locked_;
+	opening = !locked;
 	return false;
 }
 
@@ -827,11 +828,6 @@ void cMenuDestroyButton::animationCallback()
 	{
 		glassHeight += 1;
 		draw();
-	
-		if ( glassHeight >= 56 )
-		{
-			setLocked(false);
-		}
 	}
 }
 

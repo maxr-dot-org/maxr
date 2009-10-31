@@ -1748,6 +1748,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			savegame.writeAdditionalInfo ( *player->savedHud, player->savedReportsList, player );
 		}
 		break;
+	case GAME_EV_WANT_SELFDESTROY:
+		{
+			cBuilding* building = getBuildingFromID(message->popInt16());
+			if ( !building || building->owner->Nr != message->iPlayerNr ) break;
+			
+			sendSelfDestroy(building);
+			destroyUnit(building);
+		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}

@@ -68,7 +68,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_SAVE_HUD_INFO,			// the current hud settings
 	GAME_EV_SAVE_REPORT_INFO,		// a saved report
 	GAME_EV_FIN_SEND_SAVE_INFO,		// a unit has been set to automoving
-	GAME_EV_WANT_COM_ACTION			// an infiltrator wants to steal or disable another unit
+	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
+	GAME_EV_WANT_SELFDESTROY
 };
 
 /**
@@ -299,6 +300,8 @@ void sendScore(cPlayer *Subject, int turn, cPlayer *Receiver = 0);
 void sendNumEcos(cPlayer *Subject, cPlayer *Receiver = 0);
 void sendUnitScore(cBuilding *);  
 void sendVictoryConditions(int turnLimit, int scoreLimit, cPlayer *receiver=0);
+
+void sendSelfDestroy( cBuilding* building );
 
 
 #endif // servereventsH

@@ -142,13 +142,12 @@ void cDestructMenu::armReleased( void *parent )
 {
 	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
 	menu->armButton.setLocked(true);
-	menu->destroyButton.opening = true;
+	menu->destroyButton.setLocked(false);
 }
 
 void cDestructMenu::destroyReleased( void *parent )
 {
 	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
-	Client->addMessage("Not implemented yet");
 	menu->end = true;
 }
 

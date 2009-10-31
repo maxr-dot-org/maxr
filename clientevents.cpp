@@ -343,3 +343,10 @@ void sendFinishedSendSaveInfo ( int ownerNr, int savingID )
 	message->pushInt16 ( savingID );
 	Client->sendNetMessage ( message );
 }
+
+void sendWantSelfDestroy( cBuilding* building )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_SELFDESTROY );
+	message->pushInt16( building->iID );
+	Client->sendNetMessage( message );
+}

@@ -1073,3 +1073,17 @@ void sendSavedReport ( sSavedReportMessage &savedReport, int player )
 	message->pushString ( savedReport.message );
 	Server->sendNetMessage( message, player );
 }
+
+void sendSelfDestroy( cBuilding* building )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_SELFDESTROY );
+	message->pushInt16( building->iID );
+	Server->sendNetMessage(message, building->owner->Nr);
+
+	for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ )
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_SELFDESTROY );
+		message->pushInt16( building->iID );
+		Server->sendNetMessage(message, building->SeenByPlayerList[i]->Nr);
+	}
+}
