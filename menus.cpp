@@ -2088,7 +2088,9 @@ void cStartupHangarMenu::materialBarUpReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( !menu ) return;
-	if ( menu->secondList->getSelectedUnit() && menu->credits > 0 )
+	if ( !menu->secondList->getSelectedUnit() ) return;
+	sVehicle *vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player);
+	if ( menu->credits > 0 && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
 		menu->secondList->getSelectedUnit()->setResValue ( oldCargo+5 );
@@ -2107,7 +2109,9 @@ void cStartupHangarMenu::materialBarDownReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( !menu ) return;
-	if ( menu->secondList->getSelectedUnit() )
+	if ( !menu->secondList->getSelectedUnit() ) return;
+	sVehicle *vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player);
+	if ( vehicle->data.storeResType != sUnitData::STORE_RES_GOLD )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
 		menu->secondList->getSelectedUnit()->setResValue ( oldCargo-5 );
@@ -2126,7 +2130,9 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
 	if ( !menu ) return;
-	if ( menu->secondList->getSelectedUnit() && menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) )
+	if ( !menu->secondList->getSelectedUnit() ) return;
+	sVehicle *vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player);
+	if ( vehicle->data.storeResType != sUnitData::STORE_RES_GOLD )
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
 		int newCargo = (int)((float)(menu->position.y+301+115-mouse->y)/115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion(menu->player)->storageResMax );
@@ -2264,7 +2270,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	if ( !menu ) menu = dynamic_cast<cStartupHangarMenu*>((cStartupHangarMenu*)parent);
 	if ( !menu ) return;
 	sVehicle *vehicle;
-	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) ) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE )
+	if ( menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle(menu->player) ) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD )
 	{
 		menu->materialBar->setMaximalValue ( vehicle->data.storageResMax );
 		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
@@ -2274,7 +2280,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
 			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
-			case sUnitData::STORE_RES_GOLD:  type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break;
+			// case sUnitData::STORE_RES_GOLD:  type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break; // Its not allowed to store gold bought with gold. Why should the user be able to buy gold with... gold?!
 		}
 		menu->materialBar->setType(type);
 	}
