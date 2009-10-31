@@ -681,7 +681,7 @@ void cPlayer::CountEcoSpheres()
 
 void cPlayer::setScore(int s, int turn)
 {
-	int t = turn ? turn : (Client ? Client->iTurn : 1);
+	unsigned int t = turn ? turn : (Client ? Client->iTurn : 1);
 	
 	if(pointsHistory.size() < t)
 		pointsHistory.resize(t);
@@ -690,7 +690,7 @@ void cPlayer::setScore(int s, int turn)
 
 int cPlayer::getScore(int turn) const
 {
-	int t = turn;
+	unsigned int t = turn;
 	
 	if(pointsHistory.size() < t) 
 	{

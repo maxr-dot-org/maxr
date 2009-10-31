@@ -1253,7 +1253,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	
 	// player score
 	TiXmlElement *scoreNode = addMainElement(playerNode, "ScoreHistory");
-	for(int i=0; i<Player->pointsHistory.size(); i++)
+	for(unsigned int i=0; i<Player->pointsHistory.size(); i++)
 	{
 		TiXmlElement *e = addMainElement(scoreNode, "Score");
 		e->SetAttribute("num", iToStr(Player->pointsHistory[i]).c_str());

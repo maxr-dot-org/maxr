@@ -3709,7 +3709,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	}
 	if(points_lim && points_lim > min_points && points_lim < max_points)
 	{
-		int y = y1 - (points_lim - min_points) * pix_per_point;
+		int y = y1 - (int)( (points_lim - min_points) * pix_per_point );
 		
 		drawLine(buffer, x0, y, x1, y, limit_colour);
 		font->showText(x0 - 16, y - 3, iToStr(points_lim), FONT_LATIN_SMALL_WHITE);
@@ -3718,7 +3718,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Labels
 	*/
-	int my = y1 - (max_points - min_points) * pix_per_point;
+	int my = y1 - (int)( (max_points - min_points) * pix_per_point );
 	
 	font->showTextCentered(x0,    y1 + 8, iToStr(min_turns), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered(now_x, y1 + 8, iToStr(now),       FONT_LATIN_SMALL_WHITE);
@@ -3742,7 +3742,7 @@ void cMenuReportsScreen::drawScoreGraph()
 			int points = extrapolateScore(p, turn);
 			
 			int x = x0 + pix_per_turn * (turn - min_turns);
-			int y = y1 - pix_per_point * (points - min_points);
+			int y = y1 - (int)( pix_per_point * (points - min_points) );
 			
 			if(turn != min_turns)
 				drawLine(buffer, lx, ly, x, y, player_colour);

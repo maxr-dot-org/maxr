@@ -49,7 +49,7 @@ public:
 	/**screen height in pixels */
 	int iScreenH;
 	/**colour depth - e.g. 32*/
-	int iColourDepth;
+	unsigned int iColourDepth;
 	/**enable intro on start*/
 	bool bIntro;
 	/**start in windowmode*/
