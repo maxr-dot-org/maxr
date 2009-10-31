@@ -858,9 +858,9 @@ void cGameGUI::updateUnderMouseObject()
 			}
 		}
 	}
-	else if ( overUnitField->getBaseBuilding() != NULL )
+	else if ( overUnitField->getBaseBuilding() && overUnitField->getBaseBuilding()->owner )
 	{
-		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name + " (" +overUnitField->getBaseBuilding()->owner->name+")"   );
+		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name + " (" + overUnitField->getBaseBuilding()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
