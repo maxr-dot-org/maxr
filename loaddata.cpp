@@ -1268,7 +1268,7 @@ int GenerateMaxXml()
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Fastmode" );
-	element->SetAttribute ( "YN", "Yes");
+	element->SetAttribute ( "YN", "No");
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PreScale" );
