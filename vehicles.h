@@ -86,7 +86,6 @@ struct sVehicle{
   SDL_Surface *storage; // Bild des Vehicles im Lager
   char *FLCFile;       // FLC-Video
   sUnitData data;   // Grunddaten des Vehicles
-  char id[4];          // ID dieses Elements
   int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
 
@@ -125,7 +124,6 @@ public:
 	int OffX,OffY;   // Offset während der Bewegung
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
-	bool selected;   // Gibt an, ob das Fahrzeug ausgewählt ist
 	bool groupSelected;
 	string name; // Name des Vehicles
 	cPlayer *owner;  // Eigentümer des Vehicles
@@ -171,7 +169,7 @@ public:
 	float CommandoRank; // Rang des Commandos
 	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
-	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Log-Liste ist
+	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
 	cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
 

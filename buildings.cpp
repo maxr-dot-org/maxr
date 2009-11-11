@@ -71,7 +71,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	data = owner->BuildingData[typ->nr];
 
-	selected = false;
 	MenuActive = false;
 	AttackMode = false;
 	Transfer = false;
@@ -588,7 +587,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw a colored frame if necessary
-	if ( selected )
+	if ( Client->gameGUI.getSelBuilding() == this )
 	{
 		SDL_Rect d, t;
 		int max = data.isBig ? (int)(Client->gameGUI.getTileSize()) * 2 : (int)(Client->gameGUI.getTileSize());
@@ -1282,7 +1281,7 @@ void cBuilding::ClientStartWork()
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
-	if (selected)
+	if ( Client->gameGUI.getSelBuilding() == this )
 	{
 		StopFXLoop (Client->iObjectStream);
 		PlayFX (typ->Start);
@@ -1374,7 +1373,7 @@ void cBuilding::ClientStopWork()
 	if (!IsWorking)
 		return;
 	IsWorking = false;
-	if (selected)
+	if ( Client->gameGUI.getSelBuilding() == this )
 	{
 		StopFXLoop (Client->iObjectStream);
 		PlayFX (typ->Stop);
@@ -2684,8 +2683,7 @@ void cBuilding::Select ()
 {
 	if ( !owner ) return;
 
-	selected = true;
-	// Das Video laden:
+	//load video
 	if ( Client->gameGUI.getFLC() != NULL )
 	{
 		FLI_Close ( Client->gameGUI.getFLC() );
@@ -2705,7 +2703,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	selected = false;
 	MenuActive = false;
 	AttackMode = false;
 	Transfer = false;

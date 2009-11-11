@@ -65,7 +65,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	ClearingRounds = 0;
 	VehicleToActivate = 0;
 	BuildBigSavedPos = 0;
-	selected = false;
 	groupSelected = false;
 	owner = Owner;
 	data = owner->VehicleData[typ->nr];
@@ -434,7 +433,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 	}
-	if ( selected )
+	if ( Client->gameGUI.getSelVehicle() == this )
 	{
 		SDL_Rect d, t;
 		int len, max;
@@ -649,7 +648,6 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 //-----------------------------------------------------------------------------
 void cVehicle::Select ()
 {
-	selected = true;
 	// load the video
 	if ( Client->gameGUI.getFLC() != NULL ) FLI_Close ( Client->gameGUI.getFLC() );
 	if( FileExists(typ->FLCFile) )
@@ -672,7 +670,6 @@ void cVehicle::Select ()
 void cVehicle::Deselct ()
 {
 	SDL_Rect src, dest;
-	selected = false;
 	groupSelected = false;
 	MenuActive = false;
 	AttackMode = false;

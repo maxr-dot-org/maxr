@@ -3857,7 +3857,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( vehicle->dir ) + " selected: " + iToStr ( vehicle->selected ) + " moving: +" + iToStr ( vehicle->moving ) + " mjob: "  + pToStr ( vehicle->ClientMoveJob ) + " speed: " + iToStr ( vehicle->data.speedCur ) + " mj_active: " + iToStr ( vehicle->MoveJobActive ) + " menu_active: " + iToStr ( vehicle->MenuActive );
+	tmpString = "dir: " + iToStr ( vehicle->dir ) + " moving: +" + iToStr ( vehicle->moving ) + " mjob: "  + pToStr ( vehicle->ClientMoveJob ) + " speed: " + iToStr ( vehicle->data.speedCur ) + " mj_active: " + iToStr ( vehicle->MoveJobActive ) + " menu_active: " + iToStr ( vehicle->MenuActive );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3920,7 +3920,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 {
 	string tmpString;
 
-	tmpString = "name: \"" + building->name + "\" id: \"" + iToStr ( building->iID ) + "\" owner: \"" + ( building->owner?building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( building->PosX ) + " posY: " + iToStr ( building->PosY ) + " selected: " + iToStr ( building->selected );
+	tmpString = "name: \"" + building->name + "\" id: \"" + iToStr ( building->iID ) + "\" owner: \"" + ( building->owner?building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( building->PosX ) + " posY: " + iToStr ( building->PosY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

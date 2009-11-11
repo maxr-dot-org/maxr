@@ -61,7 +61,6 @@ struct sBuilding{
   SDL_Surface *eff,*eff_org; // Surfaces des Effektes
   SDL_Surface *video;  // Video
   sUnitData data;  // Grunddaten des Buildings
-  char id[4];          // ID dieses Elements
   int nr;              // Nr dieses Elements
   SDL_Surface *info;   // Infobild
 
@@ -133,7 +132,6 @@ public:
 	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	sBuilding *typ;  // Typ des Buildings
-	bool selected;   // is the building selected?
 	string name; // Name des Buildings
 	cPlayer *owner;  // owner of the building
 	sUnitData data;    // Daten des Buildings
@@ -167,8 +165,7 @@ public:
 	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	int Disabled;    // the time this unit will be disabled
-	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Log-Liste ist
-	int wantRedrawedStoredOffset;
+	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Lock-Liste ist
 	bool hasBeenAttacked;
 	cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
