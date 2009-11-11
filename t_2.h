@@ -172,7 +172,7 @@ template <class Type> class T_2{
 		return Type(x*x + y*y);
 	}
 	Type distSqr(const T_2<Type> &P)const{
-		float
+		Type
 			DX = P.x-x,
 			DY = P.y-y;
 		return DX*DX + DY*DY;
