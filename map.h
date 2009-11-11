@@ -38,50 +38,129 @@ const int RES_OIL   = 2;
 const int RES_GOLD  = 3;
 const int RES_COUNT = 4;
 
-
-class cVehicleIterator
+template<typename T>
+class cMapIterator
 {
 private:
-	cList<cVehicle*>* vehicleList;
+	cList<T*>* list;
 	int index;
 public:
-	cVehicleIterator(cList<cVehicle*>* list);
+	cMapIterator<T>(cList<T*>* list_);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size() const;
-	cVehicle& operator[](unsigned const int i) const;
-	cVehicle* operator->() const;
-	cVehicle& operator*() const;
+	T& operator[](unsigned const int i) const;
+	T* operator->() const;
+	T& operator*() const;
 	/** go to next vehicle on this field */
-	cVehicleIterator operator++(int);
+	cMapIterator operator++(int);
 	/** go to previous vehicle on this field */
-	cVehicleIterator operator--(int);
-	bool operator==(cVehicle* v) const;
-	operator cVehicle*() const;
+	cMapIterator operator--(int);
+	bool operator==(T* v) const;
+	operator T*() const;
 	bool end;
 	bool rend;
 };
 
-class cBuildingIterator
+typedef cMapIterator<cVehicle> cVehicleIterator;
+typedef cMapIterator<cBuilding> cBuildingIterator;
+
+template <typename T>
+cMapIterator<T>::cMapIterator(cList<T*>* list_)
 {
-private:
-	cList<cBuilding*>* buildingList;
-	int index;
-public:
-	cBuildingIterator(cList<cBuilding*>* list);
-	/** returns the number of buildings in the List, the Iterator points to. */
-	unsigned int size() const;
-	cVehicle& operator[](unsigned const int i) const;
-	cBuilding* operator->() const;
-	cBuilding& operator*() const;
-	/** go to next building on this field */
-	cBuildingIterator operator++(int);
-	/** go to previous building on this field */
-	cBuildingIterator operator--(int);
-	bool operator==(cBuilding* b) const;
-	operator cBuilding*() const;
-	bool end;
-	bool rend;
-};
+	index = 0;
+	list = list_;
+
+	if ( list->Size() == 0 )
+	{
+		end = true;
+		rend = true;
+	}
+	else
+	{
+		end = false;
+		rend = false;
+	}
+}
+
+template <typename T>
+unsigned int cMapIterator<T>::size() const
+{
+	return (unsigned int)list->Size();
+}
+
+template <typename T>
+T* cMapIterator<T>::operator->() const
+{
+	if ( !end && !rend )
+		return (*list)[index];
+	else
+		return NULL;
+}
+
+template <typename T>
+T& cMapIterator<T>::operator*() const
+{
+	T* unit = NULL;
+	if (!end && !rend ) unit = (*list)[index];
+
+	return *unit;
+}
+
+template <typename T>
+cMapIterator<T> cMapIterator<T>::operator++(int)
+{
+	cMapIterator<T> i = *this;
+	if (end) return i;
+
+	if (rend)
+	{
+		rend = false;
+		index = 0;
+	}
+	else
+	{
+		index++;
+	}
+	if ( index >= (int)list->Size() ) end = true;
+
+	return i;
+}
+
+template <typename T>
+cMapIterator<T> cMapIterator<T>::operator--(int)
+{
+	cMapIterator<T> i = *this;
+	if (rend) return i;
+
+	if ( end )
+	{
+		index = (int)list->Size() - 1;
+		end = false;
+	}
+	else
+	{
+		index--;
+	}
+	if ( index < 0 ) rend = true;
+
+	return i;
+}
+
+template <typename T>
+bool cMapIterator<T>::operator ==(T* unit) const
+{
+	if ( unit == NULL && (end || rend) ) return true;
+	if ( (*list)[index] == unit ) return true;
+
+	return false;
+}
+
+template <typename T>
+cMapIterator<T>::operator T*() const
+{
+	if ( end || rend ) return NULL;
+	return (*list)[index];
+}
 
 /** contains all information of a map field */
 class cMapField
@@ -101,7 +180,6 @@ private:
 
 public:
 
-	cMapField();
 	/** returns a Iterator for the vehicles on this field */
 	cVehicleIterator getVehicles();
 	/** returns a Iterator for the planes on this field */
