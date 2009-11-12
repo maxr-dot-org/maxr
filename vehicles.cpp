@@ -158,6 +158,12 @@ cVehicle::~cVehicle ()
 		passiveEndMoveActions.Delete ( 0 );
 		delete endMoveAction;
 	}
+
+	if ( Client && Client->gameGUI.getSelVehicle() == this )
+	{
+		Deselct();
+		Client->gameGUI.setSelVehicle( NULL );
+	}
 }
 
 //-----------------------------------------------------------------------------

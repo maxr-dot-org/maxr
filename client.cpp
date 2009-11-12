@@ -1709,8 +1709,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DELETE_EVERYTHING:
 		{
-			gameGUI.setSelBuilding( NULL );
-			gameGUI.setSelVehicle( NULL );
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				cPlayer *const Player = (*PlayerList)[i];
@@ -2085,12 +2083,6 @@ void cClient::deleteUnit( cBuilding *Building )
 		}
 	}
 
-	if ( gameGUI.getSelBuilding() == Building )
-	{
-		Building->Deselct();
-		gameGUI.setSelBuilding( NULL );
-	}
-
 	if ( Building->owner == ActivePlayer )
 		Building->owner->base.deleteBuilding(Building, false );
 
@@ -2133,12 +2125,6 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 		{
 			Vehicle->next->prev = NULL;
 		}
-	}
-
-	if ( gameGUI.getSelVehicle() == Vehicle )
-	{
-		Vehicle->Deselct();
-		gameGUI.setSelVehicle( NULL );
 	}
 
 	cPlayer* owner = Vehicle->owner;

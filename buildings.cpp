@@ -198,6 +198,12 @@ cBuilding::~cBuilding ()
 		passiveEndMoveActions.Delete ( 0 );
 		delete endMoveAction;
 	}
+
+	if ( Client && Client->gameGUI.getSelBuilding() == this )
+	{
+		Deselct();
+		Client->gameGUI.setSelBuilding( NULL );
+	}
 }
 
 //----------------------------------------------------
