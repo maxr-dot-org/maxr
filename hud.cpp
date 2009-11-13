@@ -887,7 +887,7 @@ void cGameGUI::updateUnderMouseObject()
 		overUnitField = NULL;
 	}
 	// place band:
-	if ( selectedVehicle && selectedVehicle->PlaceBand )
+	if ( selectedVehicle && mouseInputMode == placeBand )
 	{
 		selectedVehicle->FindNextband();
 	}
@@ -973,7 +973,7 @@ void cGameGUI::updateMouseCursor()
 		}
 	}
 
-	if ( selectedVehicle && selectedVehicle->PlaceBand && selectedVehicle->owner == Client->ActivePlayer )
+	if ( selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == Client->ActivePlayer )
 	{
 		if ( x >= HUD_LEFT_WIDTH )
 		{
@@ -1490,9 +1490,10 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				transferDialog.show();
 			}
 		}
-		else if ( changeAllowed && selectedVehicle && selectedVehicle->PlaceBand && mouse->cur == GraphicsData.gfx_Cband )
+		else if ( changeAllowed && selectedVehicle && mouseInputMode == placeBand && mouse->cur == GraphicsData.gfx_Cband )
 		{
-			selectedVehicle->PlaceBand = false;
+			mouseInputMode = normalInput;
+
 			if ( selectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
 				sendWantBuild ( selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->BandX+selectedVehicle->BandY*map->size, false, 0 );
@@ -3807,7 +3808,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "place_band: " + iToStr ( vehicle->PlaceBand ) + " bandx: " + iToStr ( vehicle->BandX ) + " bandy: +" + iToStr ( vehicle->BandY ) + " build_big_saved_pos: " + iToStr ( vehicle->BuildBigSavedPos ) + " build_path: " + iToStr (vehicle->BuildPath );
+	tmpString = " bandx: " + iToStr ( vehicle->BandX ) + " bandy: +" + iToStr ( vehicle->BandY ) + " build_big_saved_pos: " + iToStr ( vehicle->BuildBigSavedPos ) + " build_path: " + iToStr (vehicle->BuildPath );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3984,7 +3985,7 @@ void cGameGUI::drawUnitCircles()
 				if ( map->possiblePlace(&v, v.PosX + 1, v.PosY + 1)) drawExitPoint(spx + getTileSize(), spy + getTileSize());
 			}
 		}
-		if (v.PlaceBand)
+		if ( mouseInputMode == placeBand )
 		{
 			if ( v.BuildingTyp.getUnitDataOriginalVersion()->isBig )
 			{
@@ -4154,6 +4155,8 @@ void cGameGUI::checkMouseInputMode()
 			mouseInputMode = normalInput;
 		else if ( selectedBuilding && !selectedBuilding->data.shotsCur )
 			mouseInputMode = normalInput;
+		break;
+	default:
 		break;
 	}
 }

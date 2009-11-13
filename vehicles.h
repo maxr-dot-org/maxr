@@ -142,7 +142,6 @@ public:
 	int BuildRounds;  // Die verbleibenden Baurunden
 	int BuildRoundsStart; // Startwert der Baurunden (fürs Pfadbauen)
 	int BuildCostsStart;  // Startwert der Baukosten (fürs Pfadbauen)
-	bool PlaceBand;   // Gibt an, ob grad ein Band platziert wird
 	int BandX,BandY;  // X,Y Position für das Band
 	int BuildBigSavedPos; // Letzte Position vor dem Baubeginn
 	bool BuildPath;   // Gibt an, ob ein Pfad gebaut werden soll

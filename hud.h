@@ -79,7 +79,8 @@ struct sMouseBox
 enum eMouseInputMode
 {
 	normalInput,
-	attackMode
+	attackMode,
+	placeBand
 };
 
 class cGameGUI : public cMenu

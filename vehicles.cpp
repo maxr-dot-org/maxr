@@ -78,7 +78,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	MoveJobActive = false;
 	Attacking = false;
 	IsBuilding = false;
-	PlaceBand = false;
 	IsClearing = false;
 	bSentryStatus = false;
 	Transfer = false;
@@ -674,8 +673,7 @@ void cVehicle::Deselct ()
 {
 	SDL_Rect src, dest;
 	groupSelected = false;
-	if ( PlaceBand ) BuildPath = false;
-	PlaceBand = false;
+	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
 	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
@@ -972,7 +970,7 @@ void cVehicle::DrawPath ()
 
 	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->ActivePlayer )
 	{
-		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || PlaceBand ) return;
+		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || Client->gameGUI.mouseInputMode == placeBand ) return;
 
 		mx = PosX;
 		my = PosY;

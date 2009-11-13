@@ -4002,7 +4002,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 	}
 	else
 	{
-		menu->vehicle->PlaceBand = true;
+		Client->gameGUI.mouseInputMode = placeBand;
 		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size;
 
 		// save building information temporary to have them when placing band is finished
@@ -4021,7 +4021,7 @@ void cBuildingsBuildMenu::pathReleased ( void *parent )
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-	menu->vehicle->PlaceBand = true;
+	Client->gameGUI.mouseInputMode = placeBand;
 	menu->end = true;
 }
 
