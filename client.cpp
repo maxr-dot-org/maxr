@@ -995,7 +995,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speedCur = message->popInt16();
 				Data->speedMax = message->popInt16();
 
-				if ( bWasBuilding && !Vehicle->IsBuilding ) StopFXLoop ( iObjectStream );
+				if ( bWasBuilding && !Vehicle->IsBuilding && Vehicle == Client->gameGUI.getSelVehicle() ) StopFXLoop ( iObjectStream );
 			}
 		}
 		break;
