@@ -45,6 +45,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	player ( player_ ),
 	map ( map_ )
 {
+	unitMenuActive = false;
 	frame = 0;
 	zoom = 1.0;
 	offX = offY = 0;
@@ -909,6 +910,8 @@ void cGameGUI::selectUnit( cVehicle *vehicle )
 	selectedVehicle = vehicle;
 	selectedBuilding = NULL;
 
+	unitMenuActive = false;
+
 	vehicle->Select();
 	Client->iObjectStream = vehicle->playStream();
 }
@@ -919,6 +922,8 @@ void cGameGUI::selectUnit( cBuilding *building )
 
 	selectedBuilding = building;
 	selectedVehicle = NULL;
+
+	unitMenuActive = false;
 
 	building->Select();
 	Client->iObjectStream = building->playStream();
@@ -1012,8 +1017,8 @@ void cGameGUI::updateMouseCursor()
 			return;
 		}
 
-		if ( ( selectedVehicle && selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( x,y ) ) ||
-		        ( selectedBuilding && selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( x,y ) ) )
+		if ( ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( x,y ) ) ||
+			( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( x,y ) ) )
 		{
 			mouse->SetCursor ( CHand );
 		}
@@ -1338,12 +1343,12 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if ( selectedVehicle && selectedVehicle->MenuActive && selectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
 		return;
 	}
-	else if ( selectedBuilding && selectedBuilding->MenuActive && selectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
+	else if ( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
 		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
 		return;
@@ -1572,8 +1577,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over an unit menu:
-			if ( ( selectedVehicle&&selectedVehicle->MenuActive&&selectedVehicle->MouseOverMenu ( mouse->x,mouse->y ) ) ||
-			        ( selectedBuilding&&selectedBuilding->MenuActive&&selectedBuilding->MouseOverMenu ( mouse->x,mouse->y ) ) )
+			if ( ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( mouse->x,mouse->y ) ) ||
+			     ( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( mouse->x,mouse->y ) ) )
 			{
 			}
 			else
@@ -1646,8 +1651,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					{
 						if ( !selectedVehicle->moving && selectedVehicle->owner == player )
 						{
-							selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
-							if ( selectedVehicle->MenuActive ) selectedVehicle->selMenuNr = -1;
+							unitMenuActive = !unitMenuActive;
+							if ( unitMenuActive ) selectedVehicle->selMenuNr = -1;
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
@@ -1655,8 +1660,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					{
 						if ( selectedBuilding->owner == player )
 						{
-							selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
-							if ( selectedBuilding->MenuActive ) selectedBuilding->selMenuNr = -1;
+							unitMenuActive = !unitMenuActive;
+							if ( unitMenuActive ) selectedBuilding->selMenuNr = -1;
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
@@ -2020,7 +2025,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( selectedVehicle->owner == player )
 			{
-				selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
+				unitMenuActive = !unitMenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -2030,14 +2035,14 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		return true;
 	}
-	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !( OverUnitField->getPlanes() && ( OverUnitField->getVehicles()->MenuActive || OverUnitField->getVehicles()->owner != player ) ) )
+	else if ( OverUnitField->getVehicles() && !OverUnitField->getVehicles()->moving && !( OverUnitField->getPlanes() && ( unitMenuActive || OverUnitField->getVehicles()->owner != player ) ) )
 	{
 		// TOFIX: add that the unit renaming will be aborted here when active
 		if ( selectedVehicle == OverUnitField->getVehicles() )
 		{
 			if ( selectedVehicle->owner == player )
 			{
-				selectedVehicle->MenuActive = !selectedVehicle->MenuActive;
+				unitMenuActive = !unitMenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -2054,7 +2059,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( selectedBuilding->owner == player )
 			{
-				selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
+				unitMenuActive = !unitMenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -2071,7 +2076,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		{
 			if ( selectedBuilding->owner == player )
 			{
-				selectedBuilding->MenuActive = !selectedBuilding->MenuActive;
+				unitMenuActive = !unitMenuActive;
 				PlayFX ( SoundData.SNDHudButton );
 			}
 		}
@@ -2651,8 +2656,8 @@ void cGameGUI::preDrawFunction()
 
 	drawUnitCircles();
 
-	if ( selectedVehicle && selectedVehicle->MenuActive ) selectedVehicle->DrawMenu( &savedMouseState );
-	else if ( selectedBuilding && selectedBuilding->MenuActive ) selectedBuilding->DrawMenu( &savedMouseState );
+	if ( selectedVehicle && unitMenuActive ) selectedVehicle->DrawMenu( &savedMouseState );
+	else if ( selectedBuilding && unitMenuActive ) selectedBuilding->DrawMenu( &savedMouseState );
 
 	displayFX();
 
@@ -3787,7 +3792,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( vehicle->dir ) + " moving: +" + iToStr ( vehicle->moving ) + " mjob: "  + pToStr ( vehicle->ClientMoveJob ) + " speed: " + iToStr ( vehicle->data.speedCur ) + " mj_active: " + iToStr ( vehicle->MoveJobActive ) + " menu_active: " + iToStr ( vehicle->MenuActive );
+	tmpString = "dir: " + iToStr ( vehicle->dir ) + " moving: +" + iToStr ( vehicle->moving ) + " mjob: "  + pToStr ( vehicle->ClientMoveJob ) + " speed: " + iToStr ( vehicle->data.speedCur ) + " mj_active: " + iToStr ( vehicle->MoveJobActive );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3854,7 +3859,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( building->dir ) + " menu_active: " + iToStr ( building->MenuActive ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " attacking_mode: +" + iToStr ( building->AttackMode ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
+	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " attacking_mode: +" + iToStr ( building->AttackMode ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

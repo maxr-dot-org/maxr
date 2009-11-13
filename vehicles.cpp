@@ -76,7 +76,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	hasAutoMoveJob = false;
 	moving = false;
 	MoveJobActive = false;
-	MenuActive = false;
 	AttackMode = false;
 	Attacking = false;
 	IsBuilding = false;
@@ -676,7 +675,6 @@ void cVehicle::Deselct ()
 {
 	SDL_Rect src, dest;
 	groupSelected = false;
-	MenuActive = false;
 	AttackMode = false;
 	if ( PlaceBand ) BuildPath = false;
 	PlaceBand = false;
@@ -1217,8 +1215,6 @@ int cVehicle::playStream ()
 void cVehicle::StartMoveSound ()
 {
 	bool water;
-	// That's the moment, too, to hide the menu
-	MenuActive = false;
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
 	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
@@ -1253,7 +1249,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = !AttackMode;
 			Client->gameGUI.updateMouseCursor ();
@@ -1269,7 +1265,7 @@ void cVehicle::menuReleased ()
 		{
 			if ( ClientMoveJob ) sendWantStopMove ( iID );
 
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cBuildingsBuildMenu buildMenu ( owner, this );
 			buildMenu.show();
@@ -1283,7 +1279,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Transfer = !Transfer;
 			return;
@@ -1296,7 +1292,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
 			if ( autoMJob == NULL )
@@ -1319,7 +1315,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			if ( ClientMoveJob )
 			{
@@ -1344,7 +1340,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
 			sendWantStartClear ( this );
@@ -1358,7 +1354,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendChangeSentry ( iID, true );
 			return;
@@ -1372,7 +1368,7 @@ void cVehicle::menuReleased ()
 		// activatew:
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 
 			cStorageMenu storageMenu ( StoredVehicles, this, NULL );
@@ -1384,7 +1380,7 @@ void cVehicle::menuReleased ()
 		// load:
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			LoadActive = !LoadActive;
 			return;
@@ -1397,7 +1393,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			MuniActive = !MuniActive;
 			return;
@@ -1410,7 +1406,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			RepairActive = !RepairActive;
 			return;
@@ -1423,7 +1419,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			LayMines = !LayMines;
 			ClearMines = false;
@@ -1438,7 +1434,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			ClearMines = !ClearMines;
 			LayMines = false;
@@ -1453,7 +1449,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			DisableActive = !DisableActive;
 			StealActive = false;
@@ -1467,7 +1463,7 @@ void cVehicle::menuReleased ()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			StealActive = !StealActive;
 			DisableActive = false;
@@ -1479,7 +1475,7 @@ void cVehicle::menuReleased ()
 	// help:
 	if ( exeNr == nr )
 	{
-		MenuActive = false;
+		Client->gameGUI.unitMenuActive = false;
 		PlayFX ( SoundData.SNDObjectMenu );
 		cUnitHelpMenu helpMenu ( &data, owner );
 		helpMenu.show();
@@ -1490,7 +1486,7 @@ void cVehicle::menuReleased ()
 	// done:
 	if ( exeNr == nr )
 	{
-		MenuActive = false;
+		Client->gameGUI.unitMenuActive = false;
 		PlayFX ( SoundData.SNDObjectMenu );
 		return;
 	}

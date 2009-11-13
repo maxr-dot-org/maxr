@@ -133,7 +133,6 @@ public:
 	bool hasAutoMoveJob; // this is just a status information for the server, so that he can write the information to the saves
 	bool moving;     // Gibt an, ob sich das Vehicle grade bewegt
 	bool MoveJobActive; // Gibt an, ob der MoveJob gerade ausgeführt wird
-	bool MenuActive; // Gibt an, ob das Menü aktiv ist
 	bool AttackMode; // Gibt an, ob der Attack-Modus aktiv ist
 	bool Attacking;  // Gibt an, ob das Fahrzeug gerade angreift
 	bool bIsBeeingAttacked; /** true when an attack on this vehicle is running */

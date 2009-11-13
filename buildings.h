@@ -136,7 +136,6 @@ public:
 	cPlayer *owner;  // owner of the building
 	sUnitData data;    // Daten des Buildings
 	cBuilding *next,*prev; // pointers for the linked list
-	bool MenuActive; // is the menu currently active?
 	bool AttackMode; // Gibt an, ob der AttackMode grad aktiv ist
 	bool bIsBeeingAttacked; /** true when an attack on this building is running */
 	int RubbleTyp;     // Typ des Drecks

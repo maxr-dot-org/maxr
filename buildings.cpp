@@ -71,7 +71,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	data = owner->BuildingData[typ->nr];
 
-	MenuActive = false;
 	AttackMode = false;
 	Transfer = false;
 	BaseN = false;
@@ -2132,7 +2131,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			AttackMode = !AttackMode;
 			Client->gameGUI.updateMouseCursor ();
@@ -2146,7 +2145,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cVehiclesBuildMenu buildMenu ( owner, this );
 			buildMenu.show();
@@ -2160,7 +2159,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cMineManagerMenu mineManager ( this );
 			mineManager.show();
@@ -2175,7 +2174,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			Transfer = !Transfer;
 			return;
@@ -2193,7 +2192,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendWantStartWork(this);
 			return;
@@ -2206,7 +2205,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendWantStopWork(this);
 			return;
@@ -2219,7 +2218,7 @@ void cBuilding::menuReleased()
 	{
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendChangeSentry ( iID, false );
 			return;
@@ -2233,7 +2232,7 @@ void cBuilding::menuReleased()
 		// Aktivieren:
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cStorageMenu storageMenu ( StoredVehicles, NULL, this );
 			storageMenu.show();
@@ -2244,7 +2243,7 @@ void cBuilding::menuReleased()
 		// Laden:
 		if ( exeNr == nr )
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			LoadActive = !LoadActive;
 			return;
@@ -2257,7 +2256,7 @@ void cBuilding::menuReleased()
 	{
 		if (exeNr == nr)
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cDialogResearch researchDialog ( owner );
 			researchDialog.show();
@@ -2272,7 +2271,7 @@ void cBuilding::menuReleased()
 		// update this
 		if (exeNr == nr)
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cUpgradeMenu upgradeMenu ( owner );
 			upgradeMenu.show();
@@ -2287,7 +2286,7 @@ void cBuilding::menuReleased()
 		// Update all buildings of this type in this subbase
 		if (exeNr == nr)
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendUpgradeBuilding (this, true);
 			return;
@@ -2297,7 +2296,7 @@ void cBuilding::menuReleased()
 		// update this building
 		if (exeNr == nr)
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			sendUpgradeBuilding (this, false);
 			return;
@@ -2310,7 +2309,7 @@ void cBuilding::menuReleased()
 	{
 		if (exeNr == nr)
 		{
-			MenuActive = false;
+			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			cDestructMenu destructMenu;
 			if ( destructMenu.show() == 0 )
@@ -2323,7 +2322,7 @@ void cBuilding::menuReleased()
 	// Info:
 	if (exeNr == nr)
 	{
-		MenuActive = false;
+		Client->gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		cUnitHelpMenu helpMenu ( &data, owner );
 		helpMenu.show();
@@ -2334,7 +2333,7 @@ void cBuilding::menuReleased()
 	// Done:
 	if (exeNr == nr)
 	{
-		MenuActive = false;
+		Client->gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		return;
 	}
@@ -2355,7 +2354,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 
 	if ( ActivatingVehicle )
 	{
-		MenuActive = false;
+		Client->gameGUI.unitMenuActive = false;
 		return;
 	}
 
@@ -2708,7 +2707,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	MenuActive = false;
 	AttackMode = false;
 	Transfer = false;
 	LoadActive = false;

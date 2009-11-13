@@ -436,6 +436,8 @@ public:
 	
 
 	void setInfoTexts ( string infoText, string additionalInfoText );
+
+	bool unitMenuActive;
 };
 
 #endif

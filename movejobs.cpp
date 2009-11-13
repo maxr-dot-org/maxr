@@ -1215,6 +1215,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			{
 				startMoveSound();
 				Client->addActiveMoveJob( this );
+				if ( Client->gameGUI.getSelVehicle() == Vehicle ) Client->gameGUI.unitMenuActive = false;
 			}
 			if ( bEndForNow )
 			{
