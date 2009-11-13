@@ -3862,7 +3862,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
+	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " sub_base: " + pToStr (building->SubBase );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

@@ -140,7 +140,6 @@ public:
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // counter for the startup animation
-	cBase *base;     // the base to which this building belongs
 	bool BaseN,BaseE,BaseS,BaseW; // is the building connected in this direction?
 	bool BaseBN,BaseBE,BaseBS,BaseBW; // is the building connected in this direction (only for big buildings)
 	struct sSubBase *SubBase;     // the subbase to which this building belongs

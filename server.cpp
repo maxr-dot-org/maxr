@@ -2124,9 +2124,9 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 
 	if ( notifyClient ) sendDeleteUnit( Building, -1 );
 
-	if( Building->base )
+	if( Building->SubBase )
 	{
-		Building->base->deleteBuilding( Building, true );
+		Building->owner->base.deleteBuilding( Building, true );
 	}
 
 	cPlayer* owner = Building->owner;

@@ -53,7 +53,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	IsLocked = false;
 	typ = b;
 	owner = Owner;
-	base = Base;
 	points = 0;
 
 	if ( Owner == NULL || b == NULL )
