@@ -71,7 +71,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	data = owner->BuildingData[typ->nr];
 
-	AttackMode = false;
 	Transfer = false;
 	BaseN = false;
 	BaseBN = false;
@@ -2133,7 +2132,8 @@ void cBuilding::menuReleased()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			AttackMode = !AttackMode;
+
+			Client->gameGUI.toggleMouseInputMode( attackMode );
 			Client->gameGUI.updateMouseCursor ();
 			return;
 		}
@@ -2373,7 +2373,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Angriff:
 	if ( typ->data.canAttack && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || AttackMode;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == attackMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2707,7 +2707,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	AttackMode = false;
 	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;

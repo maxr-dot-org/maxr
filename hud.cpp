@@ -911,6 +911,7 @@ void cGameGUI::selectUnit( cVehicle *vehicle )
 	selectedBuilding = NULL;
 
 	unitMenuActive = false;
+	mouseInputMode = normalInput;
 
 	vehicle->Select();
 	Client->iObjectStream = vehicle->playStream();
@@ -924,6 +925,7 @@ void cGameGUI::selectUnit( cBuilding *building )
 	selectedVehicle = NULL;
 
 	unitMenuActive = false;
+	mouseInputMode = normalInput;
 
 	building->Select();
 	Client->iObjectStream = building->playStream();
@@ -943,7 +945,8 @@ void cGameGUI::deselectUnit()
 		selectedVehicle = NULL;
 		StopFXLoop ( Client->iObjectStream );
 	}
-	
+
+	mouseInputMode = normalInput;
 }
 
 void cGameGUI::setInfoTexts ( string infoText, string additionalInfoText )
@@ -1022,7 +1025,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle&&selectedVehicle->AttackMode&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == attackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
@@ -1078,7 +1081,7 @@ void cGameGUI::updateMouseCursor()
 				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), true );
 			}
 		}
-		else if ( selectedBuilding&&selectedBuilding->AttackMode&&selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff(), Client->Map ) )
 			{
@@ -2286,12 +2289,12 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	// Hotkeys for the unit menues
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->AttackMode = true;
+		mouseInputMode = attackMode;
 		updateMouseCursor();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
-		selectedBuilding->AttackMode = true;
+		mouseInputMode = attackMode;
 		updateMouseCursor();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !Client->bWaitForOthers && selectedVehicle->owner == player )
@@ -3796,7 +3799,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "attack_mode: " + iToStr ( vehicle->AttackMode ) + " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " transfer: " + iToStr ( vehicle->Transfer ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
+	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " transfer: " + iToStr ( vehicle->Transfer ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3859,7 +3862,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " attacking_mode: +" + iToStr ( building->AttackMode ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
+	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " base: " + pToStr ( building->base ) + " sub_base: " + pToStr (building->SubBase );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4133,3 +4136,24 @@ void cGameGUI::drawExitPoint ( int x, int y )
 		//END DRAW PLAYERS
 	}
 }*/
+
+void cGameGUI::toggleMouseInputMode( eMouseInputMode mode )
+{
+	if ( mouseInputMode == mode )
+		mouseInputMode = normalInput;
+	else
+		mouseInputMode = mode;
+}
+
+void cGameGUI::checkMouseInputMode()
+{
+	switch ( mouseInputMode )
+	{
+	case attackMode:
+		if ( selectedVehicle && !selectedVehicle->data.shotsCur )
+			mouseInputMode = normalInput;
+		else if ( selectedBuilding && !selectedBuilding->data.shotsCur )
+			mouseInputMode = normalInput;
+		break;
+	}
+}

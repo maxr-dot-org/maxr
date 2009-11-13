@@ -76,7 +76,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	hasAutoMoveJob = false;
 	moving = false;
 	MoveJobActive = false;
-	AttackMode = false;
 	Attacking = false;
 	IsBuilding = false;
 	PlaceBand = false;
@@ -675,7 +674,6 @@ void cVehicle::Deselct ()
 {
 	SDL_Rect src, dest;
 	groupSelected = false;
-	AttackMode = false;
 	if ( PlaceBand ) BuildPath = false;
 	PlaceBand = false;
 	Transfer = false;
@@ -1251,7 +1249,9 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			AttackMode = !AttackMode;
+
+			Client->gameGUI.toggleMouseInputMode( attackMode );
+
 			Client->gameGUI.updateMouseCursor ();
 			return;
 		}
@@ -1517,7 +1517,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Angriff:
 	if ( data.canAttack && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || AttackMode;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == attackMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
 

@@ -896,15 +896,15 @@ void cClientAttackJob::updateAgressorData()
 	{
 		vehicle->data.shotsCur--;
 		vehicle->data.ammoCur--;
-		if ( !vehicle->data.shotsCur ) vehicle->AttackMode = false;
 		if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur -= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
 	}
 	else if ( building )
 	{
 		building->data.shotsCur--;
 		building->data.ammoCur--;
-		if ( !building->data.shotsCur ) building->AttackMode = false;
 	}
+
+	Client->gameGUI.checkMouseInputMode();
 }
 
 void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )

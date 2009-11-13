@@ -76,6 +76,12 @@ struct sMouseBox
 	bool isTooSmall();
 };
 
+enum eMouseInputMode
+{
+	normalInput,
+	attackMode
+};
+
 class cGameGUI : public cMenu
 {
 	SDL_Surface *panelTopGraphic, *panelBottomGraphic;
@@ -437,7 +443,20 @@ public:
 
 	void setInfoTexts ( string infoText, string additionalInfoText );
 
+	/**
+	* activates 'mode' if not active, activates 'normalInput' otherwise
+	*@author eiko
+	*/
+	void toggleMouseInputMode( eMouseInputMode mode );
+
+	/**
+	* checks, whether the selected action in mouseInputMode is possible and resets the mode to normal otherwise.
+	*@author eiko
+	*/
+	void checkMouseInputMode();
+
 	bool unitMenuActive;
+	eMouseInputMode mouseInputMode;
 };
 
 #endif
