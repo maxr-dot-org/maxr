@@ -201,8 +201,7 @@ cBuilding::~cBuilding ()
 
 	if ( Client && Client->gameGUI.getSelBuilding() == this )
 	{
-		Deselct();
-		Client->gameGUI.setSelBuilding( NULL );
+		Client->gameGUI.deselectUnit();
 	}
 }
 

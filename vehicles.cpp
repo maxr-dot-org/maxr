@@ -161,8 +161,7 @@ cVehicle::~cVehicle ()
 
 	if ( Client && Client->gameGUI.getSelVehicle() == this )
 	{
-		Deselct();
-		Client->gameGUI.setSelVehicle( NULL );
+		Client->gameGUI.deselectUnit();
 	}
 }
 

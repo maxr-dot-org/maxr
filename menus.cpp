@@ -5283,32 +5283,15 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 {
 	if ( !vehicle && !building ) return;
 
-	if ( Client->gameGUI.getSelVehicle() )
-	{
-		Client->gameGUI.getSelVehicle()->Deselct();
-		Client->gameGUI.setSelVehicle( NULL );
-		StopFXLoop ( Client->iObjectStream );
-	}
-	else if ( Client->gameGUI.getSelBuilding() )
-	{
-		Client->gameGUI.getSelBuilding()->Deselct();
-		Client->gameGUI.setSelBuilding( NULL );
-		StopFXLoop ( Client->iObjectStream );
-	}
-
 	if ( vehicle )
 	{
-		Client->gameGUI.setSelVehicle( vehicle );
-		vehicle->Select();
+		Client->gameGUI.selectUnit( vehicle );
 		vehicle->Center();
-		Client->iObjectStream = vehicle->playStream();
 	}
 	else if ( building )
 	{
-		Client->gameGUI.setSelBuilding( building );
-		building->Select();
+		Client->gameGUI.selectUnit( building );
 		building->Center();
-		Client->iObjectStream = building->playStream();
 	}
 	end = true;
 }

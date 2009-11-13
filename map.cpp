@@ -68,7 +68,7 @@ cBuilding* cMapField::getBaseBuilding()
 
 	while ( !building.end )
 	{
-		if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND ) return building;
+		if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE ) return building;
 		building++;
 	}
 

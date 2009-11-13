@@ -430,8 +430,10 @@ public:
 	cList<cVehicle*> *getSelVehiclesGroup() { return &selectedVehiclesGroup; }
 	cBuilding *getSelBuilding() { return selectedBuilding; }
 
-	void setSelVehicle( cVehicle *vehicle );
-	void setSelBuilding( cBuilding *building );
+	void selectUnit( cVehicle *vehicle );
+	void selectUnit( cBuilding *building );
+	void deselectUnit();
+	
 
 	void setInfoTexts ( string infoText, string additionalInfoText );
 };

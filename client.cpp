@@ -1611,23 +1611,16 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *building = NULL;
 			cVehicle *vehicle = getVehicleFromID ( unitID );
 			if ( !vehicle ) building = getBuildingFromID ( unitID );
-			if ( vehicle || building )
+			
+			if ( vehicle )
 			{
-				if ( gameGUI.getSelVehicle() ) gameGUI.getSelVehicle()->Deselct();
-				if ( gameGUI.getSelBuilding() ) gameGUI.getSelBuilding()->Deselct();
-				if ( vehicle )
-				{
-					gameGUI.setSelVehicle( vehicle );
-					vehicle->Select();
-					iObjectStream = gameGUI.getSelVehicle()->playStream();
-				}
-				if ( building )
-				{
-					gameGUI.setSelBuilding( building );
-					building->Select();
-					iObjectStream = gameGUI.getSelBuilding()->playStream();
-				}
+				gameGUI.selectUnit( vehicle );
 			}
+			else if ( building )
+			{
+				gameGUI.selectUnit( building );
+			}
+
 			int x = message->popInt16();
 			int y = message->popInt16();
 			gameGUI.setOffsetPosition ( x, y );
@@ -1661,8 +1654,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( StoredVehicle == gameGUI.getSelVehicle() )
 				{
-					StoredVehicle->Deselct();
-					gameGUI.setSelVehicle( NULL );
+					gameGUI.deselectUnit();
 				}
 			}
 			else
@@ -1673,8 +1665,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( StoredVehicle == gameGUI.getSelVehicle() )
 				{
-					StoredVehicle->Deselct();
-					gameGUI.setSelVehicle( NULL );
+					gameGUI.deselectUnit();
 				}
 			}
 			PlayFX ( SoundData.SNDLoad );
@@ -2168,8 +2159,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	Hud.OffY = iY;*/
 
 	// reset the screen
-	if ( gameGUI.getSelBuilding() ) { gameGUI.getSelBuilding()->Deselct(); gameGUI.setSelBuilding( NULL ); }
-	if ( gameGUI.getSelVehicle() ) { gameGUI.getSelVehicle()->Deselct(); gameGUI.setSelVehicle( NULL ); }
+	gameGUI.deselectUnit();
 	SDL_Surface *sf;
 	SDL_Rect scr;
 	sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,32,0,0,0,0 );

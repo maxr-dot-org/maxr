@@ -902,14 +902,43 @@ void cGameGUI::setStartup ( bool startup_ )
 	startup = startup_;
 }
 
-void cGameGUI::setSelVehicle( cVehicle *vehicle )
+void cGameGUI::selectUnit( cVehicle *vehicle )
 {
+	deselectUnit();
+
 	selectedVehicle = vehicle;
+	selectedBuilding = NULL;
+
+	vehicle->Select();
+	Client->iObjectStream = vehicle->playStream();
 }
 
-void cGameGUI::setSelBuilding( cBuilding *building )
+void cGameGUI::selectUnit( cBuilding *building )
 {
+	deselectUnit();
+
 	selectedBuilding = building;
+	selectedVehicle = NULL;
+
+	building->Select();
+	Client->iObjectStream = building->playStream();
+}
+
+void cGameGUI::deselectUnit()
+{
+	if ( selectedBuilding )
+	{
+		selectedBuilding->Deselct();
+		selectedBuilding = NULL;
+		StopFXLoop ( Client->iObjectStream );
+	}
+	else if ( selectedVehicle )
+	{
+		selectedVehicle->Deselct();
+		selectedVehicle = NULL;
+		StopFXLoop ( Client->iObjectStream );
+	}
+	
 }
 
 void cGameGUI::setInfoTexts ( string infoText, string additionalInfoText )
@@ -1364,10 +1393,6 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						else if ( overBaseBuilding ) next = 'b';
 						else if ( overPlane ) next = 'p';
 					}
-
-					selectedVehicle->Deselct();
-					selectedVehicle = NULL;
-					StopFXLoop ( Client->iObjectStream );
 				}
 				else if ( selectedBuilding )
 				{
@@ -1383,46 +1408,29 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						else if ( overUnitField->getVehicles() ) next = 'v';
 						else if ( overBuilding ) next = 't';
 					}
-
-					selectedBuilding->Deselct();
-					selectedBuilding = NULL;
-					StopFXLoop ( Client->iObjectStream );
 				}
+
+				deselectUnit();
+
 				switch ( next )
 				{
 					case 't':
-						selectedBuilding = overBuilding ;
-						selectedBuilding->Select();
-						Client->iObjectStream=selectedBuilding->playStream();
+						selectUnit( overBuilding );
 						break;
 					case 'b':
-						selectedBuilding = overBaseBuilding;
-						selectedBuilding->Select();
-						Client->iObjectStream=selectedBuilding->playStream();
+						selectUnit( overBaseBuilding );
 						break;
 					case 'v':
-						selectedVehicle = overVehicle;
-						selectedVehicle->Select();
-						Client->iObjectStream = selectedVehicle->playStream();
+						selectUnit( overVehicle );
 						break;
 					case 'p':
-						selectedVehicle = overPlane;
-						selectedVehicle->Select();
-						Client->iObjectStream = selectedVehicle->playStream();
+						selectUnit( overPlane );
 						break;
 				}
 			}
-			else if ( selectedVehicle != NULL )
+			else 
 			{
-				selectedVehicle->Deselct();
-				selectedVehicle = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			else if ( selectedBuilding!=NULL )
-			{
-				selectedBuilding->Deselct();
-				selectedBuilding = NULL;
-				StopFXLoop ( Client->iObjectStream );
+				deselectUnit();
 			}
 		}
 	}
@@ -2018,21 +2026,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		else
 		{
-			if ( selectedVehicle )
-			{
-				selectedVehicle->Deselct();
-				selectedVehicle = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			else if ( selectedBuilding )
-			{
-				selectedBuilding->Deselct();
-				selectedBuilding = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			selectedVehicle = OverUnitField->getPlanes();
-			selectedVehicle->Select();
-			Client->iObjectStream = selectedVehicle->playStream();
+			selectUnit( OverUnitField->getPlanes() );
 		}
 		return true;
 	}
@@ -2049,21 +2043,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		else
 		{
-			if ( selectedVehicle )
-			{
-				selectedVehicle->Deselct();
-				selectedVehicle = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			else if ( selectedBuilding )
-			{
-				selectedBuilding->Deselct();
-				selectedBuilding = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			selectedVehicle = OverUnitField->getVehicles();
-			selectedVehicle->Select();
-			Client->iObjectStream = selectedVehicle->playStream();
+			selectUnit( OverUnitField->getVehicles() );
 		}
 		return true;
 	}
@@ -2080,21 +2060,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		else
 		{
-			if ( selectedVehicle )
-			{
-				selectedVehicle->Deselct();
-				selectedVehicle = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			else if ( selectedBuilding )
-			{
-				selectedBuilding->Deselct();
-				selectedBuilding = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			selectedBuilding = OverUnitField->getTopBuilding();
-			selectedBuilding->Select();
-			Client->iObjectStream = selectedBuilding->playStream();
+			selectUnit( OverUnitField->getTopBuilding() );
 		}
 		return true;
 	}
@@ -2111,21 +2077,7 @@ bool cGameGUI::selectUnit( cMapField *OverUnitField, bool base )
 		}
 		else
 		{
-			if ( selectedVehicle )
-			{
-				selectedVehicle->Deselct();
-				selectedVehicle = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			else if ( selectedBuilding )
-			{
-				selectedBuilding->Deselct();
-				selectedBuilding = NULL;
-				StopFXLoop ( Client->iObjectStream );
-			}
-			selectedBuilding = OverUnitField->getBaseBuilding();
-			selectedBuilding->Select();
-			Client->iObjectStream = selectedBuilding->playStream();
+			selectUnit( OverUnitField->getBaseBuilding() );
 		}
 		return true;
 	}
@@ -2169,20 +2121,12 @@ void cGameGUI::selectBoxVehicles ( sMouseBox &box )
 	}
 	if ( newSelected && selectedVehiclesGroup.Size() > 0 )
 	{
-		if ( selectedVehicle ) selectedVehicle->Deselct();
-		selectedVehicle = selectedVehiclesGroup[0];
-		selectedVehicle->Select();
+		selectUnit( selectedVehiclesGroup[0] );
 	}
 	if ( selectedVehiclesGroup.Size() == 1 )
 	{
 		selectedVehiclesGroup[0]->groupSelected = false;
 		selectedVehiclesGroup.Delete( 0 );
-	}
-
-	if ( selectedBuilding )
-	{
-		selectedBuilding->Deselct();
-		selectedBuilding = NULL;
 	}
 }
 
@@ -2522,15 +2466,8 @@ void cGameGUI::nextReleased( void *parent )
 	cVehicle *v = gui->player->GetNextVehicle();
 	if ( v )
 	{
-		if ( gui->selectedVehicle )
-		{
-			gui->selectedVehicle->Deselct();
-			StopFXLoop ( Client->iObjectStream );
-		}
-		v->Select();
+		gui->selectUnit( v );
 		v->Center();
-		Client->iObjectStream = v->playStream();
-		gui->selectedVehicle = v;
 	}
 }
 
@@ -2540,15 +2477,8 @@ void cGameGUI::prevReleased( void *parent )
 	cVehicle *v = gui->player->GetPrevVehicle();
 	if ( v )
 	{
-		if ( gui->selectedVehicle )
-		{
-			gui->selectedVehicle->Deselct();
-			StopFXLoop ( Client->iObjectStream );
-		}
-		v->Select();
+		gui->selectUnit( v );
 		v->Center();
-		Client->iObjectStream = v->playStream();
-		gui->selectedVehicle = v;
 	}
 }
 
