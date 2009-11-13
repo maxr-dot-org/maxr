@@ -154,7 +154,6 @@ public:
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
-	bool MuniActive;   // Gibt an, ob grad Munition aufgeladen werden soll
 	bool RepairActive; // Gibt an, ob grad repariert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen

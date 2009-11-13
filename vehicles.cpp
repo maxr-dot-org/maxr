@@ -81,7 +81,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsClearing = false;
 	bSentryStatus = false;
 	ActivatingVehicle = false;
-	MuniActive = false;
 	RepairActive = false;
 	BuildPath = false;
 	LayMines = false;
@@ -673,7 +672,6 @@ void cVehicle::Deselct ()
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
 	ActivatingVehicle = false;
-	MuniActive = false;
 	RepairActive = false;
 	StealActive = false;
 	DisableActive = false;
@@ -1389,7 +1387,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			MuniActive = !MuniActive;
+			Client->gameGUI.toggleMouseInputMode( muniActive );
 			return;
 		}
 		nr++;
@@ -1614,7 +1612,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Aufaden:
 	if ( data.canRearm && data.storageResCur >= 2 )
 	{
-		bSelection = selMenuNr == nr || MuniActive;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == muniActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), bSelection, dest.x, dest.y, buffer );
 

@@ -82,7 +82,8 @@ enum eMouseInputMode
 	attackMode,
 	placeBand,
 	transferMode,
-	loadMode
+	loadMode,
+	muniActive
 };
 
 class cGameGUI : public cMenu

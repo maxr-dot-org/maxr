@@ -1109,7 +1109,7 @@ void cGameGUI::updateMouseCursor()
 				selectedBuilding->DrawAttackCursor( mouse->GetKachelOff() );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->MuniActive )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == muniActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REARM ) )
 			{
@@ -1566,7 +1566,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				}
 			}
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni && selectedVehicle && selectedVehicle->MuniActive )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni && selectedVehicle && mouseInputMode == muniActive )
 		{
 			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
@@ -2373,7 +2373,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->MuniActive = true;
+		Client->gameGUI.mouseInputMode = muniActive;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -3817,11 +3817,11 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " steal_active: " + iToStr ( vehicle->StealActive ) + " disable_active: +" + iToStr ( vehicle->DisableActive ) + " disabled: " + iToStr ( vehicle->Disabled ) /*+ " detection_override: " + iToStr (vehicle->detection_override )*/;
+	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " steal_active: " + iToStr ( vehicle->StealActive ) + " disable_active: +" + iToStr ( vehicle->DisableActive ) + " disabled: " + iToStr ( vehicle->Disabled );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive ) + " muni_active: " + iToStr (vehicle->MuniActive );
+	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
