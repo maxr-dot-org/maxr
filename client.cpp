@@ -1652,6 +1652,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( !StoringVehicle ) break;
 				StoringVehicle->storeVehicle ( StoredVehicle, Map );
 
+				Client->gameGUI.checkMouseInputMode();
 				if ( StoredVehicle == gameGUI.getSelVehicle() )
 				{
 					gameGUI.deselectUnit();
@@ -1663,6 +1664,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( !StoringBuilding ) break;
 				StoringBuilding->storeVehicle ( StoredVehicle, Map );
 
+				Client->gameGUI.checkMouseInputMode();
 				if ( StoredVehicle == gameGUI.getSelVehicle() )
 				{
 					gameGUI.deselectUnit();

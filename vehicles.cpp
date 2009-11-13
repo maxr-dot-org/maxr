@@ -80,7 +80,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsBuilding = false;
 	IsClearing = false;
 	bSentryStatus = false;
-	LoadActive = false;
 	ActivatingVehicle = false;
 	MuniActive = false;
 	RepairActive = false;
@@ -673,7 +672,6 @@ void cVehicle::Deselct ()
 	SDL_Rect src, dest;
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
-	LoadActive = false;
 	ActivatingVehicle = false;
 	MuniActive = false;
 	RepairActive = false;
@@ -1378,7 +1376,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			LoadActive = !LoadActive;
+			Client->gameGUI.toggleMouseInputMode( loadMode );
 			return;
 		}
 		nr++;
@@ -1606,7 +1604,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 		// Laden:
-		bSelection = selMenuNr == nr || LoadActive;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == loadMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 		dest.y += 22;
@@ -2641,8 +2639,6 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 
 	StoredVehicles.Add ( Vehicle );
 	data.storageUnitsCur++;
-
-	if ( data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
 
 	owner->DoScan();
 }

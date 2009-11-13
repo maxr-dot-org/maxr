@@ -79,7 +79,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	BaseW = false;
 	BaseBW = false;
 	Attacking = false;
-	LoadActive = false;
 	ActivatingVehicle = false;
 	bIsBeeingAttacked = false;
 	RepeatBuild = false;
@@ -1556,8 +1555,6 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 	StoredVehicles.Add ( Vehicle );
 	data.storageUnitsCur++;
 
-	if ( data.storageUnitsCur == data.storageUnitsMax ) LoadActive = false;
-
 	owner->DoScan();
 }
 
@@ -2243,7 +2240,7 @@ void cBuilding::menuReleased()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			LoadActive = !LoadActive;
+			Client->gameGUI.toggleMouseInputMode( loadMode );
 			return;
 		}
 		nr++;
@@ -2461,8 +2458,8 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 
-		// Laden:
-		bSelection = selMenuNr == nr || LoadActive;
+		//load:
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode ==  loadMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2705,7 +2702,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	LoadActive = false;
 	ActivatingVehicle = false;
 	// Den Hintergrund wiederherstellen:
 	src.x = 0;

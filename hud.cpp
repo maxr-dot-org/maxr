@@ -1171,8 +1171,9 @@ void cGameGUI::updateMouseCursor()
 								)
 							)
 						) &&
-						!selectedVehicle->LoadActive &&
+						mouseInputMode != loadMode &&
 						!selectedVehicle->ActivatingVehicle
+						
 					)
 				) &&
 				(
@@ -1185,7 +1186,7 @@ void cGameGUI::updateMouseCursor()
 							selectedBuilding->IsWorking                     ||
 							(*selectedBuilding->BuildList)[0]->metall_remaining > 0
 						) &&
-						!selectedBuilding->LoadActive &&
+						mouseInputMode != loadMode &&
 						!selectedBuilding->ActivatingVehicle
 					)
 				)
@@ -1193,7 +1194,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CSelect );
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->LoadActive )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == loadMode )
 		{
 			if ( selectedVehicle->canLoad ( mouse->GetKachelOff(), Client->Map, false ) )
 			{
@@ -1219,7 +1220,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) )
 		{
-			if ( !selectedVehicle->IsBuilding&&!selectedVehicle->IsClearing&&!selectedVehicle->LoadActive&&!selectedVehicle->ActivatingVehicle )
+			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && !selectedVehicle->ActivatingVehicle )
 			{
 				if ( selectedVehicle->MoveJobActive )
 				{
@@ -1282,7 +1283,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->LoadActive )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == loadMode )
 		{
 			if ( selectedBuilding->canLoad ( mouse->GetKachelOff(), Client->Map, false ) )
 			{
@@ -1519,7 +1520,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 			mouse->GetKachel ( &iX, &iY );
 			sendWantExitFinishedVehicle ( selectedBuilding, iX, iY );
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && selectedBuilding->LoadActive )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && mouseInputMode == loadMode )
 		{
 			if ( overVehicle )
 			{
@@ -1542,7 +1543,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				}
 			}
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedVehicle && selectedVehicle->LoadActive )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedVehicle && mouseInputMode == loadMode )
 		{
 			if ( selectedVehicle->data.factorAir > 0 && overVehicle )
 			{
@@ -2364,11 +2365,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->LoadActive = !selectedVehicle->LoadActive;
+		toggleMouseInputMode( loadMode );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
-		selectedBuilding->LoadActive = !selectedBuilding->LoadActive;
+		toggleMouseInputMode( loadMode );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -3820,12 +3821,11 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + /*" detected: " + iToStr ( vehicle->detected ) +*/ " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive ) + " muni_active: " + iToStr (vehicle->MuniActive );
+	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive ) + " muni_active: " + iToStr (vehicle->MuniActive );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
 	tmpString =
-		"load_active: "            + iToStr(vehicle->LoadActive) +
 		" activating_vehicle: "    + iToStr(vehicle->ActivatingVehicle) +
 		" vehicle_to_activate: +"  + iToStr(vehicle->VehicleToActivate) +
 		" stored_vehicles_count: " + iToStr((int)vehicle->StoredVehicles.Size());
@@ -3880,7 +3880,6 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	*y+=8;
 
 	tmpString =
-		"load_active: "            + iToStr(building->LoadActive) +
 		" stored_vehicles_count: " + iToStr((int)building->StoredVehicles.Size());
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
@@ -4154,6 +4153,12 @@ void cGameGUI::checkMouseInputMode()
 		if ( selectedVehicle && !selectedVehicle->data.shotsCur )
 			mouseInputMode = normalInput;
 		else if ( selectedBuilding && !selectedBuilding->data.shotsCur )
+			mouseInputMode = normalInput;
+		break;
+	case loadMode:
+		if ( selectedVehicle && selectedVehicle->data.storageUnitsCur == selectedVehicle->data.storageUnitsMax )
+			mouseInputMode = normalInput;
+		else if ( selectedBuilding && selectedBuilding->data.storageUnitsCur == selectedBuilding->data.storageUnitsMax )
 			mouseInputMode = normalInput;
 		break;
 	default:

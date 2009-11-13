@@ -155,7 +155,6 @@ public:
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
-	bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
