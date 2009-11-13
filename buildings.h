@@ -148,7 +148,6 @@ public:
 	bool IsWorking;  // is the building currently working?
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	bool bSentryStatus;		/** true if the building is on sentry */
-	bool Transfer;   // Gibt an, ob ein Transfer statfinden soll
 	int MaxMetalProd,MaxOilProd,MaxGoldProd; // the maximum possible production of the building
 	int dir;         // ?Frame of the building?
 	bool Attacking;  // Gibt an, ob das Building gerade angreift

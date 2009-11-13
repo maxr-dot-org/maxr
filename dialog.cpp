@@ -674,13 +674,13 @@ cDialogTransfer::~cDialogTransfer()
 	if ( srcBuilding != NULL )
 	{
 		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, ( int ) ( srcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( srcBuilding->typ->img_org->h* fNewZoom ) );
-		srcBuilding->Transfer = false;
 	}
 	else
 	{
 		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], ( int ) ( srcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) (srcVehicle->typ->img_org[0]->h* fNewZoom ) );
-		srcVehicle->Transfer = false;
 	}
+
+	Client->gameGUI.mouseInputMode = normalInput;
 
 	if ( destBuilding ) scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, ( int ) ( destBuilding->typ->img_org->w* fNewZoom ), ( int ) ( destBuilding->typ->img_org->h* fNewZoom ) );
 	else scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], ( int ) ( destVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( destVehicle->typ->img_org[0]->h* fNewZoom ) );

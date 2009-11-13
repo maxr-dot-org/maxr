@@ -80,7 +80,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsBuilding = false;
 	IsClearing = false;
 	bSentryStatus = false;
-	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
 	MuniActive = false;
@@ -674,7 +673,6 @@ void cVehicle::Deselct ()
 	SDL_Rect src, dest;
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
-	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
 	MuniActive = false;
@@ -1279,7 +1277,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Transfer = !Transfer;
+			Client->gameGUI.toggleMouseInputMode( transferMode );
 			return;
 		}
 		nr++;
@@ -1537,7 +1535,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 	{
-		bSelection = selMenuNr == nr || Transfer;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == transferMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
 

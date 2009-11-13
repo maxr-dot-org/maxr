@@ -149,7 +149,6 @@ public:
 	int ClearingRounds; // Gibt an, wie lange ein Feld noch geräumt wird
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	bool bSentryStatus;		/** true if the vehicle is on sentry */
-	bool Transfer;    // Gibt an, ob gerade ein Transfer statfinden soll
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
 	bool LoadActive; // Gibt an, ob ein Vehicle geladen werden soll

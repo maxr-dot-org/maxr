@@ -984,7 +984,7 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor ( CNo );
 		}
 	}
-	else if ( ( selectedVehicle && selectedVehicle->Transfer && selectedVehicle->owner == Client->ActivePlayer ) || ( selectedBuilding && selectedBuilding->Transfer && selectedBuilding->owner == Client->ActivePlayer ) )
+	else if ( ( selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == Client->ActivePlayer ) || ( selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == Client->ActivePlayer ) )
 	{
 		if ( selectedVehicle )
 		{
@@ -2311,11 +2311,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->Transfer = true;
+		mouseInputMode = transferMode;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
-		selectedBuilding->Transfer = true;
+		mouseInputMode = transferMode;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -3800,7 +3800,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " transfer: " + iToStr ( vehicle->Transfer ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
+	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3867,7 +3867,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "attacking: " + iToStr ( building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( building->RubbleValue ) + " big_dirt: " + iToStr ( building->data.isBig ) + " is_working: " + iToStr (building->IsWorking ) + " transfer: " + iToStr (building->Transfer );
+	tmpString = "attacking: " + iToStr ( building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( building->RubbleValue ) + " big_dirt: " + iToStr ( building->data.isBig ) + " is_working: " + iToStr (building->IsWorking );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

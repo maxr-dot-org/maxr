@@ -70,7 +70,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	data = owner->BuildingData[typ->nr];
 
-	Transfer = false;
 	BaseN = false;
 	BaseBN = false;
 	BaseE = false;
@@ -2175,7 +2174,7 @@ void cBuilding::menuReleased()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			Transfer = !Transfer;
+			Client->gameGUI.toggleMouseInputMode( transferMode );
 			return;
 		}
 		nr++;
@@ -2405,7 +2404,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
-		bSelection = selMenuNr == nr || Transfer;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == transferMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
 
@@ -2706,7 +2705,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	Transfer = false;
 	LoadActive = false;
 	ActivatingVehicle = false;
 	// Den Hintergrund wiederherstellen:
