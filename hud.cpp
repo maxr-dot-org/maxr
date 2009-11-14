@@ -1039,7 +1039,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->DisableActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<SettingsData.iScreenW-HUD_RIGHT_WIDTH && y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
 			{
@@ -1053,7 +1053,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->StealActive&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<SettingsData.iScreenW-HUD_RIGHT_WIDTH && y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 			{
@@ -2392,11 +2392,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->DisableActive = true;
+		mouseInputMode = disableMode;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->StealActive = true;
+		mouseInputMode = stealMode;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedVehicle )
 	{
@@ -3816,7 +3816,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " steal_active: " + iToStr ( vehicle->StealActive ) + " disable_active: +" + iToStr ( vehicle->DisableActive ) + " disabled: " + iToStr ( vehicle->Disabled );
+	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " disabled: " + iToStr ( vehicle->Disabled );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4148,6 +4148,8 @@ void cGameGUI::checkMouseInputMode()
 	switch ( mouseInputMode )
 	{
 	case attackMode:
+	case disableMode:
+	case stealMode:
 		if ( selectedVehicle && !selectedVehicle->data.shotsCur )
 			mouseInputMode = normalInput;
 		else if ( selectedBuilding && !selectedBuilding->data.shotsCur )

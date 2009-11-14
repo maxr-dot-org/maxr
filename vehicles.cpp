@@ -84,8 +84,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	LayMines = false;
 	ClearMines = false;
 	Loaded = false;
-	StealActive = false;
-	DisableActive = false;
 	IsLocked = false;
 	bIsBeeingAttacked = false;
 	BigBetonAlpha = 0;
@@ -669,8 +667,6 @@ void cVehicle::Deselct ()
 	SDL_Rect src, dest;
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
-	StealActive = false;
-	DisableActive = false;
 	// redraw the background
 	src.x = 0;
 	src.y = 215;
@@ -1439,8 +1435,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			DisableActive = !DisableActive;
-			StealActive = false;
+			Client->gameGUI.toggleMouseInputMode( disableMode );
 			return;
 		}
 		nr++;
@@ -1453,8 +1448,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-			StealActive = !StealActive;
-			DisableActive = false;
+			Client->gameGUI.toggleMouseInputMode( stealMode );
 			return;
 		}
 		nr++;
@@ -1652,7 +1646,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sabotage:
 	if ( data.canDisable && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || DisableActive;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == disableMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), bSelection, dest.x, dest.y, buffer );
 
@@ -1663,7 +1657,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stehlen:
 	if ( data.canCapture && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || StealActive;
+		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == stealMode;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), bSelection, dest.x, dest.y, buffer );
 

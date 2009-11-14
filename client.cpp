@@ -1920,11 +1920,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else PlayVoice ( VoiceData.VOICommandoDetected );
 			cVehicle *srcUnit = getVehicleFromID ( message->popInt16() );
-			if ( srcUnit && !srcUnit->data.shotsCur && srcUnit == gameGUI.getSelVehicle() )
-			{
-				srcUnit->DisableActive = false;
-				srcUnit->StealActive = false;
-			}
+
+			gameGUI.checkMouseInputMode();
 		}
 		break;
 	case GAME_EV_REQ_SAVE_INFO:

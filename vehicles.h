@@ -159,7 +159,6 @@ public:
 	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	int WalkFrame;    // Frame der Geh-Annimation
 	float CommandoRank; // Rang des Commandos
-	bool StealActive,DisableActive; // Legt fest, ob gestohlen, oder sabotiert werden soll
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
 	cList<cEndMoveAction*> passiveEndMoveActions;
