@@ -1172,8 +1172,7 @@ void cGameGUI::updateMouseCursor()
 							)
 						) &&
 						mouseInputMode != loadMode &&
-						!selectedVehicle->ActivatingVehicle
-						
+						mouseInputMode != activateVehicle						
 					)
 				) &&
 				(
@@ -1187,7 +1186,7 @@ void cGameGUI::updateMouseCursor()
 							(*selectedBuilding->BuildList)[0]->metall_remaining > 0
 						) &&
 						mouseInputMode != loadMode &&
-						!selectedBuilding->ActivatingVehicle
+						mouseInputMode != activateVehicle
 					)
 				)
 				)
@@ -1205,7 +1204,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->ActivatingVehicle )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
 			int x, y;
 			mouse->GetKachel( &x, &y );
@@ -1220,7 +1219,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) )
 		{
-			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && !selectedVehicle->ActivatingVehicle )
+			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle )
 			{
 				if ( selectedVehicle->MoveJobActive )
 				{
@@ -1270,7 +1269,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding&&selectedBuilding->owner==Client->ActivePlayer&&selectedBuilding->ActivatingVehicle )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
 			int x, y;
 			mouse->GetKachel( &x, &y);
@@ -1504,12 +1503,12 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				sendWantBuild ( selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX+selectedVehicle->PosY*map->size, true, selectedVehicle->BandX+selectedVehicle->BandY*map->size );
 			}
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->ActivatingVehicle )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && mouseInputMode == activateVehicle )
 		{
 			sendWantActivate ( selectedBuilding->iID, false, selectedBuilding->StoredVehicles[selectedBuilding->VehicleToActivate]->iID, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
 			updateMouseCursor();
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedVehicle && selectedVehicle->ActivatingVehicle )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedVehicle && mouseInputMode == activateVehicle )
 		{
 			sendWantActivate ( selectedVehicle->iID, true, selectedVehicle->StoredVehicles[selectedVehicle->VehicleToActivate]->iID, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
 			updateMouseCursor();
@@ -3826,7 +3825,6 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	*y+=8;
 
 	tmpString =
-		" activating_vehicle: "    + iToStr(vehicle->ActivatingVehicle) +
 		" vehicle_to_activate: +"  + iToStr(vehicle->VehicleToActivate) +
 		" stored_vehicles_count: " + iToStr((int)vehicle->StoredVehicles.Size());
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
@@ -3875,7 +3873,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "is_locked: " + iToStr ( building->IsLocked ) + " disabled: " + iToStr ( building->Disabled ) /*+ " detected: +" + iToStr ( building->detected )*/ + " activating_vehicle: " + iToStr ( building->ActivatingVehicle ) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate );
+	tmpString = "is_locked: " + iToStr ( building->IsLocked ) + " disabled: " + iToStr ( building->Disabled ) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4016,7 +4014,7 @@ void cGameGUI::drawUnitCircles()
 				}
 			}
 		}
-		if (v.ActivatingVehicle && v.owner == player)
+		if ( mouseInputMode == activateVehicle && v.owner == player)
 		{
 			v.DrawExitPoints(v.StoredVehicles[v.VehicleToActivate]->typ);
 		}
@@ -4062,7 +4060,7 @@ void cGameGUI::drawUnitCircles()
 		{
 			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->typ);
 		}
-		if ( selectedBuilding->ActivatingVehicle&&selectedBuilding->owner==player )
+		if ( mouseInputMode == activateVehicle && selectedBuilding->owner==player )
 		{
 			selectedBuilding->DrawExitPoints(selectedBuilding->StoredVehicles[selectedBuilding->VehicleToActivate]->typ);
 		}

@@ -80,7 +80,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsBuilding = false;
 	IsClearing = false;
 	bSentryStatus = false;
-	ActivatingVehicle = false;
 	BuildPath = false;
 	LayMines = false;
 	ClearMines = false;
@@ -670,7 +669,6 @@ void cVehicle::Deselct ()
 	SDL_Rect src, dest;
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
-	ActivatingVehicle = false;
 	StealActive = false;
 	DisableActive = false;
 	// redraw the background
@@ -2655,8 +2653,6 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 	}
 
 	data.storageUnitsCur--;
-
-	ActivatingVehicle = false;
 
 	Map->addVehicle ( Vehicle, offset );
 

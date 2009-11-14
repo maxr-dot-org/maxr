@@ -153,7 +153,6 @@ public:
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
-	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde

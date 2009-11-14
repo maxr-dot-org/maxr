@@ -1686,6 +1686,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
 				StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+				if ( gameGUI.getSelVehicle() == StoringVehicle && gameGUI.mouseInputMode == activateVehicle )
+				{
+					gameGUI.mouseInputMode = normalInput;
+				}
 			}
 			else
 			{
@@ -1695,6 +1699,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
 				StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+
+				if ( gameGUI.getSelBuilding() == StoringBuilding && gameGUI.mouseInputMode == activateVehicle )
+				{
+					gameGUI.mouseInputMode = normalInput;
+				}
 			}
 			PlayFX ( SoundData.SNDActivate );
 			gameGUI.updateMouseCursor();

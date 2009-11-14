@@ -84,7 +84,8 @@ enum eMouseInputMode
 	transferMode,
 	loadMode,
 	muniActive,
-	repairActive
+	repairActive,
+	activateVehicle
 };
 
 class cGameGUI : public cMenu

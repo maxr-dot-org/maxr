@@ -79,7 +79,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	BaseW = false;
 	BaseBW = false;
 	Attacking = false;
-	ActivatingVehicle = false;
 	bIsBeeingAttacked = false;
 	RepeatBuild = false;
 	hasBeenAttacked = false;
@@ -1574,10 +1573,6 @@ void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 
 	data.storageUnitsCur--;
 
-	ActivatingVehicle = false;
-
-	ActivatingVehicle = false;
-
 	Map->addVehicle ( Vehicle, offset );
 
 	Vehicle->PosX = offset % Map->size;
@@ -2347,7 +2342,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 
 	if ( bIsBeeingAttacked ) return;
 
-	if ( ActivatingVehicle )
+	if ( Client->gameGUI.mouseInputMode == activateVehicle )
 	{
 		Client->gameGUI.unitMenuActive = false;
 		return;
@@ -2702,7 +2697,6 @@ void cBuilding::Select ()
 void cBuilding::Deselct ()
 {
 	SDL_Rect src, dest;
-	ActivatingVehicle = false;
 	// Den Hintergrund wiederherstellen:
 	src.x = 0;
 	src.y = 215;

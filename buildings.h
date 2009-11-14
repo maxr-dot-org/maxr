@@ -157,7 +157,6 @@ public:
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
-	bool ActivatingVehicle; // Gibt an, ob ein Vehicle aktiviert werden soll
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	int Disabled;    // the time this unit will be disabled
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Lock-Liste ist
