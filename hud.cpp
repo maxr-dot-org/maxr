@@ -1120,7 +1120,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&selectedVehicle->RepairActive )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == repairActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->GetKachelOff(), SUPPLY_TYPE_REPAIR ) )
 			{
@@ -1572,7 +1572,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 			else if ( overBuilding ) sendWantSupply ( overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 		}
-		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Crepair && selectedVehicle && selectedVehicle->RepairActive )
+		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Crepair && selectedVehicle && mouseInputMode == repairActive )
 		{
 			if ( overVehicle ) sendWantSupply ( overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
 			else if ( overPlane && overPlane->FlightHigh == 0 ) sendWantSupply ( overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
@@ -2377,7 +2377,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->RepairActive = true;
+		Client->gameGUI.mouseInputMode = repairActive;
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -3821,7 +3821,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines ) + " repair_active: " + iToStr (vehicle->RepairActive );
+	tmpString = "is_locked: " + iToStr ( vehicle->IsLocked ) + " clear_mines: +" + iToStr ( vehicle->ClearMines ) + " lay_mines: " + iToStr ( vehicle->LayMines );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
