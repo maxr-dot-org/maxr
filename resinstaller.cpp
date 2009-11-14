@@ -3459,7 +3459,7 @@ void installVoices()
 	iTotalFiles = 32;
 	iErrors = 0;
 	iInstalledFiles = 0;
-	oggEncode = 0;
+	oggEncode = 1;
 
 #if MAC
 	updateProgressWindow ("Voices", iTotalFiles, iInstalledFiles);
