@@ -218,7 +218,7 @@
 
   <Clan Name="Axis Inc.">
     <Description lang="ENG">
-      Extra constructors and eingineers (depends on budget)
+      Extra Constructors and Engineers (depends on budget) 
     </Description>
     <ChangedUnitStat UnitID="1 11">
       <Built_Costs Num="32"/>
