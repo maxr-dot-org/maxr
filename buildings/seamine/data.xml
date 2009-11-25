@@ -11,7 +11,7 @@
   </Description>
 
   <Weapon>
-    <Can_Attack Num="10"/>
+    <Can_Attack Num="22"/>
     <Damage Num="28"/>
   </Weapon>
 
