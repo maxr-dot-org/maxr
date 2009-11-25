@@ -1309,6 +1309,19 @@ void cClientMoveJob::moveVehicle()
 		setOffset(Vehicle, iNextDir, -64 );
 		Vehicle->moving = true;
 
+
+		//restart movesound, when drinving into or out of water
+		if ( Vehicle == Client->gameGUI.getSelVehicle() )
+		{
+			bool wasWater = Map->IsWater( Waypoints->X + Waypoints->Y*Map->size, true );
+			bool water = Map->IsWater( Waypoints->next->X + Waypoints->next->Y*Map->size, true );
+
+			if ( wasWater != water )
+			{
+				Vehicle->StartMoveSound();
+			}
+		}
+
 	}
 
 	int iSpeed;
@@ -1409,7 +1422,6 @@ void cClientMoveJob::doEndMoveVehicle ()
 	Waypoint->next = lastWaypoints;
 	lastWaypoints = Waypoint;
 
-
 	Vehicle->moving = false;
 
 	Vehicle->OffX = 0;
@@ -1475,7 +1487,7 @@ void cClientMoveJob::stopMoveSound()
 	if ( Vehicle == Client->gameGUI.getSelVehicle() )
 	{
 		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
-		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size );
+		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size, true );
 		if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 		StopFXLoop ( Client->iObjectStream );
