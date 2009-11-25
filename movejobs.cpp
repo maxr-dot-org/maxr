@@ -580,6 +580,10 @@ bool cServerMoveJob::checkMove()
 	calcNextDir();
 	Vehicle->MoveJobActive = true;
 	Vehicle->moving = true;
+	
+	Vehicle->data.speedCur += iSavedSpeed;
+	iSavedSpeed = 0;
+	Vehicle->DecSpeed ( Waypoints->next->Costs );
 
 	//reset detected flag, when a water stealth unit drives into the water
 	if ( Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround )
@@ -648,10 +652,6 @@ void cServerMoveJob::doEndMoveVehicle()
 	{
 		bFinished = true;
 	}
-
-	Vehicle->data.speedCur += iSavedSpeed;
-	iSavedSpeed = 0;
-	Vehicle->DecSpeed ( Waypoints->Costs );
 
 	// check for results of the move
 

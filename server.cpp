@@ -387,7 +387,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( Vehicle == NULL ) break;
 			if ( Vehicle->ServerMoveJob == NULL ) break;
 
-			Vehicle->ServerMoveJob->release();
+			//delete all following waypoint of the movejob, so the vehicle stops on the next field
+			cServerMoveJob* moveJob = Vehicle->ServerMoveJob;
+			sWaypoint* wayPoint = moveJob->Waypoints->next->next;
+			moveJob->Waypoints->next->next = NULL;
+			while ( wayPoint )
+			{
+				sWaypoint* nextWayPoint = wayPoint->next;
+				delete wayPoint;
+				wayPoint = nextWayPoint;
+			}
 		}
 		break;
 	case GAME_EV_WANT_ATTACK:
