@@ -26,6 +26,8 @@
     <Scan_Range Num="1"/>
     <Can_Self_Destroy YN="Yes"/>
     <Modifies_Speed Num="0.5"/>
+    <Can_Be_Overbuild Const="YesNRemove"/>
+
 
     <Surface_Position Const="Base"/>
   </Abilities>
