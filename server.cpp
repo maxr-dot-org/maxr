@@ -909,7 +909,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				Building->RepeatBuild = message->popBool();
 				Building->BuildSpeed = iBuildSpeed;
-				Building->ServerStartWork ();
+				if ( (*Building->BuildList)[0]->metall_remaining > 0 )
+				{
+					Building->ServerStartWork ();
+				}
 			}
 			sendBuildList ( Building );
 		}
