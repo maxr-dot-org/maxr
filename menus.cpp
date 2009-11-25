@@ -2597,6 +2597,8 @@ cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
 	network = new cTCP;
 
 	triedLoadMap = "";
+
+	Log.write( string(PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 cNetworkMenu::~cNetworkMenu()
@@ -3101,6 +3103,8 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			players[playerNr]->name = message->popString();
 			players[playerNr]->ready = message->popBool();
 
+			Log.write("game version of client " + iToStr(playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
+
 			if ( freshJoined ) chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Joined", players[playerNr]->name ) );
 
 			draw();
@@ -3349,6 +3353,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		}
 		break;
 	case MU_MSG_REQ_IDENTIFIKATION:
+		Log.write("game version of server is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG );
 		actPlayer->nr = message->popInt16();
 		sendIdentification ( actPlayer );
 		break;

@@ -34,6 +34,7 @@ void sendRequestIdentification ( sMenuPlayer *player )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_REQ_IDENTIFIKATION );
 	message->pushInt16 ( player->nr );
+	message->pushString( string(PACKAGE_VERSION) + " " + PACKAGE_REV );
 	cMenu::sendMessage ( message, player );
 }
 
@@ -95,6 +96,7 @@ void sendGo ()
 void sendIdentification ( sMenuPlayer *player )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_IDENTIFIKATION );
+	message->pushString( string(PACKAGE_VERSION) + " " + PACKAGE_REV );
 	message->pushBool ( player->ready );
 	message->pushString ( player->name );
 	message->pushInt16( player->color );
