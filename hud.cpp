@@ -58,6 +58,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	blinkColor = 0xFFFFFF;
 	FLC = NULL;
 	playFLC = true;
+	mouseInputMode = normalInput;
 
 	debugAjobs = false;
 	debugBaseServer = false;
@@ -585,6 +586,7 @@ void cGameGUI::setOffsetPosition ( int x, int y )
 {
 	offX = x;
 	offY = y;
+	doScroll ( 0 );
 }
 
 void cGameGUI::setZoom( float newZoom, bool setScroller )
@@ -781,7 +783,7 @@ void cGameGUI::updateUnderMouseObject()
 	lastX = x;
 	lastY = y;
 
-	if ( x == -1 ) return;
+	if ( x < 0 || y < 0 || x >= map->size || y >= map->size ) return;
 
 	// draw the coordinates:
 	/*array to get map coords in sceme XXX-YYY\0 = 8 characters
