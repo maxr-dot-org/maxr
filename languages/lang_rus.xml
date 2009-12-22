@@ -8,18 +8,18 @@
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="jazz">
-			<Editor name="jazz jazzvoid@gmail.com" time="2009-02-17 21:00:00"/>
+			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2009-12-22 20:08"/>
 		</Author>
-		<Game_Version time="2007-09-30 13:04:00"/>
+		<Game_Version time="2009-12-22 20:08"/>
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X. R." localized="M.A.X. R."/>
-			<Game_Subtitle localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X.R."/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
 			<Version ENG="version v%s" localized="версия %s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded основывается на M.A.X. от Interplay"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. основывается на M.A.X. от Interplay"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) ещё не реализовано"/>
 			</Remarks>
@@ -28,7 +28,7 @@
 			<Lang ENG="Loading language pack..." localized="Загрузка локализации.."/>
 			<Keys ENG="Loading keys..." localized="Загрузка клавиш..."/>
 			<Fonts ENG="Loading fonts..." localized="Загрузка шрифтов..."/>
-			<GFX ENG="Loading gfx..." localized="Загрузка графики..."/>
+			<GFX ENG="Loading graphics..." localized="Загрузка графики..."/>
 			<Effects ENG="Loading effects..." localized="Загрузка эффектов..."/>
 			<Terrain ENG="Loading terrain..." localized="Загрузка территорий..."/>
 			<Vehicles ENG="Loading vehicles..." localized="Загрузка подразделений..."/>
@@ -43,11 +43,11 @@
 			<Credits ENG="Credits" localized="Деньги"/>
 			<Gold ENG="Gold" localized="Золото"/>
 			<Metal ENG="Materials" localized="Сырьё"/>
-			<Oil ENG="Oil" localized="Топливо"/>
+			<Oil ENG="Fuel" localized="Топливо"/>
 			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
-			<Alien_Tech ENG="Alientechnology" localized="Техника пришельцев"/>
-			<Resource ENG="Resources" localized="Ресурсы"/>
-			<Resource_Density ENG="Resources Density" localized="Плотность ресурсов"/>
+			<Alien_Tech ENG="Alien Technology" localized="Техника пришельцев"/>
+			<Resource ENG="Resource density"" localized="Ресурсы"/>
+			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
 			<Player_Name ENG="Playername:" localized="Имя игрока"/>
 			<Player_Select ENG="Playeroptions" localized="Выбор игроков"/>
@@ -58,7 +58,7 @@
 			<Clan ENG="Clan" localized="Клан"/>
 			<Clans ENG="Clans" localized="Кланы"/>
 			<Cargo ENG="Cargo" localized="Груз"/>
-			<Choose_Planet ENG="Planetchoosing" localized="Выбор карты"/>
+			<Choose_Planet ENG="Choose planet" localized="Выбор карты"/>
 			<Options ENG="Options" localized="Опции"/>
 			<Connect ENG="Connect" localized="Соединение"/>
 			<Send ENG="Send" localized="Отправить"/>
@@ -88,7 +88,7 @@
 			<OK ENG="OK" localized="OK"/>
 			<Done ENG="Done" localized="Готово"/>
 			<Cancel ENG="Cancel" localized="Отмена"/>
-			<Hot ENG="Sharp" localized="Взвод"/>
+			<Hot ENG="Hot" localized="Взвод"/>
 			<Yes ENG="Yes" localized="Да"/>
 			<No ENG="No" localized="Нет"/>
 			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Сервер"/>
@@ -111,6 +111,20 @@
 			<Upgrade ENG="Upgrade" localized="Улучшить"/>
 			<Reload ENG="Reload" localized="Зарядить"/>
 			<Host_Start ENG="Start Host" localized="Создать сервер"/>
+			<Units ENG="Units" localized=""/>
+			<Disadvantages ENG="Disadvantages" localized=""/>
+			<Score ENG="Score" localized="Очки"/>
+			<Reports ENG="Reports" localized="Отчёты"/>
+			<Included ENG="Included" localized="Включая"/>
+			<Limited_To ENG="Limited to" localized="Только"/>
+			<Air_Units ENG="Airunits" localized="Воздушные"/>
+			<Ground_Units ENG="Landunits" localized="Наземные"/>
+			<Sea_Units ENG="Seaunits" localized="Морские"/>
+			<Stationary_Units ENG="Stationary Units" localized="Стационарные"/>
+			<Produce_Units ENG="Producing units" localized="Производственные"/>
+			<Fight_Units ENG="Fighting units" localized="Боевые"/>
+			<Damaged_Units ENG="Damaged units" localized="Повреждённые"/>
+			<Stealth_Units ENG="Stealth units" localized="Скрытые"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear" localized="Чистка"/>
@@ -148,7 +162,7 @@
 			<Status ENG="Status" localized="Статус"/>
 			<Color ENG="Color" localized="Цвет"/>
 			<Hitpoints ENG="Hits" localized="Прочн."/>
-			<Ammo ENG="Munition" localized="Боезапас"/>
+			<Ammo ENG="Ammunition" localized="Боезапас"/>
 			<Range ENG="Range" localized="Дальность"/>
 			<Scan ENG="Scan" localized="Сканер"/>
 			<Grid ENG="Grid" localized="Сетка"/>
@@ -157,22 +171,23 @@
 			<Cargo ENG="Gargo" localized="Груз"/>
 			<AmmoShort ENG="Ammo" localized="Боепр."/>
 			<Shots ENG="Shots" localized="Выстрел"/>
-			<Shield ENG="Shield" localized="Щит"/>
+			<Armor ENG="Armor" localized="Броня"/>
 			<Total ENG="Total" localized="Всего"/>
-			<Energy ENG="Energy" localized="Энерг."/>
+			<Energy ENG="Power" localized="Энерг."/>
 			<Usage ENG="Usage" localized="Исполь."/>
 			<Teams ENG="Teams" localized="Команды"/>
+			<Score ENG="Score" localized="Очки"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="мин"/>
-			<Lower ENG="very low" localized="оч. мало"/>
-			<Low ENG="low" localized="мало"/>
-			<Normal ENG="normal" localized="норм"/>
-			<Much ENG="much" localized="много"/>
-			<More ENG="very much" localized="оч. много"/>
-			<Most ENG="most" localized="макс"/>
-			<Thick ENG="thick" localized="высокая"/>
-			<Thin ENG="thin" localized="низкая"/>
+			<Lowest ENG="Least" localized="мин"/>
+			<Lower ENG="Lower" localized="оч. мало"/>
+			<Low ENG="Low" localized="мало"/>
+			<Normal ENG="Normal" localized="норм"/>
+			<Much ENG="Much" localized="много"/>
+			<More ENG="More" localized="оч. много"/>
+			<Most ENG="Most" localized="макс"/>
+			<Thick ENG="Dense" localized="высокая"/>
+			<Thin ENG="Sparse" localized="низкая"/>
 			<On ENG="on" localized="вкл."/>
 			<Off ENG="off" localized="выкл."/>
 			<Definite ENG="Built (original)" localized="Уже построена"/>
@@ -207,7 +222,7 @@
 			<Player_Twice ENG="Playername exists twice: " localized="Имя игрока уже занято: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="должен быть сервером в игре по очереди"/>
-			<Player_Amount ENG="Choose the amount of players please. For a hotseat game are at least 2 players needed. 8 players are at most possible." localized="Выберете количество игроков. Для ХотСита нужно минимум два игрока. Самое большое возможное количество игроков - 8."/>
+			<Player_Amount ENG="Choose the amount of players please.  There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/>
 			<Player_Turn ENG="'s turn" localized=" ходит"/>
 			<Player_Turn_End ENG=" ended turn" localized=" закончил ход"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Ошбика подключения к сокету"/>
@@ -237,8 +252,18 @@
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
-			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>"
-			<Player_Left ENG="%s has left" localized="%s покидает игру"/>"
+			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>
+			<Player_Left ENG="%s has left" localized="%s покидает игру"/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Не могу загрузить карту %s. Вы не готовы."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/>
+			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
+			<MapDL_Percent ENG="Map download: %s%" localized="Загрузка карты: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..." localized="Отправляю карту %s..."/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Карта не установлена: Запрашиваю загрузку"/>
+			<MapDL_Download ENG="map %s from server." localized="карты %s с сервера"/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Карта не установлена: Нет права на загрузку"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/>
+			
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Атака"/>
@@ -263,12 +288,16 @@
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Недостаточно залота, рафинария отключена."/>
 			<Team_Low ENG="Workers needed, building turned off." localized="Недостаточно рабочих, здание отключено."/>
 			<Building_Disabled ENG="Building disabled" localized="Производство остановлено."/>
-			<Energy_Optimize ENG="Power generator turned on." localized="Генератор включен."/>
-			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Невозможно включить здание, недостаточно энергии."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Невозможно запустить, недостаточно энергии."/>
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Необходима дополнительная энергия, генератор включен."/>
-			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Невозможно запустить генератор, недостаточно топлива."/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Невозможно запустить, недостаточно топлива."/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Невозможно запустить, недостаточно сырья."/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Невозможно запустить, недостаточно золота."/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Невозможно запустить, недостаточно людей."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Невозможно отключить генератор, требуется энергия."/>
-			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="Увеличена добыча топлива на "/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Добыча топлива увеличена на "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Добыча сырья уменьшена на "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>		
 			<Cheat ENG="used cheat" localized="использован чит"/>
 			<Destroyed ENG="destroyed" localized="- здание разрушено"/>
 			<Defeated ENG="defeated" localized="- игрок повержен"/>
@@ -277,29 +306,29 @@
 			<Detected ENG="detected" localized="повреждено"/>
 			<Stolen ENG="stolen" localized="захвачено"/>
 			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
-			<End_Game ENG="Exit really? \n\nNot saved gamedata will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
 			<Turn_Start ENG="Start turn" localized="Начался ход"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Подождите пока закончатся все перемещения"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Выполняются оставшиеся перемещения"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Улучшение атаки завершено"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Улучшение скорострельности завершено"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Улучшение дальнобойности завершено"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Улучшение брони завершено"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Улучшение прочности завершено"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Улучшение скорости завершено"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Улучшение радара завершено"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Улучшение стоимости производства завершено"/>
+			<Research_Attack ENG="Attack research completed" localized="Улучшение атаки завершено"/>
+			<Research_Shoots ENG="Shots research completed" localized="Улучшение скорострельности завершено"/>
+			<Research_Range ENG="Range research completed" localized="Улучшение дальнобойности завершено"/>
+			<Research_Armor ENG="Armor research completed" localized="Улучшение брони завершено"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Улучшение прочности завершено"/>
+			<Research_Speed ENG="Speed research completed" localized="Улучшение скорости завершено"/>
+			<Research_Scan ENG="Scan research completed" localized="Улучшение радара завершено"/>
+			<Research_Costs ENG="Cost research completed" localized="Улучшение стоимости производства завершено"/>
 			<Working ENG="working" localized="работает"/>
-			<Waits ENG="waits" localized="бездействует"/>
+			<Waits ENG="waiting" localized="бездействует"/>
 			<Disabled ENG="disabled" localized="сломано"/>
-			<Producing ENG="Producing" localized="производит"/>
-			<Producing_Fin ENG="finished producing" localized="закончил производство"/>
+			<Producing ENG="Building" localized="производит"/>
+			<Producing_Fin ENG="finished building" localized="закончил производство"/>
 			<Moving ENG="moving" localized="перемещается"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Clearing ENG="Clearing" localized="убирает"/>
 			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
-			<Laying ENG="laying mines" localized="устанавливает мины"/>
+			<Laying ENG="placing mines" localized="устанавливает мины"/>		
 			<Greenhorn ENG="Greenhorn" localized="Молокосос"/>
 		        <Average ENG="Average" localized="Среднячок"/>
 			<Veteran ENG="Veteran" localized="Ветеран"/>
@@ -314,8 +343,15 @@
 			<Turn ENG="Turn" localized="Ход"/>
 			<Reserve ENG="Reserve" localized="Резерв"/>
 			<Surveying ENG="surveying" localized="георазведка"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and Exploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and Exploration Reloaded' для вступления в силу нового видеорежима"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
+			<Point ENG="point" localized="очко"/>
+			<Points ENG="points" localized="очки"/>
+			<EcoSphere ENG="eco-sphere" localized="эко-сфера"/>
+			<EcoSpheres ENG="eco-spheres" localized="эко-сферы"/>
+			<GameEndsAt ENG="Game ends at" localized="Играть заканчивается при"/>
+			<NoLimit ENG="Fight to the death!" localized="Биться насмерть!"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Мнгновенная гибель: первый игрок, набравший очки, побеждает!"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
@@ -349,7 +385,7 @@
 		<Unit ID="0 21" ENG="Missile Crawler" localized="РСЗО">Реактивная система залпового огня\n\nРакетная установка на легко бронированном трансопрте. Установка немного слабее и дороже стационарного варианта, однако её подвижность делает её более грозным оружием.</Unit>
 		<Unit ID="0 22" ENG="Missile Cruiser" localized="Ракетный корабль">Ракетный корабль\n\nСудно с мощной дальнобойной ракетной установкой.</Unit>
 		<Unit ID="0 23" ENG="Mobile Anti Aircraft" localized="Мобильная Зенитка">Мобильное Зенитное орудие\n\nЛегкое быстрое транспортное средство с пулемётом для борьбы с вражеской авиацией. В связи с недостаточной скоростью перемещения Зенитки являются оборонительной техникой, для преследования вражеской авиации лучше использовать истребители.</Unit>
-		<Unit ID="0 24" ENG="Pioneer" localized="Инженер">Инженер\n\nМалая строительная машина для возведения небольших зданий.</Unit>
+		<Unit ID="0 24" ENG="Engineer" localized="Инженер">Инженер\n\nМалая строительная машина для возведения небольших зданий.</Unit>
 		<Unit ID="0 25" ENG="Repair Unit" localized="Ремонтный юнит">Ремонтный юнит\n\nЛёгкое транспортное средство для ремонта техники и зданий. Для осуществления ремонта необходимо сырьё. Чем больше повреждения, тем больше сырья необходимо. Депо, доки, ангары и бараки также могут производить ремонт.</Unit>
 		<Unit ID="0 26" ENG="Scanner" localized="Мобильный сканер">Сканер\n\nМобильный радар. Медленнее и дороже Скаутов, однако имеет больший диапазон обнаружения. Сканер - идеальный вариант для обнаружения целей в помощь РСЗО.</Unit>
 		<Unit ID="0 27" ENG="Scout" localized="Скаут">Скаут\n\nВысокоскоростное транспортное средство для обнаружения вражеских подразделений. Может пермещаться по воде, но с меньшей скоростью чем по суше.\n\nОбладает большой скоростью и радиусом сканера, однако слаб в бою против большинства других боевых единиц.</Unit>
@@ -395,9 +431,13 @@
 		<Unit ID="1 32" ENG="Storage Unit" localized="Склад">Склад\n\nСлужит для хранения лишнего сырья.</Unit>
 		<Unit ID="1 33" ENG="Fuel Tank" localized="Топливная цистерна">Топливная цистерна\n\nСоужит для хранения топлива.</Unit>
 		<Unit ID="1 34" ENG="Training Hall" localized="Тренировочный зал">Тренировочный зал\n\nОбучает шпионов, которые могут саботировать работу вражеской техники или захватить её, а также пехоту для защиты от шпионов. Тренировочный зал требует колонистов из Жилищ и энергию для работы.</Unit>
+		<Unit ID="1 35" ENG="Eco-sphere" localized="Эко-сфера">Эко-сфера\n\nВаша основная задача - постройка эко-сфер. Каждая эко-сфера даёт одно очко колонизации за ход.\n\nЗащищайте эко-сферы - если одну из них уничтожат, Вы потеряете все очки, которые она принесла!</Unit>
+
 	</Units>
 	<Graphic>
+		<Dummy/>
 	</Graphic>
 	<Speech>
+		<Dummy/>
 	</Speech>
 </MAX_Language_File>
