@@ -433,6 +433,16 @@
 		<Unit ID="1 34" localized="Trainingshalle">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
 		<Unit ID="1 35" localized="Ökosphäre">Ökosphäre\n\nGewölbtes Gebäude, das eine erdenähnliche Umgebung enthält. Ihr ultimatives Ziel ist es, Ihre Kolonisten mit so vielen Ökosphären wie möglich zu versorgen. Jede Runde, die eine Ökosphäre läuft, verbessert Ihren Punktestand. Wenn sie zerstört wird, verlieren sie alle Punkte, die diese Ökosphäre bisher erzeugt hat. Ökosphären benötigen Kolonisten einer Behausung und Energie.</Unit>
 	</Units>
+	<Clans>
+		<Clan ID="0" localized="Auserwählte">Verbesserte Lufteinheiten</Clan>
+		<Clan ID="1" localized="Roter Pfad">Verbesserte Meereseinheiten</Clan>
+		<Clan ID="2" localized="Von Griffin">Verbesserte Aufklärung</Clan>
+		<Clan ID="3" localized="Ayer's Hand">Verbesserte Langstreckenwaffen</Clan>
+		<Clan ID="4" localized="Musashi">Verbesserte Panzerung</Clan>
+		<Clan ID="5" localized="Heilige Acht">Schnellere Fahrzeuge</Clan>
+		<Clan ID="6" localized="7 Ritter">Verbesserte Verteidugungsanlagen</Clan>
+		<Clan ID="7" localized="Axis Inc.">Extra Konstrukeure und Pioniere (Hängt vom Startgold ab) </Clan>
+	</Clans>
 	<Graphic>
 	</Graphic>
 	<Speech>
