@@ -2300,6 +2300,50 @@ static int LoadVehicles()
 	return 1;
 }
 
+void translateClanData(int num)
+{
+	TiXmlNode * pXmlNode = NULL;
+	cClan* clan = NULL;
+	cClanData& clanData = cClanData::instance ();
+	clan = clanData.getClan(num);
+
+	if (clan)
+	{
+		pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Clans" );
+		if(!pXmlNode)
+		{
+			Log.write("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
+		}
+		else
+		{
+			pXmlNode = pXmlNode->FirstChildElement();
+
+			while ( pXmlNode )
+			{
+				if(atoi(pXmlNode->ToElement()->Attribute( "ID" )) == num)
+				{
+					Log.write("Found clan translation for clan id "+iToStr(num), LOG_TYPE_DEBUG);
+					if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
+					{
+					 	clan->setName(pXmlNode->ToElement()->Attribute( "localized" ));
+					}
+					else 
+					{
+						clan->setName(pXmlNode->ToElement()->Attribute( "ENG" ));
+					}
+					clan->setDescription( pXmlNode->ToElement()->GetText() );
+				}
+				pXmlNode = pXmlNode->NextSibling();
+
+			}
+		}
+	}
+	else
+	{
+		Log.write("Can't find clan id "+iToStr(num)+" for translation", LOG_TYPE_WARNING);	
+	}
+}
+
 void translateUnitData(sID ID, bool vehicle)
 {
 	sUnitData *Data = NULL;
@@ -2330,7 +2374,7 @@ void translateUnitData(sID ID, bool vehicle)
 	}
 	if ( Data == NULL ) return;
 	pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Units" );
-	pXmlNode = pXmlNode->FirstChildElement();
+	pXmlNode = pXmlNode->FirstChildElement(); //FIXME: this will crash when pXmlNode is NULL -- beko
 	while ( pXmlNode != NULL)
 	{
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
@@ -2991,6 +3035,8 @@ static int LoadClans()
 				string descriptionString = descriptionNode->ToElement ()->GetText ();
 				newClan->setDescription (descriptionString);
 			}
+
+			translateClanData(newClan->getClanID());
 
 			for (TiXmlNode* changedUnitStatsNode = 0; (changedUnitStatsNode = clanNode->IterateChildren("ChangedUnitStat", changedUnitStatsNode));)
 			{

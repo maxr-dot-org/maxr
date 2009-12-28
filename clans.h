@@ -63,6 +63,8 @@ public:
 	void setName (std::string newName);
 	const std::string& getName () const { return name; }
 
+	int getClanID (void) const { return num; }
+
 	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
 	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
@@ -90,10 +92,9 @@ public:
 	//-------------------------------------------------------------------------
 private:
 	cClanData () {}
-
 	cList<cClan*> clans;
 };
 
 
-
 #endif // clansH
+

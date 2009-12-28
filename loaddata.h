@@ -113,6 +113,13 @@ string getXMLNodeString( TiXmlDocument &document, const char *attribut, const ch
 bool getXMLNodeBool( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL, const char *path3 = NULL );
 
 /**
+* Gets the name and (text) description for clan with internal id num from language file
+* If no translation exists a warning is issued and the existing strings are not altered 
+* @param num engine internal ID of clan sorted by oder of clans in clan.xml
+*/
+void translateClanData(int num);
+
+/**
 * Gets the name and the description for the unit from the selected language file
 * @param ID Id of the unit
 */

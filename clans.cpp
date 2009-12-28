@@ -210,3 +210,4 @@ cClan* cClanData::getClan (unsigned int num)
 
  return NULL;
 }
+
