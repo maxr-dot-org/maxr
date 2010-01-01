@@ -3112,9 +3112,9 @@ void cGameGUI::drawBaseUnits( int startX, int startY, int endX, int endY, int zo
 	int tileSize = Client->gameGUI.getTileSize();
 	SDL_Rect dest;
 	//draw rubble and all base buildings (without bridges)
-	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startX;
+	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 
-	for ( int y = startX; y <= endY; y++ )
+	for ( int y = startY; y <= endY; y++ )
 	{
 		dest.x = HUD_LEFT_WIDTH-zoomOffX+tileSize*startX;
 		int pos = y*map->size+startX;
