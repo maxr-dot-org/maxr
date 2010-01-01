@@ -2122,9 +2122,7 @@ void cBuilding::menuReleased()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
 			Client->gameGUI.toggleMouseInputMode( attackMode );
-			Client->gameGUI.updateMouseCursor ();
 			return;
 		}
 		nr++;
@@ -2329,14 +2327,19 @@ void cBuilding::menuReleased()
 	}
 }
 
+//-----------------------------------------------------------------------------
+void cBuilding::setMenuSelection()
+{
+	SDL_Rect dest = GetMenuSize();
+	selMenuNr = ( mouse->y - dest.y ) / 22;
+}
+
 //--------------------------------------------------------------------------
 /** draws the building menu */
 //--------------------------------------------------------------------------
 void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0;
-	static int LastSelMenu = -1;
-	bool bSelection = false;
 	SDL_Rect dest;
 	dest = GetMenuSize();
 
@@ -2349,23 +2352,16 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
-
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( selMenuNr == -1 && LastSelMenu == -1 ) || LastSelMenu == ( mouse->y - dest.y ) / 22 ) )
-	{
-		selMenuNr = ( mouse->y - dest.y ) / 22;
-	}
-	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && selMenuNr != -1 && selMenuNr != ( mouse->y - dest.y ) / 22 )
-	{
-		LastSelMenu = selMenuNr;
-		selMenuNr = -1;
-	}
+	
+	bool isMarked;
+	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
 	if ( typ->data.canAttack && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == attackMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2374,9 +2370,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Bauen:
 	if ( !typ->data.canBuild.empty() )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2385,9 +2381,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Verteilen:
 	if ( typ->data.canMineMaxRes > 0 && IsWorking )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Dist" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Dist" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2396,9 +2392,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == transferMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2412,9 +2408,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 				typ->data.canBuild.empty()
 			))
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Start" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Start" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2423,9 +2419,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Stop:
 	if ( IsWorking )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2434,9 +2430,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Sentry status:
 	if ( bSentryStatus || data.canAttack )
 	{
-		bSelection = selMenuNr == nr || bSentryStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2446,17 +2442,17 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( typ->data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
 
 		//load:
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode ==  loadMode;
+		isMarked = selMenuNr == nr || Client->gameGUI.mouseInputMode ==  loadMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -2465,8 +2461,8 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// research
 	if (typ->data.canResearch && IsWorking)
 	{
-		bSelection = (selMenuNr == nr);
-		drawContextItem (lngPack.i18n ("Text~Context~Research"), bSelection, dest.x, dest.y, buffer);
+		isMarked = markerPossible && selMenuNr == nr;
+		drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
@@ -2475,8 +2471,8 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if (data.convertsGold)
 	{
 		// update this
-		bSelection = (selMenuNr == nr);
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), bSelection, dest.x, dest.y, buffer);
+		isMarked = markerPossible && selMenuNr == nr;
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
@@ -2485,14 +2481,14 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
 	{
 		// Update all buildings of this type in this subbase
-		bSelection = (selMenuNr == nr);
-		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), bSelection, dest.x, dest.y, buffer);
+		isMarked = markerPossible && selMenuNr == nr;
+		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
 		// update this building
-		bSelection = (selMenuNr == nr);
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), bSelection, dest.x, dest.y, buffer);
+		isMarked = markerPossible && selMenuNr == nr;
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
@@ -2500,21 +2496,21 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	// Self destruct
 	if ( data.canSelfDestroy )
 	{
-		bSelection = (selMenuNr == nr);
-		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), bSelection, dest.x, dest.y, buffer);
+		isMarked = markerPossible && selMenuNr == nr;
+		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	bSelection = (selMenuNr == nr);
-	drawContextItem (lngPack.i18n ("Text~Context~Info"), bSelection, dest.x, dest.y, buffer);
+	isMarked = markerPossible && selMenuNr == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
 	dest.y += 22;
 	nr++;
 
 	// Done:
-	bSelection = (selMenuNr == nr);
-	drawContextItem (lngPack.i18n ("Text~Context~Done"), bSelection, dest.x, dest.y, buffer);
+	isMarked = markerPossible && selMenuNr == nr;
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
 //------------------------------------------------------------------------

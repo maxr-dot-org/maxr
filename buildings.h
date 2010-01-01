@@ -189,6 +189,7 @@ public:
 	int GetScreenPosY() const;
 	int CalcHelth(int damage);
 	void menuReleased();
+	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	int GetMenuPointAnz();
 	SDL_Rect GetMenuSize();

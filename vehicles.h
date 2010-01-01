@@ -188,6 +188,7 @@ public:
 	std::string getStatusStr();
 	int playStream();
 	void StartMoveSound();
+	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	void menuReleased ();
 	int GetMenuPointAnz();

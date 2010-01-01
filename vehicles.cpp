@@ -1222,7 +1222,11 @@ void cVehicle::menuReleased ()
 	int nr = 0, exeNr;
 	SDL_Rect dest = GetMenuSize();
 	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
-	if ( exeNr != selMenuNr ) return;
+	if ( exeNr != selMenuNr )
+	{
+		selMenuNr = -1;
+		return;
+	}
 
 	if ( moving || bIsBeeingAttacked ) return;
 
@@ -1233,10 +1237,7 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
 			Client->gameGUI.toggleMouseInputMode( attackMode );
-
-			Client->gameGUI.updateMouseCursor ();
 			return;
 		}
 		nr++;
@@ -1326,7 +1327,6 @@ void cVehicle::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
-
 			sendWantStartClear ( this );
 			return;
 		}
@@ -1475,33 +1475,31 @@ void cVehicle::menuReleased ()
 }
 
 //-----------------------------------------------------------------------------
+void cVehicle::setMenuSelection()
+{
+	SDL_Rect dest = GetMenuSize();
+	selMenuNr = ( mouse->y - dest.y ) / 22;
+}
+
+//-----------------------------------------------------------------------------
 /** Draws the vehicle menu: */
 //-----------------------------------------------------------------------------
 void cVehicle::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0;
-	static int LastselMenuNr = -1;
-	bool bSelection = false;
 	SDL_Rect dest = GetMenuSize();
 
 	if ( moving || bIsBeeingAttacked ) return;
 
-	if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && ( ( selMenuNr == -1 && LastselMenuNr == -1 ) || LastselMenuNr == ( mouse->y - dest.y ) / 22 ) )
-	{
-		selMenuNr = ( mouse->y - dest.y ) / 22;
-	}
-	else if ( mouseState && mouseState->leftButtonPressed && MouseOverMenu ( mouse->x, mouse->y ) && selMenuNr != -1 && selMenuNr != ( mouse->y - dest.y ) / 22 )
-	{
-		LastselMenuNr = selMenuNr;
-		selMenuNr = -1;
-	}
+	bool isMarked;
+	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
 	if ( data.canAttack && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == attackMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1510,9 +1508,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Bauen:
 	if ( !data.canBuild.empty() && !IsBuilding )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1521,9 +1519,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Transfer:
 	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == transferMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1532,16 +1530,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Auto
 	if ( data.canSurvey )
 	{
-		if ( ( autoMJob == NULL && selMenuNr == nr ) || ( autoMJob != NULL && selMenuNr != nr ) )
-		{
-			bSelection = true;
-		}
-		else
-		{
-			bSelection = false;
-		}
+		isMarked = ( markerPossible && selMenuNr == nr ) || autoMJob != NULL;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1550,9 +1541,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stop:
 	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1561,10 +1552,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Entfernen:
 	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 	{
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1573,9 +1563,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sentry:
 	if ( bSentryStatus || data.canAttack )
 	{
-		bSelection = selMenuNr == nr || bSentryStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1585,16 +1575,16 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	if ( data.storageUnitsMax > 0 )
 	{
 		// Aktivieren:
-		bSelection = selMenuNr == nr;
+		isMarked = markerPossible && selMenuNr == nr;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
 		// Laden:
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == loadMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == loadMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), isMarked, dest.x, dest.y, buffer );
 		dest.y += 22;
 		nr++;
 	}
@@ -1602,9 +1592,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Aufaden:
 	if ( data.canRearm && data.storageResCur >= 2 )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == muniActive;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == muniActive;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1613,9 +1603,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Reparatur:
 	if ( data.canRepair && data.storageResCur >= 2 )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == repairActive;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == repairActive;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Repair" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Repair" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1624,9 +1614,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen legen:
 	if ( data.canPlaceMines && data.storageResCur > 0 )
 	{
-		bSelection = selMenuNr == nr || LayMines;
+		isMarked = ( markerPossible && selMenuNr == nr ) || LayMines;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Seed" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Seed" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1635,9 +1625,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Minen sammeln:
 	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
 	{
-		bSelection = selMenuNr == nr || ClearMines;
+		isMarked = ( markerPossible && selMenuNr == nr ) || ClearMines;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1646,9 +1636,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Sabotage:
 	if ( data.canDisable && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == disableMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == disableMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
@@ -1657,23 +1647,23 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	// Stehlen:
 	if ( data.canCapture && data.shotsCur )
 	{
-		bSelection = selMenuNr == nr || Client->gameGUI.mouseInputMode == stealMode;
+		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == stealMode;
 
-		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), bSelection, dest.x, dest.y, buffer );
+		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), isMarked, dest.x, dest.y, buffer );
 
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
-	bSelection = selMenuNr == nr;
-	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), bSelection, dest.x, dest.y, buffer );
+	isMarked = markerPossible && selMenuNr == nr;
+	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), isMarked, dest.x, dest.y, buffer );
 	dest.y += 22;
 	nr++;
 
 	// Fertig:
-	bSelection = selMenuNr == nr;
-	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), bSelection, dest.x, dest.y, buffer );
+	isMarked = markerPossible && selMenuNr == nr;
+	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), isMarked, dest.x, dest.y, buffer );
 }
 
 //-----------------------------------------------------------------------------

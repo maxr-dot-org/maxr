@@ -1350,12 +1350,14 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 
 	if ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
-		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
+		if ( mouseState.leftButtonPressed ) selectedVehicle->setMenuSelection();
+		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
 		return;
 	}
 	else if ( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
 	{
-		if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
+		if ( mouseState.leftButtonPressed ) selectedBuilding->setMenuSelection();
+		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
 		return;
 	}
 
@@ -4143,6 +4145,8 @@ void cGameGUI::toggleMouseInputMode( eMouseInputMode mode )
 		mouseInputMode = normalInput;
 	else
 		mouseInputMode = mode;
+
+	updateMouseCursor();
 }
 
 void cGameGUI::checkMouseInputMode()
