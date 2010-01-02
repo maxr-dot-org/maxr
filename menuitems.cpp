@@ -234,6 +234,11 @@ bool cMenuItem::getIsClicked()
 	return isClicked;
 }
 
+bool cMenuItem::getWasClicked()
+{
+	return wasClicked;
+}
+
 cMenuItemContainer::cMenuItemContainer( int x, int y ) : cMenuItem ( x, y )
 {
 	position.w = 0;

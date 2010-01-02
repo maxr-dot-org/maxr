@@ -272,6 +272,8 @@ class cGameGUI : public cMenu
 
 	void updateStatusText();
 
+	void resetMiniMapOffset();
+
 	cMenuSlider *zoomSlider;
 
 	cMenuButton *endButton;
@@ -330,6 +332,8 @@ class cGameGUI : public cMenu
 	static void prevReleased( void *parent );
 	static void doneReleased( void *parent );
 
+	static void twoXReleased( void *parent );
+
 	static void changedMiniMap( void *parent );
 
 	static void miniMapClicked( void *parent );
@@ -379,7 +383,7 @@ public:
 	void setFog ( bool checked ) { fogButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
 	void setLock ( bool checked ) { lockButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
 	void setTNT ( bool checked ) { TNTButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setTwoX ( bool checked ) { twoXButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
+	void setTwoX ( bool checked ) { resetMiniMapOffset(); twoXButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
 
 	/**
 	* draws an effect

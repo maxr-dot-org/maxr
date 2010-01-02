@@ -295,6 +295,11 @@ public:
 	 */
 	bool getIsClicked();
 	/**
+	 * returns the status of the wasClicked variable.
+	 *@author alzi
+	 */
+	bool getWasClicked();
+	/**
 	 * returns whether the item is disabled or not.
 	 *@author alzi
 	 */

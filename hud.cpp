@@ -49,6 +49,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	frame = 0;
 	zoom = 1.0;
 	offX = offY = 0;
+	miniMapOffX = miniMapOffY = 0;
 	framesPerSecond = cyclesPerSecond = 0;
 	loadValue = 0;
 	panelTopGraphic = NULL, panelBottomGraphic = NULL;
@@ -115,7 +116,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	TNTButton->setClickedFunction ( &changedMiniMap );
 	menuItems.Add ( TNTButton );
 	twoXButton = new cMenuCheckButton ( 136,387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	twoXButton->setClickedFunction ( &changedMiniMap );
+	twoXButton->setClickedFunction ( &twoXReleased );
 	menuItems.Add ( twoXButton );
 
 	helpButton = new cMenuButton ( 20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP );
@@ -144,7 +145,6 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 
 	miniMapImage = new cMenuImage ( MINIMAP_POS_X, MINIMAP_POS_Y, generateMiniMapSurface() );
 	miniMapImage->setClickedFunction ( &miniMapClicked );
-	miniMapImage->setMovedOverFunction ( &miniMapMovedOver );
 	menuItems.Add ( miniMapImage );
 
 	coordsLabel = new cMenuLabel ( 265+32, (SettingsData.iScreenH-21)+3 );
@@ -417,32 +417,30 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 	SDL_Surface* minimapSurface = SDL_CreateRGBSurface( SDL_SWSURFACE, MINIMAP_SIZE, MINIMAP_SIZE, 32, 0, 0, 0, 0);
 	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );
 
-	//set getZoom() factor
-	int zoomFactor = 1;
-	if ( twoXChecked() ) zoomFactor = MINIMAP_ZOOM_FACTOR;
+	//set zoom factor
+	const int displayedMapWidth = (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / getZoom());
+	const int displayedMapHight = (int)((SettingsData.iScreenH - HUD_TOTAL_HIGHT) / getZoom());
+	const int zoomFactor = twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
-	//set drawing offset, to center the minimap on the screen position
-	int minimapOffsetX = 0, minimapOffsetY = 0;	//position of the upper left edge on the map
-	if ( zoomFactor > 1 )
+	if ( zoomFactor != 1 )
 	{
-		int centerPosX = (int) (offX / 64.0 + (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / ((int)(getZoom()*64.0) * 2));
-		int centerPosY = (int) (offY / 64.0 + (SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / ((int)(getZoom()*64.0) * 2));
-		minimapOffsetX = centerPosX - (map->size / (zoomFactor * 2));
-		minimapOffsetY = centerPosY - (map->size / (zoomFactor * 2));
+		if ( offX < miniMapOffX*64 ) miniMapOffX -= SettingsData.iScrollSpeed/10;
+		else if ( offX+displayedMapWidth > miniMapOffX*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffX += SettingsData.iScrollSpeed/10;
 
-		if ( minimapOffsetX < 0 ) minimapOffsetX = 0;
-		if ( minimapOffsetY < 0 ) minimapOffsetY = 0;
-		if ( minimapOffsetX > map->size - (map->size / zoomFactor) ) minimapOffsetX = map->size - (map->size / zoomFactor);
-		if ( minimapOffsetY > map->size - (map->size / zoomFactor) ) minimapOffsetY = map->size - (map->size / zoomFactor);
+		if ( offY < miniMapOffY*64 ) miniMapOffY -= SettingsData.iScrollSpeed/10;
+		else if ( offY+displayedMapHight > miniMapOffY*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffY += SettingsData.iScrollSpeed/10;
+
+		if ( miniMapOffX < 0 ) miniMapOffX = 0;
+		if ( miniMapOffY < 0 ) miniMapOffY = 0;
+		if ( miniMapOffX > map->size - (map->size / zoomFactor) ) miniMapOffX = map->size - (map->size / zoomFactor);
+		if ( miniMapOffY > map->size - (map->size / zoomFactor) ) miniMapOffY = map->size - (map->size / zoomFactor);
 	}
-	miniMapOffX = minimapOffsetX;
-	miniMapOffY = minimapOffsetY;
 
 	//draw the landscape
 	for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
 	{
 		//calculate the field on the map
-		int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+		int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
 		if ( terrainx >= map->size ) terrainx = map->size - 1;
 
 		//calculate the position within the terrain graphic (for better rendering of maps < 112)
@@ -450,7 +448,7 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 
 		for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
 		{
-			int terrainy =  (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+			int terrainy =  (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 			if ( terrainy >= map->size ) terrainy = map->size - 1;
 			int offsety  = ((miniMapY * map->size ) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
@@ -469,10 +467,10 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 		//draw the fog
 		for ( int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++ )
 		{
-			int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetX;
+			int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
 			for ( int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++ )
 			{
-				int terrainy = (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + minimapOffsetY;
+				int terrainy = (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
 				if ( !player->ScanMap[terrainx + terrainy * map->size] )
 				{
@@ -497,11 +495,11 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 
 		for ( int mapx = 0; mapx < map->size; mapx++ )
 		{
-			rect.x = ( (mapx - minimapOffsetX) * MINIMAP_SIZE * zoomFactor ) / map->size;
+			rect.x = ( (mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor ) / map->size;
 			if ( rect.x < 0 || rect.x >= MINIMAP_SIZE ) continue;
 			for ( int mapy = 0; mapy < map->size; mapy++ )
 			{
-				rect.y = ( (mapy - minimapOffsetY) * MINIMAP_SIZE * zoomFactor ) / map->size;
+				rect.y = ( (mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor ) / map->size;
 				if ( rect.y < 0 || rect.y >= MINIMAP_SIZE ) continue;
 
 				if ( !player->ScanMap[mapx + mapy * map->size] ) continue;
@@ -547,8 +545,8 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 
 	//draw the screen borders
 	int startx, starty, endx, endy;
-	startx = (int) ((((offX / 64.0) - minimapOffsetX) * MINIMAP_SIZE * zoomFactor) / map->size);
-	starty = (int) ((((offY / 64.0) - minimapOffsetY) * MINIMAP_SIZE * zoomFactor) / map->size);
+	startx = (int) ((((offX / 64.0) - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->size);
+	starty = (int) ((((offY / 64.0) - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->size);
 	endx = (int) ( startx + ((SettingsData.iScreenW - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
 	endy = (int) ( starty + ((SettingsData.iScreenH -  HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
 
@@ -1322,6 +1320,12 @@ void cGameGUI::handleMouseMove()
 	{
 		rightMouseBox.endX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
 		rightMouseBox.endY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+	}
+
+	// check minimap
+	if ( miniMapImage->getIsClicked() || miniMapImage->getWasClicked() )
+	{
+		miniMapClicked( this );
 	}
 }
 
@@ -2504,10 +2508,36 @@ void cGameGUI::doneReleased( void *parent )
 	}
 }
 
+void cGameGUI::twoXReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->resetMiniMapOffset();
+	gui->callMiniMapDraw();
+}
+
 void cGameGUI::changedMiniMap( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 	gui->callMiniMapDraw();
+}
+
+void cGameGUI::resetMiniMapOffset()
+{
+	const int zoomFactor = twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
+
+	if ( zoomFactor == 1 ) miniMapOffX = miniMapOffY = 0;
+	else
+	{
+		int centerPosX = (int) (offX / 64.0 + (SettingsData.iScreenW - 192.0) / (getTileSize() * 2));
+		int centerPosY = (int) (offY / 64.0 + (SettingsData.iScreenH -  32.0) / (getTileSize() * 2));
+		miniMapOffX = centerPosX - (map->size / (zoomFactor * 2));
+		miniMapOffY = centerPosY - (map->size / (zoomFactor * 2));
+
+		if ( miniMapOffX < 0 ) miniMapOffX = 0;
+		if ( miniMapOffY < 0 ) miniMapOffY = 0;
+		if ( miniMapOffX > map->size - (map->size / zoomFactor) ) miniMapOffX = map->size - (map->size / zoomFactor);
+		if ( miniMapOffY > map->size - (map->size / zoomFactor) ) miniMapOffY = map->size - (map->size / zoomFactor);
+	}
 }
 
 void cGameGUI::miniMapClicked( void *parent )
@@ -2519,31 +2549,21 @@ void cGameGUI::miniMapClicked( void *parent )
 
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 
-	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * gui->map->size * 64) / (MINIMAP_SIZE * (gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1) );
-	gui->offY = gui->miniMapOffY * 64 + ((y - MINIMAP_POS_Y) * gui->map->size * 64) / (MINIMAP_SIZE * (gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1) );
-	gui->offX -= (int)( (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (gui->getZoom() * 2.0) );
-	gui->offY -= (int)( (SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / (gui->getZoom() * 2.0) );
+	const int displayedMapWidth = (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / gui->getZoom());
+	const int displayedMapHight = (int)((SettingsData.iScreenH - HUD_TOTAL_HIGHT) / gui->getZoom());
+	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
+
+	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * gui->map->size * 64) / (MINIMAP_SIZE * zoomFactor );
+	gui->offY = gui->miniMapOffY * 64 + ((y - MINIMAP_POS_Y) * gui->map->size * 64) / (MINIMAP_SIZE * zoomFactor );
+	gui->offX -= displayedMapWidth / 2;
+	gui->offY -= displayedMapHight / 2;
 
 	//check map borders
 	gui->offX = max ( gui->offX, 0 );
 	gui->offY = max ( gui->offY, 0 );
-	gui->offX = min ( gui->offX, gui->map->size * 64 - (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / gui->getZoom()) );
-	gui->offY = min ( gui->offY, gui->map->size * 64 - (int)((SettingsData.iScreenH -  HUD_TOTAL_HIGHT) / gui->getZoom()) );
+	gui->offX = min ( gui->offX, gui->map->size * 64 - displayedMapWidth );
+	gui->offY = min ( gui->offY, gui->map->size * 64 - displayedMapHight );
 
-	//workaround for click and hold on the minimap while it is zoomed:
-	//we warp the mouse so that it stays over the position of the screen
-	//does not work as intended in some cases --Eiko
-	/*int lastMinimapOffsetX = gui->miniMapOffX;
-	int lastMinimapOffsetY = gui->miniMapOffY;
-	if ( lastMinimapOffsetX != minimapOffsetX )
-	{
-		x = MINIMAP_POS_X + MINIMAP_SIZE/2;
-	}
-	if ( lastMinimapOffsetY != minimapOffsetY )
-	{
-		y = MINIMAP_POS_Y - 1 + MINIMAP_SIZE/2;
-	}
-	SDL_WarpMouse( x, y );*/
 	lastX = x;
 	lastY = y;
 
