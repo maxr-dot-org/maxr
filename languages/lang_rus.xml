@@ -434,6 +434,16 @@
 		<Unit ID="1 35" ENG="Eco-sphere" localized="Эко-сфера">Эко-сфера\n\nВаша основная задача - постройка эко-сфер. Каждая эко-сфера даёт одно очко колонизации за ход.\n\nЗащищайте эко-сферы - если одну из них уничтожат, Вы потеряете все очки, которые она принесла!</Unit>
 
 	</Units>
+	<Clans>
+		<Clan ID="0" ENG="The Chosen" localized="Избранные">Лучшие воздушные юниты</Clan>
+		<Clan ID="1" ENG="Crimson Path" localized="Путь Кримсона">Лучшие морские юниты</Clan>
+		<Clan ID="2" ENG="Von Griffin" localized="Фон Гриффон">Лучшие шпионы</Clan>
+		<Clan ID="3" ENG="Ayer's Hand" localized="Рука Айера">Лучшая ракетная техника</Clan>
+		<Clan ID="4" ENG="Musashi" localized="Мусаси">Лучшая бронетехника</Clan>
+		<Clan ID="5" ENG="Sacred Eights" localized="Священнная восьмерка">Лучшие быстрые юниты</Clan>
+		<Clan ID="6" ENG="7 Knights" localized="Семь рыцарей">Лучшая защита</Clan>
+		<Clan ID="7" ENG="Axis Inc." localized="Ось">Лучшее производство (дополнительные инженеры и конструкторы)</Clan>
+	</Clans>	
 	<Graphic>
 		<Dummy/>
 	</Graphic>
