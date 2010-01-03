@@ -3057,6 +3057,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			sMenuPlayer *player = new sMenuPlayer ( "unidentified", 0, false, (int)players.Size(), message->popInt16() );
 			players.Add ( player );
 			sendRequestIdentification ( player );
+			playersBox->setPlayers ( &players );
 			draw();
 		}
 		break;
@@ -3092,6 +3093,8 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 
 			draw();
 			sendPlayerList( &players );
+			
+			playersBox->setPlayers ( &players );
 		}
 		break;
 	case MU_MSG_IDENTIFIKATION:
@@ -3349,6 +3352,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			}
 			actPlayer->ready = false;
 			chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" ) );
+			playersBox->setPlayers ( &players );
 			draw();
 		}
 		break;
@@ -3376,6 +3380,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				if ( player->nr == actPlayerNr ) actPlayer = player;
 				players.Add ( player );
 			}
+			playersBox->setPlayers ( &players );
 			draw();
 		}
 		break;
