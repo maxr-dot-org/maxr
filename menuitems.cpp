@@ -918,7 +918,7 @@ void cMenuCheckButton::renewButtonSurface()
 		position.h = src.h = 23;
 		src.x = checked ? src.w : 0;
 		src.y = 196;
-		textLimitWight = position.w-17;
+		textLimitWight = position.w-16;
 		break;
 	case CHECKBOX_HUD_INDEX_22:
 		src.x += src.w;
