@@ -250,7 +250,8 @@
 			<Go_Check ENG="Check for go"/>
 			<Missing_Settings ENG="Options, map or savegame are not set"/>
 			<Not_Ready ENG="is not ready"/>
-			<Wait_Until ENG="Please wait until %s has finished his turn."/>
+      <Server_Not_Running ENG="The server is not running."/>
+      <Wait_Until ENG="Please wait until %s has finished his turn."/>
 			<Deadline ENG="This turn will end in %s seconds."/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
 			<Lost_Connection ENG="Lost connection to %s."/>
@@ -268,7 +269,6 @@
 			<MapDL_Download ENG="map %s from server."/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
-			
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>

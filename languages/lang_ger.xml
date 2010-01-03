@@ -246,6 +246,7 @@
 			<Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Optionen, Karte oder Speicherstand sind nicht gesetzt"/>
 			<Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
+      <Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Das Spiel läuft bereits. Falls du die Verbindung zu diesem Spiel verloren hast, kannst du dich neu verbinden. Möchtest du dich neu verbinden?"/>
