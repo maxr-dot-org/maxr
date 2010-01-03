@@ -2917,6 +2917,12 @@ void cNetworkHostMenu::okReleased( void* parent )
 		menu->draw();
 		return;
 	}
+	else if ( network->getConnectionStatus() == 0 )
+	{
+		menu->chatBox->addLine ( lngPack.i18n("Text~Multiplayer~Server_Not_Running") );
+		menu->draw();
+		return;
+	}
 	menu->saveOptions ();
 	if( !menu->gameDataContainer.savegame.empty() )
 	{
