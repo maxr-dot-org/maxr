@@ -202,8 +202,15 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	infoTextAdditionalLabel->setDisabled ( true );
 	menuItems.Add ( infoTextAdditionalLabel );
 
-	selUnitStatusStr = new cMenuLabel ( 10, 40, "", FONT_LATIN_SMALL_WHITE );
+	selUnitStatusStr = new cMenuLabel ( 12, 40, "", FONT_LATIN_SMALL_WHITE );
 	menuItems.Add ( selUnitStatusStr );
+
+	selUnitNamePrefixStr = new cMenuLabel ( 12, 30, "", FONT_LATIN_SMALL_GREEN );
+	menuItems.Add ( selUnitNamePrefixStr );
+
+	selUnitNameEdit = new cMenuLineEdit ( 12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT );
+	selUnitNameEdit->setReturnPressedFunc ( unitNameReturnPressed );
+	menuItems.Add ( selUnitNameEdit );
 
 	updateTurn( 1 );
 }
@@ -649,6 +656,29 @@ void cGameGUI::setPlayer ( cPlayer *player_ )
 void cGameGUI::setUnitDetailsData ( cVehicle *vehicle, cBuilding *building )
 {
 	unitDetails->setSelection ( vehicle, building );
+
+	if ( vehicle )
+	{
+		selUnitNamePrefixStr->setText ( vehicle->getNamePrefix() );
+		selUnitNameEdit->setText ( vehicle->isNameOriginal() ? vehicle->data.name : vehicle->getName() );
+	}
+	else if ( building )
+	{
+		selUnitNamePrefixStr->setText ( building->getNamePrefix() );
+		selUnitNameEdit->setText ( building->isNameOriginal() ? building->data.name : building->getName() );
+	}
+	else
+	{
+		selUnitNamePrefixStr->setText ( "" );
+		selUnitNameEdit->setText ( "" );
+		selUnitNameEdit->setLocked ( true );
+		return;
+	}
+	
+	selUnitNameEdit->setLocked ( false );
+	int xPosition = 12+font->getTextWide ( selUnitNamePrefixStr->getText() + " ", FONT_LATIN_SMALL_GREEN );
+	selUnitNameEdit->move ( xPosition, 30 );
+	selUnitNameEdit->setSize ( 135-xPosition, 10 );
 }
 
 void cGameGUI::updateTurn ( int turn )
@@ -816,7 +846,7 @@ void cGameGUI::updateUnderMouseObject()
 	if ( overUnitField->getVehicles() != NULL )
 	{
 		//FIXME: displaying ownername to unit name may cause an overdraw on the infobox. This needs either a seperate infobox or a length check in the future. that goes for unitnames itself too. -- beko
-		unitNameLabel->setText ( overUnitField->getVehicles()->name + " (" +overUnitField->getVehicles()->owner->name+")");
+		unitNameLabel->setText ( overUnitField->getVehicles()->getDisplayName() + " (" +overUnitField->getVehicles()->owner->name+")");
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -831,7 +861,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getPlanes() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getPlanes()->name + " (" +overUnitField->getPlanes()->owner->name+")" );
+		unitNameLabel->setText ( overUnitField->getPlanes()->getDisplayName() + " (" +overUnitField->getPlanes()->owner->name+")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -846,7 +876,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getTopBuilding() != NULL )
 	{
-		unitNameLabel->setText ( overUnitField->getTopBuilding()->name + " (" +overUnitField->getTopBuilding()->owner->name+")"  );
+		unitNameLabel->setText ( overUnitField->getTopBuilding()->getDisplayName() + " (" +overUnitField->getTopBuilding()->owner->name+")"  );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -861,7 +891,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getBaseBuilding() && overUnitField->getBaseBuilding()->owner )
 	{
-		unitNameLabel->setText ( overUnitField->getBaseBuilding()->name + " (" + overUnitField->getBaseBuilding()->owner->name + ")" );
+		unitNameLabel->setText ( overUnitField->getBaseBuilding()->getDisplayName() + " (" + overUnitField->getBaseBuilding()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -1334,6 +1364,12 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 	{
 		if ( !menuItems[i]->isDisabled() && menuItems[i]->overItem( mouse->x, mouse->y ) ) return;
+	}
+
+	if ( selUnitNameEdit == activeItem )
+	{
+		selUnitNameEdit->setActivity ( false );
+		activeItem = NULL;
 	}
 
 	bool changeAllowed = !Client->bWaitForOthers;
@@ -1874,7 +1910,7 @@ void cGameGUI::doCommand( string cmd )
 			}
 
 			//since atoi is too stupid to report an error, do an extra check, when the number is 0
-			if ( playerNum == 0 ) return;
+			//if ( playerNum == 0 ) return;
 
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
@@ -2200,7 +2236,7 @@ bool cGameGUI::loadPanelGraphics()
 void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
 	// first check whether the end key was pressed
-	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && key.keysym.sym == KeysList.KeyEndTurn && !Client->bWaitForOthers )
+	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && activeItem != selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !Client->bWaitForOthers )
 	{
 		if ( key.state == SDL_PRESSED && !endButton->getIsClicked() ) endButton->clicked ( this );
 		else if ( key.state == SDL_RELEASED && endButton->getIsClicked() && !Client->bWantToEnd ) endButton->released ( this );
@@ -2630,6 +2666,18 @@ void cGameGUI::chatBoxReturnPressed( void *parent )
 	gui->chatBox->setActivity ( false );
 	gui->activeItem = NULL;
 	gui->chatBox->setDisabled ( true );
+}
+
+void cGameGUI::unitNameReturnPressed( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	string nameString = gui->selUnitNameEdit->getText();
+
+	if ( gui->selectedVehicle ) sendWantChangeUnitName ( nameString, gui->selectedVehicle->iID );
+	else if ( gui->selectedBuilding ) sendWantChangeUnitName ( nameString, gui->selectedBuilding->iID );
+
+	gui->selUnitNameEdit->setActivity ( false );
+	gui->activeItem = NULL;
 }
 
 void cGameGUI::preDrawFunction()
@@ -3816,7 +3864,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 {
 	string tmpString;
 
-	tmpString = "name: \"" + vehicle->name + "\" id: \"" + iToStr ( vehicle->iID ) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr ( vehicle->PosX ) + " posY: " + iToStr ( vehicle->PosY ) + " offX: " + iToStr ( vehicle->OffX ) + " offY: " + iToStr ( vehicle->OffY );
+	tmpString = "name: \"" + vehicle->getDisplayName() + "\" id: \"" + iToStr ( vehicle->iID ) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr ( vehicle->PosX ) + " posY: " + iToStr ( vehicle->PosY ) + " offX: " + iToStr ( vehicle->OffX ) + " offY: " + iToStr ( vehicle->OffY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3860,7 +3908,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 		for (unsigned int i = 0; i < vehicle->StoredVehicles.Size(); i++)
 		{
 			StoredVehicle = vehicle->StoredVehicles[i];
-			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
+			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->getDisplayName()+"\"", FONT_LATIN_SMALL_WHITE);
 			*y += 8;
 		}
 	}
@@ -3881,7 +3929,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 {
 	string tmpString;
 
-	tmpString = "name: \"" + building->name + "\" id: \"" + iToStr ( building->iID ) + "\" owner: \"" + ( building->owner?building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( building->PosX ) + " posY: " + iToStr ( building->PosY );
+	tmpString = "name: \"" + building->getDisplayName() + "\" id: \"" + iToStr ( building->iID ) + "\" owner: \"" + ( building->owner?building->owner->name:"<null>" ) + "\" posX: +" + iToStr ( building->PosX ) + " posY: " + iToStr ( building->PosY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -3912,7 +3960,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 		for (unsigned int i = 0; i < building->StoredVehicles.Size(); i++)
 		{
 			StoredVehicle = building->StoredVehicles[i];
-			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->name+"\"", FONT_LATIN_SMALL_WHITE);
+			font->showText(x, *y, " store " + iToStr(i)+": \""+StoredVehicle->getDisplayName()+"\"", FONT_LATIN_SMALL_WHITE);
 			*y+=8;
 		}
 	}

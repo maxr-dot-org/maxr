@@ -350,3 +350,11 @@ void sendWantSelfDestroy( cBuilding* building )
 	message->pushInt16( building->iID );
 	Client->sendNetMessage( message );
 }
+
+void sendWantChangeUnitName( string newName, int unitID )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CHANGE_UNIT_NAME );
+	message->pushString( newName );
+	message->pushInt16( unitID );
+	Client->sendNetMessage( message );
+}

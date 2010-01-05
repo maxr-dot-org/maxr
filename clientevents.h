@@ -247,5 +247,6 @@ void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int sav
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
 void sendWantSelfDestroy( cBuilding* building );
+void sendWantChangeUnitName( string newName, int unitID );
 
 #endif // clienteventsH

@@ -4668,7 +4668,7 @@ void cStorageMenu::resetInfos()
 			{
 				cVehicle *vehicle = storageList[index];
 				srcSurface = vehicle->typ->storage;
-				name = vehicle->name;
+				name = vehicle->getDisplayName();
 				if (  vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version )
 				{
 					name += "\n(" + lngPack.i18n ( "Text~Comp~Dated" ) + ")";

@@ -418,7 +418,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		targetVehicle->data.hitpointsCur = targetVehicle->CalcHelth( damage );
 		remainingHP = targetVehicle->data.hitpointsCur;
 		owner = targetVehicle->owner;
-		Log.write(" Server: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
+		Log.write(" Server: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 	}
 	else if ( targetBuilding )
 	{
@@ -441,7 +441,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		owner = targetBuilding->owner;
 		targetBuilding->hasBeenAttacked = true;
 
-		Log.write(" Server: Building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
+		Log.write(" Server: Building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 	}
 
 	//workaround
@@ -940,9 +940,9 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			isAir = ( targetVehicle->data.factorAir > 0 );
 			targetVehicle->data.hitpointsCur = remainingHP;
 
-			Log.write(" Client: vehicle '" + targetVehicle->name + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write(" Client: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 
-			name = targetVehicle->name;
+			name = targetVehicle->getDisplayName();
 			if ( targetVehicle->owner == Client->ActivePlayer ) ownUnit = true;
 
 			if (targetVehicle->data.hitpointsCur <= 0)
@@ -964,9 +964,9 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			unitID = targetBuilding->data.ID;
 			targetBuilding->data.hitpointsCur = remainingHP;
 
-			Log.write(" Client: building '" + targetBuilding->name + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write(" Client: building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 
-			name = targetBuilding->name;
+			name = targetBuilding->getDisplayName();
 			if ( targetBuilding->owner == Client->ActivePlayer ) ownUnit = true;
 
 			if ( targetBuilding->data.hitpointsCur <= 0 )

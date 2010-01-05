@@ -226,7 +226,6 @@ cVehicle *cPlayer::AddVehicle (int posx, int posy, sVehicle *v)
 	}
 	n->next=VehicleList;
 	VehicleList=n;
-	n->GenerateName();
 	drawSpecialCircle ( n->PosX,n->PosY,n->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 	if ( n->data.canDetectStealthOn&TERRAIN_GROUND ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectLandMap, (int)sqrt ( (double)MapSize ) );
 	if ( n->data.canDetectStealthOn&TERRAIN_SEA  ) drawSpecialCircle ( n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int)sqrt ( (double)MapSize )  );
@@ -291,7 +290,6 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 	}
 	Building->next = BuildingList;
 	BuildingList = Building;
-	Building->GenerateName();
 	if ( Building->data.scan )
 	{
 		if ( Building->data.isBig ) drawSpecialCircleBig ( Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int)sqrt ( (double)MapSize ) );

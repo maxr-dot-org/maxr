@@ -466,7 +466,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
 				}
-				Log.write( " Server: attacking vehicle " + targetVehicle->name + ", " + iToStr(targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG );
+				Log.write( " Server: attacking vehicle " + targetVehicle->getDisplayName() + ", " + iToStr(targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG );
 				if ( oldOffset != targetOffset ) Log.write(" Server: target offset changed from " + iToStr( oldOffset ) + " to " + iToStr( targetOffset ), cLog::eLOG_TYPE_NET_DEBUG );
 			}
 
@@ -1767,6 +1767,26 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			
 			sendSelfDestroy(building);
 			destroyUnit(building);
+		}
+		break;
+	case GAME_EV_WANT_CHANGE_UNIT_NAME:
+		{
+			cVehicle *vehicle;
+			cBuilding *building;
+
+			int unitID = message->popInt16();
+			if ( vehicle = getVehicleFromID( unitID ) )
+			{
+				vehicle->changeName ( message->popString() );
+				for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
+				sendUnitData ( vehicle, vehicle->owner->Nr );
+			}
+			else if ( building = getBuildingFromID( unitID ) )
+			{
+				building->changeName ( message->popString() );
+				for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ ) sendUnitData ( building, i );
+				sendUnitData ( building, building->owner->Nr );
+			}
 		}
 		break;
 	default:

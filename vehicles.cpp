@@ -87,6 +87,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsLocked = false;
 	bIsBeeingAttacked = false;
 	BigBetonAlpha = 0;
+	isOriginalName = true;
 
 	DamageFXPointX = random(7) + 26 - 3;
 	DamageFXPointY = random(7) + 26 - 3;
@@ -684,13 +685,11 @@ void cVehicle::Deselct ()
 //-----------------------------------------------------------------------------
 /** Generates the name of the vehicle based on the version */
 //-----------------------------------------------------------------------------
-void cVehicle::GenerateName ()
+string cVehicle::getNamePrefix ()
 {
-	string rome, tmp_name;
-	int nr, tmp;
-	string::size_type tmp_name_idx;
-	rome = "";
-	nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
+	int tmp;
+	string rome = "";
+	int nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
 
 	// genrate roman version number (correct until 899)
 
@@ -757,53 +756,25 @@ void cVehicle::GenerateName ()
 		rome += "I";
 	}
 
-	// concatenate the name
-	if ( name.length() == 0 )
-	{
-		// prefix
-		name = "MK ";
-		name += rome;
-		name += " ";
-		// object name
-		name += ( string ) data.name;
-	}
-	else
-	{
-		// check for MK prefix
-		tmp_name = name.substr(0,2);
-		if ( 0 == (int)tmp_name.compare("MK") )
-		{
-			// current name, without prefix
-			tmp_name_idx = name.find_first_of(" ", 4 );
-			if( tmp_name_idx != string::npos )
-			{
-				tmp_name = ( string )name.substr(tmp_name_idx);
-				// prefix
-				name = "MK ";
-				name += rome;
-				// name
-				name += tmp_name;
-			}
-			else
-			{
-				tmp_name = name;
-				// prefix
-				name = "MK ";
-				name += rome;
-				name += " ";
-				// name
-				name += tmp_name;
-			}
-		}
-		else
-		{
-			tmp_name = name;
-			name = "MK ";
-			name += rome;
-			name += " ";
-			name += tmp_name;
-		}
-	}
+	return "MK " + rome;
+}
+
+//-----------------------------------------------------------------------------
+/** Returns the name of the vehicle how it should be displayed */
+//-----------------------------------------------------------------------------
+string cVehicle::getDisplayName()
+{
+	return getNamePrefix() + " " + (isOriginalName ? data.name : name);
+}
+
+
+//-----------------------------------------------------------------------------
+/** changes the name of the unit and indicates it as undefault */
+//-----------------------------------------------------------------------------
+void cVehicle::changeName ( string newName )
+{
+	name = newName;
+	isOriginalName = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -2738,8 +2709,6 @@ void cVehicle::upgradeToCurrentVersion ()
 	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
 	data.buildCosts = upgradeVersion.buildCosts;
-
-	GenerateName();
 }
 
 //-----------------------------------------------------------------------------

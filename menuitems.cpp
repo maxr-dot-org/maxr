@@ -2751,7 +2751,11 @@ void cMenuListBox::addLine ( string line )
 	scrollBar->setMaximalScroll ( (int)lines.Size()*14 );
 }
 
-cMenuLineEdit::cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_ ) : cMenuItem ( x, y ), parentMenu(parentMenu_)
+cMenuLineEdit::cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_ ) :
+	cMenuItem (x, y),
+	parentMenu (parentMenu_),
+	fontType (fontType_),
+	lineEditType (lineEditType_)
 {
 	position.w = w;
 	position.h = h;
@@ -2768,17 +2772,20 @@ cMenuLineEdit::cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_ ) 
 
 void cMenuLineEdit::draw()
 {
-	font->showText ( position.x+6, position.y+3, text.substr ( startOffset, endOffset-startOffset ) );
-	if ( active && !readOnly ) font->showText ( position.x+6+font->getTextWide( text.substr( startOffset, cursorPos-startOffset ) ), position.y+3, "|" );
+	SDL_Rect offsetRect = getTextDrawOffset();
+	int cursorXOffset = font->getFontSize( fontType ) == FONT_SIZE_SMALL ? -1 : 0;
+
+	font->showText ( position.x+offsetRect.x, position.y+offsetRect.y, text.substr ( startOffset, endOffset-startOffset ), fontType );
+	if ( active && !readOnly ) font->showText ( position.x+offsetRect.x+cursorXOffset+font->getTextWide( text.substr( startOffset, cursorPos-startOffset ), fontType ), position.y+offsetRect.y, "|", fontType );
 }
 
 bool cMenuLineEdit::preClicked()
 {
 	if ( active )
 	{
-		int x = mouse->x - (position.x+6);
+		int x = mouse->x - (position.x+getTextDrawOffset().x);
 		int cursor = startOffset;
-		while ( font->getTextWide( text.substr ( startOffset, cursor-startOffset ) ) < x )
+		while ( font->getTextWide( text.substr ( startOffset, cursor-startOffset ), fontType ) < x )
 		{
 			doPosIncrease ( cursor, cursor );
 			if ( cursor >= endOffset )
@@ -2803,18 +2810,30 @@ void cMenuLineEdit::setTaking ( bool takeChars_, bool takeNumerics_ )
 	takeNumerics = takeNumerics_;
 }
 
-void cMenuLineEdit::setText ( string text_ )
+void cMenuLineEdit::resetTextPosition()
 {
-	text = text_;
 	startOffset = 0;
 	endOffset = (int)text.length();
 	cursorPos = endOffset;
-	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
+	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
+}
+
+void cMenuLineEdit::setText ( string text_ )
+{
+	text = text_;
+	resetTextPosition();
 }
 
 string cMenuLineEdit::getText ()
 {
 	return text;
+}
+
+void cMenuLineEdit::setSize( int w, int h )
+{
+	position.w = w;
+	position.h = h;
+	resetTextPosition();
 }
 
 void cMenuLineEdit::doPosIncrease( int &value, int pos )
@@ -2850,10 +2869,10 @@ void cMenuLineEdit::scrollLeft( bool changeCursor )
 	if ( cursorPos > 0 ) while ( cursorPos-1 < startOffset ) doPosDecrease ( startOffset );
 	else while ( cursorPos < startOffset ) doPosDecrease ( startOffset );
 
-	if ( font->getTextWide( text.substr( startOffset, text.length()-startOffset ) ) > position.w-getBorderSize() )
+	if ( font->getTextWide( text.substr( startOffset, text.length()-startOffset ), fontType ) > position.w-getBorderSize() )
 	{
 		endOffset = (int)text.length();
-		while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
+		while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 	}
 }
 
@@ -2862,7 +2881,7 @@ void cMenuLineEdit::scrollRight()
 	// makes the cursor go right
 	if ( cursorPos < (int)text.length() ) doPosIncrease ( cursorPos, cursorPos );
 	while ( cursorPos > endOffset ) doPosIncrease ( endOffset, endOffset );
-	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
+	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
 }
 
 void cMenuLineEdit::deleteLeft()
@@ -2897,9 +2916,31 @@ void cMenuLineEdit::deleteRight()
 	}
 }
 
+SDL_Rect cMenuLineEdit::getTextDrawOffset()
+{
+	SDL_Rect retRect = { 0, 0, 0, 0 };
+	switch ( lineEditType )
+	{
+	default:
+	case LE_TYPE_IN_BOX:
+		retRect.x = 6;
+		retRect.y = 3;
+		return retRect;
+	case LE_TYPE_JUST_TEXT:
+		return retRect;
+	}
+}
+
 int cMenuLineEdit::getBorderSize()
 {
-	return 12;
+	switch ( lineEditType )
+	{
+	default:
+	case LE_TYPE_IN_BOX:
+		return 12;
+	case LE_TYPE_JUST_TEXT:
+		return 0;
+	}
 }
 
 bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
@@ -2943,11 +2984,11 @@ bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
 			if ( cursorPos >= endOffset )
 			{
 				doPosIncrease ( endOffset, endOffset );
-				while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
+				while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosIncrease ( startOffset, startOffset );
 			}
 			else
 			{
-				if ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ) ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
+				if ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 				else doPosIncrease ( endOffset, cursorPos );
 			}
 			if ( wasKeyInput ) wasKeyInput ( parent );
@@ -3870,7 +3911,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 				SDL_BlitSurface(surface, &src, buffer, &dest);
 			}
 
-			font->showTextAsBlock ( nameDest, nextVehicle->name );
+			font->showTextAsBlock ( nameDest, nextVehicle->getDisplayName() );
 			unitDetails[count-minCount]->setSelection ( nextVehicle, NULL );
 
 			font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextVehicle->PosX ) + "," + iToStr ( nextVehicle->PosY ) );
@@ -3900,7 +3941,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 					SDL_BlitSurface(surface, &src, buffer, &dest);
 				}
 
-				font->showTextAsBlock ( nameDest, nextBuilding->name );
+				font->showTextAsBlock ( nameDest, nextBuilding->getDisplayName() );
 				unitDetails[count-minCount]->setSelection ( NULL, nextBuilding );
 
 				font->showText ( position.x+291, position.y+35+56*(count-minCount), iToStr ( nextBuilding->PosX ) + "," + iToStr ( nextBuilding->PosY ) );

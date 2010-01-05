@@ -109,6 +109,8 @@ struct sVehicle{
 //-----------------------------------------------------------------------------
 class cVehicle
 {
+	bool isOriginalName;	// indicates whether the name has been changed by the player or not
+	string name;			// name of the vehicle
 //-----------------------------------------------------------------------------
 public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
@@ -125,7 +127,6 @@ public:
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
 	bool groupSelected;
-	string name; // Name des Vehicles
 	cPlayer *owner;  // Eigentümer des Vehicles
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
@@ -174,7 +175,14 @@ public:
 	void draw(SDL_Rect screenPosition );
 	void Select();
 	void Deselct();
-	void GenerateName();
+
+	string getName() { return name; }
+	bool isNameOriginal() { return isOriginalName; }
+
+	string getNamePrefix();
+	string getDisplayName();
+	void changeName ( string newName );
+
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath

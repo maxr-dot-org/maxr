@@ -206,7 +206,12 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushInt16 ( (int)Vehicle->CommandoRank );
 	message->pushInt16 ( Vehicle->Disabled );
 	message->pushBool ( Vehicle->bIsBeeingAttacked );
-	message->pushString ( Vehicle->name );
+	if ( !Vehicle->isNameOriginal() )
+	{
+		message->pushString ( Vehicle->getName() );
+		message->pushBool( true );
+	}
+	else message->pushBool( false );
 
 	// Data for identifying the unit by the client
 	message->pushBool( Vehicle->data.isBig );
@@ -262,7 +267,12 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	message->pushBool ( Building->IsWorking );
 	message->pushInt16 ( Building->researchArea );
 	message->pushInt16 ( Building->Disabled );
-	message->pushString ( Building->name );
+	if ( !Building->isNameOriginal() )
+	{
+		message->pushString ( Building->getName() );
+		message->pushBool( true );
+	}
+	else message->pushBool( false );
 
 	// Data for identifying the unit by the client
 	message->pushInt16( Building->PosX );

@@ -574,8 +574,8 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	vehicle->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) )
-		vehicle->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) == 0 )
+		vehicle->changeName ( unitNode->FirstChildElement( "Name" )->Attribute ( "string" ) );
 
 	loadUnitValues ( unitNode, &vehicle->data );
 
@@ -704,8 +704,8 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 
 	unitNode->FirstChildElement( "ID" )->Attribute ( "num", &tmpinteger );
 	building->iID = tmpinteger;
-	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) )
-		building->name = unitNode->FirstChildElement( "Name" )->Attribute ( "string" );
+	if ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ) && strcmp ( unitNode->FirstChildElement( "Name" )->Attribute ( "notDefault" ), "1" ) == 0 )
+		building->changeName ( unitNode->FirstChildElement( "Name" )->Attribute ( "string" ) );
 
 	loadUnitValues ( unitNode, &building->data );
 
@@ -1379,10 +1379,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	addAttributeElement ( unitNode, "Owner", "num", iToStr ( Vehicle->owner->Nr ) );
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Vehicle->PosX ), "y", iToStr ( Vehicle->PosY ) );
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
-	string wasName = Vehicle->name;
-	Vehicle->GenerateName();
-	addAttributeElement ( unitNode, "Name", "string", Vehicle->name, "notDefault", ( !Vehicle->name.compare ( wasName ) ) ? "0" : "1" );
-	Vehicle->name = wasName;
+	addAttributeElement ( unitNode, "Name", "string", Vehicle->isNameOriginal() ? Vehicle->data.name : Vehicle->getName(), "notDefault", Vehicle->isNameOriginal() ? "0" : "1" );
 
 	// write the standard unit values which are the same for vehicles and buildings
 	writeUnitValues ( unitNode, &Vehicle->data, &Vehicle->owner->VehicleData[Vehicle->typ->nr] );
@@ -1457,10 +1454,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	addAttributeElement ( unitNode, "Position", "x", iToStr ( Building->PosX ), "y", iToStr ( Building->PosY ) );
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
-	string wasName = Building->name;
-	Building->GenerateName();
-	addAttributeElement ( unitNode, "Name", "string", Building->name, "notDefault", ( !Building->name.compare ( wasName ) ) ? "0" : "1" );
-	Building->name = wasName;
+	addAttributeElement ( unitNode, "Name", "string", Building->isNameOriginal() ? Building->data.name : Building->getName(), "notDefault", Building->isNameOriginal() ? "0" : "1" );
 
 	// write the standard values
 	writeUnitValues ( unitNode, &Building->data, &Building->owner->BuildingData[Building->typ->nr] );

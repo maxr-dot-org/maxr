@@ -54,6 +54,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	typ = b;
 	owner = Owner;
 	points = 0;
+	isOriginalName = true;
 
 	if ( Owner == NULL || b == NULL )
 	{
@@ -309,13 +310,11 @@ int cBuilding::refreshData ()
 //--------------------------------------------------------------------------
 /** generates the name for the building depending on the versionnumber */
 //--------------------------------------------------------------------------
-void cBuilding::GenerateName ()
+string cBuilding::getNamePrefix ()
 {
-	string rome, tmp_name;
-	int nr, tmp;
-	string::size_type tmp_name_idx;
-	rome = "";
-	nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
+	int tmp;
+	string rome = "";
+	int nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
 
 	// generate the roman versionnumber (correct until 899)
 
@@ -376,61 +375,25 @@ void cBuilding::GenerateName ()
 	while ( nr-- )
 		rome += "I";
 
-	// concatenate the name
-	// name=(string)data.name + " MK "+rome;
-/*
-	name = ( string ) data.name;
+	return "MK " + rome;
+}
 
-	name += " MK ";
+//-----------------------------------------------------------------------------
+/** Returns the name of the vehicle how it should be displayed */
+//-----------------------------------------------------------------------------
+string cBuilding::getDisplayName()
+{
+	return getNamePrefix() + " " + (isOriginalName ? data.name : name);
+}
 
-	name += rome;
-*/
-	if ( name.length() == 0 )
-	{
-		// prefix
-		name = "MK ";
-		name += rome;
-		name += " ";
-		// object name
-		name += ( string ) data.name;
-	}
-	else
-	{
-		// check for MK prefix
-		tmp_name = name.substr(0,2);
-		if ( 0 == (int)tmp_name.compare("MK") )
-		{
-			// current name, without prefix
-			tmp_name_idx = name.find_first_of(" ", 4 );
-			if( tmp_name_idx != string::npos )
-			{
-				tmp_name = ( string )name.substr(tmp_name_idx);
-				// prefix
-				name = "MK ";
-				name += rome;
-				// name
-				name += tmp_name;
-			}
-			else
-			{
-				tmp_name = name;
-				// prefix
-				name = "MK ";
-				name += rome;
-				name += " ";
-				// name
-				name += tmp_name;
-			}
-		}
-		else
-		{
-			tmp_name = name;
-			name = "MK ";
-			name += rome;
-			name += " ";
-			name += tmp_name;
-		}
-	}
+
+//-----------------------------------------------------------------------------
+/** changes the name of the unit and indicates it as undefault */
+//-----------------------------------------------------------------------------
+void cBuilding::changeName ( string newName )
+{
+	name = newName;
+	isOriginalName = false;
 }
 
 //--------------------------------------------------------------------------
@@ -2549,8 +2512,6 @@ void cBuilding::upgradeToCurrentVersion ()
 	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
 	data.damage = upgradeVersion.damage;
 	data.buildCosts = upgradeVersion.buildCosts;
-
-	GenerateName();
 }
 
 
@@ -2681,11 +2642,10 @@ void cBuilding::Select ()
 	}
 	Client->gameGUI.setVideoSurface( typ->video );
 
-	// Sound abspielen:
-	if ( !IsWorking )
-		PlayFX ( SoundData.SNDHudButton );
+	// play sound:
+	if ( !IsWorking ) PlayFX ( SoundData.SNDHudButton );
 
-	// Die Eigenschaften anzeigen:
+	// display the details:
 	Client->gameGUI.setUnitDetailsData ( NULL, this );
 }
 

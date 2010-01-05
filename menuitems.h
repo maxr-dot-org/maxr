@@ -419,6 +419,7 @@ protected:
 public:
 	cMenuLabel ( int x, int y, string text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
 	void setText( string text_ );
+	string getText() { return text; }
 	void setFontType ( eUnicodeFontType fontType_ );
 	/**
 	 * if centered is true the text will be centered at the in the constructor overgiven position.
@@ -1006,9 +1007,18 @@ public:
  */
 class cMenuLineEdit : public cMenuItem
 {
+public:
+	enum eLineEditType
+	{
+		LE_TYPE_IN_BOX,
+		LE_TYPE_JUST_TEXT
+	};
+
 protected:
 	void (*returnPressed)(void *);
 
+	eLineEditType lineEditType;
+	eUnicodeFontType fontType;
 	cMenu *parentMenu;
 	string text;
 	int cursorPos;
@@ -1017,6 +1027,7 @@ protected:
 	bool readOnly;
 	bool takeChars, takeNumerics;
 
+	void resetTextPosition();
 	void doPosIncrease( int &value, int pos );
 	void doPosDecrease( int &pos );
 	void scrollLeft( bool changeCursor = true );
@@ -1024,9 +1035,10 @@ protected:
 	void deleteLeft();
 	void deleteRight();
 
+	SDL_Rect getTextDrawOffset();
 	virtual int getBorderSize();
 public:
-	cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_ );
+	cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, eLineEditType lineEditType_ = LE_TYPE_IN_BOX );
 	void draw();
 
 	bool preClicked();
@@ -1041,6 +1053,7 @@ public:
 	void setTaking ( bool takeChars_, bool takeNumerics_ );
 	void setText ( string text_ );
 	string getText ();
+	void setSize( int w, int h );
 	bool handleKeyInput( SDL_keysym keysym, string ch, void *parent );
 
 	void setReturnPressedFunc( void (*returnPressed_)(void *) );

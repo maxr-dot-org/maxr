@@ -757,7 +757,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 
 			// make report
-			string message = AddedVehicle->name + " (" + Player->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
+			string message = AddedVehicle->getDisplayName() + " (" + Player->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
 			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, UnitID, iPosX, iPosY );
 			if ( random( 2 ) == 0 ) PlayVoice ( VoiceData.VOIDetected1 );
 			else PlayVoice ( VoiceData.VOIDetected2 );
@@ -931,7 +931,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 
-				Vehicle->name = message->popString();
+				if ( message->popBool() ) Vehicle->changeName ( message->popString() );
+
 				Vehicle->bIsBeeingAttacked = message->popBool();
 				bool bWasDisabled = Vehicle->Disabled > 0;
 				Vehicle->Disabled = message->popInt16();
@@ -956,7 +957,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					break;
 				}
 
-				Building->name = message->popString();
+				if ( message->popBool() ) Building->changeName ( message->popString() );
+
 				bool bWasDisabled = Building->Disabled > 0;
 				Building->Disabled = message->popInt16();
 				Building->researchArea = message->popInt16();

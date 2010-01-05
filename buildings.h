@@ -120,6 +120,8 @@ enum ResourceKind
 //--------------------------------------------------------------------------
 class cBuilding
 {
+	bool isOriginalName;	// indicates whether the name has been changed by the player or not
+	string name;			// name of the building
 public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
 	~cBuilding();
@@ -132,7 +134,6 @@ public:
 	cList<cPlayer*> DetectedByPlayerList;
 	int PosX,PosY;   // Position auf der Karte
 	sBuilding *typ;  // Typ des Buildings
-	string name; // Name des Buildings
 	cPlayer *owner;  // owner of the building
 	sUnitData data;    // Daten des Buildings
 	cBuilding *next,*prev; // pointers for the linked list
@@ -171,7 +172,14 @@ public:
 	void draw(SDL_Rect *dest);
 	void Select();
 	void Deselct();
-	void GenerateName();
+	
+	string getName() { return name; }
+	bool isNameOriginal() { return isOriginalName; }
+
+	string getNamePrefix();
+	string getDisplayName();
+	void changeName ( string newName );
+
 	int playStream();
 	std::string getStatusStr();
 	/**

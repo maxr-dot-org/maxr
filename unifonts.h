@@ -34,6 +34,14 @@ enum eUnicodeFontType
 	FONT_LATIN_SMALL_YELLOW,
 };
 
+/** diffrent sizes that fonttypes can have*/
+enum eUnicodeFontSize
+{
+	FONT_SIZE_NORMAL,
+	FONT_SIZE_BIG,
+	FONT_SIZE_SMALL,
+};
+
 /** diffrent ISO-8559-X charsets*/
 enum eUnicodeFontCharset
 {
@@ -137,6 +145,13 @@ class cUnicodeFont
 		 * @return Height of fonttype in pixels
 		 */
 		int getFontHeight( eUnicodeFontType fonttype = FONT_LATIN_NORMAL );
+		/**
+		 * Holds information of font size
+		 * @author alzi
+		 * @param eBitmapFontType enum of fonttype.
+		 * @return eUnicodeFontSize enum size of fonttype
+		 */
+		eUnicodeFontSize getFontSize ( eUnicodeFontType fonttype );
 
 		string shortenStringToSize ( string str, int size, eUnicodeFontType fonttype );
 	private:

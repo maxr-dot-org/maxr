@@ -322,6 +322,7 @@ class cGameGUI : public cMenu
 	cMenuLabel *infoTextLabel, *infoTextAdditionalLabel;
 
 	cMenuLabel *selUnitStatusStr;
+	cMenuLabel *selUnitNamePrefixStr;
 	cMenuLineEdit *selUnitNameEdit;
 
 	static void helpReleased( void *parent );
@@ -350,6 +351,8 @@ class cGameGUI : public cMenu
 	static void stopReleased( void *parent );
 
 	static void chatBoxReturnPressed( void *parent );
+
+	static void unitNameReturnPressed( void *parent );
 public:
 	cGameGUI( cPlayer *player_, cMap *map_ );
 	~cGameGUI();

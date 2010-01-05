@@ -582,6 +582,24 @@ int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 	return 0;
 }
 
+eUnicodeFontSize cUnicodeFont::getFontSize ( eUnicodeFontType fonttype )
+{
+	switch ( fonttype )
+	{
+	default:
+	case FONT_LATIN_NORMAL:
+		return FONT_SIZE_NORMAL;
+	case FONT_LATIN_BIG:
+	case FONT_LATIN_BIG_GOLD:
+		return FONT_SIZE_BIG;
+	case FONT_LATIN_SMALL_WHITE:
+	case FONT_LATIN_SMALL_RED:
+	case FONT_LATIN_SMALL_GREEN:
+	case FONT_LATIN_SMALL_YELLOW:
+		return FONT_SIZE_SMALL;
+	}
+}
+
 
 string cUnicodeFont::shortenStringToSize ( string str, int size, eUnicodeFontType fonttype )
 {
