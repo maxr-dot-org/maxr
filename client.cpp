@@ -1134,10 +1134,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( !bOK )
 			{
-				// TODO: translate
 				if ( !Vehicle->BuildPath && Vehicle->owner == ActivePlayer )
 				{
-					string msgString = "Buildposition is blocked";
+					string msgString = lngPack.i18n( "Text~Comp~Producing_Err");
 					addMessage( msgString );
 					ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 				}
@@ -1588,8 +1587,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				Log.write ( "Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR );
 			}
-			// TODO: translate
-			string msgString = Player->name + " has left the game.";
+			string msgString = lngPack.i18n ( "Text~Multiplayer~Player_Left", Player->name);
 			addMessage ( msgString );
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -1815,15 +1813,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					if (i == 0)
 					{
 						buildingName = building->data.name;
-						if (buildingsInMsg > 1)
-							buildingName.append(1,'s');
 					}
 				}
 				ostringstream os;
-				os << "Upgraded " << buildingsInMsg << " " << buildingName << " for " << totalCosts << " raw materials"; // TODO: translated? check original
-				string printStr(os.str());
-				addMessage (printStr);
-				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
+				os << lngPack.i18n ( "Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")"; 
+				string sTmp(os.str());
+				addMessage (sTmp);
+				ActivePlayer->addSavedReport ( sTmp, sSavedReportMessage::REPORT_TYPE_COMP );
 				if (scanNecessary)
 					ActivePlayer->DoScan();
 			}
@@ -1845,8 +1841,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					if (i == 0)
 					{
 						vehicleName = vehicle->data.name;
-						if (vehiclesInMsg > 1)
-							vehicleName = "units"; // TODO: translated
 					}
 				}
 				cBuilding* storingBuilding = getBuildingFromID(storingBuildingID);
@@ -1860,7 +1854,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 				ostringstream os;
-				os << "Upgraded " << vehiclesInMsg << " " << vehicleName << " for " << totalCosts << " raw materials"; // TODO: translated? check original
+				os << lngPack.i18n ( "Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
+
 				string printStr(os.str());
 				addMessage (printStr);
 				ActivePlayer->addSavedReport ( printStr, sSavedReportMessage::REPORT_TYPE_COMP );
