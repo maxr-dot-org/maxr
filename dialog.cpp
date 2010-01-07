@@ -619,19 +619,19 @@ cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_
 	cancelButton->setReleasedFunction ( &cancelReleased );
 	menuItems.Add ( cancelButton );
 
-	unitNameLabels[0] = new cMenuLabel ( position.x+70, position.y+105 );
+	unitNameLabels[0] = new cMenuLabel ( position.x+70, position.y+105, "", FONT_LATIN_SMALL_WHITE );
 	unitNameLabels[0]->setCentered ( true );
 	menuItems.Add ( unitNameLabels[0] );
 
-	unitNameLabels[1] = new cMenuLabel ( position.x+240, position.y+105 );
+	unitNameLabels[1] = new cMenuLabel ( position.x+240, position.y+105, "", FONT_LATIN_SMALL_WHITE );
 	unitNameLabels[1]->setCentered ( true );
 	menuItems.Add ( unitNameLabels[1] );
 
-	unitCargoLabels[0] = new cMenuLabel ( position.x+30, position.y+60 );
+	unitCargoLabels[0] = new cMenuLabel ( position.x+30, position.y+60, "", FONT_LATIN_SMALL_WHITE );
 	unitCargoLabels[0]->setCentered ( true );
 	menuItems.Add ( unitCargoLabels[0] );
 
-	unitCargoLabels[1] = new cMenuLabel ( position.x+280, position.y+60 );
+	unitCargoLabels[1] = new cMenuLabel ( position.x+280, position.y+60, "", FONT_LATIN_SMALL_WHITE );
 	unitCargoLabels[1]->setCentered ( true );
 	menuItems.Add ( unitCargoLabels[1] );
 
