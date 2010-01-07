@@ -224,8 +224,8 @@
 			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
 			<Player_Amount ENG="Amount of players" localized="Bitte wählt die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
-			<Player_Turn ENG="'s turn" localized=" ist am Zug"/>
-			<Player_Turn_End ENG=" ended turn" localized=" hat den Zug beendet"/>
+			<Player_Turn ENG="%s's turn" localized="%s ist am Zug"/>
+			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
 			<Network_Open ENG="Game open" localized="Spiel offen"/>

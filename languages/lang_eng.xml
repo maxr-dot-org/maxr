@@ -228,8 +228,8 @@
 			<Player_Wrong ENG="Missing a correct player's name"/>
 			<Player_MustHost ENG="must be host in turn based game!"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."/>
-			<Player_Turn ENG="'s turn"/>
-			<Player_Turn_End ENG=" ended turn"/>
+			<Player_Turn ENG="%s's turn"/>
+			<Player_Turn_End ENG="%s ended turn"/>
 			<Network_Error_Socket ENG="Error opening socket"/>
 			<Network_Error_Connect ENG="Could not connect to "/>
 			<Network_Open ENG="Game open"/>
