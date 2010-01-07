@@ -115,6 +115,8 @@ std::string cLanguage::i18n(std::string  szMainText, std::string szInsertText)
 		return szMainTextNew + szInsertText;
 	}
 	szMainTextNew.replace( iPos, 2, szInsertText );
+	Log.write( "Found no place holder in language string. Update language file!", cLog::eLOG_TYPE_WARNING );
+	Log.write( "*-> String in question is: \"" + szMainText+"\"", cLog::eLOG_TYPE_WARNING );
 	return szMainTextNew;
 }
 

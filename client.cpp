@@ -869,7 +869,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  )
 				{
-					string msgString = Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End") + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) );
+					string msgString = lngPack.i18n( "Text~Multiplayer~Player_Turn_End", Player->name) + ". " + lngPack.i18n( "Text~Multiplayer~Deadline", iToStr( iTimeDelay ) );
 					addMessage( msgString );
 					ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 				}
@@ -878,7 +878,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			else if ( iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1  )
 			{
-				string msgString = Player->name + " " + lngPack.i18n( "Text~Multiplayer~Player_Turn_End");
+				string msgString = lngPack.i18n( "Text~Multiplayer~Player_Turn_End", Player->name);
 				addMessage( msgString );
 				ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 			}
@@ -2179,7 +2179,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	SDL_BlitSurface ( sf,NULL,buffer,NULL );
 	SDL_BlitSurface ( sf,&scr,buffer,&scr );
 
-	cDialogOK okDialog ( ActivePlayer->name + lngPack.i18n( "Text~Multiplayer~Player_Turn") );
+	cDialogOK okDialog ( lngPack.i18n( "Text~Multiplayer~Player_Turn", ActivePlayer->name) );
 	okDialog.show();
 }
 
