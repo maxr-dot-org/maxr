@@ -3048,7 +3048,11 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			bool translationText = message->popBool();
 			string chatText = message->popString();
 			if ( translationText ) chatBox->addLine ( lngPack.i18n ( chatText ) );
-			else chatBox->addLine ( chatText );
+			else 
+			{
+				chatBox->addLine ( chatText );
+				PlayFX ( SoundData.SNDChat ); //play some chattersound if we got a player message
+			}
 			// send to other clients
 			for ( unsigned int i = 1; i < players.Size(); i++ )
 			{
