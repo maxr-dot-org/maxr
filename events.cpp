@@ -64,7 +64,7 @@ void cEventHandling::HandleEvents()
 				Log.write ( "Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO );
 				SDL_SaveBMP ( screen, screenshotfile.c_str() );
 				if (Client != 0)
-					Client->addMessage("Screenshot saved to " + screenshotfile); // TODO: translate
+					Client->addMessage(lngPack.i18n ( "Text~Comp~Screenshot_Done", screenshotfile ));
 			}
 			else
 			{
