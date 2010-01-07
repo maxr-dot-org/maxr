@@ -361,6 +361,7 @@
 			<GameEndsAt ENG="Game ends at"/>
 			<NoLimit ENG="Fight to the death!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!"/>
+			<Screenshot_Done ENG="Screenshot saved to %s"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s"/>

@@ -335,10 +335,10 @@
 			<Clearing_Fin ENG="clearing done" localized="Räumen abgeschlossen"/>
 			<Laying ENG="laying mines" localized="Lege Minen"/>
 			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
-      <Average ENG="Average" localized="Durchschnitt"/>
+			<Average ENG="Average" localized="Durchschnitt"/>
 			<Veteran ENG="Veteran" localized="Veteran"/>
-      <Expert ENG="Expert" localized="Experte"/>
-      <Elite ENG="Elite" localized="Elite"/>
+			<Expert ENG="Expert" localized="Experte"/>
+			<Elite ENG="Elite" localized="Elite"/>
 			<Description ENG="Description" localized="Beschreibung"/>
 			<Repeat ENG="Again" localized="Wieder"/>
 			<Dated ENG="dated" localized="veraltet"/>
@@ -350,14 +350,15 @@
 			<Surveying ENG="surveying" localized="vermesse"/>
 			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um Änderungen in der Bildschirmauflösung wirksam zu machen."/>
 			<ResolutionWarning localized="Achtung: Gelesene Auflösung ungültig"/>
-      <Point ENG="point" localized="Punkt"/>
-      <Points ENG="points" localized="Punkte"/>
-      <EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
-      <EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
-      <GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
-      <NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod"/>
-      <SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
-    </Comp>
+			<Point ENG="point" localized="Punkt"/>
+			<Points ENG="points" localized="Punkte"/>
+			<EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
+			<EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
+			<GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
+			<NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto nach %s gespeichert"/>
+	</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
