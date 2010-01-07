@@ -230,6 +230,7 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."/>
 			<Player_Turn ENG="%s's turn"/>
 			<Player_Turn_End ENG="%s ended turn"/>
+			<Player_Left ENG="%s has left the game"/>
 			<Network_Error_Socket ENG="Error opening socket"/>
 			<Network_Error_Connect ENG="Could not connect to "/>
 			<Network_Open ENG="Game open"/>
@@ -323,11 +324,14 @@
 			<Research_Speed ENG="Speed research completed"/>
 			<Research_Scan ENG="Scan research completed"/>
 			<Research_Costs ENG="Cost research completed"/>
+			<Upgrades_Done ENG="Upgraded"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s"/>
 			<Working ENG="working"/>
 			<Waits ENG="waiting"/>
 			<Disabled ENG="disabled"/>
 			<Producing ENG="Building"/>
 			<Producing_Fin ENG="finished building"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources"/>
 			<Moving ENG="moving"/>
 			<Sentry ENG="on sentry"/>
 			<Clearing ENG="Clearing"/>
