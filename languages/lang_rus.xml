@@ -8,9 +8,9 @@
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="jazz">
-			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2009-12-22 20:08"/>
+			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2010-01-10 12:30"/>
 		</Author>
-		<Game_Version time="2009-12-22 20:08"/>
+		<Game_Version time="2010-01-10 12:30"/>
 	</Header>
 	<Text>
 		<Main>
@@ -45,7 +45,7 @@
 			<Metal ENG="Materials" localized="Сырьё"/>
 			<Oil ENG="Fuel" localized="Топливо"/>
 			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
-			<Alien_Tech ENG="Alien Technology" localized="Техника пришельцев"/>
+			<Alien_Tech ENG="Alien technology" localized="Техника пришельцев"/>
 			<Resource ENG="Resource density"" localized="Ресурсы"/>
 			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
@@ -223,8 +223,9 @@
 			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="должен быть сервером в игре по очереди"/>
 			<Player_Amount ENG="Choose the amount of players please.  There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/>
-			<Player_Turn ENG="'s turn" localized=" ходит"/>
-			<Player_Turn_End ENG=" ended turn" localized=" закончил ход"/>
+			<Player_Turn ENG="%s's turn" localized="%s делает ход"/>
+			<Player_Turn_End ENG="%s ended turn" localized="%s завершил ход"/>
+			<Player_Left ENG="%s has left the game" localized="%s покидает игру"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Ошбика подключения к сокету"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Невозможно подключиться к "/>
 			<Network_Open ENG="Game open" localized="Игра началась"/>
@@ -245,6 +246,7 @@
 			<Go_Check ENG="Check for go" localized="Приготовьтесь к началу"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Опции, карта или сохранённая игра не выбраны"/>
 			<Not_Ready ENG="is not ready" localized="не готов"/>
+			<Server_Not_Running ENG="The server is not running." localized="Сервер не запущен"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Дождитесь завершения хода игроком %s"/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/>
@@ -318,17 +320,20 @@
 			<Research_Speed ENG="Speed research completed" localized="Улучшение скорости завершено"/>
 			<Research_Scan ENG="Scan research completed" localized="Улучшение радара завершено"/>
 			<Research_Costs ENG="Cost research completed" localized="Улучшение стоимости производства завершено"/>
+			<Upgrades_Done ENG="Upgraded" localized="Улучшенение завершено"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="(единиц типа %s)"/>
 			<Working ENG="working" localized="работает"/>
 			<Waits ENG="waiting" localized="бездействует"/>
 			<Disabled ENG="disabled" localized="сломано"/>
 			<Producing ENG="Building" localized="производит"/>
 			<Producing_Fin ENG="finished building" localized="закончил производство"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Точка возведения заблокирована или недостаточно ресурсов"/>
 			<Moving ENG="moving" localized="перемещается"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
 			<Clearing ENG="Clearing" localized="убирает"/>
 			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
-			<Laying ENG="placing mines" localized="устанавливает мины"/>		
+			<Laying ENG="placing mines" localized="устанавливает мины"/>	
 			<Greenhorn ENG="Greenhorn" localized="Молокосос"/>
 		        <Average ENG="Average" localized="Среднячок"/>
 			<Veteran ENG="Veteran" localized="Ветеран"/>
@@ -352,6 +357,7 @@
 			<GameEndsAt ENG="Game ends at" localized="Играть заканчивается при"/>
 			<NoLimit ENG="Fight to the death!" localized="Биться насмерть!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Мнгновенная гибель: первый игрок, набравший очки, побеждает!"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
