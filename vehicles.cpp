@@ -2072,6 +2072,7 @@ int cVehicle::CalcHelth ( int damage )
 void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs )
 {
 	// calculate building time and costs
+	int a, rounds, costs;
 
 	iTurboBuildRounds[0] = 0;
 	iTurboBuildRounds[1] = 0;
@@ -2088,46 +2089,39 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	}
 
 	//step 2x
-	if ( ( iTurboBuildRounds[0] > 1 ) && ( data.storageResCur >= iTurboBuildCosts[0] + 4 ) )
+	a = iTurboBuildCosts[0];
+	rounds = iTurboBuildRounds[0];
+	costs = iTurboBuildCosts[0];
+	
+	while ( a >= 4 && data.storageResCur >= costs + 4 )
 	{
-		iTurboBuildRounds[1] = iTurboBuildRounds[0];
-		iTurboBuildCosts[1] = iTurboBuildCosts[0];
+		rounds--;
+		costs += 4;
+		a -= 4;
+	}
 
-		while ( ( data.storageResCur >= iTurboBuildCosts[1] + 4 ) && ( iTurboBuildRounds[1] > 1 ) )
-		{
-			iTurboBuildRounds[1]--;
-			iTurboBuildCosts[1] += 4;
-
-			if ( iTurboBuildCosts[1] + 4 > 2*iTurboBuildCosts[0] )
-				break;
-		}
+	if ( rounds < iTurboBuildRounds[0] && iTurboBuildRounds[0])
+	{
+		iTurboBuildCosts[1] = costs;
+		iTurboBuildRounds[1] = rounds;
 	}
 
 	//step 4x
-	if (
-		( iTurboBuildRounds[1] > 1 )
-		&& ( iTurboBuildCosts[1] <= 48 )
-		&& ( data.storageResCur >= iTurboBuildCosts[1] + 8 )
-		&& ( data.storageResCur >= 24 )
-		)
+	a = iTurboBuildCosts[1];
+	rounds = iTurboBuildRounds[1];
+	costs = iTurboBuildCosts[1];
+	
+	while ( a >= 10 && data.storageResCur >= costs + 8 && costs < data.storageResMax - 2)
 	{
-		iTurboBuildRounds[2] = iTurboBuildRounds[1];
-		iTurboBuildCosts[2] = iTurboBuildCosts[1];
+		rounds--;
+		costs += (24 - min(16,a));
+		a -= 16;
+	}
 
-		while (
-			( data.storageResCur >= iTurboBuildCosts[2] + 8 )
-			&& ( iTurboBuildRounds[2] > 1 )
-			&& ( iTurboBuildCosts[2] <= 48 )
-			&& ( (iTurboBuildRounds[2]-1)*2 >= iTurboBuildRounds[1] )
-			&& ( data.storageResCur >= (iTurboBuildRounds[1] - iTurboBuildRounds[2] + 1) * 24 )
-			)
-		{
-			iTurboBuildRounds[2]--;
-			iTurboBuildCosts[2] += 8;
-
-		}
-		if ( (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24 > iTurboBuildCosts[2] )
-			iTurboBuildCosts[2] = (iTurboBuildRounds[1] - iTurboBuildRounds[2]) * 24;
+	if ( rounds < iTurboBuildRounds[1] && iTurboBuildRounds[1] )
+	{
+		iTurboBuildCosts[2] = costs;
+		iTurboBuildRounds[2] = rounds;
 	}
 }
 

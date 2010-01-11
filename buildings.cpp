@@ -1963,20 +1963,28 @@ void cBuilding::RotateTo ( int Dir )
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
 	//first calc costs for a new Vehical
+	
+	//1x
 	iTurboBuildCosts[0] = iVehicleCosts;
 
+	//2x
+	int a = iTurboBuildCosts[0];
 	iTurboBuildCosts[1] = iTurboBuildCosts[0];
 
-	while ( iTurboBuildCosts[1] + ( 2 * data.needsMetal ) <= 2*iTurboBuildCosts[0] )
+	while ( a >= 2 * data.needsMetal )
 	{
 		iTurboBuildCosts[1] += 2 * data.needsMetal;
+		a -= 2 * data.needsMetal;
 	}
 
+	//4x
 	iTurboBuildCosts[2] = iTurboBuildCosts[1];
+	a = iTurboBuildCosts[1];
 
-	while ( iTurboBuildCosts[2] + ( 4 * data.needsMetal ) <= 3*iTurboBuildCosts[0] )
+	while ( a >= 15 )
 	{
-		iTurboBuildCosts[2] += 4 * data.needsMetal;
+		iTurboBuildCosts[2] += (12 * data.needsMetal - min(a, 8*data.needsMetal));
+		a-= 8 * data.needsMetal;
 	}
 
 	//now this is a litle bit tricky ...
