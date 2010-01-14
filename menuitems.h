@@ -1297,6 +1297,8 @@ class cMenuReportsScreen : public cMenuItem
 	void drawScoreGraph();
 	void drawReportsScreen();
 
+	void updateScrollButtons();
+
 public:
 	cMenuReportsScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
 	~cMenuReportsScreen();

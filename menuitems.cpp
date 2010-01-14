@@ -3999,16 +3999,20 @@ void cMenuReportsScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_
 
 void cMenuReportsScreen::setType ( bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked )
 {
-	if ( unitsChecked ) screenType = REP_SCR_TYPE_UNITS;
-	else if ( disadvaChecked ) screenType = REP_SCR_TYPE_DISADVA;
-	else if ( scoreChecked ) screenType = REP_SCR_TYPE_SCORE;
-	else if ( reportsChecked ) screenType = REP_SCR_TYPE_REPORTS;
-
 	index = 0;
 	selected = -1;
 
+	if ( unitsChecked ) screenType = REP_SCR_TYPE_UNITS;
+	else if ( disadvaChecked ) screenType = REP_SCR_TYPE_DISADVA;
+	else if ( scoreChecked ) screenType = REP_SCR_TYPE_SCORE;
+	else if ( reportsChecked )
+	{
+		index = owner->savedReportsList.Size() / maxItems;
+		screenType = REP_SCR_TYPE_REPORTS;
+	}
+
 	// we use scrollUp to update the scroll buttons
-	scrollUp();
+	updateScrollButtons();
 }
 
 SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
@@ -4030,12 +4034,11 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sU
 	return surface;
 }
 
-void cMenuReportsScreen::scrollDown()
+void cMenuReportsScreen::updateScrollButtons()
 {
 	switch ( screenType )
 	{
 	case REP_SCR_TYPE_UNITS:
-		if ( goThroughUnits ( false ) ) index++;
 		parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 		break;
 	case REP_SCR_TYPE_DISADVA:
@@ -4045,30 +4048,29 @@ void cMenuReportsScreen::scrollDown()
 		parentMenu->scrollCallback ( false, false );
 		break;
 	case REP_SCR_TYPE_REPORTS:
-		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) index++;
 		parentMenu->scrollCallback ( index > 0, (index+1)*maxItems < (int)owner->savedReportsList.Size() );
 		break;
 	}
 }
 
-void cMenuReportsScreen::scrollUp()
+void cMenuReportsScreen::scrollDown()
 {
-	if ( index > 0 ) index--;
 	switch ( screenType )
 	{
 	case REP_SCR_TYPE_UNITS:
-		parentMenu->scrollCallback ( index > 0, goThroughUnits( false ) );
-		break;
-	case REP_SCR_TYPE_DISADVA:
-		parentMenu->scrollCallback ( false, false );
-		break;
-	case REP_SCR_TYPE_SCORE:
-		parentMenu->scrollCallback ( false, false );
+		if ( goThroughUnits ( false ) ) index++;
 		break;
 	case REP_SCR_TYPE_REPORTS:
-		parentMenu->scrollCallback ( index > 0, (index+1)*maxItems < (int)owner->savedReportsList.Size() );
+		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) index++;
 		break;
 	}
+	updateScrollButtons();
+}
+
+void cMenuReportsScreen::scrollUp()
+{
+	if ( index > 0 ) index--;
+	updateScrollButtons();
 }
 
 void cMenuReportsScreen::released( void *parent )
