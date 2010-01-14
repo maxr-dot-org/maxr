@@ -2766,10 +2766,9 @@ void cNetworkMenu::saveOptions()
 	}
 }
 
-void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
+void cNetworkMenu::changePlayerReadyState( sMenuPlayer *player )
 {
 	if ( player != actPlayer ) return;
-	PlayFX ( SoundData.SNDHudButton );
 	if ( !gameDataContainer.map && !triedLoadMap.empty() )
 	{
 		if ( !player->ready ) chatBox->addLine ( lngPack.i18n( "Text~Multiplayer~No_Map_No_Ready", triedLoadMap ) );
@@ -2777,6 +2776,23 @@ void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 	}
 	else player->ready = !player->ready;
 	playerSettingsChanged();
+}
+
+bool cNetworkMenu::enteredCommand( string text )
+{
+	if ( !text.empty() && text[0] == '/' )
+	{
+		if ( text.substr( 1, text.length() ).compare( "ready" ) == 0 ) changePlayerReadyState ( actPlayer );
+		return true;
+	}
+	return false;
+}
+
+void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
+{
+	if ( player != actPlayer ) return;
+	PlayFX ( SoundData.SNDHudButton );
+	changePlayerReadyState ( player );
 }
 
 void cNetworkMenu::backReleased( void* parent )
@@ -2790,14 +2806,14 @@ void cNetworkMenu::sendReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
 	string chatText = menu->chatLine->getText();
-	if ( !chatText.empty() )
+	if ( !chatText.empty() && !menu->enteredCommand( chatText ) )
 	{
 		chatText = menu->nameLine->getText() + ": " + chatText;
-		menu->chatLine->setText ( "" );
 		menu->chatBox->addLine ( chatText );
-		menu->draw();
 		sendMenuChatMessage ( chatText, NULL, menu->actPlayer->nr );
 	}
+	menu->chatLine->setText ( "" );
+	menu->draw();
 }
 
 void cNetworkMenu::nextColorReleased( void* parent )

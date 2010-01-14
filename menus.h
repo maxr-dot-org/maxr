@@ -756,6 +756,9 @@ protected:
 	void showMap();
 	void setColor( int color );
 	void saveOptions();
+	void changePlayerReadyState( sMenuPlayer *player );
+	bool enteredCommand( string text );
+
 public:
 	cNetworkMenu();
 	~cNetworkMenu();
