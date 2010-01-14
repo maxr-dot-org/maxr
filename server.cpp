@@ -3369,6 +3369,19 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 
 	sendVictoryConditions(turnLimit, scoreLimit, Player);
 
+	// send attackJobs
+	for ( unsigned int i = 0; i < AJobs.Size(); i++)
+	{
+		cServerAttackJob* ajob = AJobs[i];
+		for ( int unsigned ajobClient = 0; ajobClient < ajob->executingClients.Size(); ajobClient++ )
+		{
+			if ( ajob->executingClients[ajobClient] == Player )
+			{
+				ajob->sendFireCommand(Player);
+			}
+		}
+	}
+
 	Log.write(" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 

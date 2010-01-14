@@ -1762,6 +1762,25 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				neutralBuildings = nextBuilding;
 			}
 
+			//delete attack jobs
+			while ( attackJobs.Size() )
+			{
+				delete attackJobs[0];
+				attackJobs.Delete(0);
+			}
+
+			//delete FX effects, because a finished rocked animations would do a callback on an attackjob
+			while ( FXList.Size() )
+			{
+				delete FXList[0];
+				FXList.Delete(0);
+			}
+			while ( FXList.Size() )
+			{
+				delete FXList[0];
+				FXList.Delete(0);
+			}
+
 			// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
 			// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
 			// executed in normal situations and there are situations, when this happens.

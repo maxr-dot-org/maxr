@@ -54,6 +54,7 @@ public:
 	void lockTarget( int offset );
 	void lockTargetCluster();
 	void sendFireCommand();
+	void sendFireCommand( cPlayer* player );
 	void clientFinished( int playerNr );
 	void makeImpact(int x, int y );
 	void makeImpactCluster();
@@ -79,7 +80,7 @@ public:
 	enum eAJStates { UPDATE_AGRESSOR_DATA, ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;
 
-	/** prepares a mapspuare to be attacked
+	/** prepares a mapsquare to be attacked
 	* @author Eiko
 	*/
 	static void lockTarget( cNetMessage* message );

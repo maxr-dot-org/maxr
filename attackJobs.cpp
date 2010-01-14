@@ -96,11 +96,6 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 		lockTarget( targetOff );
 	}
 	sendFireCommand();
-
-	//do local actions
-	vehicle->data.shotsCur--;
-	vehicle->data.ammoCur--;
-	if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
 	vehicle->Attacking = true;
 
 }
@@ -120,9 +115,6 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	iMuzzleType = building->data.muzzleType;
 	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
 
-	//do local actions
-	building->data.shotsCur--;
-	building->data.ammoCur--;
 	building->Attacking = true;
 
 	//lock targets
@@ -303,40 +295,46 @@ void cServerAttackJob::sendFireCommand()
 		building->dir = fireDir;
 	}
 
-	bool bMuzzleIsRocketType = ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER );
-
+	//send the fire message to all clients who can see the attack
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
+		bool bMuzzleIsRocketType = ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER );
 
-		//send message to all player who can see the attacking unit
-		if ( player->ScanMap[iAgressorOff] )
+		if ( player->ScanMap[iAgressorOff] ||
+			(player->ScanMap[iTargetOff] && bMuzzleIsRocketType ))
 		{
+			sendFireCommand( player );
 			executingClients.Add(player);
-			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
-			if ( bMuzzleIsRocketType ) message->pushInt32( iTargetOff );
-			message->pushBool( bMuzzleIsRocketType );
-			message->pushChar( fireDir );
-			message->pushInt32( vehicle ? vehicle->iID : building->iID );
-			message->pushInt16( iID );
-			Server->sendNetMessage( message, player->Nr );
-		}
-		//if it is fireing a rocked, send also to players who can see the the target
-		//TODO: avoid sending agressor coordinates to players who can't see the attacking unit
-		else if ( bMuzzleIsRocketType && player->ScanMap[iTargetOff] )
-		{
-			executingClients.Add(player);
-			cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
-			message->pushChar( fireDir );
-			message->pushInt32( iTargetOff );
-			message->pushInt32( iAgressorOff );
-			message->pushChar ( vehicle?vehicle->data.muzzleType:building->data.muzzleType );
-			message->pushInt32( 0 ); //don't send ID, because agressor is not in sight
-			message->pushInt16( iID );
-
-			Server->sendNetMessage( message, player->Nr );
 		}
 	}
+}
+
+void cServerAttackJob::sendFireCommand( cPlayer* player )
+{
+	bool bMuzzleIsRocketType = ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER );
+	char fireDir = vehicle ? vehicle->dir : building->dir;
+	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
+
+	message->pushChar( fireDir );
+	if ( bMuzzleIsRocketType ) 
+	{
+		message->pushInt32( iTargetOff );
+	}
+	if ( player->ScanMap[iAgressorOff] )
+	{
+		message->pushInt32( vehicle ? vehicle->iID : building->iID );
+	}
+	else
+	{
+		//when the agressor is out of sight, send the position and muzzle type to the client
+		message->pushInt32( iAgressorOff );
+		message->pushChar ( vehicle?vehicle->data.muzzleType:building->data.muzzleType );
+		message->pushInt32( 0 );
+	}
+	message->pushInt16( iID );
+
+	Server->sendNetMessage( message, player->Nr );
 }
 
 void cServerAttackJob::clientFinished( int playerNr )
@@ -350,6 +348,19 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 	if (executingClients.Size() == 0)
 	{
+		//update agressor data
+		if ( vehicle )
+		{
+			vehicle->data.shotsCur--;
+			vehicle->data.ammoCur--;
+			if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
+		}
+		else
+		{
+			building->data.shotsCur--;
+			building->data.ammoCur--;
+		}
+
 		if ( vehicle && vehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
 		{
 			makeImpactCluster();
@@ -615,6 +626,8 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	wait = 0;
 	this->iID = message->popInt16();
 	iTargetOffset = -1;
+	vehicle = NULL;
+	building = NULL;
 
 	//check for duplicate jobs
 	for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++)
@@ -627,25 +640,31 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	}
 
 	int unitID = message->popInt32();
-	if ( unitID != 0 )	//agressor in sight?
+
+	//get muzzle type and agressor position
+	if ( unitID == 0 )
 	{
-
-		vehicle = Client->getVehicleFromID( unitID );
+		iMuzzleType = message->popChar();
+		if ( iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET && iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER && iMuzzleType != sUnitData::MUZZLE_TYPE_TORPEDO )
+		{
+			state = FINISHED;
+			return;
+		}
+		iAgressorOffset = message->popInt32();
+	}
+	else
+	{
+		vehicle  = Client->getVehicleFromID( unitID );
 		building = Client->getBuildingFromID( unitID );
-
 		if ( !vehicle && !building )
 		{
 			state = FINISHED;
 			Log.write(" Client: agressor with id " + iToStr( unitID ) + " not found", cLog::eLOG_TYPE_NET_ERROR );
 			return; //we are out of sync!!!
 		}
-		iFireDir = message->popChar();
-		bool bMuzzleIsRocketType = message->popBool();
-		if ( bMuzzleIsRocketType )
-		{
-			iTargetOffset = message->popInt32();
-		}
+
 		iMuzzleType = vehicle ? vehicle->data.muzzleType : building->data.muzzleType;
+
 		if ( vehicle )
 		{
 			iAgressorOffset = vehicle->PosX + vehicle->PosY * Client->Map->size;
@@ -655,21 +674,12 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 			iAgressorOffset = building->PosX + building->PosY * Client->Map->size;
 		}
 	}
-	else
-	{
-		iMuzzleType = message->popChar();
-		if ( iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET && iMuzzleType != sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER && iMuzzleType != sUnitData::MUZZLE_TYPE_TORPEDO )
-		{
-			state = FINISHED;
-			return;
-		}
-		iAgressorOffset = message->popInt32();
-		iTargetOffset = message->popInt32();
-		iFireDir = message->popChar();
-		vehicle = NULL;
-		building = NULL;
 
+	if ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET || iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER || iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO )
+	{
+		iTargetOffset = message->popInt32();
 	}
+	iFireDir = message->popChar();
 }
 
 void cClientAttackJob::rotate()
@@ -988,6 +998,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 
 	if ( playImpact && SettingsData.bAlphaEffects )
 	{
+		// TODO:  PlayFX ( SoundData.hit );
 		Client->addFX( fxHit, x*64 + offX, y*64 + offY, 0);
 	}
 
