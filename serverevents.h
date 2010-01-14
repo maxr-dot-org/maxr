@@ -274,7 +274,7 @@ void sendRequestIdentification ( int iSocket );
 * the server gives his ok to the reconnection
 *@author alzi alias DoctorDeath
 */
-void sendOKReconnect ( cPlayer *Player );
+void sendReconnectAnswer ( bool okay, int socketNumber, cPlayer *Player );
 void sendTurn ( int turn, cPlayer *Player );
 void sendHudSettings ( sHudStateContainer hudStates, cPlayer *Player );
 void sendStoreVehicle ( int unitid, bool vehicle, int storedunitid, int player );

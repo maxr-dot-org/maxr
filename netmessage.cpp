@@ -475,10 +475,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_IDENTIFICATION");
 	case GAME_EV_RECON_SUCESS:
 		return string("GAME_EV_RECON_SUCESS");
-	case GAME_EV_REQ_IDENT:
-		return string("GAME_EV_REQ_IDENT");
-	case GAME_EV_OK_RECONNECT:
-		return string("GAME_EV_OK_RECONNECT");
+	case GAME_EV_REQ_RECON_IDENT:
+		return string("GAME_EV_REQ_RECON_IDENT");
+	case GAME_EV_RECONNECT_ANSWER:
+		return string("GAME_EV_RECONNECT_ANSWER");
 	case GAME_EV_SPECIFIC_UNIT_DATA:
 		return string("GAME_EV_SPECIFIC_UNIT_DATA");
 	case GAME_EV_TURN:

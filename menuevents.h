@@ -40,8 +40,8 @@ enum eMenuMessages
 	MU_MSG_REQUEST_MAP,			// a player wants to download a map from the server
 	MU_MSG_LANDING_VEHICLES,	// the list of purchased vehicles
 	MU_MSG_UPGRADES,			// data of upgraded units
-	GAME_EV_REQ_IDENT,			// a server of a running game requests an identification
-	GAME_EV_OK_RECONNECT,		// a server gives his ok to the reconnect
+	GAME_EV_REQ_RECON_IDENT,	// a server of a running game requests an identification of a player who wants to reconnect
+	GAME_EV_RECONNECT_ANSWER,	// a server returns an answer for the reconnect
 	//messages for the landing selectiong menu:
 	MU_MSG_LANDING_COORDS,		// the selected landing coords of a client
 	MU_MSG_RESELECT_LANDING,	// informs a client that the player has to reselect the landing site

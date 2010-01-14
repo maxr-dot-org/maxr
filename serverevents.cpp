@@ -793,29 +793,35 @@ void sendDeletePlayer ( cPlayer *Player, int iPlayer )
 //-------------------------------------------------------------------------------------
 void sendRequestIdentification ( int iSocket )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_REQ_IDENT );
+	cNetMessage* message = new cNetMessage( GAME_EV_REQ_RECON_IDENT );
 	message->pushInt16 ( iSocket );
 	Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	network->sendTo( iSocket, message->iLength, message->serialize() );
 }
 
 //-------------------------------------------------------------------------------------
-void sendOKReconnect ( cPlayer *Player )
+void sendReconnectAnswer ( bool okay, int socketNumber, cPlayer *Player )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_OK_RECONNECT );
-	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	cNetMessage* message = new cNetMessage( GAME_EV_RECONNECT_ANSWER );
+	if ( okay && Player != NULL )
 	{
-		cPlayer const *SecondPlayer = (*Server->PlayerList)[i];
-		if ( Player == SecondPlayer ) continue;
-		message->pushInt16 ( SecondPlayer->Nr );
-		message->pushInt16 ( GetColorNr( SecondPlayer->color ) );
-		message->pushString ( SecondPlayer->name );
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+		{
+			cPlayer const *SecondPlayer = (*Server->PlayerList)[i];
+			if ( Player == SecondPlayer ) continue;
+			message->pushInt16 ( SecondPlayer->Nr );
+			message->pushInt16 ( GetColorNr( SecondPlayer->color ) );
+			message->pushString ( SecondPlayer->name );
+		}
+		message->pushInt16 ( (int)Server->PlayerList->Size() );
+		message->pushString ( Server->Map->MapName );
+		message->pushInt16 ( GetColorNr( Player->color ) );
+		message->pushInt16 ( Player->Nr );
 	}
-	message->pushInt16 ( (int)Server->PlayerList->Size() );
-	message->pushString ( Server->Map->MapName );
-	message->pushInt16 ( GetColorNr( Player->color ) );
-	message->pushInt16 ( Player->Nr );
-	Server->sendNetMessage( message, Player->Nr );
+	message->pushBool ( okay );
+
+	Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	network->sendTo( socketNumber, message->iLength, message->serialize() );
 }
 
 //-------------------------------------------------------------------------------------

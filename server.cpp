@@ -1280,15 +1280,18 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_IDENTIFICATION:
 		{
 			string playerName = message->popString();
-			for ( unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++ )
+			int socketNumber = message->popInt16();
+			unsigned int i;
+			for ( i = 0; i < DisconnectedPlayerList.Size(); i++ )
 			{
 				if ( !playerName.compare ( DisconnectedPlayerList[i]->name ) )
 				{
-					DisconnectedPlayerList[i]->iSocketNum = message->popInt16();
-					sendOKReconnect ( DisconnectedPlayerList[i] );
+					DisconnectedPlayerList[i]->iSocketNum = socketNumber;
+					sendReconnectAnswer ( true, socketNumber, DisconnectedPlayerList[i] );
 					break;
 				}
 			}
+			if ( i == DisconnectedPlayerList.Size() ) sendReconnectAnswer ( false, socketNumber, NULL );
 		}
 		break;
 	case GAME_EV_RECON_SUCESS:

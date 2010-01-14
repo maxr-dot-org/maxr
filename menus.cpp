@@ -1668,6 +1668,9 @@ void cClanSelectionMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
 	{
+		case MU_MSG_NEW_PLAYER:
+			sendReconnectAnswer ( false, message->popInt16(), NULL );
+			break;
 		case MU_MSG_CLAN:
 			gameDataContainer->receiveClan ( message );
 			break;
@@ -2248,6 +2251,9 @@ void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
 	{
+	case MU_MSG_NEW_PLAYER:
+		sendReconnectAnswer ( false, message->popInt16(), NULL );
+		break;
 	case MU_MSG_CLAN:
 		gameDataContainer->receiveClan ( message );
 		break;
@@ -2466,6 +2472,9 @@ void cLandingMenu::handleNetMessage( cNetMessage *message )
 	// will receive and handle the messages directly
 	switch ( message->iType )
 	{
+	case MU_MSG_NEW_PLAYER:
+		sendReconnectAnswer ( false, message->popInt16(), NULL );
+		break;
 	case MU_MSG_CLAN:
 		gameDataContainer->receiveClan ( message );
 		break;
@@ -2801,7 +2810,7 @@ void cNetworkMenu::backReleased( void* parent )
 	menu->saveOptions();
 	menu->terminate = true;
 }
-
+ 
 void cNetworkMenu::sendReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -3561,55 +3570,73 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			end = true;
 		}
 		break;
-	case GAME_EV_REQ_IDENT:
+	case GAME_EV_REQ_RECON_IDENT:
 		{
 			cDialogYesNo yesNoDialog(lngPack.i18n("Text~Multiplayer~Reconnect"));
-			if ( yesNoDialog.show() == 0  ) sendGameIdentification ( actPlayer, message->popInt16() );
-			else draw();
+			if ( yesNoDialog.show() == 0  )
+			{
+				sendGameIdentification ( actPlayer, message->popInt16() );
+			}
+			else
+			{
+				chatBox->addLine (lngPack.i18n("Text~Multiplayer~Connection_Terminated"));
+				network->close ( 0 );
+			}
+			draw();
 		}
 		break;
-	case GAME_EV_OK_RECONNECT:
+	case GAME_EV_RECONNECT_ANSWER:
 		{
-			actPlayer->nr = message->popInt16();
-			actPlayer->color = message->popInt16();
-			cMap *Map = new cMap;
-			if ( !Map->LoadMap ( message->popString() ) ) break;
-			gameDataContainer.map = Map;
-
-			int playerCount = message->popInt16();
-
-			gameDataContainer.players.Add ( new cPlayer ( actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr ) );
-			while ( playerCount > 1 )
+			if ( message->popBool() )
 			{
-				string playername = message->popString();
-				int playercolor = message->popInt16();
-				int playernr = message->popInt16();
-				gameDataContainer.players.Add ( new cPlayer ( playername, OtherData.colors[playercolor], playernr ) );
-				playerCount--;
-			}
+				actPlayer->nr = message->popInt16();
+				actPlayer->color = message->popInt16();
+				cMap *Map = new cMap;
+				if ( !Map->LoadMap ( message->popString() ) ) break;
+				gameDataContainer.map = Map;
 
-			bool changed = false;
-			int size = (int)gameDataContainer.players.Size();
-			do
-			{
-				changed = false;
-				for ( int i = 0; i < size-1; i++ )
+				int playerCount = message->popInt16();
+
+				gameDataContainer.players.Add ( new cPlayer ( actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr ) );
+				while ( playerCount > 1 )
 				{
-					if ( gameDataContainer.players[i]->Nr > gameDataContainer.players[i+1]->Nr )
-					{
-						cPlayer *temp = gameDataContainer.players[i+1];
-						gameDataContainer.players[i+1] = gameDataContainer.players[i];
-						gameDataContainer.players[i] = temp;
-						changed = true;
-					}
+					string playername = message->popString();
+					int playercolor = message->popInt16();
+					int playernr = message->popInt16();
+					gameDataContainer.players.Add ( new cPlayer ( playername, OtherData.colors[playercolor], playernr ) );
+					playerCount--;
 				}
-				size--;
-			}
-			while ( changed && size );
 
-			ActiveMenu = NULL;
-			gameDataContainer.runGame ( actPlayer->nr, true );
-			end = true;
+				bool changed = false;
+				int size = (int)gameDataContainer.players.Size();
+				do
+				{
+					changed = false;
+					for ( int i = 0; i < size-1; i++ )
+					{
+						if ( gameDataContainer.players[i]->Nr > gameDataContainer.players[i+1]->Nr )
+						{
+							cPlayer *temp = gameDataContainer.players[i+1];
+							gameDataContainer.players[i+1] = gameDataContainer.players[i];
+							gameDataContainer.players[i] = temp;
+							changed = true;
+						}
+					}
+					size--;
+				}
+				while ( changed && size );
+
+				ActiveMenu = NULL;
+				gameDataContainer.runGame ( actPlayer->nr, true );
+				end = true;
+			}
+			else
+			{
+				chatBox->addLine (lngPack.i18n("Text~Multiplayer~Reconnect_Forbidden"));
+				chatBox->addLine (lngPack.i18n("Text~Multiplayer~Connection_Terminated"));
+				network->close ( 0 );
+				draw();
+			}
 		}
 		break;
 	}
