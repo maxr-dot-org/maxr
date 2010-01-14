@@ -2277,7 +2277,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 			chatBox->setActivity ( true );
 		}
 	}
-	// scroll and getZoom() hotkeys
+	// scroll and zoom hotkeys
 	else if ( key.keysym.sym == KeysList.KeyScroll1 ) doScroll ( 1 );
 	else if ( key.keysym.sym == KeysList.KeyScroll3 ) doScroll ( 3 );
 	else if ( key.keysym.sym == KeysList.KeyScroll7 ) doScroll ( 7 );
@@ -2363,12 +2363,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		if ( selectedVehicle->autoMJob == NULL ) selectedVehicle->autoMJob = new cAutoMJob ( selectedVehicle );
-		else
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			delete selectedVehicle->autoMJob;
-			selectedVehicle->autoMJob = NULL;
+			selectedVehiclesGroup[i]->toggleAutoMoveJob();
 		}
+		selectedVehicle->toggleAutoMoveJob();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty() ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
@@ -2376,9 +2375,30 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && ( selectedVehicle->ClientMoveJob || ( selectedVehicle->IsBuilding && selectedVehicle->BuildRounds ) || ( selectedVehicle->IsClearing && selectedVehicle->ClearingRounds ) ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		if ( selectedVehicle->ClientMoveJob ) sendWantStopMove ( selectedVehicle->iID );
-		else if ( selectedVehicle->IsBuilding ) sendWantStopBuilding ( selectedVehicle->iID );
-		else if ( selectedVehicle->IsClearing ) sendWantStopClear ( selectedVehicle );
+		if ( selectedVehicle->ClientMoveJob )
+		{
+			for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+			{
+				if ( selectedVehiclesGroup[i]->ClientMoveJob ) sendWantStopMove ( selectedVehiclesGroup[i]->iID );
+			}
+			sendWantStopMove ( selectedVehicle->iID );
+		}
+		else if ( selectedVehicle->IsBuilding )
+		{
+			for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+			{
+				if ( selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds ) sendWantStopBuilding ( selectedVehiclesGroup[i]->iID );
+			}
+			sendWantStopBuilding ( selectedVehicle->iID );
+		}
+		else if ( selectedVehicle->IsClearing )
+		{
+			for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+			{
+				if ( selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds ) sendWantStopClear ( selectedVehiclesGroup[i] );
+			}
+			sendWantStopClear ( selectedVehicle );
+		}
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
@@ -2386,10 +2406,18 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX+selectedVehicle->PosY*map->size].getRubble() && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+		{
+			if ( selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX+selectedVehiclesGroup[i]->PosY*map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing  ) sendWantStartClear ( selectedVehiclesGroup[i] );
+		}
 		sendWantStartClear ( selectedVehicle );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && ( selectedVehicle->bSentryStatus || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+		{
+			if ( selectedVehiclesGroup[i]->bSentryStatus || selectedVehiclesGroup[i]->data.canAttack ) sendChangeSentry ( selectedVehiclesGroup[i]->iID, true );
+		}
 		sendChangeSentry ( selectedVehicle->iID, true );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->bSentryStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
@@ -2424,15 +2452,19 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->LayMines = !selectedVehicle->LayMines;
-		selectedVehicle->ClearMines = false;
-		sendMineLayerStatus( selectedVehicle );
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+		{
+			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0 ) selectedVehiclesGroup[i]->togglePlaceMinesStatus();
+		}
+		selectedVehicle->togglePlaceMinesStatus();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		selectedVehicle->ClearMines = !selectedVehicle->ClearMines;
-		selectedVehicle->LayMines = false;
-		sendMineLayerStatus ( selectedVehicle );
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+		{
+			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax ) selectedVehiclesGroup[i]->toggleClearMinesStatus();
+		}
+		selectedVehicle->toggleClearMinesStatus();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -2469,7 +2501,8 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
-		Client->addMessage ( lngPack.i18n ( "Text~Error_Messages~INFO_Not_Implemented" ) );
+		cDestructMenu destructMenu;
+		if ( destructMenu.show() == 0 ) sendWantSelfDestroy( selectedBuilding );
 	}
 	// Hotkeys for the hud
 	else if ( key.keysym.sym == KeysList.KeyFog ) setFog ( !fogChecked() );

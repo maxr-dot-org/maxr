@@ -3085,3 +3085,32 @@ void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Re
 	}
 	blittAlphaSurface ( src, srcrect, dest, destrect );
 }
+
+//-----------------------------------------------------------------------------
+void cVehicle::toggleAutoMoveJob()
+{
+	if ( !data.canSurvey ) return;
+
+	if ( autoMJob == NULL ) autoMJob = new cAutoMJob ( this );
+	else
+	{
+		delete autoMJob;
+		autoMJob = NULL;
+	}
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::togglePlaceMinesStatus()
+{
+	LayMines = !LayMines;
+	ClearMines = false;
+	sendMineLayerStatus( this );
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::toggleClearMinesStatus()
+{
+	ClearMines = !ClearMines;
+	LayMines = false;
+	sendMineLayerStatus( this );
+}

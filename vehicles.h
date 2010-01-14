@@ -291,6 +291,10 @@ public:
 	*/
 	bool isNextTo( int x, int y) const;
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
+
+	void toggleAutoMoveJob();
+	void togglePlaceMinesStatus();
+	void toggleClearMinesStatus();
 private:
 	/**
 	* draws the main image of the vehicle onto the passed surface
