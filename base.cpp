@@ -698,9 +698,9 @@ bool sSubBase::checkOil()
 	}
 
 	//temporary debug check
-	if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
-		 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
-		 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+	if ( getGoldProd() < getMaxAllowedGoldProd() ||
+		 getMetalProd() < getMaxAllowedMetalProd() ||
+		 getOilProd() < getMaxAllowedOilProd() )
 	{
 		Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
@@ -1016,9 +1016,9 @@ void sSubBase::addBuilding( cBuilding *b )
 	}
 
 	//temporary debug check
-	if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
-		 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
-		 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+	if ( getGoldProd() < getMaxAllowedGoldProd() ||
+		 getMetalProd() < getMaxAllowedMetalProd() ||
+		 getOilProd() < getMaxAllowedOilProd() )
 	{
 		Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
