@@ -176,6 +176,7 @@ public:
 	void moveVehicle();
 	void doEndMoveVehicle();
 	void calcNextDir();
+	void stop();
 };
 
 enum eEndMoveActionType

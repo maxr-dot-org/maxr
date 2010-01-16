@@ -473,6 +473,30 @@ cServerMoveJob::~cServerMoveJob()
 	Waypoints = NULL;
 }
 
+void cServerMoveJob::stop()
+{
+	//an already started movement step will be finished
+
+	//delete all waypoint of the movejob except the next one, so the vehicle stops on the next field
+	if ( Waypoints && Waypoints->next && Waypoints->next->next )
+	{
+		sWaypoint* wayPoint = Waypoints->next->next;
+		Waypoints->next->next = NULL;
+		while ( wayPoint )
+		{
+			sWaypoint* nextWayPoint = wayPoint->next;
+			delete wayPoint;
+			wayPoint = nextWayPoint;
+		}
+	}
+
+	//if the vehicle is not moving, it has to stop immediately
+	if ( !Vehicle->moving ) 
+	{
+		release();
+	}
+}
+
 bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 {
 	if ( message->iType != GAME_EV_MOVE_JOB_CLIENT ) return false;
