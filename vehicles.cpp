@@ -2100,7 +2100,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 		a -= 4;
 	}
 
-	if ( rounds < iTurboBuildRounds[0] && iTurboBuildRounds[0])
+	if ( rounds < iTurboBuildRounds[0] && rounds > 0 && iTurboBuildRounds[0])
 	{
 		iTurboBuildCosts[1] = costs;
 		iTurboBuildRounds[1] = rounds;
@@ -2111,14 +2111,17 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	rounds = iTurboBuildRounds[1];
 	costs = iTurboBuildCosts[1];
 	
-	while ( a >= 10 && data.storageResCur >= costs + 8 && costs < data.storageResMax - 2)
+	while ( a >= 10 && costs < data.storageResMax - 2)
 	{
+		int inc = 24 - min(16,a);
+		if ( data.storageResCur < inc ) break;
+
 		rounds--;
-		costs += (24 - min(16,a));
+		costs += inc;
 		a -= 16;
 	}
 
-	if ( rounds < iTurboBuildRounds[1] && iTurboBuildRounds[1] )
+	if ( rounds < iTurboBuildRounds[1] && rounds > 0 && iTurboBuildRounds[1] )
 	{
 		iTurboBuildCosts[2] = costs;
 		iTurboBuildRounds[2] = rounds;
