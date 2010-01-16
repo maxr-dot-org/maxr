@@ -77,7 +77,7 @@ public:
 	int wait;
 	bool mineExplosion;
 
-	enum eAJStates { UPDATE_AGRESSOR_DATA, ROTATING, PLAYING_MUZZLE, FINISHED };
+	enum eAJStates { ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;
 
 	/** prepares a mapsquare to be attacked
@@ -92,7 +92,6 @@ public:
 	void rotate();
 	void playMuzzle();
 	void sendFinishMessage();
-	void updateAgressorData();
 };
 
 

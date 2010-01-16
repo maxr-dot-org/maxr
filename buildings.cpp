@@ -1796,10 +1796,10 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( !data.canAttack )
 		return false;
 
-	if ( !data.shotsCur )
+	if ( data.shotsCur <= 0)
 		return false;
 
-	if ( !data.ammoCur )
+	if ( data.ammoCur <= 0)
 		return false;
 
 	if ( Attacking )

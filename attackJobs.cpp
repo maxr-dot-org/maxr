@@ -95,8 +95,13 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	{
 		lockTarget( targetOff );
 	}
-	sendFireCommand();
+
+	vehicle->data.shotsCur--;
+	vehicle->data.ammoCur--;
+	if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
 	vehicle->Attacking = true;
+
+	sendFireCommand();
 
 }
 
@@ -115,6 +120,8 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	iMuzzleType = building->data.muzzleType;
 	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
 
+	building->data.shotsCur--;
+	building->data.ammoCur--;
 	building->Attacking = true;
 
 	//lock targets
@@ -126,6 +133,7 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	{
 		lockTarget( targetOff );
 	}
+
 	sendFireCommand();
 
 	if ( building->data.explodesOnContact )
@@ -316,11 +324,15 @@ void cServerAttackJob::sendFireCommand( cPlayer* player )
 	char fireDir = vehicle ? vehicle->dir : building->dir;
 	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
 
+	message->pushInt16( vehicle ? vehicle->data.speedCur : 0);
+	message->pushInt16( vehicle ? vehicle->data.ammoCur  : building->data.ammoCur );
+	message->pushInt16( vehicle ? vehicle->data.shotsCur : building->data.shotsCur);
 	message->pushChar( fireDir );
 	if ( bMuzzleIsRocketType ) 
 	{
 		message->pushInt32( iTargetOff );
 	}
+
 	if ( player->ScanMap[iAgressorOff] )
 	{
 		message->pushInt32( vehicle ? vehicle->iID : building->iID );
@@ -348,19 +360,6 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 	if (executingClients.Size() == 0)
 	{
-		//update agressor data
-		if ( vehicle )
-		{
-			vehicle->data.shotsCur--;
-			vehicle->data.ammoCur--;
-			if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
-		}
-		else
-		{
-			building->data.shotsCur--;
-			building->data.ammoCur--;
-		}
-
 		if ( vehicle && vehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
 		{
 			makeImpactCluster();
@@ -598,13 +597,6 @@ void cClientAttackJob::handleAttackJobs()
 				Client->attackJobs.Delete(i);
 				break;
 			}
-		case UPDATE_AGRESSOR_DATA:
-			{
-				job->updateAgressorData();
-				job->state = PLAYING_MUZZLE;
-				job->playMuzzle();
-				break;
-			}
 		case PLAYING_MUZZLE:
 			{
 				job->playMuzzle();
@@ -680,6 +672,21 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		iTargetOffset = message->popInt32();
 	}
 	iFireDir = message->popChar();
+
+	//get remaining shots, ammo and movement points
+	if ( vehicle )
+	{
+		vehicle->data.shotsCur = message->popInt16();
+		vehicle->data.ammoCur = message->popInt16();
+		vehicle->data.speedCur = message->popInt16();
+	}
+	else if ( building )
+	{
+		building->data.shotsCur = message->popInt16();
+		building->data.ammoCur = message->popInt16();
+	}
+
+	Client->gameGUI.checkMouseInputMode();
 }
 
 void cClientAttackJob::rotate()
@@ -692,7 +699,7 @@ void cClientAttackJob::rotate()
 		}
 		else
 		{
-			state = UPDATE_AGRESSOR_DATA;
+			state = PLAYING_MUZZLE;
 		}
 	}
 	else if ( building )
@@ -703,12 +710,12 @@ void cClientAttackJob::rotate()
 		}
 		else
 		{
-			state = UPDATE_AGRESSOR_DATA;
+			state = PLAYING_MUZZLE;
 		}
 	}
 	else
 	{
-		state = UPDATE_AGRESSOR_DATA;
+		state = PLAYING_MUZZLE;
 	}
 }
 
@@ -898,23 +905,6 @@ void cClientAttackJob::sendFinishMessage()
 	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FINISHED );
 	message->pushInt16( iID );
 	Client->sendNetMessage( message );
-}
-
-void cClientAttackJob::updateAgressorData()
-{
-	if ( vehicle )
-	{
-		vehicle->data.shotsCur--;
-		vehicle->data.ammoCur--;
-		if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur -= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
-	}
-	else if ( building )
-	{
-		building->data.shotsCur--;
-		building->data.ammoCur--;
-	}
-
-	Client->gameGUI.checkMouseInputMode();
 }
 
 void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )

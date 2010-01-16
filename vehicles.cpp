@@ -1896,10 +1896,10 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 	if ( !data.canAttack )
 		return false;
 
-	if ( !data.shotsCur )
+	if ( data.shotsCur <= 0)
 		return false;
 
-	if ( !data.ammoCur )
+	if ( data.ammoCur <= 0)
 		return false;
 
 	if ( Attacking )
@@ -2424,6 +2424,7 @@ bool cVehicle::InSentryRange ()
 					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
+						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
 						if ( ServerMoveJob )
@@ -2442,6 +2443,7 @@ bool cVehicle::InSentryRange ()
 					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
+						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
 						if ( ServerMoveJob )
@@ -2469,6 +2471,7 @@ bool cVehicle::InSentryRange ()
 					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
+						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
 
 						if ( ServerMoveJob )
@@ -2487,6 +2490,7 @@ bool cVehicle::InSentryRange ()
 					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
+						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
 
 						if ( ServerMoveJob )
