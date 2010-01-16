@@ -192,7 +192,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
-		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size, true);
+		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 		if ( vehicle->IsBuilding )
 		{
 			if ( water != entry.water ) continue;
@@ -256,7 +256,8 @@ SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
 
 SDL_Surface* cDrawingCache::createNewEntry(cVehicle* vehicle)
 {
-	if ( !canCache(vehicle) ) return NULL;
+	if ( !canCache(vehicle) ) 
+		return NULL;
 
 	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
 	{
