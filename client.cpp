@@ -1251,6 +1251,15 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			SubBase->MaxEnergyProd = message->popInt16();
 			SubBase->EnergyNeed = message->popInt16();
 			SubBase->EnergyProd = message->popInt16();
+
+			//temporary debug check
+			if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
+				 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
+				 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+			{
+				Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
+			}
+
 		}
 		break;
 	case GAME_EV_BUILDLIST:

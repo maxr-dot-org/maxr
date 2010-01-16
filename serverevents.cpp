@@ -562,6 +562,14 @@ void sendStopBuild ( int iVehicleID, int iNewPos, int iPlayer  )
 //-------------------------------------------------------------------------------------
 void sendSubbaseValues ( sSubBase *SubBase, int iPlayer )
 {
+	//temporary debug check
+	if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
+		 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
+		 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+	{
+		Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
+	}
+
 	cNetMessage* message = new cNetMessage( GAME_EV_SUBBASE_VALUES );
 
 	message->pushInt16 ( SubBase->EnergyProd );

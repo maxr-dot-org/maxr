@@ -697,6 +697,13 @@ bool sSubBase::checkOil()
 		offlineGenerators.Delete(0);
 	}
 
+	//temporary debug check
+	if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
+		 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
+		 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+	{
+		Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
+	}
 
 	return oilMissing;
 };
@@ -1006,6 +1013,14 @@ void sSubBase::addBuilding( cBuilding *b )
 		{
 			HumanNeed += b->data.needsHumans;
 		}
+	}
+
+	//temporary debug check
+	if ( SubBase->getGoldProd() < SubBase->getMaxAllowedGoldProd() ||
+		 SubBase->getMetalProd() < SubBase->getMaxAllowedMetalProd() ||
+		 SubBase->getOilProd() < SubBase->getMaxAllowedOilProd() )
+	{
+		Log.write(" Server: Mine distribution values are not a maximum", cLog::eLOG_TYPE_NET_WARNING);
 	}
 }
 
