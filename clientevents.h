@@ -64,8 +64,10 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
 	GAME_EV_DEFEATED,				// a player has been defeated
+	GAME_EV_WAIT_RECON,				// a client has to wait for a reconnection
+	GAME_EV_ABORT_WAIT_RECON,		// a client has to finish waiting for a reconnection
 	GAME_EV_FREEZE,					// a client has to be freezed
-	GAME_EV_DEFREEZE,				// a client has to be defreezed
+	GAME_EV_UNFREEZE,				// a client has to be defreezed
 	GAME_EV_WAIT_FOR,				// a client has to wait for an other player to finish his turn
 	GAME_EV_DEL_PLAYER,				// a client has to delete a player
 	GAME_EV_TURN,					// a message with the current turn

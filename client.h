@@ -185,6 +185,17 @@ private:
 	*@param iID Id of the subbase
 	*/
 	sSubBase *getSubBaseFromID ( int iID );
+	/**
+	* freezes the client so that no input of him is possible anymore.
+	*@author alzi alias DoctorDeath
+	*/
+	void freeze();
+	/**
+	* unfreezes the client.
+	*@author alzi alias DoctorDeath
+	*/
+	void unfreeze();
+
 public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
