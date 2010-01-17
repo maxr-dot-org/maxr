@@ -200,9 +200,10 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 	if ( reconnect ) sendReconnectionSuccess ( player );
 	Client->gameGUI.show();
 
-	for ( unsigned int i = 0; i < players.Size(); i++ )
+	while ( players.Size() )
 	{
-		delete players[i];
+		delete players[0];
+		players.Delete(0);
 	}
 
 	delete Client;
