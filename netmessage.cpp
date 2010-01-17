@@ -467,8 +467,12 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_ABORT_WAITING");
 	case GAME_EV_FREEZE:
 		return string("GAME_EV_FREEZE");
-	case GAME_EV_DEFREEZE:
-		return string("GAME_EV_DEFREEZE");
+	case GAME_EV_UNFREEZE:
+		return string("GAME_EV_UNFREEZE");
+	case GAME_EV_WAIT_RECON:
+		return string("GAME_EV_WAIT_RECON");
+	case GAME_EV_ABORT_WAIT_RECON:
+		return string("GAME_EV_ABORT_WAIT_RECON");
 	case GAME_EV_DEL_PLAYER:
 		return string("GAME_EV_DEL_PLAYER");
 	case GAME_EV_IDENTIFICATION:

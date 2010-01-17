@@ -1575,13 +1575,16 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	case GAME_EV_FREEZE:
-		bWaitForOthers = true;
-		waitReconnect = true;
+		freeze();
+		break;
+	case GAME_EV_UNFREEZE:
+		unfreeze();
+		break;
+	case GAME_EV_WAIT_RECON:
+		freeze();
 		gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ) );
 		break;
-	case GAME_EV_DEFREEZE:
-		bWaitForOthers = false;
-		waitReconnect = false;
+	case GAME_EV_ABORT_WAIT_RECON:
 		gameGUI.setInfoTexts ( "", "" );
 		break;
 	case GAME_EV_DEL_PLAYER:
@@ -2463,13 +2466,29 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	}
 }
 
+//-------------------------------------------------------------------------------------
 int cClient::getTurn() const
 {
 	return iTurn;
 }
 
+//-------------------------------------------------------------------------------------
 void cClient::getVictoryConditions(int *turnLimit, int *scoreLimit) const
 {
 	*turnLimit = this->turnLimit;
 	*scoreLimit = this->scoreLimit;
+}
+
+//-------------------------------------------------------------------------------------
+void cClient::freeze()
+{
+	bWaitForOthers = true;
+	waitReconnect = true;
+}
+
+//-------------------------------------------------------------------------------------
+void cClient::unfreeze()
+{
+	bWaitForOthers = false;
+	waitReconnect = false;
 }

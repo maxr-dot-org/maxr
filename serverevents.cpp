@@ -769,6 +769,20 @@ void sendDefeated ( cPlayer *Player, int iPlayer )
 }
 
 //-------------------------------------------------------------------------------------
+void sendWaitReconnect ( int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_WAIT_RECON );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+//-------------------------------------------------------------------------------------
+void sendAbortWaitReconnect ( int iPlayer )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_ABORT_WAIT_RECON );
+	Server->sendNetMessage( message, iPlayer );
+}
+
+//-------------------------------------------------------------------------------------
 void sendFreeze ( int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_FREEZE );
@@ -784,9 +798,9 @@ void sendWaitFor ( int waitForPlayerNr, int iPlayer )
 }
 
 //-------------------------------------------------------------------------------------
-void sendDefreeze ( int iPlayer )
+void sendUnfreeze ( int iPlayer )
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_DEFREEZE );
+	cNetMessage* message = new cNetMessage( GAME_EV_UNFREEZE );
 	Server->sendNetMessage( message, iPlayer );
 }
 

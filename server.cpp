@@ -281,7 +281,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Player->iSocketNum = -1;
 
 			// freeze clients
-			sendFreeze ();
+			sendWaitReconnect ();
 			sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
 
 			DisconnectedPlayerList.Add ( Player );
@@ -1263,7 +1263,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				deletePlayer ( DisconnectedPlayerList[i] );
 				DisconnectedPlayerList.Delete( i );
 			}
-			sendDefreeze();
+			sendAbortWaitReconnect();
 			if ( bPlayTurns ) sendWaitFor ( iActiveTurnPlayerNr );
 		}
 		break;
@@ -1300,7 +1300,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			resyncPlayer ( Player );
 
-			sendDefreeze ();
+			sendAbortWaitReconnect ();
 			if ( bPlayTurns ) sendWaitFor ( iActiveTurnPlayerNr );
 		}
 		break;
@@ -2361,6 +2361,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		makeTurnEnd ();
 		// send report to player
 		sendTurnReport ( (*PlayerList)[0] );
+		sendUnfreeze();
 	}
 	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
 	{
@@ -2405,6 +2406,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		}
 		// send report to next player
 		sendTurnReport ( (*PlayerList)[iActiveTurnPlayerNr] );
+		sendUnfreeze();
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
@@ -2454,6 +2456,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			{
 				sendTurnReport ( (*PlayerList)[i] );
 			}
+			sendUnfreeze();
 		}
 		else
 		{
@@ -2516,6 +2519,7 @@ bool cServer::checkEndActions ( int iPlayer )
 	}
 	if ( sMessage.length() > 0 )
 	{
+		sendFreeze();
 		if ( iPlayer != -1 )
 		{
 			if ( iWantPlayerEndNum == -1 )
