@@ -2114,7 +2114,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	while ( a >= 10 && costs < data.storageResMax - 2)
 	{
 		int inc = 24 - min(16,a);
-		if ( data.storageResCur < inc ) break;
+		if ( costs + inc > data.storageResCur ) break;
 
 		rounds--;
 		costs += inc;
