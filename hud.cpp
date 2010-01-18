@@ -1811,6 +1811,20 @@ void cGameGUI::doScroll( int dir )
 	callMiniMapDraw();
 }
 
+cPlayer *cGameGUI::getPlayerFromName( string playerNameStr )
+{
+	if ( !Server ) return NULL;
+
+	//first try to find player by name
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	{
+		if ( (*Server->PlayerList)[i]->name.compare( playerNameStr ) == 0 ) return (*Server->PlayerList)[i];
+	}
+
+	//then by number
+	return Server->getPlayerFromNumber ( atoi ( playerNameStr.c_str() ) );
+}
+
 void cGameGUI::doCommand( string cmd )
 {
 	if ( cmd.compare( "/fps on" ) == 0 ) { showFPS = true; return;}
@@ -1857,25 +1871,11 @@ void cGameGUI::doCommand( string cmd )
 	{
 		if ( cmd.length() > 6 && Server )
 		{
-			int playerNum = -1;
-			//first try to find player by name
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-			{
-				if ( (*Server->PlayerList)[i]->name.compare( cmd.substr ( 6, cmd.length() )) == 0 )
-				{
-					playerNum = (*Server->PlayerList)[i]->Nr;
-				}
-			}
-			//then by number
-			if ( playerNum == -1 )
-			{
-				playerNum = atoi ( cmd.substr ( 6, cmd.length() ).c_str() );
-			}
+			cPlayer *Player = getPlayerFromName ( cmd.substr ( 6, cmd.length() ) );
+			
+			// server can not be kicked
+			if ( Player->Nr = 0 ) return;
 
-			//server cannot be kicked
-			if ( playerNum == 0 ) return;
-
-			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
 
 			// close the socket
@@ -1895,24 +1895,9 @@ void cGameGUI::doCommand( string cmd )
 			int playerNum = -1;
 			string playerStr = cmd.substr ( 9, cmd.find_first_of ( " ", 9 )-9 );
 			string creditsStr = cmd.substr ( cmd.find_first_of ( " ", 9 )+1, cmd.length() );
-			//first try to find player by name
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-			{
-				if ( (*Server->PlayerList)[i]->name.compare( playerStr ) == 0 )
-				{
-					playerNum = (*Server->PlayerList)[i]->Nr;
-				}
-			}
-			//then by number
-			if ( playerNum == -1 )
-			{
-				playerNum = atoi ( playerStr.c_str() );
-			}
+			
+			cPlayer *Player = getPlayerFromName ( playerStr );
 
-			//since atoi is too stupid to report an error, do an extra check, when the number is 0
-			//if ( playerNum == 0 ) return;
-
-			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
 
 			int credits = atoi ( creditsStr.c_str() );
@@ -1926,25 +1911,11 @@ void cGameGUI::doCommand( string cmd )
 	{
 		if ( cmd.length() > 12 && Server )
 		{
-			int playerNum = -1;
-			//first try to find player by name
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-			{
-				if ( (*Server->PlayerList)[i]->name.compare( cmd.substr ( 12, cmd.length() )) == 0 )
-				{
-					playerNum = (*Server->PlayerList)[i]->Nr;
-				}
-			}
-			//then by number
-			if ( playerNum == -1 )
-			{
-				playerNum = atoi ( cmd.substr ( 12, cmd.length() ).c_str() );
-			}
+			cPlayer *Player = getPlayerFromName ( cmd.substr ( 12, cmd.length() ) );
 
 			//server cannot be disconnected
-			if ( playerNum == 0 ) return;
+			if ( Player->Nr == 0 ) return;
 
-			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( !Player ) return;
 
 			//can not disconnect local players
@@ -2055,6 +2026,28 @@ void cGameGUI::doCommand( string cmd )
 			SelectedBuilding->data.ammoCur=SelectedBuilding->data.ammoMax;SelectedBuilding->ShowDetails();
 		}*/
 		return;
+	}
+	if ( cmd.substr( 0, 8 ).compare( "/freeze " ) == 0 )
+	{
+		if ( cmd.length() > 8 && Server )
+		{
+			cPlayer *Player = getPlayerFromName ( cmd.substr ( 8, cmd.length() ) );
+
+			if ( !Player ) return;
+
+			sendFreeze ( Player->Nr );
+		}
+	}
+	if ( cmd.substr( 0, 10 ).compare( "/unfreeze " ) == 0 )
+	{
+		if ( cmd.length() > 10 && Server )
+		{
+			cPlayer *Player = getPlayerFromName ( cmd.substr ( 10, cmd.length() ) );
+
+			if ( !Player ) return;
+
+			sendUnfreeze ( Player->Nr );
+		}
 	}
 }
 

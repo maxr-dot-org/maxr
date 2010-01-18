@@ -252,6 +252,12 @@ class cGameGUI : public cMenu
 	*/
 	void doCommand( string cmd );
 	/**
+	* returns the corresponding player to a string with his name or number
+	*@author alzi alias DoctorDeath
+	*@param playerNumStr a string with the name or the number of a player
+	*/
+	cPlayer *getPlayerFromName( string playerNameStr );
+	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
 	*@param iDir new direction
