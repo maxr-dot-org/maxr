@@ -1663,25 +1663,22 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
 				if ( !StoringVehicle ) break;
 				StoringVehicle->storeVehicle ( StoredVehicle, Map );
-
-				Client->gameGUI.checkMouseInputMode();
-				if ( StoredVehicle == gameGUI.getSelVehicle() )
-				{
-					gameGUI.deselectUnit();
-				}
 			}
 			else
 			{
 				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
 				if ( !StoringBuilding ) break;
 				StoringBuilding->storeVehicle ( StoredVehicle, Map );
-
-				Client->gameGUI.checkMouseInputMode();
-				if ( StoredVehicle == gameGUI.getSelVehicle() )
-				{
-					gameGUI.deselectUnit();
-				}
 			}
+
+			int mouseX, mouseY;
+			mouse->GetKachel ( &mouseX, &mouseY );
+			if ( StoredVehicle->PosX == mouseX && StoredVehicle->PosY == mouseY ) gameGUI.updateMouseCursor();
+
+			gameGUI.checkMouseInputMode();
+
+			if ( StoredVehicle == gameGUI.getSelVehicle() ) gameGUI.deselectUnit();
+
 			PlayFX ( SoundData.SNDLoad );
 		}
 		break;
@@ -2269,6 +2266,7 @@ void cClient::handleMoveJobs ()
 			else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.Delete ( i );
 			delete MoveJob;
+			if ( Vehicle == gameGUI.getSelVehicle() ) gameGUI.updateMouseCursor();
 			continue;
 		}
 		if ( MoveJob->bEndForNow )
@@ -2280,6 +2278,7 @@ void cClient::handleMoveJobs ()
 				Vehicle->moving = false;
 			}
 			ActiveMJobs.Delete ( i );
+			if ( Vehicle == gameGUI.getSelVehicle() ) gameGUI.updateMouseCursor();
 			continue;
 		}
 

@@ -960,6 +960,8 @@ void cGameGUI::selectUnit( cVehicle *vehicle )
 
 	vehicle->Select();
 	Client->iObjectStream = vehicle->playStream();
+
+	updateMouseCursor();
 }
 
 void cGameGUI::selectUnit( cBuilding *building )
@@ -974,6 +976,8 @@ void cGameGUI::selectUnit( cBuilding *building )
 
 	building->Select();
 	Client->iObjectStream = building->playStream();
+
+	updateMouseCursor();
 }
 
 void cGameGUI::deselectUnit()
@@ -992,6 +996,8 @@ void cGameGUI::deselectUnit()
 	}
 
 	mouseInputMode = normalInput;
+
+	updateMouseCursor();
 }
 
 void cGameGUI::setInfoTexts ( string infoText, string additionalInfoText )
@@ -1580,7 +1586,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		}
 		else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && mouseInputMode == loadMode )
 		{
-			if ( overVehicle )
+			if ( overVehicle && selectedBuilding->canLoad ( overVehicle, false ) )
 			{
 				if ( selectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overVehicle->iID );
 				else
