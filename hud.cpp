@@ -591,7 +591,22 @@ void cGameGUI::setOffsetPosition ( int x, int y )
 {
 	offX = x;
 	offY = y;
-	doScroll ( 0 );
+
+	checkOffsetPosition();
+}	
+	
+void cGameGUI::checkOffsetPosition ()
+{
+	offX = max ( offX, 0 );
+	offY = max ( offY, 0 );
+
+	int maxX = map->size*64-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom());
+	int maxY = map->size*64-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom());
+	offX = min ( offX, maxX );
+	offY = min ( offY, maxY );
+
+	callMiniMapDraw();
+	updateMouseCursor();
 }
 
 void cGameGUI::setZoom( float newZoom, bool setScroller )
@@ -617,7 +632,7 @@ void cGameGUI::setZoom( float newZoom, bool setScroller )
 	if ( SettingsData.bPreScale ) scaleSurfaces();
 	scaleColors();
 
-	doScroll ( 0 );
+	checkOffsetPosition();
 }
 
 float cGameGUI::getZoom()
@@ -1767,48 +1782,43 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 
 void cGameGUI::doScroll( int dir )
 {
-	int step;
-	step = SettingsData.iScrollSpeed;
+	int step = SettingsData.iScrollSpeed;
+	int newOffX = offX;
+	int newOffY = offY;
+
 	switch ( dir )
 	{
 		case 1:
-			offX -= step;
-			offY += step;
+			newOffX -= step;
+			newOffY += step;
 			break;
 		case 2:
-			offY += step;
+			newOffY += step;
 			break;
 		case 3:
-			offX += step;
-			offY += step;
+			newOffX += step;
+			newOffY += step;
 			break;
 		case 4:
-			offX -= step;
+			newOffX -= step;
 			break;
 		case 6:
-			offX += step;
+			newOffX += step;
 			break;
 		case 7:
-			offX -= step;
-			offY -= step;
+			newOffX -= step;
+			newOffY -= step;
 			break;
 		case 8:
-			offY -= step;
+			newOffY -= step;
 			break;
 		case 9:
-			offX += step;
-			offY -= step;
+			newOffX += step;
+			newOffY -= step;
 			break;
 	}
 
-	if ( offX < 0 ) offX = 0;
-	if ( offY < 0 ) offY = 0;
-	int maxX = map->size*64-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom());
-	int maxY = map->size*64-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom());
-	if ( offX > maxX ) offX = maxX;
-	if ( offY > maxY ) offY = maxY;
-
-	callMiniMapDraw();
+	setOffsetPosition ( newOffX, newOffY );
 }
 
 cPlayer *cGameGUI::getPlayerFromName( string playerNameStr )
@@ -2588,16 +2598,10 @@ void cGameGUI::miniMapClicked( void *parent )
 	gui->offX -= displayedMapWidth / 2;
 	gui->offY -= displayedMapHight / 2;
 
-	//check map borders
-	gui->offX = max ( gui->offX, 0 );
-	gui->offY = max ( gui->offY, 0 );
-	gui->offX = min ( gui->offX, gui->map->size * 64 - displayedMapWidth );
-	gui->offY = min ( gui->offY, gui->map->size * 64 - displayedMapHight );
-
 	lastX = x;
 	lastY = y;
 
-	gui->doScroll ( 0 );
+	gui->checkOffsetPosition();
 }
 
 void cGameGUI::miniMapMovedOver( void *parent )

@@ -425,6 +425,7 @@ public:
 	void setEndButtonLock( bool locked );
 
 	void setOffsetPosition ( int x, int y );
+	void checkOffsetPosition ();
 	int getOffsetX() { return offX; }
 	int getOffsetY() { return offY; }
 
