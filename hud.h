@@ -39,6 +39,8 @@
 #define HUD_BOTTOM_HIGHT	14
 #define HUD_TOTAL_HIGHT		(HUD_TOP_HIGHT+HUD_BOTTOM_HIGHT)
 
+#define MAX_SAVE_POSITIONS	4
+
 struct sHudStateContainer
 {
 	bool tntChecked;
@@ -166,7 +168,7 @@ class cGameGUI : public cMenu
 	sMouseBox rightMouseBox;
 	sMouseState savedMouseState;
 	/** Saved positions for hotkeys F5-F8 */
-	sHudPosition savedPositions[4];
+	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
 	SDL_Surface *generateSurface();
 	SDL_Surface *generateMiniMapSurface();
@@ -279,6 +281,9 @@ class cGameGUI : public cMenu
 	void updateStatusText();
 
 	void resetMiniMapOffset();
+
+	void savePosition( int slotNumber );
+	void jumpToSavedPos ( int slotNumber );
 
 	cMenuSlider *zoomSlider;
 

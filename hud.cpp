@@ -2284,46 +2284,14 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	// position handling hotkeys
 	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle ) selectedVehicle->Center();
 	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding ) selectedBuilding->Center();
-	else if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT )
-	{
-		savedPositions[0].offsetX = offX;
-		savedPositions[0].offsetY = offY;
-	}
-	else if ( key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT )
-	{
-		savedPositions[1].offsetX = offX;
-		savedPositions[1].offsetY = offY;
-	}
-	else if ( key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT )
-	{
-		savedPositions[2].offsetX = offX;
-		savedPositions[2].offsetY = offY;
-	}
-	else if ( key.keysym.sym == SDLK_F8 && key.keysym.mod & KMOD_ALT )
-	{
-		savedPositions[3].offsetX = offX;
-		savedPositions[3].offsetY = offY;
-	}
-	else if ( key.keysym.sym == SDLK_F5 && savedPositions[0].offsetX >= 0 && savedPositions[0].offsetY >= 0 )
-	{
-		offX = savedPositions[0].offsetX;
-		offY = savedPositions[0].offsetY;
-	}
-	else if ( key.keysym.sym == SDLK_F6 && savedPositions[1].offsetX >= 0 && savedPositions[1].offsetY >= 0 )
-	{
-		offX = savedPositions[1].offsetX;
-		offY = savedPositions[1].offsetY;
-	}
-	else if ( key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0 )
-	{
-		offX = savedPositions[2].offsetX;
-		offY = savedPositions[2].offsetY;
-	}
-	else if ( key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0 )
-	{
-		offX = savedPositions[3].offsetX;
-		offY = savedPositions[3].offsetY;
-	}
+	else if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT ) savePosition ( 0 );
+	else if ( key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT ) savePosition ( 1 );
+	else if ( key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT ) savePosition ( 2 );
+	else if ( key.keysym.sym == SDLK_F8 && key.keysym.mod & KMOD_ALT ) savePosition ( 3 );
+	else if ( key.keysym.sym == SDLK_F5 && savedPositions[0].offsetX >= 0 && savedPositions[0].offsetY >= 0 ) jumpToSavedPos ( 0 );
+	else if ( key.keysym.sym == SDLK_F6 && savedPositions[1].offsetX >= 0 && savedPositions[1].offsetY >= 0 ) jumpToSavedPos ( 1 );
+	else if ( key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0 ) jumpToSavedPos ( 2 );
+	else if ( key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0 ) jumpToSavedPos ( 3 );
 	// Hotkeys for the unit menues
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
@@ -4264,4 +4232,22 @@ void cGameGUI::checkMouseInputMode()
 	default:
 		break;
 	}
+}
+
+void cGameGUI::savePosition( int slotNumber )
+{
+	if ( slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS ) return;
+
+	savedPositions[slotNumber].offsetX = offX+(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom()/2);
+	savedPositions[slotNumber].offsetY = offY+(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom()/2);
+}
+
+void cGameGUI::jumpToSavedPos ( int slotNumber )
+{
+	if ( slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS ) return;
+
+	int offsetX = savedPositions[slotNumber].offsetX-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom()/2);
+	int offsetY = savedPositions[slotNumber].offsetY-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom()/2);
+
+	setOffsetPosition ( offsetX, offsetY );
 }
