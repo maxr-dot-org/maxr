@@ -1515,8 +1515,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	}
 	else if ( mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouse->x > HUD_LEFT_WIDTH && mouse->y > 20 )
 	{
-		rightMouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + offX ) / 64.0 );
-		rightMouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + offY ) / 64.0 );
+		rightMouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		rightMouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
 	}
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
