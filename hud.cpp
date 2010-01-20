@@ -37,8 +37,15 @@
 bool sMouseBox::isTooSmall()
 {
 	if ( startX == -1 || startY == -1 || endX == -1 || endY == -1 ) return true;
-	return !(endX > startX+(10/64.0) || endX < startX-(10/64.0) || endY > startY+(10/64.0) || endY < startY-(10/64.0));
+	return !(endX > startX + 0.5 || endX < startX - 0.5 || endY > startY + 0.5 || endY < startY - 0.5);
 }
+
+sMouseBox::sMouseBox() : 
+	startX(-1),
+	startY(-1),
+	endX(-1),
+	endY(-1)
+{}
 
 cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	cMenu ( generateSurface() ),

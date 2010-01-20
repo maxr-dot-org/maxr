@@ -76,6 +76,7 @@ struct sMouseBox
 	float startX, startY;
 	float endX, endY;
 	bool isTooSmall();
+	sMouseBox();
 };
 
 enum eMouseInputMode
