@@ -1767,6 +1767,8 @@ void cVehicle::DecSpeed ( int value )
 //-----------------------------------------------------------------------------
 void cVehicle::DrawMunBar() const
 {
+	if ( owner != Client->ActivePlayer ) return;
+
 	SDL_Rect r1, r2;
 	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
