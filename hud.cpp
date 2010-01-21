@@ -2279,8 +2279,9 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		if ( Client->iMsgCoordsX != -1 )
 		{
-			offX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
-			offY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			setOffsetPosition ( offsetX, offsetY );
 			Client->iMsgCoordsX = -1;
 		}
 	}
