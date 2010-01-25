@@ -256,6 +256,7 @@
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, drücke F2 um das Warten abzubrechen"/>
+      <Frozen ENG="You have been frozen by the server." localized="Du wurdest vom Server eingefroren."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Nur der Server kann Spielstände speichern"/>
 			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
 			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
