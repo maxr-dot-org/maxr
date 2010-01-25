@@ -2050,20 +2050,21 @@ void cGameGUI::doCommand( string cmd )
 		}*/
 		return;
 	}
-	if ( cmd.substr( 0, 8 ).compare( "/freeze " ) == 0 )
+	if ( cmd.substr( 0, 7 ).compare( "/freeze" ) == 0 && Server )
 	{
-		if ( cmd.length() > 8 && Server )
+		if ( cmd.length() > 7 )
 		{
 			cPlayer *Player = getPlayerFromName ( cmd.substr ( 8, cmd.length() ) );
 
 			if ( !Player ) return;
 
-			sendFreeze ( Player->Nr );
+			sendFreeze ( true, Player->Nr );
 		}
+		else sendFreeze ( true );
 	}
-	if ( cmd.substr( 0, 10 ).compare( "/unfreeze " ) == 0 )
+	if ( cmd.substr( 0, 9 ).compare( "/unfreeze" ) == 0 )
 	{
-		if ( cmd.length() > 10 && Server )
+		if ( cmd.length() > 9 && Server )
 		{
 			cPlayer *Player = getPlayerFromName ( cmd.substr ( 10, cmd.length() ) );
 
@@ -2071,6 +2072,7 @@ void cGameGUI::doCommand( string cmd )
 
 			sendUnfreeze ( Player->Nr );
 		}
+		else sendUnfreeze();
 	}
 }
 

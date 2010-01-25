@@ -2519,7 +2519,7 @@ bool cServer::checkEndActions ( int iPlayer )
 	}
 	if ( sMessage.length() > 0 )
 	{
-		sendFreeze();
+		sendFreeze( false );
 		if ( iPlayer != -1 )
 		{
 			if ( iWantPlayerEndNum == -1 )

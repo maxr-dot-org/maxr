@@ -259,7 +259,7 @@ void sendAbortWaitReconnect ( int iPlayer = -1 );
 * sends that a client has to wait untill he will be defrezzed
 *@author alzi alias DoctorDeath
 */
-void sendFreeze ( int iPlayer = -1 );
+void sendFreeze ( bool sendNotification, int iPlayer = -1 );
 /**
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath

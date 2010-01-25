@@ -1576,9 +1576,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_FREEZE:
 		freeze();
+		if ( message->popBool() ) gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Frozen" ), "" );
 		break;
 	case GAME_EV_UNFREEZE:
 		unfreeze();
+		gameGUI.setInfoTexts ( "", "" );
 		break;
 	case GAME_EV_WAIT_RECON:
 		freeze();
