@@ -877,10 +877,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( Building->data.canBuild.compare (  Type.getUnitDataOriginalVersion()->buildAs ) != 0 )
 					continue;
 
-				Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion( Building->owner )->buildCosts );
-
 				sBuildList *BuildListItem = new sBuildList;
-				BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
+				BuildListItem->metall_remaining = -1;
 				BuildListItem->typ = Type.getVehicle();
 
 				NewBuildList->Add( BuildListItem );
@@ -897,6 +895,12 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			if ( Building->BuildList->Size() > 0 )
 			{
+				if ( (*Building->BuildList)[0]->metall_remaining == -1 )
+				{
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList)[0]->typ->data.buildCosts );	
+					(*Building->BuildList)[0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
+				}
+
 				Building->RepeatBuild = message->popBool();
 				Building->BuildSpeed = iBuildSpeed;
 				if ( (*Building->BuildList)[0]->metall_remaining > 0 )
@@ -933,21 +937,30 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
 
+			//start new buildjob
+			Building->BuildList->Delete( 0 );
 			if ( Building->RepeatBuild )
 			{
-				Building->BuildList->Delete( 0 );
-				int iTurboBuildCosts[3];
-				int iTurboBuildRounds[3];
-				Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.buildCosts);
-				BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
+				BuildingListItem->metall_remaining = -1;
 				Building->BuildList->Add( BuildingListItem );
-				Building->ServerStartWork();
 			}
 			else
 			{
 				delete BuildingListItem;
-				Building->BuildList->Delete( 0 );
-				if ( Building->BuildList->Size() > 0) Building->ServerStartWork();
+			}
+			
+			if ( Building->BuildList->Size() > 0 )
+			{
+				BuildingListItem = (*Building->BuildList)[0];
+				if ( BuildingListItem->metall_remaining == -1 )
+				{
+					int iTurboBuildCosts[3];
+					int iTurboBuildRounds[3];
+					Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.buildCosts);
+					BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
+				}
+
+				Building->ServerStartWork();
 			}
 			sendBuildList ( Building );
 		}
