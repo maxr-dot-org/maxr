@@ -179,11 +179,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		//send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
 		{
-			cList<int> clans;
-			for (unsigned int i =  0; i < players.Size (); i++)
-				clans.Add ( players[i]->getClan () );
-
-			sendClansToClients ( &clans );
+			sendClansToClients ( &players );
 		}
 		
 		//make the landing

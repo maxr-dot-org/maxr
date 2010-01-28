@@ -3311,10 +3311,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	}
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
-		cList<int> clans;
-		for (unsigned int i =  0; i < PlayerList->Size (); i++)
-			clans.Add ( (*PlayerList)[i]->getClan () );
-		sendClansToClients ( &clans );
+		sendClansToClients ( PlayerList );
 	}
 	sendTurn ( iTurn, Player );
 	if ( iDeadlineStartTime > 0 ) sendTurnFinished ( -1, iTurnDeadline - Round( ( SDL_GetTicks() - iDeadlineStartTime )/1000 ), Player );

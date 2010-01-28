@@ -1056,21 +1056,24 @@ void sendResearchSettings(cList<cBuilding*>& researchCentersToChangeArea, cList<
 }
 
 //-------------------------------------------------------------------------------------
-void sendClans ( cList<int>* clans, cPlayer* toPlayer)
+void sendClans ( const cList<cPlayer*>* playerList, cPlayer* toPlayer)
 {
-	if (clans == 0 || toPlayer == 0)
+	if (playerList == 0 || toPlayer == 0)
 		return;
 	cNetMessage *message = new cNetMessage (GAME_EV_PLAYER_CLANS);
-	for (int i = (int) clans->Size () - 1; i >= 0; i--)
-		message->pushChar ((*clans)[i]);
+	for (unsigned int i = 0; i < playerList->Size(); i++)
+	{
+		message->pushChar ((*playerList)[i]->getClan());
+		message->pushChar ((*playerList)[i]->Nr);
+	}
 	Server->sendNetMessage (message, toPlayer->Nr);
 }
 
 //-------------------------------------------------------------------------------------
-void sendClansToClients (cList<int>* clans)
+void sendClansToClients (const cList<cPlayer*>* playerList)
 {
-	for (unsigned int n = 1; n < Server->PlayerList->Size(); n++) // 1: don't send to server
-		sendClans (clans, (*Server->PlayerList)[n]);
+	for (unsigned int n = 1; n < playerList->Size(); n++) // 1: don't send to server
+		sendClans (playerList, (*playerList)[n]);
 }
 
 //-------------------------------------------------------------------------------------
