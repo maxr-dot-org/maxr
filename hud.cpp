@@ -4271,3 +4271,4 @@ void cGameGUI::jumpToSavedPos ( int slotNumber )
 
 	setOffsetPosition ( offsetX, offsetY );
 }
+
