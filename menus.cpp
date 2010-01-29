@@ -1036,7 +1036,7 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	menuItems.Add ( creditsLabel );
 	iCurrentLine += iLineHeight;
 	creditsGroup = new cMenuRadioGroup();
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Lowest") + " ("+iToStr(SETTING_CREDITS_LOWEST)+")", settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
+	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~None") + " ("+iToStr(SETTING_CREDITS_LOWEST)+")", settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	iCurrentLine += iLineHeight;
 	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Lower") + " ("+iToStr(SETTING_CREDITS_LOWER)+")", settings.credits == SETTING_CREDITS_LOWER, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	iCurrentLine += iLineHeight;
@@ -1047,8 +1047,6 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Much") + " ("+iToStr(SETTING_CREDITS_MUCH)+")", settings.credits == SETTING_CREDITS_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	iCurrentLine += iLineHeight;
 	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~More") + " ("+iToStr(SETTING_CREDITS_MORE)+")", settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	iCurrentLine += iLineHeight;
-	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Most") + " ("+iToStr(SETTING_CREDITS_MOST)+")", settings.credits == SETTING_CREDITS_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( creditsGroup );
 	
 	iCurrentLine = tmpLine;
@@ -1180,7 +1178,7 @@ void cSettingsMenu::updateSettings()
 	else if ( creditsGroup->buttonIsChecked ( 3 ) ) settings.credits = SETTING_CREDITS_NORMAL;
 	else if ( creditsGroup->buttonIsChecked ( 4 ) ) settings.credits = SETTING_CREDITS_MUCH;
 	else if ( creditsGroup->buttonIsChecked ( 5 ) ) settings.credits = SETTING_CREDITS_MORE;
-	else settings.credits = SETTING_CREDITS_MOST;
+	else settings.credits = SETTING_CREDITS_NORMAL;
 
 	if ( bridgeheadGroup->buttonIsChecked ( 0 ) ) settings.bridgeHead = SETTING_BRIDGEHEAD_MOBILE;
 	else settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
