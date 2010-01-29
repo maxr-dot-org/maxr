@@ -79,7 +79,7 @@
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
-			<Single_Player ENG="Singleplayer" localized="Einzelspieler"/>
+			<Single_Player ENG="Singleplayer" localized="Einzelspieler (ohne KI)"/>
 			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
 			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
 			<Credits ENG="Credits (*)" localized="Credits (*)"/>

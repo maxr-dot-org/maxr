@@ -83,7 +83,7 @@
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu"/>
-			<Single_Player ENG="Singleplayer"/>
+			<Single_Player ENG="Singleplayer (No AI)"/>
 			<Multi_Player ENG="Multiplayer"/>
 			<Map_Editor ENG="Mapeditor (*)"/>
 			<Credits ENG="Credits (*)"/>
