@@ -184,7 +184,7 @@
 			<Score ENG="Score"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="Least"/>
+			<None ENG="None"/>
 			<Lower ENG="Lower"/>
 			<Low ENG="Low"/>
 			<Normal ENG="Normal"/>

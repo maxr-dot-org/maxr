@@ -180,7 +180,7 @@
       <Score ENG="Score" localized="Punkte"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="kaum"/>
+			<None ENG="None" localized="keines"/>
 			<Lower ENG="very low" localized="sehr wenig"/>
 			<Low ENG="low" localized="wenige"/>
 			<Normal ENG="normal" localized="normal"/>
