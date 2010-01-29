@@ -834,7 +834,7 @@ int ReadMaxXml()
 	else
 	{
 		Log.write ( "Can't load Port from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iPort = 58600;
+		SettingsData.iPort = atoi(DEFAULTPORT);
 	}
 	//PlayerName and PlayerColor
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL)))
@@ -1337,7 +1337,7 @@ int GenerateMaxXml()
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "Port" );
-	element->SetAttribute ( "Num", "58600");
+	element->SetAttribute ( "Num", DEFAULTPORT);
 	netnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "PlayerName" );

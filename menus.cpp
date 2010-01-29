@@ -2566,6 +2566,7 @@ cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
 	menuItems.Add ( ipLabel );
 	portLabel = new cMenuLabel ( position.x+228, position.y+245, lngPack.i18n ( "Text~Title~Port" ) );
 	menuItems.Add ( portLabel );
+
 	nameLabel = new cMenuLabel ( position.x+352, position.y+245, lngPack.i18n ( "Text~Title~Player_Name" ) );
 	menuItems.Add ( nameLabel );
 	colorLabel = new cMenuLabel ( position.x+500, position.y+245, lngPack.i18n ( "Text~Title~Color" ) );
@@ -2575,13 +2576,19 @@ cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
 	ipLine->setWasKeyInputFunction ( &portIpChanged );
 	menuItems.Add ( ipLine );
 
-	portLine = new cMenuLineEdit ( position.x+224, position.y+256, 106, 17, this );
+	portLine = new cMenuLineEdit ( position.x+224, position.y+256, 84, 17, this );
 	portLine->setWasKeyInputFunction ( &portIpChanged );
 	portLine->setText ( iToStr ( port ) );
 	portLine->setTaking ( false, true );
 	menuItems.Add ( portLine );
+	
+	//little icon that restores our default port on click. TODO: find a proper gfx for this or change menu style to dropdown
+        setDefaultPortImage = new cMenuImage ( position.x+224+85, position.y+253 );
+	setDefaultPortImage->setImage(GraphicsData.gfx_Cpfeil2);
+	setDefaultPortImage->setClickedFunction(&setDefaultPort);
+	menuItems.Add ( setDefaultPortImage );
 
-	nameLine = new cMenuLineEdit ( position.x+347, position.y+256, 106, 17, this );
+	nameLine = new cMenuLineEdit ( position.x+347, position.y+256, 90, 17, this );
 	nameLine->setText ( actPlayer->name );
 	nameLine->setWasKeyInputFunction ( &wasNameImput );
 	menuItems.Add ( nameLine );
@@ -2620,6 +2627,7 @@ cNetworkMenu::~cNetworkMenu()
 
 	delete ipLabel;
 	delete portLabel;
+	delete setDefaultPortImage;
 	delete nameLabel;
 	delete colorLabel;
 
@@ -2852,6 +2860,15 @@ void cNetworkMenu::portIpChanged( void* parent )
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
 	menu->port = atoi ( menu->portLine->getText().c_str() );
 	if ( menu->ipLine->getText().compare ( "-" ) != 0 ) menu->ip = menu->ipLine->getText();
+}
+
+void cNetworkMenu::setDefaultPort(void* parent)
+{
+        cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
+        menu->portLine->setText(DEFAULTPORT);
+        menu->draw();
+        menu->portLine->setClickedFunction(&portIpChanged);
+        menu->port = atoi ( menu->portLine->getText().c_str() );
 }
 
 

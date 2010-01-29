@@ -95,6 +95,7 @@
 #define PLAYERCOLORS		8
 //^-- make sure that given amount of colors is loaded too
 
+#define DEFAULTPORT		"58600"
 #define MAX_XML			"max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"

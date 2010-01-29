@@ -743,6 +743,7 @@ protected:
 
 	cMenuLineEdit *ipLine;
 	cMenuLineEdit *portLine;
+	cMenuImage *setDefaultPortImage;
 	cMenuLineEdit *nameLine;
 
 	cMenuPlayersBox *playersBox;
@@ -772,7 +773,8 @@ public:
 
 	static void wasNameImput( void* parent );
 	static void portIpChanged( void* parent );
-
+	static void setDefaultPort (void* parent );
+	
 	virtual void playerSettingsChanged () {}
 };
 
@@ -832,7 +834,6 @@ public:
 	~cNetworkClientMenu();
 
 	static void connectReleased( void* parent );
-
 	void handleNetMessage( cNetMessage *message );
 	void playerSettingsChanged ();
 };
