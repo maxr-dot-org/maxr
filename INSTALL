@@ -54,10 +54,6 @@ resinstaller has done it's magic.
 
 TROUBLESHOOTING
 
-Compilation problems on ppc/youroddcpuhere:
-
-Not supported yet, sorry. May work. May not.
-
 Compilation problems:
 
 If you compile from source and get errors about mix_chunk try upgrading
