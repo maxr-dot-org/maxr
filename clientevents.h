@@ -191,7 +191,7 @@ void sendWantTransfer ( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDe
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */
-void sendWantBuildList ( cBuilding *Building, cList<sBuildList*> &BuildList, bool bRepeat );
+void sendWantBuildList ( cBuilding *Building, cList<sBuildList> &BuildList, bool bRepeat, int buildSpeed );
 /**
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath

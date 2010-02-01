@@ -608,8 +608,8 @@ void sendBuildList ( cBuilding *Building )
 	for ( int i = (int)Building->BuildList->Size()-1; i >= 0; i-- )
 	{
 		message->pushInt16((*Building->BuildList)[i]->metall_remaining);
-		message->pushInt16((*Building->BuildList)[i]->typ->data.ID.iSecondPart);
-		message->pushInt16((*Building->BuildList)[i]->typ->data.ID.iFirstPart);
+		message->pushInt16((*Building->BuildList)[i]->type.iSecondPart);
+		message->pushInt16((*Building->BuildList)[i]->type.iFirstPart);
 	}
 	message->pushInt16 ( (int)Building->BuildList->Size() );
 	message->pushInt16 ( Building->iID );

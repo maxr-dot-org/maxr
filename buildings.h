@@ -103,7 +103,7 @@ public:
 /** struct for the building order list */
 //--------------------------------------------------------------------------
 struct sBuildList{
-  struct sVehicle *typ;
+  sID type;
   int metall_remaining;
 };
 

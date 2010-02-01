@@ -1318,7 +1318,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			int x, y;
 			mouse->GetKachel( &x, &y);
-			if ( selectedBuilding->canExitTo(x, y, Client->Map, (*selectedBuilding->BuildList)[0]->typ))
+			if ( selectedBuilding->canExitTo(x, y, Client->Map, (*selectedBuilding->BuildList)[0]->type.getVehicle()))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -3992,7 +3992,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
 		{
 			BuildingList = (*building->BuildList)[i];
-			font->showText(x, *y, "  build "+iToStr(i)+": "+iToStr(BuildingList->typ->nr)+" \""+UnitsData.vehicle[BuildingList->typ->nr].data.name+"\"", FONT_LATIN_SMALL_WHITE);
+			font->showText(x, *y, "  build "+iToStr(i)+": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
 			*y+=8;
 		}
 	}
@@ -4144,7 +4144,7 @@ void cGameGUI::drawUnitCircles()
 				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
 				selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->typ);
+			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->type.getVehicle());
 		}
 		if ( mouseInputMode == activateVehicle && selectedBuilding->owner==player )
 		{

@@ -741,23 +741,14 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 			sBuildList *listitem = new sBuildList;
 			if ( itemElement->Attribute ( "type_id" ) != NULL )
 			{
-				sID BuildID;
-				BuildID.generate ( itemElement->Attribute ( "type_id" ) );
-				for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
-				{
-					if ( BuildID == UnitsData.vehicle[i].data.ID )
-					{
-						listitem->typ = &UnitsData.vehicle[i];
-						break;
-					}
-				}
+				listitem->type.generate ( itemElement->Attribute ( "type_id" ) );
 			}
 			// be downward compatible and looke for 'type' too
 			else if ( itemElement->Attribute ( "type" ) != NULL )
 			{
 				int typenr;
 				itemElement->Attribute ( "type", &typenr );
-				listitem->typ = &UnitsData.vehicle[typenr];
+				listitem->type = UnitsData.vehicle[typenr].data.ID;
 			}
 			itemElement->Attribute ( "metall_remaining", &listitem->metall_remaining );
 			building->BuildList->Add ( listitem );
@@ -1484,7 +1475,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 		TiXmlElement *buildlistNode = addMainElement ( buildNode, "BuildList" );
 		for ( unsigned int i = 0; i < Building->BuildList->Size(); i++ )
 		{
-			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type_id", (*Building->BuildList)[i]->typ->data.ID.getText(), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
+			addAttributeElement ( buildlistNode, "Item_" + iToStr ( i ), "type_id", (*Building->BuildList)[i]->type.getText(), "metall_remaining", iToStr ((*Building->BuildList)[i]->metall_remaining ) );
 		}
 	}
 

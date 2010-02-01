@@ -866,7 +866,7 @@ void sSubBase::makeTurnend()
 			}
 			if ( BuildListItem->metall_remaining <= 0 )
 			{
-				Server->addReport ( BuildListItem->typ->data.ID, true, owner->Nr );
+				Server->addReport ( BuildListItem->type, true, owner->Nr );
 				Building->ServerStopWork ( false );
 			}
 		}

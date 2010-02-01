@@ -857,13 +857,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Type.iSecondPart = message->popInt16();
 
 				// if the first unit hasn't changed copy it to the new buildlist
-				if ( Building->BuildList->Size() > 0 && i == 0 && Type.getVehicle() == (*Building->BuildList)[0]->typ )
+				if ( Building->BuildList->Size() > 0 && i == 0 && Type == (*Building->BuildList)[0]->type )
 				{
 					//recalculate costs, because build speed could have beed changed
 					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion ( Building->owner )->buildCosts, (*Building->BuildList)[0]->metall_remaining );
 					sBuildList *BuildListItem = new sBuildList;
 					BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
-					BuildListItem->typ = (*Building->BuildList)[0]->typ;
+					BuildListItem->type = Type;
 					NewBuildList->Add ( BuildListItem );
 					continue;
 				}
@@ -879,7 +879,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				sBuildList *BuildListItem = new sBuildList;
 				BuildListItem->metall_remaining = -1;
-				BuildListItem->typ = Type.getVehicle();
+				BuildListItem->type = Type;
 
 				NewBuildList->Add( BuildListItem );
 			}
@@ -897,7 +897,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if ( (*Building->BuildList)[0]->metall_remaining == -1 )
 				{
-					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList)[0]->typ->data.buildCosts );	
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList)[0]->type.getUnitDataCurrentVersion( Building->owner)->buildCosts );	
 					(*Building->BuildList)[0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 				}
 
@@ -929,13 +929,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			if ( !Building->isNextTo( iX, iY )) break;
 
-			if (!Map->possiblePlaceVehicle( BuildingListItem->typ->data, iX, iY ) )
+			if (!Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY ) )
 			{
-				sideStepStealthUnit(iX, iY, BuildingListItem->typ->data, Building->owner );
+				sideStepStealthUnit(iX, iY, BuildingListItem->type.getVehicle()->data, Building->owner );
 			}
-			if ( !Map->possiblePlaceVehicle( BuildingListItem->typ->data, iX, iY )) break;
+			if ( !Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY )) break;
 
-			addUnit ( iX, iY, BuildingListItem->typ, Building->owner, false );
+			addUnit ( iX, iY, BuildingListItem->type.getVehicle(), Building->owner, false );
 
 			//start new buildjob
 			Building->BuildList->Delete( 0 );
@@ -956,7 +956,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					int iTurboBuildCosts[3];
 					int iTurboBuildRounds[3];
-					Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->typ->data.buildCosts);
+					Building->CalcTurboBuild(iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->type.getUnitDataCurrentVersion( Building->owner)->buildCosts);
 					BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
 				}
 

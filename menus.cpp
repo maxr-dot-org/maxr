@@ -4237,7 +4237,7 @@ void cVehiclesBuildMenu::createBuildList()
 {
 	for ( unsigned int i = 0; i < building->BuildList->Size(); i++ )
 	{
-		secondList->addUnit ( (*building->BuildList)[i]->typ->data.ID, building->owner, NULL, true, false );
+		secondList->addUnit ( (*building->BuildList)[i]->type, building->owner, NULL, true, false );
 		secondList->getItem( secondList->getSize()-1 )->setResValue ( (*building->BuildList)[i]->metall_remaining, false );
 	}
 	if ( secondList->getSize() > 0 )
@@ -4251,16 +4251,16 @@ void cVehiclesBuildMenu::doneReleased ( void *parent )
 {
 	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cMenu*)parent);
 	if ( !menu ) return;
-	cList<sBuildList*> buildList;
+	cList<sBuildList> buildList;
 	for ( int i = 0; i < menu->secondList->getSize(); i++ )
 	{
-		sBuildList *buildItem = new sBuildList;
-		buildItem->typ = menu->secondList->getItem ( i )->getUnitID().getVehicle();
-		buildItem->metall_remaining = menu->secondList->getItem ( i )->getResValue();
+		sBuildList buildItem;
+		buildItem.type = menu->secondList->getItem ( i )->getUnitID();
+		buildItem.metall_remaining = menu->secondList->getItem ( i )->getResValue();
 		buildList.Add ( buildItem );
 	}
-	menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();
-	sendWantBuildList ( menu->building, buildList, menu->repeatButton->isChecked() );
+	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
+	sendWantBuildList ( menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed() );
 	menu->end = true;
 }
 

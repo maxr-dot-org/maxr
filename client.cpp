@@ -1285,10 +1285,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			for ( int i = 0; i < iCount; i++ )
 			{
 				sBuildList *BuildListItem = new sBuildList;
-				sID UnitID;
-				UnitID.iFirstPart = message->popInt16();
-				UnitID.iSecondPart = message->popInt16();
-				BuildListItem->typ = UnitID.getVehicle(ActivePlayer);
+				BuildListItem->type.iFirstPart = message->popInt16();
+				BuildListItem->type.iSecondPart = message->popInt16();
 				BuildListItem->metall_remaining = message->popInt16();
 				Building->BuildList->Add ( BuildListItem );
 			}

@@ -210,23 +210,22 @@ string cBuilding::getStatusStr ()
 		// Factory:
 		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
 		{
-			sBuildList *ptr;
-			ptr = (*BuildList)[0];
+			sBuildList *buildListItem = (*BuildList)[0];
 
-			if ( ptr->metall_remaining > 0 )
+			if ( buildListItem->metall_remaining > 0 )
 			{
 				string sText;
 				int iRound;
 
-				iRound = ( int ) ceil ( ptr->metall_remaining / ( double ) MetalPerRound );
+				iRound = ( int ) ceil ( buildListItem->metall_remaining / ( double ) MetalPerRound );
 				sText = lngPack.i18n ( "Text~Comp~Producing" ) + ": ";
-				sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
+				sText += buildListItem->type.getVehicle()->data.name + " (";
 				sText += iToStr ( iRound ) + ")";
 
 				if ( font->getTextWide ( sText, FONT_LATIN_SMALL_WHITE ) > 126 )
 				{
 					sText = lngPack.i18n ( "Text~Comp~Producing" ) + ":\n";
-					sText += ( string ) owner->VehicleData[ptr->typ->nr].name + " (";
+					sText += buildListItem->type.getVehicle()->data.name + " (";
 					sText += iToStr ( iRound ) + ")";
 				}
 
