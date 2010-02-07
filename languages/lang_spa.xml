@@ -16,12 +16,12 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
 			<Version ENG="version v%s" localized="versión v%s"/>
 			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original por Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
-			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded basado en Mechanized Assault and Exploration de Interplay"/>
+			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and Exploration" localized="M.A.X.R. basado en Mechanized Assault and Exploration de Interplay"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*)no implementando todavía"/>
 			</Remarks>
@@ -30,7 +30,7 @@
 			<Lang ENG="Loading language pack..." localized="Cargando paquete de idioma..."/>
       		<Keys ENG="Loading keys..." localized="Cargando claves..."/>
       		<Fonts ENG="Loading fonts..." localized="Cargando fuentes..."/>
-      		<GFX ENG="Loading gfx..." localized="Cargando gráficos..."/>
+      		<GFX ENG="Loading graphics..." localized="Cargando gráficos..."/>
       		<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
       		<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
       		<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
@@ -42,15 +42,15 @@
 		</Init>
 
 		<Title>
-			<MainMenú ENG="Main Menu" localized="Menú principal"/>
+			<MainMenu ENG="Main Menu" localized="Menú principal"/>
 			<Credits ENG="Credits" localized="Créditos"/>
 			<Gold ENG="Gold" localized="Oro"/>
-			<Metal ENG="Metal" localized="Metal"/>
-			<Oil ENG="Oil" localized="Combustible"/>
-			<BridgeHead ENG="Bridgehead" localized="Centro de mando"/>
+			<Metal ENG="Materials" localized="Materiales"/>
+			<Oil ENG="Fuel" localized="Combustible"/>
+			<BridgeHead ENG="Starting base" localized="Base inicial"/>
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
-			<Resource ENG="Resources" localized="Recursos"/>
-			<Resource_Density ENG="Resources Density" localized="Densidad de recursos"/>
+			<Resource ENG="Resource density" localized="Densidad de recursos"/>
+			<Resource_Density ENG="Resources frequency" localized="Frecuencia de recursos"/>
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Player_Name ENG="Playername:" localized="Nombre:"/>
 			<Player_Select ENG="Playeroptions" localized="Opciones de jugador"/>
@@ -61,7 +61,7 @@
 			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clanes"/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
-			<Choose_Planet ENG="Planetchoosing" localized="Selecciona planeta"/>
+			<Choose_Planet ENG="Choose Planet" localized="Selecciona planeta"/>
 			<Options ENG="Options" localized="Opciones"/>
 			<Connect ENG="Connect" localized="Conectar"/>
 			<Send ENG="Send" localized="Enviar"/>
@@ -75,13 +75,13 @@
 			<Build ENG="BuildMenu" localized="Menú Construir"/>
 			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
 			<Mine ENG="Minemanager" localized="Redistribuir minas"/>
-			<Unitinfo ENG="Unitinformations" localized="Formaciones de unidad"/>
+			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
             <Savegame ENG="Savegame" localized="Guardar Partida"/>
             <Players ENG="Players:" localized="Jugadores:"/>
 		</Title>
 		<Button>
-			<Title_Main_Menú ENG="Main Menu" localized="Menú principal"/>
-			<Single_Player ENG="Singleplayer" localized="Un jugador"/>
+			<Title_Main_Menu ENG="Main Menu" localized="Menú principal"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sin IA)"/>
 			<Multi_Player ENG="Multiplayer" localized="Multijugador"/>
 			<Map_Editor ENG="Mapeditor (*)" localized="Editor de mapas (*)"/>
 			<Credits ENG="Credits (*)" localized="Créditos (*)"/>
@@ -165,7 +165,7 @@
 			<Status ENG="Status" localized="Estado"/>
 			<Color ENG="Color" localized="Color"/>
 			<Hitpoints ENG="Hits" localized="Vida"/>
-			<Ammo ENG="Ammo" localized="Munición"/>
+			<Ammo ENG="Ammunition" localized="Munición"/>
 			<Range ENG="Range" localized="Alcance"/>
 			<Scan ENG="Scan" localized="Radar"/>
 			<Grid ENG="Grid" localized="Cuadrícula"/>
@@ -174,7 +174,7 @@
 			<Cargo ENG="Cargo" localized="Carga"/>
 			<AmmoShort ENG="Ammo" localized="Munic."/>
 			<Shots ENG="Shots" localized="Disparos"/>
-			<Shield ENG="Shield" localized="Escudo"/>
+			<Shield ENG="Armor" localized="Escudo"/>
 			<Total ENG="Total" localized="Total"/>
 			<Energy ENG="Energy" localized="Energía"/>
 			<Usage ENG="Usage" localized="Uso"/>
