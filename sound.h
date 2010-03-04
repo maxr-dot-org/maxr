@@ -25,6 +25,7 @@
 #ifndef __sSOUND__
 #define __sSOUND__
 #define sSOUND struct Mix_Chunk
+//FIXME: extern c? fix me, seriously!
 extern "C"{
 extern DECLSPEC struct Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
 #define Mix_LoadWAV(file)	Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1)
@@ -139,5 +140,5 @@ void StopMusic(void);
 void StartMusic(void);
 int PlayFXLoop(sSOUND *snd);
 void StopFXLoop(int SndStream);
-
+void play(sSOUND *snd);
 #endif

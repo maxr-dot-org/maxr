@@ -35,15 +35,16 @@ int InitSound ( int frequency,int chunksize )
 	int audio_rate,audio_channels;
 	Uint16 audio_format;
 
-	// SDL Mixer initialisieren:
+	// init SDL Mixer
 	if ( Mix_OpenAudio ( frequency,AUDIO_S16,2,chunksize ) < 0 )
 	{
-		Log.write("Could not initialize SDL_mixer", cLog::eLOG_TYPE_ERROR);
+		Log.write("Could not init SDL_mixer:", cLog::eLOG_TYPE_ERROR);
+		Log.write(Mix_GetError(), cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
 	Mix_QuerySpec ( &audio_rate, &audio_format, &audio_channels );
 
-	// Callback für Musik installieren:
+	// install callback for music
 	Mix_HookMusicFinished ( MusicFinished );
 
 	SoundChannel = SOUND_CHANNEL_MIN;
@@ -52,41 +53,41 @@ int InitSound ( int frequency,int chunksize )
 	return 1;
 }
 
-// Schließt den Sound:
+// closes sound
 void CloseSound ( void )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
 	Mix_CloseAudio();
 }
 
-// Spielt einen Voice-Sound:
+// plays voice sound
 void PlayVoice ( sSOUND *snd )
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.VoiceMute ) return;
-	Mix_PlayChannel ( VoiceChannel,snd,0 );
+	play(snd);
 	Mix_Volume ( VoiceChannel,SettingsData.VoiceVol );
 	VoiceChannel++;
 	if ( VoiceChannel>VOICE_CHANNEL_MAX ) VoiceChannel=VOICE_CHANNEL_MIN;
 }
 
-// Spielt einen FX-Sound:
+// plays fx sound
 void PlayFX ( sSOUND *snd )
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.SoundMute ) return;
-	Mix_PlayChannel ( SoundChannel,snd,0 );
+	play(snd);
 	Mix_Volume ( SoundChannel,SettingsData.SoundVol );
 	SoundChannel++;
 	if ( SoundChannel>SOUND_CHANNEL_MAX ) SoundChannel=SOUND_CHANNEL_MIN;
 }
 
-// Spielt die übergebene ogg/wav/mod-Datei:
+// plays passed ogg/wav/mod-musicfile in a loop
 void PlayMusic(char const* const file)
 {
 	if ( !SettingsData.bSoundEnabled||SettingsData.MusicMute ) return;
 	music_stream = Mix_LoadMUS ( file );
 	if ( !music_stream )
 	{
-		Log.write("failed opening music stream", cLog::eLOG_TYPE_WARNING);
+		Log.write("Failed opening music stream:", cLog::eLOG_TYPE_WARNING);
 		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		return;
 	}
@@ -94,14 +95,25 @@ void PlayMusic(char const* const file)
 	Mix_VolumeMusic ( SettingsData.MusicVol );
 }
 
-// Setzt das Volume der Musik:
+//FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
+void play(sSOUND *snd)
+{
+	if(Mix_PlayChannel ( SoundChannel,snd,0 ) == -1 )
+	{
+		Log.write("Could not play sound:", cLog::eLOG_TYPE_WARNING);
+		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
+		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
+	}
+}
+
+// sets volume for music
 void SetMusicVol ( int vol )
 {
 	if ( !SettingsData.bSoundEnabled ) return;
 	Mix_VolumeMusic ( vol );
 }
 
-// Stoppt die Musik:
+//stops music
 void StopMusic ( void )
 {
 	if ( !SettingsData.bSoundEnabled||!music_stream ) return;
@@ -109,7 +121,7 @@ void StopMusic ( void )
 	music_stream=NULL;
 }
 
-// Startet die Musik:
+// starts music
 void StartMusic ( void )
 {
 	if ( !SettingsData.bSoundEnabled ||SettingsData.MusicMute ) return;
@@ -117,7 +129,7 @@ void StartMusic ( void )
 	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
 
-// Callback, wenn Musik am Ende:
+// callback when end of music title is reached
 static void MusicFinished(void)
 {
 	if ( !SettingsData.bSoundEnabled ) return;
@@ -125,17 +137,22 @@ static void MusicFinished(void)
 	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
 
-// Startet einen Loop-Sound:
+// starts a loop sound
 int PlayFXLoop ( sSOUND *snd )
 {
 	if ( !SettingsData.bSoundEnabled|| SettingsData.SoundMute  ) return 0;
 	Mix_HaltChannel ( SoundLoopChannel );
-	Mix_PlayChannel ( SoundLoopChannel,snd,-1 );
+	if(Mix_PlayChannel ( SoundLoopChannel,snd,-1 ) == -1)
+	{
+		Log.write("Could not play loop sound", cLog::eLOG_TYPE_WARNING);
+		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
+		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
+	}
 	Mix_Volume ( SoundLoopChannel,SettingsData.SoundVol );
 	return SoundLoopChannel;
 }
 
-// Stoppt einen Loop-Sound:
+// stops a loop sound
 void StopFXLoop ( int SndStream )
 {
 	if ( !SettingsData.bSoundEnabled||SndStream!=SoundLoopChannel ) return;
