@@ -110,7 +110,7 @@ private:
  */
 class cDialogPreferences : public cMenu
 {
-	string resolutions[6];
+	string resolutions[9];
 	int oldMusicVolume, oldEffectsVolume, oldVoicesVolume;
 	bool oldMusicMute, oldEffectsMute, oldVoicesMute;
 

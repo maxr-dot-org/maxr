@@ -153,7 +153,7 @@ void cDestructMenu::destroyReleased( void *parent )
 
 cDialogLicence::cDialogLicence() :
 	cMenu(LoadPCX(GFXOD_DIALOG4), MNU_BG_ALPHA),
-	maxrLabel(  position.x + position.w / 2, position.y +  30, "\"M.A.X. Reloaded\"" ),
+	maxrLabel(  position.x + position.w / 2, position.y +  30, "\"M.A.X.R.\"" ),
 	headerLabel(position.x + position.w / 2, position.y +  30 + font->getFontHeight(), "(C) 2007 by its authors"),
 	textLabel(  position.x +  35,            position.y +  30 + 3 * font->getFontHeight()),
 	okButton(   position.x + 111,            position.y + 185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
@@ -375,33 +375,75 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	windowChBox = new cMenuCheckButton ( position.x+25, position.y+294+20*2, lngPack.i18n( "Text~Settings~Window" ), SettingsData.bWindowMode, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( windowChBox );
 
-	resolutions[0] = "640x480";
-	resolutions[1] = "800x600";
-	resolutions[2] = "1024x768";
-	resolutions[3] = "1024x960";
-	resolutions[4] = "1280x960";
-	resolutions[5] = "1280x1024";
+	//BEGIN SCREEN RESOLUTION CHECKBOXES
+	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here. 
+	//FIXME: also the resolution detection code works only on full screen when SDL can provide us with video modes (doesn't work in window mode since naturally *all* resolutions are possible in a window')
+	
+	int resolutionMode = -1;
+	resolutions[8] = "640x480"; //init some default resolutions in case we can't check with SDL's detected ones
+	resolutions[7] = "800x600";
+	resolutions[6] = "1024x768";
+	resolutions[5] = "1024x960";
+	resolutions[4] = "1152x864";
+	resolutions[3] = "1280x960";
+	resolutions[2] = "1280x1024";
+	resolutions[1] = "1400x1050";
+	resolutions[0] = "1680x1050";
 
-	int resolutionMode;
-	if(SettingsData.iScreenW == 640 && SettingsData.iScreenH == 480) resolutionMode = 0;
-	else if(SettingsData.iScreenW == 800 && SettingsData.iScreenH == 600) resolutionMode = 1;
-	else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 768) resolutionMode = 2;
-	else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 960) resolutionMode = 3;
-	else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 960) resolutionMode = 4;
-	else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 1024) resolutionMode = 5;
-	else resolutionMode = -1;
+	if (SettingsData.rDisplayModes == (SDL_Rect**)-1)
+	{
+	    Log.write("No resolutions could be detected. Presenting some common values.",  cLog::eLOG_TYPE_DEBUG); //map the default resolutions because SDL's detected ones are not avail
+	    Log.write("That does NOT mean that the gfx card really can display this too.",  cLog::eLOG_TYPE_DEBUG);
+	    if(SettingsData.iScreenW == 640 && SettingsData.iScreenH == 480) resolutionMode = 8;
+	    else if(SettingsData.iScreenW == 800 && SettingsData.iScreenH == 600) resolutionMode = 7;
+	    else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 768) resolutionMode = 6;
+	    else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 960) resolutionMode = 5;
+	    else if(SettingsData.iScreenW == 1152 && SettingsData.iScreenH == 864) resolutionMode = 4;
+	    else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 960) resolutionMode = 3;
+	    else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 1024) resolutionMode = 2;
+	    else if(SettingsData.iScreenW == 1400 && SettingsData.iScreenH == 1050) resolutionMode = 1;
+	    else if(SettingsData.iScreenW == 1680 && SettingsData.iScreenH == 1050) resolutionMode = 0;
+	    else Log.write("Unknown resolution "+iToStr(SettingsData.iScreenW) +"x"+iToStr(SettingsData.iScreenH) +" in settings detected.",  cLog::eLOG_TYPE_WARNING);
+
+	}
+	else //we got resolutions from SDL so we use the detected ones here and overwrite the default ones from above (but not our default minimal resolution)
+	{
+	  int i=0;
+	  for (i=0; SettingsData.rDisplayModes[i]; ++i)
+	  {
+	    if(i == 8) //notice: we skip mode 9 because I want 9 to offer always our minimal resolution of 640x480
+	    {
+	      Log.write("Reading more possible resolutions than I can display on dialog. Stopped.",  cLog::eLOG_TYPE_WARNING);
+	      break;
+	    }
+	    
+	    Log.write("Offering detected display resolution "+iToStr(SettingsData.rDisplayModes[i]->w)+"x"+iToStr(SettingsData.rDisplayModes[i]->h)+" to user", cLog::eLOG_TYPE_DEBUG);
+	    
+	    if(SettingsData.rDisplayModes[i]->w >= 640 && SettingsData.rDisplayModes[i]->h >= 480) //don't offer resolutions smaller 640x480 - we don't support
+	    {
+	      resolutions[i] = iToStr(SettingsData.rDisplayModes[i]->w)+"x"+iToStr(SettingsData.rDisplayModes[i]->h);
+	      if(SettingsData.iScreenW == SettingsData.rDisplayModes[i]->w && SettingsData.iScreenH == SettingsData.rDisplayModes[i]->h) resolutionMode = i; //set flagged box to current resolution if found
+	    }
+	  }
+	    if(i < 8)
+	    {
+	      Log.write("Oops, looks like we read less resolutions than I should offer. This might result in some glitches in my dialog. I want a drop down box here!",  cLog::eLOG_TYPE_WARNING);
+	    }
+	}
 
 	resoulutionGroup = new cMenuRadioGroup;
 	menuItems.Add ( resoulutionGroup );
-
-	for ( int i = 0, x = 0; x < 2; x++ )
+	
+	for ( int i = 0, x = 0; x < 3; x++ )
 	{
 		for ( int y = 0; y < 3; y++, i++ )
 		{
-			cMenuCheckButton *button = new cMenuCheckButton ( position.x+160+100*x, position.y+290+20*y, resolutions[i], resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+			cMenuCheckButton *button = new cMenuCheckButton ( position.x+150+80*x, position.y+290+20*y, resolutions[i], resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 			resoulutionGroup->addButton ( button );
 		}
 	}
+	
+	//END SCREEN RESOLUTION CHECKBOXES
 
 	okButton = new cMenuButton ( position.x+208, position.y+383, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 	okButton->setReleasedFunction ( &okReleased );
@@ -501,7 +543,7 @@ void cDialogPreferences::saveValues()
 	int oldScreenW = SettingsData.iScreenW;
 	int oldScreenH = SettingsData.iScreenH;
 
-	for ( int i = 0; i < 6; i++ )
+	for ( int i = 0; i < 8; i++ )
 	{
 		if ( resoulutionGroup->buttonIsChecked ( i ) )
 		{

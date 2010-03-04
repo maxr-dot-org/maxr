@@ -20,6 +20,7 @@
 #define SETTINGS_H
 
 #include <string>
+#include <SDL.h>
 
 // SettingsData - Class containing all gamesettings ///////////////////////
 /**
@@ -84,6 +85,8 @@ public:
 	bool bMakeTracks;
 	/**scrollspeed on map */
 	int iScrollSpeed;
+	
+	SDL_Rect** rDisplayModes;
 
 	//NET
 	/**Last/default ip used for network game */
