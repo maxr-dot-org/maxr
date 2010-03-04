@@ -276,7 +276,7 @@ static int initSound()
 	if ( SDL_Init ( SDL_INIT_AUDIO ) < 0 ) //start sound
 	{
 		Log.write ( "Could not init SDL_INIT_AUDIO",cLog::eLOG_TYPE_WARNING );
-		Log.write ( "Sound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Sound won't  be available!",cLog::eLOG_TYPE_WARNING );
 		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		SettingsData.bSoundEnabled=false;
 		return -1;
@@ -285,7 +285,7 @@ static int initSound()
 	if ( !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
         {
 		Log.write ( "Could not access mixer",cLog::eLOG_TYPE_WARNING );
-		Log.write ( "Sound won't  be avaible!",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Sound won't  be available!",cLog::eLOG_TYPE_WARNING );
 		SettingsData.bSoundEnabled = false;
                 return -1;
         }
@@ -302,7 +302,7 @@ static int initNet()
 {
 	if ( SDLNet_Init() == -1 ) // start SDL_net
 	{
-		Log.write ( "Could not init SDLNet_Init\nNetwork games won' be avaible! ",cLog::eLOG_TYPE_WARNING );
+		Log.write ( "Could not init SDLNet_Init\nNetwork games won' be available! ",cLog::eLOG_TYPE_WARNING );
 		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
 		return -1;
 	}
