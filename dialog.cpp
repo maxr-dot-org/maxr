@@ -37,8 +37,8 @@
 cDialogYesNo::cDialogYesNo(string text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel(position.x +  40, position.y +  40, text),
-	yesButton(position.x + 155, position.y + 190, lngPack.i18n("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
-	noButton( position.x +  67, position.y + 190, lngPack.i18n("Text~Button~No"),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
+	yesButton(position.x + 155, position.y + 185, lngPack.i18n("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
+	noButton( position.x +  67, position.y + 185, lngPack.i18n("Text~Button~No"),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	textLabel.setBox(232, 142);
 	//textLabel.setBox(position.w - 40, position.h - 150);
@@ -87,10 +87,10 @@ void cDialogYesNo::noReleased(void* parent)
 
 cDialogOK::cDialogOK(string text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
-	textLabel(position.x + 20, position.y + 20, text),
+	textLabel(position.x + 40, position.y + 40, text),
 	okButton(position.x + 111, position.y + 185, lngPack.i18n("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
-	textLabel.setBox(position.w - 40, position.h - 150);
+	textLabel.setBox(232, 142);
 	menuItems.Add(&textLabel);
 
 	okButton.setReleasedFunction(&okReleased);
