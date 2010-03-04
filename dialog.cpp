@@ -361,7 +361,7 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 
 	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
 	menuItems.Add ( scrollSpeedLabel );
-	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 0, 50, this );
+	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 0, 250, this );
 	scrollSpeedSlider->setValue ( (float)SettingsData.iScrollSpeed );
 	menuItems.Add ( scrollSpeedSlider );
 	menuItems.Add ( scrollSpeedSlider->scroller );
