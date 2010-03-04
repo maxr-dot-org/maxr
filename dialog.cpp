@@ -535,8 +535,8 @@ void cDialogPreferences::cancelReleased( void *parent )
 	SettingsData.MusicVol = menu->oldMusicVolume;
 	SettingsData.SoundVol = menu->oldEffectsVolume;
 	SettingsData.VoiceVol = menu->oldVoicesVolume;
-	Mix_VolumeMusic ( SettingsData.MusicVol );
-	Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+	if(SettingsData.bSoundEnabled)Mix_VolumeMusic ( SettingsData.MusicVol );
+	if(SettingsData.bSoundEnabled)Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
 
 	bool wasMusicMute = SettingsData.MusicMute;
 	SettingsData.MusicMute = menu->oldMusicMute;
@@ -551,14 +551,14 @@ void cDialogPreferences::musicVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
 	SettingsData.MusicVol = (int)menu->musicSlider->getValue();
-	Mix_VolumeMusic ( SettingsData.MusicVol );
+	if(SettingsData.bSoundEnabled)Mix_VolumeMusic ( SettingsData.MusicVol );
 }
 
 void cDialogPreferences::effectsVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
 	SettingsData.SoundVol = (int)menu->effectsSlider->getValue();
-	Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+	if(SettingsData.bSoundEnabled)Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
 }
 
 void cDialogPreferences::voicesVolumeChanged( void *parent )
