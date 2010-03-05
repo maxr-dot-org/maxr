@@ -392,7 +392,7 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	{
 	  for ( int i = 0, x = 0; x < 3; x++ )
 	  {
-	    for ( int y = 0; y < 3; y++, i++ )
+	    for ( int y = 0; y < 4; y++, i++ )
 	    {
 	      if(i >= Video.getVideoSize())
 	      {
@@ -411,7 +411,7 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	    }
 	  }
 	  
-	  if(Video.getVideoSize() > 9) //notice: we skip mode 10. to much on screen. bad luck until we get a drop down box or similar
+	  if(Video.getVideoSize() > 12) //notice: we skip mode 10. to much on screen. bad luck until we get a drop down box or similar
 	  {
 	    Log.write("Read more possible resolutions than I can display on dialog. Stopped.",  cLog::eLOG_TYPE_WARNING);
 	  } 
@@ -519,7 +519,7 @@ void cDialogPreferences::saveValues()
 	int oldScreenW = SettingsData.iScreenW;
 	int oldScreenH = SettingsData.iScreenH;
 
-	for ( int i = 0; i < 9; i++ )
+	for ( int i = 0; i < 12; i++ )
 	{
 		if ( resoulutionGroup->buttonIsChecked ( i ) )
 		{
