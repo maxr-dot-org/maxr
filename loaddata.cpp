@@ -1081,8 +1081,6 @@ int ReadMaxXml()
 	  if(Video.bHaveMinMode())
 	  {
 	    Log.write(" => Edit your config and try default video mode "+iToStr(Video.getMinW())+"x"+iToStr(Video.getMinH()), cLog::eLOG_TYPE_INFO);
-	    SettingsData.iScreenW=Video.getMinW();
-	    SettingsData.iScreenH=Video.getMinH();
 	  }
 	  else
 	  { //game could crash here. perhaps it's wise to boil out with return -1;
