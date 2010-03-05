@@ -132,11 +132,8 @@ bool cVideo::doDetection(void)
     //write detected video modes (don't write modes *below* the minimum mode'
     if(rDetectedModes[i]->w >= MINWIDTH && rDetectedModes[i]->h >= MINHEIGHT)
     {
-      sVidmode tmp[1];
-      tmp[1].width = rDetectedModes[i]->w;
-      tmp[1].height = rDetectedModes[i]->h;
-      tmp[1].mode = i;
-      vVideoMode.push_back (tmp[1]);
+      sVidmode tmp = {rDetectedModes[i]->w, rDetectedModes[i]->h, i};
+      vVideoMode.push_back (tmp);
       Log.write("Offering detected video mode "+iToStr(i)+" ("+ iToStr(rDetectedModes[i]->w)+"x"+iToStr(rDetectedModes[i]->h)+")", cLog::eLOG_TYPE_DEBUG);
     }
   }
