@@ -45,6 +45,7 @@
 #include "clans.h"
 #include "main.h"
 #include "settings.h"
+#include "video.h"
 
 TiXmlDocument LanguageFile;
 
@@ -618,8 +619,8 @@ int ReadMaxXml()
 	else
 	{
 		Log.write ( "Can't load resolution from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iScreenW = 640;
-		SettingsData.iScreenH = 480;
+		SettingsData.iScreenW = Video.getMinW();
+		SettingsData.iScreenH = Video.getMinH();
 	}
 
 	// ColourDepth
@@ -1070,99 +1071,24 @@ int ReadMaxXml()
 
 	//BEGIN SANITY CHECK SCREEN RES
 
-	const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
-	Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
-
-	
-	/* Get available fullscreen/hardware modes. Check for HWSURFACE first. If that doesn't work use a SWSURFACE instead. If that doesn't work.. die.*/
-	if(!SettingsData.bWindowMode)
-	  SettingsData.rDisplayModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|SDL_HWSURFACE); //try with HWSURFACE
-	else
-	  SettingsData.rDisplayModes = SDL_ListModes(vInfo->vfmt, SDL_HWSURFACE);
-	/* Check if there are any modes available */
-	if (SettingsData.rDisplayModes == (SDL_Rect**)0)
+	if(Video.validateMode(SettingsData.iScreenW, SettingsData.iScreenH) >= 0)
 	{
-	  if(!SettingsData.bWindowMode)
-	    SettingsData.rDisplayModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|SDL_SWSURFACE); //HWSURFACE didn't work. Try with SWSURFACE
+	   Log.write(" => Found requested video mode "+iToStr(SettingsData.iScreenW)+"x"+iToStr(SettingsData.iScreenH)+" :)", cLog::eLOG_TYPE_DEBUG);
+	}
+	else
+	{
+	  Log.write(" => Could not find requested video mode "+iToStr(SettingsData.iScreenW)+"x"+iToStr(SettingsData.iScreenH)+" :(", cLog::eLOG_TYPE_WARNING);
+	  if(Video.bHaveMinMode())
+	  {
+	    Log.write(" => Edit your config and try default video mode "+iToStr(Video.getMinW())+"x"+iToStr(Video.getMinH()), cLog::eLOG_TYPE_INFO);
+	    SettingsData.iScreenW=Video.getMinW();
+	    SettingsData.iScreenH=Video.getMinH();
+	  }
 	  else
-	    SettingsData.rDisplayModes = SDL_ListModes(vInfo->vfmt, SDL_HWSURFACE);
-
-	    //we really can't use HWSURFACE or SWSURFACE :(
-	    if (SettingsData.rDisplayModes == (SDL_Rect**)0)
-	    {
-	      Log.write("No video modes available", cLog::eLOG_TYPE_ERROR);
-	      return -1;
-	    }
-	    OtherData.iSurface = SDL_SWSURFACE;
-	    Log.write("Switched to SDL_SWSURFACE", cLog::eLOG_TYPE_WARNING);
+	  { //game could crash here. perhaps it's wise to boil out with return -1;
+	    Log.write(" => Couldn't find my default video mode. Resuming on own risk!", cLog::eLOG_TYPE_ERROR);
+	  }
 	}
-	else
-	{
-	  OtherData.iSurface = SDL_HWSURFACE;
-	  Log.write("Switched to SDL_HWSURFACE", cLog::eLOG_TYPE_DEBUG);
-	}
-	/* Check if our resolution is restricted */
-	if (SettingsData.rDisplayModes == (SDL_Rect**)-1) {
-	    Log.write("All resolutions available because we're in window mode", cLog::eLOG_TYPE_DEBUG);
-	}
-	else
-	{
-	    Log.write("Not all resolutions available", cLog::eLOG_TYPE_WARNING);
-	    /* Print valid modes */
-	    Log.write("Available video modes for "+iToStr(uBpp)+" bpp", cLog::eLOG_TYPE_DEBUG);
-	    bool bRequestedMode=false;
-	    bool bFoundMinimalRes=false; //we need at least(!)! 640x480
-	    for (int i=0; SettingsData.rDisplayModes[i]; ++i)
-	    {
-	      Log.write(iToStr(SettingsData.rDisplayModes[i]->w)+"x"+iToStr(SettingsData.rDisplayModes[i]->h), cLog::eLOG_TYPE_DEBUG);
-	      if(SettingsData.rDisplayModes[i]->w == SettingsData.iScreenW && SettingsData.rDisplayModes[i]->h == SettingsData.iScreenH)
-	      {
-		bRequestedMode=true;
-		Log.write(" => Found requested video mode :)", cLog::eLOG_TYPE_DEBUG);
-	      }
-
-	      if(SettingsData.rDisplayModes[i]->w == 640 && SettingsData.rDisplayModes[i]->h == 480)
-	      {
-		bFoundMinimalRes=true; //and we even found our default mode
-	      }
-	    }
-
-	    if(!bRequestedMode)
-	    {
-	      bool bFoundAlternate=false;
-	      Log.write(" => Could not find requested video mode :(", cLog::eLOG_TYPE_ERROR);
-	      if(bFoundMinimalRes)
-	      {
-		bFoundAlternate=true;
-		SettingsData.iScreenW=640;
-		SettingsData.iScreenH=480;
-	      }
-	      else //uuh, we can't use our minimal video mode. let's hope we find a mode > 640x480 instead
-	      {
-
-		for (int i=0; SettingsData.rDisplayModes[i]; ++i)
-		{
-		    if(SettingsData.rDisplayModes[i]->w > 640 && SettingsData.rDisplayModes[i]->h > 480)
-		    {
-			//this may become a very HIGH resolution maxr might look odd with
-		      bFoundAlternate=true;
-		      SettingsData.iScreenW=SettingsData.rDisplayModes[i]->w;
-		      SettingsData.iScreenH=SettingsData.rDisplayModes[i]->h;
-		    }
-		}
-	      }
-	      if(bFoundAlternate)
-	      {
-		Log.write("  ==> Using "+iToStr(SettingsData.iScreenW)+"x"+iToStr(SettingsData.iScreenH)+" instead ;)", cLog::eLOG_TYPE_INFO);
-	      }
-	      else
-	      {
-		Log.write("  ==> No alternative video mode found ;(", cLog::eLOG_TYPE_INFO);
-		return -1;
-	      }
-	    }
-	}
-
 	//END SANITY CHECK SCREEN RES
 
 	if(SettingsData.bDebug) //Print settingslist to log
@@ -1252,7 +1178,8 @@ int GenerateMaxXml()
 	TiXmlElement *startnode = new TiXmlElement("Start");
 
 	element = new TiXmlElement ( "Resolution" );
-	element->SetAttribute ( "Text", "640.480");
+	
+	element->SetAttribute ( "Text", (iToStr(Video.getMinW())+"."+iToStr(Video.getMinH())).c_str());
 	startnode->LinkEndChild(element);
 
 	element = new TiXmlElement ( "ColourDepth" );

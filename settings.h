@@ -86,8 +86,6 @@ public:
 	/**scrollspeed on map */
 	int iScrollSpeed;
 	
-	SDL_Rect** rDisplayModes;
-
 	//NET
 	/**Last/default ip used for network game */
 	std::string sIP; //string? why not int array? --beko

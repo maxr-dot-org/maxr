@@ -56,6 +56,7 @@
 #include "menus.h"
 #include "clans.h"
 #include "settings.h"
+#include "video.h"
 
 static int  initNet();
 static int  initSDL();
@@ -96,6 +97,9 @@ int main ( int argc, char *argv[] )
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
+	//detect some screen modes for us
+	Video.doDetection();
+	
 	if( ReadMaxXml() == -1 )
 	{
 		Quit();
@@ -181,7 +185,7 @@ static void showSplash()
 {
         const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
         Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
-
+	
 	buffer = LoadPCX(SPLASH_BACKGROUND);
 	SDL_WM_SetIcon(AutoSurface(SDL_LoadBMP(MAXR_ICON)), NULL);
 
@@ -197,9 +201,10 @@ static void showSplash()
 	}
 
 	//made it far enough to start game
-	screen=SDL_SetVideoMode ( SPLASHWIDTH, SPLASHHEIGHT, SettingsData.iColourDepth, OtherData.iSurface|SDL_NOFRAME );
+	
+	screen=SDL_SetVideoMode ( Video.getSplashW(), Video.getSplashH(), SettingsData.iColourDepth, OtherData.iSurface|SDL_NOFRAME );
 	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-
+	
 	string sVersion = PACKAGE_NAME; sVersion += " ";
 	sVersion += PACKAGE_VERSION; sVersion += " ";
 	sVersion += PACKAGE_REV; sVersion += " ";

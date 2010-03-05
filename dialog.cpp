@@ -33,6 +33,7 @@
 #include "clientevents.h"
 #include "sound.h"
 #include "settings.h"
+#include "video.h"
 
 cDialogYesNo::cDialogYesNo(string text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
@@ -378,71 +379,45 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 
 	//BEGIN SCREEN RESOLUTION CHECKBOXES
 	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here. 
-	//FIXME: also the resolution detection code works only on full screen when SDL can provide us with video modes (doesn't work in window mode since naturally *all* resolutions are possible in a window')
+	//HINT: This works only as long as avail video modes have a neat follow up list starting with 0 so make sure that the modes vector doesn't get confused
 	
-	int resolutionMode = -1;
-	resolutions[8] = "640x480"; //init some default resolutions in case we can't check with SDL's detected ones
-	resolutions[7] = "800x600";
-	resolutions[6] = "1024x768";
-	resolutions[5] = "1024x960";
-	resolutions[4] = "1152x864";
-	resolutions[3] = "1280x960";
-	resolutions[2] = "1280x1024";
-	resolutions[1] = "1400x1050";
-	resolutions[0] = "1680x1050";
-
-	if (SettingsData.rDisplayModes == (SDL_Rect**)-1)
+	int resolutionMode = Video.validateMode(SettingsData.iScreenW, SettingsData.iScreenH); //set flagged box to current resolution if found
+	resoulutionGroup = new cMenuRadioGroup;
+	
+	if (Video.getVideoSize() <= 0)
 	{
-	    Log.write("No resolutions could be detected. Presenting some common values.",  cLog::eLOG_TYPE_DEBUG); //map the default resolutions because SDL's detected ones are not avail
-	    Log.write("That does NOT mean that the gfx card really can display this too.",  cLog::eLOG_TYPE_DEBUG);
-	    if(SettingsData.iScreenW == 640 && SettingsData.iScreenH == 480) resolutionMode = 8;
-	    else if(SettingsData.iScreenW == 800 && SettingsData.iScreenH == 600) resolutionMode = 7;
-	    else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 768) resolutionMode = 6;
-	    else if(SettingsData.iScreenW == 1024 && SettingsData.iScreenH == 960) resolutionMode = 5;
-	    else if(SettingsData.iScreenW == 1152 && SettingsData.iScreenH == 864) resolutionMode = 4;
-	    else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 960) resolutionMode = 3;
-	    else if(SettingsData.iScreenW == 1280 && SettingsData.iScreenH == 1024) resolutionMode = 2;
-	    else if(SettingsData.iScreenW == 1400 && SettingsData.iScreenH == 1050) resolutionMode = 1;
-	    else if(SettingsData.iScreenW == 1680 && SettingsData.iScreenH == 1050) resolutionMode = 0;
-	    else Log.write("Unknown resolution "+iToStr(SettingsData.iScreenW) +"x"+iToStr(SettingsData.iScreenH) +" in settings detected.",  cLog::eLOG_TYPE_WARNING);
-
+	    Log.write("No resolutions could be detected. Can't display any options here.",  cLog::eLOG_TYPE_ERROR);
 	}
 	else //we got resolutions from SDL so we use the detected ones here and overwrite the default ones from above (but not our default minimal resolution)
 	{
-	  int i=0;
-	  for (i=0; SettingsData.rDisplayModes[i]; ++i)
+	  for ( int i = 0, x = 0; x < 3; x++ )
 	  {
-	    if(i == 8) //notice: we skip mode 9 because I want 9 to offer always our minimal resolution of 640x480
+	    for ( int y = 0; y < 3; y++, i++ )
 	    {
-	      Log.write("Reading more possible resolutions than I can display on dialog. Stopped.",  cLog::eLOG_TYPE_WARNING);
-	      break;
-	    }
-	    
-	    Log.write("Offering detected display resolution "+iToStr(SettingsData.rDisplayModes[i]->w)+"x"+iToStr(SettingsData.rDisplayModes[i]->h)+" to user", cLog::eLOG_TYPE_DEBUG);
-	    
-	    if(SettingsData.rDisplayModes[i]->w >= 640 && SettingsData.rDisplayModes[i]->h >= 480) //don't offer resolutions smaller 640x480 - we don't support
-	    {
-	      resolutions[i] = iToStr(SettingsData.rDisplayModes[i]->w)+"x"+iToStr(SettingsData.rDisplayModes[i]->h);
-	      if(SettingsData.iScreenW == SettingsData.rDisplayModes[i]->w && SettingsData.iScreenH == SettingsData.rDisplayModes[i]->h) resolutionMode = i; //set flagged box to current resolution if found
+	      if(i >= Video.getVideoSize())
+	      {
+		Log.write("Oops, looks like we read less resolutions than I should offer. This might result in some glitches in my dialog. I want a drop down box here!",  cLog::eLOG_TYPE_WARNING);
+		cMenuCheckButton *button = new cMenuCheckButton ( position.x+150+80*x, position.y+290+20*y, "<empty>", resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+		resoulutionGroup->addButton ( button );
+
+	      }
+	      else
+	      {
+		Log.write("Offering display resolution "+Video.getVideoMode(i)+" to user", cLog::eLOG_TYPE_DEBUG);
+		cMenuCheckButton *button = new cMenuCheckButton ( position.x+150+80*x, position.y+290+20*y, Video.getVideoMode(i), resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+		resoulutionGroup->addButton ( button );
+		
+	      }
 	    }
 	  }
-	    if(i < 8)
-	    {
-	      Log.write("Oops, looks like we read less resolutions than I should offer. This might result in some glitches in my dialog. I want a drop down box here!",  cLog::eLOG_TYPE_WARNING);
-	    }
+	  
+	  if(Video.getVideoSize() > 9) //notice: we skip mode 10. to much on screen. bad luck until we get a drop down box or similar
+	  {
+	    Log.write("Read more possible resolutions than I can display on dialog. Stopped.",  cLog::eLOG_TYPE_WARNING);
+	  } 
 	}
-
-	resoulutionGroup = new cMenuRadioGroup;
-	menuItems.Add ( resoulutionGroup );
 	
-	for ( int i = 0, x = 0; x < 3; x++ )
-	{
-		for ( int y = 0; y < 3; y++, i++ )
-		{
-			cMenuCheckButton *button = new cMenuCheckButton ( position.x+150+80*x, position.y+290+20*y, resolutions[i], resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-			resoulutionGroup->addButton ( button );
-		}
-	}
+	menuItems.Add ( resoulutionGroup );
 	
 	//END SCREEN RESOLUTION CHECKBOXES
 
@@ -544,12 +519,14 @@ void cDialogPreferences::saveValues()
 	int oldScreenW = SettingsData.iScreenW;
 	int oldScreenH = SettingsData.iScreenH;
 
-	for ( int i = 0; i < 8; i++ )
+	for ( int i = 0; i < 9; i++ )
 	{
 		if ( resoulutionGroup->buttonIsChecked ( i ) )
 		{
-			SettingsData.iScreenW = atoi ( resolutions[i].substr ( 0, resolutions[i].find_first_of ( "x", 0 ) ).c_str() );
-			SettingsData.iScreenH = atoi ( resolutions[i].substr ( resolutions[i].find_first_of ( "x", 0 )+1, resolutions[i].length() ).c_str() );
+			string sTmp = Video.getVideoMode(i);
+			SettingsData.iScreenW = atoi ( sTmp.substr(0, sTmp.find_first_of('x')).c_str());
+			SettingsData.iScreenH = atoi ( sTmp.substr(sTmp.find_first_of('x')+1, sTmp.size()).c_str());
+			
 			SaveOption ( SAVETYPE_RESOLUTION );
 			if ( SettingsData.iScreenW != oldScreenW || SettingsData.iScreenH != oldScreenH )
 			{

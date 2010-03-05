@@ -19,10 +19,6 @@
 #ifndef definesH
 #define definesH
 
-/** Slashscreen width  */
-#define SPLASHWIDTH 500
-/** Slashscreen height  */
-#define SPLASHHEIGHT 420
 #define GRID_COLOR			0x305C04	// color of the grid
 #define SCAN_COLOR			0xE3E300	// color of scan circles
 #define RANGE_GROUND_COLOR	0xE20000	// color of range circles for ground attack
