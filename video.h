@@ -39,7 +39,6 @@ struct sVidmode {
 class cVideo
 {
   public:
-  cVideo();
   
   /**
   *@return Detected videomodes

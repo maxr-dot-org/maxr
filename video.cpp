@@ -22,12 +22,6 @@
 #include "log.h"
 #include <vector>
 
-cVideo::cVideo()
-{
-  
-}
-
-
 
 /**
 *Will store either our detected videomodes or some generic video modes if auto-detection in doDetect() failed
