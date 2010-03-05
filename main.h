@@ -67,44 +67,6 @@ struct sFX;
 struct sTurnstartReport;
 struct sVehicle;
 
-///////////////////////////////////////////////////////////////////////////////
-// Defines
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-/** Slashscreen width  */
-#define SPLASHWIDTH 500
-/** Slashscreen height  */
-#define SPLASHHEIGHT 420
-#define GRID_COLOR			0x305C04	// color of the grid
-#define SCAN_COLOR			0xE3E300	// color of scan circles
-#define RANGE_GROUND_COLOR	0xE20000	// color of range circles for ground attack
-#define RANGE_AIR_COLOR		0xFCA800	// color of range circles for air attack
-#define PFEIL_COLOR			0x00FF00	// color of a waypointarrow
-#define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
-#define MOVE_SPEED			7			// speed of vehcilemovements
-#define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
-#define ANIMATION_SPEED		((int)(Client->iTimerTime/(2)))		// this means every 100ms becouse Client->iTimerTime will increase every 50ms.
-#define LANDING_DISTANCE_WARNING	28
-#define LANDING_DISTANCE_TOO_CLOSE	10
-
-//minimap configuration
-#define MINIMAP_COLOR		0xFC0000 //color of the screen borders on the minimap
-#define MINIMAP_POS_X		15		 //the position of the map on the screen
-#define MINIMAP_POS_Y		356		 //the position of the map on the screen
-#define MINIMAP_SIZE		112		 //the size of the minimap in pixels
-#define MINIMAP_ZOOM_FACTOR	2		 //the zoomfactor for minimap zoom switch
-
-// Colors /////////////////////////////////////////////////////////////////////
-#define cl_red 0
-#define cl_blue 1
-#define cl_green 2
-#define cl_grey 3
-#define cl_orange 4
-#define cl_yellow 5
-#define cl_purple 6
-#define cl_aqua 7
 
 ///////////////////////////////////////////////////////////////////////////////
 // Globals
@@ -163,7 +125,7 @@ EX sID specialIDSmallGen;
 EX sID specialIDConnector;
 EX sID specialIDSmallBeton;
 
-// Struktur f¸r die Eigenschaften der Vehicles:
+// struct for vehicle properties
 struct sUnitData
 {
 	sUnitData();
