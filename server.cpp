@@ -2374,7 +2374,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		makeTurnEnd ();
 		// send report to player
 		sendTurnReport ( (*PlayerList)[0] );
-		sendUnfreeze();
+		//sendUnfreeze();
 	}
 	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
 	{
@@ -2419,7 +2419,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		}
 		// send report to next player
 		sendTurnReport ( (*PlayerList)[iActiveTurnPlayerNr] );
-		sendUnfreeze();
+		//sendUnfreeze();
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
@@ -2469,7 +2469,7 @@ void cServer::handleEnd ( int iPlayerNum )
 			{
 				sendTurnReport ( (*PlayerList)[i] );
 			}
-			sendUnfreeze();
+			//sendUnfreeze();
 		}
 		else
 		{
@@ -2532,7 +2532,7 @@ bool cServer::checkEndActions ( int iPlayer )
 	}
 	if ( sMessage.length() > 0 )
 	{
-		sendFreeze( false );
+		//sendFreeze( false );
 		if ( iPlayer != -1 )
 		{
 			if ( iWantPlayerEndNum == -1 )
