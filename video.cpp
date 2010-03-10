@@ -191,7 +191,10 @@ int cVideo::applySettings(void)
   }
   else
   {
-    buffer = SDL_SetVideoMode(getResolutionX(),getResolutionY(),getColDepth(),getSurfaceType()|(getWindowMode()?0:SDL_FULLSCREEN));
+    //buffer = SDL_SetVideoMode(getResolutionX(),getResolutionY(),getColDepth(),getSurfaceType()|(getWindowMode()?0:SDL_FULLSCREEN));
+
+	if ( buffer ) SDL_FreeSurface( buffer );
+	buffer = SDL_CreateRGBSurface(getSurfaceType(), getResolutionX(), getResolutionY(), getColDepth(), 0, 0, 0, 0);
   }
   //TODO: noticed problems: main menu, hud borders upper, right, lower need to redraw, alpha blending buffer still to small
   draw();

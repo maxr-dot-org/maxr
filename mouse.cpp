@@ -22,12 +22,22 @@
 #include "settings.h"
 #include "hud.h"
 
-// Funktionen der Maus-Klasse ////////////////////////////////////////////////
+
 cMouse::cMouse ( void )
 {
-	visible=false;
-	cur=NULL;
-	LastX=-100;
+	visible = false;
+	cur = NULL;
+	LastX = -100;
+	LastY = -100;
+	SDL_Surface *cur = NULL;
+	x = 0;
+	y = 0;
+	isDoubleClick = false;
+	prevScreenX = 0;
+	prevScreenY = 0;
+	
+	DrawX = 0;
+	DrawY = 0;
 }
 
 // Malt die Maus, und wenn draw_back gesetzt ist, auch den alten Hintergrund:
