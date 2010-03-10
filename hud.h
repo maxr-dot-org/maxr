@@ -109,6 +109,8 @@ class cGameGUI : public cMenu
 
 	float minZoom;
 
+	void calcMinZoom();
+
 	bool closed;
 
 	int offX, offY;
@@ -365,6 +367,8 @@ class cGameGUI : public cMenu
 	static void chatBoxReturnPressed( void *parent );
 
 	static void unitNameReturnPressed( void *parent );
+
+	void recalcPosition ( bool resetItemPositions );
 public:
 	cGameGUI( cPlayer *player_, cMap *map_ );
 	~cGameGUI();

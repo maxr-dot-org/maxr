@@ -84,10 +84,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	selectedVehicle = NULL;
 	selectedBuilding = NULL;
 
-	minZoom = (float)(( max(Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
-	minZoom = max ( minZoom, ((int)( 64.0*minZoom )+( minZoom >= 1.0 ? 0 : 1 )) / (float)64.0 );
-
-	generateSurface();
+	calcMinZoom();
 
 	setWind(random(360));
 
@@ -224,6 +221,30 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	updateTurn( 1 );
 }
 
+void cGameGUI::calcMinZoom()
+{
+	minZoom = (float)(( max(Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
+	minZoom = max ( minZoom, ((int)( 64.0*minZoom )+( minZoom >= 1.0 ? 0 : 1 )) / (float)64.0 );
+}
+
+void cGameGUI::recalcPosition( bool resetItemPositions )
+{
+	background = generateSurface();
+	cMenu::recalcPosition( resetItemPositions );
+
+	// reset minimal zoom
+	calcMinZoom();
+	setZoom( zoom, true );
+	zoomSlider->setBorders( minZoom, 1.0 );
+
+	// move some items arround
+	coordsLabel->move ( coordsLabel->getPosition().x, (Video.getResolutionY()-21)+3 );
+	unitNameLabel->move ( unitNameLabel->getPosition().x, (Video.getResolutionY()-21)+3 );
+	chatBox->move ( chatBox->getPosition().x, Video.getResolutionY()-48 );
+	infoTextLabel->move ( HUD_LEFT_WIDTH+(Video.getResolutionX()-HUD_TOTAL_WIDTH)/2, infoTextLabel->getPosition().y );
+	infoTextAdditionalLabel->move ( HUD_LEFT_WIDTH+(Video.getResolutionX()-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ) );
+}
+
 cGameGUI::~cGameGUI()
 {
 	zoom = 1.0;
@@ -269,9 +290,21 @@ int cGameGUI::show()
 
 	int lastMouseX = 0, lastMouseY = 0;
 
+	int lastResX = Video.getResolutionX();
+	int lastResY = Video.getResolutionY();
+
 	while ( !end )
 	{
 		EventHandler->HandleEvents();
+
+		// check whether the resolution has been changed
+		if ( lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY() )
+		{
+			recalcPosition( true );
+			draw( false, true );
+			lastResX = Video.getResolutionX();
+			lastResY = Video.getResolutionY();
+		}
 
 		mouse->GetPos();
 		if ( mouse->moved() )

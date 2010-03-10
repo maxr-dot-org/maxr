@@ -31,8 +31,6 @@
 */
 static vector<sVidMode> vVideoMode;
 
-static bool bWasResized = false;
-
 /**
  * Some possible video modes. Don't use external!'
  */
@@ -196,21 +194,9 @@ int cVideo::applySettings(void)
 	if ( buffer ) SDL_FreeSurface( buffer );
 	buffer = SDL_CreateRGBSurface(getSurfaceType(), getResolutionX(), getResolutionY(), getColDepth(), 0, 0, 0, 0);
   }
-  //TODO: noticed problems: main menu, hud borders upper, right, lower need to redraw, alpha blending buffer still to small
   draw();
-  bWasResized = true;
   return 0;
   
-}
-
-bool cVideo::wasResized(void)
-{
-  return bWasResized;
-}
-
-void cVideo::resetResized(void)
-{
-  bWasResized = false;
 }
 
 void cVideo::clearBuffer(void)

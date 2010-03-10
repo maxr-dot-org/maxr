@@ -246,7 +246,12 @@ public:
 	 * sets a new position of the item
 	 *@author alzi
 	 */
-	void move ( int x, int y );
+	virtual void move ( int x, int y );
+	/**
+	 * returns the current position of the item
+	 *@author alzi
+	 */
+	SDL_Rect getPosition();
 	/**
 	 * locks or unlocks the item.
 	 *@author alzi
@@ -432,6 +437,7 @@ public:
 	 */
 	void setBox( int width, int height );
 	void draw();
+	void move( int x, int y );
 };
 
 /**
@@ -1232,6 +1238,7 @@ public:
 
 	void draw();
 
+	void setBorders( float minValue_, float maxValue_ );
 	void setValue( float value );
 	float getValue();
 	void setMoveCallback ( void (*movedCallback_)(void *) );

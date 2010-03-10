@@ -481,6 +481,13 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	terminate = false;
 	activeItem = NULL;
 
+	recalcPosition( false );
+}
+
+void cMenu::recalcPosition( bool resetItemPositions )
+{
+	SDL_Rect oldPosition = position;
+
 	if ( background )
 	{
 		position.w = background->w;
@@ -493,6 +500,17 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 		position.x = position.y = 0;
 		position.w = Video.getResolutionX();
 		position.h = Video.getResolutionY();
+	}
+
+	if ( resetItemPositions )
+	{
+		for ( unsigned int i = 0; i < menuItems.Size(); i++ )
+		{
+			int xOffset = menuItems[i]->getPosition().x - oldPosition.x;
+			int yOffset = menuItems[i]->getPosition().y - oldPosition.y;
+
+			menuItems[i]->move ( position.x+xOffset, position.y+yOffset );
+		}
 	}
 }
 
@@ -547,6 +565,9 @@ int cMenu::show()
 
 	int lastMouseX = 0, lastMouseY = 0;
 
+	int lastResX = Video.getResolutionX();
+	int lastResY = Video.getResolutionY();
+
 	while ( !end )
 	{
 		EventHandler->HandleEvents();
@@ -556,10 +577,13 @@ int cMenu::show()
 			if ( Client->timer100ms ) Client->gameGUI.incFrame();
 		}
 
-		if(Video.wasResized())
+		// check whether the resolution has been changed
+		if ( lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY() )
 		{
-		  draw( true );
-		  Video.resetResized();
+			recalcPosition( true );
+			draw( false, true );
+			lastResX = Video.getResolutionX();
+			lastResY = Video.getResolutionY();
 		}
 
 		mouse->GetPos();

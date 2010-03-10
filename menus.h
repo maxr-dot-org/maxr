@@ -257,7 +257,7 @@ protected:
 	/** The type of the background behind the menu background image, when the image is smaller then the screen. */
 	eMenuBackgrounds backgroundType;
 	/** The position of the menu on the screen when it is smaller than the screen. The position will be
-	 * calculated in the constructor of cMenu und set to the center of the screen.
+	 * calculated in the constructor of cMenu and set to the center of the screen.
 	 */
 	SDL_Rect position;
 
@@ -276,6 +276,10 @@ protected:
 	cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
 
 	virtual void preDrawFunction() {};
+
+	/** Recalculates the position and size of the menu.
+	 */
+	virtual void recalcPosition( bool resetItemPositions );
 
 public:
 	/**

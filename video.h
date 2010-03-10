@@ -54,11 +54,6 @@ struct sVidData {
 class cVideo
 {
   public:  
-    
-  //HACK: for main menu to redraw. main menus are not in a redraw loop and won't redraw on their own. perhaps we can do this with some sort of SDL_Event -- beko
-  bool wasResized(void);
-  void resetResized();
-  
   /**
   *Sets whether app should appear windowed or in fullscreen mode
   *@param bWindowMode pass true if app should work in windowed mode<br>pass false it app should start in fullscreen

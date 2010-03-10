@@ -185,6 +185,11 @@ void cMenuItem::move ( int x, int y )
 	position.y = y;
 }
 
+SDL_Rect cMenuItem::getPosition()
+{
+	return position;
+}
+
 void cMenuItem::setLocked( bool locked_ )
 {
 	if ( preSetLocked( locked_ ) )
@@ -452,6 +457,15 @@ void cMenuLabel::draw()
 	if ( flagCentered ) font->showTextCentered ( textPosition, text, fontType );
 	else if ( flagBox ) font->showTextAsBlock ( position, text, fontType );
 	else font->showText ( textPosition, text, fontType );
+}
+
+void cMenuLabel::move( int x, int y )
+{
+	int textPosXOffset = textPosition.x - position.x;
+	int textPosYOffset = textPosition.y - position.y;
+	cMenuItem::move ( x, y );
+	textPosition.x = position.x + textPosXOffset;
+	textPosition.y = position.y + textPosYOffset;
 }
 
 cMenuButton::cMenuButton(int x, int y, string text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
@@ -3412,8 +3426,7 @@ cMenuSlider::cMenuSlider(int x, int y, float minValue_, float maxValue_, cMenu* 
 	direction(direction_),
 	parent(parent_)
 {
-	minValue = min ( minValue_, maxValue_ );
-	maxValue = max ( minValue_, maxValue_ );
+	setBorders ( minValue_, maxValue_ );
 	curValue = minValue;
 
 	switch ( type )
@@ -3452,6 +3465,12 @@ void cMenuSlider::draw()
 {
 	if ( surface ) SDL_BlitSurface ( surface, NULL, buffer, &position );
 	cMenuSlider::scroller->draw();
+}
+
+void cMenuSlider::setBorders( float minValue_, float maxValue_ )
+{
+	minValue = min ( minValue_, maxValue_ );
+	maxValue = max ( minValue_, maxValue_ );
 }
 
 void cMenuSlider::setValue( float value )
