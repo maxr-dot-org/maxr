@@ -33,6 +33,8 @@
 #include "dialog.h"
 #include "settings.h"
 #include "hud.h"
+#include "video.h"
+
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -594,7 +596,7 @@ void cClient::handleMessages()
 			messages.Delete ( i );
 			continue;
 		}
-		iHeight += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
+		iHeight += 17 + font->getFontHeight() * ( message->len  / (Video.getResolutionX() - 300) );
 	}
 }
 
@@ -2198,7 +2200,7 @@ void cClient::makeHotSeatEnd( int iNextPlayerNum )
 	gameGUI.deselectUnit();
 	SDL_Surface *sf;
 	SDL_Rect scr;
-	sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,32,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( SDL_SRCCOLORKEY,Video.getResolutionX(),Video.getResolutionY(),32,0,0,0,0 );
 	scr.x=15;
 	scr.y=356;
 	scr.w=scr.h=112;

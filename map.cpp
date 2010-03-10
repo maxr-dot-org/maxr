@@ -21,6 +21,7 @@
 #include "player.h"
 #include "settings.h"
 #include "files.h"
+#include "video.h"
 
 sTerrain::sTerrain() :
 	water(false),
@@ -158,20 +159,20 @@ void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
-	terrain[iNum].sf_org = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].sf_org = SDL_CreateRGBSurface( Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].sf_org, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].sf_org, NULL );
 
-	terrain[iNum].sf = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].sf = SDL_CreateRGBSurface( Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].sf, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].sf, NULL );
 
 	//copy the terrains with fog
-	terrain[iNum].shw_org = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].shw_org = SDL_CreateRGBSurface( Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].shw_org, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].shw_org, NULL );
 
-	terrain[iNum].shw = SDL_CreateRGBSurface( OtherData.iSurface , 64, 64, 8, 0, 0, 0, 0 );
+	terrain[iNum].shw = SDL_CreateRGBSurface( Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0 );
 	SDL_SetColors( terrain[iNum].shw, surface->format->palette->colors,0, 256);
 	SDL_BlitSurface( surface, NULL, terrain[iNum].shw, NULL );
 

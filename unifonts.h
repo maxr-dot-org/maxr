@@ -21,6 +21,8 @@
 
 #include "defines.h"
 #include "main.h"
+#include "video.h"
+
 
 /** diffrent fonttypes*/
 enum eUnicodeFontType

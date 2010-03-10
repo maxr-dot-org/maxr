@@ -27,6 +27,8 @@
 #include "mveplayer.h"
 #include <assert.h>
 #include "main.h"
+#include "video.h"
+
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -362,7 +364,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				SDL_FreeSurface(frame_buf);
 
 			/* initialize video mvebuffer to the actual movie dimensions */
-			frame_buf = SDL_CreateRGBSurface(OtherData.iSurface, width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
+			frame_buf = SDL_CreateRGBSurface(Video.getSurfaceType(), width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
 
 			/* init movie screen rect for fullscreen purposes */
 			movie_screen.x = (screen->w - frame_buf->w) >> 1;
@@ -505,9 +507,9 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 				SDL_FreeSurface(screen);
 
 			if(fullscreen)
-				screen = SDL_SetVideoMode(dwidth, dheight, 8, OtherData.iSurface|SDL_FULLSCREEN);
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, Video.getSurfaceType()|SDL_FULLSCREEN);
 			else
-				screen = SDL_SetVideoMode(dwidth, dheight, 8, OtherData.iSurface);
+				screen = SDL_SetVideoMode(dwidth, dheight, 8, Video.getSurfaceType());
 
 			SDL_WM_SetCaption(filename, NULL);
 

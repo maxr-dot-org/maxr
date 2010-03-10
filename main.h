@@ -77,10 +77,6 @@ struct sVehicle;
 // Languagepack ////////////////////////////////////////////////////////////////
 EX cLanguage lngPack;
 
-// Screenbuffers //////////////////////////////////////////////////////////////
-EX SDL_Surface *screen ZERO;	// Der Bildschirm
-EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
-
 ///////////////////////////////////////////////////////////////////////////////
 // Structures
 // ------------------------
@@ -445,7 +441,6 @@ class cOtherData
 public:
 	SDL_Surface **colors;
 	SDL_Surface **colors_org;
-	Uint32 iSurface;
 	SDL_Surface *WayPointPfeile[8][60];
 	SDL_Surface *WayPointPfeileSpecial[8][60];
 } EX OtherData;

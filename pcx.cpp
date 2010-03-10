@@ -21,13 +21,14 @@
 #include "files.h"
 #include "settings.h"
 #include "main.h"
+#include "video.h"
 
 SDL_Surface* LoadPCX(std::string name)
 {
 	// Open the file.
 	if (!FileExists(name.c_str()))
 	{ // File not found, create empty surface.
-		SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface, 100, 20, SettingsData.iColourDepth, 0, 0, 0, 0);
+		SDL_Surface* const s = SDL_CreateRGBSurface(Video.getSurfaceType(), 100, 20, Video.getColDepth(), 0, 0, 0, 0);
 		return s;
 	}
 
@@ -35,7 +36,7 @@ SDL_Surface* LoadPCX(std::string name)
 	if (!f)
 	{
 		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); // Image corrupted, create empty surface.
-		SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface, 100, 20, SettingsData.iColourDepth, 0, 0, 0, 0);
+		SDL_Surface* const s = SDL_CreateRGBSurface(Video.getSurfaceType(), 100, 20, Video.getColDepth(), 0, 0, 0, 0);
 		return s;
 	}
 
@@ -43,7 +44,7 @@ SDL_Surface* LoadPCX(std::string name)
 	SDL_RWseek(f, 8, SEEK_SET);
 	Uint16       const x = SDL_ReadLE16(f) + 1;
 	Uint16       const y = SDL_ReadLE16(f) + 1;
-	SDL_Surface* const s = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, x, y, 32, 0, 0, 0, 0);
+	SDL_Surface* const s = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, x, y, 32, 0, 0, 0, 0);
 	if (!s)
 	{
 		Log.write(SDL_GetError(), cLog::eLOG_TYPE_ERROR);

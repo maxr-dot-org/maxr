@@ -33,6 +33,8 @@
 #include "menus.h"
 #include "settings.h"
 #include "hud.h"
+#include "video.h"
+
 
 
 //-----------------------------------------------------------------------------
@@ -1705,7 +1707,7 @@ SDL_Rect cVehicle::GetMenuSize ()
 	if ( IsBuilding && BuildingTyp.getUnitDataOriginalVersion()->isBig )
 		size *= 2;
 
-	if ( dest.x + size + 42 >= SettingsData.iScreenW - 12 )
+	if ( dest.x + size + 42 >= Video.getResolutionX() - 12 )
 		dest.x -= 42;
 	else
 		dest.x += size;
@@ -1715,10 +1717,10 @@ SDL_Rect cVehicle::GetMenuSize ()
 		dest.y -= ( i - size ) / 2;
 		dest.y += - ( dest.y - 24 );
 	}
-	else if ( dest.y - ( i - size ) / 2 + i >= SettingsData.iScreenH - 24 )
+	else if ( dest.y - ( i - size ) / 2 + i >= Video.getResolutionY() - 24 )
 	{
 		dest.y -= ( i - size ) / 2;
-		dest.y -= ( dest.y + i ) - ( SettingsData.iScreenH - 24 );
+		dest.y -= ( dest.y + i ) - ( Video.getResolutionY() - 24 );
 	}
 	else
 		dest.y -= ( i - size ) / 2;
@@ -1881,8 +1883,8 @@ void cVehicle::drawStatus() const
 //-----------------------------------------------------------------------------
 void cVehicle::Center ()
 {
-	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
 	Client->gameGUI.setOffsetPosition ( offX, offY );
 }
 

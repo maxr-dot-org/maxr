@@ -613,25 +613,25 @@ int ReadMaxXml()
 		Log.write ( "Can't find Resolution-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
 	{
-		SettingsData.iScreenW = atoi(sTmpString.substr(0,sTmpString.find(".",0)).c_str());
-		SettingsData.iScreenH = atoi(sTmpString.substr(sTmpString.find(".",0)+1,sTmpString.length()).c_str());
+		int wTmp = atoi(sTmpString.substr(0,sTmpString.find(".",0)).c_str());
+		int hTmp = atoi(sTmpString.substr(sTmpString.find(".",0)+1,sTmpString.length()).c_str());
+		Video.setResolution(wTmp, hTmp);
 	}
 	else
 	{
 		Log.write ( "Can't load resolution from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iScreenW = Video.getMinW();
-		SettingsData.iScreenH = Video.getMinH();
+		Video.setResolution(Video.getMinW(), Video.getMinH());
 	}
 
 	// ColourDepth
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", NULL)))
 		Log.write ( "Can't find ColourDepth-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iColourDepth = atoi(sTmpString.c_str());
+		Video.setColDepth(atoi(sTmpString.c_str()));
 	else
 	{
 		Log.write ( "Can't load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iColourDepth = 32;
+		Video.setColDepth(32);
 	}
 	// Intro
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", NULL)))
@@ -647,11 +647,11 @@ int ReadMaxXml()
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL)))
 		Log.write ( "Can't find Windowmode-Node in max.xml", LOG_TYPE_WARNING );
 	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bWindowMode = pXmlNode->XmlDataToBool(sTmpString);
+		Video.setWindowMode(pXmlNode->XmlDataToBool(sTmpString));
 	else
 	{
 		Log.write ( "Can't load Windowmode from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bWindowMode = true;
+		Video.setWindowMode(true);
 	}
 	// Intro
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Fastmode", NULL)))
@@ -1069,26 +1069,6 @@ int ReadMaxXml()
 	}
 
 
-	//BEGIN SANITY CHECK SCREEN RES
-
-	if(Video.validateMode(SettingsData.iScreenW, SettingsData.iScreenH) >= 0)
-	{
-	   Log.write(" => Found requested video mode "+iToStr(SettingsData.iScreenW)+"x"+iToStr(SettingsData.iScreenH)+" :)", cLog::eLOG_TYPE_DEBUG);
-	}
-	else
-	{
-	  Log.write(" => Could not find requested video mode "+iToStr(SettingsData.iScreenW)+"x"+iToStr(SettingsData.iScreenH)+" :(", cLog::eLOG_TYPE_WARNING);
-	  if(Video.bHaveMinMode())
-	  {
-	    Log.write(" => Edit your config and try default video mode "+iToStr(Video.getMinW())+"x"+iToStr(Video.getMinH()), cLog::eLOG_TYPE_INFO);
-	  }
-	  else
-	  { //game could crash here. perhaps it's wise to boil out with return -1;
-	    Log.write(" => Couldn't find my default video mode. Resuming on own risk!", cLog::eLOG_TYPE_ERROR);
-	  }
-	}
-	//END SANITY CHECK SCREEN RES
-
 	if(SettingsData.bDebug) //Print settingslist to log
 	{
 		string sTmp;
@@ -1097,10 +1077,10 @@ int ReadMaxXml()
 		#define SOFF "Disabled"
 		Log.mark();
 		Log.write ("I read the following settings:", cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Screensize    == " + iToStr(SettingsData.iScreenW) + "x" + iToStr(SettingsData.iScreenH) + "x" + iToStr(SettingsData.iColourDepth) + "bpp", cLog::eLOG_TYPE_DEBUG);
+		Log.write ("Screensize    == " + iToStr(Video.getResolutionX()) + "x" + iToStr(Video.getResolutionY()) + "x" + iToStr(Video.getColDepth()) + "bpp", cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bIntro?SON:SOFF;
 		Log.write ("Intro         == "+sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bWindowMode?SON:SOFF;
+		sTmp =  Video.getWindowMode()?SON:SOFF;
 		Log.write ("Windowmode    == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
 		sTmp =  SettingsData.bFastMode?SON:SOFF;
 		Log.write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
@@ -1657,8 +1637,8 @@ static int LoadGraphics(const char* path)
 	// Hud:
 	Log.write ( "Hudgraphics...", LOG_TYPE_DEBUG );
 	SDL_Rect scr,dest;
-	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
-		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( Video.getSurfaceType(), Video.getResolutionX(),
+		Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
 	SDL_SetColorKey ( GraphicsData.gfx_hud, SDL_SRCCOLORKEY, 0xFF00FF );
 
@@ -1716,12 +1696,12 @@ static int LoadGraphics(const char* path)
 	SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,GraphicsData.gfx_hud,&dest );
 	SDL_FreeSurface ( GraphicsData.gfx_tmp );
 
-	if ( SettingsData.iScreenH > 480 )
+	if ( Video.getResolutionY() > 480 )
 	{
 		if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "logo.pcx" ))
 			return 0;
 		dest.x = 9;
-		dest.y = SettingsData.iScreenH-32-15;
+		dest.y = Video.getResolutionY()-32-15;
 		SDL_BlitSurface ( GraphicsData.gfx_tmp,NULL,GraphicsData.gfx_hud,&dest );
 		SDL_FreeSurface ( GraphicsData.gfx_tmp );
 	}
@@ -1753,11 +1733,11 @@ static int LoadGraphics(const char* path)
 
 	Log.write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
 	// Shadow:
-	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( OtherData.iSurface, SettingsData.iScreenW,
-		SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( Video.getSurfaceType(), Video.getResolutionX(),
+		Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_FillRect ( GraphicsData.gfx_shadow, NULL, 0x0 );
 	SDL_SetAlpha ( GraphicsData.gfx_shadow, SDL_SRCALPHA, 50 );
-	GraphicsData.gfx_tmp = SDL_CreateRGBSurface ( OtherData.iSurface, 128, 128, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	GraphicsData.gfx_tmp = SDL_CreateRGBSurface ( Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_SetColorKey ( GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF );
 
 	// Glas:
@@ -1923,7 +1903,7 @@ static int LoadVehicles()
 			SDL_Rect rcDest;
 			for (int n = 0; n < 8; n++)
 			{
-				v.img[n] = SDL_CreateRGBSurface (OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
 				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				SDL_FillRect(v.img[n], NULL, 0xFF00FF);
 
@@ -1950,15 +1930,15 @@ static int LoadVehicles()
 						}
 					}
 				}
-				v.img_org[n] = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, 64*13, 64, SettingsData.iColourDepth, 0, 0, 0, 0 );
+				v.img_org[n] = SDL_CreateRGBSurface ( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64*13, 64, Video.getColDepth(), 0, 0, 0, 0 );
 				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				SDL_FillRect(v.img_org[n], NULL, 0xFFFFFF);
 				SDL_BlitSurface(v.img[n], NULL, v.img_org[n], NULL);
 
-				v.shw[n] = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.shw[n] = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
 				SDL_SetColorKey(v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF);
 				SDL_FillRect(v.shw[n], NULL, 0xFF00FF);
-				v.shw_org[n] = SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, 64 * 13, 64, SettingsData.iColourDepth, 0, 0, 0, 0);
+				v.shw_org[n] = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
 				SDL_SetColorKey(v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF);
 				SDL_FillRect(v.shw_org[n], NULL, 0xFF00FF);
 
@@ -3139,11 +3119,11 @@ int SaveOption ( int iTyp )
 		break;
 	case SAVETYPE_WINDOW:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bWindowMode,0,"");
+		SaveValue ( pXmlNode, "YN",Video.getWindowMode(),0,"");
 		break;
 	case SAVETYPE_RESOLUTION:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL);
-		SaveValue ( pXmlNode, "Text", false, 0, iToStr(SettingsData.iScreenW)+"."+iToStr(SettingsData.iScreenH));
+		SaveValue ( pXmlNode, "Text", false, 0, iToStr(Video.getResolutionX())+"."+iToStr(Video.getResolutionY()));
 		break;
 	case SAVETYPE_CACHESIZE:
 		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","CacheSize", NULL);

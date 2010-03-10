@@ -50,7 +50,7 @@ void cMouse::draw ( bool draw_back,SDL_Surface *sf )
 	//change size of back surface if nessesary, e.g. when the mouse curor was changed
 	if ( !back || back->h != cur->h || back->w != cur->w )
 	{
-		back = SDL_CreateRGBSurface( OtherData.iSurface, cur->w, cur->h,32, 0, 0, 0, 0 );
+		back = SDL_CreateRGBSurface( Video.getSurfaceType(), cur->w, cur->h,32, 0, 0, 0, 0 );
 	}
 
 	// store new background
@@ -130,14 +130,14 @@ void cMouse::GetPos ()
 
 	if(offX == 0 && offY == 0)
 	{
-		if ( x > SettingsData.iScreenW - cur->w )
+		if ( x > Video.getResolutionX() - cur->w )
 		{
-			x = SettingsData.iScreenW - cur->w;
+			x = Video.getResolutionX() - cur->w;
 			SDL_WarpMouse ( x, y );
 		}
-		if ( y > SettingsData.iScreenH - cur->h )
+		if ( y > Video.getResolutionY() - cur->h )
 		{
-			y = SettingsData.iScreenH - cur->h;
+			y = Video.getResolutionY() - cur->h;
 			SDL_WarpMouse ( x, y );
 		}
 	}
@@ -189,7 +189,7 @@ int cMouse::GetMouseButton ( )
 // Liefert die Koordinaten der Kachel unter der Maus:
 void cMouse::GetKachel ( int *X,int *Y )
 {
-	if ( x < 180 || y < 18 || x > 180 + ( SettingsData.iScreenW-192 ) || y > 18 + ( SettingsData.iScreenH-32 ) )
+	if ( x < 180 || y < 18 || x > 180 + ( Video.getResolutionX()-192 ) || y > 18 + ( Video.getResolutionY()-32 ) )
 	{
 		*X = -1;
 		*Y = -1;
@@ -205,7 +205,7 @@ void cMouse::GetKachel ( int *X,int *Y )
 int cMouse::GetKachelOff ( void )
 {
 	int ret;
-	if ( x < 180 || y < 18 || x > 180 + ( SettingsData.iScreenW-192 ) || y > 18 + ( SettingsData.iScreenH-32 ) ) return -1;
+	if ( x < 180 || y < 18 || x > 180 + ( Video.getResolutionX()-192 ) || y > 18 + ( Video.getResolutionY()-32 ) ) return -1;
 	ret = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
 	ret += (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() ) * Client->Map->size;
 	return ret;

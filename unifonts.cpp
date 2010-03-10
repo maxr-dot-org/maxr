@@ -171,7 +171,7 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
 			if ( chars[unicodeplace] ) SDL_FreeSurface ( chars[unicodeplace] );
-			chars[unicodeplace] = SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
+			chars[unicodeplace] = SDL_CreateRGBSurface ( Video.getSurfaceType()|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
 
 			// change color of smal fonts
 			switch ( fonttype )

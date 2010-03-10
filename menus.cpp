@@ -36,6 +36,8 @@
 #include "dialog.h"
 #include "mapdownload.h"
 #include "settings.h"
+#include "video.h"
+
 
 #define MAIN_MENU_BTN_SPACE 35
 
@@ -483,14 +485,14 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	{
 		position.w = background->w;
 		position.h = background->h;
-		position.x = (SettingsData.iScreenW / 2 - position.w / 2);
-		position.y = (SettingsData.iScreenH / 2 - position.h / 2);
+		position.x = (Video.getResolutionX() / 2 - position.w / 2);
+		position.y = (Video.getResolutionY() / 2 - position.h / 2);
 	}
 	else
 	{
 		position.x = position.y = 0;
-		position.w = SettingsData.iScreenW;
-		position.h = SettingsData.iScreenH;
+		position.w = Video.getResolutionX();
+		position.h = Video.getResolutionY();
 	}
 }
 
@@ -528,7 +530,7 @@ void cMenu::draw( bool firstDraw, bool showScreen )
 	if ( showScreen )
 	{
 		if ( drawnEveryFrame ) mouse->draw ( true, buffer );
-		SHOW_SCREEN
+		Video.draw();
 		if ( !drawnEveryFrame ) mouse->draw ( false, screen ); 
 	}
 }
@@ -552,6 +554,12 @@ int cMenu::show()
 		{
 			Client->doGameActions();
 			if ( Client->timer100ms ) Client->gameGUI.incFrame();
+		}
+
+		if(Video.wasResized())
+		{
+		  draw( true );
+		  Video.resetResized();
 		}
 
 		mouse->GetPos();
@@ -710,7 +718,7 @@ void cMainMenu::infoImageReleased( void* parent )
 	// draw the new image
 	menu->infoImage->setImage ( surface );
 	menu->infoImage->draw();
-	SHOW_SCREEN
+	Video.draw();
 	mouse->draw ( false, screen );
 }
 
@@ -1363,7 +1371,7 @@ void cPlanetsSelectionMenu::showMaps()
 
 	#define SELECTED 0x00C000
 	#define UNSELECTED 0x000000
-					AutoSurface imageSurface(SDL_CreateRGBSurface(OtherData.iSurface, MAPWINSIZE + 8, MAPWINSIZE + 8, SettingsData.iColourDepth, 0, 0, 0, 0));
+					AutoSurface imageSurface(SDL_CreateRGBSurface(Video.getSurfaceType(), MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
 
 					if ( selectedMapIndex == i+offset )
 					{
@@ -2314,8 +2322,8 @@ cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* play
 	hudImage->setMovedOverFunction ( &mouseMoved );
 	menuItems.Add ( hudImage );
 
-	infoLabel = new cMenuLabel ( position.x+180+(position.w-180)/2-(SettingsData.iScreenW-200)/2, position.y+position.h/2-font->getFontHeight ( FONT_LATIN_BIG ), "", FONT_LATIN_BIG );
-	infoLabel->setBox ( (SettingsData.iScreenW-200), font->getFontHeight ( FONT_LATIN_BIG )*2 );
+	infoLabel = new cMenuLabel ( position.x+180+(position.w-180)/2-(Video.getResolutionX()-200)/2, position.y+position.h/2-font->getFontHeight ( FONT_LATIN_BIG ), "", FONT_LATIN_BIG );
+	infoLabel->setBox ( (Video.getResolutionX()-200), font->getFontHeight ( FONT_LATIN_BIG )*2 );
 	menuItems.Add ( infoLabel );
 }
 
@@ -2329,7 +2337,7 @@ cLandingMenu::~cLandingMenu()
 
 void cLandingMenu::createHud()
 {
-	hudSurface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	hudSurface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
 
 	SDL_FillRect ( hudSurface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( hudSurface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -2338,10 +2346,10 @@ void cLandingMenu::createHud()
 
 	SDL_Rect top, bottom;
 	top.x=0;
-	top.y= ( SettingsData.iScreenH/2 )-479;
+	top.y= ( Video.getResolutionY()/2 )-479;
 
 	bottom.x=0;
-	bottom.y= ( SettingsData.iScreenH/2 );
+	bottom.y= ( Video.getResolutionY()/2 );
 
 	SDL_BlitSurface ( GraphicsData.gfx_panel_top, NULL, hudSurface, &top );
 	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom, NULL, hudSurface, &bottom );
@@ -2349,7 +2357,7 @@ void cLandingMenu::createHud()
 
 void cLandingMenu::createMap()
 {
-	mapSurface = SDL_CreateRGBSurface( OtherData.iSurface, SettingsData.iScreenW-192, SettingsData.iScreenH-32, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	mapSurface = SDL_CreateRGBSurface( Video.getSurfaceType(), Video.getResolutionX()-192, Video.getResolutionY()-32, Video.getColDepth(), 0, 0, 0, 0 );
 
 	if ( SDL_MUSTLOCK(mapSurface) ) SDL_LockSurface ( mapSurface );
 	for ( int x = 0; x < mapSurface->w; x++ )
@@ -2381,10 +2389,10 @@ sTerrain *cLandingMenu::getMapTile ( int x, int y )
 {
 	double fak;
 	int nr;
-	if ( x < 0 || x >= SettingsData.iScreenW-192 || y < 0 || y >= SettingsData.iScreenH-32 ) return NULL;
+	if ( x < 0 || x >= Video.getResolutionX()-192 || y < 0 || y >= Video.getResolutionY()-32 ) return NULL;
 
-	x = (int)( x * ( 448.0 / ( SettingsData.iScreenW-180 ) ) );
-	y = (int)( y * ( 448.0 / ( SettingsData.iScreenH-32 ) ) );
+	x = (int)( x * ( 448.0 / ( Video.getResolutionX()-180 ) ) );
+	y = (int)( y * ( 448.0 / ( Video.getResolutionY()-32 ) ) );
 
 	if ( map->size < 448 )
 	{
@@ -2411,14 +2419,14 @@ void cLandingMenu::mapClicked( void* parent )
 
 	if ( mouse->cur != GraphicsData.gfx_Cmove ) return;
 
-	float fakx = (float)( ( SettingsData.iScreenW-192.0 ) / menu->map->size ); //pixel per field in x direction
-	float faky = (float)( ( SettingsData.iScreenH-32.0 ) / menu->map->size );  //pixel per field in y direction
+	float fakx = (float)( ( Video.getResolutionX()-192.0 ) / menu->map->size ); //pixel per field in x direction
+	float faky = (float)( ( Video.getResolutionY()-32.0 ) / menu->map->size );  //pixel per field in y direction
 
-	menu->landData.iLandX = (int) ( ( mouse->x-180 ) / ( 448.0/menu->map->size ) * ( 448.0/ ( SettingsData.iScreenW-192 )));
-	menu->landData.iLandY = (int) ( ( mouse->y-18  ) / ( 448.0/menu->map->size ) * ( 448.0/ ( SettingsData.iScreenH-32 )));
+	menu->landData.iLandX = (int) ( ( mouse->x-180 ) / ( 448.0/menu->map->size ) * ( 448.0/ ( Video.getResolutionX()-192 )));
+	menu->landData.iLandY = (int) ( ( mouse->y-18  ) / ( 448.0/menu->map->size ) * ( 448.0/ ( Video.getResolutionY()-32 )));
 	menu->landData.landingState = LANDING_POSITION_OK;
 
-	{ AutoSurface circleSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, SettingsData.iScreenW - 192, SettingsData.iScreenH - 32, SettingsData.iColourDepth, 0, 0, 0, 0));
+	{ AutoSurface circleSurface(SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect(circleSurface, NULL, 0xFF00FF);
 		SDL_SetColorKey(circleSurface, SDL_SRCCOLORKEY, 0xFF00FF);
 
@@ -2432,7 +2440,7 @@ void cLandingMenu::mapClicked( void* parent )
 		menu->circlesImage->setImage(circleSurface);
 	}
 
-	SHOW_SCREEN
+	Video.draw();
 	mouse->SetCursor ( CHand );
 	mouse->draw ( false, screen );
 
@@ -2443,7 +2451,7 @@ void cLandingMenu::mouseMoved( void* parent )
 {
 	cLandingMenu *menu = static_cast<cLandingMenu*>((cMenu*)parent);
 	sTerrain *terrain = menu->getMapTile ( mouse->x-180, mouse->y-18 );
-	if ( mouse->x >= 180 && mouse->x < SettingsData.iScreenW-12 && mouse->y >= 18 && mouse->y < SettingsData.iScreenH-14 && terrain && !( terrain->water || terrain->coast || terrain->blocked ) ) mouse->SetCursor ( CMove );
+	if ( mouse->x >= 180 && mouse->x < Video.getResolutionX()-12 && mouse->y >= 18 && mouse->y < Video.getResolutionY()-14 && terrain && !( terrain->water || terrain->coast || terrain->blocked ) ) mouse->SetCursor ( CMove );
 	else mouse->SetCursor ( CNo );
 }
 
@@ -2757,7 +2765,7 @@ void cNetworkMenu::showMap()
 void cNetworkMenu::setColor( int color )
 {
 	SDL_Rect src = { 0, 0, 83, 10 };
-	AutoSurface colorSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
+	AutoSurface colorSurface(SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_BlitSurface ( OtherData.colors[color], &src, colorSurface, NULL );
 	colorImage->setImage ( colorSurface );
 }
@@ -4756,7 +4764,7 @@ void cStorageMenu::resetInfos()
 				upgradeButtons[pos]->setLocked ( true );
 			}
 
-			SDL_Surface *surface = SDL_CreateRGBSurface ( OtherData.iSurface, srcSurface->w, srcSurface->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+			SDL_Surface *surface = SDL_CreateRGBSurface ( Video.getSurfaceType(), srcSurface->w, srcSurface->h, Video.getColDepth(), 0, 0, 0, 0 );
 			SDL_BlitSurface ( srcSurface, NULL, surface, NULL );
 			unitImages[pos]->setImage ( surface );
 

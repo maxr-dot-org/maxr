@@ -35,6 +35,7 @@
 #include "settings.h"
 #include "video.h"
 
+
 cDialogYesNo::cDialogYesNo(string text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel(position.x +  40, position.y +  40, text),
@@ -374,14 +375,14 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	introChBox = new cMenuCheckButton ( position.x+25, position.y+294+20, lngPack.i18n( "Text~Settings~Intro" ), SettingsData.bIntro, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( introChBox );
 
-	windowChBox = new cMenuCheckButton ( position.x+25, position.y+294+20*2, lngPack.i18n( "Text~Settings~Window" ), SettingsData.bWindowMode, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	windowChBox = new cMenuCheckButton ( position.x+25, position.y+294+20*2, lngPack.i18n( "Text~Settings~Window" ), Video.getWindowMode(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( windowChBox );
 
 	//BEGIN SCREEN RESOLUTION CHECKBOXES
 	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here. 
 	//HINT: This works only as long as avail video modes have a neat follow up list starting with 0 so make sure that the modes vector doesn't get confused
 	
-	int resolutionMode = Video.validateMode(SettingsData.iScreenW, SettingsData.iScreenH); //set flagged box to current resolution if found
+	int resolutionMode = Video.validateMode(Video.getResolutionX(), Video.getResolutionY()); //set flagged box to current resolution if found
 	resoulutionGroup = new cMenuRadioGroup;
 	
 	if (Video.getVideoSize() <= 0)
@@ -490,7 +491,7 @@ void cDialogPreferences::saveValues()
 	SettingsData.bDamageEffectsVehicles = demageVehChBox->isChecked();
 	SettingsData.bIntro = introChBox->isChecked();
 	SettingsData.bMakeTracks = tracksChBox->isChecked();
-	SettingsData.bWindowMode = windowChBox->isChecked();
+	Video.setWindowMode(windowChBox->isChecked());
 	SettingsData.bShadows = shadowsChBox->isChecked();
 
 	SettingsData.iScrollSpeed = (int)scrollSpeedSlider->getValue();
@@ -516,22 +517,23 @@ void cDialogPreferences::saveValues()
 	SaveOption ( SAVETYPE_WINDOW );
 
 	// save resolution
-	int oldScreenW = SettingsData.iScreenW;
-	int oldScreenH = SettingsData.iScreenH;
+	int oldScreenW = Video.getResolutionX();
+	int oldScreenH = Video.getResolutionY();
 
 	for ( int i = 0; i < 12; i++ )
 	{
 		if ( resoulutionGroup->buttonIsChecked ( i ) )
 		{
 			string sTmp = Video.getVideoMode(i);
-			SettingsData.iScreenW = atoi ( sTmp.substr(0, sTmp.find_first_of('x')).c_str());
-			SettingsData.iScreenH = atoi ( sTmp.substr(sTmp.find_first_of('x')+1, sTmp.size()).c_str());
+			int wTmp = atoi ( sTmp.substr(0, sTmp.find_first_of('x')).c_str());
+			int hTmp = atoi ( sTmp.substr(sTmp.find_first_of('x')+1, sTmp.size()).c_str());
+			Video.setResolution(wTmp, hTmp, true);
 			
 			SaveOption ( SAVETYPE_RESOLUTION );
-			if ( SettingsData.iScreenW != oldScreenW || SettingsData.iScreenH != oldScreenH )
+			if ( Video.getResolutionX() != oldScreenW || Video.getResolutionY() != oldScreenH )
 			{
-				SettingsData.iScreenW = oldScreenW;
-				SettingsData.iScreenH = oldScreenH;
+				//TODO: Tidy up here with oldScreen blabla
+				//Video.setResolution(oldScreenW, oldScreenH);
 				cDialogOK okDialog( lngPack.i18n( "Text~Comp~ResolutionChange" ) );
 				okDialog.show();
 				break;
@@ -746,7 +748,7 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		SDL_Rect src = { 0, 0, srcBuilding->typ->img->w, srcBuilding->typ->img->h };
 		if ( srcBuilding->data.hasFrames ) src.w /= srcBuilding->data.hasFrames;
 		if ( srcBuilding->data.isConnectorGraphic || srcBuilding->data.hasClanLogos ) src.w = src.h;
-		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_FillRect ( unitImage1, NULL, 0xFF00FF );
 		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
 		if ( srcBuilding->data.hasPlayerColor ) SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
@@ -780,7 +782,7 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	else if ( srcVehicle )
 	{
 		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], Round ( (float)srcVehicle->typ->img_org[0]->w / srcVehicle->typ->img_org[0]->h ) * 64, 64 );
-		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( srcVehicle->owner->color, NULL, unitImage1, NULL );
 		SDL_BlitSurface ( srcVehicle->typ->img[0], NULL, unitImage1, NULL );
@@ -796,7 +798,7 @@ void cDialogTransfer::getNamesNCargoNImages ()
 		SDL_Rect src = { 0, 0, destBuilding->typ->img->w, destBuilding->typ->img->h };
 		if ( destBuilding->data.hasFrames ) src.w /= destBuilding->data.hasFrames;
 		if ( destBuilding->data.isConnectorGraphic || destBuilding->data.hasClanLogos ) src.w = src.h;
-		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_FillRect ( unitImage2, NULL, 0xFF00FF );
 		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
 		if ( destBuilding->data.hasPlayerColor ) SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
@@ -830,7 +832,7 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	else
 	{
 		scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], Round ( (float)destVehicle->typ->img_org[0]->w / destVehicle->typ->img_org[0]->h ) * 64, 64 );
-		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( destVehicle->owner->color, NULL, unitImage2, NULL );
 		SDL_BlitSurface ( destVehicle->typ->img[0], NULL, unitImage2, NULL );

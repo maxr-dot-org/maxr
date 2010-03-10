@@ -58,11 +58,10 @@
 #include "settings.h"
 #include "video.h"
 
+
 static int  initNet();
 static int  initSDL();
 static int  initSound();
-static void showGameWindow();
-static void showSplash();
 
 int main ( int argc, char *argv[] )
 {
@@ -97,7 +96,7 @@ int main ( int argc, char *argv[] )
 
 	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
 
-	//detect some screen modes for us
+	//detect some video modes for us
 	Video.doDetection();
 	
 	if( ReadMaxXml() == -1 )
@@ -106,7 +105,7 @@ int main ( int argc, char *argv[] )
 		return -1;
 	}
 
-	showSplash(); //show splashscreen
+	Video.initSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
 	initNet();
 
@@ -143,7 +142,7 @@ int main ( int argc, char *argv[] )
 
 			char mvereturn;
 			Log.write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
-			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), SettingsData.iScreenW, SettingsData.iScreenH, !SettingsData.bWindowMode, !SettingsData.SoundMute);
+			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !SettingsData.SoundMute);
 			Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
@@ -164,8 +163,11 @@ int main ( int argc, char *argv[] )
 	}
 
 	SDL_WaitThread ( DataThread, NULL );
-
-	showGameWindow(); //start game-window
+	
+	Video.setResolution(Video.getResolutionX(), Video.getResolutionY(), true);
+	SDL_ShowCursor ( 0 );
+	Video.clearBuffer();
+	
 	mouse = new cMouse;
 	InputHandler = new cInput;
 	EventHandler = new cEventHandling;
@@ -176,72 +178,6 @@ int main ( int argc, char *argv[] )
 	return 0;
 }
 
-static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
-
-/**
- *Shows splashscreen
- */
-static void showSplash()
-{
-        const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
-        Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
-	
-	buffer = LoadPCX(SPLASH_BACKGROUND);
-	SDL_WM_SetIcon(AutoSurface(SDL_LoadBMP(MAXR_ICON)), NULL);
-
-	//set window to center of screen.
-	if(putenv( cVideoPos)!=0)
-	{
-		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
-	}
-
-	if(SettingsData.iColourDepth > (Uint32)uBpp)
-	{
-		Log.write("Requested colordepth from config is higher than the display has!", cLog::eLOG_TYPE_WARNING);
-	}
-
-	//made it far enough to start game
-	
-	screen=SDL_SetVideoMode ( Video.getSplashW(), Video.getSplashH(), SettingsData.iColourDepth, OtherData.iSurface|SDL_NOFRAME );
-	SDL_BlitSurface ( buffer,NULL,screen,NULL );
-	
-	string sVersion = PACKAGE_NAME; sVersion += " ";
-	sVersion += PACKAGE_VERSION; sVersion += " ";
-	sVersion += PACKAGE_REV; sVersion += " ";
-	SDL_WM_SetCaption ( sVersion.c_str(), NULL );
-	SDL_UpdateRect ( screen,0,0,0,0 );
-}
-
-/**
- *Shows gamewindow
- */
-static void showGameWindow()
-{
-	SDL_FreeSurface(buffer); //delete splash image
-	buffer=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,SettingsData.iScreenW,SettingsData.iScreenH,SettingsData.iColourDepth,0,0,0,0 );
-
-	//set window to center of screen.
-	if(putenv( cVideoPos)!=0)
-	{
-		Log.write("Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
-	}
-
-	screen=SDL_SetVideoMode ( buffer->w,buffer->h,buffer->format->BitsPerPixel,OtherData.iSurface|(SettingsData.bWindowMode?0:SDL_FULLSCREEN) );
-
-	if ( screen == NULL )
-	{
-		Log.write("Couldn't set video mode w: " + iToStr( buffer->w ) +  " h: " + iToStr ( buffer->h ) + " bpp: " + iToStr ( buffer->format->BitsPerPixel ) + (SettingsData.bWindowMode?" window":" fullscreen"), cLog::eLOG_TYPE_ERROR);
-		Quit();
-	}
-
-	SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
-
-	string sVersion = PACKAGE_NAME; sVersion += " ";
-	sVersion += PACKAGE_VERSION; sVersion += " ";
-	sVersion += PACKAGE_REV; sVersion += " ";
-	SDL_WM_SetCaption ( sVersion.c_str(), NULL ); //set caption
-	SDL_ShowCursor ( 0 );
-}
 
 /**
  *Inits SDL
@@ -464,7 +400,7 @@ SDL_Surface *CreatePfeil ( int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsig
 {
 	SDL_Surface *sf;
 	float fak;
-	sf=SDL_CreateRGBSurface ( OtherData.iSurface|SDL_SRCCOLORKEY,size,size,SettingsData.iColourDepth,0,0,0,0 );
+	sf=SDL_CreateRGBSurface ( Video.getSurfaceType()|SDL_SRCCOLORKEY,size,size,Video.getColDepth(),0,0,0,0 );
 	SDL_SetColorKey ( sf,SDL_SRCCOLORKEY,0xFF00FF );
 	SDL_FillRect ( sf,NULL,0xFF00FF );
 	SDL_LockSurface ( sf );
@@ -513,7 +449,7 @@ void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
 {
 	int d,da,db,xx,yy,bry;
 	unsigned int *ptr;
-	if ( iX + iRadius < 0 || iX - iRadius > SettingsData.iScreenW || iY + iRadius < 0 || iY - iRadius > SettingsData.iScreenH ) return;
+	if ( iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() || iY + iRadius < 0 || iY - iRadius > Video.getResolutionY() ) return;
 	SDL_LockSurface ( surface );
 
 	ptr = ( unsigned int* ) surface->pixels;

@@ -18,6 +18,7 @@
  ***************************************************************************/
 #ifndef definesH
 #define definesH
+#include "settings.h"
 
 #define GRID_COLOR			0x305C04	// color of the grid
 #define SCAN_COLOR			0xE3E300	// color of scan circles
@@ -63,7 +64,6 @@
 #define ZERO
 #endif
 
-#define SHOW_SCREEN SDL_BlitSurface(buffer,NULL,screen,NULL);if(SettingsData.bWindowMode)SDL_UpdateRect(screen,0,0,0,0);else{SDL_Flip(screen);}
 #define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER

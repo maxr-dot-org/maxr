@@ -33,6 +33,8 @@
 #include "player.h"
 #include "settings.h"
 #include "events.h"
+#include "video.h"
+
 
 bool sMouseBox::isTooSmall()
 {
@@ -82,7 +84,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	selectedVehicle = NULL;
 	selectedBuilding = NULL;
 
-	minZoom = (float)(( max(SettingsData.iScreenH - HUD_TOTAL_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
+	minZoom = (float)(( max(Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
 	minZoom = max ( minZoom, ((int)( 64.0*minZoom )+( minZoom >= 1.0 ? 0 : 1 )) / (float)64.0 );
 
 	generateSurface();
@@ -154,11 +156,11 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	miniMapImage->setClickedFunction ( &miniMapClicked );
 	menuItems.Add ( miniMapImage );
 
-	coordsLabel = new cMenuLabel ( 265+32, (SettingsData.iScreenH-21)+3 );
+	coordsLabel = new cMenuLabel ( 265+32, (Video.getResolutionY()-21)+3 );
 	coordsLabel->setCentered ( true );
 	menuItems.Add ( coordsLabel );
 
-	unitNameLabel = new cMenuLabel ( 343+106, (SettingsData.iScreenH-21)+3 );
+	unitNameLabel = new cMenuLabel ( 343+106, (Video.getResolutionY()-21)+3 );
 	unitNameLabel->setCentered ( true );
 	menuItems.Add ( unitNameLabel );
 
@@ -194,17 +196,17 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	unitDetails = new cMenuUnitDetails ( 8, 171, false, player );
 	menuItems.Add ( unitDetails );
 
-	chatBox = new cMenuChatBox ( HUD_LEFT_WIDTH+5, SettingsData.iScreenH-48, this );
+	chatBox = new cMenuChatBox ( HUD_LEFT_WIDTH+5, Video.getResolutionY()-48, this );
 	chatBox->setDisabled ( true );
 	chatBox->setReturnPressedFunc ( &chatBoxReturnPressed );
 	menuItems.Add ( chatBox );
 
-	infoTextLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235, "", FONT_LATIN_BIG );
+	infoTextLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(Video.getResolutionX()-HUD_TOTAL_WIDTH)/2, 235, "", FONT_LATIN_BIG );
 	infoTextLabel->setCentered ( true );
 	infoTextLabel->setDisabled ( true );
 	menuItems.Add ( infoTextLabel );
 
-	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(SettingsData.iScreenW-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "" );
+	infoTextAdditionalLabel = new cMenuLabel ( HUD_LEFT_WIDTH+(Video.getResolutionX()-HUD_TOTAL_WIDTH)/2, 235+font->getFontHeight( FONT_LATIN_BIG ), "" );
 	infoTextAdditionalLabel->setCentered ( true );
 	infoTextAdditionalLabel->setDisabled ( true );
 	menuItems.Add ( infoTextAdditionalLabel );
@@ -346,7 +348,7 @@ void cGameGUI::returnToCallback()
 SDL_Surface *cGameGUI::generateSurface()
 {
 	SDL_Rect scr, dest;
-	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, SettingsData.iScreenW, SettingsData.iScreenH, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_HWSURFACE, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
 
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -413,13 +415,13 @@ SDL_Surface *cGameGUI::generateSurface()
 		}
 	}
 
-	if ( SettingsData.iScreenH > 480 )
+	if ( Video.getResolutionY() > 480 )
 	{
 		AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx"));
 		if (tmpSurface)
 		{
 			dest.x = 9;
-			dest.y = SettingsData.iScreenH-HUD_TOTAL_HIGHT-15;
+			dest.y = Video.getResolutionY()-HUD_TOTAL_HIGHT-15;
 			SDL_BlitSurface ( tmpSurface, NULL, surface, &dest );
 		}
 	}
@@ -432,8 +434,8 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 	Uint32* minimap = ( (Uint32*) minimapSurface->pixels );
 
 	//set zoom factor
-	const int displayedMapWidth = (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / getZoom());
-	const int displayedMapHight = (int)((SettingsData.iScreenH - HUD_TOTAL_HIGHT) / getZoom());
+	const int displayedMapWidth = (int)((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
+	const int displayedMapHight = (int)((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
 	const int zoomFactor = twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
 	if ( zoomFactor != 1 )
@@ -561,8 +563,8 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 	int startx, starty, endx, endy;
 	startx = (int) ((((offX / 64.0) - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->size);
 	starty = (int) ((((offY / 64.0) - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->size);
-	endx = (int) ( startx + ((SettingsData.iScreenW - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
-	endy = (int) ( starty + ((SettingsData.iScreenH -  HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
+	endx = (int) ( startx + ((Video.getResolutionX() - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
+	endy = (int) ( starty + ((Video.getResolutionY() -  HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom()*64.0)));
 
 	if ( endx == MINIMAP_SIZE ) endx = MINIMAP_SIZE - 1; //workaround
 	if ( endy == MINIMAP_SIZE ) endy = MINIMAP_SIZE - 1;
@@ -607,8 +609,8 @@ void cGameGUI::checkOffsetPosition ()
 	offX = max ( offX, 0 );
 	offY = max ( offY, 0 );
 
-	int maxX = map->size*64-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom());
-	int maxY = map->size*64-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom());
+	int maxX = map->size*64-(int)((Video.getResolutionX()-HUD_TOTAL_WIDTH)/getZoom());
+	int maxY = map->size*64-(int)((Video.getResolutionY()-HUD_TOTAL_HIGHT)/getZoom());
 	offX = min ( offX, maxX );
 	offY = min ( offY, maxY );
 
@@ -628,8 +630,8 @@ void cGameGUI::setZoom( float newZoom, bool setScroller )
 	if ( lastZoom != getZoom() )
 	{
 		int off;
-		int lastScreenPixel = (int)( (float)( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / lastZoom );
-		int newScreenPixel = (int)( (float)( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) / getZoom() );
+		int lastScreenPixel = (int)( (float)( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / lastZoom );
+		int newScreenPixel = (int)( (float)( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / getZoom() );
 		off = (lastScreenPixel-newScreenPixel)/2 ;
 		lastZoom = getZoom();
 
@@ -772,13 +774,13 @@ void cGameGUI::rotateBlinkColor()
 
 bool cGameGUI::checkScroll()
 {
-	if ( mouse->x <= 0 && mouse->y > 30 && mouse->y < SettingsData.iScreenH-30-18 )
+	if ( mouse->x <= 0 && mouse->y > 30 && mouse->y < Video.getResolutionY()-30-18 )
 	{
 		mouse->SetCursor ( CPfeil4 );
 		doScroll ( 4 );
 		return true;
 	}
-	else if ( mouse->x >= SettingsData.iScreenW-18 && mouse->y > 30 && mouse->y < SettingsData.iScreenH-30-18 )
+	else if ( mouse->x >= Video.getResolutionX()-18 && mouse->y > 30 && mouse->y < Video.getResolutionY()-30-18 )
 	{
 		mouse->SetCursor ( CPfeil6 );
 		doScroll ( 6 );
@@ -790,31 +792,31 @@ bool cGameGUI::checkScroll()
 		doScroll ( 7 );
 		return true;
 	}
-	else if ( ( mouse->x >= SettingsData.iScreenW-18 && mouse->y <= 30 ) || ( mouse->y<=0&&mouse->x>=SettingsData.iScreenW-30-18 ) )
+	else if ( ( mouse->x >= Video.getResolutionX()-18 && mouse->y <= 30 ) || ( mouse->y<=0&&mouse->x>=Video.getResolutionX()-30-18 ) )
 	{
 		mouse->SetCursor ( CPfeil9 );
 		doScroll ( 9 );
 		return true;
 	}
-	else if ( mouse->y <= 0 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 )
+	else if ( mouse->y <= 0 && mouse->x > 30 && mouse->x < Video.getResolutionX()-30-18 )
 	{
 		mouse->SetCursor ( CPfeil8 );
 		doScroll ( 8 );
 		return true;
 	}
-	else if ( mouse->y >= SettingsData.iScreenH-18 && mouse->x > 30 && mouse->x < SettingsData.iScreenW-30-18 )
+	else if ( mouse->y >= Video.getResolutionY()-18 && mouse->x > 30 && mouse->x < Video.getResolutionX()-30-18 )
 	{
 		mouse->SetCursor ( CPfeil2 );
 		doScroll ( 2 );
 		return true;
 	}
-	else if ( ( mouse->x <= 0 && mouse->y >= SettingsData.iScreenH-30-18 ) || ( mouse->y >= SettingsData.iScreenH-18 && mouse->x <= 30 ) )
+	else if ( ( mouse->x <= 0 && mouse->y >= Video.getResolutionY()-30-18 ) || ( mouse->y >= Video.getResolutionY()-18 && mouse->x <= 30 ) )
 	{
 		mouse->SetCursor ( CPfeil1 );
 		doScroll ( 1 );
 		return true;
 	}
-	else if ( ( mouse->x >= SettingsData.iScreenW-18 && mouse->y >= SettingsData.iScreenH-30-18 ) || ( mouse->y >= SettingsData.iScreenH-18 && mouse->x >= SettingsData.iScreenW-30-18 ) )
+	else if ( ( mouse->x >= Video.getResolutionX()-18 && mouse->y >= Video.getResolutionY()-30-18 ) || ( mouse->y >= Video.getResolutionY()-18 && mouse->x >= Video.getResolutionX()-30-18 ) )
 	{
 		mouse->SetCursor ( CPfeil3 );
 		doScroll ( 3 );
@@ -1083,7 +1085,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle && mouseInputMode == attackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == attackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->IsWater( mouse->GetKachelOff() ) ))
 			{
@@ -1097,7 +1099,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<SettingsData.iScreenW-HUD_RIGHT_WIDTH && y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false ) )
 			{
@@ -1111,7 +1113,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<SettingsData.iScreenW-HUD_RIGHT_WIDTH && y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 			{
@@ -1125,21 +1127,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->Disabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->Disabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), false );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->GetKachelOff()%Client->Map->size, mouse->GetKachelOff()/Client->Map->size, Client->Map, true ) )
 		{
 			if ( mouse->SetCursor ( CSteal ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->GetKachelOff(), true );
 			}
 		}
-		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<SettingsData.iScreenW-HUD_RIGHT_WIDTH&&y<SettingsData.iScreenH-HUD_BOTTOM_HIGHT )
+		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->IsInRange ( mouse->GetKachelOff(), Client->Map ) )
 			{
@@ -1275,7 +1277,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) )
 		{
 			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle )
 			{
@@ -2281,8 +2283,8 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		if ( Client->iMsgCoordsX != -1 )
 		{
-			int offsetX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
-			int offsetY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
 			setOffsetPosition ( offsetX, offsetY );
 			Client->iMsgCoordsX = -1;
 		}
@@ -2584,8 +2586,8 @@ void cGameGUI::resetMiniMapOffset()
 	if ( zoomFactor == 1 ) miniMapOffX = miniMapOffY = 0;
 	else
 	{
-		int centerPosX = (int) (offX / 64.0 + (SettingsData.iScreenW - 192.0) / (getTileSize() * 2));
-		int centerPosY = (int) (offY / 64.0 + (SettingsData.iScreenH -  32.0) / (getTileSize() * 2));
+		int centerPosX = (int) (offX / 64.0 + (Video.getResolutionX() - 192.0) / (getTileSize() * 2));
+		int centerPosY = (int) (offY / 64.0 + (Video.getResolutionY() -  32.0) / (getTileSize() * 2));
 		miniMapOffX = centerPosX - (map->size / (zoomFactor * 2));
 		miniMapOffY = centerPosY - (map->size / (zoomFactor * 2));
 
@@ -2605,8 +2607,8 @@ void cGameGUI::miniMapClicked( void *parent )
 
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 
-	const int displayedMapWidth = (int)((SettingsData.iScreenW - HUD_TOTAL_WIDTH) / gui->getZoom());
-	const int displayedMapHight = (int)((SettingsData.iScreenH - HUD_TOTAL_HIGHT) / gui->getZoom());
+	const int displayedMapWidth = (int)((Video.getResolutionX() - HUD_TOTAL_WIDTH) / gui->getZoom());
+	const int displayedMapHight = (int)((Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
 	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * gui->map->size * 64) / (MINIMAP_SIZE * zoomFactor );
@@ -2703,14 +2705,14 @@ void cGameGUI::preDrawFunction()
 	int startX = ((offX-1)/64)-1 < 0 ? 0 : ((offX-1)/64)-1;
 	int startY = ((offY-1)/64)-1 < 0 ? 0 : ((offY-1)/64)-1;
 
-	int endX = Round( offX/64.0 + (float)(SettingsData.iScreenW-HUD_TOTAL_WIDTH) / getTileSize() );
+	int endX = Round( offX/64.0 + (float)(Video.getResolutionX()-HUD_TOTAL_WIDTH) / getTileSize() );
 	if ( endX >= map->size ) endX = map->size-1;
-	int endY = Round( offY/64.0 + (float)(SettingsData.iScreenH-HUD_TOTAL_HIGHT) / getTileSize() );
+	int endY = Round( offY/64.0 + (float)(Video.getResolutionY()-HUD_TOTAL_HIGHT) / getTileSize() );
 	if ( endY >= map->size ) endY = map->size-1;
 
 	if ( Client->timer400ms ) map->generateNextAnimationFrame();
 
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
 	drawTerrain( zoomOffX, zoomOffY );
@@ -2788,11 +2790,11 @@ void cGameGUI::drawTerrain( int zoomOffX, int zoomOffY )
 				}
 				pos++;
 				dest.x += tileSize;
-				if ( dest.x > SettingsData.iScreenW-13 ) break;
+				if ( dest.x > Video.getResolutionX()-13 ) break;
 			}
 		}
 		dest.y += tileSize;
-		if ( dest.y > SettingsData.iScreenH-15 ) break;
+		if ( dest.y > Video.getResolutionY()-15 ) break;
 	}
 }
 
@@ -2802,9 +2804,9 @@ void cGameGUI::drawGrid( int zoomOffX, int zoomOffY )
 	SDL_Rect dest;
 	dest.x = HUD_LEFT_WIDTH;
 	dest.y = HUD_TOP_HIGHT+tileSize-(zoomOffY%tileSize);
-	dest.w = SettingsData.iScreenW-HUD_TOTAL_WIDTH;
+	dest.w = Video.getResolutionX()-HUD_TOTAL_WIDTH;
 	dest.h = 1;
-	for ( int y = 0; y < ( SettingsData.iScreenH-HUD_TOTAL_HIGHT ) / tileSize+1; y++ )
+	for ( int y = 0; y < ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / tileSize+1; y++ )
 	{
 		SDL_FillRect ( buffer, &dest, GRID_COLOR );
 		dest.y += tileSize;
@@ -2812,8 +2814,8 @@ void cGameGUI::drawGrid( int zoomOffX, int zoomOffY )
 	dest.x = HUD_LEFT_WIDTH+tileSize-(zoomOffX%tileSize);
 	dest.y = HUD_TOP_HIGHT;
 	dest.w = 1;
-	dest.h = SettingsData.iScreenH-HUD_TOTAL_HIGHT;
-	for ( int x = 0; x < ( SettingsData.iScreenW-HUD_TOTAL_WIDTH ) /tileSize+1; x++ )
+	dest.h = Video.getResolutionY()-HUD_TOTAL_HIGHT;
+	for ( int x = 0; x < ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) /tileSize+1; x++ )
 	{
 		SDL_FillRect ( buffer, &dest, GRID_COLOR );
 		dest.x += tileSize;
@@ -2824,7 +2826,7 @@ void cGameGUI::displayFX()
 {
 	if ( !Client->FXList.Size() ) return;
 
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
 	for ( int i = (int)Client->FXList.Size() - 1; i >= 0; i-- )
@@ -3090,7 +3092,7 @@ void cGameGUI::displayBottomFX()
 	if ( !Client->FXListBottom.Size() ) return;
 
 	SDL_Rect oldClipRect = buffer->clip_rect;
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
 	for ( int i = (int)Client->FXListBottom.Size() - 1; i >= 0; i-- )
@@ -3543,7 +3545,7 @@ void cGameGUI::drawSelectionBox( int zoomOffX, int zoomOffY )
 
 void cGameGUI::drawDebugOutput()
 {
-	#define DEBUGOUT_X_POS		(SettingsData.iScreenW-140)
+	#define DEBUGOUT_X_POS		(Video.getResolutionX()-140)
 
 	int debugOff = 30;
 
@@ -3677,14 +3679,14 @@ void cGameGUI::displayMessages()
 	for ( int i = (int)Client->messages.Size() - 1; i >= 0; i-- )
 	{
 		message = Client->messages[i];
-		height += 17 + font->getFontHeight() * ( message->len  / (SettingsData.iScreenW - 300) );
+		height += 17 + font->getFontHeight() * ( message->len  / (Video.getResolutionX() - 300) );
 	}
-	SDL_Rect scr = { 0, 0, SettingsData.iScreenW - 200, height+6 };
+	SDL_Rect scr = { 0, 0, Video.getResolutionX() - 200, height+6 };
 	SDL_Rect dest = { 180, 30, 0, 0 };
 
 	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
 	dest.x = 180+2; dest.y = 34;
-	dest.w = SettingsData.iScreenW - 204;
+	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
 
 	for ( unsigned int i = 0; i < Client->messages.Size(); i++ )
@@ -3810,14 +3812,14 @@ void cGameGUI::makePanel( bool open )
 	if ( open )
 	{
 		PlayFX ( SoundData.SNDPanelOpen );
-		SDL_Rect top = { 0, ( SettingsData.iScreenH/2 )-479, 171, 479 };
-		SDL_Rect bottom = { 0, ( SettingsData.iScreenH/2 ) , 171, 481 };
+		SDL_Rect top = { 0, ( Video.getResolutionY()/2 )-479, 171, 479 };
+		SDL_Rect bottom = { 0, ( Video.getResolutionY()/2 ) , 171, 481 };
 		SDL_BlitSurface ( GraphicsData.gfx_panel_top, NULL, buffer, &tmp );
 		tmp = bottom;
 		SDL_BlitSurface ( GraphicsData.gfx_panel_bottom ,NULL, buffer, &tmp );
 		while ( top.y > -479 )
 		{
-			SHOW_SCREEN
+			Video.draw();
 			mouse->draw ( false, screen );
 			SDL_Delay ( 10 );
 			top.y -= 10;
@@ -3832,23 +3834,23 @@ void cGameGUI::makePanel( bool open )
 	{
 		PlayFX ( SoundData.SNDPanelClose );
 		SDL_Rect top = { 0, -480, 171, 479 };
-		SDL_Rect bottom = { 0, SettingsData.iScreenH , 171, 481 };
-		while ( bottom.y>SettingsData.iScreenH/2 )
+		SDL_Rect bottom = { 0, Video.getResolutionY() , 171, 481 };
+		while ( bottom.y>Video.getResolutionY()/2 )
 		{
-			SHOW_SCREEN
+			Video.draw();
 			mouse->draw ( false, screen );
 			SDL_Delay ( 10 );
 			top.y += 10;
-			if ( top.y> ( SettingsData.iScreenH/2 )-479-9 ) top.y = ( SettingsData.iScreenH/2 )-479;
+			if ( top.y> ( Video.getResolutionY()/2 )-479-9 ) top.y = ( Video.getResolutionY()/2 )-479;
 			bottom.y -= 10;
-			if ( bottom.y < SettingsData.iScreenH/2+9 ) bottom.y = SettingsData.iScreenH/2;
+			if ( bottom.y < Video.getResolutionY()/2+9 ) bottom.y = Video.getResolutionY()/2;
 			draw( false, false );
 			tmp = top;
 			SDL_BlitSurface ( GraphicsData.gfx_panel_top,NULL,buffer,&tmp );
 			tmp = bottom;
 			SDL_BlitSurface ( GraphicsData.gfx_panel_bottom,NULL,buffer,&tmp );
 		}
-		SHOW_SCREEN
+		Video.draw();
 		mouse->draw ( false, screen );
 		SDL_Delay ( 100 );
 	}
@@ -4011,7 +4013,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 
 void cGameGUI::drawUnitCircles()
 {
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, SettingsData.iScreenW - HUD_TOTAL_WIDTH, SettingsData.iScreenH - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
 	if ( selectedVehicle )
@@ -4181,7 +4183,7 @@ void cGameGUI::drawExitPoint ( int x, int y )
 		SDL_Rect rDest;
 		SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
 
-		if(SettingsData.iScreenH >= 768) //draw players under minimap if screenres is big enough
+		if(Video.getResolutionY() >= 768) //draw players under minimap if screenres is big enough
 		{
 			rSrc.x = 18; //skip eyecandy spit before playerbar
 
@@ -4258,16 +4260,16 @@ void cGameGUI::savePosition( int slotNumber )
 {
 	if ( slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS ) return;
 
-	savedPositions[slotNumber].offsetX = offX+(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom()/2);
-	savedPositions[slotNumber].offsetY = offY+(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom()/2);
+	savedPositions[slotNumber].offsetX = offX+(int)((Video.getResolutionX()-HUD_TOTAL_WIDTH)/getZoom()/2);
+	savedPositions[slotNumber].offsetY = offY+(int)((Video.getResolutionY()-HUD_TOTAL_HIGHT)/getZoom()/2);
 }
 
 void cGameGUI::jumpToSavedPos ( int slotNumber )
 {
 	if ( slotNumber < 0 || slotNumber >= MAX_SAVE_POSITIONS ) return;
 
-	int offsetX = savedPositions[slotNumber].offsetX-(int)((SettingsData.iScreenW-HUD_TOTAL_WIDTH)/getZoom()/2);
-	int offsetY = savedPositions[slotNumber].offsetY-(int)((SettingsData.iScreenH-HUD_TOTAL_HIGHT)/getZoom()/2);
+	int offsetX = savedPositions[slotNumber].offsetX-(int)((Video.getResolutionX()-HUD_TOTAL_WIDTH)/getZoom()/2);
+	int offsetY = savedPositions[slotNumber].offsetY-(int)((Video.getResolutionY()-HUD_TOTAL_HIGHT)/getZoom()/2);
 
 	setOffsetPosition ( offsetX, offsetY );
 }

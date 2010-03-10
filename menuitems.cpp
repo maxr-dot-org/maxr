@@ -376,7 +376,7 @@ void cMenuImage::setImage(SDL_Surface *image_)
 {
 	if ( image_ != NULL )
 	{
-		image = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, image_->w, image_->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		image = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0 );
 
 		SDL_FillRect ( image, NULL, 0xFF00FF );
 		SDL_SetColorKey ( image, SDL_SRCCOLORKEY, 0xFF00FF );
@@ -627,7 +627,7 @@ void cMenuButton::renewButtonSurface()
 		src.y = isClicked ? 0 : 132;
 		break;
 	}
-	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface ( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	if ( buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
@@ -640,7 +640,7 @@ void cMenuButton::redraw()
 {
 	renewButtonSurface();
 	draw();
-	SHOW_SCREEN
+	Video.draw();
 	mouse->draw ( false, screen );
 }
 
@@ -823,7 +823,7 @@ void cMenuDestroyButton::draw()
 		SDL_BlitSurface(GraphicsData.gfx_destruction_glas, &src, buffer, &position);
 	}
 
-	SHOW_SCREEN
+	Video.draw();
 	mouse->draw ( false, screen );
 }
 
@@ -967,7 +967,7 @@ void cMenuCheckButton::renewButtonSurface()
 	}
 	if ( src.w > 0 )
 	{
-		surface = SDL_CreateRGBSurface ( OtherData.iSurface, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface ( Video.getSurfaceType(), src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
 		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_2X ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	}
@@ -988,7 +988,7 @@ bool cMenuCheckButton::preClicked()
 		renewButtonSurface();
 	}
 	draw();
-	SHOW_SCREEN
+	Video.draw();
 	mouse->draw ( false, screen );
 	return true;
 }
@@ -1181,7 +1181,7 @@ void cMenuUnitListItem::init ()
 	{
 		sVehicle *vehicle = unitID.getVehicle();
 		scaleSurface ( vehicle->img_org[0], vehicle->img[0], vehicle->img_org[0]->w/2, vehicle->img_org[0]->h/2 );
-		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, vehicle->img[0]->w, vehicle->img[0]->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, vehicle->img[0]->w, vehicle->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 		SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
 		SDL_BlitSurface ( vehicle->img[0], NULL, surface, NULL );
@@ -1191,7 +1191,7 @@ void cMenuUnitListItem::init ()
 		sBuilding *building = unitID.getBuilding();
 		if ( building->data.isBig ) scaleSurface ( building->img_org, building->img, building->img_org->w/4, building->img_org->h/4 );
 		else scaleSurface ( building->img_org, building->img, building->img_org->w/2, building->img_org->h/2 );
-		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, building->img->w, building->img->h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, building->img->w, building->img->h, Video.getColDepth(), 0, 0, 0, 0 );
 		SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 		if ( building->data.hasPlayerColor ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
 		else SDL_FillRect ( surface, NULL, 0xFF00FF );
@@ -2265,7 +2265,7 @@ void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
 void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface ( OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h , SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface ( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 
@@ -2534,7 +2534,7 @@ cMenuScroller::cMenuScroller(int x, int y, eMenuScrollerTypes scrollerType_, cMe
 	position.h = src.h;
 	mouseXOff = mouseYOff = 0;
 
-	surface = SDL_CreateRGBSurface( OtherData.iSurface | SDL_SRCCOLORKEY, position.w, position.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	if ( scrollerType == SCROLLER_TYPE_HUD_ZOOM ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 	else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
@@ -2641,7 +2641,7 @@ void cMenuScrollBar::createSurface()
 {
 	SDL_Rect src = { 234, 1, 16, 48};
 	SDL_Rect dest = { 0, 0, 0, 0 };
-	surface = SDL_CreateRGBSurface( OtherData.iSurface, 16, position.h-28, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( Video.getSurfaceType(), 16, position.h-28, Video.getColDepth(), 0, 0, 0, 0 );
 	do
 	{
 		if ( position.h-28-dest.y < 48 ) src.h = position.h-28-dest.x;
@@ -3005,16 +3005,16 @@ void cMenuLineEdit::setReturnPressedFunc( void (*returnPressed_)(void *) )
 }
 
 cMenuChatBox::cMenuChatBox ( int x, int y, cMenu *parentMenu_ ) :
-	cMenuLineEdit(x, y, SettingsData.iScreenW - HUD_TOTAL_WIDTH, 21, parentMenu_)
+	cMenuLineEdit(x, y, Video.getResolutionX() - HUD_TOTAL_WIDTH, 21, parentMenu_)
 {
 	generateSurface();
 }
 
 void cMenuChatBox::generateSurface()
 {
-	if ( SettingsData.iScreenW-HUD_TOTAL_WIDTH-20 < 60 ) return;
+	if ( Video.getResolutionX()-HUD_TOTAL_WIDTH-20 < 60 ) return;
 
-	surface = SDL_CreateRGBSurface( OtherData.iSurface, SettingsData.iScreenW-HUD_TOTAL_WIDTH-20, 48, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( Video.getSurfaceType(), Video.getResolutionX()-HUD_TOTAL_WIDTH-20, 48, Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 
@@ -3095,13 +3095,13 @@ void cMenuPlayersBox::draw()
 {
 	SDL_Rect src = { 10, 0, 10, 10 };
 
-	AutoSurface readySurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
+	AutoSurface readySurface(SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey ( readySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( readySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, readySurface, NULL );
 
 	src.x -= 10;
-	AutoSurface notReadySurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
+	AutoSurface notReadySurface(SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 	SDL_SetColorKey ( notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF );
 	SDL_FillRect ( notReadySurface, NULL, 0xFF00FF );
 	SDL_BlitSurface ( GraphicsData.gfx_player_ready, &src, notReadySurface, NULL );
@@ -3113,7 +3113,7 @@ void cMenuPlayersBox::draw()
 			if ( (*players)[i]->ready ) playerReadys[i-scrollBar->offset]->setImage ( readySurface );
 			else playerReadys[i-scrollBar->offset]->setImage ( notReadySurface );
 
-			AutoSurface colorSurface(SDL_CreateRGBSurface(OtherData.iSurface | SDL_SRCCOLORKEY, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0));
+			AutoSurface colorSurface(SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
 			SDL_BlitSurface ( OtherData.colors[(*players)[i]->color], &src, colorSurface, NULL );
 			playerColors[i-scrollBar->offset]->setImage ( colorSurface );
 
@@ -3424,7 +3424,7 @@ cMenuSlider::cMenuSlider(int x, int y, float minValue_, float maxValue_, cMenu* 
 			position.w = src.w;
 			position.h = src.h;
 
-	surface = SDL_CreateRGBSurface( OtherData.iSurface, src.w, src.h, SettingsData.iColourDepth, 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface( Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 
 			scroller = new cMenuScroller ( x-7, y-7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
@@ -4020,8 +4020,8 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sU
 	int factor = 2;
 	if ( data.isBig ) factor = 4;
 
-	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0 );
-	AutoSurface tmpSurface(SDL_CreateRGBSurface(SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, SettingsData.iColourDepth, 0, 0, 0, 0));
+	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, Video.getColDepth(), 0, 0, 0, 0 );
+	AutoSurface tmpSurface(SDL_CreateRGBSurface(SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, Video.getColDepth(), 0, 0, 0, 0));
 
 	scaleSurface ( oriSurface, tmpSurface, tmpSurface->w, tmpSurface->h );
 
@@ -4107,8 +4107,8 @@ void cMenuReportsScreen::released( void *parent )
 			Client->addMessage ( savedReport.message );
 			if ( savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT )
 			{
-				int offX = savedReport.xPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenW - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-				int offY = savedReport.yPos * 64 - ( ( int ) ( ( ( float ) (SettingsData.iScreenH - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+				int offX = savedReport.xPos * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
+				int offY = savedReport.yPos * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
 				Client->gameGUI.setOffsetPosition ( offX, offY );
 			}
 			return;

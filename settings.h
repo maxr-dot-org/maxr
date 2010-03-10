@@ -45,16 +45,8 @@ public:
 	std::string sHome;
 
 	//START-Node
-	/**screen width in pixels */
-	int iScreenW;
-	/**screen height in pixels */
-	int iScreenH;
-	/**colour depth - e.g. 32*/
-	unsigned int iColourDepth;
 	/**enable intro on start*/
 	bool bIntro;
-	/**start in windowmode*/
-	bool bWindowMode;
 	/**start in fastmode */
 	bool bFastMode;
 	/**prescale gfx */
