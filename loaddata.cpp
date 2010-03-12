@@ -1634,80 +1634,8 @@ static int LoadGraphics(const char* path)
 	FileExists(GraphicsData.Dialog2Path.c_str());
 	FileExists(GraphicsData.Dialog3Path.c_str());
 
-	// Hud:
-	Log.write ( "Hudgraphics...", LOG_TYPE_DEBUG );
-	SDL_Rect scr,dest;
-	GraphicsData.gfx_hud = SDL_CreateRGBSurface ( Video.getSurfaceType(), Video.getResolutionX(),
-		Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_FillRect ( GraphicsData.gfx_hud, NULL, 0xFF00FF );
-	SDL_SetColorKey ( GraphicsData.gfx_hud, SDL_SRCCOLORKEY, 0xFF00FF );
-
-	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_left.pcx" ))
-		return 0;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp, NULL, GraphicsData.gfx_hud, NULL );
-	SDL_FreeSurface ( GraphicsData.gfx_tmp );
-
-	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_top.pcx" ))
-		return 0;
-	scr.x = 0;
-	scr.y=0;
-	scr.w = GraphicsData.gfx_tmp->w;
-	scr.h = GraphicsData.gfx_tmp->h;
-	dest.x = 180;
-	dest.y = 0;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud, &dest );
-	scr.x = 1275;
-	scr.w = 18;
-	scr.h = 18;
-	dest.x = GraphicsData.gfx_hud->w-18;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud, &dest );
-	SDL_FreeSurface ( GraphicsData.gfx_tmp );
-
-	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "hud_right.pcx" ))
-		return 0;
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = GraphicsData.gfx_tmp->w;
-	scr.h = GraphicsData.gfx_tmp->h;
-	dest.x = GraphicsData.gfx_hud->w-12;
-	dest.y = 18;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp, &scr, GraphicsData.gfx_hud,&dest );
-	SDL_FreeSurface ( GraphicsData.gfx_tmp );
-
-	if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp,path,"hud_bottom.pcx" ))
-		return 0;
-	scr.x = 0;
-	scr.y = 0;
-	scr.w = GraphicsData.gfx_tmp->w;
-	scr.h = GraphicsData.gfx_tmp->h;
-	dest.x = 180;
-	dest.y = GraphicsData.gfx_hud->h-24;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,GraphicsData.gfx_hud,&dest );
-	scr.x = 1275;
-	scr.w = 23;
-	scr.h = 24;
-	dest.x = GraphicsData.gfx_hud->w-23;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,GraphicsData.gfx_hud,&dest );
-	scr.x = 1299;
-	scr.w = 16;
-	scr.h = 22;
-	dest.x = 180-16;
-	dest.y = GraphicsData.gfx_hud->h-22;
-	SDL_BlitSurface ( GraphicsData.gfx_tmp,&scr,GraphicsData.gfx_hud,&dest );
-	SDL_FreeSurface ( GraphicsData.gfx_tmp );
-
-	if ( Video.getResolutionY() > 480 )
-	{
-		if( !LoadGraphicToSurface ( GraphicsData.gfx_tmp, path, "logo.pcx" ))
-			return 0;
-		dest.x = 9;
-		dest.y = Video.getResolutionY()-32-15;
-		SDL_BlitSurface ( GraphicsData.gfx_tmp,NULL,GraphicsData.gfx_hud,&dest );
-		SDL_FreeSurface ( GraphicsData.gfx_tmp );
-	}
-
+	// Colors:
 	Log.write ( "Colourgraphics...", LOG_TYPE_DEBUG );
-	// Farben:
 	OtherData.colors = new SDL_Surface*[PLAYERCOLORS];
 	if(!OtherData.colors) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
 	LoadGraphicToSurface ( OtherData.colors[cl_red],path,"cl_red.pcx" );

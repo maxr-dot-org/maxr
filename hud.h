@@ -173,7 +173,6 @@ class cGameGUI : public cMenu
 	/** Saved positions for hotkeys F5-F8 */
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
-	SDL_Surface *generateSurface();
 	SDL_Surface *generateMiniMapSurface();
 	bool loadPanelGraphics();
 
@@ -486,6 +485,7 @@ public:
 	*@author eiko
 	*/
 	void checkMouseInputMode();
+	static SDL_Surface *generateSurface();
 
 	bool unitMenuActive;
 	eMouseInputMode mouseInputMode;

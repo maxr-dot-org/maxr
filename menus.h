@@ -330,6 +330,9 @@ public:
 	virtual void handleDestroyUnit( cBuilding *building = NULL, cVehicle *vehicle = NULL ) {}
 
 	void addTimer(cMenuTimerBase* timer);
+
+private:
+	int lastScreenResX, lastScreenResY;
 };
 
 /** pointer to the currently active menu or NULL if no menu is active */

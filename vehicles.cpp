@@ -677,7 +677,6 @@ void cVehicle::Deselct ()
 	src.h = 48;
 	dest.x = 8;
 	dest.y = 171;
-	SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, GraphicsData.gfx_hud, &dest );
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
 	Client->gameGUI.setFLC ( NULL );

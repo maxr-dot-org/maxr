@@ -481,6 +481,9 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	terminate = false;
 	activeItem = NULL;
 
+	lastScreenResX = Video.getResolutionX();
+	lastScreenResY = Video.getResolutionY();
+
 	recalcPosition( false );
 }
 
@@ -516,6 +519,13 @@ void cMenu::recalcPosition( bool resetItemPositions )
 
 void cMenu::draw( bool firstDraw, bool showScreen )
 {
+	if ( lastScreenResX != Video.getResolutionX() || lastScreenResY != Video.getResolutionY() )
+	{
+		recalcPosition( true );
+		lastScreenResX = Video.getResolutionX();
+		lastScreenResY = Video.getResolutionY();
+	}
+
 	switch ( backgroundType )
 	{
 	case MNU_BG_BLACK:
@@ -578,9 +588,8 @@ int cMenu::show()
 		}
 
 		// check whether the resolution has been changed
-		if ( lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY() )
+		if ( !end && !terminate && ( lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY() ) )
 		{
-			recalcPosition( true );
 			draw( false, true );
 			lastResX = Video.getResolutionX();
 			lastResY = Video.getResolutionY();
@@ -645,7 +654,7 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 			if ( activeItem ) activeItem->setActivity ( false );
 			activeItem = menuItem;
 			activeItem->setActivity ( true );
-			draw();
+			if ( !end && !terminate ) draw();
 		}
 		if ( mouseState.leftButtonReleased )
 		{
@@ -2361,12 +2370,7 @@ cLandingMenu::~cLandingMenu()
 
 void cLandingMenu::createHud()
 {
-	hudSurface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX(), Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
-
-	SDL_FillRect ( hudSurface, NULL, 0xFF00FF );
-	SDL_SetColorKey ( hudSurface, SDL_SRCCOLORKEY, 0xFF00FF );
-
-	SDL_BlitSurface ( GraphicsData.gfx_hud, NULL, hudSurface, NULL );
+	hudSurface = cGameGUI::generateSurface();
 
 	SDL_Rect top, bottom;
 	top.x=0;

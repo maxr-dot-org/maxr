@@ -298,7 +298,6 @@ struct sUnitData
 class cGraphicsData
 {
 public:
-	SDL_Surface *gfx_hud;
 	SDL_Surface *gfx_Chand;
 	SDL_Surface *gfx_Cno;
 	SDL_Surface *gfx_Cselect;

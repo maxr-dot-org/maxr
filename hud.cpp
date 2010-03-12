@@ -297,15 +297,6 @@ int cGameGUI::show()
 	{
 		EventHandler->HandleEvents();
 
-		// check whether the resolution has been changed
-		if ( lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY() )
-		{
-			recalcPosition( true );
-			draw( false, true );
-			lastResX = Video.getResolutionX();
-			lastResY = Video.getResolutionY();
-		}
-
 		mouse->GetPos();
 		if ( mouse->moved() )
 		{
