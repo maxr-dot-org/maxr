@@ -1628,11 +1628,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			bool steal = message->popBool();
 			// check whether the commando action is possible
-			if ( !( ( destVehicle && srcVehicle->canDoCommandoAction ( destVehicle->PosX, destVehicle->PosY, Client->Map, steal ) ) ||
-				( destBuilding && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY+1, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY, Client->Map, steal ) ) ||
-				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Client->Map, steal ) ) ) ) break;
+			if ( !( ( destVehicle && srcVehicle->canDoCommandoAction ( destVehicle->PosX, destVehicle->PosY, Map, steal ) ) ||
+				( destBuilding && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY, Map, steal ) ) ||
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX, destBuilding->PosY+1, Map, steal ) ) ||
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY, Map, steal ) ) ||
+				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Map, steal ) ) ) ) break;
 
 			// check whether the action is successfull or not
 			int chance = srcVehicle->calcCommandoChance ( destVehicle, destBuilding, steal );
