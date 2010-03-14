@@ -4935,16 +4935,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 			if ( ypos < 0 || ypos >= Client->Map->size ) continue;
 			for ( int xpos = unitXPos-1; xpos <= unitXPos+(isBig ? 2 : 1); xpos++, poscount++ )
 			{
-				if ( xpos < 0 || xpos >= Client->Map->size ||
-					(
-					 ( ( ypos == unitYPos && menu->unitData.factorAir == 0 ) ||
-					   ( ypos == unitYPos+1 && isBig )
-					 ) &&
-					 ( ( xpos == unitXPos && menu->unitData.factorAir == 0 ) ||
-					   ( xpos == unitXPos+1 && isBig )
-					 )
-					)
-				   ) continue;
+				if ( xpos < 0 || xpos >= Client->Map->size || ( ( ( ypos == unitYPos && menu->unitData.factorAir == 0 ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.factorAir == 0 ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
 				if ( ( ( menu->ownerBuilding && menu->ownerBuilding->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) ||
 					( menu->ownerVehicle && menu->ownerVehicle->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) )
 					&& !hasCheckedPlace[poscount] )
