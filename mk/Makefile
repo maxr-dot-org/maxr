@@ -67,6 +67,7 @@ SRCS += tinyxmlparser.cpp
 SRCS += unifonts.cpp
 SRCS += upgradecalculator.cpp
 SRCS += vehicles.cpp
+SRCS += video.cpp
 
 OBJS = $(filter %.o, $(SRCS:.c=.o) $(SRCS:.cpp=.o))
 DEPS = $(OBJS:.o=.d)
