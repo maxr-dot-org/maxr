@@ -113,7 +113,7 @@ int cSavegame::load()
 	if ( atoi ( version.substr ( 0, version.find_first_of ( "." ) ).c_str() ) == 0 &&
 		atoi ( version.substr ( version.find_first_of ( "." ), version.length()-version.find_first_of ( "." ) ).c_str() ) <= 2 )
 	{
-		Log.write ( "Skiping loading standard unit values becouse savegame has version 0.2 or older.", LOG_TYPE_DEBUG );
+		Log.write ( "Skiping loading standard unit values because savegame has version 0.2 or older.", LOG_TYPE_DEBUG );
 	}
 	else
 	{

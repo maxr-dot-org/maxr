@@ -409,7 +409,7 @@ public:
 	*@param iNum Number of effect to draw
 	*/
 	// TODO: find a solution that this function will not need to be public.
-	// yet it is public becouse the client has to call the drawing for rockets out of cClient::runFX()
+	// yet it is public because the client has to call the drawing for rockets out of cClient::runFX()
 	void drawFX( int num );
 	/**
 	* draws an bottom-effect

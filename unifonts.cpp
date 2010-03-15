@@ -619,7 +619,7 @@ Uint16 cUnicodeFont::encodeUTF8Char ( unsigned char *pch, int *increase )
 	// encode the UTF-8 character to his unicode position
 	Uint16 uni = 0;
 	unsigned char ch = *pch;
-	// we do not need encoding 4 byte long characters becouse SDL only returns the BMP of the unicode table
+	// we do not need encoding 4 byte long characters because SDL only returns the BMP of the unicode table
 	if ( (ch & 0xE0) == 0xE0 )
 	{
 		uni |= (ch & 0x0F) << 12;

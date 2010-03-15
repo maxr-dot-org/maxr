@@ -909,7 +909,7 @@ void cEndMoveAction::execute()
 
 void cEndMoveAction::executeLoadAction()
 {
-	// only vehicles can load vehicles. We check this twice becouse we will not have the risk to crash the game
+	// only vehicles can load vehicles. We check this twice because we will not have the risk to crash the game
 	if ( !srcVehicle || !destVehicle ) return;
 
 	// execute the loading if possible

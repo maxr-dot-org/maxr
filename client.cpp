@@ -249,7 +249,7 @@ void cClient::startGroupMove()
 	while ( group.Size() )
 	{
 		// we will start moving the vehicles in the list with the vehicle that is the closesed to the destination.
-		// this will avoid that the units will crash into each other becouse the one infront of them has started
+		// this will avoid that the units will crash into each other because the one infront of them has started
 		// his move and the next field is free.
 		int shortestWayLength = 0xFFFF;
 		int shortestWayVehNum = 0;

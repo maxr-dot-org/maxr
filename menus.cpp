@@ -2518,7 +2518,7 @@ void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 
 void cLandingMenu::handleNetMessage( cNetMessage *message )
 {
-	// becouse the messages for landing units and landing positions can be send during
+	// because the messages for landing units and landing positions can be send during
 	// the host is in the hangar menu or in the landing selection menu, the gameGataContainer class
 	// will receive and handle the messages directly
 	switch ( message->iType )

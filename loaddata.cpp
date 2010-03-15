@@ -2448,7 +2448,7 @@ static int LoadBuildings()
 		}
 
 		// Check if there is more than one frame
-		// use 129 here becouse some images from the res_installer are one pixel to large
+		// use 129 here because some images from the res_installer are one pixel to large
 		if (b.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos ) b.data.hasFrames = b.img_org->w / b.img_org->h;
 		else b.data.hasFrames = 0;
 	}
