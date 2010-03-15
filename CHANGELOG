@@ -7,8 +7,9 @@ Mechanized Assault & eXploration Reloaded SVN
 -implemented self destruction
 -seperated rendering code from engine => real fps possible now
 -improved unit group handling (hotkeys work for all selected units now)
--improved ingame chatbot
+-improved ingame chatbox
 -improved quit events (ALT+F4 should work now)
+-improved video mode selection
 -fixed build cost formula
 -fixed various graphic problems
 -fixed /ready command in multiplayer lobby
