@@ -1900,7 +1900,8 @@ bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *paren
 		sVehicle *vehicle = menu->selectedUnit->getUnitID().getVehicle(menu->player);
 		if ( vehicle && menu->checkAddOk ( menu->selectedUnit ) )
 		{
-			menu->secondList->addUnit ( vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue() );
+			if ( menu->selectedUnit->getUpgrades() ) menu->secondList->addUnit ( vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue() );
+			else menu->secondList->addUnit ( &menu->player->VehicleData[vehicle->nr], menu->player, NULL, true );
 			menu->secondList->getItem ( menu->secondList->getSize()-1 )->setResValue ( menu->selectedUnit->getResValue(), false );
 			menu->addedCallback ( menu->selectedUnit );
 			menu->draw();
