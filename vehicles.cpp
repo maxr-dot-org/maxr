@@ -821,25 +821,48 @@ int cVehicle::refreshData ()
 			//the new build event is generated in cServer::handleMoveJobs()
 			if ( BuildPath )
 			{
-				int nextX = PosX;
-				if ( PosX > BandX ) nextX--;
-				if ( PosX < BandX ) nextX++;
-				int nextY = PosY;
-				if ( PosY > BandY ) nextY--;
-				if ( PosY < BandY ) nextY++;
+				// Find a next position that either a) is something we can't move to (in which case we cancel
+				// the path building, or b) doesn't have a building type that we're trying to build.
+				int     nextX       = PosX;
+				int     nextY       = PosY;
+				bool    found_next  = false;
 
-				//sidestep stealth unit if nessesary
-				if ( (PosX != BandX || PosY != BandY) && !Server->Map->possiblePlace(this, nextX, nextY ) )
+				while ( !found_next && ( ( nextX != BandX ) || ( nextY != BandY ) ) ) 
 				{
-					Server->sideStepStealthUnit(nextX, nextY, this );
+				// Calculate the next position in the path.
+					if ( PosX > BandX ) nextX--;
+					if ( PosX < BandX ) nextX++;
+					if ( PosY > BandY ) nextY--;
+					if ( PosY < BandY ) nextY++;
+					// Can we move to this position? If not, we need to kill the path building now.
+					if ( !Server->Map->possiblePlace( this, nextX, nextY ) ) 
+					{
+						// Try sidestepping stealth units before giving up.
+						Server->sideStepStealthUnit( nextX, nextY, this );
+						if ( !Server->Map->possiblePlace( this, nextX, nextY ) ) 
+						{
+							// We can't build along this path any more.
+							break;
+						}
+					}
+					// Can we build at this next position?
+					if ( Server->Map->possiblePlaceBuilding( BuildingTyp.getBuilding()->data, nextX, nextY ) ) 
+					{
+						// We can build here.
+						found_next = true;
+						break;
+					}
 				}
 
-				if ( (PosX != BandX || PosY != BandY) && Server->addMoveJob( PosX + PosY*Server->Map->size, nextX + nextY*Server->Map->size, this ) )
+				// If we've found somewhere to move to, move there now.
+				if ( found_next && Server->addMoveJob( PosX + PosY*Server->Map->size, nextX + nextY*Server->Map->size, this ) )
 				{
 					IsBuilding = false;
 					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );
-					this->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
+					// Begin the movment immediately, so no other unit can block the destination field.
+					this->ServerMoveJob->checkMove();
 				}
+
 				else
 				{
 					if ( BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND )
