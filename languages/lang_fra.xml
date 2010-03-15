@@ -5,7 +5,7 @@
 <!--   they are needed.                                                      -->
 <!-- * All other line feeds within a text block will be replaced by a single -->
 <!--   blank.                                                                -->
-<MAX_Language_File lang="fra" encoding="utf-8" direction="left-to-right">
+<MAX_Language_File lang="fra" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="JCK">
 			<Editor name="JCK" time="2009-09-30 13:04:00"/>
@@ -81,9 +81,9 @@
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Menu principal"/>
-			<Single_Player ENG="Singleplayer" localized="Partie un joueur"/>
-			<Multi_Player ENG="Multiplayer" localized="Partie multijoueur"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Editeur de Carte (*)"/>
+			<Single_Player ENG="Singleplayer" localized="Jeu solo (sans IA)"/>
+			<Multi_Player ENG="Multiplayer" localized="Multijoueur"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Éditeur de carte (*)"/>
 			<Credits ENG="Credits (*)" localized="Crédits (*)"/>
 			<Mani ENG="Manifestation" localized="Information"/>
 			<Exit ENG="Exit" localized="Quitter"/>
@@ -249,7 +249,7 @@
 			<Go_Check ENG="Check for go" localized="Vérification"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Sauvegarde jeu, options ou map non paramétrés"/>
 			<Not_Ready ENG="is not ready" localized="n'est pas prêt"/>
-			Server_Not_Running ENG="The server is not running." localized="Le serveur n'est pas démarré."/>
+			<Server_Not_Running ENG="The server is not running." localized="Le serveur n'est pas démarré."/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Veuillez attendre que %s soit prêt."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Fin de tour dans %s secondes."/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Jeu déjà en cours. Si vous avez perdu la connexion au jeu, vous pouvez vous reconnecter. Voulez-vous vous reconnecter ?"/>
@@ -300,7 +300,7 @@
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Fioul insuffisant. Impossible de démarrer."/>
 			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Minerai insuffisant. Impossible de démarrer."/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Or insuffisant. Impossible de démarrer."/>
-			<Team_Insufficient ENG="Cannot start, workers needed." localized="Ouvriers insuffisants. Impossible de démarrer./>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Ouvriers insuffisants. Impossible de démarrer."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Energie nécessaire, désactivation générateur impossible."/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production fioul augmentée de "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining increased by " localized="Ajustement effectué : production minerai augmentée de "/>
@@ -358,7 +358,7 @@
 			<Point ENG="point" localized="point"/>
 			<Points ENG="points" localized="points"/>
 			<EcoSphere ENG="eco-sphere" localized="éco-sphère"/>
-			<EcoSpheres ENG="eco-spheres localized="éco-sphères"/>
+			<EcoSpheres ENG="eco-spheres" localized="éco-sphères"/>
 			<GameEndsAt ENG="Game ends at" localized="Le jeu termine à"/>
 			<NoLimit ENG="Fight to the death!" localized="Combat à mort!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Mort subite! Le premier joueur qui augmente son score gagne!"/>
@@ -368,7 +368,7 @@
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichier introuvable : %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traduction manquante : %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Erreur chargement carte"/>
-      <INFO_Language_initialised ENG="Language is now initialised" localized="La langue est maintenant initialisée"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="La langue est maintenant initialisée"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Pas encore implémenté"/>
 		</Error_Messages>
 	</Text>
@@ -445,14 +445,14 @@
 		<Unit ID="1 35" ENG="Eco-sphere" localized="Éco-sphère">Éco-sphère\n\nVotre but premier est la construction d'éco-sphères. Chaque éco-sphère vous donne un point de colonie par tour.\n\nDéfendez bien vos éco-sphères, car si l'une d'entre elles est détruite, vous perdez tous les points qu'elle avait accumulé!</Unit>
 	</Units>
 	<Clans>
-		<Clan ID="0" ENG="The Chosen">Meilleures unités aériennes</Clan>
-		<Clan ID="1" ENG="Crimson Path">Meilleures unités marines</Clan>
-		<Clan ID="2" ENG="Von Griffin">Espionnage amélioré</Clan>
-		<Clan ID="3" ENG="Ayer's Hand">Meilleures lance-missiles</Clan>
-		<Clan ID="4" ENG="Musashi">Meilleurs véhicules blindés</Clan>
-		<Clan ID="5" ENG="Sacred Eights">Meilleures unités rapides</Clan>
-		<Clan ID="6" ENG="7 Knights">Meilleure défense</Clan>
-		<Clan ID="7" ENG="Axis Inc.">Constructeurs et ingénieurs supplémentaires (dépend du budget)</Clan>
+		<Clan ID="0" ENG="The Chosen" localized="The Chosen">Meilleures unités aériennes</Clan>
+		<Clan ID="1" ENG="Crimson Path" localized="Crimson Path">Meilleures unités marines</Clan>
+		<Clan ID="2" ENG="Von Griffin" localized="Von Griffin">Espionnage amélioré</Clan>
+		<Clan ID="3" ENG="Ayer's Hand" localized="Ayer's Hand">Meilleures lance-missiles</Clan>
+		<Clan ID="4" ENG="Musashi" localized="Musashi">Meilleurs véhicules blindés</Clan>
+		<Clan ID="5" ENG="Sacred Eights" localized="Sacred Eights">Meilleures unités rapides</Clan>
+		<Clan ID="6" ENG="7 Knights" localized="7 Knights">Meilleure défense</Clan>
+		<Clan ID="7" ENG="Axis Inc." localized="Axis Inc.">Constructeurs et ingénieurs supplémentaires (dépend du budget)</Clan>
 	</Clans>
 	<Graphic>
 		<Dummy/>
