@@ -511,7 +511,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			else
 				screen = SDL_SetVideoMode(dwidth, dheight, 8, Video.getSurfaceType());
 
-			SDL_WM_SetCaption(filename, NULL);
+			//SDL_WM_SetCaption(filename, NULL);
 
 			/* strip unknown flag word */
 			SDL_ReadLE16(mve);
