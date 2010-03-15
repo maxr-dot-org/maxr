@@ -903,14 +903,22 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	tcpClientButton->setReleasedFunction ( &tcpClientReleased );
 	menuItems.Add ( tcpClientButton );
 
+	#ifdef RELEASE
+	
+	#else
+	
 	newHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*2, lngPack.i18n ("Text~Button~HotSeat_New") );
 	newHotseatButton->setReleasedFunction ( &newHotseatReleased );
+	newHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.Add ( newHotseatButton );
 
 	loadHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*3, lngPack.i18n ("Text~Button~HotSeat_Load") );
 	loadHotseatButton->setReleasedFunction ( &loadHotseatReleased );
+	loadHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.Add ( loadHotseatButton );
 
+	#endif
+	
 	backButton = new cMenuButton ( position.x+415, position.y+190+MAIN_MENU_BTN_SPACE*6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL );
 	backButton->setReleasedFunction ( &backReleased );
 	menuItems.Add ( backButton );
@@ -921,8 +929,16 @@ cMultiPlayersMenu::~cMultiPlayersMenu()
 	delete titleLabel;
 	delete tcpHostButton;
 	delete tcpClientButton;
+	
+	#ifdef RELEASE
+	
+	#else
+	
 	delete newHotseatButton;
 	delete loadHotseatButton;
+	
+	#endif
+	
 	delete backButton;
 }
 
@@ -952,10 +968,14 @@ void cMultiPlayersMenu::tcpClientReleased( void* parent )
 
 void cMultiPlayersMenu::newHotseatReleased( void* parent )
 {
+  cDialogOK okDialog( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+  okDialog.show();
 }
 
 void cMultiPlayersMenu::loadHotseatReleased( void* parent )
 {
+  cDialogOK okDialog( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+  okDialog.show();
 }
 
 void cMultiPlayersMenu::backReleased( void* parent )
