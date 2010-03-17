@@ -4008,7 +4008,19 @@ cLoadSaveMenu::~cLoadSaveMenu()
 void cLoadSaveMenu::exitReleased( void* parent )
 {
 	cLoadSaveMenu *menu = static_cast<cLoadSaveMenu*>((cMenu*)parent);
-	menu->end = true;
+	
+	cDialogYesNo yesNoDialog(lngPack.i18n("Text~Comp~End_Game"));
+	if ( yesNoDialog.show() == 0  )
+	{
+	  menu->end = true;
+	
+	}
+	else
+	{
+ 	  menu->draw();
+	}
+	
+	//menu->end = true;
 }
 
 void cLoadSaveMenu::saveReleased( void* parent )
