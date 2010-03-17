@@ -909,12 +909,12 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	
 	newHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*2, lngPack.i18n ("Text~Button~HotSeat_New") );
 	newHotseatButton->setReleasedFunction ( &newHotseatReleased );
-	newHotseatButton->setLocked(true); //disable, not implemented yet
+	//newHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.Add ( newHotseatButton );
 
 	loadHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*3, lngPack.i18n ("Text~Button~HotSeat_Load") );
 	loadHotseatButton->setReleasedFunction ( &loadHotseatReleased );
-	loadHotseatButton->setLocked(true); //disable, not implemented yet
+	//loadHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.Add ( loadHotseatButton );
 
 	#endif
@@ -968,14 +968,18 @@ void cMultiPlayersMenu::tcpClientReleased( void* parent )
 
 void cMultiPlayersMenu::newHotseatReleased( void* parent )
 {
+  cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
   cDialogOK okDialog( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
   okDialog.show();
+  menu->draw();
 }
 
 void cMultiPlayersMenu::loadHotseatReleased( void* parent )
 {
+  cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
   cDialogOK okDialog( lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
   okDialog.show();
+  menu->draw();
 }
 
 void cMultiPlayersMenu::backReleased( void* parent )
