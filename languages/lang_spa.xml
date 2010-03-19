@@ -11,9 +11,12 @@
 			<Editor name="Kuan_Ji" time="2009-11-08 17:00:00"/>
 			<Editor name="SOLIGAN - Asociacion de Software LIbre GANdia" time="2009-11-16 16:53:00"/>
 			<Editor name="Kuan_Ji" time="2009-12-28 23:35:00"/>
+			<Editor name="Kuan_Ji" time="2010-03-18 21:45:00"/>
+			
 		</Author>
-		<Game_Version time="2007-09-30 13:04:00"/>
+		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
+	
 	<Text>
 		<Main>
 			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
@@ -182,7 +185,7 @@
             <Score ENG="Score" localized="Puntuación"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="El mínimo"/>
+			<None ENG="None" localized="Nada"/>
 			<Lower ENG="very low" localized="Muy bajo"/>
 			<Low ENG="low" localized="Bajo"/>
 			<Normal ENG="normal" localized="Normal"/>
@@ -190,13 +193,13 @@
 			<More ENG="very much" localized="Muy alto"/>
 			<Most ENG="most" localized="El máximo"/>
 			<Thick ENG="thick" localized="Denso"/>
-			<Thin ENG="thin" localized="Disperso"/>
+			<Thin ENG="Sparse" localized="Disperso"/>
 			<On ENG="on" localized="Encendido"/>
 			<Off ENG="off" localized="Apagado"/>
-			<Definite ENG="definite" localized="Construido (original)"/>
-			<Mobile ENG="mobile" localized="Debes construir"/>
-			<Type_Turns ENG="turns" localized="Turnos"/>
-			<Type_Simu ENG="simultaneous" localized="Simultáneo"/>
+			<Definite ENG="Built (original)" localized="Construido (original)"/>
+			<Mobile ENG="Must built" localized="Debes construir"/>
+			<Type_Turns ENG="Turns" localized="Turnos"/>
+			<Type_Simu ENG="Simultaneous" localized="Simultáneo"/>
 		</Option>
 		<Settings>
 			<Preferences ENG="Preferences" localized="Preferéncias"/>
@@ -226,8 +229,9 @@
 			<Player_Wrong ENG="Missing a correct player's name" localized="Se ha perdido un nombre de jugador correcto."/>
 			<Player_MustHost ENG="must be host in turnbased game!" localized="El server debe estar en partida basada en turnos!"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum" localized="Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."/>
-			<Player_Turn ENG="'s turn" localized="El turno de"/>
-			<Player_Turn_End ENG=" ended turn" localized=" turno finalizado"/>
+			<Player_Turn ENG="%s's turn" localized="El turno de %s"/>
+			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
+			<Player_Left ENG="%s has left the game" localized=" %s ha salido de la partida"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Error abriendo socket"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="No puedo conectar a "/>
 			<Network_Open ENG="Game open" localized="Partida abierta"/>
@@ -245,13 +249,20 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
+			<Go_Check ENG="Check for go" localized="Marca cuando estés listo para empezar"/>
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Las opciones, el mapa, o el guardado no estan disponibles"/>
+			<Not_Ready ENG="is not ready" localized="no esta listo"/>
+			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="por favor espera hasta que %s haya terminado su turno"/>
                         <Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
                         <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/>
-                        <Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
+						<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
+						<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
+						<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
                         <Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
                         <Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
-                        <Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
+                        <Frozen ENG="You have been frozen by the server." localized="Has sido congelado por el servidor"/>
+						<Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
                         <Player_Joined ENG="%s has joined" localized=" Se ha unido %s"/>
                         <Player_Left ENG="%s has left" localized="Se ha ido %s"/>
                         <No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="No se puede cargar el mapa %s. No estás listo."/>
@@ -265,7 +276,7 @@
                         <MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="Mapa original de M.A.X. %s desde el servidor (registrado)!"/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Damage" localized="Daño"/>
+			<Damage ENG="Attack" localized="Ataque"/>
 			<Shoots ENG="Shoots" localized="Tiros"/>
 			<Range ENG="Range" localized="Alcance"/>
 			<Ammo ENG="Ammo" localized="Munición"/>
@@ -279,21 +290,21 @@
 			<Usage ENG="Usage" localized="Uso"/>
 		</Vehicles>
 		<Comp>
-                        <Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
-                        <Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
-                        <Fuel_Low ENG="Fuel needed, generator turned off." localized="Se necesita combustible, generador apagado."/>
-                        <Energy_Low ENG="Power needed, building turned off." localized="Se necesita energía, edificio apagado."/>
-                        <Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
-                        <Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
-                        <Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
-                        <Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
-                        <Energy_Insufficient ENG="Cannot turn on, power needed" localized="No se puede encender, se necesita energía"/>
-                        <Energy_ToLow ENG="More power needed, generator turned on." localized="Se necesita más energía, generador encendido"/>
-                        <Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No se puede encender, se necesita combustible"/>
-                        <Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
-                        <Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
-                        <Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
-                        <Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No se puede encender, se necesita energía"/>
+                <Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
+                <Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
+                <Fuel_Low ENG="Fuel needed, generator turned off." localized="Se necesita combustible, generador apagado."/>
+                <Energy_Low ENG="Power needed, building turned off." localized="Se necesita energía, edificio apagado."/>
+                <Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
+                <Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
+                <Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
+                <Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
+                <Energy_Insufficient ENG="Cannot turn on, power needed" localized="No se puede encender, se necesita energía"/>
+                <Energy_ToLow ENG="More power needed, generator turned on." localized="Se necesita más energía, generador encendido"/>
+                <Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No se puede encender, se necesita combustible"/>
+                <Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
+                <Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
+                <Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
+                <Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No se puede encender, se necesita energía"/>
                 <Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Se han hecho ajustes: Producción de combustible incrementada en "/>
                 <Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
                 <Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
@@ -317,7 +328,9 @@
                 <Research_Speed ENG="Speed research completed" localized="Investigación de velocidad completada"/>
                 <Research_Scan ENG="Scan research completed" localized="Investigación de radar completada"/>
                 <Research_Costs ENG="Cost research completed" localized="Investigación de costes completada"/>
-                <Working ENG="working" localized="trabajando"/>
+                <Upgrades_Done ENG="Upgraded" localized="Actualizado"/>
+				<Upgrades_Done2 ENG="unit(s) of type %s" localized="unidad(es) de tipo %s"/>
+				<Working ENG="working" localized="trabajando"/>
                 <Waits ENG="waiting" localized="esperando"/>
                 <Disabled ENG="disabled" localized="desactivado"/>
                 <Producing ENG="Building" localized="Edificio"/>
@@ -351,12 +364,13 @@
                 <GameEndsAt ENG="Game ends at" localized="El juego finaliza en"/>
                 <NoLimit ENG="Fight to the death!" localized="Lucha a muerte"/>
                 <SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="El primer jugador en aumentar su puntuación gana!"/>
+				<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichero no encontrado: %s"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducción perdida: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Error cargando mapa"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
+      		<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementado todavía"/>
 		</Error_Messages>
 	</Text>
@@ -432,8 +446,20 @@
 		<Unit ID="1 34" localized="Area de entrenamiento">Area de entrenamiento\n\nEntrena comandos que pueden desarmar o capturar unidades enemigas, y infantería para protegerse de los comandos. Un área de entrenamiento necesita colonos de un apartamento y energía para funcionar.</Unit>
 		<Unit ID="1 35" localized="Invernadero">Invernadero\n\nTu principal objetivo es la construcción de invernaderos. Cada invernadero te da un punto de colonia por turno. \n\nDefiende bien tus invernadores, ya que si te rompen uno, perderás todos los puntos que este te haya dado.</Unit>
   </Units>
+	<Clans>
+		<Clan ID="0" localized="The Chosen">Mejores unidades aéreas</Clan>
+		<Clan ID="1" localized="Crimson Path">Mejores unidades maritimas</Clan>
+		<Clan ID="2" localized="Von Griffin">Espionaje mejorado</Clan>
+		<Clan ID="3" localized="Ayer's Hand">Mejores unidades lanzamisiles</Clan>
+		<Clan ID="4" localized="Musashi">Mejores vehiculos blindados</Clan>
+		<Clan ID="5" localized="Sacred Eights">Mejores unidades rápidas</Clan>
+		<Clan ID="6" localized="7 Knights">Mejores defensas</Clan>
+		<Clan ID="7" localized="Axis Inc.">Constructores e ingenieros extra (depende del mapa) </Clan>
+	</Clans>
 	<Graphic>
+		<Dummy/>
 	</Graphic>
 	<Speech>
+		<Dummy/>
 	</Speech>
 </MAX_Language_File>
