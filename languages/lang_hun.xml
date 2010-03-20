@@ -9,6 +9,7 @@
 	<Header>
 		<Author name="klei">
 			<Editor name="klei" time="2009-06-12 21:31:00"/>
+			<Editor name="klei" time="2010-03-20 09:00:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -27,14 +28,14 @@
 		<Init>
 			<Lang ENG="Loading language pack..." localized="Nyelvcsomag betöltése..."/>
 			<Keys ENG="Loading keys..." localized="Billentyűk betöltése..."/>
-            <Fonts ENG="Loading fonts..." localized="Betűkészletek betöltése..."/>
-            <GFX ENG="Loading graphics..." localized="Grafika betöltése..."/>
-            <Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
-            <Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
-            <Vehicles ENG="Loading vehicles..." localized="Járművek betöltése..."/>
-            <Buildings ENG="Loading buildings..." localized="Épületek betöltése..."/>
-            <Music ENG="Loading music..." localized="Zene betöltése..."/>
-            <Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
+			<Fonts ENG="Loading fonts..." localized="Betűkészletek betöltése..."/>
+			<GFX ENG="Loading graphics..." localized="Grafika betöltése..."/>
+			<Effects ENG="Loading effects..." localized="Effektusok betöltése..."/>
+			<Terrain ENG="Loading terrain..." localized="Terep betöltése..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Járművek betöltése..."/>
+			<Buildings ENG="Loading buildings..." localized="Épületek betöltése..."/>
+			<Music ENG="Loading music..." localized="Zene betöltése..."/>
+			<Sounds ENG="Loading sounds..." localized="Hanhatások betöltése..."/>
 			<Voices ENG="Loading voices..." localized="Hangok betöltése..."/>
 			<Clans ENG="Loading clans..." localized="Hangok betöltése..."/>
 		</Init>
@@ -49,8 +50,8 @@
 			<Resource ENG="Resource density" localized="Nyersanyagsűrűség"/>
 			<Resource_Density ENG="Resource frequency" localized="Nyersanyag gyakoriság"/>
 			<Game_Type ENG="Game Type" localized="Játéktípus"/>
-			<Player_Name ENG="Playername:" localized="Játékosnév:"/>
-			<Player_Select ENG="Playeroptions" localized="Játékos beállítások"/>
+			<Player_Name ENG="Player name:" localized="Játékosnév:"/>
+			<Player_Select ENG="Player options" localized="Játékos beállítások"/>
 			<Team ENG="Team" localized="Csapat"/>
 			<Human ENG="Human" localized="Ember"/>
 			<Computer ENG="Computer" localized="Számítógép"/>
@@ -111,6 +112,20 @@
 			<Upgrade ENG="Upgrade" localized="Kutatás"/>
 			<Reload ENG="Reload" localized="Újratöltés"/>
 			<Host_Start ENG="Start Host" localized="Host Indítása"/>
+			<Units ENG="Units" localized="Egység"/>
+			<Disadvantages ENG="Disadvantages" localized="Hátrányok"/>
+			<Score ENG="Score" localized="Pont"/>
+			<Reports ENG="Reports" localized="Jelentések"/>
+			<Included ENG="Included" localized="Belevesz"/>
+			<Limited_To ENG="Limited to" localized="Korlátoz"/>
+			<Air_Units ENG="Airunits" localized="Légi egységek"/>
+			<Ground_Units ENG="Landunits" localized="Földi egységek"/>
+			<Sea_Units ENG="Seaunits" localized="Vízi egységek"/>
+			<Stationary_Units ENG="Stationary Units" localized="Rögzített egységek"/>
+			<Produce_Units ENG="Producing units" localized="Termelő egységek"/>
+			<Fight_Units ENG="Fighting units" localized="Harcoló egységek"/>
+			<Damaged_Units ENG="Damaged units" localized="Sérült egységek"/>
+			<Stealth_Units ENG="Stealth units" localized="Lopakodó egységek"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear" localized="Eltakarítás"/>
@@ -162,9 +177,10 @@
 			<Energy ENG="Power" localized="Energia"/>
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 			<Teams ENG="Teams" localized="Munkások"/>
+			<Score ENG="Score" localized="Pont"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="Least" localized="Legkevesebb"/>
+			<None ENG="None" localized="Semennyi"/>
 			<Lower ENG="Lower" localized="Kevesebb"/>
 			<Low ENG="Low" localized="Kevés"/>
 			<Normal ENG="Normal" localized="Normál"/>
@@ -210,6 +226,7 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Kérlek állítsd be a játékosok számát. HotSeat játék esetén legalább két emberi játékos kell. Maximum 8 játékos lehet."/>
 			<Player_Turn ENG="'s turn" localized=" köre következik"/>
 			<Player_Turn_End ENG=" ended turn" localized=" befejezte a körét"/>
+			<Player_Left ENG="%s has left the game" localized="%s elhagyta a játékot"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Hiba - a socket nem megnyitható"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Nem lehet hozzá csatlakozni: "/>
 			<Network_Open ENG="Game open" localized="Játék megnyitva"/>
@@ -218,7 +235,7 @@
 			<Network_Connected ENG="Connected" localized="Csatlakozva"/>
 			<Network_Connected_Not ENG="Not connected" localized="Nincs kapcsolat"/>
 			<Network_Closed ENG="Connection closed" localized="A kapcsolat bezárult"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>			
+			<Network_Syncing ENG="Synchronizing..." localized="Szinkronizálás..."/>
 			<Map_NoSet ENG="--no map set--" localized="--nincs Térkép kiválasztva--"/>
 			<Option_NoSet ENG="--no options set--" localized="--nincsenek paraméterek beállítva--"/>
 			<Go ENG="Let's go" localized="Indítás"/>
@@ -230,15 +247,28 @@
 			<Go_Check ENG="Check for go" localized="Pipáld be az indításhoz"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Nincsenek beállítva a paraméterek, a térkép vagy a játékmentés"/>
 			<Not_Ready ENG="is not ready" localized="nem készült el"/>
+			<Server_Not_Running ENG="The server is not running." localized="Nem fut a szerver"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Kérlek várd meg míg %s befejezi a körét."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="A körnek %s másoedpercen belül vége."/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Ez a játék már fut. Ha megszakadt a kapcsolatod a játékkal, újracsatlakozhatsz. Szeretnél újra csatlakozni?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="A szerver nem engedélyezi az újracsatlakozást."/>
+			<Connection_Terminated ENG="Connection terminated." localized="A kapcsolat lezárult."/>
 			<Lost_Connection ENG="Lost connection to %s." localized="A kapcsolat megszakadt %s gépével."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Várakozás egy játékos újracsatlakozására."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Kiszolgáló, a várakozás megszakításához nyomj F2-őt."/>
+			<Frozen ENG="You have been frozen by the server." localized="A szerver lefagyasztotta az állapotodat."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Csak a kiszolgáló mentheti el a játékot."/>
 			<Player_Joined ENG="%s has joined" localized="%s csatlakozott a játékhoz"/>
 			<Player_Left ENG="%s has left" localized="%s elhagyta a játékot"/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="A %s térkép nem tölthető be. Így nem indíthatod a játékot."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Le leszel csatlakoztatva, mert nem szerepelsz a mentett játékban."/>
+			<MapDL_Cancel ENG="Aborted" localized="Visszavonva"/>
+			<MapDL_Percent ENG="Map download: %s%" localized="Térkép letöltés: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..." localized="Térkép feltöltése %s gépére..."/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Nincs telepítve a térkép: letöltés kezdeményezése"/>
+			<MapDL_Download ENG="map %s from server." localized=" %s térképnek a szerverről."/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="A térkép nincs telepítve: Nem engedélyezett az eredeti"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="%s M.A.X. térkép letöltése a szerverről (licencelt)!"/>
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Támadás"/>
@@ -263,12 +293,16 @@
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Nincs elég arany, feldolgozó leállítva!"/>
 			<Team_Low ENG="Workers needed, building turned off." localized="Nincs elég munkás, épület leállítva!"/>
 			<Building_Disabled ENG="Building disabled" localized="Épület működésképtelen"/>
-			<Energy_Optimize ENG="Power generator turned on." localized="Generátor bekapcsolva."/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nem lehet elindítani, több energiára van szükség"/>
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Nincs elegendő energia, generátor elindítva."/>
 			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nincs elegendő üzemanyag az elindításhoz."/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Nincs elegendő nyersanyag az elindításhoz."/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nincs elegendő arany az elindításhoz."/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Nincs elegendő ümunkás az elindításhoz."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="A generátort nem lehet kikapcsolni, szükség van az energiára."/>
-			<Adjustments_Made ENG="Adjustments made: fuel mining increased by " localized="Módosítások történetek: üzemanyag termelés +"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
 			<Cheat ENG="used cheat" localized="csaláskód:"/>
 			<Destroyed ENG="destroyed" localized="megsemmisült"/>
 			<Defeated ENG="defeated" localized="vereséget szenvedett"/>
@@ -289,11 +323,14 @@
 			<Research_Speed ENG="Speed research completed" localized="A Sebességnövelő fejlesztés elkészült"/>
 			<Research_Scan ENG="Scan research completed" localized="A Radar hatótávnövelő fejlesztése elkészült"/>
 			<Research_Costs ENG="Cost research completed" localized="A Költséghatékonyságot javító fejlesztés elkészült"/>
+			<Upgrades_Done ENG="Upgraded" localized="Felfejlesztve"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="egység %s típusúvá"/>
 			<Working ENG="working" localized="működik"/>
 			<Waits ENG="waiting" localized="várakozik"/>
 			<Disabled ENG="disabled" localized="kikapcsolva"/>
 			<Producing ENG="Building" localized="Épít"/>
 			<Producing_Fin ENG="finished building" localized="Gyártás befejezve"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Az építési terület nem tiszta, vagy nincs elegendő nyersanyag"/>
 			<Moving ENG="moving" localized="mozog"/>
 			<Sentry ENG="on sentry" localized="őrtáll"/>
 			<Clearing ENG="Clearing" localized="Takarít"/>
@@ -316,6 +353,14 @@
 			<Surveying ENG="surveying" localized="kutat"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Kérlek indítsd újra a 'Mechanized Assault and eXploration Reloaded'-et, hogy a videó mód változásait érvényesítsd"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Figyelem: Nem támogatott videó mód a beállításban"/>
+			<Point ENG="point" localized="pontnál"/>
+			<Points ENG="points" localized="pontnál"/>
+			<EcoSphere ENG="eco-sphere" localized="ökoszféra"/>
+			<EcoSpheres ENG="eco-spheres" localized="ökoszféra"/>
+			<GameEndsAt ENG="Game ends at" localized="A játék véget ér "/>
+			<NoLimit ENG="Fight to the death!" localized="Harc a végsőkig!"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Hirtelen halál! Aki elsőnek növeli a pontjait, az nyer!"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pillanatkép elmentve: "/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
@@ -395,7 +440,18 @@
 		<Unit ID="1 32" localized="Nyersanyagtároló">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
 		<Unit ID="1 33" localized="Üzemanyagtároló">Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein.</Unit>
 		<Unit ID="1 34" localized="Kiképzőközpont">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
+		<Unit ID="1 35" localized="Ökoszféra">Eco-sphere\n\nYour primary goal is the construction of eco-spheres. Each eco-sphere gives you one colony point per turn.\n\nDefend your eco-spheres well, because if one is destroyed, you lose all the points it generated for you!</Unit>
 	</Units>
+	<Clans>
+		<Clan ID="0" localized="A Kiválasztottak">Jobb légi egységek</Clan>
+		<Clan ID="1" ENG="Bíbor Ösvény">Jobb vízi egységek</Clan>
+		<Clan ID="2" ENG="Von Griffin">Javított felderítés</Clan>
+		<Clan ID="3" ENG="Ayer Keze">Jobb rakétavető egységek</Clan>
+		<Clan ID="4" ENG="Musashi">Jobb páncélozott járművek</Clan>
+		<Clan ID="5" ENG="A Nyolc Szent">Jobb Gyors egységek</Clan>
+		<Clan ID="6" ENG="Hét Lovag">Jobb védelem</Clan>
+		<Clan ID="7" ENG="Axis Inc.">Extra Építőművek és Utászművek (költségvetéstől függ) </Clan>
+	</Clans>
 	<Graphic>
 		<Dummy/>
 	</Graphic>

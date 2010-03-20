@@ -54,8 +54,8 @@
 			<Resource ENG="Resource density"/>
 			<Resource_Density ENG="Resource frequency"/>
 			<Game_Type ENG="Game Type"/>
-			<Player_Name ENG="Playername:"/>
-			<Player_Select ENG="Playeroptions"/>
+			<Player_Name ENG="Player name:"/>
+			<Player_Select ENG="Player options"/>
 			<Team ENG="Team"/>
 			<Human ENG="Human"/>
 			<Computer ENG="Computer"/>
@@ -251,12 +251,12 @@
 			<Go_Check ENG="Check for go"/>
 			<Missing_Settings ENG="Options, map or savegame are not set"/>
 			<Not_Ready ENG="is not ready"/>
-      <Server_Not_Running ENG="The server is not running."/>
-      <Wait_Until ENG="Please wait until %s has finished his turn."/>
+			<Server_Not_Running ENG="The server is not running."/>
+			<Wait_Until ENG="Please wait until %s has finished his turn."/>
 			<Deadline ENG="This turn will end in %s seconds."/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?"/>
-      <Reconnect_Forbidden ENG="Reconnecting forbidden by server."/>
-      <Connection_Terminated ENG="Connection terminated."/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server."/>
+			<Connection_Terminated ENG="Connection terminated."/>
 			<Lost_Connection ENG="Lost connection to %s."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
@@ -341,11 +341,11 @@
 			<Clearing_Mine ENG="clearing mines"/>
 			<Clearing_Fin ENG="clearing done"/>
 			<Laying ENG="placing mines"/>
-      <Greenhorn ENG="Greenhorn"/>
-      <Average ENG="Average"/>
-      <Veteran ENG="Veteran"/>
-      <Expert ENG="Expert"/>
-      <Elite ENG="Elite"/>
+			<Greenhorn ENG="Greenhorn"/>
+			<Average ENG="Average"/>
+			<Veteran ENG="Veteran"/>
+			<Expert ENG="Expert"/>
+			<Elite ENG="Elite"/>
 			<Description ENG="Description"/>
 			<Repeat ENG="Again"/>
 			<Dated ENG="dated"/>
@@ -445,7 +445,6 @@
 		<Unit ID="1 33" ENG="Fuel Tank">Fuel Tank\n\nHolds fuel reserves. Mining stations produce fuel every turn. To save extra fuel, a mining station must be connected to a fuel tank.</Unit>
 		<Unit ID="1 34" ENG="Training Hall">Training Hall\n\nTrains infiltrators who can disable or capture enemy units, and infantry to guard against infiltrators. A training hall requires colonists from a habitat and power to operate.</Unit>
 		<Unit ID="1 35" ENG="Eco-sphere">Eco-sphere\n\nYour primary goal is the construction of eco-spheres. Each eco-sphere gives you one colony point per turn.\n\nDefend your eco-spheres well, because if one is destroyed, you lose all the points it generated for you!</Unit>
-
 	</Units>
 	<Clans>
 		<Clan ID="0" ENG="The Chosen">Better Air Units</Clan>
@@ -453,7 +452,7 @@
 		<Clan ID="2" ENG="Von Griffin">Improved Espionage</Clan>
 		<Clan ID="3" ENG="Ayer's Hand">Better Missile Units</Clan>
 		<Clan ID="4" ENG="Musashi">Better Armored Vehicles</Clan>
-		<Clan ID="5" ENG="Sacred Eights">Better Fast Unitsn</Clan>
+		<Clan ID="5" ENG="Sacred Eights">Better Fast Units</Clan>
 		<Clan ID="6" ENG="7 Knights">Better Defence</Clan>
 		<Clan ID="7" ENG="Axis Inc.">Extra Constructors and Engineers (depends on budget) </Clan>
 	</Clans>
