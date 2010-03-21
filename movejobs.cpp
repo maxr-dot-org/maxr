@@ -423,7 +423,7 @@ void setOffset( cVehicle* Vehicle, int nextDir, int offset )
 
 }
 
-cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle )
+cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle )
 {
 	if ( !Server ) return;
 
@@ -433,7 +433,7 @@ cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicl
 	ScrY = iSrcOff/Map->size;
 	DestX = iDestOff%Map->size;
 	DestY = iDestOff/Map->size;
-	this->bPlane = bPlane;
+	bPlane = (Vehicle->data.factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
 	iSavedSpeed = 0;
@@ -501,29 +501,23 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 {
 	if ( message->iType != GAME_EV_MOVE_JOB_CLIENT ) return false;
 	int iCount = 0;
-	int iWaypointOff;
 	int iReceivedCount = message->popInt16();
 
 	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 
-	// Add the waypoints
-	sWaypoint *Waypoint = new sWaypoint;
-	Waypoints = Waypoint;
 	while ( iCount < iReceivedCount )
 	{
-		iWaypointOff = message->popInt32();
-		Waypoint->X = iWaypointOff%Map->size;
-		Waypoint->Y = iWaypointOff/Map->size;
-		Waypoint->Costs = message->popInt16();
-		Waypoint->next = NULL;
+		sWaypoint* waypoint = new sWaypoint;
+		waypoint->Y = message->popInt16();
+		waypoint->X = message->popInt16();
+		waypoint->Costs = message->popInt16();
+		
+		waypoint->next = Waypoints;
+		Waypoints = waypoint;
 
 		iCount++;
 
-		if ( iCount < iReceivedCount )
-		{
-			Waypoint->next = new sWaypoint;
-			Waypoint = Waypoint->next;
-		}
+		
 	}
 	calcNextDir ();
 
@@ -746,6 +740,7 @@ void cServerMoveJob::calcNextDir()
 	else TESTXY_CND ( >,> ) iNextDir = 7;
 }
 
+/*
 cEndMoveAction::cEndMoveAction(eEndMoveActionType endMoveActionType_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_, int destX_, int destY_) :
 	srcBuilding(srcBuilding_),
 	srcVehicle(srcVehicle_),
@@ -966,17 +961,18 @@ void cEndMoveAction::handleDelVehicle( cVehicle *delVehicle )
 	if ( delVehicle == srcVehicle ) srcVehicle = NULL;
 	if ( delVehicle == destVehicle ) destVehicle = NULL;
 }
+*/
 
-cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle ) :
+cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle ) :
 	Waypoints(NULL),
 	lastWaypoints(NULL)
 {
 	DestX = iDestOff%Client->Map->size;
 	DestY = iDestOff/Client->Map->size;
-	init ( iSrcOff, bPlane, Vehicle );
+	init ( iSrcOff, Vehicle );
 }
 
-cClientMoveJob::cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane, cVehicle *Vehicle )
+cClientMoveJob::cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, cVehicle *Vehicle )
 {
 	this->Waypoints = Waypoints;
 	sWaypoint *nextWaypoint = Waypoints;
@@ -992,10 +988,10 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane,
 
 	if ( Waypoints ) calcNextDir();
 
-	init ( iSrcOff, bPlane, Vehicle );
+	init ( iSrcOff, Vehicle );
 }
 
-void cClientMoveJob::init( int iSrcOff, bool bPlane, cVehicle *Vehicle )
+void cClientMoveJob::init( int iSrcOff, cVehicle *Vehicle )
 {
 	if ( !Client ) return;
 
@@ -1003,7 +999,7 @@ void cClientMoveJob::init( int iSrcOff, bool bPlane, cVehicle *Vehicle )
 	this->Vehicle = Vehicle;
 	ScrX = iSrcOff%Map->size;
 	ScrY = iSrcOff/Map->size;
-	this->bPlane = bPlane;
+	this->bPlane = (Vehicle->data.factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
 	bSoundRunning = false;
@@ -1045,7 +1041,7 @@ cClientMoveJob::~cClientMoveJob()
 			i--;
 		}
 	}
-	if ( endMoveAction ) delete endMoveAction;
+	//if ( endMoveAction ) delete endMoveAction;
 }
 
 void cClientMoveJob::setVehicleToCoords(int x, int y)
@@ -1120,46 +1116,36 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 {
 	if ( message->iType != GAME_EV_MOVE_JOB_SERVER ) return false;
 	int iCount = 0;
-	int iWaypointOff;
 	int iReceivedCount = message->popInt16();
 
 	Log.write(" Client: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
 
 	// Add the waypoints
-	sWaypoint *Waypoint = new sWaypoint;
-	Waypoints = Waypoint;
 	while ( iCount < iReceivedCount )
 	{
-		iWaypointOff = message->popInt32();
-		Waypoint->X = iWaypointOff%Map->size;
-		Waypoint->Y = iWaypointOff/Map->size;
-		Waypoint->Costs = message->popInt16();
-		Waypoint->next = NULL;
+		sWaypoint* waypoint = new sWaypoint;
+		waypoint->Y = message->popInt16();
+		waypoint->X = message->popInt16();
+		waypoint->Costs = message->popInt16();
+		
+		waypoint->next = Waypoints;
+		Waypoints = waypoint;
 
 		iCount++;
-
-		if ( iCount < iReceivedCount )
-		{
-			Waypoint->next = new sWaypoint;
-			Waypoint = Waypoint->next;
-		}
 	}
+
 	calcNextDir ();
 	return true;
 }
 
-bool cClientMoveJob::calcPath( cList<cVehicle*> *group  )
+sWaypoint* cClientMoveJob::calcPath( int SrcX, int SrcY, int DestX, int DestY, cVehicle * vehicle, cList<cVehicle*> *group  )
 {
-	if ( ScrX == DestX && ScrY == DestY ) return false;
+	if ( SrcX == DestX && SrcY == DestY ) return false;
 
-	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle, group );
-	Waypoints = PathCalculator.calcPath();
-	if ( Waypoints )
-	{
-		calcNextDir();
-		return true;
-	}
-	return false;
+	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Client->Map, vehicle, group );
+	sWaypoint* waypoints = PathCalculator.calcPath();
+	
+	return waypoints;
 }
 
 void cClientMoveJob::release()
@@ -1281,11 +1267,11 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 				bFinished = true;
 				break;
 			}
-			ScrX = Vehicle->PosX;
-			ScrY = Vehicle->PosY;
-			if (calcPath())
+
+			sWaypoint* path = calcPath(Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
+			if ( path )
 			{
-				sendMoveJob ( this );
+				sendMoveJob( path, Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle->iID );
 			}
 			else
 			{

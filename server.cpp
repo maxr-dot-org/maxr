@@ -327,10 +327,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_MOVE_JOB_CLIENT:
 		{
-			int iVehicleID = message->popInt16();
+			int iVehicleID = message->popInt32();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
-			bool bPlane = message->popBool();
 
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
@@ -365,7 +364,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				break;
 			}
 
-			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
+			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, Vehicle );
 			if ( !MoveJob->generateFromMessage ( message ) )
 			{
 				delete MoveJob;
@@ -374,7 +373,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			addActiveMoveJob ( MoveJob );
 			Log.write(" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
-			// send the movejob to all other player who can see this unit
+			// send the movejob to all players who can see this unit
+			sendMoveJobServer( MoveJob, Vehicle->owner->Nr );
 			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
 			{
 				sendMoveJobServer( MoveJob, Vehicle->SeenByPlayerList[i]->Nr );
@@ -3412,8 +3412,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 //--------------------------------------------------------------------------
 bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
 {
-	bool bIsAir = ( vehicle->data.factorAir > 0 );
-	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, bIsAir, vehicle );
+	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, vehicle );
 	if ( !MoveJob->calcPath() )
 	{
 		delete MoveJob;

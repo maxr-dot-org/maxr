@@ -105,7 +105,7 @@ void cAutoMJob::DoAutoMove()
 		}
 		if ( vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur )
 		{
-			Client->addMoveJob( vehicle, vehicle->ClientMoveJob->DestX + vehicle->ClientMoveJob->DestY * Client->Map->size);
+			Client->addMoveJob( vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY );
 			lastMoveJob = vehicle->ClientMoveJob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
@@ -147,7 +147,7 @@ void cAutoMJob::PlanNextMove()
 
 	if ( maxFactor != FIELD_BLOCKED )
 	{
-		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size );
+		Client->addMoveJob( vehicle, bestX, bestY );
 		lastMoveJob = vehicle->ClientMoveJob;
 	}
 	else //no fields to survey next to the surveyor
@@ -283,7 +283,7 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		Client->addMoveJob( vehicle, bestX + bestY * Client->Map->size);
+		Client->addMoveJob( vehicle, bestX, bestY );
 		lastMoveJob = vehicle->ClientMoveJob;
 		if ( !lastMoveJob || lastMoveJob->bFinished )
 		{

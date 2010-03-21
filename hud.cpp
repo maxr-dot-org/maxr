@@ -1625,8 +1625,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				else
 				{
 					// the constructor does everything for us
-					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overVehicle );
-					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overVehicle );
+					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
 				}
 			}
 			else if ( overPlane )
@@ -1635,8 +1635,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				else
 				{
 					// the constructor does everything for us
-					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overPlane );
-					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overPlane );
+					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
 				}
 			}
 		}
@@ -1648,8 +1648,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				else
 				{
 					// the constructor does everything for us
-					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_LOAD, NULL, selectedVehicle, NULL, overVehicle );
-					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_LOAD, NULL, selectedVehicle, NULL, overVehicle );
+					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
 				}
 			}
 			else if ( overVehicle )
@@ -1658,8 +1658,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				else
 				{
 					// the constructor does everything for us
-					cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, NULL, selectedVehicle, NULL, overVehicle );
-					if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, NULL, selectedVehicle, NULL, overVehicle );
+					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
 				}
 			}
 		}
@@ -1703,8 +1703,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					else
 					{
 						// the constructor does everything for us
-						cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_ATTACK, NULL, selectedVehicle, building, vehicle, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
-						if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+						//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_ATTACK, NULL, selectedVehicle, building, vehicle, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
+						//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
 					}
 				}
 				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->Attacking )
@@ -1742,8 +1742,10 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					}
 					else
 					{
+						int iX, iY;
+						mouse->GetKachel ( &iX, &iY );
 						if ( selectedVehiclesGroup.Size() > 1 ) Client->startGroupMove();
-						else Client->addMoveJob( selectedVehicle, mouse->GetKachelOff() );
+						else Client->addMoveJob( selectedVehicle, iX, iY);
 					}
 				}
 				else if ( overUnitField )

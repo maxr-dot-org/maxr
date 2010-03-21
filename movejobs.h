@@ -153,7 +153,7 @@ private:
 class cServerMoveJob
 {
 public:
-	cServerMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle );
+	cServerMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle );
 	~cServerMoveJob ();
 
 	cMap *Map;
@@ -186,6 +186,7 @@ enum eEndMoveActionType
 	EMAT_ATTACK
 };
 
+/*
 class cEndMoveAction
 {
 	cBuilding *srcBuilding;
@@ -217,13 +218,16 @@ public:
 
 	void handleDelVehicle( cVehicle *delVehicle );
 };
+*/
 
 class cClientMoveJob
 {
-	void init ( int iSrcOff, bool bPlane, cVehicle *Vehicle );
+	void init ( int iSrcOff, cVehicle *Vehicle );
 public:
-	cClientMoveJob ( int iSrcOff, int iDestOff, bool bPlane, cVehicle *Vehicle );
-	cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, bool bPlane, cVehicle *Vehicle );
+	static sWaypoint* calcPath( int SrcX, int SrcY, int DestX, int DestY, cVehicle * vehicle, cList<cVehicle*> *group = NULL );
+
+	cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle );
+	cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, cVehicle *Vehicle );
 	~cClientMoveJob ();
 	cMap *Map;
 	cVehicle *Vehicle;
@@ -244,7 +248,7 @@ public:
 
 	void setVehicleToCoords(int x, int y);
 	bool generateFromMessage( cNetMessage *message );
-	bool calcPath( cList<cVehicle*> *group = NULL );
+	
 	void release();
 	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed );
 	void moveVehicle();

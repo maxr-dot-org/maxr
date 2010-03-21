@@ -103,7 +103,7 @@ cVehicle::~cVehicle ()
 	{
 		ClientMoveJob->release();
 		ClientMoveJob->Vehicle = NULL;
-		if ( ClientMoveJob->endMoveAction ) ClientMoveJob->endMoveAction->handleDelVehicle ( this );
+		//if ( ClientMoveJob->endMoveAction ) ClientMoveJob->endMoveAction->handleDelVehicle ( this );
 	}
 	if ( ServerMoveJob )
 	{
@@ -145,13 +145,13 @@ cVehicle::~cVehicle ()
 		}
 	}
 
-	while( passiveEndMoveActions.Size() )
+/*	while( passiveEndMoveActions.Size() )
 	{
 		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
 		passiveEndMoveActions.Delete ( 0 );
 		delete endMoveAction;
 	}
-
+*/
 	if ( Client && Client->gameGUI.getSelVehicle() == this )
 	{
 		Client->gameGUI.deselectUnit();

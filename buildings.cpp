@@ -189,12 +189,12 @@ cBuilding::~cBuilding ()
 		}
 	}
 
-	while( passiveEndMoveActions.Size() )
+	/*while( passiveEndMoveActions.Size() )
 	{
 		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
 		passiveEndMoveActions.Delete ( 0 );
 		delete endMoveAction;
-	}
+	}*/
 
 	if ( Client && Client->gameGUI.getSelBuilding() == this )
 	{

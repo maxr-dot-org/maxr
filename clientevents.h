@@ -127,7 +127,7 @@ void sendWantStopWork( cBuilding* building);
 * sends all waypoints of a movejob to the server.
 *@author alzi alias DoctorDeath
 */
-void sendMoveJob( cClientMoveJob *MoveJob );
+void sendMoveJob( sWaypoint* path, int SrcX, int SrcY, int DestX, int DestY, int vehicleID  );
 
 /**
 *

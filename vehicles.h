@@ -30,7 +30,6 @@ class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
-class cEndMoveAction;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -162,7 +161,7 @@ public:
 	float CommandoRank; // Rang des Commandos
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
-	cList<cEndMoveAction*> passiveEndMoveActions;
+	//cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
 
 	cVehicle *next,*prev; // Verkettungselemente

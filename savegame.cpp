@@ -1078,7 +1078,7 @@ void cSavegame::generateMoveJobs ()
 {
 	for ( unsigned int i = 0; i < MoveJobsLoad.Size(); i++ )
 	{
-		cServerMoveJob *MoveJob = new cServerMoveJob( MoveJobsLoad[i]->vehicle->PosX+MoveJobsLoad[i]->vehicle->PosY*Server->Map->size, MoveJobsLoad[i]->destX+MoveJobsLoad[i]->destY*Server->Map->size, MoveJobsLoad[i]->vehicle->data.factorAir > 0, MoveJobsLoad[i]->vehicle );
+		cServerMoveJob *MoveJob = new cServerMoveJob( MoveJobsLoad[i]->vehicle->PosX+MoveJobsLoad[i]->vehicle->PosY*Server->Map->size, MoveJobsLoad[i]->destX+MoveJobsLoad[i]->destY*Server->Map->size, MoveJobsLoad[i]->vehicle );
 		if ( !MoveJob->calcPath() )
 		{
 			delete MoveJob;

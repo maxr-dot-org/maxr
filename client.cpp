@@ -208,15 +208,14 @@ void cClient::initPlayer( cPlayer *Player )
 	}
 }
 
-void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset, cList<cVehicle*> *group)
+void cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*> *group)
 {
-	if ( vehicle->bIsBeeingAttacked ) return;
 
-	cClientMoveJob *MoveJob = new cClientMoveJob ( vehicle->PosX+vehicle->PosY*Map->size, iDestOffset, vehicle->data.factorAir > 0, vehicle );
-	if ( MoveJob->calcPath( group ) )
+	sWaypoint* path = cClientMoveJob::calcPath( vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
+	if ( path )
 	{
-		sendMoveJob ( MoveJob );
-		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( MoveJob->DestX ) + ", DestY: " + iToStr ( MoveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+		sendMoveJob( path, vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle->iID );
+		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( DestX ) + ", DestY: " + iToStr ( DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 	else
 	{
@@ -225,12 +224,6 @@ void cClient::addMoveJob(cVehicle* vehicle, int iDestOffset, cList<cVehicle*> *g
 			if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
 			else PlayVoice ( VoiceData.VOINoPath2 );
 		}
-
-		if ( MoveJob->Vehicle )
-		{
-			MoveJob->Vehicle->ClientMoveJob = NULL;
-		}
-		delete MoveJob;
 	}
 }
 
@@ -269,8 +262,9 @@ void cClient::startGroupMove()
 		cVehicle *vehicle = group[shortestWayVehNum];
 		// add the movejob to the destination of the unit.
 		// the formation of the vehicle group will stay as destination formation.
-		int destOffset = mainDestX+vehicle->PosX-mainPosX+(mainDestY+vehicle->PosY-mainPosY)*Map->size;
-		addMoveJob ( vehicle, destOffset, gameGUI.getSelVehiclesGroup() );
+		int destX = mainDestX + vehicle->PosX - mainPosX;
+		int destY = mainDestY + vehicle->PosY - mainPosY ;
+		addMoveJob ( vehicle, destX, destY, gameGUI.getSelVehiclesGroup() );
 		// delete the unit from the copyed list
 		group.Delete ( shortestWayVehNum );
 	}
@@ -1049,10 +1043,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_MOVE_JOB_SERVER:
 		{
-			int iVehicleID = message->popInt16();
+			int iVehicleID = message->popInt32();
 			int iSrcOff = message->popInt32();
 			int iDestOff = message->popInt32();
-			bool bPlane = message->popBool();
+			int iSavedSpeed = message->popInt16();
 
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
@@ -1062,7 +1056,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 
-			cClientMoveJob *MoveJob = new cClientMoveJob ( iSrcOff, iDestOff, bPlane, Vehicle );
+			cClientMoveJob *MoveJob = new cClientMoveJob ( iSrcOff, iDestOff, Vehicle );
+			MoveJob->iSavedSpeed = iSavedSpeed;
 			if ( !MoveJob->generateFromMessage ( message ) ) break;
 			Log.write(" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 		}
@@ -2266,7 +2261,7 @@ void cClient::handleMoveJobs ()
 				Vehicle->ClientMoveJob = NULL;
 				Vehicle->moving = false;
 				Vehicle->MoveJobActive = false;
-				if ( MoveJob->endMoveAction ) MoveJob->endMoveAction->execute();
+				//if ( MoveJob->endMoveAction ) MoveJob->endMoveAction->execute();
 			}
 			else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.Delete ( i );
