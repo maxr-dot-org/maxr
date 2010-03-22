@@ -214,13 +214,6 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs();
-
-	/**
-	* gets the vehicle with the ID
-	*@author alzi alias DoctorDeath
-	*@param iID The ID of the vehicle
-	*/
-	cVehicle *getVehicleFromID ( int iID );
 	/**
 	* gets the bulding with the ID
 	*@author alzi alias DoctorDeath
@@ -265,6 +258,13 @@ public:
 	bool bStarted;
 	bool bDebugCheckPos;
 
+	
+	/**
+	* gets the vehicle with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the vehicle
+	*/
+	cVehicle *getVehicleFromID ( int iID );
 	/**
 	* checks whether a player has detected some new enemy units
 	*@author alzi alias DoctorDeath
@@ -369,7 +369,7 @@ public:
 	/**
 	* generates a new movejob
 	*/
-	bool addMoveJob(int iSrc, int iDest, cVehicle* vehicle);
+	bool addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* vehicle);
 	/**
 	* adds a new rubble object to the game
 	* @param offset the offset where the rubble is added

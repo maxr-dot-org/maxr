@@ -327,57 +327,20 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		}
 	case GAME_EV_MOVE_JOB_CLIENT:
 		{
-			int iVehicleID = message->popInt32();
-			int iSrcOff = message->popInt32();
-			int iDestOff = message->popInt32();
-
-			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
-			if ( Vehicle == NULL )
+			cServerMoveJob *MoveJob = cServerMoveJob::generateFromMessage( message );
+			if ( !MoveJob )
 			{
-				Log.write(" Server: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
-				break;
-			}
-			if ( Vehicle->PosX+Vehicle->PosY*Map->size != iSrcOff )
-			{
-				Log.write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (Vehicle->PosX) + "x" + iToStr(Vehicle->PosY) + ") for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
-				break;
-			}
-			//TODO: is this check really needed?
-			if ( Vehicle->bIsBeeingAttacked )
-			{
-				Log.write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
-				break;
-			}
-			if ( Vehicle->Attacking )
-			{
-				Log.write(" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG );
-				break;
-			}
-			if ( Vehicle->IsBuilding || Vehicle->BuildPath )
-			{
-				Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
-				break;
-			}
-			if ( Vehicle->IsClearing )
-			{
-				Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
-				break;
-			}
-
-			cServerMoveJob *MoveJob = new cServerMoveJob ( iSrcOff, iDestOff, Vehicle );
-			if ( !MoveJob->generateFromMessage ( message ) )
-			{
-				delete MoveJob;
 				break;
 			}
 
 			addActiveMoveJob ( MoveJob );
 			Log.write(" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 			// send the movejob to all players who can see this unit
-			sendMoveJobServer( MoveJob, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			const cVehicle& vehicle = *MoveJob->Vehicle;
+			sendMoveJobServer( MoveJob, vehicle.owner->Nr );
+			for ( unsigned int i = 0; i < vehicle.SeenByPlayerList.Size(); i++ )
 			{
-				sendMoveJobServer( MoveJob, Vehicle->SeenByPlayerList[i]->Nr );
+				sendMoveJobServer( MoveJob, vehicle.SeenByPlayerList[i]->Nr );
 			}
 		}
 		break;
@@ -673,7 +636,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}*/
 
 			// drive away from the building lot
-			addMoveJob( Vehicle->PosX+Vehicle->PosY*Map->size, iEscapeX+iEscapeY*Map->size, Vehicle );
+			addMoveJob( Vehicle->PosX, Vehicle->PosY, iEscapeX, iEscapeY, Vehicle );
 			Vehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
 		}
 		break;
@@ -2521,8 +2484,8 @@ bool cServer::checkEndActions ( int iPlayer )
 					// restart movejob
 					NextVehicle->ServerMoveJob->calcNextDir();
 					NextVehicle->ServerMoveJob->bEndForNow = false;
-					NextVehicle->ServerMoveJob->ScrX = NextVehicle->PosX;
-					NextVehicle->ServerMoveJob->ScrY = NextVehicle->PosY;
+					NextVehicle->ServerMoveJob->SrcX = NextVehicle->PosX;
+					NextVehicle->ServerMoveJob->SrcY = NextVehicle->PosY;
 					addActiveMoveJob ( NextVehicle->ServerMoveJob );
 					sMessage = "Text~Comp~Turn_Automove";
 				}
@@ -3410,9 +3373,9 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 }
 
 //--------------------------------------------------------------------------
-bool cServer::addMoveJob(int iSrc, int iDest, cVehicle* vehicle)
+bool cServer::addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* vehicle)
 {
-	cServerMoveJob *MoveJob = new cServerMoveJob( iSrc, iDest, vehicle );
+	cServerMoveJob *MoveJob = new cServerMoveJob( srcX, srcY, destX, destY, vehicle );
 	if ( !MoveJob->calcPath() )
 	{
 		delete MoveJob;
@@ -3604,7 +3567,7 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 
 	if ( placeFound )
 	{
-		Server->addMoveJob( PosX+PosY*Server->Map->size, bestX+bestY*Server->Map->size, stealthVehicle );
+		Server->addMoveJob( PosX, PosY, bestX, bestY, stealthVehicle );
 		stealthVehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
 		return;
 	}

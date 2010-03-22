@@ -167,8 +167,6 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 
 	// calculate the number of fields which would be surveyed by this move
 	float NrSurvFields = 0;
-	// calculate the number of fields which has already revealed resources
-	float NrResFound = 0;
 	int x, y;
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
 	{
@@ -179,35 +177,40 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 			// check for map borders
 			if ( y < 0 || y >= Client->Map->size ) continue;
 
-			// calculate current map index only once in a loop cycle
 			int iPos = x + y * Client->Map->size;
-			// skip the surveyor's current target position, as it should have been explored already,
-			// but check for already found resources
-			if ( x == PosX && y == PosY )
-			{
-				if ( Client->Map->Resources[iPos].typ != 0 )
-				{
-					NrResFound++;
-				}
-				continue;
-			}
 
 			// int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size]; !the line where this variable is needed was commented out earlier!
 			if ( vehicle->owner->ResourceMap[iPos] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
-			// check if the surveyor already found some resources in this new direction or not
-			else if ( Client->Map->Resources[iPos].typ != 0 )
-			{
-				NrResFound++;
-			}
-
 		}
 	}
 	if (vehicle->PosX != PosX && vehicle->PosY != PosY) //diagonal move
 	{
 		NrSurvFields /= 2;
+	}
+
+	// calculate the number of fields which has already revealed resources
+	float NrResFound = 0;
+	for ( x = PosX - 1; x <= PosX + 1; x ++)
+	{
+		// check for map borders
+		if ( x < 0 || x >= Client->Map->size ) continue;
+		for (y = PosY - 1; y <= PosY + 1; y++)
+		{
+			// check for map borders
+			if ( y < 0 || y >= Client->Map->size ) continue;
+
+			int iPos = x + y * Client->Map->size;
+
+			// check if the surveyor already found some resources in this new direction or not
+			if ( vehicle->owner->ResourceMap[iPos] != 0 && Client->Map->Resources[iPos].typ != 0 )
+			{
+				NrResFound++;
+			}
+
+		}
 	}
 
 	//the distance to the OP
@@ -220,7 +223,6 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	{
 		if ( i == iNumber ) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-		// take note (maybe will be useful somewhere): sqrt(pow(A,B)) = pow(A,B*0.5);
 		temp = sqrt( pow( (float) PosX - autoMJobs[i]->vehicle->PosX , (float)2.0) + pow( (float) PosY - autoMJobs[i]->vehicle->PosY , (float)2.0) );
 		newDistancesSurv += pow( (float)temp, (float)EXP);
 	}

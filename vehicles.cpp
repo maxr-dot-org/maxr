@@ -855,7 +855,7 @@ int cVehicle::refreshData ()
 				}
 
 				// If we've found somewhere to move to, move there now.
-				if ( found_next && Server->addMoveJob( PosX + PosY*Server->Map->size, nextX + nextY*Server->Map->size, this ) )
+				if ( found_next && Server->addMoveJob( PosX, PosY, nextX, nextY, this ) )
 				{
 					IsBuilding = false;
 					Server->addUnit( PosX, PosY, BuildingTyp.getBuilding(), owner );

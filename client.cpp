@@ -214,7 +214,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle
 	sWaypoint* path = cClientMoveJob::calcPath( vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if ( path )
 	{
-		sendMoveJob( path, vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle->iID );
+		sendMoveJob( path, vehicle->iID );
 		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( DestX ) + ", DestY: " + iToStr ( DestY ), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 	else

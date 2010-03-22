@@ -50,7 +50,7 @@ void sendWantStopWork( cBuilding* building)
 	Client->sendNetMessage(message);
 }
 
-void sendMoveJob( sWaypoint* path, int SrcX, int SrcY, int DestX, int DestY, int vehicleID  )
+void sendMoveJob( sWaypoint* path, int vehicleID  )
 {
 
 	cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_CLIENT );
@@ -65,6 +65,7 @@ void sendMoveJob( sWaypoint* path, int SrcX, int SrcY, int DestX, int DestY, int
 
 		if ( message->iLength > PACKAGE_LENGTH - 19 )
 		{
+			Log.write(" Client: Error sending movejob: message too long", cLog::eLOG_TYPE_NET_ERROR );
 			delete message;
 			return;	// don't send movejobs that are to long
 		}
@@ -74,8 +75,6 @@ void sendMoveJob( sWaypoint* path, int SrcX, int SrcY, int DestX, int DestY, int
 	}
 
 	message->pushInt16( iCount );
-	message->pushInt32( DestX + DestY * Client->Map->size );
-	message->pushInt32( SrcX  + SrcY  * Client->Map->size );
 	message->pushInt32( vehicleID );
 
 	Client->sendNetMessage( message );
@@ -353,5 +352,14 @@ void sendWantChangeUnitName( string newName, int unitID )
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CHANGE_UNIT_NAME );
 	message->pushString( newName );
 	message->pushInt16( unitID );
+	Client->sendNetMessage( message );
+}
+
+void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_END_MOVE_ACTION );
+	message->pushChar( type );
+	message->pushInt32( destID );
+	message->pushInt32( vehicleID );
 	Client->sendNetMessage( message );
 }

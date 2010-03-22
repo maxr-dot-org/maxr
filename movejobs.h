@@ -153,13 +153,13 @@ private:
 class cServerMoveJob
 {
 public:
-	cServerMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle );
+	cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, cVehicle *Vehicle );
 	~cServerMoveJob ();
 
 	cMap *Map;
 	cVehicle *Vehicle;
 
-	int ScrX, ScrY;
+	int SrcX, SrcY;
 	int DestX, DestY;
 	bool bFinished;
 	bool bEndForNow;
@@ -169,7 +169,8 @@ public:
 
 	sWaypoint *Waypoints;
 
-	bool generateFromMessage( cNetMessage *message );
+	static cServerMoveJob* generateFromMessage( cNetMessage *message );
+
 	bool calcPath();
 	void release();
 	bool checkMove();

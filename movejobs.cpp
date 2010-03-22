@@ -423,16 +423,16 @@ void setOffset( cVehicle* Vehicle, int nextDir, int offset )
 
 }
 
-cServerMoveJob::cServerMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle )
+cServerMoveJob::cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, cVehicle *vehicle )
 {
 	if ( !Server ) return;
 
 	Map = Server->Map;
-	this->Vehicle = Vehicle;
-	ScrX = iSrcOff%Map->size;
-	ScrY = iSrcOff/Map->size;
-	DestX = iDestOff%Map->size;
-	DestY = iDestOff/Map->size;
+	this->Vehicle = vehicle;
+	SrcX = srcX_;
+	SrcY = srcY_;
+	DestX = destX_;
+	DestY = destY_;
 	bPlane = (Vehicle->data.factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
@@ -497,13 +497,50 @@ void cServerMoveJob::stop()
 	}
 }
 
-bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
+cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 {
-	if ( message->iType != GAME_EV_MOVE_JOB_CLIENT ) return false;
+	if ( message->iType != GAME_EV_MOVE_JOB_CLIENT ) return NULL;
+
+	int iVehicleID = message->popInt32();
+	cVehicle *vehicle = Server->getVehicleFromID ( iVehicleID );
+	if ( vehicle == NULL )
+	{
+		Log.write(" Server: Can't find vehicle with id " + iToStr ( iVehicleID ), cLog::eLOG_TYPE_NET_WARNING);
+		return NULL;
+	}
+
+	//TODO: is this check really needed?
+	if ( vehicle->bIsBeeingAttacked )
+	{
+		Log.write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
+		return NULL;
+	}
+	if ( vehicle->Attacking )
+	{
+		Log.write(" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG );
+		return NULL;
+	}
+	if ( vehicle->IsBuilding || vehicle->BuildPath )
+	{
+		Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
+		return NULL;
+	}
+	if ( vehicle->IsClearing )
+	{
+		Log.write(" Server: cannot move a vehicle currently building", cLog::eLOG_TYPE_NET_DEBUG );
+		return NULL;
+	}
+
+	//reconstruct path
+	sWaypoint* path = NULL;
+	int destX, destY;
 	int iCount = 0;
 	int iReceivedCount = message->popInt16();
 
-	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( Vehicle->iID ) + ", SrcX: " + iToStr( ScrX ) + ", SrcY: " + iToStr( ScrY ) + ", DestX: " + iToStr( DestX ) + ", DestY: " + iToStr( DestY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
+	if ( iReceivedCount == 0 )
+	{
+		return NULL;
+	}
 
 	while ( iCount < iReceivedCount )
 	{
@@ -511,24 +548,45 @@ bool cServerMoveJob::generateFromMessage ( cNetMessage *message )
 		waypoint->Y = message->popInt16();
 		waypoint->X = message->popInt16();
 		waypoint->Costs = message->popInt16();
+
+		destX = waypoint->X;
+		destY = waypoint->Y;
 		
-		waypoint->next = Waypoints;
-		Waypoints = waypoint;
+		waypoint->next = path;
+		path = waypoint;
 
 		iCount++;
-
-		
 	}
-	calcNextDir ();
 
-	return true;
+	//is the vehicle position equal to the begin of the path?
+	if ( vehicle->PosX != path->X || vehicle->PosY != path->Y )
+	{
+		Log.write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (vehicle->PosX) + "x" + iToStr(vehicle->PosY) + ") for movejob from " +  iToStr (path->X) + "x" + iToStr (path->Y) + " to " + iToStr (destX) + "x" + iToStr (destY), cLog::eLOG_TYPE_NET_WARNING);
+
+		while ( path )
+		{
+			sWaypoint* waypoint = path;
+			path = path->next;
+			delete waypoint;
+		}
+		return NULL;
+	}
+
+	//everything is ok. Construct the movejob
+	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( vehicle->iID ) + ", SrcX: " + iToStr( path->X ) + ", SrcY: " + iToStr( path->Y ) + ", DestX: " + iToStr( destX ) + ", DestY: " + iToStr( destY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
+	cServerMoveJob* mjob = new cServerMoveJob(path->X, path->Y, destX, destY, vehicle);
+	mjob->Waypoints = path;
+
+	mjob->calcNextDir ();
+
+	return mjob;
 }
 
 bool cServerMoveJob::calcPath()
 {
-	if ( ScrX == DestX && ScrY == DestY ) return false;
+	if ( SrcX == DestX && SrcY == DestY ) return false;
 
-	cPathCalculator PathCalculator( ScrX, ScrY, DestX, DestY, Map, Vehicle );
+	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Map, Vehicle );
 	Waypoints = PathCalculator.calcPath();
 	if ( Waypoints )
 	{
@@ -866,7 +924,7 @@ void cEndMoveAction::generateAttackAction()
 	// check whether the srcVehicle can attack the dest field
 	if ( !srcVehicle->CanAttackObject ( destX+destY*Client->Map->size, Client->Map, true, false ) ) return;
 
-	// calculate path unit the destination fiel is in range
+	// calculate path until the destination field is in range
 	cPathCalculator PathCalculator( srcVehicle->PosX, srcVehicle->PosY, Client->Map, srcVehicle, destX, destY );
 	sWaypoint *waypoints = PathCalculator.calcPath();
 
@@ -1271,7 +1329,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			sWaypoint* path = calcPath(Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
 			if ( path )
 			{
-				sendMoveJob( path, Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle->iID );
+				sendMoveJob( path, Vehicle->iID );
 			}
 			else
 			{

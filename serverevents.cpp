@@ -360,8 +360,6 @@ void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 {
 
-	//TODO: iSavedSpeed senden
-	
 	cNetMessage* message = new cNetMessage( GAME_EV_MOVE_JOB_SERVER );
 
 	sWaypoint *waypoint = MoveJob->Waypoints;
@@ -374,6 +372,7 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 		
 		if ( message->iLength > PACKAGE_LENGTH - 19 )
 		{
+			Log.write(" Server: Error sending movejob: message too long", cLog::eLOG_TYPE_NET_ERROR );
 			delete message;
 			return;	// don't send movejobs that are to long
 		}
@@ -385,7 +384,7 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 	message->pushInt16( iCount );
 	message->pushInt16( MoveJob->iSavedSpeed );
 	message->pushInt32( MoveJob->DestX+MoveJob->DestY*MoveJob->Map->size );
-	message->pushInt32( MoveJob->ScrX+MoveJob->ScrY*MoveJob->Map->size );
+	message->pushInt32( MoveJob->SrcX+MoveJob->SrcY*MoveJob->Map->size );
 	message->pushInt32( MoveJob->Vehicle->iID );
 
 	Server->sendNetMessage( message, iPlayer );

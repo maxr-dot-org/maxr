@@ -70,7 +70,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_FIN_SEND_SAVE_INFO,		// a unit has been set to automoving
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_SELFDESTROY,
-	GAME_EV_WANT_CHANGE_UNIT_NAME	// the player wants to change the name of an unit
+	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
+	GAME_EV_END_MOVE_ACTION			// specifies an action, which will be executed at the end of a movejob
 };
 
 /**
