@@ -211,9 +211,9 @@ public:
 	* when override is false, the funktion only returns true, when there is an enemy unit
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
-	bool CanAttackObject(int off, cMap *Map, bool override=false, bool checkRange = true);
-	bool IsInRange(int off, cMap *Map);
-	void DrawAttackCursor( int offset );
+	bool CanAttackObject(int x, int y, cMap *Map, bool override=false, bool checkRange = true);
+	bool IsInRange(int x, int y, cMap *Map);
+	void DrawAttackCursor( int x, int y );
 	int CalcHelth(int damage);
 	void FindNextband();
 	void doSurvey();
@@ -222,13 +222,13 @@ public:
 	bool InSentryRange();
 	void DrawExitPoints(sVehicle*) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool canLoad( int off, cMap *Map, bool checkPosition = true );
+	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true );
 	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 #define SUPPLY_TYPE_REARM	0
 #define SUPPLY_TYPE_REPAIR	1
-	bool canSupply( int iOff, int iType );
+	bool canSupply( int x, int y, int iType );
 	bool canSupply( cVehicle *Vehicle, int iType );
 	bool canSupply( cBuilding *Building, int iType );
 	/** Upgrades the unit data of this vehicle to the current, upgraded version of the player. */
@@ -255,7 +255,7 @@ public:
 	* draws the commando curser for stealing or disabling with the calculated chance
 	*@author alzi alias DoctorDeath
 	*/
-	void drawCommandoCursor( int off, bool steal );
+	void drawCommandoCursor( int x, int y, bool steal );
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath

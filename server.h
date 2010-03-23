@@ -372,11 +372,11 @@ public:
 	bool addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* vehicle);
 	/**
 	* adds a new rubble object to the game
-	* @param offset the offset where the rubble is added
+	* @param x,y the position where the rubble is added
 	* @param value the amount of material in the rubble field
 	* @param big size of the rubble field
 	*/
-	void addRubble( int offset, int value, bool big );
+	void addRubble( int x, int y, int value, bool big );
 	/**
 	* deletes a rubble object from the game
 	* @param rubble pointer to the rubble object which will be deleted

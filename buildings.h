@@ -211,19 +211,19 @@ public:
 	void ClientStopWork();
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	bool IsInRange(int off, cMap *Map);
+	bool IsInRange(int x, int y, cMap *Map);
 	/*
 	* checks if the unit can attack the offset
 	* when override is false, the function only returns true, if there is an enemy unit
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
-	bool CanAttackObject(int off, cMap *Map, bool override=false);
-	void DrawAttackCursor( int offset );
+	bool CanAttackObject(int x, int y, cMap *Map, bool override=false);
+	void DrawAttackCursor( int x, int y );
 	void RotateTo(int Dir);
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool canLoad( int offset, cMap *Map, bool checkPosition = true );
+	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true );
 	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );

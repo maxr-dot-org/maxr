@@ -24,7 +24,7 @@
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, char attackMode, cMap* map);
+void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map);
 
 class cServerAttackJob
 {

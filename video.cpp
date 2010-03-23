@@ -103,7 +103,7 @@ int cVideo::setResolution(int iWidth, int iHeight, bool bApply)
   return 0;
 }
 
-int cVideo::setColDepth(int iDepth)
+int cVideo::setColDepth(unsigned iDepth)
 {
   //TODO: Implement other colourdepths beside 32 & add sanity checks. validate new color depth
   if(iDepth != 32)
@@ -189,9 +189,7 @@ int cVideo::applySettings(void)
   }
   else
   {
-    //buffer = SDL_SetVideoMode(getResolutionX(),getResolutionY(),getColDepth(),getSurfaceType()|(getWindowMode()?0:SDL_FULLSCREEN));
-
-	if ( buffer ) SDL_FreeSurface( buffer );
+  	if ( buffer ) SDL_FreeSurface( buffer );
 	buffer = SDL_CreateRGBSurface(getSurfaceType(), getResolutionX(), getResolutionY(), getColDepth(), 0, 0, 0, 0);
   }
   draw();
@@ -268,7 +266,7 @@ string cVideo::getVideoMode(int iMode)
   string sTmp = iToStr(getMinW())+"x"+iToStr(getMinH()); //if no valid mode is given we return minimal video mode
   bool bFound = false;
   
-  for(int i=0; i<vVideoMode.size(); i++)
+  for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
     if(vVideoMode[i].mode == iMode)
     {
@@ -305,7 +303,7 @@ bool cVideo::doDetection(void)
     {
       Log.write("cVideo: No video modes detected. Probably bad!", cLog::eLOG_TYPE_ERROR);
       vVideoMode.resize(getVideoNum());
-      for(int i=0; i < vVideoMode.size(); i++) //write some default video modes
+      for(unsigned int i=0; i < vVideoMode.size(); i++) //write some default video modes
       {
 	Log.write("cVideo: Offering default video mode "+iToStr(i)+" ("+ getVideoMode(i)+")", cLog::eLOG_TYPE_WARNING);
 	vVideoMode.at(i) = videoModes[i];
@@ -341,7 +339,7 @@ bool cVideo::doDetection(void)
 
 bool cVideo::bHaveMinMode(void)
 {
-  for(int i=0; i<vVideoMode.size(); i++)
+  for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
     if(vVideoMode[i].width == MINWIDTH && vVideoMode[i].height == MINHEIGHT)
     {
@@ -355,7 +353,7 @@ bool cVideo::bHaveMinMode(void)
 
 int cVideo::validateMode(int iWidth, int iHeight)
 {
-  for(int i=0; i<vVideoMode.size(); i++)
+  for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
     if(vVideoMode[i].width == iWidth && vVideoMode[i].height == iHeight)
     {

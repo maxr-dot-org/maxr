@@ -426,7 +426,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			//check if attack is possible
 			if ( bIsVehicle )
 			{
-				if ( !attackingVehicle->CanAttackObject( targetOffset, Server->Map, true ) )
+				if ( !attackingVehicle->CanAttackObject( targetOffset%Map->size, targetOffset/Map->size, Server->Map, true ) )
 				{
 					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -435,7 +435,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else
 			{
-				if ( !attackingBuilding->CanAttackObject( targetOffset, Server->Map, true ) )
+				if ( !attackingBuilding->CanAttackObject( targetOffset%Map->size, targetOffset/Map->size, Server->Map, true ) )
 				{
 					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
@@ -788,14 +788,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cBuildingIterator bi = Map->fields[iOff].getBuildings();
 				while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
 
-				if ( !Map->IsWater ( iOff ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) bLand = true;
-				else if ( Map->IsWater ( iOff ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
+				if ( !Map->isWater ( iX, iY ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) bLand = true;
+				else if ( Map->isWater ( iX, iY ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 				{
 					bLand = true;
 					bWater = true;
 					break;
 				}
-				else if ( Map->IsWater ( iOff ) ) bWater = true;
+				else if ( Map->isWater ( iX, iY ) ) bWater = true;
 
 			}
 
@@ -3040,7 +3040,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	}
 
 	if ( value > 0 || oldRubbleValue > 0 )
-		addRubble( offset, value/2 + oldRubbleValue, bigRubble );
+		addRubble( vehicle->PosX, vehicle->PosY, value/2 + oldRubbleValue, bigRubble );
 
 	deleteUnit( vehicle );
 }
@@ -3093,49 +3093,49 @@ void cServer::destroyUnit(cBuilding *b)
 	rubble += deleteBuildings(building);
 
 	if ( surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2 )
-		addRubble( offset, rubble/2, big );
+		addRubble( b->PosX, b->PosY, rubble/2, big );
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::addRubble( int offset, int value, bool big )
+void cServer::addRubble( int x, int y, int value, bool big )
 {
 	if ( value <= 0 ) value = 1;
 
-	if ( Map->IsWater(offset))
+	if ( Map->isWater(x, y))
 	{
 		if ( big )
 		{
-			addRubble( offset + 1, value/4, false);
-			addRubble( offset + Map->size, value/4, false);
-			addRubble( offset + Map->size + 1, value/4, false);
+			addRubble( x + 1, y    , value/4, false);
+			addRubble( x    , y + 1, value/4, false);
+			addRubble( x + 1, y + 1, value/4, false);
 		}
 		return;
 	}
 
 	if ( big && 
-		 Map->IsWater(offset + 1))
+		 Map->isWater(x + 1, y))
 	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + Map->size, value/4, false);
-		addRubble( offset + Map->size + 1, value/4, false);
+		addRubble( x    , y    , value/4, false);
+		addRubble( x    , y + 1, value/4, false);
+		addRubble( x + 1, y + 1, value/4, false);
 		return;
 	}
 
 	if ( big &&
-		Map->IsWater(offset + Map->size ))
+		Map->isWater(x, y + 1))
 	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + 1, value/4, false);
-		addRubble( offset + Map->size + 1, value/4, false);
+		addRubble( x    , y    , value/4, false);
+		addRubble( x + 1, y    , value/4, false);
+		addRubble( x + 1, y + 1, value/4, false);
 		return;
 	}
 
 	if ( big &&
-		Map->IsWater(offset + Map->size + 1 ))
+		Map->isWater(x + 1, y + 1))
 	{
-		addRubble( offset, value/4, false);
-		addRubble( offset + 1, value/4, false);
-		addRubble( offset + Map->size, value/4, false);
+		addRubble( x    , y    , value/4, false);
+		addRubble( x + 1, y    , value/4, false);
+		addRubble( x    , y + 1, value/4, false);
 		return;
 	}
 
@@ -3148,13 +3148,13 @@ void cServer::addRubble( int offset, int value, bool big )
 	rubble->iID = iNextUnitID;
 	iNextUnitID++;
 
-	rubble->PosX = offset % Map->size;
-	rubble->PosY = offset / Map->size;
+	rubble->PosX = x;
+	rubble->PosY = y;
 
 	rubble->data.isBig = big;
 	rubble->RubbleValue = value;
 
-	Map->addBuilding( rubble, offset );
+	Map->addBuilding( rubble, x, y );
 
 	if ( big )
 	{
@@ -3534,7 +3534,7 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
 					if ( (*Server->PlayerList)[i]->DetectLandMap[x+y*Map->size] ) detectOnDest = true;
 				}
-				if ( Server->Map->IsWater(x+y*Map->size,true) ) detectOnDest = true;
+				if ( Server->Map->isWater(x, y, true) ) detectOnDest = true;
 			}
 			if ( stealthVehicle->data.isStealthOn&TERRAIN_SEA )
 			{
@@ -3543,7 +3543,7 @@ void cServer::sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, c
 					if ( (*Server->PlayerList)[i] == stealthVehicle->owner ) continue;
 					if ( (*Server->PlayerList)[i]->DetectSeaMap[x+y*Map->size] ) detectOnDest = true;
 				}
-				if ( !Server->Map->IsWater(x+y*Map->size, true) ) detectOnDest = true;
+				if ( !Server->Map->isWater(x, y, true) ) detectOnDest = true;
 
 				if ( stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0 )
 				{

@@ -34,7 +34,7 @@ public:
   bool visible; // Gibt an, ob die Maus angezeigt werden soll.
   SDL_Surface *cur; // Der aktuelle Cursor.
   AutoSurface back; // Zum Speichern des Maushintergrundes.
-  int x,y; // Die Position der Maus.
+  int x,y; /** the pixel positon of the curor on the map */
   bool isDoubleClick;
   int prevScreenX,prevScreenY;
   int LastX,LastY; // Die letzte Position der Maus.
@@ -57,8 +57,14 @@ public:
   void Show(void){LastX=-100;visible=true;}
   void Hide(void){visible=false;}
   int GetMouseButton(void);
-  void GetKachel(int *X,int *Y);
-  int GetKachelOff(void);
+  /**
+  * return the X Coordinate of the Cursor on the map
+  */
+  int getKachelX();
+  /**
+  * return the Y Coordinate of the Cursor on the map
+  */
+  int getKachelY();
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

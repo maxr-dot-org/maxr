@@ -788,7 +788,7 @@ void cSavegame::loadRubble( TiXmlElement *rubbleNode )
 
 	if ( rubbleNode->FirstChildElement ( "Big" ) ) big = true;
 
-	Server->addRubble ( x+y*Server->Map->size, rubblevalue, big );
+	Server->addRubble ( x, y, rubblevalue, big );
 }
 
 //--------------------------------------------------------------------------

@@ -94,7 +94,7 @@ class cVideo
   *@param iDepth colordepth to set. e.g. 32 (bpp)
   *@return 0 on success
   */    
-  int setColDepth(int iDepth);
+  int setColDepth(unsigned int iDepth);
   
   /**
   *Gets colordepth

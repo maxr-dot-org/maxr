@@ -663,8 +663,8 @@ bool cServerMoveJob::checkMove()
 	//reset detected flag, when a water stealth unit drives into the water
 	if ( Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround )
 	{
-		bool wasOnLand = !Server->Map->IsWater(Waypoints->X + Waypoints->Y*Server->Map->size, true);
-		bool driveIntoWater = Server->Map->IsWater(Waypoints->next->X + Waypoints->next->Y*Server->Map->size, true);
+		bool wasOnLand = !Server->Map->isWater(Waypoints->X, Waypoints->Y, true);
+		bool driveIntoWater = Server->Map->isWater(Waypoints->next->X, Waypoints->next->Y, true);
 
 		if ( wasOnLand && driveIntoWater )
 		{
@@ -1380,8 +1380,8 @@ void cClientMoveJob::moveVehicle()
 		//restart movesound, when drinving into or out of water
 		if ( Vehicle == Client->gameGUI.getSelVehicle() )
 		{
-			bool wasWater = Map->IsWater( Waypoints->X + Waypoints->Y*Map->size, true );
-			bool water = Map->IsWater( Waypoints->next->X + Waypoints->next->Y*Map->size, true );
+			bool wasWater = Map->isWater( Waypoints->X, Waypoints->Y, true );
+			bool water = Map->isWater( Waypoints->next->X, Waypoints->next->Y, true );
 
 			if ( wasWater != water )
 			{
@@ -1408,7 +1408,7 @@ void cClientMoveJob::moveVehicle()
 	else iSpeed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( SettingsData.bMakeTracks && Vehicle->data.makeTracks && !Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Map->size,false ) &&!
+	if ( SettingsData.bMakeTracks && Vehicle->data.makeTracks && !Map->isWater ( Vehicle->PosX, Vehicle->PosY, false ) &&!
 	        ( Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X+Waypoints->next->Y*Map->size]].water ) &&
 	        ( Vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
 	{
@@ -1554,7 +1554,7 @@ void cClientMoveJob::stopMoveSound()
 	if ( Vehicle == Client->gameGUI.getSelVehicle() )
 	{
 		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
-		bool water = Client->Map->IsWater ( Vehicle->PosX+Vehicle->PosY*Client->Map->size, true );
+		bool water = Client->Map->isWater ( Vehicle->PosX, Vehicle->PosY, true );
 		if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 		StopFXLoop ( Client->iObjectStream );

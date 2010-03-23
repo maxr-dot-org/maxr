@@ -480,6 +480,7 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	end = false;
 	terminate = false;
 	activeItem = NULL;
+	drawnEveryFrame = false;
 
 	lastScreenResX = Video.getResolutionX();
 	lastScreenResY = Video.getResolutionY();
@@ -4279,14 +4280,14 @@ void cVehiclesBuildMenu::generateSelectionList()
 			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
 			while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
 
-			if ( !Client->Map->IsWater ( off ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) land = true;
-			else if ( Client->Map->IsWater ( off ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
+			if ( !Client->Map->isWater ( x, y ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) land = true;
+			else if ( Client->Map->isWater ( x, y ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if ( Client->Map->IsWater ( off ) ) water = true;
+			else if ( Client->Map->isWater ( x, y ) ) water = true;
 		}
 
 		if ( vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water ) continue;

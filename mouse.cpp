@@ -196,27 +196,29 @@ int cMouse::GetMouseButton ( )
 	return SDL_GetMouseState( NULL, NULL );
 }
 
-// Liefert die Koordinaten der Kachel unter der Maus:
-void cMouse::GetKachel ( int *X,int *Y )
+int cMouse::getKachelX()
 {
-	if ( x < 180 || y < 18 || x > 180 + ( Video.getResolutionX()-192 ) || y > 18 + ( Video.getResolutionY()-32 ) )
+	if ( x < 180 || x > 180 + ( Video.getResolutionX()-192 ) )
 	{
-		*X = -1;
-		*Y = -1;
-		return;
+		return -1;
 	}
-	*X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
-	*Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
-	if ( *X >= Client->Map->size ) *X = Client->Map->size-1;
-	if ( *Y >= Client->Map->size ) *Y = Client->Map->size-1;
+
+	int X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+
+	if ( X >= Client->Map->size ) X = Client->Map->size-1;
+
+	return X;
 }
 
-// Liefert den Offset der Kachel unter der Maus:
-int cMouse::GetKachelOff ( void )
+int cMouse::getKachelY ()
 {
-	int ret;
-	if ( x < 180 || y < 18 || x > 180 + ( Video.getResolutionX()-192 ) || y > 18 + ( Video.getResolutionY()-32 ) ) return -1;
-	ret = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
-	ret += (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() ) * Client->Map->size;
-	return ret;
+	if ( y < 18 || y > 18 + ( Video.getResolutionY()-32 ) )
+	{
+		return -1;
+	}
+
+	int Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	if ( Y >= Client->Map->size ) Y = Client->Map->size-1;
+
+	return Y;
 }

@@ -250,7 +250,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -514,7 +514,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	{
 		//draw beton if nessesary
 		tmp = dest;
-		if ( IsBuilding && data.isBig && ( !Client->Map->IsWater(PosX+PosY*Client->Map->size) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
+		if ( IsBuilding && data.isBig && ( !Client->Map->isWater(PosX, PosY) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
 		{
 			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
 			CHECK_SCALING(GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor );
@@ -575,7 +575,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 	// draw shadow
 	tmp = dest;
-	if ( SettingsData.bShadows && ! ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->IsWater ( PosX + PosY*Client->Map->size, true ) ) )
+	if ( SettingsData.bShadows && ! ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) ) )
 	{
 		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
 		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
@@ -627,7 +627,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	}
 	else
 	{
-		bool water = Client->Map->IsWater(PosX + PosY*Client->Map->size, true);
+		bool water = Client->Map->isWater(PosX, PosY, true);
 		//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 		//because the vehicle will drive on the bridge
 		cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
@@ -1173,7 +1173,7 @@ string cVehicle::getStatusStr ()
 int cVehicle::playStream ()
 {
 	cBuilding *building = (*Client->Map)[PosX + PosY*Client->Map->size].getBaseBuilding();
-	bool water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
+	bool water = Client->Map->isWater ( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
@@ -1194,7 +1194,7 @@ void cVehicle::StartMoveSound ()
 	bool water;
 
 	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
-	water = Client->Map->IsWater ( PosX + PosY * Client->Map->size, true );
+	water = Client->Map->isWater ( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 	StopFXLoop ( Client->iObjectStream );
 
@@ -1914,8 +1914,10 @@ void cVehicle::Center ()
 /** Checks, if the vehicle can attack the object */
 //-----------------------------------------------------------------------------
 
-bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRange )
+bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool checkRange )
 {
+	int off = x + y * Map->size;
+
 	if ( Loaded )
 		return false;
 
@@ -1937,10 +1939,10 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 	if ( off < 0 )
 		return false;
 
-	if ( checkRange && !IsInRange ( off, Map ) )
+	if ( checkRange && !IsInRange ( x, y, Map ) )
 		return false;
 
-	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->IsWater( off ) )
+	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->isWater( x, y ) )
 		return false;
 
 	if ( !owner->ScanMap[off] )
@@ -1952,7 +1954,7 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 	cVehicle *targetVehicle = NULL;
 	cBuilding *targetBuilding = NULL;
 
-	selectTarget( targetVehicle, targetBuilding, off, data.canAttack, Map );
+	selectTarget( targetVehicle, targetBuilding, x, y, data.canAttack, Map );
 
 	if ( targetVehicle )
 	{
@@ -1973,11 +1975,8 @@ bool cVehicle::CanAttackObject ( int off, cMap *Map, bool override, bool checkRa
 //-----------------------------------------------------------------------------
 /** Checks, if the target lies in range */
 //-----------------------------------------------------------------------------
-bool cVehicle::IsInRange ( int off, cMap *Map )
+bool cVehicle::IsInRange ( int x, int y, cMap *Map )
 {
-	int x, y;
-	x = off % Map->size;
-	y = off / Map->size;
 	x -= PosX;
 	y -= PosY;
 
@@ -1992,14 +1991,14 @@ bool cVehicle::IsInRange ( int off, cMap *Map )
 //-----------------------------------------------------------------------------
 /** Draws the attack cursor */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawAttackCursor ( int offset )
+void cVehicle::DrawAttackCursor ( int x, int y )
 {
 	SDL_Rect r;
 	int wp, wc, t;
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, offset, data.canAttack, Client->Map );
+	selectTarget(v, b, x, y, data.canAttack, Client->Map );
 
 	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{
@@ -2160,8 +2159,8 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 void cVehicle::FindNextband ()
 {
 	bool pos[4] = {false, false, false, false};
-	int x, y;
-	mouse->GetKachel ( &x, &y );
+	int x = mouse->getKachelX();
+	int y = mouse->getKachelY();
 
 	//check, which positions are available
 	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
@@ -2369,8 +2368,8 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
 	cVehicle *v;
-	int x, y;
-	mouse->GetKachel ( &x, &y );
+	int x = mouse->getKachelX();
+	int y = mouse->getKachelY();
 
 	if ( x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1 )
 		return false;
@@ -2443,11 +2442,11 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesAir[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, Server->Map, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
@@ -2462,11 +2461,11 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, Server->Map, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
@@ -2490,11 +2489,11 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesGround[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( iOff, Server->Map, true ) )
+				if ( Sentry->b && Sentry->b->CanAttackObject ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->b->data.canAttack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
@@ -2509,11 +2508,11 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( iOff, Server->Map, true ) )
+				if ( Sentry->v && Sentry->v->CanAttackObject ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, iOff, Sentry->v->data.canAttack, Server->Map );
+					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
 					if ( targetBuilding || targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
@@ -2565,11 +2564,11 @@ bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVeh
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( int off, cMap *Map, bool checkPosition )
+bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition )
 {
-	if ( off < 0 || off > Map->size*Map->size ) return false;
+	if ( x < 0 || x >= Map->size || x < 0 || x >= Map->size ) return false;
 
-	return canLoad ( Map->fields[off].getVehicles(), checkPosition );
+	return canLoad ( Map->fields[x + y * Map->size].getVehicles(), checkPosition );
 }
 
 //-----------------------------------------------------------------------------
@@ -2649,11 +2648,11 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply ( int iOff, int iType )
+bool cVehicle::canSupply ( int x, int y, int iType )
 {
-	if ( iOff < 0 || iOff > Client->Map->size*Client->Map->size ) return false;
+	if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) return false;
 
-	cMapField& field = Client->Map->fields[iOff];
+	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
 	if ( field.getVehicles() ) return canSupply ( field.getVehicles(), iType );
 	else if ( field.getPlanes() ) return canSupply ( field.getPlanes(), iType );
 	else if ( field.getTopBuilding() ) return canSupply ( field.getTopBuilding(), iType );
@@ -2827,9 +2826,9 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 //-----------------------------------------------------------------------------
 /** draws the commando-cursors: */
 //-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor ( int off, bool steal )
+void cVehicle::drawCommandoCursor ( int x, int y, bool steal )
 {
-	cMapField* field = Client->Map->fields + off;
+	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
 	cBuilding *b = NULL;
 	cVehicle *v = NULL;
 	SDL_Surface *sf;
@@ -2837,13 +2836,13 @@ void cVehicle::drawCommandoCursor ( int off, bool steal )
 
 	if ( steal )
 	{
-		v = field->getVehicles();
+		v = field.getVehicles();
 		sf = GraphicsData.gfx_Csteal;
 	}
 	else
 	{
-		v = field->getVehicles();
-		if ( !v ) b = field->getTopBuilding();
+		v = field.getVehicles();
+		if ( !v ) b = field.getTopBuilding();
 		sf = GraphicsData.gfx_Cdisable;
 	}
 
@@ -2989,8 +2988,8 @@ void cVehicle::makeDetection()
 		{
 			cPlayer* player = (*Server->PlayerList)[i];
 			if ( player == owner ) continue;
-			bool water = Server->Map->IsWater(offset, true);
-			bool coast = Server->Map->IsWater(offset) && !water;
+			bool water = Server->Map->isWater(PosX, PosY, true);
+			bool coast = Server->Map->isWater(PosX, PosY) && !water;
 
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge

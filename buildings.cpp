@@ -1351,8 +1351,8 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 {
 	cBuilding *b;
 	cVehicle *v;
-	int x, y;
-	mouse->GetKachel ( &x, &y );
+	int x = mouse->getKachelX();
+	int y = mouse->getKachelY();
 
 	if ( OverUnitField->getVehicles() )
 	{
@@ -1462,9 +1462,10 @@ bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVe
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad ( int offset, cMap *Map, bool checkPosition )
+bool cBuilding::canLoad ( int x, int y, cMap *Map, bool checkPosition )
 {
-	if ( offset < 0 || offset > Map->size*Map->size ) return false;
+	if ( x < 0 || x >= Map->size || y < 0 || y >= Map->size ) return false;
+	int offset = x + y * Map->size;
 
 	if ( canLoad ( Map->fields[offset].getPlanes(), checkPosition ) ) return true;
 	else return canLoad ( Map->fields[offset].getVehicles(), checkPosition );
@@ -1770,11 +1771,8 @@ void cBuilding::CheckRessourceProd ( void )
 //--------------------------------------------------------------------------
 /** Checks if the target is in range */
 //--------------------------------------------------------------------------
-bool cBuilding::IsInRange ( int off, cMap *Map )
+bool cBuilding::IsInRange ( int x, int y, cMap *Map )
 {
-	int x, y;
-	x = off % Map->size;
-	y = off / Map->size;
 	x -= PosX;
 	y -= PosY;
 
@@ -1789,10 +1787,11 @@ bool cBuilding::IsInRange ( int off, cMap *Map )
 //--------------------------------------------------------------------------
 /** Checks if the building is able to attack the object */
 //--------------------------------------------------------------------------
-bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
+bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 {
 	cVehicle *v = NULL;
 	cBuilding *b = NULL;
+	int off = x + y * Map->size;
 
 	if ( !data.canAttack )
 		return false;
@@ -1812,7 +1811,7 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !IsInRange ( off, Map ) )
+	if ( !IsInRange ( x, y, Map ) )
 		return false;
 
 	if ( !owner->ScanMap[off] )
@@ -1821,7 +1820,7 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 	if ( override )
 		return true;
 
-	selectTarget(v, b, off, data.canAttack, Map );
+	selectTarget(v, b, x, y, data.canAttack, Map );
 
 	if ( v )
 	{
@@ -1842,14 +1841,14 @@ bool cBuilding::CanAttackObject ( int off, cMap *Map, bool override )
 //--------------------------------------------------------------------------
 /** Draw the attack cursor */
 //--------------------------------------------------------------------------
-void cBuilding::DrawAttackCursor ( int offset )
+void cBuilding::DrawAttackCursor ( int x, int y )
 {
 	SDL_Rect r;
 	int wp, wc, t = 0;
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, offset, data.canAttack, Client->Map );
+	selectTarget(v, b, x, y, data.canAttack, Client->Map );
 
 	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{

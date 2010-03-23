@@ -217,7 +217,7 @@ class cGameGUI : public cMenu
 	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
 	*@param iX The X coords where the text should be drawn
 	*/
-	void traceVehicle ( cVehicle *Vehicle, int *iY, int iX );
+	void traceVehicle ( cVehicle *vehicle, int *iY, int iX );
 	/**
 	* displays information about the building on the screen
 	*@author alzi alias DoctorDeath

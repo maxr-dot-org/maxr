@@ -37,9 +37,9 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		frame = ANIMATION_SPEED % 4;
 
-	water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+	water = Client->Map->isWater(vehicle->PosX, vehicle->PosY ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 
-	bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size );
+	bool water = Client->Map->isWater(vehicle->PosX, vehicle->PosY);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
@@ -192,7 +192,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
-		bool water = Client->Map->IsWater(vehicle->PosX + vehicle->PosY*Client->Map->size) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+		bool water = Client->Map->isWater(vehicle->PosX, vehicle->PosY) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 		if ( vehicle->IsBuilding )
 		{
 			if ( water != entry.water ) continue;

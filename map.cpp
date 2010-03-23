@@ -115,9 +115,11 @@ cMapField& cMap::operator[]( unsigned int offset ) const
 	return fields[offset];
 }
 
-// Gibt zurück, ob eine Kachel als Wasser gilt, oder nicht:
-bool cMap::IsWater ( int off,bool not_coast,bool is_ship )
+
+bool cMap::isWater( int x, int y, bool not_coast)
 {
+	int off = x + y * size;
+
 	if ( !terrain[Kacheln[off]].water && !terrain[Kacheln[off]].coast ) return false;
 
 	if ( not_coast ) return terrain[Kacheln[off]].water;

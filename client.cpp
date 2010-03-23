@@ -231,8 +231,8 @@ void cClient::startGroupMove()
 {
 	int mainPosX = (*gameGUI.getSelVehiclesGroup())[0]->PosX;
 	int mainPosY = (*gameGUI.getSelVehiclesGroup())[0]->PosY;
-	int mainDestX = mouse->GetKachelOff()%Map->size;
-	int mainDestY = mouse->GetKachelOff()/Map->size;
+	int mainDestX = mouse->getKachelX();
+	int mainDestY = mouse->getKachelY();
 
 	// copy the selected-units-list
 	cList<cVehicle*> group;
@@ -419,7 +419,7 @@ void cClient::addFX ( sFX* n )
 			break;
 		case fxExploSmall:
 		case fxExploWater:
-			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
+			if ( Map->isWater( n->PosX/64, n->PosY/64) )
 			{
 				int nr;
 				nr = random(3);
@@ -455,7 +455,7 @@ void cClient::addFX ( sFX* n )
 			}
 			break;
 		case fxExploBig:
-			if ( Map->IsWater ( n->PosX/64+ ( n->PosY/64 ) *Map->size ) )
+			if ( Map->isWater( n->PosX/64, n->PosY/64) )
 			{
 				if (random(2))
 				{
@@ -1671,8 +1671,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				StoringBuilding->storeVehicle ( StoredVehicle, Map );
 			}
 
-			int mouseX, mouseY;
-			mouse->GetKachel ( &mouseX, &mouseY );
+			int mouseX = mouse->getKachelX();
+			int mouseY = mouse->getKachelY();
 			if ( StoredVehicle->PosX == mouseX && StoredVehicle->PosY == mouseY ) gameGUI.updateMouseCursor();
 
 			gameGUI.checkMouseInputMode();
@@ -2375,7 +2375,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
-	else if ( Map->IsWater(vehicle->PosX + vehicle->PosY*Map->size) )
+	else if ( Map->isWater(vehicle->PosX, vehicle->PosY))
 	{
 		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}

@@ -233,7 +233,7 @@ public:
 	int iNumberOfTerrains;		// Number of terrain graphics for this map
 	sTerrain *terrain; // Terrain graphics
 
-	bool IsWater(int off,bool not_coast=false,bool is_ship=false);
+	bool isWater(int x, int y, bool not_coast=false);
 	void NewMap(int size, int iTerrainGrphCount );
 	void DeleteMap(void);
 	bool SaveMap(string filename,SDL_Surface *preview);

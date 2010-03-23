@@ -25,17 +25,18 @@
 #include "netmessage.h"
 #include "settings.h"
 
-void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int offset, char attackMode, cMap* map)
+void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map)
 {
 	targetVehicle = NULL;
 	targetBuilding = NULL;
+	int offset = x + y * map->size;
 
 	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND) )
 	{
 		targetVehicle = (*map)[offset].getPlanes();
 
 		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
-		if ( targetVehicle && (targetVehicle->data.isStealthOn&TERRAIN_SEA) && map->IsWater(offset, true) ) targetVehicle = NULL;
+		if ( targetVehicle && (targetVehicle->data.isStealthOn&TERRAIN_SEA) && map->isWater(x, y, true) ) targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
 	}
@@ -54,7 +55,7 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int off
 		if ( targetVehicle && targetVehicle->FlightHigh > 0 ) targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetVehicle = (*map)[offset].getVehicles();
-		if ( targetVehicle && (targetVehicle->data.isStealthOn&TERRAIN_SEA) && map->IsWater(offset, true) ) targetVehicle = NULL;
+		if ( targetVehicle && (targetVehicle->data.isStealthOn&TERRAIN_SEA) && map->isWater(x, y, true) ) targetVehicle = NULL;
 
 		if ( !targetVehicle ) targetBuilding = (*map)[offset].getBuildings();
 	}
@@ -156,7 +157,7 @@ void cServerAttackJob::lockTarget(int offset)
 
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, offset, attackMode, Server->Map);
+	selectTarget( targetVehicle, targetBuilding, offset%Server->Map->size, offset/Server->Map->size, attackMode, Server->Map);
 	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = true;
 
 	bool isAir = ( targetVehicle && targetVehicle->data.factorAir > 0 );
@@ -374,13 +375,13 @@ void cServerAttackJob::clientFinished( int playerNr )
 
 void cServerAttackJob::makeImpact(int x, int y )
 {
-	if ( x < 0 || x > Server->Map->size ) return;
-	if ( y < 0 || y > Server->Map->size ) return;
+	if ( x < 0 || x >= Server->Map->size ) return;
+	if ( y < 0 || y >= Server->Map->size ) return;
 	int offset = x + y * Server->Map->size;
 
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, offset, attackMode, Server->Map );
+	selectTarget( targetVehicle, targetBuilding, x, y, attackMode, Server->Map );
 
 	//check, whether the target is allready in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
@@ -728,7 +729,7 @@ void cClientAttackJob::playMuzzle()
 	{
 		state = FINISHED;
 		PlayFX ( building->typ->Attack );
-		if ( Client->Map->IsWater( building->PosX + building->PosY * Client->Map->size ) )
+		if ( Client->Map->isWater( building->PosX, building->PosY) )
 		{
 			Client->addFX( fxExploWater, building->PosX*64 + 32, building->PosY*64 + 32, 0);
 		}
