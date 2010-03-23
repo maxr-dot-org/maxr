@@ -533,7 +533,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 
 	//reconstruct path
 	sWaypoint* path = NULL;
-	int destX, destY;
+	sWaypoint* dest = NULL;
 	int iCount = 0;
 	int iReceivedCount = message->popInt16();
 
@@ -549,8 +549,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 		waypoint->X = message->popInt16();
 		waypoint->Costs = message->popInt16();
 
-		destX = waypoint->X;
-		destY = waypoint->Y;
+		if ( !dest ) dest = waypoint;
 		
 		waypoint->next = path;
 		path = waypoint;
@@ -561,7 +560,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	//is the vehicle position equal to the begin of the path?
 	if ( vehicle->PosX != path->X || vehicle->PosY != path->Y )
 	{
-		Log.write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (vehicle->PosX) + "x" + iToStr(vehicle->PosY) + ") for movejob from " +  iToStr (path->X) + "x" + iToStr (path->Y) + " to " + iToStr (destX) + "x" + iToStr (destY), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write(" Server: Vehicle with id " + iToStr ( iVehicleID ) + " is at wrong position (" + iToStr (vehicle->PosX) + "x" + iToStr(vehicle->PosY) + ") for movejob from " +  iToStr (path->X) + "x" + iToStr (path->Y) + " to " + iToStr (dest->X) + "x" + iToStr (dest->Y), cLog::eLOG_TYPE_NET_WARNING);
 
 		while ( path )
 		{
@@ -573,8 +572,8 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	}
 
 	//everything is ok. Construct the movejob
-	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( vehicle->iID ) + ", SrcX: " + iToStr( path->X ) + ", SrcY: " + iToStr( path->Y ) + ", DestX: " + iToStr( destX ) + ", DestY: " + iToStr( destY ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
-	cServerMoveJob* mjob = new cServerMoveJob(path->X, path->Y, destX, destY, vehicle);
+	Log.write(" Server: Received MoveJob: VehicleID: " + iToStr( vehicle->iID ) + ", SrcX: " + iToStr( path->X ) + ", SrcY: " + iToStr( path->Y ) + ", DestX: " + iToStr( dest->X ) + ", DestY: " + iToStr( dest->Y ) + ", WaypointCount: " + iToStr( iReceivedCount ), cLog::eLOG_TYPE_NET_DEBUG);
+	cServerMoveJob* mjob = new cServerMoveJob(path->X, path->Y, dest->X, dest->Y, vehicle);
 	mjob->Waypoints = path;
 
 	mjob->calcNextDir ();
