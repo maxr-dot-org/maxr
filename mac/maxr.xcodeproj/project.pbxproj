@@ -11,6 +11,7 @@
 		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
 		9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
 		9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
+		9F6B402B116640F5007A6C8A /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B4029116640F5007A6C8A /* video.cpp */; };
 		9F7E432D0EFD1D2200021440 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
 		9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
 		9F80D8940FB495F6002FE83F /* clans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F80D8930FB495F6002FE83F /* clans.cpp */; };
@@ -87,6 +88,8 @@
 		9F5DA1420FB8B74100CC2B17 /* menuitems.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuitems.h; path = ../menuitems.h; sourceTree = SOURCE_ROOT; };
 		9F5DA1430FB8B74100CC2B17 /* menus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menus.cpp; path = ../menus.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA1440FB8B74100CC2B17 /* menus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menus.h; path = ../menus.h; sourceTree = SOURCE_ROOT; };
+		9F6B4029116640F5007A6C8A /* video.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = video.cpp; path = ../video.cpp; sourceTree = SOURCE_ROOT; };
+		9F6B402A116640F5007A6C8A /* video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = video.h; path = ../video.h; sourceTree = SOURCE_ROOT; };
 		9F7E432B0EFD1D2200021440 /* mveplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mveplayer.cpp; path = ../mveplayer.cpp; sourceTree = SOURCE_ROOT; };
 		9F7E432C0EFD1D2200021440 /* mveplayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mveplayer.h; path = ../mveplayer.h; sourceTree = SOURCE_ROOT; };
 		9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = drawingcache.cpp; path = ../drawingcache.cpp; sourceTree = SOURCE_ROOT; };
@@ -95,6 +98,7 @@
 		9F80D8930FB495F6002FE83F /* clans.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clans.cpp; path = ../clans.cpp; sourceTree = SOURCE_ROOT; };
 		9F87B6C5101A43EA00A119FC /* settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = settings.h; path = ../settings.h; sourceTree = SOURCE_ROOT; };
 		9F87B6C6101A43EA00A119FC /* settings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = settings.cpp; path = ../settings.cpp; sourceTree = SOURCE_ROOT; };
+		9F8C8C9E10616BBE000571DA /* t_2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = t_2.h; path = ../t_2.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -288,6 +292,7 @@
 				9F87B6C5101A43EA00A119FC /* settings.h */,
 				9FC0DBB90EE2B17400F23D2C /* sound.cpp */,
 				9FC0DBBA0EE2B17400F23D2C /* sound.h */,
+				9F8C8C9E10616BBE000571DA /* t_2.h */,
 				9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */,
 				9FC0DBBC0EE2B17400F23D2C /* tinystr.h */,
 				9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */,
@@ -300,6 +305,8 @@
 				9FC0DBC20EE2B17400F23D2C /* upgradecalculator.h */,
 				9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */,
 				9FC0DBC40EE2B17400F23D2C /* vehicles.h */,
+				9F6B4029116640F5007A6C8A /* video.cpp */,
+				9F6B402A116640F5007A6C8A /* video.h */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -442,6 +449,7 @@
 				9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */,
 				9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */,
 				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
+				9F6B402B116640F5007A6C8A /* video.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
