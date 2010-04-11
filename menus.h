@@ -283,6 +283,10 @@ protected:
 
 public:
 	/**
+	* virtual destructor
+	*/
+	virtual ~cMenu() {}
+	/**
 	 * redraws the menu background, the cursor and all menuitems.
 	 *@author alzi
 	 */

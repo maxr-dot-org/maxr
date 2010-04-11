@@ -120,7 +120,7 @@ cPathCalculator::~cPathCalculator()
 	{
 		for ( int i = 0; i < blocknum; i++ )
 		{
-			delete MemBlocks[i];
+			delete[] MemBlocks[i];
 		}
 		free ( MemBlocks );
 	}
