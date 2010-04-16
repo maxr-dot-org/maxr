@@ -1910,7 +1910,7 @@ void cGameGUI::doCommand( string cmd )
 			cPlayer *Player = getPlayerFromName ( cmd.substr ( 6, cmd.length() ) );
 			
 			// server can not be kicked
-			if ( Player->Nr = 0 ) return;
+			if ( Player->Nr == 0 ) return;
 
 			if ( !Player ) return;
 
