@@ -2566,7 +2566,7 @@ bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVeh
 //-----------------------------------------------------------------------------
 bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition )
 {
-	if ( x < 0 || x >= Map->size || x < 0 || x >= Map->size ) return false;
+	if ( x < 0 || x >= Map->size || y < 0 || y >= Map->size ) return false;
 
 	return canLoad ( Map->fields[x + y * Map->size].getVehicles(), checkPosition );
 }
