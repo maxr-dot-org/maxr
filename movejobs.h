@@ -150,6 +150,31 @@ private:
 	void deleteFirstFromHeap();
 };
 
+
+enum eEndMoveActionType
+{
+	EMAT_LOAD,
+	EMAT_GET_IN,
+	EMAT_ATTACK
+};
+
+class cEndMoveAction
+{
+public:
+	cVehicle* vehicle_;
+	eEndMoveActionType type_;
+	int destID_;		//we store the ID and not a pointer to vehicle/building, 
+						//so we don't have to invalidate the pointer, when the dest unit gets destroyed
+
+	void executeLoadAction();
+	void executeGetInAction();
+	void executeAttackAction();
+
+	cEndMoveAction( cVehicle* vehicle, int destID, eEndMoveActionType type);
+
+	void execute();
+};
+
 class cServerMoveJob
 {
 public:
@@ -166,6 +191,7 @@ public:
 	int iNextDir;
 	int iSavedSpeed;
 	bool bPlane;
+	cEndMoveAction* endAction;
 
 	sWaypoint *Waypoints;
 
@@ -178,48 +204,8 @@ public:
 	void doEndMoveVehicle();
 	void calcNextDir();
 	void stop();
+	void addEndAction(int destID, eEndMoveActionType type);
 };
-
-enum eEndMoveActionType
-{
-	EMAT_LOAD,
-	EMAT_GET_IN,
-	EMAT_ATTACK
-};
-
-/*
-class cEndMoveAction
-{
-	cBuilding *srcBuilding;
-	cVehicle *srcVehicle;
-
-	cVehicle *destVehicle;
-	cBuilding *destBuilding;
-	int destX, destY;
-
-	bool success;
-
-	eEndMoveActionType endMoveActionType;
-
-	cClientMoveJob *moveJob;
-
-	void generateLoadAction();
-	void generateGetInAction();
-	void generateAttackAction();
-
-	void executeLoadAction();
-	void executeGetInAction();
-	void executeAttackAction();
-public:
-	cEndMoveAction( eEndMoveActionType endMoveActionType_, cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_, int destX_ = -1, int destY_ = -1 );
-	~cEndMoveAction();
-
-	void execute();
-	bool getSuccess();
-
-	void handleDelVehicle( cVehicle *delVehicle );
-};
-*/
 
 class cClientMoveJob
 {

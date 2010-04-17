@@ -215,13 +215,6 @@ private:
 	*/
 	void handleMoveJobs();
 	/**
-	* gets the bulding with the ID
-	*@author alzi alias DoctorDeath
-	*@param iID The ID of the building
-	*/
-	cBuilding *getBuildingFromID ( int iID );
-
-	/**
 	* Calculates the cost, that this upgrade would have for the given player.
 	*@author Paul Grathwohl
 	*/
@@ -265,6 +258,13 @@ public:
 	*@param iID The ID of the vehicle
 	*/
 	cVehicle *getVehicleFromID ( int iID );
+	/**
+	* gets the bulding with the ID
+	*@author alzi alias DoctorDeath
+	*@param iID The ID of the building
+	*/
+	cBuilding *getBuildingFromID ( int iID );
+
 	/**
 	* checks whether a player has detected some new enemy units
 	*@author alzi alias DoctorDeath

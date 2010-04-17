@@ -2014,6 +2014,17 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			destroyUnit(building);
 		}
 		break;
+	case GAME_EV_END_MOVE_ACTION_SERVER:
+		{
+			cVehicle* vehicle = getVehicleFromID( message->popInt32() );
+			if ( !vehicle || !vehicle->ClientMoveJob ) break;
+
+			int destID = message->popInt32();
+			eEndMoveActionType type = (eEndMoveActionType) message->popChar();
+			vehicle->ClientMoveJob->endMoveAction = new cEndMoveAction( vehicle, destID, type);
+		}
+		break;
+	
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;
@@ -2261,7 +2272,6 @@ void cClient::handleMoveJobs ()
 				Vehicle->ClientMoveJob = NULL;
 				Vehicle->moving = false;
 				Vehicle->MoveJobActive = false;
-				//if ( MoveJob->endMoveAction ) MoveJob->endMoveAction->execute();
 			}
 			else Log.write(" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.Delete ( i );

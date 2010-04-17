@@ -1758,6 +1758,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 		}
 		break;
+	case GAME_EV_END_MOVE_ACTION:
+		{
+			cVehicle* vehicle = getVehicleFromID(message->popInt32());
+			if ( !vehicle || !vehicle->ServerMoveJob ) break;
+
+			int destID = message->popInt32();
+			eEndMoveActionType type = (eEndMoveActionType) message->popChar();
+			vehicle->ServerMoveJob->addEndAction(destID, type);
+		}
+		break;
 	default:
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2857,6 +2867,10 @@ void cServer::handleMoveJobs ()
 				sendNextMove ( Vehicle, MJOB_FINISHED );
 			}
 			else Log.write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
+
+			//execute endMoveAction
+			if ( MoveJob->endAction ) MoveJob->endAction->execute();
+			
 			delete MoveJob;
 
 			//continue path building

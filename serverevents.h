@@ -23,6 +23,7 @@
 #include "network.h"
 #include "clientevents.h"
 #include "map.h"
+#include "movejobs.h"
 
 class cResearch;
 class cHud;
@@ -314,6 +315,8 @@ void sendUnitScore(cBuilding *);
 void sendVictoryConditions(int turnLimit, int scoreLimit, cPlayer *receiver=0);
 
 void sendSelfDestroy( cBuilding* building );
+
+void sendEndMoveActionToClient(cVehicle* vehicle, int destID, eEndMoveActionType type );
 
 
 #endif // servereventsH

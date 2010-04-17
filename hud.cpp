@@ -1613,19 +1613,37 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overVehicle->iID );
 				else
 				{
-					// the constructor does everything for us
-					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overVehicle );
-					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, Client->Map, overVehicle, true);
+					sWaypoint* path = pc.calcPath();
+					if ( path )
+					{
+						sendMoveJob( path, overVehicle->iID );
+						sendEndMoveAction(overVehicle->iID, selectedBuilding->iID, EMAT_GET_IN);
+					}
+					else
+					{
+						if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+						else PlayVoice ( VoiceData.VOINoPath2 );
+					}
 				}
 			}
-			else if ( overPlane )
+			else if ( overPlane && selectedBuilding->canLoad( overPlane, false ) )
 			{
 				if ( selectedBuilding->isNextTo ( overPlane->PosX, overPlane->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overPlane->iID );
 				else
 				{
-					// the constructor does everything for us
-					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, selectedBuilding, NULL, NULL, overPlane );
-					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					cPathCalculator pc(overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, Client->Map, overPlane, true);
+					sWaypoint* path = pc.calcPath();
+					if ( path )
+					{
+						sendMoveJob( path, overPlane->iID );
+						sendEndMoveAction(overPlane->iID, selectedBuilding->iID, EMAT_GET_IN);
+					}
+					else
+					{
+						if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+						else PlayVoice ( VoiceData.VOINoPath2 );
+					}
 				}
 			}
 		}
@@ -1636,9 +1654,18 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					// the constructor does everything for us
-					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_LOAD, NULL, selectedVehicle, NULL, overVehicle );
-					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, Client->Map, selectedVehicle);
+					sWaypoint *path = pc.calcPath();
+					if ( path )
+					{
+						sendMoveJob( path, selectedVehicle->iID );
+						sendEndMoveAction( selectedVehicle->iID, overVehicle->iID, EMAT_LOAD);
+					}
+					else
+					{
+						if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+						else PlayVoice ( VoiceData.VOINoPath2 );
+					}
 				}
 			}
 			else if ( overVehicle )
@@ -1646,9 +1673,19 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedVehicle->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					// the constructor does everything for us
-					//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_GET_IN, NULL, selectedVehicle, NULL, overVehicle );
-					//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, Client->Map, overVehicle, true);
+					sWaypoint* path = pc.calcPath();
+					if ( path )
+					{
+						sendMoveJob( path, overVehicle->iID );
+						sendEndMoveAction(overVehicle->iID, selectedVehicle->iID, EMAT_GET_IN );
+					}
+					else
+					{
+						if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+						else PlayVoice ( VoiceData.VOINoPath2 );
+					}
+
 				}
 			}
 		}
@@ -1689,11 +1726,20 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						Log.write(" Client: want to attack " + iToStr(mouse->getKachelX()) + ":" + iToStr(mouse->getKachelY()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
 						sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->Map->size, selectedVehicle->iID, true );
 					}
-					else
+					else if ( vehicle || building )
 					{
-						// the constructor does everything for us
-						//cEndMoveAction *endMoveAction = new cEndMoveAction ( EMAT_ATTACK, NULL, selectedVehicle, building, vehicle, mouse->GetKachelOff()%map->size, mouse->GetKachelOff()/map->size );
-						//if ( !endMoveAction->getSuccess() ) delete endMoveAction;
+						cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, Client->Map, selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						sWaypoint* path = pc.calcPath();
+						if ( path )
+						{
+							sendMoveJob( path, selectedVehicle->iID);
+							sendEndMoveAction(selectedVehicle->iID, vehicle?vehicle->iID:building->iID, EMAT_ATTACK);
+						}
+						else
+						{
+							if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
+							else PlayVoice ( VoiceData.VOINoPath2 );
+						}
 					}
 				}
 				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->Attacking )

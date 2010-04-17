@@ -90,6 +90,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_UNIT_SCORE,             // sends a unit's score to its owner
 	GAME_EV_VICTORY_CONDITIONS,     // the game's victory conditions
 	GAME_EV_SELFDESTROY,
+	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
 };
 
@@ -250,5 +251,7 @@ void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
 void sendWantSelfDestroy( cBuilding* building );
 void sendWantChangeUnitName( string newName, int unitID );
+
+void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type );
 
 #endif // clienteventsH

@@ -1121,3 +1121,13 @@ void sendSelfDestroy( cBuilding* building )
 		Server->sendNetMessage(message, building->SeenByPlayerList[i]->Nr);
 	}
 }
+
+void sendEndMoveActionToClient(cVehicle* vehicle, int destID, eEndMoveActionType type )
+{
+	cNetMessage* message = new cNetMessage( GAME_EV_END_MOVE_ACTION_SERVER );
+	message->pushChar( type );
+	message->pushInt32(destID);
+	message->pushInt32(vehicle->iID);
+
+	Server->sendNetMessage(message, vehicle->owner->Nr);
+}

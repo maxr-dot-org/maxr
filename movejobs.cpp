@@ -438,6 +438,7 @@ cServerMoveJob::cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, c
 	bEndForNow = false;
 	iSavedSpeed = 0;
 	Waypoints = NULL;
+	endAction = NULL;
 
 	// unset sentry status when moving vehicle
 	if ( Vehicle->bSentryStatus )
@@ -471,6 +472,8 @@ cServerMoveJob::~cServerMoveJob()
 		Waypoints = NextWaypoint;
 	}
 	Waypoints = NULL;
+
+	if ( endAction ) delete endAction;
 }
 
 void cServerMoveJob::stop()
@@ -495,6 +498,15 @@ void cServerMoveJob::stop()
 	{
 		release();
 	}
+}
+
+void cServerMoveJob::addEndAction(int destID, eEndMoveActionType type)
+{
+	if ( endAction ) delete endAction;
+
+	endAction = new cEndMoveAction(Vehicle, destID, type);
+	sendEndMoveActionToClient( Vehicle, destID, type );
+
 }
 
 cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
@@ -797,155 +809,16 @@ void cServerMoveJob::calcNextDir()
 	else TESTXY_CND ( >,> ) iNextDir = 7;
 }
 
-/*
-cEndMoveAction::cEndMoveAction(eEndMoveActionType endMoveActionType_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_, int destX_, int destY_) :
-	srcBuilding(srcBuilding_),
-	srcVehicle(srcVehicle_),
-	destVehicle(destVehicle_),
-	destBuilding(destBuilding_),
-	destX(destX_),
-	destY(destY_),
-	success(false),
-	endMoveActionType(endMoveActionType_),
-	moveJob(NULL)
+cEndMoveAction::cEndMoveAction( cVehicle* vehicle, int destID, eEndMoveActionType type)
 {
-	if ( !srcVehicle && !srcBuilding ) return;
-	if ( !destVehicle && !destBuilding ) return;
-
-	switch ( endMoveActionType )
-	{
-		case EMAT_LOAD:
-			generateLoadAction();
-			break;
-		case EMAT_GET_IN:
-			generateGetInAction();
-			break;
-		case EMAT_ATTACK:
-			generateAttackAction();
-			break;
-	}
-}
-
-cEndMoveAction::~cEndMoveAction()
-{
-	if ( moveJob ) moveJob->endMoveAction = NULL;
-	for ( unsigned int i = 0; srcVehicle && i < srcVehicle->passiveEndMoveActions.Size(); i++ )
-	{
-		if ( srcVehicle->passiveEndMoveActions[i] == this ) srcVehicle->passiveEndMoveActions.Delete ( i );
-	}
-	for ( unsigned int i = 0; srcBuilding && i < srcBuilding->passiveEndMoveActions.Size(); i++ )
-	{
-		if ( srcBuilding->passiveEndMoveActions[i] == this ) srcBuilding->passiveEndMoveActions.Delete ( i );
-	}
-	for ( unsigned int i = 0; destVehicle && i < destVehicle->passiveEndMoveActions.Size(); i++ )
-	{
-		if ( destVehicle->passiveEndMoveActions[i] == this ) destVehicle->passiveEndMoveActions.Delete ( i );
-	}
-	for ( unsigned int i = 0; destBuilding && i < destBuilding->passiveEndMoveActions.Size(); i++ )
-	{
-		if ( destBuilding->passiveEndMoveActions[i] == this ) destBuilding->passiveEndMoveActions.Delete ( i );
-	}
-}
-
-void cEndMoveAction::generateLoadAction()
-{
-	// only vehicles can load vehicles
-	if ( !srcVehicle || !destVehicle ) return;
-	// we support only planes
-	if ( srcVehicle->data.factorAir == 0 ) return;
-
-	// check whether the field above the destVehicle is free
-	if ( !Client->Map->possiblePlace ( srcVehicle, destVehicle->PosX, destVehicle->PosY ) ) return;
-	// check whether the destVehicle can be loaded
-	if ( !srcVehicle->canLoad ( destVehicle, false ) ) return;
-
-	// generate the Movejob
-	int srcOffset = srcVehicle->PosX+srcVehicle->PosY*Client->Map->size;
-	int destOffset = destVehicle->PosX+destVehicle->PosY*Client->Map->size;
-	moveJob = new cClientMoveJob ( srcOffset, destOffset, srcVehicle->data.factorAir > 0, srcVehicle );
-	if ( moveJob->calcPath() )
-	{
-		// add the endMoveAction and send the movejob
-		success = true;
-		moveJob->endMoveAction = this;
-		destVehicle->passiveEndMoveActions.Add ( this );
-		sendMoveJob ( moveJob );
-		Log.write(" Client: Added new movejob with endMoveAction: VehicleID: " + iToStr ( srcVehicle->iID ) + ", SrcX: " + iToStr ( srcVehicle->PosX ) + ", SrcY: " + iToStr ( srcVehicle->PosY ) + ", DestX: " + iToStr ( moveJob->DestX ) + ", DestY: " + iToStr ( moveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
-	}
-	else
-	{
-		// no path found so delete the movejob
-		if ( moveJob->Vehicle ) moveJob->Vehicle->ClientMoveJob = NULL;
-		delete moveJob;
-		moveJob = NULL;
-	}
-
-}
-
-void cEndMoveAction::generateGetInAction()
-{
-	// only vehicles can be loaded
-	if ( !destVehicle ) return;
-	// we need a srcUnit
-	if ( !srcVehicle && !srcBuilding ) return;
-
-	// check whether the srcUnit can load the destVehicle
-	if ( ( srcVehicle && !srcVehicle->canLoad ( destVehicle, false ) ) ||
-		 ( srcBuilding && !srcBuilding->canLoad ( destVehicle, false ) ) ) return;
-
-	cPathCalculator PathCalculator( destVehicle->PosX, destVehicle->PosY, srcVehicle, srcBuilding, Client->Map, destVehicle, true );
-	sWaypoint *waypoints = PathCalculator.calcPath();
-
-	// generate the Movejob
-	int srcOffset = destVehicle->PosX+destVehicle->PosY*Client->Map->size;
-	if ( waypoints )
-	{
-		moveJob = new cClientMoveJob ( srcOffset, waypoints, destVehicle->data.factorAir > 0, destVehicle );
-		// add the endMoveAction and send the movejob
-		success = true;
-		moveJob->endMoveAction = this;
-		if ( srcVehicle ) srcVehicle->passiveEndMoveActions.Add ( this );
-		if ( srcBuilding ) srcBuilding->passiveEndMoveActions.Add ( this );
-		sendMoveJob ( moveJob );
-		Log.write(" Client: Added new movejob with endMoveAction: VehicleID: " + iToStr ( destVehicle->iID ) + ", SrcX: " + iToStr ( destVehicle->PosX ) + ", SrcY: " + iToStr ( destVehicle->PosY ) + ", DestX: " + iToStr ( moveJob->DestX ) + ", DestY: " + iToStr ( moveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
-	}
-}
-
-void cEndMoveAction::generateAttackAction()
-{
-	// only vehicles can move to fire
-	if ( !srcVehicle ) return;
-	// we need a target unit
-	if ( !destVehicle && !destBuilding) return;
-	// and we need a target field
-	if ( destX == -1 || destY == -1 ) return;
-
-	// check whether the srcVehicle can attack the dest field
-	if ( !srcVehicle->CanAttackObject ( destX+destY*Client->Map->size, Client->Map, true, false ) ) return;
-
-	// calculate path until the destination field is in range
-	cPathCalculator PathCalculator( srcVehicle->PosX, srcVehicle->PosY, Client->Map, srcVehicle, destX, destY );
-	sWaypoint *waypoints = PathCalculator.calcPath();
-
-	// generate the Movejob
-	int srcOffset = srcVehicle->PosX+srcVehicle->PosY*Client->Map->size;
-	if ( waypoints )
-	{
-		// create the movejob with the calculated path
-		moveJob = new cClientMoveJob ( srcOffset, waypoints, srcVehicle->data.factorAir > 0, srcVehicle );
-		// add the endMoveAction and send the movejob
-		success = true;
-		moveJob->endMoveAction = this;
-		if ( destVehicle ) destVehicle->passiveEndMoveActions.Add ( this );
-		if ( destBuilding ) destBuilding->passiveEndMoveActions.Add ( this );
-		sendMoveJob ( moveJob );
-		Log.write(" Client: Added new movejob with endMoveAction: VehicleID: " + iToStr ( srcVehicle->iID ) + ", SrcX: " + iToStr ( srcVehicle->PosX ) + ", SrcY: " + iToStr ( srcVehicle->PosY ) + ", DestX: " + iToStr ( moveJob->DestX ) + ", DestY: " + iToStr ( moveJob->DestY ), cLog::eLOG_TYPE_NET_DEBUG);
-	}
+	destID_ = destID;
+	type_ = type;
+	vehicle_ = vehicle;
 }
 
 void cEndMoveAction::execute()
 {
-	switch ( endMoveActionType )
+	switch ( type_ )
 	{
 		case EMAT_LOAD:
 			executeLoadAction();
@@ -961,64 +834,73 @@ void cEndMoveAction::execute()
 
 void cEndMoveAction::executeLoadAction()
 {
-	// only vehicles can load vehicles. We check this twice because we will not have the risk to crash the game
-	if ( !srcVehicle || !destVehicle ) return;
+	cVehicle* destVehicle = Server->getVehicleFromID( destID_ );
+	if ( !destVehicle ) return;
+	
+	if ( vehicle_->canLoad ( destVehicle ) )
+	{
+		vehicle_->storeVehicle ( destVehicle, Server->Map );
+		if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
 
-	// execute the loading if possible
-	if ( srcVehicle->canLoad ( destVehicle ) ) sendWantLoad ( srcVehicle->iID, true, destVehicle->iID );
+		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
+		sendStoreVehicle ( vehicle_->iID, true, destVehicle->iID, vehicle_->owner->Nr );
+	}
 }
 
 void cEndMoveAction::executeGetInAction()
 {
-	// only vehicles can be loaded
-	if ( !destVehicle ) return;
-	// we need a srcUnit
-	if ( !srcVehicle && !srcBuilding ) return;
-
+	cVehicle* destVehicle = Server->getVehicleFromID( destID_ );
+	cBuilding* destBuilding = Server->getBuildingFromID( destID_ );
+	
 	// execute the loading if possible
-	if ( srcVehicle && srcVehicle->canLoad ( destVehicle ) ) sendWantLoad ( srcVehicle->iID, true, destVehicle->iID );
-	else if ( srcBuilding && srcBuilding->canLoad ( destVehicle ) ) sendWantLoad ( srcBuilding->iID, false, destVehicle->iID );
+	if ( destVehicle && destVehicle->canLoad ( vehicle_ ) )
+	{
+		destVehicle->storeVehicle ( vehicle_, Server->Map );
+		if ( vehicle_->ServerMoveJob ) vehicle_->ServerMoveJob->release();
+		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
+		sendStoreVehicle ( destVehicle->iID, true, vehicle_->iID, destVehicle->owner->Nr );
+	}
+	else if ( destBuilding && destBuilding->canLoad ( vehicle_ ) )
+	{
+		destBuilding->storeVehicle ( vehicle_, Server->Map );
+		if ( vehicle_->ServerMoveJob ) vehicle_->ServerMoveJob->release();
+		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
+		sendStoreVehicle ( destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr );
+
+	}
+
 }
 
 void cEndMoveAction::executeAttackAction()
 {
-	// we need a source unit
-	if ( !srcVehicle ) return;
-	// we need a target
-	if ( !destVehicle && !destBuilding ) return;
+	//get the target unit
+	cVehicle* destVehicle = Server->getVehicleFromID( destID_ );
+	cBuilding* destBuilding = Server->getBuildingFromID( destID_ );
 
-	int targetId = 0;
-	int offset = destX+destY*Client->Map->size;
-
-	// check whether the target unit is still at the target position
-	cVehicle *targetVehicle;
-	cBuilding *targetBuilding;
-	selectTarget ( targetVehicle, targetBuilding, offset, srcVehicle->data.canAttack, Client->Map );
+	int x, y;
 	if ( destVehicle )
 	{
-		if ( targetVehicle != destVehicle ) return;
-		targetId = destVehicle->iID;
+		x = destVehicle->PosX;
+		y = destVehicle->PosY;
 	}
-	else if ( destBuilding && destBuilding != targetBuilding ) return;
+	else if ( destBuilding )
+	{
+		x = destBuilding->PosX;
+		y = destBuilding->PosY;
+	}
+	else
+		return;
 
-	// check whether we can realy attack this offset now
-	if ( !srcVehicle->CanAttackObject ( offset, Client->Map, true ) ) return;
+	int offset = x + y * Server->Map->size;
+	
+	//check, whether the attack is now possible
+	if ( !vehicle_->CanAttackObject ( x, y, Client->Map, true, true ) ) return;
 
-	Log.write(" Client: want to attack on endMoveAction offset " + iToStr( offset ) + ", Vehicle ID: " + iToStr( targetId ), cLog::eLOG_TYPE_NET_DEBUG );
-	sendWantAttack( targetId, offset, srcVehicle->iID, true );
+	//is the target in sight?
+	if ( !vehicle_->owner->ScanMap[offset] ) return;
+
+	Server->AJobs.Add( new cServerAttackJob( vehicle_, offset ));
 }
-
-bool cEndMoveAction::getSuccess()
-{
-	return success;
-}
-
-void cEndMoveAction::handleDelVehicle( cVehicle *delVehicle )
-{
-	if ( delVehicle == srcVehicle ) srcVehicle = NULL;
-	if ( delVehicle == destVehicle ) destVehicle = NULL;
-}
-*/
 
 cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle ) :
 	Waypoints(NULL),
@@ -1098,7 +980,7 @@ cClientMoveJob::~cClientMoveJob()
 			i--;
 		}
 	}
-	//if ( endMoveAction ) delete endMoveAction;
+	if ( endMoveAction ) delete endMoveAction;
 }
 
 void cClientMoveJob::setVehicleToCoords(int x, int y)
@@ -1329,6 +1211,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			if ( path )
 			{
 				sendMoveJob( path, Vehicle->iID );
+				if ( endMoveAction ) sendEndMoveAction(Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
 			}
 			else
 			{

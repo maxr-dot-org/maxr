@@ -75,7 +75,6 @@ struct sBuilding{
 
 class cPlayer;
 class cBase;
-class cEndMoveAction;
 
 // enum for the upgrade symbols
 #ifndef D_eSymbols
@@ -162,7 +161,6 @@ public:
 	int Disabled;    // the time this unit will be disabled
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Lock-Liste ist
 	bool hasBeenAttacked;
-	cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
 	int points;     // accumulated eco-sphere points
 

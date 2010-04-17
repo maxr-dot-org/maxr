@@ -188,14 +188,6 @@ cBuilding::~cBuilding ()
 			if ( Client->attackJobs[i]->building == this ) Client->attackJobs[i]->building = NULL;
 		}
 	}
-
-	/*while( passiveEndMoveActions.Size() )
-	{
-		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
-		passiveEndMoveActions.Delete ( 0 );
-		delete endMoveAction;
-	}*/
-
 	if ( Client && Client->gameGUI.getSelBuilding() == this )
 	{
 		Client->gameGUI.deselectUnit();
