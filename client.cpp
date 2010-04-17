@@ -781,11 +781,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding(Player) );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
+			
+			if ( AddedBuilding->data.connectsToBase )
+			{
+				Player->base.SubBases[0]->buildings.Add ( AddedBuilding );
+				AddedBuilding->SubBase = Player->base.SubBases[0];
 
-			Player->base.SubBases[0]->buildings.Add ( AddedBuilding );
-			AddedBuilding->SubBase = Player->base.SubBases[0];
-
-			AddedBuilding->updateNeighbours( Map );
+				AddedBuilding->updateNeighbours( Map );
+			}
 		}
 		break;
 	case GAME_EV_WAIT_FOR:
