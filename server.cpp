@@ -3107,7 +3107,7 @@ void cServer::destroyUnit(cBuilding *b)
 	rubble += deleteBuildings(building);
 
 	if ( surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2 )
-		addRubble( b->PosX, b->PosY, rubble/2, big );
+		addRubble( offset%Map->size, offset/Map->size, rubble/2, big );
 }
 
 //-------------------------------------------------------------------------------------
