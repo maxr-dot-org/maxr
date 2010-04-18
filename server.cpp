@@ -786,9 +786,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				int iOff = iX + iY * Map->size;
 
 				cBuildingIterator bi = Map->fields[iOff].getBuildings();
-				while ( bi && ( bi->data.surfacePosition != sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA || bi->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
+				while ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) bi++;
 
-				if ( !Map->isWater ( iX, iY ) || ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) ) bLand = true;
+				if ( !Map->isWater ( iX, iY ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE ) ) bLand = true;
 				else if ( Map->isWater ( iX, iY ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 				{
 					bLand = true;
