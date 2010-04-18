@@ -54,7 +54,8 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 	 OPX = vehicle->PosX;
 	 OPY = vehicle->PosY;
 	 playerMJob = false;
-	 lastMoveJob = NULL;
+	 lastDestX = vehicle->PosX;
+	 lastDestY = vehicle->PosY;
 	 n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
 	 sendSetAutoStatus ( vehicle->iID, true );
 }
@@ -62,7 +63,7 @@ cAutoMJob::cAutoMJob(cVehicle *vehicle)
 //destruktor for cAutoMJob
 cAutoMJob::~cAutoMJob()
 {
-	if (!playerMJob && lastMoveJob )
+	if (!playerMJob )
 	{
 		sendWantStopMove( vehicle->iID );
 	}
@@ -99,14 +100,13 @@ void cAutoMJob::DoAutoMove()
 	}
 	else
 	{
-		if ( vehicle->ClientMoveJob != lastMoveJob && !vehicle->ClientMoveJob->bSuspended  )
+		if ( vehicle->ClientMoveJob && (vehicle->ClientMoveJob->DestX != lastDestX || vehicle->ClientMoveJob->DestY != lastDestY)  )
 		{
 			playerMJob = true;
 		}
 		if ( vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur )
 		{
 			Client->addMoveJob( vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY );
-			lastMoveJob = vehicle->ClientMoveJob;
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
@@ -148,7 +148,8 @@ void cAutoMJob::PlanNextMove()
 	if ( maxFactor != FIELD_BLOCKED )
 	{
 		Client->addMoveJob( vehicle, bestX, bestY );
-		lastMoveJob = vehicle->ClientMoveJob;
+		lastDestX = bestX;
+		lastDestY = bestY;
 	}
 	else //no fields to survey next to the surveyor
 	{
@@ -285,9 +286,12 @@ void cAutoMJob::PlanLongMove()
 	}
 	if ( minValue != 0 )
 	{
-		Client->addMoveJob( vehicle, bestX, bestY );
-		lastMoveJob = vehicle->ClientMoveJob;
-		if ( !lastMoveJob || lastMoveJob->bFinished )
+		if ( Client->addMoveJob( vehicle, bestX, bestY ) )
+		{
+			lastDestX = bestX;
+			lastDestY = bestY;
+		}
+		else
 		{
 			string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
 			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, vehicle->PosX, vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY );

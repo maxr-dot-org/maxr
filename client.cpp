@@ -208,7 +208,7 @@ void cClient::initPlayer( cPlayer *Player )
 	}
 }
 
-void cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*> *group)
+int cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*> *group)
 {
 
 	sWaypoint* path = cClientMoveJob::calcPath( vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
@@ -216,6 +216,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle
 	{
 		sendMoveJob( path, vehicle->iID );
 		Log.write(" Client: Added new movejob: VehicleID: " + iToStr ( vehicle->iID ) + ", SrcX: " + iToStr ( vehicle->PosX ) + ", SrcY: " + iToStr ( vehicle->PosY ) + ", DestX: " + iToStr ( DestX ) + ", DestY: " + iToStr ( DestY ), cLog::eLOG_TYPE_NET_DEBUG);
+		return 1;
 	}
 	else
 	{
@@ -224,6 +225,7 @@ void cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle
 			if ( random(2) ) PlayVoice(VoiceData.VOINoPath1);
 			else PlayVoice ( VoiceData.VOINoPath2 );
 		}
+		return 0;
 	}
 }
 
