@@ -105,7 +105,7 @@ public:
 	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	cList<sSavedReportMessage> savedReportsList;
-	bool reportResearchFinished; ///< stores, if just a research was finished
+	cList<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
 	cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
 	int iSocketNum;			// Number of socket over which this player is connected in network game
 	// if MAX_CLIENTS its the lokal connected player; -1 for unknown

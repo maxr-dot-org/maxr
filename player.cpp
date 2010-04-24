@@ -59,7 +59,6 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 	Credits=0;
-	reportResearchFinished = false;
 	
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
@@ -106,8 +105,8 @@ cPlayer::cPlayer(const cPlayer &Player)
 		researchLevel.setCurResearchLevel(Player.researchLevel.getCurResearchLevel(i), i);
 		researchLevel.setCurResearchPoints(Player.researchLevel.getCurResearchPoints(i), i);
 	}
-	reportResearchFinished = Player.reportResearchFinished;
-
+	reportResearchAreasFinished = Player.reportResearchAreasFinished;
+	
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
@@ -624,6 +623,7 @@ void cPlayer::doResearch()
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas;
 	cList<int> areasReachingNextLevel;
+	reportResearchAreasFinished.Reserve (0); // clear 
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		if (researchCentersWorkingOnArea[area] > 0)
@@ -631,6 +631,7 @@ void cPlayer::doResearch()
 			if (researchLevel.doResearch(researchCentersWorkingOnArea[area], area))
 			{ // next level reached
 				areasReachingNextLevel.Add(area);
+				reportResearchAreasFinished.Add(area);
 				researchFinished = true;
 			}
 		}
@@ -643,8 +644,6 @@ void cPlayer::doResearch()
 			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
 	}
 	sendResearchLevel (&researchLevel, Nr);
-
-	reportResearchFinished = researchFinished;
 }
 
 void cPlayer::accumulateScore()

@@ -1336,8 +1336,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				iReportAnz--;
 			}
 
-			bool bFinishedResearch = message->popBool();
-			ActivePlayer->reportResearchFinished = bFinishedResearch;
+			int nrResearchAreasFinished = message->popChar();
+			bool bFinishedResearch = (nrResearchAreasFinished > 0);
 			if ( ( iCount == 0  || !playVoice ) && !bFinishedResearch ) PlayVoice ( VoiceData.VOIStartNone );
 			if ( iCount == 1 )
 			{
@@ -1351,17 +1351,40 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
 			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
+			string researchMsgString = "";
 			if ( bFinishedResearch )
 			{
 				PlayVoice ( VoiceData.VOIResearchComplete );
-				//FIXME: Ticket #196
-				addMessage (lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished"));
+
+				// build research finished string
+				string themeNames[8] = {
+					lngPack.i18n ( "Text~Vehicles~Damage" ),
+					lngPack.i18n ( "Text~Hud~Shots" ),
+					lngPack.i18n ( "Text~Hud~Range" ),
+					lngPack.i18n ( "Text~Hud~Armor" ),
+					lngPack.i18n ( "Text~Hud~Hitpoints" ),
+					lngPack.i18n ( "Text~Hud~Speed" ),
+					lngPack.i18n ( "Text~Hud~Scan" ),
+					lngPack.i18n ( "Text~Vehicles~Costs" ) };
+				
+				researchMsgString = lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished") + ": ";
+				for (int i = 0; i < nrResearchAreasFinished; i++)
+				{
+					int area = message->popChar ();
+					if (0 <= area && area < 8)
+					{
+						researchMsgString += themeNames[area];
+						if (i + 1 < nrResearchAreasFinished)
+							researchMsgString += ", ";
+					}
+				}
+				addMessage (researchMsgString);
 			}
 
 			// Save the report
 			string msgString = lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) + "\n";
 			if ( sReportMsg.length() > 0 ) msgString += sReportMsg + "\n";
-			if ( bFinishedResearch ) msgString += lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished") + "\n";
+			if ( bFinishedResearch ) msgString += researchMsgString + "\n";
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
 
 			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now

@@ -628,8 +628,10 @@ void sendTurnReport ( cPlayer *Player )
 	int iCount = 0;
 	sTurnstartReport *Report;
 
-	message->pushBool (Player->reportResearchFinished);
-	Player->reportResearchFinished = false;
+	int nrResearchAreasFinished = Player->reportResearchAreasFinished.Size ();
+	for (int i = nrResearchAreasFinished - 1; i >= 0; i--) // count down to get the correct order at the client conveniently
+		message->pushChar (Player->reportResearchAreasFinished[i]);
+	message->pushChar (nrResearchAreasFinished);
 
 	while ( Player->ReportBuildings.Size() )
 	{
