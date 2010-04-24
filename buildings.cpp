@@ -801,7 +801,10 @@ int cBuilding::GetMenuPointAnz ()
 	if ( typ->data.canAttack && data.shotsCur )
 		nr++;
 
-	if ( typ->data.canWork && ( IsWorking || typ->data.canBuild.empty() ) )
+	if (typ->data.canWork && 
+		(   IsWorking                                        // "stop"
+		 || typ->data.canBuild.empty()                       // "start" for non-factory buildings
+		 || (!IsWorking && BuildList && BuildList->Size()))) // "start" for factory building
 		nr++;
 
 	if ( typ->data.canMineMaxRes > 0 )
