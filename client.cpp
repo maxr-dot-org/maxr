@@ -1613,6 +1613,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ) );
 		break;
 	case GAME_EV_ABORT_WAIT_RECON:
+		unfreeze(); 
 		gameGUI.setInfoTexts ( "", "" );
 		break;
 	case GAME_EV_DEL_PLAYER:
