@@ -1397,6 +1397,25 @@ void cGameGUI::handleMouseMove()
 		rightMouseBox.endY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
 	}
 
+	static int lastX, lastY;
+	if ( !rightMouseBox.isTooSmall() && mouse->x > HUD_LEFT_WIDTH )	//the rightMouseBox is only used to trigger the right mouse button scroll
+	{		
+		if ( lastX != -1 && lastY != -1 )
+		{
+			int speed = 5;
+			int newPosX = offX + (mouse->x - lastX) * speed;
+			int newPosY = offY + (mouse->y - lastY) * speed;
+
+			setOffsetPosition( newPosX, newPosY );
+		}
+		lastX = mouse->x;
+		lastY = mouse->y;
+	}
+	else
+	{
+		lastX = lastY = -1;
+	}
+
 	// check minimap
 	if ( miniMapImage->getIsClicked() || miniMapImage->getWasClicked() )
 	{
