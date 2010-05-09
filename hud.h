@@ -28,7 +28,6 @@
 // - change code that hud-background will not be drawn every frame (makes ~20fps on this machine!)
 // - find a good way do display the chat-box
 // - reimplement extra-players
-// - reimplement rightmousesbuttonscroll
 // - add documentation
 //
 
@@ -433,7 +432,7 @@ public:
 	int getOffsetX() { return offX; }
 	int getOffsetY() { return offY; }
 
-	void setZoom( float newZoom, bool setScroller );
+	void setZoom( float newZoom, bool setScroller, bool centerToMouse );
 	float getZoom();
 	int getTileSize();
 

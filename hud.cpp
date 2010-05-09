@@ -234,7 +234,7 @@ void cGameGUI::recalcPosition( bool resetItemPositions )
 
 	// reset minimal zoom
 	calcMinZoom();
-	setZoom( zoom, true );
+	setZoom( zoom, true, false );
 	zoomSlider->setBorders( minZoom, 1.0 );
 
 	// move some items arround
@@ -642,7 +642,7 @@ void cGameGUI::checkOffsetPosition ()
 	updateMouseCursor();
 }
 
-void cGameGUI::setZoom( float newZoom, bool setScroller )
+void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 {
 	zoom = newZoom;
 	if ( zoom < minZoom ) zoom = minZoom;
@@ -653,14 +653,37 @@ void cGameGUI::setZoom( float newZoom, bool setScroller )
 	static float lastZoom = 1.0;
 	if ( lastZoom != getZoom() )
 	{
+		//change x screen offset
 		int off;
-		int lastScreenPixel = (int)( (float)( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / lastZoom );
-		int newScreenPixel = (int)( (float)( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / getZoom() );
-		off = (lastScreenPixel-newScreenPixel)/2 ;
-		lastZoom = getZoom();
 
+		float lastScreenPixel = ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / lastZoom;
+		float newScreenPixel  = ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / getZoom();
+		if ( centerToMouse ) 
+		{
+			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->x - HUD_LEFT_WIDTH) / (Video.getResolutionX()-HUD_TOTAL_WIDTH));
+		}
+		else
+		{
+			off = (lastScreenPixel - newScreenPixel) / 2;
+		}
+				
 		offX += off;
+
+		//change y screen offset
+		lastScreenPixel = (int)( ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / lastZoom );
+		newScreenPixel  = (int)( ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / getZoom() );
+		if ( centerToMouse )
+		{
+			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->y - HUD_TOP_HIGHT) / (Video.getResolutionY()-HUD_TOTAL_HIGHT));
+		}
+		else
+		{
+			off = (lastScreenPixel - newScreenPixel) / 2;
+		}
+
 		offY += off;
+
+		lastZoom = getZoom();
 	}
 	if ( SettingsData.bPreScale ) scaleSurfaces();
 	scaleColors();
@@ -1867,8 +1890,14 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	}
 
 	// check getZoom() via mousewheel
-	if ( mouseState.wheelUp ) setZoom ( getZoom()+(float)0.05, true );
-	else if ( mouseState.wheelDown ) setZoom ( getZoom()-(float)0.05, true );
+	if ( mouseState.wheelUp ) 
+	{
+		setZoom ( getZoom()+(float)0.05, true, true );
+	}
+	else if ( mouseState.wheelDown )
+	{
+		setZoom ( getZoom()-(float)0.05, true, true );
+	}
 }
 
 void cGameGUI::doScroll( int dir )
@@ -2383,8 +2412,8 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	else if ( key.keysym.sym == KeysList.KeyScroll4a || key.keysym.sym == KeysList.KeyScroll4b ) doScroll ( 4 );
 	else if ( key.keysym.sym == KeysList.KeyScroll6a || key.keysym.sym == KeysList.KeyScroll6b ) doScroll ( 6 );
 	else if ( key.keysym.sym == KeysList.KeyScroll8a || key.keysym.sym == KeysList.KeyScroll8b ) doScroll ( 8 );
-	else if ( key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb ) setZoom ( (float)(getZoom()+0.05), true );
-	else if ( key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb ) setZoom ( (float)(getZoom()-0.05), true );
+	else if ( key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb ) setZoom ( (float)(getZoom()+0.05), true, false );
+	else if ( key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb ) setZoom ( (float)(getZoom()-0.05), true, false );
 	// position handling hotkeys
 	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle ) selectedVehicle->Center();
 	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding ) selectedBuilding->Center();
@@ -2710,7 +2739,7 @@ void cGameGUI::miniMapMovedOver( void *parent )
 void cGameGUI::zoomSliderMoved( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	gui->setZoom ( gui->zoomSlider->getValue(), false );
+	gui->setZoom ( gui->zoomSlider->getValue(), false, false );
 }
 
 void cGameGUI::endReleased( void *parent )

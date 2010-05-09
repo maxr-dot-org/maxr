@@ -1665,7 +1665,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int x = message->popInt16();
 			int y = message->popInt16();
 			gameGUI.setOffsetPosition ( x, y );
-			gameGUI.setZoom ( message->popFloat(), true );
+			gameGUI.setZoom ( message->popFloat(), true, false );
 			gameGUI.setColor ( message->popBool() );
 			gameGUI.setGrid ( message->popBool() );
 			gameGUI.setAmmo ( message->popBool() );
