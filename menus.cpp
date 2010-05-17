@@ -2989,6 +2989,32 @@ cNetworkHostMenu::~cNetworkHostMenu()
 }
 
 //-----------------------------------------------------------------------------------------
+void cNetworkHostMenu::checkTakenPlayerAttr( sMenuPlayer *player )
+{
+	if ( player->ready )
+	{
+		for ( unsigned int i = 0; i < players.Size(); i++ )
+		{
+			if ( i == player->nr ) continue;
+			if ( players[i]->name == player->name )
+			{
+				if ( player->nr != actPlayer->nr ) sendMenuChatMessage( "Text~Multiplayer~Player_Name_Taken", player, actPlayer->nr, true );
+				else chatBox->addLine ( lngPack.i18n("Text~Multiplayer~Player_Name_Taken") );
+				player->ready = false;
+				break;
+			}
+			if ( players[i]->color == player->color )
+			{
+				if ( player->nr != actPlayer->nr ) sendMenuChatMessage( "Text~Multiplayer~Player_Color_Taken", player, actPlayer->nr, true );
+				else chatBox->addLine ( lngPack.i18n("Text~Multiplayer~Player_Color_Taken") );
+				player->ready = false;
+				break;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------
 int cNetworkHostMenu::checkAllPlayersReady()
 {
 	for ( unsigned int i = 0; i < players.Size(); i++ )
@@ -3133,6 +3159,7 @@ void cNetworkHostMenu::startReleased( void* parent )
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::playerSettingsChanged ()
 {
+	checkTakenPlayerAttr( actPlayer );
 	sendPlayerList ( &players );
 }
 
@@ -3163,7 +3190,8 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 		break;
 	case MU_MSG_NEW_PLAYER:
 		{
-			sMenuPlayer *player = new sMenuPlayer ( "unidentified", 0, false, (int)players.Size(), message->popInt16() );
+#define UNIDENTIFIED_PLAYER_NAME "unidentified"
+			sMenuPlayer *player = new sMenuPlayer ( UNIDENTIFIED_PLAYER_NAME, 0, false, (int)players.Size(), message->popInt16() );
 			players.Add ( player );
 			sendRequestIdentification ( player );
 			playersBox->setPlayers ( &players );
@@ -3209,19 +3237,24 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 	case MU_MSG_IDENTIFIKATION:
 		{
 			int playerNr = message->popInt16();
+			if ( playerNr < 0 || playerNr > (int)players.Size() ) break;
+			sMenuPlayer *player = players[playerNr];
 
-			bool freshJoined = ( players[playerNr]->name.compare ( "unidentified" ) == 0 );
-			players[playerNr]->color = message->popInt16();
-			players[playerNr]->name = message->popString();
-			players[playerNr]->ready = message->popBool();
+			bool freshJoined = ( player->name.compare ( UNIDENTIFIED_PLAYER_NAME ) == 0 );
+			player->color = message->popInt16();
+			player->name = message->popString();
+			player->ready = message->popBool();
 
 			Log.write("game version of client " + iToStr(playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if ( freshJoined ) chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Joined", players[playerNr]->name ) );
+			if ( freshJoined ) chatBox->addLine ( lngPack.i18n ( "Text~Multiplayer~Player_Joined", player->name ) );
+
+			// search double taken name or color
+			checkTakenPlayerAttr( player );
 
 			draw();
 			sendPlayerList( &players );
-			sendGameData( &gameDataContainer, saveGameString, players[playerNr] );
+			sendGameData( &gameDataContainer, saveGameString, player );
 		}
 		break;
 	case MU_MSG_REQUEST_MAP:

@@ -806,6 +806,7 @@ protected:
 	cMenuButton *startButton;
 
 	int checkAllPlayersReady();
+	void checkTakenPlayerAttr( sMenuPlayer *player );
 	bool runSavedGame();
 
 	std::vector<cMapSender*> mapSenders;
