@@ -54,7 +54,7 @@ class cAutoMJob {
 
 
 	void DoAutoMove();
-	float CalcFactor(int x, int y);
+	float CalcFactor(int PosX, int PosY);
 	void PlanNextMove();
 	void PlanLongMove();
 	void changeOP();

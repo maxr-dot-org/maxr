@@ -664,21 +664,21 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 		}
 		else
 		{
-			off = (lastScreenPixel - newScreenPixel) / 2;
+			off = (int)(lastScreenPixel - newScreenPixel) / 2;
 		}
 				
 		offX += off;
 
 		//change y screen offset
-		lastScreenPixel = (int)( ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / lastZoom );
-		newScreenPixel  = (int)( ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / getZoom() );
+		lastScreenPixel = ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / lastZoom ;
+		newScreenPixel  = ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) / getZoom();
 		if ( centerToMouse )
 		{
 			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->y - HUD_TOP_HIGHT) / (Video.getResolutionY()-HUD_TOTAL_HIGHT));
 		}
 		else
 		{
-			off = (lastScreenPixel - newScreenPixel) / 2;
+			off = (int) (lastScreenPixel - newScreenPixel) / 2;
 		}
 
 		offY += off;
@@ -1971,9 +1971,6 @@ void cGameGUI::doCommand( string cmd )
 	if ( cmd.compare( "/trace off" ) == 0 ) { debugTraceServer = false; debugTraceClient = false; return; }
 	if ( cmd.compare( "/ajobs on" ) == 0 ) { debugAjobs = true; return; }
 	if ( cmd.compare( "/ajobs off" ) == 0 ) { debugAjobs = false; return; }
-	if ( cmd.compare( "/checkpos on" ) == 0 && Server ) { Server->bDebugCheckPos = true; return; }
-	if ( cmd.compare( "/checkpos off") == 0 && Server ) { Server->bDebugCheckPos = false; return; }
-	if ( cmd.compare( "/checkpos" ) == 0 && Server ) { sendCheckVehiclePositions(); return; }
 	if ( cmd.compare( "/players on" ) == 0 ) { debugPlayers = true; return; }
 	if ( cmd.compare( "/players off" ) == 0 ) { debugPlayers = false; return; }
 	if ( cmd.substr( 0, 12 ).compare( "/cache size " ) == 0 )
@@ -2051,12 +2048,9 @@ void cGameGUI::doCommand( string cmd )
 			//can not disconnect local players
 			if ( Player->iSocketNum == MAX_CLIENTS ) return;
 
-			SDL_Event* event = new SDL_Event;
-			event->type = NETWORK_EVENT;
-			event->user.code = TCP_CLOSEEVENT;
-			event->user.data1 = new Sint16[1];
-			((Sint16*)event->user.data1)[0] = Player->iSocketNum;
-			Server->pushEvent ( event );
+			cNetMessage* message = new cNetMessage( TCP_CLOSE );
+			message->pushInt16( Player->iSocketNum );
+			Server->pushEvent ( message );
 		}
 	}
 	if ( cmd.substr( 0, 9 ).compare( "/deadline"  ) == 0 )

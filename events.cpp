@@ -28,10 +28,9 @@
 #include "files.h"
 #include "video.h"
 
-void cEventHandling::pushEvent(SDL_Event* const e)
+void cEventHandling::pushEvent(cNetMessage* message)
 {
-	while (SDL_PushEvent(e) != 0) {}
-	delete e;
+	eventQueue.write(message);
 }
 
 void cEventHandling::HandleEvents()
@@ -74,81 +73,6 @@ void cEventHandling::HandleEvents()
 		case SDL_MOUSEBUTTONUP:
 			InputHandler->inputMouseButton ( event.button );
 			break;
-		case NETWORK_EVENT:
-			switch ( event.user.code )
-			{
-			case TCP_ACCEPTEVENT:
-				// new socket accepted
-				if ( ActiveMenu )
-				{
-					cNetMessage message ( MU_MSG_NEW_PLAYER );
-					message.pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					ActiveMenu->handleNetMessage ( &message );
-					free ( event.user.data1 );
-				}
-				break;
-			case TCP_RECEIVEEVENT:
-				// new Data received
-				{
-				if ( !network ) break;
-				sDataBuffer DataBuffer;
-				memset(DataBuffer.data, 0, PACKAGE_LENGTH);
-				DataBuffer.iLenght = network->read(SDL_SwapLE16(((Sint16*)event.user.data1)[0]), ((Sint16*)event.user.data1)[2], DataBuffer.data);
-
-				if ( DataBuffer.iLenght != 0 )
-				{
-					if ( SDL_SwapLE16( ((Sint16*)(DataBuffer.data+1))[1] ) < FIRST_MENU_MESSAGE ) // Eventtypes for the client
-					{
-						// devite into messages
-						SDL_Event* NewEvent = new SDL_Event;
-						NewEvent->type = GAME_EVENT;
-
-						// data1 is the real data
-						NewEvent->user.data1 = malloc(DataBuffer.iLenght);
-						memcpy(NewEvent->user.data1, DataBuffer.data, DataBuffer.iLenght);
-
-						NewEvent->user.data2 = NULL;
-						pushEvent( NewEvent );
-					}
-					else //message for the MultiPlayerMenu
-					{
-						if ( ActiveMenu )
-						{
-							cNetMessage message((char*)DataBuffer.data);
-							ActiveMenu->handleNetMessage ( &message );
-						}
-					}
-				}
-				free ( event.user.data1 );
-				break;
-				}
-			case TCP_CLOSEEVENT:
-				if ( !network ) break;
-				// Socket should be closed
-				network->close ( ((Sint16 *)event.user.data1)[0] );
-				if ( ActiveMenu && !Client )
-				{
-					cNetMessage message( MU_MSG_DEL_PLAYER );
-					message.pushInt16 ( ((Sint16 *)event.user.data1)[0] );
-					ActiveMenu->handleNetMessage ( &message );
-				}
-				else if ( Client )
-				{
-					cNetMessage message( GAME_EV_LOST_CONNECTION );
-					message.pushInt16( ((Sint16*)event.user.data1)[0] );
-					pushEvent( message.getGameEvent() );
-				}
-				free ( event.user.data1 );
-				break;
-			}
-			break;
-		case GAME_EVENT:
-			{
-				cNetMessage message( (char*) event.user.data1);
-				free ( event.user.data1 );
-				if ( Client) Client->HandleNetMessage( &message );
-				break;
-			}
 		case SDL_QUIT:
 			{
 				Quit();
@@ -158,5 +82,48 @@ void cEventHandling::HandleEvents()
 		default:
 			break;
 		}
+	}
+
+	cNetMessage *message;
+	while ( eventQueue.size() > 0 )
+	{
+		message = eventQueue.read();
+		switch (message->getClass())
+		{
+		case NET_MSG_CLIENT:
+			if ( !Client ) 
+			{
+				Log.write("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
+				break;
+			}
+			Client->HandleNetMessage( message );
+			break;
+		case NET_MSG_SERVER:
+			//should not happen!
+			Log.write("Client: got a server message! Type: " + message->getTypeAsString(),cLog::eLOG_TYPE_NET_ERROR);
+			break;
+		case NET_MSG_MENU:
+			if ( !ActiveMenu )
+			{
+				Log.write("Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR);
+				break;
+			}
+			ActiveMenu->handleNetMessage( message );
+			break;
+		case NET_MSG_STATUS:
+			if ( Client )
+			{
+				Client->HandleNetMessage( message );
+			}
+			else if ( ActiveMenu )
+			{
+				ActiveMenu->handleNetMessage( message );
+			}
+			break;
+		default:
+			break;
+		}
+
+		delete message;
 	}
 }

@@ -22,10 +22,7 @@
 
 #include "defines.h"
 #include "main.h"
-
-
-#define NETWORK_EVENT	SDL_USEREVENT
-#define GAME_EVENT		(SDL_USEREVENT + 1)
+#include "ringbuffer.h"
 
 /**
  * Class for Event handling.
@@ -33,18 +30,19 @@
  */
 class cEventHandling
 {
+private:
+	cRingbuffer<cNetMessage*> eventQueue;
 public:
 	/**
-	 * Places the event in the event queue.
-	 * If the event queue is full it waits until there is room in the queue.
-	 * @author alzi alias DoctorDeath
-	 * @param event pointer to event which should be pushed to the queue
+	 * Places a net message for the client on the message queue
+	 * @author Eiko
+	 * @param message pointer to message which should be pushed to the queue
 	 */
-	void pushEvent(SDL_Event*);
+	void pushEvent(cNetMessage* message);
 
 	/**
-	 * Handles spacial game events and the network events.
-	 * Should be the only functions which polls the event queue.
+	 * Handles input events and the network events.
+	 * Should be the only functions which polls the event queues.
 	 * @author alzi alias DoctorDeath
 	 */
 	void HandleEvents();

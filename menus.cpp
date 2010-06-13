@@ -1729,7 +1729,7 @@ void cClanSelectionMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
 	{
-		case MU_MSG_NEW_PLAYER:
+		case TCP_ACCEPT:
 			sendReconnectAnswer ( false, message->popInt16(), NULL );
 			break;
 		case MU_MSG_CLAN:
@@ -2313,7 +2313,7 @@ void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
 	{
-	case MU_MSG_NEW_PLAYER:
+	case TCP_ACCEPT:
 		sendReconnectAnswer ( false, message->popInt16(), NULL );
 		break;
 	case MU_MSG_CLAN:
@@ -2529,7 +2529,7 @@ void cLandingMenu::handleNetMessage( cNetMessage *message )
 	// will receive and handle the messages directly
 	switch ( message->iType )
 	{
-	case MU_MSG_NEW_PLAYER:
+	case TCP_ACCEPT:
 		sendReconnectAnswer ( false, message->popInt16(), NULL );
 		break;
 	case MU_MSG_CLAN:
@@ -3188,7 +3188,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			draw();
 		}
 		break;
-	case MU_MSG_NEW_PLAYER:
+	case TCP_ACCEPT:
 		{
 #define UNIDENTIFIED_PLAYER_NAME "unidentified"
 			sMenuPlayer *player = new sMenuPlayer ( UNIDENTIFIED_PLAYER_NAME, 0, false, (int)players.Size(), message->popInt16() );
@@ -3198,9 +3198,10 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			draw();
 		}
 		break;
-	case MU_MSG_DEL_PLAYER:
+	case TCP_CLOSE:
 		{
 			int socket = message->popInt16();
+			network->close ( socket );
 			string playerName;
 
 			//delete player
@@ -3485,7 +3486,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 			draw();
 		}
 		break;
-	case MU_MSG_DEL_PLAYER:
+	case TCP_CLOSE:
 		{
 			for ( unsigned int i = 0; i < players.Size(); i++ )
 			{

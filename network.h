@@ -27,7 +27,8 @@
 #define START_CHAR				(char)0xFF	// start character in netmessages
 
 // the first client message must be smaller then the first menu message!
-#define FIRST_CLIENT_MESSAGE	50
+#define FIRST_SERVER_MESSAGE	10
+#define FIRST_CLIENT_MESSAGE	100
 #define FIRST_MENU_MESSAGE		1000
 
 /**
@@ -35,13 +36,6 @@
 *@author alzi alias DoctorDeath
 */
 int CallbackHandleNetworkThread( void *arg );
-
-enum EVENT_TYPES
-{
-	TCP_ACCEPTEVENT,
-	TCP_RECEIVEEVENT,
-	TCP_CLOSEEVENT
-};
 
 enum SOCKET_TYPES
 {
@@ -66,7 +60,11 @@ enum SOCKET_STATES
 struct sDataBuffer
 {
 	Uint32 iLenght;
-	char data[PACKAGE_LENGTH];
+	char data[5*PACKAGE_LENGTH];
+
+	char* getWritePointer();
+	int getFreeSpace();
+	void deleteFront(int n);
 
 	/**
 	* Clears the data buffer and sets his lenght to 0.
@@ -89,8 +87,7 @@ struct sSocket
 
 	TCPsocket socket;
 	sDataBuffer buffer;
-	int bufferpos;
-	int messagelength;
+	unsigned int messagelength;
 };
 
 /**
@@ -114,9 +111,7 @@ public:
 
 private:
 	cMutex TCPMutex;
-	cMutex DataMutex;
 
-	bool bWaitForRead;
 
 	SDL_Thread *TCPHandleThread;
 	bool bExit;
@@ -140,26 +135,8 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void deleteSocket( int iNum );
-	/**
-	* Sends a signal to the conditional variable.
-	*@author alzi alias DoctorDeath
-	*/
-	void sendReadFinished();
-	/**
-	* waits until data will be read
-	*@author alzi alias DoctorDeath
-	*/
-	void waitForRead();
 
-	/**
-	* Pushes an event to the event handling or to the server eventqueue
-	*@author alzi alias DoctorDeath
-	*@param iEventType Typ of the event to push ( see EVENT_TYPES ).
-	*@param data1 first data of the event.
-	*@param data2 second data of the event.
-	*@return Allways 0 for success since it waits until the event can be pushed.
-	*/
-	int pushEvent( int iEventType, void *data1, void *data2 );
+	int pushEvent( cNetMessage* message);
 public:
 	/**
 	* Creates a new server on the port which has to be set before.
@@ -197,15 +174,6 @@ public:
 	*return 0 on succes, -1 if an error occurs
 	*/
 	int send( int iLenght, char *buffer );
-	/**
-	* Reads data of an given lenght from the client/socket.
-	*@author alzi alias DoctorDeath
-	*param iClientNumber Number of client/socket form which the data should be read.
-	*param iLenght Lenght of data to be read.
-	*param buffer buffer with data to be read.
-	*return 0 on succes, -1 if an error occurs
-	*/
-	int read( int iClientNumber, int iLenght, char *buffer );
 
 	/**
 	* Sets a new port.

@@ -22,6 +22,16 @@
 
 #include <SDL.h>
 #include <string>
+#include "network.h"
+
+enum eNetStatusMsg 
+{ 
+	TCP_ACCEPT = 0,
+	TCP_CLOSE
+};
+
+enum eNetMessageClass { NET_MSG_SERVER, NET_MSG_CLIENT, NET_MSG_MENU, NET_MSG_STATUS };
+
 
 /**
 * This class represents a message between server and client
@@ -31,7 +41,7 @@
 class cNetMessage
 {
 public:
-	char* data;		//the data of the netMessage
+	char data[PACKAGE_LENGTH];		//the data of the netMessage
 
 	/** length of the containing data in bytes */
 	int iLength;
@@ -52,7 +62,7 @@ public:
 	*/
 	cNetMessage( char* c );
 
-	~cNetMessage();
+	//~cNetMessage();
 
 	/** return a pointer to a platform independed serial representation of the NetMessage
 	* Byte 0: START_CHAR
@@ -64,11 +74,7 @@ public:
 	*/
 	char* serialize();
 
-	/** allocates a new SDL_Event containing the serial representation of the netMessage
-	* @author Eiko
-	* @return the SDL_Event
-	*/
-	SDL_Event* getGameEvent();
+	eNetMessageClass getClass();
 
 	/** pushes a char to the end of the netMessage
 	* @author Eiko

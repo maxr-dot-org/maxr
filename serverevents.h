@@ -32,9 +32,8 @@ struct sHudStateContainer;
 
 enum SERVER_EVENT_TYPES
 {
-	// Types between 0 and FIRST_CLIENT_MESSAGE are for the server
-	GAME_EV_LOST_CONNECTION = 0,	// connection on a socket has been lost
-	GAME_EV_CHAT_CLIENT,			// a chat message from client to server
+	// Types between FIRST_SERVER_MESSAGE and FIRST_CLIENT_MESSAGE are for the server
+	GAME_EV_CHAT_CLIENT = FIRST_SERVER_MESSAGE,		// a chat message from client to server
 	GAME_EV_WANT_TO_END_TURN,		// a client wants to end the turn
 	GAME_EV_WANT_START_WORK,		// a client wants to start a building
 	GAME_EV_WANT_STOP_WORK,			// a client wants to stop a building
@@ -224,8 +223,6 @@ void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPl
 * this is used by the client for correct drawing of the unit
 */
 void sendDetectionState( cVehicle* vehicle );
-
-void sendCheckVehiclePositions(cPlayer* p = NULL);
 
 /**
 * sends whether and how the unit has to clean the field

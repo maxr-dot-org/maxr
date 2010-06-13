@@ -91,8 +91,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_VICTORY_CONDITIONS,     // the game's victory conditions
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
-	DEBUG_CHECK_VEHICLE_POSITIONS	// sends all vehicle positions to the clients to find async vehicles
-};
+	};
 
 enum CHAT_MESSAGE_TYPES
 {

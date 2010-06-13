@@ -25,10 +25,8 @@
 enum eMenuMessages
 {
 	MU_MSG_CHAT = FIRST_MENU_MESSAGE,	// simple text message
-	MU_MSG_NEW_PLAYER,			// a new player has connected
 	MU_MSG_REQ_IDENTIFIKATION,	// host requests a identifacation of this player
 	MU_MSG_IDENTIFIKATION,		// player send his idenetification
-	MU_MSG_DEL_PLAYER,			// a player should be deleted
 	MU_MSG_PLAYERLIST,			// a list with all players and their data
 	MU_MSG_OPTINS,				// all options selected by the host
 	MU_MSG_START_MAP_DOWNLOAD,  // the host start a map upload to the client

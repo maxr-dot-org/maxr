@@ -678,56 +678,6 @@ void sendDetectionState( cVehicle* vehicle )
 }
 
 //-------------------------------------------------------------------------------------
-void sendCheckVehiclePositions(cPlayer* p )
-{
-	//generate a message for all players
-	for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
-	{
-		cPlayer* player = (*Server->PlayerList)[n];
-		if ( p && p != player ) continue;
-
-		cNetMessage* message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
-		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-		{
-			cVehicle* vehicle = (*Server->PlayerList)[i]->VehicleList;
-			while ( vehicle )
-			{
-				//check wether the vehicle is visible on the client
-				unsigned int x;
-				for ( x = 0; x < vehicle->SeenByPlayerList.Size(); x++ )
-				{
-					if ( vehicle->SeenByPlayerList[x] == player ) break;
-				}
-				if ( x < vehicle->SeenByPlayerList.Size() || vehicle->owner == player )
-				{
-					if ( vehicle->ServerMoveJob )
-					{
-						message->pushInt16( -1 );
-						message->pushInt16( -1 );
-					}
-					else
-					{
-						message->pushInt16( vehicle->PosX );
-						message->pushInt16( vehicle->PosY );
-					}
-					message->pushInt32( vehicle->iID  );
-					if ( message->iLength > PACKAGE_LENGTH - 6 )
-					{
-						message->pushBool(false);
-						Server->sendNetMessage( message, player->Nr );
-						message = new cNetMessage( DEBUG_CHECK_VEHICLE_POSITIONS );
-					}
-				}
-
-				vehicle = vehicle->next;
-			}
-		}
-		message->pushBool( true );	//true for last message part
-		Server->sendNetMessage( message, player->Nr );
-	}
-}
-
-//-------------------------------------------------------------------------------------
 void sendClearAnswer ( int answertype, cVehicle *Vehicle, int turns, int bigoffset, int iPlayer )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_CLEAR_ANSWER );

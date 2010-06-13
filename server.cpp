@@ -29,6 +29,7 @@
 #include "upgradecalculator.h"
 #include "menus.h"
 #include "settings.h"
+#include "ringbuffer.h"
 
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
@@ -52,7 +53,6 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 
 	this->turnLimit = turnLimit;
 	this->scoreLimit = scoreLimit;
-	bDebugCheckPos = false;
 	Map = map;
 	this->PlayerList = PlayerList;
 	this->gameType = gameType;
@@ -82,10 +82,9 @@ cServer::~cServer()
 	SDL_WaitThread ( ServerThread, NULL );
 	SDL_RemoveTimer ( TimerID );
 
-	while ( EventQueue.Size() )
+	while ( eventQueue.size() )
 	{
-		delete EventQueue[0];
-		EventQueue.Delete (0);
+		delete eventQueue.read();
 	}
 
 	while ( PlayerList->Size() )
@@ -114,34 +113,31 @@ void cServer::setDeadline(int iDeadline)
 }
 
 //-------------------------------------------------------------------------------------
-SDL_Event* cServer::pollEvent()
+cNetMessage* cServer::pollEvent()
 {
-	static SDL_Event* lastEvent = NULL;
+	static cNetMessage* lastEvent = NULL;
 	if ( lastEvent != NULL )
 	{
-		free (lastEvent->user.data1);
 		delete lastEvent;
 		lastEvent = NULL;
 	}
 
-	SDL_Event* event;
-	if ( EventQueue.Size() <= 0 )
+	cNetMessage* event;
+	if ( eventQueue.size() <= 0 )
 	{
 		return NULL;
 	}
 
-	cMutex::Lock l(QueueMutex);
-	event = EventQueue[0];
+	event = eventQueue.read();
 	lastEvent = event;
-	EventQueue.Delete( 0 );
+
 	return event;
 }
 
 //-------------------------------------------------------------------------------------
-int cServer::pushEvent( SDL_Event *event )
+int cServer::pushEvent( cNetMessage* message )
 {
-	cMutex::Lock l(QueueMutex);
-	EventQueue.Add ( event );
+	eventQueue.write( message );
 	return 0;
 }
 
@@ -150,15 +146,11 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 {
 	message->iPlayerNr = iPlayerNum;
 
-	if (message->iType != DEBUG_CHECK_VEHICLE_POSITIONS)  //do not pollute log file with debug events
 		Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
-
 	if ( iPlayerNum == -1 )
 	{
-		EventHandler->pushEvent( message->getGameEvent() );
 		if ( network ) network->send( message->iLength, message->data );
-		delete message;
-		//if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS && bDebugCheckPos ) sendCheckVehiclePositions();
+		EventHandler->pushEvent( message );
 		return;
 	}
 
@@ -178,15 +170,14 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	// Socketnumber MAX_CLIENTS for lokal client
 	if ( Player->iSocketNum == MAX_CLIENTS )
 	{
-		EventHandler->pushEvent ( message->getGameEvent() );
+		EventHandler->pushEvent ( message );
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
 	else
 	{
 		if ( network ) network->sendTo( Player->iSocketNum, message->iLength, message->serialize() );
+		delete message;
 	}
-	//if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS ) sendCheckVehiclePositions(Player);
-	delete message;
 }
 
 //-------------------------------------------------------------------------------------
@@ -194,61 +185,11 @@ void cServer::run()
 {
 	while ( !bExit )
 	{
-		SDL_Event* event = pollEvent();
+		cNetMessage* event = pollEvent();
 
 		if ( event )
 		{
-			switch ( event->type )
-			{
-			case NETWORK_EVENT:
-				switch ( event->user.code )
-				{
-				case TCP_ACCEPTEVENT:
-					sendRequestIdentification ( ((Sint16*)event->user.data1)[0] );
-					break;
-				case TCP_RECEIVEEVENT:
-					// new Data received
-					{
-						cNetMessage message( (char*) event->user.data1 );
-						HandleNetMessage( &message );
-						CHECK_MEMORY;
-					}
-					break;
-				case TCP_CLOSEEVENT:
-					{
-						// Socket should be closed
-						int iSocketNumber = ((Sint16 *)event->user.data1)[0];
-						network->close ( iSocketNumber );
-
-						cPlayer *Player = NULL;
-						// resort socket numbers of the players
-						for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-						{
-							if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) Player = (*PlayerList)[i];
-							else if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS ) (*PlayerList)[i]->iSocketNum--;
-						}
-						// push lost connection message
-						if ( Player )
-						{
-							cNetMessage message( GAME_EV_LOST_CONNECTION );
-							message.pushInt16( Player->Nr );
-							pushEvent( message.getGameEvent() );
-						}
-					}
-					break;
-				}
-				break;
-			case GAME_EVENT:
-				{
-					cNetMessage message( (char*) event->user.data1 );
-					HandleNetMessage( &message );
-					CHECK_MEMORY;
-				}
-				break;
-
-			default:
-				break;
-			}
+			HandleNetMessage( event );
 		}
 
 		// don't do anything if games hasn't been started yet!
@@ -273,20 +214,41 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 	switch ( message->iType )
 	{
-	case GAME_EV_LOST_CONNECTION:
+	case TCP_ACCEPT:
+		sendRequestIdentification ( message->popInt16() );
+		break;
+	case TCP_CLOSE:
 		{
-			int playerNum = message->popInt16();
-			cPlayer *Player = getPlayerFromNumber ( playerNum );
-			if ( !Player ) break;
-			Player->iSocketNum = -1;
+			// Socket should be closed
+			int iSocketNumber = message->popInt16();
+			network->close ( iSocketNumber );
 
-			// freeze clients
-			sendWaitReconnect ();
-			sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
+			cPlayer *Player = NULL;
+			// resort socket numbers of the players
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) 
+				{
+					Player = (*PlayerList)[i];
+				}
+				else if ( (*PlayerList)[i]->iSocketNum > iSocketNumber && (*PlayerList)[i]->iSocketNum != MAX_CLIENTS )
+				{
+					(*PlayerList)[i]->iSocketNum--;
+				}
+			}
+			
+			if ( Player )
+			{
+				Player->iSocketNum = -1;
 
-			DisconnectedPlayerList.Add ( Player );
+				// freeze clients
+				sendWaitReconnect ();
+				sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
 
-			memset( Player->ScanMap, 0, Map->size*Map->size );
+				DisconnectedPlayerList.Add ( Player );
+
+				memset( Player->ScanMap, 0, Map->size*Map->size );
+			}
 		}
 		break;
 	case GAME_EV_CHAT_CLIENT:
@@ -1772,7 +1734,6 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		Log.write("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	if ( bDebugCheckPos ) sendCheckVehiclePositions();
 	CHECK_MEMORY;
 	return 0;
 }

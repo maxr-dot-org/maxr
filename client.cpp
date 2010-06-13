@@ -177,9 +177,7 @@ void cClient::sendNetMessage(cNetMessage *message)
 	if (!network || network->isHost() )
 	{
 		//push an event to the lokal server in singleplayer, HotSeat or if this machine is the host
-		Server->pushEvent(message->getGameEvent() );
-		delete message;
-		//Server->pushNetMessage( message );
+		Server->pushEvent( message );
 	}
 	else // else send it over the net
 	{
@@ -598,19 +596,20 @@ void cClient::handleMessages()
 
 int cClient::HandleNetMessage( cNetMessage* message )
 {
-	if ( message->iType != DEBUG_CHECK_VEHICLE_POSITIONS )		//do not pollute log file with debug events
-		Log.write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 
 	switch ( message->iType )
 	{
-	case DEBUG_CHECK_VEHICLE_POSITIONS:
-		checkVehiclePositions( message );
+	case TCP_ACCEPT:
+		//should not happen
 		break;
-	case GAME_EV_LOST_CONNECTION:
+	case TCP_CLOSE:
 		{
+			network->close ( message->popInt16() );
 			string msgString = lngPack.i18n ( "Text~Multiplayer~Lost_Connection", "server" );
 			addMessage( msgString );
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+			//TODO: ask user for reconnect
 		}
 		break;
 	case GAME_EV_CHAT_SERVER:

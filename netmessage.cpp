@@ -33,7 +33,6 @@ cNetMessage::cNetMessage( char* c)
 	iType = SDL_SwapLE16( ((Sint16*)(c+1))[1] );
 	iPlayerNr = c[5];
 
-	data = new char[iLength];
 	data[0] = START_CHAR;
 	memcpy ( data, c, iLength );
 }
@@ -41,17 +40,12 @@ cNetMessage::cNetMessage( char* c)
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-	data = new char[PACKAGE_LENGTH];	// 0:	  reserved for startchar
-												// 1 - 2: reserved for length
-												// 3 - 4: reserved for message type
-												// 5:	  reserved for playernumber
-	data[0] = START_CHAR;
+		
+	data[0] = START_CHAR;	// 0:	  reserved for startchar
+							// 1 - 2: reserved for length
+							// 3 - 4: reserved for message type
+							// 5:	  reserved for playernumber
 	iLength = 6;
-}
-
-cNetMessage::~cNetMessage()
-{
-	delete [] data;
 }
 
 char* cNetMessage::serialize()
@@ -68,18 +62,18 @@ char* cNetMessage::serialize()
 	return data;
 }
 
-SDL_Event* cNetMessage::getGameEvent()
+eNetMessageClass cNetMessage::getClass()
 {
-	SDL_Event* event = new SDL_Event;
-	event->type = GAME_EVENT;
-	event->user.data1 = malloc( iLength );
-	memcpy( event->user.data1, serialize(), iLength );
-
-	event->user.data2 = NULL;
-
-	return event;
+	if ( iType < FIRST_SERVER_MESSAGE )
+		return NET_MSG_STATUS;
+	else if ( iType < FIRST_CLIENT_MESSAGE )
+		return NET_MSG_SERVER;
+	else if ( iType < FIRST_MENU_MESSAGE )
+		return NET_MSG_CLIENT;
+	else
+		return NET_MSG_MENU;
 }
-
+		
 
 void cNetMessage::pushChar( char c)
 {
@@ -319,16 +313,16 @@ string cNetMessage::getTypeAsString()
 	//should be updated when implementing a new message type
 	switch (iType)
 	{
+	case TCP_CLOSE:
+		return string("TCP_CLOSE");
+	case TCP_ACCEPT:
+		return string("TCP_ACCEPT");
 	case MU_MSG_CHAT:
 		return string("MU_MSG_CHAT");
-	case MU_MSG_NEW_PLAYER:
-		return string("MU_MSG_NEW_PLAYER");
 	case MU_MSG_REQ_IDENTIFIKATION:
 		return string("MU_MSG_REQ_IDENTIFIKATION");
 	case MU_MSG_IDENTIFIKATION:
 		return string("MU_MSG_IDENTIFIKATION");
-	case MU_MSG_DEL_PLAYER:
-		return string("MU_MSG_DEL_PLAYER");
 	case MU_MSG_PLAYERLIST:
 		return string("MU_MSG_PLAYERLIST");
 	case MU_MSG_OPTINS:
@@ -373,8 +367,6 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_ADD_ENEM_VEHICLE");
 	case GAME_EV_CHAT_SERVER:
 		return string("GAME_EV_CHAT_SERVER");
-	case GAME_EV_LOST_CONNECTION:
-		return string("GAME_EV_LOST_CONNECTION");
 	case GAME_EV_CHAT_CLIENT:
 		return string("GAME_EV_CHAT_CLIENT");
 	case GAME_EV_WANT_TO_END_TURN:

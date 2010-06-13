@@ -26,7 +26,7 @@
 #include "attackJobs.h"
 #include "movejobs.h"
 #include "savegame.h"
-
+#include "ringbuffer.h"
 
 /**
 * The Types which are possible for a game
@@ -84,12 +84,10 @@ public:
 
 private:
 	/** a list with all events for the server */
-	cList<SDL_Event*> EventQueue;
+	cRingbuffer<cNetMessage*> eventQueue;
 
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
-	/** mutex for the eventqueue */
-	cMutex QueueMutex;
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
@@ -142,11 +140,11 @@ private:
 
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
-	* the returned event and its data structures are valid until the next call of pollEvent()
-	*@author alzi alias DoctorDeath
-	*@return the next SDL_Event or NULL if queue is empty
+	* the returned message and its data structures are valid until the next call of pollEvent()
+	*@author eiko
+	*@return the next net message or NULL if queue is empty
 	*/
-	SDL_Event* pollEvent();
+	cNetMessage* pollEvent();
 
 
 	/**
@@ -249,8 +247,6 @@ public:
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
-	bool bDebugCheckPos;
-
 	
 	/**
 	* gets the vehicle with the ID
@@ -284,7 +280,7 @@ public:
 	*@param event The SDL_Event to be pushed.
 	*@return 0 for success
 	*/
-	int pushEvent( SDL_Event *event );
+	int pushEvent( cNetMessage *event );
 
 
 	/**
