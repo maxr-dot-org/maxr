@@ -8,9 +8,9 @@
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="jazz">
-			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2010-01-10 12:30"/>
+			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2010-07-18 22:25"/>
 		</Author>
-		<Game_Version time="2010-01-10 12:30"/>
+		<Game_Version time="2010-07-18 22:25"/>
 	</Header>
 	<Text>
 		<Main>
@@ -46,7 +46,7 @@
 			<Oil ENG="Fuel" localized="Топливо"/>
 			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
 			<Alien_Tech ENG="Alien technology" localized="Техника пришельцев"/>
-			<Resource ENG="Resource density"" localized="Ресурсы"/>
+			<Resource ENG="Resource density" localized="Ресурсы"/>
 			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
 			<Player_Name ENG="Playername:" localized="Имя игрока"/>
@@ -78,7 +78,7 @@
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
-			<Single_Player ENG="Singleplayer" localized="Одиночная игра"/>
+			<Single_Player ENG="Singleplayer (NO AI)" localized="Одиночная игра (БЕЗ ИИ)"/>
 			<Multi_Player ENG="Multiplayer" localized="Мультиплеер"/>
 			<Map_Editor ENG="Mapeditor (*)" localized="Редактор карт"/>
 			<Credits ENG="Credits (*)" localized="Разработчики"/>
@@ -168,7 +168,7 @@
 			<Grid ENG="Grid" localized="Сетка"/>
 			<Fog ENG="Fog" localized="Туман"/>
 			<Speed ENG="Speed" localized="Скор."/>
-			<Cargo ENG="Gargo" localized="Груз"/>
+			<Cargo ENG="Сargo" localized="Груз"/>
 			<AmmoShort ENG="Ammo" localized="Боепр."/>
 			<Shots ENG="Shots" localized="Выстрел"/>
 			<Armor ENG="Armor" localized="Броня"/>
@@ -179,7 +179,7 @@
 			<Score ENG="Score" localized="Очки"/>
 		</Hud>
 		<Option>
-			<Lowest ENG="Least" localized="мин"/>
+			<None ENG="None" localized="нет"/>
 			<Lower ENG="Lower" localized="оч. мало"/>
 			<Low ENG="Low" localized="мало"/>
 			<Normal ENG="Normal" localized="норм"/>
@@ -250,9 +250,12 @@
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Дождитесь завершения хода игроком %s"/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
 			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Переподключение запрещено сервером."/>
+			<Connection_Terminated ENG="Connection terminated." localized="Связь разорвана."/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Потеряна связь с %s."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
+			<Frozen ENG="You have been frozen by the server." localized="Вы были заморожены сервером."/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
 			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>
 			<Player_Left ENG="%s has left" localized="%s покидает игру"/>
