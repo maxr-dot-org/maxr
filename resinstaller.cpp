@@ -29,7 +29,6 @@
 #include "file.h"
 #include "wave.h"
 #include "ogg_encode.h"
-
 #if MAC
 #include "mac/sources/resinstallerGUI.h"
 #endif
@@ -3803,6 +3802,7 @@ bool validateMAXPath (string& maxPath)
 string getMAXPathFromUser (string cmdLineMaxPath)
 {	
 	string pathFromUser = "";
+	string sTmp = "";
 
 #if MAC
 	// pass the validateMAXPath-Method as function pointer, so that the askForCDPath-Method can determine, if the path is valid.
@@ -3828,15 +3828,9 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	#ifdef EIKO
 		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\Original Versions\\MAX\\";
 	#else
-		// read the path from cin
-		char temp[1024];
-		temp[1023] = '\0';
-		cin.getline (temp, sizeof (temp) - 1); //don't overwrite the last char in temp to be sure its a \0
-		cin.seekg (0, ios::end);
-		cin.clear ();
-		pathFromUser = temp;
+		//read path from cin
+		getline(cin, pathFromUser, '\n');
 	#endif
-		
 		if (validateMAXPath (pathFromUser))
 			break;
 		
@@ -3909,12 +3903,7 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 		pathFromUser = "C:\\Dokumente und Einstellungen\\Eiko\\Desktop\\MAX-Develop\\MAX Reloaded\\debug\\";
 #else
 		// read the path from cin
-		char temp[1024];
-		temp[1023] = '\0';
-		cin.getline (temp, sizeof (temp) - 1); //don't overwrite the last char in temp to be sure its a \0
-		cin.seekg (0, ios::end);
-		cin.clear ();
-		pathFromUser = temp;
+		getline(cin, pathFromUser);
 #endif
 		
 		if (validateOutputPath (pathFromUser))
@@ -4142,14 +4131,8 @@ int main ( int argc, char* argv[] )
 		while ( 1 )
 		{
 			cout << "\nEnter your preferred language: ";
-
-			char temp[1024];
-			temp[1023] = '\0';
-			cin.getline( temp, sizeof(temp) - 1 ); //don't overwrite the last char in temp to be sure its a \0
-			cin.seekg(0,ios::end);
-			cin.clear();
-			input = temp;
-
+			//read lang from cin
+			getline(cin, input);
 			if ( input.compare("english") == 0 )
 			{
 				sVoicePath = sMAXPath;
