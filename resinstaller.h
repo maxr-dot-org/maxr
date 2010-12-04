@@ -24,6 +24,8 @@
 #include "defines.h"
 #include <SDL.h>
 #include <iostream>
+#include <string>
+#include <locale>
 
 #ifdef WIN32
 #include <conio.h>
@@ -66,6 +68,9 @@ public:
 	InstallException( string m ) { message = m; };
 };
 
+void trimSpaces(std::string& str, const std::locale& loc = std::locale());
+
+void trimQuotes(std::string& str);
 
 // makes all necessary actions after a successfull 
 // or unsuccessfull attempt to install a file

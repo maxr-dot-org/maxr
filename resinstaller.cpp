@@ -3830,6 +3830,8 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	#else
 		//read path from cin
 		getline(cin, pathFromUser, '\n');
+		trimSpaces(pathFromUser);
+		trimQuotes(pathFromUser);
 	#endif
 		if (validateMAXPath (pathFromUser))
 			break;
@@ -3904,6 +3906,8 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 #else
 		// read the path from cin
 		getline(cin, pathFromUser);
+		trimSpaces(pathFromUser);
+		trimQuotes(pathFromUser);
 #endif
 		
 		if (validateOutputPath (pathFromUser))
@@ -3919,16 +3923,16 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 }
 
 //-------------------------------------------------------------
-int checkForAvailableLanguages (string testFileName, bool& german, bool& italian, bool& french, bool& uppercase)
+int checkForAvailableLanguages (string testFileName, bool& bGerman, bool& bItalian, bool& bFrench, bool& bUppercase)
 {
 	int iLanguages = 0;
 	SDL_RWops* testFile;
 	try
 	{
 		testFile = openFile( sMAXPath + "german" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		german = true;
+		bGerman = true;
 		iLanguages++;
-		uppercase = false;
+		bUppercase = false;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -3936,9 +3940,9 @@ int checkForAvailableLanguages (string testFileName, bool& german, bool& italian
 	try
 	{
 		testFile = openFile( sMAXPath + "GERMAN" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		if ( german == false ) iLanguages++;
-		german = true;
-		uppercase = true;
+		if ( bGerman == false ) iLanguages++;
+		bGerman = true;
+		bUppercase = true;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -3946,9 +3950,9 @@ int checkForAvailableLanguages (string testFileName, bool& german, bool& italian
 	try
 	{
 		testFile = openFile( sMAXPath + "italian" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		italian = true;
+		bItalian = true;
 		iLanguages++;
-		uppercase = false;
+		bUppercase = false;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -3956,9 +3960,9 @@ int checkForAvailableLanguages (string testFileName, bool& german, bool& italian
 	try
 	{
 		testFile = openFile( sMAXPath + "ITALIAN" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		if ( italian == false ) iLanguages++;
-		italian = true;
-		uppercase = true;
+		if ( bItalian == false ) iLanguages++;
+		bItalian = true;
+		bUppercase = true;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -3966,9 +3970,9 @@ int checkForAvailableLanguages (string testFileName, bool& german, bool& italian
 	try
 	{
 		testFile = openFile( sMAXPath + "french" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		french = true;
+		bFrench = true;
 		iLanguages++;
-		uppercase = false;
+		bUppercase = false;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -3976,9 +3980,9 @@ int checkForAvailableLanguages (string testFileName, bool& german, bool& italian
 	try
 	{
 		testFile = openFile( sMAXPath + "FRENCH" + PATH_DELIMITER + testFileName + waveExtension, "r" );
-		if ( french == false ) iLanguages++;
-		french = true;
-		uppercase = true;
+		if ( bFrench == false ) iLanguages++;
+		bFrench = true;
+		bUppercase = true;
 		SDL_RWclose( testFile );
 	}
 	catch ( InstallException ) {}
@@ -4009,6 +4013,31 @@ int installEverything (void*)
 	return 0;
 }
 
+void trimSpaces(string& str, const locale& loc) 
+{
+	//trim spaces at the beginning
+	string::size_type pos = 0;
+	while (pos < str.size() && isspace(str[pos], loc))
+		pos++;
+	str.erase(0, pos);
+	//trim spaces at the end
+	pos = str.size();
+	while (pos > 0 && isspace(str[pos - 1], loc)) 
+		pos--;
+	str.erase(pos);
+}
+
+void trimQuotes(string& str)
+{
+	string::size_type pos = 0;
+	while (pos < str.size() && str[pos] == '"') 
+		pos++;
+	str.erase(0, pos);
+	pos = str.size();
+	while (pos > 0 && str[pos -1] == '"')
+		pos--;
+	str.erase(pos);
+}
 
 #if MAC
 #else
@@ -4057,9 +4086,9 @@ int main ( int argc, char* argv[] )
 	}
 	catch ( InstallException ) {}
 
-	bool german = false, italian = false, french = false;
-	bool uppercase;
-	int iLanguages = checkForAvailableLanguages (testFileName, german, italian, french, uppercase);
+	bool bGerman = false, bItalian = false, bFrench = false;
+	bool bUppercase;
+	int iLanguages = checkForAvailableLanguages (testFileName, bGerman, bItalian, bFrench, bUppercase);
 	
 
 	// choose the language to install
@@ -4076,19 +4105,19 @@ int main ( int argc, char* argv[] )
 		{
 			sVoicePath = sMAXPath;
 		}
-		else if ( sLanguage.compare("german") == 0 && german )
+		else if ( sLanguage.compare("german") == 0 && bGerman )
 		{
-			if ( uppercase ) sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+			if ( bUppercase ) sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
 		}
-		else if ( sLanguage.compare("french") == 0 && french )
+		else if ( sLanguage.compare("french") == 0 && bFrench )
 		{
-			if ( uppercase ) sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
+			if ( bUppercase ) sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
 		}
-		else if ( sLanguage.compare("italian") == 0 && italian )
+		else if ( sLanguage.compare("italian") == 0 && bItalian )
 		{
-			if ( uppercase ) sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
+			if ( bUppercase ) sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
 		}
 		else
@@ -4101,20 +4130,20 @@ int main ( int argc, char* argv[] )
 	else
 	{
 #if MAC
-		int languageChosen = askForLanguage (german, italian, french);
+		int languageChosen = askForLanguage (bGerman, bItalian, bGrench);
 		if (languageChosen == 0) // english
 			sVoicePath = sMAXPath;
-		else if (languageChosen == 1 && uppercase)
+		else if (languageChosen == 1 && bUppercase)
 			sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
-		else if (languageChosen == 1 && !uppercase)
+		else if (languageChosen == 1 && !bUppercase)
 			sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
-		else if (languageChosen == 2 && uppercase)
+		else if (languageChosen == 2 && bUppercase)
 			sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
-		else if (languageChosen == 2 && !uppercase)
+		else if (languageChosen == 2 && !bUppercase)
 			sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
-		else if (languageChosen == 3 && uppercase)
+		else if (languageChosen == 3 && bUppercase)
 			sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
-		else if (languageChosen == 3 && !uppercase)
+		else if (languageChosen == 3 && !bUppercase)
 			sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
 		else
 			sVoicePath = sMAXPath; // default - but should not happen
@@ -4122,10 +4151,20 @@ int main ( int argc, char* argv[] )
 		
 		//make menu
 		cout << "\nThe following voice samples are available from your install source:\n";
-		cout << "- english\n";
-		if ( german == true ) cout << "- german\n";
-		if ( italian == true ) cout << "- italian\n";
-		if ( french == true ) cout << "- french\n";
+		cout << "1.) english\n";
+		int iTmp = 2;
+		if (bGerman){
+			cout << iTmp << ".) german\n";
+			iTmp++;
+		}
+		if ( bItalian == true ){
+			cout << iTmp << ".) italian\n";
+			iTmp++;
+		}
+		if ( bFrench == true ){
+			cout << iTmp << ".) french\n";
+			iTmp++;
+		}
 
 		string input;
 		while ( 1 )
@@ -4133,15 +4172,16 @@ int main ( int argc, char* argv[] )
 			cout << "\nEnter your preferred language: ";
 			//read lang from cin
 			getline(cin, input);
+			trimSpaces(input);
 			if ( input.compare("english") == 0 )
 			{
 				sVoicePath = sMAXPath;
 				break;
 			}
 
-			if ( german && input.compare("german") == 0 )
+			if ( bGerman && input.compare("german") == 0 )
 			{
-				if ( uppercase )
+				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
 				}
@@ -4152,9 +4192,9 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			if ( italian && input.compare("italian") == 0 )
+			if ( bItalian && input.compare("italian") == 0 )
 			{
-				if ( uppercase )
+				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
 				}
@@ -4165,9 +4205,9 @@ int main ( int argc, char* argv[] )
 				break;
 			}
 
-			if ( french && input.compare("french") == 0 )
+			if ( bFrench && input.compare("french") == 0 )
 			{
-				if ( uppercase )
+				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
 				}
@@ -4179,7 +4219,7 @@ int main ( int argc, char* argv[] )
 			}
 
 			cout << "Language not recognized\n";
-			cout << "Hint: Do not type the leading dashes/blanks!\n";
+			cout << "Hint: Do not type the number. Do enter the word!\n";
 		}
 #endif
 	}
