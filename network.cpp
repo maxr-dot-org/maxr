@@ -258,14 +258,15 @@ void cTCP::HandleNetworkThread()
 					s.buffer.iLenght += recvlength;
 				}
 
-
-				bool messagePushed;
+				//push all received messages
+				bool messagePushed = false;
+				int readPos = 0;
 				do
 				{
 					//get length of next message
-					if ( s.buffer.iLenght >= 3 && s.messagelength == 0 )
+					if ( s.buffer.iLenght - readPos >= 3 && s.messagelength == 0 )
 					{
-						if ( s.buffer.data[0] != START_CHAR )
+						if ( s.buffer.data[readPos] != START_CHAR )
 						{
 							//something went terribly wrong. We are unable to continue the communication.
 							Log.write ( "Wrong start character in received message. Socket closed!", LOG_TYPE_NET_ERROR );
@@ -277,7 +278,7 @@ void cTCP::HandleNetworkThread()
 							continue;
 						}
 
-						s.messagelength = SDL_SwapLE16( *(Sint16*)(s.buffer.data+1) );
+						s.messagelength = SDL_SwapLE16( *(Sint16*)(s.buffer.data+readPos+1) );
 						if ( s.messagelength > PACKAGE_LENGTH ) 
 						{
 							Log.write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
@@ -293,19 +294,21 @@ void cTCP::HandleNetworkThread()
 
 					//check if there is a complete message in buffer
 					messagePushed = false;
-					if ( s.messagelength != 0 && s.buffer.iLenght >= s.messagelength )
+					if ( s.messagelength != 0 && s.buffer.iLenght - readPos >= s.messagelength )
 					{
 						//push message
-						cNetMessage* message = new cNetMessage( s.buffer.data );
+						cNetMessage* message = new cNetMessage( s.buffer.data + readPos );
 						pushEvent( message );
 						messagePushed = true;
 						
-						//remove message from buffer
-						s.buffer.deleteFront(s.messagelength);
+						//save position of next message
+						readPos += s.messagelength;
 
 						s.messagelength = 0;
 					}
 				} while ( messagePushed );
+
+				s.buffer.deleteFront(readPos);
 			}
 		}
 	}
