@@ -12,6 +12,9 @@
 			<Editor name="SOLIGAN - Asociacion de Software LIbre GANdia" time="2009-11-16 16:53:00"/>
 			<Editor name="Kuan_Ji" time="2009-12-28 23:35:00"/>
 			<Editor name="Kuan_Ji" time="2010-03-18 21:45:00"/>
+			<Editor name="Kuan_Ji" time="2010-12-06 19:01:00"/>
+
+			
 			
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
@@ -43,7 +46,7 @@
 			<Voices ENG="Loading voices..." localized="Cargando voces..."/>
 			<Clans ENG="Loading clans..." localized="Cargando clanes..."/>
 		</Init>
-
+		
 		<Title>
 			<MainMenu ENG="Main Menu" localized="Menú principal"/>
 			<Credits ENG="Credits" localized="Créditos"/>
@@ -56,7 +59,9 @@
 			<Resource_Density ENG="Resources frequency" localized="Frecuencia de recursos"/>
 			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
 			<Player_Name ENG="Playername:" localized="Nombre:"/>
-			<Player_Select ENG="Playeroptions" localized="Opciones de jugador"/>
+			
+			
+			<Player_Select ENG="Player options" localized="Opciones de jugador"/>
 			<Team ENG="Team" localized="Equipo"/>
 			<Human ENG="Human" localized="Humano"/>
 			<Computer ENG="Computer" localized="Ordenador (IA)"/>
@@ -73,11 +78,12 @@
 			<Port ENG="Port" localized="Puerto"/>
 			<Map ENG="Map" localized="Mapa"/>
 			<LoadSave ENG="Load/Save Menú" localized="Menú Cargar/Guardar"/>
-			<Load ENG="Load Menú" localized="Menú Cargar"/>
-			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
-			<Build ENG="BuildMenu" localized="Menú Construir"/>
-			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
-			<Mine ENG="Minemanager" localized="Redistribuir minas"/>
+			
+				<Load ENG="Load Menú" localized="Menú Cargar"/>
+				<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
+				<Build ENG="BuildMenu" localized="Menú Construir"/>
+				<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
+				<Mine ENG="Minemanager" localized="Redistribuir minas"/>
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
             <Savegame ENG="Savegame" localized="Guardar Partida"/>
             <Players ENG="Players:" localized="Jugadores:"/>
@@ -117,20 +123,25 @@
 			<Upgrade ENG="Upgrade" localized="Actualizar"/>
 			<Reload ENG="Reload" localized="Recargar"/>
 			<Host_Start ENG="Start Host" localized="Iniciar Servidor"/>
-                        <Units ENG="Units" localized="Unidades"/>
-                        <Disadvantages ENG="Disadvantages" localized="Desventajas"/>
-                        <Score ENG="Score" localized="Puntuación"/>
-                        <Reports ENG="Reports" localized="Reportes"/>
-                        <Included ENG="Included" localized="Incluido"/>
-                        <Limited_To ENG="Limited to" localized="Limitado a"/>
-                        <Air_Units ENG="Airunits" localized="Unidades aéreas"/>
-                        <Ground_Units ENG="Landunits" localized="Unidades de tierra"/>
-                        <Sea_Units ENG="Seaunits" localized="Unidades de mar"/>
-                        <Stationary_Units ENG="Stationary Units" localized="Unidades estáticas"/>
-                        <Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
-                        <Fight_Units ENG="Fighting units" localized="Unidades de combate"/>
-                        <Damaged_Units ENG="Damaged units" localized="Unidades dañadas"/>
-                        <Stealth_Units ENG="Stealth units" localized="Unidades ocultas"/>
+
+            <Units ENG="Units" localized="Unidades"/>
+            <Disadvantages ENG="Disadvantages" localized="Desventajas"/>
+
+
+			<Score ENG="Score" localized="Puntuación"/>
+			<Reports ENG="Reports" localized="Reportes"/>
+            <Included ENG="Included" localized="Incluido"/>
+            <Limited_To ENG="Limited to" localized="Limitado a"/>
+
+			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
+            <Ground_Units ENG="Landunits" localized="Unidades de tierra"/>
+            
+			<Sea_Units ENG="Seaunits" localized="Unidades de mar"/>
+			<Stationary_Units ENG="Stationary Units" localized="Unidades estáticas"/>
+			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
+			<Fight_Units ENG="Fighting units" localized="Unidades de combate"/>
+			<Damaged_Units ENG="Damaged units" localized="Unidades dañadas"/>
+			<Stealth_Units ENG="Stealth units" localized="Unidades ocultas"/>
 		</Button>
 		<Context>
 			<Clear ENG="Clear" localized="Limpiar"/>
@@ -177,8 +188,10 @@
 			<Cargo ENG="Cargo" localized="Carga"/>
 			<AmmoShort ENG="Ammo" localized="Munic."/>
 			<Shots ENG="Shots" localized="Disparos"/>
+
 			<Shield ENG="Armor" localized="Escudo"/>
 			<Total ENG="Total" localized="Total"/>
+
 			<Energy ENG="Energy" localized="Energía"/>
 			<Usage ENG="Usage" localized="Uso"/>
 			<Teams ENG="Teams" localized="Equipos"/>
@@ -186,19 +199,25 @@
 		</Hud>
 		<Option>
 			<None ENG="None" localized="Nada"/>
-			<Lower ENG="very low" localized="Muy bajo"/>
-			<Low ENG="low" localized="Bajo"/>
+
+
+			<Lower ENG="Lower" localized="Muy bajo"/>
+			<Low ENG="Low" localized="Bajo"/>
 			<Normal ENG="normal" localized="Normal"/>
-			<Much ENG="much" localized="Alto"/>
-			<More ENG="very much" localized="Muy alto"/>
-			<Most ENG="most" localized="El máximo"/>
-			<Thick ENG="thick" localized="Denso"/>
+			<Much ENG="Much" localized="Alto"/>
+			
+			
+			<More ENG="More" localized="Muy alto"/>
+			<Most ENG="Most" localized="El máximo"/>
+			<Thick ENG="Dense" localized="Denso"/>
 			<Thin ENG="Sparse" localized="Disperso"/>
+
 			<On ENG="on" localized="Encendido"/>
 			<Off ENG="off" localized="Apagado"/>
 			<Definite ENG="Built (original)" localized="Construido (original)"/>
+
 			<Mobile ENG="Must built" localized="Debes construir"/>
-			<Type_Turns ENG="Turns" localized="Turnos"/>
+			<Type_Turns ENG="Turn based" localized="Turnos"/>
 			<Type_Simu ENG="Simultaneous" localized="Simultáneo"/>
 		</Option>
 		<Settings>
@@ -227,6 +246,7 @@
 			<Player_Many ENG="Too many players!" localized="Demasiados jugadores!"/>
 			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
 			<Player_Wrong ENG="Missing a correct player's name" localized="Se ha perdido un nombre de jugador correcto."/>
+
 			<Player_MustHost ENG="must be host in turnbased game!" localized="El server debe estar en partida basada en turnos!"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum" localized="Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."/>
 			<Player_Turn ENG="%s's turn" localized="El turno de %s"/>
@@ -249,19 +269,22 @@
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
+
 			<Go_Check ENG="Check for go" localized="Marca cuando estés listo para empezar"/>
 			<Missing_Settings ENG="Options, map or savegame are not set" localized="Las opciones, el mapa, o el guardado no estan disponibles"/>
 			<Not_Ready ENG="is not ready" localized="no esta listo"/>
 			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="por favor espera hasta que %s haya terminado su turno"/>
-                        <Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
-                        <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/>
-						<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
-						<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
-						<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
-                        <Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
-                        <Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
-                        <Frozen ENG="You have been frozen by the server." localized="Has sido congelado por el servidor"/>
+
+			<Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
+            <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
+			<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
+			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
+            <Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
+            <Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
+
+		<Frozen ENG="You have been frozen by the server." localized="Has sido congelado por el servidor"/>
 						<Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
                         <Player_Joined ENG="%s has joined" localized=" Se ha unido %s"/>
                         <Player_Left ENG="%s has left" localized="Se ha ido %s"/>
@@ -308,6 +331,7 @@
                 <Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Se han hecho ajustes: Producción de combustible incrementada en "/>
                 <Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
                 <Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
+
                 <Cheat ENG="used cheat" localized="Se ha usado un truco"/>
                 <Destroyed ENG="destroyed" localized="destruido"/>
                 <Defeated ENG="defeated" localized="derrotado"/>
@@ -335,6 +359,7 @@
                 <Disabled ENG="disabled" localized="desactivado"/>
                 <Producing ENG="Building" localized="Edificio"/>
                 <Producing_Fin ENG="finished building" localized="edificio terminado"/>
+				<Producing_Err ENG="Buildposition blocked or insufficient resources"/ localized="Posición de construcción incorrecta o recursos insuficientes">
                 <Moving ENG="moving" localized="moviendose"/>
                 <Sentry ENG="on sentry" localized="en alerta"/>
                 <Clearing ENG="Clearing" localized="limpiando"/>
@@ -348,10 +373,13 @@
 	      <Elite ENG="Elite" localized="Elite"/>
                 <Description ENG="Description" localized="Descripción"/>
                 <Repeat ENG="Again" localized="De nuevo"/>
+
+
                 <Dated ENG="dated" localized="a fecha de"/>
                 <Labs ENG="Labs" localized="Laboratorios"/>
                 <Themes ENG="Themes" localized="Temas"/>
                 <Turns ENG="Turns" localized="Turnos"/>
+
                 <Turn ENG="Turn" localized="Turno"/>
                 <Reserve ENG="Reserve" localized="Reserva"/>
                 <Surveying ENG="surveying" localized="explorando"/>
@@ -375,6 +403,7 @@
 		</Error_Messages>
 	</Text>
 	<Units>
+
 		<Unit ID="0 1" localized="Transporte Aereo">Transporte Aereo\n\nAvión con blindaje medio capaz de transportar hasta tres unidades de tierra.</Unit>
 		<Unit ID="0 2" localized="Tanque de asalto alien">Tanque de asalto alien\n\nSe trata de una potentísimo cañón de plasma montado sobre un chasis rápido con blindaje medio. No es tan frágil como los tanques de asalto humanos, y además tiene la habilidad de evitar los disparos enemigos cuando puede. Todas las unidades alien se autoreparan, y mejoran sus habilidades con experiencia.</Unit>
 		<Unit ID="0 3" localized="Avión alien">Avión alien\n\nCaza y bombardero al mismo tiempo. El avión alien fué diseñado principalmente para atacar objetivos terrestres, pero también lleva misiles aire-aire para derribar otros aviones. A pesar de ser muy polivalente sigue siendo debil frente cualquier tipo de defensa antiaerea. Como el resto de unidades alien, se autorepara, y mejora sus habilidades con experiencia.</Unit>
@@ -432,7 +461,7 @@
 		<Unit ID="1 20" localized="Hangar">Hangar\n\nEl hangar puede reparar daños y recargar con munición los aviones, así como dotarlos con la tecnología más moderna. Todas estas operaciones necesitan metal, así que los hangares deben estar conectados a materiales almacenados.</Unit>
 		<Unit ID="1 21" localized="Mina terrestre">Mina terrestre\n\nDispositivo explosivo pequeño y muy dificil de detectar. Solo los topógrafos mineros, y comandos, pueden descubrirlas. Una vez descubiertas, cualquier minimo daño las destruirá.</Unit>
 		<Unit ID="1 22" localized="Estación minera">Estación minera\n\nExtrae material de construcción, combustible y oro cada turno. Los edificios han de estar conectados a una mina para consumir los recursos que esta produce. Si no hay almacenes para guardar los excedentes, estos se perderán.</Unit>
-		<Unit ID="1 23" localized="Deep mine">Deep mine...</Unit>
+		<Unit ID="1 23" localized="Deep mine">Mina submarina...</Unit>
 		<Unit ID="1 24" localized="Pista de aterrizaje">Pista de aterrizaje\n\nZona para que aterrizen los aviones. No repara los aviones, pero si situas cerca una unidad de reparaciones móvil puedes repararlos. También puedes recargarlos con nueva munición con un camión de suministros.</Unit>
 		<Unit ID="1 25" localized="Plataforma acuática">Plataforma acuática\n\nProporciona una superficie rígida sobre el agua para construir otros edificios. Las plataformas acuaticas son particularmente importantes en los mapas de islas, cuando los materiales que queremos extraer están debajo del agua.</Unit>
 		<Unit ID="1 26" localized="Radar">Radar\n\nRadar estacionário. Las unidades de largo alcance (lanzamisiles y artillerias) no pueden disparar donde no ven, por tanto es importante tener un radar cerca.</Unit>
