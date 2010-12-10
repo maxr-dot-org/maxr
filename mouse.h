@@ -56,7 +56,6 @@ public:
   bool moved();
   void Show(void){LastX=-100;visible=true;}
   void Hide(void){visible=false;}
-  int GetMouseButton(void);
   /**
   * return the X Coordinate of the Cursor on the map
   */

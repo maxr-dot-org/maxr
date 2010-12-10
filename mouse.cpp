@@ -29,7 +29,6 @@ cMouse::cMouse ( void )
 	cur = NULL;
 	LastX = -100;
 	LastY = -100;
-	SDL_Surface *cur = NULL;
 	x = 0;
 	y = 0;
 	isDoubleClick = false;
@@ -191,11 +190,6 @@ bool cMouse::moved()
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:
-int cMouse::GetMouseButton ( )
-{
-	return SDL_GetMouseState( NULL, NULL );
-}
-
 int cMouse::getKachelX()
 {
 	if ( x < 180 || x > 180 + ( Video.getResolutionX()-192 ) )

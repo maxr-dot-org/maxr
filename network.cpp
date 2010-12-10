@@ -37,23 +37,23 @@ sSocket::~sSocket()
 
 void sDataBuffer::clear()
 {
-	iLenght = 0;
+	iLength = 0;
 }
 
 char* sDataBuffer::getWritePointer()
 {
-	return data + iLenght;
+	return data + iLength;
 }
 
 int sDataBuffer::getFreeSpace()
 {
-	return PACKAGE_LENGTH - iLenght;
+	return PACKAGE_LENGTH - iLength;
 }
 
 void sDataBuffer::deleteFront(int n)
 {
-	memmove(data, data + n, iLenght - n);
-	iLenght -= n;
+	memmove(data, data + n, iLength - n);
+	iLength -= n;
 }
 
 cTCP::cTCP():
@@ -124,26 +124,26 @@ int cTCP::connect()
 	return 0;
 }
 
-int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
+int cTCP::sendTo( int iClientNumber, int iLength, char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
 	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber].iType == CLIENT_SOCKET && ( Sockets[iClientNumber].iState == STATE_READY || Sockets[iClientNumber].iState == STATE_NEW ) )
 	{
 		// if the message is to long, cut it.
 		// this will result in an error in nearly all cases
-		if ( iLenght > PACKAGE_LENGTH )
+		if ( iLength > PACKAGE_LENGTH )
 		{
 			Log.write( "Cut size of message!", LOG_TYPE_NET_ERROR );
-			iLenght = PACKAGE_LENGTH;
+			iLength = PACKAGE_LENGTH;
 		}
 
-		if ( iLenght > 0 )
+		if ( iLength > 0 )
 		{
 			// send the message
-			int iSendLenght = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, buffer, iLenght );
+			int iSendLength = SDLNet_TCP_Send ( Sockets[iClientNumber].socket, buffer, iLength );
 
 			// delete socket when sending fails
-			if ( iSendLenght != iLenght )
+			if ( iSendLength != iLength )
 			{
 				Sockets[iClientNumber].iState = STATE_DYING;
 				cNetMessage *message = new cNetMessage( TCP_CLOSE );
@@ -156,13 +156,13 @@ int cTCP::sendTo( int iClientNumber, int iLenght, char *buffer )
 	return 0;
 }
 
-int cTCP::send( int iLenght, char *buffer )
+int cTCP::send( int iLength, char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
 	int iReturnVal = 0;
 	for ( int i = 0; i < getSocketCount(); i++ )
 	{
-		if ( sendTo ( i, iLenght, buffer ) == -1 )
+		if ( sendTo ( i, iLength, buffer ) == -1 )
 		{
 			iReturnVal = -1;
 		}
@@ -255,7 +255,7 @@ void cTCP::HandleNetworkThread()
 						continue;
 					}
 
-					s.buffer.iLenght += recvlength;
+					s.buffer.iLength += recvlength;
 				}
 
 				//push all received messages
@@ -264,7 +264,7 @@ void cTCP::HandleNetworkThread()
 				do
 				{
 					//get length of next message
-					if ( s.buffer.iLenght - readPos >= 3 && s.messagelength == 0 )
+					if ( s.buffer.iLength - readPos >= 3 && s.messagelength == 0 )
 					{
 						if ( s.buffer.data[readPos] != START_CHAR )
 						{
@@ -294,7 +294,7 @@ void cTCP::HandleNetworkThread()
 
 					//check if there is a complete message in buffer
 					messagePushed = false;
-					if ( s.messagelength != 0 && s.buffer.iLenght - readPos >= s.messagelength )
+					if ( s.messagelength != 0 && s.buffer.iLength - readPos >= s.messagelength )
 					{
 						//push message
 						cNetMessage* message = new cNetMessage( s.buffer.data + readPos );
@@ -342,7 +342,7 @@ void cTCP::deleteSocket( int iNum )
 	for ( int i = iNum; i < iLast_Socket-1; i++ )
 	{
 		Sockets[i] = Sockets[i+1];
-		memcpy ( Sockets[i].buffer.data, Sockets[i+1].buffer.data, Sockets[i].buffer.iLenght );
+		memcpy ( Sockets[i].buffer.data, Sockets[i+1].buffer.data, Sockets[i].buffer.iLength );
 	}
 	Sockets[iLast_Socket-1].iType = FREE_SOCKET;
 	Sockets[iLast_Socket-1].iState = STATE_UNUSED;

@@ -59,7 +59,7 @@ enum SOCKET_STATES
 */
 struct sDataBuffer
 {
-	Uint32 iLenght;
+	Uint32 iLength;
 	char data[5*PACKAGE_LENGTH];
 
 	char* getWritePointer();
@@ -161,19 +161,19 @@ public:
 	* Sends data of an given lenght to the client/socket.
 	*@author alzi alias DoctorDeath
 	*param iClientNumber Number of client/socket to which the data should be send.
-	*param iLenght Lenght of data to be send.
+	*param iLength Length of data to be send.
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int sendTo( int iClientNumber, int iLenght, char *buffer );
+	int sendTo( int iClientNumber, int iLength, char *buffer );
 	/**
 	* Sends the data to all sockets to which this machine is connected.
 	*@author alzi alias DoctorDeath
-	*param iLenght Lenght of data to be send.
+	*param iLength Length of data to be send.
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int send( int iLenght, char *buffer );
+	int send( int iLength, char *buffer );
 
 	/**
 	* Sets a new port.
