@@ -41,6 +41,7 @@
 
 #define MAIN_MENU_BTN_SPACE 35
 
+//------------------------------------------------------------------------------
 int GetColorNr ( SDL_Surface *sf )
 {
 	if ( sf == OtherData.colors[cl_red] )		return cl_red;
@@ -54,6 +55,7 @@ int GetColorNr ( SDL_Surface *sf )
 	return cl_red;
 }
 
+//------------------------------------------------------------------------------
 string sSettings::getResValString ( eSettingResourceValue type )
 {
 	switch ( type )
@@ -70,6 +72,7 @@ string sSettings::getResValString ( eSettingResourceValue type )
 	return "";
 }
 
+//------------------------------------------------------------------------------
 string sSettings::getResFreqString()
 {
 	switch ( resFrequency )
@@ -86,6 +89,7 @@ string sSettings::getResFreqString()
 	return "";
 }
 
+//------------------------------------------------------------------------------
 string sSettings::getVictoryConditionString()
 {
 	string r = iToStr(duration) + " ";
@@ -99,12 +103,19 @@ string sSettings::getVictoryConditionString()
 	return r;
 }
 
+
+//------------------------------------------------------------------------------
+// cGameDataContainer implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cGameDataContainer::~cGameDataContainer()
 {
 	if ( settings ) delete settings;
 	if ( map ) delete map;
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::runGame( int player, bool reconnect )
 {
 	if ( savegameNum >= 0 )
@@ -214,6 +225,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::runSavedGame( int player )
 {
 	cSavegame savegame ( savegameNum );
@@ -270,6 +282,7 @@ void cGameDataContainer::runSavedGame( int player )
 	reloadUnitValues();
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::receiveClan ( cNetMessage *message )
 {
 	if ( message->iType != MU_MSG_CLAN )
@@ -279,6 +292,7 @@ void cGameDataContainer::receiveClan ( cNetMessage *message )
 	players[playerNr]->setClan (clanNr);
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::receiveLandingUnits ( cNetMessage *message )
 {
 	if ( message->iType != MU_MSG_LANDING_VEHICLES ) return;
@@ -304,6 +318,7 @@ void cGameDataContainer::receiveLandingUnits ( cNetMessage *message )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::receiveUnitUpgrades ( cNetMessage *message )
 {
 	int playerNr = message->popInt16();
@@ -327,6 +342,7 @@ void cGameDataContainer::receiveUnitUpgrades ( cNetMessage *message )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 {
 	if ( message->iType != MU_MSG_LANDING_COORDS ) return;
@@ -394,6 +410,7 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 	sendAllLanded();
 }
 
+//------------------------------------------------------------------------------
 eLandingState cGameDataContainer::checkLandingState( int playerNr )
 {
 	int posX = landData[playerNr]->iLandX;
@@ -473,6 +490,12 @@ eLandingState cGameDataContainer::checkLandingState( int playerNr )
 	return newState;
 }
 
+
+//------------------------------------------------------------------------------
+// cMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	background (background_),
 	backgroundType(backgroundType_)
@@ -488,6 +511,7 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 	recalcPosition( false );
 }
 
+//------------------------------------------------------------------------------
 void cMenu::recalcPosition( bool resetItemPositions )
 {
 	SDL_Rect oldPosition = position;
@@ -518,6 +542,7 @@ void cMenu::recalcPosition( bool resetItemPositions )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cMenu::draw( bool firstDraw, bool showScreen )
 {
 	if ( lastScreenResX != Video.getResolutionX() || lastScreenResY != Video.getResolutionY() )
@@ -564,6 +589,7 @@ void cMenu::draw( bool firstDraw, bool showScreen )
 	}
 }
 
+//------------------------------------------------------------------------------
 int cMenu::show()
 {
 	drawnEveryFrame = false;
@@ -630,17 +656,20 @@ int cMenu::show()
 	return 0;
 }
 
+//------------------------------------------------------------------------------
 void cMenu::close()
 {
 	end = true;
 }
 
+//------------------------------------------------------------------------------
 void cMenu::returnToCallback()
 {
 	ActiveMenu = this;
 	mouse->SetCursor( CHand );
 }
 
+//------------------------------------------------------------------------------
 void cMenu::handleMouseInput( sMouseState mouseState )
 {
 	mouse->GetPos();
@@ -667,11 +696,13 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 	handleMouseInputExtended( mouseState );
 }
 
+//------------------------------------------------------------------------------
 void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
 	if ( activeItem && key.state == SDL_PRESSED ) activeItem->handleKeyInput ( key.keysym, ch, this );
 }
 
+//------------------------------------------------------------------------------
 void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPlayerNr )
 {
 	if ( !network ) return;
@@ -687,12 +718,20 @@ void cMenu::sendMessage ( cNetMessage *message, sMenuPlayer *player, int fromPla
 	delete message;
 }
 
+//------------------------------------------------------------------------------
 void cMenu::addTimer(cMenuTimerBase* timer)
 {
 	menuTimers.Add(timer);
 }
 
-cMainMenu::cMainMenu(): cMenu ( LoadPCX ( GFXOD_MAIN ) )
+
+//------------------------------------------------------------------------------
+// cMainMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cMainMenu::cMainMenu()
+: cMenu (LoadPCX (GFXOD_MAIN))
 {
 	infoImage = new cMenuImage( position.x+16, position.y+182, getRandomInfoImage() );
 	infoImage->setReleasedFunction ( &infoImageReleased );
@@ -704,12 +743,14 @@ cMainMenu::cMainMenu(): cMenu ( LoadPCX ( GFXOD_MAIN ) )
 	menuItems.Add ( creditsLabel );
 }
 
+//------------------------------------------------------------------------------
 cMainMenu::~cMainMenu()
 {
 	delete infoImage;
 	delete creditsLabel;
 }
 
+//------------------------------------------------------------------------------
 SDL_Surface *cMainMenu::getRandomInfoImage()
 {
 	int const showBuilding = random(3);
@@ -744,6 +785,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	return surface;
 }
 
+//------------------------------------------------------------------------------
 void cMainMenu::infoImageReleased( void* parent )
 {
 	cMainMenu *menu = dynamic_cast<cMainMenu*>((cMenu*)parent);
@@ -756,6 +798,12 @@ void cMainMenu::infoImageReleased( void* parent )
 	mouse->draw ( false, screen );
 }
 
+
+//------------------------------------------------------------------------------
+// cStartMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cStartMenu::cStartMenu()
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+147, lngPack.i18n ("Text~Title~MainMenu") );
@@ -785,6 +833,7 @@ cStartMenu::cStartMenu()
 	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg").c_str());
 }
 
+//------------------------------------------------------------------------------
 cStartMenu::~cStartMenu()
 {
 	delete titleLabel;
@@ -795,6 +844,7 @@ cStartMenu::~cStartMenu()
 	delete exitButton;
 }
 
+//------------------------------------------------------------------------------
 void cStartMenu::singlePlayerReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
@@ -803,6 +853,7 @@ void cStartMenu::singlePlayerReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cStartMenu::multiPlayerReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
@@ -811,6 +862,7 @@ void cStartMenu::multiPlayerReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cStartMenu::preferencesReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
@@ -819,6 +871,7 @@ void cStartMenu::preferencesReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cStartMenu::licenceReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
@@ -827,12 +880,19 @@ void cStartMenu::licenceReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cStartMenu::exitReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+
+//------------------------------------------------------------------------------
+// cSinglePlayerMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cSinglePlayerMenu::cSinglePlayerMenu()
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+147, lngPack.i18n ("Text~Button~Single_Player") );
@@ -852,6 +912,7 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 	menuItems.Add ( backButton );
 }
 
+//------------------------------------------------------------------------------
 cSinglePlayerMenu::~cSinglePlayerMenu()
 {
 	delete titleLabel;
@@ -860,6 +921,7 @@ cSinglePlayerMenu::~cSinglePlayerMenu()
 	delete backButton;
 }
 
+//------------------------------------------------------------------------------
 void cSinglePlayerMenu::newGameReleased( void* parent )
 {
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
@@ -869,6 +931,7 @@ void cSinglePlayerMenu::newGameReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cSinglePlayerMenu::loadGameReleased( void* parent )
 {
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
@@ -884,12 +947,19 @@ void cSinglePlayerMenu::loadGameReleased( void* parent )
 	else menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cSinglePlayerMenu::backReleased( void* parent )
 {
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+
+//------------------------------------------------------------------------------
+// cMultiPlayersMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cMultiPlayersMenu::cMultiPlayersMenu()
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+147, lngPack.i18n ("Text~Button~Multi_Player") );
@@ -925,6 +995,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	menuItems.Add ( backButton );
 }
 
+//------------------------------------------------------------------------------
 cMultiPlayersMenu::~cMultiPlayersMenu()
 {
 	delete titleLabel;
@@ -943,6 +1014,7 @@ cMultiPlayersMenu::~cMultiPlayersMenu()
 	delete backButton;
 }
 
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::tcpHostReleased( void* parent )
 {
 	cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
@@ -955,6 +1027,7 @@ void cMultiPlayersMenu::tcpHostReleased( void* parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::tcpClientReleased( void* parent )
 {
 	cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
@@ -967,6 +1040,7 @@ void cMultiPlayersMenu::tcpClientReleased( void* parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::newHotseatReleased( void* parent )
 {
   cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
@@ -975,6 +1049,7 @@ void cMultiPlayersMenu::newHotseatReleased( void* parent )
   menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::loadHotseatReleased( void* parent )
 {
   cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
@@ -983,12 +1058,19 @@ void cMultiPlayersMenu::loadHotseatReleased( void* parent )
   menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cMultiPlayersMenu::backReleased( void* parent )
 {
 	cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+
+//------------------------------------------------------------------------------
+// cSettingsMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX(GFXOD_OPTIONS) ), gameDataContainer(gameDataContainer_)
 {
 	if ( gameDataContainer->settings ) settings = (*gameDataContainer->settings);
@@ -1153,6 +1235,7 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	menuItems.Add(victoryGroup);
 }
 
+//------------------------------------------------------------------------------
 cSettingsMenu::~cSettingsMenu()
 {
 	delete titleLabel;
@@ -1182,6 +1265,7 @@ cSettingsMenu::~cSettingsMenu()
 	delete victoryGroup;
 }
 
+//------------------------------------------------------------------------------
 void cSettingsMenu::backReleased( void* parent )
 {
 	cSettingsMenu *menu = static_cast<cSettingsMenu *>((cMenu*)parent);
@@ -1189,6 +1273,7 @@ void cSettingsMenu::backReleased( void* parent )
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cSettingsMenu::okReleased( void* parent )
 {
 	cSettingsMenu *menu = static_cast<cSettingsMenu *>((cMenu*)parent);
@@ -1216,6 +1301,7 @@ void cSettingsMenu::okReleased( void* parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cSettingsMenu::updateSettings()
 {
 	if ( metalGroup->buttonIsChecked ( 0 ) ) settings.metal = SETTING_RESVAL_LOW;
@@ -1283,6 +1369,12 @@ void cSettingsMenu::updateSettings()
 
 }
 
+
+//------------------------------------------------------------------------------
+// cPlanetsSelectionMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cPlanetsSelectionMenu::cPlanetsSelectionMenu( cGameDataContainer *gameDataContainer_ ) : cMenu ( LoadPCX ( GFXOD_PLANET_SELECT ) ), gameDataContainer(gameDataContainer_)
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Title~Choose_Planet") );
@@ -1331,6 +1423,7 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu( cGameDataContainer *gameDataContai
 	showMaps();
 }
 
+//------------------------------------------------------------------------------
 cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
 {
 	delete titleLabel;
@@ -1348,6 +1441,7 @@ cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::loadMaps()
 {
 	maps = getFilesOfDirectory ( SettingsData.sMapsPath );
@@ -1371,6 +1465,7 @@ void cPlanetsSelectionMenu::loadMaps()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::showMaps()
 {
 	for ( int i = 0; i < 8; i++ ) //only 8 maps on one screen
@@ -1476,6 +1571,7 @@ void cPlanetsSelectionMenu::showMaps()
 	draw();
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::backReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
@@ -1483,6 +1579,7 @@ void cPlanetsSelectionMenu::backReleased( void* parent )
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::okReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
@@ -1533,6 +1630,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::arrowDownReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
@@ -1543,6 +1641,7 @@ void cPlanetsSelectionMenu::arrowDownReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::arrowUpReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
@@ -1553,6 +1652,7 @@ void cPlanetsSelectionMenu::arrowUpReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::mapReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
@@ -1753,7 +1853,10 @@ void cClanSelectionMenu::handleNetMessage( cNetMessage *message )
 // cHangarMenu
 //-----------------------------------------------------------------------------------
 
-cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackgrounds backgroundType_ ) : cMenu (background_, backgroundType_), player(player_)
+//------------------------------------------------------------------------------
+cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackgrounds backgroundType_ )
+: cMenu (background_, backgroundType_)
+, player(player_)
 {
 	selectionChangedFunc = NULL;
 
@@ -1791,6 +1894,7 @@ cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackg
 	selectedUnit = NULL;
 }
 
+//------------------------------------------------------------------------------
 cHangarMenu::~cHangarMenu()
 {
 	delete infoImage;
@@ -1808,6 +1912,7 @@ cHangarMenu::~cHangarMenu()
 	delete backButton;
 }
 
+//------------------------------------------------------------------------------
 void cHangarMenu::drawUnitInformation()
 {
 	if ( !selectedUnit ) return;
@@ -1825,6 +1930,7 @@ void cHangarMenu::drawUnitInformation()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cHangarMenu::infoCheckBoxClicked( void* parent )
 {
 	cHangarMenu *menu = static_cast<cHangarMenu*>((cMenu*)parent);
@@ -1832,18 +1938,21 @@ void cHangarMenu::infoCheckBoxClicked( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cHangarMenu::selListUpReleased( void* parent )
 {
 	cHangarMenu *menu = static_cast<cHangarMenu*>((cMenu*)parent);
 	menu->selectionList->scrollUp();
 }
 
+//------------------------------------------------------------------------------
 void cHangarMenu::selListDownReleased( void* parent )
 {
 	cHangarMenu *menu = static_cast<cHangarMenu*>((cMenu*)parent);
 	menu->selectionList->scrollDown();
 }
 
+//------------------------------------------------------------------------------
 void cHangarMenu::setSelectedUnit( cMenuUnitListItem *selectedUnit_ )
 {
 	selectedUnit = selectedUnit_;
@@ -1852,11 +1961,18 @@ void cHangarMenu::setSelectedUnit( cMenuUnitListItem *selectedUnit_ )
 	drawUnitInformation();
 }
 
+//------------------------------------------------------------------------------
 cMenuUnitListItem *cHangarMenu::getSelectedUnit()
 {
 	return selectedUnit;
 }
 
+
+//------------------------------------------------------------------------------
+// cAdvListHangarMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cAdvListHangarMenu::cAdvListHangarMenu( SDL_Surface *background_, cPlayer *player_ ) : cHangarMenu (background_, player_)
 {
 	secondList = new cMenuUnitsList ( position.x+330,  position.y+12, 130, 225, this, MUL_DIS_TYPE_CARGO );
@@ -1874,6 +1990,7 @@ cAdvListHangarMenu::cAdvListHangarMenu( SDL_Surface *background_, cPlayer *playe
 	menuItems.Add ( secondListDownButton );
 }
 
+//------------------------------------------------------------------------------
 cAdvListHangarMenu::~cAdvListHangarMenu()
 {
 	delete secondList;
@@ -1882,6 +1999,7 @@ cAdvListHangarMenu::~cAdvListHangarMenu()
 	delete secondListDownButton;
 }
 
+//------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListUpReleased( void* parent )
 {
 	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cMenu*)parent);
@@ -1889,6 +2007,7 @@ void cAdvListHangarMenu::secondListUpReleased( void* parent )
 	menu->secondList->scrollUp();
 }
 
+//------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListDownReleased( void* parent )
 {
 	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cMenu*)parent);
@@ -1896,6 +2015,7 @@ void cAdvListHangarMenu::secondListDownReleased( void* parent )
 	menu->secondList->scrollDown();
 }
 
+//------------------------------------------------------------------------------
 bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *parent )
 {
 	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cHangarMenu*)parent);
@@ -1916,6 +2036,7 @@ bool cAdvListHangarMenu::selListDoubleClicked( cMenuUnitsList* list, void *paren
 	return false;
 }
 
+//------------------------------------------------------------------------------
 bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *parent )
 {
 	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cHangarMenu*)parent);
@@ -1932,6 +2053,12 @@ bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *pa
 	return false;
 }
 
+
+//------------------------------------------------------------------------------
+// cStartupHangarMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_, bool noReturn ) : cHangarMenu ( LoadPCX ( GFXOD_HANGAR ), player_ ), cUpgradeHangarMenu ( player_ ), cAdvListHangarMenu ( NULL, player_ ), gameDataContainer(gameDataContainer_)
 {
 	/*cMenuLabel *titleLabel = new cMenuLabel ( position.x+552, position.y+11, lngPack.i18n ("Text~Title~Hangar") );
@@ -2046,6 +2173,7 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	if ( selectionList->getSize() > 0 ) setSelectedUnit ( selectionList->getItem ( 0 ) );
 }
 
+//------------------------------------------------------------------------------
 cStartupHangarMenu::~cStartupHangarMenu()
 {
 	delete upgradeBuyGroup;
@@ -2056,6 +2184,7 @@ cStartupHangarMenu::~cStartupHangarMenu()
 	delete materialBarDownButton;
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::updateUnitData()
 {
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
@@ -2098,6 +2227,7 @@ void cStartupHangarMenu::updateUnitData()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::backReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -2105,6 +2235,7 @@ void cStartupHangarMenu::backReleased( void* parent )
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::doneReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -2141,6 +2272,7 @@ void cStartupHangarMenu::doneReleased( void* parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::subButtonsChanged( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -2170,6 +2302,7 @@ void cStartupHangarMenu::materialBarUpReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarDownReleased( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -2191,6 +2324,7 @@ void cStartupHangarMenu::materialBarDownReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarClicked( void* parent )
 {
 	cStartupHangarMenu *menu = dynamic_cast<cStartupHangarMenu*>((cMenu*)parent);
@@ -2224,6 +2358,7 @@ void cStartupHangarMenu::materialBarClicked( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::generateSelectionList()
 {
 	sID oldSelectdUnit;
@@ -2270,6 +2405,7 @@ void cStartupHangarMenu::generateSelectionList()
 	if ( selectionList->getSelectedUnit() == NULL && selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 
+//------------------------------------------------------------------------------
 bool cStartupHangarMenu::isInLandingList( cMenuUnitListItem *item )
 {
 	for ( int i = 0; i < secondList->getSize(); i++ )
@@ -2279,6 +2415,7 @@ bool cStartupHangarMenu::isInLandingList( cMenuUnitListItem *item )
 	return false;
 }
 
+//------------------------------------------------------------------------------
 bool cStartupHangarMenu::checkAddOk ( cMenuUnitListItem *item )
 {
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
@@ -2290,6 +2427,7 @@ bool cStartupHangarMenu::checkAddOk ( cMenuUnitListItem *item )
 	return true;
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::addedCallback ( cMenuUnitListItem *item )
 {
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
@@ -2300,6 +2438,7 @@ void cStartupHangarMenu::addedCallback ( cMenuUnitListItem *item )
 	selectionChanged( this );
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::removedCallback ( cMenuUnitListItem *item )
 {
 	sVehicle *vehicle = item->getUnitID().getVehicle(player);
@@ -2309,6 +2448,7 @@ void cStartupHangarMenu::removedCallback ( cMenuUnitListItem *item )
 	goldBar->setCurrentValue ( credits );
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 {
 	switch ( message->iType )
@@ -2331,6 +2471,7 @@ void cStartupHangarMenu::handleNetMessage( cNetMessage *message )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::selectionChanged( void *parent )
 {
 	cStartupHangarMenu *menu;
@@ -2361,10 +2502,16 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 	menu->draw();
 }
 
-cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_) :
-	cMenu(0),
-	gameDataContainer(gameDataContainer_),
-	player(player_)
+
+//------------------------------------------------------------------------------
+// cLandingMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_) 
+: cMenu(0)
+, gameDataContainer(gameDataContainer_)
+, player(player_)
 {
 	map = gameDataContainer->map;
 
@@ -2386,6 +2533,7 @@ cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* play
 	menuItems.Add ( infoLabel );
 }
 
+//------------------------------------------------------------------------------
 cLandingMenu::~cLandingMenu()
 {
 	delete hudImage;
@@ -2394,6 +2542,7 @@ cLandingMenu::~cLandingMenu()
 	delete infoLabel;
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::createHud()
 {
 	hudSurface = cGameGUI::generateSurface();
@@ -2409,6 +2558,7 @@ void cLandingMenu::createHud()
 	SDL_BlitSurface ( GraphicsData.gfx_panel_bottom, NULL, hudSurface, &bottom );
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::createMap()
 {
 	mapSurface = SDL_CreateRGBSurface( Video.getSurfaceType(), Video.getResolutionX()-192, Video.getResolutionY()-32, Video.getColDepth(), 0, 0, 0, 0 );
@@ -2439,6 +2589,7 @@ void cLandingMenu::createMap()
 	if ( SDL_MUSTLOCK(mapSurface) )SDL_UnlockSurface ( mapSurface );
 }
 
+//------------------------------------------------------------------------------
 sTerrain *cLandingMenu::getMapTile ( int x, int y )
 {
 	double fak;
@@ -2465,6 +2616,7 @@ sTerrain *cLandingMenu::getMapTile ( int x, int y )
 	return &map->terrain[nr];
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::mapClicked( void* parent )
 {
 	cLandingMenu *menu = static_cast<cLandingMenu*>((cMenu*)parent);
@@ -2501,6 +2653,7 @@ void cLandingMenu::mapClicked( void* parent )
 	menu->hitPosition();
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::mouseMoved( void* parent )
 {
 	cLandingMenu *menu = static_cast<cLandingMenu*>((cMenu*)parent);
@@ -2509,6 +2662,7 @@ void cLandingMenu::mouseMoved( void* parent )
 	else mouse->SetCursor ( CNo );
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
 	if ( key.keysym.sym == SDLK_ESCAPE && key.state == SDL_PRESSED )
@@ -2522,6 +2676,7 @@ void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::handleNetMessage( cNetMessage *message )
 {
 	// because the messages for landing units and landing positions can be send during
@@ -2561,6 +2716,7 @@ void cLandingMenu::handleNetMessage( cNetMessage *message )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLandingMenu::hitPosition()
 {
 	switch ( gameDataContainer->type )
@@ -2585,7 +2741,14 @@ void cLandingMenu::hitPosition()
 	}
 }
 
-cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
+
+//------------------------------------------------------------------------------
+// cNetworkMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cNetworkMenu::cNetworkMenu() 
+: cMenu (LoadPCX (GFXOD_MULT))
 {
 	ip = SettingsData.sIP;
 	port = SettingsData.iPort;
@@ -2674,6 +2837,7 @@ cNetworkMenu::cNetworkMenu() : cMenu ( LoadPCX ( GFXOD_MULT ) )
 	Log.write( string(PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG );
 }
 
+//------------------------------------------------------------------------------
 cNetworkMenu::~cNetworkMenu()
 {
 	delete backButton;
@@ -2707,6 +2871,7 @@ cNetworkMenu::~cNetworkMenu()
 	network = NULL;
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::showSettingsText()
 {
 	string text;
@@ -2746,6 +2911,7 @@ void cNetworkMenu::showSettingsText()
 	settingsText->setText ( text );
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::showMap()
 {
 	if ( !gameDataContainer.map ) return;
@@ -2824,7 +2990,7 @@ void cNetworkMenu::setColor( int color )
 	colorImage->setImage ( colorSurface );
 }
 
-
+//------------------------------------------------------------------------------
 void cNetworkMenu::saveOptions()
 {
 	SettingsData.sPlayerName = actPlayer->name;
@@ -2840,6 +3006,7 @@ void cNetworkMenu::saveOptions()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::changePlayerReadyState( sMenuPlayer *player )
 {
 	if ( player != actPlayer ) return;
@@ -2852,6 +3019,7 @@ void cNetworkMenu::changePlayerReadyState( sMenuPlayer *player )
 	playerSettingsChanged();
 }
 
+//------------------------------------------------------------------------------
 bool cNetworkMenu::enteredCommand( string text )
 {
 	if ( !text.empty() && text[0] == '/' )
@@ -2862,6 +3030,7 @@ bool cNetworkMenu::enteredCommand( string text )
 	return false;
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 {
 	if ( player != actPlayer ) return;
@@ -2869,6 +3038,7 @@ void cNetworkMenu::playerReadyClicked ( sMenuPlayer *player )
 	changePlayerReadyState ( player );
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::backReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2876,6 +3046,7 @@ void cNetworkMenu::backReleased( void* parent )
 	menu->terminate = true;
 }
  
+//------------------------------------------------------------------------------
 void cNetworkMenu::sendReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2890,6 +3061,7 @@ void cNetworkMenu::sendReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::nextColorReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2900,6 +3072,7 @@ void cNetworkMenu::nextColorReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::prevColorReleased( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2910,6 +3083,7 @@ void cNetworkMenu::prevColorReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::wasNameImput( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2917,6 +3091,7 @@ void cNetworkMenu::wasNameImput( void* parent )
 	menu->playerSettingsChanged();
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::portIpChanged( void* parent )
 {
 	cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -2924,6 +3099,7 @@ void cNetworkMenu::portIpChanged( void* parent )
 	if ( menu->ipLine->getText().compare ( "-" ) != 0 ) menu->ip = menu->ipLine->getText();
 }
 
+//------------------------------------------------------------------------------
 void cNetworkMenu::setDefaultPort(void* parent)
 {
         cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
@@ -3466,11 +3642,13 @@ void cNetworkClientMenu::connectReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::playerSettingsChanged ()
 {
 	sendIdentification ( actPlayer );
 }
 
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 {
 	Log.write("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
@@ -3865,6 +4043,7 @@ cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds b
 	displaySaves();
 }
 
+//------------------------------------------------------------------------------
 cLoadMenu::~cLoadMenu()
 {
 	delete titleLabel;
@@ -3888,6 +4067,7 @@ cLoadMenu::~cLoadMenu()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::loadSaves()
 {
 	for ( unsigned int i = 0; i < files->Size(); i++ )
@@ -3923,6 +4103,7 @@ void cLoadMenu::loadSaves()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::displaySaves()
 {
 	for ( int x = 0; x < 2; x++ )
@@ -3948,12 +4129,14 @@ void cLoadMenu::displaySaves()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::backReleased( void* parent )
 {
 	cLoadMenu *menu = static_cast<cLoadMenu*>((cMenu*)parent);
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::loadReleased( void* parent )
 {
 	cLoadMenu *menu = static_cast<cLoadMenu*>((cMenu*)parent);
@@ -3973,6 +4156,7 @@ void cLoadMenu::loadReleased( void* parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::upReleased( void* parent )
 {
 	cLoadMenu *menu = static_cast<cLoadMenu*>((cMenu*)parent);
@@ -3985,6 +4169,7 @@ void cLoadMenu::upReleased( void* parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cLoadMenu::downReleased( void* parent )
 {
 	cLoadMenu *menu = static_cast<cLoadMenu*>((cMenu*)parent);
@@ -3998,6 +4183,7 @@ void cLoadMenu::downReleased( void* parent )
 }
 
 
+//------------------------------------------------------------------------------
 void cLoadMenu::slotClicked( void* parent )
 {
 	cLoadMenu *menu = static_cast<cLoadMenu*>((cMenu*)parent);
@@ -4021,6 +4207,11 @@ void cLoadMenu::slotClicked( void* parent )
 }
 
 
+//------------------------------------------------------------------------------
+// cLoadSaveMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMenu ( gameDataContainer_, MNU_BG_ALPHA )
 {
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+12, lngPack.i18n ("Text~Title~Load") );
@@ -4038,12 +4229,14 @@ cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMe
 	loadButton->setLocked ( true );
 }
 
+//------------------------------------------------------------------------------
 cLoadSaveMenu::~cLoadSaveMenu()
 {
 	delete exitButton;
 	delete saveButton;
 }
 
+//------------------------------------------------------------------------------
 void cLoadSaveMenu::exitReleased( void* parent )
 {
 	cLoadSaveMenu *menu = static_cast<cLoadSaveMenu*>((cMenu*)parent);
@@ -4062,6 +4255,7 @@ void cLoadSaveMenu::exitReleased( void* parent )
 	//menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cLoadSaveMenu::saveReleased( void* parent )
 {
 	cLoadSaveMenu *menu = static_cast<cLoadSaveMenu*>((cMenu*)parent);
@@ -4094,6 +4288,7 @@ void cLoadSaveMenu::saveReleased( void* parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cLoadSaveMenu::extendedSlotClicked( int oldSelection )
 {
 	if ( oldSelection != -1 && oldSelection-offset >= 0 && oldSelection-offset < 10)
@@ -4108,7 +4303,14 @@ void cLoadSaveMenu::extendedSlotClicked( int oldSelection )
 	saveSlots[selected-offset]->getNameEdit()->setReadOnly ( false );
 }
 
-cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ ) : cHangarMenu ( LoadPCX ( GFXOD_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
+
+//------------------------------------------------------------------------------
+// cBuildsBuildMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ ) 
+: cHangarMenu ( LoadPCX ( GFXOD_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
 {
 	if ( !Client ) terminate = true;
 
@@ -4146,6 +4348,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 	selectionChanged ( this );
 }
 
+//------------------------------------------------------------------------------
 cBuildingsBuildMenu::~cBuildingsBuildMenu()
 {
 	delete titleLabel;
@@ -4155,6 +4358,7 @@ cBuildingsBuildMenu::~cBuildingsBuildMenu()
 	delete speedHandler;
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::generateSelectionList()
 {
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
@@ -4171,11 +4375,13 @@ void cBuildingsBuildMenu::generateSelectionList()
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( destroyedVehicle == vehicle ) terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::doneReleased ( void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
@@ -4197,6 +4403,7 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::pathReleased ( void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
@@ -4208,12 +4415,14 @@ void cBuildingsBuildMenu::pathReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::backReleased ( void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::selectionChanged ( void *parent )
 {
 	cBuildingsBuildMenu *menu = dynamic_cast<cBuildingsBuildMenu*>((cHangarMenu*)parent);
@@ -4232,6 +4441,7 @@ void cBuildingsBuildMenu::selectionChanged ( void *parent )
 	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
+//------------------------------------------------------------------------------
 bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *parent )
 {
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cHangarMenu*)parent);
@@ -4239,7 +4449,15 @@ bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *par
 	return true;
 }
 
-cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) : cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_, MNU_BG_ALPHA ), cAdvListHangarMenu ( NULL, player_ )
+
+//------------------------------------------------------------------------------
+// cVehiclesBuildMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) 
+: cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
+, cAdvListHangarMenu ( NULL, player_ )
 {
 	if ( !Client ) terminate = true;
 
@@ -4280,6 +4498,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 	selectionChanged ( this );
 }
 
+//------------------------------------------------------------------------------
 cVehiclesBuildMenu::~cVehiclesBuildMenu()
 {
 	delete titleLabel;
@@ -4288,6 +4507,7 @@ cVehiclesBuildMenu::~cVehiclesBuildMenu()
 	delete repeatButton;
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::generateSelectionList()
 {
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
@@ -4336,11 +4556,13 @@ void cVehiclesBuildMenu::generateSelectionList()
 	if ( selectionList->getSize() > 0 ) selectionList->setSelection ( selectionList->getItem ( 0 ) );
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( destroyedBuilding == building ) terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::createBuildList()
 {
 	for ( unsigned int i = 0; i < building->BuildList->Size(); i++ )
@@ -4355,6 +4577,7 @@ void cVehiclesBuildMenu::createBuildList()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::doneReleased ( void *parent )
 {
 	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cMenu*)parent);
@@ -4372,6 +4595,7 @@ void cVehiclesBuildMenu::doneReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::backReleased ( void *parent )
 {
 	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cMenu*)parent);
@@ -4379,6 +4603,7 @@ void cVehiclesBuildMenu::backReleased ( void *parent )
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cVehiclesBuildMenu::selectionChanged ( void *parent )
 {
 	cVehiclesBuildMenu *menu = dynamic_cast<cVehiclesBuildMenu*>((cHangarMenu*)parent);
@@ -4394,6 +4619,12 @@ void cVehiclesBuildMenu::selectionChanged ( void *parent )
 	menu->speedHandler->setValues ( turboBuildTurns, turboBuildCosts );
 }
 
+
+//------------------------------------------------------------------------------
+// cUpgradeHangarMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX ( GFXOD_UPGRADE ), owner )
 {
 	upgradeFilter = new cMenuUpgradeFilter ( position.x+467, position.y+411, this );
@@ -4415,6 +4646,7 @@ cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX
 	initUpgrades ( owner );
 }
 
+//------------------------------------------------------------------------------
 cUpgradeHangarMenu::~cUpgradeHangarMenu()
 {
 	delete upgradeFilter;
@@ -4425,6 +4657,8 @@ cUpgradeHangarMenu::~cUpgradeHangarMenu()
 
 	delete[] unitUpgrades;
 }
+
+//------------------------------------------------------------------------------
 void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 {
 	unitUpgrades = new sUnitUpgrade[UnitsData.getNrVehicles () + UnitsData.getNrBuildings ()][8];
@@ -4532,20 +4766,28 @@ void cUpgradeHangarMenu::initUpgrades( cPlayer *player )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cUpgradeHangarMenu::setCredits( int credits_ )
 {
 	credits = credits_;
 	goldBar->setCurrentValue ( credits );
 }
 
+//------------------------------------------------------------------------------
 int cUpgradeHangarMenu::getCredits()
 {
 	return credits;
 }
 
-cUpgradeMenu::cUpgradeMenu(cPlayer* player) :
-	cHangarMenu(LoadPCX(GFXOD_UPGRADE), player, MNU_BG_ALPHA),
-	cUpgradeHangarMenu(player)
+
+//------------------------------------------------------------------------------
+// cUpgradeMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cUpgradeMenu::cUpgradeMenu(cPlayer* player) 
+: cHangarMenu (LoadPCX(GFXOD_UPGRADE), player, MNU_BG_ALPHA)
+, cUpgradeHangarMenu(player)
 {
 	credits = player->Credits;
 
@@ -4565,6 +4807,7 @@ cUpgradeMenu::cUpgradeMenu(cPlayer* player) :
 	selectionChangedFunc = &selectionChanged;
 }
 
+//------------------------------------------------------------------------------
 void cUpgradeMenu::doneReleased ( void *parent )
 {
 	cUpgradeMenu *menu = dynamic_cast<cUpgradeMenu*>((cMenu*)parent);
@@ -4573,6 +4816,7 @@ void cUpgradeMenu::doneReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cUpgradeMenu::backReleased ( void *parent )
 {
 	cUpgradeMenu *menu = dynamic_cast<cUpgradeMenu*>((cMenu*)parent);
@@ -4580,6 +4824,7 @@ void cUpgradeMenu::backReleased ( void *parent )
 	menu->terminate = true;
 }
 
+//------------------------------------------------------------------------------
 void cUpgradeMenu::selectionChanged ( void *parent )
 {
 	cUpgradeMenu *menu = dynamic_cast<cUpgradeMenu*>((cHangarMenu*)parent);
@@ -4589,6 +4834,7 @@ void cUpgradeMenu::selectionChanged ( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cUpgradeMenu::generateSelectionList()
 {
 	sID oldSelectedUnit;
@@ -4640,18 +4886,27 @@ void cUpgradeMenu::generateSelectionList()
 		selectionList->setSelection ( selectionList->getItem( 0 ) );
 }
 
-cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
+
+//------------------------------------------------------------------------------
+// cUnitHelpMenu
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) 
+: cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
 	init (unitID);
 }
 
+//------------------------------------------------------------------------------
 cUnitHelpMenu::cUnitHelpMenu( sUnitData* unitData, cPlayer *owner ) : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitData, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
 	init (unitData->ID);
 }
 
+//------------------------------------------------------------------------------
 void cUnitHelpMenu::init(sID unitID)
 {
 	titleLabel = new cMenuLabel ( position.x+406, position.y+11, lngPack.i18n( "Text~Title~Unitinfo" ) );
@@ -4685,6 +4940,7 @@ void cUnitHelpMenu::init(sID unitID)
 	}
 }
 
+//------------------------------------------------------------------------------
 cUnitHelpMenu::~cUnitHelpMenu()
 {
 	delete titleLabel;
@@ -4699,17 +4955,25 @@ cUnitHelpMenu::~cUnitHelpMenu()
 	delete unit;
 }
 
+//------------------------------------------------------------------------------
 void cUnitHelpMenu::doneReleased( void *parent )
 {
 	cUnitHelpMenu *menu = dynamic_cast<cUnitHelpMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cUnitHelpMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData() ) terminate = true;
 }
 
+
+//------------------------------------------------------------------------------
+// cStorageMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
 	cMenu(LoadPCX(GFXOD_STORAGE), MNU_BG_ALPHA),
 	ownerVehicle(vehicle),
@@ -4774,11 +5038,13 @@ cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cB
 	resetInfos();
 }
 
+//------------------------------------------------------------------------------
 cStorageMenu::~cStorageMenu()
 {
 	delete doneButton;
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::generateItems()
 {
 	int maxX = canStorePlanes ? 2 : 3;
@@ -4817,6 +5083,7 @@ void cStorageMenu::generateItems()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::resetInfos()
 {
 	int maxX = canStorePlanes ? 2 : 3;
@@ -4901,12 +5168,14 @@ void cStorageMenu::resetInfos()
 	else upButton->setLocked ( true );
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::doneReleased( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::upReleased( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4915,6 +5184,7 @@ void cStorageMenu::upReleased( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::downReleased( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4923,6 +5193,7 @@ void cStorageMenu::downReleased( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
 {
 	int maxX = canStorePlanes ? 2 : 3;
@@ -4940,6 +5211,7 @@ int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
 	return -1;
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::activateReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4960,6 +5232,7 @@ void cStorageMenu::activateReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::reloadReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4969,6 +5242,7 @@ void cStorageMenu::reloadReleased ( void *parent )
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::repairReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4978,6 +5252,7 @@ void cStorageMenu::repairReleased ( void *parent )
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::upgradeReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -4987,6 +5262,7 @@ void cStorageMenu::upgradeReleased ( void *parent )
 	sendWantUpgrade ( menu->ownerBuilding->iID, index, false );
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::activateAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -5024,6 +5300,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::reloadAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -5042,6 +5319,7 @@ void cStorageMenu::reloadAllReleased ( void *parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::repairAllReleased ( void *parent )
 {
 	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
@@ -5065,6 +5343,7 @@ void cStorageMenu::repairAllReleased ( void *parent )
 	}
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::upgradeAllReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
@@ -5073,11 +5352,18 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 	sendWantUpgrade ( menu->ownerBuilding->iID, 0, true );
 }
 
+//------------------------------------------------------------------------------
 void cStorageMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( destroyedBuilding == ownerBuilding || destroyedVehicle == ownerVehicle ) terminate = true;
 }
 
+
+//------------------------------------------------------------------------------
+// cMineManagerMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 cMineManagerMenu::cMineManagerMenu(cBuilding* building_) :
 	cMenu(LoadPCX(GFXOD_MINEMANAGER), MNU_BG_ALPHA),
 	building(building_),
@@ -5148,6 +5434,7 @@ cMineManagerMenu::cMineManagerMenu(cBuilding* building_) :
 	setBarLabels();
 }
 
+//------------------------------------------------------------------------------
 cMineManagerMenu::~cMineManagerMenu()
 {
 	delete titleLabel;
@@ -5174,6 +5461,7 @@ cMineManagerMenu::~cMineManagerMenu()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::setBarValues()
 {
 	metalBars[0]->setMaximalValue ( subBase.getMaxMetalProd() );
@@ -5228,6 +5516,7 @@ void cMineManagerMenu::setBarValues()
 	}
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::setBarLabels()
 {
 	metalBarLabels[0]->setText ( iToStr ( subBase.getMetalProd() ) );
@@ -5243,6 +5532,7 @@ void cMineManagerMenu::setBarLabels()
 	goldBarLabels[2]->setText ( iToStr ( subBase.Gold ) );
 }
 
+//------------------------------------------------------------------------------
 string cMineManagerMenu::secondBarText( int prod, int need )
 {
 	int perTurn = prod - need;
@@ -5252,6 +5542,7 @@ string cMineManagerMenu::secondBarText( int prod, int need )
 	return text;
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::doneReleased( void *parent )
 {
 	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
@@ -5259,6 +5550,7 @@ void cMineManagerMenu::doneReleased( void *parent )
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::increaseReleased( void *parent )
 {
 	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
@@ -5279,6 +5571,7 @@ void cMineManagerMenu::increaseReleased( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::decreseReleased( void *parent )
 {
 	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
@@ -5299,6 +5592,7 @@ void cMineManagerMenu::decreseReleased( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::barReleased( void *parent )
 {
 	cMineManagerMenu *menu = static_cast<cMineManagerMenu*>((cMenu*)parent);
@@ -5322,14 +5616,21 @@ void cMineManagerMenu::barReleased( void *parent )
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cMineManagerMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( destroyedBuilding && destroyedBuilding->SubBase == building->SubBase ) terminate = true;
 }
 
-cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
-	cMenu ( LoadPCX ( GFXOD_REPORTS ), MNU_BG_ALPHA ),
-	owner ( owner_ )
+
+//------------------------------------------------------------------------------
+// cReportsMenu implementation
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+cReportsMenu::cReportsMenu (cPlayer *owner_) 
+: cMenu (LoadPCX (GFXOD_REPORTS), MNU_BG_ALPHA)
+, owner (owner_)
 {
 	typeButtonGroup = new cMenuRadioGroup();
 	menuItems.Add ( typeButtonGroup );
@@ -5399,6 +5700,7 @@ cReportsMenu::cReportsMenu ( cPlayer *owner_ ) :
 	filterClicked ( this );
 }
 
+//------------------------------------------------------------------------------
 cReportsMenu::~cReportsMenu()
 {
 	delete typeButtonGroup;
@@ -5422,12 +5724,14 @@ cReportsMenu::~cReportsMenu()
 	delete dataScreen;
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::doneReleased(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
 	menu->end = true;
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::upReleased(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
@@ -5435,6 +5739,7 @@ void cReportsMenu::upReleased(void *parent)
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::downReleased(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
@@ -5442,12 +5747,14 @@ void cReportsMenu::downReleased(void *parent)
 	menu->draw();
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::typeChanged(void *parent)
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
 	menu->dataScreen->setType ( menu->typeButtonGroup->buttonIsChecked( 0 ), menu->typeButtonGroup->buttonIsChecked( 1 ), menu->typeButtonGroup->buttonIsChecked( 2 ), menu->typeButtonGroup->buttonIsChecked( 3 ) );
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::filterClicked( void *parent )
 {
 	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
@@ -5456,12 +5763,14 @@ void cReportsMenu::filterClicked( void *parent )
 	menu->dataScreen->setBorderedFilter ( menu->buildCheckBtn->isChecked(), menu->fightCheckBtn->isChecked(), menu->damagedCheckBtn->isChecked(), menu->stealthCheckBtn->isChecked() );
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::scrollCallback ( bool upPossible, bool downPossible )
 {
 	upButton->setLocked ( !upPossible );
 	downButton->setLocked ( !downPossible );
 }
 
+//------------------------------------------------------------------------------
 void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 {
 	if ( !vehicle && !building ) return;
