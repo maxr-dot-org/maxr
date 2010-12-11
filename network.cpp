@@ -22,6 +22,11 @@
 #include "server.h"
 #include "netmessage.h"
 
+//------------------------------------------------------------------------
+// sSocket implementation
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
 sSocket::sSocket()
 {
 	iType = FREE_SOCKET;
@@ -30,37 +35,51 @@ sSocket::sSocket()
 	buffer.clear();
 }
 
+//------------------------------------------------------------------------
 sSocket::~sSocket()
 {
 	if ( iType != FREE_SOCKET ) SDLNet_TCP_Close ( socket );
 }
 
+
+//------------------------------------------------------------------------
+// sDataBuffer implementation
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
 void sDataBuffer::clear()
 {
 	iLength = 0;
 }
 
+//------------------------------------------------------------------------
 char* sDataBuffer::getWritePointer()
 {
 	return data + iLength;
 }
 
+//------------------------------------------------------------------------
 int sDataBuffer::getFreeSpace()
 {
 	return PACKAGE_LENGTH - iLength;
 }
 
+//------------------------------------------------------------------------
 void sDataBuffer::deleteFront(int n)
 {
 	memmove(data, data + n, iLength - n);
 	iLength -= n;
 }
 
-cTCP::cTCP():
-	TCPMutex()
+
+//------------------------------------------------------------------------
+// cTCP implementation
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+cTCP::cTCP()
+: TCPMutex()
 {
-
-
 	SocketSet = SDLNet_AllocSocketSet( MAX_CLIENTS );
 
 	iLast_Socket = 0;
@@ -72,13 +91,14 @@ cTCP::cTCP():
 	TCPHandleThread = SDL_CreateThread( CallbackHandleNetworkThread, this );
 }
 
+//------------------------------------------------------------------------
 cTCP::~cTCP()
 {
 	bExit = true;
 	SDL_WaitThread ( TCPHandleThread, NULL );
 }
 
-
+//------------------------------------------------------------------------
 int cTCP::create()
 {
 	cMutex::Lock tl(TCPMutex);
@@ -102,6 +122,7 @@ int cTCP::create()
 	return 0;
 }
 
+//------------------------------------------------------------------------
 int cTCP::connect()
 {
 	cMutex::Lock tl( TCPMutex );
@@ -124,6 +145,7 @@ int cTCP::connect()
 	return 0;
 }
 
+//------------------------------------------------------------------------
 int cTCP::sendTo( int iClientNumber, int iLength, char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
@@ -156,6 +178,7 @@ int cTCP::sendTo( int iClientNumber, int iLength, char *buffer )
 	return 0;
 }
 
+//------------------------------------------------------------------------
 int cTCP::send( int iLength, char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
@@ -170,6 +193,7 @@ int cTCP::send( int iLength, char *buffer )
 	return iReturnVal;
 }
 
+//------------------------------------------------------------------------
 int CallbackHandleNetworkThread( void *arg )
 {
 	cTCP *TCP = (cTCP *) arg;
@@ -177,12 +201,12 @@ int CallbackHandleNetworkThread( void *arg )
 	return 0;
 }
 
+//------------------------------------------------------------------------
 void cTCP::HandleNetworkThread()
 {
 	while( !bExit )
 	{
 		SDLNet_CheckSockets ( SocketSet, 10 );
-
 
 		// Check all Sockets
 		for ( int i = 0; !bExit && i < iLast_Socket; i++ )
@@ -314,19 +338,21 @@ void cTCP::HandleNetworkThread()
 	}
 }
 
+//------------------------------------------------------------------------
 int cTCP::pushEvent( cNetMessage* message )
 {
 	if ( Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER) )
 	{
 		Server->pushEvent ( message );
 	}
-	else
+	else if (EventHandler)
 	{
 		EventHandler->pushEvent ( message );
 	}
 	return 0;
 }
 
+//------------------------------------------------------------------------
 void cTCP::close( int iClientNumber )
 {
 	cMutex::Lock tl(TCPMutex);
@@ -336,6 +362,7 @@ void cTCP::close( int iClientNumber )
 	}
 }
 
+//------------------------------------------------------------------------
 void cTCP::deleteSocket( int iNum )
 {
 	Sockets[iNum].~sSocket();
@@ -351,31 +378,39 @@ void cTCP::deleteSocket( int iNum )
 	iLast_Socket--;
 }
 
+//------------------------------------------------------------------------
 void cTCP::setPort( int iPort )
 {
 	this->iPort = iPort;
 }
 
+//------------------------------------------------------------------------
 void cTCP::setIP ( string sIP )
 {
 	this->sIP = sIP;
 }
 
+//------------------------------------------------------------------------
 int cTCP::getSocketCount()
 {
 	return iLast_Socket;
 }
 
+//------------------------------------------------------------------------
 int cTCP::getConnectionStatus()
 {
-	if ( iLast_Socket  > 0 ) return 1;
+	if (iLast_Socket > 0) 
+		return 1;
 	return 0;
 }
+
+//------------------------------------------------------------------------
 bool cTCP::isHost()
 {
 	return bHost;
 }
 
+//------------------------------------------------------------------------
 int cTCP::getFreeSocket()
 {
 	if ( iLast_Socket == MAX_CLIENTS ) return -1;

@@ -53,8 +53,9 @@ enum SOCKET_STATES
 	STATE_DELETE
 };
 
+//------------------------------------------------------------------------
 /**
-* Structure with data and its lenght.
+* Structure with data and its length.
 *@author alzi alias DoctorDeath
 */
 struct sDataBuffer
@@ -73,6 +74,7 @@ struct sDataBuffer
 	void clear();
 };
 
+//------------------------------------------------------------------------
 /**
 * Structure for Sockets used by the TCP-Class.
 *@author alzi alias DoctorDeath
@@ -90,6 +92,7 @@ struct sSocket
 	unsigned int messagelength;
 };
 
+//------------------------------------------------------------------------
 /**
 * Class for the handling of events over TCP/IP
 *@author alzi alias DoctorDeath
@@ -212,4 +215,5 @@ public:
 	*/
 	void HandleNetworkThread();
 } EX *network;
+
 #endif // networkH
