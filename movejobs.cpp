@@ -700,27 +700,27 @@ bool cServerMoveJob::checkMove()
 void cServerMoveJob::moveVehicle()
 {
 	int iSpeed;
-	if ( !Vehicle ) return;
+	if ( !Vehicle ) 
+		return;
 	if ( Vehicle->data.animationMovement )
-	{
 		iSpeed = MOVE_SPEED/2;
-	}
 	else if ( !(Vehicle->data.factorAir > 0) && !(Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0) )
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
-		if ( Waypoints && Waypoints->next && building && building->data.modifiesSpeed ) iSpeed = (int)(iSpeed/building->data.modifiesSpeed);
+		if (building && building->data.modifiesSpeed) 
+			iSpeed = (int)(iSpeed/building->data.modifiesSpeed);
 	}
-	else if ( Vehicle->data.factorAir > 0 ) iSpeed = MOVE_SPEED*2;
-	else iSpeed = MOVE_SPEED;
+	else if ( Vehicle->data.factorAir > 0 ) 
+		iSpeed = MOVE_SPEED*2;
+	else 
+		iSpeed = MOVE_SPEED;
 
 	setOffset(Vehicle, iNextDir, iSpeed );
 
 	// check whether the point has been reached:
 	if ( abs( Vehicle->OffX ) < iSpeed && abs( Vehicle->OffY ) < iSpeed )
-	{
 		doEndMoveVehicle();
-	}
 }
 
 void cServerMoveJob::doEndMoveVehicle()
