@@ -85,7 +85,9 @@ public:
 private:
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
-
+	/** the event that was polled last from the eventQueue*/
+	cNetMessage* lastEvent;
+	
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
 	/** true if the server should exit and end his thread */

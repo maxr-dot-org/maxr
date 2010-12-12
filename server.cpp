@@ -48,6 +48,7 @@ int CallbackRunServerThread( void *arg )
 
 //-------------------------------------------------------------------------------------
 cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
+: lastEvent (0)
 {
 	assert(!(turnLimit && scoreLimit));
 
@@ -86,6 +87,11 @@ cServer::~cServer()
 	{
 		delete eventQueue.read();
 	}
+	if (lastEvent != 0)
+	{
+		delete lastEvent;
+		lastEvent = 0;
+	}	
 
 	while ( PlayerList->Size() )
 	{
@@ -115,7 +121,6 @@ void cServer::setDeadline(int iDeadline)
 //-------------------------------------------------------------------------------------
 cNetMessage* cServer::pollEvent()
 {
-	static cNetMessage* lastEvent = NULL;
 	if ( lastEvent != NULL )
 	{
 		delete lastEvent;
