@@ -16,6 +16,60 @@
 		9F7F33D10F8F814C00B00D61 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
 		9F80D8940FB495F6002FE83F /* clans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F80D8930FB495F6002FE83F /* clans.cpp */; };
 		9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F87B6C6101A43EA00A119FC /* settings.cpp */; };
+		9F9BC21612B3AE2500674C03 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBF00EE2B1A700F23D2C /* SDLMain.m */; };
+		9F9BC24412B3AE4500674C03 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF50EE2B29A00F23D2C /* SDL.framework */; };
+		9F9BC24512B3AE4500674C03 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF60EE2B29A00F23D2C /* SDL_mixer.framework */; };
+		9F9BC24612B3AE4500674C03 /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DBF70EE2B29A00F23D2C /* SDL_net.framework */; };
+		9F9BC24712B3AE4500674C03 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC0DC2B0EE2B2CB00F23D2C /* Cocoa.framework */; };
+		9F9BC24E12B3AF2500674C03 /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
+		9F9BC25012B3AF2500674C03 /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
+		9F9BC25412B3AF2500674C03 /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
+		9F9BC25612B3AF2500674C03 /* buildings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB770EE2B17400F23D2C /* buildings.cpp */; };
+		9F9BC25812B3AF2500674C03 /* clans.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F80D8930FB495F6002FE83F /* clans.cpp */; };
+		9F9BC25A12B3AF2500674C03 /* client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB7B0EE2B17400F23D2C /* client.cpp */; };
+		9F9BC25C12B3AF2500674C03 /* clientevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB7D0EE2B17400F23D2C /* clientevents.cpp */; };
+		9F9BC26112B3AF2500674C03 /* dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB820EE2B17400F23D2C /* dialog.cpp */; };
+		9F9BC26312B3AF2500674C03 /* drawingcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7F33CF0F8F814C00B00D61 /* drawingcache.cpp */; };
+		9F9BC26512B3AF2500674C03 /* events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB860EE2B17400F23D2C /* events.cpp */; };
+		9F9BC26712B3AF2500674C03 /* extendedtinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB880EE2B17400F23D2C /* extendedtinyxml.cpp */; };
+		9F9BC26912B3AF2500674C03 /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB8A0EE2B17400F23D2C /* files.cpp */; };
+		9F9BC26B12B3AF2500674C03 /* hud.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB900EE2B17400F23D2C /* hud.cpp */; };
+		9F9BC26D12B3AF2500674C03 /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2DCB90F17B2D60022714E /* input.cpp */; };
+		9F9BC26F12B3AF2500674C03 /* keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB940EE2B17400F23D2C /* keys.cpp */; };
+		9F9BC27112B3AF2500674C03 /* language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB960EE2B17400F23D2C /* language.cpp */; };
+		9F9BC27312B3AF2500674C03 /* loaddata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB980EE2B17400F23D2C /* loaddata.cpp */; };
+		9F9BC27512B3AF2500674C03 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9A0EE2B17400F23D2C /* log.cpp */; };
+		9F9BC27912B3AF2500674C03 /* map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9E0EE2B17400F23D2C /* map.cpp */; };
+		9F9BC27B12B3AF2500674C03 /* mapdownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0A673E10112657005D7516 /* mapdownload.cpp */; };
+		9F9BC27D12B3AF2500674C03 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
+		9F9BC27F12B3AF2500674C03 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
+		9F9BC28212B3AF2500674C03 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
+		9F9BC28412B3AF2500674C03 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA40EE2B17400F23D2C /* mouse.cpp */; };
+		9F9BC28612B3AF2500674C03 /* movejobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA60EE2B17400F23D2C /* movejobs.cpp */; };
+		9F9BC28712B3AF2500674C03 /* mveplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7E432B0EFD1D2200021440 /* mveplayer.cpp */; };
+		9F9BC28A12B3AF2500674C03 /* netmessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBA80EE2B17400F23D2C /* netmessage.cpp */; };
+		9F9BC28C12B3AF2500674C03 /* network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBAA0EE2B17400F23D2C /* network.cpp */; };
+		9F9BC28E12B3AF2500674C03 /* pcx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBAC0EE2B17400F23D2C /* pcx.cpp */; };
+		9F9BC29012B3AF2500674C03 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBAE0EE2B17400F23D2C /* player.cpp */; };
+		9F9BC29412B3AF2500674C03 /* savegame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB10EE2B17400F23D2C /* savegame.cpp */; };
+		9F9BC29612B3AF2500674C03 /* SDL_flic.c in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB30EE2B17400F23D2C /* SDL_flic.c */; };
+		9F9BC29812B3AF2500674C03 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB50EE2B17400F23D2C /* server.cpp */; };
+		9F9BC29A12B3AF2500674C03 /* serverevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB70EE2B17400F23D2C /* serverevents.cpp */; };
+		9F9BC29C12B3AF2500674C03 /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F87B6C6101A43EA00A119FC /* settings.cpp */; };
+		9F9BC29E12B3AF2500674C03 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBB90EE2B17400F23D2C /* sound.cpp */; };
+		9F9BC2A112B3AF2500674C03 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBB0EE2B17400F23D2C /* tinystr.cpp */; };
+		9F9BC2A312B3AF2500674C03 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBD0EE2B17400F23D2C /* tinyxml.cpp */; };
+		9F9BC2A512B3AF2500674C03 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBBF0EE2B17400F23D2C /* tinyxmlerror.cpp */; };
+		9F9BC2A612B3AF2500674C03 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */; };
+		9F9BC2A712B3AF2500674C03 /* unifonts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2DCBB0F17B2D60022714E /* unifonts.cpp */; };
+		9F9BC2A912B3AF2500674C03 /* upgradecalculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */; };
+		9F9BC2AB12B3AF2500674C03 /* vehicles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */; };
+		9F9BC2AD12B3AF2500674C03 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B4029116640F5007A6C8A /* video.cpp */; };
+		9F9BC2B212B3B11C00674C03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9C0EE2B17400F23D2C /* main.cpp */; };
+		9F9BC31412B3E46600674C03 /* dedicatedserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */; };
+		9F9BC32D12B3E5E600674C03 /* dedicatedserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */; };
+		9F9BC43F12B42D3900674C03 /* servergame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC43E12B42D3900674C03 /* servergame.cpp */; };
+		9F9BC44012B42D3900674C03 /* servergame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC43E12B42D3900674C03 /* servergame.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
 		9FC0DBC70EE2B17400F23D2C /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB750EE2B17400F23D2C /* base.cpp */; };
@@ -101,8 +155,12 @@
 		9F8C8C9E10616BBE000571DA /* t_2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = t_2.h; path = ../t_2.h; sourceTree = SOURCE_ROOT; };
 		9F94822D12A96526004D64FE /* autoobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autoobj.h; path = ../autoobj.h; sourceTree = SOURCE_ROOT; };
 		9F94822E12A96526004D64FE /* autosurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autosurface.h; path = ../autosurface.h; sourceTree = SOURCE_ROOT; };
-		9F94822F12A96526004D64FE /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menu.h; path = ../menu.h; sourceTree = SOURCE_ROOT; };
 		9F94823012A96526004D64FE /* ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ringbuffer.h; path = ../ringbuffer.h; sourceTree = SOURCE_ROOT; };
+		9F9BC20F12B3ABB200674C03 /* maxr-console */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "maxr-console"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F9BC31212B3E46600674C03 /* dedicatedserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dedicatedserver.h; path = ../dedicatedserver.h; sourceTree = SOURCE_ROOT; };
+		9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dedicatedserver.cpp; path = ../dedicatedserver.cpp; sourceTree = SOURCE_ROOT; };
+		9F9BC43D12B42D3900674C03 /* servergame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = servergame.h; path = ../servergame.h; sourceTree = SOURCE_ROOT; };
+		9F9BC43E12B42D3900674C03 /* servergame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = servergame.cpp; path = ../servergame.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
@@ -190,6 +248,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9F9BC20D12B3ABB200674C03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F9BC24412B3AE4500674C03 /* SDL.framework in Frameworks */,
+				9F9BC24512B3AE4500674C03 /* SDL_mixer.framework in Frameworks */,
+				9F9BC24612B3AE4500674C03 /* SDL_net.framework in Frameworks */,
+				9F9BC24712B3AE4500674C03 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9FC0DB590EE2B06700F23D2C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -204,6 +273,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9F9BC2B112B3B0C800674C03 /* dedicated-server */ = {
+			isa = PBXGroup;
+			children = (
+				9F9BC31212B3E46600674C03 /* dedicatedserver.h */,
+				9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */,
+				9F9BC43D12B42D3900674C03 /* servergame.h */,
+				9F9BC43E12B42D3900674C03 /* servergame.cpp */,
+			);
+			name = "dedicated-server";
+			sourceTree = "<group>";
+		};
 		9FC0DB4A0EE2B02A00F23D2C = {
 			isa = PBXGroup;
 			children = (
@@ -218,6 +298,7 @@
 		9FC0DB560EE2B03C00F23D2C /* src */ = {
 			isa = PBXGroup;
 			children = (
+				9F9BC2B112B3B0C800674C03 /* dedicated-server */,
 				9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */,
 				9FC0DB720EE2B17400F23D2C /* attackJobs.h */,
 				9FC0DB730EE2B17400F23D2C /* automjobs.cpp */,
@@ -269,7 +350,6 @@
 				9F5DA1400FB8B74100CC2B17 /* menuevents.h */,
 				9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */,
 				9F5DA1420FB8B74100CC2B17 /* menuitems.h */,
-				9F94822F12A96526004D64FE /* menu.h */,
 				9F5DA1430FB8B74100CC2B17 /* menus.cpp */,
 				9F5DA1440FB8B74100CC2B17 /* menus.h */,
 				9FC0DBA40EE2B17400F23D2C /* mouse.cpp */,
@@ -323,6 +403,7 @@
 			isa = PBXGroup;
 			children = (
 				9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */,
+				9F9BC20F12B3ABB200674C03 /* maxr-console */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -360,6 +441,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		9F9BC20E12B3ABB200674C03 /* maxr-console */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F9BC21312B3ABD000674C03 /* Build configuration list for PBXNativeTarget "maxr-console" */;
+			buildPhases = (
+				9F9BC20C12B3ABB200674C03 /* Sources */,
+				9F9BC20D12B3ABB200674C03 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "maxr-console";
+			productName = "maxr-console";
+			productReference = 9F9BC20F12B3ABB200674C03 /* maxr-console */;
+			productType = "com.apple.product-type.tool";
+		};
 		9FC0DB5A0EE2B06700F23D2C /* MAXReloaded */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9FC0DB610EE2B06700F23D2C /* Build configuration list for PBXNativeTarget "MAXReloaded" */;
@@ -392,6 +489,7 @@
 			projectRoot = "";
 			targets = (
 				9FC0DB5A0EE2B06700F23D2C /* MAXReloaded */,
+				9F9BC20E12B3ABB200674C03 /* maxr-console */,
 			);
 		};
 /* End PBXProject section */
@@ -408,6 +506,61 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		9F9BC20C12B3ABB200674C03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F9BC24E12B3AF2500674C03 /* attackJobs.cpp in Sources */,
+				9F9BC25012B3AF2500674C03 /* automjobs.cpp in Sources */,
+				9F9BC25412B3AF2500674C03 /* base.cpp in Sources */,
+				9F9BC25612B3AF2500674C03 /* buildings.cpp in Sources */,
+				9F9BC25812B3AF2500674C03 /* clans.cpp in Sources */,
+				9F9BC25A12B3AF2500674C03 /* client.cpp in Sources */,
+				9F9BC25C12B3AF2500674C03 /* clientevents.cpp in Sources */,
+				9F9BC26112B3AF2500674C03 /* dialog.cpp in Sources */,
+				9F9BC26312B3AF2500674C03 /* drawingcache.cpp in Sources */,
+				9F9BC26512B3AF2500674C03 /* events.cpp in Sources */,
+				9F9BC26712B3AF2500674C03 /* extendedtinyxml.cpp in Sources */,
+				9F9BC26912B3AF2500674C03 /* files.cpp in Sources */,
+				9F9BC26B12B3AF2500674C03 /* hud.cpp in Sources */,
+				9F9BC26D12B3AF2500674C03 /* input.cpp in Sources */,
+				9F9BC26F12B3AF2500674C03 /* keys.cpp in Sources */,
+				9F9BC27112B3AF2500674C03 /* language.cpp in Sources */,
+				9F9BC27312B3AF2500674C03 /* loaddata.cpp in Sources */,
+				9F9BC27512B3AF2500674C03 /* log.cpp in Sources */,
+				9F9BC27912B3AF2500674C03 /* map.cpp in Sources */,
+				9F9BC27B12B3AF2500674C03 /* mapdownload.cpp in Sources */,
+				9F9BC27D12B3AF2500674C03 /* menuevents.cpp in Sources */,
+				9F9BC27F12B3AF2500674C03 /* menuitems.cpp in Sources */,
+				9F9BC28212B3AF2500674C03 /* menus.cpp in Sources */,
+				9F9BC28412B3AF2500674C03 /* mouse.cpp in Sources */,
+				9F9BC28612B3AF2500674C03 /* movejobs.cpp in Sources */,
+				9F9BC28712B3AF2500674C03 /* mveplayer.cpp in Sources */,
+				9F9BC28A12B3AF2500674C03 /* netmessage.cpp in Sources */,
+				9F9BC28C12B3AF2500674C03 /* network.cpp in Sources */,
+				9F9BC28E12B3AF2500674C03 /* pcx.cpp in Sources */,
+				9F9BC29012B3AF2500674C03 /* player.cpp in Sources */,
+				9F9BC29412B3AF2500674C03 /* savegame.cpp in Sources */,
+				9F9BC29612B3AF2500674C03 /* SDL_flic.c in Sources */,
+				9F9BC29812B3AF2500674C03 /* server.cpp in Sources */,
+				9F9BC29A12B3AF2500674C03 /* serverevents.cpp in Sources */,
+				9F9BC29C12B3AF2500674C03 /* settings.cpp in Sources */,
+				9F9BC29E12B3AF2500674C03 /* sound.cpp in Sources */,
+				9F9BC2A112B3AF2500674C03 /* tinystr.cpp in Sources */,
+				9F9BC2A312B3AF2500674C03 /* tinyxml.cpp in Sources */,
+				9F9BC2A512B3AF2500674C03 /* tinyxmlerror.cpp in Sources */,
+				9F9BC2A612B3AF2500674C03 /* tinyxmlparser.cpp in Sources */,
+				9F9BC2A712B3AF2500674C03 /* unifonts.cpp in Sources */,
+				9F9BC2A912B3AF2500674C03 /* upgradecalculator.cpp in Sources */,
+				9F9BC2AB12B3AF2500674C03 /* vehicles.cpp in Sources */,
+				9F9BC2AD12B3AF2500674C03 /* video.cpp in Sources */,
+				9F9BC21612B3AE2500674C03 /* SDLMain.m in Sources */,
+				9F9BC2B212B3B11C00674C03 /* main.cpp in Sources */,
+				9F9BC31412B3E46600674C03 /* dedicatedserver.cpp in Sources */,
+				9F9BC44012B42D3900674C03 /* servergame.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9FC0DB580EE2B06700F23D2C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -458,12 +611,78 @@
 				9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */,
 				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
 				9F6B402B116640F5007A6C8A /* video.cpp in Sources */,
+				9F9BC32D12B3E5E600674C03 /* dedicatedserver.cpp in Sources */,
+				9F9BC43F12B42D3900674C03 /* servergame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		9F9BC21112B3ABB200674C03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(NATIVE_ARCH)";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEDICATED_SERVER_APPLICATION=1",
+					"MAC=1",
+				);
+				GCC_VERSION = 4.0;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_mixer.framework/Headers,
+					/Library/Frameworks/SDL_net.framework/Headers,
+				);
+				INSTALL_PATH = /usr/local/bin;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "maxr-console";
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Debug;
+		};
+		9F9BC21212B3ABB200674C03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEDICATED_SERVER_APPLICATION=1",
+					"MAC=1",
+				);
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "maxr-console";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		9FC0DB4D0EE2B02A00F23D2C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -551,6 +770,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9F9BC21312B3ABD000674C03 /* Build configuration list for PBXNativeTarget "maxr-console" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F9BC21112B3ABB200674C03 /* Debug */,
+				9F9BC21212B3ABB200674C03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9FC0DB4F0EE2B02A00F23D2C /* Build configuration list for PBXProject "maxr" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
