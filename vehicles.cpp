@@ -758,7 +758,7 @@ string cVehicle::getNamePrefix ()
 	// the error has to be occured somewhere before and I added this warning.
 	if ( nr < 0 )
 	{
-		Log.write( "Negative 'nr' in cVehicle::getNamePrefix()", cLog::eLOG_TYPE_WARNING );
+		Log.write( "cVehicle: Negative 'nr' in cVehicle::getNamePrefix()", cLog::eLOG_TYPE_WARNING );
 	}
 	while ( nr-- > 0 )
 	{
