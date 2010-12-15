@@ -752,7 +752,15 @@ string cVehicle::getNamePrefix ()
 		rome += "IV";
 	}
 
-	while ( nr-- )
+	// alzi:
+	// We had a bug, when 'nr' was negative and the following loop never terminated.
+	// I modified the loop to terminate on a negative 'nr', but since this should never be the case,
+	// the error has to be occured somewhere before and I added this warning.
+	if ( nr < 0 )
+	{
+		Log.write( "Negative 'nr' in cVehicle::getNamePrefix()", cLog::eLOG_TYPE_WARNING );
+	}
+	while ( nr-- > 0 )
 	{
 		rome += "I";
 	}
