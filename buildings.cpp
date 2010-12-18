@@ -2082,7 +2082,7 @@ void cBuilding::menuReleased()
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
 	// Angriff:
-	if ( typ->data.canAttack && data.shotsCur )
+	if ( typ->data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2095,7 +2095,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Bauen:
-	if ( !typ->data.canBuild.empty() )
+	if ( !typ->data.canBuild.empty() && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2109,7 +2109,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Verteilen:
-	if ( typ->data.canMineMaxRes > 0 && IsWorking )
+	if ( typ->data.canMineMaxRes > 0 && IsWorking && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2124,7 +2124,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Transfer:
-	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
+	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2142,7 +2142,8 @@ void cBuilding::menuReleased()
 			(
 				(BuildList && BuildList->Size()) ||
 				typ->data.canBuild.empty()
-			))
+			) &&
+			owner == Client->ActivePlayer)
 	{
 		if ( exeNr == nr )
 		{
@@ -2155,7 +2156,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Stop:
-	if ( IsWorking )
+	if ( IsWorking && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2168,7 +2169,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Sentry status:
-	if ( bSentryStatus || data.canAttack )
+	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2181,7 +2182,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Aktivieren/Laden:
-	if ( typ->data.storageUnitsMax > 0 )
+	if ( typ->data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
 	{
 		// Aktivieren:
 		if ( exeNr == nr )
@@ -2206,7 +2207,7 @@ void cBuilding::menuReleased()
 	}
 
 	// research
-	if (typ->data.canResearch && IsWorking)
+	if (typ->data.canResearch && IsWorking && owner == Client->ActivePlayer)
 	{
 		if (exeNr == nr)
 		{
@@ -2220,7 +2221,7 @@ void cBuilding::menuReleased()
 	}
 
 	// upgradescreen
-	if (data.convertsGold)
+	if (data.convertsGold && owner == Client->ActivePlayer)
 	{
 		// update this
 		if (exeNr == nr)
@@ -2235,7 +2236,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Updates:
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
+	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 && owner == Client->ActivePlayer )
 	{
 		// Update all buildings of this type in this subbase
 		if (exeNr == nr)
@@ -2259,7 +2260,7 @@ void cBuilding::menuReleased()
 	}
 
 	// Self destruct
-	if ( data.canSelfDestroy )
+	if ( data.canSelfDestroy && owner == Client->ActivePlayer )
 	{
 		if (exeNr == nr)
 		{
@@ -2323,7 +2324,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
-	if ( typ->data.canAttack && data.shotsCur )
+	if ( typ->data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
 
@@ -2334,7 +2335,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Bauen:
-	if ( !typ->data.canBuild.empty() )
+	if ( !typ->data.canBuild.empty() && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -2345,7 +2346,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Verteilen:
-	if ( typ->data.canMineMaxRes > 0 && IsWorking )
+	if ( typ->data.canMineMaxRes > 0 && IsWorking && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -2356,7 +2357,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Transfer:
-	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
+	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
 
@@ -2372,7 +2373,8 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 			(
 				(BuildList && BuildList->Size()) ||
 				typ->data.canBuild.empty()
-			))
+			) &&
+			owner == Client->ActivePlayer)
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -2383,7 +2385,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Stop:
-	if ( IsWorking )
+	if ( IsWorking && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -2394,7 +2396,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Sentry status:
-	if ( bSentryStatus || data.canAttack )
+	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
 
@@ -2405,7 +2407,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aktivieren/Laden:
-	if ( typ->data.storageUnitsMax > 0 )
+	if ( typ->data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
 	{
 		// Aktivieren:
 		isMarked = markerPossible && selMenuNr == nr;
@@ -2425,7 +2427,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// research
-	if (typ->data.canResearch && IsWorking)
+	if (typ->data.canResearch && IsWorking && owner == Client->ActivePlayer)
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 		drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
@@ -2434,7 +2436,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// upgradescreen
-	if (data.convertsGold)
+	if (data.convertsGold && owner == Client->ActivePlayer)
 	{
 		// update this
 		isMarked = markerPossible && selMenuNr == nr;
@@ -2444,7 +2446,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Updates:
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
+	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 && owner == Client->ActivePlayer )
 	{
 		// Update all buildings of this type in this subbase
 		isMarked = markerPossible && selMenuNr == nr;
@@ -2460,7 +2462,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Self destruct
-	if ( data.canSelfDestroy )
+	if ( data.canSelfDestroy && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);

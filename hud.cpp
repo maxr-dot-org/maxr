@@ -1826,7 +1826,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					// open unit menu
 					if ( changeAllowed && selectedVehicle && ( overPlane == selectedVehicle || overVehicle == selectedVehicle ) )
 					{
-						if ( !selectedVehicle->moving && selectedVehicle->owner == player )
+						if ( !selectedVehicle->moving )
 						{
 							unitMenuActive = !unitMenuActive;
 							if ( unitMenuActive ) selectedVehicle->selMenuNr = -1;
@@ -1835,12 +1835,9 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					}
 					else if ( changeAllowed && selectedBuilding&& ( overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding ) )
 					{
-						if ( selectedBuilding->owner == player )
-						{
-							unitMenuActive = !unitMenuActive;
-							if ( unitMenuActive ) selectedBuilding->selMenuNr = -1;
-							PlayFX ( SoundData.SNDHudButton );
-						}
+						unitMenuActive = !unitMenuActive;
+						if ( unitMenuActive ) selectedBuilding->selMenuNr = -1;
+						PlayFX ( SoundData.SNDHudButton );
 					}
 					// select unit when using modern style
 					else if ( MouseStyle == Modern ) selectUnit ( overUnitField, true );

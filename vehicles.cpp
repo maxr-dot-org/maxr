@@ -1234,7 +1234,7 @@ void cVehicle::menuReleased ()
 	if ( moving || bIsBeeingAttacked ) return;
 
 	// attack:
-	if ( data.canAttack && data.shotsCur )
+	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1247,7 +1247,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// build:
-	if ( !data.canBuild.empty() && !IsBuilding )
+	if ( !data.canBuild.empty() && !IsBuilding && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1263,7 +1263,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
+	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1276,7 +1276,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// auto
-	if ( data.canSurvey )
+	if ( data.canSurvey && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1299,7 +1299,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// stop:
-	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
+	if ( (ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds )) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1324,7 +1324,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// clear:
-	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
+	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1337,7 +1337,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// sentry:
-	if ( bSentryStatus || data.canAttack )
+	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1350,7 +1350,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// activate/load:
-	if ( data.storageUnitsMax > 0 )
+	if ( data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
 	{
 		// activatew:
 		if ( exeNr == nr )
@@ -1376,7 +1376,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// rearm:
-	if ( data.canRearm && data.storageResCur >= 2 )
+	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1389,7 +1389,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// repair:
-	if ( data.canRepair && data.storageResCur >= 2 )
+	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1402,7 +1402,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// lay mines:
-	if ( data.canPlaceMines && data.storageResCur > 0 )
+	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1417,7 +1417,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// clear mines:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
+	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1432,7 +1432,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// disable:
-	if ( data.canDisable && data.shotsCur )
+	if ( data.canDisable && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1445,7 +1445,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// steal:
-	if ( data.canCapture && data.shotsCur )
+	if ( data.canCapture && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1498,7 +1498,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
-	if ( data.canAttack && data.shotsCur )
+	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
 
@@ -1509,7 +1509,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Bauen:
-	if ( !data.canBuild.empty() && !IsBuilding )
+	if ( !data.canBuild.empty() && !IsBuilding && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -1520,7 +1520,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
+	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
 
@@ -1531,7 +1531,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Auto
-	if ( data.canSurvey )
+	if ( data.canSurvey && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || autoMJob != NULL;
 
@@ -1542,7 +1542,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Stop:
-	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
+	if ( (ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds )) && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -1553,7 +1553,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Entfernen:
-	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
+	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing && owner == Client->ActivePlayer )
 	{
 		isMarked = markerPossible && selMenuNr == nr;
 
@@ -1564,7 +1564,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Sentry:
-	if ( bSentryStatus || data.canAttack )
+	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
 
@@ -1575,7 +1575,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aktivieren/Laden:
-	if ( data.storageUnitsMax > 0 )
+	if ( data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
 	{
 		// Aktivieren:
 		isMarked = markerPossible && selMenuNr == nr;
@@ -1593,7 +1593,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Aufaden:
-	if ( data.canRearm && data.storageResCur >= 2 )
+	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == muniActive;
 
@@ -1604,7 +1604,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Reparatur:
-	if ( data.canRepair && data.storageResCur >= 2 )
+	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == repairActive;
 
@@ -1615,7 +1615,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Minen legen:
-	if ( data.canPlaceMines && data.storageResCur > 0 )
+	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || LayMines;
 
@@ -1626,7 +1626,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Minen sammeln:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
+	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || ClearMines;
 
@@ -1637,7 +1637,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Sabotage:
-	if ( data.canDisable && data.shotsCur )
+	if ( data.canDisable && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == disableMode;
 
@@ -1648,7 +1648,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Stehlen:
-	if ( data.canCapture && data.shotsCur )
+	if ( data.canCapture && data.shotsCur && owner == Client->ActivePlayer )
 	{
 		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == stealMode;
 
