@@ -1607,6 +1607,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						// stop the vehicle and make it disabled
 						destBuilding->Disabled = strength;
 						destBuilding->data.shotsCur = 0;
+						destBuilding->wasWorking = destBuilding->IsWorking;
 						destBuilding->ServerStopWork( true );
 						sendDoStopWork ( destBuilding );
 						sendUnitData ( destBuilding, destBuilding->owner->Nr );
@@ -2519,6 +2520,11 @@ void cServer::makeTurnEnd ()
 				{
 					Building = Building->next;
 					continue;
+				}
+				if ( Building->wasWorking )
+				{
+					Building->ServerStartWork();
+					Building->wasWorking = false;
 				}
 			}
 			if ( Building->data.canAttack && Building->refreshData() )
