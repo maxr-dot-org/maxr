@@ -1156,7 +1156,7 @@ int GenerateMaxXml()
 	TiXmlElement *startnode = new TiXmlElement("Start");
 
 	element = new TiXmlElement ( "Resolution" );
-	
+
 	element->SetAttribute ( "Text", (iToStr(Video.getMinW())+"."+iToStr(Video.getMinH())).c_str());
 	startnode->LinkEndChild(element);
 
@@ -2160,7 +2160,7 @@ void translateClanData(int num)
 					{
 					 	clan->setName(pXmlNode->ToElement()->Attribute( "localized" ));
 					}
-					else 
+					else
 					{
 						clan->setName(pXmlNode->ToElement()->Attribute( "ENG" ));
 					}
@@ -2173,7 +2173,7 @@ void translateClanData(int num)
 	}
 	else
 	{
-		Log.write("Can't find clan id "+iToStr(num)+" for translation", LOG_TYPE_WARNING);	
+		Log.write("Can't find clan id "+iToStr(num)+" for translation", LOG_TYPE_WARNING);
 	}
 }
 
@@ -2424,6 +2424,7 @@ static int LoadBuildings()
 		}
 
 		// load sounds
+		LoadUnitSoundfile(b.Wait,   sBuildingPath.c_str(), "wait.ogg");
 		LoadUnitSoundfile(b.Start,   sBuildingPath.c_str(), "start.ogg");
 		LoadUnitSoundfile(b.Running, sBuildingPath.c_str(), "running.ogg");
 		LoadUnitSoundfile(b.Stop,    sBuildingPath.c_str(), "stop.ogg");

@@ -801,7 +801,7 @@ int cBuilding::GetMenuPointAnz ()
 	if ( typ->data.canAttack && data.shotsCur )
 		nr++;
 
-	if (typ->data.canWork && 
+	if (typ->data.canWork &&
 		(   IsWorking                                        // "stop"
 		 || typ->data.canBuild.empty()                       // "start" for non-factory buildings
 		 || (!IsWorking && BuildList && BuildList->Size()))) // "start" for factory building
@@ -1220,7 +1220,7 @@ void cBuilding::ServerStartWork ()
 		owner->ResearchCount++;
 		owner->researchCentersWorkingOnArea[researchArea]++;
 	}
-	
+
 	if( data.canScore )
 	{
 		sendNumEcos(owner);
@@ -1313,7 +1313,7 @@ void cBuilding::ServerStopWork ( bool override )
 		owner->ResearchCount--;
 		owner->researchCentersWorkingOnArea[researchArea]--;
 	}
-	
+
 	if( data.canScore )
 	{
 		sendNumEcos(owner);
@@ -1958,7 +1958,7 @@ void cBuilding::RotateTo ( int Dir )
 void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal )
 {
 	//first calc costs for a new Vehical
-	
+
 	//1x
 	iTurboBuildCosts[0] = iVehicleCosts;
 
@@ -2319,7 +2319,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
-	
+
 	bool isMarked;
 	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
@@ -2678,7 +2678,8 @@ int cBuilding::playStream ()
 {
 	if ( IsWorking )
 		return PlayFXLoop ( typ->Running );
-
+    else
+		return PlayFXLoop ( typ->Wait );
 	return 0;
 }
 

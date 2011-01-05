@@ -69,6 +69,7 @@ struct sBuilding{
   struct Mix_Chunk *Running;
   struct Mix_Chunk *Stop;
   struct Mix_Chunk *Attack;
+  struct Mix_Chunk *Wait;
 
   void scaleSurfaces( float faktor );
 };
@@ -172,7 +173,7 @@ public:
 	void draw(SDL_Rect *dest);
 	void Select();
 	void Deselct();
-	
+
 	string getName() { return name; }
 	bool isNameOriginal() { return isOriginalName; }
 
