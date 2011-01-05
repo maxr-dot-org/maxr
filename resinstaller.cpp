@@ -3112,7 +3112,7 @@ int installBuildingSounds()
 	
 	//radar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "RADAR13" + waveExtension, path + "running.wav");
+	copyWAV( sMAXPath + "RADAR13" + waveExtension, path + "wait.wav");
 	
 	//research
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "research" + PATH_DELIMITER;
