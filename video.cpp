@@ -114,12 +114,15 @@ int cVideo::setColDepth(unsigned iDepth)
   else
   {
     const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
-    Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
+	if ( vInfo != NULL )
+	{
+		Uint8 uBpp = vInfo->vfmt->BitsPerPixel;
 
-    if(iDepth > (Uint32)uBpp)
-    {
-      Log.write("cVideo: Desired bpp is higher than the display ("+iToStr(uBpp)+"bpp) has!", cLog::eLOG_TYPE_WARNING);
-    }
+		if(iDepth > (Uint32)uBpp)
+		{
+		  Log.write("cVideo: Desired bpp is higher than the display ("+iToStr(uBpp)+"bpp) has!", cLog::eLOG_TYPE_WARNING);
+		}
+	}
     videoData.iColDepth = iDepth;
   }
   return 0;

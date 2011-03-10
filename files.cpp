@@ -25,11 +25,14 @@
 
 #ifdef _WIN32
 	#include <io.h>
+	#include <direct.h>
 #else
 	#include <dirent.h>
 #endif
 
 #ifdef WIN32
+	#include <sys/types.h>
+	#include <sys/stat.h>
 #else
 	#include <sys/stat.h>
 	#include <unistd.h>
@@ -50,6 +53,24 @@ bool FileExists ( const char* path )
 	}
 	SDL_RWclose ( file );
 	return true;
+}
+
+//--------------------------------------------------------------
+bool DirExists(std::string path)
+{
+#ifdef WIN32
+	if ( _access( SettingsData.sHome.c_str(), 0 ) == 0 )
+	{
+		struct stat status;
+		stat( SettingsData.sHome.c_str(), &status );
+
+		if ( status.st_mode & S_IFDIR ) return true;
+		else return false;	// The path is not a directory
+	}
+	else return false;
+#else
+	return FileExists(path.c_str());	// on linux everything is a file
+#endif
 }
 
 //--------------------------------------------------------------
@@ -89,7 +110,15 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 std::string getUserMapsDir()
 {
 #ifdef WIN32
-	return "";
+		if (SettingsData.sHome.empty ()) return "";
+		std::string mapFolder = SettingsData.sHome + "maps";
+		if (!DirExists(mapFolder))
+		{
+			if (_mkdir (mapFolder.c_str()) == 0)
+				return mapFolder + PATH_DELIMITER;
+			return "";
+		}
+		return mapFolder + PATH_DELIMITER;
 #else
 	#ifdef __amigaos4__
 		return "";
@@ -112,9 +141,6 @@ std::string getUserMapsDir()
 //--------------------------------------------------------------
 std::string getUserScreenshotsDir()
 {
-#ifdef WIN32
-	return "";
-#endif
 #ifdef __amigaos4__
 	return "";
 #endif

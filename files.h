@@ -40,6 +40,13 @@
 bool FileExists(const char* path);
 
 /**
+* Checks whether a directory exists.
+* @param path Path to check for
+* @return true if the directory exists. Else false.
+*/
+bool DirExists(std::string path);
+
+/**
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search

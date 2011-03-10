@@ -47,6 +47,11 @@
 #include "settings.h"
 #include "video.h"
 
+#ifdef WIN32
+#	include <shlobj.h>
+#	include <direct.h>
+#endif
+
 TiXmlDocument LanguageFile;
 
 /**
@@ -1343,7 +1348,8 @@ int GenerateMaxXml()
 	pathsnode->LinkEndChild(element);
 
 	#ifdef WIN32
-		sTmp = "save";
+		sTmp = SettingsData.sHome;
+		sTmp += "save";
 	#elif __amigaos4__
 		sTmp = "save";
 	#else
@@ -3139,6 +3145,55 @@ void setPaths()
 		//this is where windowsuser should set their %HOME%
 		//this is also a good place to find out where the executable is located
 		SettingsData.sConfig = MAX_XML; //assume config in current working directory
+
+		TCHAR szPath[MAX_PATH];
+		SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath );
+
+		wstring home = szPath;
+
+		SettingsData.sHome = string(home.begin(), home.end());
+
+		bool newDirCreated = false;
+
+		if (!SettingsData.sHome.empty())
+		{
+			SettingsData.sHome += PATH_DELIMITER;
+			SettingsData.sHome += "maxr";
+			SettingsData.sHome += PATH_DELIMITER;
+			SettingsData.sConfig = SettingsData.sHome;
+			SettingsData.sConfig += MAX_XML; //set config to <PersonalFolder>/maxr/max.xml
+
+			if ( !DirExists(SettingsData.sHome) )
+			{
+				if(mkdir(SettingsData.sHome.c_str()) == 0)
+				{
+					cout << "\n(II): Created new config directory " << SettingsData.sHome;
+					newDirCreated = true;
+				}
+				else
+				{
+					cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
+					SettingsData.sHome = "";
+				}
+			}
+			else cout << "\n(II): Config is read from " << SettingsData.sHome;
+		}
+
+		//set new place for logs
+		SettingsData.sLog = SettingsData.sHome + SettingsData.sLog;
+		SettingsData.sNetLog = SettingsData.sHome + SettingsData.sNetLog;
+		cout << "\n(II): Starting logging to: " << SettingsData.sLog;
+
+		if(newDirCreated)
+		{
+			//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
+			if( ReadMaxXml() != 0 ) Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
+			
+			if( mkdir(SettingsData.sSavesPath.c_str()) == 0 ) Log.write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
+			else Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
+		}
+
+		int stop = 0;
 	#elif __amigaos4__
 		//this is where amigausers should set their %HOME%
 		//this is also a good place to find out where the executable is located
