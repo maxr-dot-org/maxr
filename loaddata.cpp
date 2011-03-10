@@ -3192,8 +3192,6 @@ void setPaths()
 			if( mkdir(SettingsData.sSavesPath.c_str()) == 0 ) Log.write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
 			else Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
 		}
-
-		int stop = 0;
 	#elif __amigaos4__
 		//this is where amigausers should set their %HOME%
 		//this is also a good place to find out where the executable is located
