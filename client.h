@@ -319,6 +319,8 @@ public:
 	void checkVehiclePositions(cNetMessage* message);
 	void getVictoryConditions(int *turnLimit, int *scoreLimit) const;
 	int getTurn() const;
+
+	void deletePlayer(cPlayer *player);
 	
 	
 } EX *Client;

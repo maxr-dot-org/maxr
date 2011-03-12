@@ -109,12 +109,11 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	return interval;
 }
 
-cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList) : gameGUI ( NULL, Map )
+cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList) :
+	Map(Map),
+	PlayerList(PlayerList),
+	gameGUI ( NULL, Map, PlayerList )
 {
-	this->Map = Map;
-
-	this->PlayerList = PlayerList;
-
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
 	neutralBuildings = NULL;
@@ -819,6 +818,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				bWantToEnd = false;
 				gameGUI.updateTurnTime ( -1 );
 				Log.write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
+				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				{
+					(*PlayerList)[i]->bFinishedTurn = false;
+				}
 			}
 
 			if ( bWaitForNextPlayer )
@@ -853,20 +856,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				break;
 			}
 
-			//HACK SHOWFINISHEDPLAYERS player finished his turn
-			/*if ( Player )
-			{
-				Player->bFinishedTurn=true;
-				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-				{
-					if ( Player == (*PlayerList)[i] )
-					{
-						Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
-						break;
-					}
-				}
-			}*/
-
+			if ( Player ) Player->bFinishedTurn=true;
 
 			if ( iTimeDelay != -1 )
 			{
@@ -1638,15 +1628,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			string msgString = lngPack.i18n ( "Text~Multiplayer~Player_Left", Player->name);
 			addMessage ( msgString );
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
-			/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-			{
-				if ( Player == (*PlayerList)[i] )
-				{
-					Hud.ExtraPlayers(Player->name + " (-)", GetColorNr(Player->color), i, false, false);
-					delete (*PlayerList)[i];
-					PlayerList->Delete ( i );
-				}
-			}*/
+
+			deletePlayer( Player );
 		}
 		break;
 	case GAME_EV_TURN:
@@ -2536,4 +2519,24 @@ void cClient::unfreeze()
 {
 	bWaitForOthers = false;
 	waitReconnect = false;
+}
+
+
+//-------------------------------------------------------------------------------------
+void cClient::deletePlayer(cPlayer *player)
+{
+	player->isRemovedFromGame = true;
+
+	// TODO: We do not really delete the player because he may is still referenced somewhere
+	// (e.g. in the playersInfo in the gameGUI)
+	// or we may need him for some statistics.
+	// uncomment this if we can make sure all references have been removed or at least been set to NULL.
+	/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	{
+		if ( player == (*PlayerList)[i] )
+		{
+			delete (*PlayerList)[i];
+			PlayerList->Delete ( i );
+		}
+	}*/
 }

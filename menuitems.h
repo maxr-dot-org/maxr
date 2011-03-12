@@ -566,7 +566,8 @@ public:
 		CHECKBOX_HUD_LOCK,
 
 		CHECKBOX_HUD_TNT,
-		CHECKBOX_HUD_2X
+		CHECKBOX_HUD_2X,
+		CHECKBOX_HUD_PLAYERS,
 	};
 
 	/** deffines whether the text will be displayed at the left or the right of the item.
@@ -1320,6 +1321,21 @@ public:
 	void scrollUp();
 
 	void released( void *parent );
+};
+
+/**
+ * A little box that displays additional information about the current state of a player.
+ * (his name, his color, whether he is active in the game and whether he has ended his turn)
+ * @author alzi
+ */
+class cMenuPlayerInfo : public cMenuItem
+{
+private:
+	cPlayer *player;
+public:
+	cMenuPlayerInfo( int x, int y, cPlayer *player_ );
+
+	void draw();
 };
 
 #endif // menuitemsH

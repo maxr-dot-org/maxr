@@ -158,6 +158,9 @@ class cGameGUI : public cMenu
 	/** show drawing cache debug information */
 	bool debugCache;
 
+	/** displays additional information about the players in the game */
+	bool showPlayers;
+
 	bool helpActive;
 
 	bool needMapDraw, needMiniMapDraw;
@@ -313,6 +316,7 @@ class cGameGUI : public cMenu
 
 	cMenuCheckButton *TNTButton;
 	cMenuCheckButton *twoXButton;
+	cMenuCheckButton *playersButton;
 
 	cMenuButton *helpButton;
 	cMenuButton *centerButton;
@@ -337,6 +341,8 @@ class cGameGUI : public cMenu
 	cMenuLabel *selUnitNamePrefixStr;
 	cMenuLineEdit *selUnitNameEdit;
 
+	cList<cMenuPlayerInfo*> playersInfo;
+
 	static void helpReleased( void *parent );
 	static void centerReleased( void *parent );
 	static void reportsReleased( void *parent );
@@ -346,6 +352,8 @@ class cGameGUI : public cMenu
 	static void doneReleased( void *parent );
 
 	static void twoXReleased( void *parent );
+	
+	static void playersReleased( void *parent );
 
 	static void changedMiniMap( void *parent );
 
@@ -368,7 +376,7 @@ class cGameGUI : public cMenu
 
 	void recalcPosition ( bool resetItemPositions );
 public:
-	cGameGUI( cPlayer *player_, cMap *map_ );
+	cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList );
 	~cGameGUI();
 
 	int show();

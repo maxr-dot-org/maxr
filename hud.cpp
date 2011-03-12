@@ -49,7 +49,7 @@ sMouseBox::sMouseBox() :
 	endY(-1)
 {}
 
-cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
+cGameGUI::cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList ) :
 	cMenu ( generateSurface() ),
 	player ( player_ ),
 	map ( map_ )
@@ -65,6 +65,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	activeItem = NULL;
 	overUnitField = NULL;
 	helpActive = false;
+	showPlayers = false;
 	blinkColor = 0xFFFFFF;
 	FLC = NULL;
 	playFLC = true;
@@ -124,6 +125,9 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	twoXButton = new cMenuCheckButton ( 136,387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
 	twoXButton->setClickedFunction ( &twoXReleased );
 	menuItems.Add ( twoXButton );
+	playersButton = new cMenuCheckButton ( 136,439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
+	playersButton->setClickedFunction ( &playersReleased );
+	menuItems.Add ( playersButton );
 
 	helpButton = new cMenuButton ( 20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP );
 	helpButton->setReleasedFunction ( &helpReleased );
@@ -218,6 +222,18 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_ ) :
 	selUnitNameEdit->setReturnPressedFunc ( unitNameReturnPressed );
 	menuItems.Add ( selUnitNameEdit );
 
+	for ( unsigned int i = 0; i < playerList->Size(); i++ )
+	{
+		int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
+		int yPos = Video.getResolutionY() >= 768 ? (482 + GraphicsData.gfx_hud_extra_players->h * i) : (480 - 82 - GraphicsData.gfx_hud_extra_players->h * i);
+
+		cMenuPlayerInfo *playerInfo = new cMenuPlayerInfo( xPos, yPos, (*playerList)[i] );
+		playerInfo->setDisabled(true);
+		playersInfo.Add( playerInfo );
+
+		menuItems.Add ( playerInfo );
+	}
+
 	updateTurn( 1 );
 }
 
@@ -266,6 +282,7 @@ cGameGUI::~cGameGUI()
 
 	delete TNTButton;
 	delete twoXButton;
+	delete playersButton;
 
 	delete helpButton;
 	delete centerButton;
@@ -2669,6 +2686,18 @@ void cGameGUI::twoXReleased( void *parent )
 	gui->callMiniMapDraw();
 }
 
+
+void cGameGUI::playersReleased( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+	gui->showPlayers = gui->playersButton->isChecked();
+
+	for ( unsigned int i = 0; i < gui->playersInfo.Size(); i++ )
+	{
+		gui->playersInfo[i]->setDisabled( !gui->showPlayers );
+	}
+}
+
 void cGameGUI::changedMiniMap( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
@@ -3659,14 +3688,14 @@ void cGameGUI::drawDebugOutput()
 			//HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
 
-			if( (*Client->PlayerList)[i]->bFinishedTurn && (*Client->PlayerList)[i] != player)
+			if( (*Client->PlayerList)[i]->bFinishedTurn/* && (*Client->PlayerList)[i] != player*/)
 			{
 				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
 			}
-			else if(  (*Client->PlayerList)[i] == player && Client->bWantToEnd )
+			/*else if(  (*Client->PlayerList)[i] == player && Client->bWantToEnd )
 			{
 				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
-			}
+			}*/
 			else
 			{
 				rDot.x = 0; //for red dot
@@ -4267,56 +4296,6 @@ void cGameGUI::drawExitPoint ( int x, int y )
 	CHECK_SCALING( GraphicsData.gfx_exitpoints, GraphicsData.gfx_exitpoints_org, factor );
 	SDL_BlitSurface ( GraphicsData.gfx_exitpoints, &scr, buffer, &dest );
 }
-
-
-/*void cHud::ExtraPlayers ( string sPlayer, int iColor, int iPos, bool bFinished, bool bActive)
-{
-	if(bShowPlayers)
-	{
-		//BEGIN PREP WORK
-		//draw players beside minimap
-		SDL_Rect rDest;
-		SDL_Rect rSrc = { 0, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
-
-		if(Video.getResolutionY() >= 768) //draw players under minimap if screenres is big enough
-		{
-			rSrc.x = 18; //skip eyecandy spit before playerbar
-
-			rDest.x = 3;
-			rDest.y = 482 + GraphicsData.gfx_hud_extra_players->h * iPos; //draw players downwards
-		}
-		else //draw players beside minimap if screenres is to small
-		{
-			rDest.x = 161;
-			rDest.y = 480 - 82 - GraphicsData.gfx_hud_extra_players->h * iPos; //draw players upwards
-		}
-
-
-		SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
-		SDL_Rect rDotDest = { rDest.x + 23 - rSrc.x, rDest.y + 6, rDot.w, rDot.h };
-
-		SDL_Rect rColorSrc = { 0, 0, 10, 12 };
-		SDL_Rect rColorDest = { rDest.x + 40 - rSrc.x, rDest.y + 6, rColorSrc.w, rColorSrc.h };
-		//END PREP WORK
-		//BEGIN DRAW PLAYERS
-		SDL_BlitSurface( GraphicsData.gfx_hud_extra_players, &rSrc, GraphicsData.gfx_hud, &rDest ); //blit box
-		if(!bFinished)
-		{
-			rDot.x = 0; //red dot
-		}
-		if(bActive)
-		{
-			SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, GraphicsData.gfx_hud, &rDotDest ); //blit dot
-			SDL_BlitSurface(OtherData.colors[iColor], &rColorSrc, GraphicsData.gfx_hud, &rColorDest ); //blit color
-		}
-		else
-		{
-			font->showText(rColorDest.x+3, rColorDest.y+2, "X" , FONT_LATIN_SMALL_RED, GraphicsData.gfx_hud); //blit X for defeated/dropped players
-		}
-		font->showText(rDest.x+= (59 - rSrc.x), rDest.y+6, sPlayer , FONT_LATIN_NORMAL, GraphicsData.gfx_hud); //blit name
-		//END DRAW PLAYERS
-	}
-}*/
 
 void cGameGUI::toggleMouseInputMode( eMouseInputMode mode )
 {

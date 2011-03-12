@@ -62,6 +62,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
+	isRemovedFromGame = false;
 	bFinishedTurn = false;
 
 	savedHud = new sHudStateContainer;

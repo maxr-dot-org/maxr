@@ -2304,6 +2304,7 @@ void cServer::handleEnd ( int iPlayerNum )
 {
 	if ( gameType == GAME_TYPE_SINGLE )
 	{
+		sendTurnFinished ( iPlayerNum, -1 );
 		if ( checkEndActions( iPlayerNum ) )
 		{
 			iWantPlayerEndNum = iPlayerNum;
@@ -2384,6 +2385,19 @@ void cServer::handleEnd ( int iPlayerNum )
 				if ( !isAdded ) PlayerEndList.Add ( (*PlayerList)[i] );
 			}
 		}
+		
+		if ( iWantPlayerEndNum == -1 )
+		{
+			if ( firstTimeEnded )
+			{
+				sendTurnFinished ( iPlayerNum, iTurnDeadline );
+				iDeadlineStartTime = SDL_GetTicks();
+			}
+			else
+			{
+				sendTurnFinished ( iPlayerNum, -1 );
+			}
+		}
 
 		if ( PlayerEndList.Size() >= PlayerList->Size() )
 		{
@@ -2393,6 +2407,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				iWantPlayerEndNum = iPlayerNum;
 				return;
 			}
+
 			while ( PlayerEndList.Size() )
 			{
 				PlayerEndList.Delete ( 0 );
@@ -2410,18 +2425,6 @@ void cServer::handleEnd ( int iPlayerNum )
 				sendTurnReport ( (*PlayerList)[i] );
 			}
 			//sendUnfreeze();
-		}
-		else
-		{
-			if ( firstTimeEnded )
-			{
-				sendTurnFinished ( iPlayerNum, iTurnDeadline );
-				iDeadlineStartTime = SDL_GetTicks();
-			}
-			else
-			{
-				sendTurnFinished ( iPlayerNum, -1 );
-			}
 		}
 	}
 }

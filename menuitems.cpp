@@ -978,11 +978,17 @@ void cMenuCheckButton::renewButtonSurface()
 		src.x = checked ? 362 : 334;
 		src.y = 53;
 		break;
+	case CHECKBOX_HUD_PLAYERS:
+		position.w = src.w = 27;
+		position.h = src.h = 28;
+		src.x = checked ? (317+27) : 317;
+		src.y = 479;
+		break;
 	}
 	if ( src.w > 0 )
 	{
 		surface = SDL_CreateRGBSurface ( Video.getSurfaceType(), src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
-		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_2X ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS ) SDL_BlitSurface ( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
 		else SDL_BlitSurface ( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
 	}
 
@@ -4137,4 +4143,45 @@ void cMenuReportsScreen::released( void *parent )
 
 	selected = clickedIndex;
 	parentMenu->draw();
+}
+
+cMenuPlayerInfo::cMenuPlayerInfo ( int x, int y, cPlayer *player_ ) :
+	cMenuItem(x, y),
+	player(player_)
+{}
+
+
+void cMenuPlayerInfo::draw()
+{
+	if ( disabled ) return;
+
+	//skip eyecandy spit before playerbar if screen is big enough to draw the box under the minimap
+	int sourceX = Video.getResolutionY() >= 768 ? 18 : 0;
+
+	if ( GraphicsData.gfx_hud_extra_players )
+	{
+		SDL_Rect srcRect = { sourceX, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
+
+		SDL_BlitSurface ( GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position );
+	}
+
+
+	if ( !player->isDefeated && !player->isRemovedFromGame ) {
+		if ( GraphicsData.gfx_player_ready )
+		{
+			SDL_Rect srcDotRect = { player->bFinishedTurn ? 10 : 0, 0, 10, 10 };
+			SDL_Rect destDotRect = { position.x + 23 - sourceX, position.y + 6, srcDotRect.w, srcDotRect.h };
+		
+			SDL_BlitSurface( GraphicsData.gfx_player_ready, &srcDotRect, buffer, &destDotRect );
+		}
+
+		SDL_Rect srcColorRect = { 0, 0, 10, 12 };
+		SDL_Rect destColorRect = { position.x + 40 - sourceX, position.y + 6, srcColorRect.w, srcColorRect.h };
+		SDL_BlitSurface(player->color, &srcColorRect, buffer, &destColorRect );
+	}
+	else {
+		font->showText(position.x + 43 - sourceX, position.y + 8, "X", FONT_LATIN_SMALL_RED);
+	}
+
+	font->showText ( position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->name + " (-)" : player->name );
 }

@@ -111,6 +111,7 @@ public:
 	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
 	bool isDefeated;			// true if the player has been defeated
+	bool isRemovedFromGame;		// true if the player has been removed from the game.
 	int numEcos;                // number of ecospheres. call CountEcoSpheres on server to update.
 	
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
