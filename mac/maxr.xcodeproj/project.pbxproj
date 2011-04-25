@@ -482,7 +482,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 9FC0DB4F0EE2B02A00F23D2C /* Build configuration list for PBXProject "maxr" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 9FC0DB4A0EE2B02A00F23D2C;
 			productRefGroup = 9FC0DB5C0EE2B06700F23D2C /* Products */;
 			projectDirPath = "";
@@ -643,6 +650,7 @@
 					/Library/Frameworks/SDL_net.framework/Headers,
 				);
 				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -652,7 +660,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "maxr-console";
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -719,6 +727,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -728,7 +737,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MAXReloaded;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.6.sdk;
 			};
 			name = Debug;
 		};
@@ -762,7 +771,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = MAXReloaded;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.6.sdk;
 				ZERO_LINK = NO;
 			};
 			name = Release;
