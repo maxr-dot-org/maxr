@@ -67,8 +67,6 @@
 		9F9BC2AD12B3AF2500674C03 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B4029116640F5007A6C8A /* video.cpp */; };
 		9F9BC2B212B3B11C00674C03 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB9C0EE2B17400F23D2C /* main.cpp */; };
 		9F9BC31412B3E46600674C03 /* dedicatedserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */; };
-		9F9BC32D12B3E5E600674C03 /* dedicatedserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC31312B3E46600674C03 /* dedicatedserver.cpp */; };
-		9F9BC43F12B42D3900674C03 /* servergame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC43E12B42D3900674C03 /* servergame.cpp */; };
 		9F9BC44012B42D3900674C03 /* servergame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F9BC43E12B42D3900674C03 /* servergame.cpp */; };
 		9FC0DBC50EE2B17400F23D2C /* attackJobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */; };
 		9FC0DBC60EE2B17400F23D2C /* automjobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9FC0DB730EE2B17400F23D2C /* automjobs.cpp */; };
@@ -618,8 +616,6 @@
 				9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */,
 				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
 				9F6B402B116640F5007A6C8A /* video.cpp in Sources */,
-				9F9BC32D12B3E5E600674C03 /* dedicatedserver.cpp in Sources */,
-				9F9BC43F12B42D3900674C03 /* servergame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
