@@ -71,6 +71,8 @@ void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, string ch)
 			case SDL_RELEASED: if (noButton.getIsClicked())  noButton.released(this); break;
 		}
 		break;
+	default:
+		break;
 	}
 }
 
@@ -874,6 +876,8 @@ void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 		if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked ( this );
 		else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released ( this );
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1103,6 +1107,8 @@ void cDialogResearch::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	case SDLK_ESCAPE:
 		if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked ( this );
 		else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released ( this );
+		break;
+	default:
 		break;
 	}
 }

@@ -241,8 +241,8 @@ void cSavegame::loadGameInfo()
 	}
 	
 	TiXmlElement *e;
-	if(e = gameInfoNode->FirstChildElement("TurnLimit")) e->Attribute("num", &Server->turnLimit);
-	if(e = gameInfoNode->FirstChildElement("ScoreLimit")) e->Attribute("num", &Server->scoreLimit);
+	if((e = gameInfoNode->FirstChildElement("TurnLimit")) != NULL) e->Attribute("num", &Server->turnLimit);
+	if((e = gameInfoNode->FirstChildElement("ScoreLimit")) != NULL) e->Attribute("num", &Server->scoreLimit);
 }
 
 //--------------------------------------------------------------------------
@@ -304,7 +304,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
 	
-	if(e = playerNode->FirstChildElement("ScoreHistory"))
+	if((e = playerNode->FirstChildElement("ScoreHistory")) != NULL)
 	{
 		TiXmlElement *s = e->FirstChildElement("Score");
 		int num=0, i=0;

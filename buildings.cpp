@@ -1481,8 +1481,8 @@ bool cBuilding::canLoad ( cVehicle *Vehicle, bool checkPosition )
 
 	if ( checkPosition && !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
-	int i;
-	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
+	size_t i;
+	for ( i = 0; i < data.storeUnitsTypes.size(); i++ )
 	{
 		if ( data.storeUnitsTypes[i].compare ( Vehicle->data.isStorageType ) == 0 ) break;
 	}

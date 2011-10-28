@@ -764,8 +764,8 @@ bool cMenuButton::preSetLocked( bool locked_ )
 
 cMenuDestroyButton::cMenuDestroyButton(int x, int y, cMenu* menu) : 
 	cMenuItem(x, y),
-	opening(false),
-	glassHeight(0)
+	glassHeight(0),
+	opening(false)
 {
 	position.w = 59;
 	position.h = 56;
@@ -2773,9 +2773,9 @@ void cMenuListBox::addLine ( string line )
 
 cMenuLineEdit::cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_ ) :
 	cMenuItem (x, y),
-	parentMenu (parentMenu_),
+	lineEditType (lineEditType_),
 	fontType (fontType_),
-	lineEditType (lineEditType_)
+	parentMenu (parentMenu_)
 {
 	position.w = w;
 	position.h = h;

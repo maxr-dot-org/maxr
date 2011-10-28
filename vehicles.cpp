@@ -2592,8 +2592,8 @@ bool cVehicle::canLoad ( cVehicle *Vehicle, bool checkPosition )
 
 	if ( checkPosition && data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
-	int i;
-	for ( i = 0; i < (int)data.storeUnitsTypes.size(); i++ )
+	size_t i;
+	for ( i = 0; i < data.storeUnitsTypes.size(); i++ )
 	{
 		if ( data.storeUnitsTypes[i].compare ( Vehicle->data.isStorageType ) == 0 ) break;
 	}

@@ -1712,13 +1712,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			cBuilding *building;
 
 			int unitID = message->popInt16();
-			if ( vehicle = getVehicleFromID( unitID ) )
+			if ( (vehicle = getVehicleFromID( unitID )) != NULL)
 			{
 				vehicle->changeName ( message->popString() );
 				for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
 				sendUnitData ( vehicle, vehicle->owner->Nr );
 			}
-			else if ( building = getBuildingFromID( unitID ) )
+			else if ( (building = getBuildingFromID( unitID )) != NULL)
 			{
 				building->changeName ( message->popString() );
 				for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ ) sendUnitData ( building, i );

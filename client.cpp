@@ -93,6 +93,8 @@ sFX::sFX( eFXTyps typ, int x, int y )
 		trackInfo->alpha = 0;
 		trackInfo->dir = 0;
 		break;
+	default:
+		break;
 	}
 }
 
@@ -109,10 +111,10 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	return interval;
 }
 
-cClient::cClient(cMap* const Map, cList<cPlayer*>* const PlayerList) :
+cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map(Map),
-	PlayerList(PlayerList),
-	gameGUI ( NULL, Map, PlayerList )
+	gameGUI ( NULL, Map, playerList ),
+	PlayerList(playerList)
 {
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
@@ -937,7 +939,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
 
-				if ( Vehicle->Disabled > 0 != bWasDisabled && Building->owner == ActivePlayer  )
+				if ( (Vehicle->Disabled > 0) != bWasDisabled && Building->owner == ActivePlayer )
 				{
 					if ( Vehicle->Disabled > 0 ) ActivePlayer->addSavedReport ( Client->addCoords( Vehicle->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY );
 					Vehicle->owner->DoScan();
@@ -963,7 +965,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->bSentryStatus = message->popBool();
 				Building->points = message->popInt16();
 
-				if ( Building->Disabled > 0 != bWasDisabled && Building->owner == ActivePlayer )
+				if ( (Building->Disabled > 0) != bWasDisabled && Building->owner == ActivePlayer )
 				{
 					if ( Building->Disabled > 0 ) ActivePlayer->addSavedReport ( addCoords( Building->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Building->PosX, Building->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY );
 					Building->owner->DoScan();

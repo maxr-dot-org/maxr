@@ -440,12 +440,12 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontTy
 {
 	string sTmp;
 
-	int k;
+	size_t k;
 
 	do
 	{
 		//erase all invalid formatted breaklines like we may get them from translation XMLs
-		k = ( int ) sText.find ( "\\n" );
+		k = sText.find ( "\\n" );
 
 		if ( k != string::npos )
 		{
@@ -458,7 +458,7 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontTy
 	do
 	{
 		//erase all blanks > 2
-		k = ( int ) sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
+		k = sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
 
 		if ( k != string::npos )
 		{
@@ -470,7 +470,7 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontTy
 	do //support of linebreaks: snip text at linebreaks, do the auto linebreak for first part and proceed with second part
 	{
 		//search and replace \n since we want a blocktext - no manual breaklines allowed
-		k = ( int ) sText.find ( "\n" );
+		k = sText.find ( "\n" );
 
 		if ( k != string::npos )
 		{

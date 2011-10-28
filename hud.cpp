@@ -307,9 +307,6 @@ int cGameGUI::show()
 
 	int lastMouseX = 0, lastMouseY = 0;
 
-	int lastResX = Video.getResolutionX();
-	int lastResY = Video.getResolutionY();
-
 	while ( !end )
 	{
 		EventHandler->HandleEvents();
@@ -2033,7 +2030,6 @@ void cGameGUI::doCommand( string cmd )
 	{
 		if ( cmd.length() > 9 && Server )
 		{
-			int playerNum = -1;
 			string playerStr = cmd.substr ( 9, cmd.find_first_of ( " ", 9 )-9 );
 			string creditsStr = cmd.substr ( cmd.find_first_of ( " ", 9 )+1, cmd.length() );
 			
@@ -3313,6 +3309,8 @@ void cGameGUI::drawBottomFX( int num )
 				return;
 			}
 			break;
+		default:
+			break;
 	}
 }
 
@@ -4164,8 +4162,8 @@ void cGameGUI::drawUnitCircles()
 		}
 		if (v.owner == player &&
 				(
-					v.IsBuilding && v.BuildRounds    == 0 ||
-					v.IsClearing && v.ClearingRounds == 0
+					(v.IsBuilding && v.BuildRounds    == 0) ||
+					(v.IsClearing && v.ClearingRounds == 0)
 					) && !v.BuildPath )
 		{
 			if ( v.data.isBig )

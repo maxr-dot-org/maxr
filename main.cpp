@@ -63,6 +63,7 @@ static int  initNet();
 static int  initSDL();
 static int  initSound();
 
+#undef main
 int main ( int argc, char *argv[] )
 {
 	setPaths(); //first thing: figure out paths

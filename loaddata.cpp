@@ -2223,11 +2223,11 @@ void translateUnitData(sID ID, bool vehicle)
 			else Data->name = pXmlNode->ToElement()->Attribute( "ENG" );
 
 			sTmpString = pXmlNode->ToElement()->GetText();
-			int iPosition = (int)sTmpString.find("\\n",0);
+			size_t iPosition = sTmpString.find("\\n",0);
 			while(iPosition != string::npos)
 			{
 				sTmpString.replace( iPosition, 2, "\n" );
-				iPosition = (int)sTmpString.find("\\n",iPosition);
+				iPosition = sTmpString.find("\\n",iPosition);
 			}
 			Data->description =  sTmpString;
 		}
@@ -2654,11 +2654,11 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 	if (ExTiXmlNode* const pExXmlNode = ExTiXmlNode::XmlGetFirstNode(unitDataXml, "Unit", "Description", NULL))
 	{
 		Data->description = pExXmlNode->ToElement()->GetText();
-		int iPosition = (int)Data->description.find("\\n",0);
+		size_t iPosition = Data->description.find("\\n", 0);
 		while(iPosition != string::npos)
 		{
 			Data->description.replace(iPosition,2,"\n");
-			iPosition = (int)Data->description.find("\\n",iPosition);
+			iPosition = Data->description.find("\\n", iPosition);
 		}
 	}
 
@@ -3149,7 +3149,7 @@ void setPaths()
 		TCHAR szPath[MAX_PATH];
 		SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath );
 
-		wstring home = szPath;
+		string home = szPath;
 
 		SettingsData.sHome = string(home.begin(), home.end());
 
