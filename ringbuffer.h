@@ -37,8 +37,8 @@ private:
 
 
 public:
-	cRingbuffer(): read_(0), write_(0), capacity(0), elements(NULL) {};
-	~cRingbuffer() { delete elements; };
+	cRingbuffer(): elements(NULL), read_(0), write_(0), capacity(0) {};
+	~cRingbuffer() { delete [] elements; };
 
 	int size();
 	void write( const T element );
@@ -74,7 +74,7 @@ template<typename T> void cRingbuffer<T>::write(const T element)
 			newElements[newWrite_] = read();
 		}
 
-		delete elements;
+		delete [] elements;
 		elements = newElements;
 		write_ = newWrite_;
 		read_ = 0;
