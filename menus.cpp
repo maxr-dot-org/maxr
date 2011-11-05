@@ -970,9 +970,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	tcpClientButton->setReleasedFunction ( &tcpClientReleased );
 	menuItems.Add ( tcpClientButton );
 
-	#ifdef RELEASE
-	
-	#else
+	#ifndef NDEBUG
 	
 	newHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*2, lngPack.i18n ("Text~Button~HotSeat_New") );
 	newHotseatButton->setReleasedFunction ( &newHotseatReleased );
@@ -998,9 +996,7 @@ cMultiPlayersMenu::~cMultiPlayersMenu()
 	delete tcpHostButton;
 	delete tcpClientButton;
 	
-	#ifdef RELEASE
-	
-	#else
+	#ifndef NDEBUG
 	
 	delete newHotseatButton;
 	delete loadHotseatButton;

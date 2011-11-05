@@ -78,7 +78,11 @@
 
 
 #ifndef PATH_DELIMITER
-#	define PATH_DELIMITER "/"
+#	ifdef WIN32
+#		define PATH_DELIMITER "\\"
+#	else
+#		define PATH_DELIMITER "/"
+#	endif
 #endif
 
 #ifndef TEXT_FILE_LF
@@ -141,10 +145,10 @@
 	#define BUILD_DATADIR "/usr/share/maxr"
 	// Builddate: Mmm DD YYYY HH:MM:SS
 	#define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
-	#ifdef RELEASE
+	#ifdef NDEBUG
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2695"
+		#define PACKAGE_REV "SVN Rev 2743"
 	#endif
 #endif
 
