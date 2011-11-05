@@ -242,11 +242,7 @@ void cGameDataContainer::runSavedGame( int player )
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		clientPlayerList.Add( new cPlayer( *(*Server->PlayerList)[i] ) );
-		// reinit unit values
-		for ( unsigned int j = 0; j < UnitsData.getNrVehicles (); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.vehicle[j].data;
-		for ( unsigned int j = 0; j < UnitsData.getNrBuildings (); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.building[j].data;
 	}
-	// reinit unitvalues
 	// init client and his player
 	Client = new cClient( &clientMap, &clientPlayerList );
 	Client->initPlayer ( clientPlayerList[player] );
