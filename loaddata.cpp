@@ -3153,15 +3153,14 @@ void setPaths()
 
 		SettingsData.sHome = string(home.begin(), home.end());
 
+		cout << "\n(II): Read home directory " << SettingsData.sHome;
+
 		bool newDirCreated = false;
 
 		if (!SettingsData.sHome.empty())
 		{
 			SettingsData.sHome += PATH_DELIMITER;
 			SettingsData.sHome += "maxr";
-			SettingsData.sHome += PATH_DELIMITER;
-			SettingsData.sConfig = SettingsData.sHome;
-			SettingsData.sConfig += MAX_XML; //set config to <PersonalFolder>/maxr/max.xml
 
 			if ( !DirExists(SettingsData.sHome) )
 			{
@@ -3177,6 +3176,11 @@ void setPaths()
 				}
 			}
 			else cout << "\n(II): Config is read from " << SettingsData.sHome;
+
+			if ( !SettingsData.sHome.empty() ) SettingsData.sHome += PATH_DELIMITER;
+
+			SettingsData.sConfig = SettingsData.sHome;
+			SettingsData.sConfig += MAX_XML;
 		}
 
 		//set new place for logs

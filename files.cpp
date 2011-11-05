@@ -59,10 +59,10 @@ bool FileExists ( const char* path )
 bool DirExists(std::string path)
 {
 #ifdef WIN32
-	if ( _access( SettingsData.sHome.c_str(), 0 ) == 0 )
+	if ( _access( path.c_str(), 0 ) == 0 )
 	{
 		struct stat status;
-		stat( SettingsData.sHome.c_str(), &status );
+		stat( path.c_str(), &status );
 
 		if ( status.st_mode & S_IFDIR ) return true;
 		else return false;	// The path is not a directory
