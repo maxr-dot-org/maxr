@@ -346,7 +346,7 @@ const char* TiXmlBase::SkipWhiteSpace( const char* p, TiXmlEncoding encoding )
 				continue;
 			}
 
-			if ( IsWhiteSpace( *p ) || *p == '\n' || *p =='\r' )		// Still using old rules for white space.
+			if (IsWhiteSpace(*p)) // Still using old rules for white space.
 				++p;
 			else
 				break;
@@ -354,7 +354,7 @@ const char* TiXmlBase::SkipWhiteSpace( const char* p, TiXmlEncoding encoding )
 	}
 	else
 	{
-		while ( *p && IsWhiteSpace( *p ) || *p == '\n' || *p =='\r' )
+		while (IsWhiteSpace(*p))
 			++p;
 	}
 
@@ -1446,7 +1446,7 @@ const char* TiXmlAttribute::Parse( const char* p, TiXmlParsingData* data, TiXmlE
 		// its best, even without them.
 		value = "";
 		while (    p && *p											// existence
-				&& !IsWhiteSpace( *p ) && *p != '\n' && *p != '\r'	// whitespace
+				&& !IsWhiteSpace(*p) // whitespace
 				&& *p != '/' && *p != '>' )							// tag end
 		{
 			if ( *p == SINGLE_QUOTE || *p == DOUBLE_QUOTE ) {
