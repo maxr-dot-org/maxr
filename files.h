@@ -25,10 +25,6 @@
 #include "defines.h"
 #include "clist.h"
 
-#ifndef PATH_DELIMITER
-#	define PATH_DELIMITER "/"
-#endif
-
 
 /**
 * Checks whether a file exists or not
