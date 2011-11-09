@@ -24,6 +24,7 @@
 /*	MVEPlayer.c - Plays 8-bit Interplay MVE multimedia files.
 	Author: jarli
 */
+#include "autosurface.h"
 #include "mveplayer.h"
 #include <assert.h>
 #include "main.h"
@@ -137,7 +138,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	Uint32 screen_mvebuffer_size = 0;
 	Uint16 width_blocks = 0, height_blocks = 0, width = 0, height = 0;
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
-	SDL_Surface *screen = NULL, *frame_buf = NULL;
+	SDL_Surface *screen = NULL;
 	SDL_Rect movie_screen;
 	const SDL_VideoInfo *initial_vid_state;
 
@@ -219,6 +220,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	/*************/
 	/* main loop */
 	/*************/
+	AutoSurface frame_buf;
 	while(!QUITTING)
 	{
 		/* poll for input from user */
@@ -358,10 +360,6 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 					}
 				}
 			}
-
-			/* if we have already allocated a mvebuffer */
-			if(frame_buf)
-				SDL_FreeSurface(frame_buf);
 
 			/* initialize video mvebuffer to the actual movie dimensions */
 			frame_buf = SDL_CreateRGBSurface(Video.getSurfaceType(), width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
@@ -658,9 +656,6 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 	/* free the video mvebuffers */
 	if(v_backbuf)
 		free(v_backbuf);
-
-	if(frame_buf)
-		SDL_FreeSurface(frame_buf);
 
 	if(screen)
 		SDL_FreeSurface(screen);
