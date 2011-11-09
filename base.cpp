@@ -1062,24 +1062,22 @@ void cBase::addBuilding ( cBuilding *building, bool bServer )
 	if ( !building->data.isBig )
 	{
 		// small building
-		sSubBase *SubBase;
-		if ( (SubBase = checkNeighbour( pos-map->size, building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+1        , building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+map->size, building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos-1        , building )) ) NeighbourList.Add( SubBase );
+		if (sSubBase* const SubBase = checkNeighbour(pos - map->size, building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + 1        , building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + map->size, building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos - 1        , building)) NeighbourList.Add(SubBase);
 	}
 	else
 	{
 		// big building
-		sSubBase *SubBase;
-		if ( (SubBase = checkNeighbour( pos-map->size,     building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos-map->size+1,   building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+2,             building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+2+map->size,   building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+map->size*2,   building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos+map->size*2+1, building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos-1,             building )) ) NeighbourList.Add( SubBase );
-		if ( (SubBase = checkNeighbour( pos-1+map->size,   building )) ) NeighbourList.Add( SubBase );
+		if (sSubBase* const SubBase = checkNeighbour(pos - map->size,         building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos - map->size + 1,     building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + 2,                 building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + 2 + map->size,     building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + map->size * 2,     building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos + map->size * 2 + 1, building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos - 1,                 building)) NeighbourList.Add(SubBase);
+		if (sSubBase* const SubBase = checkNeighbour(pos - 1+map->size,       building)) NeighbourList.Add(SubBase);
 	}
 	building->CheckNeighbours( map );
 

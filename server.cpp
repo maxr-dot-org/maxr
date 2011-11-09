@@ -1708,17 +1708,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_WANT_CHANGE_UNIT_NAME:
 		{
-			cVehicle *vehicle;
-			cBuilding *building;
-
 			int unitID = message->popInt16();
-			if ( (vehicle = getVehicleFromID( unitID )) != NULL)
+			if (cVehicle* const vehicle = getVehicleFromID(unitID))
 			{
 				vehicle->changeName ( message->popString() );
 				for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
 				sendUnitData ( vehicle, vehicle->owner->Nr );
 			}
-			else if ( (building = getBuildingFromID( unitID )) != NULL)
+			else if (cBuilding* const building = getBuildingFromID(unitID))
 			{
 				building->changeName ( message->popString() );
 				for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ ) sendUnitData ( building, i );

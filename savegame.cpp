@@ -240,9 +240,8 @@ void cSavegame::loadGameInfo()
 		element->Attribute ( "activeplayer", &Server->iActiveTurnPlayerNr );
 	}
 
-	TiXmlElement *e;
-	if((e = gameInfoNode->FirstChildElement("TurnLimit")) != NULL) e->Attribute("num", &Server->turnLimit);
-	if((e = gameInfoNode->FirstChildElement("ScoreLimit")) != NULL) e->Attribute("num", &Server->scoreLimit);
+	if (TiXmlElement* const e = gameInfoNode->FirstChildElement("TurnLimit"))  e->Attribute("num", &Server->turnLimit);
+	if (TiXmlElement* const e = gameInfoNode->FirstChildElement("ScoreLimit")) e->Attribute("num", &Server->scoreLimit);
 }
 
 //--------------------------------------------------------------------------
@@ -293,7 +292,6 @@ cList<cPlayer*> * cSavegame::loadPlayers( cMap *map )
 cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 {
 	int number, color;
-	TiXmlElement *e;
 
 	string name = playerNode->FirstChildElement( "Name" )->Attribute ( "string" );
 	playerNode->FirstChildElement( "Number" )->Attribute ( "num", &number );
@@ -304,7 +302,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
 
-	if((e = playerNode->FirstChildElement("ScoreHistory")) != NULL)
+	if (TiXmlElement* const e = playerNode->FirstChildElement("ScoreHistory"))
 	{
 		TiXmlElement *s = e->FirstChildElement("Score");
 		int num=0, i=0;
