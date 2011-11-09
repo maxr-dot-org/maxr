@@ -888,12 +888,8 @@ bool cGameGUI::checkScroll()
 
 void cGameGUI::updateUnderMouseObject()
 {
-	static int lastX = -1, lastY = -1;
 	int x = mouse->getKachelX();
 	int y = mouse->getKachelY();
-
-	lastX = x;
-	lastY = y;
 
 	if ( x < 0 || y < 0 || x >= map->size || y >= map->size ) return;
 

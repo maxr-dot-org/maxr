@@ -1428,10 +1428,8 @@ bool cBuilding::isNextTo( int x, int y) const
 //--------------------------------------------------------------------------
 void cBuilding::DrawExitPoints ( sVehicle *typ )
 {
-	int spx, spy, size;
-	spx = GetScreenPosX();
-	spy = GetScreenPosY();
-	size = Client->Map->size;
+	int const spx = GetScreenPosX();
+	int const spy = GetScreenPosY();
 
 	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
 	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
@@ -2657,14 +2655,7 @@ void cBuilding::Select ()
 //--------------------------------------------------------------------------
 void cBuilding::Deselct ()
 {
-	SDL_Rect src, dest;
 	// Den Hintergrund wiederherstellen:
-	src.x = 0;
-	src.y = 215;
-	src.w = 155;
-	src.h = 48;
-	dest.x = 8;
-	dest.y = 171;
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
 	Client->gameGUI.setVideoSurface ( NULL );

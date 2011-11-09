@@ -667,16 +667,9 @@ void cVehicle::Select ()
 //-----------------------------------------------------------------------------
 void cVehicle::Deselct ()
 {
-	SDL_Rect src, dest;
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
 	// redraw the background
-	src.x = 0;
-	src.y = 215;
-	src.w = 155;
-	src.h = 48;
-	dest.x = 8;
-	dest.y = 171;
 	StopFXLoop ( Client->iObjectStream );
 	Client->iObjectStream = -1;
 	Client->gameGUI.setFLC ( NULL );
@@ -2546,10 +2539,8 @@ bool cVehicle::InSentryRange ()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawExitPoints(sVehicle* const typ) const
 {
-	int spx, spy, size;
-	spx = GetScreenPosX();
-	spy = GetScreenPosY();
-	size = Client->Map->size;
+	int const spx = GetScreenPosX();
+	int const spy = GetScreenPosY();
 
 	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
 	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
@@ -2792,9 +2783,7 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 	if ( steal && !data.canCapture ) return false;
 	if ( !steal && !data.canDisable ) return false;
 
-	int off, boff;
-	off = x + y * map->size;
-	boff = PosX + PosY * map->size;
+	int const off = x + y * map->size;
 
 	if ( !isNextTo ( x, y ) ) return false;
 	if ( !data.shotsCur ) return false;

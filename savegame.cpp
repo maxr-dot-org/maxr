@@ -828,8 +828,6 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 {
 	if ( unitNode == NULL ) return;
 	sUnitData *Data = NULL;
-	int unitNum;
-	bool isVehicle;
 
 	// get the unit data
 	sID ID;
@@ -841,8 +839,6 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 			if ( UnitsData.vehicle[i].data.ID == ID )
 			{
 				Data = &UnitsData.vehicle[i].data;
-				unitNum = i;
-				isVehicle = true;
 				break;
 			}
 		}
@@ -854,8 +850,6 @@ void cSavegame::loadStandardUnitValues ( TiXmlElement *unitNode )
 			if ( UnitsData.building[i].data.ID == ID )
 			{
 				Data = &UnitsData.building[i].data;
-				unitNum = i;
-				isVehicle = false;
 				break;
 			}
 		}

@@ -450,11 +450,8 @@ void line ( int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf )
 void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface )
 {
 	int d,da,db,xx,yy,bry;
-	unsigned int *ptr;
 	if ( iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() || iY + iRadius < 0 || iY - iRadius > Video.getResolutionY() ) return;
 	SDL_LockSurface ( surface );
-
-	ptr = ( unsigned int* ) surface->pixels;
 
 	d = 0;
 	xx = 0;
