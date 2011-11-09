@@ -37,8 +37,8 @@ private:
 
 
 public:
-	cRingbuffer(): elements(NULL), read_(0), write_(0), capacity(0) {};
-	~cRingbuffer() { delete [] elements; };
+	cRingbuffer(): elements(NULL), read_(0), write_(0), capacity(0) {}
+	~cRingbuffer() { delete [] elements; }
 
 	int size();
 	void write( const T element );
