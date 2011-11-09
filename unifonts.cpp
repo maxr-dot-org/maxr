@@ -25,15 +25,6 @@
 
 cUnicodeFont::cUnicodeFont()
 {
-	// fill the surface pointers with NULL
-	fill <SDL_Surface**, SDL_Surface *>( charsNormal, &charsNormal[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsSmallWhite, &charsSmallWhite[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsSmallGreen, &charsSmallGreen[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsSmallRed, &charsSmallRed[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsSmallYellow, &charsSmallYellow[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsBig, &charsBig[0xFFFF], NULL );
-	fill <SDL_Surface**, SDL_Surface *>( charsBigGold, &charsBigGold[0xFFFF], NULL );
-
 	// load all existing fonts. If there will be added some, they have also to be added here!
 	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL );
 	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_NORMAL );
@@ -70,24 +61,8 @@ cUnicodeFont::cUnicodeFont()
 	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_YELLOW );
 }
 
-cUnicodeFont::~cUnicodeFont()
-{
-	// free surfaces
-	for ( int i = 0; i < 0xFFFF; i++ )
-	{
-		if ( charsNormal[i] ) SDL_FreeSurface ( charsNormal[i] );
-		if ( charsSmallWhite[i] ) SDL_FreeSurface ( charsSmallWhite[i] );
-		if ( charsSmallGreen[i] ) SDL_FreeSurface ( charsSmallGreen[i] );
-		if ( charsSmallRed[i] ) SDL_FreeSurface ( charsSmallRed[i] );
-		if ( charsSmallYellow[i] ) SDL_FreeSurface ( charsSmallYellow[i] );
-		if ( charsBig[i] ) SDL_FreeSurface ( charsBig[i] );
-		if ( charsBigGold[i] ) SDL_FreeSurface ( charsBigGold[i] );
-	}
-}
-
 void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
-	SDL_Surface **chars;
 	const unsigned short *iso8859_to_uni;
 	int currentChar, highcount;
 	int cellW, cellH;
@@ -99,7 +74,7 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 		// LOG: error while loading font
 		return;
 	}
-	chars = getFontTypeSurfaces ( fonttype );
+	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	if ( !chars )
 	{
 		// LOG: error while loading font
@@ -170,7 +145,6 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 				else if ( charset == CHARSET_ISO8559_1 ) unicodeplace = currentChar + 128 + 2*16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
-			if ( chars[unicodeplace] ) SDL_FreeSurface ( chars[unicodeplace] );
 			chars[unicodeplace] = SDL_CreateRGBSurface ( Video.getSurfaceType()|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
 
 			// change color of smal fonts
@@ -210,7 +184,7 @@ Uint32 cUnicodeFont::getPixel32(int x, int y, SDL_Surface *surface)
 	return pixels[(y*surface->w)+x];
 }
 
-SDL_Surface **cUnicodeFont::getFontTypeSurfaces ( eUnicodeFontType fonttype )
+AutoSurface* cUnicodeFont::getFontTypeSurfaces(eUnicodeFontType const fonttype)
 {
 	switch ( fonttype )
 	{
@@ -320,7 +294,7 @@ void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fontty
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
-	SDL_Surface **chars = getFontTypeSurfaces ( fonttype );
+	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 
 	//make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
@@ -509,7 +483,7 @@ int cUnicodeFont::getTextWide( string sText, eUnicodeFontType fonttype, bool enc
 SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, bool encode )
 {
 	int iSpace = 0;
-	SDL_Surface **chars = getFontTypeSurfaces ( fonttype );
+	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	//make sure only upper characters are read for the small fonts
@@ -573,7 +547,7 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 
 int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 {
-	SDL_Surface **chars = getFontTypeSurfaces ( fonttype );
+	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	// we will return the height of the first character in the list
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{

@@ -19,6 +19,7 @@
 #ifndef unifontsH
 #define unifontsH
 
+#include "autosurface.h"
 #include "defines.h"
 #include "main.h"
 #include "video.h"
@@ -74,7 +75,6 @@ class cUnicodeFont
 {
 	public:
 		cUnicodeFont();
-		~cUnicodeFont();
 
 		/**
 		 * Wrapper for showText for easy use of SDL_Rects
@@ -158,13 +158,13 @@ class cUnicodeFont
 		string shortenStringToSize ( string str, int size, eUnicodeFontType fonttype );
 	private:
 		// character surfaces. Since SDL maximal gives us the unicodes from BMP we maximaly need 0xFFFF surfaces
-		SDL_Surface *charsNormal[0xFFFF];
-		SDL_Surface *charsSmallWhite[0xFFFF];
-		SDL_Surface *charsSmallGreen[0xFFFF];
-		SDL_Surface *charsSmallRed[0xFFFF];
-		SDL_Surface *charsSmallYellow[0xFFFF];
-		SDL_Surface *charsBig[0xFFFF];
-		SDL_Surface *charsBigGold[0xFFFF];
+		AutoSurface charsNormal[0xFFFF];
+		AutoSurface charsSmallWhite[0xFFFF];
+		AutoSurface charsSmallGreen[0xFFFF];
+		AutoSurface charsSmallRed[0xFFFF];
+		AutoSurface charsSmallYellow[0xFFFF];
+		AutoSurface charsBig[0xFFFF];
+		AutoSurface charsBigGold[0xFFFF];
 
 		/**
 		 * loads all characters of a ISO table and fonttype.
@@ -180,7 +180,7 @@ class cUnicodeFont
 		 * @param fonttype the fonttype of which the chracter array should be returned.
 		 * @return the character array for the fonttype.
 		 */
-		SDL_Surface **getFontTypeSurfaces ( eUnicodeFontType fonttype );
+		AutoSurface* getFontTypeSurfaces(eUnicodeFontType fonttype);
 		/**
 		 * loads the ISO-8859 bitmap font surface
 		 * @author alzi alias DoctorDeath
