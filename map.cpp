@@ -129,7 +129,7 @@ bool cMap::isWater( int x, int y, bool not_coast)
 SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum )
 {
 	// Create new surface and copy palette
-	SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64,8,0,0,0,0);
+	AutoSurface surface(SDL_CreateRGBSurface(SDL_SWSURFACE, 64, 64, 8, 0, 0, 0, 0));
 	surface->pitch = surface->w;
 
 	SDL_SetColors( surface, Palette, 0, 256 );
@@ -143,16 +143,12 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_C
 		for( int iX = 0; iX < 64; iX++ )
 		{
 			unsigned char cColorOffset;
-			if ( SDL_RWread ( fpMapFile, &cColorOffset, 1, 1 ) == -1 )
-			{
-				SDL_FreeSurface( surface );
-				return NULL;
-			}
+			if (SDL_RWread(fpMapFile, &cColorOffset, 1, 1) == -1) return 0;
 			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
 			*pixel = cColorOffset;
 		}
 	}
-	return surface;
+	return surface.Release();
 }
 
 void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )

@@ -14,6 +14,13 @@ public:
 
 	~AutoObj() { if (p_) dealloc(p_); }
 
+	T* Release()
+	{
+		T* const p = p_;
+		p_ = 0;
+		return p;
+	}
+
 	void operator =(T* const p)
 	{
 		if (p_) dealloc(p_);
