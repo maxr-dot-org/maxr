@@ -1,8 +1,9 @@
-CONFIG ?= config.default
--include $(CONFIG)
+CFG ?= default
+-include config.$(CFG)
 
 
-BINARY ?= maxr
+BUILDDIR ?= build/$(CFG)
+BINARY   ?= maxr
 
 SDL_CONFIG  ?= sdl-config
 ifndef CFLAGS_SDL
@@ -14,9 +15,8 @@ endif
 
 CFLAGS += $(CFLAGS_SDL)
 
-CCFLAGS += $(CFLAGS)
-
-CXXFLAGS += $(CFLAGS)
+CCFLAGS  := $(CFLAGS) $(CCFLAGS)
+CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
 
 LDFLAGS += $(LDFLAGS_SDL)
 LDFLAGS += -lSDL_mixer
@@ -69,30 +69,33 @@ SRCS += upgradecalculator.cpp
 SRCS += vehicles.cpp
 SRCS += video.cpp
 
-OBJS = $(filter %.o, $(SRCS:.c=.o) $(SRCS:.cpp=.o))
-DEPS = $(OBJS:.o=.d)
+OBJS := $(patsubst %, $(BUILDDIR)/%.o, $(basename $(SRCS)))
+DEPS := $(OBJS:.o=.d)
+DIRS := $(sort $(dir $(OBJS)))
 
-.SUFFIXES:
-.SUFFIXES: .c .cpp .d .o
+# Make build directories
+DUMMY := $(shell mkdir -p $(DIRS))
 
 Q ?= @
 
-all: $(BINARY)
+.PHONY: all clean distclean
+
+all: $(BUILDDIR)/$(BINARY)
 
 -include $(DEPS)
 
-$(BINARY): $(OBJS)
+$(BUILDDIR)/$(BINARY): $(OBJS)
 	@echo '===> LD $@'
 	$(Q)$(CXX) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
 
-.c.o:
+$(BUILDDIR)/%.o: %.c
 	@echo '===> CC $<'
 	$(Q)$(CC) $(CCFLAGS) -c -MMD -o $@ $<
 
-.cpp.o:
+$(BUILDDIR)/%.o: %.cpp
 	@echo '===> CXX $<'
 	$(Q)$(CXX) $(CXXFLAGS) -c -MMD -o $@ $<
 
 clean distclean:
 	@echo '===> CLEAN'
-	$(Q)rm -fr $(DEPS) $(OBJS) $(BINARY)
+	$(Q)rm -fr $(BUILDDIR)
