@@ -136,14 +136,15 @@ int main ( int argc, char *argv[] )
 	// play intro if we're supposed to and the file exists
 	if(SettingsData.bIntro)
 	{
-		if(FileExists((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+		std::string const m = SettingsData.sMVEPath + PATH_DELIMITER "MAXINT.MVE";
+		if (FileExists(m.c_str()))
 		{
 			// Close maxr sound for intro movie
 			CloseSound();
 
 			char mvereturn;
-			Log.write ( "Starting movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
-			mvereturn = MVEPlayer((SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !SettingsData.SoundMute);
+			Log.write("Starting movie " + m, cLog::eLOG_TYPE_DEBUG);
+			mvereturn = MVEPlayer(m.c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !SettingsData.SoundMute);
 			Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
@@ -155,7 +156,7 @@ int main ( int argc, char *argv[] )
 		}
 		else
 		{
-			Log.write ( "Couldn't find movie " + SettingsData.sMVEPath + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+			Log.write("Couldn't find movie " + m, cLog::eLOG_TYPE_WARNING);
 		}
 	}
 	else

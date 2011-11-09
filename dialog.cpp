@@ -211,11 +211,11 @@ void cDialogLicence::generateLicenceTexts()
 #ifdef WIN32
 		sAuthors = "AUTHORS.txt";
 #elif __amigaos4
-		sAuthors = SettingsData.sDataDir + PATH_DELIMITER + "AUTHORS.txt";
+		sAuthors = SettingsData.sDataDir + PATH_DELIMITER "AUTHORS.txt";
 #elif MAC
 		sAuthors = "AUTHORS";
 #else
-		sAuthors = SettingsData.sDataDir + PATH_DELIMITER + "AUTHORS";
+		sAuthors = SettingsData.sDataDir + PATH_DELIMITER "AUTHORS";
 #endif
 
 	sLicence4 = "";

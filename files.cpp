@@ -79,7 +79,7 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 	cList<std::string> *List = new cList<std::string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	intptr_t const lFile = _findfirst((sDirectory + PATH_DELIMITER + "*.*").c_str(), &DataFile);
+	intptr_t const lFile = _findfirst((sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
 	if (lFile != -1)
 	{
 		do
@@ -154,7 +154,7 @@ std::string getUserScreenshotsDir()
 	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
-	screenshotsFolder = homeFolder + PATH_DELIMITER + "Desktop" + PATH_DELIMITER;
+	screenshotsFolder = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
 	return screenshotsFolder;
 #endif
 	if (SettingsData.sHome.empty ())

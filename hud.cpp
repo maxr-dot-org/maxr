@@ -391,14 +391,14 @@ SDL_Surface *cGameGUI::generateSurface()
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_left.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_left.pcx"));
 		if (tmpSurface)
 		{
 			SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_top.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_top.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -416,7 +416,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_right.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_right.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -429,7 +429,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "hud_bottom.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_bottom.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -455,7 +455,7 @@ SDL_Surface *cGameGUI::generateSurface()
 
 	if ( Video.getResolutionY() > 480 )
 	{
-		AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER + "logo.pcx"));
+		AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "logo.pcx"));
 		if (tmpSurface)
 		{
 			dest.x = 9;
@@ -2355,8 +2355,8 @@ void cGameGUI::changeWindDir()
 
 bool cGameGUI::loadPanelGraphics()
 {
-	if ( !panelTopGraphic ) panelTopGraphic = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "panel_top.pcx" );
-	if ( !panelBottomGraphic ) panelBottomGraphic = LoadPCX ( SettingsData.sGfxPath + PATH_DELIMITER + "panel_top.pcx" );
+	if (!panelTopGraphic)    panelTopGraphic    = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "panel_top.pcx");
+	if (!panelBottomGraphic) panelBottomGraphic = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "panel_top.pcx");
 
 	if ( !panelTopGraphic || !panelBottomGraphic ) return false;
 	return true;

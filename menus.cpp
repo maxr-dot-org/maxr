@@ -826,7 +826,7 @@ cStartMenu::cStartMenu()
 	exitButton->setReleasedFunction ( &exitReleased );
 	menuItems.Add ( exitButton );
 
-	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER + "main.ogg").c_str());
+	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER "main.ogg").c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -1689,14 +1689,14 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 	menuItems.Add (titleLabel);
 
 	vector<string> clanLogoPaths;
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo1.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo2.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo3.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo4.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo5.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo6.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo7.pcx");
-	clanLogoPaths.push_back (SettingsData.sGfxPath + PATH_DELIMITER + "clanlogo8.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo1.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo2.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo3.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo4.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo5.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo6.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo7.pcx");
+	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo8.pcx");
 
 	int xCount = 0;
 	int yCount = 0;

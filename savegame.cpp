@@ -87,7 +87,7 @@ int cSavegame::save( string saveName )
 		writeStandardUnitValues ( Data, i );
 	}
 
-	SaveFile->SaveFile( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
+	SaveFile->SaveFile((SettingsData.sSavesPath + PATH_DELIMITER "Save" + numberstr + ".xml").c_str());
 
 	delete SaveFile;
 	return 1;
@@ -97,7 +97,7 @@ int cSavegame::save( string saveName )
 int cSavegame::load()
 {
 	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) )
+	if (!SaveFile->LoadFile((SettingsData.sSavesPath + PATH_DELIMITER "Save" + numberstr + ".xml").c_str()))
 	{
 		return 0;
 	}
@@ -185,7 +185,7 @@ void cSavegame::recalcSubbases()
 void cSavegame::loadHeader( string *name, string *type, string *time )
 {
 	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
+	if (!SaveFile->LoadFile((SettingsData.sSavesPath + PATH_DELIMITER "Save" + numberstr + ".xml").c_str())) return;
 	if ( !SaveFile->RootElement() ) return;
 
 	TiXmlElement *headerNode = SaveFile->RootElement()->FirstChildElement( "Header" );
@@ -1644,7 +1644,7 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedReportMessage> &list, cPlayer *player )
 {
 	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
+	if (!SaveFile->LoadFile((SettingsData.sSavesPath + PATH_DELIMITER "Save" + numberstr + ".xml").c_str())) return;
 	if ( !SaveFile->RootElement() ) return;
 
 	// first get the players node
@@ -1695,7 +1695,7 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 		list.Delete ( 0 );
 	}
 
-	SaveFile->SaveFile( ( SettingsData.sSavesPath + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
+	SaveFile->SaveFile((SettingsData.sSavesPath + PATH_DELIMITER "Save" + numberstr + ".xml").c_str());
 }
 
 //--------------------------------------------------------------------------

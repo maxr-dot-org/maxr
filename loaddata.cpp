@@ -133,10 +133,10 @@ int LoadData ( void * )
 	// Load fonts for SplashMessages
 	Log.write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
 
-	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
-	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
-	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
-	if(!FileExists((SettingsData.sFontPath + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_normal.pcx"  ).c_str())) NECESSARY_FILE_FAILURE
+	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_big.pcx"     ).c_str())) NECESSARY_FILE_FAILURE
+	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_small.pcx"   ).c_str())) NECESSARY_FILE_FAILURE
 
 	font = new cUnicodeFont; //init ascii fonts
 
@@ -163,8 +163,7 @@ int LoadData ( void * )
 		}
 	}
 	sTmpString = SettingsData.sLangPath;
-	sTmpString += PATH_DELIMITER;
-	sTmpString += "lang_";
+	sTmpString += PATH_DELIMITER "lang_";
 	sTmpString += sLang;
 	sTmpString += ".xml";
 	Log.write("Using langfile: " + sTmpString, cLog::eLOG_TYPE_DEBUG );
@@ -525,7 +524,7 @@ static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* 
 	if(!SoundData.DummySound)
 	{
 		string sTmpString;
-		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER + "dummy.ogg";
+		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER "dummy.ogg";
 		if(FileExists(sTmpString.c_str()))
 		{
 			SoundData.DummySound = Mix_LoadWAV(sTmpString.c_str());
@@ -1010,7 +1009,7 @@ int ReadMaxXml()
 	else
 	{
 		Log.write ( "Can't load Saves-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSavesPath = SettingsData.sHome + PATH_DELIMITER + "saves";
+		SettingsData.sSavesPath = SettingsData.sHome + PATH_DELIMITER "saves";
 	}
 	//Sounds
 	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", NULL)))
@@ -1435,8 +1434,7 @@ static int LoadMusic(const char* path)
 	TiXmlDocument MusicXml;
 	ExTiXmlNode * pXmlNode = NULL;
 	sTmpString = path;
-	sTmpString += PATH_DELIMITER;
-	sTmpString += "music.xml";
+	sTmpString += PATH_DELIMITER "music.xml";
 	if(!FileExists(sTmpString.c_str()))
 	{
 		return 0;
@@ -1633,9 +1631,9 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_player_ready,path,"player_ready.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_hud_chatbox,path,"hud_chatbox.pcx" );
 
-	GraphicsData.DialogPath = SettingsData.sGfxPath + PATH_DELIMITER + "dialog.pcx";
-	GraphicsData.Dialog2Path = SettingsData.sGfxPath + PATH_DELIMITER + "dialog2.pcx";
-	GraphicsData.Dialog3Path = SettingsData.sGfxPath + PATH_DELIMITER + "dialog3.pcx";
+	GraphicsData.DialogPath  = SettingsData.sGfxPath + PATH_DELIMITER "dialog.pcx";
+	GraphicsData.Dialog2Path = SettingsData.sGfxPath + PATH_DELIMITER "dialog2.pcx";
+	GraphicsData.Dialog3Path = SettingsData.sGfxPath + PATH_DELIMITER "dialog3.pcx";
 	FileExists(GraphicsData.DialogPath.c_str());
 	FileExists(GraphicsData.Dialog2Path.c_str());
 	FileExists(GraphicsData.Dialog3Path.c_str());
@@ -1740,8 +1738,7 @@ static int LoadVehicles()
 	TiXmlElement * pXmlElement;
 
 	sTmpString = SettingsData.sVehiclesPath;
-	sTmpString += PATH_DELIMITER;
-	sTmpString += "vehicles.xml";
+	sTmpString += PATH_DELIMITER "vehicles.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
 		return 0;
@@ -2247,8 +2244,7 @@ static int LoadBuildings()
 
 	// read buildings.xml
 	sTmpString = SettingsData.sBuildingsPath;
-	sTmpString += PATH_DELIMITER;
-	sTmpString += "buildings.xml";
+	sTmpString += PATH_DELIMITER "buildings.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
 		return 0;
@@ -3073,8 +3069,10 @@ void reloadUnitValues ()
 {
 	TiXmlDocument UnitsXml;
 	TiXmlElement *Element;
-	if( !FileExists( (SettingsData.sVehiclesPath + PATH_DELIMITER + "vehicles.xml").c_str() ) ) return ;
-	if ( !UnitsXml.LoadFile ( (SettingsData.sVehiclesPath + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return;
+	{ std::string const v = SettingsData.sVehiclesPath + PATH_DELIMITER "vehicles.xml";
+		if (!FileExists(v.c_str())) return;
+		if (!UnitsXml.LoadFile(v.c_str())) return;
+	}
 	if( !( Element = UnitsXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" ) ) ) return;
 
 	Element = Element->FirstChildElement();
@@ -3090,8 +3088,10 @@ void reloadUnitValues ()
 		i++;
 	}
 
-	if( !FileExists( (SettingsData.sBuildingsPath + PATH_DELIMITER + "buildings.xml").c_str() ) ) return ;
-	if ( !UnitsXml.LoadFile ( (SettingsData.sBuildingsPath + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return;
+	{ std::string const b = SettingsData.sBuildingsPath + PATH_DELIMITER "buildings.xml";
+		if (!FileExists(b.c_str())) return;
+		if (!UnitsXml.LoadFile(b.c_str())) return;
+	}
 	if( !( Element = UnitsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" ) ) ) return;
 
 	Element = Element->FirstChildElement();
@@ -3123,9 +3123,7 @@ void setPaths()
 		SettingsData.sHome = cHome;
 	if (!SettingsData.sHome.empty())
 	{
-		SettingsData.sHome += PATH_DELIMITER;
-		SettingsData.sHome += ".maxr";
-		SettingsData.sHome += PATH_DELIMITER;
+		SettingsData.sHome += PATH_DELIMITER ".maxr" PATH_DELIMITER;
 
 		// check whether home dir is set up and readable
 		if (!FileExists(SettingsData.sHome.c_str())) // under mac everything is a file
@@ -3159,8 +3157,7 @@ void setPaths()
 
 		if (!SettingsData.sHome.empty())
 		{
-			SettingsData.sHome += PATH_DELIMITER;
-			SettingsData.sHome += "maxr";
+			SettingsData.sHome += PATH_DELIMITER "maxr";
 
 			if ( !DirExists(SettingsData.sHome) )
 			{
@@ -3212,9 +3209,7 @@ void setPaths()
 
 	if (!SettingsData.sHome.empty())
 	{
-		SettingsData.sHome += PATH_DELIMITER;
-		SettingsData.sHome += ".maxr";
-		SettingsData.sHome += PATH_DELIMITER;
+		SettingsData.sHome += PATH_DELIMITER ".maxr" PATH_DELIMITER;
 		SettingsData.sConfig = SettingsData.sHome;
 		SettingsData.sConfig += MAX_XML; //set config to $HOME/.maxr/max.xml
 
@@ -3390,8 +3385,7 @@ string searchData(string sDataDirFromConf)
 	for(int i=0; i<PATHCOUNT; i++)
 	{
 		string sInitFile = sPathArray[i];
-		sInitFile += PATH_DELIMITER;
-		sInitFile += "init.pcx";
+		sInitFile += PATH_DELIMITER "init.pcx";
 		if(FileExists( sInitFile.c_str() ))
 		{
 			sPathToGameData = sPathArray[i];
