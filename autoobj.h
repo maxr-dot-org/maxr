@@ -1,6 +1,12 @@
 #ifndef AUTOOBJ_H
 #define AUTOOBJ_H
 
+#if __cplusplus >= 201103L || defined __GXX_EXPERIMENTAL_CXX0X__
+#	define DELETE = delete
+#else
+#	define DELETE
+#endif
+
 template <typename T, void (&dealloc)(T*)> class AutoObj
 {
 public:
@@ -21,8 +27,8 @@ public:
 private:
 	T* p_;
 
-	AutoObj(AutoObj const&);   // No copy.
-	void operator =(AutoObj&); // No assignment.
+	AutoObj(AutoObj const&)   DELETE; // No copy.
+	void operator =(AutoObj&) DELETE; // No assignment.
 };
 
 #endif
