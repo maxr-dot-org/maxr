@@ -1,4 +1,6 @@
 #! /bin/sh
+set -e
+
 VERSION=src/autoversion.h
 export LC_ALL=C
 export LANGUAGE=C
