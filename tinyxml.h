@@ -1514,12 +1514,6 @@ public:
 	/** Write the document to standard out using formatted printing ("pretty print"). */
 	void Print() const						{ Print( stdout, 0 ); }
 
-	/* Write the document to a string using formatted printing ("pretty print"). This
-		will allocate a character array (new char[]) and return it as a pointer. The
-		calling code pust call delete[] on the return char* to avoid a memory leak.
-	*/
-	//char* PrintToMemory() const;
-
 	/// Print this Document to a FILE stream.
 	virtual void Print( FILE* cfile, int depth = 0 ) const;
 	// [internal use]
