@@ -1079,7 +1079,7 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 
 sWaypoint* cClientMoveJob::calcPath( int SrcX, int SrcY, int DestX, int DestY, cVehicle * vehicle, cList<cVehicle*> *group  )
 {
-	if ( SrcX == DestX && SrcY == DestY ) return false;
+	if (SrcX == DestX && SrcY == DestY) return 0;
 
 	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Client->Map, vehicle, group );
 	sWaypoint* waypoints = PathCalculator.calcPath();
