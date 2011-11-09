@@ -88,14 +88,14 @@ int cVideo::setResolution(int iWidth, int iHeight, bool bApply)
     }
     else
     {
-      Log.write("cVideo:  => Couldn''t even find my minimal video mode "+iToStr(Video.getMinW())+"x"+iToStr(Video.getMinH())+" - Panik! ;(", cLog::eLOG_TYPE_WARNING);    
+      Log.write("cVideo:  => Couldn''t even find my minimal video mode "+iToStr(Video.getMinW())+"x"+iToStr(Video.getMinH())+" - Panik! ;(", cLog::eLOG_TYPE_WARNING);
     }
   }
   //END SANITY CHECK SCREEN RES
-  
+
   videoData.width = iWidth;
   videoData.height = iHeight;
-  
+
   if(bApply)
   {
     return applySettings();
@@ -134,10 +134,10 @@ int cVideo::getColDepth(void)
 }
 
 int cVideo::setWindowMode(bool bWindowMode, bool bApply)
-{  
+{
   videoData.bWindowMode = bWindowMode;
   Log.write("cVideo: Window mode settings changed to "+ string(Video.getWindowMode()?"windowmode":"fullscreen"), cLog::eLOG_TYPE_DEBUG);
-  
+
   if(bApply)
   {
     return applySettings();
@@ -149,7 +149,7 @@ void cVideo::draw(void)
 {
     //TODO: add sanity check to redraw function
   SDL_BlitSurface(buffer,NULL,screen,NULL);
-  
+
   if(getWindowMode())
   {
     SDL_UpdateRect(screen,0,0,0,0);
@@ -166,7 +166,7 @@ int cVideo::applySettings(void)
   int oldY = MINHEIGHT;
   int oldDepth = COLOURDEPTH;
   Uint32 oldSurface = SDL_SWSURFACE;
-  
+
   if(screen != NULL)
   {
     oldX = screen->w;
@@ -174,10 +174,10 @@ int cVideo::applySettings(void)
     oldDepth = screen->format->BitsPerPixel;
     oldSurface = screen->flags;
   }
-  
+
   Log.write("cVideo: Applying new video settings", cLog::eLOG_TYPE_DEBUG);
   screen = SDL_SetVideoMode(getResolutionX(),getResolutionY(),getColDepth(),getSurfaceType()|(getWindowMode()?0:SDL_FULLSCREEN));
-  
+
   if ( screen == NULL )
   {
     Log.write("cVideo:  => Failed. Reverting!", cLog::eLOG_TYPE_ERROR);
@@ -192,12 +192,12 @@ int cVideo::applySettings(void)
   }
   else
   {
-  	if ( buffer ) SDL_FreeSurface( buffer );
-	buffer = SDL_CreateRGBSurface(getSurfaceType(), getResolutionX(), getResolutionY(), getColDepth(), 0, 0, 0, 0);
+		if (buffer) SDL_FreeSurface(buffer);
+		buffer = SDL_CreateRGBSurface(getSurfaceType(), getResolutionX(), getResolutionY(), getColDepth(), 0, 0, 0, 0);
   }
   draw();
   return 0;
-  
+
 }
 
 void cVideo::clearBuffer(void)
@@ -209,7 +209,7 @@ void cVideo::clearBuffer(void)
  *Shows splashscreen
  */
 void cVideo::initSplash(void)
-{	
+{
 	if(putenv( cVideoPos)!=0) //set window to center of screen.
 	{
 		Log.write("cVideo: Couldn't export SDL_VIDEO_CENTERED", cLog::eLOG_TYPE_WARNING);
@@ -217,14 +217,14 @@ void cVideo::initSplash(void)
 
 	buffer = LoadPCX(SPLASH_BACKGROUND);
 	SDL_WM_SetIcon(AutoSurface(SDL_LoadBMP(MAXR_ICON)), NULL);
-	
+
 	//BEGIN VERSION STRING
 	string sVersion = PACKAGE_NAME; sVersion += " ";
 	sVersion += PACKAGE_VERSION; sVersion += " ";
 	sVersion += PACKAGE_REV; sVersion += " ";
 	SDL_WM_SetCaption ( sVersion.c_str(), 0 );
 	//END VERSION STRING
-	
+
 	screen=SDL_SetVideoMode ( getSplashW(), getSplashH(), getColDepth(), getSurfaceType()|SDL_NOFRAME );
 	draw();
 }
@@ -268,7 +268,7 @@ string cVideo::getVideoMode(int iMode)
 {
   string sTmp = iToStr(getMinW())+"x"+iToStr(getMinH()); //if no valid mode is given we return minimal video mode
   bool bFound = false;
-  
+
   for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
     if(vVideoMode[i].mode == iMode)
@@ -278,7 +278,7 @@ string cVideo::getVideoMode(int iMode)
       break;
     }
   }
-  
+
   if(!bFound)
   {
      Log.write("cVideo: Video mode "+iToStr(iMode)+" not found. Returning default video mode "+sTmp, cLog::eLOG_TYPE_WARNING);
@@ -294,10 +294,10 @@ bool cVideo::doDetection(void)
   const SDL_VideoInfo *vInfo = SDL_GetVideoInfo();
   SDL_Rect** rDetectedModes;
   vVideoMode.clear();
-  
+
   //detect us some video modes. detection works in fullscreen only. we try HW and SW surfaces
   rDetectedModes = SDL_ListModes(vInfo->vfmt, SDL_FULLSCREEN|getSurfaceType());
-  
+
   if (rDetectedModes == (SDL_Rect**)0)
   {
     switchSurface(); //try SWSURFACE if HWSURFACE doesn't work and vice versa
@@ -322,8 +322,8 @@ bool cVideo::doDetection(void)
   {
     Log.write("cVideo: Detected video modes with "+getSurfaceName(getSurfaceType())+" and "+iToStr(vInfo->vfmt->BitsPerPixel)+" bpp", cLog::eLOG_TYPE_INFO);
   }
-  
-    /* Print and store detected modes */  
+
+    /* Print and store detected modes */
   for (int i=0; rDetectedModes[i]; ++i)
   {
     //write detected video modes (don't write modes *below* the minimum mode'
@@ -336,7 +336,7 @@ bool cVideo::doDetection(void)
   }
 
   bHaveMinMode(); //sanity check on minimal needed screen resolution that we need at last
-  
+
   return true;
 }
 
@@ -349,7 +349,7 @@ bool cVideo::bHaveMinMode(void)
       return true;
     }
   }
-  
+
   Log.write("cVideo: Minimal needed video mode ("+ iToStr(MINWIDTH)+"x"+iToStr(MINHEIGHT)+") not detected. Probably bad!", cLog::eLOG_TYPE_ERROR);
   return false;
 }

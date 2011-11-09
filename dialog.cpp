@@ -134,7 +134,7 @@ cDestructMenu::cDestructMenu() :
 	destroyButton.setReleasedFunction( &destroyReleased );
 	destroyButton.setReleaseSound( SoundData.SNDMenuButton );
 	menuItems.Add(&destroyButton);
-	
+
 }
 
 void cDestructMenu::cancelReleased( void *parent )
@@ -381,12 +381,12 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	menuItems.Add ( windowChBox );
 
 	//BEGIN SCREEN RESOLUTION CHECKBOXES
-	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here. 
+	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here.
 	//HINT: This works only as long as avail video modes have a neat follow up list starting with 0 so make sure that the modes vector doesn't get confused
-	
+
 	int resolutionMode = Video.validateMode(Video.getResolutionX(), Video.getResolutionY()); //set flagged box to current resolution if found
 	resoulutionGroup = new cMenuRadioGroup;
-	
+
 	if (Video.getVideoSize() <= 0)
 	{
 	    Log.write("No resolutions could be detected. Can't display any options here.",  cLog::eLOG_TYPE_ERROR);
@@ -409,19 +409,19 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 		Log.write("Offering display resolution "+Video.getVideoMode(i)+" to user", cLog::eLOG_TYPE_DEBUG);
 		cMenuCheckButton *button = new cMenuCheckButton ( position.x+150+80*x, position.y+290+20*y, Video.getVideoMode(i), resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 		resoulutionGroup->addButton ( button );
-		
+
 	      }
 	    }
 	  }
-	  
+
 	  if(Video.getVideoSize() > 12) //notice: we skip mode 10. to much on screen. bad luck until we get a drop down box or similar
 	  {
 	    Log.write("Read more possible resolutions than I can display on dialog. Stopped.",  cLog::eLOG_TYPE_WARNING);
-	  } 
+	  }
 	}
-	
+
 	menuItems.Add ( resoulutionGroup );
-	
+
 	//END SCREEN RESOLUTION CHECKBOXES
 
 	okButton = new cMenuButton ( position.x+208, position.y+383, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
@@ -530,7 +530,7 @@ void cDialogPreferences::saveValues()
 			int wTmp = atoi ( sTmp.substr(0, sTmp.find_first_of('x')).c_str());
 			int hTmp = atoi ( sTmp.substr(sTmp.find_first_of('x')+1, sTmp.size()).c_str());
 			Video.setResolution(wTmp, hTmp, true);
-			
+
 			SaveOption ( SAVETYPE_RESOLUTION );
 			if ( Video.getResolutionX() != oldScreenW || Video.getResolutionY() != oldScreenH )
 			{

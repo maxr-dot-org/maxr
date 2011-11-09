@@ -113,7 +113,7 @@ public:
 	bool isDefeated;			// true if the player has been defeated
 	bool isRemovedFromGame;		// true if the player has been removed from the game.
 	int numEcos;                // number of ecospheres. call CountEcoSpheres on server to update.
-	
+
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
 	cVehicle *GetNextVehicle();
@@ -141,7 +141,7 @@ public:
 	void CountEcoSpheres();
 	int getScore(int turn) const;
 	void setScore(int score, int turn);
-	
+
 	/**
 	* draws a circle on the map for the fog
 	*@author alzi alias DoctorDeath

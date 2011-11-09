@@ -91,7 +91,7 @@ cServer::~cServer()
 	{
 		delete lastEvent;
 		lastEvent = 0;
-	}	
+	}
 
 	while ( PlayerList->Size() )
 	{
@@ -232,7 +232,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// resort socket numbers of the players
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) 
+				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber )
 				{
 					Player = (*PlayerList)[i];
 				}
@@ -241,7 +241,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					(*PlayerList)[i]->iSocketNum--;
 				}
 			}
-			
+
 			if ( Player )
 			{
 				Player->iSocketNum = -1;
@@ -827,7 +827,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if ( (*Building->BuildList)[0]->metall_remaining == -1 )
 				{
-					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList)[0]->type.getUnitDataCurrentVersion( Building->owner)->buildCosts );	
+					Building->CalcTurboBuild ( iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList)[0]->type.getUnitDataCurrentVersion( Building->owner)->buildCosts );
 					(*Building->BuildList)[0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 				}
 
@@ -878,7 +878,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				delete BuildingListItem;
 			}
-			
+
 			if ( Building->BuildList->Size() > 0 )
 			{
 				BuildingListItem = (*Building->BuildList)[0];
@@ -1701,7 +1701,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			cBuilding* building = getBuildingFromID(message->popInt16());
 			if ( !building || building->owner->Nr != message->iPlayerNr ) break;
-			
+
 			sendSelfDestroy(building);
 			destroyUnit(building);
 		}
@@ -2078,7 +2078,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 			Building->next->prev = NULL;
 		}
 	}
-	
+
 	//detach from attack job
 	if (Building->Attacking)
 	{
@@ -2385,7 +2385,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				if ( !isAdded ) PlayerEndList.Add ( (*PlayerList)[i] );
 			}
 		}
-		
+
 		if ( iWantPlayerEndNum == -1 )
 		{
 			if ( firstTimeEnded )
@@ -2845,7 +2845,7 @@ void cServer::handleMoveJobs ()
 
 			//execute endMoveAction
 			if ( MoveJob->endAction ) MoveJob->endAction->execute();
-			
+
 			delete MoveJob;
 
 			//continue path building
@@ -3101,7 +3101,7 @@ void cServer::addRubble( int x, int y, int value, bool big )
 		return;
 	}
 
-	if ( big && 
+	if ( big &&
 		 Map->isWater(x + 1, y))
 	{
 		addRubble( x    , y    , value/4, false);
@@ -3577,4 +3577,3 @@ int cServer::getTurn() const
 {
 	return iTurn;
 }
-

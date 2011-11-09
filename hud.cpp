@@ -42,7 +42,7 @@ bool sMouseBox::isTooSmall()
 	return !(endX > startX + 0.5 || endX < startX - 0.5 || endY > startY + 0.5 || endY < startY - 0.5);
 }
 
-sMouseBox::sMouseBox() : 
+sMouseBox::sMouseBox() :
 	startX(-1),
 	startY(-1),
 	endX(-1),
@@ -640,8 +640,8 @@ void cGameGUI::setOffsetPosition ( int x, int y )
 	offY = y;
 
 	checkOffsetPosition();
-}	
-	
+}
+
 void cGameGUI::checkOffsetPosition ()
 {
 	offX = max ( offX, 0 );
@@ -672,7 +672,7 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 
 		float lastScreenPixel = ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / lastZoom;
 		float newScreenPixel  = ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) / getZoom();
-		if ( centerToMouse ) 
+		if ( centerToMouse )
 		{
 			off = (int) ((lastScreenPixel - newScreenPixel) * (mouse->x - HUD_LEFT_WIDTH) / (Video.getResolutionX()-HUD_TOTAL_WIDTH));
 		}
@@ -680,7 +680,7 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 		{
 			off = (int)(lastScreenPixel - newScreenPixel) / 2;
 		}
-				
+
 		offX += off;
 
 		//change y screen offset
@@ -759,7 +759,7 @@ void cGameGUI::setUnitDetailsData ( cVehicle *vehicle, cBuilding *building )
 		selUnitNameEdit->setLocked ( true );
 		return;
 	}
-	
+
 	selUnitNameEdit->setLocked ( false );
 	int xPosition = 12+font->getTextWide ( selUnitNamePrefixStr->getText() + " ", FONT_LATIN_SMALL_GREEN );
 	selUnitNameEdit->move ( xPosition, 30 );
@@ -1292,7 +1292,7 @@ void cGameGUI::updateMouseCursor()
 							)
 						) &&
 						mouseInputMode != loadMode &&
-						mouseInputMode != activateVehicle						
+						mouseInputMode != activateVehicle
 					)
 				) &&
 				(
@@ -1436,7 +1436,7 @@ void cGameGUI::handleMouseMove()
 
 	static int lastX, lastY;
 	if ( !rightMouseBox.isTooSmall() && mouse->x > HUD_LEFT_WIDTH )	//the rightMouseBox is only used to trigger the right mouse button scroll
-	{		
+	{
 		if ( lastX != -1 && lastY != -1 )
 		{
 			int speed = 5;
@@ -1581,7 +1581,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						break;
 				}
 			}
-			else 
+			else
 			{
 				deselectUnit();
 			}
@@ -1901,7 +1901,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	}
 
 	// check getZoom() via mousewheel
-	if ( mouseState.wheelUp ) 
+	if ( mouseState.wheelUp )
 	{
 		setZoom ( getZoom()+(float)0.05, true, true );
 	}
@@ -2010,7 +2010,7 @@ void cGameGUI::doCommand( string cmd )
 		if ( cmd.length() > 6 && Server )
 		{
 			cPlayer *Player = getPlayerFromName ( cmd.substr ( 6, cmd.length() ) );
-			
+
 			// server can not be kicked
 			if ( Player->Nr == 0 ) return;
 
@@ -2032,7 +2032,7 @@ void cGameGUI::doCommand( string cmd )
 		{
 			string playerStr = cmd.substr ( 9, cmd.find_first_of ( " ", 9 )-9 );
 			string creditsStr = cmd.substr ( cmd.find_first_of ( " ", 9 )+1, cmd.length() );
-			
+
 			cPlayer *Player = getPlayerFromName ( playerStr );
 
 			if ( !Player ) return;
@@ -3399,7 +3399,7 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 							{
 								SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
 								if ( building->data.isBig ) tmp.w*=2;
-								
+
 								// the VS compiler gives a warning on casting a pointer to long.
 								// therfore we will first cast to long long and then cut this to Unit32 again.
 								SDL_FillRect ( buffer,&tmp, (Uint32)(long long)(sb) );
@@ -4345,4 +4345,3 @@ void cGameGUI::jumpToSavedPos ( int slotNumber )
 
 	setOffsetPosition ( offsetX, offsetY );
 }
-

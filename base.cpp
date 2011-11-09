@@ -929,7 +929,7 @@ void sSubBase::merge(sSubBase* sb )
 int sSubBase::getID()
 {
 	assert( buildings.Size() );
-	
+
 	return buildings[0]->iID;
 }
 
@@ -1093,7 +1093,7 @@ void cBase::addBuilding ( cBuilding *building, bool bServer )
 		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding( building );
 		SubBases.Add( NewSubBase );
-			
+
 		if ( bServer ) sendSubbaseValues ( NewSubBase, NewSubBase->owner->Nr );
 
 		return;
@@ -1110,7 +1110,7 @@ void cBase::addBuilding ( cBuilding *building, bool bServer )
 	{
 		sSubBase* const SubBase = NeighbourList[0];
 		firstNeighbour->merge( SubBase );
-		
+
 		delete SubBase;
 		NeighbourList.Delete(0);
 	}
@@ -1166,12 +1166,12 @@ void cBase::deleteBuilding ( cBuilding *building, bool bServer )
 		newSubBases[i]->setMetalProd(metal);
 		newSubBases[i]->setGoldProd(gold);
 		newSubBases[i]->setOilProd(oil);
-		
+
 		metal -= newSubBases[i]->getMetalProd();
 		gold -= newSubBases[i]->getGoldProd();
 		oil -= newSubBases[i]->getOilProd();
 	}
-	
+
 	if ( building->IsWorking && building->data.canResearch )
 		building->owner->stopAResearch(building->researchArea);
 

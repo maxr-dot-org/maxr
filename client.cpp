@@ -567,9 +567,9 @@ void cClient::addMessage ( string sMsg )
 // displays a message with 'goto' coordinates
 string cClient::addCoords (const string msg,int x,int y )
 {
- 	stringstream strStream;
- 	//e.g. [85,22] missel MK I is under attack (F1)
- 	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString ( KeysList.KeyJumpToAction ) << ")";
+	stringstream strStream;
+	//e.g. [85,22] missel MK I is under attack (F1)
+	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString(KeysList.KeyJumpToAction) << ")";
 	Client->addMessage ( strStream.str() );
 	iMsgCoordsX=x;
 	iMsgCoordsY=y;
@@ -783,7 +783,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding(Player) );
 			AddedBuilding->iID = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
-			
+
 			if ( AddedBuilding->data.connectsToBase )
 			{
 				Player->base.SubBases[0]->buildings.Add ( AddedBuilding );
@@ -1365,7 +1365,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					lngPack.i18n ( "Text~Hud~Speed" ),
 					lngPack.i18n ( "Text~Hud~Scan" ),
 					lngPack.i18n ( "Text~Vehicles~Costs" ) };
-				
+
 				researchMsgString = lngPack.i18n( "Text~Context~Research") + " " + lngPack.i18n( "Text~Comp~Finished") + ": ";
 				for (int i = 0; i < nrResearchAreasFinished; i++)
 				{
@@ -1612,7 +1612,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		gameGUI.setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Reconnect" ), lngPack.i18n ( "Text~Multiplayer~Abort_Waiting" ) );
 		break;
 	case GAME_EV_ABORT_WAIT_RECON:
-		unfreeze(); 
+		unfreeze();
 		gameGUI.setInfoTexts ( "", "" );
 		break;
 	case GAME_EV_DEL_PLAYER:
@@ -1644,7 +1644,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cBuilding *building = NULL;
 			cVehicle *vehicle = getVehicleFromID ( unitID );
 			if ( !vehicle ) building = getBuildingFromID ( unitID );
-			
+
 			if ( vehicle )
 			{
 				gameGUI.selectUnit( vehicle );
@@ -1865,7 +1865,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 				}
 				ostringstream os;
-				os << lngPack.i18n ( "Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")"; 
+				os << lngPack.i18n ( "Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
 				string sTmp(os.str());
 				addMessage (sTmp);
 				ActivePlayer->addSavedReport ( sTmp, sSavedReportMessage::REPORT_TYPE_COMP );
@@ -2003,7 +2003,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int pn = message->popInt16();
 			int turn = message->popInt16();
 			int n = message->popInt16();
-			
+
 			getPlayerFromNumber(pn)->setScore(n, turn);
 		}
 		break;
@@ -2011,7 +2011,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		{
 			int pn = message->popInt16();
 			int n = message->popInt16();
-			
+
 			getPlayerFromNumber(pn)->numEcos = n;
 		}
 		break;
@@ -2045,7 +2045,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			vehicle->ClientMoveJob->endMoveAction = new cEndMoveAction( vehicle, destID, type);
 		}
 		break;
-	
+
 	default:
 		Log.write("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 		break;

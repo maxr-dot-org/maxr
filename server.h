@@ -87,7 +87,7 @@ private:
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
-	
+
 	/** the thread the server runs in */
 	SDL_Thread *ServerThread;
 	/** true if the server should exit and end his thread */
@@ -136,7 +136,7 @@ private:
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
-	
+
 	/** victory conditions. One or both must be zero. **/
 	int turnLimit, scoreLimit;
 
@@ -249,7 +249,7 @@ public:
 	cList<cPlayer*> *PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
-	
+
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
@@ -393,7 +393,7 @@ public:
 	void sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1 );
 
 	void makeAdditionalSaveRequest ( int saveNum );
-	
+
 	int getTurn() const;
 
 } EX *Server;

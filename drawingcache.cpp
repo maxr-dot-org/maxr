@@ -256,7 +256,7 @@ SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
 
 SDL_Surface* cDrawingCache::createNewEntry(cVehicle* vehicle)
 {
-	if ( !canCache(vehicle) ) 
+	if ( !canCache(vehicle) )
 		return NULL;
 
 	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry

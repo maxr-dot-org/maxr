@@ -348,11 +348,11 @@ protected:
 	cMenuTimerBase(Uint32 intervall);
 	~cMenuTimerBase();
 	SDL_TimerID timerID;
-	
+
 };
 
 /**
-* a timer class for adding timers to menus. 
+* a timer class for adding timers to menus.
 * This class is for adding timers with a
 * callback on a non static member function.
 *@author eiko
@@ -940,7 +940,7 @@ public:
 
 	SDL_Rect getPosition();
 	void move ( int value );
-	
+
 	void mouseMoved( bool center );
 
 	bool preClicked();

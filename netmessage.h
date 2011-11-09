@@ -24,8 +24,8 @@
 #include <string>
 #include "network.h"
 
-enum eNetStatusMsg 
-{ 
+enum eNetStatusMsg
+{
 	TCP_ACCEPT = 0,
 	TCP_CLOSE
 };

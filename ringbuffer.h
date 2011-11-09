@@ -65,7 +65,7 @@ template<typename T> void cRingbuffer<T>::write(const T element)
 	{
 		//alloc new memory
 		int newCapacity = capacity + 128;
-		
+
 		T* newElements = new T[newCapacity];
 
 		int newWrite_;

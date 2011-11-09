@@ -40,7 +40,7 @@ cNetMessage::cNetMessage( char* c)
 cNetMessage::cNetMessage(int iType)
 {
 	this->iType = iType;
-		
+
 	data[0] = START_CHAR;	// 0:	  reserved for startchar
 							// 1 - 2: reserved for length
 							// 3 - 4: reserved for message type
@@ -73,7 +73,7 @@ eNetMessageClass cNetMessage::getClass()
 	else
 		return NET_MSG_MENU;
 }
-		
+
 
 void cNetMessage::pushChar( char c)
 {

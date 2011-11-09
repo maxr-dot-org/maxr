@@ -369,7 +369,7 @@ void sendMoveJobServer( cServerMoveJob *MoveJob, int iPlayer )
 		message->pushInt16( waypoint->Costs );
 		message->pushInt16( waypoint->X );
 		message->pushInt16( waypoint->Y );
-		
+
 		if ( message->iLength > PACKAGE_LENGTH - 19 )
 		{
 			Log.write(" Server: Error sending movejob: message too long", cLog::eLOG_TYPE_NET_ERROR );
@@ -460,7 +460,7 @@ void sendScore( cPlayer *Subject, int turn, cPlayer *Receiver)
 		msg->pushInt16( Subject->getScore(turn));
 		msg->pushInt16( turn );
 		msg->pushInt16( Subject->Nr );
-	
+
 		Server->sendNetMessage(msg, Receiver->Nr);
 	}
 }
@@ -476,7 +476,7 @@ void sendUnitScore(cBuilding *b)
 void sendNumEcos(cPlayer *Subject, cPlayer *Receiver)
 {
 	Subject->CountEcoSpheres();
-	
+
 	if(!Receiver)
 		for ( unsigned int n = 0; n < Server->PlayerList->Size(); n++ )
 			sendNumEcos(Subject, (*Server->PlayerList)[n]);
@@ -485,7 +485,7 @@ void sendNumEcos(cPlayer *Subject, cPlayer *Receiver)
 		cNetMessage *msg = new cNetMessage( GAME_EV_NUM_ECOS );
 		msg->pushInt16( Subject->numEcos );
 		msg->pushInt16( Subject->Nr );
-	
+
 		Server->sendNetMessage(msg, Receiver->Nr);
 	}
 }

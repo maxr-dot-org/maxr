@@ -835,7 +835,7 @@ int cVehicle::refreshData ()
 				int     nextY       = PosY;
 				bool    found_next  = false;
 
-				while ( !found_next && ( ( nextX != BandX ) || ( nextY != BandY ) ) ) 
+				while ( !found_next && ( ( nextX != BandX ) || ( nextY != BandY ) ) )
 				{
 				// Calculate the next position in the path.
 					if ( PosX > BandX ) nextX--;
@@ -843,18 +843,18 @@ int cVehicle::refreshData ()
 					if ( PosY > BandY ) nextY--;
 					if ( PosY < BandY ) nextY++;
 					// Can we move to this position? If not, we need to kill the path building now.
-					if ( !Server->Map->possiblePlace( this, nextX, nextY ) ) 
+					if ( !Server->Map->possiblePlace( this, nextX, nextY ) )
 					{
 						// Try sidestepping stealth units before giving up.
 						Server->sideStepStealthUnit( nextX, nextY, this );
-						if ( !Server->Map->possiblePlace( this, nextX, nextY ) ) 
+						if ( !Server->Map->possiblePlace( this, nextX, nextY ) )
 						{
 							// We can't build along this path any more.
 							break;
 						}
 					}
 					// Can we build at this next position?
-					if ( Server->Map->possiblePlaceBuilding( BuildingTyp.getBuilding()->data, nextX, nextY ) ) 
+					if ( Server->Map->possiblePlaceBuilding( BuildingTyp.getBuilding()->data, nextX, nextY ) )
 					{
 						// We can build here.
 						found_next = true;
@@ -2125,7 +2125,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	a = iTurboBuildCosts[0];
 	rounds = iTurboBuildRounds[0];
 	costs = iTurboBuildCosts[0];
-	
+
 	while ( a >= 4 && data.storageResCur >= costs + 4 )
 	{
 		rounds--;
@@ -2143,7 +2143,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	a = iTurboBuildCosts[1];
 	rounds = iTurboBuildRounds[1];
 	costs = iTurboBuildCosts[1];
-	
+
 	while ( a >= 10 && costs < data.storageResMax - 2)
 	{
 		int inc = 24 - min(16,a);

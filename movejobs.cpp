@@ -494,7 +494,7 @@ void cServerMoveJob::stop()
 	}
 
 	//if the vehicle is not moving, it has to stop immediately
-	if ( !Vehicle->moving ) 
+	if ( !Vehicle->moving )
 	{
 		release();
 	}
@@ -562,7 +562,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 		waypoint->Costs = message->popInt16();
 
 		if ( !dest ) dest = waypoint;
-		
+
 		waypoint->next = path;
 		path = waypoint;
 
@@ -667,7 +667,7 @@ bool cServerMoveJob::checkMove()
 	calcNextDir();
 	Vehicle->MoveJobActive = true;
 	Vehicle->moving = true;
-	
+
 	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
 	Vehicle->DecSpeed ( Waypoints->next->Costs );
@@ -700,7 +700,7 @@ bool cServerMoveJob::checkMove()
 void cServerMoveJob::moveVehicle()
 {
 	int iSpeed;
-	if ( !Vehicle ) 
+	if ( !Vehicle )
 		return;
 	if ( Vehicle->data.animationMovement )
 		iSpeed = MOVE_SPEED/2;
@@ -708,12 +708,12 @@ void cServerMoveJob::moveVehicle()
 	{
 		iSpeed = MOVE_SPEED;
 		cBuilding* building = Map->fields[Waypoints->next->X+Waypoints->next->Y*Map->size].getBaseBuilding();
-		if (building && building->data.modifiesSpeed) 
+		if (building && building->data.modifiesSpeed)
 			iSpeed = (int)(iSpeed/building->data.modifiesSpeed);
 	}
-	else if ( Vehicle->data.factorAir > 0 ) 
+	else if ( Vehicle->data.factorAir > 0 )
 		iSpeed = MOVE_SPEED*2;
-	else 
+	else
 		iSpeed = MOVE_SPEED;
 
 	setOffset(Vehicle, iNextDir, iSpeed );
@@ -836,7 +836,7 @@ void cEndMoveAction::executeLoadAction()
 {
 	cVehicle* destVehicle = Server->getVehicleFromID( destID_ );
 	if ( !destVehicle ) return;
-	
+
 	if ( vehicle_->canLoad ( destVehicle ) )
 	{
 		vehicle_->storeVehicle ( destVehicle, Server->Map );
@@ -851,7 +851,7 @@ void cEndMoveAction::executeGetInAction()
 {
 	cVehicle* destVehicle = Server->getVehicleFromID( destID_ );
 	cBuilding* destBuilding = Server->getBuildingFromID( destID_ );
-	
+
 	// execute the loading if possible
 	if ( destVehicle && destVehicle->canLoad ( vehicle_ ) )
 	{
@@ -892,7 +892,7 @@ void cEndMoveAction::executeAttackAction()
 		return;
 
 	int offset = x + y * Server->Map->size;
-	
+
 	//check, whether the attack is now possible
 	if ( !vehicle_->CanAttackObject ( x, y, Client->Map, true, true ) ) return;
 
@@ -1066,7 +1066,7 @@ bool cClientMoveJob::generateFromMessage( cNetMessage *message )
 		waypoint->Y = message->popInt16();
 		waypoint->X = message->popInt16();
 		waypoint->Costs = message->popInt16();
-		
+
 		waypoint->next = Waypoints;
 		Waypoints = waypoint;
 
@@ -1083,7 +1083,7 @@ sWaypoint* cClientMoveJob::calcPath( int SrcX, int SrcY, int DestX, int DestY, c
 
 	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Client->Map, vehicle, group );
 	sWaypoint* waypoints = PathCalculator.calcPath();
-	
+
 	return waypoints;
 }
 

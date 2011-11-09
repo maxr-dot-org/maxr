@@ -163,7 +163,7 @@ class cEndMoveAction
 public:
 	cVehicle* vehicle_;
 	eEndMoveActionType type_;
-	int destID_;		//we store the ID and not a pointer to vehicle/building, 
+	int destID_;		//we store the ID and not a pointer to vehicle/building,
 						//so we don't have to invalidate the pointer, when the dest unit gets destroyed
 
 	void executeLoadAction();
@@ -235,7 +235,7 @@ public:
 
 	void setVehicleToCoords(int x, int y);
 	bool generateFromMessage( cNetMessage *message );
-	
+
 	void release();
 	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed );
 	void moveVehicle();

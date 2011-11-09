@@ -329,7 +329,7 @@ void cServerAttackJob::sendFireCommand( cPlayer* player )
 	message->pushInt16( vehicle ? vehicle->data.ammoCur  : building->data.ammoCur );
 	message->pushInt16( vehicle ? vehicle->data.shotsCur : building->data.shotsCur);
 	message->pushChar( fireDir );
-	if ( bMuzzleIsRocketType ) 
+	if ( bMuzzleIsRocketType )
 	{
 		message->pushInt32( iTargetOff );
 	}

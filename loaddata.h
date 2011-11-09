@@ -114,7 +114,7 @@ bool getXMLNodeBool( TiXmlDocument &document, const char *path0 = NULL, const ch
 
 /**
 * Gets the name and (text) description for clan with internal id num from language file
-* If no translation exists a warning is issued and the existing strings are not altered 
+* If no translation exists a warning is issued and the existing strings are not altered
 * @param num engine internal ID of clan sorted by oder of clans in clan.xml
 */
 void translateClanData(int num);

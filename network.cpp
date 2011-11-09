@@ -257,7 +257,7 @@ void cTCP::HandleNetworkThread()
 					}
 					else SDLNet_TCP_Close ( socket );
 				}
-				
+
 			}
 			// there has to be received new data
 			else if ( Sockets[i].iType == CLIENT_SOCKET && Sockets[i].iState == STATE_READY && SDLNet_SocketReady ( Sockets[i].socket ) )
@@ -303,7 +303,7 @@ void cTCP::HandleNetworkThread()
 						}
 
 						s.messagelength = SDL_SwapLE16( *(Sint16*)(s.buffer.data+readPos+1) );
-						if ( s.messagelength > PACKAGE_LENGTH ) 
+						if ( s.messagelength > PACKAGE_LENGTH )
 						{
 							Log.write ( "Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR );
 							cNetMessage* message = new cNetMessage( TCP_CLOSE );
@@ -324,7 +324,7 @@ void cTCP::HandleNetworkThread()
 						cNetMessage* message = new cNetMessage( s.buffer.data + readPos );
 						pushEvent( message );
 						messagePushed = true;
-						
+
 						//save position of next message
 						readPos += s.messagelength;
 
@@ -399,7 +399,7 @@ int cTCP::getSocketCount()
 //------------------------------------------------------------------------
 int cTCP::getConnectionStatus()
 {
-	if (iLast_Socket > 0) 
+	if (iLast_Socket > 0)
 		return 1;
 	return 0;
 }

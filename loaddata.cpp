@@ -2164,7 +2164,7 @@ void translateClanData(int num)
 					Log.write("Found clan translation for clan id "+iToStr(num), LOG_TYPE_DEBUG);
 					if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
 					{
-					 	clan->setName(pXmlNode->ToElement()->Attribute( "localized" ));
+						clan->setName(pXmlNode->ToElement()->Attribute("localized"));
 					}
 					else
 					{
@@ -3192,7 +3192,7 @@ void setPaths()
 		{
 			//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
 			if( ReadMaxXml() != 0 ) Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
-			
+
 			if( mkdir(SettingsData.sSavesPath.c_str()) == 0 ) Log.write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
 			else Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
 		}

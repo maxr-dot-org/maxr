@@ -91,7 +91,7 @@ void cEventHandling::HandleEvents()
 		switch (message->getClass())
 		{
 		case NET_MSG_CLIENT:
-			if ( !Client ) 
+			if ( !Client )
 			{
 				Log.write("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
 				break;

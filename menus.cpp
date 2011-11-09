@@ -93,7 +93,7 @@ string sSettings::getResFreqString()
 string sSettings::getVictoryConditionString()
 {
 	string r = iToStr(duration) + " ";
-	
+
 	switch(victoryType)
 	{
 		case SETTINGS_VICTORY_TURNS:  r += lngPack.i18n("Text~Comp~Turns");  break;
@@ -168,7 +168,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		//send victroy conditions to clients
 		for(unsigned n = 0; n < players.Size(); n++)
 			sendVictoryConditions( nTurns, nScore, players[n]);
-	
+
 		// place resources
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
@@ -194,7 +194,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		{
 			sendClansToClients ( &players );
 		}
-		
+
 		//make the landing
 		for ( unsigned int i = 0; i < players.Size(); i++ )
 		{
@@ -294,7 +294,7 @@ void cGameDataContainer::receiveLandingUnits ( cNetMessage *message )
 	if ( message->iType != MU_MSG_LANDING_VEHICLES ) return;
 
 	unsigned int playerNr = message->popInt16();
-	
+
 	for ( unsigned int i = (unsigned int)landingUnits.Size(); i < players.Size(); i++ )
 	{
 		landingUnits.Add ( NULL );
@@ -581,7 +581,7 @@ void cMenu::draw( bool firstDraw, bool showScreen )
 	{
 		if ( drawnEveryFrame ) mouse->draw ( true, buffer );
 		Video.draw();
-		if ( !drawnEveryFrame ) mouse->draw ( false, screen ); 
+		if ( !drawnEveryFrame ) mouse->draw ( false, screen );
 	}
 }
 
@@ -971,7 +971,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	menuItems.Add ( tcpClientButton );
 
 	#ifndef NDEBUG
-	
+
 	newHotseatButton = new cMenuButton ( position.x+390, position.y+190+MAIN_MENU_BTN_SPACE*2, lngPack.i18n ("Text~Button~HotSeat_New") );
 	newHotseatButton->setReleasedFunction ( &newHotseatReleased );
 	//newHotseatButton->setLocked(true); //disable, not implemented yet
@@ -983,7 +983,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	menuItems.Add ( loadHotseatButton );
 
 	#endif
-	
+
 	backButton = new cMenuButton ( position.x+415, position.y+190+MAIN_MENU_BTN_SPACE*6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL );
 	backButton->setReleasedFunction ( &backReleased );
 	menuItems.Add ( backButton );
@@ -995,14 +995,14 @@ cMultiPlayersMenu::~cMultiPlayersMenu()
 	delete titleLabel;
 	delete tcpHostButton;
 	delete tcpClientButton;
-	
+
 	#ifndef NDEBUG
-	
+
 	delete newHotseatButton;
 	delete loadHotseatButton;
-	
+
 	#endif
-	
+
 	delete backButton;
 }
 
@@ -1168,7 +1168,7 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	clansGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( clansGroup );
 	iCurrentLine += iLineHeight*3;
-	
+
 	int tmpLine = iCurrentLine;
 
 	// Credits field - this is where the money goes
@@ -1188,41 +1188,41 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	iCurrentLine += iLineHeight;
 	creditsGroup->addButton ( new cMenuCheckButton ( position.x+140, position.y+iCurrentLine, lngPack.i18n( "Text~Option~More") + " ("+iToStr(SETTING_CREDITS_MORE)+")", settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	menuItems.Add ( creditsGroup );
-	
+
 	iCurrentLine = tmpLine;
-	
+
 	// Victory condition
 	const bool bTurns = settings.victoryType == SETTINGS_VICTORY_TURNS;
 	const bool bPoints = settings.victoryType == SETTINGS_VICTORY_POINTS;
 	const bool bAnnih = settings.victoryType == SETTINGS_VICTORY_ANNIHILATION;
-	
+
 	const bool bShort = settings.duration == SETTINGS_DUR_SHORT;
 	const bool bMedi = settings.duration == SETTINGS_DUR_MEDIUM;
 	const bool bLong = settings.duration == SETTINGS_DUR_LONG;
-	
+
 	const std::string strTurns = lngPack.i18n("Text~Comp~Turns");
 	const std::string strPoints = lngPack.i18n("Text~Comp~Points");
 	const std::string strNoLimit = lngPack.i18n("Text~Comp~NoLimit");
-	
+
 	victoryLabel = new cMenuLabel(
-		position.x+300, position.y+iCurrentLine, 
+		position.x+300, position.y+iCurrentLine,
 		lngPack.i18n("Text~Comp~GameEndsAt")
 	);
 	menuItems.Add(victoryLabel );
-	
+
 	tmpLine = iCurrentLine += iLineHeight;
-	
+
 	victoryGroup = new cMenuRadioGroup();
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "100 "+strTurns, bTurns && bShort, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "200 "+strTurns, bTurns && bMedi,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 380, position.y+iCurrentLine, "400 "+strTurns, bTurns && bLong,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
-	
+
 	iCurrentLine = tmpLine;
-	
+
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "100 "+strPoints, bPoints && bShort, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "200 "+strPoints, bPoints && bMedi,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 500, position.y+iCurrentLine, "400 "+strPoints, bPoints && bLong,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
-	
+
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 440, position.y+iCurrentLine, strNoLimit, bAnnih, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	menuItems.Add(victoryGroup);
 }
@@ -1338,8 +1338,8 @@ void cSettingsMenu::updateSettings()
 
 	if ( gameTypeGroup->buttonIsChecked ( 0 ) ) settings.gameType = SETTINGS_GAMETYPE_TURNS;
 	else settings.gameType = SETTINGS_GAMETYPE_SIMU;
-	
-	if(victoryGroup->buttonIsChecked(6)) 
+
+	if(victoryGroup->buttonIsChecked(6))
 		settings.victoryType = SETTINGS_VICTORY_ANNIHILATION;
 	else for(int i=0; i<6; i++)
 	{
@@ -2500,7 +2500,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_) 
+cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* player_)
 : cMenu(0)
 , gameDataContainer(gameDataContainer_)
 , player(player_)
@@ -2739,7 +2739,7 @@ void cLandingMenu::hitPosition()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cNetworkMenu::cNetworkMenu() 
+cNetworkMenu::cNetworkMenu()
 : cMenu (LoadPCX (GFXOD_MULT))
 {
 	ip = SettingsData.sIP;
@@ -2798,7 +2798,7 @@ cNetworkMenu::cNetworkMenu()
 	portLine->setText ( iToStr ( port ) );
 	portLine->setTaking ( false, true );
 	menuItems.Add ( portLine );
-	
+
 	//little icon that restores our default port on click. TODO: find a proper gfx for this or change menu style to dropdown
         setDefaultPortImage = new cMenuImage ( position.x+224+85, position.y+253 );
 	setDefaultPortImage->setImage(GraphicsData.gfx_Cpfeil2);
@@ -3037,7 +3037,7 @@ void cNetworkMenu::backReleased( void* parent )
 	menu->saveOptions();
 	menu->terminate = true;
 }
- 
+
 //------------------------------------------------------------------------------
 void cNetworkMenu::sendReleased( void* parent )
 {
@@ -3342,7 +3342,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 			bool translationText = message->popBool();
 			string chatText = message->popString();
 			if ( translationText ) chatBox->addLine ( lngPack.i18n ( chatText ) );
-			else 
+			else
 			{
 				chatBox->addLine ( chatText );
 				PlayFX ( SoundData.SNDChat ); //play some chattersound if we got a player message
@@ -3399,7 +3399,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 
 			draw();
 			sendPlayerList( &players );
-			
+
 			playersBox->setPlayers ( &players );
 		}
 		break;
@@ -3710,7 +3710,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				settings->oil = (eSettingResourceValue)message->popChar();
 				settings->gold = (eSettingResourceValue)message->popChar();
 				settings->resFrequency = (eSettingResFrequency)message->popChar();
-				settings->credits = (eSettingsCredits)message->popInt16(); 
+				settings->credits = (eSettingsCredits)message->popInt16();
 				settings->bridgeHead = (eSettingsBridgeHead)message->popChar();
 				settings->alienTech = (eSettingsAlienTech)message->popChar();
 				settings->clans = (eSettingsClans)message->popChar();
@@ -4232,18 +4232,18 @@ cLoadSaveMenu::~cLoadSaveMenu()
 void cLoadSaveMenu::exitReleased( void* parent )
 {
 	cLoadSaveMenu *menu = static_cast<cLoadSaveMenu*>((cMenu*)parent);
-	
+
 	cDialogYesNo yesNoDialog(lngPack.i18n("Text~Comp~End_Game"));
 	if ( yesNoDialog.show() == 0  )
 	{
 	  menu->end = true;
-	
+
 	}
 	else
 	{
- 	  menu->draw();
+		menu->draw();
 	}
-	
+
 	//menu->end = true;
 }
 
@@ -4301,7 +4301,7 @@ void cLoadSaveMenu::extendedSlotClicked( int oldSelection )
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ ) 
+cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ )
 : cHangarMenu ( LoadPCX ( GFXOD_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
 {
 	if ( !Client ) terminate = true;
@@ -4447,7 +4447,7 @@ bool cBuildingsBuildMenu::selListDoubleClicked ( cMenuUnitsList* list, void *par
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ ) 
+cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ )
 : cHangarMenu ( LoadPCX ( GFXOD_FAC_BUILD_SCREEN ), player_, MNU_BG_ALPHA )
 , cAdvListHangarMenu ( NULL, player_ )
 {
@@ -4777,7 +4777,7 @@ int cUpgradeHangarMenu::getCredits()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUpgradeMenu::cUpgradeMenu(cPlayer* player) 
+cUpgradeMenu::cUpgradeMenu(cPlayer* player)
 : cHangarMenu (LoadPCX(GFXOD_UPGRADE), player, MNU_BG_ALPHA)
 , cUpgradeHangarMenu(player)
 {
@@ -4884,7 +4884,7 @@ void cUpgradeMenu::generateSelectionList()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner ) 
+cUnitHelpMenu::cUnitHelpMenu( sID unitID, cPlayer *owner )
 : cMenu ( LoadPCX ( GFXOD_HELP ), MNU_BG_ALPHA )
 {
 	unit = new cMenuUnitListItem ( unitID, owner, NULL, MUL_DIS_TYPE_NOEXTRA, NULL, false );
@@ -5620,7 +5620,7 @@ void cMineManagerMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cReportsMenu::cReportsMenu (cPlayer *owner_) 
+cReportsMenu::cReportsMenu (cPlayer *owner_)
 : cMenu (LoadPCX (GFXOD_REPORTS), MNU_BG_ALPHA)
 , owner (owner_)
 {

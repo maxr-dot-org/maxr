@@ -77,7 +77,7 @@ public:
 	bool bMakeTracks;
 	/**scrollspeed on map */
 	int iScrollSpeed;
-	
+
 	//NET
 	/**Last/default ip used for network game */
 	std::string sIP; //string? why not int array? --beko

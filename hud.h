@@ -352,7 +352,7 @@ class cGameGUI : public cMenu
 	static void doneReleased( void *parent );
 
 	static void twoXReleased( void *parent );
-	
+
 	static void playersReleased( void *parent );
 
 	static void changedMiniMap( void *parent );
@@ -477,7 +477,7 @@ public:
 	void selectUnit( cVehicle *vehicle );
 	void selectUnit( cBuilding *building );
 	void deselectUnit();
-	
+
 
 	void setInfoTexts ( string infoText, string additionalInfoText );
 

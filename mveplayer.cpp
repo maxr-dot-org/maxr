@@ -236,7 +236,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		/********************/
 		/* opcode handling */
 		/********************/
-    	switch(op.type)
+		switch(op.type)
 		{
 		case STOP_PLAYBACK:
 

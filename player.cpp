@@ -59,7 +59,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 	Credits=0;
-	
+
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	isRemovedFromGame = false;
@@ -107,7 +107,7 @@ cPlayer::cPlayer(const cPlayer &Player)
 		researchLevel.setCurResearchPoints(Player.researchLevel.getCurResearchPoints(i), i);
 	}
 	reportResearchAreasFinished = Player.reportResearchAreasFinished;
-	
+
 	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
@@ -624,7 +624,7 @@ void cPlayer::doResearch()
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas;
 	cList<int> areasReachingNextLevel;
-	reportResearchAreasFinished.Reserve (0); // clear 
+	reportResearchAreasFinished.Reserve (0); // clear
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		if (researchCentersWorkingOnArea[area] > 0)
@@ -651,14 +651,14 @@ void cPlayer::accumulateScore()
 {
 	const int now = Server->getTurn();
 	int deltaScore = 0;
-	
+
 	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
 		{
 			bp->points ++;
 			deltaScore ++;
-			
+
 			sendUnitScore(bp);
 		}
 	}
@@ -669,7 +669,7 @@ void cPlayer::accumulateScore()
 void cPlayer::CountEcoSpheres()
 {
 	numEcos = 0;
-	
+
 	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
@@ -680,7 +680,7 @@ void cPlayer::CountEcoSpheres()
 void cPlayer::setScore(int s, int turn)
 {
 	unsigned int t = turn ? turn : (Client ? Client->iTurn : 1);
-	
+
 	if(pointsHistory.size() < t)
 		pointsHistory.resize(t);
 	pointsHistory[t - 1] = s;
@@ -689,8 +689,8 @@ void cPlayer::setScore(int s, int turn)
 int cPlayer::getScore(int turn) const
 {
 	unsigned int t = turn;
-	
-	if(pointsHistory.size() < t) 
+
+	if(pointsHistory.size() < t)
 	{
 		int score = pointsHistory.empty() ?
 			0 : pointsHistory[pointsHistory.size() - 1];

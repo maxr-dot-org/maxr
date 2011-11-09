@@ -34,7 +34,7 @@ cMouse::cMouse ( void )
 	isDoubleClick = false;
 	prevScreenX = 0;
 	prevScreenY = 0;
-	
+
 	DrawX = 0;
 	DrawY = 0;
 }

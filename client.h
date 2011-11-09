@@ -220,7 +220,7 @@ public:
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
 	bool waitReconnect;
-	
+
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
 
@@ -321,8 +321,8 @@ public:
 	int getTurn() const;
 
 	void deletePlayer(cPlayer *player);
-	
-	
+
+
 } EX *Client;
 
 #endif

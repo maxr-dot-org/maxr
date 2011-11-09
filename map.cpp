@@ -557,8 +557,8 @@ void cMap::addBuilding( cBuilding* building, unsigned int x, unsigned int y )
 void cMap::addBuilding( cBuilding* building, unsigned int offset )
 {
 	if ( building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig && building->owner ) return; //big base building are not implemented
-	
-	int mapLevel = getMapLevel( building );	
+
+	int mapLevel = getMapLevel( building );
 	unsigned int i = 0;
 
 	if ( building->data.isBig )
@@ -581,7 +581,7 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 	}
 	else
 	{
-		
+
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
 		fields[offset].buildings.Insert(i, building);
 	}
@@ -656,13 +656,13 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 			for ( unsigned int i = 0; i < vehicles->Size(); i++ )
 				if ( (*vehicles)[i] == vehicle ) { vehicles->Delete(i); break; }
 
-			
+
 			offset += size;
 			vehicles = &fields[offset].vehicles;
 			for ( unsigned int i = 0; i < vehicles->Size(); i++ )
 			if ( (*vehicles)[i] == vehicle ) { vehicles->Delete(i); break; }
 
-			
+
 			offset--;
 			vehicles = &fields[offset].vehicles;
 			for ( unsigned int i = 0; i < vehicles->Size(); i++ )

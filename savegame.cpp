@@ -239,7 +239,7 @@ void cSavegame::loadGameInfo()
 		Server->bPlayTurns = true;
 		element->Attribute ( "activeplayer", &Server->iActiveTurnPlayerNr );
 	}
-	
+
 	TiXmlElement *e;
 	if((e = gameInfoNode->FirstChildElement("TurnLimit")) != NULL) e->Attribute("num", &Server->turnLimit);
 	if((e = gameInfoNode->FirstChildElement("ScoreLimit")) != NULL) e->Attribute("num", &Server->scoreLimit);
@@ -303,7 +303,7 @@ cPlayer *cSavegame::loadPlayer( TiXmlElement *playerNode, cMap *map )
 	Player->InitMaps ( map->size, map );
 
 	playerNode->FirstChildElement( "Credits" )->Attribute ( "num", &Player->Credits );
-	
+
 	if((e = playerNode->FirstChildElement("ScoreHistory")) != NULL)
 	{
 		TiXmlElement *s = e->FirstChildElement("Score");
@@ -1208,7 +1208,7 @@ void cSavegame::writeGameInfo()
 	addAttributeElement ( gemeinfoNode, "Turn", "num", iToStr ( Server->iTurn ) );
 	if ( Server->bHotSeat ) addAttributeElement ( gemeinfoNode, "Hotseat", "activeplayer", iToStr ( Server->iHotSeatPlayer ) );
 	if ( Server->bPlayTurns ) addAttributeElement ( gemeinfoNode, "PlayTurns", "activeplayer", iToStr ( Server->iActiveTurnPlayerNr ) );
-	
+
 	addAttributeElement ( gemeinfoNode, "TurnLimit", "num", iToStr ( Server->turnLimit ) );
 	addAttributeElement ( gemeinfoNode, "ScoreLimit", "num", iToStr ( Server->scoreLimit ) );
 }
@@ -1241,7 +1241,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 	addAttributeElement ( playerNode, "Color", "num", iToStr ( GetColorNr ( Player->color ) ) );
 	addAttributeElement ( playerNode, "Number", "num", iToStr ( Player->Nr ) );
 	addAttributeElement ( playerNode, "ResourceMap", "data", convertScanMapToString ( Player->ResourceMap, Server->Map->size*Server->Map->size ) );
-	
+
 	// player score
 	TiXmlElement *scoreNode = addMainElement(playerNode, "ScoreHistory");
 	for(unsigned int i=0; i<Player->pointsHistory.size(); i++)
@@ -1249,7 +1249,7 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 		TiXmlElement *e = addMainElement(scoreNode, "Score");
 		e->SetAttribute("num", iToStr(Player->pointsHistory[i]).c_str());
 	}
-	
+
 	// write data of upgraded units
 	TiXmlElement *upgradesNode = addMainElement ( playerNode, "Upgrades" );
 	int upgrades = 0;

@@ -785,7 +785,7 @@ public:
 	static void wasNameImput( void* parent );
 	static void portIpChanged( void* parent );
 	static void setDefaultPort (void* parent );
-	
+
 	virtual void playerSettingsChanged () {}
 };
 

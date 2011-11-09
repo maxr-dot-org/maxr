@@ -99,7 +99,7 @@ int main ( int argc, char *argv[] )
 
 	//detect some video modes for us
 	Video.doDetection();
-	
+
 	if( ReadMaxXml() == -1 )
 	{
 		Quit();
@@ -164,11 +164,11 @@ int main ( int argc, char *argv[] )
 	}
 
 	SDL_WaitThread ( DataThread, NULL );
-	
+
 	Video.setResolution(Video.getResolutionX(), Video.getResolutionY(), true);
 	SDL_ShowCursor ( 0 );
 	Video.clearBuffer();
-	
+
 	mouse = new cMouse;
 	InputHandler = new cInput;
 	EventHandler = new cEventHandling;
@@ -503,23 +503,23 @@ int random(int const x)
 
 string iToStr(int x)
 {
- 	stringstream strStream;
- 	strStream << x;
- 	return strStream.str();
+	stringstream strStream;
+	strStream << x;
+	return strStream.str();
 }
 
 string dToStr(double x)
 {
- 	stringstream strStream;
- 	strStream << x;
- 	return strStream.str();
+	stringstream strStream;
+	strStream << x;
+	return strStream.str();
 }
 
 std::string pToStr(void *x)
 {
 	stringstream strStream;
- 	strStream << x;
- 	return "0x" + strStream.str();
+	strStream << x;
+	return "0x" + strStream.str();
 }
 
 // Round //////////////////////////////////////////////////////////////////////
