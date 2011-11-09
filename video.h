@@ -27,8 +27,8 @@ using namespace std;
 
 
 // Screenbuffers //////////////////////////////////////////////////////////////
-EX SDL_Surface *screen ZERO;	// Der Bildschirm
-EX SDL_Surface *buffer ZERO;	// Der Bildschirm-Buffer
+EX SDL_Surface* screen; // Der Bildschirm
+EX SDL_Surface* buffer; // Der Bildschirm-Buffer
 
 
 struct sVidMode {

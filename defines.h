@@ -58,10 +58,8 @@
 
 #ifdef __main__
 #define EX
-#define ZERO =0
 #else
 #define EX extern
-#define ZERO
 #endif
 
 #define MAXPLAYER_HOTSEAT 8
