@@ -290,7 +290,7 @@ protected:
 	static const char* SkipWhiteSpace( const char*, TiXmlEncoding encoding );
 	inline static bool IsWhiteSpace( char c )
 	{
-		return isspace((unsigned char)c);
+		return (isspace((unsigned char)c) != 0);
 	}
 	inline static bool IsWhiteSpace( int c )
 	{

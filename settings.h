@@ -255,7 +255,7 @@ private:
 
 	void setPaths();
 
-	std::string cSettings::searchDataDir(std::string sDataDirFromConf = "");
+	std::string searchDataDir(std::string sDataDirFromConf = "");
 
 	bool createConfigFile();
 
