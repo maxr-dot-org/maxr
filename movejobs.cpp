@@ -1291,7 +1291,7 @@ void cClientMoveJob::moveVehicle()
 	else iSpeed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if ( SettingsData.bMakeTracks && Vehicle->data.makeTracks && !Map->isWater ( Vehicle->PosX, Vehicle->PosY, false ) &&!
+	if ( cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWater ( Vehicle->PosX, Vehicle->PosY, false ) &&!
 	        ( Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X+Waypoints->next->Y*Map->size]].water ) &&
 	        ( Vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
 	{

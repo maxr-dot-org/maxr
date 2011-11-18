@@ -66,7 +66,11 @@ static int  initSound();
 #undef main
 int main ( int argc, char *argv[] )
 {
-	setPaths(); //first thing: figure out paths
+	if( !cSettings::getInstance().isInitialized() )
+	{
+		Quit();
+		return -1;
+	}
 
 	if ( initSDL() == -1 ) return -1;  //stop on error during init of SDL basics. WARNINGS will be ignored!
 
@@ -100,12 +104,6 @@ int main ( int argc, char *argv[] )
 	//detect some video modes for us
 	Video.doDetection();
 
-	if( ReadMaxXml() == -1 )
-	{
-		Quit();
-		return -1;
-	}
-
 	Video.initSplash(); //show splashscreen
 	initSound(); //now config is loaded and we can init sound and net
 	initNet();
@@ -134,29 +132,28 @@ int main ( int argc, char *argv[] )
 	}
 
 	// play intro if we're supposed to and the file exists
-	if(SettingsData.bIntro)
+	if(cSettings::getInstance().shouldShowIntro())
 	{
-		std::string const m = SettingsData.sMVEPath + PATH_DELIMITER "MAXINT.MVE";
-		if (FileExists(m.c_str()))
+		if(FileExists((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
 		{
 			// Close maxr sound for intro movie
 			CloseSound();
 
 			char mvereturn;
-			Log.write("Starting movie " + m, cLog::eLOG_TYPE_DEBUG);
-			mvereturn = MVEPlayer(m.c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !SettingsData.SoundMute);
+			Log.write ( "Starting movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+			mvereturn = MVEPlayer((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
 			Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
 
 			// reinit maxr sound
-			if ( SettingsData.bSoundEnabled && !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
+			if ( cSettings::getInstance().isSoundEnabled() && !InitSound ( cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize() ) )
 			{
 				Log.write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
 			}
 		}
 		else
 		{
-			Log.write("Couldn't find movie " + m, cLog::eLOG_TYPE_WARNING);
+			Log.write ( "Couldn't find movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
 		}
 	}
 	else
@@ -210,7 +207,7 @@ static int initSDL()
  */
 static int initSound()
 {
-	if (!SettingsData.bSoundEnabled)
+	if (!cSettings::getInstance().isSoundEnabled())
 	{
 		Log.write ( "Sound disabled due configuration", cLog::eLOG_TYPE_INFO);
 		return 1;
@@ -221,15 +218,15 @@ static int initSound()
 		Log.write ( "Could not init SDL_INIT_AUDIO",cLog::eLOG_TYPE_WARNING );
 		Log.write ( "Sound won't  be available!",cLog::eLOG_TYPE_WARNING );
 		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_WARNING );
-		SettingsData.bSoundEnabled=false;
+		cSettings::getInstance().setSoundEnabled(false, false);
 		return -1;
 	}
 
-	if ( !InitSound ( SettingsData.iFrequency, SettingsData.iChunkSize ) )
+	if ( !InitSound ( cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize() ) )
         {
 		Log.write ( "Could not access mixer",cLog::eLOG_TYPE_WARNING );
 		Log.write ( "Sound won't  be available!",cLog::eLOG_TYPE_WARNING );
-		SettingsData.bSoundEnabled = false;
+		cSettings::getInstance().setSoundEnabled(false, false);
                 return -1;
         }
 	Log.write ( "Sound started", cLog::eLOG_TYPE_INFO);

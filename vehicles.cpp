@@ -183,7 +183,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//make damage effect
-	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
@@ -311,7 +311,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// draw overlay if necessary:
-	if ( data.hasOverlay && SettingsData.bAnimations )
+	if ( data.hasOverlay && cSettings::getInstance().isAnimations() )
 	{
 		SDL_Rect src;
 
@@ -322,7 +322,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		src.y = 0;
 		src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( ANIMATION_SPEED % ( (int)(typ->overlay_org->w*Client->gameGUI.getZoom()) / src.h ) ) ) ) * Client->gameGUI.getZoom() );
 
-		if ( StartUp && SettingsData.bAlphaEffects )
+		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
 		else
 			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
@@ -523,7 +523,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 		// draw shadow
 		tmp = dest;
-		if ( SettingsData.bShadows ) blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, factor );
+		if ( cSettings::getInstance().isShadows() ) blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, factor );
 
 		// draw player color
 		src.y = 0;
@@ -546,7 +546,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	{
 		// draw shadow
 		tmp = dest;
-		if ( SettingsData.bShadows )
+		if ( cSettings::getInstance().isShadows() )
 			blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, factor );
 
 		// draw player color
@@ -575,9 +575,9 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 
 	// draw shadow
 	tmp = dest;
-	if ( SettingsData.bShadows && ! ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) ) )
+	if ( cSettings::getInstance().isShadows() && ! ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) ) )
 	{
-		if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
+		if ( StartUp && cSettings::getInstance().isAlphaEffects() ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
 		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
 
 
@@ -621,7 +621,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 	src.y = 0;
 	tmp = dest;
 
-	if ( StartUp && SettingsData.bAlphaEffects )
+	if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 	{
 		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
 	}
@@ -3101,7 +3101,7 @@ void sVehicle::scaleSurfaces( float factor )
 //-----------------------------------------------------------------------------
 void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames )
 {
-	if ( !SettingsData.bPreScale )
+	if ( !cSettings::getInstance().shouldDoPrescale() )
 	{
 		int width, height;
 		height = (int) ( org_src->h*factor );

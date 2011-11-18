@@ -22,7 +22,10 @@
 #include <string>
 #include <SDL.h>
 
-// SettingsData - Class containing all gamesettings ///////////////////////
+class TiXmlNode;
+class TiXmlDocument;
+
+// cSettings::getInstance() - Class containing all gamesettings ///////////////////////
 /**
  * cSettings class. Stores gamesettings :-)
  *
@@ -31,100 +34,240 @@
 class cSettings
 {
 public:
-	/**sConfig is where the config is read from - set in setPaths() **/
-	std::string sConfig;
-	/**sExePath is where the exe is located - set in setPaths*/
-	std::string sExePath;
-	/**sDataDir is where the data files are stored*/
-	std::string sDataDir;
-	/**sLog is where the log goes - set in setPaths() **/
-	std::string sLog;
-	/**sNetLog is where the netlog goes - set in setPaths() **/
-	std::string sNetLog;
-	/**sHome is where the user has his $HOME dir - set in setPaths() **/
-	std::string sHome;
+	static cSettings& getInstance();
+
+	bool isInitialized();
+
+	void saveResolution();
+	void saveColorDepth();
+	void saveWindowMode();
+
+	bool isDebug();
+	void setDebug(bool debug, bool save = true);
+	bool shouldAutosave();
+	void setAutosave(bool autosave, bool save = true);
+	bool isAnimations();
+	void setAnimations(bool animations, bool save = true);
+	bool isShadows();
+	void setShadows(bool shadows, bool save = true);
+	bool isAlphaEffects();
+	void setAlphaEffects(bool alphaEffects, bool save = true);
+	bool shouldShowDescription();
+	void setShowDescription(bool showDescription, bool save = true);
+	bool isDamageEffects();
+	void setDamageEffects(bool damageEffects, bool save = true);
+	bool isDamageEffectsVehicles();
+	void setDamageEffectsVehicles(bool damageEffectsVehicle, bool save = true);
+	bool isMakeTracks();
+	void setMakeTracks(bool makeTracks, bool save = true);
+	int getScrollSpeed();
+	void setScrollSpeed(int scrollSpeed, bool save = true);
+
+	std::string getNetLogPath();
+	void setNetLogPath(const char *netLog);
+
+	std::string getDataDir();
+	void setDataDir(const char *dataDir, bool save = true);
+
+	std::string getExePath();
+	void setExePath(const char *exePath);
+
+	std::string getLogPath();
+	void setLogPath(const char *logPath);
+	
+	std::string getHomeDir();
+	void setHomeDir(const char *homeDir);
+
+	std::string getIP();
+	void setIP(const char* ip, bool save = true);
+
+	unsigned short getPort();
+	void setPort(unsigned short port, bool save = true);
+
+	std::string getPlayerName();
+	void setPlayerName(const char *playerName, bool save = true);
+
+	int getPlayerColor();
+	void setPlayerColor(int color, bool save = true);
+
+	bool isSoundEnabled();
+	void setSoundEnabled(bool soundEnabled, bool save = true);
+
+	int getMusicVol();
+	void setMusicVol(int musicVol, bool save = true);
+	int getSoundVol();
+	void setSoundVol(int soundVol, bool save = true);
+	int getVoiceVol();
+	void setVoiceVol(int voiceVol, bool save = true);
+
+	int getChunkSize();
+	void setChunkSize(int chunkSize, bool save = true);
+	int getFrequency();
+	void setFrequence(int frequency, bool save = true);
+
+	bool isMusicMute();
+	void setMusicMute(bool musicMute, bool save = true);
+	bool isSoundMute();
+	void setSoundMute(bool soundMute, bool save = true);
+	bool isVoiceMute();
+	void setVoiceMute(bool voiceMute, bool save = true);
+
+	bool shouldShowIntro();
+	void setShowIntro(bool showIntro, bool save = true);
+	bool shouldUseFastMode();
+	void setFastMode(bool fastMode, bool save = true);
+	bool shouldDoPrescale();
+	void setDoPrescale(bool preScale, bool save = true);
+	std::string getLanguage();
+	void setLanguage(const char *language, bool save = true);
+	unsigned int getCacheSize();
+	void setCacheSize(unsigned int cacheSize, bool save = true);
+	
+	std::string getFontPath();
+	void setFontPath(const char *fontPath, bool save = true);
+	std::string getFxPath();
+	void setFxPath(const char *fxPath, bool save = true);
+	std::string getGfxPath();
+	void setGfxPath(const char *gfxPath, bool save = true);
+	std::string getLangPath();
+	void setLangPath(const char *langPath, bool save = true);
+	std::string getMapsPath();
+	void setMapsPath(const char *mapsPath, bool save = true);
+	std::string getSavesPath();
+	void setSavesPath(const char *savesPath, bool save = true);
+	std::string getSoundsPath();
+	void setSoundsPath(const char *soundsPath, bool save = true);
+	std::string getVoicesPath();
+	void setVoicesPath(const char *voicesPath, bool save = true);
+	std::string getMusicPath();
+	void setMusicPath(const char *musicPath, bool save = true);
+	std::string getVehiclesPath();
+	void setVehiclesPath(const char *vehiclesPath, bool save = true);
+	std::string getBuildingsPath();
+	void setBuildingsPath(const char *buildingsPath, bool save = true);
+	std::string getMvePath();
+	void setMvePath(const char *mvePath, bool save = true);
+private:
+	
+	cSettings();
+	cSettings(cSettings &other);
+
+	bool initialized;
+	bool initializing;
+
+	static cSettings instance;
 
 	//START-Node
 	/**enable intro on start*/
-	bool bIntro;
+	bool showIntro;
 	/**start in fastmode */
-	bool bFastMode;
+	bool fastMode;
 	/**prescale gfx */
-	bool bPreScale;
+	bool preScale;
 	/**translation file*/
-	std::string sLanguage;
+	std::string language;
 	/**cache size*/
-	unsigned int iCacheSize;
+	unsigned int cacheSize;
 
 	//GAME-Node
 	/** enable debug*/
-	bool bDebug;
+	bool debug;
 	/**enable autosafe */
-	bool bAutoSave;
+	bool autosave;
 	/**enable animations */
-	bool bAnimations;
+	bool animations;
 	/**enable shadows */
-	bool bShadows;
+	bool shadows;
 	/**enable alpha effects */
-	bool bAlphaEffects;
+	bool alphaEffects;
 	/**enable describtions (e.g. in buildmenues) */
-	bool bShowDescription;
+	bool showDescription;
 	/**enable damage effects (smoke'n stuff)*/
-	bool bDamageEffects;
+	bool damageEffects;
 	/**enable damage effects for vehicles (smoke'n stuff)*/
-	bool bDamageEffectsVehicles;
+	bool damageEffectsVehicles;
 	/**enable tracks (units leave tracks on the floor) */
-	bool bMakeTracks;
+	bool makeTracks;
 	/**scrollspeed on map */
+	int scrollSpeed;
+
+	/**sConfig is where the config is read from - set in setPaths() **/
+	std::string configPath;
+	/**sExePath is where the exe is located - set in setPaths*/
+	std::string exePath;
+	/**sDataDir is where the data files are stored*/
+	std::string dataDir;
+	/**sLog is where the log goes - set in setPaths() **/
+	std::string logPath;
+	/**sNetLog is where the netlog goes - set in setPaths() **/
+	std::string netLogPath;
+	/**sHome is where the user has his $HOME dir - set in setPaths() **/
+	std::string homeDir;
+
 	int iScrollSpeed;
 
 	//NET
 	/**Last/default ip used for network game */
-	std::string sIP; //string? why not int array? --beko
+	std::string ip; //string? why not int array? --beko
 	/**Last/default port  used for network game */
-	int iPort;
+	unsigned short port;
 	/**Last/default player's name used for network game */
-	std::string sPlayerName;
+	std::string playerName;
 	/**Last color choosen by player*/
-	int iColor;
-
+	int playerColor;
+	
 	//SOUND
 	/**sound enabled*/
-	bool bSoundEnabled;
+	bool soundEnabled;
 	/**volume music */
-	int MusicVol;
+	int musicVol;
 	/**volume sound effects */
-	int SoundVol;
+	int soundVol;
 	/**volume voices */
-	int VoiceVol;
+	int voiceVol;
 	/**chunk size */
-	int iChunkSize;
+	int chunkSize;
 	/**frequenzy */
-	int iFrequency;
+	int frequency;
 	/**mute music */
-	bool MusicMute;
+	bool musicMute;
 	/**mute sound effects */
-	bool SoundMute;
+	bool soundMute;
 	/**mute voices */
-	bool VoiceMute;	// Muteeigenschaften der Sounds
+	bool voiceMute;
 
 	//PATHS
-	std::string sFontPath;			// Path to the fonts
-	std::string sFxPath;				// Path to the effects
-	std::string sGfxPath;			// Path to the graphics
-	std::string sLangPath;			//Path to language files
-	std::string sMapsPath;			// Path to the maps
-	std::string sSavesPath;			// Path to the saves
-	std::string sSoundsPath;			// Path to the sound-files
-	std::string sVoicesPath;			// Path to the voice-files
-	std::string sMusicPath;			// Path to the music-files
-	std::string sVehiclesPath;			// Path to the vehicles
-	std::string sBuildingsPath;			// Path to the buildings
-	std::string sMVEPath;			// Path to the in-game movies (*.mve)
+	std::string fontPath;			// Path to the fonts
+	std::string fxPath;				// Path to the effects
+	std::string gfxPath;			// Path to the graphics
+	std::string langPath;			//Path to language files
+	std::string mapsPath;			// Path to the maps
+	std::string savesPath;			// Path to the saves
+	std::string soundsPath;			// Path to the sound-files
+	std::string voicesPath;			// Path to the voice-files
+	std::string musicPath;			// Path to the music-files
+	std::string vehiclesPath;			// Path to the vehicles
+	std::string buildingsPath;			// Path to the buildings
+	std::string mvePath;			// Path to the in-game movies (*.mve)
+	
 
-	unsigned int Checksum;		// Die Checksumme ¬∏ber alle Eigenschaften - NOT IN XML-file (yet?)!
+	void initialize();
+
+	void setPaths();
+
+	std::string cSettings::searchDataDir(std::string sDataDirFromConf = "");
+
+	bool createConfigFile();
+
+	TiXmlNode *getXmlNode(std::string path, TiXmlDocument &configFile);
+	
+	void saveSetting(std::string path, const char *value);
+	void saveSetting(std::string path, int value);
+	void saveSetting(std::string path, unsigned int value);
+	void saveSetting(std::string path, bool value);
+	
+	template<typename T>
+	void saveSetting(std::string path, T value, const char *valueName);
 };
-
-extern cSettings SettingsData;
 
 #endif // SETTINGS_H

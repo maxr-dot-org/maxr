@@ -311,7 +311,7 @@ void cClient::runFX()
 
 					for ( int k=0; k < 64; k += 8 )
 					{
-						if ( SettingsData.bAlphaEffects )
+						if ( cSettings::getInstance().isAlphaEffects() )
 						{
 							addFX ( fxSmoke, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 							gameGUI.drawFX((int)FXList.Size() - 1);
@@ -347,7 +347,7 @@ void cClient::runFX()
 
 				for ( int k=0; k < 64; k += 8 )
 				{
-					if ( SettingsData.bAlphaEffects )
+					if ( cSettings::getInstance().isAlphaEffects() )
 					{
 						addFX ( fxBubbles, ( int ) ri->fpx, ( int ) ri->fpy,0 );
 						gameGUI.drawBottomFX( (int)FXListBottom.Size() - 1 );
@@ -561,7 +561,7 @@ void cClient::addMessage ( string sMsg )
 {
 	sMessage* const Message = new sMessage(sMsg, SDL_GetTicks() );
 	messages.Add(Message);
-	if(SettingsData.bDebug) Log.write(Message->msg, cLog::eLOG_TYPE_DEBUG);
+	if(cSettings::getInstance().isDebug()) Log.write(Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
 // displays a message with 'goto' coordinates

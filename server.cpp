@@ -2625,7 +2625,7 @@ void cServer::makeTurnEnd ()
 
 	//FIXME: saving of running attack jobs does not work correctly yet.
 	// make autosave
-	if ( SettingsData.bAutoSave )
+	if ( cSettings::getInstance().shouldAutosave() )
 	{
 		cSavegame Savegame ( 10 );	// autosaves are always in slot 10
 		Savegame.save ( lngPack.i18n ( "Text~Settings~Autosave") + " " + lngPack.i18n ( "Text~Comp~Turn") + " " + iToStr ( iTurn ) );

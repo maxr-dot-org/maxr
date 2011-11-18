@@ -40,30 +40,6 @@
 #define LOAD_ERROR 1
 #define LOAD_FINISHED 2
 
-// Typs for saving a setting
-#define SAVETYPE_ANIMATIONS					0
-#define SAVETYPE_SHADOWS					1
-#define SAVETYPE_ALPHA						2
-#define SAVETYPE_DAMAGEEFFECTS_BUILDINGS			3
-#define SAVETYPE_DAMAGEEFFECTS_VEHICLES				4
-#define SAVETYPE_TRACKS						5
-#define SAVETYPE_AUTOSAVE					6
-#define SAVETYPE_NAME						7
-#define SAVETYPE_IP						8
-#define SAVETYPE_PORT						9
-#define SAVETYPE_MUSICMUTE					10
-#define SAVETYPE_VOICEMUTE					11
-#define SAVETYPE_SOUNDMUTE					12
-#define SAVETYPE_MUSICVOL					13
-#define SAVETYPE_VOICEVOL					14
-#define SAVETYPE_SOUNDVOL					15
-#define SAVETYPE_SCROLLSPEED					16
-#define SAVETYPE_INTRO						17
-#define SAVETYPE_WINDOW						18
-#define SAVETYPE_RESOLUTION					19
-#define SAVETYPE_COLOR						20
-#define SAVETYPE_CACHESIZE					21
-
 #define NECESSARY_FILE_FAILURE { Log.write ( "Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR ); LoadingData=LOAD_ERROR; return 0; }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,19 +61,6 @@ EX int LoadingData;
 	* @return 1 on success
 	*/
 int LoadData(void *);
-
-	/**
-	* Reads the Information out of the config file
-	* @return 0 on success
-	*/
-int ReadMaxXml();
-
-/**
-	* Saves the acctual value of an option to the max.xml file
-	* @param Typ of Data to write (see SAVETYPE-defines)
-	* @return 1 on success
-	*/
-int SaveOption (int iTyp);
 
 /**
  * Loades the unitdata from the data.xml in the unitfolder
@@ -127,19 +90,4 @@ void translateUnitData(sID ID, bool vehicle);
 
 void reloadUnitValues ();
 
-/**
-* This is where paths are figured out - e.g. $HOME
-*/
-void setPaths ();
-
-/**
-* This is where the game data folder is searched - e.g. /usr/share/maxr
-*/
-std::string searchData ( std::string sDataDirFromConf="");
-
-/**
-* Generates a new config file.
-* @return 0 on success<br>-1 on fail
-**/
-int GenerateMaxXml();
 #endif

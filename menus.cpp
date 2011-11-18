@@ -556,7 +556,7 @@ void cMenu::draw( bool firstDraw, bool showScreen )
 		SDL_FillRect( buffer, NULL, 0x000000 );
 		break;
 	case MNU_BG_ALPHA:
-		if ( SettingsData.bAlphaEffects && firstDraw ) SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
+		if ( cSettings::getInstance().isAlphaEffects() && firstDraw ) SDL_BlitSurface ( GraphicsData.gfx_shadow, NULL, buffer, NULL );
 		break;
 	case MNU_BG_TRANSPARENT:
 		// do nothing here
@@ -826,7 +826,7 @@ cStartMenu::cStartMenu()
 	exitButton->setReleasedFunction ( &exitReleased );
 	menuItems.Add ( exitButton );
 
-	PlayMusic((SettingsData.sMusicPath + PATH_DELIMITER "main.ogg").c_str());
+	PlayMusic((cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -1436,7 +1436,7 @@ cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::loadMaps()
 {
-	maps = getFilesOfDirectory ( SettingsData.sMapsPath );
+	maps = getFilesOfDirectory ( cSettings::getInstance().getMapsPath() );
 	if (!getUserMapsDir().empty())
 	{
 		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir ());
@@ -1465,7 +1465,7 @@ void cPlanetsSelectionMenu::showMaps()
 		if ( i+offset < (int)maps->Size() )
 		{
 			string mapName = (*maps)[i + offset];
-			string mapPath = SettingsData.sMapsPath + PATH_DELIMITER + mapName;
+			string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
 			// if no factory map of that name exists, try the custom user maps
 			if (!FileExists(mapPath.c_str()) && !getUserMapsDir().empty())
 				mapPath = getUserMapsDir () + mapName;
@@ -1585,7 +1585,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 		{
 		case GAME_TYPE_SINGLE:
 			{
-				cPlayer *player = new cPlayer ( SettingsData.sPlayerName.c_str(), OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
+				cPlayer *player = new cPlayer ( cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS ); // Socketnumber MAX_CLIENTS for lokal client
 				menu->gameDataContainer->players.Add ( player );
 
 				bool started = false;
@@ -1689,14 +1689,14 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 	menuItems.Add (titleLabel);
 
 	vector<string> clanLogoPaths;
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo1.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo2.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo3.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo4.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo5.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo6.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo7.pcx");
-	clanLogoPaths.push_back(SettingsData.sGfxPath + PATH_DELIMITER "clanlogo8.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo1.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo2.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo3.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo4.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo5.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo6.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo7.pcx");
+	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo8.pcx");
 
 	int xCount = 0;
 	int yCount = 0;
@@ -2742,13 +2742,13 @@ void cLandingMenu::hitPosition()
 cNetworkMenu::cNetworkMenu()
 : cMenu (LoadPCX (GFXOD_MULT))
 {
-	ip = SettingsData.sIP;
-	port = SettingsData.iPort;
+	ip = cSettings::getInstance().getIP();
+	port = cSettings::getInstance().getPort();
 
 	playersBox = new cMenuPlayersBox ( position.x+465, position.y+284, 167, 124, this );
 	menuItems.Add ( playersBox );
 
-	actPlayer = new sMenuPlayer ( SettingsData.sPlayerName, SettingsData.iColor, false, 0, MAX_CLIENTS );
+	actPlayer = new sMenuPlayer ( cSettings::getInstance().getPlayerName(), cSettings::getInstance().getPlayerColor(), false, 0, MAX_CLIENTS );
 	players.Add ( actPlayer );
 	playersBox->setPlayers ( &players );
 
@@ -2869,7 +2869,7 @@ void cNetworkMenu::showSettingsText()
 	string text;
 
 	text = lngPack.i18n ( "Text~Main~Version", PACKAGE_VERSION ) + "\n";
-	text += "Checksum: " + iToStr( SettingsData.Checksum ) + "\n\n";
+	//text += "Checksum: " + iToStr( cSettings::getInstance().Checksum ) + "\n\n";
 
 	if ( !saveGameString.empty() ) text += lngPack.i18n ( "Text~Title~Savegame" ) + ":\n  " + saveGameString + "\n";
 
@@ -2908,7 +2908,7 @@ void cNetworkMenu::showMap()
 {
 	if ( !gameDataContainer.map ) return;
 	int size;
-	SDL_RWops *fp = SDL_RWFromFile ( (SettingsData.sMapsPath + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(), "rb" );
+	SDL_RWops *fp = SDL_RWFromFile ( (cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->MapName ).c_str(), "rb" );
 	if (fp == 0 && !getUserMapsDir().empty())
 		fp = SDL_RWFromFile ( (getUserMapsDir () + gameDataContainer.map->MapName ).c_str(), "rb" );
 	if ( fp != NULL )
@@ -2985,16 +2985,12 @@ void cNetworkMenu::setColor( int color )
 //------------------------------------------------------------------------------
 void cNetworkMenu::saveOptions()
 {
-	SettingsData.sPlayerName = actPlayer->name;
-	SettingsData.iPort = port;
-	SettingsData.iColor = actPlayer->color;
-	SaveOption ( SAVETYPE_NAME );
-	SaveOption ( SAVETYPE_PORT );
-	SaveOption ( SAVETYPE_COLOR );
+	cSettings::getInstance().setPlayerName(actPlayer->name.c_str());
+	cSettings::getInstance().setPort(port);
+	cSettings::getInstance().setPlayerColor(actPlayer->color);
 	if ( ip.compare ( "-" ) != 0 )
 	{
-		SettingsData.sIP = ip;
-		SaveOption ( SAVETYPE_IP );
+		cSettings::getInstance().setIP(ip.c_str());
 	}
 }
 
@@ -3095,7 +3091,7 @@ void cNetworkMenu::portIpChanged( void* parent )
 void cNetworkMenu::setDefaultPort(void* parent)
 {
         cNetworkMenu *menu = static_cast<cNetworkMenu*>((cMenu*)parent);
-        menu->portLine->setText(DEFAULTPORT);
+        menu->portLine->setText(iToStr(DEFAULTPORT));
         menu->draw();
         menu->portLine->setClickedFunction(&portIpChanged);
         menu->port = atoi ( menu->portLine->getText().c_str() );
@@ -4029,7 +4025,7 @@ cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds b
 	offset = 0;
 	selected = -1;
 
-	files = getFilesOfDirectory ( SettingsData.sSavesPath );
+	files = getFilesOfDirectory ( cSettings::getInstance().getSavesPath() );
 
 	loadSaves();
 	displaySaves();
@@ -4265,7 +4261,7 @@ void cLoadSaveMenu::saveReleased( void* parent )
 	Server->makeAdditionalSaveRequest( menu->selected+1 );
 
 	delete menu->files;
-	menu->files = getFilesOfDirectory ( SettingsData.sSavesPath );
+	menu->files = getFilesOfDirectory ( cSettings::getInstance().getSavesPath() );
 	for ( unsigned int i = 0; i < menu->savefiles.Size(); i++ )
 	{
 		if ( menu->savefiles[i]->number == menu->selected+1 )

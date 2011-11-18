@@ -211,11 +211,11 @@ void cDialogLicence::generateLicenceTexts()
 #ifdef WIN32
 		sAuthors = "AUTHORS.txt";
 #elif __amigaos4
-		sAuthors = SettingsData.sDataDir + PATH_DELIMITER "AUTHORS.txt";
+		sAuthors = cSettings::getInstance().sDataDir + PATH_DELIMITER + "AUTHORS.txt";
 #elif MAC
 		sAuthors = "AUTHORS";
 #else
-		sAuthors = SettingsData.sDataDir + PATH_DELIMITER "AUTHORS";
+		sAuthors = cSettings::getInstance().sDataDir + PATH_DELIMITER + "AUTHORS";
 #endif
 
 	sLicence4 = "";
@@ -309,33 +309,33 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 
 	musicLabel = new cMenuLabel ( position.x+25, position.y+56+20, lngPack.i18n( "Text~Settings~Music" ) );
 	menuItems.Add ( musicLabel );
-	disableMusicChBox = new cMenuCheckButton ( position.x+210, position.y+73, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.MusicMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableMusicChBox = new cMenuCheckButton ( position.x+210, position.y+73, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isMusicMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableMusicChBox->setClickedFunction ( &musicMuteChanged );
 	menuItems.Add ( disableMusicChBox );
 	musicSlider = new cMenuSlider ( position.x+140, position.y+81, 0, 128, this );
-	musicSlider->setValue ( (float)SettingsData.MusicVol );
+	musicSlider->setValue ( (float)cSettings::getInstance().getMusicVol() );
 	musicSlider->setMoveCallback ( &musicVolumeChanged );
 	menuItems.Add ( musicSlider );
 	menuItems.Add ( musicSlider->scroller );
 
 	effectsLabel = new cMenuLabel ( position.x+25, position.y+56+20*2, lngPack.i18n( "Text~Settings~Effects" ) );
 	menuItems.Add ( effectsLabel );
-	disableEffectsChBox = new cMenuCheckButton ( position.x+210, position.y+73+20, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.SoundMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableEffectsChBox = new cMenuCheckButton ( position.x+210, position.y+73+20, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isSoundMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableEffectsChBox->setClickedFunction ( &effectsMuteChanged );
 	menuItems.Add ( disableEffectsChBox );
 	effectsSlider = new cMenuSlider ( position.x+140, position.y+81+20, 0, 128, this );
-	effectsSlider->setValue ( (float)SettingsData.SoundVol );
+	effectsSlider->setValue ( (float)cSettings::getInstance().getSoundVol() );
 	effectsSlider->setMoveCallback ( &effectsVolumeChanged );
 	menuItems.Add ( effectsSlider );
 	menuItems.Add ( effectsSlider->scroller );
 
 	voicesLabel = new cMenuLabel ( position.x+25, position.y+56+20*3, lngPack.i18n( "Text~Settings~Voices" ) );
 	menuItems.Add ( voicesLabel );
-	disableVoicesChBox = new cMenuCheckButton ( position.x+210, position.y+73+20*2, lngPack.i18n( "Text~Settings~Disable" ), SettingsData.VoiceMute, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	disableVoicesChBox = new cMenuCheckButton ( position.x+210, position.y+73+20*2, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isVoiceMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	disableVoicesChBox->setClickedFunction ( &voicesMuteChanged );
 	menuItems.Add ( disableVoicesChBox );
 	voicesSlider = new cMenuSlider ( position.x+140, position.y+81+20*2, 0, 128, this );
-	voicesSlider->setValue ( (float)SettingsData.VoiceVol );
+	voicesSlider->setValue ( (float)cSettings::getInstance().getVoiceVol() );
 	voicesSlider->setMoveCallback ( &voicesVolumeChanged );
 	menuItems.Add ( voicesSlider );
 	menuItems.Add ( voicesSlider->scroller );
@@ -343,38 +343,38 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	nameLabel = new cMenuLabel ( position.x+25, position.y+158, lngPack.i18n( "Text~Title~Player_Name" ) );
 	menuItems.Add ( nameLabel );
 	nameEdit = new cMenuLineEdit ( position.x+112, position.y+154, 185, 18, this );
-	nameEdit->setText ( SettingsData.sPlayerName );
+	nameEdit->setText ( cSettings::getInstance().getPlayerName() );
 	menuItems.Add ( nameEdit );
 
-	animationChBox = new cMenuCheckButton ( position.x+25, position.y+193, lngPack.i18n( "Text~Settings~Animation" ), SettingsData.bAnimations, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	animationChBox = new cMenuCheckButton ( position.x+25, position.y+193, lngPack.i18n( "Text~Settings~Animation" ), cSettings::getInstance().isAnimations(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( animationChBox );
 
-	shadowsChBox = new cMenuCheckButton ( position.x+25, position.y+193+20, lngPack.i18n( "Text~Settings~Shadows" ), SettingsData.bShadows, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	shadowsChBox = new cMenuCheckButton ( position.x+25, position.y+193+20, lngPack.i18n( "Text~Settings~Shadows" ), cSettings::getInstance().isShadows(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( shadowsChBox );
 
-	alphaChBox = new cMenuCheckButton ( position.x+25, position.y+193+20*2, lngPack.i18n( "Text~Settings~Alphaeffects" ), SettingsData.bAlphaEffects, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	alphaChBox = new cMenuCheckButton ( position.x+25, position.y+193+20*2, lngPack.i18n( "Text~Settings~Alphaeffects" ), cSettings::getInstance().isAlphaEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( alphaChBox );
 
-	demageBuilChBox = new cMenuCheckButton ( position.x+210, position.y+193, lngPack.i18n( "Text~Settings~ShowDamage" ), SettingsData.bDamageEffects, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	demageBuilChBox = new cMenuCheckButton ( position.x+210, position.y+193, lngPack.i18n( "Text~Settings~ShowDamage" ), cSettings::getInstance().isDamageEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( demageBuilChBox );
 
-	demageVehChBox = new cMenuCheckButton ( position.x+210, position.y+193+20, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ), SettingsData.bDamageEffectsVehicles, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	demageVehChBox = new cMenuCheckButton ( position.x+210, position.y+193+20, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ), cSettings::getInstance().isDamageEffectsVehicles(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( demageVehChBox );
 
-	tracksChBox = new cMenuCheckButton ( position.x+210, position.y+193+20*2, lngPack.i18n( "Text~Settings~Tracks" ), SettingsData.bMakeTracks, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	tracksChBox = new cMenuCheckButton ( position.x+210, position.y+193+20*2, lngPack.i18n( "Text~Settings~Tracks" ), cSettings::getInstance().isMakeTracks(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( tracksChBox );
 
 	scrollSpeedLabel = new cMenuLabel ( position.x+25, position.y+232+25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
 	menuItems.Add ( scrollSpeedLabel );
 	scrollSpeedSlider = new cMenuSlider ( position.x+140, position.y+261, 0, 250, this );
-	scrollSpeedSlider->setValue ( (float)SettingsData.iScrollSpeed );
+	scrollSpeedSlider->setValue ( (float)cSettings::getInstance().getScrollSpeed() );
 	menuItems.Add ( scrollSpeedSlider );
 	menuItems.Add ( scrollSpeedSlider->scroller );
 
-	autosaveChBox = new cMenuCheckButton ( position.x+25, position.y+294, lngPack.i18n( "Text~Settings~Autosave" ), SettingsData.bAutoSave, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	autosaveChBox = new cMenuCheckButton ( position.x+25, position.y+294, lngPack.i18n( "Text~Settings~Autosave" ), cSettings::getInstance().shouldAutosave(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( autosaveChBox );
 
-	introChBox = new cMenuCheckButton ( position.x+25, position.y+294+20, lngPack.i18n( "Text~Settings~Intro" ), SettingsData.bIntro, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
+	introChBox = new cMenuCheckButton ( position.x+25, position.y+294+20, lngPack.i18n( "Text~Settings~Intro" ), cSettings::getInstance().shouldShowIntro(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
 	menuItems.Add ( introChBox );
 
 	windowChBox = new cMenuCheckButton ( position.x+25, position.y+294+20*2, lngPack.i18n( "Text~Settings~Window" ), Video.getWindowMode(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
@@ -433,13 +433,13 @@ cDialogPreferences::cDialogPreferences() : cMenu ( LoadPCX ( GFXOD_DIALOG5 ), MN
 	menuItems.Add ( cancelButton );
 
 	// save old volumes
-	oldMusicVolume = SettingsData.MusicVol;
-	oldEffectsVolume = SettingsData.SoundVol;
-	oldVoicesVolume = SettingsData.VoiceVol;
+	oldMusicVolume = cSettings::getInstance().getMusicVol();
+	oldEffectsVolume = cSettings::getInstance().getSoundVol();
+	oldVoicesVolume = cSettings::getInstance().getVoiceVol();
 
-	oldMusicMute = SettingsData.MusicMute;
-	oldEffectsMute = SettingsData.SoundMute;
-	oldVoicesMute = SettingsData.VoiceMute;
+	oldMusicMute = cSettings::getInstance().isMusicMute();
+	oldEffectsMute = cSettings::getInstance().isSoundMute();
+	oldVoicesMute = cSettings::getInstance().isVoiceMute();
 }
 
 cDialogPreferences::~cDialogPreferences()
@@ -483,40 +483,21 @@ cDialogPreferences::~cDialogPreferences()
 void cDialogPreferences::saveValues()
 {
 
-	SettingsData.sPlayerName = nameEdit->getText();
-	if ( Client) Client->ActivePlayer->name = SettingsData.sPlayerName;
+	cSettings::getInstance().setPlayerName(nameEdit->getText().c_str());
+	if ( Client) Client->ActivePlayer->name = cSettings::getInstance().getPlayerName();
 
-	SettingsData.bAutoSave = autosaveChBox->isChecked();
-	SettingsData.bAnimations = animationChBox->isChecked();
-	SettingsData.bAlphaEffects = alphaChBox->isChecked();
-	SettingsData.bDamageEffects = demageBuilChBox->isChecked();
-	SettingsData.bDamageEffectsVehicles = demageVehChBox->isChecked();
-	SettingsData.bIntro = introChBox->isChecked();
-	SettingsData.bMakeTracks = tracksChBox->isChecked();
+	cSettings::getInstance().setAutosave(autosaveChBox->isChecked());
+	cSettings::getInstance().setAnimations(animationChBox->isChecked());
+	cSettings::getInstance().setAlphaEffects(alphaChBox->isChecked());
+	cSettings::getInstance().setDamageEffects(demageBuilChBox->isChecked());
+	cSettings::getInstance().setDamageEffectsVehicles(demageVehChBox->isChecked());
+	cSettings::getInstance().setShowIntro(introChBox->isChecked());
+	cSettings::getInstance().setMakeTracks(tracksChBox->isChecked());
 	Video.setWindowMode(windowChBox->isChecked());
-	SettingsData.bShadows = shadowsChBox->isChecked();
+	cSettings::getInstance().saveWindowMode();
+	cSettings::getInstance().setShadows(shadowsChBox->isChecked());
 
-	SettingsData.iScrollSpeed = (int)scrollSpeedSlider->getValue();
-
-	// Save new settings to max.xml
-	SaveOption ( SAVETYPE_MUSICMUTE );
-	SaveOption ( SAVETYPE_SOUNDMUTE );
-	SaveOption ( SAVETYPE_VOICEMUTE );
-	SaveOption ( SAVETYPE_AUTOSAVE );
-	SaveOption ( SAVETYPE_ANIMATIONS );
-	SaveOption ( SAVETYPE_SHADOWS );
-	SaveOption ( SAVETYPE_ALPHA );
-	SaveOption ( SAVETYPE_SCROLLSPEED );
-	SaveOption ( SAVETYPE_MUSICVOL );
-	SaveOption ( SAVETYPE_SOUNDVOL );
-	SaveOption ( SAVETYPE_VOICEVOL );
-	SaveOption ( SAVETYPE_DAMAGEEFFECTS_BUILDINGS );
-	SaveOption ( SAVETYPE_DAMAGEEFFECTS_VEHICLES );
-	SaveOption ( SAVETYPE_TRACKS );
-	// TODO: remove game
-	SaveOption ( SAVETYPE_NAME );
-	SaveOption ( SAVETYPE_INTRO );
-	SaveOption ( SAVETYPE_WINDOW );
+	cSettings::getInstance().setScrollSpeed((int)scrollSpeedSlider->getValue());
 
 	// save resolution
 	int oldScreenW = Video.getResolutionX();
@@ -530,8 +511,8 @@ void cDialogPreferences::saveValues()
 			int wTmp = atoi ( sTmp.substr(0, sTmp.find_first_of('x')).c_str());
 			int hTmp = atoi ( sTmp.substr(sTmp.find_first_of('x')+1, sTmp.size()).c_str());
 			Video.setResolution(wTmp, hTmp, true);
+			cSettings::getInstance().saveResolution();
 
-			SaveOption ( SAVETYPE_RESOLUTION );
 			if ( Video.getResolutionX() != oldScreenW || Video.getResolutionY() != oldScreenH )
 			{
 				//TODO: Tidy up here with oldScreen blabla
@@ -556,17 +537,17 @@ void cDialogPreferences::cancelReleased( void *parent )
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
 
 	// restore old volumes
-	SettingsData.MusicVol = menu->oldMusicVolume;
-	SettingsData.SoundVol = menu->oldEffectsVolume;
-	SettingsData.VoiceVol = menu->oldVoicesVolume;
-	if(SettingsData.bSoundEnabled)Mix_VolumeMusic ( SettingsData.MusicVol );
-	if(SettingsData.bSoundEnabled)Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+	cSettings::getInstance().setMusicVol(menu->oldMusicVolume);
+	cSettings::getInstance().setSoundVol(menu->oldEffectsVolume);
+	cSettings::getInstance().setVoiceVol(menu->oldVoicesVolume);
+	if(cSettings::getInstance().isSoundEnabled())Mix_VolumeMusic ( cSettings::getInstance().getMusicVol() );
+	if(cSettings::getInstance().isSoundEnabled())Mix_Volume ( SoundLoopChannel, cSettings::getInstance().getSoundVol() );
 
-	bool wasMusicMute = SettingsData.MusicMute;
-	SettingsData.MusicMute = menu->oldMusicMute;
+	bool wasMusicMute = cSettings::getInstance().isMusicMute();
+	cSettings::getInstance().setMusicMute(menu->oldMusicMute);
 	if ( wasMusicMute && !menu->oldMusicMute ) StartMusic();
-	SettingsData.SoundMute = menu->oldEffectsMute;
-	SettingsData.VoiceMute = menu->oldVoicesMute;
+	cSettings::getInstance().setSoundMute(menu->oldEffectsMute);
+	cSettings::getInstance().setVoiceMute(menu->oldVoicesMute);
 
 	menu->terminate = true;
 }
@@ -574,42 +555,42 @@ void cDialogPreferences::cancelReleased( void *parent )
 void cDialogPreferences::musicVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.MusicVol = (int)menu->musicSlider->getValue();
-	if(SettingsData.bSoundEnabled)Mix_VolumeMusic ( SettingsData.MusicVol );
+	cSettings::getInstance().setMusicVol((int)menu->musicSlider->getValue());
+	if(cSettings::getInstance().isSoundEnabled())Mix_VolumeMusic ( cSettings::getInstance().getMusicVol() );
 }
 
 void cDialogPreferences::effectsVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.SoundVol = (int)menu->effectsSlider->getValue();
-	if(SettingsData.bSoundEnabled)Mix_Volume ( SoundLoopChannel, SettingsData.SoundVol );
+	cSettings::getInstance().setSoundVol((int)menu->effectsSlider->getValue());
+	if(cSettings::getInstance().isSoundEnabled())Mix_Volume ( SoundLoopChannel, cSettings::getInstance().getSoundVol() );
 }
 
 void cDialogPreferences::voicesVolumeChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.VoiceVol = (int)menu->voicesSlider->getValue();
+	cSettings::getInstance().setVoiceVol((int)menu->voicesSlider->getValue());
 }
 
 void cDialogPreferences::musicMuteChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	bool wasMute = SettingsData.MusicMute;
-	SettingsData.MusicMute = menu->disableMusicChBox->isChecked();
-	if ( SettingsData.MusicMute ) StopMusic ();
-	if ( !SettingsData.MusicMute && wasMute ) StartMusic();
+	bool wasMute = cSettings::getInstance().isMusicMute();
+	cSettings::getInstance().setMusicMute(menu->disableMusicChBox->isChecked());
+	if ( cSettings::getInstance().isMusicMute() ) StopMusic ();
+	if ( !cSettings::getInstance().isMusicMute() && wasMute ) StartMusic();
 }
 
 void cDialogPreferences::effectsMuteChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.SoundMute = menu->disableEffectsChBox->isChecked();
+	cSettings::getInstance().setSoundMute( menu->disableEffectsChBox->isChecked() );
 }
 
 void cDialogPreferences::voicesMuteChanged( void *parent )
 {
 	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
-	SettingsData.VoiceMute = menu->disableVoicesChBox->isChecked();
+	cSettings::getInstance().setVoiceMute( menu->disableVoicesChBox->isChecked() );
 }
 
 cDialogTransfer::cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_  ) :

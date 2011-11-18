@@ -92,47 +92,47 @@
 #endif
 
 // GFX On Demand /////////////////////////////////////////////////////////////
-#define GFXOD_MAIN             (SettingsData.sGfxPath + PATH_DELIMITER "main.pcx").c_str()
-#define GFXOD_HELP             (SettingsData.sGfxPath + PATH_DELIMITER "help_screen.pcx").c_str()
-#define GFXOD_OPTIONS          (SettingsData.sGfxPath + PATH_DELIMITER "options.pcx").c_str()
-#define GFXOD_SAVELOAD         (SettingsData.sGfxPath + PATH_DELIMITER "load_save_menu.pcx").c_str()
-#define GFXOD_PLANET_SELECT    (SettingsData.sGfxPath + PATH_DELIMITER "planet_select.pcx").c_str()
-#define GFXOD_CLAN_SELECT      (SettingsData.sGfxPath + PATH_DELIMITER "clanselection.pcx").c_str()
-#define GFXOD_PLAYER_SELECT    (SettingsData.sGfxPath + PATH_DELIMITER "customgame_menu.pcx").c_str()
-#define GFXOD_PLAYERHS_SELECT  (SettingsData.sGfxPath + PATH_DELIMITER "hotseatplayers.pcx").c_str()
-#define GFXOD_HANGAR           (SettingsData.sGfxPath + PATH_DELIMITER "hangar.pcx").c_str()
-#define GFXOD_BUILD_SCREEN     (SettingsData.sGfxPath + PATH_DELIMITER "build_screen.pcx").c_str()
-#define GFXOD_FAC_BUILD_SCREEN (SettingsData.sGfxPath + PATH_DELIMITER "fac_build_screen.pcx").c_str()
-#define GFXOD_MULT             (SettingsData.sGfxPath + PATH_DELIMITER "multi.pcx").c_str()
-#define GFXOD_UPGRADE          (SettingsData.sGfxPath + PATH_DELIMITER "upgrade.pcx").c_str()
-#define GFXOD_STORAGE          (SettingsData.sGfxPath + PATH_DELIMITER "storage.pcx").c_str()
-#define GFXOD_STORAGE_GROUND   (SettingsData.sGfxPath + PATH_DELIMITER "storage_ground.pcx").c_str()
-#define GFXOD_MULT             (SettingsData.sGfxPath + PATH_DELIMITER "multi.pcx").c_str()
-#define GFXOD_MINEMANAGER      (SettingsData.sGfxPath + PATH_DELIMITER "mine_manager.pcx").c_str()
-#define GFXOD_REPORTS          (SettingsData.sGfxPath + PATH_DELIMITER "reports.pcx").c_str()
-#define GFXOD_DIALOG2          (SettingsData.sGfxPath + PATH_DELIMITER "dialog2.pcx").c_str()
-#define GFXOD_DIALOG4          (SettingsData.sGfxPath + PATH_DELIMITER "dialog4.pcx").c_str()
-#define GFXOD_DIALOG5          (SettingsData.sGfxPath + PATH_DELIMITER "dialog5.pcx").c_str()
-#define GFXOD_DIALOG6          (SettingsData.sGfxPath + PATH_DELIMITER "dialog6.pcx").c_str()
-#define GFXOD_DIALOG_TRANSFER  (SettingsData.sGfxPath + PATH_DELIMITER "transfer.pcx").c_str()
-#define GFXOD_DIALOG_RESEARCH  (SettingsData.sGfxPath + PATH_DELIMITER "research.pcx").c_str()
-#define GFXOD_DESTRUCTION      (SettingsData.sGfxPath + PATH_DELIMITER "destruction.pcx").c_str()
+#define GFXOD_MAIN				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "main.pcx").c_str()
+#define GFXOD_HELP				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "help_screen.pcx").c_str()
+#define GFXOD_OPTIONS			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "options.pcx").c_str()
+#define GFXOD_SAVELOAD			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "load_save_menu.pcx").c_str()
+#define GFXOD_PLANET_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "planet_select.pcx").c_str()
+#define GFXOD_CLAN_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "clanselection.pcx").c_str()
+#define GFXOD_PLAYER_SELECT		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "customgame_menu.pcx").c_str()
+#define GFXOD_PLAYERHS_SELECT	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hotseatplayers.pcx").c_str()
+#define GFXOD_HANGAR			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "hangar.pcx").c_str()
+#define GFXOD_BUILD_SCREEN		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "build_screen.pcx").c_str()
+#define GFXOD_FAC_BUILD_SCREEN	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "fac_build_screen.pcx").c_str()
+#define GFXOD_MULT				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
+#define GFXOD_UPGRADE			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "upgrade.pcx").c_str()
+#define GFXOD_STORAGE			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage.pcx").c_str()
+#define GFXOD_STORAGE_GROUND	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "storage_ground.pcx").c_str()
+#define GFXOD_MULT				(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "multi.pcx").c_str()
+#define GFXOD_MINEMANAGER		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "mine_manager.pcx").c_str()
+#define GFXOD_REPORTS			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "reports.pcx").c_str()
+#define GFXOD_DIALOG2			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog2.pcx").c_str()
+#define GFXOD_DIALOG4			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog4.pcx").c_str()
+#define GFXOD_DIALOG5			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog5.pcx").c_str()
+#define GFXOD_DIALOG6			(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "dialog6.pcx").c_str()
+#define GFXOD_DIALOG_TRANSFER	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "transfer.pcx").c_str()
+#define GFXOD_DIALOG_RESEARCH	(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "research.pcx").c_str()
+#define GFXOD_DESTRUCTION		(cSettings::getInstance().getGfxPath() + PATH_DELIMITER "destruction.pcx").c_str()
 
 // Other Resources /////////////////////////////////////////////////////////////
 #define PLAYERCOLORS		8
 //^-- make sure that given amount of colors is loaded too
 
-#define DEFAULTPORT		"58600"
+#define DEFAULTPORT		58600
 #define MAX_XML			"max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"
-#define CLANS_XML		(SettingsData.sDataDir + "clans.xml").c_str()
-#define KEYS_XML		(SettingsData.sDataDir + "keys.xml").c_str()
-#define SPLASH_BACKGROUND	(SettingsData.sDataDir + "init.pcx").c_str()
+#define CLANS_XML		(cSettings::getInstance().getDataDir() + "clans.xml").c_str()
+#define KEYS_XML		(cSettings::getInstance().getDataDir() + "keys.xml").c_str()
+#define SPLASH_BACKGROUND	(cSettings::getInstance().getDataDir() + "init.pcx").c_str()
 #ifdef MAC
-	#define MAXR_ICON             (SettingsData.sDataDir + "maxr_mac.bmp").c_str()
+	#define MAXR_ICON             (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
 #else
-	#define MAXR_ICON             (SettingsData.sDataDir + "maxr.bmp").c_str()
+	#define MAXR_ICON             (cSettings::getInstance().getDataDir() + "maxr.bmp").c_str()
 #endif
 
 
@@ -146,7 +146,7 @@
 	#ifdef NDEBUG
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2743"
+		#define PACKAGE_REV "SVN Rev 2764"
 	#endif
 #endif
 

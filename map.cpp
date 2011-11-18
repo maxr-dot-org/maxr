@@ -193,7 +193,7 @@ bool cMap::LoadMap ( string filename )
 	Log.write ("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG );
 
 	// first try in the factory maps directory
-	filename = SettingsData.sMapsPath + PATH_DELIMITER + MapName;
+	filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + MapName;
 	fpMapFile = SDL_RWFromFile (filename.c_str (), "rb");
 	if (fpMapFile == 0)
 	{

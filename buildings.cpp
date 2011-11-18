@@ -396,7 +396,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// draw the damage effects
-	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && SettingsData.bDamageEffects && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
@@ -452,7 +452,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw the effect if necessary
-	if ( data.powerOnGraphic && SettingsData.bAnimations && ( IsWorking || !data.canWork ) )
+	if ( data.powerOnGraphic && cSettings::getInstance().isAnimations() && ( IsWorking || !data.canWork ) )
 	{
 		tmp = dest;
 		SDL_SetAlpha ( typ->eff, SDL_SRCALPHA, EffectAlpha );
@@ -637,7 +637,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		src.y = 0;
 
 		// draw the shadows
-		if ( SettingsData.bShadows )
+		if ( cSettings::getInstance().isShadows() )
 		{
 			if ( data.isBig )
 			{
@@ -688,7 +688,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		{
 			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
 
-			if ( StartUp && SettingsData.bAlphaEffects )
+			if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
 			else
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, 255 );
@@ -698,7 +698,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		else
 		{
 			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
-			if ( StartUp && SettingsData.bAlphaEffects )
+			if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
 			else
 				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, 255 );
@@ -718,9 +718,9 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	}
 
 	// draw the shadows
-	if ( SettingsData.bShadows )
+	if ( cSettings::getInstance().isShadows() )
 	{
-		if ( StartUp && SettingsData.bAlphaEffects )
+		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 		else
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
@@ -735,7 +735,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 
 	if ( data.hasFrames )
 	{
-		if ( data.isAnimated && SettingsData.bAnimations && !Disabled )
+		if ( data.isAnimated && cSettings::getInstance().isAnimations() && !Disabled )
 		{
 			src.x = ( ANIMATION_SPEED % data.hasFrames ) * (int)(Client->gameGUI.getTileSize());
 		}
@@ -774,7 +774,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	src.x = 0;
 	src.y = 0;
 
-	if ( StartUp && SettingsData.bAlphaEffects ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+	if ( StartUp && cSettings::getInstance().isAlphaEffects() ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
 	else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 
 	SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
@@ -991,7 +991,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		{
 			//blit shadow
 			temp = dest;
-			if ( SettingsData.bShadows ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			//blit the image
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
@@ -1011,7 +1011,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( SettingsData.bShadows ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1027,7 +1027,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( SettingsData.bShadows ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1043,7 +1043,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( SettingsData.bShadows ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
@@ -1059,7 +1059,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( SettingsData.bShadows ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}

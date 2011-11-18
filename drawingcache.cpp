@@ -108,7 +108,7 @@ cDrawingCache::cDrawingCache()
 	cacheMisses = 0;
 	notCached = 0;
 	cacheSize = 0;
-	maxCacheSize = SettingsData.iCacheSize; //set cache size from config
+	maxCacheSize = cSettings::getInstance().getCacheSize(); //set cache size from config
 	cachedImages = new sDrawingCacheEntry[maxCacheSize];
 
 };
@@ -346,7 +346,7 @@ void cDrawingCache::setMaxCacheSize( unsigned int newSize )
 	maxCacheSize = newSize;
 	cacheSize = 0;
 
-	SaveOption( SAVETYPE_CACHESIZE );
+	cSettings::getInstance().setCacheSize(newSize);
 };
 
 int cDrawingCache::getCacheSize()

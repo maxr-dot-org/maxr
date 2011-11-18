@@ -110,8 +110,8 @@ cList<std::string> *getFilesOfDirectory(std::string sDirectory)
 std::string getUserMapsDir()
 {
 #ifdef WIN32
-		if (SettingsData.sHome.empty ()) return "";
-		std::string mapFolder = SettingsData.sHome + "maps";
+	if (cSettings::getInstance().getHomeDir().empty ()) return "";
+		std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
 		if (!DirExists(mapFolder))
 		{
 			if (_mkdir (mapFolder.c_str()) == 0)
@@ -123,9 +123,9 @@ std::string getUserMapsDir()
 	#ifdef __amigaos4__
 		return "";
 	#else
-		if (SettingsData.sHome.empty ())
+		if (cSettings::getInstance().getHomeDir().empty ())
 			return "";
-		std::string mapFolder = SettingsData.sHome + "maps";
+		std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
 		if (!FileExists(mapFolder.c_str()))
 		{
 			if (mkdir (mapFolder.c_str (), 0755) == 0)
@@ -157,9 +157,9 @@ std::string getUserScreenshotsDir()
 	screenshotsFolder = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
 	return screenshotsFolder;
 #endif
-	if (SettingsData.sHome.empty ())
+	if (cSettings::getInstance().getHomeDir().empty ())
 		return "";
-	screenshotsFolder = SettingsData.sHome + PATH_DELIMITER;
+	screenshotsFolder = cSettings::getInstance().getHomeDir() + PATH_DELIMITER;
 	return screenshotsFolder;
 }
 

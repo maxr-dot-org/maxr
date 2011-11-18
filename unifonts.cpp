@@ -209,7 +209,7 @@ AutoSurface* cUnicodeFont::getFontTypeSurfaces(eUnicodeFontType const fonttype)
 SDL_Surface *cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
 	// build the filename from the information
-	string filename = SettingsData.sFontPath + PATH_DELIMITER "latin_";
+	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
 	switch ( fonttype )
 	{
 	case FONT_LATIN_NORMAL:

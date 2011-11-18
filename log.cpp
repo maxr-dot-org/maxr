@@ -23,8 +23,8 @@
 #include "cmutex.h"
 #include "settings.h"
 
-#define LOGFILE SettingsData.sLog.c_str()
-#define NETLOGFILE SettingsData.sNetLog.c_str()
+#define LOGFILE cSettings::getInstance().getLogPath().c_str()
+#define NETLOGFILE cSettings::getInstance().getNetLogPath().c_str()
 /** errors */
 #define EE "(EE): "
 /** warnings */
@@ -54,8 +54,8 @@ bool cLog::open(int TYPE)
 		char timestr[25];
 		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
 		std::string sTime = timestr;
-		SettingsData.sNetLog.erase(SettingsData.sNetLog.size() - 4, SettingsData.sNetLog.size());
-		SettingsData.sNetLog += sTime;
+		std::string netLogPath = cSettings::getInstance().getNetLogPath().erase(cSettings::getInstance().getNetLogPath().size() - 4, cSettings::getInstance().getNetLogPath().size());
+		cSettings::getInstance().setNetLogPath((netLogPath + sTime).c_str());
 		bFirstRun = false;
 	}
 
@@ -115,7 +115,7 @@ int cLog::write ( std::string str, int TYPE )
 {
 	cMutex::Lock l(mutex);
 
-	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !SettingsData.bDebug ) //in case debug is disabled we skip message
+	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug() ) //in case debug is disabled we skip message
 	{
 		return 0;
 	}

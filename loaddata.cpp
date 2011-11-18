@@ -133,10 +133,10 @@ int LoadData ( void * )
 	// Load fonts for SplashMessages
 	Log.write ( "Loading font for Splash Messages", LOG_TYPE_INFO );
 
-	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_normal.pcx"  ).c_str())) NECESSARY_FILE_FAILURE
-	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_big.pcx"     ).c_str())) NECESSARY_FILE_FAILURE
-	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
-	if (!FileExists((SettingsData.sFontPath + PATH_DELIMITER "latin_small.pcx"   ).c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
+	if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
 
 	font = new cUnicodeFont; //init ascii fonts
 
@@ -153,7 +153,7 @@ int LoadData ( void * )
 	MakeLog ( "Loading languagepack...", 0, 2 );
 
 	string sTmpString;
-	string sLang = SettingsData.sLanguage;
+	string sLang = cSettings::getInstance().getLanguage();
 	//FIXME: here is the assumption made that the file always exists with lower cases
 	for(int i=0 ; i<=2 ; i++)
 	{
@@ -162,7 +162,7 @@ int LoadData ( void * )
 			sLang[i] += 32;
 		}
 	}
-	sTmpString = SettingsData.sLangPath;
+	sTmpString = cSettings::getInstance().getLangPath();
 	sTmpString += PATH_DELIMITER "lang_";
 	sTmpString += sLang;
 	sTmpString += ".xml";
@@ -200,7 +200,7 @@ int LoadData ( void * )
 	// Load Fonts
 	MakeLog ( lngPack.i18n ( "Text~Init~Fonts" ), 0, 4 );
 	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
-	if (LoadFonts ( SettingsData.sFontPath.c_str() ) != 1 )
+	if (LoadFonts ( cSettings::getInstance().getFontPath().c_str() ) != 1 )
 	{
 		MakeLog("",-1,4);
 		SDL_Delay(5000);
@@ -216,7 +216,7 @@ int LoadData ( void * )
 	// Load Graphics
 	MakeLog ( lngPack.i18n ( "Text~Init~GFX" ), 0, 5 );
 
-	if ( LoadGraphics ( SettingsData.sGfxPath.c_str() ) != 1 )
+	if ( LoadGraphics ( cSettings::getInstance().getGfxPath().c_str() ) != 1 )
 	{
 		MakeLog("",-1,5);
 		Log.write ( "Error while loading graphics", LOG_TYPE_ERROR );
@@ -233,7 +233,7 @@ int LoadData ( void * )
 	// Load Effects
 	MakeLog ( lngPack.i18n ( "Text~Init~Effects" ), 0, 6 );
 
-	if(LoadEffects ( SettingsData.sFxPath.c_str() ) != 1)
+	if(LoadEffects ( cSettings::getInstance().getFxPath().c_str() ) != 1)
 	{
 		MakeLog("",-1,6);
 		SDL_Delay(5000);
@@ -296,7 +296,7 @@ int LoadData ( void * )
 	// Load Music
 	MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
 
-	if ( LoadMusic ( SettingsData.sMusicPath.c_str() ) != 1)
+	if ( LoadMusic ( cSettings::getInstance().getMusicPath().c_str() ) != 1)
 	{
 		MakeLog("",-1,10);
 		SDL_Delay(5000);
@@ -312,7 +312,7 @@ int LoadData ( void * )
 	// Load Sounds
 	MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 11 );
 
-	if ( LoadSounds ( SettingsData.sSoundsPath.c_str() ) != 1)
+	if ( LoadSounds ( cSettings::getInstance().getSoundsPath().c_str() ) != 1)
 	{
 		MakeLog("",-1,11);
 		SDL_Delay(5000);
@@ -328,7 +328,7 @@ int LoadData ( void * )
 	// Load Voices
 	MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 12 );
 
-	if(LoadVoices ( SettingsData.sVoicesPath.c_str() ) != 1)
+	if(LoadVoices ( cSettings::getInstance().getVoicesPath().c_str() ) != 1)
 	{
 		MakeLog("",-1,12);
 		SDL_Delay(5000);
@@ -524,7 +524,7 @@ static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* 
 	if(!SoundData.DummySound)
 	{
 		string sTmpString;
-		sTmpString = SettingsData.sSoundsPath + PATH_DELIMITER "dummy.ogg";
+		sTmpString = cSettings::getInstance().getSoundsPath() + PATH_DELIMITER + "dummy.ogg";
 		if(FileExists(sTmpString.c_str()))
 		{
 			SoundData.DummySound = Mix_LoadWAV(sTmpString.c_str());
@@ -543,597 +543,9 @@ static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* 
 	dest = Mix_LoadWAV(filepath.c_str());
 }
 
-
-// ReadMaxXml /////////////////////////////////////////////////////////////////
-// Reads the Information from the max.xml:
-int ReadMaxXml()
-{
-
-	string sTmpString;
-	// Prepare max.xml for reading
-	TiXmlDocument MaxXml;
-	ExTiXmlNode * pXmlNode = NULL;
-
-	if(SettingsData.sConfig.empty() == 1) //we need at least sConfig here
-	{
-		Log.write ( "sConfig not set!", cLog::eLOG_TYPE_WARNING );
-		SettingsData.sConfig = MAX_XML;
-	}
-
-	if(!FileExists(SettingsData.sConfig.c_str()))
-	{
-		Log.write ( "Generating new config file max.xml", cLog::eLOG_TYPE_INFO );
-		if (GenerateMaxXml() == -1)
-		{
-			return -1;
-		}
-	}
-	if (!MaxXml.LoadFile(SettingsData.sConfig.c_str()))
-	{
-		Log.write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
-		if( GenerateMaxXml() == -1)
-		{
-			return -1;
-		}
-	}
-
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Gamedata", NULL)))
-	{
-		Log.write ( "Can't find gamedata path node in max.xml", LOG_TYPE_WARNING );
-	}
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-	{
-		SettingsData.sDataDir = searchData(sTmpString); //verify datadir or search for other paths
-	}
-	else
-	{
-		Log.write ( "Can't find gamedata path in max.xml", LOG_TYPE_WARNING );
-		SettingsData.sDataDir = searchData(); //do default gamedata search
-	}
-
-	string sDataDir = "";
-	if(!SettingsData.sDataDir.empty())
-	{
-		sDataDir = SettingsData.sDataDir + PATH_DELIMITER;
-	}
-
-	// START Options
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths", "Languages", NULL)))
-	{
-		Log.write ( "Can't find language path node in max.xml", LOG_TYPE_WARNING );
-	}
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-	{
-		SettingsData.sLangPath = sDataDir + sTmpString;
-	}
-	else
-	{
-		Log.write ( "Can't find language path in max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sLangPath =  sDataDir + "languages";
-	}
-
-	// Resolution
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL)))
-		Log.write ( "Can't find Resolution-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-	{
-		int wTmp = atoi(sTmpString.substr(0,sTmpString.find(".",0)).c_str());
-		int hTmp = atoi(sTmpString.substr(sTmpString.find(".",0)+1,sTmpString.length()).c_str());
-		Video.setResolution(wTmp, hTmp);
-	}
-	else
-	{
-		Log.write ( "Can't load resolution from max.xml: using default value", LOG_TYPE_WARNING );
-		Video.setResolution(Video.getMinW(), Video.getMinH());
-	}
-
-	// ColourDepth
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","ColourDepth", NULL)))
-		Log.write ( "Can't find ColourDepth-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		Video.setColDepth(atoi(sTmpString.c_str()));
-	else
-	{
-		Log.write ( "Can't load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
-		Video.setColDepth(32);
-	}
-	// Intro
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", NULL)))
-		Log.write ( "Can't find Intro-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bIntro = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load Intro from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bIntro = true;
-	}
-	// Windowmode
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL)))
-		Log.write ( "Can't find Windowmode-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		Video.setWindowMode(pXmlNode->XmlDataToBool(sTmpString));
-	else
-	{
-		Log.write ( "Can't load Windowmode from max.xml: using default value", LOG_TYPE_WARNING );
-		Video.setWindowMode(true);
-	}
-	// Intro
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Fastmode", NULL)))
-		Log.write ( "Can't find Fastmode-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bFastMode = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load Fastmode from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bFastMode = false;
-	}
-	// PreScale
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","PreScale", NULL)))
-		Log.write ( "Can't find PreScale-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bPreScale = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load PreScale-Mode from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bPreScale = false;
-	}
-
-	// MaxCacheSize for prescaling of units
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","CacheSize", NULL)))
-		Log.write ( "Can't find CacheSize-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iCacheSize = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load CacheSize-Node from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iCacheSize=400;
-	}
-
-	// Language
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Language", NULL)))
-		Log.write ( "Can't find Language-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-	{
-		for(int i=0; i < ( int )sTmpString.size(); i++) //make sure we've only upper characters for compares later
-		{
-			sTmpString[i] = toupper(sTmpString[i]);
-		}
-		SettingsData.sLanguage = sTmpString;
-	}
-	else
-	{
-		Log.write ( "Can't load Language-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sLanguage = "ENG";
-	}
-
-	// GAME Options
-	// EnableAutosave
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", NULL)))
-		Log.write ( "Can't find EnableAutosave-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bAutoSave = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableAutosave from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bAutoSave = true;
-	}
-
-	//Enable Debug
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDebug", NULL)))
-		Log.write ( "Can't find EnableDebug-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-	{
-		SettingsData.bDebug = pXmlNode->XmlDataToBool(sTmpString);
-		if(!SettingsData.bDebug)
-		{
-			Log.write("Debugmode disabled - for verbose output please enable Debug in max.xml", cLog::eLOG_TYPE_WARNING);
-		}
-		else
-		{
-			Log.write("Debugmode enabled", cLog::eLOG_TYPE_INFO);
-		}
-	}
-	else
-	{
-		Log.write ( "Can't load EnableDebug from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bDebug = false;
-	}
-
-	// EnableAnimations
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", NULL)))
-		Log.write ( "Can't find EnableAnimations-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bAnimations = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableAnimations from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bAnimations = true;
-	}
-	// EnableShadows
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", NULL)))
-		Log.write ( "Can't find EnableShadows-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bShadows = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableShadows from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bShadows = true;
-	}
-	// EnableAlphaEffects
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", NULL)))
-		Log.write ( "Can't find EnableAlphaEffects-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bAlphaEffects = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableAlphaEffects from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bAlphaEffects = true;
-	}
-	// EnableDescribtions
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDescribtions", NULL)))
-		Log.write ( "Can't find EnableDescribtions-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bShowDescription = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableDescribtions from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bShowDescription = true;
-	}
-	// EnableDamageEffects
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", NULL)))
-		Log.write ( "Can't find EnableDamageEffects-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bDamageEffects = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableDamageEffects from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bDamageEffects = true;
-	}
-	// EnableDamageEffectsVehicles
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", NULL)))
-		Log.write ( "Can't find EnableDamageEffectsVehicles-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bDamageEffectsVehicles = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableDamageEffectsVehicles from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bDamageEffectsVehicles = true;
-	}
-	// EnableMakeTracks
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", NULL)))
-		Log.write ( "Can't find EnableMakeTracks-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bMakeTracks = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load EnableMakeTracks from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bMakeTracks = true;
-	}
-	// ScrollSpeed
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", NULL)))
-		Log.write ( "Can't find ScrollSpeed-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iScrollSpeed = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load ColourDepth from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iScrollSpeed = 32;
-	}
-
-	// GAME-NET Options
-	//IP
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", NULL)))
-		Log.write ( "Can't find Net-IP-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sIP = sTmpString;
-	else
-	{
-		Log.write ( "Can't load IP from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sIP = "127.0.0.1";
-	}
-	//Port
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port", NULL)))
-		Log.write ( "Can't find Net-Port-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iPort = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load Port from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iPort = atoi(DEFAULTPORT);
-	}
-	//PlayerName and PlayerColor
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL)))
-		Log.write ( "Can't find Net-PlayerName-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sPlayerName = sTmpString;
-	else
-	{
-		Log.write ( "Can't load PlayerName from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sPlayerName = "Commander";
-	}
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-	{
-		int iTmp = atoi(sTmpString.c_str());
-		if(iTmp >= PLAYERCOLORS || iTmp < 0)
-		{
-			Log.write ( "Invalid playercolour read: "+ sTmpString + ". Using default value", LOG_TYPE_WARNING );
-			iTmp=0;
-		}
-		SettingsData.iColor = iTmp;
-	}
-	else
-	{
-		Log.write ( "Can't load playercolor from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iColor = 0;
-	}
-
-	// GAME-SOUND Options
-	// Enabled
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "Enabled", NULL)))
-		Log.write ( "Can't find Sound-Enabled-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.bSoundEnabled = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load Enabled from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.bSoundEnabled = true;
-	}
-	// MusicMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "MusicMute", NULL)))
-		Log.write ( "Can't find Sound-MusicMute-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.MusicMute = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load MusicMute from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.MusicMute = false;
-	}
-	// SoundMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "SoundMute", NULL)))
-		Log.write ( "Can't find Sound-SoundMute-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.SoundMute = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load SoundMute from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.SoundMute = false;
-	}
-	// VoiceMute
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound", "VoiceMute", NULL)))
-		Log.write ( "Can't find Sound-VoiceMute-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"YN"))
-		SettingsData.VoiceMute = pXmlNode->XmlDataToBool(sTmpString);
-	else
-	{
-		Log.write ( "Can't load VoiceMute from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.VoiceMute = false;
-	}
-	//MusicVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", NULL)))
-		Log.write ( "Can't find Sound-MusicVol-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.MusicVol  = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load MusicVol from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.MusicVol  = 128;
-	}
-	//SoundVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol", NULL)))
-		Log.write ( "Can't find Sound-SoundVol-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.SoundVol  = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load SoundVol from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.SoundVol  = 128;
-	}
-	//VoiceVol
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol", NULL)))
-		Log.write ( "Can't find Sound-VoiceVol-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.VoiceVol  = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load VoiceVol from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.VoiceVol  = 128;
-	}
-	//ChunkSize
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","ChunkSize", NULL)))
-		Log.write ( "Can't find Sound-ChunkSize-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iChunkSize  = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load ChunkSize from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iChunkSize  = 2048;
-	}
-	//Frequency
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","Frequency", NULL)))
-		Log.write ( "Can't find Sound-Frequency-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
-		SettingsData.iFrequency  = atoi(sTmpString.c_str());
-	else
-	{
-		Log.write ( "Can't load Frequency from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.iFrequency  = 44100;
-	}
-
-	// PATHs
-	//Fonts
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Fonts", NULL)))
-		Log.write ( "Can't find Path-Fonts-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFontPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load FontsPath from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFontPath = sDataDir + "fonts";
-	}
-	//FX
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","FX", NULL)))
-		Log.write ( "Can't find Path-FX-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sFxPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load FX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sFxPath = sDataDir + "fx";
-	}
-	//Graphics
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","GFX", NULL)))
-		Log.write ( "Can't find Path-GFX-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sGfxPath = sDataDir +  sTmpString;
-	else
-	{
-		Log.write ( "Can't load GFX-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sGfxPath = sDataDir + "gfx";
-	}
-
-	//Maps
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Maps", NULL)))
-		Log.write ( "Can't find Path-Maps-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMapsPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load Maps-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMapsPath = sDataDir + "maps";
-	}
-	//Saves
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Saves", NULL)))
-		Log.write ( "Can't find Path-Saves-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sSavesPath = sTmpString; //use absolut paths for saves - do not add sDataDir or sHome
-	else
-	{
-		Log.write ( "Can't load Saves-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSavesPath = SettingsData.sHome + PATH_DELIMITER "saves";
-	}
-	//Sounds
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Sounds", NULL)))
-		Log.write ( "Can't find Path-Sounds-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sSoundsPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load Sounds-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sSoundsPath = sDataDir + "sounds";
-	}
-	//Voices
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Voices", NULL)))
-		Log.write ( "Can't find Path-Voices-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVoicesPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load Voices-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVoicesPath = sDataDir + "voices";
-	}
-	//Music
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Music", NULL)))
-		Log.write ( "Can't find Path-Music-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMusicPath = sDataDir+ sTmpString;
-	else
-	{
-		Log.write ( "Can't load Music-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMusicPath = sDataDir + "music";
-	}
-	//Vehicles
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Vehicles", NULL)))
-		Log.write ( "Can't find Path-Vehicles-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sVehiclesPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load Vehicles-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sVehiclesPath = sDataDir + "vehicles";
-	}
-	//Buildings
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","Buildings", NULL)))
-		Log.write ( "Can't find Path-Buildings-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sBuildingsPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load Buildings-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sBuildingsPath = sDataDir + "buildings";
-	}
-	//MVEs
-	if(!(pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Paths","MVEs", NULL)))
-		Log.write ( "Can't find Path-MVEs-Node in max.xml", LOG_TYPE_WARNING );
-	if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
-		SettingsData.sMVEPath = sDataDir + sTmpString;
-	else
-	{
-		Log.write ( "Can't load MVEs-Path from max.xml: using default value", LOG_TYPE_WARNING );
-		SettingsData.sMVEPath = sDataDir + "mve";
-	}
-
-
-	if(SettingsData.bDebug) //Print settingslist to log
-	{
-		string sTmp;
-
-		#define SON "Enabled"
-		#define SOFF "Disabled"
-		Log.mark();
-		Log.write ("I read the following settings:", cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Screensize    == " + iToStr(Video.getResolutionX()) + "x" + iToStr(Video.getResolutionY()) + "x" + iToStr(Video.getColDepth()) + "bpp", cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bIntro?SON:SOFF;
-		Log.write ("Intro         == "+sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  Video.getWindowMode()?SON:SOFF;
-		Log.write ("Windowmode    == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bFastMode?SON:SOFF;
-		Log.write ("Fastmode      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bPreScale?SON:SOFF;
-		Log.write ("PreScale      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("CacheSize     == "+ iToStr(SettingsData.iCacheSize), cLog::eLOG_TYPE_DEBUG)	;
-		//sTmp =  SettingsData.bDebug?SON:SOFF; //we don't need debug value because we only print thall on debug!
-		//Log.write ("Debugmode "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bAutoSave?SON:SOFF;
-		Log.write ("Autosave      == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bAnimations?SON:SOFF;
-		Log.write ("Animation     == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bShadows?SON:SOFF;
-		Log.write ("Shadows       == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bAlphaEffects?SON:SOFF;
-		Log.write ("Alphaeffect   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bDamageEffects?SON:SOFF;
-		Log.write ("Damageeffect  == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bDamageEffectsVehicles?SON:SOFF;
-		Log.write ("Vehicledamage == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bMakeTracks?SON:SOFF;
-		Log.write ("Vehicletracks == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bShowDescription?SON:SOFF;
-		Log.write ("Description   == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Language      == "+ SettingsData.sLanguage, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Scrollspeed   == " + iToStr(SettingsData.iScrollSpeed), cLog::eLOG_TYPE_DEBUG);
-		Log.write ("IP            == "+ SettingsData.sIP, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Port          == " + iToStr(SettingsData.iPort), cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Playername    == "+ SettingsData.sPlayerName, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Playercolor   == " + iToStr(SettingsData.iColor), cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.bSoundEnabled?SON:SOFF;
-		Log.write ("Sound         == "+ sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Chunksize     == " + iToStr(SettingsData.iChunkSize), cLog::eLOG_TYPE_DEBUG);
-		Log.write ("Frequency     == " + iToStr(SettingsData.iFrequency), cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.MusicMute?SON:SOFF;
-		Log.write ("Musicvolume   == " + iToStr(SettingsData.MusicVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.SoundMute?SON:SOFF;
-		Log.write ("Soundvolume   == " + iToStr(SettingsData.SoundVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
-		sTmp =  SettingsData.VoiceMute?SON:SOFF;
-		Log.write ("Voicevolume   == " + iToStr(SettingsData.VoiceVol) + " Mute: " + sTmp, cLog::eLOG_TYPE_DEBUG);
-		Log.mark();
-
-	}
-	return 0;
-}
-
 static int LoadLanguage()
 {
-	if( lngPack.SetCurrentLanguage(SettingsData.sLanguage) != 0 )			// Set the language code
+	if( lngPack.SetCurrentLanguage(cSettings::getInstance().getLanguage()) != 0 )			// Set the language code
 	{
 		// Not a valid language code, critical fail!
 		Log.write( "Not a valid language code!" , cLog::eLOG_TYPE_ERROR );
@@ -1146,260 +558,6 @@ static int LoadLanguage()
 		return 0;
 	}
 	return 1;
-}
-
-int GenerateMaxXml()
-{
-	TiXmlDocument ConfigDoc;
-	TiXmlElement *element = NULL;
-	TiXmlElement *rootnode = new TiXmlElement ( "Options" );
-	ConfigDoc.LinkEndChild ( rootnode );
-
-	//BEGIN STARTNODE
-
-	TiXmlElement *startnode = new TiXmlElement("Start");
-
-	element = new TiXmlElement ( "Resolution" );
-
-	element->SetAttribute ( "Text", (iToStr(Video.getMinW())+"."+iToStr(Video.getMinH())).c_str());
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "ColourDepth" );
-	element->SetAttribute ( "Num", "32");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Intro" );
-	element->SetAttribute ( "YN", "Yes");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Windowmode" );
-	element->SetAttribute ( "YN", "Yes");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Fastmode" );
-	element->SetAttribute ( "YN", "No");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "PreScale" );
-	element->SetAttribute ( "YN", "No");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "CacheSize" );
-	element->SetAttribute ( "Num", "400");
-	startnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Language" );
-	element->SetAttribute ( "Text", "ENG");
-	startnode->LinkEndChild(element);
-
-	ConfigDoc.RootElement()->LinkEndChild(startnode);
-
-	//END STARTNODE
-	//BEGIN GAMENODE
-	TiXmlElement *gamenode = new TiXmlElement("Game");
-	TiXmlElement *netnode = new TiXmlElement("Net");
-	TiXmlElement *soundnode = new TiXmlElement("Sound");
-	TiXmlElement *pathsnode = new TiXmlElement("Paths");
-
-	element = new TiXmlElement ( "EnableAutosave" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableDebug" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableAnimations" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableShadows" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableAlphaEffects" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableDescribtions" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableDamageEffects" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableDamageEffectsVehicles" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "EnableMakeTracks" );
-	element->SetAttribute ( "YN", "Yes");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "ScrollSpeed" );
-	element->SetAttribute ( "Num", "50");
-	gamenode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "IP" );
-	element->SetAttribute ( "Text", "127.0.0.1");
-	netnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Port" );
-	element->SetAttribute ( "Num", DEFAULTPORT);
-	netnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "PlayerName" );
-
-	char * cHome;
-	string sUser = "";
-
-	#ifdef WIN32
-		cHome = getenv("USERNAME");
-	#elif __amigaos4__
-		cHome = "AmigaOS4-User";
-	#else
-		cHome = getenv("USER"); //get $USER on linux
-	#endif
-
-	if(cHome != NULL)
-	{
-		sUser = cHome;
-	}
-
-
-	if(sUser.empty() != 1)
-	{
-		element->SetAttribute ( "Text", sUser.c_str());
-	}
-	else
-	{
-		element->SetAttribute ( "Text", "Commander");
-	}
-
-	element->SetAttribute ( "Num", "0"); //default playercolor
-
-	netnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Enabled" );
-	element->SetAttribute ( "YN", "Yes");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "MusicMute" );
-	element->SetAttribute ( "YN", "No");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "SoundMute" );
-	element->SetAttribute ( "YN", "No");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "VoiceMute" );
-	element->SetAttribute ( "YN", "No");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "MusicVol" );
-	element->SetAttribute ( "Num", "50");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "SoundVol" );
-	element->SetAttribute ( "Num", "60");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "VoiceVol" );
-	element->SetAttribute ( "Num", "70");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "ChunkSize" );
-	element->SetAttribute ( "Num", "2048");
-	soundnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Frequency" );
-	element->SetAttribute ( "Num", "44100");
-	soundnode->LinkEndChild(element);
-
-	string sTmp ="";
-
-	SettingsData.sDataDir = searchData();
-
-	sTmp = SettingsData.sDataDir;
-	element = new TiXmlElement ( "Gamedata" );
-	element->SetAttribute ( "Text", sTmp.c_str());
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Fonts" );
-	element->SetAttribute ( "Text", "fonts");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "FX" );
-	element->SetAttribute ( "Text", "fx");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "GFX" );
-	element->SetAttribute ( "Text", "gfx");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Languages" );
-	element->SetAttribute ( "Text", "languages");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Maps" );
-	element->SetAttribute ( "Text", "maps");
-	pathsnode->LinkEndChild(element);
-
-	#ifdef WIN32
-		sTmp = SettingsData.sHome;
-		sTmp += "save";
-	#elif __amigaos4__
-		sTmp = "save";
-	#else
-		sTmp = SettingsData.sHome;
-		sTmp += "save";
-	#endif
-	element = new TiXmlElement ( "Saves" );
-	element->SetAttribute ( "Text", sTmp.c_str());
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Sounds" );
-	element->SetAttribute ( "Text", "sounds");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Voices" );
-	element->SetAttribute ( "Text", "voices");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Music" );
-	element->SetAttribute ( "Text", "music");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Vehicles" );
-	element->SetAttribute ( "Text", "vehicles");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "Buildings" );
-	element->SetAttribute ( "Text", "buildings");
-	pathsnode->LinkEndChild(element);
-
-	element = new TiXmlElement ( "MVEs" );
-	element->SetAttribute ( "Text", "mve");
-	pathsnode->LinkEndChild(element);
-
-	gamenode->LinkEndChild(netnode);
-	gamenode->LinkEndChild(soundnode);
-	gamenode->LinkEndChild(pathsnode);
-
-	ConfigDoc.RootElement()->LinkEndChild(gamenode);
-
-	//END GAMENODE
-
-	if(!ConfigDoc.SaveFile(SettingsData.sConfig.c_str())) //create new empty config
-	{
-		Log.write("Could not write new config to " + SettingsData.sConfig, cLog::eLOG_TYPE_ERROR);
-		return -1; // Generate fails
-	}
-	else
-	{
-		return 0; // Generate success
-	}
 }
 
 static int LoadEffects(const char* path)
@@ -1631,9 +789,9 @@ static int LoadGraphics(const char* path)
 	LoadGraphicToSurface ( GraphicsData.gfx_player_ready,path,"player_ready.pcx" );
 	LoadGraphicToSurface ( GraphicsData.gfx_hud_chatbox,path,"hud_chatbox.pcx" );
 
-	GraphicsData.DialogPath  = SettingsData.sGfxPath + PATH_DELIMITER "dialog.pcx";
-	GraphicsData.Dialog2Path = SettingsData.sGfxPath + PATH_DELIMITER "dialog2.pcx";
-	GraphicsData.Dialog3Path = SettingsData.sGfxPath + PATH_DELIMITER "dialog3.pcx";
+	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
+	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
+	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
 	FileExists(GraphicsData.DialogPath.c_str());
 	FileExists(GraphicsData.Dialog2Path.c_str());
 	FileExists(GraphicsData.Dialog3Path.c_str());
@@ -1737,7 +895,7 @@ static int LoadVehicles()
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
 
-	sTmpString = SettingsData.sVehiclesPath;
+	sTmpString = cSettings::getInstance().getVehiclesPath();
 	sTmpString += PATH_DELIMITER "vehicles.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
@@ -1813,7 +971,7 @@ static int LoadVehicles()
 	UnitsData.vehicle.Reserve(0);
 	for ( unsigned int i = 0; i < VehicleList.Size(); i++)
 	{
-		sVehiclePath = SettingsData.sVehiclesPath;
+		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
 		sVehiclePath += VehicleList[i];
 		sVehiclePath += PATH_DELIMITER;
@@ -2159,7 +1317,7 @@ void translateClanData(int num)
 				if(atoi(pXmlNode->ToElement()->Attribute( "ID" )) == num)
 				{
 					Log.write("Found clan translation for clan id "+iToStr(num), LOG_TYPE_DEBUG);
-					if( SettingsData.sLanguage.compare ( "ENG" ) != 0 )
+					if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 )
 					{
 						clan->setName(pXmlNode->ToElement()->Attribute("localized"));
 					}
@@ -2216,7 +1374,7 @@ void translateUnitData(sID ID, bool vehicle)
 		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( SettingsData.sLanguage.compare ( "ENG" ) != 0 ) Data->name = pXmlNode->ToElement()->Attribute( "localized" );
+			if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 ) Data->name = pXmlNode->ToElement()->Attribute( "localized" );
 			else Data->name = pXmlNode->ToElement()->Attribute( "ENG" );
 
 			sTmpString = pXmlNode->ToElement()->GetText();
@@ -2243,7 +1401,7 @@ static int LoadBuildings()
 	TiXmlElement * pXmlElement;
 
 	// read buildings.xml
-	sTmpString = SettingsData.sBuildingsPath;
+	sTmpString = cSettings::getInstance().getBuildingsPath();
 	sTmpString += PATH_DELIMITER "buildings.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
@@ -2358,7 +1516,7 @@ static int LoadBuildings()
 	UnitsData.building.Reserve(0);
 	for( unsigned int i = 0; i < BuildingList.Size(); i++)
 	{
-		sBuildingPath = SettingsData.sBuildingsPath;
+		sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
 		sBuildingPath += BuildingList[i];
 		sBuildingPath += PATH_DELIMITER;
@@ -2457,16 +1615,16 @@ static int LoadBuildings()
 	}
 
 	// Dirtsurfaces
-	LoadGraphicToSurface ( UnitsData.dirt_big,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_big_org,SettingsData.sBuildingsPath.c_str(),"dirt_big.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_big_shw,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_shw,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big_shw.pcx" );
 	if ( UnitsData.dirt_big_shw ) SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
-	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_big_shw.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small_org,SettingsData.sBuildingsPath.c_str(),"dirt_small.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small_shw,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_shw,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small_shw.pcx" );
 	if ( UnitsData.dirt_small_shw ) SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
-	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,SettingsData.sBuildingsPath.c_str(),"dirt_small_shw.pcx" );
+	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small_shw.pcx" );
 
 	// set building numbers
 	for (unsigned int i = 0; i < UnitsData.building.Size(); ++i)
@@ -2490,7 +1648,7 @@ int getXMLNodeInt( TiXmlDocument &document, const char *path0, const char *path1
 
 	if ( pExXmlNode == NULL )
 	{
-		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) ) return atoi ( tmpString.c_str() );
@@ -2516,7 +1674,7 @@ float getXMLNodeFloat( TiXmlDocument &document, const char *path0, const char *p
 
 	if ( pExXmlNode == NULL )
 	{
-		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
 	if ( pExXmlNode->ToElement()->Attribute( "Num", &tmpDouble ) ) return (float)( tmpDouble );
@@ -2541,7 +1699,7 @@ string getXMLNodeString( TiXmlDocument &document, const char *attribut, const ch
 
 	if ( pExXmlNode == NULL )
 	{
-		// if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return "";
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, attribut ) ) return tmpString;
@@ -2567,7 +1725,7 @@ bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *pat
 
 	if ( pExXmlNode == NULL )
 	{
-		//if( SettingsData.bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
+		//if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return false;
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "YN" ) )
@@ -2802,7 +1960,7 @@ void LoadUnitData(sUnitData* const Data, char const* const directory, int const 
 
 	// finish
 	Log.write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
-	if( SettingsData.bDebug ) Log.mark();
+	if( cSettings::getInstance().isDebug() ) Log.mark();
 	return ;
 }
 
@@ -2913,166 +2071,12 @@ static int LoadClans()
 	return 1;
 }
 
-/**
- * Saves the value. Do not use bye yourselve. Only used by SaveOption()-function.
- * @param pXmlNode Node to which the value should be set
- * @param sAttributName Name (which means typ) of the attribut to set ("YN", "Num" or "Text")
- * @param bValue bool value to set
- * @param iValue int value to set
- * @param sValue string value to set
- * @return 1 on success
- */
-static void SaveValue(ExTiXmlNode *pXmlNode, string sAttributName, bool bValue, int iValue, string sValue)
-{
-	if( !pXmlNode )
-	{
-		Log.write ( "Can't find necessary node in max.xml", LOG_TYPE_WARNING );
-	}
-	else
-	{
-		if( sAttributName.compare("YN") == 0 )
-		{
-			if( bValue )
-				pXmlNode->ToElement()->SetAttribute ( "YN", "Yes" );
-			else
-				pXmlNode->ToElement()->SetAttribute ( "YN", "No" );
-		}
-		else if( sAttributName.compare("Num") == 0 )
-		{
-			pXmlNode->ToElement()->SetAttribute ( "Num", iValue );
-		}
-		else if( sAttributName.compare("Text") == 0 )
-		{
-			pXmlNode->ToElement()->SetAttribute ( "Text", sValue.c_str() );
-		}
-	}
-}
-int SaveOption ( int iTyp )
-{
-	Log.write ( "Saving option " + iToStr(iTyp), LOG_TYPE_INFO );
-
-	// Prepare max.xml for writing
-	TiXmlDocument MaxXml;
-	ExTiXmlNode * pXmlNode = NULL;
-	if(!FileExists(SettingsData.sConfig.c_str()))
-	{
-		Log.write ( "Generating new config file", LOG_TYPE_WARNING );
-		if( GenerateMaxXml() == -1)
-		{
-			return -1;
-		}
-	}
-	if(!MaxXml.LoadFile(SettingsData.sConfig.c_str()))
-	{
-		Log.write ( "Can't read from config file "+SettingsData.sConfig, LOG_TYPE_WARNING );
-		if( GenerateMaxXml() == -1)
-		{
-			return -1;
-		}
-	}
-	switch (iTyp )
-	{
-	case SAVETYPE_ANIMATIONS:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAnimations", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bAnimations,0,"");
-		break;
-	case SAVETYPE_SHADOWS:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableShadows", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bShadows,0,"");
-		break;
-	case SAVETYPE_ALPHA:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAlphaEffects", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bAlphaEffects,0,"");
-		break;
-	case SAVETYPE_DAMAGEEFFECTS_BUILDINGS:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffects", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bDamageEffects,0,"");
-		break;
-	case SAVETYPE_DAMAGEEFFECTS_VEHICLES:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableDamageEffectsVehicles", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bDamageEffectsVehicles,0,"");
-		break;
-	case SAVETYPE_TRACKS:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableMakeTracks", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bMakeTracks,0,"");
-		break;
-	case SAVETYPE_AUTOSAVE:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","EnableAutosave", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bAutoSave,0,"");
-		break;
-	case SAVETYPE_NAME:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL);
-		SaveValue ( pXmlNode, "Text",false,0,SettingsData.sPlayerName);
-		break;
-	case SAVETYPE_COLOR:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","PlayerName", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.iColor,"");
-		break;
-	case SAVETYPE_IP:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","IP", NULL);
-		SaveValue ( pXmlNode, "Text",false,0,SettingsData.sIP);
-		break;
-	case SAVETYPE_PORT:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Net","Port", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.iPort,"");
-		break;
-	case SAVETYPE_MUSICMUTE:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicMute", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.MusicMute,0,"");
-		break;
-	case SAVETYPE_VOICEMUTE:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceMute", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.VoiceMute,0,"");
-		break;
-	case SAVETYPE_SOUNDMUTE:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundMute", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.SoundMute,0,"");
-		break;
-	case SAVETYPE_MUSICVOL:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","MusicVol", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.MusicVol,"");
-		break;
-	case SAVETYPE_VOICEVOL:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","VoiceVol", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.VoiceVol,"");
-		break;
-	case SAVETYPE_SOUNDVOL:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","Sound","SoundVol", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.SoundVol,"");
-		break;
-	case SAVETYPE_SCROLLSPEED:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Game","ScrollSpeed", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.iScrollSpeed,"");
-		break;
-	case SAVETYPE_INTRO:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Intro", NULL);
-		SaveValue ( pXmlNode, "YN",SettingsData.bIntro,0,"");
-		break;
-	case SAVETYPE_WINDOW:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Windowmode", NULL);
-		SaveValue ( pXmlNode, "YN",Video.getWindowMode(),0,"");
-		break;
-	case SAVETYPE_RESOLUTION:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","Resolution", NULL);
-		SaveValue ( pXmlNode, "Text", false, 0, iToStr(Video.getResolutionX())+"."+iToStr(Video.getResolutionY()));
-		break;
-	case SAVETYPE_CACHESIZE:
-		pXmlNode = pXmlNode->XmlGetFirstNode(MaxXml,"Options","Start","CacheSize", NULL);
-		SaveValue ( pXmlNode, "Num",false,SettingsData.iCacheSize,"");
-		break;
-	}
-	MaxXml.SaveFile(); // Write the new values to the file
-	return 1;
-}
-
 void reloadUnitValues ()
 {
 	TiXmlDocument UnitsXml;
 	TiXmlElement *Element;
-	{ std::string const v = SettingsData.sVehiclesPath + PATH_DELIMITER "vehicles.xml";
-		if (!FileExists(v.c_str())) return;
-		if (!UnitsXml.LoadFile(v.c_str())) return;
-	}
+	if( !FileExists( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml").c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile ( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return;
 	if( !( Element = UnitsXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" ) ) ) return;
 
 	Element = Element->FirstChildElement();
@@ -3081,17 +2085,15 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		LoadUnitData ( &UnitsData.vehicle[i].data, (SettingsData.sVehiclesPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		LoadUnitData ( &UnitsData.vehicle[i].data, (cSettings::getInstance().getVehiclesPath()+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
 		translateUnitData( UnitsData.vehicle[i].data.ID, true );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
 	}
 
-	{ std::string const b = SettingsData.sBuildingsPath + PATH_DELIMITER "buildings.xml";
-		if (!FileExists(b.c_str())) return;
-		if (!UnitsXml.LoadFile(b.c_str())) return;
-	}
+	if( !FileExists( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml").c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile ( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return;
 	if( !( Element = UnitsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" ) ) ) return;
 
 	Element = Element->FirstChildElement();
@@ -3100,309 +2102,10 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		LoadUnitData ( &UnitsData.building[i].data, (SettingsData.sBuildingsPath+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		LoadUnitData ( &UnitsData.building[i].data, (cSettings::getInstance().getBuildingsPath()+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
 		translateUnitData( UnitsData.building[i].data.ID, false );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
 	}
-}
-
-void setPaths()
-{
-	//init absolutly needed paths
-	SettingsData.sLog = MAX_LOG;
-	SettingsData.sNetLog = MAX_NET_LOG;
-	SettingsData.sExePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
-	SettingsData.sHome="";
-
-	#if MAC
-	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
-	char * cHome = getenv("HOME"); //get $HOME on mac
-	if(cHome != NULL)
-		SettingsData.sHome = cHome;
-	if (!SettingsData.sHome.empty())
-	{
-		SettingsData.sHome += PATH_DELIMITER ".maxr" PATH_DELIMITER;
-
-		// check whether home dir is set up and readable
-		if (!FileExists(SettingsData.sHome.c_str())) // under mac everything is a file
-		{
-			if (mkdir (SettingsData.sHome.c_str (), 0755) == 0)
-				cout << "\n(II): Created new config directory " << SettingsData.sHome;
-			else
-			{
-				cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
-				SettingsData.sHome = ""; //reset $HOME since we can't create our config directory
-			}
-		}
-	}
-	//this is also a good place to find out where the executable is located
-	SettingsData.sConfig = MAX_XML; //assume config in current working directory
-	#elif WIN32
-		//this is where windowsuser should set their %HOME%
-		//this is also a good place to find out where the executable is located
-		SettingsData.sConfig = MAX_XML; //assume config in current working directory
-
-		TCHAR szPath[MAX_PATH];
-		SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath );
-
-		string home = szPath;
-
-		SettingsData.sHome = string(home.begin(), home.end());
-
-		cout << "\n(II): Read home directory " << SettingsData.sHome;
-
-		bool newDirCreated = false;
-
-		if (!SettingsData.sHome.empty())
-		{
-			SettingsData.sHome += PATH_DELIMITER "maxr";
-
-			if ( !DirExists(SettingsData.sHome) )
-			{
-				if(mkdir(SettingsData.sHome.c_str()) == 0)
-				{
-					cout << "\n(II): Created new config directory " << SettingsData.sHome;
-					newDirCreated = true;
-				}
-				else
-				{
-					cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
-					SettingsData.sHome = "";
-				}
-			}
-			else cout << "\n(II): Config is read from " << SettingsData.sHome;
-
-			if ( !SettingsData.sHome.empty() ) SettingsData.sHome += PATH_DELIMITER;
-
-			SettingsData.sConfig = SettingsData.sHome;
-			SettingsData.sConfig += MAX_XML;
-		}
-
-		//set new place for logs
-		SettingsData.sLog = SettingsData.sHome + SettingsData.sLog;
-		SettingsData.sNetLog = SettingsData.sHome + SettingsData.sNetLog;
-		cout << "\n(II): Starting logging to: " << SettingsData.sLog;
-
-		if(newDirCreated)
-		{
-			//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
-			if( ReadMaxXml() != 0 ) Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
-
-			if( mkdir(SettingsData.sSavesPath.c_str()) == 0 ) Log.write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
-			else Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
-		}
-	#elif __amigaos4__
-		//this is where amigausers should set their %HOME%
-		//this is also a good place to find out where the executable is located
-		SettingsData.sConfig = MAX_XML; //assume config in current working directory
-	#else
-	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
-	bool bCreateConfigDir = false;
-
-	char * cHome = getenv("HOME"); //get $HOME on linux
-	if(cHome != NULL)
-	{
-		SettingsData.sHome = cHome; //get $HOME on linux
-	}
-
-	if (!SettingsData.sHome.empty())
-	{
-		SettingsData.sHome += PATH_DELIMITER ".maxr" PATH_DELIMITER;
-		SettingsData.sConfig = SettingsData.sHome;
-		SettingsData.sConfig += MAX_XML; //set config to $HOME/.maxr/max.xml
-
-		//check whether home dir is set up and readable
-		if(!FileExists(SettingsData.sHome.c_str())) //under linux everything is a file -- beko
-		{
-			if(mkdir(SettingsData.sHome.c_str(), 0755) == 0)
-			{
-				bCreateConfigDir = true;
-				cout << "\n(II): Created new config directory " << SettingsData.sHome;
-			}
-			else
-			{
-				cout << "\n(EE): Can't create config directory " << SettingsData.sHome;
-				SettingsData.sHome = ""; //reset $HOME since we can't create our config directory
-			}
-		}
-		else
-		{
-			cout << "\n(II): Config is read from " << SettingsData.sHome; //config dir can be read - we're fine
-		}
-	}
-	else
-	{
-		cout << "\n(WW): $HOME is not set!";
-		SettingsData.sHome="";
-		SettingsData.sConfig = MAX_XML; //assume config in current working directory
-	}
-
-	//set new place for logs
-	SettingsData.sLog = SettingsData.sHome + SettingsData.sLog;
-	SettingsData.sNetLog = SettingsData.sHome + SettingsData.sNetLog;
-	cout << "\n(II): Starting logging to: " << SettingsData.sLog;
-
-	//determine full path to application
-	//this needs /proc support that should be avaible on most linux installations
-	if(FileExists("/proc/self/exe"))
-	{
-		int iSize;
-		char cPathToExe[255];
-		iSize = readlink("/proc/self/exe", cPathToExe, sizeof(cPathToExe));
-		if (iSize < 0)
-		{
-			Log.write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
-		}
-		else if (iSize >= 255)
-		{
-			Log.write("Can't resolve full path to program since my array is to small and my programmer is to lame to write a buffer for me!", cLog::eLOG_TYPE_WARNING);
-		}
-		else
-		{
-			int iPos = 0;
-			for(int i = 0; i<255;i++)
-			{
-				if(cPathToExe[i] == '/') //snip garbage after last PATH_DELIMITER + executable itself (is reported on some linux systems as well using /proc/self/exe
-					iPos = i;
-				if(cPathToExe[i] == '\0') //skip garbage that might lunger on heap after 0 termination
-					i = 255;
-			}
-
-
-			SettingsData.sExePath = cPathToExe;
-			SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos);
-			SettingsData.sExePath += PATH_DELIMITER;
-
-			if(FileExists( (SettingsData.sExePath+"maxr").c_str() )) //check for binary itself in bin folder
-			{
-				Log.write("Path to binary is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
-			}
-			else
-			{	//perhaps we got ourself a trailing maxr in the path like /proc
-				// seems to do it sometimes. remove it and try again!
-				if(cPathToExe[iPos-1] == 'r' && cPathToExe[iPos-2] == 'x' && cPathToExe[iPos-3] == 'a' && cPathToExe[iPos-4] == 'm' )
-				{
-					SettingsData.sExePath = SettingsData.sExePath.substr(0, iPos-5);
-					if(FileExists( (SettingsData.sExePath+"maxr").c_str() ))
-					{
-						Log.write("Path to binary is: "+SettingsData.sExePath, cLog::eLOG_TYPE_INFO);
-					}
-				}
-			}
-
-		}
-	}
-	else
-	{
-		Log.write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
-		SettingsData.sExePath=""; //reset sExePath
-	}
-
-	if(bCreateConfigDir)
-	{
-		//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
-		if(ReadMaxXml()==0)
-		{
-
-		}
-		else
-		{
-			Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
-		}
-
-		if(mkdir(SettingsData.sSavesPath.c_str(), 0755) == 0)
-		{
-			Log.write("Created new save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_INFO);
-		}
-		else
-		{
-			Log.write("Can't create save directory: "+SettingsData.sSavesPath, cLog::eLOG_TYPE_ERROR);
-		}
-	}
-
-	cout << "\n";
-	#endif
-}
-
-string searchData(string sDataDirFromConf)
-{
-	string sPathToGameData = "";
-	#if MAC
-		sPathToGameData =  SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
-	#elif WIN32
-		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
-	#elif __amigaos4__
-		sPathToGameData = SettingsData.sExePath; //assuming data is in same folder like binary (or current working directory)
-	#else
-	//BEGIN crude path validation to find gamedata
-	Log.write ( "Probing for data paths using default values:", cLog::eLOG_TYPE_INFO );
-
-	#define PATHCOUNT 11
-	string sPathArray[PATHCOUNT] = {
-		BUILD_DATADIR, //most important position holds value of configure --prefix to gamedata in %prefix%/$(datadir)/maxr or default path if autoversion.h wasn't used
-		"/usr/local/share/maxr",
-		"/usr/games/maxr",
-		"/usr/local/games/maxr",
-		"/usr/maxr",
-		"/usr/local/maxr",
-		"/opt/maxr",
-		"/usr/share/games/maxr",
-		"/usr/local/share/games/maxr",
-		SettingsData.sExePath, //check for gamedata in bin folder too
-		"." //last resort: local dir
-	};
-
-	/*
-	* Logic is:
-	* BUILD_DATADIR is default search path
-	* sDataDirFromConf overrides BUILD_DATADIR
-	* "$MAXRDATA overrides both
-	* BUILD_DATADIR is checked if sDataDirFromConf or $MAXRDATA fail the probe
-	*/
-	if(!sDataDirFromConf.empty())
-	{
-		sPathArray[0] = sDataDirFromConf; //override default path with path from config
-		sPathArray[1] = BUILD_DATADIR; //and save old value one later in case sDataDirFromConf is invalid
-	}
-
-	//BEGIN SET MAXRDATA
-	char * cDataDir;
-	cDataDir = getenv("MAXRDATA");
-	if(cDataDir == NULL)
-	{
-		Log.write("$MAXRDATA is not set", cLog::eLOG_TYPE_INFO);
-	}
-	else
-	{
-		sPathArray[0] = cDataDir;
-		sPathArray[1] = BUILD_DATADIR;
-		Log.write("$MAXRDATA is set and overrides default data search path", cLog::eLOG_TYPE_WARNING);
-	}
-	//END SET MAXRDATA
-
-	for(int i=0; i<PATHCOUNT; i++)
-	{
-		string sInitFile = sPathArray[i];
-		sInitFile += PATH_DELIMITER "init.pcx";
-		if(FileExists( sInitFile.c_str() ))
-		{
-			sPathToGameData = sPathArray[i];
-			sPathToGameData += PATH_DELIMITER;
-			break;
-		}
-	}
-
-	if(sPathToGameData.empty()) //still empty? cry for mama - we couldn't locate any typical data folder
-	{
-		Log.write("No success probing for data folder!", cLog::eLOG_TYPE_ERROR);
-	}
-	else
-	{
-		Log.write("Found gamedata in: "+sPathToGameData, cLog::eLOG_TYPE_INFO);
-	}
-	//END crude path validation to find gamedata
-	#endif
-	return sPathToGameData;
 }

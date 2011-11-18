@@ -56,16 +56,16 @@ int InitSound ( int frequency,int chunksize )
 // closes sound
 void CloseSound ( void )
 {
-	if ( !SettingsData.bSoundEnabled ) return;
+	if ( !cSettings::getInstance().isSoundEnabled() ) return;
 	Mix_CloseAudio();
 }
 
 // plays voice sound
 void PlayVoice ( sSOUND *snd )
 {
-	if ( !SettingsData.bSoundEnabled||SettingsData.VoiceMute ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||cSettings::getInstance().isVoiceMute() ) return;
 	play(snd);
-	Mix_Volume ( VoiceChannel,SettingsData.VoiceVol );
+	Mix_Volume ( VoiceChannel,cSettings::getInstance().getVoiceVol() );
 	VoiceChannel++;
 	if ( VoiceChannel>VOICE_CHANNEL_MAX ) VoiceChannel=VOICE_CHANNEL_MIN;
 }
@@ -73,9 +73,9 @@ void PlayVoice ( sSOUND *snd )
 // plays fx sound
 void PlayFX ( sSOUND *snd )
 {
-	if ( !SettingsData.bSoundEnabled||SettingsData.SoundMute ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||cSettings::getInstance().isSoundMute() ) return;
 	play(snd);
-	Mix_Volume ( SoundChannel,SettingsData.SoundVol );
+	Mix_Volume ( SoundChannel,cSettings::getInstance().getSoundVol() );
 	SoundChannel++;
 	if ( SoundChannel>SOUND_CHANNEL_MAX ) SoundChannel=SOUND_CHANNEL_MIN;
 }
@@ -83,7 +83,7 @@ void PlayFX ( sSOUND *snd )
 // plays passed ogg/wav/mod-musicfile in a loop
 void PlayMusic(char const* const file)
 {
-	if ( !SettingsData.bSoundEnabled||SettingsData.MusicMute ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||cSettings::getInstance().isMusicMute() ) return;
 	music_stream = Mix_LoadMUS ( file );
 	if ( !music_stream )
 	{
@@ -92,7 +92,7 @@ void PlayMusic(char const* const file)
 		return;
 	}
 	Mix_PlayMusic ( music_stream,0 );
-	Mix_VolumeMusic ( SettingsData.MusicVol );
+	Mix_VolumeMusic ( cSettings::getInstance().getMusicVol() );
 }
 
 //FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
@@ -109,14 +109,14 @@ void play(sSOUND *snd)
 // sets volume for music
 void SetMusicVol ( int vol )
 {
-	if ( !SettingsData.bSoundEnabled ) return;
+	if ( !cSettings::getInstance().isSoundEnabled() ) return;
 	Mix_VolumeMusic ( vol );
 }
 
 //stops music
 void StopMusic ( void )
 {
-	if ( !SettingsData.bSoundEnabled||!music_stream ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||!music_stream ) return;
 	Mix_FreeMusic ( music_stream );
 	music_stream=NULL;
 }
@@ -124,7 +124,7 @@ void StopMusic ( void )
 // starts music
 void StartMusic ( void )
 {
-	if ( !SettingsData.bSoundEnabled ||SettingsData.MusicMute ) return;
+	if ( !cSettings::getInstance().isSoundEnabled() ||cSettings::getInstance().isMusicMute() ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
@@ -132,7 +132,7 @@ void StartMusic ( void )
 // callback when end of music title is reached
 static void MusicFinished(void)
 {
-	if ( !SettingsData.bSoundEnabled ) return;
+	if ( !cSettings::getInstance().isSoundEnabled() ) return;
 	if ( MusicFiles.Size() == 0 ) return;
 	PlayMusic(MusicFiles[random( (int)MusicFiles.Size())].c_str());
 }
@@ -140,7 +140,7 @@ static void MusicFinished(void)
 // starts a loop sound
 int PlayFXLoop ( sSOUND *snd )
 {
-	if ( !SettingsData.bSoundEnabled|| SettingsData.SoundMute  ) return 0;
+	if ( !cSettings::getInstance().isSoundEnabled()|| cSettings::getInstance().isSoundMute()  ) return 0;
 	Mix_HaltChannel ( SoundLoopChannel );
 	if(Mix_PlayChannel ( SoundLoopChannel,snd,-1 ) == -1)
 	{
@@ -148,13 +148,13 @@ int PlayFXLoop ( sSOUND *snd )
 		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
 	}
-	Mix_Volume ( SoundLoopChannel,SettingsData.SoundVol );
+	Mix_Volume ( SoundLoopChannel,cSettings::getInstance().getSoundVol() );
 	return SoundLoopChannel;
 }
 
 // stops a loop sound
 void StopFXLoop ( int SndStream )
 {
-	if ( !SettingsData.bSoundEnabled||SndStream!=SoundLoopChannel ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||SndStream!=SoundLoopChannel ) return;
 	Mix_HaltChannel ( SoundLoopChannel );
 }

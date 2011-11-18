@@ -987,7 +987,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 	int x = offset % Client->Map->size;
 	int y = offset / Client->Map->size;
 
-	if ( playImpact && SettingsData.bAlphaEffects )
+	if ( playImpact && cSettings::getInstance().isAlphaEffects() )
 	{
 		// TODO:  PlayFX ( SoundData.hit );
 		Client->addFX( fxHit, x*64 + offX, y*64 + offY, 0);

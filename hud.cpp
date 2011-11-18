@@ -329,7 +329,7 @@ int cGameGUI::show()
 		lastMouseX = mouse->x;
 		lastMouseY = mouse->y;
 
-		if ( !SettingsData.bFastMode ) SDL_Delay ( 10 );
+		if ( !cSettings::getInstance().shouldUseFastMode() ) SDL_Delay ( 10 );
 
 		Client->doGameActions();
 
@@ -391,14 +391,14 @@ SDL_Surface *cGameGUI::generateSurface()
 	SDL_FillRect ( surface, NULL, 0xFF00FF );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_left.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "hud_left.pcx"));
 		if (tmpSurface)
 		{
 			SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_top.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "hud_top.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -416,7 +416,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_right.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "hud_right.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -429,7 +429,7 @@ SDL_Surface *cGameGUI::generateSurface()
 		}
 	}
 
-	{ AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "hud_bottom.pcx"));
+	{ AutoSurface tmpSurface(LoadPCX(cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "hud_bottom.pcx"));
 		if (tmpSurface)
 		{
 			scr.x = 0;
@@ -455,7 +455,7 @@ SDL_Surface *cGameGUI::generateSurface()
 
 	if ( Video.getResolutionY() > 480 )
 	{
-		AutoSurface tmpSurface(LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "logo.pcx"));
+		AutoSurface tmpSurface(LoadPCX(cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "logo.pcx"));
 		if (tmpSurface)
 		{
 			dest.x = 9;
@@ -478,11 +478,11 @@ SDL_Surface *cGameGUI::generateMiniMapSurface()
 
 	if ( zoomFactor != 1 )
 	{
-		if ( offX < miniMapOffX*64 ) miniMapOffX -= SettingsData.iScrollSpeed/10;
-		else if ( offX+displayedMapWidth > miniMapOffX*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffX += SettingsData.iScrollSpeed/10;
+		if ( offX < miniMapOffX*64 ) miniMapOffX -= cSettings::getInstance().getScrollSpeed()/10;
+		else if ( offX+displayedMapWidth > miniMapOffX*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffX += cSettings::getInstance().getScrollSpeed()/10;
 
-		if ( offY < miniMapOffY*64 ) miniMapOffY -= SettingsData.iScrollSpeed/10;
-		else if ( offY+displayedMapHight > miniMapOffY*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffY += SettingsData.iScrollSpeed/10;
+		if ( offY < miniMapOffY*64 ) miniMapOffY -= cSettings::getInstance().getScrollSpeed()/10;
+		else if ( offY+displayedMapHight > miniMapOffY*64+(MINIMAP_SIZE*64)/MINIMAP_ZOOM_FACTOR ) miniMapOffY += cSettings::getInstance().getScrollSpeed()/10;
 
 		if ( miniMapOffX < 0 ) miniMapOffX = 0;
 		if ( miniMapOffY < 0 ) miniMapOffY = 0;
@@ -699,7 +699,7 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 
 		lastZoom = getZoom();
 	}
-	if ( SettingsData.bPreScale ) scaleSurfaces();
+	if ( cSettings::getInstance().shouldDoPrescale() ) scaleSurfaces();
 	scaleColors();
 
 	checkOffsetPosition();
@@ -1909,7 +1909,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 
 void cGameGUI::doScroll( int dir )
 {
-	int step = SettingsData.iScrollSpeed;
+	int step = cSettings::getInstance().getScrollSpeed();
 	int newOffX = offX;
 	int newOffY = offY;
 
@@ -2326,7 +2326,7 @@ void cGameGUI::deselectGroup ()
 
 void cGameGUI::changeWindDir()
 {
-	if ( Client->timer400ms && SettingsData.bDamageEffects )
+	if ( Client->timer400ms && cSettings::getInstance().isDamageEffects() )
 	{
 		static int nextChange = 25, nextDirChange = 25, dir = 90, change = 3;
 		if ( nextChange == 0 )
@@ -2351,8 +2351,8 @@ void cGameGUI::changeWindDir()
 
 bool cGameGUI::loadPanelGraphics()
 {
-	if (!panelTopGraphic)    panelTopGraphic    = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "panel_top.pcx");
-	if (!panelBottomGraphic) panelBottomGraphic = LoadPCX(SettingsData.sGfxPath + PATH_DELIMITER "panel_top.pcx");
+	if ( !panelTopGraphic ) panelTopGraphic = LoadPCX ( cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "panel_top.pcx" );
+	if ( !panelBottomGraphic ) panelBottomGraphic = LoadPCX ( cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "panel_top.pcx" );
 
 	if ( !panelTopGraphic || !panelBottomGraphic ) return false;
 	return true;
@@ -2896,12 +2896,12 @@ void cGameGUI::drawTerrain( int zoomOffX, int zoomOffY )
 					// draw the fog:
 					if ( fogChecked() && !player->ScanMap[pos] )
 					{
-						if ( !SettingsData.bPreScale && ( terr->shw->w != tileSize || terr->shw->h != tileSize ) ) scaleSurface ( terr->shw_org, terr->shw, tileSize, tileSize );
+						if ( !cSettings::getInstance().shouldDoPrescale() && ( terr->shw->w != tileSize || terr->shw->h != tileSize ) ) scaleSurface ( terr->shw_org, terr->shw, tileSize, tileSize );
 						SDL_BlitSurface ( terr->shw,NULL,buffer,&tmp );
 					}
 					else
 					{
-						if ( !SettingsData.bPreScale && ( terr->sf->w != tileSize || terr->sf->h != tileSize ) ) scaleSurface ( terr->sf_org, terr->sf, tileSize, tileSize );
+						if ( !cSettings::getInstance().shouldDoPrescale() && ( terr->sf->w != tileSize || terr->sf->h != tileSize ) ) scaleSurface ( terr->sf_org, terr->sf, tileSize, tileSize );
 						SDL_BlitSurface ( terr->sf,NULL,buffer,&tmp );
 					}
 				}
@@ -3590,7 +3590,7 @@ void cGameGUI::drawResources( int startX, int startY, int endX, int endY, int zo
 				{
 					src.x = 0;
 					tmp = dest;
-					if ( !SettingsData.bPreScale && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
+					if ( !cSettings::getInstance().shouldDoPrescale() && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
 					SDL_BlitSurface ( ResourceData.res_metal,&src,buffer,&tmp );
 				}
 				else
@@ -3599,17 +3599,17 @@ void cGameGUI::drawResources( int startX, int startY, int endX, int endY, int zo
 					tmp = dest;
 					if ( map->Resources[pos].typ == RES_METAL )
 					{
-						if ( !SettingsData.bPreScale && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
+						if ( !cSettings::getInstance().shouldDoPrescale() && ( ResourceData.res_metal->w != ResourceData.res_metal_org->w/64*tileSize || ResourceData.res_metal->h != tileSize ) ) scaleSurface ( ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w/64*tileSize, tileSize );
 						SDL_BlitSurface ( ResourceData.res_metal, &src, buffer, &tmp );
 					}
 					else if ( map->Resources[pos].typ == RES_OIL )
 					{
-						if ( !SettingsData.bPreScale && ( ResourceData.res_oil->w != ResourceData.res_oil_org->w/64*tileSize || ResourceData.res_oil->h != tileSize ) ) scaleSurface ( ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w/64*tileSize, tileSize );
+						if ( !cSettings::getInstance().shouldDoPrescale() && ( ResourceData.res_oil->w != ResourceData.res_oil_org->w/64*tileSize || ResourceData.res_oil->h != tileSize ) ) scaleSurface ( ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w/64*tileSize, tileSize );
 						SDL_BlitSurface ( ResourceData.res_oil, &src, buffer, &tmp );
 					}
 					else
 					{
-						if ( !SettingsData.bPreScale && ( ResourceData.res_gold->w != ResourceData.res_gold_org->w/64*tileSize || ResourceData.res_gold->h != tileSize ) ) scaleSurface ( ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w/64*tileSize, tileSize );
+						if ( !cSettings::getInstance().shouldDoPrescale() && ( ResourceData.res_gold->w != ResourceData.res_gold_org->w/64*tileSize || ResourceData.res_gold->h != tileSize ) ) scaleSurface ( ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w/64*tileSize, tileSize );
 						SDL_BlitSurface ( ResourceData.res_gold, &src, buffer, &tmp );
 					}
 				}
@@ -3803,7 +3803,7 @@ void cGameGUI::displayMessages()
 	SDL_Rect scr = { 0, 0, Video.getResolutionX() - 200, height+6 };
 	SDL_Rect dest = { 180, 30, 0, 0 };
 
-	if ( SettingsData.bAlphaEffects ) SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
+	if ( cSettings::getInstance().isAlphaEffects() ) SDL_BlitSurface ( GraphicsData.gfx_shadow, &scr, buffer, &dest );
 	dest.x = 180+2; dest.y = 34;
 	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
