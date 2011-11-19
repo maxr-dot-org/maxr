@@ -136,7 +136,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 
 	/* video variables */
 	Uint32 screen_mvebuffer_size = 0;
-	Uint16 width_blocks = 0, height_blocks = 0;
+	Uint16 width_blocks = 0, height_blocks = 0, width = 0, height = 0;
 	Uint8 *map = NULL, *video = NULL, *temp = NULL;
 	SDL_Surface *screen = NULL;
 	SDL_Rect movie_screen;
@@ -496,6 +496,10 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			break;
 
 		case INIT_VIDEO_MODE:
+
+			width = SDL_ReadLE16(mve);
+			height = SDL_ReadLE16(mve);
+
 			/* if we've been here before */
 			if(screen)
 				SDL_FreeSurface(screen);
