@@ -478,7 +478,8 @@ void cSettings::initialize()
 	}
 	else
 	{
-		std::transform(temp.begin(), temp.end(), temp.begin(), (int(*)(int))std::toupper);
+		for (std::string::iterator i = temp.begin(), end = temp.end(); i != end; ++i)
+			*i = std::toupper((unsigned char)*i);
 		language = temp.c_str();
 	}
 
