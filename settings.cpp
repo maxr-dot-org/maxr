@@ -478,7 +478,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		std::transform(temp.begin(), temp.end(), temp.begin(), std::toupper);
+		std::transform(temp.begin(), temp.end(), temp.begin(), (int(*)(int))std::toupper);
 		language = temp.c_str();
 	}
 
