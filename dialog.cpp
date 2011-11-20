@@ -217,7 +217,7 @@ void cDialogLicence::generateLicenceTexts()
 #else
 		sAuthors = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS";
 #endif
-		
+
 
 	sLicence4 = "";
 	char line[72];

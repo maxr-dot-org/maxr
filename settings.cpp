@@ -68,7 +68,7 @@ void cSettings::setPaths()
 	netLogPath = MAX_NET_LOG;
 	exePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
 	homeDir="";
-	
+
 	#if MAC
 	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
 	char * cHome = getenv("HOME"); //get $HOME on mac
@@ -393,7 +393,7 @@ void cSettings::initialize()
 		Log.write ( "Can't read max.xml\n", LOG_TYPE_WARNING );
 		if ( !createConfigFile() ) return;
 	}
-	
+
 	ExTiXmlNode *xmlNode = NULL;
 	std::string temp;
 
@@ -412,7 +412,7 @@ void cSettings::initialize()
 		int hTmp = atoi(temp.substr(temp.find(".",0)+1,temp.length()).c_str());
 		Video.setResolution(wTmp, hTmp);
 	}
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","ColourDepth", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -422,7 +422,7 @@ void cSettings::initialize()
 		saveColorDepth();
 	}
 	else Video.setColDepth(32);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Intro", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -431,7 +431,7 @@ void cSettings::initialize()
 		setShowIntro(true);
 	}
 	else showIntro = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Windowmode", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -441,7 +441,7 @@ void cSettings::initialize()
 		saveWindowMode();
 	}
 	else Video.setWindowMode(xmlNode->XmlDataToBool(temp));
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Fastmode", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -450,7 +450,7 @@ void cSettings::initialize()
 		setFastMode(false);
 	}
 	else fastMode = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","PreScale", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -459,7 +459,7 @@ void cSettings::initialize()
 		setDoPrescale(false);
 	}
 	else preScale = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","CacheSize", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -468,7 +468,7 @@ void cSettings::initialize()
 		setCacheSize(400);
 	}
 	else cacheSize = atoi(temp.c_str());
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Language", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
@@ -559,7 +559,7 @@ void cSettings::initialize()
 		setDamageEffectsVehicles(true);
 	}
 	else damageEffectsVehicles = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","EnableMakeTracks", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -568,7 +568,7 @@ void cSettings::initialize()
 		setMakeTracks(true);
 	}
 	else makeTracks = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","ScrollSpeed", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -587,7 +587,7 @@ void cSettings::initialize()
 		setSoundEnabled(true);
 	}
 	else soundEnabled = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicMute", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -596,7 +596,7 @@ void cSettings::initialize()
 		setMusicMute(false);
 	}
 	else musicMute = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundMute", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -605,7 +605,7 @@ void cSettings::initialize()
 		setSoundMute(false);
 	}
 	else soundMute = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceMute", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
@@ -614,7 +614,7 @@ void cSettings::initialize()
 		setVoiceMute(false);
 	}
 	else voiceMute = xmlNode->XmlDataToBool(temp);
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicVol", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -623,7 +623,7 @@ void cSettings::initialize()
 		setMusicVol(128);
 	}
 	else musicVol = atoi(temp.c_str());
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundVol", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -632,7 +632,7 @@ void cSettings::initialize()
 		setSoundVol(128);
 	}
 	else soundVol = atoi(temp.c_str());
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceVol", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -641,7 +641,7 @@ void cSettings::initialize()
 		setVoiceVol(128);
 	}
 	else voiceVol = atoi(temp.c_str());
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "ChunkSize", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -650,7 +650,7 @@ void cSettings::initialize()
 		setChunkSize(2048);
 	}
 	else chunkSize = atoi(temp.c_str());
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "Frequency", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
@@ -880,7 +880,7 @@ template<typename T>
 void cSettings::saveSetting(std::string path, T value, const char *valueName)
 {
 	TiXmlDocument configFile;
-	
+
 	TiXmlNode *xmlNode = getXmlNode(path, configFile);
 	if ( xmlNode == NULL ) return;
 

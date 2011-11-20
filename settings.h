@@ -52,7 +52,7 @@ public:
 	 */
 	bool isInitialized();
 
-	// Some save methods for settings that are not stored in this class but nevertheless 
+	// Some save methods for settings that are not stored in this class but nevertheless
 	// have to be written to the configuration file.
 	void saveResolution();
 	void saveColorDepth();
@@ -101,7 +101,7 @@ public:
 
 	std::string getLogPath();
 	void setLogPath(const char *logPath);
-	
+
 	std::string getHomeDir();
 	void setHomeDir(const char *homeDir);
 
@@ -164,7 +164,7 @@ public:
 
 	unsigned int getCacheSize();
 	void setCacheSize(unsigned int cacheSize, bool save = true);
-	
+
 	// Paths
 
 	std::string getFontPath();
@@ -203,7 +203,7 @@ public:
 	std::string getMvePath();
 	void setMvePath(const char *mvePath, bool save = true);
 private:
-	
+
 	/**
 	 * Private constructor for singleton design pattern.
 	 */
@@ -285,7 +285,7 @@ private:
 	std::string playerName;
 	/**Last color choosen by player*/
 	int playerColor;
-	
+
 	//SOUND
 	/**sound enabled*/
 	bool soundEnabled;
@@ -319,7 +319,7 @@ private:
 	std::string vehiclesPath;			// Path to the vehicles
 	std::string buildingsPath;			// Path to the buildings
 	std::string mvePath;			// Path to the in-game movies (*.mve)
-	
+
 	/**
 	 * Gets the platform dependent user paths for the configuration file and reads the file.
 	 * If the file (or parts of it) do not exist default values will be used and written to
@@ -358,7 +358,7 @@ private:
 	 * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
 	 */
 	TiXmlNode *getXmlNode(std::string path, TiXmlDocument &configFile);
-	
+
 	/**
 	 * Template function for saving a setting.
 	 * @param path See #getXmlNode() for more information on how to use this parameter.
@@ -369,7 +369,7 @@ private:
 	void saveSetting(std::string path, T value, const char *valueName);
 
 	// Overloadings for the saveSetting template function.
-	// Each type has to call the template saveSetting() method and pass the 
+	// Each type has to call the template saveSetting() method and pass the
 	// corresponding attribute name to it.
 	void saveSetting(std::string path, const char *value);
 	void saveSetting(std::string path, int value);
