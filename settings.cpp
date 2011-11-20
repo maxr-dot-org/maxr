@@ -25,6 +25,7 @@
 #	include <unistd.h>
 #endif
 
+#include <cctype>
 #include <string>
 #include <iostream>
 #include <locale>
@@ -67,7 +68,7 @@ void cSettings::setPaths()
 	netLogPath = MAX_NET_LOG;
 	exePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
 	homeDir="";
-
+	
 	#if MAC
 	// do some rudimentary work with the user's homefolder. Needs to be extended in future...
 	char * cHome = getenv("HOME"); //get $HOME on mac
@@ -146,9 +147,6 @@ void cSettings::setPaths()
 
 		if(newDirCreated)
 		{
-			//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
-			//if( ReadMaxXml() != 0 ) Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
-			
 			if( mkdir(getSavesPath().c_str()) == 0 ) Log.write("Created new save directory: "+getSavesPath(), cLog::eLOG_TYPE_INFO);
 			else Log.write("Can't create save directory: "+getSavesPath(), cLog::eLOG_TYPE_ERROR);
 		}
@@ -184,8 +182,8 @@ void cSettings::setPaths()
 			}
 			else
 			{
-				cout << "\n(EE): Can't create config directory " << homeDir;
-				std::homeDir = ""; //reset $HOME since we can't create our config directory
+				std::cout << "\n(EE): Can't create config directory " << homeDir;
+				homeDir = ""; //reset $HOME since we can't create our config directory
 			}
 		}
 		else
@@ -263,16 +261,7 @@ void cSettings::setPaths()
 
 	if(bCreateConfigDir)
 	{
-		//since the config dir didn't exist we can assume config is missing as well so we run ReadMaxXML taking care of a missing config _and_ providing us with needed PATHS and set up save directory as well -- beko
-		if(ReadMaxXml()==0)
-		{
-
-		}
-		else
-		{
-			Log.write("An error occured. Please check your installation!", cLog::eLOG_TYPE_ERROR);
-		}
-
+		//since the config dir didn't exist we have to set up save directory as well -- beko
 		if(mkdir(getSavesPath().c_str(), 0755) == 0)
 		{
 			Log.write("Created new save directory: "+getSavesPath(), cLog::eLOG_TYPE_INFO);
@@ -489,12 +478,7 @@ void cSettings::initialize()
 	}
 	else
 	{
-		struct upper
-		{
-			locale loc;
-			int operator()(int c) { return std::toupper((char)c, loc); }
-		};
-		std::transform(temp.begin(), temp.end(), temp.begin(), upper());
+		std::transform(temp.begin(), temp.end(), temp.begin(), std::toupper);
 		language = temp.c_str();
 	}
 
