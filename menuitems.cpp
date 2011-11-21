@@ -2982,6 +2982,12 @@ bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
 	case SDLK_RIGHT:
 		scrollRight();
 		break;
+	case SDLK_HOME:
+		cursorPos = 0;
+		break;
+	case SDLK_END:
+		cursorPos = (int)text.length();
+		break;
 	case SDLK_BACKSPACE:
 		deleteLeft();
 		if ( wasKeyInput ) wasKeyInput ( parent );
