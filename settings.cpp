@@ -707,7 +707,6 @@ void cSettings::initialize()
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load saves path from config file: using default value", LOG_TYPE_WARNING );
-		setSavesPath("saves");
         savesPath = homeDir + "saves";
 	}
     else savesPath = temp; //use absolut paths for saves - do not add dataDir or homeDir
