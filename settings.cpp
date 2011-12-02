@@ -667,108 +667,119 @@ void cSettings::initialize()
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load gamedata from config file: using default value", LOG_TYPE_WARNING );
-		setDataDir(searchDataDir().c_str());
+		setDataDir(searchDataDir().c_str(), false);
 	}
-	else setDataDir(searchDataDir(temp).c_str());
+	else setDataDir(searchDataDir(temp).c_str(), false);
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Languages", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load language path from config file: using default value", LOG_TYPE_WARNING );
-		setLangPath((dataDir + "languages").c_str());
+		setLangPath("languages");
+		langPath = dataDir + "languages";
 	}
-	else setLangPath((dataDir + temp).c_str());
+	else langPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Fonts", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load fonts path from config file: using default value", LOG_TYPE_WARNING );
-		setFontPath((dataDir + "fonts").c_str());
+		setFontPath("fonts");
+		fontPath = dataDir + "fonts";
 	}
-	else setFontPath((dataDir + temp).c_str());
+    else fontPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","FX", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load fx path from config file: using default value", LOG_TYPE_WARNING );
-		setFxPath((dataDir + "fx").c_str());
+		setFxPath("fx");
+		fxPath = dataDir + "fx";
 	}
-	else setFxPath((dataDir + temp).c_str());
+    else fxPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","GFX", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load gfx path from config file: using default value", LOG_TYPE_WARNING );
-		setGfxPath((dataDir + "gfx").c_str());
+		setGfxPath("gfx");
+		gfxPath = dataDir + "gfx";
 	}
-	else setGfxPath((dataDir + temp).c_str());
+    else gfxPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Maps", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load maps path from config file: using default value", LOG_TYPE_WARNING );
-		setMapsPath((dataDir + "maps").c_str());
+		setMapsPath("maps");
+		mapsPath = dataDir + "maps";
 	}
-	else setMapsPath((dataDir + temp).c_str());
+    else mapsPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Sounds", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load sounds path from config file: using default value", LOG_TYPE_WARNING );
-		setSoundsPath((dataDir + "sounds").c_str());
+		setSoundsPath("sounds");
+		soundsPath = dataDir + "sounds";
 	}
-	else setSoundsPath((dataDir + temp).c_str());
+    else soundsPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Voices", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load voices path from config file: using default value", LOG_TYPE_WARNING );
-		setVoicesPath((dataDir + "voices").c_str());
+		setVoicesPath("voices");
+		voicesPath = dataDir + "voices";
 	}
-	else setVoicesPath((dataDir + temp).c_str());
+    else voicesPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Music", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load music path from config file: using default value", LOG_TYPE_WARNING );
-		setMusicPath((dataDir + "music").c_str());
+		setMusicPath("music");
+		musicPath = dataDir + "music";
 	}
-	else setMusicPath((dataDir + temp).c_str());
+    else musicPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Vehicles", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load vehicles path from config file: using default value", LOG_TYPE_WARNING );
-		setVehiclesPath((dataDir + "vehicles").c_str());
+		setVehiclesPath("vehicles");
+		vehiclesPath = dataDir + "vehicles";
 	}
-	else setVehiclesPath((dataDir + temp).c_str());
+    else vehiclesPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Buildings", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load buildings path from config file: using default value", LOG_TYPE_WARNING );
-		setBuildingsPath((dataDir + "buildings").c_str());
+		setBuildingsPath("buildings");
+		buildingsPath = dataDir + "buildings";
 	}
-	else setBuildingsPath((dataDir + temp).c_str());
+    else buildingsPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","MVEs", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load language path from config file: using default value", LOG_TYPE_WARNING );
-		setMvePath((dataDir + "mve").c_str());
+		setMvePath("mve");
+		mvePath = dataDir + "mve";
 	}
-	else setMvePath((dataDir + temp).c_str());
+    else mvePath = dataDir + temp;
 
 	//GAME-NET
 	// =============================================================================
