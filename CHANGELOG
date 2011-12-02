@@ -1,4 +1,4 @@
-Mechanized Assault & eXploration Reloaded SVN
+Mechanized Assault & eXploration Reloaded 0.2.7
 =======================================================================
 -implemented ecospheres/biodomes
 -implemented new victory condition with points system
@@ -6,11 +6,31 @@ Mechanized Assault & eXploration Reloaded SVN
 -implemented unit renaming
 -implemented self destruction
 -seperated rendering code from engine => real fps possible now
+-improved #196 Research report message now tells which research finished 
 -improved unit group handling (hotkeys work for all selected units now)
+-improved zooming with mouse wheel now centers to mouse cursor position
 -improved ingame chatbox
 -improved quit events (ALT+F4 should work now)
 -improved video mode selection
+-improved movejobs
+-improved #420 confirmation dialog to exit button in loadsave menu
+-improved source towards command line based dedicated server
+-improved "info" menu for enemy units
+-improved message when a unit gets disabled
+-improved autorestart of buildings when the recover from being disabled
+-improved using the "My Documents" folder on windows.
+-improved system for reading and writing config values
+-fixed #294 calculation remaining movment points 
+-fixed #422 build land units in a vehicle plant, surrounded by platforms
+-fixed #380 freezed clients after reconnect
+-fixed #438 lost network messages
+-fixed #417 endless loop on exit
+-fixed multiplayer lobby: double names or colors no longer possible
+-fixed surveyor ai
+-fixed context menu of stopped factories with queue 
+-fixed displaying enemy mines
 -fixed build cost formula
+-fixed displaying upgrades in build menu
 -fixed various graphic problems
 -fixed /ready command in multiplayer lobby
 -fixed infiltrators
