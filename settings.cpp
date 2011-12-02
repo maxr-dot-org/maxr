@@ -144,12 +144,6 @@ void cSettings::setPaths()
 		logPath = homeDir + logPath;
 		netLogPath = homeDir + netLogPath;
 		std::cout << "\n(II): Starting logging to: " << logPath;
-
-		if(newDirCreated)
-		{
-			if( mkdir(getSavesPath().c_str()) == 0 ) Log.write("Created new save directory: "+getSavesPath(), cLog::eLOG_TYPE_INFO);
-			else Log.write("Can't create save directory: "+getSavesPath(), cLog::eLOG_TYPE_ERROR);
-		}
 	#elif __amigaos4__
 		//this is where amigausers should set their %HOME%
 		//this is also a good place to find out where the executable is located
@@ -257,19 +251,6 @@ void cSettings::setPaths()
 	{
 		Log.write("Can't resolve full path to program. Doesn't this system feature /proc/self/exe?", cLog::eLOG_TYPE_WARNING);
 		exePath=""; //reset exePath
-	}
-
-	if(bCreateConfigDir)
-	{
-		//since the config dir didn't exist we have to set up save directory as well -- beko
-		if(mkdir(getSavesPath().c_str(), 0755) == 0)
-		{
-			Log.write("Created new save directory: "+getSavesPath(), cLog::eLOG_TYPE_INFO);
-		}
-		else
-		{
-			Log.write("Can't create save directory: "+getSavesPath(), cLog::eLOG_TYPE_ERROR);
-		}
 	}
 
 	std::cout << "\n";
@@ -667,7 +648,7 @@ void cSettings::initialize()
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 	{
 		Log.write ( "Can't load gamedata from config file: using default value", LOG_TYPE_WARNING );
-		setDataDir(searchDataDir().c_str(), false);
+		setDataDir(searchDataDir().c_str(), true);
 	}
 	else setDataDir(searchDataDir(temp).c_str(), false);
 
@@ -720,6 +701,16 @@ void cSettings::initialize()
 		mapsPath = dataDir + "maps";
 	}
     else mapsPath = dataDir + temp;
+
+	// =============================================================================
+	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Saves", NULL);
+	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	{
+		Log.write ( "Can't load saves path from config file: using default value", LOG_TYPE_WARNING );
+		setSavesPath("saves");
+        savesPath = homeDir + "saves";
+	}
+    else savesPath = temp; //use absolut paths for saves - do not add dataDir or homeDir
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Sounds", NULL);

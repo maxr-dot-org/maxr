@@ -43,6 +43,13 @@ bool FileExists(const char* path);
 bool DirExists(std::string path);
 
 /**
+* Creates a new directory.
+* @param Path to the directory to create.
+* @return True if the directoy has been created successfully. False on errors.
+*/
+bool makeDir(std::string path);
+
+/**
 * Gets the filenames of all files in the directory
 * @author alzi
 * @param sDirectory Directory in which to search

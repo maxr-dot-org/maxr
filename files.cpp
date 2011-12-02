@@ -56,6 +56,16 @@ bool FileExists ( const char* path )
 }
 
 //--------------------------------------------------------------
+bool makeDir(std::string path)
+{
+#ifdef WIN32
+    return mkdir(path.c_str()) == 0;
+#else
+    return mkdir(path.c_str(), 0755) == 0
+#endif
+}
+
+//--------------------------------------------------------------
 bool DirExists(std::string path)
 {
 #ifdef WIN32

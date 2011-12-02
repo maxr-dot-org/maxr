@@ -25,6 +25,7 @@
 #include "menus.h"
 #include "settings.h"
 #include "hud.h"
+#include "files.h"
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )
@@ -1687,6 +1688,13 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 		reportElement->SetAttribute ( "id", list[0].unitID.getText().c_str() );
 		reportElement->SetAttribute ( "colorNr", iToStr ( list[0].colorNr ).c_str() );
 		list.Delete ( 0 );
+	}
+
+    
+	if(!DirExists(cSettings::getInstance().getSavesPath()))
+	{
+		if( makeDir(cSettings::getInstance().getSavesPath()) ) Log.write("Created new save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_INFO);
+		else Log.write("Can't create save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
 
 	SaveFile->SaveFile( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
