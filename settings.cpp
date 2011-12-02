@@ -710,7 +710,7 @@ void cSettings::initialize()
         setSavesPath((homeDir + "saves").c_str());
 	}
     else savesPath = temp; //use absolut paths for saves - do not add dataDir or homeDir
-
+    
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Sounds", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
