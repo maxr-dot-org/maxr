@@ -1,4 +1,4 @@
-AC_INIT([maxr], [0.2.6], [bugs@maxr.org])
+AC_INIT([maxr], [0.2.7], [bugs@maxr.org])
 AC_PREREQ(2.61)
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -31,7 +31,7 @@ then SDL_LIBS=`$SDLCONFIG --prefix`/lib/libSDL.la
 else SDL_LIBS=-lSDL
 fi],
         [AC_MSG_ERROR([*** SDL not found! Get SDL from www.libsdl.org.
-If you already installed it, check it's in the path. If problem remains,
+If you already installed it, check its in the path. If problem remains,
 please send a mail to the address that appears in ./configure --version
 indicating your platform, the version of configure script and the problem.])])
 AC_CHECK_HEADER([SDL/SDL.h],,AC_MSG_ERROR([Cannot find headers for SDL]))
