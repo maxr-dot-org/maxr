@@ -2448,7 +2448,7 @@ bool cVehicle::InSentryRange ()
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
 					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
-					if ( targetBuilding || targetVehicle )
+					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
@@ -2467,7 +2467,7 @@ bool cVehicle::InSentryRange ()
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
 					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
-					if ( targetBuilding || targetVehicle )
+					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
@@ -2495,7 +2495,7 @@ bool cVehicle::InSentryRange ()
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
 					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
-					if ( targetBuilding || targetVehicle )
+					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
@@ -2514,7 +2514,7 @@ bool cVehicle::InSentryRange ()
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
 					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
-					if ( targetBuilding || targetVehicle )
+					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
 						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
