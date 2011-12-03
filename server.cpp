@@ -1967,6 +1967,15 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 
 	int iOff = iPosX + Map->size*iPosY;
 
+	cBuilding* buildingToBeDeleted =  Map->fields[iOff].getTopBuilding();
+
+	Map->addBuilding( AddedBuilding, iPosX, iPosY );
+
+	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit );
+
+	// integrate the building to the base:
+	Player->base.addBuilding ( AddedBuilding, true );
+	
 	//if this is a top building, delete connectors, mines and roads
 	if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND )
 	{
@@ -2018,7 +2027,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 		}
 		else
 		{
-			deleteUnit ( Map->fields[iOff].getTopBuilding() );
+			deleteUnit (buildingToBeDeleted);
 			cBuildingIterator building = Map->fields[iOff].getBuildings();
 			while ( building )
 			{
@@ -2031,13 +2040,6 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 			}
 		}
 	}
-
-	Map->addBuilding( AddedBuilding, iPosX, iPosY );
-
-	sendAddUnit ( iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit );
-
-	// integrate the building to the base:
-	Player->base.addBuilding ( AddedBuilding, true );
 
 	if ( AddedBuilding->data.canMineMaxRes > 0 )
 	{

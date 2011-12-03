@@ -1161,13 +1161,19 @@ void cBase::deleteBuilding ( cBuilding *building, bool bServer )
 	//try to restore ressource allocation
 	for ( unsigned int i = 0; i < newSubBases.Size(); i++ )
 	{
-		newSubBases[i]->setMetalProd(metal);
-		newSubBases[i]->setGoldProd(gold);
-		newSubBases[i]->setOilProd(oil);
+		sSubBase &subBase = *newSubBases[i];
+		
+		subBase.setMetalProd(metal);
+		subBase.setGoldProd(gold);
+		subBase.setOilProd(oil);
 
-		metal -= newSubBases[i]->getMetalProd();
-		gold -= newSubBases[i]->getGoldProd();
-		oil -= newSubBases[i]->getOilProd();
+		metal -= subBase.getMetalProd();
+		gold  -= subBase.getGoldProd();
+		oil   -= subBase.getOilProd();
+
+		subBase.setMetalProd( subBase.getMaxAllowedMetalProd() );
+		subBase.setGoldProd ( subBase.getMaxAllowedGoldProd()  );
+		subBase.setOilProd  ( subBase.getMaxAllowedOilProd()   );
 	}
 
 	if ( building->IsWorking && building->data.canResearch )

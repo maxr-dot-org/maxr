@@ -859,8 +859,8 @@ bool cMap::possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVe
 	bi = field.getBuildings();
 
 	// Determine terrain type
-	bool water = terrain[Kacheln[offset]].water != 0;
-	bool coast = terrain[Kacheln[offset]].coast != 0;
+	bool water = terrain[Kacheln[offset]].water;
+	bool coast = terrain[Kacheln[offset]].coast;
 	bool ground = !water && !coast;
 
 	while ( !bi.end )
