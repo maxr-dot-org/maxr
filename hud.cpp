@@ -3584,7 +3584,7 @@ void cGameGUI::drawResources( int startX, int startY, int endX, int endY, int zo
 		int pos = y*map->size+startX;
 		for ( int x = startX; x <= endX; x++ )
 		{
-			if ( player->ResourceMap[pos] )
+			if ( player->ResourceMap[pos] && !map->terrain[map->Kacheln[pos]].blocked )
 			{
 				if ( map->Resources[pos].typ == RES_NONE )
 				{
