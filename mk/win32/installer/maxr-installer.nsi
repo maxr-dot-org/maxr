@@ -11,16 +11,26 @@
 ${StrStr}
 
 # --- Main defines ---
-!define VERSION                    "0.2.5"
-!define FILESFOLDER                "C:\Users\Albert\Documents\Visual Studio 2008\Projects\maxr\GameData\" ;the folder to the files that should be installed with this installer (svn game directory)
+!define VERSION                    "0.2.7"
+!define NAME                       "M.A.X. Reloaded"
+!define FILESFOLDER                "C:\Users\alzi\Documents\Projekte\maxr\gamedata\" ;the folder to the files that should be installed with this installer (svn game directory)
 !define RESINSTALLER_EXE           "${FILESFOLDER}resinstaller.exe"
 !define RESINSTALLER_TESTFILE      "${FILESFOLDER}init.pcx"
 !define RES_KEEP_SPACE             138444 ;these are just about values
 !define RES_OVER_SPACE             132300
 
-Name "M.A.X. Reloaded"
+Name ${NAME}
 OutFile "maxr-${VERSION}.exe"
 InstallDir "$PROGRAMFILES\M.A.X. Reloaded"
+
+VIProductVersion "${VERSION}.0"
+VIAddVersionKey ProductName "${NAME}"
+VIAddVersionKey Comments "${NAME} ${VERSION}"
+VIAddVersionKey CompanyName maxr.org
+VIAddVersionKey LegalCopyright maxr.org
+VIAddVersionKey FileDescription "${NAME} installer"
+VIAddVersionKey ProductVersion ${VERSION}
+VIAddVersionKey OriginalFilename "maxr.exe"
 
 # --- Page Settings ---
 !define MUI_HEADERIMAGE
@@ -67,7 +77,7 @@ Section "Main Files (requierd)" Section_Main
         # first install files which will be needed by the resinstaller
         File "${RESINSTALLER_EXE}"
         File "${RESINSTALLER_TESTFILE}"
-        File /r "${FILESFOLDER}*.xml" ; xml files are just installed to get the directory structure of buildings and vehicles
+        File /r /x "max.xml" "${FILESFOLDER}*.xml" ; xml files are just installed to get the directory structure of buildings and vehicles
 
         # the resinstaller will run _before_ copying the free graphics so that they will be keeped
         ${If} $SELECTION_STATUS == "Keep"
@@ -84,6 +94,7 @@ Section "Main Files (requierd)" Section_Main
         File /r "${FILESFOLDER}*effect_org.pcx"
         File /r "${FILESFOLDER}*effect.pcx"
         File /r "${FILESFOLDER}hud_stuff.pcx"
+        File /r "${FILESFOLDER}roof.pcx"
         # run the resinstaller
         ExecWait "${RESINSTALLER_EXE} $\"$ORIGINAL_DIR$\" $\"$INSTDIR$\""
         ${EndIF}
@@ -96,7 +107,11 @@ Section "Main Files (requierd)" Section_Main
         ExecWait "${RESINSTALLER_EXE} $\"$ORIGINAL_DIR$\" $\"$INSTDIR$\""
         ${EndIF}
 
-        Call ChangeLanguage
+        CreateDirectory "$DOCUMENTS\maxr"
+        SetOutPath "$DOCUMENTS\maxr"
+        File "max.xml"
+        SetOutPath $INSTDIR
+                Call ChangeLanguage
 SectionEnd
 
 VAR MAX_XML_FILE
@@ -106,7 +121,7 @@ VAR LANGUAGE_CODE
 
 Function ChangeLanguage
          # open the max.xml
-         FileOpen $MAX_XML_FILE $INSTDIR\max.xml a
+         FileOpen $MAX_XML_FILE $DOCUMENTS\maxr\max.xml a
          StrCpy $FILE_LENGTH "0"
 
          # get the code of the selected language
@@ -146,6 +161,7 @@ Function ChangeLanguage
 
          FileClose $MAX_XML_FILE
 
+         
 FunctionEnd
 
 # --- Resinstaller options ---
@@ -242,7 +258,9 @@ Function LanguageDialog
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Hungarian (HUN)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Dutch (DUT)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (SLV)"
-
+         ${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (FRA)"
+         ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (SPA)"
+         
          # by default english is selected
          ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (ENG)"
 
