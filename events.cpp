@@ -40,6 +40,10 @@ void cEventHandling::HandleEvents()
 	{
 		switch ( event.type )
 		{
+		case SDL_ACTIVEEVENT:								
+			if ( event.active.state & SDL_APPINPUTFOCUS )	//this is an workaround for a SDL bug.
+				SDL_SetModState( KMOD_NONE );				//See Ticket #86 on bugtracker.
+			break;											//will hopefully not be required anymore in SDL 1.3
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod &KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
