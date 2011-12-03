@@ -4315,7 +4315,7 @@ int main ( int argc, char* argv[] )
 	SDL_RWclose( res );
 	SDL_RWclose( logFile );
 	
-#ifdef WIN32 && !defined(NDEBUG)
+#if defined(WIN32) && !defined(NDEBUG)
 	//wait for key press
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	getch();
