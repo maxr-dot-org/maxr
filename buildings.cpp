@@ -1488,11 +1488,11 @@ bool cBuilding::canLoad ( cVehicle *Vehicle, bool checkPosition )
 
 	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
 
-	if ( Vehicle->owner == owner && !Vehicle->IsBuilding && !Vehicle->IsClearing ) return true;
+	if ( Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing ) return false;
 
 	if ( Vehicle->bIsBeeingAttacked ) return false;
 
-	return false;
+	return true;
 }
 
 //--------------------------------------------------------------------------
