@@ -644,13 +644,13 @@ int cMenu::show()
 		if ( terminate )
 		{
 			if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
-			else lastActiveMenu = NULL;
+			else ActiveMenu = NULL;
 			return 1;
 		}
 	}
 
 	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
-	else lastActiveMenu = NULL;
+	else ActiveMenu = NULL;
 	return 0;
 }
 
