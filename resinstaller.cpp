@@ -4130,7 +4130,7 @@ int main ( int argc, char* argv[] )
 	else
 	{
 #if MAC
-		int languageChosen = askForLanguage (bGerman, bItalian, bGrench);
+		int languageChosen = askForLanguage (bGerman, bItalian, bFrench);
 		if (languageChosen == 0) // english
 			sVoicePath = sMAXPath;
 		else if (languageChosen == 1 && bUppercase)
