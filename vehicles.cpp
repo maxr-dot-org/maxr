@@ -144,14 +144,13 @@ cVehicle::~cVehicle ()
 			if ( Client->attackJobs[i]->vehicle == this ) Client->attackJobs[i]->vehicle = NULL;
 		}
 	}
-
-/*	while( passiveEndMoveActions.Size() )
+	
+	cList<cVehicle*> &selGroup = *Client->gameGUI.getSelVehiclesGroup();
+	for ( int i = 0; i < selGroup.Size(); i++)
 	{
-		cEndMoveAction *endMoveAction = passiveEndMoveActions[0];
-		passiveEndMoveActions.Delete ( 0 );
-		delete endMoveAction;
+		if ( selGroup[i] == this ) selGroup.Delete(i);
 	}
-*/
+
 	if ( Client && Client->gameGUI.getSelVehicle() == this )
 	{
 		Client->gameGUI.deselectUnit();
