@@ -1138,11 +1138,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( !bOK )
 			{
-				if ( !Vehicle->BuildPath && Vehicle->owner == ActivePlayer )
+				if ( Vehicle->owner == ActivePlayer )
 				{
-					string msgString = lngPack.i18n( "Text~Comp~Producing_Err");
-					addMessage( msgString );
-					ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+					string msgString;
+					if ( !Vehicle->BuildPath )
+					{
+						msgString = lngPack.i18n( "Text~Comp~Producing_Err");
+						addMessage( msgString );
+						ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
+					}
+					else if ( Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY )
+					{
+						msgString = "Pathbuilding interrupted";	//TODO: i18n
+						addCoords( msgString, Vehicle->PosX, Vehicle->PosY );
+						ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID ,Vehicle->PosX, Vehicle->PosY );
+					}
 				}
 				Vehicle->BuildRounds = 0;
 				Vehicle->BuildingTyp.iFirstPart = 0;
@@ -1856,6 +1866,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					int buildingID = message->popInt32();
 					cBuilding* building = getBuildingFromID(buildingID);
+					if ( !building )
+					{
+						Log.write(" Client: Unknown building with ID: "  + iToStr( buildingID ) , cLog::eLOG_TYPE_NET_ERROR);
+						break;
+					}
 					if (!scanNecessary && building->data.scan < ActivePlayer->BuildingData[building->typ->nr].scan)
 						scanNecessary = true; // Scan range was upgraded. So trigger a scan.
 					building->upgradeToCurrentVersion();
@@ -1886,6 +1901,11 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					int vehicleID = message->popInt32();
 					cVehicle* vehicle = getVehicleFromID(vehicleID);
+					if ( !vehicle )
+					{
+						Log.write(" Client: Unknown vehicle with ID: "  + iToStr( vehicleID ) , cLog::eLOG_TYPE_NET_ERROR);
+						break;
+					}
 					vehicle->upgradeToCurrentVersion();
 					if (i == 0)
 					{
@@ -2051,7 +2071,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	}
 
-	CHECK_MEMORY;
 	return 0;
 }
 
