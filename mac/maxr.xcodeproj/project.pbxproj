@@ -102,7 +102,7 @@
 		9F94822D12A96526004D64FE /* autoobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autoobj.h; path = ../autoobj.h; sourceTree = SOURCE_ROOT; };
 		9F94822E12A96526004D64FE /* autosurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autosurface.h; path = ../autosurface.h; sourceTree = SOURCE_ROOT; };
 		9F94823012A96526004D64FE /* ringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ringbuffer.h; path = ../ringbuffer.h; sourceTree = SOURCE_ROOT; };
-		9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXReloaded.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FC0DB5B0EE2B06700F23D2C /* MAXR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MAXR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FC0DB710EE2B17400F23D2C /* attackJobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = attackJobs.cpp; path = ../attackJobs.cpp; sourceTree = SOURCE_ROOT; };
 		9FC0DB720EE2B17400F23D2C /* attackJobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = attackJobs.h; path = ../attackJobs.h; sourceTree = SOURCE_ROOT; };
 		9FC0DB730EE2B17400F23D2C /* automjobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = automjobs.cpp; path = ../automjobs.cpp; sourceTree = SOURCE_ROOT; };
@@ -320,7 +320,7 @@
 		9FC0DB5C0EE2B06700F23D2C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */,
+				9FC0DB5B0EE2B06700F23D2C /* MAXR.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -373,7 +373,7 @@
 			);
 			name = MAXReloaded;
 			productName = MAXReloaded;
-			productReference = 9FC0DB5B0EE2B06700F23D2C /* MAXReloaded.app */;
+			productReference = 9FC0DB5B0EE2B06700F23D2C /* MAXR.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -514,7 +514,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = MAXReloaded;
+				PRODUCT_NAME = MAXR;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -549,7 +549,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = MAXReloaded;
+				PRODUCT_NAME = MAXR;
 				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
