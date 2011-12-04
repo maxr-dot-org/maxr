@@ -83,7 +83,7 @@ void PlayFX ( sSOUND *snd )
 // plays passed ogg/wav/mod-musicfile in a loop
 void PlayMusic(char const* const file)
 {
-	if ( !cSettings::getInstance().isSoundEnabled()||cSettings::getInstance().isMusicMute() ) return;
+	if ( !cSettings::getInstance().isSoundEnabled()||cSettings::getInstance().isMusicMute()|| file == NULL ) return;
 	music_stream = Mix_LoadMUS ( file );
 	if ( !music_stream )
 	{
@@ -98,6 +98,7 @@ void PlayMusic(char const* const file)
 //FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
 void play(sSOUND *snd)
 {
+	if ( snd == NULL ) return;
 	if(Mix_PlayChannel ( SoundChannel,snd,0 ) == -1 )
 	{
 		Log.write("Could not play sound:", cLog::eLOG_TYPE_WARNING);
@@ -140,7 +141,7 @@ static void MusicFinished(void)
 // starts a loop sound
 int PlayFXLoop ( sSOUND *snd )
 {
-	if ( !cSettings::getInstance().isSoundEnabled()|| cSettings::getInstance().isSoundMute()  ) return 0;
+	if ( !cSettings::getInstance().isSoundEnabled()|| cSettings::getInstance().isSoundMute() || snd == NULL  ) return 0;
 	Mix_HaltChannel ( SoundLoopChannel );
 	if(Mix_PlayChannel ( SoundLoopChannel,snd,-1 ) == -1)
 	{
