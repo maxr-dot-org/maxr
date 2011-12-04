@@ -86,7 +86,7 @@ void translateClanData(int num);
 * Gets the name and the description for the unit from the selected language file
 * @param ID Id of the unit
 */
-void translateUnitData(sID ID, bool vehicle);
+bool translateUnitData(sID ID, bool vehicle);
 
 void reloadUnitValues ();
 

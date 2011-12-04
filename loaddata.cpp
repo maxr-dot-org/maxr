@@ -982,7 +982,8 @@ static int LoadVehicles()
 
 		Log.write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
 		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList[i].c_str()));
-		translateUnitData(v.data.ID, true);
+		if ( !translateUnitData(v.data.ID, true) )
+			Log.write("Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING );
 
 		Log.write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
@@ -1338,11 +1339,12 @@ void translateClanData(int num)
 	}
 }
 
-void translateUnitData(sID ID, bool vehicle)
+bool translateUnitData(sID ID, bool vehicle)
 {
 	sUnitData *Data = NULL;
 	TiXmlNode * pXmlNode = NULL;
 	string sTmpString;
+	const char *TmpCharPtr;
 
 	if ( vehicle )
 	{
@@ -1366,18 +1368,28 @@ void translateUnitData(sID ID, bool vehicle)
 			}
 		}
 	}
-	if ( Data == NULL ) return;
+	if ( Data == NULL ) return false;
+
 	pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Units" );
-	pXmlNode = pXmlNode->FirstChildElement(); //FIXME: this will crash when pXmlNode is NULL -- beko
+	if ( pXmlNode == NULL ) return false;
+	pXmlNode = pXmlNode->FirstChildElement();
 	while ( pXmlNode != NULL)
 	{
-		sTmpString = pXmlNode->ToElement()->Attribute( "ID" );
+		TmpCharPtr = pXmlNode->ToElement()->Attribute( "ID" );
+		if ( TmpCharPtr == NULL ) return false;
+		sTmpString = TmpCharPtr;
+
 		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 ) Data->name = pXmlNode->ToElement()->Attribute( "localized" );
-			else Data->name = pXmlNode->ToElement()->Attribute( "ENG" );
+			if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 ) TmpCharPtr = pXmlNode->ToElement()->Attribute( "localized" );
+			else TmpCharPtr = pXmlNode->ToElement()->Attribute( "ENG" );
+			if ( TmpCharPtr == NULL ) return false;
+			Data->name = TmpCharPtr;
 
-			sTmpString = pXmlNode->ToElement()->GetText();
+			TmpCharPtr =  pXmlNode->ToElement()->GetText();
+			if ( TmpCharPtr == NULL ) return false;
+			sTmpString = TmpCharPtr;
+
 			size_t iPosition = sTmpString.find("\\n",0);
 			while(iPosition != string::npos)
 			{
@@ -1388,6 +1400,8 @@ void translateUnitData(sID ID, bool vehicle)
 		}
 		pXmlNode = pXmlNode->NextSibling();
 	}
+
+	return true;
 }
 
 static int LoadBuildings()
