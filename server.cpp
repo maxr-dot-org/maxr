@@ -1622,8 +1622,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					{
 						// stop the vehicle and make it disabled
 						destVehicle->Disabled = strength;
+						
+						//save speed and number of shots before disabling
+						destVehicle->lastSpeed = destVehicle->data.speedCur;
+						destVehicle->lastShots = destVehicle->data.shotsCur;
+
 						destVehicle->data.speedCur = 0;
 						destVehicle->data.shotsCur = 0;
+						
+
 						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
 						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
 						sendUnitData ( destVehicle, destVehicle->owner->Nr );
@@ -1638,6 +1645,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					{
 						// stop the vehicle and make it disabled
 						destBuilding->Disabled = strength;
+
+						//save number of shots before disabling
+						destBuilding->lastShots = destBuilding->data.shotsCur;
+
 						destBuilding->data.shotsCur = 0;
 						destBuilding->wasWorking = destBuilding->IsWorking;
 						destBuilding->ServerStopWork( true );
@@ -2565,17 +2576,7 @@ void cServer::makeTurnEnd ()
 			if ( Building->Disabled )
 			{
 				Building->Disabled--;
-				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
-				{
-					sendUnitData(Building, Building->SeenByPlayerList[k]->Nr );
-				}
-				sendUnitData ( Building, Building->owner->Nr );
-				if ( Building->Disabled )
-				{
-					Building = Building->next;
-					continue;
-				}
-				if ( Building->wasWorking )
+				if ( !Building->Disabled && Building->wasWorking )
 				{
 					Building->ServerStartWork();
 					Building->wasWorking = false;
@@ -2603,21 +2604,11 @@ void cServer::makeTurnEnd ()
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
+
 			if ( Vehicle->Disabled )
 			{
 				Vehicle->Disabled--;
-				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
-				{
-					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[k]->Nr );
-				}
-				sendUnitData ( Vehicle, Vehicle->owner->Nr );
-				if ( Vehicle->Disabled )
-				{
-					Vehicle = Vehicle->next;
-					continue;
-				}
 			}
-
 			if ( Vehicle->refreshData() )
 			{
 				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
@@ -2626,7 +2617,6 @@ void cServer::makeTurnEnd ()
 				}
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
-
 			if ( Vehicle->ServerMoveJob ) Vehicle->ServerMoveJob->bEndForNow = false;
 			Vehicle = Vehicle->next;
 		}
@@ -3473,6 +3463,15 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	vehicle->prev = NULL;
 	newOwner->VehicleList->prev = vehicle;
 	newOwner->VehicleList = vehicle;
+
+	//the vehicle is fully operational for the new owner
+	if ( vehicle->Disabled )
+	{
+		vehicle->data.speedCur = vehicle->lastSpeed;
+		vehicle->data.shotsCur = vehicle->lastShots;
+	}
+	vehicle->Disabled = 0;
+
 
 	// delete the unit on the clients and ad it with new owner again
 	sendDeleteUnit ( vehicle, oldOwner->Nr );

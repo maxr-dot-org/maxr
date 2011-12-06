@@ -2215,6 +2215,12 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 		}
 	}
 
+	cList<cVehicle*> &selGroup = *Client->gameGUI.getSelVehiclesGroup();
+	for ( size_t i = 0; i < selGroup.Size(); i++)
+	{
+		if ( selGroup[i] == Vehicle ) selGroup.Delete(i);
+	}
+
 	cPlayer* owner = Vehicle->owner;
 	delete Vehicle;
 

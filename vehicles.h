@@ -161,9 +161,11 @@ public:
 	int WalkFrame;    // Frame der Geh-Annimation
 	float CommandoRank; // Rang des Commandos
 	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
+	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
+	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
-	//cList<cEndMoveAction*> passiveEndMoveActions;
 	int selMenuNr;
+	
 
 	cVehicle *next,*prev; // Verkettungselemente
 	sUnitData data;    // Daten des Vehicles

@@ -92,6 +92,8 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	bIsBeeingAttacked = false;
 	BigBetonAlpha = 0;
 	isOriginalName = true;
+	lastShots = 0;
+	lastSpeed = 0;
 
 	DamageFXPointX = random(7) + 26 - 3;
 	DamageFXPointY = random(7) + 26 - 3;
@@ -147,12 +149,6 @@ cVehicle::~cVehicle ()
 		}
 	}
 	
-	cList<cVehicle*> &selGroup = *Client->gameGUI.getSelVehiclesGroup();
-	for ( int i = 0; i < selGroup.Size(); i++)
-	{
-		if ( selGroup[i] == this ) selGroup.Delete(i);
-	}
-
 	if ( Client && Client->gameGUI.getSelVehicle() == this )
 	{
 		Client->gameGUI.deselectUnit();
@@ -786,6 +782,18 @@ void cVehicle::changeName ( string newName )
 int cVehicle::refreshData ()
 {
 	int iReturn = 0;
+
+	if ( Disabled )
+	{
+		lastSpeed = data.speedMax;
+
+		if ( data.ammoCur >= data.shotsMax )
+			lastShots = data.shotsMax;
+		else
+			lastShots = data.ammoCur;
+
+		return 1;
+	}
 	if ( data.speedCur < data.speedMax || data.shotsCur < data.shotsMax )
 	{
 		data.speedCur = data.speedMax;
@@ -1965,6 +1973,8 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 	}
 	else if ( targetBuilding )
 	{
+		if ( Map->possiblePlace( this, x, y) )  //do not fire on e. g. platforms, connectors etc.
+			return false;						//see ticket #436 on bug tracker
 		if ( Client && ( targetBuilding == Client->gameGUI.getSelBuilding() || targetBuilding->owner == Client->ActivePlayer ) )
 			return false;
 	}

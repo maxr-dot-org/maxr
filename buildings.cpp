@@ -63,6 +63,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	owner = Owner;
 	points = 0;
 	isOriginalName = true;
+	lastShots = 0;
 
 	if ( Owner == NULL || b == NULL )
 	{
@@ -295,6 +296,15 @@ string cBuilding::getStatusStr ()
 //--------------------------------------------------------------------------
 int cBuilding::refreshData ()
 {
+	if ( Disabled )
+	{
+		if ( data.ammoCur >= data.shotsMax )
+			lastShots = data.shotsMax;
+		else
+			lastShots = data.ammoCur;
+		return 1;
+	}
+
 	if ( data.shotsCur < data.shotsMax )
 	{
 		if ( data.ammoCur >= data.shotsMax )
