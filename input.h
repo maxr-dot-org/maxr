@@ -48,7 +48,7 @@ private:
 	 * @author alzi alias DoctorDeath
 	 * @param ch character which is to be added.
 	 */
-	string getUTF16Char( Uint16 ch );
+	std::string getUTF16Char( Uint16 ch );
 public:
 	cInput();
 	/**

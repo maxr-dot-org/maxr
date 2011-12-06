@@ -21,6 +21,7 @@
 #define ringbuffer_h
 
 #include "cmutex.h"
+#include "assert.h"
 
 /**
 * a simple thread safe ring buffer

@@ -34,7 +34,7 @@ template<typename T> class cList
 
 		void Reserve(size_t n);
 
-		bool Contains(const T& e);
+		bool Contains(const T& e) const;
 
 		void RemoveDuplicates();
 
@@ -106,7 +106,7 @@ template<typename T> void cList<T>::Reserve(size_t const n)
 	free(old_v);
 }
 
-template<typename T> bool cList<T>::Contains(const T& e)
+template<typename T> bool cList<T>::Contains(const T& e) const
 {
 	for (size_t idx = 0; idx < size_; idx++)
 	{

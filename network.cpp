@@ -19,8 +19,12 @@
 
 #include "network.h"
 #include "events.h"
-#include "server.h"
 #include "netmessage.h"
+// It's ugly, that the network has to know about the Server, dedicated server and the EventHandler.
+// Better way would be to have a single eventQueue in the cTCP class, from which the interested
+// classes can poll events. (Pagra - 12/2010)
+#include "server.h"
+#include "dedicatedserver.h"
 
 //------------------------------------------------------------------------
 // sSocket implementation
@@ -341,7 +345,11 @@ void cTCP::HandleNetworkThread()
 //------------------------------------------------------------------------
 int cTCP::pushEvent( cNetMessage* message )
 {
-	if ( Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER) )
+	if (DEDICATED_SERVER)
+	{
+		cDedicatedServer::instance ().pushEvent (message);
+	}
+	else if ( Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER) )
 	{
 		Server->pushEvent ( message );
 	}
@@ -385,7 +393,7 @@ void cTCP::setPort( int iPort )
 }
 
 //------------------------------------------------------------------------
-void cTCP::setIP ( string sIP )
+void cTCP::setIP ( std::string sIP )
 {
 	this->sIP = sIP;
 }

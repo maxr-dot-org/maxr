@@ -19,15 +19,21 @@
 #ifndef savegameH
 #define savegameH
 #include "defines.h"
-#include "main.h"
 #include "tinyxml.h"
-#include "map.h"
-#include "player.h"
+#include "clist.h"
 
 class cResearch;
+class cMap;
+class cPlayer;
+class cVehicle;
+class cBuilding;
+struct sResources;
+struct sUnitData;
+struct sID;
 struct sHudStateContainer;
+struct sSavedReportMessage;
 
-#define SAVE_FORMAT_VERSION		((string)"0.3")
+#define SAVE_FORMAT_VERSION		((std::string)"0.3")
 
 //--------------------------------------------------------------------------
 struct sMoveJobLoad
@@ -57,14 +63,14 @@ public:
 	cSavegame ( int number );
 
 	/* saves the current gamestate to a file */
-	int save( string saveName );
+	int save( std::string saveName );
 	/* loads a savegame */
 	int load();
 
 	/* loads the header of a savefile and returns some values to the pointers */
-	void loadHeader( string *name, string *type, string *time );
-	string getMapName();
-	string getPlayerNames();
+	void loadHeader( std::string *name, std::string *type, std::string *time );
+	std::string getMapName();
+	std::string getPlayerNames();
 
 	/**
 	* ---
@@ -81,7 +87,7 @@ private:
 	/* the xml save document */
 	TiXmlDocument *SaveFile;
 	/* the version of a loaded savegame */
-	string version;
+	std::string version;
 
 	/* list with loaded movejobs */
 	cList<sMoveJobLoad*> MoveJobsLoad;
@@ -92,7 +98,7 @@ private:
 	* writes the saveheader
 	*@author alzi alias DoctorDeath
 	*/
-	void writeHeader( string saveName );
+	void writeHeader( std::string saveName );
 	/**
 	* writes game infos such as turn or mode
 	*@author alzi alias DoctorDeath
@@ -234,48 +240,48 @@ private:
 	* converts the resource data to an string in HEX format
 	*@author alzi alias DoctorDeath
 	*/
-	string convertDataToString ( sResources *resources, int size );
+	std::string convertDataToString ( sResources *resources, int size );
 	/**
 	* returns the HEX-string of a single byte
 	*@author alzi alias DoctorDeath
 	*/
-	string getHexValue ( unsigned char byte );
+	std::string getHexValue ( unsigned char byte );
 	/**
 	* converts the resource from HEX-string to byte-data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToData ( string str, int size, sResources *resources );
+	void convertStringToData ( std::string str, int size, sResources *resources );
 	/**
 	* returns the byte value of a single HEX-string
 	*@author alzi alias DoctorDeath
 	*/
-	unsigned char getByteValue ( string str );
+	unsigned char getByteValue ( std::string str );
 	/**
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
 	*/
-	string convertScanMapToString ( char *data, int size );
+	std::string convertScanMapToString ( char *data, int size );
 	/**
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToScanMap ( string str, char *data );
+	void convertStringToScanMap ( std::string str, char *data );
 
 	/**
 	* adds an node without undernodes
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement *addMainElement( TiXmlElement *node, string nodename );
+	TiXmlElement *addMainElement( TiXmlElement *node, std::string nodename );
 	/**
 	* adds an attribute with given value to the node
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttribute ( TiXmlElement *element, string attributename, string value );
+	void addAttribute ( TiXmlElement *element, std::string attributename, std::string value );
 	/**
 	* adds an node with maximal two attributes and there values
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttributeElement( TiXmlElement *node, string nodename, string attributename, string value, string attributename2 = "", string value2 = "" );
+	void addAttributeElement( TiXmlElement *node, std::string nodename, std::string attributename, std::string value, std::string attributename2 = "", std::string value2 = "" );
 };
 
 #endif // savegameH

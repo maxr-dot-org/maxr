@@ -24,6 +24,12 @@
 #include "menus.h"
 #include "settings.h"
 #include "client.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
+#include "mouse.h"
+
+using namespace std;
 
 namespace
 {

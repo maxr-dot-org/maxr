@@ -34,7 +34,11 @@
 #include "sound.h"
 #include "settings.h"
 #include "video.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
 
+using namespace std;
 
 cDialogYesNo::cDialogYesNo(string text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),

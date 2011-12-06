@@ -19,10 +19,11 @@
 #include <cassert>
 #include <set>
 #include "server.h"
-#include "client.h"
+#include "hud.h"
 #include "events.h"
 #include "network.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "netmessage.h"
 #include "attackJobs.h"
 #include "movejobs.h"
@@ -30,6 +31,13 @@
 #include "menus.h"
 #include "settings.h"
 #include "ringbuffer.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
+#include "savegame.h"
+#if DEDICATED_SERVER_APPLICATION
+#include "dedicatedserver.h"
+#endif
 
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
@@ -73,14 +81,16 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 	savingID = 0;
 	savingIndex = -1;
 
-	ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
+	if (!DEDICATED_SERVER)
+		ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
 
 //-------------------------------------------------------------------------------------
 cServer::~cServer()
 {
 	bExit = true;
-	SDL_WaitThread ( ServerThread, NULL );
+	if (!DEDICATED_SERVER)
+		SDL_WaitThread ( ServerThread, NULL );
 	SDL_RemoveTimer ( TimerID );
 
 	while ( eventQueue.size() )
@@ -154,8 +164,10 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 		Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) network->send( message->iLength, message->data );
-		EventHandler->pushEvent( message );
+		if ( network ) 
+			network->send( message->iLength, message->data );
+		if (EventHandler != 0)
+			EventHandler->pushEvent( message );
 		return;
 	}
 
@@ -175,7 +187,8 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 	// Socketnumber MAX_CLIENTS for lokal client
 	if ( Player->iSocketNum == MAX_CLIENTS )
 	{
-		EventHandler->pushEvent ( message );
+		if (EventHandler != 0)
+			EventHandler->pushEvent ( message );
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
 	else
@@ -222,17 +235,35 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case TCP_ACCEPT:
 		sendRequestIdentification ( message->popInt16() );
 		break;
+	case GAME_EV_WANT_DISCONNECT:
 	case TCP_CLOSE:
 		{
 			// Socket should be closed
-			int iSocketNumber = message->popInt16();
+			int iSocketNumber = -1;
+			if (message->iType == TCP_CLOSE)
+			{
+				iSocketNumber = message->popInt16();
+			}
+			else // a client disconnected. Usefull for play with DEDICATED_SERVER
+			{
+				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				{
+					if (message->iPlayerNr == (*PlayerList)[i]->Nr)
+					{
+						iSocketNumber = (*PlayerList)[i]->iSocketNum;
+						break;
+					}
+				}
+			}
+			if (iSocketNumber == -1)
+				break;
 			network->close ( iSocketNumber );
 
 			cPlayer *Player = NULL;
 			// resort socket numbers of the players
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber )
+				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) 
 				{
 					Player = (*PlayerList)[i];
 				}
@@ -247,7 +278,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Player->iSocketNum = -1;
 
 				// freeze clients
-				sendWaitReconnect ();
+				if (DEDICATED_SERVER == false) // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
+					sendWaitReconnect ();
 				sendChatMessageToClient(  "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name );
 
 				DisconnectedPlayerList.Add ( Player );
@@ -1212,7 +1244,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_IDENTIFICATION:
 		{
-			string playerName = message->popString();
+			std::string playerName = message->popString();
 			int socketNumber = message->popInt16();
 			unsigned int i;
 			for ( i = 0; i < DisconnectedPlayerList.Size(); i++ )
@@ -2288,6 +2320,24 @@ void cServer::checkPlayerUnits ()
 }
 
 //-------------------------------------------------------------------------------------
+bool cServer::isPlayerDisconnected (cPlayer* player) const
+{
+	return DisconnectedPlayerList.Contains (player);
+}
+
+//-------------------------------------------------------------------------------------
+void cServer::markAllPlayersAsDisconnected ()
+{
+	for (unsigned int i = 0; i < PlayerList->Size (); i++)
+	{
+		cPlayer* player = (*PlayerList)[i];
+		if (DisconnectedPlayerList.Contains (player) == false)
+			DisconnectedPlayerList.Add (player);
+		memset (player->ScanMap, 0, Map->size * Map->size);
+	}
+}
+
+//-------------------------------------------------------------------------------------
 cPlayer *cServer::getPlayerFromNumber ( int iNum )
 {
 	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
@@ -2387,7 +2437,9 @@ void cServer::handleEnd ( int iPlayerNum )
 
 		if ( iWantPlayerEndNum == -1 )
 		{
-			if ( firstTimeEnded )
+			// When playing with dedicated server where a player is not connected, play without a deadline, 
+			// but wait till all players pressed "End".
+			if ( firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.Size() == 0))
 			{
 				sendTurnFinished ( iPlayerNum, iTurnDeadline );
 				iDeadlineStartTime = SDL_GetTicks();
@@ -2445,7 +2497,7 @@ void cServer::handleWantEnd()
 //-------------------------------------------------------------------------------------
 bool cServer::checkEndActions ( int iPlayer )
 {
-	string sMessage = "";
+	std::string sMessage = "";
 	if ( ActiveMJobs.Size() > 0)
 	{
 		sMessage = "Text~Comp~Turn_Wait";
@@ -2625,14 +2677,23 @@ void cServer::makeTurnEnd ()
 		}
 	}
 
-	//FIXME: saving of running attack jobs does not work correctly yet.
-	// make autosave
-	if ( cSettings::getInstance().shouldAutosave() )
+	if (DEDICATED_SERVER == false)
 	{
-		cSavegame Savegame ( 10 );	// autosaves are always in slot 10
-		Savegame.save ( lngPack.i18n ( "Text~Settings~Autosave") + " " + lngPack.i18n ( "Text~Comp~Turn") + " " + iToStr ( iTurn ) );
-		makeAdditionalSaveRequest ( 10 );
+		//FIXME: saving of running attack jobs does not work correctly yet.
+		// make autosave
+		if ( cSettings::getInstance().shouldAutosave() )
+		{
+			cSavegame Savegame ( 10 );	// autosaves are always in slot 10
+			Savegame.save ( lngPack.i18n ( "Text~Settings~Autosave") + " " + lngPack.i18n ( "Text~Comp~Turn") + " " + iToStr ( iTurn ) );
+			makeAdditionalSaveRequest ( 10 );
+		}
 	}
+#if DEDICATED_SERVER_APPLICATION
+	else
+	{
+		cDedicatedServer::instance ().doAutoSave ();
+	}
+#endif
 
 	checkDefeats();
 
@@ -2767,14 +2828,14 @@ void cServer::checkDeadline ()
 {
 	static int lastCheckTime = SDL_GetTicks();
 	if ( !timer50ms ) return;
+	Uint32 currentTicks = SDL_GetTicks();
 	if ( iTurnDeadline >= 0 && iDeadlineStartTime > 0 )
 	{
 		// stop time when waiting for reconnection
 		if ( DisconnectedPlayerList.Size() > 0 )
-		{
-			iDeadlineStartTime += SDL_GetTicks()-lastCheckTime;
-		}
-		if ( SDL_GetTicks() - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
+			iDeadlineStartTime = currentTicks;
+		
+		if ( currentTicks - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
 			if ( checkEndActions( -1 ) )
 			{
@@ -2797,7 +2858,7 @@ void cServer::checkDeadline ()
 			}
 		}
 	}
-	lastCheckTime = SDL_GetTicks();
+	lastCheckTime = currentTicks;
 }
 
 //-------------------------------------------------------------------------------------
@@ -2844,7 +2905,7 @@ void cServer::handleMoveJobs ()
 
 			//execute endMoveAction
 			if ( MoveJob->endAction ) MoveJob->endAction->execute();
-
+			
 			delete MoveJob;
 
 			//continue path building
@@ -3100,7 +3161,7 @@ void cServer::addRubble( int x, int y, int value, bool big )
 		return;
 	}
 
-	if ( big &&
+	if ( big && 
 		 Map->isWater(x + 1, y))
 	{
 		addRubble( x    , y    , value/4, false);
@@ -3576,3 +3637,4 @@ int cServer::getTurn() const
 {
 	return iTurn;
 }
+

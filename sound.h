@@ -20,7 +20,7 @@
 #define soundH
 #include <string.h>
 #include "defines.h"
-#include "main.h"
+#include "clist.h"
 
 #ifndef __sSOUND__
 #define __sSOUND__

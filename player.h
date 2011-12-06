@@ -18,14 +18,12 @@
  ***************************************************************************/
 #ifndef playerH
 #define playerH
+
+#include <SDL.h>
 #include <vector>
 #include "defines.h"
-#include "main.h"
-#include <SDL.h>
-#include "buildings.h"
-#include "vehicles.h"
 #include "base.h"
-#include "map.h"
+#include "main.h" // for sID
 #include "upgradecalculator.h"
 
 struct sVehicle;
@@ -34,7 +32,9 @@ struct sBuilding;
 class cVehicle;
 class cBuilding;
 class cHud;
+class cMapField;
 struct sHudStateContainer;
+struct sTurnstartReport;
 
 struct sSentry
 {
@@ -57,7 +57,7 @@ struct sSavedReportMessage
 		REPORT_TYPE_CHAT
 	};
 
-	string message;
+	std::string message;
 	eReportTypes type;
 	sID unitID;
 	int xPos, yPos;
@@ -73,11 +73,11 @@ class cPlayer{
 friend class cServer;
 friend class cClient;
 public:
-	cPlayer(string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
+	cPlayer(std::string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
 	~cPlayer();
 	cPlayer(const cPlayer &Player);
 
-	string name;
+	std::string name;
 	SDL_Surface *color;
 	int Nr;
 
@@ -161,7 +161,7 @@ public:
 	*/
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
 
-	void addSavedReport ( string message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
+	void addSavedReport ( std::string message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
 
 	void setClan (int newClan);
 	int getClan () const { return clan; }

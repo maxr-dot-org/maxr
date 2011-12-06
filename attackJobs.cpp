@@ -22,8 +22,14 @@
 #include "server.h"
 #include "client.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "netmessage.h"
 #include "settings.h"
+#include "vehicles.h"
+#include "buildings.h"
+#include "player.h"
+
+using namespace std;
 
 void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map)
 {

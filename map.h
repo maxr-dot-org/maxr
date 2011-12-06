@@ -19,12 +19,17 @@
 #ifndef mapH
 #define mapH
 
+#include <string>
+
 #include "autosurface.h"
 #include "defines.h"
-#include "vehicles.h"
-#include "buildings.h"
 #include "clist.h"
 #include "t_2.h"
+
+class cVehicle;
+class cBuilding;
+class cPlayer;
+struct sUnitData;
 
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources{
@@ -225,7 +230,7 @@ public:
 	*/
 	cMapField* fields;
 	sResources *Resources; // field with the ressource data
-	string MapName;  // name of the current map
+	std::string MapName;  // name of the current map
 
 	SDL_Color palette[256];	//Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
@@ -236,8 +241,8 @@ public:
 	bool isWater(int x, int y, bool not_coast=false);
 	void NewMap(int size, int iTerrainGrphCount );
 	void DeleteMap(void);
-	bool SaveMap(string filename,SDL_Surface *preview);
-	bool LoadMap(string filename);
+	bool SaveMap(std::string filename,SDL_Surface *preview);
+	bool LoadMap(std::string filename);
 	void placeRessourcesAddPlayer(int x, int y, int frequency);
 	void placeRessources(int Metal,int Oil,int Gold);
 	void generateNextAnimationFrame();

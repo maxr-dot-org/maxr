@@ -19,13 +19,18 @@
 
 #include "savegame.h"
 #include "server.h"
-#include "client.h"
 #include "loaddata.h"
 #include "upgradecalculator.h"
 #include "menus.h"
 #include "settings.h"
 #include "hud.h"
 #include "files.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
+#include "movejobs.h"
+
+using namespace std;
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame ( int number )

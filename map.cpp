@@ -22,6 +22,8 @@
 #include "settings.h"
 #include "files.h"
 #include "video.h"
+#include "buildings.h"
+#include "vehicles.h"
 
 sTerrain::sTerrain() :
 	water(false),
@@ -180,7 +182,7 @@ void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 }
 
 /** Loads a map file */
-bool cMap::LoadMap ( string filename )
+bool cMap::LoadMap ( std::string filename )
 {
 	SDL_RWops *fpMapFile;
 	short sWidth, sHeight;
@@ -198,7 +200,7 @@ bool cMap::LoadMap ( string filename )
 	if (fpMapFile == 0)
 	{
 		// now try in the user's map directory
-		string userMapsDir = getUserMapsDir ();
+		std::string userMapsDir = getUserMapsDir ();
 		if (!userMapsDir.empty())
 		{
 			filename = userMapsDir + MapName;

@@ -19,12 +19,12 @@
 #ifndef clienteventsH
 #define clienteventsH
 #include "defines.h"
-#include "main.h"
 #include "network.h"
 #include "serverevents.h"
-#include "movejobs.h"
+#include "upgradecalculator.h"
 
 struct sSavedReportMessage;
+struct sBuildList;
 
 enum CLIENT_EVENT_TYPES
 {
@@ -104,7 +104,7 @@ enum CHAT_MESSAGE_TYPES
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer ( string sMsg );
+void sendChatMessageToServer ( std::string sMsg );
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath
@@ -249,7 +249,7 @@ void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int sav
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
 void sendWantSelfDestroy( cBuilding* building );
-void sendWantChangeUnitName( string newName, int unitID );
+void sendWantChangeUnitName( std::string newName, int unitID );
 
 void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type );
 

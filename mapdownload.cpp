@@ -34,6 +34,8 @@
 #include "log.h"
 #include "files.h"
 
+using namespace std;
+
 //-------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (std::string mapName)
 {

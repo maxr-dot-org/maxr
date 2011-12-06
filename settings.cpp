@@ -379,76 +379,80 @@ void cSettings::initialize()
 	std::string temp;
 
 	//START
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Resolution", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	
+	if (!DEDICATED_SERVER)
 	{
-		Log.write ( "Can't load resolution from config file: using default value", LOG_TYPE_WARNING );
-		Video.setResolution(Video.getMinW(), Video.getMinH());
-		saveResolution();
-	}
-	else
-	{
-		int wTmp = atoi(temp.substr(0,temp.find(".",0)).c_str());
-		int hTmp = atoi(temp.substr(temp.find(".",0)+1,temp.length()).c_str());
-		Video.setResolution(wTmp, hTmp);
-	}
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Resolution", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		{
+			Log.write ( "Can't load resolution from config file: using default value", LOG_TYPE_WARNING );
+			Video.setResolution(Video.getMinW(), Video.getMinH());
+			saveResolution();
+		}
+		else
+		{
+			int wTmp = atoi(temp.substr(0,temp.find(".",0)).c_str());
+			int hTmp = atoi(temp.substr(temp.find(".",0)+1,temp.length()).c_str());
+			Video.setResolution(wTmp, hTmp);
+		}
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","ColourDepth", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load color depth from config file: using default value", LOG_TYPE_WARNING );
-		Video.setColDepth(atoi(temp.c_str()));
-		saveColorDepth();
-	}
-	else Video.setColDepth(32);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","ColourDepth", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load color depth from config file: using default value", LOG_TYPE_WARNING );
+			Video.setColDepth(atoi(temp.c_str()));
+			saveColorDepth();
+		}
+		else Video.setColDepth(32);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Intro", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load intro from config file: using default value", LOG_TYPE_WARNING );
-		setShowIntro(true);
-	}
-	else showIntro = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Intro", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load intro from config file: using default value", LOG_TYPE_WARNING );
+			setShowIntro(true);
+		}
+		else showIntro = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Windowmode", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load window mode from config file: using default value", LOG_TYPE_WARNING );
-		Video.setWindowMode(true);
-		saveWindowMode();
-	}
-	else Video.setWindowMode(xmlNode->XmlDataToBool(temp));
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Windowmode", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load window mode from config file: using default value", LOG_TYPE_WARNING );
+			Video.setWindowMode(true);
+			saveWindowMode();
+		}
+		else Video.setWindowMode(xmlNode->XmlDataToBool(temp));
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Fastmode", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load fast mode from config file: using default value", LOG_TYPE_WARNING );
-		setFastMode(false);
-	}
-	else fastMode = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Fastmode", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load fast mode from config file: using default value", LOG_TYPE_WARNING );
+			setFastMode(false);
+		}
+		else fastMode = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","PreScale", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load pre scale from config file: using default value", LOG_TYPE_WARNING );
-		setDoPrescale(false);
-	}
-	else preScale = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","PreScale", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load pre scale from config file: using default value", LOG_TYPE_WARNING );
+			setDoPrescale(false);
+		}
+		else preScale = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","CacheSize", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load cache size from config file: using default value", LOG_TYPE_WARNING );
-		setCacheSize(400);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","CacheSize", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load cache size from config file: using default value", LOG_TYPE_WARNING );
+			setCacheSize(400);
+		}
+		else cacheSize = atoi(temp.c_str());
 	}
-	else cacheSize = atoi(temp.c_str());
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","Language", NULL);
@@ -561,86 +565,89 @@ void cSettings::initialize()
 	else scrollSpeed = atoi(temp.c_str());
 
 	//GAME-SOUND
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "Enabled", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	if (!DEDICATED_SERVER)
 	{
-		Log.write ( "Can't load sound enabled from config file: using default value", LOG_TYPE_WARNING );
-		setSoundEnabled(true);
-	}
-	else soundEnabled = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "Enabled", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load sound enabled from config file: using default value", LOG_TYPE_WARNING );
+			setSoundEnabled(true);
+		}
+		else soundEnabled = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicMute", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load music mute from config file: using default value", LOG_TYPE_WARNING );
-		setMusicMute(false);
-	}
-	else musicMute = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicMute", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load music mute from config file: using default value", LOG_TYPE_WARNING );
+			setMusicMute(false);
+		}
+		else musicMute = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundMute", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load sound mute from config file: using default value", LOG_TYPE_WARNING );
-		setSoundMute(false);
-	}
-	else soundMute = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundMute", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load sound mute from config file: using default value", LOG_TYPE_WARNING );
+			setSoundMute(false);
+		}
+		else soundMute = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceMute", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		Log.write ( "Can't load voice mute from config file: using default value", LOG_TYPE_WARNING );
-		setVoiceMute(false);
-	}
-	else voiceMute = xmlNode->XmlDataToBool(temp);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceMute", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		{
+			Log.write ( "Can't load voice mute from config file: using default value", LOG_TYPE_WARNING );
+			setVoiceMute(false);
+		}
+		else voiceMute = xmlNode->XmlDataToBool(temp);
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicVol", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
-		setMusicVol(128);
-	}
-	else musicVol = atoi(temp.c_str());
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "MusicVol", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
+			setMusicVol(128);
+		}
+		else musicVol = atoi(temp.c_str());
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundVol", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
-		setSoundVol(128);
-	}
-	else soundVol = atoi(temp.c_str());
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "SoundVol", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
+			setSoundVol(128);
+		}
+		else soundVol = atoi(temp.c_str());
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceVol", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
-		setVoiceVol(128);
-	}
-	else voiceVol = atoi(temp.c_str());
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "VoiceVol", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
+			setVoiceVol(128);
+		}
+		else voiceVol = atoi(temp.c_str());
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "ChunkSize", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
-		setChunkSize(2048);
-	}
-	else chunkSize = atoi(temp.c_str());
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "ChunkSize", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
+			setChunkSize(2048);
+		}
+		else chunkSize = atoi(temp.c_str());
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "Frequency", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
-	{
-		Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
-		setFrequence(44100);
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Sound", "Frequency", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		{
+			Log.write ( "Can't load music volume from config file: using default value", LOG_TYPE_WARNING );
+			setFrequence(44100);
+		}
+		else frequency = atoi(temp.c_str());
 	}
-	else frequency = atoi(temp.c_str());
 
 	//PATHS
 	// =============================================================================
@@ -710,36 +717,49 @@ void cSettings::initialize()
         setSavesPath((homeDir + "saves").c_str());
 	}
     else savesPath = temp; //use absolut paths for saves - do not add dataDir or homeDir
+#if MAC
+	// Create saves directory, if it doesn't exist, yet. Creating it during setPaths is too early, because it was not read yet.
+	if (!FileExists(getSavesPath().c_str ()))
+	{
+		if (mkdir(getSavesPath().c_str(), 0755) == 0)
+			Log.write ("Created new save directory " + getSavesPath(), LOG_TYPE_INFO);
+		else
+			Log.write ("Can't create save directory " + getSavesPath(), LOG_TYPE_ERROR);
+	}
+#endif
     
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Sounds", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	if (!DEDICATED_SERVER)
 	{
-		Log.write ( "Can't load sounds path from config file: using default value", LOG_TYPE_WARNING );
-		setSoundsPath("sounds");
-		soundsPath = dataDir + "sounds";
-	}
-    else soundsPath = dataDir + temp;
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Sounds", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		{
+			Log.write ( "Can't load sounds path from config file: using default value", LOG_TYPE_WARNING );
+			setSoundsPath("sounds");
+			soundsPath = dataDir + "sounds";
+		}
+		else soundsPath = dataDir + temp;
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Voices", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
-	{
-		Log.write ( "Can't load voices path from config file: using default value", LOG_TYPE_WARNING );
-		setVoicesPath("voices");
-		voicesPath = dataDir + "voices";
-	}
-    else voicesPath = dataDir + temp;
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Voices", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		{
+			Log.write ( "Can't load voices path from config file: using default value", LOG_TYPE_WARNING );
+			setVoicesPath("voices");
+			voicesPath = dataDir + "voices";
+		}
+		else voicesPath = dataDir + temp;
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Music", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
-	{
-		Log.write ( "Can't load music path from config file: using default value", LOG_TYPE_WARNING );
-		setMusicPath("music");
-		musicPath = dataDir + "music";
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Music", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		{
+			Log.write ( "Can't load music path from config file: using default value", LOG_TYPE_WARNING );
+			setMusicPath("music");
+			musicPath = dataDir + "music";
+		}
+		else musicPath = dataDir + temp;
 	}
-    else musicPath = dataDir + temp;
 
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","Vehicles", NULL);
@@ -761,16 +781,19 @@ void cSettings::initialize()
 	}
     else buildingsPath = dataDir + temp;
 
-	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","MVEs", NULL);
-	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	if (!DEDICATED_SERVER)
 	{
-		Log.write ( "Can't load language path from config file: using default value", LOG_TYPE_WARNING );
-		setMvePath("mve");
-		mvePath = dataDir + "mve";
+		// =============================================================================
+		xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Paths","MVEs", NULL);
+		if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		{
+			Log.write ( "Can't load language path from config file: using default value", LOG_TYPE_WARNING );
+			setMvePath("mve");
+			mvePath = dataDir + "mve";
+		}
+		else mvePath = dataDir + temp;
 	}
-    else mvePath = dataDir + temp;
-
+	
 	//GAME-NET
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Net","IP", NULL);

@@ -23,8 +23,6 @@
 #include <SDL.h>
 #include <string>
 
-using namespace std;
-
 
 // Screenbuffers //////////////////////////////////////////////////////////////
 EX SDL_Surface* screen; // Der Bildschirm

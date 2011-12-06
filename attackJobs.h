@@ -19,7 +19,13 @@
 #ifndef attackjobsH
 #define attackjobsH
 
-#include "player.h"
+#include "clist.h"
+
+class cVehicle;
+class cBuilding;
+class cMap;
+class cPlayer;
+class cNetMessage;
 
 /**
 * selects a target unit from a map field, depending on the attack mode.

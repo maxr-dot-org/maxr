@@ -47,8 +47,6 @@
 #include "loaddata.h"
 #include "tinyxml.h"
 #include "events.h"
-#include "client.h"
-#include "server.h"
 #include "savegame.h"
 #include "mveplayer.h"
 #include "input.h"
@@ -57,7 +55,9 @@
 #include "clans.h"
 #include "settings.h"
 #include "video.h"
+#include "dedicatedserver.h"
 
+using namespace std;
 
 static int  initNet();
 static int  initSDL();
@@ -98,13 +98,17 @@ int main ( int argc, char *argv[] )
 		Log.write ( sBuild , cLog::eLOG_TYPE_NET_DEBUG );
 	}
 
-	srand ( ( unsigned ) time ( NULL ) ); //start random number generator
+	srand ( ( unsigned ) time ( NULL ) ); // start random number generator
 
-	//detect some video modes for us
-	Video.doDetection();
+	// detect some video modes for us
+	if (!DEDICATED_SERVER)
+		Video.doDetection();
 
-	Video.initSplash(); //show splashscreen
-	initSound(); //now config is loaded and we can init sound and net
+	if (!DEDICATED_SERVER)
+	{
+		Video.initSplash(); // show splashscreen
+		initSound(); // now config is loaded and we can init sound and net
+	}
 	initNet();
 
 	// load files
@@ -124,53 +128,64 @@ int main ( int argc, char *argv[] )
 		{
 			if ( event.type == SDL_ACTIVEEVENT )
 			{
-				SDL_UpdateRect ( screen,0,0,0,0 );
+				if (!DEDICATED_SERVER)
+					SDL_UpdateRect ( screen,0,0,0,0 );
 			}
 		}
 		SDL_Delay ( 100 );
 	}
 
-	// play intro if we're supposed to and the file exists
-	if(cSettings::getInstance().shouldShowIntro())
+	if (!DEDICATED_SERVER)
 	{
-		if(FileExists((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+		// play intro if we're supposed to and the file exists
+		if(cSettings::getInstance().shouldShowIntro())
 		{
-			// Close maxr sound for intro movie
-			CloseSound();
-
-			char mvereturn;
-			Log.write ( "Starting movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
-			mvereturn = MVEPlayer((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
-			Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
-		//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
-
-			// reinit maxr sound
-			if ( cSettings::getInstance().isSoundEnabled() && !InitSound ( cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize() ) )
+			if(FileExists((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
 			{
-				Log.write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+				// Close maxr sound for intro movie
+				CloseSound();
+
+				char mvereturn;
+				Log.write ( "Starting movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_DEBUG );
+				mvereturn = MVEPlayer((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str(), Video.getResolutionX(), Video.getResolutionY(), !Video.getWindowMode(), !cSettings::getInstance().isSoundMute());
+				Log.write("MVEPlayer returned " + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+			//FIXME: make this case sensitive - my mve is e.g. completly lower cases -- beko
+
+				// reinit maxr sound
+				if ( cSettings::getInstance().isSoundEnabled() && !InitSound ( cSettings::getInstance().getFrequency(), cSettings::getInstance().getChunkSize() ) )
+				{
+					Log.write("Can't reinit sound after playing intro" + iToStr(mvereturn), cLog::eLOG_TYPE_DEBUG);
+				}
+			}
+			else
+			{
+				Log.write ( "Couldn't find movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
 			}
 		}
 		else
 		{
-			Log.write ( "Couldn't find movie " + cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE", cLog::eLOG_TYPE_WARNING );
+			Log.write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
 		}
+	}
+		
+	SDL_WaitThread ( DataThread, NULL );
+	
+	if (!DEDICATED_SERVER)
+	{
+		Video.setResolution(Video.getResolutionX(), Video.getResolutionY(), true);
+		SDL_ShowCursor ( 0 );
+		Video.clearBuffer();
+		
+		mouse = new cMouse;
+		InputHandler = new cInput;
+		EventHandler = new cEventHandling;
+		cStartMenu mainMenu;
+		mainMenu.show();
 	}
 	else
 	{
-		Log.write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
+		cDedicatedServer::instance ().run ();
 	}
-
-	SDL_WaitThread ( DataThread, NULL );
-
-	Video.setResolution(Video.getResolutionX(), Video.getResolutionY(), true);
-	SDL_ShowCursor ( 0 );
-	Video.clearBuffer();
-
-	mouse = new cMouse;
-	InputHandler = new cInput;
-	EventHandler = new cEventHandling;
-	cStartMenu mainMenu;
-	mainMenu.show();
 
 	Quit();
 	return 0;
@@ -184,7 +199,12 @@ int main ( int argc, char *argv[] )
  */
 static int initSDL()
 {
-	if ( SDL_Init ( SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE ) == -1 ) // start SDL basics
+	int sdlInitResult = -1;
+	if (DEDICATED_SERVER)
+		sdlInitResult = SDL_Init (SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE); // start SDL basics without video
+	else
+		sdlInitResult = SDL_Init (SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE); // start SDL basics
+	if (sdlInitResult == -1)
 	{
 		Log.write ( "Could not init SDL",cLog::eLOG_TYPE_ERROR );
 		Log.write ( SDL_GetError(),cLog::eLOG_TYPE_ERROR );

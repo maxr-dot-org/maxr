@@ -18,14 +18,19 @@
  ***************************************************************************/
 #ifndef buildingsH
 #define buildingsH
-#include "defines.h"
-#include "sound.h"
-#include "main.h"
 #include <SDL.h>
-#include "base.h"
-#include "map.h"
-#include "input.h"
+#include "defines.h"
+#include "clist.h"
 #include "upgradecalculator.h"
+#include "main.h" // for sUnitData, sID
+
+class cPlayer;
+class cBase;
+struct sVehicle;
+class cVehicle;
+class cMap;
+class cMapField;
+struct sMouseState;
 
 //--------------------------------------------------------------------------
 /** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
@@ -36,7 +41,7 @@ struct sUpgrade {
   int Purchased;
   int *value; // what is the current value
   int StartValue; // the initial value for this unit type
-  string name; // the name of this upgrade type, e.g. Ammo
+  std::string name; // the name of this upgrade type, e.g. Ammo
 };
 
 //--------------------------------------------------------------------------
@@ -49,7 +54,7 @@ struct sUpgradeNew {
 	int purchased; // how many upgrades of this type has the player purchased
 	int curValue; // what is the current value
 	int startValue; // the value that this unit would have without all upgrades
-	string name; // the name of this upgrade type, e.g. Ammo
+	std::string name; // the name of this upgrade type, e.g. Ammo
 };
 
 //--------------------------------------------------------------------------
@@ -73,9 +78,6 @@ struct sBuilding{
 
   void scaleSurfaces( float faktor );
 };
-
-class cPlayer;
-class cBase;
 
 // enum for the upgrade symbols
 #ifndef D_eSymbols
@@ -121,7 +123,7 @@ enum ResourceKind
 class cBuilding
 {
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	string name;			// name of the building
+	std::string name;			// name of the building
 public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
 	~cBuilding();
@@ -174,12 +176,12 @@ public:
 	void Select();
 	void Deselct();
 
-	string getName() { return name; }
+	std::string getName() { return name; }
 	bool isNameOriginal() { return isOriginalName; }
 
-	string getNamePrefix();
-	string getDisplayName();
-	void changeName ( string newName );
+	std::string getNamePrefix();
+	std::string getDisplayName();
+	void changeName ( std::string newName );
 
 	int playStream();
 	std::string getStatusStr();

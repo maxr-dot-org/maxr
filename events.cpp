@@ -20,6 +20,7 @@
 #include "network.h"
 #include "serverevents.h"
 #include "menuevents.h"
+#include "netmessage.h"
 #include "client.h"
 #include "input.h"
 #include "log.h"
@@ -56,13 +57,13 @@ void cEventHandling::HandleEvents()
 				time_t tTime;
 				tm *tmTime;
 				char timestr[16];
-				string sTime;
+				std::string sTime;
 				tTime = time ( NULL );
 				tmTime = localtime ( &tTime );
 				strftime( timestr, 16, "%d.%m.%y-%H%M%S", tmTime );
 
-				string screenshotfile = getUserScreenshotsDir();
-				screenshotfile.append ((string)"Screen_" + timestr + ".bmp");
+				std::string screenshotfile = getUserScreenshotsDir();
+				screenshotfile.append ((std::string)"Screen_" + timestr + ".bmp");
 				Log.write ( "Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO );
 				SDL_SaveBMP ( screen, screenshotfile.c_str() );
 				if (Client != 0)

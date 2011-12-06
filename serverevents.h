@@ -18,15 +18,18 @@
  ***************************************************************************/
 #ifndef servereventsH
 #define servereventsH
+
+#include <string>
 #include "defines.h"
-#include "main.h"
 #include "network.h"
-#include "clientevents.h"
-#include "map.h"
+#include "main.h" // for sID
 #include "movejobs.h"
 
 class cResearch;
 class cHud;
+class cMap;
+class cNetMessage;
+struct sSubBase;
 struct sSavedReportMessage;
 struct sHudStateContainer;
 
@@ -67,11 +70,14 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_EV_SAVE_HUD_INFO,			// the current hud settings
 	GAME_EV_SAVE_REPORT_INFO,		// a saved report
-	GAME_EV_FIN_SEND_SAVE_INFO,		// a unit has been set to automoving
+	GAME_EV_FIN_SEND_SAVE_INFO,		// 
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_SELFDESTROY,
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
-	GAME_EV_END_MOVE_ACTION			// specifies an action, which will be executed at the end of a movejob
+	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
+	
+	// DEDICATED_SERVER
+	GAME_EV_WANT_DISCONNECT			// the player wants to disconnect (but later reconnect to the dedicated server)
 };
 
 /**
@@ -142,7 +148,7 @@ void sendSpecificUnitData ( cVehicle *Vehicle );
 *@param iType spezifies if this is an error message, info message from the Server or a text message from an other player
 *@param iPlayer -1 the playernumber or -1 for broatcast
 */
-void sendChatMessageToClient( string message, int iType, int iPlayer = -1, string inserttext = "" );
+void sendChatMessageToClient( std::string message, int iType, int iPlayer = -1, std::string inserttext = "" );
 
 /**
 * sends all nessesary information to all clients to start the building

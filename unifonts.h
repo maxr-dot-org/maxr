@@ -20,8 +20,9 @@
 #define unifontsH
 
 #include "autosurface.h"
+#include <SDL.h>
+#include <string>
 #include "defines.h"
-#include "main.h"
 #include "video.h"
 
 
@@ -84,7 +85,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showText( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		void showText( SDL_Rect rDest, std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
 		/**
 		 * Displays a text
 		 * @author beko
@@ -94,7 +95,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showText( int x, int y, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		void showText( int x, int y, std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
 		/**
 		 * Displays a text as block.<br><br> This does <b>not</b> allow blanks in line. Linebreaks are interpreted. Unneeded blanks will be snipped.<br><br>
 		 * Example: "Headline\n\n This is my text for a textblock that get's linebreaked automagically"!
@@ -104,7 +105,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		int showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		int showTextAsBlock ( SDL_Rect rDest, std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
 		/**
 		 * Displays a text centered on given X
 		 * @author beko
@@ -113,7 +114,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showTextCentered( SDL_Rect rDest, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		void showTextCentered( SDL_Rect rDest, std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
 		/**
 		 * Displays a text centered on given X
 		 * @author beko
@@ -123,7 +124,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @param surface SDL_Surface to draw on. Default is buffer
 		 */
-		void showTextCentered( int x, int y, string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
+		void showTextCentered( int x, int y, std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, SDL_Surface *surface = buffer, bool encode = true );
 		/**
 		 * Calculates the needed width for a text in pixels
 		 * @author beko
@@ -131,7 +132,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @return needed width for text
 		 */
-		int getTextWide( string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
+		int getTextWide( std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
 		/**
 		 * Calculates the needed space for a text in pixels
 		 * @author beko
@@ -139,7 +140,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype. LATIN_NORMAL is default
 		 * @return SDL_Rect with needed width and height for text
 		 */
-		SDL_Rect getTextSize( string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
+		SDL_Rect getTextSize( std::string sText, eUnicodeFontType fonttype = FONT_LATIN_NORMAL, bool encode = true );
 		/**
 		 * Holds information of font height
 		 * @author beko
@@ -155,7 +156,7 @@ class cUnicodeFont
 		 */
 		eUnicodeFontSize getFontSize ( eUnicodeFontType fonttype );
 
-		string shortenStringToSize ( string str, int size, eUnicodeFontType fonttype );
+		std::string shortenStringToSize ( std::string str, int size, eUnicodeFontType fonttype );
 	private:
 		// character surfaces. Since SDL maximal gives us the unicodes from BMP we maximaly need 0xFFFF surfaces
 		AutoSurface charsNormal[0xFFFF];
@@ -196,7 +197,7 @@ class cUnicodeFont
 		 * @return the iso page
 		 */
 		const unsigned short *getIsoPage ( eUnicodeFontCharset charset );
-		int drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode );
+		int drawWithBreakLines( SDL_Rect rDest, std::string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode );
 		/**
 		 * encodes a UTF-8 character to his unicode position
 		 * @author alzi alias DoctorDeath

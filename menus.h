@@ -24,11 +24,13 @@
 #include "menuitems.h"
 #include "input.h"
 #include "server.h"
+#include "base.h" // for sSubBase
 
 // forward declarations
 int GetColorNr(SDL_Surface *sf);
 class cMapReceiver;
 class cMapSender;
+class cServer;
 
 struct sColor
 {
@@ -144,9 +146,9 @@ struct sSettings
 	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU), victoryType(SETTINGS_VICTORY_POINTS),
 	duration(SETTINGS_DUR_MEDIUM) {}
 
-	string getResValString ( eSettingResourceValue type );
-	string getResFreqString();
-	string getVictoryConditionString();
+	std::string getResValString ( eSettingResourceValue type );
+	std::string getResFreqString();
+	std::string getVictoryConditionString();
 
 };
 
@@ -161,11 +163,13 @@ public:
 
 	/** The type of the game. See eGameTypes*/
 	eGameTypes type;
+	/** Should this instance of maxr act as the server for a TCP/IP game. */
+	bool isServer;
 
 	/** Number of the savegame or -1 for no savegame*/
 	int savegameNum;
 	/** name of the savegame if the savefile is only on the server and this container is set by an client*/
-	string savegame;
+	std::string savegame;
 
 	/** The settings for the game*/
 	sSettings *settings;
@@ -178,23 +182,26 @@ public:
 	cList<cList<sLandingUnit>*> landingUnits;
 	/** the client landing data (landing positions) of the players*/
 	cList<sClientLandData*> landData;
-
+	/** indicates, whether all players have landed */
+	bool allLanded;
 
 	cGameDataContainer() :
 		type(GAME_TYPE_SINGLE),
+		isServer(false),
 		savegameNum(-1),
 		settings(0),
-		map(0)
+		map(0),
+		allLanded(false)
 	{}
 
 	~cGameDataContainer();
 
-	/** Runs the game. If player is 0, which means that he is the host, a server will be started.
+	/** Runs the game. If isServer is true, which means that he is the host, a server will be started.
 	 * Else only a client will be started. When reconnect is true, it will be reconnected to a running game.
 	 * When the conatainer contains a savegamenumber, the savegame will be loaded
 	 *@author alzi
 	 */
-	void runGame( int player, bool reconnect = false );
+	void runGame( int playerNr, bool reconnect = false );
 
 	/** handles incoming clan information
 	 *  @author pagra */
@@ -318,7 +325,7 @@ public:
 	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
 	 */
-	virtual void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	/**
 	 * sends a netmessage to the given player.
@@ -490,7 +497,7 @@ protected:
 	cMenuImage *planetImages[8];
 	cMenuLabel *planetTitles[8];
 
-	cList<string> *maps;
+	cList<std::string> *maps;
 	int selectedMapIndex;
 	int offset;
 
@@ -715,7 +722,7 @@ public:
 	static void mapClicked( void* parent );
 	static void mouseMoved( void* parent );
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 	void handleNetMessage( cNetMessage *message );
 };
 
@@ -727,7 +734,7 @@ public:
 class cNetworkMenu : public cMenu
 {
 protected:
-	string ip;
+	std::string ip;
 	int port;
 	cList<sMenuPlayer*> players;
 	sMenuPlayer *actPlayer;
@@ -760,15 +767,15 @@ protected:
 	cMenuPlayersBox *playersBox;
 
 	cGameDataContainer gameDataContainer;
-	string saveGameString;
-	string triedLoadMap;
+	std::string saveGameString;
+	std::string triedLoadMap;
 
 	void showSettingsText();
 	void showMap();
 	void setColor( int color );
 	void saveOptions();
 	void changePlayerReadyState( sMenuPlayer *player );
-	bool enteredCommand( string text );
+	bool enteredCommand( std::string text );
 
 public:
 	cNetworkMenu();
@@ -835,7 +842,7 @@ class cNetworkClientMenu : public cNetworkMenu
 	cMenuButton *connectButton;
 
 	cMapReceiver* mapReceiver;
-	string lastRequestedMap;
+	std::string lastRequestedMap;
 	void initMapDownload (cNetMessage* message);
 	void receiveMapData (cNetMessage* message);
 	void canceledMapDownload (cNetMessage* message);
@@ -869,7 +876,7 @@ protected:
 
 	cMenuSaveSlot *saveSlots[10];
 
-	cList<string> *files;
+	cList<std::string> *files;
 	cList<sSaveFile*> savefiles;
 
 	int offset;
@@ -1102,7 +1109,7 @@ class cMineManagerMenu : public cMenu
 	void setBarValues();
 	void setBarLabels();
 
-	string secondBarText( int prod, int need );
+	std::string secondBarText( int prod, int need );
 public:
 	cMineManagerMenu( cBuilding *building_ );
 	~cMineManagerMenu();

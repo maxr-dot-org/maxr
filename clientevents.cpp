@@ -21,6 +21,12 @@
 #include "events.h"
 #include "client.h"
 #include "hud.h"
+#include "netmessage.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
+
+using namespace std;
 
 void sendChatMessageToServer ( string sMsg )
 {

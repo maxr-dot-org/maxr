@@ -17,14 +17,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "serverevents.h"
+#include "clientevents.h"
+#include "menuevents.h"
 #include "network.h"
+#include "netmessage.h"
 #include "events.h"
 #include "server.h"
-#include "client.h"
 #include "movejobs.h"
 #include "upgradecalculator.h"
-#include "menuevents.h"
 #include "hud.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
 
 //-------------------------------------------------------------------------------------
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap )
@@ -285,7 +289,7 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 }
 
 //-------------------------------------------------------------------------------------
-void sendChatMessageToClient( string message, int iType, int iPlayer, string inserttext )
+void sendChatMessageToClient( std::string message, int iType, int iPlayer, std::string inserttext )
 {
 	cNetMessage* newMessage;
 	newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );
@@ -1016,7 +1020,7 @@ void sendClans ( const cList<cPlayer*>* playerList, cPlayer* toPlayer)
 //-------------------------------------------------------------------------------------
 void sendClansToClients (const cList<cPlayer*>* playerList)
 {
-	for (unsigned int n = 1; n < playerList->Size(); n++) // 1: don't send to server
+	for (unsigned int n = 0; n < playerList->Size(); n++)
 		sendClans (playerList, (*playerList)[n]);
 }
 

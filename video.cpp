@@ -25,6 +25,7 @@
 #include "pcx.h"
 #include <vector>
 
+using namespace std;
 
 /**
 *Will store either our detected videomodes or some generic video modes if auto-detection in doDetect() failed

@@ -18,15 +18,19 @@
  ***************************************************************************/
 #ifndef serverH
 #define serverH
-#include "cmutex.h"
+#include <SDL.h>
 #include "defines.h"
-#include "main.h"
-#include "map.h"
-#include "player.h"
-#include "attackJobs.h"
-#include "movejobs.h"
-#include "savegame.h"
+#include "clist.h"
 #include "ringbuffer.h"
+#include "main.h" // for sID
+#include "map.h"
+
+class cPlayer;
+class cServerAttackJob;
+class cServerMoveJob;
+class cNetMessage;
+class cBuilding;
+struct sVehicle;
 
 /**
 * The Types which are possible for a game
@@ -105,7 +109,7 @@ private:
 	/** number of active player in turn based multiplayer game */
 	int iActiveTurnPlayerNr;
 	/** name of the savegame to load or to save */
-	string sSaveLoadFile;
+	std::string sSaveLoadFile;
 	/** index number of the savegame to load or to save */
 	int iSaveLoadNumber;
 	/** the type of the current game */
@@ -148,7 +152,7 @@ private:
 	*/
 	cNetMessage* pollEvent();
 
-
+public:
 	/**
 	* Handels all incoming netMessages from the clients
 	*@author Eiko
@@ -156,7 +160,8 @@ private:
 	*@return 0 for success
 	*/
 	int HandleNetMessage( cNetMessage* message );
-
+private:
+	
 	/**
 	* lands the vehicle at a free position in the radius
 	*@author alzi alias DoctorDeath
@@ -187,11 +192,14 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void checkDefeats ();
+
+public:
 	/**
 	* rechecks the end actions when a player wanted to finish his turn
 	*@author alzi alias DoctorDeath
 	*/
 	void handleWantEnd();
+private:
 	/**
 	* checks whether some units are moving and restarts remaining movements
 	*@author alzi alias DoctorDeath
@@ -199,6 +207,7 @@ private:
 	*@return true if there were found some moving units
 	*/
 	bool checkEndActions ( int iPlayer );
+public:
 	/**
 	* checks wether the deadline has run down
 	*@author alzi alias DoctorDeath
@@ -214,6 +223,8 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleMoveJobs();
+
+private:
 	/**
 	* Calculates the cost, that this upgrade would have for the given player.
 	*@author Paul Grathwohl
@@ -276,6 +287,20 @@ public:
 	*@return The wanted player.
 	*/
 	cPlayer *getPlayerFromNumber ( int iNum );
+	
+	/**
+	 * returns if the player is on the disconnected players list
+	 *@author pagra
+	 */
+	bool isPlayerDisconnected (cPlayer* player) const;
+	
+	/**
+	 * puts all players on the disconnected list. This is useful for loading a 
+	 * game on the dedicated server.
+	 *@author pagra
+	 */
+	void markAllPlayersAsDisconnected ();
+	
 	/**
 	* pushes an event to the eventqueue of the server. This is threadsafe.
 	*@author alzi alias DoctorDeath

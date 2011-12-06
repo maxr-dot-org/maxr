@@ -21,8 +21,9 @@
 #define EVENTS_H
 
 #include "defines.h"
-#include "main.h"
 #include "ringbuffer.h"
+
+class cNetMessage;
 
 /**
  * Class for Event handling.

@@ -22,6 +22,7 @@
 #include "server.h"
 #include "events.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "pcx.h"
 #include "mouse.h"
 #include "keys.h"
@@ -34,7 +35,11 @@
 #include "settings.h"
 #include "hud.h"
 #include "video.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
 
+using namespace std;
 
 sMessage::sMessage(std::string const& s, unsigned int const age_)
 {
@@ -110,6 +115,14 @@ Uint32 TimerCallback(Uint32 interval, void *arg)
 	((cClient *)arg)->Timer();
 	return interval;
 }
+
+
+//------------------------------------------------------------------------
+// cClient implementation
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+cClient* Client = 0; // global instance
 
 cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map(Map),

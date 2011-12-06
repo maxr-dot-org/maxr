@@ -22,7 +22,9 @@
 #include "automjobs.h"
 #include "vehicles.h"
 #include "movejobs.h"
+#include "player.h"
 
+using namespace std;
 
 static cList<cAutoMJob*> autoMJobs;
 

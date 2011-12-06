@@ -20,16 +20,17 @@
 #define vehiclesH
 #include "defines.h"
 #include <SDL.h>
-#include "main.h"
-#include "sound.h"
+#include "clist.h"
 #include "automjobs.h"
-#include "input.h"
+#include "main.h" // for sUnitData
 
 class cPlayer;
+class cBuilding;
 class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
+struct sMouseState;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -109,7 +110,7 @@ struct sVehicle{
 class cVehicle
 {
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	string name;			// name of the vehicle
+	std::string name;			// name of the vehicle
 //-----------------------------------------------------------------------------
 public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
@@ -175,12 +176,12 @@ public:
 	void Select();
 	void Deselct();
 
-	string getName() { return name; }
+	std::string getName() { return name; }
 	bool isNameOriginal() { return isOriginalName; }
 
-	string getNamePrefix();
-	string getDisplayName();
-	void changeName ( string newName );
+	std::string getNamePrefix();
+	std::string getDisplayName();
+	void changeName ( std::string newName );
 
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing

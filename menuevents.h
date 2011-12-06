@@ -46,25 +46,25 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
+void sendMenuChatMessage ( std::string chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
 
 void sendRequestIdentification ( sMenuPlayer *player );
 
 void sendPlayerList ( cList<sMenuPlayer*> *players );
 
-void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPlayer *player = NULL );
+void sendGameData ( cGameDataContainer *gameData, std::string saveGameString, sMenuPlayer *player = NULL );
 
 void sendGo ();
 
 void sendIdentification ( sMenuPlayer *player );
 
-void sendClan ( int clanNr, int ownerNr );
+void sendClan ( int clanNr, int ownerNr, bool isServer );
 
-void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr );
+void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr, bool isServer );
 
-void sendUnitUpgrades ( cPlayer *player );
+void sendUnitUpgrades ( cPlayer *player, bool isServer );
 
-void sendLandingCoords ( sClientLandData& c, int ownerNr );
+void sendLandingCoords ( sClientLandData& c, int ownerNr, bool isServer );
 
 void sendReselectLanding ( eLandingState state, sMenuPlayer *player );
 
@@ -74,7 +74,7 @@ void sendGameIdentification ( sMenuPlayer *player, int socket );
 
 void sendReconnectionSuccess( int playerNr );
 
-void sendRequestMap (string mapName, int playerNr);
+void sendRequestMap (std::string mapName, int playerNr);
 
 void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player );
 

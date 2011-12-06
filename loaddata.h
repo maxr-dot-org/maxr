@@ -22,14 +22,16 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "defines.h"
-#include <map>
-#include "main.h"
-#include "sound.h"
-#include "savegame.h"
-
 #ifndef loaddataH
 #define loaddataH
+
+#include <map>
+#include <string>
+#include "defines.h"
+#include "main.h" // for sID
+
+class TiXmlDocument;
+struct sUnitData;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Defines
@@ -72,7 +74,7 @@ void LoadUnitGraphicData( sUnitData*, char const* directory );
 
 int getXMLNodeInt( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
 float getXMLNodeFloat( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
-string getXMLNodeString( TiXmlDocument &document, const char *attribut, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
+std::string getXMLNodeString( TiXmlDocument &document, const char *attribut, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL );
 bool getXMLNodeBool( TiXmlDocument &document, const char *path0 = NULL, const char *path1 = NULL,const char *path2 = NULL, const char *path3 = NULL );
 
 /**

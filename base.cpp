@@ -20,9 +20,12 @@
 #include "base.h"
 #include "map.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "server.h"
+#include "buildings.h"
+#include "player.h"
 
-
+using namespace std;
 
 sSubBase::sSubBase( cPlayer* owner_ ) :
 	buildings(),

@@ -21,13 +21,13 @@
 #include "SDL_flic.h"
 #include "defines.h"
 #include "main.h"
-#include "player.h"
-#include "map.h"
-#include "netmessage.h"
-#include "attackJobs.h"
-#include "input.h"
-#include "drawingcache.h"
 #include "hud.h"
+
+class cNetMessage;
+class cMap;
+class cPlayer;
+class cClientAttackJob;
+class cClientMoveJob;
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -306,9 +306,9 @@ public:
 	/**
 	* Adds an message to be displayed in the game
 	*/
-	void addMessage ( string sMsg );
+	void addMessage ( std::string sMsg );
 	/** displays a message with 'goto' coordinates */
-	string addCoords (const string msg,int x,int y );
+	std::string addCoords (const std::string msg,int x,int y );
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit
@@ -323,6 +323,8 @@ public:
 	void deletePlayer(cPlayer *player);
 
 
-} EX *Client;
+};
+
+extern cClient* Client;
 
 #endif

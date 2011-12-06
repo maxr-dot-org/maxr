@@ -76,6 +76,11 @@ public:
 
 	eNetMessageClass getClass();
 
+	/** rewinds a received and already read (via popXYZ) msg, so that it's content can be popped a second time.
+	 * @author Pagra  
+	 */
+	void rewind ();
+	
 	/** pushes a char to the end of the netMessage
 	* @author Eiko
 	* @param c the char to push to the message
@@ -155,6 +160,7 @@ public:
 	* @author Eiko
 	*/
 	std::string getTypeAsString();
+	int getType () const {return iType;}
 
 	/** returns the serial hexadecimal representation of the netMessage
 	* @author Eiko

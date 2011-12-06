@@ -19,7 +19,13 @@
 #ifndef movejobsH
 #define movejobsH
 
-#include "map.h"
+#include <SDL.h>
+#include "clist.h"
+
+class cVehicle;
+class cBuilding;
+class cMap;
+class cNetMessage;
 
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10

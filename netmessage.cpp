@@ -25,6 +25,8 @@
 #include "serverevents.h"
 #include "menuevents.h"
 
+using namespace std;
+
 cNetMessage::cNetMessage( char* c)
 {
 	if ( c[0] != START_CHAR ) Log.write ( "NetMessage has wrong start character", LOG_TYPE_NET_ERROR );
@@ -60,6 +62,11 @@ char* cNetMessage::serialize()
 	data[5] = (char) iPlayerNr;
 
 	return data;
+}
+
+void cNetMessage::rewind ()
+{
+	iLength = SDL_SwapLE16( ((Sint16*)(data+1))[0] );
 }
 
 eNetMessageClass cNetMessage::getClass()

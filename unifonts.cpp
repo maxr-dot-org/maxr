@@ -22,6 +22,9 @@
 #include "files.h"
 #include "log.h"
 #include "settings.h"
+#include "main.h"
+
+using namespace std;
 
 cUnicodeFont::cUnicodeFont()
 {

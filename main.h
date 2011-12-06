@@ -42,29 +42,10 @@
 #include "language.h"
 #include "clist.h"
 
-using namespace std;
-
 // Predeclarations
 class cPlayer;
-class cBuilding;
-class cVehicle;
-class cAJobs;
 class cLanguage;
-class cNetMessage;
 struct sBuilding;
-struct sUpgrades;
-struct sTuple;
-struct sBuildList;
-struct sHUp;
-struct sLanding;
-struct sClientSettings;
-struct sMessage;
-struct sWachposten;
-struct sLockElem;
-struct sSubBase;
-struct sBuildStruct;
-struct sFX;
-struct sTurnstartReport;
 struct sVehicle;
 
 
@@ -92,8 +73,8 @@ struct sID
 
 	int iFirstPart;
 	int iSecondPart;
-	string getText();
-	void generate( string text );
+	std::string getText();
+	void generate( std::string text );
 	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
 		units will have these values. */
 	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner);
@@ -135,8 +116,8 @@ struct sUnitData
 
 	// Main
 	sID ID;
-	string name;
-	string description;
+	std::string name;
+	std::string description;
 	int version;
 
 	// Attack
@@ -167,8 +148,8 @@ struct sUnitData
 
 	// Production
 	int buildCosts;
-	string canBuild;
-	string buildAs;
+	std::string canBuild;
+	std::string buildAs;
 
 	int maxBuildFactor;
 
@@ -267,8 +248,8 @@ struct sUnitData
 		STORE_UNIT_IMG_HUMAN
 	};
 	eStorageUnitsImageType storeUnitsImageType;
-	vector<string> storeUnitsTypes;
-	string isStorageType;
+	std::vector<std::string> storeUnitsTypes;
+	std::string isStorageType;
 
 	// Graphic
 	bool hasClanLogos;
@@ -352,9 +333,9 @@ public:
 	SDL_Surface *gfx_player_ready;
 	SDL_Surface *gfx_hud_chatbox;
 
-	string DialogPath;
-	string Dialog2Path;
-	string Dialog3Path;
+	std::string DialogPath;
+	std::string Dialog2Path;
+	std::string Dialog3Path;
 } EX GraphicsData;
 
 // Effects - Class containing all effect surfaces /////////////////////////////

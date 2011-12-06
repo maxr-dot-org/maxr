@@ -21,11 +21,11 @@
 
 #include "autosurface.h"
 #include "defines.h"
-#include "main.h"
-#include "mouse.h"
 #include "unifonts.h"
 #include "upgradecalculator.h"
 #include "sound.h"
+#include "clist.h"
+#include "main.h" // for sID
 
 class cMenu;
 class cHangarMenu;
@@ -34,6 +34,8 @@ class cNetworkMenu;
 class cMenuRadioGroup;
 class cMenuUnitsList;
 class cReportsMenu;
+class cVehicle;
+class cBuilding;
 
 /**
  * A struct that contains information of a savegame.
@@ -42,13 +44,13 @@ class cReportsMenu;
 struct sSaveFile
 {
 	/** the filename of the savegame*/
-	string filename;
+	std::string filename;
 	/** the displayed name of the savegame*/
-	string gamename;
+	std::string gamename;
 	/** the type of the savegame (SIN, HOT, NET)*/
-	string type;
+	std::string type;
 	/** the time and date when this savegame was saved*/
-	string time;
+	std::string time;
 	/** the number of the savegame*/
 	int number;
 };
@@ -240,7 +242,7 @@ public:
 	 *@param ch the encoded key
 	 *@param parent pointer to the calling menu
 	 */
-	virtual bool handleKeyInput( SDL_keysym keysym, string ch, void *parent ) { return false; }
+	virtual bool handleKeyInput( SDL_keysym keysym, std::string ch, void *parent ) { return false; }
 
 	/**
 	 * sets a new position of the item
@@ -415,16 +417,16 @@ class cMenuLabel : public cMenuItem
 {
 protected:
 	SDL_Rect textPosition;
-	string text;
+	std::string text;
 	eUnicodeFontType fontType;
 
 	bool flagCentered;
 	bool flagBox;
 
 public:
-	cMenuLabel ( int x, int y, string text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
-	void setText( string text_ );
-	string getText() { return text; }
+	cMenuLabel ( int x, int y, std::string text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
+	void setText( std::string text_ );
+	std::string getText() { return text; }
 	void setFontType ( eUnicodeFontType fontType_ );
 	/**
 	 * if centered is true the text will be centered at the in the constructor overgiven position.
@@ -482,7 +484,7 @@ public:
 protected:
 
 	AutoSurface surface;
-	string text;
+	std::string text;
 	eUnicodeFontType fontType;
 	eButtonTypes buttonType;
 
@@ -499,7 +501,7 @@ protected:
 
 	bool preSetLocked( bool locked_ );
 public:
-	cMenuButton ( int x, int y, string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
+	cMenuButton ( int x, int y, std::string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
 	void draw();
 };
 
@@ -578,7 +580,7 @@ public:
 		TEXT_ORIENT_LEFT
 	};
 protected:
-	string text;
+	std::string text;
 	AutoSurface surface;
 	eUnicodeFontType fontType;
 	eCheckButtonTypes buttonType;
@@ -595,7 +597,7 @@ protected:
 	bool preClicked();
 
 public:
-	cMenuCheckButton( int x, int y, string text_ = "", bool checked_ = false, bool centered_ = false,eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND, eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, sSOUND *clickSound_ = SoundData.SNDObjectMenu);
+	cMenuCheckButton( int x, int y, std::string text_ = "", bool checked_ = false, bool centered_ = false,eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND, eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, sSOUND *clickSound_ = SoundData.SNDObjectMenu);
 	void draw();
 
 	void setChecked ( bool checked_ );
@@ -995,7 +997,7 @@ class cMenuListBox : public cMenuItemContainer
 protected:
 	cMenu *parentMenu;
 
-	cList<string> lines;
+	cList<std::string> lines;
 	int maxLines;
 	int maxDrawLines;
 
@@ -1005,7 +1007,7 @@ public:
 	~cMenuListBox();
 	void draw();
 
-	void addLine ( string line );
+	void addLine ( std::string line );
 };
 
 /**
@@ -1027,7 +1029,7 @@ protected:
 	eLineEditType lineEditType;
 	eUnicodeFontType fontType;
 	cMenu *parentMenu;
-	string text;
+	std::string text;
 	int cursorPos;
 	int startOffset, endOffset;
 
@@ -1058,10 +1060,10 @@ public:
 	 *@param takeNumerics_ if this is true the box takes numerics.
 	 */
 	void setTaking ( bool takeChars_, bool takeNumerics_ );
-	void setText ( string text_ );
-	string getText ();
+	void setText ( std::string text_ );
+	std::string getText ();
 	void setSize( int w, int h );
-	bool handleKeyInput( SDL_keysym keysym, string ch, void *parent );
+	bool handleKeyInput( SDL_keysym keysym, std::string ch, void *parent );
 
 	void setReturnPressedFunc( void (*returnPressed_)(void *) );
 };
@@ -1083,14 +1085,14 @@ public:
  */
 struct sMenuPlayer
 {
-	string name;
+	std::string name;
 	int color;
 	bool ready;
 
 	int nr;
 	int socket;
 
-	sMenuPlayer (string name_ = "", int color_ = 0, bool ready_ = false, int nr_ = 0, int socket_ = -1)
+	sMenuPlayer (std::string name_ = "", int color_ = 0, bool ready_ = false, int nr_ = 0, int socket_ = -1)
 		: name(name_), color(color_), ready(ready_), nr(nr_), socket(socket_) {}
 };
 

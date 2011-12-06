@@ -18,9 +18,10 @@
  ***************************************************************************/
 #ifndef baseH
 #define baseH
-#include "defines.h"
 #include <SDL.h>
-#include "buildings.h"
+#include "defines.h"
+#include "clist.h"
+#include "main.h" // for sUnitData and sUnitData::eStorageResType
 
 class cPlayer;
 class cBuilding;

@@ -25,15 +25,21 @@
 #include "pcx.h"
 #include "events.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "client.h"
 #include "server.h"
+#include "netmessage.h"
 #include "upgradecalculator.h"
 #include "menus.h"
 #include "dialog.h"
 #include "settings.h"
 #include "hud.h"
 #include "video.h"
+#include "vehicles.h"
+#include "player.h"
+#include "attackJobs.h"
 
+using namespace std;
 
 //--------------------------------------------------------------------------
 // cBuilding Implementation

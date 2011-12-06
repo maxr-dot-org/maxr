@@ -157,3 +157,9 @@
 	#define PACKAGE_NAME  "M.A.X.R."
 
 #endif
+
+#if DEDICATED_SERVER_APPLICATION
+	#define DEDICATED_SERVER true
+#else
+	#define DEDICATED_SERVER false
+#endif

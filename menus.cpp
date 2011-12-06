@@ -33,11 +33,16 @@
 #include "clientevents.h"
 #include "clans.h"
 #include "serverevents.h"
+#include "netmessage.h"
 #include "dialog.h"
 #include "mapdownload.h"
 #include "settings.h"
 #include "video.h"
+#include "vehicles.h"
+#include "player.h"
+#include "savegame.h"
 
+using namespace std;
 
 #define MAIN_MENU_BTN_SPACE 35
 
@@ -116,24 +121,26 @@ cGameDataContainer::~cGameDataContainer()
 }
 
 //------------------------------------------------------------------------------
-void cGameDataContainer::runGame( int player, bool reconnect )
+void cGameDataContainer::runGame (int playerNr, bool reconnect)
 {
 	if ( savegameNum >= 0 )
 	{
-		runSavedGame ( player );
+		runSavedGame (playerNr);
 		return;
 	}
 
 	cPlayer *actPlayer = NULL;
-	for ( unsigned int i = 0; i < players.Size(); i++ )
+	for (unsigned int i = 0; i < players.Size(); i++)
 	{
-		if ( players[i]->Nr == player ) actPlayer = players[i];
+		if (players[i]->Nr == playerNr)
+			actPlayer = players[i];
 	}
-	if ( actPlayer == NULL ) return;
+	if (actPlayer == NULL)
+		return;
 
 	cMap serverMap;
 	cList<cPlayer*> serverPlayers;
-	if ( player == 0 )
+	if (isServer)
 	{
 		// copy map for server
 		serverMap.NewMap( map->size, map->iNumberOfTerrains );
@@ -165,7 +172,7 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		}
 		Server = new cServer( &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore );
 
-		//send victroy conditions to clients
+		// send victory conditions to clients
 		for(unsigned n = 0; n < players.Size(); n++)
 			sendVictoryConditions( nTurns, nScore, players[n]);
 
@@ -187,18 +194,16 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 	}
 	Client->initPlayer ( actPlayer );
 
-	if ( player == 0 )
+	if (isServer)
 	{
-		//send clan info to clients
+		// send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
-		{
-			sendClansToClients ( &players );
-		}
+			sendClansToClients (&players);
 
-		//make the landing
-		for ( unsigned int i = 0; i < players.Size(); i++ )
+		// make the landing
+		for (unsigned int i = 0; i < players.Size (); i++)
 		{
-			Server->makeLanding( landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE );
+			Server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 			delete landData[i];
 			delete landingUnits[i];
 		}
@@ -206,7 +211,8 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 		Server->bStarted = true;
 	}
 
-	if ( reconnect ) sendReconnectionSuccess ( player );
+	if (reconnect) 
+		sendReconnectionSuccess (playerNr);
 	Client->gameGUI.show();
 
 	while ( players.Size() )
@@ -217,8 +223,8 @@ void cGameDataContainer::runGame( int player, bool reconnect )
 
 	delete Client;
 	Client = NULL;
-
-	if ( player == 0 )
+		
+	if (isServer)
 	{
 		delete Server;
 		Server = NULL;
@@ -403,6 +409,7 @@ void cGameDataContainer::receiveLandingPosition ( cNetMessage *message )
 	}
 	if ( !ok ) return;
 
+	allLanded = true;
 	sendAllLanded();
 }
 
@@ -924,6 +931,7 @@ void cSinglePlayerMenu::newGameReleased( void* parent )
 {
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	cGameDataContainer gameDataContainer;
+	gameDataContainer.isServer = true;
 	cSettingsMenu settingsMenu ( &gameDataContainer );
 	settingsMenu.show();
 	menu->draw();
@@ -934,6 +942,7 @@ void cSinglePlayerMenu::loadGameReleased( void* parent )
 {
 	cSinglePlayerMenu *menu = static_cast<cSinglePlayerMenu*>((cMenu*)parent);
 	cGameDataContainer gameDataContainer;
+	gameDataContainer.isServer = true;
 	cLoadMenu loadMenu ( &gameDataContainer );
 	loadMenu.show();
 	if ( !gameDataContainer.savegame.empty() )
@@ -1447,6 +1456,8 @@ void cPlanetsSelectionMenu::loadMaps()
 			if (!maps->Contains((*userMaps)[i]))
 				maps->Add ((*userMaps)[i]);
 		}
+		if (userMaps != 0)
+			delete userMaps;
 	}
 	for ( unsigned int i = 0; i < maps->Size(); i++ )
 	{
@@ -1569,7 +1580,7 @@ void cPlanetsSelectionMenu::showMaps()
 void cPlanetsSelectionMenu::backReleased( void* parent )
 {
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
-	menu->gameDataContainer->map = NULL;
+	menu->gameDataContainer->map = NULL; // TODO: fix memory leak
 	menu->terminate = true;
 }
 
@@ -1579,7 +1590,7 @@ void cPlanetsSelectionMenu::okReleased( void* parent )
 	cPlanetsSelectionMenu *menu = static_cast<cPlanetsSelectionMenu *>((cMenu*)parent);
 	if ( menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int)menu->maps->Size() )
 	{
-		menu->gameDataContainer->map = new cMap();
+		menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
 		menu->gameDataContainer->map->LoadMap ( (*menu->maps)[menu->selectedMapIndex] );
 		if ( !menu->gameDataContainer->map ) return;
 
@@ -2249,13 +2260,13 @@ void cStartupHangarMenu::doneReleased( void* parent )
 		menu->gameDataContainer->landingUnits.Add ( landingUnits ); // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
-	if ( menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->player->Nr != 0 )
+	if ( menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false )
 	{
-		sendClan ( menu->player->getClan (), menu->player->Nr );
-		sendLandingUnits ( landingUnits, menu->player->Nr );
+		sendClan ( menu->player->getClan (), menu->player->Nr, menu->gameDataContainer->isServer );
+		sendLandingUnits ( landingUnits, menu->player->Nr, menu->gameDataContainer->isServer );
 	}
 
-	sendUnitUpgrades ( menu->player );
+	sendUnitUpgrades ( menu->player, menu->gameDataContainer->isServer );
 
 	cLandingMenu landingMenu ( menu->gameDataContainer, menu->player );
 	if ( landingMenu.show() == 1 && menu->gameDataContainer->type != GAME_TYPE_TCPIP)
@@ -2728,7 +2739,7 @@ void cLandingMenu::hitPosition()
 	case GAME_TYPE_TCPIP:
 		{
 			infoLabel->setText ( lngPack.i18n ( "Text~Multiplayer~Waiting" ) );
-			sendLandingCoords ( landData, player->Nr );
+			sendLandingCoords ( landData, player->Nr, gameDataContainer->isServer );
 			draw();
 		}
 		break;
@@ -3107,6 +3118,8 @@ void cNetworkMenu::setDefaultPort(void* parent)
 //-----------------------------------------------------------------------------------------
 cNetworkHostMenu::cNetworkHostMenu()
 {
+	gameDataContainer.isServer = true;
+
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Host") );
 	titleLabel->setCentered( true );
 	menuItems.Add ( titleLabel );
@@ -3585,6 +3598,8 @@ cNetworkClientMenu::cNetworkClientMenu()
 : mapReceiver (0)
 , lastRequestedMap ("")
 {
+	gameDataContainer.isServer = false;
+	
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Client") );
 	titleLabel->setCentered( true );
 	menuItems.Add ( titleLabel );

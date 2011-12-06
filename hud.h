@@ -256,13 +256,13 @@ class cGameGUI : public cMenu
 	*@author alzi alias DoctorDeath
 	*@param sCmd the input string
 	*/
-	void doCommand( string cmd );
+	void doCommand( std::string cmd );
 	/**
 	* returns the corresponding player to a string with his name or number
 	*@author alzi alias DoctorDeath
 	*@param playerNumStr a string with the name or the number of a player
 	*/
-	cPlayer *getPlayerFromName( string playerNameStr );
+	cPlayer *getPlayerFromName( std::string playerNameStr );
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
@@ -382,7 +382,7 @@ public:
 	int show();
 	void returnToCallback();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	bool surveyChecked() { return surveyButton->isChecked(); }
 	bool hitsChecked() { return hitsButton->isChecked(); }
@@ -479,7 +479,7 @@ public:
 	void deselectUnit();
 
 
-	void setInfoTexts ( string infoText, string additionalInfoText );
+	void setInfoTexts ( std::string infoText, std::string additionalInfoText );
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise

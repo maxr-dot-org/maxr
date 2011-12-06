@@ -18,6 +18,8 @@
  ***************************************************************************/
 #include "math.h"
 #include "vehicles.h"
+#include "buildings.h"
+#include "player.h"
 #include "unifonts.h"
 #include "mouse.h"
 #include "sound.h"
@@ -35,7 +37,7 @@
 #include "hud.h"
 #include "video.h"
 
-
+using namespace std;
 
 //-----------------------------------------------------------------------------
 // cVehicle Class Implementation

@@ -26,7 +26,8 @@
 #include "dialog.h"
 #include "unifonts.h"
 #include "client.h"
-#include "serverevents.h"
+#include "clientevents.h"
+#include "netmessage.h"
 #include "keys.h"
 #include "input.h"
 #include "pcx.h"
@@ -34,7 +35,11 @@
 #include "settings.h"
 #include "events.h"
 #include "video.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "attackJobs.h"
 
+using namespace std;
 
 bool sMouseBox::isTooSmall()
 {
@@ -372,6 +377,15 @@ int cGameGUI::show()
 		}
 	}
 
+	// code to work with DEDICATED_SERVER - network client sends the server, that it disconnects itself
+	if (Server == 0)
+	{
+		cNetMessage* message = new cNetMessage( GAME_EV_WANT_DISCONNECT );
+		Client->sendNetMessage ( message );
+	}
+	// end
+	
+	
 	makePanel ( false );
 
 	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();

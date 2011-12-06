@@ -18,9 +18,9 @@
  ***************************************************************************/
 #ifndef keysH
 #define keysH
-#include "defines.h"
 #include <SDL.h>
-#include "main.h"
+#include <string>
+#include "defines.h"
 
 // Globale Daten /////////////////////////////////////////////////////////////
 class cKeysList
@@ -86,7 +86,7 @@ EX eMouseStyle MouseStyle;
 // Prototypen ////////////////////////////////////////////////////////////////
 int LoadKeys();
 const char *GetKeyString(SDLKey key);
-SDLKey GetKeyFromString(string key);
+SDLKey GetKeyFromString(std::string key);
 /**
 	* Generats a new keys.xml file
 	*/

@@ -21,6 +21,11 @@
 #include "serverevents.h"
 #include "client.h"
 #include "mapdownload.h"
+#include "buildings.h"
+#include "vehicles.h"
+#include "player.h"
+
+using namespace std;
 
 void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player, int fromPlayerNr, bool translationText )
 {
@@ -104,16 +109,15 @@ void sendIdentification ( sMenuPlayer *player )
 	cMenu::sendMessage ( message );
 }
 
-void sendClan ( int clanNr, int ownerNr )
+void sendClan ( int clanNr, int ownerNr, bool isServer )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_CLAN );
 
 	message->pushInt16( clanNr );
 	message->pushInt16( ownerNr );
 
-	// the host has not to send the message over tcpip and since he has
-	// always the playernumber 0 we can handle the message directly
-	if ( ownerNr == 0 && ActiveMenu )
+	// the host has not to send the message over tcpip and we can handle the message directly
+	if ( isServer && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
@@ -121,7 +125,7 @@ void sendClan ( int clanNr, int ownerNr )
 	else cMenu::sendMessage ( message );
 }
 
-void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr )
+void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr, bool isServer )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_LANDING_VEHICLES );
 
@@ -134,9 +138,8 @@ void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr )
 	message->pushInt16( (int)landingList->Size() );
 	message->pushInt16( ownerNr );
 
-	// the host has not to send the message over tcpip and since he has
-	// always the playernumber 0 we can handle the message directly
-	if ( ownerNr == 0 && ActiveMenu )
+	// the host has not to send the message over tcpip and we can handle the message directly
+	if ( isServer && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
@@ -144,7 +147,7 @@ void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr )
 	else cMenu::sendMessage ( message );
 }
 
-void sendUnitUpgrades ( cPlayer *player )
+void sendUnitUpgrades ( cPlayer *player, bool isServer )
 {
 	cNetMessage *message = NULL;
 	int count = 0;
@@ -184,7 +187,7 @@ void sendUnitUpgrades ( cPlayer *player )
 		{
 			message->pushInt16 ( count );
 			message->pushInt16 ( player->Nr );
-			if ( player->Nr == 0 && ActiveMenu )
+			if ( isServer && ActiveMenu )
 			{
 				ActiveMenu->handleNetMessage ( message );
 				delete message;
@@ -198,7 +201,7 @@ void sendUnitUpgrades ( cPlayer *player )
 	{
 		message->pushInt16 ( count );
 		message->pushInt16 ( player->Nr );
-		if ( player->Nr == 0 && ActiveMenu )
+		if ( isServer && ActiveMenu )
 		{
 			ActiveMenu->handleNetMessage ( message );
 			delete message;
@@ -241,7 +244,7 @@ void sendUnitUpgrades ( cPlayer *player )
 		{
 			message->pushInt16 ( count );
 			message->pushInt16 ( player->Nr );
-			if ( player->Nr == 0 && ActiveMenu )
+			if ( isServer && ActiveMenu )
 			{
 				ActiveMenu->handleNetMessage ( message );
 				delete message;
@@ -255,7 +258,7 @@ void sendUnitUpgrades ( cPlayer *player )
 	{
 		message->pushInt16 ( count );
 		message->pushInt16 ( player->Nr );
-		if ( player->Nr == 0 && ActiveMenu )
+		if ( isServer && ActiveMenu )
 		{
 			ActiveMenu->handleNetMessage ( message );
 			delete message;
@@ -264,7 +267,7 @@ void sendUnitUpgrades ( cPlayer *player )
 	}
 }
 
-void sendLandingCoords ( sClientLandData& c, int ownerNr )
+void sendLandingCoords ( sClientLandData& c, int ownerNr, bool isServer )
 {
 	Log.write("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessage* message = new cNetMessage( MU_MSG_LANDING_COORDS );
@@ -272,7 +275,7 @@ void sendLandingCoords ( sClientLandData& c, int ownerNr )
 	message->pushInt16( c.iLandX );
 	message->pushChar( ownerNr );
 
-	if ( ownerNr == 0 && ActiveMenu )
+	if ( isServer && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
@@ -285,7 +288,7 @@ void sendReselectLanding ( eLandingState state, sMenuPlayer *player )
 	cNetMessage* message = new cNetMessage(MU_MSG_RESELECT_LANDING);
 	message->pushChar( state );
 
-	if ( player->nr == 0 && ActiveMenu )
+	if (!DEDICATED_SERVER && player->nr == 0 && ActiveMenu )
 	{
 		ActiveMenu->handleNetMessage ( message );
 		delete message;
@@ -297,9 +300,12 @@ void sendAllLanded ()
 {
 	cNetMessage* message = new cNetMessage( MU_MSG_ALL_LANDED );
 	cMenu::sendMessage( message );
-	message = new cNetMessage( MU_MSG_ALL_LANDED );
-	ActiveMenu->handleNetMessage ( message );
-	delete message;
+	if (ActiveMenu)
+	{
+		message = new cNetMessage( MU_MSG_ALL_LANDED );
+		ActiveMenu->handleNetMessage ( message );
+		delete message;
+	}
 }
 
 void sendGameIdentification ( sMenuPlayer *player, int socket )

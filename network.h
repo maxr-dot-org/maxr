@@ -19,8 +19,11 @@
 #ifndef networkH
 #define networkH
 #include <SDL_net.h>
+#include <string>
 #include "defines.h"
-#include "main.h"
+#include "cmutex.h"
+
+class cNetMessage;
 
 #define MAX_CLIENTS				10			// maximal number of clients that can connect to the server
 #define PACKAGE_LENGTH			1024		// maximal length of a TCP/IP package
@@ -122,7 +125,7 @@ private:
 
 	int iPort;
 	int iLast_Socket;
-	string sIP;
+	std::string sIP;
 	sSocket Sockets[MAX_CLIENTS];
 	SDLNet_SocketSet SocketSet;
 	IPaddress ipaddr;
@@ -189,7 +192,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*param iPort New IP.
 	*/
-	void setIP ( string sIP );
+	void setIP ( std::string sIP );
 	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath

@@ -27,9 +27,9 @@
 class cDialogYesNo : public cMenu
 {
 public:
-	cDialogYesNo(string text);
+	cDialogYesNo(std::string text);
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	static void yesReleased( void *parent );
 	static void noReleased( void *parent );
@@ -46,9 +46,9 @@ private:
 class cDialogOK : public cMenu
 {
 public:
-	cDialogOK(string text);
+	cDialogOK(std::string text);
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	static void okReleased( void *parent );
 
@@ -80,17 +80,17 @@ class cDialogLicence : public cMenu
 public:
 	cDialogLicence();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	static void okReleased( void *parent );
 	static void upReleased( void *parent );
 	static void downReleased( void *parent );
 
 private:
-	string sLicence1;
-	string sLicence2;
-	string sLicence3;
-	string sLicence4;
+	std::string sLicence1;
+	std::string sLicence2;
+	std::string sLicence3;
+	std::string sLicence4;
 	int offset;
 
 	cMenuLabel maxrLabel;
@@ -196,7 +196,7 @@ public:
 	cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
 	~cDialogTransfer();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );
@@ -239,7 +239,7 @@ public:
 	cDialogResearch( cPlayer *owner_ );
 	~cDialogResearch();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, string ch );
+	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
 
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );

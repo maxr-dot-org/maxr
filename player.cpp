@@ -22,6 +22,10 @@
 #include "server.h"
 #include "serverevents.h"
 #include "hud.h"
+#include "buildings.h"
+#include "vehicles.h"
+
+using namespace std;
 
 //-----------------------------------------------------------------------
 // Implementation cPlayer class

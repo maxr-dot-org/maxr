@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "log.h"
 #include "settings.h"
+#include "main.h"
 
 static Mix_Music* music_stream = NULL;
 

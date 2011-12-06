@@ -18,14 +18,17 @@
  ***************************************************************************/
 
 #include "movejobs.h"
+#include "attackJobs.h"
 #include "player.h"
 #include "serverevents.h"
 #include "clientevents.h"
 #include "server.h"
 #include "client.h"
-#include "vehicles.h"
+#include "netmessage.h"
 #include "math.h"
 #include "settings.h"
+#include "buildings.h"
+#include "vehicles.h"
 
 cPathDestHandler::cPathDestHandler(ePathDestinationTypes type_, int destX_, int destY_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	type(type_),
@@ -135,9 +138,9 @@ sWaypoint* cPathCalculator::calcPath ()
 	nodesHeap = new sPathNode*[Map->size*Map->size+1];
 	openList = new sPathNode*[Map->size*Map->size+1];
 	closedList = new sPathNode*[Map->size*Map->size+1];
-	fill <sPathNode**, sPathNode*> ( nodesHeap, &nodesHeap[Map->size*Map->size+1], NULL );
-	fill <sPathNode**, sPathNode*> ( openList, &openList[Map->size*Map->size+1], NULL );
-	fill <sPathNode**, sPathNode*> ( closedList, &closedList[Map->size*Map->size+1], NULL );
+	std::fill <sPathNode**, sPathNode*> ( nodesHeap, &nodesHeap[Map->size*Map->size+1], NULL );
+	std::fill <sPathNode**, sPathNode*> ( openList, &openList[Map->size*Map->size+1], NULL );
+	std::fill <sPathNode**, sPathNode*> ( closedList, &closedList[Map->size*Map->size+1], NULL );
 
 	// generate startnode
 	sPathNode *StartNode = allocNode ();
@@ -894,7 +897,7 @@ void cEndMoveAction::executeAttackAction()
 	int offset = x + y * Server->Map->size;
 
 	//check, whether the attack is now possible
-	if ( !vehicle_->CanAttackObject ( x, y, Client->Map, true, true ) ) return;
+	if ( !vehicle_->CanAttackObject ( x, y, Server->Map, true, true ) ) return;
 
 	//is the target in sight?
 	if ( !vehicle_->owner->ScanMap[offset] ) return;

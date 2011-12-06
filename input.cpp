@@ -17,7 +17,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "input.h"
-#include "client.h"
 #include "menus.h"
 
 sMouseState::sMouseState()
@@ -141,7 +140,7 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 	if ( ActiveMenu ) ActiveMenu->handleMouseInput ( MouseState );
 }
 
-string cInput::getUTF16Char( Uint16 ch )
+std::string cInput::getUTF16Char( Uint16 ch )
 {
 	int count;
 	Uint32 bitmask;
@@ -157,7 +156,7 @@ string cInput::getUTF16Char( Uint16 ch )
 		bitmask <<= 5;
 	}
 
-	string returnStr = "";
+	std::string returnStr = "";
 	if( count == 1 )
 	{
 		returnStr += (char)ch;

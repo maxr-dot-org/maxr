@@ -21,7 +21,12 @@
 #define drawingcacheH
 
 #include "autosurface.h"
-#include "main.h"
+
+struct sVehicle;
+struct sBuilding;
+class cPlayer;
+class cVehicle;
+class cBuilding;
 
 /**
 * Stores all properties, which determine the look of the unit.
