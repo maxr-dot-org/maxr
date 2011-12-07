@@ -2816,7 +2816,6 @@ void cServer::addReport ( sID Type, bool bVehicle, int iPlayerNum )
 //-------------------------------------------------------------------------------------
 void cServer::checkDeadline ()
 {
-	static int lastCheckTime = SDL_GetTicks();
 	if ( !timer50ms ) return;
 	Uint32 currentTicks = SDL_GetTicks();
 	if ( iTurnDeadline >= 0 && iDeadlineStartTime > 0 )
@@ -2848,7 +2847,6 @@ void cServer::checkDeadline ()
 			}
 		}
 	}
-	lastCheckTime = currentTicks;
 }
 
 //-------------------------------------------------------------------------------------

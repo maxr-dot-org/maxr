@@ -1998,7 +1998,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				else PlayVoice ( VoiceData.VOIUnitDisabled );
 			}
 			else PlayVoice ( VoiceData.VOICommandoDetected );
-			cVehicle *srcUnit = getVehicleFromID ( message->popInt16() );
+
+			/* Ignore vehicle ID. */
+			message->popInt16();
 
 			gameGUI.checkMouseInputMode();
 		}

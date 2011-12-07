@@ -150,7 +150,6 @@ void cSettings::setPaths()
 		configPath = MAX_XML; //assume config in current working directory
 	#else
 	//NOTE: I do not use cLog here on purpose. Logs on linux go somewhere to $HOME/.maxr/ - as long as we can't access that we have to output everything to the terminal because game's root dir is usually write protected! -- beko
-	bool bCreateConfigDir = false;
 
 	char * cHome = getenv("HOME"); //get $HOME on linux
 	if(cHome != NULL)
@@ -171,7 +170,6 @@ void cSettings::setPaths()
 		{
 			if(mkdir(homeDir.c_str(), 0755) == 0)
 			{
-				bCreateConfigDir = true;
 				std::cout << "\n(II): Created new config directory " << homeDir;
 			}
 			else
