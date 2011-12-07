@@ -137,7 +137,7 @@ cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
-	if (0 <= index && index < stats.Size ())
+	if (index < stats.Size())
 		return stats[index];
 	return 0;
 }
@@ -205,7 +205,7 @@ cClan* cClanData::addClan ()
 //--------------------------------------------------
 cClan* cClanData::getClan (unsigned int num)
 {
- if (0 <= num && num <= clans.Size ())
+ if (num <= clans.Size())
 	 return clans[num];
 
  return NULL;
