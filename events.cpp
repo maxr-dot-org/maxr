@@ -41,7 +41,7 @@ void cEventHandling::HandleEvents()
 	{
 		switch ( event.type )
 		{
-		case SDL_ACTIVEEVENT:								
+		case SDL_ACTIVEEVENT:
 			if ( event.active.state & SDL_APPINPUTFOCUS )	//this is an workaround for a SDL bug.
 				SDL_SetModState( KMOD_NONE );				//See Ticket #86 on bugtracker.
 			break;											//will hopefully not be required anymore in SDL 1.3

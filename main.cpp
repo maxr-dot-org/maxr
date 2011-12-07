@@ -167,15 +167,15 @@ int main ( int argc, char *argv[] )
 			Log.write ( "Skipped intro movie due settings", cLog::eLOG_TYPE_DEBUG );
 		}
 	}
-		
+
 	SDL_WaitThread ( DataThread, NULL );
-	
+
 	if (!DEDICATED_SERVER)
 	{
 		Video.setResolution(Video.getResolutionX(), Video.getResolutionY(), true);
 		SDL_ShowCursor ( 0 );
 		Video.clearBuffer();
-		
+
 		mouse = new cMouse;
 		InputHandler = new cInput;
 		EventHandler = new cEventHandling;

@@ -34,7 +34,7 @@ class cNetMessage;
 int serverGameThreadFunction (void* data);
 
 //------------------------------------------------------------------------
-/** cServerGame handles all server side tasks of one multiplayer game in a thread. 
+/** cServerGame handles all server side tasks of one multiplayer game in a thread.
  *  It is possible (in the future) to run several cServerGames in parallel.
  *  Each cServerGame has (in the future) its own queue of network events.
  */
@@ -46,23 +46,23 @@ public:
 	void prepareGameData ();
 	bool loadGame (int saveGameNumber);
 	void saveGame (int saveGameNumber);
-	
+
 	void runInThread ();
 
 	void pushEvent (cNetMessage* message);
-	
+
 	// retrieve state
 	std::string getGameState () const;
 
 	int getSocketForPlayerNr (int playerNr);
-	
+
 	//------------------------------------------------------------------------
 protected:
 	SDL_Thread* thread;
 	bool canceled;
 	bool shouldSave;
 	int saveGameNumber;
-	
+
 	friend int serverGameThreadFunction (void* data);
 	void run ();
 	cNetMessage* pollEvent ();
@@ -70,8 +70,8 @@ protected:
 
 	void startGameServer ();
 	void terminateServer ();
-	
-	cGameDataContainer* gameData;	
+
+	cGameDataContainer* gameData;
 	cList<sMenuPlayer*> menuPlayers;
 
 	cMap* serverMap;
@@ -79,7 +79,7 @@ protected:
 
 private:
 	void configRessources (std::vector<std::string>& tokens, sMenuPlayer* senderPlayer);
-	
+
 	//------------------------------------------------------------------------
 	cRingbuffer<cNetMessage*> eventQueue;
 	cNetMessage* lastEvent;

@@ -379,7 +379,7 @@ void cSettings::initialize()
 	std::string temp;
 
 	//START
-	
+
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
@@ -727,7 +727,7 @@ void cSettings::initialize()
 			Log.write ("Can't create save directory " + getSavesPath(), LOG_TYPE_ERROR);
 	}
 #endif
-    
+
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
@@ -793,7 +793,7 @@ void cSettings::initialize()
 		}
 		else mvePath = dataDir + temp;
 	}
-	
+
 	//GAME-NET
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Game","Net","IP", NULL);

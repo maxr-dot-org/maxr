@@ -70,12 +70,12 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_AUTOMOVE_STATUS,		// a unit has been set to automoving
 	GAME_EV_SAVE_HUD_INFO,			// the current hud settings
 	GAME_EV_SAVE_REPORT_INFO,		// a saved report
-	GAME_EV_FIN_SEND_SAVE_INFO,		// 
+	GAME_EV_FIN_SEND_SAVE_INFO,		//
 	GAME_EV_WANT_COM_ACTION,		// an infiltrator wants to steal or disable another unit
 	GAME_EV_WANT_SELFDESTROY,
 	GAME_EV_WANT_CHANGE_UNIT_NAME,	// the player wants to change the name of an unit
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
-	
+
 	// DEDICATED_SERVER
 	GAME_EV_WANT_DISCONNECT			// the player wants to disconnect (but later reconnect to the dedicated server)
 };

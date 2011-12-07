@@ -148,7 +148,7 @@ cVehicle::~cVehicle ()
 			if ( Client->attackJobs[i]->vehicle == this ) Client->attackJobs[i]->vehicle = NULL;
 		}
 	}
-	
+
 	if ( Client && Client->gameGUI.getSelVehicle() == this )
 	{
 		Client->gameGUI.deselectUnit();

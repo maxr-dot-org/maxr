@@ -164,7 +164,7 @@ void cServer::sendNetMessage( cNetMessage* message, int iPlayerNum )
 		Log.write("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG );
 	if ( iPlayerNum == -1 )
 	{
-		if ( network ) 
+		if ( network )
 			network->send( message->iLength, message->data );
 		if (EventHandler != 0)
 			EventHandler->pushEvent( message );
@@ -263,7 +263,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// resort socket numbers of the players
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber ) 
+				if ( (*PlayerList)[i]->iSocketNum == iSocketNumber )
 				{
 					Player = (*PlayerList)[i];
 				}
@@ -1622,14 +1622,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					{
 						// stop the vehicle and make it disabled
 						destVehicle->Disabled = strength;
-						
+
 						//save speed and number of shots before disabling
 						destVehicle->lastSpeed = destVehicle->data.speedCur;
 						destVehicle->lastShots = destVehicle->data.shotsCur;
 
 						destVehicle->data.speedCur = 0;
 						destVehicle->data.shotsCur = 0;
-						
+
 
 						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
 						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
@@ -2018,7 +2018,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 
 	// integrate the building to the base:
 	Player->base.addBuilding ( AddedBuilding, true );
-	
+
 	//if this is a top building, delete connectors, mines and roads
 	if ( AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND )
 	{
@@ -2448,7 +2448,7 @@ void cServer::handleEnd ( int iPlayerNum )
 
 		if ( iWantPlayerEndNum == -1 )
 		{
-			// When playing with dedicated server where a player is not connected, play without a deadline, 
+			// When playing with dedicated server where a player is not connected, play without a deadline,
 			// but wait till all players pressed "End".
 			if ( firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.Size() == 0))
 			{
@@ -2824,7 +2824,7 @@ void cServer::checkDeadline ()
 		// stop time when waiting for reconnection
 		if ( DisconnectedPlayerList.Size() > 0 )
 			iDeadlineStartTime = currentTicks;
-		
+
 		if ( currentTicks - iDeadlineStartTime > (unsigned int)iTurnDeadline*1000 )
 		{
 			if ( checkEndActions( -1 ) )
@@ -2895,7 +2895,7 @@ void cServer::handleMoveJobs ()
 
 			//execute endMoveAction
 			if ( MoveJob->endAction ) MoveJob->endAction->execute();
-			
+
 			delete MoveJob;
 
 			//continue path building
@@ -3151,7 +3151,7 @@ void cServer::addRubble( int x, int y, int value, bool big )
 		return;
 	}
 
-	if ( big && 
+	if ( big &&
 		 Map->isWater(x + 1, y))
 	{
 		addRubble( x    , y    , value/4, false);
@@ -3636,4 +3636,3 @@ int cServer::getTurn() const
 {
 	return iTurn;
 }
-

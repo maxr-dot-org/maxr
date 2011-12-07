@@ -165,7 +165,7 @@ public:
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
 	int selMenuNr;
-	
+
 
 	cVehicle *next,*prev; // Verkettungselemente
 	sUnitData data;    // Daten des Vehicles

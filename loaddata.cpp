@@ -295,7 +295,7 @@ int LoadData ( void * )
 	}
 	Log.mark();
 
-	
+
 	if (!DEDICATED_SERVER)
 	{
 		// Load Music
@@ -345,7 +345,7 @@ int LoadData ( void * )
 		}
 		Log.mark();
 	}
-	
+
 	SDL_Delay(1000);
 	LoadingData=LOAD_FINISHED;
 	return 1;

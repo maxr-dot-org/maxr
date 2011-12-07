@@ -1165,7 +1165,7 @@ void cBase::deleteBuilding ( cBuilding *building, bool bServer )
 	for ( unsigned int i = 0; i < newSubBases.Size(); i++ )
 	{
 		sSubBase &subBase = *newSubBases[i];
-		
+
 		subBase.setMetalProd(metal);
 		subBase.setGoldProd(gold);
 		subBase.setOilProd(oil);

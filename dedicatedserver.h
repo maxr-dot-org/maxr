@@ -34,14 +34,14 @@ class cNetMessage;
  */
 class cDedicatedServer
 {
-public:	
+public:
 	static cDedicatedServer& instance ();
 
 	void run ();
 	void pushEvent (cNetMessage* message);
-	
+
 	void doAutoSave ();
-	
+
 //------------------------------------------------------------------------
 protected:
 
@@ -83,7 +83,7 @@ protected:
 	void sendChatMessage (std::string text, int type, int socket = -1);
 
 	cDedicatedServerConfig* configuration;
-	
+
 	std::vector<cServerGame*> games;
 
 	//------------------------------------------------------------------------

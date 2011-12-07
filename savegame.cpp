@@ -92,7 +92,7 @@ int cSavegame::save( string saveName )
 		else Data = &UnitsData.building[i - UnitsData.getNrVehicles ()].data;
 		writeStandardUnitValues ( Data, i );
 	}
-    
+
 	if(!DirExists(cSettings::getInstance().getSavesPath()))
 	{
 		if( makeDir(cSettings::getInstance().getSavesPath()) ) Log.write("Created new save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_INFO);
@@ -1700,7 +1700,7 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 		reportElement->SetAttribute ( "colorNr", iToStr ( list[0].colorNr ).c_str() );
 		list.Delete ( 0 );
 	}
-    
+
 	if(!DirExists(cSettings::getInstance().getSavesPath()))
 	{
 		if( makeDir(cSettings::getInstance().getSavesPath()) ) Log.write("Created new save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_INFO);

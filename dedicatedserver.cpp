@@ -43,14 +43,14 @@ class cDedicatedServerConfig
 {
 public:
 	cDedicatedServerConfig ();
-	
+
 	int port;
 };
 
 //------------------------------------------------------------------------
 cDedicatedServerConfig::cDedicatedServerConfig ()
 : port (DEFAULTPORT)
-{	
+{
 }
 
 
@@ -82,10 +82,10 @@ cDedicatedServer::~cDedicatedServer ()
 		delete network;
 		network = 0;
 	}
-	
+
 	for (int i = 0; i < games.size (); i++)
 		delete games[i];
-	
+
 	delete configuration;
 	configuration = 0;
 }
@@ -167,7 +167,7 @@ bool cDedicatedServer::handleInput (string command)
 	// ...
 	else if (tokens.at (0).compare ("stop") == 0)
 		printHelp (kNotImplementedYet);
-	else 
+	else
 		printHelp (kHelpUnknownCommand);
 	return true;
 }
@@ -180,28 +180,28 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 		cout << "WARNING: Server is already open." << endl;
 		return true;
 	}
-	
+
 	cout << "Starting server on port " << configuration->port << "..." << endl;
-	
+
 	assert (network == 0);
 	network = new cTCP ();
-	
+
 	network->setPort (configuration->port);
-	
+
 	if (network->create () == -1)
 	{
 		cout << "ERROR: Initializing network failed." << endl;
 		return false;
 	}
-	
-	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden, 
+
+	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden,
 	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
 	// (oder zumindest dem aktuell richtigen) server Objekt arbeiten.
 	if (saveGameNumber >= 0)
 		loadSaveGame (saveGameNumber);
 	else
 		startNewGame ();
-	
+
 	return true;
 }
 
@@ -326,7 +326,7 @@ string cDedicatedServer::getAvailableMapsString () const
 	delete maps;
 	return oss.str ();
 }
-	
+
 //------------------------------------------------------------------------
 string cDedicatedServer::getServerHelpString () const
 {
@@ -395,7 +395,7 @@ void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 		case kHelpExit:
 			cout << "Quits without bothering to stop a running server before." << endl << "You should call stop before." << endl;
 			break;
-		default: 
+		default:
 			cout << "Error in printHelp: no help page implemented. Please contact developers." << endl;
 			break;
 	}
@@ -428,7 +428,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 				senderSocket = games[0]->getSocketForPlayerNr (message->iPlayerNr);
 			if (senderSocket < 0)
 				return false;
-			
+
 			size_t serverStringPos = chatText.find ("--server");
 			if (serverStringPos != string::npos && chatText.length () > serverStringPos + 9)
 			{
@@ -440,8 +440,8 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 				{
 					if (tokens[0].compare ("games") == 0)
 					{
-						sendChatMessage (getGamesString (), 
-										 message->getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_CHAT_SERVER, 
+						sendChatMessage (getGamesString (),
+										 message->getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_CHAT_SERVER,
 										 senderSocket);
 						return true;
 					}
@@ -452,8 +452,8 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 					}
 					else if (tokens[0].compare ("help") == 0)
 					{
-						sendChatMessage (getServerHelpString (), 
-										 message->getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_CHAT_SERVER, 
+						sendChatMessage (getServerHelpString (),
+										 message->getType () == MU_MSG_CHAT ? (int)MU_MSG_CHAT : (int)GAME_EV_CHAT_SERVER,
 										 senderSocket);
 						return true;
 					}
@@ -471,7 +471,7 @@ void cDedicatedServer::sendChatMessage (string text, int type, int socket)
 {
 	stringstream ss (text);
     string line;
-    while (getline (ss, line)) 
+    while (getline (ss, line))
 	{
 		cNetMessage* msg = new cNetMessage (type);
 		if (msg->getType () == GAME_EV_CHAT_SERVER)
@@ -490,7 +490,7 @@ void cDedicatedServer::sendChatMessage (string text, int type, int socket)
 			network->send (msg->iLength, msg->serialize ());
 		else
 			network->sendTo (socket, msg->iLength, msg->serialize());
-    }	
+    }
 }
 
 //------------------------------------------------------------------------
@@ -499,4 +499,3 @@ void cDedicatedServer::doAutoSave ()
 	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
 	Savegame.save ("Dedicated Server Autosave");
 }
-

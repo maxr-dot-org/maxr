@@ -161,7 +161,7 @@ public:
 	*/
 	int HandleNetMessage( cNetMessage* message );
 private:
-	
+
 	/**
 	* lands the vehicle at a free position in the radius
 	*@author alzi alias DoctorDeath
@@ -287,20 +287,20 @@ public:
 	*@return The wanted player.
 	*/
 	cPlayer *getPlayerFromNumber ( int iNum );
-	
+
 	/**
 	 * returns if the player is on the disconnected players list
 	 *@author pagra
 	 */
 	bool isPlayerDisconnected (cPlayer* player) const;
-	
+
 	/**
-	 * puts all players on the disconnected list. This is useful for loading a 
+	 * puts all players on the disconnected list. This is useful for loading a
 	 * game on the dedicated server.
 	 *@author pagra
 	 */
 	void markAllPlayersAsDisconnected ();
-	
+
 	/**
 	* pushes an event to the eventqueue of the server. This is threadsafe.
 	*@author alzi alias DoctorDeath

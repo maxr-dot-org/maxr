@@ -211,7 +211,7 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 		Server->bStarted = true;
 	}
 
-	if (reconnect) 
+	if (reconnect)
 		sendReconnectionSuccess (playerNr);
 	Client->gameGUI.show();
 
@@ -223,7 +223,7 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 
 	delete Client;
 	Client = NULL;
-		
+
 	if (isServer)
 	{
 		delete Server;
@@ -3599,7 +3599,7 @@ cNetworkClientMenu::cNetworkClientMenu()
 , lastRequestedMap ("")
 {
 	gameDataContainer.isServer = false;
-	
+
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+11, lngPack.i18n ("Text~Button~TCPIP_Client") );
 	titleLabel->setCentered( true );
 	menuItems.Add ( titleLabel );

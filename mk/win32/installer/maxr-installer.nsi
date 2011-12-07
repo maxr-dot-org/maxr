@@ -161,7 +161,7 @@ Function ChangeLanguage
 
          FileClose $MAX_XML_FILE
 
-         
+
 FunctionEnd
 
 # --- Resinstaller options ---
@@ -260,7 +260,7 @@ Function LanguageDialog
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Slovenian (SLV)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "French (FRA)"
          ${NSD_CB_AddString} $LANGUAGE_DROPLIST "Spanish (SPA)"
-         
+
          # by default english is selected
          ${NSD_CB_SelectString} $LANGUAGE_DROPLIST "English (ENG)"
 

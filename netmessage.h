@@ -77,10 +77,10 @@ public:
 	eNetMessageClass getClass();
 
 	/** rewinds a received and already read (via popXYZ) msg, so that it's content can be popped a second time.
-	 * @author Pagra  
+	 * @author Pagra
 	 */
 	void rewind ();
-	
+
 	/** pushes a char to the end of the netMessage
 	* @author Eiko
 	* @param c the char to push to the message

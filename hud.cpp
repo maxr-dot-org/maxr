@@ -384,8 +384,8 @@ int cGameGUI::show()
 		Client->sendNetMessage ( message );
 	}
 	// end
-	
-	
+
+
 	makePanel ( false );
 
 	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
