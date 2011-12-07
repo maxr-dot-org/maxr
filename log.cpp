@@ -161,10 +161,9 @@ int cLog::writeMessage ( char *str )
 
 int cLog::writeMessage ( std::string str )
 {
-	std::size_t wrote;
 	if(logfile)
 	{
-		wrote = SDL_RWwrite ( logfile , str.c_str() , 1 , ( int ) str.length() );
+		int const wrote = SDL_RWwrite(logfile, str.c_str(), 1, (int)str.length());
 		std::cout << str;
 		if ( wrote<0 ) //sanity check - was file writable?
 		{
