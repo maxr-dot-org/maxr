@@ -1364,7 +1364,7 @@ bool translateUnitData(sID ID, bool vehicle)
 
 	if ( vehicle )
 	{
-		for (size_t i = 0; i <= UnitsData.vehicle.Size(); ++i)
+		for (size_t i = 0; i != UnitsData.vehicle.Size(); ++i)
 		{
 			if ( UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart )
 			{
@@ -1375,7 +1375,7 @@ bool translateUnitData(sID ID, bool vehicle)
 	}
 	else
 	{
-		for (size_t i = 0; i <= UnitsData.building.Size(); ++i)
+		for (size_t i = 0; i != UnitsData.building.Size(); ++i)
 		{
 			if ( UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart )
 			{

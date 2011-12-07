@@ -205,7 +205,7 @@ cClan* cClanData::addClan ()
 //--------------------------------------------------
 cClan* cClanData::getClan (unsigned int num)
 {
- if (num <= clans.Size())
+ if (num < clans.Size())
 	 return clans[num];
 
  return NULL;
