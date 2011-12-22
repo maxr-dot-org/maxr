@@ -1213,7 +1213,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedBuilding->IsInRange ( mouse->getKachelX(), mouse->getKachelY(), Client->Map ) )
+			if ( selectedBuilding->IsInRange (mouse->getKachelX(), mouse->getKachelY()) )
 			{
 				if ( mouse->SetCursor ( CAttack ))
 				{
@@ -1783,7 +1783,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					cBuilding* building;
 					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, Client->Map);
 
-					if ( selectedVehicle->IsInRange ( mouse->getKachelX(), mouse->getKachelY(), map ) )
+					if ( selectedVehicle->IsInRange (mouse->getKachelX(), mouse->getKachelY()) )
 					{
 						//find target ID
 						int targetId = 0;

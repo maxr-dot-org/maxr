@@ -215,7 +215,7 @@ public:
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
 	bool CanAttackObject(int x, int y, cMap *Map, bool override=false, bool checkRange = true);
-	bool IsInRange(int x, int y, cMap *Map);
+	bool IsInRange(int x, int y);
 	void DrawAttackCursor( int x, int y );
 	int CalcHelth(int damage);
 	void FindNextband();
@@ -302,6 +302,13 @@ private:
 	* draws the main image of the vehicle onto the passed surface
 	*/
 	void render( SDL_Surface* surface, const SDL_Rect& dest );
+	
+	/** 
+	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
+	 * An opponent unit only fires as reaction to the movement, if the moving unit is an "offense" for that opponent (i.e. it could attack a unit/building of the opponent).
+	 * @author: pagra
+	 */
+	bool provokeReactionFire ();
 };
 
 #endif

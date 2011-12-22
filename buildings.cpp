@@ -1780,17 +1780,12 @@ void cBuilding::CheckRessourceProd ( void )
 //--------------------------------------------------------------------------
 /** Checks if the target is in range */
 //--------------------------------------------------------------------------
-bool cBuilding::IsInRange ( int x, int y, cMap *Map )
+bool cBuilding::IsInRange ( int x, int y)
 {
 	x -= PosX;
 	y -= PosY;
 
-	if ( sqrt ( ( double ) ( x*x + y*y ) ) <= data.range )
-	{
-		return true;
-	}
-
-	return false;
+	return (sqrt ((double) (x*x + y*y)) <= data.range);
 }
 
 //--------------------------------------------------------------------------
@@ -1820,7 +1815,7 @@ bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !IsInRange ( x, y, Map ) )
+	if ( !IsInRange (x, y) )
 		return false;
 
 	if ( !owner->ScanMap[off] )

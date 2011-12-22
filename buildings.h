@@ -215,7 +215,7 @@ public:
 	void ClientStopWork();
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	bool IsInRange(int x, int y, cMap *Map);
+	bool IsInRange(int x, int y);
 	/*
 	* checks if the unit can attack the offset
 	* when override is false, the function only returns true, if there is an enemy unit

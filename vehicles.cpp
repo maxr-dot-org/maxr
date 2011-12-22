@@ -1949,7 +1949,7 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 	if ( off < 0 )
 		return false;
 
-	if ( checkRange && !IsInRange ( x, y, Map ) )
+	if ( checkRange && !IsInRange (x, y) )
 		return false;
 
 	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->isWater( x, y ) )
@@ -1987,17 +1987,12 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 //-----------------------------------------------------------------------------
 /** Checks, if the target lies in range */
 //-----------------------------------------------------------------------------
-bool cVehicle::IsInRange ( int x, int y, cMap *Map )
+bool cVehicle::IsInRange (int x, int y)
 {
 	x -= PosX;
 	y -= PosY;
 
-	if ( sqrt ( ( double ) ( x*x + y*y ) ) <= data.range )
-	{
-		return true;
-	}
-
-	return false;
+	return (sqrt ((double) (x*x + y*y)) <= data.range);
 }
 
 //-----------------------------------------------------------------------------
@@ -2542,6 +2537,114 @@ bool cVehicle::InSentryRange ()
 		}
 	}
 
+	return provokeReactionFire ();
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::provokeReactionFire ()
+{
+	// unit can't fire, so it can't provoke a reaction fire
+	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
+		return false;
+		
+	int iOff = PosX + PosY * Server->Map->size;	
+
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+	{
+		cPlayer* player = (*Server->PlayerList)[i];
+		if (player == owner) 
+			continue;
+		
+		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player))
+			continue;
+		
+		if (player->ScanMap[iOff] == false) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
+			continue;
+		
+		bool isOffendingOpponent = false;
+		cVehicle* opponentVehicle = player->VehicleList;
+		while (opponentVehicle != 0 && isOffendingOpponent == false)
+		{
+			if (IsInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
+				&& CanAttackObject (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
+			{
+				// test, if this vehicle can really attack the opponentVehicle
+				cVehicle* selectedTargetVehicle = 0;
+				cBuilding* selectedTargetBuilding = 0;
+				selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentVehicle->PosX, opponentVehicle->PosY, data.canAttack, Server->Map);
+				if (selectedTargetVehicle == opponentVehicle)
+					isOffendingOpponent = true;
+			}
+			opponentVehicle = opponentVehicle->next;
+		}
+		cBuilding* opponentBuilding = player->BuildingList;
+		while (opponentBuilding != 0 && isOffendingOpponent == false)
+		{
+			if (opponentBuilding->data.buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
+				&& IsInRange (opponentBuilding->PosX, opponentBuilding->PosY)
+				&& CanAttackObject (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
+			{
+				// test, if this vehicle can really attack the opponentVehicle
+				cVehicle* selectedTargetVehicle = 0;
+				cBuilding* selectedTargetBuilding = 0;
+				selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentBuilding->PosX, opponentBuilding->PosY, data.canAttack, Server->Map);
+				if (selectedTargetVehicle == opponentVehicle)
+					isOffendingOpponent = true;
+				
+				isOffendingOpponent = true;
+			}
+			opponentBuilding = opponentBuilding->next;
+		}
+		
+		if (isOffendingOpponent == false)
+			continue;
+		
+		
+		// search a unit of the opponent, that could fire on this vehicle
+		// first look for a building
+		opponentBuilding = player->BuildingList;
+		while (opponentBuilding != 0)
+		{
+			if (opponentBuilding->bSentryStatus == false
+				&& opponentBuilding->CanAttackObject (PosX, PosY, Server->Map, true))
+			{
+				cVehicle* selectedTargetVehicle = 0;
+				cBuilding* selectedTargetBuilding = 0;
+				selectTarget (selectedTargetVehicle, selectedTargetBuilding, PosX, PosY, opponentBuilding->data.canAttack, Server->Map);
+				if (selectedTargetVehicle == this)
+				{
+					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentBuilding->iID), cLog::eLOG_TYPE_NET_DEBUG);
+					Server->AJobs.Add (new cServerAttackJob (opponentBuilding, iOff));
+					if (ServerMoveJob)
+						ServerMoveJob->bFinished = true;
+					return true;
+				}
+			}
+			opponentBuilding = opponentBuilding->next;
+		}
+		
+		opponentVehicle = player->VehicleList;
+		while (opponentVehicle != 0)
+		{
+			if (opponentVehicle->bSentryStatus == false
+				&& opponentVehicle->CanAttackObject (PosX, PosY, Server->Map, true, true)
+				&& opponentVehicle->data.isStealthOn == TERRAIN_NONE) // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
+			{
+				cVehicle* selectedTargetVehicle = 0;
+				cBuilding* selectedTargetBuilding = 0;
+				selectTarget (selectedTargetVehicle, selectedTargetBuilding, PosX, PosY, opponentVehicle->data.canAttack, Server->Map);
+				if (selectedTargetVehicle == this)
+				{
+					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
+					Server->AJobs.Add (new cServerAttackJob (opponentVehicle, iOff));
+					if (ServerMoveJob)
+						ServerMoveJob->bFinished = true;
+					return true;
+				}
+			}
+			opponentVehicle = opponentVehicle->next;
+		}
+	}
 	return false;
 }
 
