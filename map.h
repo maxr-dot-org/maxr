@@ -279,13 +279,14 @@ public:
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
-	* if a player is passed, the function uses the players point of view, so it does not check for units that are not in sight
-	* note, that the function can only check for map border overflows, if you pass xy coordinates instead of an offset
+	* if a checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player = NULL ) const;
-	bool possiblePlace( const cVehicle* vehicle, int offset, const cPlayer* player = NULL ) const;
-	bool possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player = NULL ) const;
-	bool possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const cPlayer* player = NULL ) const;
+	bool possiblePlace( const cVehicle* vehicle, int x, int y, bool checkPlayer = false ) const;
+	//bool possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player = NULL ) const;
+	//bool possiblePlace( const cVehicle* vehicle, int offset, const cPlayer* player = NULL ) const;
+	bool possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer = false) const;
+	//bool possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player = NULL ) const;
+	//bool possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const cPlayer* player = NULL ) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building

@@ -1353,7 +1353,7 @@ void cGameGUI::updateMouseCursor()
 				{
 					mouse->SetCursor ( CNo );
 				}
-				else if ( Client->Map->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY() ))
+				else if ( Client->Map->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true ))
 				{
 					mouse->SetCursor ( CMove );
 				}

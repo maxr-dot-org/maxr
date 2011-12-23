@@ -1464,7 +1464,7 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 //--------------------------------------------------------------------------
 bool cBuilding::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
-	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
+	if ( !map->possiblePlaceVehicle( typ->data, x, y, owner ) ) return false;
 	if ( !isNextTo(x, y) ) return false;
 
 	return true;
@@ -2686,7 +2686,7 @@ int cBuilding::playStream ()
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::isDetectedByPlayer( cPlayer* player )
+bool cBuilding::isDetectedByPlayer( const cPlayer* player )
 {
 	for (unsigned int i = 0; i < DetectedByPlayerList.Size(); i++)
 	{

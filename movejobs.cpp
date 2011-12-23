@@ -224,7 +224,7 @@ void cPathCalculator::expandNodes ( sPathNode *ParentNode )
 			if ( x < 0 || x >= Map->size ) continue;
 			if ( x == ParentNode->x && y == ParentNode->y ) continue;
 
-			if ( !Map->possiblePlaceVehicle( Vehicle->data, x, y, Vehicle->owner) )
+			if ( !Map->possiblePlace( Vehicle, x, y, true) )
 			{
 				// when we have a group of units, the units will not block each other
 				if ( group )

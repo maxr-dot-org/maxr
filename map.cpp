@@ -747,26 +747,15 @@ void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
 	vehicle->data.isBig = true;
 }
 
-bool cMap::possiblePlace( const cVehicle* vehicle, int x, int y, const cPlayer* player ) const
+bool cMap::possiblePlace( const cVehicle* vehicle, int x, int y, bool checkPlayer ) const
+{
+	return possiblePlaceVehicle( vehicle->data, x, y, vehicle->owner, checkPlayer );
+}
+
+bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer ) const
 {
 	if ( x < 0 || x >= size || y < 0 || y >= size ) return false;
-	return possiblePlaceVehicle( vehicle->data, x + y * size, player );
-}
-
-bool cMap::possiblePlace( const cVehicle* vehicle, int offset, const cPlayer* player ) const
-{
-	return possiblePlaceVehicle( vehicle->data, offset, player );
-}
-
-bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player ) const
-{
-	if ( x < 0 || x >= size || y < 0 || y >= size ) return false;
-	return possiblePlaceVehicle( vehicleData, x + y * size, player );
-}
-
-bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const cPlayer* player ) const
-{
-	if ( offset < 0 || offset >= size*size ) return false;
+	int offset = x + y * size;
 
 	//search first building, that is not a connector
 	cBuildingIterator building = fields[offset].getBuildings();
@@ -774,7 +763,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 	if ( vehicleData.factorAir > 0 )
 	{
-		if ( player && !player->ScanMap[offset] ) return true;
+		if ( checkPlayer && player && !player->ScanMap[offset] ) return true;
 		//only one plane per field for now
 		if ( fields[offset].planes.Size() > 0 ) return false;
 	}
@@ -784,13 +773,17 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 		if ( ( terrain[Kacheln[offset]].water && vehicleData.factorSea == 0  ) || ( terrain[Kacheln[offset]].coast && vehicleData.factorCoast == 0 ) )
 		{
-			if ( player && !player->ScanMap[offset] ) return false;
+			if ( checkPlayer && player && !player->ScanMap[offset] ) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
 			if ( !building ) return false;
 			if ( !( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) return false;
 		}
-		if ( player && !player->ScanMap[offset] ) return true;
+		//check for enemy mines
+		if ( player && building && building->owner != player && building->data.explodesOnContact && (building->isDetectedByPlayer( player ) || checkPlayer) )
+			return false;
+
+		if ( checkPlayer && player && !player->ScanMap[offset] ) return true;
 
 		if ( fields[offset].vehicles.Size() > 0 ) return false;
 		if ( building )
@@ -805,7 +798,12 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int offset, const
 
 		if ( !terrain[Kacheln[offset]].water && ( !terrain[Kacheln[offset]].coast || vehicleData.factorCoast == 0 ) ) return false;
 
-		if ( player && !player->ScanMap[offset] ) return true;
+		//check for enemy mines
+		if ( player && building && building->owner != player && building->data.explodesOnContact && building->isDetectedByPlayer( player ) )
+			return false;
+
+
+		if ( checkPlayer && player && !player->ScanMap[offset] ) return true;
 
 		if ( fields[offset].vehicles.Size() > 0 ) return false;
 

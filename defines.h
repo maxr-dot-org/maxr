@@ -146,7 +146,7 @@
 	#ifdef NDEBUG
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2786"
+		#define PACKAGE_REV "SVN Rev 2818"
 	#endif
 #endif
 

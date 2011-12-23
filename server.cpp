@@ -891,11 +891,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			if ( !Building->isNextTo( iX, iY )) break;
 
-			if (!Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY ) )
+			if (!Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY, Building->owner ) )
 			{
 				sideStepStealthUnit(iX, iY, BuildingListItem->type.getVehicle()->data, Building->owner );
 			}
-			if ( !Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY )) break;
+			if ( !Map->possiblePlaceVehicle( BuildingListItem->type.getVehicle()->data, iX, iY, Building->owner )) break;
 
 			addUnit ( iX, iY, BuildingListItem->type.getVehicle(), Building->owner, false );
 
@@ -1160,10 +1160,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				sideStepStealthUnit( building->PosX    , building->PosY + 1, Vehicle, rubbleoffset );
 				sideStepStealthUnit( building->PosX + 1, building->PosY + 1, Vehicle, rubbleoffset );
 
-				if ( ( !Map->possiblePlace ( Vehicle, rubbleoffset ) && rubbleoffset != off ) ||
-					( !Map->possiblePlace ( Vehicle, rubbleoffset+1 ) && rubbleoffset+1 != off ) ||
-					( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size ) && rubbleoffset+Map->size != off ) ||
-					( !Map->possiblePlace ( Vehicle, rubbleoffset+Map->size+1 ) && rubbleoffset+Map->size+1 != off ) )
+				if (( !Map->possiblePlace ( Vehicle, building->PosX    , building->PosY     ) && rubbleoffset != off ) ||
+					( !Map->possiblePlace ( Vehicle, building->PosX + 1, building->PosY     ) && rubbleoffset+1 != off ) ||
+					( !Map->possiblePlace ( Vehicle, building->PosX    , building->PosY + 1 ) && rubbleoffset+Map->size != off ) ||
+					( !Map->possiblePlace ( Vehicle, building->PosX + 1, building->PosY + 1 ) && rubbleoffset+Map->size+1 != off ) )
 				{
 					sendClearAnswer ( 1, Vehicle, 0, -1, Vehicle->owner->Nr );
 					break;
@@ -1874,7 +1874,7 @@ cVehicle *cServer::landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehic
 		for ( int k = -iWidth / 2; k < iWidth / 2; k++ )
 		{
 
-			if ( !Map->possiblePlaceVehicle( Vehicle->data, iX+k, iY+i )) continue;
+			if ( !Map->possiblePlaceVehicle( Vehicle->data, iX+k, iY+i, Player )) continue;
 
 			addUnit ( iX+k, iY+i, Vehicle, Player, true );
 			VehcilePtr = (*Map)[iX+k+ (iY+i)*Map->size].getVehicles();

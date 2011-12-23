@@ -163,8 +163,7 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
-	//TODO: prevent the surveyor from driveing onto enemy mines
-	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY )) return (float)FIELD_BLOCKED;
+	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY, true )) return (float)FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 

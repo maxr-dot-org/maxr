@@ -2669,7 +2669,7 @@ void cVehicle::DrawExitPoints(sVehicle* const typ) const
 //-----------------------------------------------------------------------------
 bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
 {
-	if ( !map->possiblePlaceVehicle( typ->data, x, y ) ) return false;
+	if ( !map->possiblePlaceVehicle( typ->data, x, y, owner ) ) return false;
 	if ( data.factorAir > 0 && ( x != PosX || y != PosY ) ) return false;
 	if ( !isNextTo(x, y) ) return false;
 
