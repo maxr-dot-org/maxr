@@ -4802,6 +4802,12 @@ cUpgradeMenu::cUpgradeMenu(cPlayer* player)
 	goldBar->setMaximalValue ( credits );
 	goldBar->setCurrentValue ( credits );
 
+	upgradeFilter->setPlaneChecked(plane);
+	upgradeFilter->setTankChecked(tank);
+	upgradeFilter->setShipChecked(ship);
+	upgradeFilter->setBuildingChecked(build);
+	upgradeFilter->setTNTChecked(tnt);
+
 	generateSelectionList();
 	if (selectedUnit != 0)
 	{
@@ -4840,6 +4846,12 @@ void cUpgradeMenu::selectionChanged ( void *parent )
 }
 
 //------------------------------------------------------------------------------
+bool cUpgradeMenu::tank = true;
+bool cUpgradeMenu::plane = false;
+bool cUpgradeMenu::ship = false;
+bool cUpgradeMenu::build = false;
+bool cUpgradeMenu::tnt = false;
+
 void cUpgradeMenu::generateSelectionList()
 {
 	sID oldSelectedUnit;
@@ -4851,11 +4863,11 @@ void cUpgradeMenu::generateSelectionList()
 	}
 
 	selectionList->clear();
-	bool tank = upgradeFilter->TankIsChecked();
-	bool plane = upgradeFilter->PlaneIsChecked();
-	bool ship = upgradeFilter->ShipIsChecked();
-	bool build = upgradeFilter->BuildingIsChecked();
-	bool tnt = upgradeFilter->TNTIsChecked();
+	tank = upgradeFilter->TankIsChecked();
+	plane = upgradeFilter->PlaneIsChecked();
+	ship = upgradeFilter->ShipIsChecked();
+	build = upgradeFilter->BuildingIsChecked();
+	tnt = upgradeFilter->TNTIsChecked();
 
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{

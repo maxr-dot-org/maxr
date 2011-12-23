@@ -980,6 +980,11 @@ public:
  */
 class cUpgradeMenu : public cUpgradeHangarMenu
 {
+	static bool tank;
+	static bool plane;
+	static bool ship;
+	static bool build;
+	static bool tnt;
 protected:
 public:
 	cUpgradeMenu( cPlayer *player );
