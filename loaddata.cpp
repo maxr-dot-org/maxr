@@ -499,17 +499,32 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
  * @param dest Destination Mix_Chunk
  * @param directory Directory of the file
  * @param filename Name of the file
+ * @param localize When true, sVoiceLanguage is appended to the filename. Used for loading voice files.
  * @return 1 on success
  */
-static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename)
+static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename, bool localize = false)
 {
 	string filepath;
+	string fullPath;
 	if(strcmp(directory,""))
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
 	}
-	filepath += filename;
+	//add lang code to voice
+	fullPath = filepath + filename;
+	if ( localize && !cSettings::getInstance().getVoiceLanguage().empty() )
+	{
+		fullPath.insert(fullPath.rfind("."),"_" + cSettings::getInstance().getVoiceLanguage() );
+		if(FileExists(filepath.c_str()))
+		{
+			dest = Mix_LoadWAV(filepath.c_str());
+			return 1;
+		}
+	}
+
+	//no localized voice file. Try opening without lang code
+	fullPath = filepath + filename;
 	if(!FileExists(filepath.c_str()))
 		return 0;
 
@@ -703,38 +718,38 @@ static int LoadVoices(const char* path)
 {
 	Log.write ( "Loading Voices", LOG_TYPE_INFO );
 
-	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.ogg" );
-	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.ogg" );
-	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.ogg" );
-	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.ogg" );
-	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.ogg" );
-	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.ogg" );
-	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.ogg" );
-	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.ogg" );
-	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.ogg" );
-	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.ogg" );
-	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.ogg" );
-	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.ogg" );
-	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.ogg" );
-	LoadSoundfile ( VoiceData.VOIWachposten,path, "wachposten.ogg" );
-	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.ogg" );
-	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.ogg" );
-	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.ogg" );
-	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.ogg" );
-	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.ogg" );
-	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.ogg" );
-	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.ogg" );
-	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.ogg" );
-	LoadSoundfile ( VoiceData.VOICommandoDetected,path, "commando_detected.ogg" );
-	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.ogg" );
-	LoadSoundfile ( VoiceData.VOISaved,path, "saved.ogg" );
-	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.ogg" );
-	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.ogg" );
-	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.ogg" );
-	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.ogg" );
-	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.ogg" );
-	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.ogg" );
-	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.ogg" );
+	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.ogg", true );
+	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.ogg", true);
+	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.ogg", true );
+	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.ogg", true );
+	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.ogg", true );
+	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.ogg", true );
+	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.ogg", true );
+	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.ogg", true );
+	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.ogg", true );
+	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.ogg", true );
+	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.ogg", true );
+	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.ogg", true );
+	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.ogg", true );
+	LoadSoundfile ( VoiceData.VOIWachposten,path, "wachposten.ogg", true );
+	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.ogg", true );
+	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.ogg", true );
+	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.ogg", true );
+	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.ogg", true );
+	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.ogg", true );
+	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.ogg", true );
+	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.ogg", true );
+	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.ogg", true );
+	LoadSoundfile ( VoiceData.VOICommandoDetected,path, "commando_detected.ogg", true );
+	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.ogg", true );
+	LoadSoundfile ( VoiceData.VOISaved,path, "saved.ogg", true );
+	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.ogg", true );
+	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.ogg", true );
+	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.ogg", true );
+	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.ogg", true );
+	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.ogg", true );
+	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.ogg", true );
+	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.ogg", true );
 
 	return 1;
 }

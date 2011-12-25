@@ -162,6 +162,9 @@ public:
 	std::string getLanguage();
 	void setLanguage(const char *language, bool save = true);
 
+	std::string getVoiceLanguage();
+	void setVoiceLanguage(const char *language, bool save = true);
+
 	unsigned int getCacheSize();
 	void setCacheSize(unsigned int cacheSize, bool save = true);
 
@@ -238,6 +241,8 @@ private:
 	bool preScale;
 	/**translation file*/
 	std::string language;
+	/**language code for voice files*/
+	std::string voiceLanguage;
 	/**cache size*/
 	unsigned int cacheSize;
 

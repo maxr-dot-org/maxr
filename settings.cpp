@@ -465,6 +465,20 @@ void cSettings::initialize()
 			*i = std::toupper((unsigned char)*i);
 		language = temp.c_str();
 	}
+	
+	// =============================================================================
+	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","VoiceLanguage", NULL);
+	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	{
+		Log.write ( "Can't load language from config file: using default value", LOG_TYPE_WARNING );
+		setVoiceLanguage("");
+	}
+	else
+	{
+		for (std::string::iterator i = temp.begin(), end = temp.end(); i != end; ++i)
+			*i = std::tolower((unsigned char)*i);
+		voiceLanguage = temp.c_str();
+	}
 
 	//GAME
 	// =============================================================================
@@ -1345,7 +1359,18 @@ void cSettings::setLanguage(const char *language, bool save)
 	this->language = language;
 	if(save) saveSetting("Options~Start~Language", language);
 }
+//------------------------------------------------------------------------------
+std::string cSettings::getVoiceLanguage()
+{
+	return voiceLanguage;
+}
 
+//------------------------------------------------------------------------------
+void cSettings::setVoiceLanguage(const char *language, bool save)
+{
+	this->voiceLanguage = language;
+	if(save) saveSetting("Options~Start~VoiceLanguage", language);
+}
 //------------------------------------------------------------------------------
 unsigned int cSettings::getCacheSize()
 {
