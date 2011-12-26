@@ -2370,11 +2370,11 @@ void cServer::handleEnd ( int iPlayerNum )
 			iWantPlayerEndNum = iPlayerNum;
 			return;
 		}
-		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
 		iTurn++;
 		makeTurnEnd ();
 		// send report to player
 		sendTurnReport ( (*PlayerList)[0] );
+		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
 		//sendUnfreeze();
 	}
 	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
@@ -2389,6 +2389,9 @@ void cServer::handleEnd ( int iPlayerNum )
 		if ( iActiveTurnPlayerNr >= (int)PlayerList->Size() )
 		{
 			iActiveTurnPlayerNr = 0;
+			makeTurnEnd ();
+			iTurn++;
+
 			if ( gameType == GAME_TYPE_HOTSEAT )
 			{
 				sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, iPlayerNum);
@@ -2399,9 +2402,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				{
 					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, (*PlayerList)[i]->Nr);
 				}
-			}
-			iTurn++;
-			makeTurnEnd ();
+			}			
 		}
 		else
 		{
@@ -2474,17 +2475,18 @@ void cServer::handleEnd ( int iPlayerNum )
 			{
 				PlayerEndList.Delete ( 0 );
 			}
-			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-			{
-				sendMakeTurnEnd ( true, false, -1, i );
-			}
 
 			iTurn++;
 			makeTurnEnd ();
+
 			// send reports to all players
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				sendTurnReport ( (*PlayerList)[i] );
+			}
+			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			{
+				sendMakeTurnEnd ( true, false, -1, i );
 			}
 			//sendUnfreeze();
 		}
