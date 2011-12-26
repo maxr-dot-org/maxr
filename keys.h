@@ -65,6 +65,7 @@ public:
 	SDLKey KeyUnitMenuStop;
 	SDLKey KeyUnitMenuClear;
 	SDLKey KeyUnitMenuSentry;
+	SDLKey KeyUnitMenuManualFire;
 	SDLKey KeyUnitMenuActivate;
 	SDLKey KeyUnitMenuLoad;
 	SDLKey KeyUnitMenuReload;

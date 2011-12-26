@@ -440,6 +440,8 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_ATTACKJOB_IMPACT");
 	case GAME_EV_TURN_REPORT:
 		return string("GAME_EV_TURN_REPORT");
+	case GAME_EV_WANT_CHANGE_MANUAL_FIRE:
+		return string("GAME_EV_WANT_CHANGE_MANUAL_FIRE");
 	case GAME_EV_WANT_CHANGE_SENTRY:
 		return string("GAME_EV_WANT_CHANGE_SENTRY");
 	case GAME_EV_ADD_RUBBLE:

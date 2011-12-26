@@ -84,6 +84,7 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsBuilding = false;
 	IsClearing = false;
 	bSentryStatus = false;
+	bManualFireStatus = false;
 	BuildPath = false;
 	LayMines = false;
 	ClearMines = false;
@@ -1106,6 +1107,8 @@ string cVehicle::getStatusStr ()
 		return lngPack.i18n ( "Text~Comp~Surveying" );
 	else if ( ClientMoveJob )
 		return lngPack.i18n ( "Text~Comp~Moving" );
+	else if ( bManualFireStatus )
+		return lngPack.i18n ( "Text~Comp~ReactionFireOff" );
 	else if ( bSentryStatus )
 		return lngPack.i18n ( "Text~Comp~Sentry" );
 	else if ( IsBuilding )
@@ -1338,6 +1341,19 @@ void cVehicle::menuReleased ()
 		nr++;
 	}
 
+	// manual Fire:
+	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	{
+		if ( exeNr == nr )
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendChangeManualFireStatus ( iID, true );
+			return;
+		}
+		nr++;
+	}
+	
 	// sentry:
 	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
@@ -1565,6 +1581,17 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 		nr++;
 	}
 
+	// Manual
+	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	{
+		isMarked = ( markerPossible && selMenuNr == nr ) || bManualFireStatus;
+		
+		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
+		
+		dest.y += 22;
+		nr++;
+	}
+	
 	// Sentry:
 	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
@@ -1696,6 +1723,9 @@ int cVehicle::GetMenuPointAnz ()
 	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 		nr++;
 
+	if ( bManualFireStatus || data.canAttack )
+		nr++;
+	
 	if ( bSentryStatus || data.canAttack )
 		nr++;
 
@@ -2580,7 +2610,7 @@ bool cVehicle::provokeReactionFire ()
 		cBuilding* opponentBuilding = player->BuildingList;
 		while (opponentBuilding != 0 && isOffendingOpponent == false)
 		{
-			if (opponentBuilding->data.buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
+			if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
 				&& IsInRange (opponentBuilding->PosX, opponentBuilding->PosY)
 				&& CanAttackObject (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
 			{
@@ -2605,7 +2635,7 @@ bool cVehicle::provokeReactionFire ()
 		opponentBuilding = player->BuildingList;
 		while (opponentBuilding != 0)
 		{
-			if (opponentBuilding->bSentryStatus == false
+			if (opponentBuilding->bSentryStatus == false && opponentBuilding->bManualFireStatus == false
 				&& opponentBuilding->CanAttackObject (PosX, PosY, Server->Map, true))
 			{
 				cVehicle* selectedTargetVehicle = 0;
@@ -2626,7 +2656,7 @@ bool cVehicle::provokeReactionFire ()
 		opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0)
 		{
-			if (opponentVehicle->bSentryStatus == false
+			if (opponentVehicle->bSentryStatus == false && opponentVehicle->bManualFireStatus == false
 				&& opponentVehicle->CanAttackObject (PosX, PosY, Server->Map, true, true)
 				&& opponentVehicle->data.isStealthOn == TERRAIN_NONE) // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
 			{
@@ -2722,6 +2752,8 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 		Vehicle->owner->deleteSentryVehicle( Vehicle);
 		Vehicle->bSentryStatus = false;
 	}
+	if ( Vehicle->bManualFireStatus )
+		Vehicle->bManualFireStatus = false;
 
 	Vehicle->Loaded = true;
 

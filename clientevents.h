@@ -203,6 +203,11 @@ void sendWantExitFinishedVehicle ( cBuilding *Building, int iX, int iY );
 */
 void sendChangeResources ( cBuilding *Building, int iMetalProd, int iOilProd, int iGoldProd );
 /**
+ * sends that the client wants to change the manual fire status of a unit
+ *@author pagra
+ */
+void sendChangeManualFireStatus ( int iUnitID, bool bVehicle );
+/**
 * sends that the client wants to change the sentry status of a unit
 *@author alzi alias DoctorDeath
 */

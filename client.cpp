@@ -951,6 +951,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->BuildRounds = message->popInt16();
 				Vehicle->ClearingRounds = message->popInt16();
 				Vehicle->bSentryStatus = message->popBool();
+				Vehicle->bManualFireStatus = message->popBool();
 
 				if ( (Vehicle->Disabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer )
 				{
@@ -976,6 +977,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->researchArea = message->popInt16();
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
+				Building->bManualFireStatus = message->popBool();
 				Building->points = message->popInt16();
 
 				if ( (Building->Disabled > 0) != bWasDisabled && Building->owner == ActivePlayer )

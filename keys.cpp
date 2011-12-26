@@ -103,6 +103,7 @@ int LoadKeys ()
 	LoadSingleKey(KeysXml, "KeyUnitMenuStop", KeysList.KeyUnitMenuStop, "S");
 	LoadSingleKey(KeysXml, "KeyUnitMenuClear", KeysList.KeyUnitMenuClear, "C");
 	LoadSingleKey(KeysXml, "KeyUnitMenuSentry", KeysList.KeyUnitMenuSentry, "S");
+	LoadSingleKey(KeysXml, "KeyUnitMenuManualFire", KeysList.KeyUnitMenuManualFire, "M");
 	LoadSingleKey(KeysXml, "KeyUnitMenuActivate", KeysList.KeyUnitMenuActivate, "A");
 	LoadSingleKey(KeysXml, "KeyUnitMenuLoad", KeysList.KeyUnitMenuLoad, "L");
 	LoadSingleKey(KeysXml, "KeyUnitMenuReload", KeysList.KeyUnitMenuReload, "R");

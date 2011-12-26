@@ -953,6 +953,42 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 		}
 		break;
+	case GAME_EV_WANT_CHANGE_MANUAL_FIRE:
+		{
+			if (message->popBool ())	// vehicle
+			{
+				cVehicle* Vehicle = getVehicleFromID (message->popInt16 ());
+				if (Vehicle == 0) 
+					break;
+				Vehicle->bManualFireStatus = !Vehicle->bManualFireStatus;
+				if (Vehicle->bManualFireStatus && Vehicle->bSentryStatus)
+				{
+					Vehicle->bSentryStatus = false;
+					Vehicle->owner->deleteSentryVehicle (Vehicle);
+				}
+				
+				sendUnitData (Vehicle, Vehicle->owner->Nr);
+				for (unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size (); i++)
+					sendUnitData (Vehicle, Vehicle->SeenByPlayerList[i]->Nr);
+			}
+			else	// building
+			{
+				cBuilding* Building = getBuildingFromID (message->popInt16 ());
+				if (Building == 0)
+					break;
+				Building->bManualFireStatus = !Building->bManualFireStatus;
+				if (Building->bManualFireStatus && Building->bSentryStatus)
+				{
+					Building->bSentryStatus = false;
+					Building->owner->deleteSentryBuilding (Building);
+				}
+
+				sendUnitData (Building, Building->owner->Nr);
+				for (unsigned int i = 0; i < Building->SeenByPlayerList.Size (); i++)
+					sendUnitData (Building, Building->SeenByPlayerList[i]->Nr);
+			}
+		}
+		break;
 	case GAME_EV_WANT_CHANGE_SENTRY:
 		{
 			if ( message->popBool() )	// vehicle
@@ -961,7 +997,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( Vehicle == NULL ) break;
 
 				Vehicle->bSentryStatus = !Vehicle->bSentryStatus;
-				if ( Vehicle->bSentryStatus ) Vehicle->owner->addSentryVehicle ( Vehicle );
+				if ( Vehicle->bSentryStatus ) 
+				{
+					Vehicle->owner->addSentryVehicle ( Vehicle );
+					Vehicle->bManualFireStatus = false;
+				}
 				else Vehicle->owner->deleteSentryVehicle ( Vehicle );
 
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
@@ -976,7 +1016,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( Building == NULL ) break;
 
 				Building->bSentryStatus = !Building->bSentryStatus;
-				if ( Building->bSentryStatus ) Building->owner->addSentryBuilding ( Building );
+				if ( Building->bSentryStatus )
+				{
+					Building->owner->addSentryBuilding ( Building );
+					Building->bManualFireStatus = false;
+				}
 				else Building->owner->deleteSentryBuilding ( Building );
 
 				sendUnitData ( Building, Building->owner->Nr );

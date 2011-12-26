@@ -150,6 +150,7 @@ public:
 	int ClearingRounds; // Gibt an, wie lange ein Feld noch geräumt wird
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	bool bSentryStatus;		/** true if the vehicle is on sentry */
+	bool bManualFireStatus; /** true, if the vehicle does only fire by manual control and not as reaction fire */
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles

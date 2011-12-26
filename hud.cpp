@@ -2524,13 +2524,33 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( selectedVehiclesGroup[i]->bSentryStatus || selectedVehiclesGroup[i]->data.canAttack ) sendChangeSentry ( selectedVehiclesGroup[i]->iID, true );
+			if ( (selectedVehiclesGroup[i]->bSentryStatus || selectedVehiclesGroup[i]->data.canAttack)
+				&& selectedVehicle->bSentryStatus == selectedVehiclesGroup[i]->bSentryStatus )
+			{
+				sendChangeSentry ( selectedVehiclesGroup[i]->iID, true );
+			}
 		}
 		sendChangeSentry ( selectedVehicle->iID, true );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->bSentryStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendChangeSentry ( selectedBuilding->iID, false );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && ( selectedVehicle->bManualFireStatus || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	{
+		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
+		{
+			if ( (selectedVehiclesGroup[i]->bManualFireStatus || selectedVehiclesGroup[i]->data.canAttack)
+				&& selectedVehicle->bManualFireStatus == selectedVehiclesGroup[i]->bManualFireStatus )
+			{
+				sendChangeManualFireStatus ( selectedVehiclesGroup[i]->iID, true );
+			}
+		}
+		sendChangeManualFireStatus ( selectedVehicle->iID, true );
+	}
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && ( selectedBuilding->bManualFireStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	{
+		sendChangeManualFireStatus ( selectedBuilding->iID, false );
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{

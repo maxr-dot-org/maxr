@@ -95,6 +95,7 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 
 	if ( data.canAttack != TERRAIN_NONE ) bSentryStatus = true;
 	else bSentryStatus = false;
+	bManualFireStatus = false;
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -284,9 +285,9 @@ string cBuilding::getStatusStr ()
 		return sText.c_str();
 	}
 	if ( bSentryStatus )
-	{
 		return lngPack.i18n ( "Text~Comp~Sentry" );
-	}
+	else if ( bManualFireStatus )
+		return lngPack.i18n ( "Text~Comp~ReactionFireOff" );
 
 	return lngPack.i18n ( "Text~Comp~Waits" );
 }
@@ -824,6 +825,9 @@ int cBuilding::GetMenuPointAnz ()
 		nr++;
 
 	if ( typ->data.canMineMaxRes > 0 )
+		nr++;
+
+	if ( bManualFireStatus || data.canAttack )
 		nr++;
 
 	if ( bSentryStatus || data.canAttack )
@@ -2177,6 +2181,19 @@ void cBuilding::menuReleased()
 		nr++;
 	}
 
+	// manual Fire:
+	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	{
+		if ( exeNr == nr )
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			sendChangeManualFireStatus ( iID, false );
+			return;
+		}
+		nr++;
+	}
+	
 	// Sentry status:
 	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
 	{
@@ -2403,6 +2420,17 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 		dest.y += 22;
 		nr++;
 	}
+	
+	// Manual
+	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	{
+		isMarked = ( markerPossible && selMenuNr == nr ) || bManualFireStatus;
+		
+		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
+		
+		dest.y += 22;
+		nr++;
+	}	
 
 	// Sentry status:
 	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
