@@ -3455,7 +3455,7 @@ void installVoices()
 {
 	string path;
 	string waveExt;
-	iTotalFiles = 32;
+	iTotalFiles = 57;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
@@ -3468,16 +3468,20 @@ void installVoices()
 	cout << "Voices\n";
 
 	path = sOutputPath + "voices" + PATH_DELIMITER;
-	waveExt = (sLangCode.empty()?"":"_") + sLangCode + ".wav";
+	waveExt = ".wav";
 	copyWAV(sVoicePath + "F001" + waveExtension, path + "ok1" + waveExt);
 	copyWAV(sVoicePath + "F004" + waveExtension, path + "ok2" + waveExt);
 	copyWAV(sVoicePath + "F006" + waveExtension, path + "ok3" + waveExt);
-	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_detected" + waveExt);
+	copyWAV(sVoicePath + "F005" + waveExtension, path + "ok4" + waveExt);
+	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed1" + waveExt);
+	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed2" + waveExt);
+	copyWAV(sVoicePath + "F012" + waveExtension, path + "commando_failed3" + waveExt);
 	copyWAV(sVoicePath + "F013" + waveExtension, path + "saved" + waveExt);
 	copyWAV(sVoicePath + "F053" + waveExtension, path + "start_none" + waveExt);
 	copyWAV(sVoicePath + "F070" + waveExtension, path + "detected1" + waveExt);
 	copyWAV(sVoicePath + "F071" + waveExtension, path + "detected2" + waveExt);
 	copyWAV(sVoicePath + "F085" + waveExtension, path + "loaded" + waveExt);
+	copyWAV(sVoicePath + "F089" + waveExtension, path + "loaded2" + waveExt);
 	copyWAV(sVoicePath + "F093" + waveExtension, path + "research_complete" + waveExt);
 	copyWAV(sVoicePath + "F094" + waveExtension, path + "no_path1" + waveExt);
 	copyWAV(sVoicePath + "F095" + waveExtension, path + "no_path2" + waveExt);
@@ -3485,24 +3489,43 @@ void installVoices()
 	copyWAV(sVoicePath + "F142" + waveExtension, path + "low_ammo1" + waveExt);
 	copyWAV(sVoicePath + "F145" + waveExtension, path + "no_speed" + waveExt);
 	copyWAV(sVoicePath + "F150" + waveExtension, path + "status_yellow" + waveExt);
+	copyWAV(sVoicePath + "F151" + waveExtension, path + "status_yellow2" + waveExt);
 	copyWAV(sVoicePath + "F154" + waveExtension, path + "status_red" + waveExt);
+	copyWAV(sVoicePath + "F155" + waveExtension, path + "status_red" + waveExt);
 	copyWAV(sVoicePath + "F158" + waveExtension, path + "wachposten" + waveExt);
 	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);
 	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);
 	copyWAV(sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt);
+	copyWAV(sVoicePath + "F169" + waveExtension, path + "build_done3" + waveExt);
+	copyWAV(sVoicePath + "F216" + waveExtension, path + "build_done4" + waveExt);
 	copyWAV(sVoicePath + "F171" + waveExtension, path + "clearing" + waveExt);
+	copyWAV(sVoicePath + "F276" + waveExtension, path + "landing" + waveExt);
 	copyWAV(sVoicePath + "F181" + waveExtension, path + "laying_mines" + waveExt);
+	copyWAV(sVoicePath + "F186" + waveExtension, path + "remove_mines" + waveExt);
 	copyWAV(sVoicePath + "F187" + waveExtension, path + "clearing_mines" + waveExt);
 	copyWAV(sVoicePath + "F191" + waveExtension, path + "surveying" + waveExt);
+	copyWAV(sVoicePath + "F192" + waveExtension, path + "surveying2" + waveExt);
+	copyWAV(sVoicePath + "F196" + waveExtension, path + "attacking1" + waveExt);
+	copyWAV(sVoicePath + "F198" + waveExtension, path + "attacking2" + waveExt);
+	copyWAV(sVoicePath + "F201" + waveExtension, path + "sub_detected" + waveExt);
 	copyWAV(sVoicePath + "F206" + waveExtension, path + "start_more" + waveExt);
+	copyWAV(sVoicePath + "F210" + waveExtension, path + "repaired_all1" + waveExt);
+	copyWAV(sVoicePath + "F211" + waveExtension, path + "repaired_all2" + waveExt);
+	copyWAV(sVoicePath + "F219" + waveExtension, path + "repaired2" + waveExt);
 	copyWAV(sVoicePath + "F220" + waveExtension, path + "repaired" + waveExt);
 	copyWAV(sVoicePath + "F224" + waveExtension, path + "transfer_done" + waveExt);
+	copyWAV(sVoicePath + "F229" + waveExtension, path + "attacking_us2" + waveExt);
+	copyWAV(sVoicePath + "F230" + waveExtension, path + "attacking_us3" + waveExt);
 	copyWAV(sVoicePath + "F232" + waveExtension, path + "attacking_us" + waveExt);
 	copyWAV(sVoicePath + "F234" + waveExtension, path + "destroyed_us" + waveExt);
 	copyWAV(sVoicePath + "F239" + waveExtension, path + "unit_stolen" + waveExt);
+	copyWAV(sVoicePath + "F243" + waveExtension, path + "unit_stolen_by_enemy" + waveExt);
 	copyWAV(sVoicePath + "F244" + waveExtension, path + "unit_disabled" + waveExt);
 	copyWAV(sVoicePath + "F249" + waveExtension, path + "disabled" + waveExt);
-
+	copyWAV(sVoicePath + "F250" + waveExtension, path + "attacking_enemy1" + waveExt);
+	copyWAV(sVoicePath + "F251" + waveExtension, path + "attacking_enemy2" + waveExt);
+	copyWAV(sVoicePath + "F271" + waveExtension, path + "turn_end_20_sec1" + waveExt);
+	copyWAV(sVoicePath + "F272" + waveExtension, path + "turn_end_20_sec2" + waveExt);
 
 	if ( logFile != NULL )
 	{
@@ -4090,7 +4113,6 @@ int main ( int argc, char* argv[] )
 	bool bGerman = false, bItalian = false, bFrench = false;
 	bool bUppercase;
 	int iLanguages = checkForAvailableLanguages (testFileName, bGerman, bItalian, bFrench, bUppercase);
-	sLangCode = "";
 
 	// choose the language to install
 	if ( iLanguages == 0 )
@@ -4105,30 +4127,25 @@ int main ( int argc, char* argv[] )
 		if ( sLanguage.compare("english") == 0 )
 		{
 			sVoicePath = sMAXPath;
-			sLangCode = "eng";
-		}
+			}
 		else if ( sLanguage.compare("german") == 0 && bGerman )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
-			sLangCode = "ger";
 		}
 		else if ( sLanguage.compare("french") == 0 && bFrench )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
-			sLangCode = "fra";
 		}
 		else if ( sLanguage.compare("italian") == 0 && bItalian )
 		{
 			if ( bUppercase ) sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
 			else sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
-			sLangCode = "ita";
 		}
 		else
 		{
 			sVoicePath = sMAXPath;
-			sLangCode = "eng";
 			writeLog("Language is not available");
 		}
 	}
@@ -4138,25 +4155,18 @@ int main ( int argc, char* argv[] )
 #if MAC
 		int languageChosen = askForLanguage (bGerman, bItalian, bFrench);
 		if (languageChosen == 0) // english
-			sLangCode = "eng";
 			sVoicePath = sMAXPath;
 		else if (languageChosen == 1 && bUppercase)
-			sLangCode = "ger";
 			sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
 		else if (languageChosen == 1 && !bUppercase)
-			sLangCode = "ger";
 			sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
 		else if (languageChosen == 2 && bUppercase)
-			sLangCode = "ita";
 			sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
 		else if (languageChosen == 2 && !bUppercase)
-			sLangCode = "ita";
 			sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
 		else if (languageChosen == 3 && bUppercase)
-			sLangCode = "fra";
 			sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
 		else if (languageChosen == 3 && !bUppercase)
-			sLangCode = "fra";
 			sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
 		else
 			sVoicePath = sMAXPath; // default - but should not happen
@@ -4189,7 +4199,6 @@ int main ( int argc, char* argv[] )
 			int number = 1;
 			if ( input.compare("english") == 0 || input.compare(iToStr(number)) )
 			{
-				sLangCode = "eng";
 				sVoicePath = sMAXPath;
 				break;
 			}
@@ -4197,7 +4206,6 @@ int main ( int argc, char* argv[] )
 			number++;
 			if ( bGerman && (input.compare("german") == 0 || input.compare(iToStr(number))) )
 			{
-				sLangCode = "ger";
 				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
@@ -4212,7 +4220,6 @@ int main ( int argc, char* argv[] )
 			if ( bGerman ) number++;
 			if ( bItalian && (input.compare("italian") == 0 || input.compare(iToStr(number))) )
 			{
-				sLangCode = "ita";
 				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
@@ -4227,7 +4234,6 @@ int main ( int argc, char* argv[] )
 			if ( bItalian ) number++;
 			if ( bFrench && (input.compare("french") == 0 || input.compare(iToStr(number))) )
 			{
-				sLangCode = "fra";
 				if ( bUppercase )
 				{
 					sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
