@@ -22,16 +22,7 @@
 #include "defines.h"
 #include "clist.h"
 
-#ifndef __sSOUND__
-#define __sSOUND__
 #define sSOUND struct Mix_Chunk
-//FIXME: extern c? fix me, seriously!
-extern "C"{
-extern DECLSPEC struct Mix_Chunk * SDLCALL Mix_LoadWAV_RW(SDL_RWops *src, int freesrc);
-#define Mix_LoadWAV(file)	Mix_LoadWAV_RW(SDL_RWFromFile(file, "rb"), 1)
-extern DECLSPEC void SDLCALL Mix_FreeChunk(struct Mix_Chunk *chunk);
-}
-#endif
 
 // Volumes ///////////////////////////////////////////////////////////////////
 #define SOUND_CHANNEL_MIN	0
