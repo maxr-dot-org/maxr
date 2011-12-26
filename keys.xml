@@ -50,6 +50,7 @@
     <KeyUnitMenuStop Text="S"/>
     <KeyUnitMenuClear Text="C"/>
     <KeyUnitMenuSentry Text="S"/>
+	<KeyUnitMenuManualFire Text="M"/>
     <KeyUnitMenuActivate Text="A"/>
     <KeyUnitMenuLoad Text="L"/>
     <KeyUnitMenuReload Text="R"/>

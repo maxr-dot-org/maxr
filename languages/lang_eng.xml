@@ -136,6 +136,7 @@
 			<Build ENG="Build"/>
 			<Transfer ENG="X-fer"/>
 			<Sentry ENG="Sentry"/>
+			<Manual ENG="Manual"/>
 			<Done ENG="Done"/>
 			<Auto ENG="Auto"/>
 			<Stop ENG="Stop"/>
@@ -337,6 +338,7 @@
 			<Producing_Err ENG="Buildposition blocked or insufficient resources"/>
 			<Moving ENG="moving"/>
 			<Sentry ENG="on sentry"/>
+			<ReactionFireOff ENG="Reaction Fire Off"/>
 			<Clearing ENG="Clearing"/>
 			<Clearing_Mine ENG="clearing mines"/>
 			<Clearing_Fin ENG="clearing done"/>
