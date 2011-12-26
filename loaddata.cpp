@@ -516,19 +516,19 @@ static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filen
 	if ( localize && !cSettings::getInstance().getVoiceLanguage().empty() )
 	{
 		fullPath.insert(fullPath.rfind("."),"_" + cSettings::getInstance().getVoiceLanguage() );
-		if(FileExists(filepath.c_str()))
+		if(FileExists(fullPath.c_str()))
 		{
-			dest = Mix_LoadWAV(filepath.c_str());
+			dest = Mix_LoadWAV(fullPath.c_str());
 			return 1;
 		}
 	}
 
 	//no localized voice file. Try opening without lang code
 	fullPath = filepath + filename;
-	if(!FileExists(filepath.c_str()))
+	if(!FileExists(fullPath.c_str()))
 		return 0;
 
-	dest = Mix_LoadWAV(filepath.c_str());
+	dest = Mix_LoadWAV(fullPath.c_str());
 
 	return 1;
 }
