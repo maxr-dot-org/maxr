@@ -1197,7 +1197,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->Disabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
@@ -4057,7 +4057,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " disabled: " + iToStr ( vehicle->Disabled );
+	tmpString = "commando_rank: " + dToStr ( Round ( vehicle->CommandoRank, 2 ) ) + " disabled: " + iToStr ( vehicle->turnsDisabled );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4114,7 +4114,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "is_locked: " + iToStr ( building->IsLocked ) + " disabled: " + iToStr ( building->Disabled ) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate );
+	tmpString = "is_locked: " + iToStr ( building->IsLocked ) + " disabled: " + iToStr ( building->turnsDisabled ) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

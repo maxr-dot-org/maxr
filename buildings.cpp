@@ -48,7 +48,8 @@ using namespace std;
 //--------------------------------------------------------------------------
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 : cUnit (cUnit::kUTBuilding, 
-		 ((Owner != 0 && b != 0) ? &(Owner->BuildingData[b->nr]) : 0))
+		 ((Owner != 0 && b != 0) ? &(Owner->BuildingData[b->nr]) : 0),
+		 Owner)
 {
 	RubbleTyp = 0;
 	RubbleValue = 0;
@@ -60,7 +61,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	researchArea = cResearch::kAttackResearch;
 	IsLocked = false;
 	typ = b;
-	owner = Owner;
 	points = 0;
 	lastShots = 0;
 
@@ -92,7 +92,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
-	Disabled = 0;
 	data.hitpointsCur = data.hitpointsMax;
 	data.ammoCur = data.ammoMax;
 	SubBase = NULL;
@@ -269,11 +268,11 @@ string cBuilding::getStatusStr ()
 		return lngPack.i18n ( "Text~Comp~Working" );
 	}
 
-	if ( Disabled )
+	if (turnsDisabled > 0)
 	{
 		string sText;
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
-		sText += iToStr ( Disabled ) + ")";
+		sText += iToStr (turnsDisabled) + ")";
 		return sText.c_str();
 	}
 	if ( bSentryStatus )
@@ -289,7 +288,7 @@ string cBuilding::getStatusStr ()
 //--------------------------------------------------------------------------
 int cBuilding::refreshData ()
 {
-	if ( Disabled )
+	if (turnsDisabled > 0)
 	{
 		if ( data.ammoCur >= data.shotsMax )
 			lastShots = data.shotsMax;
@@ -507,11 +506,11 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	//draw health bar
 	if ( Client->gameGUI.hitsChecked() )
-		DrawHelthBar();
+		drawHealthBar();
 
 	//draw ammo bar
 	if ( Client->gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0 )
-		DrawMunBar();
+		drawMunBar();
 
 	//draw status
 	if ( Client->gameGUI.statusChecked() )
@@ -655,7 +654,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 
 	if ( data.hasFrames )
 	{
-		if ( data.isAnimated && cSettings::getInstance().isAnimations() && !Disabled )
+		if ( data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0)
 		{
 			src.x = ( ANIMATION_SPEED % data.hasFrames ) * (int)(Client->gameGUI.getTileSize());
 		}
@@ -965,7 +964,7 @@ void cBuilding::ServerStartWork ()
 
 	//-- first check all requirements
 
-	if ( Disabled )
+	if (turnsDisabled > 0)
 	{
 		sendChatMessageToClient("Text~Comp~Building_Disabled", SERVER_ERROR_MESSAGE, owner->Nr );
 		return;
@@ -2380,110 +2379,6 @@ void cBuilding::Center ()
 	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
 	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
 	Client->gameGUI.setOffsetPosition ( offX, offY );
-}
-
-//------------------------------------------------------------------------
-/** draws the available ammunition over the building: */
-//--------------------------------------------------------------------------
-void cBuilding::DrawMunBar ( void ) const
-{
-	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
-	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
-
-	if ( r1.h <= 2 )
-	{
-		r1.h = 3;
-		r1.y += 1;
-	}
-
-	r2.x = r1.x + 1;
-	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) ) / data.ammoMax  * data.ammoCur );
-
-	SDL_FillRect ( buffer, &r1, 0 );
-
-	if ( data.ammoCur > data.ammoMax / 2 )
-	{
-		SDL_FillRect ( buffer, &r2, 0x04AE04 );
-	}
-	else if ( data.ammoCur > data.ammoMax / 4 )
-	{
-		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-	}
-	else
-	{
-		SDL_FillRect ( buffer, &r2, 0xE60000 );
-	}
-}
-
-//------------------------------------------------------------------------
-/** draws the health bar over the building */
-//--------------------------------------------------------------------------
-void cBuilding::DrawHelthBar ( void ) const
-{
-	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
-	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10;
-
-	if ( data.isBig )
-	{
-		r1.w += Client->gameGUI.getTileSize();
-		r1.h *= 2;
-	}
-
-	if ( r1.h <= 2  )
-		r1.h = 3;
-
-	r2.x = r1.x + 1;
-	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.hitpointsMax ) * data.hitpointsCur );
-
-	SDL_FillRect ( buffer, &r1, 0 );
-
-	if ( data.hitpointsCur > data.hitpointsMax / 2 )
-	{
-		SDL_FillRect ( buffer, &r2, 0x04AE04 );
-	}
-	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
-	{
-		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-	}
-	else
-	{
-		SDL_FillRect ( buffer, &r2, 0xE60000 );
-	}
-}
-
-//--------------------------------------------------------------------------
-void cBuilding::drawStatus() const
-{
-	SDL_Rect dest;
-	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
-	SDL_Rect disabledSymbol = {150, 109, 25, 25};
-
-	if ( Disabled )
-	{
-		if ( Client->gameGUI.getTileSize() < 25 ) return;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
-		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
-	}
-	else
-	{
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
-		if ( data.shotsCur )
-		{
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
-		}
-	}
 }
 
 //--------------------------------------------------------------------------

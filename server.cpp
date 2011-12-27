@@ -1665,7 +1665,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					if ( destVehicle )
 					{
 						// stop the vehicle and make it disabled
-						destVehicle->Disabled = strength;
+						destVehicle->turnsDisabled = strength;
 
 						//save speed and number of shots before disabling
 						destVehicle->lastSpeed = destVehicle->data.speedCur;
@@ -1688,7 +1688,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					else if ( destBuilding )
 					{
 						// stop the vehicle and make it disabled
-						destBuilding->Disabled = strength;
+						destBuilding->turnsDisabled = strength;
 
 						//save number of shots before disabling
 						destBuilding->lastShots = destBuilding->data.shotsCur;
@@ -1709,7 +1709,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				success = true;
 			}
 			// disabled units fail to detect infiltrator even if he screws up
-			else if( (destBuilding && !destBuilding->Disabled) || (destVehicle && !destVehicle->Disabled) )
+			else if( (destBuilding && destBuilding->turnsDisabled == 0) || (destVehicle && destVehicle->turnsDisabled == 0) )
 			{
 				// detect the infiltrator on failed action and let enemy units fire on him
 				//TODO: uncover the infiltrator for all players, or only for the owner of the target unit? --eiko
@@ -2619,10 +2619,10 @@ void cServer::makeTurnEnd ()
 		Building = Player->BuildingList;
 		while ( Building )
 		{
-			if ( Building->Disabled )
+			if ( Building->turnsDisabled > 0 )
 			{
-				Building->Disabled--;
-				if ( !Building->Disabled && Building->wasWorking )
+				Building->turnsDisabled--;
+				if ( Building->turnsDisabled == 0 && Building->wasWorking )
 				{
 					Building->ServerStartWork();
 					Building->wasWorking = false;
@@ -2651,9 +2651,9 @@ void cServer::makeTurnEnd ()
 		while ( Vehicle )
 		{
 
-			if ( Vehicle->Disabled )
+			if ( Vehicle->turnsDisabled > 0 )
 			{
-				Vehicle->Disabled--;
+				Vehicle->turnsDisabled--;
 			}
 			if ( Vehicle->refreshData() )
 			{
@@ -3509,12 +3509,12 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	newOwner->VehicleList = vehicle;
 
 	//the vehicle is fully operational for the new owner
-	if ( vehicle->Disabled )
+	if ( vehicle->turnsDisabled > 0 )
 	{
 		vehicle->data.speedCur = vehicle->lastSpeed;
 		vehicle->data.shotsCur = vehicle->lastShots;
 	}
-	vehicle->Disabled = 0;
+	vehicle->turnsDisabled = 0;
 
 
 	// delete the unit on the clients and ad it with new owner again

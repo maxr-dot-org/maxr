@@ -942,8 +942,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( message->popBool() ) Vehicle->changeName ( message->popString() );
 
 				Vehicle->bIsBeeingAttacked = message->popBool();
-				bool bWasDisabled = Vehicle->Disabled > 0;
-				Vehicle->Disabled = message->popInt16();
+				bool bWasDisabled = Vehicle->turnsDisabled > 0;
+				Vehicle->turnsDisabled = message->popInt16();
 				Vehicle->CommandoRank = message->popInt16();
 				Vehicle->IsClearing = message->popBool();
 				bWasBuilding = Vehicle->IsBuilding;
@@ -953,9 +953,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->bSentryStatus = message->popBool();
 				Vehicle->bManualFireStatus = message->popBool();
 
-				if ( (Vehicle->Disabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer )
+				if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer )
 				{
-					if ( Vehicle->Disabled > 0 ) ActivePlayer->addSavedReport ( Client->addCoords( Vehicle->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY );
+					if ( Vehicle->turnsDisabled > 0 ) ActivePlayer->addSavedReport ( Client->addCoords( Vehicle->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY );
 					Vehicle->owner->DoScan();
 				}
 				Data = &Vehicle->data;
@@ -972,17 +972,17 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( message->popBool() ) Building->changeName ( message->popString() );
 
-				bool bWasDisabled = Building->Disabled > 0;
-				Building->Disabled = message->popInt16();
+				bool bWasDisabled = Building->turnsDisabled > 0;
+				Building->turnsDisabled = message->popInt16();
 				Building->researchArea = message->popInt16();
 				Building->IsWorking = message->popBool();
 				Building->bSentryStatus = message->popBool();
 				Building->bManualFireStatus = message->popBool();
 				Building->points = message->popInt16();
 
-				if ( (Building->Disabled > 0) != bWasDisabled && Building->owner == ActivePlayer )
+				if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer )
 				{
-					if ( Building->Disabled > 0 ) ActivePlayer->addSavedReport ( addCoords( Building->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Building->PosX, Building->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY );
+					if ( Building->turnsDisabled > 0 ) ActivePlayer->addSavedReport ( addCoords( Building->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Building->PosX, Building->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY );
 					Building->owner->DoScan();
 				}
 				Data = &Building->data;

@@ -128,7 +128,6 @@ public:
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
 	bool groupSelected;
-	cPlayer *owner;  // Eigentümer des Vehicles
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
 	cAutoMJob *autoMJob; //the auto move AI of the vehicle
@@ -162,7 +161,6 @@ public:
 	int DamageFXPointX,DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
 	int WalkFrame;    // Frame der Geh-Annimation
 	float CommandoRank; // Rang des Commandos
-	int Disabled;     // Gibt an, für wie lange diese Einheit disabled ist
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
@@ -196,9 +194,6 @@ public:
 	virtual int getNumberOfMenuEntries() const;
 	bool MouseOverMenu(int mx,int my);
 	void DecSpeed(int value);
-	void DrawMunBar() const;
-	void drawHealthBar() const;
-	void drawStatus() const;
 	void Center();
 	/*
 	* checks if the unit can attack the offset

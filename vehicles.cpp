@@ -45,7 +45,7 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
-: cUnit (cUnit::kUTVehicle, &(Owner->VehicleData[v->nr]))
+: cUnit (cUnit::kUTVehicle, &(Owner->VehicleData[v->nr]), Owner)
 {
 	typ = v;
 	BandX = 0;
@@ -59,7 +59,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	FlightHigh = 0;
 	WalkFrame = 0;
 	CommandoRank = 0;
-	Disabled = 0;
 	BuildingTyp.iFirstPart = 0;
 	BuildingTyp.iSecondPart = 0;
 	BuildCosts = 0;
@@ -69,7 +68,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	VehicleToActivate = 0;
 	BuildBigSavedPos = 0;
 	groupSelected = false;
-	owner = Owner;
 	data.hitpointsCur = data.hitpointsMax;
 	data.ammoCur = data.ammoMax;
 	ClientMoveJob = NULL;
@@ -315,7 +313,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		tmp.x += (int)(Client->gameGUI.getTileSize()) / 2 - src.h / 2;
 		tmp.y += (int)(Client->gameGUI.getTileSize()) / 2 - src.h / 2;
 		src.y = 0;
-		src.x = Disabled ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( ANIMATION_SPEED % ( (int)(typ->overlay_org->w*Client->gameGUI.getZoom()) / src.h ) ) ) ) * Client->gameGUI.getZoom() );
+		src.x = turnsDisabled > 0 ? 0 : ( int ) ( ( typ->overlay_org->h * ( ( ANIMATION_SPEED % ( (int)(typ->overlay_org->w*Client->gameGUI.getZoom()) / src.h ) ) ) ) * Client->gameGUI.getZoom() );
 
 		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
@@ -479,7 +477,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 
 	//draw ammo bar
 	if ( Client->gameGUI.ammoChecked() && data.canAttack)
-		DrawMunBar();
+		drawMunBar();
 
 	//draw status info
 	if ( Client->gameGUI.statusChecked() )
@@ -678,7 +676,7 @@ int cVehicle::refreshData ()
 {
 	int iReturn = 0;
 
-	if ( Disabled )
+	if ( turnsDisabled > 0 )
 	{
 		lastSpeed = data.speedMax;
 
@@ -1047,11 +1045,11 @@ string cVehicle::getStatusStr ()
 			sTmp += " +" + iToStr ( (int)CommandoRank );
 		return sTmp;
 	}
-	else if ( Disabled )
+	else if ( turnsDisabled > 0 )
 	{
 		string sText;
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
-		sText += iToStr ( Disabled ) + ")";
+		sText += iToStr ( turnsDisabled ) + ")";
 		return sText;
 	}
 
@@ -1668,120 +1666,6 @@ void cVehicle::DecSpeed ( int value )
 }
 
 //-----------------------------------------------------------------------------
-/** Draws the ammunition bar over the vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawMunBar() const
-{
-	if ( owner != Client->ActivePlayer ) return;
-
-	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
-	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
-
-	if ( r1.h <= 2  )
-	{
-		r1.y += 1;
-		r1.h = 3;
-	}
-
-	r2.x = r1.x + 1;
-	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.ammoMax ) * data.ammoCur );
-
-	SDL_FillRect ( buffer, &r1, 0 );
-
-	if ( data.ammoCur > data.ammoMax / 2 )
-	{
-		SDL_FillRect ( buffer, &r2, 0x04AE04 );
-	}
-	else if ( data.ammoCur > data.ammoMax / 4 )
-	{
-		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-	}
-	else
-	{
-		SDL_FillRect ( buffer, &r2, 0xE60000 );
-	}
-}
-
-//-----------------------------------------------------------------------------
-/** Draws the hitpoints bar over the vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::drawHealthBar() const
-{
-	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
-	r1.w = Client->gameGUI.getTileSize()* 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10;
-
-	if ( r1.h <= 2  )
-		r1.h = 3;
-
-	r2.x = r1.x + 1;
-	r2.y = r1.y + 1;
-	r2.h = r1.h - 2;
-	r2.w = ( int ) ( ( ( float ) ( r1.w - 2 ) / data.hitpointsMax ) * data.hitpointsCur );
-
-	SDL_FillRect ( buffer, &r1, 0 );
-
-	if ( data.hitpointsCur > data.hitpointsMax / 2 )
-	{
-		SDL_FillRect ( buffer, &r2, 0x04AE04 );
-	}
-	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
-	{
-		SDL_FillRect ( buffer, &r2, 0xDBDE00 );
-	}
-	else
-	{
-		SDL_FillRect ( buffer, &r2, 0xE60000 );
-	}
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::drawStatus() const
-{
-	SDL_Rect dest;
-	SDL_Rect speedSymbol = {244, 97, 8, 10 };
-	SDL_Rect shotsSymbol = {254, 97, 5, 10 };
-	SDL_Rect disabledSymbol = {150, 109, 25, 25};
-
-	if ( Disabled )
-	{
-		if ( Client->gameGUI.getTileSize() < 25 ) return;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
-		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
-	}
-	else
-		{
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
-		if ( data.isBig )
-		{
-			dest.y += (Client->gameGUI.getTileSize()/2);
-			dest.x += (Client->gameGUI.getTileSize()/2);
-		}
-		if ( data.speedCur >= 4 )
-		{
-			if ( data.shotsCur ) dest.x -= Client->gameGUI.getTileSize()/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
-		}
-
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
-		if ( data.shotsCur )
-		{
-			if ( data.speedCur ) dest.x += Client->gameGUI.getTileSize()/4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
-		}
-	}
-}
-
-//-----------------------------------------------------------------------------
 /** Centers on this vehicle */
 //-----------------------------------------------------------------------------
 void cVehicle::Center ()
@@ -2131,7 +2015,7 @@ void cVehicle::MakeReport ()
 	if ( owner != Client->ActivePlayer )
 		return;
 
-	if ( Disabled )
+	if ( turnsDisabled > 0 )
 	{
 		// Disabled:
 		PlayVoice ( VoiceData.VOIDisabled );

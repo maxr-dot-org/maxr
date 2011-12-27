@@ -23,6 +23,8 @@
 #include <SDL.h>
 #include "main.h" /// for sUnitData -> move that to cUnit, too?
 
+class cPlayer;
+
 //-----------------------------------------------------------------------------
 class cUnit
 {
@@ -33,7 +35,7 @@ public:
 		kUTVehicle
 	};
 	
-	cUnit (UnitType type, sUnitData* unitData);
+	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
 	~cUnit ();
 
 	bool isVehicle () const { return unitType == kUTVehicle; }
@@ -57,19 +59,27 @@ public:
 	virtual int getMovementOffsetX () const {return 0;}
 	virtual int getMovementOffsetY () const {return 0;}
 
+	void drawMunBar () const;
+	void drawHealthBar () const;
+
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
 	int PosX, PosY;
+	int turnsDisabled;  // the time this unit will be disabled
 	
+	cPlayer* owner;
+
 	//-----------------------------------------------------------------------------
 protected:
 	UnitType unitType;
 	
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	std::string name;		// name of the building
-	
-	virtual bool treatAsBigForMenuDisplay () const { return false; } ///< overwrite possibility for subclasses
+	std::string name;		// name of the building	
+
+	void drawStatus () const;
+
+	virtual bool treatAsBigForMenuDisplay () const { return false; }
 };
 
 #endif

@@ -209,7 +209,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushBool ( Vehicle->IsBuilding );
 	message->pushBool ( Vehicle->IsClearing );
 	message->pushInt16 ( (int)Vehicle->CommandoRank );
-	message->pushInt16 ( Vehicle->Disabled );
+	message->pushInt16 ( Vehicle->turnsDisabled );
 	message->pushBool ( Vehicle->bIsBeeingAttacked );
 	if ( !Vehicle->isNameOriginal() )
 	{
@@ -272,7 +272,7 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 	message->pushBool ( Building->bSentryStatus );
 	message->pushBool ( Building->IsWorking );
 	message->pushInt16 ( Building->researchArea );
-	message->pushInt16 ( Building->Disabled );
+	message->pushInt16 ( Building->turnsDisabled );
 	if ( !Building->isNameOriginal() )
 	{
 		message->pushString ( Building->getName() );

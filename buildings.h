@@ -136,7 +136,6 @@ public:
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
 	sBuilding *typ;  // Typ des Buildings
-	cPlayer *owner;  // owner of the building
 	cBuilding *next,*prev; // pointers for the linked list
 	bool bIsBeeingAttacked; /** true when an attack on this building is running */
 	int RubbleTyp;     // Typ des Drecks
@@ -161,7 +160,6 @@ public:
 	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
-	int Disabled;    // the time this unit will be disabled
 	int lastShots;   //A disabled unit gets this amount of shots back, when it it captured
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
@@ -187,9 +185,6 @@ public:
 	int refreshData();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	void Center();
-	void DrawMunBar() const;
-	void DrawHelthBar() const;
-	void drawStatus() const;
 	void menuReleased();
 	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );

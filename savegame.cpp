@@ -597,7 +597,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		vehicle->CommandoRank = (float)tmpdouble;
 	}
 	if ( unitNode->FirstChildElement( "IsBig" ) ) Server->Map->moveVehicleBig( vehicle, x, y );
-	if ( unitNode->FirstChildElement( "Disabled" ) ) vehicle->Disabled = true;
+	if ( unitNode->FirstChildElement( "Disabled" ) ) unitNode->FirstChildElement("Disabled")->Attribute ("turns", &vehicle->turnsDisabled);
 	if ( unitNode->FirstChildElement( "LayMines" ) ) vehicle->LayMines = true;
 	if ( unitNode->FirstChildElement( "AutoMoving" ) ) vehicle->hasAutoMoveJob = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
@@ -1385,7 +1385,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	addAttributeElement ( unitNode, "Direction", "num", iToStr ( Vehicle->dir ).c_str() );
 	if ( Vehicle->data.canCapture || Vehicle->data.canDisable ) addAttributeElement ( unitNode, "CommandoRank", "num", dToStr ( Vehicle->CommandoRank ).c_str() );
 	if ( Vehicle->data.isBig ) addMainElement ( unitNode, "IsBig" );
-	if ( Vehicle->Disabled ) addMainElement ( unitNode, "Disabled" );
+	if ( Vehicle->turnsDisabled > 0 ) addAttributeElement ( unitNode, "Disabled", "turns", iToStr (Vehicle->turnsDisabled).c_str () );
 	if ( Vehicle->LayMines ) addMainElement ( unitNode, "LayMines" );
 	if ( Vehicle->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
 	if ( Vehicle->bManualFireStatus ) addMainElement ( unitNode, "ManualFire" );

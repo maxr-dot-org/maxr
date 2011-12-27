@@ -21,15 +21,18 @@
 #include "math.h"
 #include "client.h"
 #include "video.h"
+#include "player.h"
 
 using namespace std;
 
 //-----------------------------------------------------------------------------
-cUnit::cUnit (UnitType unitType, sUnitData* unitData)
-: unitType (unitType)
-, isOriginalName (true)
-, PosX (0)
+cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
+: PosX (0)
 , PosY (0)
+, turnsDisabled (0)
+, owner (owner)
+, unitType (unitType)
+, isOriginalName (true)
 {
 	if (unitData != 0)
 		data = *unitData;
@@ -222,5 +225,117 @@ int cUnit::getScreenPosX () const
 int cUnit::getScreenPosY () const
 {
 	return 18 - ((int)((Client->gameGUI.getOffsetY () - getMovementOffsetY ()) * Client->gameGUI.getZoom ())) + (int)(Client->gameGUI.getTileSize ()) * PosY;
+}
+
+//-----------------------------------------------------------------------------
+/** Draws the ammunition bar over the unit */
+//-----------------------------------------------------------------------------
+void cUnit::drawMunBar () const
+{
+	if (owner != Client->ActivePlayer)
+		return;
+	
+	SDL_Rect r1, r2;
+	r1.x = getScreenPosX () + Client->gameGUI.getTileSize () / 10 + 1;
+	r1.w = Client->gameGUI.getTileSize () * 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize () / 8;
+	r1.y = getScreenPosY () + Client->gameGUI.getTileSize () / 10 + Client->gameGUI.getTileSize () / 8;
+	
+	if (r1.h <= 2)
+	{
+		r1.y += 1;
+		r1.h = 3;
+	}
+	
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.h = r1.h - 2;
+	r2.w = (int)(((float)(r1.w - 2) / data.ammoMax) * data.ammoCur);
+	
+	SDL_FillRect (buffer, &r1, 0);
+	
+	if (data.ammoCur > data.ammoMax / 2)
+		SDL_FillRect (buffer, &r2, 0x04AE04);
+	else if (data.ammoCur > data.ammoMax / 4)
+		SDL_FillRect (buffer, &r2, 0xDBDE00);
+	else
+		SDL_FillRect (buffer, &r2, 0xE60000);
+}
+
+//------------------------------------------------------------------------
+/** draws the health bar over the unit */
+//--------------------------------------------------------------------------
+void cUnit::drawHealthBar () const
+{
+	SDL_Rect r1, r2;
+	r1.x = getScreenPosX () + Client->gameGUI.getTileSize () / 10 + 1;
+	r1.w = Client->gameGUI.getTileSize () * 8 / 10 ;
+	r1.h = Client->gameGUI.getTileSize () / 8;
+	r1.y = getScreenPosY () + Client->gameGUI.getTileSize () / 10;
+	
+	if (data.isBig)
+	{
+		r1.w += Client->gameGUI.getTileSize ();
+		r1.h *= 2;
+	}
+	
+	if (r1.h <= 2)
+		r1.h = 3;
+	
+	r2.x = r1.x + 1;
+	r2.y = r1.y + 1;
+	r2.h = r1.h - 2;
+	r2.w = (int)( ((float)(r1.w - 2) / data.hitpointsMax) * data.hitpointsCur);
+	
+	SDL_FillRect (buffer, &r1, 0);
+	
+	if (data.hitpointsCur > data.hitpointsMax / 2)
+		SDL_FillRect (buffer, &r2, 0x04AE04);
+	else if (data.hitpointsCur > data.hitpointsMax / 4)
+		SDL_FillRect (buffer, &r2, 0xDBDE00);
+	else
+		SDL_FillRect (buffer, &r2, 0xE60000);
+}
+
+//-----------------------------------------------------------------------------
+void cUnit::drawStatus () const
+{
+	SDL_Rect dest;
+	SDL_Rect speedSymbol = {244, 97, 8, 10};
+	SDL_Rect shotsSymbol = {254, 97, 5, 10};
+	SDL_Rect disabledSymbol = {150, 109, 25, 25};
+	
+	if (turnsDisabled > 0)
+	{
+		if (Client->gameGUI.getTileSize () < 25) 
+			return;
+		dest.x = getScreenPosX () + Client->gameGUI.getTileSize () / 2 - 12;
+		dest.y = getScreenPosY () + Client->gameGUI.getTileSize () / 2 - 12;
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
+	}
+	else
+	{
+		dest.y = getScreenPosY () + Client->gameGUI.getTileSize () - 11;
+		dest.x = getScreenPosX () + Client->gameGUI.getTileSize () / 2 - 4;
+		if (data.isBig)
+		{
+			dest.y += (Client->gameGUI.getTileSize () / 2);
+			dest.x += (Client->gameGUI.getTileSize () / 2);
+		}
+		if (data.speedCur >= 4)
+		{
+			if (data.shotsCur) 
+				dest.x -= Client->gameGUI.getTileSize () / 4;
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest);
+		}
+		
+		dest.x = getScreenPosX () + Client->gameGUI.getTileSize () / 2 - 4;
+		if (data.shotsCur)
+		{
+			if (data.speedCur)
+				dest.x += Client->gameGUI.getTileSize () / 4;
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
+		}
+	}
 }
 

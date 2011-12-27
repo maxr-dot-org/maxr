@@ -477,7 +477,7 @@ void cPlayer::DoScan ()
 			continue;
 		}
 
-		if ( vp->Disabled )
+		if ( vp->turnsDisabled )
 			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )] = 1;
 		else
 		{
@@ -512,7 +512,7 @@ void cPlayer::DoScan ()
 	while ( bp )
 	{
 
-		if ( bp->Disabled )
+		if ( bp->turnsDisabled )
 			ScanMap[bp->PosX+bp->PosY*(int)sqrt ( (double)MapSize )]=1;
 		else
 		{
@@ -985,7 +985,7 @@ void cPlayer::DrawLockList ()
 				             spy+Client->gameGUI.getTileSize()/2,
 				             elem->v->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
 			if ( Client->gameGUI.ammoChecked()&&elem->v->data.canAttack )
-				elem->v->DrawMunBar();
+				elem->v->drawMunBar();
 			if ( Client->gameGUI.hitsChecked() )
 				elem->v->drawHealthBar();
 		}
@@ -1022,9 +1022,9 @@ void cPlayer::DrawLockList ()
 				             elem->b->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
 
 			if ( Client->gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
-				elem->b->DrawMunBar();
+				elem->b->drawMunBar();
 			if ( Client->gameGUI.hitsChecked() )
-				elem->b->DrawHelthBar();
+				elem->b->drawHealthBar();
 		}
 	}
 }
