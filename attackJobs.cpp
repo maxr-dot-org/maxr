@@ -432,7 +432,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		}
 
 		id = targetVehicle->iID;
-		targetVehicle->data.hitpointsCur = targetVehicle->CalcHelth( damage );
+		targetVehicle->data.hitpointsCur = targetVehicle->calcHealth( damage );
 		remainingHP = targetVehicle->data.hitpointsCur;
 		owner = targetVehicle->owner;
 		Log.write(" Server: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
@@ -453,7 +453,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 		}
 
 		id = targetBuilding->iID;
-		targetBuilding->data.hitpointsCur = targetBuilding->CalcHelth( damage );
+		targetBuilding->data.hitpointsCur = targetBuilding->calcHealth( damage );
 		remainingHP = targetBuilding->data.hitpointsCur;
 		owner = targetBuilding->owner;
 		targetBuilding->hasBeenAttacked = true;

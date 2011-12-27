@@ -45,10 +45,9 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
+: cUnit (cUnit::kUTVehicle, &(Owner->VehicleData[v->nr]))
 {
 	typ = v;
-	PosX = 0;
-	PosY = 0;
 	BandX = 0;
 	BandY = 0;
 	OffX = 0;
@@ -71,7 +70,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	BuildBigSavedPos = 0;
 	groupSelected = false;
 	owner = Owner;
-	data = owner->VehicleData[typ->nr];
 	data.hitpointsCur = data.hitpointsMax;
 	data.ammoCur = data.ammoMax;
 	ClientMoveJob = NULL;
@@ -92,7 +90,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	IsLocked = false;
 	bIsBeeingAttacked = false;
 	BigBetonAlpha = 0;
-	isOriginalName = true;
 	lastShots = 0;
 	lastSpeed = 0;
 
@@ -675,109 +672,6 @@ void cVehicle::Deselct ()
 }
 
 //-----------------------------------------------------------------------------
-/** Generates the name of the vehicle based on the version */
-//-----------------------------------------------------------------------------
-string cVehicle::getNamePrefix ()
-{
-	int tmp;
-	string rome = "";
-	int nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
-
-	// genrate roman version number (correct until 899)
-
-	if ( nr > 100 )
-	{
-		tmp = nr / 100;
-		nr %= 100;
-
-		while ( tmp-- )
-		{
-			rome += "C";
-		}
-	}
-
-	if ( nr >= 90 )
-	{
-		rome += "XC";
-		nr -= 90;
-	}
-
-	if ( nr >= 50 )
-	{
-		nr -= 50;
-		rome += "L";
-	}
-
-	if ( nr >= 40 )
-	{
-		nr -= 40;
-		rome += "XL";
-	}
-
-	if ( nr >= 10 )
-	{
-		tmp = nr / 10;
-		nr %= 10;
-
-		while ( tmp-- )
-		{
-			rome += "X";
-		}
-	}
-
-	if ( nr == 9 )
-	{
-		nr -= 9;
-		rome += "IX";
-	}
-
-	if ( nr >= 5 )
-	{
-		nr -= 5;
-		rome += "V";
-	}
-
-	if ( nr == 4 )
-	{
-		nr -= 4;
-		rome += "IV";
-	}
-
-	// alzi:
-	// We had a bug, when 'nr' was negative and the following loop never terminated.
-	// I modified the loop to terminate on a negative 'nr', but since this should never be the case,
-	// the error has to be occured somewhere before and I added this warning.
-	if ( nr < 0 )
-	{
-		Log.write( "cVehicle: Negative 'nr' in cVehicle::getNamePrefix()", cLog::eLOG_TYPE_WARNING );
-	}
-	while ( nr-- > 0 )
-	{
-		rome += "I";
-	}
-
-	return "MK " + rome;
-}
-
-//-----------------------------------------------------------------------------
-/** Returns the name of the vehicle how it should be displayed */
-//-----------------------------------------------------------------------------
-string cVehicle::getDisplayName()
-{
-	return getNamePrefix() + " " + (isOriginalName ? data.name : name);
-}
-
-
-//-----------------------------------------------------------------------------
-/** changes the name of the unit and indicates it as undefault */
-//-----------------------------------------------------------------------------
-void cVehicle::changeName ( string newName )
-{
-	name = newName;
-	isOriginalName = false;
-}
-
-//-----------------------------------------------------------------------------
 /** Initializes all unit data to its maxiumum values */
 //-----------------------------------------------------------------------------
 int cVehicle::refreshData ()
@@ -933,22 +827,6 @@ int cVehicle::refreshData ()
 		iReturn = 1;
 	}
 	return iReturn;
-}
-
-//-----------------------------------------------------------------------------
-/** Returns the x-position of the vehicle on the screen */
-//-----------------------------------------------------------------------------
-int cVehicle::GetScreenPosX() const
-{
-	return 180 - ( ( int ) ( ( Client->gameGUI.getOffsetX() - OffX ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosX;
-}
-
-//-----------------------------------------------------------------------------
-/** Returns the y-position of the vehicle on the screen */
-//-----------------------------------------------------------------------------
-int cVehicle::GetScreenPosY() const
-{
-	return 18 - ( ( int ) ( ( Client->gameGUI.getOffsetY() - OffY ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosY;
 }
 
 //-----------------------------------------------------------------------------
@@ -1228,7 +1106,7 @@ void cVehicle::StartMoveSound ()
 void cVehicle::menuReleased ()
 {
 	int nr = 0, exeNr;
-	SDL_Rect dest = GetMenuSize();
+	SDL_Rect dest = getMenuSize();
 	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
 	if ( exeNr != selMenuNr )
 	{
@@ -1498,7 +1376,7 @@ void cVehicle::menuReleased ()
 //-----------------------------------------------------------------------------
 void cVehicle::setMenuSelection()
 {
-	SDL_Rect dest = GetMenuSize();
+	SDL_Rect dest = getMenuSize();
 	selMenuNr = ( mouse->y - dest.y ) / 22;
 }
 
@@ -1508,7 +1386,7 @@ void cVehicle::setMenuSelection()
 void cVehicle::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0;
-	SDL_Rect dest = GetMenuSize();
+	SDL_Rect dest = getMenuSize();
 
 	if ( moving || bIsBeeingAttacked ) return;
 
@@ -1701,7 +1579,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 //-----------------------------------------------------------------------------
 /** Returns the number of points in the menu: */
 //-----------------------------------------------------------------------------
-int cVehicle::GetMenuPointAnz ()
+int cVehicle::getNumberOfMenuEntries () const
 {
 	int nr = 2;
 
@@ -1754,49 +1632,12 @@ int cVehicle::GetMenuPointAnz ()
 }
 
 //-----------------------------------------------------------------------------
-/** Returns the size of the menu and the position */
-//-----------------------------------------------------------------------------
-SDL_Rect cVehicle::GetMenuSize ()
-{
-	SDL_Rect dest;
-	int i, size;
-	dest.x = GetScreenPosX();
-	dest.y = GetScreenPosY();
-	dest.h = i = GetMenuPointAnz() * 22;
-	dest.w = 42;
-	size = Client->gameGUI.getTileSize();
-
-	if ( IsBuilding && BuildingTyp.getUnitDataOriginalVersion()->isBig )
-		size *= 2;
-
-	if ( dest.x + size + 42 >= Video.getResolutionX() - 12 )
-		dest.x -= 42;
-	else
-		dest.x += size;
-
-	if ( dest.y - ( i - size ) / 2 <= 24 )
-	{
-		dest.y -= ( i - size ) / 2;
-		dest.y += - ( dest.y - 24 );
-	}
-	else if ( dest.y - ( i - size ) / 2 + i >= Video.getResolutionY() - 24 )
-	{
-		dest.y -= ( i - size ) / 2;
-		dest.y -= ( dest.y + i ) - ( Video.getResolutionY() - 24 );
-	}
-	else
-		dest.y -= ( i - size ) / 2;
-
-	return dest;
-}
-
-//-----------------------------------------------------------------------------
 /** Returns true, if the mouse coordinates are in the menu's space */
 //-----------------------------------------------------------------------------
 bool cVehicle::MouseOverMenu ( int mx, int my )
 {
 	SDL_Rect r;
-	r = GetMenuSize();
+	r = getMenuSize();
 
 	if ( mx < r.x || mx > r.x + r.w )
 		return false;
@@ -1834,10 +1675,10 @@ void cVehicle::DrawMunBar() const
 	if ( owner != Client->ActivePlayer ) return;
 
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
+	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
 
 	if ( r1.h <= 2  )
 	{
@@ -1872,10 +1713,10 @@ void cVehicle::DrawMunBar() const
 void cVehicle::drawHealthBar() const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
 	r1.w = Client->gameGUI.getTileSize()* 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10;
+	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10;
 
 	if ( r1.h <= 2  )
 		r1.h = 3;
@@ -1912,14 +1753,14 @@ void cVehicle::drawStatus() const
 	if ( Disabled )
 	{
 		if ( Client->gameGUI.getTileSize() < 25 ) return;
-		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
-		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.y = getScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
 		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
 	}
 	else
 		{
-		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize() - 11;
-		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
+		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
+		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.isBig )
 		{
 			dest.y += (Client->gameGUI.getTileSize()/2);
@@ -1931,7 +1772,7 @@ void cVehicle::drawStatus() const
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest );
 		}
 
-		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
+		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.shotsCur )
 		{
 			if ( data.speedCur ) dest.x += Client->gameGUI.getTileSize()/4;
@@ -1979,7 +1820,7 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 	if ( off < 0 )
 		return false;
 
-	if ( checkRange && !IsInRange (x, y) )
+	if ( checkRange && !isInRange (x, y) )
 		return false;
 
 	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->isWater( x, y ) )
@@ -2012,17 +1853,6 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 		return false;
 
 	return true;
-}
-
-//-----------------------------------------------------------------------------
-/** Checks, if the target lies in range */
-//-----------------------------------------------------------------------------
-bool cVehicle::IsInRange (int x, int y)
-{
-	x -= PosX;
-	y -= PosY;
-
-	return (sqrt ((double) (x*x + y*y)) <= data.range);
 }
 
 //-----------------------------------------------------------------------------
@@ -2065,9 +1895,9 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	}
 
 	if ( v )
-		t = v->CalcHelth ( data.damage );
+		t = v->calcHealth ( data.damage );
 	else
-		t = b->CalcHelth ( data.damage );
+		t = b->calcHealth ( data.damage );
 
 	if ( t )
 	{
@@ -2104,31 +1934,6 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	if ( r.w )
 		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
 }
-
-//-----------------------------------------------------------------------------
-/** returns the remaining hitpoints after an attack */
-//-----------------------------------------------------------------------------
-int cVehicle::CalcHelth ( int damage )
-{
-	damage -= data.armor;
-
-	if ( damage <= 0 )
-	{
-		//minimum damage is 1
-		damage = 1;
-	}
-
-	int hp;
-	hp = data.hitpointsCur - damage;
-
-	if ( hp < 0 )
-	{
-		return 0;
-	}
-
-	return hp;
-}
-
 
 //-----------------------------------------------------------------------------
 void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs )
@@ -2595,7 +2400,7 @@ bool cVehicle::provokeReactionFire ()
 		cVehicle* opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0 && isOffendingOpponent == false)
 		{
-			if (IsInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
+			if (isInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
 				&& CanAttackObject (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
 			{
 				// test, if this vehicle can really attack the opponentVehicle
@@ -2611,7 +2416,7 @@ bool cVehicle::provokeReactionFire ()
 		while (opponentBuilding != 0 && isOffendingOpponent == false)
 		{
 			if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-				&& IsInRange (opponentBuilding->PosX, opponentBuilding->PosY)
+				&& isInRange (opponentBuilding->PosX, opponentBuilding->PosY)
 				&& CanAttackObject (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
 			{
 				// test, if this vehicle can really attack the opponentVehicle
@@ -2683,8 +2488,8 @@ bool cVehicle::provokeReactionFire ()
 //-----------------------------------------------------------------------------
 void cVehicle::DrawExitPoints(sVehicle* const typ) const
 {
-	int const spx = GetScreenPosX();
-	int const spy = GetScreenPosY();
+	int const spx = getScreenPosX();
+	int const spy = getScreenPosY();
 
 	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
 	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
@@ -3288,4 +3093,22 @@ void cVehicle::toggleClearMinesStatus()
 	ClearMines = !ClearMines;
 	LayMines = false;
 	sendMineLayerStatus( this );
+}
+
+
+
+
+
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-- methods, that already have been extracted as part of cUnit refactoring
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool cVehicle::treatAsBigForMenuDisplay () const
+{
+	return (IsBuilding && BuildingTyp.getUnitDataOriginalVersion ()->isBig);
 }

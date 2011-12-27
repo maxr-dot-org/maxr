@@ -560,7 +560,7 @@ int Round ( double dValueToRound )
 //----------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------
-string sID::getText()
+string sID::getText() const
 {
 	char tmp[6];
 	sprintf(tmp, "%.2d %.2d", iFirstPart, iSecondPart);
@@ -575,7 +575,7 @@ void sID::generate ( string text )
 }
 
 //----------------------------------------------------------------------------------
-sUnitData *sID::getUnitDataOriginalVersion( cPlayer *Owner )
+sUnitData *sID::getUnitDataOriginalVersion( cPlayer *Owner ) const
 {
 	switch ( iFirstPart )
 	{
@@ -592,7 +592,7 @@ sUnitData *sID::getUnitDataOriginalVersion( cPlayer *Owner )
 }
 
 //----------------------------------------------------------------------------------
-sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner )
+sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner ) const
 {
 	if (iFirstPart == 0)
 	{
@@ -614,7 +614,7 @@ sUnitData *sID::getUnitDataCurrentVersion( cPlayer *Owner )
 }
 
 //----------------------------------------------------------------------------------
-sVehicle *sID::getVehicle (cPlayer* Owner)
+sVehicle *sID::getVehicle (cPlayer* Owner) const
 {
 	if ( iFirstPart != 0 ) return NULL;
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
@@ -626,7 +626,7 @@ sVehicle *sID::getVehicle (cPlayer* Owner)
 }
 
 //----------------------------------------------------------------------------------
-sBuilding *sID::getBuilding (cPlayer* Owner)
+sBuilding *sID::getBuilding (cPlayer* Owner) const
 {
 	if ( iFirstPart != 1 ) return NULL;
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )

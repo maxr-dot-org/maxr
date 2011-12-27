@@ -23,6 +23,7 @@
 #include "clist.h"
 #include "automjobs.h"
 #include "main.h" // for sUnitData
+#include "unit.h"
 
 class cPlayer;
 class cBuilding;
@@ -107,10 +108,8 @@ struct sVehicle{
 //-----------------------------------------------------------------------------
 /** Class for a vehicle-unit of a player */
 //-----------------------------------------------------------------------------
-class cVehicle
+class cVehicle : public cUnit
 {
-	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	std::string name;			// name of the vehicle
 //-----------------------------------------------------------------------------
 public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
@@ -122,8 +121,10 @@ public:
 	cList<cPlayer*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
-	int PosX,PosY;   // Position auf der Karte
 	int OffX,OffY;   // Offset während der Bewegung
+	virtual int getMovementOffsetX () const {return OffX;}
+	virtual int getMovementOffsetY () const {return OffY;}
+	
 	sVehicle *typ;   // Typ des Vehicles
 	int dir;         // aktuelle Drehrichtung
 	bool groupSelected;
@@ -169,7 +170,6 @@ public:
 
 
 	cVehicle *next,*prev; // Verkettungselemente
-	sUnitData data;    // Daten des Vehicles
 
 	/**
 	* Draws the vehicle to the screen buffer.
@@ -179,21 +179,12 @@ public:
 	void Select();
 	void Deselct();
 
-	std::string getName() { return name; }
-	bool isNameOriginal() { return isOriginalName; }
-
-	std::string getNamePrefix();
-	std::string getDisplayName();
-	void changeName ( std::string newName );
-
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
 	*@return 1 if there has been refreshed something else 0.
 	*/
 	int refreshData();
-	int GetScreenPosX() const;
-	int GetScreenPosY() const;
 	void DrawPath();
 	void RotateTo(int Dir);
 	std::string getStatusStr();
@@ -202,8 +193,7 @@ public:
 	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	void menuReleased ();
-	int GetMenuPointAnz();
-	SDL_Rect GetMenuSize();
+	virtual int getNumberOfMenuEntries() const;
 	bool MouseOverMenu(int mx,int my);
 	void DecSpeed(int value);
 	void DrawMunBar() const;
@@ -216,9 +206,7 @@ public:
 	* ATTENTION: must not be called with override == false from the server thread!
 	*/
 	bool CanAttackObject(int x, int y, cMap *Map, bool override=false, bool checkRange = true);
-	bool IsInRange(int x, int y);
 	void DrawAttackCursor( int x, int y );
-	int CalcHelth(int damage);
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();
@@ -310,6 +298,11 @@ private:
 	 * @author: pagra
 	 */
 	bool provokeReactionFire ();
+	
+	//-----------------------------------------------------------------------------
+protected:
+	//-- methods, that have been extracted during cUnit refactoring
+	virtual bool treatAsBigForMenuDisplay () const;
 };
 
 #endif

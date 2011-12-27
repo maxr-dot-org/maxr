@@ -23,6 +23,7 @@
 #include "clist.h"
 #include "upgradecalculator.h"
 #include "main.h" // for sUnitData, sID
+#include "unit.h"
 
 class cPlayer;
 class cBase;
@@ -120,7 +121,7 @@ enum ResourceKind
 //--------------------------------------------------------------------------
 /** Class cBuilding for one building. */
 //--------------------------------------------------------------------------
-class cBuilding
+class cBuilding : public cUnit
 {
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
 	std::string name;			// name of the building
@@ -134,10 +135,8 @@ public:
 	cList<cPlayer*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
-	int PosX,PosY;   // Position auf der Karte
 	sBuilding *typ;  // Typ des Buildings
 	cPlayer *owner;  // owner of the building
-	sUnitData data;    // Daten des Buildings
 	cBuilding *next,*prev; // pointers for the linked list
 	bool bIsBeeingAttacked; /** true when an attack on this building is running */
 	int RubbleTyp;     // Typ des Drecks
@@ -178,13 +177,6 @@ public:
 	void Select();
 	void Deselct();
 
-	std::string getName() { return name; }
-	bool isNameOriginal() { return isOriginalName; }
-
-	std::string getNamePrefix();
-	std::string getDisplayName();
-	void changeName ( std::string newName );
-
 	int playStream();
 	std::string getStatusStr();
 	/**
@@ -198,14 +190,10 @@ public:
 	void DrawMunBar() const;
 	void DrawHelthBar() const;
 	void drawStatus() const;
-	int GetScreenPosX() const;
-	int GetScreenPosY() const;
-	int CalcHelth(int damage);
 	void menuReleased();
 	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
-	int GetMenuPointAnz();
-	SDL_Rect GetMenuSize();
+	virtual int getNumberOfMenuEntries() const;
 	bool MouseOverMenu(int mx,int my);
 	void SelfDestructionMenu();
 	void updateNeighbours( cMap *map );
@@ -216,7 +204,6 @@ public:
 	void ClientStopWork();
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	bool IsInRange(int x, int y);
 	/*
 	* checks if the unit can attack the offset
 	* when override is false, the function only returns true, if there is an enemy unit

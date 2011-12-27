@@ -47,9 +47,9 @@ using namespace std;
 
 //--------------------------------------------------------------------------
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
+: cUnit (cUnit::kUTBuilding, 
+		 ((Owner != 0 && b != 0) ? &(Owner->BuildingData[b->nr]) : 0))
 {
-	PosX = 0;
-	PosY = 0;
 	RubbleTyp = 0;
 	RubbleValue = 0;
 	EffectAlpha = 0;
@@ -62,23 +62,15 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	typ = b;
 	owner = Owner;
 	points = 0;
-	isOriginalName = true;
 	lastShots = 0;
 
 	if ( Owner == NULL || b == NULL )
 	{
-		if ( b != NULL )
-		{
-			data = b->data;
-		}
-
 		BuildList = NULL;
 
 		bSentryStatus = false;
 		return;
 	}
-
-	data = owner->BuildingData[typ->nr];
 
 	BaseN = false;
 	BaseBN = false;
@@ -315,95 +307,6 @@ int cBuilding::refreshData ()
 		return 1;
 	}
 	return 0;
-}
-
-//--------------------------------------------------------------------------
-/** generates the name for the building depending on the versionnumber */
-//--------------------------------------------------------------------------
-string cBuilding::getNamePrefix ()
-{
-	int tmp;
-	string rome = "";
-	int nr = data.version + 1;	// +1, because the numbers in the name start at 1, not at 0
-
-	// generate the roman versionnumber (correct until 899)
-
-	if ( nr > 100 )
-	{
-		tmp = nr / 100;
-		nr %= 100;
-
-		while ( tmp-- )
-			rome += "C";
-	}
-
-	if ( nr >= 90 )
-	{
-		rome += "XC";
-		nr -= 90;
-	}
-
-	if ( nr >= 50 )
-	{
-		nr -= 50;
-		rome += "L";
-	}
-
-	if ( nr >= 40 )
-	{
-		nr -= 40;
-		rome += "XL";
-	}
-
-	if ( nr >= 10 )
-	{
-		tmp = nr / 10;
-		nr %= 10;
-
-		while ( tmp-- )
-			rome += "X";
-	}
-
-	if ( nr == 9 )
-	{
-		nr -= 9;
-		rome += "IX";
-	}
-
-	if ( nr >= 5 )
-	{
-		nr -= 5;
-		rome += "V";
-	}
-
-	if ( nr == 4 )
-	{
-		nr -= 4;
-		rome += "IV";
-	}
-
-	while ( nr-- )
-		rome += "I";
-
-	return "MK " + rome;
-}
-
-//-----------------------------------------------------------------------------
-/** Returns the name of the vehicle how it should be displayed */
-//-----------------------------------------------------------------------------
-string cBuilding::getDisplayName()
-{
-	return getNamePrefix() + " " + (isOriginalName ? data.name : name);
-}
-
-
-//-----------------------------------------------------------------------------
-/** changes the name of the unit and indicates it as undefault */
-//-----------------------------------------------------------------------------
-void cBuilding::changeName ( string newName )
-{
-	name = newName;
-	isOriginalName = false;
 }
 
 //--------------------------------------------------------------------------
@@ -800,7 +703,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 //--------------------------------------------------------------------------
 /** Get the numer of menu items */
 //--------------------------------------------------------------------------
-int cBuilding::GetMenuPointAnz ()
+int cBuilding::getNumberOfMenuEntries () const
 {
 	int nr = 2;
 
@@ -849,49 +752,12 @@ int cBuilding::GetMenuPointAnz ()
 }
 
 //--------------------------------------------------------------------------
-/** Returns the size and position of the menu */
-//--------------------------------------------------------------------------
-SDL_Rect cBuilding::GetMenuSize ()
-{
-	SDL_Rect dest;
-	int i, size;
-	dest.x = GetScreenPosX();
-	dest.y = GetScreenPosY();
-	dest.h = i = GetMenuPointAnz() * 22;
-	dest.w = 42;
-	size = Client->gameGUI.getTileSize();
-
-	if ( data.isBig )
-		size *= 2;
-
-	if ( dest.x + size + 42 >= Video.getResolutionX() - 12 )
-		dest.x -= 42;
-	else
-		dest.x += size;
-
-	if ( dest.y - ( i - size ) / 2 <= 24 )
-	{
-		dest.y -= ( i - size ) / 2;
-		dest.y += - ( dest.y - 24 );
-	}
-	else if ( dest.y - ( i - size ) / 2 + i >= Video.getResolutionY() - 24 )
-	{
-		dest.y -= ( i - size ) / 2;
-		dest.y -= ( dest.y + i ) - ( Video.getResolutionY() - 24 );
-	}
-	else
-		dest.y -= ( i - size ) / 2;
-
-	return dest;
-}
-
-//--------------------------------------------------------------------------
 /** returns true, if the mouse coordinates are inside the menu area */
 //--------------------------------------------------------------------------
 bool cBuilding::MouseOverMenu (int mx, int my)
 {
 	SDL_Rect r;
-	r = GetMenuSize();
+	r = getMenuSize();
 
 	if ( mx < r.x || mx > r.x + r.w )
 		return false;
@@ -1448,8 +1314,8 @@ bool cBuilding::isNextTo( int x, int y) const
 //--------------------------------------------------------------------------
 void cBuilding::DrawExitPoints ( sVehicle *typ )
 {
-	int const spx = GetScreenPosX();
-	int const spy = GetScreenPosY();
+	int const spx = getScreenPosX();
+	int const spy = getScreenPosY();
 
 	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
 	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
@@ -1782,17 +1648,6 @@ void cBuilding::CheckRessourceProd ( void )
 }
 
 //--------------------------------------------------------------------------
-/** Checks if the target is in range */
-//--------------------------------------------------------------------------
-bool cBuilding::IsInRange ( int x, int y)
-{
-	x -= PosX;
-	y -= PosY;
-
-	return (sqrt ((double) (x*x + y*y)) <= data.range);
-}
-
-//--------------------------------------------------------------------------
 /** Checks if the building is able to attack the object */
 //--------------------------------------------------------------------------
 bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
@@ -1819,7 +1674,7 @@ bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 	if ( off < 0 )
 		return false;
 
-	if ( !IsInRange (x, y) )
+	if ( !isInRange (x, y) )
 		return false;
 
 	if ( !owner->ScanMap[off] )
@@ -1886,9 +1741,9 @@ void cBuilding::DrawAttackCursor ( int x, int y )
 	}
 
 	if ( v )
-		t = v->CalcHelth ( data.damage );
+		t = v->calcHealth ( data.damage );
 	else  if ( b )
-		t = b->CalcHelth ( data.damage );
+		t = b->calcHealth ( data.damage );
 
 	if ( t )
 	{
@@ -2043,50 +1898,10 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	}
 }
 
-//--------------------------------------------------------------------------
-/** Returns the screen x position of the building */
-//--------------------------------------------------------------------------
-int cBuilding::GetScreenPosX () const
-{
-	return 180 - ( ( int ) ( ( Client->gameGUI.getOffsetX() ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosX;
-}
-
-//--------------------------------------------------------------------------
-/** Returns the screen x position of the building */
-//--------------------------------------------------------------------------
-int cBuilding::GetScreenPosY () const
-{
-	return 18 - ( ( int ) ( ( Client->gameGUI.getOffsetY() ) * Client->gameGUI.getZoom() ) ) + (int)(Client->gameGUI.getTileSize())*PosY;
-}
-
-//--------------------------------------------------------------------------
-/** returns the remaining hitpoints after an attack */
-//--------------------------------------------------------------------------
-int cBuilding::CalcHelth ( int damage )
-{
-	damage -= data.armor;
-
-	if ( damage <= 0 )
-	{
-		//minimum damage is 1
-		damage = 1;
-	}
-
-	int hp;
-	hp = data.hitpointsCur - damage;
-
-	if ( hp < 0 )
-	{
-		return 0;
-	}
-
-	return hp;
-}
-
 void cBuilding::menuReleased()
 {
 	int nr = 0, exeNr;
-	SDL_Rect dest = GetMenuSize();
+	SDL_Rect dest = getMenuSize();
 	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
 	if ( exeNr != selMenuNr ) return;
 
@@ -2323,7 +2138,7 @@ void cBuilding::menuReleased()
 //-----------------------------------------------------------------------------
 void cBuilding::setMenuSelection()
 {
-	SDL_Rect dest = GetMenuSize();
+	SDL_Rect dest = getMenuSize();
 	selMenuNr = ( mouse->y - dest.y ) / 22;
 }
 
@@ -2334,7 +2149,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 {
 	int nr = 0;
 	SDL_Rect dest;
-	dest = GetMenuSize();
+	dest = getMenuSize();
 
 	if ( bIsBeeingAttacked ) return;
 
@@ -2573,10 +2388,10 @@ void cBuilding::Center ()
 void cBuilding::DrawMunBar ( void ) const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
+	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10 + Client->gameGUI.getTileSize() / 8;
 
 	if ( r1.h <= 2 )
 	{
@@ -2611,10 +2426,10 @@ void cBuilding::DrawMunBar ( void ) const
 void cBuilding::DrawHelthBar ( void ) const
 {
 	SDL_Rect r1, r2;
-	r1.x = GetScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
+	r1.x = getScreenPosX() + Client->gameGUI.getTileSize()/10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = GetScreenPosY() + Client->gameGUI.getTileSize()/10;
+	r1.y = getScreenPosY() + Client->gameGUI.getTileSize()/10;
 
 	if ( data.isBig )
 	{
@@ -2656,14 +2471,14 @@ void cBuilding::drawStatus() const
 	if ( Disabled )
 	{
 		if ( Client->gameGUI.getTileSize() < 25 ) return;
-		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
-		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 12;
+		dest.y = getScreenPosY() + Client->gameGUI.getTileSize()/2 - 12;
 		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
 	}
 	else
 	{
-		dest.y = GetScreenPosY() + Client->gameGUI.getTileSize() - 11;
-		dest.x = GetScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
+		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
+		dest.x = getScreenPosX() + Client->gameGUI.getTileSize()/2 - 4;
 		if ( data.shotsCur )
 		{
 			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );

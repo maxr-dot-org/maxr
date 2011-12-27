@@ -966,8 +966,8 @@ void cPlayer::DrawLockList ()
 				i--;
 				continue;
 			}
-			spx=elem->v->GetScreenPosX();
-			spy=elem->v->GetScreenPosY();
+			spx=elem->v->getScreenPosX();
+			spy=elem->v->getScreenPosY();
 
 			if ( Client->gameGUI.scanChecked() )
 			{
@@ -998,8 +998,8 @@ void cPlayer::DrawLockList ()
 				i--;
 				continue;
 			}
-			spx=elem->b->GetScreenPosX();
-			spy=elem->b->GetScreenPosY();
+			spx=elem->b->getScreenPosX();
+			spy=elem->b->getScreenPosY();
 
 			if ( Client->gameGUI.scanChecked() )
 			{

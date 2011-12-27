@@ -1213,7 +1213,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedBuilding->IsInRange (mouse->getKachelX(), mouse->getKachelY()) )
+			if ( selectedBuilding->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 			{
 				if ( mouse->SetCursor ( CAttack ))
 				{
@@ -1783,7 +1783,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					cBuilding* building;
 					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, Client->Map);
 
-					if ( selectedVehicle->IsInRange (mouse->getKachelX(), mouse->getKachelY()) )
+					if ( selectedVehicle->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 					{
 						//find target ID
 						int targetId = 0;
@@ -4172,8 +4172,8 @@ void cGameGUI::drawUnitCircles()
 	if ( selectedVehicle )
 	{
 		cVehicle& v   = *selectedVehicle; // XXX not const is suspicious
-		int const spx = v.GetScreenPosX();
-		int const spy = v.GetScreenPosY();
+		int const spx = v.getScreenPosX();
+		int const spy = v.getScreenPosY();
 		if ( scanChecked() )
 		{
 			if ( v.data.isBig )
@@ -4262,8 +4262,8 @@ void cGameGUI::drawUnitCircles()
 	else if ( selectedBuilding )
 	{
 		int spx,spy;
-		spx=selectedBuilding->GetScreenPosX();
-		spy=selectedBuilding->GetScreenPosY();
+		spx=selectedBuilding->getScreenPosX();
+		spy=selectedBuilding->getScreenPosY();
 		if ( scanChecked() )
 		{
 			if ( selectedBuilding->data.isBig )

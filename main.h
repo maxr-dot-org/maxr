@@ -73,23 +73,23 @@ struct sID
 
 	int iFirstPart;
 	int iSecondPart;
-	std::string getText();
+	std::string getText() const;
 	void generate( std::string text );
 	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
 		units will have these values. */
-	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner);
+	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner) const;
 	/** Get the basic version of a unit.
 		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
 					 If no owner is given, the basic version without any clan modifications is returned.
 		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
-	sUnitData *getUnitDataOriginalVersion (cPlayer *Owner = NULL);
+	sUnitData *getUnitDataOriginalVersion (cPlayer *Owner = NULL) const;
 
 	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sVehicle *getVehicle (cPlayer* Owner = NULL);
+	sVehicle *getVehicle (cPlayer* Owner = NULL) const;
 	/** Returns the original version of a building as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sBuilding *getBuilding (cPlayer* Owner = NULL);
+	sBuilding *getBuilding (cPlayer* Owner = NULL) const;
 
 	bool operator==(const sID &ID) const;
 };
