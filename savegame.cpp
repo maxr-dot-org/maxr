@@ -721,6 +721,8 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	loadUnitValues ( unitNode, &building->data );
 
 	if ( unitNode->FirstChildElement( "IsWorking" ) ) building->IsWorking = true;
+	if ( unitNode->FirstChildElement( "wasWorking" ) ) building->wasWorking = true;
+	if ( unitNode->FirstChildElement( "Disabled" ) ) unitNode->FirstChildElement("Disabled")->Attribute ("turns", &building->turnsDisabled);
 	if ( unitNode->FirstChildElement( "ResearchArea" ) ) unitNode->FirstChildElement( "ResearchArea" )->Attribute( "area", &(building->researchArea) );
 	if ( unitNode->FirstChildElement( "Score" ) ) unitNode->FirstChildElement( "Score" )->Attribute( "num", &(building->points) );
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
@@ -1459,6 +1461,9 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 
 	// write additional stauts information
 	if ( Building->IsWorking ) addMainElement ( unitNode, "IsWorking" );
+	if ( Building->wasWorking ) addMainElement ( unitNode, "wasWorking" );
+	if ( Building->turnsDisabled > 0 ) addAttributeElement ( unitNode, "Disabled", "turns", iToStr (Building->turnsDisabled).c_str () );
+
 	if ( Building->data.canResearch )
 	{
 		TiXmlElement *researchNode = addMainElement ( unitNode, "ResearchArea" );

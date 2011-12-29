@@ -2619,6 +2619,7 @@ void cServer::makeTurnEnd ()
 		Building = Player->BuildingList;
 		while ( Building )
 		{
+			bool forceSendUnitData = false;
 			if ( Building->turnsDisabled > 0 )
 			{
 				Building->turnsDisabled--;
@@ -2627,8 +2628,9 @@ void cServer::makeTurnEnd ()
 					Building->ServerStartWork();
 					Building->wasWorking = false;
 				}
+				forceSendUnitData = true;
 			}
-			if ( Building->data.canAttack && Building->refreshData() )
+			if ( (Building->data.canAttack && Building->refreshData()) || forceSendUnitData)
 			{
 				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
 				{
@@ -2650,12 +2652,13 @@ void cServer::makeTurnEnd ()
 		Vehicle = Player->VehicleList;
 		while ( Vehicle )
 		{
-
+			bool forceSendUnitData = false;
 			if ( Vehicle->turnsDisabled > 0 )
 			{
 				Vehicle->turnsDisabled--;
+				forceSendUnitData = true;
 			}
-			if ( Vehicle->refreshData() )
+			if ( Vehicle->refreshData() || forceSendUnitData )
 			{
 				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
 				{
