@@ -2446,28 +2446,6 @@ bool cVehicle::canSupply( cBuilding *Building, int iType )
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::upgradeToCurrentVersion ()
-{
-	sUnitData& upgradeVersion = owner->VehicleData[typ->nr];
-	data.version = upgradeVersion.version;
-
-	if (data.hitpointsCur == data.hitpointsMax)
-		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
-	data.hitpointsMax = upgradeVersion.hitpointsMax;
-
-	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
-
-	data.speedMax = upgradeVersion.speedMax;
-
-	data.armor = upgradeVersion.armor;
-	data.scan = upgradeVersion.scan;
-	data.range = upgradeVersion.range;
-	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
-	data.damage = upgradeVersion.damage;
-	data.buildCosts = upgradeVersion.buildCosts;
-}
-
-//-----------------------------------------------------------------------------
 bool cVehicle::layMine ()
 {
 	if ( data.storageResCur <= 0 ) return false;
@@ -2869,6 +2847,12 @@ void cVehicle::toggleClearMinesStatus()
 //-- methods, that already have been extracted as part of cUnit refactoring
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+sUnitData* cVehicle::getUpgradedUnitData () const
+{
+	return &(owner->VehicleData[typ->nr]);
+}
 
 //-----------------------------------------------------------------------------
 bool cVehicle::treatAsBigForMenuDisplay () const

@@ -499,3 +499,28 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	return true;
 }
 
+//-----------------------------------------------------------------------------
+void cUnit::upgradeToCurrentVersion ()
+{
+	sUnitData* upgradeVersion = getUpgradedUnitData ();
+	if (upgradeVersion != 0)
+	{
+		data.version = upgradeVersion->version;
+		
+		if (data.hitpointsCur == data.hitpointsMax)
+			data.hitpointsCur = upgradeVersion->hitpointsMax; // TODO: check behaviour in original
+		data.hitpointsMax = upgradeVersion->hitpointsMax;
+		
+		data.ammoMax = upgradeVersion->ammoMax; // don't change the current ammo-amount!
+		
+		data.speedMax = upgradeVersion->speedMax;
+		
+		data.armor = upgradeVersion->armor;
+		data.scan = upgradeVersion->scan;
+		data.range = upgradeVersion->range;
+		data.shotsMax = upgradeVersion->shotsMax; // TODO: check behaviour in original
+		data.damage = upgradeVersion->damage;
+		data.buildCosts = upgradeVersion->buildCosts;
+	}
+}
+

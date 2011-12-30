@@ -197,7 +197,6 @@ public:
 	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
-	void upgradeToCurrentVersion ();
 	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll); //TODO: move to other file (clientevents?)
 
 	/**
@@ -231,6 +230,11 @@ private:
 	* draws the connectors onto the given surface
 	*/
 	void drawConnectors( SDL_Surface* surface, SDL_Rect dest);
+	
+	//-----------------------------------------------------------------------------
+protected:
+	//-- methods, that have been extracted during cUnit refactoring
+	virtual sUnitData* getUpgradedUnitData () const;
 };
 
 #endif

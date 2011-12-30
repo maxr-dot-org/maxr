@@ -204,8 +204,6 @@ public:
 	bool canSupply( int x, int y, int iType );
 	bool canSupply( cVehicle *Vehicle, int iType );
 	bool canSupply( cBuilding *Building, int iType );
-	/** Upgrades the unit data of this vehicle to the current, upgraded version of the player. */
-	void upgradeToCurrentVersion();
 	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs );
 	/**
 	* lays a mine. Should only be called by the server!
@@ -280,6 +278,7 @@ private:
 protected:
 	//-- methods, that have been extracted during cUnit refactoring
 	virtual bool isUnitLoaded () const { return Loaded; }
+	virtual sUnitData* getUpgradedUnitData () const;
 	virtual bool treatAsBigForMenuDisplay () const;
 };
 

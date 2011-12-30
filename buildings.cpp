@@ -2206,26 +2206,6 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 	Client->sendNetMessage (msg);
 }
 
-//------------------------------------------------------------------------
-void cBuilding::upgradeToCurrentVersion ()
-{
-	sUnitData& upgradeVersion = owner->BuildingData[typ->nr];
-	data.version = upgradeVersion.version;
-
-	if (data.hitpointsCur == data.hitpointsMax)
-		data.hitpointsCur = upgradeVersion.hitpointsMax; // TODO: check behaviour in original
-	data.hitpointsMax = upgradeVersion.hitpointsMax;
-
-	data.ammoMax = upgradeVersion.ammoMax; // don't change the current ammo-amount!
-
-	data.armor = upgradeVersion.armor;
-	data.scan = upgradeVersion.scan;
-	data.range = upgradeVersion.range;
-	data.shotsMax = upgradeVersion.shotsMax; // TODO: check behaviour in original
-	data.damage = upgradeVersion.damage;
-	data.buildCosts = upgradeVersion.buildCosts;
-}
-
 //--------------------------------------------------------------------------
 void cBuilding::Select ()
 {
@@ -2337,3 +2317,19 @@ void sBuilding::scaleSurfaces( float factor )
 	scaleSurface ( shw_org, shw, (int)(shw_org->w*factor), (int)(shw_org->h*factor) );
 	if ( eff_org ) scaleSurface ( eff_org, eff, (int)(eff_org->w*factor), (int)(eff_org->h*factor) );
 }
+
+
+
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-- methods, that already have been extracted as part of cUnit refactoring
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+sUnitData* cBuilding::getUpgradedUnitData () const
+{
+	return &(owner->BuildingData[typ->nr]);
+}
+
