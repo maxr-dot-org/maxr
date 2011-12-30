@@ -2226,17 +2226,6 @@ void cBuilding::upgradeToCurrentVersion ()
 	data.buildCosts = upgradeVersion.buildCosts;
 }
 
-
-//------------------------------------------------------------------------
-/** centers on this building */
-//--------------------------------------------------------------------------
-void cBuilding::Center ()
-{
-	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	Client->gameGUI.setOffsetPosition ( offX, offY );
-}
-
 //--------------------------------------------------------------------------
 void cBuilding::Select ()
 {

@@ -58,7 +58,8 @@ public:
 	bool areCoordsOverMenu (int x, int y);
 	int getScreenPosX () const;
 	int getScreenPosY () const;
-	
+	void center () const;
+
 	virtual int getMovementOffsetX () const {return 0;}
 	virtual int getMovementOffsetY () const {return 0;}
 

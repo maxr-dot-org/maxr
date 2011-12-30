@@ -187,7 +187,6 @@ public:
 	void menuReleased ();
 	virtual int getNumberOfMenuEntries() const;
 	void DecSpeed(int value);
-	void Center();
 	void DrawAttackCursor( int x, int y );
 	void FindNextband();
 	void doSurvey();

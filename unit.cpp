@@ -275,6 +275,16 @@ int cUnit::getScreenPosY () const
 }
 
 //-----------------------------------------------------------------------------
+/** Centers on this unit */
+//-----------------------------------------------------------------------------
+void cUnit::center () const
+{
+	int offX = PosX * 64 - ((int)( ((float)(Video.getResolutionX () - 192) / (2 * Client->gameGUI.getTileSize ())) * 64)) + 32;
+	int offY = PosY * 64 - ((int)( ((float)(Video.getResolutionY () - 32)  / (2 * Client->gameGUI.getTileSize ())) * 64)) + 32;
+	Client->gameGUI.setOffsetPosition (offX, offY);
+}
+
+//-----------------------------------------------------------------------------
 /** Draws the ammunition bar over the unit */
 //-----------------------------------------------------------------------------
 void cUnit::drawMunBar () const

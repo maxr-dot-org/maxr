@@ -5844,12 +5844,12 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 	if ( vehicle )
 	{
 		Client->gameGUI.selectUnit( vehicle );
-		vehicle->Center();
+		vehicle->center();
 	}
 	else if ( building )
 	{
 		Client->gameGUI.selectUnit( building );
-		building->Center();
+		building->center();
 	}
 	end = true;
 }

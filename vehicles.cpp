@@ -1605,16 +1605,6 @@ void cVehicle::DecSpeed ( int value )
 }
 
 //-----------------------------------------------------------------------------
-/** Centers on this vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::Center ()
-{
-	int offX = PosX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	int offY = PosY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - 32 ) / (2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	Client->gameGUI.setOffsetPosition ( offX, offY );
-}
-
-//-----------------------------------------------------------------------------
 /** Draws the attack cursor */
 //-----------------------------------------------------------------------------
 void cVehicle::DrawAttackCursor ( int x, int y )

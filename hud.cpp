@@ -340,8 +340,8 @@ int cGameGUI::show()
 
 		if ( startup )
 		{
-			if ( player->BuildingList ) player->BuildingList->Center();
-			else if ( player->VehicleList ) player->VehicleList->Center();
+			if ( player->BuildingList ) player->BuildingList->center();
+			else if ( player->VehicleList ) player->VehicleList->center();
 			startup = false;
 		}
 
@@ -2429,8 +2429,8 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	else if ( key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb ) setZoom ( (float)(getZoom()+0.05), true, false );
 	else if ( key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb ) setZoom ( (float)(getZoom()-0.05), true, false );
 	// position handling hotkeys
-	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle ) selectedVehicle->Center();
-	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding ) selectedBuilding->Center();
+	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle ) selectedVehicle->center();
+	else if ( key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding ) selectedBuilding->center();
 	else if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT ) savePosition ( 0 );
 	else if ( key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT ) savePosition ( 1 );
 	else if ( key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT ) savePosition ( 2 );
@@ -2654,8 +2654,8 @@ void cGameGUI::helpReleased( void *parent )
 void cGameGUI::centerReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	if ( gui->selectedVehicle ) gui->selectedVehicle->Center();
-	else if ( gui->selectedBuilding ) gui->selectedBuilding->Center();
+	if ( gui->selectedVehicle ) gui->selectedVehicle->center();
+	else if ( gui->selectedBuilding ) gui->selectedBuilding->center();
 }
 
 void cGameGUI::reportsReleased( void *parent )
@@ -2681,7 +2681,7 @@ void cGameGUI::nextReleased( void *parent )
 	if ( v )
 	{
 		gui->selectUnit( v );
-		v->Center();
+		v->center();
 	}
 }
 
@@ -2692,7 +2692,7 @@ void cGameGUI::prevReleased( void *parent )
 	if ( v )
 	{
 		gui->selectUnit( v );
-		v->Center();
+		v->center();
 	}
 }
 
