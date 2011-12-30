@@ -78,8 +78,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	Attacking = false;
 	IsBuilding = false;
 	IsClearing = false;
-	bSentryStatus = false;
-	bManualFireStatus = false;
 	BuildPath = false;
 	LayMines = false;
 	ClearMines = false;
@@ -113,7 +111,7 @@ cVehicle::~cVehicle ()
 	if ( autoMJob )
 		delete autoMJob;
 
-	if ( bSentryStatus )
+	if ( sentryActive )
 		owner->deleteSentryVehicle ( this );
 
 	DeleteStored();
@@ -943,9 +941,9 @@ string cVehicle::getStatusStr ()
 		return lngPack.i18n ( "Text~Comp~Surveying" );
 	else if ( ClientMoveJob )
 		return lngPack.i18n ( "Text~Comp~Moving" );
-	else if ( bManualFireStatus )
+	else if ( manualFireActive )
 		return lngPack.i18n ( "Text~Comp~ReactionFireOff" );
-	else if ( bSentryStatus )
+	else if ( sentryActive )
 		return lngPack.i18n ( "Text~Comp~Sentry" );
 	else if ( IsBuilding )
 	{
@@ -1178,7 +1176,7 @@ void cVehicle::menuReleased ()
 	}
 
 	// manual Fire:
-	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1191,7 +1189,7 @@ void cVehicle::menuReleased ()
 	}
 	
 	// sentry:
-	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1418,9 +1416,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 
 	// Manual
-	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || bManualFireStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || manualFireActive;
 		
 		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
 		
@@ -1429,9 +1427,9 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	}
 	
 	// Sentry:
-	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || sentryActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
 
@@ -1559,10 +1557,10 @@ int cVehicle::getNumberOfMenuEntries () const
 	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
 		nr++;
 
-	if ( bManualFireStatus || data.canAttack )
+	if ( manualFireActive || data.canAttack )
 		nr++;
 	
-	if ( bSentryStatus || data.canAttack )
+	if ( sentryActive || data.canAttack )
 		nr++;
 
 	if ( data.storageUnitsMax > 0 )
@@ -1999,7 +1997,7 @@ void cVehicle::MakeReport ()
 			else
 				PlayVoice ( VoiceData.VOILowAmmo2 );
 		}
-		else if ( bSentryStatus )
+		else if ( sentryActive )
 		{
 			// on sentry:
 			PlayVoice ( VoiceData.VOIWachposten );
@@ -2267,7 +2265,7 @@ bool cVehicle::provokeReactionFire ()
 		opponentBuilding = player->BuildingList;
 		while (opponentBuilding != 0)
 		{
-			if (opponentBuilding->bSentryStatus == false && opponentBuilding->bManualFireStatus == false
+			if (opponentBuilding->sentryActive == false && opponentBuilding->manualFireActive == false
 				&& opponentBuilding->CanAttackObject (PosX, PosY, Server->Map, true))
 			{
 				cVehicle* selectedTargetVehicle = 0;
@@ -2288,7 +2286,7 @@ bool cVehicle::provokeReactionFire ()
 		opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0)
 		{
-			if (opponentVehicle->bSentryStatus == false && opponentVehicle->bManualFireStatus == false
+			if (opponentVehicle->sentryActive == false && opponentVehicle->manualFireActive == false
 				&& opponentVehicle->CanAttackObject (PosX, PosY, Server->Map, true, true)
 				&& opponentVehicle->data.isStealthOn == TERRAIN_NONE) // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
 			{
@@ -2379,13 +2377,13 @@ bool cVehicle::canLoad ( cVehicle *Vehicle, bool checkPosition )
 void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 {
 	Map->deleteVehicle ( Vehicle );
-	if ( Vehicle->bSentryStatus )
+	if ( Vehicle->sentryActive )
 	{
 		Vehicle->owner->deleteSentryVehicle( Vehicle);
-		Vehicle->bSentryStatus = false;
+		Vehicle->sentryActive = false;
 	}
-	if ( Vehicle->bManualFireStatus )
-		Vehicle->bManualFireStatus = false;
+	if ( Vehicle->manualFireActive )
+		Vehicle->manualFireActive = false;
 
 	Vehicle->Loaded = true;
 

@@ -444,10 +444,10 @@ cServerMoveJob::cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, c
 	endAction = NULL;
 
 	// unset sentry status when moving vehicle
-	if ( Vehicle->bSentryStatus )
+	if ( Vehicle->sentryActive )
 	{
 		Vehicle->owner->deleteSentryVehicle ( Vehicle );
-		Vehicle->bSentryStatus = false;
+		Vehicle->sentryActive = false;
 	}
 	sendUnitData ( Vehicle, Vehicle->owner->Nr );
 	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )

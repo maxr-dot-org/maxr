@@ -149,7 +149,7 @@ cPlayer::~cPlayer ()
 	{
 		cVehicle *ptr;
 		ptr=VehicleList->next;
-		VehicleList->bSentryStatus = false;
+		VehicleList->sentryActive = false;
 		delete VehicleList;
 		VehicleList=ptr;
 	}
@@ -157,7 +157,7 @@ cPlayer::~cPlayer ()
 	{
 		cBuilding *ptr;
 		ptr=BuildingList->next;
-		BuildingList->bSentryStatus = false;
+		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
 		while( BuildingList->StoredVehicles.Size() > 0 )
@@ -549,7 +549,7 @@ cVehicle *cPlayer::GetNextVehicle ()
 	v = start;
 	do
 	{
-		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded )
+		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->sentryActive && !v->Loaded )
 			return v;
 		next = false;
 		if ( v->next )
@@ -580,7 +580,7 @@ cVehicle *cPlayer::GetPrevVehicle ()
 	v = start;
 	do
 	{
-		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->bSentryStatus && !v->Loaded )
+		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->sentryActive && !v->Loaded )
 			return v;
 		next = false;
 		if ( v->prev )

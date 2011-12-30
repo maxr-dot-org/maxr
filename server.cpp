@@ -960,10 +960,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cVehicle* Vehicle = getVehicleFromID (message->popInt16 ());
 				if (Vehicle == 0) 
 					break;
-				Vehicle->bManualFireStatus = !Vehicle->bManualFireStatus;
-				if (Vehicle->bManualFireStatus && Vehicle->bSentryStatus)
+				Vehicle->manualFireActive = !Vehicle->manualFireActive;
+				if (Vehicle->manualFireActive && Vehicle->sentryActive)
 				{
-					Vehicle->bSentryStatus = false;
+					Vehicle->sentryActive = false;
 					Vehicle->owner->deleteSentryVehicle (Vehicle);
 				}
 				
@@ -976,10 +976,10 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cBuilding* Building = getBuildingFromID (message->popInt16 ());
 				if (Building == 0)
 					break;
-				Building->bManualFireStatus = !Building->bManualFireStatus;
-				if (Building->bManualFireStatus && Building->bSentryStatus)
+				Building->manualFireActive = !Building->manualFireActive;
+				if (Building->manualFireActive && Building->sentryActive)
 				{
-					Building->bSentryStatus = false;
+					Building->sentryActive = false;
 					Building->owner->deleteSentryBuilding (Building);
 				}
 
@@ -996,11 +996,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
 				if ( Vehicle == NULL ) break;
 
-				Vehicle->bSentryStatus = !Vehicle->bSentryStatus;
-				if ( Vehicle->bSentryStatus ) 
+				Vehicle->sentryActive = !Vehicle->sentryActive;
+				if ( Vehicle->sentryActive ) 
 				{
 					Vehicle->owner->addSentryVehicle ( Vehicle );
-					Vehicle->bManualFireStatus = false;
+					Vehicle->manualFireActive = false;
 				}
 				else Vehicle->owner->deleteSentryVehicle ( Vehicle );
 
@@ -1015,11 +1015,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cBuilding *Building = getBuildingFromID ( message->popInt16() );
 				if ( Building == NULL ) break;
 
-				Building->bSentryStatus = !Building->bSentryStatus;
-				if ( Building->bSentryStatus )
+				Building->sentryActive = !Building->sentryActive;
+				if ( Building->sentryActive )
 				{
 					Building->owner->addSentryBuilding ( Building );
-					Building->bManualFireStatus = false;
+					Building->manualFireActive = false;
 				}
 				else Building->owner->deleteSentryBuilding ( Building );
 
@@ -1540,7 +1540,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					if (!scanNecessary && upgradedBuildings[i]->data.scan < upgradedVersion.scan)
 						scanNecessary = true; // Scan range was upgraded. So trigger a scan.
-					if ( upgradedBuildings[i]->bSentryStatus && upgradedBuildings[i]->data.range < upgradedVersion.range )
+					if ( upgradedBuildings[i]->sentryActive && upgradedBuildings[i]->data.range < upgradedVersion.range )
 						refreshSentry = true;
 
 					upgradedBuildings[i]->upgradeToCurrentVersion();
@@ -2047,7 +2047,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	// generate the building:
 	AddedBuilding = Player->addBuilding ( iPosX, iPosY, Building );
 	if ( AddedBuilding->data.canMineMaxRes > 0 ) AddedBuilding->CheckRessourceProd();
-	if ( AddedBuilding->bSentryStatus ) Player->addSentryBuilding ( AddedBuilding );
+	if ( AddedBuilding->sentryActive ) Player->addSentryBuilding ( AddedBuilding );
 
 	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;

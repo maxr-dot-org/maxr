@@ -31,12 +31,16 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 , PosY (0)
 , dir (0)
 , turnsDisabled (0)
+, sentryActive (false)
+, manualFireActive (false)
 , owner (owner)
 , unitType (unitType)
 , isOriginalName (true)
 {
 	if (unitData != 0)
 		data = *unitData;
+	
+	sentryActive = (isBuilding () && data.canAttack != TERRAIN_NONE);
 }
 
 //-----------------------------------------------------------------------------

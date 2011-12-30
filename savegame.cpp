@@ -602,10 +602,10 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	if ( unitNode->FirstChildElement( "AutoMoving" ) ) vehicle->hasAutoMoveJob = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
-		vehicle->bSentryStatus = true;
+		vehicle->sentryActive = true;
 		owner->addSentryVehicle ( vehicle );
 	}
-	if ( unitNode->FirstChildElement( "ManualFire" ) ) vehicle->bManualFireStatus = true;
+	if ( unitNode->FirstChildElement( "ManualFire" ) ) vehicle->manualFireActive = true;
 
 	if (TiXmlElement* const element = unitNode->FirstChildElement("Building"))
 	{
@@ -727,18 +727,18 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	if ( unitNode->FirstChildElement( "Score" ) ) unitNode->FirstChildElement( "Score" )->Attribute( "num", &(building->points) );
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
-		if ( !building->bSentryStatus )
+		if ( !building->sentryActive )
 		{
-			building->bSentryStatus = true;
+			building->sentryActive = true;
 			owner->addSentryBuilding ( building );
 		}
 	}
-	else if ( building->bSentryStatus )
+	else if ( building->sentryActive )
 	{
 		owner->deleteSentryBuilding ( building );
-		building->bSentryStatus = false;
+		building->sentryActive = false;
 	}
-	if ( unitNode->FirstChildElement( "ManualFire" ) ) building->bManualFireStatus = true;
+	if ( unitNode->FirstChildElement( "ManualFire" ) ) building->manualFireActive = true;
 	if ( unitNode->FirstChildElement( "HasBeenAttacked" ) ) building->hasBeenAttacked = true;
 
 	if (TiXmlElement* const element = unitNode->FirstChildElement("Building"))
@@ -1389,8 +1389,8 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->data.isBig ) addMainElement ( unitNode, "IsBig" );
 	if ( Vehicle->turnsDisabled > 0 ) addAttributeElement ( unitNode, "Disabled", "turns", iToStr (Vehicle->turnsDisabled).c_str () );
 	if ( Vehicle->LayMines ) addMainElement ( unitNode, "LayMines" );
-	if ( Vehicle->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
-	if ( Vehicle->bManualFireStatus ) addMainElement ( unitNode, "ManualFire" );
+	if ( Vehicle->sentryActive ) addMainElement ( unitNode, "OnSentry" );
+	if ( Vehicle->manualFireActive ) addMainElement ( unitNode, "ManualFire" );
 	if ( Vehicle->hasAutoMoveJob ) addMainElement ( unitNode, "AutoMoving" );
 
 	if ( Vehicle->IsBuilding )
@@ -1473,8 +1473,8 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	{
 		addAttributeElement( unitNode, "Score", "num", iToStr(Building->points));
 	}
-	if ( Building->bSentryStatus ) addMainElement ( unitNode, "OnSentry" );
-	if ( Building->bManualFireStatus ) addMainElement( unitNode, "ManualFire" );
+	if ( Building->sentryActive ) addMainElement ( unitNode, "OnSentry" );
+	if ( Building->manualFireActive ) addMainElement( unitNode, "ManualFire" );
 	if ( Building->hasBeenAttacked ) addMainElement ( unitNode, "HasBeenAttacked" );
 
 	// write the buildlist

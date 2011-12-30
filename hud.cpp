@@ -2520,35 +2520,35 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 		}
 		sendWantStartClear ( selectedVehicle );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && ( selectedVehicle->bSentryStatus || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && ( selectedVehicle->sentryActive || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( (selectedVehiclesGroup[i]->bSentryStatus || selectedVehiclesGroup[i]->data.canAttack)
-				&& selectedVehicle->bSentryStatus == selectedVehiclesGroup[i]->bSentryStatus )
+			if ( (selectedVehiclesGroup[i]->sentryActive || selectedVehiclesGroup[i]->data.canAttack)
+				&& selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive )
 			{
 				sendChangeSentry ( selectedVehiclesGroup[i]->iID, true );
 			}
 		}
 		sendChangeSentry ( selectedVehicle->iID, true );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->bSentryStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->sentryActive || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendChangeSentry ( selectedBuilding->iID, false );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && ( selectedVehicle->bManualFireStatus || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && ( selectedVehicle->manualFireActive || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( (selectedVehiclesGroup[i]->bManualFireStatus || selectedVehiclesGroup[i]->data.canAttack)
-				&& selectedVehicle->bManualFireStatus == selectedVehiclesGroup[i]->bManualFireStatus )
+			if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
+				&& selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive )
 			{
 				sendChangeManualFireStatus ( selectedVehiclesGroup[i]->iID, true );
 			}
 		}
 		sendChangeManualFireStatus ( selectedVehicle->iID, true );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && ( selectedBuilding->bManualFireStatus || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && ( selectedBuilding->manualFireActive || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendChangeManualFireStatus ( selectedBuilding->iID, false );
 	}
@@ -4041,7 +4041,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->bSentryStatus ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
+	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->sentryActive ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4102,7 +4102,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->bSentryStatus ) + " sub_base: " + pToStr (building->SubBase );
+	tmpString = "dir: " + iToStr ( building->dir ) + " on sentry: +" + iToStr ( building->sentryActive ) + " sub_base: " + pToStr (building->SubBase );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 

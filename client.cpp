@@ -950,8 +950,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Vehicle->IsBuilding = message->popBool();
 				Vehicle->BuildRounds = message->popInt16();
 				Vehicle->ClearingRounds = message->popInt16();
-				Vehicle->bSentryStatus = message->popBool();
-				Vehicle->bManualFireStatus = message->popBool();
+				Vehicle->sentryActive = message->popBool();
+				Vehicle->manualFireActive = message->popBool();
 
 				if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer )
 				{
@@ -976,8 +976,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Building->turnsDisabled = message->popInt16();
 				Building->researchArea = message->popInt16();
 				Building->IsWorking = message->popBool();
-				Building->bSentryStatus = message->popBool();
-				Building->bManualFireStatus = message->popBool();
+				Building->sentryActive = message->popBool();
+				Building->manualFireActive = message->popBool();
 				Building->points = message->popInt16();
 
 				if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer )
@@ -1780,7 +1780,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				while ( Player->VehicleList )
 				{
 					vehicle = Player->VehicleList->next;
-					Player->VehicleList->bSentryStatus = false;
+					Player->VehicleList->sentryActive = false;
 					Map->deleteVehicle ( Player->VehicleList );
 					delete Player->VehicleList;
 					Player->VehicleList = vehicle;
@@ -1789,7 +1789,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					cBuilding *building;
 					building = Player->BuildingList->next;
-					Player->BuildingList->bSentryStatus = false;
+					Player->BuildingList->sentryActive = false;
 
 
 					while( Player->BuildingList->StoredVehicles.Size() > 0 )

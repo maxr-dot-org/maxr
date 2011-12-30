@@ -69,8 +69,10 @@ public:
 	sUnitData data; ///< basic data of the unit
 	int PosX, PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
-	int turnsDisabled;  // the time this unit will be disabled
-	
+	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
+	bool sentryActive; ///< is the unit on sentry?
+	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
+
 	cPlayer* owner;
 
 	//-----------------------------------------------------------------------------

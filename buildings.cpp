@@ -66,8 +66,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	if ( Owner == NULL || b == NULL )
 	{
 		BuildList = NULL;
-
-		bSentryStatus = false;
 		return;
 	}
 
@@ -83,10 +81,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	bIsBeeingAttacked = false;
 	RepeatBuild = false;
 	hasBeenAttacked = false;
-
-	if ( data.canAttack != TERRAIN_NONE ) bSentryStatus = true;
-	else bSentryStatus = false;
-	bManualFireStatus = false;
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -157,7 +151,7 @@ cBuilding::~cBuilding ()
 		StoredVehicles.Delete ( 0 );
 	}
 
-	if ( bSentryStatus )
+	if ( sentryActive )
 	{
 		owner->deleteSentryBuilding ( this );
 	}
@@ -274,9 +268,9 @@ string cBuilding::getStatusStr ()
 		sText += iToStr (turnsDisabled) + ")";
 		return sText.c_str();
 	}
-	if ( bSentryStatus )
+	if ( sentryActive )
 		return lngPack.i18n ( "Text~Comp~Sentry" );
-	else if ( bManualFireStatus )
+	else if ( manualFireActive )
 		return lngPack.i18n ( "Text~Comp~ReactionFireOff" );
 
 	return lngPack.i18n ( "Text~Comp~Waits" );
@@ -728,10 +722,10 @@ int cBuilding::getNumberOfMenuEntries () const
 	if ( typ->data.canMineMaxRes > 0 )
 		nr++;
 
-	if ( bManualFireStatus || data.canAttack )
+	if ( manualFireActive || data.canAttack )
 		nr++;
 
-	if ( bSentryStatus || data.canAttack )
+	if ( sentryActive || data.canAttack )
 		nr++;
 
 	if ( typ->data.storageUnitsMax > 0 )
@@ -1368,10 +1362,10 @@ bool cBuilding::canLoad ( cVehicle *Vehicle, bool checkPosition )
 void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 {
 	Map->deleteVehicle ( Vehicle );
-	if ( Vehicle->bSentryStatus )
+	if ( Vehicle->sentryActive )
 	{
 		Vehicle->owner->deleteSentryVehicle( Vehicle );
-		Vehicle->bSentryStatus = false;
+		Vehicle->sentryActive = false;
 	}
 
 	Vehicle->Loaded = true;
@@ -1940,7 +1934,7 @@ void cBuilding::menuReleased()
 	}
 
 	// manual Fire:
-	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -1953,7 +1947,7 @@ void cBuilding::menuReleased()
 	}
 	
 	// Sentry status:
-	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
 		if ( exeNr == nr )
 		{
@@ -2180,9 +2174,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}
 	
 	// Manual
-	if ( (bManualFireStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || bManualFireStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || manualFireActive;
 		
 		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
 		
@@ -2191,9 +2185,9 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	}	
 
 	// Sentry status:
-	if ( (bSentryStatus || data.canAttack) && owner == Client->ActivePlayer )
+	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
 	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || bSentryStatus;
+		isMarked = ( markerPossible && selMenuNr == nr ) || sentryActive;
 
 		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
 

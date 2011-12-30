@@ -202,8 +202,8 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	// Current state of the unit
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
 	//		because this data will be received by enemys, too
-	message->pushBool ( Vehicle->bManualFireStatus );	
-	message->pushBool ( Vehicle->bSentryStatus );
+	message->pushBool ( Vehicle->manualFireActive );	
+	message->pushBool ( Vehicle->sentryActive );
 	message->pushInt16 ( Vehicle->ClearingRounds );
 	message->pushInt16 ( Vehicle->BuildRounds );
 	message->pushBool ( Vehicle->IsBuilding );
@@ -268,8 +268,8 @@ void sendUnitData ( cBuilding *Building, int iPlayer )
 
 	// Current state of the unit
 	message->pushInt16 ( Building->points );
-	message->pushBool ( Building->bManualFireStatus );
-	message->pushBool ( Building->bSentryStatus );
+	message->pushBool ( Building->manualFireActive );
+	message->pushBool ( Building->sentryActive );
 	message->pushBool ( Building->IsWorking );
 	message->pushInt16 ( Building->researchArea );
 	message->pushInt16 ( Building->turnsDisabled );
