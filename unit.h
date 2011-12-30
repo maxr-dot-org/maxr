@@ -73,6 +73,8 @@ public:
 	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
 	bool sentryActive; ///< is the unit on sentry?
 	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
+	bool attacking;  ///< is the unit currently attacking?
+	bool isBeeingAttacked; ///< true when an attack on this unit is running
 
 	cPlayer* owner;
 

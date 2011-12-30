@@ -77,8 +77,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	BaseBS = false;
 	BaseW = false;
 	BaseBW = false;
-	Attacking = false;
-	bIsBeeingAttacked = false;
 	RepeatBuild = false;
 	hasBeenAttacked = false;
 
@@ -514,10 +512,10 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	{
 		cBuilding* serverBuilding = NULL;
 		if ( Server ) serverBuilding = Server->Map->fields[PosX + PosY*Server->Map->size].getBuildings();
-		if ( bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-		if ( serverBuilding && serverBuilding->bIsBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-		if ( Attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-		if ( serverBuilding && serverBuilding->Attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+		if ( isBeeingAttacked ) font->showText(dest.x + 1,dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverBuilding && serverBuilding->isBeeingAttacked ) font->showText(dest.x + 1,dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( attacking ) font->showText(dest.x + 1,dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverBuilding && serverBuilding->attacking ) font->showText(dest.x + 1,dest.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 	}
 }
 
@@ -1329,11 +1327,11 @@ bool cBuilding::canLoad ( cVehicle *Vehicle, bool checkPosition )
 	}
 	if ( i == data.storeUnitsTypes.size() ) return false;
 
-	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
+	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->attacking || Vehicle->MoveJobActive ) ) return false;
 
 	if ( Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing ) return false;
 
-	if ( Vehicle->bIsBeeingAttacked ) return false;
+	if ( Vehicle->isBeeingAttacked ) return false;
 
 	return true;
 }
@@ -1609,8 +1607,6 @@ void cBuilding::CheckRessourceProd ( void )
 //--------------------------------------------------------------------------
 bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 {
-	cVehicle *v = NULL;
-	cBuilding *b = NULL;
 	int off = x + y * Map->size;
 
 	if ( !data.canAttack )
@@ -1622,10 +1618,10 @@ bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 	if ( data.ammoCur <= 0)
 		return false;
 
-	if ( Attacking )
+	if ( attacking )
 		return false;
 
-	if ( bIsBeeingAttacked )
+	if ( isBeeingAttacked )
 		return false;
 
 	if ( off < 0 )
@@ -1640,6 +1636,8 @@ bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
 	if ( override )
 		return true;
 
+	cVehicle *v = NULL;
+	cBuilding *b = NULL;
 	selectTarget(v, b, x, y, data.canAttack, Map );
 
 	if ( v )
@@ -1824,7 +1822,7 @@ void cBuilding::menuReleased()
 	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
 	if ( exeNr != selMenuNr ) return;
 
-	if ( bIsBeeingAttacked ) return;
+	if ( isBeeingAttacked ) return;
 
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
@@ -2070,7 +2068,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	SDL_Rect dest;
 	dest = getMenuSize();
 
-	if ( bIsBeeingAttacked ) return;
+	if ( isBeeingAttacked ) return;
 
 	if ( Client->gameGUI.mouseInputMode == activateVehicle )
 	{

@@ -106,7 +106,7 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	vehicle->data.shotsCur--;
 	vehicle->data.ammoCur--;
 	if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
-	vehicle->Attacking = true;
+	vehicle->attacking = true;
 
 	sendFireCommand();
 
@@ -129,7 +129,7 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 
 	building->data.shotsCur--;
 	building->data.ammoCur--;
-	building->Attacking = true;
+	building->attacking = true;
 
 	//lock targets
 	if ( building->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
@@ -152,8 +152,8 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 
 cServerAttackJob::~cServerAttackJob()
 {
-	if ( building ) building->Attacking = false;
-	if ( vehicle  ) vehicle->Attacking = false;
+	if ( building ) building->attacking = false;
+	if ( vehicle  ) vehicle->attacking = false;
 }
 
 void cServerAttackJob::lockTarget(int offset)
@@ -164,7 +164,7 @@ void cServerAttackJob::lockTarget(int offset)
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
 	selectTarget( targetVehicle, targetBuilding, offset%Server->Map->size, offset/Server->Map->size, attackMode, Server->Map);
-	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = true;
+	if ( targetVehicle ) targetVehicle->isBeeingAttacked = true;
 
 	bool isAir = ( targetVehicle && targetVehicle->data.factorAir > 0 );
 
@@ -184,7 +184,7 @@ void cServerAttackJob::lockTarget(int offset)
 		while ( !buildings.end )
 		{
 			targetBuilding = buildings;
-			buildings->bIsBeeingAttacked = true;
+			buildings->isBeeingAttacked = true;
 			buildings++;
 		}
 	}
@@ -409,7 +409,7 @@ void cServerAttackJob::makeImpact(int x, int y )
 
 	//in the time between the first locking and the impact, it is possible that a vehicle drove onto the target field
 	//so relock the target, to ensure synchronity
-	if ( targetVehicle && !targetVehicle->bIsBeeingAttacked )
+	if ( targetVehicle && !targetVehicle->isBeeingAttacked )
 	{
 		Log.write(" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG );
 		lockTarget( offset );
@@ -480,20 +480,20 @@ void cServerAttackJob::makeImpact(int x, int y )
 	}
 
 
-	//attack finished. reset Attacking and bIsBeeingAttacked flags
-	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
+	//attack finished. reset attacking and isBeeingAttacked flags
+	if ( targetVehicle ) targetVehicle->isBeeingAttacked = false;
 
 	if ( !isAir )
 	{
 		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
-			buildings->bIsBeeingAttacked = false;
+			buildings->isBeeingAttacked = false;
 			buildings++;
 		}
 	}
-	if ( vehicle ) vehicle->Attacking = false;
-	if ( building ) building->Attacking = false;
+	if ( vehicle ) vehicle->attacking = false;
+	if ( building ) building->attacking = false;
 
 	//check whether a following sentry mode attack is possible
 	if ( targetVehicle ) targetVehicle->InSentryRange();
@@ -566,7 +566,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 			return;	//we are out of sync!!!
 		}
 
-		vehicle->bIsBeeingAttacked = true;
+		vehicle->isBeeingAttacked = true;
 
 		//synchonize position
 		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
@@ -584,7 +584,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
-			buildings->bIsBeeingAttacked = true;
+			buildings->isBeeingAttacked = true;
 			buildings++;
 		}
 	}
@@ -1016,14 +1016,14 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 	}
 
 	//clean up
-	if ( targetVehicle ) targetVehicle->bIsBeeingAttacked = false;
+	if ( targetVehicle ) targetVehicle->isBeeingAttacked = false;
 
 	if ( !isAir )
 	{
 		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
 		while ( !buildings.end )
 		{
-			buildings->bIsBeeingAttacked = false;
+			buildings->isBeeingAttacked = false;
 			buildings++;
 		}
 	}

@@ -210,7 +210,7 @@ void sendUnitData( cVehicle *Vehicle, int iPlayer )
 	message->pushBool ( Vehicle->IsClearing );
 	message->pushInt16 ( (int)Vehicle->CommandoRank );
 	message->pushInt16 ( Vehicle->turnsDisabled );
-	message->pushBool ( Vehicle->bIsBeeingAttacked );
+	message->pushBool ( Vehicle->isBeeingAttacked );
 	if ( !Vehicle->isNameOriginal() )
 	{
 		message->pushString ( Vehicle->getName() );

@@ -525,12 +525,12 @@ cServerMoveJob* cServerMoveJob::generateFromMessage ( cNetMessage *message )
 	}
 
 	//TODO: is this check really needed?
-	if ( vehicle->bIsBeeingAttacked )
+	if ( vehicle->isBeeingAttacked )
 	{
 		Log.write(" Server: cannot move a vehicle currently under attack", cLog::eLOG_TYPE_NET_DEBUG );
 		return NULL;
 	}
-	if ( vehicle->Attacking )
+	if ( vehicle->attacking )
 	{
 		Log.write(" Server: cannot move a vehicle currently attacking", cLog::eLOG_TYPE_NET_DEBUG );
 		return NULL;

@@ -941,7 +941,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( message->popBool() ) Vehicle->changeName ( message->popString() );
 
-				Vehicle->bIsBeeingAttacked = message->popBool();
+				Vehicle->isBeeingAttacked = message->popBool();
 				bool bWasDisabled = Vehicle->turnsDisabled > 0;
 				Vehicle->turnsDisabled = message->popInt16();
 				Vehicle->CommandoRank = message->popInt16();
@@ -2320,7 +2320,7 @@ void cClient::handleMoveJobs ()
 		Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
-		if ( Vehicle && Vehicle->bIsBeeingAttacked ) continue;
+		if ( Vehicle && Vehicle->isBeeingAttacked ) continue;
 
 		if ( MoveJob->bFinished || MoveJob->bEndForNow )
 		{

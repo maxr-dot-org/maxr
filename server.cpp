@@ -371,7 +371,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					Log.write(" Server: Message was not send by vehicle owner!", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
-				if ( attackingVehicle->bIsBeeingAttacked ) break;
+				if ( attackingVehicle->isBeeingAttacked ) break;
 			}
 			else
 			{
@@ -392,7 +392,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					Log.write(" Server: Message was not send by building owner!", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
-				if ( attackingBuilding->bIsBeeingAttacked ) break;
+				if ( attackingBuilding->isBeeingAttacked ) break;
 			}
 
 			//find target offset
@@ -2166,7 +2166,7 @@ void cServer::deleteUnit( cBuilding *Building, bool notifyClient )
 	}
 
 	//detach from attack job
-	if (Building->Attacking)
+	if (Building->attacking)
 	{
 		for ( unsigned int i = 0; i < AJobs.Size(); i++ )
 		{
@@ -2222,7 +2222,7 @@ void cServer::deleteUnit( cVehicle* vehicle )
 	}
 
 	//detach from attack job
-	if (vehicle->Attacking)
+	if (vehicle->attacking)
 	{
 		for ( unsigned int i = 0; i < AJobs.Size(); i++ )
 		{
@@ -2916,7 +2916,7 @@ void cServer::handleMoveJobs ()
 		Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
-		if ( Vehicle && Vehicle->bIsBeeingAttacked )
+		if ( Vehicle && Vehicle->isBeeingAttacked )
 			continue;
 
 		// stop the job

@@ -135,7 +135,6 @@ public:
 	cList<cPlayer*> DetectedByPlayerList;
 	sBuilding *typ;  // Typ des Buildings
 	cBuilding *next,*prev; // pointers for the linked list
-	bool bIsBeeingAttacked; /** true when an attack on this building is running */
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // counter for the startup animation
@@ -147,7 +146,6 @@ public:
 	bool IsWorking;  // is the building currently working?
 	int researchArea; ///< if the building can research, this is the area the building last researched or is researching
 	int MaxMetalProd,MaxOilProd,MaxGoldProd; // the maximum possible production of the building
-	bool Attacking;  // Gibt an, ob das Building gerade angreift
 	cList<sBuildList*> *BuildList; // Die Bauliste der Fabrik
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut

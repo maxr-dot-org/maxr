@@ -83,7 +83,7 @@ cAutoMJob::~cAutoMJob()
 //performs the auto move of a vehicle and adds new mjobs to the engine, if necessary
 void cAutoMJob::DoAutoMove()
 {
-	if ( vehicle->bIsBeeingAttacked ) return;
+	if ( vehicle->isBeeingAttacked ) return;
 	if ( Client->bWaitForOthers ) return;
 	if ( vehicle->owner != Client->ActivePlayer ) return;
 

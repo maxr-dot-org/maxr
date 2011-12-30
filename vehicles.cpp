@@ -75,7 +75,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	hasAutoMoveJob = false;
 	moving = false;
 	MoveJobActive = false;
-	Attacking = false;
 	IsBuilding = false;
 	IsClearing = false;
 	BuildPath = false;
@@ -83,7 +82,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	ClearMines = false;
 	Loaded = false;
 	IsLocked = false;
-	bIsBeeingAttacked = false;
 	BigBetonAlpha = 0;
 	lastShots = 0;
 	lastSpeed = 0;
@@ -185,7 +183,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		// check, if the plane should land
 		cBuilding *b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
 
-		if ( b && b->owner == owner && b->data.canBeLandedOn && !ClientMoveJob && !moving && !Attacking )
+		if ( b && b->owner == owner && b->data.canBeLandedOn && !ClientMoveJob && !moving && !attacking )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -485,10 +483,10 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	{
 		cVehicle* serverVehicle = NULL;
 		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
-		if ( bIsBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->bIsBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-		if ( Attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->Attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+		if ( isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 	}
 }
 
@@ -1070,7 +1068,7 @@ void cVehicle::menuReleased ()
 		return;
 	}
 
-	if ( moving || bIsBeeingAttacked ) return;
+	if ( moving || isBeeingAttacked ) return;
 
 	// attack:
 	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
@@ -1344,7 +1342,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	int nr = 0;
 	SDL_Rect dest = getMenuSize();
 
-	if ( moving || bIsBeeingAttacked ) return;
+	if ( moving || isBeeingAttacked ) return;
 
 	bool isMarked;
 	bool markerPossible = areCoordsOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
@@ -1636,10 +1634,10 @@ bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool ch
 	if ( data.ammoCur <= 0)
 		return false;
 
-	if ( Attacking )
+	if ( attacking )
 		return false;
 
-	if ( bIsBeeingAttacked )
+	if ( isBeeingAttacked )
 		return false;
 
 	if ( off < 0 )
@@ -2364,11 +2362,11 @@ bool cVehicle::canLoad ( cVehicle *Vehicle, bool checkPosition )
 	}
 	if ( i == data.storeUnitsTypes.size() ) return false;
 
-	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->Attacking || Vehicle->MoveJobActive ) ) return false;
+	if ( Vehicle->ClientMoveJob && ( Vehicle->moving || Vehicle->attacking || Vehicle->MoveJobActive ) ) return false;
 
 	if ( Vehicle->owner != owner || Vehicle->IsBuilding || Vehicle->IsClearing ) return false;
 
-	if ( Vehicle->bIsBeeingAttacked ) return false;
+	if ( Vehicle->isBeeingAttacked ) return false;
 
 	return true;
 }
@@ -2449,10 +2447,10 @@ bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
 	switch ( iType )
 	{
 	case SUPPLY_TYPE_REARM:
-		if ( Vehicle == this || !Vehicle->data.canAttack || Vehicle->data.ammoCur >= Vehicle->data.ammoMax || Vehicle->moving || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || !Vehicle->data.canAttack || Vehicle->data.ammoCur >= Vehicle->data.ammoMax || Vehicle->moving || Vehicle->attacking ) return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if ( Vehicle == this || Vehicle->data.hitpointsCur >= Vehicle->data.hitpointsMax || Vehicle->moving || Vehicle->Attacking ) return false;
+		if ( Vehicle == this || Vehicle->data.hitpointsCur >= Vehicle->data.hitpointsMax || Vehicle->moving || Vehicle->attacking ) return false;
 		break;
 	default:
 		return false;

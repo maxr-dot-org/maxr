@@ -1777,7 +1777,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 			}
 			else
 				// check, if the player wants to attack:
-				if ( changeAllowed && mouse->cur==GraphicsData.gfx_Cattack&&selectedVehicle&&!selectedVehicle->Attacking&&!selectedVehicle->MoveJobActive )
+				if ( changeAllowed && mouse->cur==GraphicsData.gfx_Cattack&&selectedVehicle&&!selectedVehicle->attacking&&!selectedVehicle->MoveJobActive )
 				{
 					cVehicle* vehicle;
 					cBuilding* building;
@@ -1808,7 +1808,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						}
 					}
 				}
-				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->Attacking )
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedBuilding && !selectedBuilding->attacking )
 				{
 					//find target ID
 					int targetId = 0;
@@ -1833,7 +1833,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				}
 				else if ( MouseStyle == OldSchool && overUnitField && selectUnit ( overUnitField, false ) )
 				{}
-				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmove && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->Attacking )
+				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Cmove && selectedVehicle && !selectedVehicle->moving && !selectedVehicle->attacking )
 				{
 					if ( selectedVehicle->IsBuilding )
 					{
@@ -4041,7 +4041,7 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = " attacking: " + iToStr ( vehicle->Attacking ) + " on sentry: +" + iToStr ( vehicle->sentryActive ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
+	tmpString = " attacking: " + iToStr ( vehicle->attacking ) + " on sentry: +" + iToStr ( vehicle->sentryActive ) + " ditherx: " + iToStr (vehicle->ditherX ) + " dithery: " + iToStr ( vehicle->ditherY );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
@@ -4106,7 +4106,7 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
-	tmpString = "attacking: " + iToStr ( building->Attacking ) + " UnitsData.dirt_typ: " + iToStr ( building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( building->RubbleValue ) + " big_dirt: " + iToStr ( building->data.isBig ) + " is_working: " + iToStr (building->IsWorking );
+	tmpString = "attacking: " + iToStr ( building->attacking ) + " UnitsData.dirt_typ: " + iToStr ( building->RubbleTyp ) + " UnitsData.dirt_value: +" + iToStr ( building->RubbleValue ) + " big_dirt: " + iToStr ( building->data.isBig ) + " is_working: " + iToStr (building->IsWorking );
 	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y+=8;
 
