@@ -22,6 +22,10 @@
 #include "client.h"
 #include "video.h"
 #include "player.h"
+#include "attackJobs.h"
+
+#include "vehicles.h"
+#include "buildings.h"
 
 using namespace std;
 
@@ -418,5 +422,70 @@ void cUnit::rotateTo (int newDir)
 		if (dir > 7)
 			dir -= 8;
 	}
+}
+
+
+
+//-----------------------------------------------------------------------------
+/** Checks, if the unit can attack an object at the given coordinates*/
+//-----------------------------------------------------------------------------
+bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange)
+{
+	int off = x + y * map->size;
+	
+	if (isUnitLoaded ())
+		return false;
+	
+	if (data.canAttack == false)
+		return false;
+	
+	if (data.shotsCur <= 0)
+		return false;
+	
+	if (data.ammoCur <= 0)
+		return false;
+	
+	if (attacking)
+		return false;
+	
+	if (isBeeingAttacked)
+		return false;
+	
+	if (off < 0)
+		return false;
+	
+	if (checkRange && isInRange (x, y) == false)
+		return false;
+	
+	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater(x, y) == false)
+		return false;
+	
+	if (owner->ScanMap[off] == false)
+		return forceAttack ? true : false;
+	
+	if (forceAttack)
+		return true;
+	
+	cVehicle* targetVehicle = 0;
+	cBuilding* targetBuilding = 0;	
+	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
+	
+	if (targetVehicle != 0)
+	{
+		if (Client && (targetVehicle == Client->gameGUI.getSelVehicle () || targetVehicle->owner == Client->ActivePlayer))
+			return false;
+	}
+	else if (targetBuilding != 0)
+	{
+		if (isVehicle () && map->possiblePlace ((cVehicle*)this, x, y))  //do not fire on e. g. platforms, connectors etc.
+			return false;												 //see ticket #436 on bug tracker
+		
+		if (Client && (targetBuilding == Client->gameGUI.getSelBuilding () || targetBuilding->owner == Client->ActivePlayer))
+			return false;
+	}
+	else
+		return false;
+	
+	return true;
 }
 

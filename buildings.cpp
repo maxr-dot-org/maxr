@@ -1603,60 +1603,6 @@ void cBuilding::CheckRessourceProd ( void )
 }
 
 //--------------------------------------------------------------------------
-/** Checks if the building is able to attack the object */
-//--------------------------------------------------------------------------
-bool cBuilding::CanAttackObject ( int x, int y, cMap *Map, bool override )
-{
-	int off = x + y * Map->size;
-
-	if ( !data.canAttack )
-		return false;
-
-	if ( data.shotsCur <= 0)
-		return false;
-
-	if ( data.ammoCur <= 0)
-		return false;
-
-	if ( attacking )
-		return false;
-
-	if ( isBeeingAttacked )
-		return false;
-
-	if ( off < 0 )
-		return false;
-
-	if ( !isInRange (x, y) )
-		return false;
-
-	if ( !owner->ScanMap[off] )
-		return override?true:false;
-
-	if ( override )
-		return true;
-
-	cVehicle *v = NULL;
-	cBuilding *b = NULL;
-	selectTarget(v, b, x, y, data.canAttack, Map );
-
-	if ( v )
-	{
-		if ( Client && ( v == Client->gameGUI.getSelVehicle() || v->owner == Client->ActivePlayer ) )
-			return false;
-	}
-	else if ( b )
-	{
-		if ( Client && ( b == Client->gameGUI.getSelBuilding() || b->owner == Client->ActivePlayer ) )
-			return false;
-	}
-	else
-		return false;
-
-	return true;
-}
-
-//--------------------------------------------------------------------------
 /** Draw the attack cursor */
 //--------------------------------------------------------------------------
 void cBuilding::DrawAttackCursor ( int x, int y )

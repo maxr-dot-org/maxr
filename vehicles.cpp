@@ -1615,70 +1615,6 @@ void cVehicle::Center ()
 }
 
 //-----------------------------------------------------------------------------
-/** Checks, if the vehicle can attack the object */
-//-----------------------------------------------------------------------------
-
-bool cVehicle::CanAttackObject ( int x, int y, cMap *Map, bool override, bool checkRange )
-{
-	int off = x + y * Map->size;
-
-	if ( Loaded )
-		return false;
-
-	if ( !data.canAttack )
-		return false;
-
-	if ( data.shotsCur <= 0)
-		return false;
-
-	if ( data.ammoCur <= 0)
-		return false;
-
-	if ( attacking )
-		return false;
-
-	if ( isBeeingAttacked )
-		return false;
-
-	if ( off < 0 )
-		return false;
-
-	if ( checkRange && !isInRange (x, y) )
-		return false;
-
-	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Map->isWater( x, y ) )
-		return false;
-
-	if ( !owner->ScanMap[off] )
-		return override?true:false;
-
-	if ( override )
-		return true;
-
-	cVehicle *targetVehicle = NULL;
-	cBuilding *targetBuilding = NULL;
-
-	selectTarget( targetVehicle, targetBuilding, x, y, data.canAttack, Map );
-
-	if ( targetVehicle )
-	{
-		if ( Client && ( targetVehicle == Client->gameGUI.getSelVehicle() || targetVehicle->owner == Client->ActivePlayer ) )
-			return false;
-	}
-	else if ( targetBuilding )
-	{
-		if ( Map->possiblePlace( this, x, y) )  //do not fire on e. g. platforms, connectors etc.
-			return false;						//see ticket #436 on bug tracker
-		if ( Client && ( targetBuilding == Client->gameGUI.getSelBuilding() || targetBuilding->owner == Client->ActivePlayer ) )
-			return false;
-	}
-	else
-		return false;
-
-	return true;
-}
-
-//-----------------------------------------------------------------------------
 /** Draws the attack cursor */
 //-----------------------------------------------------------------------------
 void cVehicle::DrawAttackCursor ( int x, int y )
@@ -2107,7 +2043,7 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesAir[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( PosX, PosY, Server->Map, true ) )
+				if ( Sentry->b && Sentry->b->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -2126,7 +2062,7 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( PosX, PosY, Server->Map, true ) )
+				if ( Sentry->v && Sentry->v->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -2154,7 +2090,7 @@ bool cVehicle::InSentryRange ()
 			{
 				Sentry = Player->SentriesGround[k];
 
-				if ( Sentry->b && Sentry->b->CanAttackObject ( PosX, PosY, Server->Map, true ) )
+				if ( Sentry->b && Sentry->b->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -2173,7 +2109,7 @@ bool cVehicle::InSentryRange ()
 					}
 				}
 
-				if ( Sentry->v && Sentry->v->CanAttackObject ( PosX, PosY, Server->Map, true ) )
+				if ( Sentry->v && Sentry->v->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
 				{
 					cVehicle* targetVehicle;
 					cBuilding* targetBuilding;
@@ -2224,7 +2160,7 @@ bool cVehicle::provokeReactionFire ()
 		while (opponentVehicle != 0 && isOffendingOpponent == false)
 		{
 			if (isInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
-				&& CanAttackObject (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
+				&& canAttackObjectAt (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
 			{
 				// test, if this vehicle can really attack the opponentVehicle
 				cVehicle* selectedTargetVehicle = 0;
@@ -2240,7 +2176,7 @@ bool cVehicle::provokeReactionFire ()
 		{
 			if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
 				&& isInRange (opponentBuilding->PosX, opponentBuilding->PosY)
-				&& CanAttackObject (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
+				&& canAttackObjectAt (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
 			{
 				// test, if this vehicle can really attack the opponentVehicle
 				cVehicle* selectedTargetVehicle = 0;
@@ -2264,7 +2200,7 @@ bool cVehicle::provokeReactionFire ()
 		while (opponentBuilding != 0)
 		{
 			if (opponentBuilding->sentryActive == false && opponentBuilding->manualFireActive == false
-				&& opponentBuilding->CanAttackObject (PosX, PosY, Server->Map, true))
+				&& opponentBuilding->canAttackObjectAt (PosX, PosY, Server->Map, true))
 			{
 				cVehicle* selectedTargetVehicle = 0;
 				cBuilding* selectedTargetBuilding = 0;
@@ -2285,7 +2221,7 @@ bool cVehicle::provokeReactionFire ()
 		while (opponentVehicle != 0)
 		{
 			if (opponentVehicle->sentryActive == false && opponentVehicle->manualFireActive == false
-				&& opponentVehicle->CanAttackObject (PosX, PosY, Server->Map, true, true)
+				&& opponentVehicle->canAttackObjectAt (PosX, PosY, Server->Map, true, true)
 				&& opponentVehicle->data.isStealthOn == TERRAIN_NONE) // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
 			{
 				cVehicle* selectedTargetVehicle = 0;

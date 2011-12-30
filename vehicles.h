@@ -188,12 +188,6 @@ public:
 	virtual int getNumberOfMenuEntries() const;
 	void DecSpeed(int value);
 	void Center();
-	/*
-	* checks if the unit can attack the offset
-	* when override is false, the funktion only returns true, when there is an enemy unit
-	* ATTENTION: must not be called with override == false from the server thread!
-	*/
-	bool CanAttackObject(int x, int y, cMap *Map, bool override=false, bool checkRange = true);
 	void DrawAttackCursor( int x, int y );
 	void FindNextband();
 	void doSurvey();
@@ -286,6 +280,7 @@ private:
 	//-----------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring
+	virtual bool isUnitLoaded () const { return Loaded; }
 	virtual bool treatAsBigForMenuDisplay () const;
 };
 

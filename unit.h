@@ -24,6 +24,7 @@
 #include "main.h" /// for sUnitData -> move that to cUnit, too?
 
 class cPlayer;
+class cMap;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -65,6 +66,14 @@ public:
 	void drawHealthBar () const;
 	void rotateTo (int newDir);
 
+	/** checks if the unit can attack something at the offset
+	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
+	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
+	 */	
+	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true);
+
+	
+	
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
@@ -87,6 +96,7 @@ protected:
 
 	void drawStatus () const;
 
+	virtual bool isUnitLoaded () const { return false; } 
 	virtual bool treatAsBigForMenuDisplay () const { return false; }
 };
 

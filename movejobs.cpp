@@ -897,7 +897,7 @@ void cEndMoveAction::executeAttackAction()
 	int offset = x + y * Server->Map->size;
 
 	//check, whether the attack is now possible
-	if ( !vehicle_->CanAttackObject ( x, y, Server->Map, true, true ) ) return;
+	if ( !vehicle_->canAttackObjectAt ( x, y, Server->Map, true, true ) ) return;
 
 	//is the target in sight?
 	if ( !vehicle_->owner->ScanMap[offset] ) return;

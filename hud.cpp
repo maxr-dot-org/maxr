@@ -1225,14 +1225,14 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && selectedVehicle->CanAttackObject( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false, false ) )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false, false ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedVehicle->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && selectedBuilding->CanAttackObject( mouse->getKachelX(), mouse->getKachelY(), Client->Map ) )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->Map ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{

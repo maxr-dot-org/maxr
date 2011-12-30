@@ -191,12 +191,6 @@ public:
 	void ClientStopWork();
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	/*
-	* checks if the unit can attack the offset
-	* when override is false, the function only returns true, if there is an enemy unit
-	* ATTENTION: must not be called with override == false from the server thread!
-	*/
-	bool CanAttackObject(int x, int y, cMap *Map, bool override=false);
 	void DrawAttackCursor( int x, int y );
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
