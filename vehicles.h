@@ -126,7 +126,6 @@ public:
 	virtual int getMovementOffsetY () const {return OffY;}
 	
 	sVehicle *typ;   // Typ des Vehicles
-	int dir;         // aktuelle Drehrichtung
 	bool groupSelected;
 	cServerMoveJob *ServerMoveJob;
 	cClientMoveJob *ClientMoveJob;
@@ -184,7 +183,6 @@ public:
 	*/
 	int refreshData();
 	void DrawPath();
-	void RotateTo(int Dir);
 	std::string getStatusStr();
 	int playStream();
 	void StartMoveSound();
@@ -192,7 +190,6 @@ public:
 	void DrawMenu( sMouseState *mouseState = NULL );
 	void menuReleased ();
 	virtual int getNumberOfMenuEntries() const;
-	bool MouseOverMenu(int mx,int my);
 	void DecSpeed(int value);
 	void Center();
 	/*

@@ -53,6 +53,7 @@ public:
 	
 	virtual int getNumberOfMenuEntries () const = 0;
 	SDL_Rect getMenuSize () const;
+	bool areCoordsOverMenu (int x, int y);
 	int getScreenPosX () const;
 	int getScreenPosY () const;
 	
@@ -61,11 +62,13 @@ public:
 
 	void drawMunBar () const;
 	void drawHealthBar () const;
+	void rotateTo (int newDir);
 
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
 	int PosX, PosY;
+	int dir; // ?Frame of the unit/current direction the unit is facing?
 	int turnsDisabled;  // the time this unit will be disabled
 	
 	cPlayer* owner;

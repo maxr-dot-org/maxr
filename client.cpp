@@ -2361,7 +2361,7 @@ void cClient::handleMoveJobs ()
 		if ( MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur )
 		{
 			// rotate vehicle
-			if ( timer100ms ) Vehicle->RotateTo ( MoveJob->iNextDir );
+			if ( timer100ms ) Vehicle->rotateTo ( MoveJob->iNextDir );
 		}
 		else if ( Vehicle->MoveJobActive )
 		{

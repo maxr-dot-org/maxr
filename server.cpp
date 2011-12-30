@@ -2983,7 +2983,7 @@ void cServer::handleMoveJobs ()
 		if ( MoveJob->iNextDir != Vehicle->dir )
 		{
 			// rotate vehicle
-			if ( timer100ms ) Vehicle->RotateTo ( MoveJob->iNextDir );
+			if ( timer100ms ) Vehicle->rotateTo ( MoveJob->iNextDir );
 		}
 		else
 		{
@@ -3520,7 +3520,7 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 	vehicle->turnsDisabled = 0;
 
 
-	// delete the unit on the clients and ad it with new owner again
+	// delete the unit on the clients and add it with new owner again
 	sendDeleteUnit ( vehicle, oldOwner->Nr );
 	while ( vehicle->SeenByPlayerList.Size() )
 	{

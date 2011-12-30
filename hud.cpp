@@ -1150,8 +1150,8 @@ void cGameGUI::updateMouseCursor()
 			return;
 		}
 
-		if ( ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( x,y ) ) ||
-			( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( x,y ) ) )
+		if ( ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( x,y ) ) ||
+			( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( x,y ) ) )
 		{
 			mouse->SetCursor ( CHand );
 		}
@@ -1499,13 +1499,13 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( mouse->x, mouse->y ) )
+	if ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouse->x, mouse->y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedVehicle->setMenuSelection();
 		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
 		return;
 	}
-	else if ( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( mouse->x, mouse->y ) )
+	else if ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouse->x, mouse->y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedBuilding->setMenuSelection();
 		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
@@ -1771,8 +1771,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over an unit menu:
-			if ( ( selectedVehicle && unitMenuActive && selectedVehicle->MouseOverMenu ( mouse->x,mouse->y ) ) ||
-			     ( selectedBuilding && unitMenuActive && selectedBuilding->MouseOverMenu ( mouse->x,mouse->y ) ) )
+			if ( ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouse->x,mouse->y ) ) ||
+			     ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouse->x,mouse->y ) ) )
 			{
 			}
 			else

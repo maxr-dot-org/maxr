@@ -52,7 +52,6 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	BandY = 0;
 	OffX = 0;
 	OffY = 0;
-	dir = 0;
 	ditherX = 0;
 	ditherY = 0;
 	StartUp = 0;
@@ -230,7 +229,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		if ( data.isBig )
 			dir = 0;
 		else
-			RotateTo ( 0 );
+			rotateTo ( 0 );
 	}
 
 	//run start up effect
@@ -936,45 +935,6 @@ void cVehicle::DrawPath ()
 }
 
 //-----------------------------------------------------------------------------
-/** rotates the vehicle to the given direction */
-//-----------------------------------------------------------------------------
-void cVehicle::RotateTo ( int Dir )
-{
-	if ( Dir < 0 || Dir >= 8 ) return;
-	int i, t, dest;
-
-	if ( dir == Dir )
-		return;
-
-	t = dir;
-
-	for ( i = 0;i < 8;i++ )
-	{
-		if ( t == Dir )
-		{
-			dest = i;
-			break;
-		}
-
-		t++;
-
-		if ( t > 7 )
-			t = 0;
-	}
-
-	if ( dest < 4 )
-		dir++;
-	else
-		dir--;
-
-	if ( dir < 0 )
-		dir += 8;
-	else
-		if ( dir > 7 )
-			dir -= 8;
-}
-
-//-----------------------------------------------------------------------------
 /** Returns a string with the current state */
 //-----------------------------------------------------------------------------
 string cVehicle::getStatusStr ()
@@ -1105,7 +1065,7 @@ void cVehicle::menuReleased ()
 {
 	int nr = 0, exeNr;
 	SDL_Rect dest = getMenuSize();
-	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
+	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
 	if ( exeNr != selMenuNr )
 	{
 		selMenuNr = -1;
@@ -1389,7 +1349,7 @@ void cVehicle::DrawMenu ( sMouseState *mouseState )
 	if ( moving || bIsBeeingAttacked ) return;
 
 	bool isMarked;
-	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
+	bool markerPossible = areCoordsOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
 	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
@@ -1627,23 +1587,6 @@ int cVehicle::getNumberOfMenuEntries () const
 		nr++;
 
 	return nr;
-}
-
-//-----------------------------------------------------------------------------
-/** Returns true, if the mouse coordinates are in the menu's space */
-//-----------------------------------------------------------------------------
-bool cVehicle::MouseOverMenu ( int mx, int my )
-{
-	SDL_Rect r;
-	r = getMenuSize();
-
-	if ( mx < r.x || mx > r.x + r.w )
-		return false;
-
-	if ( my < r.y || my > r.y + r.h )
-		return false;
-
-	return true;
 }
 
 //-----------------------------------------------------------------------------

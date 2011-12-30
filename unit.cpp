@@ -29,6 +29,7 @@ using namespace std;
 cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 : PosX (0)
 , PosY (0)
+, dir (0)
 , turnsDisabled (0)
 , owner (owner)
 , unitType (unitType)
@@ -211,6 +212,22 @@ SDL_Rect cUnit::getMenuSize () const
 	return dest;
 }
 
+//-----------------------------------------------------------------------------
+/** Returns true, if the coordinates are in the menu's space */
+//-----------------------------------------------------------------------------
+bool cUnit::areCoordsOverMenu (int x, int y)
+{
+	SDL_Rect r = getMenuSize();
+	
+	if (x < r.x || x > r.x + r.w)
+		return false;
+	
+	if (y < r.y || y > r.y + r.h)
+		return false;
+	
+	return true;
+}
+
 //--------------------------------------------------------------------------
 /** Returns the screen x position of the unit */
 //--------------------------------------------------------------------------
@@ -336,6 +353,44 @@ void cUnit::drawStatus () const
 				dest.x += Client->gameGUI.getTileSize () / 4;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
 		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+/** rotates the unit to the given direction */
+//-----------------------------------------------------------------------------
+void cUnit::rotateTo (int newDir)
+{
+	if (newDir < 0 || newDir >= 8 || newDir == dir) 
+		return;
+		
+	int t = dir;
+	int dest;
+	
+	for (int i = 0; i < 8; i++)
+	{
+		if (t == newDir)
+		{
+			dest = i;
+			break;
+		}
+		t++;
+		
+		if (t > 7)
+			t = 0;
+	}
+	
+	if (dest < 4)
+		dir++;
+	else
+		dir--;
+	
+	if (dir < 0)
+		dir += 8;
+	else
+	{
+		if (dir > 7)
+			dir -= 8;
 	}
 }
 

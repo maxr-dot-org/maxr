@@ -55,7 +55,6 @@ cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
 	RubbleValue = 0;
 	EffectAlpha = 0;
 	EffectInc = true;
-	dir = 0;
 	StartUp = 0;
 	IsWorking = false;
 	researchArea = cResearch::kAttackResearch;
@@ -748,23 +747,6 @@ int cBuilding::getNumberOfMenuEntries () const
 		nr++;
 
 	return nr;
-}
-
-//--------------------------------------------------------------------------
-/** returns true, if the mouse coordinates are inside the menu area */
-//--------------------------------------------------------------------------
-bool cBuilding::MouseOverMenu (int mx, int my)
-{
-	SDL_Rect r;
-	r = getMenuSize();
-
-	if ( mx < r.x || mx > r.x + r.w )
-		return false;
-
-	if ( my < r.y || my > r.y + r.h )
-		return false;
-
-	return true;
 }
 
 //--------------------------------------------------------------------------
@@ -1781,44 +1763,6 @@ void cBuilding::DrawAttackCursor ( int x, int y )
 }
 
 //--------------------------------------------------------------------------
-/** Rotates the building in the given direction */
-//--------------------------------------------------------------------------
-void cBuilding::RotateTo ( int Dir )
-{
-	int i, t, dest;
-
-	if ( dir == Dir )
-		return;
-
-	t = dir;
-
-	for ( i = 0;i < 8;i++ )
-	{
-		if ( t == Dir )
-		{
-			dest = i;
-			break;
-		}
-
-		t++;
-
-		if ( t > 7 )
-			t = 0;
-	}
-
-	if ( dest < 4 )
-		dir++;
-	else
-		dir--;
-
-	if ( dir < 0 )
-		dir += 8;
-	else
-		if ( dir > 7 )
-			dir -= 8;
-}
-
-//--------------------------------------------------------------------------
 /** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given base costs
 	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
@@ -1901,7 +1845,7 @@ void cBuilding::menuReleased()
 {
 	int nr = 0, exeNr;
 	SDL_Rect dest = getMenuSize();
-	if ( MouseOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
+	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
 	if ( exeNr != selMenuNr ) return;
 
 	if ( bIsBeeingAttacked ) return;
@@ -2161,7 +2105,7 @@ void cBuilding::DrawMenu ( sMouseState *mouseState )
 	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
 
 	bool isMarked;
-	bool markerPossible = MouseOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
+	bool markerPossible = areCoordsOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
 
 	// Angriff:
 	if ( typ->data.canAttack && data.shotsCur && owner == Client->ActivePlayer )

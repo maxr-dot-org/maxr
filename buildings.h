@@ -123,8 +123,6 @@ enum ResourceKind
 //--------------------------------------------------------------------------
 class cBuilding : public cUnit
 {
-	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	std::string name;			// name of the building
 public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
 	~cBuilding();
@@ -151,7 +149,6 @@ public:
 	bool bSentryStatus;		/** true if the building is on sentry */
 	bool bManualFireStatus; /** true, if the building does only fire by manual control and not as reaction fire */
 	int MaxMetalProd,MaxOilProd,MaxGoldProd; // the maximum possible production of the building
-	int dir;         // ?Frame of the building?
 	bool Attacking;  // Gibt an, ob das Building gerade angreift
 	cList<sBuildList*> *BuildList; // Die Bauliste der Fabrik
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
@@ -189,7 +186,6 @@ public:
 	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	virtual int getNumberOfMenuEntries() const;
-	bool MouseOverMenu(int mx,int my);
 	void SelfDestructionMenu();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
@@ -206,7 +202,6 @@ public:
 	*/
 	bool CanAttackObject(int x, int y, cMap *Map, bool override=false);
 	void DrawAttackCursor( int x, int y );
-	void RotateTo(int Dir);
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints(sVehicle *typ);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;

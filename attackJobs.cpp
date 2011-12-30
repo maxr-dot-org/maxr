@@ -702,7 +702,7 @@ void cClientAttackJob::rotate()
 	{
 		if ( vehicle->dir != iFireDir )
 		{
-			vehicle->RotateTo( iFireDir );
+			vehicle->rotateTo( iFireDir );
 		}
 		else
 		{
@@ -713,7 +713,7 @@ void cClientAttackJob::rotate()
 	{
 		if ( building->dir != iFireDir && !building->data.explodesOnContact )
 		{
-			building->RotateTo( iFireDir );
+			building->rotateTo( iFireDir );
 		}
 		else
 		{
