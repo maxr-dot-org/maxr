@@ -936,6 +936,7 @@ void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *sur
 
 cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA ), owner(owner_)
 {
+	owner->researchFinished = false;
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+19, lngPack.i18n( "Text~Title~Labs" ) );
 	titleLabel->setCentered ( true );
 	menuItems.Add ( titleLabel );

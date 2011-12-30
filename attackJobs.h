@@ -38,6 +38,7 @@ public:
 
 	static int iNextID;
 	int iID;
+	bool sentryFire;
 	int iAgressorOff;
 	int iMuzzleType;
 	bool bMuzzlePlayed;
@@ -51,8 +52,8 @@ public:
 	cBuilding* building;
 	cVehicle* vehicle;
 
-	cServerAttackJob( cBuilding* building, int targetOff );
-	cServerAttackJob( cVehicle* vehicle, int targetOff );
+	cServerAttackJob( cBuilding* building, int targetOff, bool sentry );
+	cServerAttackJob( cVehicle* vehicle, int targetOff, bool sentry );
 	~cServerAttackJob();
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko

@@ -749,7 +749,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	cBuilding* mine = Map->fields[Vehicle->PosX+Vehicle->PosY*Map->size].getMine();
 	if ( Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner )
 	{
-		Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size ));
+		Server->AJobs.Add( new cServerAttackJob( mine, Vehicle->PosX+Vehicle->PosY*Map->size, false ));
 		bEndForNow = true;
 	}
 
@@ -902,7 +902,7 @@ void cEndMoveAction::executeAttackAction()
 	//is the target in sight?
 	if ( !vehicle_->owner->ScanMap[offset] ) return;
 
-	Server->AJobs.Add( new cServerAttackJob( vehicle_, offset ));
+	Server->AJobs.Add( new cServerAttackJob( vehicle_, offset, false ));
 }
 
 cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle ) :

@@ -430,7 +430,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
-				AJobs.Add( new cServerAttackJob( attackingVehicle, targetOffset ));
+				AJobs.Add( new cServerAttackJob( attackingVehicle, targetOffset, false ));
 			}
 			else
 			{
@@ -439,7 +439,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 					break;
 				}
-				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset ));
+				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset, false ));
 			}
 
 		}

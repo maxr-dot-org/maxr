@@ -61,6 +61,18 @@ void CloseSound ( void )
 	Mix_CloseAudio();
 }
 
+//FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
+void play(sSOUND *snd)
+{
+	if ( snd == NULL ) return;
+	if(Mix_PlayChannel ( SoundChannel,snd,0 ) == -1 )
+	{
+		Log.write("Could not play sound:", cLog::eLOG_TYPE_WARNING);
+		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
+		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
+	}
+}
+
 // plays voice sound
 void PlayVoice ( sSOUND *snd )
 {
@@ -94,18 +106,6 @@ void PlayMusic(char const* const file)
 	}
 	Mix_PlayMusic ( music_stream,0 );
 	Mix_VolumeMusic ( cSettings::getInstance().getMusicVol() );
-}
-
-//FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
-void play(sSOUND *snd)
-{
-	if ( snd == NULL ) return;
-	if(Mix_PlayChannel ( SoundChannel,snd,0 ) == -1 )
-	{
-		Log.write("Could not play sound:", cLog::eLOG_TYPE_WARNING);
-		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
-		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
-	}
 }
 
 // sets volume for music

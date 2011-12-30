@@ -769,12 +769,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			AddedVehicle->iID = message->popInt16();
 
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
-
-			// make report
-			string message = AddedVehicle->getDisplayName() + " (" + Player->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
-			Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, UnitID, iPosX, iPosY );
-			if ( random( 2 ) == 0 ) PlayVoice ( VoiceData.VOIDetected1 );
-			else PlayVoice ( VoiceData.VOIDetected2 );
 		}
 		break;
 	case GAME_EV_ADD_ENEM_BUILDING:
@@ -1378,6 +1372,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			string researchMsgString = "";
 			if ( bFinishedResearch )
 			{
+				ActivePlayer->researchFinished = true;
 				PlayVoice ( VoiceData.VOIResearchComplete );
 
 				// build research finished string
@@ -1410,17 +1405,6 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			if ( sReportMsg.length() > 0 ) msgString += sReportMsg + "\n";
 			if ( bFinishedResearch ) msgString += researchMsgString + "\n";
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
-
-			//HACK SHOWFINISHEDPLAYERS reset finished turn for all players since a new turn started right now
-			/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-			{
-				cPlayer *Player = (*Client->PlayerList)[i];
-				if(Player)
-				{
-					Player->bFinishedTurn=false;
-					Hud.ExtraPlayers(Player->name, GetColorNr(Player->color), i, Player->bFinishedTurn);
-				}
-			}*/
 		}
 		break;
 	case GAME_EV_MARK_LOG:
@@ -1432,6 +1416,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_SUPPLY:
 		{
+			bool storageMenuActive = false;
 			int iType = message->popChar ();
 			if ( message->popBool () )
 			{
@@ -1465,11 +1450,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 					if ( Building != NULL && ActiveMenu != NULL )
 					{
+						//FIXME: Is ActiveMenu really an instance of cStorageMenu?
 						cStorageMenu *storageMenu = dynamic_cast<cStorageMenu*>(ActiveMenu);
 						if ( storageMenu )
 						{
+							storageMenuActive = true;
 							storageMenu->resetInfos();
 							storageMenu->draw();
+							storageMenu->playVoice(iType);
 						}
 					}
 				}
@@ -1487,15 +1475,18 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( iType == SUPPLY_TYPE_REARM ) DestBuilding->data.ammoCur = message->popInt16();
 				else DestBuilding->data.hitpointsCur = message->popInt16();
 			}
-			if ( iType == SUPPLY_TYPE_REARM )
+			if (!storageMenuActive)
 			{
-				PlayVoice ( VoiceData.VOILoaded );
-				PlayFX ( SoundData.SNDReload );
-			}
-			else
-			{
-				PlayVoice ( VoiceData.VOIRepaired );
-				PlayFX ( SoundData.SNDRepair );
+				if ( iType == SUPPLY_TYPE_REARM )
+				{
+					PlayVoice ( VoiceData.VOILoaded );
+					PlayFX ( SoundData.SNDReload );
+				}
+				else
+				{
+					PlayVoice ( VoiceData.VOIRepaired );
+					PlayFX ( SoundData.SNDRepair );
+				}
 			}
 		}
 		break;
@@ -1830,10 +1821,10 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				delete FXList[0];
 				FXList.Delete(0);
 			}
-			while ( FXList.Size() )
+			while ( FXListBottom.Size() )
 			{
-				delete FXList[0];
-				FXList.Delete(0);
+				delete FXListBottom[0];
+				FXListBottom.Delete(0);
 			}
 
 			// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
@@ -1994,12 +1985,21 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_COMMANDO_ANSWER:
 		{
-			if ( message->popBool() )
+			if ( message->popBool() )	//success?
 			{
 				if ( message->popBool() ) PlayVoice ( VoiceData.VOIUnitStolen );
 				else PlayVoice ( VoiceData.VOIUnitDisabled );
 			}
-			else PlayVoice ( VoiceData.VOICommandoDetected );
+			else 
+			{
+				int i = random(3);
+				if (i = 0)
+					PlayVoice ( VoiceData.VOICommandoFailed1 );
+				else if (i = 1)
+					PlayVoice ( VoiceData.VOICommandoFailed2 );
+				else
+					PlayVoice ( VoiceData.VOICommandoFailed3 );
+			}
 
 			/* Ignore vehicle ID. */
 			message->popInt16();
@@ -2100,6 +2100,26 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 
 	gameGUI.updateMouseCursor();
 	gameGUI.callMiniMapDraw();
+
+	if ( AddedVehicle->owner != ActivePlayer && AddedVehicle->iID == ActivePlayer->lastDeletedUnit )
+	{
+		//this unit was captured by an infiltrator
+		PlayVoice( VoiceData.VOIUnitStolenByEnemy );
+		Client->ActivePlayer->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY );
+	}
+	else if ( AddedVehicle->owner != ActivePlayer )
+	{
+		// make report
+		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
+		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY );
+
+		if ( AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack )
+			PlayVoice( VoiceData.VOISubDetected );
+		else if ( random( 2 ) ) 
+			PlayVoice ( VoiceData.VOIDetected1 );
+		else 
+			PlayVoice ( VoiceData.VOIDetected2 );
+	}
 }
 
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
@@ -2202,6 +2222,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 
 	gameGUI.callMiniMapDraw();
 
+	cPlayer* owner = Vehicle->owner;
 	if( Vehicle->prev )
 	{
 		Vehicle->prev->next = Vehicle->next;
@@ -2212,7 +2233,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	}
 	else
 	{
-		Vehicle->owner->VehicleList = Vehicle->next;
+		owner->VehicleList = Vehicle->next;
 		if( Vehicle->next )
 		{
 			Vehicle->next->prev = NULL;
@@ -2225,7 +2246,8 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 		if ( selGroup[i] == Vehicle ) selGroup.Delete(i);
 	}
 
-	cPlayer* owner = Vehicle->owner;
+	owner->lastDeletedUnit = Vehicle->iID;
+	
 	delete Vehicle;
 
 	if ( owner ) owner->DoScan();

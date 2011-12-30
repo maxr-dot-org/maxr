@@ -79,7 +79,7 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 
 int cServerAttackJob::iNextID = 0;
 
-cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
+cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff, bool sentry )
 {
 	iID = iNextID;
 	iNextID++;
@@ -89,6 +89,7 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 	this->vehicle = vehicle;
 	damage = vehicle->data.damage;
 	attackMode = vehicle->data.canAttack;
+	sentryFire = sentry;
 
 	iMuzzleType = vehicle->data.muzzleType;
 	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
@@ -112,7 +113,7 @@ cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff )
 
 }
 
-cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
+cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff, bool sentry )
 {
 	iID = iNextID;
 	iNextID++;
@@ -122,7 +123,7 @@ cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff )
 	vehicle = NULL;
 	damage = building->data.damage;
 	attackMode = building->data.canAttack;
-
+	sentryFire = sentry;
 
 	iMuzzleType = building->data.muzzleType;
 	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
@@ -331,6 +332,7 @@ void cServerAttackJob::sendFireCommand( cPlayer* player )
 	char fireDir = vehicle ? vehicle->dir : building->dir;
 	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
 
+	message->pushBool( sentryFire );
 	message->pushInt16( vehicle ? vehicle->data.speedCur : 0);
 	message->pushInt16( vehicle ? vehicle->data.ammoCur  : building->data.ammoCur );
 	message->pushInt16( vehicle ? vehicle->data.shotsCur : building->data.shotsCur);
@@ -693,6 +695,19 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		building->data.ammoCur = message->popInt16();
 	}
 
+	bool sentryReaction = message->popBool();
+	if ( sentryReaction && ( (building && building->owner == Client->ActivePlayer) || vehicle && vehicle->owner == Client->ActivePlayer ))
+	{
+		int x = vehicle?vehicle->PosX:building->PosX;
+		int y = vehicle?vehicle->PosY:building->PosY;
+		string name = vehicle?vehicle->getDisplayName():building->getDisplayName();
+		sID id = vehicle?vehicle->data.ID:building->data.ID;
+		Client->ActivePlayer->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~AttackingEnemy", name), x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y );
+		if (random(2))
+			PlayVoice(VoiceData.VOIAttackingEnemy1 );
+		else
+			PlayVoice(VoiceData.VOIAttackingEnemy2 );
+	}
 	Client->gameGUI.checkMouseInputMode();
 }
 
@@ -1010,7 +1025,13 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		else
 		{
 			message = name + " " + lngPack.i18n("Text~Comp~Attacked");
-			PlayVoice( VoiceData.VOIAttackingUs );
+			int i = random(3);
+			if (i==0)
+				PlayVoice( VoiceData.VOIAttackingUs );
+			else if ( i == 1)
+				PlayVoice( VoiceData.VOIAttackingUs2 );
+			else
+				PlayVoice( VoiceData.VOIAttackingUs3 );
 		}
 		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y );
 	}

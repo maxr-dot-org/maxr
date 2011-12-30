@@ -2536,6 +2536,8 @@ cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* play
 	infoLabel = new cMenuLabel ( position.x+180+(position.w-180)/2-(Video.getResolutionX()-200)/2, position.y+position.h/2-font->getFontHeight ( FONT_LATIN_BIG ), "", FONT_LATIN_BIG );
 	infoLabel->setBox ( (Video.getResolutionX()-200), font->getFontHeight ( FONT_LATIN_BIG )*2 );
 	menuItems.Add ( infoLabel );
+
+	PlayVoice( VoiceData.VOILanding );
 }
 
 //------------------------------------------------------------------------------
@@ -4277,6 +4279,8 @@ void cLoadSaveMenu::saveReleased( void* parent )
 	savegame.save ( menu->saveSlots[menu->selected-menu->offset]->getNameEdit()->getText() );
 	Server->makeAdditionalSaveRequest( menu->selected+1 );
 
+	PlayVoice( VoiceData.VOISaved );
+
 	delete menu->files;
 	menu->files = getFilesOfDirectory ( cSettings::getInstance().getSavesPath() );
 	for ( unsigned int i = 0; i < menu->savefiles.Size(); i++ )
@@ -4995,7 +4999,9 @@ cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cB
 	cMenu(LoadPCX(GFXOD_STORAGE), MNU_BG_ALPHA),
 	ownerVehicle(vehicle),
 	ownerBuilding(building),
-	storageList(storageList_)
+	storageList(storageList_),
+	voicePlayed(false),
+	voiceTypeAll(false)
 {
 	if ( ownerVehicle ) unitData = ownerVehicle->data;
 	else if ( ownerBuilding )
@@ -5257,6 +5263,8 @@ void cStorageMenu::reloadReleased ( void *parent )
 	if ( index == -1 || !menu->ownerBuilding ) return;
 
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
+	menu->voiceTypeAll = false;
+	menu->voicePlayed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -5267,6 +5275,8 @@ void cStorageMenu::repairReleased ( void *parent )
 	if ( index == -1 || !menu->ownerBuilding ) return;
 
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );
+	menu->voiceTypeAll = false;
+	menu->voicePlayed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -5323,6 +5333,8 @@ void cStorageMenu::reloadAllReleased ( void *parent )
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
 	if ( !menu->ownerBuilding ) return;
 
+	menu->voiceTypeAll = true;
+	menu->voicePlayed = false;
 	int resources = menu->metalValue;
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
@@ -5342,6 +5354,8 @@ void cStorageMenu::repairAllReleased ( void *parent )
 	cStorageMenu *menu = dynamic_cast<cStorageMenu*>((cMenu*)parent);
 	if ( !menu->ownerBuilding ) return;
 
+	menu->voiceTypeAll = true;
+	menu->voicePlayed = false;
 	int resources = menu->metalValue;
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
@@ -5373,6 +5387,41 @@ void cStorageMenu::upgradeAllReleased ( void *parent )
 void cStorageMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *destroyedVehicle )
 {
 	if ( destroyedBuilding == ownerBuilding || destroyedVehicle == ownerVehicle ) terminate = true;
+}
+//------------------------------------------------------------------------------
+void cStorageMenu::playVoice( int Type )
+{
+	if ( voicePlayed ) return;
+
+	voicePlayed = true;
+
+	if ( Type == SUPPLY_TYPE_REARM )
+	{
+		PlayFX ( SoundData.SNDReload );
+		if ( voiceTypeAll == true )
+			PlayVoice( VoiceData.VOILoaded2 );
+		else
+			PlayVoice( VoiceData.VOILoaded );
+	}
+	else
+	{
+		PlayFX ( SoundData.SNDRepair );
+		if ( voiceTypeAll == true )
+		{
+			if (random(2))
+				PlayVoice( VoiceData.VOIRepairedAll1 );
+			else
+				PlayVoice( VoiceData.VOIRepairedAll2 );
+		}
+		else
+		{
+			if (random(2))
+				PlayVoice( VoiceData.VOIRepaired );
+			else
+				PlayVoice( VoiceData.VOIRepaired2 );
+		}
+	}
+
 }
 
 

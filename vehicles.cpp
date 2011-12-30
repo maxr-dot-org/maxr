@@ -1898,7 +1898,21 @@ void cVehicle::MakeReport ()
 	else if ( data.hitpointsCur > data.hitpointsMax / 2 )
 	{
 		// Status green
-		if ( data.speedCur == 0 )
+		if ( ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK )
+		{
+			if ( random(2) )
+				PlayVoice( VoiceData.VOIAttacking1 );
+			else
+				PlayVoice( VoiceData.VOIAttacking2 );
+		}
+		else if ( autoMJob )
+		{
+			if ( random(2) )
+				PlayVoice( VoiceData.VOISurveying );
+			else
+				PlayVoice( VoiceData.VOISurveying2 );
+		}
+		else if ( data.speedCur == 0 )
 		{
 			// no more movement
 			PlayVoice ( VoiceData.VOINoSpeed );
@@ -1909,19 +1923,21 @@ void cVehicle::MakeReport ()
 			if ( !BuildRounds )
 			{
 				// Bau beendet:
-				if (random(2))
+				int i = random(4);
+				if (i == 0)
 					PlayVoice ( VoiceData.VOIBuildDone1 );
-				else
+				else if (i == 1)
 					PlayVoice ( VoiceData.VOIBuildDone2 );
+				else if (i == 2)
+					PlayVoice ( VoiceData.VOIBuildDone3 );
+				else
+					PlayVoice ( VoiceData.VOIBuildDone4 );
 			}
 		}
 		else if ( IsClearing )
 		{
 			// removing dirt
-			if ( ClearingRounds )
-				PlayVoice ( VoiceData.VOIClearing );
-			else
-				PlayVoice ( VoiceData.VOIOK2 );
+			PlayVoice ( VoiceData.VOIClearing );
 		}
 		else if ( data.canAttack && !data.ammoCur )
 		{
@@ -1934,32 +1950,47 @@ void cVehicle::MakeReport ()
 		else if ( sentryActive )
 		{
 			// on sentry:
-			PlayVoice ( VoiceData.VOIWachposten );
+			PlayVoice ( VoiceData.VOISentry );
 		}
 		else if ( ClearMines )
-			PlayVoice ( VoiceData.VOIClearingMines );
+		{
+			if (random(2))
+				PlayVoice ( VoiceData.VOIClearingMines );
+			else
+				PlayVoice ( VoiceData.VOIClearingMines2 );
+		}
 		else if ( LayMines )
+		{
 			PlayVoice ( VoiceData.VOILayingMines );
+		}
 		else
 		{
 			int nr;
 			// Alles OK:
-			nr = random(3);
+			nr = random(4);
 
 			if ( nr == 0 )
 				PlayVoice ( VoiceData.VOIOK1 );
 			else if ( nr == 1 )
 				PlayVoice ( VoiceData.VOIOK2 );
-			else
+			else if ( nr == 2 )
 				PlayVoice ( VoiceData.VOIOK3 );
+			else
+				PlayVoice ( VoiceData.VOIOK4 );
 		}
 	}
 	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
 		// Status yellow:
-		PlayVoice ( VoiceData.VOIStatusYellow );
+		if (random(2))
+			PlayVoice ( VoiceData.VOIStatusYellow );
+		else
+			PlayVoice ( VoiceData.VOIStatusYellow2 );
 	else
 		// Status red:
-		PlayVoice ( VoiceData.VOIStatusRed );
+		if (random(2))
+			PlayVoice ( VoiceData.VOIStatusRed );
+		else
+			PlayVoice ( VoiceData.VOIStatusRed2 );
 }
 
 //-----------------------------------------------------------------------------
@@ -2051,7 +2082,7 @@ bool cVehicle::InSentryRange ()
 					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
+						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff, true ) );
 
 						if ( ServerMoveJob )
 						{
@@ -2070,7 +2101,7 @@ bool cVehicle::InSentryRange ()
 					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
+						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff, true ) );
 
 						if ( ServerMoveJob )
 						{
@@ -2098,7 +2129,7 @@ bool cVehicle::InSentryRange ()
 					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff ) );
+						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff, true ) );
 
 						if ( ServerMoveJob )
 						{
@@ -2117,7 +2148,7 @@ bool cVehicle::InSentryRange ()
 					if ( targetVehicle )
 					{
 						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff ) );
+						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff, true ) );
 
 						if ( ServerMoveJob )
 						{
@@ -2208,7 +2239,7 @@ bool cVehicle::provokeReactionFire ()
 				if (selectedTargetVehicle == this)
 				{
 					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentBuilding->iID), cLog::eLOG_TYPE_NET_DEBUG);
-					Server->AJobs.Add (new cServerAttackJob (opponentBuilding, iOff));
+					Server->AJobs.Add (new cServerAttackJob (opponentBuilding, iOff, true));
 					if (ServerMoveJob)
 						ServerMoveJob->bFinished = true;
 					return true;
@@ -2230,7 +2261,7 @@ bool cVehicle::provokeReactionFire ()
 				if (selectedTargetVehicle == this)
 				{
 					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
-					Server->AJobs.Add (new cServerAttackJob (opponentVehicle, iOff));
+					Server->AJobs.Add (new cServerAttackJob (opponentVehicle, iOff, true));
 					if (ServerMoveJob)
 						ServerMoveJob->bFinished = true;
 					return true;

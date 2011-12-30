@@ -37,7 +37,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	color(Color),
 	Nr(nr),
 	numEcos(0),
-	clan(-1)
+	clan(-1),
+	lastDeletedUnit(0)
 {
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
@@ -70,6 +71,7 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	bFinishedTurn = false;
 
 	savedHud = new sHudStateContainer;
+	researchFinished = false;
 }
 
 //-----------------------------------------------------------------------
@@ -82,6 +84,7 @@ cPlayer::cPlayer(const cPlayer &Player)
 	clan = Player.clan;
 	pointsHistory = Player.pointsHistory;
 	numEcos = Player.numEcos;
+	lastDeletedUnit = Player.lastDeletedUnit;
 
 	// copy vehicle and building datas
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
@@ -117,6 +120,8 @@ cPlayer::cPlayer(const cPlayer &Player)
 	bFinishedTurn = Player.bFinishedTurn;
 
 	savedHud = new sHudStateContainer;
+
+	researchFinished = Player.researchFinished;
 }
 
 //-----------------------------------------------------------------------

@@ -396,7 +396,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw the mark, when a build order is finished
-	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 && owner == Client->ActivePlayer)
+	if ( ((BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == Client->ActivePlayer)
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -739,14 +739,6 @@ int cBuilding::getNumberOfMenuEntries () const
 		nr++;
 
 	return nr;
-}
-
-//--------------------------------------------------------------------------
-/** displays the self destruction menu */
-//--------------------------------------------------------------------------
-void cBuilding::SelfDestructionMenu ()
-{
-	//TODO: self destruction dialog and destruction code
 }
 
 //--------------------------------------------------------------------------
@@ -2259,7 +2251,22 @@ void cBuilding::Select ()
 	Client->gameGUI.setVideoSurface( typ->video );
 
 	// play sound:
-	if ( !IsWorking ) PlayFX ( SoundData.SNDHudButton );
+	if ( owner->researchFinished && data.canResearch )
+		PlayVoice( VoiceData.VOIResearchComplete );
+	else if ( BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 )
+	{
+		int i = random(4);
+		if (i == 0)
+			PlayVoice ( VoiceData.VOIBuildDone1 );
+		else if (i == 1)
+			PlayVoice ( VoiceData.VOIBuildDone2 );
+		else if (i == 2)
+			PlayVoice ( VoiceData.VOIBuildDone3 );
+		else
+			PlayVoice ( VoiceData.VOIBuildDone4 );
+	}
+	else if ( !IsWorking ) 
+		PlayFX ( SoundData.SNDHudButton );
 
 	// display the details:
 	Client->gameGUI.setUnitDetailsData ( NULL, this );

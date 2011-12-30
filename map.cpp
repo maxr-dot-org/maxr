@@ -658,7 +658,7 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 			offset += size;
 			vehicles = &fields[offset].vehicles;
 			for ( unsigned int i = 0; i < vehicles->Size(); i++ )
-			if ( (*vehicles)[i] == vehicle ) { vehicles->Delete(i); break; }
+				if ( (*vehicles)[i] == vehicle ) { vehicles->Delete(i); break; }
 
 
 			offset--;

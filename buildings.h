@@ -182,7 +182,6 @@ public:
 	void setMenuSelection();
 	void DrawMenu( sMouseState *mouseState = NULL );
 	virtual int getNumberOfMenuEntries() const;
-	void SelfDestructionMenu();
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
 	void ServerStartWork();

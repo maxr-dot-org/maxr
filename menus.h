@@ -1035,6 +1035,9 @@ protected:
 	bool canStoreShips;
 	bool canRepairReloadUpgrade;
 
+	bool voiceTypeAll;
+	bool voicePlayed;
+
 	int metalValue;
 
 	int offset;
@@ -1083,6 +1086,7 @@ public:
 	static void repairAllReleased ( void *parent );
 	static void upgradeAllReleased ( void *parent );
 
+	void playVoice( int Type );
 	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
 };
 

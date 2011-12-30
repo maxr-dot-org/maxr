@@ -86,29 +86,43 @@ public:
 class cVoiceData
 {
 public:
+	sSOUND *VOIAttackingEnemy1;
+	sSOUND *VOIAttackingEnemy2;
 	sSOUND *VOINoPath1;
 	sSOUND *VOINoPath2;
 	sSOUND *VOIBuildDone1;
 	sSOUND *VOIBuildDone2;
+	sSOUND *VOIBuildDone3;
+	sSOUND *VOIBuildDone4;
 	sSOUND *VOINoSpeed;
 	sSOUND *VOIStatusRed;
+	sSOUND *VOIStatusRed2;
 	sSOUND *VOIStatusYellow;
+	sSOUND *VOIStatusYellow2;
 	sSOUND *VOIClearing;
 	sSOUND *VOILowAmmo1;
 	sSOUND *VOILowAmmo2;
 	sSOUND *VOIOK1;
 	sSOUND *VOIOK2;
 	sSOUND *VOIOK3;
-	sSOUND *VOIWachposten;
+	sSOUND *VOIOK4;
+	sSOUND *VOISentry;
 	sSOUND *VOITransferDone;
 	sSOUND *VOILoaded;
+	sSOUND *VOILoaded2;
 	sSOUND *VOIRepaired;
+	sSOUND *VOIRepaired2;
+	sSOUND *VOIRepairedAll1;
+	sSOUND *VOIRepairedAll2;
 	sSOUND *VOILayingMines;
 	sSOUND *VOIClearingMines;
+	sSOUND *VOIClearingMines2;
 	sSOUND *VOIResearchComplete;
 	sSOUND *VOIUnitStolen;
 	sSOUND *VOIUnitDisabled;
-	sSOUND *VOICommandoDetected;
+	sSOUND *VOICommandoFailed1;
+	sSOUND *VOICommandoFailed2;
+	sSOUND *VOICommandoFailed3;
 	sSOUND *VOIDisabled;
 	sSOUND *VOISaved;
 	sSOUND *VOIStartNone;
@@ -117,7 +131,18 @@ public:
 	sSOUND *VOIDetected1;
 	sSOUND *VOIDetected2;
 	sSOUND *VOIAttackingUs;
+	sSOUND *VOIAttackingUs2;
+	sSOUND *VOIAttackingUs3;
 	sSOUND *VOIDestroyedUs;
+	sSOUND *VOIAttacking1;
+	sSOUND *VOIAttacking2;
+	sSOUND *VOILanding;
+	sSOUND *VOISubDetected;
+	sSOUND *VOISurveying;
+	sSOUND *VOISurveying2;
+	sSOUND *VOITurnEnd20Sec1;
+	sSOUND *VOITurnEnd20Sec2;
+	sSOUND *VOIUnitStolenByEnemy;
 } EX VoiceData;
 
 // Prototypen ////////////////////////////////////////////////////////////////
@@ -131,5 +156,5 @@ void StopMusic(void);
 void StartMusic(void);
 int PlayFXLoop(sSOUND *snd);
 void StopFXLoop(int SndStream);
-void play(sSOUND *snd);
+//void play(sSOUND *snd);
 #endif
