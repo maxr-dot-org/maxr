@@ -43,6 +43,7 @@ public:
 
 	int calcHealth (int damage) const;
 	bool isInRange (int x, int y) const;
+	bool isNextTo (int x, int y) const; ///< checks whether the coordinates are next to the unit
 
 	std::string getName () const { return name; }
 	bool isNameOriginal () const { return isOriginalName; }

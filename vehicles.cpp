@@ -2819,23 +2819,6 @@ void cVehicle::makeDetection()
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isNextTo( int x, int y) const
-{
-	if ( x + 1 < PosX || y + 1 < PosY ) return false;
-
-	if ( data.isBig )
-	{
-		if ( x - 2 > PosX || y - 2 > PosY ) return false;
-	}
-	else
-	{
-		if ( x - 1 > PosX || y - 1 > PosY ) return false;
-	}
-
-	return true;
-}
-
-//-----------------------------------------------------------------------------
 void sVehicle::scaleSurfaces( float factor )
 {
 	int width, height;

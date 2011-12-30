@@ -231,10 +231,6 @@ public:
 	* this function has to be called on the server everytime a building is added
 	*/
 	void makeDetection();
-	/**
-	* checks whether the coordinates are next to the building
-	*/
-	bool isNextTo( int x, int y) const;
 
 private:
 	/**

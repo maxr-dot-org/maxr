@@ -267,10 +267,6 @@ public:
 	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
 	void makeDetection();
-	/**
-	* checks whether the offset is next to the vehicle
-	*/
-	bool isNextTo( int x, int y) const;
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
 
 	void toggleAutoMoveJob();

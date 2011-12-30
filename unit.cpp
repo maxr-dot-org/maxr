@@ -81,6 +81,26 @@ bool cUnit::isInRange (int x, int y) const
 	return (sqrt ((double) (x*x + y*y)) <= data.range);
 }
 
+//-----------------------------------------------------------------------------
+bool cUnit::isNextTo (int x, int y) const
+{
+	if (x + 1 < PosX || y + 1 < PosY)
+		return false;
+	
+	if (data.isBig)
+	{
+		if (x - 2 > PosX || y - 2 > PosY) 
+			return false;
+	}
+	else 
+	{
+		if (x - 1 > PosX || y - 1 > PosY)
+			return false;
+	}
+	
+	return true;
+}
+
 //--------------------------------------------------------------------------
 /** generates the name for the unit depending on the versionnumber */
 //--------------------------------------------------------------------------
