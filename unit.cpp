@@ -25,6 +25,8 @@
 #include "dialog.h"
 #include "player.h"
 #include "attackJobs.h"
+#include "menus.h"
+#include "clientevents.h"
 
 #include "vehicles.h"
 #include "buildings.h"
@@ -33,7 +35,8 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
-: PosX (0)
+: iID (0)
+, PosX (0)
 , PosY (0)
 , dir (0)
 , turnsDisabled (0)
@@ -504,8 +507,345 @@ void cUnit::drawMenu ()
 	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);	
 }
 
+//--------------------------------------------------------------------------
+void cUnit::menuReleased ()
+{
+	SDL_Rect dest = getMenuSize ();
 
+	int exeNr = -1000;
+	if (areCoordsOverMenu (mouse->x, mouse->y)) 
+		exeNr = (mouse->y - dest.y) / 22;
 
+	if (exeNr != selectedMenuButtonIndex)
+	{
+		selectedMenuButtonIndex = -1;
+		return;
+	}
+	
+	if (isUnitMoving () || isBeeingAttacked) 
+		return;
+
+	if (factoryHasJustFinishedBuilding ())
+		return;
+
+	int nr = 0;
+
+	// attack:
+	if (data.canAttack && data.shotsCur && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (attackMode);
+			return;
+		}
+		nr++;
+	}
+	
+	// Build:
+	if (data.canBuild.empty () == false && isUnitBuildingABuilding () == false && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeBuildCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// distribute:
+	if (data.canMineMaxRes > 0 && isUnitWorking () && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeMineManagerCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// transfer:
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding () == false && isUnitClearing () == false && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (transferMode);
+			return;
+		}
+		nr++;
+	}
+	
+	// Start:
+	if (data.canWork && buildingCanBeStarted () && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			sendWantStartWork (this);
+			return;
+		}
+		nr++;
+	}
+	
+	// auto
+	if (data.canSurvey && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeAutoMoveJobCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// stop:
+	if (canBeStoppedViaUnitMenu () && owner == Client->ActivePlayer )
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeStopCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// remove:
+	if (data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble () != 0 && isUnitClearing () == false && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			sendWantStartClear (this);
+			return;
+		}
+		nr++;
+	}
+	
+	// manual Fire:
+	if ((manualFireActive || data.canAttack) && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			sendChangeManualFireStatus (iID, true);
+			return;
+		}
+		nr++;
+	}
+
+	// sentry:
+	if ((sentryActive || data.canAttack) && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			sendChangeSentry (iID, true);
+			return;
+		}
+		nr++;
+	}
+	
+	// activate/load:
+	if (data.storageUnitsMax > 0 && owner == Client->ActivePlayer)
+	{
+		// activate:
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeActivateStoredVehiclesCommand ();
+			return;
+		}
+		nr++;
+		
+		// load:
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (loadMode);
+			return;
+		}
+		nr++;
+	}
+	
+	// research
+	if (data.canResearch && isUnitWorking () && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			cDialogResearch researchDialog (owner);
+			researchDialog.show();
+			return;
+		}
+		nr++;
+	}
+	
+	// gold upgrades screen
+	if (data.convertsGold && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			cUpgradeMenu upgradeMenu (owner);
+			upgradeMenu.show ();
+			return;
+		}
+		nr++;
+	}
+	
+	// Updates:
+	if (buildingCanBeUpgraded () && owner == Client->ActivePlayer )
+	{
+		// Update all buildings of this type in this subbase
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeUpdateBuildingCommmand (true);
+			return;
+		}
+		nr++;
+		
+		// update this building
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX ( SoundData.SNDObjectMenu );
+			executeUpdateBuildingCommmand (false);
+			return;
+		}
+		nr++;
+	}
+	
+	// Self destruct
+	if (data.canSelfDestroy && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeSelfDestroyCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// rearm:
+	if (data.canRearm && data.storageResCur >= 2 && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (muniActive);
+			return;
+		}
+		nr++;
+	}
+	
+	// repair:
+	if (data.canRepair && data.storageResCur >= 2 && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (repairActive);
+			return;
+		}
+		nr++;
+	}
+	
+	// lay mines:
+	if (data.canPlaceMines && data.storageResCur > 0 && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeLayMinesCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// clear mines:
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			executeClearMinesCommand ();
+			return;
+		}
+		nr++;
+	}
+	
+	// disable:
+	if (data.canDisable && data.shotsCur > 0 && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (disableMode);
+			return;
+		}
+		nr++;
+	}
+	
+	// steal:
+	if (data.canCapture && data.shotsCur > 0 && owner == Client->ActivePlayer)
+	{
+		if (exeNr == nr)
+		{
+			Client->gameGUI.unitMenuActive = false;
+			PlayFX (SoundData.SNDObjectMenu);
+			Client->gameGUI.toggleMouseInputMode (stealMode);
+			return;
+		}
+		nr++;
+	}
+	
+	// help/info:
+	if (exeNr == nr)
+	{
+		Client->gameGUI.unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		cUnitHelpMenu helpMenu (&data, owner);
+		helpMenu.show ();
+		return;
+	}
+	nr++;
+	
+	// done:
+	if (exeNr == nr)
+	{
+		Client->gameGUI.unitMenuActive = false;
+		PlayFX (SoundData.SNDObjectMenu);
+		return;
+	}
+}
 
 
 //--------------------------------------------------------------------------

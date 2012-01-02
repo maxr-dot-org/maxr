@@ -2473,9 +2473,9 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			selectedVehiclesGroup[i]->toggleAutoMoveJob();
+			selectedVehiclesGroup[i]->executeAutoMoveJobCommand();
 		}
-		selectedVehicle->toggleAutoMoveJob();
+		selectedVehicle->executeAutoMoveJobCommand();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty() ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
@@ -2582,17 +2582,17 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0 ) selectedVehiclesGroup[i]->togglePlaceMinesStatus();
+			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0 ) selectedVehiclesGroup[i]->executeLayMinesCommand();
 		}
-		selectedVehicle->togglePlaceMinesStatus();
+		selectedVehicle->executeLayMinesCommand();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax ) selectedVehiclesGroup[i]->toggleClearMinesStatus();
+			if ( selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax ) selectedVehiclesGroup[i]->executeClearMinesCommand();
 		}
-		selectedVehicle->toggleClearMinesStatus();
+		selectedVehicle->executeClearMinesCommand();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{

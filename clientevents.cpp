@@ -42,18 +42,18 @@ void sendWantToEndTurn()
 	Client->sendNetMessage( message );
 }
 
-void sendWantStartWork( cBuilding* building)
+void sendWantStartWork (cUnit* building)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_START_WORK );
-	message->pushInt32(building->iID);
-	Client->sendNetMessage(message);
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_START_WORK);
+	message->pushInt32 (building->iID);
+	Client->sendNetMessage (message);
 }
 
-void sendWantStopWork( cBuilding* building)
+void sendWantStopWork (cUnit* building)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_WORK );
-	message->pushInt32( building->iID);
-	Client->sendNetMessage(message);
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_STOP_WORK);
+	message->pushInt32 (building->iID);
+	Client->sendNetMessage (message);
 }
 
 void sendMoveJob( sWaypoint* path, int vehicleID  )
@@ -222,18 +222,18 @@ void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehic
 	Client->sendNetMessage( message );
 }
 
-void sendWantStartClear ( cVehicle *Vehicle )
+void sendWantStartClear (cUnit* unit)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_START_CLEAR );
-	message->pushInt16 ( Vehicle->iID );
-	Client->sendNetMessage( message );
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_START_CLEAR);
+	message->pushInt16 (unit->iID);
+	Client->sendNetMessage (message);
 }
 
-void sendWantStopClear ( cVehicle *Vehicle )
+void sendWantStopClear (cUnit* unit)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_STOP_CLEAR );
-	message->pushInt16 ( Vehicle->iID );
-	Client->sendNetMessage( message );
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_STOP_CLEAR);
+	message->pushInt16 (unit->iID);
+	Client->sendNetMessage (message);
 }
 
 void sendAbortWaiting ()
@@ -354,11 +354,11 @@ void sendFinishedSendSaveInfo ( int ownerNr, int savingID )
 	Client->sendNetMessage ( message );
 }
 
-void sendWantSelfDestroy( cBuilding* building )
+void sendWantSelfDestroy (cUnit* building)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_WANT_SELFDESTROY );
-	message->pushInt16( building->iID );
-	Client->sendNetMessage( message );
+	cNetMessage* message = new cNetMessage (GAME_EV_WANT_SELFDESTROY);
+	message->pushInt16 (building->iID);
+	Client->sendNetMessage (message);
 }
 
 void sendWantChangeUnitName( string newName, int unitID )

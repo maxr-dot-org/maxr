@@ -1057,276 +1057,6 @@ void cVehicle::StartMoveSound ()
 		Client->iObjectStream = PlayFXLoop ( typ->Drive );
 }
 
-void cVehicle::menuReleased ()
-{
-	int nr = 0, exeNr;
-	SDL_Rect dest = getMenuSize();
-	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
-	if ( exeNr != selectedMenuButtonIndex )
-	{
-		selectedMenuButtonIndex = -1;
-		return;
-	}
-
-	if ( moving || isBeeingAttacked ) return;
-
-	// attack:
-	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( attackMode );
-			return;
-		}
-		nr++;
-	}
-
-	// build:
-	if ( !data.canBuild.empty() && !IsBuilding && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			if ( ClientMoveJob ) sendWantStopMove ( iID );
-
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cBuildingsBuildMenu buildMenu ( owner, this );
-			buildMenu.show();
-			return;
-		}
-		nr++;
-	}
-
-	// transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( transferMode );
-			return;
-		}
-		nr++;
-	}
-
-	// auto
-	if ( data.canSurvey && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-
-			if ( autoMJob == NULL )
-			{
-				autoMJob = new cAutoMJob ( this );
-			}
-			else
-			{
-				delete autoMJob;
-				autoMJob = NULL;
-			}
-
-			return;
-		}
-		nr++;
-	}
-
-	// stop:
-	if ( (ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds )) && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			if ( ClientMoveJob )
-			{
-				sendWantStopMove ( iID );
-			}
-			else if ( IsBuilding )
-			{
-				sendWantStopBuilding ( iID );
-			}
-			else if ( IsClearing )
-			{
-				sendWantStopClear ( this );
-			}
-
-			return;
-		}
-		nr++;
-	}
-
-	// clear:
-	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendWantStartClear ( this );
-			return;
-		}
-		nr++;
-	}
-
-	// manual Fire:
-	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeManualFireStatus ( iID, true );
-			return;
-		}
-		nr++;
-	}
-	
-	// sentry:
-	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeSentry ( iID, true );
-			return;
-		}
-		nr++;
-	}
-
-	// activate/load:
-	if ( data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
-	{
-		// activatew:
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-
-			cStorageMenu storageMenu ( StoredVehicles, this, NULL );
-			storageMenu.show();
-			return;
-		}
-		nr++;
-
-		// load:
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( loadMode );
-			return;
-		}
-		nr++;
-	}
-
-	// rearm:
-	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( muniActive );
-			return;
-		}
-		nr++;
-	}
-
-	// repair:
-	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( repairActive );
-			return;
-		}
-		nr++;
-	}
-
-	// lay mines:
-	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			LayMines = !LayMines;
-			ClearMines = false;
-			sendMineLayerStatus( this );
-			return;
-		}
-		nr++;
-	}
-
-	// clear mines:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			ClearMines = !ClearMines;
-			LayMines = false;
-			sendMineLayerStatus ( this );
-			return;
-		}
-		nr++;
-	}
-
-	// disable:
-	if ( data.canDisable && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( disableMode );
-			return;
-		}
-		nr++;
-	}
-
-	// steal:
-	if ( data.canCapture && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( stealMode );
-			return;
-		}
-		nr++;
-	}
-
-	// help:
-	if ( exeNr == nr )
-	{
-		Client->gameGUI.unitMenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
-		cUnitHelpMenu helpMenu ( &data, owner );
-		helpMenu.show();
-		return;
-	}
-	nr++;
-
-	// done:
-	if ( exeNr == nr )
-	{
-		Client->gameGUI.unitMenuActive = false;
-		PlayFX ( SoundData.SNDObjectMenu );
-		return;
-	}
-}
-
 //-----------------------------------------------------------------------------
 /** Returns the number of points in the menu: */
 //-----------------------------------------------------------------------------
@@ -2604,39 +2334,6 @@ void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Re
 	blittAlphaSurface ( src, srcrect, dest, destrect );
 }
 
-//-----------------------------------------------------------------------------
-void cVehicle::toggleAutoMoveJob()
-{
-	if ( !data.canSurvey ) return;
-
-	if ( autoMJob == NULL ) autoMJob = new cAutoMJob ( this );
-	else
-	{
-		delete autoMJob;
-		autoMJob = NULL;
-	}
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::togglePlaceMinesStatus()
-{
-	LayMines = !LayMines;
-	ClearMines = false;
-	sendMineLayerStatus( this );
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::toggleClearMinesStatus()
-{
-	ClearMines = !ClearMines;
-	LayMines = false;
-	sendMineLayerStatus( this );
-}
-
-
-
-
-
 
 
 //-----------------------------------------------------------------------------
@@ -2649,6 +2346,65 @@ void cVehicle::toggleClearMinesStatus()
 bool cVehicle::canBeStoppedViaUnitMenu () const
 { 
 	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && BuildRounds > 0) || (isUnitClearing () && ClearingRounds > 0));
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeBuildCommand ()
+{
+	if (ClientMoveJob)
+		sendWantStopMove (iID);
+	cBuildingsBuildMenu buildMenu (owner, this);
+	buildMenu.show ();	
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeStopCommand ()
+{
+	if (ClientMoveJob != 0)
+		sendWantStopMove (iID);
+	else if (isUnitBuildingABuilding ())
+		sendWantStopBuilding (iID);
+	else if (isUnitClearing ())
+		sendWantStopClear (this);
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeAutoMoveJobCommand ()
+{
+	if (data.canSurvey == false)
+		return;
+	if (autoMJob == 0)
+	{
+		autoMJob = new cAutoMJob (this);
+	}
+	else
+	{
+		delete autoMJob;
+		autoMJob = 0;
+	}
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeActivateStoredVehiclesCommand ()
+{
+	cStorageMenu storageMenu (StoredVehicles, this, 0);
+	storageMenu.show ();
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeLayMinesCommand ()
+{
+	LayMines = !LayMines;
+	ClearMines = false;
+	sendMineLayerStatus (this);	
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::executeClearMinesCommand ()
+{
+	ClearMines = !ClearMines;
+	LayMines = false;
+	sendMineLayerStatus (this);
 }
 
 //-----------------------------------------------------------------------------

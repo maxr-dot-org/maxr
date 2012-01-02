@@ -25,6 +25,7 @@
 
 struct sSavedReportMessage;
 struct sBuildList;
+class cUnit;
 
 enum CLIENT_EVENT_TYPES
 {
@@ -115,13 +116,13 @@ void sendWantToEndTurn();
 * sends a request to start a building to the Server
 *@author Eiko
 */
-void sendWantStartWork( cBuilding* building);
+void sendWantStartWork (cUnit* building);
 
 /**
 * sends a request to stop a building to the Server
 *@author Eiko
 */
-void sendWantStopWork( cBuilding* building);
+void sendWantStopWork (cUnit* building);
 
 /**
 * sends all waypoints of a movejob to the server.
@@ -221,12 +222,12 @@ void sendWantSupply ( int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehic
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStartClear ( cVehicle *Vehicle );
+void sendWantStartClear (cUnit* unit);
 /**
 * sends that the client wants to stop clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStopClear ( cVehicle *Vehicle );
+void sendWantStopClear (cUnit* unit);
 /**
 * sends that the client wants to abort waiting for the reconnect of a disconnected player
 *@author alzi alias DoctorDeath
@@ -253,7 +254,7 @@ void sendSaveHudInfo ( int selectedUnitID, int ownerNr, int savingID );
 void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int savingID );
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
-void sendWantSelfDestroy( cBuilding* building );
+void sendWantSelfDestroy (cUnit* building);
 void sendWantChangeUnitName( std::string newName, int unitID );
 
 void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type );

@@ -114,8 +114,6 @@ public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
 	~cVehicle();
 
-	/** the identification number of this unit */
-	unsigned int iID;
 	/** a list were the numbers of all players who can see this vehicle are stored in */
 	cList<cPlayer*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
@@ -179,7 +177,6 @@ public:
 	std::string getStatusStr();
 	int playStream();
 	void StartMoveSound();
-	void menuReleased ();
 	virtual int getNumberOfMenuEntries() const;
 	void DecSpeed(int value);
 	void DrawAttackCursor( int x, int y );
@@ -253,9 +250,11 @@ public:
 	void makeDetection();
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
 
-	void toggleAutoMoveJob();
-	void togglePlaceMinesStatus();
-	void toggleClearMinesStatus();
+	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
+	virtual void executeAutoMoveJobCommand ();
+	virtual void executeLayMinesCommand ();
+	virtual void executeClearMinesCommand ();
+	
 private:
 	/**
 	* draws the main image of the vehicle onto the passed surface
@@ -271,7 +270,8 @@ private:
 	
 	//-----------------------------------------------------------------------------
 protected:
-	//-- methods, that have been extracted during cUnit refactoring
+	//-- methods, that have been extracted during cUnit refactoring ---------------
+
 	virtual bool isUnitLoaded () const { return Loaded; }
 	virtual bool isUnitMoving () const { return moving; }
 	virtual bool isAutoMoveJobActive () const { return autoMJob != 0; }
@@ -281,6 +281,11 @@ protected:
 	virtual bool isUnitBuildingABuilding () const { return IsBuilding; }
 	virtual bool canBeStoppedViaUnitMenu () const;
 
+	// methods needed for execution of unit menu commands
+	virtual void executeBuildCommand ();
+	virtual void executeStopCommand ();
+	virtual void executeActivateStoredVehiclesCommand ();
+	
 	virtual sUnitData* getUpgradedUnitData () const;
 	virtual bool treatAsBigForMenuDisplay () const;
 };

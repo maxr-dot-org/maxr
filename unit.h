@@ -58,6 +58,11 @@ public:
 	bool areCoordsOverMenu (int x, int y);
 	void setMenuSelection ();
 	void drawMenu ();
+	void menuReleased ();
+	virtual void executeAutoMoveJobCommand () {}
+	virtual void executeLayMinesCommand () {}
+	virtual void executeClearMinesCommand () {}	
+	
 	int getScreenPosX () const;
 	int getScreenPosY () const;
 	void center () const;
@@ -76,12 +81,12 @@ public:
 	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true);
 	
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
-
 	
 	
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
+	unsigned int iID; ///< the identification number of this unit
 	int PosX, PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
 	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
@@ -116,6 +121,13 @@ protected:
 	virtual bool buildingCanBeUpgraded () const { return false; }
 	virtual bool canBeStoppedViaUnitMenu () const { return false; }
 
+	virtual void executeBuildCommand () {}
+	virtual void executeMineManagerCommand () {}
+	virtual void executeStopCommand () {}
+	virtual void executeActivateStoredVehiclesCommand () {}
+	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType) {}
+	virtual void executeSelfDestroyCommand () {}
+	
 	virtual sUnitData* getUpgradedUnitData () const = 0;
 	virtual bool treatAsBigForMenuDisplay () const { return false; }
 };

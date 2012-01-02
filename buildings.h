@@ -126,8 +126,6 @@ public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
 	~cBuilding();
 
-	/** the identification number of this unit */
-	unsigned int iID;
 	/** a list were the numbers of all players who can see this building are stored in */
 	cList<cPlayer*> SeenByPlayerList;
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
@@ -175,7 +173,6 @@ public:
 	*/
 	int refreshData();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	void menuReleased();
 	virtual int getNumberOfMenuEntries() const;
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
@@ -229,13 +226,21 @@ private:
 	
 	//-----------------------------------------------------------------------------
 protected:
-	//-- methods, that have been extracted during cUnit refactoring
+	//-- methods, that have been extracted during cUnit refactoring ---------------
 	virtual bool isUnitWorking () const { return IsWorking; }
 	virtual bool factoryHasJustFinishedBuilding () const;
 	virtual bool buildingCanBeStarted () const;
 	virtual bool buildingCanBeUpgraded () const;
 	virtual bool canBeStoppedViaUnitMenu () const { return isUnitWorking (); }
 
+	// methods needed for execution of unit menu commands
+	virtual void executeBuildCommand ();
+	virtual void executeMineManagerCommand ();
+	virtual void executeStopCommand ();
+	virtual void executeActivateStoredVehiclesCommand ();
+	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType);
+	virtual void executeSelfDestroyCommand ();
+	
 	virtual sUnitData* getUpgradedUnitData () const;
 };
 

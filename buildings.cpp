@@ -1753,243 +1753,6 @@ void cBuilding::CalcTurboBuild ( int *iTurboBuildRounds, int *iTurboBuildCosts, 
 	}
 }
 
-void cBuilding::menuReleased()
-{
-	int nr = 0, exeNr;
-	SDL_Rect dest = getMenuSize();
-	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
-	if ( exeNr != selectedMenuButtonIndex ) return;
-
-	if ( isBeeingAttacked ) return;
-
-	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
-
-	// Angriff:
-	if ( typ->data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( attackMode );
-			return;
-		}
-		nr++;
-	}
-
-	// Bauen:
-	if ( !typ->data.canBuild.empty() && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cVehiclesBuildMenu buildMenu ( owner, this );
-			buildMenu.show();
-			return;
-		}
-		nr++;
-	}
-
-	// Verteilen:
-	if ( typ->data.canMineMaxRes > 0 && IsWorking && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cMineManagerMenu mineManager ( this );
-			mineManager.show();
-			return;
-		}
-		dest.y += 22;
-		nr++;
-	}
-
-	// Transfer:
-	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( transferMode );
-			return;
-		}
-		nr++;
-	}
-
-	// Start:
-	if (typ->data.canWork &&
-			!IsWorking         &&
-			(
-				(BuildList && BuildList->Size()) ||
-				typ->data.canBuild.empty()
-			) &&
-			owner == Client->ActivePlayer)
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendWantStartWork(this);
-			return;
-		}
-		nr++;
-	}
-
-	// Stop:
-	if ( IsWorking && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendWantStopWork(this);
-			return;
-		}
-		nr++;
-	}
-
-	// manual Fire:
-	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeManualFireStatus ( iID, false );
-			return;
-		}
-		nr++;
-	}
-	
-	// Sentry status:
-	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendChangeSentry ( iID, false );
-			return;
-		}
-		nr++;
-	}
-
-	// Aktivieren/Laden:
-	if ( typ->data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
-	{
-		// Aktivieren:
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cStorageMenu storageMenu ( StoredVehicles, NULL, this );
-			storageMenu.show();
-			return;
-		}
-		nr++;
-
-		// Laden:
-		if ( exeNr == nr )
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			Client->gameGUI.toggleMouseInputMode( loadMode );
-			return;
-		}
-		nr++;
-	}
-
-	// research
-	if (typ->data.canResearch && IsWorking && owner == Client->ActivePlayer)
-	{
-		if (exeNr == nr)
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cDialogResearch researchDialog ( owner );
-			researchDialog.show();
-			return;
-		}
-		nr++;
-	}
-
-	// upgradescreen
-	if (data.convertsGold && owner == Client->ActivePlayer)
-	{
-		// update this
-		if (exeNr == nr)
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX (SoundData.SNDObjectMenu);
-			cUpgradeMenu upgradeMenu ( owner );
-			upgradeMenu.show();
-			return;
-		}
-		nr++;
-	}
-
-	// Updates:
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 && owner == Client->ActivePlayer )
-	{
-		// Update all buildings of this type in this subbase
-		if (exeNr == nr)
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendUpgradeBuilding (this, true);
-			return;
-		}
-		nr++;
-
-		// update this building
-		if (exeNr == nr)
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			sendUpgradeBuilding (this, false);
-			return;
-		}
-		nr++;
-	}
-
-	// Self destruct
-	if ( data.canSelfDestroy && owner == Client->ActivePlayer )
-	{
-		if (exeNr == nr)
-		{
-			Client->gameGUI.unitMenuActive = false;
-			PlayFX ( SoundData.SNDObjectMenu );
-			cDestructMenu destructMenu;
-			if ( destructMenu.show() == 0 )
-				sendWantSelfDestroy(this);
-			return;
-		}
-		nr++;
-	}
-
-	// Info:
-	if (exeNr == nr)
-	{
-		Client->gameGUI.unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		cUnitHelpMenu helpMenu ( &data, owner );
-		helpMenu.show();
-		return;
-	}
-	nr++;
-
-	// Done:
-	if (exeNr == nr)
-	{
-		Client->gameGUI.unitMenuActive = false;
-		PlayFX (SoundData.SNDObjectMenu);
-		return;
-	}
-}
-
 //------------------------------------------------------------------------
 void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 {
@@ -2139,6 +1902,47 @@ sUnitData* cBuilding::getUpgradedUnitData () const
 bool cBuilding::factoryHasJustFinishedBuilding () const
 {
 	return (BuildList && BuildList->Size () > 0 && isUnitWorking () == false && (*BuildList)[0]->metall_remaining <= 0);
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeBuildCommand () 
+{
+	cVehiclesBuildMenu buildMenu (owner, this);
+	buildMenu.show ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeMineManagerCommand () 
+{
+	cMineManagerMenu mineManager (this);
+	mineManager.show ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeStopCommand () 
+{
+	sendWantStopWork (this);
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeActivateStoredVehiclesCommand ()
+{
+	cStorageMenu storageMenu (StoredVehicles, 0, this);
+	storageMenu.show ();
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeUpdateBuildingCommmand (bool updateAllOfSameType)
+{
+	sendUpgradeBuilding (this, updateAllOfSameType);
+}
+
+//-----------------------------------------------------------------------------
+void cBuilding::executeSelfDestroyCommand ()
+{
+	cDestructMenu destructMenu;
+	if (destructMenu.show () == 0)
+		sendWantSelfDestroy (this);	
 }
 
 //-----------------------------------------------------------------------------
