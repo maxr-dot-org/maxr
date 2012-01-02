@@ -1758,7 +1758,7 @@ void cBuilding::menuReleased()
 	int nr = 0, exeNr;
 	SDL_Rect dest = getMenuSize();
 	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
-	if ( exeNr != selMenuNr ) return;
+	if ( exeNr != selectedMenuButtonIndex ) return;
 
 	if ( isBeeingAttacked ) return;
 
@@ -1990,204 +1990,6 @@ void cBuilding::menuReleased()
 	}
 }
 
-//-----------------------------------------------------------------------------
-void cBuilding::setMenuSelection()
-{
-	SDL_Rect dest = getMenuSize();
-	selMenuNr = ( mouse->y - dest.y ) / 22;
-}
-
-//--------------------------------------------------------------------------
-/** draws the building menu */
-//--------------------------------------------------------------------------
-void cBuilding::DrawMenu ( sMouseState *mouseState )
-{
-	int nr = 0;
-	SDL_Rect dest;
-	dest = getMenuSize();
-
-	if ( isBeeingAttacked ) return;
-
-	if ( Client->gameGUI.mouseInputMode == activateVehicle )
-	{
-		Client->gameGUI.unitMenuActive = false;
-		return;
-	}
-
-	if (BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) return;
-
-	bool isMarked;
-	bool markerPossible = areCoordsOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
-
-	// Angriff:
-	if ( typ->data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Bauen:
-	if ( !typ->data.canBuild.empty() && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Verteilen:
-	if ( typ->data.canMineMaxRes > 0 && IsWorking && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Dist" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Transfer:
-	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Start:
-	if (typ->data.canWork &&
-			!IsWorking         &&
-			(
-				(BuildList && BuildList->Size()) ||
-				typ->data.canBuild.empty()
-			) &&
-			owner == Client->ActivePlayer)
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Start" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Stop:
-	if ( IsWorking && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-	
-	// Manual
-	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || manualFireActive;
-		
-		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
-		
-		dest.y += 22;
-		nr++;
-	}	
-
-	// Sentry status:
-	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || sentryActive;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Aktivieren/Laden:
-	if ( typ->data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
-	{
-		// Aktivieren:
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-
-		//load:
-		isMarked = selMenuNr == nr || Client->gameGUI.mouseInputMode ==  loadMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// research
-	if (typ->data.canResearch && IsWorking && owner == Client->ActivePlayer)
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// upgradescreen
-	if (data.convertsGold && owner == Client->ActivePlayer)
-	{
-		// update this
-		isMarked = markerPossible && selMenuNr == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Updates:
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 && owner == Client->ActivePlayer )
-	{
-		// Update all buildings of this type in this subbase
-		isMarked = markerPossible && selMenuNr == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-
-		// update this building
-		isMarked = markerPossible && selMenuNr == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Self destruct
-	if ( data.canSelfDestroy && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
-		dest.y += 22;
-		nr++;
-	}
-
-	// Info:
-	isMarked = markerPossible && selMenuNr == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
-	dest.y += 22;
-	nr++;
-
-	// Done:
-	isMarked = markerPossible && selMenuNr == nr;
-	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
-}
-
 //------------------------------------------------------------------------
 void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 {
@@ -2222,7 +2024,7 @@ void cBuilding::Select ()
 	// play sound:
 	if ( owner->researchFinished && data.canResearch )
 		PlayVoice( VoiceData.VOIResearchComplete );
-	else if ( BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0 )
+	else if ( factoryHasJustFinishedBuilding () )
 	{
 		int i = random(4);
 		if (i == 0)
@@ -2333,3 +2135,21 @@ sUnitData* cBuilding::getUpgradedUnitData () const
 	return &(owner->BuildingData[typ->nr]);
 }
 
+//-----------------------------------------------------------------------------
+bool cBuilding::factoryHasJustFinishedBuilding () const
+{
+	return (BuildList && BuildList->Size () > 0 && isUnitWorking () == false && (*BuildList)[0]->metall_remaining <= 0);
+}
+
+//-----------------------------------------------------------------------------
+bool cBuilding::buildingCanBeStarted () const
+{
+	return (data.canWork && isUnitWorking () == false 
+			&& ((BuildList && BuildList->Size() > 0) || data.canBuild.empty()));
+}
+
+//-----------------------------------------------------------------------------
+bool cBuilding::buildingCanBeUpgraded () const
+{
+	return (data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2);
+}

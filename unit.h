@@ -56,6 +56,8 @@ public:
 	virtual int getNumberOfMenuEntries () const = 0;
 	SDL_Rect getMenuSize () const;
 	bool areCoordsOverMenu (int x, int y);
+	void setMenuSelection ();
+	void drawMenu ();
 	int getScreenPosX () const;
 	int getScreenPosY () const;
 	void center () const;
@@ -88,6 +90,8 @@ public:
 	bool attacking;  ///< is the unit currently attacking?
 	bool isBeeingAttacked; ///< true when an attack on this unit is running
 
+	int selectedMenuButtonIndex;
+	
 	cPlayer* owner;
 
 	//-----------------------------------------------------------------------------
@@ -100,6 +104,18 @@ protected:
 	void drawStatus () const;
 
 	virtual bool isUnitLoaded () const { return false; } 
+	virtual bool isUnitMoving () const { return false; }
+	virtual bool isAutoMoveJobActive () const { return false; }
+	virtual bool isUnitWorking () const { return false; }
+	virtual bool isUnitClearing () const { return false; }
+	virtual bool isUnitLayingMines () const { return false; }
+	virtual bool isUnitClearingMines () const { return false; }
+	virtual bool isUnitBuildingABuilding () const { return false; }
+	virtual bool factoryHasJustFinishedBuilding () const { return false; }
+	virtual bool buildingCanBeStarted () const { return false; }
+	virtual bool buildingCanBeUpgraded () const { return false; }
+	virtual bool canBeStoppedViaUnitMenu () const { return false; }
+
 	virtual sUnitData* getUpgradedUnitData () const = 0;
 	virtual bool treatAsBigForMenuDisplay () const { return false; }
 };

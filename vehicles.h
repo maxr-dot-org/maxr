@@ -31,7 +31,6 @@ class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
-struct sMouseState;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -159,8 +158,6 @@ public:
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
-	int selMenuNr;
-
 
 	cVehicle *next,*prev; // Verkettungselemente
 
@@ -182,8 +179,6 @@ public:
 	std::string getStatusStr();
 	int playStream();
 	void StartMoveSound();
-	void setMenuSelection();
-	void DrawMenu( sMouseState *mouseState = NULL );
 	void menuReleased ();
 	virtual int getNumberOfMenuEntries() const;
 	void DecSpeed(int value);
@@ -278,6 +273,14 @@ private:
 protected:
 	//-- methods, that have been extracted during cUnit refactoring
 	virtual bool isUnitLoaded () const { return Loaded; }
+	virtual bool isUnitMoving () const { return moving; }
+	virtual bool isAutoMoveJobActive () const { return autoMJob != 0; }
+	virtual bool isUnitClearing () const { return IsClearing; }
+	virtual bool isUnitLayingMines () const { return LayMines; }
+	virtual bool isUnitClearingMines () const { return ClearMines; }
+	virtual bool isUnitBuildingABuilding () const { return IsBuilding; }
+	virtual bool canBeStoppedViaUnitMenu () const;
+
 	virtual sUnitData* getUpgradedUnitData () const;
 	virtual bool treatAsBigForMenuDisplay () const;
 };

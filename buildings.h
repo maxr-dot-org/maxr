@@ -31,7 +31,6 @@ struct sVehicle;
 class cVehicle;
 class cMap;
 class cMapField;
-struct sMouseState;
 
 //--------------------------------------------------------------------------
 /** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
@@ -158,7 +157,6 @@ public:
 	bool wasWorking;
 	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Lock-Liste ist
 	bool hasBeenAttacked;
-	int selMenuNr;
 	int points;     // accumulated eco-sphere points
 
 	/**
@@ -178,8 +176,6 @@ public:
 	int refreshData();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
 	void menuReleased();
-	void setMenuSelection();
-	void DrawMenu( sMouseState *mouseState = NULL );
 	virtual int getNumberOfMenuEntries() const;
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
@@ -234,6 +230,12 @@ private:
 	//-----------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring
+	virtual bool isUnitWorking () const { return IsWorking; }
+	virtual bool factoryHasJustFinishedBuilding () const;
+	virtual bool buildingCanBeStarted () const;
+	virtual bool buildingCanBeUpgraded () const;
+	virtual bool canBeStoppedViaUnitMenu () const { return isUnitWorking (); }
+
 	virtual sUnitData* getUpgradedUnitData () const;
 };
 

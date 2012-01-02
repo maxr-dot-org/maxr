@@ -1062,9 +1062,9 @@ void cVehicle::menuReleased ()
 	int nr = 0, exeNr;
 	SDL_Rect dest = getMenuSize();
 	if ( areCoordsOverMenu ( mouse->x, mouse->y ) ) exeNr = ( mouse->y - dest.y ) / 22;
-	if ( exeNr != selMenuNr )
+	if ( exeNr != selectedMenuButtonIndex )
 	{
-		selMenuNr = -1;
+		selectedMenuButtonIndex = -1;
 		return;
 	}
 
@@ -1325,209 +1325,6 @@ void cVehicle::menuReleased ()
 		PlayFX ( SoundData.SNDObjectMenu );
 		return;
 	}
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::setMenuSelection()
-{
-	SDL_Rect dest = getMenuSize();
-	selMenuNr = ( mouse->y - dest.y ) / 22;
-}
-
-//-----------------------------------------------------------------------------
-/** Draws the vehicle menu: */
-//-----------------------------------------------------------------------------
-void cVehicle::DrawMenu ( sMouseState *mouseState )
-{
-	int nr = 0;
-	SDL_Rect dest = getMenuSize();
-
-	if ( moving || isBeeingAttacked ) return;
-
-	bool isMarked;
-	bool markerPossible = areCoordsOverMenu ( mouse->x, mouse->y ) && ( selMenuNr == ( mouse->y - dest.y ) / 22 );
-
-	// Angriff:
-	if ( data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == attackMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Attack" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Bauen:
-	if ( !data.canBuild.empty() && !IsBuilding && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Build" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == transferMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Transfer" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Auto
-	if ( data.canSurvey && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || autoMJob != NULL;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Auto" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Stop:
-	if ( (ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds )) && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Stop" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Entfernen:
-	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing && owner == Client->ActivePlayer )
-	{
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Manual
-	if ( (manualFireActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || manualFireActive;
-		
-		drawContextItem( lngPack.i18n ( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
-		
-		dest.y += 22;
-		nr++;
-	}
-	
-	// Sentry:
-	if ( (sentryActive || data.canAttack) && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || sentryActive;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Aktivieren/Laden:
-	if ( data.storageUnitsMax > 0 && owner == Client->ActivePlayer )
-	{
-		// Aktivieren:
-		isMarked = markerPossible && selMenuNr == nr;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Active" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-		// Laden:
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == loadMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Load" ), isMarked, dest.x, dest.y, buffer );
-		dest.y += 22;
-		nr++;
-	}
-
-	// Aufaden:
-	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == muniActive;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Reload" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Reparatur:
-	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == repairActive;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Repair" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Minen legen:
-	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || LayMines;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Seed" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Minen sammeln:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || ClearMines;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Sabotage:
-	if ( data.canDisable && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == disableMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Disable" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Stehlen:
-	if ( data.canCapture && data.shotsCur && owner == Client->ActivePlayer )
-	{
-		isMarked = ( markerPossible && selMenuNr == nr ) || Client->gameGUI.mouseInputMode == stealMode;
-
-		drawContextItem( lngPack.i18n ( "Text~Context~Steal" ), isMarked, dest.x, dest.y, buffer );
-
-		dest.y += 22;
-		nr++;
-	}
-
-	// Info:
-	isMarked = markerPossible && selMenuNr == nr;
-	drawContextItem( lngPack.i18n ( "Text~Context~Info" ), isMarked, dest.x, dest.y, buffer );
-	dest.y += 22;
-	nr++;
-
-	// Fertig:
-	isMarked = markerPossible && selMenuNr == nr;
-	drawContextItem( lngPack.i18n ( "Text~Context~Done" ), isMarked, dest.x, dest.y, buffer );
 }
 
 //-----------------------------------------------------------------------------
@@ -2847,6 +2644,12 @@ void cVehicle::toggleClearMinesStatus()
 //-- methods, that already have been extracted as part of cUnit refactoring
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+bool cVehicle::canBeStoppedViaUnitMenu () const
+{ 
+	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && BuildRounds > 0) || (isUnitClearing () && ClearingRounds > 0));
+}
 
 //-----------------------------------------------------------------------------
 sUnitData* cVehicle::getUpgradedUnitData () const

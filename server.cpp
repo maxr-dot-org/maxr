@@ -1519,7 +1519,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					cBuilding* otherBuilding = subBase->buildings[subBaseBuildIdx];
 					if (otherBuilding == building)
 						continue;
-					if (otherBuilding->typ != building->typ)
+					if (otherBuilding->typ->nr != building->typ->nr)
 						continue;
 					if (otherBuilding->data.version >= upgradedVersion.version)
 						continue;

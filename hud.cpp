@@ -1853,14 +1853,14 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						if ( !selectedVehicle->moving )
 						{
 							unitMenuActive = !unitMenuActive;
-							if ( unitMenuActive ) selectedVehicle->selMenuNr = -1;
+							if ( unitMenuActive ) selectedVehicle->selectedMenuButtonIndex = -1;
 							PlayFX ( SoundData.SNDHudButton );
 						}
 					}
 					else if ( changeAllowed && selectedBuilding&& ( overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding ) )
 					{
 						unitMenuActive = !unitMenuActive;
-						if ( unitMenuActive ) selectedBuilding->selMenuNr = -1;
+						if ( unitMenuActive ) selectedBuilding->selectedMenuButtonIndex = -1;
 						PlayFX ( SoundData.SNDHudButton );
 					}
 					// select unit when using modern style
@@ -2899,8 +2899,8 @@ void cGameGUI::preDrawFunction()
 
 	drawUnitCircles();
 
-	if ( selectedVehicle && unitMenuActive ) selectedVehicle->DrawMenu( &savedMouseState );
-	else if ( selectedBuilding && unitMenuActive ) selectedBuilding->DrawMenu( &savedMouseState );
+	if ( selectedVehicle && unitMenuActive ) selectedVehicle->drawMenu();
+	else if ( selectedBuilding && unitMenuActive ) selectedBuilding->drawMenu();
 
 	displayFX();
 
