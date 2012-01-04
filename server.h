@@ -420,6 +420,8 @@ public:
 	void makeAdditionalSaveRequest ( int saveNum );
 
 	int getTurn() const;
+	
+	bool isTurnBasedGame () const { return bPlayTurns; }
 
 } EX *Server;
 

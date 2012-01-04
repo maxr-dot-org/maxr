@@ -1703,42 +1703,50 @@ bool cVehicle::provokeReactionFire ()
 		if (player->ScanMap[iOff] == false) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
 			continue;
 		
-		bool isOffendingOpponent = false;
-		cVehicle* opponentVehicle = player->VehicleList;
-		while (opponentVehicle != 0 && isOffendingOpponent == false)
+		bool playerWantsToFireOnThisVehicle = false;
+		if (Server->isTurnBasedGame ())
 		{
-			if (isInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
-				&& canAttackObjectAt (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
-			{
-				// test, if this vehicle can really attack the opponentVehicle
-				cVehicle* selectedTargetVehicle = 0;
-				cBuilding* selectedTargetBuilding = 0;
-				selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentVehicle->PosX, opponentVehicle->PosY, data.canAttack, Server->Map);
-				if (selectedTargetVehicle == opponentVehicle)
-					isOffendingOpponent = true;
-			}
-			opponentVehicle = opponentVehicle->next;
+			// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
+			playerWantsToFireOnThisVehicle = true;
 		}
-		cBuilding* opponentBuilding = player->BuildingList;
-		while (opponentBuilding != 0 && isOffendingOpponent == false)
+		else
 		{
-			if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-				&& isInRange (opponentBuilding->PosX, opponentBuilding->PosY)
-				&& canAttackObjectAt (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
+			// check if there is a vehicle or building of player, that is offended
+			
+			cVehicle* opponentVehicle = player->VehicleList;
+			while (opponentVehicle != 0 && playerWantsToFireOnThisVehicle == false)
 			{
-				// test, if this vehicle can really attack the opponentVehicle
-				cVehicle* selectedTargetVehicle = 0;
-				cBuilding* selectedTargetBuilding = 0;
-				selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentBuilding->PosX, opponentBuilding->PosY, data.canAttack, Server->Map);
-				if (selectedTargetVehicle == opponentVehicle)
-					isOffendingOpponent = true;
-				
-				isOffendingOpponent = true;
+				if (isInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
+					&& canAttackObjectAt (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
+				{
+					// test, if this vehicle can really attack the opponentVehicle
+					cVehicle* selectedTargetVehicle = 0;
+					cBuilding* selectedTargetBuilding = 0;
+					selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentVehicle->PosX, opponentVehicle->PosY, data.canAttack, Server->Map);
+					if (selectedTargetVehicle == opponentVehicle)
+						playerWantsToFireOnThisVehicle = true;
+				}
+				opponentVehicle = opponentVehicle->next;
 			}
-			opponentBuilding = opponentBuilding->next;
+			cBuilding* opponentBuilding = player->BuildingList;
+			while (opponentBuilding != 0 && playerWantsToFireOnThisVehicle == false)
+			{
+				if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
+					&& isInRange (opponentBuilding->PosX, opponentBuilding->PosY)
+					&& canAttackObjectAt (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
+				{
+					// test, if this vehicle can really attack the opponentVehicle
+					cVehicle* selectedTargetVehicle = 0;
+					cBuilding* selectedTargetBuilding = 0;
+					selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentBuilding->PosX, opponentBuilding->PosY, data.canAttack, Server->Map);
+					if (selectedTargetVehicle == opponentVehicle)
+						playerWantsToFireOnThisVehicle = true;
+				}
+				opponentBuilding = opponentBuilding->next;
+			}
 		}
 		
-		if (isOffendingOpponent == false)
+		if (playerWantsToFireOnThisVehicle == false)
 			continue;
 		
 		
