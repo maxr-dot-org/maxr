@@ -53,7 +53,6 @@ public:
 	std::string getDisplayName () const;
 	void changeName (std::string newName);
 	
-	virtual int getNumberOfMenuEntries () const = 0;
 	SDL_Rect getMenuSize () const;
 	bool areCoordsOverMenu (int x, int y);
 	void setMenuSelection ();
@@ -107,6 +106,7 @@ protected:
 	std::string name;		// name of the building	
 
 	void drawStatus () const;
+	int getNumberOfMenuEntries () const;
 
 	virtual bool isUnitLoaded () const { return false; } 
 	virtual bool isUnitMoving () const { return false; }

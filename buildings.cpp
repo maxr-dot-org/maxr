@@ -691,57 +691,6 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 }
 
 //--------------------------------------------------------------------------
-/** Get the numer of menu items */
-//--------------------------------------------------------------------------
-int cBuilding::getNumberOfMenuEntries () const
-{
-	int nr = 2;
-
-	if ( typ == NULL ) return 0;
-
-	if ( typ->data.canSelfDestroy )
-		nr++;
-
-	if ( !typ->data.canBuild.empty() )
-		nr++;
-
-	if ( typ->data.storeResType != sUnitData::STORE_RES_NONE )
-		nr++;
-
-	if ( typ->data.canAttack && data.shotsCur )
-		nr++;
-
-	if (typ->data.canWork &&
-		(   IsWorking                                        // "stop"
-		 || typ->data.canBuild.empty()                       // "start" for non-factory buildings
-		 || (!IsWorking && BuildList && BuildList->Size()))) // "start" for factory building
-		nr++;
-
-	if ( typ->data.canMineMaxRes > 0 )
-		nr++;
-
-	if ( manualFireActive || data.canAttack )
-		nr++;
-
-	if ( sentryActive || data.canAttack )
-		nr++;
-
-	if ( typ->data.storageUnitsMax > 0 )
-		nr += 2;
-
-	if ( typ->data.canResearch && IsWorking )
-		nr++;
-
-	if ( data.version != owner->BuildingData[typ->nr].version && SubBase && SubBase->Metal >= 2 )
-		nr += 2;
-
-	if ( data.convertsGold )
-		nr++;
-
-	return nr;
-}
-
-//--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (cMap *Map)
 {
 	int iPosOff = PosX+PosY*Map->size;

@@ -177,7 +177,6 @@ public:
 	std::string getStatusStr();
 	int playStream();
 	void StartMoveSound();
-	virtual int getNumberOfMenuEntries() const;
 	void DecSpeed(int value);
 	void DrawAttackCursor( int x, int y );
 	void FindNextband();

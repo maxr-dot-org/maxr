@@ -173,7 +173,6 @@ public:
 	*/
 	int refreshData();
 	void DrawSymbolBig(eSymbolsBig sym,int x,int y,int maxx,int value,int orgvalue,SDL_Surface *sf);
-	virtual int getNumberOfMenuEntries() const;
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
 	void ServerStartWork();

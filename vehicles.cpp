@@ -1058,61 +1058,6 @@ void cVehicle::StartMoveSound ()
 }
 
 //-----------------------------------------------------------------------------
-/** Returns the number of points in the menu: */
-//-----------------------------------------------------------------------------
-int cVehicle::getNumberOfMenuEntries () const
-{
-	int nr = 2;
-
-	if ( !data.canBuild.empty() && !IsBuilding )
-		nr++;
-
-	if ( data.canSurvey )
-		nr++;
-
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && !IsBuilding && !IsClearing )
-		nr++;
-
-	if ( data.canAttack && data.shotsCur )
-		nr++;
-
-	if ( ClientMoveJob || ( IsBuilding && BuildRounds ) || ( IsClearing && ClearingRounds ) )
-		nr++;
-
-	if ( data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble() && !IsClearing )
-		nr++;
-
-	if ( manualFireActive || data.canAttack )
-		nr++;
-	
-	if ( sentryActive || data.canAttack )
-		nr++;
-
-	if ( data.storageUnitsMax > 0 )
-		nr += 2;
-
-	if ( data.canRearm && data.storageResCur >= 2 )
-		nr++;
-
-	if ( data.canRepair && data.storageResCur >= 2 )
-		nr++;
-
-	if ( data.canPlaceMines && data.storageResCur > 0 )
-		nr++;
-
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
-		nr++;
-
-	if ( data.canCapture && data.shotsCur )
-		nr++;
-
-	if ( data.canDisable && data.shotsCur )
-		nr++;
-
-	return nr;
-}
-
-//-----------------------------------------------------------------------------
 /** Reduces the remaining speedCur and shotsCur during movement */
 //-----------------------------------------------------------------------------
 void cVehicle::DecSpeed ( int value )
@@ -1752,7 +1697,7 @@ bool cVehicle::provokeReactionFire ()
 		
 		// search a unit of the opponent, that could fire on this vehicle
 		// first look for a building
-		opponentBuilding = player->BuildingList;
+		cBuilding* opponentBuilding = player->BuildingList;
 		while (opponentBuilding != 0)
 		{
 			if (opponentBuilding->sentryActive == false && opponentBuilding->manualFireActive == false
@@ -1773,7 +1718,7 @@ bool cVehicle::provokeReactionFire ()
 			opponentBuilding = opponentBuilding->next;
 		}
 		
-		opponentVehicle = player->VehicleList;
+		cVehicle* opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0)
 		{
 			if (opponentVehicle->sentryActive == false && opponentVehicle->manualFireActive == false

@@ -272,6 +272,102 @@ void cUnit::setMenuSelection ()
 }
 
 //--------------------------------------------------------------------------
+int cUnit::getNumberOfMenuEntries () const
+{
+	int result = 2; // Info/Help + Done
+
+	if (owner != Client->ActivePlayer)
+		return result;
+	
+	// Attack
+	if (data.canAttack && data.shotsCur)
+		result++;
+
+	// Build
+	if (data.canBuild.empty () == false && isUnitBuildingABuilding () == false)
+		result++;
+
+	// Distribute
+	if (data.canMineMaxRes > 0 && isUnitWorking ())
+		result++;
+
+	// Transfer
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding () == false && isUnitClearing () == false)
+		result++;
+	
+	// Start
+	if (data.canWork && buildingCanBeStarted ())
+		result++;
+	
+	// Auto survey
+	if (data.canSurvey)
+		result++;
+	
+	// Stop
+	if (canBeStoppedViaUnitMenu ())
+		result++;
+
+	// Remove
+	if (data.canClearArea && Client->Map->fields[PosX + PosY*Client->Map->size].getRubble () && isUnitClearing () == false)
+		result++;
+	
+	// Manual Fire
+	if (manualFireActive || data.canAttack)
+		result++;
+
+	// Sentry
+	if (sentryActive || data.canAttack)
+		result++;
+
+	// Activate / Load
+	if (data.storageUnitsMax > 0)
+		result += 2;
+
+	// Research
+	if (data.canResearch && isUnitWorking ())
+		result++;
+
+	// Gold upgrades screen
+	if (data.convertsGold)
+		result++;
+
+	// Update building(s)
+	if (buildingCanBeUpgraded ())
+		result += 2;
+	
+	// Self destruct
+	if (data.canSelfDestroy)
+		result++;
+
+	// Ammo
+	if (data.canRearm && data.storageResCur >= 2)
+		result++;
+	
+	// Repair
+	if (data.canRepair && data.storageResCur >= 2)
+		result++;
+	
+	// Lay Mines
+	if (data.canPlaceMines && data.storageResCur > 0)
+		result++;
+	
+	// Clear Mines
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax)
+		result++;
+	
+	// Sabotage/disable
+	if (data.canCapture && data.shotsCur)
+		result++;
+	
+	// Steal
+	if (data.canDisable && data.shotsCur)
+		result++;
+	
+	return result;
+	
+}
+
+//--------------------------------------------------------------------------
 void cUnit::drawMenu ()
 {
 	int nr = 0;
