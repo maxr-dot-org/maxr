@@ -143,10 +143,10 @@
 	#define BUILD_DATADIR "/usr/share/maxr"
 	// Builddate: Mmm DD YYYY HH:MM:SS
 	#define MAX_BUILD_DATE		(std::string)__DATE__ + " " + __TIME__
-	#ifdef NDEBUG
+	#ifdef RELEASE
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2818"
+		#define PACKAGE_REV "SVN Rev 2843"
 	#endif
 #endif
 
