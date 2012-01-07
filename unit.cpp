@@ -1156,30 +1156,29 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater(x, y) == false)
 		return false;
 	
+	cVehicle* targetVehicle = 0;
+	cBuilding* targetBuilding = 0;	
+	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
+	
+	if (targetVehicle && targetVehicle->iID == iID) //a unit cannot fire on it self
+		return false;
+	
+	if (targetBuilding && targetBuilding->iID == iID) //a unit cannot fire on it self
+		return false;
+
 	if (owner->ScanMap[off] == false)
 		return forceAttack ? true : false;
 	
 	if (forceAttack)
 		return true;
 	
-	cVehicle* targetVehicle = 0;
-	cBuilding* targetBuilding = 0;	
-	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
+	if (targetBuilding && isVehicle () && map->possiblePlace ((cVehicle*)this, x, y))  //do not fire on e. g. platforms, connectors etc.
+		return false;																	//see ticket #436 on bug tracker
 	
-	if (targetVehicle != 0)
-	{
-		if (Client && (targetVehicle == Client->gameGUI.getSelVehicle () || targetVehicle->owner == Client->ActivePlayer))
-			return false;
-	}
-	else if (targetBuilding != 0)
-	{
-		if (isVehicle () && map->possiblePlace ((cVehicle*)this, x, y))  //do not fire on e. g. platforms, connectors etc.
-			return false;												 //see ticket #436 on bug tracker
+	if ( (targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
+		return false;
 		
-		if (Client && (targetBuilding == Client->gameGUI.getSelBuilding () || targetBuilding->owner == Client->ActivePlayer))
-			return false;
-	}
-	else
+	if (!targetBuilding && !targetVehicle)
 		return false;
 	
 	return true;
