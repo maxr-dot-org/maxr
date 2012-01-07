@@ -2417,8 +2417,8 @@ void cServer::handleEnd ( int iPlayerNum )
 		iTurn++;
 		makeTurnEnd ();
 		// send report to player
-		sendTurnReport ( (*PlayerList)[0] );
 		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
+		sendTurnReport ( (*PlayerList)[0] );		
 		//sendUnfreeze();
 	}
 	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
@@ -2526,11 +2526,11 @@ void cServer::handleEnd ( int iPlayerNum )
 			// send reports to all players
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				sendTurnReport ( (*PlayerList)[i] );
+				sendMakeTurnEnd ( true, false, -1, i );
 			}
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
-				sendMakeTurnEnd ( true, false, -1, i );
+				sendTurnReport ( (*PlayerList)[i] );
 			}
 			//sendUnfreeze();
 		}
