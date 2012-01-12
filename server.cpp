@@ -423,24 +423,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			//check if attack is possible
-			if ( bIsVehicle )
+			cUnit* attackingUnit = bIsVehicle ? (cUnit*)attackingVehicle : (cUnit*)attackingBuilding;
+			if (attackingUnit->canAttackObjectAt (targetOffset % Map->size, targetOffset / Map->size, Server->Map, true) == false)
 			{
-				if ( !attackingVehicle->canAttackObjectAt( targetOffset%Map->size, targetOffset/Map->size, Server->Map, true ) )
-				{
-					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
-					break;
-				}
-				AJobs.Add( new cServerAttackJob( attackingVehicle, targetOffset, false ));
+				Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
+				break;
 			}
-			else
-			{
-				if ( !attackingBuilding->canAttackObjectAt( targetOffset%Map->size, targetOffset/Map->size, Server->Map, true ) )
-				{
-					Log.write(" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
-					break;
-				}
-				AJobs.Add( new cServerAttackJob( attackingBuilding, targetOffset, false ));
-			}
+			AJobs.Add (new cServerAttackJob (attackingUnit, targetOffset, false));
 
 		}
 		break;
