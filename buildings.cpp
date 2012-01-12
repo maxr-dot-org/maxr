@@ -131,7 +131,7 @@ cBuilding::~cBuilding ()
 		if ( v->prev )
 		{
 			cVehicle *vp;
-			vp = v->prev;
+			vp = (cVehicle*)v->prev;
 			vp->next = v->next;
 
 			if ( v->next )
@@ -139,7 +139,7 @@ cBuilding::~cBuilding ()
 		}
 		else
 		{
-			v->owner->VehicleList = v->next;
+			v->owner->VehicleList = (cVehicle*)v->next;
 
 			if ( v->next )
 				v->next->prev = NULL;
@@ -166,9 +166,10 @@ cBuilding::~cBuilding ()
 	}
 	if ( Server )
 	{
-		for ( unsigned int i = 0; i < Server->AJobs.Size(); i++ )
+		for (unsigned int i = 0; i < Server->AJobs.Size (); i++)
 		{
-			if ( Server->AJobs[i]->building == this ) Server->AJobs[i]->building = NULL;
+			if (Server->AJobs[i]->unit == this)
+				Server->AJobs[i]->unit = 0;
 		}
 	}
 	if ( Client )

@@ -23,21 +23,46 @@
 
 class cVehicle;
 class cBuilding;
+class cUnit;
 class cMap;
 class cPlayer;
 class cNetMessage;
 
+
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map);
+void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map);
 
+//--------------------------------------------------------------------------
 class cServerAttackJob
 {
 public:
+	cServerAttackJob (cUnit* _unit, int targetOff, bool sentry);
+	~cServerAttackJob ();
+
+	void sendFireCommand (cPlayer* player);
+	void clientFinished (int playerNr);
+
+	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
+	cUnit* unit;
+	int iID;
+	
+	//--------------------------------------------------------------------------
+private:
+	/** syncronizes positions of target, locks target and suspents move job if nessesary
+	* @author Eiko
+	*/
+	void lockTarget (int offset);
+	void lockTargetCluster ();
+	void sendFireCommand ();
+	void makeImpact (int x, int y);
+	void makeImpactCluster ();
+	void sendAttackJobImpact (int offset, int remainingHP, int id);
+
+	bool isMuzzleTypeRocket () const;
 
 	static int iNextID;
-	int iID;
 	bool sentryFire;
 	int iAgressorOff;
 	int iMuzzleType;
@@ -47,29 +72,10 @@ public:
 	char attackMode;
 	cList<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
 	cList<cBuilding*> buildingTargets;
-
-	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
-	cBuilding* building;
-	cVehicle* vehicle;
-
-	cServerAttackJob( cBuilding* building, int targetOff, bool sentry );
-	cServerAttackJob( cVehicle* vehicle, int targetOff, bool sentry );
-	~cServerAttackJob();
-	/** syncronizes positions of target, locks target and suspents move job if nessesary
-	* @author Eiko
-	*/
-	void lockTarget( int offset );
-	void lockTargetCluster();
-	void sendFireCommand();
-	void sendFireCommand( cPlayer* player );
-	void clientFinished( int playerNr );
-	void makeImpact(int x, int y );
-	void makeImpactCluster();
-	void sendAttackJobImpact(int offset, int remainingHP, int id );
-
 };
 
 
+//--------------------------------------------------------------------------
 class cClientAttackJob
 {
 public:

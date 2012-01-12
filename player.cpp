@@ -147,13 +147,13 @@ cPlayer::~cPlayer ()
 		{
 			ptr->DeleteStored();
 		}
-		ptr=ptr->next;
+		ptr = (cVehicle*)ptr->next;
 	}
 	// Jetzt alle Vehicles lˆschen:
 	while ( VehicleList )
 	{
 		cVehicle *ptr;
-		ptr=VehicleList->next;
+		ptr = (cVehicle*)VehicleList->next;
 		VehicleList->sentryActive = false;
 		delete VehicleList;
 		VehicleList=ptr;
@@ -161,7 +161,7 @@ cPlayer::~cPlayer ()
 	while ( BuildingList )
 	{
 		cBuilding *ptr;
-		ptr=BuildingList->next;
+		ptr = (cBuilding*)BuildingList->next;
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
@@ -478,7 +478,7 @@ void cPlayer::DoScan ()
 	{
 		if ( vp->Loaded )
 		{
-			vp = vp->next;
+			vp = (cVehicle*)vp->next;
 			continue;
 		}
 
@@ -509,7 +509,7 @@ void cPlayer::DoScan ()
 				}
 			}
 		}
-		vp = vp->next;
+		vp = (cVehicle*)vp->next;
 	}
 
 	// iterate the building list
@@ -529,7 +529,7 @@ void cPlayer::DoScan ()
 					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
-		bp = bp->next;
+		bp = (cBuilding*)bp->next;
 	}
 }
 
@@ -558,7 +558,7 @@ cVehicle *cPlayer::GetNextVehicle ()
 			return v;
 		next = false;
 		if ( v->next )
-			v = v->next;
+			v = (cVehicle*)v->next;
 		else
 			v = VehicleList;
 	}
@@ -589,11 +589,11 @@ cVehicle *cPlayer::GetPrevVehicle ()
 			return v;
 		next = false;
 		if ( v->prev )
-			v = v->prev;
+			v = (cVehicle*)v->prev;
 		else
 		{
 			while ( v->next )
-				v = v->next;
+				v = (cVehicle*)v->next;
 		}
 	}
 	while ( v != start );
@@ -661,7 +661,7 @@ void cPlayer::accumulateScore()
 	const int now = Server->getTurn();
 	int deltaScore = 0;
 
-	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
+	for(cBuilding *bp = BuildingList; bp; bp = (cBuilding*)bp->next)
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
 		{
@@ -679,7 +679,7 @@ void cPlayer::CountEcoSpheres()
 {
 	numEcos = 0;
 
-	for(cBuilding *bp = BuildingList; bp; bp = bp->next)
+	for(cBuilding *bp = BuildingList; bp; bp = (cBuilding*)bp->next)
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
 			numEcos ++;
@@ -823,7 +823,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;
 		}
-		curBuilding = curBuilding->next;
+		curBuilding = (cBuilding*)curBuilding->next;
 	}
 	ResearchCount = newResearchCount;
 }

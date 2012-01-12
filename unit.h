@@ -73,6 +73,8 @@ public:
 	void drawHealthBar () const;
 	void rotateTo (int newDir);
 
+	virtual void setDetectedByPlayer (cPlayer* player) {}
+	
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
 	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
@@ -93,7 +95,10 @@ public:
 	bool manualFireActive; ///< if active, then the unit only fires by manual control and not as reaction fire
 	bool attacking;  ///< is the unit currently attacking?
 	bool isBeeingAttacked; ///< true when an attack on this unit is running
-
+	
+	cUnit* next; // "next"-pointer for the double linked list
+	cUnit* prev; // "prev"-pointer for the double linked list
+	
 	int selectedMenuButtonIndex;
 	
 	cPlayer* owner;

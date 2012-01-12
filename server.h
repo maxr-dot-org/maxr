@@ -30,6 +30,7 @@ class cServerAttackJob;
 class cServerMoveJob;
 class cNetMessage;
 class cBuilding;
+class cUnit;
 struct sVehicle;
 
 /**
@@ -329,11 +330,10 @@ public:
 	/**
 	* deletes a Unit
 	*@author alzi alias DoctorDeath
-	*@param Building Building which should be deleted.
-	*@param notifyClient when fasle, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
+	*@param unit the unit which should be deleted.
+	*@param notifyClient when false, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
 	*/
-	void deleteUnit ( cBuilding *Building, bool notifyClient = true );
-	void deleteUnit( cVehicle* vehicle );
+	void deleteUnit (cUnit* unit, bool notifyClient = true);
 
 	/**
 	* deletes an unit (and additional units on the same field if nessesarry)

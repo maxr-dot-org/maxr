@@ -157,8 +157,6 @@ public:
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
 	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
 
-	cVehicle *next,*prev; // Verkettungselemente
-
 	/**
 	* Draws the vehicle to the screen buffer.
 	* Takes the main image from the cache or calls cVehicle::render()
@@ -239,7 +237,7 @@ public:
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void setDetectedByPlayer( cPlayer* player );
+	virtual void setDetectedByPlayer( cPlayer* player );
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit

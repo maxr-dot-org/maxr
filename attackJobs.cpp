@@ -31,6 +31,7 @@
 
 using namespace std;
 
+//--------------------------------------------------------------------------
 void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map)
 {
 	targetVehicle = NULL;
@@ -77,102 +78,77 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 
 }
 
+
+
+//--------------------------------------------------------------------------
+// cServerAttackJob Implementation
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
 int cServerAttackJob::iNextID = 0;
 
-cServerAttackJob::cServerAttackJob( cVehicle* vehicle, int targetOff, bool sentry )
+//--------------------------------------------------------------------------
+cServerAttackJob::cServerAttackJob (cUnit* _unit, int targetOff, bool sentry)
 {
-	iID = iNextID;
-	iNextID++;
-	bMuzzlePlayed = false;
-	this->iTargetOff = targetOff;
-	building = NULL;
-	this->vehicle = vehicle;
-	damage = vehicle->data.damage;
-	attackMode = vehicle->data.canAttack;
-	sentryFire = sentry;
-
-	iMuzzleType = vehicle->data.muzzleType;
-	iAgressorOff = vehicle->PosX + vehicle->PosY*Server->Map->size;
-
-	//lock targets
-	if ( vehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
-	{
-		lockTargetCluster();
-	}
-	else
-	{
-		lockTarget( targetOff );
-	}
-
-	vehicle->data.shotsCur--;
-	vehicle->data.ammoCur--;
-	if ( !vehicle->data.canDriveAndFire ) vehicle->data.speedCur-= (int)(( ( float ) vehicle->data.speedMax ) /vehicle->data.shotsMax);
-	vehicle->attacking = true;
-
-	sendFireCommand();
-
-}
-
-cServerAttackJob::cServerAttackJob( cBuilding* building, int targetOff, bool sentry )
-{
+	unit = _unit;
+	
 	iID = iNextID;
 	iNextID++;
 	bMuzzlePlayed = false;
 	iTargetOff = targetOff;
-	this->building = building;
-	vehicle = NULL;
-	damage = building->data.damage;
-	attackMode = building->data.canAttack;
+	damage = unit->data.damage;
+	attackMode = unit->data.canAttack;
 	sentryFire = sentry;
-
-	iMuzzleType = building->data.muzzleType;
-	iAgressorOff = building->PosX + building->PosY*Server->Map->size;
-
-	building->data.shotsCur--;
-	building->data.ammoCur--;
-	building->attacking = true;
-
+	
+	iMuzzleType = unit->data.muzzleType;
+	iAgressorOff = unit->PosX + unit->PosY * Server->Map->size;
+	
 	//lock targets
-	if ( building->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
-	{
-		lockTargetCluster();
-	}
+	if (unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
+		lockTargetCluster ();
 	else
+		lockTarget (targetOff);
+	
+	unit->data.shotsCur--;
+	unit->data.ammoCur--;
+	if (unit->isVehicle () && unit->data.canDriveAndFire == false) 
+		unit->data.speedCur -= (int)(((float)unit->data.speedMax) / unit->data.shotsMax);
+	unit->attacking = true;
+	
+	sendFireCommand ();
+	
+	if (unit->isBuilding () && unit->data.explodesOnContact )
 	{
-		lockTarget( targetOff );
-	}
-
-	sendFireCommand();
-
-	if ( building->data.explodesOnContact )
-	{
-		Server->deleteUnit( building, false );
-		this->building = NULL;
+		Server->deleteUnit (unit, false);
+		unit = 0;
 	}
 }
 
-cServerAttackJob::~cServerAttackJob()
+//--------------------------------------------------------------------------
+cServerAttackJob::~cServerAttackJob ()
 {
-	if ( building ) building->attacking = false;
-	if ( vehicle  ) vehicle->attacking = false;
+	if (unit != 0) 
+		unit->attacking = false;
 }
 
-void cServerAttackJob::lockTarget(int offset)
+//--------------------------------------------------------------------------
+void cServerAttackJob::lockTarget (int offset)
 {
 	//make sure, that the unit data has been send to all clients
-	Server->checkPlayerUnits();
+	Server->checkPlayerUnits ();
 
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, offset%Server->Map->size, offset/Server->Map->size, attackMode, Server->Map);
-	if ( targetVehicle ) targetVehicle->isBeeingAttacked = true;
+	selectTarget (targetVehicle, targetBuilding, offset%Server->Map->size, offset/Server->Map->size, attackMode, Server->Map);
+	if (targetVehicle) 
+		targetVehicle->isBeeingAttacked = true;
 
-	bool isAir = ( targetVehicle && targetVehicle->data.factorAir > 0 );
+	bool isAir = (targetVehicle && targetVehicle->data.factorAir > 0);
 
 	//if the agressor can attack air and land units, decide whether it is currently attacking air or land targets
 	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND) )
 	{
-		if ( isAir )
+		if (isAir)
 			//TODO: can alien units attack submarines?
 			attackMode = TERRAIN_AIR;
 		else
@@ -190,80 +166,80 @@ void cServerAttackJob::lockTarget(int offset)
 		}
 	}
 
-	if ( !targetVehicle && !targetBuilding ) return;
+	if (targetVehicle == 0 && targetBuilding == 0)
+		return;
 
 	//change offset, to match the upper left field of big vehicles
-	if ( targetVehicle && targetVehicle->data.isBig )
-	{
+	if (targetVehicle != 0 && targetVehicle->data.isBig)
 		offset = targetVehicle->PosX + targetVehicle->PosY * Server->Map->size;
-	}
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
 		//targed in sight?
-		if ( player->ScanMap[offset] == 0 ) continue;
+		if (player->ScanMap[offset] == 0) 
+			continue;
 
-		cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_LOCK_TARGET );
-		if ( targetVehicle )
+		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
+		if (targetVehicle != 0)
 		{
-			message->pushChar ( targetVehicle->OffX );
-			message->pushChar ( targetVehicle->OffY );
-			message->pushInt32 ( targetVehicle->iID );
+			message->pushChar (targetVehicle->OffX);
+			message->pushChar (targetVehicle->OffY);
+			message->pushInt32 (targetVehicle->iID);
 		}
 		else
 		{
 			//ID 0 for 'no vehicle'
-			message->pushInt32 ( 0 );
+			message->pushInt32 (0);
 		}
-		message->pushInt32( offset );
-		message->pushBool ( isAir );
+		message->pushInt32 (offset);
+		message->pushBool (isAir);
 
-		Server->sendNetMessage( message, player->Nr );
+		Server->sendNetMessage (message, player->Nr);
 	}
 }
 
-void cServerAttackJob::lockTargetCluster()
+//--------------------------------------------------------------------------
+void cServerAttackJob::lockTargetCluster ()
 {
 	int PosX = iTargetOff % Server->Map->size;
 	int PosY = iTargetOff / Server->Map->size;
 
-	for ( int x = PosY - 2; x <= PosY + 2; x++ )
+	for (int x = PosY - 2; x <= PosY + 2; x++)
 	{
-		if ( x < 0 || x >= Server->Map->size ) continue;
-		for ( int y = PosY - 2; y <= PosY + 2; y++ )
+		if (x < 0 || x >= Server->Map->size)
+			continue;
+		for (int y = PosY - 2; y <= PosY + 2; y++)
 		{
-			if ( y < 0 || y >= Server->Map->size ) continue;
-			if ( abs(PosX - x) + abs(PosY - y) > 2 ) continue;
-			lockTarget( x + y * Server->Map->size );
+			if (y < 0 || y >= Server->Map->size)
+				continue;
+			if (abs (PosX - x) + abs (PosY - y) > 2)
+				continue;
+			lockTarget (x + y * Server->Map->size);
 		}
 	}
 }
 
-
-void cServerAttackJob::sendFireCommand()
+//--------------------------------------------------------------------------
+void cServerAttackJob::sendFireCommand ()
 {
+	if (unit == 0)
+		return;
+	
 	//make the agressor visible on all clients who can see the agressor offset
-	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
-		if ( !player->ScanMap[iAgressorOff] ) continue;
+		if (player->ScanMap[iAgressorOff] == false)
+			continue;
 
-		if ( vehicle )
-		{
-			if ( vehicle->owner == player ) continue;
+		if (unit->owner == player) 
+			continue;
 
-			vehicle->setDetectedByPlayer( player );
-		}
-		else
-		{
-			if ( building->owner == player ) continue;
-
-			building->setDetectedByPlayer( player );
-		}
+		unit->setDetectedByPlayer (player);
 	}
-	Server->checkPlayerUnits();
+	Server->checkPlayerUnits ();
 
 	//calculate fire direction
 	int targetX = iTargetOff % Server->Map->size;
@@ -275,8 +251,8 @@ void cServerAttackJob::sendFireCommand()
 	float dy =(float)-( targetY - agressorY );
 	float r = sqrt ( dx*dx + dy*dy );
 
-	int fireDir = vehicle?vehicle->dir:building->dir;
-	if ( r<=0.001 )
+	int fireDir = unit->dir;
+	if (r <= 0.001)
 	{
 		//do not rotate agressor
 	}
@@ -284,225 +260,209 @@ void cServerAttackJob::sendFireCommand()
 	{
 		dx /= r;
 		dy /= r;
-		r = (float)(asin ( dx ) *57.29577951);
-		if ( dy >= 0 )
+		r = (float)(asin (dx) * 57.29577951);
+		if (dy >= 0)
 		{
-			if ( r < 0 ) r += 360;
+			if (r < 0) 
+				r += 360;
 		}
 		else
-		{
 			r = 180 - r;
-		}
-		if ( r>=337.5||r<=22.5 ) fireDir=0;
-		else if ( r>=22.5&&r<=67.5 ) fireDir=1;
-		else if ( r>=67.5&&r<=112.5 ) fireDir=2;
-		else if ( r>=112.5&&r<=157.5 ) fireDir=3;
-		else if ( r>=157.5&&r<=202.5 ) fireDir=4;
-		else if ( r>=202.5&&r<=247.5 ) fireDir=5;
-		else if ( r>=247.5&&r<=292.5 ) fireDir=6;
-		else if ( r>=292.5&&r<=337.5 ) fireDir=7;
-	}
-	if ( vehicle )
-	{
-		vehicle->dir = fireDir;
-	}
-	else
-	{
-		building->dir = fireDir;
-	}
 
-	//send the fire message to all clients who can see the attack
-	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+		if (r >= 337.5 || r <= 22.5) fireDir = 0;
+		else if (r >= 22.5  && r <= 67.5)  fireDir = 1;
+		else if (r >= 67.5  && r <= 112.5) fireDir = 2;
+		else if (r >= 112.5 && r <= 157.5) fireDir = 3;
+		else if (r >= 157.5 && r <= 202.5) fireDir = 4;
+		else if (r >= 202.5 && r <= 247.5) fireDir = 5;
+		else if (r >= 247.5 && r <= 292.5) fireDir = 6;
+		else if (r >= 292.5 && r <= 337.5) fireDir = 7;
+	}
+	unit->dir = fireDir;
+
+	// send the fire message to all clients who can see the attack
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
-		bool bMuzzleIsRocketType = ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER );
 
-		if ( player->ScanMap[iAgressorOff] ||
-			(player->ScanMap[iTargetOff] && bMuzzleIsRocketType ))
+		if (player->ScanMap[iAgressorOff] 
+			|| (player->ScanMap[iTargetOff] && isMuzzleTypeRocket ()))
 		{
-			sendFireCommand( player );
-			executingClients.Add(player);
+			sendFireCommand (player);
+			executingClients.Add (player);
 		}
 	}
 }
 
-void cServerAttackJob::sendFireCommand( cPlayer* player )
+//--------------------------------------------------------------------------
+void cServerAttackJob::sendFireCommand (cPlayer* player)
 {
-	bool bMuzzleIsRocketType = ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) || ( iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER );
-	char fireDir = vehicle ? vehicle->dir : building->dir;
-	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FIRE );
+	if (unit == 0)
+		return;
+	
+	cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_FIRE);
 
-	message->pushBool( sentryFire );
-	message->pushInt16( vehicle ? vehicle->data.speedCur : 0);
-	message->pushInt16( vehicle ? vehicle->data.ammoCur  : building->data.ammoCur );
-	message->pushInt16( vehicle ? vehicle->data.shotsCur : building->data.shotsCur);
-	message->pushChar( fireDir );
-	if ( bMuzzleIsRocketType )
-	{
-		message->pushInt32( iTargetOff );
-	}
+	message->pushBool (sentryFire);
+	message->pushInt16 (unit->data.speedCur);
+	message->pushInt16 (unit->data.ammoCur);
+	message->pushInt16 (unit->data.shotsCur);
+	message->pushChar (unit->dir);
+	if (isMuzzleTypeRocket ())
+		message->pushInt32 (iTargetOff);
 
-	if ( player->ScanMap[iAgressorOff] )
-	{
-		message->pushInt32( vehicle ? vehicle->iID : building->iID );
-	}
+	if (player->ScanMap[iAgressorOff])
+		message->pushInt32 (unit->iID);
 	else
 	{
 		//when the agressor is out of sight, send the position and muzzle type to the client
-		message->pushInt32( iAgressorOff );
-		message->pushChar ( vehicle?vehicle->data.muzzleType:building->data.muzzleType );
-		message->pushInt32( 0 );
+		message->pushInt32 (iAgressorOff);
+		message->pushChar (unit->data.muzzleType);
+		message->pushInt32 (0);
 	}
-	message->pushInt16( iID );
+	message->pushInt16 (iID);
 
-	Server->sendNetMessage( message, player->Nr );
+	Server->sendNetMessage (message, player->Nr);
 }
 
-void cServerAttackJob::clientFinished( int playerNr )
+//--------------------------------------------------------------------------
+bool cServerAttackJob::isMuzzleTypeRocket () const
 {
-	for (unsigned int i = 0; i < executingClients.Size(); i++)
+	return ((iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET)
+			|| (iMuzzleType == sUnitData::MUZZLE_TYPE_TORPEDO) 
+			|| (iMuzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER));
+}
+
+//--------------------------------------------------------------------------
+void cServerAttackJob::clientFinished (int playerNr)
+{
+	for (unsigned int i = 0; i < executingClients.Size (); i++)
 	{
-		if ( executingClients[i]->Nr == playerNr ) executingClients.Delete(i);
+		if (executingClients[i]->Nr == playerNr) 
+			executingClients.Delete (i);
 	}
 
-	Log.write( " Server: waiting for " + iToStr((int)executingClients.Size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write (" Server: waiting for " + iToStr ((int)executingClients.Size ()) + " clients", cLog::eLOG_TYPE_NET_DEBUG);
 
-	if (executingClients.Size() == 0)
+	if (executingClients.Size () == 0)
 	{
-		if ( vehicle && vehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
-		{
-			makeImpactCluster();
-		}
+		if (unit && unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER )
+			makeImpactCluster ();
 		else
-		{
-			makeImpact( iTargetOff % Server->Map->size, iTargetOff / Server->Map->size );
-		}
+			makeImpact (iTargetOff % Server->Map->size, iTargetOff / Server->Map->size);
 	}
 }
 
-
-void cServerAttackJob::makeImpact(int x, int y )
+//--------------------------------------------------------------------------
+void cServerAttackJob::makeImpact (int x, int y)
 {
-	if ( x < 0 || x >= Server->Map->size ) return;
-	if ( y < 0 || y >= Server->Map->size ) return;
+	if (x < 0 || x >= Server->Map->size || y < 0 || y >= Server->Map->size)
+		return;
 	int offset = x + y * Server->Map->size;
 
-	cVehicle* targetVehicle;
-	cBuilding* targetBuilding;
-	selectTarget( targetVehicle, targetBuilding, x, y, attackMode, Server->Map );
+	cVehicle* targetVehicle = 0;
+	cBuilding* targetBuilding = 0;
+	selectTarget (targetVehicle, targetBuilding, x, y, attackMode, Server->Map);
 
 	//check, whether the target is allready in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
-	for ( unsigned int i = 0; i < vehicleTargets.Size(); i++)
+	for (unsigned int i = 0; i < vehicleTargets.Size (); i++)
 	{
-		if ( vehicleTargets[i] == targetVehicle ) return;
+		if (vehicleTargets[i] == targetVehicle) 
+			return;
 	}
-	for ( unsigned int i = 0; i < buildingTargets.Size(); i++)
+	for (unsigned int i = 0; i < buildingTargets.Size (); i++)
 	{
-		if ( buildingTargets[i] == targetBuilding ) return;
+		if (buildingTargets[i] == targetBuilding)
+			return;
 	}
-	if ( targetVehicle  ) vehicleTargets.Add ( targetVehicle  );
-	if ( targetBuilding ) buildingTargets.Add( targetBuilding );
+	if (targetVehicle != 0) 
+		vehicleTargets.Add (targetVehicle );
+	if (targetBuilding != 0) 
+		buildingTargets.Add (targetBuilding);
 
 	int remainingHP = 0;
 	int id = 0;
-	cPlayer* owner = NULL;
-	bool isAir = ( targetVehicle && targetVehicle->data.factorAir > 0 );
+	cPlayer* owner = 0;
+	bool isAir = (targetVehicle != 0 && targetVehicle->data.factorAir > 0);
 
-	//in the time between the first locking and the impact, it is possible that a vehicle drove onto the target field
-	//so relock the target, to ensure synchronity
-	if ( targetVehicle && !targetVehicle->isBeeingAttacked )
+	// in the time between the first locking and the impact, it is possible that a vehicle drove onto the target field
+	// so relock the target, to ensure synchronity
+	if (targetVehicle != 0 && targetVehicle->isBeeingAttacked == false)
 	{
-		Log.write(" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG );
-		lockTarget( offset );
+		Log.write (" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG);
+		lockTarget (offset);
 	}
 
-	//if target found, make the impact
-	if ( targetVehicle )
+	// if target found, make the impact
+	cUnit* targetUnit = ((targetVehicle != 0) ? (cUnit*)targetVehicle : (cUnit*)targetBuilding);
+	if (targetUnit != 0)
 	{
-		//if taget is a stealth unit, make it visible on all clients
-		if ( targetVehicle->data.isStealthOn != TERRAIN_NONE )
+		// if taget is a stealth unit, make it visible on all clients
+		if (targetUnit->data.isStealthOn != TERRAIN_NONE)
 		{
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
+			for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 			{
 				cPlayer* player = (*Server->PlayerList)[i];
-				if ( targetVehicle->owner == player ) continue;
-				if ( !player->ScanMap[offset] ) continue;
-				targetVehicle->setDetectedByPlayer( player );
+				if (targetUnit->owner == player) 
+					continue;
+				if (!player->ScanMap[offset]) 
+					continue;
+				targetUnit->setDetectedByPlayer (player);
 			}
-			Server->checkPlayerUnits();
+			Server->checkPlayerUnits ();
 		}
 
-		id = targetVehicle->iID;
-		targetVehicle->data.hitpointsCur = targetVehicle->calcHealth( damage );
-		remainingHP = targetVehicle->data.hitpointsCur;
-		owner = targetVehicle->owner;
-		Log.write(" Server: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
-	}
-	else if ( targetBuilding )
-	{
-		//if taget is a stealth unit, make it visible on all clients
-		if ( targetBuilding->data.isStealthOn != TERRAIN_NONE )
-		{
-			for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-			{
-				cPlayer* player = (*Server->PlayerList)[i];
-				if ( targetBuilding->owner == player ) continue;
-				if ( !player->ScanMap[offset] ) continue;
-				targetBuilding->setDetectedByPlayer( player );
-			}
-			Server->checkPlayerUnits();
-		}
-
-		id = targetBuilding->iID;
-		targetBuilding->data.hitpointsCur = targetBuilding->calcHealth( damage );
-		remainingHP = targetBuilding->data.hitpointsCur;
-		owner = targetBuilding->owner;
-		targetBuilding->hasBeenAttacked = true;
-
-		Log.write(" Server: Building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
+		id = targetUnit->iID;
+		targetUnit->data.hitpointsCur = targetUnit->calcHealth (damage);
+		remainingHP = targetUnit->data.hitpointsCur;
+		owner = targetUnit->owner;
+		Log.write (" Server: unit '" + targetUnit->getDisplayName () + "' (ID: " + iToStr (targetUnit->iID) + ") hit. Remaining HP: " + iToStr (targetUnit->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	//workaround
 	//make sure, the owner gets the impact message
-	if ( owner ) owner->ScanMap[offset] = 1;
+	if (owner) 
+		owner->ScanMap[offset] = 1;
 
-	sendAttackJobImpact( offset, remainingHP, id );
+	sendAttackJobImpact (offset, remainingHP, id);
 
 	//remove the destroyed units
-	if ( targetBuilding && targetBuilding->data.hitpointsCur <= 0 )
+	if (targetBuilding && targetBuilding->data.hitpointsCur <= 0)
 	{
-		Server->destroyUnit( targetBuilding );
-		targetBuilding = NULL;
+		Server->destroyUnit (targetBuilding);
+		targetBuilding = 0;
 	}
-	else if ( targetVehicle && targetVehicle->data.hitpointsCur <= 0)
+	else if (targetVehicle && targetVehicle->data.hitpointsCur <= 0)
 	{
-		Server->destroyUnit( targetVehicle );
-		targetVehicle = NULL;
+		Server->destroyUnit (targetVehicle);
+		targetVehicle = 0;
 	}
-
 
 	//attack finished. reset attacking and isBeeingAttacked flags
-	if ( targetVehicle ) targetVehicle->isBeeingAttacked = false;
+	if (targetVehicle) 
+		targetVehicle->isBeeingAttacked = false;
 
-	if ( !isAir )
+	if (isAir == false)
 	{
-		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings();
-		while ( !buildings.end )
+		cBuildingIterator buildings = (*Server->Map)[offset].getBuildings ();
+		while (buildings.end == false)
 		{
 			buildings->isBeeingAttacked = false;
 			buildings++;
 		}
 	}
-	if ( vehicle ) vehicle->attacking = false;
-	if ( building ) building->attacking = false;
+	if (unit)
+		unit->attacking = false;
 
 	//check whether a following sentry mode attack is possible
-	if ( targetVehicle ) targetVehicle->InSentryRange();
+	if (targetVehicle)
+		targetVehicle->InSentryRange ();
 	//check whether the agressor itself is in sentry range
-	if ( vehicle ) vehicle->InSentryRange();
+	if (unit && unit->isVehicle ())
+		((cVehicle*)unit)->InSentryRange ();
 }
 
+//--------------------------------------------------------------------------
 void cServerAttackJob::makeImpactCluster()
 {
 	int clusterDamage = damage;
@@ -510,50 +470,58 @@ void cServerAttackJob::makeImpactCluster()
 	int PosY = iTargetOff / Server->Map->size;
 
 	//full damage
-	makeImpact( PosX, PosY );
+	makeImpact (PosX, PosY);
 
 	// 3/4 damage
 	damage = (clusterDamage * 3) / 4;
-	makeImpact( PosX - 1, PosY     );
-	makeImpact( PosX + 1, PosY     );
-	makeImpact( PosX    , PosY - 1 );
-	makeImpact( PosX    , PosY + 1 );
+	makeImpact (PosX - 1, PosY    );
+	makeImpact (PosX + 1, PosY    );
+	makeImpact (PosX    , PosY - 1);
+	makeImpact (PosX    , PosY + 1);
 
 	// 1/2 damage
 	damage = clusterDamage / 2;
-	makeImpact( PosX + 1, PosY + 1 );
-	makeImpact( PosX + 1, PosY - 1 );
-	makeImpact( PosX - 1, PosY + 1 );
-	makeImpact( PosX - 1, PosY - 1 );
+	makeImpact (PosX + 1, PosY + 1);
+	makeImpact (PosX + 1, PosY - 1);
+	makeImpact (PosX - 1, PosY + 1);
+	makeImpact (PosX - 1, PosY - 1);
 
 	// 1/3 damage
 	damage = clusterDamage / 3;
-	makeImpact( PosX - 2, PosY     );
-	makeImpact( PosX + 2, PosY     );
-	makeImpact( PosX    , PosY - 2 );
-	makeImpact( PosX    , PosY + 2 );
+	makeImpact (PosX - 2, PosY    );
+	makeImpact (PosX + 2, PosY    );
+	makeImpact (PosX    , PosY - 2);
+	makeImpact (PosX    , PosY + 2);
 
 }
 
-void cServerAttackJob::sendAttackJobImpact(int offset, int remainingHP, int id )
+//--------------------------------------------------------------------------
+void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 {
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
 
 		//targed in sight?
-		if ( player->ScanMap[offset] == 0 ) continue;
+		if (player->ScanMap[offset] == 0) 
+			continue;
 
-		cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_IMPACT );
-		message->pushInt32( offset );
-		message->pushInt16( remainingHP );
-		message->pushInt16( id );
+		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_IMPACT);
+		message->pushInt32 (offset);
+		message->pushInt16 (remainingHP);
+		message->pushInt16 (id);
 
-		Server->sendNetMessage( message, player->Nr );
-
+		Server->sendNetMessage (message, player->Nr);
 	}
 }
 
+
+
+//--------------------------------------------------------------------------
+// cClientAttackJob implementation
+//--------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------
 void cClientAttackJob::lockTarget( cNetMessage* message )
 {
 	bool bIsAir = message->popBool();
@@ -592,6 +560,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 	}
 }
 
+//--------------------------------------------------------------------------
 void cClientAttackJob::handleAttackJobs()
 {
 	for (unsigned int i = 0; i < Client->attackJobs.Size(); i++)
@@ -621,6 +590,7 @@ void cClientAttackJob::handleAttackJobs()
 	}
 }
 
+//--------------------------------------------------------------------------
 cClientAttackJob::cClientAttackJob( cNetMessage* message )
 {
 	state = ROTATING;
@@ -711,6 +681,7 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	Client->gameGUI.checkMouseInputMode();
 }
 
+//--------------------------------------------------------------------------
 void cClientAttackJob::rotate()
 {
 	if ( vehicle )
@@ -741,6 +712,7 @@ void cClientAttackJob::rotate()
 	}
 }
 
+//--------------------------------------------------------------------------
 void cClientAttackJob::playMuzzle()
 {
 
@@ -922,6 +894,7 @@ void cClientAttackJob::playMuzzle()
 
 }
 
+//--------------------------------------------------------------------------
 void cClientAttackJob::sendFinishMessage()
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_ATTACKJOB_FINISHED );
@@ -929,6 +902,7 @@ void cClientAttackJob::sendFinishMessage()
 	Client->sendNetMessage( message );
 }
 
+//--------------------------------------------------------------------------
 void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 {
 	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )

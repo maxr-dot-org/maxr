@@ -127,9 +127,10 @@ cVehicle::~cVehicle ()
 	}
 	if ( Server )
 	{
-		for ( unsigned int i = 0; i < Server->AJobs.Size(); i++ )
+		for (unsigned int i = 0; i < Server->AJobs.Size (); i++)
 		{
-			if ( Server->AJobs[i]->vehicle == this ) Server->AJobs[i]->vehicle = NULL;
+			if (Server->AJobs[i]->unit == this) 
+				Server->AJobs[i]->unit = 0;
 		}
 	}
 	if ( Client )
@@ -1671,7 +1672,7 @@ bool cVehicle::provokeReactionFire ()
 					if (selectedTargetVehicle == opponentVehicle)
 						playerWantsToFireOnThisVehicle = true;
 				}
-				opponentVehicle = opponentVehicle->next;
+				opponentVehicle = (cVehicle*)opponentVehicle->next;
 			}
 			cBuilding* opponentBuilding = player->BuildingList;
 			while (opponentBuilding != 0 && playerWantsToFireOnThisVehicle == false)
@@ -1687,7 +1688,7 @@ bool cVehicle::provokeReactionFire ()
 					if (selectedTargetVehicle == opponentVehicle)
 						playerWantsToFireOnThisVehicle = true;
 				}
-				opponentBuilding = opponentBuilding->next;
+				opponentBuilding = (cBuilding*)opponentBuilding->next;
 			}
 		}
 		
@@ -1715,7 +1716,7 @@ bool cVehicle::provokeReactionFire ()
 					return true;
 				}
 			}
-			opponentBuilding = opponentBuilding->next;
+			opponentBuilding = (cBuilding*)opponentBuilding->next;
 		}
 		
 		cVehicle* opponentVehicle = player->VehicleList;
@@ -1737,7 +1738,7 @@ bool cVehicle::provokeReactionFire ()
 					return true;
 				}
 			}
-			opponentVehicle = opponentVehicle->next;
+			opponentVehicle = (cVehicle*)opponentVehicle->next;
 		}
 	}
 	return false;
@@ -2108,7 +2109,7 @@ void cVehicle::DeleteStored ()
 		if ( v->prev )
 		{
 			cVehicle *vp;
-			vp = v->prev;
+			vp = (cVehicle*)v->prev;
 			vp->next = v->next;
 
 			if ( v->next )
@@ -2116,7 +2117,7 @@ void cVehicle::DeleteStored ()
 		}
 		else
 		{
-			v->owner->VehicleList = v->next;
+			v->owner->VehicleList = (cVehicle*)v->next;
 
 			if ( v->next )
 				v->next->prev = NULL;

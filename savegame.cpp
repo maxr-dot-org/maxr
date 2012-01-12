@@ -66,14 +66,14 @@ int cSavegame::save( string saveName )
 				writeUnit ( Vehicle, &unitnum );
 				unitnum++;
 			}
-			Vehicle = Vehicle->next;
+			Vehicle = (cVehicle*)Vehicle->next;
 		}
 		cBuilding *Building = Player->BuildingList;
 		while ( Building )
 		{
 			writeUnit ( Building, &unitnum );
 			unitnum++;
-			Building = Building->next;
+			Building = (cBuilding*)Building->next;
 		}
 	}
 	int rubblenum = 0;
@@ -82,7 +82,7 @@ int cSavegame::save( string saveName )
 	{
 		writeRubble ( Rubble, rubblenum );
 		rubblenum++;
-		Rubble = Rubble->next;
+		Rubble = (cBuilding*)Rubble->next;
 	}
 
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )

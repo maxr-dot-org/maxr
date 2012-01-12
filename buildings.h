@@ -131,7 +131,6 @@ public:
 	/** a list were the numbers of all players who have deteced this vehicle are stored in */
 	cList<cPlayer*> DetectedByPlayerList;
 	sBuilding *typ;  // Typ des Buildings
-	cBuilding *next,*prev; // pointers for the linked list
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // counter for the startup animation
@@ -205,7 +204,7 @@ public:
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void setDetectedByPlayer( cPlayer* player );
+	virtual void setDetectedByPlayer( cPlayer* player );
 	/**
 	* - checks whether the building has been detected by an other unit
 	* the detection maps have to be up to date, when calling this funktion
