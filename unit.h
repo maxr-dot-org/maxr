@@ -82,7 +82,9 @@ public:
 	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true) const;
 	
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
-	
+
+	void deleteStoredUnits ();
+
 	
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
@@ -96,9 +98,10 @@ public:
 	bool attacking;  ///< is the unit currently attacking?
 	bool isBeeingAttacked; ///< true when an attack on this unit is running
 	
-	cUnit* next; // "next"-pointer for the double linked list
-	cUnit* prev; // "prev"-pointer for the double linked list
-	
+	cUnit* next; ///< "next"-pointer for the double linked list
+	cUnit* prev; ///< "prev"-pointer for the double linked list
+	cList<cUnit*> storedUnits; ///< list with the units (normally vehicles), that are stored in this unit
+
 	int selectedMenuButtonIndex;
 	
 	cPlayer* owner;

@@ -123,32 +123,6 @@ cBuilding::~cBuilding ()
 		delete BuildList;
 	}
 
-	while (StoredVehicles.Size())
-	{
-		cVehicle *v;
-		v = StoredVehicles[0];
-
-		if ( v->prev )
-		{
-			cVehicle *vp;
-			vp = (cVehicle*)v->prev;
-			vp->next = v->next;
-
-			if ( v->next )
-				v->next->prev = vp;
-		}
-		else
-		{
-			v->owner->VehicleList = (cVehicle*)v->next;
-
-			if ( v->next )
-				v->next->prev = NULL;
-		}
-		delete v;
-
-		StoredVehicles.Delete ( 0 );
-	}
-
 	if ( sentryActive )
 	{
 		owner->deleteSentryBuilding ( this );
@@ -1292,7 +1266,7 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 
 	Vehicle->Loaded = true;
 
-	StoredVehicles.Add ( Vehicle );
+	storedUnits.Add ( Vehicle );
 	data.storageUnitsCur++;
 
 	owner->DoScan();
@@ -1302,14 +1276,14 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 // Unloads a vehicle
 void cBuilding::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
-	for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
+	for ( unsigned int i = 0; i < storedUnits.Size(); i++ )
 	{
-		if ( StoredVehicles[i] == Vehicle )
+		if ( storedUnits[i] == Vehicle )
 		{
-			StoredVehicles.Delete ( i );
+			storedUnits.Delete ( i );
 			break;
 		}
-		if ( i == StoredVehicles.Size()-1 ) return;
+		if ( i == storedUnits.Size()-1 ) return;
 	}
 
 	data.storageUnitsCur--;
@@ -1877,7 +1851,7 @@ void cBuilding::executeStopCommand ()
 //-----------------------------------------------------------------------------
 void cBuilding::executeActivateStoredVehiclesCommand ()
 {
-	cStorageMenu storageMenu (StoredVehicles, 0, this);
+	cStorageMenu storageMenu (storedUnits, 0, this);
 	storageMenu.show ();
 }
 

@@ -1027,7 +1027,7 @@ friend class cClient;
 protected:
 	cVehicle *ownerVehicle;
 	cBuilding *ownerBuilding;
-	cList<cVehicle *> &storageList;
+	cList<cUnit*>& storageList;
 	sUnitData unitData;
 	sSubBase *subBase;
 
@@ -1068,7 +1068,7 @@ protected:
 
 	int getClickedButtonVehIndex ( cMenuButton *buttons[6] );
 public:
-	cStorageMenu( cList<cVehicle *> &storageList_, cVehicle *vehicle, cBuilding *building );
+	cStorageMenu( cList<cUnit*>& storageList_, cVehicle *vehicle, cBuilding *building );
 	~cStorageMenu();
 
 	static void doneReleased( void *parent );

@@ -112,8 +112,6 @@ cVehicle::~cVehicle ()
 	if ( sentryActive )
 		owner->deleteSentryVehicle ( this );
 
-	DeleteStored();
-
 	if ( IsLocked )
 	{
 		cPlayer *p;
@@ -1780,7 +1778,7 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 
 	Vehicle->Loaded = true;
 
-	StoredVehicles.Add ( Vehicle );
+	storedUnits.Add ( Vehicle );
 	data.storageUnitsCur++;
 
 	owner->DoScan();
@@ -1791,14 +1789,14 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 //-----------------------------------------------------------------------------
 void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 {
-	for ( unsigned int i = 0; i < StoredVehicles.Size(); i++ )
+	for ( unsigned int i = 0; i < storedUnits.Size(); i++ )
 	{
-		if ( StoredVehicles[i] == Vehicle )
+		if ( storedUnits[i] == Vehicle )
 		{
-			StoredVehicles.Delete ( i );
+			storedUnits.Delete ( i );
 			break;
 		}
-		if ( i == StoredVehicles.Size()-1 ) return;
+		if ( i == storedUnits.Size()-1 ) return;
 	}
 
 	data.storageUnitsCur--;
@@ -1915,52 +1913,39 @@ bool cVehicle::clearMine ()
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbour field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
+bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 {
-	if ( steal && !data.canCapture ) return false;
-	if ( !steal && !data.canDisable ) return false;
+	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+		return false;
 
-	int const off = x + y * map->size;
+	if (isNextTo (x, y) == false || data.shotsCur == 0) 
+		return false;
 
-	if ( !isNextTo ( x, y ) ) return false;
-	if ( !data.shotsCur ) return false;
+	int off = x + y * map->size;
+	cUnit* vehicle  = map->fields[off].getVehicles ();
+	cUnit* building = map->fields[off].getBuildings ();
+	cUnit* unit = vehicle ? vehicle : building;
 
-	cVehicle*  vehicle  = map->fields[off].getVehicles();
-	cBuilding* building = map->fields[off].getBuildings();
-
-	bool result = true;
-	if ( vehicle )
+	if (unit != 0)
 	{
-		if ( steal && !vehicle->data.canBeCaptured ) result = false;
-		if ( !steal && !vehicle->data.canBeDisabled ) result = false;
+		bool result = true;
+		if (unit->isBuilding () && unit->owner == 0) return false; // rubble
+		if (steal && unit->data.canBeCaptured == false) return false;
+		if (steal == false && unit->data.canBeDisabled == false) return false;
+		if (steal && unit->storedUnits.Size () > 0) return false;
+		if (unit->owner == owner) return false;
+		if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0) return false;
 
-		if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh > 0 ) result = false;
-		if ( steal && vehicle->StoredVehicles.Size() ) result = false;
-
-		if ( vehicle->owner == owner ) result = false;
-
-		if (result) return true;
+		if (result) 
+			return true;
 	}
-
-	if ( building )
-	{
-		if ( !building->owner ) result = false;
-		if ( steal && !building->data.canBeCaptured ) result = false;
-		if ( !steal && !building->data.canBeDisabled ) result = false;
-
-		if ( steal && building->StoredVehicles.Size() ) result = false;
-		if ( building->owner == owner ) result = false;
-
-		if (result) return true;
-	}
-
 	return false;
 }
 
 //-----------------------------------------------------------------------------
 /** draws the commando-cursors: */
 //-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor (int x, int y, bool steal)
+void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
 {
 	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
 	SDL_Surface* sf;
@@ -1997,7 +1982,7 @@ void cVehicle::drawCommandoCursor (int x, int y, bool steal)
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal)
+int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
 {
 	if (destUnit == 0)
 		return 0;
@@ -2023,7 +2008,7 @@ int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal)
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoTurns (cUnit* destUnit)
+int cVehicle::calcCommandoTurns (cUnit* destUnit) const
 {
 	if (destUnit == 0)
 		return 1;
@@ -2048,38 +2033,6 @@ int cVehicle::calcCommandoTurns (cUnit* destUnit)
 	if (turns < 1)
 		turns = 1;
 	return turns;
-}
-
-//-----------------------------------------------------------------------------
-void cVehicle::DeleteStored ()
-{
-	while ( StoredVehicles.Size() )
-	{
-		cVehicle *v;
-		v = StoredVehicles[0];
-
-		if ( v->prev )
-		{
-			cVehicle *vp;
-			vp = (cVehicle*)v->prev;
-			vp->next = v->next;
-
-			if ( v->next )
-				v->next->prev = vp;
-		}
-		else
-		{
-			v->owner->VehicleList = (cVehicle*)v->next;
-
-			if ( v->next )
-				v->next->prev = NULL;
-		}
-
-		v->DeleteStored();
-
-		delete v;
-		StoredVehicles.Delete ( 0 );
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -2293,7 +2246,7 @@ void cVehicle::executeAutoMoveJobCommand ()
 //-----------------------------------------------------------------------------
 void cVehicle::executeActivateStoredVehiclesCommand ()
 {
-	cStorageMenu storageMenu (StoredVehicles, this, 0);
+	cStorageMenu storageMenu (storedUnits, this, 0);
 	storageMenu.show ();
 }
 

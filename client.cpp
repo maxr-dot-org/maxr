@@ -1437,9 +1437,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					while ( Building )
 					{
 						bool found = false;
-						for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+						for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 						{
-							if ( Building->StoredVehicles[i] == DestVehicle )
+							if ( Building->storedUnits[i] == DestVehicle )
 							{
 								found = true;
 								break;
@@ -1764,7 +1764,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				cVehicle *vehicle = Player->VehicleList;
 				while ( vehicle )
 				{
-					if ( vehicle->StoredVehicles.Size() ) vehicle->DeleteStored();
+					if ( vehicle->storedUnits.Size() ) vehicle->deleteStoredUnits ();
 					vehicle = (cVehicle*)vehicle->next;
 				}
 
@@ -1783,9 +1783,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					Player->BuildingList->sentryActive = false;
 
 
-					while( Player->BuildingList->StoredVehicles.Size() > 0 )
+					while( Player->BuildingList->storedUnits.Size() > 0 )
 					{
-						Player->BuildingList->StoredVehicles.Delete( 0 );
+						Player->BuildingList->storedUnits.Delete( 0 );
 					}
 
 					Map->deleteBuilding ( Player->BuildingList );

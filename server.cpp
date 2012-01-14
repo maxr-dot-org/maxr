@@ -1134,11 +1134,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int availableMetal = storingBuilding->SubBase->Metal;
 
 			cList<cVehicle*> upgradedVehicles;
-			for (unsigned int i = 0; i < storingBuilding->StoredVehicles.Size(); i++)
+			for (unsigned int i = 0; i < storingBuilding->storedUnits.Size(); i++)
 			{
 				if (upgradeAll || i == storageSlot)
 				{
-					cVehicle* vehicle = storingBuilding->StoredVehicles[i];
+					cVehicle* vehicle = (cVehicle*)storingBuilding->storedUnits[i];
 					sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
 
 					if (vehicle->data.version >= upgradedVersion.version)
@@ -1784,18 +1784,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		break;
 	case GAME_EV_WANT_CHANGE_UNIT_NAME:
 		{
-			int unitID = message->popInt16();
-			if (cVehicle* const vehicle = getVehicleFromID(unitID))
+			int unitID = message->popInt16 ();
+			cUnit* unit = getUnitFromID (unitID);
+			if (unit != 0)
 			{
-				vehicle->changeName ( message->popString() );
-				for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
-				sendUnitData ( vehicle, vehicle->owner->Nr );
-			}
-			else if (cBuilding* const building = getBuildingFromID(unitID))
-			{
-				building->changeName ( message->popString() );
-				for ( unsigned int i = 0; i < building->seenByPlayerList.Size(); i++ ) sendUnitData ( building, i );
-				sendUnitData ( building, building->owner->Nr );
+				unit->changeName (message->popString ());
+				for (unsigned int i = 0; i < unit->seenByPlayerList.Size (); i++) 
+					sendUnitData (unit, i);
+				sendUnitData (unit, unit->owner->Nr );
 			}
 		}
 		break;
@@ -2172,17 +2168,12 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	}
 	
 	if (unit->isBuilding ())
-	{
 		Map->deleteBuilding ((cBuilding*)unit);
-		if (notifyClient)
-			sendDeleteUnit ((cBuilding*)unit, -1);
-	}
 	else
-	{
 		Map->deleteVehicle ((cVehicle*)unit);
-		if (notifyClient)
-			sendDeleteUnit ((cVehicle*)unit, -1);
-	}
+
+	if (notifyClient)
+		sendDeleteUnit (unit, -1);
 
 	if (unit->isBuilding () && ((cBuilding*)unit)->SubBase != 0)
 		unit->owner->base.deleteBuilding ((cBuilding*)unit, true);
@@ -3338,9 +3329,9 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	while ( Building )
 	{
 		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, false );
-		for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+		for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 		{
-			cVehicle *StoredVehicle = Building->StoredVehicles[i];
+			cVehicle *StoredVehicle = (cVehicle*)Building->storedUnits[i];
 			resyncVehicle ( StoredVehicle, Player );
 			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
 		}
@@ -3408,9 +3399,9 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 {
 	sendAddUnit ( Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, false, !Vehicle->Loaded );
 	if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
-	for ( unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++ )
+	for ( unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++ )
 	{
-		cVehicle *StoredVehicle = Vehicle->StoredVehicles[i];
+		cVehicle *StoredVehicle = (cVehicle*)Vehicle->storedUnits[i];
 		resyncVehicle ( StoredVehicle, Player );
 		sendStoreVehicle ( Vehicle->iID, true, StoredVehicle->iID, Player->Nr );
 	}

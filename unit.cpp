@@ -60,6 +60,7 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 //-----------------------------------------------------------------------------
 cUnit::~cUnit ()
 {
+	deleteStoredUnits ();
 }
 
 //--------------------------------------------------------------------------
@@ -1211,3 +1212,32 @@ void cUnit::upgradeToCurrentVersion ()
 	}
 }
 
+//-----------------------------------------------------------------------------
+void cUnit::deleteStoredUnits ()
+{
+	while (storedUnits.Size ())
+	{
+		cUnit* unit = storedUnits[0];
+		if (unit->prev)
+		{
+			cUnit* prevUnit;
+			prevUnit = unit->prev;
+			prevUnit->next = unit->next;
+			
+			if (unit->next)
+				unit->next->prev = prevUnit;
+		}
+		else
+		{
+			unit->owner->VehicleList = (cVehicle*)unit->next;
+			
+			if (unit->next)
+				unit->next->prev = 0;
+		}
+		if (unit->isVehicle ())
+			unit->deleteStoredUnits ();
+		
+		delete unit;
+		storedUnits.Delete (0);
+	}
+}

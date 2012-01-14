@@ -143,9 +143,9 @@ cPlayer::~cPlayer ()
 	cVehicle *ptr=VehicleList;
 	while ( ptr )
 	{
-		if ( ptr->StoredVehicles.Size() )
+		if ( ptr->storedUnits.Size() )
 		{
-			ptr->DeleteStored();
+			ptr->deleteStoredUnits ();
 		}
 		ptr = (cVehicle*)ptr->next;
 	}
@@ -165,9 +165,9 @@ cPlayer::~cPlayer ()
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
-		while( BuildingList->StoredVehicles.Size() > 0 )
+		while( BuildingList->storedUnits.Size() > 0 )
 		{
-			BuildingList->StoredVehicles.Delete( BuildingList->StoredVehicles.Size() - 1 );
+			BuildingList->storedUnits.Delete( BuildingList->storedUnits.Size() - 1 );
 		}
 
 		delete BuildingList;

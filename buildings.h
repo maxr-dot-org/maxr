@@ -142,7 +142,6 @@ public:
 	int BuildSpeed;  // Die baugeschwindigkeit der Fabrik
 	int MetalPerRound; //Die Menge an Metal, die die Fabrik bei momentaner Baugeschwindigkeit pro Runde maximal verbaut
 	bool RepeatBuild; // Gibt an, ob der Bau wiederholt werden soll
-	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	int DamageFXPointX,DamageFXPointY,DamageFXPointX2,DamageFXPointY2; // the points, where smoke will be generated when the building is damaged
 	int lastShots;   //A disabled unit gets this amount of shots back, when it it captured

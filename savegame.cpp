@@ -1424,10 +1424,10 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	}
 
 	// write all stored vehicles
-	for ( unsigned int i = 0; i < Vehicle->StoredVehicles.Size(); i++ )
+	for ( unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++ )
 	{
 		(*unitnum)++;
-		TiXmlElement *storedNode = writeUnit ( Vehicle->StoredVehicles[i], unitnum );
+		TiXmlElement *storedNode = writeUnit ((cVehicle*)Vehicle->storedUnits[i], unitnum );
 		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Vehicle->iID ), "is_vehicle", "1" );
 	}
 	return unitNode;
@@ -1503,10 +1503,10 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	}
 
 	// write all stored vehicles
-	for ( unsigned int i = 0; i < Building->StoredVehicles.Size(); i++ )
+	for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 	{
 		(*unitnum)++;
-		TiXmlElement *storedNode = writeUnit ( Building->StoredVehicles[i], unitnum );
+		TiXmlElement *storedNode = writeUnit ((cVehicle*)Building->storedUnits[i], unitnum );
 		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Building->iID ), "is_vehicle", "0" );
 	}
 }

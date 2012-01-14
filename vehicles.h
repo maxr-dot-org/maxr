@@ -142,7 +142,6 @@ public:
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
-	cList<cVehicle*> StoredVehicles; // Liste mit geladenen Vehicles
 	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
@@ -206,19 +205,18 @@ public:
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
 	*/
-	bool canDoCommandoAction( int x, int y, cMap *map, bool steal );
+	bool canDoCommandoAction (int x, int y, cMap* map, bool steal) const;
 	/**
 	* draws the commando curser for stealing or disabling with the calculated chance
 	*@author alzi alias DoctorDeath
 	*/
-	void drawCommandoCursor( int x, int y, bool steal );
+	void drawCommandoCursor (int x, int y, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath
 	*/
-	int calcCommandoChance (cUnit* destUnit, bool steal );
-	int calcCommandoTurns (cUnit* destUnit);
-	void DeleteStored();
+	int calcCommandoChance (cUnit* destUnit, bool steal ) const;
+	int calcCommandoTurns (cUnit* destUnit) const;
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
