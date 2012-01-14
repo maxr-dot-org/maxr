@@ -32,6 +32,7 @@ class cNetMessage;
 struct sSubBase;
 struct sSavedReportMessage;
 struct sHudStateContainer;
+class cUnit;
 
 enum SERVER_EVENT_TYPES
 {
@@ -94,25 +95,22 @@ enum SERVER_EVENT_TYPES
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap = true );
 /**
 * Sends an event to a player that a unit has to be deleted
-*@param vehicle vehicle that has to be deleted
-*@param building building that has to be deleted
+*@param unit unit that has to be deleted
 *@param iClient The client who schould receive this event. -1 for all Clients who can see the unit
 */
-void sendDeleteUnit ( cVehicle* vehicle, int iCLient);
-void sendDeleteUnit ( cBuilding* building, int iCLient);
+void sendDeleteUnit (cUnit* unit, int iCLient);
+void sendDeleteUnitMessage (cUnit* unit, int playerNr); ///< playerNr must be the number of a valid player
 /**
 * adds a rubble object to the client
 */
 void sendAddRubble( cBuilding* building, int iPlayer );
 /**
-* Sends an event to a player that he has to detected an enemy unit and should add it
+* Sends an event to a player that he has detected an enemy unit and should add it
 *@author alzi alias DoctorDeath
-*@param Vehicle The vehicle that should be added by the player
-*@param Building The building that should be added by the player
-*@param iPlayer The player whos unit should be deleted
+*@param unit The unit that should be added by the player
+*@param iCLient The client who schould receive this event
 */
-void sendAddEnemyUnit( cVehicle *Vehicle, int iPlayer );
-void sendAddEnemyUnit ( cBuilding *Building, int iPlayer );
+void sendAddEnemyUnit (cUnit* unit, int iCLient);
 /**
 * A client has to make a turnend
 *@author alzi alias DoctorDeath
@@ -133,12 +131,10 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay, cPlayer *Player = NULL )
 /**
 * Sends the data values of this unit to the client
 *@author alzi alias DoctorDeath
-*@param Vehicle The vehicle from which the data should be taken
-*@param Building The building from which the data should be taken
+*@param unit The unit from which the data should be taken
 *@param iPlayer Player who should receive this message
 */
-void sendUnitData( cVehicle *Vehicle, int iPlayer );
-void sendUnitData ( cBuilding *Building, int iPlayer );
+void sendUnitData (cUnit* unit, int iPlayer);
 
 void sendSpecificUnitData ( cVehicle *Vehicle );
 

@@ -126,10 +126,6 @@ public:
 	cBuilding(sBuilding *b,cPlayer *Owner,cBase *Base);
 	~cBuilding();
 
-	/** a list were the numbers of all players who can see this building are stored in */
-	cList<cPlayer*> SeenByPlayerList;
-	/** a list were the numbers of all players who have deteced this vehicle are stored in */
-	cList<cPlayer*> DetectedByPlayerList;
 	sBuilding *typ;  // Typ des Buildings
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks

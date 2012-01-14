@@ -1414,12 +1414,12 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	if ( Vehicle->ServerMoveJob ) addAttributeElement ( unitNode, "Movejob", "destx", iToStr ( Vehicle->ServerMoveJob->DestX ).c_str(), "desty", iToStr ( Vehicle->ServerMoveJob->DestY ).c_str()  );
 
 	// write from which players this unit has been detected
-	if ( Vehicle->DetectedByPlayerList.Size() > 0 )
+	if ( Vehicle->detectedByPlayerList.Size() > 0 )
 	{
 		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
-		for ( unsigned int i = 0; i < Vehicle->DetectedByPlayerList.Size(); i++ )
+		for ( unsigned int i = 0; i < Vehicle->detectedByPlayerList.Size(); i++ )
 		{
-			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Vehicle->DetectedByPlayerList[i]->Nr ) );
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Vehicle->detectedByPlayerList[i]->Nr ) );
 		}
 	}
 
@@ -1493,12 +1493,12 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	}
 
 	// write from which players this unit has been detected
-	if ( Building->DetectedByPlayerList.Size() > 0 )
+	if ( Building->detectedByPlayerList.Size() > 0 )
 	{
 		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
-		for ( unsigned int i = 0; i < Building->DetectedByPlayerList.Size(); i++ )
+		for ( unsigned int i = 0; i < Building->detectedByPlayerList.Size(); i++ )
 		{
-			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Building->DetectedByPlayerList[i]->Nr ) );
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Building->detectedByPlayerList[i]->Nr ) );
 		}
 	}
 

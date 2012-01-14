@@ -239,7 +239,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -622,7 +622,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest )
 		cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
 		if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
-		if ( (data.isStealthOn&TERRAIN_SEA) && water && DetectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
+		if ( (data.isStealthOn&TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
 		else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 	}
 
@@ -800,17 +800,17 @@ int cVehicle::refreshData ()
 			{
 				Server->Map->moveVehicle ( this, BuildBigSavedPos );
 				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
-				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < seenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, BuildBigSavedPos, SeenByPlayerList[i]->Nr );
+					sendStopClear ( this, BuildBigSavedPos, seenByPlayerList[i]->Nr );
 				}
 			}
 			else
 			{
 				sendStopClear ( this, -1, owner->Nr );
-				for ( unsigned int i = 0; i < SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < seenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, -1, SeenByPlayerList[i]->Nr );
+					sendStopClear ( this, -1, seenByPlayerList[i]->Nr );
 				}
 			}
 			data.storageResCur += Rubble->RubbleValue;
@@ -2085,9 +2085,9 @@ void cVehicle::DeleteStored ()
 //-----------------------------------------------------------------------------
 bool cVehicle::isDetectedByPlayer( const cPlayer* player )
 {
-	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
-		if (DetectedByPlayerList[i] == player) return true;
+		if (detectedByPlayerList[i] == player) return true;
 	}
 	return false;
 }
@@ -2095,10 +2095,10 @@ bool cVehicle::isDetectedByPlayer( const cPlayer* player )
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer( cPlayer* player )
 {
-	bool wasDetected = ( DetectedByPlayerList.Size() > 0 );
+	bool wasDetected = ( detectedByPlayerList.Size() > 0 );
 
 	if (!isDetectedByPlayer( player ))
-		DetectedByPlayerList.Add( player );
+		detectedByPlayerList.Add( player );
 
 	if ( !wasDetected ) sendDetectionState( this );
 }
@@ -2106,14 +2106,14 @@ void cVehicle::setDetectedByPlayer( cPlayer* player )
 //-----------------------------------------------------------------------------
 void cVehicle::resetDetectedByPlayer( cPlayer* player )
 {
-	bool wasDetected = ( DetectedByPlayerList.Size() > 0 );
+	bool wasDetected = ( detectedByPlayerList.Size() > 0 );
 
-	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
-		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
+		if ( detectedByPlayerList[i] == player ) detectedByPlayerList.Delete(i);
 	}
 
-	if ( wasDetected && DetectedByPlayerList.Size() == 0 ) sendDetectionState( this );
+	if ( wasDetected && detectedByPlayerList.Size() == 0 ) sendDetectionState( this );
 }
 
 //-----------------------------------------------------------------------------

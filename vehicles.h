@@ -115,10 +115,6 @@ public:
 	cVehicle(sVehicle *v,cPlayer *Owner);
 	~cVehicle();
 
-	/** a list were the numbers of all players who can see this vehicle are stored in */
-	cList<cPlayer*> SeenByPlayerList;
-	/** a list were the numbers of all players who have deteced this vehicle are stored in */
-	cList<cPlayer*> DetectedByPlayerList;
 	int OffX,OffY;   // Offset während der Bewegung
 	virtual int getMovementOffsetX () const {return OffX;}
 	virtual int getMovementOffsetY () const {return OffY;}

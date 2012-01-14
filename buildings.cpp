@@ -1781,9 +1781,9 @@ int cBuilding::playStream ()
 //--------------------------------------------------------------------------
 bool cBuilding::isDetectedByPlayer( const cPlayer* player )
 {
-	for (unsigned int i = 0; i < DetectedByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < detectedByPlayerList.Size(); i++)
 	{
-		if ( DetectedByPlayerList[i] == player ) return true;
+		if ( detectedByPlayerList[i] == player ) return true;
 	}
 	return false;
 }
@@ -1792,15 +1792,15 @@ bool cBuilding::isDetectedByPlayer( const cPlayer* player )
 void cBuilding::setDetectedByPlayer( cPlayer* player )
 {
 	if (!isDetectedByPlayer( player ))
-		DetectedByPlayerList.Add( player );
+		detectedByPlayerList.Add( player );
 }
 
 //--------------------------------------------------------------------------
 void cBuilding::resetDetectedByPlayer( cPlayer* player )
 {
-	for ( unsigned int i = 0; i < DetectedByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
-		if ( DetectedByPlayerList[i] == player ) DetectedByPlayerList.Delete(i);
+		if ( detectedByPlayerList[i] == player ) detectedByPlayerList.Delete(i);
 	}
 }
 

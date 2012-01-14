@@ -102,6 +102,9 @@ public:
 	int selectedMenuButtonIndex;
 	
 	cPlayer* owner;
+	cList<cPlayer*> seenByPlayerList; ///< a list were the numbers of all players who can see this unit are stored in
+	cList<cPlayer*> detectedByPlayerList; ///< a list were the numbers of all players who have deteced this unit are stored in
+	
 
 	//-----------------------------------------------------------------------------
 protected:

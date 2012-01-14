@@ -450,9 +450,9 @@ cServerMoveJob::cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, c
 		Vehicle->sentryActive = false;
 	}
 	sendUnitData ( Vehicle, Vehicle->owner->Nr );
-	for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 	{
-		sendUnitData ( Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
+		sendUnitData ( Vehicle, Vehicle->seenByPlayerList[i]->Nr );
 	}
 
 	if ( Vehicle->ServerMoveJob )
@@ -683,8 +683,8 @@ bool cServerMoveJob::checkMove()
 
 		if ( wasOnLand && driveIntoWater )
 		{
-			while( Vehicle->DetectedByPlayerList.Size() )
-				Vehicle->resetDetectedByPlayer( Vehicle->DetectedByPlayerList[0] );
+			while( Vehicle->detectedByPlayerList.Size() )
+				Vehicle->resetDetectedByPlayer( Vehicle->detectedByPlayerList[0] );
 		}
 	}
 
@@ -776,9 +776,9 @@ void cServerMoveJob::doEndMoveVehicle()
 		{
 			// send new unit values
 			sendUnitData( Vehicle, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 			{
-				sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
+				sendUnitData(Vehicle, Vehicle->seenByPlayerList[i]->Nr );
 			}
 		}
 	}

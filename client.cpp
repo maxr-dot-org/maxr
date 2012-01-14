@@ -1520,12 +1520,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			bool detected = message->popBool();
 			if ( detected )
 			{
-				//mark vehicle as detected with size of DetectedByPlayerList > 0
-				vehicle->DetectedByPlayerList.Add(NULL);
+				//mark vehicle as detected with size of detectedByPlayerList > 0
+				vehicle->detectedByPlayerList.Add(NULL);
 			}
 			else
 			{
-				while ( vehicle->DetectedByPlayerList.Size() > 0 ) vehicle->DetectedByPlayerList.Delete(0);
+				while ( vehicle->detectedByPlayerList.Size() > 0 ) vehicle->detectedByPlayerList.Delete(0);
 			}
 		}
 		break;

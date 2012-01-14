@@ -337,9 +337,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			// send the movejob to all players who can see this unit
 			const cVehicle& vehicle = *MoveJob->Vehicle;
 			sendMoveJobServer( MoveJob, vehicle.owner->Nr );
-			for ( unsigned int i = 0; i < vehicle.SeenByPlayerList.Size(); i++ )
+			for ( unsigned int i = 0; i < vehicle.seenByPlayerList.Size(); i++ )
 			{
-				sendMoveJobServer( MoveJob, vehicle.SeenByPlayerList[i]->Nr );
+				sendMoveJobServer( MoveJob, vehicle.seenByPlayerList[i]->Nr );
 			}
 		}
 		break;
@@ -482,9 +482,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if ( result )
 			{
 				sendUnitData( Vehicle, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 				{
-					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
+					sendUnitData(Vehicle, Vehicle->seenByPlayerList[i]->Nr );
 				}
 			}
 		}
@@ -618,9 +618,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 			/*// send new vehicle status and position		//done implicitly by addMoveJob()
 			sendUnitData ( Vehicle, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+			for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 			{
-				sendUnitData(Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
+				sendUnitData(Vehicle, Vehicle->seenByPlayerList[i]->Nr );
 			}*/
 
 			// drive away from the building lot
@@ -957,8 +957,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 				
 				sendUnitData (Vehicle, Vehicle->owner->Nr);
-				for (unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size (); i++)
-					sendUnitData (Vehicle, Vehicle->SeenByPlayerList[i]->Nr);
+				for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size (); i++)
+					sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 			}
 			else	// building
 			{
@@ -973,8 +973,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				sendUnitData (Building, Building->owner->Nr);
-				for (unsigned int i = 0; i < Building->SeenByPlayerList.Size (); i++)
-					sendUnitData (Building, Building->SeenByPlayerList[i]->Nr);
+				for (unsigned int i = 0; i < Building->seenByPlayerList.Size (); i++)
+					sendUnitData (Building, Building->seenByPlayerList[i]->Nr);
 			}
 		}
 		break;
@@ -994,9 +994,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else Vehicle->owner->deleteSentryVehicle ( Vehicle );
 
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 				{
-					sendUnitData ( Vehicle, Vehicle->SeenByPlayerList[i]->Nr );
+					sendUnitData ( Vehicle, Vehicle->seenByPlayerList[i]->Nr );
 				}
 			}
 			else	// building
@@ -1013,9 +1013,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				else Building->owner->deleteSentryBuilding ( Building );
 
 				sendUnitData ( Building, Building->owner->Nr );
-				for ( unsigned int i = 0; i < Building->SeenByPlayerList.Size(); i++ )
+				for ( unsigned int i = 0; i < Building->seenByPlayerList.Size(); i++ )
 				{
-					sendUnitData ( Building, Building->SeenByPlayerList[i]->Nr );
+					sendUnitData ( Building, Building->seenByPlayerList[i]->Nr );
 				}
 			}
 		}
@@ -1104,8 +1104,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				sendSupply ( DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr );
 
 				//send unitdata to the players who are not the owner
-				for ( unsigned int i = 0; i < DestVehicle->SeenByPlayerList.Size(); i++)
-					sendUnitData( DestVehicle, DestVehicle->SeenByPlayerList[i]->Nr );
+				for ( unsigned int i = 0; i < DestVehicle->seenByPlayerList.Size(); i++)
+					sendUnitData( DestVehicle, DestVehicle->seenByPlayerList[i]->Nr );
 			}
 			else
 			{
@@ -1115,8 +1115,8 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				sendSupply ( DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr );
 
 				//send unitdata to the players who are not the owner
-				for ( unsigned int i = 0; i < DestBuilding->SeenByPlayerList.Size(); i++)
-					sendUnitData( DestBuilding, DestBuilding->SeenByPlayerList[i]->Nr );
+				for ( unsigned int i = 0; i < DestBuilding->seenByPlayerList.Size(); i++)
+					sendUnitData( DestBuilding, DestBuilding->seenByPlayerList[i]->Nr );
 			}
 		}
 		break;
@@ -1210,9 +1210,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
 
 			sendClearAnswer ( 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr );
-			for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++)
+			for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
-				sendClearAnswer( 0, Vehicle, 0, rubbleoffset, Vehicle->SeenByPlayerList[i]->Nr );
+				sendClearAnswer( 0, Vehicle, 0, rubbleoffset, Vehicle->seenByPlayerList[i]->Nr );
 			}
 		}
 		break;
@@ -1235,17 +1235,17 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				{
 					Map->moveVehicle ( Vehicle, Vehicle->BuildBigSavedPos );
 					sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr );
-					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+					for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 					{
-						sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->SeenByPlayerList[i]->Nr );
+						sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->seenByPlayerList[i]->Nr );
 					}
 				}
 				else
 				{
 					sendStopClear ( Vehicle, -1, Vehicle->owner->Nr );
-					for ( unsigned int i = 0; i < Vehicle->SeenByPlayerList.Size(); i++ )
+					for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 					{
-						sendStopClear ( Vehicle, -1, Vehicle->SeenByPlayerList[i]->Nr );
+						sendStopClear ( Vehicle, -1, Vehicle->seenByPlayerList[i]->Nr );
 					}
 				}
 			}
@@ -1667,9 +1667,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						if ( destVehicle->IsBuilding ) stopVehicleBuilding ( destVehicle );
 						if ( destVehicle->ServerMoveJob ) destVehicle->ServerMoveJob->release();
 						sendUnitData ( destVehicle, destVehicle->owner->Nr );
-						for ( unsigned int i = 0; i < destVehicle->SeenByPlayerList.Size(); i++ )
+						for ( unsigned int i = 0; i < destVehicle->seenByPlayerList.Size(); i++ )
 						{
-							sendUnitData ( destVehicle, destVehicle->SeenByPlayerList[i]->Nr );
+							sendUnitData ( destVehicle, destVehicle->seenByPlayerList[i]->Nr );
 						}
 						destVehicle->owner->DoScan();
 						checkPlayerUnits();
@@ -1687,9 +1687,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						destBuilding->ServerStopWork( true );
 						sendDoStopWork ( destBuilding );
 						sendUnitData ( destBuilding, destBuilding->owner->Nr );
-						for ( unsigned int i = 0; i < destBuilding->SeenByPlayerList.Size(); i++ )
+						for ( unsigned int i = 0; i < destBuilding->seenByPlayerList.Size(); i++ )
 						{
-							sendUnitData ( destBuilding, destBuilding->SeenByPlayerList[i]->Nr );
+							sendUnitData ( destBuilding, destBuilding->seenByPlayerList[i]->Nr );
 						}
 						destBuilding->owner->DoScan();
 						checkPlayerUnits();
@@ -1788,13 +1788,13 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (cVehicle* const vehicle = getVehicleFromID(unitID))
 			{
 				vehicle->changeName ( message->popString() );
-				for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
+				for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ ) sendUnitData ( vehicle, i );
 				sendUnitData ( vehicle, vehicle->owner->Nr );
 			}
 			else if (cBuilding* const building = getBuildingFromID(unitID))
 			{
 				building->changeName ( message->popString() );
-				for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ ) sendUnitData ( building, i );
+				for ( unsigned int i = 0; i < building->seenByPlayerList.Size(); i++ ) sendUnitData ( building, i );
 				sendUnitData ( building, building->owner->Nr );
 			}
 		}
@@ -2216,13 +2216,13 @@ void cServer::checkPlayerUnits ()
 				if ( MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) && !NextVehicle->Loaded )
 				{
 					unsigned int i;
-					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
+					for ( i = 0; i < NextVehicle->seenByPlayerList.Size(); i++ )
 					{
-						if ( NextVehicle->SeenByPlayerList[i] == MapPlayer ) break;
+						if ( NextVehicle->seenByPlayerList[i] == MapPlayer ) break;
 					}
-					if ( i == NextVehicle->SeenByPlayerList.Size() )
+					if ( i == NextVehicle->seenByPlayerList.Size() )
 					{
-						NextVehicle->SeenByPlayerList.Add ( MapPlayer );
+						NextVehicle->seenByPlayerList.Add ( MapPlayer );
 						sendAddEnemyUnit( NextVehicle, MapPlayer->Nr );
 						sendUnitData( NextVehicle, MapPlayer->Nr );
 						if ( NextVehicle->ServerMoveJob ) sendMoveJobServer ( NextVehicle->ServerMoveJob, MapPlayer->Nr );
@@ -2231,11 +2231,11 @@ void cServer::checkPlayerUnits ()
 				else
 				{
 					unsigned int i;
-					for ( i = 0; i < NextVehicle->SeenByPlayerList.Size(); i++ )
+					for ( i = 0; i < NextVehicle->seenByPlayerList.Size(); i++ )
 					{
-						if ( NextVehicle->SeenByPlayerList[i] == MapPlayer )
+						if ( NextVehicle->seenByPlayerList[i] == MapPlayer )
 						{
-							NextVehicle->SeenByPlayerList.Delete ( i );
+							NextVehicle->seenByPlayerList.Delete ( i );
 							sendDeleteUnit( NextVehicle, MapPlayer->Nr );
 							break;
 						}
@@ -2257,13 +2257,13 @@ void cServer::checkPlayerUnits ()
 				if ( MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer( MapPlayer ) || (MapPlayer->isDefeated && openMapDefeat) ) )
 				{
 					unsigned int i;
-					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )
+					for ( i = 0; i < NextBuilding->seenByPlayerList.Size(); i++ )
 					{
-						if ( NextBuilding->SeenByPlayerList[i] == MapPlayer ) break;
+						if ( NextBuilding->seenByPlayerList[i] == MapPlayer ) break;
 					}
-					if ( i == NextBuilding->SeenByPlayerList.Size() )
+					if ( i == NextBuilding->seenByPlayerList.Size() )
 					{
-						NextBuilding->SeenByPlayerList.Add ( MapPlayer );
+						NextBuilding->seenByPlayerList.Add ( MapPlayer );
 						sendAddEnemyUnit( NextBuilding, MapPlayer->Nr );
 						sendUnitData( NextBuilding, MapPlayer->Nr );
 					}
@@ -2271,11 +2271,11 @@ void cServer::checkPlayerUnits ()
 				else
 				{
 					unsigned int i;
-					for ( i = 0; i < NextBuilding->SeenByPlayerList.Size(); i++ )
+					for ( i = 0; i < NextBuilding->seenByPlayerList.Size(); i++ )
 					{
-						if ( NextBuilding->SeenByPlayerList[i] == MapPlayer )
+						if ( NextBuilding->seenByPlayerList[i] == MapPlayer )
 						{
-							NextBuilding->SeenByPlayerList.Delete ( i );
+							NextBuilding->seenByPlayerList.Delete ( i );
 							sendDeleteUnit( NextBuilding, MapPlayer->Nr );
 
 							break;
@@ -2299,24 +2299,24 @@ void cServer::checkPlayerUnits ()
 			if ( MapPlayer->ScanMap[iOff] == 1 )
 			{
 				unsigned int i;
-				for ( i = 0; i < building->SeenByPlayerList.Size(); i++ )
+				for ( i = 0; i < building->seenByPlayerList.Size(); i++ )
 				{
-					if ( building->SeenByPlayerList[i] == MapPlayer ) break;
+					if ( building->seenByPlayerList[i] == MapPlayer ) break;
 				}
-				if ( i == building->SeenByPlayerList.Size() )
+				if ( i == building->seenByPlayerList.Size() )
 				{
-					building->SeenByPlayerList.Add ( MapPlayer );
+					building->seenByPlayerList.Add ( MapPlayer );
 					sendAddRubble( building, MapPlayer->Nr );
 				}
 			}
 			else
 			{
 				unsigned int i;
-				for ( i = 0; i < building->SeenByPlayerList.Size(); i++ )
+				for ( i = 0; i < building->seenByPlayerList.Size(); i++ )
 				{
-					if ( building->SeenByPlayerList[i] == MapPlayer )
+					if ( building->seenByPlayerList[i] == MapPlayer )
 					{
-						building->SeenByPlayerList.Delete ( i );
+						building->seenByPlayerList.Delete ( i );
 						sendDeleteUnit( building, MapPlayer->Nr );
 						break;
 					}
@@ -2585,9 +2585,9 @@ void cServer::makeTurnEnd ()
 			}
 			if ( (Building->data.canAttack && Building->refreshData()) || forceSendUnitData)
 			{
-				for ( unsigned int k = 0; k < Building->SeenByPlayerList.Size(); k++ )
+				for ( unsigned int k = 0; k < Building->seenByPlayerList.Size(); k++ )
 				{
-					sendUnitData(Building, Building->SeenByPlayerList[k]->Nr );
+					sendUnitData(Building, Building->seenByPlayerList[k]->Nr );
 				}
 				sendUnitData ( Building, Building->owner->Nr );
 			}
@@ -2613,9 +2613,9 @@ void cServer::makeTurnEnd ()
 			}
 			if ( Vehicle->refreshData() || forceSendUnitData )
 			{
-				for ( unsigned int k = 0; k < Vehicle->SeenByPlayerList.Size(); k++ )
+				for ( unsigned int k = 0; k < Vehicle->seenByPlayerList.Size(); k++ )
 				{
-					sendUnitData(Vehicle, Vehicle->SeenByPlayerList[k]->Nr );
+					sendUnitData(Vehicle, Vehicle->seenByPlayerList[k]->Nr );
 				}
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
@@ -2632,7 +2632,7 @@ void cServer::makeTurnEnd ()
 		cVehicle* vehicle = player->VehicleList;
 		while ( vehicle )
 		{
-			while ( vehicle->DetectedByPlayerList.Size() ) vehicle->resetDetectedByPlayer(vehicle->DetectedByPlayerList[0]);
+			while ( vehicle->detectedByPlayerList.Size() ) vehicle->resetDetectedByPlayer(vehicle->detectedByPlayerList[0]);
 			vehicle->makeDetection();
 			vehicle = (cVehicle*)vehicle->next;
 		}
@@ -2973,35 +2973,44 @@ void cServer::handleTimer()
 }
 
 //-------------------------------------------------------------------------------------
-cVehicle *cServer::getVehicleFromID ( int iID )
+cUnit* cServer::getUnitFromID (int iID) const
 {
-	cVehicle *Vehicle;
-	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
-	{
-		Vehicle = (*PlayerList)[i]->VehicleList;
-		while ( Vehicle )
-		{
-			if ( Vehicle->iID == iID ) return Vehicle;
-			Vehicle = (cVehicle*)Vehicle->next;
-		}
-	}
-	return NULL;
+	cUnit* result = getVehicleFromID (iID);
+	if (result == 0)
+		result = getBuildingFromID (iID);
+	return result;
 }
 
 //-------------------------------------------------------------------------------------
-cBuilding *cServer::getBuildingFromID ( int iID )
+cVehicle* cServer::getVehicleFromID ( int iID ) const
 {
-	cBuilding *Building;
-	for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	for (unsigned int i = 0; i < PlayerList->Size (); i++)
 	{
-		Building = (*PlayerList)[i]->BuildingList;
-		while ( Building )
+		cVehicle* vehicle = (*PlayerList)[i]->VehicleList;
+		while (vehicle != 0)
 		{
-			if ( Building->iID == iID ) return Building;
-			Building = (cBuilding*)Building->next;
+			if (vehicle->iID == iID) 
+				return vehicle;
+			vehicle = (cVehicle*)vehicle->next;
 		}
 	}
-	return NULL;
+	return 0;
+}
+
+//-------------------------------------------------------------------------------------
+cBuilding* cServer::getBuildingFromID (int iID) const
+{
+	for (unsigned int i = 0; i < PlayerList->Size (); i++)
+	{
+		cBuilding* building = (*PlayerList)[i]->BuildingList;
+		while (building != 0)
+		{
+			if (building->iID == iID) 
+				return building;
+			building = (cBuilding*)building->next;
+		}
+	}
+	return 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -3284,18 +3293,18 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 			Vehicle = UnitPlayer->VehicleList;
 			while ( Vehicle )
 			{
-				for ( unsigned int j = 0; j < Vehicle->SeenByPlayerList.Size(); j++ )
+				for ( unsigned int j = 0; j < Vehicle->seenByPlayerList.Size(); j++ )
 				{
-					if ( Vehicle->SeenByPlayerList[j] == Player ) Vehicle->SeenByPlayerList.Delete ( j );
+					if ( Vehicle->seenByPlayerList[j] == Player ) Vehicle->seenByPlayerList.Delete ( j );
 				}
 				Vehicle = (cVehicle*)Vehicle->next;
 			}
 			Building = UnitPlayer->BuildingList;
 			while ( Building )
 			{
-				for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+				for ( unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++ )
 				{
-					if ( Building->SeenByPlayerList[j] == Player ) Building->SeenByPlayerList.Delete ( j );
+					if ( Building->seenByPlayerList[j] == Player ) Building->seenByPlayerList.Delete ( j );
 				}
 				Building = (cBuilding*)Building->next;
 			}
@@ -3303,9 +3312,9 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		Building = neutralBuildings;
 		while ( Building )
 		{
-			for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+			for ( unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++ )
 			{
-				if ( Building->SeenByPlayerList[j] == Player ) Building->SeenByPlayerList.Delete ( j );
+				if ( Building->seenByPlayerList[j] == Player ) Building->seenByPlayerList.Delete ( j );
 			}
 			Building = (cBuilding*)Building->next;
 		}
@@ -3408,7 +3417,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	sendUnitData ( Vehicle, Player->Nr );
 	sendSpecificUnitData ( Vehicle );
 	if ( Vehicle->hasAutoMoveJob ) sendSetAutomoving ( Vehicle );
-	if ( Vehicle->DetectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
+	if ( Vehicle->detectedByPlayerList.Size() > 0 ) sendDetectionState ( Vehicle );
 }
 
 //--------------------------------------------------------------------------
@@ -3423,9 +3432,9 @@ bool cServer::addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* veh
 	}
 
 	sendMoveJobServer ( MoveJob, vehicle->owner->Nr );
-	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 	{
-		sendMoveJobServer( MoveJob, vehicle->SeenByPlayerList[i]->Nr );
+		sendMoveJobServer( MoveJob, vehicle->seenByPlayerList[i]->Nr );
 	}
 
 	addActiveMoveJob ( MoveJob );
@@ -3475,12 +3484,12 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 
 	// delete the unit on the clients and add it with new owner again
 	sendDeleteUnit ( vehicle, oldOwner->Nr );
-	while ( vehicle->SeenByPlayerList.Size() )
+	while ( vehicle->seenByPlayerList.Size() )
 	{
-		sendDeleteUnit ( vehicle, vehicle->SeenByPlayerList[0]->Nr );
-		vehicle->SeenByPlayerList.Delete ( 0 );
+		sendDeleteUnit ( vehicle, vehicle->seenByPlayerList[0]->Nr );
+		vehicle->seenByPlayerList.Delete ( 0 );
 	}
-	while ( vehicle->DetectedByPlayerList.Size() ) vehicle->DetectedByPlayerList.Delete ( 0 );
+	while ( vehicle->detectedByPlayerList.Size() ) vehicle->detectedByPlayerList.Delete ( 0 );
 	sendAddUnit ( vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false );
 	sendUnitData ( vehicle, vehicle->owner->Nr );
 	sendSpecificUnitData ( vehicle );
@@ -3515,9 +3524,9 @@ void cServer::stopVehicleBuilding ( cVehicle *vehicle )
 		vehicle->owner->DoScan();
 	}
 	sendStopBuild ( vehicle->iID, iPos, vehicle->owner->Nr );
-	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 	{
-		sendStopBuild ( vehicle->iID, iPos, vehicle->SeenByPlayerList[i]->Nr );
+		sendStopBuild ( vehicle->iID, iPos, vehicle->seenByPlayerList[i]->Nr );
 	}
 }
 

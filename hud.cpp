@@ -4085,9 +4085,9 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 	if ( debugTraceServer )
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
 		{
-			tmpString += ", \"" + vehicle->SeenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + vehicle->seenByPlayerList[i]->name + "\"";
 		}
 		font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y+=8;
@@ -4155,9 +4155,9 @@ void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )
 	if ( debugTraceServer )
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
 		{
-			tmpString += ", \"" + building->SeenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + building->seenByPlayerList[i]->name + "\"";
 		}
 		font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y+=8;

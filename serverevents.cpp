@@ -66,87 +66,44 @@ void sendAddRubble( cBuilding* building, int iPlayer )
 }
 
 //-------------------------------------------------------------------------------------
-void sendDeleteUnit ( cBuilding* building, int iClient )
+void sendDeleteUnitMessage (cUnit* unit, int playerNr)
 {
-	cNetMessage* message;
-	if ( iClient == -1 )
-	{
-		for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++)
-		{
-			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
-			message->pushInt16( building->iID );
-			Server->sendNetMessage(message, building->SeenByPlayerList[i]->Nr );
-		}
+	cNetMessage* message = new cNetMessage (unit->isBuilding () ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE);
+	message->pushInt16 (unit->iID);
+	Server->sendNetMessage (message, playerNr);
+}
 
-		//send message to owner, since he is not in the SeenByPlayerList
-		if ( building->owner )
-		{
-			message = new cNetMessage ( GAME_EV_DEL_BUILDING );
-			message->pushInt16( building->iID );
-			Server->sendNetMessage(message, building->owner->Nr);
-		}
+//-------------------------------------------------------------------------------------
+void sendDeleteUnit (cUnit* unit, int iClient)
+{
+	if (iClient == -1)
+	{
+		for (unsigned int i = 0; i < unit->seenByPlayerList.Size (); i++)
+			sendDeleteUnitMessage (unit, unit->seenByPlayerList[i]->Nr);
+
+		//send message to owner, since he is not in the seenByPlayerList
+		if (unit->owner != 0)
+			sendDeleteUnitMessage (unit, unit->owner->Nr);
 	}
 	else
-	{
-		message = new cNetMessage ( GAME_EV_DEL_BUILDING );
-		message->pushInt16( building->iID );
-		Server->sendNetMessage( message, iClient );
-	}
+		sendDeleteUnitMessage(unit, iClient);
 }
 
 //-------------------------------------------------------------------------------------
-void sendDeleteUnit ( cVehicle* vehicle, int iClient )
+void sendAddEnemyUnit (cUnit* unit, int iClient)
 {
-	cNetMessage* message;
-	if ( iClient == -1 )
-	{
-		for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++)
-		{
-			message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-			message->pushInt16( vehicle->iID );
-			Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
-		}
-		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-		message->pushInt16( vehicle->iID );
-		Server->sendNetMessage( message, vehicle->owner->Nr );
-	}
-	else
-	{
-		message = new cNetMessage ( GAME_EV_DEL_VEHICLE );
-		message->pushInt16( vehicle->iID );
-		Server->sendNetMessage( message, iClient );
-	}
-}
+	cNetMessage* message = new cNetMessage (unit->isBuilding () ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
 
-//-------------------------------------------------------------------------------------
-void sendAddEnemyUnit ( cVehicle *Vehicle, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_VEHICLE );
+	message->pushInt16 (unit->iID);
+	if (unit->isVehicle ())
+		message->pushInt16 (unit->dir);
+	message->pushInt16 (unit->PosX);
+	message->pushInt16 (unit->PosY);
+	message->pushInt16 (unit->data.ID.iSecondPart);
+	message->pushInt16 (unit->data.ID.iFirstPart);
+	message->pushInt16 (unit->owner->Nr);
 
-	message->pushInt16( Vehicle->iID );
-	message->pushInt16( Vehicle->dir );
-	message->pushInt16( Vehicle->PosX );
-	message->pushInt16( Vehicle->PosY );
-	message->pushInt16( Vehicle->data.ID.iSecondPart );
-	message->pushInt16( Vehicle->data.ID.iFirstPart );
-	message->pushInt16( Vehicle->owner->Nr );
-
-	Server->sendNetMessage( message, iPlayer );
-}
-
-//-------------------------------------------------------------------------------------
-void sendAddEnemyUnit ( cBuilding *Building, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage ( GAME_EV_ADD_ENEM_BUILDING );
-
-	message->pushInt16( Building->iID );
-	message->pushInt16( Building->PosX );
-	message->pushInt16( Building->PosY );
-	message->pushInt16( Building->data.ID.iSecondPart );
-	message->pushInt16( Building->data.ID.iFirstPart );
-	message->pushInt16( Building->owner->Nr );
-
-	Server->sendNetMessage( message, iPlayer );
+	Server->sendNetMessage (message, iClient);
 }
 
 //-------------------------------------------------------------------------------------
@@ -174,59 +131,82 @@ void sendTurnFinished ( int iPlayerNum, int iTimeDelay, cPlayer *Player )
 }
 
 //-------------------------------------------------------------------------------------
-void sendUnitData( cVehicle *Vehicle, int iPlayer )
+void sendUnitData (cUnit* unit, int iPlayer)
 {
-	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
+	cNetMessage* message = new cNetMessage (GAME_EV_UNIT_DATA);
 
 	// The unit data values
-	message->pushInt16( Vehicle->data.speedMax );
-	message->pushInt16( Vehicle->data.speedCur );
-
-	message->pushInt16( Vehicle->data.version );
-	message->pushInt16( Vehicle->data.hitpointsMax );
-	message->pushInt16( Vehicle->data.hitpointsCur );
-	message->pushInt16( Vehicle->data.armor );
-	message->pushInt16( Vehicle->data.scan );
-	message->pushInt16( Vehicle->data.range );
-	message->pushInt16( Vehicle->data.shotsMax );
-	message->pushInt16( Vehicle->data.shotsCur );
-	message->pushInt16( Vehicle->data.damage );
-	message->pushInt16( Vehicle->data.storageUnitsMax );
-	message->pushInt16( Vehicle->data.storageUnitsCur );
-	message->pushInt16( Vehicle->data.storageResMax );
-	message->pushInt16( Vehicle->data.storageResCur );
-	message->pushInt16( Vehicle->data.ammoMax );
-	message->pushInt16( Vehicle->data.ammoCur );
-	message->pushInt16( Vehicle->data.buildCosts );
-
+	if (unit->isVehicle ())
+	{
+		message->pushInt16 (unit->data.speedMax);
+		message->pushInt16 (unit->data.speedCur);
+	}
+	message->pushInt16 (unit->data.version);
+	message->pushInt16 (unit->data.hitpointsMax);
+	message->pushInt16 (unit->data.hitpointsCur);
+	message->pushInt16 (unit->data.armor);
+	message->pushInt16 (unit->data.scan);
+	message->pushInt16 (unit->data.range);
+	message->pushInt16 (unit->data.shotsMax);
+	message->pushInt16 (unit->data.shotsCur);
+	message->pushInt16 (unit->data.damage);
+	message->pushInt16 (unit->data.storageUnitsMax);
+	message->pushInt16 (unit->data.storageUnitsCur);
+	message->pushInt16 (unit->data.storageResMax);
+	message->pushInt16 (unit->data.storageResCur);
+	message->pushInt16 (unit->data.ammoMax);
+	message->pushInt16 (unit->data.ammoCur);
+	message->pushInt16 (unit->data.buildCosts);
+	
 	// Current state of the unit
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
 	//		because this data will be received by enemys, too
-	message->pushBool ( Vehicle->manualFireActive );	
-	message->pushBool ( Vehicle->sentryActive );
-	message->pushInt16 ( Vehicle->ClearingRounds );
-	message->pushInt16 ( Vehicle->BuildRounds );
-	message->pushBool ( Vehicle->IsBuilding );
-	message->pushBool ( Vehicle->IsClearing );
-	message->pushInt16 ( (int)Vehicle->CommandoRank );
-	message->pushInt16 ( Vehicle->turnsDisabled );
-	message->pushBool ( Vehicle->isBeeingAttacked );
-	if ( !Vehicle->isNameOriginal() )
+	if (unit->isBuilding ()) 
+		message->pushInt16 (((cBuilding*)unit)->points);
+	
+	message->pushBool (unit->manualFireActive);
+	message->pushBool (unit->sentryActive);
+	
+	if (unit->isVehicle ())
 	{
-		message->pushString ( Vehicle->getName() );
-		message->pushBool( true );
+		cVehicle* vehicle = (cVehicle*)unit;
+		message->pushInt16 (vehicle->ClearingRounds);
+		message->pushInt16 (vehicle->BuildRounds);
+		message->pushBool (vehicle->IsBuilding);
+		message->pushBool (vehicle->IsClearing);
+		message->pushInt16 ((int)vehicle->CommandoRank);
 	}
-	else message->pushBool( false );
+	else
+	{
+		cBuilding* building = (cBuilding*)unit;
+		message->pushBool ( building->IsWorking );
+		message->pushInt16 ( building->researchArea );
+	}
+	
+	message->pushInt16 (unit->turnsDisabled);
+	
+	if (unit->isVehicle ())
+		message->pushBool (unit->isBeeingAttacked);
+
+	if (unit->isNameOriginal () == false)
+	{
+		message->pushString (unit->getName ());
+		message->pushBool (true);
+	}
+	else 
+		message->pushBool (false);
+
+	if (unit->isVehicle ()) 
+		message->pushBool (unit->data.isBig);
 
 	// Data for identifying the unit by the client
-	message->pushBool( Vehicle->data.isBig );
-	message->pushInt16( Vehicle->PosX );
-	message->pushInt16( Vehicle->PosY );
-	message->pushBool( true );	// true for vehicles
-	message->pushInt16 ( Vehicle->iID );
-	message->pushInt16( Vehicle->owner->Nr );
+	message->pushInt16 (unit->PosX);
+	message->pushInt16 (unit->PosY);
+	message->pushBool  (unit->isVehicle ());
+	message->pushInt16 (unit->iID);
+	message->pushInt16 (unit->owner->Nr);
 
-	Server->sendNetMessage( message, iPlayer );
+	Server->sendNetMessage (message, iPlayer);
 }
 
 //-------------------------------------------------------------------------------------
@@ -241,53 +221,6 @@ void sendSpecificUnitData ( cVehicle *Vehicle )
 	message->pushInt16 ( Vehicle->dir );
 	message->pushInt16 ( Vehicle->iID );
 	Server->sendNetMessage( message, Vehicle->owner->Nr );
-}
-
-//-------------------------------------------------------------------------------------
-void sendUnitData ( cBuilding *Building, int iPlayer )
-{
-	cNetMessage* message = new cNetMessage ( GAME_EV_UNIT_DATA );
-
-	// The unit data values
-	message->pushInt16( Building->data.version );
-	message->pushInt16( Building->data.hitpointsMax );
-	message->pushInt16( Building->data.hitpointsCur );
-	message->pushInt16( Building->data.armor );
-	message->pushInt16( Building->data.scan );
-	message->pushInt16( Building->data.range );
-	message->pushInt16( Building->data.shotsMax );
-	message->pushInt16( Building->data.shotsCur );
-	message->pushInt16( Building->data.damage );
-	message->pushInt16( Building->data.storageUnitsMax );
-	message->pushInt16( Building->data.storageUnitsCur );
-	message->pushInt16( Building->data.storageResMax );
-	message->pushInt16( Building->data.storageResCur );
-	message->pushInt16( Building->data.ammoMax );
-	message->pushInt16( Building->data.ammoCur );
-	message->pushInt16( Building->data.buildCosts );
-
-	// Current state of the unit
-	message->pushInt16 ( Building->points );
-	message->pushBool ( Building->manualFireActive );
-	message->pushBool ( Building->sentryActive );
-	message->pushBool ( Building->IsWorking );
-	message->pushInt16 ( Building->researchArea );
-	message->pushInt16 ( Building->turnsDisabled );
-	if ( !Building->isNameOriginal() )
-	{
-		message->pushString ( Building->getName() );
-		message->pushBool( true );
-	}
-	else message->pushBool( false );
-
-	// Data for identifying the unit by the client
-	message->pushInt16( Building->PosX );
-	message->pushInt16( Building->PosY );
-	message->pushBool( false );	// false for buildings
-	message->pushInt16 ( Building->iID );
-	message->pushInt16( Building->owner->Nr );
-
-	Server->sendNetMessage( message, iPlayer );
 }
 
 //-------------------------------------------------------------------------------------
@@ -342,7 +275,7 @@ void sendDoStopWork( cBuilding* building )
 //-------------------------------------------------------------------------------------
 void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 {
-	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
 		if ( iSavedSpeed >= 0 ) message->pushChar( iSavedSpeed );
@@ -350,7 +283,7 @@ void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 		message->pushInt16(vehicle->PosY);
 		message->pushInt16(vehicle->PosX);
 		message->pushInt16( vehicle->iID );
-		Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
+		Server->sendNetMessage( message, vehicle->seenByPlayerList[i]->Nr );
 	}
 
 	cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
@@ -533,7 +466,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 	Server->sendNetMessage( message, vehicle->owner->Nr );
 
 	//message for the enemys
-	for ( unsigned int i = 0; i < vehicle->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_BUILD_ANSWER );
 		if ( bOK )
@@ -544,7 +477,7 @@ void sendBuildAnswer( bool bOK, cVehicle* vehicle )
 		}
 		message->pushInt16( vehicle->iID );
 		message->pushBool ( bOK );
-		Server->sendNetMessage( message, vehicle->SeenByPlayerList[i]->Nr );
+		Server->sendNetMessage( message, vehicle->seenByPlayerList[i]->Nr );
 	}
 }
 
@@ -678,7 +611,7 @@ void sendSupply ( int iDestID, bool bDestVehicle, int iValue, int iType, int iPl
 void sendDetectionState( cVehicle* vehicle )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_DETECTION_STATE );
-	message->pushBool( vehicle->DetectedByPlayerList.Size() > 0 );
+	message->pushBool( vehicle->detectedByPlayerList.Size() > 0 );
 	message->pushInt32( vehicle->iID );
 	Server->sendNetMessage( message, vehicle->owner->Nr );
 }
@@ -944,7 +877,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
 		{
-			if (upgradedBuildings[buildingIdx]->SeenByPlayerList.Contains(curPlayer)) // that player can see the building
+			if (upgradedBuildings[buildingIdx]->seenByPlayerList.Contains(curPlayer)) // that player can see the building
 				sendUnitData(upgradedBuildings[buildingIdx], curPlayer->Nr);
 		}
 	}
@@ -1072,11 +1005,11 @@ void sendSelfDestroy( cBuilding* building )
 	message->pushInt16( building->iID );
 	Server->sendNetMessage(message, building->owner->Nr);
 
-	for ( unsigned int i = 0; i < building->SeenByPlayerList.Size(); i++ )
+	for ( unsigned int i = 0; i < building->seenByPlayerList.Size(); i++ )
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_SELFDESTROY );
 		message->pushInt16( building->iID );
-		Server->sendNetMessage(message, building->SeenByPlayerList[i]->Nr);
+		Server->sendNetMessage(message, building->seenByPlayerList[i]->Nr);
 	}
 }
 

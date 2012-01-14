@@ -263,17 +263,22 @@ public:
 	bool bStarted;
 
 	/**
+	 * gets the unit with the ID
+	 *@param iID The ID of the unit
+	 */
+	cUnit* getUnitFromID (int iID) const;
+	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle *getVehicleFromID ( int iID );
+	cVehicle* getVehicleFromID (int iID) const;
 	/**
 	* gets the bulding with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the building
 	*/
-	cBuilding *getBuildingFromID ( int iID );
+	cBuilding* getBuildingFromID (int iID) const;
 
 	/**
 	* checks whether a player has detected some new enemy units

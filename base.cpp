@@ -833,9 +833,9 @@ void sSubBase::makeTurnend()
 			if ( Building->data.hitpointsCur > Building->data.hitpointsMax ) Building->data.hitpointsCur = Building->data.hitpointsMax;
 			addMetal ( -1 );
 			sendUnitData ( Building, owner->Nr );
-			for ( unsigned int j = 0; j < Building->SeenByPlayerList.Size(); j++ )
+			for ( unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++ )
 			{
-				sendUnitData ( Building, Building->SeenByPlayerList[j]->Nr );
+				sendUnitData ( Building, Building->seenByPlayerList[j]->Nr );
 			}
 		}
 		if ( Building->hasBeenAttacked ) Building->hasBeenAttacked = false;
