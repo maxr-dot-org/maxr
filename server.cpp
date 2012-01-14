@@ -1630,7 +1630,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				( destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction ( destBuilding->PosX+1, destBuilding->PosY+1, Map, steal ) ) ) ) break;
 
 			// check whether the action is successfull or not
-			int chance = srcVehicle->calcCommandoChance ( destVehicle, destBuilding, steal );
+			int chance = srcVehicle->calcCommandoChance (destVehicle ? (cUnit*)destVehicle : (cUnit*)destBuilding, steal);
 			bool success = false;
 			if ( random ( 100 ) < chance )
 			{
@@ -1650,7 +1650,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					// every 5 rankings he needs one succesfull disabling more, to get to the next ranking
 					srcVehicle->CommandoRank += (float)1/((int)(((int)srcVehicle->CommandoRank+5)/5));
 
-					int strength = srcVehicle->calcCommandoTurns ( destVehicle, destBuilding );
+					int strength = srcVehicle->calcCommandoTurns (destVehicle ? (cUnit*)destVehicle : (cUnit*)destBuilding);
 					if ( destVehicle )
 					{
 						// stop the vehicle and make it disabled

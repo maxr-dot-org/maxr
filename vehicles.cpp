@@ -1970,54 +1970,54 @@ bool cVehicle::canDoCommandoAction ( int x, int y, cMap *map, bool steal )
 //-----------------------------------------------------------------------------
 /** draws the commando-cursors: */
 //-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor ( int x, int y, bool steal )
+void cVehicle::drawCommandoCursor (int x, int y, bool steal)
 {
 	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
-	cBuilding *b = NULL;
-	cVehicle *v = NULL;
-	SDL_Surface *sf;
-	SDL_Rect r;
+	SDL_Surface* sf;
 
-	if ( steal )
+	cUnit* unit = 0;
+	if (steal)
 	{
-		v = field.getVehicles();
+		unit = field.getVehicles ();
 		sf = GraphicsData.gfx_Csteal;
 	}
 	else
 	{
-		v = field.getVehicles();
-		if ( !v ) b = field.getTopBuilding();
+		unit = field.getVehicles ();
+		if (unit == 0) 
+			unit = field.getTopBuilding ();
 		sf = GraphicsData.gfx_Cdisable;
 	}
 
+	SDL_Rect r;
 	r.x = 1;
 	r.y = 28;
 	r.h = 3;
 	r.w = 35;
 
-	if ( !v && !b )
+	if (unit == 0)
 	{
-		SDL_FillRect ( sf, &r, 0 );
+		SDL_FillRect (sf, &r, 0);
 		return;
 	}
 
-	SDL_FillRect ( sf, &r, 0xFF0000 );
-	r.w = 35*calcCommandoChance( v, b, steal )/100;
-	SDL_FillRect ( sf, &r, 0x00FF00 );
+	SDL_FillRect (sf, &r, 0xFF0000);
+	r.w = 35 * calcCommandoChance (unit, steal) / 100;
+	SDL_FillRect (sf, &r, 0x00FF00);
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal )
+int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal)
 {
-	int destTurn, factor, srcLevel, chance;
+	if (destUnit == 0)
+		return 0;
 
-	if ( !destVehicle && !destBuilding ) return 0;
-
-	if ( destVehicle ) destTurn = destVehicle->data.buildCosts/3; // TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
-	else if ( destBuilding ) destTurn = destBuilding->data.buildCosts/3; // TODO: Bug? /3? or correctly /2, because constructing buildings takes two resources per turn?
-
-	factor = steal ? 1 : 4;
-	srcLevel = (int)CommandoRank+7;
+	// TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
+	// TODO: Bug for buildings? /3? or correctly /2, because constructing buildings takes two resources per turn?
+	int destTurn = destUnit->data.buildCosts / 3;
+	
+	int factor = steal ? 1 : 4;
+	int srcLevel = (int)CommandoRank+7;
 
 	/* The chance to disable or steal a unit depends on the infiltratorranking and the
 	buildcosts (or 'turns' in the original game) of the target unit. The chance rises
@@ -2025,33 +2025,38 @@ int cVehicle::calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding
 	infiltrator will be calculated like he has the ranking 7. Disabling has a 4 times
 	higher chance then stealing.
 	*/
-	chance = Round( (float)(8*srcLevel)/(35*destTurn)*factor*100 );
+	int chance = Round ((float)(8 * srcLevel) / (35 * destTurn) * factor * 100);
+	if (chance > 90) 
+		chance = 90;
 
-	if ( chance > 90 ) chance = 90;
 	return chance;
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding )
+int cVehicle::calcCommandoTurns (cUnit* destUnit)
 {
+	if (destUnit == 0)
+		return 1;
+
 	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 	int destTurn, srcLevel;
 
-	if ( destVehicle )
+	if (destUnit->isVehicle ())
 	{
-		destTurn = destVehicle->data.buildCosts/3;
+		destTurn = destUnit->data.buildCosts / 3;
 		srcLevel = (int)CommandoRank;
-		if ( destTurn > 0 && destTurn < 13 ) srcLevel += vehiclesTable[destTurn];
+		if (destTurn > 0 && destTurn < 13)
+			srcLevel += vehiclesTable[destTurn];
 	}
-	else if ( destBuilding )
+	else
 	{
-		destTurn = destBuilding->data.buildCosts/2;
-		srcLevel = (int)CommandoRank+8;
+		destTurn = destUnit->data.buildCosts / 2;
+		srcLevel = (int)CommandoRank + 8;
 	}
-	else return 1;
 
-	int turns = (int)(1.0/destTurn*srcLevel);
-	if ( turns < 1 ) turns = 1;
+	int turns = (int)(1.0 / destTurn * srcLevel);
+	if (turns < 1)
+		turns = 1;
 	return turns;
 }
 

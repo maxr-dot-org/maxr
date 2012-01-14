@@ -221,8 +221,8 @@ public:
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath
 	*/
-	int calcCommandoChance( cVehicle *destVehicle, cBuilding *destBuilding, bool steal );
-	int calcCommandoTurns( cVehicle *destVehicle, cBuilding *destBuilding );
+	int calcCommandoChance (cUnit* destUnit, bool steal );
+	int calcCommandoTurns (cUnit* destUnit);
 	void DeleteStored();
 	/**
 	* returns whether this player has detected this unit or not
