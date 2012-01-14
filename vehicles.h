@@ -191,9 +191,8 @@ public:
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 #define SUPPLY_TYPE_REARM	0
 #define SUPPLY_TYPE_REPAIR	1
-	bool canSupply( int x, int y, int iType );
-	bool canSupply( cVehicle *Vehicle, int iType );
-	bool canSupply( cBuilding *Building, int iType );
+	bool canSupply (int x, int y, int supplyType) const; ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (cUnit* unit, int supplyType) const; ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	void calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs );
 	/**
 	* lays a mine. Should only be called by the server!

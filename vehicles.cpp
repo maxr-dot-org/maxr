@@ -1816,65 +1816,55 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply ( int x, int y, int iType )
+bool cVehicle::canSupply (int x, int y, int supplyType) const
 {
-	if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) return false;
+	if (x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size) 
+		return false;
 
 	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
-	if ( field.getVehicles() ) return canSupply ( field.getVehicles(), iType );
-	else if ( field.getPlanes() ) return canSupply ( field.getPlanes(), iType );
-	else if ( field.getTopBuilding() ) return canSupply ( field.getTopBuilding(), iType );
+	if (field.getVehicles ()) return canSupply (field.getVehicles (), supplyType);
+	else if (field.getPlanes ()) return canSupply (field.getPlanes (), supplyType);
+	else if (field.getTopBuilding ()) return canSupply (field.getTopBuilding (), supplyType);
 
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply( cVehicle *Vehicle, int iType )
+bool cVehicle::canSupply (cUnit* unit, int supplyType) const
 {
-	if ( !Vehicle ) return false;
-
-	if ( data.storageResCur <= 0 ) return false;
-
-	if ( Vehicle->PosX > PosX+1 || Vehicle->PosX < PosX-1 || Vehicle->PosY > PosY+1 || Vehicle->PosY < PosY-1 ) return false;
-
-	if ( Vehicle->data.factorAir > 0 && Vehicle->FlightHigh > 0 ) return false;
-
-	switch ( iType )
-	{
-	case SUPPLY_TYPE_REARM:
-		if ( Vehicle == this || !Vehicle->data.canAttack || Vehicle->data.ammoCur >= Vehicle->data.ammoMax || Vehicle->moving || Vehicle->attacking ) return false;
-		break;
-	case SUPPLY_TYPE_REPAIR:
-		if ( Vehicle == this || Vehicle->data.hitpointsCur >= Vehicle->data.hitpointsMax || Vehicle->moving || Vehicle->attacking ) return false;
-		break;
-	default:
+	if (unit == 0) 
 		return false;
-	}
 
-	return true;
-}
+	if (data.storageResCur <= 0) 
+		return false;
 
-//-----------------------------------------------------------------------------
-bool cVehicle::canSupply( cBuilding *Building, int iType )
-{
-	if ( data.storageResCur <= 0 ) return false;
-
-	if ( !Building->data.isBig )
+	if (unit->data.isBig == false)
 	{
-		if ( Building->PosX > PosX+1 || Building->PosX < PosX-1 || Building->PosY > PosY+1 || Building->PosY < PosY-1 ) return false;
+		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1) 
+			return false;
 	}
 	else
 	{
-		if ( Building->PosX > PosX+1 || Building->PosX < PosX-2 || Building->PosY > PosY+1 || Building->PosY < PosY-2 ) return false;
+		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2) 
+			return false;
 	}
+	
+	if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0) 
+		return false;
 
-	switch ( iType )
+	switch (supplyType)
 	{
 	case SUPPLY_TYPE_REARM:
-		if ( !Building->data.canAttack || Building->data.ammoCur >= Building->data.ammoMax ) return false;
+		if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax 
+			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ()) 
+			|| unit->attacking) 
+			return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if ( Building->data.hitpointsCur >= Building->data.hitpointsMax ) return false;
+		if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax 
+			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ()) 
+			|| unit->attacking) 
+			return false;
 		break;
 	default:
 		return false;
