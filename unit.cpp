@@ -1127,7 +1127,7 @@ void cUnit::rotateTo (int newDir)
 //-----------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //-----------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange)
+bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
 {
 	int off = x + y * map->size;
 	
@@ -1177,10 +1177,10 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (targetBuilding && isVehicle () && map->possiblePlace ((cVehicle*)this, x, y))  //do not fire on e. g. platforms, connectors etc.
 		return false;																	//see ticket #436 on bug tracker
 	
-	if ( (targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
+	if ((targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
 		return false;
 		
-	if (!targetBuilding && !targetVehicle)
+	if (targetBuilding == 0 && targetVehicle == 0)
 		return false;
 	
 	return true;

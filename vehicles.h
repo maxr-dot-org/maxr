@@ -31,6 +31,7 @@ class cAutoMJob;
 class cMap;
 class cServerMoveJob;
 class cClientMoveJob;
+struct sSentry;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols
@@ -258,12 +259,19 @@ private:
 	*/
 	void render( SDL_Surface* surface, const SDL_Rect& dest );
 	
+	//---- sentry and reaction fire helpers ---------------------------------------
 	/** 
 	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
 	 * An opponent unit only fires as reaction to the movement, if the moving unit is an "offense" for that opponent (i.e. it could attack a unit/building of the opponent).
 	 * @author: pagra
 	 */
 	bool provokeReactionFire ();
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const;
+	bool makeAttackOnThis (cUnit* opponentUnit, std::string reasonForLog) const;
+	bool makeSentryAttack (sSentry* sentry) const;
+	bool isOtherUnitOffendedByThis (cUnit* otherUnit) const;
+	bool doReactionFire (cPlayer* player) const;
+	bool doReactionFireForUnit (cUnit* opponentUnit) const;
 	
 	//-----------------------------------------------------------------------------
 protected:

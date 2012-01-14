@@ -1513,13 +1513,42 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 }
 
 //-----------------------------------------------------------------------------
+bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, string reasonForLog) const
+{
+	cVehicle* targetVehicle = 0;
+	cBuilding* targetBuilding = 0;
+	selectTarget (targetVehicle, targetBuilding, PosX, PosY, opponentUnit->data.canAttack, Server->Map);
+	if (targetVehicle == this)
+	{
+		int iOff = PosX + PosY * Server->Map->size;
+		Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
+		Server->AJobs.Add (new cServerAttackJob (opponentUnit, iOff, true));
+		if (ServerMoveJob != 0)
+			ServerMoveJob->bFinished = true;
+		return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::makeSentryAttack (sSentry* sentry) const
+{
+	cUnit* sentryUnit = (sentry->b != 0 ? (cUnit*)sentry->b : (cUnit*)sentry->v);
+	if (sentryUnit != 0 && sentryUnit->canAttackObjectAt (PosX, PosY, Server->Map, true))
+	{
+		if (makeAttackOnThis (sentryUnit, "sentry reaction"))
+			return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
 bool cVehicle::InSentryRange ()
 {
-	sSentry *Sentry;
-	int iOff;
-	cPlayer *Player;
+	sSentry* Sentry = 0;
+	cPlayer* Player = 0;
 
-	iOff = PosX + PosY * Server->Map->size;
+	int iOff = PosX + PosY * Server->Map->size;
 
 	for ( unsigned int i = 0;i < Server->PlayerList->Size();i++ )
 	{
@@ -1536,44 +1565,8 @@ bool cVehicle::InSentryRange ()
 			for ( unsigned int k = 0; k < Player->SentriesAir.Size(); k++ )
 			{
 				Sentry = Player->SentriesAir[k];
-
-				if ( Sentry->b && Sentry->b->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
-				{
-					cVehicle* targetVehicle;
-					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
-					if ( targetVehicle )
-					{
-						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff, true ) );
-
-						if ( ServerMoveJob )
-						{
-							ServerMoveJob->bFinished = true;
-						}
-
-						return true;
-					}
-				}
-
-				if ( Sentry->v && Sentry->v->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
-				{
-					cVehicle* targetVehicle;
-					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
-					if ( targetVehicle )
-					{
-						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff, true ) );
-
-						if ( ServerMoveJob )
-						{
-							ServerMoveJob->bFinished = true;
-						}
-
-						return true;
-					}
-				}
+				if (makeSentryAttack (Sentry))
+					return true;
 			}
 		}
 		else
@@ -1583,49 +1576,99 @@ bool cVehicle::InSentryRange ()
 			for ( unsigned int k = 0;k < Player->SentriesGround.Size();k++ )
 			{
 				Sentry = Player->SentriesGround[k];
-
-				if ( Sentry->b && Sentry->b->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
-				{
-					cVehicle* targetVehicle;
-					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->b->data.canAttack, Server->Map );
-					if ( targetVehicle )
-					{
-						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->b->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->b, iOff, true ) );
-
-						if ( ServerMoveJob )
-						{
-							ServerMoveJob->bFinished = true;
-						}
-
-						return true;
-					}
-				}
-
-				if ( Sentry->v && Sentry->v->canAttackObjectAt ( PosX, PosY, Server->Map, true ) )
-				{
-					cVehicle* targetVehicle;
-					cBuilding* targetBuilding;
-					selectTarget( targetVehicle, targetBuilding, PosX, PosY, Sentry->v->data.canAttack, Server->Map );
-					if ( targetVehicle )
-					{
-						Log.write(" Server: sentry reaction: attacking offset " + iToStr(iOff) + " Agressor ID: " + iToStr( Sentry->v->iID ), cLog::eLOG_TYPE_NET_DEBUG);
-						Server->AJobs.Add( new cServerAttackJob( Sentry->v, iOff, true ) );
-
-						if ( ServerMoveJob )
-						{
-							ServerMoveJob->bFinished = true;
-						}
-
-						return true;
-					}
-				}
+				if (makeSentryAttack (Sentry))
+					return true;
 			}
 		}
 	}
 
 	return provokeReactionFire ();
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::isOtherUnitOffendedByThis (cUnit* otherUnit) const
+{
+	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
+	bool otherUnitIsCheapBuilding = (otherUnit->isBuilding () && otherUnit->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2);
+	
+	if (otherUnitIsCheapBuilding == false 
+		&& isInRange (otherUnit->PosX, otherUnit->PosY) 
+		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, Server->Map, true, false))
+	{
+		// test, if this vehicle can really attack the opponentVehicle
+		cVehicle* selectedTargetVehicle = 0;
+		cBuilding* selectedTargetBuilding = 0;
+		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, Server->Map);
+		if (selectedTargetVehicle == otherUnit || selectedTargetBuilding == otherUnit)
+			return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const
+{
+	if (Server->isTurnBasedGame ())
+	{
+		// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
+		return true;
+	}
+	else
+	{
+		// check if there is a vehicle or building of player, that is offended
+		
+		cUnit* opponentVehicle = player->VehicleList;
+		while (opponentVehicle != 0)
+		{
+			if (isOtherUnitOffendedByThis (opponentVehicle))
+				return true;
+			opponentVehicle = opponentVehicle->next;
+		}
+		cUnit* opponentBuilding = player->BuildingList;
+		while (opponentBuilding != 0)
+		{
+			if (isOtherUnitOffendedByThis (opponentBuilding))
+				return true;
+			opponentBuilding = (cBuilding*)opponentBuilding->next;
+		}
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::doReactionFireForUnit (cUnit* opponentUnit) const
+{
+	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
+		&& opponentUnit->canAttackObjectAt (PosX, PosY, Server->Map, true)
+		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
+		&& (opponentUnit->isVehicle () == false || opponentUnit->data.isStealthOn == TERRAIN_NONE)) 
+	{
+		if (makeAttackOnThis (opponentUnit, "reaction fire"))
+			return true;
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::doReactionFire (cPlayer* player) const
+{
+	// search a unit of the opponent, that could fire on this vehicle
+	// first look for a building
+	cUnit* opponentBuilding = player->BuildingList;
+	while (opponentBuilding != 0)
+	{
+		if (doReactionFireForUnit (opponentBuilding))
+			return true;		
+		opponentBuilding = opponentBuilding->next;
+	}
+	cUnit* opponentVehicle = player->VehicleList;
+	while (opponentVehicle != 0)
+	{
+		if (doReactionFireForUnit (opponentVehicle))
+			return true;
+		opponentVehicle = opponentVehicle->next;
+	}
+	return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -1649,97 +1692,11 @@ bool cVehicle::provokeReactionFire ()
 		if (player->ScanMap[iOff] == false) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
 			continue;
 		
-		bool playerWantsToFireOnThisVehicle = false;
-		if (Server->isTurnBasedGame ())
-		{
-			// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
-			playerWantsToFireOnThisVehicle = true;
-		}
-		else
-		{
-			// check if there is a vehicle or building of player, that is offended
-			
-			cVehicle* opponentVehicle = player->VehicleList;
-			while (opponentVehicle != 0 && playerWantsToFireOnThisVehicle == false)
-			{
-				if (isInRange (opponentVehicle->PosX, opponentVehicle->PosY) 
-					&& canAttackObjectAt (opponentVehicle->PosX, opponentVehicle->PosY, Server->Map, true, false))
-				{
-					// test, if this vehicle can really attack the opponentVehicle
-					cVehicle* selectedTargetVehicle = 0;
-					cBuilding* selectedTargetBuilding = 0;
-					selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentVehicle->PosX, opponentVehicle->PosY, data.canAttack, Server->Map);
-					if (selectedTargetVehicle == opponentVehicle)
-						playerWantsToFireOnThisVehicle = true;
-				}
-				opponentVehicle = (cVehicle*)opponentVehicle->next;
-			}
-			cBuilding* opponentBuilding = player->BuildingList;
-			while (opponentBuilding != 0 && playerWantsToFireOnThisVehicle == false)
-			{
-				if (opponentBuilding->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2 // don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-					&& isInRange (opponentBuilding->PosX, opponentBuilding->PosY)
-					&& canAttackObjectAt (opponentBuilding->PosX, opponentBuilding->PosY, Server->Map, true, false))
-				{
-					// test, if this vehicle can really attack the opponentVehicle
-					cVehicle* selectedTargetVehicle = 0;
-					cBuilding* selectedTargetBuilding = 0;
-					selectTarget (selectedTargetVehicle, selectedTargetBuilding, opponentBuilding->PosX, opponentBuilding->PosY, data.canAttack, Server->Map);
-					if (selectedTargetVehicle == opponentVehicle)
-						playerWantsToFireOnThisVehicle = true;
-				}
-				opponentBuilding = (cBuilding*)opponentBuilding->next;
-			}
-		}
-		
-		if (playerWantsToFireOnThisVehicle == false)
+		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (player) == false)
 			continue;
 		
-		
-		// search a unit of the opponent, that could fire on this vehicle
-		// first look for a building
-		cBuilding* opponentBuilding = player->BuildingList;
-		while (opponentBuilding != 0)
-		{
-			if (opponentBuilding->sentryActive == false && opponentBuilding->manualFireActive == false
-				&& opponentBuilding->canAttackObjectAt (PosX, PosY, Server->Map, true))
-			{
-				cVehicle* selectedTargetVehicle = 0;
-				cBuilding* selectedTargetBuilding = 0;
-				selectTarget (selectedTargetVehicle, selectedTargetBuilding, PosX, PosY, opponentBuilding->data.canAttack, Server->Map);
-				if (selectedTargetVehicle == this)
-				{
-					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentBuilding->iID), cLog::eLOG_TYPE_NET_DEBUG);
-					Server->AJobs.Add (new cServerAttackJob (opponentBuilding, iOff, true));
-					if (ServerMoveJob)
-						ServerMoveJob->bFinished = true;
-					return true;
-				}
-			}
-			opponentBuilding = (cBuilding*)opponentBuilding->next;
-		}
-		
-		cVehicle* opponentVehicle = player->VehicleList;
-		while (opponentVehicle != 0)
-		{
-			if (opponentVehicle->sentryActive == false && opponentVehicle->manualFireActive == false
-				&& opponentVehicle->canAttackObjectAt (PosX, PosY, Server->Map, true, true)
-				&& opponentVehicle->data.isStealthOn == TERRAIN_NONE) // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
-			{
-				cVehicle* selectedTargetVehicle = 0;
-				cBuilding* selectedTargetBuilding = 0;
-				selectTarget (selectedTargetVehicle, selectedTargetBuilding, PosX, PosY, opponentVehicle->data.canAttack, Server->Map);
-				if (selectedTargetVehicle == this)
-				{
-					Log.write(" Server: reaction fire: attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
-					Server->AJobs.Add (new cServerAttackJob (opponentVehicle, iOff, true));
-					if (ServerMoveJob)
-						ServerMoveJob->bFinished = true;
-					return true;
-				}
-			}
-			opponentVehicle = (cVehicle*)opponentVehicle->next;
-		}
+		if (doReactionFire (player))
+			return true;
 	}
 	return false;
 }

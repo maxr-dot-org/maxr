@@ -79,7 +79,7 @@ public:
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
 	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
 	 */	
-	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true);
+	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true) const;
 	
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
 	
