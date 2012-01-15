@@ -786,9 +786,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	Vehicle->moving = false;
 	calcNextDir();
 
-	//workaround for repairing/reloading
-	cBuilding* b = (*Server->Map)[Vehicle->PosX+Vehicle->PosY*Server->Map->size].getBuildings();
-	if ( Vehicle->data.factorAir > 0 && b && b->owner == Vehicle->owner && b->data.canBeLandedOn )
+	if ( Vehicle->canLand( *Server->Map ) )
 	{
 		Vehicle->FlightHigh = 0;
 	}
@@ -986,7 +984,7 @@ cClientMoveJob::~cClientMoveJob()
 	if ( endMoveAction ) delete endMoveAction;
 }
 
-void cClientMoveJob::setVehicleToCoords(int x, int y)
+void cClientMoveJob::setVehicleToCoords(int x, int y, int height)
 {
 	if ( x == Waypoints->X && y == Waypoints->Y ) return;
 
@@ -1005,7 +1003,7 @@ void cClientMoveJob::setVehicleToCoords(int x, int y)
 	}
 
 
-	Map->moveVehicle( Vehicle, x, y );
+	Map->moveVehicle( Vehicle, x, y, height );
 
 	if ( bForward )
 	{
@@ -1099,7 +1097,7 @@ void cClientMoveJob::release()
 	Log.write ( " Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
-void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed )
+void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed, int height )
 {
 	// the client is faster than the server and has already
 	// reached the last field or the next will be the last,
@@ -1141,7 +1139,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			//the server is faster than the client. So set so server position.
 			Log.write ( " Client: Server is more than one field faster", cLog::eLOG_TYPE_NET_DEBUG );
 			if ( Vehicle->moving ) doEndMoveVehicle();
-			setVehicleToCoords( iServerPositionX, iServerPositionY );
+			setVehicleToCoords( iServerPositionX, iServerPositionY, height );
 		}
 		else
 		{
@@ -1182,7 +1180,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		{
 			Log.write(" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 			if ( Vehicle->moving ) doEndMoveVehicle();
-			setVehicleToCoords( iServerPositionX, iServerPositionY );
+			setVehicleToCoords( iServerPositionX, iServerPositionY, height );
 			if ( bEndForNow ) Client->addActiveMoveJob(this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
@@ -1194,14 +1192,14 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 		{
 			Log.write(" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
 			if ( Vehicle->moving ) doEndMoveVehicle();
-			setVehicleToCoords( iServerPositionX, iServerPositionY );
+			setVehicleToCoords( iServerPositionX, iServerPositionY, height );
 			release ();
 		}
 		break;
 	case MJOB_BLOCKED:
 		{
 			if ( Vehicle->moving ) doEndMoveVehicle();
-			setVehicleToCoords( iServerPositionX, iServerPositionY );
+			setVehicleToCoords( iServerPositionX, iServerPositionY, height );
 			Log.write(" Client: next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 
 			if ( Vehicle->owner != Client->ActivePlayer )

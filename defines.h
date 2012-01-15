@@ -31,6 +31,7 @@
 #define ANIMATION_SPEED		((int)(Client->iTimerTime/(2)))		// this means every 100ms because Client->iTimerTime will increase every 50ms.
 #define LANDING_DISTANCE_WARNING	28
 #define LANDING_DISTANCE_TOO_CLOSE	10
+#define MAX_PLANES_PER_FIELD		5
 
 //minimap configuration
 #define MINIMAP_COLOR		0xFC0000 //color of the screen borders on the minimap

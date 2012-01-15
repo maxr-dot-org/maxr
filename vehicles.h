@@ -245,6 +245,12 @@ public:
 	virtual void executeAutoMoveJobCommand ();
 	virtual void executeLayMinesCommand ();
 	virtual void executeClearMinesCommand ();
+
+	/**
+	* Is this a plane and is there a landing platform beneath it, that can be used to land on?
+	* @author: eiko
+	*/
+	bool canLand( const cMap& map) const;
 	
 private:
 	/**

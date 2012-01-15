@@ -526,6 +526,8 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 {
 	bool bIsAir = message->popBool();
 	int offset = message->popInt32();
+	int x = offset % Client->Map->size;
+	int y = offset / Client->Map->size;
 	int ID = message->popInt32();
 	if ( ID != 0 )
 	{
@@ -539,10 +541,10 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 		vehicle->isBeeingAttacked = true;
 
 		//synchonize position
-		if ( vehicle->PosX + vehicle->PosY * Client->Map->size != offset )
+		if ( vehicle->PosX != x || vehicle->PosY != y )
 		{
-			Log.write(" Client: changed vehicle position to " + iToStr( offset ), cLog::eLOG_TYPE_NET_DEBUG );
-			Client->Map->moveVehicle( vehicle, offset );
+			Log.write(" Client: changed vehicle position to (" + iToStr( x ) + ":" + iToStr( y ) + ")", cLog::eLOG_TYPE_NET_DEBUG );
+			Client->Map->moveVehicle( vehicle, x, y );
 			vehicle->owner->DoScan();
 
 			vehicle->OffY = message->popChar();
@@ -571,6 +573,8 @@ void cClientAttackJob::handleAttackJobs()
 		case FINISHED:
 			{
 				job->sendFinishMessage();
+				if (job->vehicle)  job->vehicle->attacking  = false;
+				if (job->building) job->building->attacking = false;
 				delete job;
 				Client->attackJobs.Delete(i);
 				break;
@@ -658,11 +662,13 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 		vehicle->data.shotsCur = message->popInt16();
 		vehicle->data.ammoCur = message->popInt16();
 		vehicle->data.speedCur = message->popInt16();
+		vehicle->attacking = true;
 	}
 	else if ( building )
 	{
 		building->data.shotsCur = message->popInt16();
 		building->data.ammoCur = message->popInt16();
+		building->attacking = true;
 	}
 
 	bool sentryReaction = message->popBool();

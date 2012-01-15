@@ -53,7 +53,7 @@ public:
 	cMapIterator<T>(cList<T*>* list_);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size() const;
-	T& operator[](unsigned const int i) const;
+	//T& operator[](unsigned const int i) const;
 	T* operator->() const;
 	T& operator*() const;
 	/** go to next vehicle on this field */
@@ -62,6 +62,10 @@ public:
 	cMapIterator operator--(int);
 	bool operator==(T* v) const;
 	operator T*() const;
+	void setToEnd();
+	void rewind();
+	bool contains(const T& v) const;
+	size_t getIndex() const;
 	bool end;
 	bool rend;
 };
@@ -167,6 +171,55 @@ cMapIterator<T>::operator T*() const
 	return (*list)[index];
 }
 
+template <typename T>
+void cMapIterator<T>::setToEnd()
+{
+	if ( list->Size() > 0 )
+	{
+		index = list->Size() - 1;
+	}
+	else
+	{
+		index = 0;
+		end = true;
+		rend = true;
+	}
+}
+
+template <typename T>
+void cMapIterator<T>::rewind()
+{
+	index = 0;
+	if ( list->Size() == 0 )
+	{
+		rend = true;
+		end = true;
+	}
+	else
+	{
+		rend = false;
+		end = false;
+	}
+}
+
+template <typename T>
+bool cMapIterator<T>::contains( const T &v) const
+{
+	for ( size_t i = 0; i < list->Size(); i++ )
+	{
+		if ( (*list)[i] == &v )
+			return true;
+	}
+	return false;
+}
+
+
+template <typename T>
+size_t cMapIterator<T>::getIndex() const
+{
+	return index;
+}
+
 /** contains all information of a map field */
 class cMapField
 {
@@ -261,15 +314,14 @@ public:
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
+	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
 	*/
-	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
-	void moveVehicle( cVehicle* vehicle, unsigned int offset );
+	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y, int height = 0 );
 
 	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
 	void moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y);
-	void moveVehicleBig( cVehicle* vehicle, unsigned int offset );
 
 	void deleteBuilding( cBuilding* building );
 	void deleteVehicle( cVehicle* vehicle );

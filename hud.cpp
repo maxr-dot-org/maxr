@@ -1527,73 +1527,100 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		}
 		else if ( overUnitField ) selectUnit ( overUnitField, true );
 	}
-	else if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
+	else 
 	{
-		if ( helpActive )
+		bool mouseOverSelectedUnit = false;
+		if ( selectedBuilding && mouse->getKachelX() == selectedBuilding->PosX && mouse->getKachelY() == selectedBuilding->PosY ) mouseOverSelectedUnit = true;
+		if ( selectedBuilding && selectedBuilding->data.isBig && mouse->getKachelX() >= selectedBuilding->PosX && mouse->getKachelX() <= selectedBuilding->PosX + 1 
+															  && mouse->getKachelY() >= selectedBuilding->PosY && mouse->getKachelY() <= selectedBuilding->PosY + 1 ) mouseOverSelectedUnit = true;
+		if ( selectedVehicle && mouse->getKachelX() == selectedVehicle->PosX && mouse->getKachelY() == selectedVehicle->PosY ) mouseOverSelectedUnit = true;
+		if ( selectedVehicle && selectedVehicle->data.isBig && mouse->getKachelX() >= selectedVehicle->PosX && mouse->getKachelX() <= selectedVehicle->PosX + 1 
+															&& mouse->getKachelY() >= selectedVehicle->PosY && mouse->getKachelY() <= selectedVehicle->PosY + 1 ) mouseOverSelectedUnit = true;
+
+
+		if ( ( mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) || ( MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased ) )
 		{
-			helpActive = false;
-		}
-		else
-		{
-			deselectGroup();
-			if ( overUnitField && (
-			            ( selectedVehicle && ( overVehicle == selectedVehicle || overPlane == selectedVehicle ) ) ||
-			            ( selectedBuilding && ( overBaseBuilding == selectedBuilding || overBuilding == selectedBuilding ) ) ) )
+			if ( helpActive )
 			{
-				int next = -1;
-
-				if ( selectedVehicle )
-				{
-					if ( overPlane == selectedVehicle )
-					{
-						if ( overVehicle ) next = 'v';
-						else if ( overBuilding ) next = 't';
-						else if ( overBaseBuilding ) next = 'b';
-					}
-					else
-					{
-						if ( overBuilding ) next = 't';
-						else if ( overBaseBuilding ) next = 'b';
-						else if ( overPlane ) next = 'p';
-					}
-				}
-				else if ( selectedBuilding )
-				{
-					if ( overBuilding == selectedBuilding )
-					{
-						if ( overBaseBuilding ) next = 'b';
-						else if ( overPlane ) next = 'p';
-						else if ( overUnitField->getVehicles() ) next = 'v';
-					}
-					else
-					{
-						if ( overPlane ) next = 'p';
-						else if ( overUnitField->getVehicles() ) next = 'v';
-						else if ( overBuilding ) next = 't';
-					}
-				}
-
-				deselectUnit();
-
-				switch ( next )
-				{
-					case 't':
-						selectUnit( overBuilding );
-						break;
-					case 'b':
-						selectUnit( overBaseBuilding );
-						break;
-					case 'v':
-						selectUnit( overVehicle );
-						break;
-					case 'p':
-						selectUnit( overPlane );
-						break;
-				}
+				helpActive = false;
 			}
 			else
 			{
-				deselectUnit();
+				deselectGroup();
+				if ( overUnitField && mouseOverSelectedUnit )
+				{
+					cVehicleIterator planes = overUnitField->getPlanes();
+					int next = 0;
+
+					if ( selectedVehicle )
+					{
+						if ( planes.contains(*selectedVehicle) )
+						{
+							while ( !planes.end )
+							{
+								if ( planes == selectedVehicle )
+									break;
+								planes++;
+							}
+							planes++;
+
+							if ( !planes.end ) next = 'p';
+							else if ( overVehicle ) next = 'v';
+							else if ( overBuilding ) next = 't';
+							else if ( overBaseBuilding ) next = 'b';
+							else if ( planes.size() > 1 ) 
+							{
+								next = 'p';
+								planes.rewind();
+							}
+						}
+						else
+						{
+							if ( overBuilding ) next = 't';
+							else if ( overBaseBuilding ) next = 'b';
+							else if ( overPlane ) next = 'p';
+						}
+					}
+					else if ( selectedBuilding )
+					{
+						if ( overBuilding == selectedBuilding )
+						{
+							if ( overBaseBuilding ) next = 'b';
+							else if ( overPlane ) next = 'p';
+							else if ( overUnitField->getVehicles() ) next = 'v';
+						}
+						else
+						{
+							if ( overPlane ) next = 'p';
+							else if ( overUnitField->getVehicles() ) next = 'v';
+							else if ( overBuilding ) next = 't';
+						}
+					}
+
+					deselectUnit();
+
+					switch ( next )
+					{
+						case 't':
+							selectUnit( overBuilding );
+							break;
+						case 'b':
+							selectUnit( overBaseBuilding );
+							break;
+						case 'v':
+							selectUnit( overVehicle );
+							break;
+						case 'p':
+							selectUnit( planes );
+							break;
+						default:
+							break;
+					}
+				}
+				else
+				{
+					deselectUnit();
+				}
 			}
 		}
 	}
@@ -1848,7 +1875,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				else if ( overUnitField )
 				{
 					// open unit menu
-					if ( changeAllowed && selectedVehicle && ( overPlane == selectedVehicle || overVehicle == selectedVehicle ) )
+					if ( changeAllowed && selectedVehicle && ( overUnitField->getPlanes().contains(*selectedVehicle) || overVehicle == selectedVehicle ) )
 					{
 						if ( !selectedVehicle->moving )
 						{
@@ -3594,10 +3621,12 @@ void cGameGUI::drawPlanes( int startX, int startY, int endX, int endY, int zoomO
 		{
 			if ( player->ScanMap[pos] )
 			{
-				cVehicle* plane = map->fields[pos].getPlanes();
-				if ( plane )
+				cVehicleIterator planes = map->fields[pos].getPlanes();
+				planes.setToEnd();
+				while ( !planes.rend )
 				{
-					plane->draw ( dest );
+					planes->draw ( dest );
+					planes--;
 				}
 			}
 			pos++;
@@ -4092,6 +4121,10 @@ void cGameGUI::traceVehicle ( cVehicle *vehicle, int *y, int x )
 		font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y+=8;
 	}
+
+	tmpString = "flight height: " + iToStr ( vehicle->FlightHigh );
+	font->showText(x,*y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y+=8;
 }
 
 void cGameGUI::traceBuilding ( cBuilding *building, int *y, int x )

@@ -239,11 +239,11 @@ public:
 	sWaypoint *Waypoints;
 	sWaypoint *lastWaypoints;
 
-	void setVehicleToCoords(int x, int y);
+	void setVehicleToCoords(int x, int y, int height);
 	bool generateFromMessage( cNetMessage *message );
 
 	void release();
-	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed );
+	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed, int heigth );
 	void moveVehicle();
 	void doEndMoveVehicle ();
 	void calcNextDir ();

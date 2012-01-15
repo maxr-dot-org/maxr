@@ -546,7 +546,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Vehicle->BuildBigSavedPos = Vehicle->PosX+Vehicle->PosY*Map->size;
 
 				// set vehicle to build position
-				Map->moveVehicleBig( Vehicle, iBuildOff );
+				Map->moveVehicleBig( Vehicle, buildX, buildY );
 				Vehicle->owner->DoScan();
 			}
 			else
@@ -1203,7 +1203,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				}
 
 				Vehicle->BuildBigSavedPos = off;
-				Map->moveVehicleBig ( Vehicle, rubbleoffset );
+				Map->moveVehicleBig ( Vehicle, building->PosX, building->PosY );
 			}
 
 			Vehicle->IsClearing = true;
@@ -1233,7 +1233,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 
 				if ( Vehicle->data.isBig )
 				{
-					Map->moveVehicle ( Vehicle, Vehicle->BuildBigSavedPos );
+					Map->moveVehicle ( Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size );
 					sendStopClear ( Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr );
 					for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
 					{
@@ -1372,19 +1372,19 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
 					}
+				
+					if ( StoredVehicle->canLand (*Map) )
+					{
+						StoredVehicle->FlightHigh = 0;
+					}
+					else
+					{
+						StoredVehicle->FlightHigh = 64;
+					}
 					StoredVehicle->InSentryRange();
 				}
 
-				//workaround for setting flight height
-				cBuilding* b = (*Server->Map)[x + y*Server->Map->size].getBuildings();
-				if ( StoredVehicle->data.factorAir > 0 && b && b->owner == StoredVehicle->owner && b->data.canBeLandedOn )
-				{
-					StoredVehicle->FlightHigh = 0;
-				}
-				else
-				{
-					StoredVehicle->FlightHigh = 64;
-				}
+			
 			}
 			else
 			{
@@ -2007,9 +2007,7 @@ cVehicle * cServer::addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *P
 	}
 	if ( !bInit ) AddedVehicle->InSentryRange();
 
-	//workaround for setting flight height
-	cBuilding* b = (*Server->Map)[iPosX + iPosY*Server->Map->size].getBuildings();
-	if ( AddedVehicle->data.factorAir > 0 && b && b->owner == AddedVehicle->owner && b->data.canBeLandedOn )
+	if ( AddedVehicle->canLand (*Map) )
 	{
 		AddedVehicle->FlightHigh = 0;
 	}
@@ -3510,7 +3508,7 @@ void cServer::stopVehicleBuilding ( cVehicle *vehicle )
 
 	if ( vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 	{
-		Map->moveVehicle( vehicle, vehicle->BuildBigSavedPos );
+		Map->moveVehicle( vehicle, vehicle->BuildBigSavedPos % Map->size, vehicle->BuildBigSavedPos / Map->size );
 		iPos = vehicle->BuildBigSavedPos;
 		vehicle->owner->DoScan();
 	}

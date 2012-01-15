@@ -138,6 +138,7 @@ void sendUnitData (cUnit* unit, int iPlayer)
 	// The unit data values
 	if (unit->isVehicle ())
 	{
+		message->pushInt16( ((cVehicle*) unit)->FlightHigh );
 		message->pushInt16 (unit->data.speedMax);
 		message->pushInt16 (unit->data.speedCur);
 	}
@@ -275,19 +276,30 @@ void sendDoStopWork( cBuilding* building )
 //-------------------------------------------------------------------------------------
 void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 {
+	char height = -1;
+	cVehicleIterator planes = (*Server->Map)[vehicle->PosX + vehicle->PosY * Server->Map->size].getPlanes();
+	while ( !planes.end )
+	{
+		if ( planes == vehicle )
+			height = planes.getIndex();
+		planes++;
+	}
+
 	for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
 		if ( iSavedSpeed >= 0 ) message->pushChar( iSavedSpeed );
+		message->pushChar( height );
 		message->pushChar( iType );
-		message->pushInt16(vehicle->PosY);
-		message->pushInt16(vehicle->PosX);
+		message->pushInt16( vehicle->PosY );
+		message->pushInt16( vehicle->PosX );
 		message->pushInt16( vehicle->iID );
 		Server->sendNetMessage( message, vehicle->seenByPlayerList[i]->Nr );
 	}
 
 	cNetMessage* message = new cNetMessage( GAME_EV_NEXT_MOVE );
 	if ( iSavedSpeed >= 0 ) message->pushChar( iSavedSpeed );
+	message->pushChar( height );
 	message->pushChar( iType );
 	message->pushInt16(vehicle->PosY);
 	message->pushInt16(vehicle->PosX);

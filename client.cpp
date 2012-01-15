@@ -1010,6 +1010,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speedMax = message->popInt16();
 
 				if ( bWasBuilding && !Vehicle->IsBuilding && Vehicle == Client->gameGUI.getSelVehicle() ) StopFXLoop ( iObjectStream );
+
+				Vehicle->FlightHigh = message->popInt16();
 			}
 		}
 		break;
@@ -1081,6 +1083,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			int iDestX = message->popInt16();
 			int iDestY = message->popInt16();
 			int iType = message->popChar();
+			int height = message->popChar();
 			int iSavedSpeed = -1;
 			if ( iType == MJOB_STOP ) iSavedSpeed = message->popChar();
 
@@ -1089,7 +1092,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( iID );
 			if ( Vehicle && Vehicle->ClientMoveJob )
 			{
-				Vehicle->ClientMoveJob->handleNextMove( iDestX, iDestY, iType, iSavedSpeed );
+				Vehicle->ClientMoveJob->handleNextMove( iDestX, iDestY, iType, iSavedSpeed, height );
 			}
 			else
 			{
@@ -1227,7 +1230,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( Vehicle->data.isBig )
 			{
-				Map->moveVehicle(Vehicle, iNewPos );
+				Map->moveVehicle(Vehicle, iNewPos % Map->size, iNewPos / Map->size );
 				Vehicle->owner->DoScan();
 			}
 
@@ -1545,7 +1548,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 					Vehicle->ClearingRounds = message->popInt16();
 					int bigoffset = message->popInt16();
-					if ( bigoffset >= 0 ) Map->moveVehicleBig ( Vehicle, bigoffset );
+					if ( bigoffset >= 0 ) Map->moveVehicleBig ( Vehicle, bigoffset % Map->size, bigoffset / Map->size );
 					Vehicle->IsClearing = true;
 
 					if ( gameGUI.getSelVehicle() == Vehicle )
@@ -1578,7 +1581,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			int bigoffset = message->popInt16();
-			if ( bigoffset >= 0 ) Map->moveVehicle ( Vehicle, bigoffset );
+			if ( bigoffset >= 0 ) Map->moveVehicle ( Vehicle, bigoffset % Map->size, bigoffset / Map->size );
 			Vehicle->IsClearing = false;
 			Vehicle->ClearingRounds = 0;
 

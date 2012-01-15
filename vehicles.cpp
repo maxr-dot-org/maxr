@@ -179,10 +179,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//make landing and take off of planes
 	if ( data.factorAir > 0 && Client->timer50ms )
 	{
-		// check, if the plane should land
-		cBuilding *b = Client->Map->fields[PosX+PosY*Client->Map->size].getTopBuilding();
-
-		if ( b && b->owner == owner && b->data.canBeLandedOn && !ClientMoveJob && !moving && !attacking )
+		if ( canLand (*Client->Map) )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -423,7 +420,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		SDL_Rect d, t;
 		int len, max;
 
-		if ( ( IsBuilding || IsClearing ) && data.isBig ) max = (int)(Client->gameGUI.getTileSize()) * 2;
+		if ( data.isBig ) max = (int)(Client->gameGUI.getTileSize()) * 2;
 		else max = (int)(Client->gameGUI.getTileSize());
 
 		len = max / 4;
@@ -481,7 +478,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	if ( Client->gameGUI.getAJobDebugStatus() )
 	{
 		cVehicle* serverVehicle = NULL;
-		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
+		if ( Server ) serverVehicle = &*Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
 		if ( isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
 		if ( serverVehicle && serverVehicle->isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
 		if ( attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
@@ -796,7 +793,8 @@ int cVehicle::refreshData ()
 			cBuilding *Rubble = Server->Map->fields[PosX+PosY*Server->Map->size].getRubble();
 			if ( data.isBig )
 			{
-				Server->Map->moveVehicle ( this, BuildBigSavedPos );
+				int size = Server->Map->size;
+				Server->Map->moveVehicle ( this, BuildBigSavedPos % size, BuildBigSavedPos / size );
 				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
 				for ( unsigned int i = 0; i < seenByPlayerList.Size(); i++ )
 				{
@@ -2273,7 +2271,42 @@ sUnitData* cVehicle::getUpgradedUnitData () const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::treatAsBigForMenuDisplay () const
+bool cVehicle::treatAsBigForMenuDisplay () const  //TODO:???
 {
 	return (IsBuilding && BuildingTyp.getUnitDataOriginalVersion ()->isBig);
+}
+
+bool cVehicle::canLand( const cMap& map) const
+{
+	if ( data.factorAir == 0 )  return true;  //true, because normal vehicles are always "landed"
+
+	if ( moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || attacking ) return false; //vehicle busy?
+
+	//landing pad there?
+	cBuildingIterator bi = map[PosX + PosY * map.size].getBuildings();
+	while( !bi.end )
+	{
+		if ( bi->data.canBeLandedOn )
+			break;
+		bi++;
+	}
+	if ( bi.end ) return false;
+
+	//is the landing pad already occupied?
+	cVehicleIterator vi = map[PosX + PosY * map.size].getPlanes();
+	while ( !vi.end )
+	{
+		if ( vi->FlightHigh == 0 && vi->iID != iID )
+			return false;
+		vi++;
+	}
+
+	//returning true before checking owner, because a stolen vehicle
+	//can stay on an enemy landing pad until it is moved
+	if ( FlightHigh == 0 ) return true; 
+
+
+	if ( bi->owner != owner ) return false;
+
+	return true;
 }

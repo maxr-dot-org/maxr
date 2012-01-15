@@ -669,17 +669,13 @@ void cMap::deleteVehicle( cVehicle* vehicle )
 	}
 }
 
-void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y )
-{
-	moveVehicle( vehicle, x + y * size );
-}
-
-void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
+void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y, int height )
 {
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
+	int newOffset = x + y * size;
 
-	vehicle->PosX = newOffset % size;
-	vehicle->PosY = newOffset / size;
+	vehicle->PosX = x;
+	vehicle->PosY = y;
 
 	if ( vehicle->data.factorAir > 0 )
 	{
@@ -688,7 +684,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 		{
 			if ( planes[i] == vehicle ) planes.Delete(i);
 		}
-		fields[newOffset].planes.Insert(0, vehicle );
+		fields[newOffset].planes.Insert(height, vehicle );
 	}
 	else
 	{
@@ -717,32 +713,29 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int newOffset )
 
 void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y)
 {
-	moveVehicleBig( vehicle, x + y * size );
-}
-
-void cMap::moveVehicleBig( cVehicle* vehicle, unsigned int offset )
-{
 	if ( vehicle->data.isBig )
 	{
 		Log.write("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR );
 		//calling this this function twice is allways an error.
 		//nevertheless try to proceed by resetting the data.isBig flag
-		moveVehicle(vehicle, offset);
+		moveVehicle (vehicle, x, y);
 	}
 
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
+	int newOffset = x + y * size;
+
 	fields[oldOffset].vehicles.Delete(0);
 
-	vehicle->PosX = offset % size;
-	vehicle->PosY = offset / size;
+	vehicle->PosX = x;
+	vehicle->PosY = y;
 
-	fields[offset].vehicles.Insert(0, vehicle );
-	offset++;
-	fields[offset].vehicles.Insert(0, vehicle );
-	offset += size;
-	fields[offset].vehicles.Insert(0, vehicle );
-	offset--;
-	fields[offset].vehicles.Insert(0, vehicle );
+	fields[newOffset].vehicles.Insert(0, vehicle );
+	newOffset++;
+	fields[newOffset].vehicles.Insert(0, vehicle );
+	newOffset += size;
+	fields[newOffset].vehicles.Insert(0, vehicle );
+	newOffset--;
+	fields[newOffset].vehicles.Insert(0, vehicle );
 
 	vehicle->data.isBig = true;
 }
@@ -765,7 +758,7 @@ bool cMap::possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, con
 	{
 		if ( checkPlayer && player && !player->ScanMap[offset] ) return true;
 		//only one plane per field for now
-		if ( fields[offset].planes.Size() > 0 ) return false;
+		if ( fields[offset].planes.Size() >= MAX_PLANES_PER_FIELD ) return false;
 	}
 	if ( vehicleData.factorGround > 0 )
 	{
