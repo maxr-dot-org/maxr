@@ -982,21 +982,24 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			if ( message->popBool() )	// vehicle
 			{
-				cVehicle *Vehicle = getVehicleFromID ( message->popInt16() );
-				if ( Vehicle == NULL ) break;
+				cVehicle *vehicle = getVehicleFromID ( message->popInt16() );
+				if ( vehicle == NULL ) break;
 
-				Vehicle->sentryActive = !Vehicle->sentryActive;
-				if ( Vehicle->sentryActive ) 
+				vehicle->sentryActive = !vehicle->sentryActive;
+				if ( vehicle->data.canAttack )
 				{
-					Vehicle->owner->addSentryVehicle ( Vehicle );
-					Vehicle->manualFireActive = false;
+					if ( vehicle->sentryActive ) 
+					{
+						vehicle->owner->addSentryVehicle ( vehicle );
+						vehicle->manualFireActive = false;
+					}
+					else vehicle->owner->deleteSentryVehicle ( vehicle );
 				}
-				else Vehicle->owner->deleteSentryVehicle ( Vehicle );
 
-				sendUnitData ( Vehicle, Vehicle->owner->Nr );
-				for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
+				sendUnitData ( vehicle, vehicle->owner->Nr );
+				for ( unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++ )
 				{
-					sendUnitData ( Vehicle, Vehicle->seenByPlayerList[i]->Nr );
+					sendUnitData ( vehicle, vehicle->seenByPlayerList[i]->Nr );
 				}
 			}
 			else	// building
@@ -1005,12 +1008,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( Building == NULL ) break;
 
 				Building->sentryActive = !Building->sentryActive;
-				if ( Building->sentryActive )
+				if ( Building->data.canAttack )
 				{
-					Building->owner->addSentryBuilding ( Building );
-					Building->manualFireActive = false;
+					if ( Building->sentryActive )
+					{
+						Building->owner->addSentryBuilding ( Building );
+						Building->manualFireActive = false;
+					}
+					else Building->owner->deleteSentryBuilding ( Building );
 				}
-				else Building->owner->deleteSentryBuilding ( Building );
 
 				sendUnitData ( Building, Building->owner->Nr );
 				for ( unsigned int i = 0; i < Building->seenByPlayerList.Size(); i++ )

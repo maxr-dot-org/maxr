@@ -319,7 +319,7 @@ int cUnit::getNumberOfMenuEntries () const
 		result++;
 
 	// Sentry
-	if (sentryActive || data.canAttack)
+	if ( (sentryActive || data.canAttack || (!isBuilding () && !canBeStoppedViaUnitMenu () )) && owner == Client->ActivePlayer )
 		result++;
 
 	// Activate / Load
@@ -474,7 +474,7 @@ void cUnit::drawMenu ()
 	}	
 	
 	// Sentry status:
-	if ((sentryActive || data.canAttack) && owner == Client->ActivePlayer)
+	if ( (sentryActive || data.canAttack || (!isBuilding () && !canBeStoppedViaUnitMenu () )) && owner == Client->ActivePlayer )
 	{
 		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
 		drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
@@ -747,7 +747,7 @@ void cUnit::menuReleased ()
 	}
 
 	// sentry:
-	if ((sentryActive || data.canAttack) && owner == Client->ActivePlayer)
+	if ((sentryActive || data.canAttack || (!isBuilding () && !canBeStoppedViaUnitMenu () )) && owner == Client->ActivePlayer )
 	{
 		if (exeNr == nr)
 		{

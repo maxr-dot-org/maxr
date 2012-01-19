@@ -2547,12 +2547,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 		}
 		sendWantStartClear ( selectedVehicle );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && ( selectedVehicle->sentryActive || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
-			if ( (selectedVehiclesGroup[i]->sentryActive || selectedVehiclesGroup[i]->data.canAttack)
-				&& selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive )
+			if (  selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive )
 			{
 				sendChangeSentry ( selectedVehiclesGroup[i]->iID, true );
 			}
@@ -2711,6 +2710,7 @@ void cGameGUI::nextReleased( void *parent )
 		v->center();
 	}
 }
+
 
 void cGameGUI::prevReleased( void *parent )
 {

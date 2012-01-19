@@ -478,7 +478,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	if ( Client->gameGUI.getAJobDebugStatus() )
 	{
 		cVehicle* serverVehicle = NULL;
-		if ( Server ) serverVehicle = &*Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
+		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
 		if ( isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
 		if ( serverVehicle && serverVehicle->isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
 		if ( attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
@@ -2271,7 +2271,7 @@ sUnitData* cVehicle::getUpgradedUnitData () const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::treatAsBigForMenuDisplay () const  //TODO:???
+bool cVehicle::treatAsBigForMenuDisplay () const
 {
 	return (IsBuilding && BuildingTyp.getUnitDataOriginalVersion ()->isBig);
 }
@@ -2296,7 +2296,7 @@ bool cVehicle::canLand( const cMap& map) const
 	cVehicleIterator vi = map[PosX + PosY * map.size].getPlanes();
 	while ( !vi.end )
 	{
-		if ( vi->FlightHigh == 0 && vi->iID != iID )
+		if ( vi->FlightHigh < 64 && vi->iID != iID )
 			return false;
 		vi++;
 	}
