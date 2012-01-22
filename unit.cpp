@@ -50,6 +50,7 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 , owner (owner)
 , unitType (unitType)
 , isOriginalName (true)
+, isMarkedAsDone (false)
 {
 	if (unitData != 0)
 		data = *unitData;

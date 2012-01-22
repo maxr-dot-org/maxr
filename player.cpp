@@ -535,68 +535,184 @@ void cPlayer::DoScan ()
 
 
 //--------------------------------------------------------------------------
-/** Returns the next vehicle that can still fire/shoot */
+/** Returns the next unit that can still fire/shoot */
 //--------------------------------------------------------------------------
-cVehicle *cPlayer::GetNextVehicle ()
+cUnit *cPlayer::getNextUnit ()
 {
-	cVehicle *v, *start;
-	bool next = false;
-	if ( Client->gameGUI.getSelVehicle() && Client->gameGUI.getSelVehicle()->owner == this )
+	//find the first unit to look at
+	cUnit *start = Client->gameGUI.getSelectedUnit ();
+	if (start)
 	{
-		start = Client->gameGUI.getSelVehicle();
-		next = true;
+		if (start->next)
+		{
+			start = start->next;
+		}
+		else
+		{
+			if (start->isBuilding ())
+				start = VehicleList;
+			else
+				start = BuildingList;
+		}
 	}
-	else
+	if (!start || start->owner != this)
+	{
 		start = VehicleList;
-
-	if ( !start )
+	}
+	if (!start)
+	{
+		start = BuildingList;
+	}
+	if (!start)
+	{
 		return NULL;
-	v = start;
+	}
+
+
+	cUnit *unit = start;
 	do
 	{
-		if ( !next && ( v->data.speedCur||v->data.shotsCur ) && !v->IsBuilding && !v->IsClearing && !v->sentryActive && !v->Loaded )
-			return v;
-		next = false;
-		if ( v->next )
-			v = (cVehicle*)v->next;
+		//check if this unit is the next one to be selected
+		if (unit->isBuilding ())	
+		{
+			cBuilding* building = (cBuilding*) unit;
+			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( (building->BuildList && building->BuildList->Size() > 0) || ( building->data.canAttack && building->data.shotsCur )))
+				return unit;
+		}
 		else
-			v = VehicleList;
+		{
+			cVehicle* vehicle = (cVehicle*) unit;
+			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
+				return unit;
+		}
+		
+		//otherwise get next unit
+		if (unit->next)
+		{
+			unit = unit->next;
+		}
+		else
+		{
+			if (unit->isBuilding ())
+			{
+				unit = VehicleList ? (cUnit*)VehicleList : (cUnit*)BuildingList;
+			}
+			else
+			{
+				unit = BuildingList ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+			}
+		}
 	}
-	while ( v != start );
+	while (unit != start);
+
+	//when no unit is found, go to mining station
+	unit = BuildingList;
+	while (unit)
+	{
+		if (unit->data.canMineMaxRes > 0)
+			return unit;
+		unit = unit->next;
+	}
+
 	return NULL;
 }
 
 //--------------------------------------------------------------------------
 /** Returns the previous vehicle, that can still move / shoot */
 //--------------------------------------------------------------------------
-cVehicle *cPlayer::GetPrevVehicle ()
+cUnit *cPlayer::getPrevUnit ()
 {
-	cVehicle *v, *start;
-	bool next = false;
-	if ( Client->gameGUI.getSelVehicle() && Client->gameGUI.getSelVehicle()->owner == this )
+	//find the first unit to look at
+	cUnit *start = Client->gameGUI.getSelectedUnit ();
+	if (start)
 	{
-		start = Client->gameGUI.getSelVehicle();
-		next = true;
-	}
-	else
-		start = VehicleList;
-	if ( !start )
-		return NULL;
-	v = start;
-	do
-	{
-		if ( !next && (v->data.speedCur || v->data.shotsCur) && !v->IsBuilding && !v->IsClearing && !v->sentryActive && !v->Loaded )
-			return v;
-		next = false;
-		if ( v->prev )
-			v = (cVehicle*)v->prev;
+		if (start->prev)
+		{
+			start = start->prev;
+		}
 		else
 		{
-			while ( v->next )
-				v = (cVehicle*)v->next;
+			if (start->isBuilding ())
+			{
+				start = VehicleList;
+				while (start->next)
+					start = start->next;
+			}	
+			else
+			{
+				start = BuildingList;
+				while (start->next)
+					start = start->next;
+			}
 		}
 	}
-	while ( v != start );
+	if (!start || start->owner != this)
+	{
+		start = VehicleList;
+		while (start->next)
+			start = start->next;
+	}
+	if (!start)
+	{
+		start = BuildingList;
+		while (start->next)
+			start = start->next;
+	}
+	if (!start)
+	{
+		return NULL;
+	}
+
+
+	cUnit *unit = start;
+	do
+	{
+		//check if this unit is the next one to be selected
+		if (unit->isBuilding ())	
+		{
+			cBuilding* building = (cBuilding*) unit;
+			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( (building->BuildList && building->BuildList->Size() > 0) || ( building->data.canAttack && building->data.shotsCur )))
+				return unit;
+		}
+		else
+		{
+			cVehicle* vehicle = (cVehicle*) unit;
+			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
+				return unit;
+		}
+		
+		//otherwise get next unit
+		if (unit->prev)
+		{
+			unit = unit->prev;
+		}
+		else
+		{
+			if (unit->isBuilding ())
+			{
+				unit = VehicleList ? (cUnit*)VehicleList : (cUnit*)BuildingList;
+				while (unit->next)
+					unit = unit->next;
+			}
+			else
+			{
+				unit = BuildingList ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+				while (unit->next)
+					unit = unit->next;
+			}
+		}
+	}
+	while (unit != start);
+
+	//when no unit is found, go to mining station
+	unit = BuildingList;
+	while (unit)
+	{
+		if (unit->data.canMineMaxRes > 0)
+			return unit;
+		unit = unit->next;
+	}
+
 	return NULL;
 }
 
@@ -693,6 +809,23 @@ void cPlayer::setScore(int s, int turn)
 	if(pointsHistory.size() < t)
 		pointsHistory.resize(t);
 	pointsHistory[t - 1] = s;
+}
+
+void cPlayer::clearDone()
+{
+	cUnit *unit = VehicleList;
+	while (unit)
+	{
+		unit->isMarkedAsDone = false;
+		unit = unit->next;
+	}
+
+	unit = BuildingList;
+	while (unit)
+	{
+		unit->isMarkedAsDone = false;
+		unit = unit->next;
+	}
 }
 
 int cPlayer::getScore(int turn) const

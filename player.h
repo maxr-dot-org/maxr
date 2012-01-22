@@ -33,6 +33,7 @@ class cVehicle;
 class cBuilding;
 class cHud;
 class cMapField;
+class cUnit;
 struct sHudStateContainer;
 struct sTurnstartReport;
 
@@ -118,8 +119,8 @@ public:
 
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
-	cVehicle *GetNextVehicle();
-	cVehicle *GetPrevVehicle();
+	cUnit *getNextUnit ();
+	cUnit *getPrevUnit ();
 	void addSentryVehicle( cVehicle *v );
 	void addSentryBuilding( cBuilding *b );
 	void deleteSentryVehicle( cVehicle *v );
@@ -143,6 +144,7 @@ public:
 	void CountEcoSpheres();
 	int getScore(int turn) const;
 	void setScore(int score, int turn);
+	void clearDone();
 
 	/**
 	* draws a circle on the map for the fog

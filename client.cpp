@@ -826,6 +826,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if (!bWaitForNextPlayer ) gameGUI.setEndButtonLock( false );
 				bWantToEnd = false;
 				gameGUI.updateTurnTime ( -1 );
+				ActivePlayer->clearDone ();
 				Log.write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
 				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 				{

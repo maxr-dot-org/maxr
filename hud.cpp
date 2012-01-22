@@ -2703,11 +2703,15 @@ void cGameGUI::chatReleased( void *parent )
 void cGameGUI::nextReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	cVehicle *v = gui->player->GetNextVehicle();
-	if ( v )
+	cUnit *unit = gui->player->getNextUnit();
+	if ( unit )
 	{
-		gui->selectUnit( v );
-		v->center();
+		if (unit->isBuilding ())
+			gui->selectUnit( (cBuilding*) unit );
+		else
+			gui->selectUnit( (cVehicle*) unit );
+
+		unit->center();
 	}
 }
 
@@ -2715,20 +2719,29 @@ void cGameGUI::nextReleased( void *parent )
 void cGameGUI::prevReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	cVehicle *v = gui->player->GetPrevVehicle();
-	if ( v )
+	cUnit *unit = gui->player->getPrevUnit();
+	if ( unit )
 	{
-		gui->selectUnit( v );
-		v->center();
+		if (unit->isBuilding ())
+			gui->selectUnit( (cBuilding*) unit );
+		else
+			gui->selectUnit( (cVehicle*) unit );
+
+		unit->center();
 	}
 }
 
 void cGameGUI::doneReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
-	if ( gui->selectedVehicle && gui->selectedVehicle->ClientMoveJob && gui->selectedVehicle->ClientMoveJob->bSuspended && gui->selectedVehicle->data.speedCur )
-	{
-		gui->selectedVehicle->ClientMoveJob->calcNextDir();
+
+	cUnit* unit = gui->selectedVehicle;
+	if (!unit) unit = gui->selectedBuilding;
+	
+	if (unit)
+	{	
+		unit->center();
+		unit->isMarkedAsDone = true;
 	}
 }
 

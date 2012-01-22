@@ -473,6 +473,7 @@ public:
 	cVehicle *getSelVehicle() { return selectedVehicle; }
 	cList<cVehicle*> *getSelVehiclesGroup() { return &selectedVehiclesGroup; }
 	cBuilding *getSelBuilding() { return selectedBuilding; }
+	cUnit *getSelectedUnit () { return selectedVehicle ? (cUnit*) selectedVehicle : (cUnit*) selectedBuilding; }
 
 	void selectUnit( cVehicle *vehicle );
 	void selectUnit( cBuilding *building );
