@@ -285,6 +285,7 @@
 			<Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Pfadbauauftrag konnte nicht fortgesetzt werden."/>
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
 			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen, oder neue Position wählen"/>
 			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
@@ -361,6 +362,8 @@
 			<NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto nach %s gespeichert"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s wurde vom Feind unter Kontrolle gebracht"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s feuert auf feindliche Einheit"/>
 	</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
