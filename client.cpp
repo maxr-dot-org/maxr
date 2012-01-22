@@ -1161,7 +1161,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					}
 					else if ( Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY )
 					{
-						msgString = "Pathbuilding interrupted";	//TODO: i18n
+						msgString =  lngPack.i18n( "Text~Comp~Path_interrupted");
 						addCoords( msgString, Vehicle->PosX, Vehicle->PosY );
 						ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID ,Vehicle->PosX, Vehicle->PosY );
 					}
