@@ -2336,7 +2336,7 @@ void cClient::addActiveMoveJob ( cClientMoveJob *MoveJob )
 
 void cClient::handleMoveJobs ()
 {
-	for (unsigned int i = 0; i < ActiveMJobs.Size(); i++)
+	for ( int i = ActiveMJobs.Size()-1; i >= 0; i--)
 	{
 		cClientMoveJob *MoveJob;
 		cVehicle *Vehicle;

@@ -2164,6 +2164,22 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		}
 	}
 
+	//detach from move job
+	if ( !unit->isBuilding() )
+	{
+		cVehicle *vehicle = (cVehicle*) unit;
+		if ( vehicle->ServerMoveJob )
+		{
+			vehicle->ServerMoveJob->Vehicle = NULL;
+		}
+	}
+
+	//remove from sentry list
+	if ( unit->isBuilding () )
+		unit->owner->deleteSentryBuilding( (cBuilding*) unit );
+	else
+		unit->owner->deleteSentryVehicle( (cVehicle*) unit );
+
 	// lose eco points
 	if (unit->isBuilding () && ((cBuilding*)unit)->points != 0)
 	{
@@ -2855,7 +2871,7 @@ void cServer::addActiveMoveJob ( cServerMoveJob *MoveJob )
 //-------------------------------------------------------------------------------------
 void cServer::handleMoveJobs ()
 {
-	for ( unsigned int i = 0; i < ActiveMJobs.Size(); i++ )
+	for ( int i = ActiveMJobs.Size()-1; i >= 0; i-- )
 	{
 		cServerMoveJob *MoveJob;
 		cVehicle *Vehicle;
@@ -2889,9 +2905,11 @@ void cServer::handleMoveJobs ()
 			else Log.write(" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 
 			//execute endMoveAction
-			if ( MoveJob->endAction ) MoveJob->endAction->execute();
+			if ( Vehicle && MoveJob->endAction ) MoveJob->endAction->execute();
 
 			delete MoveJob;
+			ActiveMJobs.Delete ( i );
+			
 
 			//continue path building
 			if ( Vehicle && Vehicle->BuildPath )
@@ -2909,7 +2927,7 @@ void cServer::handleMoveJobs ()
 					sendBuildAnswer( false, Vehicle );
 				}
 			}
-			ActiveMJobs.Delete ( i );
+
 			continue;
 		}
 

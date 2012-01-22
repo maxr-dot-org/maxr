@@ -66,7 +66,7 @@
 #define MAXPLAYER_HOTSEAT 8
 
 #ifdef _MSC_VER
-	#define CHECK_MEMORY //_CrtCheckMemory();
+	#define CHECK_MEMORY _ASSERTE( _CrtCheckMemory( ) );
 #else
 	#define CHECK_MEMORY
 #endif
@@ -147,7 +147,7 @@
 	#ifdef RELEASE
 		#define PACKAGE_REV "Releaseversion"
 	#else
-		#define PACKAGE_REV "SVN Rev 2843"
+		#define PACKAGE_REV "SVN Rev 2856"
 	#endif
 #endif
 
