@@ -503,6 +503,19 @@ void cServerMoveJob::stop()
 	}
 }
 
+void cServerMoveJob::resume()
+{
+	if ( Vehicle && Vehicle->data.speedCur > 0 && !Vehicle->moving )
+	{
+		// restart movejob
+		calcNextDir();
+		bEndForNow = false;
+		SrcX = Vehicle->PosX;
+		SrcY = Vehicle->PosY;
+		Server->addActiveMoveJob ( this );
+	}
+}
+
 void cServerMoveJob::addEndAction(int destID, eEndMoveActionType type)
 {
 	if ( endAction ) delete endAction;

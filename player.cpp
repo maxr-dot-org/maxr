@@ -576,7 +576,7 @@ cUnit *cPlayer::getNextUnit ()
 		if (unit->isBuilding ())	
 		{
 			cBuilding* building = (cBuilding*) unit;
-			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( (building->BuildList && building->BuildList->Size() > 0) || ( building->data.canAttack && building->data.shotsCur )))
+			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
 				return unit;
 		}
 		else
@@ -671,7 +671,7 @@ cUnit *cPlayer::getPrevUnit ()
 		if (unit->isBuilding ())	
 		{
 			cBuilding* building = (cBuilding*) unit;
-			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( (building->BuildList && building->BuildList->Size() > 0) || ( building->data.canAttack && building->data.shotsCur )))
+			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
 				return unit;
 		}
 		else

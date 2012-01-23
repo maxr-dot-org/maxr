@@ -2742,6 +2742,7 @@ void cGameGUI::doneReleased( void *parent )
 	{	
 		unit->center();
 		unit->isMarkedAsDone = true;
+		sendMoveJobResume (unit->iID);
 	}
 }
 

@@ -351,6 +351,28 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			Vehicle->ServerMoveJob->stop();
 		}
 		break;
+	case GAME_EV_MOVEJOB_RESUME:
+		{
+			int id = message->popInt32();
+			if (id == 0)
+			{
+				for (unsigned int i = 0; i < ActiveMJobs.Size()-1; i++)
+				{
+					cServerMoveJob* moveJob = ActiveMJobs[i];
+					if (moveJob->Vehicle && moveJob->Vehicle->owner->Nr == message->iPlayerNr)
+						moveJob->resume();
+				}
+			}
+			else
+			{
+				cVehicle *vehicle = getVehicleFromID (id);
+				if (!vehicle || vehicle->owner->Nr != message->iPlayerNr) break;
+
+				if (vehicle->ServerMoveJob)
+					vehicle->ServerMoveJob->resume ();
+			}
+		}
+		break;
 	case GAME_EV_WANT_ATTACK:
 		{
 			//identify agressor

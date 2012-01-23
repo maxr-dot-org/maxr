@@ -210,6 +210,7 @@ public:
 	void doEndMoveVehicle();
 	void calcNextDir();
 	void stop();
+	void resume();
 	void addEndAction(int destID, eEndMoveActionType type);
 };
 

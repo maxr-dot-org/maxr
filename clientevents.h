@@ -137,6 +137,12 @@ void sendMoveJob( sWaypoint* path, int vehicleID  );
 void sendWantStopMove ( int iVehicleID );
 
 /**
+*requests the server to resume the movejob of the vehicle. If 0 is passed, all movejobs of the player will be resumed.
+*@author eiko
+*/
+void sendMoveJobResume (int unitId);
+
+/**
 * sends all nessesary information to identify agressor
 * and target of an attack to the server
 *@param targetID ID of the target if it is a vehicle, 0 otherwise.
