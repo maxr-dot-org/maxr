@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0A673E10112657005D7516 /* mapdownload.cpp */; };
+		9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
+		9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
 		9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
 		9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
@@ -134,6 +136,10 @@
 /* Begin PBXFileReference section */
 		9F0A673E10112657005D7516 /* mapdownload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapdownload.cpp; path = ../mapdownload.cpp; sourceTree = SOURCE_ROOT; };
 		9F0A67421011267D005D7516 /* mapdownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapdownload.h; path = ../mapdownload.h; sourceTree = SOURCE_ROOT; };
+		9F141F6A14CAF4C6009AC1D7 /* casualtiestracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = casualtiestracker.h; path = ../casualtiestracker.h; sourceTree = SOURCE_ROOT; };
+		9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = casualtiestracker.cpp; path = ../casualtiestracker.cpp; sourceTree = SOURCE_ROOT; };
+		9F33BF7114A9EF2200379C9E /* unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unit.h; path = ../unit.h; sourceTree = SOURCE_ROOT; };
+		9F33BF7214A9EF2200379C9E /* unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unit.cpp; path = ../unit.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuevents.cpp; path = ../menuevents.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA1400FB8B74100CC2B17 /* menuevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuevents.h; path = ../menuevents.h; sourceTree = SOURCE_ROOT; };
 		9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuitems.cpp; path = ../menuitems.cpp; sourceTree = SOURCE_ROOT; };
@@ -307,6 +313,8 @@
 				9FC0DB760EE2B17400F23D2C /* base.h */,
 				9FC0DB770EE2B17400F23D2C /* buildings.cpp */,
 				9FC0DB780EE2B17400F23D2C /* buildings.h */,
+				9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */,
+				9F141F6A14CAF4C6009AC1D7 /* casualtiestracker.h */,
 				9F80D8930FB495F6002FE83F /* clans.cpp */,
 				9F80D8920FB495F6002FE83F /* clans.h */,
 				9FC0DB7B0EE2B17400F23D2C /* client.cpp */,
@@ -387,6 +395,8 @@
 				9FC0DBC00EE2B17400F23D2C /* tinyxmlparser.cpp */,
 				9FC2DCBB0F17B2D60022714E /* unifonts.cpp */,
 				9FC2DCBC0F17B2D60022714E /* unifonts.h */,
+				9F33BF7214A9EF2200379C9E /* unit.cpp */,
+				9F33BF7114A9EF2200379C9E /* unit.h */,
 				9FC0DBC10EE2B17400F23D2C /* upgradecalculator.cpp */,
 				9FC0DBC20EE2B17400F23D2C /* upgradecalculator.h */,
 				9FC0DBC30EE2B17400F23D2C /* vehicles.cpp */,
@@ -563,6 +573,7 @@
 				9F9BC2B212B3B11C00674C03 /* main.cpp in Sources */,
 				9F9BC31412B3E46600674C03 /* dedicatedserver.cpp in Sources */,
 				9F9BC44012B42D3900674C03 /* servergame.cpp in Sources */,
+				9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +627,7 @@
 				9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */,
 				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
 				9F6B402B116640F5007A6C8A /* video.cpp in Sources */,
+				9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,8 +754,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = (
+					"$(ARCHS_STANDARD_32_BIT)",
+					ppc,
+				);
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "/Library/Frameworks\nFRAMEWORK_SEARCH_PATHS";
