@@ -2403,7 +2403,7 @@ bool cGameGUI::loadPanelGraphics()
 
 void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
-	if ( key.keysym.sym == SDLK_LSHIFT || key.keysym.sym == SDLK_LSHIFT )
+	if ( key.keysym.sym == SDLK_LSHIFT || key.keysym.sym == SDLK_RSHIFT )
 	{
 		if ( key.type == SDL_KEYDOWN )
 		{
