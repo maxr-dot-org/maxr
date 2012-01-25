@@ -121,6 +121,8 @@ protected:
 	void (*moveMouseOver)(void *);
 	/** pointer to the extern  function that will be called when the item is active and keyboard input has been received */
 	void (*wasKeyInput)(void *);
+	/** pointer to the extern function that will be called when the item is right clicked */
+	void (*rightClick)(void *);
 
 	cMenuItem( int x, int y );
 
@@ -244,6 +246,13 @@ public:
 	 */
 	virtual bool handleKeyInput( SDL_keysym keysym, std::string ch, void *parent ) { return false; }
 
+
+	/**
+	 *@author eiko
+	 * This function will be called by the menus when this item is clicked with the right mouse button
+	 */
+	virtual void rightClicked (void *parent);
+
 	/**
 	 * sets a new position of the item
 	 *@author alzi
@@ -280,6 +289,13 @@ public:
 	 *@author alzi
 	 */
 	void setClickedFunction ( void (*click_)(void *) );
+
+	/**
+	 * sets the click-pointer-function.
+	 *@author alzi
+	 */
+	void setRightClickedFunction ( void (*click_)(void *) );
+
 	/**
 	 * sets the release-pointer-function.
 	 *@author alzi

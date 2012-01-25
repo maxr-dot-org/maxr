@@ -161,6 +161,7 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerL
 
 	miniMapImage = new cMenuImage ( MINIMAP_POS_X, MINIMAP_POS_Y, generateMiniMapSurface() );
 	miniMapImage->setClickedFunction ( &miniMapClicked );
+	miniMapImage->setRightClickedFunction (&miniMapRightClicked);
 	menuItems.Add ( miniMapImage );
 
 	coordsLabel = new cMenuLabel ( 265+32, (Video.getResolutionY()-21)+3 );
@@ -2831,6 +2832,25 @@ void cGameGUI::miniMapClicked( void *parent )
 	lastY = y;
 
 	gui->checkOffsetPosition();
+}
+
+void cGameGUI::miniMapRightClicked( void *parent )
+{
+	cGameGUI *gui = static_cast<cGameGUI*>(parent);
+
+	if (!gui->selectedVehicle || gui->selectedVehicle->owner != Client->ActivePlayer) return;
+
+	int x = mouse->x;
+	int y = mouse->y;
+	const int displayedMapWidth = (int)((Video.getResolutionX() - HUD_TOTAL_WIDTH) / gui->getZoom());
+	const int displayedMapHight = (int)((Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
+	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
+
+	int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
+	int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
+
+	Client->addMoveJob (gui->selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
+	
 }
 
 void cGameGUI::miniMapMovedOver( void *parent )

@@ -360,6 +360,7 @@ class cGameGUI : public cMenu
 	static void changedMiniMap( void *parent );
 
 	static void miniMapClicked( void *parent );
+	static void miniMapRightClicked( void *parent );
 	static void miniMapMovedOver( void *parent );
 
 	static void zoomSliderMoved( void *parent );

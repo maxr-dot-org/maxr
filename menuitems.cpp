@@ -138,6 +138,16 @@ void cMenuItem::clicked(void *parent)
 	}
 }
 
+void cMenuItem::rightClicked(void *parent)
+{
+	if ( locked ) return;
+	if ( preClicked() )
+	{
+		if ( clickSound ) PlayFX ( clickSound );
+		if ( rightClick ) rightClick(parent);
+	}
+}
+
 void cMenuItem::released(void *parent)
 {
 	if ( locked ) return;
@@ -223,6 +233,11 @@ void cMenuItem::setReleaseSound ( sSOUND *releaseSound_ )
 void cMenuItem::setClickedFunction ( void (*click_)(void *) )
 {
 	click = click_;
+}
+
+void cMenuItem::setRightClickedFunction ( void (*click_)(void *) )
+{
+	rightClick = click_;
 }
 
 void cMenuItem::setReleasedFunction ( void (*release_)(void *) )

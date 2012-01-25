@@ -696,6 +696,10 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 			if ( menuItem->overItem( mouse->x, mouse->y ) ) menuItem->released( this );
 			else menuItem->somewhereReleased();
 		}
+		if (menuItem->overItem( mouse->x, mouse->y ) && mouseState.rightButtonPressed)
+		{
+			menuItem->rightClicked (this);
+		}
 	}
 
 	handleMouseInputExtended( mouseState );
