@@ -165,6 +165,8 @@ class cGameGUI : public cMenu
 
 	bool needMapDraw, needMiniMapDraw;
 
+	bool shiftPressed;
+
 	/** drawing cache to speed up the graphic engine */
 	cDrawingCache dCache;
 

@@ -57,7 +57,6 @@ bool cInput::IsDoubleClicked (void)
         LastClickTicks = SDL_GetTicks ();
         return (false);
     }
-
     else
     {
         CurrentClickTicks = SDL_GetTicks ();

@@ -57,7 +57,8 @@ sMouseBox::sMouseBox() :
 cGameGUI::cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList ) :
 	cMenu ( generateSurface() ),
 	player ( player_ ),
-	map ( map_ )
+	map ( map_ ),
+	shiftPressed ( false )
 {
 	unitMenuActive = false;
 	frame = 0;
@@ -2401,6 +2402,18 @@ bool cGameGUI::loadPanelGraphics()
 
 void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 {
+	if ( key.keysym.sym == SDLK_LSHIFT || key.keysym.sym == SDLK_LSHIFT )
+	{
+		if ( key.type == SDL_KEYDOWN )
+		{
+			shiftPressed = true;
+		}
+		else if ( key.type == SDL_KEYUP )
+		{
+			shiftPressed = false;
+		}
+	}
+
 	// first check whether the end key was pressed
 	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && activeItem != selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !Client->bWaitForOthers )
 	{
@@ -2735,10 +2748,16 @@ void cGameGUI::doneReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 
+	if (gui->shiftPressed)
+	{
+		sendMoveJobResume(0);
+		return;
+	}
+
 	cUnit* unit = gui->selectedVehicle;
 	if (!unit) unit = gui->selectedBuilding;
 	
-	if (unit)
+	if (unit && unit->owner == Client->ActivePlayer)
 	{	
 		unit->center();
 		unit->isMarkedAsDone = true;

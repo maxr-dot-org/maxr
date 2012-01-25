@@ -943,8 +943,11 @@ void cUnit::menuReleased ()
 	{
 		Client->gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
-		isMarkedAsDone = true;
-		sendMoveJobResume (iID);
+		if (owner == Client->ActivePlayer)
+		{
+			isMarkedAsDone = true;
+			sendMoveJobResume (iID);
+		}
 		return;
 	}
 }

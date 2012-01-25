@@ -356,11 +356,16 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			int id = message->popInt32();
 			if (id == 0)
 			{
-				for (unsigned int i = 0; i < ActiveMJobs.Size()-1; i++)
+				cPlayer *player = getPlayerFromNumber (message->iPlayerNr);
+				if (!player) break;
+				cVehicle* vehicle = player->VehicleList;
+
+				while (vehicle)
 				{
-					cServerMoveJob* moveJob = ActiveMJobs[i];
-					if (moveJob->Vehicle && moveJob->Vehicle->owner->Nr == message->iPlayerNr)
-						moveJob->resume();
+					if (vehicle->ServerMoveJob && !vehicle->moving)
+						vehicle->ServerMoveJob->resume();
+
+					vehicle = (cVehicle*) vehicle->next;
 				}
 			}
 			else
