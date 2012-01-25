@@ -138,6 +138,8 @@
 		9F0A67421011267D005D7516 /* mapdownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapdownload.h; path = ../mapdownload.h; sourceTree = SOURCE_ROOT; };
 		9F141F6A14CAF4C6009AC1D7 /* casualtiestracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = casualtiestracker.h; path = ../casualtiestracker.h; sourceTree = SOURCE_ROOT; };
 		9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = casualtiestracker.cpp; path = ../casualtiestracker.cpp; sourceTree = SOURCE_ROOT; };
+		9F191B0B14CF580F002426E2 /* notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = notifications.h; path = ../notifications.h; sourceTree = SOURCE_ROOT; };
+		9F191B0C14CF580F002426E2 /* notifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = notifications.cpp; path = ../notifications.cpp; sourceTree = SOURCE_ROOT; };
 		9F33BF7114A9EF2200379C9E /* unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unit.h; path = ../unit.h; sourceTree = SOURCE_ROOT; };
 		9F33BF7214A9EF2200379C9E /* unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unit.cpp; path = ../unit.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuevents.cpp; path = ../menuevents.cpp; sourceTree = SOURCE_ROOT; };
@@ -368,6 +370,8 @@
 				9FC0DBA90EE2B17400F23D2C /* netmessage.h */,
 				9FC0DBAA0EE2B17400F23D2C /* network.cpp */,
 				9FC0DBAB0EE2B17400F23D2C /* network.h */,
+				9F191B0C14CF580F002426E2 /* notifications.cpp */,
+				9F191B0B14CF580F002426E2 /* notifications.h */,
 				9FC0DBAC0EE2B17400F23D2C /* pcx.cpp */,
 				9FC0DBAD0EE2B17400F23D2C /* pcx.h */,
 				9FC0DBAE0EE2B17400F23D2C /* player.cpp */,
@@ -724,11 +728,12 @@
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
+				GCC_MODEL_TUNING = G3;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "MAC=1";
+				GCC_VERSION = 4.0;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL.framework/Headers,
@@ -737,6 +742,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -762,10 +768,11 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = "/Library/Frameworks\nFRAMEWORK_SEARCH_PATHS";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
+				GCC_MODEL_TUNING = G3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "MAC=1";
+				GCC_VERSION = 4.0;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL.framework/Headers,
@@ -774,6 +781,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
