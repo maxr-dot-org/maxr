@@ -44,8 +44,10 @@ tinyxml.cpp \
 tinyxmlerror.cpp \
 tinyxmlparser.cpp \
 unifonts.cpp \
+unit.cpp \
 upgradecalculator.cpp \
 vehicles.cpp \
 video.cpp
 
 maxr_LDADD = $(SDL_LIBS) $(SDL_MIXER_LIBS) $(SDL_NET_LIBS)
+
