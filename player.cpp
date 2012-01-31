@@ -635,13 +635,13 @@ cUnit *cPlayer::getPrevUnit ()
 			if (start->isBuilding ())
 			{
 				start = VehicleList;
-				while (start->next)
+				while (start && start->next)
 					start = start->next;
 			}	
 			else
 			{
 				start = BuildingList;
-				while (start->next)
+				while (start && start->next)
 					start = start->next;
 			}
 		}
@@ -649,13 +649,13 @@ cUnit *cPlayer::getPrevUnit ()
 	if (!start || start->owner != this)
 	{
 		start = VehicleList;
-		while (start->next)
+		while (start && start->next)
 			start = start->next;
 	}
 	if (!start)
 	{
 		start = BuildingList;
-		while (start->next)
+		while (start && start->next)
 			start = start->next;
 	}
 	if (!start)
@@ -691,13 +691,13 @@ cUnit *cPlayer::getPrevUnit ()
 			if (unit->isBuilding ())
 			{
 				unit = VehicleList ? (cUnit*)VehicleList : (cUnit*)BuildingList;
-				while (unit->next)
+				while (unit && unit->next)
 					unit = unit->next;
 			}
 			else
 			{
 				unit = BuildingList ? (cUnit*)BuildingList : (cUnit*)VehicleList;
-				while (unit->next)
+				while (unit && unit->next)
 					unit = unit->next;
 			}
 		}
