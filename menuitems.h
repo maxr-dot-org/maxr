@@ -19,6 +19,7 @@
 #ifndef menuitemsH
 #define menuitemsH
 
+#include <vector>
 #include "autosurface.h"
 #include "defines.h"
 #include "unifonts.h"
@@ -26,6 +27,7 @@
 #include "sound.h"
 #include "clist.h"
 #include "main.h" // for sID
+#include "notifications.h"
 
 class cMenu;
 class cHangarMenu;
@@ -1285,7 +1287,8 @@ public:
 	SDL_Rect getPosition();
 };
 
-class cMenuReportsScreen : public cMenuItem
+//-----------------------------------------------------------------------------
+class cMenuReportsScreen : public cMenuItem, public INotificationListener
 {
 	cPlayer *owner;
 	cReportsMenu *parentMenu;
@@ -1317,6 +1320,11 @@ class cMenuReportsScreen : public cMenuItem
 	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
 	SDL_Surface *generateUnitSurface ( SDL_Surface *oriSurface, sUnitData &data );
 
+	int countDisadvantageEntries () const;
+	/** Draws a disadvantage entry, if a player has losses for the unitID and the entry should be displayed on the current page. 
+	 * @return true, if an entry was drawn or would at least be in the list for unitImg */
+	bool drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface* unitImg, std::vector<sID>& unitTypesWithLosses, int displayedEntryIndex);
+
 	void drawUnitsScreen();
 	void drawDisadvantagesScreen();
 	void drawScoreScreen();
@@ -1325,6 +1333,7 @@ class cMenuReportsScreen : public cMenuItem
 
 	void updateScrollButtons();
 
+//-----------------------------------------------------------------------------
 public:
 	cMenuReportsScreen ( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ );
 	~cMenuReportsScreen();
@@ -1339,8 +1348,13 @@ public:
 	void scrollUp();
 
 	void released( void *parent );
+	
+	// INotificationListener implementation
+	virtual bool notify (std::string message, void* sender = 0);
 };
 
+
+//-----------------------------------------------------------------------------
 /**
  * A little box that displays additional information about the current state of a player.
  * (his name, his color, whether he is active in the game and whether he has ended his turn)

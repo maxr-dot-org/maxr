@@ -130,6 +130,11 @@ private:
 	 */
 	void writeResearchCentersWorkingOnArea (TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player);
 	/**
+	 * save the casualties of all players
+	 *@author pagra
+	 */
+	void writeCasualties ();
+	/**
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
@@ -190,6 +195,11 @@ private:
 	 * @author pagra
 	 */
 	void loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersWorkingOnAreaNode, cPlayer *player );
+	/**
+	 * loads the casualties of all players
+	 *@author pagra
+	 */
+	void loadCasualties ();		
 	/**
 	* loads all units
 	*@author alzi alias DoctorDeath

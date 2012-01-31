@@ -32,6 +32,7 @@ class cNetMessage;
 class cBuilding;
 class cUnit;
 struct sVehicle;
+class cCasualtiesTracker;
 
 /**
 * The Types which are possible for a game
@@ -145,6 +146,11 @@ private:
 	/** victory conditions. One or both must be zero. **/
 	int turnLimit, scoreLimit;
 
+	cCasualtiesTracker* casualtiesTracker;
+public:
+	cCasualtiesTracker* getCasualtiesTracker () {return casualtiesTracker;}
+	
+private:
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
 	* the returned message and its data structures are valid until the next call of pollEvent()

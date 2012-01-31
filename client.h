@@ -28,6 +28,7 @@ class cMap;
 class cPlayer;
 class cClientAttackJob;
 class cClientMoveJob;
+class cCasualtiesTracker;
 
 Uint32 TimerCallback(Uint32 interval, void *arg);
 
@@ -128,6 +129,8 @@ private:
 	/** this client's copy of the victory conditions **/
 	int turnLimit, scoreLimit;
 
+	cCasualtiesTracker* casualtiesTracker;
+	
 	/**
 	* handles the game relevant actions (for example moving the current position of a rocket)
 	* of the fx-effects, so that they are handled also, when the effects are not drawn.
@@ -322,7 +325,7 @@ public:
 
 	void deletePlayer(cPlayer *player);
 
-
+	cCasualtiesTracker* getCasualties () {return casualtiesTracker;}
 };
 
 extern cClient* Client;

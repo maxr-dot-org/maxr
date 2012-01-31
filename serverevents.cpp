@@ -29,6 +29,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 #include "player.h"
+#include "casualtiestracker.h"
 
 //-------------------------------------------------------------------------------------
 void sendAddUnit ( int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap )
@@ -1011,6 +1012,20 @@ void sendSavedReport ( sSavedReportMessage &savedReport, int player )
 	Server->sendNetMessage( message, player );
 }
 
+//-------------------------------------------------------------------------------------
+void sendCasualtiesReport (int player)
+{
+	cCasualtiesTracker* casualtiesTracker = Server->getCasualtiesTracker ();
+	if (casualtiesTracker)
+	{
+		cList<cNetMessage*> messages;
+		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
+		for (int i = 0; i < messages.Size (); i++)
+			Server->sendNetMessage (messages[i], player);
+	}
+}
+
+//-------------------------------------------------------------------------------------
 void sendSelfDestroy( cBuilding* building )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_SELFDESTROY );

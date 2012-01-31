@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		9F0A673F10112657005D7516 /* mapdownload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0A673E10112657005D7516 /* mapdownload.cpp */; };
+		9F0B084014D08558007F3D00 /* notifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F191B0C14CF580F002426E2 /* notifications.cpp */; };
+		9F0B084114D08559007F3D00 /* notifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F191B0C14CF580F002426E2 /* notifications.cpp */; };
+		9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
+		9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
 		9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
@@ -578,6 +582,8 @@
 				9F9BC31412B3E46600674C03 /* dedicatedserver.cpp in Sources */,
 				9F9BC44012B42D3900674C03 /* servergame.cpp in Sources */,
 				9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */,
+				9F0B084114D08559007F3D00 /* notifications.cpp in Sources */,
+				9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,6 +638,8 @@
 				9F87B6C7101A43EA00A119FC /* settings.cpp in Sources */,
 				9F6B402B116640F5007A6C8A /* video.cpp in Sources */,
 				9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */,
+				9F0B084014D08558007F3D00 /* notifications.cpp in Sources */,
+				9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,7 +731,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = (
+					ppc,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -734,6 +745,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "MAC=1";
 				GCC_VERSION = 4.0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/Library/Frameworks/SDL.framework/Headers,
@@ -743,7 +755,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,

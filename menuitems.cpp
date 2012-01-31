@@ -20,6 +20,7 @@
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <vector>
 #include "menuitems.h"
 #include "menus.h"
 #include "settings.h"
@@ -28,6 +29,8 @@
 #include "vehicles.h"
 #include "player.h"
 #include "mouse.h"
+#include "casualtiestracker.h"
+#include "clientevents.h"
 
 using namespace std;
 
@@ -3596,6 +3599,12 @@ SDL_Rect cMenuScrollerHandler::getPosition()
 	return position;
 }
 
+
+//-----------------------------------------------------------------------------
+// cMenuReportsScreen implementation
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer *owner_, cReportsMenu *parentMenu_ ) :
 	cMenuItem ( x, y ),
 	owner ( owner_ ),
@@ -3619,16 +3628,37 @@ cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer *own
 		unitDetails[i] = new cMenuUnitDetails( position.x+127, position.y+17+55*i, true, owner );
 	}
 	screenType = REP_SCR_TYPE_UNITS;
+	if (Client->getCasualties () != 0)
+	{
+		Client->getCasualties ()->addNotificationListener (this);
+		sendRequestCasualtiesReport ();
+	}
 }
 
+//-----------------------------------------------------------------------------
 cMenuReportsScreen::~cMenuReportsScreen()
 {
+	if (Client->getCasualties () != 0)
+		Client->getCasualties ()->removeNotificationListener (this);
+
 	for ( int i = 0; i < maxItems; i++ )
 	{
 		delete unitDetails[i];
 	}
 }
 
+//-----------------------------------------------------------------------------
+bool cMenuReportsScreen::notify (std::string message, void* sender)
+{
+	if (message == "casualties tracker updated" && screenType == REP_SCR_TYPE_DISADVA)
+	{
+		draw ();
+		updateScrollButtons ();
+	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::draw()
 {
 	switch ( screenType )
@@ -3648,6 +3678,7 @@ void cMenuReportsScreen::draw()
 	}
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawUnitsScreen()
 {
 	goThroughUnits ( true );
@@ -3677,11 +3708,110 @@ void cMenuReportsScreen::drawUnitsScreen()
 	}
 }
 
-void cMenuReportsScreen::drawDisadvantagesScreen()
-{
-	font->showText ( position.x+17, position.y+30, lngPack.i18n( "Text~Error_Messages~INFO_Not_Implemented" ) );
+//-----------------------------------------------------------------------------
+void cMenuReportsScreen::drawDisadvantagesScreen ()
+{	
+	if (Client->PlayerList == 0)
+		return;
+	
+	for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
+	{
+		cPlayer* player = (*(Client->PlayerList))[playerIdx];
+		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37), 
+								position.y + (playerIdx < 4 ? 9 : 22), player->name);
+	}
+		
+	
+	cCasualtiesTracker* casualties = Client->getCasualties ();
+	if (casualties != 0)
+	{
+		vector<sID> unitTypesWithLosses = casualties->getUnitTypesWithLosses ();
+		if (unitTypesWithLosses.size () == 0)
+			return;
+		
+		int displayedEntryIndex = 0;
+
+		for (int i = 0; i < UnitsData.building.Size (); i++)
+		{
+			sID unitID = UnitsData.building[i].data.ID;
+			sBuilding* buildingImgs = unitID.getBuilding ();
+			SDL_Surface* unitImg = buildingImgs ? buildingImgs->img_org : 0;
+			if (unitImg == 0) // shouldn't happen
+				continue;
+			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
+				displayedEntryIndex++;
+			
+			if (displayedEntryIndex >= (index + 1) * 10)
+				break;
+		}		
+		
+		for (int i = 0; i < UnitsData.vehicle.Size (); i++)
+		{
+			sID unitID = UnitsData.vehicle[i].data.ID;
+			sVehicle* vehicleImgs = unitID.getVehicle ();
+			SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->img_org[0] : 0;
+			if (unitImg == 0) // shouldn't happen
+				continue;
+			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
+				displayedEntryIndex++;
+
+			if (displayedEntryIndex >= (index + 1) * 10)
+				break;
+		}
+	}
+	else
+		font->showText (position.x + 17, position.y + 30, "Error: casualties are not initialized. Tell developers of this message.");
 }
 
+//-----------------------------------------------------------------------------
+int cMenuReportsScreen::countDisadvantageEntries () const
+{
+	cCasualtiesTracker* casualties = Client->getCasualties ();
+	if (casualties != 0)
+		return casualties->getUnitTypesWithLosses ().size ();
+	return 0;
+}
+
+//-----------------------------------------------------------------------------
+bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface* unitImg, vector<sID>& unitTypesWithLosses, int displayedEntryIndex)
+{
+	cCasualtiesTracker* casualties = Client->getCasualties ();
+	if (casualties == 0)
+		return false;
+	for (int i = 0; i < unitTypesWithLosses.size (); i++)
+	{
+		if (unitID == unitTypesWithLosses[i])
+		{
+			if (index * 10 <= displayedEntryIndex && displayedEntryIndex < (index + 1) * 10)
+			{
+				sUnitData* unitData = unitTypesWithLosses[i].getUnitDataOriginalVersion ();
+				if (unitData != 0)
+				{
+					{
+						SDL_Rect src = { 0, 0, 32, 32 };
+						SDL_Rect dest = { position.x + 17, position.y + 28 + (displayedEntryIndex - (index * 10)) * 42, 0, 0 };
+						AutoSurface surface (generateUnitSurface (unitImg, *unitData));
+						SDL_BlitSurface (surface, &src, buffer, &dest);
+					}
+					
+					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
+					
+					for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
+					{
+						cPlayer* player = (*(Client->PlayerList))[playerIdx];
+						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
+						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37), 
+												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));								
+					}
+				}
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreScreen()
 {
 	int turnLimit, scoreLimit;
@@ -3724,6 +3854,7 @@ void cMenuReportsScreen::drawScoreScreen()
 	drawScoreGraph();
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreGraph()
 {
 	const Uint32 axis_colour = SDL_MapRGB(buffer->format, 164, 164, 164);
@@ -3857,6 +3988,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	drawLine(buffer, x0, y1, x1, y1, axis_colour);
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { position.x+54, position.y+25, 410, 30 };
@@ -3910,6 +4042,7 @@ void cMenuReportsScreen::drawReportsScreen()
 	}
 }
 
+//-----------------------------------------------------------------------------
 bool cMenuReportsScreen::checkFilter ( sUnitData &data, bool checkInclude )
 {
 	if ( checkInclude )
@@ -3930,6 +4063,7 @@ bool cMenuReportsScreen::checkFilter ( sUnitData &data, bool checkInclude )
 }
 
 
+//-----------------------------------------------------------------------------
 bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **vehicle, cBuilding **building )
 {
 	bool deleteCount = false;
@@ -4021,6 +4155,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 	return false;
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::setIncludeFilter(bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_)
 {
 	if ( screenType != REP_SCR_TYPE_UNITS ) return;
@@ -4035,6 +4170,7 @@ void cMenuReportsScreen::setIncludeFilter(bool filterPlanes_, bool filterGround_
 	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 };
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
 {
 	if ( screenType != REP_SCR_TYPE_UNITS ) return;
@@ -4049,6 +4185,7 @@ void cMenuReportsScreen::setBorderedFilter(bool filterBuild_, bool filterAttack_
 	parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::setType ( bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked )
 {
 	index = 0;
@@ -4067,6 +4204,7 @@ void cMenuReportsScreen::setType ( bool unitsChecked, bool disadvaChecked, bool 
 	updateScrollButtons();
 }
 
+//-----------------------------------------------------------------------------
 SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
 {
 	int factor = 2;
@@ -4086,6 +4224,7 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sU
 	return surface;
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::updateScrollButtons()
 {
 	switch ( screenType )
@@ -4094,7 +4233,7 @@ void cMenuReportsScreen::updateScrollButtons()
 		parentMenu->scrollCallback ( index > 0, goThroughUnits ( false ) );
 		break;
 	case REP_SCR_TYPE_DISADVA:
-		parentMenu->scrollCallback ( false, false );
+		parentMenu->scrollCallback (index > 0, (index + 1) * 10 < countDisadvantageEntries ());
 		break;
 	case REP_SCR_TYPE_SCORE:
 		parentMenu->scrollCallback ( false, false );
@@ -4105,26 +4244,35 @@ void cMenuReportsScreen::updateScrollButtons()
 	}
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::scrollDown()
 {
 	switch ( screenType )
 	{
 	case REP_SCR_TYPE_UNITS:
-		if ( goThroughUnits ( false ) ) index++;
+		if ( goThroughUnits ( false ) )
+			index++;
+		break;
+	case REP_SCR_TYPE_DISADVA:
+		if ((index + 1) * 10 < countDisadvantageEntries ()) 
+			index++;
 		break;
 	case REP_SCR_TYPE_REPORTS:
-		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) index++;
+		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) 
+			index++;
 		break;
 	}
 	updateScrollButtons();
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::scrollUp()
 {
 	if ( index > 0 ) index--;
 	updateScrollButtons();
 }
 
+//-----------------------------------------------------------------------------
 void cMenuReportsScreen::released( void *parent )
 {
 	int clickedIndex = Round ( (mouse->y-position.x-17)/55.0 )+index*maxItems;
@@ -4172,12 +4320,19 @@ void cMenuReportsScreen::released( void *parent )
 	parentMenu->draw();
 }
 
+
+
+//-----------------------------------------------------------------------------
+// cMenuPlayerInfo Implementation
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 cMenuPlayerInfo::cMenuPlayerInfo ( int x, int y, cPlayer *player_ ) :
 	cMenuItem(x, y),
 	player(player_)
 {}
 
-
+//-----------------------------------------------------------------------------
 void cMenuPlayerInfo::draw()
 {
 	if ( disabled ) return;

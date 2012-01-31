@@ -38,6 +38,7 @@
 #if DEDICATED_SERVER_APPLICATION
 #include "dedicatedserver.h"
 #endif
+#include "casualtiestracker.h"
 
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
@@ -57,6 +58,7 @@ int CallbackRunServerThread( void *arg )
 //-------------------------------------------------------------------------------------
 cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 : lastEvent (0)
+, casualtiesTracker (0)
 {
 	assert(!(turnLimit && scoreLimit));
 
@@ -81,6 +83,8 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 	savingID = 0;
 	savingIndex = -1;
 
+	casualtiesTracker = new cCasualtiesTracker ();
+	
 	if (!DEDICATED_SERVER)
 		ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
@@ -89,6 +93,12 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 cServer::~cServer()
 {
 	bExit = true;
+	if (casualtiesTracker != 0)
+	{
+		delete casualtiesTracker;
+		casualtiesTracker = 0;
+	}
+	
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread ( ServerThread, NULL );
 	SDL_RemoveTimer ( TimerID );
@@ -1806,6 +1816,11 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			savegame.writeAdditionalInfo ( *player->savedHud, player->savedReportsList, player );
 		}
 		break;
+	case GAME_EV_REQUEST_CASUALTIES_REPORT:
+		{
+			sendCasualtiesReport (message->iPlayerNr);
+		}
+		break;
 	case GAME_EV_WANT_SELFDESTROY:
 		{
 			cBuilding* building = getBuildingFromID(message->popInt16());
@@ -2164,6 +2179,9 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		deleteRubble ((cBuilding*)unit);
 		return;
 	}
+
+	if (unit->owner && casualtiesTracker && ((unit->isBuilding () && unit->data.buildCosts <= 2) == false))
+		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->Nr);
 	
 	if (unit->prev)
 	{
@@ -3484,6 +3502,9 @@ bool cServer::addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* veh
 //--------------------------------------------------------------------------
 void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 {
+	if (vehicle->owner && casualtiesTracker)
+		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->Nr);
+	
 	// delete vehicle in the list of he old player
 	cPlayer *oldOwner = vehicle->owner;
 	cVehicle *vehicleList = oldOwner->VehicleList;

@@ -38,6 +38,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 #include "player.h"
+#include "casualtiestracker.h"
 
 using namespace std;
 
@@ -147,10 +148,18 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
+	
+	casualtiesTracker = new cCasualtiesTracker ();
 }
 
 cClient::~cClient()
 {
+	if (casualtiesTracker != 0)
+	{
+		delete casualtiesTracker;
+		casualtiesTracker = 0;
+	}
+	
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
 	while (messages.Size())
@@ -2037,6 +2046,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			savedReport.unitID.iSecondPart = message->popInt16();
 			savedReport.colorNr = message->popInt16();
 			ActivePlayer->savedReportsList.Add ( savedReport );
+		}
+		break;
+	case GAME_EV_CASUALTIES_REPORT:
+		{
+			if (casualtiesTracker != 0)
+				casualtiesTracker->updateCasualtiesFromNetMessage (message);
 		}
 		break;
 	case GAME_EV_SCORE:

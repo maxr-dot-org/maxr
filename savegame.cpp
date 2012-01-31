@@ -29,6 +29,7 @@
 #include "vehicles.h"
 #include "player.h"
 #include "movejobs.h"
+#include "casualtiestracker.h"
 
 using namespace std;
 
@@ -52,6 +53,7 @@ int cSavegame::save( string saveName )
 	writeHeader( saveName );
 	writeGameInfo ();
 	writeMap( Server->Map );
+	writeCasualties ();
 
 	int unitnum = 0;
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
@@ -161,6 +163,7 @@ int cSavegame::load()
 
 	loadGameInfo();
 	loadUnits ();
+	loadCasualties ();
 
 	recalcSubbases();
 
@@ -522,6 +525,19 @@ void cSavegame::loadResearchCentersWorkingOnArea( TiXmlElement *researchCentersW
 	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
 	researchCentersWorkingOnAreaNode->Attribute ( "cost", &value );
 	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;
+}
+
+//--------------------------------------------------------------------------
+void cSavegame::loadCasualties ()
+{
+	if (Server == 0 || Server->getCasualtiesTracker () == 0)
+		return;
+
+	TiXmlElement* casualtiesNode = SaveFile->RootElement ()->FirstChildElement ("Casualties");
+	if (casualtiesNode == 0)
+		return;
+	
+	Server->getCasualtiesTracker ()->initFromXML (casualtiesNode);
 }
 
 //--------------------------------------------------------------------------
@@ -1356,6 +1372,16 @@ void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement *researchCenters
 	researchCentersWorkingOnAreaNode->SetAttribute( "speed", iToStr (player->researchCentersWorkingOnArea[cResearch::kSpeedResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "scan", iToStr (player->researchCentersWorkingOnArea[cResearch::kScanResearch]).c_str() );
 	researchCentersWorkingOnAreaNode->SetAttribute( "cost", iToStr (player->researchCentersWorkingOnArea[cResearch::kCostResearch]).c_str() );
+}
+
+//--------------------------------------------------------------------------
+void cSavegame::writeCasualties ()
+{
+	if (Server == 0 || Server->getCasualtiesTracker () == 0)
+		return;
+	
+	TiXmlElement* casualtiesNode = addMainElement (SaveFile->RootElement (), "Casualties");
+	Server->getCasualtiesTracker ()->storeToXML (casualtiesNode);
 }
 
 //--------------------------------------------------------------------------

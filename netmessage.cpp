@@ -536,12 +536,16 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_REQ_SAVE_INFO");
 	case GAME_EV_SAVED_REPORT:
 		return string("GAME_EV_SAVED_REPORT");
+	case GAME_EV_CASUALTIES_REPORT:
+		return string("GAME_EV_CASUALTIES_REPORT");
 	case GAME_EV_SAVE_HUD_INFO:
 		return string("GAME_EV_SAVE_HUD_INFO");
 	case GAME_EV_SAVE_REPORT_INFO:
 		return string("GAME_EV_SAVE_REPORT_INFO");
 	case GAME_EV_FIN_SEND_SAVE_INFO:
 		return string("GAME_EV_FIN_SEND_SAVE_INFO");
+	case GAME_EV_REQUEST_CASUALTIES_REPORT:
+		return string("GAME_EV_REQUEST_CASUALTIES_REPORT");
 	case GAME_EV_REQUEST_RESYNC:
 		return string("GAME_EV_REQUEST_RESYNC");
 	case GAME_EV_DELETE_EVERYTHING:

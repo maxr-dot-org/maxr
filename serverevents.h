@@ -80,7 +80,8 @@ enum SERVER_EVENT_TYPES
 	GAME_EV_END_MOVE_ACTION,		// specifies an action, which will be executed at the end of a movejob
 
 	// DEDICATED_SERVER
-	GAME_EV_WANT_DISCONNECT			// the player wants to disconnect (but later reconnect to the dedicated server)
+	GAME_EV_WANT_DISCONNECT,		// the player wants to disconnect (but later reconnect to the dedicated server)
+	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data
 };
 
 /**
@@ -309,6 +310,8 @@ void sendSetAutomoving ( cVehicle *Vehicle );
 void sendCommandoAnswer ( bool succsess, bool steal, cVehicle *srcUnit, int player );
 void sendRequestSaveInfo ( int saveingID );
 void sendSavedReport ( sSavedReportMessage &savedReport, int player );
+
+void sendCasualtiesReport (int player);
 
 void sendScore(cPlayer *Subject, int turn, cPlayer *Receiver = 0);
 void sendNumEcos(cPlayer *Subject, cPlayer *Receiver = 0);

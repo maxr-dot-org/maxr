@@ -361,6 +361,12 @@ void sendFinishedSendSaveInfo ( int ownerNr, int savingID )
 	Client->sendNetMessage ( message );
 }
 
+void sendRequestCasualtiesReport ()
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_REQUEST_CASUALTIES_REPORT);
+	Client->sendNetMessage (message);
+}
+
 void sendWantSelfDestroy (cUnit* building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_SELFDESTROY);

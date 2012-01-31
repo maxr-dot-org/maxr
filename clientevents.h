@@ -92,7 +92,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_VICTORY_CONDITIONS,     // the game's victory conditions
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
-	};
+	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
+};
 
 enum CHAT_MESSAGE_TYPES
 {
@@ -245,6 +246,9 @@ void sendWantActivate ( int unitid, bool vehicle, int activatunitid, int x, int 
 * sends a request to resync the player
 */
 void sendRequestResync( char PlayerNr );
+
+void sendRequestCasualtiesReport ();
+
 /**
 * sends that a unit has been set to automove status
 */
