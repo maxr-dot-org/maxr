@@ -104,13 +104,14 @@ string cClanUnitStat::getClanStatsDescription () const
 			if (!first)
 				result += ", ";
 			int nrTurns = (getModificationValue ("Built_Costs")) / (unitIdFirstPart == 0 ? 3 : 2);
+			if (data->isHuman)
+				nrTurns = getModificationValue ("Built_Costs");
 			result += iToStr (nrTurns) + " Turns";
 			first = false;
 		}
 	}
 	return result;
 }
-
 
 //--------------------------------------------------
 cClan::~cClan ()
