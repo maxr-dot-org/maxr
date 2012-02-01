@@ -1371,7 +1371,7 @@ sID cMenuUnitListItem::getUnitID()
 
 sUnitData* cMenuUnitListItem::getUnitData()
 {
-	if ( !unitData ) return unitID.getUnitDataOriginalVersion();
+	if ( !unitData ) return unitID.getUnitDataCurrentVersion(getOwner());
 	return unitData;
 }
 
