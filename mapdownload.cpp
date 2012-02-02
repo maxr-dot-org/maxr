@@ -29,6 +29,7 @@
 #include "netmessage.h"
 #include "menus.h"
 #include "menuevents.h"
+#include "events.h"
 #include "settings.h"
 #include "defines.h"
 #include "log.h"
@@ -195,8 +196,9 @@ int mapSenderThreadFunction (void* data)
 }
 
 //-------------------------------------------------------------------------------
-cMapSender::cMapSender (int toSocket, std::string mapName)
+cMapSender::cMapSender (int toSocket, std::string mapName, std::string receivingPlayerName)
 : toSocket (toSocket)
+, receivingPlayerName (receivingPlayerName)
 , mapName (mapName)
 , mapSize (0)
 , bytesSent (0)
@@ -296,7 +298,16 @@ void cMapSender::run ()
 	delete[] sendBuffer;
 	sendBuffer = 0;
 	msg = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
+	msg->pushString (receivingPlayerName);
 	sendMsg (msg);
+	// Push message also to client, that belongs to the host, to give feedback about the finished upload state. 
+	// The EventHandler mechanism is used, because this code runs in another thread than the code, that must display the msg.
+	if (EventHandler)
+	{
+		cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
+		message->pushString (receivingPlayerName);
+		EventHandler->pushEvent (message);
+	}
 }
 
 //-------------------------------------------------------------------------------

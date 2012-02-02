@@ -3460,13 +3460,20 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 							mapSenders.erase (mapSenders.begin () + i);
 						}
 					}
-					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName);
+					cMapSender* mapSender = new cMapSender (socketNr, gameDataContainer.map->MapName, players[receiverNr]->name);
 					mapSenders.push_back (mapSender);
 					mapSender->runInThread (this);
 					chatBox->addLine (lngPack.i18n ( "Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
 					draw();
 				}
 			}
+		}
+		break;
+	case MU_MSG_FINISHED_MAP_DOWNLOAD:
+		{
+			string receivingPlayerName = message->popString ();
+			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", receivingPlayerName));
+			draw ();
 		}
 		break;
 	}
@@ -3997,6 +4004,7 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 		delete map;
 	showSettingsText ();
 	showMap ();
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Finished"));
 	draw ();
 
 	delete mapReceiver;
