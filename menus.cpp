@@ -3788,7 +3788,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 						}
 						else
 						{
-							if (!MapDownload::isMapOriginal(mapName))
+							if (MapDownload::isMapOriginal(mapName, mapCheckSum) == false)
 							{
 								if (mapName != lastRequestedMap)
 								{

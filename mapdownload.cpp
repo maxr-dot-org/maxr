@@ -38,33 +38,67 @@
 using namespace std;
 
 //-------------------------------------------------------------------------------
-bool MapDownload::isMapOriginal (std::string mapName)
+bool MapDownload::isMapOriginal (std::string mapName, Sint32 checksum)
 {
 	std::transform(mapName.begin(), mapName.end(), mapName.begin(), static_cast<int (*)(int)>(std::tolower));
-	return (mapName == "bottleneck.wrl"
-			|| mapName == "flash point.wrl"
-			|| mapName == "freckles.wrl"
-			|| mapName == "frigia.wrl"
-			|| mapName == "great circle.wrl"
-			|| mapName == "great divide.wrl"
-			|| mapName == "hammerhead.wrl"
-			|| mapName == "high impact.wrl"
-			|| mapName == "ice berg.wrl"
-			|| mapName == "iron cross.wrl"
-			|| mapName == "islandia.wrl"
-			|| mapName == "long floes.wrl"
-			|| mapName == "long passage.wrl"
-			|| mapName == "middle sea.wrl"
-			|| mapName == "new luzon.wrl"
-			|| mapName == "peak-a-boo.wrl"
-			|| mapName == "sanctuary.wrl"
-			|| mapName == "sandspit.wrl"
-			|| mapName == "snowcrab.wrl"
-			|| mapName == "splatterscape.wrl"
-			|| mapName == "the cooler.wrl"
-			|| mapName == "three rings.wrl"
-			|| mapName == "ultima thule.wrl"
-			|| mapName == "valentine's planet.wrl");
+	if (mapName == "bottleneck.wrl"
+		|| mapName == "flash point.wrl"
+		|| mapName == "freckles.wrl"
+		|| mapName == "frigia.wrl"
+		|| mapName == "great circle.wrl"
+		|| mapName == "great divide.wrl"
+		|| mapName == "hammerhead.wrl"
+		|| mapName == "high impact.wrl"
+		|| mapName == "ice berg.wrl"
+		|| mapName == "iron cross.wrl"
+		|| mapName == "islandia.wrl"
+		|| mapName == "long floes.wrl"
+		|| mapName == "long passage.wrl"
+		|| mapName == "middle sea.wrl"
+		|| mapName == "new luzon.wrl"
+		|| mapName == "peak-a-boo.wrl"
+		|| mapName == "sanctuary.wrl"
+		|| mapName == "sandspit.wrl"
+		|| mapName == "snowcrab.wrl"
+		|| mapName == "splatterscape.wrl"
+		|| mapName == "the cooler.wrl"
+		|| mapName == "three rings.wrl"
+		|| mapName == "ultima thule.wrl"
+		|| mapName == "valentine's planet.wrl")
+	{
+		return true;
+	}
+	if (checksum == 0)
+		checksum = calculateCheckSum (mapName);
+	if (checksum == 344087468
+		|| checksum == 1702427970
+		|| checksum == 1401869069
+		|| checksum == 1612651246
+		|| checksum == 1041139234
+		|| checksum == 117739146
+		|| checksum == 1969035068
+		|| checksum == 268073155
+		|| checksum == 1382754034
+		|| checksum == 1704409466
+		|| checksum == 1893077128
+		|| checksum == 289119678
+		|| checksum == 231873358
+		|| checksum == 959897984
+		|| checksum == 1422663356
+		|| checksum == 2072925938
+		|| checksum == 1286420600
+		|| checksum == 2040193020
+		|| checksum == 10554807
+		|| checksum == 486474018
+		|| checksum == 451439582
+		|| checksum == 1682525072
+		|| checksum == 1397392934
+		|| checksum == 280492815)
+	{
+		return true;
+	}
+		
+	return false;
 }
 
 //-------------------------------------------------------------------------------
