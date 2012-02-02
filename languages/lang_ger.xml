@@ -263,6 +263,8 @@
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Du kannst nicht bereit gehen."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Du wirst getrennt, da du nicht im Spielstand aufgeführt bist."/>
 			<MapDL_Cancel localized="Abgebrochen"/>
+			<MapDL_Finished localized="Karte wurde vollständig heruntergeladen."/>
+			<MapDL_UploadFinished localized="Karte wurde vollständig zu %s hochgeladen."/>
 			<MapDL_Percent localized="Lade Karte: %s%"/>
 			<MapDL_Upload localized="Kopiere Karte für %s..."/>
 			<MapDL_DownloadRequest localized="Karte nicht installiert: Fordere die "/>
