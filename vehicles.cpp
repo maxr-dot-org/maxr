@@ -932,7 +932,14 @@ void cVehicle::DrawPath ()
 //-----------------------------------------------------------------------------
 string cVehicle::getStatusStr ()
 {
-	if ( autoMJob )
+	if ( turnsDisabled > 0 )
+	{
+		string sText;
+		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
+		sText += iToStr ( turnsDisabled ) + ")";
+		return sText;
+	}	
+	else if ( autoMJob )
 		return lngPack.i18n ( "Text~Comp~Surveying" );
 	else if ( ClientMoveJob )
 		return lngPack.i18n ( "Text~Comp~Moving" );
@@ -998,14 +1005,7 @@ string cVehicle::getStatusStr ()
 			sTmp += " +" + iToStr ( (int)CommandoRank );
 		return sTmp;
 	}
-	else if ( turnsDisabled > 0 )
-	{
-		string sText;
-		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
-		sText += iToStr ( turnsDisabled ) + ")";
-		return sText;
-	}
-
+	
 	return lngPack.i18n ( "Text~Comp~Waits" );
 }
 

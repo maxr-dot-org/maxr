@@ -164,6 +164,14 @@ cBuilding::~cBuilding ()
 //----------------------------------------------------
 string cBuilding::getStatusStr ()
 {
+	if (turnsDisabled > 0)
+	{
+		string sText;
+		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
+		sText += iToStr (turnsDisabled) + ")";
+		return sText.c_str();
+	}
+	
 	if ( IsWorking )
 	{
 		// Factory:
@@ -234,13 +242,6 @@ string cBuilding::getStatusStr ()
 		return lngPack.i18n ( "Text~Comp~Working" );
 	}
 
-	if (turnsDisabled > 0)
-	{
-		string sText;
-		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
-		sText += iToStr (turnsDisabled) + ")";
-		return sText.c_str();
-	}
 	if ( sentryActive )
 		return lngPack.i18n ( "Text~Comp~Sentry" );
 	else if ( manualFireActive )
