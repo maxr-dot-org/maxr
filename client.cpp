@@ -776,6 +776,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			AddedVehicle->dir = message->popInt16();
 			AddedVehicle->iID = message->popInt16();
+			AddedVehicle->data.version = message->popInt16();
 
 			addUnit ( iPosX, iPosY, AddedVehicle, false );
 		}
@@ -798,6 +799,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			AddedBuilding = Player->addBuilding( iPosX, iPosY, UnitID.getBuilding(Player) );
 			AddedBuilding->iID = message->popInt16();
+			AddedBuilding->data.version = message->popInt16();
 			addUnit ( iPosX, iPosY, AddedBuilding, false );
 
 			if ( AddedBuilding->data.connectsToBase )

@@ -95,6 +95,7 @@ void sendAddEnemyUnit (cUnit* unit, int iClient)
 {
 	cNetMessage* message = new cNetMessage (unit->isBuilding () ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
 
+	message->pushInt16 (unit->data.version);
 	message->pushInt16 (unit->iID);
 	if (unit->isVehicle ())
 		message->pushInt16 (unit->dir);
