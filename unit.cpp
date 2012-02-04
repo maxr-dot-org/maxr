@@ -741,7 +741,7 @@ void cUnit::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			sendChangeManualFireStatus (iID, true);
+			sendChangeManualFireStatus (iID, isVehicle ());
 			return;
 		}
 		nr++;
@@ -754,7 +754,7 @@ void cUnit::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			sendChangeSentry (iID, true);
+			sendChangeSentry (iID, isVehicle () );
 			return;
 		}
 		nr++;
