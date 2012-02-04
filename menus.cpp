@@ -515,6 +515,13 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 }
 
 //------------------------------------------------------------------------------
+cMenu::~cMenu() 
+{
+	if (ActiveMenu == this) 
+		ActiveMenu = NULL;
+}
+
+//------------------------------------------------------------------------------
 void cMenu::recalcPosition( bool resetItemPositions )
 {
 	SDL_Rect oldPosition = position;

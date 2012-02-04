@@ -292,7 +292,7 @@ public:
 	/**
 	* virtual destructor
 	*/
-	virtual ~cMenu() {}
+	virtual ~cMenu();
 	/**
 	 * redraws the menu background, the cursor and all menuitems.
 	 *@author alzi
