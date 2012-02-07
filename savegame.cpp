@@ -673,10 +673,15 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 		{
 			int playerNum;
 			element->Attribute ( "nr", &playerNum );
+			int wasDetectedThisTurnAttrib = 1;
+			if (element->Attribute ("ThisTurn", &wasDetectedThisTurnAttrib) == 0)
+				wasDetectedThisTurnAttrib = 1; // for old savegames, that don't have this attribute, set it to "detected this turn"
+			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
 			cPlayer *Player = Server->getPlayerFromNumber ( playerNum );
 			if ( Player )
 			{
-				vehicle->setDetectedByPlayer ( Player );
+				vehicle->setDetectedByPlayer ( Player, wasDetectedThisTurn );
+				
 			}
 			playerNodeNum++;
 		}
@@ -1445,7 +1450,9 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
 		for ( unsigned int i = 0; i < Vehicle->detectedByPlayerList.Size(); i++ )
 		{
-			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), "nr", iToStr ( Vehicle->detectedByPlayerList[i]->Nr ) );
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), 
+								 "nr", iToStr ( Vehicle->detectedByPlayerList[i]->Nr ),
+								 "ThisTurn", Vehicle->wasDetectedInThisTurnByPlayer (Vehicle->detectedByPlayerList[i]) ? "1" : "0" );
 		}
 	}
 

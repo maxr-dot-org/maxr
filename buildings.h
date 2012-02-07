@@ -193,13 +193,13 @@ public:
 	*/
 	bool isDetectedByPlayer( const cPlayer* player );
 	/**
-	* adds a player to the DetecedByPlayerList
+	* removes a player from the detectedByPlayerList
 	*/
 	void resetDetectedByPlayer( cPlayer* player );
 	/**
-	* removes a player from the detectedByPlayerList
+	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer( cPlayer* player );
+	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true );
 	/**
 	* - checks whether the building has been detected by an other unit
 	* the detection maps have to be up to date, when calling this funktion

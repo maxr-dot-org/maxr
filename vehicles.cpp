@@ -112,6 +112,8 @@ cVehicle::~cVehicle ()
 	if ( sentryActive )
 		owner->deleteSentryVehicle ( this );
 
+	detectedInThisTurnByPlayerList.Reserve (0);
+	
 	if ( IsLocked )
 	{
 		cPlayer *p;
@@ -2044,7 +2046,7 @@ bool cVehicle::isDetectedByPlayer( const cPlayer* player )
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setDetectedByPlayer( cPlayer* player )
+void cVehicle::setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList )
 {
 	bool wasDetected = ( detectedByPlayerList.Size() > 0 );
 
@@ -2052,6 +2054,9 @@ void cVehicle::setDetectedByPlayer( cPlayer* player )
 		detectedByPlayerList.Add( player );
 
 	if ( !wasDetected ) sendDetectionState( this );
+	
+	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
+		detectedInThisTurnByPlayerList.Add (player);
 }
 
 //-----------------------------------------------------------------------------
@@ -2063,40 +2068,100 @@ void cVehicle::resetDetectedByPlayer( cPlayer* player )
 	{
 		if ( detectedByPlayerList[i] == player ) detectedByPlayerList.Delete(i);
 	}
-
+	for ( unsigned int i = 0; i < detectedInThisTurnByPlayerList.Size(); i++ )
+	{
+		if ( detectedInThisTurnByPlayerList[i] == player ) detectedInThisTurnByPlayerList.Delete(i);
+	}
+	
 	if ( wasDetected && detectedByPlayerList.Size() == 0 ) sendDetectionState( this );
+}
+
+//-----------------------------------------------------------------------------
+bool cVehicle::wasDetectedInThisTurnByPlayer (cPlayer* player) const
+{
+	return detectedInThisTurnByPlayerList.Contains (player);
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::clearDetectedInThisTurnPlayerList ()
+{
+	detectedInThisTurnByPlayerList.Reserve (0);
+}
+
+//-----------------------------------------------------------------------------
+void cVehicle::tryResetOfDetectionStateAfterMove ()
+{
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
+	
+	bool foundPlayerToReset = true;
+	while (foundPlayerToReset)
+	{
+		foundPlayerToReset = false;
+		for (unsigned int i = 0; i < detectedByPlayerList.Size (); i++)
+		{
+			if (playersThatDetectThisVehicle.Contains (detectedByPlayerList[i]) == false
+				&& detectedInThisTurnByPlayerList.Contains (detectedByPlayerList[i]) == false)
+			{
+				resetDetectedByPlayer (detectedByPlayerList[i]);
+				foundPlayerToReset = true;
+				break;
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+cList<cPlayer*> cVehicle::calcDetectedByPlayer () const
+{
+	cList<cPlayer*> playersThatDetectThisVehicle;
+	//check whether the vehicle has been detected by others
+	if (data.isStealthOn != TERRAIN_NONE) // the vehicle is a stealth vehicle
+	{
+		int offset = PosX + PosY * Server->Map->size;
+		for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+		{
+			cPlayer* player = (*Server->PlayerList)[i];
+			if (player == owner)
+				continue;
+			bool isOnWater = Server->Map->isWater (PosX, PosY, true);
+			bool isOnCoast = Server->Map->isWater (PosX, PosY) && (isOnWater == false);
+			
+			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
+			//because the vehicle will drive on the bridge
+			cBuilding* building = Server->Map->fields[offset].getBaseBuilding ();
+			if (data.factorGround > 0 && building 
+				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
+					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
+					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE))
+			{
+				isOnWater = false;
+				isOnCoast = false;
+			}
+			
+			if ((data.isStealthOn & TERRAIN_GROUND) 
+				&& (player->DetectLandMap[offset] || ( !(data.isStealthOn & TERRAIN_COAST) && isOnCoast) 
+					|| isOnWater))
+			{
+				playersThatDetectThisVehicle.Add (player);
+			}
+			
+			if ((data.isStealthOn & TERRAIN_SEA)
+				&& (player->DetectSeaMap[offset] || isOnWater == false))
+			{
+				playersThatDetectThisVehicle.Add (player);
+			}
+		}
+	}
+	return playersThatDetectThisVehicle;
 }
 
 //-----------------------------------------------------------------------------
 void cVehicle::makeDetection()
 {
 	//check whether the vehicle has been detected by others
-	if ( data.isStealthOn != TERRAIN_NONE )
-	{
-		int offset = PosX + PosY * Server->Map->size;
-		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-		{
-			cPlayer* player = (*Server->PlayerList)[i];
-			if ( player == owner ) continue;
-			bool water = Server->Map->isWater(PosX, PosY, true);
-			bool coast = Server->Map->isWater(PosX, PosY) && !water;
-
-			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
-			//because the vehicle will drive on the bridge
-			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
-			if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = coast = false;
-
-			if ( (data.isStealthOn&TERRAIN_GROUND) && ( player->DetectLandMap[offset] || ( !(data.isStealthOn&TERRAIN_COAST) && coast ) || water ))
-			{
-				setDetectedByPlayer( player );
-			}
-
-			if ( (data.isStealthOn&TERRAIN_SEA) && ( player->DetectSeaMap[offset] || !water ))
-			{
-				setDetectedByPlayer( player );
-			}
-		}
-	}
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
+	for (unsigned int i = 0; i < playersThatDetectThisVehicle.Size (); i++)
+		setDetectedByPlayer (playersThatDetectThisVehicle[i]);	
 
 	//detect other units
 	if ( data.canDetectStealthOn )

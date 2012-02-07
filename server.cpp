@@ -2688,7 +2688,7 @@ void cServer::makeTurnEnd ()
 		cVehicle* vehicle = player->VehicleList;
 		while ( vehicle )
 		{
-			while ( vehicle->detectedByPlayerList.Size() ) vehicle->resetDetectedByPlayer(vehicle->detectedByPlayerList[0]);
+			vehicle->clearDetectedInThisTurnPlayerList ();
 			vehicle->makeDetection();
 			vehicle = (cVehicle*)vehicle->next;
 		}

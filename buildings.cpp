@@ -1764,7 +1764,7 @@ bool cBuilding::isDetectedByPlayer( const cPlayer* player )
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::setDetectedByPlayer( cPlayer* player )
+void cBuilding::setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList )
 {
 	if (!isDetectedByPlayer( player ))
 		detectedByPlayerList.Add( player );

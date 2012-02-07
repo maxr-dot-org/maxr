@@ -73,7 +73,7 @@ public:
 	void drawHealthBar () const;
 	void rotateTo (int newDir);
 
-	virtual void setDetectedByPlayer (cPlayer* player) {}
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
 	
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit

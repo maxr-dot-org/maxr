@@ -700,6 +700,8 @@ bool cServerMoveJob::checkMove()
 				Vehicle->resetDetectedByPlayer( Vehicle->detectedByPlayerList[0] );
 		}
 	}
+	// resetDetected for players, that can't _detect_ the unit anymore and if the unit was not in the detected area of that player in this turn, too
+	Vehicle->tryResetOfDetectionStateAfterMove ();
 
 	// send move command to all players who can see the unit
 	sendNextMove ( Vehicle, MJOB_OK );

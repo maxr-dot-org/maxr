@@ -225,13 +225,13 @@ public:
 	*/
 	bool isDetectedByPlayer( const cPlayer* player );
 	/**
-	* adds a player to the DetecedByPlayerList
+	* removes a player from the detectedByPlayerList
 	*/
 	void resetDetectedByPlayer( cPlayer* player );
 	/**
-	* removes a player from the detectedByPlayerList
+	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer( cPlayer* player );
+	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true );
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit
@@ -239,6 +239,13 @@ public:
 	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
 	void makeDetection();
+	
+	/** After a movement the detection state of a unit might be reset, if it was not detected in _this_ turn. */
+	void tryResetOfDetectionStateAfterMove ();
+	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
+	void clearDetectedInThisTurnPlayerList ();
+	bool wasDetectedInThisTurnByPlayer (cPlayer* player) const;
+	
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
 
 	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
@@ -271,6 +278,9 @@ private:
 	bool isOtherUnitOffendedByThis (cUnit* otherUnit) const;
 	bool doReactionFire (cPlayer* player) const;
 	bool doReactionFireForUnit (cUnit* opponentUnit) const;
+	
+	cList<cPlayer*> calcDetectedByPlayer () const; ///< helper method that returns a list of all players, that can detect this unit
+	cList<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
 	
 	//-----------------------------------------------------------------------------
 protected:
