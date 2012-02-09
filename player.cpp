@@ -364,7 +364,6 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 			{
 				SentriesAir.Delete ( i );
 				delete ptr;
-				break;
 			}
 		}
 		refreshSentryAir();
@@ -378,7 +377,6 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 			{
 				SentriesGround.Delete ( i );
 				delete ptr;
-				break;
 			}
 		}
 		refreshSentryGround();
