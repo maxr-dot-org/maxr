@@ -42,12 +42,18 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 
 	water = Client->Map->isWater(vehicle->PosX, vehicle->PosY ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
 
-	bool water = Client->Map->isWater(vehicle->PosX, vehicle->PosY);
+	bool isOnWaterAndNotCoast = Client->Map->isWater(vehicle->PosX, vehicle->PosY, true);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-	if ( vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
-	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && water && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+	if ( vehicle->data.factorGround > 0 && building 
+		&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
+			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
+			|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) 
+	{
+		isOnWaterAndNotCoast = false;
+	}
+	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
 		stealth = true;
 	else
 		stealth = false;
@@ -204,9 +210,17 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		//check the stealth flag
 		bool stealth = false;
 
+		bool isOnWaterAndNotCoast = Client->Map->isWater (vehicle->PosX, vehicle->PosY, true);
 		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-		if ( vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
-		if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && water && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+		if ( vehicle->data.factorGround > 0 && building 
+			&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
+				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
+				|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
+		{
+			isOnWaterAndNotCoast = false;
+		}
+		
+		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
 			stealth = true;
 
 		if ( entry.stealth != stealth ) continue;
