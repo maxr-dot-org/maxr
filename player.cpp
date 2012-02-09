@@ -357,7 +357,7 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 	sSentry *ptr;
 	if ( v->data.canAttack & TERRAIN_AIR )
 	{
-		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
+		for ( int i = SentriesAir.Size(); i >= 0 ; i-- )
 		{
 			ptr = SentriesAir[i];
 			if ( ptr->v == v )
@@ -371,7 +371,7 @@ void cPlayer::deleteSentryVehicle ( cVehicle *v )
 	}
 	else if ( (v->data.canAttack & TERRAIN_GROUND) || (v->data.canAttack & TERRAIN_SEA) )
 	{
-		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
+		for ( int i = SentriesGround.Size(); i >= 0 ; i-- )
 		{
 			ptr = SentriesGround[i];
 			if ( ptr->v == v )
@@ -391,28 +391,26 @@ void cPlayer::deleteSentryBuilding ( cBuilding *b )
 	sSentry *ptr;
 	if ( b->data.canAttack & TERRAIN_AIR )
 	{
-		for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
+		for ( int i = SentriesAir.Size(); i >= 0 ; i-- )
 		{
 			ptr = SentriesAir[i];
 			if ( ptr->b == b )
 			{
 				SentriesAir.Delete ( i );
 				delete ptr;
-				break;
 			}
 		}
 		refreshSentryAir();
 	}
 	if ( (b->data.canAttack & TERRAIN_GROUND) || (b->data.canAttack & TERRAIN_SEA) )
 	{
-		for ( unsigned int i = 0; i < SentriesGround.Size(); i++ )
+		for ( int i = SentriesGround.Size(); i >= 0 ; i-- )
 		{
 			ptr = SentriesGround[i];
 			if ( ptr->b == b )
 			{
 				SentriesGround.Delete ( i );
 				delete ptr;
-				break;
 			}
 		}
 		refreshSentryGround();
