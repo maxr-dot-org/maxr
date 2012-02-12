@@ -16,6 +16,8 @@ template<typename T> class cList
 
 		~cList() { Reserve(0); }
 
+		cList( const cList& list);
+
 		size_t Size() const { return size_; }
 
 		T&       Back()       { return v_[size_ - 1]; }
@@ -44,6 +46,16 @@ template<typename T> class cList
 		size_t size_;
 };
 
+template<typename T>
+cList<T>::cList( const cList& list) :
+	capacity_(list.capacity_),
+	size_(list.size_)
+{
+	v_ = new T[list.capacity_];
+	for ( size_t i = 0; i < size_; i++ )
+		new (&v_[i]) T(list.v_[i]);
+}
+	
 
 template<typename T> void cList<T>::Add(T const& e)
 {
