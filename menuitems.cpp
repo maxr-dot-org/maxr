@@ -110,6 +110,7 @@ cMenuItem::cMenuItem ( int x, int y )
 	active = false;
 
 	click = NULL;
+	rightClick = NULL;
 	release = NULL;
 	hoverOn = NULL;
 	hoverAway = NULL;
