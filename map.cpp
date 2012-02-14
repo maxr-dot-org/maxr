@@ -684,6 +684,8 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y, int h
 		{
 			if ( planes[i] == vehicle ) planes.Delete(i);
 		}
+		if (height > (int)fields[newOffset].planes.Size()) 
+			height = fields[newOffset].planes.Size();
 		fields[newOffset].planes.Insert(height, vehicle );
 	}
 	else
