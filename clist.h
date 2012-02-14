@@ -17,6 +17,7 @@ template<typename T> class cList
 		~cList() { Reserve(0); }
 
 		cList( const cList& list);
+		cList& operator=( const cList& list);
 
 		size_t Size() const { return size_; }
 
@@ -54,6 +55,23 @@ cList<T>::cList( const cList& list) :
 	v_ = new T[list.capacity_];
 	for ( size_t i = 0; i < size_; i++ )
 		new (&v_[i]) T(list.v_[i]);
+}
+
+template<typename T>
+cList<T>& cList<T>::operator=( const cList& list)
+{
+	for ( size_t i = 0; i < size_; i++ )
+		v_[i].~T();
+	delete[] v_;
+
+	capacity_ = list.capacity_;
+	size_ = list.size_;
+
+	v_ = new T[capacity_];
+	for ( size_t i = 0; i < size_; i++ )
+		new (&v_[i]) T(list.v_[i]);
+
+	return *this;
 }
 	
 
