@@ -138,25 +138,6 @@ cBuilding::~cBuilding ()
 			p->DeleteLock ( this );
 		}
 	}
-	if ( Server )
-	{
-		for (unsigned int i = 0; i < Server->AJobs.Size (); i++)
-		{
-			if (Server->AJobs[i]->unit == this)
-				Server->AJobs[i]->unit = 0;
-		}
-	}
-	if ( Client )
-	{
-		for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++ )
-		{
-			if ( Client->attackJobs[i]->building == this ) Client->attackJobs[i]->building = NULL;
-		}
-	}
-	if ( Client && Client->gameGUI.getSelBuilding() == this )
-	{
-		Client->gameGUI.deselectUnit();
-	}
 }
 
 //----------------------------------------------------

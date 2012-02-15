@@ -98,7 +98,6 @@ cVehicle::~cVehicle ()
 	{
 		ClientMoveJob->release();
 		ClientMoveJob->Vehicle = NULL;
-		//if ( ClientMoveJob->endMoveAction ) ClientMoveJob->endMoveAction->handleDelVehicle ( this );
 	}
 	if ( ServerMoveJob )
 	{
@@ -124,26 +123,6 @@ cVehicle::~cVehicle ()
 			p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
-	}
-	if ( Server )
-	{
-		for (unsigned int i = 0; i < Server->AJobs.Size (); i++)
-		{
-			if (Server->AJobs[i]->unit == this) 
-				Server->AJobs[i]->unit = 0;
-		}
-	}
-	if ( Client )
-	{
-		for ( unsigned int i = 0; i < Client->attackJobs.Size(); i++ )
-		{
-			if ( Client->attackJobs[i]->vehicle == this ) Client->attackJobs[i]->vehicle = NULL;
-		}
-	}
-
-	if ( Client && Client->gameGUI.getSelVehicle() == this )
-	{
-		Client->gameGUI.deselectUnit();
 	}
 }
 

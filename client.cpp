@@ -2216,6 +2216,11 @@ void cClient::deleteUnit( cBuilding *Building )
 		}
 	}
 
+	if ( gameGUI.getSelBuilding() == Building )
+	{
+		gameGUI.deselectUnit();
+	}
+
 	if ( Building->owner == ActivePlayer )
 		Building->owner->base.deleteBuilding(Building, false );
 
@@ -2261,6 +2266,10 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 		}
 	}
 
+	if ( gameGUI.getSelVehicle() == Vehicle )
+	{
+		gameGUI.deselectUnit();
+	}
 	cList<cVehicle*> &selGroup = *Client->gameGUI.getSelVehiclesGroup();
 	for ( size_t i = 0; i < selGroup.Size(); i++)
 	{
