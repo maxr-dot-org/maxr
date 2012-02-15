@@ -461,6 +461,7 @@ cServerMoveJob::cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, c
 		Vehicle->ServerMoveJob->release();
 		Vehicle->moving = false;
 		Vehicle->MoveJobActive = false;
+		Vehicle->ServerMoveJob->Vehicle == NULL;
 	}
 	Vehicle->ServerMoveJob = this;
 }
