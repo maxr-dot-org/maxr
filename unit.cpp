@@ -1078,7 +1078,9 @@ void cUnit::drawStatus () const
 		{
 			if (data.shotsCur) 
 				dest.x -= Client->gameGUI.getTileSize () / 4;
-			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &dest);
+
+			SDL_Rect destCopy = dest;
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
 		}
 		
 		dest.x = getScreenPosX () + Client->gameGUI.getTileSize () / 2 - 4;
