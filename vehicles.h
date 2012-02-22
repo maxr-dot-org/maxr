@@ -301,7 +301,6 @@ protected:
 	virtual void executeActivateStoredVehiclesCommand ();
 	
 	virtual sUnitData* getUpgradedUnitData () const;
-	virtual bool treatAsBigForMenuDisplay () const;
 };
 
 #endif

@@ -228,7 +228,7 @@ SDL_Rect cUnit::getMenuSize () const
 	dest.w = 42;
 	size = Client->gameGUI.getTileSize ();
 	
-	if (data.isBig || treatAsBigForMenuDisplay ())
+	if (data.isBig)
 		size *= 2;
 	
 	if (dest.x + size + 42 >= Video.getResolutionX () - 12)

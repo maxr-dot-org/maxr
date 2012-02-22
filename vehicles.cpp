@@ -2314,12 +2314,6 @@ sUnitData* cVehicle::getUpgradedUnitData () const
 	return &(owner->VehicleData[typ->nr]);
 }
 
-//-----------------------------------------------------------------------------
-bool cVehicle::treatAsBigForMenuDisplay () const
-{
-	return (IsBuilding && BuildingTyp.getUnitDataOriginalVersion ()->isBig);
-}
-
 bool cVehicle::canLand( const cMap& map) const
 {
 	if ( data.factorAir == 0 )  return true;  //true, because normal vehicles are always "landed"

@@ -141,7 +141,6 @@ protected:
 	virtual void executeSelfDestroyCommand () {}
 	
 	virtual sUnitData* getUpgradedUnitData () const = 0;
-	virtual bool treatAsBigForMenuDisplay () const { return false; }
 };
 
 #endif
