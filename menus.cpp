@@ -3436,7 +3436,7 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 	case MU_MSG_IDENTIFIKATION:
 		{
 			int playerNr = message->popInt16();
-			if ( playerNr < 0 || playerNr > (int)players.Size() ) break;
+			if ( playerNr < 0 || playerNr > (int)players.Size()-1 ) break;
 			sMenuPlayer *player = players[playerNr];
 
 			bool freshJoined = ( player->name.compare ( UNIDENTIFIED_PLAYER_NAME ) == 0 );
