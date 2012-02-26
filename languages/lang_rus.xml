@@ -8,9 +8,9 @@
 <MAX_Language_File lang="rus" encoding="utf8" direction="left-to-right">
 	<Header>
 		<Author name="jazz">
-			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2010-07-18 22:25"/>
+			<Editor name="Valeriy Malov jazzvoid@gmail.com" time="2012-02-26 17:34"/>
 		</Author>
-		<Game_Version time="2010-07-18 22:25"/>
+		<Game_Version time="2012-02-26 17:34"/>
 	</Header>
 	<Text>
 		<Main>
@@ -49,8 +49,8 @@
 			<Resource ENG="Resource density" localized="Ресурсы"/>
 			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
 			<Game_Type ENG="Game Type" localized="Тип игры"/>
-			<Player_Name ENG="Playername:" localized="Имя игрока"/>
-			<Player_Select ENG="Playeroptions" localized="Выбор игроков"/>
+			<Player_Name ENG="Player name:" localized="Имя игрока"/>
+			<Player_Select ENG="Player options" localized="Выбор игроков"/>
 			<Team ENG="Team" localized="Команда"/>
 			<Human ENG="Human" localized="Человек"/>
 			<Computer ENG="Computer" localized="Компьютер"/>
@@ -78,7 +78,7 @@
 		</Title>
 		<Button>
 			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
-			<Single_Player ENG="Singleplayer (NO AI)" localized="Одиночная игра (БЕЗ ИИ)"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Одиночная игра (Без ИИ)"/>
 			<Multi_Player ENG="Multiplayer" localized="Мультиплеер"/>
 			<Map_Editor ENG="Mapeditor (*)" localized="Редактор карт"/>
 			<Credits ENG="Credits (*)" localized="Разработчики"/>
@@ -131,6 +131,7 @@
 			<Build ENG="Build" localized="Строить"/>
 			<Transfer ENG="X-fer" localized="Трансф."/>
 			<Sentry ENG="Sentry" localized="Часовой"/>
+			<Manual ENG="Manual" localized="Ручное упр."/>
 			<Done ENG="Done" localized="Готово"/>
 			<Auto ENG="Auto" localized="Авто"/>
 			<Stop ENG="Stop" localized="Стоп"/>
@@ -262,13 +263,14 @@
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Не могу загрузить карту %s. Вы не готовы."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/>
 			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
+			<MapDL_Finished ENG="Map download finished." localized="Загрузка карты завершена."/>
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized="Отправка карты к %s завершена."/>
 			<MapDL_Percent ENG="Map download: %s%" localized="Загрузка карты: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Отправляю карту %s..."/>
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Карта не установлена: Запрашиваю загрузку"/>
 			<MapDL_Download ENG="map %s from server." localized="карты %s с сервера"/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Карта не установлена: Нет права на загрузку"/>
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/>
-			
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack" localized="Атака"/>
@@ -285,6 +287,7 @@
 			<Usage ENG="Usage" localized="Исп."/>
 		</Vehicles>
 		<Comp>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Возведение построек по заданному маршруту не может быть продолжено."/>
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."/>
 			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."/>
 			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Недостаточно топлива, генератор выключен."/>
@@ -333,12 +336,13 @@
 			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Точка возведения заблокирована или недостаточно ресурсов"/>
 			<Moving ENG="moving" localized="перемещается"/>
 			<Sentry ENG="on sentry" localized="на карауле"/>
+			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
 			<Clearing ENG="Clearing" localized="убирает"/>
 			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
-			<Laying ENG="placing mines" localized="устанавливает мины"/>	
+			<Laying ENG="placing mines" localized="устанавливает мины"/>
 			<Greenhorn ENG="Greenhorn" localized="Молокосос"/>
-		        <Average ENG="Average" localized="Среднячок"/>
+			<Average ENG="Average" localized="Среднячок"/>
 			<Veteran ENG="Veteran" localized="Ветеран"/>
 			<Expert ENG="Expert" localized="Эксперт"/>
 			<Elite ENG="Elite" localized="Элита"/>
@@ -361,6 +365,8 @@
 			<NoLimit ENG="Fight to the death!" localized="Биться насмерть!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Мнгновенная гибель: первый игрок, набравший очки, побеждает!"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Враг захватил %s"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
