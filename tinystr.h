@@ -1,6 +1,5 @@
 /*
 www.sourceforge.net/projects/tinyxml
-Original file by Yves Berquin.
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any
@@ -22,17 +21,6 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-/*
- * THIS FILE WAS ALTERED BY Tyge Lovset, 7. April 2005.
- *
- * - completely rewritten. compact, clean, and fast implementation.
- * - sizeof(TiXmlString) = pointer size (4 bytes on 32-bit systems)
- * - fixed reserve() to work as per specification.
- * - fixed buggy compares operator==(), operator<(), and operator>()
- * - fixed operator+=() to take a const ref argument, following spec.
- * - added "copy" constructor with length, and most compare operators.
- * - added swap(), clear(), size(), capacity(), operator+().
- */
 
 #ifndef TIXML_USE_STL
 
@@ -68,7 +56,7 @@ class TiXmlString
 {
   public :
 	// The size type used
-	typedef size_t size_type;
+  	typedef size_t size_type;
 
 	// Error value for find primitive
 	static const size_type npos; // = -1;
@@ -106,13 +94,11 @@ class TiXmlString
 		quit();
 	}
 
-	// = operator
 	TiXmlString& operator = (const char * copy)
 	{
 		return assign( copy, (size_type)strlen(copy));
 	}
 
-	// = operator
 	TiXmlString& operator = (const TiXmlString & copy)
 	{
 		return assign(copy.start(), copy.length());
@@ -238,7 +224,7 @@ class TiXmlString
 			// to the normal allocation, although use an 'int' for systems
 			// that are overly picky about structure alignment.
 			const size_type bytesNeeded = sizeof(Rep) + cap;
-			const size_type intsNeeded = ( bytesNeeded + sizeof(int) - 1 ) / sizeof( int );
+			const size_type intsNeeded = ( bytesNeeded + sizeof(int) - 1 ) / sizeof( int ); 
 			rep_ = reinterpret_cast<Rep*>( new int[ intsNeeded ] );
 
 			rep_->str[ rep_->size = sz ] = '\0';
