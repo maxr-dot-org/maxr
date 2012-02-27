@@ -34,7 +34,8 @@
 using namespace std;
 
 //--------------------------------------------------------------------------
-cSavegame::cSavegame ( int number )
+cSavegame::cSavegame ( int number ):
+	SaveFile()
 {
 	this->number = number;
 	if ( number > 100 ) return;
@@ -44,11 +45,9 @@ cSavegame::cSavegame ( int number )
 //--------------------------------------------------------------------------
 int cSavegame::save( string saveName )
 {
-	SaveFile = new TiXmlDocument;
-
 	TiXmlElement *rootnode = new TiXmlElement ( "MAXR_SAVE_FILE" );
 	rootnode->SetAttribute ( "version", (SAVE_FORMAT_VERSION).c_str() );
-	SaveFile->LinkEndChild ( rootnode );
+	SaveFile.LinkEndChild ( rootnode );
 
 	writeHeader( saveName );
 	writeGameInfo ();
@@ -101,23 +100,22 @@ int cSavegame::save( string saveName )
 		else Log.write("Can't create save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
 
-	SaveFile->SaveFile( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
+	SaveFile.SaveFile( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
 
-	delete SaveFile;
 	return 1;
 }
 
 //--------------------------------------------------------------------------
 int cSavegame::load()
 {
-	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) )
+
+	if ( !SaveFile.LoadFile ( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) )
 	{
 		return 0;
 	}
-	if ( !SaveFile->RootElement() ) return 0;
+	if ( !SaveFile.RootElement() ) return 0;
 
-	version = SaveFile->RootElement()->Attribute ( "version" );
+	version = SaveFile.RootElement()->Attribute ( "version" );
 	if ( version.compare ( SAVE_FORMAT_VERSION ) )
 	{
 		Log.write ( "Savefile-version differs from the one supported by the game!", cLog::eLOG_TYPE_WARNING );
@@ -131,7 +129,7 @@ int cSavegame::load()
 	}
 	else
 	{
-		TiXmlElement *unitValuesNode = SaveFile->RootElement()->FirstChildElement( "UnitValues" );
+		TiXmlElement *unitValuesNode = SaveFile.RootElement()->FirstChildElement( "UnitValues" );
 		if ( unitValuesNode != NULL )
 		{
 			int unitnum = 0;
@@ -166,8 +164,6 @@ int cSavegame::load()
 	loadCasualties ();
 
 	recalcSubbases();
-
-	delete SaveFile;
 	return 1;
 }
 
@@ -199,11 +195,17 @@ void cSavegame::recalcSubbases()
 //--------------------------------------------------------------------------
 void cSavegame::loadHeader( string *name, string *type, string *time )
 {
-	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
-	if ( !SaveFile->RootElement() ) return;
+	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
+	if ( fileName != SaveFile.Value() )
+	{
+		if ( !SaveFile.LoadFile (fileName.c_str ()))
+		{
+			return;
+		}
+	}
+	if ( !SaveFile.RootElement() ) return;
 
-	TiXmlElement *headerNode = SaveFile->RootElement()->FirstChildElement( "Header" );
+	TiXmlElement *headerNode = SaveFile.RootElement()->FirstChildElement( "Header" );
 
 	if ( name ) *name = headerNode->FirstChildElement( "Name" )->Attribute ( "string" );
 	if ( type ) *type = headerNode->FirstChildElement( "Type" )->Attribute ( "string" );
@@ -213,7 +215,7 @@ void cSavegame::loadHeader( string *name, string *type, string *time )
 //--------------------------------------------------------------------------
 string cSavegame::getMapName()
 {
-	TiXmlElement *mapNode = SaveFile->RootElement()->FirstChildElement( "Map" );
+	TiXmlElement *mapNode = SaveFile.RootElement()->FirstChildElement( "Map" );
 	if ( mapNode != NULL ) return mapNode->FirstChildElement( "Name" )->Attribute ( "string" );
 	else return "";
 }
@@ -222,7 +224,7 @@ string cSavegame::getMapName()
 string cSavegame::getPlayerNames()
 {
 	string playernames = "";
-	TiXmlElement *playersNode = SaveFile->RootElement()->FirstChildElement( "Players" );
+	TiXmlElement *playersNode = SaveFile.RootElement()->FirstChildElement( "Players" );
 	if ( playersNode != NULL )
 	{
 		int playernum = 0;
@@ -240,7 +242,7 @@ string cSavegame::getPlayerNames()
 //--------------------------------------------------------------------------
 void cSavegame::loadGameInfo()
 {
-	TiXmlElement *gameInfoNode = SaveFile->RootElement()->FirstChildElement( "Game" );
+	TiXmlElement *gameInfoNode = SaveFile.RootElement()->FirstChildElement( "Game" );
 	if ( !gameInfoNode ) return;
 
 	gameInfoNode->FirstChildElement( "Turn" )->Attribute ( "num", &Server->iTurn );
@@ -262,7 +264,7 @@ void cSavegame::loadGameInfo()
 //--------------------------------------------------------------------------
 cMap *cSavegame::loadMap()
 {
-	TiXmlElement *mapNode = SaveFile->RootElement()->FirstChildElement( "Map" );
+	TiXmlElement *mapNode = SaveFile.RootElement()->FirstChildElement( "Map" );
 	if ( mapNode != NULL )
 	{
 		cMap *map = new cMap;
@@ -284,7 +286,7 @@ cList<cPlayer*> * cSavegame::loadPlayers( cMap *map )
 {
 	cList<cPlayer *> *PlayerList = new cList<cPlayer *>;
 
-	TiXmlElement *playersNode = SaveFile->RootElement()->FirstChildElement( "Players" );
+	TiXmlElement *playersNode = SaveFile.RootElement()->FirstChildElement( "Players" );
 	if ( playersNode != NULL )
 	{
 		int playernum = 0;
@@ -533,7 +535,7 @@ void cSavegame::loadCasualties ()
 	if (Server == 0 || Server->getCasualtiesTracker () == 0)
 		return;
 
-	TiXmlElement* casualtiesNode = SaveFile->RootElement ()->FirstChildElement ("Casualties");
+	TiXmlElement* casualtiesNode = SaveFile.RootElement ()->FirstChildElement ("Casualties");
 	if (casualtiesNode == 0)
 		return;
 	
@@ -545,7 +547,7 @@ void cSavegame::loadUnits ()
 {
 	if ( !Server ) return;
 
-	TiXmlElement *unitsNode = SaveFile->RootElement()->FirstChildElement( "Units" );
+	TiXmlElement *unitsNode = SaveFile.RootElement()->FirstChildElement( "Units" );
 	if ( unitsNode != NULL )
 	{
 		int unitnum = 0;
@@ -1203,7 +1205,7 @@ void cSavegame::convertStringToScanMap ( string str, char *data )
 //--------------------------------------------------------------------------
 void cSavegame::writeHeader( string saveName )
 {
-	TiXmlElement *headerNode = addMainElement ( SaveFile->RootElement(), "Header" );
+	TiXmlElement *headerNode = addMainElement ( SaveFile.RootElement(), "Header" );
 
 	addAttributeElement ( headerNode, "Game_Version", "string", PACKAGE_VERSION );
 	addAttributeElement ( headerNode, "Name", "string", saveName );
@@ -1232,7 +1234,7 @@ void cSavegame::writeHeader( string saveName )
 //--------------------------------------------------------------------------
 void cSavegame::writeGameInfo()
 {
-	TiXmlElement *gemeinfoNode = addMainElement ( SaveFile->RootElement(), "Game" );
+	TiXmlElement *gemeinfoNode = addMainElement ( SaveFile.RootElement(), "Game" );
 
 	addAttributeElement ( gemeinfoNode, "Turn", "num", iToStr ( Server->iTurn ) );
 	if ( Server->bHotSeat ) addAttributeElement ( gemeinfoNode, "Hotseat", "activeplayer", iToStr ( Server->iHotSeatPlayer ) );
@@ -1245,7 +1247,7 @@ void cSavegame::writeGameInfo()
 //--------------------------------------------------------------------------
 void cSavegame::writeMap( cMap *Map )
 {
-	TiXmlElement *mapNode = addMainElement ( SaveFile->RootElement(), "Map" );
+	TiXmlElement *mapNode = addMainElement ( SaveFile.RootElement(), "Map" );
 	addAttributeElement ( mapNode, "Name", "string", Map->MapName );
 	addAttributeElement ( mapNode, "Resources", "data", convertDataToString ( Map->Resources, Map->size*Map->size ) );
 }
@@ -1255,9 +1257,9 @@ void cSavegame::writePlayer( cPlayer *Player, int number )
 {
 	// generate players node if it doesn't exists
 	TiXmlElement *playersNode;
-	if ( !(playersNode = SaveFile->RootElement()->FirstChildElement ( "Players" )) )
+	if ( !(playersNode = SaveFile.RootElement()->FirstChildElement ( "Players" )) )
 	{
-		playersNode = addMainElement ( SaveFile->RootElement(), "Players" );
+		playersNode = addMainElement ( SaveFile.RootElement(), "Players" );
 	}
 
 	// add node for the player
@@ -1385,7 +1387,7 @@ void cSavegame::writeCasualties ()
 	if (Server == 0 || Server->getCasualtiesTracker () == 0)
 		return;
 	
-	TiXmlElement* casualtiesNode = addMainElement (SaveFile->RootElement (), "Casualties");
+	TiXmlElement* casualtiesNode = addMainElement (SaveFile.RootElement (), "Casualties");
 	Server->getCasualtiesTracker ()->storeToXML (casualtiesNode);
 }
 
@@ -1394,9 +1396,9 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 {
 	// add units node if it doesn't exists
 	TiXmlElement *unitsNode;
-	if ( !(unitsNode = SaveFile->RootElement()->FirstChildElement ( "Units" )) )
+	if ( !(unitsNode = SaveFile.RootElement()->FirstChildElement ( "Units" )) )
 	{
-		unitsNode = addMainElement ( SaveFile->RootElement(), "Units" );
+		unitsNode = addMainElement ( SaveFile.RootElement(), "Units" );
 		addAttributeElement ( unitsNode, "NextUnitID", "num", iToStr ( Server->iNextUnitID ) );
 	}
 
@@ -1471,9 +1473,9 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 {
 	// add units node if it doesn't exists
 	TiXmlElement *unitsNode;
-	if ( !(unitsNode = SaveFile->RootElement()->FirstChildElement ( "Units" )) )
+	if ( !(unitsNode = SaveFile.RootElement()->FirstChildElement ( "Units" )) )
 	{
-		unitsNode = addMainElement ( SaveFile->RootElement(), "Units" );
+		unitsNode = addMainElement ( SaveFile.RootElement(), "Units" );
 		addAttributeElement ( unitsNode, "NextUnitID", "num", iToStr ( Server->iNextUnitID ) );
 	}
 
@@ -1549,9 +1551,9 @@ void cSavegame::writeRubble ( cBuilding *Building, int rubblenum )
 {
 	// add units node if it doesn't exists
 	TiXmlElement *unitsNode;
-	if ( !(unitsNode = SaveFile->RootElement()->FirstChildElement ( "Units" )) )
+	if ( !(unitsNode = SaveFile.RootElement()->FirstChildElement ( "Units" )) )
 	{
-		unitsNode = addMainElement ( SaveFile->RootElement(), "Units" );
+		unitsNode = addMainElement ( SaveFile.RootElement(), "Units" );
 		addAttributeElement ( unitsNode, "NextUnitID", "num", iToStr ( Server->iNextUnitID ) );
 	}
 
@@ -1597,9 +1599,9 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 {
 	// add the main node if it doesn't exists
 	TiXmlElement *unitValuesNode;
-	if ( !(unitValuesNode = SaveFile->RootElement()->FirstChildElement ( "UnitValues" )) )
+	if ( !(unitValuesNode = SaveFile.RootElement()->FirstChildElement ( "UnitValues" )) )
 	{
-		unitValuesNode = addMainElement ( SaveFile->RootElement(), "UnitValues" );
+		unitValuesNode = addMainElement ( SaveFile.RootElement(), "UnitValues" );
 	}
 	// add the unit node
 	TiXmlElement *unitNode = addMainElement ( unitValuesNode, "UnitVal_" + iToStr( unitnum ) );
@@ -1691,12 +1693,11 @@ void cSavegame::writeStandardUnitValues ( sUnitData *Data, int unitnum )
 //--------------------------------------------------------------------------
 void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedReportMessage> &list, cPlayer *player )
 {
-	SaveFile = new TiXmlDocument ();
-	if ( !SaveFile->LoadFile ( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
-	if ( !SaveFile->RootElement() ) return;
+	if ( !SaveFile.LoadFile ( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() ) ) return;
+	if ( !SaveFile.RootElement() ) return;
 
 	// first get the players node
-	TiXmlElement *playersNode = SaveFile->RootElement()->FirstChildElement( "Players" );
+	TiXmlElement *playersNode = SaveFile.RootElement()->FirstChildElement( "Players" );
 	int playernum = 0;
 	TiXmlElement *playerNode = NULL;
 	do
@@ -1749,7 +1750,7 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 		else Log.write("Can't create save directory: "+cSettings::getInstance().getSavesPath(), cLog::eLOG_TYPE_ERROR);
 	}
 
-	SaveFile->SaveFile( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
+	SaveFile.SaveFile( ( cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml" ).c_str() );
 }
 
 //--------------------------------------------------------------------------

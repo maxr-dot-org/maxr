@@ -85,7 +85,7 @@ private:
 	/* the number of the savefile as string with 3 chars */
 	char numberstr[4];
 	/* the xml save document */
-	TiXmlDocument *SaveFile;
+	TiXmlDocument SaveFile;
 	/* the version of a loaded savegame */
 	std::string version;
 
