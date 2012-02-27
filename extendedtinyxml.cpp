@@ -127,7 +127,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 			return NULL;
 			break;
 		case ExTiXmlNode::eXML_COMMENT :
-			if ( pXmlNode->Type() == TiXmlNode::ELEMENT )
+			if ( pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT )
 			{
 				pXmlNode = pXmlNode->FirstChild();
 			}
@@ -137,7 +137,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 			}
 			do
 			{
-				if( pXmlNode->Type() == TiXmlNode::COMMENT )
+				if( pXmlNode->Type() == TiXmlNode::TINYXML_COMMENT )
 				{
 					rstrData =  pXmlNode->ToComment()->Value();
 					bDataFoundPossible = false; // Get only the first data !
@@ -150,7 +150,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 			}while( bDataFoundPossible );
 			break;
 		case ExTiXmlNode::eXML_TEXT :
-			if ( pXmlNode->Type() == TiXmlNode::ELEMENT )
+			if ( pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT )
 			{
 				pXmlNode = pXmlNode->FirstChild();
 			}
@@ -160,7 +160,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 			}
 			do
 			{
-				if( pXmlNode->Type() == TiXmlNode::TEXT )
+				if( pXmlNode->Type() == TiXmlNode::TINYXML_TEXT )
 				{
 					rstrData =  pXmlNode->ToText()->Value();
 					bDataFoundPossible = false; // Get only the first data !
@@ -195,7 +195,7 @@ ExTiXmlNode * ExTiXmlNode::XmlReadNodeData( std::string &rstrData, XML_NODE_TYPE
 	switch( eType )
 	{
 		case ExTiXmlNode::eXML_ATTRIBUTE :
-			if( pXmlNode->Type() != TiXmlNode::ELEMENT ) return NULL;
+			if( pXmlNode->Type() != TiXmlNode::TINYXML_ELEMENT ) return NULL;
 			pXmlElement = pXmlNode->ToElement();// FirstChildElement();
 			if( pXmlElement == NULL )
 			{
