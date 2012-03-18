@@ -563,19 +563,22 @@ void cMap::addBuilding( cBuilding* building, unsigned int offset )
 	{
 		i = 0;
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
-		fields[offset           ].buildings.Insert(i, building );
+		fields[offset].buildings.Insert(i, building );
 
+		offset += 1;
 		i = 0;
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
-		fields[offset + 1       ].buildings.Insert(i, building );
+		fields[offset].buildings.Insert(i, building );
 
+		offset += size;
 		i = 0;
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
-		fields[offset + size    ].buildings.Insert(i, building );
+		fields[offset].buildings.Insert(i, building );
 
+		offset -= 1;
 		i = 0;
 		while ( i < fields[offset].buildings.Size() && getMapLevel(fields[offset].buildings[i]) < mapLevel ) i++;
-		fields[offset + size + 1].buildings.Insert(i, building );
+		fields[offset].buildings.Insert(i, building );
 	}
 	else
 	{
