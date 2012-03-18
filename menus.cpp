@@ -276,12 +276,6 @@ void cGameDataContainer::runSavedGame( int player )
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
-	while ( clientPlayerList.Size() )
-	{
-		delete clientPlayerList[0];
-		clientPlayerList.Delete(0);
-	}
-
 	delete Client;
 	Client = NULL;
 	delete Server;
@@ -3436,7 +3430,11 @@ void cNetworkHostMenu::handleNetMessage( cNetMessage *message )
 	case MU_MSG_IDENTIFIKATION:
 		{
 			int playerNr = message->popInt16();
-			if ( playerNr < 0 || playerNr > (int)players.Size()-1 ) break;
+			if ( playerNr < 0 || playerNr >= (int)players.Size() )
+			{
+				sendPlayerList( &players );
+				break;
+			}
 			sMenuPlayer *player = players[playerNr];
 
 			bool freshJoined = ( player->name.compare ( UNIDENTIFIED_PLAYER_NAME ) == 0 );
