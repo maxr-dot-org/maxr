@@ -276,6 +276,12 @@ void cGameDataContainer::runSavedGame( int player )
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
+	while ( clientPlayerList.Size() )
+	{
+		delete clientPlayerList[0];
+		clientPlayerList.Delete(0);
+	}
+
 	delete Client;
 	Client = NULL;
 	delete Server;
