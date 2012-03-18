@@ -560,6 +560,10 @@ string cNetMessage::getTypeAsString()
 		return string("GAME_EV_VICTORY_CONDITIONS");
 	case GAME_EV_WAIT_FOR:
 		return string("GAME_EV_WAIT_FOR");
+	case GAME_EV_END_MOVE_ACTION_SERVER:
+		return string("GAME_EV_END_MOVE_ACTION_SERVER");
+	case GAME_EV_END_MOVE_ACTION:
+		return string("GAME_EV_END_MOVE_ACTION");
 	default:
 		return iToStr( iType );
 	}
