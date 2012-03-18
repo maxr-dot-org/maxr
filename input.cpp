@@ -41,7 +41,12 @@ cInput::cInput() :
 void cInput::inputkey ( SDL_KeyboardEvent &key )
 {
 	// give the key to the active menu
-	if ( ActiveMenu ) ActiveMenu->handleKeyInput ( key, getUTF16Char ( key.keysym.unicode ) );
+	// But do not send events to a menu, after an event triggered the termination
+	// the user wouldn't expects the menu to execute further events after klicking the exit button
+	if ( ActiveMenu && !ActiveMenu->exiting() )
+	{
+		ActiveMenu->handleKeyInput ( key, getUTF16Char ( key.keysym.unicode ) );
+	}
 }
 
 bool cInput::IsDoubleClicked (void)
@@ -136,7 +141,11 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = false;
 		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = false;
 	}
-	if ( ActiveMenu ) ActiveMenu->handleMouseInput ( MouseState );
+
+	if ( ActiveMenu && !ActiveMenu->exiting() ) //do not send events to a menu, after an event triggered the termination
+	{											//the user wouldn't expects the menu to execute further events after klicking the exit button
+		ActiveMenu->handleMouseInput ( MouseState );
+	}
 }
 
 std::string cInput::getUTF16Char( Uint16 ch )

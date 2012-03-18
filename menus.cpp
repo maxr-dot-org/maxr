@@ -688,6 +688,12 @@ void cMenu::returnToCallback()
 }
 
 //------------------------------------------------------------------------------
+bool cMenu::exiting()
+{
+	return end || terminate;
+}
+
+//------------------------------------------------------------------------------
 void cMenu::handleMouseInput( sMouseState mouseState )
 {
 	mouse->GetPos();

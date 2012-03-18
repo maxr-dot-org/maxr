@@ -311,6 +311,12 @@ public:
 	virtual void returnToCallback();
 
 	/**
+	 * will the menu be closed after finishing the current action?
+	 *@author eiko
+	 */
+	bool exiting();
+
+	/**
 	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.
 	 *@author alzi
 	 */
