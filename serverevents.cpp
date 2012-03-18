@@ -278,7 +278,7 @@ void sendDoStopWork( cBuilding* building )
 //-------------------------------------------------------------------------------------
 void sendNextMove( cVehicle* vehicle, int iType, int iSavedSpeed )
 {
-	char height = -1;
+	char height = 0;
 	cVehicleIterator planes = (*Server->Map)[vehicle->PosX + vehicle->PosY * Server->Map->size].getPlanes();
 	while ( !planes.end )
 	{
