@@ -374,6 +374,8 @@ int cGameGUI::show()
 
 		if ( terminate )
 		{
+			EventHandler->HandleEvents();	//flush event queue before exiting menu
+
 			if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
 			return 1;
 		}
@@ -389,6 +391,8 @@ int cGameGUI::show()
 
 
 	makePanel ( false );
+
+	EventHandler->HandleEvents();	//flush event queue before exiting menu
 
 	if ( lastActiveMenu ) lastActiveMenu->returnToCallback();
 	return 0;
