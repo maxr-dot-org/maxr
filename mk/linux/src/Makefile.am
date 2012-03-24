@@ -7,6 +7,7 @@ automjobs.cpp \
 base.cpp \
 buildings.cpp \
 clans.cpp \
+casualtiestracker.cpp \
 client.cpp \
 clientevents.cpp \
 dialog.cpp \
@@ -20,6 +21,7 @@ keys.cpp \
 language.cpp \
 loaddata.cpp \
 log.cpp \
+notifications.cpp \
 main.cpp \
 map.cpp \
 mapdownload.cpp \
