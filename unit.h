@@ -98,6 +98,7 @@ public:
 	bool attacking;  ///< is the unit currently attacking?
 	bool isBeeingAttacked; ///< true when an attack on this unit is running
 	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
+	bool hasBeenAttacked; //the unit was attacked in this turn
 	
 	cUnit* next; ///< "next"-pointer for the double linked list
 	cUnit* prev; ///< "prev"-pointer for the double linked list

@@ -415,6 +415,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		id = targetUnit->iID;
 		targetUnit->data.hitpointsCur = targetUnit->calcHealth (damage);
 		remainingHP = targetUnit->data.hitpointsCur;
+		targetUnit->hasBeenAttacked = true;
 		owner = targetUnit->owner;
 		Log.write (" Server: unit '" + targetUnit->getDisplayName () + "' (ID: " + iToStr (targetUnit->iID) + ") hit. Remaining HP: " + iToStr (targetUnit->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 	}

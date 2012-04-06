@@ -51,6 +51,7 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 , unitType (unitType)
 , isOriginalName (true)
 , isMarkedAsDone (false)
+, hasBeenAttacked (false)
 {
 	if (unitData != 0)
 		data = *unitData;
