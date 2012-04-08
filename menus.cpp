@@ -2073,10 +2073,10 @@ bool cAdvListHangarMenu::secondListDoubleClicked( cMenuUnitsList* list, void *pa
 {
 	cAdvListHangarMenu *menu = dynamic_cast<cAdvListHangarMenu*>((cHangarMenu*)parent);
 	if ( !menu || !menu->selectedUnit ) return false;
-	if ( menu->selectedUnit->getFixedStatus() ) return false;
 
 	if ( menu->selectedUnit == menu->secondList->getSelectedUnit() )
 	{
+		if ( menu->selectedUnit->getFixedStatus() ) return false;
 		menu->removedCallback ( menu->selectedUnit );
 		menu->secondList->removeUnit ( menu->selectedUnit );
 		if ( menu->selectedUnit == NULL && menu->selectionList->getSelectedUnit() ) menu->setSelectedUnit ( menu->selectionList->getSelectedUnit() );
