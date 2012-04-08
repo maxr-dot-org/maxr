@@ -1035,6 +1035,9 @@ void cGameGUI::setStartup ( bool startup_ )
 
 void cGameGUI::selectUnit( cVehicle *vehicle )
 {
+	if ( vehicle->Loaded )
+		return;
+
 	deselectUnit();
 
 	selectedVehicle = vehicle;

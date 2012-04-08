@@ -5877,6 +5877,46 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 {
 	if ( !vehicle && !building ) return;
 
+	end = true;
+
+	if ( vehicle && vehicle->Loaded )
+	{
+		//find storing unit
+		cVehicle* storingVehicle = vehicle->owner->VehicleList;
+		while ( storingVehicle )
+		{
+			for ( unsigned i = 0; i < storingVehicle->storedUnits.Size(); i++)
+			{
+				if ( storingVehicle->storedUnits[i] == vehicle )
+				{
+					Client->gameGUI.selectUnit( storingVehicle );
+					storingVehicle->center();
+					return;
+				}
+			}
+
+			storingVehicle = (cVehicle*)storingVehicle->next;
+		}
+
+		cBuilding* storingBuilding = vehicle->owner->BuildingList;
+		while ( storingBuilding )
+		{
+			for ( unsigned i = 0; i < storingBuilding->storedUnits.Size(); i++)
+			{
+				if ( storingBuilding->storedUnits[i] == vehicle )
+				{
+					Client->gameGUI.selectUnit( storingBuilding );
+					storingBuilding->center();
+					return;
+				}
+			}
+
+			storingBuilding = (cBuilding*) storingBuilding->next;
+		}
+		
+		return;
+	}
+
 	if ( vehicle )
 	{
 		Client->gameGUI.selectUnit( vehicle );
@@ -5887,5 +5927,4 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 		Client->gameGUI.selectUnit( building );
 		building->center();
 	}
-	end = true;
 }
