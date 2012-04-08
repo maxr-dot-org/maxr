@@ -4299,7 +4299,7 @@ void cMenuReportsScreen::scrollUp()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::released( void *parent )
 {
-	int clickedIndex = Round ( (mouse->y-position.x-17)/55.0 )+index*maxItems;
+	int clickedIndex = (mouse->y-position.y-20)/55 +index*maxItems;
 	if ( clickedIndex >= (index+1)*maxItems ) clickedIndex = (index+1)*maxItems-1;
 
 	switch ( screenType )
