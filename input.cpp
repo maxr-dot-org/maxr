@@ -27,6 +27,8 @@ sMouseState::sMouseState()
 	rightButtonReleased = false;
 	wheelUp = false;
 	wheelDown = false;
+	x = 0;
+	y = 0;
 }
 
 cInput::cInput() :
@@ -88,6 +90,9 @@ bool cInput::IsDoubleClicked (void)
 
 void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 {
+	MouseState.x = button.x;
+	MouseState.y = button.y;
+
 	if ( button.state == SDL_PRESSED )
 	{
 		if ( button.button == SDL_BUTTON_LEFT )

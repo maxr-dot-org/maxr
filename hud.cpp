@@ -1483,7 +1483,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 {
 	for ( unsigned int i = 0; i < menuItems.Size(); i++ )
 	{
-		if ( !menuItems[i]->isDisabled() && menuItems[i]->overItem( mouse->x, mouse->y ) ) return;
+		if ( !menuItems[i]->isDisabled() && menuItems[i]->overItem(mouseState.x, mouseState.y ) ) return;
 	}
 
 	if ( selUnitNameEdit == activeItem )
@@ -1508,13 +1508,13 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouse->x, mouse->y ) )
+	if ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouseState.x, mouseState.y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedVehicle->setMenuSelection();
 		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
 		return;
 	}
-	else if ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouse->x, mouse->y ) )
+	else if ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouseState.x, mouseState.y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedBuilding->setMenuSelection();
 		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
@@ -1639,10 +1639,10 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		rightMouseBox.startX = rightMouseBox.startY = -1;
 		rightMouseBox.endX = rightMouseBox.endY = -1;
 	}
-	else if ( mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouse->x > HUD_LEFT_WIDTH && mouse->y > 20 )
+	else if ( mouseState.rightButtonPressed && !mouseState.leftButtonPressed && rightMouseBox.startX == -1 && mouseState.x > HUD_LEFT_WIDTH && mouseState.y > 20 )
 	{
-		rightMouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
-		rightMouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+		rightMouseBox.startX = (float)( ( ( mouseState.x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		rightMouseBox.startY = (float)( ( ( mouseState.y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
 	}
 	if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed )
 	{
@@ -1807,8 +1807,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over an unit menu:
-			if ( ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouse->x,mouse->y ) ) ||
-			     ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouse->x,mouse->y ) ) )
+			if ( ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouseState.x,mouseState.y ) ) ||
+			     ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouseState.x,mouseState.y ) ) )
 			{
 			}
 			else
@@ -1940,10 +1940,10 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		mouseBox.startX = mouseBox.startY = -1;
 		mouseBox.endX = mouseBox.endY = -1;
 	}
-	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouse->x > HUD_LEFT_WIDTH && mouse->y > 20 )
+	else if ( mouseState.leftButtonPressed && !mouseState.rightButtonPressed && mouseBox.startX == -1 && mouseState.x > HUD_LEFT_WIDTH && mouseState.y > 20 )
 	{
-		mouseBox.startX = (float)( ( ( mouse->x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
-		mouseBox.startY = (float)( ( ( mouse->y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
+		mouseBox.startX = (float)( ( ( mouseState.x-HUD_LEFT_WIDTH ) + (offX*getZoom()) ) / getTileSize() );
+		mouseBox.startY = (float)( ( ( mouseState.y-HUD_TOP_HIGHT ) + (offY*getZoom()) ) / getTileSize() );
 	}
 
 	// check getZoom() via mousewheel

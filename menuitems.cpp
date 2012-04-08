@@ -4016,8 +4016,6 @@ void cMenuReportsScreen::drawReportsScreen()
 			break;
 		case sSavedReportMessage::REPORT_TYPE_UNIT:
 			{
-				//SDL_Surface *orgSurface;
-				//SDL_Rect src = { 0, 0, 32, 32 };
 				SDL_Rect dest = { position.x+17, position.y+30+(i-(index)*maxItems)*55, 0, 0 };
 
 				AutoSurface surface;
@@ -4033,8 +4031,6 @@ void cMenuReportsScreen::drawReportsScreen()
 				{
 					break;
 				}
-
-				//AutoSurface surface(generateUnitSurface(orgSurface, *savedReport.unitID.getUnitDataOriginalVersion()));
 				SDL_BlitSurface ( surface, NULL, buffer, &dest );
 			}
 			break;
@@ -4099,7 +4095,6 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 	int &count = (*count_);
 	count = 0;
 
-	SDL_Rect src = { 0, 0, 32, 32 };
 	SDL_Rect dest = { position.x+17, position.y+30, 0, 0 };
 	SDL_Rect nameDest = { position.x+54, position.y+25, 75, 30 };
 
@@ -4116,7 +4111,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		if ( draw )
 		{
 			{ AutoSurface surface(generateUnitSurface(&cVehicle(nextVehicle->typ, nextVehicle->owner)));
-				SDL_BlitSurface(surface, &src, buffer, &dest);
+				SDL_BlitSurface(surface, NULL, buffer, &dest);
 			}
 
 			font->showTextAsBlock ( nameDest, nextVehicle->getDisplayName() );
@@ -4146,7 +4141,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			if ( draw )
 			{
 				{ AutoSurface surface(generateUnitSurface(&cBuilding(nextBuilding->typ, nextBuilding->owner,NULL)));
-					SDL_BlitSurface(surface, &src, buffer, &dest);
+					SDL_BlitSurface(surface, NULL, buffer, &dest);
 				}
 
 				font->showTextAsBlock ( nameDest, nextBuilding->getDisplayName() );

@@ -32,6 +32,8 @@ struct sMouseState
 	bool wheelUp;
 	bool wheelDown;
 	bool isDoubleClick;
+
+	int x, y;
 };
 
 /**
