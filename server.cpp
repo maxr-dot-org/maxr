@@ -113,17 +113,18 @@ cServer::~cServer()
 		lastEvent = 0;
 	}
 
+	while ( AJobs.Size() )
+	{
+		delete AJobs[0];
+		AJobs.Delete(0);
+	}
+
 	while ( PlayerList->Size() )
 	{
 		delete (*PlayerList)[0];
 		PlayerList->Delete ( 0 );
 	}
 
-	while ( AJobs.Size() )
-	{
-		delete AJobs[0];
-		AJobs.Delete(0);
-	}
 	while ( neutralBuildings )
 	{
 		cBuilding* nextBuilding = (cBuilding*)neutralBuildings->next;
