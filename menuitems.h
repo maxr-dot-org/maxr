@@ -38,6 +38,7 @@ class cMenuUnitsList;
 class cReportsMenu;
 class cVehicle;
 class cBuilding;
+class cUnit;
 
 /**
  * A struct that contains information of a savegame.
@@ -1318,7 +1319,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 
 	bool checkFilter ( sUnitData &data, bool checkInclude );
 	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
-	SDL_Surface *generateUnitSurface ( SDL_Surface *oriSurface, sUnitData &data );
+	SDL_Surface *generateUnitSurface(cUnit* unit );
 
 	int countDisadvantageEntries () const;
 	/** Draws a disadvantage entry, if a player has losses for the unitID and the entry should be displayed on the current page. 

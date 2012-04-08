@@ -3788,10 +3788,22 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 				if (unitData != 0)
 				{
 					{
-						SDL_Rect src = { 0, 0, 32, 32 };
+						//SDL_Rect src = { 0, 0, 32, 32 };
 						SDL_Rect dest = { position.x + 17, position.y + 28 + (displayedEntryIndex - (index * 10)) * 42, 0, 0 };
-						AutoSurface surface (generateUnitSurface (unitImg, *unitData));
-						SDL_BlitSurface (surface, &src, buffer, &dest);
+						AutoSurface surface;
+						if ( unitID.getBuilding() )
+						{
+							surface = generateUnitSurface (&cBuilding(unitID.getBuilding(), Client->ActivePlayer, NULL));
+						}
+						else if ( unitID.getVehicle() )
+						{
+							surface = generateUnitSurface (&cVehicle(unitID.getVehicle(), Client->ActivePlayer));
+						}
+						else
+						{
+							continue;
+						}
+						SDL_BlitSurface (surface, NULL, buffer, &dest);
 					}
 					
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
@@ -4004,16 +4016,26 @@ void cMenuReportsScreen::drawReportsScreen()
 			break;
 		case sSavedReportMessage::REPORT_TYPE_UNIT:
 			{
-				SDL_Surface *orgSurface;
-				SDL_Rect src = { 0, 0, 32, 32 };
+				//SDL_Surface *orgSurface;
+				//SDL_Rect src = { 0, 0, 32, 32 };
 				SDL_Rect dest = { position.x+17, position.y+30+(i-(index)*maxItems)*55, 0, 0 };
 
-				if ( savedReport.unitID.getVehicle() ) orgSurface = savedReport.unitID.getVehicle()->img_org[0];
-				else if ( savedReport.unitID.getBuilding() ) orgSurface = savedReport.unitID.getBuilding()->img_org;
-				else break;
+				AutoSurface surface;
+				if ( savedReport.unitID.getVehicle() ) 
+				{
+					surface = generateUnitSurface (&cVehicle(savedReport.unitID.getVehicle(), Client->ActivePlayer));
+				}
+				else if ( savedReport.unitID.getBuilding() )
+				{
+					surface = generateUnitSurface (&cBuilding(savedReport.unitID.getBuilding(), Client->ActivePlayer, NULL));
+				}
+				else 
+				{
+					break;
+				}
 
-				AutoSurface surface(generateUnitSurface(orgSurface, *savedReport.unitID.getUnitDataOriginalVersion()));
-				SDL_BlitSurface ( surface, &src, buffer, &dest );
+				//AutoSurface surface(generateUnitSurface(orgSurface, *savedReport.unitID.getUnitDataOriginalVersion()));
+				SDL_BlitSurface ( surface, NULL, buffer, &dest );
 			}
 			break;
 		case sSavedReportMessage::REPORT_TYPE_CHAT:
@@ -4093,7 +4115,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		}
 		if ( draw )
 		{
-			{ AutoSurface surface(generateUnitSurface(nextVehicle->typ->img_org[0], nextVehicle->data));
+			{ AutoSurface surface(generateUnitSurface(&cVehicle(nextVehicle->typ, nextVehicle->owner)));
 				SDL_BlitSurface(surface, &src, buffer, &dest);
 			}
 
@@ -4123,7 +4145,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			}
 			if ( draw )
 			{
-				{ AutoSurface surface(generateUnitSurface(nextBuilding->typ->img_org, nextBuilding->data));
+				{ AutoSurface surface(generateUnitSurface(&cBuilding(nextBuilding->typ, nextBuilding->owner,NULL)));
 					SDL_BlitSurface(surface, &src, buffer, &dest);
 				}
 
@@ -4205,21 +4227,28 @@ void cMenuReportsScreen::setType ( bool unitsChecked, bool disadvaChecked, bool 
 }
 
 //-----------------------------------------------------------------------------
-SDL_Surface *cMenuReportsScreen::generateUnitSurface(SDL_Surface *oriSurface, sUnitData &data )
+SDL_Surface *cMenuReportsScreen::generateUnitSurface(cUnit* unit )
 {
-	int factor = 2;
-	if ( data.isBig ) factor = 4;
 
-	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, Video.getColDepth(), 0, 0, 0, 0 );
-	AutoSurface tmpSurface(SDL_CreateRGBSurface(SDL_SRCCOLORKEY, oriSurface->w/factor, oriSurface->h/factor, Video.getColDepth(), 0, 0, 0, 0));
+	const int UNIT_IMAGE_SIZE = 32;
+	float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(unit->data.isBig?128.0:64.0);
+	SDL_Rect dest = { 0, 0, 0, 0};
 
-	scaleSurface ( oriSurface, tmpSurface, tmpSurface->w, tmpSurface->h );
-
+	SDL_Surface *surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
 	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-	if ( data.hasPlayerColor ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
-	else SDL_FillRect ( surface, NULL, 0xFF00FF );
+	//SDL_FillRect ( surface, NULL, 0xFF00FF );
 
-	SDL_BlitSurface ( tmpSurface, NULL, surface, NULL );
+	if ( unit->isBuilding() )
+	{
+		cBuilding* building = (cBuilding*) unit;
+		building->render(surface, dest, zoomFactor, false, false);
+	}
+	else
+	{
+		cVehicle* vehicle = (cVehicle*) unit;
+		vehicle->render(surface, dest, zoomFactor, false);
+		vehicle->drawOverlayAnimation(surface, dest, zoomFactor);
+	}
 
 	return surface;
 }
