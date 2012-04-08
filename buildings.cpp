@@ -123,10 +123,10 @@ cBuilding::~cBuilding ()
 		delete BuildList;
 	}
 
-	if ( sentryActive )
+	/*if ( sentryActive )
 	{
 		owner->deleteSentryBuilding ( this );
-	}
+	}*/
 
 	if ( IsLocked )
 	{
@@ -294,7 +294,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	if ( bDraw )
 	{
-		render ( drawingSurface, dest );
+		render ( drawingSurface, dest,(float)Client->gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows(), true );
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -476,14 +476,12 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 }
 
-void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
+void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
 {
 	//Note: when changing something in this function, make sure to update the caching rules!
 	SDL_Rect src, tmp;
 	src.x = 0;
 	src.y = 0;
-
-	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// check, if it is dirt:
 	if ( !owner )
@@ -491,12 +489,12 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		if ( data.isBig )
 		{
 			if ( !UnitsData.dirt_big ) return;
-			src.w = src.h = (int)(UnitsData.dirt_big_org->h*factor);
+			src.w = src.h = (int)(UnitsData.dirt_big_org->h*zoomFactor);
 		}
 		else
 		{
 			if ( !UnitsData.dirt_small ) return;
-			src.w = src.h = (int)(UnitsData.dirt_small_org->h*factor);
+			src.w = src.h = (int)(UnitsData.dirt_small_org->h*zoomFactor);
 		}
 
 		src.x = src.w * RubbleTyp;
@@ -504,16 +502,16 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		src.y = 0;
 
 		// draw the shadows
-		if ( cSettings::getInstance().isShadows() )
+		if ( drawShadow )
 		{
 			if ( data.isBig )
 			{
-				CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, factor );
+				CHECK_SCALING( UnitsData.dirt_big_shw, UnitsData.dirt_big_shw_org, zoomFactor );
 				SDL_BlitSurface ( UnitsData.dirt_big_shw, &src, surface, &tmp );
 			}
 			else
 			{
-				CHECK_SCALING( UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, factor );
+				CHECK_SCALING( UnitsData.dirt_small_shw, UnitsData.dirt_small_shw_org, zoomFactor );
 				SDL_BlitSurface ( UnitsData.dirt_small_shw, &src, surface, &tmp );
 			}
 		}
@@ -523,12 +521,12 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 
 		if ( data.isBig )
 		{
-			CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, factor);
+			CHECK_SCALING( UnitsData.dirt_big, UnitsData.dirt_big_org, zoomFactor);
 			SDL_BlitSurface ( UnitsData.dirt_big, &src, surface, &tmp );
 		}
 		else
 		{
-			CHECK_SCALING( UnitsData.dirt_small, UnitsData.dirt_small_org, factor);
+			CHECK_SCALING( UnitsData.dirt_small, UnitsData.dirt_small_org, zoomFactor);
 			SDL_BlitSurface ( UnitsData.dirt_small, &src, surface, &tmp );
 		}
 
@@ -538,22 +536,22 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	// read the size:
 	if ( data.hasFrames )
 	{
-		src.w = (int)(Client->gameGUI.getTileSize());
-		src.h = (int)(Client->gameGUI.getTileSize());
+		src.w = Round(64.0*zoomFactor);
+		src.h = Round(64.0*zoomFactor);
 	}
 	else
 	{
-		src.w = (int)(typ->img_org->w*factor);
-		src.h = (int)(typ->img_org->h*factor);
+		src.w = (int)(typ->img_org->w*zoomFactor);
+		src.h = (int)(typ->img_org->h*zoomFactor);
 	}
 
 	// draw the concrete
 	tmp = dest;
-	if ( data.hasBetonUnderground )
+	if ( data.hasBetonUnderground && drawConcrete )
 	{
 		if ( data.isBig )
 		{
-			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, factor);
+			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
 
 			if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 				SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, StartUp );
@@ -564,7 +562,7 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 		}
 		else
 		{
-			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, factor);
+			CHECK_SCALING( UnitsData.ptr_small_beton, UnitsData.ptr_small_beton_org, zoomFactor);
 			if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 				SDL_SetAlpha ( UnitsData.ptr_small_beton, SDL_SRCALPHA, StartUp );
 			else
@@ -580,19 +578,19 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 	// draw the connector slots:
 	if ( (this->SubBase && !StartUp) || data.isConnectorGraphic )
 	{
-		drawConnectors (  surface, dest );
+		drawConnectors (  surface, dest, zoomFactor, drawShadow );
 		if ( data.isConnectorGraphic ) return;
 	}
 
 	// draw the shadows
-	if ( cSettings::getInstance().isShadows() )
+	if ( drawShadow )
 	{
 		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, StartUp / 5 );
 		else
 			SDL_SetAlpha ( typ->shw, SDL_SRCALPHA, 50 );
 
-		CHECK_SCALING( typ->shw, typ->shw_org, factor);
+		CHECK_SCALING( typ->shw, typ->shw_org, zoomFactor);
 		blittAlphaSurface ( typ->shw, NULL, surface, &tmp );
 	}
 
@@ -602,36 +600,36 @@ void cBuilding::render( SDL_Surface* surface, const SDL_Rect& dest)
 
 	if ( data.hasFrames )
 	{
-		if ( data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0)
+		if ( data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && Client)
 		{
-			src.x = ( ANIMATION_SPEED % data.hasFrames ) * (int)(Client->gameGUI.getTileSize());
+			src.x = ( ANIMATION_SPEED % data.hasFrames ) * Round(64.0*zoomFactor);
 		}
 		else
 		{
-			src.x = dir * (int)(Client->gameGUI.getTileSize());
+			src.x = dir * Round(64.0*zoomFactor);
 		}
 
-		CHECK_SCALING( typ->img, typ->img_org, factor);
+		CHECK_SCALING( typ->img, typ->img_org, zoomFactor);
 		SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
 
 		src.x = 0;
 	}
 	else if ( data.hasClanLogos )
 	{
-		CHECK_SCALING( typ->img, typ->img_org, factor);
+		CHECK_SCALING( typ->img, typ->img_org, zoomFactor);
 		src.x = 0;
 		src.y = 0;
-		src.w = (int) (128 * factor);
-		src.h = (int) (128 * factor);
+		src.w = (int) (128 * zoomFactor);
+		src.h = (int) (128 * zoomFactor);
 		//select clan image
 		if ( owner->getClan() != -1 )
-			src.x = (int) ((owner->getClan() + 1) * 128 * factor);
+			src.x = (int) ((owner->getClan() + 1) * 128 * zoomFactor);
 		SDL_BlitSurface ( typ->img, &src, GraphicsData.gfx_tmp, NULL );
 
 	}
 	else
 	{
-		CHECK_SCALING( typ->img, typ->img_org, factor);
+		CHECK_SCALING( typ->img, typ->img_org, zoomFactor);
 		SDL_BlitSurface ( typ->img, NULL, GraphicsData.gfx_tmp, NULL );
 	}
 
@@ -709,13 +707,12 @@ void cBuilding::CheckNeighbours ( cMap *Map )
 //--------------------------------------------------------------------------
 /** Draws the connectors at the building: */
 //--------------------------------------------------------------------------
-void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
+void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow )
 {
 	SDL_Rect src, temp;
-	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
-	CHECK_SCALING( UnitsData.ptr_connector, UnitsData.ptr_connector_org, factor);
-	CHECK_SCALING( UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, factor);
+	CHECK_SCALING( UnitsData.ptr_connector, UnitsData.ptr_connector_org, zoomFactor);
+	CHECK_SCALING( UnitsData.ptr_connector_shw, UnitsData.ptr_connector_shw_org, zoomFactor);
 
 	if ( StartUp ) SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, StartUp );
 	else SDL_SetAlpha( UnitsData.ptr_connector, SDL_SRCALPHA, 255 );
@@ -748,7 +745,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		{
 			//blit shadow
 			temp = dest;
-			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( drawShadow ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			//blit the image
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
@@ -768,14 +765,14 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( drawShadow ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
 
 		//upper right field
 		src.x = 0;
-		dest.x += Client->gameGUI.getTileSize();
+		dest.x += Round( 64.0*zoomFactor );
 		if      (  BaseBN &&  BaseE ) src.x = 8;
 		else if (  BaseBN && !BaseE ) src.x = 1;
 		else if ( !BaseBN &&  BaseE ) src.x = 2;
@@ -784,14 +781,14 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( drawShadow ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
 
 		//lower right field
 		src.x = 0;
-		dest.y += Client->gameGUI.getTileSize();
+		dest.y += Round( 64.0*zoomFactor );
 		if      (  BaseBE &&  BaseBS ) src.x = 9;
 		else if (  BaseBE && !BaseBS ) src.x = 2;
 		else if ( !BaseBE &&  BaseBS ) src.x = 3;
@@ -800,14 +797,14 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( drawShadow ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}
 
 		//lower left field
 		src.x = 0;
-		dest.x -= Client->gameGUI.getTileSize();
+		dest.x -= Round( 64.0*zoomFactor );
 		if      (  BaseS &&  BaseBW ) src.x = 10;
 		else if (  BaseS && !BaseBW ) src.x =  3;
 		else if ( !BaseS &&  BaseBW ) src.x =  4;
@@ -816,7 +813,7 @@ void cBuilding::drawConnectors ( SDL_Surface* surface, SDL_Rect dest )
 		if ( src.x != 0 )
 		{
 			temp = dest;
-			if ( cSettings::getInstance().isShadows() ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
+			if ( drawShadow ) blittAlphaSurface( UnitsData.ptr_connector_shw, &src, surface, &temp );
 			temp = dest;
 			SDL_BlitSurface ( UnitsData.ptr_connector, &src, surface, &temp );
 		}

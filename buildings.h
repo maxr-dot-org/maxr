@@ -206,15 +206,15 @@ public:
 	*/
 	void makeDetection();
 
-private:
 	/**
 	* draws the main image of the building onto the given surface
 	*/
-	void render( SDL_Surface* surface, const SDL_Rect& dest);
+	void render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete);
+private:
 	/**
 	* draws the connectors onto the given surface
 	*/
-	void drawConnectors( SDL_Surface* surface, SDL_Rect dest);
+	void drawConnectors ( SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow );
 	
 	//-----------------------------------------------------------------------------
 protected:

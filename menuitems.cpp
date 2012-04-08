@@ -1222,25 +1222,24 @@ cMenuUnitListItem::cMenuUnitListItem(sUnitData* unitData_, cPlayer* owner_, sUni
 
 void cMenuUnitListItem::init ()
 {
+	const int UNIT_IMAGE_SIZE = 32;
+	surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
+	SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	SDL_FillRect(surface, NULL, 0xFF00FF );
+	SDL_Rect dest = {0, 0, 0, 0};
+
 	if ( unitID.getVehicle() )
 	{
-		sVehicle *vehicle = unitID.getVehicle();
-		scaleSurface ( vehicle->img_org[0], vehicle->img[0], vehicle->img_org[0]->w/2, vehicle->img_org[0]->h/2 );
-		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, vehicle->img[0]->w, vehicle->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-		SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
-		SDL_BlitSurface ( vehicle->img[0], NULL, surface, NULL );
+		cVehicle vehicle = cVehicle(unitID.getVehicle(),owner);
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)64.0;
+		vehicle.render(surface, dest, zoomFactor, false);
+		vehicle.drawOverlayAnimation(surface, dest, zoomFactor);
 	}
 	else if ( unitID.getBuilding() )
 	{
-		sBuilding *building = unitID.getBuilding();
-		if ( building->data.isBig ) scaleSurface ( building->img_org, building->img, building->img_org->w/4, building->img_org->h/4 );
-		else scaleSurface ( building->img_org, building->img, building->img_org->w/2, building->img_org->h/2 );
-		surface = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, building->img->w, building->img->h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( building->data.hasPlayerColor ) SDL_BlitSurface ( OtherData.colors[cl_grey], NULL, surface, NULL );
-		else SDL_FillRect ( surface, NULL, 0xFF00FF );
-		SDL_BlitSurface ( building->img, NULL, surface, NULL );
+		cBuilding building = cBuilding(unitID.getBuilding(), owner, NULL);
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(building.data.isBig?128.0:64.0);
+		building.render(surface, dest, zoomFactor, false, false);
 	}
 	else surface = NULL;
 

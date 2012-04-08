@@ -679,21 +679,7 @@ cDialogTransfer::~cDialogTransfer()
 		delete unitCargoLabels[i];
 	}
 
-	float fNewZoom = Client->gameGUI.getZoom();
-
-	if ( srcBuilding != NULL )
-	{
-		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, ( int ) ( srcBuilding->typ->img_org->w* fNewZoom ) , ( int ) ( srcBuilding->typ->img_org->h* fNewZoom ) );
-	}
-	else
-	{
-		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], ( int ) ( srcVehicle->typ->img_org[0]->w* fNewZoom ) , ( int ) (srcVehicle->typ->img_org[0]->h* fNewZoom ) );
-	}
-
 	Client->gameGUI.mouseInputMode = normalInput;
-
-	if ( destBuilding ) scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, ( int ) ( destBuilding->typ->img_org->w* fNewZoom ), ( int ) ( destBuilding->typ->img_org->h* fNewZoom ) );
-	else scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], ( int ) ( destVehicle->typ->img_org[0]->w* fNewZoom ), ( int ) ( destVehicle->typ->img_org[0]->h* fNewZoom ) );
 }
 
 void cDialogTransfer::getTransferType()
@@ -728,19 +714,24 @@ void cDialogTransfer::getTransferType()
 
 void cDialogTransfer::getNamesNCargoNImages ()
 {
+	const int UNIT_IMAGE_SIZE = 64;
 	SDL_Surface *unitImage1, *unitImage2;
+
+	unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
+	SDL_FillRect ( unitImage1, NULL, 0xFF00FF );
+	SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
+
+	unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
+	SDL_FillRect ( unitImage2, NULL, 0xFF00FF );
+	SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
+
+	SDL_Rect dest = {0, 0, 0, 0};
+
 
 	if ( srcBuilding )
 	{
-		scaleSurface ( srcBuilding->typ->img_org, srcBuilding->typ->img, Round ( (float)srcBuilding->typ->img_org->w / srcBuilding->typ->img_org->h ) * 64, 64 );
-		SDL_Rect src = { 0, 0, srcBuilding->typ->img->w, srcBuilding->typ->img->h };
-		if ( srcBuilding->data.hasFrames ) src.w /= srcBuilding->data.hasFrames;
-		if ( srcBuilding->data.isConnectorGraphic || srcBuilding->data.hasClanLogos ) src.w = src.h;
-		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_FillRect ( unitImage1, NULL, 0xFF00FF );
-		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( srcBuilding->data.hasPlayerColor ) SDL_BlitSurface ( srcBuilding->owner->color, NULL, unitImage1, NULL );
-		SDL_BlitSurface ( srcBuilding->typ->img, &src, unitImage1, NULL );
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(srcBuilding->data.isBig?128.0:64.0);
+		srcBuilding->render(unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText ( srcBuilding->data.name );
 		if ( destVehicle )
@@ -769,11 +760,9 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	}
 	else if ( srcVehicle )
 	{
-		scaleSurface ( srcVehicle->typ->img_org[0], srcVehicle->typ->img[0], Round ( (float)srcVehicle->typ->img_org[0]->w / srcVehicle->typ->img_org[0]->h ) * 64, 64 );
-		unitImage1 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, srcVehicle->typ->img[0]->w, srcVehicle->typ->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_SetColorKey ( unitImage1, SDL_SRCCOLORKEY, 0xFF00FF );
-		SDL_BlitSurface ( srcVehicle->owner->color, NULL, unitImage1, NULL );
-		SDL_BlitSurface ( srcVehicle->typ->img[0], NULL, unitImage1, NULL );
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(srcVehicle->data.isBig?128.0:64.0);
+		srcVehicle->render(unitImage1, dest, zoomFactor, false);
+		srcVehicle->drawOverlayAnimation(unitImage1, dest, zoomFactor);
 
 		unitNameLabels[0]->setText ( srcVehicle->data.name );
 		maxSrcCargo = srcVehicle->data.storageResMax;
@@ -782,15 +771,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 
 	if ( destBuilding )
 	{
-		scaleSurface ( destBuilding->typ->img_org, destBuilding->typ->img, Round ( (float)destBuilding->typ->img_org->w / destBuilding->typ->img_org->h ) * 64, 64 );
-		SDL_Rect src = { 0, 0, destBuilding->typ->img->w, destBuilding->typ->img->h };
-		if ( destBuilding->data.hasFrames ) src.w /= destBuilding->data.hasFrames;
-		if ( destBuilding->data.isConnectorGraphic || destBuilding->data.hasClanLogos ) src.w = src.h;
-		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_FillRect ( unitImage2, NULL, 0xFF00FF );
-		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
-		if ( destBuilding->data.hasPlayerColor ) SDL_BlitSurface ( destBuilding->owner->color, NULL, unitImage2, NULL );
-		SDL_BlitSurface ( destBuilding->typ->img, &src, unitImage2, NULL );
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(destBuilding->data.isBig?128.0:64.0);
+		destBuilding->render(unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText ( destBuilding->data.name );
 		if ( srcVehicle )
@@ -819,11 +801,9 @@ void cDialogTransfer::getNamesNCargoNImages ()
 	}
 	else
 	{
-		scaleSurface ( destVehicle->typ->img_org[0], destVehicle->typ->img[0], Round ( (float)destVehicle->typ->img_org[0]->w / destVehicle->typ->img_org[0]->h ) * 64, 64 );
-		unitImage2 = SDL_CreateRGBSurface ( SDL_SRCCOLORKEY, destVehicle->typ->img[0]->w, destVehicle->typ->img[0]->h, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_SetColorKey ( unitImage2, SDL_SRCCOLORKEY, 0xFF00FF );
-		SDL_BlitSurface ( destVehicle->owner->color, NULL, unitImage2, NULL );
-		SDL_BlitSurface ( destVehicle->typ->img[0], NULL, unitImage2, NULL );
+		float zoomFactor = (float)UNIT_IMAGE_SIZE/(float)(destVehicle->data.isBig?128.0:64.0);
+		destVehicle->render(unitImage2, dest, zoomFactor, false);
+		destVehicle->drawOverlayAnimation(unitImage2, dest, zoomFactor);
 
 		unitNameLabels[1]->setText ( destVehicle->data.name );
 		maxDestCargo = destVehicle->data.storageResMax;

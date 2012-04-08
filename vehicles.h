@@ -259,12 +259,18 @@ public:
 	*/
 	bool canLand( const cMap& map) const;
 	
-private:
+
 	/**
 	* draws the main image of the vehicle onto the passed surface
 	*/
-	void render( SDL_Surface* surface, const SDL_Rect& dest );
-	
+	void render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+	/**
+	* draws the overlay animation of the vehicle on the given surface
+	*@author: eiko
+	*/
+	void drawOverlayAnimation(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+
+private:
 	//---- sentry and reaction fire helpers ---------------------------------------
 	/** 
 	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
