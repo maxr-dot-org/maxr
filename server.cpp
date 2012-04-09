@@ -3074,6 +3074,8 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	int value = 0;
 	int oldRubbleValue = 0;
 	bool bigRubble = false;
+	int rubblePosX = vehicle->PosX;
+	int rubblePosY = vehicle->PosY;
 
 	if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0 )
 	{
@@ -3091,7 +3093,11 @@ void cServer::destroyUnit( cVehicle* vehicle )
 		{
 			oldRubbleValue += bi->RubbleValue;
 			if ( bi->data.isBig )
+			{
+				rubblePosX = bi->PosX;
+				rubblePosY = bi->PosY;
 				bigRubble = true;
+			}
 		}
 		else // normal unit
 			value += bi->data.buildCosts;
@@ -3142,7 +3148,7 @@ void cServer::destroyUnit( cVehicle* vehicle )
 	}
 
 	if ( value > 0 || oldRubbleValue > 0 )
-		addRubble( vehicle->PosX, vehicle->PosY, value/2 + oldRubbleValue, bigRubble );
+		addRubble( rubblePosX, rubblePosY, value/2 + oldRubbleValue, bigRubble );
 
 	deleteUnit( vehicle );
 }
