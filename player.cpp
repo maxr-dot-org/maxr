@@ -127,18 +127,6 @@ cPlayer::cPlayer(const cPlayer &Player)
 //-----------------------------------------------------------------------
 cPlayer::~cPlayer ()
 {
-	while ( SentriesAir.Size() )
-	{
-		delete SentriesAir[SentriesAir.Size() - 1];
-		SentriesAir.Delete( SentriesAir.Size() - 1 );
-	}
-
-	while ( SentriesGround.Size() )
-	{
-		delete SentriesGround[SentriesGround.Size() - 1];
-		SentriesGround.Delete( SentriesGround.Size() - 1 );
-	}
-
 	// Erst alle geladenen Vehicles lˆschen:
 	cVehicle *ptr=VehicleList;
 	while ( ptr )
@@ -308,149 +296,80 @@ cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::addSentryVehicle ( cVehicle *v )
+void cPlayer::addSentry ( cUnit *u )
 {
-	sSentry *n;
-	if ( v->data.canAttack & TERRAIN_AIR )
+	u->sentryActive = true;
+	if ( u->data.canAttack & TERRAIN_AIR )
 	{
-		n = new sSentry;
-		n->b = NULL;
-		n->v = v;
-		SentriesAir.Add ( n );
-		drawSpecialCircle ( v->PosX, v->PosY, v->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( u->PosX, u->PosY, u->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 	}
-	if ( ( v->data.canAttack & TERRAIN_GROUND ) || ( v->data.canAttack & TERRAIN_SEA ) )
+	if ( ( u->data.canAttack & TERRAIN_GROUND ) || ( u->data.canAttack & TERRAIN_SEA ) )
 	{
-		n = new sSentry;
-		n->b = NULL;
-		n->v = v;
-		SentriesGround.Add ( n );
-		drawSpecialCircle ( v->PosX, v->PosY, v->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
+		drawSpecialCircle ( u->PosX, u->PosY, u->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
 
-//--------------------------------------------------------------------------
-void cPlayer::addSentryBuilding ( cBuilding *b )
-{
-	sSentry *n;
-	if ( b->data.canAttack & TERRAIN_AIR )
-	{
-		n = new sSentry;
-		n->b = b;
-		n->v = NULL;
-		SentriesAir.Add ( n );
-		drawSpecialCircle ( b->PosX, b->PosY, b->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
-	}
-	if ( ( b->data.canAttack & TERRAIN_GROUND ) || ( b->data.canAttack & TERRAIN_SEA ) )
-	{
-		n = new sSentry;
-		n->b = b;
-		n->v = NULL;
-		SentriesGround.Add ( n );
-		drawSpecialCircle ( b->PosX, b->PosY, b->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
-	}
-}
+
 
 //--------------------------------------------------------------------------
-void cPlayer::deleteSentryVehicle ( cVehicle *v )
+void cPlayer::deleteSentry ( cUnit *u )
 {
-	sSentry *ptr;
-	if ( v->data.canAttack & TERRAIN_AIR )
+	u->sentryActive = false;
+	if ( u->data.canAttack & TERRAIN_AIR )
 	{
-		for ( int i = SentriesAir.Size()-1; i >= 0 ; i-- )
-		{
-			ptr = SentriesAir[i];
-			if ( ptr->v == v )
-			{
-				SentriesAir.Delete ( i );
-				delete ptr;
-			}
-		}
 		refreshSentryAir();
 	}
-	else if ( (v->data.canAttack & TERRAIN_GROUND) || (v->data.canAttack & TERRAIN_SEA) )
+	else if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA) )
 	{
-		for ( int i = SentriesGround.Size()-1; i >= 0 ; i-- )
-		{
-			ptr = SentriesGround[i];
-			if ( ptr->v == v )
-			{
-				SentriesGround.Delete ( i );
-				delete ptr;
-			}
-		}
 		refreshSentryGround();
-	}
-}
-
-//--------------------------------------------------------------------------
-void cPlayer::deleteSentryBuilding ( cBuilding *b )
-{
-	sSentry *ptr;
-	if ( b->data.canAttack & TERRAIN_AIR )
-	{
-		for ( int i = SentriesAir.Size()-1; i >= 0 ; i-- )
-		{
-			ptr = SentriesAir[i];
-			if ( ptr->b == b )
-			{
-				SentriesAir.Delete ( i );
-				delete ptr;
-			}
-		}
-		refreshSentryAir();
-	}
-	if ( (b->data.canAttack & TERRAIN_GROUND) || (b->data.canAttack & TERRAIN_SEA) )
-	{
-		for ( int i = SentriesGround.Size()-1; i >= 0 ; i-- )
-		{
-			ptr = SentriesGround[i];
-			if ( ptr->b == b )
-			{
-				SentriesGround.Delete ( i );
-				delete ptr;
-			}
-		}
-		refreshSentryGround();
-
 	}
 }
 
 //--------------------------------------------------------------------------
 void cPlayer::refreshSentryAir ()
 {
-	sSentry *ptr;
 	memset ( SentriesMapAir,0,MapSize );
-	for ( unsigned int i = 0; i < SentriesAir.Size(); i++ )
+	cUnit* unit = (cUnit*) VehicleList;
+	while (unit)
 	{
-		ptr = SentriesAir[i];
-		if ( ptr->v )
+		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
 		{
-			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
+			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
-		else
+		unit = unit->next;
+	}
+	unit = (cUnit*) BuildingList;
+	while (unit)
+	{
+		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
 		{
-			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
+			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
+		unit = unit->next;
 	}
 }
 
 //--------------------------------------------------------------------------
 void cPlayer::refreshSentryGround ()
 {
-	sSentry *ptr;
 	memset ( SentriesMapGround,0,MapSize );
-	for ( unsigned int i = 0 ; i < SentriesGround.Size(); i++ )
+	cUnit* unit = (cUnit*) VehicleList;
+	while (unit)
 	{
-		ptr = SentriesGround[i];
-		if ( ptr->v )
+		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )
 		{
-			drawSpecialCircle ( ptr->v->PosX, ptr->v->PosY, ptr->v->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
+			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
-		else
+		unit = unit->next;
+	}
+	unit = (cUnit*) BuildingList;
+	while (unit)
+	{
+		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )
 		{
-			drawSpecialCircle ( ptr->b->PosX, ptr->b->PosY, ptr->b->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
+			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
+		unit = unit->next;
 	}
 }
 

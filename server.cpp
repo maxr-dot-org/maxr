@@ -990,8 +990,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Vehicle->manualFireActive = !Vehicle->manualFireActive;
 				if (Vehicle->manualFireActive && Vehicle->sentryActive)
 				{
-					Vehicle->sentryActive = false;
-					Vehicle->owner->deleteSentryVehicle (Vehicle);
+					Vehicle->owner->deleteSentry (Vehicle);
 				}
 				
 				sendUnitData (Vehicle, Vehicle->owner->Nr);
@@ -1006,8 +1005,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				Building->manualFireActive = !Building->manualFireActive;
 				if (Building->manualFireActive && Building->sentryActive)
 				{
-					Building->sentryActive = false;
-					Building->owner->deleteSentryBuilding (Building);
+					Building->owner->deleteSentry (Building);
 				}
 
 				sendUnitData (Building, Building->owner->Nr);
@@ -1023,15 +1021,15 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				cVehicle *vehicle = getVehicleFromID ( message->popInt16() );
 				if ( vehicle == NULL ) break;
 
-				vehicle->sentryActive = !vehicle->sentryActive;
-				if ( vehicle->data.canAttack )
+				if ( vehicle->sentryActive )
 				{
-					if ( vehicle->sentryActive ) 
-					{
-						vehicle->owner->addSentryVehicle ( vehicle );
-						vehicle->manualFireActive = false;
-					}
-					else vehicle->owner->deleteSentryVehicle ( vehicle );
+					vehicle->owner->deleteSentry ( vehicle );
+ 
+				}
+				else
+				{
+					vehicle->owner->addSentry (vehicle);
+					vehicle->manualFireActive = false;
 				}
 
 				sendUnitData ( vehicle, vehicle->owner->Nr );
@@ -1042,24 +1040,24 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 			else	// building
 			{
-				cBuilding *Building = getBuildingFromID ( message->popInt16() );
-				if ( Building == NULL ) break;
+				cBuilding *building = getBuildingFromID ( message->popInt16() );
+				if ( building == NULL ) break;
 
-				Building->sentryActive = !Building->sentryActive;
-				if ( Building->data.canAttack )
+				if ( building->sentryActive )
 				{
-					if ( Building->sentryActive )
-					{
-						Building->owner->addSentryBuilding ( Building );
-						Building->manualFireActive = false;
-					}
-					else Building->owner->deleteSentryBuilding ( Building );
+					building->owner->deleteSentry (building);
+ 
+				}
+				else
+				{
+					building->owner->addSentry (building);
+					building->manualFireActive = false;
 				}
 
-				sendUnitData ( Building, Building->owner->Nr );
-				for ( unsigned int i = 0; i < Building->seenByPlayerList.Size(); i++ )
+				sendUnitData ( building, building->owner->Nr );
+				for ( unsigned int i = 0; i < building->seenByPlayerList.Size(); i++ )
 				{
-					sendUnitData ( Building, Building->seenByPlayerList[i]->Nr );
+					sendUnitData ( building, building->seenByPlayerList[i]->Nr );
 				}
 			}
 		}
@@ -2079,7 +2077,7 @@ cBuilding * cServer::addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer
 	// generate the building:
 	AddedBuilding = Player->addBuilding ( iPosX, iPosY, Building );
 	if ( AddedBuilding->data.canMineMaxRes > 0 ) AddedBuilding->CheckRessourceProd();
-	if ( AddedBuilding->sentryActive ) Player->addSentryBuilding ( AddedBuilding );
+	if ( AddedBuilding->sentryActive ) Player->addSentry (AddedBuilding);
 
 	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
@@ -2221,11 +2219,8 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	}
 
 	//remove from sentry list
-	if ( unit->isBuilding () )
-		unit->owner->deleteSentryBuilding( (cBuilding*) unit );
-	else
-		unit->owner->deleteSentryVehicle( (cVehicle*) unit );
-
+	unit->owner->deleteSentry (unit);
+	
 	// lose eco points
 	if (unit->isBuilding () && ((cBuilding*)unit)->points != 0)
 	{

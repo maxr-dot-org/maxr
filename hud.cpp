@@ -3864,18 +3864,6 @@ void cGameGUI::drawDebugOutput()
 		debugOff += font->getFontHeight ( FONT_LATIN_SMALL_WHITE );
 	}
 
-	if ( debugSentry )
-	{
-		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
-		{
-			cPlayer *Player = (*Server->PlayerList)[i];
-			font->showText(DEBUGOUT_X_POS, debugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-air: " + iToStr((int)Player->SentriesAir.Size()), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-			font->showText(DEBUGOUT_X_POS, debugOff, Player->name + " (" + iToStr ( Player->Nr ) + ") s-ground: " + iToStr((int)Player->SentriesGround.Size()), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		}
-	}
-
 	if ( debugFX )
 	{
 		/*font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);

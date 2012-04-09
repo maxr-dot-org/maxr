@@ -37,12 +37,6 @@ class cUnit;
 struct sHudStateContainer;
 struct sTurnstartReport;
 
-struct sSentry
-{
-	cVehicle *v;
-	cBuilding *b;
-};
-
 // Eintrag in der Lock-Liste /////////////////////////////////////////////////
 struct sLockElem{
   cVehicle *v;
@@ -90,9 +84,9 @@ public:
 	char *ScanMap;             // Map mit dem Scannerflags.
 	char *ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
 	cBase base;               // Die Basis dieses Spielers.
-	cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
+	//cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
 	char *SentriesMapAir;				/** the covered air area */
-	cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
+	//cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
 	char *SentriesMapGround;			/** the covered ground area */
 	char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
 	char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
@@ -121,12 +115,8 @@ public:
 	void DoScan();
 	cUnit *getNextUnit ();
 	cUnit *getPrevUnit ();
-	void addSentryVehicle( cVehicle *v );
-	void addSentryBuilding( cBuilding *b );
-	void deleteSentryVehicle( cVehicle *v );
-	void deleteSentryBuilding( cBuilding *b) ;
-	void refreshSentryAir();
-	void refreshSentryGround();
+	void addSentry ( cUnit *u );
+	void deleteSentry ( cUnit *u );
 	void startAResearch (int researchArea);
 	void stopAResearch (int researchArea);
 	void doResearch (); ///< proceed with the research at turn end
@@ -171,6 +161,9 @@ public:
 	int getClan () const { return clan; }
 
 private:
+	void refreshSentryAir();
+	void refreshSentryGround();
+	
 	cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
 	cBuilding *addBuilding( int posx, int posy, sBuilding *b );
 

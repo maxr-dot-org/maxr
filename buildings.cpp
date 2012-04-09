@@ -1239,8 +1239,7 @@ void cBuilding::storeVehicle( cVehicle *Vehicle, cMap *Map  )
 	Map->deleteVehicle ( Vehicle );
 	if ( Vehicle->sentryActive )
 	{
-		Vehicle->owner->deleteSentryVehicle( Vehicle );
-		Vehicle->sentryActive = false;
+		Vehicle->owner->deleteSentry (Vehicle);
 	}
 
 	Vehicle->Loaded = true;

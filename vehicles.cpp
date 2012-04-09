@@ -108,10 +108,7 @@ cVehicle::~cVehicle ()
 	if ( autoMJob )
 		delete autoMJob;
 
-	if ( sentryActive )
-		owner->deleteSentryVehicle ( this );
-
-	detectedInThisTurnByPlayerList.Reserve (0);
+	detectedInThisTurnByPlayerList.Reserve (0); //?
 	
 	if ( IsLocked )
 	{
@@ -1522,10 +1519,9 @@ bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, string reasonForLog) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeSentryAttack (sSentry* sentry) const
+bool cVehicle::makeSentryAttack (cUnit* sentryUnit) const
 {
-	cUnit* sentryUnit = (sentry->b != 0 ? (cUnit*)sentry->b : (cUnit*)sentry->v);
-	if (sentryUnit != 0 && sentryUnit->canAttackObjectAt (PosX, PosY, Server->Map, true))
+	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, Server->Map, true))
 	{
 		if (makeAttackOnThis (sentryUnit, "sentry reaction"))
 			return true;
@@ -1547,29 +1543,24 @@ bool cVehicle::InSentryRange ()
 
 		if ( Player == owner ) continue;
 
-		if ( data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer( Player ) ) continue;	//check next player
+		if ( data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer( Player ) ) continue;	//don't attack undiscovered stealth units
+		if ( Player->ScanMap[iOff] == 0) continue;											//don't attack units out of scan range
+		if ( data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0 ) continue;		 //check sentry type
+		if ( data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		 //check sentry type
 
-		if ( data.factorAir > 0 )
+		cUnit* unit = (cUnit*) Player->VehicleList;
+		while (unit)
 		{
-			if ( ! ( Player->SentriesMapAir[iOff] && Player->ScanMap[iOff] ) ) continue; //check next player
-
-			for ( unsigned int k = 0; k < Player->SentriesAir.Size(); k++ )
-			{
-				Sentry = Player->SentriesAir[k];
-				if (makeSentryAttack (Sentry))
-					return true;
-			}
+			if (makeSentryAttack (unit))
+				return true;
+			unit = unit->next;
 		}
-		else
+		unit = (cUnit*) Player->BuildingList;
+		while (unit)
 		{
-			if ( ! ( Player->SentriesMapGround[iOff] && Player->ScanMap[iOff] ) ) continue; //check next player
-
-			for ( unsigned int k = 0;k < Player->SentriesGround.Size();k++ )
-			{
-				Sentry = Player->SentriesGround[k];
-				if (makeSentryAttack (Sentry))
-					return true;
-			}
+			if (makeSentryAttack (unit))
+				return true;
+			unit = unit->next;
 		}
 	}
 
@@ -1763,11 +1754,10 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 	Map->deleteVehicle ( Vehicle );
 	if ( Vehicle->sentryActive )
 	{
-		Vehicle->owner->deleteSentryVehicle( Vehicle);
-		Vehicle->sentryActive = false;
+		Vehicle->owner->deleteSentry (Vehicle);
 	}
-	if ( Vehicle->manualFireActive )
-		Vehicle->manualFireActive = false;
+	
+	Vehicle->manualFireActive = false;
 
 	Vehicle->Loaded = true;
 

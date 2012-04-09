@@ -620,8 +620,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 	if ( unitNode->FirstChildElement( "AutoMoving" ) ) vehicle->hasAutoMoveJob = true;
 	if ( unitNode->FirstChildElement( "OnSentry" ) )
 	{
-		vehicle->sentryActive = true;
-		owner->addSentryVehicle ( vehicle );
+		owner->addSentry ( vehicle );
 	}
 	if ( unitNode->FirstChildElement( "ManualFire" ) ) vehicle->manualFireActive = true;
 
@@ -752,14 +751,12 @@ void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 	{
 		if ( !building->sentryActive )
 		{
-			building->sentryActive = true;
-			owner->addSentryBuilding ( building );
+			owner->addSentry ( building );
 		}
 	}
 	else if ( building->sentryActive )
 	{
-		owner->deleteSentryBuilding ( building );
-		building->sentryActive = false;
+		owner->deleteSentry ( building );
 	}
 	if ( unitNode->FirstChildElement( "ManualFire" ) ) building->manualFireActive = true;
 	if ( unitNode->FirstChildElement( "HasBeenAttacked" ) ) building->hasBeenAttacked = true;
