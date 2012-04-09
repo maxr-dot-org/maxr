@@ -37,7 +37,7 @@ public:
 	};
 	
 	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
-	~cUnit ();
+	virtual ~cUnit ();
 
 	bool isVehicle () const { return unitType == kUTVehicle; }
 	bool isBuilding () const { return unitType == kUTBuilding; }

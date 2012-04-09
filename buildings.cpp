@@ -123,11 +123,6 @@ cBuilding::~cBuilding ()
 		delete BuildList;
 	}
 
-	/*if ( sentryActive )
-	{
-		owner->deleteSentryBuilding ( this );
-	}*/
-
 	if ( IsLocked )
 	{
 		cPlayer *p;
