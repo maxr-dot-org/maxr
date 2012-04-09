@@ -3793,11 +3793,13 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						AutoSurface surface;
 						if ( unitID.getBuilding() )
 						{
-							surface = generateUnitSurface (&cBuilding(unitID.getBuilding(), Client->ActivePlayer, NULL));
+							cBuilding building(unitID.getBuilding(), Client->ActivePlayer, NULL);
+							surface = generateUnitSurface (&building);
 						}
 						else if ( unitID.getVehicle() )
 						{
-							surface = generateUnitSurface (&cVehicle(unitID.getVehicle(), Client->ActivePlayer));
+							cVehicle vehicle(unitID.getVehicle(), Client->ActivePlayer);
+							surface = generateUnitSurface (&vehicle);
 						}
 						else
 						{
@@ -4021,11 +4023,13 @@ void cMenuReportsScreen::drawReportsScreen()
 				AutoSurface surface;
 				if ( savedReport.unitID.getVehicle() ) 
 				{
-					surface = generateUnitSurface (&cVehicle(savedReport.unitID.getVehicle(), Client->ActivePlayer));
+					cVehicle vehicle(savedReport.unitID.getVehicle(), Client->ActivePlayer);
+					surface = generateUnitSurface (&vehicle);
 				}
 				else if ( savedReport.unitID.getBuilding() )
 				{
-					surface = generateUnitSurface (&cBuilding(savedReport.unitID.getBuilding(), Client->ActivePlayer, NULL));
+					cBuilding building(savedReport.unitID.getBuilding(), Client->ActivePlayer, NULL);
+					surface = generateUnitSurface (&building);
 				}
 				else 
 				{
@@ -4110,7 +4114,9 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		}
 		if ( draw )
 		{
-			{ AutoSurface surface(generateUnitSurface(&cVehicle(nextVehicle->typ, nextVehicle->owner)));
+			{
+				cVehicle vehicle(nextVehicle->typ, nextVehicle->owner);
+				AutoSurface surface(generateUnitSurface(&vehicle));
 				SDL_BlitSurface(surface, NULL, buffer, &dest);
 			}
 
@@ -4140,7 +4146,9 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			}
 			if ( draw )
 			{
-				{ AutoSurface surface(generateUnitSurface(&cBuilding(nextBuilding->typ, nextBuilding->owner,NULL)));
+				{ 
+					cBuilding building(nextBuilding->typ, nextBuilding->owner,NULL);
+					AutoSurface surface(generateUnitSurface(&building));
 					SDL_BlitSurface(surface, NULL, buffer, &dest);
 				}
 
