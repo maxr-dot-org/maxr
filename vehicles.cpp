@@ -128,23 +128,6 @@ cVehicle::~cVehicle ()
 //-----------------------------------------------------------------------------
 void cVehicle::draw ( SDL_Rect screenPosition )
 {
-	// Workarounds:
-
-	if ( ( !ClientMoveJob || !MoveJobActive ) && ( OffX != 0 || OffY != 0 ) )
-	{
-		OffX = 0;
-		OffY = 0;
-	}
-
-	if ( !ClientMoveJob && ( MoveJobActive || moving ) )
-	{
-		//TODO: remove
-		MoveJobActive = false;
-		moving = false;
-		StopFXLoop ( Client->iObjectStream );
-		Client->iObjectStream = playStream();
-	}
-
 	//make damage effect
 	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
 	{
