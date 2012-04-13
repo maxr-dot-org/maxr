@@ -4247,7 +4247,7 @@ void cLoadMenu::slotClicked( void* parent )
 	menu->extendedSlotClicked( oldSelection );
 	menu->draw();
 
-	if (mouse->isDoubleClick)
+	if (mouse->isDoubleClick && !menu->loadButton->isLocked())
 	{
 		loadReleased( parent );
 	}

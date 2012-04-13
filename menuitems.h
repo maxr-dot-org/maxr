@@ -330,6 +330,8 @@ public:
 	 *@author alzi
 	 */
 	bool isDisabled() { return disabled; }
+
+	bool isLocked() { return locked; }
 };
 
 /**
