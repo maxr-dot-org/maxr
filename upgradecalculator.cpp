@@ -359,18 +359,18 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_16 [32] = 416;
 	attackSpeed_16 [34] = 611;
 
-	attackSpeed_17 [17] = 5; // TODO: these are not the real values! Rocketlauncher, attack, Clan Ayer's Hand
-	attackSpeed_17 [19] = 11;
-	attackSpeed_17 [21] = 19;
-	attackSpeed_17 [23] = 35;
-	attackSpeed_17 [25] = 55;
-	attackSpeed_17 [27] = 94;
-	attackSpeed_17 [29] = 152;
-	attackSpeed_17 [31] = 229;
-	attackSpeed_17 [33] = 331;
-	attackSpeed_17 [35] = 483;
-	attackSpeed_17 [37] = 694;
-
+	attackSpeed_17 [17] = 5;
+    attackSpeed_17 [19] = 10;
+    attackSpeed_17 [21] = 19;
+    attackSpeed_17 [23] = 34;
+    attackSpeed_17 [25] = 56;
+    attackSpeed_17 [27] = 91;
+    attackSpeed_17 [29] = 143;
+    attackSpeed_17 [31] = 216;
+    attackSpeed_17 [33] = 321;
+    attackSpeed_17 [35] = 466;
+    attackSpeed_17 [37] = 661;
+	
 	attackSpeed_18 [18] = 4;
 	attackSpeed_18 [20] = 10;
 	attackSpeed_18 [22] = 16;
