@@ -37,8 +37,8 @@ cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	color(Color),
 	Nr(nr),
 	numEcos(0),
-	clan(-1),
-	lastDeletedUnit(0)
+	lastDeletedUnit(0),
+	clan(-1)
 {
 	// copy the vehicle stats
 	VehicleData = new sUnitData[UnitsData.getNrVehicles ()];
@@ -488,7 +488,7 @@ cUnit *cPlayer::getNextUnit ()
 	do
 	{
 		//check if this unit is the next one to be selected
-		if (unit->isBuilding ())	
+		if (unit->isBuilding ())
 		{
 			cBuilding* building = (cBuilding*) unit;
 			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
@@ -500,7 +500,7 @@ cUnit *cPlayer::getNextUnit ()
 			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
 				return unit;
 		}
-		
+
 		//otherwise get next unit
 		if (unit->next)
 		{
@@ -552,7 +552,7 @@ cUnit *cPlayer::getPrevUnit ()
 				start = VehicleList;
 				while (start && start->next)
 					start = start->next;
-			}	
+			}
 			else
 			{
 				start = BuildingList;
@@ -583,7 +583,7 @@ cUnit *cPlayer::getPrevUnit ()
 	do
 	{
 		//check if this unit is the next one to be selected
-		if (unit->isBuilding ())	
+		if (unit->isBuilding ())
 		{
 			cBuilding* building = (cBuilding*) unit;
 			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
@@ -595,7 +595,7 @@ cUnit *cPlayer::getPrevUnit ()
 			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
 				return unit;
 		}
-		
+
 		//otherwise get next unit
 		if (unit->prev)
 		{

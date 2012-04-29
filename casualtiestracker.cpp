@@ -29,7 +29,7 @@ using namespace std;
 void cCasualtiesTracker::initFromXML (TiXmlElement* casualtiesNode)
 {
 	casualtiesPerPlayer.clear ();
-	
+
 	TiXmlElement* playerNode = casualtiesNode->FirstChildElement ("PlayerCasualties");
 	while (playerNode != 0)
 	{
@@ -58,19 +58,19 @@ void cCasualtiesTracker::initFromXML (TiXmlElement* casualtiesNode)
 void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode)
 {
 	// add sub elements for every player that contain all his casualties
-	for (int i = 0; i < casualtiesPerPlayer.size (); i++)
+	for (size_t i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
 		CasualtiesOfPlayer& casualtiesOfPlayer = casualtiesPerPlayer[i];
-		
+
 		TiXmlElement* playerNode = new TiXmlElement ("PlayerCasualties");
 		casualtiesNode->LinkEndChild (playerNode); // playerNode is now owned by casualtiesNode
 		playerNode->SetAttribute ("PlayerNr", iToStr (casualtiesOfPlayer.playerNr).c_str ());
-		
+
 		// add sub elements for each casualty of the current player
-		for (int j = 0; j < casualtiesOfPlayer.casualties.size (); j++)
+		for (size_t j = 0; j < casualtiesOfPlayer.casualties.size (); j++)
 		{
 			Casualty& casualty = casualtiesOfPlayer.casualties[j];
-			
+
 			TiXmlElement* casualtyNode = new TiXmlElement ("Casualty");
 			playerNode->LinkEndChild (casualtyNode); // casualtyNode is now owned by playerNode
 			casualtyNode->SetAttribute ("ID_Fst", iToStr (casualty.unitID.iFirstPart).c_str ());
@@ -90,7 +90,7 @@ void cCasualtiesTracker::logCasualty (sID unitType, int playerNr)
 void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int playerNr)
 {
 	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
-	
+
 	for (unsigned int i = 0; i < casualties.size (); i++)
 	{
 		if (unitType == casualties[i].unitID)
@@ -131,7 +131,7 @@ int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr)
 vector<sID> cCasualtiesTracker::getUnitTypesWithLosses ()
 {
 	vector<sID> result;
-	
+
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
 		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
@@ -139,7 +139,7 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses ()
 		{
 			Casualty& casualty = casualties[entryIdx];
 			bool containedInResult = false;
-			for (int j = 0; j < result.size (); j++)
+			for (unsigned int j = 0; j < result.size (); j++)
 			{
 				if (result[j] == casualty.unitID)
 				{
@@ -154,7 +154,7 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses ()
 				{
 					int firstPart = casualty.unitID.iFirstPart;
 					int secondPart = casualty.unitID.iSecondPart;
-					
+
 					if ((firstPart == 1 && result[j].iFirstPart == 0) // 0: vehicle, 1: building; buildings should be inserted first
 						|| (firstPart == result[j].iFirstPart && secondPart < result[j].iSecondPart))
 					{
@@ -177,9 +177,9 @@ void cCasualtiesTracker::debugPrint ()
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
 		Log.write ("Casualties of Player: " + iToStr (casualtiesPerPlayer[i].playerNr), cLog::eLOG_TYPE_DEBUG);
-		
+
 		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
-		for (int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
+		for (unsigned int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
 		{
 			sUnitData* unitData = casualties[entryIdx].unitID.getUnitDataOriginalVersion ();
 			if (unitData != 0)
@@ -209,7 +209,7 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 			setCasualty (unitType, numberLosses, playerNr);
 		}
 	}
-	
+
 	notifyListeners ("casualties tracker updated");
 }
 
@@ -227,7 +227,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messa
 		currentPlayer = casualtiesPerPlayer[i].playerNr;
 		entriesInMessageForPlayer = 0;
 		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
-		for (int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
+		for (unsigned int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
 		{
 			if (message == 0)
 			{
@@ -235,12 +235,12 @@ void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messa
 				entriesInMessageForPlayer = 0;
 				dataSetsInMessage = 1;
 			}
-			
+
 			message->pushInt32 (casualties[entryIdx].numberOfLosses);
 			message->pushInt16 (casualties[entryIdx].unitID.iSecondPart);
 			message->pushInt16 (casualties[entryIdx].unitID.iFirstPart);
 			entriesInMessageForPlayer++;
-			
+
 			if (message->iLength + 4 + 4 + 8 > PACKAGE_LENGTH)
 			{
 				message->pushInt16 (entriesInMessageForPlayer);

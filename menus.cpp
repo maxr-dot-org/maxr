@@ -521,9 +521,9 @@ cMenu::cMenu( SDL_Surface *background_, eMenuBackgrounds backgroundType_ ) :
 }
 
 //------------------------------------------------------------------------------
-cMenu::~cMenu() 
+cMenu::~cMenu()
 {
-	if (ActiveMenu == this) 
+	if (ActiveMenu == this)
 		ActiveMenu = NULL;
 }
 
@@ -5040,8 +5040,8 @@ cStorageMenu::cStorageMenu(cList<cUnit*>& storageList_, cVehicle* vehicle, cBuil
 	ownerVehicle(vehicle),
 	ownerBuilding(building),
 	storageList(storageList_),
-	voicePlayed(false),
-	voiceTypeAll(false)
+	voiceTypeAll(false),
+	voicePlayed(false)
 {
 	if ( ownerVehicle ) unitData = ownerVehicle->data;
 	else if ( ownerBuilding )
@@ -5917,7 +5917,7 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 
 			storingBuilding = (cBuilding*) storingBuilding->next;
 		}
-		
+
 		return;
 	}
 

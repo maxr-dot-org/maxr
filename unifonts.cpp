@@ -367,7 +367,7 @@ int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFont
 	while ( getTextWide ( sText, fonttype, encode ) > rDest.w )
 	{
 		// get the position of the end of as many words from the text as fit in rDest.w
-		int pos = 0, lastPos = 0;
+		size_t pos = 0, lastPos = 0;
 		do
 		{
 			lastPos = pos;

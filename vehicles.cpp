@@ -109,7 +109,7 @@ cVehicle::~cVehicle ()
 		delete autoMJob;
 
 	detectedInThisTurnByPlayerList.Reserve (0); //?
-	
+
 	if ( IsLocked )
 	{
 		cPlayer *p;
@@ -913,7 +913,7 @@ string cVehicle::getStatusStr ()
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
 		sText += iToStr ( turnsDisabled ) + ")";
 		return sText;
-	}	
+	}
 	else if ( autoMJob )
 		return lngPack.i18n ( "Text~Comp~Surveying" );
 	else if ( ClientMoveJob )
@@ -980,7 +980,7 @@ string cVehicle::getStatusStr ()
 			sTmp += " +" + iToStr ( (int)CommandoRank );
 		return sTmp;
 	}
-	
+
 	return lngPack.i18n ( "Text~Comp~Waits" );
 }
 
@@ -1515,7 +1515,6 @@ bool cVehicle::makeSentryAttack (cUnit* sentryUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::InSentryRange ()
 {
-	sSentry* Sentry = 0;
 	cPlayer* Player = 0;
 
 	int iOff = PosX + PosY * Server->Map->size;
@@ -1555,9 +1554,9 @@ bool cVehicle::isOtherUnitOffendedByThis (cUnit* otherUnit) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
 	bool otherUnitIsCheapBuilding = (otherUnit->isBuilding () && otherUnit->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2);
-	
-	if (otherUnitIsCheapBuilding == false 
-		&& isInRange (otherUnit->PosX, otherUnit->PosY) 
+
+	if (otherUnitIsCheapBuilding == false
+		&& isInRange (otherUnit->PosX, otherUnit->PosY)
 		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, Server->Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
@@ -1581,7 +1580,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player)
 	else
 	{
 		// check if there is a vehicle or building of player, that is offended
-		
+
 		cUnit* opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0)
 		{
@@ -1606,7 +1605,7 @@ bool cVehicle::doReactionFireForUnit (cUnit* opponentUnit) const
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
 		&& opponentUnit->canAttackObjectAt (PosX, PosY, Server->Map, true)
 		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
-		&& (opponentUnit->isVehicle () == false || opponentUnit->data.isStealthOn == TERRAIN_NONE)) 
+		&& (opponentUnit->isVehicle () == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
 	{
 		if (makeAttackOnThis (opponentUnit, "reaction fire"))
 			return true;
@@ -1623,7 +1622,7 @@ bool cVehicle::doReactionFire (cPlayer* player) const
 	while (opponentBuilding != 0)
 	{
 		if (doReactionFireForUnit (opponentBuilding))
-			return true;		
+			return true;
 		opponentBuilding = opponentBuilding->next;
 	}
 	cUnit* opponentVehicle = player->VehicleList;
@@ -1642,24 +1641,24 @@ bool cVehicle::provokeReactionFire ()
 	// unit can't fire, so it can't provoke a reaction fire
 	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
 		return false;
-		
-	int iOff = PosX + PosY * Server->Map->size;	
+
+	int iOff = PosX + PosY * Server->Map->size;
 
 	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
 		cPlayer* player = (*Server->PlayerList)[i];
-		if (player == owner) 
+		if (player == owner)
 			continue;
-		
+
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player))
 			continue;
-		
+
 		if (player->ScanMap[iOff] == false) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
 			continue;
-		
+
 		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (player) == false)
 			continue;
-		
+
 		if (doReactionFire (player))
 			return true;
 	}
@@ -1739,7 +1738,7 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
 	}
-	
+
 	Vehicle->manualFireActive = false;
 
 	Vehicle->Loaded = true;
@@ -1782,7 +1781,7 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply (int x, int y, int supplyType) const
 {
-	if (x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size) 
+	if (x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size)
 		return false;
 
 	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
@@ -1796,38 +1795,38 @@ bool cVehicle::canSupply (int x, int y, int supplyType) const
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply (cUnit* unit, int supplyType) const
 {
-	if (unit == 0) 
+	if (unit == 0)
 		return false;
 
-	if (data.storageResCur <= 0) 
+	if (data.storageResCur <= 0)
 		return false;
 
 	if (unit->data.isBig == false)
 	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1) 
+		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1)
 			return false;
 	}
 	else
 	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2) 
+		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2)
 			return false;
 	}
-	
-	if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0) 
+
+	if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0)
 		return false;
 
 	switch (supplyType)
 	{
 	case SUPPLY_TYPE_REARM:
-		if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax 
-			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ()) 
-			|| unit->attacking) 
+		if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
+			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ())
+			|| unit->attacking)
 			return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
-		if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax 
-			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ()) 
-			|| unit->attacking) 
+		if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
+			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ())
+			|| unit->attacking)
 			return false;
 		break;
 	default:
@@ -1884,7 +1883,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
 
-	if (isNextTo (x, y) == false || data.shotsCur == 0) 
+	if (isNextTo (x, y) == false || data.shotsCur == 0)
 		return false;
 
 	int off = x + y * map->size;
@@ -1902,7 +1901,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 		if (unit->owner == owner) return false;
 		if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0) return false;
 
-		if (result) 
+		if (result)
 			return true;
 	}
 	return false;
@@ -1925,7 +1924,7 @@ void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
 	else
 	{
 		unit = field.getVehicles ();
-		if (unit == 0) 
+		if (unit == 0)
 			unit = field.getTopBuilding ();
 		sf = GraphicsData.gfx_Cdisable;
 	}
@@ -1956,7 +1955,7 @@ int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
 	// TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
 	// TODO: Bug for buildings? /3? or correctly /2, because constructing buildings takes two resources per turn?
 	int destTurn = destUnit->data.buildCosts / 3;
-	
+
 	int factor = steal ? 1 : 4;
 	int srcLevel = (int)CommandoRank+7;
 
@@ -1967,7 +1966,7 @@ int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
 	higher chance then stealing.
 	*/
 	int chance = Round ((float)(8 * srcLevel) / (35 * destTurn) * factor * 100);
-	if (chance > 90) 
+	if (chance > 90)
 		chance = 90;
 
 	return chance;
@@ -2020,7 +2019,7 @@ void cVehicle::setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTur
 		detectedByPlayerList.Add( player );
 
 	if ( !wasDetected ) sendDetectionState( this );
-	
+
 	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
 		detectedInThisTurnByPlayerList.Add (player);
 }
@@ -2038,7 +2037,7 @@ void cVehicle::resetDetectedByPlayer( cPlayer* player )
 	{
 		if ( detectedInThisTurnByPlayerList[i] == player ) detectedInThisTurnByPlayerList.Delete(i);
 	}
-	
+
 	if ( wasDetected && detectedByPlayerList.Size() == 0 ) sendDetectionState( this );
 }
 
@@ -2058,7 +2057,7 @@ void cVehicle::clearDetectedInThisTurnPlayerList ()
 void cVehicle::tryResetOfDetectionStateAfterMove ()
 {
 	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
-	
+
 	bool foundPlayerToReset = true;
 	while (foundPlayerToReset)
 	{
@@ -2091,26 +2090,26 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer () const
 				continue;
 			bool isOnWater = Server->Map->isWater (PosX, PosY, true);
 			bool isOnCoast = Server->Map->isWater (PosX, PosY) && (isOnWater == false);
-			
+
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
 			cBuilding* building = Server->Map->fields[offset].getBaseBuilding ();
-			if (data.factorGround > 0 && building 
-				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
-					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
+			if (data.factorGround > 0 && building
+				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
+					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE))
 			{
 				isOnWater = false;
 				isOnCoast = false;
 			}
-			
-			if ((data.isStealthOn & TERRAIN_GROUND) 
-				&& (player->DetectLandMap[offset] || ( !(data.isStealthOn & TERRAIN_COAST) && isOnCoast) 
+
+			if ((data.isStealthOn & TERRAIN_GROUND)
+				&& (player->DetectLandMap[offset] || ( !(data.isStealthOn & TERRAIN_COAST) && isOnCoast)
 					|| isOnWater))
 			{
 				playersThatDetectThisVehicle.Add (player);
 			}
-			
+
 			if ((data.isStealthOn & TERRAIN_SEA)
 				&& (player->DetectSeaMap[offset] || isOnWater == false))
 			{
@@ -2127,7 +2126,7 @@ void cVehicle::makeDetection()
 	//check whether the vehicle has been detected by others
 	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
 	for (unsigned int i = 0; i < playersThatDetectThisVehicle.Size (); i++)
-		setDetectedByPlayer (playersThatDetectThisVehicle[i]);	
+		setDetectedByPlayer (playersThatDetectThisVehicle[i]);
 
 	//detect other units
 	if ( data.canDetectStealthOn )
@@ -2232,7 +2231,7 @@ void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Re
 
 //-----------------------------------------------------------------------------
 bool cVehicle::canBeStoppedViaUnitMenu () const
-{ 
+{
 	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && BuildRounds > 0) || (isUnitClearing () && ClearingRounds > 0));
 }
 
@@ -2242,7 +2241,7 @@ void cVehicle::executeBuildCommand ()
 	if (ClientMoveJob)
 		sendWantStopMove (iID);
 	cBuildingsBuildMenu buildMenu (owner, this);
-	buildMenu.show ();	
+	buildMenu.show ();
 }
 
 //-----------------------------------------------------------------------------
@@ -2284,7 +2283,7 @@ void cVehicle::executeLayMinesCommand ()
 {
 	LayMines = !LayMines;
 	ClearMines = false;
-	sendMineLayerStatus (this);	
+	sendMineLayerStatus (this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2328,7 +2327,7 @@ bool cVehicle::canLand( const cMap& map) const
 
 	//returning true before checking owner, because a stolen vehicle
 	//can stay on an enemy landing pad until it is moved
-	if ( FlightHigh == 0 ) return true; 
+	if ( FlightHigh == 0 ) return true;
 
 
 	if ( bi->owner != owner ) return false;

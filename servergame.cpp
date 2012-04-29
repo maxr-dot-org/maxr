@@ -45,10 +45,10 @@ int serverGameThreadFunction (void* data)
 
 //------------------------------------------------------------------------
 cServerGame::cServerGame ()
-: canceled (false)
+: thread (0)
+, canceled (false)
 , shouldSave (false)
 , saveGameNumber (-1)
-, thread (0)
 , gameData (0)
 , serverMap (0)
 , lastEvent (0)

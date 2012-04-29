@@ -1536,14 +1536,14 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		}
 		else if ( overUnitField ) selectUnit ( overUnitField, true );
 	}
-	else 
+	else
 	{
 		bool mouseOverSelectedUnit = false;
 		if ( selectedBuilding && mouse->getKachelX() == selectedBuilding->PosX && mouse->getKachelY() == selectedBuilding->PosY ) mouseOverSelectedUnit = true;
-		if ( selectedBuilding && selectedBuilding->data.isBig && mouse->getKachelX() >= selectedBuilding->PosX && mouse->getKachelX() <= selectedBuilding->PosX + 1 
+		if ( selectedBuilding && selectedBuilding->data.isBig && mouse->getKachelX() >= selectedBuilding->PosX && mouse->getKachelX() <= selectedBuilding->PosX + 1
 															  && mouse->getKachelY() >= selectedBuilding->PosY && mouse->getKachelY() <= selectedBuilding->PosY + 1 ) mouseOverSelectedUnit = true;
 		if ( selectedVehicle && mouse->getKachelX() == selectedVehicle->PosX && mouse->getKachelY() == selectedVehicle->PosY ) mouseOverSelectedUnit = true;
-		if ( selectedVehicle && selectedVehicle->data.isBig && mouse->getKachelX() >= selectedVehicle->PosX && mouse->getKachelX() <= selectedVehicle->PosX + 1 
+		if ( selectedVehicle && selectedVehicle->data.isBig && mouse->getKachelX() >= selectedVehicle->PosX && mouse->getKachelX() <= selectedVehicle->PosX + 1
 															&& mouse->getKachelY() >= selectedVehicle->PosY && mouse->getKachelY() <= selectedVehicle->PosY + 1 ) mouseOverSelectedUnit = true;
 
 
@@ -1577,7 +1577,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 							else if ( overVehicle ) next = 'v';
 							else if ( overBuilding ) next = 't';
 							else if ( overBaseBuilding ) next = 'b';
-							else if ( planes.size() > 1 ) 
+							else if ( planes.size() > 1 )
 							{
 								next = 'p';
 								planes.rewind();
@@ -2764,9 +2764,9 @@ void cGameGUI::doneReleased( void *parent )
 
 	cUnit* unit = gui->selectedVehicle;
 	if (!unit) unit = gui->selectedBuilding;
-	
+
 	if (unit && unit->owner == Client->ActivePlayer)
-	{	
+	{
 		unit->center();
 		unit->isMarkedAsDone = true;
 		sendMoveJobResume (unit->iID);
@@ -2849,15 +2849,13 @@ void cGameGUI::miniMapRightClicked( void *parent )
 
 	int x = mouse->x;
 	int y = mouse->y;
-	const int displayedMapWidth = (int)((Video.getResolutionX() - HUD_TOTAL_WIDTH) / gui->getZoom());
-	const int displayedMapHight = (int)((Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
 	int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
 	int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
 
 	Client->addMoveJob (gui->selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
-	
+
 }
 
 void cGameGUI::miniMapMovedOver( void *parent )

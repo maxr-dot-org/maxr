@@ -112,8 +112,6 @@ void cSettings::setPaths()
 
 		std::cout << "\n(II): Read home directory " << homeDir;
 
-		bool newDirCreated = false;
-
 		if (!homeDir.empty())
 		{
 			homeDir += PATH_DELIMITER;
@@ -124,7 +122,6 @@ void cSettings::setPaths()
 				if(mkdir(homeDir.c_str()) == 0)
 				{
 					std::cout << "\n(II): Created new config directory " << homeDir;
-					newDirCreated = true;
 				}
 				else
 				{
@@ -465,7 +462,7 @@ void cSettings::initialize()
 			*i = std::toupper((unsigned char)*i);
 		language = temp.c_str();
 	}
-	
+
 	// =============================================================================
 	xmlNode = ExTiXmlNode::XmlGetFirstNode(configFile,"Options","Start","VoiceLanguage", NULL);
 	if(!xmlNode || !xmlNode->XmlReadNodeData(temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))

@@ -83,7 +83,7 @@ cDedicatedServer::~cDedicatedServer ()
 		network = 0;
 	}
 
-	for (int i = 0; i < games.size (); i++)
+	for (size_t i = 0; i < games.size (); i++)
 		delete games[i];
 
 	delete configuration;
@@ -280,7 +280,7 @@ string cDedicatedServer::getGamesString () const
 	stringstream oss;
 	if (games.size () == 0)
 		oss << "No games started" << endl;
-	for (int i = 0; i < games.size (); i++)
+	for (size_t i = 0; i < games.size (); i++)
 	{
 		oss << "--------- Game " << i << ": -----------" << endl;
 		cServerGame* game = games[i];
