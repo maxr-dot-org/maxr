@@ -148,7 +148,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	bWaitForOthers = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
-	
+
 	casualtiesTracker = new cCasualtiesTracker ();
 }
 
@@ -159,7 +159,7 @@ cClient::~cClient()
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
-	
+
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
 	while (messages.Size())
@@ -2005,12 +2005,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( message->popBool() ) PlayVoice ( VoiceData.VOIUnitStolen );
 				else PlayVoice ( VoiceData.VOIUnitDisabled );
 			}
-			else 
+			else
 			{
 				int i = random(3);
-				if (i = 0)
+				if (i == 0)
 					PlayVoice ( VoiceData.VOICommandoFailed1 );
-				else if (i = 1)
+				else if (i == 1)
 					PlayVoice ( VoiceData.VOICommandoFailed2 );
 				else
 					PlayVoice ( VoiceData.VOICommandoFailed3 );
@@ -2136,9 +2136,9 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 
 		if ( AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack )
 			PlayVoice( VoiceData.VOISubDetected );
-		else if ( random( 2 ) ) 
+		else if ( random( 2 ) )
 			PlayVoice ( VoiceData.VOIDetected1 );
-		else 
+		else
 			PlayVoice ( VoiceData.VOIDetected2 );
 	}
 }
@@ -2277,7 +2277,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	}
 
 	owner->lastDeletedUnit = Vehicle->iID;
-	
+
 	delete Vehicle;
 
 	if ( owner ) owner->DoScan();
