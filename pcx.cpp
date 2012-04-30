@@ -23,7 +23,86 @@
 #include "main.h"
 #include "video.h"
 
-SDL_Surface* LoadPCX(std::string name)
+/**
+*  Class that uses a internal buffer to read from file.
+*  It avoid some costly I/O calls.
+*/
+class cBufferedFile
+{
+public:
+	cBufferedFile() :
+		file(NULL),
+		start(0),
+		end(0)
+	{}
+
+	~cBufferedFile() { close(); }
+
+	bool open(const char* filename, const char* mode)
+	{
+		this->file = SDL_RWFromFile(filename, mode);
+		return this->file != NULL;
+	}
+
+	void close()
+	{
+		if (this->file != NULL)
+		{
+			SDL_RWclose(this->file);
+			this->file = NULL;
+		}
+	}
+
+	void seek(int pos, int from)
+	{
+		SDL_RWseek(file, pos, from);
+		start = end = 0;
+	}
+
+	void read(void* vbuffer, unsigned int size, unsigned int count)
+	{
+		char *buffer = reinterpret_cast<char *>(vbuffer);
+		unsigned int pos = 0;
+		const unsigned int totalSize = size * count;
+
+		while (pos < totalSize) {
+			this->fillBufferIfNeeded();
+			const unsigned int copySize = std::min(end - start, totalSize - pos);
+
+			memcpy(buffer + pos, this->internalBuffer + start, copySize);
+			pos += copySize;
+			start += copySize;
+		}
+	}
+
+	Uint16 readLE16()
+	{
+		Uint16 res;
+
+		read(&res, sizeof(res), 1);
+		res = SDL_SwapLE16(res);
+		return res;
+	}
+
+private:
+	void fillBufferIfNeeded()
+	{
+		if (start == end)
+		{
+			start = end = 0;
+			end = SDL_RWread(file, internalBuffer, 1, bufferSize);
+		}
+	}
+
+private:
+	static const unsigned int bufferSize = 1024;
+	SDL_RWops* file;
+	char internalBuffer[bufferSize];
+	unsigned int start;
+	unsigned int end;
+};
+
+SDL_Surface* LoadPCX(const std::string& name)
 {
 	// Open the file.
 	if (!FileExists(name.c_str()))
@@ -32,42 +111,40 @@ SDL_Surface* LoadPCX(std::string name)
 		return s;
 	}
 
-	SDL_RWops* const f = SDL_RWFromFile(name.c_str(), "rb");
-	if (!f)
+	cBufferedFile bufferedFile;
+	if (!bufferedFile.open(name.c_str(), "rb"))
 	{
 		Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING); // Image corrupted, create empty surface.
 		SDL_Surface* const s = SDL_CreateRGBSurface(Video.getSurfaceType(), 100, 20, Video.getColDepth(), 0, 0, 0, 0);
 		return s;
 	}
-
 	// Load the image.
-	SDL_RWseek(f, 8, SEEK_SET);
-	Uint16       const x = SDL_ReadLE16(f) + 1;
-	Uint16       const y = SDL_ReadLE16(f) + 1;
+	bufferedFile.seek(8, SEEK_SET);
+	Uint16       const x = bufferedFile.readLE16() + 1;
+	Uint16       const y = bufferedFile.readLE16() + 1;
 	SDL_Surface* const s = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, x, y, 32, 0, 0, 0, 0);
 	if (!s)
 	{
 		Log.write(SDL_GetError(), cLog::eLOG_TYPE_ERROR);
-		SDL_RWclose(f);
 		return NULL; //app will crash using this
 	}
 	SDL_SetColorKey(s, SDL_SRCCOLORKEY, 0xFF00FF);
 
 	Uint32* const buf = static_cast<Uint32*>(s->pixels);
-	SDL_RWseek(f, 128, RW_SEEK_SET);
+	bufferedFile.seek(128, RW_SEEK_SET);
 	int k = 0;
 	int i = 0;
 	do
 	{
 		char tmp[2];
-		SDL_RWread(f, tmp, 1, 1);
+		bufferedFile.read(tmp, 1, 1);
 		unsigned char const temp = tmp[0];
 		if (temp >= 0xC0)
 		{
 			int z = temp - 192;
 			if (z + k > x)
 				z = x - k;
-			SDL_RWread(f, tmp, 1, 1);
+			bufferedFile.read(tmp, 1, 1);
 			unsigned char const temp = tmp[0];
 			for (int j = 0; j < z; ++j)
 			{
@@ -91,17 +168,17 @@ SDL_Surface* LoadPCX(std::string name)
 
 	// Convert from palette to true colour.
 	int colors[256];
-	SDL_RWseek(f, -768, SEEK_END);
+	bufferedFile.seek(-768, SEEK_END);
 	for (int i = 0; i != 256; ++i)
 	{
 		Uint8 rgb[3];
-		SDL_RWread(f, rgb, sizeof(rgb), 1);
+
+		bufferedFile.read(rgb, sizeof(rgb), 1);
 		colors[i] = SDL_MapRGB(s->format, rgb[0], rgb[1], rgb[2]);
 	}
 	for (int i = 0; i != x * y; ++i)
 	{
 		buf[i] = colors[buf[i]];
 	}
-	SDL_RWclose(f);
 	return s;
 }
