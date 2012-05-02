@@ -265,8 +265,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle *getVehicleFromID ( int iID );
-	cBuilding *getBuildingFromID ( int iID );
+	cVehicle *getVehicleFromID ( unsigned int iID );
+	cBuilding *getBuildingFromID ( unsigned int iID );
 
 	/**
 	* initialises this client for the player.

@@ -109,7 +109,7 @@ public:
 	bool isRemovedFromGame;		// true if the player has been removed from the game.
 	int numEcos;                // number of ecospheres. call CountEcoSpheres on server to update.
 	bool researchFinished;
-	int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
+	unsigned int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 
 	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
@@ -163,7 +163,7 @@ public:
 private:
 	void refreshSentryAir();
 	void refreshSentryGround();
-	
+
 	cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
 	cBuilding *addBuilding( int posx, int posy, sBuilding *b );
 

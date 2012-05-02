@@ -149,7 +149,7 @@ private:
 	cCasualtiesTracker* casualtiesTracker;
 public:
 	cCasualtiesTracker* getCasualtiesTracker () {return casualtiesTracker;}
-	
+
 private:
 	/**
 	* returns a pointer to the next event of the eventqueue. If the queue is empty it will return NULL.
@@ -272,19 +272,19 @@ public:
 	 * gets the unit with the ID
 	 *@param iID The ID of the unit
 	 */
-	cUnit* getUnitFromID (int iID) const;
+	cUnit* getUnitFromID (unsigned int iID) const;
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle* getVehicleFromID (int iID) const;
+	cVehicle* getVehicleFromID (unsigned int iID) const;
 	/**
 	* gets the bulding with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the building
 	*/
-	cBuilding* getBuildingFromID (int iID) const;
+	cBuilding* getBuildingFromID (unsigned int iID) const;
 
 	/**
 	* checks whether a player has detected some new enemy units
@@ -431,7 +431,7 @@ public:
 	void makeAdditionalSaveRequest ( int saveNum );
 
 	int getTurn() const;
-	
+
 	bool isTurnBasedGame () const { return bPlayTurns; }
 
 } EX *Server;

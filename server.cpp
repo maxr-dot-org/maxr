@@ -84,7 +84,7 @@ cServer::cServer(cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes 
 	savingIndex = -1;
 
 	casualtiesTracker = new cCasualtiesTracker ();
-	
+
 	if (!DEDICATED_SERVER)
 		ServerThread = SDL_CreateThread( CallbackRunServerThread, this );
 }
@@ -98,7 +98,7 @@ cServer::~cServer()
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
-	
+
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread ( ServerThread, NULL );
 	SDL_RemoveTimer ( TimerID );
@@ -985,14 +985,14 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (message->popBool ())	// vehicle
 			{
 				cVehicle* Vehicle = getVehicleFromID (message->popInt16 ());
-				if (Vehicle == 0) 
+				if (Vehicle == 0)
 					break;
 				Vehicle->manualFireActive = !Vehicle->manualFireActive;
 				if (Vehicle->manualFireActive && Vehicle->sentryActive)
 				{
 					Vehicle->owner->deleteSentry (Vehicle);
 				}
-				
+
 				sendUnitData (Vehicle, Vehicle->owner->Nr);
 				for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size (); i++)
 					sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
@@ -1024,7 +1024,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( vehicle->sentryActive )
 				{
 					vehicle->owner->deleteSentry ( vehicle );
- 
+
 				}
 				else
 				{
@@ -1046,7 +1046,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 				if ( building->sentryActive )
 				{
 					building->owner->deleteSentry (building);
- 
+
 				}
 				else
 				{
@@ -1414,7 +1414,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						sendVehicleResources( StoredVehicle, Map );
 						StoredVehicle->doSurvey();
 					}
-				
+
 					if ( StoredVehicle->canLand (*Map) )
 					{
 						StoredVehicle->FlightHigh = 0;
@@ -1426,7 +1426,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					StoredVehicle->InSentryRange();
 				}
 
-			
+
 			}
 			else
 			{
@@ -1836,7 +1836,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			if (unit != 0)
 			{
 				unit->changeName (message->popString ());
-				for (unsigned int i = 0; i < unit->seenByPlayerList.Size (); i++) 
+				for (unsigned int i = 0; i < unit->seenByPlayerList.Size (); i++)
 					sendUnitData (unit, i);
 				sendUnitData (unit, unit->owner->Nr );
 			}
@@ -2181,7 +2181,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 
 	if (unit->owner && casualtiesTracker && ((unit->isBuilding () && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->Nr);
-	
+
 	if (unit->prev)
 	{
 		unit->prev->next = unit->next;
@@ -2220,14 +2220,14 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 
 	//remove from sentry list
 	unit->owner->deleteSentry (unit);
-	
+
 	// lose eco points
 	if (unit->isBuilding () && ((cBuilding*)unit)->points != 0)
 	{
 		unit->owner->setScore (unit->owner->getScore (iTurn) - ((cBuilding*)unit)->points, iTurn);
 		sendScore (unit->owner, iTurn);
 	}
-	
+
 	if (unit->isBuilding ())
 		Map->deleteBuilding ((cBuilding*)unit);
 	else
@@ -2242,7 +2242,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	cPlayer* owner = unit->owner;
 	delete unit;
 
-	if (owner != 0) 
+	if (owner != 0)
 		owner->DoScan ();
 }
 
@@ -2423,7 +2423,7 @@ void cServer::handleEnd ( int iPlayerNum )
 		makeTurnEnd ();
 		// send report to player
 		sendMakeTurnEnd ( true, false, -1, iPlayerNum );
-		sendTurnReport ( (*PlayerList)[0] );		
+		sendTurnReport ( (*PlayerList)[0] );
 		//sendUnfreeze();
 	}
 	else if ( gameType == GAME_TYPE_HOTSEAT || bPlayTurns )
@@ -2451,7 +2451,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				{
 					sendMakeTurnEnd(true, bWaitForPlayer, (*PlayerList)[iActiveTurnPlayerNr]->Nr, (*PlayerList)[i]->Nr);
 				}
-			}			
+			}
 		}
 		else
 		{
@@ -2950,7 +2950,7 @@ void cServer::handleMoveJobs ()
 
 			delete MoveJob;
 			ActiveMJobs.Delete ( i );
-			
+
 
 			//continue path building
 			if ( Vehicle && Vehicle->BuildPath )
@@ -3027,7 +3027,7 @@ void cServer::handleTimer()
 }
 
 //-------------------------------------------------------------------------------------
-cUnit* cServer::getUnitFromID (int iID) const
+cUnit* cServer::getUnitFromID (unsigned int iID) const
 {
 	cUnit* result = getVehicleFromID (iID);
 	if (result == 0)
@@ -3036,14 +3036,14 @@ cUnit* cServer::getUnitFromID (int iID) const
 }
 
 //-------------------------------------------------------------------------------------
-cVehicle* cServer::getVehicleFromID ( int iID ) const
+cVehicle* cServer::getVehicleFromID ( unsigned int iID ) const
 {
 	for (unsigned int i = 0; i < PlayerList->Size (); i++)
 	{
 		cVehicle* vehicle = (*PlayerList)[i]->VehicleList;
 		while (vehicle != 0)
 		{
-			if (vehicle->iID == iID) 
+			if (vehicle->iID == iID)
 				return vehicle;
 			vehicle = (cVehicle*)vehicle->next;
 		}
@@ -3052,14 +3052,14 @@ cVehicle* cServer::getVehicleFromID ( int iID ) const
 }
 
 //-------------------------------------------------------------------------------------
-cBuilding* cServer::getBuildingFromID (int iID) const
+cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 {
 	for (unsigned int i = 0; i < PlayerList->Size (); i++)
 	{
 		cBuilding* building = (*PlayerList)[i]->BuildingList;
 		while (building != 0)
 		{
-			if (building->iID == iID) 
+			if (building->iID == iID)
 				return building;
 			building = (cBuilding*)building->next;
 		}
@@ -3506,7 +3506,7 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 {
 	if (vehicle->owner && casualtiesTracker)
 		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->Nr);
-	
+
 	// delete vehicle in the list of he old player
 	cPlayer *oldOwner = vehicle->owner;
 	cVehicle *vehicleList = oldOwner->VehicleList;

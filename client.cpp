@@ -2423,7 +2423,7 @@ void cClient::handleMoveJobs ()
 	}
 }
 
-cVehicle *cClient::getVehicleFromID ( int iID )
+cVehicle *cClient::getVehicleFromID ( unsigned int iID )
 {
 	cVehicle *Vehicle;
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
@@ -2438,7 +2438,7 @@ cVehicle *cClient::getVehicleFromID ( int iID )
 	return NULL;
 }
 
-cBuilding *cClient::getBuildingFromID ( int iID )
+cBuilding *cClient::getBuildingFromID ( unsigned int iID )
 {
 	cBuilding *Building;
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)

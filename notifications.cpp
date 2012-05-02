@@ -28,7 +28,7 @@ bool cNotificationSender::addNotificationListener (INotificationListener* listen
 {
 	if (listener == 0)
 		return false;
-	for (int i = 0; i < listeners.size (); i++)
+	for (size_t i = 0; i < listeners.size (); i++)
 	{
 		if (listeners[i] == listener)
 			return false;
@@ -42,7 +42,7 @@ bool cNotificationSender::removeNotificationListener (INotificationListener* lis
 {
 	if (listener == 0)
 		return false;
-	for (int i = 0; i < listeners.size (); i++)
+	for (size_t i = 0; i < listeners.size (); i++)
 	{
 		if (listeners[i] == listener)
 		{
@@ -56,6 +56,6 @@ bool cNotificationSender::removeNotificationListener (INotificationListener* lis
 //--------------------------------------------------------------------------
 void cNotificationSender::notifyListeners (std::string message)
 {
-	for (int i = 0; i < listeners.size (); i++)
+	for (size_t i = 0; i < listeners.size (); i++)
 		listeners[i]->notify (message, (void*)this);
 }
