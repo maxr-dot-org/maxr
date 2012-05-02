@@ -460,7 +460,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		targetVehicle->InSentryRange ();
 	//check whether the agressor itself is in sentry range
 	if (unit && unit->isVehicle ())
-		((cVehicle*)unit)->InSentryRange ();
+		static_cast<cVehicle*>(unit)->InSentryRange ();
 }
 
 //--------------------------------------------------------------------------

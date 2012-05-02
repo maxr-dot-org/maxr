@@ -97,12 +97,12 @@ public:
 	void flush();
 
 	void resetStatistics();
-	int getMaxCacheSize();
+	int getMaxCacheSize() const;
 	void setMaxCacheSize( unsigned int newSize );
-	int getCacheSize();
-	int getCacheHits();
-	int getCacheMisses();
-	int getNotCached();
+	int getCacheSize() const;
+	int getCacheHits() const;
+	int getCacheMisses() const;
+	int getNotCached() const;
 
 private:
 	unsigned int maxCacheSize;

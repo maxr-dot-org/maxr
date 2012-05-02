@@ -329,9 +329,9 @@ public:
 	 * returns whether the item is disabled or not.
 	 *@author alzi
 	 */
-	bool isDisabled() { return disabled; }
+	bool isDisabled() const { return disabled; }
 
-	bool isLocked() { return locked; }
+	bool isLocked() const { return locked; }
 };
 
 /**
@@ -1324,7 +1324,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 	SDL_Surface *generateUnitSurface(cUnit* unit );
 
 	int countDisadvantageEntries () const;
-	/** Draws a disadvantage entry, if a player has losses for the unitID and the entry should be displayed on the current page. 
+	/** Draws a disadvantage entry, if a player has losses for the unitID and the entry should be displayed on the current page.
 	 * @return true, if an entry was drawn or would at least be in the list for unitImg */
 	bool drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface* unitImg, std::vector<sID>& unitTypesWithLosses, int displayedEntryIndex);
 
@@ -1351,7 +1351,7 @@ public:
 	void scrollUp();
 
 	void released( void *parent );
-	
+
 	// INotificationListener implementation
 	virtual bool notify (std::string message, void* sender = 0);
 };

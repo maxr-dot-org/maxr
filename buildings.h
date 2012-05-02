@@ -90,7 +90,7 @@ enum eSymbolsBig {SBSpeed,SBHits,SBAmmo,SBAttack,SBShots,SBRange,SBArmor,SBScan,
 struct sBuildStruct
 {
 public:
-	sBuildStruct(SDL_Surface* const sf_, sID const ID_, int const iRemainingMetal_ = -1) :
+	sBuildStruct(SDL_Surface* const sf_, const sID& ID_, int const iRemainingMetal_ = -1) :
 		sf(sf_),
 		ID(ID_),
 		iRemainingMetal(iRemainingMetal_)
@@ -215,7 +215,7 @@ private:
 	* draws the connectors onto the given surface
 	*/
 	void drawConnectors ( SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow );
-	
+
 	//-----------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring ---------------
@@ -232,7 +232,7 @@ protected:
 	virtual void executeActivateStoredVehiclesCommand ();
 	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType);
 	virtual void executeSelfDestroyCommand ();
-	
+
 	virtual sUnitData* getUpgradedUnitData () const;
 };
 

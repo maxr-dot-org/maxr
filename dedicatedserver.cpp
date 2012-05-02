@@ -114,7 +114,7 @@ bool cDedicatedServer::handleInput (string command)
 	vector<string> tokens;
 	istringstream iss (command);
     copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
-	if (tokens.size () == 0)
+	if (tokens.empty())
 		return true;
 	if (tokens.at (0).compare ("help") == 0)
 	{
@@ -233,7 +233,7 @@ void cDedicatedServer::loadSaveGame (int saveGameNumber)
 //------------------------------------------------------------------------
 void cDedicatedServer::saveGame (int saveGameNumber)
 {
-	if (games.size () > 0)
+	if (games.empty() == false)
 	{
 		cout << "Save game in slot " << saveGameNumber << endl;
 		games[0]->saveGame (saveGameNumber);
@@ -278,7 +278,7 @@ void cDedicatedServer::printGames () const
 string cDedicatedServer::getGamesString () const
 {
 	stringstream oss;
-	if (games.size () == 0)
+	if (games.empty())
 		oss << "No games started" << endl;
 	for (size_t i = 0; i < games.size (); i++)
 	{
@@ -407,7 +407,7 @@ void cDedicatedServer::pushEvent (cNetMessage* message)
 	if (handleDedicatedServerEvents (message))
 		return;
 	// TODO: delegate to correct game (and not simply first game)
-	if (games.size () > 0)
+	if (games.empty() == false)
 		games[0]->pushEvent (message);
 }
 
@@ -424,7 +424,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 			string chatText = message->popString ();
 			message->rewind ();
 			int senderSocket = -1;
-			if (games.size () > 0 && message->iPlayerNr >= 0)
+			if (games.empty() == false && message->iPlayerNr >= 0)
 				senderSocket = games[0]->getSocketForPlayerNr (message->iPlayerNr);
 			if (senderSocket < 0)
 				return false;

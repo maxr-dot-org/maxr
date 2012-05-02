@@ -1028,6 +1028,7 @@ cDialogResearch::cDialogResearch( cPlayer *owner_ ) : cMenu ( LoadPCX(GFXOD_DIAL
 
 cDialogResearch::~cDialogResearch()
 {
+	delete titleLabel;
 	delete centersLabel;
 	delete themeLabel;
 	delete turnsLabel;

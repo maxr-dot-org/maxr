@@ -2728,9 +2728,9 @@ void cGameGUI::nextReleased( void *parent )
 	if ( unit )
 	{
 		if (unit->isBuilding ())
-			gui->selectUnit( (cBuilding*) unit );
+			gui->selectUnit( static_cast<cBuilding*>(unit) );
 		else
-			gui->selectUnit( (cVehicle*) unit );
+			gui->selectUnit( static_cast<cVehicle*>(unit) );
 
 		unit->center();
 	}
@@ -2744,9 +2744,9 @@ void cGameGUI::prevReleased( void *parent )
 	if ( unit )
 	{
 		if (unit->isBuilding ())
-			gui->selectUnit( (cBuilding*) unit );
+			gui->selectUnit( static_cast<cBuilding*>(unit) );
 		else
-			gui->selectUnit( (cVehicle*) unit );
+			gui->selectUnit( static_cast<cVehicle*>(unit) );
 
 		unit->center();
 	}

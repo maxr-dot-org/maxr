@@ -145,9 +145,9 @@ public:
 	int getMaxAllowedOilProd();
 
 	/** returns the current production of a ressource */
-	int getMetalProd();
-	int getGoldProd();
-	int getOilProd();
+	int getMetalProd() const;
+	int getGoldProd() const;
+	int getOilProd() const;
 
 	/** sets the production of a ressource. If i is bigger then maxAllowed, it will be reduced to the maximum allowed value */
 	void setMetalProd( int i );

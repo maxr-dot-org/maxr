@@ -130,7 +130,7 @@ private:
 	int turnLimit, scoreLimit;
 
 	cCasualtiesTracker* casualtiesTracker;
-	
+
 	/**
 	* handles the game relevant actions (for example moving the current position of a rocket)
 	* of the fx-effects, so that they are handled also, when the effects are not drawn.
@@ -311,7 +311,7 @@ public:
 	*/
 	void addMessage ( std::string sMsg );
 	/** displays a message with 'goto' coordinates */
-	std::string addCoords (const std::string msg,int x,int y );
+	std::string addCoords (const std::string& msg, int x,int y );
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit

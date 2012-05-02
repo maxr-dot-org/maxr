@@ -46,10 +46,10 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-	if ( vehicle->data.factorGround > 0 && building 
-		&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
-			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
-			|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) 
+	if ( vehicle->data.factorGround > 0 && building
+		&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
+			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
+			|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
 	{
 		isOnWaterAndNotCoast = false;
 	}
@@ -212,14 +212,14 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 
 		bool isOnWaterAndNotCoast = Client->Map->isWater (vehicle->PosX, vehicle->PosY, true);
 		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
-		if ( vehicle->data.factorGround > 0 && building 
-			&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA 
-				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE 
+		if ( vehicle->data.factorGround > 0 && building
+			&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
+				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
 		{
 			isOnWaterAndNotCoast = false;
 		}
-		
+
 		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
 			stealth = true;
 
@@ -351,7 +351,7 @@ void cDrawingCache::resetStatistics()
 	notCached = 0;
 };
 
-int cDrawingCache::getMaxCacheSize()
+int cDrawingCache::getMaxCacheSize() const
 {
 	return maxCacheSize;
 };
@@ -366,22 +366,22 @@ void cDrawingCache::setMaxCacheSize( unsigned int newSize )
 	cSettings::getInstance().setCacheSize(newSize);
 };
 
-int cDrawingCache::getCacheSize()
+int cDrawingCache::getCacheSize() const
 {
 	return cacheSize;
 };
 
-int cDrawingCache::getCacheHits()
+int cDrawingCache::getCacheHits() const
 {
 	return cacheHits;
 };
 
-int cDrawingCache::getCacheMisses()
+int cDrawingCache::getCacheMisses() const
 {
 	return cacheMisses;
 };
 
-int cDrawingCache::getNotCached()
+int cDrawingCache::getNotCached() const
 {
 	return notCached/2;
 };

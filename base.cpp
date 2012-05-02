@@ -117,17 +117,17 @@ int sSubBase::getMaxAllowedOilProd()
 }
 
 
-int sSubBase::getMetalProd()
+int sSubBase::getMetalProd() const
 {
 	return MetalProd;
 }
 
-int sSubBase::getGoldProd()
+int sSubBase::getGoldProd() const
 {
 	return GoldProd;
 }
 
-int sSubBase::getOilProd()
+int sSubBase::getOilProd() const
 {
 	return OilProd;
 }

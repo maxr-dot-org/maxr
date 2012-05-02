@@ -106,9 +106,9 @@ sFX::sFX( eFXTyps typ, int x, int y )
 
 sFX::~sFX()
 {
-	if ( rocketInfo ) delete rocketInfo;
-	if ( smokeInfo ) delete smokeInfo;
-	if ( trackInfo ) delete trackInfo;
+	delete rocketInfo;
+	delete smokeInfo;
+	delete trackInfo;
 }
 
 Uint32 TimerCallback(Uint32 interval, void *arg)
@@ -587,7 +587,7 @@ void cClient::addMessage ( string sMsg )
 }
 
 // displays a message with 'goto' coordinates
-string cClient::addCoords (const string msg,int x,int y )
+string cClient::addCoords (const string& msg, int x,int y )
 {
 	stringstream strStream;
 	//e.g. [85,22] missel MK I is under attack (F1)
