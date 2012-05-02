@@ -3710,28 +3710,28 @@ void cMenuReportsScreen::drawUnitsScreen()
 
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawDisadvantagesScreen ()
-{	
+{
 	if (Client->PlayerList == 0)
 		return;
-	
+
 	for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
 	{
 		cPlayer* player = (*(Client->PlayerList))[playerIdx];
-		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37), 
+		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
 								position.y + (playerIdx < 4 ? 9 : 22), player->name);
 	}
-		
-	
+
+
 	cCasualtiesTracker* casualties = Client->getCasualties ();
 	if (casualties != 0)
 	{
 		vector<sID> unitTypesWithLosses = casualties->getUnitTypesWithLosses ();
 		if (unitTypesWithLosses.size () == 0)
 			return;
-		
+
 		int displayedEntryIndex = 0;
 
-		for (int i = 0; i < UnitsData.building.Size (); i++)
+		for (size_t i = 0; i < UnitsData.building.Size (); i++)
 		{
 			sID unitID = UnitsData.building[i].data.ID;
 			sBuilding* buildingImgs = unitID.getBuilding ();
@@ -3740,12 +3740,12 @@ void cMenuReportsScreen::drawDisadvantagesScreen ()
 				continue;
 			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
 				displayedEntryIndex++;
-			
+
 			if (displayedEntryIndex >= (index + 1) * 10)
 				break;
-		}		
-		
-		for (int i = 0; i < UnitsData.vehicle.Size (); i++)
+		}
+
+		for (size_t i = 0; i < UnitsData.vehicle.Size (); i++)
 		{
 			sID unitID = UnitsData.vehicle[i].data.ID;
 			sVehicle* vehicleImgs = unitID.getVehicle ();
@@ -3778,7 +3778,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 	cCasualtiesTracker* casualties = Client->getCasualties ();
 	if (casualties == 0)
 		return false;
-	for (int i = 0; i < unitTypesWithLosses.size (); i++)
+	for (size_t i = 0; i < unitTypesWithLosses.size (); i++)
 	{
 		if (unitID == unitTypesWithLosses[i])
 		{
@@ -3807,15 +3807,15 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						}
 						SDL_BlitSurface (surface, NULL, buffer, &dest);
 					}
-					
+
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
-					
+
 					for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
 					{
 						cPlayer* player = (*(Client->PlayerList))[playerIdx];
 						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
-						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37), 
-												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));								
+						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
+												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));
 					}
 				}
 			}
@@ -4021,7 +4021,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				SDL_Rect dest = { position.x+17, position.y+30+(i-(index)*maxItems)*55, 0, 0 };
 
 				AutoSurface surface;
-				if ( savedReport.unitID.getVehicle() ) 
+				if ( savedReport.unitID.getVehicle() )
 				{
 					cVehicle vehicle(savedReport.unitID.getVehicle(), Client->ActivePlayer);
 					surface = generateUnitSurface (&vehicle);
@@ -4031,7 +4031,7 @@ void cMenuReportsScreen::drawReportsScreen()
 					cBuilding building(savedReport.unitID.getBuilding(), Client->ActivePlayer, NULL);
 					surface = generateUnitSurface (&building);
 				}
-				else 
+				else
 				{
 					break;
 				}
@@ -4146,7 +4146,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			}
 			if ( draw )
 			{
-				{ 
+				{
 					cBuilding building(nextBuilding->typ, nextBuilding->owner,NULL);
 					AutoSurface surface(generateUnitSurface(&building));
 					SDL_BlitSurface(surface, NULL, buffer, &dest);
@@ -4286,11 +4286,11 @@ void cMenuReportsScreen::scrollDown()
 			index++;
 		break;
 	case REP_SCR_TYPE_DISADVA:
-		if ((index + 1) * 10 < countDisadvantageEntries ()) 
+		if ((index + 1) * 10 < countDisadvantageEntries ())
 			index++;
 		break;
 	case REP_SCR_TYPE_REPORTS:
-		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() ) 
+		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() )
 			index++;
 		break;
 	}

@@ -129,7 +129,7 @@ int cVideo::setColDepth(unsigned iDepth)
   return 0;
 }
 
-int cVideo::getColDepth(void)
+int cVideo::getColDepth() const
 {
   return videoData.iColDepth;
 }
@@ -230,17 +230,17 @@ void cVideo::initSplash(void)
 	draw();
 }
 
-bool cVideo::getWindowMode(void)
+bool cVideo::getWindowMode() const
 {
   return videoData.bWindowMode;
 }
 
-int cVideo::getResolutionX(void)
+int cVideo::getResolutionX() const
 {
   return videoData.width;
 }
 
-int cVideo::getResolutionY(void)
+int cVideo::getResolutionY() const
 {
   return videoData.height;
 }
@@ -255,17 +255,17 @@ void cVideo::setSurfaceType(Uint32 iSurfaceType)
   videoData.iSurfaceType=iSurfaceType;
 }
 
-Uint32 cVideo::getSurfaceType(void)
+Uint32 cVideo::getSurfaceType(void) const
 {
    return videoData.iSurfaceType;
 }
 
-int cVideo::getVideoNum (void)
+int cVideo::getVideoNum (void) const
 {
 	return sizeof(videoModes)/sizeof(sVidMode);
 }
 
-string cVideo::getVideoMode(int iMode)
+string cVideo::getVideoMode(unsigned int iMode) const
 {
   string sTmp = iToStr(getMinW())+"x"+iToStr(getMinH()); //if no valid mode is given we return minimal video mode
   bool bFound = false;
@@ -355,7 +355,7 @@ bool cVideo::bHaveMinMode(void)
   return false;
 }
 
-int cVideo::validateMode(int iWidth, int iHeight)
+int cVideo::validateMode(unsigned int iWidth, unsigned int iHeight) const
 {
   for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
@@ -368,27 +368,27 @@ int cVideo::validateMode(int iWidth, int iHeight)
   return -1;
 }
 
-int cVideo::getVideoSize (void)
+int cVideo::getVideoSize () const
 {
   return vVideoMode.size();
 }
 
-int cVideo::getSplashW(void)
+int cVideo::getSplashW() const
 {
   return SPLASHWIDTH;
 }
 
-int cVideo::getSplashH(void)
+int cVideo::getSplashH() const
 {
   return SPLASHHEIGHT;
 }
 
-int cVideo::getMinW(void)
+int cVideo::getMinW() const
 {
   return MINWIDTH;
 }
 
-int cVideo::getMinH(void)
+int cVideo::getMinH() const
 {
   return MINHEIGHT;
 }

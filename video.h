@@ -64,7 +64,7 @@ class cVideo
   *Get whether app should appear windowed or in fullscreen mode
   *@return  true if app should work in windowed mode<br>false it app should start in fullscreen
   */
-  bool getWindowMode(void);
+  bool getWindowMode() const;
 
   /**
   *Set resolution/dimension of app window.
@@ -79,13 +79,13 @@ class cVideo
   *@deprecated for compat only - will be removed!
   *@return stored window width
   */
-  int getResolutionX(void);
+  int getResolutionX() const;
 
   /**
   *@deprecated for compat only - will be removed!
   *@return stored window height
   */
-  int getResolutionY(void);
+  int getResolutionY() const;
 
   /**
   *Sets colordepth
@@ -98,7 +98,7 @@ class cVideo
   *Gets colordepth
   @return colordepth
   */
-  int getColDepth(void);
+  int getColDepth() const;
 
   /**
   *Sets SurfaceType
@@ -110,24 +110,24 @@ class cVideo
   *Gets SurfaceType
   @return surfacetype e.g. SDL_HWSURFACE
   */
-  Uint32 getSurfaceType(void);
+  Uint32 getSurfaceType() const;
 
   /**
   *@return Detected videomodes
   */
-  int getVideoSize (void);
+  int getVideoSize () const;
 
   /**
   *@param iMode video mode num from video mode array
   *@return Videomode as string widthxheight. If iMode is unknown minimal needed videomode will be returned.
   */
-  std::string getVideoMode(int iMode);
+  std::string getVideoMode(unsigned int iMode) const;
 
   /**
   *Try to autodetect avail video modes from SDL. Might fail.
   *@return true on success
   */
-  bool doDetection(void);
+  bool doDetection();
 
   /**
   *Check whether the provided mode is known to our video mode list
@@ -135,32 +135,32 @@ class cVideo
   *@param height Screenheight to look for
   *@return iMode or -1 on unknown mode
   */
-  int validateMode(int iWidth, int iHeight);
+  int validateMode(unsigned int iWidth, unsigned int iHeight) const;
 
   /**
   *@return Splash width
   */
-  int getSplashW(void);
+  int getSplashW() const;
 
   /**
   *@return Splash height
   */
-  int getSplashH(void);
+  int getSplashH() const;
 
   /**
   *@return Minimal needed screen resolution width
   */
-  int getMinW(void);
+  int getMinW() const;
 
   /**
   *@return Minimal needed screen resolution height
   */
-  int getMinH(void);
+  int getMinH() const;
 
   /**
   *Inits our buffers and draws the splashscreen
   */
-  void initSplash(void);
+  void initSplash();
 
   /**
   *clears buffer (black)
@@ -185,7 +185,7 @@ class cVideo
   /**
   *@return Length of videomodes array
   */
-  int getVideoNum (void);
+  int getVideoNum (void) const;
 
   /**
   * Just for readable log entries

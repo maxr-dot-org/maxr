@@ -160,16 +160,16 @@ void sendUnitData (cUnit* unit, int iPlayer)
 	message->pushInt16 (unit->data.ammoMax);
 	message->pushInt16 (unit->data.ammoCur);
 	message->pushInt16 (unit->data.buildCosts);
-	
+
 	// Current state of the unit
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
 	//		because this data will be received by enemys, too
-	if (unit->isBuilding ()) 
+	if (unit->isBuilding ())
 		message->pushInt16 (((cBuilding*)unit)->points);
-	
+
 	message->pushBool (unit->manualFireActive);
 	message->pushBool (unit->sentryActive);
-	
+
 	if (unit->isVehicle ())
 	{
 		cVehicle* vehicle = (cVehicle*)unit;
@@ -185,9 +185,9 @@ void sendUnitData (cUnit* unit, int iPlayer)
 		message->pushBool ( building->IsWorking );
 		message->pushInt16 ( building->researchArea );
 	}
-	
+
 	message->pushInt16 (unit->turnsDisabled);
-	
+
 	if (unit->isVehicle ())
 		message->pushBool (unit->isBeeingAttacked);
 
@@ -196,10 +196,10 @@ void sendUnitData (cUnit* unit, int iPlayer)
 		message->pushString (unit->getName ());
 		message->pushBool (true);
 	}
-	else 
+	else
 		message->pushBool (false);
 
-	if (unit->isVehicle ()) 
+	if (unit->isVehicle ())
 		message->pushBool (unit->data.isBig);
 
 	// Data for identifying the unit by the client
@@ -1021,7 +1021,7 @@ void sendCasualtiesReport (int player)
 	{
 		cList<cNetMessage*> messages;
 		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
-		for (int i = 0; i < messages.Size (); i++)
+		for (size_t i = 0; i < messages.Size (); i++)
 			Server->sendNetMessage (messages[i], player);
 	}
 }

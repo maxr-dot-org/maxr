@@ -302,7 +302,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 					if (tokens[0].compare ("map") == 0)
 					{
 						string mapName = tokens[1];
-						for (int i = 2; i < tokens.size (); i++)
+						for (size_t i = 2; i < tokens.size (); i++)
 						{
 							mapName += " ";
 							mapName += tokens[i];
@@ -573,7 +573,7 @@ std::string cServerGame::getGameState () const
 	result << "Players:" << endl;
 	if (Server != 0 && serverPlayers.Size () > 0)
 	{
-		for (int i = 0; i < serverPlayers.Size (); i++)
+		for (size_t i = 0; i < serverPlayers.Size (); i++)
 		{
 			cPlayer* player = serverPlayers[i];
 			result << " " << player->name << (Server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
@@ -581,12 +581,12 @@ std::string cServerGame::getGameState () const
 	}
 	else if (gameData->players.Size () > 0)
 	{
-		for (int i = 0; i < gameData->players.Size (); i++)
+		for (size_t i = 0; i < gameData->players.Size (); i++)
 			result << " " << gameData->players[i]->name << endl;
 	}
 	else if (menuPlayers.Size () > 0)
 	{
-		for (int i = 0; i < menuPlayers.Size (); i++)
+		for (size_t i = 0; i < menuPlayers.Size (); i++)
 			result << " " << menuPlayers[i]->name << endl;
 	}
 	return result.str ();
@@ -601,7 +601,7 @@ int cServerGame::getSocketForPlayerNr (int playerNr)
 		if (player != 0)
 			return player->iSocketNum;
 	}
-	for (int i = 0; i < menuPlayers.Size (); i++)
+	for (size_t i = 0; i < menuPlayers.Size (); i++)
 	{
 		if (menuPlayers[i]->nr == playerNr)
 			return menuPlayers[i]->socket;
