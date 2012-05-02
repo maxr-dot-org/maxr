@@ -307,14 +307,18 @@ void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fontty
 		case FONT_LATIN_SMALL_RED:
 		case FONT_LATIN_SMALL_WHITE:
 		case FONT_LATIN_SMALL_YELLOW:
-			for( int i=0; i < (int)sText.size(); i++ ) sText[i] = toupper(sText[i]);
+			for( size_t i=0; i < sText.size(); i++ ) sText[i] = toupper(sText[i]);
 			iSpace = 1;
+			break;
+		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_BIG:
+		case FONT_LATIN_BIG_GOLD:
 			break;
 	}
 
 	// decode the UTF-8 String:
-	char *p = (char*)sText.c_str();
-	char *now = &p[sText.length()];
+	const char *p = sText.c_str();
+	const char *now = &p[sText.length()];
 	while ( p < now )
 	{
 		//is space?
@@ -329,7 +333,7 @@ void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fontty
 			offX = x;
 			p++;
 		}
-		else if( 13 == *(unsigned char *)p )
+		else if( 13 == *(const unsigned char *)p )
 		{
 			p++;
 			//ignore - is breakline in file
@@ -497,14 +501,18 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 		case FONT_LATIN_SMALL_RED:
 		case FONT_LATIN_SMALL_WHITE:
 		case FONT_LATIN_SMALL_YELLOW:
-			for( int i=0; i < (int)sText.size(); i++ ) sText[i] = toupper(sText[i]);
+			for( size_t i=0; i < sText.size(); i++ ) sText[i] = toupper(sText[i]);
 			iSpace = 1;
+			break;
+		case FONT_LATIN_NORMAL:
+		case FONT_LATIN_BIG:
+		case FONT_LATIN_BIG_GOLD:
 			break;
 	}
 
 	// decode the UTF-8 String:
-	char *p = (char*)sText.c_str();
-	char *now = &p[sText.length()];
+	const char *p = sText.c_str();
+	const char *now = &p[sText.length()];
 	while ( p < now )
 	{
 		//is space?
@@ -519,7 +527,7 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 			rTmp.h += getFontHeight ( fonttype );
 			p++;
 		}
-		else if( 13 == *(unsigned char *)p )
+		else if( 13 == *(const unsigned char *)p )
 		{
 			p++;
 			//ignore - is breakline in file
@@ -550,7 +558,7 @@ SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, boo
 
 int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 {
-	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	// we will return the height of the first character in the list
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{
@@ -559,7 +567,7 @@ int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 	return 0;
 }
 
-eUnicodeFontSize cUnicodeFont::getFontSize ( eUnicodeFontType fonttype )
+eUnicodeFontSize cUnicodeFont::getFontSize ( eUnicodeFontType fonttype ) const
 {
 	switch ( fonttype )
 	{
@@ -591,7 +599,7 @@ string cUnicodeFont::shortenStringToSize ( string str, int size, eUnicodeFontTyp
 	return str;
 }
 
-Uint16 cUnicodeFont::encodeUTF8Char ( unsigned char *pch, int *increase )
+Uint16 cUnicodeFont::encodeUTF8Char ( const unsigned char *pch, int *increase ) const
 {
 	// encode the UTF-8 character to his unicode position
 	Uint16 uni = 0;
@@ -600,14 +608,14 @@ Uint16 cUnicodeFont::encodeUTF8Char ( unsigned char *pch, int *increase )
 	if ( (ch & 0xE0) == 0xE0 )
 	{
 		uni |= (ch & 0x0F) << 12;
-		uni |= (*(unsigned char*)(pch+1) & 0x3F) << 6;
-		uni |= (*(unsigned char*)(pch+2) & 0x3F);
+		uni |= (*(pch+1) & 0x3F) << 6;
+		uni |= (*(pch+2) & 0x3F);
 		*increase = 3;
 	}
 	else if ( (ch & 0xC0) == 0xC0 )
 	{
 		uni |= (ch & 0x1F) << 6;
-		uni |= (*(unsigned char*)(pch+1) & 0x3F);
+		uni |= (*(pch+1) & 0x3F);
 		*increase = 2;
 	}
 	else

@@ -154,7 +154,7 @@ class cUnicodeFont
 		 * @param eBitmapFontType enum of fonttype.
 		 * @return eUnicodeFontSize enum size of fonttype
 		 */
-		eUnicodeFontSize getFontSize ( eUnicodeFontType fonttype );
+		eUnicodeFontSize getFontSize ( eUnicodeFontType fonttype ) const;
 
 		std::string shortenStringToSize ( std::string str, int size, eUnicodeFontType fonttype );
 	private:
@@ -205,7 +205,7 @@ class cUnicodeFont
 		 * @param increase number which will be changed to the value how much bytes the character has taken in UTF-8
 		 * @return unicode position
 		 */
-		Uint16 encodeUTF8Char ( unsigned char *pch, int *increase );
+		Uint16 encodeUTF8Char ( const unsigned char *pch, int *increase ) const;
 };
 
 EX cUnicodeFont *font;

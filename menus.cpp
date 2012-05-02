@@ -2773,6 +2773,8 @@ void cLandingMenu::hitPosition()
 			draw();
 		}
 		break;
+	case GAME_TYPE_HOTSEAT:
+		break;
 	}
 }
 

@@ -1768,6 +1768,9 @@ SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition ( eUnitDataSymbols symType
 			src.w = 12;
 			src.h = 16;
 			break;
+		case MENU_SYMBOLS_TRANS_TANK:
+		case MENU_SYMBOLS_TRANS_AIR:
+			break;
 	}
 	return src;
 }
@@ -1831,6 +1834,11 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition ( eUnitDataSymbols symTy
 			src.x = 186;
 			src.w = 21;
 			src.h = 8;
+			break;
+		case MENU_SYMBOLS_ATTACK:
+		case MENU_SYMBOLS_RANGE:
+		case MENU_SYMBOLS_ARMOR:
+		case MENU_SYMBOLS_SCAN:
 			break;
 	}
 	return src;
@@ -4292,6 +4300,8 @@ void cMenuReportsScreen::scrollDown()
 	case REP_SCR_TYPE_REPORTS:
 		if ( (index+1)*maxItems < (int)owner->savedReportsList.Size() )
 			index++;
+		break;
+	case REP_SCR_TYPE_SCORE:
 		break;
 	}
 	updateScrollButtons();

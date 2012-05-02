@@ -3320,6 +3320,13 @@ void cGameGUI::drawFX( int num )
 			SDL_BlitSurface ( EffectsData.fx_absorb[1],&scr,buffer,&dest );
 			break;
 		}
+		case fxTorpedo:
+		case fxTracks:
+		case fxBubbles:
+		case fxCorpse:
+		{
+			break;
+		}
 	}
 }
 
