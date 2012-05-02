@@ -709,6 +709,8 @@ void cDialogTransfer::getTransferType()
 	case sUnitData::STORE_RES_GOLD:
 		transferType = cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_SMALL;
 		break;
+	case sUnitData::STORE_RES_NONE:
+		break;
 	}
 }
 
@@ -750,6 +752,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 				maxSrcCargo = srcBuilding->SubBase->MaxGold;
 				srcCargo = srcBuilding->SubBase->Gold;
 				break;
+			case sUnitData::STORE_RES_NONE:
+				break;
 			}
 		}
 		else
@@ -790,6 +794,8 @@ void cDialogTransfer::getNamesNCargoNImages ()
 			case sUnitData::STORE_RES_GOLD:
 				maxDestCargo = destBuilding->SubBase->MaxGold;
 				destCargo = destBuilding->SubBase->Gold;
+				break;
+			case sUnitData::STORE_RES_NONE:
 				break;
 			}
 		}

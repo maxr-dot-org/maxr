@@ -1940,6 +1940,8 @@ void cMenuUnitDetails::draw()
 					cUnitDataSymbolHandler::drawNumber ( position.x+23, position.y+30, building->SubBase->Gold, building->SubBase->MaxGold );
 					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x+80,  position.y+28, 70, false, building->SubBase->Gold, building->SubBase->MaxGold );
 					break;
+				case sUnitData::STORE_RES_NONE:
+					break;
 				}
 			}
 			else
@@ -1955,6 +1957,8 @@ void cMenuUnitDetails::draw()
 					break;
 				case sUnitData::STORE_RES_GOLD:
 					cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x+80, position.y+15, 70, false, data->storageResCur, data->storageResMax );
+					break;
+				case sUnitData::STORE_RES_NONE:
 					break;
 				}
 			}
@@ -1974,6 +1978,8 @@ void cMenuUnitDetails::draw()
 				break;
 			case sUnitData::STORE_UNIT_IMG_HUMAN:
 				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x+80, position.y+15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+				break;
+			case sUnitData::STORE_UNIT_IMG_NONE:
 				break;
 			}
 		}
@@ -2149,6 +2155,8 @@ void cMenuUnitDetailsBig::draw()
 				break;
 			case sUnitData::STORE_RES_GOLD:
 				cUnitDataSymbolHandler::drawSymbols ( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
+				break;
+			case sUnitData::STORE_RES_NONE:
 				break;
 		}
 
@@ -2550,9 +2558,10 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgra
 		return cUpgradeCalculator::kScan;
 	case sUnitUpgrade::UPGRADE_TYPE_SPEED:
 		return cUpgradeCalculator::kSpeed;
+	case sUnitUpgrade::UPGRADE_TYPE_NONE: // Follow next line
+	default:
+		return cUpgradeCalculator::kAttack;
 	}
-	// default
-	return cUpgradeCalculator::kAttack;
 }
 
 cMenuScroller::cMenuScroller(int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem* parent_, void (*movedCallback_)(void*)) :

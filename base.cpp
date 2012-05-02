@@ -438,6 +438,9 @@ void sSubBase::addRessouce( sUnitData::eStorageResType storeResType, int value )
 	case sUnitData::STORE_RES_GOLD:
 		storedRessources = &Gold;
 		break;
+	case sUnitData::STORE_RES_NONE:
+		assert(0);
+		break;
 	}
 
 
@@ -953,6 +956,8 @@ void sSubBase::addBuilding( cBuilding *b )
 	case sUnitData::STORE_RES_GOLD:
 		MaxGold += b->data.storageResMax;
 		Gold += b->data.storageResCur;
+		break;
+	case sUnitData::STORE_RES_NONE:
 		break;
 	}
 	// calculate energy

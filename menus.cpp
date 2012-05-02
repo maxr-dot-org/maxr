@@ -2255,6 +2255,8 @@ void cStartupHangarMenu::updateUnitData()
 				case sUnitUpgrade::UPGRADE_TYPE_SPEED:
 					data->speedMax = upgrades[j].curValue;
 					break;
+				case sUnitUpgrade::UPGRADE_TYPE_NONE:
+					break;
 			}
 		}
 	}
@@ -2522,7 +2524,8 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
 			case sUnitData::STORE_RES_OIL:   type = cMenuMaterialBar::MAT_BAR_TYPE_OIL;   break;
-			// case sUnitData::STORE_RES_GOLD:  type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break; // Its not allowed to store gold bought with gold. Why should the user be able to buy gold with... gold?!
+			case sUnitData::STORE_RES_GOLD: //type = cMenuMaterialBar::MAT_BAR_TYPE_GOLD;  break; // Its not allowed to store gold bought with gold. Why should the user be able to buy gold with... gold?!
+			case sUnitData::STORE_RES_NONE: break;
 		}
 		menu->materialBar->setType(type);
 	}
