@@ -3455,7 +3455,7 @@ void installVoices()
 {
 	string path;
 	string waveExt;
-	iTotalFiles = 57;
+	iTotalFiles = 56;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
@@ -3492,7 +3492,7 @@ void installVoices()
 	copyWAV(sVoicePath + "F151" + waveExtension, path + "status_yellow2" + waveExt);
 	copyWAV(sVoicePath + "F154" + waveExtension, path + "status_red" + waveExt);
 	copyWAV(sVoicePath + "F155" + waveExtension, path + "status_red" + waveExt);
-	copyWAV(sVoicePath + "F158" + waveExtension, path + "wachposten" + waveExt);
+	copyWAV(sVoicePath + "F158" + waveExtension, path + "sentry" + waveExt);
 	copyWAV(sVoicePath + "F162" + waveExtension, path + "build_done1" + waveExt);
 	copyWAV(sVoicePath + "F165" + waveExtension, path + "build_done2" + waveExt);
 	copyWAV(sVoicePath + "F166" + waveExtension, path + "start_one" + waveExt);
@@ -3501,7 +3501,7 @@ void installVoices()
 	copyWAV(sVoicePath + "F171" + waveExtension, path + "clearing" + waveExt);
 	copyWAV(sVoicePath + "F276" + waveExtension, path + "landing" + waveExt);
 	copyWAV(sVoicePath + "F181" + waveExtension, path + "laying_mines" + waveExt);
-	copyWAV(sVoicePath + "F186" + waveExtension, path + "remove_mines" + waveExt);
+	copyWAV(sVoicePath + "F186" + waveExtension, path + "clearing_mines2" + waveExt);
 	copyWAV(sVoicePath + "F187" + waveExtension, path + "clearing_mines" + waveExt);
 	copyWAV(sVoicePath + "F191" + waveExtension, path + "surveying" + waveExt);
 	copyWAV(sVoicePath + "F192" + waveExtension, path + "surveying2" + waveExt);
