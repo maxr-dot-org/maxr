@@ -1,3 +1,25 @@
+Mechanized Assault & eXploration Reloaded 0.2.8
+=======================================================================
+-implemented reaction fire 
+-Implemented "statistics" feature 
+-implemented missing voice messages
+-implemented multiple planes per field
+-implement save/load of disabled turns and "wasWorking" for buildings
+-implemented Shift+Done shortcut
+-vehicles can not drive onto mines anymore
+-set ability to detect mines to mine layer and sea mine layer
+-rightClick in miniMap for setting paths now works
+-fixed upgrade costs for "Rocketlauncher, attack, Clan Ayer's Hand". Thanks to nonsinn for researching the missing values!
+-fixed behavior of Prev, Next and Done Button
+-fixed resource allocation when adding or removing buildings
+-fixed crash, when disabling vehicles with an infiltrator
+-fixed non original infiltrator behavior
+-fixed many bugs in the reports menu
+-fixed non original behavior of stealth vehicles
+-tons of bugs and crashes fixed
+
+
+
 Mechanized Assault & eXploration Reloaded 0.2.7
 =======================================================================
 -implemented ecospheres/biodomes
