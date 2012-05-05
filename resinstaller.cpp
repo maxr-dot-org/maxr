@@ -3455,7 +3455,7 @@ void installVoices()
 {
 	string path;
 	string waveExt;
-	iTotalFiles = 56;
+	iTotalFiles = 57;
 	iErrors = 0;
 	iInstalledFiles = 0;
 	oggEncode = 1;
