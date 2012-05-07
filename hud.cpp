@@ -1164,7 +1164,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle && mouseInputMode == attackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
 			{
@@ -1220,7 +1220,7 @@ void cGameGUI::updateMouseCursor()
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), true );
 			}
 		}
-		else if ( selectedBuilding && mouseInputMode == attackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 			{
@@ -2490,12 +2490,12 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
 	// Hotkeys for the unit menues
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		mouseInputMode = attackMode;
+		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !Client->bWaitForOthers && selectedBuilding->owner == player )
 	{
-		mouseInputMode = attackMode;
+		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
 	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !Client->bWaitForOthers && selectedVehicle->owner == player )
@@ -4425,7 +4425,7 @@ void cGameGUI::checkMouseInputMode()
 {
 	switch ( mouseInputMode )
 	{
-	case attackMode:
+	case mouseInputAttackMode:
 	case disableMode:
 	case stealMode:
 		if ( selectedVehicle && !selectedVehicle->data.shotsCur )

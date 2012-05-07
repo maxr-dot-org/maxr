@@ -397,7 +397,7 @@ void cUnit::drawMenu ()
 	// Attack:
 	if (data.canAttack && data.shotsCur && owner == Client->ActivePlayer )
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == attackMode;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == mouseInputAttackMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -638,7 +638,7 @@ void cUnit::menuReleased ()
 		{
 			Client->gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (attackMode);
+			Client->gameGUI.toggleMouseInputMode (mouseInputAttackMode);
 			return;
 		}
 		nr++;

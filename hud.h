@@ -81,7 +81,7 @@ struct sMouseBox
 enum eMouseInputMode
 {
 	normalInput,
-	attackMode,
+	mouseInputAttackMode,
 	placeBand,
 	transferMode,
 	loadMode,
