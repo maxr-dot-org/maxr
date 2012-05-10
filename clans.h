@@ -31,13 +31,13 @@ class cClanUnitStat
 public:
 	cClanUnitStat (int unitIdFirstPart, int unitIdSecPart) : unitIdFirstPart (unitIdFirstPart), unitIdSecPart (unitIdSecPart) {}
 
-	void addModification (std::string area, int value);
+	void addModification (const std::string& area, int value);
 
 	int getUnitIdFirstPart () const { return unitIdFirstPart; }
 	int getUnitIdSecPart () const { return unitIdSecPart; }
 
-	int getModificationValue (std::string key) const;
-	bool hasModification (std::string key) const;
+	int getModificationValue (const std::string& key) const;
+	bool hasModification (const std::string& key) const;
 
 	std::string getClanStatsDescription () const;
 
@@ -55,20 +55,20 @@ public:
 	cClan (int num) : num (num) {}
 	virtual ~cClan ();
 
-	void setDescription (std::string newDescription);
+	void setDescription (const std::string& newDescription);
 	const std::string& getDescription () const { return description; }
 
 	std::vector<std::string> getClanStatsDescription () const;
 
-	void setName (std::string newName);
+	void setName (const std::string& newName);
 	const std::string& getName () const { return name; }
 
-	int getClanID (void) const { return num; }
+	int getClanID () const { return num; }
 
 	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
 	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
-	int getNrUnitStats () const { return (int) stats.Size (); }
+	int getNrUnitStats () const { return static_cast<int>(stats.Size()); }
 
 	//-------------------------------------------------------------------------
 private:
@@ -87,7 +87,7 @@ public:
 
 	cClan* addClan ();
 	cClan* getClan (unsigned int num);
-	int getNrClans () const { return (int) clans.Size (); }
+	int getNrClans () const { return static_cast<int>(clans.Size()); }
 
 	//-------------------------------------------------------------------------
 private:

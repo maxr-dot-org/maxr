@@ -74,7 +74,7 @@ void sendGameIdentification ( sMenuPlayer *player, int socket );
 
 void sendReconnectionSuccess( int playerNr );
 
-void sendRequestMap (std::string mapName, int playerNr);
+void sendRequestMap (const std::string& mapName, int playerNr);
 
 void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player );
 

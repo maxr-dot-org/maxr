@@ -109,7 +109,7 @@ void cDedicatedServer::run ()
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleInput (string command)
+bool cDedicatedServer::handleInput (const string& command)
 {
 	vector<string> tokens;
 	istringstream iss (command);
@@ -243,7 +243,7 @@ void cDedicatedServer::saveGame (int saveGameNumber)
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::setProperty (string property, string value)
+void cDedicatedServer::setProperty (const string& property, string value)
 {
 	if (property.compare ("port") == 0)
 	{
@@ -467,7 +467,7 @@ bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::sendChatMessage (string text, int type, int socket)
+void cDedicatedServer::sendChatMessage (const string& text, int type, int socket)
 {
 	stringstream ss (text);
     string line;

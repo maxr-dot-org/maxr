@@ -24,19 +24,19 @@ using namespace std;
 
 
 //--------------------------------------------------
-void cClanUnitStat::addModification (string area, int value)
+void cClanUnitStat::addModification (const string& area, int value)
 {
 	modifications[area] = value;
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (string key) const
+bool cClanUnitStat::hasModification (const string& key) const
 {
 	return (modifications.find (key) != modifications.end ());
 }
 
 //--------------------------------------------------
-int cClanUnitStat::getModificationValue (string key) const
+int cClanUnitStat::getModificationValue (const string& key) const
 {
 	map<string, int>::const_iterator it = modifications.find (key);
 	if (it != modifications.end ())
@@ -152,12 +152,12 @@ cClanUnitStat* cClan::addUnitStat (int idFirstPart, int idSecPart)
 }
 
 //--------------------------------------------------
-void cClan::setDescription (string newDescription)
+void cClan::setDescription (const string& newDescription)
 {
 	description = newDescription;
 }
 //--------------------------------------------------
-void cClan::setName (string newName)
+void cClan::setName (const string& newName)
 {
 	name = newName;
 }

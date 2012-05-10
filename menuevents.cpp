@@ -323,7 +323,7 @@ void sendReconnectionSuccess( int playerNr )
 	cMenu::sendMessage ( message );
 }
 
-void sendRequestMap (string mapName, int playerNr)
+void sendRequestMap (const string& mapName, int playerNr)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_REQUEST_MAP);
 	msg->pushString (mapName);

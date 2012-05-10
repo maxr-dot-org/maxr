@@ -38,38 +38,39 @@
 using namespace std;
 
 //-------------------------------------------------------------------------------
-bool MapDownload::isMapOriginal (std::string mapName, Sint32 checksum)
+bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
 {
-	std::transform(mapName.begin(), mapName.end(), mapName.begin(), static_cast<int (*)(int)>(std::tolower));
-	if (mapName == "bottleneck.wrl"
-		|| mapName == "flash point.wrl"
-		|| mapName == "freckles.wrl"
-		|| mapName == "frigia.wrl"
-		|| mapName == "great circle.wrl"
-		|| mapName == "great divide.wrl"
-		|| mapName == "hammerhead.wrl"
-		|| mapName == "high impact.wrl"
-		|| mapName == "ice berg.wrl"
-		|| mapName == "iron cross.wrl"
-		|| mapName == "islandia.wrl"
-		|| mapName == "long floes.wrl"
-		|| mapName == "long passage.wrl"
-		|| mapName == "middle sea.wrl"
-		|| mapName == "new luzon.wrl"
-		|| mapName == "peak-a-boo.wrl"
-		|| mapName == "sanctuary.wrl"
-		|| mapName == "sandspit.wrl"
-		|| mapName == "snowcrab.wrl"
-		|| mapName == "splatterscape.wrl"
-		|| mapName == "the cooler.wrl"
-		|| mapName == "three rings.wrl"
-		|| mapName == "ultima thule.wrl"
-		|| mapName == "valentine's planet.wrl")
+	std::string lowerMapName(mapName);
+	std::transform(lowerMapName.begin(), lowerMapName.end(), lowerMapName.begin(), static_cast<int (*)(int)>(std::tolower));
+	if (lowerMapName == "bottleneck.wrl"
+		|| lowerMapName == "flash point.wrl"
+		|| lowerMapName == "freckles.wrl"
+		|| lowerMapName == "frigia.wrl"
+		|| lowerMapName == "great circle.wrl"
+		|| lowerMapName == "great divide.wrl"
+		|| lowerMapName == "hammerhead.wrl"
+		|| lowerMapName == "high impact.wrl"
+		|| lowerMapName == "ice berg.wrl"
+		|| lowerMapName == "iron cross.wrl"
+		|| lowerMapName == "islandia.wrl"
+		|| lowerMapName == "long floes.wrl"
+		|| lowerMapName == "long passage.wrl"
+		|| lowerMapName == "middle sea.wrl"
+		|| lowerMapName == "new luzon.wrl"
+		|| lowerMapName == "peak-a-boo.wrl"
+		|| lowerMapName == "sanctuary.wrl"
+		|| lowerMapName == "sandspit.wrl"
+		|| lowerMapName == "snowcrab.wrl"
+		|| lowerMapName == "splatterscape.wrl"
+		|| lowerMapName == "the cooler.wrl"
+		|| lowerMapName == "three rings.wrl"
+		|| lowerMapName == "ultima thule.wrl"
+		|| lowerMapName == "valentine's planet.wrl")
 	{
 		return true;
 	}
 	if (checksum == 0)
-		checksum = calculateCheckSum (mapName);
+		checksum = calculateCheckSum (lowerMapName);
 	if (checksum == 344087468
 		|| checksum == 1702427970
 		|| checksum == 1401869069
@@ -97,12 +98,12 @@ bool MapDownload::isMapOriginal (std::string mapName, Sint32 checksum)
 	{
 		return true;
 	}
-		
+
 	return false;
 }
 
 //-------------------------------------------------------------------------------
-std::string MapDownload::getExistingMapFilePath (std::string mapName)
+std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 {
 	string filenameFactory = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
 	if (FileExists(filenameFactory.c_str()))
@@ -117,7 +118,7 @@ std::string MapDownload::getExistingMapFilePath (std::string mapName)
 }
 
 //-------------------------------------------------------------------------------
-Sint32 MapDownload::calculateCheckSum (std::string mapName)
+Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	Sint32 result = 0;
 	string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
@@ -158,7 +159,7 @@ Sint32 MapDownload::calculateCheckSum (std::string mapName)
 //-------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------
-cMapReceiver::cMapReceiver (std::string mapName, int mapSize)
+cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize)
 : mapName (mapName)
 , mapSize (mapSize)
 , bytesReceived (0)
@@ -334,7 +335,7 @@ void cMapSender::run ()
 	msg = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
 	msg->pushString (receivingPlayerName);
 	sendMsg (msg);
-	// Push message also to client, that belongs to the host, to give feedback about the finished upload state. 
+	// Push message also to client, that belongs to the host, to give feedback about the finished upload state.
 	// The EventHandler mechanism is used, because this code runs in another thread than the code, that must display the msg.
 	if (EventHandler)
 	{

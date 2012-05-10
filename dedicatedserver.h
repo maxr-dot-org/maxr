@@ -71,8 +71,8 @@ protected:
 	std::string getAvailableMapsString () const;
 	std::string getServerHelpString () const;
 
-	bool handleInput (std::string command);
-	void setProperty (std::string property, std::string value);
+	bool handleInput (const std::string& command);
+	void setProperty (const std::string& property, std::string value);
 
 	bool startServer (int saveGameNumber = -1);
 	void startNewGame ();
@@ -80,7 +80,7 @@ protected:
 	void saveGame (int saveGameNumber);
 
 	bool handleDedicatedServerEvents (cNetMessage* message);
-	void sendChatMessage (std::string text, int type, int socket = -1);
+	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
 	cDedicatedServerConfig* configuration;
 
