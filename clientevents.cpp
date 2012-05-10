@@ -28,7 +28,7 @@
 
 using namespace std;
 
-void sendChatMessageToServer ( string sMsg )
+void sendChatMessageToServer ( const string& sMsg )
 {
 
 	cNetMessage* message = new cNetMessage( GAME_EV_CHAT_CLIENT );
@@ -374,7 +374,7 @@ void sendWantSelfDestroy (cUnit* building)
 	Client->sendNetMessage (message);
 }
 
-void sendWantChangeUnitName( string newName, int unitID )
+void sendWantChangeUnitName( const string& newName, int unitID )
 {
 	cNetMessage* message = new cNetMessage( GAME_EV_WANT_CHANGE_UNIT_NAME );
 	message->pushString( newName );

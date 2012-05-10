@@ -3665,7 +3665,7 @@ cMenuReportsScreen::~cMenuReportsScreen()
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::notify (std::string message, void* sender)
+bool cMenuReportsScreen::notify (const std::string& message, void* sender)
 {
 	if (message == "casualties tracker updated" && screenType == REP_SCR_TYPE_DISADVA)
 	{

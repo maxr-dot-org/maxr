@@ -106,7 +106,7 @@ enum CHAT_MESSAGE_TYPES
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer ( std::string sMsg );
+void sendChatMessageToServer ( const std::string& sMsg );
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath
@@ -265,7 +265,7 @@ void sendSaveReportInfo ( sSavedReportMessage *savedReport, int ownerNr, int sav
 void sendFinishedSendSaveInfo ( int ownerNr, int savingID );
 
 void sendWantSelfDestroy (cUnit* building);
-void sendWantChangeUnitName( std::string newName, int unitID );
+void sendWantChangeUnitName( const std::string& newName, int unitID );
 
 void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type );
 

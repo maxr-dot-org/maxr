@@ -243,7 +243,7 @@ void cDedicatedServer::saveGame (int saveGameNumber)
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::setProperty (const string& property, string value)
+void cDedicatedServer::setProperty (const string& property, const string& value)
 {
 	if (property.compare ("port") == 0)
 	{

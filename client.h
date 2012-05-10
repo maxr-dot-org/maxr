@@ -309,7 +309,7 @@ public:
 	/**
 	* Adds an message to be displayed in the game
 	*/
-	void addMessage ( std::string sMsg );
+	void addMessage (const std::string& sMsg );
 	/** displays a message with 'goto' coordinates */
 	std::string addCoords (const std::string& msg, int x,int y );
 	/**

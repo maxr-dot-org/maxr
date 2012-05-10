@@ -210,7 +210,7 @@ string cUnit::getDisplayName () const
 //-----------------------------------------------------------------------------
 /** changes the name of the unit and indicates it as "not default" */
 //-----------------------------------------------------------------------------
-void cUnit::changeName (string newName)
+void cUnit::changeName (const string& newName)
 {
 	name = newName;
 	isOriginalName = false;

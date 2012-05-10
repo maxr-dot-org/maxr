@@ -35,7 +35,7 @@ public:
 		kUTBuilding,
 		kUTVehicle
 	};
-	
+
 	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
 	virtual ~cUnit ();
 
@@ -46,13 +46,13 @@ public:
 	bool isInRange (int x, int y) const;
 	bool isNextTo (int x, int y) const; ///< checks whether the coordinates are next to the unit
 
-	std::string getName () const { return name; }
+	const std::string& getName () const { return name; }
 	bool isNameOriginal () const { return isOriginalName; }
 
 	std::string getNamePrefix () const;
 	std::string getDisplayName () const;
-	void changeName (std::string newName);
-	
+	void changeName (const std::string& newName);
+
 	SDL_Rect getMenuSize () const;
 	bool areCoordsOverMenu (int x, int y);
 	void setMenuSelection ();
@@ -60,8 +60,8 @@ public:
 	void menuReleased ();
 	virtual void executeAutoMoveJobCommand () {}
 	virtual void executeLayMinesCommand () {}
-	virtual void executeClearMinesCommand () {}	
-	
+	virtual void executeClearMinesCommand () {}
+
 	int getScreenPosX () const;
 	int getScreenPosY () const;
 	void center () const;
@@ -74,18 +74,18 @@ public:
 	void rotateTo (int newDir);
 
 	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
-	
+
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
 	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
-	 */	
+	 */
 	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true) const;
-	
+
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
 
 	void deleteStoredUnits ();
 
-	
+
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
@@ -99,29 +99,29 @@ public:
 	bool isBeeingAttacked; ///< true when an attack on this unit is running
 	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
 	bool hasBeenAttacked; //the unit was attacked in this turn
-	
+
 	cUnit* next; ///< "next"-pointer for the double linked list
 	cUnit* prev; ///< "prev"-pointer for the double linked list
 	cList<cUnit*> storedUnits; ///< list with the units (normally vehicles), that are stored in this unit
 
 	int selectedMenuButtonIndex;
-	
+
 	cPlayer* owner;
 	cList<cPlayer*> seenByPlayerList; ///< a list were the numbers of all players who can see this unit are stored in
 	cList<cPlayer*> detectedByPlayerList; ///< a list were the numbers of all players who have deteced this unit are stored in
-	
+
 
 	//-----------------------------------------------------------------------------
 protected:
 	UnitType unitType;
-	
+
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
-	std::string name;		// name of the building	
+	std::string name;		// name of the building
 
 	void drawStatus () const;
 	int getNumberOfMenuEntries () const;
 
-	virtual bool isUnitLoaded () const { return false; } 
+	virtual bool isUnitLoaded () const { return false; }
 	virtual bool isUnitMoving () const { return false; }
 	virtual bool isAutoMoveJobActive () const { return false; }
 	virtual bool isUnitWorking () const { return false; }
@@ -140,7 +140,7 @@ protected:
 	virtual void executeActivateStoredVehiclesCommand () {}
 	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType) {}
 	virtual void executeSelfDestroyCommand () {}
-	
+
 	virtual sUnitData* getUpgradedUnitData () const = 0;
 };
 

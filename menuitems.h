@@ -1353,7 +1353,7 @@ public:
 	void released( void *parent );
 
 	// INotificationListener implementation
-	virtual bool notify (std::string message, void* sender = 0);
+	virtual bool notify (const std::string& message, void* sender = 0);
 };
 
 

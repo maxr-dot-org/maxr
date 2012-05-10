@@ -579,7 +579,7 @@ void cClient::addFX ( sFX* n )
 }
 
 // Adds an message to be displayed in the game
-void cClient::addMessage ( string sMsg )
+void cClient::addMessage ( const string& sMsg )
 {
 	sMessage* const Message = new sMessage(sMsg, SDL_GetTicks() );
 	messages.Add(Message);

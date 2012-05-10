@@ -27,7 +27,7 @@
 class INotificationListener
 {
 public:
-	virtual bool notify (std::string message, void* sender = 0) = 0;
+	virtual bool notify (const std::string& message, void* sender = 0) = 0;
 };
 
 //-------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public:
 	bool removeNotificationListener (INotificationListener* listener);
 
 protected:
-	void notifyListeners (std::string message);
+	void notifyListeners (const std::string& message);
 
 private:
 	std::vector<INotificationListener*> listeners;

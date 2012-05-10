@@ -72,7 +72,7 @@ protected:
 	std::string getServerHelpString () const;
 
 	bool handleInput (const std::string& command);
-	void setProperty (const std::string& property, std::string value);
+	void setProperty (const std::string& property, const std::string& value);
 
 	bool startServer (int saveGameNumber = -1);
 	void startNewGame ();
