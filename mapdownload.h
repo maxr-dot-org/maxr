@@ -66,7 +66,7 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (int toSocket, std::string mapName, std::string receivingPlayerName);
+	cMapSender (int toSocket, const std::string& mapName, const std::string& receivingPlayerName);
 	virtual ~cMapSender ();
 
 	int getToSocket () const { return toSocket; }

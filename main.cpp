@@ -568,7 +568,7 @@ string sID::getText() const
 }
 
 //----------------------------------------------------------------------------------
-void sID::generate ( string text )
+void sID::generate ( const string& text )
 {
 	iFirstPart = atoi ( text.substr( 0, text.find( " ", 0 ) ).c_str() );
 	iSecondPart = atoi ( text.substr( text.find( " ", 0 ), text.length() ).c_str() );

@@ -331,7 +331,7 @@ public:
 	 * delegates the keyinput to the active menuitem.
 	 *@author alzi
 	 */
-	virtual void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	/**
 	 * sends a netmessage to the given player.
@@ -728,7 +728,7 @@ public:
 	static void mapClicked( void* parent );
 	static void mouseMoved( void* parent );
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 	void handleNetMessage( cNetMessage *message );
 };
 

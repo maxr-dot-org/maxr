@@ -231,7 +231,7 @@ int mapSenderThreadFunction (void* data)
 }
 
 //-------------------------------------------------------------------------------
-cMapSender::cMapSender (int toSocket, std::string mapName, std::string receivingPlayerName)
+cMapSender::cMapSender (int toSocket, const std::string& mapName, const std::string& receivingPlayerName)
 : toSocket (toSocket)
 , receivingPlayerName (receivingPlayerName)
 , mapName (mapName)

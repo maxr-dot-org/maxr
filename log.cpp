@@ -154,12 +154,12 @@ void cLog::mark()
 	if ( open(-1) ) writeMessage ( str );
 }
 
-int cLog::writeMessage ( char *str )
+int cLog::writeMessage ( const char *str )
 {
 	return writeMessage ( std::string ( str ) );
 }
 
-int cLog::writeMessage ( std::string str )
+int cLog::writeMessage ( const std::string& str )
 {
 	if(logfile)
 	{

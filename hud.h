@@ -254,17 +254,17 @@ class cGameGUI : public cMenu
 	void rotateBlinkColor();
 	void doScroll( int dir );
 	/**
-	* checks whether the input is a comman
+	* checks whether the input is a command
 	*@author alzi alias DoctorDeath
 	*@param sCmd the input string
 	*/
-	void doCommand( std::string cmd );
+	void doCommand( const std::string& cmd );
 	/**
 	* returns the corresponding player to a string with his name or number
 	*@author alzi alias DoctorDeath
 	*@param playerNumStr a string with the name or the number of a player
 	*/
-	cPlayer *getPlayerFromName( std::string playerNameStr );
+	cPlayer *getPlayerFromName( const std::string& playerNameStr );
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
@@ -385,7 +385,7 @@ public:
 	int show();
 	void returnToCallback();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	bool surveyChecked() { return surveyButton->isChecked(); }
 	bool hitsChecked() { return hitsButton->isChecked(); }
@@ -483,7 +483,7 @@ public:
 	void deselectUnit();
 
 
-	void setInfoTexts ( std::string infoText, std::string additionalInfoText );
+	void setInfoTexts ( const std::string& infoText, const std::string& additionalInfoText );
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise

@@ -294,10 +294,10 @@ public:
 	bool isWater(int x, int y, bool not_coast=false);
 	void NewMap(int size, int iTerrainGrphCount );
 	void DeleteMap(void);
-	bool SaveMap(std::string filename,SDL_Surface *preview);
-	bool LoadMap(std::string filename);
+	//bool SaveMap(const std::string& filename, SDL_Surface *preview);
+	bool LoadMap(const std::string& filename);
 	void placeRessourcesAddPlayer(int x, int y, int frequency);
-	void placeRessources(int Metal,int Oil,int Gold);
+	void placeRessources(int Metal, int Oil, int Gold);
 	void generateNextAnimationFrame();
 	/**
 	* Access to a map field

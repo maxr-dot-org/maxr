@@ -87,7 +87,7 @@ EX eMouseStyle MouseStyle;
 // Prototypen ////////////////////////////////////////////////////////////////
 int LoadKeys();
 const char *GetKeyString(SDLKey key);
-SDLKey GetKeyFromString(std::string key);
+SDLKey GetKeyFromString(const std::string& key);
 /**
 	* Generats a new keys.xml file
 	*/

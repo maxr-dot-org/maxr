@@ -40,14 +40,14 @@ bool FileExists(const char* path);
 * @param path Path to check for
 * @return true if the directory exists. Else false.
 */
-bool DirExists(std::string path);
+bool DirExists(const std::string& path);
 
 /**
 * Creates a new directory.
 * @param Path to the directory to create.
 * @return True if the directoy has been created successfully. False on errors.
 */
-bool makeDir(std::string path);
+bool makeDir(const std::string& path);
 
 /**
 * Gets the filenames of all files in the directory
@@ -55,7 +55,7 @@ bool makeDir(std::string path);
 * @param sDirectory Directory in which to search
 * @return A new list with all filenames (the caller is owner of the list)
 */
-cList<std::string> *getFilesOfDirectory(std::string sDirectory);
+cList<std::string> *getFilesOfDirectory(const std::string& sDirectory);
 
 /**
 * Gets the map folder of the user's custom maps.

@@ -27,9 +27,9 @@
 class cDialogYesNo : public cMenu
 {
 public:
-	cDialogYesNo(std::string text);
+	cDialogYesNo(const std::string& text);
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	static void yesReleased( void *parent );
 	static void noReleased( void *parent );
@@ -48,7 +48,7 @@ class cDialogOK : public cMenu
 public:
 	cDialogOK(std::string text);
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	static void okReleased( void *parent );
 
@@ -80,7 +80,7 @@ class cDialogLicence : public cMenu
 public:
 	cDialogLicence();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	static void okReleased( void *parent );
 	static void upReleased( void *parent );
@@ -196,7 +196,7 @@ public:
 	cDialogTransfer( cBuilding *srcBuilding_, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
 	~cDialogTransfer();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );
@@ -239,7 +239,7 @@ public:
 	cDialogResearch( cPlayer *owner_ );
 	~cDialogResearch();
 
-	void handleKeyInput( SDL_KeyboardEvent &key, std::string ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
 	static void doneReleased( void *parent );
 	static void cancelReleased( void *parent );
@@ -260,6 +260,6 @@ public:
  * @param y y position
  * @param *surface SDL_Surface to draw on
 */
-void drawContextItem(std::string sText, bool bPressed, int x, int y, SDL_Surface *surface);
+void drawContextItem(const std::string& sText, bool bPressed, int x, int y, SDL_Surface *surface);
 
 #endif

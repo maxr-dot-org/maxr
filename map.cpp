@@ -182,8 +182,9 @@ void cMap::CopySrfToTerData ( SDL_Surface *surface, int iNum )
 }
 
 /** Loads a map file */
-bool cMap::LoadMap ( std::string filename )
+bool cMap::LoadMap ( const std::string& filename_ )
 {
+	std::string filename(filename_);
 	SDL_RWops *fpMapFile;
 	short sWidth, sHeight;
 	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
@@ -687,7 +688,7 @@ void cMap::moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y, int h
 		{
 			if ( planes[i] == vehicle ) planes.Delete(i);
 		}
-		if (height > (int)fields[newOffset].planes.Size()) 
+		if (height > (int)fields[newOffset].planes.Size())
 			height = fields[newOffset].planes.Size();
 		fields[newOffset].planes.Insert(height, vehicle );
 	}

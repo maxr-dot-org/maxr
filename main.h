@@ -74,7 +74,7 @@ struct sID
 	int iFirstPart;
 	int iSecondPart;
 	std::string getText() const;
-	void generate( std::string text );
+	void generate( const std::string& text );
 	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
 		units will have these values. */
 	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner) const;

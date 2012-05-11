@@ -431,7 +431,7 @@ void cMenuImage::draw()
 	}
 }
 
-cMenuLabel::cMenuLabel(int x, int y, string text_, eUnicodeFontType fontType_) :
+cMenuLabel::cMenuLabel(int x, int y, const string& text_, eUnicodeFontType fontType_) :
 	cMenuItem(x, y),
 	fontType(fontType_),
 	flagCentered(false),
@@ -443,7 +443,7 @@ cMenuLabel::cMenuLabel(int x, int y, string text_, eUnicodeFontType fontType_) :
 	setText ( text_ );
 }
 
-void cMenuLabel::setText( string text_ )
+void cMenuLabel::setText( const string& text_ )
 {
 	text = text_;
 	if ( !flagBox )
@@ -493,7 +493,7 @@ void cMenuLabel::move( int x, int y )
 	textPosition.y = position.y + textPosYOffset;
 }
 
-cMenuButton::cMenuButton(int x, int y, string text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
+cMenuButton::cMenuButton(int x, int y, const string& text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
 	cMenuItem(x, y),
 	text(text_),
 	fontType(fontType_),
@@ -875,7 +875,7 @@ void cMenuDestroyButton::animationCallback()
 	}
 }
 
-cMenuCheckButton::cMenuCheckButton(int x, int y, string text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_) :
+cMenuCheckButton::cMenuCheckButton(int x, int y, const string& text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND *clickSound_) :
 	cMenuItem(x, y),
 	text(text_),
   fontType(fontType_),
@@ -2794,20 +2794,21 @@ void cMenuListBox::draw()
 	}
 }
 
-void cMenuListBox::addLine ( string line )
+void cMenuListBox::addLine ( const string& line )
 {
+	string line_(line);
 	size_t pos = 0;
 	size_t length;
 	do
 	{
-		length = line.length()-pos;
-		while ( font->getTextWide ( line.substr ( pos, length ) ) > position.w-24-17 ) length--;
-		lines.Add ( line.substr ( pos, length ) );
+		length = line_.length()-pos;
+		while ( font->getTextWide ( line_.substr ( pos, length ) ) > position.w-24-17 ) length--;
+		lines.Add ( line_.substr ( pos, length ) );
 		pos += length;
-		if ( pos == line.length() ) break;
-		line.insert ( pos, "	" );
+		if ( pos == line_.length() ) break;
+		line_.insert ( pos, "	" );
 	}
-	while ( pos < line.length() );
+	while ( pos < line_.length() );
 
 	scrollBar->setMaximalScroll ( (int)lines.Size()*14 );
 }
@@ -2879,13 +2880,13 @@ void cMenuLineEdit::resetTextPosition()
 	while ( font->getTextWide( text.substr( startOffset, endOffset-startOffset ), fontType ) > position.w-getBorderSize() ) doPosDecrease ( endOffset );
 }
 
-void cMenuLineEdit::setText ( string text_ )
+void cMenuLineEdit::setText ( const string& text_ )
 {
 	text = text_;
 	resetTextPosition();
 }
 
-string cMenuLineEdit::getText ()
+const string& cMenuLineEdit::getText () const
 {
 	return text;
 }
@@ -3004,7 +3005,7 @@ int cMenuLineEdit::getBorderSize()
 	}
 }
 
-bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, string ch, void *parent )
+bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, const string& ch, void *parent )
 {
 	if ( readOnly ) return false;
 

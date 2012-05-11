@@ -46,7 +46,7 @@ bool FileExists ( const char* path )
 {
 	SDL_RWops *file;
 	file = SDL_RWFromFile ( path, "r" );
-	if ( file==NULL )
+	if ( file == NULL )
 	{
 		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return false;
@@ -56,7 +56,7 @@ bool FileExists ( const char* path )
 }
 
 //--------------------------------------------------------------
-bool makeDir(std::string path)
+bool makeDir(const std::string& path)
 {
 #ifdef WIN32
     return mkdir(path.c_str()) == 0;
@@ -66,7 +66,7 @@ bool makeDir(std::string path)
 }
 
 //--------------------------------------------------------------
-bool DirExists(std::string path)
+bool DirExists(const std::string& path)
 {
 #ifdef WIN32
 	if ( _access( path.c_str(), 0 ) == 0 )
@@ -84,7 +84,7 @@ bool DirExists(std::string path)
 }
 
 //--------------------------------------------------------------
-cList<std::string> *getFilesOfDirectory(std::string sDirectory)
+cList<std::string> *getFilesOfDirectory(const std::string& sDirectory)
 {
 	cList<std::string> *List = new cList<std::string>;
 #ifdef _WIN32

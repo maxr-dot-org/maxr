@@ -1088,7 +1088,7 @@ void cGameGUI::deselectUnit()
 	updateMouseCursor();
 }
 
-void cGameGUI::setInfoTexts ( string infoText, string additionalInfoText )
+void cGameGUI::setInfoTexts ( const string& infoText, const string& additionalInfoText )
 {
 	infoTextLabel->setText ( infoText );
 	infoTextLabel->setDisabled ( infoText.empty() );
@@ -1998,7 +1998,7 @@ void cGameGUI::doScroll( int dir )
 	setOffsetPosition ( newOffX, newOffY );
 }
 
-cPlayer *cGameGUI::getPlayerFromName( string playerNameStr )
+cPlayer *cGameGUI::getPlayerFromName( const string& playerNameStr )
 {
 	if ( !Server ) return NULL;
 
@@ -2012,7 +2012,7 @@ cPlayer *cGameGUI::getPlayerFromName( string playerNameStr )
 	return Server->getPlayerFromNumber ( atoi ( playerNameStr.c_str() ) );
 }
 
-void cGameGUI::doCommand( string cmd )
+void cGameGUI::doCommand( const string& cmd )
 {
 	if ( cmd.compare( "/fps on" ) == 0 ) { showFPS = true; return;}
 	if ( cmd.compare( "/fps off" ) == 0 ) { showFPS = false; return;}
@@ -2143,11 +2143,12 @@ void cGameGUI::doCommand( string cmd )
 		}
 		return;
 	}
-	if ( cmd.substr( 0, 5 ).compare( "/mark"  ) == 0 )
+	if ( cmd.substr( 0, 5 ).compare( "/mark" ) == 0 )
 	{
-		cmd.erase(0, 5 );
+		std::string cmdArg(cmd);
+		cmdArg.erase(0, 5 );
 		cNetMessage* message = new cNetMessage( GAME_EV_WANT_MARK_LOG );
-		message->pushString( cmd );
+		message->pushString( cmdArg );
 		Client->sendNetMessage( message );
 		return;
 	}
@@ -2408,7 +2409,7 @@ bool cGameGUI::loadPanelGraphics()
 	return true;
 }
 
-void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	if ( key.keysym.sym == SDLK_LSHIFT || key.keysym.sym == SDLK_RSHIFT )
 	{

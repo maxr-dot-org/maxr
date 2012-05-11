@@ -729,7 +729,7 @@ void cMenu::handleMouseInput( sMouseState mouseState )
 }
 
 //------------------------------------------------------------------------------
-void cMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cMenu::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	if ( activeItem && key.state == SDL_PRESSED ) activeItem->handleKeyInput ( key.keysym, ch, this );
 }
@@ -2701,7 +2701,7 @@ void cLandingMenu::mouseMoved( void* parent )
 }
 
 //------------------------------------------------------------------------------
-void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cLandingMenu::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	if ( key.keysym.sym == SDLK_ESCAPE && key.state == SDL_PRESSED )
 	{

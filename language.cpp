@@ -32,17 +32,17 @@
 #include "log.h"
 #include "settings.h"
 
-cLanguage::cLanguage(void) :
+cLanguage::cLanguage() :
 	m_bLeftToRight(true),
 	m_bErrorMsgTranslationLoaded(false)
 {}
 
-std::string cLanguage::GetCurrentLanguage(void)
+const std::string& cLanguage::GetCurrentLanguage() const
 {
 	return m_szLanguage;
 }
 
-int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
+int cLanguage::SetCurrentLanguage(const std::string& szLanguageCode)
 {
 	//don't do this on constructor because language folder isn't known yet in programm start.
 	//since the first thinh we do with language files is setting our language we can init the master lang file here too -- beko
@@ -50,20 +50,20 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 	m_szLanguageFileMaster += PATH_DELIMITER LANGUAGE_FILE_NAME "eng" LANGUAGE_FILE_EXT;
 
 	std::string szTemp;
-	if( szLanguageCode.length() != 3 )
+	if ( szLanguageCode.length() != 3 )
 	{
 		return -1;
 	}
-	if( szLanguageCode.find_first_not_of
+	if ( szLanguageCode.find_first_not_of
 		( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != std::string::npos )
 	{
 		return -1;
 	}
 
 	m_szLanguage = szLanguageCode;
-	for(int i=0 ; i<=2 ; i++)
+	for (int i=0 ; i<=2 ; i++)
 	{
-		if( m_szLanguage[i] < 97 )
+		if ( m_szLanguage[i] < 97 )
 		{
 			m_szLanguage[i] += 32;
 		}
@@ -75,7 +75,7 @@ int cLanguage::SetCurrentLanguage(std::string szLanguageCode)
 	return 0;
 }
 
-std::string cLanguage::i18n(std::string szInputText)
+std::string cLanguage::i18n(const std::string& szInputText)
 {
 	StrStrMap :: const_iterator impTranslation;
 	impTranslation = m_mpLanguage.find( szInputText );
@@ -85,7 +85,7 @@ std::string cLanguage::i18n(std::string szInputText)
 		if (m_bErrorMsgTranslationLoaded)
 		{
 			return i18n( "Text~Error_Messages~ERROR_Missing_Translation" , szInputText );
-		}else
+		} else
 		{
 			return std::string("missing translation: ") + szInputText;
 		}
@@ -99,9 +99,9 @@ std::string cLanguage::i18n(std::string szInputText)
 }
 
 // Translation with replace %s
-std::string cLanguage::i18n(std::string  szMainText, std::string szInsertText)
+std::string cLanguage::i18n(const std::string& szMainText, const std::string& szInsertText)
 {
-	std::string  szMainTextNew;
+	std::string szMainTextNew;
 	std::size_t iPos;
 
 	szMainTextNew = this->i18n( szMainText );
@@ -113,7 +113,8 @@ std::string cLanguage::i18n(std::string  szMainText, std::string szInsertText)
 		return szMainTextNew + szInsertText;
 	}
 	else
-	{	szMainTextNew.replace( iPos, 2, szInsertText );
+	{
+		szMainTextNew.replace( iPos, 2, szInsertText );
 		return szMainTextNew;
 	}
 }
@@ -349,14 +350,15 @@ int cLanguage::ReadLanguagePackHeader()
 }
 
 
-int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
+int cLanguage::ReadLanguagePackHeader( const std::string& strLanguageCode )
 {
 	ExTiXmlNode * pXmlNode = NULL;
 	std::string strResult;
 	std::string strErrorMsg;
 	std::string strFileName;
+	std::string szLanguageCode(strLanguageCode);
 
-	if( szLanguageCode == "" )
+	if( szLanguageCode.empty() )
 	{
 		strFileName = m_szLanguageFileMaster;
 		szLanguageCode = "eng";
@@ -466,10 +468,11 @@ int cLanguage::ReadLanguagePackHeader( std::string szLanguageCode )
 	return 0;
 }
 
-int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlNode, std::string strNodePath )
+int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlNode, const std::string& szNodePath )
 {
 	ExTiXmlNode * pXmlNodeTMP;
 	std::string strResult;
+	std::string strNodePath(szNodePath);
 
 	if( pXmlNode == NULL )
 	{
@@ -501,7 +504,7 @@ int cLanguage::ReadRecursiveLanguagePack( ExTiXmlNode * pXmlNode, std::string st
 
 	return 0;
 }
-std::string cLanguage::ReadSingleTranslation( std::string strInput )
+std::string cLanguage::ReadSingleTranslation( const std::string& strInput )
 {
 	std::string strPath, strCurrent, strResult, szErrorMsg;
 	TiXmlNode * pXmlNode;

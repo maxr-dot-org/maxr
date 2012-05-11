@@ -275,7 +275,7 @@ const char *GetKeyString ( SDLKey key )
 }
 
 // Liefert den Code der Taste zurueck:
-SDLKey GetKeyFromString ( string key )
+SDLKey GetKeyFromString ( const string& key )
 {
 	if ( !key.compare ( "UNKNOWN" ) ) return SDLK_UNKNOWN;
 	if ( !key.compare ( "BACKSPACE" ) ) return SDLK_BACKSPACE;

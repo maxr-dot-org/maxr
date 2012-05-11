@@ -247,7 +247,7 @@ public:
 	 *@param ch the encoded key
 	 *@param parent pointer to the calling menu
 	 */
-	virtual bool handleKeyInput( SDL_keysym keysym, std::string ch, void *parent ) { return false; }
+	virtual bool handleKeyInput( SDL_keysym keysym, const std::string& ch, void *parent ) { return false; }
 
 
 	/**
@@ -445,9 +445,9 @@ protected:
 	bool flagBox;
 
 public:
-	cMenuLabel ( int x, int y, std::string text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
-	void setText( std::string text_ );
-	std::string getText() { return text; }
+	cMenuLabel ( int x, int y, const std::string& text_ = "", eUnicodeFontType fontType_= FONT_LATIN_NORMAL );
+	void setText( const std::string& text_ );
+	const std::string& getText() const { return text; }
 	void setFontType ( eUnicodeFontType fontType_ );
 	/**
 	 * if centered is true the text will be centered at the in the constructor overgiven position.
@@ -522,7 +522,7 @@ protected:
 
 	bool preSetLocked( bool locked_ );
 public:
-	cMenuButton ( int x, int y, std::string text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
+	cMenuButton ( int x, int y, const std::string& text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND *clickSound_ = SoundData.SNDHudButton );
 	void draw();
 };
 
@@ -618,7 +618,7 @@ protected:
 	bool preClicked();
 
 public:
-	cMenuCheckButton( int x, int y, std::string text_ = "", bool checked_ = false, bool centered_ = false,eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND, eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, sSOUND *clickSound_ = SoundData.SNDObjectMenu);
+	cMenuCheckButton( int x, int y, const std::string& text_ = "", bool checked_ = false, bool centered_ = false,eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND, eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, sSOUND *clickSound_ = SoundData.SNDObjectMenu);
 	void draw();
 
 	void setChecked ( bool checked_ );
@@ -1028,7 +1028,7 @@ public:
 	~cMenuListBox();
 	void draw();
 
-	void addLine ( std::string line );
+	void addLine ( const std::string& line );
 };
 
 /**
@@ -1081,10 +1081,10 @@ public:
 	 *@param takeNumerics_ if this is true the box takes numerics.
 	 */
 	void setTaking ( bool takeChars_, bool takeNumerics_ );
-	void setText ( std::string text_ );
-	std::string getText ();
+	void setText ( const std::string& text_ );
+	const std::string& getText () const;
 	void setSize( int w, int h );
-	bool handleKeyInput( SDL_keysym keysym, std::string ch, void *parent );
+	virtual bool handleKeyInput( SDL_keysym keysym, const std::string& ch, void *parent );
 
 	void setReturnPressedFunc( void (*returnPressed_)(void *) );
 };
@@ -1113,7 +1113,7 @@ struct sMenuPlayer
 	int nr;
 	int socket;
 
-	sMenuPlayer (std::string name_ = "", int color_ = 0, bool ready_ = false, int nr_ = 0, int socket_ = -1)
+	sMenuPlayer (const std::string& name_ = "", int color_ = 0, bool ready_ = false, int nr_ = 0, int socket_ = -1)
 		: name(name_), color(color_), ready(ready_), nr(nr_), socket(socket_) {}
 };
 

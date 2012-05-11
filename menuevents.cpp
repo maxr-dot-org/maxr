@@ -27,7 +27,7 @@
 
 using namespace std;
 
-void sendMenuChatMessage ( string chatMsg, sMenuPlayer *player, int fromPlayerNr, bool translationText )
+void sendMenuChatMessage ( const string& chatMsg, sMenuPlayer *player, int fromPlayerNr, bool translationText )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_CHAT );
 	message->pushString ( chatMsg );
@@ -59,7 +59,7 @@ void sendPlayerList ( cList<sMenuPlayer*> *players )
 	cMenu::sendMessage ( message );
 }
 
-void sendGameData ( cGameDataContainer *gameData, string saveGameString, sMenuPlayer *player )
+void sendGameData ( cGameDataContainer *gameData, const string& saveGameString, sMenuPlayer *player )
 {
 	cNetMessage *message = new cNetMessage ( MU_MSG_OPTINS );
 

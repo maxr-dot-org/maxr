@@ -49,8 +49,8 @@ private:
 	/**
 	* Writes message finally to logfile
 	*/
-	int writeMessage( char *);
-	int writeMessage( std::string );
+	int writeMessage( const char *);
+	int writeMessage( const std::string& );
 
 	/**
 	* Closes the logfile.

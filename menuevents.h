@@ -46,13 +46,13 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage ( std::string chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
+void sendMenuChatMessage ( const std::string& chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
 
 void sendRequestIdentification ( sMenuPlayer *player );
 
 void sendPlayerList ( cList<sMenuPlayer*> *players );
 
-void sendGameData ( cGameDataContainer *gameData, std::string saveGameString, sMenuPlayer *player = NULL );
+void sendGameData ( cGameDataContainer *gameData, const std::string& saveGameString, sMenuPlayer *player = NULL );
 
 void sendGo ();
 

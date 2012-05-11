@@ -66,12 +66,12 @@
 class cLanguage
 {
 public:
-	cLanguage(void);
+	cLanguage();
 
-	std::string GetCurrentLanguage(void);
-	int         SetCurrentLanguage(std::string szLanguageCode);
-	std::string i18n(std::string szInputText);
-	std::string i18n(std::string szMainText, std::string szInsertText); // Translation with replace %s
+	const std::string& GetCurrentLanguage() const;
+	int         SetCurrentLanguage(const std::string& szLanguageCode);
+	std::string i18n(const std::string& szInputText);
+	std::string i18n(const std::string& szMainText, const std::string& szInsertText); // Translation with replace %s
 	int         ReadLanguagePack();
 	int         CheckCurrentLanguagePack(bool bInsertMissingEntries);
 
@@ -79,11 +79,11 @@ private:
 	typedef std::map<std::string, std::string> StrStrMap;
 
 	int         ReadSingleTranslation(std::string& strResult, char const* pszCurrent, ...);
-	std::string ReadSingleTranslation(std::string strInput);
+	std::string ReadSingleTranslation(const std::string& strInput);
 	int         ReadLanguagePackHeader();
-	int         ReadLanguagePackHeader(std::string szLanguageCode);
+	int         ReadLanguagePackHeader(const std::string& strLanguageCode);
 	int         ReadLanguageMaster();
-	int         ReadRecursiveLanguagePack(ExTiXmlNode* pXmlStartingNode, std::string strNodePath);
+	int         ReadRecursiveLanguagePack(ExTiXmlNode* pXmlStartingNode, const std::string& szNodePath);
 
 	TiXmlDocument m_XmlDoc;
 	std::string   m_szLanguage; // Use ISO 639-2 codes to identify languages (http://www.loc.gov/standards/iso639-2/php/code_list.php)

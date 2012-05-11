@@ -64,7 +64,7 @@ TiXmlDocument LanguageFile;
  * @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
  * @param pos Horizontal Positionindex on SplashScreen
  */
-static void MakeLog(std::string sTxt, int ok,int pos);
+static void MakeLog(const std::string& sTxt, int ok,int pos);
 
 /**
  * Loads the selected languagepack
@@ -354,7 +354,7 @@ int LoadData ( void * )
 
 // MakeLog ///////////////////////////////////////////////////////////////////
 // Writes a Logmessage on the SplashScreen:
-void MakeLog ( string sTxt,int ok,int pos )
+/* static */ void MakeLog ( const string& sTxt, int ok, int pos )
 {
 	if (!DEDICATED_SERVER)
 	{

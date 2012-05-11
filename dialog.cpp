@@ -40,7 +40,7 @@
 
 using namespace std;
 
-cDialogYesNo::cDialogYesNo(string text) :
+cDialogYesNo::cDialogYesNo(const string& text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel(position.x +  40, position.y +  40, text),
 	yesButton(position.x + 155, position.y + 185, lngPack.i18n("Text~Button~Yes"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
@@ -57,7 +57,7 @@ cDialogYesNo::cDialogYesNo(string text) :
 	menuItems.Add(&noButton);
 }
 
-void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, string ch)
+void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, const string& ch)
 {
 	switch ( key.keysym.sym )
 	{
@@ -105,7 +105,7 @@ cDialogOK::cDialogOK(string text) :
 	menuItems.Add(&okButton);
 }
 
-void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	if ( key.keysym.sym == SDLK_RETURN )
 	{
@@ -266,7 +266,7 @@ void cDialogLicence::resetText()
 	draw();
 }
 
-void cDialogLicence::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cDialogLicence::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	if ( key.keysym.sym == SDLK_RETURN )
 	{
@@ -836,7 +836,7 @@ void cDialogTransfer::setCargos()
 	resBar->setCurrentValue ( (int)( 223 * (float)(destCargo+transferValue) / maxDestCargo ) );
 }
 
-void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	switch ( key.keysym.sym )
 	{
@@ -910,7 +910,7 @@ void cDialogTransfer::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle 
 		 destroyedBuilding == destBuilding || destroyedVehicle == destVehicle ) terminate = true;
 }
 
-void drawContextItem(string sText, bool bPressed, int x, int y, SDL_Surface *surface)
+void drawContextItem(const string& sText, bool bPressed, int x, int y, SDL_Surface *surface)
 {
 	SDL_Rect dest={x,y,42,21};
 	SDL_Rect src={0,0,42,21}; //default button deselected
@@ -1070,7 +1070,7 @@ void cDialogResearch::setData()
 	}
 }
 
-void cDialogResearch::handleKeyInput( SDL_KeyboardEvent &key, string ch )
+void cDialogResearch::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 {
 	switch ( key.keysym.sym )
 	{

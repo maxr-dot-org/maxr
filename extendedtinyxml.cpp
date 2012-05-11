@@ -36,8 +36,10 @@
 #include "defines.h"
 #include "log.h"
 
-void debugToLog( std::string szMsg);
+#if 0
+void debugToLog( const std::string& szMsg);
 void debugToLog( void * pointer , const char * pname);
+#endif
 
 ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument &rTiXmlDoc, const char * pszCurrent, ... )
 {
@@ -317,7 +319,7 @@ bool ExTiXmlNode::XmlDataToBool( std::string &rstrData )
 	}
 }
 
-/*
+#if 0
 void debugToLog( void * pointer , const char * pname)
 {
 	char szMsg[256] = ""; //JCK
@@ -326,9 +328,9 @@ void debugToLog( void * pointer , const char * pname)
 	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };
 
-void debugToLog( std::string szMsg)
+void debugToLog( const std::string& szMsg)
 {
 	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
 };
 
-*/
+#endif
