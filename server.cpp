@@ -1165,7 +1165,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 	case GAME_EV_WANT_VEHICLE_UPGRADE:
 		{
 			bool upgradeAll = message->popBool();
-			int storageSlot = 0;
+			unsigned int storageSlot = 0;
 			if (!upgradeAll)
 				storageSlot = message->popInt16();
 			cBuilding* storingBuilding = getBuildingFromID(message->popInt32());

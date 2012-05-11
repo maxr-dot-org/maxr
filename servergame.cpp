@@ -227,8 +227,8 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 		}
 		case MU_MSG_IDENTIFIKATION:
 		{
-			int playerNr = message->popInt16 ();
-			if (playerNr < 0 || playerNr > menuPlayers.Size ())
+			unsigned int playerNr = message->popInt16 ();
+			if (playerNr >= menuPlayers.Size ())
 				break;
 			sMenuPlayer* player = menuPlayers[playerNr];
 
@@ -256,8 +256,8 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			bool translationText = message->popBool ();
 			string chatText = message->popString ();
 
-			int senderPlyerNr = message->iPlayerNr;
-			if (senderPlyerNr < 0 || senderPlyerNr > menuPlayers.Size ())
+			unsigned int senderPlyerNr = message->iPlayerNr;
+			if (senderPlyerNr >= menuPlayers.Size ())
 				break;
 			sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
 
