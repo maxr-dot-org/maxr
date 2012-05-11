@@ -27,7 +27,7 @@
 #include "base.h" // for sSubBase
 
 // forward declarations
-int GetColorNr(SDL_Surface *sf);
+int GetColorNr(const SDL_Surface *sf);
 class cMapReceiver;
 class cMapSender;
 class cServer;
@@ -146,10 +146,9 @@ struct sSettings
 	bridgeHead (SETTING_BRIDGEHEAD_DEFINITE), alienTech(SETTING_ALIENTECH_OFF), clans(SETTING_CLANS_ON), gameType(SETTINGS_GAMETYPE_SIMU), victoryType(SETTINGS_VICTORY_POINTS),
 	duration(SETTINGS_DUR_MEDIUM) {}
 
-	std::string getResValString ( eSettingResourceValue type );
-	std::string getResFreqString();
-	std::string getVictoryConditionString();
-
+	std::string getResValString ( eSettingResourceValue type ) const;
+	std::string getResFreqString() const;
+	std::string getVictoryConditionString() const;
 };
 
 /**
@@ -314,7 +313,7 @@ public:
 	 * will the menu be closed after finishing the current action?
 	 *@author eiko
 	 */
-	bool exiting();
+	bool exiting() const;
 
 	/**
 	 * handles mouseclicks, delegates them to the matching menuitem and handles the activity of the menuitems.

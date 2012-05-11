@@ -163,14 +163,14 @@ cPlayer::~cPlayer ()
 	}
 	delete [] VehicleData;
 	delete [] BuildingData;
-	if ( ScanMap ) delete [] ScanMap;
-	if ( SentriesMapAir ) delete [] SentriesMapAir;
-	if ( SentriesMapGround ) delete [] SentriesMapGround;
-	if ( ResourceMap ) delete [] ResourceMap;
+	delete [] ScanMap;
+	delete [] SentriesMapAir;
+	delete [] SentriesMapGround;
+	delete [] ResourceMap;
 
-	if ( DetectLandMap ) delete [] DetectLandMap;
-	if ( DetectSeaMap ) delete [] DetectSeaMap;
-	if ( DetectMinesMap ) delete [] DetectMinesMap;
+	delete [] DetectLandMap;
+	delete [] DetectSeaMap;
+	delete [] DetectMinesMap;
 
 	while ( ReportVehicles.Size() )
 	{

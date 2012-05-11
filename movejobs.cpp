@@ -127,9 +127,9 @@ cPathCalculator::~cPathCalculator()
 		}
 		free ( MemBlocks );
 	}
-	if ( nodesHeap != NULL ) delete [] nodesHeap;
-	if ( openList != NULL ) delete [] openList;
-	if ( closedList != NULL ) delete [] closedList;
+	delete [] nodesHeap;
+	delete [] openList;
+	delete [] closedList;
 }
 
 sWaypoint* cPathCalculator::calcPath ()
@@ -476,7 +476,7 @@ cServerMoveJob::~cServerMoveJob()
 	}
 	Waypoints = NULL;
 
-	if ( endAction ) delete endAction;
+	delete endAction;
 }
 
 void cServerMoveJob::stop()
@@ -996,7 +996,7 @@ cClientMoveJob::~cClientMoveJob()
 			i--;
 		}
 	}
-	if ( endMoveAction ) delete endMoveAction;
+	delete endMoveAction;
 }
 
 void cClientMoveJob::setVehicleToCoords(int x, int y, int height)

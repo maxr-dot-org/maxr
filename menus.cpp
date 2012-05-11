@@ -47,7 +47,7 @@ using namespace std;
 #define MAIN_MENU_BTN_SPACE 35
 
 //------------------------------------------------------------------------------
-int GetColorNr ( SDL_Surface *sf )
+int GetColorNr ( const SDL_Surface *sf )
 {
 	if ( sf == OtherData.colors[cl_red] )		return cl_red;
 	if ( sf == OtherData.colors[cl_blue] )		return cl_blue;
@@ -61,7 +61,7 @@ int GetColorNr ( SDL_Surface *sf )
 }
 
 //------------------------------------------------------------------------------
-string sSettings::getResValString ( eSettingResourceValue type )
+string sSettings::getResValString ( eSettingResourceValue type ) const
 {
 	switch ( type )
 	{
@@ -78,7 +78,7 @@ string sSettings::getResValString ( eSettingResourceValue type )
 }
 
 //------------------------------------------------------------------------------
-string sSettings::getResFreqString()
+string sSettings::getResFreqString() const
 {
 	switch ( resFrequency )
 	{
@@ -95,7 +95,7 @@ string sSettings::getResFreqString()
 }
 
 //------------------------------------------------------------------------------
-string sSettings::getVictoryConditionString()
+string sSettings::getVictoryConditionString() const
 {
 	string r = iToStr(duration) + " ";
 
@@ -116,8 +116,8 @@ string sSettings::getVictoryConditionString()
 //------------------------------------------------------------------------------
 cGameDataContainer::~cGameDataContainer()
 {
-	if ( settings ) delete settings;
-	if ( map ) delete map;
+	delete settings;
+	delete map;
 }
 
 //------------------------------------------------------------------------------
@@ -692,7 +692,7 @@ void cMenu::returnToCallback()
 }
 
 //------------------------------------------------------------------------------
-bool cMenu::exiting()
+bool cMenu::exiting() const
 {
 	return end || terminate;
 }
@@ -1308,7 +1308,7 @@ void cSettingsMenu::okReleased( void* parent )
 {
 	cSettingsMenu *menu = static_cast<cSettingsMenu *>((cMenu*)parent);
 	menu->updateSettings();
-	if ( menu->gameDataContainer->settings ) delete menu->gameDataContainer->settings;
+	delete menu->gameDataContainer->settings;
 	menu->gameDataContainer->settings = new sSettings(menu->settings);
 
 	switch ( menu->gameDataContainer->type )
@@ -3335,7 +3335,7 @@ void cNetworkHostMenu::loadReleased( void* parent )
 		savegame.loadHeader ( &menu->saveGameString, NULL, NULL );
 		menu->saveGameString += "\n\n" + lngPack.i18n ( "Text~Title~Players" ) +"\n" + savegame.getPlayerNames();
 
-		if ( menu->gameDataContainer.map ) delete menu->gameDataContainer.map;
+		delete menu->gameDataContainer.map;
 		cMap *map = new cMap;
 		map->LoadMap ( savegame.getMapName() );
 		menu->gameDataContainer.map = map;
