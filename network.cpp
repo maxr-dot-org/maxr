@@ -393,19 +393,19 @@ void cTCP::setPort( int iPort )
 }
 
 //------------------------------------------------------------------------
-void cTCP::setIP ( std::string sIP )
+void cTCP::setIP ( const std::string& sIP )
 {
 	this->sIP = sIP;
 }
 
 //------------------------------------------------------------------------
-int cTCP::getSocketCount()
+int cTCP::getSocketCount() const
 {
 	return iLast_Socket;
 }
 
 //------------------------------------------------------------------------
-int cTCP::getConnectionStatus()
+int cTCP::getConnectionStatus() const
 {
 	if (iLast_Socket > 0)
 		return 1;
@@ -413,7 +413,7 @@ int cTCP::getConnectionStatus()
 }
 
 //------------------------------------------------------------------------
-bool cTCP::isHost()
+bool cTCP::isHost() const
 {
 	return bHost;
 }

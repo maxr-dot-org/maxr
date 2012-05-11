@@ -43,7 +43,7 @@ cSavegame::cSavegame ( int number ):
 }
 
 //--------------------------------------------------------------------------
-int cSavegame::save( string saveName )
+int cSavegame::save( const string& saveName )
 {
 	TiXmlElement *rootnode = new TiXmlElement ( "MAXR_SAVE_FILE" );
 	rootnode->SetAttribute ( "version", (SAVE_FORMAT_VERSION).c_str() );
@@ -538,7 +538,7 @@ void cSavegame::loadCasualties ()
 	TiXmlElement* casualtiesNode = SaveFile.RootElement ()->FirstChildElement ("Casualties");
 	if (casualtiesNode == 0)
 		return;
-	
+
 	Server->getCasualtiesTracker ()->initFromXML (casualtiesNode);
 }
 
@@ -682,7 +682,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 			if ( Player )
 			{
 				vehicle->setDetectedByPlayer ( Player, wasDetectedThisTurn );
-				
+
 			}
 			playerNodeNum++;
 		}
@@ -1155,7 +1155,7 @@ string cSavegame::getHexValue ( unsigned char byte )
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::convertStringToData ( string str, int size, sResources *resources )
+void cSavegame::convertStringToData ( const string& str, int size, sResources *resources )
 {
 	for ( int i = 0; i < size; i++ )
 	{
@@ -1165,7 +1165,7 @@ void cSavegame::convertStringToData ( string str, int size, sResources *resource
 }
 
 //--------------------------------------------------------------------------
-unsigned char cSavegame::getByteValue ( string str )
+unsigned char cSavegame::getByteValue ( const string& str )
 {
 	unsigned char first = str.substr ( 0, 1 ).c_str()[0] - '0';
 	unsigned char second = str.substr ( 1, 1 ).c_str()[0] - '0';
@@ -1190,7 +1190,7 @@ string cSavegame::convertScanMapToString ( char *data, int size )
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::convertStringToScanMap ( string str, char *data )
+void cSavegame::convertStringToScanMap ( const string& str, char *data )
 {
 	for ( unsigned int i = 0; i < str.length(); i++ )
 	{
@@ -1200,7 +1200,7 @@ void cSavegame::convertStringToScanMap ( string str, char *data )
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeHeader( string saveName )
+void cSavegame::writeHeader( const string& saveName )
 {
 	TiXmlElement *headerNode = addMainElement ( SaveFile.RootElement(), "Header" );
 
@@ -1383,7 +1383,7 @@ void cSavegame::writeCasualties ()
 {
 	if (Server == 0 || Server->getCasualtiesTracker () == 0)
 		return;
-	
+
 	TiXmlElement* casualtiesNode = addMainElement (SaveFile.RootElement (), "Casualties");
 	Server->getCasualtiesTracker ()->storeToXML (casualtiesNode);
 }
@@ -1449,7 +1449,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 		TiXmlElement *detecedByNode = addMainElement ( unitNode, "IsDetectedByPlayers" );
 		for ( unsigned int i = 0; i < Vehicle->detectedByPlayerList.Size(); i++ )
 		{
-			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ), 
+			addAttributeElement ( detecedByNode, "Player_" + iToStr ( i ),
 								 "nr", iToStr ( Vehicle->detectedByPlayerList[i]->Nr ),
 								 "ThisTurn", Vehicle->wasDetectedInThisTurnByPlayer (Vehicle->detectedByPlayerList[i]) ? "1" : "0" );
 		}
@@ -1751,7 +1751,7 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::addAttributeElement( TiXmlElement *node, string nodename, string attributename, string value, string attributename2, string value2 )
+void cSavegame::addAttributeElement( TiXmlElement *node, const string& nodename, const string& attributename, const string& value, const string& attributename2, const string& value2 )
 {
 	TiXmlElement *element = addMainElement ( node, nodename );
 	element->SetAttribute ( attributename.c_str(), value.c_str() );
@@ -1759,7 +1759,7 @@ void cSavegame::addAttributeElement( TiXmlElement *node, string nodename, string
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement *cSavegame::addMainElement( TiXmlElement *node, string nodename )
+TiXmlElement *cSavegame::addMainElement( TiXmlElement *node, const string& nodename )
 {
 	TiXmlElement *element = new TiXmlElement ( nodename.c_str() );
 	node->LinkEndChild( element );

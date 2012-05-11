@@ -80,7 +80,7 @@ public:
 	* @return 0 on success
 	*/
 	int write( const char *str , int TYPE );
-	int write( std::string str , int TYPE );
+	int write( const std::string& str , int TYPE );
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -90,7 +90,7 @@ public:
 	* @return 0 on success
 	*/
 	int write( const char *str );
-	int write( std::string str );
+	//int write( const std::string& str );
 
 	enum LOG_TYPE
 	{

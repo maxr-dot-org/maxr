@@ -287,13 +287,14 @@ const unsigned short *cUnicodeFont::getIsoPage ( eUnicodeFontCharset charset )
 	return NULL;
 }
 
-void cUnicodeFont::showText( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showText( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
 	showText ( rDest.x, rDest.y, sText, fonttype, surface, encode );
 }
 
-void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
+	string sText(text);
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
@@ -364,8 +365,9 @@ void cUnicodeFont::showText( int x, int y, string sText, eUnicodeFontType fontty
 	}
 }
 
-int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
+	string sText(text);
 	string drawString = "";
 
 	while ( getTextWide ( sText, fonttype, encode ) > rDest.w )
@@ -417,8 +419,9 @@ int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, string sText, eUnicodeFont
 	return rDest.y;
 }
 
-int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
+	string sText(text);
 	string sTmp;
 
 	size_t k;
@@ -470,25 +473,26 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, string sText, eUnicodeFontTy
 	return drawWithBreakLines(rDest, sText, fonttype, surface, encode); //draw rest of text
 }
 
-void cUnicodeFont::showTextCentered( SDL_Rect rDest, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showTextCentered( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
 	showTextCentered ( rDest.x, rDest.y, sText, fonttype, surface, encode );
 }
 
-void cUnicodeFont::showTextCentered( int x, int y, string sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showTextCentered( int x, int y, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
 {
 	SDL_Rect rTmp = getTextSize ( sText, fonttype, encode );
 	showText ( x - rTmp.w / 2, y, sText, fonttype, surface, encode );
 }
 
-int cUnicodeFont::getTextWide( string sText, eUnicodeFontType fonttype, bool encode )
+int cUnicodeFont::getTextWide( const string& sText, eUnicodeFontType fonttype, bool encode )
 {
 	SDL_Rect rTmp = getTextSize( sText, fonttype, encode );
 	return rTmp.w;
 }
 
-SDL_Rect cUnicodeFont::getTextSize( string sText, eUnicodeFontType fonttype, bool encode )
+SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttype, bool encode )
 {
+	string sText(text);
 	int iSpace = 0;
 	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
@@ -586,17 +590,19 @@ eUnicodeFontSize cUnicodeFont::getFontSize ( eUnicodeFontType fonttype ) const
 }
 
 
-string cUnicodeFont::shortenStringToSize ( string str, int size, eUnicodeFontType fonttype )
+string cUnicodeFont::shortenStringToSize ( const string& str, int size, eUnicodeFontType fonttype )
 {
-	if ( font->getTextWide ( str, fonttype ) > size )
+	string res(str);
+
+	if ( font->getTextWide ( res, fonttype ) > size )
 	{
-		while ( font->getTextWide ( str + "." ) > size )
+		while ( font->getTextWide ( res + "." ) > size )
 		{
-			str.erase ( str.length()-1, str.length() );
+			res.erase ( res.length()-1, res.length() );
 		}
-		str += ".";
+		res += ".";
 	}
-	return str;
+	return res;
 }
 
 Uint16 cUnicodeFont::encodeUTF8Char ( const unsigned char *pch, int *increase ) const

@@ -3056,7 +3056,7 @@ void cNetworkMenu::changePlayerReadyState( sMenuPlayer *player )
 }
 
 //------------------------------------------------------------------------------
-bool cNetworkMenu::enteredCommand( string text )
+bool cNetworkMenu::enteredCommand( const string& text )
 {
 	if ( !text.empty() && text[0] == '/' )
 	{

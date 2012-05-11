@@ -121,7 +121,7 @@ public:
 	* @author Eiko
 	* @param s the string to push to the message
 	*/
-	void pushString( std::string s );
+	void pushString( const std::string& s );
 
 	/** pops a string from the end of the netMessage
 	* @author Eiko

@@ -192,25 +192,25 @@ public:
 	*@author alzi alias DoctorDeath
 	*param iPort New IP.
 	*/
-	void setIP ( std::string sIP );
+	void setIP ( const std::string& sIP );
 	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath
 	*return Number of sockets.
 	*/
-	int getSocketCount();
+	int getSocketCount() const;
 	/**
 	* Gets the status of the connection.
 	*@author alzi alias DoctorDeath
 	*return 1 if connected, 0 if not.
 	*/
-	int getConnectionStatus();
+	int getConnectionStatus() const;
 	/**
 	* looks if this machine is the host.
 	*@author alzi alias DoctorDeath
 	*return true if is host, false if not.
 	*/
-	bool isHost();
+	bool isHost() const;
 
 	/**
 	* Thread function which handles new incoming connections and data.

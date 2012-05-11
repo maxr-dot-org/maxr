@@ -781,7 +781,7 @@ protected:
 	void setColor( int color );
 	void saveOptions();
 	void changePlayerReadyState( sMenuPlayer *player );
-	bool enteredCommand( std::string text );
+	bool enteredCommand( const std::string& text );
 
 public:
 	cNetworkMenu();

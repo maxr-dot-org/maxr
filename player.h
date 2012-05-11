@@ -68,7 +68,7 @@ class cPlayer{
 friend class cServer;
 friend class cClient;
 public:
-	cPlayer(std::string Name,SDL_Surface *Color,int nr, int iSocketNum = -1 );
+	cPlayer(const std::string& Name, SDL_Surface *Color, int nr, int iSocketNum = -1 );
 	~cPlayer();
 	cPlayer(const cPlayer &Player);
 
@@ -155,7 +155,7 @@ public:
 	*/
 	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
 
-	void addSavedReport ( std::string message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
+	void addSavedReport ( const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
 
 	void setClan (int newClan);
 	int getClan () const { return clan; }

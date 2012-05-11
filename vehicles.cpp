@@ -1484,7 +1484,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, string reasonForLog) const
+bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, const string& reasonForLog) const
 {
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;

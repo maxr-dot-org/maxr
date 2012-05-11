@@ -93,7 +93,7 @@ void cDialogYesNo::noReleased(void* parent)
 	menu->terminate = true;
 }
 
-cDialogOK::cDialogOK(string text) :
+cDialogOK::cDialogOK(const string& text) :
 	cMenu(LoadPCX(GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel(position.x + 40, position.y + 40, text),
 	okButton(position.x + 111, position.y + 185, lngPack.i18n("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)

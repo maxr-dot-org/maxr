@@ -118,7 +118,7 @@ public:
 	int OffX,OffY;   // Offset während der Bewegung
 	virtual int getMovementOffsetX () const {return OffX;}
 	virtual int getMovementOffsetY () const {return OffY;}
-	
+
 	sVehicle *typ;   // Typ des Vehicles
 	bool groupSelected;
 	cServerMoveJob *ServerMoveJob;
@@ -239,13 +239,13 @@ public:
 	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
 	void makeDetection();
-	
+
 	/** After a movement the detection state of a unit might be reset, if it was not detected in _this_ turn. */
 	void tryResetOfDetectionStateAfterMove ();
 	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList ();
 	bool wasDetectedInThisTurnByPlayer (cPlayer* player) const;
-	
+
 	void blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames = 1 );
 
 	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
@@ -258,7 +258,7 @@ public:
 	* @author: eiko
 	*/
 	bool canLand( const cMap& map) const;
-	
+
 
 	/**
 	* draws the main image of the vehicle onto the passed surface
@@ -272,22 +272,22 @@ public:
 
 private:
 	//---- sentry and reaction fire helpers ---------------------------------------
-	/** 
+	/**
 	 * Is called after a unit moved one field; it allows opponent units to react to that movement and fire on the moving vehicle, if they can.
 	 * An opponent unit only fires as reaction to the movement, if the moving unit is an "offense" for that opponent (i.e. it could attack a unit/building of the opponent).
 	 * @author: pagra
 	 */
 	bool provokeReactionFire ();
 	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const;
-	bool makeAttackOnThis (cUnit* opponentUnit, std::string reasonForLog) const;
+	bool makeAttackOnThis (cUnit* opponentUnit, const std::string& reasonForLog) const;
 	bool makeSentryAttack (cUnit* unit) const;
 	bool isOtherUnitOffendedByThis (cUnit* otherUnit) const;
 	bool doReactionFire (cPlayer* player) const;
 	bool doReactionFireForUnit (cUnit* opponentUnit) const;
-	
+
 	cList<cPlayer*> calcDetectedByPlayer () const; ///< helper method that returns a list of all players, that can detect this unit
 	cList<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
-	
+
 	//-----------------------------------------------------------------------------
 protected:
 	//-- methods, that have been extracted during cUnit refactoring ---------------
@@ -305,7 +305,7 @@ protected:
 	virtual void executeBuildCommand ();
 	virtual void executeStopCommand ();
 	virtual void executeActivateStoredVehiclesCommand ();
-	
+
 	virtual sUnitData* getUpgradedUnitData () const;
 };
 

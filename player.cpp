@@ -32,7 +32,7 @@ using namespace std;
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
-cPlayer::cPlayer(string Name, SDL_Surface* Color, int nr, int iSocketNum) :
+cPlayer::cPlayer(const string& Name, SDL_Surface* Color, int nr, int iSocketNum) :
 	name(Name),
 	color(Color),
 	Nr(nr),
@@ -1179,7 +1179,7 @@ void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int 
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::addSavedReport ( string message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr )
+void cPlayer::addSavedReport ( const string& message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr )
 {
 	sSavedReportMessage savedReport;
 	savedReport.message = message;

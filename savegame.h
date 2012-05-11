@@ -63,7 +63,7 @@ public:
 	cSavegame ( int number );
 
 	/* saves the current gamestate to a file */
-	int save( std::string saveName );
+	int save( const std::string& saveName );
 	/* loads a savegame */
 	int load();
 
@@ -98,7 +98,7 @@ private:
 	* writes the saveheader
 	*@author alzi alias DoctorDeath
 	*/
-	void writeHeader( std::string saveName );
+	void writeHeader( const std::string& saveName );
 	/**
 	* writes game infos such as turn or mode
 	*@author alzi alias DoctorDeath
@@ -199,7 +199,7 @@ private:
 	 * loads the casualties of all players
 	 *@author pagra
 	 */
-	void loadCasualties ();		
+	void loadCasualties ();
 	/**
 	* loads all units
 	*@author alzi alias DoctorDeath
@@ -260,12 +260,12 @@ private:
 	* converts the resource from HEX-string to byte-data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToData ( std::string str, int size, sResources *resources );
+	void convertStringToData ( const std::string& str, int size, sResources *resources );
 	/**
 	* returns the byte value of a single HEX-string
 	*@author alzi alias DoctorDeath
 	*/
-	unsigned char getByteValue ( std::string str );
+	unsigned char getByteValue ( const std::string& str );
 	/**
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
@@ -275,23 +275,23 @@ private:
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToScanMap ( std::string str, char *data );
+	void convertStringToScanMap ( const std::string& str, char *data );
 
 	/**
 	* adds an node without undernodes
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement *addMainElement( TiXmlElement *node, std::string nodename );
+	TiXmlElement *addMainElement( TiXmlElement *node, const std::string& nodename );
 	/**
 	* adds an attribute with given value to the node
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttribute ( TiXmlElement *element, std::string attributename, std::string value );
+	void addAttribute ( TiXmlElement *element, const std::string& attributename, const std::string& value );
 	/**
 	* adds an node with maximal two attributes and there values
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttributeElement( TiXmlElement *node, std::string nodename, std::string attributename, std::string value, std::string attributename2 = "", std::string value2 = "" );
+	void addAttributeElement( TiXmlElement *node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "" );
 };
 
 #endif // savegameH

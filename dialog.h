@@ -46,7 +46,7 @@ private:
 class cDialogOK : public cMenu
 {
 public:
-	cDialogOK(std::string text);
+	cDialogOK(const std::string& text);
 
 	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 

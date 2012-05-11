@@ -54,7 +54,8 @@ bool cLog::open(int TYPE)
 		char timestr[25];
 		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
 		std::string sTime = timestr;
-		std::string netLogPath = cSettings::getInstance().getNetLogPath().erase(cSettings::getInstance().getNetLogPath().size() - 4, cSettings::getInstance().getNetLogPath().size());
+		std::string netLogPath = cSettings::getInstance().getNetLogPath();
+		netLogPath.erase(netLogPath.size() - 4, netLogPath.size());
 		cSettings::getInstance().setNetLogPath((netLogPath + sTime).c_str());
 		bFirstRun = false;
 	}
@@ -111,8 +112,9 @@ int cLog::write ( const char *str, int TYPE )
 	return write ( std::string ( str ) , TYPE );
 }
 
-int cLog::write ( std::string str, int TYPE )
+int cLog::write ( const std::string& s, int TYPE )
 {
+	std::string str(s);
 	cMutex::Lock l(mutex);
 
 	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug() ) //in case debug is disabled we skip message

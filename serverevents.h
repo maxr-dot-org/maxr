@@ -147,7 +147,7 @@ void sendSpecificUnitData ( cVehicle *Vehicle );
 *@param iType spezifies if this is an error message, info message from the Server or a text message from an other player
 *@param iPlayer -1 the playernumber or -1 for broatcast
 */
-void sendChatMessageToClient( std::string message, int iType, int iPlayer = -1, std::string inserttext = "" );
+void sendChatMessageToClient( const std::string& message, int iType, int iPlayer = -1, const std::string& inserttext = "" );
 
 /**
 * sends all nessesary information to all clients to start the building

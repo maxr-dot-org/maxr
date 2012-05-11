@@ -47,10 +47,10 @@ public:
 	static cSettings& getInstance();
 
 	/**
-	 * Checks whether the class has been initialized allready and successful (what means the configuration file has been read).
+	 * Checks whether the class has been initialized already and successful (what means the configuration file has been read).
 	 * @return True if the settings have been initialized.
 	 */
-	bool isInitialized();
+	bool isInitialized() const;
 
 	// Some save methods for settings that are not stored in this class but nevertheless
 	// have to be written to the configuration file.
@@ -60,150 +60,150 @@ public:
 
 	// Game
 
-	bool isDebug();
+	bool isDebug() const;
 	void setDebug(bool debug, bool save = true);
 
-	bool shouldAutosave();
+	bool shouldAutosave() const;
 	void setAutosave(bool autosave, bool save = true);
 
-	bool isAnimations();
+	bool isAnimations() const;
 	void setAnimations(bool animations, bool save = true);
 
-	bool isShadows();
+	bool isShadows() const;
 	void setShadows(bool shadows, bool save = true);
 
-	bool isAlphaEffects();
+	bool isAlphaEffects() const;
 	void setAlphaEffects(bool alphaEffects, bool save = true);
 
-	bool shouldShowDescription();
+	bool shouldShowDescription() const;
 	void setShowDescription(bool showDescription, bool save = true);
 
-	bool isDamageEffects();
+	bool isDamageEffects() const;
 	void setDamageEffects(bool damageEffects, bool save = true);
 
-	bool isDamageEffectsVehicles();
+	bool isDamageEffectsVehicles() const;
 	void setDamageEffectsVehicles(bool damageEffectsVehicle, bool save = true);
 
-	bool isMakeTracks();
+	bool isMakeTracks() const;
 	void setMakeTracks(bool makeTracks, bool save = true);
 
-	int getScrollSpeed();
+	int getScrollSpeed() const;
 	void setScrollSpeed(int scrollSpeed, bool save = true);
 
-	std::string getNetLogPath();
+	const std::string& getNetLogPath() const;
 	void setNetLogPath(const char *netLog);
 
-	std::string getDataDir();
+	const std::string& getDataDir() const;
 	void setDataDir(const char *dataDir, bool save = true);
 
-	std::string getExePath();
+	const std::string& getExePath() const;
 	void setExePath(const char *exePath);
 
-	std::string getLogPath();
+	const std::string& getLogPath() const;
 	void setLogPath(const char *logPath);
 
-	std::string getHomeDir();
+	const std::string& getHomeDir() const;
 	void setHomeDir(const char *homeDir);
 
 	// Network
 
-	std::string getIP();
+	const std::string& getIP() const;
 	void setIP(const char* ip, bool save = true);
 
-	unsigned short getPort();
+	unsigned short getPort() const;
 	void setPort(unsigned short port, bool save = true);
 
-	std::string getPlayerName();
+	const std::string& getPlayerName() const;
 	void setPlayerName(const char *playerName, bool save = true);
 
-	int getPlayerColor();
+	int getPlayerColor() const;
 	void setPlayerColor(int color, bool save = true);
 
-	bool isSoundEnabled();
+	bool isSoundEnabled() const;
 	void setSoundEnabled(bool soundEnabled, bool save = true);
 
 	// Sound
 
-	int getMusicVol();
+	int getMusicVol() const;
 	void setMusicVol(int musicVol, bool save = true);
 
-	int getSoundVol();
+	int getSoundVol() const;
 	void setSoundVol(int soundVol, bool save = true);
 
-	int getVoiceVol();
+	int getVoiceVol() const;
 	void setVoiceVol(int voiceVol, bool save = true);
 
-	int getChunkSize();
+	int getChunkSize() const;
 	void setChunkSize(int chunkSize, bool save = true);
 
-	int getFrequency();
+	int getFrequency() const;
 	void setFrequence(int frequency, bool save = true);
 
-	bool isMusicMute();
+	bool isMusicMute() const;
 	void setMusicMute(bool musicMute, bool save = true);
 
-	bool isSoundMute();
+	bool isSoundMute() const;
 	void setSoundMute(bool soundMute, bool save = true);
 
-	bool isVoiceMute();
+	bool isVoiceMute() const;
 	void setVoiceMute(bool voiceMute, bool save = true);
 
 	// Startup
 
-	bool shouldShowIntro();
+	bool shouldShowIntro() const;
 	void setShowIntro(bool showIntro, bool save = true);
 
-	bool shouldUseFastMode();
+	bool shouldUseFastMode() const;
 	void setFastMode(bool fastMode, bool save = true);
 
-	bool shouldDoPrescale();
+	bool shouldDoPrescale() const;
 	void setDoPrescale(bool preScale, bool save = true);
 
-	std::string getLanguage();
+	const std::string& getLanguage() const;
 	void setLanguage(const char *language, bool save = true);
 
-	std::string getVoiceLanguage();
+	const std::string& getVoiceLanguage() const;
 	void setVoiceLanguage(const char *language, bool save = true);
 
-	unsigned int getCacheSize();
+	unsigned int getCacheSize() const;
 	void setCacheSize(unsigned int cacheSize, bool save = true);
 
 	// Paths
 
-	std::string getFontPath();
+	const std::string& getFontPath() const;
 	void setFontPath(const char *fontPath, bool save = true);
 
-	std::string getFxPath();
+	const std::string& getFxPath() const;
 	void setFxPath(const char *fxPath, bool save = true);
 
-	std::string getGfxPath();
+	const std::string& getGfxPath() const;
 	void setGfxPath(const char *gfxPath, bool save = true);
 
-	std::string getLangPath();
+	const std::string& getLangPath() const;
 	void setLangPath(const char *langPath, bool save = true);
 
-	std::string getMapsPath();
+	const std::string& getMapsPath() const;
 	void setMapsPath(const char *mapsPath, bool save = true);
 
-	std::string getSavesPath();
+	const std::string& getSavesPath() const;
 	void setSavesPath(const char *savesPath, bool save = true);
 
-	std::string getSoundsPath();
+	const std::string& getSoundsPath() const;
 	void setSoundsPath(const char *soundsPath, bool save = true);
 
-	std::string getVoicesPath();
+	const std::string& getVoicesPath() const;
 	void setVoicesPath(const char *voicesPath, bool save = true);
 
-	std::string getMusicPath();
+	const std::string& getMusicPath() const;
 	void setMusicPath(const char *musicPath, bool save = true);
 
-	std::string getVehiclesPath();
+	const std::string& getVehiclesPath() const;
 	void setVehiclesPath(const char *vehiclesPath, bool save = true);
 
-	std::string getBuildingsPath();
+	const std::string& getBuildingsPath() const;
 	void setBuildingsPath(const char *buildingsPath, bool save = true);
 
-	std::string getMvePath();
+	const std::string& getMvePath() const;
 	void setMvePath(const char *mvePath, bool save = true);
 private:
 
@@ -344,7 +344,7 @@ private:
 	 * @param sDataDirFromConf The data location that has been read from the confguration file.
 	 * @return The realy selected data location.
 	 */
-	std::string searchDataDir(std::string sDataDirFromConf = "");
+	std::string searchDataDir(const std::string& sDataDirFromConf = "");
 
 	/**
 	 * Creates a new configuration file and adds the root node to it.
@@ -362,7 +362,7 @@ private:
 	 * @param configFile The XML file to search in.
 	 * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
 	 */
-	TiXmlNode *getXmlNode(std::string path, TiXmlDocument &configFile);
+	TiXmlNode *getXmlNode(const std::string& path, TiXmlDocument &configFile);
 
 	/**
 	 * Template function for saving a setting.
@@ -371,15 +371,15 @@ private:
 	 * @param valueName The name of the attribute to set to the setting node.
 	 */
 	template<typename T>
-	void saveSetting(std::string path, T value, const char *valueName);
+	void saveSetting(const std::string& path, T value, const char *valueName);
 
 	// Overloadings for the saveSetting template function.
 	// Each type has to call the template saveSetting() method and pass the
 	// corresponding attribute name to it.
-	void saveSetting(std::string path, const char *value);
-	void saveSetting(std::string path, int value);
-	void saveSetting(std::string path, unsigned int value);
-	void saveSetting(std::string path, bool value);
+	void saveSetting(const std::string& path, const char *value);
+	void saveSetting(const std::string& path, int value);
+	void saveSetting(const std::string& path, unsigned int value);
+	void saveSetting(const std::string& path, bool value);
 };
 
 #endif // SETTINGS_H

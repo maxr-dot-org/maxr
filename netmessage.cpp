@@ -151,7 +151,7 @@ Sint32 cNetMessage::popInt32()
 	return SDL_SwapLE32( *((Sint32*) (data + iLength)) );
 }
 
-void cNetMessage::pushString( string s )
+void cNetMessage::pushString( const string& s )
 {
 	int stringLength = (int) s.length() + 2;
 

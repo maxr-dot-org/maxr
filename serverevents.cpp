@@ -227,7 +227,7 @@ void sendSpecificUnitData ( cVehicle *Vehicle )
 }
 
 //-------------------------------------------------------------------------------------
-void sendChatMessageToClient( std::string message, int iType, int iPlayer, std::string inserttext )
+void sendChatMessageToClient( const std::string& message, int iType, int iPlayer, const std::string& inserttext )
 {
 	cNetMessage* newMessage;
 	newMessage = new cNetMessage( GAME_EV_CHAT_SERVER );

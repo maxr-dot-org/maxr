@@ -55,7 +55,7 @@ cSettings& cSettings::getInstance()
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isInitialized()
+bool cSettings::isInitialized() const
 {
 	return initialized;
 }
@@ -254,11 +254,11 @@ void cSettings::setPaths()
 
 
 //------------------------------------------------------------------------------
-std::string cSettings::searchDataDir(std::string sDataDirFromConf)
+std::string cSettings::searchDataDir(const std::string& sDataDirFromConf)
 {
 	std::string sPathToGameData = "";
 	#if MAC
-		sPathToGameData =  exePath; //assuming data is in same folder like binary (or current working directory)
+		sPathToGameData = exePath; //assuming data is in same folder like binary (or current working directory)
 	#elif WIN32
 		sPathToGameData = exePath; //assuming data is in same folder like binary (or current working directory)
 	#elif __amigaos4__
@@ -854,7 +854,7 @@ void cSettings::initialize()
 }
 
 //------------------------------------------------------------------------------
-TiXmlNode *cSettings::getXmlNode(std::string path, TiXmlDocument &configFile)
+TiXmlNode *cSettings::getXmlNode(const std::string& path, TiXmlDocument &configFile)
 {
 	if (!configFile.LoadFile(configPath.c_str()))
 	{
@@ -885,25 +885,25 @@ TiXmlNode *cSettings::getXmlNode(std::string path, TiXmlDocument &configFile)
 }
 
 //------------------------------------------------------------------------------
-void cSettings::saveSetting(std::string path, const char* value)
+void cSettings::saveSetting(const std::string& path, const char* value)
 {
 	saveSetting(path, value, "Text");
 }
 
 //------------------------------------------------------------------------------
-void cSettings::saveSetting(std::string path, int value)
+void cSettings::saveSetting(const std::string& path, int value)
 {
 	saveSetting(path, value, "Num");
 }
 
 //------------------------------------------------------------------------------
-void cSettings::saveSetting(std::string path, unsigned int value)
+void cSettings::saveSetting(const std::string& path, unsigned int value)
 {
 	saveSetting(path, value, "Num");
 }
 
 //------------------------------------------------------------------------------
-void cSettings::saveSetting(std::string path, bool value)
+void cSettings::saveSetting(const std::string& path, bool value)
 {
 	if ( value ) saveSetting(path, "Yes", "YN");
 	else saveSetting(path, "No", "YN");
@@ -911,7 +911,7 @@ void cSettings::saveSetting(std::string path, bool value)
 
 //------------------------------------------------------------------------------
 template<typename T>
-void cSettings::saveSetting(std::string path, T value, const char *valueName)
+void cSettings::saveSetting(const std::string& path, T value, const char *valueName)
 {
 	TiXmlDocument configFile;
 
@@ -946,7 +946,7 @@ void cSettings::saveColorDepth()
 
 
 //------------------------------------------------------------------------------
-bool cSettings::isDebug()
+bool cSettings::isDebug() const
 {
 	return debug;
 }
@@ -959,7 +959,7 @@ void cSettings::setDebug(bool debug, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::shouldAutosave()
+bool cSettings::shouldAutosave() const
 {
 	return autosave;
 }
@@ -972,7 +972,7 @@ void cSettings::setAutosave(bool autosave, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isAnimations()
+bool cSettings::isAnimations() const
 {
 	return animations;
 }
@@ -985,7 +985,7 @@ void cSettings::setAnimations(bool animations, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isShadows()
+bool cSettings::isShadows() const
 {
 	return shadows;
 }
@@ -998,7 +998,7 @@ void cSettings::setShadows(bool shadows, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isAlphaEffects()
+bool cSettings::isAlphaEffects() const
 {
 	return alphaEffects;
 }
@@ -1011,7 +1011,7 @@ void cSettings::setAlphaEffects(bool alphaEffects, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::shouldShowDescription()
+bool cSettings::shouldShowDescription() const
 {
 	return showDescription;
 }
@@ -1024,7 +1024,7 @@ void cSettings::setShowDescription(bool showDescription, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isDamageEffects()
+bool cSettings::isDamageEffects() const
 {
 	return damageEffects;
 }
@@ -1037,7 +1037,7 @@ void cSettings::setDamageEffects(bool damageEffects, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isDamageEffectsVehicles()
+bool cSettings::isDamageEffectsVehicles() const
 {
 	return damageEffectsVehicles;
 }
@@ -1050,7 +1050,7 @@ void cSettings::setDamageEffectsVehicles(bool damageEffectsVehicles, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isMakeTracks()
+bool cSettings::isMakeTracks() const
 {
 	return makeTracks;
 }
@@ -1063,7 +1063,7 @@ void cSettings::setMakeTracks(bool makeTracks, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getScrollSpeed()
+int cSettings::getScrollSpeed() const
 {
 	return scrollSpeed;
 }
@@ -1076,7 +1076,7 @@ void cSettings::setScrollSpeed(int scrollSpeed, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getIP()
+const std::string& cSettings::getIP() const
 {
 	return ip;
 }
@@ -1089,7 +1089,7 @@ void cSettings::setIP(const char* ip, bool save)
 }
 
 //------------------------------------------------------------------------------
-unsigned short cSettings::getPort()
+unsigned short cSettings::getPort() const
 {
 	return port;
 }
@@ -1102,7 +1102,7 @@ void cSettings::setPort(unsigned short port, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getPlayerName()
+const std::string& cSettings::getPlayerName() const
 {
 	return playerName;
 }
@@ -1115,7 +1115,7 @@ void cSettings::setPlayerName(const char *playerName, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getPlayerColor()
+int cSettings::getPlayerColor() const
 {
 	return playerColor;
 }
@@ -1128,7 +1128,7 @@ void cSettings::setPlayerColor(int color, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getNetLogPath()
+const std::string& cSettings::getNetLogPath() const
 {
 	return netLogPath;
 }
@@ -1140,7 +1140,7 @@ void cSettings::setNetLogPath(const char *netLogPath)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getDataDir()
+const std::string& cSettings::getDataDir() const
 {
 	return dataDir;
 }
@@ -1153,7 +1153,7 @@ void cSettings::setDataDir(const char *dataDir, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getExePath()
+const std::string& cSettings::getExePath() const
 {
 	return exePath;
 }
@@ -1165,7 +1165,7 @@ void cSettings::setExePath(const char *exePath)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getLogPath()
+const std::string& cSettings::getLogPath() const
 {
 	return logPath;
 }
@@ -1177,7 +1177,7 @@ void cSettings::setLogPath(const char *logPath)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getHomeDir()
+const std::string& cSettings::getHomeDir() const
 {
 	return homeDir;
 }
@@ -1189,7 +1189,7 @@ void cSettings::setHomeDir(const char *homeDir)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isSoundEnabled()
+bool cSettings::isSoundEnabled() const
 {
 	return soundEnabled;
 }
@@ -1202,7 +1202,7 @@ void cSettings::setSoundEnabled(bool soundEnabled, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getMusicVol()
+int cSettings::getMusicVol() const
 {
 	return musicVol;
 }
@@ -1215,7 +1215,7 @@ void cSettings::setMusicVol(int musicVol, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getSoundVol()
+int cSettings::getSoundVol() const
 {
 	return soundVol;
 }
@@ -1228,7 +1228,7 @@ void cSettings::setSoundVol(int soundVol, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getVoiceVol()
+int cSettings::getVoiceVol() const
 {
 	return voiceVol;
 }
@@ -1241,7 +1241,7 @@ void cSettings::setVoiceVol(int voiceVol, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getChunkSize()
+int cSettings::getChunkSize() const
 {
 	return chunkSize;
 }
@@ -1254,7 +1254,7 @@ void cSettings::setChunkSize(int chunkSize, bool save)
 }
 
 //------------------------------------------------------------------------------
-int cSettings::getFrequency()
+int cSettings::getFrequency() const
 {
 	return frequency;
 }
@@ -1267,7 +1267,7 @@ void cSettings::setFrequence(int frequency, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isMusicMute()
+bool cSettings::isMusicMute() const
 {
 	return musicMute;
 }
@@ -1280,7 +1280,7 @@ void cSettings::setMusicMute(bool musicMute, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isSoundMute()
+bool cSettings::isSoundMute() const
 {
 	return soundMute;
 }
@@ -1293,7 +1293,7 @@ void cSettings::setSoundMute(bool soundMute, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::isVoiceMute()
+bool cSettings::isVoiceMute() const
 {
 	return voiceMute;
 }
@@ -1306,7 +1306,7 @@ void cSettings::setVoiceMute(bool voiceMute, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::shouldShowIntro()
+bool cSettings::shouldShowIntro() const
 {
 	return showIntro;
 }
@@ -1319,7 +1319,7 @@ void cSettings::setShowIntro(bool showIntro, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::shouldUseFastMode()
+bool cSettings::shouldUseFastMode() const
 {
 	return fastMode;
 }
@@ -1332,7 +1332,7 @@ void cSettings::setFastMode(bool fastMode, bool save)
 }
 
 //------------------------------------------------------------------------------
-bool cSettings::shouldDoPrescale()
+bool cSettings::shouldDoPrescale() const
 {
 	return preScale;
 }
@@ -1345,7 +1345,7 @@ void cSettings::setDoPrescale(bool preScale, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getLanguage()
+const std::string& cSettings::getLanguage() const
 {
 	return language;
 }
@@ -1357,7 +1357,7 @@ void cSettings::setLanguage(const char *language, bool save)
 	if(save) saveSetting("Options~Start~Language", language);
 }
 //------------------------------------------------------------------------------
-std::string cSettings::getVoiceLanguage()
+const std::string& cSettings::getVoiceLanguage() const
 {
 	return voiceLanguage;
 }
@@ -1369,7 +1369,7 @@ void cSettings::setVoiceLanguage(const char *language, bool save)
 	if(save) saveSetting("Options~Start~VoiceLanguage", language);
 }
 //------------------------------------------------------------------------------
-unsigned int cSettings::getCacheSize()
+unsigned int cSettings::getCacheSize() const
 {
 	return cacheSize;
 }
@@ -1382,7 +1382,7 @@ void cSettings::setCacheSize(unsigned int cacheSize, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFontPath()
+const std::string& cSettings::getFontPath() const
 {
 	return fontPath;
 }
@@ -1395,7 +1395,7 @@ void cSettings::setFontPath(const char *fontPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getFxPath()
+const std::string& cSettings::getFxPath() const
 {
 	return fxPath;
 }
@@ -1408,7 +1408,7 @@ void cSettings::setFxPath(const char *fxPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getGfxPath()
+const std::string& cSettings::getGfxPath() const
 {
 	return gfxPath;
 }
@@ -1421,7 +1421,7 @@ void cSettings::setGfxPath(const char *gfxPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getLangPath()
+const std::string& cSettings::getLangPath() const
 {
 	return langPath;
 }
@@ -1434,7 +1434,7 @@ void cSettings::setLangPath(const char *langPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMapsPath()
+const std::string& cSettings::getMapsPath() const
 {
 	return mapsPath;
 }
@@ -1447,7 +1447,7 @@ void cSettings::setMapsPath(const char *mapsPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSavesPath()
+const std::string& cSettings::getSavesPath() const
 {
 	return savesPath;
 }
@@ -1460,7 +1460,7 @@ void cSettings::setSavesPath(const char *savesPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getSoundsPath()
+const std::string& cSettings::getSoundsPath() const
 {
 	return soundsPath;
 }
@@ -1473,7 +1473,7 @@ void cSettings::setSoundsPath(const char *soundsPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVoicesPath()
+const std::string& cSettings::getVoicesPath() const
 {
 	return voicesPath;
 }
@@ -1486,7 +1486,7 @@ void cSettings::setVoicesPath(const char *voicesPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMusicPath()
+const std::string& cSettings::getMusicPath() const
 {
 	return musicPath;
 }
@@ -1499,7 +1499,7 @@ void cSettings::setMusicPath(const char *musicPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getVehiclesPath()
+const std::string& cSettings::getVehiclesPath() const
 {
 	return vehiclesPath;
 }
@@ -1512,7 +1512,7 @@ void cSettings::setVehiclesPath(const char *vehiclesPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getBuildingsPath()
+const std::string& cSettings::getBuildingsPath() const
 {
 	return buildingsPath;
 }
@@ -1525,7 +1525,7 @@ void cSettings::setBuildingsPath(const char *buildingsPath, bool save)
 }
 
 //------------------------------------------------------------------------------
-std::string cSettings::getMvePath()
+const std::string& cSettings::getMvePath() const
 {
 	return mvePath;
 }
