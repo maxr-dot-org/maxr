@@ -150,7 +150,7 @@ int LoadData ( void * )
 	sVersion += MAX_BUILD_DATE; sVersion += " ";
 	sVersion += PACKAGE_REV;
 
-	MakeLog( sVersion.c_str(),0,0);
+	MakeLog( sVersion,0,0);
 
 	// Load Languagepack
 	MakeLog ( "Loading languagepack...", 0, 2 );
@@ -401,8 +401,13 @@ int LoadData ( void * )
 		cout << sTxt << endl;
 }
 
+static SDL_Surface* CloneSDLSurface(SDL_Surface* src)
+{
+	return SDL_ConvertSurface(src, src->format, src->flags);
+}
+
 /**
- * Loades a graphic to the surface
+ * Loads a graphic to the surface
  * @param dest Destination surface
  * @param directory Directory of the file
  * @param filename Name of the file
@@ -425,7 +430,7 @@ static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const
 		return 0;
 	}
 
-	dest = LoadPCX(filepath.c_str());
+	dest = LoadPCX(filepath);
 
 	filepath.insert(0,"File loaded: ");
 	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
@@ -434,7 +439,7 @@ static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const
 }
 
 /**
- * Loades a effectgraphic to the surface
+ * Loads a effectgraphic to the surface
  * @param dest Destination surface
  * @param directory Directory of the file
  * @param filename Name of the file
@@ -459,8 +464,8 @@ static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory
 
 	dest = new SDL_Surface*[2];
 	if(!dest) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX(filepath.c_str());
-	dest[1] = LoadPCX(filepath.c_str());
+	dest[0] = LoadPCX(filepath);
+	dest[1] = CloneSDLSurface(dest[0]);
 
 	filepath.insert(0,"Effect successful loaded: ");
 	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
@@ -484,10 +489,10 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
 
 	dest = new SDL_Surface*[2];
 	if(!dest) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX(filepath.c_str());
-	SDL_SetAlpha(dest[0],SDL_SRCALPHA,alpha);
-	dest[1] = LoadPCX(filepath.c_str());
-	SDL_SetAlpha(dest[1],SDL_SRCALPHA,alpha);
+	dest[0] = LoadPCX(filepath);
+	dest[1] = CloneSDLSurface(dest[0]);
+	SDL_SetAlpha(dest[0], SDL_SRCALPHA, alpha);
+	SDL_SetAlpha(dest[1], SDL_SRCALPHA, alpha);
 
 	filepath.insert(0,"Effectalpha loaded: ");
 	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
@@ -981,7 +986,7 @@ static int LoadVehicles()
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
 			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			Log.write(sTmpString, LOG_TYPE_WARNING);
 		}
 		pszTmp = pXmlElement->Attribute( "num" );
 		if(pszTmp != 0)
@@ -991,7 +996,7 @@ static int LoadVehicles()
 			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			Log.write(sTmpString, LOG_TYPE_WARNING);
 		}
 	}
 	else
@@ -1010,7 +1015,7 @@ static int LoadVehicles()
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
 			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			Log.write(sTmpString, LOG_TYPE_WARNING);
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
 		if(pszTmp != 0)
@@ -1020,7 +1025,7 @@ static int LoadVehicles()
 			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			Log.write(sTmpString, LOG_TYPE_WARNING);
 		}
 	}
 	// load found units
@@ -1063,7 +1068,7 @@ static int LoadVehicles()
 
 					if(FileExists(sTmpString.c_str()))
 					{
-						AutoSurface sfTempSurface(LoadPCX(sTmpString.c_str()));
+						AutoSurface sfTempSurface(LoadPCX(sTmpString));
 						if(!sfTempSurface)
 						{
 							Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -1118,9 +1123,9 @@ static int LoadVehicles()
 				Log.write(sTmpString, cLog::eLOG_TYPE_DEBUG);
 				if(FileExists(sTmpString.c_str()))
 				{
-					v.img_org[n] = LoadPCX(sTmpString.c_str());
+					v.img_org[n] = LoadPCX(sTmpString);
+					v.img[n] = CloneSDLSurface(v.img_org[n]);
 					SDL_SetColorKey(v.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-					v.img[n] = LoadPCX(sTmpString.c_str());
 					SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
 				}
 				else
@@ -1133,8 +1138,8 @@ static int LoadVehicles()
 				sTmpString.replace(sTmpString.length()-8,3,"shw");
 				if(FileExists(sTmpString.c_str()))
 				{
-					v.shw_org[n] = LoadPCX(sTmpString.c_str());
-					v.shw[n] = LoadPCX(sTmpString.c_str());
+					v.shw_org[n] = LoadPCX(sTmpString);
+					v.shw[n] = CloneSDLSurface(v.shw_org[n]);
 					SDL_SetAlpha(v.shw[n], SDL_SRCALPHA, 50);
 				}
 				else
@@ -1163,7 +1168,7 @@ static int LoadVehicles()
 		Log.write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			v.info = LoadPCX(sTmpString.c_str());
+			v.info = LoadPCX(sTmpString);
 		}
 		else
 		{
@@ -1177,7 +1182,7 @@ static int LoadVehicles()
 		Log.write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
 		if(FileExists(sTmpString.c_str()))
 		{
-			v.storage = LoadPCX(sTmpString.c_str());
+			v.storage = LoadPCX(sTmpString);
 		}
 		else
 		{
@@ -1193,8 +1198,8 @@ static int LoadVehicles()
 			sTmpString += "overlay.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.overlay_org = LoadPCX(sTmpString.c_str());
-				v.overlay     = LoadPCX(sTmpString.c_str());
+				v.overlay_org = LoadPCX(sTmpString);
+				v.overlay = CloneSDLSurface(v.overlay_org);
 			}
 			else
 			{
@@ -1219,9 +1224,9 @@ static int LoadVehicles()
 			sTmpString += "build.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.build_org = LoadPCX(sTmpString.c_str());
+				v.build_org = LoadPCX(sTmpString);
+				v.build = CloneSDLSurface(v.build_org);
 				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				v.build = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
@@ -1236,8 +1241,8 @@ static int LoadVehicles()
 			sTmpString += "build_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.build_shw_org = LoadPCX(sTmpString.c_str());
-				v.build_shw     = LoadPCX(sTmpString.c_str());
+				v.build_shw_org = LoadPCX(sTmpString);
+				v.build_shw = CloneSDLSurface(v.build_shw_org);
 				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
@@ -1264,9 +1269,9 @@ static int LoadVehicles()
 			sTmpString += "clear_small.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.clear_small_org = LoadPCX(sTmpString.c_str());
+				v.clear_small_org = LoadPCX(sTmpString);
+				v.clear_small = CloneSDLSurface(v.clear_small_org);
 				SDL_SetColorKey(v.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				v.clear_small = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(v.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
@@ -1281,8 +1286,8 @@ static int LoadVehicles()
 			sTmpString += "clear_small_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.clear_small_shw_org = LoadPCX(sTmpString.c_str());
-				v.clear_small_shw     = LoadPCX(sTmpString.c_str());
+				v.clear_small_shw_org = LoadPCX(sTmpString);
+				v.clear_small_shw = CloneSDLSurface(v.clear_small_shw_org);
 				SDL_SetAlpha(v.clear_small_shw, SDL_SRCALPHA, 50);
 			}
 			else
@@ -1297,9 +1302,9 @@ static int LoadVehicles()
 			sTmpString += "clear_big.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.build_org = LoadPCX(sTmpString.c_str());
+				v.build_org = LoadPCX(sTmpString);
+				v.build = CloneSDLSurface(v.build_org);
 				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				v.build = LoadPCX(sTmpString.c_str());
 				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
 			}
 			else
@@ -1314,8 +1319,8 @@ static int LoadVehicles()
 			sTmpString += "clear_big_shw.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				v.build_shw_org = LoadPCX(sTmpString.c_str());
-				v.build_shw     = LoadPCX(sTmpString.c_str());
+				v.build_shw_org = LoadPCX(sTmpString);
+				v.build_shw = CloneSDLSurface(v.build_shw_org);
 				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
 			}
 			else
@@ -1603,9 +1608,9 @@ static int LoadBuildings()
 		sTmpString += "img.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			b.img_org = LoadPCX(sTmpString.c_str());
+			b.img_org = LoadPCX(sTmpString);
+			b.img = CloneSDLSurface(b.img_org);
 			SDL_SetColorKey(b.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-			b.img = LoadPCX(sTmpString.c_str());
 			SDL_SetColorKey(b.img, SDL_SRCCOLORKEY, 0xFFFFFF);
 		}
 		else
@@ -1618,8 +1623,8 @@ static int LoadBuildings()
 		sTmpString += "shw.pcx";
 		if(FileExists(sTmpString.c_str()))
 		{
-			b.shw_org = LoadPCX(sTmpString.c_str());
-			b.shw     = LoadPCX(sTmpString.c_str());
+			b.shw_org = LoadPCX(sTmpString);
+			b.shw     = CloneSDLSurface(b.shw_org);
 			SDL_SetAlpha(b.shw, SDL_SRCALPHA, 50);
 		}
 
@@ -1627,13 +1632,13 @@ static int LoadBuildings()
 		sTmpString = sBuildingPath;
 		sTmpString += "video.pcx";
 		if(FileExists(sTmpString.c_str()))
-			b.video = LoadPCX(sTmpString.c_str());
+			b.video = LoadPCX(sTmpString);
 
 		// load infoimage
 		sTmpString = sBuildingPath;
 		sTmpString += "info.pcx";
 		if(FileExists(sTmpString.c_str()))
-			b.info = LoadPCX(sTmpString.c_str());
+			b.info = LoadPCX(sTmpString);
 
 		// load effectgraphics if necessary
 		if (b.data.powerOnGraphic)
@@ -1642,8 +1647,8 @@ static int LoadBuildings()
 			sTmpString += "effect.pcx";
 			if(FileExists(sTmpString.c_str()))
 			{
-				b.eff_org = LoadPCX(sTmpString.c_str());
-				b.eff     = LoadPCX(sTmpString.c_str());
+				b.eff_org = LoadPCX(sTmpString);
+				b.eff = CloneSDLSurface(b.eff_org);
 				SDL_SetAlpha(b.eff, SDL_SRCALPHA, 10);
 			}
 		}
