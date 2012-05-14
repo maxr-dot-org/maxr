@@ -154,11 +154,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 
 cClient::~cClient()
 {
-	if (casualtiesTracker != 0)
-	{
-		delete casualtiesTracker;
-		casualtiesTracker = 0;
-	}
+	delete casualtiesTracker;
 
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
@@ -231,7 +227,6 @@ void cClient::initPlayer( cPlayer *Player )
 
 int cClient::addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*> *group)
 {
-
 	sWaypoint* path = cClientMoveJob::calcPath( vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if ( path )
 	{
@@ -384,7 +379,6 @@ void cClient::runFX()
 			default:
 				break;
 		}
-
 	}
 }
 
@@ -413,7 +407,6 @@ void cClient::addFX ( eFXTyps typ,int x,int y,int param )
 // F¸gt einen FX-Effekt ein:
 void cClient::addFX ( sFX* n )
 {
-
 	if ( n->typ==fxTracks||n->typ==fxTorpedo||n->typ==fxBubbles||n->typ==fxCorpse )
 	{
 		FXListBottom.Add ( n );

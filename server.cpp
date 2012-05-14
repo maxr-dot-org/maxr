@@ -1296,7 +1296,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 		{
 			if ( DisconnectedPlayerList.Size() < 1 ) break;
 			// only server player can abort the waiting
-			cPlayer *LocalPlayer;
+			cPlayer *LocalPlayer = NULL;
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
 				if ( (*PlayerList)[i]->iSocketNum == MAX_CLIENTS )

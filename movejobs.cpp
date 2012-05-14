@@ -298,7 +298,7 @@ sPathNode *cPathCalculator::allocNode()
 
 void cPathCalculator::insertToHeap( sPathNode *Node, bool exists )
 {
-	int i;
+	int i = 0;
 	if ( exists )
 	{
 		// get the number of the existing node

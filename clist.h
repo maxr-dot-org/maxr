@@ -31,11 +31,11 @@ template<typename T> class cList
 
 		void Insert( size_t const i, T const& e );
 
-		void Delete(size_t idx);
+		void Delete(size_t const idx);
 
 		void PopBack();
 
-		void Reserve(size_t n);
+		void Reserve(size_t const n);
 
 		bool Contains(const T& e) const;
 
@@ -73,7 +73,7 @@ cList<T>& cList<T>::operator=( const cList& list)
 
 	return *this;
 }
-	
+
 
 template<typename T> void cList<T>::Add(T const& e)
 {

@@ -47,7 +47,7 @@ using namespace std;
 
 //--------------------------------------------------------------------------
 cBuilding::cBuilding ( sBuilding *b, cPlayer *Owner, cBase *Base )
-: cUnit (cUnit::kUTBuilding, 
+: cUnit (cUnit::kUTBuilding,
 		 ((Owner != 0 && b != 0) ? &(Owner->BuildingData[b->nr]) : 0),
 		 Owner)
 {
@@ -147,7 +147,7 @@ string cBuilding::getStatusStr ()
 		sText += iToStr (turnsDisabled) + ")";
 		return sText.c_str();
 	}
-	
+
 	if ( IsWorking )
 	{
 		// Factory:
@@ -1497,7 +1497,7 @@ void cBuilding::CheckRessourceProd ( void )
 void cBuilding::DrawAttackCursor ( int x, int y )
 {
 	SDL_Rect r;
-	int wp, wc, t = 0;
+	int wp = 0, wc = 0, t = 0;
 	cVehicle *v;
 	cBuilding *b;
 
@@ -1522,7 +1522,7 @@ void cBuilding::DrawAttackCursor ( int x, int y )
 	{
 		if ( v )
 			wc = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
-		else  if ( b )
+		else if ( b )
 			wc = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
@@ -1532,14 +1532,14 @@ void cBuilding::DrawAttackCursor ( int x, int y )
 
 	if ( v )
 		t = v->calcHealth ( data.damage );
-	else  if ( b )
+	else if ( b )
 		t = b->calcHealth ( data.damage );
 
 	if ( t )
 	{
 		if ( v )
 			wp = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
-		else  if ( b )
+		else if ( b )
 			wp = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
@@ -1696,7 +1696,7 @@ void cBuilding::Select ()
 		else
 			PlayVoice ( VoiceData.VOIBuildDone4 );
 	}
-	else if ( !IsWorking ) 
+	else if ( !IsWorking )
 		PlayFX ( SoundData.SNDHudButton );
 
 	// display the details:
@@ -1802,21 +1802,21 @@ bool cBuilding::factoryHasJustFinishedBuilding () const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeBuildCommand () 
+void cBuilding::executeBuildCommand ()
 {
 	cVehiclesBuildMenu buildMenu (owner, this);
 	buildMenu.show ();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeMineManagerCommand () 
+void cBuilding::executeMineManagerCommand ()
 {
 	cMineManagerMenu mineManager (this);
 	mineManager.show ();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeStopCommand () 
+void cBuilding::executeStopCommand ()
 {
 	sendWantStopWork (this);
 }
@@ -1839,13 +1839,13 @@ void cBuilding::executeSelfDestroyCommand ()
 {
 	cDestructMenu destructMenu;
 	if (destructMenu.show () == 0)
-		sendWantSelfDestroy (this);	
+		sendWantSelfDestroy (this);
 }
 
 //-----------------------------------------------------------------------------
 bool cBuilding::buildingCanBeStarted () const
 {
-	return (data.canWork && isUnitWorking () == false 
+	return (data.canWork && isUnitWorking () == false
 			&& ((BuildList && BuildList->Size() > 0) || data.canBuild.empty()));
 }
 

@@ -872,7 +872,7 @@ TiXmlNode *cSettings::getXmlNode(const std::string& path, TiXmlDocument &configF
 	}
 	while(j != path.length());
 
-	TiXmlNode *xmlNode;
+	TiXmlNode *xmlNode = NULL;
 	TiXmlNode *lastNode = &configFile;
 	for ( std::vector<std::string>::const_iterator i = parts.begin(); i != parts.end(); i++ )
 	{

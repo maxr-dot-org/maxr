@@ -1103,7 +1103,7 @@ void cUnit::rotateTo (int newDir)
 		return;
 
 	int t = dir;
-	int dest;
+	int dest = 0;
 
 	for (int i = 0; i < 8; i++)
 	{

@@ -243,7 +243,7 @@ int cLanguage::ReadSingleTranslation( std::string & strResult, const char * pszC
 	StrStrMap :: const_iterator impTranslation;
 	std::string szErrorMsg;
 
-	TiXmlNode * pXmlNode;
+	TiXmlNode * pXmlNode = NULL;
 	std::string szXmlNodePath;
 
 	for(;;)

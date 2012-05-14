@@ -162,7 +162,7 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 		}
 
 		// init server
-		int nTurns, nScore;
+		int nTurns = 0, nScore = 0;
 		switch(settings->victoryType)
 		{
 			case SETTINGS_VICTORY_TURNS: nTurns = settings->duration; nScore = 0; break;
@@ -791,7 +791,7 @@ SDL_Surface *cMainMenu::getRandomInfoImage()
 	// vehicles are way more cool so I prefer
 	// them to be shown) -- beko
 	static int lastUnitShow = -1;
-	int unitShow;
+	int unitShow = -1;
 	SDL_Surface *surface = NULL;
 
 	if ( showBuilding == 1 && UnitsData.getNrBuildings () > 0 ) //that's a 33% chance that we show a building on 1
@@ -2519,7 +2519,7 @@ void cStartupHangarMenu::selectionChanged( void *parent )
 		menu->materialBar->setMaximalValue ( vehicle->data.storageResMax );
 		menu->materialBar->setCurrentValue ( menu->secondList->getSelectedUnit()->getResValue() );
 
-		cMenuMaterialBar::eMaterialBarTypes type;
+		cMenuMaterialBar::eMaterialBarTypes type = cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG;
 		switch(vehicle->data.storeResType)
 		{
 			case sUnitData::STORE_RES_METAL: type = cMenuMaterialBar::MAT_BAR_TYPE_METAL; break;
@@ -3589,7 +3589,7 @@ bool cNetworkHostMenu::runSavedGame()
 	cList<cPlayer*> clientPlayerList;
 
 	// copy players for client
-	cPlayer *localPlayer;
+	cPlayer *localPlayer = NULL;
 	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
 		cPlayer* addedPlayer = new cPlayer( *(*Server->PlayerList)[i] );
