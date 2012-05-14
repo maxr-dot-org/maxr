@@ -171,7 +171,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int sendTo( int iClientNumber, int iLength, char *buffer );
+	int sendTo( int iClientNumber, int iLength, const char *buffer );
 	/**
 	* Sends the data to all sockets to which this machine is connected.
 	*@author alzi alias DoctorDeath
@@ -179,7 +179,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int send( int iLength, char *buffer );
+	int send( int iLength, const char *buffer );
 
 	/**
 	* Sets a new port.

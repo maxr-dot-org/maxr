@@ -27,7 +27,7 @@
 
 using namespace std;
 
-cNetMessage::cNetMessage( char* c)
+cNetMessage::cNetMessage( const char* c)
 {
 	if ( c[0] != START_CHAR ) Log.write ( "NetMessage has wrong start character", LOG_TYPE_NET_ERROR );
 
@@ -69,7 +69,7 @@ void cNetMessage::rewind ()
 	iLength = SDL_SwapLE16( ((Sint16*)(data+1))[0] );
 }
 
-eNetMessageClass cNetMessage::getClass()
+eNetMessageClass cNetMessage::getClass() const
 {
 	if ( iType < FIRST_SERVER_MESSAGE )
 		return NET_MSG_STATUS;
@@ -314,7 +314,7 @@ float cNetMessage::popFloat()
     return result;
 }
 
-string cNetMessage::getTypeAsString()
+string cNetMessage::getTypeAsString() const
 {
 	//find the string representation of the message type for
 	//should be updated when implementing a new message type
@@ -575,17 +575,15 @@ string cNetMessage::getHexDump()
 
 	serialize(); //updates the internal data
 
+	const char hexChars[] = "0123456789ABCDEF";
 	for (int i = 0; i < iLength; i++)
 	{
-		unsigned char byte = data[i];
-		unsigned char temp = byte/16;
-		if ( temp < 10 ) dump += ('0' + temp);
-		else dump += ( 'A' + temp - 10 );
+		const unsigned char byte = data[i];
+		const unsigned char high = (byte >> 4) & 0x0F;
+		const unsigned char low = byte & 0x0F;
 
-		temp = byte%16;
-		if ( temp < 10 ) dump += ('0' + temp);
-		else dump += ( 'A' + temp - 10 );
+		dump += hexChars[high];
+		dump += hexChars[low];
 	}
-
 	return dump;
 }

@@ -1143,14 +1143,12 @@ string cSavegame::convertDataToString ( sResources *resources, int size )
 string cSavegame::getHexValue ( unsigned char byte )
 {
 	string str = "";
-	unsigned char temp = byte/16;
-	if ( temp < 10 ) str += ('0' + temp);
-	else str += ( 'A' + temp - 10 );
+	const char hexChars[] = "0123456789ABCDEF";
+	const unsigned char high = (byte >> 4) & 0x0F;
+	const unsigned char low = byte & 0x0F;
 
-	temp = byte%16;
-	if ( temp < 10 ) str += ('0' + temp);
-	else str += ( 'A' + temp - 10 );
-
+	str += hexChars[high];
+	str += hexChars[low];
 	return str;
 }
 
@@ -1159,16 +1157,16 @@ void cSavegame::convertStringToData ( const string& str, int size, sResources *r
 {
 	for ( int i = 0; i < size; i++ )
 	{
-		resources[i].typ = getByteValue ( str.substr( i*4, 2 ).c_str() );
-		resources[i].value = getByteValue ( str.substr( i*4+2, 2 ).c_str() );
+		resources[i].typ = getByteValue ( str.substr( i*4, 2 ) );
+		resources[i].value = getByteValue ( str.substr( i*4+2, 2 ) );
 	}
 }
 
 //--------------------------------------------------------------------------
 unsigned char cSavegame::getByteValue ( const string& str )
 {
-	unsigned char first = str.substr ( 0, 1 ).c_str()[0] - '0';
-	unsigned char second = str.substr ( 1, 1 ).c_str()[0] - '0';
+	unsigned char first = str[0] - '0';
+	unsigned char second = str[1] - '0';
 
 	if ( first >= 'A'-'0' )
 		first -= 'A'-'0'-10;
@@ -1178,12 +1176,12 @@ unsigned char cSavegame::getByteValue ( const string& str )
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertScanMapToString ( char *data, int size )
+string cSavegame::convertScanMapToString ( const char *data, int size )
 {
 	string str = "";
 	for ( int i = 0; i < size; i++ )
 	{
-		if  ( data[i] > 0 ) str += "1";
+		if ( data[i] > 0 ) str += "1";
 		else str += "0";
 	}
 	return str;

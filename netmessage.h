@@ -60,7 +60,7 @@ public:
 	* @author Eiko
 	* @param c the serial data from a netMessage
 	*/
-	cNetMessage( char* c );
+	cNetMessage( const char* c );
 
 	//~cNetMessage();
 
@@ -74,7 +74,7 @@ public:
 	*/
 	char* serialize();
 
-	eNetMessageClass getClass();
+	eNetMessageClass getClass() const;
 
 	/** rewinds a received and already read (via popXYZ) msg, so that it's content can be popped a second time.
 	 * @author Pagra
@@ -159,7 +159,7 @@ public:
 	* this is only for better readability of the netlog
 	* @author Eiko
 	*/
-	std::string getTypeAsString();
+	std::string getTypeAsString() const;
 	int getType () const {return iType;}
 
 	/** returns the serial hexadecimal representation of the netMessage

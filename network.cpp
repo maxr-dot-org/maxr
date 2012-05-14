@@ -150,7 +150,7 @@ int cTCP::connect()
 }
 
 //------------------------------------------------------------------------
-int cTCP::sendTo( int iClientNumber, int iLength, char *buffer )
+int cTCP::sendTo( int iClientNumber, int iLength, const char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
 	if ( iClientNumber >= 0 && iClientNumber < iLast_Socket && Sockets[iClientNumber].iType == CLIENT_SOCKET && ( Sockets[iClientNumber].iState == STATE_READY || Sockets[iClientNumber].iState == STATE_NEW ) )
@@ -183,7 +183,7 @@ int cTCP::sendTo( int iClientNumber, int iLength, char *buffer )
 }
 
 //------------------------------------------------------------------------
-int cTCP::send( int iLength, char *buffer )
+int cTCP::send( int iLength, const char *buffer )
 {
 	cMutex::Lock tl(TCPMutex);
 	int iReturnVal = 0;

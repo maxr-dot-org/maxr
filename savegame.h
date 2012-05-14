@@ -270,7 +270,7 @@ private:
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertScanMapToString ( char *data, int size );
+	std::string convertScanMapToString ( const char *data, int size );
 	/**
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath

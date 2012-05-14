@@ -2902,7 +2902,7 @@ void cMenuLineEdit::doPosIncrease( int &value, int pos )
 {
 	if ( pos < (int)text.length() )
 	{
-		unsigned char c = ((unsigned char*)(text.c_str()))[pos];
+		unsigned char c = text[pos];
 		if ( (c & 0xE0) == 0xE0 ) value += 3;
 		else if ( (c & 0xC0) == 0xC0 ) value += 2;
 		else  value += 1;
@@ -2913,11 +2913,11 @@ void cMenuLineEdit::doPosDecrease( int &pos )
 {
 	if ( pos > 0 )
 	{
-		unsigned char c = ((unsigned char*)(text.c_str()))[pos-1];
+		unsigned char c = text[pos - 1];
 		while ( ((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80) )
 		{
 			pos--;
-			c = ((unsigned char*)(text.c_str()))[pos-1];
+			c = text[pos-1];
 		}
 		pos--;
 	}
@@ -2951,12 +2951,12 @@ void cMenuLineEdit::deleteLeft()
 	// deletes the first character left from the cursor
 	if ( cursorPos > 0 )
 	{
-		unsigned char c = ((unsigned char*)(text.c_str()))[cursorPos-1];
+		unsigned char c = text[cursorPos-1];
 		while ( ((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80) )
 		{
 			text.erase ( cursorPos-1, 1 );
 			cursorPos--;
-			c = ((unsigned char*)(text.c_str()))[cursorPos-1];
+			c = text[cursorPos-1];
 		}
 		text.erase ( cursorPos-1, 1 );
 		cursorPos--;
@@ -2970,7 +2970,7 @@ void cMenuLineEdit::deleteRight()
 	// deletes the first character right from the cursor
 	if ( cursorPos < (int)text.length() )
 	{
-		unsigned char c = ((unsigned char*)(text.c_str()))[cursorPos];
+		unsigned char c = text[cursorPos];
 		if ( (c & 0xE0) == 0xE0 )text.erase ( cursorPos, 3 );
 		else if ( (c & 0xC0) == 0xC0 )text.erase ( cursorPos, 2 );
 		else text.erase ( cursorPos, 1 );
