@@ -583,7 +583,7 @@ void cSavegame::loadUnits ()
 void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
-	int tmpinteger, number, x, y;
+	int tmpinteger, number = -1, x, y;
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles (); i++ )
 	{
 		if ( UnitsData.vehicle[i].data.ID == ID )
@@ -718,7 +718,7 @@ void cSavegame::loadVehicle( TiXmlElement *unitNode, sID &ID )
 void cSavegame::loadBuilding( TiXmlElement *unitNode, sID &ID )
 {
 	if ( !Server ) return;
-	int tmpinteger, number, x, y;
+	int tmpinteger, number = -1, x, y;
 	for ( unsigned int i = 0; i < UnitsData.getNrBuildings (); i++ )
 	{
 		if ( UnitsData.building[i].data.ID == ID )

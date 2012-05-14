@@ -932,7 +932,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 
 			case 0x7:
 				{
-					Uint8 p[2], b[8], mask;
+					Uint8 p[2], b[8], mask = 1;
 
 					p[0] = *data++;
 					p[1] = *data++;
@@ -977,7 +977,7 @@ void MVEPlayerDecodeVideo(Uint16 wblocks, Uint16 hblocks, Uint8 * pData, Uint8 *
 
 			case 0x8:
 				{
-					Uint8 p[8], b[8], mask, k;
+					Uint8 p[8], b[8], mask = 1, k;
 					if(data[0] <= data[1])
 					{
 						for(j = 0; j < 4; j++)
