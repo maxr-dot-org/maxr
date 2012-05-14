@@ -145,7 +145,7 @@ string cBuilding::getStatusStr ()
 		string sText;
 		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
 		sText += iToStr (turnsDisabled) + ")";
-		return sText.c_str();
+		return sText;
 	}
 
 	if ( IsWorking )
@@ -212,7 +212,7 @@ string cBuilding::getStatusStr ()
 			sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 			sText += lngPack.i18n ( "Text~Title~Credits" ) + ": ";
 			sText += iToStr ( owner->Credits );
-			return sText.c_str();
+			return sText;
 		}
 
 		return lngPack.i18n ( "Text~Comp~Working" );

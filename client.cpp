@@ -1376,7 +1376,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				if ( !bFinishedResearch && playVoice ) PlayVoice ( VoiceData.VOIStartMore );
 			}
 			addMessage( lngPack.i18n( "Text~Comp~Turn_Start") + " " + iToStr( iTurn ) );
-			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg.c_str() );
+			if ( sReportMsg.length() > 0 ) addMessage( sReportMsg );
 			string researchMsgString = "";
 			if ( bFinishedResearch )
 			{

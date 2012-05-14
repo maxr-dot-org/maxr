@@ -240,7 +240,7 @@ SDL_Surface *cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUni
 	filename += ".pcx";
 
 	// load the bitmap
-	if ( FileExists( filename.c_str() ) ) return LoadPCX ( filename.c_str() );
+	if ( FileExists( filename.c_str() ) ) return LoadPCX ( filename );
 	else return NULL;
 }
 
