@@ -105,8 +105,7 @@ cVehicle::~cVehicle ()
 		ServerMoveJob->Vehicle = NULL;
 	}
 
-	if ( autoMJob )
-		delete autoMJob;
+	delete autoMJob;
 
 	detectedInThisTurnByPlayerList.Reserve (0); //?
 
@@ -1527,14 +1526,14 @@ bool cVehicle::InSentryRange ()
 		if ( data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0 ) continue;		 //check sentry type
 		if ( data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		 //check sentry type
 
-		cUnit* unit = (cUnit*) Player->VehicleList;
+		cUnit* unit = static_cast<cUnit*>(Player->VehicleList);
 		while (unit)
 		{
 			if (makeSentryAttack (unit))
 				return true;
 			unit = unit->next;
 		}
-		unit = (cUnit*) Player->BuildingList;
+		unit = static_cast<cUnit*>(Player->BuildingList);
 		while (unit)
 		{
 			if (makeSentryAttack (unit))
@@ -1590,7 +1589,7 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player)
 		{
 			if (isOtherUnitOffendedByThis (opponentBuilding))
 				return true;
-			opponentBuilding = (cBuilding*)opponentBuilding->next;
+			opponentBuilding = static_cast<cBuilding*>(opponentBuilding->next);
 		}
 	}
 	return false;
@@ -1809,20 +1808,20 @@ bool cVehicle::canSupply (cUnit* unit, int supplyType) const
 			return false;
 	}
 
-	if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0)
+	if (unit->isVehicle () && unit->data.factorAir > 0 && static_cast<cVehicle*>(unit)->FlightHigh > 0)
 		return false;
 
 	switch (supplyType)
 	{
 	case SUPPLY_TYPE_REARM:
 		if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
-			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ())
+			|| (unit->isVehicle () && static_cast<cVehicle*>(unit)->isUnitMoving ())
 			|| unit->attacking)
 			return false;
 		break;
 	case SUPPLY_TYPE_REPAIR:
 		if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
-			|| (unit->isVehicle () && ((cVehicle*)unit)->isUnitMoving ())
+			|| (unit->isVehicle () && static_cast<cVehicle*>(unit)->isUnitMoving ())
 			|| unit->attacking)
 			return false;
 		break;
@@ -1896,7 +1895,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 		if (steal == false && unit->data.canBeDisabled == false) return false;
 		if (steal && unit->storedUnits.Size () > 0) return false;
 		if (unit->owner == owner) return false;
-		if (unit->isVehicle () && unit->data.factorAir > 0 && ((cVehicle*)unit)->FlightHigh > 0) return false;
+		if (unit->isVehicle () && unit->data.factorAir > 0 && static_cast<cVehicle*>(unit)->FlightHigh > 0) return false;
 
 		if (result)
 			return true;

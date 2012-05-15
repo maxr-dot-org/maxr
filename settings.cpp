@@ -874,7 +874,7 @@ TiXmlNode *cSettings::getXmlNode(const std::string& path, TiXmlDocument &configF
 
 	TiXmlNode *xmlNode = NULL;
 	TiXmlNode *lastNode = &configFile;
-	for ( std::vector<std::string>::const_iterator i = parts.begin(); i != parts.end(); i++ )
+	for ( std::vector<std::string>::const_iterator i = parts.begin(); i != parts.end(); ++i )
 	{
 		xmlNode = lastNode->FirstChild( (*i).c_str() );
 		if ( xmlNode == NULL ) xmlNode = lastNode->LinkEndChild(new TiXmlElement( (*i).c_str() ));

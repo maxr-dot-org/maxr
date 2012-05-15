@@ -53,12 +53,8 @@ void cInput::inputkey ( SDL_KeyboardEvent &key )
 
 bool cInput::IsDoubleClicked()
 {
-    //static long LastClickTicks;
-	long CurrentClickTicks;
-
     /* First time this function is called, LastClickTicks
         has not been initialised yet. */
-
     if (! LastClickTicks)
     {
         LastClickTicks = SDL_GetTicks ();
@@ -66,7 +62,7 @@ bool cInput::IsDoubleClicked()
     }
     else
     {
-        CurrentClickTicks = SDL_GetTicks ();
+        const long CurrentClickTicks = SDL_GetTicks ();
 
         /* If the period between the two clicks is smaller
             or equal to a pre-defined number, we report a

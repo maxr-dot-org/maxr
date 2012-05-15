@@ -67,14 +67,14 @@ int cSavegame::save( const string& saveName )
 				writeUnit ( Vehicle, &unitnum );
 				unitnum++;
 			}
-			Vehicle = (cVehicle*)Vehicle->next;
+			Vehicle = static_cast<cVehicle*>(Vehicle->next);
 		}
 		cBuilding *Building = Player->BuildingList;
 		while ( Building )
 		{
 			writeUnit ( Building, &unitnum );
 			unitnum++;
-			Building = (cBuilding*)Building->next;
+			Building = static_cast<cBuilding*>(Building->next);
 		}
 	}
 	int rubblenum = 0;
@@ -83,7 +83,7 @@ int cSavegame::save( const string& saveName )
 	{
 		writeRubble ( Rubble, rubblenum );
 		rubblenum++;
-		Rubble = (cBuilding*)Rubble->next;
+		Rubble = static_cast<cBuilding*>(Rubble->next);
 	}
 
 	for ( unsigned int i = 0; i < UnitsData.getNrVehicles () + UnitsData.getNrBuildings (); i++ )
@@ -1457,7 +1457,7 @@ TiXmlElement *cSavegame::writeUnit ( cVehicle *Vehicle, int *unitnum )
 	for ( unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++ )
 	{
 		(*unitnum)++;
-		TiXmlElement *storedNode = writeUnit ((cVehicle*)Vehicle->storedUnits[i], unitnum );
+		TiXmlElement *storedNode = writeUnit (static_cast<cVehicle*>(Vehicle->storedUnits[i]), unitnum );
 		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Vehicle->iID ), "is_vehicle", "1" );
 	}
 	return unitNode;
@@ -1536,7 +1536,7 @@ void cSavegame::writeUnit ( cBuilding *Building, int *unitnum )
 	for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 	{
 		(*unitnum)++;
-		TiXmlElement *storedNode = writeUnit ((cVehicle*)Building->storedUnits[i], unitnum );
+		TiXmlElement *storedNode = writeUnit (static_cast<cVehicle*>(Building->storedUnits[i]), unitnum );
 		addAttributeElement ( storedNode, "Stored_In", "id", iToStr ( Building->iID ), "is_vehicle", "0" );
 	}
 }

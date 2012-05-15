@@ -63,7 +63,7 @@ char* sDataBuffer::getWritePointer()
 }
 
 //------------------------------------------------------------------------
-int sDataBuffer::getFreeSpace()
+int sDataBuffer::getFreeSpace() const
 {
 	return PACKAGE_LENGTH - iLength;
 }
@@ -200,7 +200,7 @@ int cTCP::send( int iLength, const char *buffer )
 //------------------------------------------------------------------------
 int CallbackHandleNetworkThread( void *arg )
 {
-	cTCP *TCP = (cTCP *) arg;
+	cTCP *TCP = reinterpret_cast<cTCP *>(arg);
 	TCP->HandleNetworkThread();
 	return 0;
 }

@@ -113,7 +113,7 @@ sFX::~sFX()
 
 Uint32 TimerCallback(Uint32 interval, void *arg)
 {
-	((cClient *)arg)->Timer();
+	reinterpret_cast<cClient *>(arg)->Timer();
 	return interval;
 }
 
@@ -181,7 +181,7 @@ cClient::~cClient()
 
 	while ( neutralBuildings )
 	{
-		cBuilding* nextBuilding = (cBuilding*)neutralBuildings->next;
+		cBuilding* nextBuilding = static_cast<cBuilding*>(neutralBuildings->next);
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}

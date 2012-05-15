@@ -67,7 +67,7 @@ struct sDataBuffer
 	char data[5*PACKAGE_LENGTH];
 
 	char* getWritePointer();
-	int getFreeSpace();
+	int getFreeSpace() const;
 	void deleteFront(int n);
 
 	/**

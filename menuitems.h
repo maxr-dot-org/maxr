@@ -180,6 +180,7 @@ protected:
 	virtual bool preSetLocked( bool locked_ ) { return true; }
 
 public:
+	virtual ~cMenuItem() {}
 	/**
 	 * virtual functions that should draw the item.
 	 *@author alzi
@@ -265,7 +266,7 @@ public:
 	 * returns the current position of the item
 	 *@author alzi
 	 */
-	SDL_Rect getPosition();
+	SDL_Rect getPosition() const;
 	/**
 	 * locks or unlocks the item.
 	 *@author alzi
@@ -319,12 +320,12 @@ public:
 	 * returns the status of the isClicked variable.
 	 *@author alzi
 	 */
-	bool getIsClicked();
+	bool getIsClicked() const;
 	/**
 	 * returns the status of the wasClicked variable.
 	 *@author alzi
 	 */
-	bool getWasClicked();
+	bool getWasClicked() const;
 	/**
 	 * returns whether the item is disabled or not.
 	 *@author alzi

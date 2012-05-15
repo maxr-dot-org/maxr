@@ -1483,8 +1483,7 @@ void cPlanetsSelectionMenu::loadMaps()
 			if (!maps->Contains((*userMaps)[i]))
 				maps->Add ((*userMaps)[i]);
 		}
-		if (userMaps != 0)
-			delete userMaps;
+		delete userMaps;
 	}
 	for ( unsigned int i = 0; i < maps->Size(); i++ )
 	{
@@ -3661,8 +3660,7 @@ cNetworkClientMenu::~cNetworkClientMenu()
 {
 	delete titleLabel;
 	delete connectButton;
-	if (mapReceiver != 0)
-		delete mapReceiver;
+	delete mapReceiver;
 }
 
 void cNetworkClientMenu::connectReleased( void* parent )
@@ -3787,8 +3785,7 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 				Sint32 mapCheckSum = message->popInt32();
 				if ( !gameDataContainer.map || gameDataContainer.map->MapName != mapName )
 				{
-					if ( gameDataContainer.map )
-						delete gameDataContainer.map;
+					delete gameDataContainer.map;
 
 					bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
 					cMap *map = new cMap;
@@ -3985,8 +3982,7 @@ void cNetworkClientMenu::initMapDownload (cNetMessage* message)
 	int mapSize = message->popInt32 ();
 	string mapName = message->popString ();
 
-	if (mapReceiver != 0)
-		delete mapReceiver;
+	delete mapReceiver;
 	mapReceiver = new cMapReceiver (mapName, mapSize);
 }
 
@@ -5853,7 +5849,7 @@ void cReportsMenu::upReleased(void *parent)
 //------------------------------------------------------------------------------
 void cReportsMenu::downReleased(void *parent)
 {
-	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	cReportsMenu *menu = reinterpret_cast<cReportsMenu*>(parent);
 	menu->dataScreen->scrollDown();
 	menu->draw();
 }
@@ -5861,14 +5857,14 @@ void cReportsMenu::downReleased(void *parent)
 //------------------------------------------------------------------------------
 void cReportsMenu::typeChanged(void *parent)
 {
-	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	cReportsMenu *menu = reinterpret_cast<cReportsMenu*>(parent);
 	menu->dataScreen->setType ( menu->typeButtonGroup->buttonIsChecked( 0 ), menu->typeButtonGroup->buttonIsChecked( 1 ), menu->typeButtonGroup->buttonIsChecked( 2 ), menu->typeButtonGroup->buttonIsChecked( 3 ) );
 }
 
 //------------------------------------------------------------------------------
 void cReportsMenu::filterClicked( void *parent )
 {
-	cReportsMenu *menu = static_cast<cReportsMenu*>((cMenu*)parent);
+	cReportsMenu *menu = reinterpret_cast<cReportsMenu*>(parent);
 
 	menu->dataScreen->setIncludeFilter ( menu->planesCheckBtn->isChecked(), menu->groundCheckBtn->isChecked(), menu->seaCheckBtn->isChecked(), menu->stationaryCheckBtn->isChecked() );
 	menu->dataScreen->setBorderedFilter ( menu->buildCheckBtn->isChecked(), menu->fightCheckBtn->isChecked(), menu->damagedCheckBtn->isChecked(), menu->stealthCheckBtn->isChecked() );
@@ -5904,7 +5900,7 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 				}
 			}
 
-			storingVehicle = (cVehicle*)storingVehicle->next;
+			storingVehicle = static_cast<cVehicle*>(storingVehicle->next);
 		}
 
 		cBuilding* storingBuilding = vehicle->owner->BuildingList;
@@ -5920,7 +5916,7 @@ void cReportsMenu::doubleClicked ( cVehicle *vehicle, cBuilding *building )
 				}
 			}
 
-			storingBuilding = (cBuilding*) storingBuilding->next;
+			storingBuilding = static_cast<cBuilding*>(storingBuilding->next);
 		}
 
 		return;

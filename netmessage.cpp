@@ -48,6 +48,7 @@ cNetMessage::cNetMessage(int iType)
 							// 3 - 4: reserved for message type
 							// 5:	  reserved for playernumber
 	iLength = 6;
+	iPlayerNr = -1;
 }
 
 char* cNetMessage::serialize()

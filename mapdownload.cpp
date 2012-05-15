@@ -172,8 +172,7 @@ cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize)
 //-------------------------------------------------------------------------------
 cMapReceiver::~cMapReceiver ()
 {
-	if (readBuffer != 0)
-		delete[] readBuffer;
+	delete[] readBuffer;
 }
 
 //-------------------------------------------------------------------------------
@@ -225,7 +224,7 @@ bool cMapReceiver::finished ()
 //-------------------------------------------------------------------------------
 int mapSenderThreadFunction (void* data)
 {
-	cMapSender* mapSender = (cMapSender*) data;
+	cMapSender* mapSender = reinterpret_cast<cMapSender*>(data);
 	mapSender->run ();
 	return 0;
 }

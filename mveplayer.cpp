@@ -369,8 +369,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			movie_screen.y = (screen->h - frame_buf->h) >> 1;
 
 			/* erase old video backmvebuffer */
-			if(v_backbuf)
-				free(v_backbuf);
+			free(v_backbuf);
 
 			/* allocate memory for the backmvebuffers sufficient for the screen pixel mvebuffer */
 			screen_mvebuffer_size = frame_buf->h * frame_buf->w;
@@ -473,8 +472,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			memcpy(temp_audio_mvebuffer.data + audio_mvebuffer.length, audio_data_read.data, audio_data_read.length);
 
 			/* free audio mvebuffer */
-			if(audio_mvebuffer.data)
-				free(audio_mvebuffer.data);
+			free(audio_mvebuffer.data);
 
 			/* temp_audio_mvebuffer has the requested data, and audio_mvebuffer needs to have it. */
 			audio_mvebuffer.data = temp_audio_mvebuffer.data;
@@ -488,8 +486,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 			temp_audio_mvebuffer.length = 0;
 
 			/* close off audio_data_read */
-			if(audio_data_read.data)
-				free(audio_data_read.data);
+			free(audio_data_read.data);
 			audio_data_read.data = NULL;
 			audio_data_read.length = 0;
 
@@ -564,8 +561,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		case SET_DECODING_MAP:
 
 			/* kill previous map */
-			if(map)
-				free(map);
+			free(map);
 
 			/* get new map */
 			map = (Uint8 *)malloc(sizeof(Uint8) * op.length);
@@ -576,8 +572,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		case VIDEO_DATA:
 
 			/* free the previously allocated video data array */
-			if(video)
-				free(video);
+			free(video);
 
 			/* allocate enough memory for the video data array */
 			video = (Uint8 *)malloc(op.length);
@@ -631,31 +626,24 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 		}
 
 		/* free audio mvebuffers */
-		if(audio_mvebuffer.data)
-			free(audio_mvebuffer.data);
+		free(audio_mvebuffer.data);
 
-		if(audio_data_read.data)
-			free(audio_data_read.data);
+		free(audio_data_read.data);
 
-		if(temp_audio_mvebuffer.data)
-			free(temp_audio_mvebuffer.data);
+		free(temp_audio_mvebuffer.data);
 
 		/* free the audio_spec */
-		if(desired)
-			free(desired);
+		free(desired);
 	}
 
 	/* free the decoding map */
-	if(map)
-		free(map);
+	free(map);
 
 	/* free the video data */
-	if(video)
-		free(video);
+	free(video);
 
 	/* free the video mvebuffers */
-	if(v_backbuf)
-		free(v_backbuf);
+	free(v_backbuf);
 
 	if(screen)
 		SDL_FreeSurface(screen);
@@ -705,8 +693,7 @@ void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 		memcpy(temp, audio_mvebuffer->data + len, audio_mvebuffer->length);
 
 		/* free the memory of the audio_mvebuffer */
-		if(audio_mvebuffer->data)
-			free(audio_mvebuffer->data);
+		free(audio_mvebuffer->data);
 
 		/* assign the address of our stored data to the audio_mvebuffer's data */
 		audio_mvebuffer->data = temp;
@@ -777,8 +764,7 @@ void MVEPlayerDecodeAudio(mvebuffer * in)
 	}
 
 	/* free the original mvebuffer*/
-	if(in->data)
-		free(in->data);
+	free(in->data);
 
 	/* assign the incoming mvebuffer the outgoing data for return */
 	in->data = out.data;

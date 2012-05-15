@@ -140,7 +140,7 @@ void sendUnitData (cUnit* unit, int iPlayer)
 	// The unit data values
 	if (unit->isVehicle ())
 	{
-		message->pushInt16( ((cVehicle*) unit)->FlightHigh );
+		message->pushInt16( static_cast<cVehicle*>(unit)->FlightHigh );
 		message->pushInt16 (unit->data.speedMax);
 		message->pushInt16 (unit->data.speedCur);
 	}
@@ -165,14 +165,14 @@ void sendUnitData (cUnit* unit, int iPlayer)
 	//TODO: remove information such sentrystatus, build or clearrounds from normal data
 	//		because this data will be received by enemys, too
 	if (unit->isBuilding ())
-		message->pushInt16 (((cBuilding*)unit)->points);
+		message->pushInt16 (static_cast<cBuilding*>(unit)->points);
 
 	message->pushBool (unit->manualFireActive);
 	message->pushBool (unit->sentryActive);
 
 	if (unit->isVehicle ())
 	{
-		cVehicle* vehicle = (cVehicle*)unit;
+		cVehicle* vehicle = static_cast<cVehicle*>(unit);
 		message->pushInt16 (vehicle->ClearingRounds);
 		message->pushInt16 (vehicle->BuildRounds);
 		message->pushBool (vehicle->IsBuilding);
@@ -181,7 +181,7 @@ void sendUnitData (cUnit* unit, int iPlayer)
 	}
 	else
 	{
-		cBuilding* building = (cBuilding*)unit;
+		cBuilding* building = static_cast<cBuilding*>(unit);
 		message->pushBool ( building->IsWorking );
 		message->pushInt16 ( building->researchArea );
 	}

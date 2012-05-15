@@ -38,7 +38,7 @@ using namespace std;
 //-------------------------------------------------------------------------------
 int serverGameThreadFunction (void* data)
 {
-	cServerGame* serverGame = (cServerGame*) data;
+	cServerGame* serverGame = reinterpret_cast<cServerGame*>(data);
 	serverGame->run ();
 	return 0;
 }

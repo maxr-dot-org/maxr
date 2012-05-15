@@ -43,14 +43,14 @@
 //-------------------------------------------------------------------------------------
 Uint32 ServerTimerCallback(Uint32 interval, void *arg)
 {
-	((cServer *)arg)->Timer();
+	reinterpret_cast<cServer *>(arg)->Timer();
 	return interval;
 }
 
 //-------------------------------------------------------------------------------------
 int CallbackRunServerThread( void *arg )
 {
-	cServer *Server = (cServer *) arg;
+	cServer *Server = reinterpret_cast<cServer *>(arg);
 	Server->run();
 	return 0;
 }
@@ -127,7 +127,7 @@ cServer::~cServer()
 
 	while ( neutralBuildings )
 	{
-		cBuilding* nextBuilding = (cBuilding*)neutralBuildings->next;
+		cBuilding* nextBuilding = static_cast<cBuilding*>(neutralBuildings->next);
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
@@ -376,7 +376,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 					if (vehicle->ServerMoveJob && !vehicle->moving)
 						vehicle->ServerMoveJob->resume();
 
-					vehicle = (cVehicle*) vehicle->next;
+					vehicle = static_cast<cVehicle*>(vehicle->next);
 				}
 			}
 			else
@@ -1180,7 +1180,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if (upgradeAll || i == storageSlot)
 				{
-					cVehicle* vehicle = (cVehicle*)storingBuilding->storedUnits[i];
+					cVehicle* vehicle = static_cast<cVehicle*>(storingBuilding->storedUnits[i]);
 					sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
 
 					if (vehicle->data.version >= upgradedVersion.version)
@@ -1620,7 +1620,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 						newAreasForResearchCenters.Add(newArea);
 						centersToAssign--;
 					}
-					curBuilding = (cBuilding*)curBuilding->next;
+					curBuilding = static_cast<cBuilding*>(curBuilding->next);
 				}
 				if (curBuilding == 0 && centersToAssign > 0)
 				{
@@ -1632,7 +1632,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if (curBuilding->data.canResearch && curBuilding->IsWorking)
 					researchCentersToStop.Add(curBuilding);
-				curBuilding = (cBuilding*)curBuilding->next;
+				curBuilding = static_cast<cBuilding*>(curBuilding->next);
 			}
 			if (error)
 				break;
@@ -2175,7 +2175,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 
 	if (unit->isBuilding () && unit->owner == 0)
 	{
-		deleteRubble ((cBuilding*)unit);
+		deleteRubble (static_cast<cBuilding*>(unit));
 		return;
 	}
 
@@ -2191,9 +2191,9 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	else
 	{
 		if (unit->isVehicle ())
-			unit->owner->VehicleList = (cVehicle*)unit->next;
+			unit->owner->VehicleList = static_cast<cVehicle*>(unit->next);
 		else
-			unit->owner->BuildingList = (cBuilding*)unit->next;
+			unit->owner->BuildingList = static_cast<cBuilding*>(unit->next);
 		if (unit->next)
 			unit->next->prev = 0;
 	}
@@ -2211,7 +2211,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	//detach from move job
 	if ( !unit->isBuilding() )
 	{
-		cVehicle *vehicle = (cVehicle*) unit;
+		cVehicle *vehicle = static_cast<cVehicle*>(unit);
 		if ( vehicle->ServerMoveJob )
 		{
 			vehicle->ServerMoveJob->Vehicle = NULL;
@@ -2222,22 +2222,22 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	unit->owner->deleteSentry (unit);
 
 	// lose eco points
-	if (unit->isBuilding () && ((cBuilding*)unit)->points != 0)
+	if (unit->isBuilding () && static_cast<cBuilding*>(unit)->points != 0)
 	{
-		unit->owner->setScore (unit->owner->getScore (iTurn) - ((cBuilding*)unit)->points, iTurn);
+		unit->owner->setScore (unit->owner->getScore (iTurn) - static_cast<cBuilding*>(unit)->points, iTurn);
 		sendScore (unit->owner, iTurn);
 	}
 
 	if (unit->isBuilding ())
-		Map->deleteBuilding ((cBuilding*)unit);
+		Map->deleteBuilding (static_cast<cBuilding*>(unit));
 	else
-		Map->deleteVehicle ((cVehicle*)unit);
+		Map->deleteVehicle (static_cast<cVehicle*>(unit));
 
 	if (notifyClient)
 		sendDeleteUnit (unit, -1);
 
-	if (unit->isBuilding () && ((cBuilding*)unit)->SubBase != 0)
-		unit->owner->base.deleteBuilding ((cBuilding*)unit, true);
+	if (unit->isBuilding () && static_cast<cBuilding*>(unit)->SubBase != 0)
+		unit->owner->base.deleteBuilding (static_cast<cBuilding*>(unit), true);
 
 	cPlayer* owner = unit->owner;
 	delete unit;
@@ -2294,7 +2294,7 @@ void cServer::checkPlayerUnits ()
 					}
 				}
 			}
-			NextVehicle = (cVehicle*)NextVehicle->next;
+			NextVehicle = static_cast<cVehicle*>(NextVehicle->next);
 		}
 		cBuilding *NextBuilding = UnitPlayer->BuildingList;
 		while ( NextBuilding != NULL )
@@ -2335,7 +2335,7 @@ void cServer::checkPlayerUnits ()
 					}
 				}
 			}
-			NextBuilding = (cBuilding*)NextBuilding->next;
+			NextBuilding = static_cast<cBuilding*>(NextBuilding->next);
 		}
 	}
 
@@ -2375,7 +2375,7 @@ void cServer::checkPlayerUnits ()
 				}
 			}
 		}
-		building = (cBuilding*)building->next;
+		building = static_cast<cBuilding*>(building->next);
 	}
 }
 
@@ -2582,7 +2582,7 @@ bool cServer::checkEndActions ( int iPlayer )
 					addActiveMoveJob ( NextVehicle->ServerMoveJob );
 					sMessage = "Text~Comp~Turn_Automove";
 				}
-				NextVehicle = (cVehicle*)NextVehicle->next;
+				NextVehicle = static_cast<cVehicle*>(NextVehicle->next);
 			}
 		}
 	}
@@ -2643,7 +2643,7 @@ void cServer::makeTurnEnd ()
 				}
 				sendUnitData ( Building, Building->owner->Nr );
 			}
-			Building = (cBuilding*)Building->next;
+			Building = static_cast<cBuilding*>(Building->next);
 		}
 	}
 
@@ -2672,7 +2672,7 @@ void cServer::makeTurnEnd ()
 				sendUnitData ( Vehicle, Vehicle->owner->Nr );
 			}
 			if ( Vehicle->ServerMoveJob ) Vehicle->ServerMoveJob->bEndForNow = false;
-			Vehicle = (cVehicle*)Vehicle->next;
+			Vehicle = static_cast<cVehicle*>(Vehicle->next);
 		}
 	}
 
@@ -2686,7 +2686,7 @@ void cServer::makeTurnEnd ()
 		{
 			vehicle->clearDetectedInThisTurnPlayerList ();
 			vehicle->makeDetection();
-			vehicle = (cVehicle*)vehicle->next;
+			vehicle = static_cast<cVehicle*>(vehicle->next);
 		}
 	}
 
@@ -2717,7 +2717,7 @@ void cServer::makeTurnEnd ()
 		while ( Vehicle )
 		{
 			Vehicle->InSentryRange();
-			Vehicle = (cVehicle*)Vehicle->next;
+			Vehicle = static_cast<cVehicle*>(Vehicle->next);
 		}
 	}
 
@@ -2776,13 +2776,13 @@ void cServer::checkDefeats ()
 			while ( Vehicle )
 			{
 				if ( Vehicle->data.canAttack || !Vehicle->data.canBuild.empty() ) break;
-				Vehicle = (cVehicle*)Vehicle->next;
+				Vehicle = static_cast<cVehicle*>(Vehicle->next);
 			}
 			if ( Vehicle != NULL ) continue;
 			while ( Building )
 			{
 				if ( Building->data.canAttack || !Building->data.canBuild.empty() ) break;
-				Building = (cBuilding*)Building->next;
+				Building = static_cast<cBuilding*>(Building->next);
 			}
 			if ( Building != NULL ) continue;
 
@@ -3045,7 +3045,7 @@ cVehicle* cServer::getVehicleFromID ( unsigned int iID ) const
 		{
 			if (vehicle->iID == iID)
 				return vehicle;
-			vehicle = (cVehicle*)vehicle->next;
+			vehicle = static_cast<cVehicle*>(vehicle->next);
 		}
 	}
 	return 0;
@@ -3061,7 +3061,7 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 		{
 			if (building->iID == iID)
 				return building;
-			building = (cBuilding*)building->next;
+			building = static_cast<cBuilding*>(building->next);
 		}
 	}
 	return 0;
@@ -3281,7 +3281,7 @@ void cServer::deleteRubble( cBuilding* rubble )
 
 	if ( !rubble->prev )
 	{
-		neutralBuildings = (cBuilding*)rubble->next;
+		neutralBuildings = static_cast<cBuilding*>(rubble->next);
 		if ( rubble->next ) rubble->next->prev = NULL;
 	}
 	else
@@ -3303,7 +3303,7 @@ void cServer::deletePlayer( cPlayer *Player )
 	cVehicle *Vehicle = Player->VehicleList;
 	while ( Vehicle )
 	{
-		cVehicle *nextVehicle = (cVehicle*)Vehicle->next;
+		cVehicle *nextVehicle = static_cast<cVehicle*>(Vehicle->next);
 		if ( !Vehicle->Loaded ) deleteUnit( Vehicle );
 		Vehicle = nextVehicle;
 	}
@@ -3321,7 +3321,7 @@ void cServer::deletePlayer( cPlayer *Player )
 		while ( Vehicle )
 		{
 			if ( Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer ( Player ) ) Vehicle->resetDetectedByPlayer ( Player );
-			Vehicle = (cVehicle*)Vehicle->next;
+			Vehicle = static_cast<cVehicle*>(Vehicle->next);
 		}
 	}
 	// delete the player
@@ -3357,7 +3357,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 				{
 					if ( Vehicle->seenByPlayerList[j] == Player ) Vehicle->seenByPlayerList.Delete ( j );
 				}
-				Vehicle = (cVehicle*)Vehicle->next;
+				Vehicle = static_cast<cVehicle*>(Vehicle->next);
 			}
 			Building = UnitPlayer->BuildingList;
 			while ( Building )
@@ -3366,7 +3366,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 				{
 					if ( Building->seenByPlayerList[j] == Player ) Building->seenByPlayerList.Delete ( j );
 				}
-				Building = (cBuilding*)Building->next;
+				Building = static_cast<cBuilding*>(Building->next);
 			}
 		}
 		Building = neutralBuildings;
@@ -3376,7 +3376,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 			{
 				if ( Building->seenByPlayerList[j] == Player ) Building->seenByPlayerList.Delete ( j );
 			}
-			Building = (cBuilding*)Building->next;
+			Building = static_cast<cBuilding*>(Building->next);
 		}
 		sendDeleteEverything ( Player->Nr );
 	}
@@ -3392,7 +3392,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 	while ( Vehicle )
 	{
 		if ( !Vehicle->Loaded ) resyncVehicle ( Vehicle, Player );
-		Vehicle = (cVehicle*)Vehicle->next;
+		Vehicle = static_cast<cVehicle*>(Vehicle->next);
 	}
 	Building = Player->BuildingList;
 	while ( Building )
@@ -3400,14 +3400,14 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, false );
 		for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 		{
-			cVehicle *StoredVehicle = (cVehicle*)Building->storedUnits[i];
+			cVehicle *StoredVehicle = static_cast<cVehicle*>(Building->storedUnits[i]);
 			resyncVehicle ( StoredVehicle, Player );
 			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
 		}
 		sendUnitData ( Building, Player->Nr );
 		if ( Building->data.canMineMaxRes > 0 ) sendProduceValues ( Building );
 		if ( Building->BuildList && Building->BuildList->Size() > 0 ) sendBuildList ( Building );
-		Building = (cBuilding*)Building->next;
+		Building = static_cast<cBuilding*>(Building->next);
 	}
 	// send all subbases
 	for ( unsigned int i = 0; i < Player->base.SubBases.Size(); i++ )
@@ -3470,7 +3470,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
 	for ( unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++ )
 	{
-		cVehicle *StoredVehicle = (cVehicle*)Vehicle->storedUnits[i];
+		cVehicle *StoredVehicle = static_cast<cVehicle*>(Vehicle->storedUnits[i]);
 		resyncVehicle ( StoredVehicle, Player );
 		sendStoreVehicle ( Vehicle->iID, true, StoredVehicle->iID, Player->Nr );
 	}
@@ -3521,13 +3521,13 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 			}
 			else if ( vehicleList->next )
 			{
-				oldOwner->VehicleList = (cVehicle*)vehicleList->next;
+				oldOwner->VehicleList = static_cast<cVehicle*>(vehicleList->next);
 				vehicleList->next->prev = NULL;
 			}
 			else oldOwner->VehicleList = NULL;
 			break;
 		}
-		vehicleList = (cVehicle*)vehicleList->next;
+		vehicleList = static_cast<cVehicle*>(vehicleList->next);
 	}
 	// add the vehicle to the list of the new player
 	vehicle->owner = newOwner;

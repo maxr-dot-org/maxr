@@ -205,7 +205,7 @@ void cMenuItem::move ( int x, int y )
 	position.y = y;
 }
 
-SDL_Rect cMenuItem::getPosition()
+SDL_Rect cMenuItem::getPosition() const
 {
 	return position;
 }
@@ -259,12 +259,12 @@ void cMenuItem::setWasKeyInputFunction ( void (*wasKeyInput_)(void *) )
 	wasKeyInput = wasKeyInput_;
 }
 
-bool cMenuItem::getIsClicked()
+bool cMenuItem::getIsClicked() const
 {
 	return isClicked;
 }
 
-bool cMenuItem::getWasClicked()
+bool cMenuItem::getWasClicked() const
 {
 	return wasClicked;
 }
@@ -390,7 +390,7 @@ bool cMenuTimerBase::getState()
 
 Uint32 cMenuTimerBase::sdlTimerCallback(Uint32 intervall, void* param)
 {
-	cMenuTimerBase *timer = (cMenuTimerBase*) param;
+	cMenuTimerBase *timer = reinterpret_cast<cMenuTimerBase*>(param);
 	timer->state = true;
 
 	return intervall;
@@ -1360,8 +1360,9 @@ void cMenuUnitListItem::drawCargo( int destY )
 void cMenuUnitListItem::released( void *parent )
 {
 	if ( releaseSound ) PlayFX ( releaseSound );
-	((cMenuUnitsList*)parent)->setSelection ( this );
-	((cMenuUnitsList*)parent)->parentMenu->draw();
+	cMenuUnitsList* menuUnitsList = reinterpret_cast<cMenuUnitsList*>(parent);
+	menuUnitsList->setSelection ( this );
+	menuUnitsList->parentMenu->draw();
 }
 
 sID cMenuUnitListItem::getUnitID()
@@ -2746,7 +2747,7 @@ void cMenuScrollBar::setMaximalScroll ( int maximalScroll_ )
 
 void cMenuScrollBar::upButtonReleased( void* parent )
 {
-	cMenuScrollBar *This = ((cMenuScrollBar*)parent);
+	cMenuScrollBar *This = reinterpret_cast<cMenuScrollBar*>(parent);
 	if ( This->offset > 0 )
 	{
 		This->offset--;
@@ -2756,7 +2757,7 @@ void cMenuScrollBar::upButtonReleased( void* parent )
 
 void cMenuScrollBar::downButtonReleased( void* parent )
 {
-	cMenuScrollBar *This = ((cMenuScrollBar*)parent);
+	cMenuScrollBar *This = reinterpret_cast<cMenuScrollBar*>(parent);
 	if ( This->offset < This->maximalOffset )
 	{
 		This->offset++;
@@ -3442,7 +3443,7 @@ bool cMenuUpgradeFilter::TNTIsChecked()
 
 void cMenuUpgradeFilter::buttonChanged( void *parent )
 {
-	cMenuUpgradeFilter *filter = ((cMenuUpgradeFilter*)parent);
+	cMenuUpgradeFilter *filter = reinterpret_cast<cMenuUpgradeFilter*>(parent);
 	filter->parentMenu->generateSelectionList();
 	filter->parentMenu->draw();
 }
@@ -3553,7 +3554,7 @@ void cMenuSlider::setMoveCallback ( void (*movedCallback_)(void *) )
 
 void cMenuSlider::scrollerMoved( void *parent_ )
 {
-	cMenuSlider *This = (cMenuSlider*)parent_;
+	cMenuSlider *This = reinterpret_cast<cMenuSlider*>(parent_);
 	int pos = This->scroller->getPosition().x - This->position.x + (( This->type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7);
 	if ( pos < 0 )
 	{
@@ -3744,7 +3745,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen ()
 	if (casualties != 0)
 	{
 		vector<sID> unitTypesWithLosses = casualties->getUnitTypesWithLosses ();
-		if (unitTypesWithLosses.size () == 0)
+		if (unitTypesWithLosses.empty())
 			return;
 
 		int displayedEntryIndex = 0;
@@ -4126,7 +4127,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		bool inFilter = checkFilter ( nextVehicle->data, true );
 		if ( !inFilter || count < minCount )
 		{
-			nextVehicle = (cVehicle*)nextVehicle->next;
+			nextVehicle = static_cast<cVehicle*>(nextVehicle->next);
 			if ( inFilter ) count++;
 			continue;
 		}
@@ -4147,7 +4148,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 		}
 		if ( vehicle && count == selected ) (*vehicle) = nextVehicle;
 		count++;
-		nextVehicle = (cVehicle*)nextVehicle->next;
+		nextVehicle = static_cast<cVehicle*>(nextVehicle->next);
 	}
 
 	cBuilding *nextBuilding = buildings;
@@ -4158,7 +4159,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			bool inFilter = checkFilter ( nextBuilding->data, false );
 			if ( !inFilter || count < minCount )
 			{
-				nextBuilding = (cBuilding*)nextBuilding->next;
+				nextBuilding = static_cast<cBuilding*>(nextBuilding->next);
 				if ( inFilter ) count++;
 				continue;
 			}
@@ -4180,7 +4181,7 @@ bool cMenuReportsScreen::goThroughUnits ( bool draw, int *count_, cVehicle **veh
 			}
 			if ( building && count == selected ) (*building) = nextBuilding;
 			count++;
-			nextBuilding = (cBuilding*)nextBuilding->next;
+			nextBuilding = static_cast<cBuilding*>(nextBuilding->next);
 		}
 	}
 
@@ -4261,12 +4262,12 @@ SDL_Surface *cMenuReportsScreen::generateUnitSurface(cUnit* unit )
 
 	if ( unit->isBuilding() )
 	{
-		cBuilding* building = (cBuilding*) unit;
+		cBuilding* building = static_cast<cBuilding*>( unit );
 		building->render(surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
-		cVehicle* vehicle = (cVehicle*) unit;
+		cVehicle* vehicle = static_cast<cVehicle*>( unit );
 		vehicle->render(surface, dest, zoomFactor, false);
 		vehicle->drawOverlayAnimation(surface, dest, zoomFactor);
 	}
