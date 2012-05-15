@@ -1345,7 +1345,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
-			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map,((cVehicle*)selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
+			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1404,7 +1404,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, ((cVehicle*)selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -4343,7 +4343,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if ( mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints(((cVehicle*)v.storedUnits[v.VehicleToActivate])->typ);
+			v.DrawExitPoints(static_cast<cVehicle*>(v.storedUnits[v.VehicleToActivate])->typ);
 		}
 	}
 	else if ( selectedBuilding )
@@ -4389,7 +4389,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if ( mouseInputMode == activateVehicle && selectedBuilding->owner==player )
 		{
-			selectedBuilding->DrawExitPoints(((cVehicle*)selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ);
+			selectedBuilding->DrawExitPoints(static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ);
 		}
 	}
 	player->DrawLockList();

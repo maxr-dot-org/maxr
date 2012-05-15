@@ -83,13 +83,13 @@ void cDialogYesNo::handleKeyInput(SDL_KeyboardEvent& key, const string& ch)
 
 void cDialogYesNo::yesReleased(void* parent)
 {
-	cDialogYesNo* menu = static_cast<cDialogYesNo*>((cMenu*)parent);
+	cDialogYesNo* menu = reinterpret_cast<cDialogYesNo*>(parent);
 	menu->end = true;
 }
 
 void cDialogYesNo::noReleased(void* parent)
 {
-	cDialogYesNo* menu = static_cast<cDialogYesNo*>((cMenu*)parent);
+	cDialogYesNo* menu = reinterpret_cast<cDialogYesNo*>(parent);
 	menu->terminate = true;
 }
 
@@ -119,7 +119,7 @@ void cDialogOK::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 
 void cDialogOK::okReleased( void *parent )
 {
-	cDialogOK* menu = static_cast<cDialogOK*>((cMenu*)parent);
+	cDialogOK* menu = reinterpret_cast<cDialogOK*>(parent);
 	menu->end = true;
 }
 
@@ -143,20 +143,20 @@ cDestructMenu::cDestructMenu() :
 
 void cDestructMenu::cancelReleased( void *parent )
 {
-	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	cDestructMenu* menu = reinterpret_cast<cDestructMenu*>(parent);
 	menu->terminate = true;
 }
 
 void cDestructMenu::armReleased( void *parent )
 {
-	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	cDestructMenu* menu = reinterpret_cast<cDestructMenu*>(parent);
 	menu->armButton.setLocked(true);
 	menu->destroyButton.setLocked(false);
 }
 
 void cDestructMenu::destroyReleased( void *parent )
 {
-	cDestructMenu* menu = static_cast<cDestructMenu*>((cMenu*)parent);
+	cDestructMenu* menu = reinterpret_cast<cDestructMenu*>(parent);
 	menu->end = true;
 }
 
@@ -280,20 +280,20 @@ void cDialogLicence::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 
 void cDialogLicence::okReleased( void *parent )
 {
-	cDialogLicence* menu = static_cast<cDialogLicence*>((cMenu*)parent);
+	cDialogLicence* menu = reinterpret_cast<cDialogLicence*>(parent);
 	menu->end = true;
 }
 
 void cDialogLicence::upReleased( void *parent )
 {
-	cDialogLicence* menu = static_cast<cDialogLicence*>((cMenu*)parent);
+	cDialogLicence* menu = reinterpret_cast<cDialogLicence*>(parent);
 	if ( menu->offset > 0 ) menu->offset--;
 	menu->resetText();
 }
 
 void cDialogLicence::downReleased( void *parent )
 {
-	cDialogLicence* menu = static_cast<cDialogLicence*>((cMenu*)parent);
+	cDialogLicence* menu = reinterpret_cast<cDialogLicence*>(parent);
 	if ( menu->offset < 3 ) menu->offset++;
 	menu->resetText();
 }
@@ -532,14 +532,14 @@ void cDialogPreferences::saveValues()
 
 void cDialogPreferences::okReleased( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	menu->saveValues();
 	menu->end = true;
 }
 
 void cDialogPreferences::cancelReleased( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 
 	// restore old volumes
 	cSettings::getInstance().setMusicVol(menu->oldMusicVolume);
@@ -559,27 +559,27 @@ void cDialogPreferences::cancelReleased( void *parent )
 
 void cDialogPreferences::musicVolumeChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	cSettings::getInstance().setMusicVol((int)menu->musicSlider->getValue());
 	if(cSettings::getInstance().isSoundEnabled())Mix_VolumeMusic ( cSettings::getInstance().getMusicVol() );
 }
 
 void cDialogPreferences::effectsVolumeChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	cSettings::getInstance().setSoundVol((int)menu->effectsSlider->getValue());
 	if(cSettings::getInstance().isSoundEnabled())Mix_Volume ( SoundLoopChannel, cSettings::getInstance().getSoundVol() );
 }
 
 void cDialogPreferences::voicesVolumeChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	cSettings::getInstance().setVoiceVol((int)menu->voicesSlider->getValue());
 }
 
 void cDialogPreferences::musicMuteChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	bool wasMute = cSettings::getInstance().isMusicMute();
 	cSettings::getInstance().setMusicMute(menu->disableMusicChBox->isChecked());
 	if ( cSettings::getInstance().isMusicMute() ) StopMusic ();
@@ -588,13 +588,13 @@ void cDialogPreferences::musicMuteChanged( void *parent )
 
 void cDialogPreferences::effectsMuteChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	cSettings::getInstance().setSoundMute( menu->disableEffectsChBox->isChecked() );
 }
 
 void cDialogPreferences::voicesMuteChanged( void *parent )
 {
-	cDialogPreferences* menu = static_cast<cDialogPreferences*>((cMenu*)parent);
+	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>(parent);
 	cSettings::getInstance().setVoiceMute( menu->disableVoicesChBox->isChecked() );
 }
 
@@ -855,7 +855,7 @@ void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 
 void cDialogTransfer::doneReleased( void *parent )
 {
-	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>(parent);
 
 	if ( menu->transferValue != 0 )
 	{
@@ -876,13 +876,13 @@ void cDialogTransfer::doneReleased( void *parent )
 
 void cDialogTransfer::cancelReleased( void *parent )
 {
-	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>(parent);
 	menu->terminate = true;
 }
 
 void cDialogTransfer::incReleased( void *parent )
 {
-	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>(parent);
 	menu->transferValue++;
 	menu->setCargos();
 	menu->draw();
@@ -890,7 +890,7 @@ void cDialogTransfer::incReleased( void *parent )
 
 void cDialogTransfer::decReleased( void *parent )
 {
-	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>(parent);
 	menu->transferValue--;
 	menu->setCargos();
 	menu->draw();
@@ -898,7 +898,7 @@ void cDialogTransfer::decReleased( void *parent )
 
 void cDialogTransfer::barClicked( void *parent )
 {
-	cDialogTransfer* menu = static_cast<cDialogTransfer*>((cMenu*)parent);
+	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>(parent);
 	menu->transferValue = Round ( (mouse->x-menu->resBar->getPosition().x) * ( menu->maxDestCargo / 223.0 ) - menu->destCargo );
 	menu->setCargos();
 	menu->draw();
@@ -1089,20 +1089,20 @@ void cDialogResearch::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 
 void cDialogResearch::doneReleased( void *parent )
 {
-	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	cDialogResearch* menu = reinterpret_cast<cDialogResearch*>(parent);
 	sendWantResearchChange ( menu->newResearchSettings, menu->owner->Nr );
 	menu->end = true;
 }
 
 void cDialogResearch::cancelReleased( void *parent )
 {
-	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	cDialogResearch* menu = reinterpret_cast<cDialogResearch*>(parent);
 	menu->terminate = true;
 }
 
 void cDialogResearch::incReleased( void *parent )
 {
-	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	cDialogResearch* menu = reinterpret_cast<cDialogResearch*>(parent);
 	if ( menu->unusedResearch > 0 )
 	{
 		menu->unusedResearch--;
@@ -1121,7 +1121,7 @@ void cDialogResearch::incReleased( void *parent )
 
 void cDialogResearch::decReleased( void *parent )
 {
-	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	cDialogResearch* menu = reinterpret_cast<cDialogResearch*>(parent);
 	if ( menu->unusedResearch < menu->owner->ResearchCount )
 	{
 		menu->unusedResearch++;
@@ -1140,7 +1140,7 @@ void cDialogResearch::decReleased( void *parent )
 
 void cDialogResearch::sliderClicked( void *parent )
 {
-	cDialogResearch* menu = static_cast<cDialogResearch*>((cMenu*)parent);
+	cDialogResearch* menu = reinterpret_cast<cDialogResearch*>(parent);
 	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
 	{
 		if ( menu->scroller[i]->overItem( mouse->x, mouse->y ) )

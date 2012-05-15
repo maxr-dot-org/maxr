@@ -135,13 +135,13 @@ cPlayer::~cPlayer ()
 		{
 			ptr->deleteStoredUnits ();
 		}
-		ptr = (cVehicle*)ptr->next;
+		ptr = static_cast<cVehicle*>(ptr->next);
 	}
 	// Jetzt alle Vehicles lˆschen:
 	while ( VehicleList )
 	{
 		cVehicle *ptr;
-		ptr = (cVehicle*)VehicleList->next;
+		ptr = static_cast<cVehicle*>(VehicleList->next);
 		VehicleList->sentryActive = false;
 		delete VehicleList;
 		VehicleList=ptr;
@@ -149,7 +149,7 @@ cPlayer::~cPlayer ()
 	while ( BuildingList )
 	{
 		cBuilding *ptr;
-		ptr = (cBuilding*)BuildingList->next;
+		ptr = static_cast<cBuilding*>(BuildingList->next);
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
@@ -329,7 +329,7 @@ void cPlayer::deleteSentry ( cUnit *u )
 void cPlayer::refreshSentryAir ()
 {
 	memset ( SentriesMapAir,0,MapSize );
-	cUnit* unit = (cUnit*) VehicleList;
+	cUnit* unit = VehicleList;
 	while (unit)
 	{
 		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
@@ -338,7 +338,7 @@ void cPlayer::refreshSentryAir ()
 		}
 		unit = unit->next;
 	}
-	unit = (cUnit*) BuildingList;
+	unit = BuildingList;
 	while (unit)
 	{
 		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
@@ -353,7 +353,7 @@ void cPlayer::refreshSentryAir ()
 void cPlayer::refreshSentryGround ()
 {
 	memset ( SentriesMapGround,0,MapSize );
-	cUnit* unit = (cUnit*) VehicleList;
+	cUnit* unit = VehicleList;
 	while (unit)
 	{
 		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )

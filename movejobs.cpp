@@ -518,7 +518,7 @@ void cServerMoveJob::resume()
 
 void cServerMoveJob::addEndAction(int destID, eEndMoveActionType type)
 {
-	if ( endAction ) delete endAction;
+	delete endAction;
 
 	endAction = new cEndMoveAction(Vehicle, destID, type);
 	sendEndMoveActionToClient( Vehicle, destID, type );
