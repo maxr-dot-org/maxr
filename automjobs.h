@@ -68,8 +68,7 @@ public:
 
 	static void handleAutoMoveJobs();
 	cAutoMJob(cVehicle *vehicle);
-	~cAutoMJob(void);
-
+	~cAutoMJob();
 };
 
 #endif  //automjobsH

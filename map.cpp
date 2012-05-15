@@ -99,7 +99,7 @@ cBuilding* cMapField::getMine()
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////
-cMap::cMap ( void )
+cMap::cMap()
 {
 	Kacheln=NULL;
 	NewMap ( 32, 32 );
@@ -107,7 +107,7 @@ cMap::cMap ( void )
 	resSpots = NULL;
 }
 
-cMap::~cMap ( void )
+cMap::~cMap()
 {
 	DeleteMap();
 }
@@ -346,14 +346,14 @@ void cMap::NewMap ( int size, int iTerrainGrphCount )
 }
 
 // Löscht die aktuelle Map:
-void cMap::DeleteMap ( void )
+void cMap::DeleteMap()
 {
 	if ( !Kacheln ) return;
 	delete [] Kacheln;
 	delete[] fields;
 	delete [] Resources;
-	Kacheln=NULL;
-	delete[] ( terrain );
+	Kacheln = NULL;
+	delete[] terrain;
 }
 
 void cMap::generateNextAnimationFrame()

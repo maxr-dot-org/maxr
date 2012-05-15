@@ -186,7 +186,7 @@ class cBase
 {
 public:
 	cBase();
-	~cBase(void);
+	~cBase();
 
 	cList<sSubBase*> SubBases;
 	cMap *map;

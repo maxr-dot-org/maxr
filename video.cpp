@@ -146,7 +146,7 @@ int cVideo::setWindowMode(bool bWindowMode, bool bApply)
   return 0;
 }
 
-void cVideo::draw(void)
+void cVideo::draw()
 {
     //TODO: add sanity check to redraw function
   SDL_BlitSurface(buffer,NULL,screen,NULL);
@@ -161,7 +161,7 @@ void cVideo::draw(void)
   }
 }
 
-int cVideo::applySettings(void)
+int cVideo::applySettings()
 {
   int oldX = MINWIDTH;
   int oldY = MINHEIGHT;
@@ -201,7 +201,7 @@ int cVideo::applySettings(void)
 
 }
 
-void cVideo::clearBuffer(void)
+void cVideo::clearBuffer()
 {
   SDL_FillRect ( buffer,NULL,SDL_MapRGB (buffer->format, 0, 0, 0) );
 }
@@ -209,7 +209,7 @@ void cVideo::clearBuffer(void)
 /**
  *Shows splashscreen
  */
-void cVideo::initSplash(void)
+void cVideo::initSplash()
 {
 	if(putenv( cVideoPos)!=0) //set window to center of screen.
 	{
@@ -255,12 +255,12 @@ void cVideo::setSurfaceType(Uint32 iSurfaceType)
   videoData.iSurfaceType=iSurfaceType;
 }
 
-Uint32 cVideo::getSurfaceType(void) const
+Uint32 cVideo::getSurfaceType() const
 {
    return videoData.iSurfaceType;
 }
 
-int cVideo::getVideoNum (void) const
+int cVideo::getVideoNum() const
 {
 	return sizeof(videoModes)/sizeof(sVidMode);
 }
@@ -288,7 +288,7 @@ string cVideo::getVideoMode(unsigned int iMode) const
   return sTmp;
 }
 
-bool cVideo::doDetection(void)
+bool cVideo::doDetection()
 {
   Log.write("cVideo: Screen resolution detection started. Results may vary!", cLog::eLOG_TYPE_INFO);
 
@@ -341,7 +341,7 @@ bool cVideo::doDetection(void)
   return true;
 }
 
-bool cVideo::bHaveMinMode(void)
+bool cVideo::bHaveMinMode()
 {
   for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
@@ -400,7 +400,7 @@ string cVideo::getSurfaceName (Uint32 iSurfaceType)
   else return "UNKNOWN";
 }
 
-void cVideo::switchSurface(void)
+void cVideo::switchSurface()
 {
   if(getSurfaceType() == SDL_SWSURFACE) setSurfaceType (SDL_HWSURFACE);
   else if(getSurfaceType() == SDL_HWSURFACE) setSurfaceType (SDL_SWSURFACE);

@@ -51,7 +51,7 @@ void cInput::inputkey ( SDL_KeyboardEvent &key )
 	}
 }
 
-bool cInput::IsDoubleClicked (void)
+bool cInput::IsDoubleClicked()
 {
     //static long LastClickTicks;
 	long CurrentClickTicks;

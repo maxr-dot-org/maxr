@@ -28,10 +28,10 @@
 
 static Mix_Music* music_stream = NULL;
 
-static void MusicFinished(void);
+static void MusicFinished();
 
 // Initialisiert den Sound:
-int InitSound ( int frequency,int chunksize )
+int InitSound( int frequency, int chunksize )
 {
 	int audio_rate,audio_channels;
 	Uint16 audio_format;
@@ -55,7 +55,7 @@ int InitSound ( int frequency,int chunksize )
 }
 
 // closes sound
-void CloseSound ( void )
+void CloseSound()
 {
 	if ( !cSettings::getInstance().isSoundEnabled() ) return;
 	Mix_CloseAudio();
@@ -65,7 +65,7 @@ void CloseSound ( void )
 void play(sSOUND *snd)
 {
 	if ( snd == NULL ) return;
-	if(Mix_PlayChannel ( SoundChannel,snd,0 ) == -1 )
+	if (Mix_PlayChannel ( SoundChannel, snd, 0 ) == -1 )
 	{
 		Log.write("Could not play sound:", cLog::eLOG_TYPE_WARNING);
 		Log.write(Mix_GetError(), cLog::eLOG_TYPE_WARNING);
@@ -116,7 +116,7 @@ void SetMusicVol ( int vol )
 }
 
 //stops music
-void StopMusic ( void )
+void StopMusic ()
 {
 	if ( !cSettings::getInstance().isSoundEnabled()||!music_stream ) return;
 	Mix_FreeMusic ( music_stream );
@@ -124,7 +124,7 @@ void StopMusic ( void )
 }
 
 // starts music
-void StartMusic ( void )
+void StartMusic ()
 {
 	if ( !cSettings::getInstance().isSoundEnabled() ||cSettings::getInstance().isMusicMute() ) return;
 	if ( MusicFiles.Size() == 0 ) return;
@@ -132,7 +132,7 @@ void StartMusic ( void )
 }
 
 // callback when end of music title is reached
-static void MusicFinished(void)
+static void MusicFinished()
 {
 	if ( !cSettings::getInstance().isSoundEnabled() ) return;
 	if ( MusicFiles.Size() == 0 ) return;

@@ -165,12 +165,12 @@ class cVideo
   /**
   *clears buffer (black)
   */
-  void clearBuffer(void);
+  void clearBuffer();
 
   /**
   *Blits or updates buffer to screen depending on windowmode
   */
-  void draw(void);
+  void draw();
 
   private:
 
@@ -185,7 +185,7 @@ class cVideo
   /**
   *@return Length of videomodes array
   */
-  int getVideoNum (void) const;
+  int getVideoNum () const;
 
   /**
   * Just for readable log entries
@@ -197,20 +197,20 @@ class cVideo
   /**
   *Switch SDL_HWSURFACE with SDL_SWSURFACE and vice versa
   */
-  void switchSurface (void);
+  void switchSurface();
 
   /**
   *Checks whether our minimal needed videomode has been autodetected
   *@return true if mininal video mode looks valid
   */
-  bool bHaveMinMode(void);
+  bool bHaveMinMode();
 
   /**
   *Applys current video settings
   *@param bNoFrame set to true to start without window frame (e.g. for splashscreen)
   *@return 0 on success
   */
-  int applySettings(void);
+  int applySettings();
 };
 
 extern cVideo Video;

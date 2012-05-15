@@ -273,8 +273,8 @@ struct sTerrain
 // Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap{
 public:
-	cMap(void);
-	~cMap(void);
+	cMap();
+	~cMap();
 
 	int size;     // size of the map
 	int *Kacheln; // terrain numbers of the map fields
@@ -293,7 +293,7 @@ public:
 
 	bool isWater(int x, int y, bool not_coast=false);
 	void NewMap(int size, int iTerrainGrphCount );
-	void DeleteMap(void);
+	void DeleteMap();
 	//bool SaveMap(const std::string& filename, SDL_Surface *preview);
 	bool LoadMap(const std::string& filename);
 	void placeRessourcesAddPlayer(int x, int y, int frequency);

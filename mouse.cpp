@@ -23,7 +23,7 @@
 #include "hud.h"
 
 
-cMouse::cMouse ( void )
+cMouse::cMouse()
 {
 	visible = false;
 	cur = NULL;

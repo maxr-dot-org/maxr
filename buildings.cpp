@@ -1420,7 +1420,7 @@ void cBuilding::DrawSymbolBig ( eSymbolsBig sym, int x, int y, int maxx, int val
 //-------------------------------------------------------------------------------
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
-void cBuilding::CheckRessourceProd ( void )
+void cBuilding::CheckRessourceProd()
 {
 	int pos = PosX + PosY * Server->Map->size;
 

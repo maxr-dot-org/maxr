@@ -1036,7 +1036,7 @@ void sSubBase::addBuilding( cBuilding *b )
 cBase::cBase(): map()
 {};
 
-cBase::~cBase ( void )
+cBase::~cBase()
 {
 	while (SubBases.Size() != 0)
 	{
@@ -1211,7 +1211,7 @@ void cBase::handleTurnend ()
 }
 
 // recalculates all subbase values (after a load)
-void cBase::refreshSubbases ( void )
+void cBase::refreshSubbases()
 {
 	for ( unsigned int i = 0; i < SubBases.Size(); i++ )
 	{

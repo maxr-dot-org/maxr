@@ -54,8 +54,8 @@ public:
   void setPos(int px, int py);
   void getCursorOffset(int &x, int &y);
   bool moved();
-  void Show(void){LastX=-100;visible=true;}
-  void Hide(void){visible=false;}
+  void Show(){LastX=-100;visible=true;}
+  void Hide(){visible=false;}
   /**
   * return the X Coordinate of the Cursor on the map
   */

@@ -147,13 +147,13 @@ public:
 
 // Prototypen ////////////////////////////////////////////////////////////////
 int InitSound(int frequency,int chunksize);
-void CloseSound(void);
+void CloseSound();
 void PlayVoice(sSOUND *snd);
 void PlayFX(sSOUND *snd);
 void PlayMusic(char const* file);
 void SetMusicVol(int vol);
-void StopMusic(void);
-void StartMusic(void);
+void StopMusic();
+void StartMusic();
 int PlayFXLoop(sSOUND *snd);
 void StopFXLoop(int SndStream);
 //void play(sSOUND *snd);

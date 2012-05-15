@@ -60,11 +60,11 @@ public:
 	 * @author alzi alias DoctorDeath
 	 * @param keysym SDL_keysym with pressed key information.
 	 */
-	void inputkey ( SDL_KeyboardEvent &key );
+	void inputkey( SDL_KeyboardEvent &key );
 
 	long LastClickTicks;
-	void inputMouseButton ( SDL_MouseButtonEvent &button );
-	bool IsDoubleClicked (void);
+	void inputMouseButton( SDL_MouseButtonEvent &button );
+	bool IsDoubleClicked();
 };
 
 EX cInput *InputHandler;
