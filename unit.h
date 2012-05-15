@@ -54,7 +54,7 @@ public:
 	void changeName (const std::string& newName);
 
 	SDL_Rect getMenuSize () const;
-	bool areCoordsOverMenu (int x, int y);
+	bool areCoordsOverMenu (int x, int y) const;
 	void setMenuSelection ();
 	void drawMenu ();
 	void menuReleased ();

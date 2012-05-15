@@ -30,7 +30,7 @@ EX SDL_Surface* buffer; // Der Bildschirm-Buffer
 
 
 struct sVidMode {
-        unsigned int width;
+	unsigned int width;
 	unsigned int height;
 	unsigned int mode;
 };
@@ -192,7 +192,7 @@ class cVideo
   *@param iSurfaceType surface type SDL_HWSURFACE or SDL_SWSURFACE
   *@return Surface type as string e.g."SDL_HWSURFACE"
   */
-  std::string getSurfaceName (Uint32 iSurfaceType);
+  std::string getSurfaceName (Uint32 iSurfaceType) const;
 
   /**
   *Switch SDL_HWSURFACE with SDL_SWSURFACE and vice versa
@@ -203,7 +203,7 @@ class cVideo
   *Checks whether our minimal needed videomode has been autodetected
   *@return true if mininal video mode looks valid
   */
-  bool bHaveMinMode();
+  bool bHaveMinMode() const;
 
   /**
   *Applys current video settings

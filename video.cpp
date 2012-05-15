@@ -341,7 +341,7 @@ bool cVideo::doDetection()
   return true;
 }
 
-bool cVideo::bHaveMinMode()
+bool cVideo::bHaveMinMode() const
 {
   for(unsigned int i=0; i<vVideoMode.size(); i++)
   {
@@ -393,10 +393,10 @@ int cVideo::getMinH() const
   return MINHEIGHT;
 }
 
-string cVideo::getSurfaceName (Uint32 iSurfaceType)
+string cVideo::getSurfaceName (Uint32 iSurfaceType) const
 {
-  if(iSurfaceType == SDL_SWSURFACE) return "SDL_SWSURFACE";
-  else if(iSurfaceType == SDL_HWSURFACE) return "SDL_HWSURFACE";
+  if (iSurfaceType == SDL_SWSURFACE) return "SDL_SWSURFACE";
+  else if (iSurfaceType == SDL_HWSURFACE) return "SDL_HWSURFACE";
   else return "UNKNOWN";
 }
 

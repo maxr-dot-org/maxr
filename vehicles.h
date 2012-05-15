@@ -29,6 +29,7 @@ class cPlayer;
 class cBuilding;
 class cAutoMJob;
 class cMap;
+class cMapField;
 class cServerMoveJob;
 class cClientMoveJob;
 struct sSentry;
@@ -168,7 +169,7 @@ public:
 	*/
 	int refreshData();
 	void DrawPath();
-	std::string getStatusStr();
+	std::string getStatusStr() const;
 	int playStream();
 	void StartMoveSound();
 	void DecSpeed(int value);
@@ -176,12 +177,12 @@ public:
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();
-	bool CanTransferTo( class cMapField *OverUnitField );
+	bool CanTransferTo( cMapField *OverUnitField ) const;
 	bool InSentryRange();
-	void DrawExitPoints(sVehicle*) const;
+	void DrawExitPoints(const sVehicle*) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
-	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true );
-	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );
+	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true ) const;
+	bool canLoad( const cVehicle *Vehicle, bool checkPosition = true ) const;
 	void storeVehicle( cVehicle *Vehicle, cMap *Map );
 	void exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map );
 #define SUPPLY_TYPE_REARM	0
@@ -223,7 +224,7 @@ public:
 	*@param iPlayerNum number of player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( const cPlayer* player );
+	bool isDetectedByPlayer( const cPlayer* player ) const;
 	/**
 	* removes a player from the detectedByPlayerList
 	*/

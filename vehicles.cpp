@@ -905,7 +905,7 @@ void cVehicle::DrawPath ()
 //-----------------------------------------------------------------------------
 /** Returns a string with the current state */
 //-----------------------------------------------------------------------------
-string cVehicle::getStatusStr ()
+string cVehicle::getStatusStr() const
 {
 	if ( turnsDisabled > 0 )
 	{
@@ -1430,19 +1430,17 @@ void cVehicle::MakeReport ()
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transfered to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
+bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 {
-	cBuilding *b;
-	cVehicle *v;
-	int x = mouse->getKachelX();
-	int y = mouse->getKachelY();
+	const int x = mouse->getKachelX();
+	const int y = mouse->getKachelY();
 
 	if ( x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1 )
 		return false;
 
 	if ( OverUnitField->getVehicles() )
 	{
-		v = OverUnitField->getVehicles();
+		const cVehicle *v = OverUnitField->getVehicles();
 
 		if ( v == this )
 			return false;
@@ -1460,7 +1458,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 	}
 	else if ( OverUnitField->getTopBuilding() )
 	{
-		b = OverUnitField->getTopBuilding();
+		cBuilding *b = OverUnitField->getTopBuilding();
 
 		if ( b->owner != Client->ActivePlayer )
 			return false;
@@ -1479,7 +1477,6 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField )
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -1668,7 +1665,7 @@ bool cVehicle::provokeReactionFire ()
 //-----------------------------------------------------------------------------
 /** Draws exitpoints for a vehicle, that should be exited */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawExitPoints(sVehicle* const typ) const
+void cVehicle::DrawExitPoints(const sVehicle* const typ) const
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
@@ -1694,7 +1691,7 @@ bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVeh
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition )
+bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition ) const
 {
 	if ( x < 0 || x >= Map->size || y < 0 || y >= Map->size ) return false;
 
@@ -1702,7 +1699,7 @@ bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition )
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( cVehicle *Vehicle, bool checkPosition )
+bool cVehicle::canLoad ( const cVehicle *Vehicle, bool checkPosition ) const
 {
 	if ( !Vehicle ) return false;
 
@@ -2001,7 +1998,7 @@ int cVehicle::calcCommandoTurns (cUnit* destUnit) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isDetectedByPlayer( const cPlayer* player )
+bool cVehicle::isDetectedByPlayer( const cPlayer* player ) const
 {
 	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{

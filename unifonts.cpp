@@ -298,7 +298,7 @@ void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType 
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
-	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 
 	//make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
@@ -494,7 +494,7 @@ SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttyp
 {
 	string sText(text);
 	int iSpace = 0;
-	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
 	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	//make sure only upper characters are read for the small fonts

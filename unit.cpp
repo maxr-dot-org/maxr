@@ -256,7 +256,7 @@ SDL_Rect cUnit::getMenuSize () const
 //-----------------------------------------------------------------------------
 /** Returns true, if the coordinates are in the menu's space */
 //-----------------------------------------------------------------------------
-bool cUnit::areCoordsOverMenu (int x, int y)
+bool cUnit::areCoordsOverMenu (int x, int y) const
 {
 	SDL_Rect r = getMenuSize();
 

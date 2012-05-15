@@ -25,8 +25,8 @@
 class cResearch;
 
 //-------------------------------------------------------------------------------
-/**	A singleton class for calculating costs for upgrades and research and for
-	getting the	results of such upgrades and research.
+/** A singleton class for calculating costs for upgrades and research and for
+	getting the results of such upgrades and research.
 	In M.A.X. research and gold upgrades have no direct influence on each other.
 	Their effects are simply added.
 	Example:
@@ -37,7 +37,7 @@ class cResearch;
 	If you have gold-upgraded the speed of an awac from 18 to 32 and do now
 	a speed research, then you will still get only an additional bonus of 1
 	for the first research (and not 3). This is because the research benefit
-	is	always calculated on the basis of the start value and not of the current
+	is always calculated on the basis of the start value and not of the current
 	value.
 
 	To use this class, simply call: cUpdateCalculator::instance().theMethodINeed()
