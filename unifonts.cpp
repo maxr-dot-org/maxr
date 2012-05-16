@@ -465,7 +465,7 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicode
 			sTmp.erase (k, sTmp.size()); //delete everything after \n
 
 			rDest.y = drawWithBreakLines(rDest, sTmp, fonttype, surface, encode); //draw first part of text and proceed searching for breaklines
-			// += font->getFontHeight(eBitmapFontType); //add newline for each breakline
+			// += getFontHeight(eBitmapFontType); //add newline for each breakline
 		}
 	}
 	while ( k != string::npos );
@@ -594,9 +594,9 @@ string cUnicodeFont::shortenStringToSize ( const string& str, int size, eUnicode
 {
 	string res(str);
 
-	if ( font->getTextWide ( res, fonttype ) > size )
+	if ( getTextWide ( res, fonttype ) > size )
 	{
-		while ( font->getTextWide ( res + "." ) > size )
+		while ( getTextWide ( res + "." ) > size )
 		{
 			res.erase ( res.length()-1, res.length() );
 		}

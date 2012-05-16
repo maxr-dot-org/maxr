@@ -389,8 +389,8 @@ void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOf
 	sFXRocketInfos* ri = n->rocketInfo;
 	ri->ScrX = x;
 	ri->ScrY = y;
-	ri->DestX = (iDestOff % Client->getMap()->size) * 64;
-	ri->DestY = (iDestOff / Client->getMap()->size) * 64;
+	ri->DestX = (iDestOff % getMap()->size) * 64;
+	ri->DestY = (iDestOff / getMap()->size) * 64;
 	ri->aj = aj;
 	ri->dir = iFireDir;
 	addFX( n );
@@ -585,7 +585,7 @@ string cClient::addCoords (const string& msg, int x,int y )
 	stringstream strStream;
 	//e.g. [85,22] missel MK I is under attack (F1)
 	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString(KeysList.KeyJumpToAction) << ")";
-	Client->addMessage ( strStream.str() );
+	addMessage ( strStream.str() );
 	iMsgCoordsX=x;
 	iMsgCoordsY=y;
 	return strStream.str();
@@ -954,7 +954,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer )
 				{
-					if ( Vehicle->turnsDisabled > 0 ) ActivePlayer->addSavedReport ( Client->addCoords( Vehicle->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY );
+					if ( Vehicle->turnsDisabled > 0 ) ActivePlayer->addSavedReport ( addCoords( Vehicle->getDisplayName() + " " + lngPack.i18n("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY );
 					Vehicle->owner->DoScan();
 				}
 				Data = &Vehicle->data;
@@ -1014,7 +1014,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Data->speedCur = message->popInt16();
 				Data->speedMax = message->popInt16();
 
-				if ( bWasBuilding && !Vehicle->IsBuilding && Vehicle == Client->gameGUI.getSelVehicle() ) StopFXLoop ( iObjectStream );
+				if ( bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI.getSelVehicle() ) StopFXLoop ( iObjectStream );
 
 				Vehicle->FlightHigh = message->popInt16();
 			}
@@ -1115,7 +1115,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 	case GAME_EV_ATTACKJOB_FIRE:
 		{
 			cClientAttackJob* job = new cClientAttackJob( message );
-			Client->attackJobs.Add( job );
+			attackJobs.Add( job );
 		}
 		break;
 	case GAME_EV_ATTACKJOB_IMPACT:
@@ -1558,8 +1558,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 					if ( gameGUI.getSelVehicle() == Vehicle )
 					{
-						StopFXLoop( Client->iObjectStream );
-						Client->iObjectStream = Vehicle->playStream();
+						StopFXLoop( iObjectStream );
+						iObjectStream = Vehicle->playStream();
 					}
 				}
 				break;
@@ -1592,8 +1592,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( gameGUI.getSelVehicle() == Vehicle )
 			{
-				StopFXLoop( Client->iObjectStream );
-				Client->iObjectStream = Vehicle->playStream();
+				StopFXLoop( iObjectStream );
+				iObjectStream = Vehicle->playStream();
 			}
 		}
 		break;
@@ -2119,13 +2119,13 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 	{
 		//this unit was captured by an infiltrator
 		PlayVoice( VoiceData.VOIUnitStolenByEnemy );
-		Client->getActivePlayer()->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY );
+		getActivePlayer()->addSavedReport ( addCoords( lngPack.i18n("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY );
 	}
 	else if ( AddedVehicle->owner != ActivePlayer )
 	{
 		// make report
 		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
-		Client->getActivePlayer()->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY );
+		getActivePlayer()->addSavedReport ( addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY );
 
 		if ( AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack )
 			PlayVoice( VoiceData.VOISubDetected );
@@ -2263,7 +2263,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	{
 		gameGUI.deselectUnit();
 	}
-	cList<cVehicle*> &selGroup = *Client->gameGUI.getSelVehiclesGroup();
+	cList<cVehicle*> &selGroup = *gameGUI.getSelVehiclesGroup();
 	for ( size_t i = 0; i < selGroup.Size(); i++)
 	{
 		if ( selGroup[i] == Vehicle ) selGroup.Delete(i);
@@ -2475,7 +2475,7 @@ void cClient::doGameActions()
 
 sSubBase *cClient::getSubBaseFromID ( int iID )
 {
-	cBuilding* building = Client->getBuildingFromID( iID );
+	cBuilding* building = getBuildingFromID( iID );
 	if ( building )
 		return building->SubBase;
 
@@ -2487,25 +2487,25 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	//play explosion
 	if ( vehicle->data.isBig )
 	{
-		Client->addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
+		addFX( fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
 	}
 	else if ( vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0 )
 	{
-		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
+		addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 	else if ( getMap()->isWater(vehicle->PosX, vehicle->PosY))
 	{
-		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
+		addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 	else
 	{
-		Client->addFX( fxExploSmall, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
+		addFX( fxExploSmall, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
 
 	if ( vehicle->data.hasCorpse )
 	{
 		//add corpse
-		Client->addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
+		addFX( fxCorpse,  vehicle->PosX*64 + vehicle->OffX, vehicle->PosY*64 + vehicle->OffY, 0);
 	}
 }
 
@@ -2515,11 +2515,11 @@ void cClient::destroyUnit(cBuilding *building)
 	cBuilding* topBuilding = getMap()->fields[building->PosX + building->PosY*getMap()->size].getBuildings();
 	if ( topBuilding && topBuilding->data.isBig )
 	{
-		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
+		addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
 	}
 	else
 	{
-		Client->addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
+		addFX( fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
 }
 
@@ -2532,9 +2532,9 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	if ( vehicleList.Size() == 0 && !lastMessagePart )
 	{
 		//generate list with all vehicles
-		for ( unsigned int i = 0; i < Client->getPlayerList()->Size(); i++ )
+		for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 		{
-			cVehicle* vehicle = (*Client->getPlayerList())[i]->VehicleList;
+			cVehicle* vehicle = (*getPlayerList())[i]->VehicleList;
 			while ( vehicle )
 			{
 				vehicleList.Add( vehicle );
