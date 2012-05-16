@@ -151,7 +151,7 @@ string cBuilding::getStatusStr ()
 	if ( IsWorking )
 	{
 		// Factory:
-		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == Client->ActivePlayer)
+		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == Client->getActivePlayer())
 		{
 			sBuildList *buildListItem = (*BuildList)[0];
 
@@ -181,7 +181,7 @@ string cBuilding::getStatusStr ()
 		}
 
 		// Research Center
-		if (data.canResearch && owner == Client->ActivePlayer)
+		if (data.canResearch && owner == Client->getActivePlayer())
 		{
 			string sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -206,7 +206,7 @@ string cBuilding::getStatusStr ()
 		}
 
 		// Goldraffinerie:
-		if ( data.convertsGold && owner == Client->ActivePlayer )
+		if ( data.convertsGold && owner == Client->getActivePlayer() )
 		{
 			string sText;
 			sText = lngPack.i18n ( "Text~Comp~Working" ) + "\n";
@@ -258,7 +258,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// draw the damage effects
-	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->getMap()->size] ) )
+	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[PosX+PosY*Client->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
@@ -348,7 +348,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ((BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == Client->ActivePlayer)
+	if ( ((BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == Client->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -1102,7 +1102,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 	{
 		v = OverUnitField->getVehicles();
 
-		if ( v->owner != Client->ActivePlayer )
+		if ( v->owner != Client->getActivePlayer() )
 			return false;
 
 		if ( v->data.storeResType != data.storeResType )
@@ -1142,7 +1142,7 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 			if ( b->SubBase != SubBase )
 				return false;
 
-			if ( b->owner != Client->ActivePlayer )
+			if ( b->owner != Client->getActivePlayer() )
 				return false;
 
 			if ( data.storeResType != b->data.storeResType )

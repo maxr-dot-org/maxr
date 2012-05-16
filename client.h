@@ -109,6 +109,8 @@ private:
 	cMap *Map;
 	/** List with all players */
 	cList<cPlayer*> *PlayerList;
+	/** the active Player */
+	cPlayer *ActivePlayer;
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
@@ -207,8 +209,6 @@ private:
 public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
-	/** the active Player */
-	cPlayer *ActivePlayer;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
@@ -328,6 +328,7 @@ public:
 	cCasualtiesTracker* getCasualties () {return casualtiesTracker;}
 	cMap* getMap() { return Map; }
 	cList<cPlayer*>* getPlayerList() { return PlayerList; }
+	cPlayer *getActivePlayer() { return ActivePlayer; };
 
 };
 

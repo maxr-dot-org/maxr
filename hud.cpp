@@ -1112,7 +1112,7 @@ void cGameGUI::updateMouseCursor()
 		}
 	}
 
-	if ( selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == Client->ActivePlayer )
+	if ( selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == Client->getActivePlayer() )
 	{
 		if ( x >= HUD_LEFT_WIDTH )
 		{
@@ -1123,7 +1123,7 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor ( CNo );
 		}
 	}
-	else if ( ( selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == Client->ActivePlayer ) || ( selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == Client->ActivePlayer ) )
+	else if ( ( selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == Client->getActivePlayer() ) || ( selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == Client->getActivePlayer() ) )
 	{
 		if ( selectedVehicle )
 		{
@@ -1164,7 +1164,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->getMap()->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
 			{
@@ -1178,7 +1178,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
@@ -1192,7 +1192,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
 			{
@@ -1206,21 +1206,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), false );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
 		{
 			if ( mouse->SetCursor ( CSteal ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), true );
 			}
 		}
-		else if ( selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner==Client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 			{
@@ -1234,21 +1234,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false, false ) )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false, false ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedVehicle->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap() ) )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedBuilding->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == muniActive )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == muniActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REARM ) )
 			{
@@ -1259,7 +1259,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == repairActive )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == repairActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REPAIR ) )
 			{
@@ -1281,7 +1281,7 @@ void cGameGUI::updateMouseCursor()
 				) &&
 				(
 					!selectedVehicle                               ||
-					selectedVehicle->owner != Client->ActivePlayer ||
+					selectedVehicle->owner != Client->getActivePlayer() ||
 					(
 						(
 							selectedVehicle->data.factorAir > 0 ||
@@ -1316,7 +1316,7 @@ void cGameGUI::updateMouseCursor()
 				) &&
 				(
 					!selectedBuilding                               ||
-					selectedBuilding->owner != Client->ActivePlayer ||
+					selectedBuilding->owner != Client->getActivePlayer() ||
 					(
 						(
 							!selectedBuilding->BuildList                    ||
@@ -1332,7 +1332,7 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CSelect );
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == loadMode )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == loadMode )
 		{
 			if ( selectedVehicle->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
@@ -1343,7 +1343,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
 			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
 			{
@@ -1354,7 +1354,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) )
 		{
 			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle )
 			{
@@ -1387,7 +1387,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (
 				selectedBuilding                                &&
-				selectedBuilding->owner == Client->ActivePlayer &&
+				selectedBuilding->owner == Client->getActivePlayer() &&
 				selectedBuilding->BuildList                     &&
 				selectedBuilding->BuildList->Size()             &&
 				!selectedBuilding->IsWorking                    &&
@@ -1402,7 +1402,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
 			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
 			{
@@ -1413,7 +1413,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == loadMode )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && mouseInputMode == loadMode )
 		{
 			if ( selectedBuilding->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
@@ -2138,7 +2138,7 @@ void cGameGUI::doCommand( const string& cmd )
 			}
 			else
 			{
-				sendRequestResync( Client->ActivePlayer->Nr );
+				sendRequestResync( Client->getActivePlayer()->Nr );
 			}
 		}
 		return;
@@ -2766,7 +2766,7 @@ void cGameGUI::doneReleased( void *parent )
 	cUnit* unit = gui->selectedVehicle;
 	if (!unit) unit = gui->selectedBuilding;
 
-	if (unit && unit->owner == Client->ActivePlayer)
+	if (unit && unit->owner == Client->getActivePlayer())
 	{
 		unit->center();
 		unit->isMarkedAsDone = true;
@@ -2846,7 +2846,7 @@ void cGameGUI::miniMapRightClicked( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 
-	if (!gui->selectedVehicle || gui->selectedVehicle->owner != Client->ActivePlayer) return;
+	if (!gui->selectedVehicle || gui->selectedVehicle->owner != Client->getActivePlayer()) return;
 
 	int x = mouse->x;
 	int y = mouse->y;

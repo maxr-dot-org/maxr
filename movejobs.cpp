@@ -1217,7 +1217,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 			setVehicleToCoords( iServerPositionX, iServerPositionY, height );
 			Log.write(" Client: next field is blocked: DestX: " + iToStr ( Waypoints->next->X ) + ", DestY: " + iToStr ( Waypoints->next->Y ), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if ( Vehicle->owner != Client->ActivePlayer )
+			if ( Vehicle->owner != Client->getActivePlayer() )
 			{
 				bFinished = true;
 				break;
@@ -1309,7 +1309,7 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if ( cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWater ( Vehicle->PosX, Vehicle->PosY, false ) &&!
 	        ( Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X+Waypoints->next->Y*Map->size]].water ) &&
-	        ( Vehicle->owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
+	        ( Vehicle->owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[Vehicle->PosX+Vehicle->PosY*Map->size] ) )
 	{
 		if ( abs(Vehicle->OffX) == 64 || abs(Vehicle->OffY) == 64 )
 		{

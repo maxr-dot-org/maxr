@@ -128,7 +128,7 @@ cVehicle::~cVehicle ()
 void cVehicle::draw ( SDL_Rect screenPosition )
 {
 	//make damage effect
-	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->getMap()->size] ) )
+	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[PosX+PosY*Client->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
@@ -192,7 +192,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && Client->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+		if ( (data.isStealthOn&TERRAIN_SEA) && Client->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->getActivePlayer() )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -263,7 +263,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// draw indication, when building is complete
-	if ( IsBuilding && BuildRounds == 0  && owner == Client->ActivePlayer && !BuildPath )
+	if ( IsBuilding && BuildRounds == 0  && owner == Client->getActivePlayer() && !BuildPath )
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -586,7 +586,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 			cBuilding* building = Client->getMap()->fields[PosX + PosY*Client->getMap()->size].getBaseBuilding();
 			if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
-			if ( (data.isStealthOn&TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
+			if ( (data.isStealthOn&TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == Client->getActivePlayer() ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
 			else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 		}
 	}
@@ -802,7 +802,7 @@ void cVehicle::DrawPath ()
 	SDL_Rect dest, ndest;
 	sWaypoint *wp;
 
-	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->ActivePlayer )
+	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->getActivePlayer() )
 	{
 		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || Client->gameGUI.mouseInputMode == placeBand ) return;
 
@@ -923,7 +923,7 @@ string cVehicle::getStatusStr() const
 		return lngPack.i18n ( "Text~Comp~Sentry" );
 	else if ( IsBuilding )
 	{
-		if ( owner != Client->ActivePlayer )
+		if ( owner != Client->getActivePlayer() )
 			return lngPack.i18n ( "Text~Comp~Producing" );
 		else
 		{
@@ -966,7 +966,7 @@ string cVehicle::getStatusStr() const
 		else
 			return lngPack.i18n ( "Text~Comp~Clearing_Fin" );
 	}
-	else if ( ( data.canCapture || data.canDisable ) && owner == Client->ActivePlayer )
+	else if ( ( data.canCapture || data.canDisable ) && owner == Client->getActivePlayer() )
 	{
 		string sTmp = lngPack.i18n ( "Text~Comp~Waits" ) + "\n";
 
@@ -992,7 +992,7 @@ int cVehicle::playStream ()
 	bool water = Client->getMap()->isWater ( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
-	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
+	if ( IsBuilding && ( BuildRounds || Client->getActivePlayer() != owner ))
 		return PlayFXLoop ( SoundData.SNDBuilding );
 	else if ( IsClearing )
 		return PlayFXLoop ( SoundData.SNDClearing );
@@ -1320,7 +1320,7 @@ void cVehicle::doSurvey ()
 //-----------------------------------------------------------------------------
 void cVehicle::MakeReport ()
 {
-	if ( owner != Client->ActivePlayer )
+	if ( owner != Client->getActivePlayer() )
 		return;
 
 	if ( turnsDisabled > 0 )
@@ -1444,7 +1444,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 		if ( v == this )
 			return false;
 
-		if ( v->owner != Client->ActivePlayer )
+		if ( v->owner != Client->getActivePlayer() )
 			return false;
 
 		if ( v->data.storeResType != data.storeResType )
@@ -1459,7 +1459,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 	{
 		cBuilding *b = OverUnitField->getTopBuilding();
 
-		if ( b->owner != Client->ActivePlayer )
+		if ( b->owner != Client->getActivePlayer() )
 			return false;
 
 		if ( !b->SubBase )

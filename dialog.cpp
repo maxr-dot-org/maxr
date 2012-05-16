@@ -489,7 +489,7 @@ void cDialogPreferences::saveValues()
 {
 
 	cSettings::getInstance().setPlayerName(nameEdit->getText().c_str());
-	if ( Client) Client->ActivePlayer->name = cSettings::getInstance().getPlayerName();
+	if ( Client) Client->getActivePlayer()->name = cSettings::getInstance().getPlayerName();
 
 	cSettings::getInstance().setAutosave(autosaveChBox->isChecked());
 	cSettings::getInstance().setAnimations(animationChBox->isChecked());

@@ -2119,13 +2119,13 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 	{
 		//this unit was captured by an infiltrator
 		PlayVoice( VoiceData.VOIUnitStolenByEnemy );
-		Client->ActivePlayer->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY );
+		Client->getActivePlayer()->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY );
 	}
 	else if ( AddedVehicle->owner != ActivePlayer )
 	{
 		// make report
 		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->name + ") " + lngPack.i18n ( "Text~Comp~Detected" );
-		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY );
+		Client->getActivePlayer()->addSavedReport ( Client->addCoords( message, iPosX, iPosY ), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY );
 
 		if ( AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack )
 			PlayVoice( VoiceData.VOISubDetected );

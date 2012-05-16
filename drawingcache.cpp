@@ -53,7 +53,7 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
 		stealth = true;
 	else
 		stealth = false;
@@ -220,7 +220,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->ActivePlayer )
+		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
 			stealth = true;
 
 		if ( entry.stealth != stealth ) continue;

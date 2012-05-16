@@ -3812,12 +3812,12 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 						AutoSurface surface;
 						if ( unitID.getBuilding() )
 						{
-							cBuilding building(unitID.getBuilding(), Client->ActivePlayer, NULL);
+							cBuilding building(unitID.getBuilding(), Client->getActivePlayer(), NULL);
 							surface = generateUnitSurface (&building);
 						}
 						else if ( unitID.getVehicle() )
 						{
-							cVehicle vehicle(unitID.getVehicle(), Client->ActivePlayer);
+							cVehicle vehicle(unitID.getVehicle(), Client->getActivePlayer());
 							surface = generateUnitSurface (&vehicle);
 						}
 						else
@@ -4042,12 +4042,12 @@ void cMenuReportsScreen::drawReportsScreen()
 				AutoSurface surface;
 				if ( savedReport.unitID.getVehicle() )
 				{
-					cVehicle vehicle(savedReport.unitID.getVehicle(), Client->ActivePlayer);
+					cVehicle vehicle(savedReport.unitID.getVehicle(), Client->getActivePlayer());
 					surface = generateUnitSurface (&vehicle);
 				}
 				else if ( savedReport.unitID.getBuilding() )
 				{
-					cBuilding building(savedReport.unitID.getBuilding(), Client->ActivePlayer, NULL);
+					cBuilding building(savedReport.unitID.getBuilding(), Client->getActivePlayer(), NULL);
 					surface = generateUnitSurface (&building);
 				}
 				else

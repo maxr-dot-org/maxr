@@ -673,13 +673,13 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 	}
 
 	bool sentryReaction = message->popBool();
-	if ( sentryReaction && ( (building && building->owner == Client->ActivePlayer) || (vehicle && vehicle->owner == Client->ActivePlayer) ))
+	if ( sentryReaction && ( (building && building->owner == Client->getActivePlayer()) || (vehicle && vehicle->owner == Client->getActivePlayer()) ))
 	{
 		int x = vehicle?vehicle->PosX:building->PosX;
 		int y = vehicle?vehicle->PosY:building->PosY;
 		string name = vehicle?vehicle->getDisplayName():building->getDisplayName();
 		sID id = vehicle?vehicle->data.ID:building->data.ID;
-		Client->ActivePlayer->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~AttackingEnemy", name), x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y );
+		Client->getActivePlayer()->addSavedReport ( Client->addCoords( lngPack.i18n("Text~Comp~AttackingEnemy", name), x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y );
 		if (random(2))
 			PlayVoice(VoiceData.VOIAttackingEnemy1 );
 		else
@@ -946,7 +946,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			Log.write(" Client: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr(targetVehicle->iID) + ") hit. Remaining HP: " + iToStr(targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 
 			name = targetVehicle->getDisplayName();
-			if ( targetVehicle->owner == Client->ActivePlayer ) ownUnit = true;
+			if ( targetVehicle->owner == Client->getActivePlayer() ) ownUnit = true;
 
 			if (targetVehicle->data.hitpointsCur <= 0)
 			{
@@ -970,7 +970,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			Log.write(" Client: building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr(targetBuilding->iID) + ") hit. Remaining HP: " + iToStr(targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG );
 
 			name = targetBuilding->getDisplayName();
-			if ( targetBuilding->owner == Client->ActivePlayer ) ownUnit = true;
+			if ( targetBuilding->owner == Client->getActivePlayer() ) ownUnit = true;
 
 			if ( targetBuilding->data.hitpointsCur <= 0 )
 			{
@@ -1014,7 +1014,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 			else
 				PlayVoice( VoiceData.VOIAttackingUs3 );
 		}
-		Client->ActivePlayer->addSavedReport ( Client->addCoords( message, x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y );
+		Client->getActivePlayer()->addSavedReport ( Client->addCoords( message, x, y ), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y );
 	}
 
 	//clean up
