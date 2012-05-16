@@ -362,7 +362,7 @@ void cPlayer::refreshSentryGround ()
 		}
 		unit = unit->next;
 	}
-	unit = (cUnit*) BuildingList;
+	unit = BuildingList;
 	while (unit)
 	{
 		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )
@@ -393,7 +393,7 @@ void cPlayer::DoScan ()
 	{
 		if ( vp->Loaded )
 		{
-			vp = (cVehicle*)vp->next;
+			vp = static_cast<cVehicle*>(vp->next);
 			continue;
 		}
 
@@ -424,7 +424,7 @@ void cPlayer::DoScan ()
 				}
 			}
 		}
-		vp = (cVehicle*)vp->next;
+		vp = static_cast<cVehicle*>(vp->next);
 	}
 
 	// iterate the building list
@@ -444,7 +444,7 @@ void cPlayer::DoScan ()
 					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
-		bp = (cBuilding*)bp->next;
+		bp = static_cast<cBuilding*>(bp->next);
 	}
 }
 
@@ -490,13 +490,13 @@ cUnit *cPlayer::getNextUnit ()
 		//check if this unit is the next one to be selected
 		if (unit->isBuilding ())
 		{
-			cBuilding* building = (cBuilding*) unit;
+			cBuilding* building = static_cast<cBuilding*>(unit);
 			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
 				return unit;
 		}
 		else
 		{
-			cVehicle* vehicle = (cVehicle*) unit;
+			cVehicle* vehicle = static_cast<cVehicle*>(unit);
 			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
 				return unit;
 		}
@@ -585,13 +585,13 @@ cUnit *cPlayer::getPrevUnit ()
 		//check if this unit is the next one to be selected
 		if (unit->isBuilding ())
 		{
-			cBuilding* building = (cBuilding*) unit;
+			cBuilding* building = static_cast<cBuilding*>(unit);
 			if ( !building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && ( !building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
 				return unit;
 		}
 		else
 		{
-			cVehicle* vehicle = (cVehicle*) unit;
+			cVehicle* vehicle = static_cast<cVehicle*>(unit);
 			if ( !vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && ( vehicle->data.speedCur || vehicle->data.shotsCur ))
 				return unit;
 		}
@@ -692,7 +692,7 @@ void cPlayer::accumulateScore()
 	const int now = Server->getTurn();
 	int deltaScore = 0;
 
-	for(cBuilding *bp = BuildingList; bp; bp = (cBuilding*)bp->next)
+	for (cBuilding *bp = BuildingList; bp; bp = static_cast<cBuilding*>(bp->next))
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
 		{
@@ -710,7 +710,7 @@ void cPlayer::CountEcoSpheres()
 {
 	numEcos = 0;
 
-	for(cBuilding *bp = BuildingList; bp; bp = (cBuilding*)bp->next)
+	for (cBuilding *bp = BuildingList; bp; bp = static_cast<cBuilding*>(bp->next))
 	{
 		if ( bp->typ->data.canScore && bp->IsWorking )
 			numEcos ++;
@@ -871,7 +871,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;
 		}
-		curBuilding = (cBuilding*)curBuilding->next;
+		curBuilding = static_cast<cBuilding*>(curBuilding->next);
 	}
 	ResearchCount = newResearchCount;
 }

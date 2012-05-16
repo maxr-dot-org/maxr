@@ -27,6 +27,7 @@
 class INotificationListener
 {
 public:
+	virtual ~INotificationListener() {}
 	virtual bool notify (const std::string& message, void* sender = 0) = 0;
 };
 

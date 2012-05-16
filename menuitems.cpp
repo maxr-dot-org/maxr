@@ -2452,7 +2452,7 @@ cMenuUpgradeHandler::~cMenuUpgradeHandler()
 
 void cMenuUpgradeHandler::buttonReleased( void* parent )
 {
-	cMenuUpgradeHandler *This = (cMenuUpgradeHandler *)parent;
+	cMenuUpgradeHandler *This = reinterpret_cast<cMenuUpgradeHandler *>(parent);
 	if ( !This->selection ) return;
 
 	sUnitUpgrade *upgrades = This->selection->getUpgrades();
