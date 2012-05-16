@@ -3730,12 +3730,12 @@ void cMenuReportsScreen::drawUnitsScreen()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawDisadvantagesScreen ()
 {
-	if (Client->PlayerList == 0)
+	if (Client->getPlayerList() == 0)
 		return;
 
-	for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
+	for (unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size (); playerIdx++)
 	{
-		cPlayer* player = (*(Client->PlayerList))[playerIdx];
+		cPlayer* player = (*(Client->getPlayerList()))[playerIdx];
 		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
 								position.y + (playerIdx < 4 ? 9 : 22), player->name);
 	}
@@ -3829,9 +3829,9 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
 
-					for (unsigned int playerIdx = 0; playerIdx < Client->PlayerList->Size (); playerIdx++)
+					for (unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size (); playerIdx++)
 					{
-						cPlayer* player = (*(Client->PlayerList))[playerIdx];
+						cPlayer* player = (*(Client->getPlayerList()))[playerIdx];
 						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
 						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
 												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));
@@ -3867,9 +3867,9 @@ void cMenuReportsScreen::drawScoreScreen()
 		font->showText(position.x+25, position.y+20, ss.str());
 	}
 
-	for (unsigned n=0, y=36; n < Client->PlayerList->Size(); n++, y+=16)
+	for (unsigned n=0, y=36; n < Client->getPlayerList()->Size(); n++, y+=16)
 	{
-		cPlayer *p = (*Client->PlayerList)[n];
+		cPlayer *p = (*Client->getPlayerList())[n];
 		int score = p->getScore(Client->getTurn());
 		int ecos = p->numEcos;
 
@@ -3927,11 +3927,11 @@ void cMenuReportsScreen::drawScoreGraph()
 	*/
 	int highest_score = 0;
 	int lowest_score = 0x7FFFFFFF;
-	for(unsigned n=0; n < Client->PlayerList->Size(); n++)
+	for(unsigned n=0; n < Client->getPlayerList()->Size(); n++)
 	{
 		for(int turn = min_turns; turn < max_turns; turn++)
 		{
-			cPlayer *p = (*Client->PlayerList)[n];
+			cPlayer *p = (*Client->getPlayerList())[n];
 			int score = extrapolateScore(p, turn);
 			if(score > highest_score)
 				highest_score = score;
@@ -3992,9 +3992,9 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Score Lines
 	*/
-	for(unsigned n=0, y=40; n < Client->PlayerList->Size(); n++, y+=25)
+	for(unsigned n=0, y=40; n < Client->getPlayerList()->Size(); n++, y+=25)
 	{
-		cPlayer *p = (*Client->PlayerList)[n];
+		cPlayer *p = (*Client->getPlayerList())[n];
 		Uint32 player_colour = getPlayerColour(p);
 
 		int lx, ly;

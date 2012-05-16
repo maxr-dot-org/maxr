@@ -1166,7 +1166,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->Map->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
+			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->getMap()->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
 			{
 				if ( mouse->SetCursor ( CAttack ))
 				{
@@ -1180,7 +1180,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
 				if ( mouse->SetCursor ( CDisable ) )
 				{
@@ -1194,7 +1194,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, true ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
 			{
 				if ( mouse->SetCursor ( CSteal ) )
 				{
@@ -1206,14 +1206,14 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==Client->ActivePlayer&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), false );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), Client->Map, true ) )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
 		{
 			if ( mouse->SetCursor ( CSteal ) )
 			{
@@ -1234,14 +1234,14 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false, false ) )
+		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false, false ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedVehicle->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->Map ) )
+		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
@@ -1334,7 +1334,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == loadMode )
 		{
-			if ( selectedVehicle->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false ) )
+			if ( selectedVehicle->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
 				mouse->SetCursor ( CLoad );
 			}
@@ -1345,7 +1345,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && selectedVehicle->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
-			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
+			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1362,7 +1362,7 @@ void cGameGUI::updateMouseCursor()
 				{
 					mouse->SetCursor ( CNo );
 				}
-				else if ( Client->Map->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true ))
+				else if ( Client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true ))
 				{
 					mouse->SetCursor ( CMove );
 				}
@@ -1375,7 +1375,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if ( ( ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds == 0 ) ||
 					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds == 0 ) ) &&
-					 Client->Map->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo(mouse->getKachelX(), mouse->getKachelY()))
+					 Client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo(mouse->getKachelX(), mouse->getKachelY()))
 				{
 					mouse->SetCursor( CMove );
 				}
@@ -1393,7 +1393,7 @@ void cGameGUI::updateMouseCursor()
 				!selectedBuilding->IsWorking                    &&
 				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, (*selectedBuilding->BuildList)[0]->type.getVehicle()))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), (*selectedBuilding->BuildList)[0]->type.getVehicle()))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1404,7 +1404,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == activateVehicle )
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->Map, static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1415,7 +1415,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && selectedBuilding->owner==Client->ActivePlayer && mouseInputMode == loadMode )
 		{
-			if ( selectedBuilding->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->Map, false ) )
+			if ( selectedBuilding->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
 			{
 				mouse->SetCursor ( CLoad );
 			}
@@ -1715,7 +1715,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, Client->Map, overVehicle, true);
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, Client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1734,7 +1734,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedBuilding->isNextTo ( overPlane->PosX, overPlane->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overPlane->iID );
 				else
 				{
-					cPathCalculator pc(overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, Client->Map, overPlane, true);
+					cPathCalculator pc(overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, Client->getMap(), overPlane, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1756,7 +1756,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, Client->Map, selectedVehicle);
+					cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, Client->getMap(), selectedVehicle);
 					sWaypoint *path = pc.calcPath();
 					if ( path )
 					{
@@ -1775,7 +1775,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedVehicle->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, Client->Map, overVehicle, true);
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, Client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1817,7 +1817,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				{
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, Client->Map);
+					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, Client->getMap());
 
 					if ( selectedVehicle->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 					{
@@ -1826,11 +1826,11 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						if ( vehicle ) targetId = vehicle->iID;
 
 						Log.write(" Client: want to attack " + iToStr(mouse->getKachelX()) + ":" + iToStr(mouse->getKachelY()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
-						sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->Map->size, selectedVehicle->iID, true );
+						sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->getMap()->size, selectedVehicle->iID, true );
 					}
 					else if ( vehicle || building )
 					{
-						cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, Client->Map, selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, Client->getMap(), selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 						sWaypoint* path = pc.calcPath();
 						if ( path )
 						{
@@ -1850,11 +1850,11 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					int targetId = 0;
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedBuilding->data.canAttack, Client->Map);
+					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedBuilding->data.canAttack, Client->getMap());
 					if ( vehicle ) targetId = vehicle->iID;
 
 					int offset = selectedBuilding->PosX + selectedBuilding->PosY * map->size;
-					sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->Map->size, offset, false );
+					sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->getMap()->size, offset, false );
 				}
 				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle )
 				{

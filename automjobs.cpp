@@ -162,7 +162,7 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor(int PosX, int PosY)
 {
-	if ( !Client->Map->possiblePlace( vehicle, PosX, PosY, true )) return (float)FIELD_BLOCKED;
+	if ( !Client->getMap()->possiblePlace( vehicle, PosX, PosY, true )) return (float)FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -172,16 +172,16 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
 	{
 		// check for map borders
-		if ( x < 0 || x >= Client->Map->size ) continue;
+		if ( x < 0 || x >= Client->getMap()->size ) continue;
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			// check for map borders
-			if ( y < 0 || y >= Client->Map->size ) continue;
+			if ( y < 0 || y >= Client->getMap()->size ) continue;
 
-			int iPos = x + y * Client->Map->size;
+			int iPos = x + y * Client->getMap()->size;
 
-			// int terrainNr = Client->Map->Kacheln[x + y * Client->Map->size]; !the line where this variable is needed was commented out earlier!
-			if ( vehicle->owner->ResourceMap[iPos] == 0 )//&& !Client->Map->terrain[terrainNr].blocked )
+			// int terrainNr = Client->getMap()->Kacheln[x + y * Client->getMap()->size]; !the line where this variable is needed was commented out earlier!
+			if ( vehicle->owner->ResourceMap[iPos] == 0 )//&& !Client->getMap()->terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
@@ -197,16 +197,16 @@ float cAutoMJob::CalcFactor(int PosX, int PosY)
 	for ( x = PosX - 1; x <= PosX + 1; x ++)
 	{
 		// check for map borders
-		if ( x < 0 || x >= Client->Map->size ) continue;
+		if ( x < 0 || x >= Client->getMap()->size ) continue;
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			// check for map borders
-			if ( y < 0 || y >= Client->Map->size ) continue;
+			if ( y < 0 || y >= Client->getMap()->size ) continue;
 
-			int iPos = x + y * Client->Map->size;
+			int iPos = x + y * Client->getMap()->size;
 
 			// check if the surveyor already found some resources in this new direction or not
-			if ( vehicle->owner->ResourceMap[iPos] != 0 && Client->Map->Resources[iPos].typ != 0 )
+			if ( vehicle->owner->ResourceMap[iPos] != 0 && Client->getMap()->Resources[iPos].typ != 0 )
 			{
 				NrResFound++;
 			}
@@ -252,12 +252,12 @@ void cAutoMJob::PlanLongMove()
 	float factor;
 	float minValue = 0;
 
-	for ( x = 0; x < Client->Map->size; x++ )
+	for ( x = 0; x < Client->getMap()->size; x++ )
 	{
-		for ( y = 0; y < Client->Map->size; y++ )
+		for ( y = 0; y < Client->getMap()->size; y++ )
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if ( !Client->Map->possiblePlace( vehicle, x, y ) || vehicle->owner->ResourceMap[x + y * Client->Map->size] == 1 ) continue;
+			if ( !Client->getMap()->possiblePlace( vehicle, x, y ) || vehicle->owner->ResourceMap[x + y * Client->getMap()->size] == 1 ) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;

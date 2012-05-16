@@ -4437,12 +4437,12 @@ void cBuildingsBuildMenu::doneReleased ( void *parent )
 	cBuildingsBuildMenu *menu = static_cast<cBuildingsBuildMenu*>((cMenu*)parent);
 	if ( !menu->selectedUnit->getUnitData()->isBig )
 	{
-		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size, false, 0 );
+		sendWantBuild( menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size, false, 0 );
 	}
 	else
 	{
 		Client->gameGUI.mouseInputMode = placeBand;
-		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * Client->Map->size;
+		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size;
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
@@ -4578,20 +4578,20 @@ void cVehiclesBuildMenu::generateSelectionList()
 			else if ( j == 5 || j == 7 ) x += 3;
 			else x++;
 
-			if ( x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size ) continue;
+			if ( x < 0 || x >= Client->getMap()->size || y < 0 || y >= Client->getMap()->size ) continue;
 
-			int off = x + y * Client->Map->size;
-			cBuildingIterator bi = Client->Map->fields[off].getBuildings();
+			int off = x + y * Client->getMap()->size;
+			cBuildingIterator bi = Client->getMap()->fields[off].getBuildings();
 			while ( bi && ( bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) ) bi++;
 
-			if ( !Client->Map->isWater ( x, y ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE ) ) land = true;
-			else if ( Client->Map->isWater ( x, y ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
+			if ( !Client->getMap()->isWater ( x, y ) || ( bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE ) ) land = true;
+			else if ( Client->getMap()->isWater ( x, y ) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if ( Client->Map->isWater ( x, y ) ) water = true;
+			else if ( Client->getMap()->isWater ( x, y ) ) water = true;
 		}
 
 		if ( vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water ) continue;
@@ -5348,12 +5348,12 @@ void cStorageMenu::activateAllReleased ( void *parent )
 		bool activated = false;
 		for ( int ypos = unitYPos-1, poscount = 0; ypos <= unitYPos+(isBig ? 2 : 1); ypos++ )
 		{
-			if ( ypos < 0 || ypos >= Client->Map->size ) continue;
+			if ( ypos < 0 || ypos >= Client->getMap()->size ) continue;
 			for ( int xpos = unitXPos-1; xpos <= unitXPos+(isBig ? 2 : 1); xpos++, poscount++ )
 			{
-				if ( xpos < 0 || xpos >= Client->Map->size || ( ( ( ypos == unitYPos && menu->unitData.factorAir == 0 ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.factorAir == 0 ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
-				if ( ( ( menu->ownerBuilding && menu->ownerBuilding->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) ||
-					( menu->ownerVehicle && menu->ownerVehicle->canExitTo ( xpos, ypos, Client->Map, vehicle->typ ) ) )
+				if ( xpos < 0 || xpos >= Client->getMap()->size || ( ( ( ypos == unitYPos && menu->unitData.factorAir == 0 ) || ( ypos == unitYPos+1 && isBig ) ) && ( ( xpos == unitXPos && menu->unitData.factorAir == 0 ) || ( xpos == unitXPos+1 && isBig ) ) ) ) continue;
+				if ( ( ( menu->ownerBuilding && menu->ownerBuilding->canExitTo ( xpos, ypos, Client->getMap(), vehicle->typ ) ) ||
+					( menu->ownerVehicle && menu->ownerVehicle->canExitTo ( xpos, ypos, Client->getMap(), vehicle->typ ) ) )
 					&& !hasCheckedPlace[poscount] )
 				{
 					sendWantActivate ( id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos );

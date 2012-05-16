@@ -313,7 +313,7 @@ int cUnit::getNumberOfMenuEntries () const
 		result++;
 
 	// Remove
-	if (data.canClearArea && Client->Map->fields[PosX + PosY*Client->Map->size].getRubble () && isUnitClearing () == false)
+	if (data.canClearArea && Client->getMap()->fields[PosX + PosY*Client->getMap()->size].getRubble () && isUnitClearing () == false)
 		result++;
 
 	// Manual Fire
@@ -458,7 +458,7 @@ void cUnit::drawMenu ()
 	}
 
 	// Remove:
-	if (data.canClearArea && Client->Map->fields[PosX + PosY*Client->Map->size].getRubble () && isUnitClearing () == false && owner == Client->ActivePlayer)
+	if (data.canClearArea && Client->getMap()->fields[PosX + PosY*Client->getMap()->size].getRubble () && isUnitClearing () == false && owner == Client->ActivePlayer)
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
@@ -723,7 +723,7 @@ void cUnit::menuReleased ()
 	}
 
 	// remove:
-	if (data.canClearArea && Client->Map->fields[PosX+PosY*Client->Map->size].getRubble () != 0 && isUnitClearing () == false && owner == Client->ActivePlayer)
+	if (data.canClearArea && Client->getMap()->fields[PosX+PosY*Client->getMap()->size].getRubble () != 0 && isUnitClearing () == false && owner == Client->ActivePlayer)
 	{
 		if (exeNr == nr)
 		{

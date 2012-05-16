@@ -527,8 +527,8 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 {
 	bool bIsAir = message->popBool();
 	int offset = message->popInt32();
-	int x = offset % Client->Map->size;
-	int y = offset / Client->Map->size;
+	int x = offset % Client->getMap()->size;
+	int y = offset / Client->getMap()->size;
 	int ID = message->popInt32();
 	if ( ID != 0 )
 	{
@@ -545,7 +545,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 		if ( vehicle->PosX != x || vehicle->PosY != y )
 		{
 			Log.write(" Client: changed vehicle position to (" + iToStr( x ) + ":" + iToStr( y ) + ")", cLog::eLOG_TYPE_NET_DEBUG );
-			Client->Map->moveVehicle( vehicle, x, y );
+			Client->getMap()->moveVehicle( vehicle, x, y );
 			vehicle->owner->DoScan();
 
 			vehicle->OffY = message->popChar();
@@ -554,7 +554,7 @@ void cClientAttackJob::lockTarget( cNetMessage* message )
 	}
 	if ( !bIsAir )
 	{
-		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
+		cBuildingIterator buildings = (*Client->getMap())[offset].getBuildings();
 		while ( !buildings.end )
 		{
 			buildings->isBeeingAttacked = true;
@@ -643,11 +643,11 @@ cClientAttackJob::cClientAttackJob( cNetMessage* message )
 
 		if ( vehicle )
 		{
-			iAgressorOffset = vehicle->PosX + vehicle->PosY * Client->Map->size;
+			iAgressorOffset = vehicle->PosX + vehicle->PosY * Client->getMap()->size;
 		}
 		else
 		{
-			iAgressorOffset = building->PosX + building->PosY * Client->Map->size;
+			iAgressorOffset = building->PosX + building->PosY * Client->getMap()->size;
 		}
 	}
 
@@ -729,7 +729,7 @@ void cClientAttackJob::playMuzzle()
 	{
 		state = FINISHED;
 		PlayFX ( building->typ->Attack );
-		if ( Client->Map->isWater( building->PosX, building->PosY) )
+		if ( Client->getMap()->isWater( building->PosX, building->PosY) )
 		{
 			Client->addFX( fxExploWater, building->PosX*64 + 32, building->PosY*64 + 32, 0);
 		}
@@ -809,8 +809,8 @@ void cClientAttackJob::playMuzzle()
 		{
 			if ( wait++!=0 ) return;
 
-			int PosX = iAgressorOffset%Client->Map->size;
-			int PosY = iAgressorOffset/Client->Map->size;
+			int PosX = iAgressorOffset%Client->getMap()->size;
+			int PosY = iAgressorOffset/Client->getMap()->size;
 			Client->addFX ( fxRocket, PosX*64, PosY*64, this, iTargetOffset, iFireDir );
 
 			break;
@@ -880,8 +880,8 @@ void cClientAttackJob::playMuzzle()
 		{
 			if ( wait++!=0 ) return;
 
-			int PosX = iAgressorOffset%Client->Map->size;
-			int PosY = iAgressorOffset/Client->Map->size;
+			int PosX = iAgressorOffset%Client->getMap()->size;
+			int PosY = iAgressorOffset/Client->getMap()->size;
 			Client->addFX ( fxTorpedo, PosX*64, PosY*64, this, iTargetOffset, iFireDir );
 
 			break;
@@ -912,7 +912,7 @@ void cClientAttackJob::sendFinishMessage()
 //--------------------------------------------------------------------------
 void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 {
-	if ( offset < 0 || offset > Client->Map->size * Client->Map->size )
+	if ( offset < 0 || offset > Client->getMap()->size * Client->getMap()->size )
 	{
 		Log.write(" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR );
 		return;
@@ -986,8 +986,8 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		Client->gameGUI.updateMouseCursor();
 	}
 
-	int x = offset % Client->Map->size;
-	int y = offset / Client->Map->size;
+	int x = offset % Client->getMap()->size;
+	int y = offset / Client->getMap()->size;
 
 	if ( playImpact && cSettings::getInstance().isAlphaEffects() )
 	{
@@ -1022,7 +1022,7 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 
 	if ( !isAir )
 	{
-		cBuildingIterator buildings = (*Client->Map)[offset].getBuildings();
+		cBuildingIterator buildings = (*Client->getMap())[offset].getBuildings();
 		while ( !buildings.end )
 		{
 			buildings->isBeeingAttacked = false;

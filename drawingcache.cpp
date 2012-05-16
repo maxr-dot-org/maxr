@@ -40,12 +40,12 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		frame = ANIMATION_SPEED % 4;
 
-	water = Client->Map->isWater(vehicle->PosX, vehicle->PosY ) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+	water = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY ) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
 
-	bool isOnWaterAndNotCoast = Client->Map->isWater(vehicle->PosX, vehicle->PosY, true);
+	bool isOnWaterAndNotCoast = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY, true);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+	cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
 	if ( vehicle->data.factorGround > 0 && building
 		&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -201,7 +201,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
-		bool water = Client->Map->isWater(vehicle->PosX, vehicle->PosY) && !Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+		bool water = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
 		if ( vehicle->IsBuilding )
 		{
 			if ( water != entry.water ) continue;
@@ -210,8 +210,8 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		//check the stealth flag
 		bool stealth = false;
 
-		bool isOnWaterAndNotCoast = Client->Map->isWater (vehicle->PosX, vehicle->PosY, true);
-		cBuilding* building = Client->Map->fields[vehicle->PosX + vehicle->PosY*Client->Map->size].getBaseBuilding();
+		bool isOnWaterAndNotCoast = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY, true);
+		cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
 		if ( vehicle->data.factorGround > 0 && building
 			&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE

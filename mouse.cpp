@@ -199,7 +199,7 @@ int cMouse::getKachelX()
 
 	int X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
 
-	if ( X >= Client->Map->size ) X = Client->Map->size-1;
+	if ( X >= Client->getMap()->size ) X = Client->getMap()->size-1;
 
 	return X;
 }
@@ -212,7 +212,7 @@ int cMouse::getKachelY ()
 	}
 
 	int Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
-	if ( Y >= Client->Map->size ) Y = Client->Map->size-1;
+	if ( Y >= Client->getMap()->size ) Y = Client->getMap()->size-1;
 
 	return Y;
 }

@@ -922,8 +922,8 @@ cClientMoveJob::cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle ) 
 	Waypoints(NULL),
 	lastWaypoints(NULL)
 {
-	DestX = iDestOff%Client->Map->size;
-	DestY = iDestOff/Client->Map->size;
+	DestX = iDestOff%Client->getMap()->size;
+	DestY = iDestOff/Client->getMap()->size;
 	init ( iSrcOff, Vehicle );
 }
 
@@ -950,7 +950,7 @@ void cClientMoveJob::init( int iSrcOff, cVehicle *Vehicle )
 {
 	if ( !Client ) return;
 
-	Map = Client->Map;
+	Map = Client->getMap();
 	this->Vehicle = Vehicle;
 	ScrX = iSrcOff%Map->size;
 	ScrY = iSrcOff/Map->size;
@@ -1097,7 +1097,7 @@ sWaypoint* cClientMoveJob::calcPath( int SrcX, int SrcY, int DestX, int DestY, c
 {
 	if (SrcX == DestX && SrcY == DestY) return 0;
 
-	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Client->Map, vehicle, group );
+	cPathCalculator PathCalculator( SrcX, SrcY, DestX, DestY, Client->getMap(), vehicle, group );
 	sWaypoint* waypoints = PathCalculator.calcPath();
 
 	return waypoints;
@@ -1452,8 +1452,8 @@ void cClientMoveJob::stopMoveSound()
 
 	if ( Vehicle == Client->gameGUI.getSelVehicle() )
 	{
-		cBuilding* building = Client->Map->fields[Vehicle->PosX+Vehicle->PosY*Client->Map->size].getBaseBuilding();
-		bool water = Client->Map->isWater ( Vehicle->PosX, Vehicle->PosY, true );
+		cBuilding* building = Client->getMap()->fields[Vehicle->PosX+Vehicle->PosY*Client->getMap()->size].getBaseBuilding();
+		bool water = Client->getMap()->isWater ( Vehicle->PosX, Vehicle->PosY, true );
 		if ( Vehicle->data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 		StopFXLoop ( Client->iObjectStream );

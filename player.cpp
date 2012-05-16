@@ -1012,7 +1012,7 @@ void cPlayer::DrawLockList ()
 		elem = LockList[i];
 		if ( elem->v )
 		{
-			off=elem->v->PosX+elem->v->PosY*Client->Map->size;
+			off=elem->v->PosX+elem->v->PosY*Client->getMap()->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->v );
@@ -1044,7 +1044,7 @@ void cPlayer::DrawLockList ()
 		}
 		else if ( elem->b )
 		{
-			off=elem->b->PosX+elem->b->PosY*Client->Map->size;
+			off=elem->b->PosX+elem->b->PosY*Client->getMap()->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->b );

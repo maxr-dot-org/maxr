@@ -105,6 +105,11 @@ private:
 	friend class cVehicle;
 	friend class cUnit;
 
+	/** the map */
+	cMap *Map;
+	/** List with all players */
+	cList<cPlayer*> *PlayerList;
+
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** ID of the timer */
@@ -208,8 +213,6 @@ public:
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	cList<cClientMoveJob*> ActiveMJobs;
-	/** the map */
-	cMap *Map;
 	/** the hud */
 	cGameGUI gameGUI;
 	/** true if the turn should be end after all movejobs have been finished */
@@ -223,9 +226,6 @@ public:
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
 	bool waitReconnect;
-
-	/** List with all players */
-	cList<cPlayer*> *PlayerList;
 
 	/**
 	* handles the timers timer50ms, timer100ms and timer400ms
@@ -326,6 +326,9 @@ public:
 	void deletePlayer(cPlayer *player);
 
 	cCasualtiesTracker* getCasualties () {return casualtiesTracker;}
+	cMap* getMap() { return Map; }
+	cList<cPlayer*>* getPlayerList() { return PlayerList; }
+
 };
 
 extern cClient* Client;

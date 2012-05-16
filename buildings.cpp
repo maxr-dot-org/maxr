@@ -258,7 +258,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
 
 	// draw the damage effects
-	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
@@ -1162,18 +1162,18 @@ void cBuilding::DrawExitPoints ( sVehicle *typ )
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 2, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX + 2, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy );
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 2, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX    , PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX + 1, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX + 2, PosY + 2, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 2, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX + 2, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy );
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 2, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX    , PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX + 1, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
+	if ( canExitTo ( PosX + 2, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize()*2 );
 }
 
 //--------------------------------------------------------------------------
@@ -1501,7 +1501,7 @@ void cBuilding::DrawAttackCursor ( int x, int y )
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, x, y, data.canAttack, Client->Map );
+	selectTarget(v, b, x, y, data.canAttack, Client->getMap() );
 
 	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{

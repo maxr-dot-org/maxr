@@ -127,8 +127,8 @@ cClient* Client = 0; // global instance
 
 cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map(Map),
-	gameGUI ( NULL, Map, playerList ),
-	PlayerList(playerList)
+	PlayerList(playerList),
+	gameGUI ( NULL, Map, playerList )
 {
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
@@ -389,8 +389,8 @@ void cClient::addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOf
 	sFXRocketInfos* ri = n->rocketInfo;
 	ri->ScrX = x;
 	ri->ScrY = y;
-	ri->DestX = (iDestOff % Client->Map->size) * 64;
-	ri->DestY = (iDestOff / Client->Map->size) * 64;
+	ri->DestX = (iDestOff % Client->getMap()->size) * 64;
+	ri->DestY = (iDestOff / Client->getMap()->size) * 64;
 	ri->aj = aj;
 	ri->dir = iFireDir;
 	addFX( n );
@@ -435,7 +435,7 @@ void cClient::addFX ( sFX* n )
 			break;
 		case fxExploSmall:
 		case fxExploWater:
-			if ( Map->isWater( n->PosX/64, n->PosY/64) )
+			if ( getMap()->isWater( n->PosX/64, n->PosY/64) )
 			{
 				int nr;
 				nr = random(3);
@@ -471,7 +471,7 @@ void cClient::addFX ( sFX* n )
 			}
 			break;
 		case fxExploBig:
-			if ( Map->isWater( n->PosX/64, n->PosY/64) )
+			if ( getMap()->isWater( n->PosX/64, n->PosY/64) )
 			{
 				if (random(2))
 				{
@@ -661,7 +661,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	case GAME_EV_PLAYER_CLANS:
-			for (unsigned int i = 0; i < PlayerList->Size (); i++)
+			for (unsigned int i = 0; i < getPlayerList()->Size (); i++)
 			{
 				int playerNr = message->popChar();
 				int clan = message->popChar ();
@@ -800,7 +800,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				Player->base.SubBases[0]->buildings.Add ( AddedBuilding );
 				AddedBuilding->SubBase = Player->base.SubBases[0];
 
-				AddedBuilding->updateNeighbours( Map );
+				AddedBuilding->updateNeighbours( getMap() );
 			}
 		}
 		break;
@@ -832,9 +832,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				gameGUI.updateTurnTime ( -1 );
 				ActivePlayer->clearDone ();
 				Log.write("######### Round " + iToStr( iTurn ) + " ###########", cLog::eLOG_TYPE_NET_DEBUG );
-				for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+				for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 				{
-					(*PlayerList)[i]->bFinishedTurn = false;
+					(*getPlayerList())[i]->bFinishedTurn = false;
 				}
 			}
 
@@ -932,8 +932,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 					// set to server position if vehicle is not moving
 					if ( !Vehicle->MoveJobActive )
 					{
-						Map->moveVehicle( Vehicle, iPosX, iPosY );
-						if ( bBig ) Map->moveVehicleBig( Vehicle, iPosX, iPosY );
+						getMap()->moveVehicle( Vehicle, iPosX, iPosY );
+						if ( bBig ) getMap()->moveVehicleBig( Vehicle, iPosX, iPosY );
 						Vehicle->owner->DoScan();
 					}
 				}
@@ -1071,7 +1071,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			cVehicle *Vehicle = getVehicleFromID ( iVehicleID );
 			if ( Vehicle == NULL )
 			{
-				Log.write(" Client: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%Map->size) + "x" + iToStr (iSrcOff/Map->size) + " to " + iToStr (iDestOff%Map->size) + "x" + iToStr (iDestOff/Map->size), cLog::eLOG_TYPE_NET_WARNING);
+				Log.write(" Client: Can't find vehicle with id " + iToStr ( iVehicleID ) + " for movejob from " +  iToStr (iSrcOff%getMap()->size) + "x" + iToStr (iSrcOff/getMap()->size) + " to " + iToStr (iDestOff%getMap()->size) + "x" + iToStr (iDestOff/getMap()->size), cLog::eLOG_TYPE_NET_WARNING);
 				// TODO: request sync of vehicle
 				break;
 			}
@@ -1134,8 +1134,8 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				int iOff = message->popInt32();
 				ActivePlayer->ResourceMap[iOff] = 1;
 
-				Map->Resources[iOff].typ = (unsigned char)message->popInt16();
-				Map->Resources[iOff].value = (unsigned char)message->popInt16();
+				getMap()->Resources[iOff].typ = (unsigned char)message->popInt16();
+				getMap()->Resources[iOff].value = (unsigned char)message->popInt16();
 			}
 		}
 		break;
@@ -1188,14 +1188,14 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( bBuildBig )
 			{
-				Map->moveVehicleBig(Vehicle, iBuildX, iBuildY );
+				getMap()->moveVehicleBig(Vehicle, iBuildX, iBuildY );
 				Vehicle->owner->DoScan();
 
 				Vehicle->BigBetonAlpha = 10;
 			}
 			else
 			{
-				Map->moveVehicle(Vehicle, iBuildX, iBuildY );
+				getMap()->moveVehicle(Vehicle, iBuildX, iBuildY );
 				Vehicle->owner->DoScan();
 			}
 
@@ -1235,7 +1235,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			if ( Vehicle->data.isBig )
 			{
-				Map->moveVehicle(Vehicle, iNewPos % Map->size, iNewPos / Map->size );
+				getMap()->moveVehicle(Vehicle, iNewPos % getMap()->size, iNewPos / getMap()->size );
 				Vehicle->owner->DoScan();
 			}
 
@@ -1513,7 +1513,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			rubble->PosY = message->popInt16();
 			rubble->PosX = message->popInt16();
 
-			Map->addBuilding( rubble, rubble->PosX, rubble->PosY);
+			getMap()->addBuilding( rubble, rubble->PosX, rubble->PosY);
 		}
 		break;
 	case GAME_EV_DETECTION_STATE:
@@ -1553,7 +1553,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 					Vehicle->ClearingRounds = message->popInt16();
 					int bigoffset = message->popInt16();
-					if ( bigoffset >= 0 ) Map->moveVehicleBig ( Vehicle, bigoffset % Map->size, bigoffset / Map->size );
+					if ( bigoffset >= 0 ) getMap()->moveVehicleBig ( Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size );
 					Vehicle->IsClearing = true;
 
 					if ( gameGUI.getSelVehicle() == Vehicle )
@@ -1586,7 +1586,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			}
 
 			int bigoffset = message->popInt16();
-			if ( bigoffset >= 0 ) Map->moveVehicle ( Vehicle, bigoffset % Map->size, bigoffset / Map->size );
+			if ( bigoffset >= 0 ) getMap()->moveVehicle ( Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size );
 			Vehicle->IsClearing = false;
 			Vehicle->ClearingRounds = 0;
 
@@ -1598,7 +1598,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		}
 		break;
 	case GAME_EV_NOFOG:
-		memset ( ActivePlayer->ScanMap, 1, Map->size*Map->size );
+		memset ( ActivePlayer->ScanMap, 1, getMap()->size*getMap()->size );
 		break;
 	case GAME_EV_DEFEATED:
 		{
@@ -1613,9 +1613,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			string msgString = lngPack.i18n( "Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n( "Text~Comp~Defeated");
 			addMessage ( msgString );
 			ActivePlayer->addSavedReport ( msgString, sSavedReportMessage::REPORT_TYPE_COMP );
-			/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			/*for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 			{
-				if ( Player == (*PlayerList)[i] )
+				if ( Player == (*getPlayerList())[i] )
 				{
 					Hud.ExtraPlayers(Player->name + " (d)", GetColorNr(Player->color), i, Player->bFinishedTurn, false);
 					break;
@@ -1707,13 +1707,13 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			{
 				cVehicle *StoringVehicle = getVehicleFromID ( message->popInt16() );
 				if ( !StoringVehicle ) break;
-				StoringVehicle->storeVehicle ( StoredVehicle, Map );
+				StoringVehicle->storeVehicle ( StoredVehicle, getMap() );
 			}
 			else
 			{
 				cBuilding *StoringBuilding = getBuildingFromID ( message->popInt16() );
 				if ( !StoringBuilding ) break;
-				StoringBuilding->storeVehicle ( StoredVehicle, Map );
+				StoringBuilding->storeVehicle ( StoredVehicle, getMap() );
 			}
 
 			int mouseX = mouse->getKachelX();
@@ -1739,7 +1739,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
-				StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+				StoringVehicle->exitVehicleTo ( StoredVehicle, x+y*getMap()->size, getMap() );
 				if ( gameGUI.getSelVehicle() == StoringVehicle && gameGUI.mouseInputMode == activateVehicle )
 				{
 					gameGUI.mouseInputMode = normalInput;
@@ -1752,7 +1752,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 				int x = message->popInt16 ();
 				int y = message->popInt16 ();
-				StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*Map->size, Map );
+				StoringBuilding->exitVehicleTo ( StoredVehicle, x+y*getMap()->size, getMap() );
 
 				if ( gameGUI.getSelBuilding() == StoringBuilding && gameGUI.mouseInputMode == activateVehicle )
 				{
@@ -1765,9 +1765,9 @@ int cClient::HandleNetMessage( cNetMessage* message )
 		break;
 	case GAME_EV_DELETE_EVERYTHING:
 		{
-			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+			for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 			{
-				cPlayer *const Player = (*PlayerList)[i];
+				cPlayer *const Player = (*getPlayerList())[i];
 
 				cVehicle *vehicle = Player->VehicleList;
 				while ( vehicle )
@@ -1780,7 +1780,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				{
 					vehicle = (cVehicle*)Player->VehicleList->next;
 					Player->VehicleList->sentryActive = false;
-					Map->deleteVehicle ( Player->VehicleList );
+					getMap()->deleteVehicle ( Player->VehicleList );
 					delete Player->VehicleList;
 					Player->VehicleList = vehicle;
 				}
@@ -1796,7 +1796,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 						Player->BuildingList->storedUnits.Delete( 0 );
 					}
 
-					Map->deleteBuilding ( Player->BuildingList );
+					getMap()->deleteBuilding ( Player->BuildingList );
 					delete Player->BuildingList;
 					Player->BuildingList = building;
 				}
@@ -1811,7 +1811,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			while ( neutralBuildings )
 			{
 				cBuilding* nextBuilding = (cBuilding*)neutralBuildings->next;
-				Map->deleteBuilding( neutralBuildings );
+				getMap()->deleteBuilding( neutralBuildings );
 				delete neutralBuildings;
 				neutralBuildings = nextBuilding;
 			}
@@ -1838,7 +1838,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 			// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
 			// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
 			// executed in normal situations and there are situations, when this happens.
-			Map->reset();
+			getMap()->reset();
 		}
 		break;
 	case GAME_EV_UNIT_UPGRADE_VALUES:
@@ -2108,7 +2108,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit, bool bAddToMap )
 {
 	// place the vehicle
-	if ( bAddToMap ) Map->addVehicle( AddedVehicle, iPosX, iPosY );
+	if ( bAddToMap ) getMap()->addVehicle( AddedVehicle, iPosX, iPosY );
 
 	if ( !bInit ) AddedVehicle->StartUp = 10;
 
@@ -2139,7 +2139,7 @@ void cClient::addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit,
 void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit )
 {
 	// place the building
-	Map->addBuilding( AddedBuilding, iPosX, iPosY);
+	getMap()->addBuilding( AddedBuilding, iPosX, iPosY);
 
 
 	if ( !bInit ) AddedBuilding->StartUp = 10;
@@ -2150,9 +2150,9 @@ void cClient::addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bIni
 
 cPlayer *cClient::getPlayerFromNumber ( int iNum )
 {
-	for ( unsigned int i = 0; i < PlayerList->Size(); i++)
+	for ( unsigned int i = 0; i < getPlayerList()->Size(); i++)
 	{
-		cPlayer* const p = (*PlayerList)[i];
+		cPlayer* const p = (*getPlayerList())[i];
 		if (p->Nr == iNum) return p;
 	}
 	return NULL;
@@ -2164,7 +2164,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	gameGUI.callMiniMapDraw();
 
 	if ( ActiveMenu ) ActiveMenu->handleDestroyUnit ( Building );
-	Map->deleteBuilding( Building );
+	getMap()->deleteBuilding( Building );
 
 	if ( !Building->owner )
 	{
@@ -2229,7 +2229,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	if( !Vehicle ) return;
 
 	if ( ActiveMenu ) ActiveMenu->handleDestroyUnit ( NULL, Vehicle );
-	Map->deleteVehicle( Vehicle );
+	getMap()->deleteVehicle( Vehicle );
 
 	for ( unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
@@ -2419,9 +2419,9 @@ void cClient::handleMoveJobs ()
 cVehicle *cClient::getVehicleFromID ( unsigned int iID )
 {
 	cVehicle *Vehicle;
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
 	{
-		Vehicle = (*PlayerList)[i]->VehicleList;
+		Vehicle = (*getPlayerList())[i]->VehicleList;
 		while ( Vehicle )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
@@ -2434,9 +2434,9 @@ cVehicle *cClient::getVehicleFromID ( unsigned int iID )
 cBuilding *cClient::getBuildingFromID ( unsigned int iID )
 {
 	cBuilding *Building;
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
 	{
-		Building = (*PlayerList)[i]->BuildingList;
+		Building = (*getPlayerList())[i]->BuildingList;
 		while ( Building )
 		{
 			if ( Building->iID == iID ) return Building;
@@ -2493,7 +2493,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 	{
 		Client->addFX( fxExploAir, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
-	else if ( Map->isWater(vehicle->PosX, vehicle->PosY))
+	else if ( getMap()->isWater(vehicle->PosX, vehicle->PosY))
 	{
 		Client->addFX( fxExploWater, vehicle->PosX*64 + vehicle->OffX + 32, vehicle->PosY*64 + vehicle->OffY + 32, 0);
 	}
@@ -2512,7 +2512,7 @@ void cClient::destroyUnit( cVehicle* vehicle )
 void cClient::destroyUnit(cBuilding *building)
 {
 	//play explosion animation
-	cBuilding* topBuilding = Map->fields[building->PosX + building->PosY*Map->size].getBuildings();
+	cBuilding* topBuilding = getMap()->fields[building->PosX + building->PosY*getMap()->size].getBuildings();
 	if ( topBuilding && topBuilding->data.isBig )
 	{
 		Client->addFX( fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
@@ -2532,9 +2532,9 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	if ( vehicleList.Size() == 0 && !lastMessagePart )
 	{
 		//generate list with all vehicles
-		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+		for ( unsigned int i = 0; i < Client->getPlayerList()->Size(); i++ )
 		{
-			cVehicle* vehicle = (*Client->PlayerList)[i]->VehicleList;
+			cVehicle* vehicle = (*Client->getPlayerList())[i]->VehicleList;
 			while ( vehicle )
 			{
 				vehicleList.Add( vehicle );
@@ -2620,12 +2620,12 @@ void cClient::deletePlayer(cPlayer *player)
 	// (e.g. in the playersInfo in the gameGUI)
 	// or we may need him for some statistics.
 	// uncomment this if we can make sure all references have been removed or at least been set to NULL.
-	/*for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
+	/*for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 	{
-		if ( player == (*PlayerList)[i] )
+		if ( player == (*getPlayerList())[i] )
 		{
-			delete (*PlayerList)[i];
-			PlayerList->Delete ( i );
+			delete (*getPlayerList())[i];
+			getPlayerList()->Delete ( i );
 		}
 	}*/
 }

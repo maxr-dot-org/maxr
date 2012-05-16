@@ -128,7 +128,7 @@ cVehicle::~cVehicle ()
 void cVehicle::draw ( SDL_Rect screenPosition )
 {
 	//make damage effect
-	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->Map->size] ) )
+	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->ActivePlayer || Client->ActivePlayer->ScanMap[PosX+PosY*Client->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
 		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
@@ -137,7 +137,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//make landing and take off of planes
 	if ( data.factorAir > 0 && Client->timer50ms )
 	{
-		if ( canLand (*Client->Map) )
+		if ( canLand (*Client->getMap()) )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -192,7 +192,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && Client->Map->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
+		if ( (data.isStealthOn&TERRAIN_SEA) && Client->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -465,7 +465,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	{
 		//draw beton if nessesary
 		tmp = dest;
-		if ( IsBuilding && data.isBig && ( !Client->Map->isWater(PosX, PosY) || Client->Map->fields[PosX+PosY*Client->Map->size].getBaseBuilding()) )
+		if ( IsBuilding && data.isBig && ( !Client->getMap()->isWater(PosX, PosY) || Client->getMap()->fields[PosX+PosY*Client->getMap()->size].getBaseBuilding()) )
 		{
 			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
 			CHECK_SCALING(GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor );
@@ -526,7 +526,7 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 
 	// draw shadow
 	tmp = dest;
-	if ( drawShadow && ! ( (data.isStealthOn&TERRAIN_SEA) && Client && Client->Map->isWater ( PosX, PosY, true ) ) )
+	if ( drawShadow && ! ( (data.isStealthOn&TERRAIN_SEA) && Client && Client->getMap()->isWater ( PosX, PosY, true ) ) )
 	{
 		if ( StartUp && cSettings::getInstance().isAlphaEffects() ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
 		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
@@ -580,10 +580,10 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		}
 		else
 		{
-			bool water = Client->Map->isWater(PosX, PosY, true);
+			bool water = Client->getMap()->isWater(PosX, PosY, true);
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
-			cBuilding* building = Client->Map->fields[PosX + PosY*Client->Map->size].getBaseBuilding();
+			cBuilding* building = Client->getMap()->fields[PosX + PosY*Client->getMap()->size].getBaseBuilding();
 			if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
 			if ( (data.isStealthOn&TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == Client->ActivePlayer ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
@@ -988,8 +988,8 @@ string cVehicle::getStatusStr() const
 //-----------------------------------------------------------------------------
 int cVehicle::playStream ()
 {
-	cBuilding *building = (*Client->Map)[PosX + PosY*Client->Map->size].getBaseBuilding();
-	bool water = Client->Map->isWater ( PosX, PosY, true );
+	cBuilding *building = (*Client->getMap())[PosX + PosY*Client->getMap()->size].getBaseBuilding();
+	bool water = Client->getMap()->isWater ( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
 	if ( IsBuilding && ( BuildRounds || Client->ActivePlayer != owner ))
@@ -1009,8 +1009,8 @@ void cVehicle::StartMoveSound ()
 {
 	bool water;
 
-	cBuilding* building = Client->Map->fields[PosX + PosY * Client->Map->size].getBaseBuilding();
-	water = Client->Map->isWater ( PosX, PosY, true );
+	cBuilding* building = Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding();
+	water = Client->getMap()->isWater ( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 	StopFXLoop ( Client->iObjectStream );
 
@@ -1057,7 +1057,7 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	cVehicle *v;
 	cBuilding *b;
 
-	selectTarget(v, b, x, y, data.canAttack, Client->Map );
+	selectTarget(v, b, x, y, data.canAttack, Client->getMap() );
 
 	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{
@@ -1198,30 +1198,30 @@ void cVehicle::FindNextband ()
 
 	//check, which positions are available
 	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
-	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    ) )
+	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY - 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    ) )
 	{
 		pos[0] = true;
 	}
 
-	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY - 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    ) )
+	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY - 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    ) )
 	{
 		pos[1] = true;
 	}
 
-	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    )
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX + 1, PosY + 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
+	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    )
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY + 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
 	{
 		pos[2] = true;
 	}
 
-	if ( Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    )
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX - 1, PosY + 1)
-	  && Client->Map->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
+	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    )
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY + 1)
+	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
 	{
 		pos[3] = true;
 	}
@@ -1669,14 +1669,14 @@ void cVehicle::DrawExitPoints(const sVehicle* const typ) const
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX + 1, PosY    , Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY + 1, Client->Map, typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX - 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX + 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy );
+	if ( canExitTo ( PosX - 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX    , PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize() );
+	if ( canExitTo ( PosX + 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
 }
 
 //-----------------------------------------------------------------------------
@@ -1777,10 +1777,10 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply (int x, int y, int supplyType) const
 {
-	if (x < 0 || x >= Client->Map->size || y < 0 || y >= Client->Map->size)
+	if (x < 0 || x >= Client->getMap()->size || y < 0 || y >= Client->getMap()->size)
 		return false;
 
-	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
+	cMapField& field = Client->getMap()->fields[x + y * Client->getMap()->size];
 	if (field.getVehicles ()) return canSupply (field.getVehicles (), supplyType);
 	else if (field.getPlanes ()) return canSupply (field.getPlanes (), supplyType);
 	else if (field.getTopBuilding ()) return canSupply (field.getTopBuilding (), supplyType);
@@ -1908,7 +1908,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 //-----------------------------------------------------------------------------
 void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
 {
-	cMapField& field = Client->Map->fields[x + y * Client->Map->size];
+	cMapField& field = Client->getMap()->fields[x + y * Client->getMap()->size];
 	SDL_Surface* sf;
 
 	cUnit* unit = 0;
