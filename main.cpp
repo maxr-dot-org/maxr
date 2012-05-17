@@ -277,6 +277,12 @@ void Quit()
 {
 	delete mouse;
 	delete font;
+	delete InputHandler;
+	delete EventHandler;
+	
+	UnitsData.vehicle.Reserve(0);
+	UnitsData.building.Reserve(0);
+
 	//unload files here
 	CloseSound();
 	SDLNet_Quit();
