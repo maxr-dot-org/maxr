@@ -57,5 +57,5 @@ bool cNotificationSender::removeNotificationListener (INotificationListener* lis
 void cNotificationSender::notifyListeners (const std::string& message)
 {
 	for (size_t i = 0; i < listeners.size (); i++)
-		listeners[i]->notify (message, (void*)this);
+		listeners[i]->notify (message, this);
 }

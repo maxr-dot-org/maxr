@@ -1454,7 +1454,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 							}
 						}
 						if ( found ) break;
-						Building = (cBuilding*)Building->next;
+						Building = static_cast<cBuilding*>(Building->next);
 					}
 					if ( Building != NULL && ActiveMenu != NULL )
 					{
@@ -1773,12 +1773,12 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				while ( vehicle )
 				{
 					if ( vehicle->storedUnits.Size() ) vehicle->deleteStoredUnits ();
-					vehicle = (cVehicle*)vehicle->next;
+					vehicle = static_cast<cVehicle*>(vehicle->next);
 				}
 
 				while ( Player->VehicleList )
 				{
-					vehicle = (cVehicle*)Player->VehicleList->next;
+					vehicle = static_cast<cVehicle*>(Player->VehicleList->next);
 					Player->VehicleList->sentryActive = false;
 					getMap()->deleteVehicle ( Player->VehicleList );
 					delete Player->VehicleList;
@@ -1787,7 +1787,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 				while ( Player->BuildingList )
 				{
 					cBuilding *building;
-					building = (cBuilding*)Player->BuildingList->next;
+					building = static_cast<cBuilding*>(Player->BuildingList->next);
 					Player->BuildingList->sentryActive = false;
 
 
@@ -1810,7 +1810,7 @@ int cClient::HandleNetMessage( cNetMessage* message )
 
 			while ( neutralBuildings )
 			{
-				cBuilding* nextBuilding = (cBuilding*)neutralBuildings->next;
+				cBuilding* nextBuilding = static_cast<cBuilding*>(neutralBuildings->next);
 				getMap()->deleteBuilding( neutralBuildings );
 				delete neutralBuildings;
 				neutralBuildings = nextBuilding;
@@ -2170,7 +2170,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	{
 		if ( !Building->prev )
 		{
-			neutralBuildings = (cBuilding*)Building->next;
+			neutralBuildings = static_cast<cBuilding*>(Building->next);
 			if ( Building->next )
 				Building->next->prev = NULL;
 		}
@@ -2202,7 +2202,7 @@ void cClient::deleteUnit( cBuilding *Building )
 	}
 	else
 	{
-		Building->owner->BuildingList = (cBuilding*)Building->next;
+		Building->owner->BuildingList = static_cast<cBuilding*>(Building->next);
 		if( Building->next )
 		{
 			Building->next->prev = NULL;
@@ -2252,7 +2252,7 @@ void cClient::deleteUnit( cVehicle *Vehicle )
 	}
 	else
 	{
-		owner->VehicleList = (cVehicle*)Vehicle->next;
+		owner->VehicleList = static_cast<cVehicle*>(Vehicle->next);
 		if( Vehicle->next )
 		{
 			Vehicle->next->prev = NULL;
@@ -2425,7 +2425,7 @@ cVehicle *cClient::getVehicleFromID ( unsigned int iID )
 		while ( Vehicle )
 		{
 			if ( Vehicle->iID == iID ) return Vehicle;
-			Vehicle = (cVehicle*)Vehicle->next;
+			Vehicle = static_cast<cVehicle*>(Vehicle->next);
 		}
 	}
 	return NULL;
@@ -2440,7 +2440,7 @@ cBuilding *cClient::getBuildingFromID ( unsigned int iID )
 		while ( Building )
 		{
 			if ( Building->iID == iID ) return Building;
-			Building = (cBuilding*)Building->next;
+			Building = static_cast<cBuilding*>(Building->next);
 		}
 	}
 
@@ -2448,7 +2448,7 @@ cBuilding *cClient::getBuildingFromID ( unsigned int iID )
 	while ( Building )
 	{
 		if ( Building->iID == iID ) return Building;
-		Building = (cBuilding*)Building->next;
+		Building = static_cast<cBuilding*>(Building->next);
 	}
 
 	return NULL;
@@ -2538,7 +2538,7 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 			while ( vehicle )
 			{
 				vehicleList.Add( vehicle );
-				vehicle = (cVehicle*)vehicle->next;
+				vehicle = static_cast<cVehicle*>(vehicle->next);
 			}
 		}
 	}

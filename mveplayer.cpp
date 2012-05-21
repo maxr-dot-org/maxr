@@ -667,7 +667,7 @@ int MVEPlayer(const char *filename, int dwidth, int dheight, int fullscreen, int
 void MVEPlayerAudioCB(void *userdata, Uint8 *stream, int len)
 {
 	Uint8 * temp;
-	mvebuffer *audio_mvebuffer = (mvebuffer *)userdata;
+	mvebuffer *audio_mvebuffer = reinterpret_cast<mvebuffer *>(userdata);
 
 	if((Uint32)len > audio_mvebuffer->length)
 	{

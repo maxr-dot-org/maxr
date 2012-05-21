@@ -1186,7 +1186,7 @@ void cMenuRadioGroup::clicked( void *parent )
 		if ( buttonList[i]->overItem ( mouse->x, mouse->y ) )
 		{
 			buttonList[i]->clicked ( parent );
-			//((cMenu*)parent)->draw();
+			//reinterpret_cast<cMenu*>(parent)->draw();
 			break;
 		}
 	}
