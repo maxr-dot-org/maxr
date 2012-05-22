@@ -128,14 +128,13 @@ cPlayer::cPlayer(const cPlayer &Player)
 cPlayer::~cPlayer ()
 {
 	// Erst alle geladenen Vehicles lˆschen:
-	cVehicle *ptr=VehicleList;
-	while ( ptr )
+
+	for (cVehicle *ptr = VehicleList; ptr; ptr = static_cast<cVehicle*>(ptr->next))
 	{
 		if ( ptr->storedUnits.Size() )
 		{
 			ptr->deleteStoredUnits ();
 		}
-		ptr = static_cast<cVehicle*>(ptr->next);
 	}
 	// Jetzt alle Vehicles lˆschen:
 	while ( VehicleList )
@@ -329,23 +328,21 @@ void cPlayer::deleteSentry ( cUnit *u )
 void cPlayer::refreshSentryAir ()
 {
 	memset ( SentriesMapAir,0,MapSize );
-	cUnit* unit = VehicleList;
-	while (unit)
+
+	for (cUnit* unit = VehicleList; unit; unit = unit->next)
 	{
 		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
 		{
 			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
-		unit = unit->next;
 	}
-	unit = BuildingList;
-	while (unit)
+
+	for (cUnit* unit = BuildingList; unit; unit = unit->next)
 	{
 		if ( unit->sentryActive && unit->data.canAttack & TERRAIN_AIR )
 		{
 			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int)sqrt ( (double)MapSize ) );
 		}
-		unit = unit->next;
 	}
 }
 
@@ -353,23 +350,21 @@ void cPlayer::refreshSentryAir ()
 void cPlayer::refreshSentryGround ()
 {
 	memset ( SentriesMapGround,0,MapSize );
-	cUnit* unit = VehicleList;
-	while (unit)
+
+	for (cUnit* unit = VehicleList; unit; unit = unit->next)
 	{
 		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )
 		{
 			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
-		unit = unit->next;
 	}
-	unit = BuildingList;
-	while (unit)
+
+	for (cUnit* unit = BuildingList; unit; unit = unit->next)
 	{
 		if ( unit->sentryActive && ((unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)) )
 		{
 			drawSpecialCircle ( unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 		}
-		unit = unit->next;
 	}
 }
 
@@ -378,9 +373,6 @@ void cPlayer::refreshSentryGround ()
 //--------------------------------------------------------------------------
 void cPlayer::DoScan ()
 {
-	cVehicle *vp;
-	cBuilding *bp;
-
 	if ( isDefeated ) return;
 	memset ( ScanMap,       0, MapSize );
 	memset ( DetectLandMap, 0, MapSize );
@@ -388,14 +380,9 @@ void cPlayer::DoScan ()
 	memset ( DetectMinesMap,0, MapSize );
 
 	// iterate the vehicle list
-	vp = VehicleList;
-	while ( vp )
+	for ( cVehicle *vp = VehicleList; vp; vp = static_cast<cVehicle*>(vp->next) )
 	{
-		if ( vp->Loaded )
-		{
-			vp = static_cast<cVehicle*>(vp->next);
-			continue;
-		}
+		if ( vp->Loaded ) continue;
 
 		if ( vp->turnsDisabled )
 			ScanMap[vp->PosX+vp->PosY*(int)sqrt ( (double)MapSize )] = 1;
@@ -424,16 +411,14 @@ void cPlayer::DoScan ()
 				}
 			}
 		}
-		vp = static_cast<cVehicle*>(vp->next);
 	}
 
 	// iterate the building list
-	bp = BuildingList;
-	while ( bp )
-	{
 
+	for ( cBuilding *bp = BuildingList; bp; bp = static_cast<cBuilding*>(bp->next) )
+	{
 		if ( bp->turnsDisabled )
-			ScanMap[bp->PosX+bp->PosY*(int)sqrt ( (double)MapSize )]=1;
+			ScanMap[bp->PosX+bp->PosY*(int)sqrt ( (double)MapSize )] = 1;
 		else
 		{
 			if ( bp->data.scan )
@@ -444,7 +429,6 @@ void cPlayer::DoScan ()
 					drawSpecialCircle ( bp->PosX,bp->PosY,bp->data.scan,ScanMap, (int)sqrt ( (double)MapSize ) );
 			}
 		}
-		bp = static_cast<cBuilding*>(bp->next);
 	}
 }
 
@@ -521,12 +505,10 @@ cUnit *cPlayer::getNextUnit ()
 	while (unit != start);
 
 	//when no unit is found, go to mining station
-	unit = BuildingList;
-	while (unit)
+	for (unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->data.canMineMaxRes > 0)
 			return unit;
-		unit = unit->next;
 	}
 
 	return NULL;
@@ -620,14 +602,11 @@ cUnit *cPlayer::getPrevUnit ()
 	while (unit != start);
 
 	//when no unit is found, go to mining station
-	unit = BuildingList;
-	while (unit)
+	for (unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->data.canMineMaxRes > 0)
 			return unit;
-		unit = unit->next;
 	}
-
 	return NULL;
 }
 
@@ -728,18 +707,14 @@ void cPlayer::setScore(int s, int turn)
 
 void cPlayer::clearDone()
 {
-	cUnit *unit = VehicleList;
-	while (unit)
+	for (cUnit *unit = VehicleList; unit; unit = unit->next)
 	{
 		unit->isMarkedAsDone = false;
-		unit = unit->next;
 	}
 
-	unit = BuildingList;
-	while (unit)
+	for (cUnit *unit = BuildingList; unit; unit = unit->next)
 	{
 		unit->isMarkedAsDone = false;
-		unit = unit->next;
 	}
 }
 
@@ -863,15 +838,14 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	int newResearchCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
-	cBuilding* curBuilding = BuildingList;
-	while (curBuilding)
+
+	for (cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = static_cast<cBuilding*>(curBuilding->next))
 	{
 		if (curBuilding->data.canResearch && curBuilding->IsWorking)
 		{
 			researchCentersWorkingOnArea[curBuilding->researchArea] += 1;
 			newResearchCount++;
 		}
-		curBuilding = static_cast<cBuilding*>(curBuilding->next);
 	}
 	ResearchCount = newResearchCount;
 }
@@ -1005,7 +979,6 @@ void cPlayer::DrawLockList ()
 	if ( !Client->gameGUI.lockChecked() ) return;
 	sLockElem *elem;
 	int spx, spy, off;
-
 
 	for ( unsigned int i = 0; i < LockList.Size(); i++ )
 	{
