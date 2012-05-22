@@ -127,9 +127,9 @@ cBuilding::~cBuilding ()
 	{
 		cPlayer *p;
 
-		for (unsigned int i = 0; i < Client->PlayerList->Size(); i++)
+		for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
 		{
-			p = (*Client->PlayerList)[i];
+			p = (*Client->getPlayerList())[i];
 			p->DeleteLock ( this );
 		}
 	}
