@@ -206,6 +206,72 @@ private:
 	*/
 	void unfreeze();
 
+
+	void HandleNetMessage_TCP_CLOSE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_CHAT_SERVER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_PLAYER_CLANS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ADD_BUILDING( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ADD_VEHICLE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DEL_BUILDING( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DEL_VEHICLE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_WAIT_FOR( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_MAKE_TURNEND( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_FINISHED_TURN( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UNIT_DATA( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DO_START_WORK( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DO_STOP_WORK( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_NEXT_MOVE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ATTACKJOB_FIRE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_RESOURCES( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_BUILD_ANSWER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_STOP_BUILD( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SUBBASE_VALUES( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_BUILDLIST( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_TURN_REPORT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_MARK_LOG( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SUPPLY( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ADD_RUBBLE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DETECTION_STATE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_CLEAR_ANSWER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_STOP_CLEARING( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_NOFOG( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DEFEATED( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_FREEZE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UNFREEZE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_WAIT_RECON( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_ABORT_WAIT_RECON( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DEL_PLAYER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_TURN( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_HUD_SETTINGS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_STORE_UNIT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_EXIT_UNIT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_CREDITS_CHANGED( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SET_AUTOMOVE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SAVED_REPORT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_CASUALTIES_REPORT( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SCORE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_NUM_ECOS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_UNIT_SCORE( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_SELFDESTROY( cNetMessage& message );
+	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER( cNetMessage& message );
+
 public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
