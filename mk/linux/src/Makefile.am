@@ -1,5 +1,4 @@
-AM_CPPFLAGS = $(LIBSDL_CFLAGS) -DHAVE_AUTOVERSION_H
-
+AM_CPPFLAGS = $(LIBSDL_CFLAGS) $(DWIN) $(DDEDICATED) -DHAVE_AUTOVERSION_H  
 bin_PROGRAMS = maxr
 
 maxr_SOURCES = attackJobs.cpp \
@@ -10,6 +9,7 @@ clans.cpp \
 casualtiestracker.cpp \
 client.cpp \
 clientevents.cpp \
+dedicatedserver.cpp \
 dialog.cpp \
 drawingcache.cpp \
 events.cpp \
@@ -36,6 +36,7 @@ network.cpp \
 pcx.cpp \
 player.cpp \
 savegame.cpp \
+servergame.cpp \
 SDL_flic.c \
 server.cpp \
 serverevents.cpp \
