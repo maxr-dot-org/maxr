@@ -1056,7 +1056,7 @@ protected:
 	cMenuStoredUnitDetails *unitInfo[6];
 
 	cMenuButton *activateButtons[6];
-	cMenuButton *relaodButtons[6];
+	cMenuButton *reloadButtons[6];
 	cMenuButton *repairButtons[6];
 	cMenuButton *upgradeButtons[6];
 

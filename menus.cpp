@@ -5119,7 +5119,7 @@ cStorageMenu::~cStorageMenu()
 		delete unitInfo[i];
 
 		delete activateButtons[i];
-		delete relaodButtons[i];
+		delete reloadButtons[i];
 		delete repairButtons[i];
 		delete upgradeButtons[i];
 	}
@@ -5141,7 +5141,7 @@ void cStorageMenu::generateItems()
 	memset(unitNames, '\0', 6 * sizeof (void*));
 	memset(unitInfo, '\0', 6 * sizeof (void*));
 	memset(activateButtons, '\0', 6 * sizeof (void*));
-	memset(relaodButtons, '\0', 6 * sizeof (void*));
+	memset(reloadButtons, '\0', 6 * sizeof (void*));
 	memset(repairButtons, '\0', 6 * sizeof (void*));
 	memset(upgradeButtons, '\0', 6 * sizeof (void*));
 
@@ -5152,8 +5152,8 @@ void cStorageMenu::generateItems()
 			int index = x + y*maxX;
 			activateButtons[index] = new cMenuButton ( position.x+startX+x*xStep, position.y+191+y*236, lngPack.i18n ( "Text~Button~Active" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 			activateButtons[index]->setReleasedFunction ( &activateReleased );
-			relaodButtons[index] = new cMenuButton ( position.x+startX+x*xStep, position.y+191+25+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Reload" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-			relaodButtons[index]->setReleasedFunction ( &reloadReleased );
+			reloadButtons[index] = new cMenuButton ( position.x+startX+x*xStep, position.y+191+25+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Reload" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
+			reloadButtons[index]->setReleasedFunction ( &reloadReleased );
 			repairButtons[index] = new cMenuButton ( position.x+startX+75+x*xStep, position.y+191+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Repair" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
 			repairButtons[index]->setReleasedFunction ( &repairReleased );
 			upgradeButtons[index] = new cMenuButton ( position.x+startX+75+x*xStep, position.y+191+25+y*236, canRepairReloadUpgrade ? lngPack.i18n ( "Text~Button~Upgrade" ) : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
@@ -5165,7 +5165,7 @@ void cStorageMenu::generateItems()
 			unitInfo[index] = new cMenuStoredUnitDetails ( position.x+startX+17+x*xStepImage, position.y+143+y*236 );
 
 			menuItems.Add ( activateButtons[index] );
-			menuItems.Add ( relaodButtons[index] );
+			menuItems.Add ( reloadButtons[index] );
 			menuItems.Add ( repairButtons[index] );
 			menuItems.Add ( upgradeButtons[index] );
 
@@ -5203,8 +5203,8 @@ void cStorageMenu::resetInfos()
 				unitInfo[pos]->setUnitData ( &vehicle->data );
 
 				activateButtons[pos]->setLocked ( false );
-				if ( vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 2 ) relaodButtons[pos]->setLocked ( false );
-				else relaodButtons[pos]->setLocked ( true );
+				if ( vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 2 ) reloadButtons[pos]->setLocked ( false );
+				else reloadButtons[pos]->setLocked ( true );
 				if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 2 ) repairButtons[pos]->setLocked ( false );
 				else repairButtons[pos]->setLocked ( true );
 				if ( vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 2 ) upgradeButtons[pos]->setLocked ( false );
@@ -5219,7 +5219,7 @@ void cStorageMenu::resetInfos()
 				unitInfo[pos]->setUnitData ( NULL );
 
 				activateButtons[pos]->setLocked ( true );
-				relaodButtons[pos]->setLocked ( true );
+				reloadButtons[pos]->setLocked ( true );
 				repairButtons[pos]->setLocked ( true );
 				upgradeButtons[pos]->setLocked ( true );
 			}
@@ -5329,7 +5329,7 @@ void cStorageMenu::activateReleased ( void *parent )
 void cStorageMenu::reloadReleased ( void *parent )
 {
 	cStorageMenu *menu = static_cast<cStorageMenu*>((cMenu*)parent);
-	int index = menu->getClickedButtonVehIndex ( menu->relaodButtons );
+	int index = menu->getClickedButtonVehIndex ( menu->reloadButtons );
 	if ( index == -1 || !menu->ownerBuilding ) return;
 
 	sendWantSupply ( menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
