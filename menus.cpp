@@ -1776,6 +1776,7 @@ cClanSelectionMenu::~cClanSelectionMenu ()
 	delete titleLabel;
 	delete clanDescription1;
 	delete clanDescription2;
+	delete clanShortDescription;
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -5106,6 +5107,26 @@ cStorageMenu::cStorageMenu(cList<cUnit*>& storageList_, cVehicle* vehicle, cBuil
 cStorageMenu::~cStorageMenu()
 {
 	delete doneButton;
+
+	delete doneButton;
+	delete downButton;
+	delete upButton;
+
+	for (int i = 0; i != 6; ++i)
+	{
+		delete unitImages[i];
+		delete unitNames[i];
+		delete unitInfo[i];
+
+		delete activateButtons[i];
+		delete relaodButtons[i];
+		delete repairButtons[i];
+		delete upgradeButtons[i];
+	}
+	delete activateAllButton;
+	delete reloadAllButton;
+	delete repairAllButton;
+	delete upgradeAllButton;
 }
 
 //------------------------------------------------------------------------------
@@ -5115,6 +5136,14 @@ void cStorageMenu::generateItems()
 	int xStep = canStorePlanes ? 227 : 155;
 	int xStepImage = canStorePlanes ? 227 : 155;
 	int startX = canStorePlanes ? 42 : 8;
+
+	memset(unitImages, '\0', 6 * sizeof (void*));
+	memset(unitNames, '\0', 6 * sizeof (void*));
+	memset(unitInfo, '\0', 6 * sizeof (void*));
+	memset(activateButtons, '\0', 6 * sizeof (void*));
+	memset(relaodButtons, '\0', 6 * sizeof (void*));
+	memset(repairButtons, '\0', 6 * sizeof (void*));
+	memset(upgradeButtons, '\0', 6 * sizeof (void*));
 
 	for ( int x = 0; x < maxX; x++ )
 	{
