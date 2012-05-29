@@ -102,6 +102,14 @@ cBuilding* cMapField::getMine()
 cMap::cMap()
 {
 	Kacheln=NULL;
+	fields=NULL;
+	Resources=NULL;
+	iNumberOfTerrains = 0;
+	terrain=NULL;
+	resSpots=NULL;
+	resSpotTypes=NULL;
+	resSpotCount=0;
+	resCurrentSpotCount=0;
 	NewMap ( 32, 32 );
 	MapName="";
 	resSpots = NULL;

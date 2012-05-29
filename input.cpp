@@ -27,6 +27,7 @@ sMouseState::sMouseState()
 	rightButtonReleased = false;
 	wheelUp = false;
 	wheelDown = false;
+	isDoubleClick = false;
 	x = 0;
 	y = 0;
 }

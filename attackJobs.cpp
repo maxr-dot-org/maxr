@@ -995,9 +995,10 @@ void cClientAttackJob::makeImpact(int offset, int remainingHP, int id )
 		Client->addFX( fxHit, x*64 + offX, y*64 + offY, 0);
 	}
 
-	string message;
 	if ( ownUnit )
 	{
+		string message;
+
 		if ( destroyed )
 		{
 			message = name + " " + lngPack.i18n("Text~Comp~Destroyed");
