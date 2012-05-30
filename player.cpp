@@ -139,16 +139,14 @@ cPlayer::~cPlayer ()
 	// Jetzt alle Vehicles lˆschen:
 	while ( VehicleList )
 	{
-		cVehicle *ptr;
-		ptr = static_cast<cVehicle*>(VehicleList->next);
+		cVehicle *ptr = static_cast<cVehicle*>(VehicleList->next);
 		VehicleList->sentryActive = false;
 		delete VehicleList;
 		VehicleList=ptr;
 	}
 	while ( BuildingList )
 	{
-		cBuilding *ptr;
-		ptr = static_cast<cBuilding*>(BuildingList->next);
+		cBuilding *ptr = static_cast<cBuilding*>(BuildingList->next);
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
@@ -210,9 +208,7 @@ void cPlayer::setClan (int newClan)
 //--------------------------------------------------------------------------
 cVehicle *cPlayer::AddVehicle (int posx, int posy, sVehicle *v)
 {
-	cVehicle *n;
-
-	n=new cVehicle ( v,this );
+	cVehicle *n = new cVehicle ( v, this );
 	n->PosX=posx;
 	n->PosY=posy;
 	n->prev=NULL;
@@ -274,9 +270,8 @@ void cPlayer::InitMaps ( int MapSizeX, cMap *map )
 //--------------------------------------------------------------------------
 cBuilding *cPlayer::addBuilding ( int posx, int posy, sBuilding *b )
 {
-	cBuilding *Building;
+	cBuilding *Building = new cBuilding ( b, this, &base );
 
-	Building = new cBuilding ( b, this, &base );
 	Building->PosX = posx;
 	Building->PosY = posy;
 	Building->prev = NULL;
@@ -307,8 +302,6 @@ void cPlayer::addSentry ( cUnit *u )
 		drawSpecialCircle ( u->PosX, u->PosY, u->data.range, SentriesMapGround, (int)sqrt ( (double)MapSize ) );
 	}
 }
-
-
 
 //--------------------------------------------------------------------------
 void cPlayer::deleteSentry ( cUnit *u )
@@ -414,7 +407,6 @@ void cPlayer::DoScan ()
 	}
 
 	// iterate the building list
-
 	for ( cBuilding *bp = BuildingList; bp; bp = static_cast<cBuilding*>(bp->next) )
 	{
 		if ( bp->turnsDisabled )
@@ -466,7 +458,6 @@ cUnit *cPlayer::getNextUnit ()
 	{
 		return NULL;
 	}
-
 
 	cUnit *unit = start;
 	do
@@ -855,8 +846,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 //------------------------------------------------------------
 void cPlayer::AddLock (cBuilding *b)
 {
-	sLockElem *elem;
-	elem = new sLockElem;
+	sLockElem *elem = new sLockElem;
 	elem->b = b;
 	elem->v = NULL;
 	b->IsLocked = true;
@@ -868,8 +858,7 @@ void cPlayer::AddLock (cBuilding *b)
 //------------------------------------------------------------
 void cPlayer::AddLock (cVehicle *v)
 {
-	sLockElem *elem;
-	elem = new sLockElem;
+	sLockElem *elem = new sLockElem;
 	elem->v = v;
 	elem->b = NULL;
 	v->IsLocked = true;
@@ -881,10 +870,9 @@ void cPlayer::AddLock (cVehicle *v)
 //------------------------------------------------------------
 void cPlayer::DeleteLock (cVehicle *v)
 {
-	sLockElem *elem;
-	for (unsigned int i = 0; i < LockList.Size(); i++)
+	for (size_t i = 0; i < LockList.Size(); i++)
 	{
-		elem = LockList[i];
+		sLockElem *elem = LockList[i];
 		if (elem->v == v)
 		{
 			v->IsLocked=false;
@@ -900,10 +888,9 @@ void cPlayer::DeleteLock (cVehicle *v)
 //------------------------------------------------------------
 void cPlayer::DeleteLock (cBuilding *b)
 {
-	sLockElem *elem;
-	for (unsigned int i = 0; i < LockList.Size(); i++)
+	for (size_t i = 0; i < LockList.Size(); i++)
 	{
-		elem = LockList[i];
+		sLockElem *elem = LockList[i];
 		if (elem->b == b)
 		{
 			b->IsLocked = false;
@@ -917,7 +904,7 @@ void cPlayer::DeleteLock (cBuilding *b)
 //------------------------------------------------------------
 /** Checks if the building is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (cBuilding *b)
+bool cPlayer::InLockList (cBuilding *b) const
 {
 	sLockElem *elem;
 	for (unsigned int i = 0; i < LockList.Size(); i++)
@@ -932,7 +919,7 @@ bool cPlayer::InLockList (cBuilding *b)
 //------------------------------------------------------------
 /** Checks if the vehicle is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (cVehicle *v)
+bool cPlayer::InLockList (cVehicle *v) const
 {
 	sLockElem *elem;
 	for (unsigned int i = 0; i < LockList.Size(); i++)
@@ -974,82 +961,81 @@ void cPlayer::ToggelLock ( cMapField *OverUnitField )
 //--------------------------------------------------------------------------
 /** Draws all entries, that are in the lock list. */
 //--------------------------------------------------------------------------
-void cPlayer::DrawLockList ()
+void cPlayer::DrawLockList (cGameGUI &gameGUI)
 {
-	if ( !Client->gameGUI.lockChecked() ) return;
-	sLockElem *elem;
-	int spx, spy, off;
+	if ( !gameGUI.lockChecked() ) return;
+	const int tileSize = gameGUI.getTileSize();
 
 	for ( unsigned int i = 0; i < LockList.Size(); i++ )
 	{
-		elem = LockList[i];
+		sLockElem *elem = LockList[i];
 		if ( elem->v )
 		{
-			off=elem->v->PosX+elem->v->PosY*Client->getMap()->size;
+			const int off=elem->v->PosX+elem->v->PosY*Client->getMap()->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->v );
 				i--;
 				continue;
 			}
-			spx=elem->v->getScreenPosX();
-			spy=elem->v->getScreenPosY();
+			const int spx=elem->v->getScreenPosX();
+			const int spy=elem->v->getScreenPosY();
 
-			if ( Client->gameGUI.scanChecked() )
+			if ( gameGUI.scanChecked() )
 			{
 				if ( elem->v->data.isBig )
-					drawCircle ( spx+ Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize(), elem->v->data.scan * Client->gameGUI.getTileSize(), SCAN_COLOR, buffer );
+					drawCircle ( spx+ tileSize, spy + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer );
 				else
-					drawCircle ( spx + Client->gameGUI.getTileSize()/2, spy + Client->gameGUI.getTileSize()/2, elem->v->data.scan * Client->gameGUI.getTileSize(), SCAN_COLOR, buffer );
+					drawCircle ( spx + tileSize/2, spy + tileSize/2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer );
 			}
-			if ( Client->gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND) )
-				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
-				             spy+Client->gameGUI.getTileSize()/2,
-				             elem->v->data.range*Client->gameGUI.getTileSize()+1,RANGE_GROUND_COLOR,buffer );
-			if ( Client->gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR) )
-				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
-				             spy+Client->gameGUI.getTileSize()/2,
-				             elem->v->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
-			if ( Client->gameGUI.ammoChecked()&&elem->v->data.canAttack )
+			if ( gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND) )
+				drawCircle ( spx+tileSize/2,
+				             spy+tileSize/2,
+				             elem->v->data.range*tileSize+1,RANGE_GROUND_COLOR,buffer );
+			if ( gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR) )
+				drawCircle ( spx+tileSize/2,
+				             spy+tileSize/2,
+				             elem->v->data.range*tileSize+2,RANGE_AIR_COLOR,buffer );
+			if ( gameGUI.ammoChecked()&&elem->v->data.canAttack )
 				elem->v->drawMunBar();
-			if ( Client->gameGUI.hitsChecked() )
+			if ( gameGUI.hitsChecked() )
 				elem->v->drawHealthBar();
 		}
 		else if ( elem->b )
 		{
-			off=elem->b->PosX+elem->b->PosY*Client->getMap()->size;
+			const int off=elem->b->PosX+elem->b->PosY*Client->getMap()->size;
 			if ( !ScanMap[off] )
 			{
 				DeleteLock ( elem->b );
 				i--;
 				continue;
 			}
-			spx=elem->b->getScreenPosX();
-			spy=elem->b->getScreenPosY();
+			const int spx=elem->b->getScreenPosX();
+			const int spy=elem->b->getScreenPosY();
 
-			if ( Client->gameGUI.scanChecked() )
+			if ( gameGUI.scanChecked() )
 			{
 				if ( elem->b->data.isBig )
-					drawCircle ( spx+Client->gameGUI.getTileSize(),
-					             spy+Client->gameGUI.getTileSize(),
-					             elem->b->data.scan*Client->gameGUI.getTileSize(),SCAN_COLOR,buffer );
+					drawCircle ( spx+tileSize,
+					             spy+tileSize,
+					             elem->b->data.scan*tileSize,SCAN_COLOR,buffer );
 				else
-					drawCircle ( spx+Client->gameGUI.getTileSize()/2,
-					             spy+Client->gameGUI.getTileSize()/2,
-					             elem->b->data.scan*Client->gameGUI.getTileSize(),SCAN_COLOR,buffer );
+					drawCircle ( spx+tileSize/2,
+					             spy+tileSize/2,
+					             elem->b->data.scan*tileSize,SCAN_COLOR,buffer );
 			}
-			if ( Client->gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) &&!elem->b->data.explodesOnContact )
-				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
-				             spy+Client->gameGUI.getTileSize()/2,
-				             elem->b->data.range*Client->gameGUI.getTileSize()+2,RANGE_GROUND_COLOR,buffer );
-			if ( Client->gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR) )
-				drawCircle ( spx+Client->gameGUI.getTileSize()/2,
-				             spy+Client->gameGUI.getTileSize()/2,
-				             elem->b->data.range*Client->gameGUI.getTileSize()+2,RANGE_AIR_COLOR,buffer );
+			if ( gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) &&!elem->b->data.explodesOnContact )
+				drawCircle ( spx+tileSize/2,
+				             spy+tileSize/2,
+				             elem->b->data.range*tileSize+2,RANGE_GROUND_COLOR,buffer );
+			if ( gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR) )
+				drawCircle ( spx+tileSize/2,
+				             spy+tileSize/2,
+				             elem->b->data.range*tileSize+2,RANGE_AIR_COLOR,buffer );
 
-			if ( Client->gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
+			if ( gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact )
 				elem->b->drawMunBar();
-			if ( Client->gameGUI.hitsChecked() )
+			if ( gameGUI.hitsChecked() )
 				elem->b->drawHealthBar();
 		}
 	}
@@ -1058,11 +1044,12 @@ void cPlayer::DrawLockList ()
 //--------------------------------------------------------------------------
 void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize )
 {
-	float w = (float)(0.017453*45), step;
+	const float PI_ON_180 = 0.017453f;
+	float w = (float)(PI_ON_180*45), step;
 	int rx, ry, x1, x2;
 	if ( iRadius <= 0 ) return;
 	iRadius *= 10;
-	step = (float)(0.017453*90-acos ( 1.0/iRadius ));
+	step = (float)(PI_ON_180*90-acos ( 1.0/iRadius ));
 	step /= 2;
 	for ( float i = 0; i <= w; i += step )
 	{
@@ -1100,12 +1087,13 @@ void cPlayer::drawSpecialCircle( int iX, int iY, int iRadius, char *map, int map
 //--------------------------------------------------------------------------
 void cPlayer::drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize )
 {
-	float w=(float)(0.017453*45), step;
+	const float PI_ON_180 = 0.017453f;
+	float w=(float)(PI_ON_180*45), step;
 	int rx, ry, x1, x2;
 	if ( iRadius > 0 ) iRadius--;
 	else return;
 	iRadius *= 10;
-	step = (float)(0.017453*90-acos ( 1.0/iRadius ));
+	step = (float)(PI_ON_180*90-acos ( 1.0/iRadius ));
 	step /= 2;
 	for ( float i = 0; i <= w; i += step )
 	{

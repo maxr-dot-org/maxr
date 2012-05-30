@@ -4349,7 +4349,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if ( mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints(static_cast<cVehicle*>(v.storedUnits[v.VehicleToActivate])->typ);
+			v.DrawExitPoints(v.storedUnits[v.VehicleToActivate]->typ);
 		}
 	}
 	else if ( selectedBuilding )
@@ -4395,10 +4395,10 @@ void cGameGUI::drawUnitCircles()
 		}
 		if ( mouseInputMode == activateVehicle && selectedBuilding->owner==player )
 		{
-			selectedBuilding->DrawExitPoints(static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ, *this);
+			selectedBuilding->DrawExitPoints(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ, *this);
 		}
 	}
-	player->DrawLockList();
+	player->DrawLockList(*this);
 
 	SDL_SetClipRect( buffer, NULL );
 }
