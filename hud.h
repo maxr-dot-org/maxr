@@ -74,7 +74,7 @@ struct sMouseBox
 {
 	float startX, startY;
 	float endX, endY;
-	bool isTooSmall();
+	bool isTooSmall() const;
 	sMouseBox();
 };
 
@@ -387,18 +387,18 @@ public:
 
 	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
-	bool surveyChecked() { return surveyButton->isChecked(); }
-	bool hitsChecked() { return hitsButton->isChecked(); }
-	bool scanChecked() { return scanButton->isChecked(); }
-	bool statusChecked() { return statusButton->isChecked(); }
-	bool ammoChecked() { return ammoButton->isChecked(); }
-	bool gridChecked() { return gridButton->isChecked(); }
-	bool colorChecked() { return colorButton->isChecked(); }
-	bool rangeChecked() { return rangeButton->isChecked(); }
-	bool fogChecked() { return fogButton->isChecked(); }
-	bool lockChecked() { return lockButton->isChecked(); }
-	bool tntChecked() { return TNTButton->isChecked(); }
-	bool twoXChecked() { return twoXButton->isChecked(); }
+	bool surveyChecked() const { return surveyButton->isChecked(); }
+	bool hitsChecked() const { return hitsButton->isChecked(); }
+	bool scanChecked() const { return scanButton->isChecked(); }
+	bool statusChecked() const { return statusButton->isChecked(); }
+	bool ammoChecked() const { return ammoButton->isChecked(); }
+	bool gridChecked() const { return gridButton->isChecked(); }
+	bool colorChecked() const { return colorButton->isChecked(); }
+	bool rangeChecked() const { return rangeButton->isChecked(); }
+	bool fogChecked() const { return fogButton->isChecked(); }
+	bool lockChecked() const { return lockButton->isChecked(); }
+	bool tntChecked() const { return TNTButton->isChecked(); }
+	bool twoXChecked() const { return twoXButton->isChecked(); }
 
 	void setSurvey ( bool checked ) { surveyButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
 	void setHits ( bool checked ) { hitsButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
@@ -440,12 +440,12 @@ public:
 
 	void setOffsetPosition ( int x, int y );
 	void checkOffsetPosition ();
-	int getOffsetX() { return offX; }
-	int getOffsetY() { return offY; }
+	int getOffsetX() const { return offX; }
+	int getOffsetY() const { return offY; }
 
 	void setZoom( float newZoom, bool setScroller, bool centerToMouse );
-	float getZoom();
-	int getTileSize();
+	float getZoom() const;
+	int getTileSize() const;
 
 	void setVideoSurface ( SDL_Surface *videoSurface );
 	void setFLC ( FLI_Animation *FLC_ );
@@ -453,12 +453,12 @@ public:
 
 	cDrawingCache *getDCache() { return &dCache; }
 
-	unsigned int getFrame() { return frame; }
-	unsigned int getBlinkColor() { return blinkColor; }
+	unsigned int getFrame() const { return frame; }
+	unsigned int getBlinkColor() const { return blinkColor; }
 
-	bool getAJobDebugStatus() { return debugAjobs; }
+	bool getAJobDebugStatus() const { return debugAjobs; }
 
-	float getWindDir() { return windDir; }
+	float getWindDir() const { return windDir; }
 
 	void setPlayer ( cPlayer *player_ );
 

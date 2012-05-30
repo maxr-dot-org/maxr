@@ -623,7 +623,7 @@ public:
 	void draw();
 
 	void setChecked ( bool checked_ );
-	bool isChecked();
+	bool isChecked() const;
 
 	void limitTextSize ( int w );
 };

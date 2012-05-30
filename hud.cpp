@@ -41,7 +41,7 @@
 
 using namespace std;
 
-bool sMouseBox::isTooSmall()
+bool sMouseBox::isTooSmall() const
 {
 	if ( startX == -1 || startY == -1 || endX == -1 || endY == -1 ) return true;
 	return !(endX > startX + 0.5 || endX < startX - 0.5 || endY > startY + 0.5 || endY < startY - 0.5);
@@ -725,12 +725,12 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 	checkOffsetPosition();
 }
 
-float cGameGUI::getZoom()
+float cGameGUI::getZoom() const
 {
 	return ( getTileSize()/(float)64.0 );
 }
 
-int cGameGUI::getTileSize()
+int cGameGUI::getTileSize() const
 {
 	return Round( 64.0*zoom );
 }

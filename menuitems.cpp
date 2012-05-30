@@ -1119,7 +1119,7 @@ void cMenuCheckButton::setChecked ( bool checked_ )
 	else renewButtonSurface();
 }
 
-bool cMenuCheckButton::isChecked()
+bool cMenuCheckButton::isChecked() const
 {
 	return checked;
 }
