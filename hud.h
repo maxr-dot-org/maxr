@@ -478,9 +478,9 @@ public:
 
 	void setStartup ( bool startup_ );
 
-	cVehicle *getSelVehicle() { return selectedVehicle; }
+	const cVehicle *getSelVehicle() const { return selectedVehicle; }
 	cList<cVehicle*> *getSelVehiclesGroup() { return &selectedVehiclesGroup; }
-	cBuilding *getSelBuilding() { return selectedBuilding; }
+	const cBuilding *getSelBuilding() const { return selectedBuilding; }
 	cUnit *getSelectedUnit () { return selectedVehicle ? (cUnit*) selectedVehicle : (cUnit*) selectedBuilding; }
 
 	void selectUnit( cVehicle *vehicle );
