@@ -3467,7 +3467,7 @@ void cGameGUI::drawBaseUnits( int startX, int startY, int endX, int endY, int zo
 				{
 					if ( bi->PosX == x && bi->PosY == y )
 					{
-						bi->draw ( &dest );
+						bi->draw ( &dest, *this );
 					}
 				}
 				bi--;
@@ -3500,7 +3500,7 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 				{
 					if ( building->PosX == x && building->PosY == y )	//make sure a big building is drawn only once
 					{
-						building->draw ( &dest );
+						building->draw ( &dest, *this );
 
 						if ( debugBaseClient && building->SubBase )
 						{
@@ -3597,7 +3597,7 @@ void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY
 				{
 					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA )
 					{
-						building->draw ( &dest );
+						building->draw ( &dest, *this );
 					}
 					building++;
 				} while ( !building.end );
@@ -3607,7 +3607,7 @@ void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY
 				{
 					if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE )
 					{
-						building->draw ( &dest );
+						building->draw ( &dest, *this );
 					}
 					building++;
 				} while ( !building.end );
@@ -3670,7 +3670,7 @@ void cGameGUI::drawConnectors( int startX, int startY, int endX, int endY, int z
 				cBuilding* building = map->fields[pos].getTopBuilding();
 				if ( building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE )
 				{
-					building->draw ( &dest );
+					building->draw ( &dest, *this );
 				}
 			}
 			pos++;
@@ -4391,11 +4391,11 @@ void cGameGUI::drawUnitCircles()
 				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0 &&
 				selectedBuilding->owner == player)
 		{
-			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->type.getVehicle());
+			selectedBuilding->DrawExitPoints((*selectedBuilding->BuildList)[0]->type.getVehicle(), *this);
 		}
 		if ( mouseInputMode == activateVehicle && selectedBuilding->owner==player )
 		{
-			selectedBuilding->DrawExitPoints(static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ);
+			selectedBuilding->DrawExitPoints(static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ, *this);
 		}
 	}
 	player->DrawLockList();

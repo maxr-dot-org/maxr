@@ -391,6 +391,7 @@ public:
 
 	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
 
+	cClient *getClient() { return client; }
 	bool surveyChecked() const { return surveyButton->isChecked(); }
 	bool hitsChecked() const { return hitsButton->isChecked(); }
 	bool scanChecked() const { return scanButton->isChecked(); }

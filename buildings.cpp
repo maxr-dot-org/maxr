@@ -252,32 +252,32 @@ int cBuilding::refreshData ()
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::draw ( SDL_Rect *screenPos )
+void cBuilding::draw ( SDL_Rect *screenPos, cGameGUI &gameGUI)
 {
 	SDL_Rect dest, tmp;
-	float factor = (float)Client->gameGUI.getTileSize()/(float)64.0;
+	float factor = (float)gameGUI.getTileSize()/(float)64.0;
 
 	// draw the damage effects
-	if ( Client->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[PosX+PosY*Client->getMap()->size] ) )
+	if ( gameGUI.getClient()->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX+PosY*gameGUI.getClient()->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 200 - 200 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
-		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
+		gameGUI.getClient()->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX, PosY*64 + DamageFXPointY, intense );
 
 		if ( data.isBig && intense > 50 )
 		{
 			intense -= 50;
-			Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX2, PosY*64 + DamageFXPointY2, intense );
+			gameGUI.getClient()->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX2, PosY*64 + DamageFXPointY2, intense );
 		}
 	}
 
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = Client->gameGUI.getDCache()->getCachedImage(this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage(this);
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = Client->gameGUI.getDCache()->createNewEntry(this);
+		drawingSurface = gameGUI.getDCache()->createNewEntry(this);
 	}
 
 	if ( drawingSurface == NULL )
@@ -289,7 +289,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	if ( bDraw )
 	{
-		render ( drawingSurface, dest,(float)Client->gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows(), true );
+		render ( drawingSurface, dest,(float)gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows(), true );
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -306,7 +306,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 
 	if ( StartUp )
 	{
-		if ( Client->timer100ms )
+		if ( gameGUI.getClient()->timer100ms )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )
@@ -322,7 +322,7 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		CHECK_SCALING( typ->eff, typ->eff_org, factor);
 		SDL_BlitSurface ( typ->eff, NULL, buffer, &tmp );
 
-		if ( Client->timer100ms )
+		if ( gameGUI.getClient()->timer100ms )
 		{
 			if ( EffectInc )
 			{
@@ -348,12 +348,12 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ((BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == Client->getActivePlayer())
+	if ( ((BuildList && BuildList->Size() && !IsWorking && (*BuildList)[0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
 		nr = 0xFF00 - ( ( ANIMATION_SPEED % 0x8 ) * 0x1000 );
-		max = (int)( Client->gameGUI.getTileSize() - 2 ) * 2;
+		max = (int)( gameGUI.getTileSize() - 2 ) * 2;
 		d.x = dest.x + 2;
 		d.y = dest.y + 2;
 		d.w = max;
@@ -376,11 +376,11 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw a colored frame if necessary
-	if ( Client->gameGUI.colorChecked() )
+	if ( gameGUI.colorChecked() )
 	{
 		SDL_Rect d, t;
 		int nr = *((unsigned int*)(owner->color->pixels));
-		int max = data.isBig ? ((int)(Client->gameGUI.getTileSize()) - 1) * 2 : (int)(Client->gameGUI.getTileSize()) - 1;
+		int max = data.isBig ? ((int)(gameGUI.getTileSize()) - 1) * 2 : (int)(gameGUI.getTileSize()) - 1;
 
 		d.x = dest.x + 1;
 		d.y = dest.y + 1;
@@ -404,10 +404,10 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 	}
 
 	// draw a colored frame if necessary
-	if ( Client->gameGUI.getSelBuilding() == this )
+	if ( gameGUI.getSelBuilding() == this )
 	{
 		SDL_Rect d, t;
-		int max = data.isBig ? (int)(Client->gameGUI.getTileSize()) * 2 : (int)(Client->gameGUI.getTileSize());
+		int max = data.isBig ? (int)(gameGUI.getTileSize()) * 2 : (int)(gameGUI.getTileSize());
 		int len = max / 4;
 
 		d.x = dest.x + 1;
@@ -415,52 +415,52 @@ void cBuilding::draw ( SDL_Rect *screenPos )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = dest.x + 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y = dest.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = dest.x + 1;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 	}
 
 	//draw health bar
-	if ( Client->gameGUI.hitsChecked() )
+	if ( gameGUI.hitsChecked() )
 		drawHealthBar();
 
 	//draw ammo bar
-	if ( Client->gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0 )
+	if ( gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0 )
 		drawMunBar();
 
 	//draw status
-	if ( Client->gameGUI.statusChecked() )
+	if ( gameGUI.statusChecked() )
 		drawStatus();
 
 	//attack job debug output
-	if ( Client->gameGUI.getAJobDebugStatus() )
+	if ( gameGUI.getAJobDebugStatus() )
 	{
 		cBuilding* serverBuilding = NULL;
 		if ( Server ) serverBuilding = Server->Map->fields[PosX + PosY*Server->Map->size].getBuildings();
@@ -982,17 +982,17 @@ void cBuilding::ServerStartWork ()
 //------------------------------------------------------------
 /** starts the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::ClientStartWork()
+void cBuilding::ClientStartWork(cGameGUI &gameGUI)
 {
 	if (IsWorking)
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
-	if ( Client->gameGUI.getSelBuilding() == this )
+	if ( gameGUI.getSelBuilding() == this )
 	{
-		StopFXLoop (Client->iObjectStream);
+		StopFXLoop (gameGUI.getClient()->iObjectStream);
 		PlayFX (typ->Start);
-		Client->iObjectStream = playStream ();
+		gameGUI.getClient()->iObjectStream = playStream();
 	}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
@@ -1075,16 +1075,16 @@ void cBuilding::ServerStopWork ( bool override )
 //------------------------------------------------------------
 /** stops the building in the client thread */
 //------------------------------------------------------------
-void cBuilding::ClientStopWork()
+void cBuilding::ClientStopWork(cGameGUI &gameGUI)
 {
 	if (!IsWorking)
 		return;
 	IsWorking = false;
-	if ( Client->gameGUI.getSelBuilding() == this )
+	if ( gameGUI.getSelBuilding() == this )
 	{
-		StopFXLoop (Client->iObjectStream);
+		StopFXLoop (gameGUI.getClient()->iObjectStream);
 		PlayFX (typ->Stop);
-		Client->iObjectStream = playStream ();
+		gameGUI.getClient()->iObjectStream = playStream ();
 	}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
@@ -1157,23 +1157,21 @@ bool cBuilding::CanTransferTo ( cMapField *OverUnitField )
 //--------------------------------------------------------------------------
 /** draws the exit points for a vehicle of the given type: */
 //--------------------------------------------------------------------------
-void cBuilding::DrawExitPoints ( sVehicle *typ )
+void cBuilding::DrawExitPoints ( sVehicle *typ, cGameGUI &gameGUI )
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
+	cMap *map = gameGUI.getClient()->getMap();
+	const int tilesize = gameGUI.getTileSize();
+	T_2<int> offsets[12] = {T_2<int>(-1, -1), T_2<int>(0, -1), T_2<int>(1, -1), T_2<int>(2, -1),
+							T_2<int>(-1,  0),                                   T_2<int>(2, 0),
+							T_2<int>(-1,  1),                                   T_2<int>(2, 1),
+							T_2<int>(-1,  2), T_2<int>(0,  2), T_2<int>(1,  2), T_2<int>(2, 2)};
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 2, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX + 2, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy );
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 2, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX    , PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX + 1, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize()*2 );
-	if ( canExitTo ( PosX + 2, PosY + 2, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize()*2, spy + Client->gameGUI.getTileSize()*2 );
+	for (int i = 0; i != 12; ++i) {
+		if (canExitTo ( PosX + offsets[i].x, PosY + offsets[i].y, map, typ ) )
+			gameGUI.drawExitPoint ( spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize );
+	}
 }
 
 //--------------------------------------------------------------------------

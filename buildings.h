@@ -31,6 +31,7 @@ struct sVehicle;
 class cVehicle;
 class cMap;
 class cMapField;
+class cGameGUI;
 
 //--------------------------------------------------------------------------
 /** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
@@ -153,7 +154,7 @@ public:
 	/**
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
 	*/
-	void draw(SDL_Rect *dest);
+	void draw(SDL_Rect *dest, cGameGUI &gameGUI);
 	void Select();
 	void Deselct();
 
@@ -169,14 +170,14 @@ public:
 	void updateNeighbours( cMap *map );
 	void CheckNeighbours( cMap *Map );
 	void ServerStartWork();
-	void ClientStartWork();
+	void ClientStartWork(cGameGUI &gameGUI);
 	void ServerStopWork(bool override);
-	void ClientStopWork();
+	void ClientStopWork(cGameGUI &gameGUI);
 	bool CanTransferTo(cMapField *OverUnitField ); /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
 	void DrawAttackCursor( int x, int y );
 	void CalcTurboBuild(int *iTurboBuildRounds, int *iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
-	void DrawExitPoints(sVehicle *typ);
+	void DrawExitPoints(sVehicle *typ, cGameGUI &gameGUI);
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
 	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true );
 	bool canLoad( cVehicle *Vehicle, bool checkPosition = true );

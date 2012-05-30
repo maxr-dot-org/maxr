@@ -1059,7 +1059,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_START_WORK( cNetMessage& message )
 		return;
 	}
 
-	building->ClientStartWork();
+	building->ClientStartWork(gameGUI);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK( cNetMessage& message )
@@ -1075,7 +1075,7 @@ void cClient::HandleNetMessage_GAME_EV_DO_STOP_WORK( cNetMessage& message )
 		return;
 	}
 
-	building->ClientStopWork();
+	building->ClientStopWork(gameGUI);
 }
 
 void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER( cNetMessage& message )
