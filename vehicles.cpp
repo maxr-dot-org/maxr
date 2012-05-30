@@ -107,16 +107,11 @@ cVehicle::~cVehicle ()
 
 	delete autoMJob;
 
-	detectedInThisTurnByPlayerList.Reserve (0); //?
-
 	if ( IsLocked )
 	{
-		cPlayer *p;
-		unsigned int i;
-
-		for ( i = 0;i < Client->PlayerList->Size();i++ )
+		for (size_t i = 0; i < Client->PlayerList->Size(); i++ )
 		{
-			p = (*Client->PlayerList)[i];
+			cPlayer *p = (*Client->PlayerList)[i];
 			p->DeleteLock ( this );
 		}
 	}
@@ -2047,7 +2042,7 @@ bool cVehicle::wasDetectedInThisTurnByPlayer (cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::clearDetectedInThisTurnPlayerList ()
 {
-	detectedInThisTurnByPlayerList.Reserve (0);
+	detectedInThisTurnByPlayerList.Clear();
 }
 
 //-----------------------------------------------------------------------------

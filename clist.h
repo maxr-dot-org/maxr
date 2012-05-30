@@ -14,7 +14,7 @@ template<typename T> class cList
 	public:
 		cList() : v_(), capacity_(), size_() {}
 
-		~cList() { Reserve(0); }
+		~cList() { Clear(); }
 
 		cList( const cList& list);
 		cList& operator=( const cList& list);
@@ -32,6 +32,8 @@ template<typename T> class cList
 		void Insert( size_t const i, T const& e );
 
 		void Delete(size_t const idx);
+
+		void Clear() { Reserve(0); }
 
 		void PopBack();
 

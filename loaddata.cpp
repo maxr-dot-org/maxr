@@ -1029,7 +1029,8 @@ static int LoadVehicles()
 		}
 	}
 	// load found units
-	UnitsData.vehicle.Reserve(0);
+	UnitsData.vehicle.Clear();
+	UnitsData.vehicle.Reserve(VehicleList.Size());
 	for ( unsigned int i = 0; i < VehicleList.Size(); i++)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
@@ -1588,7 +1589,8 @@ static int LoadBuildings()
 
 	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
 	// load found units
-	UnitsData.building.Reserve(0);
+	UnitsData.building.Clear();
+	UnitsData.building.Reserve(BuildingList.Size());
 	for( unsigned int i = 0; i < BuildingList.Size(); i++)
 	{
 		sBuildingPath = cSettings::getInstance().getBuildingsPath();

@@ -634,7 +634,7 @@ void cPlayer::doResearch()
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas;
 	cList<int> areasReachingNextLevel;
-	reportResearchAreasFinished.Reserve (0); // clear
+	reportResearchAreasFinished.Clear();
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		if (researchCentersWorkingOnArea[area] > 0)
