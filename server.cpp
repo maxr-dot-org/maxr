@@ -1180,7 +1180,7 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			{
 				if (upgradeAll || i == storageSlot)
 				{
-					cVehicle* vehicle = static_cast<cVehicle*>(storingBuilding->storedUnits[i]);
+					cVehicle* vehicle = storingBuilding->storedUnits[i];
 					sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
 
 					if (vehicle->data.version >= upgradedVersion.version)
@@ -3400,7 +3400,7 @@ void cServer::resyncPlayer ( cPlayer *Player, bool firstDelete )
 		sendAddUnit ( Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, false );
 		for ( unsigned int i = 0; i < Building->storedUnits.Size(); i++ )
 		{
-			cVehicle *StoredVehicle = static_cast<cVehicle*>(Building->storedUnits[i]);
+			cVehicle *StoredVehicle = Building->storedUnits[i];
 			resyncVehicle ( StoredVehicle, Player );
 			sendStoreVehicle ( Building->iID, false, StoredVehicle->iID, Player->Nr );
 		}
@@ -3470,7 +3470,7 @@ void cServer::resyncVehicle ( cVehicle *Vehicle, cPlayer *Player )
 	if ( Vehicle->ServerMoveJob ) sendMoveJobServer ( Vehicle->ServerMoveJob, Player->Nr );
 	for ( unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++ )
 	{
-		cVehicle *StoredVehicle = static_cast<cVehicle*>(Vehicle->storedUnits[i]);
+		cVehicle *StoredVehicle = Vehicle->storedUnits[i];
 		resyncVehicle ( StoredVehicle, Player );
 		sendStoreVehicle ( Vehicle->iID, true, StoredVehicle->iID, Player->Nr );
 	}

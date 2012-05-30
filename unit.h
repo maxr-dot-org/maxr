@@ -25,6 +25,7 @@
 
 class cPlayer;
 class cMap;
+class cVehicle;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -102,7 +103,7 @@ public:
 
 	cUnit* next; ///< "next"-pointer for the double linked list
 	cUnit* prev; ///< "prev"-pointer for the double linked list
-	cList<cUnit*> storedUnits; ///< list with the units (normally vehicles), that are stored in this unit
+	cList<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
 	int selectedMenuButtonIndex;
 

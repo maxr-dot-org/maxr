@@ -5037,7 +5037,7 @@ void cUnitHelpMenu::handleDestroyUnit( cBuilding *destroyedBuilding, cVehicle *d
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStorageMenu::cStorageMenu(cList<cUnit*>& storageList_, cVehicle* vehicle, cBuilding* building) :
+cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
 	cMenu(LoadPCX(GFXOD_STORAGE), MNU_BG_ALPHA),
 	ownerVehicle(vehicle),
 	ownerBuilding(building),
@@ -5193,7 +5193,7 @@ void cStorageMenu::resetInfos()
 
 			if ( index < (int)storageList.Size() )
 			{
-				cVehicle *vehicle = (cVehicle*)storageList[index];
+				cVehicle *vehicle = storageList[index];
 				srcSurface = vehicle->typ->storage;
 				name = vehicle->getDisplayName();
 				if (  vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version )
@@ -5241,7 +5241,7 @@ void cStorageMenu::resetInfos()
 	{
 		for ( unsigned int i = 0; i < storageList.Size(); i++ )
 		{
-			cVehicle *vehicle = (cVehicle*)storageList[i];
+			cVehicle *vehicle = storageList[i];
 			if ( vehicle->data.ammoCur != vehicle->data.ammoMax ) reloadAllButton->setLocked ( false );
 			if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax ) repairAllButton->setLocked ( false );
 			if ( vehicle->data.version != vehicle->owner->VehicleData[vehicle->typ->nr].version ) upgradeAllButton->setLocked ( false );
@@ -5373,7 +5373,7 @@ void cStorageMenu::activateAllReleased ( void *parent )
 
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
-		cVehicle *vehicle = (cVehicle*)menu->storageList[i];
+		cVehicle *vehicle = menu->storageList[i];
 		bool activated = false;
 		for ( int ypos = unitYPos-1, poscount = 0; ypos <= unitYPos+(isBig ? 2 : 1); ypos++ )
 		{
@@ -5409,7 +5409,7 @@ void cStorageMenu::reloadAllReleased ( void *parent )
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
 		if ( resources < 1 ) break;
-		cUnit* vehicle = menu->storageList[i];
+		cVehicle* vehicle = menu->storageList[i];
 		if ( vehicle->data.ammoCur != vehicle->data.ammoMax )
 		{
 			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM );
@@ -5430,7 +5430,7 @@ void cStorageMenu::repairAllReleased ( void *parent )
 	for ( unsigned int i = 0; i < menu->storageList.Size(); i++ )
 	{
 		if ( resources < 1 ) break;
-		cUnit* vehicle = menu->storageList[i];
+		cVehicle* vehicle = menu->storageList[i];
 		if ( vehicle->data.hitpointsCur != vehicle->data.hitpointsMax )
 		{
 			sendWantSupply ( vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR );

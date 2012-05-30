@@ -1226,7 +1226,7 @@ void cUnit::deleteStoredUnits ()
 {
 	while (storedUnits.Size ())
 	{
-		cUnit* unit = storedUnits[0];
+		cVehicle* unit = storedUnits[0];
 		if (unit->prev)
 		{
 			cUnit* prevUnit;

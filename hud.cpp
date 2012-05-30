@@ -1351,7 +1351,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
-			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
+			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->typ) )
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1410,7 +1410,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if ( selectedBuilding && selectedBuilding->owner==client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
