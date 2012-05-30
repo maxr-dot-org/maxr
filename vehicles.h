@@ -32,6 +32,7 @@ class cMap;
 class cMapField;
 class cServerMoveJob;
 class cClientMoveJob;
+class cGameGUI;
 struct sSentry;
 
 //-----------------------------------------------------------------------------
@@ -158,7 +159,7 @@ public:
 	* Draws the vehicle to the screen buffer.
 	* Takes the main image from the cache or calls cVehicle::render()
 	*/
-	void draw(SDL_Rect screenPosition );
+	void draw(SDL_Rect screenPosition, cGameGUI &gameGUI );
 	void Select();
 	void Deselct();
 
@@ -168,7 +169,7 @@ public:
 	*@return 1 if there has been refreshed something else 0.
 	*/
 	int refreshData();
-	void DrawPath();
+	void DrawPath(cGameGUI &gameGUI);
 	std::string getStatusStr() const;
 	int playStream();
 	void StartMoveSound();

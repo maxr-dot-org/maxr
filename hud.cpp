@@ -2980,7 +2980,7 @@ void cGameGUI::preDrawFunction()
 
 	if ( selectedVehicle && ( ( selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended ) || selectedVehicle->BuildPath ) )
 	{
-		selectedVehicle->DrawPath();
+		selectedVehicle->DrawPath(*this);
 	}
 
 	drawDebugOutput();
@@ -3569,7 +3569,7 @@ void cGameGUI::drawShips( int startX, int startY, int endX, int endY, int zoomOf
 				cVehicle* vehicle = map->fields[pos].getVehicles();
 				if ( vehicle && vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0 )
 				{
-					vehicle->draw ( dest );
+					vehicle->draw ( dest, *this );
 				}
 			}
 			pos++;
@@ -3617,7 +3617,7 @@ void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY
 				{
 					if ( vehicle->PosX == x && vehicle->PosY == y )	//make sure a big vehicle is drawn only once
 					{
-						vehicle->draw ( dest );
+						vehicle->draw ( dest, *this );
 					}
 				}
 			}
@@ -3644,7 +3644,7 @@ void cGameGUI::drawVehicles( int startX, int startY, int endX, int endY, int zoo
 				cVehicle* vehicle = map->fields[pos].getVehicles();
 				if ( vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing )
 				{
-					vehicle->draw ( dest );
+					vehicle->draw ( dest, *this );
 				}
 			}
 			pos++;
@@ -3697,7 +3697,7 @@ void cGameGUI::drawPlanes( int startX, int startY, int endX, int endY, int zoomO
 				planes.setToEnd();
 				while ( !planes.rend )
 				{
-					planes->draw ( dest );
+					planes->draw ( dest, *this );
 					planes--;
 				}
 			}

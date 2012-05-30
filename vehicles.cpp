@@ -125,19 +125,19 @@ cVehicle::~cVehicle ()
 //-----------------------------------------------------------------------------
 /** Draws the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::draw ( SDL_Rect screenPosition )
+void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 {
 	//make damage effect
-	if ( Client->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[PosX+PosY*Client->getMap()->size] ) )
+	if ( gameGUI.getClient()->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX+PosY*gameGUI.getClient()->getMap()->size] ) )
 	{
 		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
-		Client->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
+		gameGUI.getClient()->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
 	}
 
 	//make landing and take off of planes
-	if ( data.factorAir > 0 && Client->timer50ms )
+	if ( data.factorAir > 0 && gameGUI.getClient()->timer50ms )
 	{
-		if ( canLand (*Client->getMap()) )
+		if ( canLand (*gameGUI.getClient()->getMap()) )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -150,7 +150,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// make the dithering
-	if ( Client->timer100ms )
+	if ( gameGUI.getClient()->timer100ms )
 	{
 		if ( FlightHigh > 0 )
 		{
@@ -174,7 +174,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//rotate vehicles to the right direction for building/clearing
-	if ( ( IsBuilding || IsClearing ) && Client->timer100ms )
+	if ( ( IsBuilding || IsClearing ) && gameGUI.getClient()->timer100ms )
 	{
 		if ( data.isBig )
 			dir = 0;
@@ -185,14 +185,14 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	//run start up effect
 	if ( StartUp )
 	{
-		if ( Client->timer50ms )
+		if ( gameGUI.getClient()->timer50ms )
 			StartUp += 25;
 
 		if ( StartUp >= 255 )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && Client->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == Client->getActivePlayer() )
+		if ( (data.isStealthOn&TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == gameGUI.getClient()->getActivePlayer() )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -200,7 +200,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 
 	if ( IsBuilding && dir == 0 && BigBetonAlpha < 255 )
 	{
-		if ( Client->timer50ms )
+		if ( gameGUI.getClient()->timer50ms )
 			BigBetonAlpha += 25;
 
 		if ( BigBetonAlpha > 255 )
@@ -208,8 +208,8 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	//calculate screen position
-	int ox = (int) (OffX * Client->gameGUI.getZoom());
-	int oy = (int) (OffY * Client->gameGUI.getZoom());
+	int ox = (int) (OffX * gameGUI.getZoom());
+	int oy = (int) (OffY * gameGUI.getZoom());
 
 	if ( !IsBuilding && !IsClearing )
 	{
@@ -225,12 +225,12 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = Client->gameGUI.getDCache()->getCachedImage(this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage(this);
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = Client->gameGUI.getDCache()->createNewEntry(this);
+		drawingSurface = gameGUI.getDCache()->createNewEntry(this);
 	}
 
 	if ( drawingSurface == NULL )
@@ -242,7 +242,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 
 	if ( bDraw )
 	{
-		render ( drawingSurface, dest, (float)Client->gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows() );
+		render ( drawingSurface, dest, (float)gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows() );
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -253,7 +253,7 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// draw overlay if necessary:
-	drawOverlayAnimation(buffer, screenPosition, Client->gameGUI.getZoom());
+	drawOverlayAnimation(buffer, screenPosition, gameGUI.getZoom());
 
 	//remove the dithering for the following operations
 	if ( FlightHigh > 0 )
@@ -263,16 +263,16 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// draw indication, when building is complete
-	if ( IsBuilding && BuildRounds == 0  && owner == Client->getActivePlayer() && !BuildPath )
+	if ( IsBuilding && BuildRounds == 0  && owner == gameGUI.getClient()->getActivePlayer() && !BuildPath )
 	{
 		SDL_Rect d, t;
 		int max, nr;
 		nr = 0xFF00 - ( ( ANIMATION_SPEED % 0x8 ) * 0x1000 );
 
 		if ( data.isBig )
-			max = ( Client->gameGUI.getTileSize() * 2) - 3;
+			max = ( gameGUI.getTileSize() * 2) - 3;
 		else
-			max = Client->gameGUI.getTileSize() - 3;
+			max = gameGUI.getTileSize() - 3;
 
 		d.x = screenPosition.x + 2;
 		d.y = screenPosition.y + 2;
@@ -296,14 +296,14 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 	}
 
 	// Draw the colored frame if necessary
-	if ( Client->gameGUI.colorChecked() )
+	if ( gameGUI.colorChecked() )
 	{
 		SDL_Rect d, t;
 		int max, nr;
 		nr = * ( unsigned int* ) owner->color->pixels;
 
-		if ( data.isBig ) max = ( (int)(Client->gameGUI.getTileSize()) - 1 ) * 2;
-		else max = (int)(Client->gameGUI.getTileSize()) - 1;
+		if ( data.isBig ) max = ( gameGUI.getTileSize() - 1 ) * 2;
+		else max = gameGUI.getTileSize() - 1;
 
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
@@ -332,37 +332,37 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		Uint32 color = 0xFFFF00;
 		SDL_Rect d;
 
-		d.w = (int)(Client->gameGUI.getTileSize())-2;
+		d.w = gameGUI.getTileSize() - 2;
 		d.h = 1;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
-		d.w = (int)(Client->gameGUI.getTileSize())-2;
+		d.w = gameGUI.getTileSize() - 2;
 		d.h = 1;
 		d.x = screenPosition.x + 1;
-		d.y = screenPosition.y + (int)(Client->gameGUI.getTileSize())-1;
+		d.y = screenPosition.y + gameGUI.getTileSize() - 1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
-		d.h = (int)(Client->gameGUI.getTileSize())-2;
+		d.h = gameGUI.getTileSize() - 2;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 
 		d.w = 1;
-		d.h = (int)(Client->gameGUI.getTileSize())-2;
-		d.x = screenPosition.x + (int)(Client->gameGUI.getTileSize())-1;
+		d.h = gameGUI.getTileSize() - 2;
+		d.x = screenPosition.x + gameGUI.getTileSize() - 1;
 		d.y = screenPosition.y + 1;
 		SDL_FillRect ( buffer, &d, color );
 	}
-	if ( Client->gameGUI.getSelVehicle() == this )
+	if ( gameGUI.getSelVehicle() == this )
 	{
 		SDL_Rect d, t;
 		int len, max;
 
-		if ( data.isBig ) max = (int)(Client->gameGUI.getTileSize()) * 2;
-		else max = (int)(Client->gameGUI.getTileSize());
+		if ( data.isBig ) max = gameGUI.getTileSize() * 2;
+		else max = gameGUI.getTileSize();
 
 		len = max / 4;
 
@@ -371,52 +371,52 @@ void cVehicle::draw ( SDL_Rect screenPosition )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
-		SDL_FillRect ( buffer, &d, Client->gameGUI.getBlinkColor() );
+		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
 	}
 
 	//draw health bar
-	if ( Client->gameGUI.hitsChecked() )
+	if ( gameGUI.hitsChecked() )
 		drawHealthBar();
 
 	//draw ammo bar
-	if ( Client->gameGUI.ammoChecked() && data.canAttack)
+	if ( gameGUI.ammoChecked() && data.canAttack)
 		drawMunBar();
 
 	//draw status info
-	if ( Client->gameGUI.statusChecked() )
+	if ( gameGUI.statusChecked() )
 		drawStatus();
 
 	//attack job debug output
-	if ( Client->gameGUI.getAJobDebugStatus() )
+	if ( gameGUI.getAJobDebugStatus() )
 	{
 		cVehicle* serverVehicle = NULL;
 		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
@@ -796,15 +796,15 @@ int cVehicle::refreshData ()
 //-----------------------------------------------------------------------------
 /** Draws the path of the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawPath ()
+void cVehicle::DrawPath (cGameGUI &gameGUI)
 {
 	int mx = 0, my = 0, sp, save;
 	SDL_Rect dest, ndest;
 	sWaypoint *wp;
 
-	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != Client->getActivePlayer() )
+	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer() )
 	{
-		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || Client->gameGUI.mouseInputMode == placeBand ) return;
+		if ( !BuildPath || ( BandX == PosX && BandY == PosY ) || gameGUI.mouseInputMode == placeBand ) return;
 
 		mx = PosX;
 		my = PosY;
@@ -822,10 +822,10 @@ void cVehicle::DrawPath ()
 
 		while ( mx != BandX || my != BandY )
 		{
-			dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * mx;
-			dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * my;
+			dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
+			dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
 
-			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-Client->gameGUI.getTileSize()], NULL, buffer, &dest );
+			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-gameGUI.getTileSize()], NULL, buffer, &dest );
 
 			if ( mx < BandX )
 				mx++;
@@ -840,10 +840,10 @@ void cVehicle::DrawPath ()
 					my--;
 		}
 
-		dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * mx;
-		dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * my;
+		dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
+		dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
 
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-Client->gameGUI.getTileSize()], NULL, buffer, &dest );
+		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-gameGUI.getTileSize()], NULL, buffer, &dest );
 		return;
 	}
 
@@ -856,8 +856,8 @@ void cVehicle::DrawPath ()
 	}
 	else save = ClientMoveJob->iSavedSpeed;
 
-	dest.x = 180 - ( int ) ( Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * PosX;
-	dest.y = 18 - ( int ) ( Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) + Client->gameGUI.getTileSize() * PosY;
+	dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosX;
+	dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosY;
 	wp = ClientMoveJob->Waypoints;
 	ndest = dest;
 
@@ -865,8 +865,8 @@ void cVehicle::DrawPath ()
 	{
 		if ( wp->next )
 		{
-			ndest.x += mx = wp->next->X * Client->gameGUI.getTileSize() - wp->X * Client->gameGUI.getTileSize();
-			ndest.y += my = wp->next->Y * Client->gameGUI.getTileSize() - wp->Y * Client->gameGUI.getTileSize();
+			ndest.x += mx = wp->next->X * gameGUI.getTileSize() - wp->X * gameGUI.getTileSize();
+			ndest.y += my = wp->next->Y * gameGUI.getTileSize() - wp->Y * gameGUI.getTileSize();
 		}
 		else
 		{
