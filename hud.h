@@ -23,6 +23,8 @@
 #include "menus.h"
 #include "drawingcache.h"
 
+class cClient;
+
 // TODO-list for the gameGUI:
 //
 // - change code that hud-background will not be drawn every frame (makes ~20fps on this machine!)
@@ -94,6 +96,7 @@ enum eMouseInputMode
 
 class cGameGUI : public cMenu
 {
+	cClient *client;
 	SDL_Surface *panelTopGraphic, *panelBottomGraphic;
 
 	/** the currently selected vehicle */
@@ -382,6 +385,7 @@ public:
 	cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList );
 	~cGameGUI();
 
+	void setClient(cClient *client);
 	int show();
 	void returnToCallback();
 

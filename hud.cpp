@@ -56,6 +56,7 @@ sMouseBox::sMouseBox() :
 
 cGameGUI::cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList ) :
 	cMenu ( generateSurface() ),
+	client(NULL),
 	player ( player_ ),
 	map ( map_ ),
 	shiftPressed ( false )
@@ -244,6 +245,11 @@ cGameGUI::cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerL
 	updateTurn( 1 );
 }
 
+void cGameGUI::setClient(cClient *client)
+{
+	this->client = client;
+}
+
 void cGameGUI::calcMinZoom()
 {
 	minZoom = (float)(( max(Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float)map->size ) / 64.0);
@@ -310,7 +316,7 @@ int cGameGUI::show()
 	// do startup actions
 	makePanel( true );
 	startup = true;
-	if ( Client->bWaitForOthers ) setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Until", Client->getPlayerFromNumber( 0 )->name ), "" );
+	if ( client->bWaitForOthers ) setInfoTexts ( lngPack.i18n ( "Text~Multiplayer~Wait_Until", client->getPlayerFromNumber( 0 )->name ), "" );
 
 	int lastMouseX = 0, lastMouseY = 0;
 
@@ -338,7 +344,7 @@ int cGameGUI::show()
 
 		if ( !cSettings::getInstance().shouldUseFastMode() ) SDL_Delay ( 10 );
 
-		Client->doGameActions();
+		client->doGameActions();
 
 		if ( startup )
 		{
@@ -357,7 +363,7 @@ int cGameGUI::show()
 			miniMapImage->setImage(mini);
 			needMiniMapDraw = false;
 		}
-		if ( Client->timer100ms )
+		if ( client->timer100ms )
 		{
 			if ( FLC != NULL && playFLC )
 			{
@@ -385,7 +391,7 @@ int cGameGUI::show()
 	if (Server == 0)
 	{
 		cNetMessage* message = new cNetMessage( GAME_EV_WANT_DISCONNECT );
-		Client->sendNetMessage ( message );
+		client->sendNetMessage ( message );
 	}
 	// end
 
@@ -1047,7 +1053,7 @@ void cGameGUI::selectUnit( cVehicle *vehicle )
 	mouseInputMode = normalInput;
 
 	vehicle->Select();
-	Client->iObjectStream = vehicle->playStream();
+	client->iObjectStream = vehicle->playStream();
 
 	updateMouseCursor();
 }
@@ -1063,7 +1069,7 @@ void cGameGUI::selectUnit( cBuilding *building )
 	mouseInputMode = normalInput;
 
 	building->Select();
-	Client->iObjectStream = building->playStream();
+	client->iObjectStream = building->playStream();
 
 	updateMouseCursor();
 }
@@ -1074,13 +1080,13 @@ void cGameGUI::deselectUnit()
 	{
 		selectedBuilding->Deselct();
 		selectedBuilding = NULL;
-		StopFXLoop ( Client->iObjectStream );
+		StopFXLoop ( client->iObjectStream );
 	}
 	else if ( selectedVehicle )
 	{
 		selectedVehicle->Deselct();
 		selectedVehicle = NULL;
-		StopFXLoop ( Client->iObjectStream );
+		StopFXLoop ( client->iObjectStream );
 	}
 
 	mouseInputMode = normalInput;
@@ -1112,7 +1118,7 @@ void cGameGUI::updateMouseCursor()
 		}
 	}
 
-	if ( selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == Client->getActivePlayer() )
+	if ( selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == client->getActivePlayer() )
 	{
 		if ( x >= HUD_LEFT_WIDTH )
 		{
@@ -1123,7 +1129,7 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor ( CNo );
 		}
 	}
-	else if ( ( selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == Client->getActivePlayer() ) || ( selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == Client->getActivePlayer() ) )
+	else if ( ( selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == client->getActivePlayer() ) || ( selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == client->getActivePlayer() ) )
 	{
 		if ( selectedVehicle )
 		{
@@ -1164,9 +1170,9 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CHand );
 		}
-		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner==client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !Client->getMap()->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
+			if ( !( selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !client->getMap()->isWater( mouse->getKachelX(), mouse->getKachelY() ) ))
 			{
 				if ( mouse->SetCursor ( CAttack ))
 				{
@@ -1178,9 +1184,9 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == disableMode && selectedVehicle->owner==client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), false ) )
 			{
 				if ( mouse->SetCursor ( CDisable ) )
 				{
@@ -1192,9 +1198,9 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedVehicle && mouseInputMode == stealMode && selectedVehicle->owner==client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
-			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
+			if ( selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), true ) )
 			{
 				if ( mouse->SetCursor ( CSteal ) )
 				{
@@ -1206,21 +1212,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction ( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), false )&& ( !overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled ) )
 		{
 			if ( mouse->SetCursor ( CDisable ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), false );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), true ) )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && x>=HUD_LEFT_WIDTH && y>=HUD_TOP_HIGHT && x<Video.getResolutionX()-HUD_RIGHT_WIDTH && y<Video.getResolutionY()-HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), true ) )
 		{
 			if ( mouse->SetCursor ( CSteal ) )
 			{
 				selectedVehicle->drawCommandoCursor( mouse->getKachelX(), mouse->getKachelY(), true );
 			}
 		}
-		else if ( selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner==Client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
+		else if ( selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner==client->getActivePlayer()&&x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<Video.getResolutionX()-HUD_RIGHT_WIDTH&&y<Video.getResolutionY()-HUD_BOTTOM_HIGHT )
 		{
 			if ( selectedBuilding->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 			{
@@ -1234,21 +1240,21 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false, false ) )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && selectedVehicle->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), false, false ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedVehicle->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), Client->getMap() ) )
+		else if ( selectedBuilding && selectedBuilding->owner==client->getActivePlayer() && selectedBuilding->canAttackObjectAt( mouse->getKachelX(), mouse->getKachelY(), client->getMap() ) )
 		{
 			if ( mouse->SetCursor ( CAttack ))
 			{
 				selectedBuilding->DrawAttackCursor( mouse->getKachelX(), mouse->getKachelY() );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == muniActive )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && mouseInputMode == muniActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REARM ) )
 			{
@@ -1259,7 +1265,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == repairActive )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && mouseInputMode == repairActive )
 		{
 			if ( selectedVehicle->canSupply ( mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REPAIR ) )
 			{
@@ -1281,7 +1287,7 @@ void cGameGUI::updateMouseCursor()
 				) &&
 				(
 					!selectedVehicle                               ||
-					selectedVehicle->owner != Client->getActivePlayer() ||
+					selectedVehicle->owner != client->getActivePlayer() ||
 					(
 						(
 							selectedVehicle->data.factorAir > 0 ||
@@ -1316,7 +1322,7 @@ void cGameGUI::updateMouseCursor()
 				) &&
 				(
 					!selectedBuilding                               ||
-					selectedBuilding->owner != Client->getActivePlayer() ||
+					selectedBuilding->owner != client->getActivePlayer() ||
 					(
 						(
 							!selectedBuilding->BuildList                    ||
@@ -1332,9 +1338,9 @@ void cGameGUI::updateMouseCursor()
 		{
 			mouse->SetCursor ( CSelect );
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == loadMode )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && mouseInputMode == loadMode )
 		{
-			if ( selectedVehicle->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
+			if ( selectedVehicle->canLoad ( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), false ) )
 			{
 				mouse->SetCursor ( CLoad );
 			}
@@ -1343,9 +1349,9 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle && selectedVehicle->owner==Client->getActivePlayer() && mouseInputMode == activateVehicle )
+		else if ( selectedVehicle && selectedVehicle->owner==client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
-			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
+			if (selectedVehicle->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), static_cast<cVehicle*>(selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate])->typ) )
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1354,7 +1360,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedVehicle&&selectedVehicle->owner==Client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) )
+		else if ( selectedVehicle&&selectedVehicle->owner==client->getActivePlayer() && x>=HUD_LEFT_WIDTH&&y>=HUD_TOP_HIGHT&&x<HUD_LEFT_WIDTH+ ( Video.getResolutionX()-HUD_TOTAL_WIDTH ) && y<HUD_TOP_HIGHT+ ( Video.getResolutionY()-HUD_TOTAL_HIGHT ) )
 		{
 			if ( !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && mouseInputMode != loadMode && mouseInputMode != activateVehicle )
 			{
@@ -1362,7 +1368,7 @@ void cGameGUI::updateMouseCursor()
 				{
 					mouse->SetCursor ( CNo );
 				}
-				else if ( Client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true ))
+				else if ( client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true ))
 				{
 					mouse->SetCursor ( CMove );
 				}
@@ -1375,7 +1381,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if ( ( ( selectedVehicle->IsBuilding&&selectedVehicle->BuildRounds == 0 ) ||
 					 ( selectedVehicle->IsClearing&&selectedVehicle->ClearingRounds == 0 ) ) &&
-					 Client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo(mouse->getKachelX(), mouse->getKachelY()))
+					 client->getMap()->possiblePlace( selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo(mouse->getKachelX(), mouse->getKachelY()))
 				{
 					mouse->SetCursor( CMove );
 				}
@@ -1387,13 +1393,13 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (
 				selectedBuilding                                &&
-				selectedBuilding->owner == Client->getActivePlayer() &&
+				selectedBuilding->owner == client->getActivePlayer() &&
 				selectedBuilding->BuildList                     &&
 				selectedBuilding->BuildList->Size()             &&
 				!selectedBuilding->IsWorking                    &&
 				(*selectedBuilding->BuildList)[0]->metall_remaining <= 0)
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), (*selectedBuilding->BuildList)[0]->type.getVehicle()))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), (*selectedBuilding->BuildList)[0]->type.getVehicle()))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1402,9 +1408,9 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && mouseInputMode == activateVehicle )
+		else if ( selectedBuilding && selectedBuilding->owner==client->getActivePlayer() && mouseInputMode == activateVehicle )
 		{
-			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
+			if ( selectedBuilding->canExitTo(mouse->getKachelX(), mouse->getKachelY(), client->getMap(), static_cast<cVehicle*>(selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate])->typ))
 			{
 				mouse->SetCursor ( CActivate );
 			}
@@ -1413,9 +1419,9 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor ( CNo );
 			}
 		}
-		else if ( selectedBuilding && selectedBuilding->owner==Client->getActivePlayer() && mouseInputMode == loadMode )
+		else if ( selectedBuilding && selectedBuilding->owner==client->getActivePlayer() && mouseInputMode == loadMode )
 		{
-			if ( selectedBuilding->canLoad ( mouse->getKachelX(), mouse->getKachelY(), Client->getMap(), false ) )
+			if ( selectedBuilding->canLoad ( mouse->getKachelX(), mouse->getKachelY(), client->getMap(), false ) )
 			{
 				mouse->SetCursor ( CLoad );
 			}
@@ -1492,7 +1498,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		activeItem = NULL;
 	}
 
-	bool changeAllowed = !Client->bWaitForOthers;
+	bool changeAllowed = !client->bWaitForOthers;
 
 	savedMouseState = mouseState;
 
@@ -1715,7 +1721,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedBuilding->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, Client->getMap(), overVehicle, true);
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1734,7 +1740,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedBuilding->isNextTo ( overPlane->PosX, overPlane->PosY ) ) sendWantLoad ( selectedBuilding->iID, false, overPlane->iID );
 				else
 				{
-					cPathCalculator pc(overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, Client->getMap(), overPlane, true);
+					cPathCalculator pc(overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, client->getMap(), overPlane, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1756,7 +1762,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, Client->getMap(), selectedVehicle);
+					cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, client->getMap(), selectedVehicle);
 					sWaypoint *path = pc.calcPath();
 					if ( path )
 					{
@@ -1775,7 +1781,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				if ( selectedVehicle->isNextTo ( overVehicle->PosX, overVehicle->PosY ) ) sendWantLoad ( selectedVehicle->iID, true, overVehicle->iID );
 				else
 				{
-					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, Client->getMap(), overVehicle, true);
+					cPathCalculator pc(overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if ( path )
 					{
@@ -1817,7 +1823,7 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 				{
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, Client->getMap());
+					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedVehicle->data.canAttack, client->getMap());
 
 					if ( selectedVehicle->isInRange (mouse->getKachelX(), mouse->getKachelY()) )
 					{
@@ -1826,11 +1832,11 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 						if ( vehicle ) targetId = vehicle->iID;
 
 						Log.write(" Client: want to attack " + iToStr(mouse->getKachelX()) + ":" + iToStr(mouse->getKachelY()) + ", Vehicle ID: " + iToStr(targetId), cLog::eLOG_TYPE_NET_DEBUG );
-						sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->getMap()->size, selectedVehicle->iID, true );
+						sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*client->getMap()->size, selectedVehicle->iID, true );
 					}
 					else if ( vehicle || building )
 					{
-						cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, Client->getMap(), selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						cPathCalculator pc(selectedVehicle->PosX, selectedVehicle->PosY, client->getMap(), selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 						sWaypoint* path = pc.calcPath();
 						if ( path )
 						{
@@ -1850,11 +1856,11 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					int targetId = 0;
 					cVehicle* vehicle;
 					cBuilding* building;
-					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedBuilding->data.canAttack, Client->getMap());
+					selectTarget( vehicle, building, mouse->getKachelX(), mouse->getKachelY(), selectedBuilding->data.canAttack, client->getMap());
 					if ( vehicle ) targetId = vehicle->iID;
 
 					int offset = selectedBuilding->PosX + selectedBuilding->PosY * map->size;
-					sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*Client->getMap()->size, offset, false );
+					sendWantAttack( targetId, mouse->getKachelX() + mouse->getKachelY()*client->getMap()->size, offset, false );
 				}
 				else if ( changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle )
 				{
@@ -1877,8 +1883,8 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 					}
 					else
 					{
-						if ( selectedVehiclesGroup.Size() > 1 ) Client->startGroupMove();
-						else Client->addMoveJob( selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						if ( selectedVehiclesGroup.Size() > 1 ) client->startGroupMove();
+						else client->addMoveJob( selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 					}
 				}
 				else if ( overUnitField )
@@ -2138,7 +2144,7 @@ void cGameGUI::doCommand( const string& cmd )
 			}
 			else
 			{
-				sendRequestResync( Client->getActivePlayer()->Nr );
+				sendRequestResync( client->getActivePlayer()->Nr );
 			}
 		}
 		return;
@@ -2149,7 +2155,7 @@ void cGameGUI::doCommand( const string& cmd )
 		cmdArg.erase(0, 5 );
 		cNetMessage* message = new cNetMessage( GAME_EV_WANT_MARK_LOG );
 		message->pushString( cmdArg );
-		Client->sendNetMessage( message );
+		client->sendNetMessage( message );
 		return;
 	}
 	if ( cmd.substr( 0, 7 ).compare( "/color " ) == 0 ) {
@@ -2377,7 +2383,7 @@ void cGameGUI::deselectGroup ()
 
 void cGameGUI::changeWindDir()
 {
-	if ( Client->timer400ms && cSettings::getInstance().isDamageEffects() )
+	if ( client->timer400ms && cSettings::getInstance().isDamageEffects() )
 	{
 		static int nextChange = 25, nextDirChange = 25, dir = 90, change = 3;
 		if ( nextChange == 0 )
@@ -2424,10 +2430,10 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 	}
 
 	// first check whether the end key was pressed
-	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && activeItem != selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !Client->bWaitForOthers )
+	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && activeItem != selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->bWaitForOthers )
 	{
 		if ( key.state == SDL_PRESSED && !endButton->getIsClicked() ) endButton->clicked ( this );
-		else if ( key.state == SDL_RELEASED && endButton->getIsClicked() && !Client->bWantToEnd ) endButton->released ( this );
+		else if ( key.state == SDL_RELEASED && endButton->getIsClicked() && !client->bWantToEnd ) endButton->released ( this );
 		return;
 	}
 
@@ -2435,7 +2441,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 	if ( key.state != SDL_PRESSED ) return;
 
 	// check whether the player wants to abort waiting
-	if ( Client->bWaitForOthers && Client->waitReconnect && key.keysym.sym == SDLK_F2 )
+	if ( client->bWaitForOthers && client->waitReconnect && key.keysym.sym == SDLK_F2 )
 	{
 		sendAbortWaiting ();
 	}
@@ -2449,12 +2455,12 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 	{}
 	else if ( key.keysym.sym == KeysList.KeyJumpToAction )
 	{
-		if ( Client->iMsgCoordsX != -1 )
+		if ( client->iMsgCoordsX != -1 )
 		{
-			int offsetX = Client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
-			int offsetY = Client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetX = client->iMsgCoordsX * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize() ) ) * 64 ) ) + 32;
+			int offsetY = client->iMsgCoordsY * 64 - ( ( int ) ( ( ( float ) (Video.getResolutionY() - HUD_TOTAL_HIGHT ) / (2 * getTileSize() ) ) * 64 ) ) + 32;
 			setOffsetPosition ( offsetX, offsetY );
-			Client->iMsgCoordsX = -1;
+			client->iMsgCoordsX = -1;
 		}
 	}
 	else if ( key.keysym.sym == KeysList.KeyChat )
@@ -2489,36 +2495,36 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 	else if ( key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0 ) jumpToSavedPos ( 2 );
 	else if ( key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0 ) jumpToSavedPos ( 3 );
 	// Hotkeys for the unit menues
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		sendWantStopMove ( selectedVehicle->iID );
 		cBuildingsBuildMenu buildMenu ( player, selectedVehicle );
 		buildMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cVehiclesBuildMenu buildMenu ( player, selectedBuilding );
 		buildMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		mouseInputMode = transferMode;
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		mouseInputMode = transferMode;
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2526,11 +2532,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		selectedVehicle->executeAutoMoveJobCommand();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty() ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty() ) && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendWantStartWork( selectedBuilding );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && ( selectedVehicle->ClientMoveJob || ( selectedVehicle->IsBuilding && selectedVehicle->BuildRounds ) || ( selectedVehicle->IsClearing && selectedVehicle->ClearingRounds ) ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && ( selectedVehicle->ClientMoveJob || ( selectedVehicle->IsBuilding && selectedVehicle->BuildRounds ) || ( selectedVehicle->IsClearing && selectedVehicle->ClearingRounds ) ) && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		if ( selectedVehicle->ClientMoveJob )
 		{
@@ -2557,11 +2563,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 			sendWantStopClear ( selectedVehicle );
 		}
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendWantStopWork( selectedBuilding );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX+selectedVehicle->PosY*map->size].getRubble() && !selectedVehicle->IsClearing && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX+selectedVehicle->PosY*map->size].getRubble() && !selectedVehicle->IsClearing && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2569,7 +2575,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		sendWantStartClear ( selectedVehicle );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2580,11 +2586,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		sendChangeSentry ( selectedVehicle->iID, true );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->sentryActive || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && ( selectedBuilding->sentryActive || selectedBuilding->data.canAttack ) && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendChangeSentry ( selectedBuilding->iID, false );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && ( selectedVehicle->manualFireActive || selectedVehicle->data.canAttack ) && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && ( selectedVehicle->manualFireActive || selectedVehicle->data.canAttack ) && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2596,37 +2602,37 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		sendChangeManualFireStatus ( selectedVehicle->iID, true );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && ( selectedBuilding->manualFireActive || selectedBuilding->data.canAttack ) && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && ( selectedBuilding->manualFireActive || selectedBuilding->data.canAttack ) && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		sendChangeManualFireStatus ( selectedBuilding->iID, false );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		cStorageMenu storageMenu ( selectedVehicle->storedUnits, selectedVehicle, NULL );
 		storageMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cStorageMenu storageMenu ( selectedBuilding->storedUnits, NULL, selectedBuilding );
 		storageMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		toggleMouseInputMode( loadMode );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		toggleMouseInputMode( loadMode );
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		Client->gameGUI.mouseInputMode = muniActive;
+		client->gameGUI.mouseInputMode = muniActive;
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
-		Client->gameGUI.mouseInputMode = repairActive;
+		client->gameGUI.mouseInputMode = repairActive;
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2634,7 +2640,7 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		selectedVehicle->executeLayMinesCommand();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		for ( unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++ )
 		{
@@ -2642,11 +2648,11 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		}
 		selectedVehicle->executeClearMinesCommand();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		mouseInputMode = disableMode;
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !Client->bWaitForOthers && selectedVehicle->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player )
 	{
 		mouseInputMode = stealMode;
 	}
@@ -2660,22 +2666,22 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent &key, const string& ch )
 		cUnitHelpMenu helpMenu ( &selectedBuilding->data, selectedBuilding->owner );
 		helpMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cMineManagerMenu mineManager ( selectedBuilding );
 		mineManager.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cDialogResearch researchDialog ( selectedBuilding->owner );
 		researchDialog.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cUpgradeMenu upgradeMenu ( selectedBuilding->owner );
 		upgradeMenu.show();
 	}
-	else if ( key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !Client->bWaitForOthers && selectedBuilding->owner == player )
+	else if ( key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->bWaitForOthers && selectedBuilding->owner == player )
 	{
 		cDestructMenu destructMenu;
 		if ( destructMenu.show() == 0 ) sendWantSelfDestroy( selectedBuilding );
@@ -2766,7 +2772,7 @@ void cGameGUI::doneReleased( void *parent )
 	cUnit* unit = gui->selectedVehicle;
 	if (!unit) unit = gui->selectedBuilding;
 
-	if (unit && unit->owner == Client->getActivePlayer())
+	if (unit && unit->owner == gui->client->getActivePlayer())
 	{
 		unit->center();
 		unit->isMarkedAsDone = true;
@@ -2846,7 +2852,7 @@ void cGameGUI::miniMapRightClicked( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 
-	if (!gui->selectedVehicle || gui->selectedVehicle->owner != Client->getActivePlayer()) return;
+	if (!gui->selectedVehicle || gui->selectedVehicle->owner != gui->client->getActivePlayer()) return;
 
 	int x = mouse->x;
 	int y = mouse->y;
@@ -2855,7 +2861,7 @@ void cGameGUI::miniMapRightClicked( void *parent )
 	int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
 	int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * gui->map->size) / (MINIMAP_SIZE * zoomFactor );
 
-	Client->addMoveJob (gui->selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
+	gui->client->addMoveJob (gui->selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
 
 }
 
@@ -2878,7 +2884,7 @@ void cGameGUI::endReleased( void *parent )
 {
 	cGameGUI *gui = static_cast<cGameGUI*>(parent);
 	gui->endButton->setLocked( true );
-	Client->handleEnd();
+	gui->client->handleEnd();
 }
 
 void cGameGUI::preferencesReleased( void *parent )
@@ -2947,7 +2953,7 @@ void cGameGUI::preDrawFunction()
 	int endY = Round( offY/64.0 + (float)(Video.getResolutionY()-HUD_TOTAL_HIGHT) / getTileSize() );
 	if ( endY >= map->size ) endY = map->size-1;
 
-	if ( Client->timer400ms ) map->generateNextAnimationFrame();
+	if ( client->timer400ms ) map->generateNextAnimationFrame();
 
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
@@ -2995,7 +3001,7 @@ void cGameGUI::preDrawFunction()
 
 void cGameGUI::drawTerrain( int zoomOffX, int zoomOffY )
 {
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	SDL_Rect dest, tmp;
 	dest.y = HUD_TOP_HIGHT-zoomOffY;
 	// draw the terrain
@@ -3037,7 +3043,7 @@ void cGameGUI::drawTerrain( int zoomOffX, int zoomOffY )
 
 void cGameGUI::drawGrid( int zoomOffX, int zoomOffY )
 {
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	SDL_Rect dest;
 	dest.x = HUD_LEFT_WIDTH;
 	dest.y = HUD_TOP_HIGHT+tileSize-(zoomOffY%tileSize);
@@ -3061,12 +3067,12 @@ void cGameGUI::drawGrid( int zoomOffX, int zoomOffY )
 
 void cGameGUI::displayFX()
 {
-	if ( !Client->FXList.Size() ) return;
+	if ( !client->FXList.Size() ) return;
 
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
-	for ( int i = (int)Client->FXList.Size() - 1; i >= 0; i-- )
+	for ( int i = (int)client->FXList.Size() - 1; i >= 0; i-- )
 	{
 		drawFX ( i );
 	}
@@ -3078,7 +3084,7 @@ void cGameGUI::drawFX( int num )
 	SDL_Rect scr,dest;
 	sFX *fx;
 
-	fx = Client->FXList[num];
+	fx = client->FXList[num];
 	if ( !player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] && fx->typ != fxRocket ) return;
 
 	switch ( fx->typ )
@@ -3086,10 +3092,10 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleBig:
 			if ( !EffectsData.fx_muzzle_big ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
 			scr.x=(int)(getZoom()*64.0)*fx->param;
@@ -3103,10 +3109,10 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleSmall:
 			if ( !EffectsData.fx_muzzle_small ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
 			scr.x=(int)(getZoom()*64.0)*fx->param;
@@ -3120,10 +3126,10 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleMed:
 			if ( !EffectsData.fx_muzzle_med ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 2 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 2 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
 			scr.x=(int)(getZoom()*64.0)*fx->param;
@@ -3137,10 +3143,10 @@ void cGameGUI::drawFX( int num )
 		case fxMuzzleMedLong:
 			if ( !EffectsData.fx_muzzle_med ) break;
 			CHECK_SCALING( EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 5 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 5 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
 			scr.x=(int)(getZoom()*64.0)*fx->param;
@@ -3154,13 +3160,13 @@ void cGameGUI::drawFX( int num )
 		case fxHit:
 			if ( !EffectsData.fx_hit ) break;
 			CHECK_SCALING( EffectsData.fx_hit[1], EffectsData.fx_hit[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 5 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 5 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x=(int)(getZoom()*64.0)* ((Client->iTimerTime-fx->StartTime)/2);
+			scr.x=(int)(getZoom()*64.0)* ((client->iTimerTime-fx->StartTime)/2);
 			scr.y=0;
 			scr.w=(int)(getZoom()*64.0);
 			scr.h=(int)(getZoom()*64.0);
@@ -3171,13 +3177,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploSmall:
 			if ( !EffectsData.fx_explo_small ) break;
 			CHECK_SCALING( EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
@@ -3188,13 +3194,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploBig:
 			if ( !EffectsData.fx_explo_big ) break;
 			CHECK_SCALING( EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 28 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 28 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 307 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 307 * ( (client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 307 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 194 / 64.0);
@@ -3205,13 +3211,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploWater:
 			if ( !EffectsData.fx_explo_water ) break;
 			CHECK_SCALING( EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 114 * ( (client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 114 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 108 / 64.0);
@@ -3222,13 +3228,13 @@ void cGameGUI::drawFX( int num )
 		case fxExploAir:
 			if ( !EffectsData.fx_explo_air ) break;
 			CHECK_SCALING( EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], getZoom() );
-			if ( (Client->iTimerTime - fx->StartTime)/2 > 14 )
+			if ( (client->iTimerTime - fx->StartTime)/2 > 14 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x = (int) ((int)(getZoom()*64.0) * 137 * ( (Client->iTimerTime - fx->StartTime)/2 ) / 64.0);
+			scr.x = (int) ((int)(getZoom()*64.0) * 137 * ( (client->iTimerTime - fx->StartTime)/2 ) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ((int)(getZoom()*64.0) * 137 / 64.0);
 			scr.h = (int) ((int)(getZoom()*64.0) * 121 / 64.0);
@@ -3239,13 +3245,13 @@ void cGameGUI::drawFX( int num )
 		case fxSmoke:
 			if ( !EffectsData.fx_smoke ) break;
 			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
-			if ( (Client->iTimerTime-fx->StartTime)/2 > 100/4 )
+			if ( (client->iTimerTime-fx->StartTime)/2 > 100/4 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (Client->iTimerTime-fx->StartTime)/2 ) *4 );
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (client->iTimerTime-fx->StartTime)/2 ) *4 );
 			scr.y=scr.x=0;
 			scr.w=EffectsData.fx_smoke[1]->h;
 			scr.h=EffectsData.fx_smoke[1]->h;
@@ -3277,13 +3283,13 @@ void cGameGUI::drawFX( int num )
 			CHECK_SCALING( EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], getZoom() );
 			sFXDarkSmoke *dsi;
 			dsi = fx->smokeInfo;
-			if ( (Client->iTimerTime-fx->StartTime)/2 > 50 || dsi->alpha <= 1 )
+			if ( (client->iTimerTime-fx->StartTime)/2 > 50 || dsi->alpha <= 1 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x= ( int ) ( 0.375*(int)(getZoom()*64.0) ) * ( (Client->iTimerTime-fx->StartTime)/2 );
+			scr.x= ( int ) ( 0.375*(int)(getZoom()*64.0) ) * ( (client->iTimerTime-fx->StartTime)/2 );
 			scr.y=0;
 			scr.w=EffectsData.fx_dark_smoke[1]->h;
 			scr.h=EffectsData.fx_dark_smoke[1]->h;
@@ -3293,7 +3299,7 @@ void cGameGUI::drawFX( int num )
 			SDL_SetAlpha ( EffectsData.fx_dark_smoke[1],SDL_SRCALPHA,dsi->alpha );
 			SDL_BlitSurface ( EffectsData.fx_dark_smoke[1],&scr,buffer,&dest );
 
-			if ( Client->timer50ms )
+			if ( client->timer50ms )
 			{
 				dsi->fx+=dsi->dx;
 				dsi->fy+=dsi->dy;
@@ -3306,13 +3312,13 @@ void cGameGUI::drawFX( int num )
 		{
 			if ( !EffectsData.fx_absorb ) break;
 			CHECK_SCALING( EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], getZoom() );
-			if ( (Client->iTimerTime-fx->StartTime)/2 > 10 )
+			if ( (client->iTimerTime-fx->StartTime)/2 > 10 )
 			{
 				delete fx;
-				Client->FXList.Delete ( num );
+				client->FXList.Delete ( num );
 				return;
 			}
-			scr.x=(int)(getZoom()*64.0)* ( (Client->iTimerTime-fx->StartTime)/2 );
+			scr.x=(int)(getZoom()*64.0)* ( (client->iTimerTime-fx->StartTime)/2 );
 			scr.y=0;
 			scr.w=(int)(getZoom()*64.0);
 			scr.h=(int)(getZoom()*64.0);
@@ -3333,13 +3339,13 @@ void cGameGUI::drawFX( int num )
 
 void cGameGUI::displayBottomFX()
 {
-	if ( !Client->FXListBottom.Size() ) return;
+	if ( !client->FXListBottom.Size() ) return;
 
 	SDL_Rect oldClipRect = buffer->clip_rect;
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect( buffer, &clipRect );
 
-	for ( int i = (int)Client->FXListBottom.Size() - 1; i >= 0; i-- )
+	for ( int i = (int)client->FXListBottom.Size() - 1; i >= 0; i-- )
 	{
 		drawBottomFX ( i );
 	}
@@ -3350,7 +3356,7 @@ void cGameGUI::drawBottomFX( int num )
 {
 	SDL_Rect scr, dest;
 
-	sFX *fx = Client->FXListBottom[num];
+	sFX *fx = client->FXListBottom[num];
 	if ( ( !player->ScanMap[fx->PosX/64+fx->PosY/64*map->size] ) && fx->typ != fxTorpedo && fx->typ != fxTracks ) return;
 	switch ( fx->typ )
 	{
@@ -3380,12 +3386,12 @@ void cGameGUI::drawBottomFX( int num )
 			if ( tri->alpha<=1 )
 			{
 				delete fx;
-				Client->FXListBottom.Delete ( num );
+				client->FXListBottom.Delete ( num );
 				return;
 			}
 
 			SDL_SetAlpha ( EffectsData.fx_tracks[1],SDL_SRCALPHA,tri->alpha );
-			if ( Client->timer50ms )
+			if ( client->timer50ms )
 			{
 				tri->alpha--;
 			}
@@ -3401,13 +3407,13 @@ void cGameGUI::drawBottomFX( int num )
 		}
 		case fxBubbles:
 			CHECK_SCALING( EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom() );
-			if ( (Client->iTimerTime-fx->StartTime)/2 > 100/4 )
+			if ( (client->iTimerTime-fx->StartTime)/2 > 100/4 )
 			{
 				delete fx;
-				Client->FXListBottom.Delete ( num );
+				client->FXListBottom.Delete ( num );
 				return;
 			}
-			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (Client->iTimerTime-fx->StartTime)/2 ) *4 );
+			SDL_SetAlpha ( EffectsData.fx_smoke[1],SDL_SRCALPHA,100- ( (client->iTimerTime-fx->StartTime)/2 ) *4 );
 			scr.y=scr.x=0;
 			scr.w=EffectsData.fx_smoke[1]->h;
 			scr.h=EffectsData.fx_smoke[1]->h;
@@ -3428,7 +3434,7 @@ void cGameGUI::drawBottomFX( int num )
 			if ( fx->param<=0 )
 			{
 				delete fx;
-				Client->FXListBottom.Delete ( num );
+				client->FXListBottom.Delete ( num );
 				return;
 			}
 			break;
@@ -3439,7 +3445,7 @@ void cGameGUI::drawBottomFX( int num )
 
 void cGameGUI::drawBaseUnits( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	SDL_Rect dest;
 	//draw rubble and all base buildings (without bridges)
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
@@ -3476,7 +3482,7 @@ void cGameGUI::drawBaseUnits( int startX, int startY, int endX, int endY, int zo
 void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	//draw top buildings (except connectors)
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
@@ -3550,7 +3556,7 @@ void cGameGUI::drawTopBuildings( int startX, int startY, int endX, int endY, int
 void cGameGUI::drawShips( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
 	{
@@ -3576,7 +3582,7 @@ void cGameGUI::drawShips( int startX, int startY, int endX, int endY, int zoomOf
 void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
 	{
@@ -3625,7 +3631,7 @@ void cGameGUI::drawAboveSeaBaseUnits( int startX, int startY, int endX, int endY
 void cGameGUI::drawVehicles( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
 	{
@@ -3651,7 +3657,7 @@ void cGameGUI::drawVehicles( int startX, int startY, int endX, int endY, int zoo
 void cGameGUI::drawConnectors( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
 	{
@@ -3677,7 +3683,7 @@ void cGameGUI::drawConnectors( int startX, int startY, int endX, int endY, int z
 void cGameGUI::drawPlanes( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
 	SDL_Rect dest;
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
 	{
@@ -3704,7 +3710,7 @@ void cGameGUI::drawPlanes( int startX, int startY, int endX, int endY, int zoomO
 
 void cGameGUI::drawResources( int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY )
 {
-	int tileSize = Client->gameGUI.getTileSize();
+	int tileSize = client->gameGUI.getTileSize();
 	SDL_Rect dest, tmp, src = { 0, 0, tileSize, tileSize };
 	dest.y = HUD_TOP_HIGHT-zoomOffY+tileSize*startY;
 	for ( int y = startY; y <= endY; y++ )
@@ -3799,23 +3805,23 @@ void cGameGUI::drawDebugOutput()
 
 	if ( debugPlayers )
 	{
-		font->showText(DEBUGOUT_X_POS, debugOff, "Players: " + iToStr( (int)Client->PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "Players: " + iToStr( (int)client->PlayerList->Size() ), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { DEBUGOUT_X_POS, debugOff, 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
 		SDL_Rect rDotDest = {DEBUGOUT_X_POS-10, debugOff, 10, 10 };
 		SDL_Rect rBlackOut = {DEBUGOUT_X_POS+20, debugOff, 0, 10 };
-		for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+		for ( unsigned int i = 0; i < client->PlayerList->Size(); i++ )
 		{
 			//HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
 
-			if( (*Client->PlayerList)[i]->bFinishedTurn/* && (*Client->PlayerList)[i] != player*/)
+			if( (*client->PlayerList)[i]->bFinishedTurn/* && (*client->PlayerList)[i] != player*/)
 			{
 				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
 			}
-			/*else if(  (*Client->PlayerList)[i] == player && Client->bWantToEnd )
+			/*else if( (*client->PlayerList)[i] == player && client->bWantToEnd )
 			{
 				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
 			}*/
@@ -3825,17 +3831,17 @@ void cGameGUI::drawDebugOutput()
 				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
 			}
 
-			SDL_BlitSurface ( (*Client->PlayerList)[i]->color, &rSrc, buffer, &rDest );
-			if ( (*Client->PlayerList)[i] == player )
+			SDL_BlitSurface ( (*client->PlayerList)[i]->color, &rSrc, buffer, &rDest );
+			if ( (*client->PlayerList)[i] == player )
 			{
-				string sTmpLine = " " + (*Client->PlayerList)[i]->name + ", nr: " + iToStr ( (*Client->PlayerList)[i]->Nr ) + " << you! ";
+				string sTmpLine = " " + (*client->PlayerList)[i]->name + ", nr: " + iToStr ( (*client->PlayerList)[i]->Nr ) + " << you! ";
 				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
 				SDL_FillRect(buffer, &rBlackOut, 0x000000);
 				font->showText(rBlackOut.x, debugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			else
 			{
-				string sTmpLine = " " + (*Client->PlayerList)[i]->name + ", nr: " + iToStr ( (*Client->PlayerList)[i]->Nr ) + " ";
+				string sTmpLine = " " + (*client->PlayerList)[i]->name + ", nr: " + iToStr ( (*client->PlayerList)[i]->Nr ) + " ";
 				rBlackOut.w = font->getTextWide(sTmpLine, FONT_LATIN_SMALL_WHITE); //black out background for better recognizing
 				SDL_FillRect(buffer, &rBlackOut, 0x000000);
 				font->showText(rBlackOut.x, debugOff+1, sTmpLine , FONT_LATIN_SMALL_WHITE);
@@ -3848,7 +3854,7 @@ void cGameGUI::drawDebugOutput()
 
 	if ( debugAjobs )
 	{
-		font->showText(DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr((int)Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr((int)client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		if ( Server )
 		{
@@ -3908,13 +3914,13 @@ void cGameGUI::drawDebugOutput()
 
 void cGameGUI::displayMessages()
 {
-	if ( Client->messages.Size() == 0 ) return;
+	if ( client->messages.Size() == 0 ) return;
 
 	sMessage *message;
 	int height = 0;
-	for ( int i = (int)Client->messages.Size() - 1; i >= 0; i-- )
+	for ( int i = (int)client->messages.Size() - 1; i >= 0; i-- )
 	{
-		message = Client->messages[i];
+		message = client->messages[i];
 		height += 17 + font->getFontHeight() * ( message->len  / (Video.getResolutionX() - 300) );
 	}
 	SDL_Rect scr = { 0, 0, Video.getResolutionX() - 200, height+6 };
@@ -3925,9 +3931,9 @@ void cGameGUI::displayMessages()
 	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
 
-	for ( unsigned int i = 0; i < Client->messages.Size(); i++ )
+	for ( unsigned int i = 0; i < client->messages.Size(); i++ )
 	{
-		message = Client->messages[i];
+		message = client->messages[i];
 		string msgString = message->msg;
 		//HACK TO SHOW PLAYERCOLOR IN CHAT
 		int color = -1;
@@ -3936,9 +3942,9 @@ void cGameGUI::displayMessages()
 			if(msgString[i] == ':') //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr( 0, i );
-				for ( unsigned int i = 0; i < Client->PlayerList->Size(); i++ )
+				for ( size_t i = 0; i < client->PlayerList->Size(); i++ )
 				{
-					cPlayer* const Player = (*Client->PlayerList)[i];
+					cPlayer* const Player = (*client->PlayerList)[i];
 					if (Player)
 					{
 						if(tmpString.compare( Player->name ) == 0)

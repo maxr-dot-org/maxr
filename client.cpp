@@ -130,6 +130,7 @@ cClient::cClient(cMap* const Map, cList<cPlayer*>* const playerList) :
 	PlayerList(playerList),
 	gameGUI ( NULL, Map, playerList )
 {
+	gameGUI.setClient(this);
 	TimerID = SDL_AddTimer ( 50, TimerCallback, this );
 	iTimerTime = 0;
 	neutralBuildings = NULL;
