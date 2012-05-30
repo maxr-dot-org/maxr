@@ -180,7 +180,7 @@ public:
 	void MakeReport();
 	bool CanTransferTo( cMapField *OverUnitField ) const;
 	bool InSentryRange();
-	void DrawExitPoints(const sVehicle*) const;
+	void DrawExitPoints(const sVehicle* typ, cGameGUI &gameGUI) const;
 	bool canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const;
 	bool canLoad( int x, int y, cMap *Map, bool checkPosition = true ) const;
 	bool canLoad( const cVehicle *Vehicle, bool checkPosition = true ) const;

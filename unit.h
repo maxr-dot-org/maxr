@@ -26,6 +26,7 @@
 class cPlayer;
 class cMap;
 class cVehicle;
+class cGameGUI;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -57,8 +58,8 @@ public:
 	SDL_Rect getMenuSize () const;
 	bool areCoordsOverMenu (int x, int y) const;
 	void setMenuSelection ();
-	void drawMenu ();
-	void menuReleased ();
+	void drawMenu (cGameGUI &gameGUI);
+	void menuReleased (cGameGUI &gameGUI);
 	virtual void executeAutoMoveJobCommand () {}
 	virtual void executeLayMinesCommand () {}
 	virtual void executeClearMinesCommand () {}

@@ -373,7 +373,7 @@ int cUnit::getNumberOfMenuEntries () const
 }
 
 //--------------------------------------------------------------------------
-void cUnit::drawMenu ()
+void cUnit::drawMenu (cGameGUI &gameGUI)
 {
 	int nr = 0;
 	SDL_Rect dest = getMenuSize ();
@@ -383,9 +383,9 @@ void cUnit::drawMenu ()
 	if (isUnitMoving ())
 		return;
 
-	if (Client->gameGUI.mouseInputMode == activateVehicle)
+	if (gameGUI.mouseInputMode == activateVehicle)
 	{
-		Client->gameGUI.unitMenuActive = false;
+		gameGUI.unitMenuActive = false;
 		return;
 	}
 
@@ -397,7 +397,7 @@ void cUnit::drawMenu ()
 	// Attack:
 	if (data.canAttack && data.shotsCur && owner == Client->getActivePlayer() )
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == mouseInputAttackMode;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -424,7 +424,7 @@ void cUnit::drawMenu ()
 	// Transfer:
 	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding () == false && isUnitClearing () == false && owner == Client->getActivePlayer())
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == transferMode;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -494,7 +494,7 @@ void cUnit::drawMenu ()
 		nr++;
 
 		// Load:
-		isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == loadMode;
+		isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -546,7 +546,7 @@ void cUnit::drawMenu ()
 	// Ammo:
 	if (data.canRearm && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == muniActive;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
 		drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -555,7 +555,7 @@ void cUnit::drawMenu ()
 	// Repair:
 	if (data.canRepair && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == repairActive;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
 		drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -582,7 +582,7 @@ void cUnit::drawMenu ()
 	// Sabotage/disable:
 	if (data.canDisable && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == disableMode;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -591,7 +591,7 @@ void cUnit::drawMenu ()
 	// Steal:
 	if (data.canCapture && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || Client->gameGUI.mouseInputMode == stealMode;
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
 		drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
@@ -609,7 +609,7 @@ void cUnit::drawMenu ()
 }
 
 //--------------------------------------------------------------------------
-void cUnit::menuReleased ()
+void cUnit::menuReleased (cGameGUI &gameGUI)
 {
 	SDL_Rect dest = getMenuSize ();
 
@@ -636,9 +636,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (mouseInputAttackMode);
+			gameGUI.toggleMouseInputMode (mouseInputAttackMode);
 			return;
 		}
 		nr++;
@@ -649,7 +649,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeBuildCommand ();
 			return;
@@ -662,7 +662,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeMineManagerCommand ();
 			return;
@@ -675,9 +675,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (transferMode);
+			gameGUI.toggleMouseInputMode (transferMode);
 			return;
 		}
 		nr++;
@@ -688,7 +688,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			sendWantStartWork (this);
 			return;
@@ -701,7 +701,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeAutoMoveJobCommand ();
 			return;
@@ -714,7 +714,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeStopCommand ();
 			return;
@@ -727,7 +727,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			sendWantStartClear (this);
 			return;
@@ -740,7 +740,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			sendChangeManualFireStatus (iID, isVehicle ());
 			return;
@@ -753,7 +753,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			sendChangeSentry (iID, isVehicle () );
 			return;
@@ -767,7 +767,7 @@ void cUnit::menuReleased ()
 		// activate:
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeActivateStoredVehiclesCommand ();
 			return;
@@ -777,9 +777,9 @@ void cUnit::menuReleased ()
 		// load:
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (loadMode);
+			gameGUI.toggleMouseInputMode (loadMode);
 			return;
 		}
 		nr++;
@@ -790,7 +790,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cDialogResearch researchDialog (owner);
 			researchDialog.show();
@@ -804,7 +804,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cUpgradeMenu upgradeMenu (owner);
 			upgradeMenu.show ();
@@ -819,7 +819,7 @@ void cUnit::menuReleased ()
 		// Update all buildings of this type in this subbase
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeUpdateBuildingCommmand (true);
 			return;
@@ -829,7 +829,7 @@ void cUnit::menuReleased ()
 		// update this building
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX ( SoundData.SNDObjectMenu );
 			executeUpdateBuildingCommmand (false);
 			return;
@@ -842,7 +842,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeSelfDestroyCommand ();
 			return;
@@ -855,9 +855,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (muniActive);
+			gameGUI.toggleMouseInputMode (muniActive);
 			return;
 		}
 		nr++;
@@ -868,9 +868,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (repairActive);
+			gameGUI.toggleMouseInputMode (repairActive);
 			return;
 		}
 		nr++;
@@ -881,7 +881,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeLayMinesCommand ();
 			return;
@@ -894,7 +894,7 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			executeClearMinesCommand ();
 			return;
@@ -907,9 +907,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (disableMode);
+			gameGUI.toggleMouseInputMode (disableMode);
 			return;
 		}
 		nr++;
@@ -920,9 +920,9 @@ void cUnit::menuReleased ()
 	{
 		if (exeNr == nr)
 		{
-			Client->gameGUI.unitMenuActive = false;
+			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			Client->gameGUI.toggleMouseInputMode (stealMode);
+			gameGUI.toggleMouseInputMode (stealMode);
 			return;
 		}
 		nr++;
@@ -931,7 +931,7 @@ void cUnit::menuReleased ()
 	// help/info:
 	if (exeNr == nr)
 	{
-		Client->gameGUI.unitMenuActive = false;
+		gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		cUnitHelpMenu helpMenu (&data, owner);
 		helpMenu.show ();
@@ -942,7 +942,7 @@ void cUnit::menuReleased ()
 	// done:
 	if (exeNr == nr)
 	{
-		Client->gameGUI.unitMenuActive = false;
+		gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		if (owner == Client->getActivePlayer())
 		{

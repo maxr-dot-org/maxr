@@ -1664,19 +1664,20 @@ bool cVehicle::provokeReactionFire ()
 //-----------------------------------------------------------------------------
 /** Draws exitpoints for a vehicle, that should be exited */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawExitPoints(const sVehicle* const typ) const
+void cVehicle::DrawExitPoints(const sVehicle* const typ, cGameGUI &gameGUI) const
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
+	cMap* map = Client->getMap();
+	const int tilesize = gameGUI.getTileSize();
+	T_2<int> offsets[8] = {T_2<int>(-1, -1), T_2<int>(0, -1), T_2<int>(1, -1),
+							T_2<int>(-1, 0),                  T_2<int>(1, 0),
+							T_2<int>(-1, 1), T_2<int>(0,  1), T_2<int>(1, 1)};
 
-	if ( canExitTo ( PosX - 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY - 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy - Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX - 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX + 1, PosY    , Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy );
-	if ( canExitTo ( PosX - 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx - Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX    , PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx, spy + Client->gameGUI.getTileSize() );
-	if ( canExitTo ( PosX + 1, PosY + 1, Client->getMap(), typ ) ) Client->gameGUI.drawExitPoint ( spx + Client->gameGUI.getTileSize(), spy + Client->gameGUI.getTileSize() );
+	for (int i = 0; i != 8; ++i) {
+		if (canExitTo ( PosX + offsets[i].x, PosY + offsets[i].y, map, typ ) )
+			gameGUI.drawExitPoint ( spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize );
+	}
 }
 
 //-----------------------------------------------------------------------------

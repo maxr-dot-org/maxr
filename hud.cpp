@@ -1517,13 +1517,13 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 	if ( selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu ( mouseState.x, mouseState.y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedVehicle->setMenuSelection();
-		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased();
+		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedVehicle->menuReleased(*this);
 		return;
 	}
 	else if ( selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu ( mouseState.x, mouseState.y ) )
 	{
 		if ( mouseState.leftButtonPressed ) selectedBuilding->setMenuSelection();
-		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased();
+		else if ( mouseState.leftButtonReleased && !mouseState.rightButtonPressed ) selectedBuilding->menuReleased(*this);
 		return;
 	}
 
@@ -2991,8 +2991,8 @@ void cGameGUI::preDrawFunction()
 
 	drawUnitCircles();
 
-	if ( selectedVehicle && unitMenuActive ) selectedVehicle->drawMenu();
-	else if ( selectedBuilding && unitMenuActive ) selectedBuilding->drawMenu();
+	if ( selectedVehicle && unitMenuActive ) selectedVehicle->drawMenu(*this);
+	else if ( selectedBuilding && unitMenuActive ) selectedBuilding->drawMenu(*this);
 
 	displayFX();
 
@@ -4349,7 +4349,7 @@ void cGameGUI::drawUnitCircles()
 		}
 		if ( mouseInputMode == activateVehicle && v.owner == player)
 		{
-			v.DrawExitPoints(v.storedUnits[v.VehicleToActivate]->typ);
+			v.DrawExitPoints(v.storedUnits[v.VehicleToActivate]->typ, *this);
 		}
 	}
 	else if ( selectedBuilding )
