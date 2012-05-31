@@ -1038,7 +1038,7 @@ cBase::cBase(): map()
 
 cBase::~cBase()
 {
-	for (size_t i = 0; i != SubBases.Size() != 0; ++i )
+	for (size_t i = 0; i != SubBases.Size(); ++i )
 	{
 		delete SubBases[i];
 	}
