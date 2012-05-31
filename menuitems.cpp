@@ -1132,10 +1132,9 @@ void cMenuCheckButton::limitTextSize ( int w )
 
 cMenuRadioGroup::~cMenuRadioGroup()
 {
-	while ( buttonList.Size() )
+	for ( size_t i = 0; i != buttonList.Size(); ++i )
 	{
-		delete buttonList[0];
-		buttonList.Delete ( 0 );
+		delete buttonList[i];
 	}
 }
 
@@ -1455,10 +1454,9 @@ cMenuUnitsList::cMenuUnitsList( int x, int y, int w, int h, cHangarMenu *parent,
 
 cMenuUnitsList::~cMenuUnitsList()
 {
-	while ( unitsList.Size() )
+	for ( size_t i = 0; i != unitsList.Size(); ++i )
 	{
-		delete unitsList[0];
-		unitsList.Delete( 0 );
+		delete unitsList[i];
 	}
 }
 
@@ -1611,11 +1609,11 @@ void cMenuUnitsList::clear()
 {
 	parentMenu->setSelectedUnit ( NULL );
 	selectedUnit = NULL;
-	while ( unitsList.Size() )
+	for ( size_t i = 0; i != unitsList.Size(); ++i )
 	{
-		delete unitsList[0];
-		unitsList.Delete ( 0 );
+		delete unitsList[i];
 	}
+	unitsList.Clear();
 	offset = 0;
 }
 

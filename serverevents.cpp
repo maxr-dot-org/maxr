@@ -579,33 +579,32 @@ void sendTurnReport ( cPlayer *Player )
 
 	cNetMessage* message = new cNetMessage( GAME_EV_TURN_REPORT );
 	int iCount = 0;
-	sTurnstartReport *Report;
 
 	int nrResearchAreasFinished = Player->reportResearchAreasFinished.Size ();
 	for (int i = nrResearchAreasFinished - 1; i >= 0; i--) // count down to get the correct order at the client conveniently
 		message->pushChar (Player->reportResearchAreasFinished[i]);
 	message->pushChar (nrResearchAreasFinished);
 
-	while ( Player->ReportBuildings.Size() )
+	for ( size_t i = 0; i != Player->ReportBuildings.Size(); ++i )
 	{
-		Report = Player->ReportBuildings[0];
+		sTurnstartReport *Report = Player->ReportBuildings[i];
 		message->pushInt16 ( Report->iAnz );
 		message->pushInt16 ( Report->Type.iSecondPart );
 		message->pushInt16 ( Report->Type.iFirstPart );
-		Player->ReportBuildings.Delete ( 0 );
 		delete Report;
 		iCount++;
 	}
-	while ( Player->ReportVehicles.Size() )
+	Player->ReportBuildings.Clear();
+	for ( size_t i = 0; i != Player->ReportVehicles.Size(); ++i )
 	{
-		Report = Player->ReportVehicles[0];
+		sTurnstartReport *Report = Player->ReportVehicles[i];
 		message->pushInt16 ( Report->iAnz );
 		message->pushInt16 ( Report->Type.iSecondPart );
 		message->pushInt16 ( Report->Type.iFirstPart );
-		Player->ReportVehicles.Delete ( 0 );
 		delete Report;
 		iCount++;
 	}
+	Player->ReportVehicles.Clear();
 	message->pushInt16 ( iCount );
 	Server->sendNetMessage( message, Player->Nr );
 }

@@ -915,8 +915,8 @@ void cMap::reset()
 {
 	for ( int i = 0; i < size*size; i++ )
 	{
-		while ( fields[i].buildings.Size() ) fields[i].buildings.Delete(0);
-		while ( fields[i].vehicles.Size() ) fields[i].vehicles.Delete(0);
-		while ( fields[i].planes.Size() ) fields[i].planes.Delete(0);
+		fields[i].buildings.Clear();
+		fields[i].vehicles.Clear();
+		fields[i].planes.Clear();
 	}
 }

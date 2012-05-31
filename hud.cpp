@@ -2374,11 +2374,11 @@ void cGameGUI::updateStatusText()
 
 void cGameGUI::deselectGroup ()
 {
-	while ( selectedVehiclesGroup.Size() )
+	for ( size_t i = 0; i != selectedVehiclesGroup.Size(); ++i )
 	{
-		selectedVehiclesGroup[0]->groupSelected = false;
-		selectedVehiclesGroup.Delete ( 0 );
+		selectedVehiclesGroup[i]->groupSelected = false;
 	}
+	selectedVehiclesGroup.Clear();
 }
 
 void cGameGUI::changeWindDir()

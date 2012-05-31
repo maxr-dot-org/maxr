@@ -1727,17 +1727,17 @@ void cSavegame::writeAdditionalInfo ( sHudStateContainer hudState, cList<sSavedR
 	// add reports
 	TiXmlElement *reportsNode = addMainElement ( playerNode, "Reports" );
 
-	while ( list.Size() )
+	for ( size_t i = 0; i != list.Size(); ++i )
 	{
 		TiXmlElement *reportElement = addMainElement ( reportsNode, "Report" );
-		reportElement->SetAttribute ( "msg", list[0].message.c_str() );
-		reportElement->SetAttribute ( "type", iToStr ( list[0].type ).c_str() );
-		reportElement->SetAttribute ( "xPos", iToStr ( list[0].xPos ).c_str() );
-		reportElement->SetAttribute ( "yPos", iToStr ( list[0].yPos ).c_str() );
-		reportElement->SetAttribute ( "id", list[0].unitID.getText().c_str() );
-		reportElement->SetAttribute ( "colorNr", iToStr ( list[0].colorNr ).c_str() );
-		list.Delete ( 0 );
+		reportElement->SetAttribute ( "msg", list[i].message.c_str() );
+		reportElement->SetAttribute ( "type", iToStr ( list[i].type ).c_str() );
+		reportElement->SetAttribute ( "xPos", iToStr ( list[i].xPos ).c_str() );
+		reportElement->SetAttribute ( "yPos", iToStr ( list[i].yPos ).c_str() );
+		reportElement->SetAttribute ( "id", list[i].unitID.getText().c_str() );
+		reportElement->SetAttribute ( "colorNr", iToStr ( list[i].colorNr ).c_str() );
 	}
+	list.Clear();
 
 	if(!DirExists(cSettings::getInstance().getSavesPath()))
 	{

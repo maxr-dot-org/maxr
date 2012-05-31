@@ -496,7 +496,7 @@ void sSubBase::refresh()
 	}
 
 	//reset subbase
-	while ( buildings.Size() ) buildings.Delete( buildings.Size() - 1 );
+	buildings.Clear();
 	MaxMetal = 0;
 	Metal = 0;
 	MaxOil = 0;
@@ -903,13 +903,13 @@ void sSubBase::merge(sSubBase* sb )
 	oil   += sb->getOilProd();
 
 	//merge buildings
-	while( sb->buildings.Size() )
+	for ( size_t i = 0; i != sb->buildings.Size(); ++i )
 	{
-		cBuilding* building = sb->buildings[0];
+		cBuilding* building = sb->buildings[i];
 		addBuilding( building );
 		building->SubBase = this;
-		sb->buildings.Delete ( 0 );
 	}
+	sb->buildings.Clear();
 
 	//set ressource allocation
 	setMetalProd(0);
@@ -1038,11 +1038,9 @@ cBase::cBase(): map()
 
 cBase::~cBase()
 {
-	while (SubBases.Size() != 0)
+	for (size_t i = 0; i != SubBases.Size() != 0; ++i )
 	{
-		sSubBase* const sb = SubBases[0];
-		delete sb;
-		SubBases.Delete(0);
+		delete SubBases[i];
 	}
 }
 
@@ -1112,15 +1110,14 @@ void cBase::addBuilding ( cBuilding *building, bool bServer )
 	NeighbourList.Delete(0);
 
 	// now merge the other neigbours to the first one, if nessesary
-	while (NeighbourList.Size() > 0)
+	for (size_t i = 0; i != NeighbourList.Size(); ++i)
 	{
-		sSubBase* const SubBase = NeighbourList[0];
+		sSubBase* const SubBase = NeighbourList[i];
 		firstNeighbour->merge( SubBase );
 
 		delete SubBase;
-		NeighbourList.Delete(0);
 	}
-
+	NeighbourList.Clear();
 	if ( bServer ) sendSubbaseValues ( firstNeighbour, building->owner->Nr );
 }
 

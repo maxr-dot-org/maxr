@@ -113,18 +113,16 @@ cServer::~cServer()
 		lastEvent = 0;
 	}
 
-	while ( AJobs.Size() )
+	for ( size_t i = 0; i != AJobs.Size(); ++i )
 	{
-		delete AJobs[0];
-		AJobs.Delete(0);
+		delete AJobs[i];
 	}
 
-	while ( PlayerList->Size() )
+	for ( size_t i = 0; i != PlayerList->Size(); ++i )
 	{
-		delete (*PlayerList)[0];
-		PlayerList->Delete ( 0 );
+		delete (*PlayerList)[i];
 	}
-
+	PlayerList->Clear();
 	while ( neutralBuildings )
 	{
 		cBuilding* nextBuilding = static_cast<cBuilding*>(neutralBuildings->next);
@@ -874,10 +872,9 @@ int cServer::HandleNetMessage( cNetMessage *message )
 			}
 
 			// delete all buildings from the list
-			while ( Building->BuildList->Size() )
+			for ( size_t i = 0; i != Building->BuildList->Size(); ++i )
 			{
-				delete (*Building->BuildList)[0];
-				Building->BuildList->Delete( 0 );
+				delete (*Building->BuildList)[i];
 			}
 			delete Building->BuildList;
 			Building->BuildList = NewBuildList;
@@ -2520,10 +2517,7 @@ void cServer::handleEnd ( int iPlayerNum )
 				return;
 			}
 
-			while ( PlayerEndList.Size() )
-			{
-				PlayerEndList.Delete ( 0 );
-			}
+			PlayerEndList.Clear();
 
 			iTurn++;
 			makeTurnEnd ();
@@ -2886,7 +2880,7 @@ void cServer::checkDeadline ()
 				return;
 			}
 
-			while ( PlayerEndList.Size() ) PlayerEndList.Delete ( 0 );
+			PlayerEndList.Clear();
 
 			for ( unsigned int i = 0; i < PlayerList->Size(); i++ )
 			{
@@ -3547,12 +3541,12 @@ void cServer::changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner )
 
 	// delete the unit on the clients and add it with new owner again
 	sendDeleteUnit ( vehicle, oldOwner->Nr );
-	while ( vehicle->seenByPlayerList.Size() )
+	for ( size_t i = 0; i != vehicle->seenByPlayerList.Size(); ++i )
 	{
-		sendDeleteUnit ( vehicle, vehicle->seenByPlayerList[0]->Nr );
-		vehicle->seenByPlayerList.Delete ( 0 );
+		sendDeleteUnit ( vehicle, vehicle->seenByPlayerList[i]->Nr );
 	}
-	while ( vehicle->detectedByPlayerList.Size() ) vehicle->detectedByPlayerList.Delete ( 0 );
+	vehicle->seenByPlayerList.Clear();
+	vehicle->detectedByPlayerList.Clear();
 	sendAddUnit ( vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false );
 	sendUnitData ( vehicle, vehicle->owner->Nr );
 	sendSpecificUnitData ( vehicle );

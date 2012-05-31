@@ -215,11 +215,11 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 		sendReconnectionSuccess (playerNr);
 	Client->gameGUI.show();
 
-	while ( players.Size() )
+	for ( size_t i = 0; i != players.Size(); ++i )
 	{
-		delete players[0];
-		players.Delete(0);
+		delete players[i];
 	}
+	players.Clear();
 
 	delete Client;
 	Client = NULL;
@@ -265,22 +265,22 @@ void cGameDataContainer::runSavedGame( int player )
 	{
 		sendHudSettings ( *(*Server->PlayerList)[i]->savedHud, (*Server->PlayerList)[i] );
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
-		while ( reportList.Size() )
+		for ( size_t j = 0; j != reportList.Size(); ++j )
 		{
-			sendSavedReport ( reportList[0], (*Server->PlayerList)[i]->Nr );
-			reportList.Delete ( 0 );
+			sendSavedReport ( reportList[j], (*Server->PlayerList)[i]->Nr );
 		}
+		reportList.Clear();
 	}
 
 	// exit menu and start game
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
-	while ( clientPlayerList.Size() )
+	for ( size_t i = 0; i != clientPlayerList.Size(); ++i )
 	{
-		delete clientPlayerList[0];
-		clientPlayerList.Delete(0);
+		delete clientPlayerList[i];
 	}
+	clientPlayerList.Clear();
 
 	delete Client;
 	Client = NULL;
@@ -3613,11 +3613,11 @@ bool cNetworkHostMenu::runSavedGame()
 		sendRequestResync( (*Server->PlayerList)[i]->Nr );
 		sendHudSettings ( *(*Server->PlayerList)[i]->savedHud, (*Server->PlayerList)[i] );
 		cList<sSavedReportMessage> &reportList = (*Server->PlayerList)[i]->savedReportsList;
-		while ( reportList.Size() )
+		for ( size_t j = 0; j != reportList.Size(); ++j )
 		{
-			sendSavedReport ( reportList[0], (*Server->PlayerList)[i]->Nr );
-			reportList.Delete ( 0 );
+			sendSavedReport ( reportList[j], (*Server->PlayerList)[i]->Nr );
 		}
+		reportList.Clear();
 	}
 
 	// exit menu and start game
@@ -3736,11 +3736,11 @@ void cNetworkClientMenu::handleNetMessage( cNetMessage *message )
 		{
 			int playerCount = message->popInt16();
 			int actPlayerNr = actPlayer->nr;
-			while ( players.Size() > 0 )
+			for ( size_t i = 0; i != players.Size(); ++i )
 			{
-				delete players[0];
-				players.Delete ( 0 );
+				delete players[i];
 			}
+			players.Clear();
 			for ( int i = 0; i < playerCount; i++ )
 			{
 				string name = message->popString();
@@ -4109,10 +4109,9 @@ cLoadMenu::~cLoadMenu()
 	}
 
 	delete files;
-	while ( savefiles.Size() )
+	for ( size_t i = 0; i != savefiles.Size(); ++i )
 	{
-		delete savefiles[0];
-		savefiles.Delete ( 0 );
+		delete savefiles[i];
 	}
 }
 

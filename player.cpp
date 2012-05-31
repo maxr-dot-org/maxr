@@ -169,21 +169,21 @@ cPlayer::~cPlayer ()
 	delete [] DetectSeaMap;
 	delete [] DetectMinesMap;
 
-	while ( ReportVehicles.Size() )
+	for ( size_t i = 0; i != ReportVehicles.Size(); ++i )
 	{
-		delete ReportVehicles[0];
-		ReportVehicles.Delete ( 0 );
+		delete ReportVehicles[i];
 	}
-	while ( ReportBuildings.Size() )
+	ReportVehicles.Clear();
+	for ( size_t i = 0; i != ReportBuildings.Size(); ++i )
 	{
-		delete ReportBuildings[0];
-		ReportBuildings.Delete ( 0 );
+		delete ReportBuildings[i];
 	}
-	while ( LockList.Size() )
+	ReportBuildings.Clear();
+	for ( size_t i = 0; i != LockList.Size(); ++i )
 	{
-		delete LockList[0];
-		LockList.Delete ( 0 );
+		delete LockList[i];
 	}
+	LockList.Clear();
 
 	delete savedHud;
 }

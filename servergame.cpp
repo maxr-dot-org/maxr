@@ -510,37 +510,28 @@ void cServerGame::terminateServer ()
 {
 	if (gameData != 0)
 	{
-		while (gameData->players.Size() )
+		for (size_t i = 0; i != gameData->players.Size(); ++i )
 		{
-			delete gameData->players[0];
-			gameData->players.Delete(0);
+			delete gameData->players[i];
 		}
+		gameData->players.Clear();
 	}
 
-	if (serverMap != 0)
-	{
-		delete serverMap;
-		serverMap = 0;
-	}
+	delete serverMap;
+	serverMap = NULL;
 
-	if (Server != 0)
-	{
-		delete Server;
-		Server = 0;
-	}
+	delete Server;
+	Server = NULL;
 }
 
 //-------------------------------------------------------------------------------------
 cNetMessage* cServerGame::pollEvent ()
 {
-	if (lastEvent != 0)
-	{
-		delete lastEvent;
-		lastEvent = 0;
-	}
+	delete lastEvent;
+	lastEvent = NULL;
 
 	if (eventQueue.size () <= 0)
-		return 0;
+		return NULL;
 
 	cNetMessage* event = eventQueue.read ();
 	lastEvent = event;

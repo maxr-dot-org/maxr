@@ -159,27 +159,22 @@ cClient::~cClient()
 
 	SDL_RemoveTimer ( TimerID );
 	StopFXLoop ( iObjectStream );
-	while (messages.Size())
+	for (size_t i = 0; i != messages.Size(); ++i)
 	{
-		delete messages[0];
-		messages.Delete ( 0 );
+		delete messages[i];
 	}
-	while (FXList.Size())
+	for (size_t i = 0; i != FXList.Size(); ++i )
 	{
-		delete FXList[0];
-		FXList.Delete ( 0 );
+		delete FXList[i];
 	}
-	while (FXListBottom.Size())
+	for (size_t i = 0; i != FXListBottom.Size(); ++i )
 	{
-		delete FXListBottom[0];
-		FXListBottom.Delete ( 0 );
+		delete FXListBottom[i];
 	}
-
 	for (unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
 		delete attackJobs[i];
 	}
-
 	while ( neutralBuildings )
 	{
 		cBuilding* nextBuilding = static_cast<cBuilding*>(neutralBuildings->next);
@@ -1582,7 +1577,7 @@ void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE( cNetMessage& message )
 	}
 	else
 	{
-		while ( vehicle->detectedByPlayerList.Size() > 0 ) vehicle->detectedByPlayerList.Delete(0);
+		vehicle->detectedByPlayerList.Clear();
 	}
 }
 
@@ -1858,46 +1853,35 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING( cNetMessage& message )
 
 	for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
 	{
-		cPlayer *const Player = (*getPlayerList())[i];
+		cPlayer &Player = *(*getPlayerList())[i];
 
-		cVehicle *vehicle = Player->VehicleList;
-		while ( vehicle )
+		for ( cVehicle *vehicle = Player.VehicleList; vehicle; vehicle = static_cast<cVehicle*>(vehicle->next) )
 		{
-			if ( vehicle->storedUnits.Size() ) vehicle->deleteStoredUnits ();
-			vehicle = static_cast<cVehicle*>(vehicle->next);
+			vehicle->deleteStoredUnits();
 		}
 
-		while ( Player->VehicleList )
+		while ( Player.VehicleList )
 		{
-			vehicle = static_cast<cVehicle*>(Player->VehicleList->next);
-			Player->VehicleList->sentryActive = false;
-			getMap()->deleteVehicle ( Player->VehicleList );
-			delete Player->VehicleList;
-			Player->VehicleList = vehicle;
+			cVehicle *vehicle = static_cast<cVehicle*>(Player.VehicleList->next);
+			Player.VehicleList->sentryActive = false;
+			getMap()->deleteVehicle ( Player.VehicleList );
+			delete Player.VehicleList;
+			Player.VehicleList = vehicle;
 		}
-		while ( Player->BuildingList )
+		while ( Player.BuildingList )
 		{
-			cBuilding *building;
-			building = static_cast<cBuilding*>(Player->BuildingList->next);
-			Player->BuildingList->sentryActive = false;
+			cBuilding *building = static_cast<cBuilding*>(Player.BuildingList->next);
+			Player.BuildingList->sentryActive = false;
+			Player.BuildingList->deleteStoredUnits();
 
-
-			while( Player->BuildingList->storedUnits.Size() > 0 )
-			{
-				Player->BuildingList->storedUnits.Delete( 0 );
-			}
-
-			getMap()->deleteBuilding ( Player->BuildingList );
-			delete Player->BuildingList;
-			Player->BuildingList = building;
+			getMap()->deleteBuilding ( Player.BuildingList );
+			delete Player.BuildingList;
+			Player.BuildingList = building;
 		}
 	}
 
 	//delete subbases
-	while ( ActivePlayer->base.SubBases.Size() )
-	{
-		ActivePlayer->base.SubBases.Delete(0);
-	}
+	ActivePlayer->base.SubBases.Clear();
 
 	while ( neutralBuildings )
 	{
@@ -1908,24 +1892,23 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING( cNetMessage& message )
 	}
 
 	//delete attack jobs
-	while ( attackJobs.Size() )
+	for ( size_t i = 0; i != attackJobs.Size(); ++i )
 	{
-		delete attackJobs[0];
-		attackJobs.Delete(0);
+		delete attackJobs[i];
 	}
+	attackJobs.Clear();
 
 	//delete FX effects, because a finished rocked animations would do a callback on an attackjob
-	while ( FXList.Size() )
+	for ( size_t i = 0; i != FXList.Size(); ++i )
 	{
-		delete FXList[0];
-		FXList.Delete(0);
+		delete FXList[i];
 	}
-	while ( FXListBottom.Size() )
+	FXList.Clear();
+	for ( size_t i = 0; i != FXListBottom.Size(); ++i )
 	{
-		delete FXListBottom[0];
-		FXListBottom.Delete(0);
+		delete FXListBottom[i];
 	}
-
+	FXListBottom.Clear();
 	// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
 	// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
 	// executed in normal situations and there are situations, when this happens.
@@ -2491,14 +2474,11 @@ void cClient::handleEnd()
 void cClient::makeHotSeatEnd( int iNextPlayerNum )
 {
 	// clear the messages
-	sMessage *Message;
-	while (messages.Size())
+	for ( size_t i = 0; i != messages.Size(); ++i )
 	{
-		Message = messages[0];
-		delete Message;
-		messages.Delete ( 0 );
+		delete messages[i];
 	}
-
+	messages.Clear();
 	// save information and set next player
 	/*int iZoom, iX, iY;
 	//ActivePlayer->HotHud = Hud;
@@ -2780,11 +2760,11 @@ void cClient::checkVehiclePositions(cNetMessage *message)
 	if ( lastMessagePart )
 	{
 		//check remaining vehicles
-		while ( vehicleList.Size() > 0 )
+		for ( size_t i = 0; i != vehicleList.Size(); ++i )
 		{
-			Log.write("   --vehicle should not exist, ID: "+iToStr(vehicleList[0]->iID), cLog::eLOG_TYPE_NET_ERROR );
-			vehicleList.Delete(0);
+			Log.write("   --vehicle should not exist, ID: "+iToStr(vehicleList[i]->iID), cLog::eLOG_TYPE_NET_ERROR );
 		}
+		vehicleList.Clear();
 	}
 }
 

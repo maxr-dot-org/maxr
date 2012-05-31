@@ -113,23 +113,18 @@ cBuilding::~cBuilding ()
 {
 	if ( BuildList )
 	{
-		while (BuildList->Size())
+		for (size_t i = 0; i != BuildList->Size(); ++i)
 		{
-			sBuildList *ptr;
-			ptr = (*BuildList)[0];
-			delete ptr;
-			BuildList->Delete( 0 );
+			delete (*BuildList)[i];
 		}
 		delete BuildList;
 	}
 
 	if ( IsLocked )
 	{
-		cPlayer *p;
-
 		for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
 		{
-			p = (*Client->getPlayerList())[i];
+			cPlayer *p = (*Client->getPlayerList())[i];
 			p->DeleteLock ( this );
 		}
 	}

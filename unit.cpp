@@ -1224,13 +1224,12 @@ void cUnit::upgradeToCurrentVersion ()
 //-----------------------------------------------------------------------------
 void cUnit::deleteStoredUnits ()
 {
-	while (storedUnits.Size ())
+	for (size_t i = 0; i != storedUnits.Size (); ++i )
 	{
-		cVehicle* unit = storedUnits[0];
+		cVehicle* unit = storedUnits[i];
 		if (unit->prev)
 		{
-			cUnit* prevUnit;
-			prevUnit = unit->prev;
+			cUnit* prevUnit = unit->prev;
 			prevUnit->next = unit->next;
 
 			if (unit->next)
@@ -1247,6 +1246,6 @@ void cUnit::deleteStoredUnits ()
 			unit->deleteStoredUnits ();
 
 		delete unit;
-		storedUnits.Delete (0);
 	}
+	storedUnits.Clear();
 }
