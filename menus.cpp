@@ -5107,8 +5107,6 @@ cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cB
 cStorageMenu::~cStorageMenu()
 {
 	delete doneButton;
-
-	delete doneButton;
 	delete downButton;
 	delete upButton;
 
