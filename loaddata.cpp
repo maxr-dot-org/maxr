@@ -949,14 +949,14 @@ static int LoadVehicles()
 {
 	Log.write ( "Loading Vehicles", LOG_TYPE_INFO );
 
-	string sTmpString, sVehiclePath;
+	string sVehiclePath;
 	char sztmp[16];
 	const char *pszTmp;
 	TiXmlDocument VehiclesXml;
 	TiXmlNode *pXmlNode;
 	TiXmlElement * pXmlElement;
 
-	sTmpString = cSettings::getInstance().getVehiclesPath();
+	string sTmpString = cSettings::getInstance().getVehiclesPath();
 	sTmpString += PATH_DELIMITER "vehicles.xml";
 	if( !FileExists( sTmpString.c_str() ) )
 	{
@@ -993,7 +993,6 @@ static int LoadVehicles()
 			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString, LOG_TYPE_WARNING);
@@ -1022,7 +1021,6 @@ static int LoadVehicles()
 			IDList.Add(pszTmp);
 		else
 		{
-			VehicleList.Delete(VehicleList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString, LOG_TYPE_WARNING);
@@ -1518,7 +1516,6 @@ static int LoadBuildings()
 			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList.Delete(BuildingList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
@@ -1560,7 +1557,6 @@ static int LoadBuildings()
 			IDList.Add(pszTmp);
 		else
 		{
-			BuildingList.Delete(BuildingList.Size());
 			sTmpString = "Can't read num-attribute from \"\" - node";
 			sTmpString.insert(32,pXmlNode->Value());
 			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
