@@ -20,6 +20,7 @@
 #define menusH
 
 #include "autosurface.h"
+#include "autoptr.h"
 #include "defines.h"
 #include "menuitems.h"
 #include "input.h"
@@ -360,12 +361,11 @@ EX cMenu *ActiveMenu;
  */
 class cMainMenu : public cMenu
 {
-	cMenuImage *infoImage;
-	cMenuLabel *creditsLabel;
+	AutoPtr<cMenuImage>::type infoImage;
+	AutoPtr<cMenuLabel>::type creditsLabel;
 
 public:
 	cMainMenu();
-	~cMainMenu();
 
 	SDL_Surface *getRandomInfoImage();
 	static void infoImageReleased( void* parent );
@@ -377,16 +377,15 @@ public:
  */
 class cStartMenu : public cMainMenu
 {
-	cMenuLabel *titleLabel;
-	cMenuButton *singleButton;
-	cMenuButton *multiButton;
-	cMenuButton *preferenceButton;
-	cMenuButton *licenceButton;
-	cMenuButton *exitButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type singleButton;
+	AutoPtr<cMenuButton>::type multiButton;
+	AutoPtr<cMenuButton>::type preferenceButton;
+	AutoPtr<cMenuButton>::type licenceButton;
+	AutoPtr<cMenuButton>::type exitButton;
 
 public:
 	cStartMenu();
-	~cStartMenu();
 
 	static void singlePlayerReleased( void* parent );
 	static void multiPlayerReleased( void* parent );
@@ -401,13 +400,12 @@ public:
  */
 class cSinglePlayerMenu : public cMainMenu
 {
-	cMenuLabel *titleLabel;
-	cMenuButton *newGameButton;
-	cMenuButton *loadGameButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type newGameButton;
+	AutoPtr<cMenuButton>::type loadGameButton;
+	AutoPtr<cMenuButton>::type backButton;
 public:
 	cSinglePlayerMenu();
-	~cSinglePlayerMenu();
 
 	static void newGameReleased( void* parent );
 	static void loadGameReleased( void* parent );
@@ -420,15 +418,14 @@ public:
  */
 class cMultiPlayersMenu : public cMainMenu
 {
-	cMenuLabel *titleLabel;
-	cMenuButton *tcpHostButton;
-	cMenuButton *tcpClientButton;
-	cMenuButton *newHotseatButton;
-	cMenuButton *loadHotseatButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type tcpHostButton;
+	AutoPtr<cMenuButton>::type tcpClientButton;
+	AutoPtr<cMenuButton>::type newHotseatButton;
+	AutoPtr<cMenuButton>::type loadHotseatButton;
+	AutoPtr<cMenuButton>::type backButton;
 public:
 	cMultiPlayersMenu();
-	~cMultiPlayersMenu();
 
 	static void tcpHostReleased( void* parent );
 	static void tcpClientReleased( void* parent );
@@ -447,36 +444,35 @@ protected:
 	cGameDataContainer *gameDataContainer;
 	sSettings settings;
 
-	cMenuLabel *titleLabel;
-	cMenuButton *okButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type okButton;
+	AutoPtr<cMenuButton>::type backButton;
 
-	cMenuLabel *metalLabel;
-	cMenuLabel *oilLabel;
-	cMenuLabel *goldLabel;
-	cMenuLabel *creditsLabel;
-	cMenuLabel *bridgeheadLabel;
-	//cMenuLabel *alienTechLabel;
-	cMenuLabel *clansLabel;
-	cMenuLabel *resFrequencyLabel;
-	cMenuLabel *gameTypeLabel;
-	cMenuLabel *victoryLabel;
+	AutoPtr<cMenuLabel>::type metalLabel;
+	AutoPtr<cMenuLabel>::type oilLabel;
+	AutoPtr<cMenuLabel>::type goldLabel;
+	AutoPtr<cMenuLabel>::type creditsLabel;
+	AutoPtr<cMenuLabel>::type bridgeheadLabel;
+	//AutoPtr<cMenuLabel>::type alienTechLabel;
+	AutoPtr<cMenuLabel>::type clansLabel;
+	AutoPtr<cMenuLabel>::type resFrequencyLabel;
+	AutoPtr<cMenuLabel>::type gameTypeLabel;
+	AutoPtr<cMenuLabel>::type victoryLabel;
 
-	cMenuRadioGroup *metalGroup;
-	cMenuRadioGroup *oilGroup;
-	cMenuRadioGroup *goldGroup;
-	cMenuRadioGroup *creditsGroup;
-	cMenuRadioGroup *bridgeheadGroup;
-	//cMenuRadioGroup *aliensGroup;
-	cMenuRadioGroup *clansGroup;
-	cMenuRadioGroup *resFrequencyGroup;
-	cMenuRadioGroup *gameTypeGroup;
-	cMenuRadioGroup *victoryGroup;
+	AutoPtr<cMenuRadioGroup>::type metalGroup;
+	AutoPtr<cMenuRadioGroup>::type oilGroup;
+	AutoPtr<cMenuRadioGroup>::type goldGroup;
+	AutoPtr<cMenuRadioGroup>::type creditsGroup;
+	AutoPtr<cMenuRadioGroup>::type bridgeheadGroup;
+	//AutoPtr<cMenuRadioGroup>::type aliensGroup;
+	AutoPtr<cMenuRadioGroup>::type clansGroup;
+	AutoPtr<cMenuRadioGroup>::type resFrequencyGroup;
+	AutoPtr<cMenuRadioGroup>::type gameTypeGroup;
+	AutoPtr<cMenuRadioGroup>::type victoryGroup;
 
 	void updateSettings();
 public:
 	cSettingsMenu( cGameDataContainer *gameDataContainer_ );
-	~cSettingsMenu();
 
 	static void backReleased( void* parent );
 	static void okReleased( void* parent );
@@ -491,16 +487,16 @@ class cPlanetsSelectionMenu : public cMenu
 protected:
 	cGameDataContainer *gameDataContainer;
 
-	cMenuLabel *titleLabel;
+	AutoPtr<cMenuLabel>::type titleLabel;
 
-	cMenuButton *okButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuButton>::type okButton;
+	AutoPtr<cMenuButton>::type backButton;
 
-	cMenuButton *arrowUpButton;
-	cMenuButton *arrowDownButton;
+	AutoPtr<cMenuButton>::type arrowUpButton;
+	AutoPtr<cMenuButton>::type arrowDownButton;
 
-	cMenuImage *planetImages[8];
-	cMenuLabel *planetTitles[8];
+	AutoPtr<cMenuImage>::type planetImages[8];
+	AutoPtr<cMenuLabel>::type planetTitles[8];
 
 	cList<std::string> *maps;
 	int selectedMapIndex;
@@ -508,7 +504,6 @@ protected:
 
 public:
 	cPlanetsSelectionMenu( cGameDataContainer *gameDataContainer_ );
-	~cPlanetsSelectionMenu();
 
 	void loadMaps();
 	void showMaps();
@@ -530,16 +525,16 @@ class cClanSelectionMenu : public cMenu
 protected:
 	cGameDataContainer *gameDataContainer;
 
-	cMenuLabel *titleLabel;
+	AutoPtr<cMenuLabel>::type titleLabel;
 
-	cMenuImage *clanImages[8];
-	cMenuLabel *clanNames[8];
-	cMenuLabel *clanDescription1;
-	cMenuLabel *clanDescription2;
-	cMenuLabel *clanShortDescription;
+	AutoPtr<cMenuImage>::type clanImages[8];
+	AutoPtr<cMenuLabel>::type clanNames[8];
+	AutoPtr<cMenuLabel>::type clanDescription1;
+	AutoPtr<cMenuLabel>::type clanDescription2;
+	AutoPtr<cMenuLabel>::type clanShortDescription;
 
-	cMenuButton *okButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuButton>::type okButton;
+	AutoPtr<cMenuButton>::type backButton;
 
 	cPlayer *player;
 	int clan;
@@ -548,7 +543,6 @@ protected:
 
 public:
 	cClanSelectionMenu (cGameDataContainer* gameDataContainer_, cPlayer *player, bool noReturn );
-	~cClanSelectionMenu ();
 
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
@@ -567,27 +561,26 @@ class cHangarMenu : public cMenu
 protected:
 	cPlayer *player;
 
-	cMenuImage *infoImage;
-	cMenuLabel *infoText;
-	cMenuCheckButton *infoTextCheckBox;
+	AutoPtr<cMenuImage>::type infoImage;
+	AutoPtr<cMenuLabel>::type infoText;
+	AutoPtr<cMenuCheckButton>::type infoTextCheckBox;
 
-	cMenuUnitDetailsBig *unitDetails;
+	AutoPtr<cMenuUnitDetailsBig>::type unitDetails;
 
-	cMenuUnitsList *selectionList;
-	cMenuUnitListItem *selectedUnit;
+	AutoPtr<cMenuUnitsList>::type selectionList;
+	cMenuUnitListItem* selectedUnit;
 
-	cMenuButton *selListUpButton;
-	cMenuButton *selListDownButton;
+	AutoPtr<cMenuButton>::type selListUpButton;
+	AutoPtr<cMenuButton>::type selListDownButton;
 
-	cMenuButton *doneButton;
-	cMenuButton *backButton;
+	AutoPtr<cMenuButton>::type doneButton;
+	AutoPtr<cMenuButton>::type backButton;
 
 	void drawUnitInformation();
 
 	void (*selectionChangedFunc)(void *);
 public:
 	cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK );
-	~cHangarMenu();
 
 	static void infoCheckBoxClicked( void* parent );
 	static void selListUpReleased( void* parent );
@@ -606,17 +599,16 @@ public:
 class cAdvListHangarMenu : virtual public cHangarMenu
 {
 protected:
-	cMenuUnitsList *secondList;
+	AutoPtr<cMenuUnitsList>::type secondList;
 
-	cMenuButton *secondListUpButton;
-	cMenuButton *secondListDownButton;
+	AutoPtr<cMenuButton>::type secondListUpButton;
+	AutoPtr<cMenuButton>::type secondListDownButton;
 
 	virtual bool checkAddOk ( cMenuUnitListItem *item ) { return true; }
 	virtual void addedCallback ( cMenuUnitListItem *item ) {}
 	virtual void removedCallback ( cMenuUnitListItem *item ) {}
 public:
 	cAdvListHangarMenu( SDL_Surface *background_, cPlayer *player_ );
-	~cAdvListHangarMenu();
 
 	static bool selListDoubleClicked( cMenuUnitsList* list, void* parent );
 	static bool secondListDoubleClicked( cMenuUnitsList* list, void* parent );
@@ -635,10 +627,10 @@ class cUpgradeHangarMenu : virtual public cHangarMenu
 protected:
 	int credits;
 
-	cMenuUpgradeFilter *upgradeFilter;
-	cMenuUpgradeHandler *upgradeButtons;
-	cMenuMaterialBar *goldBar;
-	cMenuLabel *goldBarLabel;
+	AutoPtr<cMenuUpgradeFilter>::type upgradeFilter;
+	AutoPtr<cMenuUpgradeHandler>::type upgradeButtons;
+	AutoPtr<cMenuMaterialBar>::type goldBar;
+	AutoPtr<cMenuLabel>::type goldBarLabel;
 
 	sUnitUpgrade (*unitUpgrades)[8];
 	void initUpgrades( cPlayer *player );
@@ -659,14 +651,14 @@ class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
 protected:
 	cGameDataContainer *gameDataContainer;
 
-	cMenuRadioGroup *upgradeBuyGroup;
+	AutoPtr<cMenuRadioGroup>::type upgradeBuyGroup;
 
-	cMenuMaterialBar *materialBar;
+	AutoPtr<cMenuMaterialBar>::type materialBar;
 
-	cMenuLabel *materialBarLabel;
+	AutoPtr<cMenuLabel>::type materialBarLabel;
 
-	cMenuButton *materialBarUpButton;
-	cMenuButton *materialBarDownButton;
+	AutoPtr<cMenuButton>::type materialBarUpButton;
+	AutoPtr<cMenuButton>::type materialBarDownButton;
 
 	bool isInLandingList( cMenuUnitListItem *item );
 
@@ -677,7 +669,6 @@ protected:
 	void updateUnitData();
 public:
 	cStartupHangarMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_, bool noReturn );
-	~cStartupHangarMenu();
 
 	static void selectionChanged( void* parent );
 
@@ -709,10 +700,10 @@ protected:
 	AutoSurface hudSurface;
 	AutoSurface mapSurface;
 
-	cMenuImage *hudImage;
-	cMenuImage *mapImage;
-	cMenuImage *circlesImage;
-	cMenuLabel *infoLabel;
+	AutoPtr<cMenuImage>::type hudImage;
+	AutoPtr<cMenuImage>::type mapImage;
+	AutoPtr<cMenuImage>::type circlesImage;
+	AutoPtr<cMenuLabel>::type infoLabel;
 
 	sClientLandData landData;
 
@@ -722,7 +713,6 @@ protected:
 	void hitPosition();
 public:
 	cLandingMenu( cGameDataContainer *gameDataContainer_, cPlayer *player_ );
-	~cLandingMenu();
 
 	static void mapClicked( void* parent );
 	static void mouseMoved( void* parent );
@@ -744,32 +734,32 @@ protected:
 	cList<sMenuPlayer*> players;
 	sMenuPlayer *actPlayer;
 
-	cMenuButton *backButton;
-	cMenuButton *sendButton;
+	AutoPtr<cMenuButton>::type backButton;
+	AutoPtr<cMenuButton>::type sendButton;
 
-	cMenuImage *mapImage;
-	cMenuLabel *mapLabel;
+	AutoPtr<cMenuImage>::type mapImage;
+	AutoPtr<cMenuLabel>::type mapLabel;
 
-	cMenuLabel *settingsText;
+	AutoPtr<cMenuLabel>::type settingsText;
 
-	cMenuListBox *chatBox;
-	cMenuLineEdit *chatLine;
+	AutoPtr<cMenuListBox>::type chatBox;
+	AutoPtr<cMenuLineEdit>::type chatLine;
 
-	cMenuLabel *ipLabel;
-	cMenuLabel *portLabel;
-	cMenuLabel *nameLabel;
-	cMenuLabel *colorLabel;
+	AutoPtr<cMenuLabel>::type ipLabel;
+	AutoPtr<cMenuLabel>::type portLabel;
+	AutoPtr<cMenuLabel>::type nameLabel;
+	AutoPtr<cMenuLabel>::type colorLabel;
 
-	cMenuButton *nextColorButton;
-	cMenuButton *prevColorButton;
-	cMenuImage *colorImage;
+	AutoPtr<cMenuButton>::type nextColorButton;
+	AutoPtr<cMenuButton>::type prevColorButton;
+	AutoPtr<cMenuImage>::type colorImage;
 
-	cMenuLineEdit *ipLine;
-	cMenuLineEdit *portLine;
-	cMenuImage *setDefaultPortImage;
-	cMenuLineEdit *nameLine;
+	AutoPtr<cMenuLineEdit>::type ipLine;
+	AutoPtr<cMenuLineEdit>::type portLine;
+	AutoPtr<cMenuImage>::type setDefaultPortImage;
+	AutoPtr<cMenuLineEdit>::type nameLine;
 
-	cMenuPlayersBox *playersBox;
+	AutoPtr<cMenuPlayersBox>::type playersBox;
 
 	cGameDataContainer gameDataContainer;
 	std::string saveGameString;
@@ -808,14 +798,14 @@ public:
 class cNetworkHostMenu : public cNetworkMenu
 {
 protected:
-	cMenuLabel *titleLabel;
+	AutoPtr<cMenuLabel>::type titleLabel;
 
-	cMenuButton *okButton;
+	AutoPtr<cMenuButton>::type okButton;
 
-	cMenuButton *mapButton;
-	cMenuButton *settingsButton;
-	cMenuButton *loadButton;
-	cMenuButton *startButton;
+	AutoPtr<cMenuButton>::type mapButton;
+	AutoPtr<cMenuButton>::type settingsButton;
+	AutoPtr<cMenuButton>::type loadButton;
+	AutoPtr<cMenuButton>::type startButton;
 
 	int checkAllPlayersReady();
 	void checkTakenPlayerAttr( sMenuPlayer *player );
@@ -843,8 +833,8 @@ public:
  */
 class cNetworkClientMenu : public cNetworkMenu
 {
-	cMenuLabel *titleLabel;
-	cMenuButton *connectButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type connectButton;
 
 	cMapReceiver* mapReceiver;
 	std::string lastRequestedMap;
@@ -871,15 +861,15 @@ class cLoadMenu : public cMenu
 protected:
 	cGameDataContainer *gameDataContainer;
 
-	cMenuLabel *titleLabel;
+	AutoPtr<cMenuLabel>::type titleLabel;
 
-	cMenuButton *backButton;
-	cMenuButton *loadButton;
+	AutoPtr<cMenuButton>::type backButton;
+	AutoPtr<cMenuButton>::type loadButton;
 
-	cMenuButton *upButton;
-	cMenuButton *downButton;
+	AutoPtr<cMenuButton>::type upButton;
+	AutoPtr<cMenuButton>::type downButton;
 
-	cMenuSaveSlot *saveSlots[10];
+	AutoPtr<cMenuSaveSlot>::type saveSlots[10];
 
 	cList<std::string> *files;
 	cList<sSaveFile*> savefiles;
@@ -912,12 +902,11 @@ public:
 class cLoadSaveMenu : public cLoadMenu
 {
 protected:
-	cMenuButton *exitButton;
-	cMenuButton *saveButton;
+	AutoPtr<cMenuButton>::type exitButton;
+	AutoPtr<cMenuButton>::type saveButton;
 
 public:
 	cLoadSaveMenu( cGameDataContainer *gameDataContainer_ );
-	~cLoadSaveMenu();
 
 	static void exitReleased( void* parent );
 	static void saveReleased( void* parent );
@@ -934,13 +923,12 @@ class cBuildingsBuildMenu : public cHangarMenu
 protected:
 	cVehicle *vehicle;
 
-	cMenuLabel *titleLabel;
-	cMenuButton *pathButton;
-	cMenuBuildSpeedHandler *speedHandler;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type pathButton;
+	AutoPtr<cMenuBuildSpeedHandler>::type speedHandler;
 
 public:
 	cBuildingsBuildMenu( cPlayer *player_, cVehicle *vehicle_ );
-	~cBuildingsBuildMenu();
 
 	static void doneReleased ( void *parent );
 	static void backReleased ( void *parent );
@@ -961,15 +949,14 @@ class cVehiclesBuildMenu : public cAdvListHangarMenu
 protected:
 	cBuilding *building;
 
-	cMenuLabel *titleLabel;
-	cMenuBuildSpeedHandler *speedHandler;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuBuildSpeedHandler>::type speedHandler;
 
-	cMenuCheckButton *repeatButton;
+	AutoPtr<cMenuCheckButton>::type repeatButton;
 
 	void createBuildList();
 public:
 	cVehiclesBuildMenu( cPlayer *player_, cBuilding *building_ );
-	~cVehiclesBuildMenu();
 
 	static void doneReleased ( void *parent );
 	static void backReleased ( void *parent );
@@ -1004,23 +991,21 @@ public:
 class cUnitHelpMenu : public cMenu
 {
 protected:
-	cMenuLabel *titleLabel;
+	AutoPtr<cMenuLabel>::type titleLabel;
 
-	cMenuImage *infoImage;
-	cMenuLabel *infoText;
+	AutoPtr<cMenuImage>::type infoImage;
+	AutoPtr<cMenuLabel>::type infoText;
 
-	cMenuUnitDetailsBig *unitDetails;
+	AutoPtr<cMenuUnitDetailsBig>::type unitDetails;
 
-	cMenuButton *doneButton;
+	AutoPtr<cMenuButton>::type doneButton;
 
-	cMenuUnitListItem *unit;
+	AutoPtr<cMenuUnitListItem>::type unit;
 
 	void init(sID unitID);
 public:
 	cUnitHelpMenu( sID unitID, cPlayer *owner );
 	cUnitHelpMenu( sUnitData* unitData, cPlayer *owner );
-
-	~cUnitHelpMenu();
 
 	static void doneReleased( void *parent );
 	void handleDestroyUnit( cBuilding *destroyedBuilding = NULL, cVehicle *destroyedVehicle = NULL );
@@ -1047,34 +1032,33 @@ protected:
 
 	int offset;
 
-	cMenuButton *doneButton;
-	cMenuButton *downButton;
-	cMenuButton *upButton;
+	AutoPtr<cMenuButton>::type doneButton;
+	AutoPtr<cMenuButton>::type downButton;
+	AutoPtr<cMenuButton>::type upButton;
 
-	cMenuImage *unitImages[6];
-	cMenuLabel *unitNames[6];
-	cMenuStoredUnitDetails *unitInfo[6];
+	AutoPtr<cMenuImage>::type unitImages[6];
+	AutoPtr<cMenuLabel>::type unitNames[6];
+	AutoPtr<cMenuStoredUnitDetails>::type unitInfo[6];
 
-	cMenuButton *activateButtons[6];
-	cMenuButton *reloadButtons[6];
-	cMenuButton *repairButtons[6];
-	cMenuButton *upgradeButtons[6];
+	AutoPtr<cMenuButton>::type activateButtons[6];
+	AutoPtr<cMenuButton>::type reloadButtons[6];
+	AutoPtr<cMenuButton>::type repairButtons[6];
+	AutoPtr<cMenuButton>::type upgradeButtons[6];
 
-	cMenuButton *activateAllButton;
-	cMenuButton *reloadAllButton;
-	cMenuButton *repairAllButton;
-	cMenuButton *upgradeAllButton;
+	AutoPtr<cMenuButton>::type activateAllButton;
+	AutoPtr<cMenuButton>::type reloadAllButton;
+	AutoPtr<cMenuButton>::type repairAllButton;
+	AutoPtr<cMenuButton>::type upgradeAllButton;
 
-	cMenuMaterialBar *metalBar;
+	AutoPtr<cMenuMaterialBar>::type metalBar;
 
 	void generateItems();
 
 	void resetInfos();
 
-	int getClickedButtonVehIndex ( cMenuButton *buttons[6] );
+	int getClickedButtonVehIndex ( AutoPtr<cMenuButton>::type (&buttons)[6] );
 public:
 	cStorageMenu( cList<cVehicle*>& storageList_, cVehicle *vehicle, cBuilding *building );
-	~cStorageMenu();
 
 	static void doneReleased( void *parent );
 
@@ -1100,25 +1084,25 @@ class cMineManagerMenu : public cMenu
 	cBuilding *building;
 	sSubBase subBase;
 
-	cMenuLabel *titleLabel;
-	cMenuButton *doneButton;
+	AutoPtr<cMenuLabel>::type titleLabel;
+	AutoPtr<cMenuButton>::type doneButton;
 
-	cMenuMaterialBar *metalBars[3];
-	cMenuMaterialBar *oilBars[3];
-	cMenuMaterialBar *goldBars[3];
+	AutoPtr<cMenuMaterialBar>::type metalBars[3];
+	AutoPtr<cMenuMaterialBar>::type oilBars[3];
+	AutoPtr<cMenuMaterialBar>::type goldBars[3];
 
-	cMenuLabel *metalBarLabels[3];
-	cMenuLabel *oilBarLabels[3];
-	cMenuLabel *goldBarLabels[3];
+	AutoPtr<cMenuLabel>::type metalBarLabels[3];
+	AutoPtr<cMenuLabel>::type oilBarLabels[3];
+	AutoPtr<cMenuLabel>::type goldBarLabels[3];
 
-	cMenuMaterialBar *noneBars[3];
+	AutoPtr<cMenuMaterialBar>::type noneBars[3];
 
-	cMenuLabel *resourceLabels[3];
-	cMenuLabel *usageLabels[3];
-	cMenuLabel *reserveLabels[3];
+	AutoPtr<cMenuLabel>::type resourceLabels[3];
+	AutoPtr<cMenuLabel>::type usageLabels[3];
+	AutoPtr<cMenuLabel>::type reserveLabels[3];
 
-	cMenuButton *incButtons[3];
-	cMenuButton *decButtons[3];
+	AutoPtr<cMenuButton>::type incButtons[3];
+	AutoPtr<cMenuButton>::type decButtons[3];
 
 	void setBarValues();
 	void setBarLabels();
@@ -1126,7 +1110,6 @@ class cMineManagerMenu : public cMenu
 	std::string secondBarText( int prod, int need );
 public:
 	cMineManagerMenu( cBuilding *building_ );
-	~cMineManagerMenu();
 
 	static void doneReleased( void *parent );
 
@@ -1142,28 +1125,27 @@ class cReportsMenu : public cMenu
 {
 	cPlayer *owner;
 
-	cMenuRadioGroup *typeButtonGroup;
+	AutoPtr<cMenuRadioGroup>::type typeButtonGroup;
 
-	cMenuLabel *includedLabel;
-	cMenuCheckButton *planesCheckBtn;
-	cMenuCheckButton *groundCheckBtn;
-	cMenuCheckButton *seaCheckBtn;
-	cMenuCheckButton *stationaryCheckBtn;
+	AutoPtr<cMenuLabel>::type includedLabel;
+	AutoPtr<cMenuCheckButton>::type planesCheckBtn;
+	AutoPtr<cMenuCheckButton>::type groundCheckBtn;
+	AutoPtr<cMenuCheckButton>::type seaCheckBtn;
+	AutoPtr<cMenuCheckButton>::type stationaryCheckBtn;
 
-	cMenuLabel *borderedLabel;
-	cMenuCheckButton *buildCheckBtn;
-	cMenuCheckButton *fightCheckBtn;
-	cMenuCheckButton *damagedCheckBtn;
-	cMenuCheckButton *stealthCheckBtn;
+	AutoPtr<cMenuLabel>::type borderedLabel;
+	AutoPtr<cMenuCheckButton>::type buildCheckBtn;
+	AutoPtr<cMenuCheckButton>::type fightCheckBtn;
+	AutoPtr<cMenuCheckButton>::type damagedCheckBtn;
+	AutoPtr<cMenuCheckButton>::type stealthCheckBtn;
 
-	cMenuButton *doneButton;
-	cMenuButton *upButton;
-	cMenuButton *downButton;
+	AutoPtr<cMenuButton>::type doneButton;
+	AutoPtr<cMenuButton>::type upButton;
+	AutoPtr<cMenuButton>::type downButton;
 
-	cMenuReportsScreen *dataScreen;
+	AutoPtr<cMenuReportsScreen>::type dataScreen;
 public:
 	cReportsMenu( cPlayer *owner_ );
-	~cReportsMenu();
 
 	static void doneReleased( void *parent );
 

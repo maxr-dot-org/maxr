@@ -42,6 +42,8 @@
 #include "player.h"
 #include "savegame.h"
 
+#include "autoptr.h"
+
 using namespace std;
 
 #define MAIN_MENU_BTN_SPACE 35
@@ -776,13 +778,6 @@ cMainMenu::cMainMenu()
 }
 
 //------------------------------------------------------------------------------
-cMainMenu::~cMainMenu()
-{
-	delete infoImage;
-	delete creditsLabel;
-}
-
-//------------------------------------------------------------------------------
 SDL_Surface *cMainMenu::getRandomInfoImage()
 {
 	int const showBuilding = random(3);
@@ -866,17 +861,6 @@ cStartMenu::cStartMenu()
 }
 
 //------------------------------------------------------------------------------
-cStartMenu::~cStartMenu()
-{
-	delete titleLabel;
-	delete singleButton;
-	delete multiButton;
-	delete preferenceButton;
-	delete licenceButton;
-	delete exitButton;
-}
-
-//------------------------------------------------------------------------------
 void cStartMenu::singlePlayerReleased( void* parent )
 {
 	cStartMenu *menu = static_cast<cStartMenu*>((cMenu*)parent);
@@ -942,15 +926,6 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 	backButton = new cMenuButton ( position.x+415, position.y+190+MAIN_MENU_BTN_SPACE*6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL );
 	backButton->setReleasedFunction ( &backReleased );
 	menuItems.Add ( backButton );
-}
-
-//------------------------------------------------------------------------------
-cSinglePlayerMenu::~cSinglePlayerMenu()
-{
-	delete titleLabel;
-	delete newGameButton;
-	delete loadGameButton;
-	delete backButton;
 }
 
 //------------------------------------------------------------------------------
@@ -1028,23 +1003,6 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 }
 
 //------------------------------------------------------------------------------
-cMultiPlayersMenu::~cMultiPlayersMenu()
-{
-	delete titleLabel;
-	delete tcpHostButton;
-	delete tcpClientButton;
-
-	#ifndef RELEASE
-
-	delete newHotseatButton;
-	delete loadHotseatButton;
-
-	#endif
-
-	delete backButton;
-}
-
-//------------------------------------------------------------------------------
 void cMultiPlayersMenu::tcpHostReleased( void* parent )
 {
 	cMultiPlayersMenu *menu = static_cast<cMultiPlayersMenu *>((cMenu*)parent);
@@ -1109,7 +1067,7 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 	int iLineHeight = 16; //pixels after we start a new line
 	//black window screen on gfx is 510 width. calculation for most option fields starts at px 240x. and is 347 width.
 
-	// Titel
+	// Title
 	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+13, lngPack.i18n ("Text~Button~Game_Options") );
 	titleLabel->setCentered( true );
 	menuItems.Add ( titleLabel );
@@ -1263,36 +1221,6 @@ cSettingsMenu::cSettingsMenu( cGameDataContainer *gameDataContainer_ ) : cMenu (
 
 	victoryGroup->addButton(new cMenuCheckButton(position.x + 440, position.y+iCurrentLine, strNoLimit, bAnnih, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 	menuItems.Add(victoryGroup);
-}
-
-//------------------------------------------------------------------------------
-cSettingsMenu::~cSettingsMenu()
-{
-	delete titleLabel;
-	delete okButton;
-	delete backButton;
-
-	delete metalLabel;
-	delete oilLabel;
-	delete goldLabel;
-	delete creditsLabel;
-	delete bridgeheadLabel;
-	//delete alienTechLabel;
-	delete clansLabel;
-	delete resFrequencyLabel;
-	delete gameTypeLabel;
-	delete victoryLabel;
-
-	delete metalGroup;
-	delete oilGroup;
-	delete goldGroup;
-	delete creditsGroup;
-	delete bridgeheadGroup;
-	//delete aliensGroup;
-	delete clansGroup;
-	delete resFrequencyGroup;
-	delete gameTypeGroup;
-	delete victoryGroup;
 }
 
 //------------------------------------------------------------------------------
@@ -1451,24 +1379,6 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu( cGameDataContainer *gameDataContai
 
 	loadMaps();
 	showMaps();
-}
-
-//------------------------------------------------------------------------------
-cPlanetsSelectionMenu::~cPlanetsSelectionMenu()
-{
-	delete titleLabel;
-
-	delete okButton;
-	delete backButton;
-
-	delete arrowUpButton;
-	delete arrowDownButton;
-
-	for ( int i = 0; i < 8; i++ )
-	{
-		delete planetImages[i];
-		delete planetTitles[i];
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -1768,24 +1678,6 @@ cClanSelectionMenu::cClanSelectionMenu( cGameDataContainer *gameDataContainer_, 
 }
 
 //-----------------------------------------------------------------------------------
-cClanSelectionMenu::~cClanSelectionMenu ()
-{
-	delete okButton;
-	delete backButton;
-
-	delete titleLabel;
-	delete clanDescription1;
-	delete clanDescription2;
-	delete clanShortDescription;
-
-	for (int i = 0; i < 8; i++)
-	{
-		delete clanImages[i];
-		delete clanNames[i];
-	}
-}
-
-//-----------------------------------------------------------------------------------
 void cClanSelectionMenu::okReleased (void* parent)
 {
 	cClanSelectionMenu* menu = dynamic_cast<cClanSelectionMenu*>((cMenu*)parent);
@@ -1927,24 +1819,6 @@ cHangarMenu::cHangarMenu( SDL_Surface *background_, cPlayer *player_, eMenuBackg
 }
 
 //------------------------------------------------------------------------------
-cHangarMenu::~cHangarMenu()
-{
-	delete infoImage;
-	delete infoText;
-	delete infoTextCheckBox;
-
-	delete unitDetails;
-
-	delete selectionList;
-
-	delete selListUpButton;
-	delete selListDownButton;
-
-	delete doneButton;
-	delete backButton;
-}
-
-//------------------------------------------------------------------------------
 void cHangarMenu::drawUnitInformation()
 {
 	if ( !selectedUnit ) return;
@@ -2020,15 +1894,6 @@ cAdvListHangarMenu::cAdvListHangarMenu( SDL_Surface *background_, cPlayer *playe
 	secondListDownButton = new cMenuButton ( position.x+348, position.y+240, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
 	secondListDownButton->setReleasedFunction ( &secondListDownReleased );
 	menuItems.Add ( secondListDownButton );
-}
-
-//------------------------------------------------------------------------------
-cAdvListHangarMenu::~cAdvListHangarMenu()
-{
-	delete secondList;
-
-	delete secondListUpButton;
-	delete secondListDownButton;
 }
 
 //------------------------------------------------------------------------------
@@ -2112,9 +1977,6 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 	upgradeBuyGroup->addButton ( new cMenuCheckButton ( position.x+542, position.y+445+17, lngPack.i18n ("Text~Button~Upgrade"), false, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND ) );
 	upgradeBuyGroup->setClickedFunction ( &subButtonsChanged );
 	menuItems.Add ( upgradeBuyGroup );
-
-	upgradeFilter = new cMenuUpgradeFilter ( position.x+467, position.y+411, this );
-	menuItems.Add ( upgradeFilter );
 
 	materialBar = new cMenuMaterialBar ( position.x+421, position.y+301, position.x+430, position.y+275, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL );
 	materialBar->setClickedFunction ( materialBarClicked );
@@ -2204,17 +2066,6 @@ cStartupHangarMenu::cStartupHangarMenu( cGameDataContainer *gameDataContainer_, 
 		}
 	}
 	if ( selectionList->getSize() > 0 ) setSelectedUnit ( selectionList->getItem ( 0 ) );
-}
-
-//------------------------------------------------------------------------------
-cStartupHangarMenu::~cStartupHangarMenu()
-{
-	delete upgradeBuyGroup;
-
-	delete materialBar;
-	delete materialBarLabel;
-	delete materialBarUpButton;
-	delete materialBarDownButton;
 }
 
 //------------------------------------------------------------------------------
@@ -2572,15 +2423,6 @@ cLandingMenu::cLandingMenu(cGameDataContainer* gameDataContainer_, cPlayer* play
 }
 
 //------------------------------------------------------------------------------
-cLandingMenu::~cLandingMenu()
-{
-	delete hudImage;
-	delete mapImage;
-	delete circlesImage;
-	delete infoLabel;
-}
-
-//------------------------------------------------------------------------------
 void cLandingMenu::createHud()
 {
 	hudSurface = cGameGUI::generateSurface();
@@ -2880,33 +2722,6 @@ cNetworkMenu::cNetworkMenu()
 //------------------------------------------------------------------------------
 cNetworkMenu::~cNetworkMenu()
 {
-	delete backButton;
-	delete sendButton;
-
-	delete mapImage;
-	delete mapLabel;
-
-	delete settingsText;
-
-	delete chatBox;
-	delete chatLine;
-
-	delete ipLabel;
-	delete portLabel;
-	delete setDefaultPortImage;
-	delete nameLabel;
-	delete colorLabel;
-
-	delete nextColorButton;
-	delete prevColorButton;
-	delete colorImage;
-
-	delete ipLine;
-	delete portLine;
-	delete nameLine;
-
-	delete playersBox;
-
 	delete network;
 	network = NULL;
 }
@@ -3186,19 +3001,9 @@ cNetworkHostMenu::cNetworkHostMenu()
 //-----------------------------------------------------------------------------------------
 cNetworkHostMenu::~cNetworkHostMenu()
 {
-	delete titleLabel;
-
-	delete okButton;
-
-	delete mapButton;
-	delete settingsButton;
-	delete loadButton;
-	delete startButton;
-
-	for (unsigned int i = 0; i < mapSenders.size (); i++)
+	for (size_t i = 0; i < mapSenders.size (); i++)
 	{
-		if (mapSenders[i] != 0)
-			delete mapSenders[i];
+		delete mapSenders[i];
 	}
 }
 
@@ -3659,8 +3464,6 @@ cNetworkClientMenu::cNetworkClientMenu()
 
 cNetworkClientMenu::~cNetworkClientMenu()
 {
-	delete titleLabel;
-	delete connectButton;
 	delete mapReceiver;
 }
 
@@ -4095,19 +3898,6 @@ cLoadMenu::cLoadMenu( cGameDataContainer *gameDataContainer_, eMenuBackgrounds b
 //------------------------------------------------------------------------------
 cLoadMenu::~cLoadMenu()
 {
-	delete titleLabel;
-
-	delete backButton;
-	delete loadButton;
-
-	delete upButton;
-	delete downButton;
-
-	for ( int i = 0; i < 10; i++ )
-	{
-		delete saveSlots[i];
-	}
-
 	delete files;
 	for ( size_t i = 0; i != savefiles.Size(); ++i )
 	{
@@ -4262,10 +4052,6 @@ void cLoadMenu::slotClicked( void* parent )
 //------------------------------------------------------------------------------
 cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMenu ( gameDataContainer_, MNU_BG_ALPHA )
 {
-	titleLabel = new cMenuLabel ( position.x+position.w/2, position.y+12, lngPack.i18n ("Text~Title~Load") );
-	titleLabel->setCentered( true );
-	menuItems.Add ( titleLabel );
-
 	exitButton = new cMenuButton ( position.x+246, position.y+438, lngPack.i18n ( "Text~Button~Exit" ), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton );
 	exitButton->setReleasedFunction ( &exitReleased );
 	menuItems.Add ( exitButton );
@@ -4275,13 +4061,6 @@ cLoadSaveMenu::cLoadSaveMenu( cGameDataContainer *gameDataContainer_ ) : cLoadMe
 	menuItems.Add ( saveButton );
 
 	loadButton->setLocked ( true );
-}
-
-//------------------------------------------------------------------------------
-cLoadSaveMenu::~cLoadSaveMenu()
-{
-	delete exitButton;
-	delete saveButton;
 }
 
 //------------------------------------------------------------------------------
@@ -4396,16 +4175,6 @@ cBuildingsBuildMenu::cBuildingsBuildMenu ( cPlayer *player_, cVehicle *vehicle_ 
 	generateSelectionList();
 
 	selectionChanged ( this );
-}
-
-//------------------------------------------------------------------------------
-cBuildingsBuildMenu::~cBuildingsBuildMenu()
-{
-	delete titleLabel;
-
-	if ( vehicle->data.canBuildPath ) delete pathButton;
-
-	delete speedHandler;
 }
 
 //------------------------------------------------------------------------------
@@ -4546,15 +4315,6 @@ cVehiclesBuildMenu::cVehiclesBuildMenu ( cPlayer *player_, cBuilding *building_ 
 	createBuildList();
 
 	selectionChanged ( this );
-}
-
-//------------------------------------------------------------------------------
-cVehiclesBuildMenu::~cVehiclesBuildMenu()
-{
-	delete titleLabel;
-	delete speedHandler;
-
-	delete repeatButton;
 }
 
 //------------------------------------------------------------------------------
@@ -4699,12 +4459,6 @@ cUpgradeHangarMenu::cUpgradeHangarMenu( cPlayer *owner ) : cHangarMenu ( LoadPCX
 //------------------------------------------------------------------------------
 cUpgradeHangarMenu::~cUpgradeHangarMenu()
 {
-	delete upgradeFilter;
-	delete upgradeButtons;
-
-	delete goldBar;
-	delete goldBarLabel;
-
 	delete[] unitUpgrades;
 }
 
@@ -5003,21 +4757,6 @@ void cUnitHelpMenu::init(sID unitID)
 }
 
 //------------------------------------------------------------------------------
-cUnitHelpMenu::~cUnitHelpMenu()
-{
-	delete titleLabel;
-
-	delete infoImage;
-	delete infoText;
-
-	delete unitDetails;
-
-	delete doneButton;
-
-	delete unit;
-}
-
-//------------------------------------------------------------------------------
 void cUnitHelpMenu::doneReleased( void *parent )
 {
 	cUnitHelpMenu *menu = dynamic_cast<cUnitHelpMenu*>((cMenu*)parent);
@@ -5103,44 +4842,12 @@ cStorageMenu::cStorageMenu(cList<cVehicle*>& storageList_, cVehicle* vehicle, cB
 }
 
 //------------------------------------------------------------------------------
-cStorageMenu::~cStorageMenu()
-{
-	delete doneButton;
-	delete downButton;
-	delete upButton;
-
-	for (int i = 0; i != 6; ++i)
-	{
-		delete unitImages[i];
-		delete unitNames[i];
-		delete unitInfo[i];
-
-		delete activateButtons[i];
-		delete reloadButtons[i];
-		delete repairButtons[i];
-		delete upgradeButtons[i];
-	}
-	delete activateAllButton;
-	delete reloadAllButton;
-	delete repairAllButton;
-	delete upgradeAllButton;
-}
-
-//------------------------------------------------------------------------------
 void cStorageMenu::generateItems()
 {
 	int maxX = canStorePlanes ? 2 : 3;
 	int xStep = canStorePlanes ? 227 : 155;
 	int xStepImage = canStorePlanes ? 227 : 155;
 	int startX = canStorePlanes ? 42 : 8;
-
-	memset(unitImages, '\0', 6 * sizeof (void*));
-	memset(unitNames, '\0', 6 * sizeof (void*));
-	memset(unitInfo, '\0', 6 * sizeof (void*));
-	memset(activateButtons, '\0', 6 * sizeof (void*));
-	memset(reloadButtons, '\0', 6 * sizeof (void*));
-	memset(repairButtons, '\0', 6 * sizeof (void*));
-	memset(upgradeButtons, '\0', 6 * sizeof (void*));
 
 	for ( int x = 0; x < maxX; x++ )
 	{
@@ -5284,7 +4991,7 @@ void cStorageMenu::downReleased( void *parent )
 }
 
 //------------------------------------------------------------------------------
-int cStorageMenu::getClickedButtonVehIndex ( cMenuButton *buttons[6] )
+int cStorageMenu::getClickedButtonVehIndex ( AutoPtr<cMenuButton>::type (&buttons)[6] )
 {
 	int maxX = canStorePlanes ? 2 : 3;
 
@@ -5568,33 +5275,6 @@ cMineManagerMenu::cMineManagerMenu(cBuilding* building_) :
 }
 
 //------------------------------------------------------------------------------
-cMineManagerMenu::~cMineManagerMenu()
-{
-	delete titleLabel;
-	delete doneButton;
-
-	for ( int i = 0; i < 3; i++ )
-	{
-		delete incButtons[i];
-		delete decButtons[i];
-
-		delete resourceLabels[i];
-		delete usageLabels[i];
-		delete reserveLabels[i];
-
-		delete metalBars[i];
-		delete oilBars[i];
-		delete goldBars[i];
-
-		delete metalBarLabels[i];
-		delete oilBarLabels[i];
-		delete goldBarLabels[i];
-
-		delete noneBars[i];
-	}
-}
-
-//------------------------------------------------------------------------------
 void cMineManagerMenu::setBarValues()
 {
 	metalBars[0]->setMaximalValue ( subBase.getMaxMetalProd() );
@@ -5831,30 +5511,6 @@ cReportsMenu::cReportsMenu (cPlayer *owner_)
 	menuItems.Add ( downButton );
 
 	filterClicked ( this );
-}
-
-//------------------------------------------------------------------------------
-cReportsMenu::~cReportsMenu()
-{
-	delete typeButtonGroup;
-
-	delete includedLabel;
-	delete planesCheckBtn;
-	delete groundCheckBtn;
-	delete seaCheckBtn;
-	delete stationaryCheckBtn;
-
-	delete borderedLabel;
-	delete buildCheckBtn;
-	delete fightCheckBtn;
-	delete damagedCheckBtn;
-	delete stealthCheckBtn;
-
-	delete doneButton;
-	delete upButton;
-	delete downButton;
-
-	delete dataScreen;
 }
 
 //------------------------------------------------------------------------------
