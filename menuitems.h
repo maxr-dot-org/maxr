@@ -513,8 +513,8 @@ protected:
 
 	void renewButtonSurface();
 	void redraw();
-	int getTextYOffset();
-	int getBordersSize();
+	int getTextYOffset() const;
+	int getBordersSize() const;
 
 	bool preClicked();
 	bool preReleased();
@@ -650,7 +650,7 @@ public:
 	void draw();
 
 	void addButton( cMenuCheckButton* button );
-	bool buttonIsChecked ( int index );
+	bool buttonIsChecked ( int index ) const;
 };
 
 /** The diffrent display types for a unit list item */
@@ -700,7 +700,7 @@ public:
 	cMenuUnitListItem( sUnitData *unitData_, cPlayer *owner_, sUnitUpgrade *upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ );
 	void draw();
 
-	sID getUnitID();
+	sID getUnitID() const;
 	sUnitData *getUnitData();
 	cPlayer *getOwner();
 
@@ -708,12 +708,12 @@ public:
 	 * returns the res-value saved by the listitem.
 	 *@author alzi
 	 */
-	int getResValue();
+	int getResValue() const;
 	/**
 	 * returns whether the res-value is fixed or not.
 	 *@author alzi
 	 */
-	bool getFixedResValue ();
+	bool getFixedResValue () const;
 	/**
 	 * sets a new res-value to the unit. The value will automatically set to minResValue if it's smaller than this value.
 	 *@author alzi
@@ -746,7 +746,7 @@ public:
 	 * returns the fixed status of the listitem.
 	 *@author alzi
 	 */
-	bool getFixedStatus();
+	bool getFixedStatus() const;
 
 	sUnitUpgrade *getUpgrades();
 	sUnitUpgrade *getUpgrade( sUnitUpgrade::eUpgradeTypes type );
@@ -779,7 +779,7 @@ public:
 	~cMenuUnitsList();
 	void draw();
 
-	int getSize();
+	int getSize() const;
 	cMenuUnitListItem* getItem ( int index );
 	cMenuUnitListItem* getSelectedUnit();
 
@@ -910,8 +910,6 @@ public:
 	void setType(eMaterialBarTypes);
 	void setMaximalValue( int maxValue_ );
 	void setCurrentValue( int currentValue_ );
-
-	SDL_Rect getPosition();
 };
 
 /**
@@ -961,7 +959,6 @@ public:
 	cMenuScroller ( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem *parent_, void (*movedCallback_)(void *) = NULL );
 	void draw();
 
-	SDL_Rect getPosition();
 	void move ( int value );
 
 	void mouseMoved( bool center );
@@ -1065,7 +1062,7 @@ protected:
 	void deleteLeft();
 	void deleteRight();
 
-	SDL_Rect getTextDrawOffset();
+	SDL_Rect getTextDrawOffset() const;
 	virtual int getBorderSize();
 public:
 	cMenuLineEdit ( int x, int y, int w, int h, cMenu *parentMenu_, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, eLineEditType lineEditType_ = LE_TYPE_IN_BOX );
@@ -1094,7 +1091,7 @@ class cMenuChatBox : public cMenuLineEdit
 	AutoSurface surface;
 
 	void generateSurface();
-	int getBorderSize();
+	int getBorderSize() const;
 public:
 	cMenuChatBox ( int x, int y, cMenu *parentMenu_ );
 	void draw();
@@ -1182,7 +1179,7 @@ public:
 
 	void setValues ( int *turboBuildTurns, int *turboBuildCosts );
 	void setBuildSpeed( int buildSpeed );
-	int getBuildSpeed();
+	int getBuildSpeed() const;
 };
 
 /**
@@ -1209,11 +1206,11 @@ public:
 	void setBuildingChecked ( bool checked );
 	void setTNTChecked ( bool checked );
 
-	bool TankIsChecked();
-	bool PlaneIsChecked();
-	bool ShipIsChecked();
-	bool BuildingIsChecked();
-	bool TNTIsChecked();
+	bool TankIsChecked() const;
+	bool PlaneIsChecked() const;
+	bool ShipIsChecked() const;
+	bool BuildingIsChecked() const;
+	bool TNTIsChecked() const;
 };
 
 class cMenuStoredUnitDetails : public cMenuItem
@@ -1261,7 +1258,7 @@ public:
 
 	void setBorders( float minValue_, float maxValue_ );
 	void setValue( float value );
-	float getValue();
+	float getValue() const;
 	void setMoveCallback ( void (*movedCallback_)(void *) );
 
 	static void scrollerMoved( void *parent );
@@ -1282,8 +1279,6 @@ public:
 	void draw();
 
 	void setValue( int value );
-
-	SDL_Rect getPosition();
 };
 
 //-----------------------------------------------------------------------------
@@ -1315,7 +1310,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 
 	eReportScreenTypes screenType;
 
-	bool checkFilter ( sUnitData &data, bool checkInclude );
+	bool checkFilter ( sUnitData &data, bool checkInclude ) const;
 	bool goThroughUnits ( bool draw, int *count = NULL, cVehicle **vehicle = NULL, cBuilding **building = NULL );
 	SDL_Surface *generateUnitSurface(cUnit* unit );
 

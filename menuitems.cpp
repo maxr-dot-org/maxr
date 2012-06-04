@@ -683,7 +683,7 @@ void cMenuButton::redraw()
 	mouse->draw ( false, screen );
 }
 
-int cMenuButton::getTextYOffset()
+int cMenuButton::getTextYOffset() const
 {
 	switch ( buttonType )
 	{
@@ -722,7 +722,7 @@ int cMenuButton::getTextYOffset()
 	}
 }
 
-int cMenuButton::getBordersSize()
+int cMenuButton::getBordersSize() const
 {
 	switch ( buttonType )
 	{
@@ -1152,7 +1152,7 @@ void cMenuRadioGroup::addButton( cMenuCheckButton* button )
 	buttonList.Add ( button );
 }
 
-bool cMenuRadioGroup::buttonIsChecked ( int index )
+bool cMenuRadioGroup::buttonIsChecked ( int index ) const
 {
 	if ( index >= 0 && index < (int)buttonList.Size() && buttonList[index]->isChecked() )  return true;
 	return false;
@@ -1364,7 +1364,7 @@ void cMenuUnitListItem::released( void *parent )
 	menuUnitsList->parentMenu->draw();
 }
 
-sID cMenuUnitListItem::getUnitID()
+sID cMenuUnitListItem::getUnitID() const
 {
 	return unitID;
 }
@@ -1380,12 +1380,12 @@ cPlayer *cMenuUnitListItem::getOwner()
 	return owner;
 }
 
-int cMenuUnitListItem::getResValue()
+int cMenuUnitListItem::getResValue() const
 {
 	return resValue;
 }
 
-bool cMenuUnitListItem::getFixedResValue ()
+bool cMenuUnitListItem::getFixedResValue () const
 {
 	return fixedResValue;
 }
@@ -1421,7 +1421,7 @@ void cMenuUnitListItem::setFixed ( bool fixed_ )
 	fixed = fixed_;
 }
 
-bool cMenuUnitListItem::getFixedStatus()
+bool cMenuUnitListItem::getFixedStatus() const
 {
 	return fixed;
 }
@@ -1489,7 +1489,7 @@ void cMenuUnitsList::released( void *parent )
 	}
 }
 
-int cMenuUnitsList::getSize()
+int cMenuUnitsList::getSize() const
 {
 	return (int)unitsList.Size();
 }
@@ -2405,12 +2405,12 @@ void cMenuMaterialBar::setCurrentValue( int currentValue_ )
 	currentValue = currentValue_;
 	valueLabel->setText( iToStr ( currentValue ) );
 }
-
-SDL_Rect cMenuMaterialBar::getPosition()
+#if 0
+SDL_Rect cMenuMaterialBar::getPosition() const
 {
 	return position;
 }
-
+#endif
 cMenuUpgradeHandler::cMenuUpgradeHandler ( int x, int y, cUpgradeHangarMenu *parent ) : cMenuItemContainer ( x, y ), parentMenu(parent)
 {
 	for ( int i = 0; i < 8; i++ )
@@ -2628,11 +2628,6 @@ void cMenuScroller::mouseMoved( bool center )
 		break;
 	}
 	if ( movedCallback ) movedCallback( parent );
-}
-
-SDL_Rect cMenuScroller::getPosition()
-{
-	return position;
 }
 
 void cMenuScroller::move ( int value )
@@ -2948,7 +2943,7 @@ void cMenuLineEdit::deleteRight()
 	}
 }
 
-SDL_Rect cMenuLineEdit::getTextDrawOffset()
+SDL_Rect cMenuLineEdit::getTextDrawOffset() const
 {
 	SDL_Rect retRect = { 0, 0, 0, 0 };
 	switch ( lineEditType )
@@ -3079,7 +3074,7 @@ void cMenuChatBox::generateSurface()
 	}
 }
 
-int cMenuChatBox::getBorderSize()
+int cMenuChatBox::getBorderSize() const
 {
 	return 38;
 }
@@ -3300,7 +3295,7 @@ void cMenuBuildSpeedHandler::setBuildSpeed( int buildSpeed )
 	speedButtons[buildSpeed]->setChecked ( true );
 }
 
-int cMenuBuildSpeedHandler::getBuildSpeed()
+int cMenuBuildSpeedHandler::getBuildSpeed() const
 {
 	for ( int i = 0; i < 3; i++ )
 	{
@@ -3357,27 +3352,27 @@ void cMenuUpgradeFilter::setTNTChecked ( bool checked )
 	checkButtonTNT->setChecked ( checked );
 }
 
-bool cMenuUpgradeFilter::TankIsChecked()
+bool cMenuUpgradeFilter::TankIsChecked() const
 {
 	return checkButtonTank->isChecked();
 }
 
-bool cMenuUpgradeFilter::PlaneIsChecked()
+bool cMenuUpgradeFilter::PlaneIsChecked() const
 {
 	return checkButtonPlane->isChecked();
 }
 
-bool cMenuUpgradeFilter::ShipIsChecked()
+bool cMenuUpgradeFilter::ShipIsChecked() const
 {
 	return checkButtonShip->isChecked();
 }
 
-bool cMenuUpgradeFilter::BuildingIsChecked()
+bool cMenuUpgradeFilter::BuildingIsChecked() const
 {
 	return checkButtonBuilding->isChecked();
 }
 
-bool cMenuUpgradeFilter::TNTIsChecked()
+bool cMenuUpgradeFilter::TNTIsChecked() const
 {
 	return checkButtonTNT->isChecked();
 }
@@ -3478,7 +3473,7 @@ void cMenuSlider::setValue( float value )
 	}
 }
 
-float cMenuSlider::getValue()
+float cMenuSlider::getValue() const
 {
 	return curValue;
 }
@@ -3543,12 +3538,6 @@ void cMenuScrollerHandler::setValue( int value )
 	int pos = position.x + (position.w-14) / maxValue * currentValue;
 	scroller->move ( pos );
 }
-
-SDL_Rect cMenuScrollerHandler::getPosition()
-{
-	return position;
-}
-
 
 //-----------------------------------------------------------------------------
 // cMenuReportsScreen implementation
@@ -4012,7 +4001,7 @@ void cMenuReportsScreen::drawReportsScreen()
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::checkFilter ( sUnitData &data, bool checkInclude )
+bool cMenuReportsScreen::checkFilter ( sUnitData &data, bool checkInclude ) const
 {
 	if ( checkInclude )
 	{
