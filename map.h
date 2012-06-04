@@ -291,7 +291,7 @@ public:
 	int iNumberOfTerrains;		// Number of terrain graphics for this map
 	sTerrain *terrain; // Terrain graphics
 
-	bool isWater(int x, int y, bool not_coast=false);
+	bool isWater(int x, int y, bool not_coast=false) const;
 	void NewMap(int size, int iTerrainGrphCount );
 	void DeleteMap();
 	//bool SaveMap(const std::string& filename, SDL_Surface *preview);

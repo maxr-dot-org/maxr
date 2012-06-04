@@ -126,7 +126,7 @@ cMapField& cMap::operator[]( unsigned int offset ) const
 }
 
 
-bool cMap::isWater( int x, int y, bool not_coast)
+bool cMap::isWater( int x, int y, bool not_coast) const
 {
 	int off = x + y * size;
 
