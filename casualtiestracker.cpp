@@ -55,12 +55,12 @@ void cCasualtiesTracker::initFromXML (TiXmlElement* casualtiesNode)
 }
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode)
+void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode) const
 {
 	// add sub elements for every player that contain all his casualties
 	for (size_t i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
-		CasualtiesOfPlayer& casualtiesOfPlayer = casualtiesPerPlayer[i];
+		const CasualtiesOfPlayer& casualtiesOfPlayer = casualtiesPerPlayer[i];
 
 		TiXmlElement* playerNode = new TiXmlElement ("PlayerCasualties");
 		casualtiesNode->LinkEndChild (playerNode); // playerNode is now owned by casualtiesNode
@@ -69,7 +69,7 @@ void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode)
 		// add sub elements for each casualty of the current player
 		for (size_t j = 0; j < casualtiesOfPlayer.casualties.size (); j++)
 		{
-			Casualty& casualty = casualtiesOfPlayer.casualties[j];
+			const Casualty& casualty = casualtiesOfPlayer.casualties[j];
 
 			TiXmlElement* casualtyNode = new TiXmlElement ("Casualty");
 			playerNode->LinkEndChild (casualtyNode); // casualtyNode is now owned by playerNode
@@ -118,7 +118,7 @@ void cCasualtiesTracker::setCasualty (sID unitType, int numberOfLosses, int play
 //--------------------------------------------------------------------------
 int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr)
 {
-	vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
+	const vector<Casualty>& casualties = getCasualtiesOfPlayer (playerNr);
 	for (unsigned int i = 0; i < casualties.size (); i++)
 	{
 		if (unitType == casualties[i].unitID)
@@ -128,16 +128,16 @@ int cCasualtiesTracker::getCasualtiesOfUnitType (sID unitType, int playerNr)
 }
 
 //--------------------------------------------------------------------------
-vector<sID> cCasualtiesTracker::getUnitTypesWithLosses ()
+vector<sID> cCasualtiesTracker::getUnitTypesWithLosses () const
 {
 	vector<sID> result;
 
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
-		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
+		const vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
 		for (unsigned int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
 		{
-			Casualty& casualty = casualties[entryIdx];
+			const Casualty& casualty = casualties[entryIdx];
 			bool containedInResult = false;
 			for (unsigned int j = 0; j < result.size (); j++)
 			{
@@ -152,8 +152,8 @@ vector<sID> cCasualtiesTracker::getUnitTypesWithLosses ()
 				bool inserted = false;
 				for (unsigned int j = 0; j < result.size (); j++)
 				{
-					int firstPart = casualty.unitID.iFirstPart;
-					int secondPart = casualty.unitID.iSecondPart;
+					const int firstPart = casualty.unitID.iFirstPart;
+					const int secondPart = casualty.unitID.iSecondPart;
 
 					if ((firstPart == 1 && result[j].iFirstPart == 0) // 0: vehicle, 1: building; buildings should be inserted first
 						|| (firstPart == result[j].iFirstPart && secondPart < result[j].iSecondPart))
@@ -178,14 +178,14 @@ void cCasualtiesTracker::debugPrint ()
 	{
 		Log.write ("Casualties of Player: " + iToStr (casualtiesPerPlayer[i].playerNr), cLog::eLOG_TYPE_DEBUG);
 
-		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
+		const vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
 		for (unsigned int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)
 		{
-			sUnitData* unitData = casualties[entryIdx].unitID.getUnitDataOriginalVersion ();
-			if (unitData != 0)
+			const sUnitData* unitData = casualties[entryIdx].unitID.getUnitDataOriginalVersion ();
+			if (unitData != NULL)
 				Log.write ("  " + unitData->name + ": " + iToStr (casualties[entryIdx].numberOfLosses), cLog::eLOG_TYPE_DEBUG);
 			else
-				Log.write ("Invalid Casualty: Can't get untiData from sID", cLog::eLOG_TYPE_DEBUG);
+				Log.write ("Invalid Casualty: Can't get unitData from sID", cLog::eLOG_TYPE_DEBUG);
 		}
 	}
 }
@@ -193,19 +193,19 @@ void cCasualtiesTracker::debugPrint ()
 //--------------------------------------------------------------------------
 void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 {
-	if (message == 0)
+	if (message == NULL)
 		return;
-	int dataSetsInMessage = message->popInt16 ();
+	const int dataSetsInMessage = message->popInt16 ();
 	for (int dataSet = 0; dataSet < dataSetsInMessage; dataSet++)
 	{
-		int playerNr = message->popInt16 ();
-		int nrCasualtyReports = message->popInt16 ();
+		const int playerNr = message->popInt16 ();
+		const int nrCasualtyReports = message->popInt16 ();
 		for (int i = 0; i < nrCasualtyReports; i++)
 		{
 			sID unitType;
 			unitType.iFirstPart = message->popInt16 ();
 			unitType.iSecondPart = message->popInt16 ();
-			int numberLosses = message->popInt32 ();
+			const int numberLosses = message->popInt32 ();
 			setCasualty (unitType, numberLosses, playerNr);
 		}
 	}
@@ -218,13 +218,12 @@ void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messa
 {
 	cNetMessage* message = 0;
 	int entriesInMessageForPlayer = 0;
-	int currentPlayer = -1;
 	int dataSetsInMessage = 0;
 	for (unsigned int i = 0; i < casualtiesPerPlayer.size (); i++)
 	{
 		if (entriesInMessageForPlayer > 0)
 			dataSetsInMessage++;
-		currentPlayer = casualtiesPerPlayer[i].playerNr;
+		const int currentPlayer = casualtiesPerPlayer[i].playerNr;
 		entriesInMessageForPlayer = 0;
 		vector<Casualty>& casualties = casualtiesPerPlayer[i].casualties;
 		for (unsigned int entryIdx = 0; entryIdx < casualties.size (); entryIdx++)

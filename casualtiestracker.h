@@ -33,18 +33,18 @@ class cCasualtiesTracker : public cNotificationSender
 {
 public:
 	cCasualtiesTracker () {}
-	
+
 	void initFromXML (TiXmlElement* casualtiesNode);
-	void storeToXML (TiXmlElement* casualtiesNode);
-	
+	void storeToXML (TiXmlElement* casualtiesNode) const;
+
 	void logCasualty (sID unitType, int playerNr);
 	int getCasualtiesOfUnitType (sID unitType, int playerNr);
 
 	void updateCasualtiesFromNetMessage (cNetMessage* message);
 	void prepareNetMessagesForClient (cList<cNetMessage*>& messages, int msgType);
-	
-	std::vector<sID> getUnitTypesWithLosses ();
-	
+
+	std::vector<sID> getUnitTypesWithLosses () const;
+
 	//-------------------------------------------------------------------------------
 private:
 	struct Casualty
@@ -58,10 +58,10 @@ private:
 		int playerNr;
 	};
 	std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
-	
+
 	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr);
 	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
-	
+
 	void debugPrint ();
 };
 
