@@ -1432,7 +1432,7 @@ void cPlanetsSelectionMenu::showMaps()
 					SDL_RWseek ( mapFile, 2 + size*size*3, SEEK_CUR );
 					sGraphCount = SDL_ReadLE16( mapFile );
 					SDL_RWseek ( mapFile, 64*64*sGraphCount, SEEK_CUR );
-					SDL_RWread ( mapFile, &Palette, 1, 768 );
+					SDL_RWread ( mapFile, &Palette, 3, 256 );
 
 					AutoSurface mapSurface(SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
 					mapSurface->pitch = mapSurface->w;
@@ -1445,15 +1445,12 @@ void cPlanetsSelectionMenu::showMaps()
 						mapSurface->format->palette->colors[j].b = Palette[j].cRed;
 					}
 					SDL_RWseek ( mapFile, 9, SEEK_SET );
-					for( int iY = 0; iY < size; iY++ )
-					{
-						for( int iX = 0; iX < size; iX++ )
-						{
-							unsigned char cColorOffset;
-							SDL_RWread ( mapFile, &cColorOffset, 1, 1 );
-							Uint8 *pixel = (Uint8*) mapSurface->pixels  + (iY * size + iX);
-							*pixel = cColorOffset;
-						}
+					const int byteReadCount = SDL_RWread ( mapFile, mapSurface->pixels, 1, size * size);
+
+					if (byteReadCount != size * size) {
+						// error.
+						SDL_RWclose ( mapFile );
+						continue;
 					}
 					SDL_RWclose ( mapFile );
 
