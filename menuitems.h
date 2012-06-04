@@ -20,6 +20,7 @@
 #define menuitemsH
 
 #include <vector>
+#include "autoptr.h"
 #include "autosurface.h"
 #include "defines.h"
 #include "unifonts.h"
@@ -894,7 +895,7 @@ protected:
 	AutoSurface surface;
 	eMaterialBarTypes materialType;
 
-	cMenuLabel *valueLabel;
+	AutoPtr<cMenuLabel>::type valueLabel;
 
 	int maxValue, currentValue;
 	bool inverted;
@@ -904,7 +905,6 @@ protected:
 	void generateSurface();
 public:
 	cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_ = false, bool showLabel_ = true );
-	~cMenuMaterialBar();
 	void draw();
 
 	void setType(eMaterialBarTypes);
@@ -923,16 +923,15 @@ class cMenuUpgradeHandler : public cMenuItemContainer
 	cUpgradeHangarMenu *parentMenu;
 	cMenuUnitListItem *selection;
 
-	cMenuButton *decreaseButtons[8];
-	cMenuButton *increaseButtons[8];
-	cMenuLabel *costsLabel[8];
+	AutoPtr<cMenuButton>::type decreaseButtons[8];
+	AutoPtr<cMenuButton>::type increaseButtons[8];
+	AutoPtr<cMenuLabel>::type costsLabel[8];
 
 	cUpgradeCalculator::UpgradeTypes getUpgradeType( sUnitUpgrade upgrade );
 
 	static void buttonReleased( void* parent );
 public:
 	cMenuUpgradeHandler( int x, int y, cUpgradeHangarMenu *parent );
-	~cMenuUpgradeHandler();
 
 	void setSelection ( cMenuUnitListItem *selection_ );
 };
@@ -994,14 +993,14 @@ protected:
 	int maximalOffset;
 	int scrollerSteps;
 
-	cMenuButton *upButton;
-	cMenuButton *downButton;
-	cMenuScroller *scroller;
+	AutoPtr<cMenuButton>::type upButton;
+	AutoPtr<cMenuButton>::type downButton;
+	AutoPtr<cMenuScroller>::type scroller;
 
 	void createSurface();
 public:
 	cMenuScrollBar ( int x, int y, int h, int pageSteps_, cMenu *parentMenu_, cMenuItem *parentItem_ );
-	~cMenuScrollBar();
+
 	void draw();
 
 	void setMaximalScroll ( int maximalScroll_ );
@@ -1023,10 +1022,10 @@ protected:
 	int maxLines;
 	int maxDrawLines;
 
-	cMenuScrollBar *scrollBar;
+	AutoPtr<cMenuScrollBar>::type scrollBar;
 public:
 	cMenuListBox ( int x, int y, int w, int h, int maxLines_, cMenu *parentMenu_ );
-	~cMenuListBox();
+
 	void draw();
 
 	void addLine ( const std::string& line );
@@ -1133,7 +1132,7 @@ class cMenuPlayersBox : public cMenuItemContainer
 	cList<cMenuLabel*> playerNames;
 	cList<cMenuImage*> playerReadys;
 
-	cMenuScrollBar *scrollBar;
+	AutoPtr<cMenuScrollBar>::type scrollBar;
 
 	bool preClicked();
 public:
@@ -1150,13 +1149,13 @@ public:
  */
 class cMenuSaveSlot : public cMenuItem
 {
-	cMenuLabel *saveNumber;
-	cMenuLabel *saveType;
-	cMenuLabel *saveTime;
-	cMenuLineEdit *saveName;
+	AutoPtr<cMenuLabel>::type saveNumber;
+	AutoPtr<cMenuLabel>::type saveType;
+	AutoPtr<cMenuLabel>::type saveTime;
+	AutoPtr<cMenuLineEdit>::type saveName;
 public:
 	cMenuSaveSlot( int x, int y, cMenu *parent );
-	~cMenuSaveSlot();
+
 	void draw();
 
 	void setActivity ( bool active_ ) {}
@@ -1173,14 +1172,13 @@ public:
 class cMenuBuildSpeedHandler : public cMenuItemContainer
 {
 	cMenuCheckButton *speedButtons[3];
-	cMenuRadioGroup *speedGroup;
+	AutoPtr<cMenuRadioGroup>::type speedGroup;
 
-	cMenuLabel *turnsLabels[3];
-	cMenuLabel *costsLabels[3];
+	AutoPtr<cMenuLabel>::type turnsLabels[3];
+	AutoPtr<cMenuLabel>::type costsLabels[3];
 
 public:
 	cMenuBuildSpeedHandler( int x, int y );
-	~cMenuBuildSpeedHandler();
 
 	void setValues ( int *turboBuildTurns, int *turboBuildCosts );
 	void setBuildSpeed( int buildSpeed );
@@ -1195,16 +1193,15 @@ class cMenuUpgradeFilter : public cMenuItemContainer
 {
 	cHangarMenu *parentMenu;
 
-	cMenuCheckButton* checkButtonTank;
-	cMenuCheckButton* checkButtonPlane;
-	cMenuCheckButton* checkButtonShip;
-	cMenuCheckButton* checkButtonBuilding;
-	cMenuCheckButton* checkButtonTNT;
+	AutoPtr<cMenuCheckButton>::type checkButtonTank;
+	AutoPtr<cMenuCheckButton>::type checkButtonPlane;
+	AutoPtr<cMenuCheckButton>::type checkButtonShip;
+	AutoPtr<cMenuCheckButton>::type checkButtonBuilding;
+	AutoPtr<cMenuCheckButton>::type checkButtonTNT;
 
 	static void buttonChanged( void *parent );
 public:
 	cMenuUpgradeFilter( int x, int y, cHangarMenu *parentMenu );
-	~cMenuUpgradeFilter();
 
 	void setTankChecked ( bool checked );
 	void setPlaneChecked ( bool checked );
@@ -1257,9 +1254,8 @@ protected:
 	void (*movedCallback)(void *);
 public:
 	cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu *parent_, int wight = 58, eSliderType type_ = SLIDER_TYPE_NORMAL, eSliderDirection direction_ = SLIDER_DIR_LEFTMIN );
-	~cMenuSlider();
 
-	cMenuScroller *scroller;
+	AutoPtr<cMenuScroller>::type scroller;
 
 	void draw();
 
@@ -1278,11 +1274,10 @@ class cMenuScrollerHandler : public cMenuItem
 	int maxValue;
 	int currentValue;
 
-	cMenuScroller *scroller;
+	AutoPtr<cMenuScroller>::type scroller;
 
 public:
 	cMenuScrollerHandler( int x, int y, int w, int maxValue_ );
-	~cMenuScrollerHandler();
 
 	void draw();
 
@@ -1316,7 +1311,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 		REP_SCR_TYPE_REPORTS
 	};
 
-	cMenuUnitDetails **unitDetails;
+	AutoPtr<cMenuUnitDetails>::type *unitDetails;
 
 	eReportScreenTypes screenType;
 

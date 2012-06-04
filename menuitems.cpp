@@ -2280,11 +2280,6 @@ cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int ma
 	setType ( materialType_ );
 }
 
-cMenuMaterialBar::~cMenuMaterialBar()
-{
-	delete valueLabel;
-}
-
 void cMenuMaterialBar::setType(eMaterialBarTypes materialType_)
  {
 	if( surface && materialType == materialType_ ) return;
@@ -2433,20 +2428,8 @@ cMenuUpgradeHandler::cMenuUpgradeHandler ( int x, int y, cUpgradeHangarMenu *par
 		costsLabel[i] = new cMenuLabel ( position.x+40, position.y+2+19*i );
 		addItem ( costsLabel[i] );
 	}
-
 	selection = NULL;
 }
-
-cMenuUpgradeHandler::~cMenuUpgradeHandler()
-{
-	for ( int i = 0; i < 8; i++ )
-	{
-		delete decreaseButtons[i];
-		delete increaseButtons[i];
-		delete costsLabel[i];
-	}
-}
-
 
 void cMenuUpgradeHandler::buttonReleased( void* parent )
 {
@@ -2690,13 +2673,6 @@ cMenuScrollBar::cMenuScrollBar(int x, int y, int h, int pageSteps_, cMenu* paren
 	itemList.Add ( upButton );
 }
 
-cMenuScrollBar::~cMenuScrollBar()
-{
-	delete upButton;
-	delete downButton;
-	delete scroller;
-}
-
 void cMenuScrollBar::createSurface()
 {
 	SDL_Rect src = { 234, 1, 16, 48};
@@ -2775,11 +2751,6 @@ cMenuListBox::cMenuListBox(int x, int y, int w, int h, int maxLines_, cMenu* par
 
 	scrollBar = new cMenuScrollBar ( position.x+position.w-17, position.y, position.h, 14, parentMenu, this );
 	itemList.Add ( scrollBar );
-}
-
-cMenuListBox::~cMenuListBox()
-{
-	delete scrollBar;
 }
 
 void cMenuListBox::draw()
@@ -3149,7 +3120,6 @@ cMenuPlayersBox::cMenuPlayersBox ( int x, int y, int w, int h, cNetworkMenu *par
 
 cMenuPlayersBox::~cMenuPlayersBox()
 {
-	delete scrollBar;
 	for ( int i = 0; i < maxDrawPlayers; i++ )
 	{
 		delete playerColors[i];
@@ -3235,14 +3205,6 @@ cMenuSaveSlot::cMenuSaveSlot( int x, int y, cMenu *parent ) : cMenuItem ( x, y )
 	saveName->setReadOnly ( true );
 }
 
-cMenuSaveSlot::~cMenuSaveSlot()
-{
-	delete saveNumber;
-	delete saveType;
-	delete saveTime;
-	delete saveName;
-}
-
 void cMenuSaveSlot::draw()
 {
 	saveNumber->draw();
@@ -3296,16 +3258,6 @@ cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContai
 	addItem ( speedGroup );
 	position.w = 77;
 	position.h = 75;
-}
-
-cMenuBuildSpeedHandler::~cMenuBuildSpeedHandler()
-{
-	for ( int i = 0; i < 3; i++ )
-	{
-		delete turnsLabels[i];
-		delete costsLabels[i];
-	}
-	delete speedGroup;
 }
 
 void cMenuBuildSpeedHandler::setValues ( int *turboBuildTurns, int *turboBuildCosts )
@@ -3378,15 +3330,6 @@ cMenuUpgradeFilter::cMenuUpgradeFilter( int x, int y, cHangarMenu *parentMenu_ )
 	checkButtonTNT = new cMenuCheckButton ( position.x+33*4, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT );
 	checkButtonTNT->setClickedFunction ( &buttonChanged );
 	addItem ( checkButtonTNT );
-}
-
-cMenuUpgradeFilter::~cMenuUpgradeFilter()
-{
-	delete checkButtonTank;
-	delete checkButtonPlane;
-	delete checkButtonShip;
-	delete checkButtonBuilding;
-	delete checkButtonTNT;
 }
 
 void cMenuUpgradeFilter::setTankChecked ( bool checked )
@@ -3509,11 +3452,6 @@ cMenuSlider::cMenuSlider(int x, int y, float minValue_, float maxValue_, cMenu* 
 	movedCallback = NULL;
 }
 
-cMenuSlider::~cMenuSlider()
-{
-	delete scroller;
-}
-
 void cMenuSlider::draw()
 {
 	if ( surface ) SDL_BlitSurface ( surface, NULL, buffer, &position );
@@ -3594,11 +3532,6 @@ cMenuScrollerHandler::cMenuScrollerHandler(int x, int y, int w, int maxValue_) :
 	currentValue = 0;
 }
 
-cMenuScrollerHandler::~cMenuScrollerHandler()
-{
-	delete scroller;
-}
-
 void cMenuScrollerHandler::draw()
 {
 	scroller->draw();
@@ -3639,7 +3572,7 @@ cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer *own
 
 	maxItems = ((position.h-25) / 55);
 
-	unitDetails = new cMenuUnitDetails*[maxItems];
+	unitDetails = new AutoPtr<cMenuUnitDetails>::type [maxItems];
 	for ( int i = 0; i < maxItems; i++ )
 	{
 		unitDetails[i] = new cMenuUnitDetails( position.x+127, position.y+17+55*i, true, owner );
@@ -3658,10 +3591,7 @@ cMenuReportsScreen::~cMenuReportsScreen()
 	if (Client->getCasualties () != 0)
 		Client->getCasualties ()->removeNotificationListener (this);
 
-	for ( int i = 0; i < maxItems; i++ )
-	{
-		delete unitDetails[i];
-	}
+	delete [] unitDetails;
 }
 
 //-----------------------------------------------------------------------------
