@@ -69,7 +69,7 @@ public:
 	* returns an unique number to identify the subbase
 	* @author eiko
 	*/
-	int getID();
+	int getID() const;
 
 	void addBuilding( cBuilding *b );
 
@@ -135,14 +135,14 @@ public:
 	//ressource management:
 
 	/** returns the maximum production of a ressource */
-	int getMaxMetalProd();
-	int getMaxGoldProd();
-	int getMaxOilProd();
+	int getMaxMetalProd() const;
+	int getMaxGoldProd() const;
+	int getMaxOilProd() const;
 
 	/** returns the maximum allowed production (without dereasing one of the other ones) of a ressource */
-	int getMaxAllowedMetalProd();
-	int getMaxAllowedGoldProd();
-	int getMaxAllowedOilProd();
+	int getMaxAllowedMetalProd() const;
+	int getMaxAllowedGoldProd() const;
+	int getMaxAllowedOilProd() const;
 
 	/** returns the current production of a ressource */
 	int getMetalProd() const;
@@ -168,12 +168,12 @@ private:
 	* calcs the maximum allowed production of a ressource, without decreasing the production of the other two
 	* @author eiko
 	*/
-	int calcMaxAllowedProd( int ressourceType );
+	int calcMaxAllowedProd( int ressourceType ) const;
 	/**
 	* calcs the maximum possible production of a ressource
 	* @author eiko
 	*/
-	int calcMaxProd( int ressourceType );
+	int calcMaxProd( int ressourceType ) const;
 	/**
 	* adds/substracts ressourcec of the type storeResType  to/from the subbase
 	* @author eiko

@@ -86,32 +86,32 @@ sSubBase::sSubBase( const sSubBase& sb ) :
 	}
 }
 
-int sSubBase::getMaxMetalProd()
+int sSubBase::getMaxMetalProd() const
 {
 	return calcMaxProd(RES_METAL);
 }
 
-int sSubBase::getMaxGoldProd()
+int sSubBase::getMaxGoldProd() const
 {
 	return calcMaxProd(RES_GOLD);
 }
 
-int sSubBase::getMaxOilProd()
+int sSubBase::getMaxOilProd() const
 {
 	return calcMaxProd(RES_OIL);
 }
 
-int sSubBase::getMaxAllowedMetalProd()
+int sSubBase::getMaxAllowedMetalProd() const
 {
 	return calcMaxAllowedProd( RES_METAL );
 }
 
-int sSubBase::getMaxAllowedGoldProd()
+int sSubBase::getMaxAllowedGoldProd() const
 {
 	return calcMaxAllowedProd( RES_GOLD );
 }
 
-int sSubBase::getMaxAllowedOilProd()
+int sSubBase::getMaxAllowedOilProd() const
 {
 	return calcMaxAllowedProd( RES_OIL );
 }
@@ -186,7 +186,7 @@ void sSubBase::changeGoldProd( int i )
 	setGoldProd( GoldProd + i );
 }
 
-int sSubBase::calcMaxProd( int ressourceType )
+int sSubBase::calcMaxProd( int ressourceType ) const
 {
 	int maxProd = 0;
 	for ( unsigned int i = 0; i < buildings.Size(); i++ )
@@ -212,7 +212,7 @@ int sSubBase::calcMaxProd( int ressourceType )
 	return maxProd;
 }
 
-int sSubBase::calcMaxAllowedProd( int ressourceType )
+int sSubBase::calcMaxAllowedProd( int ressourceType ) const
 {
 	//initialise needed Variables and element pointers, so the algorithm itself is independent from the ressouce type
 	int maxAllowedProd;
@@ -932,7 +932,7 @@ void sSubBase::merge(sSubBase* sb )
 	}
 }
 
-int sSubBase::getID()
+int sSubBase::getID() const
 {
 	assert( buildings.Size() );
 
