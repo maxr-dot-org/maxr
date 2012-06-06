@@ -2781,7 +2781,7 @@ void cNetworkMenu::showMap()
 		SDL_RWseek ( fp, 2 + size*size*3, SEEK_CUR );
 		sGraphCount = SDL_ReadLE16( fp );
 		SDL_RWseek ( fp, 64*64*sGraphCount, SEEK_CUR );
-		SDL_RWread ( fp, &Palette, 1, 768 );
+		SDL_RWread ( fp, &Palette, 3, 256 );
 
 		AutoSurface surface(SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 8, 0, 0, 0, 0));
 
@@ -2796,16 +2796,7 @@ void cNetworkMenu::showMap()
 			surface->format->palette->colors[j].b = Palette[j].cRed;
 		}
 		SDL_RWseek ( fp, 9, SEEK_SET );
-		for( int iY = 0; iY < size; iY++ )
-		{
-			for( int iX = 0; iX < size; iX++ )
-			{
-				unsigned char cColorOffset;
-				SDL_RWread ( fp, &cColorOffset, 1, 1 );
-				Uint8 *pixel = (Uint8*) surface->pixels  + (iY * size + iX);
-				*pixel = cColorOffset;
-			}
-		}
+		SDL_RWread ( fp, surface->pixels, 1, size * size);
 		if ( SDL_MUSTLOCK ( surface ) ) SDL_UnlockSurface ( surface );
 
 		SDL_RWclose ( fp );

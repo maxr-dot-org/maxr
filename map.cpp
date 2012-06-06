@@ -148,16 +148,7 @@ SDL_Surface *cMap::LoadTerrGraph ( SDL_RWops *fpMapFile, int iGraphicsPos, SDL_C
 	SDL_RWseek ( fpMapFile, iGraphicsPos + 64*64*( iNum ), SEEK_SET );
 
 	// Read pixel data and write to surface
-	for( int iY = 0; iY < 64; iY++ )
-	{
-		for( int iX = 0; iX < 64; iX++ )
-		{
-			unsigned char cColorOffset;
-			if (SDL_RWread(fpMapFile, &cColorOffset, 1, 1) == -1) return 0;
-			Uint8 *pixel = (Uint8*) surface->pixels  + (iY * 64 + iX);
-			*pixel = cColorOffset;
-		}
-	}
+	if (SDL_RWread(fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
 	return surface.Release();
 }
 
