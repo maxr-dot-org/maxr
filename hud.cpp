@@ -228,10 +228,10 @@ cGameGUI::cGameGUI( cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	selUnitNameEdit.setReturnPressedFunc( unitNameReturnPressed );
 	menuItems.Add( &selUnitNameEdit );
 
-	for ( unsigned int i = 0; i < playerList->Size(); i++ )
+	for ( size_t i = 0; i < playerList->Size(); i++ )
 	{
-		int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
-		int yPos = Video.getResolutionY() >= 768 ? ( 482 + GraphicsData.gfx_hud_extra_players->h * i ) : ( 480 - 82 - GraphicsData.gfx_hud_extra_players->h * i );
+		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
+		const int yPos = Video.getResolutionY() >= 768 ? ( 482 + GraphicsData.gfx_hud_extra_players->h * i ) : ( 480 - 82 - GraphicsData.gfx_hud_extra_players->h * i );
 
 		cMenuPlayerInfo* playerInfo = new cMenuPlayerInfo( xPos, yPos, ( *playerList )[i] );
 		playerInfo->setDisabled( true );
@@ -278,6 +278,10 @@ cGameGUI::~cGameGUI()
 	scaleSurfaces();
 
 	if ( FLC ) FLI_Close( FLC );
+	for ( size_t i = 0; i != playersInfo.Size(); ++i )
+	{
+		delete playersInfo[i];
+	}
 }
 
 int cGameGUI::show()
