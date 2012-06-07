@@ -63,7 +63,7 @@ public:
 	* integrates all building of the given subbase in the own one
 	* @author eiko
 	*/
-	void merge(sSubBase* sb );
+	void merge( sSubBase* sb );
 
 	/**
 	* returns an unique number to identify the subbase
@@ -71,7 +71,7 @@ public:
 	*/
 	int getID() const;
 
-	void addBuilding( cBuilding *b );
+	void addBuilding( cBuilding* b );
 
 	/**
 	* adds/substracts a ressource to/from the subbase
@@ -159,7 +159,7 @@ public:
 	void changeGoldProd( int i );
 	void changeOilProd( int i );
 
-//TODO: private:
+	//TODO: private:
 	int MetalProd;
 	int OilProd;
 	int GoldProd;
@@ -189,7 +189,7 @@ public:
 	~cBase();
 
 	cList<sSubBase*> SubBases;
-	cMap *map;
+	cMap* map;
 
 	/**
 	* adds a building to the base and updates the subbase structures
@@ -197,21 +197,21 @@ public:
 	* @param bServer when true, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void addBuilding(cBuilding *building, bool bServer );
+	void addBuilding( cBuilding* building, bool bServer );
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
 	* @param bServer when true, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void deleteBuilding(cBuilding *building, bool bServer);
+	void deleteBuilding( cBuilding* building, bool bServer );
 	void handleTurnend();
 	/**
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
 	void refreshSubbases();
-	sSubBase *checkNeighbour ( int iOff, cBuilding *Building );
+	sSubBase* checkNeighbour( int iOff, cBuilding* Building );
 };
 
 #endif

@@ -25,36 +25,36 @@
 
 class cNetMessage;
 class cNetworkHostMenu;
-int mapSenderThreadFunction (void* data);
+int mapSenderThreadFunction( void* data );
 
 namespace MapDownload
 {
-	/** @return is this a map that originates from the original M.A.X. ?*/
-	bool isMapOriginal (const std::string& mapName, Sint32 checksum = 0);
+/** @return is this a map that originates from the original M.A.X. ?*/
+bool isMapOriginal( const std::string& mapName, Sint32 checksum = 0 );
 
-	/** @return the path to the map (in user or factory maps directory), or empty string if not found */
-	std::string getExistingMapFilePath (const std::string& mapName);
+/** @return the path to the map (in user or factory maps directory), or empty string if not found */
+std::string getExistingMapFilePath( const std::string& mapName );
 
-	/** @return a 32 bit checksum of the given map */
-	Sint32 calculateCheckSum (const std::string& mapName);
+/** @return a 32 bit checksum of the given map */
+Sint32 calculateCheckSum( const std::string& mapName );
 };
 
 //-------------------------------------------------------------------------------
 class cMapReceiver
 {
 public:
-	cMapReceiver (const std::string& mapName, int mapSize);
-	virtual ~cMapReceiver ();
+	cMapReceiver( const std::string& mapName, int mapSize );
+	virtual ~cMapReceiver();
 
-	bool receiveData (cNetMessage* message, int bytesInMsg);
-	bool finished ();
+	bool receiveData( cNetMessage* message, int bytesInMsg );
+	bool finished();
 
-	const std::string& getMapName () const { return mapName; }
-	int getMapSize () const { return mapSize; }
-	int getBytesReceived () const { return bytesReceived; }
+	const std::string& getMapName() const { return mapName; }
+	int getMapSize() const { return mapSize; }
+	int getBytesReceived() const { return bytesReceived; }
 
 
-//-------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------
 private:
 	std::string mapName;
 	int mapSize;
@@ -66,13 +66,13 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (int toSocket, const std::string& mapName, const std::string& receivingPlayerName);
-	virtual ~cMapSender ();
+	cMapSender( int toSocket, const std::string& mapName, const std::string& receivingPlayerName );
+	virtual ~cMapSender();
 
-	int getToSocket () const { return toSocket; }
+	int getToSocket() const { return toSocket; }
 
-	void runInThread (cNetworkHostMenu* hostMenu);
-//-------------------------------------------------------------------------------
+	void runInThread( cNetworkHostMenu* hostMenu );
+	//-------------------------------------------------------------------------------
 private:
 	int toSocket;
 	std::string receivingPlayerName;
@@ -85,10 +85,10 @@ private:
 	SDL_Thread* thread;
 	bool canceled;
 
-	friend int mapSenderThreadFunction (void* data);
+	friend int mapSenderThreadFunction( void* data );
 
-	void run ();
-	bool sendMsg (cNetMessage* msg);
+	void run();
+	bool sendMsg( cNetMessage* msg );
 };
 
 #endif // mapdownloadH

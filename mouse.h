@@ -24,49 +24,50 @@
 #include <SDL.h>
 
 // Die Mauszeigertypen ///////////////////////////////////////////////////////
-enum eCursor{CHand,CNo,CSelect,CMove,CPfeil1,CPfeil2,CPfeil3,CPfeil4,CPfeil6,CPfeil7,CPfeil8,CPfeil9,CHelp,CAttack,CBand,CTransf,CLoad,CMuni,CRepair,CSteal,CDisable,CActivate};
+enum eCursor {CHand, CNo, CSelect, CMove, CPfeil1, CPfeil2, CPfeil3, CPfeil4, CPfeil6, CPfeil7, CPfeil8, CPfeil9, CHelp, CAttack, CBand, CTransf, CLoad, CMuni, CRepair, CSteal, CDisable, CActivate};
 
 // Die Maus-Klasse ///////////////////////////////////////////////////////////
-class cMouse{
+class cMouse
+{
 public:
 	cMouse();
 
-  bool visible; // Gibt an, ob die Maus angezeigt werden soll.
-  SDL_Surface *cur; // Der aktuelle Cursor.
-  AutoSurface back; // Zum Speichern des Maushintergrundes.
-  int x,y; /** the pixel positon of the curor on the map */
-  bool isDoubleClick;
-  int prevScreenX,prevScreenY;
-  int LastX,LastY; // Die letzte Position der Maus.
-  int DrawX,DrawY; // Die Position, an die die Maus gezeichnet werden soll.
+	bool visible; // Gibt an, ob die Maus angezeigt werden soll.
+	SDL_Surface* cur; // Der aktuelle Cursor.
+	AutoSurface back; // Zum Speichern des Maushintergrundes.
+	int x, y; /** the pixel positon of the curor on the map */
+	bool isDoubleClick;
+	int prevScreenX, prevScreenY;
+	int LastX, LastY; // Die letzte Position der Maus.
+	int DrawX, DrawY; // Die Position, an die die Maus gezeichnet werden soll.
 
-  void draw(bool draw_back,SDL_Surface *sf);
+	void draw( bool draw_back, SDL_Surface* sf );
 
 	// Set a new cursor.
-	bool SetCursor(eCursor);
+	bool SetCursor( eCursor );
 
-  void GetBack(SDL_Surface *sf);
-  /**
-  * Draws the currently stored background to sf
-  */
-  void restoreBack( SDL_Surface *sf );
-  void GetPos();
-  void setPos(int px, int py);
-  void getCursorOffset(int &x, int &y);
-  bool moved();
-  void Show(){LastX=-100;visible=true;}
-  void Hide(){visible=false;}
-  /**
-  * return the X Coordinate of the Cursor on the map
-  */
-  int getKachelX();
-  /**
-  * return the Y Coordinate of the Cursor on the map
-  */
-  int getKachelY();
+	void GetBack( SDL_Surface* sf );
+	/**
+	* Draws the currently stored background to sf
+	*/
+	void restoreBack( SDL_Surface* sf );
+	void GetPos();
+	void setPos( int px, int py );
+	void getCursorOffset( int& x, int& y );
+	bool moved();
+	void Show() {LastX = -100; visible = true;}
+	void Hide() {visible = false;}
+	/**
+	* return the X Coordinate of the Cursor on the map
+	*/
+	int getKachelX();
+	/**
+	* return the Y Coordinate of the Cursor on the map
+	*/
+	int getKachelY();
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////
-EX cMouse *mouse;
+EX cMouse* mouse;
 
 #endif

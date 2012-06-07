@@ -29,8 +29,8 @@
 #ifdef WIN32
 
 #else
-	#include <sys/stat.h>
-	#include <unistd.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 #include "loaddata.h"
@@ -64,7 +64,7 @@ TiXmlDocument LanguageFile;
  * @param ok 0 writes just text, 1 writes "OK" and else "ERROR"
  * @param pos Horizontal Positionindex on SplashScreen
  */
-static void MakeLog(const std::string& sTxt, int ok,int pos);
+static void MakeLog( const std::string& sTxt, int ok, int pos );
 
 /**
  * Loads the selected languagepack
@@ -77,14 +77,14 @@ static int LoadLanguage();
  * @param path Directory of the graphics
  * @return 1 on success
  */
-static int LoadGraphics(const char* path);
+static int LoadGraphics( const char* path );
 
 /**
  * Loads the Effects
  * @param path Directory of the Effects
  * @return 1 on success
  */
-static int LoadEffects(const char* path);
+static int LoadEffects( const char* path );
 
 /**
  * Loads all Buildings
@@ -111,36 +111,36 @@ static int LoadClans();
  * @param path Directory of the Vehicles
  * @return 1 on success
  */
-static int LoadMusic(const char* path);
+static int LoadMusic( const char* path );
 
 /**
  * Loads all Sounds
  * @param path Directory of the Vehicles
  * @return 1 on success
  */
-static int LoadSounds(const char* path);
+static int LoadSounds( const char* path );
 
 /**
  * Loads all Voices
  * @param path Directory of the Vehicles
  * @return 1 on success
  */
-static int LoadVoices(const char* path);
+static int LoadVoices( const char* path );
 
 // LoadData ///////////////////////////////////////////////////////////////////
 // Loads all relevant files and datas:
-int LoadData ( void * )
+int LoadData( void* )
 {
-	LoadingData=LOAD_GOING;
+	LoadingData = LOAD_GOING;
 
-	if (!DEDICATED_SERVER)
+	if ( !DEDICATED_SERVER )
 	{
-		if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
-		if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
-		if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
-		if(!FileExists((cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
+		if ( !FileExists( ( cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_normal.pcx" ).c_str() ) ) NECESSARY_FILE_FAILURE
+			if ( !FileExists( ( cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big.pcx" ).c_str() ) ) NECESSARY_FILE_FAILURE
+				if ( !FileExists( ( cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big_gold.pcx" ).c_str() ) ) NECESSARY_FILE_FAILURE
+					if ( !FileExists( ( cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_small.pcx" ).c_str() ) ) NECESSARY_FILE_FAILURE
 
-		font = new cUnicodeFont; //init ascii fonts
+						font = new cUnicodeFont; //init ascii fonts
 
 		Log.mark();
 	}
@@ -150,17 +150,17 @@ int LoadData ( void * )
 	sVersion += MAX_BUILD_DATE; sVersion += " ";
 	sVersion += PACKAGE_REV;
 
-	MakeLog( sVersion,0,0);
+	MakeLog( sVersion, 0, 0 );
 
 	// Load Languagepack
-	MakeLog ( "Loading languagepack...", 0, 2 );
+	MakeLog( "Loading languagepack...", 0, 2 );
 
 	string sTmpString;
 	string sLang = cSettings::getInstance().getLanguage();
 	//FIXME: here is the assumption made that the file always exists with lower cases
-	for(int i=0 ; i<=2 ; i++)
+	for ( int i = 0 ; i <= 2 ; i++ )
 	{
-		if( sLang[i] < 97 )
+		if ( sLang[i] < 97 )
 		{
 			sLang[i] += 32;
 		}
@@ -169,39 +169,39 @@ int LoadData ( void * )
 	sTmpString += PATH_DELIMITER "lang_";
 	sTmpString += sLang;
 	sTmpString += ".xml";
-	Log.write("Using langfile: " + sTmpString, cLog::eLOG_TYPE_DEBUG );
-	if ( LoadLanguage()!=1 || !FileExists( sTmpString.c_str() ) )
+	Log.write( "Using langfile: " + sTmpString, cLog::eLOG_TYPE_DEBUG );
+	if ( LoadLanguage() != 1 || !FileExists( sTmpString.c_str() ) )
 	{
-		MakeLog("",-1,2);
+		MakeLog( "", -1, 2 );
 		LoadingData = LOAD_ERROR;
-		SDL_Delay(5000);
+		SDL_Delay( 5000 );
 		return -1;
 	}
 	else
 	{
-		LanguageFile.LoadFile(sTmpString.c_str());
-		MakeLog ( "", 1, 2 );
+		LanguageFile.LoadFile( sTmpString.c_str() );
+		MakeLog( "", 1, 2 );
 	}
 	Log.mark();
 
 	// Load Keys
-	MakeLog ( lngPack.i18n ( "Text~Init~Keys" ), 0, 3 );
+	MakeLog( lngPack.i18n( "Text~Init~Keys" ), 0, 3 );
 
-	if(LoadKeys()!=1)
+	if ( LoadKeys() != 1 )
 	{
-		MakeLog("",-1,3);
-		SDL_Delay(5000);
+		MakeLog( "", -1, 3 );
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 3 );
+		MakeLog( "", 1, 3 );
 	}
 	Log.mark();
 
 	// Load Fonts
-	MakeLog ( lngPack.i18n ( "Text~Init~Fonts" ), 0, 4 );
+	MakeLog( lngPack.i18n( "Text~Init~Fonts" ), 0, 4 );
 	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
 	if (LoadFonts ( cSettings::getInstance().getFontPath().c_str() ) != 1 )
 	{
@@ -212,198 +212,198 @@ int LoadData ( void * )
 	}
 	else
 	{*/
-		MakeLog ( "", 1, 4 );
+	MakeLog( "", 1, 4 );
 	//}
 	Log.mark();
 
 	// Load Graphics
-	MakeLog ( lngPack.i18n ( "Text~Init~GFX" ), 0, 5 );
+	MakeLog( lngPack.i18n( "Text~Init~GFX" ), 0, 5 );
 
-	if ( LoadGraphics ( cSettings::getInstance().getGfxPath().c_str() ) != 1 )
+	if ( LoadGraphics( cSettings::getInstance().getGfxPath().c_str() ) != 1 )
 	{
-		MakeLog("",-1,5);
-		Log.write ( "Error while loading graphics", LOG_TYPE_ERROR );
-		SDL_Delay(5000);
+		MakeLog( "", -1, 5 );
+		Log.write( "Error while loading graphics", LOG_TYPE_ERROR );
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 5 );
+		MakeLog( "", 1, 5 );
 	}
 	Log.mark();
 
 	// Load Effects
-	MakeLog ( lngPack.i18n ( "Text~Init~Effects" ), 0, 6 );
+	MakeLog( lngPack.i18n( "Text~Init~Effects" ), 0, 6 );
 
-	if(LoadEffects ( cSettings::getInstance().getFxPath().c_str() ) != 1)
+	if ( LoadEffects( cSettings::getInstance().getFxPath().c_str() ) != 1 )
 	{
-		MakeLog("",-1,6);
-		SDL_Delay(5000);
+		MakeLog( "", -1, 6 );
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 6 );
+		MakeLog( "", 1, 6 );
 	}
 	Log.mark();
 
 	// Load Vehicles
-	MakeLog ( lngPack.i18n ( "Text~Init~Vehicles" ), 0, 7 );
+	MakeLog( lngPack.i18n( "Text~Init~Vehicles" ), 0, 7 );
 
 	if ( LoadVehicles() != 1 )
 	{
-		MakeLog("",-1,7);
-		SDL_Delay(5000);
+		MakeLog( "", -1, 7 );
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 7 );
+		MakeLog( "", 1, 7 );
 	}
 	Log.mark();
 
 	// Load Buildings
-	MakeLog ( lngPack.i18n ( "Text~Init~Buildings" ), 0, 8 );
+	MakeLog( lngPack.i18n( "Text~Init~Buildings" ), 0, 8 );
 
-	if ( LoadBuildings() != 1)
+	if ( LoadBuildings() != 1 )
 	{
-		MakeLog("",-1,8);
-		SDL_Delay(5000);
+		MakeLog( "", -1, 8 );
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 8 );
+		MakeLog( "", 1, 8 );
 	}
 	Log.mark();
 
-	MakeLog ( lngPack.i18n ( "Text~Init~Clans" ), 0, 9 );
+	MakeLog( lngPack.i18n( "Text~Init~Clans" ), 0, 9 );
 
 	// Load Clan Settings
-	if (LoadClans () != 1)
+	if ( LoadClans() != 1 )
 	{
-		SDL_Delay(5000);
+		SDL_Delay( 5000 );
 		LoadingData = LOAD_ERROR;
 		return -1;
 	}
 	else
 	{
-		MakeLog ( "", 1, 9 );
+		MakeLog( "", 1, 9 );
 	}
 	Log.mark();
 
 
-	if (!DEDICATED_SERVER)
+	if ( !DEDICATED_SERVER )
 	{
 		// Load Music
-		MakeLog ( lngPack.i18n ( "Text~Init~Music" ), 0, 10 );
+		MakeLog( lngPack.i18n( "Text~Init~Music" ), 0, 10 );
 
-		if ( LoadMusic ( cSettings::getInstance().getMusicPath().c_str() ) != 1)
+		if ( LoadMusic( cSettings::getInstance().getMusicPath().c_str() ) != 1 )
 		{
-			MakeLog("",-1,10);
-			SDL_Delay(5000);
+			MakeLog( "", -1, 10 );
+			SDL_Delay( 5000 );
 			LoadingData = LOAD_ERROR;
 			return -1;
 		}
 		else
 		{
-			MakeLog ( "", 1, 10 );
+			MakeLog( "", 1, 10 );
 		}
 		Log.mark();
 
 		// Load Sounds
-		MakeLog ( lngPack.i18n ( "Text~Init~Sounds" ), 0, 11 );
-		if ( LoadSounds ( cSettings::getInstance().getSoundsPath().c_str() ) != 1)
+		MakeLog( lngPack.i18n( "Text~Init~Sounds" ), 0, 11 );
+		if ( LoadSounds( cSettings::getInstance().getSoundsPath().c_str() ) != 1 )
 		{
-			MakeLog("",-1,11);
-			SDL_Delay(5000);
+			MakeLog( "", -1, 11 );
+			SDL_Delay( 5000 );
 			LoadingData = LOAD_ERROR;
 			return -1;
 		}
 		else
 		{
-			MakeLog ( "", 1, 11 );
+			MakeLog( "", 1, 11 );
 		}
 		Log.mark();
 
 		// Load Voices
-		MakeLog ( lngPack.i18n ( "Text~Init~Voices" ), 0, 12 );
+		MakeLog( lngPack.i18n( "Text~Init~Voices" ), 0, 12 );
 
-		if(LoadVoices ( cSettings::getInstance().getVoicesPath().c_str() ) != 1)
+		if ( LoadVoices( cSettings::getInstance().getVoicesPath().c_str() ) != 1 )
 		{
-			MakeLog("",-1,12);
-			SDL_Delay(5000);
+			MakeLog( "", -1, 12 );
+			SDL_Delay( 5000 );
 			LoadingData = LOAD_ERROR;
 			return -1;
 		}
 		else
 		{
-			MakeLog ( "", 1, 12 );
+			MakeLog( "", 1, 12 );
 		}
 		Log.mark();
 	}
 
-	SDL_Delay(1000);
-	LoadingData=LOAD_FINISHED;
+	SDL_Delay( 1000 );
+	LoadingData = LOAD_FINISHED;
 	return 1;
 }
 
 // MakeLog ///////////////////////////////////////////////////////////////////
 // Writes a Logmessage on the SplashScreen:
-/* static */ void MakeLog ( const string& sTxt, int ok, int pos )
+/* static */ void MakeLog( const string& sTxt, int ok, int pos )
 {
-	if (!DEDICATED_SERVER)
+	if ( !DEDICATED_SERVER )
 	{
-		SDL_Rect rDest = {22, 152, 228, font->getFontHeight(FONT_LATIN_BIG_GOLD)};
-		SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight(FONT_LATIN_BIG_GOLD)};
+		SDL_Rect rDest = {22, 152, 228, font->getFontHeight( FONT_LATIN_BIG_GOLD )};
+		SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight( FONT_LATIN_BIG_GOLD )};
 		SDL_Rect rSrc;
 
 		switch ( ok )
 		{
-		case 0:
-			font->showText(rDest.x, rDest.y + rDest.h*pos, sTxt, FONT_LATIN_NORMAL);
-			rSrc=rDest;
-			rSrc.y = rDest.y + rDest.h*pos;
-			if(pos == 0) //need full line for first entry version information
-			{
-				SDL_BlitSurface ( buffer, NULL, screen, NULL );
-				SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w+rDest2.w, rDest.h );
-			}
-			else
-			{
-				SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
-				SDL_UpdateRect ( screen, rDest.x, rDest.y + rDest.h*pos, rDest.w, rDest.h );
-			}
-			break;
+			case 0:
+				font->showText( rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL );
+				rSrc = rDest;
+				rSrc.y = rDest.y + rDest.h * pos;
+				if ( pos == 0 ) //need full line for first entry version information
+				{
+					SDL_BlitSurface( buffer, NULL, screen, NULL );
+					SDL_UpdateRect( screen, rDest.x, rDest.y + rDest.h * pos, rDest.w + rDest2.w, rDest.h );
+				}
+				else
+				{
+					SDL_BlitSurface( buffer, &rSrc, screen, &rSrc );
+					SDL_UpdateRect( screen, rDest.x, rDest.y + rDest.h * pos, rDest.w, rDest.h );
+				}
+				break;
 
-		case 1:
-			font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "OK", FONT_LATIN_BIG_GOLD);
-			break;
+			case 1:
+				font->showText( rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD );
+				break;
 
-		default:
-			font->showText(rDest2.x, rDest2.y + rDest2.h*pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
-			break;
+			default:
+				font->showText( rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD );
+				break;
 		}
 
 		if ( ok != 0 )
 		{
-			rSrc=rDest2;
-			rSrc.y = rDest2.y + rDest2.h*pos;
-			SDL_BlitSurface ( buffer, &rSrc, screen, &rSrc );
-			SDL_UpdateRect ( screen, rDest2.x, rDest2.y + rDest2.h*pos, rDest2.w, rDest2.h );
+			rSrc = rDest2;
+			rSrc.y = rDest2.y + rDest2.h * pos;
+			SDL_BlitSurface( buffer, &rSrc, screen, &rSrc );
+			SDL_UpdateRect( screen, rDest2.x, rDest2.y + rDest2.h * pos, rDest2.w, rDest2.h );
 		}
 	}
 	else // dedicated server
 		cout << sTxt << endl;
 }
 
-static SDL_Surface* CloneSDLSurface(SDL_Surface* src)
+static SDL_Surface* CloneSDLSurface( SDL_Surface* src )
 {
-	return SDL_ConvertSurface(src, src->format, src->flags);
+	return SDL_ConvertSurface( src, src->format, src->flags );
 }
 
 /**
@@ -413,27 +413,27 @@ static SDL_Surface* CloneSDLSurface(SDL_Surface* src)
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const char* filename)
+static int LoadGraphicToSurface( SDL_Surface*& dest, const char* directory, const char* filename )
 {
 	string filepath;
-	if(strcmp(directory,""))
+	if ( strcmp( directory, "" ) )
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
 	}
 	filepath += filename;
-	if(!FileExists(filepath.c_str()))
+	if ( !FileExists( filepath.c_str() ) )
 	{
 		dest = NULL;
-		Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
-	dest = LoadPCX(filepath);
+	dest = LoadPCX( filepath );
 
-	filepath.insert(0,"File loaded: ");
-	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
+	filepath.insert( 0, "File loaded: " );
+	Log.write( filepath.c_str(), LOG_TYPE_DEBUG );
 
 	return 1;
 }
@@ -445,57 +445,57 @@ static int LoadGraphicToSurface(SDL_Surface* &dest, const char* directory, const
  * @param filename Name of the file
  * @return 1 on success
  */
-static int LoadEffectGraphicToSurface(SDL_Surface** &dest, const char* directory, const char* filename)
+static int LoadEffectGraphicToSurface( SDL_Surface**& dest, const char* directory, const char* filename )
 {
 	string filepath;
-	if(strcmp(directory,""))
+	if ( strcmp( directory, "" ) )
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
 	}
 	filepath += filename;
-	if(!FileExists(filepath.c_str()))
+	if ( !FileExists( filepath.c_str() ) )
 	{
-		Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+		Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
 
 
 	dest = new SDL_Surface*[2];
-	if(!dest) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX(filepath);
-	dest[1] = CloneSDLSurface(dest[0]);
+	if ( !dest ) { Log.write( "Out of memory", cLog::eLOG_TYPE_MEM ); }
+	dest[0] = LoadPCX( filepath );
+	dest[1] = CloneSDLSurface( dest[0] );
 
-	filepath.insert(0,"Effect successful loaded: ");
-	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
+	filepath.insert( 0, "Effect successful loaded: " );
+	Log.write( filepath.c_str(), LOG_TYPE_DEBUG );
 
 	return 1;
 }
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
 // Loades a effectgraphic as aplha to the surface:
-int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const char* filename, int alpha)
+int LoadEffectAlphaToSurface( SDL_Surface**& dest, const char* directory, const char* filename, int alpha )
 {
 	string filepath;
-	if(strcmp(directory,""))
+	if ( strcmp( directory, "" ) )
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
 	}
 	filepath += filename;
-	if(!FileExists(filepath.c_str()))
+	if ( !FileExists( filepath.c_str() ) )
 		return 0;
 
 	dest = new SDL_Surface*[2];
-	if(!dest) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	dest[0] = LoadPCX(filepath);
-	dest[1] = CloneSDLSurface(dest[0]);
-	SDL_SetAlpha(dest[0], SDL_SRCALPHA, alpha);
-	SDL_SetAlpha(dest[1], SDL_SRCALPHA, alpha);
+	if ( !dest ) { Log.write( "Out of memory", cLog::eLOG_TYPE_MEM ); }
+	dest[0] = LoadPCX( filepath );
+	dest[1] = CloneSDLSurface( dest[0] );
+	SDL_SetAlpha( dest[0], SDL_SRCALPHA, alpha );
+	SDL_SetAlpha( dest[1], SDL_SRCALPHA, alpha );
 
-	filepath.insert(0,"Effectalpha loaded: ");
-	Log.write ( filepath.c_str(), LOG_TYPE_DEBUG );
+	filepath.insert( 0, "Effectalpha loaded: " );
+	Log.write( filepath.c_str(), LOG_TYPE_DEBUG );
 
 	return 1;
 }
@@ -508,11 +508,11 @@ int LoadEffectAlphaToSurface(SDL_Surface** &dest, const char* directory, const c
  * @param localize When true, sVoiceLanguage is appended to the filename. Used for loading voice files.
  * @return 1 on success
  */
-static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filename, bool localize = false)
+static int LoadSoundfile( sSOUND*& dest, const char* directory, const char* filename, bool localize = false )
 {
 	string filepath;
 	string fullPath;
-	if(strcmp(directory,""))
+	if ( strcmp( directory, "" ) )
 	{
 		filepath = directory;
 		filepath += PATH_DELIMITER;
@@ -521,20 +521,20 @@ static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filen
 	fullPath = filepath + filename;
 	if ( localize && !cSettings::getInstance().getVoiceLanguage().empty() )
 	{
-		fullPath.insert(fullPath.rfind("."),"_" + cSettings::getInstance().getVoiceLanguage() );
-		if(FileExists(fullPath.c_str()))
+		fullPath.insert( fullPath.rfind( "." ), "_" + cSettings::getInstance().getVoiceLanguage() );
+		if ( FileExists( fullPath.c_str() ) )
 		{
-			dest = Mix_LoadWAV(fullPath.c_str());
+			dest = Mix_LoadWAV( fullPath.c_str() );
 			return 1;
 		}
 	}
 
 	//no localized voice file. Try opening without lang code
 	fullPath = filepath + filename;
-	if(!FileExists(fullPath.c_str()))
+	if ( !FileExists( fullPath.c_str() ) )
 		return 0;
 
-	dest = Mix_LoadWAV(fullPath.c_str());
+	dest = Mix_LoadWAV( fullPath.c_str() );
 
 	return 1;
 }
@@ -545,44 +545,44 @@ static int LoadSoundfile(sSOUND *&dest, const char* directory, const char* filen
  * @param directory Directory of the file, relativ to the main vehicles directory
  * @param filename Name of the file
  */
-static void LoadUnitSoundfile(sSOUND *&dest, const char* directory, const char* filename)
+static void LoadUnitSoundfile( sSOUND*& dest, const char* directory, const char* filename )
 {
-	SDL_RWops *file;
+	SDL_RWops* file;
 	string filepath;
-	if(strcmp(directory,""))
+	if ( strcmp( directory, "" ) )
 		filepath += directory;
 	filepath += filename;
-	if(!SoundData.DummySound)
+	if ( !SoundData.DummySound )
 	{
 		string sTmpString;
 		sTmpString = cSettings::getInstance().getSoundsPath() + PATH_DELIMITER + "dummy.ogg";
-		if(FileExists(sTmpString.c_str()))
+		if ( FileExists( sTmpString.c_str() ) )
 		{
-			SoundData.DummySound = Mix_LoadWAV(sTmpString.c_str());
-			if(!SoundData.DummySound)
-				Log.write("Can't load dummy.ogg", LOG_TYPE_WARNING);
+			SoundData.DummySound = Mix_LoadWAV( sTmpString.c_str() );
+			if ( !SoundData.DummySound )
+				Log.write( "Can't load dummy.ogg", LOG_TYPE_WARNING );
 		}
 	}
 	// Not using FileExists to avoid unnecessary warnings in log file
-	if(!(file=SDL_RWFromFile ( filepath.c_str(), "r" )))
+	if ( !( file = SDL_RWFromFile( filepath.c_str(), "r" ) ) )
 	{
 		dest = SoundData.DummySound;
 		return;
 	}
-	SDL_RWclose ( file );
+	SDL_RWclose( file );
 
-	dest = Mix_LoadWAV(filepath.c_str());
+	dest = Mix_LoadWAV( filepath.c_str() );
 }
 
 static int LoadLanguage()
 {
-	if( lngPack.SetCurrentLanguage(cSettings::getInstance().getLanguage()) != 0 )			// Set the language code
+	if ( lngPack.SetCurrentLanguage( cSettings::getInstance().getLanguage() ) != 0 )			// Set the language code
 	{
 		// Not a valid language code, critical fail!
 		Log.write( "Not a valid language code!" , cLog::eLOG_TYPE_ERROR );
 		return 0;
 	}
-	if( lngPack.ReadLanguagePack() != 0 )					// Load the translations
+	if ( lngPack.ReadLanguagePack() != 0 )					// Load the translations
 	{
 		// Could not load the language, critical fail!
 		Log.write( "Could not load the language!" , cLog::eLOG_TYPE_ERROR );
@@ -591,354 +591,354 @@ static int LoadLanguage()
 	return 1;
 }
 
-static int LoadEffects(const char* path)
+static int LoadEffects( const char* path )
 {
-	Log.write ( "Loading Effects", LOG_TYPE_INFO );
+	Log.write( "Loading Effects", LOG_TYPE_INFO );
 
-	LoadEffectGraphicToSurface ( EffectsData.fx_explo_small,path,"explo_small.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_explo_big,path,"explo_big.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_explo_water,path,"explo_water.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_explo_air,path,"explo_air.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_big,path,"muzzle_big.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_small,path,"muzzle_small.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_muzzle_med,path,"muzzle_med.pcx" );
-	LoadEffectGraphicToSurface ( EffectsData.fx_hit,path,"hit.pcx" );
-	LoadEffectAlphaToSurface ( EffectsData.fx_smoke,path,"smoke.pcx",100 );
-	LoadEffectGraphicToSurface ( EffectsData.fx_rocket,path,"rocket.pcx" );
-	LoadEffectAlphaToSurface ( EffectsData.fx_dark_smoke,path,"dark_smoke.pcx",100 );
-	LoadEffectAlphaToSurface ( EffectsData.fx_tracks,path,"tracks.pcx",100 );
-	LoadEffectAlphaToSurface ( EffectsData.fx_corpse,path,"corpse.pcx",255 );
-	LoadEffectAlphaToSurface ( EffectsData.fx_absorb,path,"absorb.pcx",150 );
+	LoadEffectGraphicToSurface( EffectsData.fx_explo_small, path, "explo_small.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_explo_big, path, "explo_big.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_explo_water, path, "explo_water.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_explo_air, path, "explo_air.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_muzzle_big, path, "muzzle_big.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_muzzle_small, path, "muzzle_small.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_muzzle_med, path, "muzzle_med.pcx" );
+	LoadEffectGraphicToSurface( EffectsData.fx_hit, path, "hit.pcx" );
+	LoadEffectAlphaToSurface( EffectsData.fx_smoke, path, "smoke.pcx", 100 );
+	LoadEffectGraphicToSurface( EffectsData.fx_rocket, path, "rocket.pcx" );
+	LoadEffectAlphaToSurface( EffectsData.fx_dark_smoke, path, "dark_smoke.pcx", 100 );
+	LoadEffectAlphaToSurface( EffectsData.fx_tracks, path, "tracks.pcx", 100 );
+	LoadEffectAlphaToSurface( EffectsData.fx_corpse, path, "corpse.pcx", 255 );
+	LoadEffectAlphaToSurface( EffectsData.fx_absorb, path, "absorb.pcx", 150 );
 
 	return 1;
 }
 
-static int LoadMusic(const char* path)
+static int LoadMusic( const char* path )
 {
-	Log.write ( "Loading music", LOG_TYPE_INFO );
+	Log.write( "Loading music", LOG_TYPE_INFO );
 	string sTmpString;
 	char sztmp[32];
 
 	// Prepare music.xml for reading
 	TiXmlDocument MusicXml;
-	ExTiXmlNode * pXmlNode = NULL;
+	ExTiXmlNode* pXmlNode = NULL;
 	sTmpString = path;
 	sTmpString += PATH_DELIMITER "music.xml";
-	if(!FileExists(sTmpString.c_str()))
+	if ( !FileExists( sTmpString.c_str() ) )
 	{
 		return 0;
 	}
-	if(!(MusicXml.LoadFile(sTmpString.c_str())))
+	if ( !( MusicXml.LoadFile( sTmpString.c_str() ) ) )
 	{
-		Log.write ( "Can't load music.xml ", LOG_TYPE_ERROR );
+		Log.write( "Can't load music.xml ", LOG_TYPE_ERROR );
 		return 0;
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","main", NULL);
-	if(!(pXmlNode->XmlReadNodeData(MainMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
+	pXmlNode = pXmlNode->XmlGetFirstNode( MusicXml, "Music", "Menus", "main", NULL );
+	if ( !( pXmlNode->XmlReadNodeData( MainMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text" ) ) )
 	{
-		Log.write ( "Can't find \"main\" in music.xml ", LOG_TYPE_ERROR );
+		Log.write( "Can't find \"main\" in music.xml ", LOG_TYPE_ERROR );
 		return 0;
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Menus","credits", NULL);
-	if(!(pXmlNode->XmlReadNodeData(CreditsMusicFile,ExTiXmlNode::eXML_ATTRIBUTE,"Text")))
+	pXmlNode = pXmlNode->XmlGetFirstNode( MusicXml, "Music", "Menus", "credits", NULL );
+	if ( !( pXmlNode->XmlReadNodeData( CreditsMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text" ) ) )
 	{
-		Log.write ( "Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR );
+		Log.write( "Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR );
 		return 0;
 	}
 
 
-	pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Game","bkgcount", NULL);
-	if (!pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Num"))
+	pXmlNode = pXmlNode->XmlGetFirstNode( MusicXml, "Music", "Game", "bkgcount", NULL );
+	if ( !pXmlNode->XmlReadNodeData( sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) )
 	{
-		Log.write ( "Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR );
+		Log.write( "Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR );
 		return 0;
 	}
-	int const MusicAnz = atoi(sTmpString.c_str());
-	for ( int i=1;i <= MusicAnz; i++ )
+	int const MusicAnz = atoi( sTmpString.c_str() );
+	for ( int i = 1; i <= MusicAnz; i++ )
 	{
-		sprintf ( sztmp,"%d",i );
+		sprintf( sztmp, "%d", i );
 		sTmpString = "bkg"; sTmpString += sztmp;
-		pXmlNode = pXmlNode->XmlGetFirstNode(MusicXml,"Music","Game",sTmpString.c_str(), NULL);
-		if(pXmlNode->XmlReadNodeData(sTmpString,ExTiXmlNode::eXML_ATTRIBUTE,"Text"))
+		pXmlNode = pXmlNode->XmlGetFirstNode( MusicXml, "Music", "Game", sTmpString.c_str(), NULL );
+		if ( pXmlNode->XmlReadNodeData( sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Text" ) )
 		{
-			sTmpString.insert(0,PATH_DELIMITER);
-			sTmpString.insert(0,path);
+			sTmpString.insert( 0, PATH_DELIMITER );
+			sTmpString.insert( 0, path );
 		}
 		else
 		{
 			sTmpString = "Can't find \"bkg\" in music.xml";
-			sprintf ( sztmp,"%d",i );
-			sTmpString.insert(16,sztmp);
-			Log.write ( sTmpString.c_str(), LOG_TYPE_WARNING );
+			sprintf( sztmp, "%d", i );
+			sTmpString.insert( 16, sztmp );
+			Log.write( sTmpString.c_str(), LOG_TYPE_WARNING );
 			continue;
 		}
-		if(!FileExists(sTmpString.c_str()))
+		if ( !FileExists( sTmpString.c_str() ) )
 			continue;
-		MusicFiles.Add ( sTmpString );
+		MusicFiles.Add( sTmpString );
 	}
 
 	return 1;
 }
 
-static int LoadSounds(const char* path)
+static int LoadSounds( const char* path )
 {
-	Log.write ( "Loading Sounds", LOG_TYPE_INFO );
+	Log.write( "Loading Sounds", LOG_TYPE_INFO );
 
-	LoadSoundfile ( SoundData.SNDHudSwitch, path, "HudSwitch.ogg" );
-	LoadSoundfile ( SoundData.SNDHudButton, path, "HudButton.ogg" );
-	LoadSoundfile ( SoundData.SNDMenuButton, path, "MenuButton.ogg" );
-	LoadSoundfile ( SoundData.SNDChat, path, "Chat.ogg" );
-	LoadSoundfile ( SoundData.SNDObjectMenu, path, "ObjectMenu.ogg" );
-	LoadSoundfile ( SoundData.EXPBigWet0, path, "exp_big_wet0.ogg" );
-	LoadSoundfile ( SoundData.EXPBigWet1, path, "exp_big_wet1.ogg" );
-	LoadSoundfile ( SoundData.EXPBig0, path, "exp_big0.ogg" );
-	LoadSoundfile ( SoundData.EXPBig1, path, "exp_big1.ogg" );
-	LoadSoundfile ( SoundData.EXPBig2, path, "exp_big2.ogg" );
-	LoadSoundfile ( SoundData.EXPBig3, path, "exp_big3.ogg" );
-	LoadSoundfile ( SoundData.EXPSmallWet0, path, "exp_small_wet0.ogg" );
-	LoadSoundfile ( SoundData.EXPSmallWet1, path, "exp_small_wet1.ogg" );
-	LoadSoundfile ( SoundData.EXPSmallWet2, path, "exp_small_wet2.ogg" );
-	LoadSoundfile ( SoundData.EXPSmall0, path, "exp_small0.ogg" );
-	LoadSoundfile ( SoundData.EXPSmall1, path, "exp_small1.ogg" );
-	LoadSoundfile ( SoundData.EXPSmall2, path, "exp_small2.ogg" );
-	LoadSoundfile ( SoundData.SNDArm, path, "arm.ogg" );
-	LoadSoundfile ( SoundData.SNDBuilding, path, "building.ogg" );
-	LoadSoundfile ( SoundData.SNDClearing, path, "clearing.ogg" );
-	LoadSoundfile ( SoundData.SNDQuitsch, path, "quitsch.ogg" );
-	LoadSoundfile ( SoundData.SNDActivate, path, "activate.ogg" );
-	LoadSoundfile ( SoundData.SNDLoad, path, "load.ogg" );
-	LoadSoundfile ( SoundData.SNDReload, path, "reload.ogg" );
-	LoadSoundfile ( SoundData.SNDRepair, path, "repair.ogg" );
-	LoadSoundfile ( SoundData.SNDLandMinePlace, path, "land_mine_place.ogg" );
-	LoadSoundfile ( SoundData.SNDLandMineClear, path, "land_mine_clear.ogg" );
-	LoadSoundfile ( SoundData.SNDSeaMinePlace, path, "sea_mine_place.ogg" );
-	LoadSoundfile ( SoundData.SNDSeaMineClear, path, "sea_mine_clear.ogg" );
-	LoadSoundfile ( SoundData.SNDPanelOpen, path, "panel_open.ogg" );
-	LoadSoundfile ( SoundData.SNDPanelClose, path, "panel_close.ogg" );
-	LoadSoundfile ( SoundData.SNDAbsorb, path, "absorb.ogg" );
+	LoadSoundfile( SoundData.SNDHudSwitch, path, "HudSwitch.ogg" );
+	LoadSoundfile( SoundData.SNDHudButton, path, "HudButton.ogg" );
+	LoadSoundfile( SoundData.SNDMenuButton, path, "MenuButton.ogg" );
+	LoadSoundfile( SoundData.SNDChat, path, "Chat.ogg" );
+	LoadSoundfile( SoundData.SNDObjectMenu, path, "ObjectMenu.ogg" );
+	LoadSoundfile( SoundData.EXPBigWet0, path, "exp_big_wet0.ogg" );
+	LoadSoundfile( SoundData.EXPBigWet1, path, "exp_big_wet1.ogg" );
+	LoadSoundfile( SoundData.EXPBig0, path, "exp_big0.ogg" );
+	LoadSoundfile( SoundData.EXPBig1, path, "exp_big1.ogg" );
+	LoadSoundfile( SoundData.EXPBig2, path, "exp_big2.ogg" );
+	LoadSoundfile( SoundData.EXPBig3, path, "exp_big3.ogg" );
+	LoadSoundfile( SoundData.EXPSmallWet0, path, "exp_small_wet0.ogg" );
+	LoadSoundfile( SoundData.EXPSmallWet1, path, "exp_small_wet1.ogg" );
+	LoadSoundfile( SoundData.EXPSmallWet2, path, "exp_small_wet2.ogg" );
+	LoadSoundfile( SoundData.EXPSmall0, path, "exp_small0.ogg" );
+	LoadSoundfile( SoundData.EXPSmall1, path, "exp_small1.ogg" );
+	LoadSoundfile( SoundData.EXPSmall2, path, "exp_small2.ogg" );
+	LoadSoundfile( SoundData.SNDArm, path, "arm.ogg" );
+	LoadSoundfile( SoundData.SNDBuilding, path, "building.ogg" );
+	LoadSoundfile( SoundData.SNDClearing, path, "clearing.ogg" );
+	LoadSoundfile( SoundData.SNDQuitsch, path, "quitsch.ogg" );
+	LoadSoundfile( SoundData.SNDActivate, path, "activate.ogg" );
+	LoadSoundfile( SoundData.SNDLoad, path, "load.ogg" );
+	LoadSoundfile( SoundData.SNDReload, path, "reload.ogg" );
+	LoadSoundfile( SoundData.SNDRepair, path, "repair.ogg" );
+	LoadSoundfile( SoundData.SNDLandMinePlace, path, "land_mine_place.ogg" );
+	LoadSoundfile( SoundData.SNDLandMineClear, path, "land_mine_clear.ogg" );
+	LoadSoundfile( SoundData.SNDSeaMinePlace, path, "sea_mine_place.ogg" );
+	LoadSoundfile( SoundData.SNDSeaMineClear, path, "sea_mine_clear.ogg" );
+	LoadSoundfile( SoundData.SNDPanelOpen, path, "panel_open.ogg" );
+	LoadSoundfile( SoundData.SNDPanelClose, path, "panel_close.ogg" );
+	LoadSoundfile( SoundData.SNDAbsorb, path, "absorb.ogg" );
 
 	return 1;
 }
 
-static int LoadVoices(const char* path)
+static int LoadVoices( const char* path )
 {
-	Log.write ( "Loading Voices", LOG_TYPE_INFO );
+	Log.write( "Loading Voices", LOG_TYPE_INFO );
 
-	LoadSoundfile ( VoiceData.VOIAttackingEnemy1,path, "attacking_enemy1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttackingEnemy2,path, "attacking_enemy2.ogg", true );
-	LoadSoundfile ( VoiceData.VOINoPath1,path, "no_path1.ogg", true );
-	LoadSoundfile ( VoiceData.VOINoPath2,path, "no_path2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIBuildDone1,path, "build_done1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIBuildDone2,path, "build_done2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIBuildDone3,path, "build_done3.ogg", true );
-	LoadSoundfile ( VoiceData.VOIBuildDone4,path, "build_done4.ogg", true );
-	LoadSoundfile ( VoiceData.VOINoSpeed,path, "no_speed.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStatusRed,path, "status_red.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStatusRed2,path, "status_red2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStatusYellow,path, "status_yellow.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStatusYellow2,path, "status_yellow2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIClearing,path, "clearing.ogg", true );
-	LoadSoundfile ( VoiceData.VOILowAmmo1,path, "low_ammo1.ogg", true );
-	LoadSoundfile ( VoiceData.VOILowAmmo2,path, "low_ammo2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIOK1,path, "ok1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIOK2,path, "ok2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIOK3,path, "ok3.ogg", true );
-	LoadSoundfile ( VoiceData.VOIOK4,path, "ok4.ogg", true );
-	LoadSoundfile ( VoiceData.VOISentry,path, "sentry.ogg", true );
-	LoadSoundfile ( VoiceData.VOITransferDone,path, "transfer_done.ogg", true );
-	LoadSoundfile ( VoiceData.VOILoaded,path, "loaded.ogg", true );
-	LoadSoundfile ( VoiceData.VOILoaded2,path, "loaded2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIRepaired,path, "repaired.ogg", true );
-	LoadSoundfile ( VoiceData.VOIRepaired2,path, "repaired2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIRepairedAll1,path, "repaired_all1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIRepairedAll2,path, "repaired_all2.ogg", true );
-	LoadSoundfile ( VoiceData.VOILayingMines,path, "laying_mines.ogg", true );
-	LoadSoundfile ( VoiceData.VOIClearingMines,path, "clearing_mines.ogg", true );
-	LoadSoundfile ( VoiceData.VOIClearingMines2,path, "clearing_mines2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIResearchComplete,path, "research_complete.ogg", true );
-	LoadSoundfile ( VoiceData.VOIUnitStolen,path, "unit_stolen.ogg", true );
-	LoadSoundfile ( VoiceData.VOIUnitDisabled,path, "unit_disabled.ogg", true );
-	LoadSoundfile ( VoiceData.VOICommandoFailed1,path, "commando_failed1.ogg", true );
-	LoadSoundfile ( VoiceData.VOICommandoFailed2,path, "commando_failed2.ogg", true );
-	LoadSoundfile ( VoiceData.VOICommandoFailed3,path, "commando_failed3.ogg", true );
-	LoadSoundfile ( VoiceData.VOIDisabled,path, "disabled.ogg", true );
-	LoadSoundfile ( VoiceData.VOISaved,path, "saved.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStartNone,path, "start_none.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStartOne,path, "start_one.ogg", true );
-	LoadSoundfile ( VoiceData.VOIStartMore,path, "start_more.ogg", true );
-	LoadSoundfile ( VoiceData.VOIDetected1,path, "detected1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIDetected2,path, "detected2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttackingUs,path, "attacking_us.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttackingUs2,path, "attacking_us2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttackingUs3,path, "attacking_us3.ogg", true );
-	LoadSoundfile ( VoiceData.VOIDestroyedUs,path, "destroyed_us.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttacking1,path, "attacking1.ogg", true );
-	LoadSoundfile ( VoiceData.VOIAttacking2,path, "attacking2.ogg", true );
-	LoadSoundfile ( VoiceData.VOILanding,path, "landing.ogg", true );
-	LoadSoundfile ( VoiceData.VOISubDetected,path, "sub_detected.ogg", true );
-	LoadSoundfile ( VoiceData.VOISurveying,path, "surveying.ogg", true );
-	LoadSoundfile ( VoiceData.VOISurveying2,path, "surveying2.ogg", true );
-	LoadSoundfile ( VoiceData.VOITurnEnd20Sec1,path, "turn_end_20_sec1.ogg", true );
-	LoadSoundfile ( VoiceData.VOITurnEnd20Sec2,path, "turn_end_20_sec2.ogg", true );
-	LoadSoundfile ( VoiceData.VOIUnitStolenByEnemy,path, "unit_stolen_by_enemy.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttackingEnemy1, path, "attacking_enemy1.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttackingEnemy2, path, "attacking_enemy2.ogg", true );
+	LoadSoundfile( VoiceData.VOINoPath1, path, "no_path1.ogg", true );
+	LoadSoundfile( VoiceData.VOINoPath2, path, "no_path2.ogg", true );
+	LoadSoundfile( VoiceData.VOIBuildDone1, path, "build_done1.ogg", true );
+	LoadSoundfile( VoiceData.VOIBuildDone2, path, "build_done2.ogg", true );
+	LoadSoundfile( VoiceData.VOIBuildDone3, path, "build_done3.ogg", true );
+	LoadSoundfile( VoiceData.VOIBuildDone4, path, "build_done4.ogg", true );
+	LoadSoundfile( VoiceData.VOINoSpeed, path, "no_speed.ogg", true );
+	LoadSoundfile( VoiceData.VOIStatusRed, path, "status_red.ogg", true );
+	LoadSoundfile( VoiceData.VOIStatusRed2, path, "status_red2.ogg", true );
+	LoadSoundfile( VoiceData.VOIStatusYellow, path, "status_yellow.ogg", true );
+	LoadSoundfile( VoiceData.VOIStatusYellow2, path, "status_yellow2.ogg", true );
+	LoadSoundfile( VoiceData.VOIClearing, path, "clearing.ogg", true );
+	LoadSoundfile( VoiceData.VOILowAmmo1, path, "low_ammo1.ogg", true );
+	LoadSoundfile( VoiceData.VOILowAmmo2, path, "low_ammo2.ogg", true );
+	LoadSoundfile( VoiceData.VOIOK1, path, "ok1.ogg", true );
+	LoadSoundfile( VoiceData.VOIOK2, path, "ok2.ogg", true );
+	LoadSoundfile( VoiceData.VOIOK3, path, "ok3.ogg", true );
+	LoadSoundfile( VoiceData.VOIOK4, path, "ok4.ogg", true );
+	LoadSoundfile( VoiceData.VOISentry, path, "sentry.ogg", true );
+	LoadSoundfile( VoiceData.VOITransferDone, path, "transfer_done.ogg", true );
+	LoadSoundfile( VoiceData.VOILoaded, path, "loaded.ogg", true );
+	LoadSoundfile( VoiceData.VOILoaded2, path, "loaded2.ogg", true );
+	LoadSoundfile( VoiceData.VOIRepaired, path, "repaired.ogg", true );
+	LoadSoundfile( VoiceData.VOIRepaired2, path, "repaired2.ogg", true );
+	LoadSoundfile( VoiceData.VOIRepairedAll1, path, "repaired_all1.ogg", true );
+	LoadSoundfile( VoiceData.VOIRepairedAll2, path, "repaired_all2.ogg", true );
+	LoadSoundfile( VoiceData.VOILayingMines, path, "laying_mines.ogg", true );
+	LoadSoundfile( VoiceData.VOIClearingMines, path, "clearing_mines.ogg", true );
+	LoadSoundfile( VoiceData.VOIClearingMines2, path, "clearing_mines2.ogg", true );
+	LoadSoundfile( VoiceData.VOIResearchComplete, path, "research_complete.ogg", true );
+	LoadSoundfile( VoiceData.VOIUnitStolen, path, "unit_stolen.ogg", true );
+	LoadSoundfile( VoiceData.VOIUnitDisabled, path, "unit_disabled.ogg", true );
+	LoadSoundfile( VoiceData.VOICommandoFailed1, path, "commando_failed1.ogg", true );
+	LoadSoundfile( VoiceData.VOICommandoFailed2, path, "commando_failed2.ogg", true );
+	LoadSoundfile( VoiceData.VOICommandoFailed3, path, "commando_failed3.ogg", true );
+	LoadSoundfile( VoiceData.VOIDisabled, path, "disabled.ogg", true );
+	LoadSoundfile( VoiceData.VOISaved, path, "saved.ogg", true );
+	LoadSoundfile( VoiceData.VOIStartNone, path, "start_none.ogg", true );
+	LoadSoundfile( VoiceData.VOIStartOne, path, "start_one.ogg", true );
+	LoadSoundfile( VoiceData.VOIStartMore, path, "start_more.ogg", true );
+	LoadSoundfile( VoiceData.VOIDetected1, path, "detected1.ogg", true );
+	LoadSoundfile( VoiceData.VOIDetected2, path, "detected2.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttackingUs, path, "attacking_us.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttackingUs2, path, "attacking_us2.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttackingUs3, path, "attacking_us3.ogg", true );
+	LoadSoundfile( VoiceData.VOIDestroyedUs, path, "destroyed_us.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttacking1, path, "attacking1.ogg", true );
+	LoadSoundfile( VoiceData.VOIAttacking2, path, "attacking2.ogg", true );
+	LoadSoundfile( VoiceData.VOILanding, path, "landing.ogg", true );
+	LoadSoundfile( VoiceData.VOISubDetected, path, "sub_detected.ogg", true );
+	LoadSoundfile( VoiceData.VOISurveying, path, "surveying.ogg", true );
+	LoadSoundfile( VoiceData.VOISurveying2, path, "surveying2.ogg", true );
+	LoadSoundfile( VoiceData.VOITurnEnd20Sec1, path, "turn_end_20_sec1.ogg", true );
+	LoadSoundfile( VoiceData.VOITurnEnd20Sec2, path, "turn_end_20_sec2.ogg", true );
+	LoadSoundfile( VoiceData.VOIUnitStolenByEnemy, path, "unit_stolen_by_enemy.ogg", true );
 	return 1;
 }
 
-static int LoadGraphics(const char* path)
+static int LoadGraphics( const char* path )
 {
-	Log.write ( "Loading Graphics", LOG_TYPE_INFO );
+	Log.write( "Loading Graphics", LOG_TYPE_INFO );
 	string stmp;
-	if (!DEDICATED_SERVER)
+	if ( !DEDICATED_SERVER )
 	{
-		Log.write ( "Gamegraphics...", LOG_TYPE_DEBUG );
-		if ( !LoadGraphicToSurface ( GraphicsData.gfx_Chand,path,"hand.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cno,path,"no.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cselect,path,"select.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cmove,path,"move.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Chelp,path,"help.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Ctransf,path,"transf.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cload,path,"load.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cmuni,path,"muni.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cband,path,"band_cur.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cactivate,path,"activate.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Crepair,path,"repair.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Csteal,path,"steal.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cdisable,path,"disable.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_Cattack,path,"attack.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_hud_stuff,path,"hud_stuff.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_hud_extra_players,path,"hud_extra_players.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_panel_top,path,"panel_top.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_panel_bottom,path,"panel_bottom.pcx" ) ||
-			!LoadGraphicToSurface ( GraphicsData.gfx_menu_stuff,path,"menu_stuff.pcx" ) )
+		Log.write( "Gamegraphics...", LOG_TYPE_DEBUG );
+		if ( !LoadGraphicToSurface( GraphicsData.gfx_Chand, path, "hand.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cno, path, "no.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cselect, path, "select.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cmove, path, "move.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Chelp, path, "help.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Ctransf, path, "transf.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cload, path, "load.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cmuni, path, "muni.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cband, path, "band_cur.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cactivate, path, "activate.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Crepair, path, "repair.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Csteal, path, "steal.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cdisable, path, "disable.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_Cattack, path, "attack.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_hud_stuff, path, "hud_stuff.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_hud_extra_players, path, "hud_extra_players.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_panel_top, path, "panel_top.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_panel_bottom, path, "panel_bottom.pcx" ) ||
+			 !LoadGraphicToSurface( GraphicsData.gfx_menu_stuff, path, "menu_stuff.pcx" ) )
 		{
 			return 0;
 		}
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil1,path,"pf_1.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil2,path,"pf_2.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil3,path,"pf_3.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil4,path,"pf_4.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil6,path,"pf_6.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil7,path,"pf_7.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil8,path,"pf_8.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_Cpfeil9,path,"pf_9.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_context_menu,path,"object_menu2.pcx");
-		LoadGraphicToSurface ( GraphicsData.gfx_destruction,path,"destruction.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_band_small_org,path,"band_small.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_band_small,path,"band_small.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_band_big_org,path,"band_big.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_band_big,path,"band_big.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_big_beton_org,path,"big_beton.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_big_beton,path,"big_beton.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_storage,path,"storage.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_storage_ground,path,"storage_ground.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_dialog,path,"dialog.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_edock,path,"edock.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_edepot,path,"edepot.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_ehangar,path,"ehangar.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_player_pc,path,"player_pc.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_player_human,path,"player_human.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_player_none,path,"player_none.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_exitpoints_org,path,"activate_field.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_exitpoints,path,"activate_field.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_player_select,path,"customgame_menu.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_menu_buttons,path,"menu_buttons.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_player_ready,path,"player_ready.pcx" );
-		LoadGraphicToSurface ( GraphicsData.gfx_hud_chatbox,path,"hud_chatbox.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil1, path, "pf_1.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil2, path, "pf_2.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil3, path, "pf_3.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil4, path, "pf_4.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil6, path, "pf_6.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil7, path, "pf_7.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil8, path, "pf_8.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_Cpfeil9, path, "pf_9.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_context_menu, path, "object_menu2.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_destruction, path, "destruction.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_band_small_org, path, "band_small.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_band_small, path, "band_small.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_band_big_org, path, "band_big.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_band_big, path, "band_big.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_big_beton_org, path, "big_beton.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_big_beton, path, "big_beton.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_storage, path, "storage.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_storage_ground, path, "storage_ground.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_dialog, path, "dialog.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_edock, path, "edock.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_edepot, path, "edepot.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_ehangar, path, "ehangar.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_player_pc, path, "player_pc.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_player_human, path, "player_human.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_player_none, path, "player_none.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_exitpoints, path, "activate_field.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_player_select, path, "customgame_menu.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_player_ready, path, "player_ready.pcx" );
+		LoadGraphicToSurface( GraphicsData.gfx_hud_chatbox, path, "hud_chatbox.pcx" );
 
 		GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
 		GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
 		GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
-		FileExists(GraphicsData.DialogPath.c_str());
-		FileExists(GraphicsData.Dialog2Path.c_str());
-		FileExists(GraphicsData.Dialog3Path.c_str());
+		FileExists( GraphicsData.DialogPath.c_str() );
+		FileExists( GraphicsData.Dialog2Path.c_str() );
+		FileExists( GraphicsData.Dialog3Path.c_str() );
 	}
 
 	// load colors even for dedicated server
 	// Colors:
-	Log.write ( "Colourgraphics...", LOG_TYPE_DEBUG );
+	Log.write( "Colourgraphics...", LOG_TYPE_DEBUG );
 	OtherData.colors = new SDL_Surface*[PLAYERCOLORS];
-	if(!OtherData.colors) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	LoadGraphicToSurface ( OtherData.colors[cl_red],path,"cl_red.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_blue],path,"cl_blue.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_green],path,"cl_green.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_grey],path,"cl_grey.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_orange],path,"cl_orange.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_yellow],path,"cl_yellow.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_purple],path,"cl_purple.pcx" );
-	LoadGraphicToSurface ( OtherData.colors[cl_aqua],path,"cl_aqua.pcx" );
+	if ( !OtherData.colors ) { Log.write( "Out of memory", cLog::eLOG_TYPE_MEM ); }
+	LoadGraphicToSurface( OtherData.colors[cl_red], path, "cl_red.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_blue], path, "cl_blue.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_green], path, "cl_green.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_grey], path, "cl_grey.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_orange], path, "cl_orange.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_yellow], path, "cl_yellow.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_purple], path, "cl_purple.pcx" );
+	LoadGraphicToSurface( OtherData.colors[cl_aqua], path, "cl_aqua.pcx" );
 
 	OtherData.colors_org = new SDL_Surface*[PLAYERCOLORS];
-	if(!OtherData.colors) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-	LoadGraphicToSurface ( OtherData.colors_org[cl_red],path,"cl_red.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_blue],path,"cl_blue.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_green],path,"cl_green.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_grey],path,"cl_grey.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_orange],path,"cl_orange.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_yellow],path,"cl_yellow.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_purple],path,"cl_purple.pcx" );
-	LoadGraphicToSurface ( OtherData.colors_org[cl_aqua],path,"cl_aqua.pcx" );
+	if ( !OtherData.colors ) { Log.write( "Out of memory", cLog::eLOG_TYPE_MEM ); }
+	LoadGraphicToSurface( OtherData.colors_org[cl_red], path, "cl_red.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_blue], path, "cl_blue.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_green], path, "cl_green.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_grey], path, "cl_grey.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_orange], path, "cl_orange.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_yellow], path, "cl_yellow.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_purple], path, "cl_purple.pcx" );
+	LoadGraphicToSurface( OtherData.colors_org[cl_aqua], path, "cl_aqua.pcx" );
 
 
-	if (!DEDICATED_SERVER)
+	if ( !DEDICATED_SERVER )
 	{
-		Log.write ( "Shadowgraphics...", LOG_TYPE_DEBUG );
+		Log.write( "Shadowgraphics...", LOG_TYPE_DEBUG );
 		// Shadow:
-		GraphicsData.gfx_shadow = SDL_CreateRGBSurface ( Video.getSurfaceType(), Video.getResolutionX(),
-			Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_FillRect ( GraphicsData.gfx_shadow, NULL, 0x0 );
-		SDL_SetAlpha ( GraphicsData.gfx_shadow, SDL_SRCALPHA, 50 );
-		GraphicsData.gfx_tmp = SDL_CreateRGBSurface ( Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0 );
-		SDL_SetColorKey ( GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF );
+		GraphicsData.gfx_shadow = SDL_CreateRGBSurface( Video.getSurfaceType(), Video.getResolutionX(),
+														Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0 );
+		SDL_FillRect( GraphicsData.gfx_shadow, NULL, 0x0 );
+		SDL_SetAlpha( GraphicsData.gfx_shadow, SDL_SRCALPHA, 50 );
+		GraphicsData.gfx_tmp = SDL_CreateRGBSurface( Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0 );
+		SDL_SetColorKey( GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF );
 
 		// Glas:
-		Log.write ( "Glassgraphic...", LOG_TYPE_DEBUG );
-		LoadGraphicToSurface ( GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx" );
-		SDL_SetAlpha ( GraphicsData.gfx_destruction_glas, SDL_SRCALPHA, 150 );
+		Log.write( "Glassgraphic...", LOG_TYPE_DEBUG );
+		LoadGraphicToSurface( GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx" );
+		SDL_SetAlpha( GraphicsData.gfx_destruction_glas, SDL_SRCALPHA, 150 );
 
 		// Waypoints:
-		Log.write ( "Waypointgraphics...", LOG_TYPE_DEBUG );
+		Log.write( "Waypointgraphics...", LOG_TYPE_DEBUG );
 		for ( int i = 0; i < 60; i++ )
 		{
-			OtherData.WayPointPfeile[0][i] = CreatePfeil ( 26,11,51,36,14,48,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[1][i] = CreatePfeil ( 14,14,49,14,31,49,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[2][i] = CreatePfeil ( 37,11,12,36,49,48,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[3][i] = CreatePfeil ( 49,14,49,49,14,31,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[4][i] = CreatePfeil ( 14,14,14,49,49,31,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[5][i] = CreatePfeil ( 15,14,52,26,27,51,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[6][i] = CreatePfeil ( 31,14,14,49,49,49,PFEIL_COLOR,64-i );
-			OtherData.WayPointPfeile[7][i] = CreatePfeil ( 48,14,36,51,11,26,PFEIL_COLOR,64-i );
+			OtherData.WayPointPfeile[0][i] = CreatePfeil( 26, 11, 51, 36, 14, 48, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[1][i] = CreatePfeil( 14, 14, 49, 14, 31, 49, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[2][i] = CreatePfeil( 37, 11, 12, 36, 49, 48, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[3][i] = CreatePfeil( 49, 14, 49, 49, 14, 31, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[4][i] = CreatePfeil( 14, 14, 14, 49, 49, 31, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[5][i] = CreatePfeil( 15, 14, 52, 26, 27, 51, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[6][i] = CreatePfeil( 31, 14, 14, 49, 49, 49, PFEIL_COLOR, 64 - i );
+			OtherData.WayPointPfeile[7][i] = CreatePfeil( 48, 14, 36, 51, 11, 26, PFEIL_COLOR, 64 - i );
 
-			OtherData.WayPointPfeileSpecial[0][i] = CreatePfeil ( 26,11,51,36,14,48,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[1][i] = CreatePfeil ( 14,14,49,14,31,49,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[2][i] = CreatePfeil ( 37,11,12,36,49,48,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[3][i] = CreatePfeil ( 49,14,49,49,14,31,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[4][i] = CreatePfeil ( 14,14,14,49,49,31,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[5][i] = CreatePfeil ( 15,14,52,26,27,51,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[6][i] = CreatePfeil ( 31,14,14,49,49,49,PFEILS_COLOR,64-i );
-			OtherData.WayPointPfeileSpecial[7][i] = CreatePfeil ( 48,14,36,51,11,26,PFEILS_COLOR,64-i );
+			OtherData.WayPointPfeileSpecial[0][i] = CreatePfeil( 26, 11, 51, 36, 14, 48, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[1][i] = CreatePfeil( 14, 14, 49, 14, 31, 49, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[2][i] = CreatePfeil( 37, 11, 12, 36, 49, 48, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[3][i] = CreatePfeil( 49, 14, 49, 49, 14, 31, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[4][i] = CreatePfeil( 14, 14, 14, 49, 49, 31, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[5][i] = CreatePfeil( 15, 14, 52, 26, 27, 51, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[6][i] = CreatePfeil( 31, 14, 14, 49, 49, 49, PFEILS_COLOR, 64 - i );
+			OtherData.WayPointPfeileSpecial[7][i] = CreatePfeil( 48, 14, 36, 51, 11, 26, PFEILS_COLOR, 64 - i );
 		}
 
 		// Resources:
-		Log.write ( "Resourcegraphics...", LOG_TYPE_DEBUG );
+		Log.write( "Resourcegraphics...", LOG_TYPE_DEBUG );
 		//metal
-		if ( LoadGraphicToSurface ( ResourceData.res_metal_org,path,"res.pcx" ) == 1 )
+		if ( LoadGraphicToSurface( ResourceData.res_metal_org, path, "res.pcx" ) == 1 )
 		{
-			LoadGraphicToSurface ( ResourceData.res_metal,path,"res.pcx" );
-			SDL_SetColorKey ( ResourceData.res_metal,SDL_SRCCOLORKEY,0xFF00FF );
+			LoadGraphicToSurface( ResourceData.res_metal, path, "res.pcx" );
+			SDL_SetColorKey( ResourceData.res_metal, SDL_SRCCOLORKEY, 0xFF00FF );
 		}
 
 		//fuel
-		if ( LoadGraphicToSurface ( ResourceData.res_gold_org,path,"gold.pcx" ) == 1 )
+		if ( LoadGraphicToSurface( ResourceData.res_gold_org, path, "gold.pcx" ) == 1 )
 		{
-			LoadGraphicToSurface ( ResourceData.res_gold,path,"gold.pcx" );
-			SDL_SetColorKey ( ResourceData.res_gold,SDL_SRCCOLORKEY,0xFF00FF );
+			LoadGraphicToSurface( ResourceData.res_gold, path, "gold.pcx" );
+			SDL_SetColorKey( ResourceData.res_gold, SDL_SRCCOLORKEY, 0xFF00FF );
 		}
 
 		//fuel
-		if ( LoadGraphicToSurface ( ResourceData.res_oil_org,path,"fuel.pcx" ) == 1 )
+		if ( LoadGraphicToSurface( ResourceData.res_oil_org, path, "fuel.pcx" ) == 1 )
 		{
-			LoadGraphicToSurface ( ResourceData.res_oil,path,"fuel.pcx" );
-			SDL_SetColorKey ( ResourceData.res_oil,SDL_SRCCOLORKEY,0xFF00FF );
+			LoadGraphicToSurface( ResourceData.res_oil, path, "fuel.pcx" );
+			SDL_SetColorKey( ResourceData.res_oil, SDL_SRCCOLORKEY, 0xFF00FF );
 		}
 	}
 
@@ -947,29 +947,29 @@ static int LoadGraphics(const char* path)
 
 static int LoadVehicles()
 {
-	Log.write ( "Loading Vehicles", LOG_TYPE_INFO );
+	Log.write( "Loading Vehicles", LOG_TYPE_INFO );
 
 	string sVehiclePath;
 	char sztmp[16];
-	const char *pszTmp;
+	const char* pszTmp;
 	TiXmlDocument VehiclesXml;
-	TiXmlNode *pXmlNode;
-	TiXmlElement * pXmlElement;
+	TiXmlNode* pXmlNode;
+	TiXmlElement* pXmlElement;
 
 	string sTmpString = cSettings::getInstance().getVehiclesPath();
 	sTmpString += PATH_DELIMITER "vehicles.xml";
-	if( !FileExists( sTmpString.c_str() ) )
+	if ( !FileExists( sTmpString.c_str() ) )
 	{
 		return 0;
 	}
-	if ( !VehiclesXml.LoadFile ( sTmpString.c_str() ) )
+	if ( !VehiclesXml.LoadFile( sTmpString.c_str() ) )
 	{
-		Log.write("Can't load vehicles.xml!",LOG_TYPE_ERROR);
+		Log.write( "Can't load vehicles.xml!", LOG_TYPE_ERROR );
 		return 0;
 	}
-	if(!(pXmlNode = VehiclesXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" )))
+	if ( !( pXmlNode = VehiclesXml.FirstChildElement( "VehicleData" )->FirstChildElement( "Vehicles" ) ) )
 	{
-		Log.write("Can't read \"VehicleData->Vehicles\" node!",LOG_TYPE_ERROR);
+		Log.write( "Can't read \"VehicleData->Vehicles\" node!", LOG_TYPE_ERROR );
 		return 0;
 	}
 	// read vehicles.xml
@@ -980,56 +980,56 @@ static int LoadVehicles()
 	if ( pXmlElement )
 	{
 		pszTmp = pXmlElement->Attribute( "directory" );
-		if(pszTmp != 0)
-			VehicleList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			VehicleList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString, LOG_TYPE_WARNING);
+			sTmpString.insert( 38, pXmlNode->Value() );
+			Log.write( sTmpString, LOG_TYPE_WARNING );
 		}
 		pszTmp = pXmlElement->Attribute( "num" );
-		if(pszTmp != 0)
-			IDList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			IDList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString, LOG_TYPE_WARNING);
+			sTmpString.insert( 32, pXmlNode->Value() );
+			Log.write( sTmpString, LOG_TYPE_WARNING );
 		}
 	}
 	else
-		Log.write("No vehicles defined in vehicles.xml!",LOG_TYPE_WARNING);
-	while ( pXmlNode != NULL)
+		Log.write( "No vehicles defined in vehicles.xml!", LOG_TYPE_WARNING );
+	while ( pXmlNode != NULL )
 	{
 		pXmlNode = pXmlNode->NextSibling();
-		if ( pXmlNode == NULL)
+		if ( pXmlNode == NULL )
 			break;
-		if( pXmlNode->Type() !=1 )
+		if ( pXmlNode->Type() != 1 )
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute( "directory" );
-		if(pszTmp != 0)
-			VehicleList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			VehicleList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString, LOG_TYPE_WARNING);
+			sTmpString.insert( 38, pXmlNode->Value() );
+			Log.write( sTmpString, LOG_TYPE_WARNING );
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
-		if(pszTmp != 0)
-			IDList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			IDList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString, LOG_TYPE_WARNING);
+			sTmpString.insert( 32, pXmlNode->Value() );
+			Log.write( sTmpString, LOG_TYPE_WARNING );
 		}
 	}
 	// load found units
 	UnitsData.vehicle.Clear();
-	UnitsData.vehicle.Reserve(VehicleList.Size());
-	for ( unsigned int i = 0; i < VehicleList.Size(); i++)
+	UnitsData.vehicle.Reserve( VehicleList.Size() );
+	for ( unsigned int i = 0; i < VehicleList.Size(); i++ )
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
@@ -1038,108 +1038,108 @@ static int LoadVehicles()
 
 		// Prepare memory for next unit
 		UnitsData.vehicle.Add( sVehicle() );
-		sVehicle &v = UnitsData.vehicle[i];
+		sVehicle& v = UnitsData.vehicle[i];
 
-		Log.write("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData(&v.data, sVehiclePath.c_str(), atoi(IDList[i].c_str()));
-		if ( !translateUnitData(v.data.ID, true) )
-			Log.write("Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING );
+		Log.write( "Reading values from XML", cLog::eLOG_TYPE_DEBUG );
+		LoadUnitData( &v.data, sVehiclePath.c_str(), atoi( IDList[i].c_str() ) );
+		if ( !translateUnitData( v.data.ID, true ) )
+			Log.write( "Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING );
 
-		Log.write("Loading graphics", cLog::eLOG_TYPE_DEBUG);
+		Log.write( "Loading graphics", cLog::eLOG_TYPE_DEBUG );
 
 		// laod infantery graphics
-		if (v.data.animationMovement)
+		if ( v.data.animationMovement )
 		{
 			SDL_Rect rcDest;
-			for (int n = 0; n < 8; n++)
+			for ( int n = 0; n < 8; n++ )
 			{
-				v.img[n] = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_FillRect(v.img[n], NULL, 0xFF00FF);
+				v.img[n] = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0 );
+				SDL_SetColorKey( v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_FillRect( v.img[n], NULL, 0xFF00FF );
 
 				for ( int j = 0; j < 13; j++ )
 				{
 					sTmpString = sVehiclePath;
-					sprintf(sztmp, "img%d_%.2d.pcx", n, j);
+					sprintf( sztmp, "img%d_%.2d.pcx", n, j );
 					sTmpString += sztmp;
 
 
 
-					if(FileExists(sTmpString.c_str()))
+					if ( FileExists( sTmpString.c_str() ) )
 					{
-						AutoSurface sfTempSurface(LoadPCX(sTmpString));
-						if(!sfTempSurface)
+						AutoSurface sfTempSurface( LoadPCX( sTmpString ) );
+						if ( !sfTempSurface )
 						{
-							Log.write(SDL_GetError(), cLog::eLOG_TYPE_WARNING);
+							Log.write( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
 						}
 						else
 						{
-							rcDest.x = 64*j + 32 - sfTempSurface->w/2;
-							rcDest.y = 32 - sfTempSurface->h/2;
-							SDL_BlitSurface(sfTempSurface, NULL, v.img[n], &rcDest);
+							rcDest.x = 64 * j + 32 - sfTempSurface->w / 2;
+							rcDest.y = 32 - sfTempSurface->h / 2;
+							SDL_BlitSurface( sfTempSurface, NULL, v.img[n], &rcDest );
 						}
 					}
 				}
-				v.img_org[n] = SDL_CreateRGBSurface ( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64*13, 64, Video.getColDepth(), 0, 0, 0, 0 );
-				SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_FillRect(v.img_org[n], NULL, 0xFFFFFF);
-				SDL_BlitSurface(v.img[n], NULL, v.img_org[n], NULL);
+				v.img_org[n] = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0 );
+				SDL_SetColorKey( v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_FillRect( v.img_org[n], NULL, 0xFFFFFF );
+				SDL_BlitSurface( v.img[n], NULL, v.img_org[n], NULL );
 
-				v.shw[n] = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey(v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF);
-				SDL_FillRect(v.shw[n], NULL, 0xFF00FF);
-				v.shw_org[n] = SDL_CreateRGBSurface(Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0);
-				SDL_SetColorKey(v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF);
-				SDL_FillRect(v.shw_org[n], NULL, 0xFF00FF);
+				v.shw[n] = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0 );
+				SDL_SetColorKey( v.shw[n], SDL_SRCCOLORKEY, 0xFF00FF );
+				SDL_FillRect( v.shw[n], NULL, 0xFF00FF );
+				v.shw_org[n] = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, 64 * 13, 64, Video.getColDepth(), 0, 0, 0, 0 );
+				SDL_SetColorKey( v.shw_org[n], SDL_SRCCOLORKEY, 0xFF00FF );
+				SDL_FillRect( v.shw_org[n], NULL, 0xFF00FF );
 
-				int *ptr;
-				rcDest.x=3;
-				rcDest.y=3;
-				SDL_BlitSurface(v.img_org[n], NULL, v.shw_org[n], &rcDest);
-				SDL_LockSurface(v.shw_org[n]);
-				ptr = (int*)(v.shw_org[n]->pixels);
-				for ( int j = 0; j < 64*13*64; j++ )
+				int* ptr;
+				rcDest.x = 3;
+				rcDest.y = 3;
+				SDL_BlitSurface( v.img_org[n], NULL, v.shw_org[n], &rcDest );
+				SDL_LockSurface( v.shw_org[n] );
+				ptr = ( int* )( v.shw_org[n]->pixels );
+				for ( int j = 0; j < 64 * 13 * 64; j++ )
 				{
 					if ( *ptr != 0xFF00FF )
-						*ptr=0;
+						*ptr = 0;
 					ptr++;
 				}
-				SDL_UnlockSurface(v.shw_org[n]);
-				SDL_BlitSurface(v.shw_org[n], NULL, v.shw[n], NULL);
-				SDL_SetAlpha(v.shw_org[n], SDL_SRCALPHA, 50);
-				SDL_SetAlpha(v.shw[n], SDL_SRCALPHA, 50);
+				SDL_UnlockSurface( v.shw_org[n] );
+				SDL_BlitSurface( v.shw_org[n], NULL, v.shw[n], NULL );
+				SDL_SetAlpha( v.shw_org[n], SDL_SRCALPHA, 50 );
+				SDL_SetAlpha( v.shw[n], SDL_SRCALPHA, 50 );
 			}
 		}
 		// load other vehicle graphics
 		else
 		{
-			for(int n = 0; n < 8; n++)
+			for ( int n = 0; n < 8; n++ )
 			{
 				// load image
 				sTmpString = sVehiclePath;
-				sprintf(sztmp,"img%d.pcx",n);
+				sprintf( sztmp, "img%d.pcx", n );
 				sTmpString += sztmp;
-				Log.write(sTmpString, cLog::eLOG_TYPE_DEBUG);
-				if(FileExists(sTmpString.c_str()))
+				Log.write( sTmpString, cLog::eLOG_TYPE_DEBUG );
+				if ( FileExists( sTmpString.c_str() ) )
 				{
-					v.img_org[n] = LoadPCX(sTmpString);
-					v.img[n] = CloneSDLSurface(v.img_org[n]);
-					SDL_SetColorKey(v.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF);
-					SDL_SetColorKey(v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF);
+					v.img_org[n] = LoadPCX( sTmpString );
+					v.img[n] = CloneSDLSurface( v.img_org[n] );
+					SDL_SetColorKey( v.img_org[n], SDL_SRCCOLORKEY, 0xFFFFFF );
+					SDL_SetColorKey( v.img[n], SDL_SRCCOLORKEY, 0xFFFFFF );
 				}
 				else
 				{
-					Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+					Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 					return -1;
 				}
 
 				// load shadow
-				sTmpString.replace(sTmpString.length()-8,3,"shw");
-				if(FileExists(sTmpString.c_str()))
+				sTmpString.replace( sTmpString.length() - 8, 3, "shw" );
+				if ( FileExists( sTmpString.c_str() ) )
 				{
-					v.shw_org[n] = LoadPCX(sTmpString);
-					v.shw[n] = CloneSDLSurface(v.shw_org[n]);
-					SDL_SetAlpha(v.shw[n], SDL_SRCALPHA, 50);
+					v.shw_org[n] = LoadPCX( sTmpString );
+					v.shw[n] = CloneSDLSurface( v.shw_org[n] );
+					SDL_SetAlpha( v.shw[n], SDL_SRCALPHA, 50 );
 				}
 				else
 				{
@@ -1151,58 +1151,58 @@ static int LoadVehicles()
 		// load video
 		sTmpString = sVehiclePath;
 		sTmpString += "video.flc";
-		Log.write("Loading video " + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if( !FileExists(sTmpString.c_str()))
+		Log.write( "Loading video " + sTmpString, cLog::eLOG_TYPE_DEBUG );
+		if ( !FileExists( sTmpString.c_str() ) )
 		{
 			sTmpString = "";
 		}
-		v.FLCFile = new char[sTmpString.length()+1];
-		if (!v.FLCFile) { Log.write("Out of memory", cLog::eLOG_TYPE_MEM); }
-		strcpy(v.FLCFile, sTmpString.c_str());
+		v.FLCFile = new char[sTmpString.length() + 1];
+		if ( !v.FLCFile ) { Log.write( "Out of memory", cLog::eLOG_TYPE_MEM ); }
+		strcpy( v.FLCFile, sTmpString.c_str() );
 
 
 		// load infoimage
 		sTmpString = sVehiclePath;
 		sTmpString += "info.pcx";
-		Log.write("Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if(FileExists(sTmpString.c_str()))
+		Log.write( "Loading portrait" + sTmpString, cLog::eLOG_TYPE_DEBUG );
+		if ( FileExists( sTmpString.c_str() ) )
 		{
-			v.info = LoadPCX(sTmpString);
+			v.info = LoadPCX( sTmpString );
 		}
 		else
 		{
-			Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 			return -1;
 		}
 
 		// load storageimage
 		sTmpString = sVehiclePath;
 		sTmpString += "store.pcx";
-		Log.write("Loading storageportrait" +sTmpString, cLog::eLOG_TYPE_DEBUG);
-		if(FileExists(sTmpString.c_str()))
+		Log.write( "Loading storageportrait" + sTmpString, cLog::eLOG_TYPE_DEBUG );
+		if ( FileExists( sTmpString.c_str() ) )
 		{
-			v.storage = LoadPCX(sTmpString);
+			v.storage = LoadPCX( sTmpString );
 		}
 		else
 		{
-			Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 			return -1;
 		}
 
 		// load overlaygraphics if necessary
-		Log.write("Loading overlay", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.hasOverlay)
+		Log.write( "Loading overlay", cLog::eLOG_TYPE_DEBUG );
+		if ( v.data.hasOverlay )
 		{
 			sTmpString = sVehiclePath;
 			sTmpString += "overlay.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.overlay_org = LoadPCX(sTmpString);
-				v.overlay = CloneSDLSurface(v.overlay_org);
+				v.overlay_org = LoadPCX( sTmpString );
+				v.overlay = CloneSDLSurface( v.overlay_org );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.overlay_org       = NULL;
 				v.overlay           = NULL;
 				v.data.hasOverlay = false;
@@ -1215,22 +1215,22 @@ static int LoadVehicles()
 		}
 
 		// load buildgraphics if necessary
-		Log.write("Loading buildgraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.buildUpGraphic)
+		Log.write( "Loading buildgraphics", cLog::eLOG_TYPE_DEBUG );
+		if ( v.data.buildUpGraphic )
 		{
 			// load image
 			sTmpString = sVehiclePath;
 			sTmpString += "build.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.build_org = LoadPCX(sTmpString);
-				v.build = CloneSDLSurface(v.build_org);
-				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.build_org = LoadPCX( sTmpString );
+				v.build = CloneSDLSurface( v.build_org );
+				SDL_SetColorKey( v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_SetColorKey( v.build, SDL_SRCCOLORKEY, 0xFFFFFF );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.build_org             = NULL;
 				v.build                 = NULL;
 				v.data.buildUpGraphic = false;
@@ -1238,15 +1238,15 @@ static int LoadVehicles()
 			// load shadow
 			sTmpString = sVehiclePath;
 			sTmpString += "build_shw.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.build_shw_org = LoadPCX(sTmpString);
-				v.build_shw = CloneSDLSurface(v.build_shw_org);
-				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
+				v.build_shw_org = LoadPCX( sTmpString );
+				v.build_shw = CloneSDLSurface( v.build_shw_org );
+				SDL_SetAlpha( v.build_shw, SDL_SRCALPHA, 50 );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.build_shw_org         = NULL;
 				v.build_shw             = NULL;
 				v.data.buildUpGraphic = false;
@@ -1260,22 +1260,22 @@ static int LoadVehicles()
 			v.build_shw     = NULL;
 		}
 		// load cleargraphics if necessary
-		Log.write("Loading cleargraphics", cLog::eLOG_TYPE_DEBUG);
-		if (v.data.canClearArea)
+		Log.write( "Loading cleargraphics", cLog::eLOG_TYPE_DEBUG );
+		if ( v.data.canClearArea )
 		{
 			// load image (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.clear_small_org = LoadPCX(sTmpString);
-				v.clear_small = CloneSDLSurface(v.clear_small_org);
-				SDL_SetColorKey(v.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey(v.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.clear_small_org = LoadPCX( sTmpString );
+				v.clear_small = CloneSDLSurface( v.clear_small_org );
+				SDL_SetColorKey( v.clear_small_org, SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_SetColorKey( v.clear_small, SDL_SRCCOLORKEY, 0xFFFFFF );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.clear_small_org      = NULL;
 				v.clear_small          = NULL;
 				v.data.canClearArea = false;
@@ -1283,15 +1283,15 @@ static int LoadVehicles()
 			// load shadow (small)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_small_shw.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.clear_small_shw_org = LoadPCX(sTmpString);
-				v.clear_small_shw = CloneSDLSurface(v.clear_small_shw_org);
-				SDL_SetAlpha(v.clear_small_shw, SDL_SRCALPHA, 50);
+				v.clear_small_shw_org = LoadPCX( sTmpString );
+				v.clear_small_shw = CloneSDLSurface( v.clear_small_shw_org );
+				SDL_SetAlpha( v.clear_small_shw, SDL_SRCALPHA, 50 );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.clear_small_shw_org  = NULL;
 				v.clear_small_shw      = NULL;
 				v.data.canClearArea = false;
@@ -1299,16 +1299,16 @@ static int LoadVehicles()
 			// load image (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.build_org = LoadPCX(sTmpString);
-				v.build = CloneSDLSurface(v.build_org);
-				SDL_SetColorKey(v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-				SDL_SetColorKey(v.build, SDL_SRCCOLORKEY, 0xFFFFFF);
+				v.build_org = LoadPCX( sTmpString );
+				v.build = CloneSDLSurface( v.build_org );
+				SDL_SetColorKey( v.build_org, SDL_SRCCOLORKEY, 0xFFFFFF );
+				SDL_SetColorKey( v.build, SDL_SRCCOLORKEY, 0xFFFFFF );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.build_org            = NULL;
 				v.build                = NULL;
 				v.data.canClearArea = false;
@@ -1316,15 +1316,15 @@ static int LoadVehicles()
 			// load shadow (big)
 			sTmpString = sVehiclePath;
 			sTmpString += "clear_big_shw.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				v.build_shw_org = LoadPCX(sTmpString);
-				v.build_shw = CloneSDLSurface(v.build_shw_org);
-				SDL_SetAlpha(v.build_shw, SDL_SRCALPHA, 50);
+				v.build_shw_org = LoadPCX( sTmpString );
+				v.build_shw = CloneSDLSurface( v.build_shw_org );
+				SDL_SetAlpha( v.build_shw, SDL_SRCALPHA, 50 );
 			}
 			else
 			{
-				Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING);
+				Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_WARNING );
 				v.build_shw_org        = NULL;
 				v.build_shw            = NULL;
 				v.data.canClearArea = false;
@@ -1339,35 +1339,35 @@ static int LoadVehicles()
 		}
 
 		// load sounds
-		Log.write("Loading sounds", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitSoundfile(v.Wait,       sVehiclePath.c_str(), "wait.ogg");
-		LoadUnitSoundfile(v.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg");
-		LoadUnitSoundfile(v.Start,      sVehiclePath.c_str(), "start.ogg");
-		LoadUnitSoundfile(v.StartWater, sVehiclePath.c_str(), "start_water.ogg");
-		LoadUnitSoundfile(v.Stop,       sVehiclePath.c_str(), "stop.ogg");
-		LoadUnitSoundfile(v.StopWater,  sVehiclePath.c_str(), "stop_water.ogg");
-		LoadUnitSoundfile(v.Drive,      sVehiclePath.c_str(), "drive.ogg");
-		LoadUnitSoundfile(v.DriveWater, sVehiclePath.c_str(), "drive_water.ogg");
-		LoadUnitSoundfile(v.Attack,     sVehiclePath.c_str(), "attack.ogg");
+		Log.write( "Loading sounds", cLog::eLOG_TYPE_DEBUG );
+		LoadUnitSoundfile( v.Wait,       sVehiclePath.c_str(), "wait.ogg" );
+		LoadUnitSoundfile( v.WaitWater,  sVehiclePath.c_str(), "wait_water.ogg" );
+		LoadUnitSoundfile( v.Start,      sVehiclePath.c_str(), "start.ogg" );
+		LoadUnitSoundfile( v.StartWater, sVehiclePath.c_str(), "start_water.ogg" );
+		LoadUnitSoundfile( v.Stop,       sVehiclePath.c_str(), "stop.ogg" );
+		LoadUnitSoundfile( v.StopWater,  sVehiclePath.c_str(), "stop_water.ogg" );
+		LoadUnitSoundfile( v.Drive,      sVehiclePath.c_str(), "drive.ogg" );
+		LoadUnitSoundfile( v.DriveWater, sVehiclePath.c_str(), "drive_water.ogg" );
+		LoadUnitSoundfile( v.Attack,     sVehiclePath.c_str(), "attack.ogg" );
 	}
 
-	for (unsigned int i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = (int)i;
+	for ( unsigned int i = 0 ; i < UnitsData.vehicle.Size(); ++i ) UnitsData.vehicle[i].nr = ( int )i;
 	return 1;
 }
 
-void translateClanData(int num)
+void translateClanData( int num )
 {
-	TiXmlNode * pXmlNode = NULL;
+	TiXmlNode* pXmlNode = NULL;
 	cClan* clan = NULL;
-	cClanData& clanData = cClanData::instance ();
-	clan = clanData.getClan(num);
+	cClanData& clanData = cClanData::instance();
+	clan = clanData.getClan( num );
 
-	if (clan)
+	if ( clan )
 	{
 		pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Clans" );
-		if(!pXmlNode)
+		if ( !pXmlNode )
 		{
-			Log.write("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
+			Log.write( "Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING );
 		}
 		else
 		{
@@ -1375,16 +1375,16 @@ void translateClanData(int num)
 
 			while ( pXmlNode )
 			{
-				if(atoi(pXmlNode->ToElement()->Attribute( "ID" )) == num)
+				if ( atoi( pXmlNode->ToElement()->Attribute( "ID" ) ) == num )
 				{
-					Log.write("Found clan translation for clan id "+iToStr(num), LOG_TYPE_DEBUG);
-					if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 )
+					Log.write( "Found clan translation for clan id " + iToStr( num ), LOG_TYPE_DEBUG );
+					if ( cSettings::getInstance().getLanguage().compare( "ENG" ) != 0 )
 					{
-						clan->setName(pXmlNode->ToElement()->Attribute("localized"));
+						clan->setName( pXmlNode->ToElement()->Attribute( "localized" ) );
 					}
 					else
 					{
-						clan->setName(pXmlNode->ToElement()->Attribute( "ENG" ));
+						clan->setName( pXmlNode->ToElement()->Attribute( "ENG" ) );
 					}
 					clan->setDescription( pXmlNode->ToElement()->GetText() );
 				}
@@ -1395,20 +1395,20 @@ void translateClanData(int num)
 	}
 	else
 	{
-		Log.write("Can't find clan id "+iToStr(num)+" for translation", LOG_TYPE_WARNING);
+		Log.write( "Can't find clan id " + iToStr( num ) + " for translation", LOG_TYPE_WARNING );
 	}
 }
 
-bool translateUnitData(sID ID, bool vehicle)
+bool translateUnitData( sID ID, bool vehicle )
 {
-	sUnitData *Data = NULL;
-	TiXmlNode * pXmlNode = NULL;
+	sUnitData* Data = NULL;
+	TiXmlNode* pXmlNode = NULL;
 	string sTmpString;
-	const char *TmpCharPtr;
+	const char* TmpCharPtr;
 
 	if ( vehicle )
 	{
-		for (size_t i = 0; i != UnitsData.vehicle.Size(); ++i)
+		for ( size_t i = 0; i != UnitsData.vehicle.Size(); ++i )
 		{
 			if ( UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart )
 			{
@@ -1419,7 +1419,7 @@ bool translateUnitData(sID ID, bool vehicle)
 	}
 	else
 	{
-		for (size_t i = 0; i != UnitsData.building.Size(); ++i)
+		for ( size_t i = 0; i != UnitsData.building.Size(); ++i )
 		{
 			if ( UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart )
 			{
@@ -1433,15 +1433,15 @@ bool translateUnitData(sID ID, bool vehicle)
 	pXmlNode = LanguageFile.FirstChild( "MAX_Language_File" )->FirstChildElement( "Units" );
 	if ( pXmlNode == NULL ) return false;
 	pXmlNode = pXmlNode->FirstChildElement();
-	while ( pXmlNode != NULL)
+	while ( pXmlNode != NULL )
 	{
 		TmpCharPtr = pXmlNode->ToElement()->Attribute( "ID" );
 		if ( TmpCharPtr == NULL ) return false;
 		sTmpString = TmpCharPtr;
 
-		if( atoi( sTmpString.substr( 0,sTmpString.find( " ",0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ",0 ),sTmpString.length() ).c_str() ) == ID.iSecondPart )
+		if ( atoi( sTmpString.substr( 0, sTmpString.find( " ", 0 ) ).c_str() ) == ID.iFirstPart && atoi( sTmpString.substr( sTmpString.find( " ", 0 ), sTmpString.length() ).c_str() ) == ID.iSecondPart )
 		{
-			if( cSettings::getInstance().getLanguage().compare ( "ENG" ) != 0 ) TmpCharPtr = pXmlNode->ToElement()->Attribute( "localized" );
+			if ( cSettings::getInstance().getLanguage().compare( "ENG" ) != 0 ) TmpCharPtr = pXmlNode->ToElement()->Attribute( "localized" );
 			else TmpCharPtr = pXmlNode->ToElement()->Attribute( "ENG" );
 			if ( TmpCharPtr == NULL ) return false;
 			Data->name = TmpCharPtr;
@@ -1450,11 +1450,11 @@ bool translateUnitData(sID ID, bool vehicle)
 			if ( TmpCharPtr == NULL ) return false;
 			sTmpString = TmpCharPtr;
 
-			size_t iPosition = sTmpString.find("\\n",0);
-			while(iPosition != string::npos)
+			size_t iPosition = sTmpString.find( "\\n", 0 );
+			while ( iPosition != string::npos )
 			{
 				sTmpString.replace( iPosition, 2, "\n" );
-				iPosition = sTmpString.find("\\n",iPosition);
+				iPosition = sTmpString.find( "\\n", iPosition );
 			}
 			Data->description =  sTmpString;
 		}
@@ -1466,29 +1466,29 @@ bool translateUnitData(sID ID, bool vehicle)
 
 static int LoadBuildings()
 {
-	Log.write ( "Loading Buildings", LOG_TYPE_INFO );
+	Log.write( "Loading Buildings", LOG_TYPE_INFO );
 
 	string sTmpString, sBuildingPath;
-	const char *pszTmp;
+	const char* pszTmp;
 	TiXmlDocument BuildingsXml;
-	TiXmlNode *pXmlNode;
-	TiXmlElement * pXmlElement;
+	TiXmlNode* pXmlNode;
+	TiXmlElement* pXmlElement;
 
 	// read buildings.xml
 	sTmpString = cSettings::getInstance().getBuildingsPath();
 	sTmpString += PATH_DELIMITER "buildings.xml";
-	if( !FileExists( sTmpString.c_str() ) )
+	if ( !FileExists( sTmpString.c_str() ) )
 	{
 		return 0;
 	}
-	if ( !BuildingsXml.LoadFile ( sTmpString.c_str() ) )
+	if ( !BuildingsXml.LoadFile( sTmpString.c_str() ) )
 	{
-		Log.write("Can't load buildings.xml!",LOG_TYPE_ERROR);
+		Log.write( "Can't load buildings.xml!", LOG_TYPE_ERROR );
 		return 0;
 	}
-	if(!(pXmlNode = BuildingsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" )))
+	if ( !( pXmlNode = BuildingsXml.FirstChildElement( "BuildingsData" )->FirstChildElement( "Buildings" ) ) )
 	{
-		Log.write("Can't read \"BuildingData->Building\" node!",LOG_TYPE_ERROR);
+		Log.write( "Can't read \"BuildingData->Building\" node!", LOG_TYPE_ERROR );
 		return 0;
 	}
 	cList<string> BuildingList;
@@ -1496,98 +1496,98 @@ static int LoadBuildings()
 	pXmlNode = pXmlNode->FirstChildElement();
 	if ( !pXmlNode )
 	{
-		Log.write("There are no buildings in the buildings.xml defined",LOG_TYPE_ERROR);
+		Log.write( "There are no buildings in the buildings.xml defined", LOG_TYPE_ERROR );
 		return 1;
 	}
 	pXmlElement = pXmlNode->ToElement();
 	if ( pXmlElement )
 	{
 		pszTmp = pXmlElement->Attribute( "directory" );
-		if(pszTmp != 0)
-			BuildingList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			BuildingList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			sTmpString.insert( 38, pXmlNode->Value() );
+			Log.write( sTmpString.c_str(), LOG_TYPE_WARNING );
 		}
 		pszTmp = pXmlElement->Attribute( "num" );
-		if(pszTmp != 0)
-			IDList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			IDList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			sTmpString.insert( 32, pXmlNode->Value() );
+			Log.write( sTmpString.c_str(), LOG_TYPE_WARNING );
 		}
 
 		pszTmp = pXmlNode->ToElement()->Attribute( "special" );
 		if ( pszTmp != 0 )
 		{
 			string specialString = pszTmp;
-			if ( specialString.compare ( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else Log.write ( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
+			if ( specialString.compare( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else Log.write( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
 		}
 	}
 	else
-		Log.write("No buildings defined in buildings.xml!",LOG_TYPE_WARNING);
-	while ( pXmlNode != NULL)
+		Log.write( "No buildings defined in buildings.xml!", LOG_TYPE_WARNING );
+	while ( pXmlNode != NULL )
 	{
 		pXmlNode = pXmlNode->NextSibling();
-		if ( pXmlNode == NULL)
+		if ( pXmlNode == NULL )
 			break;
-		if( pXmlNode->Type() !=1 )
+		if ( pXmlNode->Type() != 1 )
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute( "directory" );
-		if(pszTmp != 0)
-			BuildingList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			BuildingList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert(38,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			sTmpString.insert( 38, pXmlNode->Value() );
+			Log.write( sTmpString.c_str(), LOG_TYPE_WARNING );
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute( "num" );
-		if(pszTmp != 0)
-			IDList.Add(pszTmp);
+		if ( pszTmp != 0 )
+			IDList.Add( pszTmp );
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert(32,pXmlNode->Value());
-			Log.write(sTmpString.c_str(),LOG_TYPE_WARNING);
+			sTmpString.insert( 32, pXmlNode->Value() );
+			Log.write( sTmpString.c_str(), LOG_TYPE_WARNING );
 		}
 
 		pszTmp = pXmlNode->ToElement()->Attribute( "special" );
 		if ( pszTmp != 0 )
 		{
 			string specialString = pszTmp;
-			if ( specialString.compare ( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else if ( specialString.compare ( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi ( IDList[IDList.Size()-1].c_str() );
-			else Log.write ( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
+			if ( specialString.compare( "mine" ) == 0 ) specialIDMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "energy" ) == 0 ) specialIDSmallGen.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "connector" ) == 0 ) specialIDConnector.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "landmine" ) == 0 ) specialIDLandMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "seamine" ) == 0 ) specialIDSeaMine.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else if ( specialString.compare( "smallBeton" ) == 0 ) specialIDSmallBeton.iSecondPart = atoi( IDList[IDList.Size() - 1].c_str() );
+			else Log.write( "Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING );
 		}
 	}
 
-	if ( specialIDMine.iSecondPart == 0 ) Log.write ( "special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING );
-	if ( specialIDSmallGen.iSecondPart == 0 ) Log.write ( "special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING );
-	if ( specialIDConnector.iSecondPart == 0 ) Log.write ( "special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING );
-	if ( specialIDLandMine.iSecondPart == 0 ) Log.write ( "special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING );
-	if ( specialIDSeaMine.iSecondPart == 0 ) Log.write ( "special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING );
-	if ( specialIDSmallBeton.iSecondPart == 0 ) Log.write ( "special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDMine.iSecondPart == 0 ) Log.write( "special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSmallGen.iSecondPart == 0 ) Log.write( "special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDConnector.iSecondPart == 0 ) Log.write( "special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDLandMine.iSecondPart == 0 ) Log.write( "special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSeaMine.iSecondPart == 0 ) Log.write( "special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING );
+	if ( specialIDSmallBeton.iSecondPart == 0 ) Log.write( "special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING );
 
 	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
 	// load found units
 	UnitsData.building.Clear();
-	UnitsData.building.Reserve(BuildingList.Size());
-	for( unsigned int i = 0; i < BuildingList.Size(); i++)
+	UnitsData.building.Reserve( BuildingList.Size() );
+	for ( unsigned int i = 0; i < BuildingList.Size(); i++ )
 	{
 		sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
@@ -1595,59 +1595,59 @@ static int LoadBuildings()
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.building.Add(sBuilding());
+		UnitsData.building.Add( sBuilding() );
 
 		sBuilding& b = UnitsData.building.Back();
-		LoadUnitData(&b.data, sBuildingPath.c_str(), atoi(IDList[i].c_str()));
-		translateUnitData(b.data.ID, false);
+		LoadUnitData( &b.data, sBuildingPath.c_str(), atoi( IDList[i].c_str() ) );
+		translateUnitData( b.data.ID, false );
 
 		// load img
 		sTmpString = sBuildingPath;
 		sTmpString += "img.pcx";
-		if(FileExists(sTmpString.c_str()))
+		if ( FileExists( sTmpString.c_str() ) )
 		{
-			b.img_org = LoadPCX(sTmpString);
-			b.img = CloneSDLSurface(b.img_org);
-			SDL_SetColorKey(b.img_org, SDL_SRCCOLORKEY, 0xFFFFFF);
-			SDL_SetColorKey(b.img, SDL_SRCCOLORKEY, 0xFFFFFF);
+			b.img_org = LoadPCX( sTmpString );
+			b.img = CloneSDLSurface( b.img_org );
+			SDL_SetColorKey( b.img_org, SDL_SRCCOLORKEY, 0xFFFFFF );
+			SDL_SetColorKey( b.img, SDL_SRCCOLORKEY, 0xFFFFFF );
 		}
 		else
 		{
-			Log.write("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
+			Log.write( "Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR );
 			return -1;
 		}
 		// load shadow
 		sTmpString = sBuildingPath;
 		sTmpString += "shw.pcx";
-		if(FileExists(sTmpString.c_str()))
+		if ( FileExists( sTmpString.c_str() ) )
 		{
-			b.shw_org = LoadPCX(sTmpString);
-			b.shw     = CloneSDLSurface(b.shw_org);
-			SDL_SetAlpha(b.shw, SDL_SRCALPHA, 50);
+			b.shw_org = LoadPCX( sTmpString );
+			b.shw     = CloneSDLSurface( b.shw_org );
+			SDL_SetAlpha( b.shw, SDL_SRCALPHA, 50 );
 		}
 
 		// load video
 		sTmpString = sBuildingPath;
 		sTmpString += "video.pcx";
-		if(FileExists(sTmpString.c_str()))
-			b.video = LoadPCX(sTmpString);
+		if ( FileExists( sTmpString.c_str() ) )
+			b.video = LoadPCX( sTmpString );
 
 		// load infoimage
 		sTmpString = sBuildingPath;
 		sTmpString += "info.pcx";
-		if(FileExists(sTmpString.c_str()))
-			b.info = LoadPCX(sTmpString);
+		if ( FileExists( sTmpString.c_str() ) )
+			b.info = LoadPCX( sTmpString );
 
 		// load effectgraphics if necessary
-		if (b.data.powerOnGraphic)
+		if ( b.data.powerOnGraphic )
 		{
 			sTmpString = sBuildingPath;
 			sTmpString += "effect.pcx";
-			if(FileExists(sTmpString.c_str()))
+			if ( FileExists( sTmpString.c_str() ) )
 			{
-				b.eff_org = LoadPCX(sTmpString);
-				b.eff = CloneSDLSurface(b.eff_org);
-				SDL_SetAlpha(b.eff, SDL_SRCALPHA, 10);
+				b.eff_org = LoadPCX( sTmpString );
+				b.eff = CloneSDLSurface( b.eff_org );
+				SDL_SetAlpha( b.eff, SDL_SRCALPHA, 10 );
 			}
 		}
 		else
@@ -1657,11 +1657,11 @@ static int LoadBuildings()
 		}
 
 		// load sounds
-		LoadUnitSoundfile(b.Wait,   sBuildingPath.c_str(), "wait.ogg");
-		LoadUnitSoundfile(b.Start,   sBuildingPath.c_str(), "start.ogg");
-		LoadUnitSoundfile(b.Running, sBuildingPath.c_str(), "running.ogg");
-		LoadUnitSoundfile(b.Stop,    sBuildingPath.c_str(), "stop.ogg");
-		LoadUnitSoundfile(b.Attack,  sBuildingPath.c_str(), "attack.ogg");
+		LoadUnitSoundfile( b.Wait,   sBuildingPath.c_str(), "wait.ogg" );
+		LoadUnitSoundfile( b.Start,   sBuildingPath.c_str(), "start.ogg" );
+		LoadUnitSoundfile( b.Running, sBuildingPath.c_str(), "running.ogg" );
+		LoadUnitSoundfile( b.Stop,    sBuildingPath.c_str(), "stop.ogg" );
+		LoadUnitSoundfile( b.Attack,  sBuildingPath.c_str(), "attack.ogg" );
 
 		// Get Ptr if necessary:
 		if ( b.data.ID == specialIDConnector )
@@ -1669,106 +1669,106 @@ static int LoadBuildings()
 			b.data.isConnectorGraphic = true;
 			UnitsData.ptr_connector = b.img;
 			UnitsData.ptr_connector_org = b.img_org;
-			SDL_SetColorKey(UnitsData.ptr_connector,SDL_SRCCOLORKEY,0xFF00FF);
+			SDL_SetColorKey( UnitsData.ptr_connector, SDL_SRCCOLORKEY, 0xFF00FF );
 			UnitsData.ptr_connector_shw = b.shw;
 			UnitsData.ptr_connector_shw_org = b.shw_org;
-			SDL_SetColorKey(UnitsData.ptr_connector_shw,SDL_SRCCOLORKEY,0xFF00FF);
+			SDL_SetColorKey( UnitsData.ptr_connector_shw, SDL_SRCCOLORKEY, 0xFF00FF );
 		}
-		else if (b.data.ID == specialIDSmallBeton )
+		else if ( b.data.ID == specialIDSmallBeton )
 		{
 			UnitsData.ptr_small_beton = b.img;
 			UnitsData.ptr_small_beton_org = b.img_org;
-			SDL_SetColorKey(UnitsData.ptr_small_beton,SDL_SRCCOLORKEY,0xFF00FF);
+			SDL_SetColorKey( UnitsData.ptr_small_beton, SDL_SRCCOLORKEY, 0xFF00FF );
 		}
 
 		// Check if there is more than one frame
 		// use 129 here because some images from the res_installer are one pixel to large
-		if (b.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos ) b.data.hasFrames = b.img_org->w / b.img_org->h;
+		if ( b.img_org->w > 129 && !b.data.isConnectorGraphic && !b.data.hasClanLogos ) b.data.hasFrames = b.img_org->w / b.img_org->h;
 		else b.data.hasFrames = 0;
 	}
 
 	// Dirtsurfaces
-	LoadGraphicToSurface ( UnitsData.dirt_big,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_big_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_big_shw,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big_shw.pcx" );
-	if ( UnitsData.dirt_big_shw ) SDL_SetAlpha(UnitsData.dirt_big_shw,SDL_SRCALPHA,50);
-	LoadGraphicToSurface ( UnitsData.dirt_big_shw_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_big_shw.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small.pcx" );
-	LoadGraphicToSurface ( UnitsData.dirt_small_shw,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small_shw.pcx" );
-	if ( UnitsData.dirt_small_shw ) SDL_SetAlpha(UnitsData.dirt_small_shw,SDL_SRCALPHA,50);
-	LoadGraphicToSurface ( UnitsData.dirt_small_shw_org,cSettings::getInstance().getBuildingsPath().c_str(),"dirt_small_shw.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_big, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_big_shw, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx" );
+	if ( UnitsData.dirt_big_shw ) SDL_SetAlpha( UnitsData.dirt_big_shw, SDL_SRCALPHA, 50 );
+	LoadGraphicToSurface( UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_small, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx" );
+	LoadGraphicToSurface( UnitsData.dirt_small_shw, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx" );
+	if ( UnitsData.dirt_small_shw ) SDL_SetAlpha( UnitsData.dirt_small_shw, SDL_SRCALPHA, 50 );
+	LoadGraphicToSurface( UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx" );
 
 	// set building numbers
-	for (unsigned int i = 0; i < UnitsData.building.Size(); ++i)
+	for ( unsigned int i = 0; i < UnitsData.building.Size(); ++i )
 	{
-		UnitsData.building[i].nr = (int)i;
+		UnitsData.building[i].nr = ( int )i;
 	}
 	return 1;
 }
 
 //-------------------------------------------------------------------------------------
-int getXMLNodeInt( TiXmlDocument &document, const char *path0, const char *path1,const char *path2 )
+int getXMLNodeInt( TiXmlDocument& document, const char* path0, const char* path1, const char* path2 )
 {
 	string tmpString;
-	ExTiXmlNode *pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+	ExTiXmlNode* pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode( document, path0, path1, path2, NULL );
 
 	string pathText = "";
-	if ( path0 ) pathText += (string)path0;
-	if ( path1 ) pathText += (string)"~" + path1;
-	if ( path2 ) pathText += (string)"~" + path2;
+	if ( path0 ) pathText += ( string )path0;
+	if ( path1 ) pathText += ( string )"~" + path1;
+	if ( path2 ) pathText += ( string )"~" + path2;
 
 	if ( pExXmlNode == NULL )
 	{
 		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
-	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) ) return atoi ( tmpString.c_str() );
+	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num" ) ) return atoi( tmpString.c_str() );
 	else
 	{
-		Log.write( ((string)"Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		Log.write( ( ( string )"Can't read \"Num\" from \"" ) + pathText + "\"", cLog::eLOG_TYPE_WARNING );
 		return 0;
 	}
 }
 
 //-------------------------------------------------------------------------------------
-float getXMLNodeFloat( TiXmlDocument &document, const char *path0, const char *path1,const char *path2 )
+float getXMLNodeFloat( TiXmlDocument& document, const char* path0, const char* path1, const char* path2 )
 {
 	string tmpString;
-	ExTiXmlNode *pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+	ExTiXmlNode* pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode( document, path0, path1, path2, NULL );
 
 	double tmpDouble;
 	string pathText = "";
-	if ( path0 ) pathText += (string)path0;
-	if ( path1 ) pathText += (string)"~" + path1;
-	if ( path2 ) pathText += (string)"~" + path2;
+	if ( path0 ) pathText += ( string )path0;
+	if ( path1 ) pathText += ( string )"~" + path1;
+	if ( path2 ) pathText += ( string )"~" + path2;
 
 	if ( pExXmlNode == NULL )
 	{
 		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
 		return 0;
 	}
-	if ( pExXmlNode->ToElement()->Attribute( "Num", &tmpDouble ) ) return (float)( tmpDouble );
+	if ( pExXmlNode->ToElement()->Attribute( "Num", &tmpDouble ) ) return ( float )( tmpDouble );
 	else
 	{
-		Log.write( ((string)"Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		Log.write( ( ( string )"Can't read \"Num\" from \"" ) + pathText + "\"", cLog::eLOG_TYPE_WARNING );
 		return 0;
 	}
 }
 
 //-------------------------------------------------------------------------------------
-string getXMLNodeString( TiXmlDocument &document, const char *attribut, const char *path0, const char *path1,const char *path2 )
+string getXMLNodeString( TiXmlDocument& document, const char* attribut, const char* path0, const char* path1, const char* path2 )
 {
 	string tmpString;
-	ExTiXmlNode *pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, NULL );
+	ExTiXmlNode* pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode( document, path0, path1, path2, NULL );
 
 	string pathText = "";
-	if ( path0 ) pathText += (string)path0;
-	if ( path1 ) pathText += (string)"~" + path1;
-	if ( path2 ) pathText += (string)"~" + path2;
+	if ( path0 ) pathText += ( string )path0;
+	if ( path1 ) pathText += ( string )"~" + path1;
+	if ( path2 ) pathText += ( string )"~" + path2;
 
 	if ( pExXmlNode == NULL )
 	{
@@ -1778,23 +1778,23 @@ string getXMLNodeString( TiXmlDocument &document, const char *attribut, const ch
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, attribut ) ) return tmpString;
 	else
 	{
-		Log.write( ((string)"Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING );
+		Log.write( ( ( string )"Can't read \"" ) + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING );
 		return "";
 	}
 }
 
 //-------------------------------------------------------------------------------------
-bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *path1,const char *path2, const char *path3 )
+bool getXMLNodeBool( TiXmlDocument& document, const char* path0, const char* path1, const char* path2, const char* path3 )
 {
 	string tmpString;
-	ExTiXmlNode *pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode ( document, path0, path1, path2, path3, NULL );
+	ExTiXmlNode* pExXmlNode = NULL;
+	pExXmlNode = pExXmlNode->XmlGetFirstNode( document, path0, path1, path2, path3, NULL );
 
 	string pathText = "";
-	if ( path0 ) pathText += (string)path0;
-	if ( path1 ) pathText += (string)"~" + path1;
-	if ( path2 ) pathText += (string)"~" + path2;
-	if ( path3 ) pathText += (string)"~" + path3;
+	if ( path0 ) pathText += ( string )path0;
+	if ( path1 ) pathText += ( string )"~" + path1;
+	if ( path2 ) pathText += ( string )"~" + path2;
+	if ( path3 ) pathText += ( string )"~" + path3;
 
 	if ( pExXmlNode == NULL )
 	{
@@ -1803,267 +1803,269 @@ bool getXMLNodeBool( TiXmlDocument &document, const char *path0, const char *pat
 	}
 	if ( pExXmlNode->XmlReadNodeData( tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "YN" ) )
 	{
-		if ( tmpString.compare ( "Yes" ) == 0 ) return true;
+		if ( tmpString.compare( "Yes" ) == 0 ) return true;
 		else return false;
 	}
 	else
 	{
-		Log.write( ((string)"Can't read \"YN\" from \"") + pathText +"\"", cLog::eLOG_TYPE_WARNING );
+		Log.write( ( ( string )"Can't read \"YN\" from \"" ) + pathText + "\"", cLog::eLOG_TYPE_WARNING );
 		return false;
 	}
 }
 
 //-------------------------------------------------------------------------------------
-void LoadUnitData(sUnitData* const Data, char const* const directory, int const iID)
+void LoadUnitData( sUnitData* const Data, char const* const directory, int const iID )
 {
 	TiXmlDocument unitDataXml;
 
 	string path = directory;
 	path += "data.xml";
-	if( !FileExists( path.c_str() ) ) return ;
+	if ( !FileExists( path.c_str() ) ) return ;
 
-	if ( !unitDataXml.LoadFile ( path.c_str() ) )
+	if ( !unitDataXml.LoadFile( path.c_str() ) )
 	{
-		Log.write( "Can't load " + path,LOG_TYPE_WARNING);
+		Log.write( "Can't load " + path, LOG_TYPE_WARNING );
 		return ;
 	}
 	// Read minimal game version
-	string gameVersion = getXMLNodeString ( unitDataXml, "text", "Unit", "Header", "Game_Version" );
+	string gameVersion = getXMLNodeString( unitDataXml, "text", "Unit", "Header", "Game_Version" );
 
 	//TODO check game version
 
 	//read id
-	string idString = getXMLNodeString ( unitDataXml, "ID", "Unit" );
+	string idString = getXMLNodeString( unitDataXml, "ID", "Unit" );
 	char szTmp[100];
 	// check whether the id exists twice
-	Data->ID.iFirstPart = atoi(idString.substr(0,idString.find(" ",0)).c_str());
-	if(Data->ID.iFirstPart == 0)
+	Data->ID.iFirstPart = atoi( idString.substr( 0, idString.find( " ", 0 ) ).c_str() );
+	if ( Data->ID.iFirstPart == 0 )
 	{
-		for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+		for ( size_t i = 0; i < UnitsData.vehicle.Size(); ++i )
 		{
-			if( UnitsData.vehicle[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
+			if ( UnitsData.vehicle[i].data.ID.iSecondPart == atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() ) )
 			{
-				sprintf(szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
-				Log.write(szTmp,LOG_TYPE_WARNING);
+				sprintf( szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart );
+				Log.write( szTmp, LOG_TYPE_WARNING );
 				return ;
 			}
 		}
 	}
 	else
 	{
-		for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+		for ( size_t i = 0; i < UnitsData.building.Size(); ++i )
 		{
-			if( UnitsData.building[i].data.ID.iSecondPart == atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
+			if ( UnitsData.building[i].data.ID.iSecondPart == atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() ) )
 			{
-				sprintf(szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
-				Log.write(szTmp,LOG_TYPE_WARNING);
+				sprintf( szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart );
+				Log.write( szTmp, LOG_TYPE_WARNING );
 				return ;
 			}
 		}
 	}
-	Data->ID.iSecondPart = atoi(idString.substr(idString.find(" ",0),idString.length()).c_str());
+	Data->ID.iSecondPart = atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() );
 
 	// check whether the read id is the same as the one from vehicles.xml or buildins.xml
-	if(iID != atoi(idString.substr(idString.find(" ",0),idString.length()).c_str()))
+	if ( iID != atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() ) )
 	{
-		sprintf(szTmp, "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi(idString.substr(0, idString.find(" ", 0)).c_str()), atoi(idString.substr(idString.find(" ", 0), idString.length()).c_str()), directory);
-		Log.write(szTmp,LOG_TYPE_WARNING);
+		sprintf( szTmp, "ID %.2d %.2d isn't equal with ID for unit \"%s\" ", atoi( idString.substr( 0, idString.find( " ", 0 ) ).c_str() ), atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() ), directory );
+		Log.write( szTmp, LOG_TYPE_WARNING );
 		return ;
 	}
 	else
 	{
-		sprintf(szTmp, "ID %.2d %.2d verified", atoi(idString.substr(0, idString.find(" ", 0)).c_str()), atoi(idString.substr(idString.find(" ", 0), idString.length()).c_str()));
-		Log.write(szTmp,LOG_TYPE_DEBUG);
+		sprintf( szTmp, "ID %.2d %.2d verified", atoi( idString.substr( 0, idString.find( " ", 0 ) ).c_str() ), atoi( idString.substr( idString.find( " ", 0 ), idString.length() ).c_str() ) );
+		Log.write( szTmp, LOG_TYPE_DEBUG );
 	}
 	//read name
-	Data->name = getXMLNodeString ( unitDataXml, "name", "Unit" );
+	Data->name = getXMLNodeString( unitDataXml, "name", "Unit" );
 	//read description
-	if (ExTiXmlNode* const pExXmlNode = ExTiXmlNode::XmlGetFirstNode(unitDataXml, "Unit", "Description", NULL))
+	if ( ExTiXmlNode* const pExXmlNode = ExTiXmlNode::XmlGetFirstNode( unitDataXml, "Unit", "Description", NULL ) )
 	{
 		Data->description = pExXmlNode->ToElement()->GetText();
-		size_t iPosition = Data->description.find("\\n", 0);
-		while(iPosition != string::npos)
+		size_t iPosition = Data->description.find( "\\n", 0 );
+		while ( iPosition != string::npos )
 		{
-			Data->description.replace(iPosition,2,"\n");
-			iPosition = Data->description.find("\\n", iPosition);
+			Data->description.replace( iPosition, 2, "\n" );
+			iPosition = Data->description.find( "\\n", iPosition );
 		}
 	}
 
 	// Weapon
-	string muzzleType = getXMLNodeString ( unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type" );
-	if ( muzzleType.compare ( "Big" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_BIG;
-	else if ( muzzleType.compare ( "Rocket" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET;
-	else if ( muzzleType.compare ( "Small" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_SMALL;
-	else if ( muzzleType.compare ( "Med" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED;
-	else if ( muzzleType.compare ( "Med_Long" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED_LONG;
-	else if ( muzzleType.compare ( "Rocket_Cluster" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER;
-	else if ( muzzleType.compare ( "Torpedo" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_TORPEDO;
-	else if ( muzzleType.compare ( "Sniper" ) == 0 ) Data->muzzleType =sUnitData:: MUZZLE_TYPE_SNIPER;
+	string muzzleType = getXMLNodeString( unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type" );
+	if ( muzzleType.compare( "Big" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_BIG;
+	else if ( muzzleType.compare( "Rocket" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET;
+	else if ( muzzleType.compare( "Small" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_SMALL;
+	else if ( muzzleType.compare( "Med" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED;
+	else if ( muzzleType.compare( "Med_Long" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_MED_LONG;
+	else if ( muzzleType.compare( "Rocket_Cluster" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER;
+	else if ( muzzleType.compare( "Torpedo" ) == 0 ) Data->muzzleType = sUnitData::MUZZLE_TYPE_TORPEDO;
+	else if ( muzzleType.compare( "Sniper" ) == 0 ) Data->muzzleType = sUnitData:: MUZZLE_TYPE_SNIPER;
 	else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
 
-	Data->ammoMax = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Ammo_Quantity" );
-	Data->shotsMax = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Shots" );
-	Data->range = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Range" );
-	Data->damage = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Damage" );
-	Data->canAttack = getXMLNodeInt ( unitDataXml, "Unit", "Weapon", "Can_Attack" );
+	Data->ammoMax = getXMLNodeInt( unitDataXml, "Unit", "Weapon", "Ammo_Quantity" );
+	Data->shotsMax = getXMLNodeInt( unitDataXml, "Unit", "Weapon", "Shots" );
+	Data->range = getXMLNodeInt( unitDataXml, "Unit", "Weapon", "Range" );
+	Data->damage = getXMLNodeInt( unitDataXml, "Unit", "Weapon", "Damage" );
+	Data->canAttack = getXMLNodeInt( unitDataXml, "Unit", "Weapon", "Can_Attack" );
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
 	if ( Data->canAttack & TERRAIN_SEA ) Data->canAttack |= TERRAIN_GROUND;
 
-	Data->canDriveAndFire = getXMLNodeBool ( unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire" );
+	Data->canDriveAndFire = getXMLNodeBool( unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire" );
 
 	// Production
-	Data->buildCosts = getXMLNodeInt ( unitDataXml, "Unit", "Production", "Built_Costs" );
+	Data->buildCosts = getXMLNodeInt( unitDataXml, "Unit", "Production", "Built_Costs" );
 
-	Data->canBuild = getXMLNodeString ( unitDataXml, "String", "Unit", "Production", "Can_Build" );
-	Data->buildAs = getXMLNodeString ( unitDataXml, "String", "Unit", "Production", "Build_As" );
+	Data->canBuild = getXMLNodeString( unitDataXml, "String", "Unit", "Production", "Can_Build" );
+	Data->buildAs = getXMLNodeString( unitDataXml, "String", "Unit", "Production", "Build_As" );
 
-	Data->maxBuildFactor = getXMLNodeInt ( unitDataXml, "Unit", "Production", "Max_Build_Factor" );
+	Data->maxBuildFactor = getXMLNodeInt( unitDataXml, "Unit", "Production", "Max_Build_Factor" );
 
-	Data->canBuildPath = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Can_Build_Path" );
-	Data->canBuildRepeat = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Can_Build_Repeat" );
-	Data->buildIntern = getXMLNodeBool ( unitDataXml, "Unit", "Production", "Builds_Intern" );
+	Data->canBuildPath = getXMLNodeBool( unitDataXml, "Unit", "Production", "Can_Build_Path" );
+	Data->canBuildRepeat = getXMLNodeBool( unitDataXml, "Unit", "Production", "Can_Build_Repeat" );
+	Data->buildIntern = getXMLNodeBool( unitDataXml, "Unit", "Production", "Builds_Intern" );
 
 	// Movement
-	Data->speedMax = getXMLNodeInt ( unitDataXml, "Unit", "Movement", "Movement_Sum" );
+	Data->speedMax = getXMLNodeInt( unitDataXml, "Unit", "Movement", "Movement_Sum" );
 	Data->speedMax *= 4;
 
-	Data->factorGround = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Ground" );
-	Data->factorSea = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Sea" );
-	Data->factorAir = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Air" );
-	Data->factorCoast = getXMLNodeFloat ( unitDataXml, "Unit", "Movement", "Factor_Coast" );
+	Data->factorGround = getXMLNodeFloat( unitDataXml, "Unit", "Movement", "Factor_Ground" );
+	Data->factorSea = getXMLNodeFloat( unitDataXml, "Unit", "Movement", "Factor_Sea" );
+	Data->factorAir = getXMLNodeFloat( unitDataXml, "Unit", "Movement", "Factor_Air" );
+	Data->factorCoast = getXMLNodeFloat( unitDataXml, "Unit", "Movement", "Factor_Coast" );
 
 	// Abilities
-	Data->isBig = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Big" );
-	Data->connectsToBase = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Connects_To_Base" );
-	Data->armor = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Armor" );
-	Data->hitpointsMax = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Hitpoints" );
-	Data->scan = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Scan_Range" );
-	Data->modifiesSpeed = getXMLNodeFloat ( unitDataXml, "Unit", "Abilities", "Modifies_Speed" );
-	Data->canClearArea = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Clear_Area" );
-	Data->canBeCaptured = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Captured" );
-	Data->canBeDisabled = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Disabled" );
-	Data->canCapture = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Capture" );
-	Data->canDisable = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Disable" );
-	Data->canRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Repair" );
-	Data->canRearm = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Rearm" );
-	Data->canResearch = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Research" );
-	Data->canPlaceMines = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Place_Mines" );
-	Data->canSurvey = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Survey" );
-	Data->doesSelfRepair = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Does_Self_Repair" );
-	Data->convertsGold = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Converts_Gold" );
-	Data->canSelfDestroy = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Self_Destroy" );
-	Data->canScore = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Score" );
+	Data->isBig = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Is_Big" );
+	Data->connectsToBase = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Connects_To_Base" );
+	Data->armor = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Armor" );
+	Data->hitpointsMax = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Hitpoints" );
+	Data->scan = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Scan_Range" );
+	Data->modifiesSpeed = getXMLNodeFloat( unitDataXml, "Unit", "Abilities", "Modifies_Speed" );
+	Data->canClearArea = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Clear_Area" );
+	Data->canBeCaptured = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Be_Captured" );
+	Data->canBeDisabled = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Be_Disabled" );
+	Data->canCapture = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Capture" );
+	Data->canDisable = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Disable" );
+	Data->canRepair = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Repair" );
+	Data->canRearm = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Rearm" );
+	Data->canResearch = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Research" );
+	Data->canPlaceMines = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Place_Mines" );
+	Data->canSurvey = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Survey" );
+	Data->doesSelfRepair = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Does_Self_Repair" );
+	Data->convertsGold = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Converts_Gold" );
+	Data->canSelfDestroy = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Self_Destroy" );
+	Data->canScore = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Score" );
 
-	Data->canMineMaxRes = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource" );
+	Data->canMineMaxRes = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource" );
 
-	Data->needsMetal = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Metal" );
-	Data->needsOil = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Oil" );
-	Data->needsEnergy = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Energy" );
-	Data->needsHumans = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Needs_Humans" );
+	Data->needsMetal = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Needs_Metal" );
+	Data->needsOil = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Needs_Oil" );
+	Data->needsEnergy = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Needs_Energy" );
+	Data->needsHumans = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Needs_Humans" );
 	if ( Data->needsEnergy < 0 )
 	{
 		Data->produceEnergy = abs( Data->needsEnergy );
 		Data->needsEnergy = 0;
-	} else Data->produceEnergy = 0;
+	}
+	else Data->produceEnergy = 0;
 	if ( Data->needsHumans < 0 )
 	{
 		Data->produceHumans = abs( Data->needsHumans );
 		Data->needsHumans = 0;
-	} else Data->produceHumans = 0;
+	}
+	else Data->produceHumans = 0;
 
-	Data->isStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Is_Stealth_On" );
-	Data->canDetectStealthOn = getXMLNodeInt ( unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On" );
+	Data->isStealthOn = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Is_Stealth_On" );
+	Data->canDetectStealthOn = getXMLNodeInt( unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On" );
 
-	string surfacePosString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Surface_Position" );
-	if ( surfacePosString.compare ( "BeneathSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH_SEA;
-	else if ( surfacePosString.compare ( "AboveSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_SEA;
-	else if ( surfacePosString.compare ( "Base" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BASE;
-	else if ( surfacePosString.compare ( "AboveBase" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_BASE;
-	else if ( surfacePosString.compare ( "Above" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE;
+	string surfacePosString = getXMLNodeString( unitDataXml, "Const", "Unit", "Abilities", "Surface_Position" );
+	if ( surfacePosString.compare( "BeneathSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH_SEA;
+	else if ( surfacePosString.compare( "AboveSea" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_SEA;
+	else if ( surfacePosString.compare( "Base" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_BASE;
+	else if ( surfacePosString.compare( "AboveBase" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_BASE;
+	else if ( surfacePosString.compare( "Above" ) == 0 ) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE;
 	else Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
 
-	string overbuildString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild" );
-	if ( overbuildString.compare ( "Yes" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YES;
-	else if ( overbuildString.compare ( "YesNRemove" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YESNREMOVE;
+	string overbuildString = getXMLNodeString( unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild" );
+	if ( overbuildString.compare( "Yes" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YES;
+	else if ( overbuildString.compare( "YesNRemove" ) == 0 ) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YESNREMOVE;
 	else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
 
-	Data->canBeLandedOn = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On" );
-	Data->canWork = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Activatable" );
-	Data->explodesOnContact = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Explodes_On_Contact" );
-	Data->isHuman = getXMLNodeBool ( unitDataXml, "Unit", "Abilities", "Is_Human" );
+	Data->canBeLandedOn = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On" );
+	Data->canWork = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Is_Activatable" );
+	Data->explodesOnContact = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Explodes_On_Contact" );
+	Data->isHuman = getXMLNodeBool( unitDataXml, "Unit", "Abilities", "Is_Human" );
 
 	// Storage
-	Data->storageResMax = getXMLNodeInt ( unitDataXml, "Unit", "Storage", "Capacity_Resources" );
+	Data->storageResMax = getXMLNodeInt( unitDataXml, "Unit", "Storage", "Capacity_Resources" );
 
-	string storeResString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type" );
-	if ( storeResString.compare ( "Metal" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_METAL;
-	else if ( storeResString.compare ( "Oil" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_OIL;
-	else if ( storeResString.compare ( "Gold" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_GOLD;
+	string storeResString = getXMLNodeString( unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type" );
+	if ( storeResString.compare( "Metal" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_METAL;
+	else if ( storeResString.compare( "Oil" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_OIL;
+	else if ( storeResString.compare( "Gold" ) == 0 ) Data->storeResType = sUnitData::STORE_RES_GOLD;
 	else Data->storeResType = sUnitData::STORE_RES_NONE;
 
-	Data->storageUnitsMax = getXMLNodeInt ( unitDataXml, "Unit", "Storage", "Capacity_Units" );
+	Data->storageUnitsMax = getXMLNodeInt( unitDataXml, "Unit", "Storage", "Capacity_Units" );
 
-	string storeUnitImgString = getXMLNodeString ( unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type" );
-	if ( storeUnitImgString.compare ( "Plane" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_PLANE;
-	else if ( storeUnitImgString.compare ( "Human" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_HUMAN;
-	else if ( storeUnitImgString.compare ( "Tank" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
-	else if ( storeUnitImgString.compare ( "Ship" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_SHIP;
+	string storeUnitImgString = getXMLNodeString( unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type" );
+	if ( storeUnitImgString.compare( "Plane" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_PLANE;
+	else if ( storeUnitImgString.compare( "Human" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_HUMAN;
+	else if ( storeUnitImgString.compare( "Tank" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
+	else if ( storeUnitImgString.compare( "Ship" ) == 0 ) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_SHIP;
 	else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
 
-	string storeUnitsString = getXMLNodeString ( unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type" );
+	string storeUnitsString = getXMLNodeString( unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type" );
 	if ( storeUnitsString.length() > 0 )
 	{
 		int pos = -1;
 		do
 		{
 			int lastpos = pos;
-			pos = storeUnitsString.find_first_of ( "+", pos+1 );
+			pos = storeUnitsString.find_first_of( "+", pos + 1 );
 			if ( pos == string::npos ) pos = storeUnitsString.length();
-			Data->storeUnitsTypes.push_back ( storeUnitsString.substr ( lastpos+1, pos-(lastpos+1) ) );
+			Data->storeUnitsTypes.push_back( storeUnitsString.substr( lastpos + 1, pos - ( lastpos + 1 ) ) );
 		}
-		while ( pos < (int)storeUnitsString.length() );
+		while ( pos < ( int )storeUnitsString.length() );
 	}
 
-	Data->isStorageType = getXMLNodeString ( unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type" );
+	Data->isStorageType = getXMLNodeString( unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type" );
 
 	// load graphics.xml
-	LoadUnitGraphicData ( Data, directory );
+	LoadUnitGraphicData( Data, directory );
 
 	// finish
-	Log.write("Unitdata read", cLog::eLOG_TYPE_DEBUG);
-	if( cSettings::getInstance().isDebug() ) Log.mark();
+	Log.write( "Unitdata read", cLog::eLOG_TYPE_DEBUG );
+	if ( cSettings::getInstance().isDebug() ) Log.mark();
 	return ;
 }
 
 //-------------------------------------------------------------------------------------
-void LoadUnitGraphicData( sUnitData *Data, char const* directory )
+void LoadUnitGraphicData( sUnitData* Data, char const* directory )
 {
 	TiXmlDocument unitGraphicsXml;
 
 	string path = directory;
 	path += "graphics.xml";
-	if( !FileExists( path.c_str() ) ) return ;
+	if ( !FileExists( path.c_str() ) ) return ;
 
-	if ( !unitGraphicsXml.LoadFile ( path.c_str() ) )
+	if ( !unitGraphicsXml.LoadFile( path.c_str() ) )
 	{
 		Log.write( "Can't load " + path, LOG_TYPE_WARNING );
 		return ;
 	}
 
-	Data->hasClanLogos = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos" );
-	Data->hasCorpse = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Corpse" );
-	Data->hasDamageEffect = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect" );
-	Data->hasBetonUnderground = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground" );
-	Data->hasPlayerColor = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color" );
-	Data->hasOverlay = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Has_Overlay" );
+	Data->hasClanLogos = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos" );
+	Data->hasCorpse = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Corpse" );
+	Data->hasDamageEffect = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect" );
+	Data->hasBetonUnderground = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground" );
+	Data->hasPlayerColor = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color" );
+	Data->hasOverlay = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Has_Overlay" );
 
-	Data->buildUpGraphic = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up" );
-	Data->animationMovement = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement" );
-	Data->powerOnGraphic = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On" );
-	Data->isAnimated = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated" );
-	Data->makeTracks = getXMLNodeBool ( unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks" );
+	Data->buildUpGraphic = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up" );
+	Data->animationMovement = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement" );
+	Data->powerOnGraphic = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On" );
+	Data->isAnimated = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated" );
+	Data->makeTracks = getXMLNodeBool( unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks" );
 }
 
 //-------------------------------------------------------------------------------------
@@ -2072,67 +2074,67 @@ static int LoadClans()
 	TiXmlDocument clansXml;
 
 	string clansXMLPath = CLANS_XML;
-	if (!FileExists(clansXMLPath.c_str()))
+	if ( !FileExists( clansXMLPath.c_str() ) )
 		return 0;
-	if (!clansXml.LoadFile(clansXMLPath.c_str()))
+	if ( !clansXml.LoadFile( clansXMLPath.c_str() ) )
 	{
-		Log.write ("Can't load "+clansXMLPath, LOG_TYPE_ERROR);
-		return 0;
-	}
-
-	TiXmlNode* xmlNode = clansXml.FirstChildElement ("Clans");
-	if (xmlNode == 0)
-	{
-		Log.write ("Can't read \"Clans\" node!", LOG_TYPE_ERROR);
+		Log.write( "Can't load " + clansXMLPath, LOG_TYPE_ERROR );
 		return 0;
 	}
 
-	for (TiXmlNode* clanNode = 0; (clanNode = xmlNode->IterateChildren(clanNode));)
+	TiXmlNode* xmlNode = clansXml.FirstChildElement( "Clans" );
+	if ( xmlNode == 0 )
 	{
-		TiXmlElement* clanElement = clanNode->ToElement ();
-		if (clanElement)
+		Log.write( "Can't read \"Clans\" node!", LOG_TYPE_ERROR );
+		return 0;
+	}
+
+	for ( TiXmlNode* clanNode = 0; ( clanNode = xmlNode->IterateChildren( clanNode ) ); )
+	{
+		TiXmlElement* clanElement = clanNode->ToElement();
+		if ( clanElement )
 		{
-			cClan* newClan = cClanData::instance ().addClan ();
-			string nameAttr = clanElement->Attribute ("Name");
-			newClan->setName (nameAttr);
+			cClan* newClan = cClanData::instance().addClan();
+			string nameAttr = clanElement->Attribute( "Name" );
+			newClan->setName( nameAttr );
 
-			const TiXmlNode* descriptionNode = clanNode->FirstChild ("Description");
-			if (descriptionNode)
+			const TiXmlNode* descriptionNode = clanNode->FirstChild( "Description" );
+			if ( descriptionNode )
 			{
-				string descriptionString = descriptionNode->ToElement ()->GetText ();
-				newClan->setDescription (descriptionString);
+				string descriptionString = descriptionNode->ToElement()->GetText();
+				newClan->setDescription( descriptionString );
 			}
 
-			translateClanData(newClan->getClanID());
+			translateClanData( newClan->getClanID() );
 
-			for (TiXmlNode* changedUnitStatsNode = 0; (changedUnitStatsNode = clanNode->IterateChildren("ChangedUnitStat", changedUnitStatsNode));)
+			for ( TiXmlNode* changedUnitStatsNode = 0; ( changedUnitStatsNode = clanNode->IterateChildren( "ChangedUnitStat", changedUnitStatsNode ) ); )
 			{
-				TiXmlElement* statsElement = changedUnitStatsNode->ToElement ();
-				if (statsElement)
+				TiXmlElement* statsElement = changedUnitStatsNode->ToElement();
+				if ( statsElement )
 				{
-					const char* idAttr = statsElement->Attribute ("UnitID");
-					if (idAttr == 0)
+					const char* idAttr = statsElement->Attribute( "UnitID" );
+					if ( idAttr == 0 )
 					{
-						Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR);
+						Log.write( "Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR );
 						continue;
 					}
-					string idAttrStr (idAttr);
-					int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str ());
-					int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length ()).c_str ());
+					string idAttrStr( idAttr );
+					int firstPart = atoi( idAttrStr.substr( 0, idAttrStr.find( " ", 0 ) ).c_str() );
+					int secondPart = atoi( idAttrStr.substr( idAttrStr.find( " ", 0 ), idAttrStr.length() ).c_str() );
 
-					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
+					cClanUnitStat* newStat = newClan->addUnitStat( firstPart, secondPart );
 
-					for (TiXmlNode* modificationNode = 0; (modificationNode = changedUnitStatsNode->IterateChildren(modificationNode));)
+					for ( TiXmlNode* modificationNode = 0; ( modificationNode = changedUnitStatsNode->IterateChildren( modificationNode ) ); )
 					{
-						string modName = modificationNode->Value ();
-						TiXmlElement* modificationElement = modificationNode->ToElement ();
-						if (modName != "" && modificationElement)
+						string modName = modificationNode->Value();
+						TiXmlElement* modificationElement = modificationNode->ToElement();
+						if ( modName != "" && modificationElement )
 						{
-							const char* numAttr = modificationElement->Attribute ("Num");
-							if (numAttr != 0)
+							const char* numAttr = modificationElement->Attribute( "Num" );
+							if ( numAttr != 0 )
 							{
-								int value = atoi (numAttr);
-								newStat->addModification (modName, value);
+								int value = atoi( numAttr );
+								newStat->addModification( modName, value );
 							}
 						}
 					}
@@ -2144,13 +2146,13 @@ static int LoadClans()
 	return 1;
 }
 
-void reloadUnitValues ()
+void reloadUnitValues()
 {
 	TiXmlDocument UnitsXml;
-	TiXmlElement *Element;
-	if( !FileExists( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml").c_str() ) ) return ;
-	if ( !UnitsXml.LoadFile ( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return;
-	if( !( Element = UnitsXml.FirstChildElement ( "VehicleData" )->FirstChildElement ( "Vehicles" ) ) ) return;
+	TiXmlElement* Element;
+	if ( !FileExists( ( cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile( ( cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml" ).c_str() ) ) return;
+	if ( !( Element = UnitsXml.FirstChildElement( "VehicleData" )->FirstChildElement( "Vehicles" ) ) ) return;
 
 	Element = Element->FirstChildElement();
 	int i = 0;
@@ -2158,16 +2160,16 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		LoadUnitData ( &UnitsData.vehicle[i].data, (cSettings::getInstance().getVehiclesPath()+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		LoadUnitData( &UnitsData.vehicle[i].data, ( cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute( "directory" ) + PATH_DELIMITER ).c_str(), num );
 		translateUnitData( UnitsData.vehicle[i].data.ID, true );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;
 		i++;
 	}
 
-	if( !FileExists( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml").c_str() ) ) return ;
-	if ( !UnitsXml.LoadFile ( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return;
-	if( !( Element = UnitsXml.FirstChildElement ( "BuildingsData" )->FirstChildElement ( "Buildings" ) ) ) return;
+	if ( !FileExists( ( cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return ;
+	if ( !UnitsXml.LoadFile( ( cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml" ).c_str() ) ) return;
+	if ( !( Element = UnitsXml.FirstChildElement( "BuildingsData" )->FirstChildElement( "Buildings" ) ) ) return;
 
 	Element = Element->FirstChildElement();
 	i = 0;
@@ -2175,7 +2177,7 @@ void reloadUnitValues ()
 	{
 		int num;
 		Element->Attribute( "num", &num );
-		LoadUnitData ( &UnitsData.building[i].data, (cSettings::getInstance().getBuildingsPath()+PATH_DELIMITER+Element->Attribute( "directory" )+PATH_DELIMITER).c_str(), num );
+		LoadUnitData( &UnitsData.building[i].data, ( cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute( "directory" ) + PATH_DELIMITER ).c_str(), num );
 		translateUnitData( UnitsData.building[i].data.ID, false );
 		if ( Element->NextSibling() ) Element = Element->NextSibling()->ToElement();
 		else Element = NULL;

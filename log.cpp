@@ -44,61 +44,61 @@ cLog::cLog():
 	bFirstRun = true;
 }
 
-bool cLog::open(int TYPE)
+bool cLog::open( int TYPE )
 {
 	//check if netlog file name is initialized
 	if ( bFirstRun )
 	{
-		time_t tTime = time ( NULL );
-		tm * tmTime = localtime ( &tTime );
+		time_t tTime = time( NULL );
+		tm* tmTime = localtime( &tTime );
 		char timestr[25];
 		strftime( timestr, 21, "-%d.%m.%y-%H%M.log", tmTime );
 		std::string sTime = timestr;
 		std::string netLogPath = cSettings::getInstance().getNetLogPath();
-		netLogPath.erase(netLogPath.size() - 4, netLogPath.size());
-		cSettings::getInstance().setNetLogPath((netLogPath + sTime).c_str());
+		netLogPath.erase( netLogPath.size() - 4, netLogPath.size() );
+		cSettings::getInstance().setNetLogPath( ( netLogPath + sTime ).c_str() );
 		bFirstRun = false;
 	}
 
-	if ( logfile == NULL || ((TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR) && !bNetlogStarted) )
+	if ( logfile == NULL || ( ( TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR ) && !bNetlogStarted ) )
 	{
-		if(TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
+		if ( TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR )
 		{
-			logfile = SDL_RWFromFile ( NETLOGFILE,"w+t" ); //Start new network-log and write at beginning of file
+			logfile = SDL_RWFromFile( NETLOGFILE, "w+t" ); //Start new network-log and write at beginning of file
 			bNetlogStarted = true;
 		}
 		else
 		{
-			logfile = SDL_RWFromFile ( LOGFILE,"w+t" ); //Start new log and write at beginning of file
+			logfile = SDL_RWFromFile( LOGFILE, "w+t" ); //Start new log and write at beginning of file
 		}
 	}
 	else
 	{
-		if(TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR)
+		if ( TYPE == LOG_TYPE_NET_DEBUG || TYPE == LOG_TYPE_NET_WARNING || TYPE == LOG_TYPE_NET_ERROR )
 		{
-			logfile = SDL_RWFromFile ( NETLOGFILE,"a+t" ); //Reopen network-log and write at end of file
+			logfile = SDL_RWFromFile( NETLOGFILE, "a+t" ); //Reopen network-log and write at end of file
 		}
 		else
 		{
-			logfile = SDL_RWFromFile ( LOGFILE,"a+t" ); //Reopen log and write at end of file
+			logfile = SDL_RWFromFile( LOGFILE, "a+t" ); //Reopen log and write at end of file
 		}
 	}
 
 	int blocks; //sanity check - is file readable?
 	char buf[256];
 
-	if(logfile) //can access logfile
+	if ( logfile ) //can access logfile
 	{
-		blocks=SDL_RWread ( logfile,buf,16,256/16 );
+		blocks = SDL_RWread( logfile, buf, 16, 256 / 16 );
 	}
 	else
 	{
-		fprintf ( stderr,"(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n" );
+		fprintf( stderr, "(EE): Couldn't open maxr.log!\n Please check file/directory permissions\n" );
 		return false;
 	}
-	if ( blocks<0 )
+	if ( blocks < 0 )
 	{
-		fprintf ( stderr,"(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n" );
+		fprintf( stderr, "(EE): Couldn't read maxr.log!\n Please check file/directory permissions\n" );
 
 		if ( logfile != NULL ) return true;
 		else return false;
@@ -107,69 +107,69 @@ bool cLog::open(int TYPE)
 
 }
 
-int cLog::write ( const char *str, int TYPE )
+int cLog::write( const char* str, int TYPE )
 {
-	return write ( std::string ( str ) , TYPE );
+	return write( std::string( str ) , TYPE );
 }
 
-int cLog::write ( const std::string& s, int TYPE )
+int cLog::write( const std::string& s, int TYPE )
 {
-	std::string str(s);
-	cMutex::Lock l(mutex);
+	std::string str( s );
+	cMutex::Lock l( mutex );
 
-	if ( (TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG) && !cSettings::getInstance().isDebug() ) //in case debug is disabled we skip message
+	if ( ( TYPE == LOG_TYPE_DEBUG || TYPE == LOG_TYPE_NET_DEBUG ) && !cSettings::getInstance().isDebug() ) //in case debug is disabled we skip message
 	{
 		return 0;
 	}
 
-	if ( open(TYPE) )
+	if ( open( TYPE ) )
 	{
 		switch ( TYPE ) //Attach log message type to tmp
 		{
 			case LOG_TYPE_NET_WARNING :
-			case LOG_TYPE_WARNING : str = str.insert ( 0 , WW ); break;
+			case LOG_TYPE_WARNING : str = str.insert( 0 , WW ); break;
 			case LOG_TYPE_NET_ERROR :
-			case LOG_TYPE_ERROR :   str = str.insert ( 0 , EE ); std::cout << str << "\n"; break;
+			case LOG_TYPE_ERROR :   str = str.insert( 0 , EE ); std::cout << str << "\n"; break;
 			case LOG_TYPE_NET_DEBUG :
-			case LOG_TYPE_DEBUG :   str = str.insert ( 0 , DD ); break;
-			case LOG_TYPE_INFO :    str = str.insert ( 0 , II ); break;
-			case LOG_TYPE_MEM :	 str = str.insert ( 0 , MM ); break;
-			default :				str = str.insert ( 0 , II );
+			case LOG_TYPE_DEBUG :   str = str.insert( 0 , DD ); break;
+			case LOG_TYPE_INFO :    str = str.insert( 0 , II ); break;
+			case LOG_TYPE_MEM :	 str = str.insert( 0 , MM ); break;
+			default :				str = str.insert( 0 , II );
 		}
 		str += TEXT_FILE_LF;
-		return writeMessage ( str ); //add log message itself to tmp and send it for writing
+		return writeMessage( str );  //add log message itself to tmp and send it for writing
 	}
 	else return -1;
 }
 
-int cLog::write ( const char *str )
+int cLog::write( const char* str )
 {
-	return write ( std::string ( str ) , LOG_TYPE_INFO );
+	return write( std::string( str ) , LOG_TYPE_INFO );
 }
 
 void cLog::mark()
 {
-	cMutex::Lock l(mutex);
+	cMutex::Lock l( mutex );
 
 	std::string str = "==============================(MARK)==============================";
 	str += TEXT_FILE_LF;
-	if ( open(-1) ) writeMessage ( str );
+	if ( open( -1 ) ) writeMessage( str );
 }
 
-int cLog::writeMessage ( const char *str )
+int cLog::writeMessage( const char* str )
 {
-	return writeMessage ( std::string ( str ) );
+	return writeMessage( std::string( str ) );
 }
 
-int cLog::writeMessage ( const std::string& str )
+int cLog::writeMessage( const std::string& str )
 {
-	if(logfile)
+	if ( logfile )
 	{
-		int const wrote = SDL_RWwrite(logfile, str.c_str(), 1, (int)str.length());
+		int const wrote = SDL_RWwrite( logfile, str.c_str(), 1, ( int )str.length() );
 		std::cout << str;
-		if ( wrote<0 ) //sanity check - was file writable?
+		if ( wrote < 0 ) //sanity check - was file writable?
 		{
-			fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
+			fprintf( stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
 			return -1;
 		}
 		else close(); //after successful writing of all information we close log here and nowhere else!
@@ -177,7 +177,7 @@ int cLog::writeMessage ( const std::string& str )
 	}
 	else
 	{
-		fprintf ( stderr,"Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
+		fprintf( stderr, "Couldn't write to maxr.log\nPlease check permissions for maxr.log\nLog message was:\n%s", str.c_str() );
 	}
 	return -1;
 }
@@ -185,5 +185,5 @@ int cLog::writeMessage ( const std::string& str )
 
 void cLog::close()
 {
-	SDL_RWclose ( logfile ); //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
+	SDL_RWclose( logfile );  //function RWclose always returns 0 in SDL <= 1.2.9 - no sanity check possible
 }

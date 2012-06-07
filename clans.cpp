@@ -24,89 +24,89 @@ using namespace std;
 
 
 //--------------------------------------------------
-void cClanUnitStat::addModification (const string& area, int value)
+void cClanUnitStat::addModification( const string& area, int value )
 {
 	modifications[area] = value;
 }
 
 //--------------------------------------------------
-bool cClanUnitStat::hasModification (const string& key) const
+bool cClanUnitStat::hasModification( const string& key ) const
 {
-	return (modifications.find (key) != modifications.end ());
+	return ( modifications.find( key ) != modifications.end() );
 }
 
 //--------------------------------------------------
-int cClanUnitStat::getModificationValue (const string& key) const
+int cClanUnitStat::getModificationValue( const string& key ) const
 {
-	map<string, int>::const_iterator it = modifications.find (key);
-	if (it != modifications.end ())
+	map<string, int>::const_iterator it = modifications.find( key );
+	if ( it != modifications.end() )
 		return it->second;
 	return 0;
 }
 
 //--------------------------------------------------
-string cClanUnitStat::getClanStatsDescription () const
+string cClanUnitStat::getClanStatsDescription() const
 {
 	sID unitID;
 	unitID.iFirstPart = unitIdFirstPart;
 	unitID.iSecondPart = unitIdSecPart;
-	sUnitData* data = unitID.getUnitDataOriginalVersion ();
+	sUnitData* data = unitID.getUnitDataOriginalVersion();
 	string result = "Unknown";
-	if (data)
+	if ( data )
 	{
-		result = string (data->name) + ": ";
+		result = string( data->name ) + ": ";
 
 		bool first = true;
-		if (hasModification ("Damage"))
+		if ( hasModification( "Damage" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Attack +" + iToStr (getModificationValue ("Damage") - data->damage);
+			result += "Attack +" + iToStr( getModificationValue( "Damage" ) - data->damage );
 			first = false;
 		}
-		if (hasModification ("Range"))
+		if ( hasModification( "Range" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Range +" + iToStr (getModificationValue ("Range") - data->range);
+			result += "Range +" + iToStr( getModificationValue( "Range" ) - data->range );
 			first = false;
 		}
-		if (hasModification ("Armor"))
+		if ( hasModification( "Armor" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Armor +" + iToStr (getModificationValue ("Armor") - data->armor);
+			result += "Armor +" + iToStr( getModificationValue( "Armor" ) - data->armor );
 			first = false;
 		}
-		if (hasModification ("Hitpoints"))
+		if ( hasModification( "Hitpoints" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
+			result += "Hits +" + iToStr( getModificationValue( "Hitpoints" ) - data->hitpointsMax );
 			first = false;
 		}
-		if (hasModification ("Scan"))
+		if ( hasModification( "Scan" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Scan +" + iToStr (getModificationValue ("Scan") - data->scan);
+			result += "Scan +" + iToStr( getModificationValue( "Scan" ) - data->scan );
 			first = false;
 		}
-		if (hasModification ("Speed"))
+		if ( hasModification( "Speed" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			result += "Speed +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
+			result += "Speed +" + iToStr( getModificationValue( "Speed" ) - ( data->speedMax / 4 ) );
 			first = false;
 		}
-		if (hasModification ("Built_Costs"))
+		if ( hasModification( "Built_Costs" ) )
 		{
-			if (!first)
+			if ( !first )
 				result += ", ";
-			int nrTurns = (getModificationValue ("Built_Costs")) / (unitIdFirstPart == 0 ? 3 : 2);
-			if (data->isHuman)
-				nrTurns = getModificationValue ("Built_Costs");
-			result += iToStr (nrTurns) + " Turns";
+			int nrTurns = ( getModificationValue( "Built_Costs" ) ) / ( unitIdFirstPart == 0 ? 3 : 2 );
+			if ( data->isHuman )
+				nrTurns = getModificationValue( "Built_Costs" );
+			result += iToStr( nrTurns ) + " Turns";
 			first = false;
 		}
 	}
@@ -114,11 +114,11 @@ string cClanUnitStat::getClanStatsDescription () const
 }
 
 //--------------------------------------------------
-cClan::~cClan ()
+cClan::~cClan()
 {
-	for (unsigned int i = 0; i < stats.Size (); i++)
+	for ( unsigned int i = 0; i < stats.Size(); i++ )
 	{
-		if (stats[i] != 0)
+		if ( stats[i] != 0 )
 		{
 			delete stats[i];
 			stats[i] = 0;
@@ -127,49 +127,49 @@ cClan::~cClan ()
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
+cClanUnitStat* cClan::getUnitStat( int idFirstPart, int idSecPart ) const
 {
-	for (unsigned int statIdx = 0; statIdx < stats.Size (); statIdx++)
-		if (stats[statIdx]->getUnitIdFirstPart () == idFirstPart && stats[statIdx]->getUnitIdSecPart () == idSecPart)
+	for ( unsigned int statIdx = 0; statIdx < stats.Size(); statIdx++ )
+		if ( stats[statIdx]->getUnitIdFirstPart() == idFirstPart && stats[statIdx]->getUnitIdSecPart() == idSecPart )
 			return stats[statIdx];
 	return 0;
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::getUnitStat (unsigned int index) const
+cClanUnitStat* cClan::getUnitStat( unsigned int index ) const
 {
-	if (index < stats.Size())
+	if ( index < stats.Size() )
 		return stats[index];
 	return 0;
 }
 
 //--------------------------------------------------
-cClanUnitStat* cClan::addUnitStat (int idFirstPart, int idSecPart)
+cClanUnitStat* cClan::addUnitStat( int idFirstPart, int idSecPart )
 {
-	cClanUnitStat* newStat = new cClanUnitStat (idFirstPart, idSecPart);
-	stats.Add (newStat);
+	cClanUnitStat* newStat = new cClanUnitStat( idFirstPart, idSecPart );
+	stats.Add( newStat );
 	return newStat;
 }
 
 //--------------------------------------------------
-void cClan::setDescription (const string& newDescription)
+void cClan::setDescription( const string& newDescription )
 {
 	description = newDescription;
 }
 //--------------------------------------------------
-void cClan::setName (const string& newName)
+void cClan::setName( const string& newName )
 {
 	name = newName;
 }
 
 //--------------------------------------------------
-vector<string> cClan::getClanStatsDescription () const
+vector<string> cClan::getClanStatsDescription() const
 {
 	vector<string> result;
-	for (int i = 0; i < getNrUnitStats (); i++)
+	for ( int i = 0; i < getNrUnitStats(); i++ )
 	{
-		cClanUnitStat* stat = getUnitStat (i);
-		result.push_back (stat->getClanStatsDescription ());
+		cClanUnitStat* stat = getUnitStat( i );
+		result.push_back( stat->getClanStatsDescription() );
 	}
 	return result;
 }
@@ -183,11 +183,11 @@ cClanData& cClanData::instance()
 }
 
 //--------------------------------------------------
-cClanData::~cClanData ()
+cClanData::~cClanData()
 {
-	for (unsigned int i = 0; i < clans.Size (); i++)
+	for ( unsigned int i = 0; i < clans.Size(); i++ )
 	{
-		if (clans[i] != 0)
+		if ( clans[i] != 0 )
 		{
 			delete clans[i];
 			clans[i] = 0;
@@ -196,18 +196,18 @@ cClanData::~cClanData ()
 }
 
 //--------------------------------------------------
-cClan* cClanData::addClan ()
+cClan* cClanData::addClan()
 {
-	cClan* clan = new cClan ( (int) clans.Size ());
-	clans.Add (clan);
+	cClan* clan = new cClan( ( int ) clans.Size() );
+	clans.Add( clan );
 	return clan;
 }
 
 //--------------------------------------------------
-cClan* cClanData::getClan (unsigned int num)
+cClan* cClanData::getClan( unsigned int num )
 {
- if (num < clans.Size())
-	 return clans[num];
+	if ( num < clans.Size() )
+		return clans[num];
 
- return NULL;
+	return NULL;
 }

@@ -81,16 +81,16 @@ public:
 	SDLKey KeyUnitMenuDestroy;
 } EX KeysList;
 
-typedef enum {OldSchool,Modern}eMouseStyle;
+typedef enum {OldSchool, Modern} eMouseStyle;
 EX eMouseStyle MouseStyle;
 
 // Prototypen ////////////////////////////////////////////////////////////////
 int LoadKeys();
-const char *GetKeyString(SDLKey key);
-SDLKey GetKeyFromString(const std::string& key);
+const char* GetKeyString( SDLKey key );
+SDLKey GetKeyFromString( const std::string& key );
 /**
-	* Generats a new keys.xml file
-	*/
+* Generats a new keys.xml file
+*/
 void GenerateKeysXml();
 
 #endif

@@ -45,11 +45,13 @@ class cResearch;
 	@author Paul Grathwohl
 */
 //-------------------------------------------------------------------------------
-class cUpgradeCalculator {
+class cUpgradeCalculator
+{
 public:
 	static cUpgradeCalculator& instance();
 
-	enum UpgradeTypes {
+	enum UpgradeTypes
+	{
 		kHitpoints = 0,
 		kArmor,
 		kAmmo,
@@ -61,7 +63,8 @@ public:
 		kCost
 	};
 
-	enum {
+	enum
+	{
 		kNoPriceAvailable = 0,
 		kNoResearchAvailable = 66666
 	};
@@ -72,7 +75,7 @@ public:
 	@param upgradeType the area of the upgrade
 	@param researchLevel the research level of the player that has to be taken into account
 	@return the costs for this upgrade or kNoPriceAvailable if the values are unknown */
-	int calcPrice(int curValue, int orgValue, int upgradeType, cResearch& researchLevel) const;
+	int calcPrice( int curValue, int orgValue, int upgradeType, cResearch& researchLevel ) const;
 
 	/** Calculates the increase of a unit value, when an upgrade is bought.
 	    Examples: If orgValue is 10, the increase will be 2.
@@ -82,7 +85,7 @@ public:
 		@param startValue the value, the unit has in it's base version
 		@return the increase of the unit's value, when an upgrade is bought
 	*/
-	int calcIncreaseByUpgrade(int startValue) const;
+	int calcIncreaseByUpgrade( int startValue ) const;
 
 	/** Calculates the price (gold) for upgrading a unit, that started with orgValue and has
 		currently curValue, to newValue.
@@ -93,14 +96,14 @@ public:
 	 @param researchLevel the research level of the player that has to be taken into account
 	 @return the costs for this upgrade or kNoPriceAvailable if such an upgrade is impossible
 	*/
-	int getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel) const;
+	int getCostForUpgrade( int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel ) const;
 
 	/** Calculates the turns needed for one research center to reach the next level.
 	 @param curResearchLevel the level this research area currently has (e.g. 20 for 20%)
 	 @param upgradeType the area of the upgrade
 	 @return the turns needed to reach the next level with one research center or
 			 kNoResearchAvailable if the passed values are out of range */
-	int calcResearchTurns(int curResearchLevel, int upgradeType) const;
+	int calcResearchTurns( int curResearchLevel, int upgradeType ) const;
 
 	/** Calculates the raw-material needed for upgrading a unit, that costs unitCost, to the current version.
 		The costs in original M.A.X. are simply a fourth of the costs (rounded down) needed to build that unit.
@@ -109,9 +112,10 @@ public:
 		maximum).
 	 @param unitCost the raw-material cost to build the unit that will be upgraded (e.g. 24 for a mine-building)
 	 @return the raw-material needed to upgrade to the current version */
-	int getMaterialCostForUpgrading(int unitCost) const;
+	int getMaterialCostForUpgrading( int unitCost ) const;
 
-	enum UnitTypes {
+	enum UnitTypes
+	{
 		kBuilding = 0, // Mines, Research Centers, Storage, Generators, ...
 		kInfantry, // Infantry and Infiltrator
 		kStandardUnit // all other, like Tank, Ground Attack Plane, Scanner, ...
@@ -127,8 +131,8 @@ public:
 		@param unitType optional, needed for upgradeType kCost because the
 						behaviour changes for the unit types
 		@return the change of the startValue (can be negative if kCost is the upgradeType) */
-	int calcChangeByResearch(int startValue, int curResearchLevel,
-							 int upgradeType=-1, int unitType=kBuilding) const;
+	int calcChangeByResearch( int startValue, int curResearchLevel,
+							  int upgradeType = -1, int unitType = kBuilding ) const;
 
 	/** Prints some upgrade values to the standard log on debug-level. Expand the implementation
 		to test, if all works fine. */
@@ -200,12 +204,12 @@ private:
 	PriceMap shots_1;
 	PriceMap shots_2;
 
-	int lookupPrice(const PriceMap& prices, int value) const;
+	int lookupPrice( const PriceMap& prices, int value ) const;
 	void setupLookupTables();
 
-	int getNearestPossibleCost(double realCost, int costDifference) const;
+	int getNearestPossibleCost( double realCost, int costDifference ) const;
 
-	void printToLog(const char* str, int value=-1000) const;
+	void printToLog( const char* str, int value = -1000 ) const;
 
 	bool setupDone;
 };
@@ -218,7 +222,8 @@ private:
 class cResearch
 {
 public:
-	enum ResearchArea {
+	enum ResearchArea
+	{
 		kAttackResearch = 0,
 		kShotsResearch,
 		kRangeResearch,
@@ -230,28 +235,28 @@ public:
 		kNrResearchAreas
 	};
 
-	cResearch (); ///< constructor
+	cResearch();  ///< constructor
 
 	/** Adds researchPoints to the current research points of the specified researchArea.
 		\return true, if the next research level was reached */
-	bool doResearch (int researchPoints, int researchArea);
+	bool doResearch( int researchPoints, int researchArea );
 
-	int getCurResearchLevel (int researchArea) const; ///< 0, 10, 20, 30, ...
-	int getCurResearchPoints (int researchArea) const; ///< Number of research-center turns the player invested in an area
-	int getNeededResearchPoints (int researchArea) const;  ///< Number of research-center turns needed to reach the next level
-	int getRemainingResearchPoints (int researchArea) const { return getNeededResearchPoints (researchArea) - getCurResearchPoints (researchArea); }
+	int getCurResearchLevel( int researchArea ) const; ///< 0, 10, 20, 30, ...
+	int getCurResearchPoints( int researchArea ) const; ///< Number of research-center turns the player invested in an area
+	int getNeededResearchPoints( int researchArea ) const; ///< Number of research-center turns needed to reach the next level
+	int getRemainingResearchPoints( int researchArea ) const { return getNeededResearchPoints( researchArea ) - getCurResearchPoints( researchArea ); }
 
-	int getRemainingTurns (int researchArea, int centersWorkingOn) const; ///< returns the needed number of turns to reach the next level with the given nr of research centers
+	int getRemainingTurns( int researchArea, int centersWorkingOn ) const; ///< returns the needed number of turns to reach the next level with the given nr of research centers
 
-	void setCurResearchLevel (int researchLevel, int researchArea); ///< will also set the neededResearchPoints if necessary
-	void setCurResearchPoints (int researchPoints, int researchArea); ///< if researchPoints >= neededResearchPoints, nothing will be done
+	void setCurResearchLevel( int researchLevel, int researchArea ); ///< will also set the neededResearchPoints if necessary
+	void setCurResearchPoints( int researchPoints, int researchArea ); ///< if researchPoints >= neededResearchPoints, nothing will be done
 
-	int getUpgradeCalculatorUpgradeType (int researchArea) const;
-	int getResearchArea (int upgradeCalculatorType) const;
+	int getUpgradeCalculatorUpgradeType( int researchArea ) const;
+	int getResearchArea( int upgradeCalculatorType ) const;
 
-//-------------------------------------------
+	//-------------------------------------------
 protected:
-	void init (); ///< sets all research information to the initial values
+	void init();  ///< sets all research information to the initial values
 
 	int curResearchLevel[kNrResearchAreas]; ///< 0, 10, 20, 30, ...
 	int curResearchPoints[kNrResearchAreas]; ///< Numberr of research-center turns the player invested in an area

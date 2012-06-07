@@ -29,61 +29,61 @@ using namespace std;
 cUnicodeFont::cUnicodeFont()
 {
 	// load all existing fonts. If there will be added some, they have also to be added here!
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_NORMAL );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_NORMAL );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_NORMAL );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_NORMAL );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_NORMAL );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_NORMAL );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_NORMAL );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_BIG );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_BIG );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_BIG );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_BIG );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_BIG );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_BIG );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_BIG );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_BIG );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_BIG_GOLD );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_BIG_GOLD );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_BIG_GOLD );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_BIG_GOLD );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_BIG_GOLD );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_BIG_GOLD );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_WHITE );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_WHITE );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_WHITE );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_WHITE );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_WHITE );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_SMALL_WHITE );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_SMALL_WHITE );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_SMALL_WHITE );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_RED );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_RED );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_RED );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_RED );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_RED );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_SMALL_RED );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_SMALL_RED );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_SMALL_RED );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_GREEN );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_GREEN );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_GREEN );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_GREEN );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_GREEN );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_SMALL_GREEN );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_SMALL_GREEN );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_SMALL_GREEN );
 
-	loadChars ( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_YELLOW );
-	loadChars ( CHARSET_ISO8559_1, FONT_LATIN_SMALL_YELLOW );
-	loadChars ( CHARSET_ISO8559_2, FONT_LATIN_SMALL_YELLOW );
-	loadChars ( CHARSET_ISO8559_5, FONT_LATIN_SMALL_YELLOW );
+	loadChars( CHARSET_ISO8559_ALL, FONT_LATIN_SMALL_YELLOW );
+	loadChars( CHARSET_ISO8559_1, FONT_LATIN_SMALL_YELLOW );
+	loadChars( CHARSET_ISO8559_2, FONT_LATIN_SMALL_YELLOW );
+	loadChars( CHARSET_ISO8559_5, FONT_LATIN_SMALL_YELLOW );
 }
 
 void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
-	const unsigned short *iso8859_to_uni;
+	const unsigned short* iso8859_to_uni;
 	int currentChar, highcount;
 	int cellW, cellH;
 	int pX, pY;
 
-	AutoSurface surface(loadCharsetSurface(charset, fonttype));
+	AutoSurface surface( loadCharsetSurface( charset, fonttype ) );
 	if ( !surface )
 	{
 		// LOG: error while loading font
 		return;
 	}
-	AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	AutoSurface* const chars = getFontTypeSurfaces( fonttype );
 	if ( !chars )
 	{
 		// LOG: error while loading font
 		return;
 	}
-	iso8859_to_uni = getIsoPage ( charset );
+	iso8859_to_uni = getIsoPage( charset );
 
 	if ( charset == CHARSET_ISO8559_ALL ) highcount = 16;
 	else highcount = 6;
@@ -94,10 +94,10 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 	pX = 0;
 	pY = 0;
 
-	for( int rows = 0; rows < highcount; rows ++)
+	for ( int rows = 0; rows < highcount; rows ++ )
 	{
 		//go through the cols
-		for( int cols = 0; cols < 16; cols ++)
+		for ( int cols = 0; cols < 16; cols ++ )
 		{
 			SDL_Rect Rect;
 			Rect.x = cellW * cols; //write each cell position and size into array
@@ -106,14 +106,14 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			Rect.w = cellW;
 
 			//go through pixels to find offset x
-			for( int pCol = 0; pCol < cellH; pCol++)
+			for ( int pCol = 0; pCol < cellH; pCol++ )
 			{
-				for( int pRow = 0; pRow < cellH; pRow++)
+				for ( int pRow = 0; pRow < cellH; pRow++ )
 				{
-					pX = (cellW * cols) + pCol;
-					pY = (cellH * rows) + pRow;
+					pX = ( cellW * cols ) + pCol;
+					pY = ( cellH * rows ) + pRow;
 
-					if( getPixel32(pX, pY, surface) != SDL_MapRGB(surface->format, 0xFF, 0, 0xFF) )
+					if ( getPixel32( pX, pY, surface ) != SDL_MapRGB( surface->format, 0xFF, 0, 0xFF ) )
 					{
 						//offset
 						Rect.x = pX;
@@ -123,16 +123,16 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 				}
 			}
 			//go through pixel to find offset w
-			for( int pCol_w = cellW - 1; pCol_w >= 0; pCol_w--)
+			for ( int pCol_w = cellW - 1; pCol_w >= 0; pCol_w-- )
 			{
-				for ( int pRow_w = 0; pRow_w < cellH; pRow_w++)
+				for ( int pRow_w = 0; pRow_w < cellH; pRow_w++ )
 				{
-					pX = (cellW * cols ) + pCol_w;
-					pY = (cellH * rows ) + pRow_w;
+					pX = ( cellW * cols ) + pCol_w;
+					pY = ( cellH * rows ) + pRow_w;
 
-					if( getPixel32(pX, pY, surface) != SDL_MapRGB(surface->format, 0xFF, 0, 0xFF) )
+					if ( getPixel32( pX, pY, surface ) != SDL_MapRGB( surface->format, 0xFF, 0, 0xFF ) )
 					{
-						Rect.w = (pX - Rect.x) +1;
+						Rect.w = ( pX - Rect.x ) + 1;
 						pCol_w = -1; //break loop
 						pRow_w = cellH;
 					}
@@ -145,32 +145,32 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 			if ( iso8859_to_uni == NULL )
 			{
 				if ( charset == CHARSET_ISO8559_ALL ) unicodeplace = currentChar;
-				else if ( charset == CHARSET_ISO8559_1 ) unicodeplace = currentChar + 128 + 2*16;
+				else if ( charset == CHARSET_ISO8559_1 ) unicodeplace = currentChar + 128 + 2 * 16;
 			}
 			else unicodeplace = iso8859_to_uni[currentChar];
-			chars[unicodeplace] = SDL_CreateRGBSurface ( Video.getSurfaceType()|SDL_SRCCOLORKEY,Rect.w,Rect.h,32,0,0,0,0 );
+			chars[unicodeplace] = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, Rect.w, Rect.h, 32, 0, 0, 0, 0 );
 
 			// change color of smal fonts
 			switch ( fonttype )
 			{
-			case FONT_LATIN_SMALL_RED:
-				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[unicodeplace], NULL, 0xe60000 );
-				break;
-			case FONT_LATIN_SMALL_GREEN:
-				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[unicodeplace], NULL, 0x04ae04 );
-				break;
-			case FONT_LATIN_SMALL_YELLOW:
-				SDL_SetColorKey ( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
-				SDL_FillRect ( chars[unicodeplace], NULL, 0xdbde00 );
-				break;
-			default:
-				SDL_FillRect ( chars[unicodeplace], NULL, 0xFF00FF );
-				break;
+				case FONT_LATIN_SMALL_RED:
+					SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+					SDL_FillRect( chars[unicodeplace], NULL, 0xe60000 );
+					break;
+				case FONT_LATIN_SMALL_GREEN:
+					SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+					SDL_FillRect( chars[unicodeplace], NULL, 0x04ae04 );
+					break;
+				case FONT_LATIN_SMALL_YELLOW:
+					SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xf0d8b8 );
+					SDL_FillRect( chars[unicodeplace], NULL, 0xdbde00 );
+					break;
+				default:
+					SDL_FillRect( chars[unicodeplace], NULL, 0xFF00FF );
+					break;
 			}
-			SDL_BlitSurface ( surface, &Rect, chars[unicodeplace], NULL );
-			SDL_SetColorKey ( chars[unicodeplace], SDL_SRCCOLORKEY, 0xFF00FF );
+			SDL_BlitSurface( surface, &Rect, chars[unicodeplace], NULL );
+			SDL_SetColorKey( chars[unicodeplace], SDL_SRCCOLORKEY, 0xFF00FF );
 
 			//goto next character
 			currentChar++;
@@ -178,137 +178,137 @@ void cUnicodeFont::loadChars( eUnicodeFontCharset charset, eUnicodeFontType font
 	}
 }
 
-Uint32 cUnicodeFont::getPixel32(int x, int y, SDL_Surface *surface)
+Uint32 cUnicodeFont::getPixel32( int x, int y, SDL_Surface* surface )
 {
 	//converts the Pixel to 32 bit
-	Uint32 *pixels = (Uint32 *) surface->pixels;
+	Uint32* pixels = ( Uint32* ) surface->pixels;
 
 	//get the requested pixels
-	return pixels[(y*surface->w)+x];
+	return pixels[( y * surface->w ) + x];
 }
 
-AutoSurface* cUnicodeFont::getFontTypeSurfaces(eUnicodeFontType const fonttype)
+AutoSurface* cUnicodeFont::getFontTypeSurfaces( eUnicodeFontType const fonttype )
 {
 	switch ( fonttype )
 	{
-	case FONT_LATIN_NORMAL:
-		return charsNormal;
-	case FONT_LATIN_BIG:
-		return charsBig;
-	case FONT_LATIN_BIG_GOLD:
-		return charsBigGold;
-	case FONT_LATIN_SMALL_WHITE:
-		return charsSmallWhite;
-	case FONT_LATIN_SMALL_RED:
-		return charsSmallRed;
-	case FONT_LATIN_SMALL_GREEN:
-		return charsSmallGreen;
-	case FONT_LATIN_SMALL_YELLOW:
-		return charsSmallYellow;
+		case FONT_LATIN_NORMAL:
+			return charsNormal;
+		case FONT_LATIN_BIG:
+			return charsBig;
+		case FONT_LATIN_BIG_GOLD:
+			return charsBigGold;
+		case FONT_LATIN_SMALL_WHITE:
+			return charsSmallWhite;
+		case FONT_LATIN_SMALL_RED:
+			return charsSmallRed;
+		case FONT_LATIN_SMALL_GREEN:
+			return charsSmallGreen;
+		case FONT_LATIN_SMALL_YELLOW:
+			return charsSmallYellow;
 	}
 	return NULL;
 }
 
-SDL_Surface *cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
+SDL_Surface* cUnicodeFont::loadCharsetSurface( eUnicodeFontCharset charset, eUnicodeFontType fonttype )
 {
 	// build the filename from the information
 	string filename = cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_";
 	switch ( fonttype )
 	{
-	case FONT_LATIN_NORMAL:
-		filename += "normal";
-		break;
-	case FONT_LATIN_BIG:
-		filename += "big";
-		break;
-	case FONT_LATIN_BIG_GOLD:
-		filename += "big_gold";
-		break;
-	case FONT_LATIN_SMALL_WHITE:
-	case FONT_LATIN_SMALL_RED:
-	case FONT_LATIN_SMALL_GREEN:
-	case FONT_LATIN_SMALL_YELLOW:
-		filename += "small";
-		break;
+		case FONT_LATIN_NORMAL:
+			filename += "normal";
+			break;
+		case FONT_LATIN_BIG:
+			filename += "big";
+			break;
+		case FONT_LATIN_BIG_GOLD:
+			filename += "big_gold";
+			break;
+		case FONT_LATIN_SMALL_WHITE:
+		case FONT_LATIN_SMALL_RED:
+		case FONT_LATIN_SMALL_GREEN:
+		case FONT_LATIN_SMALL_YELLOW:
+			filename += "small";
+			break;
 	}
 	if ( charset != CHARSET_ISO8559_ALL )
 	{
 		filename += "_iso-8559-";
 		// it's important that the enum-numbers are the same as theire iso-numbers!
-		filename += iToStr ( charset );
+		filename += iToStr( charset );
 	}
 	filename += ".pcx";
 
 	// load the bitmap
-	if ( FileExists( filename.c_str() ) ) return LoadPCX ( filename );
+	if ( FileExists( filename.c_str() ) ) return LoadPCX( filename );
 	else return NULL;
 }
 
-const unsigned short *cUnicodeFont::getIsoPage ( eUnicodeFontCharset charset )
+const unsigned short* cUnicodeFont::getIsoPage( eUnicodeFontCharset charset )
 {
 	switch ( charset )
 	{
-	case CHARSET_ISO8559_ALL:
-		return NULL;
-	case CHARSET_ISO8559_1:
-		return NULL;
-	case CHARSET_ISO8559_2:
-		return iso8859_2_2uni;
-	case CHARSET_ISO8559_3:
-		return iso8859_3_2uni;
-	case CHARSET_ISO8559_4:
-		return iso8859_4_2uni;
-	case CHARSET_ISO8559_5:
-		return iso8859_5_2uni;
-	case CHARSET_ISO8559_6:
-		return iso8859_6_2uni;
-	case CHARSET_ISO8559_7:
-		return iso8859_7_2uni;
-	case CHARSET_ISO8559_8:
-		return iso8859_8_2uni;
-	case CHARSET_ISO8559_9:
-		return iso8859_9_2uni;
-	case CHARSET_ISO8559_10:
-		return iso8859_10_2uni;
-	case CHARSET_ISO8559_11:
-		return NULL;
-	case CHARSET_ISO8559_13:
-		return iso8859_13_2uni;
-	case CHARSET_ISO8559_14:
-		return iso8859_14_2uni;
-	case CHARSET_ISO8559_15:
-		return iso8859_15_2uni;
-	case CHARSET_ISO8559_16:
-		return iso8859_16_2uni;
-	default:
-		//LOG: unknown iso format
-		break;
+		case CHARSET_ISO8559_ALL:
+			return NULL;
+		case CHARSET_ISO8559_1:
+			return NULL;
+		case CHARSET_ISO8559_2:
+			return iso8859_2_2uni;
+		case CHARSET_ISO8559_3:
+			return iso8859_3_2uni;
+		case CHARSET_ISO8559_4:
+			return iso8859_4_2uni;
+		case CHARSET_ISO8559_5:
+			return iso8859_5_2uni;
+		case CHARSET_ISO8559_6:
+			return iso8859_6_2uni;
+		case CHARSET_ISO8559_7:
+			return iso8859_7_2uni;
+		case CHARSET_ISO8559_8:
+			return iso8859_8_2uni;
+		case CHARSET_ISO8559_9:
+			return iso8859_9_2uni;
+		case CHARSET_ISO8559_10:
+			return iso8859_10_2uni;
+		case CHARSET_ISO8559_11:
+			return NULL;
+		case CHARSET_ISO8559_13:
+			return iso8859_13_2uni;
+		case CHARSET_ISO8559_14:
+			return iso8859_14_2uni;
+		case CHARSET_ISO8559_15:
+			return iso8859_15_2uni;
+		case CHARSET_ISO8559_16:
+			return iso8859_16_2uni;
+		default:
+			//LOG: unknown iso format
+			break;
 	}
 	return NULL;
 }
 
-void cUnicodeFont::showText( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showText( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	showText ( rDest.x, rDest.y, sText, fonttype, surface, encode );
+	showText( rDest.x, rDest.y, sText, fonttype, surface, encode );
 }
 
-void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	string sText(text);
+	string sText( text );
 	int offX = x;
 	int offY = y;
 	int iSpace = 0;
-	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces( fonttype );
 
 	//make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
-	switch( fonttype )
+	switch ( fonttype )
 	{
 		case FONT_LATIN_SMALL_GREEN:
 		case FONT_LATIN_SMALL_RED:
 		case FONT_LATIN_SMALL_WHITE:
 		case FONT_LATIN_SMALL_YELLOW:
-			for( size_t i=0; i < sText.size(); i++ ) sText[i] = toupper(sText[i]);
+			for ( size_t i = 0; i < sText.size(); i++ ) sText[i] = toupper( sText[i] );
 			iSpace = 1;
 			break;
 		case FONT_LATIN_NORMAL:
@@ -318,23 +318,23 @@ void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType 
 	}
 
 	// decode the UTF-8 String:
-	const char *p = sText.c_str();
-	const char *now = &p[sText.length()];
+	const char* p = sText.c_str();
+	const char* now = &p[sText.length()];
 	while ( p < now )
 	{
 		//is space?
-		if( *p == ' ' )
+		if ( *p == ' ' )
 		{
 			if ( chars[97] ) offX += chars[97]->w;
 			p++;
 		} //is new line?
-		else if( *p == '\n' )
+		else if ( *p == '\n' )
 		{
-			offY += getFontHeight ( fonttype );
+			offY += getFontHeight( fonttype );
 			offX = x;
 			p++;
 		}
-		else if( 13 == *(const unsigned char *)p )
+		else if ( 13 == *( const unsigned char* )p )
 		{
 			p++;
 			//ignore - is breakline in file
@@ -345,18 +345,18 @@ void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType 
 			if ( encode )
 			{
 				int increase;
-				uni = encodeUTF8Char ( (unsigned char *)p, &increase );
+				uni = encodeUTF8Char( ( unsigned char* )p, &increase );
 				p += increase;
 			}
 			else
 			{
-				uni = *(unsigned char *)p;
+				uni = *( unsigned char* )p;
 				p++;
 			}
 			if ( chars[uni] != NULL )
 			{
 				SDL_Rect rTmp = {offX, offY, 16, 16};
-				SDL_BlitSurface( chars[uni], NULL, surface, &rTmp);
+				SDL_BlitSurface( chars[uni], NULL, surface, &rTmp );
 
 				//move one px forward for space between signs
 				offX += chars[uni]->w + iSpace;
@@ -365,63 +365,63 @@ void cUnicodeFont::showText( int x, int y, const string& text, eUnicodeFontType 
 	}
 }
 
-int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+int cUnicodeFont::drawWithBreakLines( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	string sText(text);
+	string sText( text );
 	string drawString = "";
 
-	while ( getTextWide ( sText, fonttype, encode ) > rDest.w )
+	while ( getTextWide( sText, fonttype, encode ) > rDest.w )
 	{
 		// get the position of the end of as many words from the text as fit in rDest.w
 		size_t pos = 0, lastPos = 0;
 		do
 		{
 			lastPos = pos;
-			pos = sText.find ( " ", pos+1 );
+			pos = sText.find( " ", pos + 1 );
 		}
-		while ( getTextWide ( sText.substr ( 0, pos ), fonttype, encode ) < rDest.w && pos != string::npos );
+		while ( getTextWide( sText.substr( 0, pos ), fonttype, encode ) < rDest.w && pos != string::npos );
 
 		// get the words. If there was no " " in the text we get the hole text string
-		if ( lastPos != 0 ) drawString = sText.substr ( 0, lastPos );
+		if ( lastPos != 0 ) drawString = sText.substr( 0, lastPos );
 		else drawString = sText;
 
 		// if there is only one word in the string it is possible that this word is to long.
 		// we will check this, and cut it if necessary
-		while ( getTextWide ( drawString, fonttype, encode ) > rDest.w )
+		while ( getTextWide( drawString, fonttype, encode ) > rDest.w )
 		{
 			string stringPart = drawString;
 
 			// delete as many chars as it is needed to fit into the line
-			while ( getTextWide ( stringPart, fonttype, encode ) + getTextWide ( "-", fonttype, encode ) > rDest.w ) stringPart.erase ( stringPart.length()-1, 1 );
+			while ( getTextWide( stringPart, fonttype, encode ) + getTextWide( "-", fonttype, encode ) > rDest.w ) stringPart.erase( stringPart.length() - 1, 1 );
 			stringPart += "-";
 
 			// show the part of the word
-			showText ( rDest, stringPart, fonttype, surface, encode );
-			rDest.y += getFontHeight ( fonttype );
+			showText( rDest, stringPart, fonttype, surface, encode );
+			rDest.y += getFontHeight( fonttype );
 
 			// erase the part from the line and from the hole text
-			drawString.erase ( 0, stringPart.length()-1 );
-			sText.erase ( 0, stringPart.length()-1 );
+			drawString.erase( 0, stringPart.length() - 1 );
+			sText.erase( 0, stringPart.length() - 1 );
 		}
 
 		// draw the rest of the line
-		showText ( rDest, drawString, fonttype, surface, encode );
-		rDest.y += getFontHeight ( fonttype );
+		showText( rDest, drawString, fonttype, surface, encode );
+		rDest.y += getFontHeight( fonttype );
 
-		sText.erase ( 0, drawString.length() );
-		if ( lastPos != 0 ) sText.erase ( 0, 1 );
+		sText.erase( 0, drawString.length() );
+		if ( lastPos != 0 ) sText.erase( 0, 1 );
 	}
 
 	// draw the rest of the text
-	showText ( rDest, sText, fonttype, surface, encode );
-	rDest.y += getFontHeight ( fonttype );
+	showText( rDest, sText, fonttype, surface, encode );
+	rDest.y += getFontHeight( fonttype );
 
 	return rDest.y;
 }
 
-int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+int cUnicodeFont::showTextAsBlock( SDL_Rect rDest, const string& text, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	string sText(text);
+	string sText( text );
 	string sTmp;
 
 	size_t k;
@@ -429,12 +429,12 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicode
 	do
 	{
 		//erase all invalid formatted breaklines like we may get them from translation XMLs
-		k = sText.find ( "\\n" );
+		k = sText.find( "\\n" );
 
 		if ( k != string::npos )
 		{
-			sText.erase ( k, 2 );
-			sText.insert (k, "\n");
+			sText.erase( k, 2 );
+			sText.insert( k, "\n" );
 		}
 	}
 	while ( k != string::npos );
@@ -442,11 +442,11 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicode
 	do
 	{
 		//erase all blanks > 2
-		k = sText.find ( "  " ); //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
+		k = sText.find( "  " );  //IMPORTANT: _two_ blanks! don't change this or this will become an endless loop
 
 		if ( k != string::npos )
 		{
-			sText.erase ( k, 1 );
+			sText.erase( k, 1 );
 		}
 	}
 	while ( k != string::npos );
@@ -454,34 +454,34 @@ int cUnicodeFont::showTextAsBlock ( SDL_Rect rDest, const string& text, eUnicode
 	do //support of linebreaks: snip text at linebreaks, do the auto linebreak for first part and proceed with second part
 	{
 		//search and replace \n since we want a blocktext - no manual breaklines allowed
-		k = sText.find ( "\n" );
+		k = sText.find( "\n" );
 
 		if ( k != string::npos )
 		{
 
-			sTmp=sText;
+			sTmp = sText;
 
-			sText.erase ( 0, k+1 ); //delete everything before and including linebreak \n
-			sTmp.erase (k, sTmp.size()); //delete everything after \n
+			sText.erase( 0, k + 1 ); //delete everything before and including linebreak \n
+			sTmp.erase( k, sTmp.size() ); //delete everything after \n
 
-			rDest.y = drawWithBreakLines(rDest, sTmp, fonttype, surface, encode); //draw first part of text and proceed searching for breaklines
+			rDest.y = drawWithBreakLines( rDest, sTmp, fonttype, surface, encode ); //draw first part of text and proceed searching for breaklines
 			// += getFontHeight(eBitmapFontType); //add newline for each breakline
 		}
 	}
 	while ( k != string::npos );
 
-	return drawWithBreakLines(rDest, sText, fonttype, surface, encode); //draw rest of text
+	return drawWithBreakLines( rDest, sText, fonttype, surface, encode ); //draw rest of text
 }
 
-void cUnicodeFont::showTextCentered( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showTextCentered( SDL_Rect rDest, const string& sText, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	showTextCentered ( rDest.x, rDest.y, sText, fonttype, surface, encode );
+	showTextCentered( rDest.x, rDest.y, sText, fonttype, surface, encode );
 }
 
-void cUnicodeFont::showTextCentered( int x, int y, const string& sText, eUnicodeFontType fonttype, SDL_Surface *surface, bool encode )
+void cUnicodeFont::showTextCentered( int x, int y, const string& sText, eUnicodeFontType fonttype, SDL_Surface* surface, bool encode )
 {
-	SDL_Rect rTmp = getTextSize ( sText, fonttype, encode );
-	showText ( x - rTmp.w / 2, y, sText, fonttype, surface, encode );
+	SDL_Rect rTmp = getTextSize( sText, fonttype, encode );
+	showText( x - rTmp.w / 2, y, sText, fonttype, surface, encode );
 }
 
 int cUnicodeFont::getTextWide( const string& sText, eUnicodeFontType fonttype, bool encode )
@@ -492,20 +492,20 @@ int cUnicodeFont::getTextWide( const string& sText, eUnicodeFontType fonttype, b
 
 SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttype, bool encode )
 {
-	string sText(text);
+	string sText( text );
 	int iSpace = 0;
-	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces( fonttype );
 	SDL_Rect rTmp = {0, 0, 0, 0};
 
 	//make sure only upper characters are read for the small fonts
 	// since we don't support lower chars on the small fonts
-	switch( fonttype )
+	switch ( fonttype )
 	{
 		case FONT_LATIN_SMALL_GREEN:
 		case FONT_LATIN_SMALL_RED:
 		case FONT_LATIN_SMALL_WHITE:
 		case FONT_LATIN_SMALL_YELLOW:
-			for( size_t i=0; i < sText.size(); i++ ) sText[i] = toupper(sText[i]);
+			for ( size_t i = 0; i < sText.size(); i++ ) sText[i] = toupper( sText[i] );
 			iSpace = 1;
 			break;
 		case FONT_LATIN_NORMAL:
@@ -515,23 +515,23 @@ SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttyp
 	}
 
 	// decode the UTF-8 String:
-	const char *p = sText.c_str();
-	const char *now = &p[sText.length()];
+	const char* p = sText.c_str();
+	const char* now = &p[sText.length()];
 	while ( p < now )
 	{
 		//is space?
-		if( *p == ' ' )
+		if ( *p == ' ' )
 		{
 			// we will use the wight of the 'a' for spaces
 			if ( chars[97] ) rTmp.w += chars[97]->w;
 			p++;
 		} //is new line?
-		else if( *p == '\n' )
+		else if ( *p == '\n' )
 		{
-			rTmp.h += getFontHeight ( fonttype );
+			rTmp.h += getFontHeight( fonttype );
 			p++;
 		}
-		else if( 13 == *(const unsigned char *)p )
+		else if ( 13 == *( const unsigned char* )p )
 		{
 			p++;
 			//ignore - is breakline in file
@@ -542,12 +542,12 @@ SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttyp
 			if ( encode )
 			{
 				int increase;
-				uni = encodeUTF8Char ( (unsigned char *)p, &increase );
+				uni = encodeUTF8Char( ( unsigned char* )p, &increase );
 				p += increase;
 			}
 			else
 			{
-				uni = *(unsigned char *)p;
+				uni = *( unsigned char* )p;
 				p++;
 			}
 			if ( chars[uni] != NULL )
@@ -562,7 +562,7 @@ SDL_Rect cUnicodeFont::getTextSize( const string& text, eUnicodeFontType fonttyp
 
 int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 {
-	const AutoSurface* const chars = getFontTypeSurfaces(fonttype);
+	const AutoSurface* const chars = getFontTypeSurfaces( fonttype );
 	// we will return the height of the first character in the list
 	for ( int i = 0; i < 0xFFFF; i++ )
 	{
@@ -571,62 +571,62 @@ int cUnicodeFont::getFontHeight( eUnicodeFontType fonttype )
 	return 0;
 }
 
-eUnicodeFontSize cUnicodeFont::getFontSize ( eUnicodeFontType fonttype ) const
+eUnicodeFontSize cUnicodeFont::getFontSize( eUnicodeFontType fonttype ) const
 {
 	switch ( fonttype )
 	{
-	default:
-	case FONT_LATIN_NORMAL:
-		return FONT_SIZE_NORMAL;
-	case FONT_LATIN_BIG:
-	case FONT_LATIN_BIG_GOLD:
-		return FONT_SIZE_BIG;
-	case FONT_LATIN_SMALL_WHITE:
-	case FONT_LATIN_SMALL_RED:
-	case FONT_LATIN_SMALL_GREEN:
-	case FONT_LATIN_SMALL_YELLOW:
-		return FONT_SIZE_SMALL;
+		default:
+		case FONT_LATIN_NORMAL:
+			return FONT_SIZE_NORMAL;
+		case FONT_LATIN_BIG:
+		case FONT_LATIN_BIG_GOLD:
+			return FONT_SIZE_BIG;
+		case FONT_LATIN_SMALL_WHITE:
+		case FONT_LATIN_SMALL_RED:
+		case FONT_LATIN_SMALL_GREEN:
+		case FONT_LATIN_SMALL_YELLOW:
+			return FONT_SIZE_SMALL;
 	}
 }
 
 
-string cUnicodeFont::shortenStringToSize ( const string& str, int size, eUnicodeFontType fonttype )
+string cUnicodeFont::shortenStringToSize( const string& str, int size, eUnicodeFontType fonttype )
 {
-	string res(str);
+	string res( str );
 
-	if ( getTextWide ( res, fonttype ) > size )
+	if ( getTextWide( res, fonttype ) > size )
 	{
-		while ( getTextWide ( res + "." ) > size )
+		while ( getTextWide( res + "." ) > size )
 		{
-			res.erase ( res.length()-1, res.length() );
+			res.erase( res.length() - 1, res.length() );
 		}
 		res += ".";
 	}
 	return res;
 }
 
-Uint16 cUnicodeFont::encodeUTF8Char ( const unsigned char *pch, int *increase ) const
+Uint16 cUnicodeFont::encodeUTF8Char( const unsigned char* pch, int* increase ) const
 {
 	// encode the UTF-8 character to his unicode position
 	Uint16 uni = 0;
 	unsigned char ch = *pch;
 	// we do not need encoding 4 byte long characters because SDL only returns the BMP of the unicode table
-	if ( (ch & 0xE0) == 0xE0 )
+	if ( ( ch & 0xE0 ) == 0xE0 )
 	{
-		uni |= (ch & 0x0F) << 12;
-		uni |= (*(pch+1) & 0x3F) << 6;
-		uni |= (*(pch+2) & 0x3F);
+		uni |= ( ch & 0x0F ) << 12;
+		uni |= ( *( pch + 1 ) & 0x3F ) << 6;
+		uni |= ( *( pch + 2 ) & 0x3F );
 		*increase = 3;
 	}
-	else if ( (ch & 0xC0) == 0xC0 )
+	else if ( ( ch & 0xC0 ) == 0xC0 )
 	{
-		uni |= (ch & 0x1F) << 6;
-		uni |= (*(pch+1) & 0x3F);
+		uni |= ( ch & 0x1F ) << 6;
+		uni |= ( *( pch + 1 ) & 0x3F );
 		*increase = 2;
 	}
 	else
 	{
-		uni |= (ch & 0x7F);
+		uni |= ( ch & 0x7F );
 		*increase = 1;
 	}
 	return uni;

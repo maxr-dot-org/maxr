@@ -26,15 +26,15 @@
 //--------------------------------------------------
 cUpgradeCalculator& cUpgradeCalculator::instance()
 {
-  static cUpgradeCalculator _instance;
-  if (!_instance.setupDone) // do the setup on the first call, not on startup of the program
-	  _instance.setupLookupTables();
-  return _instance;
+	static cUpgradeCalculator _instance;
+	if ( !_instance.setupDone ) // do the setup on the first call, not on startup of the program
+		_instance.setupLookupTables();
+	return _instance;
 }
 
 //--------------------------------------------------
 cUpgradeCalculator::cUpgradeCalculator()
-: setupDone (false)
+	: setupDone( false )
 {}
 
 //--------------------------------------------------
@@ -360,17 +360,17 @@ void cUpgradeCalculator::setupLookupTables()
 	attackSpeed_16 [34] = 611;
 
 	attackSpeed_17 [17] = 5;
-    attackSpeed_17 [19] = 10;
-    attackSpeed_17 [21] = 19;
-    attackSpeed_17 [23] = 34;
-    attackSpeed_17 [25] = 56;
-    attackSpeed_17 [27] = 91;
-    attackSpeed_17 [29] = 143;
-    attackSpeed_17 [31] = 216;
-    attackSpeed_17 [33] = 321;
-    attackSpeed_17 [35] = 466;
-    attackSpeed_17 [37] = 661;
-	
+	attackSpeed_17 [19] = 10;
+	attackSpeed_17 [21] = 19;
+	attackSpeed_17 [23] = 34;
+	attackSpeed_17 [25] = 56;
+	attackSpeed_17 [27] = 91;
+	attackSpeed_17 [29] = 143;
+	attackSpeed_17 [31] = 216;
+	attackSpeed_17 [33] = 321;
+	attackSpeed_17 [35] = 466;
+	attackSpeed_17 [37] = 661;
+
 	attackSpeed_18 [18] = 4;
 	attackSpeed_18 [20] = 10;
 	attackSpeed_18 [22] = 16;
@@ -593,47 +593,49 @@ void cUpgradeCalculator::setupLookupTables()
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::lookupPrice(const PriceMap& prices, int value) const
+int cUpgradeCalculator::lookupPrice( const PriceMap& prices, int value ) const
 {
-	PriceMap::const_iterator it = prices.find(value);
-	if (it != prices.end())
+	PriceMap::const_iterator it = prices.find( value );
+	if ( it != prices.end() )
 		return it->second; // the price
 	return kNoPriceAvailable;
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, cResearch& researchLevel) const
+int cUpgradeCalculator::calcPrice( int curValue, int orgValue, int upgradeType, cResearch& researchLevel ) const
 {
-	int bonusByResearch = calcChangeByResearch(orgValue, researchLevel.getCurResearchLevel (researchLevel.getResearchArea (upgradeType)));
+	int bonusByResearch = calcChangeByResearch( orgValue, researchLevel.getCurResearchLevel( researchLevel.getResearchArea( upgradeType ) ) );
 	curValue -= bonusByResearch;
 
 	int price = kNoPriceAvailable;
-	switch (upgradeType) {
+	switch ( upgradeType )
+	{
 
 		case kHitpoints:
 		case kArmor:
 		case kAmmo:
 		{
-			switch (orgValue) {
-				case 2:  price = lookupPrice (hitpointsArmorAmmo_2,  curValue); break;
-				case 4:  price = lookupPrice (hitpointsArmorAmmo_4,  curValue); break;
-				case 6:  price = lookupPrice (hitpointsArmorAmmo_6,  curValue); break;
-				case 7:  price = lookupPrice (hitpointsArmorAmmo_7,  curValue); break;
-				case 8:  price = lookupPrice (hitpointsArmorAmmo_8,  curValue); break;
-				case 9:  price = lookupPrice (hitpointsArmorAmmo_9,  curValue); break;
-				case 10: price = lookupPrice (hitpointsArmorAmmo_10, curValue); break;
-				case 12: price = lookupPrice (hitpointsArmorAmmo_12, curValue); break;
-				case 14: price = lookupPrice (hitpointsArmorAmmo_14, curValue); break;
-				case 16: price = lookupPrice (hitpointsArmorAmmo_16, curValue); break;
-				case 18: price = lookupPrice (hitpointsArmorAmmo_18, curValue); break;
-				case 20: price = lookupPrice (hitpointsArmorAmmo_20, curValue); break;
-				case 24: price = lookupPrice (hitpointsArmorAmmo_24, curValue); break;
-				case 26: price = lookupPrice (hitpointsArmorAmmo_26, curValue); break;
-				case 28: price = lookupPrice (hitpointsArmorAmmo_28, curValue); break;
-				case 32: price = lookupPrice (hitpointsArmorAmmo_32, curValue); break;
-				case 36: price = lookupPrice (hitpointsArmorAmmo_36, curValue); break;
-				case 40: price = lookupPrice (hitpointsArmorAmmo_40, curValue); break;
-				case 56: price = lookupPrice (hitpointsArmorAmmo_56, curValue); break;
+			switch ( orgValue )
+			{
+				case 2:  price = lookupPrice( hitpointsArmorAmmo_2,  curValue ); break;
+				case 4:  price = lookupPrice( hitpointsArmorAmmo_4,  curValue ); break;
+				case 6:  price = lookupPrice( hitpointsArmorAmmo_6,  curValue ); break;
+				case 7:  price = lookupPrice( hitpointsArmorAmmo_7,  curValue ); break;
+				case 8:  price = lookupPrice( hitpointsArmorAmmo_8,  curValue ); break;
+				case 9:  price = lookupPrice( hitpointsArmorAmmo_9,  curValue ); break;
+				case 10: price = lookupPrice( hitpointsArmorAmmo_10, curValue ); break;
+				case 12: price = lookupPrice( hitpointsArmorAmmo_12, curValue ); break;
+				case 14: price = lookupPrice( hitpointsArmorAmmo_14, curValue ); break;
+				case 16: price = lookupPrice( hitpointsArmorAmmo_16, curValue ); break;
+				case 18: price = lookupPrice( hitpointsArmorAmmo_18, curValue ); break;
+				case 20: price = lookupPrice( hitpointsArmorAmmo_20, curValue ); break;
+				case 24: price = lookupPrice( hitpointsArmorAmmo_24, curValue ); break;
+				case 26: price = lookupPrice( hitpointsArmorAmmo_26, curValue ); break;
+				case 28: price = lookupPrice( hitpointsArmorAmmo_28, curValue ); break;
+				case 32: price = lookupPrice( hitpointsArmorAmmo_32, curValue ); break;
+				case 36: price = lookupPrice( hitpointsArmorAmmo_36, curValue ); break;
+				case 40: price = lookupPrice( hitpointsArmorAmmo_40, curValue ); break;
+				case 56: price = lookupPrice( hitpointsArmorAmmo_56, curValue ); break;
 				default: break;
 			}
 			break;
@@ -642,26 +644,27 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 		case kAttack:
 		case kSpeed:
 		{
-			switch (orgValue) {
-				case 5:  price = lookupPrice (attackSpeed_5,  curValue); break;
-				case 6:  price = lookupPrice (attackSpeed_6,  curValue); break;
-				case 7:  price = lookupPrice (attackSpeed_7,  curValue); break;
-				case 8:  price = lookupPrice (attackSpeed_8,  curValue); break;
-				case 9:  price = lookupPrice (attackSpeed_9,  curValue); break;
-				case 10: price = lookupPrice (attackSpeed_10, curValue); break;
-				case 11: price = lookupPrice (attackSpeed_11, curValue); break;
-				case 12: price = lookupPrice (attackSpeed_12, curValue); break;
-				case 14: price = lookupPrice (attackSpeed_14, curValue); break;
-				case 15: price = lookupPrice (attackSpeed_15, curValue); break;
-				case 16: price = lookupPrice (attackSpeed_16, curValue); break;
-				case 17: price = lookupPrice (attackSpeed_17, curValue); break;
-				case 18: price = lookupPrice (attackSpeed_18, curValue); break;
-				case 20: price = lookupPrice (attackSpeed_20, curValue); break;
-				case 22: price = lookupPrice (attackSpeed_22, curValue); break;
-				case 24: price = lookupPrice (attackSpeed_24, curValue); break;
-				case 28: price = lookupPrice (attackSpeed_28, curValue); break;
-				case 30: price = lookupPrice (attackSpeed_30, curValue); break;
-				case 36: price = lookupPrice (attackSpeed_36, curValue); break;
+			switch ( orgValue )
+			{
+				case 5:  price = lookupPrice( attackSpeed_5,  curValue ); break;
+				case 6:  price = lookupPrice( attackSpeed_6,  curValue ); break;
+				case 7:  price = lookupPrice( attackSpeed_7,  curValue ); break;
+				case 8:  price = lookupPrice( attackSpeed_8,  curValue ); break;
+				case 9:  price = lookupPrice( attackSpeed_9,  curValue ); break;
+				case 10: price = lookupPrice( attackSpeed_10, curValue ); break;
+				case 11: price = lookupPrice( attackSpeed_11, curValue ); break;
+				case 12: price = lookupPrice( attackSpeed_12, curValue ); break;
+				case 14: price = lookupPrice( attackSpeed_14, curValue ); break;
+				case 15: price = lookupPrice( attackSpeed_15, curValue ); break;
+				case 16: price = lookupPrice( attackSpeed_16, curValue ); break;
+				case 17: price = lookupPrice( attackSpeed_17, curValue ); break;
+				case 18: price = lookupPrice( attackSpeed_18, curValue ); break;
+				case 20: price = lookupPrice( attackSpeed_20, curValue ); break;
+				case 22: price = lookupPrice( attackSpeed_22, curValue ); break;
+				case 24: price = lookupPrice( attackSpeed_24, curValue ); break;
+				case 28: price = lookupPrice( attackSpeed_28, curValue ); break;
+				case 30: price = lookupPrice( attackSpeed_30, curValue ); break;
+				case 36: price = lookupPrice( attackSpeed_36, curValue ); break;
 				default: break;
 			}
 			break;
@@ -670,22 +673,23 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 		case kRange:
 		case kScan:
 		{
-			switch (orgValue) {
-				case 3:  price = lookupPrice (rangeScan_3,  curValue); break;
-				case 4:  price = lookupPrice (rangeScan_4,  curValue); break;
-				case 5:  price = lookupPrice (rangeScan_5,  curValue); break;
-				case 6:  price = lookupPrice (rangeScan_6,  curValue); break;
-				case 7:  price = lookupPrice (rangeScan_7,  curValue); break;
-				case 8:  price = lookupPrice (rangeScan_8,  curValue); break;
-				case 9:  price = lookupPrice (rangeScan_9,  curValue); break;
-				case 10: price = lookupPrice (rangeScan_10, curValue); break;
-				case 11: price = lookupPrice (rangeScan_11, curValue); break;
-				case 12: price = lookupPrice (rangeScan_12, curValue); break;
-				case 14: price = lookupPrice (rangeScan_14, curValue); break;
-				case 16: price = lookupPrice (rangeScan_16, curValue); break;
-				case 18: price = lookupPrice (rangeScan_18, curValue); break;
-				case 20: price = lookupPrice (rangeScan_20, curValue); break;
-				case 24: price = lookupPrice (rangeScan_24, curValue); break;
+			switch ( orgValue )
+			{
+				case 3:  price = lookupPrice( rangeScan_3,  curValue ); break;
+				case 4:  price = lookupPrice( rangeScan_4,  curValue ); break;
+				case 5:  price = lookupPrice( rangeScan_5,  curValue ); break;
+				case 6:  price = lookupPrice( rangeScan_6,  curValue ); break;
+				case 7:  price = lookupPrice( rangeScan_7,  curValue ); break;
+				case 8:  price = lookupPrice( rangeScan_8,  curValue ); break;
+				case 9:  price = lookupPrice( rangeScan_9,  curValue ); break;
+				case 10: price = lookupPrice( rangeScan_10, curValue ); break;
+				case 11: price = lookupPrice( rangeScan_11, curValue ); break;
+				case 12: price = lookupPrice( rangeScan_12, curValue ); break;
+				case 14: price = lookupPrice( rangeScan_14, curValue ); break;
+				case 16: price = lookupPrice( rangeScan_16, curValue ); break;
+				case 18: price = lookupPrice( rangeScan_18, curValue ); break;
+				case 20: price = lookupPrice( rangeScan_20, curValue ); break;
+				case 24: price = lookupPrice( rangeScan_24, curValue ); break;
 				default: break;
 			}
 			break;
@@ -693,9 +697,10 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 
 		case kShots:
 		{
-			switch (orgValue) {
-				case 1:  price = lookupPrice (shots_1,  curValue); break;
-				case 2:  price = lookupPrice (shots_2,  curValue); break;
+			switch ( orgValue )
+			{
+				case 1:  price = lookupPrice( shots_1,  curValue ); break;
+				case 2:  price = lookupPrice( shots_2,  curValue ); break;
 				default: break;
 			}
 			break;
@@ -707,20 +712,20 @@ int cUpgradeCalculator::calcPrice(int curValue, int orgValue, int upgradeType, c
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getCostForUpgrade(int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel) const
+int cUpgradeCalculator::getCostForUpgrade( int orgValue, int curValue, int newValue, int upgradeType, cResearch& researchLevel ) const
 {
 	int cost = 0;
-	if (orgValue <= curValue && curValue < newValue)
+	if ( orgValue <= curValue && curValue < newValue )
 	{
 		int upgradedValue = curValue;
-		while (upgradedValue < newValue)
+		while ( upgradedValue < newValue )
 		{
-			int costsForThis = calcPrice (upgradedValue, orgValue, upgradeType, researchLevel);
-			if (costsForThis != kNoPriceAvailable)
+			int costsForThis = calcPrice( upgradedValue, orgValue, upgradeType, researchLevel );
+			if ( costsForThis != kNoPriceAvailable )
 			{
 				cost += costsForThis;
-				upgradedValue += calcIncreaseByUpgrade (orgValue);
-				if (upgradedValue > newValue)
+				upgradedValue += calcIncreaseByUpgrade( orgValue );
+				if ( upgradedValue > newValue )
 					return kNoPriceAvailable; // it is not possible to reach the newValue with upgrading
 			}
 			else
@@ -731,36 +736,36 @@ int cUpgradeCalculator::getCostForUpgrade(int orgValue, int curValue, int newVal
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcResearchTurns(int curResearchLevel, int upgradeType) const
+int cUpgradeCalculator::calcResearchTurns( int curResearchLevel, int upgradeType ) const
 {
 	int neededTurns = kNoResearchAvailable;
 
-	switch (upgradeType)
+	switch ( upgradeType )
 	{
 		case kHitpoints:
 		case kArmor:
 		{
-			if (curResearchLevel < 10) neededTurns = 8;
-			else if (curResearchLevel < 20)  neededTurns = 15;
-			else if (curResearchLevel < 30)  neededTurns = 25;
-			else if (curResearchLevel < 40)  neededTurns = 42;
-			else if (curResearchLevel < 50)  neededTurns = 67;
-			else if (curResearchLevel < 60)  neededTurns = 104;
-			else if (curResearchLevel < 70)  neededTurns = 156;
-			else if (curResearchLevel < 80)  neededTurns = 229;
-			else if (curResearchLevel < 90)  neededTurns = 328;
-			else if (curResearchLevel < 100) neededTurns = 462;
-			else if (curResearchLevel < 110) neededTurns = 639;
-			else if (curResearchLevel < 120) neededTurns = 871;
-			else if (curResearchLevel < 130) neededTurns = 1171;
-			else if (curResearchLevel < 140) neededTurns = 1553;
-			else if (curResearchLevel < 150) neededTurns = 2036;
-			else if (curResearchLevel < 160) neededTurns = 2640;
-			else if (curResearchLevel < 170) neededTurns = 3389;
-			else if (curResearchLevel < 180) neededTurns = 4311;
-			else if (curResearchLevel < 190) neededTurns = 5437;
-			else if (curResearchLevel < 200) neededTurns = 6803;
-			else if (curResearchLevel < 210) neededTurns = 8448;
+			if ( curResearchLevel < 10 ) neededTurns = 8;
+			else if ( curResearchLevel < 20 )  neededTurns = 15;
+			else if ( curResearchLevel < 30 )  neededTurns = 25;
+			else if ( curResearchLevel < 40 )  neededTurns = 42;
+			else if ( curResearchLevel < 50 )  neededTurns = 67;
+			else if ( curResearchLevel < 60 )  neededTurns = 104;
+			else if ( curResearchLevel < 70 )  neededTurns = 156;
+			else if ( curResearchLevel < 80 )  neededTurns = 229;
+			else if ( curResearchLevel < 90 )  neededTurns = 328;
+			else if ( curResearchLevel < 100 ) neededTurns = 462;
+			else if ( curResearchLevel < 110 ) neededTurns = 639;
+			else if ( curResearchLevel < 120 ) neededTurns = 871;
+			else if ( curResearchLevel < 130 ) neededTurns = 1171;
+			else if ( curResearchLevel < 140 ) neededTurns = 1553;
+			else if ( curResearchLevel < 150 ) neededTurns = 2036;
+			else if ( curResearchLevel < 160 ) neededTurns = 2640;
+			else if ( curResearchLevel < 170 ) neededTurns = 3389;
+			else if ( curResearchLevel < 180 ) neededTurns = 4311;
+			else if ( curResearchLevel < 190 ) neededTurns = 5437;
+			else if ( curResearchLevel < 200 ) neededTurns = 6803;
+			else if ( curResearchLevel < 210 ) neededTurns = 8448;
 			break;
 		}
 
@@ -768,27 +773,27 @@ int cUpgradeCalculator::calcResearchTurns(int curResearchLevel, int upgradeType)
 		case kSpeed:
 		case kShots:
 		{
-			if (curResearchLevel < 10) neededTurns = 16;
-			else if (curResearchLevel < 20)  neededTurns = 30;
-			else if (curResearchLevel < 30)  neededTurns = 51;
-			else if (curResearchLevel < 40)  neededTurns = 85;
-			else if (curResearchLevel < 50)  neededTurns = 135;
-			else if (curResearchLevel < 60)  neededTurns = 208;
-			else if (curResearchLevel < 70)  neededTurns = 312;
-			else if (curResearchLevel < 80)  neededTurns = 458;
-			else if (curResearchLevel < 90)  neededTurns = 657;
-			else if (curResearchLevel < 100) neededTurns = 924;
-			else if (curResearchLevel < 110) neededTurns = 1278;
-			else if (curResearchLevel < 120) neededTurns = 1742;
-			else if (curResearchLevel < 130) neededTurns = 2342;
-			else if (curResearchLevel < 140) neededTurns = 3106;
-			else if (curResearchLevel < 150) neededTurns = 4072;
-			else if (curResearchLevel < 160) neededTurns = 5280;
-			else if (curResearchLevel < 170) neededTurns = 6778;
-			else if (curResearchLevel < 180) neededTurns = 8622;
-			else if (curResearchLevel < 190) neededTurns = 10874;
-			else if (curResearchLevel < 200) neededTurns = 13606;
-			else if (curResearchLevel < 210) neededTurns = 16896;
+			if ( curResearchLevel < 10 ) neededTurns = 16;
+			else if ( curResearchLevel < 20 )  neededTurns = 30;
+			else if ( curResearchLevel < 30 )  neededTurns = 51;
+			else if ( curResearchLevel < 40 )  neededTurns = 85;
+			else if ( curResearchLevel < 50 )  neededTurns = 135;
+			else if ( curResearchLevel < 60 )  neededTurns = 208;
+			else if ( curResearchLevel < 70 )  neededTurns = 312;
+			else if ( curResearchLevel < 80 )  neededTurns = 458;
+			else if ( curResearchLevel < 90 )  neededTurns = 657;
+			else if ( curResearchLevel < 100 ) neededTurns = 924;
+			else if ( curResearchLevel < 110 ) neededTurns = 1278;
+			else if ( curResearchLevel < 120 ) neededTurns = 1742;
+			else if ( curResearchLevel < 130 ) neededTurns = 2342;
+			else if ( curResearchLevel < 140 ) neededTurns = 3106;
+			else if ( curResearchLevel < 150 ) neededTurns = 4072;
+			else if ( curResearchLevel < 160 ) neededTurns = 5280;
+			else if ( curResearchLevel < 170 ) neededTurns = 6778;
+			else if ( curResearchLevel < 180 ) neededTurns = 8622;
+			else if ( curResearchLevel < 190 ) neededTurns = 10874;
+			else if ( curResearchLevel < 200 ) neededTurns = 13606;
+			else if ( curResearchLevel < 210 ) neededTurns = 16896;
 			break;
 		}
 
@@ -796,27 +801,27 @@ int cUpgradeCalculator::calcResearchTurns(int curResearchLevel, int upgradeType)
 		case kScan:
 		case kCost:
 		{
-			if (curResearchLevel < 10) neededTurns = 33;
-			else if (curResearchLevel < 20)  neededTurns = 60;
-			else if (curResearchLevel < 30)  neededTurns = 103;
-			else if (curResearchLevel < 40)  neededTurns = 170;
-			else if (curResearchLevel < 50)  neededTurns = 270;
-			else if (curResearchLevel < 60)  neededTurns = 416;
-			else if (curResearchLevel < 70)  neededTurns = 625;
-			else if (curResearchLevel < 80)  neededTurns = 916;
-			else if (curResearchLevel < 90)  neededTurns = 1314;
-			else if (curResearchLevel < 100) neededTurns = 1849;
-			else if (curResearchLevel < 110) neededTurns = 2559;
-			else if (curResearchLevel < 120) neededTurns = 3487;
-			else if (curResearchLevel < 130) neededTurns = 4684;
-			else if (curResearchLevel < 140) neededTurns = 6213;
-			else if (curResearchLevel < 150) neededTurns = 8144;
-			else if (curResearchLevel < 160) neededTurns = 10560;
-			else if (curResearchLevel < 170) neededTurns = 13556;
-			else if (curResearchLevel < 180) neededTurns = 17244;
-			else if (curResearchLevel < 190) neededTurns = 21748;
-			else if (curResearchLevel < 200) neededTurns = 27212;
-			else if (curResearchLevel < 210) neededTurns = 33792;
+			if ( curResearchLevel < 10 ) neededTurns = 33;
+			else if ( curResearchLevel < 20 )  neededTurns = 60;
+			else if ( curResearchLevel < 30 )  neededTurns = 103;
+			else if ( curResearchLevel < 40 )  neededTurns = 170;
+			else if ( curResearchLevel < 50 )  neededTurns = 270;
+			else if ( curResearchLevel < 60 )  neededTurns = 416;
+			else if ( curResearchLevel < 70 )  neededTurns = 625;
+			else if ( curResearchLevel < 80 )  neededTurns = 916;
+			else if ( curResearchLevel < 90 )  neededTurns = 1314;
+			else if ( curResearchLevel < 100 ) neededTurns = 1849;
+			else if ( curResearchLevel < 110 ) neededTurns = 2559;
+			else if ( curResearchLevel < 120 ) neededTurns = 3487;
+			else if ( curResearchLevel < 130 ) neededTurns = 4684;
+			else if ( curResearchLevel < 140 ) neededTurns = 6213;
+			else if ( curResearchLevel < 150 ) neededTurns = 8144;
+			else if ( curResearchLevel < 160 ) neededTurns = 10560;
+			else if ( curResearchLevel < 170 ) neededTurns = 13556;
+			else if ( curResearchLevel < 180 ) neededTurns = 17244;
+			else if ( curResearchLevel < 190 ) neededTurns = 21748;
+			else if ( curResearchLevel < 200 ) neededTurns = 27212;
+			else if ( curResearchLevel < 210 ) neededTurns = 33792;
 			break;
 		}
 
@@ -828,44 +833,44 @@ int cUpgradeCalculator::calcResearchTurns(int curResearchLevel, int upgradeType)
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcIncreaseByUpgrade(int startValue) const
+int cUpgradeCalculator::calcIncreaseByUpgrade( int startValue ) const
 {
-	if (startValue < 10)
+	if ( startValue < 10 )
 		return 1;
-	if (startValue < 26)
+	if ( startValue < 26 )
 		return 2;
-	if (startValue < 56)
+	if ( startValue < 56 )
 		return 5;
 	return 10;
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLevel,
-											 int upgradeType, int unitType) const
+int cUpgradeCalculator::calcChangeByResearch( int startValue, int curResearchLevel,
+											  int upgradeType, int unitType ) const
 {
-	if (curResearchLevel <= 0) // no research done yet...
+	if ( curResearchLevel <= 0 ) // no research done yet...
 		return 0;
 
-	if (upgradeType == -1 || upgradeType != kCost) // standard research areas - all handled the same way
+	if ( upgradeType == -1 || upgradeType != kCost ) // standard research areas - all handled the same way
 	{
 		// a simple integer division does the job
-		int newValue = (startValue * (100 + curResearchLevel)) / 100;
+		int newValue = ( startValue * ( 100 + curResearchLevel ) ) / 100;
 		return newValue - startValue;
 	}
-	else if (upgradeType == kCost)
+	else if ( upgradeType == kCost )
 	{
 		// cost makes a decrease based on the formula 1/x (where x is the research level)
-		double realCost = startValue / ((100.0f + curResearchLevel) / 100.0f);
+		double realCost = startValue / ( ( 100.0f + curResearchLevel ) / 100.0f );
 
 		// now the real cost is rounded to the next possible cost value
 		// (Unit factories: steps of 3, Building construction: steps of 2, Infantry training: steps of 1)
 		int costRounded = startValue;
-		if (unitType == kBuilding)
-			costRounded = getNearestPossibleCost(realCost, 2);
-		else if (unitType == kInfantry)
-			costRounded = getNearestPossibleCost(realCost, 1);
-		else if (unitType == kStandardUnit)
-			costRounded = getNearestPossibleCost(realCost, 3);
+		if ( unitType == kBuilding )
+			costRounded = getNearestPossibleCost( realCost, 2 );
+		else if ( unitType == kInfantry )
+			costRounded = getNearestPossibleCost( realCost, 1 );
+		else if ( unitType == kStandardUnit )
+			costRounded = getNearestPossibleCost( realCost, 3 );
 
 		return costRounded - startValue;
 	}
@@ -874,27 +879,27 @@ int cUpgradeCalculator::calcChangeByResearch(int startValue, int curResearchLeve
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getMaterialCostForUpgrading(int unitCost) const
+int cUpgradeCalculator::getMaterialCostForUpgrading( int unitCost ) const
 {
-	if (unitCost < 4)
+	if ( unitCost < 4 )
 		return 0;
 	return unitCost / 4;
 }
 
 //--------------------------------------------------
-int cUpgradeCalculator::getNearestPossibleCost(double realCost, int costDifference) const
+int cUpgradeCalculator::getNearestPossibleCost( double realCost, int costDifference ) const
 {
-	if (costDifference <= 0)
-		return (int) realCost;
+	if ( costDifference <= 0 )
+		return ( int ) realCost;
 
-	int intCost = (int) realCost;
-	int nearestLowerCost = intCost - (intCost % costDifference);
+	int intCost = ( int ) realCost;
+	int nearestLowerCost = intCost - ( intCost % costDifference );
 	int result;
-	if (realCost - nearestLowerCost < (costDifference / 2.0f))
+	if ( realCost - nearestLowerCost < ( costDifference / 2.0f ) )
 		result = nearestLowerCost;
 	else
 		result = nearestLowerCost + costDifference;
-	if (result <= 0) // a cost of zero or below is forbidden
+	if ( result <= 0 ) // a cost of zero or below is forbidden
 		result = costDifference;
 	return result;
 }
@@ -902,123 +907,123 @@ int cUpgradeCalculator::getNearestPossibleCost(double realCost, int costDifferen
 //--------------------------------------------------
 void cUpgradeCalculator::printAllToLog() const
 {
-	printToLog("CALC CHANGE BY RESEARCH TEST ---- CALC CHANGE BY RESEARCH TEST");
+	printToLog( "CALC CHANGE BY RESEARCH TEST ---- CALC CHANGE BY RESEARCH TEST" );
 
-	printToLog("--------------- Cost-Research for Buildings ----------------");
-	printToLog("Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch(40,   0, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch(40,  10, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch(40,  20, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch(40,  30, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch(40,  40, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch(40,  50, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch(40,  60, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch(40,  70, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch(40,  80, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch(40,  90, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch(40, 100, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch(40, 110, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch(40, 120, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch(40, 130, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch(40, 140, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch(40, 150, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch(40, 160, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch(40, 170, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch(40, 180, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch(40, 190, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch(40, 200, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch(40, 210, kCost, kBuilding));
-	printToLog("Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch(40, 220, kCost, kBuilding));
+	printToLog( "--------------- Cost-Research for Buildings ----------------" );
+	printToLog( "Building-Cost: Start 40, Level   0 => Change: ", calcChangeByResearch( 40,   0, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  10 => Change: ", calcChangeByResearch( 40,  10, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  20 => Change: ", calcChangeByResearch( 40,  20, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  30 => Change: ", calcChangeByResearch( 40,  30, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  40 => Change: ", calcChangeByResearch( 40,  40, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  50 => Change: ", calcChangeByResearch( 40,  50, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  60 => Change: ", calcChangeByResearch( 40,  60, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  70 => Change: ", calcChangeByResearch( 40,  70, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  80 => Change: ", calcChangeByResearch( 40,  80, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level  90 => Change: ", calcChangeByResearch( 40,  90, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 100 => Change: ", calcChangeByResearch( 40, 100, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 110 => Change: ", calcChangeByResearch( 40, 110, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 120 => Change: ", calcChangeByResearch( 40, 120, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 130 => Change: ", calcChangeByResearch( 40, 130, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 140 => Change: ", calcChangeByResearch( 40, 140, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 150 => Change: ", calcChangeByResearch( 40, 150, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 160 => Change: ", calcChangeByResearch( 40, 160, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 170 => Change: ", calcChangeByResearch( 40, 170, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 180 => Change: ", calcChangeByResearch( 40, 180, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 190 => Change: ", calcChangeByResearch( 40, 190, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 200 => Change: ", calcChangeByResearch( 40, 200, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 210 => Change: ", calcChangeByResearch( 40, 210, kCost, kBuilding ) );
+	printToLog( "Building-Cost: Start 40, Level 220 => Change: ", calcChangeByResearch( 40, 220, kCost, kBuilding ) );
 
-	printToLog("--------------- Cost-Research for Standard Units ----------------");
-	printToLog("Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch(24,   0, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch(24,  10, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch(24,  20, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch(24,  30, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch(24,  40, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch(24,  50, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch(24,  60, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch(24,  70, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch(24,  80, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch(24,  90, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch(24, 100, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch(24, 110, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch(24, 120, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch(24, 130, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch(24, 140, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch(24, 150, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch(24, 160, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch(24, 170, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch(24, 180, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch(24, 190, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch(24, 200, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch(24, 210, kCost, kStandardUnit));
-	printToLog("Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch(24, 220, kCost, kStandardUnit));
+	printToLog( "--------------- Cost-Research for Standard Units ----------------" );
+	printToLog( "Unit-Cost: Start 24, Level   0 => Change: ", calcChangeByResearch( 24,   0, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  10 => Change: ", calcChangeByResearch( 24,  10, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  20 => Change: ", calcChangeByResearch( 24,  20, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  30 => Change: ", calcChangeByResearch( 24,  30, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  40 => Change: ", calcChangeByResearch( 24,  40, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  50 => Change: ", calcChangeByResearch( 24,  50, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  60 => Change: ", calcChangeByResearch( 24,  60, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  70 => Change: ", calcChangeByResearch( 24,  70, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  80 => Change: ", calcChangeByResearch( 24,  80, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level  90 => Change: ", calcChangeByResearch( 24,  90, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 100 => Change: ", calcChangeByResearch( 24, 100, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 110 => Change: ", calcChangeByResearch( 24, 110, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 120 => Change: ", calcChangeByResearch( 24, 120, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 130 => Change: ", calcChangeByResearch( 24, 130, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 140 => Change: ", calcChangeByResearch( 24, 140, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 150 => Change: ", calcChangeByResearch( 24, 150, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 160 => Change: ", calcChangeByResearch( 24, 160, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 170 => Change: ", calcChangeByResearch( 24, 170, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 180 => Change: ", calcChangeByResearch( 24, 180, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 190 => Change: ", calcChangeByResearch( 24, 190, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 200 => Change: ", calcChangeByResearch( 24, 200, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 210 => Change: ", calcChangeByResearch( 24, 210, kCost, kStandardUnit ) );
+	printToLog( "Unit-Cost: Start 24, Level 220 => Change: ", calcChangeByResearch( 24, 220, kCost, kStandardUnit ) );
 
-	printToLog("--------------- Cost-Research for Infantry ----------------");
-	printToLog("Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch(9,   0, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch(9,  10, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch(9,  20, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch(9,  30, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch(9,  40, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch(9,  50, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch(9,  60, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch(9,  70, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch(9,  80, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch(9,  90, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch(9, 100, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch(9, 110, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch(9, 120, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch(9, 130, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch(9, 140, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch(9, 150, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch(9, 160, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch(9, 170, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch(9, 180, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch(9, 190, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch(9, 200, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch(9, 210, kCost, kInfantry));
-	printToLog("Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch(9, 220, kCost, kInfantry));
+	printToLog( "--------------- Cost-Research for Infantry ----------------" );
+	printToLog( "Infantry-Cost: Start 9, Level   0 => Change: ", calcChangeByResearch( 9,   0, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  10 => Change: ", calcChangeByResearch( 9,  10, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  20 => Change: ", calcChangeByResearch( 9,  20, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  30 => Change: ", calcChangeByResearch( 9,  30, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  40 => Change: ", calcChangeByResearch( 9,  40, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  50 => Change: ", calcChangeByResearch( 9,  50, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  60 => Change: ", calcChangeByResearch( 9,  60, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  70 => Change: ", calcChangeByResearch( 9,  70, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  80 => Change: ", calcChangeByResearch( 9,  80, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level  90 => Change: ", calcChangeByResearch( 9,  90, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 100 => Change: ", calcChangeByResearch( 9, 100, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 110 => Change: ", calcChangeByResearch( 9, 110, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 120 => Change: ", calcChangeByResearch( 9, 120, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 130 => Change: ", calcChangeByResearch( 9, 130, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 140 => Change: ", calcChangeByResearch( 9, 140, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 150 => Change: ", calcChangeByResearch( 9, 150, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 160 => Change: ", calcChangeByResearch( 9, 160, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 170 => Change: ", calcChangeByResearch( 9, 170, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 180 => Change: ", calcChangeByResearch( 9, 180, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 190 => Change: ", calcChangeByResearch( 9, 190, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 200 => Change: ", calcChangeByResearch( 9, 200, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 210 => Change: ", calcChangeByResearch( 9, 210, kCost, kInfantry ) );
+	printToLog( "Infantry-Cost: Start 9, Level 220 => Change: ", calcChangeByResearch( 9, 220, kCost, kInfantry ) );
 
-	printToLog("--------------- Upgrade-Research (e.g. Armor) ----------------");
-	printToLog("Normal-Research: Start 12, Level   0 => Change: ", calcChangeByResearch(12,   0));
-	printToLog("Normal-Research: Start 12, Level  10 => Change: ", calcChangeByResearch(12,  10));
-	printToLog("Normal-Research: Start 12, Level  20 => Change: ", calcChangeByResearch(12,  20));
-	printToLog("Normal-Research: Start 12, Level  30 => Change: ", calcChangeByResearch(12,  30));
-	printToLog("Normal-Research: Start 12, Level  40 => Change: ", calcChangeByResearch(12,  40));
-	printToLog("Normal-Research: Start 12, Level  50 => Change: ", calcChangeByResearch(12,  50));
-	printToLog("Normal-Research: Start 12, Level  60 => Change: ", calcChangeByResearch(12,  60));
-	printToLog("Normal-Research: Start 12, Level  70 => Change: ", calcChangeByResearch(12,  70));
-	printToLog("Normal-Research: Start 12, Level  80 => Change: ", calcChangeByResearch(12,  80));
-	printToLog("Normal-Research: Start 12, Level  90 => Change: ", calcChangeByResearch(12,  90));
-	printToLog("Normal-Research: Start 12, Level 100 => Change: ", calcChangeByResearch(12, 100));
-	printToLog("Normal-Research: Start 12, Level 110 => Change: ", calcChangeByResearch(12, 110));
-	printToLog("Normal-Research: Start 12, Level 120 => Change: ", calcChangeByResearch(12, 120));
-	printToLog("Normal-Research: Start 12, Level 130 => Change: ", calcChangeByResearch(12, 130));
-	printToLog("Normal-Research: Start 12, Level 140 => Change: ", calcChangeByResearch(12, 140));
-	printToLog("Normal-Research: Start 12, Level 150 => Change: ", calcChangeByResearch(12, 150));
-	printToLog("Normal-Research: Start 12, Level 160 => Change: ", calcChangeByResearch(12, 160));
-	printToLog("Normal-Research: Start 12, Level 170 => Change: ", calcChangeByResearch(12, 170));
-	printToLog("Normal-Research: Start 12, Level 180 => Change: ", calcChangeByResearch(12, 180));
-	printToLog("Normal-Research: Start 12, Level 190 => Change: ", calcChangeByResearch(12, 190));
-	printToLog("Normal-Research: Start 12, Level 200 => Change: ", calcChangeByResearch(12, 200));
-	printToLog("Normal-Research: Start 12, Level 210 => Change: ", calcChangeByResearch(12, 210));
-	printToLog("Normal-Research: Start 12, Level 220 => Change: ", calcChangeByResearch(12, 220));
+	printToLog( "--------------- Upgrade-Research (e.g. Armor) ----------------" );
+	printToLog( "Normal-Research: Start 12, Level   0 => Change: ", calcChangeByResearch( 12,   0 ) );
+	printToLog( "Normal-Research: Start 12, Level  10 => Change: ", calcChangeByResearch( 12,  10 ) );
+	printToLog( "Normal-Research: Start 12, Level  20 => Change: ", calcChangeByResearch( 12,  20 ) );
+	printToLog( "Normal-Research: Start 12, Level  30 => Change: ", calcChangeByResearch( 12,  30 ) );
+	printToLog( "Normal-Research: Start 12, Level  40 => Change: ", calcChangeByResearch( 12,  40 ) );
+	printToLog( "Normal-Research: Start 12, Level  50 => Change: ", calcChangeByResearch( 12,  50 ) );
+	printToLog( "Normal-Research: Start 12, Level  60 => Change: ", calcChangeByResearch( 12,  60 ) );
+	printToLog( "Normal-Research: Start 12, Level  70 => Change: ", calcChangeByResearch( 12,  70 ) );
+	printToLog( "Normal-Research: Start 12, Level  80 => Change: ", calcChangeByResearch( 12,  80 ) );
+	printToLog( "Normal-Research: Start 12, Level  90 => Change: ", calcChangeByResearch( 12,  90 ) );
+	printToLog( "Normal-Research: Start 12, Level 100 => Change: ", calcChangeByResearch( 12, 100 ) );
+	printToLog( "Normal-Research: Start 12, Level 110 => Change: ", calcChangeByResearch( 12, 110 ) );
+	printToLog( "Normal-Research: Start 12, Level 120 => Change: ", calcChangeByResearch( 12, 120 ) );
+	printToLog( "Normal-Research: Start 12, Level 130 => Change: ", calcChangeByResearch( 12, 130 ) );
+	printToLog( "Normal-Research: Start 12, Level 140 => Change: ", calcChangeByResearch( 12, 140 ) );
+	printToLog( "Normal-Research: Start 12, Level 150 => Change: ", calcChangeByResearch( 12, 150 ) );
+	printToLog( "Normal-Research: Start 12, Level 160 => Change: ", calcChangeByResearch( 12, 160 ) );
+	printToLog( "Normal-Research: Start 12, Level 170 => Change: ", calcChangeByResearch( 12, 170 ) );
+	printToLog( "Normal-Research: Start 12, Level 180 => Change: ", calcChangeByResearch( 12, 180 ) );
+	printToLog( "Normal-Research: Start 12, Level 190 => Change: ", calcChangeByResearch( 12, 190 ) );
+	printToLog( "Normal-Research: Start 12, Level 200 => Change: ", calcChangeByResearch( 12, 200 ) );
+	printToLog( "Normal-Research: Start 12, Level 210 => Change: ", calcChangeByResearch( 12, 210 ) );
+	printToLog( "Normal-Research: Start 12, Level 220 => Change: ", calcChangeByResearch( 12, 220 ) );
 }
 
 //--------------------------------------------------
-void cUpgradeCalculator::printToLog(const char* str, int value) const
+void cUpgradeCalculator::printToLog( const char* str, int value ) const
 {
-	if (value != -1000)
+	if ( value != -1000 )
 	{
 		std::stringstream ss;
 		std::string printStr;
 		ss << value;
 		ss >> printStr;
-		printStr.insert(0, str);
-		Log.write(printStr, cLog::eLOG_TYPE_INFO);
+		printStr.insert( 0, str );
+		Log.write( printStr, cLog::eLOG_TYPE_INFO );
 	}
 	else
-		Log.write(str, cLog::eLOG_TYPE_INFO);
+		Log.write( str, cLog::eLOG_TYPE_INFO );
 }
 
 
@@ -1303,91 +1308,91 @@ void cUpgradeCalculator::printToLog(const char* str, int value) const
 //---------------------------------------------------------------------
 
 //---------------------------------------------------------------------
-cResearch::cResearch ()
+cResearch::cResearch()
 {
-	init ();
+	init();
 }
 
 //---------------------------------------------------------------------
-void cResearch::init ()
+void cResearch::init()
 {
-	for (int i = 0; i < kNrResearchAreas; i++)
+	for ( int i = 0; i < kNrResearchAreas; i++ )
 	{
 		curResearchLevel[i] = 0;
 		curResearchPoints[i] = 0;
-		neededResearchPoints[i] = cUpgradeCalculator::instance ().calcResearchTurns (0, getUpgradeCalculatorUpgradeType (i));
+		neededResearchPoints[i] = cUpgradeCalculator::instance().calcResearchTurns( 0, getUpgradeCalculatorUpgradeType( i ) );
 	}
 }
 
 //---------------------------------------------------------------------
-int cResearch::getCurResearchLevel (int researchArea) const
+int cResearch::getCurResearchLevel( int researchArea ) const
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas )
 		return curResearchLevel[researchArea];
 	return 0;
 }
 
 //---------------------------------------------------------------------
-int cResearch::getCurResearchPoints (int researchArea) const
+int cResearch::getCurResearchPoints( int researchArea ) const
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas )
 		return curResearchPoints[researchArea];
 	return 0;
 }
 
 //---------------------------------------------------------------------
-int cResearch::getNeededResearchPoints (int researchArea) const
+int cResearch::getNeededResearchPoints( int researchArea ) const
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas )
 		return neededResearchPoints[researchArea];
 	return cUpgradeCalculator::kNoResearchAvailable;
 }
 
 //---------------------------------------------------------------------
-int cResearch::getRemainingTurns (int researchArea, int centersWorkingOn) const
+int cResearch::getRemainingTurns( int researchArea, int centersWorkingOn ) const
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas && centersWorkingOn > 0)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas && centersWorkingOn > 0 )
 	{
-		int remainingPoints = getRemainingResearchPoints(researchArea);
-		if (remainingPoints % centersWorkingOn == 0)
+		int remainingPoints = getRemainingResearchPoints( researchArea );
+		if ( remainingPoints % centersWorkingOn == 0 )
 			return remainingPoints / centersWorkingOn;
 		else
-			return (remainingPoints / centersWorkingOn) + 1;
+			return ( remainingPoints / centersWorkingOn ) + 1;
 	}
 	return 0;
 }
 
 //---------------------------------------------------------------------
-void cResearch::setCurResearchLevel (int researchLevel, int researchArea)
+void cResearch::setCurResearchLevel( int researchLevel, int researchArea )
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchLevel >= 0 && researchLevel % 10 == 0)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas && researchLevel >= 0 && researchLevel % 10 == 0 )
 	{
 		curResearchLevel[researchArea] = researchLevel;
-		neededResearchPoints[researchArea] = cUpgradeCalculator::instance ().calcResearchTurns (researchLevel, getUpgradeCalculatorUpgradeType (researchArea));
-		if (curResearchPoints[researchArea] >= neededResearchPoints[researchArea])
+		neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns( researchLevel, getUpgradeCalculatorUpgradeType( researchArea ) );
+		if ( curResearchPoints[researchArea] >= neededResearchPoints[researchArea] )
 			curResearchPoints[researchArea] = 0;
 	}
 }
 
 //---------------------------------------------------------------------
-void cResearch::setCurResearchPoints (int researchPoints, int researchArea)
+void cResearch::setCurResearchPoints( int researchPoints, int researchArea )
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints >= 0 && researchPoints < neededResearchPoints[researchArea])
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints >= 0 && researchPoints < neededResearchPoints[researchArea] )
 		curResearchPoints[researchArea] = researchPoints;
 }
 
 //---------------------------------------------------------------------
-bool cResearch::doResearch (int researchPoints, int researchArea)
+bool cResearch::doResearch( int researchPoints, int researchArea )
 {
-	if (0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints > 0)
+	if ( 0 <= researchArea && researchArea <= kNrResearchAreas && researchPoints > 0 )
 	{
 		curResearchPoints[researchArea] += researchPoints;
-		if (curResearchPoints[researchArea] >= neededResearchPoints [researchArea])
+		if ( curResearchPoints[researchArea] >= neededResearchPoints [researchArea] )
 		{
 			curResearchPoints[researchArea] = 0;
 			curResearchLevel[researchArea] += 10;
-			neededResearchPoints[researchArea] = cUpgradeCalculator::instance ().calcResearchTurns (curResearchLevel[researchArea],
-																									getUpgradeCalculatorUpgradeType (researchArea));
+			neededResearchPoints[researchArea] = cUpgradeCalculator::instance().calcResearchTurns( curResearchLevel[researchArea],
+												 getUpgradeCalculatorUpgradeType( researchArea ) );
 			return true;
 		}
 	}
@@ -1395,9 +1400,9 @@ bool cResearch::doResearch (int researchPoints, int researchArea)
 }
 
 //---------------------------------------------------------------------
-int cResearch::getUpgradeCalculatorUpgradeType (int researchArea) const
+int cResearch::getUpgradeCalculatorUpgradeType( int researchArea ) const
 {
-	switch (researchArea)
+	switch ( researchArea )
 	{
 		case kHitpointsResearch: return cUpgradeCalculator::kHitpoints;
 		case kArmorResearch: return cUpgradeCalculator::kArmor;
@@ -1412,9 +1417,9 @@ int cResearch::getUpgradeCalculatorUpgradeType (int researchArea) const
 }
 
 //---------------------------------------------------------------------
-int cResearch::getResearchArea (int upgradeCalculatorType) const
+int cResearch::getResearchArea( int upgradeCalculatorType ) const
 {
-	switch (upgradeCalculatorType)
+	switch ( upgradeCalculatorType )
 	{
 		case cUpgradeCalculator::kHitpoints: return kHitpointsResearch;
 		case cUpgradeCalculator::kArmor: return kArmorResearch;

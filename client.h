@@ -30,62 +30,65 @@ class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
 
-Uint32 TimerCallback(Uint32 interval, void *arg);
+Uint32 TimerCallback( Uint32 interval, void* arg );
 
 
 /** structure for the messages displayed in the game */
 struct sMessage
 {
-	public:
-		sMessage(std::string const&, unsigned int age);
-		~sMessage();
+public:
+	sMessage( std::string const&, unsigned int age );
+	~sMessage();
 
-	public:
-		char*        msg;
-		int          chars;
-		int          len;
-		unsigned int age;
+public:
+	char*        msg;
+	int          chars;
+	int          len;
+	unsigned int age;
 };
 
 /** FX types */
-enum eFXTyps {fxMuzzleBig,fxMuzzleSmall,fxMuzzleMed,fxMuzzleMedLong,fxExploSmall,fxExploBig,fxExploAir,fxExploWater,fxHit,fxSmoke,fxRocket,fxDarkSmoke,fxTorpedo,fxTracks,fxBubbles,fxCorpse,fxAbsorb};
+enum eFXTyps {fxMuzzleBig, fxMuzzleSmall, fxMuzzleMed, fxMuzzleMedLong, fxExploSmall, fxExploBig, fxExploAir, fxExploWater, fxHit, fxSmoke, fxRocket, fxDarkSmoke, fxTorpedo, fxTracks, fxBubbles, fxCorpse, fxAbsorb};
 
 /** struct for the rocked data */
-struct sFXRocketInfos{
-  int ScrX,ScrY;
-  int DestX,DestY;
-  int dir;
-  float fpx,fpy,mx,my;
-  cClientAttackJob *aj;
+struct sFXRocketInfos
+{
+	int ScrX, ScrY;
+	int DestX, DestY;
+	int dir;
+	float fpx, fpy, mx, my;
+	cClientAttackJob* aj;
 };
 
 /** struct for the dark smoke data */
-struct sFXDarkSmoke{
-  int alpha;
-  float fx,fy;
-  float dx,dy;
+struct sFXDarkSmoke
+{
+	int alpha;
+	float fx, fy;
+	float dx, dy;
 };
 
 /** struct for the tracks effect */
-struct sFXTracks{
-  int alpha;
-  int dir;
+struct sFXTracks
+{
+	int alpha;
+	int dir;
 };
 
 /** struct for an FX effect */
 struct sFX
 {
-	public:
-		sFX( eFXTyps typ, int x, int y);
-		~sFX();
+public:
+	sFX( eFXTyps typ, int x, int y );
+	~sFX();
 
-		eFXTyps typ;
-		int PosX,PosY;
-		int StartTime;
-		int param;
-		sFXRocketInfos* rocketInfo;
-		sFXDarkSmoke* smokeInfo;
-		sFXTracks* trackInfo;
+	eFXTyps typ;
+	int PosX, PosY;
+	int StartTime;
+	int param;
+	sFXRocketInfos* rocketInfo;
+	sFXDarkSmoke* smokeInfo;
+	sFXTracks* trackInfo;
 };
 
 /**
@@ -95,7 +98,7 @@ struct sFX
 class cClient
 {
 public:
-	cClient(cMap* Map, cList<cPlayer*>* PlayerList);
+	cClient( cMap* Map, cList<cPlayer*>* PlayerList );
 	~cClient();
 
 private:
@@ -106,11 +109,11 @@ private:
 	friend class cUnit;
 
 	/** the map */
-	cMap *Map;
+	cMap* Map;
 	/** List with all players */
-	cList<cPlayer*> *PlayerList;
+	cList<cPlayer*>* PlayerList;
 	/** the active Player */
-	cPlayer *ActivePlayer;
+	cPlayer* ActivePlayer;
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
@@ -159,15 +162,15 @@ private:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	void addUnit( int iPosX, int iPosY, cVehicle *AddedVehicle, bool bInit = false, bool bAddToMap = true );
-	void addUnit( int iPosX, int iPosY, cBuilding *AddedBuilding, bool bInit = false );
+	void addUnit( int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true );
+	void addUnit( int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false );
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
 	*@param iNum The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer *getPlayerFromNumber ( int iNum );
+	cPlayer* getPlayerFromNumber( int iNum );
 	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath
@@ -188,13 +191,13 @@ private:
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
-	void handleMoveJobs ();
+	void handleMoveJobs();
 	/**
 	* gets the subbase with the id
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase
 	*/
-	sSubBase *getSubBaseFromID ( int iID );
+	sSubBase* getSubBaseFromID( int iID );
 	/**
 	* freezes the client so that no input of him is possible anymore.
 	*@author alzi alias DoctorDeath
@@ -303,43 +306,43 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob(cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*> *group = NULL);
-	void startGroupMove ();
+	int addMoveJob( cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group = NULL );
+	void startGroupMove();
 	/**
 	* adds an new movejob
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
-	void addActiveMoveJob ( cClientMoveJob *MJob );
+	void addActiveMoveJob( cClientMoveJob* MJob );
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit( cBuilding *Building );
-	void deleteUnit( cVehicle *Vehicle );
+	void deleteUnit( cBuilding* Building );
+	void deleteUnit( cVehicle* Vehicle );
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
-	void sendNetMessage ( cNetMessage *message );
+	void sendNetMessage( cNetMessage* message );
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle *getVehicleFromID ( unsigned int iID );
-	cBuilding *getBuildingFromID ( unsigned int iID );
+	cVehicle* getVehicleFromID( unsigned int iID );
+	cBuilding* getBuildingFromID( unsigned int iID );
 
 	/**
 	* initialises this client for the player.
 	*@author alzi alias DoctorDeath
 	*@param Player The player.
 	*/
-	void initPlayer( cPlayer *Player );
+	void initPlayer( cPlayer* Player );
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
@@ -364,7 +367,7 @@ public:
 	*@param iNum
 	*/
 	void addFX( eFXTyps typ, int iX, int iY, int iParam );
-	void addFX ( eFXTyps typ,int x,int y, cClientAttackJob* aj, int iDestOff, int iFireDir );
+	void addFX( eFXTyps typ, int x, int y, cClientAttackJob* aj, int iDestOff, int iFireDir );
 	void addFX( sFX* iNum );
 
 	/**
@@ -375,9 +378,9 @@ public:
 	/**
 	* Adds an message to be displayed in the game
 	*/
-	void addMessage (const std::string& sMsg );
+	void addMessage( const std::string& sMsg );
 	/** displays a message with 'goto' coordinates */
-	std::string addCoords (const std::string& msg, int x,int y );
+	std::string addCoords( const std::string& msg, int x, int y );
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit
@@ -385,16 +388,16 @@ public:
 	void destroyUnit( cVehicle* vehicle );
 	void destroyUnit( cBuilding* building );
 
-	void checkVehiclePositions(cNetMessage* message);
-	void getVictoryConditions(int *turnLimit, int *scoreLimit) const;
+	void checkVehiclePositions( cNetMessage* message );
+	void getVictoryConditions( int* turnLimit, int* scoreLimit ) const;
 	int getTurn() const;
 
-	void deletePlayer(cPlayer *player);
+	void deletePlayer( cPlayer* player );
 
-	cCasualtiesTracker* getCasualties () {return casualtiesTracker;}
+	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
 	cMap* getMap() { return Map; }
 	cList<cPlayer*>* getPlayerList() { return PlayerList; }
-	cPlayer *getActivePlayer() { return ActivePlayer; };
+	cPlayer* getActivePlayer() { return ActivePlayer; };
 
 };
 

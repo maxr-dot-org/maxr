@@ -41,8 +41,8 @@ enum MJOB_TYPES
 // structures for the calculation of the path
 struct sWaypoint
 {
-	sWaypoint *next;
-	int X,Y;
+	sWaypoint* next;
+	int X, Y;
 	int Costs;
 };
 
@@ -54,7 +54,7 @@ struct sPathNode
 	/* the difrent cost types */
 	int costF, costG, costH;
 	/* previous and next node of this one in the hole path */
-	sPathNode *prev, *next;
+	sPathNode* prev, *next;
 
 	/* the costs to enter on this field */
 	int fieldCosts;
@@ -71,26 +71,26 @@ class cPathDestHandler
 {
 	ePathDestinationTypes type;
 
-	cVehicle *srcVehicle;
+	cVehicle* srcVehicle;
 
-	cBuilding *destBuilding;
-	cVehicle *destVehicle;
+	cBuilding* destBuilding;
+	cVehicle* destVehicle;
 	int destX, destY;
 public:
-	cPathDestHandler ( ePathDestinationTypes type_, int destX, int destY, cVehicle *srcVehicle_, cBuilding *destBuilding_, cVehicle *destVehicle_ );
+	cPathDestHandler( ePathDestinationTypes type_, int destX, int destY, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_ );
 
 	bool hasReachedDestination( int x, int y );
-	int heuristicCost ( int srcX, int srcY );
+	int heuristicCost( int srcX, int srcY );
 };
 
 class cPathCalculator
 {
-	void init( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group );
+	void init( int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group );
 
 public:
-	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap *Map, cVehicle *Vehicle, cList<cVehicle*> *group = NULL );
-	cPathCalculator( int ScrX, int ScrY, cVehicle *destVehicle, cBuilding *destBuilding, cMap *Map, cVehicle *Vehicle, bool load );
-	cPathCalculator( int ScrX, int ScrY, cMap *Map, cVehicle *Vehicle, int attackX, int attackY );
+	cPathCalculator( int ScrX, int ScrY, int DestX, int DestY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group = NULL );
+	cPathCalculator( int ScrX, int ScrY, cVehicle* destVehicle, cBuilding* destBuilding, cMap* Map, cVehicle* Vehicle, bool load );
+	cPathCalculator( int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, int attackX, int attackY );
 	~cPathCalculator();
 
 	/**
@@ -105,50 +105,50 @@ public:
 	int calcNextCost( int srcX, int srcY, int destX, int destY );
 
 	/* the map on which the path will be calculated */
-	cMap *Map;
+	cMap* Map;
 	/* the moving vehicle */
-	cVehicle *Vehicle;
+	cVehicle* Vehicle;
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
-	cList<cVehicle*> *group;
+	cList<cVehicle*>* group;
 	/* source and destination coords */
 	int ScrX, ScrY;
 	bool bPlane, bShip;
-	cPathDestHandler *destHandler;
+	cPathDestHandler* destHandler;
 
 
 private:
 	/* the waypoints of the found path*/
-	sWaypoint *Waypoints;
+	sWaypoint* Waypoints;
 	/* memoryblocks for the nodes */
-	sPathNode **MemBlocks;
+	sPathNode** MemBlocks;
 	/* number of blocks */
 	int blocknum;
 	/* restsize of the last block */
 	int blocksize;
 
 	/* heaplist where all nodes are sortet by there costF value */
-	sPathNode **nodesHeap;
+	sPathNode** nodesHeap;
 	/* open nodes map */
-	sPathNode **openList;
+	sPathNode** openList;
 	/* closed nodes map */
-	sPathNode **closedList;
+	sPathNode** closedList;
 	/* number of nodes saved on the heaplist; equal to number of nodes in the openlist */
 	int heapCount;
 	/**
 	* expands the nodes around the overgiven one
 	*@author alzi alias DoctorDeath
 	*/
-	void expandNodes ( sPathNode *Node );
+	void expandNodes( sPathNode* Node );
 	/**
 	* returns a pointer to allocated memory and allocets a new block in memory if necessary
 	*@author alzi alias DoctorDeath
 	*/
-	sPathNode *allocNode();
+	sPathNode* allocNode();
 	/**
 	* inserts a node into the heaplist and sets it to the right position by its costF value.
 	*@author alzi alias DoctorDeath
 	*/
-	void insertToHeap( sPathNode *Node, bool exists );
+	void insertToHeap( sPathNode* Node, bool exists );
 	/**
 	* deletes the first node in the heaplist and resorts the rest.
 	*@author alzi alias DoctorDeath
@@ -170,13 +170,13 @@ public:
 	cVehicle* vehicle_;
 	eEndMoveActionType type_;
 	int destID_;		//we store the ID and not a pointer to vehicle/building,
-						//so we don't have to invalidate the pointer, when the dest unit gets destroyed
+	//so we don't have to invalidate the pointer, when the dest unit gets destroyed
 
 	void executeLoadAction();
 	void executeGetInAction();
 	void executeAttackAction();
 
-	cEndMoveAction( cVehicle* vehicle, int destID, eEndMoveActionType type);
+	cEndMoveAction( cVehicle* vehicle, int destID, eEndMoveActionType type );
 
 	void execute();
 };
@@ -184,11 +184,11 @@ public:
 class cServerMoveJob
 {
 public:
-	cServerMoveJob ( int srcX_, int srcY_, int destX_, int destY_, cVehicle *Vehicle );
-	~cServerMoveJob ();
+	cServerMoveJob( int srcX_, int srcY_, int destX_, int destY_, cVehicle* Vehicle );
+	~cServerMoveJob();
 
-	cMap *Map;
-	cVehicle *Vehicle;
+	cMap* Map;
+	cVehicle* Vehicle;
 
 	int SrcX, SrcY;
 	int DestX, DestY;
@@ -199,9 +199,9 @@ public:
 	bool bPlane;
 	cEndMoveAction* endAction;
 
-	sWaypoint *Waypoints;
+	sWaypoint* Waypoints;
 
-	static cServerMoveJob* generateFromMessage( cNetMessage *message );
+	static cServerMoveJob* generateFromMessage( cNetMessage* message );
 
 	bool calcPath();
 	void release();
@@ -211,21 +211,21 @@ public:
 	void calcNextDir();
 	void stop();
 	void resume();
-	void addEndAction(int destID, eEndMoveActionType type);
+	void addEndAction( int destID, eEndMoveActionType type );
 };
 
 class cClientMoveJob
 {
-	void init ( int iSrcOff, cVehicle *Vehicle );
+	void init( int iSrcOff, cVehicle* Vehicle );
 public:
-	static sWaypoint* calcPath( int SrcX, int SrcY, int DestX, int DestY, cVehicle * vehicle, cList<cVehicle*> *group = NULL );
+	static sWaypoint* calcPath( int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group = NULL );
 
-	cClientMoveJob ( int iSrcOff, int iDestOff, cVehicle *Vehicle );
-	cClientMoveJob ( int iSrcOff, sWaypoint *Waypoints, cVehicle *Vehicle );
-	~cClientMoveJob ();
-	cMap *Map;
-	cVehicle *Vehicle;
-	cEndMoveAction *endMoveAction;
+	cClientMoveJob( int iSrcOff, int iDestOff, cVehicle* Vehicle );
+	cClientMoveJob( int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle );
+	~cClientMoveJob();
+	cMap* Map;
+	cVehicle* Vehicle;
+	cEndMoveAction* endMoveAction;
 
 	int ScrX, ScrY;
 	int DestX, DestY;
@@ -237,18 +237,18 @@ public:
 	bool bPlane;
 	bool bSoundRunning;
 
-	sWaypoint *Waypoints;
-	sWaypoint *lastWaypoints;
+	sWaypoint* Waypoints;
+	sWaypoint* lastWaypoints;
 
-	void setVehicleToCoords(int x, int y, int height);
-	bool generateFromMessage( cNetMessage *message );
+	void setVehicleToCoords( int x, int y, int height );
+	bool generateFromMessage( cNetMessage* message );
 
 	void release();
 	void handleNextMove( int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed, int heigth );
 	void moveVehicle();
-	void doEndMoveVehicle ();
-	void calcNextDir ();
-	void drawArrow ( SDL_Rect Dest, SDL_Rect *LastDest, bool bSpezial );
+	void doEndMoveVehicle();
+	void calcNextDir();
+	void drawArrow( SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial );
 	void startMoveSound();
 	void stopMoveSound();
 };

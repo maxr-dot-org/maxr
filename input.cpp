@@ -33,59 +33,59 @@ sMouseState::sMouseState()
 }
 
 cInput::cInput() :
-	LastClickTicks(0)
+	LastClickTicks( 0 )
 {
 	// enables that SDL puts the unicode values to the keyevents.
-	SDL_EnableUNICODE ( 1 );
+	SDL_EnableUNICODE( 1 );
 	// enables keyrepetition
-	SDL_EnableKeyRepeat ( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
+	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
 }
 
-void cInput::inputkey ( SDL_KeyboardEvent &key )
+void cInput::inputkey( SDL_KeyboardEvent& key )
 {
 	// give the key to the active menu
 	// But do not send events to a menu, after an event triggered the termination
 	// the user wouldn't expects the menu to execute further events after klicking the exit button
 	if ( ActiveMenu && !ActiveMenu->exiting() )
 	{
-		ActiveMenu->handleKeyInput ( key, getUTF16Char ( key.keysym.unicode ) );
+		ActiveMenu->handleKeyInput( key, getUTF16Char( key.keysym.unicode ) );
 	}
 }
 
 bool cInput::IsDoubleClicked()
 {
-    /* First time this function is called, LastClickTicks
-        has not been initialised yet. */
-    if (! LastClickTicks)
-    {
-        LastClickTicks = SDL_GetTicks ();
-        return (false);
-    }
-    else
-    {
-        const long CurrentClickTicks = SDL_GetTicks ();
+	/* First time this function is called, LastClickTicks
+	    has not been initialised yet. */
+	if ( ! LastClickTicks )
+	{
+		LastClickTicks = SDL_GetTicks();
+		return ( false );
+	}
+	else
+	{
+		const long CurrentClickTicks = SDL_GetTicks();
 
-        /* If the period between the two clicks is smaller
-            or equal to a pre-defined number, we report a
-            DoubleClick event. */
+		/* If the period between the two clicks is smaller
+		    or equal to a pre-defined number, we report a
+		    DoubleClick event. */
 
-        if (CurrentClickTicks - LastClickTicks <= 500)
-        {
-            /* Update LastClickTicks and signal a DoubleClick. */
+		if ( CurrentClickTicks - LastClickTicks <= 500 )
+		{
+			/* Update LastClickTicks and signal a DoubleClick. */
 
-            LastClickTicks = CurrentClickTicks;
-            return (true);
-        }
+			LastClickTicks = CurrentClickTicks;
+			return ( true );
+		}
 
-        /* Update LastClickTicks and signal a SingleClick. */
+		/* Update LastClickTicks and signal a SingleClick. */
 
-        LastClickTicks = CurrentClickTicks;
-        return (false);
-    }
+		LastClickTicks = CurrentClickTicks;
+		return ( false );
+	}
 }
 
 
-void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
+void cInput::inputMouseButton( SDL_MouseButtonEvent& button )
 {
 	MouseState.x = button.x;
 	MouseState.y = button.y;
@@ -117,7 +117,7 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 			MouseState.rightButtonReleased = false;
 		}
 
-		if (IsDoubleClicked())
+		if ( IsDoubleClicked() )
 		{
 			MouseState.isDoubleClick = true;
 		}
@@ -145,8 +145,9 @@ void cInput::inputMouseButton ( SDL_MouseButtonEvent &button )
 	}
 
 	if ( ActiveMenu && !ActiveMenu->exiting() ) //do not send events to a menu, after an event triggered the termination
-	{											//the user wouldn't expects the menu to execute further events after klicking the exit button
-		ActiveMenu->handleMouseInput ( MouseState );
+	{
+		//the user wouldn't expects the menu to execute further events after klicking the exit button
+		ActiveMenu->handleMouseInput( MouseState );
 	}
 }
 
@@ -157,27 +158,27 @@ std::string cInput::getUTF16Char( Uint16 ch )
 
 	// convert from UTF-16 to UTF-8
 	count = 1;
-	if( ch >= 0x80 ) count++;
+	if ( ch >= 0x80 ) count++;
 
 	bitmask = 0x800;
-	for( int i = 0; i < 5; i++ )
+	for ( int i = 0; i < 5; i++ )
 	{
-		if( (Uint32)ch >= bitmask ) count++;
+		if ( ( Uint32 )ch >= bitmask ) count++;
 		bitmask <<= 5;
 	}
 
 	std::string returnStr = "";
-	if( count == 1 )
+	if ( count == 1 )
 	{
-		returnStr += (char)ch;
+		returnStr += ( char )ch;
 	}
 	else
 	{
-		for( int i = count-1; i >= 0; i-- )
+		for ( int i = count - 1; i >= 0; i-- )
 		{
-			unsigned char c = (ch >> (6*i)) & 0x3f;
+			unsigned char c = ( ch >> ( 6 * i ) ) & 0x3f;
 			c |= 0x80;
-			if( i == count-1 ) c |= 0xff << (8-count);
+			if ( i == count - 1 ) c |= 0xff << ( 8 - count );
 			returnStr += c;
 		}
 	}

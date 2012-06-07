@@ -69,7 +69,7 @@ struct sUnitData;
 // Struktur f¸r die IDs
 struct sID
 {
-	sID () : iFirstPart(0), iSecondPart(0) {};
+	sID() : iFirstPart( 0 ), iSecondPart( 0 ) {};
 
 	int iFirstPart;
 	int iSecondPart;
@@ -77,21 +77,21 @@ struct sID
 	void generate( const std::string& text );
 	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
 		units will have these values. */
-	sUnitData *getUnitDataCurrentVersion (cPlayer *Owner) const;
+	sUnitData* getUnitDataCurrentVersion( cPlayer* Owner ) const;
 	/** Get the basic version of a unit.
 		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
 					 If no owner is given, the basic version without any clan modifications is returned.
 		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
-	sUnitData *getUnitDataOriginalVersion (cPlayer *Owner = NULL) const;
+	sUnitData* getUnitDataOriginalVersion( cPlayer* Owner = NULL ) const;
 
 	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sVehicle *getVehicle (cPlayer* Owner = NULL) const;
+	sVehicle* getVehicle( cPlayer* Owner = NULL ) const;
 	/** Returns the original version of a building as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sBuilding *getBuilding (cPlayer* Owner = NULL) const;
+	sBuilding* getBuilding( cPlayer* Owner = NULL ) const;
 
-	bool operator==(const sID &ID) const;
+	bool operator==( const sID& ID ) const;
 };
 
 // Nummbers of buildings //////////////////////////////////////////////////////
@@ -279,59 +279,59 @@ struct sUnitData
 class cGraphicsData
 {
 public:
-	SDL_Surface *gfx_Chand;
-	SDL_Surface *gfx_Cno;
-	SDL_Surface *gfx_Cselect;
-	SDL_Surface *gfx_Cmove;
-	SDL_Surface *gfx_Chelp;
-	SDL_Surface *gfx_Cattack;
-	SDL_Surface *gfx_Cpfeil1;
-	SDL_Surface *gfx_Cpfeil2;
-	SDL_Surface *gfx_Cpfeil3;
-	SDL_Surface *gfx_Cpfeil4;
-	SDL_Surface *gfx_Cpfeil6;
-	SDL_Surface *gfx_Cpfeil7;
-	SDL_Surface *gfx_Cpfeil8;
-	SDL_Surface *gfx_Cpfeil9;
-	SDL_Surface *gfx_hud_stuff;
-	SDL_Surface *gfx_shadow;
-	SDL_Surface *gfx_tmp;
-	SDL_Surface *gfx_context_menu;
-	SDL_Surface *gfx_destruction;
-	SDL_Surface *gfx_destruction_glas;
-	SDL_Surface *gfx_Cband;
-	SDL_Surface *gfx_band_small;
-	SDL_Surface *gfx_band_big;
-	SDL_Surface *gfx_band_small_org;
-	SDL_Surface *gfx_band_big_org;
-	SDL_Surface *gfx_big_beton_org;
-	SDL_Surface *gfx_big_beton;
-	SDL_Surface *gfx_Ctransf;
-	SDL_Surface *gfx_Cload;
-	SDL_Surface *gfx_Cactivate;
-	SDL_Surface *gfx_storage;
-	SDL_Surface *gfx_storage_ground;
-	SDL_Surface *gfx_dialog;
-	SDL_Surface *gfx_edock;
-	SDL_Surface *gfx_ehangar;
-	SDL_Surface *gfx_edepot;
-	SDL_Surface *gfx_Cmuni;
-	SDL_Surface *gfx_Crepair;
-	SDL_Surface *gfx_panel_top;
-	SDL_Surface *gfx_panel_bottom;
-	SDL_Surface *gfx_Csteal;
-	SDL_Surface *gfx_Cdisable;
-	SDL_Surface *gfx_menu_stuff;
-	SDL_Surface *gfx_hud_extra_players;
-	SDL_Surface *gfx_player_pc;
-	SDL_Surface *gfx_player_human;
-	SDL_Surface *gfx_player_none;
-	SDL_Surface *gfx_player_select;
-	SDL_Surface *gfx_exitpoints_org;
-	SDL_Surface *gfx_exitpoints;
-	SDL_Surface *gfx_menu_buttons;
-	SDL_Surface *gfx_player_ready;
-	SDL_Surface *gfx_hud_chatbox;
+	SDL_Surface* gfx_Chand;
+	SDL_Surface* gfx_Cno;
+	SDL_Surface* gfx_Cselect;
+	SDL_Surface* gfx_Cmove;
+	SDL_Surface* gfx_Chelp;
+	SDL_Surface* gfx_Cattack;
+	SDL_Surface* gfx_Cpfeil1;
+	SDL_Surface* gfx_Cpfeil2;
+	SDL_Surface* gfx_Cpfeil3;
+	SDL_Surface* gfx_Cpfeil4;
+	SDL_Surface* gfx_Cpfeil6;
+	SDL_Surface* gfx_Cpfeil7;
+	SDL_Surface* gfx_Cpfeil8;
+	SDL_Surface* gfx_Cpfeil9;
+	SDL_Surface* gfx_hud_stuff;
+	SDL_Surface* gfx_shadow;
+	SDL_Surface* gfx_tmp;
+	SDL_Surface* gfx_context_menu;
+	SDL_Surface* gfx_destruction;
+	SDL_Surface* gfx_destruction_glas;
+	SDL_Surface* gfx_Cband;
+	SDL_Surface* gfx_band_small;
+	SDL_Surface* gfx_band_big;
+	SDL_Surface* gfx_band_small_org;
+	SDL_Surface* gfx_band_big_org;
+	SDL_Surface* gfx_big_beton_org;
+	SDL_Surface* gfx_big_beton;
+	SDL_Surface* gfx_Ctransf;
+	SDL_Surface* gfx_Cload;
+	SDL_Surface* gfx_Cactivate;
+	SDL_Surface* gfx_storage;
+	SDL_Surface* gfx_storage_ground;
+	SDL_Surface* gfx_dialog;
+	SDL_Surface* gfx_edock;
+	SDL_Surface* gfx_ehangar;
+	SDL_Surface* gfx_edepot;
+	SDL_Surface* gfx_Cmuni;
+	SDL_Surface* gfx_Crepair;
+	SDL_Surface* gfx_panel_top;
+	SDL_Surface* gfx_panel_bottom;
+	SDL_Surface* gfx_Csteal;
+	SDL_Surface* gfx_Cdisable;
+	SDL_Surface* gfx_menu_stuff;
+	SDL_Surface* gfx_hud_extra_players;
+	SDL_Surface* gfx_player_pc;
+	SDL_Surface* gfx_player_human;
+	SDL_Surface* gfx_player_none;
+	SDL_Surface* gfx_player_select;
+	SDL_Surface* gfx_exitpoints_org;
+	SDL_Surface* gfx_exitpoints;
+	SDL_Surface* gfx_menu_buttons;
+	SDL_Surface* gfx_player_ready;
+	SDL_Surface* gfx_hud_chatbox;
 
 	std::string DialogPath;
 	std::string Dialog2Path;
@@ -342,39 +342,39 @@ public:
 class cEffectsData
 {
 public:
-	SDL_Surface **fx_explo_big;
-	SDL_Surface **fx_explo_small;
-	SDL_Surface **fx_explo_water;
-	SDL_Surface **fx_explo_air;
-	SDL_Surface **fx_muzzle_big;
-	SDL_Surface **fx_muzzle_small;
-	SDL_Surface **fx_muzzle_med;
-	SDL_Surface **fx_hit;
-	SDL_Surface **fx_smoke;
-	SDL_Surface **fx_rocket;
-	SDL_Surface **fx_dark_smoke;
-	SDL_Surface **fx_tracks;
-	SDL_Surface **fx_corpse;
-	SDL_Surface **fx_absorb;
+	SDL_Surface** fx_explo_big;
+	SDL_Surface** fx_explo_small;
+	SDL_Surface** fx_explo_water;
+	SDL_Surface** fx_explo_air;
+	SDL_Surface** fx_muzzle_big;
+	SDL_Surface** fx_muzzle_small;
+	SDL_Surface** fx_muzzle_med;
+	SDL_Surface** fx_hit;
+	SDL_Surface** fx_smoke;
+	SDL_Surface** fx_rocket;
+	SDL_Surface** fx_dark_smoke;
+	SDL_Surface** fx_tracks;
+	SDL_Surface** fx_corpse;
+	SDL_Surface** fx_absorb;
 } EX EffectsData;
 
 // ResourceData - Class containing all resource surfaces //////////////////////
 class cResourceData
 {
 public:
-	SDL_Surface *res_metal_org;
-	SDL_Surface *res_metal;
-	SDL_Surface *res_oil_org;
-	SDL_Surface *res_oil;
-	SDL_Surface *res_gold_org;
-	SDL_Surface *res_gold;
+	SDL_Surface* res_metal_org;
+	SDL_Surface* res_metal;
+	SDL_Surface* res_oil_org;
+	SDL_Surface* res_oil;
+	SDL_Surface* res_gold_org;
+	SDL_Surface* res_gold;
 } EX ResourceData;
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
 class cUnitsData
 {
 public:
-	cUnitsData ();
+	cUnitsData();
 
 	// Vehicles
 	cList<sVehicle> vehicle; // the standard version without clan modifications
@@ -382,32 +382,32 @@ public:
 	// Buildings
 	cList<sBuilding> building;  // the standard version without clan modifications
 
-	sVehicle& getVehicle (int nr, int clan = -1); ///< -1: game without clans
-	sBuilding& getBuilding (int nr, int clan = -1); ///< -1: game without clans
+	sVehicle& getVehicle( int nr, int clan = -1 ); ///< -1: game without clans
+	sBuilding& getBuilding( int nr, int clan = -1 ); ///< -1: game without clans
 
-	unsigned int getNrVehicles () const { return (int) vehicle.Size (); }
-	unsigned int getNrBuildings () const { return (int) building.Size (); }
+	unsigned int getNrVehicles() const { return ( int ) vehicle.Size(); }
+	unsigned int getNrBuildings() const { return ( int ) building.Size(); }
 
 
-	SDL_Surface *dirt_small_org;
-	SDL_Surface *dirt_small;
-	SDL_Surface *dirt_small_shw_org;
-	SDL_Surface *dirt_small_shw;
-	SDL_Surface *dirt_big_org;
-	SDL_Surface *dirt_big;
-	SDL_Surface *dirt_big_shw_org;
-	SDL_Surface *dirt_big_shw;
+	SDL_Surface* dirt_small_org;
+	SDL_Surface* dirt_small;
+	SDL_Surface* dirt_small_shw_org;
+	SDL_Surface* dirt_small_shw;
+	SDL_Surface* dirt_big_org;
+	SDL_Surface* dirt_big;
+	SDL_Surface* dirt_big_shw_org;
+	SDL_Surface* dirt_big_shw;
 
-	SDL_Surface *ptr_small_beton;
-	SDL_Surface *ptr_small_beton_org;
-	SDL_Surface *ptr_connector;
-	SDL_Surface *ptr_connector_org;
-	SDL_Surface *ptr_connector_shw;
-	SDL_Surface *ptr_connector_shw_org;
+	SDL_Surface* ptr_small_beton;
+	SDL_Surface* ptr_small_beton_org;
+	SDL_Surface* ptr_connector;
+	SDL_Surface* ptr_connector_org;
+	SDL_Surface* ptr_connector_shw;
+	SDL_Surface* ptr_connector_shw_org;
 
-//------------------------------------------------------------
+	//------------------------------------------------------------
 private:
-	void initializeClanUnitData ();
+	void initializeClanUnitData();
 
 	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans
 	std::vector<std::vector<sBuilding> > clanUnitDataBuildings; // cotains the modified versions for the clans
@@ -419,10 +419,10 @@ private:
 class cOtherData
 {
 public:
-	SDL_Surface **colors;
-	SDL_Surface **colors_org;
-	SDL_Surface *WayPointPfeile[8][60];
-	SDL_Surface *WayPointPfeileSpecial[8][60];
+	SDL_Surface** colors;
+	SDL_Surface** colors_org;
+	SDL_Surface* WayPointPfeile[8][60];
+	SDL_Surface* WayPointPfeileSpecial[8][60];
 } EX OtherData;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -446,29 +446,29 @@ public:
  * @param height height of the new surface.
  * @return returns the destination surface.
  */
-SDL_Surface *scaleSurface( SDL_Surface *scr, SDL_Surface *dest, int width, int height);
+SDL_Surface* scaleSurface( SDL_Surface* scr, SDL_Surface* dest, int width, int height );
 
-SDL_Surface *CreatePfeil(int p1x,int p1y,int p2x,int p2y,int p3x,int p3y,unsigned int color,int size);
+SDL_Surface* CreatePfeil( int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size );
 
 /** Draws a line on the surface */
-void line(int x1,int y1,int x2,int y2,unsigned int color,SDL_Surface *sf);
+void line( int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf );
 /** Draws a circle on the surface */
-void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface *surface );
+void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface* surface );
 /** Sets a pixel on the surface */
 void setPixel( SDL_Surface* surface, int x, int y, int iColor );
 
 // returns a random number in the range 0 <= r < x
-int random(int x);
+int random( int x );
 
 /**Converts integer to string
 */
-std::string iToStr(int x);
+std::string iToStr( int x );
 /**Converts double to string
 */
-std::string dToStr(double x);
+std::string dToStr( double x );
 /**Converts pointer to string
 */
-std::string pToStr(void *x);
+std::string pToStr( void* x );
 
 /**
 * Rounds given param num to specified position after decimal point<br>
@@ -482,7 +482,7 @@ std::string pToStr(void *x);
 *@param n the position after decimal point in dValueToRound, that will be rounded
 *@return rounded num
 */
-double Round(double num, unsigned int n);
+double Round( double num, unsigned int n );
 
 /**
 * Rounds given param num without numbers after decimal point<br>
@@ -494,18 +494,18 @@ double Round(double num, unsigned int n);
 *@param num number to round up
 *@return rounded num
 */
-int Round ( double num );
+int Round( double num );
 
 /**
 * Works like SDL_BlittSurface. But unlike SDL it respects the destination alpha channel of the surface.
 * This function is only designed to blitt from a surface with per surface alpha value to a surface with alpha channel.
 * A source color key is also supported.
 */
-void blittPerSurfaceAlphaToAlphaChannel(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+void blittPerSurfaceAlphaToAlphaChannel( SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect );
 /**
 * Works like SDL_BlittSurface. This function choses the right blitt function to use for blitting.
 */
-void blittAlphaSurface (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+void blittAlphaSurface( SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect );
 
 void Quit();
 

@@ -46,38 +46,38 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage ( const std::string& chatMsg, sMenuPlayer *player = NULL, int fromPlayerNr = -1, bool translationText = false );
+void sendMenuChatMessage( const std::string& chatMsg, sMenuPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false );
 
-void sendRequestIdentification ( sMenuPlayer *player );
+void sendRequestIdentification( sMenuPlayer* player );
 
-void sendPlayerList ( cList<sMenuPlayer*> *players );
+void sendPlayerList( cList<sMenuPlayer*>* players );
 
-void sendGameData ( cGameDataContainer *gameData, const std::string& saveGameString, sMenuPlayer *player = NULL );
+void sendGameData( cGameDataContainer* gameData, const std::string& saveGameString, sMenuPlayer* player = NULL );
 
-void sendGo ();
+void sendGo();
 
-void sendIdentification ( sMenuPlayer *player );
+void sendIdentification( sMenuPlayer* player );
 
-void sendClan ( int clanNr, int ownerNr, bool isServer );
+void sendClan( int clanNr, int ownerNr, bool isServer );
 
-void sendLandingUnits ( cList<sLandingUnit> *landingList, int ownerNr, bool isServer );
+void sendLandingUnits( cList<sLandingUnit>* landingList, int ownerNr, bool isServer );
 
-void sendUnitUpgrades ( cPlayer *player, bool isServer );
+void sendUnitUpgrades( cPlayer* player, bool isServer );
 
-void sendLandingCoords ( sClientLandData& c, int ownerNr, bool isServer );
+void sendLandingCoords( sClientLandData& c, int ownerNr, bool isServer );
 
-void sendReselectLanding ( eLandingState state, sMenuPlayer *player );
+void sendReselectLanding( eLandingState state, sMenuPlayer* player );
 
-void sendAllLanded ();
+void sendAllLanded();
 
-void sendGameIdentification ( sMenuPlayer *player, int socket );
+void sendGameIdentification( sMenuPlayer* player, int socket );
 
 void sendReconnectionSuccess( int playerNr );
 
-void sendRequestMap (const std::string& mapName, int playerNr);
+void sendRequestMap( const std::string& mapName, int playerNr );
 
-void sendTakenUpgrades ( sUnitUpgrade (*unitUpgrades)[8], cPlayer *player );
+void sendTakenUpgrades( sUnitUpgrade( *unitUpgrades )[8], cPlayer* player );
 
-int findUpgradeValue ( sUnitUpgrade upgrades[8], int upgradeType, int defaultValue = 0);
+int findUpgradeValue( sUnitUpgrade upgrades[8], int upgradeType, int defaultValue = 0 );
 
 #endif // menueventsH

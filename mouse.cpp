@@ -40,44 +40,44 @@ cMouse::cMouse()
 }
 
 // Malt die Maus, und wenn draw_back gesetzt ist, auch den alten Hintergrund:
-void cMouse::draw ( bool draw_back,SDL_Surface *sf )
+void cMouse::draw( bool draw_back, SDL_Surface* sf )
 {
 	SDL_Rect dest;
-	if ( !visible||cur==NULL ) return;
+	if ( !visible || cur == NULL ) return;
 	GetPos();
 
 	// restore old background
-	if ( back && draw_back && LastX!=-100 )
+	if ( back && draw_back && LastX != -100 )
 	{
-		dest.x=LastX;
-		dest.y=LastY;
-		SDL_BlitSurface ( back,NULL,sf,&dest );
+		dest.x = LastX;
+		dest.y = LastY;
+		SDL_BlitSurface( back, NULL, sf, &dest );
 
-		SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
+		SDL_UpdateRect( sf, dest.x, dest.y, dest.w, dest.h );
 	}
 
 	//change size of back surface if nessesary, e.g. when the mouse curor was changed
 	if ( !back || back->h != cur->h || back->w != cur->w )
 	{
-		back = SDL_CreateRGBSurface( Video.getSurfaceType(), cur->w, cur->h,32, 0, 0, 0, 0 );
+		back = SDL_CreateRGBSurface( Video.getSurfaceType(), cur->w, cur->h, 32, 0, 0, 0, 0 );
 	}
 
 	// store new background
-	GetBack ( sf );
-	dest.x=DrawX;
-	dest.y=DrawY;
-	LastX=DrawX;
-	LastY=DrawY;
+	GetBack( sf );
+	dest.x = DrawX;
+	dest.y = DrawY;
+	LastX = DrawX;
+	LastY = DrawY;
 
 	//draw mouse
-	SDL_BlitSurface ( cur,NULL,sf,&dest );
-	SDL_UpdateRect ( sf,dest.x,dest.y,dest.w,dest.h );
+	SDL_BlitSurface( cur, NULL, sf, &dest );
+	SDL_UpdateRect( sf, dest.x, dest.y, dest.w, dest.h );
 }
 
-bool cMouse::SetCursor(eCursor const typ)
+bool cMouse::SetCursor( eCursor const typ )
 {
 	SDL_Surface* const lastCur = cur;
-	switch (typ)
+	switch ( typ )
 	{
 		default:
 		case CHand:     cur = GraphicsData.gfx_Chand;     break;
@@ -107,47 +107,47 @@ bool cMouse::SetCursor(eCursor const typ)
 }
 
 // Liest den Hintergrund in das Back-Surface ein:
-void cMouse::GetBack ( SDL_Surface *sf )
+void cMouse::GetBack( SDL_Surface* sf )
 {
 	SDL_Rect scr;
 	GetPos();
-	scr.x=DrawX;
-	scr.y=DrawY;
-	scr.w=back->w;
-	scr.h=back->h;
-	SDL_BlitSurface ( sf,&scr,back,NULL );
+	scr.x = DrawX;
+	scr.y = DrawY;
+	scr.w = back->w;
+	scr.h = back->h;
+	SDL_BlitSurface( sf, &scr, back, NULL );
 }
 
-void cMouse::restoreBack( SDL_Surface *sf )
+void cMouse::restoreBack( SDL_Surface* sf )
 {
 	SDL_Rect dest;
 	dest.x = LastX;
 	dest.y = LastY;
-	SDL_BlitSurface ( back, NULL, sf, &dest );
+	SDL_BlitSurface( back, NULL, sf, &dest );
 }
 
 // Liest die aktuelle Mausposition aus:
-void cMouse::GetPos ()
+void cMouse::GetPos()
 {
-	SDL_GetMouseState( &x, &y);
+	SDL_GetMouseState( &x, &y );
 
 	// Cursor Offset bestimmen:
 	int offX;
 	int offY;
 
-	getCursorOffset(offX, offY);
+	getCursorOffset( offX, offY );
 
-	if(offX == 0 && offY == 0)
+	if ( offX == 0 && offY == 0 )
 	{
 		if ( x > Video.getResolutionX() - cur->w )
 		{
 			x = Video.getResolutionX() - cur->w;
-			SDL_WarpMouse ( x, y );
+			SDL_WarpMouse( x, y );
 		}
 		if ( y > Video.getResolutionY() - cur->h )
 		{
 			y = Video.getResolutionY() - cur->h;
-			SDL_WarpMouse ( x, y );
+			SDL_WarpMouse( x, y );
 		}
 	}
 
@@ -155,25 +155,27 @@ void cMouse::GetPos ()
 	DrawY = y + offY;
 }
 // sets the mouse cursor to the given coordinates in windowspace
-void cMouse::setPos(int px, int py)
+void cMouse::setPos( int px, int py )
 {
-	SDL_WarpMouse(px, py);
+	SDL_WarpMouse( px, py );
 }
 
 
 // gets the cursor offset. transforms screenspace to clickspace
-void cMouse::getCursorOffset(int &x, int &y)
+void cMouse::getCursorOffset( int& x, int& y )
 {
-	if ( cur==GraphicsData.gfx_Cselect||cur==GraphicsData.gfx_Chelp||cur==GraphicsData.gfx_Cmove||cur==GraphicsData.gfx_Cno||cur==GraphicsData.gfx_Ctransf||cur==GraphicsData.gfx_Cband||cur==GraphicsData.gfx_Cload||cur==GraphicsData.gfx_Cmuni||cur==GraphicsData.gfx_Crepair||cur==GraphicsData.gfx_Cactivate )
+	if ( cur == GraphicsData.gfx_Cselect || cur == GraphicsData.gfx_Chelp || cur == GraphicsData.gfx_Cmove || cur == GraphicsData.gfx_Cno || cur == GraphicsData.gfx_Ctransf || cur == GraphicsData.gfx_Cband || cur == GraphicsData.gfx_Cload || cur == GraphicsData.gfx_Cmuni || cur == GraphicsData.gfx_Crepair || cur == GraphicsData.gfx_Cactivate )
 	{
 		x = -12;
 		y = -12;
 	}
-	else if ( cur==GraphicsData.gfx_Cattack||cur==GraphicsData.gfx_Csteal||cur==GraphicsData.gfx_Cdisable )
+	else if ( cur == GraphicsData.gfx_Cattack || cur == GraphicsData.gfx_Csteal || cur == GraphicsData.gfx_Cdisable )
 	{
 		x = -19;
 		y = -16;
-	}else{
+	}
+	else
+	{
 		x = 0;
 		y = 0;
 	}
@@ -192,27 +194,27 @@ bool cMouse::moved()
 // Liefert die Koordinaten der Kachel unter der Maus:
 int cMouse::getKachelX()
 {
-	if ( x < 180 || x > 180 + ( Video.getResolutionX()-192 ) )
+	if ( x < 180 || x > 180 + ( Video.getResolutionX() - 192 ) )
 	{
 		return -1;
 	}
 
-	int X = (int) ( ( x-180 + Client->gameGUI.getOffsetX()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	int X = ( int )( ( x - 180 + Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
 
-	if ( X >= Client->getMap()->size ) X = Client->getMap()->size-1;
+	if ( X >= Client->getMap()->size ) X = Client->getMap()->size - 1;
 
 	return X;
 }
 
-int cMouse::getKachelY ()
+int cMouse::getKachelY()
 {
-	if ( y < 18 || y > 18 + ( Video.getResolutionY()-32 ) )
+	if ( y < 18 || y > 18 + ( Video.getResolutionY() - 32 ) )
 	{
 		return -1;
 	}
 
-	int Y = (int) ( ( y-18 + Client->gameGUI.getOffsetY()*Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
-	if ( Y >= Client->getMap()->size ) Y = Client->getMap()->size-1;
+	int Y = ( int )( ( y - 18 + Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom() ) / Client->gameGUI.getTileSize() );
+	if ( Y >= Client->getMap()->size ) Y = Client->getMap()->size - 1;
 
 	return Y;
 }

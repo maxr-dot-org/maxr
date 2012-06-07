@@ -33,21 +33,21 @@
 * @return true if exists (as in readable)
 * @return false if does not exist (as in not readable)
 */
-bool FileExists(const char* path);
+bool FileExists( const char* path );
 
 /**
 * Checks whether a directory exists.
 * @param path Path to check for
 * @return true if the directory exists. Else false.
 */
-bool DirExists(const std::string& path);
+bool DirExists( const std::string& path );
 
 /**
 * Creates a new directory.
 * @param Path to the directory to create.
 * @return True if the directoy has been created successfully. False on errors.
 */
-bool makeDir(const std::string& path);
+bool makeDir( const std::string& path );
 
 /**
 * Gets the filenames of all files in the directory
@@ -55,7 +55,7 @@ bool makeDir(const std::string& path);
 * @param sDirectory Directory in which to search
 * @return A new list with all filenames (the caller is owner of the list)
 */
-cList<std::string> *getFilesOfDirectory(const std::string& sDirectory);
+cList<std::string>* getFilesOfDirectory( const std::string& sDirectory );
 
 /**
 * Gets the map folder of the user's custom maps.
@@ -75,6 +75,6 @@ std::string getUserScreenshotsDir();
 * @author pagra
 * @return a checksum of all bytes in the given data chunk
 */
-Sint32 calcCheckSum(const char* data, size_t dataSize);
+Sint32 calcCheckSum( const char* data, size_t dataSize );
 
 #endif

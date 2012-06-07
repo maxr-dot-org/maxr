@@ -1,0 +1,41 @@
+# config file for AStyle ( http://astyle.sourceforge.net/ )
+# AStyle version : 2.02
+
+# style
+--style=ansi
+--indent=force-tab=4
+#--lineend=linux
+--lineend=windows
+--min-conditional-indent=0
+--max-instatement-indent=60
+--keep-one-line-statements
+--keep-one-line-blocks
+--indent-preprocessor
+--indent-col1-comments
+--indent-switches
+--unpad-paren
+--pad-oper
+--pad-header
+--pad-paren-in
+#--add-brackets
+--align-pointer=type
+--align-reference=type
+--mode=c
+
+
+# extra options
+
+# do not modify 'extern' files
+--exclude=SDL_flic.c
+--exclude=SDL_flic.h
+--exclude=tinystr.cpp
+--exclude=tinystr.h
+--exclude=tinyxml.cpp
+--exclude=tinyxml.h
+--exclude=tinyxmlerror.cpp
+--exclude=tinyxmlparser.cpp
+
+--ignore-exclude-errors-x
+
+--preserve-date
+--suffix=none

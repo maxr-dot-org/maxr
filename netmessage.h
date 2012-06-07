@@ -54,7 +54,7 @@ public:
 	* @author Eiko
 	* @param iType the type of the message
 	*/
-	cNetMessage(int iType);
+	cNetMessage( int iType );
 
 	/** creates a netMessage from a former serialized netMessage
 	* @author Eiko
@@ -79,13 +79,13 @@ public:
 	/** rewinds a received and already read (via popXYZ) msg, so that it's content can be popped a second time.
 	 * @author Pagra
 	 */
-	void rewind ();
+	void rewind();
 
 	/** pushes a char to the end of the netMessage
 	* @author Eiko
 	* @param c the char to push to the message
 	*/
-	void pushChar( char c);
+	void pushChar( char c );
 
 	/** pops an char from the end of the netMessage
 	* @author Eiko
@@ -115,7 +115,7 @@ public:
 	* @author Eiko
 	* @return the Sint32 poped from the message
 	*/
-	Sint32 popInt32 ();
+	Sint32 popInt32();
 
 	/** pushes a string to the end of the netMessage
 	* @author Eiko
@@ -141,8 +141,8 @@ public:
 	*/
 	bool popBool();
 
-	#define BITS 32
-	#define EXPBITS 8
+#define BITS 32
+#define EXPBITS 8
 	/** pushes a float to the end of the netMessage
 	* @author Eiko
 	* @param f the float to push to the message
@@ -160,7 +160,7 @@ public:
 	* @author Eiko
 	*/
 	std::string getTypeAsString() const;
-	int getType () const {return iType;}
+	int getType() const {return iType;}
 
 	/** returns the serial hexadecimal representation of the netMessage
 	* @author Eiko

@@ -60,16 +60,16 @@ struct sHudStateContainer
 	int offX, offY;
 	int selUnitID;
 
-	sHudStateContainer() : tntChecked(false), hitsChecked(false), lockChecked(false), surveyChecked(false),
-		statusChecked(false), scanChecked(false), rangeChecked(false), twoXChecked(false), fogChecked(false),
-		ammoChecked(false), gridChecked(false), colorsChecked(false),
-		zoom(0.0), offX(0), offY(0), selUnitID(0) {}
+	sHudStateContainer() : tntChecked( false ), hitsChecked( false ), lockChecked( false ), surveyChecked( false ),
+		statusChecked( false ), scanChecked( false ), rangeChecked( false ), twoXChecked( false ), fogChecked( false ),
+		ammoChecked( false ), gridChecked( false ), colorsChecked( false ),
+		zoom( 0.0 ), offX( 0 ), offY( 0 ), selUnitID( 0 ) {}
 };
 
 struct sHudPosition
 {
 	int offsetX, offsetY;
-	sHudPosition() : offsetX(-1), offsetY(-1) {}
+	sHudPosition() : offsetX( -1 ), offsetY( -1 ) {}
 };
 
 struct sMouseBox
@@ -96,18 +96,18 @@ enum eMouseInputMode
 
 class cGameGUI : public cMenu
 {
-	cClient *client;
-	SDL_Surface *panelTopGraphic, *panelBottomGraphic;
+	cClient* client;
+	SDL_Surface* panelTopGraphic, *panelBottomGraphic;
 
 	/** the currently selected vehicle */
-	cVehicle *selectedVehicle;
+	cVehicle* selectedVehicle;
 	/** the currently selected group of vehicles */
 	cList<cVehicle*> selectedVehiclesGroup;
 	/** the currently selected building */
-	cBuilding *selectedBuilding;
+	cBuilding* selectedBuilding;
 
-	cPlayer *player;
-	cMap *map;
+	cPlayer* player;
+	cMap* map;
 
 	float minZoom;
 
@@ -136,7 +136,7 @@ class cGameGUI : public cMenu
 	bool startup;
 
 	/** the FLC-Animation */
-	FLI_Animation *FLC;
+	FLI_Animation* FLC;
 	/** true when the FLC-animation should be played */
 	bool playFLC;
 
@@ -173,14 +173,14 @@ class cGameGUI : public cMenu
 	/** drawing cache to speed up the graphic engine */
 	cDrawingCache dCache;
 
-	cMapField *overUnitField;
+	cMapField* overUnitField;
 	sMouseBox mouseBox;
 	sMouseBox rightMouseBox;
 	sMouseState savedMouseState;
 	/** Saved positions for hotkeys F5-F8 */
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
-	SDL_Surface *generateMiniMapSurface();
+	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();
 
 	void preDrawFunction();
@@ -216,7 +216,7 @@ class cGameGUI : public cMenu
 	* shows the information for the field under the mouse
 	*@author alzi alias DoctorDeath
 	*/
-	void trace ();
+	void trace();
 	/**
 	* displays information about the vehicle on the screen
 	*@author alzi alias DoctorDeath
@@ -224,7 +224,7 @@ class cGameGUI : public cMenu
 	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
 	*@param iX The X coords where the text should be drawn
 	*/
-	void traceVehicle ( cVehicle *vehicle, int *iY, int iX );
+	void traceVehicle( cVehicle* vehicle, int* iY, int iX );
 	/**
 	* displays information about the building on the screen
 	*@author alzi alias DoctorDeath
@@ -232,7 +232,7 @@ class cGameGUI : public cMenu
 	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
 	*@param iX The X coords where the text should be drawn
 	*/
-	void traceBuilding ( cBuilding *Building, int *iY, int iX );
+	void traceBuilding( cBuilding* Building, int* iY, int iX );
 
 	/**
 	* displays the effects
@@ -267,7 +267,7 @@ class cGameGUI : public cMenu
 	*@author alzi alias DoctorDeath
 	*@param playerNumStr a string with the name or the number of a player
 	*/
-	cPlayer *getPlayerFromName( const std::string& playerNameStr );
+	cPlayer* getPlayerFromName( const std::string& playerNameStr );
 	/**
 	* sets a new wind direction
 	*@author alzi alias DoctorDeath
@@ -275,123 +275,123 @@ class cGameGUI : public cMenu
 	*/
 	void setWind( int dir );
 	void changeWindDir();
-	bool selectUnit( cMapField *OverUnitField, bool base );
+	bool selectUnit( cMapField* OverUnitField, bool base );
 	/**
 	* selects all vehicles which are within the mousebox
 	*@author alzi alias DoctorDeath
 	*/
-	void selectBoxVehicles ( sMouseBox &box );
+	void selectBoxVehicles( sMouseBox& box );
 	/**
 	* deselects all group selected vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void deselectGroup ();
+	void deselectGroup();
 
 	void updateStatusText();
 
 	void resetMiniMapOffset();
 
 	void savePosition( int slotNumber );
-	void jumpToSavedPos ( int slotNumber );
+	void jumpToSavedPos( int slotNumber );
 
-	cMenuSlider *zoomSlider;
+	cMenuSlider* zoomSlider;
 
-	cMenuButton *endButton;
+	cMenuButton* endButton;
 
-	cMenuButton *preferencesButton;
-	cMenuButton *filesButton;
+	cMenuButton* preferencesButton;
+	cMenuButton* filesButton;
 
-	cMenuButton *playButton;
-	cMenuButton *stopButton;
+	cMenuButton* playButton;
+	cMenuButton* stopButton;
 
-	cMenuImage *FLCImage;
-	cMenuUnitDetails *unitDetails;
+	cMenuImage* FLCImage;
+	cMenuUnitDetails* unitDetails;
 
-	cMenuCheckButton *surveyButton;
-	cMenuCheckButton *hitsButton;
-	cMenuCheckButton *scanButton;
-	cMenuCheckButton *statusButton;
-	cMenuCheckButton *ammoButton;
-	cMenuCheckButton *gridButton;
-	cMenuCheckButton *colorButton;
-	cMenuCheckButton *rangeButton;
-	cMenuCheckButton *fogButton;
+	cMenuCheckButton* surveyButton;
+	cMenuCheckButton* hitsButton;
+	cMenuCheckButton* scanButton;
+	cMenuCheckButton* statusButton;
+	cMenuCheckButton* ammoButton;
+	cMenuCheckButton* gridButton;
+	cMenuCheckButton* colorButton;
+	cMenuCheckButton* rangeButton;
+	cMenuCheckButton* fogButton;
 
-	cMenuCheckButton *lockButton;
+	cMenuCheckButton* lockButton;
 
-	cMenuCheckButton *TNTButton;
-	cMenuCheckButton *twoXButton;
-	cMenuCheckButton *playersButton;
+	cMenuCheckButton* TNTButton;
+	cMenuCheckButton* twoXButton;
+	cMenuCheckButton* playersButton;
 
-	cMenuButton *helpButton;
-	cMenuButton *centerButton;
-	cMenuButton *reportsButton;
-	cMenuButton *chatButton;
-	cMenuButton *nextButton;
-	cMenuButton *prevButton;
-	cMenuButton *doneButton;
+	cMenuButton* helpButton;
+	cMenuButton* centerButton;
+	cMenuButton* reportsButton;
+	cMenuButton* chatButton;
+	cMenuButton* nextButton;
+	cMenuButton* prevButton;
+	cMenuButton* doneButton;
 
-	cMenuImage *miniMapImage;
+	cMenuImage* miniMapImage;
 
-	cMenuLabel *coordsLabel;
-	cMenuLabel *unitNameLabel;
-	cMenuLabel *turnLabel;
-	cMenuLabel *timeLabel;
+	cMenuLabel* coordsLabel;
+	cMenuLabel* unitNameLabel;
+	cMenuLabel* turnLabel;
+	cMenuLabel* timeLabel;
 
-	cMenuChatBox *chatBox;
+	cMenuChatBox* chatBox;
 
-	cMenuLabel *infoTextLabel, *infoTextAdditionalLabel;
+	cMenuLabel* infoTextLabel, *infoTextAdditionalLabel;
 
-	cMenuLabel *selUnitStatusStr;
-	cMenuLabel *selUnitNamePrefixStr;
-	cMenuLineEdit *selUnitNameEdit;
+	cMenuLabel* selUnitStatusStr;
+	cMenuLabel* selUnitNamePrefixStr;
+	cMenuLineEdit* selUnitNameEdit;
 
 	cList<cMenuPlayerInfo*> playersInfo;
 
-	static void helpReleased( void *parent );
-	static void centerReleased( void *parent );
-	static void reportsReleased( void *parent );
-	static void chatReleased( void *parent );
-	static void nextReleased( void *parent );
-	static void prevReleased( void *parent );
-	static void doneReleased( void *parent );
+	static void helpReleased( void* parent );
+	static void centerReleased( void* parent );
+	static void reportsReleased( void* parent );
+	static void chatReleased( void* parent );
+	static void nextReleased( void* parent );
+	static void prevReleased( void* parent );
+	static void doneReleased( void* parent );
 
-	static void twoXReleased( void *parent );
+	static void twoXReleased( void* parent );
 
-	static void playersReleased( void *parent );
+	static void playersReleased( void* parent );
 
-	static void changedMiniMap( void *parent );
+	static void changedMiniMap( void* parent );
 
-	static void miniMapClicked( void *parent );
-	static void miniMapRightClicked( void *parent );
-	static void miniMapMovedOver( void *parent );
+	static void miniMapClicked( void* parent );
+	static void miniMapRightClicked( void* parent );
+	static void miniMapMovedOver( void* parent );
 
-	static void zoomSliderMoved( void *parent );
+	static void zoomSliderMoved( void* parent );
 
-	static void endReleased( void *parent );
+	static void endReleased( void* parent );
 
-	static void preferencesReleased( void *parent );
-	static void filesReleased( void *parent );
+	static void preferencesReleased( void* parent );
+	static void filesReleased( void* parent );
 
-	static void playReleased( void *parent );
-	static void stopReleased( void *parent );
+	static void playReleased( void* parent );
+	static void stopReleased( void* parent );
 
-	static void chatBoxReturnPressed( void *parent );
+	static void chatBoxReturnPressed( void* parent );
 
-	static void unitNameReturnPressed( void *parent );
+	static void unitNameReturnPressed( void* parent );
 
-	void recalcPosition ( bool resetItemPositions );
+	void recalcPosition( bool resetItemPositions );
 public:
-	cGameGUI( cPlayer *player_, cMap *map_, cList<cPlayer*>* const playerList );
+	cGameGUI( cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList );
 	~cGameGUI();
 
-	void setClient(cClient *client);
+	void setClient( cClient* client );
 	int show();
 	void returnToCallback();
 
-	virtual void handleKeyInput( SDL_KeyboardEvent &key, const std::string& ch );
+	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
 
-	cClient *getClient() { return client; }
+	cClient* getClient() { return client; }
 	bool surveyChecked() const { return surveyButton->isChecked(); }
 	bool hitsChecked() const { return hitsButton->isChecked(); }
 	bool scanChecked() const { return scanButton->isChecked(); }
@@ -405,18 +405,18 @@ public:
 	bool tntChecked() const { return TNTButton->isChecked(); }
 	bool twoXChecked() const { return twoXButton->isChecked(); }
 
-	void setSurvey ( bool checked ) { surveyButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setHits ( bool checked ) { hitsButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setScan ( bool checked ) { scanButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setStatus ( bool checked ) { statusButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setAmmo ( bool checked ) { ammoButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setGrid ( bool checked ) { gridButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setColor ( bool checked ) { colorButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setRange ( bool checked ) { rangeButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setFog ( bool checked ) { fogButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setLock ( bool checked ) { lockButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setTNT ( bool checked ) { TNTButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
-	void setTwoX ( bool checked ) { resetMiniMapOffset(); twoXButton->setChecked ( checked ); PlayFX ( SoundData.SNDHudSwitch ); }
+	void setSurvey( bool checked ) { surveyButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setHits( bool checked ) { hitsButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setScan( bool checked ) { scanButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setStatus( bool checked ) { statusButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setAmmo( bool checked ) { ammoButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setGrid( bool checked ) { gridButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setColor( bool checked ) { colorButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setRange( bool checked ) { rangeButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setFog( bool checked ) { fogButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setLock( bool checked ) { lockButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setTNT( bool checked ) { TNTButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setTwoX( bool checked ) { resetMiniMapOffset(); twoXButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
 
 	/**
 	* draws an effect
@@ -439,12 +439,12 @@ public:
 	*@param iX X coordinate
 	*@param iY Y coordinate
 	*/
-	void drawExitPoint ( int x, int y );
+	void drawExitPoint( int x, int y );
 	void callMiniMapDraw();
 	void setEndButtonLock( bool locked );
 
-	void setOffsetPosition ( int x, int y );
-	void checkOffsetPosition ();
+	void setOffsetPosition( int x, int y );
+	void checkOffsetPosition();
 	int getOffsetX() const { return offX; }
 	int getOffsetY() const { return offY; }
 
@@ -452,11 +452,11 @@ public:
 	float getZoom() const;
 	int getTileSize() const;
 
-	void setVideoSurface ( SDL_Surface *videoSurface );
-	void setFLC ( FLI_Animation *FLC_ );
-	FLI_Animation *getFLC() { return FLC; }
+	void setVideoSurface( SDL_Surface* videoSurface );
+	void setFLC( FLI_Animation* FLC_ );
+	FLI_Animation* getFLC() { return FLC; }
 
-	cDrawingCache *getDCache() { return &dCache; }
+	cDrawingCache* getDCache() { return &dCache; }
 
 	unsigned int getFrame() const { return frame; }
 	unsigned int getBlinkColor() const { return blinkColor; }
@@ -465,30 +465,30 @@ public:
 
 	float getWindDir() const { return windDir; }
 
-	void setPlayer ( cPlayer *player_ );
+	void setPlayer( cPlayer* player_ );
 
-	void setUnitDetailsData ( cVehicle *vehicle, cBuilding *building );
+	void setUnitDetailsData( cVehicle* vehicle, cBuilding* building );
 
-	void updateTurn ( int turn );
-	void updateTurnTime ( int time );
+	void updateTurn( int turn );
+	void updateTurnTime( int time );
 
 	void updateMouseCursor();
 
 	void incFrame();
 
-	void setStartup ( bool startup_ );
+	void setStartup( bool startup_ );
 
-	const cVehicle *getSelVehicle() const { return selectedVehicle; }
-	cList<cVehicle*> *getSelVehiclesGroup() { return &selectedVehiclesGroup; }
-	const cBuilding *getSelBuilding() const { return selectedBuilding; }
-	cUnit *getSelectedUnit () { return selectedVehicle ? (cUnit*) selectedVehicle : (cUnit*) selectedBuilding; }
+	const cVehicle* getSelVehicle() const { return selectedVehicle; }
+	cList<cVehicle*>* getSelVehiclesGroup() { return &selectedVehiclesGroup; }
+	const cBuilding* getSelBuilding() const { return selectedBuilding; }
+	cUnit* getSelectedUnit() { return selectedVehicle ? ( cUnit* ) selectedVehicle : ( cUnit* ) selectedBuilding; }
 
-	void selectUnit( cVehicle *vehicle );
-	void selectUnit( cBuilding *building );
+	void selectUnit( cVehicle* vehicle );
+	void selectUnit( cBuilding* building );
 	void deselectUnit();
 
 
-	void setInfoTexts ( const std::string& infoText, const std::string& additionalInfoText );
+	void setInfoTexts( const std::string& infoText, const std::string& additionalInfoText );
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise
@@ -501,7 +501,7 @@ public:
 	*@author eiko
 	*/
 	void checkMouseInputMode();
-	static SDL_Surface *generateSurface();
+	static SDL_Surface* generateSurface();
 
 	bool unitMenuActive;
 	eMouseInputMode mouseInputMode;

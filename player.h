@@ -39,9 +39,10 @@ struct sHudStateContainer;
 struct sTurnstartReport;
 
 // Eintrag in der Lock-Liste /////////////////////////////////////////////////
-struct sLockElem{
-  cVehicle *v;
-  cBuilding *b;
+struct sLockElem
+{
+	cVehicle* v;
+	cBuilding* b;
 };
 
 struct sSavedReportMessage
@@ -64,40 +65,41 @@ typedef std::vector<int> PointsHistory;
 
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
-class cPlayer{
+class cPlayer
+{
 
-friend class cServer;
-friend class cClient;
+	friend class cServer;
+	friend class cClient;
 public:
-	cPlayer(const std::string& Name, SDL_Surface *Color, int nr, int iSocketNum = -1 );
+	cPlayer( const std::string& Name, SDL_Surface* Color, int nr, int iSocketNum = -1 );
 	~cPlayer();
-	cPlayer(const cPlayer &Player);
+	cPlayer( const cPlayer& Player );
 
 	std::string name;
-	SDL_Surface *color;
+	SDL_Surface* color;
 	int Nr;
 
-	sUnitData *VehicleData; // Daten aller Vehicles f¸r diesen Player.
-	cVehicle *VehicleList;     // Liste aller Vehicles des Spielers.
-	sUnitData *BuildingData; // Daten aller Buildings f¸r diesen Player.
-	cBuilding *BuildingList;     // Liste aller Buildings des Spielers.
+	sUnitData* VehicleData; // Daten aller Vehicles f¸r diesen Player.
+	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.
+	sUnitData* BuildingData; // Daten aller Buildings f¸r diesen Player.
+	cBuilding* BuildingList;     // Liste aller Buildings des Spielers.
 	int MapSize;               // Kartengrˆﬂe
-	char *ScanMap;             // Map mit dem Scannerflags.
-	char *ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
+	char* ScanMap;             // Map mit dem Scannerflags.
+	char* ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
 	cBase base;               // Die Basis dieses Spielers.
 	//cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
-	char *SentriesMapAir;				/** the covered air area */
+	char* SentriesMapAir;				/** the covered air area */
 	//cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
-	char *SentriesMapGround;			/** the covered ground area */
-	char *DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
-	char *DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
-	char *DetectMinesMap;				/** the area where the player can detect mines */
+	char* SentriesMapGround;			/** the covered ground area */
+	char* DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
+	char* DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
+	char* DetectMinesMap;				/** the area where the player can detect mines */
 	cResearch researchLevel;	///< stores the current research level of the player
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
 	int ResearchCount;         ///< number of working research centers
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
-	sHudStateContainer *savedHud;
+	sHudStateContainer* savedHud;
 	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
 	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	cList<sSavedReportMessage> savedReportsList;
@@ -112,29 +114,29 @@ public:
 	bool researchFinished;
 	unsigned int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 
-	void InitMaps(int MapSizeX, cMap *map = NULL ); // TODO: remove ' = NULL'
+	void InitMaps( int MapSizeX, cMap* map = NULL ); // TODO: remove ' = NULL'
 	void DoScan();
-	cUnit *getNextUnit ();
-	cUnit *getPrevUnit ();
-	void addSentry ( cUnit *u );
-	void deleteSentry ( cUnit *u );
-	void startAResearch (int researchArea);
-	void stopAResearch (int researchArea);
-	void doResearch (); ///< proceed with the research at turn end
+	cUnit* getNextUnit();
+	cUnit* getPrevUnit();
+	void addSentry( cUnit* u );
+	void deleteSentry( cUnit* u );
+	void startAResearch( int researchArea );
+	void stopAResearch( int researchArea );
+	void doResearch();  ///< proceed with the research at turn end
 	void accumulateScore(); // at turn end
-	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
+	void upgradeUnitTypes( cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas );
 	void refreshResearchCentersWorkingOnArea();
-	void AddLock(cBuilding *b);
-	void AddLock(cVehicle *v);
-	void DeleteLock(cBuilding *b);
-	void DeleteLock(cVehicle *v);
-	bool InLockList(cBuilding *b) const;
-	bool InLockList(cVehicle *v) const;
-	void ToggelLock(cMapField *OverUnitField);
-	void DrawLockList(cGameGUI &gameGUI);
+	void AddLock( cBuilding* b );
+	void AddLock( cVehicle* v );
+	void DeleteLock( cBuilding* b );
+	void DeleteLock( cVehicle* v );
+	bool InLockList( cBuilding* b ) const;
+	bool InLockList( cVehicle* v ) const;
+	void ToggelLock( cMapField* OverUnitField );
+	void DrawLockList( cGameGUI& gameGUI );
 	void CountEcoSpheres();
-	int getScore(int turn) const;
-	void setScore(int score, int turn);
+	int getScore( int turn ) const;
+	void setScore( int score, int turn );
 	void clearDone();
 
 	/**
@@ -145,7 +147,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle( int iX, int iY, int iRadius, char *map, int mapsize );
+	void drawSpecialCircle( int iX, int iY, int iRadius, char* map, int mapsize );
 	/**
 	* draws a big circle on the map for the fog
 	*@author alzi alias DoctorDeath
@@ -154,19 +156,19 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig( int iX, int iY, int iRadius, char *map, int mapsize );
+	void drawSpecialCircleBig( int iX, int iY, int iRadius, char* map, int mapsize );
 
-	void addSavedReport ( const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
+	void addSavedReport( const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
 
-	void setClan (int newClan);
-	int getClan () const { return clan; }
+	void setClan( int newClan );
+	int getClan() const { return clan; }
 
 private:
 	void refreshSentryAir();
 	void refreshSentryGround();
 
-	cVehicle *AddVehicle( int posx, int posy, sVehicle *v );
-	cBuilding *addBuilding( int posx, int posy, sBuilding *b );
+	cVehicle* AddVehicle( int posx, int posy, sVehicle* v );
+	cBuilding* addBuilding( int posx, int posy, sBuilding* b );
 
 	int clan;
 };

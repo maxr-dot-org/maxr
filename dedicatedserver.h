@@ -35,14 +35,14 @@ class cNetMessage;
 class cDedicatedServer
 {
 public:
-	static cDedicatedServer& instance ();
+	static cDedicatedServer& instance();
 
-	void run ();
-	void pushEvent (cNetMessage* message);
+	void run();
+	void pushEvent( cNetMessage* message );
 
-	void doAutoSave ();
+	void doAutoSave();
 
-//------------------------------------------------------------------------
+	//------------------------------------------------------------------------
 protected:
 
 	enum eHelpCommands
@@ -62,25 +62,25 @@ protected:
 		kHelpExit,
 		kHelpPrintConfig
 	};
-	void printHelp (eHelpCommands) const;
-	void printPrompt () const;
-	void printConfiguration () const;
-	void printGames () const;
-	std::string getGamesString () const;
-	void printMaps () const;
-	std::string getAvailableMapsString () const;
-	std::string getServerHelpString () const;
+	void printHelp( eHelpCommands ) const;
+	void printPrompt() const;
+	void printConfiguration() const;
+	void printGames() const;
+	std::string getGamesString() const;
+	void printMaps() const;
+	std::string getAvailableMapsString() const;
+	std::string getServerHelpString() const;
 
-	bool handleInput (const std::string& command);
-	void setProperty (const std::string& property, const std::string& value);
+	bool handleInput( const std::string& command );
+	void setProperty( const std::string& property, const std::string& value );
 
-	bool startServer (int saveGameNumber = -1);
-	void startNewGame ();
-	void loadSaveGame (int saveGameNumber);
-	void saveGame (int saveGameNumber);
+	bool startServer( int saveGameNumber = -1 );
+	void startNewGame();
+	void loadSaveGame( int saveGameNumber );
+	void saveGame( int saveGameNumber );
 
-	bool handleDedicatedServerEvents (cNetMessage* message);
-	void sendChatMessage (const std::string& text, int type, int socket = -1);
+	bool handleDedicatedServerEvents( cNetMessage* message );
+	void sendChatMessage( const std::string& text, int type, int socket = -1 );
 
 	cDedicatedServerConfig* configuration;
 
@@ -88,7 +88,7 @@ protected:
 
 	//------------------------------------------------------------------------
 private:
-	cDedicatedServer ();
+	cDedicatedServer();
 	virtual ~cDedicatedServer();
 };
 

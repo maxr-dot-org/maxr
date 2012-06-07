@@ -44,8 +44,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
-: cUnit (cUnit::kUTVehicle, &(Owner->VehicleData[v->nr]), Owner)
+cVehicle::cVehicle( sVehicle* v, cPlayer* Owner )
+	: cUnit( cUnit::kUTVehicle, &( Owner->VehicleData[v->nr] ), Owner )
 {
 	typ = v;
 	BandX = 0;
@@ -86,13 +86,13 @@ cVehicle::cVehicle ( sVehicle *v, cPlayer *Owner )
 	lastShots = 0;
 	lastSpeed = 0;
 
-	DamageFXPointX = random(7) + 26 - 3;
-	DamageFXPointY = random(7) + 26 - 3;
+	DamageFXPointX = random( 7 ) + 26 - 3;
+	DamageFXPointY = random( 7 ) + 26 - 3;
 	refreshData();
 }
 
 //-----------------------------------------------------------------------------
-cVehicle::~cVehicle ()
+cVehicle::~cVehicle()
 {
 	if ( ClientMoveJob )
 	{
@@ -109,10 +109,10 @@ cVehicle::~cVehicle ()
 
 	if ( IsLocked )
 	{
-		for (size_t i = 0; i < Client->PlayerList->Size(); i++ )
+		for ( size_t i = 0; i < Client->PlayerList->Size(); i++ )
 		{
-			cPlayer *p = (*Client->PlayerList)[i];
-			p->DeleteLock ( this );
+			cPlayer* p = ( *Client->PlayerList )[i];
+			p->DeleteLock( this );
 		}
 	}
 }
@@ -120,19 +120,19 @@ cVehicle::~cVehicle ()
 //-----------------------------------------------------------------------------
 /** Draws the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
+void cVehicle::draw( SDL_Rect screenPosition, cGameGUI& gameGUI )
 {
 	//make damage effect
-	if ( gameGUI.getClient()->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX+PosY*gameGUI.getClient()->getMap()->size] ) )
+	if ( gameGUI.getClient()->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && ( owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size] ) )
 	{
-		int intense = ( int ) ( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
-		gameGUI.getClient()->addFX ( fxDarkSmoke, PosX*64 + DamageFXPointX + OffX, PosY*64 + DamageFXPointY + OffY, intense );
+		int intense = ( int )( 100 - 100 * ( ( float ) data.hitpointsCur / data.hitpointsMax ) );
+		gameGUI.getClient()->addFX( fxDarkSmoke, PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense );
 	}
 
 	//make landing and take off of planes
 	if ( data.factorAir > 0 && gameGUI.getClient()->timer50ms )
 	{
-		if ( canLand (*gameGUI.getClient()->getMap()) )
+		if ( canLand( *gameGUI.getClient()->getMap() ) )
 		{
 			FlightHigh -= 8;
 			if ( FlightHigh < 0 ) FlightHigh = 0;
@@ -157,8 +157,8 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 			}
 			else
 			{
-				ditherX = random(2) - 1;
-				ditherY = random(2) - 1;
+				ditherX = random( 2 ) - 1;
+				ditherY = random( 2 ) - 1;
 			}
 		}
 		else
@@ -174,7 +174,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		if ( data.isBig )
 			dir = 0;
 		else
-			rotateTo ( 0 );
+			rotateTo( 0 );
 	}
 
 	//run start up effect
@@ -187,7 +187,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn&TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater ( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == gameGUI.getClient()->getActivePlayer() )
+		if ( ( data.isStealthOn & TERRAIN_SEA ) && gameGUI.getClient()->getMap()->isWater( PosX, PosY, true ) && detectedByPlayerList.Size() == 0 && owner == gameGUI.getClient()->getActivePlayer() )
 		{
 			if ( StartUp > 100 ) StartUp = 0;
 		}
@@ -203,8 +203,8 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 	}
 
 	//calculate screen position
-	int ox = (int) (OffX * gameGUI.getZoom());
-	int oy = (int) (OffY * gameGUI.getZoom());
+	int ox = ( int )( OffX * gameGUI.getZoom() );
+	int oy = ( int )( OffY * gameGUI.getZoom() );
 
 	if ( !IsBuilding && !IsClearing )
 	{
@@ -220,12 +220,12 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage(this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage( this );
 	if ( drawingSurface == NULL )
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = gameGUI.getDCache()->createNewEntry(this);
+		drawingSurface = gameGUI.getDCache()->createNewEntry( this );
 	}
 
 	if ( drawingSurface == NULL )
@@ -237,7 +237,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 
 	if ( bDraw )
 	{
-		render ( drawingSurface, dest, (float)gameGUI.getTileSize()/(float)64.0, cSettings::getInstance().isShadows() );
+		render( drawingSurface, dest, ( float )gameGUI.getTileSize() / ( float )64.0, cSettings::getInstance().isShadows() );
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -248,7 +248,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 	}
 
 	// draw overlay if necessary:
-	drawOverlayAnimation(buffer, screenPosition, gameGUI.getZoom());
+	drawOverlayAnimation( buffer, screenPosition, gameGUI.getZoom() );
 
 	//remove the dithering for the following operations
 	if ( FlightHigh > 0 )
@@ -265,7 +265,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		nr = 0xFF00 - ( ( ANIMATION_SPEED % 0x8 ) * 0x1000 );
 
 		if ( data.isBig )
-			max = ( gameGUI.getTileSize() * 2) - 3;
+			max = ( gameGUI.getTileSize() * 2 ) - 3;
 		else
 			max = gameGUI.getTileSize() - 3;
 
@@ -274,20 +274,20 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		d.w = max;
 		d.h = 3;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.y += max - 3;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.y = screenPosition.y + 2 + oy;
 		d.w = 3;
 		d.h = max;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.x += max - 3;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 	}
 
 	// Draw the colored frame if necessary
@@ -305,20 +305,20 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		d.w = max;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.y += max - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = max;
 		t = d;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 		d = t;
 		d.x += max - 1;
-		SDL_FillRect ( buffer, &d, nr );
+		SDL_FillRect( buffer, &d, nr );
 	}
 
 	// draw the group selected frame if necessary
@@ -331,25 +331,25 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		d.h = 1;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
-		SDL_FillRect ( buffer, &d, color );
+		SDL_FillRect( buffer, &d, color );
 
 		d.w = gameGUI.getTileSize() - 2;
 		d.h = 1;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + gameGUI.getTileSize() - 1;
-		SDL_FillRect ( buffer, &d, color );
+		SDL_FillRect( buffer, &d, color );
 
 		d.w = 1;
 		d.h = gameGUI.getTileSize() - 2;
 		d.x = screenPosition.x + 1;
 		d.y = screenPosition.y + 1;
-		SDL_FillRect ( buffer, &d, color );
+		SDL_FillRect( buffer, &d, color );
 
 		d.w = 1;
 		d.h = gameGUI.getTileSize() - 2;
 		d.x = screenPosition.x + gameGUI.getTileSize() - 1;
 		d.y = screenPosition.y + 1;
-		SDL_FillRect ( buffer, &d, color );
+		SDL_FillRect( buffer, &d, color );
 	}
 	if ( gameGUI.getSelVehicle() == this )
 	{
@@ -366,36 +366,36 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		d.w = len;
 		d.h = 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y = screenPosition.y + 1;
 		d.w = 1;
 		d.h = len;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x += max - 2;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.y += max - len - 1;
 		t = d;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 		d = t;
 		d.x = screenPosition.x + 1;
-		SDL_FillRect ( buffer, &d, gameGUI.getBlinkColor() );
+		SDL_FillRect( buffer, &d, gameGUI.getBlinkColor() );
 	}
 
 	//draw health bar
@@ -403,7 +403,7 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 		drawHealthBar();
 
 	//draw ammo bar
-	if ( gameGUI.ammoChecked() && data.canAttack)
+	if ( gameGUI.ammoChecked() && data.canAttack )
 		drawMunBar();
 
 	//draw status info
@@ -415,14 +415,14 @@ void cVehicle::draw ( SDL_Rect screenPosition, cGameGUI &gameGUI )
 	{
 		cVehicle* serverVehicle = NULL;
 		if ( Server ) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
-		if ( isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->isBeeingAttacked ) font->showText(screenPosition.x + 1,screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
-		if ( attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
-		if ( serverVehicle && serverVehicle->attacking ) font->showText(screenPosition.x + 1,screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
+		if ( isBeeingAttacked ) font->showText( screenPosition.x + 1, screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->isBeeingAttacked ) font->showText( screenPosition.x + 1, screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW );
+		if ( attacking ) font->showText( screenPosition.x + 1, screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE );
+		if ( serverVehicle && serverVehicle->attacking ) font->showText( screenPosition.x + 1, screenPosition.y + 25, "S: attacking", FONT_LATIN_SMALL_YELLOW );
 	}
 }
 
-void cVehicle::drawOverlayAnimation(SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cVehicle::drawOverlayAnimation( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor )
 {
 	if ( data.hasOverlay && cSettings::getInstance().isAnimations() )
 	{
@@ -431,22 +431,22 @@ void cVehicle::drawOverlayAnimation(SDL_Surface* surface, const SDL_Rect& dest, 
 		int frameNr = 0;
 		if ( Client && turnsDisabled == 0 )
 		{
-			frameNr = ANIMATION_SPEED % (typ->overlay_org->w / typ->overlay_org->h);
+			frameNr = ANIMATION_SPEED % ( typ->overlay_org->w / typ->overlay_org->h );
 		}
 
 		tmp = dest;
-		src.h = src.w = (int)(typ->overlay_org->h*zoomFactor);
-		tmp.x += (int)( Round( 64.0*zoomFactor )) / 2 - src.h / 2;
-		tmp.y += (int)( Round( 64.0*zoomFactor )) / 2 - src.h / 2;
+		src.h = src.w = ( int )( typ->overlay_org->h * zoomFactor );
+		tmp.x += ( int )( Round( 64.0 * zoomFactor ) ) / 2 - src.h / 2;
+		tmp.y += ( int )( Round( 64.0 * zoomFactor ) ) / 2 - src.h / 2;
 		src.y = 0;
-		src.x = (int)(typ->overlay_org->h * frameNr * zoomFactor);
+		src.x = ( int )( typ->overlay_org->h * frameNr * zoomFactor );
 
 		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
-			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, StartUp );
+			SDL_SetAlpha( typ->overlay, SDL_SRCALPHA, StartUp );
 		else
-			SDL_SetAlpha ( typ->overlay, SDL_SRCALPHA, 255 );
+			SDL_SetAlpha( typ->overlay, SDL_SRCALPHA, 255 );
 
-		blitWithPreScale ( typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor );
+		blitWithPreScale( typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor );
 	}
 }
 
@@ -456,34 +456,34 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || ( IsClearing && data.isBig )) && dir == 0 )
+	if ( ( IsBuilding || ( IsClearing && data.isBig ) ) && dir == 0 )
 	{
 		//draw beton if nessesary
 		tmp = dest;
-		if ( IsBuilding && data.isBig && ( !Client->getMap()->isWater(PosX, PosY) || Client->getMap()->fields[PosX+PosY*Client->getMap()->size].getBaseBuilding()) )
+		if ( IsBuilding && data.isBig && ( !Client->getMap()->isWater( PosX, PosY ) || Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding() ) )
 		{
-			SDL_SetAlpha ( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
-			CHECK_SCALING(GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor );
-			SDL_BlitSurface ( GraphicsData.gfx_big_beton, NULL, surface, &tmp );
+			SDL_SetAlpha( GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha );
+			CHECK_SCALING( GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor );
+			SDL_BlitSurface( GraphicsData.gfx_big_beton, NULL, surface, &tmp );
 		}
 
 		// draw shadow
 		tmp = dest;
-		if ( drawShadow ) blitWithPreScale ( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, zoomFactor );
+		if ( drawShadow ) blitWithPreScale( typ->build_shw_org, typ->build_shw, NULL, surface, &tmp, zoomFactor );
 
 		// draw player color
 		src.y = 0;
-		src.h = src.w = (int)(typ->build_org->h*zoomFactor);
+		src.h = src.w = ( int )( typ->build_org->h * zoomFactor );
 		src.x = ( ANIMATION_SPEED % 4 ) * src.w;
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
-		blitWithPreScale ( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4 );
+		SDL_BlitSurface( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+		blitWithPreScale( typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4 );
 
 		// draw vehicle
 		src.x = 0;
 		src.y = 0;
 		tmp = dest;
-		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+		SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		SDL_BlitSurface( GraphicsData.gfx_tmp, &src, surface, &tmp );
 
 		return;
 	}
@@ -493,22 +493,22 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		// draw shadow
 		tmp = dest;
 		if ( drawShadow )
-			blitWithPreScale ( typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, zoomFactor );
+			blitWithPreScale( typ->clear_small_shw_org, typ->clear_small_shw, NULL, surface, &tmp, zoomFactor );
 
 		// draw player color
 		src.y = 0;
-		src.h = src.w = (int)(typ->clear_small_org->h*zoomFactor);
+		src.h = src.w = ( int )( typ->clear_small_org->h * zoomFactor );
 		src.x = ( ANIMATION_SPEED % 4 ) * src.w;
-		SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+		SDL_BlitSurface( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
-		blitWithPreScale ( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4 );
+		blitWithPreScale( typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4 );
 
 		// draw vehicle
 		src.x = 0;
 		src.y = 0;
 		tmp = dest;
-		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
-		SDL_BlitSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+		SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		SDL_BlitSurface( GraphicsData.gfx_tmp, &src, surface, &tmp );
 
 		return;
 	}
@@ -516,50 +516,50 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	//draw all other vehicles:
 
 	// read the size:
-	src.w = (int)(typ->img_org[dir]->w*zoomFactor);
-	src.h = (int)(typ->img_org[dir]->h*zoomFactor);
+	src.w = ( int )( typ->img_org[dir]->w * zoomFactor );
+	src.h = ( int )( typ->img_org[dir]->h * zoomFactor );
 
 	// draw shadow
 	tmp = dest;
-	if ( drawShadow && ! ( (data.isStealthOn&TERRAIN_SEA) && Client && Client->getMap()->isWater ( PosX, PosY, true ) ) )
+	if ( drawShadow && !( ( data.isStealthOn & TERRAIN_SEA ) && Client && Client->getMap()->isWater( PosX, PosY, true ) ) )
 	{
-		if ( StartUp && cSettings::getInstance().isAlphaEffects() ) SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
-		else SDL_SetAlpha ( typ->shw[dir], SDL_SRCALPHA, 50 );
+		if ( StartUp && cSettings::getInstance().isAlphaEffects() ) SDL_SetAlpha( typ->shw[dir], SDL_SRCALPHA, StartUp / 5 );
+		else SDL_SetAlpha( typ->shw[dir], SDL_SRCALPHA, 50 );
 
 
 		// draw shadow
 		if ( FlightHigh > 0 )
 		{
-			int high = ( ( int ) ( (int)(Client->gameGUI.getTileSize()) * ( FlightHigh / 64.0 ) ) );
+			int high = ( ( int )( ( int )( Client->gameGUI.getTileSize() ) * ( FlightHigh / 64.0 ) ) );
 			tmp.x += high;
 			tmp.y += high;
 
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor );
+			blitWithPreScale( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor );
 		}
 		else if ( data.animationMovement )
 		{
 			SDL_Rect r;
-			r.h = r.w = (int) (typ->img_org[dir]->h*zoomFactor);
+			r.h = r.w = ( int )( typ->img_org[dir]->h * zoomFactor );
 			r.x = r.w * WalkFrame;
 			r.y = 0;
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, zoomFactor );
+			blitWithPreScale( typ->shw_org[dir], typ->shw[dir], &r, surface, &tmp, zoomFactor );
 		}
 		else
-			blitWithPreScale ( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor );
+			blitWithPreScale( typ->shw_org[dir], typ->shw[dir], NULL, surface, &tmp, zoomFactor );
 	}
 
 	// draw player color
-	SDL_BlitSurface ( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
+	SDL_BlitSurface( owner->color, NULL, GraphicsData.gfx_tmp, NULL );
 
 	if ( data.animationMovement )
 	{
-		src.w = src.h = tmp.h = tmp.w = (int) (typ->img_org[dir]->h*zoomFactor);
+		src.w = src.h = tmp.h = tmp.w = ( int )( typ->img_org[dir]->h * zoomFactor );
 		tmp.x = WalkFrame * tmp.w;
 		tmp.y = 0;
-		blitWithPreScale ( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, zoomFactor );
+		blitWithPreScale( typ->img_org[dir], typ->img[dir], &tmp, GraphicsData.gfx_tmp, NULL, zoomFactor );
 	}
 	else
-		blitWithPreScale ( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor );
+		blitWithPreScale( typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor );
 
 
 	// draw the vehicle
@@ -571,68 +571,69 @@ void cVehicle::render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	{
 		if ( StartUp && cSettings::getInstance().isAlphaEffects() )
 		{
-			SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
+			SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, StartUp );
 		}
 		else
 		{
-			bool water = Client->getMap()->isWater(PosX, PosY, true);
+			bool water = Client->getMap()->isWater( PosX, PosY, true );
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
-			cBuilding* building = Client->getMap()->fields[PosX + PosY*Client->getMap()->size].getBaseBuilding();
+			cBuilding* building = Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding();
 			if ( building && data.factorGround > 0 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) ) water = false;
 
-			if ( (data.isStealthOn&TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == Client->getActivePlayer() ) SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
-			else SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+			if ( ( data.isStealthOn & TERRAIN_SEA ) && water && detectedByPlayerList.Size() == 0 && owner == Client->getActivePlayer() ) SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, 100 );
+			else SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 		}
 	}
 	else
 	{
-		SDL_SetAlpha ( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
+		SDL_SetAlpha( GraphicsData.gfx_tmp, SDL_SRCALPHA, 255 );
 	}
 
-	blittAlphaSurface ( GraphicsData.gfx_tmp, &src, surface, &tmp );
+	blittAlphaSurface( GraphicsData.gfx_tmp, &src, surface, &tmp );
 
 }
 
 //-----------------------------------------------------------------------------
 /** Selects the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Select ()
+void cVehicle::Select()
 {
 	// load the video
-	if ( Client->gameGUI.getFLC() != NULL ) FLI_Close ( Client->gameGUI.getFLC() );
-	if( FileExists(typ->FLCFile) )
+	if ( Client->gameGUI.getFLC() != NULL ) FLI_Close( Client->gameGUI.getFLC() );
+	if ( FileExists( typ->FLCFile ) )
 	{
-		Client->gameGUI.setFLC ( FLI_Open ( SDL_RWFromFile ( typ->FLCFile, "rb" ), NULL ) );
+		Client->gameGUI.setFLC( FLI_Open( SDL_RWFromFile( typ->FLCFile, "rb" ), NULL ) );
 	}
 	else
-	{	//in case the flc video doesn't exist we use the storage image instead
-		Client->gameGUI.setFLC ( NULL );
-		Client->gameGUI.setVideoSurface ( typ->storage );
+	{
+		//in case the flc video doesn't exist we use the storage image instead
+		Client->gameGUI.setFLC( NULL );
+		Client->gameGUI.setVideoSurface( typ->storage );
 	}
 
 	MakeReport();
-	Client->gameGUI.setUnitDetailsData ( this, NULL );
+	Client->gameGUI.setUnitDetailsData( this, NULL );
 }
 
 //-----------------------------------------------------------------------------
 /** Deselects the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Deselct ()
+void cVehicle::Deselct()
 {
 	groupSelected = false;
 	if ( Client->gameGUI.mouseInputMode == placeBand ) BuildPath = false;
 	// redraw the background
-	StopFXLoop ( Client->iObjectStream );
+	StopFXLoop( Client->iObjectStream );
 	Client->iObjectStream = -1;
-	Client->gameGUI.setFLC ( NULL );
-	Client->gameGUI.setUnitDetailsData ( NULL, NULL );
+	Client->gameGUI.setFLC( NULL );
+	Client->gameGUI.setUnitDetailsData( NULL, NULL );
 }
 
 //-----------------------------------------------------------------------------
 /** Initializes all unit data to its maxiumum values */
 //-----------------------------------------------------------------------------
-int cVehicle::refreshData ()
+int cVehicle::refreshData()
 {
 	int iReturn = 0;
 
@@ -677,7 +678,7 @@ int cVehicle::refreshData ()
 
 		if ( BuildRounds == 0 )
 		{
-			Server->addReport ( BuildingTyp, false, owner->Nr );
+			Server->addReport( BuildingTyp, false, owner->Nr );
 
 			//handle pathbuilding
 			//here the new building is added (if possible) and the move job to the next field is generated
@@ -692,7 +693,7 @@ int cVehicle::refreshData ()
 
 				while ( !found_next && ( ( nextX != BandX ) || ( nextY != BandY ) ) )
 				{
-				// Calculate the next position in the path.
+					// Calculate the next position in the path.
 					if ( PosX > BandX ) nextX--;
 					if ( PosX < BandX ) nextX++;
 					if ( PosY > BandY ) nextY--;
@@ -734,7 +735,7 @@ int cVehicle::refreshData ()
 						IsBuilding = false;
 					}
 					BuildPath = false;
-					sendBuildAnswer(false, this );
+					sendBuildAnswer( false, this );
 				}
 			}
 			else
@@ -759,28 +760,28 @@ int cVehicle::refreshData ()
 		if ( ClearingRounds == 0 )
 		{
 			IsClearing = false;
-			cBuilding *Rubble = Server->Map->fields[PosX+PosY*Server->Map->size].getRubble();
+			cBuilding* Rubble = Server->Map->fields[PosX + PosY * Server->Map->size].getRubble();
 			if ( data.isBig )
 			{
 				int size = Server->Map->size;
-				Server->Map->moveVehicle ( this, BuildBigSavedPos % size, BuildBigSavedPos / size );
-				sendStopClear ( this, BuildBigSavedPos, owner->Nr );
+				Server->Map->moveVehicle( this, BuildBigSavedPos % size, BuildBigSavedPos / size );
+				sendStopClear( this, BuildBigSavedPos, owner->Nr );
 				for ( unsigned int i = 0; i < seenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, BuildBigSavedPos, seenByPlayerList[i]->Nr );
+					sendStopClear( this, BuildBigSavedPos, seenByPlayerList[i]->Nr );
 				}
 			}
 			else
 			{
-				sendStopClear ( this, -1, owner->Nr );
+				sendStopClear( this, -1, owner->Nr );
 				for ( unsigned int i = 0; i < seenByPlayerList.Size(); i++ )
 				{
-					sendStopClear ( this, -1, seenByPlayerList[i]->Nr );
+					sendStopClear( this, -1, seenByPlayerList[i]->Nr );
 				}
 			}
 			data.storageResCur += Rubble->RubbleValue;
-			if ( data.storageResCur > data.storageResMax) data.storageResCur = data.storageResMax;
-			Server->deleteRubble ( Rubble );
+			if ( data.storageResCur > data.storageResMax ) data.storageResCur = data.storageResMax;
+			Server->deleteRubble( Rubble );
 		}
 
 		iReturn = 1;
@@ -791,11 +792,11 @@ int cVehicle::refreshData ()
 //-----------------------------------------------------------------------------
 /** Draws the path of the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawPath (cGameGUI &gameGUI)
+void cVehicle::DrawPath( cGameGUI& gameGUI )
 {
 	int mx = 0, my = 0, sp, save;
 	SDL_Rect dest, ndest;
-	sWaypoint *wp;
+	sWaypoint* wp;
 
 	if ( !ClientMoveJob || !ClientMoveJob->Waypoints || owner != gameGUI.getClient()->getActivePlayer() )
 	{
@@ -806,39 +807,35 @@ void cVehicle::DrawPath (cGameGUI &gameGUI)
 
 		if ( mx < BandX )
 			sp = 4;
+		else if ( mx > BandX )
+			sp = 3;
+		else if ( my < BandY )
+			sp = 1;
 		else
-			if ( mx > BandX )
-				sp = 3;
-			else
-				if ( my < BandY )
-					sp = 1;
-				else
-					sp = 6;
+			sp = 6;
 
 		while ( mx != BandX || my != BandY )
 		{
-			dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
-			dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
+			dest.x = 180 - ( int )( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
+			dest.y = 18 - ( int )( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
 
-			SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-gameGUI.getTileSize()], NULL, buffer, &dest );
+			SDL_BlitSurface( OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest );
 
 			if ( mx < BandX )
 				mx++;
-			else
-				if ( mx > BandX )
-					mx--;
+			else if ( mx > BandX )
+				mx--;
 
 			if ( my < BandY )
 				my++;
-			else
-				if ( my > BandY )
-					my--;
+			else if ( my > BandY )
+				my--;
 		}
 
-		dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
-		dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
+		dest.x = 180 - ( int )( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * mx;
+		dest.y = 18 - ( int )( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * my;
 
-		SDL_BlitSurface ( OtherData.WayPointPfeileSpecial[sp][64-gameGUI.getTileSize()], NULL, buffer, &dest );
+		SDL_BlitSurface( OtherData.WayPointPfeileSpecial[sp][64 - gameGUI.getTileSize()], NULL, buffer, &dest );
 		return;
 	}
 
@@ -851,8 +848,8 @@ void cVehicle::DrawPath (cGameGUI &gameGUI)
 	}
 	else save = ClientMoveJob->iSavedSpeed;
 
-	dest.x = 180 - ( int ) ( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosX;
-	dest.y = 18 - ( int ) ( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosY;
+	dest.x = 180 - ( int )( gameGUI.getOffsetX() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosX;
+	dest.y = 18 - ( int )( gameGUI.getOffsetY() * gameGUI.getZoom() ) + gameGUI.getTileSize() * PosY;
 	wp = ClientMoveJob->Waypoints;
 	ndest = dest;
 
@@ -871,13 +868,13 @@ void cVehicle::DrawPath (cGameGUI &gameGUI)
 
 		if ( sp == 0 )
 		{
-			ClientMoveJob->drawArrow ( dest, &ndest, true );
+			ClientMoveJob->drawArrow( dest, &ndest, true );
 			sp += data.speedMax + save;
 			save = 0;
 		}
 		else
 		{
-			ClientMoveJob->drawArrow ( dest, &ndest, false );
+			ClientMoveJob->drawArrow( dest, &ndest, false );
 		}
 
 		dest = ndest;
@@ -904,129 +901,129 @@ string cVehicle::getStatusStr() const
 	if ( turnsDisabled > 0 )
 	{
 		string sText;
-		sText = lngPack.i18n ( "Text~Comp~Disabled" ) + " (";
-		sText += iToStr ( turnsDisabled ) + ")";
+		sText = lngPack.i18n( "Text~Comp~Disabled" ) + " (";
+		sText += iToStr( turnsDisabled ) + ")";
 		return sText;
 	}
 	else if ( autoMJob )
-		return lngPack.i18n ( "Text~Comp~Surveying" );
+		return lngPack.i18n( "Text~Comp~Surveying" );
 	else if ( ClientMoveJob )
-		return lngPack.i18n ( "Text~Comp~Moving" );
+		return lngPack.i18n( "Text~Comp~Moving" );
 	else if ( manualFireActive )
-		return lngPack.i18n ( "Text~Comp~ReactionFireOff" );
+		return lngPack.i18n( "Text~Comp~ReactionFireOff" );
 	else if ( sentryActive )
-		return lngPack.i18n ( "Text~Comp~Sentry" );
+		return lngPack.i18n( "Text~Comp~Sentry" );
 	else if ( IsBuilding )
 	{
 		if ( owner != Client->getActivePlayer() )
-			return lngPack.i18n ( "Text~Comp~Producing" );
+			return lngPack.i18n( "Text~Comp~Producing" );
 		else
 		{
 			if ( BuildRounds )
 			{
 				string sText;
-				sText = lngPack.i18n ( "Text~Comp~Producing" );
+				sText = lngPack.i18n( "Text~Comp~Producing" );
 				sText += ": ";
-				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
-				sText += iToStr ( BuildRounds );
+				sText += ( string ) BuildingTyp.getUnitDataCurrentVersion( owner )->name + " (";
+				sText += iToStr( BuildRounds );
 				sText += ")";
 
-				if ( font->getTextWide ( sText ) > 126 )
+				if ( font->getTextWide( sText ) > 126 )
 				{
-					sText = lngPack.i18n ( "Text~Comp~Producing" );
+					sText = lngPack.i18n( "Text~Comp~Producing" );
 					sText += ":\n";
-					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion ( owner )->name + " (";
-					sText += iToStr ( BuildRounds );
+					sText += ( string ) BuildingTyp.getUnitDataCurrentVersion( owner )->name + " (";
+					sText += iToStr( BuildRounds );
 					sText += ")";
 				}
 				return sText;
 			}
 			else
-				return lngPack.i18n ( "Text~Comp~Producing_Fin" );
+				return lngPack.i18n( "Text~Comp~Producing_Fin" );
 		}
 	}
 	else if ( ClearMines )
-		return lngPack.i18n ( "Text~Comp~Clearing_Mine" );
+		return lngPack.i18n( "Text~Comp~Clearing_Mine" );
 	else if ( LayMines )
-		return lngPack.i18n ( "Text~Comp~Laying" );
+		return lngPack.i18n( "Text~Comp~Laying" );
 	else if ( IsClearing )
 	{
 		if ( ClearingRounds )
 		{
 			string sText;
-			sText = lngPack.i18n ( "Text~Comp~Clearing" ) + " (";
-			sText += iToStr ( ClearingRounds ) + ")";
+			sText = lngPack.i18n( "Text~Comp~Clearing" ) + " (";
+			sText += iToStr( ClearingRounds ) + ")";
 			return sText;
 		}
 		else
-			return lngPack.i18n ( "Text~Comp~Clearing_Fin" );
+			return lngPack.i18n( "Text~Comp~Clearing_Fin" );
 	}
 	else if ( ( data.canCapture || data.canDisable ) && owner == Client->getActivePlayer() )
 	{
-		string sTmp = lngPack.i18n ( "Text~Comp~Waits" ) + "\n";
+		string sTmp = lngPack.i18n( "Text~Comp~Waits" ) + "\n";
 
-		if ( CommandoRank < 1 ) sTmp += lngPack.i18n ( "Text~Comp~Greenhorn" );
-		else if ( CommandoRank < 3 ) sTmp += lngPack.i18n ( "Text~Comp~Average" );
-		else if ( CommandoRank < 6 ) sTmp += lngPack.i18n ( "Text~Comp~Veteran" );
-		else if ( CommandoRank < 11 ) sTmp += lngPack.i18n ( "Text~Comp~Expert" );
-		else sTmp += lngPack.i18n ( "Text~Comp~Elite" );
+		if ( CommandoRank < 1 ) sTmp += lngPack.i18n( "Text~Comp~Greenhorn" );
+		else if ( CommandoRank < 3 ) sTmp += lngPack.i18n( "Text~Comp~Average" );
+		else if ( CommandoRank < 6 ) sTmp += lngPack.i18n( "Text~Comp~Veteran" );
+		else if ( CommandoRank < 11 ) sTmp += lngPack.i18n( "Text~Comp~Expert" );
+		else sTmp += lngPack.i18n( "Text~Comp~Elite" );
 		if ( CommandoRank > 0 )
-			sTmp += " +" + iToStr ( (int)CommandoRank );
+			sTmp += " +" + iToStr( ( int )CommandoRank );
 		return sTmp;
 	}
 
-	return lngPack.i18n ( "Text~Comp~Waits" );
+	return lngPack.i18n( "Text~Comp~Waits" );
 }
 
 //-----------------------------------------------------------------------------
 /** Plays the soundstream, that belongs to this vehicle */
 //-----------------------------------------------------------------------------
-int cVehicle::playStream ()
+int cVehicle::playStream()
 {
-	cBuilding *building = (*Client->getMap())[PosX + PosY*Client->getMap()->size].getBaseBuilding();
-	bool water = Client->getMap()->isWater ( PosX, PosY, true );
+	cBuilding* building = ( *Client->getMap() )[PosX + PosY * Client->getMap()->size].getBaseBuilding();
+	bool water = Client->getMap()->isWater( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
 
-	if ( IsBuilding && ( BuildRounds || Client->getActivePlayer() != owner ))
-		return PlayFXLoop ( SoundData.SNDBuilding );
+	if ( IsBuilding && ( BuildRounds || Client->getActivePlayer() != owner ) )
+		return PlayFXLoop( SoundData.SNDBuilding );
 	else if ( IsClearing )
-		return PlayFXLoop ( SoundData.SNDClearing );
+		return PlayFXLoop( SoundData.SNDClearing );
 	else if ( water && data.factorSea > 0 )
-		return PlayFXLoop ( typ->WaitWater );
+		return PlayFXLoop( typ->WaitWater );
 	else
-		return PlayFXLoop ( typ->Wait );
+		return PlayFXLoop( typ->Wait );
 }
 
 //-----------------------------------------------------------------------------
 /** Starts the MoveSound */
 //-----------------------------------------------------------------------------
-void cVehicle::StartMoveSound ()
+void cVehicle::StartMoveSound()
 {
 	bool water;
 
 	cBuilding* building = Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding();
-	water = Client->getMap()->isWater ( PosX, PosY, true );
+	water = Client->getMap()->isWater( PosX, PosY, true );
 	if ( data.factorGround > 0 && building && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA ) ) water = false;
-	StopFXLoop ( Client->iObjectStream );
+	StopFXLoop( Client->iObjectStream );
 
 	if ( !MoveJobActive )
 	{
 		if ( water && data.factorSea != 0 )
-			PlayFX ( typ->StartWater );
+			PlayFX( typ->StartWater );
 		else
-			PlayFX ( typ->Start );
+			PlayFX( typ->Start );
 	}
 
 	if ( water && data.factorSea != 0 )
-		Client->iObjectStream = PlayFXLoop ( typ->DriveWater );
+		Client->iObjectStream = PlayFXLoop( typ->DriveWater );
 	else
-		Client->iObjectStream = PlayFXLoop ( typ->Drive );
+		Client->iObjectStream = PlayFXLoop( typ->Drive );
 }
 
 //-----------------------------------------------------------------------------
 /** Reduces the remaining speedCur and shotsCur during movement */
 //-----------------------------------------------------------------------------
-void cVehicle::DecSpeed ( int value )
+void cVehicle::DecSpeed( int value )
 {
 	data.speedCur -= value;
 
@@ -1035,7 +1032,7 @@ void cVehicle::DecSpeed ( int value )
 		float f;
 		int s;
 		f = ( ( float ) data.shotsMax / data.speedMax );
-		s = ( int ) ( data.speedCur * f );
+		s = ( int )( data.speedCur * f );
 
 		if ( !data.canDriveAndFire && s < data.shotsCur && s >= 0 )
 			data.shotsCur = s;
@@ -1045,22 +1042,22 @@ void cVehicle::DecSpeed ( int value )
 //-----------------------------------------------------------------------------
 /** Draws the attack cursor */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawAttackCursor ( int x, int y )
+void cVehicle::DrawAttackCursor( int x, int y )
 {
 	SDL_Rect r;
 	int wp, wc, t;
-	cVehicle *v;
-	cBuilding *b;
+	cVehicle* v;
+	cBuilding* b;
 
-	selectTarget(v, b, x, y, data.canAttack, Client->getMap() );
+	selectTarget( v, b, x, y, data.canAttack, Client->getMap() );
 
-	if ( !(v || b) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
+	if ( !( v || b ) || ( v && v == Client->gameGUI.getSelVehicle() ) || ( b && b == Client->gameGUI.getSelBuilding() ) )
 	{
 		r.x = 1;
 		r.y = 29;
 		r.h = 3;
 		r.w = 35;
-		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
+		SDL_FillRect( GraphicsData.gfx_Cattack, &r, 0 );
 		return;
 	}
 
@@ -1072,9 +1069,9 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	if ( t )
 	{
 		if ( v )
-			wc = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
+			wc = ( int )( ( float ) t / v->data.hitpointsMax * 35 );
 		else
-			wc = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
+			wc = ( int )( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -1082,16 +1079,16 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	}
 
 	if ( v )
-		t = v->calcHealth ( data.damage );
+		t = v->calcHealth( data.damage );
 	else
-		t = b->calcHealth ( data.damage );
+		t = b->calcHealth( data.damage );
 
 	if ( t )
 	{
 		if ( v )
-			wp = ( int ) ( ( float ) t / v->data.hitpointsMax * 35 );
+			wp = ( int )( ( float ) t / v->data.hitpointsMax * 35 );
 		else
-			wp = ( int ) ( ( float ) t / b->data.hitpointsMax * 35 );
+			wp = ( int )( ( float ) t / b->data.hitpointsMax * 35 );
 	}
 	else
 	{
@@ -1105,25 +1102,25 @@ void cVehicle::DrawAttackCursor ( int x, int y )
 	r.w = wp;
 
 	if ( r.w )
-		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0x00FF00 );
+		SDL_FillRect( GraphicsData.gfx_Cattack, &r, 0x00FF00 );
 
 	r.x += r.w;
 
 	r.w = wc - wp;
 
 	if ( r.w )
-		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0xFF0000 );
+		SDL_FillRect( GraphicsData.gfx_Cattack, &r, 0xFF0000 );
 
 	r.x += r.w;
 
 	r.w = 35 - wc;
 
 	if ( r.w )
-		SDL_FillRect ( GraphicsData.gfx_Cattack, &r, 0 );
+		SDL_FillRect( GraphicsData.gfx_Cattack, &r, 0 );
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs )
+void cVehicle::calcTurboBuild( int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs )
 {
 	// calculate building time and costs
 	int a, rounds, costs;
@@ -1139,7 +1136,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	if ( data.storageResCur >= iBuild_Costs )
 	{
 		iTurboBuildCosts[0] = iBuild_Costs;
-		iTurboBuildRounds[0] = ( int ) ceil ( iTurboBuildCosts[0] / ( double ) ( data.needsMetal ) );
+		iTurboBuildRounds[0] = ( int ) ceil( iTurboBuildCosts[0] / ( double )( data.needsMetal ) );
 	}
 
 	//step 2x
@@ -1154,7 +1151,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 		a -= 4;
 	}
 
-	if ( rounds < iTurboBuildRounds[0] && rounds > 0 && iTurboBuildRounds[0])
+	if ( rounds < iTurboBuildRounds[0] && rounds > 0 && iTurboBuildRounds[0] )
 	{
 		iTurboBuildCosts[1] = costs;
 		iTurboBuildRounds[1] = rounds;
@@ -1165,9 +1162,9 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 	rounds = iTurboBuildRounds[1];
 	costs = iTurboBuildCosts[1];
 
-	while ( a >= 10 && costs < data.storageResMax - 2)
+	while ( a >= 10 && costs < data.storageResMax - 2 )
 	{
-		int inc = 24 - min(16,a);
+		int inc = 24 - min( 16, a );
 		if ( costs + inc > data.storageResCur ) break;
 
 		rounds--;
@@ -1185,7 +1182,7 @@ void cVehicle::calcTurboBuild(int* const iTurboBuildRounds, int* const iTurboBui
 //-----------------------------------------------------------------------------
 /** Finds the next fitting position for the band */
 //-----------------------------------------------------------------------------
-void cVehicle::FindNextband ()
+void cVehicle::FindNextband()
 {
 	bool pos[4] = {false, false, false, false};
 	int x = mouse->getKachelX();
@@ -1193,30 +1190,30 @@ void cVehicle::FindNextband ()
 
 	//check, which positions are available
 	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
-	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY - 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    ) )
+	if ( Client->getMap()->possiblePlaceBuilding( BuildingType, PosX - 1, PosY - 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX    , PosY - 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX - 1, PosY ) )
 	{
 		pos[0] = true;
 	}
 
-	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY - 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY - 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    ) )
+	if ( Client->getMap()->possiblePlaceBuilding( BuildingType, PosX    , PosY - 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX + 1, PosY - 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX + 1, PosY ) )
 	{
 		pos[1] = true;
 	}
 
-	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY    )
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX + 1, PosY + 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
+	if ( Client->getMap()->possiblePlaceBuilding( BuildingType, PosX + 1, PosY )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX + 1, PosY + 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX    , PosY + 1 ) )
 	{
 		pos[2] = true;
 	}
 
-	if ( Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY    )
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX - 1, PosY + 1)
-	  && Client->getMap()->possiblePlaceBuilding(BuildingType, PosX    , PosY + 1) )
+	if ( Client->getMap()->possiblePlaceBuilding( BuildingType, PosX - 1, PosY )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX - 1, PosY + 1 )
+		 && Client->getMap()->possiblePlaceBuilding( BuildingType, PosX    , PosY + 1 ) )
 	{
 		pos[3] = true;
 	}
@@ -1292,28 +1289,28 @@ void cVehicle::FindNextband ()
 //-----------------------------------------------------------------------------
 /** Scans for resources ( This function is only called by the server) */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey ()
+void cVehicle::doSurvey()
 {
-	char *ptr;
+	char* ptr;
 	ptr = owner->ResourceMap;
 
 	if ( !ptr ) return;
 
-	ptr[PosX+PosY*Server->Map->size] = 1;
-	if ( PosX > 0 ) ptr[PosX-1+PosY*Server->Map->size] = 1;
-	if ( PosX < Server->Map->size - 1 ) ptr[PosX+1+PosY*Server->Map->size] = 1;
-	if ( PosY > 0 ) ptr[PosX+ ( PosY-1 ) *Server->Map->size] = 1;
-	if ( PosX > 0 && PosY > 0 ) ptr[PosX-1+ ( PosY-1 ) *Server->Map->size] = 1;
-	if ( PosX < Server->Map->size - 1 && PosY > 0 ) ptr[PosX+1+ ( PosY-1 ) *Server->Map->size] = 1;
-	if ( PosY < Server->Map->size - 1 ) ptr[PosX+ ( PosY+1 ) *Server->Map->size] = 1;
-	if ( PosX > 0 && PosY < Server->Map->size - 1 ) ptr[PosX-1+ ( PosY+1 ) *Server->Map->size] = 1;
-	if ( PosX < Server->Map->size - 1 && PosY < Server->Map->size - 1 ) ptr[PosX+1+ ( PosY+1 ) *Server->Map->size] = 1;
+	ptr[PosX + PosY * Server->Map->size] = 1;
+	if ( PosX > 0 ) ptr[PosX - 1 + PosY * Server->Map->size] = 1;
+	if ( PosX < Server->Map->size - 1 ) ptr[PosX + 1 + PosY * Server->Map->size] = 1;
+	if ( PosY > 0 ) ptr[PosX + ( PosY - 1 ) *Server->Map->size] = 1;
+	if ( PosX > 0 && PosY > 0 ) ptr[PosX - 1 + ( PosY - 1 ) *Server->Map->size] = 1;
+	if ( PosX < Server->Map->size - 1 && PosY > 0 ) ptr[PosX + 1 + ( PosY - 1 ) *Server->Map->size] = 1;
+	if ( PosY < Server->Map->size - 1 ) ptr[PosX + ( PosY + 1 ) *Server->Map->size] = 1;
+	if ( PosX > 0 && PosY < Server->Map->size - 1 ) ptr[PosX - 1 + ( PosY + 1 ) *Server->Map->size] = 1;
+	if ( PosX < Server->Map->size - 1 && PosY < Server->Map->size - 1 ) ptr[PosX + 1 + ( PosY + 1 ) *Server->Map->size] = 1;
 }
 
 //-----------------------------------------------------------------------------
 /** Makes the report */
 //-----------------------------------------------------------------------------
-void cVehicle::MakeReport ()
+void cVehicle::MakeReport()
 {
 	if ( owner != Client->getActivePlayer() )
 		return;
@@ -1321,21 +1318,21 @@ void cVehicle::MakeReport ()
 	if ( turnsDisabled > 0 )
 	{
 		// Disabled:
-		PlayVoice ( VoiceData.VOIDisabled );
+		PlayVoice( VoiceData.VOIDisabled );
 	}
 	else if ( data.hitpointsCur > data.hitpointsMax / 2 )
 	{
 		// Status green
 		if ( ClientMoveJob && ClientMoveJob->endMoveAction && ClientMoveJob->endMoveAction->type_ == EMAT_ATTACK )
 		{
-			if ( random(2) )
+			if ( random( 2 ) )
 				PlayVoice( VoiceData.VOIAttacking1 );
 			else
 				PlayVoice( VoiceData.VOIAttacking2 );
 		}
 		else if ( autoMJob )
 		{
-			if ( random(2) )
+			if ( random( 2 ) )
 				PlayVoice( VoiceData.VOISurveying );
 			else
 				PlayVoice( VoiceData.VOISurveying2 );
@@ -1343,7 +1340,7 @@ void cVehicle::MakeReport ()
 		else if ( data.speedCur == 0 )
 		{
 			// no more movement
-			PlayVoice ( VoiceData.VOINoSpeed );
+			PlayVoice( VoiceData.VOINoSpeed );
 		}
 		else if ( IsBuilding )
 		{
@@ -1351,80 +1348,80 @@ void cVehicle::MakeReport ()
 			if ( !BuildRounds )
 			{
 				// Bau beendet:
-				int i = random(4);
-				if (i == 0)
-					PlayVoice ( VoiceData.VOIBuildDone1 );
-				else if (i == 1)
-					PlayVoice ( VoiceData.VOIBuildDone2 );
-				else if (i == 2)
-					PlayVoice ( VoiceData.VOIBuildDone3 );
+				int i = random( 4 );
+				if ( i == 0 )
+					PlayVoice( VoiceData.VOIBuildDone1 );
+				else if ( i == 1 )
+					PlayVoice( VoiceData.VOIBuildDone2 );
+				else if ( i == 2 )
+					PlayVoice( VoiceData.VOIBuildDone3 );
 				else
-					PlayVoice ( VoiceData.VOIBuildDone4 );
+					PlayVoice( VoiceData.VOIBuildDone4 );
 			}
 		}
 		else if ( IsClearing )
 		{
 			// removing dirt
-			PlayVoice ( VoiceData.VOIClearing );
+			PlayVoice( VoiceData.VOIClearing );
 		}
 		else if ( data.canAttack && !data.ammoCur )
 		{
 			// no ammo
-			if (random(2))
-				PlayVoice ( VoiceData.VOILowAmmo1 );
+			if ( random( 2 ) )
+				PlayVoice( VoiceData.VOILowAmmo1 );
 			else
-				PlayVoice ( VoiceData.VOILowAmmo2 );
+				PlayVoice( VoiceData.VOILowAmmo2 );
 		}
 		else if ( sentryActive )
 		{
 			// on sentry:
-			PlayVoice ( VoiceData.VOISentry );
+			PlayVoice( VoiceData.VOISentry );
 		}
 		else if ( ClearMines )
 		{
-			if (random(2))
-				PlayVoice ( VoiceData.VOIClearingMines );
+			if ( random( 2 ) )
+				PlayVoice( VoiceData.VOIClearingMines );
 			else
-				PlayVoice ( VoiceData.VOIClearingMines2 );
+				PlayVoice( VoiceData.VOIClearingMines2 );
 		}
 		else if ( LayMines )
 		{
-			PlayVoice ( VoiceData.VOILayingMines );
+			PlayVoice( VoiceData.VOILayingMines );
 		}
 		else
 		{
 			int nr;
 			// Alles OK:
-			nr = random(4);
+			nr = random( 4 );
 
 			if ( nr == 0 )
-				PlayVoice ( VoiceData.VOIOK1 );
+				PlayVoice( VoiceData.VOIOK1 );
 			else if ( nr == 1 )
-				PlayVoice ( VoiceData.VOIOK2 );
+				PlayVoice( VoiceData.VOIOK2 );
 			else if ( nr == 2 )
-				PlayVoice ( VoiceData.VOIOK3 );
+				PlayVoice( VoiceData.VOIOK3 );
 			else
-				PlayVoice ( VoiceData.VOIOK4 );
+				PlayVoice( VoiceData.VOIOK4 );
 		}
 	}
 	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
 		// Status yellow:
-		if (random(2))
-			PlayVoice ( VoiceData.VOIStatusYellow );
+		if ( random( 2 ) )
+			PlayVoice( VoiceData.VOIStatusYellow );
 		else
-			PlayVoice ( VoiceData.VOIStatusYellow2 );
+			PlayVoice( VoiceData.VOIStatusYellow2 );
 	else
 		// Status red:
-		if (random(2))
-			PlayVoice ( VoiceData.VOIStatusRed );
+		if ( random( 2 ) )
+			PlayVoice( VoiceData.VOIStatusRed );
 		else
-			PlayVoice ( VoiceData.VOIStatusRed2 );
+			PlayVoice( VoiceData.VOIStatusRed2 );
 }
 
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transfered to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
+bool cVehicle::CanTransferTo( cMapField* OverUnitField ) const
 {
 	const int x = mouse->getKachelX();
 	const int y = mouse->getKachelY();
@@ -1434,7 +1431,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 
 	if ( OverUnitField->getVehicles() )
 	{
-		const cVehicle *v = OverUnitField->getVehicles();
+		const cVehicle* v = OverUnitField->getVehicles();
 
 		if ( v == this )
 			return false;
@@ -1452,7 +1449,7 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 	}
 	else if ( OverUnitField->getTopBuilding() )
 	{
-		cBuilding *b = OverUnitField->getTopBuilding();
+		cBuilding* b = OverUnitField->getTopBuilding();
 
 		if ( b->owner != Client->getActivePlayer() )
 			return false;
@@ -1475,17 +1472,17 @@ bool cVehicle::CanTransferTo ( cMapField *OverUnitField ) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, const string& reasonForLog) const
+bool cVehicle::makeAttackOnThis( cUnit* opponentUnit, const string& reasonForLog ) const
 {
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;
-	selectTarget (targetVehicle, targetBuilding, PosX, PosY, opponentUnit->data.canAttack, Server->Map);
-	if (targetVehicle == this)
+	selectTarget( targetVehicle, targetBuilding, PosX, PosY, opponentUnit->data.canAttack, Server->Map );
+	if ( targetVehicle == this )
 	{
 		int iOff = PosX + PosY * Server->Map->size;
-		Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-		Server->AJobs.Add (new cServerAttackJob (opponentUnit, iOff, true));
-		if (ServerMoveJob != 0)
+		Log.write( " Server: " + reasonForLog + ": attacking offset " + iToStr( iOff ) + " Agressor ID: " + iToStr( opponentUnit->iID ), cLog::eLOG_TYPE_NET_DEBUG );
+		Server->AJobs.Add( new cServerAttackJob( opponentUnit, iOff, true ) );
+		if ( ServerMoveJob != 0 )
 			ServerMoveJob->bFinished = true;
 		return true;
 	}
@@ -1493,77 +1490,77 @@ bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, const string& reasonForLog
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeSentryAttack (cUnit* sentryUnit) const
+bool cVehicle::makeSentryAttack( cUnit* sentryUnit ) const
 {
-	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, Server->Map, true))
+	if ( sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt( PosX, PosY, Server->Map, true ) )
 	{
-		if (makeAttackOnThis (sentryUnit, "sentry reaction"))
+		if ( makeAttackOnThis( sentryUnit, "sentry reaction" ) )
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::InSentryRange ()
+bool cVehicle::InSentryRange()
 {
 	cPlayer* Player = 0;
 
 	int iOff = PosX + PosY * Server->Map->size;
 
-	for ( unsigned int i = 0;i < Server->PlayerList->Size();i++ )
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
-		Player = (*Server->PlayerList)[i];
+		Player = ( *Server->PlayerList )[i];
 
 		if ( Player == owner ) continue;
 
 		if ( data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer( Player ) ) continue;	//don't attack undiscovered stealth units
-		if ( Player->ScanMap[iOff] == 0) continue;											//don't attack units out of scan range
+		if ( Player->ScanMap[iOff] == 0 ) continue;											//don't attack units out of scan range
 		if ( data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0 ) continue;		 //check sentry type
-		if ( data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		 //check sentry type
+		if ( data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0 ) continue;		 //check sentry type
 
-		cUnit* unit = static_cast<cUnit*>(Player->VehicleList);
-		while (unit)
+		cUnit* unit = static_cast<cUnit*>( Player->VehicleList );
+		while ( unit )
 		{
-			if (makeSentryAttack (unit))
+			if ( makeSentryAttack( unit ) )
 				return true;
 			unit = unit->next;
 		}
-		unit = static_cast<cUnit*>(Player->BuildingList);
-		while (unit)
+		unit = static_cast<cUnit*>( Player->BuildingList );
+		while ( unit )
 		{
-			if (makeSentryAttack (unit))
+			if ( makeSentryAttack( unit ) )
 				return true;
 			unit = unit->next;
 		}
 	}
 
-	return provokeReactionFire ();
+	return provokeReactionFire();
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isOtherUnitOffendedByThis (cUnit* otherUnit) const
+bool cVehicle::isOtherUnitOffendedByThis( cUnit* otherUnit ) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-	bool otherUnitIsCheapBuilding = (otherUnit->isBuilding () && otherUnit->data.ID.getUnitDataOriginalVersion ()->buildCosts > 2);
+	bool otherUnitIsCheapBuilding = ( otherUnit->isBuilding() && otherUnit->data.ID.getUnitDataOriginalVersion()->buildCosts > 2 );
 
-	if (otherUnitIsCheapBuilding == false
-		&& isInRange (otherUnit->PosX, otherUnit->PosY)
-		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, Server->Map, true, false))
+	if ( otherUnitIsCheapBuilding == false
+		 && isInRange( otherUnit->PosX, otherUnit->PosY )
+		 && canAttackObjectAt( otherUnit->PosX, otherUnit->PosY, Server->Map, true, false ) )
 	{
 		// test, if this vehicle can really attack the opponentVehicle
 		cVehicle* selectedTargetVehicle = 0;
 		cBuilding* selectedTargetBuilding = 0;
-		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, Server->Map);
-		if (selectedTargetVehicle == otherUnit || selectedTargetBuilding == otherUnit)
+		selectTarget( selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, Server->Map );
+		if ( selectedTargetVehicle == otherUnit || selectedTargetBuilding == otherUnit )
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const
+bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire( cPlayer* player ) const
 {
-	if (Server->isTurnBasedGame ())
+	if ( Server->isTurnBasedGame() )
 	{
 		// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
 		return true;
@@ -1573,53 +1570,53 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player)
 		// check if there is a vehicle or building of player, that is offended
 
 		cUnit* opponentVehicle = player->VehicleList;
-		while (opponentVehicle != 0)
+		while ( opponentVehicle != 0 )
 		{
-			if (isOtherUnitOffendedByThis (opponentVehicle))
+			if ( isOtherUnitOffendedByThis( opponentVehicle ) )
 				return true;
 			opponentVehicle = opponentVehicle->next;
 		}
 		cUnit* opponentBuilding = player->BuildingList;
-		while (opponentBuilding != 0)
+		while ( opponentBuilding != 0 )
 		{
-			if (isOtherUnitOffendedByThis (opponentBuilding))
+			if ( isOtherUnitOffendedByThis( opponentBuilding ) )
 				return true;
-			opponentBuilding = static_cast<cBuilding*>(opponentBuilding->next);
+			opponentBuilding = static_cast<cBuilding*>( opponentBuilding->next );
 		}
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFireForUnit (cUnit* opponentUnit) const
+bool cVehicle::doReactionFireForUnit( cUnit* opponentUnit ) const
 {
-	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
-		&& opponentUnit->canAttackObjectAt (PosX, PosY, Server->Map, true)
-		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
-		&& (opponentUnit->isVehicle () == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
+	if ( opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
+		 && opponentUnit->canAttackObjectAt( PosX, PosY, Server->Map, true )
+		 // Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
+		 && ( opponentUnit->isVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE ) )
 	{
-		if (makeAttackOnThis (opponentUnit, "reaction fire"))
+		if ( makeAttackOnThis( opponentUnit, "reaction fire" ) )
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFire (cPlayer* player) const
+bool cVehicle::doReactionFire( cPlayer* player ) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
 	cUnit* opponentBuilding = player->BuildingList;
-	while (opponentBuilding != 0)
+	while ( opponentBuilding != 0 )
 	{
-		if (doReactionFireForUnit (opponentBuilding))
+		if ( doReactionFireForUnit( opponentBuilding ) )
 			return true;
 		opponentBuilding = opponentBuilding->next;
 	}
 	cUnit* opponentVehicle = player->VehicleList;
-	while (opponentVehicle != 0)
+	while ( opponentVehicle != 0 )
 	{
-		if (doReactionFireForUnit (opponentVehicle))
+		if ( doReactionFireForUnit( opponentVehicle ) )
 			return true;
 		opponentVehicle = opponentVehicle->next;
 	}
@@ -1627,30 +1624,30 @@ bool cVehicle::doReactionFire (cPlayer* player) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::provokeReactionFire ()
+bool cVehicle::provokeReactionFire()
 {
 	// unit can't fire, so it can't provoke a reaction fire
-	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
+	if ( data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0 )
 		return false;
 
 	int iOff = PosX + PosY * Server->Map->size;
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+	for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 	{
-		cPlayer* player = (*Server->PlayerList)[i];
-		if (player == owner)
+		cPlayer* player = ( *Server->PlayerList )[i];
+		if ( player == owner )
 			continue;
 
-		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player))
+		if ( data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer( player ) )
 			continue;
 
-		if (player->ScanMap[iOff] == false) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
+		if ( player->ScanMap[iOff] == false ) // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
 			continue;
 
-		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (player) == false)
+		if ( doesPlayerWantToFireOnThisVehicleAsReactionFire( player ) == false )
 			continue;
 
-		if (doReactionFire (player))
+		if ( doReactionFire( player ) )
 			return true;
 	}
 	return false;
@@ -1659,42 +1656,44 @@ bool cVehicle::provokeReactionFire ()
 //-----------------------------------------------------------------------------
 /** Draws exitpoints for a vehicle, that should be exited */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawExitPoints(const sVehicle* const typ, cGameGUI &gameGUI) const
+void cVehicle::DrawExitPoints( const sVehicle* const typ, cGameGUI& gameGUI ) const
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
 	cMap* map = Client->getMap();
 	const int tilesize = gameGUI.getTileSize();
-	T_2<int> offsets[8] = {T_2<int>(-1, -1), T_2<int>(0, -1), T_2<int>(1, -1),
-							T_2<int>(-1, 0),                  T_2<int>(1, 0),
-							T_2<int>(-1, 1), T_2<int>(0,  1), T_2<int>(1, 1)};
+	T_2<int> offsets[8] = {T_2<int>( -1, -1 ), T_2<int>( 0, -1 ), T_2<int>( 1, -1 ),
+						   T_2<int>( -1, 0 ),                  T_2<int>( 1, 0 ),
+						   T_2<int>( -1, 1 ), T_2<int>( 0,  1 ), T_2<int>( 1, 1 )
+						  };
 
-	for (int i = 0; i != 8; ++i) {
-		if (canExitTo ( PosX + offsets[i].x, PosY + offsets[i].y, map, typ ) )
-			gameGUI.drawExitPoint ( spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize );
+	for ( int i = 0; i != 8; ++i )
+	{
+		if ( canExitTo( PosX + offsets[i].x, PosY + offsets[i].y, map, typ ) )
+			gameGUI.drawExitPoint( spx + offsets[i].x * tilesize, spy + offsets[i].y * tilesize );
 	}
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canExitTo ( const int x, const int y, const cMap* map, const sVehicle *typ ) const
+bool cVehicle::canExitTo( const int x, const int y, const cMap* map, const sVehicle* typ ) const
 {
 	if ( !map->possiblePlaceVehicle( typ->data, x, y, owner ) ) return false;
 	if ( data.factorAir > 0 && ( x != PosX || y != PosY ) ) return false;
-	if ( !isNextTo(x, y) ) return false;
+	if ( !isNextTo( x, y ) ) return false;
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( int x, int y, cMap *Map, bool checkPosition ) const
+bool cVehicle::canLoad( int x, int y, cMap* Map, bool checkPosition ) const
 {
 	if ( x < 0 || x >= Map->size || y < 0 || y >= Map->size ) return false;
 
-	return canLoad ( Map->fields[x + y * Map->size].getVehicles(), checkPosition );
+	return canLoad( Map->fields[x + y * Map->size].getVehicles(), checkPosition );
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad ( const cVehicle *Vehicle, bool checkPosition ) const
+bool cVehicle::canLoad( const cVehicle* Vehicle, bool checkPosition ) const
 {
 	if ( !Vehicle ) return false;
 
@@ -1702,14 +1701,14 @@ bool cVehicle::canLoad ( const cVehicle *Vehicle, bool checkPosition ) const
 
 	if ( data.storageUnitsCur >= data.storageUnitsMax )	return false;
 
-	if ( checkPosition && !isNextTo ( Vehicle->PosX, Vehicle->PosY ) ) return false;
+	if ( checkPosition && !isNextTo( Vehicle->PosX, Vehicle->PosY ) ) return false;
 
 	if ( checkPosition && data.factorAir > 0 && ( Vehicle->PosX != PosX || Vehicle->PosY != PosY ) ) return false;
 
 	size_t i;
 	for ( i = 0; i < data.storeUnitsTypes.size(); i++ )
 	{
-		if ( data.storeUnitsTypes[i].compare ( Vehicle->data.isStorageType ) == 0 ) break;
+		if ( data.storeUnitsTypes[i].compare( Vehicle->data.isStorageType ) == 0 ) break;
 	}
 	if ( i == data.storeUnitsTypes.size() ) return false;
 
@@ -1723,19 +1722,19 @@ bool cVehicle::canLoad ( const cVehicle *Vehicle, bool checkPosition ) const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
+void cVehicle::storeVehicle( cVehicle* Vehicle, cMap* Map )
 {
-	Map->deleteVehicle ( Vehicle );
+	Map->deleteVehicle( Vehicle );
 	if ( Vehicle->sentryActive )
 	{
-		Vehicle->owner->deleteSentry (Vehicle);
+		Vehicle->owner->deleteSentry( Vehicle );
 	}
 
 	Vehicle->manualFireActive = false;
 
 	Vehicle->Loaded = true;
 
-	storedUnits.Add ( Vehicle );
+	storedUnits.Add( Vehicle );
 	data.storageUnitsCur++;
 
 	owner->DoScan();
@@ -1744,21 +1743,21 @@ void cVehicle::storeVehicle( cVehicle *Vehicle, cMap *Map )
 //-----------------------------------------------------------------------------
 /** Exits a vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
+void cVehicle::exitVehicleTo( cVehicle* Vehicle, int offset, cMap* Map )
 {
 	for ( unsigned int i = 0; i < storedUnits.Size(); i++ )
 	{
 		if ( storedUnits[i] == Vehicle )
 		{
-			storedUnits.Delete ( i );
+			storedUnits.Delete( i );
 			break;
 		}
-		if ( i == storedUnits.Size()-1 ) return;
+		if ( i == storedUnits.Size() - 1 ) return;
 	}
 
 	data.storageUnitsCur--;
 
-	Map->addVehicle ( Vehicle, offset );
+	Map->addVehicle( Vehicle, offset );
 
 	Vehicle->PosX = offset % Map->size;
 	Vehicle->PosY = offset / Map->size;
@@ -1771,77 +1770,77 @@ void cVehicle::exitVehicleTo( cVehicle *Vehicle, int offset, cMap *Map )
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (int x, int y, int supplyType) const
+bool cVehicle::canSupply( int x, int y, int supplyType ) const
 {
-	if (x < 0 || x >= Client->getMap()->size || y < 0 || y >= Client->getMap()->size)
+	if ( x < 0 || x >= Client->getMap()->size || y < 0 || y >= Client->getMap()->size )
 		return false;
 
 	cMapField& field = Client->getMap()->fields[x + y * Client->getMap()->size];
-	if (field.getVehicles ()) return canSupply (field.getVehicles (), supplyType);
-	else if (field.getPlanes ()) return canSupply (field.getPlanes (), supplyType);
-	else if (field.getTopBuilding ()) return canSupply (field.getTopBuilding (), supplyType);
+	if ( field.getVehicles() ) return canSupply( field.getVehicles(), supplyType );
+	else if ( field.getPlanes() ) return canSupply( field.getPlanes(), supplyType );
+	else if ( field.getTopBuilding() ) return canSupply( field.getTopBuilding(), supplyType );
 
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (cUnit* unit, int supplyType) const
+bool cVehicle::canSupply( cUnit* unit, int supplyType ) const
 {
-	if (unit == 0)
+	if ( unit == 0 )
 		return false;
 
-	if (data.storageResCur <= 0)
+	if ( data.storageResCur <= 0 )
 		return false;
 
-	if (unit->data.isBig == false)
+	if ( unit->data.isBig == false )
 	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1)
+		if ( unit->PosX > PosX + 1 || unit->PosX < PosX - 1 || unit->PosY > PosY + 1 || unit->PosY < PosY - 1 )
 			return false;
 	}
 	else
 	{
-		if (unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2)
+		if ( unit->PosX > PosX + 1 || unit->PosX < PosX - 2 || unit->PosY > PosY + 1 || unit->PosY < PosY - 2 )
 			return false;
 	}
 
-	if (unit->isVehicle () && unit->data.factorAir > 0 && static_cast<cVehicle*>(unit)->FlightHigh > 0)
+	if ( unit->isVehicle() && unit->data.factorAir > 0 && static_cast<cVehicle*>( unit )->FlightHigh > 0 )
 		return false;
 
-	switch (supplyType)
+	switch ( supplyType )
 	{
-	case SUPPLY_TYPE_REARM:
-		if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
-			|| (unit->isVehicle () && static_cast<cVehicle*>(unit)->isUnitMoving ())
-			|| unit->attacking)
+		case SUPPLY_TYPE_REARM:
+			if ( unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
+				 || ( unit->isVehicle() && static_cast<cVehicle*>( unit )->isUnitMoving() )
+				 || unit->attacking )
+				return false;
+			break;
+		case SUPPLY_TYPE_REPAIR:
+			if ( unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
+				 || ( unit->isVehicle() && static_cast<cVehicle*>( unit )->isUnitMoving() )
+				 || unit->attacking )
+				return false;
+			break;
+		default:
 			return false;
-		break;
-	case SUPPLY_TYPE_REPAIR:
-		if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
-			|| (unit->isVehicle () && static_cast<cVehicle*>(unit)->isUnitMoving ())
-			|| unit->attacking)
-			return false;
-		break;
-	default:
-		return false;
 	}
 
 	return true;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::layMine ()
+bool cVehicle::layMine()
 {
 	if ( data.storageResCur <= 0 ) return false;
 
 	if ( ( data.factorSea > 0 && data.factorGround == 0 ) )
 	{
-		if ( !Server->Map->possiblePlaceBuilding( *specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		Server->addUnit(PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
+		if ( !Server->Map->possiblePlaceBuilding( *specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this ) ) return false;
+		Server->addUnit( PosX, PosY, specialIDSeaMine.getBuilding(), owner, false );
 	}
 	else
 	{
-		if ( !Server->Map->possiblePlaceBuilding( *specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		Server->addUnit(PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
+		if ( !Server->Map->possiblePlaceBuilding( *specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this ) ) return false;
+		Server->addUnit( PosX, PosY, specialIDLandMine.getBuilding(), owner, false );
 	}
 	data.storageResCur--;
 
@@ -1851,15 +1850,15 @@ bool cVehicle::layMine ()
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::clearMine ()
+bool cVehicle::clearMine()
 {
-	cBuilding* Mine = Server->Map->fields[PosX+PosY*Server->Map->size].getMine();
+	cBuilding* Mine = Server->Map->fields[PosX + PosY * Server->Map->size].getMine();
 
 	if ( !Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax ) return false;
 	if ( Mine->data.factorGround > 0 && data.factorGround == 0 ) return false;
 	if ( Mine->data.factorSea > 0 && data.factorSea == 0 ) return false;
 
-	Server->deleteUnit ( Mine );
+	Server->deleteUnit( Mine );
 	data.storageResCur++;
 
 	if ( data.storageResCur >= data.storageResMax ) ClearMines = false;
@@ -1870,30 +1869,30 @@ bool cVehicle::clearMine ()
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbour field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
+bool cVehicle::canDoCommandoAction( int x, int y, cMap* map, bool steal ) const
 {
-	if ((steal && data.canCapture == false) || (steal == false && data.canDisable == false))
+	if ( ( steal && data.canCapture == false ) || ( steal == false && data.canDisable == false ) )
 		return false;
 
-	if (isNextTo (x, y) == false || data.shotsCur == 0)
+	if ( isNextTo( x, y ) == false || data.shotsCur == 0 )
 		return false;
 
 	int off = x + y * map->size;
-	cUnit* vehicle  = map->fields[off].getVehicles ();
-	cUnit* building = map->fields[off].getBuildings ();
+	cUnit* vehicle  = map->fields[off].getVehicles();
+	cUnit* building = map->fields[off].getBuildings();
 	cUnit* unit = vehicle ? vehicle : building;
 
-	if (unit != 0)
+	if ( unit != 0 )
 	{
 		bool result = true;
-		if (unit->isBuilding () && unit->owner == 0) return false; // rubble
-		if (steal && unit->data.canBeCaptured == false) return false;
-		if (steal == false && unit->data.canBeDisabled == false) return false;
-		if (steal && unit->storedUnits.Size () > 0) return false;
-		if (unit->owner == owner) return false;
-		if (unit->isVehicle () && unit->data.factorAir > 0 && static_cast<cVehicle*>(unit)->FlightHigh > 0) return false;
+		if ( unit->isBuilding() && unit->owner == 0 ) return false; // rubble
+		if ( steal && unit->data.canBeCaptured == false ) return false;
+		if ( steal == false && unit->data.canBeDisabled == false ) return false;
+		if ( steal && unit->storedUnits.Size() > 0 ) return false;
+		if ( unit->owner == owner ) return false;
+		if ( unit->isVehicle() && unit->data.factorAir > 0 && static_cast<cVehicle*>( unit )->FlightHigh > 0 ) return false;
 
-		if (result)
+		if ( result )
 			return true;
 	}
 	return false;
@@ -1902,22 +1901,22 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 //-----------------------------------------------------------------------------
 /** draws the commando-cursors: */
 //-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
+void cVehicle::drawCommandoCursor( int x, int y, bool steal ) const
 {
 	cMapField& field = Client->getMap()->fields[x + y * Client->getMap()->size];
 	SDL_Surface* sf;
 
 	cUnit* unit = 0;
-	if (steal)
+	if ( steal )
 	{
-		unit = field.getVehicles ();
+		unit = field.getVehicles();
 		sf = GraphicsData.gfx_Csteal;
 	}
 	else
 	{
-		unit = field.getVehicles ();
-		if (unit == 0)
-			unit = field.getTopBuilding ();
+		unit = field.getVehicles();
+		if ( unit == 0 )
+			unit = field.getTopBuilding();
 		sf = GraphicsData.gfx_Cdisable;
 	}
 
@@ -1927,21 +1926,21 @@ void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
 	r.h = 3;
 	r.w = 35;
 
-	if (unit == 0)
+	if ( unit == 0 )
 	{
-		SDL_FillRect (sf, &r, 0);
+		SDL_FillRect( sf, &r, 0 );
 		return;
 	}
 
-	SDL_FillRect (sf, &r, 0xFF0000);
-	r.w = 35 * calcCommandoChance (unit, steal) / 100;
-	SDL_FillRect (sf, &r, 0x00FF00);
+	SDL_FillRect( sf, &r, 0xFF0000 );
+	r.w = 35 * calcCommandoChance( unit, steal ) / 100;
+	SDL_FillRect( sf, &r, 0x00FF00 );
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
+int cVehicle::calcCommandoChance( cUnit* destUnit, bool steal ) const
 {
-	if (destUnit == 0)
+	if ( destUnit == 0 )
 		return 0;
 
 	// TODO: include cost research and clan modifications? Or should always the basic version without clanmods be used?
@@ -1949,7 +1948,7 @@ int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
 	int destTurn = destUnit->data.buildCosts / 3;
 
 	int factor = steal ? 1 : 4;
-	int srcLevel = (int)CommandoRank+7;
+	int srcLevel = ( int )CommandoRank + 7;
 
 	/* The chance to disable or steal a unit depends on the infiltratorranking and the
 	buildcosts (or 'turns' in the original game) of the target unit. The chance rises
@@ -1957,37 +1956,37 @@ int cVehicle::calcCommandoChance (cUnit* destUnit, bool steal) const
 	infiltrator will be calculated like he has the ranking 7. Disabling has a 4 times
 	higher chance then stealing.
 	*/
-	int chance = Round ((float)(8 * srcLevel) / (35 * destTurn) * factor * 100);
-	if (chance > 90)
+	int chance = Round( ( float )( 8 * srcLevel ) / ( 35 * destTurn ) * factor * 100 );
+	if ( chance > 90 )
 		chance = 90;
 
 	return chance;
 }
 
 //-----------------------------------------------------------------------------
-int cVehicle::calcCommandoTurns (cUnit* destUnit) const
+int cVehicle::calcCommandoTurns( cUnit* destUnit ) const
 {
-	if (destUnit == 0)
+	if ( destUnit == 0 )
 		return 1;
 
 	int vehiclesTable[13] = { 0, 0, 0, 5, 8, 3, 3, 0, 0, 0, 1, 0, -4 };
 	int destTurn, srcLevel;
 
-	if (destUnit->isVehicle ())
+	if ( destUnit->isVehicle() )
 	{
 		destTurn = destUnit->data.buildCosts / 3;
-		srcLevel = (int)CommandoRank;
-		if (destTurn > 0 && destTurn < 13)
+		srcLevel = ( int )CommandoRank;
+		if ( destTurn > 0 && destTurn < 13 )
 			srcLevel += vehiclesTable[destTurn];
 	}
 	else
 	{
 		destTurn = destUnit->data.buildCosts / 2;
-		srcLevel = (int)CommandoRank + 8;
+		srcLevel = ( int )CommandoRank + 8;
 	}
 
-	int turns = (int)(1.0 / destTurn * srcLevel);
-	if (turns < 1)
+	int turns = ( int )( 1.0 / destTurn * srcLevel );
+	if ( turns < 1 )
 		turns = 1;
 	return turns;
 }
@@ -1997,7 +1996,7 @@ bool cVehicle::isDetectedByPlayer( const cPlayer* player ) const
 {
 	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
-		if (detectedByPlayerList[i] == player) return true;
+		if ( detectedByPlayerList[i] == player ) return true;
 	}
 	return false;
 }
@@ -2007,13 +2006,13 @@ void cVehicle::setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTur
 {
 	bool wasDetected = ( detectedByPlayerList.Size() > 0 );
 
-	if (!isDetectedByPlayer( player ))
+	if ( !isDetectedByPlayer( player ) )
 		detectedByPlayerList.Add( player );
 
 	if ( !wasDetected ) sendDetectionState( this );
 
-	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
-		detectedInThisTurnByPlayerList.Add (player);
+	if ( addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains( player ) == false )
+		detectedInThisTurnByPlayerList.Add( player );
 }
 
 //-----------------------------------------------------------------------------
@@ -2023,43 +2022,43 @@ void cVehicle::resetDetectedByPlayer( cPlayer* player )
 
 	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
-		if ( detectedByPlayerList[i] == player ) detectedByPlayerList.Delete(i);
+		if ( detectedByPlayerList[i] == player ) detectedByPlayerList.Delete( i );
 	}
 	for ( unsigned int i = 0; i < detectedInThisTurnByPlayerList.Size(); i++ )
 	{
-		if ( detectedInThisTurnByPlayerList[i] == player ) detectedInThisTurnByPlayerList.Delete(i);
+		if ( detectedInThisTurnByPlayerList[i] == player ) detectedInThisTurnByPlayerList.Delete( i );
 	}
 
 	if ( wasDetected && detectedByPlayerList.Size() == 0 ) sendDetectionState( this );
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::wasDetectedInThisTurnByPlayer (cPlayer* player) const
+bool cVehicle::wasDetectedInThisTurnByPlayer( cPlayer* player ) const
 {
-	return detectedInThisTurnByPlayerList.Contains (player);
+	return detectedInThisTurnByPlayerList.Contains( player );
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::clearDetectedInThisTurnPlayerList ()
+void cVehicle::clearDetectedInThisTurnPlayerList()
 {
 	detectedInThisTurnByPlayerList.Clear();
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::tryResetOfDetectionStateAfterMove ()
+void cVehicle::tryResetOfDetectionStateAfterMove()
 {
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer();
 
 	bool foundPlayerToReset = true;
-	while (foundPlayerToReset)
+	while ( foundPlayerToReset )
 	{
 		foundPlayerToReset = false;
-		for (unsigned int i = 0; i < detectedByPlayerList.Size (); i++)
+		for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 		{
-			if (playersThatDetectThisVehicle.Contains (detectedByPlayerList[i]) == false
-				&& detectedInThisTurnByPlayerList.Contains (detectedByPlayerList[i]) == false)
+			if ( playersThatDetectThisVehicle.Contains( detectedByPlayerList[i] ) == false
+				 && detectedInThisTurnByPlayerList.Contains( detectedByPlayerList[i] ) == false )
 			{
-				resetDetectedByPlayer (detectedByPlayerList[i]);
+				resetDetectedByPlayer( detectedByPlayerList[i] );
 				foundPlayerToReset = true;
 				break;
 			}
@@ -2068,44 +2067,44 @@ void cVehicle::tryResetOfDetectionStateAfterMove ()
 }
 
 //-----------------------------------------------------------------------------
-cList<cPlayer*> cVehicle::calcDetectedByPlayer () const
+cList<cPlayer*> cVehicle::calcDetectedByPlayer() const
 {
 	cList<cPlayer*> playersThatDetectThisVehicle;
 	//check whether the vehicle has been detected by others
-	if (data.isStealthOn != TERRAIN_NONE) // the vehicle is a stealth vehicle
+	if ( data.isStealthOn != TERRAIN_NONE ) // the vehicle is a stealth vehicle
 	{
 		int offset = PosX + PosY * Server->Map->size;
-		for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+		for ( unsigned int i = 0; i < Server->PlayerList->Size(); i++ )
 		{
-			cPlayer* player = (*Server->PlayerList)[i];
-			if (player == owner)
+			cPlayer* player = ( *Server->PlayerList )[i];
+			if ( player == owner )
 				continue;
-			bool isOnWater = Server->Map->isWater (PosX, PosY, true);
-			bool isOnCoast = Server->Map->isWater (PosX, PosY) && (isOnWater == false);
+			bool isOnWater = Server->Map->isWater( PosX, PosY, true );
+			bool isOnCoast = Server->Map->isWater( PosX, PosY ) && ( isOnWater == false );
 
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
-			cBuilding* building = Server->Map->fields[offset].getBaseBuilding ();
-			if (data.factorGround > 0 && building
-				&& (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
-					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
-					|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE))
+			cBuilding* building = Server->Map->fields[offset].getBaseBuilding();
+			if ( data.factorGround > 0 && building
+				 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
+					  || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
+					  || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
 			{
 				isOnWater = false;
 				isOnCoast = false;
 			}
 
-			if ((data.isStealthOn & TERRAIN_GROUND)
-				&& (player->DetectLandMap[offset] || ( !(data.isStealthOn & TERRAIN_COAST) && isOnCoast)
-					|| isOnWater))
+			if ( ( data.isStealthOn & TERRAIN_GROUND )
+				 && ( player->DetectLandMap[offset] || ( !( data.isStealthOn & TERRAIN_COAST ) && isOnCoast )
+					  || isOnWater ) )
 			{
-				playersThatDetectThisVehicle.Add (player);
+				playersThatDetectThisVehicle.Add( player );
 			}
 
-			if ((data.isStealthOn & TERRAIN_SEA)
-				&& (player->DetectSeaMap[offset] || isOnWater == false))
+			if ( ( data.isStealthOn & TERRAIN_SEA )
+				 && ( player->DetectSeaMap[offset] || isOnWater == false ) )
 			{
-				playersThatDetectThisVehicle.Add (player);
+				playersThatDetectThisVehicle.Add( player );
 			}
 		}
 	}
@@ -2116,17 +2115,17 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer () const
 void cVehicle::makeDetection()
 {
 	//check whether the vehicle has been detected by others
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer ();
-	for (unsigned int i = 0; i < playersThatDetectThisVehicle.Size (); i++)
-		setDetectedByPlayer (playersThatDetectThisVehicle[i]);
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer();
+	for ( unsigned int i = 0; i < playersThatDetectThisVehicle.Size(); i++ )
+		setDetectedByPlayer( playersThatDetectThisVehicle[i] );
 
 	//detect other units
 	if ( data.canDetectStealthOn )
 	{
-		for ( int x = PosX - data.scan; x < PosX + data.scan; x++)
+		for ( int x = PosX - data.scan; x < PosX + data.scan; x++ )
 		{
 			if ( x < 0 || x >= Server->Map->size ) continue;
-			for ( int y = PosY - data.scan; y < PosY + data.scan; y++)
+			for ( int y = PosY - data.scan; y < PosY + data.scan; y++ )
 			{
 				if ( y < 0 || y >= Server->Map->size ) continue;
 
@@ -2136,18 +2135,18 @@ void cVehicle::makeDetection()
 
 				if ( vehicle && vehicle->owner != owner )
 				{
-					if ( (data.canDetectStealthOn&TERRAIN_GROUND) && owner->DetectLandMap[offset] && (vehicle->data.isStealthOn&TERRAIN_GROUND) )
+					if ( ( data.canDetectStealthOn & TERRAIN_GROUND ) && owner->DetectLandMap[offset] && ( vehicle->data.isStealthOn & TERRAIN_GROUND ) )
 					{
 						vehicle->setDetectedByPlayer( owner );
 					}
-					if ( (data.canDetectStealthOn&TERRAIN_SEA) && owner->DetectSeaMap[offset] && (vehicle->data.isStealthOn&TERRAIN_SEA) )
+					if ( ( data.canDetectStealthOn & TERRAIN_SEA ) && owner->DetectSeaMap[offset] && ( vehicle->data.isStealthOn & TERRAIN_SEA ) )
 					{
 						vehicle->setDetectedByPlayer( owner );
 					}
 				}
 				if ( building && building->owner != owner )
 				{
-					if ( (data.canDetectStealthOn&AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn&AREA_EXP_MINE) )
+					if ( ( data.canDetectStealthOn & AREA_EXP_MINE ) && owner->DetectMinesMap[offset] && ( building->data.isStealthOn & AREA_EXP_MINE ) )
 					{
 						building->setDetectedByPlayer( owner );
 					}
@@ -2163,54 +2162,54 @@ void sVehicle::scaleSurfaces( float factor )
 	int width, height;
 	for ( int i = 0; i < 8; i++ )
 	{
-		width= (int) ( img_org[i]->w*factor );
-		height= (int) ( img_org[i]->h*factor );
-		scaleSurface ( img_org[i], img[i], width, height );
-		width= (int) ( shw_org[i]->w*factor );
-		height= (int) ( shw_org[i]->h*factor );
-		scaleSurface ( shw_org[i], shw[i], width, height );
+		width = ( int )( img_org[i]->w * factor );
+		height = ( int )( img_org[i]->h * factor );
+		scaleSurface( img_org[i], img[i], width, height );
+		width = ( int )( shw_org[i]->w * factor );
+		height = ( int )( shw_org[i]->h * factor );
+		scaleSurface( shw_org[i], shw[i], width, height );
 	}
 	if ( build_org )
 	{
-		height= (int) ( build_org->h*factor );
-		width=height*4;
-		scaleSurface ( build_org, build, width, height );
-		width= (int) ( build_shw_org->w*factor );
-		height= (int) ( build_shw_org->h*factor );
-		scaleSurface ( build_shw_org, build_shw, width, height );
+		height = ( int )( build_org->h * factor );
+		width = height * 4;
+		scaleSurface( build_org, build, width, height );
+		width = ( int )( build_shw_org->w * factor );
+		height = ( int )( build_shw_org->h * factor );
+		scaleSurface( build_shw_org, build_shw, width, height );
 	}
 	if ( clear_small_org )
 	{
-		height= (int) ( clear_small_org->h*factor );
-		width=height*4;
-		scaleSurface ( clear_small_org, clear_small, width, height );
-		width= (int) ( clear_small_shw_org->w*factor );
-		height= (int) ( clear_small_shw_org->h*factor );
-		scaleSurface ( clear_small_shw_org, clear_small_shw, width, height );
+		height = ( int )( clear_small_org->h * factor );
+		width = height * 4;
+		scaleSurface( clear_small_org, clear_small, width, height );
+		width = ( int )( clear_small_shw_org->w * factor );
+		height = ( int )( clear_small_shw_org->h * factor );
+		scaleSurface( clear_small_shw_org, clear_small_shw, width, height );
 	}
 	if ( overlay_org )
 	{
-		height= (int) ( overlay_org->h*factor );
-		width= (int) ( overlay_org->w*factor );
-		scaleSurface ( overlay_org, overlay, width, height );
+		height = ( int )( overlay_org->h * factor );
+		width = ( int )( overlay_org->w * factor );
+		scaleSurface( overlay_org, overlay, width, height );
 	}
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, SDL_Rect *destrect, float factor, int frames )
+void cVehicle::blitWithPreScale( SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames )
 {
 	if ( !cSettings::getInstance().shouldDoPrescale() )
 	{
 		int width, height;
-		height = (int) ( org_src->h*factor );
-		if ( frames > 1 ) width = height*frames;
-		else width = (int) ( org_src->w*factor );
+		height = ( int )( org_src->h * factor );
+		if ( frames > 1 ) width = height * frames;
+		else width = ( int )( org_src->w * factor );
 		if ( src->w != width || src->h != height )
 		{
-			scaleSurface ( org_src, src, width, height );
+			scaleSurface( org_src, src, width, height );
 		}
 	}
-	blittAlphaSurface ( src, srcrect, dest, destrect );
+	blittAlphaSurface( src, srcrect, dest, destrect );
 }
 
 
@@ -2222,39 +2221,39 @@ void cVehicle::blitWithPreScale ( SDL_Surface *org_src, SDL_Surface *src, SDL_Re
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canBeStoppedViaUnitMenu () const
+bool cVehicle::canBeStoppedViaUnitMenu() const
 {
-	return (ClientMoveJob != 0 || (isUnitBuildingABuilding () && BuildRounds > 0) || (isUnitClearing () && ClearingRounds > 0));
+	return ( ClientMoveJob != 0 || ( isUnitBuildingABuilding() && BuildRounds > 0 ) || ( isUnitClearing() && ClearingRounds > 0 ) );
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeBuildCommand ()
+void cVehicle::executeBuildCommand()
 {
-	if (ClientMoveJob)
-		sendWantStopMove (iID);
-	cBuildingsBuildMenu buildMenu (owner, this);
-	buildMenu.show ();
+	if ( ClientMoveJob )
+		sendWantStopMove( iID );
+	cBuildingsBuildMenu buildMenu( owner, this );
+	buildMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeStopCommand ()
+void cVehicle::executeStopCommand()
 {
-	if (ClientMoveJob != 0)
-		sendWantStopMove (iID);
-	else if (isUnitBuildingABuilding ())
-		sendWantStopBuilding (iID);
-	else if (isUnitClearing ())
-		sendWantStopClear (this);
+	if ( ClientMoveJob != 0 )
+		sendWantStopMove( iID );
+	else if ( isUnitBuildingABuilding() )
+		sendWantStopBuilding( iID );
+	else if ( isUnitClearing() )
+		sendWantStopClear( this );
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeAutoMoveJobCommand ()
+void cVehicle::executeAutoMoveJobCommand()
 {
-	if (data.canSurvey == false)
+	if ( data.canSurvey == false )
 		return;
-	if (autoMJob == 0)
+	if ( autoMJob == 0 )
 	{
-		autoMJob = new cAutoMJob (this);
+		autoMJob = new cAutoMJob( this );
 	}
 	else
 	{
@@ -2264,43 +2263,43 @@ void cVehicle::executeAutoMoveJobCommand ()
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeActivateStoredVehiclesCommand ()
+void cVehicle::executeActivateStoredVehiclesCommand()
 {
-	cStorageMenu storageMenu (storedUnits, this, 0);
-	storageMenu.show ();
+	cStorageMenu storageMenu( storedUnits, this, 0 );
+	storageMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeLayMinesCommand ()
+void cVehicle::executeLayMinesCommand()
 {
 	LayMines = !LayMines;
 	ClearMines = false;
-	sendMineLayerStatus (this);
+	sendMineLayerStatus( this );
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeClearMinesCommand ()
+void cVehicle::executeClearMinesCommand()
 {
 	ClearMines = !ClearMines;
 	LayMines = false;
-	sendMineLayerStatus (this);
+	sendMineLayerStatus( this );
 }
 
 //-----------------------------------------------------------------------------
-sUnitData* cVehicle::getUpgradedUnitData () const
+sUnitData* cVehicle::getUpgradedUnitData() const
 {
-	return &(owner->VehicleData[typ->nr]);
+	return &( owner->VehicleData[typ->nr] );
 }
 
-bool cVehicle::canLand( const cMap& map) const
+bool cVehicle::canLand( const cMap& map ) const
 {
 	if ( data.factorAir == 0 )  return true;  //true, because normal vehicles are always "landed"
 
-	if ( moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || attacking ) return false; //vehicle busy?
+	if ( moving || ClientMoveJob || ( ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next ) || attacking ) return false; //vehicle busy?
 
 	//landing pad there?
 	cBuildingIterator bi = map[PosX + PosY * map.size].getBuildings();
-	while( !bi.end )
+	while ( !bi.end )
 	{
 		if ( bi->data.canBeLandedOn )
 			break;

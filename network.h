@@ -38,7 +38,7 @@ class cNetMessage;
 * Callback for the networkthread
 *@author alzi alias DoctorDeath
 */
-int CallbackHandleNetworkThread( void *arg );
+int CallbackHandleNetworkThread( void* arg );
 
 enum SOCKET_TYPES
 {
@@ -64,11 +64,11 @@ enum SOCKET_STATES
 struct sDataBuffer
 {
 	Uint32 iLength;
-	char data[5*PACKAGE_LENGTH];
+	char data[5 * PACKAGE_LENGTH];
 
 	char* getWritePointer();
 	int getFreeSpace() const;
-	void deleteFront(int n);
+	void deleteFront( int n );
 
 	/**
 	* Clears the data buffer and sets his lenght to 0.
@@ -119,7 +119,7 @@ private:
 	cMutex TCPMutex;
 
 
-	SDL_Thread *TCPHandleThread;
+	SDL_Thread* TCPHandleThread;
 	bool bExit;
 	bool bHost;
 
@@ -142,7 +142,7 @@ private:
 	*/
 	void deleteSocket( int iNum );
 
-	int pushEvent( cNetMessage* message);
+	int pushEvent( cNetMessage* message );
 public:
 	/**
 	* Creates a new server on the port which has to be set before.
@@ -171,7 +171,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int sendTo( int iClientNumber, int iLength, const char *buffer );
+	int sendTo( int iClientNumber, int iLength, const char* buffer );
 	/**
 	* Sends the data to all sockets to which this machine is connected.
 	*@author alzi alias DoctorDeath
@@ -179,7 +179,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int send( int iLength, const char *buffer );
+	int send( int iLength, const char* buffer );
 
 	/**
 	* Sets a new port.
@@ -192,7 +192,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*param iPort New IP.
 	*/
-	void setIP ( const std::string& sIP );
+	void setIP( const std::string& sIP );
 	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath
@@ -217,6 +217,6 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void HandleNetworkThread();
-} EX *network;
+} EX* network;
 
 #endif // networkH

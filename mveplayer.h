@@ -32,7 +32,7 @@ extern "C"
 #ifndef _MVEPLAYER_H
 #define _MVEPLAYER_H
 
-/*	define return states */
+	/*	define return states */
 #define SUCCESS						0x00
 #define UNABLE_TO_OPEN_FILE			0x01
 #define FILE_TOO_SHORT				0x02
@@ -47,8 +47,8 @@ extern "C"
 #define READ_FAILURE_IN_COMPAUDIO	0x0B
 #define SIXTEEN_BIT_MVE				0X0C
 
-/* player function prototype */
-int MVEPlayer(const char *MVEfilename, int dwidth, int dheight, int fullscreen, int audio);
+	/* player function prototype */
+	int MVEPlayer( const char* MVEfilename, int dwidth, int dheight, int fullscreen, int audio );
 
 #endif /* _MVEPLAYER_H */
 #ifdef __cplusplus

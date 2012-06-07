@@ -31,7 +31,7 @@ struct sMenuPlayer;
 class cPlayer;
 class cMap;
 class cNetMessage;
-int serverGameThreadFunction (void* data);
+int serverGameThreadFunction( void* data );
 
 //------------------------------------------------------------------------
 /** cServerGame handles all server side tasks of one multiplayer game in a thread.
@@ -41,20 +41,20 @@ int serverGameThreadFunction (void* data);
 class cServerGame
 {
 public:
-	cServerGame ();
-	virtual ~cServerGame ();
-	void prepareGameData ();
-	bool loadGame (int saveGameNumber);
-	void saveGame (int saveGameNumber);
+	cServerGame();
+	virtual ~cServerGame();
+	void prepareGameData();
+	bool loadGame( int saveGameNumber );
+	void saveGame( int saveGameNumber );
 
-	void runInThread ();
+	void runInThread();
 
-	void pushEvent (cNetMessage* message);
+	void pushEvent( cNetMessage* message );
 
 	// retrieve state
-	std::string getGameState () const;
+	std::string getGameState() const;
 
-	int getSocketForPlayerNr (int playerNr);
+	int getSocketForPlayerNr( int playerNr );
 
 	//------------------------------------------------------------------------
 protected:
@@ -63,13 +63,13 @@ protected:
 	bool shouldSave;
 	int saveGameNumber;
 
-	friend int serverGameThreadFunction (void* data);
-	void run ();
-	cNetMessage* pollEvent ();
-	void handleNetMessage (cNetMessage* message);
+	friend int serverGameThreadFunction( void* data );
+	void run();
+	cNetMessage* pollEvent();
+	void handleNetMessage( cNetMessage* message );
 
-	void startGameServer ();
-	void terminateServer ();
+	void startGameServer();
+	void terminateServer();
 
 	cGameDataContainer* gameData;
 	cList<sMenuPlayer*> menuPlayers;
@@ -78,7 +78,7 @@ protected:
 	cList<cPlayer*> serverPlayers;
 
 private:
-	void configRessources (std::vector<std::string>& tokens, sMenuPlayer* senderPlayer);
+	void configRessources( std::vector<std::string>& tokens, sMenuPlayer* senderPlayer );
 
 	//------------------------------------------------------------------------
 	cRingbuffer<cNetMessage*> eventQueue;

@@ -41,7 +41,7 @@
 class cLog
 {
 private:
-	SDL_RWops *logfile;
+	SDL_RWops* logfile;
 	bool bNetlogStarted;
 	bool bFirstRun;
 	cMutex mutex;
@@ -49,7 +49,7 @@ private:
 	/**
 	* Writes message finally to logfile
 	*/
-	int writeMessage( const char *);
+	int writeMessage( const char* );
 	int writeMessage( const std::string& );
 
 	/**
@@ -62,7 +62,7 @@ private:
 	*
 	* @return true on success
 	*/
-	bool open(int TYPE);
+	bool open( int TYPE );
 public:
 	cLog();
 	/**
@@ -79,7 +79,7 @@ public:
 	*
 	* @return 0 on success
 	*/
-	int write( const char *str , int TYPE );
+	int write( const char* str , int TYPE );
 	int write( const std::string& str , int TYPE );
 
 	/**
@@ -89,7 +89,7 @@ public:
 	*
 	* @return 0 on success
 	*/
-	int write( const char *str );
+	int write( const char* str );
 	//int write( const std::string& str );
 
 	enum LOG_TYPE
@@ -109,5 +109,5 @@ public:
 	* Writes a marker into logfile - please use only veeeery few times!
 	*/
 	void mark();
-}EX Log;
+} EX Log;
 #endif

@@ -32,18 +32,18 @@ class TiXmlElement;
 class cCasualtiesTracker : public cNotificationSender
 {
 public:
-	cCasualtiesTracker () {}
+	cCasualtiesTracker() {}
 
-	void initFromXML (TiXmlElement* casualtiesNode);
-	void storeToXML (TiXmlElement* casualtiesNode) const;
+	void initFromXML( TiXmlElement* casualtiesNode );
+	void storeToXML( TiXmlElement* casualtiesNode ) const;
 
-	void logCasualty (sID unitType, int playerNr);
-	int getCasualtiesOfUnitType (sID unitType, int playerNr);
+	void logCasualty( sID unitType, int playerNr );
+	int getCasualtiesOfUnitType( sID unitType, int playerNr );
 
-	void updateCasualtiesFromNetMessage (cNetMessage* message);
-	void prepareNetMessagesForClient (cList<cNetMessage*>& messages, int msgType);
+	void updateCasualtiesFromNetMessage( cNetMessage* message );
+	void prepareNetMessagesForClient( cList<cNetMessage*>& messages, int msgType );
 
-	std::vector<sID> getUnitTypesWithLosses () const;
+	std::vector<sID> getUnitTypesWithLosses() const;
 
 	//-------------------------------------------------------------------------------
 private:
@@ -59,10 +59,10 @@ private:
 	};
 	std::vector<CasualtiesOfPlayer> casualtiesPerPlayer;
 
-	std::vector<Casualty>& getCasualtiesOfPlayer (int playerNr);
-	void setCasualty (sID unitType, int numberOfLosses, int playerNr);
+	std::vector<Casualty>& getCasualtiesOfPlayer( int playerNr );
+	void setCasualty( sID unitType, int numberOfLosses, int playerNr );
 
-	void debugPrint ();
+	void debugPrint();
 };
 
 

@@ -38,54 +38,54 @@ public:
 		kUTVehicle
 	};
 
-	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
-	virtual ~cUnit ();
+	cUnit( UnitType type, sUnitData* unitData, cPlayer* owner );
+	virtual ~cUnit();
 
-	bool isVehicle () const { return unitType == kUTVehicle; }
-	bool isBuilding () const { return unitType == kUTBuilding; }
+	bool isVehicle() const { return unitType == kUTVehicle; }
+	bool isBuilding() const { return unitType == kUTBuilding; }
 
-	int calcHealth (int damage) const;
-	bool isInRange (int x, int y) const;
-	bool isNextTo (int x, int y) const; ///< checks whether the coordinates are next to the unit
+	int calcHealth( int damage ) const;
+	bool isInRange( int x, int y ) const;
+	bool isNextTo( int x, int y ) const; ///< checks whether the coordinates are next to the unit
 
-	const std::string& getName () const { return name; }
-	bool isNameOriginal () const { return isOriginalName; }
+	const std::string& getName() const { return name; }
+	bool isNameOriginal() const { return isOriginalName; }
 
-	std::string getNamePrefix () const;
-	std::string getDisplayName () const;
-	void changeName (const std::string& newName);
+	std::string getNamePrefix() const;
+	std::string getDisplayName() const;
+	void changeName( const std::string& newName );
 
-	SDL_Rect getMenuSize () const;
-	bool areCoordsOverMenu (int x, int y) const;
-	void setMenuSelection ();
-	void drawMenu (cGameGUI &gameGUI);
-	void menuReleased (cGameGUI &gameGUI);
-	virtual void executeAutoMoveJobCommand () {}
-	virtual void executeLayMinesCommand () {}
-	virtual void executeClearMinesCommand () {}
+	SDL_Rect getMenuSize() const;
+	bool areCoordsOverMenu( int x, int y ) const;
+	void setMenuSelection();
+	void drawMenu( cGameGUI& gameGUI );
+	void menuReleased( cGameGUI& gameGUI );
+	virtual void executeAutoMoveJobCommand() {}
+	virtual void executeLayMinesCommand() {}
+	virtual void executeClearMinesCommand() {}
 
-	int getScreenPosX () const;
-	int getScreenPosY () const;
-	void center () const;
+	int getScreenPosX() const;
+	int getScreenPosY() const;
+	void center() const;
 
-	virtual int getMovementOffsetX () const {return 0;}
-	virtual int getMovementOffsetY () const {return 0;}
+	virtual int getMovementOffsetX() const {return 0;}
+	virtual int getMovementOffsetY() const {return 0;}
 
-	void drawMunBar () const;
-	void drawHealthBar () const;
-	void rotateTo (int newDir);
+	void drawMunBar() const;
+	void drawHealthBar() const;
+	void rotateTo( int newDir );
 
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
+	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true ) {}
 
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
 	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
 	 */
-	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack=false, bool checkRange=true) const;
+	bool canAttackObjectAt( int x, int y, cMap* map, bool forceAttack = false, bool checkRange = true ) const;
 
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
 
-	void deleteStoredUnits ();
+	void deleteStoredUnits();
 
 
 	//------------------------------- public members: TODO: make protected and make getters/setters
@@ -120,30 +120,30 @@ protected:
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
 	std::string name;		// name of the building
 
-	void drawStatus () const;
-	int getNumberOfMenuEntries () const;
+	void drawStatus() const;
+	int getNumberOfMenuEntries() const;
 
-	virtual bool isUnitLoaded () const { return false; }
-	virtual bool isUnitMoving () const { return false; }
-	virtual bool isAutoMoveJobActive () const { return false; }
-	virtual bool isUnitWorking () const { return false; }
-	virtual bool isUnitClearing () const { return false; }
-	virtual bool isUnitLayingMines () const { return false; }
-	virtual bool isUnitClearingMines () const { return false; }
-	virtual bool isUnitBuildingABuilding () const { return false; }
-	virtual bool factoryHasJustFinishedBuilding () const { return false; }
-	virtual bool buildingCanBeStarted () const { return false; }
-	virtual bool buildingCanBeUpgraded () const { return false; }
-	virtual bool canBeStoppedViaUnitMenu () const { return false; }
+	virtual bool isUnitLoaded() const { return false; }
+	virtual bool isUnitMoving() const { return false; }
+	virtual bool isAutoMoveJobActive() const { return false; }
+	virtual bool isUnitWorking() const { return false; }
+	virtual bool isUnitClearing() const { return false; }
+	virtual bool isUnitLayingMines() const { return false; }
+	virtual bool isUnitClearingMines() const { return false; }
+	virtual bool isUnitBuildingABuilding() const { return false; }
+	virtual bool factoryHasJustFinishedBuilding() const { return false; }
+	virtual bool buildingCanBeStarted() const { return false; }
+	virtual bool buildingCanBeUpgraded() const { return false; }
+	virtual bool canBeStoppedViaUnitMenu() const { return false; }
 
-	virtual void executeBuildCommand () {}
-	virtual void executeMineManagerCommand () {}
-	virtual void executeStopCommand () {}
-	virtual void executeActivateStoredVehiclesCommand () {}
-	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType) {}
-	virtual void executeSelfDestroyCommand () {}
+	virtual void executeBuildCommand() {}
+	virtual void executeMineManagerCommand() {}
+	virtual void executeStopCommand() {}
+	virtual void executeActivateStoredVehiclesCommand() {}
+	virtual void executeUpdateBuildingCommmand( bool updateAllOfSameType ) {}
+	virtual void executeSelfDestroyCommand() {}
 
-	virtual sUnitData* getUpgradedUnitData () const = 0;
+	virtual sUnitData* getUpgradedUnitData() const = 0;
 };
 
 #endif

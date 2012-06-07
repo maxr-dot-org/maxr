@@ -59,10 +59,10 @@ struct sTurnstartReport
 * Callback funktion for the serverthread
 *@author alzi alias DoctorDeath
 */
-int CallbackRunServerThread( void *arg );
+int CallbackRunServerThread( void* arg );
 
 
-Uint32 ServerTimerCallback(Uint32 interval, void *arg);
+Uint32 ServerTimerCallback( Uint32 interval, void* arg );
 
 struct sLandingUnit;
 
@@ -84,8 +84,8 @@ public:
 	 *@param turnLimit Game ends after this many turns
 	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer(cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit=0, int scoreLimit=0);
-	void setDeadline(int iDeadline);
+	cServer( cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0 );
+	void setDeadline( int iDeadline );
 	~cServer();
 
 private:
@@ -95,7 +95,7 @@ private:
 	cNetMessage* lastEvent;
 
 	/** the thread the server runs in */
-	SDL_Thread *ServerThread;
+	SDL_Thread* ServerThread;
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
@@ -148,7 +148,7 @@ private:
 
 	cCasualtiesTracker* casualtiesTracker;
 public:
-	cCasualtiesTracker* getCasualtiesTracker () {return casualtiesTracker;}
+	cCasualtiesTracker* getCasualtiesTracker() {return casualtiesTracker;}
 
 private:
 	/**
@@ -180,25 +180,25 @@ private:
 	*@param Player Player whose vehicle should be land.
 	*@return NULL if the vehicle could not be landed, else a pointer to the vehicle.
 	*/
-	cVehicle *landVehicle ( int iX, int iY, int iWidth, int iHeight, sVehicle *Vehicle, cPlayer *Player );
+	cVehicle* landVehicle( int iX, int iY, int iWidth, int iHeight, sVehicle* Vehicle, cPlayer* Player );
 
 	/**
 	* handles the pressed end of a player
 	*@author alzi alias DoctorDeath
 	*/
-	void handleEnd ( int iPlayerNum );
+	void handleEnd( int iPlayerNum );
 	/**
 	* executes everthing for a turnend
 	*@author alzi alias DoctorDeath
 	*@param iPlayerNum Number of player who has pressed the end turn button
 	*@param bChangeTurn true if all players have ended their turn and the turnnumber has changed
 	*/
-	void makeTurnEnd ();
+	void makeTurnEnd();
 	/**
 	* checks whether a player is defeated
 	*@author alzi alias DoctorDeath
 	*/
-	void checkDefeats ();
+	void checkDefeats();
 
 public:
 	/**
@@ -213,13 +213,13 @@ private:
 	*@param iPlayer The player who will receive the messages when the turn can't be finished now; -1 for all players
 	*@return true if there were found some moving units
 	*/
-	bool checkEndActions ( int iPlayer );
+	bool checkEndActions( int iPlayer );
 public:
 	/**
 	* checks wether the deadline has run down
 	*@author alzi alias DoctorDeath
 	*/
-	void checkDeadline ();
+	void checkDeadline();
 	/**
 	* handles the timers timer50ms, timer100ms and timer400ms
 	*@author alzi alias DoctorDeath
@@ -236,35 +236,35 @@ private:
 	* Calculates the cost, that this upgrade would have for the given player.
 	*@author Paul Grathwohl
 	*/
-	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
+	int getUpgradeCosts( sID& ID, cPlayer* player, bool bVehicle,
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
-						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
+						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed );
 	/**
 	* changes the owner of a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void changeUnitOwner ( cVehicle *vehicle, cPlayer *newOwner );
+	void changeUnitOwner( cVehicle* vehicle, cPlayer* newOwner );
 	/**
 	* stops the buildingprocess of a working vehicle.
 	*@author alzi alias DoctorDeath
 	*/
-	void stopVehicleBuilding ( cVehicle *vehicle );
+	void stopVehicleBuilding( cVehicle* vehicle );
 
 	/**
 	 * Helper for destroyUnit(cBuilding) that deletes all buildings in the iterator and returns the generated rubble value.
 	 * @author Paul Grathwohl
 	 */
-	int deleteBuildings(cBuildingIterator building);
+	int deleteBuildings( cBuildingIterator building );
 
 public:
 	/** the map */
-	cMap *Map;
+	cMap* Map;
 	/** List with all attackjobs */
 	cList<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */
 	cList<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */
-	cList<cPlayer*> *PlayerList;
+	cList<cPlayer*>* PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
 
@@ -272,25 +272,25 @@ public:
 	 * gets the unit with the ID
 	 *@param iID The ID of the unit
 	 */
-	cUnit* getUnitFromID (unsigned int iID) const;
+	cUnit* getUnitFromID( unsigned int iID ) const;
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle* getVehicleFromID (unsigned int iID) const;
+	cVehicle* getVehicleFromID( unsigned int iID ) const;
 	/**
 	* gets the bulding with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the building
 	*/
-	cBuilding* getBuildingFromID (unsigned int iID) const;
+	cBuilding* getBuildingFromID( unsigned int iID ) const;
 
 	/**
 	* checks whether a player has detected some new enemy units
 	*@author alzi alias DoctorDeath
 	*/
-	void checkPlayerUnits ();
+	void checkPlayerUnits();
 
 	/**
 	* returns the player with the given number
@@ -298,20 +298,20 @@ public:
 	*@param iNum The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer *getPlayerFromNumber ( int iNum );
+	cPlayer* getPlayerFromNumber( int iNum );
 
 	/**
 	 * returns if the player is on the disconnected players list
 	 *@author pagra
 	 */
-	bool isPlayerDisconnected (cPlayer* player) const;
+	bool isPlayerDisconnected( cPlayer* player ) const;
 
 	/**
 	 * puts all players on the disconnected list. This is useful for loading a
 	 * game on the dedicated server.
 	 *@author pagra
 	 */
-	void markAllPlayersAsDisconnected ();
+	void markAllPlayersAsDisconnected();
 
 	/**
 	* pushes an event to the eventqueue of the server. This is threadsafe.
@@ -319,7 +319,7 @@ public:
 	*@param event The SDL_Event to be pushed.
 	*@return 0 for success
 	*/
-	int pushEvent( cNetMessage *event );
+	int pushEvent( cNetMessage* event );
 
 
 	/**
@@ -344,7 +344,7 @@ public:
 	*@param unit the unit which should be deleted.
 	*@param notifyClient when false, the Unit is only removed locally on the Server. The caller must make sure to inform the clients
 	*/
-	void deleteUnit (cUnit* unit, bool notifyClient = true);
+	void deleteUnit( cUnit* unit, bool notifyClient = true );
 
 	/**
 	* deletes an unit (and additional units on the same field if nessesarry)
@@ -365,8 +365,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle *addUnit( int iPosX, int iPosY, sVehicle *Vehicle, cPlayer *Player, bool bInit = false, bool bAddToMap = true );
-	cBuilding *addUnit( int iPosX, int iPosY, sBuilding *Building, cPlayer *Player, bool bInit = false );
+	cVehicle* addUnit( int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true );
+	cBuilding* addUnit( int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit = false );
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath
@@ -376,11 +376,11 @@ public:
 	*@param List List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding( int iX, int iY, cPlayer *Player, cList<sLandingUnit> *List, bool bFixed );
+	void makeLanding( int iX, int iY, cPlayer* Player, cList<sLandingUnit>* List, bool bFixed );
 	/**
 	 *
 	 */
-	void correctLandingPos( int &iX, int &iY);
+	void correctLandingPos( int& iX, int& iY );
 	/**
 	* increments the iTimeTimer.
 	*@author alzi alias DoctorDeath
@@ -393,17 +393,17 @@ public:
 	*@param bVehicle true if the report is about vehicles
 	*@param iPlayerNum Number of player to whos list the report should be added
 	*/
-	void addReport ( sID Type, bool bVehicle, int iPlayerNum );
+	void addReport( sID Type, bool bVehicle, int iPlayerNum );
 	/**
 	* adds an new movejob
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
-	void addActiveMoveJob ( cServerMoveJob *MoveJob );
+	void addActiveMoveJob( cServerMoveJob* MoveJob );
 	/**
 	* generates a new movejob
 	*/
-	bool addMoveJob(int srcX, int srcY, int destX, int destY, cVehicle* vehicle);
+	bool addMoveJob( int srcX, int srcY, int destX, int destY, cVehicle* vehicle );
 	/**
 	* adds a new rubble object to the game
 	* @param x,y the position where the rubble is added
@@ -417,23 +417,23 @@ public:
 	*/
 	void deleteRubble( cBuilding* rubble );
 
-	void resyncPlayer ( cPlayer *Player, bool firstDelete = false );
-	void resyncVehicle ( cVehicle *Vehicle, cPlayer *Player );
+	void resyncPlayer( cPlayer* Player, bool firstDelete = false );
+	void resyncVehicle( cVehicle* Vehicle, cPlayer* Player );
 	/**
 	* deletes a player and all his units
 	*@author alzi alias DoctorDeath
 	*/
-	void deletePlayer( cPlayer *Player );
+	void deletePlayer( cPlayer* Player );
 
 	void sideStepStealthUnit( int PosX, int PosY, cVehicle* vehicle, int bigOffset = -1 );
 	void sideStepStealthUnit( int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1 );
 
-	void makeAdditionalSaveRequest ( int saveNum );
+	void makeAdditionalSaveRequest( int saveNum );
 
 	int getTurn() const;
 
-	bool isTurnBasedGame () const { return bPlayTurns; }
+	bool isTurnBasedGame() const { return bPlayTurns; }
 
-} EX *Server;
+} EX* Server;
 
 #endif

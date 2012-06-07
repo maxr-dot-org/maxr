@@ -38,7 +38,7 @@ private:
 
 
 public:
-	cRingbuffer(): elements(NULL), read_(0), write_(0), capacity(0) {}
+	cRingbuffer(): elements( NULL ), read_( 0 ), write_( 0 ), capacity( 0 ) {}
 	~cRingbuffer() { delete [] elements; }
 
 	int size();
@@ -49,17 +49,17 @@ public:
 
 template<typename T> int cRingbuffer<T>::size()
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock( mutex );
 
 	int size = write_ - read_;
-	if (size < 0) size += capacity;
+	if ( size < 0 ) size += capacity;
 
 	return size;
 }
 
-template<typename T> void cRingbuffer<T>::write(const T element)
+template<typename T> void cRingbuffer<T>::write( const T element )
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock( mutex );
 
 	int s = size();
 	if ( s >= capacity - 1 )
@@ -94,7 +94,7 @@ template<typename T> void cRingbuffer<T>::write(const T element)
 
 template<typename T> T cRingbuffer<T>::read()
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock( mutex );
 
 	assert( size() != 0 );
 

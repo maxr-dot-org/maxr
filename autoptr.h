@@ -4,7 +4,7 @@
 #include "autoobj.h"
 
 template<typename T>
-void deleteFunc(T* ptr) { delete ptr; }
+void deleteFunc( T* ptr ) { delete ptr; }
 
 template <typename T>
 struct AutoPtr

@@ -25,7 +25,7 @@
 #include "vehicles.h"
 #include "player.h"
 
-void sDrawingCacheEntry::init( cVehicle* vehicle)
+void sDrawingCacheEntry::init( cVehicle* vehicle )
 {
 	dir = vehicle->dir;
 	owner = vehicle->owner;
@@ -40,20 +40,20 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	else
 		frame = ANIMATION_SPEED % 4;
 
-	water = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY ) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
+	water = Client->getMap()->isWater( vehicle->PosX, vehicle->PosY ) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
 
-	bool isOnWaterAndNotCoast = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY, true);
+	bool isOnWaterAndNotCoast = Client->getMap()->isWater( vehicle->PosX, vehicle->PosY, true );
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
+	cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
 	if ( vehicle->data.factorGround > 0 && building
-		&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
-			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
-			|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
+		 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
+			  || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
+			  || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ( (vehicle->data.isStealthOn&TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
+	if ( ( vehicle->data.isStealthOn & TERRAIN_SEA ) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
 		stealth = true;
 	else
 		stealth = false;
@@ -62,11 +62,11 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 	lastUsed = Client->gameGUI.getFrame();
 
 	//determine needed size of the surface
-	int height = (int) std::max(vehicle->typ->img_org[vehicle->dir]->h*zoom, vehicle->typ->shw_org[vehicle->dir]->h*zoom);
-	int width  = (int) std::max(vehicle->typ->img_org[vehicle->dir]->w*zoom, vehicle->typ->shw_org[vehicle->dir]->w*zoom);
+	int height = ( int ) std::max( vehicle->typ->img_org[vehicle->dir]->h * zoom, vehicle->typ->shw_org[vehicle->dir]->h * zoom );
+	int width  = ( int ) std::max( vehicle->typ->img_org[vehicle->dir]->w * zoom, vehicle->typ->shw_org[vehicle->dir]->w * zoom );
 	if ( vehicle->FlightHigh > 0 )
 	{
-		int shwOff = ( ( int ) ( Client->gameGUI.getTileSize() * ( vehicle->FlightHigh / 64.0 ) ) );
+		int shwOff = ( ( int )( Client->gameGUI.getTileSize() * ( vehicle->FlightHigh / 64.0 ) ) );
 		height += shwOff;
 		width  += shwOff;
 	}
@@ -75,10 +75,10 @@ void sDrawingCacheEntry::init( cVehicle* vehicle)
 		width  = 130;
 		height = 130;
 	}
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = SDL_CreateRGBSurface( SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000 );
 
-	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );
+	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0 ) );
+	SDL_SetColorKey( surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0 ) );
 };
 
 void sDrawingCacheEntry::init( cBuilding* building )
@@ -101,14 +101,14 @@ void sDrawingCacheEntry::init( cBuilding* building )
 	lastUsed = Client->gameGUI.getFrame();
 
 	//determine needed size of the surface
-	int height = (int) std::max(building->typ->img_org->h*zoom, building->typ->shw_org->h*zoom);
-	int width  = (int) std::max(building->typ->img_org->w*zoom, building->typ->shw_org->w*zoom);
-	if ( building->data.hasFrames ) width = (int) (building->typ->shw_org->w*zoom);
+	int height = ( int ) std::max( building->typ->img_org->h * zoom, building->typ->shw_org->h * zoom );
+	int width  = ( int ) std::max( building->typ->img_org->w * zoom, building->typ->shw_org->w * zoom );
+	if ( building->data.hasFrames ) width = ( int )( building->typ->shw_org->w * zoom );
 
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	surface = SDL_CreateRGBSurface( SDL_SWSURFACE, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000 );
 
-	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0));
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY|SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0) );
+	SDL_FillRect( surface, NULL, SDL_MapRGBA( surface->format, 255, 0, 255, 0 ) );
+	SDL_SetColorKey( surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA( surface->format, 255, 0, 255, 0 ) );
 };
 
 cDrawingCache::cDrawingCache()
@@ -127,9 +127,9 @@ cDrawingCache::~cDrawingCache()
 	delete[] cachedImages;
 };
 
-SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
+SDL_Surface* cDrawingCache::getCachedImage( cBuilding* building )
 {
-	if ( !canCache(building) ) return NULL;
+	if ( !canCache( building ) ) return NULL;
 
 	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
@@ -173,9 +173,9 @@ SDL_Surface* cDrawingCache::getCachedImage(cBuilding* building )
 	return NULL;
 };
 
-SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
+SDL_Surface* cDrawingCache::getCachedImage( cVehicle* vehicle )
 {
-	if ( !canCache(vehicle) ) return NULL;
+	if ( !canCache( vehicle ) ) return NULL;
 
 	for ( unsigned int i = 0; i < cacheSize; i++ )
 	{
@@ -201,7 +201,7 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		}
 		if ( entry.zoom != Client->gameGUI.getZoom() ) continue;
 
-		bool water = Client->getMap()->isWater(vehicle->PosX, vehicle->PosY) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
+		bool water = Client->getMap()->isWater( vehicle->PosX, vehicle->PosY ) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
 		if ( vehicle->IsBuilding )
 		{
 			if ( water != entry.water ) continue;
@@ -210,17 +210,17 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 		//check the stealth flag
 		bool stealth = false;
 
-		bool isOnWaterAndNotCoast = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY, true);
-		cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY*Client->getMap()->size].getBaseBuilding();
+		bool isOnWaterAndNotCoast = Client->getMap()->isWater( vehicle->PosX, vehicle->PosY, true );
+		cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
 		if ( vehicle->data.factorGround > 0 && building
-			&& ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
-				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
-				|| building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
+			 && ( building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
+				  || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
+				  || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE ) )
 		{
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
+		if ( ( vehicle->data.isStealthOn & TERRAIN_SEA ) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer() )
 			stealth = true;
 
 		if ( entry.stealth != stealth ) continue;
@@ -238,9 +238,9 @@ SDL_Surface* cDrawingCache::getCachedImage(cVehicle* vehicle )
 	return NULL;
 };
 
-SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
+SDL_Surface* cDrawingCache::createNewEntry( cBuilding* building )
 {
-	if ( !canCache(building) ) return NULL;
+	if ( !canCache( building ) ) return NULL;
 
 	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
 	{
@@ -271,9 +271,9 @@ SDL_Surface* cDrawingCache::createNewEntry(cBuilding* building)
 	return NULL;
 };
 
-SDL_Surface* cDrawingCache::createNewEntry(cVehicle* vehicle)
+SDL_Surface* cDrawingCache::createNewEntry( cVehicle* vehicle )
 {
-	if ( !canCache(vehicle) )
+	if ( !canCache( vehicle ) )
 		return NULL;
 
 	if ( cacheSize < maxCacheSize ) //cache hasn't reached the max size, so allocate a new entry
@@ -312,8 +312,8 @@ void cDrawingCache::flush()
 bool cDrawingCache::canCache( cBuilding* building )
 {
 	if ( !building->owner   ||
-		  building->StartUp ||
-		  building->data.isAnimated )
+		 building->StartUp ||
+		 building->data.isAnimated )
 	{
 		notCached++;
 		return false;
@@ -363,7 +363,7 @@ void cDrawingCache::setMaxCacheSize( unsigned int newSize )
 	maxCacheSize = newSize;
 	cacheSize = 0;
 
-	cSettings::getInstance().setCacheSize(newSize);
+	cSettings::getInstance().setCacheSize( newSize );
 };
 
 int cDrawingCache::getCacheSize() const
@@ -383,5 +383,5 @@ int cDrawingCache::getCacheMisses() const
 
 int cDrawingCache::getNotCached() const
 {
-	return notCached/2;
+	return notCached / 2;
 };
