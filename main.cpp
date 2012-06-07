@@ -280,8 +280,8 @@ void Quit()
 	delete InputHandler;
 	delete EventHandler;
 
-	UnitsData.vehicle.Reserve( 0 );
-	UnitsData.building.Reserve( 0 );
+	UnitsData.vehicle.Clear();
+	UnitsData.building.Clear();
 
 	//unload files here
 	CloseSound();
