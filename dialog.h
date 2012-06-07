@@ -18,8 +18,10 @@
  ***************************************************************************/
 #ifndef dialogH
 #define dialogH
+
 #include "defines.h"
 #include "menus.h"
+#include "autoptr.h"
 
 /**
  Shows localized Yes/No dialog. The show function returns 0 for yes and 1 for no.
@@ -27,7 +29,7 @@
 class cDialogYesNo : public cMenu
 {
 public:
-	cDialogYesNo( const std::string& text );
+	explicit cDialogYesNo( const std::string& text );
 
 	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
 
@@ -35,7 +37,7 @@ public:
 	static void noReleased( void* parent );
 
 private:
-	cMenuLabel  textLabel;
+	cMenuLabel textLabel;
 	cMenuButton yesButton;
 	cMenuButton noButton;
 };
@@ -46,14 +48,14 @@ private:
 class cDialogOK : public cMenu
 {
 public:
-	cDialogOK( const std::string& text );
+	explicit cDialogOK( const std::string& text );
 
 	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
 
 	static void okReleased( void* parent );
 
 private:
-	cMenuLabel  textLabel;
+	cMenuLabel textLabel;
 	cMenuButton okButton;
 };
 
@@ -113,45 +115,44 @@ class cDialogPreferences : public cMenu
 	int oldMusicVolume, oldEffectsVolume, oldVoicesVolume;
 	bool oldMusicMute, oldEffectsMute, oldVoicesMute;
 
-	cMenuLabel* titleLabel;
+	cMenuLabel titleLabel;
 
-	cMenuLabel* volumeLabel;
-	cMenuLabel* musicLabel;
-	cMenuLabel* effectsLabel;
-	cMenuLabel* voicesLabel;
-	cMenuCheckButton* disableMusicChBox;
-	cMenuCheckButton* disableEffectsChBox;
-	cMenuCheckButton* disableVoicesChBox;
-	cMenuSlider* musicSlider;
-	cMenuSlider* effectsSlider;
-	cMenuSlider* voicesSlider;
+	cMenuLabel volumeLabel;
+	cMenuLabel musicLabel;
+	cMenuLabel effectsLabel;
+	cMenuLabel voicesLabel;
+	cMenuCheckButton disableMusicChBox;
+	cMenuCheckButton disableEffectsChBox;
+	cMenuCheckButton disableVoicesChBox;
+	cMenuSlider musicSlider;
+	cMenuSlider effectsSlider;
+	cMenuSlider voicesSlider;
 
-	cMenuLabel* nameLabel;
-	cMenuLineEdit* nameEdit;
+	cMenuLabel nameLabel;
+	cMenuLineEdit nameEdit;
 
-	cMenuCheckButton* animationChBox;
-	cMenuCheckButton* shadowsChBox;
-	cMenuCheckButton* alphaChBox;
-	cMenuCheckButton* demageBuilChBox;
-	cMenuCheckButton* demageVehChBox;
-	cMenuCheckButton* tracksChBox;
+	cMenuCheckButton animationChBox;
+	cMenuCheckButton shadowsChBox;
+	cMenuCheckButton alphaChBox;
+	cMenuCheckButton demageBuilChBox;
+	cMenuCheckButton demageVehChBox;
+	cMenuCheckButton tracksChBox;
 
-	cMenuLabel* scrollSpeedLabel;
-	cMenuSlider* scrollSpeedSlider;
+	cMenuLabel scrollSpeedLabel;
+	cMenuSlider scrollSpeedSlider;
 
-	cMenuCheckButton* autosaveChBox;
-	cMenuCheckButton* introChBox;
-	cMenuCheckButton* windowChBox;
+	cMenuCheckButton autosaveChBox;
+	cMenuCheckButton introChBox;
+	cMenuCheckButton windowChBox;
 
-	cMenuRadioGroup* resoulutionGroup;
+	cMenuRadioGroup resoulutionGroup;
 
-	cMenuButton* okButton;
-	cMenuButton* cancelButton;
+	cMenuButton okButton;
+	cMenuButton cancelButton;
 
 	void saveValues();
 public:
 	cDialogPreferences();
-	~cDialogPreferences();
 
 	static void okReleased( void* parent );
 	static void cancelReleased( void* parent );
@@ -175,19 +176,19 @@ class cDialogTransfer : public cMenu
 	int destCargo, maxDestCargo;
 	int transferValue;
 
-	cMenuButton* doneButton;
-	cMenuButton* cancelButton;
+	cMenuButton doneButton;
+	cMenuButton cancelButton;
 
-	cMenuButton* incButton;
-	cMenuButton* decButton;
+	cMenuButton incButton;
+	cMenuButton decButton;
 
-	cMenuMaterialBar* resBar;
+	cMenuMaterialBar resBar;
 
-	cMenuImage* unitImages[2];
+	AutoPtr<cMenuImage>::type unitImages[2];
 
-	cMenuLabel* unitNameLabels[2];
-	cMenuLabel* unitCargoLabels[2];
-	cMenuLabel* transferLabel;
+	AutoPtr<cMenuLabel>::type unitNameLabels[2];
+	AutoPtr<cMenuLabel>::type unitCargoLabels[2];
+	cMenuLabel transferLabel;
 
 	void getTransferType();
 	void getNamesNCargoNImages();
@@ -215,29 +216,28 @@ class cDialogResearch : public cMenu
 	int newResearchSettings[cResearch::kNrResearchAreas];
 	int unusedResearch;
 
-	cMenuLabel* titleLabel;
+	cMenuLabel titleLabel;
 
-	cMenuLabel* centersLabel;
-	cMenuLabel* themeLabel;
-	cMenuLabel* turnsLabel;
+	cMenuLabel centersLabel;
+	cMenuLabel themeLabel;
+	cMenuLabel turnsLabel;
 
-	cMenuButton* doneButton;
-	cMenuButton* cancelButton;
+	cMenuButton doneButton;
+	cMenuButton cancelButton;
 
-	cMenuButton* incButtons[cResearch::kNrResearchAreas];
-	cMenuButton* decButtons[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuButton>::type incButtons[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuButton>::type decButtons[cResearch::kNrResearchAreas];
 
-	cMenuScrollerHandler* scroller[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuScrollerHandler>::type scroller[cResearch::kNrResearchAreas];
 
-	cMenuLabel* centerCountLabels[cResearch::kNrResearchAreas];
-	cMenuLabel* themeNameLabels[cResearch::kNrResearchAreas];
-	cMenuLabel* percentageLabels[cResearch::kNrResearchAreas];
-	cMenuLabel* turnsLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel>::type centerCountLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel>::type themeNameLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel>::type percentageLabels[cResearch::kNrResearchAreas];
+	AutoPtr<cMenuLabel>::type turnsLabels[cResearch::kNrResearchAreas];
 
 	void setData();
 public:
-	cDialogResearch( cPlayer* owner_ );
-	~cDialogResearch();
+	explicit cDialogResearch( cPlayer* owner_ );
 
 	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
 

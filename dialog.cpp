@@ -42,7 +42,7 @@ using namespace std;
 
 cDialogYesNo::cDialogYesNo( const string& text ) :
 	cMenu( LoadPCX( GFXOD_DIALOG2 ), MNU_BG_ALPHA ),
-	textLabel( position.x +  40, position.y +  40, text ),
+	textLabel( position.x + 40, position.y + 40, text ),
 	yesButton( position.x + 155, position.y + 185, lngPack.i18n( "Text~Button~Yes" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
 	noButton( position.x +  67, position.y + 185, lngPack.i18n( "Text~Button~No" ),  cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL )
 {
@@ -138,7 +138,6 @@ cDestructMenu::cDestructMenu() :
 	destroyButton.setReleasedFunction( &destroyReleased );
 	destroyButton.setReleaseSound( SoundData.SNDMenuButton );
 	menuItems.Add( &destroyButton );
-
 }
 
 void cDestructMenu::cancelReleased( void* parent )
@@ -164,10 +163,10 @@ cDialogLicence::cDialogLicence() :
 	cMenu( LoadPCX( GFXOD_DIALOG4 ), MNU_BG_ALPHA ),
 	maxrLabel( position.x + position.w / 2, position.y +  30, "\"M.A.X.R.\"" ),
 	headerLabel( position.x + position.w / 2, position.y +  30 + font->getFontHeight(), "(C) 2007 by its authors" ),
-	textLabel( position.x +  35,            position.y +  30 + 3 * font->getFontHeight() ),
-	okButton( position.x + 111,            position.y + 185, lngPack.i18n( "Text~Button~OK" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
-	upButton( position.x + 241,            position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL ),
-	downButton( position.x + 261,            position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL )
+	textLabel( position.x +  35, position.y +  30 + 3 * font->getFontHeight() ),
+	okButton( position.x + 111, position.y + 185, lngPack.i18n( "Text~Button~OK" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
+	upButton( position.x + 241, position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL ),
+	downButton( position.x + 261, position.y + 187, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL )
 {
 	generateLicenceTexts();
 
@@ -221,7 +220,6 @@ void cDialogLicence::generateLicenceTexts()
 #else
 	sAuthors = cSettings::getInstance().getDataDir() + PATH_DELIMITER + "AUTHORS";
 #endif
-
 
 	sLicence4 = "";
 	char line[72];
@@ -299,99 +297,95 @@ void cDialogLicence::downReleased( void* parent )
 	menu->resetText();
 }
 
-cDialogPreferences::cDialogPreferences() : cMenu( LoadPCX( GFXOD_DIALOG5 ), MNU_BG_ALPHA )
+cDialogPreferences::cDialogPreferences() : cMenu( LoadPCX( GFXOD_DIALOG5 ), MNU_BG_ALPHA ),
+	titleLabel( position.x + position.w / 2, position.y + 15, lngPack.i18n( "Text~Settings~Preferences" ) ),
+	volumeLabel( position.x + 25, position.y + 56, lngPack.i18n( "Text~Settings~Volume" ) + ":" ),
+	musicLabel( position.x + 25, position.y + 56 + 20, lngPack.i18n( "Text~Settings~Music" ) ),
+	effectsLabel( position.x + 25, position.y + 56 + 20 * 2, lngPack.i18n( "Text~Settings~Effects" ) ),
+	voicesLabel( position.x + 25, position.y + 56 + 20 * 3, lngPack.i18n( "Text~Settings~Voices" ) ),
+	disableMusicChBox( position.x + 210, position.y + 73, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isMusicMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	disableEffectsChBox( position.x + 210, position.y + 73 + 20, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isSoundMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	disableVoicesChBox( position.x + 210, position.y + 73 + 20 * 2, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isVoiceMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	musicSlider( position.x + 140, position.y + 81, 0, 128, this ),
+	effectsSlider( position.x + 140, position.y + 81 + 20, 0, 128, this ),
+	voicesSlider( position.x + 140, position.y + 81 + 20 * 2, 0, 128, this ),
+	nameLabel( position.x + 25, position.y + 158, lngPack.i18n( "Text~Title~Player_Name" ) ),
+	nameEdit( position.x + 112, position.y + 154, 185, 18, this ),
+	animationChBox( position.x + 25, position.y + 193, lngPack.i18n( "Text~Settings~Animation" ), cSettings::getInstance().isAnimations(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	shadowsChBox( position.x + 25, position.y + 193 + 20, lngPack.i18n( "Text~Settings~Shadows" ), cSettings::getInstance().isShadows(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	alphaChBox( position.x + 25, position.y + 193 + 20 * 2, lngPack.i18n( "Text~Settings~Alphaeffects" ), cSettings::getInstance().isAlphaEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	demageBuilChBox( position.x + 210, position.y + 193, lngPack.i18n( "Text~Settings~ShowDamage" ), cSettings::getInstance().isDamageEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	demageVehChBox( position.x + 210, position.y + 193 + 20, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ), cSettings::getInstance().isDamageEffectsVehicles(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	tracksChBox( position.x + 210, position.y + 193 + 20 * 2, lngPack.i18n( "Text~Settings~Tracks" ), cSettings::getInstance().isMakeTracks(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	scrollSpeedLabel( position.x + 25, position.y + 232 + 25, lngPack.i18n( "Text~Settings~Scrollspeed" ) ),
+	scrollSpeedSlider( position.x + 140, position.y + 261, 0, 250, this ),
+	autosaveChBox( position.x + 25, position.y + 294, lngPack.i18n( "Text~Settings~Autosave" ), cSettings::getInstance().shouldAutosave(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	introChBox( position.x + 25, position.y + 294 + 20, lngPack.i18n( "Text~Settings~Intro" ), cSettings::getInstance().shouldShowIntro(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	windowChBox( position.x + 25, position.y + 294 + 20 * 2, lngPack.i18n( "Text~Settings~Window" ), Video.getWindowMode(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD ),
+	resoulutionGroup(),
+	okButton( position.x + 208, position.y + 383, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
+	cancelButton( position.x + 118, position.y + 383, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL )
 {
 	// blit black titlebar behind textfield for playername
 	SDL_Rect src = { 108, 12, 186, 18 };
 	SDL_Rect dest = { 108, 154, 0, 0 };
 	SDL_BlitSurface( background, &src, background, &dest );
 
-	titleLabel = new cMenuLabel( position.x + position.w / 2, position.y + 15, lngPack.i18n( "Text~Settings~Preferences" ) );
-	titleLabel->setCentered( true );
-	menuItems.Add( titleLabel );
+	titleLabel.setCentered( true );
+	menuItems.Add( &titleLabel );
+	menuItems.Add( &volumeLabel );
+	menuItems.Add( &musicLabel );
+	menuItems.Add( &effectsLabel );
+	menuItems.Add( &voicesLabel );
 
-	volumeLabel = new cMenuLabel( position.x + 25, position.y + 56, lngPack.i18n( "Text~Settings~Volume" ) + ":" );
-	menuItems.Add( volumeLabel );
+	disableMusicChBox.setClickedFunction( &musicMuteChanged );
+	menuItems.Add( &disableMusicChBox );
+	disableEffectsChBox.setClickedFunction( &effectsMuteChanged );
+	menuItems.Add( &disableEffectsChBox );
+	disableVoicesChBox.setClickedFunction( &voicesMuteChanged );
+	menuItems.Add( &disableVoicesChBox );
 
-	musicLabel = new cMenuLabel( position.x + 25, position.y + 56 + 20, lngPack.i18n( "Text~Settings~Music" ) );
-	menuItems.Add( musicLabel );
-	disableMusicChBox = new cMenuCheckButton( position.x + 210, position.y + 73, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isMusicMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	disableMusicChBox->setClickedFunction( &musicMuteChanged );
-	menuItems.Add( disableMusicChBox );
-	musicSlider = new cMenuSlider( position.x + 140, position.y + 81, 0, 128, this );
-	musicSlider->setValue( ( float )cSettings::getInstance().getMusicVol() );
-	musicSlider->setMoveCallback( &musicVolumeChanged );
-	menuItems.Add( musicSlider );
-	menuItems.Add( musicSlider->scroller );
+	musicSlider.setValue( ( float )cSettings::getInstance().getMusicVol() );
+	musicSlider.setMoveCallback( &musicVolumeChanged );
+	menuItems.Add( &musicSlider );
+	menuItems.Add( musicSlider.scroller );
 
-	effectsLabel = new cMenuLabel( position.x + 25, position.y + 56 + 20 * 2, lngPack.i18n( "Text~Settings~Effects" ) );
-	menuItems.Add( effectsLabel );
-	disableEffectsChBox = new cMenuCheckButton( position.x + 210, position.y + 73 + 20, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isSoundMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	disableEffectsChBox->setClickedFunction( &effectsMuteChanged );
-	menuItems.Add( disableEffectsChBox );
-	effectsSlider = new cMenuSlider( position.x + 140, position.y + 81 + 20, 0, 128, this );
-	effectsSlider->setValue( ( float )cSettings::getInstance().getSoundVol() );
-	effectsSlider->setMoveCallback( &effectsVolumeChanged );
-	menuItems.Add( effectsSlider );
-	menuItems.Add( effectsSlider->scroller );
+	effectsSlider.setValue( ( float )cSettings::getInstance().getSoundVol() );
+	effectsSlider.setMoveCallback( &effectsVolumeChanged );
+	menuItems.Add( &effectsSlider );
+	menuItems.Add( effectsSlider.scroller );
 
-	voicesLabel = new cMenuLabel( position.x + 25, position.y + 56 + 20 * 3, lngPack.i18n( "Text~Settings~Voices" ) );
-	menuItems.Add( voicesLabel );
-	disableVoicesChBox = new cMenuCheckButton( position.x + 210, position.y + 73 + 20 * 2, lngPack.i18n( "Text~Settings~Disable" ), cSettings::getInstance().isVoiceMute(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	disableVoicesChBox->setClickedFunction( &voicesMuteChanged );
-	menuItems.Add( disableVoicesChBox );
-	voicesSlider = new cMenuSlider( position.x + 140, position.y + 81 + 20 * 2, 0, 128, this );
-	voicesSlider->setValue( ( float )cSettings::getInstance().getVoiceVol() );
-	voicesSlider->setMoveCallback( &voicesVolumeChanged );
-	menuItems.Add( voicesSlider );
-	menuItems.Add( voicesSlider->scroller );
+	voicesSlider.setValue( ( float )cSettings::getInstance().getVoiceVol() );
+	voicesSlider.setMoveCallback( &voicesVolumeChanged );
+	menuItems.Add( &voicesSlider );
+	menuItems.Add( voicesSlider.scroller );
 
-	nameLabel = new cMenuLabel( position.x + 25, position.y + 158, lngPack.i18n( "Text~Title~Player_Name" ) );
-	menuItems.Add( nameLabel );
-	nameEdit = new cMenuLineEdit( position.x + 112, position.y + 154, 185, 18, this );
-	nameEdit->setText( cSettings::getInstance().getPlayerName() );
-	menuItems.Add( nameEdit );
+	menuItems.Add( &nameLabel );
 
-	animationChBox = new cMenuCheckButton( position.x + 25, position.y + 193, lngPack.i18n( "Text~Settings~Animation" ), cSettings::getInstance().isAnimations(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( animationChBox );
+	nameEdit.setText( cSettings::getInstance().getPlayerName() );
+	menuItems.Add( &nameEdit );
 
-	shadowsChBox = new cMenuCheckButton( position.x + 25, position.y + 193 + 20, lngPack.i18n( "Text~Settings~Shadows" ), cSettings::getInstance().isShadows(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( shadowsChBox );
+	menuItems.Add( &animationChBox );
+	menuItems.Add( &shadowsChBox );
+	menuItems.Add( &alphaChBox );
+	menuItems.Add( &demageBuilChBox );
+	menuItems.Add( &demageVehChBox );
+	menuItems.Add( &tracksChBox );
 
-	alphaChBox = new cMenuCheckButton( position.x + 25, position.y + 193 + 20 * 2, lngPack.i18n( "Text~Settings~Alphaeffects" ), cSettings::getInstance().isAlphaEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( alphaChBox );
+	menuItems.Add( &scrollSpeedLabel );
+	scrollSpeedSlider.setValue( ( float )cSettings::getInstance().getScrollSpeed() );
+	menuItems.Add( &scrollSpeedSlider );
+	menuItems.Add( scrollSpeedSlider.scroller );
 
-	demageBuilChBox = new cMenuCheckButton( position.x + 210, position.y + 193, lngPack.i18n( "Text~Settings~ShowDamage" ), cSettings::getInstance().isDamageEffects(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( demageBuilChBox );
-
-	demageVehChBox = new cMenuCheckButton( position.x + 210, position.y + 193 + 20, lngPack.i18n( "Text~Settings~ShowDamageVehicle" ), cSettings::getInstance().isDamageEffectsVehicles(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( demageVehChBox );
-
-	tracksChBox = new cMenuCheckButton( position.x + 210, position.y + 193 + 20 * 2, lngPack.i18n( "Text~Settings~Tracks" ), cSettings::getInstance().isMakeTracks(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( tracksChBox );
-
-	scrollSpeedLabel = new cMenuLabel( position.x + 25, position.y + 232 + 25, lngPack.i18n( "Text~Settings~Scrollspeed" ) );
-	menuItems.Add( scrollSpeedLabel );
-	scrollSpeedSlider = new cMenuSlider( position.x + 140, position.y + 261, 0, 250, this );
-	scrollSpeedSlider->setValue( ( float )cSettings::getInstance().getScrollSpeed() );
-	menuItems.Add( scrollSpeedSlider );
-	menuItems.Add( scrollSpeedSlider->scroller );
-
-	autosaveChBox = new cMenuCheckButton( position.x + 25, position.y + 294, lngPack.i18n( "Text~Settings~Autosave" ), cSettings::getInstance().shouldAutosave(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( autosaveChBox );
-
-	introChBox = new cMenuCheckButton( position.x + 25, position.y + 294 + 20, lngPack.i18n( "Text~Settings~Intro" ), cSettings::getInstance().shouldShowIntro(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( introChBox );
-
-	windowChBox = new cMenuCheckButton( position.x + 25, position.y + 294 + 20 * 2, lngPack.i18n( "Text~Settings~Window" ), Video.getWindowMode(), false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-	menuItems.Add( windowChBox );
+	menuItems.Add( &autosaveChBox );
+	menuItems.Add( &introChBox );
+	menuItems.Add( &windowChBox );
 
 	//BEGIN SCREEN RESOLUTION CHECKBOXES
 	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here.
 	//HINT: This works only as long as avail video modes have a neat follow up list starting with 0 so make sure that the modes vector doesn't get confused
 
 	int resolutionMode = Video.validateMode( Video.getResolutionX(), Video.getResolutionY() ); //set flagged box to current resolution if found
-	resoulutionGroup = new cMenuRadioGroup;
 
 	if ( Video.getVideoSize() <= 0 )
 	{
@@ -407,14 +401,14 @@ cDialogPreferences::cDialogPreferences() : cMenu( LoadPCX( GFXOD_DIALOG5 ), MNU_
 				{
 					Log.write( "Oops, looks like we read less resolutions than I should offer. This might result in some glitches in my dialog. I want a drop down box here!",  cLog::eLOG_TYPE_WARNING );
 					cMenuCheckButton* button = new cMenuCheckButton( position.x + 150 + 80 * x, position.y + 290 + 20 * y, "<empty>", resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-					resoulutionGroup->addButton( button );
+					resoulutionGroup.addButton( button );
 
 				}
 				else
 				{
 					Log.write( "Offering display resolution " + Video.getVideoMode( i ) + " to user", cLog::eLOG_TYPE_DEBUG );
 					cMenuCheckButton* button = new cMenuCheckButton( position.x + 150 + 80 * x, position.y + 290 + 20 * y, Video.getVideoMode( i ), resolutionMode == i, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD );
-					resoulutionGroup->addButton( button );
+					resoulutionGroup.addButton( button );
 
 				}
 			}
@@ -426,17 +420,15 @@ cDialogPreferences::cDialogPreferences() : cMenu( LoadPCX( GFXOD_DIALOG5 ), MNU_
 		}
 	}
 
-	menuItems.Add( resoulutionGroup );
+	menuItems.Add( &resoulutionGroup );
 
 	//END SCREEN RESOLUTION CHECKBOXES
 
-	okButton = new cMenuButton( position.x + 208, position.y + 383, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	okButton->setReleasedFunction( &okReleased );
-	menuItems.Add( okButton );
+	okButton.setReleasedFunction( &okReleased );
+	menuItems.Add( &okButton );
 
-	cancelButton = new cMenuButton( position.x + 118, position.y + 383, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	cancelButton->setReleasedFunction( &cancelReleased );
-	menuItems.Add( cancelButton );
+	cancelButton.setReleasedFunction( &cancelReleased );
+	menuItems.Add( &cancelButton );
 
 	// save old volumes
 	oldMusicVolume = cSettings::getInstance().getMusicVol();
@@ -448,62 +440,23 @@ cDialogPreferences::cDialogPreferences() : cMenu( LoadPCX( GFXOD_DIALOG5 ), MNU_
 	oldVoicesMute = cSettings::getInstance().isVoiceMute();
 }
 
-cDialogPreferences::~cDialogPreferences()
-{
-	delete titleLabel;
-
-	delete volumeLabel;
-	delete musicLabel;
-	delete effectsLabel;
-	delete voicesLabel;
-	delete disableMusicChBox;
-	delete disableEffectsChBox;
-	delete disableVoicesChBox;
-	delete musicSlider;
-	delete effectsSlider;
-	delete voicesSlider;
-
-	delete nameLabel;
-	delete nameEdit;
-
-	delete animationChBox;
-	delete shadowsChBox;
-	delete alphaChBox;
-	delete demageBuilChBox;
-	delete demageVehChBox;
-	delete tracksChBox;
-
-	delete scrollSpeedLabel;
-	delete scrollSpeedSlider;
-
-	delete autosaveChBox;
-	delete introChBox;
-	delete windowChBox;
-
-	delete resoulutionGroup;
-
-	delete okButton;
-	delete cancelButton;
-}
-
 void cDialogPreferences::saveValues()
 {
-
-	cSettings::getInstance().setPlayerName( nameEdit->getText().c_str() );
+	cSettings::getInstance().setPlayerName( nameEdit.getText().c_str() );
 	if ( Client ) Client->getActivePlayer()->name = cSettings::getInstance().getPlayerName();
 
-	cSettings::getInstance().setAutosave( autosaveChBox->isChecked() );
-	cSettings::getInstance().setAnimations( animationChBox->isChecked() );
-	cSettings::getInstance().setAlphaEffects( alphaChBox->isChecked() );
-	cSettings::getInstance().setDamageEffects( demageBuilChBox->isChecked() );
-	cSettings::getInstance().setDamageEffectsVehicles( demageVehChBox->isChecked() );
-	cSettings::getInstance().setShowIntro( introChBox->isChecked() );
-	cSettings::getInstance().setMakeTracks( tracksChBox->isChecked() );
-	Video.setWindowMode( windowChBox->isChecked() );
+	cSettings::getInstance().setAutosave( autosaveChBox.isChecked() );
+	cSettings::getInstance().setAnimations( animationChBox.isChecked() );
+	cSettings::getInstance().setAlphaEffects( alphaChBox.isChecked() );
+	cSettings::getInstance().setDamageEffects( demageBuilChBox.isChecked() );
+	cSettings::getInstance().setDamageEffectsVehicles( demageVehChBox.isChecked() );
+	cSettings::getInstance().setShowIntro( introChBox.isChecked() );
+	cSettings::getInstance().setMakeTracks( tracksChBox.isChecked() );
+	Video.setWindowMode( windowChBox.isChecked() );
 	cSettings::getInstance().saveWindowMode();
-	cSettings::getInstance().setShadows( shadowsChBox->isChecked() );
+	cSettings::getInstance().setShadows( shadowsChBox.isChecked() );
 
-	cSettings::getInstance().setScrollSpeed( ( int )scrollSpeedSlider->getValue() );
+	cSettings::getInstance().setScrollSpeed( ( int )scrollSpeedSlider.getValue() );
 
 	// save resolution
 	int oldScreenW = Video.getResolutionX();
@@ -511,7 +464,7 @@ void cDialogPreferences::saveValues()
 
 	for ( int i = 0; i < 12; i++ )
 	{
-		if ( resoulutionGroup->buttonIsChecked( i ) )
+		if ( resoulutionGroup.buttonIsChecked( i ) )
 		{
 			string sTmp = Video.getVideoMode( i );
 			int wTmp = atoi( sTmp.substr( 0, sTmp.find_first_of( 'x' ) ).c_str() );
@@ -561,28 +514,28 @@ void cDialogPreferences::cancelReleased( void* parent )
 void cDialogPreferences::musicVolumeChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
-	cSettings::getInstance().setMusicVol( ( int )menu->musicSlider->getValue() );
+	cSettings::getInstance().setMusicVol( ( int )menu->musicSlider.getValue() );
 	if ( cSettings::getInstance().isSoundEnabled() )Mix_VolumeMusic( cSettings::getInstance().getMusicVol() );
 }
 
 void cDialogPreferences::effectsVolumeChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
-	cSettings::getInstance().setSoundVol( ( int )menu->effectsSlider->getValue() );
+	cSettings::getInstance().setSoundVol( ( int )menu->effectsSlider.getValue() );
 	if ( cSettings::getInstance().isSoundEnabled() )Mix_Volume( SoundLoopChannel, cSettings::getInstance().getSoundVol() );
 }
 
 void cDialogPreferences::voicesVolumeChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
-	cSettings::getInstance().setVoiceVol( ( int )menu->voicesSlider->getValue() );
+	cSettings::getInstance().setVoiceVol( ( int )menu->voicesSlider.getValue() );
 }
 
 void cDialogPreferences::musicMuteChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
 	bool wasMute = cSettings::getInstance().isMusicMute();
-	cSettings::getInstance().setMusicMute( menu->disableMusicChBox->isChecked() );
+	cSettings::getInstance().setMusicMute( menu->disableMusicChBox.isChecked() );
 	if ( cSettings::getInstance().isMusicMute() ) StopMusic();
 	if ( !cSettings::getInstance().isMusicMute() && wasMute ) StartMusic();
 }
@@ -590,13 +543,13 @@ void cDialogPreferences::musicMuteChanged( void* parent )
 void cDialogPreferences::effectsMuteChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
-	cSettings::getInstance().setSoundMute( menu->disableEffectsChBox->isChecked() );
+	cSettings::getInstance().setSoundMute( menu->disableEffectsChBox.isChecked() );
 }
 
 void cDialogPreferences::voicesMuteChanged( void* parent )
 {
 	cDialogPreferences* menu = reinterpret_cast<cDialogPreferences*>( parent );
-	cSettings::getInstance().setVoiceMute( menu->disableVoicesChBox->isChecked() );
+	cSettings::getInstance().setVoiceMute( menu->disableVoicesChBox.isChecked() );
 }
 
 cDialogTransfer::cDialogTransfer( cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_ ) :
@@ -604,31 +557,32 @@ cDialogTransfer::cDialogTransfer( cBuilding* srcBuilding_, cVehicle* srcVehicle_
 	srcBuilding( srcBuilding_ ),
 	destBuilding( destBuilding_ ),
 	srcVehicle( srcVehicle_ ),
-	destVehicle( destVehicle_ )
+	destVehicle( destVehicle_ ),
+	doneButton( position.x + 159, position.y + 200, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
+	cancelButton( position.x + 71, position.y + 200, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
+	incButton( position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL ),
+	decButton( position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL ),
+	resBar( position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false ),
+	transferLabel( position.x + 157, position.y + 49, "", FONT_LATIN_BIG )
 {
 	// TODO: add changing arrow direction!
 
 	getTransferType();
 
-	incButton = new cMenuButton( position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL );
-	incButton->setReleasedFunction( &incReleased );
-	menuItems.Add( incButton );
+	doneButton.setReleasedFunction( &doneReleased );
+	menuItems.Add( &doneButton );
 
-	decButton = new cMenuButton( position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL );
-	decButton->setReleasedFunction( &decReleased );
-	menuItems.Add( decButton );
+	cancelButton.setReleasedFunction( &cancelReleased );
+	menuItems.Add( &cancelButton );
 
-	resBar = new cMenuMaterialBar( position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false );
-	resBar->setClickedFunction( &barClicked );
-	menuItems.Add( resBar );
+	incButton.setReleasedFunction( &incReleased );
+	menuItems.Add( &incButton );
 
-	doneButton = new cMenuButton( position.x + 159, position.y + 200, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	doneButton->setReleasedFunction( &doneReleased );
-	menuItems.Add( doneButton );
+	decButton.setReleasedFunction( &decReleased );
+	menuItems.Add( &decButton );
 
-	cancelButton = new cMenuButton( position.x + 71, position.y + 200, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	cancelButton->setReleasedFunction( &cancelReleased );
-	menuItems.Add( cancelButton );
+	resBar.setClickedFunction( &barClicked );
+	menuItems.Add( &resBar );
 
 	unitNameLabels[0] = new cMenuLabel( position.x + 70, position.y + 105, "", FONT_LATIN_SMALL_WHITE );
 	unitNameLabels[0]->setCentered( true );
@@ -646,9 +600,8 @@ cDialogTransfer::cDialogTransfer( cBuilding* srcBuilding_, cVehicle* srcVehicle_
 	unitCargoLabels[1]->setCentered( true );
 	menuItems.Add( unitCargoLabels[1] );
 
-	transferLabel = new cMenuLabel( position.x + 157, position.y + 49, "", FONT_LATIN_BIG );
-	transferLabel->setCentered( true );
-	menuItems.Add( transferLabel );
+	transferLabel.setCentered( true );
+	menuItems.Add( &transferLabel );
 
 	unitImages[0] = new cMenuImage( position.x + 39, position.y + 26 );
 	menuItems.Add( unitImages[0] );
@@ -662,24 +615,6 @@ cDialogTransfer::cDialogTransfer( cBuilding* srcBuilding_, cVehicle* srcVehicle_
 
 cDialogTransfer::~cDialogTransfer()
 {
-	delete doneButton;
-	delete cancelButton;
-
-	delete incButton;
-	delete decButton;
-
-	delete resBar;
-
-	delete transferLabel;
-
-	for ( int i = 0; i < 2; i++ )
-	{
-		delete unitImages[i];
-
-		delete unitNameLabels[i];
-		delete unitCargoLabels[i];
-	}
-
 	Client->gameGUI.mouseInputMode = normalInput;
 }
 
@@ -733,7 +668,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 	if ( srcBuilding )
 	{
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( srcBuilding->data.isBig ? 128.0 : 64.0 );
+		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( srcBuilding->data.isBig ? 128.0f : 64.0f );
 		srcBuilding->render( unitImage1, dest, zoomFactor, false, false );
 
 		unitNameLabels[0]->setText( srcBuilding->data.name );
@@ -765,7 +700,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else if ( srcVehicle )
 	{
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( srcVehicle->data.isBig ? 128.0 : 64.0 );
+		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( srcVehicle->data.isBig ? 128.0f : 64.0f );
 		srcVehicle->render( unitImage1, dest, zoomFactor, false );
 		srcVehicle->drawOverlayAnimation( unitImage1, dest, zoomFactor );
 
@@ -776,7 +711,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 
 	if ( destBuilding )
 	{
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( destBuilding->data.isBig ? 128.0 : 64.0 );
+		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( destBuilding->data.isBig ? 128.0f : 64.0f );
 		destBuilding->render( unitImage2, dest, zoomFactor, false, false );
 
 		unitNameLabels[1]->setText( destBuilding->data.name );
@@ -808,7 +743,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	}
 	else
 	{
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( destVehicle->data.isBig ? 128.0 : 64.0 );
+		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( destVehicle->data.isBig ? 128.0f : 64.0f );
 		destVehicle->render( unitImage2, dest, zoomFactor, false );
 		destVehicle->drawOverlayAnimation( unitImage2, dest, zoomFactor );
 
@@ -832,9 +767,9 @@ void cDialogTransfer::setCargos()
 	unitCargoLabels[0]->setText( iToStr( srcCargo - transferValue ) );
 	unitCargoLabels[1]->setText( iToStr( destCargo + transferValue ) );
 
-	transferLabel->setText( iToStr( abs( transferValue ) ) );
+	transferLabel.setText( iToStr( abs( transferValue ) ) );
 
-	resBar->setCurrentValue( ( int )( 223 * ( float )( destCargo + transferValue ) / maxDestCargo ) );
+	resBar.setCurrentValue( ( int )( 223 * ( float )( destCargo + transferValue ) / maxDestCargo ) );
 }
 
 void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent& key, const string& ch )
@@ -842,12 +777,12 @@ void cDialogTransfer::handleKeyInput( SDL_KeyboardEvent& key, const string& ch )
 	switch ( key.keysym.sym )
 	{
 		case SDLK_RETURN:
-			if ( key.state == SDL_PRESSED && !doneButton->getIsClicked() ) doneButton->clicked( this );
-			else if ( key.state == SDL_RELEASED && doneButton->getIsClicked() ) doneButton->released( this );
+			if ( key.state == SDL_PRESSED && !doneButton.getIsClicked() ) doneButton.clicked( this );
+			else if ( key.state == SDL_RELEASED && doneButton.getIsClicked() ) doneButton.released( this );
 			break;
 		case SDLK_ESCAPE:
-			if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked( this );
-			else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released( this );
+			if ( key.state == SDL_PRESSED && !cancelButton.getIsClicked() ) cancelButton.clicked( this );
+			else if ( key.state == SDL_RELEASED && cancelButton.getIsClicked() ) cancelButton.released( this );
 			break;
 		default:
 			break;
@@ -900,7 +835,7 @@ void cDialogTransfer::decReleased( void* parent )
 void cDialogTransfer::barClicked( void* parent )
 {
 	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*>( parent );
-	menu->transferValue = Round( ( mouse->x - menu->resBar->getPosition().x ) * ( menu->maxDestCargo / 223.0 ) - menu->destCargo );
+	menu->transferValue = Round( ( mouse->x - menu->resBar.getPosition().x ) * ( menu->maxDestCargo / 223.0 ) - menu->destCargo );
 	menu->setCargos();
 	menu->draw();
 }
@@ -921,34 +856,35 @@ void drawContextItem( const string& sText, bool bPressed, int x, int y, SDL_Surf
 	font->showTextCentered( dest.x + dest.w / 2, dest.y + ( dest.h / 2 - font->getFontHeight( FONT_LATIN_SMALL_WHITE ) / 2 ) + 1, sText, FONT_LATIN_SMALL_WHITE );
 }
 
-cDialogResearch::cDialogResearch( cPlayer* owner_ ) : cMenu( LoadPCX( GFXOD_DIALOG_RESEARCH ), MNU_BG_ALPHA ), owner( owner_ )
+cDialogResearch::cDialogResearch( cPlayer* owner_ ) : cMenu( LoadPCX( GFXOD_DIALOG_RESEARCH ), MNU_BG_ALPHA ), owner( owner_ ),
+	titleLabel( position.x + position.w / 2, position.y + 19, lngPack.i18n( "Text~Title~Labs" ) ),
+	centersLabel( position.x + 58, position.y + 52, lngPack.i18n( "Text~Comp~Labs" ) ),
+	themeLabel( position.x + 200, position.y + 52, lngPack.i18n( "Text~Comp~Themes" ) ),
+	turnsLabel( position.x + 313, position.y + 52, lngPack.i18n( "Text~Comp~Turns" ) ),
+	doneButton( position.x + 193, position.y + 294, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL ),
+	cancelButton( position.x + 91, position.y + 294, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL )
 {
 	owner->researchFinished = false;
-	titleLabel = new cMenuLabel( position.x + position.w / 2, position.y + 19, lngPack.i18n( "Text~Title~Labs" ) );
-	titleLabel->setCentered( true );
-	menuItems.Add( titleLabel );
 
-	centersLabel = new cMenuLabel( position.x + 58, position.y + 52, lngPack.i18n( "Text~Comp~Labs" ) );
-	centersLabel->setCentered( true );
-	menuItems.Add( centersLabel );
+	titleLabel.setCentered( true );
+	menuItems.Add( &titleLabel );
 
-	themeLabel = new cMenuLabel( position.x + 200, position.y + 52, lngPack.i18n( "Text~Comp~Themes" ) );
-	themeLabel->setCentered( true );
-	menuItems.Add( themeLabel );
+	centersLabel.setCentered( true );
+	menuItems.Add( &centersLabel );
 
-	turnsLabel = new cMenuLabel( position.x + 313, position.y + 52, lngPack.i18n( "Text~Comp~Turns" ) );
-	turnsLabel->setCentered( true );
-	menuItems.Add( turnsLabel );
+	themeLabel.setCentered( true );
+	menuItems.Add( &themeLabel );
 
-	doneButton = new cMenuButton( position.x + 193, position.y + 294, lngPack.i18n( "Text~Button~Done" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	doneButton->setReleasedFunction( &doneReleased );
-	menuItems.Add( doneButton );
+	turnsLabel.setCentered( true );
+	menuItems.Add( &turnsLabel );
 
-	cancelButton = new cMenuButton( position.x + 91, position.y + 294, lngPack.i18n( "Text~Button~Cancel" ), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL );
-	cancelButton->setReleasedFunction( &cancelReleased );
-	menuItems.Add( cancelButton );
+	doneButton.setReleasedFunction( &doneReleased );
+	menuItems.Add( &doneButton );
 
-	string themeNames[8] =
+	cancelButton.setReleasedFunction( &cancelReleased );
+	menuItems.Add( &cancelButton );
+
+	const string themeNames[8] =
 	{
 		lngPack.i18n( "Text~Vehicles~Damage" ),
 		lngPack.i18n( "Text~Hud~Shots" ),
@@ -1035,30 +971,6 @@ cDialogResearch::cDialogResearch( cPlayer* owner_ ) : cMenu( LoadPCX( GFXOD_DIAL
 	setData();
 }
 
-cDialogResearch::~cDialogResearch()
-{
-	delete titleLabel;
-	delete centersLabel;
-	delete themeLabel;
-	delete turnsLabel;
-
-	delete doneButton;
-	delete cancelButton;
-
-	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
-	{
-		delete incButtons[i];
-		delete decButtons[i];
-
-		delete scroller[i];
-
-		delete centerCountLabels[i];
-		delete themeNameLabels[i];
-		delete percentageLabels[i];
-		delete turnsLabels[i];
-	}
-}
-
 void cDialogResearch::setData()
 {
 	for ( int i = 0; i < cResearch::kNrResearchAreas; i++ )
@@ -1078,12 +990,12 @@ void cDialogResearch::handleKeyInput( SDL_KeyboardEvent& key, const string& ch )
 	switch ( key.keysym.sym )
 	{
 		case SDLK_RETURN:
-			if ( key.state == SDL_PRESSED && !doneButton->getIsClicked() ) doneButton->clicked( this );
-			else if ( key.state == SDL_RELEASED && doneButton->getIsClicked() ) doneButton->released( this );
+			if ( key.state == SDL_PRESSED && !doneButton.getIsClicked() ) doneButton.clicked( this );
+			else if ( key.state == SDL_RELEASED && doneButton.getIsClicked() ) doneButton.released( this );
 			break;
 		case SDLK_ESCAPE:
-			if ( key.state == SDL_PRESSED && !cancelButton->getIsClicked() ) cancelButton->clicked( this );
-			else if ( key.state == SDL_RELEASED && cancelButton->getIsClicked() ) cancelButton->released( this );
+			if ( key.state == SDL_PRESSED && !cancelButton.getIsClicked() ) cancelButton.clicked( this );
+			else if ( key.state == SDL_RELEASED && cancelButton.getIsClicked() ) cancelButton.released( this );
 			break;
 		default:
 			break;
