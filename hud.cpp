@@ -59,7 +59,47 @@ cGameGUI::cGameGUI( cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	client( NULL ),
 	player( player_ ),
 	map( map_ ),
-	shiftPressed( false )
+	shiftPressed( false ),
+	overUnitField( NULL ),
+	zoomSlider( 20, 274, minZoom, 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN ),
+	endButton( 391, 4, lngPack.i18n( "Text~Hud~End" ), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL ),
+	preferencesButton( 86, 4, lngPack.i18n( "Text~Hud~Settings" ), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE ),
+	filesButton( 17, 3, lngPack.i18n( "Text~Hud~Files" ), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE ),
+	playButton( 146, 123, "", cMenuButton::BUTTON_TYPE_HUD_PLAY ),
+	stopButton( 146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP ),
+	FLCImage( 10, 29, NULL ),
+	unitDetails( 8, 171, false, player ),
+	surveyButton( 2, 296, lngPack.i18n( "Text~Hud~Survey" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	hitsButton( 57, 296, lngPack.i18n( "Text~Hud~Hitpoints" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	scanButton( 112, 296, lngPack.i18n( "Text~Hud~Scan" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	statusButton( 2, 296 + 18, lngPack.i18n( "Text~Hud~Status" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	ammoButton( 57, 296 + 18, lngPack.i18n( "Text~Hud~Ammo" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	gridButton( 112, 296 + 18, lngPack.i18n( "Text~Hud~Grid" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	colorButton( 2, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Color" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	rangeButton( 57, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Range" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	fogButton( 112, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Fog" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	lockButton( 32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	TNTButton( 136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	twoXButton( 136, 387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	playersButton( 136, 439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch ),
+	helpButton( 20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP ),
+	centerButton( 4, 227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER ),
+	reportsButton( 101, 252, lngPack.i18n( "Text~Hud~Log" ), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE ),
+	chatButton( 51, 252, lngPack.i18n( "Text~Hud~Chat" ), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE ),
+	nextButton( 124, 227, ">>", cMenuButton::BUTTON_TYPE_HUD_NEXT, FONT_LATIN_SMALL_WHITE ),
+	prevButton( 60, 227, "<<", cMenuButton::BUTTON_TYPE_HUD_PREV, FONT_LATIN_SMALL_WHITE ),
+	doneButton( 99, 227, lngPack.i18n( "Text~Hud~Proceed" ), cMenuButton::BUTTON_TYPE_HUD_DONE, FONT_LATIN_SMALL_WHITE ),
+	miniMapImage( MINIMAP_POS_X, MINIMAP_POS_Y, generateMiniMapSurface() ),
+	coordsLabel( 265 + 32, ( Video.getResolutionY() - 21 ) + 3 ),
+	unitNameLabel( 343 + 106, ( Video.getResolutionY() - 21 ) + 3 ),
+	turnLabel( 498, 7 ),
+	timeLabel( 564, 7 ),
+	chatBox( HUD_LEFT_WIDTH + 5, Video.getResolutionY() - 48, this ),
+	infoTextLabel( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235, "", FONT_LATIN_BIG ),
+	infoTextAdditionalLabel( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235 + font->getFontHeight( FONT_LATIN_BIG ), "" ),
+	selUnitStatusStr( 12, 40, "", FONT_LATIN_SMALL_WHITE ),
+	selUnitNamePrefixStr( 12, 30, "", FONT_LATIN_SMALL_GREEN ),
+	selUnitNameEdit( 12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT )
 {
 	unitMenuActive = false;
 	frame = 0;
@@ -70,7 +110,6 @@ cGameGUI::cGameGUI( cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	loadValue = 0;
 	panelTopGraphic = NULL, panelBottomGraphic = NULL;
 	activeItem = NULL;
-	overUnitField = NULL;
 	helpActive = false;
 	showPlayers = false;
 	blinkColor = 0xFFFFFF;
@@ -98,137 +137,96 @@ cGameGUI::cGameGUI( cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 
 	closed = false;
 
-	zoomSlider = new cMenuSlider( 20, 274, minZoom, 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN );
-	zoomSlider->setMoveCallback( &zoomSliderMoved );
-	menuItems.Add( zoomSlider );
-	menuItems.Add( zoomSlider->scroller );
+	zoomSlider.setMoveCallback( &zoomSliderMoved );
+	menuItems.Add( &zoomSlider );
+	menuItems.Add( zoomSlider.scroller );
+
+	endButton.setReleasedFunction( &endReleased );
+	menuItems.Add( &endButton );
+
+	preferencesButton.setReleasedFunction( &preferencesReleased );
+	menuItems.Add( &preferencesButton );
+	filesButton.setReleasedFunction( &filesReleased );
+	menuItems.Add( &filesButton );
+
+	playButton.setReleasedFunction( &playReleased );
+	menuItems.Add( &playButton );
+	stopButton.setReleasedFunction( &stopReleased );
+	menuItems.Add( &stopButton );
+
+	menuItems.Add( &FLCImage );
+
+	menuItems.Add( &unitDetails );
 
 	// generate checkbuttons
-	surveyButton = new cMenuCheckButton( 2, 296, lngPack.i18n( "Text~Hud~Survey" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_00, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( surveyButton );
-	hitsButton = new cMenuCheckButton( 57, 296, lngPack.i18n( "Text~Hud~Hitpoints" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_01, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( hitsButton );
-	scanButton = new cMenuCheckButton( 112, 296, lngPack.i18n( "Text~Hud~Scan" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_02, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( scanButton );
-	statusButton = new cMenuCheckButton( 2, 296 + 18, lngPack.i18n( "Text~Hud~Status" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_10, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( statusButton );
-	ammoButton = new cMenuCheckButton( 57, 296 + 18, lngPack.i18n( "Text~Hud~Ammo" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_11, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( ammoButton );
-	gridButton = new cMenuCheckButton( 112, 296 + 18, lngPack.i18n( "Text~Hud~Grid" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_12, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( gridButton );
-	colorButton = new cMenuCheckButton( 2, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Color" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_20, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( colorButton );
-	rangeButton = new cMenuCheckButton( 57, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Range" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_21, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( rangeButton );
-	fogButton = new cMenuCheckButton( 112, 296 + 18 + 16, lngPack.i18n( "Text~Hud~Fog" ), false, false, cMenuCheckButton::CHECKBOX_HUD_INDEX_22, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( fogButton );
+	menuItems.Add( &surveyButton );
+	menuItems.Add( &hitsButton );
+	menuItems.Add( &scanButton );
+	menuItems.Add( &statusButton );
+	menuItems.Add( &ammoButton );
+	menuItems.Add( &gridButton );
+	menuItems.Add( &colorButton );
+	menuItems.Add( &rangeButton );
+	menuItems.Add( &fogButton );
+	menuItems.Add( &lockButton );
 
-	lockButton = new cMenuCheckButton( 32, 227, "", false, false, cMenuCheckButton::CHECKBOX_HUD_LOCK, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	menuItems.Add( lockButton );
+	TNTButton.setClickedFunction( &changedMiniMap );
+	menuItems.Add( &TNTButton );
+	twoXButton.setClickedFunction( &twoXReleased );
+	menuItems.Add( &twoXButton );
+	playersButton.setClickedFunction( &playersReleased );
+	menuItems.Add( &playersButton );
 
-	TNTButton = new cMenuCheckButton( 136, 413, "", false, false, cMenuCheckButton::CHECKBOX_HUD_TNT, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	TNTButton->setClickedFunction( &changedMiniMap );
-	menuItems.Add( TNTButton );
-	twoXButton = new cMenuCheckButton( 136, 387, "", false, false, cMenuCheckButton::CHECKBOX_HUD_2X, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	twoXButton->setClickedFunction( &twoXReleased );
-	menuItems.Add( twoXButton );
-	playersButton = new cMenuCheckButton( 136, 439, "", false, false, cMenuCheckButton::CHECKBOX_HUD_PLAYERS, cMenuCheckButton::TEXT_ORIENT_RIGHT, FONT_LATIN_NORMAL, SoundData.SNDHudSwitch );
-	playersButton->setClickedFunction( &playersReleased );
-	menuItems.Add( playersButton );
+	helpButton.setReleasedFunction( &helpReleased );
+	menuItems.Add( &helpButton );
+	centerButton.setReleasedFunction( &centerReleased );
+	menuItems.Add( &centerButton );
 
-	helpButton = new cMenuButton( 20, 250, "", cMenuButton::BUTTON_TYPE_HUD_HELP );
-	helpButton->setReleasedFunction( &helpReleased );
-	menuItems.Add( helpButton );
-	centerButton = new cMenuButton( 4, 227, "", cMenuButton::BUTTON_TYPE_HUD_CENTER );
-	centerButton->setReleasedFunction( &centerReleased );
-	menuItems.Add( centerButton );
+	reportsButton.setReleasedFunction( &reportsReleased );
+	menuItems.Add( &reportsButton );
+	chatButton.setReleasedFunction( &chatReleased );
+	menuItems.Add( &chatButton );
 
-	reportsButton = new cMenuButton( 101, 252, lngPack.i18n( "Text~Hud~Log" ), cMenuButton::BUTTON_TYPE_HUD_REPORT, FONT_LATIN_SMALL_WHITE );
-	reportsButton->setReleasedFunction( &reportsReleased );
-	menuItems.Add( reportsButton );
-	chatButton = new cMenuButton( 51, 252, lngPack.i18n( "Text~Hud~Chat" ), cMenuButton::BUTTON_TYPE_HUD_CHAT, FONT_LATIN_SMALL_WHITE );
-	chatButton->setReleasedFunction( &chatReleased );
-	menuItems.Add( chatButton );
+	nextButton.setReleasedFunction( &nextReleased );
+	menuItems.Add( &nextButton );
+	prevButton.setReleasedFunction( &prevReleased );
+	menuItems.Add( &prevButton );
+	doneButton.setReleasedFunction( &doneReleased );
+	menuItems.Add( &doneButton );
 
-	nextButton = new cMenuButton( 124, 227, ">>", cMenuButton::BUTTON_TYPE_HUD_NEXT, FONT_LATIN_SMALL_WHITE );
-	nextButton->setReleasedFunction( &nextReleased );
-	menuItems.Add( nextButton );
-	prevButton = new cMenuButton( 60, 227, "<<", cMenuButton::BUTTON_TYPE_HUD_PREV, FONT_LATIN_SMALL_WHITE );
-	prevButton->setReleasedFunction( &prevReleased );
-	menuItems.Add( prevButton );
-	doneButton = new cMenuButton( 99, 227, lngPack.i18n( "Text~Hud~Proceed" ), cMenuButton::BUTTON_TYPE_HUD_DONE, FONT_LATIN_SMALL_WHITE );
-	doneButton->setReleasedFunction( &doneReleased );
-	menuItems.Add( doneButton );
+	miniMapImage.setClickedFunction( &miniMapClicked );
+	miniMapImage.setRightClickedFunction( &miniMapRightClicked );
+	menuItems.Add( &miniMapImage );
 
-	miniMapImage = new cMenuImage( MINIMAP_POS_X, MINIMAP_POS_Y, generateMiniMapSurface() );
-	miniMapImage->setClickedFunction( &miniMapClicked );
-	miniMapImage->setRightClickedFunction( &miniMapRightClicked );
-	menuItems.Add( miniMapImage );
+	coordsLabel.setCentered( true );
+	menuItems.Add( &coordsLabel );
 
-	coordsLabel = new cMenuLabel( 265 + 32, ( Video.getResolutionY() - 21 ) + 3 );
-	coordsLabel->setCentered( true );
-	menuItems.Add( coordsLabel );
+	unitNameLabel.setCentered( true );
+	menuItems.Add( &unitNameLabel );
 
-	unitNameLabel = new cMenuLabel( 343 + 106, ( Video.getResolutionY() - 21 ) + 3 );
-	unitNameLabel->setCentered( true );
-	menuItems.Add( unitNameLabel );
+	turnLabel.setCentered( true );
+	menuItems.Add( &turnLabel );
 
-	turnLabel = new cMenuLabel( 498, 7 );
-	turnLabel->setCentered( true );
-	menuItems.Add( turnLabel );
+	timeLabel.setCentered( true );
+	menuItems.Add( &timeLabel );
 
-	timeLabel = new cMenuLabel( 564, 7 );
-	timeLabel->setCentered( true );
-	menuItems.Add( timeLabel );
+	chatBox.setDisabled( true );
+	chatBox.setReturnPressedFunc( &chatBoxReturnPressed );
+	menuItems.Add( &chatBox );
 
-	endButton = new cMenuButton( 391, 4, lngPack.i18n( "Text~Hud~End" ), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL );
-	endButton->setReleasedFunction( &endReleased );
-	menuItems.Add( endButton );
+	infoTextLabel.setCentered( true );
+	infoTextLabel.setDisabled( true );
+	menuItems.Add( &infoTextLabel );
 
-	preferencesButton = new cMenuButton( 86, 4, lngPack.i18n( "Text~Hud~Settings" ), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE );
-	preferencesButton->setReleasedFunction( &preferencesReleased );
-	menuItems.Add( preferencesButton );
-	filesButton = new cMenuButton( 17, 3, lngPack.i18n( "Text~Hud~Files" ), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE );
-	filesButton->setReleasedFunction( &filesReleased );
-	menuItems.Add( filesButton );
+	infoTextAdditionalLabel.setCentered( true );
+	infoTextAdditionalLabel.setDisabled( true );
+	menuItems.Add( &infoTextAdditionalLabel );
 
-	playButton = new cMenuButton( 146, 123, "", cMenuButton::BUTTON_TYPE_HUD_PLAY );
-	playButton->setReleasedFunction( &playReleased );
-	menuItems.Add( playButton );
-	stopButton = new cMenuButton( 146, 143, "", cMenuButton::BUTTON_TYPE_HUD_STOP );
-	stopButton->setReleasedFunction( &stopReleased );
-	menuItems.Add( stopButton );
+	menuItems.Add( &selUnitStatusStr );
+	menuItems.Add( &selUnitNamePrefixStr );
 
-	FLCImage = new cMenuImage( 10, 29, NULL );
-	menuItems.Add( FLCImage );
-
-	unitDetails = new cMenuUnitDetails( 8, 171, false, player );
-	menuItems.Add( unitDetails );
-
-	chatBox = new cMenuChatBox( HUD_LEFT_WIDTH + 5, Video.getResolutionY() - 48, this );
-	chatBox->setDisabled( true );
-	chatBox->setReturnPressedFunc( &chatBoxReturnPressed );
-	menuItems.Add( chatBox );
-
-	infoTextLabel = new cMenuLabel( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235, "", FONT_LATIN_BIG );
-	infoTextLabel->setCentered( true );
-	infoTextLabel->setDisabled( true );
-	menuItems.Add( infoTextLabel );
-
-	infoTextAdditionalLabel = new cMenuLabel( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235 + font->getFontHeight( FONT_LATIN_BIG ), "" );
-	infoTextAdditionalLabel->setCentered( true );
-	infoTextAdditionalLabel->setDisabled( true );
-	menuItems.Add( infoTextAdditionalLabel );
-
-	selUnitStatusStr = new cMenuLabel( 12, 40, "", FONT_LATIN_SMALL_WHITE );
-	menuItems.Add( selUnitStatusStr );
-
-	selUnitNamePrefixStr = new cMenuLabel( 12, 30, "", FONT_LATIN_SMALL_GREEN );
-	menuItems.Add( selUnitNamePrefixStr );
-
-	selUnitNameEdit = new cMenuLineEdit( 12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT );
-	selUnitNameEdit->setReturnPressedFunc( unitNameReturnPressed );
-	menuItems.Add( selUnitNameEdit );
+	selUnitNameEdit.setReturnPressedFunc( unitNameReturnPressed );
+	menuItems.Add( &selUnitNameEdit );
 
 	for ( unsigned int i = 0; i < playerList->Size(); i++ )
 	{
@@ -264,14 +262,14 @@ void cGameGUI::recalcPosition( bool resetItemPositions )
 	// reset minimal zoom
 	calcMinZoom();
 	setZoom( zoom, true, false );
-	zoomSlider->setBorders( minZoom, 1.0 );
+	zoomSlider.setBorders( minZoom, 1.0 );
 
-	// move some items arround
-	coordsLabel->move( coordsLabel->getPosition().x, ( Video.getResolutionY() - 21 ) + 3 );
-	unitNameLabel->move( unitNameLabel->getPosition().x, ( Video.getResolutionY() - 21 ) + 3 );
-	chatBox->move( chatBox->getPosition().x, Video.getResolutionY() - 48 );
-	infoTextLabel->move( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, infoTextLabel->getPosition().y );
-	infoTextAdditionalLabel->move( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235 + font->getFontHeight( FONT_LATIN_BIG ) );
+	// move some items around
+	coordsLabel.move( coordsLabel.getPosition().x, ( Video.getResolutionY() - 21 ) + 3 );
+	unitNameLabel.move( unitNameLabel.getPosition().x, ( Video.getResolutionY() - 21 ) + 3 );
+	chatBox.move( chatBox.getPosition().x, Video.getResolutionY() - 48 );
+	infoTextLabel.move( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, infoTextLabel.getPosition().y );
+	infoTextAdditionalLabel.move( HUD_LEFT_WIDTH + ( Video.getResolutionX() - HUD_TOTAL_WIDTH ) / 2, 235 + font->getFontHeight( FONT_LATIN_BIG ) );
 }
 
 cGameGUI::~cGameGUI()
@@ -280,30 +278,6 @@ cGameGUI::~cGameGUI()
 	scaleSurfaces();
 
 	if ( FLC ) FLI_Close( FLC );
-
-	delete surveyButton;
-	delete hitsButton;
-	delete scanButton;
-	delete statusButton;
-	delete ammoButton;
-	delete gridButton;
-	delete colorButton;
-	delete rangeButton;
-	delete fogButton;
-
-	delete lockButton;
-
-	delete TNTButton;
-	delete twoXButton;
-	delete playersButton;
-
-	delete helpButton;
-	delete centerButton;
-	delete reportsButton;
-	delete chatButton;
-	delete nextButton;
-	delete prevButton;
-	delete doneButton;
 }
 
 int cGameGUI::show()
@@ -360,7 +334,7 @@ int cGameGUI::show()
 		if ( needMiniMapDraw )
 		{
 			AutoSurface mini( generateMiniMapSurface() );
-			miniMapImage->setImage( mini );
+			miniMapImage.setImage( mini );
 			needMiniMapDraw = false;
 		}
 		if ( client->timer100ms )
@@ -368,7 +342,7 @@ int cGameGUI::show()
 			if ( FLC != NULL && playFLC )
 			{
 				FLI_NextFrame( FLC );
-				FLCImage->setImage( FLC->surface );
+				FLCImage.setImage( FLC->surface );
 			}
 			rotateBlinkColor();
 		}
@@ -692,7 +666,7 @@ void cGameGUI::setZoom( float newZoom, bool setScroller, bool centerToMouse )
 	if ( zoom < minZoom ) zoom = minZoom;
 	if ( zoom > 1.0 ) zoom = 1.0;
 
-	if ( setScroller ) this->zoomSlider->setValue( zoom );
+	if ( setScroller ) this->zoomSlider.setValue( zoom );
 
 	static float lastZoom = 1.0;
 	if ( lastZoom != getZoom() )
@@ -747,7 +721,7 @@ int cGameGUI::getTileSize() const
 
 void cGameGUI::setVideoSurface( SDL_Surface* videoSurface )
 {
-	FLCImage->setImage( videoSurface );
+	FLCImage.setImage( videoSurface );
 }
 
 void cGameGUI::setFLC( FLI_Animation* FLC_ )
@@ -757,54 +731,54 @@ void cGameGUI::setFLC( FLI_Animation* FLC_ )
 	{
 		FLI_Rewind( FLC );
 		FLI_NextFrame( FLC );
-		FLCImage->setImage( FLC->surface );
+		FLCImage.setImage( FLC->surface );
 	}
-	else FLCImage->setImage( NULL );
+	else FLCImage.setImage( NULL );
 }
 
 void cGameGUI::setPlayer( cPlayer* player_ )
 {
 	player = player_;
-	unitDetails->setOwner( player );
+	unitDetails.setOwner( player );
 }
 
 void cGameGUI::setUnitDetailsData( cVehicle* vehicle, cBuilding* building )
 {
-	unitDetails->setSelection( vehicle, building );
+	unitDetails.setSelection( vehicle, building );
 
 	if ( vehicle )
 	{
-		selUnitNamePrefixStr->setText( vehicle->getNamePrefix() );
-		selUnitNameEdit->setText( vehicle->isNameOriginal() ? vehicle->data.name : vehicle->getName() );
+		selUnitNamePrefixStr.setText( vehicle->getNamePrefix() );
+		selUnitNameEdit.setText( vehicle->isNameOriginal() ? vehicle->data.name : vehicle->getName() );
 	}
 	else if ( building )
 	{
-		selUnitNamePrefixStr->setText( building->getNamePrefix() );
-		selUnitNameEdit->setText( building->isNameOriginal() ? building->data.name : building->getName() );
+		selUnitNamePrefixStr.setText( building->getNamePrefix() );
+		selUnitNameEdit.setText( building->isNameOriginal() ? building->data.name : building->getName() );
 	}
 	else
 	{
-		selUnitNamePrefixStr->setText( "" );
-		selUnitNameEdit->setText( "" );
-		selUnitNameEdit->setLocked( true );
+		selUnitNamePrefixStr.setText( "" );
+		selUnitNameEdit.setText( "" );
+		selUnitNameEdit.setLocked( true );
 		return;
 	}
 
-	selUnitNameEdit->setLocked( false );
-	int xPosition = 12 + font->getTextWide( selUnitNamePrefixStr->getText() + " ", FONT_LATIN_SMALL_GREEN );
-	selUnitNameEdit->move( xPosition, 30 );
-	selUnitNameEdit->setSize( 135 - xPosition, 10 );
+	selUnitNameEdit.setLocked( false );
+	int xPosition = 12 + font->getTextWide( selUnitNamePrefixStr.getText() + " ", FONT_LATIN_SMALL_GREEN );
+	selUnitNameEdit.move( xPosition, 30 );
+	selUnitNameEdit.setSize( 135 - xPosition, 10 );
 }
 
 void cGameGUI::updateTurn( int turn )
 {
-	turnLabel->setText( iToStr( turn ) );
+	turnLabel.setText( iToStr( turn ) );
 }
 
 void cGameGUI::updateTurnTime( int time )
 {
-	if ( time < 0 ) timeLabel->setText( "" );
-	else timeLabel->setText( iToStr( time ) );
+	if ( time < 0 ) timeLabel.setText( "" );
+	else timeLabel.setText( iToStr( time ) );
 }
 
 void cGameGUI::callMiniMapDraw()
@@ -814,7 +788,7 @@ void cGameGUI::callMiniMapDraw()
 
 void cGameGUI::setEndButtonLock( bool locked )
 {
-	endButton->setLocked( locked );
+	endButton.setLocked( locked );
 }
 
 void cGameGUI::handleFramesPerSecond()
@@ -929,7 +903,7 @@ void cGameGUI::updateUnderMouseObject()
 	method to format x and y easily with leading 0 -- beko */
 	char str[8];
 	sprintf( str, "%.3d-%.3d", x, y );
-	coordsLabel->setText( str );
+	coordsLabel.setText( str );
 
 	if ( !player->ScanMap[x + y * map->size] )
 	{
@@ -956,7 +930,7 @@ void cGameGUI::updateUnderMouseObject()
 	if ( overUnitField->getVehicles() != NULL )
 	{
 		//FIXME: displaying ownername to unit name may cause an overdraw on the infobox. This needs either a seperate infobox or a length check in the future. that goes for unitnames itself too. -- beko
-		unitNameLabel->setText( overUnitField->getVehicles()->getDisplayName() + " (" + overUnitField->getVehicles()->owner->name + ")" );
+		unitNameLabel.setText( overUnitField->getVehicles()->getDisplayName() + " (" + overUnitField->getVehicles()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -971,7 +945,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getPlanes() != NULL )
 	{
-		unitNameLabel->setText( overUnitField->getPlanes()->getDisplayName() + " (" + overUnitField->getPlanes()->owner->name + ")" );
+		unitNameLabel.setText( overUnitField->getPlanes()->getDisplayName() + " (" + overUnitField->getPlanes()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -986,7 +960,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getTopBuilding() != NULL )
 	{
-		unitNameLabel->setText( overUnitField->getTopBuilding()->getDisplayName() + " (" + overUnitField->getTopBuilding()->owner->name + ")" );
+		unitNameLabel.setText( overUnitField->getTopBuilding()->getDisplayName() + " (" + overUnitField->getTopBuilding()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -1001,7 +975,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else if ( overUnitField->getBaseBuilding() && overUnitField->getBaseBuilding()->owner )
 	{
-		unitNameLabel->setText( overUnitField->getBaseBuilding()->getDisplayName() + " (" + overUnitField->getBaseBuilding()->owner->name + ")" );
+		unitNameLabel.setText( overUnitField->getBaseBuilding()->getDisplayName() + " (" + overUnitField->getBaseBuilding()->owner->name + ")" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			if ( selectedVehicle )
@@ -1016,7 +990,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	else
 	{
-		unitNameLabel->setText( "" );
+		unitNameLabel.setText( "" );
 		if ( mouse->cur == GraphicsData.gfx_Cattack )
 		{
 			SDL_Rect r;
@@ -1100,10 +1074,10 @@ void cGameGUI::deselectUnit()
 
 void cGameGUI::setInfoTexts( const string& infoText, const string& additionalInfoText )
 {
-	infoTextLabel->setText( infoText );
-	infoTextLabel->setDisabled( infoText.empty() );
-	infoTextAdditionalLabel->setText( additionalInfoText );
-	infoTextAdditionalLabel->setDisabled( additionalInfoText.empty() );
+	infoTextLabel.setText( infoText );
+	infoTextLabel.setDisabled( infoText.empty() );
+	infoTextAdditionalLabel.setText( additionalInfoText );
+	infoTextAdditionalLabel.setDisabled( additionalInfoText.empty() );
 }
 
 void cGameGUI::updateMouseCursor()
@@ -1483,7 +1457,7 @@ void cGameGUI::handleMouseMove()
 	}
 
 	// check minimap
-	if ( miniMapImage->getIsClicked() || miniMapImage->getWasClicked() )
+	if ( miniMapImage.getIsClicked() || miniMapImage.getWasClicked() )
 	{
 		miniMapClicked( this );
 	}
@@ -1496,9 +1470,9 @@ void cGameGUI::handleMouseInputExtended( sMouseState mouseState )
 		if ( !menuItems[i]->isDisabled() && menuItems[i]->overItem( mouseState.x, mouseState.y ) ) return;
 	}
 
-	if ( selUnitNameEdit == activeItem )
+	if ( &selUnitNameEdit == activeItem )
 	{
-		selUnitNameEdit->setActivity( false );
+		selUnitNameEdit.setActivity( false );
 		activeItem = NULL;
 	}
 
@@ -2373,9 +2347,9 @@ void cGameGUI::selectBoxVehicles( sMouseBox& box )
 
 void cGameGUI::updateStatusText()
 {
-	if ( selectedVehicle ) selUnitStatusStr->setText( selectedVehicle->getStatusStr() );
-	else if ( selectedBuilding ) selUnitStatusStr->setText( selectedBuilding->getStatusStr() );
-	else selUnitStatusStr->setText( "" );
+	if ( selectedVehicle ) selUnitStatusStr.setText( selectedVehicle->getStatusStr() );
+	else if ( selectedBuilding ) selUnitStatusStr.setText( selectedBuilding->getStatusStr() );
+	else selUnitStatusStr.setText( "" );
 }
 
 void cGameGUI::deselectGroup()
@@ -2436,10 +2410,10 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent& key, const string& ch )
 	}
 
 	// first check whether the end key was pressed
-	if ( ( activeItem != chatBox || chatBox->isDisabled() ) && activeItem != selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->bWaitForOthers )
+	if ( ( activeItem != &chatBox || chatBox.isDisabled() ) && activeItem != &selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->bWaitForOthers )
 	{
-		if ( key.state == SDL_PRESSED && !endButton->getIsClicked() ) endButton->clicked( this );
-		else if ( key.state == SDL_RELEASED && endButton->getIsClicked() && !client->bWantToEnd ) endButton->released( this );
+		if ( key.state == SDL_PRESSED && !endButton.getIsClicked() ) endButton.clicked( this );
+		else if ( key.state == SDL_RELEASED && endButton.getIsClicked() && !client->bWantToEnd ) endButton.released( this );
 		return;
 	}
 
@@ -2473,9 +2447,9 @@ void cGameGUI::handleKeyInput( SDL_KeyboardEvent& key, const string& ch )
 	{
 		if ( !( key.keysym.mod & KMOD_ALT ) )
 		{
-			if ( chatBox->isDisabled() ) chatBox->setDisabled( false );
-			activeItem = chatBox;
-			chatBox->setActivity( true );
+			if ( chatBox.isDisabled() ) chatBox.setDisabled( false );
+			activeItem = &chatBox;
+			chatBox.setActivity( true );
 		}
 	}
 	// scroll and zoom hotkeys
@@ -2728,10 +2702,10 @@ void cGameGUI::reportsReleased( void* parent )
 void cGameGUI::chatReleased( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	gui->chatBox->setDisabled( !gui->chatBox->isDisabled() );
+	gui->chatBox.setDisabled( !gui->chatBox.isDisabled() );
 	if ( gui->activeItem ) gui->activeItem->setActivity( false );
-	gui->activeItem = gui->chatBox;
-	gui->chatBox->setActivity( true );
+	gui->activeItem = &gui->chatBox;
+	gui->chatBox.setActivity( true );
 }
 
 void cGameGUI::nextReleased( void* parent )
@@ -2797,7 +2771,7 @@ void cGameGUI::twoXReleased( void* parent )
 void cGameGUI::playersReleased( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	gui->showPlayers = gui->playersButton->isChecked();
+	gui->showPlayers = gui->playersButton.isChecked();
 
 	for ( unsigned int i = 0; i < gui->playersInfo.Size(); i++ )
 	{
@@ -2874,7 +2848,7 @@ void cGameGUI::miniMapRightClicked( void* parent )
 void cGameGUI::miniMapMovedOver( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	if ( gui->miniMapImage->getIsClicked() )
+	if ( gui->miniMapImage.getIsClicked() )
 	{
 		gui->miniMapClicked( parent );
 	}
@@ -2883,13 +2857,13 @@ void cGameGUI::miniMapMovedOver( void* parent )
 void cGameGUI::zoomSliderMoved( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	gui->setZoom( gui->zoomSlider->getValue(), false, false );
+	gui->setZoom( gui->zoomSlider.getValue(), false, false );
 }
 
 void cGameGUI::endReleased( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	gui->endButton->setLocked( true );
+	gui->endButton.setLocked( true );
 	gui->client->handleEnd();
 }
 
@@ -2921,27 +2895,27 @@ void cGameGUI::stopReleased( void* parent )
 void cGameGUI::chatBoxReturnPressed( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	string chatString = gui->chatBox->getText();
+	string chatString = gui->chatBox.getText();
 	if ( !chatString.empty() )
 	{
 		if ( chatString[0] == '/' ) gui->doCommand( chatString );
 		else sendChatMessageToServer( gui->player->name + ": " + chatString );
-		gui->chatBox->setText( "" );
+		gui->chatBox.setText( "" );
 	}
-	gui->chatBox->setActivity( false );
+	gui->chatBox.setActivity( false );
 	gui->activeItem = NULL;
-	gui->chatBox->setDisabled( true );
+	gui->chatBox.setDisabled( true );
 }
 
 void cGameGUI::unitNameReturnPressed( void* parent )
 {
 	cGameGUI* gui = static_cast<cGameGUI*>( parent );
-	string nameString = gui->selUnitNameEdit->getText();
+	string nameString = gui->selUnitNameEdit.getText();
 
 	if ( gui->selectedVehicle ) sendWantChangeUnitName( nameString, gui->selectedVehicle->iID );
 	else if ( gui->selectedBuilding ) sendWantChangeUnitName( nameString, gui->selectedBuilding->iID );
 
-	gui->selUnitNameEdit->setActivity( false );
+	gui->selUnitNameEdit.setActivity( false );
 	gui->activeItem = NULL;
 }
 

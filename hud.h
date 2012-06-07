@@ -294,57 +294,58 @@ class cGameGUI : public cMenu
 	void savePosition( int slotNumber );
 	void jumpToSavedPos( int slotNumber );
 
-	cMenuSlider* zoomSlider;
+	cMenuSlider zoomSlider;
 
-	cMenuButton* endButton;
+	cMenuButton endButton;
 
-	cMenuButton* preferencesButton;
-	cMenuButton* filesButton;
+	cMenuButton preferencesButton;
+	cMenuButton filesButton;
 
-	cMenuButton* playButton;
-	cMenuButton* stopButton;
+	cMenuButton playButton;
+	cMenuButton stopButton;
 
-	cMenuImage* FLCImage;
-	cMenuUnitDetails* unitDetails;
+	cMenuImage FLCImage;
+	cMenuUnitDetails unitDetails;
 
-	cMenuCheckButton* surveyButton;
-	cMenuCheckButton* hitsButton;
-	cMenuCheckButton* scanButton;
-	cMenuCheckButton* statusButton;
-	cMenuCheckButton* ammoButton;
-	cMenuCheckButton* gridButton;
-	cMenuCheckButton* colorButton;
-	cMenuCheckButton* rangeButton;
-	cMenuCheckButton* fogButton;
+	cMenuCheckButton surveyButton;
+	cMenuCheckButton hitsButton;
+	cMenuCheckButton scanButton;
+	cMenuCheckButton statusButton;
+	cMenuCheckButton ammoButton;
+	cMenuCheckButton gridButton;
+	cMenuCheckButton colorButton;
+	cMenuCheckButton rangeButton;
+	cMenuCheckButton fogButton;
 
-	cMenuCheckButton* lockButton;
+	cMenuCheckButton lockButton;
 
-	cMenuCheckButton* TNTButton;
-	cMenuCheckButton* twoXButton;
-	cMenuCheckButton* playersButton;
+	cMenuCheckButton TNTButton;
+	cMenuCheckButton twoXButton;
+	cMenuCheckButton playersButton;
 
-	cMenuButton* helpButton;
-	cMenuButton* centerButton;
-	cMenuButton* reportsButton;
-	cMenuButton* chatButton;
-	cMenuButton* nextButton;
-	cMenuButton* prevButton;
-	cMenuButton* doneButton;
+	cMenuButton helpButton;
+	cMenuButton centerButton;
+	cMenuButton reportsButton;
+	cMenuButton chatButton;
+	cMenuButton nextButton;
+	cMenuButton prevButton;
+	cMenuButton doneButton;
 
-	cMenuImage* miniMapImage;
+	cMenuImage miniMapImage;
 
-	cMenuLabel* coordsLabel;
-	cMenuLabel* unitNameLabel;
-	cMenuLabel* turnLabel;
-	cMenuLabel* timeLabel;
+	cMenuLabel coordsLabel;
+	cMenuLabel unitNameLabel;
+	cMenuLabel turnLabel;
+	cMenuLabel timeLabel;
 
-	cMenuChatBox* chatBox;
+	cMenuChatBox chatBox;
 
-	cMenuLabel* infoTextLabel, *infoTextAdditionalLabel;
+	cMenuLabel infoTextLabel;
+	cMenuLabel infoTextAdditionalLabel;
 
-	cMenuLabel* selUnitStatusStr;
-	cMenuLabel* selUnitNamePrefixStr;
-	cMenuLineEdit* selUnitNameEdit;
+	cMenuLabel selUnitStatusStr;
+	cMenuLabel selUnitNamePrefixStr;
+	cMenuLineEdit selUnitNameEdit;
 
 	cList<cMenuPlayerInfo*> playersInfo;
 
@@ -392,31 +393,31 @@ public:
 	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
 
 	cClient* getClient() { return client; }
-	bool surveyChecked() const { return surveyButton->isChecked(); }
-	bool hitsChecked() const { return hitsButton->isChecked(); }
-	bool scanChecked() const { return scanButton->isChecked(); }
-	bool statusChecked() const { return statusButton->isChecked(); }
-	bool ammoChecked() const { return ammoButton->isChecked(); }
-	bool gridChecked() const { return gridButton->isChecked(); }
-	bool colorChecked() const { return colorButton->isChecked(); }
-	bool rangeChecked() const { return rangeButton->isChecked(); }
-	bool fogChecked() const { return fogButton->isChecked(); }
-	bool lockChecked() const { return lockButton->isChecked(); }
-	bool tntChecked() const { return TNTButton->isChecked(); }
-	bool twoXChecked() const { return twoXButton->isChecked(); }
+	bool surveyChecked() const { return surveyButton.isChecked(); }
+	bool hitsChecked() const { return hitsButton.isChecked(); }
+	bool scanChecked() const { return scanButton.isChecked(); }
+	bool statusChecked() const { return statusButton.isChecked(); }
+	bool ammoChecked() const { return ammoButton.isChecked(); }
+	bool gridChecked() const { return gridButton.isChecked(); }
+	bool colorChecked() const { return colorButton.isChecked(); }
+	bool rangeChecked() const { return rangeButton.isChecked(); }
+	bool fogChecked() const { return fogButton.isChecked(); }
+	bool lockChecked() const { return lockButton.isChecked(); }
+	bool tntChecked() const { return TNTButton.isChecked(); }
+	bool twoXChecked() const { return twoXButton.isChecked(); }
 
-	void setSurvey( bool checked ) { surveyButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setHits( bool checked ) { hitsButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setScan( bool checked ) { scanButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setStatus( bool checked ) { statusButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setAmmo( bool checked ) { ammoButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setGrid( bool checked ) { gridButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setColor( bool checked ) { colorButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setRange( bool checked ) { rangeButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setFog( bool checked ) { fogButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setLock( bool checked ) { lockButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setTNT( bool checked ) { TNTButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
-	void setTwoX( bool checked ) { resetMiniMapOffset(); twoXButton->setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setSurvey( bool checked ) { surveyButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setHits( bool checked ) { hitsButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setScan( bool checked ) { scanButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setStatus( bool checked ) { statusButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setAmmo( bool checked ) { ammoButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setGrid( bool checked ) { gridButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setColor( bool checked ) { colorButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setRange( bool checked ) { rangeButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setFog( bool checked ) { fogButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setLock( bool checked ) { lockButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setTNT( bool checked ) { TNTButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
+	void setTwoX( bool checked ) { resetMiniMapOffset(); twoXButton.setChecked( checked ); PlayFX( SoundData.SNDHudSwitch ); }
 
 	/**
 	* draws an effect
