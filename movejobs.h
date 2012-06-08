@@ -80,7 +80,7 @@ public:
 	cPathDestHandler( ePathDestinationTypes type_, int destX, int destY, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_ );
 
 	bool hasReachedDestination( int x, int y ) const;
-	int heuristicCost( int srcX, int srcY );
+	int heuristicCost( int srcX, int srcY ) const;
 };
 
 class cPathCalculator
