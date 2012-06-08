@@ -133,7 +133,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 /** Returns a string with the current state */
 //----------------------------------------------------
-string cBuilding::getStatusStr()
+string cBuilding::getStatusStr() const
 {
 	if ( turnsDisabled > 0 )
 	{
@@ -672,7 +672,7 @@ void cBuilding::CheckNeighbours( cMap* Map )
 		if ( b && b->owner == owner && b->data.connectsToBase )			\
 		{m=true;}else{m=false;}							\
 	}														\
-	 
+
 	if ( !data.isBig )
 	{
 		CHECK_NEIGHBOUR( PosX    , PosY - 1, BaseN )
@@ -1720,7 +1720,7 @@ int cBuilding::playStream()
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::isDetectedByPlayer( const cPlayer* player )
+bool cBuilding::isDetectedByPlayer( const cPlayer* player ) const
 {
 	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{
@@ -1737,7 +1737,7 @@ void cBuilding::setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTu
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::resetDetectedByPlayer( cPlayer* player )
+void cBuilding::resetDetectedByPlayer( const cPlayer* player )
 {
 	for ( unsigned int i = 0; i < detectedByPlayerList.Size(); i++ )
 	{

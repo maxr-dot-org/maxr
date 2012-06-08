@@ -163,7 +163,7 @@ public:
 	void Deselct();
 
 	int playStream();
-	std::string getStatusStr();
+	std::string getStatusStr() const;
 	/**
 	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath
@@ -195,11 +195,11 @@ public:
 	*@param player player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( const cPlayer* player );
+	bool isDetectedByPlayer( const cPlayer* player ) const;
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void resetDetectedByPlayer( cPlayer* player );
+	void resetDetectedByPlayer( const cPlayer* player );
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
