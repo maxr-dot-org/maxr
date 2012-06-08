@@ -75,7 +75,6 @@ void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 	//check for rubble
 	if ( targetBuilding && !targetBuilding->owner )
 		targetBuilding = NULL;
-
 }
 
 
@@ -363,7 +362,7 @@ void cServerAttackJob::makeImpact( int x, int y )
 	cBuilding* targetBuilding = 0;
 	selectTarget( targetVehicle, targetBuilding, x, y, attackMode, Server->Map );
 
-	//check, whether the target is allready in the target list.
+	//check, whether the target is already in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
 	for ( unsigned int i = 0; i < vehicleTargets.Size(); i++ )
 	{

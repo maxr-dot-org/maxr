@@ -39,7 +39,7 @@ cPathDestHandler::cPathDestHandler( ePathDestinationTypes type_, int destX_, int
 	destY( destY_ )
 {}
 
-bool cPathDestHandler::hasReachedDestination( int x, int y )
+bool cPathDestHandler::hasReachedDestination( int x, int y ) const
 {
 	switch ( type )
 	{
@@ -58,7 +58,7 @@ bool cPathDestHandler::hasReachedDestination( int x, int y )
 	return false;
 }
 
-int cPathDestHandler::heuristicCost( int srcX, int srcY )
+int cPathDestHandler::heuristicCost( int srcX, int srcY ) const
 {
 	switch ( type )
 	{
@@ -633,7 +633,7 @@ void cServerMoveJob::release()
 		if ( this == Server->ActiveMJobs[i] ) return;
 	}
 	Server->addActiveMoveJob( this );
-	Log.write( " Server: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG );
+	Log.write( " Server: Added released movejob to active ones", cLog::eLOG_TYPE_NET_DEBUG );
 }
 
 bool cServerMoveJob::checkMove()
@@ -1042,7 +1042,6 @@ void cClientMoveJob::setVehicleToCoords( int x, int y, int height )
 	}
 	else
 	{
-
 		Waypoint = lastWaypoints;
 		while ( Waypoint )
 		{
@@ -1141,7 +1140,7 @@ void cClientMoveJob::handleNextMove( int iServerPositionX, int iServerPositionY,
 
 		if ( iServerPositionX == Vehicle->PosX && iServerPositionY == Vehicle->PosY )
 		{
-			//the server has allready finished the current movement step
+			//the server has already finished the current movement step
 			Log.write( " Client: Server is one field faster than client", cLog::eLOG_TYPE_NET_DEBUG );
 			if ( Vehicle->moving ) doEndMoveVehicle();
 		}

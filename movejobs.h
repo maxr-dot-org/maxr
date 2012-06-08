@@ -79,7 +79,7 @@ class cPathDestHandler
 public:
 	cPathDestHandler( ePathDestinationTypes type_, int destX, int destY, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_ );
 
-	bool hasReachedDestination( int x, int y );
+	bool hasReachedDestination( int x, int y ) const;
 	int heuristicCost( int srcX, int srcY );
 };
 
@@ -126,7 +126,7 @@ private:
 	/* restsize of the last block */
 	int blocksize;
 
-	/* heaplist where all nodes are sortet by there costF value */
+	/* heaplist where all nodes are sorted by there costF value */
 	sPathNode** nodesHeap;
 	/* open nodes map */
 	sPathNode** openList;
