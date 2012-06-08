@@ -399,15 +399,14 @@ void cGameDataContainer::receiveLandingPosition( cNetMessage* message )
 
 		if ( state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE )
 		{
-			sMenuPlayer* menuPlayer = new sMenuPlayer( players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum );
-			sendReselectLanding( state, menuPlayer );
-			delete menuPlayer;
+			sMenuPlayer menuPlayer( players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum );
+			sendReselectLanding( state, &menuPlayer );
 		}
 	}
 
 	// now remove all players with warning
 	bool ok = true;
-	for ( int player = 0; player < ( int )landData.Size(); player++ )
+	for ( size_t player = 0; player < landData.Size(); ++player )
 	{
 		if ( landData[player]->landingState != LANDING_POSITION_OK && landData[player]->landingState != LANDING_POSITION_CONFIRMED )
 		{
@@ -1387,13 +1386,12 @@ void cPlanetsSelectionMenu::loadMaps()
 	maps = getFilesOfDirectory( cSettings::getInstance().getMapsPath() );
 	if ( !getUserMapsDir().empty() )
 	{
-		cList<string>* userMaps = getFilesOfDirectory( getUserMapsDir() );
+		AutoPtr<cList<string> >::type userMaps( getFilesOfDirectory( getUserMapsDir() ) );
 		for ( unsigned int i = 0; userMaps != 0 && i < userMaps->Size(); i++ )
 		{
 			if ( !maps->Contains( ( *userMaps )[i] ) )
 				maps->Add( ( *userMaps )[i] );
 		}
-		delete userMaps;
 	}
 	for ( unsigned int i = 0; i < maps->Size(); i++ )
 	{
@@ -3002,9 +3000,9 @@ void cNetworkHostMenu::checkTakenPlayerAttr( sMenuPlayer* player )
 {
 	if ( player->ready )
 	{
-		for ( unsigned int i = 0; i < players.Size(); i++ )
+		for ( size_t i = 0; i < players.Size(); ++i )
 		{
-			if ( i == player->nr ) continue;
+			if ( static_cast<int>( i ) == player->nr ) continue;
 			if ( players[i]->name == player->name )
 			{
 				if ( player->nr != actPlayer->nr ) sendMenuChatMessage( "Text~Multiplayer~Player_Name_Taken", player, actPlayer->nr, true );
