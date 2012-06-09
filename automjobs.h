@@ -55,7 +55,7 @@ class cAutoMJob
 
 
 	void DoAutoMove();
-	float CalcFactor( int PosX, int PosY );
+	float CalcFactor (int PosX, int PosY);
 	void PlanNextMove();
 	void PlanLongMove();
 	void changeOP();
@@ -68,7 +68,7 @@ public:
 	bool playerMJob;	//the player has changed the move job
 
 	static void handleAutoMoveJobs();
-	cAutoMJob( cVehicle* vehicle );
+	cAutoMJob (cVehicle* vehicle);
 	~cAutoMJob();
 };
 

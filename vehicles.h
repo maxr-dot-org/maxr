@@ -106,7 +106,7 @@ struct sVehicle
 	struct Mix_Chunk* DriveWater;
 	struct Mix_Chunk* Attack;
 
-	void scaleSurfaces( float factor );
+	void scaleSurfaces (float factor);
 };
 
 
@@ -117,7 +117,7 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle( sVehicle* v, cPlayer* Owner );
+	cVehicle (sVehicle* v, cPlayer* Owner);
 	~cVehicle();
 
 	int OffX, OffY;  // Offset während der Bewegung
@@ -162,7 +162,7 @@ public:
 	* Draws the vehicle to the screen buffer.
 	* Takes the main image from the cache or calls cVehicle::render()
 	*/
-	void draw( SDL_Rect screenPosition, cGameGUI& gameGUI );
+	void draw (SDL_Rect screenPosition, cGameGUI& gameGUI);
 	void Select();
 	void Deselct();
 
@@ -172,28 +172,28 @@ public:
 	*@return 1 if there has been refreshed something else 0.
 	*/
 	int refreshData();
-	void DrawPath( cGameGUI& gameGUI );
+	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr() const;
 	int playStream();
 	void StartMoveSound();
-	void DecSpeed( int value );
-	void DrawAttackCursor( int x, int y );
+	void DecSpeed (int value);
+	void DrawAttackCursor (int x, int y);
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();
-	bool CanTransferTo( cMapField* OverUnitField ) const;
+	bool CanTransferTo (cMapField* OverUnitField) const;
 	bool InSentryRange();
-	void DrawExitPoints( const sVehicle* typ, cGameGUI& gameGUI ) const;
-	bool canExitTo( const int x, const int y, const cMap* map, const sVehicle* typ ) const;
-	bool canLoad( int x, int y, cMap* Map, bool checkPosition = true ) const;
-	bool canLoad( const cVehicle* Vehicle, bool checkPosition = true ) const;
-	void storeVehicle( cVehicle* Vehicle, cMap* Map );
-	void exitVehicleTo( cVehicle* Vehicle, int offset, cMap* Map );
+	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI) const;
+	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
+	bool canLoad (int x, int y, cMap* Map, bool checkPosition = true) const;
+	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
+	void storeVehicle (cVehicle* Vehicle, cMap* Map);
+	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
 #define SUPPLY_TYPE_REARM	0
 #define SUPPLY_TYPE_REPAIR	1
-	bool canSupply( int x, int y, int supplyType ) const; ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply( cUnit* unit, int supplyType ) const; ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	void calcTurboBuild( int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs );
+	bool canSupply (int x, int y, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (cUnit* unit, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	void calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs);
 	/**
 	* lays a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath
@@ -210,33 +210,33 @@ public:
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath
 	*/
-	bool canDoCommandoAction( int x, int y, cMap* map, bool steal ) const;
+	bool canDoCommandoAction (int x, int y, cMap* map, bool steal) const;
 	/**
 	* draws the commando curser for stealing or disabling with the calculated chance
 	*@author alzi alias DoctorDeath
 	*/
-	void drawCommandoCursor( int x, int y, bool steal ) const;
+	void drawCommandoCursor (int x, int y, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath
 	*/
-	int calcCommandoChance( cUnit* destUnit, bool steal ) const;
-	int calcCommandoTurns( cUnit* destUnit ) const;
+	int calcCommandoChance (cUnit* destUnit, bool steal) const;
+	int calcCommandoTurns (cUnit* destUnit) const;
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath
 	*@param iPlayerNum number of player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( const cPlayer* player ) const;
+	bool isDetectedByPlayer (const cPlayer* player) const;
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void resetDetectedByPlayer( cPlayer* player );
+	void resetDetectedByPlayer (cPlayer* player);
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true );
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true);
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit
@@ -249,9 +249,9 @@ public:
 	void tryResetOfDetectionStateAfterMove();
 	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList();
-	bool wasDetectedInThisTurnByPlayer( cPlayer* player ) const;
+	bool wasDetectedInThisTurnByPlayer (cPlayer* player) const;
 
-	void blitWithPreScale( SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1 );
+	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
 	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
 	virtual void executeAutoMoveJobCommand();
@@ -262,18 +262,18 @@ public:
 	* Is this a plane and is there a landing platform beneath it, that can be used to land on?
 	* @author: eiko
 	*/
-	bool canLand( const cMap& map ) const;
+	bool canLand (const cMap& map) const;
 
 
 	/**
 	* draws the main image of the vehicle onto the passed surface
 	*/
-	void render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow );
+	void render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
-	void drawOverlayAnimation( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor );
+	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
 
 private:
 	//---- sentry and reaction fire helpers ---------------------------------------
@@ -283,12 +283,12 @@ private:
 	 * @author: pagra
 	 */
 	bool provokeReactionFire();
-	bool doesPlayerWantToFireOnThisVehicleAsReactionFire( cPlayer* player ) const;
-	bool makeAttackOnThis( cUnit* opponentUnit, const std::string& reasonForLog ) const;
-	bool makeSentryAttack( cUnit* unit ) const;
-	bool isOtherUnitOffendedByThis( cUnit* otherUnit ) const;
-	bool doReactionFire( cPlayer* player ) const;
-	bool doReactionFireForUnit( cUnit* opponentUnit ) const;
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const;
+	bool makeAttackOnThis (cUnit* opponentUnit, const std::string& reasonForLog) const;
+	bool makeSentryAttack (cUnit* unit) const;
+	bool isOtherUnitOffendedByThis (cUnit* otherUnit) const;
+	bool doReactionFire (cPlayer* player) const;
+	bool doReactionFireForUnit (cUnit* opponentUnit) const;
 
 	cList<cPlayer*> calcDetectedByPlayer() const;  ///< helper method that returns a list of all players, that can detect this unit
 	cList<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn

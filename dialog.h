@@ -29,12 +29,12 @@
 class cDialogYesNo : public cMenu
 {
 public:
-	explicit cDialogYesNo( const std::string& text );
+	explicit cDialogYesNo (const std::string& text);
 
-	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
-	static void yesReleased( void* parent );
-	static void noReleased( void* parent );
+	static void yesReleased (void* parent);
+	static void noReleased (void* parent);
 
 private:
 	cMenuLabel textLabel;
@@ -48,11 +48,11 @@ private:
 class cDialogOK : public cMenu
 {
 public:
-	explicit cDialogOK( const std::string& text );
+	explicit cDialogOK (const std::string& text);
 
-	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
-	static void okReleased( void* parent );
+	static void okReleased (void* parent);
 
 private:
 	cMenuLabel textLabel;
@@ -64,9 +64,9 @@ class cDestructMenu : public cMenu
 public:
 	cDestructMenu();
 
-	static void armReleased( void* parent );
-	static void cancelReleased( void* parent );
-	static void destroyReleased( void* parent );
+	static void armReleased (void* parent);
+	static void cancelReleased (void* parent);
+	static void destroyReleased (void* parent);
 
 private:
 	cMenuButton armButton;
@@ -82,11 +82,11 @@ class cDialogLicence : public cMenu
 public:
 	cDialogLicence();
 
-	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
-	static void okReleased( void* parent );
-	static void upReleased( void* parent );
-	static void downReleased( void* parent );
+	static void okReleased (void* parent);
+	static void upReleased (void* parent);
+	static void downReleased (void* parent);
 
 private:
 	std::string sLicence1;
@@ -154,16 +154,16 @@ class cDialogPreferences : public cMenu
 public:
 	cDialogPreferences();
 
-	static void okReleased( void* parent );
-	static void cancelReleased( void* parent );
+	static void okReleased (void* parent);
+	static void cancelReleased (void* parent);
 
-	static void musicVolumeChanged( void* parent );
-	static void effectsVolumeChanged( void* parent );
-	static void voicesVolumeChanged( void* parent );
+	static void musicVolumeChanged (void* parent);
+	static void effectsVolumeChanged (void* parent);
+	static void voicesVolumeChanged (void* parent);
 
-	static void musicMuteChanged( void* parent );
-	static void effectsMuteChanged( void* parent );
-	static void voicesMuteChanged( void* parent );
+	static void musicMuteChanged (void* parent);
+	static void effectsMuteChanged (void* parent);
+	static void voicesMuteChanged (void* parent);
 };
 
 class cDialogTransfer : public cMenu
@@ -194,20 +194,20 @@ class cDialogTransfer : public cMenu
 	void getNamesNCargoNImages();
 	void setCargos();
 public:
-	cDialogTransfer( cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_ );
+	cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
 	~cDialogTransfer();
 
-	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
-	static void doneReleased( void* parent );
-	static void cancelReleased( void* parent );
+	static void doneReleased (void* parent);
+	static void cancelReleased (void* parent);
 
-	static void incReleased( void* parent );
-	static void decReleased( void* parent );
+	static void incReleased (void* parent);
+	static void decReleased (void* parent);
 
-	static void barClicked( void* parent );
+	static void barClicked (void* parent);
 
-	void handleDestroyUnit( cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL );
+	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 class cDialogResearch : public cMenu
@@ -237,19 +237,19 @@ class cDialogResearch : public cMenu
 
 	void setData();
 public:
-	explicit cDialogResearch( cPlayer* owner_ );
+	explicit cDialogResearch (cPlayer* owner_);
 
-	virtual void handleKeyInput( SDL_KeyboardEvent& key, const std::string& ch );
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
-	static void doneReleased( void* parent );
-	static void cancelReleased( void* parent );
+	static void doneReleased (void* parent);
+	static void cancelReleased (void* parent);
 
-	static void incReleased( void* parent );
-	static void decReleased( void* parent );
+	static void incReleased (void* parent);
+	static void decReleased (void* parent);
 
-	static void sliderClicked( void* parent );
+	static void sliderClicked (void* parent);
 
-	void handleDestroyUnit( cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL );
+	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 /** Draws a context menu item
@@ -260,6 +260,6 @@ public:
  * @param y y position
  * @param *surface SDL_Surface to draw on
 */
-void drawContextItem( const std::string& sText, bool bPressed, int x, int y, SDL_Surface* surface );
+void drawContextItem (const std::string& sText, bool bPressed, int x, int y, SDL_Surface* surface);
 
 #endif

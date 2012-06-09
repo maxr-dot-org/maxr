@@ -38,7 +38,7 @@ class cNetMessage;
 * Callback for the networkthread
 *@author alzi alias DoctorDeath
 */
-int CallbackHandleNetworkThread( void* arg );
+int CallbackHandleNetworkThread (void* arg);
 
 enum SOCKET_TYPES
 {
@@ -68,7 +68,7 @@ struct sDataBuffer
 
 	char* getWritePointer();
 	int getFreeSpace() const;
-	void deleteFront( int n );
+	void deleteFront (int n);
 
 	/**
 	* Clears the data buffer and sets his lenght to 0.
@@ -140,9 +140,9 @@ private:
 	* Deletes the socket, frees its memory and sorts the rest sockets in the list.
 	*@author alzi alias DoctorDeath
 	*/
-	void deleteSocket( int iNum );
+	void deleteSocket (int iNum);
 
-	int pushEvent( cNetMessage* message );
+	int pushEvent (cNetMessage* message);
 public:
 	/**
 	* Creates a new server on the port which has to be set before.
@@ -161,7 +161,7 @@ public:
 	*@author alzi alias DoctorDeath
 	*param iClientNumber Number of client/socket to which the connection should be closed.
 	*/
-	void close( int iClientNumber );
+	void close (int iClientNumber);
 
 	/**
 	* Sends data of an given lenght to the client/socket.
@@ -171,7 +171,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int sendTo( int iClientNumber, int iLength, const char* buffer );
+	int sendTo (int iClientNumber, int iLength, const char* buffer);
 	/**
 	* Sends the data to all sockets to which this machine is connected.
 	*@author alzi alias DoctorDeath
@@ -179,20 +179,20 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int send( int iLength, const char* buffer );
+	int send (int iLength, const char* buffer);
 
 	/**
 	* Sets a new port.
 	*@author alzi alias DoctorDeath
 	*param iPort New port number.
 	*/
-	void setPort( int iPort );
+	void setPort (int iPort);
 	/**
 	* Sets a new IP.
 	*@author alzi alias DoctorDeath
 	*param iPort New IP.
 	*/
-	void setIP( const std::string& sIP );
+	void setIP (const std::string& sIP);
 	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath

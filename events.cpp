@@ -29,54 +29,54 @@
 #include "files.h"
 #include "video.h"
 
-void cEventHandling::pushEvent( cNetMessage* message )
+void cEventHandling::pushEvent (cNetMessage* message)
 {
-	eventQueue.write( message );
+	eventQueue.write (message);
 }
 
 void cEventHandling::HandleEvents()
 {
 	SDL_Event event;
-	while ( SDL_PollEvent( &event ) )
+	while (SDL_PollEvent (&event))
 	{
-		switch ( event.type )
+		switch (event.type)
 		{
 			case SDL_ACTIVEEVENT:
-				if ( event.active.state & SDL_APPINPUTFOCUS )	//this is an workaround for a SDL bug.
-					SDL_SetModState( KMOD_NONE );				//See Ticket #86 on bugtracker.
+				if (event.active.state & SDL_APPINPUTFOCUS)	//this is an workaround for a SDL bug.
+					SDL_SetModState (KMOD_NONE);				//See Ticket #86 on bugtracker.
 				break;											//will hopefully not be required anymore in SDL 1.3
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-				if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod & KMOD_ALT ) //alt+enter makes us go fullscreen|windowmode
+				if (event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_RETURN && event.key.keysym.mod & KMOD_ALT)   //alt+enter makes us go fullscreen|windowmode
 				{
-					Video.setWindowMode( !Video.getWindowMode(), true );
+					Video.setWindowMode (!Video.getWindowMode(), true);
 				}
 				// Screenshot
-				else if ( event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT )
+				else if (event.key.state == SDL_PRESSED && event.key.keysym.sym == SDLK_c && event.key.keysym.mod & KMOD_ALT)
 				{
 					time_t tTime;
 					tm* tmTime;
 					char timestr[16];
 					std::string sTime;
-					tTime = time( NULL );
-					tmTime = localtime( &tTime );
-					strftime( timestr, 16, "%d.%m.%y-%H%M%S", tmTime );
+					tTime = time (NULL);
+					tmTime = localtime (&tTime);
+					strftime (timestr, 16, "%d.%m.%y-%H%M%S", tmTime);
 
 					std::string screenshotfile = getUserScreenshotsDir();
-					screenshotfile.append( ( std::string )"Screen_" + timestr + ".bmp" );
-					Log.write( "Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO );
-					SDL_SaveBMP( screen, screenshotfile.c_str() );
-					if ( Client != 0 )
-						Client->addMessage( lngPack.i18n( "Text~Comp~Screenshot_Done", screenshotfile ) );
+					screenshotfile.append ( (std::string) "Screen_" + timestr + ".bmp");
+					Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
+					SDL_SaveBMP (screen, screenshotfile.c_str());
+					if (Client != 0)
+						Client->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
 				}
 				else
 				{
-					InputHandler->inputkey( event.key );
+					InputHandler->inputkey (event.key);
 				}
 				break;
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
-				InputHandler->inputMouseButton( event.button );
+				InputHandler->inputMouseButton (event.button);
 				break;
 			case SDL_QUIT:
 			{
@@ -90,39 +90,39 @@ void cEventHandling::HandleEvents()
 	}
 
 	cNetMessage* message;
-	while ( eventQueue.size() > 0 )
+	while (eventQueue.size() > 0)
 	{
 		message = eventQueue.read();
-		switch ( message->getClass() )
+		switch (message->getClass())
 		{
 			case NET_MSG_CLIENT:
-				if ( !Client )
+				if (!Client)
 				{
-					Log.write( "Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR );
+					Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
-				Client->HandleNetMessage( message );
+				Client->HandleNetMessage (message);
 				break;
 			case NET_MSG_SERVER:
 				//should not happen!
-				Log.write( "Client: got a server message! Type: " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR );
+				Log.write ("Client: got a server message! Type: " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			case NET_MSG_MENU:
-				if ( !ActiveMenu )
+				if (!ActiveMenu)
 				{
-					Log.write( "Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR );
+					Log.write ("Got a menu message, but no menu active!", cLog::eLOG_TYPE_NET_ERROR);
 					break;
 				}
-				ActiveMenu->handleNetMessage( message );
+				ActiveMenu->handleNetMessage (message);
 				break;
 			case NET_MSG_STATUS:
-				if ( Client )
+				if (Client)
 				{
-					Client->HandleNetMessage( message );
+					Client->HandleNetMessage (message);
 				}
-				else if ( ActiveMenu )
+				else if (ActiveMenu)
 				{
-					ActiveMenu->handleNetMessage( message );
+					ActiveMenu->handleNetMessage (message);
 				}
 				break;
 			default:

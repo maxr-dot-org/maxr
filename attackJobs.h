@@ -32,17 +32,17 @@ class cNetMessage;
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-void selectTarget( cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map );
+void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map);
 
 //--------------------------------------------------------------------------
 class cServerAttackJob
 {
 public:
-	cServerAttackJob( cUnit* _unit, int targetOff, bool sentry );
+	cServerAttackJob (cUnit* _unit, int targetOff, bool sentry);
 	~cServerAttackJob();
 
-	void sendFireCommand( cPlayer* player );
-	void clientFinished( int playerNr );
+	void sendFireCommand (cPlayer* player);
+	void clientFinished (int playerNr);
 
 	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
 	cUnit* unit;
@@ -53,12 +53,12 @@ private:
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko
 	*/
-	void lockTarget( int offset );
+	void lockTarget (int offset);
 	void lockTargetCluster();
 	void sendFireCommand();
-	void makeImpact( int x, int y );
+	void makeImpact (int x, int y);
 	void makeImpactCluster();
-	void sendAttackJobImpact( int offset, int remainingHP, int id );
+	void sendAttackJobImpact (int offset, int remainingHP, int id);
 
 	bool isMuzzleTypeRocket() const;
 
@@ -96,11 +96,11 @@ public:
 	/** prepares a mapsquare to be attacked
 	* @author Eiko
 	*/
-	static void lockTarget( cNetMessage* message );
+	static void lockTarget (cNetMessage* message);
 	static void handleAttackJobs();
-	static void makeImpact( int offset, int remainingHP, int id );
+	static void makeImpact (int offset, int remainingHP, int id);
 
-	cClientAttackJob( cNetMessage* message );
+	cClientAttackJob (cNetMessage* message);
 
 	void rotate();
 	void playMuzzle();

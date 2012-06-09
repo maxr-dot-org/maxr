@@ -38,31 +38,31 @@ private:
 
 
 public:
-	cRingbuffer(): elements( NULL ), read_( 0 ), write_( 0 ), capacity( 0 ) {}
+	cRingbuffer() : elements (NULL), read_ (0), write_ (0), capacity (0) {}
 	~cRingbuffer() { delete [] elements; }
 
 	int size();
-	void write( const T element );
+	void write (const T element);
 	T read();
 
 };
 
 template<typename T> int cRingbuffer<T>::size()
 {
-	cMutex::Lock lock( mutex );
+	cMutex::Lock lock (mutex);
 
 	int size = write_ - read_;
-	if ( size < 0 ) size += capacity;
+	if (size < 0) size += capacity;
 
 	return size;
 }
 
-template<typename T> void cRingbuffer<T>::write( const T element )
+template<typename T> void cRingbuffer<T>::write (const T element)
 {
-	cMutex::Lock lock( mutex );
+	cMutex::Lock lock (mutex);
 
 	int s = size();
-	if ( s >= capacity - 1 )
+	if (s >= capacity - 1)
 	{
 		//alloc new memory
 		int newCapacity = capacity + 128;
@@ -70,7 +70,7 @@ template<typename T> void cRingbuffer<T>::write( const T element )
 		T* newElements = new T[newCapacity];
 
 		int newWrite_;
-		for ( newWrite_ = 0; newWrite_ < capacity - 1; newWrite_++ )
+		for (newWrite_ = 0; newWrite_ < capacity - 1; newWrite_++)
 		{
 			newElements[newWrite_] = read();
 		}
@@ -85,7 +85,7 @@ template<typename T> void cRingbuffer<T>::write( const T element )
 	elements[write_] = element;
 
 	write_++;
-	if ( write_ >= capacity )
+	if (write_ >= capacity)
 	{
 		write_ = 0;
 	}
@@ -94,13 +94,13 @@ template<typename T> void cRingbuffer<T>::write( const T element )
 
 template<typename T> T cRingbuffer<T>::read()
 {
-	cMutex::Lock lock( mutex );
+	cMutex::Lock lock (mutex);
 
-	assert( size() != 0 );
+	assert (size() != 0);
 
 	T element = elements[read_];
 	read_++;
-	if ( read_ >= capacity )
+	if (read_ >= capacity)
 	{
 		read_ = 0;
 		//TODO: free memory here

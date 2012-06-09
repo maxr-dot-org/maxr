@@ -24,29 +24,29 @@
 using namespace std;
 
 //--------------------------------------------------------------------------
-bool cNotificationSender::addNotificationListener( INotificationListener* listener )
+bool cNotificationSender::addNotificationListener (INotificationListener* listener)
 {
-	if ( listener == 0 )
+	if (listener == 0)
 		return false;
-	for ( size_t i = 0; i < listeners.size(); i++ )
+	for (size_t i = 0; i < listeners.size(); i++)
 	{
-		if ( listeners[i] == listener )
+		if (listeners[i] == listener)
 			return false;
 	}
-	listeners.push_back( listener );
+	listeners.push_back (listener);
 	return true;
 }
 
 //--------------------------------------------------------------------------
-bool cNotificationSender::removeNotificationListener( INotificationListener* listener )
+bool cNotificationSender::removeNotificationListener (INotificationListener* listener)
 {
-	if ( listener == 0 )
+	if (listener == 0)
 		return false;
-	for ( size_t i = 0; i < listeners.size(); i++ )
+	for (size_t i = 0; i < listeners.size(); i++)
 	{
-		if ( listeners[i] == listener )
+		if (listeners[i] == listener)
 		{
-			listeners.erase( listeners.begin() + i );
+			listeners.erase (listeners.begin() + i);
 			return true;
 		}
 	}
@@ -54,8 +54,8 @@ bool cNotificationSender::removeNotificationListener( INotificationListener* lis
 }
 
 //--------------------------------------------------------------------------
-void cNotificationSender::notifyListeners( const std::string& message )
+void cNotificationSender::notifyListeners (const std::string& message)
 {
-	for ( size_t i = 0; i < listeners.size(); i++ )
-		listeners[i]->notify( message, this );
+	for (size_t i = 0; i < listeners.size(); i++)
+		listeners[i]->notify (message, this);
 }

@@ -67,8 +67,8 @@ struct sDrawingCacheEntry
 	/**
 	* sets all properties and initialises the surface.
 	*/
-	void init( cVehicle* vehicle );
-	void init( cBuilding* building );
+	void init (cVehicle* vehicle);
+	void init (cBuilding* building);
 };
 
 class cDrawingCache
@@ -81,16 +81,16 @@ public:
 	* This method looks for a cached image, that matches the properties of the passed building.
 	* @return a pointer to a surface, which contains the already rendered image of the building or NULL when no matching cache entry exists.
 	*/
-	SDL_Surface* getCachedImage( cBuilding* building );
-	SDL_Surface* getCachedImage( cVehicle* vehicle );
+	SDL_Surface* getCachedImage (cBuilding* building);
+	SDL_Surface* getCachedImage (cVehicle* vehicle);
 	/**
 	* This method creates a new chace entry, when there is space in the cache.
 	* When there is no free space, an old entry is reused.
 	* When there is no free space and no old entries, NULL is returned.
 	* @return a surface to which the building has to be drawn, after calling this function. Returns NULL when the cache is full.
 	*/
-	SDL_Surface* createNewEntry( cBuilding* building );
-	SDL_Surface* createNewEntry( cVehicle* vehicle );
+	SDL_Surface* createNewEntry (cBuilding* building);
+	SDL_Surface* createNewEntry (cVehicle* vehicle);
 	/**
 	* Deletes all cache entries.
 	*/
@@ -98,7 +98,7 @@ public:
 
 	void resetStatistics();
 	int getMaxCacheSize() const;
-	void setMaxCacheSize( unsigned int newSize );
+	void setMaxCacheSize (unsigned int newSize);
 	int getCacheSize() const;
 	int getCacheHits() const;
 	int getCacheMisses() const;
@@ -108,8 +108,8 @@ private:
 	unsigned int maxCacheSize;
 	unsigned int cacheSize;
 	sDrawingCacheEntry* cachedImages;
-	bool canCache( cBuilding* building );
-	bool canCache( cVehicle* vehicle );
+	bool canCache (cBuilding* building);
+	bool canCache (cVehicle* vehicle);
 
 	//statistics
 	int cacheHits;

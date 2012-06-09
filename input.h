@@ -50,7 +50,7 @@ private:
 	 * @author alzi alias DoctorDeath
 	 * @param ch character which is to be added.
 	 */
-	std::string getUTF16Char( Uint16 ch );
+	std::string getUTF16Char (Uint16 ch);
 public:
 	cInput();
 	/**
@@ -60,10 +60,10 @@ public:
 	 * @author alzi alias DoctorDeath
 	 * @param keysym SDL_keysym with pressed key information.
 	 */
-	void inputkey( SDL_KeyboardEvent& key );
+	void inputkey (SDL_KeyboardEvent& key);
 
 	long LastClickTicks;
-	void inputMouseButton( SDL_MouseButtonEvent& button );
+	void inputMouseButton (SDL_MouseButtonEvent& button);
 	bool IsDoubleClicked();
 };
 

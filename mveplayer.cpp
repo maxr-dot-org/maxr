@@ -103,17 +103,17 @@ float ms_per_frame = 0;
 /* function prototypes */
 /***********************/
 #ifndef NOAUDIO
-void MVEPlayerAudioCB( void* userdata, Uint8* stream, Sint32 len );
-void MVEPlayerDecodeAudio( mvebuffer* input );
+void MVEPlayerAudioCB (void* userdata, Uint8* stream, Sint32 len);
+void MVEPlayerDecodeAudio (mvebuffer* input);
 #endif
-void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* video_data, Uint8* decoding_map );
+void MVEPlayerDecodeVideo (Uint16 wblocks, Uint16 hblocks, Uint8* video_data, Uint8* decoding_map);
 void MVEPlayerEventHandler();
 
 /********************************/
 /* primary function entry point */
 /********************************/
 
-int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, int audio )
+int MVEPlayer (const char* filename, int dwidth, int dheight, int fullscreen, int audio)
 {
 	/*************************/
 	/* variable declarations */
@@ -165,80 +165,80 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 	/******************************************/
 
 	/* initialize file access structure */
-	mve = SDL_RWFromFile( filename, "rb" );
+	mve = SDL_RWFromFile (filename, "rb");
 
 	/* confirm MVE file open */
-	if ( !mve )
+	if (!mve)
 		return UNABLE_TO_OPEN_FILE;
 
 	/* read the first 26 bytes */
-	if ( SDL_RWread( mve, fileTestString, sizeof( char ), idlen ) < 0 )
+	if (SDL_RWread (mve, fileTestString, sizeof (char), idlen) < 0)
 		return FILE_TOO_SHORT;
 
 	/* validate MVE idstring */
-	if ( SDL_memcmp( fileTestString, idstring, idlen ) != 0 )
+	if (SDL_memcmp (fileTestString, idstring, idlen) != 0)
 		return NOT_MVE_FILE;
 
 	/* open first chunk */
-	if ( !SDL_RWread( mve, &ch, sizeof( ch ), 1 ) )
+	if (!SDL_RWread (mve, &ch, sizeof (ch), 1))
 		return CHUNK_READ_FAILED;
 
 	/* read opcode (initial read) */
-	if ( !SDL_RWread( mve, &op, sizeof( op ), 1 ) )
+	if (!SDL_RWread (mve, &op, sizeof (op), 1))
 		return OPCODE_READ_FAILED;
 
 	/* are opcode parameters within known bounds? */
-	if ( op.type > 0x15 || op.version > 3 )
+	if (op.type > 0x15 || op.version > 3)
 		return MVE_CORRUPT;
 
 	//set window to center of screen
 	static char cVideoPos[] = "SDL_VIDEO_CENTERED=1";
-	putenv( cVideoPos );
+	putenv (cVideoPos);
 
 	/* See if SDL is already initialized by MAXR main (audio shouldn't be) */
-	if ( audio )
+	if (audio)
 	{
-		if ( SDL_WasInit( SDL_INIT_AUDIO ) != SDL_INIT_AUDIO )
-			SDL_Init( SDL_INIT_AUDIO );
+		if (SDL_WasInit (SDL_INIT_AUDIO) != SDL_INIT_AUDIO)
+			SDL_Init (SDL_INIT_AUDIO);
 
-		if ( SDL_WasInit( SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER ) != ( SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER ) )
+		if (SDL_WasInit (SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != (SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER))
 			return SDL_INIT_FAILURE;
 	}
 
-	if ( !audio )
-		if ( SDL_WasInit( SDL_INIT_VIDEO | SDL_INIT_TIMER ) != ( SDL_INIT_VIDEO | SDL_INIT_TIMER ) )
+	if (!audio)
+		if (SDL_WasInit (SDL_INIT_VIDEO | SDL_INIT_TIMER) != (SDL_INIT_VIDEO | SDL_INIT_TIMER))
 			return SDL_INIT_FAILURE;
 
 	/* save initial video state; we'll restore at the end */
-	if ( !fullscreen )
+	if (!fullscreen)
 		initial_vid_state = SDL_GetVideoInfo();
 
 	// hide mouse in fullscreen
-	if ( fullscreen )
-		SDL_ShowCursor( SDL_DISABLE );
+	if (fullscreen)
+		SDL_ShowCursor (SDL_DISABLE);
 
 	/*************/
 	/* main loop */
 	/*************/
 	AutoSurface frame_buf;
-	while ( !QUITTING )
+	while (!QUITTING)
 	{
 		/* poll for input from user */
 		MVEPlayerEventHandler();
 
-		if ( PAUSED || QUITTING )
+		if (PAUSED || QUITTING)
 			continue;
 
-		if ( TIMER_INIT )
+		if (TIMER_INIT)
 		{
-			start_time = ( float )SDL_GetTicks();
+			start_time = (float) SDL_GetTicks();
 			TIMER_INIT = 0;
 		}
 
 		/********************/
 		/* opcode handling */
 		/********************/
-		switch ( op.type )
+		switch (op.type)
 		{
 			case STOP_PLAYBACK:
 
@@ -248,7 +248,7 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 
 			case FETCH_NEXT_CHUNK:
 
-				if ( !SDL_RWread( mve, &ch, sizeof( ch ), 1 ) )
+				if (!SDL_RWread (mve, &ch, sizeof (ch), 1))
 					return CHUNK_READ_FAILED;
 
 				break;
@@ -256,12 +256,12 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 			case CREATE_TIMER:
 
 				/* get timer rate (uint32) */
-				timer_rate = SDL_ReadLE32( mve );
+				timer_rate = SDL_ReadLE32 (mve);
 
 				/* get timer subdivision (uint16) */
-				timer_subdivision = SDL_ReadLE16( mve );
+				timer_subdivision = SDL_ReadLE16 (mve);
 
-				ms_per_frame = ( float )( timer_rate * timer_subdivision / 1000.0 );
+				ms_per_frame = (float) (timer_rate * timer_subdivision / 1000.0);
 
 				TIMER_CREATED = 1;
 				TIMER_INIT = 1;
@@ -270,25 +270,25 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 
 			case INIT_AUDIO_BUFFERS:
 
-				if ( !audio )
+				if (!audio)
 				{
 					/* strip opcode data; don't know how to catch errors here */
-					mve->seek( mve, op.length, SEEK_CUR );
+					mve->seek (mve, op.length, SEEK_CUR);
 					break;
 				}
 
 
 				/* init sdl audio settings */
-				desired = ( SDL_AudioSpec* )malloc( sizeof( SDL_AudioSpec ) );
+				desired = (SDL_AudioSpec*) malloc (sizeof (SDL_AudioSpec));
 
 				/* strip the unknown word out */
-				SDL_ReadLE16( mve );
+				SDL_ReadLE16 (mve);
 
 				/* get the file audio flags */
-				file_audio_flags = SDL_ReadLE16( mve );
+				file_audio_flags = SDL_ReadLE16 (mve);
 
 				/* get the sample rate (frequency) */
-				desired->freq = SDL_ReadLE16( mve );
+				desired->freq = SDL_ReadLE16 (mve);
 
 				/* fill the known audiospec values */
 				desired->samples = 4096;
@@ -296,47 +296,47 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				desired->userdata = &audio_mvebuffer;
 
 				/* fill values gotten from the file audio flags */
-				desired->channels = ( file_audio_flags & 0x01 ? 2 : 1 );
-				desired->format = ( file_audio_flags & 0x02 ? AUDIO_S16 : AUDIO_U8 );
+				desired->channels = (file_audio_flags & 0x01 ? 2 : 1);
+				desired->format = (file_audio_flags & 0x02 ? AUDIO_S16 : AUDIO_U8);
 
-				if ( desired->channels == 2 )
+				if (desired->channels == 2)
 					AUDIO_STEREO = 1;
 
-				if ( desired->format == AUDIO_S16 )
+				if (desired->format == AUDIO_S16)
 					SAMPLESIZE16 = 1;
 
 				/* initialize the audio mode */
-				if ( SDL_OpenAudio( desired, NULL ) < 0 )
+				if (SDL_OpenAudio (desired, NULL) < 0)
 				{
 					return COULD_NOT_OPEN_AUDIO;
 				}
 
 				/* set the compressed flag if necessary */
-				if ( op.version == 1 )
-					AUDIO_COMPRESSED = ( file_audio_flags & 0x04 ? 1 : 0 );
+				if (op.version == 1)
+					AUDIO_COMPRESSED = (file_audio_flags & 0x04 ? 1 : 0);
 
 				/* we're going to abort if is compressed and (not stereo or not AUDIO_S16) because we don't know what to do */
 				/* besides, we've never seen such an MVE before... */
-				if ( AUDIO_COMPRESSED && ( !AUDIO_STEREO || !SAMPLESIZE16 ) )
+				if (AUDIO_COMPRESSED && (!AUDIO_STEREO || !SAMPLESIZE16))
 					return CANNOT_PROCESS_AUDIO;
 
 				/* get rid of rest of opcode data */
-				if ( op.version == 1 )
-					SDL_ReadLE32( mve );
+				if (op.version == 1)
+					SDL_ReadLE32 (mve);
 				else
-					SDL_ReadLE16( mve );
+					SDL_ReadLE16 (mve);
 
 				break;
 
 			case START_AUDIO:
 
-				if ( !audio )
+				if (!audio)
 					break;
 
 				AUDIO_PLAYING = 1;
-				if ( SDL_GetAudioStatus() != SDL_AUDIO_PLAYING )
+				if (SDL_GetAudioStatus() != SDL_AUDIO_PLAYING)
 				{
-					SDL_PauseAudio( 0 );
+					SDL_PauseAudio (0);
 				}
 				break;
 
@@ -344,17 +344,17 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 
 				/* get the requested dimensions
 				note: this is in 8x8 pixel chunks so multiply by 8 to get requested screen pixels*/
-				width_blocks = SDL_ReadLE16( mve );
-				height_blocks = SDL_ReadLE16( mve );
+				width_blocks = SDL_ReadLE16 (mve);
+				height_blocks = SDL_ReadLE16 (mve);
 
 				/* ditch the rest of the opcode data*/
-				if ( op.version > 0 )
+				if (op.version > 0)
 				{
-					SDL_ReadLE16( mve );
-					if ( op.version > 1 )
+					SDL_ReadLE16 (mve);
+					if (op.version > 1)
 					{
-						Uint16 truecolor = SDL_ReadLE16( mve );
-						if ( truecolor )
+						Uint16 truecolor = SDL_ReadLE16 (mve);
+						if (truecolor)
 						{
 							return SIXTEEN_BIT_MVE;
 						}
@@ -362,20 +362,20 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				}
 
 				/* initialize video mvebuffer to the actual movie dimensions */
-				frame_buf = SDL_CreateRGBSurface( Video.getSurfaceType(), width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0 );
+				frame_buf = SDL_CreateRGBSurface (Video.getSurfaceType(), width_blocks << 3, height_blocks << 3, 8, 0, 0, 0, 0);
 
 				/* init movie screen rect for fullscreen purposes */
-				movie_screen.x = ( screen->w - frame_buf->w ) >> 1;
-				movie_screen.y = ( screen->h - frame_buf->h ) >> 1;
+				movie_screen.x = (screen->w - frame_buf->w) >> 1;
+				movie_screen.y = (screen->h - frame_buf->h) >> 1;
 
 				/* erase old video backmvebuffer */
-				free( v_backbuf );
+				free (v_backbuf);
 
 				/* allocate memory for the backmvebuffers sufficient for the screen pixel mvebuffer */
 				screen_mvebuffer_size = frame_buf->h * frame_buf->w;
 
-				v_backbuf = ( Uint8* )calloc( 1, screen_mvebuffer_size << 1 );
-				assert( v_backbuf );
+				v_backbuf = (Uint8*) calloc (1, screen_mvebuffer_size << 1);
+				assert (v_backbuf);
 
 				frame_hot = v_backbuf;
 				frame_cold = v_backbuf + screen_mvebuffer_size;
@@ -385,19 +385,19 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 			case SEND_BUFFER_TO_DISPLAY:
 
 				/* write the decoded data to the frame_buf */
-				memcpy( frame_buf->pixels, frame_hot, screen_mvebuffer_size );
+				memcpy (frame_buf->pixels, frame_hot, screen_mvebuffer_size);
 
 				/* send the mvebuffer to the screen mvebuffer */
-				if ( SDL_MUSTLOCK( screen ) )
-					SDL_LockSurface( screen );
+				if (SDL_MUSTLOCK (screen))
+					SDL_LockSurface (screen);
 
-				if ( fullscreen )
-					SDL_SoftStretch( frame_buf, NULL, screen, NULL );
+				if (fullscreen)
+					SDL_SoftStretch (frame_buf, NULL, screen, NULL);
 				else
-					SDL_BlitSurface( frame_buf, NULL, screen, &movie_screen );
+					SDL_BlitSurface (frame_buf, NULL, screen, &movie_screen);
 
-				if ( SDL_MUSTLOCK( screen ) )
-					SDL_UnlockSurface( screen );
+				if (SDL_MUSTLOCK (screen))
+					SDL_UnlockSurface (screen);
 
 				/* increment start time - this is now our target frame output time */
 				start_time += ms_per_frame;
@@ -406,73 +406,73 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				current_time = SDL_GetTicks();
 
 				/* if there's time to next scheduled update, force delay to our target output time */
-				if ( current_time < start_time )
-					SDL_Delay( ( Uint32 )( start_time - current_time ) );
+				if (current_time < start_time)
+					SDL_Delay ( (Uint32) (start_time - current_time));
 
 				/* update the screen */
-				SDL_UpdateRect( screen, 0, 0, 0, 0 );
+				SDL_UpdateRect (screen, 0, 0, 0, 0);
 
 				/* strip opcode data; don't know how to catch errors here */
-				mve->seek( mve, op.length, SEEK_CUR );
+				mve->seek (mve, op.length, SEEK_CUR);
 
 				break;
 
 			case AUDIO_FRAME:
 
-				if ( !audio )
+				if (!audio)
 				{
 					/* strip opcode data; don't know how to catch errors here */
-					mve->seek( mve, op.length, SEEK_CUR );
+					mve->seek (mve, op.length, SEEK_CUR);
 					break;
 				}
 
 				/* strip the seq-index and stream-mask */
-				SDL_ReadLE16( mve );
-				SDL_ReadLE16( mve );
+				SDL_ReadLE16 (mve);
+				SDL_ReadLE16 (mve);
 
 				/* lock SDL out of the audio_mvebuffer; we'll release at the end */
 				SDL_LockAudio();
 
-				if ( AUDIO_COMPRESSED )
+				if (AUDIO_COMPRESSED)
 				{
 					/* send in the raw data via audio_data_read; it will be returned the same way */
 					/* read in the compressed data (should be op.length - 4 [the 4 being seq-index and stream-mask]) */
 					audio_data_read.length =  op.length - 4;
-					audio_data_read.data = ( Uint8* )malloc( audio_data_read.length );
-					assert( audio_data_read.data != NULL );
+					audio_data_read.data = (Uint8*) malloc (audio_data_read.length);
+					assert (audio_data_read.data != NULL);
 
-					if ( SDL_RWread( mve, audio_data_read.data, audio_data_read.length, 1 ) < 0 )
+					if (SDL_RWread (mve, audio_data_read.data, audio_data_read.length, 1) < 0)
 						return AUDIO_FRAME_READ_FAILURE;
-					MVEPlayerDecodeAudio( &audio_data_read );
+					MVEPlayerDecodeAudio (&audio_data_read);
 				}
 				else
 				{
 					/* get the stream length */
-					audio_data_read.length = SDL_ReadLE16( mve );
+					audio_data_read.length = SDL_ReadLE16 (mve);
 
 					/* allocate memory sufficient for the data read */
-					audio_data_read.data = ( Uint8* )malloc( audio_data_read.length );
-					assert( audio_data_read.data != NULL );
+					audio_data_read.data = (Uint8*) malloc (audio_data_read.length);
+					assert (audio_data_read.data != NULL);
 
 					/* get audio data */
-					if ( SDL_RWread( mve, audio_data_read.data, audio_data_read.length, 1 ) < 0 )
+					if (SDL_RWread (mve, audio_data_read.data, audio_data_read.length, 1) < 0)
 						return AUDIO_FRAME_READ_FAILURE;
 				}
 				/* at this point, we have uncompressed audio in audio_data_read, along with appropriate lengths */
 
 				/* create temp_audio_mvebuffer the size of old audio mvebuffer + new audio data */
 				temp_audio_mvebuffer.length = audio_data_read.length + audio_mvebuffer.length;
-				temp_audio_mvebuffer.data = ( Uint8* )malloc( temp_audio_mvebuffer.length );
-				assert( temp_audio_mvebuffer.data != NULL );
+				temp_audio_mvebuffer.data = (Uint8*) malloc (temp_audio_mvebuffer.length);
+				assert (temp_audio_mvebuffer.data != NULL);
 
 				/* copy old audio mvebuffer to temp_audio_mvebuffer */
-				memcpy( temp_audio_mvebuffer.data, audio_mvebuffer.data, audio_mvebuffer.length );
+				memcpy (temp_audio_mvebuffer.data, audio_mvebuffer.data, audio_mvebuffer.length);
 
 				/* append new data to temp_audio_mvebuffer */
-				memcpy( temp_audio_mvebuffer.data + audio_mvebuffer.length, audio_data_read.data, audio_data_read.length );
+				memcpy (temp_audio_mvebuffer.data + audio_mvebuffer.length, audio_data_read.data, audio_data_read.length);
 
 				/* free audio mvebuffer */
-				free( audio_mvebuffer.data );
+				free (audio_mvebuffer.data);
 
 				/* temp_audio_mvebuffer has the requested data, and audio_mvebuffer needs to have it. */
 				audio_mvebuffer.data = temp_audio_mvebuffer.data;
@@ -486,7 +486,7 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				temp_audio_mvebuffer.length = 0;
 
 				/* close off audio_data_read */
-				free( audio_data_read.data );
+				free (audio_data_read.data);
 				audio_data_read.data = NULL;
 				audio_data_read.length = 0;
 
@@ -494,22 +494,22 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 
 			case INIT_VIDEO_MODE:
 				/* Skip unused width and height. */
-				SDL_ReadLE16( mve );
-				SDL_ReadLE16( mve );
+				SDL_ReadLE16 (mve);
+				SDL_ReadLE16 (mve);
 
 				/* if we've been here before */
-				if ( screen )
-					SDL_FreeSurface( screen );
+				if (screen)
+					SDL_FreeSurface (screen);
 
-				if ( fullscreen )
-					screen = SDL_SetVideoMode( dwidth, dheight, 8, Video.getSurfaceType() | SDL_FULLSCREEN );
+				if (fullscreen)
+					screen = SDL_SetVideoMode (dwidth, dheight, 8, Video.getSurfaceType() | SDL_FULLSCREEN);
 				else
-					screen = SDL_SetVideoMode( dwidth, dheight, 8, Video.getSurfaceType() );
+					screen = SDL_SetVideoMode (dwidth, dheight, 8, Video.getSurfaceType());
 
 				//SDL_WM_SetCaption(filename, NULL);
 
 				/* strip unknown flag word */
-				SDL_ReadLE16( mve );
+				SDL_ReadLE16 (mve);
 
 				break;
 
@@ -519,27 +519,27 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				Uint16 palette_start = 0, numPalColors = 0;
 
 				/* get # of first entry to fill */
-				palette_start = SDL_ReadLE16( mve );
+				palette_start = SDL_ReadLE16 (mve);
 
 				/* get number of entries in palette */
-				numPalColors = SDL_ReadLE16( mve );
+				numPalColors = SDL_ReadLE16 (mve);
 
 				/* fill the palette */
-				for ( i = 0; i < 256; i++ )
+				for (i = 0; i < 256; i++)
 				{
-					if ( i < palette_start )
+					if (i < palette_start)
 					{
 						r = g = b = 0;
 					}
-					else if ( i >= numPalColors + palette_start )
+					else if (i >= numPalColors + palette_start)
 					{
 						r = g = b = 50;
 					}
 					else
 					{
-						SDL_RWread( mve, &r, sizeof( Uint8 ), 1 );
-						SDL_RWread( mve, &g, sizeof( Uint8 ), 1 );
-						SDL_RWread( mve, &b, sizeof( Uint8 ), 1 );
+						SDL_RWread (mve, &r, sizeof (Uint8), 1);
+						SDL_RWread (mve, &g, sizeof (Uint8), 1);
+						SDL_RWread (mve, &b, sizeof (Uint8), 1);
 						/* interplay divides the palette entries by 4; must multiply by 4. */
 						r <<= 2;
 						g <<= 2;
@@ -552,7 +552,7 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				}
 
 				/* install the palette in the screen surface */
-				SDL_SetColors( screen, frame_buf->format->palette->colors, 0, 256 );
+				SDL_SetColors (screen, frame_buf->format->palette->colors, 0, 256);
 
 			}
 
@@ -561,22 +561,22 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 			case SET_DECODING_MAP:
 
 				/* kill previous map */
-				free( map );
+				free (map);
 
 				/* get new map */
-				map = ( Uint8* )malloc( sizeof( Uint8 ) * op.length );
-				assert( map != NULL );
-				SDL_RWread( mve, map, op.length, 1 );
+				map = (Uint8*) malloc (sizeof (Uint8) * op.length);
+				assert (map != NULL);
+				SDL_RWread (mve, map, op.length, 1);
 				break;
 
 			case VIDEO_DATA:
 
 				/* free the previously allocated video data array */
-				free( video );
+				free (video);
 
 				/* allocate enough memory for the video data array */
-				video = ( Uint8* )malloc( op.length );
-				assert( video != NULL );
+				video = (Uint8*) malloc (op.length);
+				assert (video != NULL);
 
 				/* swap the frames so we draw next on the frame that was onscreen 1 frame ago */
 				temp = frame_cold;
@@ -584,21 +584,21 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 				frame_hot = temp;
 
 				/* read the data */
-				SDL_RWread( mve, video, op.length, 1 );
+				SDL_RWread (mve, video, op.length, 1);
 
 				/* decode the video data and update the frame_hot pixel data */
-				MVEPlayerDecodeVideo( width_blocks, height_blocks, video, map );
+				MVEPlayerDecodeVideo (width_blocks, height_blocks, video, map);
 
 				break;
 
 			default:
 
 				/* are opcode parameters within known bounds? */
-				if ( op.type > 0x15 || op.version > 3 )
+				if (op.type > 0x15 || op.version > 3)
 					return MVE_CORRUPT;
 
 				/* strip opcode data; don't know how to catch errors here */
-				mve->seek( mve, op.length, SEEK_CUR );
+				mve->seek (mve, op.length, SEEK_CUR);
 
 				break;
 		}
@@ -608,7 +608,7 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 		/************************/
 
 		/* read opcode (trailing read) */
-		if ( !SDL_RWread( mve, &op, sizeof( op ), 1 ) )
+		if (!SDL_RWread (mve, &op, sizeof (op), 1))
 			return OPCODE_READ_FAILED;
 
 	}
@@ -616,45 +616,45 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 	/* cleanup */
 	/***********/
 
-	if ( audio )
+	if (audio)
 	{
 		/* stop audio */
-		if ( AUDIO_PLAYING )
+		if (AUDIO_PLAYING)
 		{
-			SDL_PauseAudio( 1 );
+			SDL_PauseAudio (1);
 			SDL_CloseAudio();
 		}
 
 		/* free audio mvebuffers */
-		free( audio_mvebuffer.data );
+		free (audio_mvebuffer.data);
 
-		free( audio_data_read.data );
+		free (audio_data_read.data);
 
-		free( temp_audio_mvebuffer.data );
+		free (temp_audio_mvebuffer.data);
 
 		/* free the audio_spec */
-		free( desired );
+		free (desired);
 	}
 
 	/* free the decoding map */
-	free( map );
+	free (map);
 
 	/* free the video data */
-	free( video );
+	free (video);
 
 	/* free the video mvebuffers */
-	free( v_backbuf );
+	free (v_backbuf);
 
-	if ( screen )
-		SDL_FreeSurface( screen );
+	if (screen)
+		SDL_FreeSurface (screen);
 
 	/* close the file handle */
-	if ( mve )
-		SDL_RWclose( mve );
+	if (mve)
+		SDL_RWclose (mve);
 
 	/* reset video mode to original */
-	if ( !fullscreen )
-		SDL_SetVideoMode( initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT );
+	if (!fullscreen)
+		SDL_SetVideoMode (initial_vid_state->current_w, initial_vid_state->current_h, initial_vid_state->vfmt->BitsPerPixel, SDL_ANYFORMAT);
 
 	/* seems to have worked. */
 	return SUCCESS;
@@ -664,36 +664,36 @@ int MVEPlayer( const char* filename, int dwidth, int dheight, int fullscreen, in
 /* Audio callback entry point */
 /******************************/
 
-void MVEPlayerAudioCB( void* userdata, Uint8* stream, int len )
+void MVEPlayerAudioCB (void* userdata, Uint8* stream, int len)
 {
 	Uint8* temp;
-	mvebuffer* audio_mvebuffer = reinterpret_cast<mvebuffer*>( userdata );
+	mvebuffer* audio_mvebuffer = reinterpret_cast<mvebuffer*> (userdata);
 
-	if ( ( Uint32 )len > audio_mvebuffer->length )
+	if ( (Uint32) len > audio_mvebuffer->length)
 	{
 		/* give SDL what we have */
-		memcpy( stream, audio_mvebuffer->data, audio_mvebuffer->length );
+		memcpy (stream, audio_mvebuffer->data, audio_mvebuffer->length);
 		/* and now we have nothing */
 		audio_mvebuffer->length = 0;
 	}
 	else
 	{
 		/* copy len bytes to stream */
-		memcpy( stream, audio_mvebuffer->data, len );
+		memcpy (stream, audio_mvebuffer->data, len);
 
 		/* our mvebuffer length is now whatever we started with minus len */
 		audio_mvebuffer->length -= len;
 
 		/* now we need to store the data that wasn't read */
-		temp = ( Uint8* )malloc( audio_mvebuffer->length );
-		assert( temp != NULL );
+		temp = (Uint8*) malloc (audio_mvebuffer->length);
+		assert (temp != NULL);
 
 		/* copy from data address + len length bytes
 		(which should be the start of the data that wasn't copied to stream) */
-		memcpy( temp, audio_mvebuffer->data + len, audio_mvebuffer->length );
+		memcpy (temp, audio_mvebuffer->data + len, audio_mvebuffer->length);
 
 		/* free the memory of the audio_mvebuffer */
-		free( audio_mvebuffer->data );
+		free (audio_mvebuffer->data);
 
 		/* assign the address of our stored data to the audio_mvebuffer's data */
 		audio_mvebuffer->data = temp;
@@ -727,7 +727,7 @@ Sint16 interplay_delta_table[256] =
 /*****************************/
 /* audio decoder entry point */
 /*****************************/
-void MVEPlayerDecodeAudio( mvebuffer* in )
+void MVEPlayerDecodeAudio (mvebuffer* in)
 {
 	/* this only works for stereo dpcm at present */
 
@@ -738,33 +738,33 @@ void MVEPlayerDecodeAudio( mvebuffer* in )
 
 	/* in->data includes initial stream-len word */
 	/* uncompressed streamlen is stream-len bytes */
-	out.length = LE16( in->data );
+	out.length = LE16 (in->data);
 	in_pos += 2;
-	out.data = ( Uint8* )malloc( out.length );
-	assert( out.data != NULL );
+	out.data = (Uint8*) malloc (out.length);
+	assert (out.data != NULL);
 
 	/* each byte in the input mvebuffer after the first four (two words: initial L and R values)
 	will be expanded to fill a word in the return mvebuffer after decompression.
 	The initial two words will be stored in return mvebuffer as-is. */
-	sample[0] = LE16( in->data + in_pos );
+	sample[0] = LE16 (in->data + in_pos);
 	in_pos += 2;
-	*( Sint16* )( out.data + out_pos ) = sample[0];
+	* (Sint16*) (out.data + out_pos) = sample[0];
 	out_pos += 2;
-	sample[1] = LE16( in->data + in_pos );
+	sample[1] = LE16 (in->data + in_pos);
 	in_pos += 2;
-	*( Sint16* )( out.data + out_pos ) = sample[1];
+	* (Sint16*) (out.data + out_pos) = sample[1];
 	out_pos += 2;
 
-	while ( in_pos < in->length )
+	while (in_pos < in->length)
 	{
-		sample[channel] += interplay_delta_table[*( in->data + in_pos++ )];
-		*( Sint16* )( out.data + out_pos ) = sample[channel];
+		sample[channel] += interplay_delta_table[* (in->data + in_pos++)];
+		* (Sint16*) (out.data + out_pos) = sample[channel];
 		out_pos += 2;
 		channel = !channel;
 	}
 
 	/* free the original mvebuffer*/
-	free( in->data );
+	free (in->data);
 
 	/* assign the incoming mvebuffer the outgoing data for return */
 	in->data = out.data;
@@ -774,7 +774,7 @@ void MVEPlayerDecodeAudio( mvebuffer* in )
 /**************************************/
 /* Video decoding routine entry point */
 /**************************************/
-void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* pMap )
+void MVEPlayerDecodeVideo (Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* pMap)
 {
 	Uint8 encoding = 0, *map = NULL, *data = NULL, *new_frame = NULL, *current = NULL, *temp = NULL;
 	Uint16 pitch = 0;
@@ -788,10 +788,10 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 	pitch = wblocks << 3;
 
 	/* for each row (of 8x8 pixel blocks) */
-	for ( y = 0; y < hblocks; y++ )
+	for (y = 0; y < hblocks; y++)
 	{
 		/* for each column (of 8x8 pixel blocks) */
-		for ( x = 0; x < wblocks; x++ )
+		for (x = 0; x < wblocks; x++)
 		{
 			/* assign the frame mvebuffer pointers to the addresses of the screen
 			mvebuffers so we can do pointer arithmetic on them such as incrementing.
@@ -806,23 +806,23 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 			x * 8 = upper left pixel of the 8x8 block in this new row to be rendered at this time.
 			I felt like replacing the multiplications throughout this function with shift operations. */
 
-			new_frame += ( y * wblocks << 6 ) + ( x << 3 );
-			current += ( y * wblocks << 6 ) + ( x << 3 );
+			new_frame += (y * wblocks << 6) + (x << 3);
+			current += (y * wblocks << 6) + (x << 3);
 
 			/* get the decoding map info for this block; low 4 bits if x is even, high 4 bits if x is odd */
-			encoding = ( *map >> ( ( x & 1 ) << 2 ) ) & 0x0f;
+			encoding = (*map >> ( (x & 1) << 2)) & 0x0f;
 
 			/* if x is odd, increment the decoding map */
-			map += ( x & 1 );
+			map += (x & 1);
 
 			/* process the block */
-			switch ( encoding )
+			switch (encoding)
 			{
 				case 0x0:
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memcpy( new_frame + j * pitch, current + j * pitch, 8 );
+						memcpy (new_frame + j * pitch, current + j * pitch, 8);
 					}
 
 					break;
@@ -834,23 +834,23 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0x2:
 
 					temp = new_frame;
-					if ( *data < 56 )
+					if (*data < 56)
 					{
-						i = 8 + ( *data % 7 );
+						i = 8 + (*data % 7);
 						j =      *data / 7;
 					}
 					else
 					{
-						i = -14 + ( ( *data - 56 ) % 29 );
-						j =   8 + ( ( *data - 56 ) / 29 );
+						i = -14 + ( (*data - 56) % 29);
+						j =   8 + ( (*data - 56) / 29);
 					}
 					data++;
 
 					temp += j * pitch + i;
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memcpy( new_frame + j * pitch, temp + j * pitch, 8 );
+						memcpy (new_frame + j * pitch, temp + j * pitch, 8);
 					}
 
 					break;
@@ -858,50 +858,50 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0x3:
 
 					temp = new_frame;
-					if ( *data < 56 )
+					if (*data < 56)
 					{
-						i = -( 8 + ( *data % 7 ) );
-						j = - ( *data / 7 );
+						i = - (8 + (*data % 7));
+						j = - (*data / 7);
 					}
 					else
 					{
-						i = -( -14 + ( ( *data - 56 ) % 29 ) );
-						j = -( 8 + ( ( *data - 56 ) / 29 ) );
+						i = - (-14 + ( (*data - 56) % 29));
+						j = - (8 + ( (*data - 56) / 29));
 					}
 					data++;
 
 					temp += j * pitch + i;
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memcpy( new_frame + j * pitch, temp + j * pitch, 8 );
+						memcpy (new_frame + j * pitch, temp + j * pitch, 8);
 					}
 
 					break;
 
 				case 0x4:
 
-					i = -8 + ( *data & 0xF );
-					j = -8 + ( *data >> 4 );
+					i = -8 + (*data & 0xF);
+					j = -8 + (*data >> 4);
 					data++;
 
 					current += j * pitch + i;
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memcpy( new_frame + j * pitch, current + j * pitch, 8 );
+						memcpy (new_frame + j * pitch, current + j * pitch, 8);
 					}
 
 					break;
 
 				case 0x5:
 
-					current += ( Sint8 )data[1] * pitch + ( Sint8 )data[0];
+					current += (Sint8) data[1] * pitch + (Sint8) data[0];
 					data += 2;
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memcpy( new_frame + j * pitch, current + j * pitch, 8 );
+						memcpy (new_frame + j * pitch, current + j * pitch, 8);
 					}
 
 					break;
@@ -909,7 +909,7 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0x6:
 
 					x += 2;
-					if ( x >= wblocks )
+					if (x >= wblocks)
 					{
 						y++;
 						x %= wblocks;
@@ -923,17 +923,17 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 					p[0] = *data++;
 					p[1] = *data++;
 
-					if ( p[0] <= p[1] )
+					if (p[0] <= p[1])
 					{
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
 							b[i] = *data++;
 						}
-						for ( j = 0; j < 8; j++ )
+						for (j = 0; j < 8; j++)
 						{
-							for ( i = 0, mask = 1; i < 8; i++, mask <<= 1 )
+							for (i = 0, mask = 1; i < 8; i++, mask <<= 1)
 							{
-								new_frame[i] = p[!!( b[j] & mask )];
+								new_frame[i] = p[!! (b[j] & mask)];
 							}
 							new_frame += pitch;
 						}
@@ -943,16 +943,16 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 						b[0] = *data++;
 						b[1] = *data++;
 
-						for ( j = 0; j < 4; j++ )
+						for (j = 0; j < 4; j++)
 						{
-							if ( !( j % 2 ) )
+							if (! (j % 2))
 								mask = 0x01;
-							for ( i = 0; i < 4; i++, mask <<= 1 )
+							for (i = 0; i < 4; i++, mask <<= 1)
 							{
 								new_frame[i << 1] =
-									new_frame[( i << 1 ) + 1] =
-										new_frame[( i << 1 ) + pitch] =
-											new_frame[( i << 1 ) + 1 + pitch] = p[!!( b[j >> 1] & mask )];
+									new_frame[ (i << 1) + 1] =
+										new_frame[ (i << 1) + pitch] =
+											new_frame[ (i << 1) + 1 + pitch] = p[!! (b[j >> 1] & mask)];
 							}
 							new_frame += pitch << 1;
 						}
@@ -964,34 +964,34 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0x8:
 				{
 					Uint8 p[8], b[8], mask = 1, k;
-					if ( data[0] <= data[1] )
+					if (data[0] <= data[1])
 					{
-						for ( j = 0; j < 4; j++ )
+						for (j = 0; j < 4; j++)
 						{
-							for ( i = 0; i < 2; i++ )
+							for (i = 0; i < 2; i++)
 							{
-								p[i + ( j << 1 )] = *data++;
+								p[i + (j << 1)] = *data++;
 							}
-							for ( i = 0; i < 2; i++ )
+							for (i = 0; i < 2; i++)
 							{
-								b[i + ( j << 1 )] = *data++;
+								b[i + (j << 1)] = *data++;
 							}
 						}
 
-						for ( k = 0; k < 4; k++ )
+						for (k = 0; k < 4; k++)
 						{
-							if ( k == 2 )
+							if (k == 2)
 							{
 								new_frame -= pitch << 3;
 								new_frame += 4;
 							}
-							for ( j = 0; j < 4; j++ )
+							for (j = 0; j < 4; j++)
 							{
-								if ( !( j & 1 ) )
+								if (! (j & 1))
 									mask = 1;
-								for ( i = 0; i < 4; i++ )
+								for (i = 0; i < 4; i++)
 								{
-									new_frame[i] = p[!!( b[( j >> 1 ) + ( k << 1 )] & mask ) + ( k << 1 )];
+									new_frame[i] = p[!! (b[ (j >> 1) + (k << 1)] & mask) + (k << 1)];
 									mask <<= 1;
 								} /* for i */
 								new_frame += pitch;
@@ -1000,25 +1000,25 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 					} /* if p0 <= p1 */
 					else
 					{
-						for ( j = 0; j < 2; j++ )
+						for (j = 0; j < 2; j++)
 						{
-							for ( i = 0; i < 2; i++ )
+							for (i = 0; i < 2; i++)
 							{
-								p[( j << 1 ) + i] = *data++;
+								p[ (j << 1) + i] = *data++;
 							}
-							for ( i = 0; i < 4; i++ )
+							for (i = 0; i < 4; i++)
 							{
-								b[( j << 2 ) + i] = *data++;
+								b[ (j << 2) + i] = *data++;
 							}
 						}
-						if ( p[2] > p[3] )
+						if (p[2] > p[3])
 						{
 							/* horizontally split block */
-							for ( j = 0; j < 8; j++ )
+							for (j = 0; j < 8; j++)
 							{
-								for ( i = 0, mask = 1; i < 8; i++, mask <<= 1 )
+								for (i = 0, mask = 1; i < 8; i++, mask <<= 1)
 								{
-									new_frame[i] = p[!!( b[j] & mask ) + ( j > 3 ? 2 : 0 )];
+									new_frame[i] = p[!! (b[j] & mask) + (j > 3 ? 2 : 0)];
 								}
 								new_frame += pitch;
 							}
@@ -1026,21 +1026,21 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 						else
 						{
 							/* vertically split block */
-							for ( k = 0; k < 2; k++ )
+							for (k = 0; k < 2; k++)
 							{
-								if ( k == 1 )
+								if (k == 1)
 								{
 									new_frame -= pitch << 3;
 									new_frame += 4;
 								}
-								for ( j = 0; j < 4; j++ )
+								for (j = 0; j < 4; j++)
 								{
 									mask = 1;
-									for ( i = 0; i < 8; i++ )
+									for (i = 0; i < 8; i++)
 									{
-										new_frame[i % 4] = p[!!( b[j + ( k << 2 )] & mask ) + ( k << 1 )];
+										new_frame[i % 4] = p[!! (b[j + (k << 2)] & mask) + (k << 1)];
 										mask <<= 1;
-										if ( i == 3 )
+										if (i == 3)
 											new_frame += pitch;
 									}
 									new_frame += pitch;
@@ -1055,78 +1055,78 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0x9:
 				{
 					Uint8 p[4], b[16];
-					for ( i = 0; i < 4; i++ )
+					for (i = 0; i < 4; i++)
 					{
 						p[i] = *data++;
 					}
-					if ( p[0] <= p[1] && p[2] <= p[3] )
+					if (p[0] <= p[1] && p[2] <= p[3])
 					{
 						Uint16 mask;
-						for ( i = 0; i < 16; i++ )
+						for (i = 0; i < 16; i++)
 						{
 							b[i] = *data++;
 						}
-						for ( j = 0; j < 8; j++ )
+						for (j = 0; j < 8; j++)
 						{
-							for ( i = 0, mask = 3; i < 8; i++, mask <<= 2 )
+							for (i = 0, mask = 3; i < 8; i++, mask <<= 2)
 							{
-								new_frame[i] = p[( mask & ( b[( j << 1 ) + 1] << 8 | b[j << 1] ) ) >> ( i << 1 )];
+								new_frame[i] = p[ (mask & (b[ (j << 1) + 1] << 8 | b[j << 1])) >> (i << 1)];
 							}
 							new_frame += pitch;
 						}
 					}
-					if ( p[0] <= p[1] && p[2] > p[3] )
+					if (p[0] <= p[1] && p[2] > p[3])
 					{
 						Uint8 mask;
-						for ( i = 0; i < 4; i++ )
+						for (i = 0; i < 4; i++)
 						{
 							b[i] = *data++;
 						}
-						for ( j = 0; j < 8; j++ )
+						for (j = 0; j < 8; j++)
 						{
 							mask = 3;
-							for ( i = 0; i < 8; i++ )
+							for (i = 0; i < 8; i++)
 							{
-								new_frame[i] = p[( b[j >> 1] & mask ) >> ( ( i >> 1 ) << 1 )];
-								if ( i & 1 )
+								new_frame[i] = p[ (b[j >> 1] & mask) >> ( (i >> 1) << 1)];
+								if (i & 1)
 									mask <<= 2;
 							}
 							new_frame += pitch;
 						}
 					}
-					if ( p[0] > p[1] && p[2] <= p[3] )
+					if (p[0] > p[1] && p[2] <= p[3])
 					{
 						Uint8 mask;
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
 							b[i] = *data++;
 						}
-						for ( j = 0; j < 8; j++ )
+						for (j = 0; j < 8; j++)
 						{
 							mask = 3;
-							for ( i = 0; i < 8; i++ )
+							for (i = 0; i < 8; i++)
 							{
-								new_frame[i] = p[( b[j] & mask ) >> ( ( i >> 1 ) << 1 )];
-								if ( i & 1 )
+								new_frame[i] = p[ (b[j] & mask) >> ( (i >> 1) << 1)];
+								if (i & 1)
 									mask <<= 2;
 							}
 							new_frame += pitch;
 						}
 					}
-					if ( p[0] > p[1] && p[2] > p[3] )
+					if (p[0] > p[1] && p[2] > p[3])
 					{
 						Uint16 mask;
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
 							b[i] = *data++;
 						}
-						for ( j = 0; j < 4; j++ )
+						for (j = 0; j < 4; j++)
 						{
 							mask = 3;
-							for ( i = 0; i < 8; i++ )
+							for (i = 0; i < 8; i++)
 							{
 								new_frame[i] =
-									new_frame[i + pitch] = p[( ( b[( j << 1 ) + 1] << 8 | b[j << 1] ) & mask ) >> ( i << 1 )];
+									new_frame[i + pitch] = p[ ( (b[ (j << 1) + 1] << 8 | b[j << 1]) & mask) >> (i << 1)];
 								mask <<= 2;
 							}
 							new_frame += pitch << 1;
@@ -1139,30 +1139,30 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0xA:
 				{
 					Uint8 p[16], b[16], mask, k;
-					if ( data[0] <= data[1] )
+					if (data[0] <= data[1])
 					{
-						for ( i = 0; i < 4; i++ )
+						for (i = 0; i < 4; i++)
 						{
-							for ( j = 0; j < 4; j++ )
+							for (j = 0; j < 4; j++)
 							{
-								p[( i << 2 ) + j] = *data++;
+								p[ (i << 2) + j] = *data++;
 							}
-							for ( j = 0; j < 4; j++ )
+							for (j = 0; j < 4; j++)
 							{
-								b[( i << 2 ) + j] = *data++;
+								b[ (i << 2) + j] = *data++;
 							}
 						}
-						for ( k = 0; k < 4; k++ )
+						for (k = 0; k < 4; k++)
 						{
-							for ( j = 0; j < 4; j++ )
+							for (j = 0; j < 4; j++)
 							{
-								for ( i = 0, mask = 3; i < 4; i++, mask <<= 2 )
+								for (i = 0, mask = 3; i < 4; i++, mask <<= 2)
 								{
-									new_frame[i] = p[( ( b[( k << 2 ) + j] & mask ) >> ( i << 1 ) ) + ( k << 2 )];
+									new_frame[i] = p[ ( (b[ (k << 2) + j] & mask) >> (i << 1)) + (k << 2)];
 								}
 								new_frame += pitch;
 							}
-							if ( k == 1 )
+							if (k == 1)
 							{
 								new_frame -= pitch << 3;
 								new_frame += 4;
@@ -1171,30 +1171,30 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 					}
 					else
 					{
-						for ( i = 0; i < 2; i++ )
+						for (i = 0; i < 2; i++)
 						{
-							for ( j = 0; j < 4; j++ )
+							for (j = 0; j < 4; j++)
 							{
-								p[( i << 2 ) + j] = *data++;
+								p[ (i << 2) + j] = *data++;
 							}
-							for ( j = 0; j < 8; j++ )
+							for (j = 0; j < 8; j++)
 							{
-								b[( i << 3 ) + j] = *data++;
+								b[ (i << 3) + j] = *data++;
 							}
 						}
-						if ( p[4] <= p[5] )
+						if (p[4] <= p[5])
 						{
-							for ( k = 0; k < 2; k++ )
+							for (k = 0; k < 2; k++)
 							{
-								for ( j = 0; j < 8; j++ )
+								for (j = 0; j < 8; j++)
 								{
-									for ( i = 0, mask = 3; i < 4; i++, mask <<= 2 )
+									for (i = 0, mask = 3; i < 4; i++, mask <<= 2)
 									{
-										new_frame[i] = p[( ( b[j + ( k << 3 )] & mask ) >> ( i << 1 ) ) + ( k << 2 )];
+										new_frame[i] = p[ ( (b[j + (k << 3)] & mask) >> (i << 1)) + (k << 2)];
 									}
 									new_frame += pitch;
 								}
-								if ( k == 0 )
+								if (k == 0)
 								{
 									new_frame -= pitch << 3;
 									new_frame += 4;
@@ -1203,16 +1203,16 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 						}
 						else
 						{
-							for ( k = 0; k < 2; k++ )
+							for (k = 0; k < 2; k++)
 							{
-								for ( j = 0; j < 4; j++ )
+								for (j = 0; j < 4; j++)
 								{
-									for ( i = 0, mask = 3; i < 8; i++, mask <<= 2 )
+									for (i = 0, mask = 3; i < 8; i++, mask <<= 2)
 									{
-										if ( i == 4 )
+										if (i == 4)
 											mask = 3;
-										new_frame[i] = p[( ( b[( j << 1 ) + ( i > 3 ? 1 : 0 ) + ( k << 3 )] & mask )
-														   >> ( ( i % 4 ) << 1 ) ) + ( k << 2 )];
+										new_frame[i] = p[ ( (b[ (j << 1) + (i > 3 ? 1 : 0) + (k << 3)] & mask)
+															>> ( (i % 4) << 1)) + (k << 2)];
 									}
 									new_frame += pitch;
 								}
@@ -1225,9 +1225,9 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 
 				case 0xB:
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
 							new_frame[i] = *data++;
 						}
@@ -1239,15 +1239,15 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0xC:
 				{
 					Uint8 p[16];
-					for ( i = 0; i < 16; i++ )
+					for (i = 0; i < 16; i++)
 					{
 						p[i] = *data++;
 					}
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
-							new_frame[i] = p[( i >> 1 ) + ( ( j >> 1 ) << 2 )];
+							new_frame[i] = p[ (i >> 1) + ( (j >> 1) << 2)];
 						}
 						new_frame += pitch;
 					}
@@ -1258,15 +1258,15 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 				case 0xD:
 				{
 					Uint8 p[4];
-					for ( i = 0; i < 4; i++ )
+					for (i = 0; i < 4; i++)
 					{
 						p[i] = *data++;
 					}
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						for ( i = 0; i < 8; i++ )
+						for (i = 0; i < 8; i++)
 						{
-							new_frame[i] = p[( ( j > 3 ? 1 : 0 ) << 1 ) + ( i > 3 ? 1 : 0 )];
+							new_frame[i] = p[ ( (j > 3 ? 1 : 0) << 1) + (i > 3 ? 1 : 0)];
 						}
 						new_frame += pitch;
 					}
@@ -1276,9 +1276,9 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 
 				case 0xE:
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						memset( new_frame + j * pitch, *data, 8 );
+						memset (new_frame + j * pitch, *data, 8);
 					}
 					data++;
 
@@ -1286,10 +1286,10 @@ void MVEPlayerDecodeVideo( Uint16 wblocks, Uint16 hblocks, Uint8* pData, Uint8* 
 
 				case 0xF:
 
-					for ( j = 0; j < 8; j++ )
+					for (j = 0; j < 8; j++)
 					{
-						for ( i = 0; i < 8; i++ )
-							new_frame[i] = data[( ( i + j ) & 1 )];
+						for (i = 0; i < 8; i++)
+							new_frame[i] = data[ ( (i + j) & 1)];
 						new_frame += pitch;
 					}
 					data += 2;
@@ -1311,29 +1311,29 @@ void MVEPlayerEventHandler()
 	static Uint8 keyin = 0;
 	static SDL_Event event;
 
-	while ( SDL_PollEvent( &event ) )
+	while (SDL_PollEvent (&event))
 	{
-		switch ( event.type )
+		switch (event.type)
 		{
 			case SDL_KEYDOWN:
 				keyin = event.key.keysym.sym;
 				break;
 			case SDL_KEYUP:
-				if ( event.key.keysym.sym == keyin )
+				if (event.key.keysym.sym == keyin)
 				{
-					switch ( event.key.keysym.sym )
+					switch (event.key.keysym.sym)
 					{
 						case SDLK_PAUSE:
 							PAUSED = !PAUSED;
-							if ( PAUSED )
+							if (PAUSED)
 							{
-								if ( AUDIO_PLAYING )
-									SDL_PauseAudio( 1 );
-								if ( TIMER_CREATED )
+								if (AUDIO_PLAYING)
+									SDL_PauseAudio (1);
+								if (TIMER_CREATED)
 									TIMER_INIT = 1;
 							}
-							else if ( AUDIO_PLAYING )
-								SDL_PauseAudio( 0 );
+							else if (AUDIO_PLAYING)
+								SDL_PauseAudio (0);
 							break;
 							/* ToggleFullScreen does not work on my system so I cannot test it */
 							/*case SDLK_f:

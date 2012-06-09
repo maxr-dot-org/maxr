@@ -39,7 +39,7 @@ public:
 	 * @author Eiko
 	 * @param message pointer to message which should be pushed to the queue
 	 */
-	void pushEvent( cNetMessage* message );
+	void pushEvent (cNetMessage* message);
 
 	/**
 	 * Handles input events and the network events.

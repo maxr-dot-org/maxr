@@ -69,29 +69,29 @@ struct sUnitData;
 // Struktur f¸r die IDs
 struct sID
 {
-	sID() : iFirstPart( 0 ), iSecondPart( 0 ) {};
+	sID() : iFirstPart (0), iSecondPart (0) {};
 
 	int iFirstPart;
 	int iSecondPart;
 	std::string getText() const;
-	void generate( const std::string& text );
+	void generate (const std::string& text);
 	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
 		units will have these values. */
-	sUnitData* getUnitDataCurrentVersion( cPlayer* Owner ) const;
+	sUnitData* getUnitDataCurrentVersion (cPlayer* Owner) const;
 	/** Get the basic version of a unit.
 		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
 					 If no owner is given, the basic version without any clan modifications is returned.
 		@return the sUnitData of the owner without upgrades (but with the owner's clan modifications) */
-	sUnitData* getUnitDataOriginalVersion( cPlayer* Owner = NULL ) const;
+	sUnitData* getUnitDataOriginalVersion (cPlayer* Owner = NULL) const;
 
 	/** Returns the original version of a vehicle as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sVehicle* getVehicle( cPlayer* Owner = NULL ) const;
+	sVehicle* getVehicle (cPlayer* Owner = NULL) const;
 	/** Returns the original version of a building as stored in UnitsData. If Owner is given, his clan will be taken
 		into consideration for modifications of the unit's values. */
-	sBuilding* getBuilding( cPlayer* Owner = NULL ) const;
+	sBuilding* getBuilding (cPlayer* Owner = NULL) const;
 
-	bool operator==( const sID& ID ) const;
+	bool operator== (const sID& ID) const;
 };
 
 // Nummbers of buildings //////////////////////////////////////////////////////
@@ -382,11 +382,11 @@ public:
 	// Buildings
 	cList<sBuilding> building;  // the standard version without clan modifications
 
-	sVehicle& getVehicle( int nr, int clan = -1 ); ///< -1: game without clans
-	sBuilding& getBuilding( int nr, int clan = -1 ); ///< -1: game without clans
+	sVehicle& getVehicle (int nr, int clan = -1);  ///< -1: game without clans
+	sBuilding& getBuilding (int nr, int clan = -1);  ///< -1: game without clans
 
-	unsigned int getNrVehicles() const { return ( int ) vehicle.Size(); }
-	unsigned int getNrBuildings() const { return ( int ) building.Size(); }
+	unsigned int getNrVehicles() const { return (int) vehicle.Size(); }
+	unsigned int getNrBuildings() const { return (int) building.Size(); }
 
 
 	SDL_Surface* dirt_small_org;
@@ -446,29 +446,29 @@ public:
  * @param height height of the new surface.
  * @return returns the destination surface.
  */
-SDL_Surface* scaleSurface( SDL_Surface* scr, SDL_Surface* dest, int width, int height );
+SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int height);
 
-SDL_Surface* CreatePfeil( int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size );
+SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size);
 
 /** Draws a line on the surface */
-void line( int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf );
+void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf);
 /** Draws a circle on the surface */
-void drawCircle( int iX, int iY, int iRadius, int iColor, SDL_Surface* surface );
+void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface);
 /** Sets a pixel on the surface */
-void setPixel( SDL_Surface* surface, int x, int y, int iColor );
+void setPixel (SDL_Surface* surface, int x, int y, int iColor);
 
 // returns a random number in the range 0 <= r < x
-int random( int x );
+int random (int x);
 
 /**Converts integer to string
 */
-std::string iToStr( int x );
+std::string iToStr (int x);
 /**Converts double to string
 */
-std::string dToStr( double x );
+std::string dToStr (double x);
 /**Converts pointer to string
 */
-std::string pToStr( void* x );
+std::string pToStr (void* x);
 
 /**
 * Rounds given param num to specified position after decimal point<br>
@@ -482,7 +482,7 @@ std::string pToStr( void* x );
 *@param n the position after decimal point in dValueToRound, that will be rounded
 *@return rounded num
 */
-double Round( double num, unsigned int n );
+double Round (double num, unsigned int n);
 
 /**
 * Rounds given param num without numbers after decimal point<br>
@@ -494,18 +494,18 @@ double Round( double num, unsigned int n );
 *@param num number to round up
 *@return rounded num
 */
-int Round( double num );
+int Round (double num);
 
 /**
 * Works like SDL_BlittSurface. But unlike SDL it respects the destination alpha channel of the surface.
 * This function is only designed to blitt from a surface with per surface alpha value to a surface with alpha channel.
 * A source color key is also supported.
 */
-void blittPerSurfaceAlphaToAlphaChannel( SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect );
+void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 /**
 * Works like SDL_BlittSurface. This function choses the right blitt function to use for blitting.
 */
-void blittAlphaSurface( SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect );
+void blittAlphaSurface (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect);
 
 void Quit();
 

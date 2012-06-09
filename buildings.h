@@ -80,7 +80,7 @@ struct sBuilding
 	struct Mix_Chunk* Attack;
 	struct Mix_Chunk* Wait;
 
-	void scaleSurfaces( float faktor );
+	void scaleSurfaces (float faktor);
 };
 
 // enum for the upgrade symbols
@@ -94,10 +94,10 @@ enum eSymbolsBig {SBSpeed, SBHits, SBAmmo, SBAttack, SBShots, SBRange, SBArmor, 
 struct sBuildStruct
 {
 public:
-	sBuildStruct( SDL_Surface* const sf_, const sID& ID_, int const iRemainingMetal_ = -1 ) :
-		sf( sf_ ),
-		ID( ID_ ),
-		iRemainingMetal( iRemainingMetal_ )
+	sBuildStruct (SDL_Surface* const sf_, const sID& ID_, int const iRemainingMetal_ = -1) :
+		sf (sf_),
+		ID (ID_),
+		iRemainingMetal (iRemainingMetal_)
 	{}
 
 	SDL_Surface* sf;
@@ -128,7 +128,7 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding( sBuilding* b, cPlayer* Owner, cBase* Base );
+	cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base);
 	~cBuilding();
 
 	sBuilding* typ;  // Typ des Buildings
@@ -158,7 +158,7 @@ public:
 	/**
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
 	*/
-	void draw( SDL_Rect* dest, cGameGUI& gameGUI );
+	void draw (SDL_Rect* dest, cGameGUI& gameGUI);
 	void Select();
 	void Deselct();
 
@@ -170,24 +170,24 @@ public:
 	*@return 1 if there has been refreshed something, else 0.
 	*/
 	int refreshData();
-	void DrawSymbolBig( eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf );
-	void updateNeighbours( cMap* map );
-	void CheckNeighbours( cMap* Map );
+	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
+	void updateNeighbours (cMap* map);
+	void CheckNeighbours (cMap* Map);
 	void ServerStartWork();
-	void ClientStartWork( cGameGUI& gameGUI );
-	void ServerStopWork( bool override );
-	void ClientStopWork( cGameGUI& gameGUI );
-	bool CanTransferTo( cMapField* OverUnitField ); /** check whether a transfer to an unit on the field is possible */
+	void ClientStartWork (cGameGUI& gameGUI);
+	void ServerStopWork (bool override);
+	void ClientStopWork (cGameGUI& gameGUI);
+	bool CanTransferTo (cMapField* OverUnitField);  /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	void DrawAttackCursor( int x, int y );
-	void CalcTurboBuild( int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1 );
-	void DrawExitPoints( sVehicle* typ, cGameGUI& gameGUI );
-	bool canExitTo( const int x, const int y, const cMap* map, const sVehicle* typ ) const;
-	bool canLoad( int x, int y, cMap* Map, bool checkPosition = true );
-	bool canLoad( cVehicle* Vehicle, bool checkPosition = true );
-	void storeVehicle( cVehicle* Vehicle, cMap* Map );
-	void exitVehicleTo( cVehicle* Vehicle, int offset, cMap* Map );
-	void sendUpgradeBuilding( cBuilding* building, bool upgradeAll ); //TODO: move to other file (clientevents?)
+	void DrawAttackCursor (int x, int y);
+	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
+	void DrawExitPoints (sVehicle* typ, cGameGUI& gameGUI);
+	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
+	bool canLoad (int x, int y, cMap* Map, bool checkPosition = true);
+	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);
+	void storeVehicle (cVehicle* Vehicle, cMap* Map);
+	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
+	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll);  //TODO: move to other file (clientevents?)
 
 	/**
 	* returns whether this player has detected this unit or not
@@ -195,15 +195,15 @@ public:
 	*@param player player for which the stauts sould be checked
 	*@return true if the player has detected the unit
 	*/
-	bool isDetectedByPlayer( const cPlayer* player ) const;
+	bool isDetectedByPlayer (const cPlayer* player) const;
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void resetDetectedByPlayer( const cPlayer* player );
+	void resetDetectedByPlayer (const cPlayer* player);
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true );
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true);
 	/**
 	* - checks whether the building has been detected by an other unit
 	* the detection maps have to be up to date, when calling this funktion
@@ -214,12 +214,12 @@ public:
 	/**
 	* draws the main image of the building onto the given surface
 	*/
-	void render( SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete );
+	void render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete);
 private:
 	/**
 	* draws the connectors onto the given surface
 	*/
-	void drawConnectors( SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow );
+	void drawConnectors (SDL_Surface* surface, SDL_Rect dest, float zoomFactor, bool drawShadow);
 
 	//-----------------------------------------------------------------------------
 protected:
@@ -235,7 +235,7 @@ protected:
 	virtual void executeMineManagerCommand();
 	virtual void executeStopCommand();
 	virtual void executeActivateStoredVehiclesCommand();
-	virtual void executeUpdateBuildingCommmand( bool updateAllOfSameType );
+	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType);
 	virtual void executeSelfDestroyCommand();
 
 	virtual sUnitData* getUpgradedUnitData() const;

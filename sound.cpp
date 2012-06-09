@@ -31,22 +31,22 @@ static Mix_Music* music_stream = NULL;
 static void MusicFinished();
 
 // Initialisiert den Sound:
-int InitSound( int frequency, int chunksize )
+int InitSound (int frequency, int chunksize)
 {
 	int audio_rate, audio_channels;
 	Uint16 audio_format;
 
 	// init SDL Mixer
-	if ( Mix_OpenAudio( frequency, AUDIO_S16, 2, chunksize ) < 0 )
+	if (Mix_OpenAudio (frequency, AUDIO_S16, 2, chunksize) < 0)
 	{
-		Log.write( "Could not init SDL_mixer:", cLog::eLOG_TYPE_ERROR );
-		Log.write( Mix_GetError(), cLog::eLOG_TYPE_ERROR );
+		Log.write ("Could not init SDL_mixer:", cLog::eLOG_TYPE_ERROR);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	Mix_QuerySpec( &audio_rate, &audio_format, &audio_channels );
+	Mix_QuerySpec (&audio_rate, &audio_format, &audio_channels);
 
 	// install callback for music
-	Mix_HookMusicFinished( MusicFinished );
+	Mix_HookMusicFinished (MusicFinished);
 
 	SoundChannel = SOUND_CHANNEL_MIN;
 	VoiceChannel = VOICE_CHANNEL_MIN;
@@ -57,106 +57,106 @@ int InitSound( int frequency, int chunksize )
 // closes sound
 void CloseSound()
 {
-	if ( !cSettings::getInstance().isSoundEnabled() ) return;
+	if (!cSettings::getInstance().isSoundEnabled()) return;
 	Mix_CloseAudio();
 }
 
 //FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
-void play( sSOUND* snd )
+void play (sSOUND* snd)
 {
-	if ( snd == NULL ) return;
-	if ( Mix_PlayChannel( SoundChannel, snd, 0 ) == -1 )
+	if (snd == NULL) return;
+	if (Mix_PlayChannel (SoundChannel, snd, 0) == -1)
 	{
-		Log.write( "Could not play sound:", cLog::eLOG_TYPE_WARNING );
-		Log.write( Mix_GetError(), cLog::eLOG_TYPE_WARNING );
+		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
 	}
 }
 
 // plays voice sound
-void PlayVoice( sSOUND* snd )
+void PlayVoice (sSOUND* snd)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isVoiceMute() ) return;
-	play( snd );
-	Mix_Volume( VoiceChannel, cSettings::getInstance().getVoiceVol() );
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isVoiceMute()) return;
+	play (snd);
+	Mix_Volume (VoiceChannel, cSettings::getInstance().getVoiceVol());
 	VoiceChannel++;
-	if ( VoiceChannel > VOICE_CHANNEL_MAX ) VoiceChannel = VOICE_CHANNEL_MIN;
+	if (VoiceChannel > VOICE_CHANNEL_MAX) VoiceChannel = VOICE_CHANNEL_MIN;
 }
 
 // plays fx sound
-void PlayFX( sSOUND* snd )
+void PlayFX (sSOUND* snd)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute() ) return;
-	play( snd );
-	Mix_Volume( SoundChannel, cSettings::getInstance().getSoundVol() );
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute()) return;
+	play (snd);
+	Mix_Volume (SoundChannel, cSettings::getInstance().getSoundVol());
 	SoundChannel++;
-	if ( SoundChannel > SOUND_CHANNEL_MAX ) SoundChannel = SOUND_CHANNEL_MIN;
+	if (SoundChannel > SOUND_CHANNEL_MAX) SoundChannel = SOUND_CHANNEL_MIN;
 }
 
 // plays passed ogg/wav/mod-musicfile in a loop
-void PlayMusic( char const* const file )
+void PlayMusic (char const* const file)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute() || file == NULL ) return;
-	music_stream = Mix_LoadMUS( file );
-	if ( !music_stream )
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute() || file == NULL) return;
+	music_stream = Mix_LoadMUS (file);
+	if (!music_stream)
 	{
-		Log.write( "Failed opening music stream:", cLog::eLOG_TYPE_WARNING );
-		Log.write( Mix_GetError(), cLog::eLOG_TYPE_WARNING );
+		Log.write ("Failed opening music stream:", cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		return;
 	}
-	Mix_PlayMusic( music_stream, 0 );
-	Mix_VolumeMusic( cSettings::getInstance().getMusicVol() );
+	Mix_PlayMusic (music_stream, 0);
+	Mix_VolumeMusic (cSettings::getInstance().getMusicVol());
 }
 
 // sets volume for music
-void SetMusicVol( int vol )
+void SetMusicVol (int vol)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() ) return;
-	Mix_VolumeMusic( vol );
+	if (!cSettings::getInstance().isSoundEnabled()) return;
+	Mix_VolumeMusic (vol);
 }
 
 //stops music
 void StopMusic()
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || !music_stream ) return;
-	Mix_FreeMusic( music_stream );
+	if (!cSettings::getInstance().isSoundEnabled() || !music_stream) return;
+	Mix_FreeMusic (music_stream);
 	music_stream = NULL;
 }
 
 // starts music
 void StartMusic()
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute() ) return;
-	if ( MusicFiles.Size() == 0 ) return;
-	PlayMusic( MusicFiles[random( ( int )MusicFiles.Size() )].c_str() );
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isMusicMute()) return;
+	if (MusicFiles.Size() == 0) return;
+	PlayMusic (MusicFiles[random ( (int) MusicFiles.Size())].c_str());
 }
 
 // callback when end of music title is reached
 static void MusicFinished()
 {
-	if ( !cSettings::getInstance().isSoundEnabled() ) return;
-	if ( MusicFiles.Size() == 0 ) return;
-	PlayMusic( MusicFiles[random( ( int )MusicFiles.Size() )].c_str() );
+	if (!cSettings::getInstance().isSoundEnabled()) return;
+	if (MusicFiles.Size() == 0) return;
+	PlayMusic (MusicFiles[random ( (int) MusicFiles.Size())].c_str());
 }
 
 // starts a loop sound
-int PlayFXLoop( sSOUND* snd )
+int PlayFXLoop (sSOUND* snd)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute() || snd == NULL ) return 0;
-	Mix_HaltChannel( SoundLoopChannel );
-	if ( Mix_PlayChannel( SoundLoopChannel, snd, -1 ) == -1 )
+	if (!cSettings::getInstance().isSoundEnabled() || cSettings::getInstance().isSoundMute() || snd == NULL) return 0;
+	Mix_HaltChannel (SoundLoopChannel);
+	if (Mix_PlayChannel (SoundLoopChannel, snd, -1) == -1)
 	{
-		Log.write( "Could not play loop sound", cLog::eLOG_TYPE_WARNING );
-		Log.write( Mix_GetError(), cLog::eLOG_TYPE_WARNING );
+		Log.write ("Could not play loop sound", cLog::eLOG_TYPE_WARNING);
+		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
 		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
 	}
-	Mix_Volume( SoundLoopChannel, cSettings::getInstance().getSoundVol() );
+	Mix_Volume (SoundLoopChannel, cSettings::getInstance().getSoundVol());
 	return SoundLoopChannel;
 }
 
 // stops a loop sound
-void StopFXLoop( int SndStream )
+void StopFXLoop (int SndStream)
 {
-	if ( !cSettings::getInstance().isSoundEnabled() || SndStream != SoundLoopChannel ) return;
-	Mix_HaltChannel( SoundLoopChannel );
+	if (!cSettings::getInstance().isSoundEnabled() || SndStream != SoundLoopChannel) return;
+	Mix_HaltChannel (SoundLoopChannel);
 }

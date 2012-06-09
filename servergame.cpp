@@ -36,45 +36,45 @@
 using namespace std;
 
 //-------------------------------------------------------------------------------
-int serverGameThreadFunction( void* data )
+int serverGameThreadFunction (void* data)
 {
-	cServerGame* serverGame = reinterpret_cast<cServerGame*>( data );
+	cServerGame* serverGame = reinterpret_cast<cServerGame*> (data);
 	serverGame->run();
 	return 0;
 }
 
 //------------------------------------------------------------------------
 cServerGame::cServerGame()
-	: thread( 0 )
-	, canceled( false )
-	, shouldSave( false )
-	, saveGameNumber( -1 )
-	, gameData( 0 )
-	, serverMap( 0 )
-	, lastEvent( 0 )
+	: thread (0)
+	, canceled (false)
+	, shouldSave (false)
+	, saveGameNumber (-1)
+	, gameData (0)
+	, serverMap (0)
+	, lastEvent (0)
 {
 }
 
 //------------------------------------------------------------------------
 cServerGame::~cServerGame()
 {
-	if ( thread != 0 )
+	if (thread != 0)
 	{
 		canceled = true;
-		SDL_WaitThread( thread, NULL );
+		SDL_WaitThread (thread, NULL);
 		thread = 0;
 	}
 
-	for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+	for (size_t i = 0; i < menuPlayers.Size(); i++)
 		delete menuPlayers[i];
 
-	if ( gameData != 0 )
+	if (gameData != 0)
 	{
 		delete gameData;
 		gameData = 0;
 	}
 
-	if ( lastEvent != 0 )
+	if (lastEvent != 0)
 	{
 		delete lastEvent;
 		lastEvent = 0;
@@ -84,16 +84,16 @@ cServerGame::~cServerGame()
 //-------------------------------------------------------------------------------
 void cServerGame::runInThread()
 {
-	thread = SDL_CreateThread( serverGameThreadFunction, this );
+	thread = SDL_CreateThread (serverGameThreadFunction, this);
 }
 
 //------------------------------------------------------------------------
-bool cServerGame::loadGame( int saveGameNumber )
+bool cServerGame::loadGame (int saveGameNumber)
 {
-	cSavegame savegame( saveGameNumber );
-	if ( savegame.load() != 1 )
+	cSavegame savegame (saveGameNumber);
+	if (savegame.load() != 1)
 		return false;
-	if ( Server != 0 )
+	if (Server != 0)
 	{
 		Server->markAllPlayersAsDisconnected();
 		Server->bStarted = true;
@@ -102,9 +102,9 @@ bool cServerGame::loadGame( int saveGameNumber )
 }
 
 //------------------------------------------------------------------------
-void cServerGame::saveGame( int saveGameNumber )
+void cServerGame::saveGame (int saveGameNumber)
 {
-	if ( Server == 0 )
+	if (Server == 0)
 	{
 		cout << "Server not running. Can't save game." << endl;
 		return;
@@ -133,26 +133,26 @@ void cServerGame::prepareGameData()
 	gameData->settings->duration = SETTINGS_DUR_LONG;
 	gameData->map = new cMap();
 	string mapName = "Mushroom.wrl";
-	gameData->map->LoadMap( mapName );
+	gameData->map->LoadMap (mapName);
 }
 
 //------------------------------------------------------------------------
 void cServerGame::run()
 {
-	while ( canceled == false )
+	while (canceled == false)
 	{
 		cNetMessage* event = pollEvent();
 
-		if ( event )
+		if (event)
 		{
-			if ( Server != 0 )
-				Server->HandleNetMessage( event );
+			if (Server != 0)
+				Server->HandleNetMessage (event);
 			else
-				handleNetMessage( event );
+				handleNetMessage (event);
 		}
 
 		// don't do anything if game hasn't been started yet!
-		if ( Server && Server->bStarted )
+		if (Server && Server->bStarted)
 		{
 			Server->checkPlayerUnits();
 			Server->checkDeadline();
@@ -160,75 +160,75 @@ void cServerGame::run()
 			Server->handleTimer();
 			Server->handleWantEnd();
 
-			if ( shouldSave )
+			if (shouldSave)
 			{
-				cSavegame saveGame( saveGameNumber );
-				saveGame.save( "Dedicated Server Savegame" );
+				cSavegame saveGame (saveGameNumber);
+				saveGame.save ("Dedicated Server Savegame");
 				cout << "...saved to slot " << saveGameNumber << endl;
 				shouldSave = false;
 			}
 		}
 
-		if ( event == 0 )
-			SDL_Delay( 20 );
+		if (event == 0)
+			SDL_Delay (20);
 	}
-	if ( Server )
+	if (Server)
 		terminateServer();
 }
 
 //-------------------------------------------------------------------------------------
-void cServerGame::handleNetMessage( cNetMessage* message )
+void cServerGame::handleNetMessage (cNetMessage* message)
 {
 	cout << "Msg received: " << message->getTypeAsString() << endl;
 
-	switch ( message->iType )
+	switch (message->iType)
 	{
 			// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
 		case TCP_ACCEPT:
 		{
-			sMenuPlayer* player = new sMenuPlayer( "unidentified", 0, false, menuPlayers.Size(), message->popInt16() );
-			menuPlayers.Add( player );
-			sendMenuChatMessage( "type --server help for dedicated server help", player );
-			sendRequestIdentification( player );
+			sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.Size(), message->popInt16());
+			menuPlayers.Add (player);
+			sendMenuChatMessage ("type --server help for dedicated server help", player);
+			sendRequestIdentification (player);
 			break;
 		}
 		case TCP_CLOSE: // TODO: this is only ok in cNetwork(Host)Menu. when server runs already, it must be treated another way
 		{
 			int socket = message->popInt16();
-			network->close( socket );
+			network->close (socket);
 			string playerName;
 
 			// delete menuPlayer
-			for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+			for (size_t i = 0; i < menuPlayers.Size(); i++)
 			{
-				if ( menuPlayers[i]->socket == socket )
+				if (menuPlayers[i]->socket == socket)
 				{
 					playerName = menuPlayers[i]->name;
-					menuPlayers.Delete( i );
+					menuPlayers.Delete (i);
 				}
 			}
 
 			// resort socket numbers
-			for ( size_t playerNr = 0; playerNr < menuPlayers.Size(); playerNr++ )
+			for (size_t playerNr = 0; playerNr < menuPlayers.Size(); playerNr++)
 			{
-				if ( menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS )
+				if (menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS)
 					menuPlayers[playerNr]->socket--;
 			}
 
 			// resort player numbers
-			for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+			for (size_t i = 0; i < menuPlayers.Size(); i++)
 			{
 				menuPlayers[i]->nr = i;
-				sendRequestIdentification( menuPlayers[i] );
+				sendRequestIdentification (menuPlayers[i]);
 			}
-			sendPlayerList( &menuPlayers );
+			sendPlayerList (&menuPlayers);
 
 			break;
 		}
 		case MU_MSG_IDENTIFIKATION:
 		{
 			unsigned int playerNr = message->popInt16();
-			if ( playerNr >= menuPlayers.Size() )
+			if (playerNr >= menuPlayers.Size())
 				break;
 			sMenuPlayer* player = menuPlayers[playerNr];
 
@@ -237,7 +237,7 @@ void cServerGame::handleNetMessage( cNetMessage* message )
 			player->name = message->popString();
 			player->ready = message->popBool();
 
-			Log.write( "game version of client " + iToStr( playerNr ) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG );
+			Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
 			//if (freshJoined)
 			//	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name)); // TODO: instead send a chat message to all players?
@@ -245,9 +245,9 @@ void cServerGame::handleNetMessage( cNetMessage* message )
 			// search double taken name or color
 			//checkTakenPlayerAttr( player );
 
-			sendPlayerList( &menuPlayers );
+			sendPlayerList (&menuPlayers);
 			//sendGameData (gameData, saveGameString, player);
-			sendGameData( gameData, "", player );
+			sendGameData (gameData, "", player);
 
 			break;
 		}
@@ -257,124 +257,124 @@ void cServerGame::handleNetMessage( cNetMessage* message )
 			string chatText = message->popString();
 
 			unsigned int senderPlyerNr = message->iPlayerNr;
-			if ( senderPlyerNr >= menuPlayers.Size() )
+			if (senderPlyerNr >= menuPlayers.Size())
 				break;
 			sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
 
 
 			// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
-			size_t serverStringPos = chatText.find( "--server" );
-			if ( serverStringPos != string::npos && chatText.length() > serverStringPos + 9 )
+			size_t serverStringPos = chatText.find ("--server");
+			if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
 			{
-				string command = chatText.substr( serverStringPos + 9 );
+				string command = chatText.substr (serverStringPos + 9);
 				vector<string> tokens;
-				istringstream iss( command );
-				copy( istream_iterator<string> ( iss ), istream_iterator<string> (), back_inserter<vector<string> > ( tokens ) );
-				if ( tokens.size() == 1 )
+				istringstream iss (command);
+				copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+				if (tokens.size() == 1)
 				{
-					if ( tokens[0].compare( "go" ) == 0 )
+					if (tokens[0].compare ("go") == 0)
 					{
 						bool allReady = true;
-						for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+						for (size_t i = 0; i < menuPlayers.Size(); i++)
 						{
-							if ( menuPlayers[i]->ready == false )
+							if (menuPlayers[i]->ready == false)
 							{
 								allReady = false;
 								break;
 							}
 						}
-						if ( allReady )
+						if (allReady)
 						{
-							for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+							for (size_t i = 0; i < menuPlayers.Size(); i++)
 							{
-								cPlayer* player = new cPlayer( menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket );
-								gameData->players.Add( player );
+								cPlayer* player = new cPlayer (menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket);
+								gameData->players.Add (player);
 							}
 
 							sendGo();
 						}
 						else
-							sendMenuChatMessage( "Not all players are ready...", senderPlayer );
+							sendMenuChatMessage ("Not all players are ready...", senderPlayer);
 					}
 				}
-				else if ( tokens.size() >= 2 )
+				else if (tokens.size() >= 2)
 				{
-					if ( tokens[0].compare( "map" ) == 0 )
+					if (tokens[0].compare ("map") == 0)
 					{
 						string mapName = tokens[1];
-						for ( size_t i = 2; i < tokens.size(); i++ )
+						for (size_t i = 2; i < tokens.size(); i++)
 						{
 							mapName += " ";
 							mapName += tokens[i];
 						}
-						if ( gameData->map != 0 && gameData->map->LoadMap( mapName ) )
+						if (gameData->map != 0 && gameData->map->LoadMap (mapName))
 						{
-							sendGameData( gameData, "" );
+							sendGameData (gameData, "");
 							string reply = senderPlayer->name;
 							reply += " changed the map.";
-							sendMenuChatMessage( reply );
+							sendMenuChatMessage (reply);
 						}
 						else
 						{
 							string reply = "Could not load map ";
 							reply += mapName;
-							sendMenuChatMessage( reply, senderPlayer );
+							sendMenuChatMessage (reply, senderPlayer);
 						}
 					}
-					if ( tokens.size() == 2 )
+					if (tokens.size() == 2)
 					{
-						if ( tokens[0].compare( "credits" ) == 0 )
+						if (tokens[0].compare ("credits") == 0)
 						{
-							int credits = atoi( tokens[1].c_str() );
-							if ( credits != SETTING_CREDITS_LOWEST
-								 && credits != SETTING_CREDITS_LOWEST
-								 && credits != SETTING_CREDITS_LOWER
-								 && credits != SETTING_CREDITS_LOW
-								 && credits != SETTING_CREDITS_NORMAL
-								 && credits != SETTING_CREDITS_MUCH
-								 && credits != SETTING_CREDITS_MORE )
+							int credits = atoi (tokens[1].c_str());
+							if (credits != SETTING_CREDITS_LOWEST
+								&& credits != SETTING_CREDITS_LOWEST
+								&& credits != SETTING_CREDITS_LOWER
+								&& credits != SETTING_CREDITS_LOW
+								&& credits != SETTING_CREDITS_NORMAL
+								&& credits != SETTING_CREDITS_MUCH
+								&& credits != SETTING_CREDITS_MORE)
 							{
-								sendMenuChatMessage( "Credits must be one of: 0 50 100 150 200 250", senderPlayer );
+								sendMenuChatMessage ("Credits must be one of: 0 50 100 150 200 250", senderPlayer);
 							}
 							else
 							{
-								gameData->settings->credits = ( eSettingsCredits )credits;
-								sendGameData( gameData, "" );
+								gameData->settings->credits = (eSettingsCredits) credits;
+								sendGameData (gameData, "");
 								string reply = senderPlayer->name;
 								reply += " changed the starting credits.";
-								sendMenuChatMessage( reply );
+								sendMenuChatMessage (reply);
 							}
 						}
-						else if ( tokens[0].compare( "oil" ) == 0 || tokens[0].compare( "gold" ) == 0 || tokens[0].compare( "metal" ) == 0
-								  || tokens[0].compare( "res" ) == 0 )
-							configRessources( tokens, senderPlayer );
+						else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
+								 || tokens[0].compare ("res") == 0)
+							configRessources (tokens, senderPlayer);
 					}
 				}
 			}
 			else
 			{
 				// send to other clients
-				for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+				for (size_t i = 0; i < menuPlayers.Size(); i++)
 				{
-					if ( menuPlayers[i]->nr == message->iPlayerNr )
+					if (menuPlayers[i]->nr == message->iPlayerNr)
 						continue;
-					sendMenuChatMessage( chatText, menuPlayers[i], -1, translationText );
+					sendMenuChatMessage (chatText, menuPlayers[i], -1, translationText);
 				}
 			}
 			break;
 		}
 		case MU_MSG_CLAN:
-			gameData->receiveClan( message );
+			gameData->receiveClan (message);
 			break;
 		case MU_MSG_LANDING_VEHICLES:
-			gameData->receiveLandingUnits( message );
+			gameData->receiveLandingUnits (message);
 			break;
 		case MU_MSG_UPGRADES:
-			gameData->receiveUnitUpgrades( message );
+			gameData->receiveUnitUpgrades (message);
 			break;
 		case MU_MSG_LANDING_COORDS:
-			gameData->receiveLandingPosition( message );
-			if ( gameData->allLanded )
+			gameData->receiveLandingPosition (message);
+			if (gameData->allLanded)
 				startGameServer();
 			break;
 			//		case MU_MSG_ALL_LANDED:
@@ -383,51 +383,51 @@ void cServerGame::handleNetMessage( cNetMessage* message )
 }
 
 //-------------------------------------------------------------------------------------
-void cServerGame::configRessources( vector<string>& tokens, sMenuPlayer* senderPlayer )
+void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderPlayer)
 {
-	if ( tokens[0].compare( "res" ) == 0 )
+	if (tokens[0].compare ("res") == 0)
 	{
 		int density = -1;
-		if ( tokens[1].compare( "sparse" ) == 0 ) density = SETTING_RESFREQ_THIN;
-		else if ( tokens[1].compare( "normal" ) == 0 ) density = SETTING_RESFREQ_NORMAL;
-		else if ( tokens[1].compare( "dense" ) == 0 ) density = SETTING_RESFREQ_THICK;
-		else if ( tokens[1].compare( "most" ) == 0 ) density = SETTING_RESFREQ_MOST;
-		if ( density != -1 )
+		if (tokens[1].compare ("sparse") == 0) density = SETTING_RESFREQ_THIN;
+		else if (tokens[1].compare ("normal") == 0) density = SETTING_RESFREQ_NORMAL;
+		else if (tokens[1].compare ("dense") == 0) density = SETTING_RESFREQ_THICK;
+		else if (tokens[1].compare ("most") == 0) density = SETTING_RESFREQ_MOST;
+		if (density != -1)
 		{
-			gameData->settings->resFrequency = ( eSettingResFrequency )density;
-			sendGameData( gameData, "" );
+			gameData->settings->resFrequency = (eSettingResFrequency) density;
+			sendGameData (gameData, "");
 			string reply = senderPlayer->name;
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
 			reply += ".";
-			sendMenuChatMessage( reply );
+			sendMenuChatMessage (reply);
 		}
 		else
-			sendMenuChatMessage( "res must be one of: sparse normal dense most", senderPlayer );
+			sendMenuChatMessage ("res must be one of: sparse normal dense most", senderPlayer);
 	}
-	if ( tokens[0].compare( "oil" ) == 0 || tokens[0].compare( "gold" ) == 0 || tokens[0].compare( "metal" ) == 0 )
+	if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0)
 	{
 		int ammount = -1;
-		if ( tokens[1].compare( "low" ) == 0 ) ammount = SETTING_RESVAL_LOW;
-		else if ( tokens[1].compare( "normal" ) == 0 ) ammount = SETTING_RESVAL_NORMAL;
-		else if ( tokens[1].compare( "much" ) == 0 ) ammount = SETTING_RESVAL_MUCH;
-		else if ( tokens[1].compare( "most" ) == 0 ) ammount = SETTING_RESVAL_MOST;
-		if ( ammount != -1 )
+		if (tokens[1].compare ("low") == 0) ammount = SETTING_RESVAL_LOW;
+		else if (tokens[1].compare ("normal") == 0) ammount = SETTING_RESVAL_NORMAL;
+		else if (tokens[1].compare ("much") == 0) ammount = SETTING_RESVAL_MUCH;
+		else if (tokens[1].compare ("most") == 0) ammount = SETTING_RESVAL_MOST;
+		if (ammount != -1)
 		{
-			if ( tokens[0].compare( "oil" ) == 0 ) gameData->settings->oil = ( eSettingResourceValue )ammount;
-			else if ( tokens[0].compare( "metal" ) == 0 ) gameData->settings->metal = ( eSettingResourceValue )ammount;
-			else if ( tokens[0].compare( "gold" ) == 0 ) gameData->settings->gold = ( eSettingResourceValue )ammount;
-			sendGameData( gameData, "" );
+			if (tokens[0].compare ("oil") == 0) gameData->settings->oil = (eSettingResourceValue) ammount;
+			else if (tokens[0].compare ("metal") == 0) gameData->settings->metal = (eSettingResourceValue) ammount;
+			else if (tokens[0].compare ("gold") == 0) gameData->settings->gold = (eSettingResourceValue) ammount;
+			sendGameData (gameData, "");
 			string reply = senderPlayer->name;
 			reply += " changed the resource density of ";
 			reply += tokens[0];
 			reply += " to ";
 			reply += tokens[1];
 			reply += ".";
-			sendMenuChatMessage( reply );
+			sendMenuChatMessage (reply);
 		}
 		else
-			sendMenuChatMessage( "oil|gold|metal must be one of: low normal much most", senderPlayer );
+			sendMenuChatMessage ("oil|gold|metal must be one of: low normal much most", senderPlayer);
 	}
 }
 
@@ -437,10 +437,10 @@ void cServerGame::startGameServer()
 	serverMap = new cMap();
 
 	// copy map for server
-	serverMap->NewMap( gameData->map->size, gameData->map->iNumberOfTerrains );
+	serverMap->NewMap (gameData->map->size, gameData->map->iNumberOfTerrains);
 	serverMap->MapName = gameData->map->MapName;
-	memcpy( serverMap->Kacheln, gameData->map->Kacheln, sizeof( int ) * gameData->map->size * gameData->map->size );
-	for ( int i = 0; i < gameData->map->iNumberOfTerrains; i++ )
+	memcpy (serverMap->Kacheln, gameData->map->Kacheln, sizeof (int) * gameData->map->size * gameData->map->size);
+	for (int i = 0; i < gameData->map->iNumberOfTerrains; i++)
 	{
 		serverMap->terrain[i].blocked = gameData->map->terrain[i].blocked;
 		serverMap->terrain[i].coast = gameData->map->terrain[i].coast;
@@ -448,16 +448,16 @@ void cServerGame::startGameServer()
 	}
 
 	// copy playerlist for server
-	for ( unsigned int i = 0; i < gameData->players.Size(); i++ )
+	for (unsigned int i = 0; i < gameData->players.Size(); i++)
 	{
-		serverPlayers.Add( new cPlayer( *( gameData->players[i] ) ) );
-		serverPlayers[i]->InitMaps( serverMap->size, serverMap );
+		serverPlayers.Add (new cPlayer (* (gameData->players[i])));
+		serverPlayers[i]->InitMaps (serverMap->size, serverMap);
 	}
 
 	// init server
 	int nTurns = 0;
 	int nScore = 0;
-	switch ( gameData->settings->victoryType )
+	switch (gameData->settings->victoryType)
 	{
 		case SETTINGS_VICTORY_TURNS:
 			nTurns = gameData->settings->duration;
@@ -472,32 +472,32 @@ void cServerGame::startGameServer()
 			nScore = 0;
 			break;
 		default:
-			assert( 0 );
+			assert (0);
 	}
-	Server = new cServer( serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore );
+	Server = new cServer (serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 	// send victory conditions to clients
-	for ( unsigned n = 0; n < gameData->players.Size(); n++ )
-		sendVictoryConditions( nTurns, nScore, gameData->players[n] );
+	for (unsigned n = 0; n < gameData->players.Size(); n++)
+		sendVictoryConditions (nTurns, nScore, gameData->players[n]);
 
 	// place resources
-	for ( unsigned int i = 0; i < gameData->players.Size(); i++ )
+	for (unsigned int i = 0; i < gameData->players.Size(); i++)
 	{
-		Server->correctLandingPos( gameData->landData[i]->iLandX, gameData->landData[i]->iLandY );
-		serverMap->placeRessourcesAddPlayer( gameData->landData[i]->iLandX, gameData->landData[i]->iLandY, gameData->settings->resFrequency );
+		Server->correctLandingPos (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY);
+		serverMap->placeRessourcesAddPlayer (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY, gameData->settings->resFrequency);
 	}
-	serverMap->placeRessources( gameData->settings->metal, gameData->settings->oil, gameData->settings->gold );
+	serverMap->placeRessources (gameData->settings->metal, gameData->settings->oil, gameData->settings->gold);
 
 
 	// send clan info to clients
-	if ( gameData->settings->clans == SETTING_CLANS_ON )
-		sendClansToClients( &( gameData->players ) );
+	if (gameData->settings->clans == SETTING_CLANS_ON)
+		sendClansToClients (& (gameData->players));
 
 	// make the landing
-	for ( unsigned int i = 0; i < gameData->players.Size(); i++ )
+	for (unsigned int i = 0; i < gameData->players.Size(); i++)
 	{
-		Server->makeLanding( gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
-							 serverPlayers[i], gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE );
+		Server->makeLanding (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
+							 serverPlayers[i], gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 		delete gameData->landData[i];
 		delete gameData->landingUnits[i];
 	}
@@ -508,9 +508,9 @@ void cServerGame::startGameServer()
 //-------------------------------------------------------------------------------------
 void cServerGame::terminateServer()
 {
-	if ( gameData != 0 )
+	if (gameData != 0)
 	{
-		for ( size_t i = 0; i != gameData->players.Size(); ++i )
+		for (size_t i = 0; i != gameData->players.Size(); ++i)
 		{
 			delete gameData->players[i];
 		}
@@ -530,7 +530,7 @@ cNetMessage* cServerGame::pollEvent()
 	delete lastEvent;
 	lastEvent = NULL;
 
-	if ( eventQueue.size() <= 0 )
+	if (eventQueue.size() <= 0)
 		return NULL;
 
 	cNetMessage* event = eventQueue.read();
@@ -540,9 +540,9 @@ cNetMessage* cServerGame::pollEvent()
 }
 
 //------------------------------------------------------------------------
-void cServerGame::pushEvent( cNetMessage* message )
+void cServerGame::pushEvent (cNetMessage* message)
 {
-	eventQueue.write( message );
+	eventQueue.write (message);
 }
 
 //------------------------------------------------------------------------
@@ -550,51 +550,51 @@ std::string cServerGame::getGameState() const
 {
 	std::stringstream result;
 	result << "GameState: ";
-	if ( Server != 0 )
+	if (Server != 0)
 		result << "Game is active" << endl;
-	else if ( gameData != 0 && gameData->players.Size() == 0 )
+	else if (gameData != 0 && gameData->players.Size() == 0)
 		result << "Game is open for new players" << endl;
 	else
 		result << "Game has started, players are setting up" << endl;
 
-	result << "Map: " << ( gameData != 0 ? gameData->map->MapName : "none" ) << endl;
-	if ( Server != 0 )
+	result << "Map: " << (gameData != 0 ? gameData->map->MapName : "none") << endl;
+	if (Server != 0)
 		result << "Turn: " << Server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if ( Server != 0 && serverPlayers.Size() > 0 )
+	if (Server != 0 && serverPlayers.Size() > 0)
 	{
-		for ( size_t i = 0; i < serverPlayers.Size(); i++ )
+		for (size_t i = 0; i < serverPlayers.Size(); i++)
 		{
 			cPlayer* player = serverPlayers[i];
-			result << " " << player->name << ( Server->isPlayerDisconnected( player ) ? " (disconnected)" : " (online)" ) << endl;
+			result << " " << player->name << (Server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
-	else if ( gameData->players.Size() > 0 )
+	else if (gameData->players.Size() > 0)
 	{
-		for ( size_t i = 0; i < gameData->players.Size(); i++ )
+		for (size_t i = 0; i < gameData->players.Size(); i++)
 			result << " " << gameData->players[i]->name << endl;
 	}
-	else if ( menuPlayers.Size() > 0 )
+	else if (menuPlayers.Size() > 0)
 	{
-		for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+		for (size_t i = 0; i < menuPlayers.Size(); i++)
 			result << " " << menuPlayers[i]->name << endl;
 	}
 	return result.str();
 }
 
 //------------------------------------------------------------------------
-int cServerGame::getSocketForPlayerNr( int playerNr )
+int cServerGame::getSocketForPlayerNr (int playerNr)
 {
-	if ( Server != 0 )
+	if (Server != 0)
 	{
-		cPlayer* player = Server->getPlayerFromNumber( playerNr );
-		if ( player != 0 )
+		cPlayer* player = Server->getPlayerFromNumber (playerNr);
+		if (player != 0)
 			return player->iSocketNum;
 	}
-	for ( size_t i = 0; i < menuPlayers.Size(); i++ )
+	for (size_t i = 0; i < menuPlayers.Size(); i++)
 	{
-		if ( menuPlayers[i]->nr == playerNr )
+		if (menuPlayers[i]->nr == playerNr)
 			return menuPlayers[i]->socket;
 	}
 	return -1;

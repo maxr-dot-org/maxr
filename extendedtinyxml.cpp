@@ -37,58 +37,58 @@
 #include "log.h"
 
 #if 0
-void debugToLog( const std::string& szMsg );
-void debugToLog( void* pointer , const char* pname );
+void debugToLog (const std::string& szMsg);
+void debugToLog (void* pointer , const char* pname);
 #endif
 
-ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode( TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ... )
+ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode (TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ...)
 {
 	va_list pvaArg;
-	va_start( pvaArg, pszCurrent );
+	va_start (pvaArg, pszCurrent);
 
 	TiXmlNode* pXmlNode;
 
-	if ( rTiXmlDoc.Value() == NULL )
+	if (rTiXmlDoc.Value() == NULL)
 	{
-		va_end( pvaArg );
+		va_end (pvaArg);
 		return NULL;
 	}
 
 	pXmlNode = rTiXmlDoc.RootElement();
-	if ( pXmlNode == NULL )
+	if (pXmlNode == NULL)
 	{
-		va_end( pvaArg );
+		va_end (pvaArg);
 		return NULL;
 	}
 
-	if ( strcmp( pXmlNode->Value(), pszCurrent ) != 0 )
+	if (strcmp (pXmlNode->Value(), pszCurrent) != 0)
 	{
-		va_end( pvaArg );
+		va_end (pvaArg);
 		return NULL;
 	}
 
 	do
 	{
-		pszCurrent = va_arg( pvaArg, char* );
-		if ( pszCurrent != NULL )
+		pszCurrent = va_arg (pvaArg, char*);
+		if (pszCurrent != NULL)
 		{
-			pXmlNode = pXmlNode->FirstChild( pszCurrent );
-			if ( pXmlNode == NULL )
+			pXmlNode = pXmlNode->FirstChild (pszCurrent);
+			if (pXmlNode == NULL)
 			{
-				va_end( pvaArg );
+				va_end (pvaArg);
 				return NULL;
 			}
 		}
 	}
-	while ( pszCurrent != NULL );
+	while (pszCurrent != NULL);
 
-	return ( ExTiXmlNode* )pXmlNode;
+	return (ExTiXmlNode*) pXmlNode;
 }
 
 ExTiXmlNode* ExTiXmlNode::XmlGetFirstNodeChild()
 {
 	TiXmlNode* pXmlNode;
-	if ( this == NULL )
+	if (this == NULL)
 	{
 		return NULL;
 	}
@@ -96,13 +96,13 @@ ExTiXmlNode* ExTiXmlNode::XmlGetFirstNodeChild()
 
 	pXmlNode = pXmlNode->FirstChild();
 
-	return ( ExTiXmlNode* )pXmlNode;
+	return (ExTiXmlNode*) pXmlNode;
 }
 
 ExTiXmlNode* ExTiXmlNode::XmlGetNextNodeSibling()
 {
 	TiXmlNode* pXmlNode;
-	if ( this == NULL )
+	if (this == NULL)
 	{
 		return NULL;
 	}
@@ -110,104 +110,104 @@ ExTiXmlNode* ExTiXmlNode::XmlGetNextNodeSibling()
 
 	pXmlNode = pXmlNode->NextSibling();
 
-	return ( ExTiXmlNode* )pXmlNode;
+	return (ExTiXmlNode*) pXmlNode;
 }
 
 
-ExTiXmlNode* ExTiXmlNode::XmlReadNodeData( std::string& rstrData, XML_NODE_TYPE eType )
+ExTiXmlNode* ExTiXmlNode::XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType)
 {
 	bool bDataFoundPossible = true;
-	TiXmlNode* pXmlNode = ( TiXmlNode* )this;
+	TiXmlNode* pXmlNode = (TiXmlNode*) this;
 	rstrData = "";
 
-	if ( this == NULL )
+	if (this == NULL)
 	{
 		return NULL;
 	}
-	switch ( eType )
+	switch (eType)
 	{
 		case ExTiXmlNode::eXML_ATTRIBUTE :
 			return NULL;
 			break;
 		case ExTiXmlNode::eXML_COMMENT :
-			if ( pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT )
+			if (pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 			{
 				pXmlNode = pXmlNode->FirstChild();
 			}
-			if ( pXmlNode == NULL )
+			if (pXmlNode == NULL)
 			{
 				return NULL;
 			}
 			do
 			{
-				if ( pXmlNode->Type() == TiXmlNode::TINYXML_COMMENT )
+				if (pXmlNode->Type() == TiXmlNode::TINYXML_COMMENT)
 				{
 					rstrData =  pXmlNode->ToComment()->Value();
 					bDataFoundPossible = false; // Get only the first data !
 				}
 				pXmlNode = pXmlNode->NextSibling();
-				if ( pXmlNode == NULL )
+				if (pXmlNode == NULL)
 				{
 					bDataFoundPossible = false; // Last sibling already checked
 				}
 			}
-			while ( bDataFoundPossible );
+			while (bDataFoundPossible);
 			break;
 		case ExTiXmlNode::eXML_TEXT :
-			if ( pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT )
+			if (pXmlNode->Type() == TiXmlNode::TINYXML_ELEMENT)
 			{
 				pXmlNode = pXmlNode->FirstChild();
 			}
-			if ( pXmlNode == NULL )
+			if (pXmlNode == NULL)
 			{
 				return NULL;
 			}
 			do
 			{
-				if ( pXmlNode->Type() == TiXmlNode::TINYXML_TEXT )
+				if (pXmlNode->Type() == TiXmlNode::TINYXML_TEXT)
 				{
 					rstrData =  pXmlNode->ToText()->Value();
 					bDataFoundPossible = false; // Get only the first data !
 				}
 				pXmlNode = pXmlNode->NextSibling();
-				if ( pXmlNode == NULL )
+				if (pXmlNode == NULL)
 				{
 					bDataFoundPossible = false; // Last sibling already checked
 				}
 			}
-			while ( bDataFoundPossible );
+			while (bDataFoundPossible);
 			break;
 		default :
 			rstrData = "";
 			return NULL;
 	}
-	return ( ExTiXmlNode* ) pXmlNode;
+	return (ExTiXmlNode*) pXmlNode;
 }
 
 
-ExTiXmlNode* ExTiXmlNode::XmlReadNodeData( std::string& rstrData, XML_NODE_TYPE eType,  const char* pszAttributeName )
+ExTiXmlNode* ExTiXmlNode::XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType,  const char* pszAttributeName)
 {
-	TiXmlNode* pXmlNode = ( TiXmlNode* )this;
+	TiXmlNode* pXmlNode = (TiXmlNode*) this;
 	TiXmlElement* pXmlElement;
 	const char* pszTemp;
 
 	rstrData = "";
 
-	if ( this == NULL )
+	if (this == NULL)
 	{
 		return NULL;
 	}
-	switch ( eType )
+	switch (eType)
 	{
 		case ExTiXmlNode::eXML_ATTRIBUTE :
-			if ( pXmlNode->Type() != TiXmlNode::TINYXML_ELEMENT ) return NULL;
+			if (pXmlNode->Type() != TiXmlNode::TINYXML_ELEMENT) return NULL;
 			pXmlElement = pXmlNode->ToElement();// FirstChildElement();
-			if ( pXmlElement == NULL )
+			if (pXmlElement == NULL)
 			{
 				return NULL;
 			}
-			pszTemp =  pXmlElement->Attribute( pszAttributeName );
-			if ( pszTemp == 0 )
+			pszTemp =  pXmlElement->Attribute (pszAttributeName);
+			if (pszTemp == 0)
 			{
 				return NULL;
 			}
@@ -225,10 +225,10 @@ ExTiXmlNode* ExTiXmlNode::XmlReadNodeData( std::string& rstrData, XML_NODE_TYPE 
 		default :
 			return NULL;
 	}
-	return ( ExTiXmlNode* )pXmlNode;
+	return (ExTiXmlNode*) pXmlNode;
 }
 
-int ExTiXmlNode::CheckTimeStamp( std::string& rstrData )
+int ExTiXmlNode::CheckTimeStamp (std::string& rstrData)
 {
 	//JCK: Should be replaced by a faster and more secure function
 
@@ -236,55 +236,55 @@ int ExTiXmlNode::CheckTimeStamp( std::string& rstrData )
 	// Index   : 0123456789012345678
 	// Example : 2007-09-30 13:04:00
 
-	if ( rstrData.length() != 19 ) return -1;
-	if (	! isdigit( rstrData[0] ) ) return -1;
-	if (	! isdigit( rstrData[1] ) ) return -1;
-	if (	! isdigit( rstrData[2] ) ) return -1;
-	if (	! isdigit( rstrData[3] ) ) return -1;
-	if ( rstrData[4] != '-' ) return -1;
-	if (	! isdigit( rstrData[5] ) ) return -1;
-	if (	! isdigit( rstrData[6] ) ) return -1;
-	if ( rstrData[7] != '-' ) return -1;
-	if (	! isdigit( rstrData[8] ) ) return -1;
-	if (	! isdigit( rstrData[9] ) ) return -1;
-	if ( rstrData[10] != ' ' ) return -1;
-	if (	! isdigit( rstrData[11] ) ) return -1;
-	if (	! isdigit( rstrData[12] ) ) return -1;
-	if ( rstrData[13] != ':' ) return -1;
-	if (	! isdigit( rstrData[14] ) ) return -1;
-	if (	! isdigit( rstrData[15] ) ) return -1;
-	if ( rstrData[16] != ':' ) return -1;
-	if (	! isdigit( rstrData[17] ) ) return -1;
-	if (	! isdigit( rstrData[18] ) ) return -1;
+	if (rstrData.length() != 19) return -1;
+	if (! isdigit (rstrData[0])) return -1;
+	if (! isdigit (rstrData[1])) return -1;
+	if (! isdigit (rstrData[2])) return -1;
+	if (! isdigit (rstrData[3])) return -1;
+	if (rstrData[4] != '-') return -1;
+	if (! isdigit (rstrData[5])) return -1;
+	if (! isdigit (rstrData[6])) return -1;
+	if (rstrData[7] != '-') return -1;
+	if (! isdigit (rstrData[8])) return -1;
+	if (! isdigit (rstrData[9])) return -1;
+	if (rstrData[10] != ' ') return -1;
+	if (! isdigit (rstrData[11])) return -1;
+	if (! isdigit (rstrData[12])) return -1;
+	if (rstrData[13] != ':') return -1;
+	if (! isdigit (rstrData[14])) return -1;
+	if (! isdigit (rstrData[15])) return -1;
+	if (rstrData[16] != ':') return -1;
+	if (! isdigit (rstrData[17])) return -1;
+	if (! isdigit (rstrData[18])) return -1;
 
 	std::string szTemp1 = rstrData;
 
-	szTemp1.erase( 16, 1 );
-	szTemp1.erase( 13, 1 );
-	szTemp1.erase( 10, 1 );
-	szTemp1.erase( 7, 1 );
-	szTemp1.erase( 4, 1 );
+	szTemp1.erase (16, 1);
+	szTemp1.erase (13, 1);
+	szTemp1.erase (10, 1);
+	szTemp1.erase (7, 1);
+	szTemp1.erase (4, 1);
 
 	std::string szTemp2 = MAX_BUILD_DATE;
 
-	szTemp2.erase( 16, 1 );
-	szTemp2.erase( 13, 1 );
-	szTemp2.erase( 10, 1 );
-	szTemp2.erase( 7, 1 );
-	szTemp2.erase( 4, 1 );
+	szTemp2.erase (16, 1);
+	szTemp2.erase (13, 1);
+	szTemp2.erase (10, 1);
+	szTemp2.erase (7, 1);
+	szTemp2.erase (4, 1);
 
-	if ( szTemp1 < szTemp2 )
+	if (szTemp1 < szTemp2)
 	{
 		return 0; // XML is older than the game
 	}
-	if ( szTemp1 > szTemp2 )
+	if (szTemp1 > szTemp2)
 	{
 		return 1; // XML is newer than the game
 	}
 	return 2;     // XML is matching the game
 }
 
-int ExTiXmlNode::XmlGetLastEditor( std::string& rstrData, ExTiXmlNode* pXmlAuthorNode )
+int ExTiXmlNode::XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode)
 {
 	rstrData = "";
 
@@ -292,14 +292,14 @@ int ExTiXmlNode::XmlGetLastEditor( std::string& rstrData, ExTiXmlNode* pXmlAutho
 	return 0;
 }
 
-bool ExTiXmlNode::XmlDataToBool( std::string& rstrData )
+bool ExTiXmlNode::XmlDataToBool (std::string& rstrData)
 {
 	// Default value = true !!!
 
 	// is it a number ?
-	if ( rstrData.find_first_not_of( " 01234567890,.+-" ) == rstrData.npos )
+	if (rstrData.find_first_not_of (" 01234567890,.+-") == rstrData.npos)
 	{
-		if ( atoi( rstrData.c_str() ) == 0 )
+		if (atoi (rstrData.c_str()) == 0)
 		{
 			return false;
 		}
@@ -311,11 +311,11 @@ bool ExTiXmlNode::XmlDataToBool( std::string& rstrData )
 	else  // no number ! only first letter is important !
 	{
 		std::string szTemp = rstrData;
-		while ( szTemp[0] == ' ' )
+		while (szTemp[0] == ' ')
 		{
-			szTemp.erase( 0 );
+			szTemp.erase (0);
 		}
-		if ( szTemp[0] == 'f' || szTemp[0] == 'F' || szTemp[0] == 'n' || szTemp[0] == 'N' )
+		if (szTemp[0] == 'f' || szTemp[0] == 'F' || szTemp[0] == 'n' || szTemp[0] == 'N')
 		{
 			return false;
 		}
@@ -327,17 +327,17 @@ bool ExTiXmlNode::XmlDataToBool( std::string& rstrData )
 }
 
 #if 0
-void debugToLog( void* pointer , const char* pname )
+void debugToLog (void* pointer , const char* pname)
 {
 	char szMsg[256] = ""; //JCK
-	sprintf( szMsg , "%s = %p", pname, pointer );
+	sprintf (szMsg , "%s = %p", pname, pointer);
 
-	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
+	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
 };
 
-void debugToLog( const std::string& szMsg )
+void debugToLog (const std::string& szMsg)
 {
-	Log.write( szMsg, cLog::eLOG_TYPE_DEBUG );
+	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
 };
 
 #endif

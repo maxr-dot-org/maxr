@@ -49,7 +49,7 @@ public:
 
 //------------------------------------------------------------------------
 cDedicatedServerConfig::cDedicatedServerConfig()
-	: port( DEFAULTPORT )
+	: port (DEFAULTPORT)
 {
 }
 
@@ -77,13 +77,13 @@ cDedicatedServer::cDedicatedServer()
 //------------------------------------------------------------------------
 cDedicatedServer::~cDedicatedServer()
 {
-	if ( network != 0 )
+	if (network != 0)
 	{
 		delete network;
 		network = 0;
 	}
 
-	for ( size_t i = 0; i < games.size(); i++ )
+	for (size_t i = 0; i < games.size(); i++)
 		delete games[i];
 
 	delete configuration;
@@ -93,89 +93,89 @@ cDedicatedServer::~cDedicatedServer()
 //------------------------------------------------------------------------
 void cDedicatedServer::run()
 {
-	printHelp( kHelpHelp );
+	printHelp (kHelpHelp);
 	printPrompt();
 	bool done = false;
-	while ( done == false )
+	while (done == false)
 	{
 		string input;
-		getline( cin, input ); // waits for user input in the terminal
-		if ( cin.good() == false ) // happens during debugging
+		getline (cin, input);  // waits for user input in the terminal
+		if (cin.good() == false)   // happens during debugging
 			cin.clear();
-		if ( handleInput( input ) == false )
+		if (handleInput (input) == false)
 			done = true;
 		printPrompt();
 	}
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleInput( const string& command )
+bool cDedicatedServer::handleInput (const string& command)
 {
 	vector<string> tokens;
-	istringstream iss( command );
-	copy( istream_iterator<string> ( iss ), istream_iterator<string> (), back_inserter<vector<string> > ( tokens ) );
-	if ( tokens.empty() )
+	istringstream iss (command);
+	copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+	if (tokens.empty())
 		return true;
-	if ( tokens.at( 0 ).compare( "help" ) == 0 )
+	if (tokens.at (0).compare ("help") == 0)
 	{
-		if ( tokens.size() == 1 ) printHelp( kHelpGeneral );
-		else if ( tokens.at( 1 ).compare( "newGame" ) == 0 ) printHelp( kHelpNewGame );
-		else if ( tokens.at( 1 ).compare( "loadGame" ) == 0 ) printHelp( kHelpLoadGame );
-		else if ( tokens.at( 1 ).compare( "saveGame" ) == 0 ) printHelp( kHelpSaveGame );
-		else if ( tokens.at( 1 ).compare( "stop" ) == 0 ) printHelp( kHelpStop );
-		else if ( tokens.at( 1 ).compare( "games" ) == 0 ) printHelp( kHelpGames );
-		else if ( tokens.at( 1 ).compare( "maps" ) == 0 ) printHelp( kHelpMaps );
-		else if ( tokens.at( 1 ).compare( "set" ) == 0 ) printHelp( kHelpSet );
-		else if ( tokens.at( 1 ).compare( "printconfig" ) == 0 ) printHelp( kHelpPrintConfig );
-		else if ( tokens.at( 1 ).compare( "exit" ) == 0 ) printHelp( kHelpExit );
+		if (tokens.size() == 1) printHelp (kHelpGeneral);
+		else if (tokens.at (1).compare ("newGame") == 0) printHelp (kHelpNewGame);
+		else if (tokens.at (1).compare ("loadGame") == 0) printHelp (kHelpLoadGame);
+		else if (tokens.at (1).compare ("saveGame") == 0) printHelp (kHelpSaveGame);
+		else if (tokens.at (1).compare ("stop") == 0) printHelp (kHelpStop);
+		else if (tokens.at (1).compare ("games") == 0) printHelp (kHelpGames);
+		else if (tokens.at (1).compare ("maps") == 0) printHelp (kHelpMaps);
+		else if (tokens.at (1).compare ("set") == 0) printHelp (kHelpSet);
+		else if (tokens.at (1).compare ("printconfig") == 0) printHelp (kHelpPrintConfig);
+		else if (tokens.at (1).compare ("exit") == 0) printHelp (kHelpExit);
 		// ...
 	}
-	else if ( tokens.at( 0 ).compare( "newGame" ) == 0 )
+	else if (tokens.at (0).compare ("newGame") == 0)
 		return startServer();
-	else if ( tokens.at( 0 ).compare( "loadGame" ) == 0 )
+	else if (tokens.at (0).compare ("loadGame") == 0)
 	{
-		if ( tokens.size() == 2 )
-			return startServer( atoi( tokens.at( 1 ).c_str() ) );
+		if (tokens.size() == 2)
+			return startServer (atoi (tokens.at (1).c_str()));
 		else
 		{
 			cout << "No savegame number given. Trying to load auto save (savegame number " << kAutoSaveSlot << ")." << endl;
-			return startServer( kAutoSaveSlot );
+			return startServer (kAutoSaveSlot);
 		}
 	}
-	else if ( tokens.at( 0 ).compare( "saveGame" ) == 0 )
+	else if (tokens.at (0).compare ("saveGame") == 0)
 	{
-		if ( tokens.size() == 2 )
-			saveGame( atoi( tokens.at( 1 ).c_str() ) );
+		if (tokens.size() == 2)
+			saveGame (atoi (tokens.at (1).c_str()));
 		else
-			printHelp( kHelpWrongArguments );
+			printHelp (kHelpWrongArguments);
 	}
-	else if ( tokens.at( 0 ).compare( "set" ) == 0 )
+	else if (tokens.at (0).compare ("set") == 0)
 	{
-		if ( tokens.size() == 3 )
-			setProperty( tokens.at( 1 ), tokens.at( 2 ) );
+		if (tokens.size() == 3)
+			setProperty (tokens.at (1), tokens.at (2));
 		else
-			printHelp( kHelpWrongArguments );
+			printHelp (kHelpWrongArguments);
 	}
-	else if ( tokens.at( 0 ).compare( "games" ) == 0 )
+	else if (tokens.at (0).compare ("games") == 0)
 		printGames();
-	else if ( tokens.at( 0 ).compare( "maps" ) == 0 )
+	else if (tokens.at (0).compare ("maps") == 0)
 		printMaps();
-	else if ( tokens.at( 0 ).compare( "printconfig" ) == 0 )
+	else if (tokens.at (0).compare ("printconfig") == 0)
 		printConfiguration();
-	else if ( tokens.at( 0 ).compare( "exit" ) == 0 )
+	else if (tokens.at (0).compare ("exit") == 0)
 		return false;
 	// ...
-	else if ( tokens.at( 0 ).compare( "stop" ) == 0 )
-		printHelp( kNotImplementedYet );
+	else if (tokens.at (0).compare ("stop") == 0)
+		printHelp (kNotImplementedYet);
 	else
-		printHelp( kHelpUnknownCommand );
+		printHelp (kHelpUnknownCommand);
 	return true;
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::startServer( int saveGameNumber )
+bool cDedicatedServer::startServer (int saveGameNumber)
 {
-	if ( network != 0 )
+	if (network != 0)
 	{
 		cout << "WARNING: Server is already open." << endl;
 		return true;
@@ -183,12 +183,12 @@ bool cDedicatedServer::startServer( int saveGameNumber )
 
 	cout << "Starting server on port " << configuration->port << "..." << endl;
 
-	assert( network == 0 );
+	assert (network == 0);
 	network = new cTCP();
 
-	network->setPort( configuration->port );
+	network->setPort (configuration->port);
 
-	if ( network->create() == -1 )
+	if (network->create() == -1)
 	{
 		cout << "ERROR: Initializing network failed." << endl;
 		return false;
@@ -197,8 +197,8 @@ bool cDedicatedServer::startServer( int saveGameNumber )
 	// TODO: muss von Clients ausgeloest werden. Aber, dann muss ganze Infrastruktur angepasst werden,
 	// dass z.B. NetMessages an richtiges Game/cServer gehen und dass die Methoden nicht auf einem globalen
 	// (oder zumindest dem aktuell richtigen) server Objekt arbeiten.
-	if ( saveGameNumber >= 0 )
-		loadSaveGame( saveGameNumber );
+	if (saveGameNumber >= 0)
+		loadSaveGame (saveGameNumber);
 	else
 		startNewGame();
 
@@ -211,44 +211,44 @@ void cDedicatedServer::startNewGame()
 	cout << "Setting up new game..." << endl;
 	cServerGame* game = new cServerGame();
 	game->prepareGameData();
-	games.push_back( game );
+	games.push_back (game);
 	game->runInThread();
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::loadSaveGame( int saveGameNumber )
+void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
 	cServerGame* game = new cServerGame();
-	if ( game->loadGame( saveGameNumber ) == false )
+	if (game->loadGame (saveGameNumber) == false)
 	{
 		delete game;
 		cout << "Loading game failed. Game is not setup." << endl;
 		return;
 	}
-	games.push_back( game );
+	games.push_back (game);
 	game->runInThread();
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::saveGame( int saveGameNumber )
+void cDedicatedServer::saveGame (int saveGameNumber)
 {
-	if ( games.empty() == false )
+	if (games.empty() == false)
 	{
 		cout << "Save game in slot " << saveGameNumber << endl;
-		games[0]->saveGame( saveGameNumber );
+		games[0]->saveGame (saveGameNumber);
 	}
 	else
 		cout << "No game running. Can't save." << endl;
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::setProperty( const string& property, const string& value )
+void cDedicatedServer::setProperty (const string& property, const string& value)
 {
-	if ( property.compare( "port" ) == 0 )
+	if (property.compare ("port") == 0)
 	{
-		int newPort = atoi( value.c_str() );
-		if ( newPort < 0 || newPort >= 65536 )
+		int newPort = atoi (value.c_str());
+		if (newPort < 0 || newPort >= 65536)
 			newPort = DEFAULTPORT;
 		configuration->port = newPort;
 		cout << "Port set to: " << newPort << endl;
@@ -278,9 +278,9 @@ void cDedicatedServer::printGames() const
 string cDedicatedServer::getGamesString() const
 {
 	stringstream oss;
-	if ( games.empty() )
+	if (games.empty())
 		oss << "No games started" << endl;
-	for ( size_t i = 0; i < games.size(); i++ )
+	for (size_t i = 0; i < games.size(); i++)
 	{
 		oss << "--------- Game " << i << ": -----------" << endl;
 		cServerGame* game = games[i];
@@ -299,26 +299,26 @@ void cDedicatedServer::printMaps() const
 string cDedicatedServer::getAvailableMapsString() const
 {
 	stringstream oss;
-	cList<string>* maps = getFilesOfDirectory( cSettings::getInstance().getMapsPath() );
-	if ( getUserMapsDir().empty() == false )
+	cList<string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	if (getUserMapsDir().empty() == false)
 	{
-		cList<string>* userMaps = getFilesOfDirectory( getUserMapsDir() );
-		if ( userMaps != 0 )
+		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir());
+		if (userMaps != 0)
 		{
-			for ( unsigned int i = 0; i < userMaps->Size(); i++ )
+			for (unsigned int i = 0; i < userMaps->Size(); i++)
 			{
-				if ( maps->Contains( ( *userMaps )[i] ) == false )
-					maps->Add( ( *userMaps )[i] );
+				if (maps->Contains ( (*userMaps) [i]) == false)
+					maps->Add ( (*userMaps) [i]);
 			}
 			delete userMaps;
 		}
 	}
 	oss << "----- Available maps: ------" << endl;
-	for ( unsigned int i = 0; i < maps->Size(); i++ )
+	for (unsigned int i = 0; i < maps->Size(); i++)
 	{
-		string mapFilename = ( *maps )[i];
-		if ( mapFilename.substr( mapFilename.length() - 3, 3 ).compare( "WRL" ) == 0
-			 || mapFilename.substr( mapFilename.length() - 3, 3 ).compare( "wrl" ) == 0 )
+		string mapFilename = (*maps) [i];
+		if (mapFilename.substr (mapFilename.length() - 3, 3).compare ("WRL") == 0
+			|| mapFilename.substr (mapFilename.length() - 3, 3).compare ("wrl") == 0)
 		{
 			oss << mapFilename << endl;
 		}
@@ -344,9 +344,9 @@ string cDedicatedServer::getServerHelpString() const
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::printHelp( eHelpCommands helpCommand ) const
+void cDedicatedServer::printHelp (eHelpCommands helpCommand) const
 {
-	switch ( helpCommand )
+	switch (helpCommand)
 	{
 		case kHelpUnknownCommand:
 			cout << "Unknown command." << endl;
@@ -402,59 +402,59 @@ void cDedicatedServer::printHelp( eHelpCommands helpCommand ) const
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::pushEvent( cNetMessage* message )
+void cDedicatedServer::pushEvent (cNetMessage* message)
 {
-	if ( handleDedicatedServerEvents( message ) )
+	if (handleDedicatedServerEvents (message))
 		return;
 	// TODO: delegate to correct game (and not simply first game)
-	if ( games.empty() == false )
-		games[0]->pushEvent( message );
+	if (games.empty() == false)
+		games[0]->pushEvent (message);
 }
 
 //------------------------------------------------------------------------
-bool cDedicatedServer::handleDedicatedServerEvents( cNetMessage* message )
+bool cDedicatedServer::handleDedicatedServerEvents (cNetMessage* message)
 {
-	switch ( message->getType() )
+	switch (message->getType())
 	{
 		case GAME_EV_CHAT_CLIENT:
 		case MU_MSG_CHAT:
 		{
-			if ( message->getType() == MU_MSG_CHAT )
+			if (message->getType() == MU_MSG_CHAT)
 				message->popBool();
 			string chatText = message->popString();
 			message->rewind();
 			int senderSocket = -1;
-			if ( games.empty() == false && message->iPlayerNr >= 0 )
-				senderSocket = games[0]->getSocketForPlayerNr( message->iPlayerNr );
-			if ( senderSocket < 0 )
+			if (games.empty() == false && message->iPlayerNr >= 0)
+				senderSocket = games[0]->getSocketForPlayerNr (message->iPlayerNr);
+			if (senderSocket < 0)
 				return false;
 
-			size_t serverStringPos = chatText.find( "--server" );
-			if ( serverStringPos != string::npos && chatText.length() > serverStringPos + 9 )
+			size_t serverStringPos = chatText.find ("--server");
+			if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
 			{
-				string command = chatText.substr( serverStringPos + 9 );
+				string command = chatText.substr (serverStringPos + 9);
 				vector<string> tokens;
-				istringstream iss( command );
-				copy( istream_iterator<string> ( iss ), istream_iterator<string> (), back_inserter<vector<string> > ( tokens ) );
-				if ( tokens.size() == 1 )
+				istringstream iss (command);
+				copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+				if (tokens.size() == 1)
 				{
-					if ( tokens[0].compare( "games" ) == 0 )
+					if (tokens[0].compare ("games") == 0)
 					{
-						sendChatMessage( getGamesString(),
-										 message->getType() == MU_MSG_CHAT ? ( int )MU_MSG_CHAT : ( int )GAME_EV_CHAT_SERVER,
-										 senderSocket );
+						sendChatMessage (getGamesString(),
+										 message->getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+										 senderSocket);
 						return true;
 					}
-					else if ( tokens[0].compare( "maps" ) == 0 )
+					else if (tokens[0].compare ("maps") == 0)
 					{
-						sendChatMessage( getAvailableMapsString(), MU_MSG_CHAT, senderSocket );
+						sendChatMessage (getAvailableMapsString(), MU_MSG_CHAT, senderSocket);
 						return true;
 					}
-					else if ( tokens[0].compare( "help" ) == 0 )
+					else if (tokens[0].compare ("help") == 0)
 					{
-						sendChatMessage( getServerHelpString(),
-										 message->getType() == MU_MSG_CHAT ? ( int )MU_MSG_CHAT : ( int )GAME_EV_CHAT_SERVER,
-										 senderSocket );
+						sendChatMessage (getServerHelpString(),
+										 message->getType() == MU_MSG_CHAT ? (int) MU_MSG_CHAT : (int) GAME_EV_CHAT_SERVER,
+										 senderSocket);
 						return true;
 					}
 				}
@@ -467,35 +467,35 @@ bool cDedicatedServer::handleDedicatedServerEvents( cNetMessage* message )
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::sendChatMessage( const string& text, int type, int socket )
+void cDedicatedServer::sendChatMessage (const string& text, int type, int socket)
 {
-	stringstream ss( text );
+	stringstream ss (text);
 	string line;
-	while ( getline( ss, line ) )
+	while (getline (ss, line))
 	{
-		cNetMessage* msg = new cNetMessage( type );
-		if ( msg->getType() == GAME_EV_CHAT_SERVER )
+		cNetMessage* msg = new cNetMessage (type);
+		if (msg->getType() == GAME_EV_CHAT_SERVER)
 		{
-			msg->pushString( "" );
-			msg->pushString( line );
-			msg->pushChar( SERVER_INFO_MESSAGE );
+			msg->pushString ("");
+			msg->pushString (line);
+			msg->pushChar (SERVER_INFO_MESSAGE);
 		}
 		else
 		{
-			msg->pushString( line );
-			msg->pushBool( false );
+			msg->pushString (line);
+			msg->pushBool (false);
 		}
 		msg->iPlayerNr = -1;
-		if ( socket < 0 )
-			network->send( msg->iLength, msg->serialize() );
+		if (socket < 0)
+			network->send (msg->iLength, msg->serialize());
 		else
-			network->sendTo( socket, msg->iLength, msg->serialize() );
+			network->sendTo (socket, msg->iLength, msg->serialize());
 	}
 }
 
 //------------------------------------------------------------------------
 void cDedicatedServer::doAutoSave()
 {
-	cSavegame Savegame( kAutoSaveSlot );	// dedicated server autosaves are always in slot kAutoSaveSlot
-	Savegame.save( "Dedicated Server Autosave" );
+	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
+	Savegame.save ("Dedicated Server Autosave");
 }

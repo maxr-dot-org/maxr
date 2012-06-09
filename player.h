@@ -71,9 +71,9 @@ class cPlayer
 	friend class cServer;
 	friend class cClient;
 public:
-	cPlayer( const std::string& Name, SDL_Surface* Color, int nr, int iSocketNum = -1 );
+	cPlayer (const std::string& Name, SDL_Surface* Color, int nr, int iSocketNum = -1);
 	~cPlayer();
-	cPlayer( const cPlayer& Player );
+	cPlayer (const cPlayer& Player);
 
 	std::string name;
 	SDL_Surface* color;
@@ -114,29 +114,29 @@ public:
 	bool researchFinished;
 	unsigned int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 
-	void InitMaps( int MapSizeX, cMap* map = NULL ); // TODO: remove ' = NULL'
+	void InitMaps (int MapSizeX, cMap* map = NULL);  // TODO: remove ' = NULL'
 	void DoScan();
 	cUnit* getNextUnit();
 	cUnit* getPrevUnit();
-	void addSentry( cUnit* u );
-	void deleteSentry( cUnit* u );
-	void startAResearch( int researchArea );
-	void stopAResearch( int researchArea );
+	void addSentry (cUnit* u);
+	void deleteSentry (cUnit* u);
+	void startAResearch (int researchArea);
+	void stopAResearch (int researchArea);
 	void doResearch();  ///< proceed with the research at turn end
 	void accumulateScore(); // at turn end
-	void upgradeUnitTypes( cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas );
+	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
-	void AddLock( cBuilding* b );
-	void AddLock( cVehicle* v );
-	void DeleteLock( cBuilding* b );
-	void DeleteLock( cVehicle* v );
-	bool InLockList( cBuilding* b ) const;
-	bool InLockList( cVehicle* v ) const;
-	void ToggelLock( cMapField* OverUnitField );
-	void DrawLockList( cGameGUI& gameGUI );
+	void AddLock (cBuilding* b);
+	void AddLock (cVehicle* v);
+	void DeleteLock (cBuilding* b);
+	void DeleteLock (cVehicle* v);
+	bool InLockList (cBuilding* b) const;
+	bool InLockList (cVehicle* v) const;
+	void ToggelLock (cMapField* OverUnitField);
+	void DrawLockList (cGameGUI& gameGUI);
 	void CountEcoSpheres();
-	int getScore( int turn ) const;
-	void setScore( int score, int turn );
+	int getScore (int turn) const;
+	void setScore (int score, int turn);
 	void clearDone();
 
 	/**
@@ -147,7 +147,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle( int iX, int iY, int iRadius, char* map, int mapsize );
+	void drawSpecialCircle (int iX, int iY, int iRadius, char* map, int mapsize);
 	/**
 	* draws a big circle on the map for the fog
 	*@author alzi alias DoctorDeath
@@ -156,19 +156,19 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig( int iX, int iY, int iRadius, char* map, int mapsize );
+	void drawSpecialCircleBig (int iX, int iY, int iRadius, char* map, int mapsize);
 
-	void addSavedReport( const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1 );
+	void addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1);
 
-	void setClan( int newClan );
+	void setClan (int newClan);
 	int getClan() const { return clan; }
 
 private:
 	void refreshSentryAir();
 	void refreshSentryGround();
 
-	cVehicle* AddVehicle( int posx, int posy, sVehicle* v );
-	cBuilding* addBuilding( int posx, int posy, sBuilding* b );
+	cVehicle* AddVehicle (int posx, int posy, sVehicle* v);
+	cBuilding* addBuilding (int posx, int posy, sBuilding* b);
 
 	int clan;
 };

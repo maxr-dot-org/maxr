@@ -42,75 +42,75 @@
 //--------------------------------------------------------------
 /** @return exists a file at path */
 //--------------------------------------------------------------
-bool FileExists( const char* path )
+bool FileExists (const char* path)
 {
 	SDL_RWops* file;
-	file = SDL_RWFromFile( path, "r" );
-	if ( file == NULL )
+	file = SDL_RWFromFile (path, "r");
+	if (file == NULL)
 	{
-		Log.write( SDL_GetError(), cLog::eLOG_TYPE_WARNING );
+		Log.write (SDL_GetError(), cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
-	SDL_RWclose( file );
+	SDL_RWclose (file);
 	return true;
 }
 
 //--------------------------------------------------------------
-bool makeDir( const std::string& path )
+bool makeDir (const std::string& path)
 {
 #ifdef WIN32
-	return mkdir( path.c_str() ) == 0;
+	return mkdir (path.c_str()) == 0;
 #else
-	return mkdir( path.c_str(), 0755 ) == 0;
+	return mkdir (path.c_str(), 0755) == 0;
 #endif
 }
 
 //--------------------------------------------------------------
-bool DirExists( const std::string& path )
+bool DirExists (const std::string& path)
 {
 #ifdef WIN32
-	if ( _access( path.c_str(), 0 ) == 0 )
+	if (_access (path.c_str(), 0) == 0)
 	{
 		struct stat status;
-		stat( path.c_str(), &status );
+		stat (path.c_str(), &status);
 
-		if ( status.st_mode & S_IFDIR ) return true;
+		if (status.st_mode & S_IFDIR) return true;
 		else return false;	// The path is not a directory
 	}
 	else return false;
 #else
-	return FileExists( path.c_str() );	// on linux everything is a file
+	return FileExists (path.c_str());	// on linux everything is a file
 #endif
 }
 
 //--------------------------------------------------------------
-cList<std::string>* getFilesOfDirectory( const std::string& sDirectory )
+cList<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 {
 	cList<std::string>* List = new cList<std::string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
-	intptr_t const lFile = _findfirst( ( sDirectory + PATH_DELIMITER "*.*" ).c_str(), &DataFile );
-	if ( lFile != -1 )
+	intptr_t const lFile = _findfirst ( (sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);
+	if (lFile != -1)
 	{
 		do
 		{
-			if ( DataFile.attrib & _A_SUBDIR ) continue;
-			if ( DataFile.name[0] == '.' )     continue;
-			List->Add( DataFile.name );
+			if (DataFile.attrib & _A_SUBDIR) continue;
+			if (DataFile.name[0] == '.')     continue;
+			List->Add (DataFile.name);
 		}
-		while ( _findnext( lFile, &DataFile ) == 0 );
-		_findclose( lFile );
+		while (_findnext (lFile, &DataFile) == 0);
+		_findclose (lFile);
 	}
 #else
-	if ( DIR* const dir = opendir( sDirectory.c_str() ) )
+	if (DIR* const dir = opendir (sDirectory.c_str()))
 	{
-		while ( struct dirent* const entry = readdir( dir ) )
+		while (struct dirent* const entry = readdir (dir))
 		{
 			char const* const name = entry->d_name;
-			if ( name[0] == '.' ) continue;
-			List->Add( name );
+			if (name[0] == '.') continue;
+			List->Add (name);
 		}
-		closedir( dir );
+		closedir (dir);
 	}
 #endif
 	return List;
@@ -120,11 +120,11 @@ cList<std::string>* getFilesOfDirectory( const std::string& sDirectory )
 std::string getUserMapsDir()
 {
 #ifdef WIN32
-	if ( cSettings::getInstance().getHomeDir().empty() ) return "";
+	if (cSettings::getInstance().getHomeDir().empty()) return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if ( !DirExists( mapFolder ) )
+	if (!DirExists (mapFolder))
 	{
-		if ( _mkdir( mapFolder.c_str() ) == 0 )
+		if (_mkdir (mapFolder.c_str()) == 0)
 			return mapFolder + PATH_DELIMITER;
 		return "";
 	}
@@ -133,12 +133,12 @@ std::string getUserMapsDir()
 #ifdef __amigaos4__
 	return "";
 #else
-	if ( cSettings::getInstance().getHomeDir().empty() )
+	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	std::string mapFolder = cSettings::getInstance().getHomeDir() + "maps";
-	if ( !FileExists( mapFolder.c_str() ) )
+	if (!FileExists (mapFolder.c_str()))
 	{
-		if ( mkdir( mapFolder.c_str(), 0755 ) == 0 )
+		if (mkdir (mapFolder.c_str(), 0755) == 0)
 			return mapFolder + PATH_DELIMITER;
 		return "";
 	}
@@ -157,27 +157,27 @@ std::string getUserScreenshotsDir()
 
 	std::string screenshotsFolder = "";
 #ifdef MAC
-	char* cHome = getenv( "HOME" ); //get $HOME on mac
-	if ( cHome == NULL )
+	char* cHome = getenv ("HOME");  //get $HOME on mac
+	if (cHome == NULL)
 		return "";
 	std::string homeFolder = cHome;
-	if ( homeFolder.empty() )
+	if (homeFolder.empty())
 		return "";
 	// store screenshots directly on the desktop of the user
 	screenshotsFolder = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
 	return screenshotsFolder;
 #endif
-	if ( cSettings::getInstance().getHomeDir().empty() )
+	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
 	screenshotsFolder = cSettings::getInstance().getHomeDir() + PATH_DELIMITER;
 	return screenshotsFolder;
 }
 
-Sint32 calcCheckSum( const char* data, size_t dataSize )
+Sint32 calcCheckSum (const char* data, size_t dataSize)
 {
 	// NOTE: The calculation must be endian safe.
 	Uint32 checksum = 0;
-	for ( const char* i = data; i != data + dataSize; ++i )
+	for (const char* i = data; i != data + dataSize; ++i)
 	{
 		checksum  = checksum << 1 | checksum >> 31; // Rotate left by one.
 		checksum += *i;

@@ -49,8 +49,8 @@ private:
 	/**
 	* Writes message finally to logfile
 	*/
-	int writeMessage( const char* );
-	int writeMessage( const std::string& );
+	int writeMessage (const char*);
+	int writeMessage (const std::string&);
 
 	/**
 	* Closes the logfile.
@@ -62,7 +62,7 @@ private:
 	*
 	* @return true on success
 	*/
-	bool open( int TYPE );
+	bool open (int TYPE);
 public:
 	cLog();
 	/**
@@ -79,8 +79,8 @@ public:
 	*
 	* @return 0 on success
 	*/
-	int write( const char* str , int TYPE );
-	int write( const std::string& str , int TYPE );
+	int write (const char* str , int TYPE);
+	int write (const std::string& str , int TYPE);
 
 	/**
 	* Writes message with default type (II) to the logfile
@@ -89,7 +89,7 @@ public:
 	*
 	* @return 0 on success
 	*/
-	int write( const char* str );
+	int write (const char* str);
 	//int write( const std::string& str );
 
 	enum LOG_TYPE

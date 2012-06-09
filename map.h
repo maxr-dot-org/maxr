@@ -51,21 +51,21 @@ private:
 	cList<T*>* list;
 	int index;
 public:
-	cMapIterator<T>( cList<T*>* list_ );
+	cMapIterator<T> (cList<T*>* list_);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size() const;
 	//T& operator[](unsigned const int i) const;
 	T* operator->() const;
 	T& operator*() const;
 	/** go to next vehicle on this field */
-	cMapIterator operator++( int );
+	cMapIterator operator++ (int);
 	/** go to previous vehicle on this field */
-	cMapIterator operator--( int );
-	bool operator==( T* v ) const;
+	cMapIterator operator-- (int);
+	bool operator== (T* v) const;
 	operator T* () const;
 	void setToEnd();
 	void rewind();
-	bool contains( const T& v ) const;
+	bool contains (const T& v) const;
 	size_t getIndex() const;
 	bool end;
 	bool rend;
@@ -75,12 +75,12 @@ typedef cMapIterator<cVehicle> cVehicleIterator;
 typedef cMapIterator<cBuilding> cBuildingIterator;
 
 template <typename T>
-cMapIterator<T>::cMapIterator( cList<T*>* list_ )
+cMapIterator<T>::cMapIterator (cList<T*>* list_)
 {
 	index = 0;
 	list = list_;
 
-	if ( list->Size() == 0 )
+	if (list->Size() == 0)
 	{
 		end = true;
 		rend = true;
@@ -95,14 +95,14 @@ cMapIterator<T>::cMapIterator( cList<T*>* list_ )
 template <typename T>
 unsigned int cMapIterator<T>::size() const
 {
-	return ( unsigned int )list->Size();
+	return (unsigned int) list->Size();
 }
 
 template <typename T>
 T* cMapIterator<T>::operator->() const
 {
-	if ( !end && !rend )
-		return ( *list )[index];
+	if (!end && !rend)
+		return (*list) [index];
 	else
 		return NULL;
 }
@@ -111,18 +111,18 @@ template <typename T>
 T& cMapIterator<T>::operator*() const
 {
 	T* unit = NULL;
-	if ( !end && !rend ) unit = ( *list )[index];
+	if (!end && !rend) unit = (*list) [index];
 
 	return *unit;
 }
 
 template <typename T>
-cMapIterator<T> cMapIterator<T>::operator++( int )
+cMapIterator<T> cMapIterator<T>::operator++ (int)
 {
 	cMapIterator<T> i = *this;
-	if ( end ) return i;
+	if (end) return i;
 
-	if ( rend )
+	if (rend)
 	{
 		rend = false;
 		index = 0;
@@ -131,36 +131,36 @@ cMapIterator<T> cMapIterator<T>::operator++( int )
 	{
 		index++;
 	}
-	if ( index >= ( int )list->Size() ) end = true;
+	if (index >= (int) list->Size()) end = true;
 
 	return i;
 }
 
 template <typename T>
-cMapIterator<T> cMapIterator<T>::operator--( int )
+cMapIterator<T> cMapIterator<T>::operator-- (int)
 {
 	cMapIterator<T> i = *this;
-	if ( rend ) return i;
+	if (rend) return i;
 
-	if ( end )
+	if (end)
 	{
-		index = ( int )list->Size() - 1;
+		index = (int) list->Size() - 1;
 		end = false;
 	}
 	else
 	{
 		index--;
 	}
-	if ( index < 0 ) rend = true;
+	if (index < 0) rend = true;
 
 	return i;
 }
 
 template <typename T>
-bool cMapIterator<T>::operator ==( T* unit ) const
+bool cMapIterator<T>::operator == (T* unit) const
 {
-	if ( unit == NULL && ( end || rend ) ) return true;
-	if ( ( *list )[index] == unit ) return true;
+	if (unit == NULL && (end || rend)) return true;
+	if ( (*list) [index] == unit) return true;
 
 	return false;
 }
@@ -168,14 +168,14 @@ bool cMapIterator<T>::operator ==( T* unit ) const
 template <typename T>
 cMapIterator<T>::operator T* () const
 {
-	if ( end || rend ) return NULL;
-	return ( *list )[index];
+	if (end || rend) return NULL;
+	return (*list) [index];
 }
 
 template <typename T>
 void cMapIterator<T>::setToEnd()
 {
-	if ( list->Size() > 0 )
+	if (list->Size() > 0)
 	{
 		index = list->Size() - 1;
 	}
@@ -191,7 +191,7 @@ template <typename T>
 void cMapIterator<T>::rewind()
 {
 	index = 0;
-	if ( list->Size() == 0 )
+	if (list->Size() == 0)
 	{
 		rend = true;
 		end = true;
@@ -204,11 +204,11 @@ void cMapIterator<T>::rewind()
 }
 
 template <typename T>
-bool cMapIterator<T>::contains( const T& v ) const
+bool cMapIterator<T>::contains (const T& v) const
 {
-	for ( size_t i = 0; i < list->Size(); i++ )
+	for (size_t i = 0; i < list->Size(); i++)
 	{
-		if ( ( *list )[i] == &v )
+		if ( (*list) [i] == &v)
 			return true;
 	}
 	return false;
@@ -293,59 +293,59 @@ public:
 	int iNumberOfTerrains;		// Number of terrain graphics for this map
 	sTerrain* terrain; // Terrain graphics
 
-	bool isWater( int x, int y, bool not_coast = false ) const;
-	void NewMap( int size, int iTerrainGrphCount );
+	bool isWater (int x, int y, bool not_coast = false) const;
+	void NewMap (int size, int iTerrainGrphCount);
 	void DeleteMap();
 	//bool SaveMap(const std::string& filename, SDL_Surface *preview);
-	bool LoadMap( const std::string& filename );
-	void placeRessourcesAddPlayer( int x, int y, int frequency );
-	void placeRessources( int Metal, int Oil, int Gold );
+	bool LoadMap (const std::string& filename);
+	void placeRessourcesAddPlayer (int x, int y, int frequency);
+	void placeRessources (int Metal, int Oil, int Gold);
 	void generateNextAnimationFrame();
 	/**
 	* Access to a map field
 	* @param the offset of the map field
 	* @return an instance of cMapField, which has several methods to access the objects on the field
 	*/
-	cMapField& operator[]( unsigned int offset ) const;
+	cMapField& operator[] (unsigned int offset) const;
 
-	void addBuilding( cBuilding* building, unsigned int x, unsigned int y );
-	void addBuilding( cBuilding* building, unsigned int offset );
-	void addVehicle( cVehicle* vehicle, unsigned int x, unsigned int y );
-	void addVehicle( cVehicle* vehicle, unsigned int offset );
+	void addBuilding (cBuilding* building, unsigned int x, unsigned int y);
+	void addBuilding (cBuilding* building, unsigned int offset);
+	void addVehicle (cVehicle* vehicle, unsigned int x, unsigned int y);
+	void addVehicle (cVehicle* vehicle, unsigned int offset);
 
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
 	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
 	*/
-	void moveVehicle( cVehicle* vehicle, unsigned int x, unsigned int y, int height = 0 );
+	void moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int height = 0);
 
 	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
-	void moveVehicleBig( cVehicle* vehicle, unsigned int x, unsigned int y );
+	void moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y);
 
-	void deleteBuilding( cBuilding* building );
-	void deleteVehicle( cVehicle* vehicle );
+	void deleteBuilding (cBuilding* building);
+	void deleteVehicle (cVehicle* vehicle);
 
-	int getMapLevel( cBuilding* building ) const;
-	int getMapLevel( cVehicle* vehicle ) const;
+	int getMapLevel (cBuilding* building) const;
+	int getMapLevel (cVehicle* vehicle) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace( const cVehicle* vehicle, int x, int y, bool checkPlayer = false ) const;
-	bool possiblePlaceVehicle( const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer = false ) const;
+	bool possiblePlace (const cVehicle* vehicle, int x, int y, bool checkPlayer = false) const;
+	bool possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer = false) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the building
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
 	*/
-	bool possiblePlaceBuilding( const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL ) const;
-	bool possiblePlaceBuildingWithMargin( const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle = NULL ) const;
-	bool possiblePlaceBuilding( const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL ) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL) const;
 
 	/**
 	* removes all units from the map structure
@@ -355,8 +355,8 @@ public:
 
 private:
 
-	SDL_Surface* LoadTerrGraph( SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum );
-	void CopySrfToTerData( SDL_Surface* surface, int iNum );
+	SDL_Surface* LoadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum);
+	void CopySrfToTerData (SDL_Surface* surface, int iNum);
 
 	T_2<int>* resSpots;
 	int* resSpotTypes;

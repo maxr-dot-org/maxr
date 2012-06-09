@@ -34,29 +34,29 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-cUnit::cUnit( UnitType unitType, sUnitData* unitData, cPlayer* owner )
-	: iID( 0 )
-	, PosX( 0 )
-	, PosY( 0 )
-	, dir( 0 )
-	, turnsDisabled( 0 )
-	, sentryActive( false )
-	, manualFireActive( false )
-	, attacking( false )
-	, isBeeingAttacked( false )
-	, isMarkedAsDone( false )
-	, hasBeenAttacked( false )
-	, next( 0 )
-	, prev( 0 )
-	, selectedMenuButtonIndex( -1 )
-	, owner( owner )
-	, unitType( unitType )
-	, isOriginalName( true )
+cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
+	: iID (0)
+	, PosX (0)
+	, PosY (0)
+	, dir (0)
+	, turnsDisabled (0)
+	, sentryActive (false)
+	, manualFireActive (false)
+	, attacking (false)
+	, isBeeingAttacked (false)
+	, isMarkedAsDone (false)
+	, hasBeenAttacked (false)
+	, next (0)
+	, prev (0)
+	, selectedMenuButtonIndex (-1)
+	, owner (owner)
+	, unitType (unitType)
+	, isOriginalName (true)
 {
-	if ( unitData != 0 )
+	if (unitData != 0)
 		data = *unitData;
 
-	sentryActive = ( isBuilding() && data.canAttack != TERRAIN_NONE );
+	sentryActive = (isBuilding() && data.canAttack != TERRAIN_NONE);
 }
 
 //-----------------------------------------------------------------------------
@@ -68,11 +68,11 @@ cUnit::~cUnit()
 //--------------------------------------------------------------------------
 /** returns the remaining hitpoints after an attack */
 //--------------------------------------------------------------------------
-int cUnit::calcHealth( int damage ) const
+int cUnit::calcHealth (int damage) const
 {
 	damage -= data.armor;
 
-	if ( damage <= 0 )
+	if (damage <= 0)
 	{
 		//minimum damage is 1
 		damage = 1;
@@ -81,7 +81,7 @@ int cUnit::calcHealth( int damage ) const
 	int hp;
 	hp = data.hitpointsCur - damage;
 
-	if ( hp < 0 )
+	if (hp < 0)
 		return 0;
 
 	return hp;
@@ -90,28 +90,28 @@ int cUnit::calcHealth( int damage ) const
 //--------------------------------------------------------------------------
 /** Checks if the target is in range */
 //--------------------------------------------------------------------------
-bool cUnit::isInRange( int x, int y ) const
+bool cUnit::isInRange (int x, int y) const
 {
 	x -= PosX;
 	y -= PosY;
 
-	return ( sqrt( ( double )( x * x + y * y ) ) <= data.range );
+	return (sqrt ( (double) (x * x + y * y)) <= data.range);
 }
 
 //-----------------------------------------------------------------------------
-bool cUnit::isNextTo( int x, int y ) const
+bool cUnit::isNextTo (int x, int y) const
 {
-	if ( x + 1 < PosX || y + 1 < PosY )
+	if (x + 1 < PosX || y + 1 < PosY)
 		return false;
 
-	if ( data.isBig )
+	if (data.isBig)
 	{
-		if ( x - 2 > PosX || y - 2 > PosY )
+		if (x - 2 > PosX || y - 2 > PosY)
 			return false;
 	}
 	else
 	{
-		if ( x - 1 > PosX || y - 1 > PosY )
+		if (x - 1 > PosX || y - 1 > PosY)
 			return false;
 	}
 
@@ -129,55 +129,55 @@ string cUnit::getNamePrefix() const
 
 	// generate the roman versionnumber (correct until 899)
 
-	if ( nr > 100 )
+	if (nr > 100)
 	{
 		tmp = nr / 100;
 		nr %= 100;
 
-		while ( tmp-- )
+		while (tmp--)
 			rome += "C";
 	}
 
-	if ( nr >= 90 )
+	if (nr >= 90)
 	{
 		rome += "XC";
 		nr -= 90;
 	}
 
-	if ( nr >= 50 )
+	if (nr >= 50)
 	{
 		nr -= 50;
 		rome += "L";
 	}
 
-	if ( nr >= 40 )
+	if (nr >= 40)
 	{
 		nr -= 40;
 		rome += "XL";
 	}
 
-	if ( nr >= 10 )
+	if (nr >= 10)
 	{
 		tmp = nr / 10;
 		nr %= 10;
 
-		while ( tmp-- )
+		while (tmp--)
 			rome += "X";
 	}
 
-	if ( nr == 9 )
+	if (nr == 9)
 	{
 		nr -= 9;
 		rome += "IX";
 	}
 
-	if ( nr >= 5 )
+	if (nr >= 5)
 	{
 		nr -= 5;
 		rome += "V";
 	}
 
-	if ( nr == 4 )
+	if (nr == 4)
 	{
 		nr -= 4;
 		rome += "IV";
@@ -187,11 +187,11 @@ string cUnit::getNamePrefix() const
 	// We had a bug, when 'nr' was negative and the following loop never terminated.
 	// I modified the loop to terminate on a negative 'nr', but since this should never be the case,
 	// the error has to be occured somewhere before and I added this warning.
-	if ( nr < 0 )
+	if (nr < 0)
 	{
-		Log.write( "cUnit: Negative 'nr' in cUnit::getNamePrefix()", cLog::eLOG_TYPE_WARNING );
+		Log.write ("cUnit: Negative 'nr' in cUnit::getNamePrefix()", cLog::eLOG_TYPE_WARNING);
 	}
-	while ( nr-- > 0 )
+	while (nr-- > 0)
 	{
 		rome += "I";
 	}
@@ -204,13 +204,13 @@ string cUnit::getNamePrefix() const
 //-----------------------------------------------------------------------------
 string cUnit::getDisplayName() const
 {
-	return getNamePrefix() + " " + ( isNameOriginal() ? data.name : name );
+	return getNamePrefix() + " " + (isNameOriginal() ? data.name : name);
 }
 
 //-----------------------------------------------------------------------------
 /** changes the name of the unit and indicates it as "not default" */
 //-----------------------------------------------------------------------------
-void cUnit::changeName( const string& newName )
+void cUnit::changeName (const string& newName)
 {
 	name = newName;
 	isOriginalName = false;
@@ -229,26 +229,26 @@ SDL_Rect cUnit::getMenuSize() const
 	dest.w = 42;
 	size = Client->gameGUI.getTileSize();
 
-	if ( data.isBig )
+	if (data.isBig)
 		size *= 2;
 
-	if ( dest.x + size + 42 >= Video.getResolutionX() - 12 )
+	if (dest.x + size + 42 >= Video.getResolutionX() - 12)
 		dest.x -= 42;
 	else
 		dest.x += size;
 
-	if ( dest.y - ( i - size ) / 2 <= 24 )
+	if (dest.y - (i - size) / 2 <= 24)
 	{
-		dest.y -= ( i - size ) / 2;
-		dest.y += - ( dest.y - 24 );
+		dest.y -= (i - size) / 2;
+		dest.y += - (dest.y - 24);
 	}
-	else if ( dest.y - ( i - size ) / 2 + i >= Video.getResolutionY() - 24 )
+	else if (dest.y - (i - size) / 2 + i >= Video.getResolutionY() - 24)
 	{
-		dest.y -= ( i - size ) / 2;
-		dest.y -= ( dest.y + i ) - ( Video.getResolutionY() - 24 );
+		dest.y -= (i - size) / 2;
+		dest.y -= (dest.y + i) - (Video.getResolutionY() - 24);
 	}
 	else
-		dest.y -= ( i - size ) / 2;
+		dest.y -= (i - size) / 2;
 
 	return dest;
 }
@@ -256,14 +256,14 @@ SDL_Rect cUnit::getMenuSize() const
 //-----------------------------------------------------------------------------
 /** Returns true, if the coordinates are in the menu's space */
 //-----------------------------------------------------------------------------
-bool cUnit::areCoordsOverMenu( int x, int y ) const
+bool cUnit::areCoordsOverMenu (int x, int y) const
 {
 	SDL_Rect r = getMenuSize();
 
-	if ( x < r.x || x > r.x + r.w )
+	if (x < r.x || x > r.x + r.w)
 		return false;
 
-	if ( y < r.y || y > r.y + r.h )
+	if (y < r.y || y > r.y + r.h)
 		return false;
 
 	return true;
@@ -273,7 +273,7 @@ bool cUnit::areCoordsOverMenu( int x, int y ) const
 void cUnit::setMenuSelection()
 {
 	SDL_Rect dest = getMenuSize();
-	selectedMenuButtonIndex = ( mouse->y - dest.y ) / 22;
+	selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
 }
 
 //--------------------------------------------------------------------------
@@ -281,91 +281,91 @@ int cUnit::getNumberOfMenuEntries() const
 {
 	int result = 2; // Info/Help + Done
 
-	if ( owner != Client->getActivePlayer() )
+	if (owner != Client->getActivePlayer())
 		return result;
 
 	// Attack
-	if ( data.canAttack && data.shotsCur )
+	if (data.canAttack && data.shotsCur)
 		result++;
 
 	// Build
-	if ( data.canBuild.empty() == false && isUnitBuildingABuilding() == false )
+	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false)
 		result++;
 
 	// Distribute
-	if ( data.canMineMaxRes > 0 && isUnitWorking() )
+	if (data.canMineMaxRes > 0 && isUnitWorking())
 		result++;
 
 	// Transfer
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false )
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false)
 		result++;
 
 	// Start
-	if ( data.canWork && buildingCanBeStarted() )
+	if (data.canWork && buildingCanBeStarted())
 		result++;
 
 	// Auto survey
-	if ( data.canSurvey )
+	if (data.canSurvey)
 		result++;
 
 	// Stop
-	if ( canBeStoppedViaUnitMenu() )
+	if (canBeStoppedViaUnitMenu())
 		result++;
 
 	// Remove
-	if ( data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() && isUnitClearing() == false )
+	if (data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() && isUnitClearing() == false)
 		result++;
 
 	// Manual Fire
-	if ( manualFireActive || data.canAttack )
+	if (manualFireActive || data.canAttack)
 		result++;
 
 	// Sentry
-	if ( ( sentryActive || data.canAttack || ( !isBuilding() && !canBeStoppedViaUnitMenu() ) ) && owner == Client->getActivePlayer() )
+	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == Client->getActivePlayer())
 		result++;
 
 	// Activate / Load
-	if ( data.storageUnitsMax > 0 )
+	if (data.storageUnitsMax > 0)
 		result += 2;
 
 	// Research
-	if ( data.canResearch && isUnitWorking() )
+	if (data.canResearch && isUnitWorking())
 		result++;
 
 	// Gold upgrades screen
-	if ( data.convertsGold )
+	if (data.convertsGold)
 		result++;
 
 	// Update building(s)
-	if ( buildingCanBeUpgraded() )
+	if (buildingCanBeUpgraded())
 		result += 2;
 
 	// Self destruct
-	if ( data.canSelfDestroy )
+	if (data.canSelfDestroy)
 		result++;
 
 	// Ammo
-	if ( data.canRearm && data.storageResCur >= 2 )
+	if (data.canRearm && data.storageResCur >= 2)
 		result++;
 
 	// Repair
-	if ( data.canRepair && data.storageResCur >= 2 )
+	if (data.canRepair && data.storageResCur >= 2)
 		result++;
 
 	// Lay Mines
-	if ( data.canPlaceMines && data.storageResCur > 0 )
+	if (data.canPlaceMines && data.storageResCur > 0)
 		result++;
 
 	// Clear Mines
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax )
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax)
 		result++;
 
 	// Sabotage/disable
-	if ( data.canCapture && data.shotsCur )
+	if (data.canCapture && data.shotsCur)
 		result++;
 
 	// Steal
-	if ( data.canDisable && data.shotsCur )
+	if (data.canDisable && data.shotsCur)
 		result++;
 
 	return result;
@@ -373,284 +373,284 @@ int cUnit::getNumberOfMenuEntries() const
 }
 
 //--------------------------------------------------------------------------
-void cUnit::drawMenu( cGameGUI& gameGUI )
+void cUnit::drawMenu (cGameGUI& gameGUI)
 {
 	int nr = 0;
 	SDL_Rect dest = getMenuSize();
 
-	if ( isBeeingAttacked )
+	if (isBeeingAttacked)
 		return;
-	if ( isUnitMoving() )
+	if (isUnitMoving())
 		return;
 
-	if ( gameGUI.mouseInputMode == activateVehicle )
+	if (gameGUI.mouseInputMode == activateVehicle)
 	{
 		gameGUI.unitMenuActive = false;
 		return;
 	}
 
-	if ( factoryHasJustFinishedBuilding() )
+	if (factoryHasJustFinishedBuilding())
 		return;
 
-	bool markerPossible = ( areCoordsOverMenu( mouse->x, mouse->y ) && ( selectedMenuButtonIndex == ( mouse->y - dest.y ) / 22 ) );
+	bool markerPossible = (areCoordsOverMenu (mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 
 	// Attack:
-	if ( data.canAttack && data.shotsCur && owner == Client->getActivePlayer() )
+	if (data.canAttack && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == mouseInputAttackMode;
-		drawContextItem( lngPack.i18n( "Text~Context~Attack" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == mouseInputAttackMode;
+		drawContextItem (lngPack.i18n ("Text~Context~Attack"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Build:
-	if ( data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == Client->getActivePlayer() )
+	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Build" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Build"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Distribute:
-	if ( data.canMineMaxRes > 0 && isUnitWorking() && owner == Client->getActivePlayer() )
+	if (data.canMineMaxRes > 0 && isUnitWorking() && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Dist" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Dist"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == Client->getActivePlayer() )
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == transferMode;
-		drawContextItem( lngPack.i18n( "Text~Context~Transfer" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == transferMode;
+		drawContextItem (lngPack.i18n ("Text~Context~Transfer"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Start:
-	if ( data.canWork && buildingCanBeStarted() && owner == Client->getActivePlayer() )
+	if (data.canWork && buildingCanBeStarted() && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Start" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Start"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Auto survey movejob of surveyor
-	if ( data.canSurvey && owner == Client->getActivePlayer() )
+	if (data.canSurvey && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || isAutoMoveJobActive();
-		drawContextItem( lngPack.i18n( "Text~Context~Auto" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isAutoMoveJobActive();
+		drawContextItem (lngPack.i18n ("Text~Context~Auto"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Stop:
-	if ( canBeStoppedViaUnitMenu() && owner == Client->getActivePlayer() )
+	if (canBeStoppedViaUnitMenu() && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Stop" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Stop"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Remove:
-	if ( data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() && isUnitClearing() == false && owner == Client->getActivePlayer() )
+	if (data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() && isUnitClearing() == false && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Manual fire
-	if ( ( manualFireActive || data.canAttack ) && owner == Client->getActivePlayer() )
+	if ( (manualFireActive || data.canAttack) && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || manualFireActive;
-		drawContextItem( lngPack.i18n( "Text~Context~Manual" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || manualFireActive;
+		drawContextItem (lngPack.i18n ("Text~Context~Manual"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Sentry status:
-	if ( ( sentryActive || data.canAttack || ( !isBuilding() && !canBeStoppedViaUnitMenu() ) ) && owner == Client->getActivePlayer() )
+	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || sentryActive;
-		drawContextItem( lngPack.i18n( "Text~Context~Sentry" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || sentryActive;
+		drawContextItem (lngPack.i18n ("Text~Context~Sentry"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Activate / Load:
-	if ( data.storageUnitsMax > 0 && owner == Client->getActivePlayer() )
+	if (data.storageUnitsMax > 0 && owner == Client->getActivePlayer())
 	{
 		// Activate:
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Active" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Active"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
 		// Load:
-		isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == loadMode;
-		drawContextItem( lngPack.i18n( "Text~Context~Load" ), isMarked, dest.x, dest.y, buffer );
+		isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == loadMode;
+		drawContextItem (lngPack.i18n ("Text~Context~Load"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// research
-	if ( data.canResearch && isUnitWorking() && owner == Client->getActivePlayer() )
+	if (data.canResearch && isUnitWorking() && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Research" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Research"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// gold upgrades screen
-	if ( data.convertsGold && owner == Client->getActivePlayer() )
+	if (data.convertsGold && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Upgrades" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrades"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Updates:
-	if ( buildingCanBeUpgraded() && owner == Client->getActivePlayer() )
+	if (buildingCanBeUpgraded() && owner == Client->getActivePlayer())
 	{
 		// Update all buildings of this type in this subbase
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~UpAll" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~UpAll"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 
 		// update this building
 		isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Upgrade" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Upgrade"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Self destruct
-	if ( data.canSelfDestroy && owner == Client->getActivePlayer() )
+	if (data.canSelfDestroy && owner == Client->getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-		drawContextItem( lngPack.i18n( "Text~Context~Destroy" ), isMarked, dest.x, dest.y, buffer );
+		drawContextItem (lngPack.i18n ("Text~Context~Destroy"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Ammo:
-	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->getActivePlayer() )
+	if (data.canRearm && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == muniActive;
-		drawContextItem( lngPack.i18n( "Text~Context~Reload" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
+		drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Repair:
-	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->getActivePlayer() )
+	if (data.canRepair && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == repairActive;
-		drawContextItem( lngPack.i18n( "Text~Context~Repair" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
+		drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Lay mines:
-	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->getActivePlayer() )
+	if (data.canPlaceMines && data.storageResCur > 0 && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || isUnitLayingMines();
-		drawContextItem( lngPack.i18n( "Text~Context~Seed" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitLayingMines();
+		drawContextItem (lngPack.i18n ("Text~Context~Seed"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Collect/clear mines:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->getActivePlayer() )
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || isUnitClearingMines();
-		drawContextItem( lngPack.i18n( "Text~Context~Clear" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || isUnitClearingMines();
+		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Sabotage/disable:
-	if ( data.canDisable && data.shotsCur && owner == Client->getActivePlayer() )
+	if (data.canDisable && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == disableMode;
-		drawContextItem( lngPack.i18n( "Text~Context~Disable" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == disableMode;
+		drawContextItem (lngPack.i18n ("Text~Context~Disable"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Steal:
-	if ( data.canCapture && data.shotsCur && owner == Client->getActivePlayer() )
+	if (data.canCapture && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		bool isMarked = ( markerPossible && selectedMenuButtonIndex == nr ) || gameGUI.mouseInputMode == stealMode;
-		drawContextItem( lngPack.i18n( "Text~Context~Steal" ), isMarked, dest.x, dest.y, buffer );
+		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == stealMode;
+		drawContextItem (lngPack.i18n ("Text~Context~Steal"), isMarked, dest.x, dest.y, buffer);
 		dest.y += 22;
 		nr++;
 	}
 
 	// Info:
 	bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem( lngPack.i18n( "Text~Context~Info" ), isMarked, dest.x, dest.y, buffer );
+	drawContextItem (lngPack.i18n ("Text~Context~Info"), isMarked, dest.x, dest.y, buffer);
 	dest.y += 22;
 	nr++;
 
 	// Done:
 	isMarked = markerPossible && selectedMenuButtonIndex == nr;
-	drawContextItem( lngPack.i18n( "Text~Context~Done" ), isMarked, dest.x, dest.y, buffer );
+	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
 //--------------------------------------------------------------------------
-void cUnit::menuReleased( cGameGUI& gameGUI )
+void cUnit::menuReleased (cGameGUI& gameGUI)
 {
 	SDL_Rect dest = getMenuSize();
 
 	int exeNr = -1000;
-	if ( areCoordsOverMenu( mouse->x, mouse->y ) )
-		exeNr = ( mouse->y - dest.y ) / 22;
+	if (areCoordsOverMenu (mouse->x, mouse->y))
+		exeNr = (mouse->y - dest.y) / 22;
 
-	if ( exeNr != selectedMenuButtonIndex )
+	if (exeNr != selectedMenuButtonIndex)
 	{
 		selectedMenuButtonIndex = -1;
 		return;
 	}
 
-	if ( isUnitMoving() || isBeeingAttacked )
+	if (isUnitMoving() || isBeeingAttacked)
 		return;
 
-	if ( factoryHasJustFinishedBuilding() )
+	if (factoryHasJustFinishedBuilding())
 		return;
 
 	int nr = 0;
 
 	// attack:
-	if ( data.canAttack && data.shotsCur && owner == Client->getActivePlayer() )
+	if (data.canAttack && data.shotsCur && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( mouseInputAttackMode );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (mouseInputAttackMode);
 			return;
 		}
 		nr++;
 	}
 
 	// Build:
-	if ( data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == Client->getActivePlayer() )
+	if (data.canBuild.empty() == false && isUnitBuildingABuilding() == false && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeBuildCommand();
 			return;
 		}
@@ -658,12 +658,12 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// distribute:
-	if ( data.canMineMaxRes > 0 && isUnitWorking() && owner == Client->getActivePlayer() )
+	if (data.canMineMaxRes > 0 && isUnitWorking() && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeMineManagerCommand();
 			return;
 		}
@@ -671,38 +671,38 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// transfer:
-	if ( data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == Client->getActivePlayer() )
+	if (data.storeResType != sUnitData::STORE_RES_NONE && isUnitBuildingABuilding() == false && isUnitClearing() == false && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( transferMode );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (transferMode);
 			return;
 		}
 		nr++;
 	}
 
 	// Start:
-	if ( data.canWork && buildingCanBeStarted() && owner == Client->getActivePlayer() )
+	if (data.canWork && buildingCanBeStarted() && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			sendWantStartWork( this );
+			PlayFX (SoundData.SNDObjectMenu);
+			sendWantStartWork (this);
 			return;
 		}
 		nr++;
 	}
 
 	// auto
-	if ( data.canSurvey && owner == Client->getActivePlayer() )
+	if (data.canSurvey && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeAutoMoveJobCommand();
 			return;
 		}
@@ -710,12 +710,12 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// stop:
-	if ( canBeStoppedViaUnitMenu() && owner == Client->getActivePlayer() )
+	if (canBeStoppedViaUnitMenu() && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeStopCommand();
 			return;
 		}
@@ -723,76 +723,76 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// remove:
-	if ( data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() != 0 && isUnitClearing() == false && owner == Client->getActivePlayer() )
+	if (data.canClearArea && Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getRubble() != 0 && isUnitClearing() == false && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			sendWantStartClear( this );
+			PlayFX (SoundData.SNDObjectMenu);
+			sendWantStartClear (this);
 			return;
 		}
 		nr++;
 	}
 
 	// manual Fire:
-	if ( ( manualFireActive || data.canAttack ) && owner == Client->getActivePlayer() )
+	if ( (manualFireActive || data.canAttack) && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			sendChangeManualFireStatus( iID, isVehicle() );
+			PlayFX (SoundData.SNDObjectMenu);
+			sendChangeManualFireStatus (iID, isVehicle());
 			return;
 		}
 		nr++;
 	}
 
 	// sentry:
-	if ( ( sentryActive || data.canAttack || ( !isBuilding() && !canBeStoppedViaUnitMenu() ) ) && owner == Client->getActivePlayer() )
+	if ( (sentryActive || data.canAttack || (!isBuilding() && !canBeStoppedViaUnitMenu())) && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			sendChangeSentry( iID, isVehicle() );
+			PlayFX (SoundData.SNDObjectMenu);
+			sendChangeSentry (iID, isVehicle());
 			return;
 		}
 		nr++;
 	}
 
 	// activate/load:
-	if ( data.storageUnitsMax > 0 && owner == Client->getActivePlayer() )
+	if (data.storageUnitsMax > 0 && owner == Client->getActivePlayer())
 	{
 		// activate:
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeActivateStoredVehiclesCommand();
 			return;
 		}
 		nr++;
 
 		// load:
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( loadMode );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (loadMode);
 			return;
 		}
 		nr++;
 	}
 
 	// research
-	if ( data.canResearch && isUnitWorking() && owner == Client->getActivePlayer() )
+	if (data.canResearch && isUnitWorking() && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			cDialogResearch researchDialog( owner );
+			PlayFX (SoundData.SNDObjectMenu);
+			cDialogResearch researchDialog (owner);
 			researchDialog.show();
 			return;
 		}
@@ -800,13 +800,13 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// gold upgrades screen
-	if ( data.convertsGold && owner == Client->getActivePlayer() )
+	if (data.convertsGold && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			cUpgradeMenu upgradeMenu( owner );
+			PlayFX (SoundData.SNDObjectMenu);
+			cUpgradeMenu upgradeMenu (owner);
 			upgradeMenu.show();
 			return;
 		}
@@ -814,36 +814,36 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// Updates:
-	if ( buildingCanBeUpgraded() && owner == Client->getActivePlayer() )
+	if (buildingCanBeUpgraded() && owner == Client->getActivePlayer())
 	{
 		// Update all buildings of this type in this subbase
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			executeUpdateBuildingCommmand( true );
+			PlayFX (SoundData.SNDObjectMenu);
+			executeUpdateBuildingCommmand (true);
 			return;
 		}
 		nr++;
 
 		// update this building
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			executeUpdateBuildingCommmand( false );
+			PlayFX (SoundData.SNDObjectMenu);
+			executeUpdateBuildingCommmand (false);
 			return;
 		}
 		nr++;
 	}
 
 	// Self destruct
-	if ( data.canSelfDestroy && owner == Client->getActivePlayer() )
+	if (data.canSelfDestroy && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeSelfDestroyCommand();
 			return;
 		}
@@ -851,38 +851,38 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// rearm:
-	if ( data.canRearm && data.storageResCur >= 2 && owner == Client->getActivePlayer() )
+	if (data.canRearm && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( muniActive );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (muniActive);
 			return;
 		}
 		nr++;
 	}
 
 	// repair:
-	if ( data.canRepair && data.storageResCur >= 2 && owner == Client->getActivePlayer() )
+	if (data.canRepair && data.storageResCur >= 2 && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( repairActive );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (repairActive);
 			return;
 		}
 		nr++;
 	}
 
 	// lay mines:
-	if ( data.canPlaceMines && data.storageResCur > 0 && owner == Client->getActivePlayer() )
+	if (data.canPlaceMines && data.storageResCur > 0 && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeLayMinesCommand();
 			return;
 		}
@@ -890,12 +890,12 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// clear mines:
-	if ( data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->getActivePlayer() )
+	if (data.canPlaceMines && data.storageResCur < data.storageResMax && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
+			PlayFX (SoundData.SNDObjectMenu);
 			executeClearMinesCommand();
 			return;
 		}
@@ -903,51 +903,51 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 	}
 
 	// disable:
-	if ( data.canDisable && data.shotsCur > 0 && owner == Client->getActivePlayer() )
+	if (data.canDisable && data.shotsCur > 0 && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( disableMode );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (disableMode);
 			return;
 		}
 		nr++;
 	}
 
 	// steal:
-	if ( data.canCapture && data.shotsCur > 0 && owner == Client->getActivePlayer() )
+	if (data.canCapture && data.shotsCur > 0 && owner == Client->getActivePlayer())
 	{
-		if ( exeNr == nr )
+		if (exeNr == nr)
 		{
 			gameGUI.unitMenuActive = false;
-			PlayFX( SoundData.SNDObjectMenu );
-			gameGUI.toggleMouseInputMode( stealMode );
+			PlayFX (SoundData.SNDObjectMenu);
+			gameGUI.toggleMouseInputMode (stealMode);
 			return;
 		}
 		nr++;
 	}
 
 	// help/info:
-	if ( exeNr == nr )
+	if (exeNr == nr)
 	{
 		gameGUI.unitMenuActive = false;
-		PlayFX( SoundData.SNDObjectMenu );
-		cUnitHelpMenu helpMenu( &data, owner );
+		PlayFX (SoundData.SNDObjectMenu);
+		cUnitHelpMenu helpMenu (&data, owner);
 		helpMenu.show();
 		return;
 	}
 	nr++;
 
 	// done:
-	if ( exeNr == nr )
+	if (exeNr == nr)
 	{
 		gameGUI.unitMenuActive = false;
-		PlayFX( SoundData.SNDObjectMenu );
-		if ( owner == Client->getActivePlayer() )
+		PlayFX (SoundData.SNDObjectMenu);
+		if (owner == Client->getActivePlayer())
 		{
 			isMarkedAsDone = true;
-			sendMoveJobResume( iID );
+			sendMoveJobResume (iID);
 		}
 		return;
 	}
@@ -959,7 +959,7 @@ void cUnit::menuReleased( cGameGUI& gameGUI )
 //--------------------------------------------------------------------------
 int cUnit::getScreenPosX() const
 {
-	return 180 - ( ( int )( ( Client->gameGUI.getOffsetX() - getMovementOffsetX() ) * Client->gameGUI.getZoom() ) ) + ( int )( Client->gameGUI.getTileSize() ) * PosX;
+	return 180 - ( (int) ( (Client->gameGUI.getOffsetX() - getMovementOffsetX()) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosX;
 }
 
 //--------------------------------------------------------------------------
@@ -967,7 +967,7 @@ int cUnit::getScreenPosX() const
 //--------------------------------------------------------------------------
 int cUnit::getScreenPosY() const
 {
-	return 18 - ( ( int )( ( Client->gameGUI.getOffsetY() - getMovementOffsetY() ) * Client->gameGUI.getZoom() ) ) + ( int )( Client->gameGUI.getTileSize() ) * PosY;
+	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - getMovementOffsetY()) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
 }
 
 //-----------------------------------------------------------------------------
@@ -975,9 +975,9 @@ int cUnit::getScreenPosY() const
 //-----------------------------------------------------------------------------
 void cUnit::center() const
 {
-	int offX = PosX * 64 - ( ( int )( ( ( float )( Video.getResolutionX() - 192 ) / ( 2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	int offY = PosY * 64 - ( ( int )( ( ( float )( Video.getResolutionY() - 32 )  / ( 2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-	Client->gameGUI.setOffsetPosition( offX, offY );
+	int offX = PosX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
+	int offY = PosY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32)  / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
+	Client->gameGUI.setOffsetPosition (offX, offY);
 }
 
 //-----------------------------------------------------------------------------
@@ -985,7 +985,7 @@ void cUnit::center() const
 //-----------------------------------------------------------------------------
 void cUnit::drawMunBar() const
 {
-	if ( owner != Client->getActivePlayer() )
+	if (owner != Client->getActivePlayer())
 		return;
 
 	SDL_Rect r1, r2;
@@ -994,7 +994,7 @@ void cUnit::drawMunBar() const
 	r1.h = Client->gameGUI.getTileSize() / 8;
 	r1.y = getScreenPosY() + Client->gameGUI.getTileSize() / 10 + Client->gameGUI.getTileSize() / 8;
 
-	if ( r1.h <= 2 )
+	if (r1.h <= 2)
 	{
 		r1.y += 1;
 		r1.h = 3;
@@ -1003,16 +1003,16 @@ void cUnit::drawMunBar() const
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int )( ( ( float )( r1.w - 2 ) / data.ammoMax ) * data.ammoCur );
+	r2.w = (int) ( ( (float) (r1.w - 2) / data.ammoMax) * data.ammoCur);
 
-	SDL_FillRect( buffer, &r1, 0 );
+	SDL_FillRect (buffer, &r1, 0);
 
-	if ( data.ammoCur > data.ammoMax / 2 )
-		SDL_FillRect( buffer, &r2, 0x04AE04 );
-	else if ( data.ammoCur > data.ammoMax / 4 )
-		SDL_FillRect( buffer, &r2, 0xDBDE00 );
+	if (data.ammoCur > data.ammoMax / 2)
+		SDL_FillRect (buffer, &r2, 0x04AE04);
+	else if (data.ammoCur > data.ammoMax / 4)
+		SDL_FillRect (buffer, &r2, 0xDBDE00);
 	else
-		SDL_FillRect( buffer, &r2, 0xE60000 );
+		SDL_FillRect (buffer, &r2, 0xE60000);
 }
 
 //------------------------------------------------------------------------
@@ -1026,28 +1026,28 @@ void cUnit::drawHealthBar() const
 	r1.h = Client->gameGUI.getTileSize() / 8;
 	r1.y = getScreenPosY() + Client->gameGUI.getTileSize() / 10;
 
-	if ( data.isBig )
+	if (data.isBig)
 	{
 		r1.w += Client->gameGUI.getTileSize();
 		r1.h *= 2;
 	}
 
-	if ( r1.h <= 2 )
+	if (r1.h <= 2)
 		r1.h = 3;
 
 	r2.x = r1.x + 1;
 	r2.y = r1.y + 1;
 	r2.h = r1.h - 2;
-	r2.w = ( int )( ( ( float )( r1.w - 2 ) / data.hitpointsMax ) * data.hitpointsCur );
+	r2.w = (int) ( ( (float) (r1.w - 2) / data.hitpointsMax) * data.hitpointsCur);
 
-	SDL_FillRect( buffer, &r1, 0 );
+	SDL_FillRect (buffer, &r1, 0);
 
-	if ( data.hitpointsCur > data.hitpointsMax / 2 )
-		SDL_FillRect( buffer, &r2, 0x04AE04 );
-	else if ( data.hitpointsCur > data.hitpointsMax / 4 )
-		SDL_FillRect( buffer, &r2, 0xDBDE00 );
+	if (data.hitpointsCur > data.hitpointsMax / 2)
+		SDL_FillRect (buffer, &r2, 0x04AE04);
+	else if (data.hitpointsCur > data.hitpointsMax / 4)
+		SDL_FillRect (buffer, &r2, 0xDBDE00);
 	else
-		SDL_FillRect( buffer, &r2, 0xE60000 );
+		SDL_FillRect (buffer, &r2, 0xE60000);
 }
 
 //-----------------------------------------------------------------------------
@@ -1058,38 +1058,38 @@ void cUnit::drawStatus() const
 	SDL_Rect shotsSymbol = {254, 97, 5, 10};
 	SDL_Rect disabledSymbol = {150, 109, 25, 25};
 
-	if ( turnsDisabled > 0 )
+	if (turnsDisabled > 0)
 	{
-		if ( Client->gameGUI.getTileSize() < 25 )
+		if (Client->gameGUI.getTileSize() < 25)
 			return;
 		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 12;
 		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() / 2 - 12;
-		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
 	}
 	else
 	{
 		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
 		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 4;
-		if ( data.isBig )
+		if (data.isBig)
 		{
-			dest.y += ( Client->gameGUI.getTileSize() / 2 );
-			dest.x += ( Client->gameGUI.getTileSize() / 2 );
+			dest.y += (Client->gameGUI.getTileSize() / 2);
+			dest.x += (Client->gameGUI.getTileSize() / 2);
 		}
-		if ( data.speedCur >= 4 )
+		if (data.speedCur >= 4)
 		{
-			if ( data.shotsCur )
+			if (data.shotsCur)
 				dest.x -= Client->gameGUI.getTileSize() / 4;
 
 			SDL_Rect destCopy = dest;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy );
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
 		}
 
 		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 4;
-		if ( data.shotsCur )
+		if (data.shotsCur)
 		{
-			if ( data.speedCur )
+			if (data.speedCur)
 				dest.x += Client->gameGUI.getTileSize() / 4;
-			SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest );
+			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
 		}
 	}
 }
@@ -1097,37 +1097,37 @@ void cUnit::drawStatus() const
 //-----------------------------------------------------------------------------
 /** rotates the unit to the given direction */
 //-----------------------------------------------------------------------------
-void cUnit::rotateTo( int newDir )
+void cUnit::rotateTo (int newDir)
 {
-	if ( newDir < 0 || newDir >= 8 || newDir == dir )
+	if (newDir < 0 || newDir >= 8 || newDir == dir)
 		return;
 
 	int t = dir;
 	int dest = 0;
 
-	for ( int i = 0; i < 8; i++ )
+	for (int i = 0; i < 8; i++)
 	{
-		if ( t == newDir )
+		if (t == newDir)
 		{
 			dest = i;
 			break;
 		}
 		t++;
 
-		if ( t > 7 )
+		if (t > 7)
 			t = 0;
 	}
 
-	if ( dest < 4 )
+	if (dest < 4)
 		dir++;
 	else
 		dir--;
 
-	if ( dir < 0 )
+	if (dir < 0)
 		dir += 8;
 	else
 	{
-		if ( dir > 7 )
+		if (dir > 7)
 			dir -= 8;
 	}
 }
@@ -1137,60 +1137,60 @@ void cUnit::rotateTo( int newDir )
 //-----------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
 //-----------------------------------------------------------------------------
-bool cUnit::canAttackObjectAt( int x, int y, cMap* map, bool forceAttack, bool checkRange ) const
+bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
 {
 	int off = x + y * map->size;
 
-	if ( isUnitLoaded() )
+	if (isUnitLoaded())
 		return false;
 
-	if ( data.canAttack == false )
+	if (data.canAttack == false)
 		return false;
 
-	if ( data.shotsCur <= 0 )
+	if (data.shotsCur <= 0)
 		return false;
 
-	if ( data.ammoCur <= 0 )
+	if (data.ammoCur <= 0)
 		return false;
 
-	if ( attacking )
+	if (attacking)
 		return false;
 
-	if ( isBeeingAttacked )
+	if (isBeeingAttacked)
 		return false;
 
-	if ( off < 0 )
+	if (off < 0)
 		return false;
 
-	if ( checkRange && isInRange( x, y ) == false )
+	if (checkRange && isInRange (x, y) == false)
 		return false;
 
-	if ( data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater( x, y ) == false )
+	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater (x, y) == false)
 		return false;
 
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;
-	selectTarget( targetVehicle, targetBuilding, x, y, data.canAttack, map );
+	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
 
-	if ( targetVehicle && targetVehicle->iID == iID ) //a unit cannot fire on it self
+	if (targetVehicle && targetVehicle->iID == iID)   //a unit cannot fire on it self
 		return false;
 
-	if ( targetBuilding && targetBuilding->iID == iID ) //a unit cannot fire on it self
+	if (targetBuilding && targetBuilding->iID == iID)   //a unit cannot fire on it self
 		return false;
 
-	if ( owner->ScanMap[off] == false )
+	if (owner->ScanMap[off] == false)
 		return forceAttack ? true : false;
 
-	if ( forceAttack )
+	if (forceAttack)
 		return true;
 
-	if ( targetBuilding && isVehicle() && map->possiblePlace( static_cast<const cVehicle*>( this ), x, y ) ) //do not fire on e. g. platforms, connectors etc.
+	if (targetBuilding && isVehicle() && map->possiblePlace (static_cast<const cVehicle*> (this), x, y))     //do not fire on e. g. platforms, connectors etc.
 		return false;																	//see ticket #436 on bug tracker
 
-	if ( ( targetBuilding && targetBuilding->owner == owner ) || ( targetVehicle && targetVehicle->owner == owner ) )
+	if ( (targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
 		return false;
 
-	if ( targetBuilding == 0 && targetVehicle == 0 )
+	if (targetBuilding == 0 && targetVehicle == 0)
 		return false;
 
 	return true;
@@ -1200,11 +1200,11 @@ bool cUnit::canAttackObjectAt( int x, int y, cMap* map, bool forceAttack, bool c
 void cUnit::upgradeToCurrentVersion()
 {
 	sUnitData* upgradeVersion = getUpgradedUnitData();
-	if ( upgradeVersion != 0 )
+	if (upgradeVersion != 0)
 	{
 		data.version = upgradeVersion->version;
 
-		if ( data.hitpointsCur == data.hitpointsMax )
+		if (data.hitpointsCur == data.hitpointsMax)
 			data.hitpointsCur = upgradeVersion->hitpointsMax; // TODO: check behaviour in original
 		data.hitpointsMax = upgradeVersion->hitpointsMax;
 
@@ -1224,25 +1224,25 @@ void cUnit::upgradeToCurrentVersion()
 //-----------------------------------------------------------------------------
 void cUnit::deleteStoredUnits()
 {
-	for ( size_t i = 0; i != storedUnits.Size(); ++i )
+	for (size_t i = 0; i != storedUnits.Size(); ++i)
 	{
 		cVehicle* unit = storedUnits[i];
-		if ( unit->prev )
+		if (unit->prev)
 		{
 			cUnit* prevUnit = unit->prev;
 			prevUnit->next = unit->next;
 
-			if ( unit->next )
+			if (unit->next)
 				unit->next->prev = prevUnit;
 		}
 		else
 		{
-			unit->owner->VehicleList = static_cast<cVehicle*>( unit->next );
+			unit->owner->VehicleList = static_cast<cVehicle*> (unit->next);
 
-			if ( unit->next )
+			if (unit->next)
 				unit->next->prev = 0;
 		}
-		if ( unit->isVehicle() )
+		if (unit->isVehicle())
 			unit->deleteStoredUnits();
 
 		delete unit;

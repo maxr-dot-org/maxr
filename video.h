@@ -60,7 +60,7 @@ public:
 	*@param bApply set to true if app should apply new windowMode too
 	*@return 0 on success
 	*/
-	int setWindowMode( bool bWindowMode, bool bApply = false );
+	int setWindowMode (bool bWindowMode, bool bApply = false);
 
 	/**
 	*Get whether app should appear windowed or in fullscreen mode
@@ -75,7 +75,7 @@ public:
 	*@param bApply  set to true if app should apply new resolution too
 	*@return 0 on success
 	*/
-	int setResolution( int iWidth, int iHeight, bool bApply = false );
+	int setResolution (int iWidth, int iHeight, bool bApply = false);
 
 	/**
 	*@deprecated for compat only - will be removed!
@@ -94,7 +94,7 @@ public:
 	*@param iDepth colordepth to set. e.g. 32 (bpp)
 	*@return 0 on success
 	*/
-	int setColDepth( unsigned int iDepth );
+	int setColDepth (unsigned int iDepth);
 
 	/**
 	*Gets colordepth
@@ -106,7 +106,7 @@ public:
 	*Sets SurfaceType
 	*@param iSurfaceType surfacetype to set. e.g. SDL_HWSURFACE
 	*/
-	void setSurfaceType( Uint32 iSurfaceType );
+	void setSurfaceType (Uint32 iSurfaceType);
 
 	/**
 	*Gets SurfaceType
@@ -123,7 +123,7 @@ public:
 	*@param iMode video mode num from video mode array
 	*@return Videomode as string widthxheight. If iMode is unknown minimal needed videomode will be returned.
 	*/
-	std::string getVideoMode( unsigned int iMode ) const;
+	std::string getVideoMode (unsigned int iMode) const;
 
 	/**
 	*Try to autodetect avail video modes from SDL. Might fail.
@@ -137,7 +137,7 @@ public:
 	*@param height Screenheight to look for
 	*@return iMode or -1 on unknown mode
 	*/
-	int validateMode( unsigned int iWidth, unsigned int iHeight ) const;
+	int validateMode (unsigned int iWidth, unsigned int iHeight) const;
 
 	/**
 	*@return Splash width
@@ -194,7 +194,7 @@ private:
 	*@param iSurfaceType surface type SDL_HWSURFACE or SDL_SWSURFACE
 	*@return Surface type as string e.g."SDL_HWSURFACE"
 	*/
-	std::string getSurfaceName( Uint32 iSurfaceType ) const;
+	std::string getSurfaceName (Uint32 iSurfaceType) const;
 
 	/**
 	*Switch SDL_HWSURFACE with SDL_SWSURFACE and vice versa

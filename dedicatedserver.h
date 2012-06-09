@@ -38,7 +38,7 @@ public:
 	static cDedicatedServer& instance();
 
 	void run();
-	void pushEvent( cNetMessage* message );
+	void pushEvent (cNetMessage* message);
 
 	void doAutoSave();
 
@@ -62,7 +62,7 @@ protected:
 		kHelpExit,
 		kHelpPrintConfig
 	};
-	void printHelp( eHelpCommands ) const;
+	void printHelp (eHelpCommands) const;
 	void printPrompt() const;
 	void printConfiguration() const;
 	void printGames() const;
@@ -71,16 +71,16 @@ protected:
 	std::string getAvailableMapsString() const;
 	std::string getServerHelpString() const;
 
-	bool handleInput( const std::string& command );
-	void setProperty( const std::string& property, const std::string& value );
+	bool handleInput (const std::string& command);
+	void setProperty (const std::string& property, const std::string& value);
 
-	bool startServer( int saveGameNumber = -1 );
+	bool startServer (int saveGameNumber = -1);
 	void startNewGame();
-	void loadSaveGame( int saveGameNumber );
-	void saveGame( int saveGameNumber );
+	void loadSaveGame (int saveGameNumber);
+	void saveGame (int saveGameNumber);
 
-	bool handleDedicatedServerEvents( cNetMessage* message );
-	void sendChatMessage( const std::string& text, int type, int socket = -1 );
+	bool handleDedicatedServerEvents (cNetMessage* message);
+	void sendChatMessage (const std::string& text, int type, int socket = -1);
 
 	cDedicatedServerConfig* configuration;
 

@@ -36,51 +36,51 @@ using namespace std;
 
 namespace
 {
-std::string plural( int n, const std::string& sing, const std::string& plu )
+std::string plural (int n, const std::string& sing, const std::string& plu)
 {
 	std::stringstream ss;
 	ss << n << " ";
-	ss << lngPack.i18n( n == 1 ? sing : plu );
+	ss << lngPack.i18n (n == 1 ? sing : plu);
 	return ss.str();
 }
 
-Uint32 getPlayerColour( cPlayer* p )
+Uint32 getPlayerColour (cPlayer* p)
 {
-	return ( ( Uint32* )( p->color->pixels ) )[0];
+	return ( (Uint32*) (p->color->pixels)) [0];
 }
 
-void plot( SDL_Surface* s, int x, int y, Uint32 colour )
+void plot (SDL_Surface* s, int x, int y, Uint32 colour)
 {
 	SDL_Rect rect = {x, y, 1, 1};
-	SDL_FillRect( s, &rect, colour );
+	SDL_FillRect (s, &rect, colour);
 }
 
-void drawLine( SDL_Surface* s, int x0, int y0, int x1, int y1, Uint32 colour )
+void drawLine (SDL_Surface* s, int x0, int y0, int x1, int y1, Uint32 colour)
 {
-	bool steep = abs( y1 - y0 ) > abs( x1 - x0 );
-	if ( steep )
+	bool steep = abs (y1 - y0) > abs (x1 - x0);
+	if (steep)
 	{
-		std::swap( x0, y0 );
-		std::swap( x1, y1 );
+		std::swap (x0, y0);
+		std::swap (x1, y1);
 	}
-	if ( x0 > x1 )
+	if (x0 > x1)
 	{
-		std::swap( x0, x1 );
-		std::swap( y0, y1 );
+		std::swap (x0, x1);
+		std::swap (y0, y1);
 	}
 
 	int dx = x1 - x0;
-	int dy = abs( y1 - y0 );
+	int dy = abs (y1 - y0);
 	int er = dx / 2;
 	int ys = y0 < y1 ? 1 : -1;
 	int y = y0;
 
-	for ( int x = x0; x < x1; x++ )
+	for (int x = x0; x < x1; x++)
 	{
-		if ( steep ) plot( s, y, x, colour );
-		else plot( s, x, y, colour );
+		if (steep) plot (s, y, x, colour);
+		else plot (s, x, y, colour);
 		er -= dy;
-		if ( er < 0 )
+		if (er < 0)
 		{
 			y += ys;
 			er += dx;
@@ -88,18 +88,18 @@ void drawLine( SDL_Surface* s, int x0, int y0, int x1, int y1, Uint32 colour )
 	}
 }
 
-int extrapolateScore( const cPlayer* p, int turn )
+int extrapolateScore (const cPlayer* p, int turn)
 {
 	const int now = Client->getTurn();
 
-	if ( turn <= now )
-		return p->getScore( turn );
+	if (turn <= now)
+		return p->getScore (turn);
 	else
-		return p->getScore( now ) + p->numEcos * ( turn - now );
+		return p->getScore (now) + p->numEcos * (turn - now);
 }
 }
 
-cMenuItem::cMenuItem( int x, int y )
+cMenuItem::cMenuItem (int x, int y)
 {
 	position.x = x;
 	position.y = y;
@@ -124,44 +124,44 @@ cMenuItem::cMenuItem( int x, int y )
 	releaseSound = NULL;
 }
 
-bool cMenuItem::overItem( int x, int y ) const
+bool cMenuItem::overItem (int x, int y) const
 {
-	if ( x >= position.x && x < position.x + position.w &&
-		 y >= position.y && y < position.y + position.h )
+	if (x >= position.x && x < position.x + position.w &&
+		y >= position.y && y < position.y + position.h)
 	{
 		return true;
 	}
 	return false;
 }
 
-void cMenuItem::clicked( void* parent )
+void cMenuItem::clicked (void* parent)
 {
-	if ( locked ) return;
+	if (locked) return;
 	isClicked = true;
-	if ( preClicked() )
+	if (preClicked())
 	{
-		if ( clickSound ) PlayFX( clickSound );
-		if ( click ) click( parent );
+		if (clickSound) PlayFX (clickSound);
+		if (click) click (parent);
 	}
 }
 
-void cMenuItem::rightClicked( void* parent )
+void cMenuItem::rightClicked (void* parent)
 {
-	if ( locked ) return;
-	if ( preClicked() )
+	if (locked) return;
+	if (preClicked())
 	{
-		if ( clickSound ) PlayFX( clickSound );
-		if ( rightClick ) rightClick( parent );
+		if (clickSound) PlayFX (clickSound);
+		if (rightClick) rightClick (parent);
 	}
 }
 
-void cMenuItem::released( void* parent )
+void cMenuItem::released (void* parent)
 {
-	if ( locked ) return;
-	if ( preReleased() )
+	if (locked) return;
+	if (preReleased())
 	{
-		if ( releaseSound ) PlayFX( releaseSound );
-		if ( release ) release( parent );
+		if (releaseSound) PlayFX (releaseSound);
+		if (release) release (parent);
 		postReleased();
 		isClicked = false;
 		wasClicked = false;
@@ -170,39 +170,39 @@ void cMenuItem::released( void* parent )
 
 bool cMenuItem::preReleased()
 {
-	if ( isClicked || wasClicked ) return true;
+	if (isClicked || wasClicked) return true;
 	else return false;
 }
 
-void cMenuItem::hoveredOn( void* parent )
+void cMenuItem::hoveredOn (void* parent)
 {
-	if ( locked ) return;
-	if ( wasClicked ) isClicked = true;
-	if ( preHoveredOn() && hoverOn ) hoverOn( parent );
+	if (locked) return;
+	if (wasClicked) isClicked = true;
+	if (preHoveredOn() && hoverOn) hoverOn (parent);
 	wasClicked = false;
 }
 
-void cMenuItem::hoveredAway( void* parent )
+void cMenuItem::hoveredAway (void* parent)
 {
-	if ( locked ) return;
-	if ( isClicked ) wasClicked = true;
-	if ( preHoveredAway() && hoverAway ) hoverAway( parent );
+	if (locked) return;
+	if (isClicked) wasClicked = true;
+	if (preHoveredAway() && hoverAway) hoverAway (parent);
 	isClicked = false;
 }
 
-void cMenuItem::movedMouseOver( int lastMouseX, int lastMouseY, void* parent )
+void cMenuItem::movedMouseOver (int lastMouseX, int lastMouseY, void* parent)
 {
-	if ( moveMouseOver ) moveMouseOver( parent );
+	if (moveMouseOver) moveMouseOver (parent);
 }
 
 void cMenuItem::somewhereReleased()
 {
-	if ( locked ) return;
+	if (locked) return;
 	isClicked = false;
 	wasClicked = false;
 }
 
-void cMenuItem::move( int x, int y )
+void cMenuItem::move (int x, int y)
 {
 	position.x = x;
 	position.y = y;
@@ -213,51 +213,51 @@ SDL_Rect cMenuItem::getPosition() const
 	return position;
 }
 
-void cMenuItem::setLocked( bool locked_ )
+void cMenuItem::setLocked (bool locked_)
 {
-	if ( preSetLocked( locked_ ) )
+	if (preSetLocked (locked_))
 	{
 		locked = locked_;
 		isClicked = locked;
 	}
 }
 
-void cMenuItem::setDisabled( bool disabled_ )
+void cMenuItem::setDisabled (bool disabled_)
 {
 	disabled = disabled_;
 }
 
-void cMenuItem::setClickSound( sSOUND* clickSound_ )
+void cMenuItem::setClickSound (sSOUND* clickSound_)
 {
 	clickSound = clickSound_;
 }
 
-void cMenuItem::setReleaseSound( sSOUND* releaseSound_ )
+void cMenuItem::setReleaseSound (sSOUND* releaseSound_)
 {
 	releaseSound = releaseSound_;
 }
 
-void cMenuItem::setClickedFunction( void ( *click_ )( void* ) )
+void cMenuItem::setClickedFunction (void (*click_) (void*))
 {
 	click = click_;
 }
 
-void cMenuItem::setRightClickedFunction( void ( *click_ )( void* ) )
+void cMenuItem::setRightClickedFunction (void (*click_) (void*))
 {
 	rightClick = click_;
 }
 
-void cMenuItem::setReleasedFunction( void ( *release_ )( void* ) )
+void cMenuItem::setReleasedFunction (void (*release_) (void*))
 {
 	release = release_;
 }
 
-void cMenuItem::setMovedOverFunction( void ( *moveMouseOver_ )( void* ) )
+void cMenuItem::setMovedOverFunction (void (*moveMouseOver_) (void*))
 {
 	moveMouseOver = moveMouseOver_;
 }
 
-void cMenuItem::setWasKeyInputFunction( void ( *wasKeyInput_ )( void* ) )
+void cMenuItem::setWasKeyInputFunction (void (*wasKeyInput_) (void*))
 {
 	wasKeyInput = wasKeyInput_;
 }
@@ -272,7 +272,7 @@ bool cMenuItem::getWasClicked() const
 	return wasClicked;
 }
 
-cMenuItemContainer::cMenuItemContainer( int x, int y ) : cMenuItem( x, y )
+cMenuItemContainer::cMenuItemContainer (int x, int y) : cMenuItem (x, y)
 {
 	position.w = 0;
 	position.h = 0;
@@ -280,89 +280,89 @@ cMenuItemContainer::cMenuItemContainer( int x, int y ) : cMenuItem( x, y )
 
 void cMenuItemContainer::draw()
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
 		itemList[i]->draw();
 	}
 }
 
-void cMenuItemContainer::clicked( void* parent )
+void cMenuItemContainer::clicked (void* parent)
 {
 	preClicked();
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		if ( itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->clicked( this );
+		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->clicked (this);
 	}
 }
 
-void cMenuItemContainer::released( void* parent )
+void cMenuItemContainer::released (void* parent)
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		if ( itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->released( this );
+		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->released (this);
 		else itemList[i]->somewhereReleased();
 	}
 }
 
-void cMenuItemContainer::hoveredOn( void* parent )
+void cMenuItemContainer::hoveredOn (void* parent)
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		if ( itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->hoveredOn( this );
+		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
 	}
 }
 
-void cMenuItemContainer::hoveredAway( void* parent )
+void cMenuItemContainer::hoveredAway (void* parent)
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		itemList[i]->hoveredAway( this );
+		itemList[i]->hoveredAway (this);
 	}
 }
 
-void cMenuItemContainer::movedMouseOver( int lastMouseX, int lastMouseY, void* parent )
+void cMenuItemContainer::movedMouseOver (int lastMouseX, int lastMouseY, void* parent)
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		if ( itemList[i]->overItem( lastMouseX, lastMouseY ) && !itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->hoveredAway( this );
-		else if ( !itemList[i]->overItem( lastMouseX, lastMouseY ) && itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->hoveredOn( this );
-		else if ( itemList[i]->overItem( lastMouseX, lastMouseY ) && itemList[i]->overItem( mouse->x, mouse->y ) ) itemList[i]->movedMouseOver( lastMouseX, lastMouseY, this );
+		if (itemList[i]->overItem (lastMouseX, lastMouseY) && !itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredAway (this);
+		else if (!itemList[i]->overItem (lastMouseX, lastMouseY) && itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
+		else if (itemList[i]->overItem (lastMouseX, lastMouseY) && itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->movedMouseOver (lastMouseX, lastMouseY, this);
 	}
 }
 
 void cMenuItemContainer::somewhereReleased()
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
 		itemList[i]->somewhereReleased();
 	}
 }
 
-void cMenuItemContainer::addItem( cMenuItem* item )
+void cMenuItemContainer::addItem (cMenuItem* item)
 {
-	itemList.Add( item );
-	if ( item->position.x == 0 && item->position.y == 0 && item->position.w == 0 && item->position.h == 0 ) return;
-	if ( item->position.x < position.x )
+	itemList.Add (item);
+	if (item->position.x == 0 && item->position.y == 0 && item->position.w == 0 && item->position.h == 0) return;
+	if (item->position.x < position.x)
 	{
 		position.w = position.x + position.w - item->position.x;
 		position.x = item->position.x;
 	}
-	if ( item->position.y < position.y )
+	if (item->position.y < position.y)
 	{
 		position.w = position.y + position.h - item->position.y;
 		position.y = item->position.y;
 	}
-	if ( item->position.x + item->position.w > position.x + position.w ) position.w = item->position.x + item->position.w - position.x;
-	if ( item->position.y + item->position.h > position.y + position.h ) position.h = item->position.y + item->position.h - position.y;
+	if (item->position.x + item->position.w > position.x + position.w) position.w = item->position.x + item->position.w - position.x;
+	if (item->position.y + item->position.h > position.y + position.h) position.h = item->position.y + item->position.h - position.y;
 }
 
-void cMenuItemContainer::removeItem( cMenuItem* item )
+void cMenuItemContainer::removeItem (cMenuItem* item)
 {
-	for ( unsigned int i = 0; i < itemList.Size() ; i++ )
+	for (unsigned int i = 0; i < itemList.Size() ; i++)
 	{
-		if ( item == itemList[i] )
+		if (item == itemList[i])
 		{
-			itemList.Delete( i );
+			itemList.Delete (i);
 			break;
 		}
 	}
@@ -370,20 +370,20 @@ void cMenuItemContainer::removeItem( cMenuItem* item )
 }
 
 
-cMenuTimerBase::cMenuTimerBase( Uint32 intervall ) :
-	state( false )
+cMenuTimerBase::cMenuTimerBase (Uint32 intervall) :
+	state (false)
 {
-	timerID = SDL_AddTimer( intervall, &sdlTimerCallback, this );
+	timerID = SDL_AddTimer (intervall, &sdlTimerCallback, this);
 }
 
 cMenuTimerBase::~cMenuTimerBase()
 {
-	SDL_RemoveTimer( timerID );
+	SDL_RemoveTimer (timerID);
 }
 
 bool cMenuTimerBase::getState()
 {
-	if ( state )
+	if (state)
 	{
 		state = false;
 		return true;
@@ -391,30 +391,30 @@ bool cMenuTimerBase::getState()
 	return false;
 }
 
-Uint32 cMenuTimerBase::sdlTimerCallback( Uint32 intervall, void* param )
+Uint32 cMenuTimerBase::sdlTimerCallback (Uint32 intervall, void* param)
 {
-	cMenuTimerBase* timer = reinterpret_cast<cMenuTimerBase*>( param );
+	cMenuTimerBase* timer = reinterpret_cast<cMenuTimerBase*> (param);
 	timer->state = true;
 
 	return intervall;
 }
 
 
-cMenuImage::cMenuImage( int x, int y, SDL_Surface* image_ ) : cMenuItem( x, y )
+cMenuImage::cMenuImage (int x, int y, SDL_Surface* image_) : cMenuItem (x, y)
 {
-	setImage( image_ );
+	setImage (image_);
 }
 
-void cMenuImage::setImage( SDL_Surface* image_ )
+void cMenuImage::setImage (SDL_Surface* image_)
 {
-	if ( image_ != NULL )
+	if (image_ != NULL)
 	{
-		image = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0 );
+		image = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, image_->w, image_->h, Video.getColDepth(), 0, 0, 0, 0);
 
-		SDL_FillRect( image, NULL, 0xFF00FF );
-		SDL_SetColorKey( image, SDL_SRCCOLORKEY, 0xFF00FF );
+		SDL_FillRect (image, NULL, 0xFF00FF);
+		SDL_SetColorKey (image, SDL_SRCCOLORKEY, 0xFF00FF);
 
-		SDL_BlitSurface( image_, NULL, image, NULL );
+		SDL_BlitSurface (image_, NULL, image, NULL);
 
 		position.w = image->w;
 		position.h = image->h;
@@ -428,52 +428,52 @@ void cMenuImage::setImage( SDL_Surface* image_ )
 
 void cMenuImage::draw()
 {
-	if ( image )
+	if (image)
 	{
-		SDL_BlitSurface( image, NULL, buffer, &position );
+		SDL_BlitSurface (image, NULL, buffer, &position);
 	}
 }
 
-cMenuLabel::cMenuLabel( int x, int y, const string& text_, eUnicodeFontType fontType_ ) :
-	cMenuItem( x, y ),
-	fontType( fontType_ ),
-	flagCentered( false ),
-	flagBox( false )
+cMenuLabel::cMenuLabel (int x, int y, const string& text_, eUnicodeFontType fontType_) :
+	cMenuItem (x, y),
+	fontType (fontType_),
+	flagCentered (false),
+	flagBox (false)
 {
 	textPosition.x = position.x;
 	textPosition.y = position.y;
 	textPosition.w = textPosition.h = 0;
-	setText( text_ );
+	setText (text_);
 }
 
-void cMenuLabel::setText( const string& text_ )
+void cMenuLabel::setText (const string& text_)
 {
 	text = text_;
-	if ( !flagBox )
+	if (!flagBox)
 	{
-		if ( text.length() > 0 )
+		if (text.length() > 0)
 		{
-			position.w = textPosition.w = font->getTextWide( text, fontType );
-			position.h = textPosition.h = font->getFontHeight( fontType );
+			position.w = textPosition.w = font->getTextWide (text, fontType);
+			position.h = textPosition.h = font->getFontHeight (fontType);
 		}
 		else position.w = position.h = textPosition.w = textPosition.h = 0;
-		setCentered( flagCentered );
+		setCentered (flagCentered);
 	}
 }
 
-void cMenuLabel::setFontType( eUnicodeFontType fontType_ )
+void cMenuLabel::setFontType (eUnicodeFontType fontType_)
 {
 	fontType = fontType_;
 }
 
-void cMenuLabel::setCentered( bool centered )
+void cMenuLabel::setCentered (bool centered)
 {
 	flagCentered = centered;
-	if ( flagCentered ) position.x = textPosition.x - textPosition.w / 2;
+	if (flagCentered) position.x = textPosition.x - textPosition.w / 2;
 	else position.x = textPosition.x;
 }
 
-void cMenuLabel::setBox( int width, int height )
+void cMenuLabel::setBox (int width, int height)
 {
 	position.w = width;
 	position.h = height;
@@ -482,25 +482,25 @@ void cMenuLabel::setBox( int width, int height )
 
 void cMenuLabel::draw()
 {
-	if ( flagCentered ) font->showTextCentered( textPosition, text, fontType );
-	else if ( flagBox ) font->showTextAsBlock( position, text, fontType );
-	else font->showText( textPosition, text, fontType );
+	if (flagCentered) font->showTextCentered (textPosition, text, fontType);
+	else if (flagBox) font->showTextAsBlock (position, text, fontType);
+	else font->showText (textPosition, text, fontType);
 }
 
-void cMenuLabel::move( int x, int y )
+void cMenuLabel::move (int x, int y)
 {
 	int textPosXOffset = textPosition.x - position.x;
 	int textPosYOffset = textPosition.y - position.y;
-	cMenuItem::move( x, y );
+	cMenuItem::move (x, y);
 	textPosition.x = position.x + textPosXOffset;
 	textPosition.y = position.y + textPosYOffset;
 }
 
-cMenuButton::cMenuButton( int x, int y, const string& text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_ ) :
-	cMenuItem( x, y ),
-	text( text_ ),
-	fontType( fontType_ ),
-	buttonType( buttonType_ )
+cMenuButton::cMenuButton (int x, int y, const string& text_, eButtonTypes buttonType_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
+	cMenuItem (x, y),
+	text (text_),
+	fontType (fontType_),
+	buttonType (buttonType_)
 {
 	clickSound = clickSound_;
 	renewButtonSurface();
@@ -509,7 +509,7 @@ cMenuButton::cMenuButton( int x, int y, const string& text_, eButtonTypes button
 void cMenuButton::renewButtonSurface()
 {
 	SDL_Rect src;
-	switch ( buttonType )
+	switch (buttonType)
 	{
 		default:
 		case BUTTON_TYPE_STANDARD_BIG:
@@ -669,13 +669,13 @@ void cMenuButton::renewButtonSurface()
 			src.y = isClicked ? 0 : 132;
 			break;
 	}
-	surface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_FillRect( surface, NULL, 0xFF00FF );
-	if ( buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP ) SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
-	else SDL_BlitSurface( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_FillRect (surface, NULL, 0xFF00FF);
+	if (buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 
-	text = font->shortenStringToSize( text, position.w - getBordersSize(), fontType );
+	text = font->shortenStringToSize (text, position.w - getBordersSize(), fontType);
 }
 
 void cMenuButton::redraw()
@@ -683,12 +683,12 @@ void cMenuButton::redraw()
 	renewButtonSurface();
 	draw();
 	Video.draw();
-	mouse->draw( false, screen );
+	mouse->draw (false, screen);
 }
 
 int cMenuButton::getTextYOffset() const
 {
-	switch ( buttonType )
+	switch (buttonType)
 	{
 		default:
 		case BUTTON_TYPE_STANDARD_BIG:
@@ -708,14 +708,14 @@ int cMenuButton::getTextYOffset() const
 		case BUTTON_TYPE_ARROW_DOWN_BAR:
 			return -1;
 		case BUTTON_TYPE_ANGULAR:
-			if ( isClicked || locked ) return 5;
+			if (isClicked || locked) return 5;
 			else return 4;
 		case BUTTON_TYPE_HUD_NEXT:
 		case BUTTON_TYPE_HUD_PREV:
 		case BUTTON_TYPE_HUD_DONE:
 			return 9;
 		case BUTTON_TYPE_HUD_END:
-			if ( isClicked || locked ) return 3;
+			if (isClicked || locked) return 3;
 			else return 2;
 		case BUTTON_TYPE_HUD_REPORT:
 		case BUTTON_TYPE_HUD_CHAT:
@@ -727,7 +727,7 @@ int cMenuButton::getTextYOffset() const
 
 int cMenuButton::getBordersSize() const
 {
-	switch ( buttonType )
+	switch (buttonType)
 	{
 		case BUTTON_TYPE_HUD_DONE:
 			return 0;
@@ -745,63 +745,63 @@ bool cMenuButton::preClicked()
 
 bool cMenuButton::preReleased()
 {
-	if ( isClicked || wasClicked ) return true;
+	if (isClicked || wasClicked) return true;
 	return false;
 }
 
 void cMenuButton::postReleased()
 {
-	if ( !locked ) isClicked = false;
+	if (!locked) isClicked = false;
 	redraw();
 }
 
 bool cMenuButton::preHoveredOn()
 {
-	if ( wasClicked ) preClicked();
+	if (wasClicked) preClicked();
 	return true;
 }
 
 bool cMenuButton::preHoveredAway()
 {
-	if ( isClicked ) postReleased();
+	if (isClicked) postReleased();
 	return true;
 }
 
 void cMenuButton::draw()
 {
-	if ( surface )
+	if (surface)
 	{
-		SDL_BlitSurface( surface, NULL, buffer, &position );
+		SDL_BlitSurface (surface, NULL, buffer, &position);
 
-		if ( buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES )
+		if (buttonType >= BUTTON_TYPE_HUD_NEXT && buttonType <= BUTTON_TYPE_HUD_FILES)
 		{
-			if ( isClicked ) font->showTextCentered( position.x + position.w / 2, position.y + getTextYOffset(), text, FONT_LATIN_SMALL_GREEN );
-			else font->showTextCentered( position.x + position.w / 2, position.y + getTextYOffset() - 1, text, FONT_LATIN_SMALL_RED );
-			font->showTextCentered( position.x + position.w / 2 - 1, position.y + getTextYOffset() - 1 + ( isClicked ? 1 : 0 ), text, FONT_LATIN_SMALL_WHITE );
+			if (isClicked) font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, FONT_LATIN_SMALL_GREEN);
+			else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset() - 1, text, FONT_LATIN_SMALL_RED);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + getTextYOffset() - 1 + (isClicked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 		}
-		else font->showTextCentered( position.x + position.w / 2, position.y + getTextYOffset(), text, fontType );
+		else font->showTextCentered (position.x + position.w / 2, position.y + getTextYOffset(), text, fontType);
 	}
 }
 
-bool cMenuButton::preSetLocked( bool locked_ )
+bool cMenuButton::preSetLocked (bool locked_)
 {
 	isClicked = locked_;
 	renewButtonSurface();
 	return true;
 }
 
-cMenuDestroyButton::cMenuDestroyButton( int x, int y, cMenu* menu ) :
-	cMenuItem( x, y ),
-	glassHeight( 0 ),
-	opening( false )
+cMenuDestroyButton::cMenuDestroyButton (int x, int y, cMenu* menu) :
+	cMenuItem (x, y),
+	glassHeight (0),
+	opening (false)
 {
 	position.w = 59;
 	position.h = 56;
 
-	setLocked( true );
+	setLocked (true);
 
-	timer = new cMenuTimer<cMenuDestroyButton> ( *this, &cMenuDestroyButton::animationCallback, 10 );
-	menu->addTimer( timer );
+	timer = new cMenuTimer<cMenuDestroyButton> (*this, &cMenuDestroyButton::animationCallback, 10);
+	menu->addTimer (timer);
 }
 
 cMenuDestroyButton::~cMenuDestroyButton()
@@ -812,34 +812,34 @@ cMenuDestroyButton::~cMenuDestroyButton()
 bool cMenuDestroyButton::preClicked()
 {
 	draw();
-	return ( glassHeight >= 56 );
+	return (glassHeight >= 56);
 }
 
 bool cMenuDestroyButton::preReleased()
 {
-	if ( isClicked || wasClicked ) return true;
+	if (isClicked || wasClicked) return true;
 	return false;
 }
 
 void cMenuDestroyButton::postReleased()
 {
-	if ( !locked ) isClicked = false;
+	if (!locked) isClicked = false;
 	draw();
 }
 
 bool cMenuDestroyButton::preHoveredOn()
 {
-	if ( wasClicked ) preClicked();
+	if (wasClicked) preClicked();
 	return true;
 }
 
 bool cMenuDestroyButton::preHoveredAway()
 {
-	if ( isClicked ) postReleased();
+	if (isClicked) postReleased();
 	return true;
 }
 
-bool cMenuDestroyButton::preSetLocked( bool locked_ )
+bool cMenuDestroyButton::preSetLocked (bool locked_)
 {
 	locked = locked_;
 	opening = !locked;
@@ -848,64 +848,64 @@ bool cMenuDestroyButton::preSetLocked( bool locked_ )
 
 void cMenuDestroyButton::draw()
 {
-	if ( isClicked )
+	if (isClicked)
 	{
 		SDL_Rect src = {6, 269, 59, 56};
-		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, buffer, &position );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &position);
 	}
 	else
 	{
 		SDL_Rect src = {15, 13, 59, 56};
-		SDL_BlitSurface( GraphicsData.gfx_destruction, &src, buffer, &position );
+		SDL_BlitSurface (GraphicsData.gfx_destruction, &src, buffer, &position);
 	}
 
-	if ( glassHeight < 56 )
+	if (glassHeight < 56)
 	{
 		SDL_Rect src = { 0, glassHeight, 59, 56 - glassHeight };
-		SDL_BlitSurface( GraphicsData.gfx_destruction_glas, &src, buffer, &position );
+		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, buffer, &position);
 	}
 
 	Video.draw();
-	mouse->draw( false, screen );
+	mouse->draw (false, screen);
 }
 
 void cMenuDestroyButton::animationCallback()
 {
-	if ( opening && glassHeight < 56 )
+	if (opening && glassHeight < 56)
 	{
 		glassHeight += 1;
 		draw();
 	}
 }
 
-cMenuCheckButton::cMenuCheckButton( int x, int y, const string& text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND* clickSound_ ) :
-	cMenuItem( x, y ),
-	text( text_ ),
-	fontType( fontType_ ),
-	buttonType( buttonType_ ),
-	textOrientation( textOrientation_ ),
+cMenuCheckButton::cMenuCheckButton (int x, int y, const string& text_, bool checked_, bool centered_, eCheckButtonTypes buttonType_, eCheckButtonTextOriantation textOrientation_, eUnicodeFontType fontType_, sSOUND* clickSound_) :
+	cMenuItem (x, y),
+	text (text_),
+	fontType (fontType_),
+	buttonType (buttonType_),
+	textOrientation (textOrientation_),
 	group(),
-	centered( centered_ ),
-	checked( checked_ ),
-	textLimitWight( -1 )
+	centered (centered_),
+	checked (checked_),
+	textLimitWight (-1)
 {
 	clickSound = clickSound_;
 
 	renewButtonSurface();
-	if ( centered ) position.x -= position.w / 2;
+	if (centered) position.x -= position.w / 2;
 }
 
 void cMenuCheckButton::renewButtonSurface()
 {
 	SDL_Rect src = {0, 0, 0, 0};
 
-	if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_INDEX_22 )
+	if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_INDEX_22)
 	{
 		src.y = 44;
 		position.w = src.w = 55;
 		position.h = 0;
 	}
-	switch ( buttonType )
+	switch (buttonType)
 	{
 		default:
 		case RADIOBTN_TYPE_BTN_ROUND:
@@ -916,8 +916,8 @@ void cMenuCheckButton::renewButtonSurface()
 			break;
 		case RADIOBTN_TYPE_TEXT_ONLY:
 			surface = NULL;
-			position.w = font->getTextWide( text, fontType );
-			position.h = font->getFontHeight( fontType );
+			position.w = font->getTextWide (text, fontType);
+			position.h = font->getFontHeight (fontType);
 			break;
 		case CHECKBOX_TYPE_STANDARD:
 			position.w = src.w = 18;
@@ -969,7 +969,7 @@ void cMenuCheckButton::renewButtonSurface()
 		case CHECKBOX_HUD_INDEX_20:
 			src.h = position.h = 18;
 			src.y += 18 + 16;
-			if ( !checked ) src.x += 167;
+			if (!checked) src.x += 167;
 			break;
 		case CHECKBOX_HUD_INDEX_12:
 			src.x += src.w;
@@ -978,7 +978,7 @@ void cMenuCheckButton::renewButtonSurface()
 		case CHECKBOX_HUD_INDEX_10:
 			src.h = position.h = 16;
 			src.y += 18;
-			if ( !checked ) src.x += 167;
+			if (!checked) src.x += 167;
 			break;
 		case CHECKBOX_HUD_INDEX_02:
 			src.x += src.w;
@@ -986,7 +986,7 @@ void cMenuCheckButton::renewButtonSurface()
 			src.x += src.w;
 		case CHECKBOX_HUD_INDEX_00:
 			src.h = position.h = 18;
-			if ( !checked ) src.x += 167;
+			if (!checked) src.x += 167;
 			break;
 		case CHECKBOX_HUD_LOCK:
 			position.w = src.w = 21;
@@ -1009,26 +1009,26 @@ void cMenuCheckButton::renewButtonSurface()
 		case CHECKBOX_HUD_PLAYERS:
 			position.w = src.w = 27;
 			position.h = src.h = 28;
-			src.x = checked ? ( 317 + 27 ) : 317;
+			src.x = checked ? (317 + 27) : 317;
 			src.y = 479;
 			break;
 	}
-	if ( src.w > 0 )
+	if (src.w > 0)
 	{
-		surface = SDL_CreateRGBSurface( Video.getSurfaceType(), src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
-		if ( buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS ) SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
-		else SDL_BlitSurface( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+		surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+		if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
+		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 	}
 
-	if ( textLimitWight != -1 ) text = font->shortenStringToSize( text, textLimitWight, fontType );
+	if (textLimitWight != -1) text = font->shortenStringToSize (text, textLimitWight, fontType);
 }
 
 bool cMenuCheckButton::preClicked()
 {
-	if ( group )
+	if (group)
 	{
 		checked = true;
-		group->checkedButton( this );
+		group->checkedButton (this);
 	}
 	else
 	{
@@ -1037,63 +1037,63 @@ bool cMenuCheckButton::preClicked()
 	}
 	draw();
 	Video.draw();
-	mouse->draw( false, screen );
+	mouse->draw (false, screen);
 	return true;
 }
 
 void cMenuCheckButton::draw()
 {
 	SDL_Rect textDest = { -1, -1, -1, -1 };
-	if ( surface )
+	if (surface)
 	{
-		switch ( textOrientation )
+		switch (textOrientation)
 		{
 			case TEXT_ORIENT_RIGHT:
 				textDest.x = position.x + surface->w + 2;
-				textDest.y = position.y + ( position.h / 2 ) - ( font->getFontHeight( fontType ) / 2 );
+				textDest.y = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
 				break;
 			case TEXT_ORIENT_LEFT:
-				textDest.x = position.x - ( font->getTextWide( text, fontType ) + 2 );
-				textDest.y = position.y + ( position.h / 2 ) - ( font->getFontHeight( fontType ) / 2 );
+				textDest.x = position.x - (font->getTextWide (text, fontType) + 2);
+				textDest.y = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
 				break;
 		}
 	}
 
-	switch ( buttonType )
+	switch (buttonType)
 	{
 		default:
 		case CHECKBOX_TYPE_STANDARD:
 		case RADIOBTN_TYPE_BTN_ROUND:
-			SDL_BlitSurface( surface, NULL, buffer, &position );
-			font->showText( textDest.x , textDest.y, text, fontType );
+			SDL_BlitSurface (surface, NULL, buffer, &position);
+			font->showText (textDest.x , textDest.y, text, fontType);
 			break;
 		case CHECKBOX_TYPE_TANK:
 		case CHECKBOX_TYPE_PLANE:
 		case CHECKBOX_TYPE_SHIP:
 		case CHECKBOX_TYPE_BUILD:
 		case CHECKBOX_TYPE_TNT:
-			SDL_BlitSurface( surface, NULL, buffer, &position );
+			SDL_BlitSurface (surface, NULL, buffer, &position);
 			break;
 		case RADIOBTN_TYPE_TEXT_ONLY:
-			font->showText( position.x, position.y, text, fontType );
-			if ( checked )
+			font->showText (position.x, position.y, text, fontType);
+			if (checked)
 			{
 #define SELECTION_COLOR 0xE3DACF
 				SDL_Rect dest = { position.x + position.w + 2, position.y - 1, 1, position.h + 2 };
-				SDL_FillRect( buffer, &dest, SELECTION_COLOR );
+				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
 				dest.x -= position.w + 4;
-				SDL_FillRect( buffer, &dest, SELECTION_COLOR );
+				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
 				dest.h = 1;
 				dest.w = position.w + 5;
-				SDL_FillRect( buffer, &dest, SELECTION_COLOR );
+				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
 				dest.y += position.h + 2;
-				SDL_FillRect( buffer, &dest, SELECTION_COLOR );
+				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
 			}
 			break;
 		case RADIOBTN_TYPE_ANGULAR_BUTTON:
-			SDL_BlitSurface( surface, NULL, buffer, &position );
-			if ( checked ) font->showTextCentered( position.x + position.w / 2, position.y + 5, text, fontType );
-			else font->showTextCentered( position.x + position.w / 2, position.y + 4, text, fontType );
+			SDL_BlitSurface (surface, NULL, buffer, &position);
+			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + 5, text, fontType);
+			else font->showTextCentered (position.x + position.w / 2, position.y + 4, text, fontType);
 			break;
 		case CHECKBOX_HUD_INDEX_00:
 		case CHECKBOX_HUD_INDEX_01:
@@ -1102,23 +1102,23 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_HUD_INDEX_10:
 		case CHECKBOX_HUD_INDEX_11:
 		case CHECKBOX_HUD_INDEX_12:
-			if ( textDest.y != 7 ) textDest.y = 6;
+			if (textDest.y != 7) textDest.y = 6;
 		case CHECKBOX_HUD_INDEX_20:
 		case CHECKBOX_HUD_INDEX_21:
 		case CHECKBOX_HUD_INDEX_22:
-			if ( textDest.y != 6 && textDest.y != 7 ) textDest.y = 5;
-			SDL_BlitSurface( surface, NULL, buffer, &position );
-			if ( checked ) font->showTextCentered( position.x + position.w / 2, position.y + textDest.y, text, FONT_LATIN_SMALL_GREEN );
-			else font->showTextCentered( position.x + position.w / 2, position.y + textDest.y - 1, text, FONT_LATIN_SMALL_RED );
-			font->showTextCentered( position.x + position.w / 2 - 1, position.y + textDest.y - 1 + ( checked ? 1 : 0 ), text, FONT_LATIN_SMALL_WHITE );
+			if (textDest.y != 6 && textDest.y != 7) textDest.y = 5;
+			SDL_BlitSurface (surface, NULL, buffer, &position);
+			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDest.y, text, FONT_LATIN_SMALL_GREEN);
+			else font->showTextCentered (position.x + position.w / 2, position.y + textDest.y - 1, text, FONT_LATIN_SMALL_RED);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDest.y - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 			break;
 	}
 }
 
-void cMenuCheckButton::setChecked( bool checked_ )
+void cMenuCheckButton::setChecked (bool checked_)
 {
 	checked = checked_;
-	if ( group ) group->checkedButton( this );
+	if (group) group->checkedButton (this);
 	else renewButtonSurface();
 }
 
@@ -1127,15 +1127,15 @@ bool cMenuCheckButton::isChecked() const
 	return checked;
 }
 
-void cMenuCheckButton::limitTextSize( int w )
+void cMenuCheckButton::limitTextSize (int w)
 {
 	textLimitWight = w;
-	text = font->shortenStringToSize( text, textLimitWight, fontType );
+	text = font->shortenStringToSize (text, textLimitWight, fontType);
 }
 
 cMenuRadioGroup::~cMenuRadioGroup()
 {
-	for ( size_t i = 0; i != buttonList.Size(); ++i )
+	for (size_t i = 0; i != buttonList.Size(); ++i)
 	{
 		delete buttonList[i];
 	}
@@ -1143,81 +1143,81 @@ cMenuRadioGroup::~cMenuRadioGroup()
 
 void cMenuRadioGroup::draw()
 {
-	for ( unsigned int i = 0; i < buttonList.Size(); i++ )
+	for (unsigned int i = 0; i < buttonList.Size(); i++)
 	{
 		buttonList[i]->draw();
 	}
 }
 
-void cMenuRadioGroup::addButton( cMenuCheckButton* button )
+void cMenuRadioGroup::addButton (cMenuCheckButton* button)
 {
 	button->group = this;
-	buttonList.Add( button );
+	buttonList.Add (button);
 }
 
-bool cMenuRadioGroup::buttonIsChecked( int index ) const
+bool cMenuRadioGroup::buttonIsChecked (int index) const
 {
-	if ( index >= 0 && index < ( int )buttonList.Size() && buttonList[index]->isChecked() )  return true;
+	if (index >= 0 && index < (int) buttonList.Size() && buttonList[index]->isChecked())  return true;
 	return false;
 }
 
-void cMenuRadioGroup::checkedButton( cMenuCheckButton* button )
+void cMenuRadioGroup::checkedButton (cMenuCheckButton* button)
 {
-	for ( unsigned int i = 0; i < buttonList.Size(); i++ )
+	for (unsigned int i = 0; i < buttonList.Size(); i++)
 	{
-		if ( buttonList[i] != button ) buttonList[i]->checked = false;
+		if (buttonList[i] != button) buttonList[i]->checked = false;
 		buttonList[i]->renewButtonSurface();
 	}
 }
 
-bool cMenuRadioGroup::overItem( int x, int y ) const
+bool cMenuRadioGroup::overItem (int x, int y) const
 {
-	for ( unsigned int i = 0; i < buttonList.Size(); i++ )
+	for (unsigned int i = 0; i < buttonList.Size(); i++)
 	{
-		if ( buttonList[i]->overItem( x, y ) )
+		if (buttonList[i]->overItem (x, y))
 			return true;
 	}
 	return false;
 }
 
-void cMenuRadioGroup::clicked( void* parent )
+void cMenuRadioGroup::clicked (void* parent)
 {
 	mouse->GetPos();
-	for ( unsigned int i = 0; i < buttonList.Size(); i++ )
+	for (unsigned int i = 0; i < buttonList.Size(); i++)
 	{
-		if ( buttonList[i]->overItem( mouse->x, mouse->y ) )
+		if (buttonList[i]->overItem (mouse->x, mouse->y))
 		{
-			buttonList[i]->clicked( parent );
+			buttonList[i]->clicked (parent);
 			//reinterpret_cast<cMenu*>(parent)->draw();
 			break;
 		}
 	}
-	if ( click ) click( parent );
+	if (click) click (parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) :
-	cMenuItem( 0, 0 ),
-	displayType( displayType_ ),
-	parentList( parent ),
-	unitID( unitID_ ),
-	unitData( 0 ),
-	owner( owner_ ),
-	upgrades( upgrades_ ),
-	fixedResValue( fixedResValue_ )
+cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+	cMenuItem (0, 0),
+	displayType (displayType_),
+	parentList (parent),
+	unitID (unitID_),
+	unitData (0),
+	owner (owner_),
+	upgrades (upgrades_),
+	fixedResValue (fixedResValue_)
 {
 	init();
 }
 
-cMenuUnitListItem::cMenuUnitListItem( sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_ ) :
-	cMenuItem( 0, 0 ),
-	displayType( displayType_ ),
-	parentList( parent ),
-	unitData( unitData_ ),
-	owner( owner_ ),
-	upgrades( upgrades_ ),
-	fixedResValue( fixedResValue_ )
+cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+	cMenuItem (0, 0),
+	displayType (displayType_),
+	parentList (parent),
+	unitData (unitData_),
+	owner (owner_),
+	upgrades (upgrades_),
+	fixedResValue (fixedResValue_)
 {
-	if ( unitData != 0 )
+	if (unitData != 0)
 		unitID = unitData->ID;
 	init();
 }
@@ -1225,23 +1225,23 @@ cMenuUnitListItem::cMenuUnitListItem( sUnitData* unitData_, cPlayer* owner_, sUn
 void cMenuUnitListItem::init()
 {
 	const int UNIT_IMAGE_SIZE = 32;
-	surface = SDL_CreateRGBSurface( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_FillRect( surface, NULL, 0xFF00FF );
+	surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_FillRect (surface, NULL, 0xFF00FF);
 	SDL_Rect dest = {0, 0, 0, 0};
 
-	if ( unitID.getVehicle() )
+	if (unitID.getVehicle())
 	{
-		cVehicle vehicle = cVehicle( unitID.getVehicle(), owner );
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )64.0;
-		vehicle.render( surface, dest, zoomFactor, false );
-		vehicle.drawOverlayAnimation( surface, dest, zoomFactor );
+		cVehicle vehicle = cVehicle (unitID.getVehicle(), owner);
+		float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) 64.0;
+		vehicle.render (surface, dest, zoomFactor, false);
+		vehicle.drawOverlayAnimation (surface, dest, zoomFactor);
 	}
-	else if ( unitID.getBuilding() )
+	else if (unitID.getBuilding())
 	{
-		cBuilding building = cBuilding( unitID.getBuilding(), owner, NULL );
-		float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( building.data.isBig ? 128.0 : 64.0 );
-		building.render( surface, dest, zoomFactor, false, false );
+		cBuilding building = cBuilding (unitID.getBuilding(), owner, NULL);
+		float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) (building.data.isBig ? 128.0 : 64.0);
+		building.render (surface, dest, zoomFactor, false, false);
 	}
 	else surface = NULL;
 
@@ -1256,114 +1256,114 @@ void cMenuUnitListItem::draw()
 {
 	SDL_Rect src = { 0, 0, 32, 32 };
 	SDL_Rect dest = { position.x, position.y, 0, 0 };
-	SDL_BlitSurface( surface, &src, buffer, &dest );
+	SDL_BlitSurface (surface, &src, buffer, &dest);
 
-	if ( selected )
+	if (selected)
 	{
 		dest.x -= 4;
 		dest.y -= 4;
 		dest.h = 1;
 		dest.w = 8;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.x += 30;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.y += 38;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.x -= 30;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.y = position.y - 4;
 		dest.w = 1;
 		dest.h = 8;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.x += 38;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.y += 31;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 		dest.x -= 38;
-		SDL_FillRect( buffer, &dest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &dest, 0xE0E0E0);
 	}
-	dest.w = position.w - ( 32 + 4 ) - 12;
+	dest.w = position.w - (32 + 4) - 12;
 
-	switch ( displayType )
+	switch (displayType)
 	{
 		case MUL_DIS_TYPE_NOEXTRA:
-			drawName( false );
+			drawName (false);
 			break;
 		case MUL_DIS_TYPE_COSTS:
 		{
-			drawName( false );
+			drawName (false);
 
-			dest.x = position.x + ( 32 + 4 );
+			dest.x = position.x + (32 + 4);
 			dest.y = position.y + 12;
 
-			if ( unitID.getVehicle() ) font->showTextCentered( position.x + position.w - 12, dest.y, iToStr( unitID.getUnitDataCurrentVersion( owner )->buildCosts ), FONT_LATIN_SMALL_YELLOW );
+			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, dest.y, iToStr (unitID.getUnitDataCurrentVersion (owner)->buildCosts), FONT_LATIN_SMALL_YELLOW);
 		}
 		break;
 		default:
 		case MUL_DIS_TYPE_CARGO:
 		{
-			int destY = drawName( true );
-			drawCargo( destY );
+			int destY = drawName (true);
+			drawCargo (destY);
 		}
 		break;
 	}
 }
 
 
-int cMenuUnitListItem::drawName( bool withNumber )
+int cMenuUnitListItem::drawName (bool withNumber)
 {
-	SDL_Rect dest = { position.x + 32 + 4, position.y + 12, position.w - ( 32 + 4 ) - 12, 0 };
-	string name = ( ( string )unitID.getUnitDataCurrentVersion( owner )->name );
+	SDL_Rect dest = { position.x + 32 + 4, position.y + 12, position.w - (32 + 4) - 12, 0 };
+	string name = ( (string) unitID.getUnitDataCurrentVersion (owner)->name);
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
-	if ( withNumber )
+	if (withNumber)
 	{
 		// numerate the unit.
 		int nrOfSameUnits = 1;
 		// search the landing list for other units of the same type.
-		for ( int otherUnitIdx = 0; otherUnitIdx < ( int )parentList->unitsList.Size(); otherUnitIdx++ )
+		for (int otherUnitIdx = 0; otherUnitIdx < (int) parentList->unitsList.Size(); otherUnitIdx++)
 		{
-			if ( !parentList->unitsList[otherUnitIdx]->unitID.getVehicle() ) continue;
-			if ( parentList->unitsList[otherUnitIdx] == this ) break;
-			if ( unitID == parentList->unitsList[otherUnitIdx]->unitID ) nrOfSameUnits++;
+			if (!parentList->unitsList[otherUnitIdx]->unitID.getVehicle()) continue;
+			if (parentList->unitsList[otherUnitIdx] == this) break;
+			if (unitID == parentList->unitsList[otherUnitIdx]->unitID) nrOfSameUnits++;
 		}
-		name += " " + iToStr( nrOfSameUnits );
+		name += " " + iToStr (nrOfSameUnits);
 	}
 
 	// display the name
-	if ( font->getTextWide( name, fontType ) > dest.w )
+	if (font->getTextWide (name, fontType) > dest.w)
 	{
-		dest.y -= font->getFontHeight( fontType ) / 2;
-		font->showTextAsBlock( dest, name, fontType );
-		dest.y += font->getFontHeight( fontType ) / 2;
+		dest.y -= font->getFontHeight (fontType) / 2;
+		font->showTextAsBlock (dest, name, fontType);
+		dest.y += font->getFontHeight (fontType) / 2;
 	}
-	else font->showText( dest, name, fontType );
+	else font->showText (dest, name, fontType);
 
 	return dest.y;
 }
 
-void cMenuUnitListItem::drawCargo( int destY )
+void cMenuUnitListItem::drawCargo (int destY)
 {
-	if ( !unitID.getVehicle() ) return;
+	if (!unitID.getVehicle()) return;
 
 	SDL_Rect dest = { position.x + 32 + 4, destY, 0, 0 };
 
-	if ( unitID.getUnitDataOriginalVersion()->storeResType != sUnitData::STORE_RES_NONE )
+	if (unitID.getUnitDataOriginalVersion()->storeResType != sUnitData::STORE_RES_NONE)
 	{
-		if ( unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD ) return; // don't allow buying gold
+		if (unitID.getUnitDataOriginalVersion()->storeResType == sUnitData::STORE_RES_GOLD) return;   // don't allow buying gold
 
-		if ( resValue == 0 ) font->showText( dest.x, dest.y + 10, "(empty)", FONT_LATIN_SMALL_WHITE );
-		else if ( resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 4 ) font->showText( dest.x, dest.y + 10, " (" + iToStr( resValue ) + "/" + iToStr( unitID.getUnitDataOriginalVersion()->storageResMax ) + ")", FONT_LATIN_SMALL_RED );
-		else if ( resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 2 ) font->showText( dest.x, dest.y + 10, " (" + iToStr( resValue ) + "/" + iToStr( unitID.getUnitDataOriginalVersion()->storageResMax ) + ")", FONT_LATIN_SMALL_YELLOW );
-		else font->showText( dest.x, dest.y + 10, " (" + iToStr( resValue ) + "/" + iToStr( unitID.getUnitDataOriginalVersion()->storageResMax ) + ")", FONT_LATIN_SMALL_GREEN );
+		if (resValue == 0) font->showText (dest.x, dest.y + 10, "(empty)", FONT_LATIN_SMALL_WHITE);
+		else if (resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 4) font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_RED);
+		else if (resValue <= unitID.getUnitDataOriginalVersion()->storageResMax / 2) font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_YELLOW);
+		else font->showText (dest.x, dest.y + 10, " (" + iToStr (resValue) + "/" + iToStr (unitID.getUnitDataOriginalVersion()->storageResMax) + ")", FONT_LATIN_SMALL_GREEN);
 	}
 }
 
-void cMenuUnitListItem::released( void* parent )
+void cMenuUnitListItem::released (void* parent)
 {
-	if ( releaseSound ) PlayFX( releaseSound );
-	cMenuUnitsList* menuUnitsList = reinterpret_cast<cMenuUnitsList*>( parent );
-	menuUnitsList->setSelection( this );
+	if (releaseSound) PlayFX (releaseSound);
+	cMenuUnitsList* menuUnitsList = reinterpret_cast<cMenuUnitsList*> (parent);
+	menuUnitsList->setSelection (this);
 	menuUnitsList->parentMenu->draw();
 }
 
@@ -1374,7 +1374,7 @@ sID cMenuUnitListItem::getUnitID() const
 
 sUnitData* cMenuUnitListItem::getUnitData()
 {
-	if ( !unitData ) return unitID.getUnitDataCurrentVersion( getOwner() );
+	if (!unitData) return unitID.getUnitDataCurrentVersion (getOwner());
 	return unitData;
 }
 
@@ -1393,33 +1393,33 @@ bool cMenuUnitListItem::getFixedResValue() const
 	return fixedResValue;
 }
 
-void cMenuUnitListItem::setResValue( int resValue_, bool cargoCheck )
+void cMenuUnitListItem::setResValue (int resValue_, bool cargoCheck)
 {
-	if ( fixedResValue ) return;
+	if (fixedResValue) return;
 	resValue = resValue_;
-	if ( resValue < minResValue ) resValue = minResValue;
-	if ( cargoCheck && resValue < 0 ) resValue = 0;
-	if ( cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->storageResMax ) resValue = unitID.getUnitDataOriginalVersion()->storageResMax;
+	if (resValue < minResValue) resValue = minResValue;
+	if (cargoCheck && resValue < 0) resValue = 0;
+	if (cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->storageResMax) resValue = unitID.getUnitDataOriginalVersion()->storageResMax;
 }
 
-void cMenuUnitListItem::setMinResValue( int minResValue_ )
+void cMenuUnitListItem::setMinResValue (int minResValue_)
 {
 	minResValue = minResValue_;
-	if ( resValue < minResValue ) resValue = minResValue;
+	if (resValue < minResValue) resValue = minResValue;
 }
 
-void cMenuUnitListItem::setMarked( bool marked_ )
+void cMenuUnitListItem::setMarked (bool marked_)
 {
 	marked = marked_;
 }
 
-void cMenuUnitListItem::setFixedResValue( bool fixedResValue_ )
+void cMenuUnitListItem::setFixedResValue (bool fixedResValue_)
 {
 	fixedResValue = fixedResValue_;
 }
 
 
-void cMenuUnitListItem::setFixed( bool fixed_ )
+void cMenuUnitListItem::setFixed (bool fixed_)
 {
 	fixed = fixed_;
 }
@@ -1435,19 +1435,19 @@ sUnitUpgrade* cMenuUnitListItem::getUpgrades()
 }
 
 
-sUnitUpgrade* cMenuUnitListItem::getUpgrade( sUnitUpgrade::eUpgradeTypes type )
+sUnitUpgrade* cMenuUnitListItem::getUpgrade (sUnitUpgrade::eUpgradeTypes type)
 {
-	if ( !upgrades ) return NULL;
-	for ( int i = 0; i < 8; i++ )
+	if (!upgrades) return NULL;
+	for (int i = 0; i < 8; i++)
 	{
-		if ( upgrades[i].type == type ) return &upgrades[i];
+		if (upgrades[i].type == type) return &upgrades[i];
 	}
 	return NULL;
 }
 
-cMenuUnitsList::cMenuUnitsList( int x, int y, int w, int h, cHangarMenu* parent, eMenuUnitListDisplayTypes displayType_ ) : cMenuItem( x, y ), parentMenu( parent ), displayType( displayType_ )
+cMenuUnitsList::cMenuUnitsList (int x, int y, int w, int h, cHangarMenu* parent, eMenuUnitListDisplayTypes displayType_) : cMenuItem (x, y), parentMenu (parent), displayType (displayType_)
 {
-	resize( w, h );
+	resize (w, h);
 
 	doubleClicked = NULL;
 
@@ -1457,7 +1457,7 @@ cMenuUnitsList::cMenuUnitsList( int x, int y, int w, int h, cHangarMenu* parent,
 
 cMenuUnitsList::~cMenuUnitsList()
 {
-	for ( size_t i = 0; i != unitsList.Size(); ++i )
+	for (size_t i = 0; i != unitsList.Size(); ++i)
 	{
 		delete unitsList[i];
 	}
@@ -1465,41 +1465,41 @@ cMenuUnitsList::~cMenuUnitsList()
 
 void cMenuUnitsList::draw()
 {
-	for ( int i = offset; i < offset + maxDisplayUnits; i++ )
+	for (int i = offset; i < offset + maxDisplayUnits; i++)
 	{
-		if ( i >= ( int )unitsList.Size() ) break;
+		if (i >= (int) unitsList.Size()) break;
 		unitsList[i]->position.x = position.x + 10;
-		unitsList[i]->position.y = position.y + 8 + ( i - offset ) * 34;
+		unitsList[i]->position.y = position.y + 8 + (i - offset) * 34;
 		unitsList[i]->draw();
 	}
 }
 
-void cMenuUnitsList::released( void* parent )
+void cMenuUnitsList::released (void* parent)
 {
 	mouse->GetPos();
-	for ( int i = offset; i < offset + maxDisplayUnits; i++ )
+	for (int i = offset; i < offset + maxDisplayUnits; i++)
 	{
-		if ( i >= ( int )unitsList.Size() ) break;
-		if ( unitsList[i]->overItem( mouse->x, mouse->y ) )
+		if (i >= (int) unitsList.Size()) break;
+		if (unitsList[i]->overItem (mouse->x, mouse->y))
 		{
-			if ( selectedUnit == unitsList[i] )
+			if (selectedUnit == unitsList[i])
 			{
-				if ( unitsList[i]->releaseSound ) PlayFX( unitsList[i]->releaseSound );
-				if ( !doubleClicked || !doubleClicked( this, parent ) ) unitsList[i]->released( this );
+				if (unitsList[i]->releaseSound) PlayFX (unitsList[i]->releaseSound);
+				if (!doubleClicked || !doubleClicked (this, parent)) unitsList[i]->released (this);
 			}
-			else unitsList[i]->released( this );
+			else unitsList[i]->released (this);
 		}
 	}
 }
 
 int cMenuUnitsList::getSize() const
 {
-	return ( int )unitsList.Size();
+	return (int) unitsList.Size();
 }
 
-cMenuUnitListItem* cMenuUnitsList::getItem( int index )
+cMenuUnitListItem* cMenuUnitsList::getItem (int index)
 {
-	if ( index >= 0 && index < ( int )unitsList.Size() ) return unitsList[index];
+	if (index >= 0 && index < (int) unitsList.Size()) return unitsList[index];
 	else return NULL;
 }
 
@@ -1508,101 +1508,101 @@ cMenuUnitListItem* cMenuUnitsList::getSelectedUnit()
 	return selectedUnit;
 }
 
-void cMenuUnitsList::resize( int w, int h )
+void cMenuUnitsList::resize (int w, int h)
 {
 	position.w = w;
 	position.h = h;
 
-	maxDisplayUnits = ( position.h - 16 ) / 34;
+	maxDisplayUnits = (position.h - 16) / 34;
 }
 
-void cMenuUnitsList::setDoubleClickedFunction( bool ( *doubleClicked_ )( cMenuUnitsList*, void* parent ) )
+void cMenuUnitsList::setDoubleClickedFunction (bool (*doubleClicked_) (cMenuUnitsList*, void* parent))
 {
 	doubleClicked = doubleClicked_;
 }
 
 void cMenuUnitsList::scrollUp()
 {
-	if ( offset - maxDisplayUnits > 0 ) offset -= maxDisplayUnits;
+	if (offset - maxDisplayUnits > 0) offset -= maxDisplayUnits;
 	else offset = 0;
 	parentMenu->draw();
 }
 
 void cMenuUnitsList::scrollDown()
 {
-	if ( offset + maxDisplayUnits < ( int )unitsList.Size() )
+	if (offset + maxDisplayUnits < (int) unitsList.Size())
 	{
 		offset += maxDisplayUnits;
-		if ( offset + maxDisplayUnits > ( int )unitsList.Size() && ( int )unitsList.Size() > maxDisplayUnits )
+		if (offset + maxDisplayUnits > (int) unitsList.Size() && (int) unitsList.Size() > maxDisplayUnits)
 		{
-			offset = ( int )unitsList.Size() - maxDisplayUnits;
+			offset = (int) unitsList.Size() - maxDisplayUnits;
 		}
 	}
 	else return;
 	parentMenu->draw();
 }
 
-void cMenuUnitsList::setSelection( cMenuUnitListItem* selectedUnit_ )
+void cMenuUnitsList::setSelection (cMenuUnitListItem* selectedUnit_)
 {
-	for ( unsigned int i = 0; i < unitsList.Size(); i++ )
+	for (unsigned int i = 0; i < unitsList.Size(); i++)
 	{
-		if ( unitsList[i] == selectedUnit_ )
+		if (unitsList[i] == selectedUnit_)
 		{
 			selectedUnit = selectedUnit_;
 			selectedUnit->selected = true;
 		}
 		else unitsList[i]->selected = false;
 	}
-	parentMenu->setSelectedUnit( selectedUnit );
+	parentMenu->setSelectedUnit (selectedUnit);
 }
 
-void cMenuUnitsList::addUnit( cMenuUnitListItem* unitItem, bool scroll )
+void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 {
-	unitItem->setReleaseSound( SoundData.SNDObjectMenu );
+	unitItem->setReleaseSound (SoundData.SNDObjectMenu);
 	unitItem->position.h = 32;
 	unitItem->position.w = position.w - 20;
-	unitsList.Add( unitItem );
-	if ( selectedUnit ) selectedUnit->selected = false;
+	unitsList.Add (unitItem);
+	if (selectedUnit) selectedUnit->selected = false;
 	selectedUnit = unitItem;
 	selectedUnit->selected = true;
-	if ( scroll && ( int )unitsList.Size() > offset + maxDisplayUnits ) scrollDown();
+	if (scroll && (int) unitsList.Size() > offset + maxDisplayUnits) scrollDown();
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit( sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo )
+cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem( unitData, owner, upgrades, displayType, this, fixedCargo );
-	addUnit( unitItem, scroll );
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitData, owner, upgrades, displayType, this, fixedCargo);
+	addUnit (unitItem, scroll);
 	return unitItem;
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit( sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo )
+cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem( unitID, owner, upgrades, displayType, this, fixedCargo );
-	addUnit( unitItem, scroll );
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitID, owner, upgrades, displayType, this, fixedCargo);
+	addUnit (unitItem, scroll);
 	return unitItem;
 }
 
-void cMenuUnitsList::removeUnit( cMenuUnitListItem* item )
+void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 {
-	for ( unsigned int i = 0; i < unitsList.Size(); i++ )
+	for (unsigned int i = 0; i < unitsList.Size(); i++)
 	{
-		if ( unitsList[i] == item )
+		if (unitsList[i] == item)
 		{
 			cMenuUnitListItem* nextSelUnit = NULL;
 			bool isInMenuSelected = false;
-			if ( unitsList[i]->selected )
+			if (unitsList[i]->selected)
 			{
-				if ( i + 1 < ( int )unitsList.Size() ) nextSelUnit = unitsList[i + 1];
-				else if ( ( ( int )i ) - 1 >= 0 ) nextSelUnit = unitsList[i - 1];
-				if ( unitsList[i] == parentMenu->getSelectedUnit() ) isInMenuSelected = true;
+				if (i + 1 < (int) unitsList.Size()) nextSelUnit = unitsList[i + 1];
+				else if ( ( (int) i) - 1 >= 0) nextSelUnit = unitsList[i - 1];
+				if (unitsList[i] == parentMenu->getSelectedUnit()) isInMenuSelected = true;
 			}
 			delete unitsList[i];
-			unitsList.Delete( i );
+			unitsList.Delete (i);
 
 			selectedUnit = nextSelUnit;
-			if ( isInMenuSelected ) parentMenu->setSelectedUnit( nextSelUnit );
-			if ( selectedUnit ) selectedUnit->selected = true;
-			if ( offset >= ( int )unitsList.Size() ) scrollUp();
+			if (isInMenuSelected) parentMenu->setSelectedUnit (nextSelUnit);
+			if (selectedUnit) selectedUnit->selected = true;
+			if (offset >= (int) unitsList.Size()) scrollUp();
 			break;
 		}
 	}
@@ -1610,9 +1610,9 @@ void cMenuUnitsList::removeUnit( cMenuUnitListItem* item )
 
 void cMenuUnitsList::clear()
 {
-	parentMenu->setSelectedUnit( NULL );
+	parentMenu->setSelectedUnit (NULL);
 	selectedUnit = NULL;
-	for ( size_t i = 0; i != unitsList.Size(); ++i )
+	for (size_t i = 0; i != unitsList.Size(); ++i)
 	{
 		delete unitsList[i];
 	}
@@ -1620,48 +1620,48 @@ void cMenuUnitsList::clear()
 	offset = 0;
 }
 
-void cMenuUnitsList::setDisplayType( eMenuUnitListDisplayTypes displayType_ )
+void cMenuUnitsList::setDisplayType (eMenuUnitListDisplayTypes displayType_)
 {
 	displayType = displayType_;
 }
 
-void cUnitDataSymbolHandler::drawSymbols( eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2 )
+void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2)
 {
 	SDL_Rect src;
 
 	int toValue;
 
-	if ( big )
+	if (big)
 	{
-		src = getBigSymbolPosition( symType );
+		src = getBigSymbolPosition (symType);
 		maxX -= src.w;
 
-		if ( value2 < value1 ) maxX -= src.w + 3;
+		if (value2 < value1) maxX -= src.w + 3;
 		toValue = value1;
 	}
 	else
 	{
-		src = getSmallSymbolPosition( symType );
+		src = getSmallSymbolPosition (symType);
 		toValue = value2;
 
-		if ( symType == MENU_SYMBOLS_HITS )
+		if (symType == MENU_SYMBOLS_HITS)
 		{
-			if ( value1 <= value2 / 4 ) src.x += src.w * 4;
-			else if ( value1 <= value2 / 2 ) src.x += src.w * 2;
+			if (value1 <= value2 / 4) src.x += src.w * 4;
+			else if (value1 <= value2 / 2) src.x += src.w * 2;
 		}
 	}
 
 	int offX = src.w;
 	int step = 1;
 
-	while ( offX * toValue > maxX )
+	while (offX * toValue > maxX)
 	{
 		offX--;
 
-		if ( offX < 4 )
+		if (offX < 4)
 		{
 			toValue /= 2;
-			if ( big ) value2 /= 2;
+			if (big) value2 /= 2;
 			step *= 2;
 			offX = src.w;
 		}
@@ -1670,9 +1670,9 @@ void cUnitDataSymbolHandler::drawSymbols( eUnitDataSymbols symType, int x, int y
 	SDL_Rect dest = {x, y, 0, 0};
 
 	int oriSrcX = src.x;
-	for ( int i = 0; i < toValue; i++ )
+	for (int i = 0; i < toValue; i++)
 	{
-		if ( big && i == value2 )
+		if (big && i == value2)
 		{
 			SDL_Rect mark;
 			dest.x += src.w + 3;
@@ -1680,30 +1680,30 @@ void cUnitDataSymbolHandler::drawSymbols( eUnitDataSymbols symType, int x, int y
 			mark.y = dest.y;
 			mark.w = 1;
 			mark.h = src.h;
-			SDL_FillRect( buffer, &mark, 0xFC0000 );
+			SDL_FillRect (buffer, &mark, 0xFC0000);
 		}
 
-		if ( !big && value1 <= 0 ) src.x = oriSrcX + src.w;
+		if (!big && value1 <= 0) src.x = oriSrcX + src.w;
 
-		SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, buffer, &dest );
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 
 		dest.x += offX;
 		value1 -= step;
 	}
 }
 
-void cUnitDataSymbolHandler::drawNumber( int x, int y, int value, int maximalValue )
+void cUnitDataSymbolHandler::drawNumber (int x, int y, int value, int maximalValue)
 {
-	if ( value > maximalValue / 2 )	font->showTextCentered( x, y, iToStr( value ) + "/" + iToStr( maximalValue ), FONT_LATIN_SMALL_GREEN, buffer );
-	else if ( value > maximalValue / 4 ) font->showTextCentered( x, y, iToStr( value ) + "/" + iToStr( maximalValue ), FONT_LATIN_SMALL_YELLOW, buffer );
-	else font->showTextCentered( x, y, iToStr( value ) + "/" + iToStr( maximalValue ), FONT_LATIN_SMALL_RED, buffer );
+	if (value > maximalValue / 2)	font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_GREEN, buffer);
+	else if (value > maximalValue / 4) font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_YELLOW, buffer);
+	else font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_RED, buffer);
 }
 
-SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition( eUnitDataSymbols symType )
+SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition (eUnitDataSymbols symType)
 {
 	SDL_Rect src = {0, 109, 0, 0};
 
-	switch ( symType )
+	switch (symType)
 	{
 		case MENU_SYMBOLS_SPEED:
 			src.x = 0;
@@ -1777,10 +1777,10 @@ SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition( eUnitDataSymbols symType 
 	return src;
 }
 
-SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition( eUnitDataSymbols symType )
+SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition (eUnitDataSymbols symType)
 {
 	SDL_Rect src = {0, 98, 0, 0};
-	switch ( symType )
+	switch (symType)
 	{
 		case MENU_SYMBOLS_SPEED:
 			src.x = 0;
@@ -1846,10 +1846,10 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition( eUnitDataSymbols symTyp
 	return src;
 }
 
-cMenuUnitDetails::cMenuUnitDetails( int x, int y, bool drawLines_, cPlayer* owner_ ) :
-	cMenuItem( x, y ),
-	owner( owner_ ),
-	drawLines( drawLines_ )
+cMenuUnitDetails::cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_) :
+	cMenuItem (x, y),
+	owner (owner_),
+	drawLines (drawLines_)
 {
 	position.w = 155;
 	position.h = 25;
@@ -1859,24 +1859,24 @@ cMenuUnitDetails::cMenuUnitDetails( int x, int y, bool drawLines_, cPlayer* owne
 
 void cMenuUnitDetails::draw()
 {
-	if ( drawLines )
+	if (drawLines)
 	{
 		SDL_Rect lineRect = { position.x + 2, position.y + 14, 153, 1 };
-		SDL_FillRect( buffer , &lineRect, 0x743904 );
+		SDL_FillRect (buffer , &lineRect, 0x743904);
 		lineRect.y += 12;
-		SDL_FillRect( buffer , &lineRect, 0x743904 );
+		SDL_FillRect (buffer , &lineRect, 0x743904);
 		lineRect.y += 12;
-		SDL_FillRect( buffer , &lineRect, 0x743904 );
+		SDL_FillRect (buffer , &lineRect, 0x743904);
 	}
 
 	sUnitData* data;
 	cPlayer* unitOwner;
-	if ( vehicle )
+	if (vehicle)
 	{
 		data = &vehicle->data;
 		unitOwner = vehicle->owner;
 	}
-	else if ( building )
+	else if (building)
 	{
 		data = &building->data;
 		unitOwner = building->owner;
@@ -1884,63 +1884,63 @@ void cMenuUnitDetails::draw()
 	else return;
 
 	// Die Hitpoints anzeigen:
-	cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax );
-	font->showText( position.x + 47, position.y + 6, lngPack.i18n( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE, buffer );
-	cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, false, data->hitpointsCur, data->hitpointsMax );
+	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
+	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE, buffer);
+	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, false, data->hitpointsCur, data->hitpointsMax);
 
 	// Den Speed anzeigen:
-	if ( data->speedMax > 0 )
+	if (data->speedMax > 0)
 	{
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, data->speedCur / 4, data->speedMax / 4 );
-		font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Speed" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, false, data->speedCur / 4, data->speedMax / 4 );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data->speedCur / 4, data->speedMax / 4);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, false, data->speedCur / 4, data->speedMax / 4);
 	}
 
 	// additional values
-	if ( data->canScore )
+	if (data->canScore)
 	{
 		int score = building->points;
-		int tot = building->owner->getScore( Client->getTurn() );
+		int tot = building->owner->getScore (Client->getTurn());
 		int turnLim, scoreLim;
-		Client->getVictoryConditions( &turnLim, &scoreLim );
+		Client->getVictoryConditions (&turnLim, &scoreLim);
 		int lim = scoreLim ? scoreLim : tot;
 
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, score, score );
-		font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Score" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, score, score );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, score, score);
 
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, tot, lim );
-		font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, false, tot, lim );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, tot, lim);
+		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, false, tot, lim);
 	}
-	else if ( ( data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0 ) && unitOwner == owner )
+	else if ( (data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == owner)
 	{
-		font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Cargo" ), FONT_LATIN_SMALL_WHITE, buffer );
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Cargo"), FONT_LATIN_SMALL_WHITE, buffer);
 
-		if ( data->storeResType > 0 )
+		if (data->storeResType > 0)
 		{
-			if ( building )
+			if (building)
 			{
-				cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->storageResCur, data->storageResMax );
+				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageResCur, data->storageResMax);
 
-				font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
+				font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 
-				switch ( data->storeResType )
+				switch (data->storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax );
-						cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->Metal, building->SubBase->MaxMetal );
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, false, building->SubBase->Metal, building->SubBase->MaxMetal );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Metal, building->SubBase->MaxMetal);
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, false, building->SubBase->Metal, building->SubBase->MaxMetal);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax );
-						cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->Oil, building->SubBase->MaxOil );
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, false, building->SubBase->Oil, building->SubBase->MaxOil );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Oil, building->SubBase->MaxOil);
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, false, building->SubBase->Oil, building->SubBase->MaxOil);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, false, data->storageResCur, data->storageResMax );
-						cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->Gold, building->SubBase->MaxGold );
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80,  position.y + 28, 70, false, building->SubBase->Gold, building->SubBase->MaxGold );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Gold, building->SubBase->MaxGold);
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80,  position.y + 28, 70, false, building->SubBase->Gold, building->SubBase->MaxGold);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1948,17 +1948,17 @@ void cMenuUnitDetails::draw()
 			}
 			else
 			{
-				cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->storageResCur, data->storageResMax );
-				switch ( data->storeResType )
+				cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageResCur, data->storageResMax);
+				switch (data->storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax );
+						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1967,118 +1967,118 @@ void cMenuUnitDetails::draw()
 		}
 		else
 		{
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->storageUnitsCur, data->storageUnitsMax );
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->storageUnitsCur, data->storageUnitsMax);
 
-			switch ( data->storeUnitsImageType )
+			switch (data->storeUnitsImageType)
 			{
 				case sUnitData::STORE_UNIT_IMG_TANK:
 				case sUnitData::STORE_UNIT_IMG_SHIP:
-					cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_PLANE:
-					cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_HUMAN:
-					cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax );
+					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_NONE:
 					break;
 			}
 		}
 	}
-	else if ( data->canAttack && !data->explodesOnContact )
+	else if (data->canAttack && !data->explodesOnContact)
 	{
-		if ( unitOwner == owner )
+		if (unitOwner == owner)
 		{
 			// Munition:
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->ammoCur, data->ammoMax );
-			font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, false, data->ammoCur, data->ammoMax );
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->ammoCur, data->ammoMax);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, false, data->ammoCur, data->ammoMax);
 		}
 
 		// shots
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 41, data->shotsCur, data->shotsMax );
-		font->showText( position.x + 47, position.y + 41, lngPack.i18n( "Text~Hud~Shots" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, false, data->shotsCur, data->shotsMax );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data->shotsCur, data->shotsMax);
+		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, false, data->shotsCur, data->shotsMax);
 	}
-	else if ( data->produceEnergy && building )
+	else if (data->produceEnergy && building)
 	{
 		// EnergieProduktion:
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, ( building->IsWorking ? data->produceEnergy : 0 ), data->produceEnergy );
-		font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Energy" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, false, ( building->IsWorking ? data->produceEnergy : 0 ), data->produceEnergy );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, false, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
 
-		if ( unitOwner == owner )
+		if (unitOwner == owner)
 		{
 			// Gesammt:
-			font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, false, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd );
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, false, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 
 			// Verbrauch:
-			font->showText( position.x + 47,  position.y + 41, lngPack.i18n( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawNumber( position.x + 23,  position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, false, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed );
+			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, false, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 		}
 	}
-	else if ( data->produceHumans && building )
+	else if (data->produceHumans && building)
 	{
 		// HumanProduktion:
-		cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->produceHumans, data->produceHumans );
-		font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Teams" ), FONT_LATIN_SMALL_WHITE, buffer );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->produceHumans, data->produceHumans );
+		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->produceHumans, data->produceHumans);
+		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE, buffer);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->produceHumans, data->produceHumans);
 
-		if ( unitOwner == owner )
+		if (unitOwner == owner)
 		{
 			// Gesammt:
-			font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanProd, building->SubBase->HumanProd );
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanProd, building->SubBase->HumanProd);
 
 			// Verbrauch:
-			font->showText( position.x + 47,  position.y + 41, lngPack.i18n( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawNumber( position.x + 23,  position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
-	else if ( data->needsHumans && building )
+	else if (data->needsHumans && building)
 	{
 		// HumanNeed:
-		if ( building->IsWorking )
+		if (building->IsWorking)
 		{
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, data->needsHumans, data->needsHumans );
-			font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->needsHumans, data->needsHumans );
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->needsHumans, data->needsHumans);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->needsHumans, data->needsHumans);
 		}
 		else
 		{
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 18, 0, data->needsHumans );
-			font->showText( position.x + 47, position.y + 18, lngPack.i18n( "Text~Hud~Usage" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, 0, data->needsHumans );
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data->needsHumans);
+			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, 0, data->needsHumans);
 		}
 
-		if ( unitOwner == owner )
+		if (unitOwner == owner)
 		{
 			// Gesammt:
-			font->showText( position.x + 47, position.y + 30, lngPack.i18n( "Text~Hud~Total" ), FONT_LATIN_SMALL_WHITE, buffer );
-			cUnitDataSymbolHandler::drawNumber( position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed );
+			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
+			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
 }
 
-void cMenuUnitDetails::setOwner( cPlayer* owner_ )
+void cMenuUnitDetails::setOwner (cPlayer* owner_)
 {
 	owner = owner_;
 }
 
-void cMenuUnitDetails::setSelection( cVehicle* vehicle_, cBuilding* building_ )
+void cMenuUnitDetails::setSelection (cVehicle* vehicle_, cBuilding* building_)
 {
 	vehicle = vehicle_;
 	building = building_;
 }
 
-cMenuUnitDetailsBig::cMenuUnitDetailsBig( int x, int y ) : cMenuItem( x, y )
+cMenuUnitDetailsBig::cMenuUnitDetailsBig (int x, int y) : cMenuItem (x, y)
 {
 	position.w = 246;
 	position.h = 176;
@@ -2087,11 +2087,11 @@ cMenuUnitDetailsBig::cMenuUnitDetailsBig( int x, int y ) : cMenuItem( x, y )
 
 void cMenuUnitDetailsBig::draw()
 {
-	if ( !selectedUnit ) return;
+	if (!selectedUnit) return;
 	sUnitData* data = selectedUnit->getUnitData();
-	if ( data == 0 )
-		data = selectedUnit->getUnitID().getUnitDataCurrentVersion( selectedUnit->getOwner() );
-	sUnitData* oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion( selectedUnit->getOwner() );
+	if (data == 0)
+		data = selectedUnit->getUnitID().getUnitDataCurrentVersion (selectedUnit->getOwner());
+	sUnitData* oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion (selectedUnit->getOwner());
 
 #define DETAIL_COLUMN_1 dest.x+27
 #define DETAIL_COLUMN_2 dest.x+42
@@ -2104,59 +2104,59 @@ void cMenuUnitDetailsBig::draw()
 
 	sUnitUpgrade* upgrade = NULL;
 
-	if ( data->canAttack )
+	if (data->canAttack)
 	{
 		// Damage:
-		upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_DAMAGE );
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->damage ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Damage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, upgrade ? upgrade->curValue : data->damage, oriData->damage );
+		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE);
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->damage));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Damage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, upgrade ? upgrade->curValue : data->damage, oriData->damage);
 		DETAIL_DOLINEBREAK
 
-		if ( !data->explodesOnContact )
+		if (!data->explodesOnContact)
 		{
 			// Shots:
-			upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_SHOTS );
-			font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->shotsMax ) );
-			font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Shoots" ) );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax );
+			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS);
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->shotsMax));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Shoots"));
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax);
 			DETAIL_DOLINEBREAK
 
 			// Range:
-			upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_RANGE );
-			font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->range ) );
-			font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Range" ) );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->range, oriData->range );
+			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE);
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->range));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Range"));
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->range, oriData->range);
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
-			upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_AMMO );
-			font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->ammoMax ) );
-			font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Ammo" ) );
-			cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax );
+			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO);
+			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->ammoMax));
+			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Ammo"));
+			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax);
 			DETAIL_DOLINEBREAK
 		}
 	}
 
 	sUnitData::eStorageResType transport;
-	if ( selectedUnit->getUnitID().getVehicle() ) transport = data->storeResType;
+	if (selectedUnit->getUnitID().getVehicle()) transport = data->storeResType;
 	else transport = data->storeResType;
 
-	if ( transport != sUnitData::STORE_RES_NONE )
+	if (transport != sUnitData::STORE_RES_NONE)
 	{
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->storageResMax ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Cargo" ) );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->storageResMax));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Cargo"));
 
-		switch ( transport )
+		switch (transport)
 		{
 			case sUnitData::STORE_RES_METAL:
-				cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
+				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_OIL:
-				cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
+				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_GOLD:
-				cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax );
+				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_NONE:
 				break;
@@ -2165,131 +2165,131 @@ void cMenuUnitDetailsBig::draw()
 		DETAIL_DOLINEBREAK
 	}
 
-	if ( data->produceEnergy )
+	if (data->produceEnergy)
 	{
 		// Eneryproduction:
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->produceEnergy ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Produce" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->produceEnergy, oriData->produceEnergy );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->produceEnergy));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->produceEnergy, oriData->produceEnergy);
 		DETAIL_DOLINEBREAK
 
 		// Oil consumption:
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->needsOil ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsOil, oriData->needsOil );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsOil));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsOil, oriData->needsOil);
 		DETAIL_DOLINEBREAK
 	}
 
-	if ( data->produceHumans )
+	if (data->produceHumans)
 	{
 		// Humanproduction:
-		font->showText( DETAIL_COLUMN_1, y, iToStr( data->produceHumans ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Produce" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->produceHumans, oriData->produceHumans );
+		font->showText (DETAIL_COLUMN_1, y, iToStr (data->produceHumans));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->produceHumans, oriData->produceHumans);
 		DETAIL_DOLINEBREAK
 	}
 
 	// Armor:
-	upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_ARMOR );
-	font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->armor ) );
-	font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Armor" ) );
-	cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->armor, oriData->armor );
+	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR);
+	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->armor));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Armor"));
+	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->armor, oriData->armor);
 	DETAIL_DOLINEBREAK
 
 	// Hitpoints:
-	upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_HITS );
-	font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->hitpointsMax ) );
-	font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Hitpoints" ) );
-	cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax );
+	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS);
+	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->hitpointsMax));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Hitpoints"));
+	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax);
 	DETAIL_DOLINEBREAK
 
 	// Scan:
-	if ( data->scan )
+	if (data->scan)
 	{
-		upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_SCAN );
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( upgrade ? upgrade->curValue : data->scan ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Scan" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3 , y - 2, 160, true, upgrade ? upgrade->curValue : data->scan, oriData->scan );
+		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN);
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->scan));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Scan"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3 , y - 2, 160, true, upgrade ? upgrade->curValue : data->scan, oriData->scan);
 		DETAIL_DOLINEBREAK
 	}
 
 	// Speed:
-	if ( data->speedMax )
+	if (data->speedMax)
 	{
-		upgrade = selectedUnit->getUpgrade( sUnitUpgrade::UPGRADE_TYPE_SPEED );
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( ( upgrade ? upgrade->curValue : data->speedMax ) / 4 ) ); //FIXME: might crash if e.g. speedMax = 3
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Speed" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, ( upgrade ? upgrade->curValue : data->speedMax ) / 4, oriData->speedMax / 4 );
+		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED);
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->speedMax) / 4));    //FIXME: might crash if e.g. speedMax = 3
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Speed"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, (upgrade ? upgrade->curValue : data->speedMax) / 4, oriData->speedMax / 4);
 		DETAIL_DOLINEBREAK
 	}
 
 	// energy consumption:
-	if ( data->needsEnergy )
+	if (data->needsEnergy)
 	{
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->needsEnergy ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->needsEnergy, oriData->needsEnergy );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsEnergy));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->needsEnergy, oriData->needsEnergy);
 		DETAIL_DOLINEBREAK
 	}
 
 	// humans needed:
-	if ( data->needsHumans )
+	if (data->needsHumans)
 	{
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->needsHumans ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->needsHumans, oriData->needsHumans );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsHumans));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->needsHumans, oriData->needsHumans);
 		DETAIL_DOLINEBREAK
 	}
 
 	// raw material consumption:
-	if ( data->needsMetal )
+	if (data->needsMetal)
 	{
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->needsMetal ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsMetal, oriData->needsMetal );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsMetal));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsMetal, oriData->needsMetal);
 		DETAIL_DOLINEBREAK
 	}
 
 	// gold consumption:
-	if ( data->convertsGold )
+	if (data->convertsGold)
 	{
-		font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->convertsGold ) );
-		font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Usage" ) );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->convertsGold, oriData->convertsGold );
+		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->convertsGold));
+		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->convertsGold, oriData->convertsGold);
 		DETAIL_DOLINEBREAK
 	}
 
 	// Costs:
-	font->showTextCentered( DETAIL_COLUMN_1, y, iToStr( data->buildCosts ) );
-	font->showText( DETAIL_COLUMN_2, y, lngPack.i18n( "Text~Vehicles~Costs" ) );
-	cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->buildCosts, oriData->buildCosts );
+	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->buildCosts));
+	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Costs"));
+	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->buildCosts, oriData->buildCosts);
 }
 
-void cMenuUnitDetailsBig::setSelection( cMenuUnitListItem* selectedUnit_ )
+void cMenuUnitDetailsBig::setSelection (cMenuUnitListItem* selectedUnit_)
 {
 	selectedUnit = selectedUnit_;
 	draw();
 }
 
-cMenuMaterialBar::cMenuMaterialBar( int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_, bool showLabel_ ) : cMenuItem( x, y )
+cMenuMaterialBar::cMenuMaterialBar (int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_, bool showLabel_) : cMenuItem (x, y)
 {
-	setReleaseSound( SoundData.SNDObjectMenu );
+	setReleaseSound (SoundData.SNDObjectMenu);
 	currentValue = maxValue = maxValue_;
 	inverted = inverted_;
 	showLabel = showLabel_;
-	valueLabel = new cMenuLabel( labelX, labelY, iToStr( currentValue ) );
-	valueLabel->setCentered( true );
+	valueLabel = new cMenuLabel (labelX, labelY, iToStr (currentValue));
+	valueLabel->setCentered (true);
 
-	setType( materialType_ );
+	setType (materialType_);
 }
 
-void cMenuMaterialBar::setType( eMaterialBarTypes materialType_ )
+void cMenuMaterialBar::setType (eMaterialBarTypes materialType_)
 {
-	if ( surface && materialType == materialType_ ) return;
+	if (surface && materialType == materialType_) return;
 
 	materialType = materialType_;
 
-	switch ( materialType )
+	switch (materialType)
 	{
 		default:
 		case MAT_BAR_TYPE_METAL:
@@ -2322,11 +2322,11 @@ void cMenuMaterialBar::setType( eMaterialBarTypes materialType_ )
 void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_FillRect( surface, NULL, 0xFF00FF );
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_FillRect (surface, NULL, 0xFF00FF);
 
-	switch ( materialType )
+	switch (materialType)
 	{
 		case MAT_BAR_TYPE_METAL_HORI_BIG:
 			src.x = 156;
@@ -2371,42 +2371,42 @@ void cMenuMaterialBar::generateSurface()
 			break;
 	}
 
-	SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
+	SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
 }
 
 void cMenuMaterialBar::draw()
 {
-	if ( currentValue <= 0 && maxValue <= 0 ) return;
+	if (currentValue <= 0 && maxValue <= 0) return;
 	SDL_Rect src;
-	src.h = horizontal ? surface->h : ( int )( ( float )currentValue / maxValue * surface->h );
-	src.w = horizontal ? ( int )( ( float )currentValue / maxValue * surface->w ) : surface->w;
+	src.h = horizontal ? surface->h : (int) ( (float) currentValue / maxValue * surface->h);
+	src.w = horizontal ? (int) ( (float) currentValue / maxValue * surface->w) : surface->w;
 	src.x = horizontal ? surface->w - src.w : 0;
 	src.y = 0;
 	SDL_Rect dest;
 	dest.h = dest.w = 0;
 	dest.x = position.x;
-	dest.y = position.y + ( horizontal ? 0 : surface->h - src.h );
+	dest.y = position.y + (horizontal ? 0 : surface->h - src.h);
 
-	if ( inverted && horizontal )
+	if (inverted && horizontal)
 	{
 		dest.x += surface->w - src.w;
 		src.x = 0;
 	}
 
-	SDL_BlitSurface( surface, &src, buffer, &dest );
+	SDL_BlitSurface (surface, &src, buffer, &dest);
 
-	if ( showLabel ) valueLabel->draw();
+	if (showLabel) valueLabel->draw();
 }
 
-void cMenuMaterialBar::setMaximalValue( int maxValue_ )
+void cMenuMaterialBar::setMaximalValue (int maxValue_)
 {
 	maxValue = maxValue_;
 }
 
-void cMenuMaterialBar::setCurrentValue( int currentValue_ )
+void cMenuMaterialBar::setCurrentValue (int currentValue_)
 {
 	currentValue = currentValue_;
-	valueLabel->setText( iToStr( currentValue ) );
+	valueLabel->setText (iToStr (currentValue));
 }
 #if 0
 SDL_Rect cMenuMaterialBar::getPosition() const
@@ -2414,118 +2414,118 @@ SDL_Rect cMenuMaterialBar::getPosition() const
 	return position;
 }
 #endif
-cMenuUpgradeHandler::cMenuUpgradeHandler( int x, int y, cUpgradeHangarMenu* parent ) : cMenuItemContainer( x, y ), parentMenu( parent )
+cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cUpgradeHangarMenu* parent) : cMenuItemContainer (x, y), parentMenu (parent)
 {
-	for ( int i = 0; i < 8; i++ )
+	for (int i = 0; i < 8; i++)
 	{
-		decreaseButtons[i] = new cMenuButton( position.x , position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
-		decreaseButtons[i]->setLocked( true );
-		decreaseButtons[i]->setReleasedFunction( &buttonReleased );
-		addItem( decreaseButtons[i] );
+		decreaseButtons[i] = new cMenuButton (position.x , position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+		decreaseButtons[i]->setLocked (true);
+		decreaseButtons[i]->setReleasedFunction (&buttonReleased);
+		addItem (decreaseButtons[i]);
 
-		increaseButtons[i] = new cMenuButton( position.x + 18, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
-		increaseButtons[i]->setLocked( true );
-		increaseButtons[i]->setReleasedFunction( &buttonReleased );
-		addItem( increaseButtons[i] );
+		increaseButtons[i] = new cMenuButton (position.x + 18, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+		increaseButtons[i]->setLocked (true);
+		increaseButtons[i]->setReleasedFunction (&buttonReleased);
+		addItem (increaseButtons[i]);
 
-		costsLabel[i] = new cMenuLabel( position.x + 40, position.y + 2 + 19 * i );
-		addItem( costsLabel[i] );
+		costsLabel[i] = new cMenuLabel (position.x + 40, position.y + 2 + 19 * i);
+		addItem (costsLabel[i]);
 	}
 	selection = NULL;
 }
 
-void cMenuUpgradeHandler::buttonReleased( void* parent )
+void cMenuUpgradeHandler::buttonReleased (void* parent)
 {
-	cMenuUpgradeHandler* This = reinterpret_cast<cMenuUpgradeHandler*>( parent );
-	if ( !This->selection ) return;
+	cMenuUpgradeHandler* This = reinterpret_cast<cMenuUpgradeHandler*> (parent);
+	if (!This->selection) return;
 
 	sUnitUpgrade* upgrades = This->selection->getUpgrades();
 	cPlayer* owner = This->selection->getOwner();
 
-	for ( int i = 0; i < 8; i++ )
+	for (int i = 0; i < 8; i++)
 	{
-		cUpgradeCalculator::UpgradeTypes upgradeType = This->getUpgradeType( upgrades[i] );
+		cUpgradeCalculator::UpgradeTypes upgradeType = This->getUpgradeType (upgrades[i]);
 		cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 
-		if ( This->increaseButtons[i]->overItem( mouse->x, mouse->y ) )
+		if (This->increaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			This->parentMenu->setCredits( This->parentMenu->getCredits() - upgrades[i].nextPrice );
+			This->parentMenu->setCredits (This->parentMenu->getCredits() - upgrades[i].nextPrice);
 
-			if ( upgradeType != cUpgradeCalculator::kSpeed )
+			if (upgradeType != cUpgradeCalculator::kSpeed)
 			{
-				upgrades[i].curValue += uc.calcIncreaseByUpgrade( upgrades[i].startValue );
-				upgrades[i].nextPrice = uc.calcPrice( upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel );
+				upgrades[i].curValue += uc.calcIncreaseByUpgrade (upgrades[i].startValue);
+				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel);
 			}
 			else
 			{
-				upgrades[i].curValue += 4 * uc.calcIncreaseByUpgrade( upgrades[i].startValue / 4 );
-				upgrades[i].nextPrice = uc.calcPrice( upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel );
+				upgrades[i].curValue += 4 * uc.calcIncreaseByUpgrade (upgrades[i].startValue / 4);
+				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
 			}
 
 			upgrades[i].purchased++;
 
-			This->setSelection( This->selection );
+			This->setSelection (This->selection);
 			This->parentMenu->draw();
 		}
-		else if ( This->decreaseButtons[i]->overItem( mouse->x, mouse->y ) )
+		else if (This->decreaseButtons[i]->overItem (mouse->x, mouse->y))
 		{
-			if ( upgradeType != cUpgradeCalculator::kSpeed )
+			if (upgradeType != cUpgradeCalculator::kSpeed)
 			{
-				upgrades[i].curValue -= uc.calcIncreaseByUpgrade( upgrades[i].startValue );
-				upgrades[i].nextPrice = uc.calcPrice( upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel );
+				upgrades[i].curValue -= uc.calcIncreaseByUpgrade (upgrades[i].startValue);
+				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue, upgrades[i].startValue, upgradeType, owner->researchLevel);
 			}
 			else
 			{
-				upgrades[i].curValue -= 4 * uc.calcIncreaseByUpgrade( upgrades[i].startValue / 4 );
-				upgrades[i].nextPrice = uc.calcPrice( upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel );
+				upgrades[i].curValue -= 4 * uc.calcIncreaseByUpgrade (upgrades[i].startValue / 4);
+				upgrades[i].nextPrice = uc.calcPrice (upgrades[i].curValue / 4, upgrades[i].startValue / 4, upgradeType, owner->researchLevel);
 			}
 
-			This->parentMenu->setCredits( This->parentMenu->getCredits() + upgrades[i].nextPrice );
+			This->parentMenu->setCredits (This->parentMenu->getCredits() + upgrades[i].nextPrice);
 
 			upgrades[i].purchased--;
 
-			This->setSelection( This->selection );
+			This->setSelection (This->selection);
 			This->parentMenu->draw();
 		}
 	}
 }
 
-void cMenuUpgradeHandler::setSelection( cMenuUnitListItem* selection_ )
+void cMenuUpgradeHandler::setSelection (cMenuUnitListItem* selection_)
 {
 	selection = selection_;
-	if ( !selection )
+	if (!selection)
 	{
-		for ( int i = 0; i < 8; i++ )
+		for (int i = 0; i < 8; i++)
 		{
-			increaseButtons[i]->setLocked( true );
-			decreaseButtons[i]->setLocked( true );
-			costsLabel[i]->setText( "" );
+			increaseButtons[i]->setLocked (true);
+			decreaseButtons[i]->setLocked (true);
+			costsLabel[i]->setText ("");
 		}
 		return;
 	}
 	sUnitUpgrade* upgrade = selection->getUpgrades();
-	for ( int i = 0; i < 8; i++ )
+	for (int i = 0; i < 8; i++)
 	{
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable )
-			costsLabel[i]->setText( iToStr( upgrade[i].nextPrice ) );
+		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+			costsLabel[i]->setText (iToStr (upgrade[i].nextPrice));
 		else
-			costsLabel[i]->setText( "" );
+			costsLabel[i]->setText ("");
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable )
-			increaseButtons[i]->setLocked( false );
+		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && parentMenu->getCredits() >= upgrade[i].nextPrice && upgrade[i].nextPrice != cUpgradeCalculator::kNoPriceAvailable)
+			increaseButtons[i]->setLocked (false);
 		else
-			increaseButtons[i]->setLocked( true );
+			increaseButtons[i]->setLocked (true);
 
-		if ( upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0 )
-			decreaseButtons[i]->setLocked( false );
+		if (upgrade[i].type != sUnitUpgrade::UPGRADE_TYPE_NONE && upgrade[i].purchased > 0)
+			decreaseButtons[i]->setLocked (false);
 		else
-			decreaseButtons[i]->setLocked( true );
+			decreaseButtons[i]->setLocked (true);
 	}
 }
 
-cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgrade upgrade )
+cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType (sUnitUpgrade upgrade)
 {
-	switch ( upgrade.type )
+	switch (upgrade.type)
 	{
 		case sUnitUpgrade::UPGRADE_TYPE_DAMAGE:
 			return cUpgradeCalculator::kAttack;
@@ -2549,15 +2549,15 @@ cUpgradeCalculator::UpgradeTypes cMenuUpgradeHandler::getUpgradeType( sUnitUpgra
 	}
 }
 
-cMenuScroller::cMenuScroller( int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem* parent_, void ( *movedCallback_ )( void* ) ) :
-	cMenuItem( x, y ),
-	parent( parent_ ),
-	scrollerType( scrollerType_ ),
-	movedCallback( movedCallback_ )
+cMenuScroller::cMenuScroller (int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem* parent_, void (*movedCallback_) (void*)) :
+	cMenuItem (x, y),
+	parent (parent_),
+	scrollerType (scrollerType_),
+	movedCallback (movedCallback_)
 {
 	SDL_Rect src;
 	src.y = 35;
-	switch ( scrollerType )
+	switch (scrollerType)
 	{
 		case SCROLLER_TYPE_VERT:
 			src.x = 201;
@@ -2580,16 +2580,16 @@ cMenuScroller::cMenuScroller( int x, int y, eMenuScrollerTypes scrollerType_, cM
 	position.h = src.h;
 	mouseXOff = mouseYOff = 0;
 
-	surface = SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_FillRect( surface, NULL, 0xFF00FF );
-	if ( scrollerType == SCROLLER_TYPE_HUD_ZOOM ) SDL_BlitSurface( GraphicsData.gfx_hud_stuff, &src, surface, NULL );
-	else SDL_BlitSurface( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, position.w, position.h, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_FillRect (surface, NULL, 0xFF00FF);
+	if (scrollerType == SCROLLER_TYPE_HUD_ZOOM) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
+	else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 }
 
 void cMenuScroller::draw()
 {
-	SDL_BlitSurface( surface, NULL, buffer, &position );
+	SDL_BlitSurface (surface, NULL, buffer, &position);
 }
 
 bool cMenuScroller::preClicked()
@@ -2599,43 +2599,43 @@ bool cMenuScroller::preClicked()
 	return true;
 }
 
-void cMenuScroller::hoveredAway( void* parent )
+void cMenuScroller::hoveredAway (void* parent)
 {
-	if ( locked ) return;
-	if ( preHoveredAway() && hoverAway ) hoverAway( parent );
+	if (locked) return;
+	if (preHoveredAway() && hoverAway) hoverAway (parent);
 }
 
-void cMenuScroller::movedMouseOver( int lastMouseX, int lastMouseY, void* parent )
+void cMenuScroller::movedMouseOver (int lastMouseX, int lastMouseY, void* parent)
 {
-	if ( !isClicked ) return;
-	mouseMoved( false );
+	if (!isClicked) return;
+	mouseMoved (false);
 }
 
 void cMenuScroller::somewhereMoved()
 {
-	if ( !isClicked ) return;
-	mouseMoved( false );
+	if (!isClicked) return;
+	mouseMoved (false);
 }
 
 
-void cMenuScroller::mouseMoved( bool center )
+void cMenuScroller::mouseMoved (bool center)
 {
-	switch ( scrollerType )
+	switch (scrollerType)
 	{
 		case SCROLLER_TYPE_VERT:
-			position.y = mouse->y - ( center ? ( position.h / 2 ) : mouseYOff );
+			position.y = mouse->y - (center ? (position.h / 2) : mouseYOff);
 			break;
 		case SCROLLER_TYPE_HUD_ZOOM:
 		case SCROLLER_TYPE_HORI:
-			position.x = mouse->x - ( center ? ( position.w / 2 ) : mouseXOff );
+			position.x = mouse->x - (center ? (position.w / 2) : mouseXOff);
 			break;
 	}
-	if ( movedCallback ) movedCallback( parent );
+	if (movedCallback) movedCallback (parent);
 }
 
-void cMenuScroller::move( int value )
+void cMenuScroller::move (int value)
 {
-	switch ( scrollerType )
+	switch (scrollerType)
 	{
 		case SCROLLER_TYPE_VERT:
 			position.y = value;
@@ -2647,42 +2647,42 @@ void cMenuScroller::move( int value )
 	}
 }
 
-cMenuScrollBar::cMenuScrollBar( int x, int y, int h, int pageSteps_, cMenu* parentMenu_, cMenuItem* parentItem_ ) :
-	cMenuItemContainer( x, y ),
-	parentMenu( parentMenu_ ),
-	parentItem( parentItem_ ),
-	pageSteps( pageSteps_ )
+cMenuScrollBar::cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* parentMenu_, cMenuItem* parentItem_) :
+	cMenuItemContainer (x, y),
+	parentMenu (parentMenu_),
+	parentItem (parentItem_),
+	pageSteps (pageSteps_)
 {
 	maximalScroll = position.h = h;
 	position.w = 17;
 	offset = 0;
 	scrollerSteps = 0;
 
-	if ( position.h < 48 ) position.h = 48;
+	if (position.h < 48) position.h = 48;
 	createSurface();
 
-	upButton = new cMenuButton( position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
-	upButton->setReleasedFunction( &upButtonReleased );
-	itemList.Add( upButton );
-	downButton = new cMenuButton( position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu );
-	downButton->setReleasedFunction( &downButtonReleased );
-	itemList.Add( downButton );
-	scroller = new cMenuScroller( position.x, position.y + 17, cMenuScroller::SCROLLER_TYPE_VERT, this );
-	itemList.Add( upButton );
+	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	upButton->setReleasedFunction (&upButtonReleased);
+	itemList.Add (upButton);
+	downButton = new cMenuButton (position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+	downButton->setReleasedFunction (&downButtonReleased);
+	itemList.Add (downButton);
+	scroller = new cMenuScroller (position.x, position.y + 17, cMenuScroller::SCROLLER_TYPE_VERT, this);
+	itemList.Add (upButton);
 }
 
 void cMenuScrollBar::createSurface()
 {
 	SDL_Rect src = { 234, 1, 16, 48};
 	SDL_Rect dest = { 0, 0, 0, 0 };
-	surface = SDL_CreateRGBSurface( Video.getSurfaceType(), 16, position.h - 28, Video.getColDepth(), 0, 0, 0, 0 );
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType(), 16, position.h - 28, Video.getColDepth(), 0, 0, 0, 0);
 	do
 	{
-		if ( position.h - 28 - dest.y < 48 ) src.h = position.h - 28 - dest.x;
-		SDL_BlitSurface( GraphicsData.gfx_menu_stuff, &src, surface, &dest );
+		if (position.h - 28 - dest.y < 48) src.h = position.h - 28 - dest.x;
+		SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, &dest);
 		dest.y += src.h;
 	}
-	while ( dest.y < position.h - 28 );
+	while (dest.y < position.h - 28);
 }
 
 void cMenuScrollBar::draw()
@@ -2690,17 +2690,17 @@ void cMenuScrollBar::draw()
 	SDL_Rect dest = position;
 	dest.x++;
 	dest.y += 14;
-	SDL_BlitSurface( surface, NULL, buffer, &dest );
+	SDL_BlitSurface (surface, NULL, buffer, &dest);
 	upButton->draw();
 	downButton->draw();
-	scroller->move( position.y + 17 + offset * scrollerSteps );
-	if ( scroller->getPosition().y > position.y + position.h - 17 - 14 ) scroller->move( position.y + position.h - 17 - 14 );
+	scroller->move (position.y + 17 + offset * scrollerSteps);
+	if (scroller->getPosition().y > position.y + position.h - 17 - 14) scroller->move (position.y + position.h - 17 - 14);
 	scroller->draw();
 }
 
-void cMenuScrollBar::setMaximalScroll( int maximalScroll_ )
+void cMenuScrollBar::setMaximalScroll (int maximalScroll_)
 {
-	if ( maximalScroll_ <= position.h - 24 )
+	if (maximalScroll_ <= position.h - 24)
 	{
 		offset = 0;
 		maximalOffset = 0;
@@ -2710,82 +2710,82 @@ void cMenuScrollBar::setMaximalScroll( int maximalScroll_ )
 	}
 	maximalScroll = maximalScroll_;
 	bool stayOnBottom = offset == maximalOffset;
-	maximalOffset = ( maximalScroll - ( position.h - 24 ) ) / pageSteps;
+	maximalOffset = (maximalScroll - (position.h - 24)) / pageSteps;
 	maximalOffset++;
-	if ( stayOnBottom ) offset = maximalOffset;
-	scrollerSteps = ( position.h - 17 * 2 - 14 ) / maximalOffset;
+	if (stayOnBottom) offset = maximalOffset;
+	scrollerSteps = (position.h - 17 * 2 - 14) / maximalOffset;
 	scrollerSteps++;
 }
 
-void cMenuScrollBar::upButtonReleased( void* parent )
+void cMenuScrollBar::upButtonReleased (void* parent)
 {
-	cMenuScrollBar* This = reinterpret_cast<cMenuScrollBar*>( parent );
-	if ( This->offset > 0 )
+	cMenuScrollBar* This = reinterpret_cast<cMenuScrollBar*> (parent);
+	if (This->offset > 0)
 	{
 		This->offset--;
 		This->parentMenu->draw();
 	}
 }
 
-void cMenuScrollBar::downButtonReleased( void* parent )
+void cMenuScrollBar::downButtonReleased (void* parent)
 {
-	cMenuScrollBar* This = reinterpret_cast<cMenuScrollBar*>( parent );
-	if ( This->offset < This->maximalOffset )
+	cMenuScrollBar* This = reinterpret_cast<cMenuScrollBar*> (parent);
+	if (This->offset < This->maximalOffset)
 	{
 		This->offset++;
 		This->parentMenu->draw();
 	}
 }
 
-cMenuListBox::cMenuListBox( int x, int y, int w, int h, int maxLines_, cMenu* parentMenu_ ) :
-	cMenuItemContainer( x, y ),
-	parentMenu( parentMenu_ ),
-	maxLines( maxLines_ )
+cMenuListBox::cMenuListBox (int x, int y, int w, int h, int maxLines_, cMenu* parentMenu_) :
+	cMenuItemContainer (x, y),
+	parentMenu (parentMenu_),
+	maxLines (maxLines_)
 {
 	position.w = w;
 	position.h = h;
 
-	maxDrawLines = ( position.h - 24 ) / 14;
+	maxDrawLines = (position.h - 24) / 14;
 
-	scrollBar = new cMenuScrollBar( position.x + position.w - 17, position.y, position.h, 14, parentMenu, this );
-	itemList.Add( scrollBar );
+	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
+	itemList.Add (scrollBar);
 }
 
 void cMenuListBox::draw()
 {
 	scrollBar->draw();
 
-	for ( int i = scrollBar->offset; i < scrollBar->offset + maxDrawLines; i++ )
+	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawLines; i++)
 	{
-		if ( i >= ( int )lines.Size() ) break;
-		font->showText( position.x + 12, position.y + 12 + 14 * ( i - scrollBar->offset ), lines[i] );
+		if (i >= (int) lines.Size()) break;
+		font->showText (position.x + 12, position.y + 12 + 14 * (i - scrollBar->offset), lines[i]);
 	}
 }
 
-void cMenuListBox::addLine( const string& line )
+void cMenuListBox::addLine (const string& line)
 {
-	string line_( line );
+	string line_ (line);
 	size_t pos = 0;
 	size_t length;
 	do
 	{
 		length = line_.length() - pos;
-		while ( font->getTextWide( line_.substr( pos, length ) ) > position.w - 24 - 17 ) length--;
-		lines.Add( line_.substr( pos, length ) );
+		while (font->getTextWide (line_.substr (pos, length)) > position.w - 24 - 17) length--;
+		lines.Add (line_.substr (pos, length));
 		pos += length;
-		if ( pos == line_.length() ) break;
-		line_.insert( pos, "	" );
+		if (pos == line_.length()) break;
+		line_.insert (pos, "	");
 	}
-	while ( pos < line_.length() );
+	while (pos < line_.length());
 
-	scrollBar->setMaximalScroll( ( int )lines.Size() * 14 );
+	scrollBar->setMaximalScroll ( (int) lines.Size() * 14);
 }
 
-cMenuLineEdit::cMenuLineEdit( int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_ ) :
-	cMenuItem( x, y ),
-	lineEditType( lineEditType_ ),
-	fontType( fontType_ ),
-	parentMenu( parentMenu_ )
+cMenuLineEdit::cMenuLineEdit (int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_) :
+	cMenuItem (x, y),
+	lineEditType (lineEditType_),
+	fontType (fontType_),
+	parentMenu (parentMenu_)
 {
 	position.w = w;
 	position.h = h;
@@ -2803,22 +2803,22 @@ cMenuLineEdit::cMenuLineEdit( int x, int y, int w, int h, cMenu* parentMenu_, eU
 void cMenuLineEdit::draw()
 {
 	SDL_Rect offsetRect = getTextDrawOffset();
-	int cursorXOffset = font->getFontSize( fontType ) == FONT_SIZE_SMALL ? -1 : 0;
+	int cursorXOffset = font->getFontSize (fontType) == FONT_SIZE_SMALL ? -1 : 0;
 
-	font->showText( position.x + offsetRect.x, position.y + offsetRect.y, text.substr( startOffset, endOffset - startOffset ), fontType );
-	if ( active && !readOnly ) font->showText( position.x + offsetRect.x + cursorXOffset + font->getTextWide( text.substr( startOffset, cursorPos - startOffset ), fontType ), position.y + offsetRect.y, "|", fontType );
+	font->showText (position.x + offsetRect.x, position.y + offsetRect.y, text.substr (startOffset, endOffset - startOffset), fontType);
+	if (active && !readOnly) font->showText (position.x + offsetRect.x + cursorXOffset + font->getTextWide (text.substr (startOffset, cursorPos - startOffset), fontType), position.y + offsetRect.y, "|", fontType);
 }
 
 bool cMenuLineEdit::preClicked()
 {
-	if ( active )
+	if (active)
 	{
-		int x = mouse->x - ( position.x + getTextDrawOffset().x );
+		int x = mouse->x - (position.x + getTextDrawOffset().x);
 		int cursor = startOffset;
-		while ( font->getTextWide( text.substr( startOffset, cursor - startOffset ), fontType ) < x )
+		while (font->getTextWide (text.substr (startOffset, cursor - startOffset), fontType) < x)
 		{
-			doPosIncrease( cursor, cursor );
-			if ( cursor >= endOffset )
+			doPosIncrease (cursor, cursor);
+			if (cursor >= endOffset)
 			{
 				cursor = endOffset;
 				break;
@@ -2829,12 +2829,12 @@ bool cMenuLineEdit::preClicked()
 	return true;
 }
 
-void cMenuLineEdit::setReadOnly( bool readOnly_ )
+void cMenuLineEdit::setReadOnly (bool readOnly_)
 {
 	readOnly = readOnly_;
 }
 
-void cMenuLineEdit::setTaking( bool takeChars_, bool takeNumerics_ )
+void cMenuLineEdit::setTaking (bool takeChars_, bool takeNumerics_)
 {
 	takeChars = takeChars_;
 	takeNumerics = takeNumerics_;
@@ -2843,12 +2843,12 @@ void cMenuLineEdit::setTaking( bool takeChars_, bool takeNumerics_ )
 void cMenuLineEdit::resetTextPosition()
 {
 	startOffset = 0;
-	endOffset = ( int )text.length();
+	endOffset = (int) text.length();
 	cursorPos = endOffset;
-	while ( font->getTextWide( text.substr( startOffset, endOffset - startOffset ), fontType ) > position.w - getBorderSize() ) doPosDecrease( endOffset );
+	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
 }
 
-void cMenuLineEdit::setText( const string& text_ )
+void cMenuLineEdit::setText (const string& text_)
 {
 	text = text_;
 	resetTextPosition();
@@ -2859,30 +2859,30 @@ const string& cMenuLineEdit::getText() const
 	return text;
 }
 
-void cMenuLineEdit::setSize( int w, int h )
+void cMenuLineEdit::setSize (int w, int h)
 {
 	position.w = w;
 	position.h = h;
 	resetTextPosition();
 }
 
-void cMenuLineEdit::doPosIncrease( int& value, int pos )
+void cMenuLineEdit::doPosIncrease (int& value, int pos)
 {
-	if ( pos < ( int )text.length() )
+	if (pos < (int) text.length())
 	{
 		unsigned char c = text[pos];
-		if ( ( c & 0xE0 ) == 0xE0 ) value += 3;
-		else if ( ( c & 0xC0 ) == 0xC0 ) value += 2;
+		if ( (c & 0xE0) == 0xE0) value += 3;
+		else if ( (c & 0xC0) == 0xC0) value += 2;
 		else  value += 1;
 	}
 }
 
-void cMenuLineEdit::doPosDecrease( int& pos )
+void cMenuLineEdit::doPosDecrease (int& pos)
 {
-	if ( pos > 0 )
+	if (pos > 0)
 	{
 		unsigned char c = text[pos - 1];
-		while ( ( ( c & 0xE0 ) != 0xE0 ) && ( ( c & 0xC0 ) != 0xC0 ) && ( ( c & 0x80 ) == 0x80 ) )
+		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
 		{
 			pos--;
 			c = text[pos - 1];
@@ -2891,65 +2891,65 @@ void cMenuLineEdit::doPosDecrease( int& pos )
 	}
 }
 
-void cMenuLineEdit::scrollLeft( bool changeCursor )
+void cMenuLineEdit::scrollLeft (bool changeCursor)
 {
 	// makes the cursor go left
-	if ( changeCursor && cursorPos > 0 ) doPosDecrease( cursorPos );
+	if (changeCursor && cursorPos > 0) doPosDecrease (cursorPos);
 
-	if ( cursorPos > 0 ) while ( cursorPos - 1 < startOffset ) doPosDecrease( startOffset );
-	else while ( cursorPos < startOffset ) doPosDecrease( startOffset );
+	if (cursorPos > 0) while (cursorPos - 1 < startOffset) doPosDecrease (startOffset);
+	else while (cursorPos < startOffset) doPosDecrease (startOffset);
 
-	if ( font->getTextWide( text.substr( startOffset, text.length() - startOffset ), fontType ) > position.w - getBorderSize() )
+	if (font->getTextWide (text.substr (startOffset, text.length() - startOffset), fontType) > position.w - getBorderSize())
 	{
-		endOffset = ( int )text.length();
-		while ( font->getTextWide( text.substr( startOffset, endOffset - startOffset ), fontType ) > position.w - getBorderSize() ) doPosDecrease( endOffset );
+		endOffset = (int) text.length();
+		while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
 	}
 }
 
 void cMenuLineEdit::scrollRight()
 {
 	// makes the cursor go right
-	if ( cursorPos < ( int )text.length() ) doPosIncrease( cursorPos, cursorPos );
-	while ( cursorPos > endOffset ) doPosIncrease( endOffset, endOffset );
-	while ( font->getTextWide( text.substr( startOffset, endOffset - startOffset ), fontType ) > position.w - getBorderSize() ) doPosIncrease( startOffset, startOffset );
+	if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+	while (cursorPos > endOffset) doPosIncrease (endOffset, endOffset);
+	while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
 }
 
 void cMenuLineEdit::deleteLeft()
 {
 	// deletes the first character left from the cursor
-	if ( cursorPos > 0 )
+	if (cursorPos > 0)
 	{
 		unsigned char c = text[cursorPos - 1];
-		while ( ( ( c & 0xE0 ) != 0xE0 ) && ( ( c & 0xC0 ) != 0xC0 ) && ( ( c & 0x80 ) == 0x80 ) )
+		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
 		{
-			text.erase( cursorPos - 1, 1 );
+			text.erase (cursorPos - 1, 1);
 			cursorPos--;
 			c = text[cursorPos - 1];
 		}
-		text.erase( cursorPos - 1, 1 );
+		text.erase (cursorPos - 1, 1);
 		cursorPos--;
-		if ( endOffset > ( int )text.length() ) endOffset = ( int )text.length();
-		scrollLeft( false );
+		if (endOffset > (int) text.length()) endOffset = (int) text.length();
+		scrollLeft (false);
 	}
 }
 
 void cMenuLineEdit::deleteRight()
 {
 	// deletes the first character right from the cursor
-	if ( cursorPos < ( int )text.length() )
+	if (cursorPos < (int) text.length())
 	{
 		unsigned char c = text[cursorPos];
-		if ( ( c & 0xE0 ) == 0xE0 )text.erase( cursorPos, 3 );
-		else if ( ( c & 0xC0 ) == 0xC0 )text.erase( cursorPos, 2 );
-		else text.erase( cursorPos, 1 );
-		if ( endOffset > ( int )text.length() ) endOffset = ( int )text.length();
+		if ( (c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
+		else if ( (c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
+		else text.erase (cursorPos, 1);
+		if (endOffset > (int) text.length()) endOffset = (int) text.length();
 	}
 }
 
 SDL_Rect cMenuLineEdit::getTextDrawOffset() const
 {
 	SDL_Rect retRect = { 0, 0, 0, 0 };
-	switch ( lineEditType )
+	switch (lineEditType)
 	{
 		default:
 		case LE_TYPE_IN_BOX:
@@ -2963,7 +2963,7 @@ SDL_Rect cMenuLineEdit::getTextDrawOffset() const
 
 int cMenuLineEdit::getBorderSize()
 {
-	switch ( lineEditType )
+	switch (lineEditType)
 	{
 		default:
 		case LE_TYPE_IN_BOX:
@@ -2973,17 +2973,17 @@ int cMenuLineEdit::getBorderSize()
 	}
 }
 
-bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, const string& ch, void* parent )
+bool cMenuLineEdit::handleKeyInput (SDL_keysym keysym, const string& ch, void* parent)
 {
-	if ( readOnly ) return false;
+	if (readOnly) return false;
 
-	switch ( keysym.sym )
+	switch (keysym.sym)
 	{
 		case SDLK_RETURN:
-			if ( returnPressed )
+			if (returnPressed)
 			{
-				PlayFX( SoundData.SNDHudButton );
-				returnPressed( parent );
+				PlayFX (SoundData.SNDHudButton);
+				returnPressed (parent);
 			}
 			break;
 		case SDLK_LEFT:
@@ -2996,38 +2996,38 @@ bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, const string& ch, void* p
 			cursorPos = 0;
 			break;
 		case SDLK_END:
-			cursorPos = ( int )text.length();
+			cursorPos = (int) text.length();
 			break;
 		case SDLK_BACKSPACE:
 			deleteLeft();
-			if ( wasKeyInput ) wasKeyInput( parent );
+			if (wasKeyInput) wasKeyInput (parent);
 			break;
 		case SDLK_DELETE:
 			deleteRight();
-			if ( wasKeyInput ) wasKeyInput( parent );
+			if (wasKeyInput) wasKeyInput (parent);
 			break;
 		default: // no special key - handle as normal character:
-			if ( keysym.unicode >= 32 )
+			if (keysym.unicode >= 32)
 			{
-				if ( keysym.unicode >= 48 && keysym.unicode <= 57 )
+				if (keysym.unicode >= 48 && keysym.unicode <= 57)
 				{
-					if ( !takeNumerics ) break;
+					if (!takeNumerics) break;
 				}
-				else if ( !takeChars ) break;
+				else if (!takeChars) break;
 
-				text.insert( cursorPos, ch );
-				if ( cursorPos < ( int )text.length() ) doPosIncrease( cursorPos, cursorPos );
-				if ( cursorPos >= endOffset )
+				text.insert (cursorPos, ch);
+				if (cursorPos < (int) text.length()) doPosIncrease (cursorPos, cursorPos);
+				if (cursorPos >= endOffset)
 				{
-					doPosIncrease( endOffset, endOffset );
-					while ( font->getTextWide( text.substr( startOffset, endOffset - startOffset ), fontType ) > position.w - getBorderSize() ) doPosIncrease( startOffset, startOffset );
+					doPosIncrease (endOffset, endOffset);
+					while (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosIncrease (startOffset, startOffset);
 				}
 				else
 				{
-					if ( font->getTextWide( text.substr( startOffset, endOffset - startOffset ), fontType ) > position.w - getBorderSize() ) doPosDecrease( endOffset );
-					else doPosIncrease( endOffset, cursorPos );
+					if (font->getTextWide (text.substr (startOffset, endOffset - startOffset), fontType) > position.w - getBorderSize()) doPosDecrease (endOffset);
+					else doPosIncrease (endOffset, cursorPos);
 				}
-				if ( wasKeyInput ) wasKeyInput( parent );
+				if (wasKeyInput) wasKeyInput (parent);
 			}
 			break;
 	}
@@ -3035,43 +3035,43 @@ bool cMenuLineEdit::handleKeyInput( SDL_keysym keysym, const string& ch, void* p
 	return true;
 }
 
-void cMenuLineEdit::setReturnPressedFunc( void ( *returnPressed_ )( void* ) )
+void cMenuLineEdit::setReturnPressedFunc (void (*returnPressed_) (void*))
 {
 	returnPressed = returnPressed_;
 }
 
-cMenuChatBox::cMenuChatBox( int x, int y, cMenu* parentMenu_ ) :
-	cMenuLineEdit( x, y, Video.getResolutionX() - HUD_TOTAL_WIDTH, 21, parentMenu_ )
+cMenuChatBox::cMenuChatBox (int x, int y, cMenu* parentMenu_) :
+	cMenuLineEdit (x, y, Video.getResolutionX() - HUD_TOTAL_WIDTH, 21, parentMenu_)
 {
 	generateSurface();
 }
 
 void cMenuChatBox::generateSurface()
 {
-	if ( Video.getResolutionX() - HUD_TOTAL_WIDTH - 20 < 60 ) return;
+	if (Video.getResolutionX() - HUD_TOTAL_WIDTH - 20 < 60) return;
 
-	surface = SDL_CreateRGBSurface( Video.getSurfaceType(), Video.getResolutionX() - HUD_TOTAL_WIDTH - 20, 48, Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_FillRect( surface, NULL, 0xFF00FF );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX() - HUD_TOTAL_WIDTH - 20, 48, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_FillRect (surface, NULL, 0xFF00FF);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 
 	SDL_Rect src = { 0, 0, 30, 48 };
 	SDL_Rect dest = { 0, 0, 0, 0 };
 
 	// blit the beginning
-	SDL_BlitSurface( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
 	// blit the end
 	src.x = 40;
 	dest.x = surface->w - 30;
-	SDL_BlitSurface( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+	SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
 
 	int restWidth = surface->w - 60;
 	src.x = 30;
 	dest.x = 30;
-	while ( restWidth > 0 )
+	while (restWidth > 0)
 	{
 		src.w = 10;
-		if ( restWidth < 10 ) src.w = restWidth;
-		SDL_BlitSurface( GraphicsData.gfx_hud_chatbox, &src, surface, &dest );
+		if (restWidth < 10) src.w = restWidth;
+		SDL_BlitSurface (GraphicsData.gfx_hud_chatbox, &src, surface, &dest);
 		dest.x += src.w;
 		restWidth -= src.w;
 	}
@@ -3084,41 +3084,41 @@ int cMenuChatBox::getBorderSize() const
 
 void cMenuChatBox::draw()
 {
-	if ( disabled ) return;
+	if (disabled) return;
 
-	if ( surface )
+	if (surface)
 	{
-		SDL_BlitSurface( surface, NULL, buffer, &position );
+		SDL_BlitSurface (surface, NULL, buffer, &position);
 	}
 
-	font->showText( position.x + 28, position.y + 5, text.substr( startOffset, endOffset - startOffset ) );
-	if ( active && !readOnly ) font->showText( position.x + 28 + font->getTextWide( text.substr( startOffset, cursorPos - startOffset ) ), position.y + 5, "|" );
+	font->showText (position.x + 28, position.y + 5, text.substr (startOffset, endOffset - startOffset));
+	if (active && !readOnly) font->showText (position.x + 28 + font->getTextWide (text.substr (startOffset, cursorPos - startOffset)), position.y + 5, "|");
 }
 
-cMenuPlayersBox::cMenuPlayersBox( int x, int y, int w, int h, cNetworkMenu* parentMenu_ ) : cMenuItemContainer( x, y ), parentMenu( parentMenu_ )
+cMenuPlayersBox::cMenuPlayersBox (int x, int y, int w, int h, cNetworkMenu* parentMenu_) : cMenuItemContainer (x, y), parentMenu (parentMenu_)
 {
 	position.w = w;
 	position.h = h;
 
-	maxDrawPlayers = ( position.h - 24 ) / 14;
+	maxDrawPlayers = (position.h - 24) / 14;
 
-	scrollBar = new cMenuScrollBar( position.x + position.w - 17, position.y, position.h, 14, parentMenu, this );
-	itemList.Add( scrollBar );
+	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
+	itemList.Add (scrollBar);
 
-	for ( int i = 0; i < maxDrawPlayers; i++ )
+	for (int i = 0; i < maxDrawPlayers; i++)
 	{
-		cMenuImage* colorImage = new cMenuImage( position.x + 12, position.y + 12 + 14 * i );
-		cMenuLabel* nameLabel = new cMenuLabel( position.x + 12 + 16, position.y + 12 + 14 * i );
-		cMenuImage* readyImage = new cMenuImage( position.x + position.w - 17 - 15, position.y + 12 + 14 * i );
-		playerColors.Add( colorImage );
-		playerNames.Add( nameLabel );
-		playerReadys.Add( readyImage );
+		cMenuImage* colorImage = new cMenuImage (position.x + 12, position.y + 12 + 14 * i);
+		cMenuLabel* nameLabel = new cMenuLabel (position.x + 12 + 16, position.y + 12 + 14 * i);
+		cMenuImage* readyImage = new cMenuImage (position.x + position.w - 17 - 15, position.y + 12 + 14 * i);
+		playerColors.Add (colorImage);
+		playerNames.Add (nameLabel);
+		playerReadys.Add (readyImage);
 	}
 }
 
 cMenuPlayersBox::~cMenuPlayersBox()
 {
-	for ( int i = 0; i < maxDrawPlayers; i++ )
+	for (int i = 0; i < maxDrawPlayers; i++)
 	{
 		delete playerColors[i];
 		delete playerNames[i];
@@ -3130,35 +3130,35 @@ void cMenuPlayersBox::draw()
 {
 	SDL_Rect src = { 10, 0, 10, 10 };
 
-	AutoSurface readySurface( SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 ) );
-	SDL_SetColorKey( readySurface, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_FillRect( readySurface, NULL, 0xFF00FF );
-	SDL_BlitSurface( GraphicsData.gfx_player_ready, &src, readySurface, NULL );
+	AutoSurface readySurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (readySurface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_FillRect (readySurface, NULL, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, readySurface, NULL);
 
 	src.x -= 10;
-	AutoSurface notReadySurface( SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 ) );
-	SDL_SetColorKey( notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF );
-	SDL_FillRect( notReadySurface, NULL, 0xFF00FF );
-	SDL_BlitSurface( GraphicsData.gfx_player_ready, &src, notReadySurface, NULL );
+	AutoSurface notReadySurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+	SDL_SetColorKey (notReadySurface, SDL_SRCCOLORKEY, 0xFF00FF);
+	SDL_FillRect (notReadySurface, NULL, 0xFF00FF);
+	SDL_BlitSurface (GraphicsData.gfx_player_ready, &src, notReadySurface, NULL);
 
-	for ( int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++ )
+	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 	{
-		if ( i < ( int )players->Size() )
+		if (i < (int) players->Size())
 		{
-			if ( ( *players )[i]->ready ) playerReadys[i - scrollBar->offset]->setImage( readySurface );
-			else playerReadys[i - scrollBar->offset]->setImage( notReadySurface );
+			if ( (*players) [i]->ready) playerReadys[i - scrollBar->offset]->setImage (readySurface);
+			else playerReadys[i - scrollBar->offset]->setImage (notReadySurface);
 
-			AutoSurface colorSurface( SDL_CreateRGBSurface( Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 ) );
-			SDL_BlitSurface( OtherData.colors[( *players )[i]->color], &src, colorSurface, NULL );
-			playerColors[i - scrollBar->offset]->setImage( colorSurface );
+			AutoSurface colorSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
+			SDL_BlitSurface (OtherData.colors[ (*players) [i]->color], &src, colorSurface, NULL);
+			playerColors[i - scrollBar->offset]->setImage (colorSurface);
 
-			playerNames[i - scrollBar->offset]->setText( ( *players )[i]->name );
+			playerNames[i - scrollBar->offset]->setText ( (*players) [i]->name);
 		}
 		else
 		{
-			playerColors[i - scrollBar->offset]->setImage( NULL );
-			playerReadys[i - scrollBar->offset]->setImage( NULL );
-			playerNames[i - scrollBar->offset]->setText( "" );
+			playerColors[i - scrollBar->offset]->setImage (NULL);
+			playerReadys[i - scrollBar->offset]->setImage (NULL);
+			playerNames[i - scrollBar->offset]->setText ("");
 		}
 
 		playerColors[i - scrollBar->offset]->draw();
@@ -3170,37 +3170,37 @@ void cMenuPlayersBox::draw()
 
 bool cMenuPlayersBox::preClicked()
 {
-	if ( mouse->x > position.x + position.w - 17 - 15 && mouse->x < position.x + position.w - 17 - 5 )
+	if (mouse->x > position.x + position.w - 17 - 15 && mouse->x < position.x + position.w - 17 - 5)
 	{
-		for ( int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++ )
+		for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 		{
-			if ( i >= ( int )players->Size() ) break;
-			if ( mouse->y > position.y + 12 + 14 * ( i - scrollBar->offset ) && mouse->y < position.y + 12 + 14 * ( i - scrollBar->offset ) + 10 )
+			if (i >= (int) players->Size()) break;
+			if (mouse->y > position.y + 12 + 14 * (i - scrollBar->offset) && mouse->y < position.y + 12 + 14 * (i - scrollBar->offset) + 10)
 			{
-				parentMenu->playerReadyClicked( ( *players )[i] );
+				parentMenu->playerReadyClicked ( (*players) [i]);
 			}
 		}
 	}
 	return true;
 }
 
-void cMenuPlayersBox::setPlayers( cList<sMenuPlayer*>* player_ )
+void cMenuPlayersBox::setPlayers (cList<sMenuPlayer*>* player_)
 {
 	players = player_;
 
-	scrollBar->setMaximalScroll( ( int )players->Size() * 14 );
+	scrollBar->setMaximalScroll ( (int) players->Size() * 14);
 }
 
-cMenuSaveSlot::cMenuSaveSlot( int x, int y, cMenu* parent ) : cMenuItem( x, y )
+cMenuSaveSlot::cMenuSaveSlot (int x, int y, cMenu* parent) : cMenuItem (x, y)
 {
 	position.w = 203;
 	position.h = 71;
 
-	saveNumber = new cMenuLabel( position.x + 13, position.y + 27, "", FONT_LATIN_BIG );
-	saveTime = new cMenuLabel( position.x + 43, position.y + 19 );
-	saveType = new cMenuLabel( position.x + 156, position.y + 19 );
-	saveName = new cMenuLineEdit( position.x + 38, position.y + 37, 154, 18, parent );
-	saveName->setReadOnly( true );
+	saveNumber = new cMenuLabel (position.x + 13, position.y + 27, "", FONT_LATIN_BIG);
+	saveTime = new cMenuLabel (position.x + 43, position.y + 19);
+	saveType = new cMenuLabel (position.x + 156, position.y + 19);
+	saveName = new cMenuLineEdit (position.x + 38, position.y + 37, 154, 18, parent);
+	saveName->setReadOnly (true);
 }
 
 void cMenuSaveSlot::draw()
@@ -3211,24 +3211,24 @@ void cMenuSaveSlot::draw()
 	saveName->draw();
 }
 
-void cMenuSaveSlot::setSaveData( sSaveFile saveFile, bool selected )
+void cMenuSaveSlot::setSaveData (sSaveFile saveFile, bool selected)
 {
-	saveNumber->setText( iToStr( saveFile.number ) );
-	saveType->setText( saveFile.type );
-	saveTime->setText( saveFile.time );
-	saveName->setText( saveFile.gamename );
-	if ( selected ) saveNumber->setFontType( FONT_LATIN_BIG_GOLD );
-	else saveNumber->setFontType( FONT_LATIN_BIG );
+	saveNumber->setText (iToStr (saveFile.number));
+	saveType->setText (saveFile.type);
+	saveTime->setText (saveFile.time);
+	saveName->setText (saveFile.gamename);
+	if (selected) saveNumber->setFontType (FONT_LATIN_BIG_GOLD);
+	else saveNumber->setFontType (FONT_LATIN_BIG);
 }
 
-void cMenuSaveSlot::reset( int number, bool selected )
+void cMenuSaveSlot::reset (int number, bool selected)
 {
-	saveNumber->setText( iToStr( number ) );
-	saveType->setText( "" );
-	saveTime->setText( "" );
-	saveName->setText( "" );
-	if ( selected ) saveNumber->setFontType( FONT_LATIN_BIG_GOLD );
-	else saveNumber->setFontType( FONT_LATIN_BIG );
+	saveNumber->setText (iToStr (number));
+	saveType->setText ("");
+	saveTime->setText ("");
+	saveName->setText ("");
+	if (selected) saveNumber->setFontType (FONT_LATIN_BIG_GOLD);
+	else saveNumber->setFontType (FONT_LATIN_BIG);
 }
 
 cMenuLineEdit* cMenuSaveSlot::getNameEdit()
@@ -3236,123 +3236,123 @@ cMenuLineEdit* cMenuSaveSlot::getNameEdit()
 	return saveName;
 }
 
-cMenuBuildSpeedHandler::cMenuBuildSpeedHandler( int x, int y ) : cMenuItemContainer( x, y )
+cMenuBuildSpeedHandler::cMenuBuildSpeedHandler (int x, int y) : cMenuItemContainer (x, y)
 {
 	speedGroup = new cMenuRadioGroup();
 
-	for ( int i = 0; i < 3; i++ )
+	for (int i = 0; i < 3; i++)
 	{
 		int factor = i + 1;
-		if ( i == 2 ) factor = 4;
-		turnsLabels[i] = new cMenuLabel( position.x + 97, position.y + 25 * i + 5 );
-		costsLabels[i] = new cMenuLabel( position.x + 137, position.y + 25 * i + 5 );
-		turnsLabels[i]->setCentered( true );
-		costsLabels[i]->setCentered( true );
-		speedButtons[i] =  new cMenuCheckButton( position.x, position.y + 25 * i, lngPack.i18n( "Text~Button~Build" ) + " x" + iToStr( factor ), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON );
-		speedGroup->addButton( speedButtons[i] );
-		addItem( turnsLabels[i] );
-		addItem( costsLabels[i] );
+		if (i == 2) factor = 4;
+		turnsLabels[i] = new cMenuLabel (position.x + 97, position.y + 25 * i + 5);
+		costsLabels[i] = new cMenuLabel (position.x + 137, position.y + 25 * i + 5);
+		turnsLabels[i]->setCentered (true);
+		costsLabels[i]->setCentered (true);
+		speedButtons[i] =  new cMenuCheckButton (position.x, position.y + 25 * i, lngPack.i18n ("Text~Button~Build") + " x" + iToStr (factor), i == 0, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON);
+		speedGroup->addButton (speedButtons[i]);
+		addItem (turnsLabels[i]);
+		addItem (costsLabels[i]);
 	}
-	addItem( speedGroup );
+	addItem (speedGroup);
 	position.w = 77;
 	position.h = 75;
 }
 
-void cMenuBuildSpeedHandler::setValues( int* turboBuildTurns, int* turboBuildCosts )
+void cMenuBuildSpeedHandler::setValues (int* turboBuildTurns, int* turboBuildCosts)
 {
-	turnsLabels[0]->setText( iToStr( turboBuildTurns[0] ) );
-	costsLabels[0]->setText( iToStr( turboBuildCosts[0] ) );
+	turnsLabels[0]->setText (iToStr (turboBuildTurns[0]));
+	costsLabels[0]->setText (iToStr (turboBuildCosts[0]));
 
-	if ( turboBuildTurns[1] > 0 )
+	if (turboBuildTurns[1] > 0)
 	{
-		turnsLabels[1]->setText( iToStr( turboBuildTurns[1] ) );
-		costsLabels[1]->setText( iToStr( turboBuildCosts[1] ) );
-		speedButtons[1]->setLocked( false );
+		turnsLabels[1]->setText (iToStr (turboBuildTurns[1]));
+		costsLabels[1]->setText (iToStr (turboBuildCosts[1]));
+		speedButtons[1]->setLocked (false);
 	}
 	else
 	{
-		turnsLabels[1]->setText( "" );
-		costsLabels[1]->setText( "" );
-		speedButtons[1]->setLocked( true );
-		if ( !speedGroup->buttonIsChecked( 0 ) ) speedButtons[0]->setChecked( true );
+		turnsLabels[1]->setText ("");
+		costsLabels[1]->setText ("");
+		speedButtons[1]->setLocked (true);
+		if (!speedGroup->buttonIsChecked (0)) speedButtons[0]->setChecked (true);
 	}
 
-	if ( turboBuildTurns[2] > 0 )
+	if (turboBuildTurns[2] > 0)
 	{
-		turnsLabels[2]->setText( iToStr( turboBuildTurns[2] ) );
-		costsLabels[2]->setText( iToStr( turboBuildCosts[2] ) );
-		speedButtons[2]->setLocked( false );
+		turnsLabels[2]->setText (iToStr (turboBuildTurns[2]));
+		costsLabels[2]->setText (iToStr (turboBuildCosts[2]));
+		speedButtons[2]->setLocked (false);
 	}
 	else
 	{
-		turnsLabels[2]->setText( "" );
-		costsLabels[2]->setText( "" );
-		speedButtons[2]->setLocked( true );
-		if ( speedGroup->buttonIsChecked( 2 ) ) speedButtons[1]->setChecked( true );
+		turnsLabels[2]->setText ("");
+		costsLabels[2]->setText ("");
+		speedButtons[2]->setLocked (true);
+		if (speedGroup->buttonIsChecked (2)) speedButtons[1]->setChecked (true);
 	}
 }
 
-void cMenuBuildSpeedHandler::setBuildSpeed( int buildSpeed )
+void cMenuBuildSpeedHandler::setBuildSpeed (int buildSpeed)
 {
-	if ( buildSpeed < 0 && buildSpeed >= 3 ) return;
-	speedButtons[buildSpeed]->setChecked( true );
+	if (buildSpeed < 0 && buildSpeed >= 3) return;
+	speedButtons[buildSpeed]->setChecked (true);
 }
 
 int cMenuBuildSpeedHandler::getBuildSpeed() const
 {
-	for ( int i = 0; i < 3; i++ )
+	for (int i = 0; i < 3; i++)
 	{
-		if ( speedGroup->buttonIsChecked( i ) ) return i;
+		if (speedGroup->buttonIsChecked (i)) return i;
 	}
 	return 0;
 }
 
-cMenuUpgradeFilter::cMenuUpgradeFilter( int x, int y, cHangarMenu* parentMenu_ ) : cMenuItemContainer( x, y ), parentMenu( parentMenu_ )
+cMenuUpgradeFilter::cMenuUpgradeFilter (int x, int y, cHangarMenu* parentMenu_) : cMenuItemContainer (x, y), parentMenu (parentMenu_)
 {
-	checkButtonTank = new cMenuCheckButton( position.x, position.y, "", true, false, cMenuCheckButton::CHECKBOX_TYPE_TANK );
-	checkButtonTank->setClickedFunction( &buttonChanged );
-	addItem( checkButtonTank );
+	checkButtonTank = new cMenuCheckButton (position.x, position.y, "", true, false, cMenuCheckButton::CHECKBOX_TYPE_TANK);
+	checkButtonTank->setClickedFunction (&buttonChanged);
+	addItem (checkButtonTank);
 
-	checkButtonPlane = new cMenuCheckButton( position.x + 33, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_PLANE );
-	checkButtonPlane->setClickedFunction( &buttonChanged );
-	addItem( checkButtonPlane );
+	checkButtonPlane = new cMenuCheckButton (position.x + 33, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_PLANE);
+	checkButtonPlane->setClickedFunction (&buttonChanged);
+	addItem (checkButtonPlane);
 
-	checkButtonShip = new cMenuCheckButton( position.x + 33 * 2, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_SHIP );
-	checkButtonShip->setClickedFunction( &buttonChanged );
-	addItem( checkButtonShip );
+	checkButtonShip = new cMenuCheckButton (position.x + 33 * 2, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_SHIP);
+	checkButtonShip->setClickedFunction (&buttonChanged);
+	addItem (checkButtonShip);
 
-	checkButtonBuilding = new cMenuCheckButton( position.x + 33 * 3, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_BUILD );
-	checkButtonBuilding->setClickedFunction( &buttonChanged );
-	addItem( checkButtonBuilding );
+	checkButtonBuilding = new cMenuCheckButton (position.x + 33 * 3, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_BUILD);
+	checkButtonBuilding->setClickedFunction (&buttonChanged);
+	addItem (checkButtonBuilding);
 
-	checkButtonTNT = new cMenuCheckButton( position.x + 33 * 4, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT );
-	checkButtonTNT->setClickedFunction( &buttonChanged );
-	addItem( checkButtonTNT );
+	checkButtonTNT = new cMenuCheckButton (position.x + 33 * 4, position.y, "", false, false, cMenuCheckButton::CHECKBOX_TYPE_TNT);
+	checkButtonTNT->setClickedFunction (&buttonChanged);
+	addItem (checkButtonTNT);
 }
 
-void cMenuUpgradeFilter::setTankChecked( bool checked )
+void cMenuUpgradeFilter::setTankChecked (bool checked)
 {
-	checkButtonTank->setChecked( checked );
+	checkButtonTank->setChecked (checked);
 }
 
-void cMenuUpgradeFilter::setPlaneChecked( bool checked )
+void cMenuUpgradeFilter::setPlaneChecked (bool checked)
 {
-	checkButtonPlane->setChecked( checked );
+	checkButtonPlane->setChecked (checked);
 }
 
-void cMenuUpgradeFilter::setShipChecked( bool checked )
+void cMenuUpgradeFilter::setShipChecked (bool checked)
 {
-	checkButtonShip->setChecked( checked );
+	checkButtonShip->setChecked (checked);
 }
 
-void cMenuUpgradeFilter::setBuildingChecked( bool checked )
+void cMenuUpgradeFilter::setBuildingChecked (bool checked)
 {
-	checkButtonBuilding->setChecked( checked );
+	checkButtonBuilding->setChecked (checked);
 }
 
-void cMenuUpgradeFilter::setTNTChecked( bool checked )
+void cMenuUpgradeFilter::setTNTChecked (bool checked)
 {
-	checkButtonTNT->setChecked( checked );
+	checkButtonTNT->setChecked (checked);
 }
 
 bool cMenuUpgradeFilter::TankIsChecked() const
@@ -3380,50 +3380,50 @@ bool cMenuUpgradeFilter::TNTIsChecked() const
 	return checkButtonTNT->isChecked();
 }
 
-void cMenuUpgradeFilter::buttonChanged( void* parent )
+void cMenuUpgradeFilter::buttonChanged (void* parent)
 {
-	cMenuUpgradeFilter* filter = reinterpret_cast<cMenuUpgradeFilter*>( parent );
+	cMenuUpgradeFilter* filter = reinterpret_cast<cMenuUpgradeFilter*> (parent);
 	filter->parentMenu->generateSelectionList();
 	filter->parentMenu->draw();
 }
 
-cMenuStoredUnitDetails::cMenuStoredUnitDetails( int x, int y, sUnitData* unitData_ ) : cMenuItem( x, y ), unitData( unitData_ )
+cMenuStoredUnitDetails::cMenuStoredUnitDetails (int x, int y, sUnitData* unitData_) : cMenuItem (x, y), unitData (unitData_)
 {
 	position.w = 135;
 	position.h = 45;
 }
 
-void cMenuStoredUnitDetails::setUnitData( sUnitData* unitData_ )
+void cMenuStoredUnitDetails::setUnitData (sUnitData* unitData_)
 {
 	unitData = unitData_;
 }
 
 void cMenuStoredUnitDetails::draw()
 {
-	if ( !unitData ) return;
+	if (!unitData) return;
 
-	cUnitDataSymbolHandler::drawNumber( position.x + 16, position.y + 12, unitData->hitpointsCur, unitData->hitpointsMax );
-	font->showText( position.x + 30, position.y + 12, lngPack.i18n( "Text~Hud~Hitpoints" ), FONT_LATIN_SMALL_WHITE );
-	cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, false, unitData->hitpointsCur, unitData->hitpointsMax );
+	cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12, unitData->hitpointsCur, unitData->hitpointsMax);
+	font->showText (position.x + 30, position.y + 12, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
+	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, false, unitData->hitpointsCur, unitData->hitpointsMax);
 
-	if ( unitData->canAttack )
+	if (unitData->canAttack)
 	{
-		cUnitDataSymbolHandler::drawNumber( position.x + 16, position.y + 12 + 15, unitData->ammoCur, unitData->ammoMax );
-		font->showText( position.x + 30, position.y + 27, lngPack.i18n( "Text~Hud~AmmoShort" ), FONT_LATIN_SMALL_WHITE );
-		cUnitDataSymbolHandler::drawSymbols( cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, false, unitData->ammoCur, unitData->ammoMax );
+		cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12 + 15, unitData->ammoCur, unitData->ammoMax);
+		font->showText (position.x + 30, position.y + 27, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
+		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, false, unitData->ammoCur, unitData->ammoMax);
 	}
 }
 
-cMenuSlider::cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu* parent_, int wight, eSliderType type_, eSliderDirection direction_ ) :
-	cMenuItem( x, y ),
-	type( type_ ),
-	direction( direction_ ),
-	parent( parent_ )
+cMenuSlider::cMenuSlider (int x, int y, float minValue_, float maxValue_, cMenu* parent_, int wight, eSliderType type_, eSliderDirection direction_) :
+	cMenuItem (x, y),
+	type (type_),
+	direction (direction_),
+	parent (parent_)
 {
-	setBorders( minValue_, maxValue_ );
+	setBorders (minValue_, maxValue_);
 	curValue = minValue;
 
-	switch ( type )
+	switch (type)
 	{
 		case SLIDER_TYPE_NORMAL:
 		{
@@ -3431,10 +3431,10 @@ cMenuSlider::cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu*
 			position.w = src.w;
 			position.h = src.h;
 
-			surface = SDL_CreateRGBSurface( Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0 );
-			SDL_BlitSurface( GraphicsData.gfx_menu_stuff, &src, surface, NULL );
+			surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
+			SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 
-			scroller = new cMenuScroller( x - 7, y - 7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved );
+			scroller = new cMenuScroller (x - 7, y - 7, cMenuScroller::SCROLLER_TYPE_HORI, this, &scrollerMoved);
 		}
 		break;
 		case SLIDER_TYPE_HUD_ZOOM:
@@ -3443,7 +3443,7 @@ cMenuSlider::cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu*
 
 			surface = NULL;
 
-			scroller = new cMenuScroller( x, y, cMenuScroller::SCROLLER_TYPE_HUD_ZOOM, this, &scrollerMoved );
+			scroller = new cMenuScroller (x, y, cMenuScroller::SCROLLER_TYPE_HUD_ZOOM, this, &scrollerMoved);
 			break;
 	}
 
@@ -3452,26 +3452,26 @@ cMenuSlider::cMenuSlider( int x, int y, float minValue_, float maxValue_, cMenu*
 
 void cMenuSlider::draw()
 {
-	if ( surface ) SDL_BlitSurface( surface, NULL, buffer, &position );
+	if (surface) SDL_BlitSurface (surface, NULL, buffer, &position);
 	cMenuSlider::scroller->draw();
 }
 
-void cMenuSlider::setBorders( float minValue_, float maxValue_ )
+void cMenuSlider::setBorders (float minValue_, float maxValue_)
 {
-	minValue = min( minValue_, maxValue_ );
-	maxValue = max( minValue_, maxValue_ );
+	minValue = min (minValue_, maxValue_);
+	maxValue = max (minValue_, maxValue_);
 }
 
-void cMenuSlider::setValue( float value )
+void cMenuSlider::setValue (float value)
 {
 	curValue = value;
-	switch ( direction )
+	switch (direction)
 	{
 		case SLIDER_DIR_LEFTMIN:
-			scroller->move( ( int )( ( ( minValue + curValue ) * ( position.w - ( ( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0 ) ) ) / ( maxValue - minValue ) + position.x - ( ( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7 ) ) );
+			scroller->move ( (int) ( ( (minValue + curValue) * (position.w - ( (type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ( (type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
 			break;
 		case SLIDER_DIR_RIGHTMIN:
-			scroller->move( ( int )( ( ( maxValue - curValue ) * ( position.w - ( ( type == SLIDER_TYPE_HUD_ZOOM ) ? scroller->getPosition().w : 0 ) ) ) / ( maxValue - minValue ) + position.x - ( ( type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7 ) ) );
+			scroller->move ( (int) ( ( (maxValue - curValue) * (position.w - ( (type == SLIDER_TYPE_HUD_ZOOM) ? scroller->getPosition().w : 0))) / (maxValue - minValue) + position.x - ( (type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7)));
 			break;
 	}
 }
@@ -3481,51 +3481,51 @@ float cMenuSlider::getValue() const
 	return curValue;
 }
 
-void cMenuSlider::setMoveCallback( void ( *movedCallback_ )( void* ) )
+void cMenuSlider::setMoveCallback (void (*movedCallback_) (void*))
 {
 	movedCallback = movedCallback_;
 }
 
-void cMenuSlider::scrollerMoved( void* parent_ )
+void cMenuSlider::scrollerMoved (void* parent_)
 {
-	cMenuSlider* This = reinterpret_cast<cMenuSlider*>( parent_ );
-	int pos = This->scroller->getPosition().x - This->position.x + ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7 );
-	if ( pos < 0 )
+	cMenuSlider* This = reinterpret_cast<cMenuSlider*> (parent_);
+	int pos = This->scroller->getPosition().x - This->position.x + ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7);
+	if (pos < 0)
 	{
 		pos = 0;
-		This->scroller->move( This->position.x - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? 0 : 7 ) );
+		This->scroller->move (This->position.x - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? 0 : 7));
 	}
-	if ( pos > This->position.w - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0 ) )
+	if (pos > This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))
 	{
-		pos = This->position.w - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 7 );
-		This->scroller->move( This->position.x + This->position.w - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 7 ) );
+		pos = This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7);
+		This->scroller->move (This->position.x + This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 7));
 	}
-	switch ( This->direction )
+	switch (This->direction)
 	{
 		case SLIDER_DIR_LEFTMIN:
-			This->curValue = This->minValue + ( ( This->maxValue - This->minValue ) / ( float )( This->position.w - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0 ) ) ) * ( float )pos;
+			This->curValue = This->minValue + ( (This->maxValue - This->minValue) / (float) (This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
 			break;
 		case SLIDER_DIR_RIGHTMIN:
-			This->curValue = This->maxValue - ( ( This->maxValue - This->minValue ) / ( float )( This->position.w - ( ( This->type == SLIDER_TYPE_HUD_ZOOM ) ? This->scroller->getPosition().w : 0 ) ) ) * ( float )pos;
+			This->curValue = This->maxValue - ( (This->maxValue - This->minValue) / (float) (This->position.w - ( (This->type == SLIDER_TYPE_HUD_ZOOM) ? This->scroller->getPosition().w : 0))) * (float) pos;
 			break;
 	}
 	This->parent->draw();
 
-	if ( This->movedCallback ) This->movedCallback( This->parent );
+	if (This->movedCallback) This->movedCallback (This->parent);
 }
 
 bool cMenuSlider::preClicked()
 {
-	scroller->mouseMoved( true );
+	scroller->mouseMoved (true);
 	return true;
 }
 
-cMenuScrollerHandler::cMenuScrollerHandler( int x, int y, int w, int maxValue_ ) : cMenuItem( x, y ), maxValue( maxValue_ )
+cMenuScrollerHandler::cMenuScrollerHandler (int x, int y, int w, int maxValue_) : cMenuItem (x, y), maxValue (maxValue_)
 {
 	position.h = 17;
 	position.w = w;
 
-	scroller = new cMenuScroller( position.x, position.y, cMenuScroller::SCROLLER_TYPE_HORI, this );
+	scroller = new cMenuScroller (position.x, position.y, cMenuScroller::SCROLLER_TYPE_HORI, this);
 
 	currentValue = 0;
 }
@@ -3535,11 +3535,11 @@ void cMenuScrollerHandler::draw()
 	scroller->draw();
 }
 
-void cMenuScrollerHandler::setValue( int value )
+void cMenuScrollerHandler::setValue (int value)
 {
 	currentValue = value;
-	int pos = position.x + ( position.w - 14 ) / maxValue * currentValue;
-	scroller->move( pos );
+	int pos = position.x + (position.w - 14) / maxValue * currentValue;
+	scroller->move (pos);
 }
 
 //-----------------------------------------------------------------------------
@@ -3547,10 +3547,10 @@ void cMenuScrollerHandler::setValue( int value )
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer* owner_, cReportsMenu* parentMenu_ ) :
-	cMenuItem( x, y ),
-	owner( owner_ ),
-	parentMenu( parentMenu_ )
+cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cPlayer* owner_, cReportsMenu* parentMenu_) :
+	cMenuItem (x, y),
+	owner (owner_),
+	parentMenu (parentMenu_)
 {
 	position.w = w;
 	position.h = h;
@@ -3562,17 +3562,17 @@ cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer* own
 	filterPlanes = filterGround = filterSea = filterBuilding = false;
 	filterBuild = filterAttack = filterDamaged = filterStealth = false;
 
-	maxItems = ( ( position.h - 25 ) / 55 );
+	maxItems = ( (position.h - 25) / 55);
 
 	unitDetails = new AutoPtr<cMenuUnitDetails>::type [maxItems];
-	for ( int i = 0; i < maxItems; i++ )
+	for (int i = 0; i < maxItems; i++)
 	{
-		unitDetails[i] = new cMenuUnitDetails( position.x + 127, position.y + 17 + 55 * i, true, owner );
+		unitDetails[i] = new cMenuUnitDetails (position.x + 127, position.y + 17 + 55 * i, true, owner);
 	}
 	screenType = REP_SCR_TYPE_UNITS;
-	if ( Client->getCasualties() != 0 )
+	if (Client->getCasualties() != 0)
 	{
-		Client->getCasualties()->addNotificationListener( this );
+		Client->getCasualties()->addNotificationListener (this);
 		sendRequestCasualtiesReport();
 	}
 }
@@ -3580,16 +3580,16 @@ cMenuReportsScreen::cMenuReportsScreen( int x, int y, int w, int h, cPlayer* own
 //-----------------------------------------------------------------------------
 cMenuReportsScreen::~cMenuReportsScreen()
 {
-	if ( Client->getCasualties() != 0 )
-		Client->getCasualties()->removeNotificationListener( this );
+	if (Client->getCasualties() != 0)
+		Client->getCasualties()->removeNotificationListener (this);
 
 	delete [] unitDetails;
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::notify( const std::string& message, void* sender )
+bool cMenuReportsScreen::notify (const std::string& message, void* sender)
 {
-	if ( message == "casualties tracker updated" && screenType == REP_SCR_TYPE_DISADVA )
+	if (message == "casualties tracker updated" && screenType == REP_SCR_TYPE_DISADVA)
 	{
 		draw();
 		updateScrollButtons();
@@ -3600,7 +3600,7 @@ bool cMenuReportsScreen::notify( const std::string& message, void* sender )
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::draw()
 {
-	switch ( screenType )
+	switch (screenType)
 	{
 		case REP_SCR_TYPE_UNITS:
 			drawUnitsScreen();
@@ -3620,141 +3620,141 @@ void cMenuReportsScreen::draw()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawUnitsScreen()
 {
-	goThroughUnits( true );
+	goThroughUnits (true);
 
-	if ( selected >= index * maxItems && selected < ( index + 1 )*maxItems )
+	if (selected >= index * maxItems && selected < (index + 1) *maxItems)
 	{
 		int selIndex = selected - index * maxItems;
 		SDL_Rect selDest = { position.x + 13, position.y + 26 + 55 * selIndex, 8, 1 };
 
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x += 30;
-		SDL_FillRect( buffer, &selDest , 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest , 0xE0E0E0);
 		selDest.y += 38;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x -= 30;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.y = position.y + 26 + 55 * selIndex;
 		selDest.w = 1;
 		selDest.h = 8;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x += 38;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.y += 31;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x -= 38;
-		SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 	}
 }
 
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawDisadvantagesScreen()
 {
-	if ( Client->getPlayerList() == 0 )
+	if (Client->getPlayerList() == 0)
 		return;
 
-	for ( unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size(); playerIdx++ )
+	for (unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size(); playerIdx++)
 	{
-		cPlayer* player = ( *( Client->getPlayerList() ) )[playerIdx];
-		font->showTextCentered( position.x + 17 + 200 + ( 75 * ( playerIdx % 4 ) ) + ( playerIdx < 4 ? 0 : 37 ),
-								position.y + ( playerIdx < 4 ? 9 : 22 ), player->name );
+		cPlayer* player = (* (Client->getPlayerList())) [playerIdx];
+		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
+								position.y + (playerIdx < 4 ? 9 : 22), player->name);
 	}
 
 
 	cCasualtiesTracker* casualties = Client->getCasualties();
-	if ( casualties != 0 )
+	if (casualties != 0)
 	{
 		vector<sID> unitTypesWithLosses = casualties->getUnitTypesWithLosses();
-		if ( unitTypesWithLosses.empty() )
+		if (unitTypesWithLosses.empty())
 			return;
 
 		int displayedEntryIndex = 0;
 
-		for ( size_t i = 0; i < UnitsData.building.Size(); i++ )
+		for (size_t i = 0; i < UnitsData.building.Size(); i++)
 		{
 			sID unitID = UnitsData.building[i].data.ID;
 			sBuilding* buildingImgs = unitID.getBuilding();
 			SDL_Surface* unitImg = buildingImgs ? buildingImgs->img_org : 0;
-			if ( unitImg == 0 ) // shouldn't happen
+			if (unitImg == 0)   // shouldn't happen
 				continue;
-			if ( drawDisadvantageEntryIfNeeded( unitID, unitImg, unitTypesWithLosses, displayedEntryIndex ) )
+			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
 				displayedEntryIndex++;
 
-			if ( displayedEntryIndex >= ( index + 1 ) * 10 )
+			if (displayedEntryIndex >= (index + 1) * 10)
 				break;
 		}
 
-		for ( size_t i = 0; i < UnitsData.vehicle.Size(); i++ )
+		for (size_t i = 0; i < UnitsData.vehicle.Size(); i++)
 		{
 			sID unitID = UnitsData.vehicle[i].data.ID;
 			sVehicle* vehicleImgs = unitID.getVehicle();
 			SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->img_org[0] : 0;
-			if ( unitImg == 0 ) // shouldn't happen
+			if (unitImg == 0)   // shouldn't happen
 				continue;
-			if ( drawDisadvantageEntryIfNeeded( unitID, unitImg, unitTypesWithLosses, displayedEntryIndex ) )
+			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
 				displayedEntryIndex++;
 
-			if ( displayedEntryIndex >= ( index + 1 ) * 10 )
+			if (displayedEntryIndex >= (index + 1) * 10)
 				break;
 		}
 	}
 	else
-		font->showText( position.x + 17, position.y + 30, "Error: casualties are not initialized. Tell developers of this message." );
+		font->showText (position.x + 17, position.y + 30, "Error: casualties are not initialized. Tell developers of this message.");
 }
 
 //-----------------------------------------------------------------------------
 int cMenuReportsScreen::countDisadvantageEntries() const
 {
 	cCasualtiesTracker* casualties = Client->getCasualties();
-	if ( casualties != 0 )
+	if (casualties != 0)
 		return casualties->getUnitTypesWithLosses().size();
 	return 0;
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded( sID& unitID, SDL_Surface* unitImg, vector<sID>& unitTypesWithLosses, int displayedEntryIndex )
+bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface* unitImg, vector<sID>& unitTypesWithLosses, int displayedEntryIndex)
 {
 	cCasualtiesTracker* casualties = Client->getCasualties();
-	if ( casualties == 0 )
+	if (casualties == 0)
 		return false;
-	for ( size_t i = 0; i < unitTypesWithLosses.size(); i++ )
+	for (size_t i = 0; i < unitTypesWithLosses.size(); i++)
 	{
-		if ( unitID == unitTypesWithLosses[i] )
+		if (unitID == unitTypesWithLosses[i])
 		{
-			if ( index * 10 <= displayedEntryIndex && displayedEntryIndex < ( index + 1 ) * 10 )
+			if (index * 10 <= displayedEntryIndex && displayedEntryIndex < (index + 1) * 10)
 			{
 				sUnitData* unitData = unitTypesWithLosses[i].getUnitDataOriginalVersion();
-				if ( unitData != 0 )
+				if (unitData != 0)
 				{
 					{
 						//SDL_Rect src = { 0, 0, 32, 32 };
-						SDL_Rect dest = { position.x + 17, position.y + 28 + ( displayedEntryIndex - ( index * 10 ) ) * 42, 0, 0 };
+						SDL_Rect dest = { position.x + 17, position.y + 28 + (displayedEntryIndex - (index * 10)) * 42, 0, 0 };
 						AutoSurface surface;
-						if ( unitID.getBuilding() )
+						if (unitID.getBuilding())
 						{
-							cBuilding building( unitID.getBuilding(), Client->getActivePlayer(), NULL );
-							surface = generateUnitSurface( &building );
+							cBuilding building (unitID.getBuilding(), Client->getActivePlayer(), NULL);
+							surface = generateUnitSurface (&building);
 						}
-						else if ( unitID.getVehicle() )
+						else if (unitID.getVehicle())
 						{
-							cVehicle vehicle( unitID.getVehicle(), Client->getActivePlayer() );
-							surface = generateUnitSurface( &vehicle );
+							cVehicle vehicle (unitID.getVehicle(), Client->getActivePlayer());
+							surface = generateUnitSurface (&vehicle);
 						}
 						else
 						{
 							continue;
 						}
-						SDL_BlitSurface( surface, NULL, buffer, &dest );
+						SDL_BlitSurface (surface, NULL, buffer, &dest);
 					}
 
-					font->showText( position.x + 54, position.y + 38 + ( displayedEntryIndex - ( index * 10 ) ) * 42, unitData->name );
+					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
 
-					for ( unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size(); playerIdx++ )
+					for (unsigned int playerIdx = 0; playerIdx < Client->getPlayerList()->Size(); playerIdx++)
 					{
-						cPlayer* player = ( *( Client->getPlayerList() ) )[playerIdx];
-						int lossesOfPlayer = casualties->getCasualtiesOfUnitType( unitData->ID, player->Nr );
-						font->showTextCentered( position.x + 17 + 200 + ( 75 * ( playerIdx % 4 ) ) + ( playerIdx < 4 ? 0 : 37 ),
-												position.y + 38 + ( displayedEntryIndex - ( index * 10 ) ) * 42, iToStr( lossesOfPlayer ) );
+						cPlayer* player = (* (Client->getPlayerList())) [playerIdx];
+						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
+						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
+												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));
 					}
 				}
 			}
@@ -3768,40 +3768,40 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded( sID& unitID, SDL_Surface
 void cMenuReportsScreen::drawScoreScreen()
 {
 	int turnLimit, scoreLimit;
-	Client->getVictoryConditions( &turnLimit, &scoreLimit );
+	Client->getVictoryConditions (&turnLimit, &scoreLimit);
 	{
 		std::stringstream ss;
-		if ( turnLimit )
+		if (turnLimit)
 		{
-			ss << lngPack.i18n( "Text~Comp~GameEndsAt" ) << " " <<
-			   plural( turnLimit, "Text~Comp~Turn", "Text~Comp~Turns" );
+			ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
+			   plural (turnLimit, "Text~Comp~Turn", "Text~Comp~Turns");
 		}
-		else if ( scoreLimit )
+		else if (scoreLimit)
 		{
-			ss << lngPack.i18n( "Text~Comp~GameEndsAt" ) << " " <<
-			   plural( scoreLimit, "Text~Comp~Point", "Text~Comp~Points" );
+			ss << lngPack.i18n ("Text~Comp~GameEndsAt") << " " <<
+			   plural (scoreLimit, "Text~Comp~Point", "Text~Comp~Points");
 		}
 		else
-			ss << lngPack.i18n( "Text~Comp~NoLimit" );
+			ss << lngPack.i18n ("Text~Comp~NoLimit");
 
-		font->showText( position.x + 25, position.y + 20, ss.str() );
+		font->showText (position.x + 25, position.y + 20, ss.str());
 	}
 
-	for ( unsigned n = 0, y = 36; n < Client->getPlayerList()->Size(); n++, y += 16 )
+	for (unsigned n = 0, y = 36; n < Client->getPlayerList()->Size(); n++, y += 16)
 	{
-		cPlayer* p = ( *Client->getPlayerList() )[n];
-		int score = p->getScore( Client->getTurn() );
+		cPlayer* p = (*Client->getPlayerList()) [n];
+		int score = p->getScore (Client->getTurn());
 		int ecos = p->numEcos;
 
 		SDL_Rect r = {position.x + 24, position.y + y + 3, 8, 8};
-		SDL_FillRect( buffer, &r, getPlayerColour( p ) );
+		SDL_FillRect (buffer, &r, getPlayerColour (p));
 
 		std::stringstream ss;
 		ss << p->name << ": "
-		   << plural( score, "Text~Comp~Point", "Text~Comp~Points" ) << ", "
-		   << plural( ecos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres" );
+		   << plural (score, "Text~Comp~Point", "Text~Comp~Points") << ", "
+		   << plural (ecos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
-		font->showText( position.x + 42, position.y + y, ss.str() );
+		font->showText (position.x + 42, position.y + y, ss.str());
 	}
 
 	drawScoreGraph();
@@ -3810,8 +3810,8 @@ void cMenuReportsScreen::drawScoreScreen()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawScoreGraph()
 {
-	const Uint32 axis_colour = SDL_MapRGB( buffer->format, 164, 164, 164 );
-	const Uint32 limit_colour = SDL_MapRGB( buffer->format, 128, 128, 128 );
+	const Uint32 axis_colour = SDL_MapRGB (buffer->format, 164, 164, 164);
+	const Uint32 limit_colour = SDL_MapRGB (buffer->format, 128, 128, 128);
 
 	const int px = position.x;
 	const int py = position.y;
@@ -3833,29 +3833,29 @@ void cMenuReportsScreen::drawScoreGraph()
 	int max_turns = now + 40;
 	int min_turns = max_turns - num_turns;
 
-	if ( min_turns < 1 )
+	if (min_turns < 1)
 	{
 		const int over = 1 - min_turns;
 		min_turns += over;
 		max_turns += over;
 	}
 
-	const int now_x = x0 + ( now - min_turns ) * pix_per_turn;
+	const int now_x = x0 + (now - min_turns) * pix_per_turn;
 
 	/*
 		Calculate points axis
 	*/
 	int highest_score = 0;
 	int lowest_score = 0x7FFFFFFF;
-	for ( unsigned n = 0; n < Client->getPlayerList()->Size(); n++ )
+	for (unsigned n = 0; n < Client->getPlayerList()->Size(); n++)
 	{
-		for ( int turn = min_turns; turn < max_turns; turn++ )
+		for (int turn = min_turns; turn < max_turns; turn++)
 		{
-			cPlayer* p = ( *Client->getPlayerList() )[n];
-			int score = extrapolateScore( p, turn );
-			if ( score > highest_score )
+			cPlayer* p = (*Client->getPlayerList()) [n];
+			int score = extrapolateScore (p, turn);
+			if (score > highest_score)
 				highest_score = score;
-			if ( score < lowest_score )
+			if (score < lowest_score)
 				lowest_score = score;
 		}
 	}
@@ -3866,10 +3866,10 @@ void cMenuReportsScreen::drawScoreGraph()
 
 	const float default_pix_per_point = 5;
 	float pix_per_point;
-	if ( num_points )
+	if (num_points)
 	{
-		pix_per_point = ( float ) h / num_points;
-		if ( pix_per_point > default_pix_per_point )
+		pix_per_point = (float) h / num_points;
+		if (pix_per_point > default_pix_per_point)
 			pix_per_point = default_pix_per_point;
 	}
 	else
@@ -3878,57 +3878,57 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Limits
 	*/
-	drawLine( buffer, now_x, y0, now_x, y1, limit_colour );
+	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
 
 	int turn_lim, points_lim;
-	Client->getVictoryConditions( &turn_lim, &points_lim );
+	Client->getVictoryConditions (&turn_lim, &points_lim);
 
-	if ( turn_lim && turn_lim > min_turns && turn_lim < max_turns )
+	if (turn_lim && turn_lim > min_turns && turn_lim < max_turns)
 	{
-		int x = x0 + ( turn_lim - min_turns ) * pix_per_turn;
+		int x = x0 + (turn_lim - min_turns) * pix_per_turn;
 
-		drawLine( buffer, x, y0, x, y1, limit_colour );
-		font->showTextCentered( x, y1 + 8, iToStr( turn_lim ), FONT_LATIN_SMALL_WHITE );
+		drawLine (buffer, x, y0, x, y1, limit_colour);
+		font->showTextCentered (x, y1 + 8, iToStr (turn_lim), FONT_LATIN_SMALL_WHITE);
 	}
-	if ( points_lim && points_lim > min_points && points_lim < max_points )
+	if (points_lim && points_lim > min_points && points_lim < max_points)
 	{
-		int y = y1 - ( int )( ( points_lim - min_points ) * pix_per_point );
+		int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
 
-		drawLine( buffer, x0, y, x1, y, limit_colour );
-		font->showText( x0 - 16, y - 3, iToStr( points_lim ), FONT_LATIN_SMALL_WHITE );
+		drawLine (buffer, x0, y, x1, y, limit_colour);
+		font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
 	}
 
 	/*
 		Draw Labels
 	*/
-	int my = y1 - ( int )( ( max_points - min_points ) * pix_per_point );
+	int my = y1 - (int) ( (max_points - min_points) * pix_per_point);
 
-	font->showTextCentered( x0,    y1 + 8, iToStr( min_turns ), FONT_LATIN_SMALL_WHITE );
-	font->showTextCentered( now_x, y1 + 8, iToStr( now ),       FONT_LATIN_SMALL_WHITE );
-	font->showTextCentered( x1,    y1 + 8, iToStr( max_turns ), FONT_LATIN_SMALL_WHITE );
+	font->showTextCentered (x0,    y1 + 8, iToStr (min_turns), FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered (now_x, y1 + 8, iToStr (now),       FONT_LATIN_SMALL_WHITE);
+	font->showTextCentered (x1,    y1 + 8, iToStr (max_turns), FONT_LATIN_SMALL_WHITE);
 
-	font->showText( x0 - 16, y1 - 3, iToStr( min_points ), FONT_LATIN_SMALL_WHITE );
-	font->showText( x0 - 16, my - 3, iToStr( max_points ), FONT_LATIN_SMALL_WHITE );
+	font->showText (x0 - 16, y1 - 3, iToStr (min_points), FONT_LATIN_SMALL_WHITE);
+	font->showText (x0 - 16, my - 3, iToStr (max_points), FONT_LATIN_SMALL_WHITE);
 
 	/*
 		Draw Score Lines
 	*/
-	for ( unsigned n = 0, y = 40; n < Client->getPlayerList()->Size(); n++, y += 25 )
+	for (unsigned n = 0, y = 40; n < Client->getPlayerList()->Size(); n++, y += 25)
 	{
-		cPlayer* p = ( *Client->getPlayerList() )[n];
-		Uint32 player_colour = getPlayerColour( p );
+		cPlayer* p = (*Client->getPlayerList()) [n];
+		Uint32 player_colour = getPlayerColour (p);
 
 		int lx, ly;
 
-		for ( int turn = min_turns; turn < max_turns; turn++ )
+		for (int turn = min_turns; turn < max_turns; turn++)
 		{
-			int points = extrapolateScore( p, turn );
+			int points = extrapolateScore (p, turn);
 
-			int x = x0 + pix_per_turn * ( turn - min_turns );
-			int y = y1 - ( int )( pix_per_point * ( points - min_points ) );
+			int x = x0 + pix_per_turn * (turn - min_turns);
+			int y = y1 - (int) (pix_per_point * (points - min_points));
 
-			if ( turn != min_turns )
-				drawLine( buffer, lx, ly, x, y, player_colour );
+			if (turn != min_turns)
+				drawLine (buffer, lx, ly, x, y, player_colour);
 
 			lx = x;
 			ly = y;
@@ -3938,44 +3938,44 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Axes
 	*/
-	drawLine( buffer, x0, y0, x0, y1, axis_colour );
-	drawLine( buffer, x0, y1, x1, y1, axis_colour );
+	drawLine (buffer, x0, y0, x0, y1, axis_colour);
+	drawLine (buffer, x0, y1, x1, y1, axis_colour);
 }
 
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { position.x + 54, position.y + 25, 410, 30 };
-	for ( unsigned int i = ( index ) * maxItems; i < owner->savedReportsList.Size(); i++ )
+	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.Size(); i++)
 	{
-		if ( ( int )i >= ( index + 1 )*maxItems ) break;
+		if ( (int) i >= (index + 1) *maxItems) break;
 		sSavedReportMessage& savedReport = owner->savedReportsList[i];
 
-		switch ( savedReport.type )
+		switch (savedReport.type)
 		{
 			case sSavedReportMessage::REPORT_TYPE_COMP:
 				// TODO: draw computer symbol
 				break;
 			case sSavedReportMessage::REPORT_TYPE_UNIT:
 			{
-				SDL_Rect dest = { position.x + 17, position.y + 30 + ( i - ( index )*maxItems ) * 55, 0, 0 };
+				SDL_Rect dest = { position.x + 17, position.y + 30 + (i - (index) *maxItems) * 55, 0, 0 };
 
 				AutoSurface surface;
-				if ( savedReport.unitID.getVehicle() )
+				if (savedReport.unitID.getVehicle())
 				{
-					cVehicle vehicle( savedReport.unitID.getVehicle(), Client->getActivePlayer() );
-					surface = generateUnitSurface( &vehicle );
+					cVehicle vehicle (savedReport.unitID.getVehicle(), Client->getActivePlayer());
+					surface = generateUnitSurface (&vehicle);
 				}
-				else if ( savedReport.unitID.getBuilding() )
+				else if (savedReport.unitID.getBuilding())
 				{
-					cBuilding building( savedReport.unitID.getBuilding(), Client->getActivePlayer(), NULL );
-					surface = generateUnitSurface( &building );
+					cBuilding building (savedReport.unitID.getBuilding(), Client->getActivePlayer(), NULL);
+					surface = generateUnitSurface (&building);
 				}
 				else
 				{
 					break;
 				}
-				SDL_BlitSurface( surface, NULL, buffer, &dest );
+				SDL_BlitSurface (surface, NULL, buffer, &dest);
 			}
 			break;
 			case sSavedReportMessage::REPORT_TYPE_CHAT:
@@ -3983,147 +3983,147 @@ void cMenuReportsScreen::drawReportsScreen()
 				break;
 		}
 
-		font->showTextAsBlock( textDest, savedReport.message );
+		font->showTextAsBlock (textDest, savedReport.message);
 		textDest.y += 55;
 
-		if ( selected == ( int )i )
+		if (selected == (int) i)
 		{
 			int selIndex = selected - index * maxItems;
 			SDL_Rect selDest = { position.x + 15, position.y + 23 + 55 * selIndex, 1, 53 };
 
-			SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 			selDest.x += 450;
-			SDL_FillRect( buffer, &selDest , 0xE0E0E0 );
+			SDL_FillRect (buffer, &selDest , 0xE0E0E0);
 			selDest.x -= 450;
 			selDest.w = 450;
 			selDest.h = 1;
-			SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 			selDest.y += 53;
-			SDL_FillRect( buffer, &selDest, 0xE0E0E0 );
+			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		}
 	}
 }
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::checkFilter( sUnitData& data, bool checkInclude ) const
+bool cMenuReportsScreen::checkFilter (sUnitData& data, bool checkInclude) const
 {
-	if ( checkInclude )
+	if (checkInclude)
 	{
-		if ( data.factorAir > 0 && !filterPlanes ) return false;
-		if ( data.factorGround > 0 && ( data.factorSea == 0 || !filterSea ) && !filterGround ) return false;
-		if ( data.factorSea > 0 && ( data.factorGround == 0 || !filterGround ) && !filterSea ) return false;
+		if (data.factorAir > 0 && !filterPlanes) return false;
+		if (data.factorGround > 0 && (data.factorSea == 0 || !filterSea) && !filterGround) return false;
+		if (data.factorSea > 0 && (data.factorGround == 0 || !filterGround) && !filterSea) return false;
 	}
 
-	if ( data.canBuild.empty() && filterBuild ) return false;
-	if ( !data.canAttack && filterAttack ) return false;
-	if ( data.hitpointsCur >= data.hitpointsMax && filterDamaged ) return false;
-	if ( !data.isStealthOn && filterStealth ) return false;
+	if (data.canBuild.empty() && filterBuild) return false;
+	if (!data.canAttack && filterAttack) return false;
+	if (data.hitpointsCur >= data.hitpointsMax && filterDamaged) return false;
+	if (!data.isStealthOn && filterStealth) return false;
 
-	if ( data.surfacePosition != sUnitData::SURFACE_POS_GROUND ) return false;
+	if (data.surfacePosition != sUnitData::SURFACE_POS_GROUND) return false;
 
 	return true;
 }
 
 
 //-----------------------------------------------------------------------------
-bool cMenuReportsScreen::goThroughUnits( bool draw, int* count_, cVehicle** vehicle, cBuilding** building )
+bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehicle, cBuilding** building)
 {
 	bool deleteCount = false;
-	int minCount = ( index ) * maxItems;
-	int maxCount = ( index + 1 ) * maxItems;
-	if ( !count_ )
+	int minCount = (index) * maxItems;
+	int maxCount = (index + 1) * maxItems;
+	if (!count_)
 	{
 		count_ = new int;
 		deleteCount = true;
 	}
-	int& count = ( *count_ );
+	int& count = (*count_);
 	count = 0;
 
 	SDL_Rect dest = { position.x + 17, position.y + 30, 0, 0 };
 	SDL_Rect nameDest = { position.x + 54, position.y + 25, 75, 30 };
 
 	cVehicle* nextVehicle = vehicles;
-	while ( nextVehicle && count < maxCount )
+	while (nextVehicle && count < maxCount)
 	{
-		bool inFilter = checkFilter( nextVehicle->data, true );
-		if ( !inFilter || count < minCount )
+		bool inFilter = checkFilter (nextVehicle->data, true);
+		if (!inFilter || count < minCount)
 		{
-			nextVehicle = static_cast<cVehicle*>( nextVehicle->next );
-			if ( inFilter ) count++;
+			nextVehicle = static_cast<cVehicle*> (nextVehicle->next);
+			if (inFilter) count++;
 			continue;
 		}
-		if ( draw )
+		if (draw)
 		{
 			{
-				cVehicle vehicle( nextVehicle->typ, nextVehicle->owner );
-				AutoSurface surface( generateUnitSurface( &vehicle ) );
-				SDL_BlitSurface( surface, NULL, buffer, &dest );
+				cVehicle vehicle (nextVehicle->typ, nextVehicle->owner);
+				AutoSurface surface (generateUnitSurface (&vehicle));
+				SDL_BlitSurface (surface, NULL, buffer, &dest);
 			}
 
-			font->showTextAsBlock( nameDest, nextVehicle->getDisplayName() );
-			unitDetails[count - minCount]->setSelection( nextVehicle, NULL );
+			font->showTextAsBlock (nameDest, nextVehicle->getDisplayName());
+			unitDetails[count - minCount]->setSelection (nextVehicle, NULL);
 
-			font->showText( position.x + 291, position.y + 35 + 56 * ( count - minCount ), iToStr( nextVehicle->PosX ) + "," + iToStr( nextVehicle->PosY ) );
-			font->showText( position.x + 343, position.y + 35 + 56 * ( count - minCount ), nextVehicle->getStatusStr() );
+			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
+			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr());
 			dest.y += 55; nameDest.y += 55;
 		}
-		if ( vehicle && count == selected )( *vehicle ) = nextVehicle;
+		if (vehicle && count == selected) (*vehicle) = nextVehicle;
 		count++;
-		nextVehicle = static_cast<cVehicle*>( nextVehicle->next );
+		nextVehicle = static_cast<cVehicle*> (nextVehicle->next);
 	}
 
 	cBuilding* nextBuilding = buildings;
-	if ( filterBuilding )
+	if (filterBuilding)
 	{
-		while ( nextBuilding && count < maxCount )
+		while (nextBuilding && count < maxCount)
 		{
-			bool inFilter = checkFilter( nextBuilding->data, false );
-			if ( !inFilter || count < minCount )
+			bool inFilter = checkFilter (nextBuilding->data, false);
+			if (!inFilter || count < minCount)
 			{
-				nextBuilding = static_cast<cBuilding*>( nextBuilding->next );
-				if ( inFilter ) count++;
+				nextBuilding = static_cast<cBuilding*> (nextBuilding->next);
+				if (inFilter) count++;
 				continue;
 			}
-			if ( draw )
+			if (draw)
 			{
 				{
-					cBuilding building( nextBuilding->typ, nextBuilding->owner, NULL );
-					AutoSurface surface( generateUnitSurface( &building ) );
-					SDL_BlitSurface( surface, NULL, buffer, &dest );
+					cBuilding building (nextBuilding->typ, nextBuilding->owner, NULL);
+					AutoSurface surface (generateUnitSurface (&building));
+					SDL_BlitSurface (surface, NULL, buffer, &dest);
 				}
 
-				font->showTextAsBlock( nameDest, nextBuilding->getDisplayName() );
-				unitDetails[count - minCount]->setSelection( NULL, nextBuilding );
+				font->showTextAsBlock (nameDest, nextBuilding->getDisplayName());
+				unitDetails[count - minCount]->setSelection (NULL, nextBuilding);
 
-				font->showText( position.x + 291, position.y + 35 + 56 * ( count - minCount ), iToStr( nextBuilding->PosX ) + "," + iToStr( nextBuilding->PosY ) );
-				font->showText( position.x + 343, position.y + 35 + 56 * ( count - minCount ), nextBuilding->getStatusStr() );
+				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
+				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr());
 
 				dest.y += 55; nameDest.y += 55;
 			}
-			if ( building && count == selected )( *building ) = nextBuilding;
+			if (building && count == selected) (*building) = nextBuilding;
 			count++;
-			nextBuilding = static_cast<cBuilding*>( nextBuilding->next );
+			nextBuilding = static_cast<cBuilding*> (nextBuilding->next);
 		}
 	}
 
-	for ( int i = 0; i < count - minCount; i++ )
+	for (int i = 0; i < count - minCount; i++)
 	{
 		unitDetails[i]->draw();
 	}
 
-	if ( count == maxCount && ( nextVehicle || nextBuilding ) )
+	if (count == maxCount && (nextVehicle || nextBuilding))
 	{
-		if ( deleteCount ) delete count_;
+		if (deleteCount) delete count_;
 		return true;
 	}
-	if ( deleteCount ) delete count_;
+	if (deleteCount) delete count_;
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-void cMenuReportsScreen::setIncludeFilter( bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_ )
+void cMenuReportsScreen::setIncludeFilter (bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_)
 {
-	if ( screenType != REP_SCR_TYPE_UNITS ) return;
+	if (screenType != REP_SCR_TYPE_UNITS) return;
 
 	filterPlanes = filterPlanes_;
 	filterGround = filterGround_;
@@ -4132,13 +4132,13 @@ void cMenuReportsScreen::setIncludeFilter( bool filterPlanes_, bool filterGround
 
 	index = 0;
 	selected = -1;
-	parentMenu->scrollCallback( index > 0, goThroughUnits( false ) );
+	parentMenu->scrollCallback (index > 0, goThroughUnits (false));
 };
 
 //-----------------------------------------------------------------------------
-void cMenuReportsScreen::setBorderedFilter( bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_ )
+void cMenuReportsScreen::setBorderedFilter (bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
 {
-	if ( screenType != REP_SCR_TYPE_UNITS ) return;
+	if (screenType != REP_SCR_TYPE_UNITS) return;
 
 	filterBuild = filterBuild_;
 	filterAttack = filterAttack_;
@@ -4147,19 +4147,19 @@ void cMenuReportsScreen::setBorderedFilter( bool filterBuild_, bool filterAttack
 
 	index = 0;
 	selected = -1;
-	parentMenu->scrollCallback( index > 0, goThroughUnits( false ) );
+	parentMenu->scrollCallback (index > 0, goThroughUnits (false));
 }
 
 //-----------------------------------------------------------------------------
-void cMenuReportsScreen::setType( bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked )
+void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool scoreChecked, bool reportsChecked)
 {
 	index = 0;
 	selected = -1;
 
-	if ( unitsChecked ) screenType = REP_SCR_TYPE_UNITS;
-	else if ( disadvaChecked ) screenType = REP_SCR_TYPE_DISADVA;
-	else if ( scoreChecked ) screenType = REP_SCR_TYPE_SCORE;
-	else if ( reportsChecked )
+	if (unitsChecked) screenType = REP_SCR_TYPE_UNITS;
+	else if (disadvaChecked) screenType = REP_SCR_TYPE_DISADVA;
+	else if (scoreChecked) screenType = REP_SCR_TYPE_SCORE;
+	else if (reportsChecked)
 	{
 		index = owner->savedReportsList.Size() / maxItems;
 		screenType = REP_SCR_TYPE_REPORTS;
@@ -4170,27 +4170,27 @@ void cMenuReportsScreen::setType( bool unitsChecked, bool disadvaChecked, bool s
 }
 
 //-----------------------------------------------------------------------------
-SDL_Surface* cMenuReportsScreen::generateUnitSurface( cUnit* unit )
+SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 {
 
 	const int UNIT_IMAGE_SIZE = 32;
-	float zoomFactor = ( float )UNIT_IMAGE_SIZE / ( float )( unit->data.isBig ? 128.0 : 64.0 );
+	float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) (unit->data.isBig ? 128.0 : 64.0);
 	SDL_Rect dest = { 0, 0, 0, 0};
 
-	SDL_Surface* surface = SDL_CreateRGBSurface( SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0 );
-	SDL_SetColorKey( surface, SDL_SRCCOLORKEY, 0xFF00FF );
+	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 	//SDL_FillRect ( surface, NULL, 0xFF00FF );
 
-	if ( unit->isBuilding() )
+	if (unit->isBuilding())
 	{
-		cBuilding* building = static_cast<cBuilding*>( unit );
-		building->render( surface, dest, zoomFactor, false, false );
+		cBuilding* building = static_cast<cBuilding*> (unit);
+		building->render (surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
-		cVehicle* vehicle = static_cast<cVehicle*>( unit );
-		vehicle->render( surface, dest, zoomFactor, false );
-		vehicle->drawOverlayAnimation( surface, dest, zoomFactor );
+		cVehicle* vehicle = static_cast<cVehicle*> (unit);
+		vehicle->render (surface, dest, zoomFactor, false);
+		vehicle->drawOverlayAnimation (surface, dest, zoomFactor);
 	}
 
 	return surface;
@@ -4199,19 +4199,19 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface( cUnit* unit )
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::updateScrollButtons()
 {
-	switch ( screenType )
+	switch (screenType)
 	{
 		case REP_SCR_TYPE_UNITS:
-			parentMenu->scrollCallback( index > 0, goThroughUnits( false ) );
+			parentMenu->scrollCallback (index > 0, goThroughUnits (false));
 			break;
 		case REP_SCR_TYPE_DISADVA:
-			parentMenu->scrollCallback( index > 0, ( index + 1 ) * 10 < countDisadvantageEntries() );
+			parentMenu->scrollCallback (index > 0, (index + 1) * 10 < countDisadvantageEntries());
 			break;
 		case REP_SCR_TYPE_SCORE:
-			parentMenu->scrollCallback( false, false );
+			parentMenu->scrollCallback (false, false);
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			parentMenu->scrollCallback( index > 0, ( index + 1 )*maxItems < ( int )owner->savedReportsList.Size() );
+			parentMenu->scrollCallback (index > 0, (index + 1) *maxItems < (int) owner->savedReportsList.Size());
 			break;
 	}
 }
@@ -4219,18 +4219,18 @@ void cMenuReportsScreen::updateScrollButtons()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::scrollDown()
 {
-	switch ( screenType )
+	switch (screenType)
 	{
 		case REP_SCR_TYPE_UNITS:
-			if ( goThroughUnits( false ) )
+			if (goThroughUnits (false))
 				index++;
 			break;
 		case REP_SCR_TYPE_DISADVA:
-			if ( ( index + 1 ) * 10 < countDisadvantageEntries() )
+			if ( (index + 1) * 10 < countDisadvantageEntries())
 				index++;
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if ( ( index + 1 )*maxItems < ( int )owner->savedReportsList.Size() )
+			if ( (index + 1) *maxItems < (int) owner->savedReportsList.Size())
 				index++;
 			break;
 		case REP_SCR_TYPE_SCORE:
@@ -4242,30 +4242,30 @@ void cMenuReportsScreen::scrollDown()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::scrollUp()
 {
-	if ( index > 0 ) index--;
+	if (index > 0) index--;
 	updateScrollButtons();
 }
 
 //-----------------------------------------------------------------------------
-void cMenuReportsScreen::released( void* parent )
+void cMenuReportsScreen::released (void* parent)
 {
-	int clickedIndex = ( mouse->y - position.y - 20 ) / 55 + index * maxItems;
-	if ( clickedIndex >= ( index + 1 )*maxItems ) clickedIndex = ( index + 1 ) * maxItems - 1;
+	int clickedIndex = (mouse->y - position.y - 20) / 55 + index * maxItems;
+	if (clickedIndex >= (index + 1) *maxItems) clickedIndex = (index + 1) * maxItems - 1;
 
-	switch ( screenType )
+	switch (screenType)
 	{
 		case REP_SCR_TYPE_UNITS:
 		{
 			int maxDisplayedUnits;
 			cVehicle* vehicle = NULL;
 			cBuilding* building = NULL;
-			goThroughUnits( false, &maxDisplayedUnits, &vehicle, &building );
-			if ( clickedIndex == selected )
+			goThroughUnits (false, &maxDisplayedUnits, &vehicle, &building);
+			if (clickedIndex == selected)
 			{
-				parentMenu->doubleClicked( vehicle, building );
+				parentMenu->doubleClicked (vehicle, building);
 				return;
 			}
-			if ( clickedIndex >= maxDisplayedUnits ) return;
+			if (clickedIndex >= maxDisplayedUnits) return;
 		}
 		break;
 		case REP_SCR_TYPE_DISADVA:
@@ -4273,17 +4273,17 @@ void cMenuReportsScreen::released( void* parent )
 		case REP_SCR_TYPE_SCORE:
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if ( clickedIndex > ( int )owner->savedReportsList.Size() ) return;
-			if ( clickedIndex == selected )
+			if (clickedIndex > (int) owner->savedReportsList.Size()) return;
+			if (clickedIndex == selected)
 			{
 				sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
 				parentMenu->close();
-				Client->addMessage( savedReport.message );
-				if ( savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT )
+				Client->addMessage (savedReport.message);
+				if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
 				{
-					int offX = savedReport.xPos * 64 - ( ( int )( ( ( float )( Video.getResolutionX() - 192 ) / ( 2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-					int offY = savedReport.yPos * 64 - ( ( int )( ( ( float )( Video.getResolutionY() - 32 ) / ( 2 * Client->gameGUI.getTileSize() ) ) * 64 ) ) + 32;
-					Client->gameGUI.setOffsetPosition( offX, offY );
+					int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
+					int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
+					Client->gameGUI.setOffsetPosition (offX, offY);
 				}
 				return;
 			}
@@ -4301,45 +4301,45 @@ void cMenuReportsScreen::released( void* parent )
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cMenuPlayerInfo::cMenuPlayerInfo( int x, int y, cPlayer* player_ ) :
-	cMenuItem( x, y ),
-	player( player_ )
+cMenuPlayerInfo::cMenuPlayerInfo (int x, int y, cPlayer* player_) :
+	cMenuItem (x, y),
+	player (player_)
 {}
 
 //-----------------------------------------------------------------------------
 void cMenuPlayerInfo::draw()
 {
-	if ( disabled ) return;
+	if (disabled) return;
 
 	//skip eyecandy spit before playerbar if screen is big enough to draw the box under the minimap
 	int sourceX = Video.getResolutionY() >= 768 ? 18 : 0;
 
-	if ( GraphicsData.gfx_hud_extra_players )
+	if (GraphicsData.gfx_hud_extra_players)
 	{
 		SDL_Rect srcRect = { sourceX, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
 
-		SDL_BlitSurface( GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position );
+		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position);
 	}
 
 
-	if ( !player->isDefeated && !player->isRemovedFromGame )
+	if (!player->isDefeated && !player->isRemovedFromGame)
 	{
-		if ( GraphicsData.gfx_player_ready )
+		if (GraphicsData.gfx_player_ready)
 		{
 			SDL_Rect srcDotRect = { player->bFinishedTurn ? 10 : 0, 0, 10, 10 };
 			SDL_Rect destDotRect = { position.x + 23 - sourceX, position.y + 6, srcDotRect.w, srcDotRect.h };
 
-			SDL_BlitSurface( GraphicsData.gfx_player_ready, &srcDotRect, buffer, &destDotRect );
+			SDL_BlitSurface (GraphicsData.gfx_player_ready, &srcDotRect, buffer, &destDotRect);
 		}
 
 		SDL_Rect srcColorRect = { 0, 0, 10, 12 };
 		SDL_Rect destColorRect = { position.x + 40 - sourceX, position.y + 6, srcColorRect.w, srcColorRect.h };
-		SDL_BlitSurface( player->color, &srcColorRect, buffer, &destColorRect );
+		SDL_BlitSurface (player->color, &srcColorRect, buffer, &destColorRect);
 	}
 	else
 	{
-		font->showText( position.x + 43 - sourceX, position.y + 8, "X", FONT_LATIN_SMALL_RED );
+		font->showText (position.x + 43 - sourceX, position.y + 8, "X", FONT_LATIN_SMALL_RED);
 	}
 
-	font->showText( position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->name + " (-)" : player->name );
+	font->showText (position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->name + " (-)" : player->name);
 }

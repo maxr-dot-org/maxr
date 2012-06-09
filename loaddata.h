@@ -62,33 +62,33 @@ EX int LoadingData;
 * Loads all relevant files and datas
 * @return 1 on success
 */
-int LoadData( void* );
+int LoadData (void*);
 
 /**
  * Loades the unitdata from the data.xml in the unitfolder
  * @param directory Unitdirectory , relativ to the main game directory
  */
-void LoadUnitData( sUnitData*, char const* directory, int iID );
+void LoadUnitData (sUnitData*, char const* directory, int iID);
 
-void LoadUnitGraphicData( sUnitData*, char const* directory );
+void LoadUnitGraphicData (sUnitData*, char const* directory);
 
-int getXMLNodeInt( TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL );
-float getXMLNodeFloat( TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL );
-std::string getXMLNodeString( TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL );
-bool getXMLNodeBool( TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL );
+int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
+float getXMLNodeFloat (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
+std::string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
+bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL);
 
 /**
 * Gets the name and (text) description for clan with internal id num from language file
 * If no translation exists a warning is issued and the existing strings are not altered
 * @param num engine internal ID of clan sorted by oder of clans in clan.xml
 */
-void translateClanData( int num );
+void translateClanData (int num);
 
 /**
 * Gets the name and the description for the unit from the selected language file
 * @param ID Id of the unit
 */
-bool translateUnitData( sID ID, bool vehicle );
+bool translateUnitData (sID ID, bool vehicle);
 
 void reloadUnitValues();
 

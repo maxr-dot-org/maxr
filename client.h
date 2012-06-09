@@ -30,14 +30,14 @@ class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
 
-Uint32 TimerCallback( Uint32 interval, void* arg );
+Uint32 TimerCallback (Uint32 interval, void* arg);
 
 
 /** structure for the messages displayed in the game */
 struct sMessage
 {
 public:
-	sMessage( std::string const&, unsigned int age );
+	sMessage (std::string const&, unsigned int age);
 	~sMessage();
 
 public:
@@ -79,7 +79,7 @@ struct sFXTracks
 struct sFX
 {
 public:
-	sFX( eFXTyps typ, int x, int y );
+	sFX (eFXTyps typ, int x, int y);
 	~sFX();
 
 	eFXTyps typ;
@@ -98,7 +98,7 @@ public:
 class cClient
 {
 public:
-	cClient( cMap* Map, cList<cPlayer*>* PlayerList );
+	cClient (cMap* Map, cList<cPlayer*>* PlayerList);
 	~cClient();
 
 private:
@@ -162,15 +162,15 @@ private:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	void addUnit( int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true );
-	void addUnit( int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false );
+	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
+	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
 	/**
 	* returns the player with the given number
 	*@author alzi alias DoctorDeath
 	*@param iNum The number of the player.
 	*@return The wanted player.
 	*/
-	cPlayer* getPlayerFromNumber( int iNum );
+	cPlayer* getPlayerFromNumber (int iNum);
 	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath
@@ -181,7 +181,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iNextPlayerNum Number of Player who has ended his turn
 	*/
-	void makeHotSeatEnd( int iNextPlayerNum );
+	void makeHotSeatEnd (int iNextPlayerNum);
 	/**
 	* handles the rest-time of the current turn
 	*@author alzi alias DoctorDeath
@@ -197,7 +197,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*@param iID Id of the subbase
 	*/
-	sSubBase* getSubBaseFromID( int iID );
+	sSubBase* getSubBaseFromID (int iID);
 	/**
 	* freezes the client so that no input of him is possible anymore.
 	*@author alzi alias DoctorDeath
@@ -210,70 +210,70 @@ private:
 	void unfreeze();
 
 
-	void HandleNetMessage_TCP_CLOSE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_CHAT_SERVER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_PLAYER_CLANS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ADD_BUILDING( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ADD_VEHICLE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DEL_BUILDING( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DEL_VEHICLE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_WAIT_FOR( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_MAKE_TURNEND( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_FINISHED_TURN( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UNIT_DATA( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DO_START_WORK( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DO_STOP_WORK( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_NEXT_MOVE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ATTACKJOB_FIRE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_RESOURCES( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_BUILD_ANSWER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_STOP_BUILD( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SUBBASE_VALUES( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_BUILDLIST( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_TURN_REPORT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_MARK_LOG( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SUPPLY( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ADD_RUBBLE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DETECTION_STATE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_CLEAR_ANSWER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_STOP_CLEARING( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_NOFOG( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DEFEATED( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_FREEZE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UNFREEZE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_WAIT_RECON( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_ABORT_WAIT_RECON( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DEL_PLAYER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_TURN( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_HUD_SETTINGS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_STORE_UNIT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_EXIT_UNIT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_CREDITS_CHANGED( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SET_AUTOMOVE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SAVED_REPORT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_CASUALTIES_REPORT( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SCORE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_NUM_ECOS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_UNIT_SCORE( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_SELFDESTROY( cNetMessage& message );
-	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER( cNetMessage& message );
+	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DO_START_WORK (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DO_STOP_WORK (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SUBBASE_VALUES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WAIT_RECON (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CREDITS_CHANGED (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_RESEARCH_LEVEL (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_REFRESH_RESEARCH_COUNT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_COMMANDO_ANSWER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SCORE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_NUM_ECOS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_UNIT_SCORE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 
 public:
 	/**  the soundstream of the selected unit */
@@ -306,43 +306,43 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob( cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group = NULL );
+	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group = NULL);
 	void startGroupMove();
 	/**
 	* adds an new movejob
 	*@author alzi alias DoctorDeath
 	*@param MJob the movejob to be added
 	*/
-	void addActiveMoveJob( cClientMoveJob* MJob );
+	void addActiveMoveJob (cClientMoveJob* MJob);
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
 	*@param Building Building which should be deleted.
 	*@param Vehicle Vehicle which should be deleted.
 	*/
-	void deleteUnit( cBuilding* Building );
-	void deleteUnit( cVehicle* Vehicle );
+	void deleteUnit (cBuilding* Building);
+	void deleteUnit (cVehicle* Vehicle);
 	/**
 	* sends the netMessage to the server.
 	* do not try to delete a message after calling this function!
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
-	void sendNetMessage( cNetMessage* message );
+	void sendNetMessage (cNetMessage* message);
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
 	*@param iID The ID of the vehicle
 	*/
-	cVehicle* getVehicleFromID( unsigned int iID );
-	cBuilding* getBuildingFromID( unsigned int iID );
+	cVehicle* getVehicleFromID (unsigned int iID);
+	cBuilding* getBuildingFromID (unsigned int iID);
 
 	/**
 	* initialises this client for the player.
 	*@author alzi alias DoctorDeath
 	*@param Player The player.
 	*/
-	void initPlayer( cPlayer* Player );
+	void initPlayer (cPlayer* Player);
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
@@ -355,7 +355,7 @@ public:
 	*@param message The netMessage to be handled.
 	*@return 0 for success
 	*/
-	int HandleNetMessage( cNetMessage* message );
+	int HandleNetMessage (cNetMessage* message);
 	/**
 	* adds an effect
 	*@author alzi alias DoctorDeath
@@ -366,9 +366,9 @@ public:
 	*@param param
 	*@param iNum
 	*/
-	void addFX( eFXTyps typ, int iX, int iY, int iParam );
-	void addFX( eFXTyps typ, int x, int y, cClientAttackJob* aj, int iDestOff, int iFireDir );
-	void addFX( sFX* iNum );
+	void addFX (eFXTyps typ, int iX, int iY, int iParam);
+	void addFX (eFXTyps typ, int x, int y, cClientAttackJob* aj, int iDestOff, int iFireDir);
+	void addFX (sFX* iNum);
 
 	/**
 	* increments the iTimeTimer.
@@ -378,21 +378,21 @@ public:
 	/**
 	* Adds an message to be displayed in the game
 	*/
-	void addMessage( const std::string& sMsg );
+	void addMessage (const std::string& sMsg);
 	/** displays a message with 'goto' coordinates */
-	std::string addCoords( const std::string& msg, int x, int y );
+	std::string addCoords (const std::string& msg, int x, int y);
 	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit
 	*/
-	void destroyUnit( cVehicle* vehicle );
-	void destroyUnit( cBuilding* building );
+	void destroyUnit (cVehicle* vehicle);
+	void destroyUnit (cBuilding* building);
 
-	void checkVehiclePositions( cNetMessage* message );
-	void getVictoryConditions( int* turnLimit, int* scoreLimit ) const;
+	void checkVehiclePositions (cNetMessage* message);
+	void getVictoryConditions (int* turnLimit, int* scoreLimit) const;
 	int getTurn() const;
 
-	void deletePlayer( cPlayer* player );
+	void deletePlayer (cPlayer* player);
 
 	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
 	cMap* getMap() { return Map; }

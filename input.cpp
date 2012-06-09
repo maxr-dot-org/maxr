@@ -33,22 +33,22 @@ sMouseState::sMouseState()
 }
 
 cInput::cInput() :
-	LastClickTicks( 0 )
+	LastClickTicks (0)
 {
 	// enables that SDL puts the unicode values to the keyevents.
-	SDL_EnableUNICODE( 1 );
+	SDL_EnableUNICODE (1);
 	// enables keyrepetition
-	SDL_EnableKeyRepeat( SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL );
+	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
 
-void cInput::inputkey( SDL_KeyboardEvent& key )
+void cInput::inputkey (SDL_KeyboardEvent& key)
 {
 	// give the key to the active menu
 	// But do not send events to a menu, after an event triggered the termination
 	// the user wouldn't expects the menu to execute further events after klicking the exit button
-	if ( ActiveMenu && !ActiveMenu->exiting() )
+	if (ActiveMenu && !ActiveMenu->exiting())
 	{
-		ActiveMenu->handleKeyInput( key, getUTF16Char( key.keysym.unicode ) );
+		ActiveMenu->handleKeyInput (key, getUTF16Char (key.keysym.unicode));
 	}
 }
 
@@ -56,10 +56,10 @@ bool cInput::IsDoubleClicked()
 {
 	/* First time this function is called, LastClickTicks
 	    has not been initialised yet. */
-	if ( ! LastClickTicks )
+	if (! LastClickTicks)
 	{
 		LastClickTicks = SDL_GetTicks();
-		return ( false );
+		return (false);
 	}
 	else
 	{
@@ -69,55 +69,55 @@ bool cInput::IsDoubleClicked()
 		    or equal to a pre-defined number, we report a
 		    DoubleClick event. */
 
-		if ( CurrentClickTicks - LastClickTicks <= 500 )
+		if (CurrentClickTicks - LastClickTicks <= 500)
 		{
 			/* Update LastClickTicks and signal a DoubleClick. */
 
 			LastClickTicks = CurrentClickTicks;
-			return ( true );
+			return (true);
 		}
 
 		/* Update LastClickTicks and signal a SingleClick. */
 
 		LastClickTicks = CurrentClickTicks;
-		return ( false );
+		return (false);
 	}
 }
 
 
-void cInput::inputMouseButton( SDL_MouseButtonEvent& button )
+void cInput::inputMouseButton (SDL_MouseButtonEvent& button)
 {
 	MouseState.x = button.x;
 	MouseState.y = button.y;
 
-	if ( button.state == SDL_PRESSED )
+	if (button.state == SDL_PRESSED)
 	{
-		if ( button.button == SDL_BUTTON_LEFT )
+		if (button.button == SDL_BUTTON_LEFT)
 		{
 			MouseState.leftButtonPressed = true;
 			MouseState.leftButtonReleased = false;
 			MouseState.rightButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_RIGHT )
+		else if (button.button == SDL_BUTTON_RIGHT)
 		{
 			MouseState.rightButtonPressed = true;
 			MouseState.rightButtonReleased = false;
 			MouseState.leftButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_WHEELUP )
+		else if (button.button == SDL_BUTTON_WHEELUP)
 		{
 			MouseState.wheelUp = true;
 			MouseState.leftButtonReleased = false;
 			MouseState.rightButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_WHEELDOWN )
+		else if (button.button == SDL_BUTTON_WHEELDOWN)
 		{
 			MouseState.wheelDown = true;
 			MouseState.leftButtonReleased = false;
 			MouseState.rightButtonReleased = false;
 		}
 
-		if ( IsDoubleClicked() )
+		if (IsDoubleClicked())
 		{
 			MouseState.isDoubleClick = true;
 		}
@@ -126,59 +126,59 @@ void cInput::inputMouseButton( SDL_MouseButtonEvent& button )
 			MouseState.isDoubleClick = false;
 		}
 	}
-	else if ( button.state == SDL_RELEASED )
+	else if (button.state == SDL_RELEASED)
 	{
-		if ( button.button == SDL_BUTTON_LEFT )
+		if (button.button == SDL_BUTTON_LEFT)
 		{
 			MouseState.leftButtonPressed = false;
 			MouseState.leftButtonReleased = true;
 			MouseState.rightButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_RIGHT )
+		else if (button.button == SDL_BUTTON_RIGHT)
 		{
 			MouseState.rightButtonPressed = false;
 			MouseState.rightButtonReleased = true;
 			MouseState.leftButtonReleased = false;
 		}
-		else if ( button.button == SDL_BUTTON_WHEELUP ) MouseState.wheelUp = false;
-		else if ( button.button == SDL_BUTTON_WHEELDOWN ) MouseState.wheelDown = false;
+		else if (button.button == SDL_BUTTON_WHEELUP) MouseState.wheelUp = false;
+		else if (button.button == SDL_BUTTON_WHEELDOWN) MouseState.wheelDown = false;
 	}
 
-	if ( ActiveMenu && !ActiveMenu->exiting() ) //do not send events to a menu, after an event triggered the termination
+	if (ActiveMenu && !ActiveMenu->exiting())   //do not send events to a menu, after an event triggered the termination
 	{
 		//the user wouldn't expects the menu to execute further events after klicking the exit button
-		ActiveMenu->handleMouseInput( MouseState );
+		ActiveMenu->handleMouseInput (MouseState);
 	}
 }
 
-std::string cInput::getUTF16Char( Uint16 ch )
+std::string cInput::getUTF16Char (Uint16 ch)
 {
 	int count;
 	Uint32 bitmask;
 
 	// convert from UTF-16 to UTF-8
 	count = 1;
-	if ( ch >= 0x80 ) count++;
+	if (ch >= 0x80) count++;
 
 	bitmask = 0x800;
-	for ( int i = 0; i < 5; i++ )
+	for (int i = 0; i < 5; i++)
 	{
-		if ( ( Uint32 )ch >= bitmask ) count++;
+		if ( (Uint32) ch >= bitmask) count++;
 		bitmask <<= 5;
 	}
 
 	std::string returnStr = "";
-	if ( count == 1 )
+	if (count == 1)
 	{
-		returnStr += ( char )ch;
+		returnStr += (char) ch;
 	}
 	else
 	{
-		for ( int i = count - 1; i >= 0; i-- )
+		for (int i = count - 1; i >= 0; i--)
 		{
-			unsigned char c = ( ch >> ( 6 * i ) ) & 0x3f;
+			unsigned char c = (ch >> (6 * i)) & 0x3f;
 			c |= 0x80;
-			if ( i == count - 1 ) c |= 0xff << ( 8 - count );
+			if (i == count - 1) c |= 0xff << (8 - count);
 			returnStr += c;
 		}
 	}

@@ -27,429 +27,429 @@
 
 using namespace std;
 
-void sendMenuChatMessage( const string& chatMsg, sMenuPlayer* player, int fromPlayerNr, bool translationText )
+void sendMenuChatMessage (const string& chatMsg, sMenuPlayer* player, int fromPlayerNr, bool translationText)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_CHAT );
-	message->pushString( chatMsg );
-	message->pushBool( translationText );
-	cMenu::sendMessage( message, player, fromPlayerNr );
+	cNetMessage* message = new cNetMessage (MU_MSG_CHAT);
+	message->pushString (chatMsg);
+	message->pushBool (translationText);
+	cMenu::sendMessage (message, player, fromPlayerNr);
 }
 
-void sendRequestIdentification( sMenuPlayer* player )
+void sendRequestIdentification (sMenuPlayer* player)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_REQ_IDENTIFIKATION );
-	message->pushInt16( player->nr );
-	message->pushString( string( PACKAGE_VERSION ) + " " + PACKAGE_REV );
-	cMenu::sendMessage( message, player );
+	cNetMessage* message = new cNetMessage (MU_MSG_REQ_IDENTIFIKATION);
+	message->pushInt16 (player->nr);
+	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
+	cMenu::sendMessage (message, player);
 }
 
-void sendPlayerList( cList<sMenuPlayer*>* players )
+void sendPlayerList (cList<sMenuPlayer*>* players)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_PLAYERLIST );
+	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
-	for ( int i = ( int )players->Size() - 1; i >= 0; i-- )
+	for (int i = (int) players->Size() - 1; i >= 0; i--)
 	{
-		const sMenuPlayer* player = ( *players )[i];
-		message->pushInt16( player->nr );
-		message->pushBool( player->ready );
-		message->pushInt16( player->color );
-		message->pushString( player->name );
+		const sMenuPlayer* player = (*players) [i];
+		message->pushInt16 (player->nr);
+		message->pushBool (player->ready);
+		message->pushInt16 (player->color);
+		message->pushString (player->name);
 	}
-	message->pushInt16( ( int )players->Size() );
-	cMenu::sendMessage( message );
+	message->pushInt16 ( (int) players->Size());
+	cMenu::sendMessage (message);
 }
 
-void sendGameData( cGameDataContainer* gameData, const string& saveGameString, sMenuPlayer* player )
+void sendGameData (cGameDataContainer* gameData, const string& saveGameString, sMenuPlayer* player)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_OPTINS );
+	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
-	if ( !gameData->savegame.empty() ) message->pushString( saveGameString );
-	message->pushBool( !gameData->savegame.empty() );
+	if (!gameData->savegame.empty()) message->pushString (saveGameString);
+	message->pushBool (!gameData->savegame.empty());
 
-	if ( gameData->map )
+	if (gameData->map)
 	{
-		message->pushInt32( MapDownload::calculateCheckSum( gameData->map->MapName ) );
-		message->pushString( gameData->map->MapName );
+		message->pushInt32 (MapDownload::calculateCheckSum (gameData->map->MapName));
+		message->pushString (gameData->map->MapName);
 	}
-	message->pushBool( gameData->map != NULL );
+	message->pushBool (gameData->map != NULL);
 
-	if ( gameData->settings )
+	if (gameData->settings)
 	{
-		message->pushChar( gameData->settings->gameType );
-		message->pushChar( gameData->settings->clans );
-		message->pushChar( gameData->settings->alienTech );
-		message->pushChar( gameData->settings->bridgeHead );
-		message->pushInt16( gameData->settings->credits );
-		message->pushChar( gameData->settings->resFrequency );
-		message->pushChar( gameData->settings->gold );
-		message->pushChar( gameData->settings->oil );
-		message->pushChar( gameData->settings->metal );
-		message->pushChar( gameData->settings->victoryType );
-		message->pushInt16( gameData->settings->duration );
+		message->pushChar (gameData->settings->gameType);
+		message->pushChar (gameData->settings->clans);
+		message->pushChar (gameData->settings->alienTech);
+		message->pushChar (gameData->settings->bridgeHead);
+		message->pushInt16 (gameData->settings->credits);
+		message->pushChar (gameData->settings->resFrequency);
+		message->pushChar (gameData->settings->gold);
+		message->pushChar (gameData->settings->oil);
+		message->pushChar (gameData->settings->metal);
+		message->pushChar (gameData->settings->victoryType);
+		message->pushInt16 (gameData->settings->duration);
 	}
-	message->pushBool( gameData->settings != NULL );
+	message->pushBool (gameData->settings != NULL);
 
-	cMenu::sendMessage( message, player );
+	cMenu::sendMessage (message, player);
 }
 
 void sendGo()
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_GO );
-	cMenu::sendMessage( message );
+	cNetMessage* message = new cNetMessage (MU_MSG_GO);
+	cMenu::sendMessage (message);
 }
 
-void sendIdentification( sMenuPlayer* player )
+void sendIdentification (sMenuPlayer* player)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_IDENTIFIKATION );
-	message->pushString( string( PACKAGE_VERSION ) + " " + PACKAGE_REV );
-	message->pushBool( player->ready );
-	message->pushString( player->name );
-	message->pushInt16( player->color );
-	message->pushInt16( player->nr );
-	cMenu::sendMessage( message );
+	cNetMessage* message = new cNetMessage (MU_MSG_IDENTIFIKATION);
+	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
+	message->pushBool (player->ready);
+	message->pushString (player->name);
+	message->pushInt16 (player->color);
+	message->pushInt16 (player->nr);
+	cMenu::sendMessage (message);
 }
 
-void sendClan( int clanNr, int ownerNr, bool isServer )
+void sendClan (int clanNr, int ownerNr, bool isServer)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_CLAN );
+	cNetMessage* message = new cNetMessage (MU_MSG_CLAN);
 
-	message->pushInt16( clanNr );
-	message->pushInt16( ownerNr );
+	message->pushInt16 (clanNr);
+	message->pushInt16 (ownerNr);
 
 	// the host has not to send the message over tcpip and we can handle the message directly
-	if ( isServer && ActiveMenu )
+	if (isServer && ActiveMenu)
 	{
-		ActiveMenu->handleNetMessage( message );
+		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage( message );
+	else cMenu::sendMessage (message);
 }
 
-void sendLandingUnits( cList<sLandingUnit>* landingList, int ownerNr, bool isServer )
+void sendLandingUnits (cList<sLandingUnit>* landingList, int ownerNr, bool isServer)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_LANDING_VEHICLES );
+	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
 
-	for ( unsigned int i = 0; i < landingList->Size(); i++ )
+	for (unsigned int i = 0; i < landingList->Size(); i++)
 	{
-		message->pushInt16( ( *landingList )[i].unitID.iSecondPart );
-		message->pushInt16( ( *landingList )[i].unitID.iFirstPart );
-		message->pushInt16( ( *landingList )[i].cargo );
+		message->pushInt16 ( (*landingList) [i].unitID.iSecondPart);
+		message->pushInt16 ( (*landingList) [i].unitID.iFirstPart);
+		message->pushInt16 ( (*landingList) [i].cargo);
 	}
-	message->pushInt16( ( int )landingList->Size() );
-	message->pushInt16( ownerNr );
+	message->pushInt16 ( (int) landingList->Size());
+	message->pushInt16 (ownerNr);
 
 	// the host has not to send the message over tcpip and we can handle the message directly
-	if ( isServer && ActiveMenu )
+	if (isServer && ActiveMenu)
 	{
-		ActiveMenu->handleNetMessage( message );
+		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage( message );
+	else cMenu::sendMessage (message);
 }
 
-void sendUnitUpgrades( cPlayer* player, bool isServer )
+void sendUnitUpgrades (cPlayer* player, bool isServer)
 {
 	cNetMessage* message = NULL;
 	int count = 0;
 
 	// send vehicles
-	for ( unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i )
+	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{
-		if ( message == NULL )
+		if (message == NULL)
 		{
-			message = new cNetMessage( MU_MSG_UPGRADES );
+			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
-		if ( player->VehicleData[i].damage != UnitsData.getVehicle( i, player->getClan() ).data.damage ||
-			 player->VehicleData[i].shotsMax != UnitsData.getVehicle( i, player->getClan() ).data.shotsMax ||
-			 player->VehicleData[i].range != UnitsData.getVehicle( i, player->getClan() ).data.range ||
-			 player->VehicleData[i].ammoMax != UnitsData.getVehicle( i, player->getClan() ).data.ammoMax ||
-			 player->VehicleData[i].armor != UnitsData.getVehicle( i, player->getClan() ).data.armor ||
-			 player->VehicleData[i].hitpointsMax != UnitsData.getVehicle( i, player->getClan() ).data.hitpointsMax ||
-			 player->VehicleData[i].scan != UnitsData.getVehicle( i, player->getClan() ).data.scan ||
-			 player->VehicleData[i].speedMax != UnitsData.getVehicle( i, player->getClan() ).data.speedMax )
+		if (player->VehicleData[i].damage != UnitsData.getVehicle (i, player->getClan()).data.damage ||
+			player->VehicleData[i].shotsMax != UnitsData.getVehicle (i, player->getClan()).data.shotsMax ||
+			player->VehicleData[i].range != UnitsData.getVehicle (i, player->getClan()).data.range ||
+			player->VehicleData[i].ammoMax != UnitsData.getVehicle (i, player->getClan()).data.ammoMax ||
+			player->VehicleData[i].armor != UnitsData.getVehicle (i, player->getClan()).data.armor ||
+			player->VehicleData[i].hitpointsMax != UnitsData.getVehicle (i, player->getClan()).data.hitpointsMax ||
+			player->VehicleData[i].scan != UnitsData.getVehicle (i, player->getClan()).data.scan ||
+			player->VehicleData[i].speedMax != UnitsData.getVehicle (i, player->getClan()).data.speedMax)
 		{
-			message->pushInt16( player->VehicleData[i].speedMax );
-			message->pushInt16( player->VehicleData[i].scan );
-			message->pushInt16( player->VehicleData[i].hitpointsMax );
-			message->pushInt16( player->VehicleData[i].armor );
-			message->pushInt16( player->VehicleData[i].ammoMax );
-			message->pushInt16( player->VehicleData[i].range );
-			message->pushInt16( player->VehicleData[i].shotsMax );
-			message->pushInt16( player->VehicleData[i].damage );
-			message->pushInt16( player->VehicleData[i].ID.iSecondPart );
-			message->pushInt16( player->VehicleData[i].ID.iFirstPart );
-			message->pushBool( true ); // true for vehciles
+			message->pushInt16 (player->VehicleData[i].speedMax);
+			message->pushInt16 (player->VehicleData[i].scan);
+			message->pushInt16 (player->VehicleData[i].hitpointsMax);
+			message->pushInt16 (player->VehicleData[i].armor);
+			message->pushInt16 (player->VehicleData[i].ammoMax);
+			message->pushInt16 (player->VehicleData[i].range);
+			message->pushInt16 (player->VehicleData[i].shotsMax);
+			message->pushInt16 (player->VehicleData[i].damage);
+			message->pushInt16 (player->VehicleData[i].ID.iSecondPart);
+			message->pushInt16 (player->VehicleData[i].ID.iFirstPart);
+			message->pushBool (true);  // true for vehciles
 
 			count++;
 		}
 
-		if ( message->iLength + 38 > PACKAGE_LENGTH )
+		if (message->iLength + 38 > PACKAGE_LENGTH)
 		{
-			message->pushInt16( count );
-			message->pushInt16( player->Nr );
-			if ( isServer && ActiveMenu )
+			message->pushInt16 (count);
+			message->pushInt16 (player->Nr);
+			if (isServer && ActiveMenu)
 			{
-				ActiveMenu->handleNetMessage( message );
+				ActiveMenu->handleNetMessage (message);
 				delete message;
 			}
-			else cMenu::sendMessage( message );
+			else cMenu::sendMessage (message);
 			message = NULL;
 			count = 0;
 		}
 	}
-	if ( message != NULL )
+	if (message != NULL)
 	{
-		message->pushInt16( count );
-		message->pushInt16( player->Nr );
-		if ( isServer && ActiveMenu )
+		message->pushInt16 (count);
+		message->pushInt16 (player->Nr);
+		if (isServer && ActiveMenu)
 		{
-			ActiveMenu->handleNetMessage( message );
+			ActiveMenu->handleNetMessage (message);
 			delete message;
 		}
-		else cMenu::sendMessage( message );
+		else cMenu::sendMessage (message);
 		message = NULL;
 		count = 0;
 	}
 
 	// send buildings
-	for ( unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i )
+	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); ++i)
 	{
-		if ( message == NULL )
+		if (message == NULL)
 		{
-			message = new cNetMessage( MU_MSG_UPGRADES );
+			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
-		if ( player->BuildingData[i].damage != UnitsData.getBuilding( i, player->getClan() ).data.damage ||
-			 player->BuildingData[i].shotsMax != UnitsData.getBuilding( i, player->getClan() ).data.shotsMax ||
-			 player->BuildingData[i].range != UnitsData.getBuilding( i, player->getClan() ).data.range ||
-			 player->BuildingData[i].ammoMax != UnitsData.getBuilding( i, player->getClan() ).data.ammoMax ||
-			 player->BuildingData[i].armor != UnitsData.getBuilding( i, player->getClan() ).data.armor ||
-			 player->BuildingData[i].hitpointsMax != UnitsData.getBuilding( i, player->getClan() ).data.hitpointsMax ||
-			 player->BuildingData[i].scan != UnitsData.getBuilding( i, player->getClan() ).data.scan )
+		if (player->BuildingData[i].damage != UnitsData.getBuilding (i, player->getClan()).data.damage ||
+			player->BuildingData[i].shotsMax != UnitsData.getBuilding (i, player->getClan()).data.shotsMax ||
+			player->BuildingData[i].range != UnitsData.getBuilding (i, player->getClan()).data.range ||
+			player->BuildingData[i].ammoMax != UnitsData.getBuilding (i, player->getClan()).data.ammoMax ||
+			player->BuildingData[i].armor != UnitsData.getBuilding (i, player->getClan()).data.armor ||
+			player->BuildingData[i].hitpointsMax != UnitsData.getBuilding (i, player->getClan()).data.hitpointsMax ||
+			player->BuildingData[i].scan != UnitsData.getBuilding (i, player->getClan()).data.scan)
 		{
-			message->pushInt16( player->BuildingData[i].scan );
-			message->pushInt16( player->BuildingData[i].hitpointsMax );
-			message->pushInt16( player->BuildingData[i].armor );
-			message->pushInt16( player->BuildingData[i].ammoMax );
-			message->pushInt16( player->BuildingData[i].range );
-			message->pushInt16( player->BuildingData[i].shotsMax );
-			message->pushInt16( player->BuildingData[i].damage );
-			message->pushInt16( player->BuildingData[i].ID.iSecondPart );
-			message->pushInt16( player->BuildingData[i].ID.iFirstPart );
-			message->pushBool( false ); // false for buildings
+			message->pushInt16 (player->BuildingData[i].scan);
+			message->pushInt16 (player->BuildingData[i].hitpointsMax);
+			message->pushInt16 (player->BuildingData[i].armor);
+			message->pushInt16 (player->BuildingData[i].ammoMax);
+			message->pushInt16 (player->BuildingData[i].range);
+			message->pushInt16 (player->BuildingData[i].shotsMax);
+			message->pushInt16 (player->BuildingData[i].damage);
+			message->pushInt16 (player->BuildingData[i].ID.iSecondPart);
+			message->pushInt16 (player->BuildingData[i].ID.iFirstPart);
+			message->pushBool (false);  // false for buildings
 
 			count++;
 		}
 
-		if ( message->iLength + 34 > PACKAGE_LENGTH )
+		if (message->iLength + 34 > PACKAGE_LENGTH)
 		{
-			message->pushInt16( count );
-			message->pushInt16( player->Nr );
-			if ( isServer && ActiveMenu )
+			message->pushInt16 (count);
+			message->pushInt16 (player->Nr);
+			if (isServer && ActiveMenu)
 			{
-				ActiveMenu->handleNetMessage( message );
+				ActiveMenu->handleNetMessage (message);
 				delete message;
 			}
-			else cMenu::sendMessage( message );
+			else cMenu::sendMessage (message);
 			message = NULL;
 			count = 0;
 		}
 	}
-	if ( message != NULL )
+	if (message != NULL)
 	{
-		message->pushInt16( count );
-		message->pushInt16( player->Nr );
-		if ( isServer && ActiveMenu )
+		message->pushInt16 (count);
+		message->pushInt16 (player->Nr);
+		if (isServer && ActiveMenu)
 		{
-			ActiveMenu->handleNetMessage( message );
+			ActiveMenu->handleNetMessage (message);
 			delete message;
 		}
-		else cMenu::sendMessage( message );
+		else cMenu::sendMessage (message);
 	}
 }
 
-void sendLandingCoords( sClientLandData& c, int ownerNr, bool isServer )
+void sendLandingCoords (sClientLandData& c, int ownerNr, bool isServer)
 {
-	Log.write( "Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG );
-	cNetMessage* message = new cNetMessage( MU_MSG_LANDING_COORDS );
-	message->pushInt16( c.iLandY );
-	message->pushInt16( c.iLandX );
-	message->pushChar( ownerNr );
+	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
+	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
+	message->pushInt16 (c.iLandY);
+	message->pushInt16 (c.iLandX);
+	message->pushChar (ownerNr);
 
-	if ( isServer && ActiveMenu )
+	if (isServer && ActiveMenu)
 	{
-		ActiveMenu->handleNetMessage( message );
+		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage( message );
+	else cMenu::sendMessage (message);
 }
 
-void sendReselectLanding( eLandingState state, sMenuPlayer* player )
+void sendReselectLanding (eLandingState state, sMenuPlayer* player)
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_RESELECT_LANDING );
-	message->pushChar( state );
+	cNetMessage* message = new cNetMessage (MU_MSG_RESELECT_LANDING);
+	message->pushChar (state);
 
-	if ( !DEDICATED_SERVER && player->nr == 0 && ActiveMenu )
+	if (!DEDICATED_SERVER && player->nr == 0 && ActiveMenu)
 	{
-		ActiveMenu->handleNetMessage( message );
+		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage( message, player );
+	else cMenu::sendMessage (message, player);
 }
 
 void sendAllLanded()
 {
-	cNetMessage* message = new cNetMessage( MU_MSG_ALL_LANDED );
-	cMenu::sendMessage( message );
-	if ( ActiveMenu )
+	cNetMessage* message = new cNetMessage (MU_MSG_ALL_LANDED);
+	cMenu::sendMessage (message);
+	if (ActiveMenu)
 	{
-		message = new cNetMessage( MU_MSG_ALL_LANDED );
-		ActiveMenu->handleNetMessage( message );
+		message = new cNetMessage (MU_MSG_ALL_LANDED);
+		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
 }
 
-void sendGameIdentification( sMenuPlayer* player, int socket )
+void sendGameIdentification (sMenuPlayer* player, int socket)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_IDENTIFICATION );
-	message->pushInt16( socket );
-	message->pushString( player->name );
-	cMenu::sendMessage( message );
+	cNetMessage* message = new cNetMessage (GAME_EV_IDENTIFICATION);
+	message->pushInt16 (socket);
+	message->pushString (player->name);
+	cMenu::sendMessage (message);
 }
 
-void sendReconnectionSuccess( int playerNr )
+void sendReconnectionSuccess (int playerNr)
 {
-	cNetMessage* message = new cNetMessage( GAME_EV_RECON_SUCESS );
-	message->pushInt16( playerNr );
-	cMenu::sendMessage( message );
+	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCESS);
+	message->pushInt16 (playerNr);
+	cMenu::sendMessage (message);
 }
 
-void sendRequestMap( const string& mapName, int playerNr )
+void sendRequestMap (const string& mapName, int playerNr)
 {
-	cNetMessage* msg = new cNetMessage( MU_MSG_REQUEST_MAP );
-	msg->pushString( mapName );
-	msg->pushInt16( playerNr );
-	cMenu::sendMessage( msg );
+	cNetMessage* msg = new cNetMessage (MU_MSG_REQUEST_MAP);
+	msg->pushString (mapName);
+	msg->pushInt16 (playerNr);
+	cMenu::sendMessage (msg);
 }
 
-void sendTakenUpgrades( sUnitUpgrade( *unitUpgrades )[8], cPlayer* player )
+void sendTakenUpgrades (sUnitUpgrade (*unitUpgrades) [8], cPlayer* player)
 {
 	cNetMessage* msg = NULL;
 	int iCount = 0;
 
-	for ( unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); unitIndex++ )
+	for (unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); unitIndex++)
 	{
 		sUnitUpgrade* curUpgrade = unitUpgrades[unitIndex];
 		bool purchased = false;
-		for ( int i = 0; i < 8; i++ )
+		for (int i = 0; i < 8; i++)
 		{
-			if ( curUpgrade[i].purchased )
+			if (curUpgrade[i].purchased)
 			{
 				purchased = true;
 				break;
 			}
 		}
 
-		if ( purchased )
+		if (purchased)
 		{
-			if ( msg == NULL )
+			if (msg == NULL)
 			{
-				msg = new cNetMessage( GAME_EV_WANT_BUY_UPGRADES );
+				msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
 				iCount = 0;
 			}
 
 			sUnitData* currentVersion;
-			if ( unitIndex < UnitsData.getNrVehicles() ) currentVersion = &player->VehicleData[unitIndex];
+			if (unitIndex < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[unitIndex];
 			else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
 
-			msg->pushInt16( findUpgradeValue( curUpgrade, 0, currentVersion->speedMax ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 1, currentVersion->scan ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 2, currentVersion->hitpointsMax ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 3, currentVersion->armor ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 4, currentVersion->ammoMax ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 5, currentVersion->range ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 6, currentVersion->shotsMax ) );
-			msg->pushInt16( findUpgradeValue( curUpgrade, 7, currentVersion->damage ) );
-			msg->pushInt16( currentVersion->ID.iSecondPart );
-			msg->pushInt16( currentVersion->ID.iFirstPart );
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->speedMax));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion->scan));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion->hitpointsMax));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion->armor));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion->ammoMax));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion->range));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion->shotsMax));
+			msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion->damage));
+			msg->pushInt16 (currentVersion->ID.iSecondPart);
+			msg->pushInt16 (currentVersion->ID.iFirstPart);
 
 			iCount++; // msg contains one more upgrade struct
 
 			// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
-			if ( msg->iLength + 38 > PACKAGE_LENGTH )
+			if (msg->iLength + 38 > PACKAGE_LENGTH)
 			{
-				msg->pushInt16( iCount );
-				msg->pushInt16( player->Nr );
-				Client->sendNetMessage( msg );
+				msg->pushInt16 (iCount);
+				msg->pushInt16 (player->Nr);
+				Client->sendNetMessage (msg);
 				msg = NULL;
 			}
 
 		}
 	}
-	if ( msg != NULL )
+	if (msg != NULL)
 	{
-		msg->pushInt16( iCount );
-		msg->pushInt16( player->Nr );
-		Client->sendNetMessage( msg );
+		msg->pushInt16 (iCount);
+		msg->pushInt16 (player->Nr);
+		Client->sendNetMessage (msg);
 	}
 }
 
-int findUpgradeValue( sUnitUpgrade upgrades[8], int upgradeType, int defaultValue )
+int findUpgradeValue (sUnitUpgrade upgrades[8], int upgradeType, int defaultValue)
 {
-	switch ( upgradeType )
+	switch (upgradeType)
 	{
 		case 0:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SPEED )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SPEED)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 1:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SCAN )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SCAN)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 2:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_HITS )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_HITS)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 3:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_ARMOR )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_ARMOR)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 4:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_AMMO )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_AMMO)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 5:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_RANGE )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_RANGE)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 6:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SHOTS )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SHOTS)
 					return upgrades[i].curValue;
 			}
 			break;
 		case 7:
-			for ( int i = 0; i < 8; i++ )
+			for (int i = 0; i < 8; i++)
 			{
-				if ( upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_DAMAGE )
+				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_DAMAGE)
 					return upgrades[i].curValue;
 			}
 			break;

@@ -41,19 +41,19 @@ public:
 	int LastX, LastY; // Die letzte Position der Maus.
 	int DrawX, DrawY; // Die Position, an die die Maus gezeichnet werden soll.
 
-	void draw( bool draw_back, SDL_Surface* sf );
+	void draw (bool draw_back, SDL_Surface* sf);
 
 	// Set a new cursor.
-	bool SetCursor( eCursor );
+	bool SetCursor (eCursor);
 
-	void GetBack( SDL_Surface* sf );
+	void GetBack (SDL_Surface* sf);
 	/**
 	* Draws the currently stored background to sf
 	*/
-	void restoreBack( SDL_Surface* sf );
+	void restoreBack (SDL_Surface* sf);
 	void GetPos();
-	void setPos( int px, int py );
-	void getCursorOffset( int& x, int& y );
+	void setPos (int px, int py);
+	void getCursorOffset (int& x, int& y);
 	bool moved();
 	void Show() {LastX = -100; visible = true;}
 	void Hide() {visible = false;}

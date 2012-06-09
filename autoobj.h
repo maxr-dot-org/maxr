@@ -7,12 +7,12 @@
 #	define DELETE
 #endif
 
-template <typename T, void ( &dealloc )( T* )> class AutoObj
+template <typename T, void (&dealloc) (T*) > class AutoObj
 {
 public:
-	explicit AutoObj( T* const p = 0 ) : p_( p ) {}
+	explicit AutoObj (T* const p = 0) : p_ (p) {}
 
-	~AutoObj() { if ( p_ ) dealloc( p_ ); }
+	~AutoObj() { if (p_) dealloc (p_); }
 
 	T* Release()
 	{
@@ -21,9 +21,9 @@ public:
 		return p;
 	}
 
-	void operator =( T* const p )
+	void operator = (T* const p)
 	{
-		if ( p_ ) dealloc( p_ );
+		if (p_) dealloc (p_);
 		p_ = p;
 	}
 
@@ -34,8 +34,8 @@ public:
 private:
 	T* p_;
 
-	AutoObj( AutoObj const& )   DELETE; // No copy.
-	void operator =( AutoObj& ) DELETE; // No assignment.
+	AutoObj (AutoObj const&)   DELETE;  // No copy.
+	void operator = (AutoObj&) DELETE;  // No assignment.
 };
 
 #endif

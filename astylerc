@@ -16,7 +16,7 @@
 --unpad-paren
 --pad-oper
 --pad-header
---pad-paren-in
+--pad-paren-out
 #--add-brackets
 --align-pointer=type
 --align-reference=type

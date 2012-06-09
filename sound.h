@@ -146,15 +146,15 @@ public:
 } EX VoiceData;
 
 // Prototypen ////////////////////////////////////////////////////////////////
-int InitSound( int frequency, int chunksize );
+int InitSound (int frequency, int chunksize);
 void CloseSound();
-void PlayVoice( sSOUND* snd );
-void PlayFX( sSOUND* snd );
-void PlayMusic( char const* file );
-void SetMusicVol( int vol );
+void PlayVoice (sSOUND* snd);
+void PlayFX (sSOUND* snd);
+void PlayMusic (char const* file);
+void SetMusicVol (int vol);
 void StopMusic();
 void StartMusic();
-int PlayFXLoop( sSOUND* snd );
-void StopFXLoop( int SndStream );
+int PlayFXLoop (sSOUND* snd);
+void StopFXLoop (int SndStream);
 //void play(sSOUND *snd);
 #endif

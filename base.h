@@ -30,8 +30,8 @@ class cMap;
 struct sSubBase
 {
 public:
-	sSubBase( cPlayer* owner_ );
-	sSubBase( const sSubBase& sb );
+	sSubBase (cPlayer* owner_);
+	sSubBase (const sSubBase& sb);
 
 	cList<cBuilding*> buildings;
 	cPlayer* owner;
@@ -63,7 +63,7 @@ public:
 	* integrates all building of the given subbase in the own one
 	* @author eiko
 	*/
-	void merge( sSubBase* sb );
+	void merge (sSubBase* sb);
 
 	/**
 	* returns an unique number to identify the subbase
@@ -71,15 +71,15 @@ public:
 	*/
 	int getID() const;
 
-	void addBuilding( cBuilding* b );
+	void addBuilding (cBuilding* b);
 
 	/**
 	* adds/substracts a ressource to/from the subbase
 	* @author eiko
 	*/
-	void addMetal( int i );
-	void addOil( int i );
-	void addGold( int i );
+	void addMetal (int i);
+	void addOil (int i);
+	void addGold (int i);
 
 
 	/**
@@ -92,7 +92,7 @@ public:
 	* inreases the energy production of the subbase by starting offline generators/stations
 	* @author eiko
 	*/
-	bool increaseEnergyProd( int i );
+	bool increaseEnergyProd (int i);
 
 	//-----------------------------------
 	//turn end manangement:
@@ -150,14 +150,14 @@ public:
 	int getOilProd() const;
 
 	/** sets the production of a ressource. If i is bigger then maxAllowed, it will be reduced to the maximum allowed value */
-	void setMetalProd( int i );
-	void setGoldProd( int i );
-	void setOilProd( int i );
+	void setMetalProd (int i);
+	void setGoldProd (int i);
+	void setOilProd (int i);
 
 	/** changes the production of a ressource by i. */
-	void changeMetalProd( int i );
-	void changeGoldProd( int i );
-	void changeOilProd( int i );
+	void changeMetalProd (int i);
+	void changeGoldProd (int i);
+	void changeOilProd (int i);
 
 	//TODO: private:
 	int MetalProd;
@@ -168,17 +168,17 @@ private:
 	* calcs the maximum allowed production of a ressource, without decreasing the production of the other two
 	* @author eiko
 	*/
-	int calcMaxAllowedProd( int ressourceType ) const;
+	int calcMaxAllowedProd (int ressourceType) const;
 	/**
 	* calcs the maximum possible production of a ressource
 	* @author eiko
 	*/
-	int calcMaxProd( int ressourceType ) const;
+	int calcMaxProd (int ressourceType) const;
 	/**
 	* adds/substracts ressourcec of the type storeResType  to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce( sUnitData::eStorageResType storeResType, int value );
+	void addRessouce (sUnitData::eStorageResType storeResType, int value);
 
 };
 
@@ -197,21 +197,21 @@ public:
 	* @param bServer when true, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void addBuilding( cBuilding* building, bool bServer );
+	void addBuilding (cBuilding* building, bool bServer);
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
 	* @param bServer when true, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void deleteBuilding( cBuilding* building, bool bServer );
+	void deleteBuilding (cBuilding* building, bool bServer);
 	void handleTurnend();
 	/**
 	* recalculates the values of all subbases
 	*@author eiko
 	*/
 	void refreshSubbases();
-	sSubBase* checkNeighbour( int iOff, cBuilding* Building );
+	sSubBase* checkNeighbour (int iOff, cBuilding* Building);
 };
 
 #endif

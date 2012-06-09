@@ -38,28 +38,28 @@ public:
 		kUTVehicle
 	};
 
-	cUnit( UnitType type, sUnitData* unitData, cPlayer* owner );
+	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
 	virtual ~cUnit();
 
 	bool isVehicle() const { return unitType == kUTVehicle; }
 	bool isBuilding() const { return unitType == kUTBuilding; }
 
-	int calcHealth( int damage ) const;
-	bool isInRange( int x, int y ) const;
-	bool isNextTo( int x, int y ) const; ///< checks whether the coordinates are next to the unit
+	int calcHealth (int damage) const;
+	bool isInRange (int x, int y) const;
+	bool isNextTo (int x, int y) const;  ///< checks whether the coordinates are next to the unit
 
 	const std::string& getName() const { return name; }
 	bool isNameOriginal() const { return isOriginalName; }
 
 	std::string getNamePrefix() const;
 	std::string getDisplayName() const;
-	void changeName( const std::string& newName );
+	void changeName (const std::string& newName);
 
 	SDL_Rect getMenuSize() const;
-	bool areCoordsOverMenu( int x, int y ) const;
+	bool areCoordsOverMenu (int x, int y) const;
 	void setMenuSelection();
-	void drawMenu( cGameGUI& gameGUI );
-	void menuReleased( cGameGUI& gameGUI );
+	void drawMenu (cGameGUI& gameGUI);
+	void menuReleased (cGameGUI& gameGUI);
 	virtual void executeAutoMoveJobCommand() {}
 	virtual void executeLayMinesCommand() {}
 	virtual void executeClearMinesCommand() {}
@@ -73,15 +73,15 @@ public:
 
 	void drawMunBar() const;
 	void drawHealthBar() const;
-	void rotateTo( int newDir );
+	void rotateTo (int newDir);
 
-	virtual void setDetectedByPlayer( cPlayer* player, bool addToDetectedInThisTurnList = true ) {}
+	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
 
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit
 	 *  ATTENTION: must not be called with forceAttack == false from the server thread!
 	 */
-	bool canAttackObjectAt( int x, int y, cMap* map, bool forceAttack = false, bool checkRange = true ) const;
+	bool canAttackObjectAt (int x, int y, cMap* map, bool forceAttack = false, bool checkRange = true) const;
 
 	void upgradeToCurrentVersion(); ///< Upgrades the unit data of this unit to the current, upgraded version of the player.
 
@@ -140,7 +140,7 @@ protected:
 	virtual void executeMineManagerCommand() {}
 	virtual void executeStopCommand() {}
 	virtual void executeActivateStoredVehiclesCommand() {}
-	virtual void executeUpdateBuildingCommmand( bool updateAllOfSameType ) {}
+	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType) {}
 	virtual void executeSelfDestroyCommand() {}
 
 	virtual sUnitData* getUpgradedUnitData() const = 0;

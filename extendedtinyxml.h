@@ -49,7 +49,7 @@ class ExTiXmlNode : public TiXmlNode
 	friend class TiXmlElement;
 
 protected:
-	ExTiXmlNode( );
+	ExTiXmlNode();
 
 public:
 	enum XML_NODE_TYPE
@@ -65,7 +65,7 @@ public:
 	};
 
 	/// Get the first Node with a matching path
-	static ExTiXmlNode* XmlGetFirstNode( TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ... );
+	static ExTiXmlNode* XmlGetFirstNode (TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ...);
 
 	/// Navigate to a child node.
 	ExTiXmlNode* XmlGetFirstNodeChild();
@@ -73,14 +73,14 @@ public:
 	ExTiXmlNode* XmlGetNextNodeSibling();
 
 	/// Retrieve data from a node
-	ExTiXmlNode* XmlReadNodeData( std::string& rstrData, XML_NODE_TYPE eType );
-	ExTiXmlNode* XmlReadNodeData( std::string& rstrData, XML_NODE_TYPE eType, const char* pszAttributeName );
-	int XmlGetLastEditor( std::string& rstrData, ExTiXmlNode* pXmlAuthorNode );
+	ExTiXmlNode* XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType);
+	ExTiXmlNode* XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType, const char* pszAttributeName);
+	int XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode);
 
-	bool XmlDataToBool( std::string& rstrData );
-	inline long XmlDataToLong( std::string& rstrData ) { return atol( rstrData.c_str() ); };
-	inline double XmlDataToDouble( std::string& rstrData ) { return atof( rstrData.c_str() ); };
-	int CheckTimeStamp( std::string& rstrData );
+	bool XmlDataToBool (std::string& rstrData);
+	inline long XmlDataToLong (std::string& rstrData) { return atol (rstrData.c_str()); };
+	inline double XmlDataToDouble (std::string& rstrData) { return atof (rstrData.c_str()); };
+	int CheckTimeStamp (std::string& rstrData);
 };
 
 

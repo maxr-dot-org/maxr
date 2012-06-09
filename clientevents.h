@@ -106,7 +106,7 @@ enum CHAT_MESSAGE_TYPES
 * Generates a event with a chat message and pushes it to the event queue or sends it over TCP/IP if necessary
 *@param sMsg the chat message.
 */
-void sendChatMessageToServer( const std::string& sMsg );
+void sendChatMessageToServer (const std::string& sMsg);
 /**
 * Sends an event that the player wants to end this turn
 *@author alzi alias DoctorDeath
@@ -117,31 +117,31 @@ void sendWantToEndTurn();
 * sends a request to start a building to the Server
 *@author Eiko
 */
-void sendWantStartWork( cUnit* building );
+void sendWantStartWork (cUnit* building);
 
 /**
 * sends a request to stop a building to the Server
 *@author Eiko
 */
-void sendWantStopWork( cUnit* building );
+void sendWantStopWork (cUnit* building);
 
 /**
 * sends all waypoints of a movejob to the server.
 *@author alzi alias DoctorDeath
 */
-void sendMoveJob( sWaypoint* path, int vehicleID );
+void sendMoveJob (sWaypoint* path, int vehicleID);
 
 /**
 *
 *@author alzi alias DoctorDeath
 */
-void sendWantStopMove( int iVehicleID );
+void sendWantStopMove (int iVehicleID);
 
 /**
 *requests the server to resume the movejob of the vehicle. If 0 is passed, all movejobs of the player will be resumed.
 *@author eiko
 */
-void sendMoveJobResume( int unitId );
+void sendMoveJobResume (int unitId);
 
 /**
 * sends all nessesary information to identify agressor
@@ -152,14 +152,14 @@ void sendMoveJobResume( int unitId );
 *@param isVehicle true if agressor is a vehicle, false otherwise
 *@author Eiko
 */
-void sendWantAttack( int targetID, int targetOffset, int aggressor, bool isVehicle );
+void sendWantAttack (int targetID, int targetOffset, int aggressor, bool isVehicle);
 
 /**
 * sends whether a minelayer is laying or clearing mines
 *@author alzi alias DoctorDeath
 *@param Vehicle the vehicle which status has to be send
 */
-void sendMineLayerStatus( cVehicle* Vehicle );
+void sendMineLayerStatus (cVehicle* Vehicle);
 /**
 * sends that a vehicle wants to start building
 *@author alzi alias DoctorDeath
@@ -170,7 +170,7 @@ void sendMineLayerStatus( cVehicle* Vehicle );
 *@param bBuildPath true if the vehicle is building in path
 *@param iPathOff offset were the path will end
 */
-void sendWantBuild( int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff );
+void sendWantBuild (int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff);
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath
@@ -178,12 +178,12 @@ void sendWantBuild( int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBu
 *@param EscapeX X coordinate to which he wants do move now
 *@param EscapeY Y coordinate to which he wants do move now
 */
-void sendWantEndBuilding( cVehicle* Vehicle, int EscapeX, int EscapeY );
+void sendWantEndBuilding (cVehicle* Vehicle, int EscapeX, int EscapeY);
 /**
 * sends that the player wants a vehicle to stop building
 *@author alzi alias DoctorDeath
 */
-void sendWantStopBuilding( int iVehicleID );
+void sendWantStopBuilding (int iVehicleID);
 /**
 * sends that the client wants to tranfer resources
 *@author alzi alias DoctorDeath
@@ -194,79 +194,79 @@ void sendWantStopBuilding( int iVehicleID );
 *@param iTransferValue value of the transfer
 *@param iType Type of resources which will be transfered. ( See: NEED_METAL, NEED_OIL or NEED_GOLD )
 */
-void sendWantTransfer( bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType );
+void sendWantTransfer (bool bSrcVehicle, int iSrcID, bool bDestVehicle, int iDestID, int iTransferValue, int iType);
 /**
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */
-void sendWantBuildList( cBuilding* Building, cList<sBuildList>& BuildList, bool bRepeat, int buildSpeed );
+void sendWantBuildList (cBuilding* Building, cList<sBuildList>& BuildList, bool bRepeat, int buildSpeed);
 /**
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath
 */
-void sendWantExitFinishedVehicle( cBuilding* Building, int iX, int iY );
+void sendWantExitFinishedVehicle (cBuilding* Building, int iX, int iY);
 /**
 * sends that the client wants to change the produce values in the minemanager of a building
 *@author alzi alias DoctorDeath
 */
-void sendChangeResources( cBuilding* Building, int iMetalProd, int iOilProd, int iGoldProd );
+void sendChangeResources (cBuilding* Building, int iMetalProd, int iOilProd, int iGoldProd);
 /**
  * sends that the client wants to change the manual fire status of a unit
  *@author pagra
  */
-void sendChangeManualFireStatus( int iUnitID, bool bVehicle );
+void sendChangeManualFireStatus (int iUnitID, bool bVehicle);
 /**
 * sends that the client wants to change the sentry status of a unit
 *@author alzi alias DoctorDeath
 */
-void sendChangeSentry( int iUnitID, bool bVehicle );
+void sendChangeSentry (int iUnitID, bool bVehicle);
 /**
 * sends that the client wants to rearm or repair a unit by an rearm-/repairable vehicle
 *@author alzi alias DoctorDeath
 */
-void sendWantSupply( int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType );
+void sendWantSupply (int iDestID, bool bDestVehicle, int iSrcID, bool bSrcVehicle, int iType);
 /**
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStartClear( cUnit* unit );
+void sendWantStartClear (cUnit* unit);
 /**
 * sends that the client wants to stop clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStopClear( cUnit* unit );
+void sendWantStopClear (cUnit* unit);
 /**
 * sends that the client wants to abort waiting for the reconnect of a disconnected player
 *@author alzi alias DoctorDeath
 */
 void sendAbortWaiting();
-void sendWantLoad( int unitid, bool vehicle, int loadedunitid );
-void sendWantActivate( int unitid, bool vehicle, int activatunitid, int x, int y );
+void sendWantLoad (int unitid, bool vehicle, int loadedunitid);
+void sendWantActivate (int unitid, bool vehicle, int activatunitid, int x, int y);
 /**
 * sends a request to resync the player
 */
-void sendRequestResync( char PlayerNr );
+void sendRequestResync (char PlayerNr);
 
 void sendRequestCasualtiesReport();
 
 /**
 * sends that a unit has been set to automove status
 */
-void sendSetAutoStatus( int unitID, bool set );
+void sendSetAutoStatus (int unitID, bool set);
 /**
 * sends that the infiltrator wants to infiltrate a unit
 *@author alzi alias DoctorDeath
 */
-void sendWantComAction( int srcUnitID, int destUnitID, bool destIsVehicle, bool steal );
-void sendWantUpgrade( int buildingID, int storageSlot, bool upgradeAll );
-void sendWantResearchChange( int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr );
-void sendSaveHudInfo( int selectedUnitID, int ownerNr, int savingID );
-void sendSaveReportInfo( sSavedReportMessage* savedReport, int ownerNr, int savingID );
-void sendFinishedSendSaveInfo( int ownerNr, int savingID );
+void sendWantComAction (int srcUnitID, int destUnitID, bool destIsVehicle, bool steal);
+void sendWantUpgrade (int buildingID, int storageSlot, bool upgradeAll);
+void sendWantResearchChange (int newResearchSettings[cResearch::kNrResearchAreas], int ownerNr);
+void sendSaveHudInfo (int selectedUnitID, int ownerNr, int savingID);
+void sendSaveReportInfo (sSavedReportMessage* savedReport, int ownerNr, int savingID);
+void sendFinishedSendSaveInfo (int ownerNr, int savingID);
 
-void sendWantSelfDestroy( cUnit* building );
-void sendWantChangeUnitName( const std::string& newName, int unitID );
+void sendWantSelfDestroy (cUnit* building);
+void sendWantChangeUnitName (const std::string& newName, int unitID);
 
-void sendEndMoveAction( int vehicleID, int destID, eEndMoveActionType type );
+void sendEndMoveAction (int vehicleID, int destID, eEndMoveActionType type);
 
 #endif // clienteventsH

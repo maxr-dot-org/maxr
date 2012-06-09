@@ -54,13 +54,13 @@ public:
 	* @author Eiko
 	* @param iType the type of the message
 	*/
-	cNetMessage( int iType );
+	cNetMessage (int iType);
 
 	/** creates a netMessage from a former serialized netMessage
 	* @author Eiko
 	* @param c the serial data from a netMessage
 	*/
-	cNetMessage( const char* c );
+	cNetMessage (const char* c);
 
 	//~cNetMessage();
 
@@ -85,7 +85,7 @@ public:
 	* @author Eiko
 	* @param c the char to push to the message
 	*/
-	void pushChar( char c );
+	void pushChar (char c);
 
 	/** pops an char from the end of the netMessage
 	* @author Eiko
@@ -97,7 +97,7 @@ public:
 	* @author Eiko
 	* @param i the Sint16 to push to the message
 	*/
-	void pushInt16( Sint16 i );
+	void pushInt16 (Sint16 i);
 
 	/** pops a Sint16 from the end of the netMessage
 	* @author Eiko
@@ -109,7 +109,7 @@ public:
 	* @author Eiko
 	* @param i the Sint32 to push to the message
 	*/
-	void pushInt32( Sint32 i );
+	void pushInt32 (Sint32 i);
 
 	/** pops a Sint 32 from the end of the netMessage
 	* @author Eiko
@@ -121,7 +121,7 @@ public:
 	* @author Eiko
 	* @param s the string to push to the message
 	*/
-	void pushString( const std::string& s );
+	void pushString (const std::string& s);
 
 	/** pops a string from the end of the netMessage
 	* @author Eiko
@@ -133,7 +133,7 @@ public:
 	* @author Eiko
 	* @param b the bool to push to the message
 	*/
-	void pushBool( bool b );
+	void pushBool (bool b);
 
 	/** pops a bool from the end of the netMessage
 	* @author Eiko
@@ -147,7 +147,7 @@ public:
 	* @author Eiko
 	* @param f the float to push to the message
 	*/
-	void pushFloat( float f );
+	void pushFloat (float f);
 
 	/** pops a float from the end of the netMessage
 	* @author Eiko

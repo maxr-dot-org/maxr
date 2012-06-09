@@ -60,15 +60,15 @@ struct sSubBaseLoad
 class cSavegame
 {
 public:
-	cSavegame( int number );
+	cSavegame (int number);
 
 	/* saves the current gamestate to a file */
-	int save( const std::string& saveName );
+	int save (const std::string& saveName);
 	/* loads a savegame */
 	int load();
 
 	/* loads the header of a savefile and returns some values to the pointers */
-	void loadHeader( std::string* name, std::string* type, std::string* time );
+	void loadHeader (std::string* name, std::string* type, std::string* time);
 	std::string getMapName();
 	std::string getPlayerNames();
 
@@ -76,7 +76,7 @@ public:
 	* ---
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo( sHudStateContainer hudState, cList<sSavedReportMessage>& list, cPlayer* player );
+	void writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, cPlayer* player);
 
 	//--------------------------------------------------------------------------
 private:
@@ -98,7 +98,7 @@ private:
 	* writes the saveheader
 	*@author alzi alias DoctorDeath
 	*/
-	void writeHeader( const std::string& saveName );
+	void writeHeader (const std::string& saveName);
 	/**
 	* writes game infos such as turn or mode
 	*@author alzi alias DoctorDeath
@@ -108,27 +108,27 @@ private:
 	* saves the map infos
 	*@author alzi alias DoctorDeath
 	*/
-	void writeMap( cMap* Map );
+	void writeMap (cMap* Map);
 	/**
 	* saves the information for the player to a new node
 	*@author alzi alias DoctorDeath
 	*/
-	void writePlayer( cPlayer* Player, int number );
+	void writePlayer (cPlayer* Player, int number);
 	/**
 	* saves the values of a upgraded unit
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUpgrade( TiXmlElement* upgradesNode, int upgradenumber, sUnitData* data, sUnitData* originaldata );
+	void writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, sUnitData* data, sUnitData* originaldata);
 	/**
 	 * save the research level values of a player
 	 *@author pagra
 	 */
-	void writeResearchLevel( TiXmlElement* researchLevelNode, cResearch& researchLevel );
+	void writeResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel);
 	/**
 	 * save the number of research centers that are working on each area of a player
 	 *@author pagra
 	 */
-	void writeResearchCentersWorkingOnArea( TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player );
+	void writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player);
 	/**
 	 * save the casualties of all players
 	 *@author pagra
@@ -138,27 +138,27 @@ private:
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* writeUnit( cVehicle* Vehicle, int* unitnum );
+	TiXmlElement* writeUnit (cVehicle* Vehicle, int* unitnum);
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit( cBuilding* Building, int* unitnum );
+	void writeUnit (cBuilding* Building, int* unitnum);
 	/**
 	* saves the information of the rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void writeRubble( cBuilding* Building, int rubblenum );
+	void writeRubble (cBuilding* Building, int rubblenum);
 	/**
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnitValues( TiXmlElement* unitNode, sUnitData* Data, sUnitData* OwnerData );
+	void writeUnitValues (TiXmlElement* unitNode, sUnitData* Data, sUnitData* OwnerData);
 	/**
 	* saves the standard unit values from the unit xmls
 	*@author alzi alias DoctorDeath
 	*/
-	void writeStandardUnitValues( sUnitData* Data, int unitnum );
+	void writeStandardUnitValues (sUnitData* Data, int unitnum);
 
 	/**
 	* loads the main game information
@@ -174,27 +174,27 @@ private:
 	* loads all players from savefile
 	*@author alzi alias DoctorDeath
 	*/
-	cList<cPlayer*>* loadPlayers( cMap* map );
+	cList<cPlayer*>* loadPlayers (cMap* map);
 	/**
 	* loads a player
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* loadPlayer( TiXmlElement* playerNode, cMap* map );
+	cPlayer* loadPlayer (TiXmlElement* playerNode, cMap* map);
 	/**
 	* loads the upgrade values of a unit in the players data
 	*@author alzi alias DoctorDeath
 	*/
-	void loadUpgrade( TiXmlElement* upgradeNode, sUnitData* data );
+	void loadUpgrade (TiXmlElement* upgradeNode, sUnitData* data);
 	/**
 	 * loads the research level of a player into the players researchLevel
 	 * @author pagra
 	 */
-	void loadResearchLevel( TiXmlElement* researchLevelNode, cResearch& researchLevel );
+	void loadResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel);
 	/**
 	 * loads the number of research centers of a player that are working on each area
 	 * @author pagra
 	 */
-	void loadResearchCentersWorkingOnArea( TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player );
+	void loadResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player);
 	/**
 	 * loads the casualties of all players
 	 *@author pagra
@@ -209,27 +209,27 @@ private:
 	* loads a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void loadVehicle( TiXmlElement* unitNode, sID& ID );
+	void loadVehicle (TiXmlElement* unitNode, sID& ID);
 	/**
 	* loads a building
 	*@author alzi alias DoctorDeath
 	*/
-	void loadBuilding( TiXmlElement* unitNode, sID& ID );
+	void loadBuilding (TiXmlElement* unitNode, sID& ID);
 	/**
 	* loads rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void loadRubble( TiXmlElement* rubbleNode );
+	void loadRubble (TiXmlElement* rubbleNode);
 	/**
 	* loads unit data values that are the same for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void loadUnitValues( TiXmlElement* unitNode, sUnitData* Data );
+	void loadUnitValues (TiXmlElement* unitNode, sUnitData* Data);
 	/**
 	* loads the standard unit values
 	*@author alzi alias DoctorDeath
 	*/
-	void loadStandardUnitValues( TiXmlElement* unitNode );
+	void loadStandardUnitValues (TiXmlElement* unitNode);
 	/**
 	* recalculates the subbase values after loading all units
 	*@author eiko
@@ -245,53 +245,53 @@ private:
 	* returns the player with the number
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* getPlayerFromNumber( cList<cPlayer*>* PlayerList, int number );
+	cPlayer* getPlayerFromNumber (cList<cPlayer*>* PlayerList, int number);
 	/**
 	* converts the resource data to an string in HEX format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertDataToString( sResources* resources, int size );
+	std::string convertDataToString (sResources* resources, int size);
 	/**
 	* returns the HEX-string of a single byte
 	*@author alzi alias DoctorDeath
 	*/
-	std::string getHexValue( unsigned char byte );
+	std::string getHexValue (unsigned char byte);
 	/**
 	* converts the resource from HEX-string to byte-data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToData( const std::string& str, int size, sResources* resources );
+	void convertStringToData (const std::string& str, int size, sResources* resources);
 	/**
 	* returns the byte value of a single HEX-string
 	*@author alzi alias DoctorDeath
 	*/
-	unsigned char getByteValue( const std::string& str );
+	unsigned char getByteValue (const std::string& str);
 	/**
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertScanMapToString( const char* data, int size );
+	std::string convertScanMapToString (const char* data, int size);
 	/**
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToScanMap( const std::string& str, char* data );
+	void convertStringToScanMap (const std::string& str, char* data);
 
 	/**
 	* adds an node without undernodes
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* addMainElement( TiXmlElement* node, const std::string& nodename );
+	TiXmlElement* addMainElement (TiXmlElement* node, const std::string& nodename);
 	/**
 	* adds an attribute with given value to the node
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttribute( TiXmlElement* element, const std::string& attributename, const std::string& value );
+	void addAttribute (TiXmlElement* element, const std::string& attributename, const std::string& value);
 	/**
 	* adds an node with maximal two attributes and there values
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttributeElement( TiXmlElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "" );
+	void addAttributeElement (TiXmlElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
 };
 
 #endif // savegameH
