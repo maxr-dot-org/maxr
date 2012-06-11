@@ -426,7 +426,7 @@ class cMenuImage : public cMenuItem
 public:
 	cMenuImage (int x, int y, SDL_Surface* image_ = NULL);
 	void setImage (SDL_Surface* image_);
-	void draw();
+	virtual void draw();
 
 private:
 	AutoSurface image;
@@ -461,8 +461,8 @@ public:
 	 *@author alzi
 	 */
 	void setBox (int width, int height);
-	void draw();
-	void move (int x, int y);
+	virtual void draw();
+	virtual void move (int x, int y);
 };
 
 /**
@@ -516,16 +516,15 @@ protected:
 	int getTextYOffset() const;
 	int getBordersSize() const;
 
-	bool preClicked();
-	bool preReleased();
-	void postReleased();
-	bool preHoveredOn();
-	bool preHoveredAway();
-
-	bool preSetLocked (bool locked_);
+	virtual bool preClicked();
+	virtual bool preReleased();
+	virtual void postReleased();
+	virtual bool preHoveredOn();
+	virtual bool preHoveredAway();
+	virtual bool preSetLocked (bool locked_);
 public:
 	cMenuButton (int x, int y, const std::string& text_ = "", eButtonTypes buttonType_ = BUTTON_TYPE_STANDARD_BIG, eUnicodeFontType fontType_ = FONT_LATIN_BIG, sSOUND* clickSound_ = SoundData.SNDHudButton);
-	void draw();
+	virtual void draw();
 };
 
 /**
@@ -541,17 +540,17 @@ protected:
 
 	void animationCallback();
 
-	bool preClicked();
-	bool preReleased();
-	void postReleased();
-	bool preHoveredOn();
-	bool preHoveredAway();
-	bool preSetLocked (bool locked_);
+	virtual bool preClicked();
+	virtual bool preReleased();
+	virtual void postReleased();
+	virtual bool preHoveredOn();
+	virtual bool preHoveredAway();
+	virtual bool preSetLocked (bool locked_);
 
 public:
 	cMenuDestroyButton (int x, int y, cMenu* menu);
 	~cMenuDestroyButton();
-	void draw();
+	virtual void draw();
 
 	bool opening;
 };
@@ -617,11 +616,11 @@ protected:
 
 	void renewButtonSurface();
 
-	bool preClicked();
+	virtual bool preClicked();
 
 public:
 	cMenuCheckButton (int x, int y, const std::string& text_ = "", bool checked_ = false, bool centered_ = false, eCheckButtonTypes buttonType_ = RADIOBTN_TYPE_BTN_ROUND, eCheckButtonTextOriantation textOrientation = TEXT_ORIENT_RIGHT, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, sSOUND* clickSound_ = SoundData.SNDObjectMenu);
-	void draw();
+	virtual void draw();
 
 	void setChecked (bool checked_);
 	bool isChecked() const;
@@ -641,13 +640,13 @@ protected:
 
 	void checkedButton (cMenuCheckButton* button);
 
-	bool overItem (int x, int y) const;
+	virtual bool overItem (int x, int y) const;
 
-	void clicked (void* parent);
+	virtual void clicked (void* parent);
 public:
 	cMenuRadioGroup() : cMenuItem (0, 0) {}
 	~cMenuRadioGroup();
-	void draw();
+	virtual void draw();
 
 	void addButton (cMenuCheckButton* button);
 	bool buttonIsChecked (int index) const;
@@ -693,12 +692,12 @@ protected:
 	int drawName (bool withNumber);
 	void drawCargo (int destY);
 
-	void released (void* parent);
+	virtual void released (void* parent);
 	void init();
 public:
 	cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
 	cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_);
-	void draw();
+	virtual void draw();
 
 	sID getUnitID() const;
 	sUnitData* getUnitData();
@@ -771,13 +770,13 @@ protected:
 	int offset;
 	int maxDisplayUnits;
 
-	void released (void* parent);
+	virtual void released (void* parent);
 	void addUnit (cMenuUnitListItem* unitItem, bool scroll = false);
 
 public:
 	cMenuUnitsList (int x, int y, int w, int h, cHangarMenu* parent, eMenuUnitListDisplayTypes displayType_);
 	~cMenuUnitsList();
-	void draw();
+	virtual void draw();
 
 	int getSize() const;
 	cMenuUnitListItem* getItem (int index);
@@ -848,7 +847,7 @@ protected:
 
 public:
 	cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_);
-	void draw();
+	virtual void draw();
 
 	void setOwner (cPlayer* owner_);
 	void setSelection (cVehicle* vehicle_, cBuilding* building_);
@@ -865,7 +864,7 @@ protected:
 
 public:
 	cMenuUnitDetailsBig (int x, int y);
-	void draw();
+	virtual void draw();
 
 	void setSelection (cMenuUnitListItem* selectedUnit_);
 };
@@ -905,7 +904,7 @@ protected:
 	void generateSurface();
 public:
 	cMenuMaterialBar (int x, int y, int labelX, int labelY, int maxValue_, eMaterialBarTypes materialType_, bool inverted_ = false, bool showLabel_ = true);
-	void draw();
+	virtual void draw();
 
 	void setType (eMaterialBarTypes);
 	void setMaximalValue (int maxValue_);
@@ -957,16 +956,16 @@ private:
 	void (*movedCallback) (void*);
 public:
 	cMenuScroller (int x, int y, eMenuScrollerTypes scrollerType_, cMenuItem* parent_, void (*movedCallback_) (void*) = NULL);
-	void draw();
+	virtual void draw();
 
 	void move (int value);
 
 	void mouseMoved (bool center);
 
-	bool preClicked();
-	void hoveredAway (void* parent);
-	void movedMouseOver (int lastMouseX, int lastMouseY, void* parent);
-	void somewhereMoved();
+	virtual bool preClicked();
+	virtual void hoveredAway (void* parent);
+	virtual void movedMouseOver (int lastMouseX, int lastMouseY, void* parent);
+	virtual void somewhereMoved();
 };
 
 /**
@@ -998,7 +997,7 @@ protected:
 public:
 	cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* parentMenu_, cMenuItem* parentItem_);
 
-	void draw();
+	virtual void draw();
 
 	void setMaximalScroll (int maximalScroll_);
 
@@ -1023,7 +1022,7 @@ protected:
 public:
 	cMenuListBox (int x, int y, int w, int h, int maxLines_, cMenu* parentMenu_);
 
-	void draw();
+	virtual void draw();
 
 	void addLine (const std::string& line);
 };
@@ -1066,9 +1065,9 @@ protected:
 	virtual int getBorderSize();
 public:
 	cMenuLineEdit (int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, eLineEditType lineEditType_ = LE_TYPE_IN_BOX);
-	void draw();
+	virtual void draw();
 
-	bool preClicked();
+	virtual bool preClicked();
 
 	void setReadOnly (bool readOnly_);
 	/**
@@ -1094,7 +1093,7 @@ class cMenuChatBox : public cMenuLineEdit
 	int getBorderSize() const;
 public:
 	cMenuChatBox (int x, int y, cMenu* parentMenu_);
-	void draw();
+	virtual void draw();
 };
 
 /**
@@ -1131,11 +1130,11 @@ class cMenuPlayersBox : public cMenuItemContainer
 
 	AutoPtr<cMenuScrollBar>::type scrollBar;
 
-	bool preClicked();
+	virtual bool preClicked();
 public:
 	cMenuPlayersBox (int x, int y, int w, int h, cNetworkMenu* parentMenu_);
 	~cMenuPlayersBox();
-	void draw();
+	virtual void draw();
 
 	void setPlayers (cList<sMenuPlayer*>* player_);
 };
@@ -1153,9 +1152,9 @@ class cMenuSaveSlot : public cMenuItem
 public:
 	cMenuSaveSlot (int x, int y, cMenu* parent);
 
-	void draw();
+	virtual void draw();
 
-	void setActivity (bool active_) {}
+	virtual void setActivity (bool active_) {}
 
 	void setSaveData (sSaveFile saveFile, bool selected);
 	void reset (int number, bool selected);
@@ -1219,7 +1218,7 @@ protected:
 	sUnitData* unitData;
 public:
 	cMenuStoredUnitDetails (int x, int y, sUnitData* unitData_ = NULL);
-	void draw();
+	virtual void draw();
 
 	void setUnitData (sUnitData* unitData_);
 };
@@ -1254,7 +1253,7 @@ public:
 
 	AutoPtr<cMenuScroller>::type scroller;
 
-	void draw();
+	virtual void draw();
 
 	void setBorders (float minValue_, float maxValue_);
 	void setValue (float value);
@@ -1263,7 +1262,7 @@ public:
 
 	static void scrollerMoved (void* parent);
 
-	bool preClicked();
+	virtual bool preClicked();
 };
 
 class cMenuScrollerHandler : public cMenuItem
@@ -1276,7 +1275,7 @@ class cMenuScrollerHandler : public cMenuItem
 public:
 	cMenuScrollerHandler (int x, int y, int w, int maxValue_);
 
-	void draw();
+	virtual void draw();
 
 	void setValue (int value);
 };
@@ -1332,7 +1331,7 @@ public:
 	cMenuReportsScreen (int x, int y, int w, int h, cPlayer* owner_, cReportsMenu* parentMenu_);
 	~cMenuReportsScreen();
 
-	void draw();
+	virtual void draw();
 
 	void setIncludeFilter (bool filterPlanes_, bool filterGround_, bool filterSea_, bool filterBuilding_);
 	void setBorderedFilter (bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_);
@@ -1341,7 +1340,7 @@ public:
 	void scrollDown();
 	void scrollUp();
 
-	void released (void* parent);
+	virtual void released (void* parent);
 
 	// INotificationListener implementation
 	virtual bool notify (const std::string& message, void* sender = 0);
@@ -1361,7 +1360,7 @@ private:
 public:
 	cMenuPlayerInfo (int x, int y, cPlayer* player_);
 
-	void draw();
+	virtual void draw();
 };
 
 #endif // menuitemsH
