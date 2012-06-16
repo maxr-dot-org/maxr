@@ -61,6 +61,8 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	map (map_),
 	shiftPressed (false),
 	overUnitField (NULL),
+	miniMapOffX(0),
+	miniMapOffY(0),
 	zoomSlider (20, 274, minZoom, 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
 	endButton (391, 4, lngPack.i18n ("Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
 	preferencesButton (86, 4, lngPack.i18n ("Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
@@ -105,7 +107,6 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	frame = 0;
 	zoom = 1.0;
 	offX = offY = 0;
-	miniMapOffX = miniMapOffY = 0;
 	framesPerSecond = cyclesPerSecond = 0;
 	loadValue = 0;
 	panelTopGraphic = NULL, panelBottomGraphic = NULL;
