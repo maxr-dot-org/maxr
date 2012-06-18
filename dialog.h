@@ -182,7 +182,7 @@ class cDialogTransfer : public cMenu
 	cMenuButton incButton;
 	cMenuButton decButton;
 
-	cMenuMaterialBar resBar;
+	AutoPtr<cMenuMaterialBar>::type resBar;
 
 	AutoPtr<cMenuImage>::type unitImages[2];
 

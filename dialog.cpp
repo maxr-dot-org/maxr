@@ -562,7 +562,6 @@ cDialogTransfer::cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_
 	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	incButton (position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL),
 	decButton (position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL),
-	resBar (position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
 	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG)
 {
 	// TODO: add changing arrow direction!
@@ -581,8 +580,9 @@ cDialogTransfer::cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_
 	decButton.setReleasedFunction (&decReleased);
 	menuItems.Add (&decButton);
 
-	resBar.setClickedFunction (&barClicked);
-	menuItems.Add (&resBar);
+	resBar = new cMenuMaterialBar(position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
+	resBar->setClickedFunction (&barClicked);
+	menuItems.Add (resBar);
 
 	unitNameLabels[0] = new cMenuLabel (position.x + 70, position.y + 105, "", FONT_LATIN_SMALL_WHITE);
 	unitNameLabels[0]->setCentered (true);
@@ -769,7 +769,7 @@ void cDialogTransfer::setCargos()
 
 	transferLabel.setText (iToStr (abs (transferValue)));
 
-	resBar.setCurrentValue ( (int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
+	resBar->setCurrentValue ( (int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
 }
 
 void cDialogTransfer::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
@@ -835,7 +835,7 @@ void cDialogTransfer::decReleased (void* parent)
 void cDialogTransfer::barClicked (void* parent)
 {
 	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*> (parent);
-	menu->transferValue = Round ( (mouse->x - menu->resBar.getPosition().x) * (menu->maxDestCargo / 223.0) - menu->destCargo);
+	menu->transferValue = Round ( (mouse->x - menu->resBar->getPosition().x) * (menu->maxDestCargo / 223.0) - menu->destCargo);
 	menu->setCargos();
 	menu->draw();
 }
