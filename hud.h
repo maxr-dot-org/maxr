@@ -111,7 +111,7 @@ class cGameGUI : public cMenu
 
 	float minZoom;
 
-	void calcMinZoom();
+	float calcMinZoom();
 
 	bool closed;
 

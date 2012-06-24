@@ -63,7 +63,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	miniMapOffY(0),
 	shiftPressed (false),
 	overUnitField (NULL),
-	zoomSlider (20, 274, minZoom, 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
+	zoomSlider (20, 274, calcMinZoom(), 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
 	endButton (391, 4, lngPack.i18n ("Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
 	preferencesButton (86, 4, lngPack.i18n ("Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
 	filesButton (17, 3, lngPack.i18n ("Text~Hud~Files"), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE),
@@ -249,10 +249,12 @@ void cGameGUI::setClient (cClient* client)
 	this->client = client;
 }
 
-void cGameGUI::calcMinZoom()
+float cGameGUI::calcMinZoom()
 {
 	minZoom = (float) ( (max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) map->size) / 64.0);
 	minZoom = max (minZoom, ( (int) (64.0 * minZoom) + (minZoom >= 1.0 ? 0 : 1)) / (float) 64.0);
+
+	return minZoom;
 }
 
 void cGameGUI::recalcPosition (bool resetItemPositions)
