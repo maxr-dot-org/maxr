@@ -30,14 +30,14 @@
 		<Init>
 			<Lang ENG="Loading language pack..." localized="Chargement pack langue..."/>
 			<Keys ENG="Loading keys..." localized="Chargement paramètres..."/>
-      		<Fonts ENG="Loading fonts..." localized="Chargement polices..."/>
-      		<GFX ENG="Loading graphics..." localized="Chargement graphismes..."/>
-      		<Effects ENG="Loading effects..." localized="Chargement effets..."/>
-      		<Terrain ENG="Loading terrain..." localized="Chargement Terrains..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Chargement Véhicules..."/>
-      		<Buildings ENG="Loading buildings..." localized="Chargement bâtiments..."/>
-      		<Music ENG="Loading music..." localized="Chargement musiques..."/>
-      		<Sounds ENG="Loading sounds..." localized="Chargement sons..."/>
+			<Fonts ENG="Loading fonts..." localized="Chargement polices..."/>
+			<GFX ENG="Loading graphics..." localized="Chargement graphismes..."/>
+			<Effects ENG="Loading effects..." localized="Chargement effets..."/>
+			<Terrain ENG="Loading terrain..." localized="Chargement Terrains..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Chargement Véhicules..."/>
+			<Buildings ENG="Loading buildings..." localized="Chargement bâtiments..."/>
+			<Music ENG="Loading music..." localized="Chargement musiques..."/>
+			<Sounds ENG="Loading sounds..." localized="Chargement sons..."/>
 			<Voices ENG="Loading voices..." localized="Chargement voix..."/>
 			<Clans ENG="Loading clans..." localized="Chargement Clans..."/>
 		</Init>
@@ -134,6 +134,7 @@
 			<Build ENG="Build" localized="Constr."/>
 			<Transfer ENG="X-fer" localized="Transf."/>
 			<Sentry ENG="Sentry" localized="Faction"/>
+			<Manual ENG="Manual" localized="Manuel"/>
 			<Done ENG="Done" localized="Fini"/>
 			<Auto ENG="Auto" localized="Auto"/>
 			<Stop ENG="Stop" localized="Stop"/>
@@ -229,6 +230,8 @@
 			<Player_Turn ENG="%s's turn" localized="Tour de %s"/>
 			<Player_Turn_End ENG="%s ended turn" localized="%s a terminé son tour"/>
 			<Player_Left ENG="%s has left the game" localized="%s a quitté la partie"/>
+			<Player_Name_Taken ENG="All player names should be unique" localized="Les noms des joueurs doivent être uniques"/>
+			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
 			<Network_Error_Socket ENG="Error opening socket" localized="Erreur ouverture Socket"/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Impossible de se connecter à "/>
 			<Network_Open ENG="Game open" localized="Ouvrir jeu"/>
@@ -265,6 +268,8 @@
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
 			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Vous ne faites pas parti du jeu sauvegardé : vous allez être déconnecté"/>
 			<MapDL_Cancel ENG="Aborted"/>
+			<MapDL_Finished ENG="Map download finished."/>
+			<MapDL_UploadFinished ENG="Map upload to %s finished."/>
 			<MapDL_Percent ENG="Map download: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..."/>
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom"/>
@@ -287,6 +292,7 @@
 			<Usage ENG="Usage" localized="Usage"/>
 		</Vehicles>
 		<Comp>
+			<Path_interrupted ENG="l'ordre de construction a été interrompu."/>
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Point d'atterrissage trop proche d'un autre joueur. Veuillez choisir un autre emplacement."/>
 			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Point d'atterrissage proche d'un autre joueur. Veuillez confirmer en cliquant dans le cercle rouge, sinon choississez un autre emplacment."/>
 			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Fioul insuffisant, générateur désactivé !"/>
@@ -335,6 +341,7 @@
 			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Chantier bloqué ou ressources insuffisantes."/>
 			<Moving ENG="moving" localized="en mouvement"/>
 			<Sentry ENG="on sentry" localized="en faction"/>
+			<ReactionFireOff ENG="Tir de réaction désactivé"/>
 			<Clearing ENG="Clearing" localized="Nettoyage"/>
 			<Clearing_Mine ENG="clearing mines" localized="en déminage"/>
 			<Clearing_Fin ENG="clearing done" localized="nettoyage terminé"/>
@@ -363,6 +370,8 @@
 			<NoLimit ENG="Fight to the death!" localized="Combat à mort!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Mort subite! Le premier joueur qui augmente son score gagne!"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Capture d'écran sauvegardée: %s"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s a été capturé par l'enemi"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s attaque l'enemi"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichier introuvable : %s"/>

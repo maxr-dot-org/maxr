@@ -231,6 +231,8 @@
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum."/>
 			<Player_Turn ENG="%s's turn"/>
 			<Player_Turn_End ENG="%s ended turn"/>
+			<Player_Name_Taken ENG="All player names should be unique"/>
+			<Player_Color_Taken ENG="All player colors should be unique"/>
 			<Player_Left ENG="%s has left the game"/>
 			<Network_Error_Socket ENG="Error opening socket"/>
 			<Network_Error_Connect ENG="Could not connect to "/>
@@ -261,7 +263,7 @@
 			<Lost_Connection ENG="Lost connection to %s."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
-      <Frozen ENG="You have been frozen by the server."/>
+			<Frozen ENG="You have been frozen by the server."/>
 			<Save_Only_Host ENG="Only the host can save games."/>
 			<Player_Joined ENG="%s has joined"/>
 			<Player_Left ENG="%s has left"/>
