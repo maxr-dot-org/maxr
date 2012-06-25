@@ -55,6 +55,7 @@
 			<Credits ENG="Credits" localized="Crédits "/>
 			<Game_Type ENG="Game Type" localized="Type de jeu "/>
 			<Gold ENG="Gold" localized="Or "/>
+			<Hangar ENG="Hangar" localized="Hangar"/>
 			<Human ENG="Human" localized="Humain"/>
 			<IP ENG="IP" localized="IP"/>
 			<Labs ENG="Research menu" localized="Menu recherche"/>
