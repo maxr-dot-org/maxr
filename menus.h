@@ -561,6 +561,7 @@ class cHangarMenu : public cMenu
 protected:
 	cPlayer* player;
 
+	cMenuLabel titleLabel;
 	AutoPtr<cMenuImage>::type infoImage;
 	AutoPtr<cMenuLabel>::type infoText;
 	AutoPtr<cMenuCheckButton>::type infoTextCheckBox;

@@ -1774,11 +1774,15 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 //-----------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_)
-	: cMenu (background_, backgroundType_)
-	, player (player_)
+cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_) :
+	cMenu (background_, backgroundType_),
+	player (player_),
+	titleLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Hangar"))
 {
 	selectionChangedFunc = NULL;
+
+	titleLabel.setCentered(true);
+	menuItems.Add(&titleLabel);
 
 	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	menuItems.Add (doneButton);
@@ -1953,12 +1957,10 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStartupHangarMenu::cStartupHangarMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) : cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (NULL, player_), gameDataContainer (gameDataContainer_)
+cStartupHangarMenu::cStartupHangarMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn) :
+	cHangarMenu (LoadPCX (GFXOD_HANGAR), player_), cUpgradeHangarMenu (player_), cAdvListHangarMenu (NULL, player_),
+	gameDataContainer (gameDataContainer_)
 {
-	/*cMenuLabel *titleLabel = new cMenuLabel ( position.x+552, position.y+11, lngPack.i18n ("Text~Title~Hangar") );
-	titleLabel->setCentered( true );
-	menuItems.Add ( titleLabel );*/
-
 	if (gameDataContainer->settings) credits = gameDataContainer->settings->credits;
 	else credits = 0;
 
