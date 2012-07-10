@@ -1184,7 +1184,7 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (forceAttack)
 		return true;
 
-	if (targetBuilding && isVehicle() && map->possiblePlace (static_cast<const cVehicle*> (this), x, y))     //do not fire on e. g. platforms, connectors etc.
+	if (targetBuilding && isVehicle() && data.factorAir == 0 && map->possiblePlace (static_cast<const cVehicle*> (this), x, y))     //do not fire on e. g. platforms, connectors etc.
 		return false;																	//see ticket #436 on bug tracker
 
 	if ( (targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
