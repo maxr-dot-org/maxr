@@ -159,6 +159,51 @@ private:
 	*/
 	cNetMessage* pollEvent();
 
+	void HandleNetMessage_TCT_ACCEPT (cNetMessage& message);
+	void HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
+
 public:
 	/**
 	* Handels all incoming netMessages from the clients
