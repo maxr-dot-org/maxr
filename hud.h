@@ -376,6 +376,7 @@ class cGameGUI : public cMenu
 
 	static void playReleased (void* parent);
 	static void stopReleased (void* parent);
+	static void swithAnimationReleased (void* parent);
 
 	static void chatBoxReturnPressed (void* parent);
 

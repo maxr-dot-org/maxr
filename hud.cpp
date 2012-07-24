@@ -155,6 +155,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	stopButton.setReleasedFunction (&stopReleased);
 	menuItems.Add (&stopButton);
 
+	FLCImage.setReleasedFunction(&swithAnimationReleased);
 	menuItems.Add (&FLCImage);
 
 	menuItems.Add (&unitDetails);
@@ -2897,6 +2898,12 @@ void cGameGUI::stopReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	gui->playFLC = false;
+}
+
+void cGameGUI::swithAnimationReleased (void* parent)
+{
+	cGameGUI* gui = static_cast<cGameGUI*> (parent);
+	gui->playFLC = !gui->playFLC;
 }
 
 void cGameGUI::chatBoxReturnPressed (void* parent)
