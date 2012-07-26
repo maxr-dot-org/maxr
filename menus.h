@@ -691,9 +691,23 @@ public:
  */
 class cLandingMenu : public cMenu
 {
+public:
+	cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_);
+
+	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	void handleNetMessage (cNetMessage* message);
+protected:
+	void createHud();
+	void createMap();
+	const sTerrain* getMapTile (int x, int y) const;
+	void hitPosition();
+
+	static void mapClicked (void* parent);
+	static void mouseMoved (void* parent);
+	static void backReleased (void* parent);
+
 protected:
 	cGameDataContainer* gameDataContainer;
-
 	cPlayer* player;
 
 	cMap* map;
@@ -706,20 +720,9 @@ protected:
 	AutoPtr<cMenuImage>::type circlesImage;
 	AutoPtr<cMenuLabel>::type infoLabel;
 
+	AutoPtr<cMenuButton>::type backButton;
+
 	sClientLandData landData;
-
-	void createHud();
-	void createMap();
-	sTerrain* getMapTile (int x, int y);
-	void hitPosition();
-public:
-	cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_);
-
-	static void mapClicked (void* parent);
-	static void mouseMoved (void* parent);
-
-	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-	void handleNetMessage (cNetMessage* message);
 };
 
 /**

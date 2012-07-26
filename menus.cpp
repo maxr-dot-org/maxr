@@ -2148,7 +2148,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 	sendUnitUpgrades (menu->player, menu->gameDataContainer->isServer);
 
 	cLandingMenu landingMenu (menu->gameDataContainer, menu->player);
-	if (landingMenu.show() == 1 && menu->gameDataContainer->type != GAME_TYPE_TCPIP)
+	if (landingMenu.show() == 1)
 	{
 		menu->draw();
 		return;
@@ -2393,10 +2393,10 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLandingMenu::cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_)
-	: cMenu (0)
-	, gameDataContainer (gameDataContainer_)
-	, player (player_)
+cLandingMenu::cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_) :
+	cMenu (NULL),
+	gameDataContainer (gameDataContainer_),
+	player (player_)
 {
 	map = gameDataContainer->map;
 
@@ -2416,6 +2416,10 @@ cLandingMenu::cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* pla
 	infoLabel = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + position.h / 2 - font->getFontHeight (FONT_LATIN_BIG), "", FONT_LATIN_BIG);
 	infoLabel->setBox ( (Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
 	menuItems.Add (infoLabel);
+
+	backButton = new cMenuButton (position.x + 35, position.y + 255, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
+	backButton->setReleasedFunction (&backReleased);
+	menuItems.Add (backButton);
 
 	PlayVoice (VoiceData.VOILanding);
 }
@@ -2468,7 +2472,7 @@ void cLandingMenu::createMap()
 }
 
 //------------------------------------------------------------------------------
-sTerrain* cLandingMenu::getMapTile (int x, int y)
+const sTerrain* cLandingMenu::getMapTile (int x, int y) const
 {
 	double fak;
 	int nr;
@@ -2509,7 +2513,7 @@ void cLandingMenu::mapClicked (void* parent)
 	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionX() - 192)));
 	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
-
+	menu->backButton->setLocked(true);
 	{
 		AutoSurface circleSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (circleSurface, NULL, 0xFF00FF);
@@ -2535,10 +2539,23 @@ void cLandingMenu::mapClicked (void* parent)
 //------------------------------------------------------------------------------
 void cLandingMenu::mouseMoved (void* parent)
 {
+	const cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
+
+	if (menu->mapImage->overItem(mouse->x, mouse->y))
+	{
+		const sTerrain* terrain = menu->getMapTile (mouse->x - 180, mouse->y - 18);
+		if (terrain && ! (terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
+		else mouse->SetCursor (CNo);
+	}
+	else mouse->SetCursor (CHand);
+}
+
+//------------------------------------------------------------------------------
+void cLandingMenu::backReleased (void* parent)
+{
 	cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
-	sTerrain* terrain = menu->getMapTile (mouse->x - 180, mouse->y - 18);
-	if (mouse->x >= 180 && mouse->x < Video.getResolutionX() - 12 && mouse->y >= 18 && mouse->y < Video.getResolutionY() - 14 && terrain && ! (terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
-	else mouse->SetCursor (CNo);
+
+	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -2581,6 +2598,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 		case MU_MSG_RESELECT_LANDING:
 			Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
 			landData.landingState = (eLandingState) message->popChar();
+			backButton->setLocked(landData.landingState == LANDING_POSITION_OK || landData.landingState == LANDING_POSITION_CONFIRMED);
 
 			if (landData.landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
