@@ -304,7 +304,7 @@ void cMapSender::run()
 	if (canceled) return;
 
 	cNetMessage* msg = new cNetMessage (MU_MSG_START_MAP_DOWNLOAD);
-	msg->pushString (mapName.c_str());
+	msg->pushString (mapName);
 	msg->pushInt32 (mapSize);
 	sendMsg (msg);
 
