@@ -17,6 +17,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <math.h>
+#include <sstream>
 
 #include "autosurface.h"
 #include "hud.h"
@@ -54,13 +55,374 @@ sMouseBox::sMouseBox() :
 	endY (-1)
 {}
 
+cDebugOutput::cDebugOutput()
+{
+	debugAjobs = false;
+	debugBaseServer = false;
+	debugBaseClient = false;
+	debugSentry = false;
+	debugFX = false;
+	debugTraceServer = false;
+	debugTraceClient = false;
+	debugPlayers = false;
+	showFPS = true;
+	debugCache = false;
+	debugSync = true;
+}
+
+void cDebugOutput::draw()
+{
+	#define DEBUGOUT_X_POS		(Video.getResolutionX()-200)
+
+	int debugOff = 30;
+
+	cPlayer* player = Client->gameGUI.player;
+	const cGameGUI& gui = Client->gameGUI;
+
+	if (debugPlayers)
+	{
+		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ( (int) Client->PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		SDL_Rect rDest = { DEBUGOUT_X_POS, debugOff, 20, 10 };
+		SDL_Rect rSrc = { 0, 0, 20, 10 };
+		SDL_Rect rDotDest = {DEBUGOUT_X_POS - 10, debugOff, 10, 10 };
+		SDL_Rect rBlackOut = {DEBUGOUT_X_POS + 20, debugOff, 0, 10 };
+		for (unsigned int i = 0; i < Client->PlayerList->Size(); i++)
+		{
+			//HACK SHOWFINISHEDPLAYERS
+			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
+
+			if ( (*Client->PlayerList) [i]->bFinishedTurn/* && (*client->PlayerList)[i] != player*/)
+			{
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
+			}
+			/*else if( (*client->PlayerList)[i] == player && client->bWantToEnd )
+			{
+				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+			}*/
+			else
+			{
+				rDot.x = 0; //for red dot
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
+			}
+
+			SDL_BlitSurface ( (*Client->PlayerList) [i]->color, &rSrc, buffer, &rDest);
+			if ( (*Client->PlayerList) [i] == player)
+			{
+				string sTmpLine = " " + (*Client->PlayerList) [i]->name + ", nr: " + iToStr ( (*Client->PlayerList) [i]->Nr) + " << you! ";
+				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
+				SDL_FillRect (buffer, &rBlackOut, 0x000000);
+				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
+			}
+			else
+			{
+				string sTmpLine = " " + (*Client->PlayerList) [i]->name + ", nr: " + iToStr ( (*Client->PlayerList) [i]->Nr) + " ";
+				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
+				SDL_FillRect (buffer, &rBlackOut, 0x000000);
+				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
+			}
+			debugOff += 10; //use 10 for pixel high of dots instead of text high
+			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
+
+		}
+	}
+
+	if (debugAjobs)
+	{
+		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) Client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		if (Server)
+		{
+			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		}
+	}
+
+	if (debugBaseClient)
+	{
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) player->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+	}
+
+	if (debugBaseServer)
+	{
+		cPlayer* serverPlayer = Server->getPlayerFromNumber (player->Nr);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+	}
+
+	if (debugFX)
+	{
+		/*font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);*/
+	}
+	if (debugTraceServer || debugTraceClient)
+	{
+		trace();
+	}
+	if (debugCache)
+	{
+		const cDrawingCache& dCache = Client->gameGUI.dCache;
+		font->showText (DEBUGOUT_X_POS, debugOff, "Max cache size: " + iToStr (dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "cache size: " + iToStr (dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "cache hits: " + iToStr (dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "cache misses: " + iToStr (dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "not cached: " + iToStr (dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+	}
+
+	if (showFPS)
+	{
+		font->showText (DEBUGOUT_X_POS, debugOff, "Frame: " + iToStr (gui.frame), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "FPS: " + iToStr (Round (gui.framesPerSecond)), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Cycles/s: " + iToStr (Round (gui.cyclesPerSecond)), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Load: " + iToStr (gui.loadValue / 10) + "." + iToStr (gui.loadValue % 10) + "%", FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+	}
+	if (debugSync)
+	{
+		font->showText(DEBUGOUT_X_POS-20, debugOff, "Sync debug:", FONT_LATIN_SMALL_YELLOW);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		if (Server)
+		{
+			font->showText(DEBUGOUT_X_POS-10, debugOff, "-Server:", FONT_LATIN_SMALL_YELLOW);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS, debugOff, "Server Time: ", FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+			font->showText(DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+			for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+			{
+				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
+				if (Server->gameTimer.getReceivedTime(i)+PAUSE_GAME_TIMEOUT<Server->gameTimer.gameTime)
+					fontType = FONT_LATIN_SMALL_RED;
+				font->showText(DEBUGOUT_X_POS+10, debugOff, "Client " + iToStr(i) + ": ", fontType);
+				font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.getReceivedTime(i) - Server->gameTimer.getReceivedTime(i)), fontType);
+				debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+			}
+		}
+
+		font->showText(DEBUGOUT_X_POS-10, debugOff, "-Client:", FONT_LATIN_SMALL_YELLOW);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		eUnicodeFontType fontType = FONT_LATIN_SMALL_GREEN;
+		if (Client->gameTimer.debugRemoteChecksum != Client->gameTimer.localChecksum)
+			fontType = FONT_LATIN_SMALL_RED;
+		font->showText(DEBUGOUT_X_POS, debugOff, "Server Checksum: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex(Client->gameTimer.debugRemoteChecksum), fontType);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "Client Checksum: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex(Client->gameTimer.localChecksum), fontType);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "Client Time: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.getReceivedTime()-Client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
+		static unsigned int lastGameTime = 0;
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.gameTime-lastGameTime), FONT_LATIN_SMALL_WHITE);
+		lastGameTime = Client->gameTimer.gameTime;
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		
+	}
+}
+
+
+void cDebugOutput::trace()
+{
+	cMapField* field;
+
+	int x = mouse->getKachelX();
+	int y = mouse->getKachelY();
+	if (x < 0 || y < 0) return;
+
+	if (debugTraceServer) field = &Server->Map->fields[Server->Map->size * y + x];
+	else field = &Client->Map->fields[Client->Map->size * y + x];
+
+	y = 18 + 5 + 8;
+	x = 180 + 5;
+
+	if (field->getVehicles()) { traceVehicle (field->getVehicles(), &y, x); y += 20; }
+	if (field->getPlanes()) { traceVehicle (field->getPlanes(), &y, x); y += 20; }
+	cBuildingIterator bi = field->getBuildings();
+	while (!bi.end) { traceBuilding (bi, &y, x); y += 20; bi++;}
+}
+
+void cDebugOutput::traceVehicle (cVehicle* vehicle, int* y, int x)
+{
+	string tmpString;
+
+	tmpString = "name: \"" + vehicle->getDisplayName() + "\" id: \"" + iToStr (vehicle->iID) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr (vehicle->PosX) + " posY: " + iToStr (vehicle->PosY) + " offX: " + iToStr (vehicle->OffX) + " offY: " + iToStr (vehicle->OffY);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "dir: " + iToStr (vehicle->dir) + " moving: +" + iToStr (vehicle->moving) + " mjob: "  + pToStr (vehicle->ClientMoveJob) + " speed: " + iToStr (vehicle->data.speedCur) + " mj_active: " + iToStr (vehicle->MoveJobActive);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = " attacking: " + iToStr (vehicle->attacking) + " on sentry: +" + iToStr (vehicle->sentryActive) + " ditherx: " + iToStr (vehicle->ditherX) + " dithery: " + iToStr (vehicle->ditherY);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "is_building: " + iToStr (vehicle->IsBuilding) + " building_typ: " + vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr (vehicle->BuildCosts) + " build_rounds: " + iToStr (vehicle->BuildRounds) + " build_round_start: " + iToStr (vehicle->BuildRoundsStart);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = " bandx: " + iToStr (vehicle->BandX) + " bandy: +" + iToStr (vehicle->BandY) + " build_big_saved_pos: " + iToStr (vehicle->BuildBigSavedPos) + " build_path: " + iToStr (vehicle->BuildPath);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = " is_clearing: " + iToStr (vehicle->IsClearing) + " clearing_rounds: +" + iToStr (vehicle->ClearingRounds) + " clear_big: " + iToStr (vehicle->data.isBig) + " loaded: " + iToStr (vehicle->Loaded);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "commando_rank: " + dToStr (Round (vehicle->CommandoRank, 2)) + " disabled: " + iToStr (vehicle->turnsDisabled);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "is_locked: " + iToStr (vehicle->IsLocked) + " clear_mines: +" + iToStr (vehicle->ClearMines) + " lay_mines: " + iToStr (vehicle->LayMines);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString =
+		" vehicle_to_activate: +"  + iToStr (vehicle->VehicleToActivate) +
+		" stored_vehicles_count: " + iToStr ( (int) vehicle->storedUnits.Size());
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	if (vehicle->storedUnits.Size())
+	{
+		cUnit* storedVehicle;
+		for (unsigned int i = 0; i < vehicle->storedUnits.Size(); i++)
+		{
+			storedVehicle = vehicle->storedUnits[i];
+			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
+			*y += 8;
+		}
+	}
+
+	if (debugTraceServer)
+	{
+		tmpString = "seen by players: owner";
+		for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
+		{
+			tmpString += ", \"" + vehicle->seenByPlayerList[i]->name + "\"";
+		}
+		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+		*y += 8;
+	}
+
+	tmpString = "flight height: " + iToStr (vehicle->FlightHigh);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+}
+
+void cDebugOutput::traceBuilding (cBuilding* building, int* y, int x)
+{
+	string tmpString;
+
+	tmpString = "name: \"" + building->getDisplayName() + "\" id: \"" + iToStr (building->iID) + "\" owner: \"" + (building->owner ? building->owner->name : "<null>") + "\" posX: +" + iToStr (building->PosX) + " posY: " + iToStr (building->PosY);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "dir: " + iToStr (building->dir) + " on sentry: +" + iToStr (building->sentryActive) + " sub_base: " + pToStr (building->SubBase);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "attacking: " + iToStr (building->attacking) + " UnitsData.dirt_typ: " + iToStr (building->RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building->RubbleValue) + " big_dirt: " + iToStr (building->data.isBig) + " is_working: " + iToStr (building->IsWorking);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = " max_metal_p: " + iToStr (building->MaxMetalProd) + " max_oil_p: " + iToStr (building->MaxOilProd) + " max_gold_p: " + iToStr (building->MaxGoldProd);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString = "is_locked: " + iToStr (building->IsLocked) + " disabled: " + iToStr (building->turnsDisabled) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	tmpString =
+		" stored_vehicles_count: " + iToStr ( (int) building->storedUnits.Size());
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	if (building->storedUnits.Size())
+	{
+		cUnit* storedVehicle;
+		for (unsigned int i = 0; i < building->storedUnits.Size(); i++)
+		{
+			storedVehicle = building->storedUnits[i];
+			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
+			*y += 8;
+		}
+	}
+
+	tmpString =
+		"build_speed: "        + iToStr (building->BuildSpeed)  +
+		" repeat_build: "      + iToStr (building->RepeatBuild) +
+		" build_list_count: +" + iToStr (building->BuildList ? (int) building->BuildList->Size() : 0);
+	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+	*y += 8;
+
+	if (building->BuildList && building->BuildList->Size())
+	{
+		sBuildList* BuildingList;
+		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
+		{
+			BuildingList = (*building->BuildList) [i];
+			font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
+			*y += 8;
+		}
+	}
+
+	if (debugTraceServer)
+	{
+		tmpString = "seen by players: owner";
+		for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
+		{
+			tmpString += ", \"" + building->seenByPlayerList[i]->name + "\"";
+		}
+		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
+		*y += 8;
+	}
+}
+
+
+Uint32 TimerCallback (Uint32 interval, void* arg)
+{
+	reinterpret_cast<cGameGUI*> (arg)->Timer();
+	return interval;
+}
+
+
 cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList) :
 	cMenu (generateSurface()),
+	iTimerTime(0),
 	client (NULL),
 	player (player_),
 	map (map_),
-	miniMapOffX(0),
-	miniMapOffY(0),
+	miniMapOffX (0),
+	miniMapOffY (0),
+	msgCoordsX (-1),
+	msgCoordsY (-1),
 	shiftPressed (false),
 	overUnitField (NULL),
 	zoomSlider (20, 274, calcMinZoom(), 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
@@ -117,17 +479,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	FLC = NULL;
 	playFLC = true;
 	mouseInputMode = normalInput;
-
-	debugAjobs = false;
-	debugBaseServer = false;
-	debugBaseClient = false;
-	debugSentry = false;
-	debugFX = false;
-	debugTraceServer = false;
-	debugTraceClient = false;
-	debugPlayers = false;
-	showFPS = false;
-	debugCache = false;
+	TimerID = SDL_AddTimer (50, TimerCallback, this);
 
 	selectedVehicle = NULL;
 	selectedBuilding = NULL;
@@ -280,12 +632,74 @@ cGameGUI::~cGameGUI()
 {
 	zoom = 1.0;
 	scaleSurfaces();
+	SDL_RemoveTimer (TimerID);
 
 	if (FLC) FLI_Close (FLC);
 	for (size_t i = 0; i != playersInfo.Size(); ++i)
 	{
 		delete playersInfo[i];
 	}
+	for (size_t i = 0; i != messages.Size(); ++i)
+	{
+		delete messages[i];
+	}
+}
+
+void cGameGUI::Timer()
+{
+	iTimerTime++;
+}
+
+void cGameGUI::handleTimer()
+{
+	static unsigned int iLast = 0;
+	timer50ms = false;
+	timer100ms = false;
+	timer400ms = false;
+	if (iTimerTime != iLast)
+	{
+		iLast = iTimerTime;
+		timer50ms = true;
+		if (iTimerTime & 0x1) timer100ms = true;
+		if ( (iTimerTime & 0x3) == 3) timer400ms = true;
+	}
+}
+
+void cGameGUI::handleMessages()
+{
+	int iHeight = 0;
+	sMessage* message;
+	if (messages.Size() == 0) return;
+	//delete old messages
+	for (int i = (int) messages.Size() - 1; i >= 0; i--)
+	{
+		message = messages[i];
+		if (message->age + MSG_TICKS < SDL_GetTicks() || iHeight > 200)
+		{
+			delete message;
+			messages.Delete (i);
+			continue;
+		}
+		iHeight += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
+	}
+}
+
+void cGameGUI::addMessage (const string& sMsg)
+{
+	sMessage* const Message = new sMessage (sMsg, SDL_GetTicks());
+	messages.Add (Message);
+	if (cSettings::getInstance().isDebug()) Log.write (Message->msg, cLog::eLOG_TYPE_DEBUG);
+}
+
+string cGameGUI::addCoords (const string& msg, int x, int y)
+{
+	stringstream strStream;
+	//e.g. [85,22] missel MK I is under attack (F1)
+	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString (KeysList.KeyJumpToAction) << ")";
+	addMessage (strStream.str());
+	msgCoordsX = x;
+	msgCoordsY = y;
+	return strStream.str();
 }
 
 int cGameGUI::show()
@@ -324,15 +738,23 @@ int cGameGUI::show()
 		lastMouseX = mouse->x;
 		lastMouseY = mouse->y;
 
-		if (!cSettings::getInstance().shouldUseFastMode()) SDL_Delay (10);
-
-		client->doGameActions();
+		if (!cSettings::getInstance().shouldUseFastMode()) SDL_Delay (1);
 
 		if (startup)
 		{
 			if (player->BuildingList) player->BuildingList->center();
 			else if (player->VehicleList) player->VehicleList->center();
 			startup = false;
+		}
+
+		handleMessages();
+
+		handleTimer();
+		if (timer50ms)
+		{
+			//run effects
+			Client->runFX();
+			Client->handleTurnTime();
 		}
 
 		checkScroll();
@@ -345,7 +767,7 @@ int cGameGUI::show()
 			miniMapImage.setImage (mini);
 			needMiniMapDraw = false;
 		}
-		if (client->timer100ms)
+		if (timer100ms)
 		{
 			if (FLC != NULL && playFLC)
 			{
@@ -2006,22 +2428,22 @@ cPlayer* cGameGUI::getPlayerFromName (const string& playerNameStr)
 
 void cGameGUI::doCommand (const string& cmd)
 {
-	if (cmd.compare ("/fps on") == 0) { showFPS = true; return;}
-	if (cmd.compare ("/fps off") == 0) { showFPS = false; return;}
-	if (cmd.compare ("/base client") == 0) { debugBaseClient = true; debugBaseServer = false; return; }
-	if (cmd.compare ("/base server") == 0) { if (Server) debugBaseServer = true; debugBaseClient = false; return; }
-	if (cmd.compare ("/base off") == 0) { debugBaseServer = false; debugBaseClient = false; return; }
-	if (cmd.compare ("/sentry server") == 0) { if (Server) debugSentry = true; return; }
-	if (cmd.compare ("/sentry off") == 0) { debugSentry = false; return; }
-	if (cmd.compare ("/fx on") == 0) { debugFX = true; return; }
-	if (cmd.compare ("/fx off") == 0) { debugFX = false; return; }
-	if (cmd.compare ("/trace server") == 0) { if (Server) debugTraceServer = true; debugTraceClient = false; return; }
-	if (cmd.compare ("/trace client") == 0) { debugTraceClient = true; debugTraceServer = false; return; }
-	if (cmd.compare ("/trace off") == 0) { debugTraceServer = false; debugTraceClient = false; return; }
-	if (cmd.compare ("/ajobs on") == 0) { debugAjobs = true; return; }
-	if (cmd.compare ("/ajobs off") == 0) { debugAjobs = false; return; }
-	if (cmd.compare ("/players on") == 0) { debugPlayers = true; return; }
-	if (cmd.compare ("/players off") == 0) { debugPlayers = false; return; }
+	if (cmd.compare ("/fps on") == 0) { debugOutput.showFPS = true; return;}
+	if (cmd.compare ("/fps off") == 0) { debugOutput.showFPS = false; return;}
+	if (cmd.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false; return; }
+	if (cmd.compare ("/base server") == 0) { if (Server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false; return; }
+	if (cmd.compare ("/base off") == 0) { debugOutput.debugBaseServer = false; debugOutput.debugBaseClient = false; return; }
+	if (cmd.compare ("/sentry server") == 0) { if (Server) debugOutput.debugSentry = true; return; }
+	if (cmd.compare ("/sentry off") == 0) { debugOutput.debugSentry = false; return; }
+	if (cmd.compare ("/fx on") == 0) { debugOutput.debugFX = true; return; }
+	if (cmd.compare ("/fx off") == 0) { debugOutput.debugFX = false; return; }
+	if (cmd.compare ("/trace server") == 0) { if (Server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false; return; }
+	if (cmd.compare ("/trace client") == 0) { debugOutput.debugTraceClient = true; debugOutput.debugTraceServer = false; return; }
+	if (cmd.compare ("/trace off") == 0) { debugOutput.debugTraceServer = false; debugOutput.debugTraceClient = false; return; }
+	if (cmd.compare ("/ajobs on") == 0) { debugOutput.debugAjobs = true; return; }
+	if (cmd.compare ("/ajobs off") == 0) { debugOutput.debugAjobs = false; return; }
+	if (cmd.compare ("/players on") == 0) { debugOutput.debugPlayers = true; return; }
+	if (cmd.compare ("/players off") == 0) { debugOutput.debugPlayers = false; return; }
 	if (cmd.substr (0, 12).compare ("/cache size ") == 0)
 	{
 		int size = atoi (cmd.substr (12, cmd.length()).c_str());
@@ -2036,11 +2458,11 @@ void cGameGUI::doCommand (const string& cmd)
 	}
 	if (cmd.compare ("/cache debug on") == 0)
 	{
-		debugCache = true;
+		debugOutput.debugCache = true;
 	}
 	if (cmd.compare ("/cache debug off") == 0)
 	{
-		debugCache = false;
+		debugOutput.debugCache = false;
 	}
 
 	if (cmd.substr (0, 6).compare ("/kick ") == 0)
@@ -2165,14 +2587,6 @@ void cGameGUI::doCommand (const string& cmd)
 
 	if (cmd.compare ("/credits") == 0)
 	{
-		return;
-	}
-	if (cmd.substr (0, 5).compare ("/kill ") == 0)
-	{
-		int x, y;
-		sscanf (cmd.c_str(), "kill %d,%d", &x, &y);
-		/*engine->DestroyObject ( x+y*map->size,false );
-		engine->DestroyObject ( x+y*map->size,true );*/
 		return;
 	}
 	if (cmd.compare ("/load") == 0)
@@ -2371,7 +2785,7 @@ void cGameGUI::deselectGroup()
 
 void cGameGUI::changeWindDir()
 {
-	if (client->timer400ms && cSettings::getInstance().isDamageEffects())
+	if (timer400ms && cSettings::getInstance().isDamageEffects())
 	{
 		static int nextChange = 25, nextDirChange = 25, dir = 90, change = 3;
 		if (nextChange == 0)
@@ -2443,12 +2857,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{}
 	else if (key.keysym.sym == KeysList.KeyJumpToAction)
 	{
-		if (client->iMsgCoordsX != -1)
+		if (msgCoordsX != -1)
 		{
-			int offsetX = client->iMsgCoordsX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize())) * 64)) + 32;
-			int offsetY = client->iMsgCoordsY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / (2 * getTileSize())) * 64)) + 32;
+			int offsetX = msgCoordsX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / (2 * getTileSize())) * 64)) + 32;
+			int offsetY = msgCoordsY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / (2 * getTileSize())) * 64)) + 32;
 			setOffsetPosition (offsetX, offsetY);
-			client->iMsgCoordsX = -1;
+			msgCoordsX = -1;
 		}
 	}
 	else if (key.keysym.sym == KeysList.KeyChat)
@@ -2947,7 +3361,7 @@ void cGameGUI::preDrawFunction()
 	int endY = Round (offY / 64.0 + (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getTileSize());
 	if (endY >= map->size) endY = map->size - 1;
 
-	if (client->timer400ms) map->generateNextAnimationFrame();
+	if (timer400ms) map->generateNextAnimationFrame();
 
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
 	SDL_SetClipRect (buffer, &clipRect);
@@ -2977,7 +3391,7 @@ void cGameGUI::preDrawFunction()
 		selectedVehicle->DrawPath (*this);
 	}
 
-	drawDebugOutput();
+	debugOutput.draw();
 
 	drawSelectionBox (zoomOffX, zoomOffY);
 
@@ -3086,7 +3500,7 @@ void cGameGUI::drawFX (int num)
 		case fxMuzzleBig:
 			if (!EffectsData.fx_muzzle_big) break;
 			CHECK_SCALING (EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 2)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
 			{
 				delete fx;
 				client->FXList.Delete (num);
@@ -3103,7 +3517,7 @@ void cGameGUI::drawFX (int num)
 		case fxMuzzleSmall:
 			if (!EffectsData.fx_muzzle_small) break;
 			CHECK_SCALING (EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 2)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
 			{
 				delete fx;
 				client->FXList.Delete (num);
@@ -3120,7 +3534,7 @@ void cGameGUI::drawFX (int num)
 		case fxMuzzleMed:
 			if (!EffectsData.fx_muzzle_med) break;
 			CHECK_SCALING (EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 2)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
 			{
 				delete fx;
 				client->FXList.Delete (num);
@@ -3137,7 +3551,7 @@ void cGameGUI::drawFX (int num)
 		case fxMuzzleMedLong:
 			if (!EffectsData.fx_muzzle_med) break;
 			CHECK_SCALING (EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 5)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 5)
 			{
 				delete fx;
 				client->FXList.Delete (num);
@@ -3154,13 +3568,13 @@ void cGameGUI::drawFX (int num)
 		case fxHit:
 			if (!EffectsData.fx_hit) break;
 			CHECK_SCALING (EffectsData.fx_hit[1], EffectsData.fx_hit[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 5)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 5)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) (getZoom() * 64.0) * ( (client->iTimerTime - fx->StartTime) / 2);
+			scr.x = (int) (getZoom() * 64.0) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
 			scr.y = 0;
 			scr.w = (int) (getZoom() * 64.0);
 			scr.h = (int) (getZoom() * 64.0);
@@ -3171,13 +3585,13 @@ void cGameGUI::drawFX (int num)
 		case fxExploSmall:
 			if (!EffectsData.fx_explo_small) break;
 			CHECK_SCALING (EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 14)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (client->iTimerTime - fx->StartTime) / 2) / 64.0);
+			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ( (int) (getZoom() * 64.0) * 114 / 64.0);
 			scr.h = (int) ( (int) (getZoom() * 64.0) * 108 / 64.0);
@@ -3188,13 +3602,13 @@ void cGameGUI::drawFX (int num)
 		case fxExploBig:
 			if (!EffectsData.fx_explo_big) break;
 			CHECK_SCALING (EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 28)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 28)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 307 * ( (client->iTimerTime - fx->StartTime) / 2) / 64.0);
+			scr.x = (int) ( (int) (getZoom() * 64.0) * 307 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ( (int) (getZoom() * 64.0) * 307 / 64.0);
 			scr.h = (int) ( (int) (getZoom() * 64.0) * 194 / 64.0);
@@ -3205,13 +3619,13 @@ void cGameGUI::drawFX (int num)
 		case fxExploWater:
 			if (!EffectsData.fx_explo_water) break;
 			CHECK_SCALING (EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 14)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (client->iTimerTime - fx->StartTime) / 2) / 64.0);
+			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ( (int) (getZoom() * 64.0) * 114 / 64.0);
 			scr.h = (int) ( (int) (getZoom() * 64.0) * 108 / 64.0);
@@ -3222,13 +3636,13 @@ void cGameGUI::drawFX (int num)
 		case fxExploAir:
 			if (!EffectsData.fx_explo_air) break;
 			CHECK_SCALING (EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 14)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 137 * ( (client->iTimerTime - fx->StartTime) / 2) / 64.0);
+			scr.x = (int) ( (int) (getZoom() * 64.0) * 137 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
 			scr.y = 0;
 			scr.w = (int) ( (int) (getZoom() * 64.0) * 137 / 64.0);
 			scr.h = (int) ( (int) (getZoom() * 64.0) * 121 / 64.0);
@@ -3239,13 +3653,13 @@ void cGameGUI::drawFX (int num)
 		case fxSmoke:
 			if (!EffectsData.fx_smoke) break;
 			CHECK_SCALING (EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 100 / 4)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 100 / 4)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (client->iTimerTime - fx->StartTime) / 2) * 4);
+			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) * 4);
 			scr.y = scr.x = 0;
 			scr.w = EffectsData.fx_smoke[1]->h;
 			scr.h = EffectsData.fx_smoke[1]->h;
@@ -3277,13 +3691,13 @@ void cGameGUI::drawFX (int num)
 			CHECK_SCALING (EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], getZoom());
 			sFXDarkSmoke* dsi;
 			dsi = fx->smokeInfo;
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 50 || dsi->alpha <= 1)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 50 || dsi->alpha <= 1)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) (0.375 * (int) (getZoom() * 64.0)) * ( (client->iTimerTime - fx->StartTime) / 2);
+			scr.x = (int) (0.375 * (int) (getZoom() * 64.0)) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
 			scr.y = 0;
 			scr.w = EffectsData.fx_dark_smoke[1]->h;
 			scr.h = EffectsData.fx_dark_smoke[1]->h;
@@ -3293,7 +3707,7 @@ void cGameGUI::drawFX (int num)
 			SDL_SetAlpha (EffectsData.fx_dark_smoke[1], SDL_SRCALPHA, dsi->alpha);
 			SDL_BlitSurface (EffectsData.fx_dark_smoke[1], &scr, buffer, &dest);
 
-			if (client->timer50ms)
+			if (timer50ms)
 			{
 				dsi->fx += dsi->dx;
 				dsi->fy += dsi->dy;
@@ -3306,13 +3720,13 @@ void cGameGUI::drawFX (int num)
 		{
 			if (!EffectsData.fx_absorb) break;
 			CHECK_SCALING (EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 10)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 10)
 			{
 				delete fx;
 				client->FXList.Delete (num);
 				return;
 			}
-			scr.x = (int) (getZoom() * 64.0) * ( (client->iTimerTime - fx->StartTime) / 2);
+			scr.x = (int) (getZoom() * 64.0) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
 			scr.y = 0;
 			scr.w = (int) (getZoom() * 64.0);
 			scr.h = (int) (getZoom() * 64.0);
@@ -3385,7 +3799,7 @@ void cGameGUI::drawBottomFX (int num)
 			}
 
 			SDL_SetAlpha (EffectsData.fx_tracks[1], SDL_SRCALPHA, tri->alpha);
-			if (client->timer50ms)
+			if (timer50ms)
 			{
 				tri->alpha--;
 			}
@@ -3401,13 +3815,13 @@ void cGameGUI::drawBottomFX (int num)
 		}
 		case fxBubbles:
 			CHECK_SCALING (EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom());
-			if ( (client->iTimerTime - fx->StartTime) / 2 > 100 / 4)
+			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 100 / 4)
 			{
 				delete fx;
 				client->FXListBottom.Delete (num);
 				return;
 			}
-			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (client->iTimerTime - fx->StartTime) / 2) * 4);
+			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) * 4);
 			scr.y = scr.x = 0;
 			scr.w = EffectsData.fx_smoke[1]->h;
 			scr.h = EffectsData.fx_smoke[1]->h;
@@ -3496,7 +3910,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 					{
 						building->draw (&dest, *this);
 
-						if (debugBaseClient && building->SubBase)
+						if (debugOutput.debugBaseClient && building->SubBase)
 						{
 							sSubBase* sb;
 							SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
@@ -3515,7 +3929,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 							sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
 							font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
 						}
-						if (debugBaseServer && building->SubBase)
+						if (debugOutput.debugBaseServer && building->SubBase)
 						{
 							sSubBase* sb = Server->Map->fields[pos].getBuildings()->SubBase;;
 							if (sb)
@@ -3752,10 +4166,6 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 	}
 }
 
-void cGameGUI::drawDebugSentry()
-{
-}
-
 void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 {
 	if (mouseBox.startX == -1 || mouseBox.startY == -1 || mouseBox.endX == -1 || mouseBox.endY == -1) return;
@@ -3793,130 +4203,15 @@ void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 	SDL_FillRect (buffer, &d, color);
 }
 
-void cGameGUI::drawDebugOutput()
-{
-#define DEBUGOUT_X_POS		(Video.getResolutionX()-140)
-
-	int debugOff = 30;
-
-	if (debugPlayers)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ( (int) client->PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-
-		SDL_Rect rDest = { DEBUGOUT_X_POS, debugOff, 20, 10 };
-		SDL_Rect rSrc = { 0, 0, 20, 10 };
-		SDL_Rect rDotDest = {DEBUGOUT_X_POS - 10, debugOff, 10, 10 };
-		SDL_Rect rBlackOut = {DEBUGOUT_X_POS + 20, debugOff, 0, 10 };
-		for (unsigned int i = 0; i < client->PlayerList->Size(); i++)
-		{
-			//HACK SHOWFINISHEDPLAYERS
-			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
-
-			if ( (*client->PlayerList) [i]->bFinishedTurn/* && (*client->PlayerList)[i] != player*/)
-			{
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
-			}
-			/*else if( (*client->PlayerList)[i] == player && client->bWantToEnd )
-			{
-				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
-			}*/
-			else
-			{
-				rDot.x = 0; //for red dot
-				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
-			}
-
-			SDL_BlitSurface ( (*client->PlayerList) [i]->color, &rSrc, buffer, &rDest);
-			if ( (*client->PlayerList) [i] == player)
-			{
-				string sTmpLine = " " + (*client->PlayerList) [i]->name + ", nr: " + iToStr ( (*client->PlayerList) [i]->Nr) + " << you! ";
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
-				SDL_FillRect (buffer, &rBlackOut, 0x000000);
-				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
-			}
-			else
-			{
-				string sTmpLine = " " + (*client->PlayerList) [i]->name + ", nr: " + iToStr ( (*client->PlayerList) [i]->Nr) + " ";
-				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
-				SDL_FillRect (buffer, &rBlackOut, 0x000000);
-				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
-			}
-			debugOff += 10; //use 10 for pixel high of dots instead of text high
-			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
-
-		}
-	}
-
-	if (debugAjobs)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		if (Server)
-		{
-			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
-			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		}
-	}
-
-	if (debugBaseClient)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) player->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (debugBaseServer)
-	{
-		cPlayer* serverPlayer = Server->getPlayerFromNumber (player->Nr);
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (debugFX)
-	{
-		/*font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);*/
-	}
-	if (debugTraceServer || debugTraceClient)
-	{
-		trace();
-	}
-	if (debugCache)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Max cache size: " + iToStr (dCache.getMaxCacheSize()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache size: " + iToStr (dCache.getCacheSize()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache hits: " + iToStr (dCache.getCacheHits()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "cache misses: " + iToStr (dCache.getCacheMisses()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "not cached: " + iToStr (dCache.getNotCached()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-
-	if (showFPS)
-	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "FPS: " + iToStr (Round (framesPerSecond)), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "Cycles/s: " + iToStr (Round (cyclesPerSecond)), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS, debugOff, "Load: " + iToStr (loadValue / 10) + "." + iToStr (loadValue % 10) + "%", FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-	}
-}
-
 void cGameGUI::displayMessages()
 {
-	if (client->messages.Size() == 0) return;
+	if (messages.Size() == 0) return;
 
 	sMessage* message;
 	int height = 0;
-	for (int i = (int) client->messages.Size() - 1; i >= 0; i--)
+	for (int i = (int) messages.Size() - 1; i >= 0; i--)
 	{
-		message = client->messages[i];
+		message = messages[i];
 		height += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
 	}
 	SDL_Rect scr = { 0, 0, Video.getResolutionX() - 200, height + 6 };
@@ -3927,9 +4222,9 @@ void cGameGUI::displayMessages()
 	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
 
-	for (unsigned int i = 0; i < client->messages.Size(); i++)
+	for (unsigned int i = 0; i < messages.Size(); i++)
 	{
-		message = client->messages[i];
+		message = messages[i];
 		string msgString = message->msg;
 		//HACK TO SHOW PLAYERCOLOR IN CHAT
 		int color = -1;
@@ -3938,9 +4233,9 @@ void cGameGUI::displayMessages()
 			if (msgString[i] == ':')   //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr (0, i);
-				for (size_t i = 0; i < client->PlayerList->Size(); i++)
+				for (size_t i = 0; i < Client->getPlayerList()->Size(); i++)
 				{
-					cPlayer* const Player = (*client->PlayerList) [i];
+					cPlayer* const Player = (*Client->getPlayerList()) [i];
 					if (Player)
 					{
 						if (tmpString.compare (Player->name) == 0)
@@ -4091,165 +4386,6 @@ void cGameGUI::makePanel (bool open)
 		Video.draw();
 		mouse->draw (false, screen);
 		SDL_Delay (100);
-	}
-}
-
-void cGameGUI::trace()
-{
-	cMapField* field;
-
-	int x = mouse->getKachelX();
-	int y = mouse->getKachelY();
-	if (x < 0 || y < 0) return;
-
-	if (debugTraceServer) field = Server->Map->fields + (Server->Map->size * y + x);
-	else field = map->fields + (map->size * y + x);
-
-	y = 18 + 5 + 8;
-	x = 180 + 5;
-
-	if (field->getVehicles()) { traceVehicle (field->getVehicles(), &y, x); y += 20; }
-	if (field->getPlanes()) { traceVehicle (field->getPlanes(), &y, x); y += 20; }
-	cBuildingIterator bi = field->getBuildings();
-	while (!bi.end) { traceBuilding (bi, &y, x); y += 20; bi++;}
-}
-
-void cGameGUI::traceVehicle (cVehicle* vehicle, int* y, int x)
-{
-	string tmpString;
-
-	tmpString = "name: \"" + vehicle->getDisplayName() + "\" id: \"" + iToStr (vehicle->iID) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr (vehicle->PosX) + " posY: " + iToStr (vehicle->PosY) + " offX: " + iToStr (vehicle->OffX) + " offY: " + iToStr (vehicle->OffY);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "dir: " + iToStr (vehicle->dir) + " moving: +" + iToStr (vehicle->moving) + " mjob: "  + pToStr (vehicle->ClientMoveJob) + " speed: " + iToStr (vehicle->data.speedCur) + " mj_active: " + iToStr (vehicle->MoveJobActive);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = " attacking: " + iToStr (vehicle->attacking) + " on sentry: +" + iToStr (vehicle->sentryActive) + " ditherx: " + iToStr (vehicle->ditherX) + " dithery: " + iToStr (vehicle->ditherY);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "is_building: " + iToStr (vehicle->IsBuilding) + " building_typ: " + vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr (vehicle->BuildCosts) + " build_rounds: " + iToStr (vehicle->BuildRounds) + " build_round_start: " + iToStr (vehicle->BuildRoundsStart);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = " bandx: " + iToStr (vehicle->BandX) + " bandy: +" + iToStr (vehicle->BandY) + " build_big_saved_pos: " + iToStr (vehicle->BuildBigSavedPos) + " build_path: " + iToStr (vehicle->BuildPath);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = " is_clearing: " + iToStr (vehicle->IsClearing) + " clearing_rounds: +" + iToStr (vehicle->ClearingRounds) + " clear_big: " + iToStr (vehicle->data.isBig) + " loaded: " + iToStr (vehicle->Loaded);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "commando_rank: " + dToStr (Round (vehicle->CommandoRank, 2)) + " disabled: " + iToStr (vehicle->turnsDisabled);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "is_locked: " + iToStr (vehicle->IsLocked) + " clear_mines: +" + iToStr (vehicle->ClearMines) + " lay_mines: " + iToStr (vehicle->LayMines);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString =
-		" vehicle_to_activate: +"  + iToStr (vehicle->VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr ( (int) vehicle->storedUnits.Size());
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	if (vehicle->storedUnits.Size())
-	{
-		cUnit* storedVehicle;
-		for (unsigned int i = 0; i < vehicle->storedUnits.Size(); i++)
-		{
-			storedVehicle = vehicle->storedUnits[i];
-			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
-			*y += 8;
-		}
-	}
-
-	if (debugTraceServer)
-	{
-		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
-		{
-			tmpString += ", \"" + vehicle->seenByPlayerList[i]->name + "\"";
-		}
-		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-		*y += 8;
-	}
-
-	tmpString = "flight height: " + iToStr (vehicle->FlightHigh);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-}
-
-void cGameGUI::traceBuilding (cBuilding* building, int* y, int x)
-{
-	string tmpString;
-
-	tmpString = "name: \"" + building->getDisplayName() + "\" id: \"" + iToStr (building->iID) + "\" owner: \"" + (building->owner ? building->owner->name : "<null>") + "\" posX: +" + iToStr (building->PosX) + " posY: " + iToStr (building->PosY);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "dir: " + iToStr (building->dir) + " on sentry: +" + iToStr (building->sentryActive) + " sub_base: " + pToStr (building->SubBase);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "attacking: " + iToStr (building->attacking) + " UnitsData.dirt_typ: " + iToStr (building->RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building->RubbleValue) + " big_dirt: " + iToStr (building->data.isBig) + " is_working: " + iToStr (building->IsWorking);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = " max_metal_p: " + iToStr (building->MaxMetalProd) + " max_oil_p: " + iToStr (building->MaxOilProd) + " max_gold_p: " + iToStr (building->MaxGoldProd);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString = "is_locked: " + iToStr (building->IsLocked) + " disabled: " + iToStr (building->turnsDisabled) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	tmpString =
-		" stored_vehicles_count: " + iToStr ( (int) building->storedUnits.Size());
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	if (building->storedUnits.Size())
-	{
-		cUnit* storedVehicle;
-		for (unsigned int i = 0; i < building->storedUnits.Size(); i++)
-		{
-			storedVehicle = building->storedUnits[i];
-			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
-			*y += 8;
-		}
-	}
-
-	tmpString =
-		"build_speed: "        + iToStr (building->BuildSpeed)  +
-		" repeat_build: "      + iToStr (building->RepeatBuild) +
-		" build_list_count: +" + iToStr (building->BuildList ? (int) building->BuildList->Size() : 0);
-	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-	*y += 8;
-
-	if (building->BuildList && building->BuildList->Size())
-	{
-		sBuildList* BuildingList;
-		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
-		{
-			BuildingList = (*building->BuildList) [i];
-			font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
-			*y += 8;
-		}
-	}
-
-	if (debugTraceServer)
-	{
-		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
-		{
-			tmpString += ", \"" + building->seenByPlayerList[i]->name + "\"";
-		}
-		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
-		*y += 8;
 	}
 }
 

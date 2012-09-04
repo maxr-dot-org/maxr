@@ -528,6 +528,13 @@ string iToStr( int x )
 	return strStream.str();
 }
 
+string iToHex( unsigned int x )
+{
+	stringstream strStream;
+	strStream << std::hex << x;
+	return strStream.str();
+}
+
 string dToStr( double x )
 {
 	stringstream strStream;

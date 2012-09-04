@@ -19,6 +19,7 @@
 #include "events.h"
 #include "network.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "menuevents.h"
 #include "netmessage.h"
 #include "client.h"
@@ -31,11 +32,24 @@
 
 void cEventHandling::pushEvent (cNetMessage* message)
 {
+	if (Client && message->iType == NET_GAME_TIME_SERVER )
+	{
+		//FIXME: race cond on exit: client deleted while server pushed event
+
+		//this is a preview for the client to know how many sync messages are in queue
+		//used to detect a growing lag behind the server time
+		message->popInt32();
+		Client->gameTimer.setReceivedTime (message->popInt32());
+		message->rewind();
+	}
+
 	eventQueue.write (message);
 }
 
 void cEventHandling::HandleEvents()
 {
+	handleNetMessages();
+
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{
@@ -67,7 +81,7 @@ void cEventHandling::HandleEvents()
 					Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
 					SDL_SaveBMP (screen, screenshotfile.c_str());
 					if (Client != 0)
-						Client->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
+						Client->gameGUI.addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
 				}
 				else
 				{
@@ -83,15 +97,38 @@ void cEventHandling::HandleEvents()
 				Quit();
 				break;
 			}
+			case SDL_USEREVENT:
+				if (event.user.code == USER_EV_GAME_TIME_TICK)
+				{
+					if (Client)
+						Client->processNextGameTime ();
+				}
+				break;
 
 			default:
 				break;
 		}
 	}
 
+	//check whether the client time lags too much behind the server time and add an extra increment of the client time
+	if (Client && Client->gameTimer.gameTime + MAX_CLIENT_LAG < Client->gameTimer.getReceivedTime())
+	{
+		Client->processNextGameTime ();
+	}
+	
+
+
+}
+
+void cEventHandling::handleNetMessages ()
+{
 	cNetMessage* message;
 	while (eventQueue.size() > 0)
 	{
+		//stop precessing, when there are no messages for the current game time tick anymore
+		if ( Client && Client->gameTimer.currentTickFinished )
+			break;
+
 		message = eventQueue.read();
 		switch (message->getClass())
 		{

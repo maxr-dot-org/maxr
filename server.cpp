@@ -35,21 +35,47 @@
 #include "vehicles.h"
 #include "player.h"
 #include "savegame.h"
+#include "gametimer.h"
 #if DEDICATED_SERVER_APPLICATION
 #include "dedicatedserver.h"
 #endif
 #include "casualtiestracker.h"
 
-//-------------------------------------------------------------------------------------
-Uint32 ServerTimerCallback (Uint32 interval, void* arg)
+#ifdef _MSC_VER
+#include <windows.h>
+const DWORD MS_VC_EXCEPTION=0x406D1388;
+
+#pragma pack(push,8)
+typedef struct tagTHREADNAME_INFO
 {
-	reinterpret_cast<cServer*> (arg)->Timer();
-	return interval;
-}
+   DWORD dwType; // Must be 0x1000.
+   LPCSTR szName; // Pointer to name (in user addr space).
+   DWORD dwThreadID; // Thread ID (-1=caller thread).
+   DWORD dwFlags; // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+#endif
+
 
 //-------------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
+#if defined _MSC_VER && defined DEBUG //set a readable thread name for debugging
+   THREADNAME_INFO info;
+   info.dwType = 0x1000;
+   info.szName = "Server Thread";
+   info.dwThreadID = -1;
+   info.dwFlags = 0;
+
+   __try
+   {
+      RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+   }
+   __except(EXCEPTION_EXECUTE_HANDLER)
+   {
+   }
+#endif
+
 	cServer* Server = reinterpret_cast<cServer*> (arg);
 	Server->run();
 	return 0;
@@ -59,6 +85,7 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: lastEvent (0)
 	, casualtiesTracker (0)
+	, gameTimer(serverResumeCond = SDL_CreateCond())
 {
 	assert (! (turnLimit && scoreLimit));
 
@@ -77,9 +104,7 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 90; // just temporary set to 90 seconds
 	iNextUnitID = 1;
-	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
-	TimerID = SDL_AddTimer (50, ServerTimerCallback, this);
 	savingID = 0;
 	savingIndex = -1;
 
@@ -101,7 +126,9 @@ cServer::~cServer()
 
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread (ServerThread, NULL);
-	SDL_RemoveTimer (TimerID);
+
+	//FIXME: RACE COND: timerCallback using serverResumeCond still running.
+	SDL_DestroyCond(serverResumeCond);
 
 	while (eventQueue.size())
 	{
@@ -162,6 +189,7 @@ cNetMessage* cServer::pollEvent()
 int cServer::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);
+	SDL_CondSignal (serverResumeCond);
 	return 0;
 }
 
@@ -170,7 +198,10 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 {
 	message->iPlayerNr = iPlayerNum;
 
-	Log.write ("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	message->serialize();
+	if (message->iType != NET_GAME_TIME_SERVER)
+		Log.write ("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+
 	if (iPlayerNum == -1)
 	{
 		if (network)
@@ -222,16 +253,60 @@ void cServer::run()
 		// don't do anything if games hasn't been started yet!
 		if (bStarted)
 		{
+			if (gameTimer.flag)
+			{
+				int waitForPlayer = -1;//checkClientTimes ();
+				if (waitForPlayer == -1)
+				{
+					gameTimer.gameTime++;
+				}
+				else
+				{
+					sendFreeze(waitForPlayer);
+				}
+				gameTimer.flag = false;
+			}
+
+			gameTimer.handleTimer();
 
 			checkPlayerUnits();
 			checkDeadline();
 			handleMoveJobs();
-			handleTimer();
 			handleWantEnd();
+
+			if ( gameTimer.timer10ms ) 
+			{
+				static int lastTime = 0;
+				if ( lastTime != gameTimer.gameTime - 1 )
+					int wazzap = 0;
+
+				lastTime = gameTimer.gameTime;
+
+				for (size_t i = 0; i < PlayerList->Size(); i++)
+				{
+					const cPlayer &player = *(*PlayerList)[i];
+					sendSyncMessage (player);
+				}
+			}
+
 		}
 
-		if (!event) SDL_Delay (10);
+		if (!event)
+		{
+			SDL_CondWait (serverResumeCond, NULL);
+		}
 	}
+}
+
+void cServer::sendSyncMessage ( const cPlayer& player)
+{
+	cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
+
+	message->pushInt32 (gameTimer.gameTime);	
+	Uint32 checkSum = calcPlayerChecksum (player);
+	message->pushInt32 (checkSum);
+
+	sendNetMessage (message, player.Nr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1951,6 +2026,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 
 	int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
+	SDL_Delay(2000);
+
 	if (unit != 0)
 	{
 		unit->changeName (message.popString());
@@ -1974,9 +2051,18 @@ void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 }
 
 //-------------------------------------------------------------------------------------
+void cServer::HandleNetMessage_NET_GAME_TIME_CLIENT (cNetMessage& message)
+{
+	assert (message.iType == NET_GAME_TIME_CLIENT);
+
+	gameTimer.setReceivedTime (message.popInt32(), message.iPlayerNr);
+}
+
+//-------------------------------------------------------------------------------------
 int cServer::HandleNetMessage (cNetMessage* message)
 {
-	Log.write ("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	if (message->iType != NET_GAME_TIME_CLIENT)
+		Log.write ("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{
@@ -2027,12 +2113,25 @@ int cServer::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_WANT_SELFDESTROY: HandleNetMessage_GAME_EV_WANT_SELFDESTROY (*message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (*message); break;
 		case GAME_EV_END_MOVE_ACTION: HandleNetMessage_GAME_EV_END_MOVE_ACTION (*message); break;
+		case NET_GAME_TIME_CLIENT: HandleNetMessage_NET_GAME_TIME_CLIENT (*message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	CHECK_MEMORY;
 	return 0;
+}
+
+int cServer::checkClientTimes ()
+{
+	for (int i = 0; i < PlayerList->Size (); i++)
+	{
+		cPlayer* player = (*PlayerList)[i];
+		if (!isPlayerDisconnected(player) && gameTimer.getReceivedTime(i) + PAUSE_GAME_TIMEOUT < gameTimer.gameTime)
+			return player->Nr;
+	}
+
+	return -1;
 }
 
 //-------------------------------------------------------------------------------------
@@ -2557,7 +2656,13 @@ void cServer::checkPlayerUnits()
 //-------------------------------------------------------------------------------------
 bool cServer::isPlayerDisconnected (cPlayer* player) const
 {
-	return DisconnectedPlayerList.Contains (player);
+	if (player->iSocketNum == MAX_CLIENTS)
+		return false;
+
+	if (network)
+		return !network->isConnected (player->iSocketNum);
+
+	return true;
 }
 
 //-------------------------------------------------------------------------------------
@@ -2717,7 +2822,7 @@ void cServer::handleEnd (int iPlayerNum)
 //-------------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
-	if (!timer50ms) return;
+	if (!gameTimer.timer50ms) return;
 	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
 	{
 		for (unsigned int i = 0; i < PlayerEndList.Size(); i++)
@@ -3043,7 +3148,7 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 //-------------------------------------------------------------------------------------
 void cServer::checkDeadline()
 {
-	if (!timer50ms) return;
+	if (!gameTimer.timer50ms) return;
 	Uint32 currentTicks = SDL_GetTicks();
 	if (iTurnDeadline >= 0 && iDeadlineStartTime > 0)
 	{
@@ -3150,6 +3255,7 @@ void cServer::handleMoveJobs()
 
 		if (!Vehicle->moving)
 		{
+			Log.write(" Server: Check Move at time " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 			if (!MoveJob->checkMove() && !MoveJob->bFinished)
 			{
 				ActiveMJobs.Delete (i);
@@ -3158,44 +3264,30 @@ void cServer::handleMoveJobs()
 				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
 				continue;
 			}
+			if (MoveJob->bEndForNow)
+			{
+				continue;
+			}
 		}
 
 		if (MoveJob->iNextDir != Vehicle->dir)
 		{
 			// rotate vehicle
-			if (timer100ms) Vehicle->rotateTo (MoveJob->iNextDir);
+			if (gameTimer.timer100ms) 
+			{
+				Vehicle->rotateTo (MoveJob->iNextDir);
+				Log.write(" Server: Rotate Vehicle at time " + iToStr(gameTimer.gameTime) + ", Dir: " + iToStr(Vehicle->dir) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
+			}
 		}
 		else
 		{
 			//move the vehicle
-			if (timer50ms) MoveJob->moveVehicle();
+			if (gameTimer.timer10ms) 
+			{
+				MoveJob->moveVehicle();
+				Log.write(" Server: Move Vehicle at time " + iToStr(gameTimer.gameTime) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
+			}
 		}
-	}
-}
-
-//-------------------------------------------------------------------------------------
-void cServer::Timer()
-{
-	iTimerTime++;
-}
-
-//-------------------------------------------------------------------------------------
-void cServer::handleTimer()
-{
-	//timer50ms: 50ms
-	//timer100ms: 100ms
-	//timer400ms: 400ms
-
-	static unsigned int iLast = 0;
-	timer50ms = false;
-	timer100ms = false;
-	timer400ms = false;
-	if (iTimerTime != iLast)
-	{
-		iLast = iTimerTime;
-		timer50ms = true;
-		if (iTimerTime & 0x1) timer100ms = true;
-		if ( (iTimerTime & 0x3) == 3) timer400ms = true;
 	}
 }
 
@@ -3562,10 +3654,15 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	sendResources (Player);
 	// send all units to the client
 	Vehicle = Player->VehicleList;
+	
+	//send backwards to avaid false out of sync detection because of different order of units on client and server
+	while (Vehicle->next)	
+		Vehicle = static_cast<cVehicle*> (Vehicle->next);
+
 	while (Vehicle)
 	{
 		if (!Vehicle->Loaded) resyncVehicle (Vehicle, Player);
-		Vehicle = static_cast<cVehicle*> (Vehicle->next);
+		Vehicle = static_cast<cVehicle*> (Vehicle->prev);
 	}
 	Building = Player->BuildingList;
 	while (Building)

@@ -678,7 +678,7 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 		int y = vehicle ? vehicle->PosY : building->PosY;
 		string name = vehicle ? vehicle->getDisplayName() : building->getDisplayName();
 		sID id = vehicle ? vehicle->data.ID : building->data.ID;
-		Client->getActivePlayer()->addSavedReport (Client->addCoords (lngPack.i18n ("Text~Comp~AttackingEnemy", name), x, y), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
+		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (lngPack.i18n ("Text~Comp~AttackingEnemy", name), x, y), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
 		if (random (2))
 			PlayVoice (VoiceData.VOIAttackingEnemy1);
 		else
@@ -1014,7 +1014,7 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 			else
 				PlayVoice (VoiceData.VOIAttackingUs3);
 		}
-		Client->getActivePlayer()->addSavedReport (Client->addCoords (message, x, y), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
+		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, x, y), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
 	}
 
 	//clean up

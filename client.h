@@ -29,23 +29,10 @@ class cPlayer;
 class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
+class cClientSpeedCtrl;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
-
-/** structure for the messages displayed in the game */
-struct sMessage
-{
-public:
-	sMessage (std::string const&, unsigned int age);
-	~sMessage();
-
-public:
-	char*        msg;
-	int          chars;
-	int          len;
-	unsigned int age;
-};
 
 /** FX types */
 enum eFXTyps {fxMuzzleBig, fxMuzzleSmall, fxMuzzleMed, fxMuzzleMedLong, fxExploSmall, fxExploBig, fxExploAir, fxExploWater, fxHit, fxSmoke, fxRocket, fxDarkSmoke, fxTorpedo, fxTracks, fxBubbles, fxCorpse, fxAbsorb};
@@ -102,7 +89,8 @@ public:
 	~cClient();
 
 private:
-	friend class cGameGUI;
+	//friend class cGameGUI;
+	friend class cDebugOutput;
 	friend class cPlayer;
 	friend class cBuilding;
 	friend class cVehicle;
@@ -117,19 +105,10 @@ private:
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
-	/** ID of the timer */
-	SDL_TimerID TimerID;
-	/** list with all messages */
-	cList<sMessage*> messages;
 	/** number of current turn */
 	int iTurn;
-	/** lists with all FX-Animation */
-	cList<sFX*> FXList;
-	cList<sFX*> FXListBottom;
 	/** flags what should be displaxed in the raffinery */
-	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT;
-	/** Coordinates to a important message */
-	int iMsgCoordsX, iMsgCoordsY;
+	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT; //TODO: GameGUI!
 	/** true if the player has been defeated */
 	bool bDefeated;
 	/** how many seconds will be left for this turn */
@@ -140,17 +119,6 @@ private:
 	int turnLimit, scoreLimit;
 
 	cCasualtiesTracker* casualtiesTracker;
-
-	/**
-	* handles the game relevant actions (for example moving the current position of a rocket)
-	* of the fx-effects, so that they are handled also, when the effects are not drawn.
-	*/
-	void runFX();
-	/**
-	* handles the game messages
-	*@author alzi alias DoctorDeath
-	*/
-	void handleMessages();
 
 	/**
 	* adds the unit to the map and player.
@@ -165,28 +133,11 @@ private:
 	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
 	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
 	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer* getPlayerFromNumber (int iNum);
-	/**
-	* handles the end of a turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleEnd();
-	/**
 	* handles the end of a hotseat game
 	*@author alzi alias DoctorDeath
 	*@param iNextPlayerNum Number of Player who has ended his turn
 	*/
 	void makeHotSeatEnd (int iNextPlayerNum);
-	/**
-	* handles the rest-time of the current turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTurnTime();
 	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
@@ -276,8 +227,12 @@ private:
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 
 public:
+	cGameTimer gameTimer; //TODO: private
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
+	/** lists with all FX-Animation */
+	cList<sFX*> FXList;
+	cList<sFX*> FXListBottom;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
@@ -288,19 +243,30 @@ public:
 	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
-	/** will be incremented by the Timer */
-	unsigned int iTimerTime;
-	/** diffrent timers */
-	bool timer50ms, timer100ms, timer400ms;
+	
 	/** shows if the player has to wait for other players */
 	bool bWaitForOthers;
 	bool waitReconnect;
-
 	/**
-	* handles the timers timer50ms, timer100ms and timer400ms
+	* handles the end of a turn
 	*@author alzi alias DoctorDeath
 	*/
-	void handleTimer();
+	void handleEnd();
+
+	/**
+	* handles the game relevant actions (for example moving the current position of a rocket)
+	* of the fx-effects, so that they are handled also, when the effects are not drawn.
+	*/
+	void runFX();
+
+	/**
+	* handles the rest-time of the current turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleTurnTime();
+
+	void processNextGameTime();
+
 	/**
 	* creates a new moveJob an transmits it to the server
 	* @param vehicle the vehicle to be moved
@@ -314,6 +280,13 @@ public:
 	*@param MJob the movejob to be added
 	*/
 	void addActiveMoveJob (cClientMoveJob* MJob);
+	/**
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer* getPlayerFromNumber (int iNum);
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
@@ -343,6 +316,7 @@ public:
 	*@param Player The player.
 	*/
 	void initPlayer (cPlayer* Player);
+	
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
@@ -371,24 +345,12 @@ public:
 	void addFX (sFX* iNum);
 
 	/**
-	* increments the iTimeTimer.
-	*@author alzi alias DoctorDeath
-	*/
-	void Timer();
-	/**
-	* Adds an message to be displayed in the game
-	*/
-	void addMessage (const std::string& sMsg);
-	/** displays a message with 'goto' coordinates */
-	std::string addCoords (const std::string& msg, int x, int y);
-	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit
 	*/
 	void destroyUnit (cVehicle* vehicle);
 	void destroyUnit (cBuilding* building);
 
-	void checkVehiclePositions (cNetMessage* message);
 	void getVictoryConditions (int* turnLimit, int* scoreLimit) const;
 	int getTurn() const;
 

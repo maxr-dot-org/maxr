@@ -1126,7 +1126,7 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 	{
 		// check whether the destination field is one of the next in the waypointlist
 		// if not it must have been one that has been deleted already
-		bool bServerIsFaster = false;
+		/*bool bServerIsFaster = false;
 		sWaypoint* Waypoint = Waypoints->next->next;
 		while (Waypoint)
 		{
@@ -1137,7 +1137,7 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 			}
 			Waypoint = Waypoint->next;
 		}
-
+		
 		if (iServerPositionX == Vehicle->PosX && iServerPositionY == Vehicle->PosY)
 		{
 			//the server has already finished the current movement step
@@ -1169,6 +1169,7 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 			bEndForNow = true;
 			if (iType == MJOB_OK) return;
 		}
+		*/
 	}
 
 	switch (iType)
@@ -1188,6 +1189,15 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
+			if (Vehicle->moving) doEndMoveVehicle();
+
+			Vehicle->moving = true;
+			Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
+			//Vehicle->owner->DoScan();
+			Vehicle->OffX = 0;
+			Vehicle->OffY = 0;
+			setOffset (Vehicle, iNextDir, -64);
+
 		}
 		break;
 		case MJOB_STOP:
@@ -1359,11 +1369,11 @@ void cClientMoveJob::moveVehicle()
 	setOffset (Vehicle, iNextDir, iSpeed);
 
 	// check whether the point has been reached:
-	if (abs (Vehicle->OffX) < iSpeed && abs (Vehicle->OffY) < iSpeed)
+	/*if (abs (Vehicle->OffX) < iSpeed && abs (Vehicle->OffY) < iSpeed)
 	{
 		Log.write (" Client: Vehicle reached the next field: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->X) + ", Y: " + iToStr (Waypoints->next->Y), cLog::eLOG_TYPE_NET_DEBUG);
 		doEndMoveVehicle();
-	}
+	}*/
 }
 
 void cClientMoveJob::doEndMoveVehicle()
@@ -1375,7 +1385,7 @@ void cClientMoveJob::doEndMoveVehicle()
 		// this is just to avoid errors, this should normaly never happen.
 		bFinished = true;
 		return;
-	}
+	} 
 
 	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;
@@ -1394,6 +1404,7 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	Client->gameGUI.callMiniMapDraw();
 	Client->gameGUI.updateMouseCursor();
+	Vehicle->owner->DoScan();
 
 	calcNextDir();
 }

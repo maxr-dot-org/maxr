@@ -565,6 +565,9 @@ string cNetMessage::getTypeAsString() const
 			return string ("GAME_EV_END_MOVE_ACTION_SERVER");
 		case GAME_EV_END_MOVE_ACTION:
 			return string ("GAME_EV_END_MOVE_ACTION");
+		case NET_GAME_TIME_SERVER:
+			return string("NET_GAME_TIME_SERVER");
+			//TODO: sync message
 		default:
 			return iToStr (iType);
 	}

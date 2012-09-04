@@ -627,8 +627,11 @@ int cMenu::show()
 		EventHandler->HandleEvents();
 		if (Client)
 		{
-			Client->doGameActions();
-			if (Client->timer100ms) Client->gameGUI.incFrame();
+			//TODO: is this all thats needed here?
+			Client->gameGUI.handleTimer();
+			Client->runFX();
+
+			//if (Client->timer100ms) Client->gameGUI.incFrame(); what is this?!?
 		}
 
 		// check whether the resolution has been changed
@@ -832,7 +835,7 @@ void cMainMenu::infoImageReleased (void* parent)
 //------------------------------------------------------------------------------
 cStartMenu::cStartMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, "Test",FONT_LATIN_NORMAL);
 	titleLabel->setCentered (true);
 	menuItems.Add (titleLabel);
 

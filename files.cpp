@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <SDL.h>
+#include <SDL_endian.h>
 
 #include "files.h"
 #include "log.h"
@@ -173,14 +174,17 @@ std::string getUserScreenshotsDir()
 	return screenshotsFolder;
 }
 
-Sint32 calcCheckSum (const char* data, size_t dataSize)
+Uint32 calcCheckSum(Uint32 data, Uint32 checksum)
 {
-	// NOTE: The calculation must be endian safe.
-	Uint32 checksum = 0;
+	return calcCheckSum((char*) &SDL_SwapLE32(data), 4, checksum);
+}
+
+Uint32 calcCheckSum(const char* data, size_t dataSize, Uint32 checksum)
+{ // NOTE: The calculation must be endian safe.
 	for (const char* i = data; i != data + dataSize; ++i)
 	{
 		checksum  = checksum << 1 | checksum >> 31; // Rotate left by one.
 		checksum += *i;
 	}
-	return checksum & 0x7FFFFFFF; // Unset MSB. XXX why?
+	return checksum;
 }

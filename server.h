@@ -24,6 +24,7 @@
 #include "ringbuffer.h"
 #include "main.h" // for sID
 #include "map.h"
+#include "gametimer.h"
 
 class cPlayer;
 class cServerAttackJob;
@@ -73,6 +74,7 @@ struct sLandingUnit;
 class cServer
 {
 	friend class cSavegame;
+	friend class cServerGame;
 public:
 	/**
 	 * initialises the server class. turnLimit and scoreLimit should not
@@ -88,11 +90,16 @@ public:
 	void setDeadline (int iDeadline);
 	~cServer();
 
+	cGameTimer gameTimer; //TODO: private?
 private:
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
+	
+	SDL_cond* serverResumeCond;
+
+	
 
 	/** the thread the server runs in */
 	SDL_Thread* ServerThread;
@@ -128,12 +135,6 @@ private:
 	int iWantPlayerEndNum;
 	/** The ID for the next unit*/
 	unsigned int iNextUnitID;
-	/** will be incremented by the Timer */
-	unsigned int iTimerTime;
-	/** diffrent timers */
-	bool timer50ms, timer100ms, timer400ms;
-	/** ID of the timer */
-	SDL_TimerID TimerID;
 	/** if this is true the map will be opened for a defeated player */
 	bool openMapDefeat;
 	/** List with disconnected players */
@@ -203,6 +204,7 @@ private:
 	void HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
+	void HandleNetMessage_NET_GAME_TIME_CLIENT (cNetMessage& message);
 
 public:
 	/**
@@ -266,11 +268,6 @@ public:
 	*/
 	void checkDeadline();
 	/**
-	* handles the timers timer50ms, timer100ms and timer400ms
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTimer();
-	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
@@ -284,6 +281,19 @@ private:
 	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
+
+	/**
+	* this function returns a player number, when the clients haven't sent a sync message for longer than PAUSE_GAME_TIMEOUT
+	*@author eiko
+	*/
+	int checkClientTimes ();
+
+	/**
+	* sends a sync net message with current gametime and checksum to the player
+	*@author eiko
+	*/
+	void sendSyncMessage ( const cPlayer& player);
+
 	/**
 	* changes the owner of a vehicle
 	*@author alzi alias DoctorDeath
@@ -426,11 +436,6 @@ public:
 	 *
 	 */
 	void correctLandingPos (int& iX, int& iY);
-	/**
-	* increments the iTimeTimer.
-	*@author alzi alias DoctorDeath
-	*/
-	void Timer();
 	/**
 	* adds a report to the reportlist
 	*@author alzi alias DoctorDeath

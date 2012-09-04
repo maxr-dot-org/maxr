@@ -679,10 +679,10 @@ void sendAbortWaitReconnect (int iPlayer)
 }
 
 //-------------------------------------------------------------------------------------
-void sendFreeze (bool sendNotification, int iPlayer)
+void sendFreeze (int waitForPlayer, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_FREEZE);
-	message->pushBool (sendNotification);
+	message->pushInt16 (waitForPlayer);
 	Server->sendNetMessage (message, iPlayer);
 }
 

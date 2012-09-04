@@ -25,14 +25,15 @@
 
 class cNetMessage;
 
+#define USER_EV_GAME_TIME_TICK 0x01
+
 /**
  * Class for Event handling.
  *@author alzi alias DoctorDeath
  */
 class cEventHandling
 {
-private:
-	cRingbuffer<cNetMessage*> eventQueue;
+	friend class cDebugOutput;
 public:
 	/**
 	 * Places a net message for the client on the message queue
@@ -47,6 +48,11 @@ public:
 	 * @author alzi alias DoctorDeath
 	 */
 	void HandleEvents();
+
+	void handleNetMessages();
+
+private:
+	cRingbuffer<cNetMessage*> eventQueue;
 } EX* EventHandler;
 
 #endif

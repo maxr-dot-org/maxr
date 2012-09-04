@@ -149,6 +149,17 @@ int cTCP::connect()
 	return 0;
 }
 
+bool cTCP::isConnected (int socketNr)
+{
+	if (socketNr == MAX_CLIENTS) 
+		return true;
+
+	if (Sockets[socketNr].iState == STATE_NEW || Sockets[socketNr].iState == STATE_READY)
+		return true;
+
+	return false;
+}
+
 //------------------------------------------------------------------------
 int cTCP::sendTo (int iClientNumber, int iLength, const char* buffer)
 {

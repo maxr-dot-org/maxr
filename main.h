@@ -463,6 +463,9 @@ int random (int x);
 /**Converts integer to string
 */
 std::string iToStr (int x);
+/**Converts integer to string in hex representation
+*/
+std::string iToHex ( unsigned int x);
 /**Converts double to string
 */
 std::string dToStr (double x);

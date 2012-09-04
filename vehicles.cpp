@@ -123,14 +123,14 @@ cVehicle::~cVehicle()
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
 	//make damage effect
-	if (gameGUI.getClient()->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
+	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
 		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense);
 	}
 
 	//make landing and take off of planes
-	if (data.factorAir > 0 && gameGUI.getClient()->timer50ms)
+	if (data.factorAir > 0 && gameGUI.timer50ms)
 	{
 		if (canLand (*gameGUI.getClient()->getMap()))
 		{
@@ -145,7 +145,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// make the dithering
-	if (gameGUI.getClient()->timer100ms)
+	if (gameGUI.timer100ms)
 	{
 		if (FlightHigh > 0)
 		{
@@ -169,7 +169,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	//rotate vehicles to the right direction for building/clearing
-	if ( (IsBuilding || IsClearing) && gameGUI.getClient()->timer100ms)
+	if ( (IsBuilding || IsClearing) && gameGUI.timer100ms)
 	{
 		if (data.isBig)
 			dir = 0;
@@ -180,7 +180,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	//run start up effect
 	if (StartUp)
 	{
-		if (gameGUI.getClient()->timer50ms)
+		if (gameGUI.timer50ms)
 			StartUp += 25;
 
 		if (StartUp >= 255)
@@ -195,7 +195,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	if (IsBuilding && dir == 0 && BigBetonAlpha < 255)
 	{
-		if (gameGUI.getClient()->timer50ms)
+		if (gameGUI.timer50ms)
 			BigBetonAlpha += 25;
 
 		if (BigBetonAlpha > 255)

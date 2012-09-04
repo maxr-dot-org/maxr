@@ -141,7 +141,7 @@ void cServerGame::run()
 {
 	while (canceled == false)
 	{
-		cNetMessage* event = pollEvent();
+	/*	cNetMessage* event = pollEvent();
 
 		if (event)
 		{
@@ -171,9 +171,73 @@ void cServerGame::run()
 
 		if (event == 0)
 			SDL_Delay (20);
+
+		*/
+		cNetMessage* event = pollEvent();
+
+		if (event)
+		{
+			if (Server != 0)
+				Server->HandleNetMessage (event);
+			else
+				handleNetMessage (event);
+		}
+
+		// don't do anything if games hasn't been started yet!
+		if (Server && Server->bStarted)
+		{
+			if (Server->gameTimer.flag)
+			{
+				int waitForPlayer = Server->checkClientTimes (); //TODO: wait for nobody
+				if (waitForPlayer == -1)
+				{
+					Server->gameTimer.gameTime++;
+				}
+				else
+				{
+					sendFreeze(waitForPlayer);	//TODO: freeze nicht permanent senden
+				}
+				Server->gameTimer.flag = false;
+			}
+
+			Server->gameTimer.handleTimer();
+
+			Server->checkPlayerUnits();
+			Server->checkDeadline();
+			Server->handleMoveJobs();
+			Server->handleWantEnd();
+
+			if ( Server->gameTimer.timer10ms ) 
+			{
+				for (size_t i = 0; i < Server->PlayerList->Size(); i++)
+				{
+					const cPlayer &player = *(*Server->PlayerList)[i];
+					Server->sendSyncMessage (player);
+				}
+			}
+
+			if (shouldSave)
+			{
+				cSavegame saveGame (saveGameNumber);
+				saveGame.save ("Dedicated Server Savegame");
+				cout << "...saved to slot " << saveGameNumber << endl;
+				shouldSave = false;
+			}
+
+		}
+
+		if (!event)
+		{
+			if (Server)
+				SDL_CondWait (Server->serverResumeCond, NULL);	//TODO: warum hängt das hier beim beenden?
+			else
+				SDL_Delay (20);
+		}
 	}
+
 	if (Server)
 		terminateServer();
+
 }
 
 //-------------------------------------------------------------------------------------

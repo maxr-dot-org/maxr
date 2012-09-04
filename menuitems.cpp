@@ -4278,7 +4278,7 @@ void cMenuReportsScreen::released (void* parent)
 			{
 				sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
 				parentMenu->close();
-				Client->addMessage (savedReport.message);
+				Client->gameGUI.addMessage (savedReport.message);
 				if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
 				{
 					int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
