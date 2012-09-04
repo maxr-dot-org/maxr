@@ -2507,7 +2507,6 @@ void cClient::addActiveMoveJob (cClientMoveJob* MoveJob)
 		if (ActiveMJobs[i] == MoveJob) return;
 	}
 	ActiveMJobs.Add (MoveJob);
-	Log.write(" Client: Added active move job at time " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 void cClient::handleMoveJobs()
@@ -2565,7 +2564,6 @@ void cClient::handleMoveJobs()
 			if (gameTimer.timer100ms) 
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
-				Log.write(" Client: Rotate Vehicle at time " + iToStr(gameTimer.gameTime) + ", Dir: " + iToStr(Vehicle->dir) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 		else if (Vehicle->MoveJobActive)
@@ -2574,7 +2572,6 @@ void cClient::handleMoveJobs()
 			if (gameTimer.timer10ms) 
 			{
 				MoveJob->moveVehicle();
-				Log.write(" Client: Move Vehicle at time " + iToStr(gameTimer.gameTime) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 	}
