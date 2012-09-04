@@ -101,7 +101,7 @@ void cEventHandling::HandleEvents()
 				if (event.user.code == USER_EV_GAME_TIME_TICK)
 				{
 					if (Client)
-						Client->processNextGameTime ();
+						Client->calcNextGameTimeTick ();
 				}
 				break;
 
@@ -113,7 +113,7 @@ void cEventHandling::HandleEvents()
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
 	if (Client && Client->gameTimer.gameTime + MAX_CLIENT_LAG < Client->gameTimer.getReceivedTime())
 	{
-		Client->processNextGameTime ();
+		Client->calcNextGameTimeTick ();
 	}
 	
 

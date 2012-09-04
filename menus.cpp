@@ -835,7 +835,7 @@ void cMainMenu::infoImageReleased (void* parent)
 //------------------------------------------------------------------------------
 cStartMenu::cStartMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, "Test",FONT_LATIN_NORMAL);
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"),FONT_LATIN_NORMAL);
 	titleLabel->setCentered (true);
 	menuItems.Add (titleLabel);
 

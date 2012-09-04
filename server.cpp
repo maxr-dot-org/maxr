@@ -2026,7 +2026,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 
 	int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
-	SDL_Delay(2000);
+	SDL_Delay(2000); //TODO: remove me
 
 	if (unit != 0)
 	{
@@ -3255,7 +3255,6 @@ void cServer::handleMoveJobs()
 
 		if (!Vehicle->moving)
 		{
-			Log.write(" Server: Check Move at time " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 			if (!MoveJob->checkMove() && !MoveJob->bFinished)
 			{
 				ActiveMJobs.Delete (i);
@@ -3276,7 +3275,6 @@ void cServer::handleMoveJobs()
 			if (gameTimer.timer100ms) 
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
-				Log.write(" Server: Rotate Vehicle at time " + iToStr(gameTimer.gameTime) + ", Dir: " + iToStr(Vehicle->dir) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 		else
@@ -3285,7 +3283,6 @@ void cServer::handleMoveJobs()
 			if (gameTimer.timer10ms) 
 			{
 				MoveJob->moveVehicle();
-				Log.write(" Server: Move Vehicle at time " + iToStr(gameTimer.gameTime) + ", OffX: " + iToStr(Vehicle->OffX) + ", OffY: " + iToStr(Vehicle->OffY) + ", PosX: " + iToStr(Vehicle->PosX) + ", PosY: " + iToStr(Vehicle->PosY), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 		}
 	}

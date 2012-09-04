@@ -2230,7 +2230,7 @@ int cClient::HandleNetMessage (cNetMessage* message)
 	return 0;
 }
 
-void cClient::processNextGameTime()
+void cClient::calcNextGameTimeTick()
 {
 	if (!gameTimer.nextTickAllowed()) 
 	{
