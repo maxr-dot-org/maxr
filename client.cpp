@@ -2230,7 +2230,7 @@ int cClient::HandleNetMessage (cNetMessage* message)
 	return 0;
 }
 
-void cClient::calcNextGameTimeTick()
+void cClient::doNextGameTimeTick()
 {
 	if (!gameTimer.nextTickAllowed()) 
 	{
@@ -2246,9 +2246,10 @@ void cClient::calcNextGameTimeTick()
 		bWaitForOthers = false;
 		gameGUI.setInfoTexts("","");
 	}
-				
+
+	EventHandler->handleNetMessages();
+
 	gameTimer.gameTime++;
-	gameTimer.currentTickFinished = false;
 	doGameActions();
 
 	/*cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
@@ -2256,8 +2257,6 @@ void cClient::calcNextGameTimeTick()
 	sendNetMessage (message);
 	*/
  
-	EventHandler->handleNetMessages();
-
 }
 
 void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit, bool bAddToMap)

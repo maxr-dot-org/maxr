@@ -43,7 +43,6 @@ public:
 	unsigned int getReceivedTime(unsigned int nr = 0);
 
 	//client only
-	bool currentTickFinished;
 	void HandleNetMessage_NET_GAME_TIME_SERVER (cNetMessage& message);
 	/** checks, whether the client has finished the current turn, and has an client time < servertime */
 	bool nextTickAllowed();

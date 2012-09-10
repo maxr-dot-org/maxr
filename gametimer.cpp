@@ -27,7 +27,6 @@ cGameTimer::cGameTimer(SDL_cond* conditionVariable)
 	localChecksum = 0;
 	remoteChecksum = 0;
 	debugRemoteChecksum = 0;
-	currentTickFinished = false;
 
 	TimerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
 	condSignal = conditionVariable;
@@ -88,8 +87,6 @@ void cGameTimer::HandleNetMessage_NET_GAME_TIME_SERVER (cNetMessage& message)
 	if ( newSyncTime != lastSyncMessage + 1 )
 		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
 	lastSyncMessage = newSyncTime;
-
-	currentTickFinished = true;
 }
 
 void cGameTimer::setReceivedTime(unsigned int time, unsigned int nr)
@@ -114,9 +111,6 @@ unsigned int cGameTimer::getReceivedTime(unsigned int nr)
 
 bool cGameTimer::nextTickAllowed()
 {
-	if (!currentTickFinished)
-		return false;
-
 	return gameTime < getReceivedTime();
 }
 

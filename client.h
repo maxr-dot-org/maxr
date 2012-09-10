@@ -265,7 +265,7 @@ public:
 	*/
 	void handleTurnTime();
 
-	void calcNextGameTimeTick();
+	void doNextGameTimeTick();
 
 	/**
 	* creates a new moveJob an transmits it to the server

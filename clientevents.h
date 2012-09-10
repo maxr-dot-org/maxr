@@ -93,7 +93,7 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
-	NET_GAME_TIME_SERVER,				// notification about current server time
+	NET_GAME_TIME_SERVER,			// notification about current server time
 };
 
 enum CHAT_MESSAGE_TYPES

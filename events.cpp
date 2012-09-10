@@ -48,8 +48,9 @@ void cEventHandling::pushEvent (cNetMessage* message)
 
 void cEventHandling::HandleEvents()
 {
-	handleNetMessages();
-
+	if (!Client)
+		handleNetMessages();
+	
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{
@@ -101,7 +102,7 @@ void cEventHandling::HandleEvents()
 				if (event.user.code == USER_EV_GAME_TIME_TICK)
 				{
 					if (Client)
-						Client->calcNextGameTimeTick ();
+						Client->doNextGameTimeTick ();
 				}
 				break;
 
@@ -113,11 +114,8 @@ void cEventHandling::HandleEvents()
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
 	if (Client && Client->gameTimer.gameTime + MAX_CLIENT_LAG < Client->gameTimer.getReceivedTime())
 	{
-		Client->calcNextGameTimeTick ();
+		Client->doNextGameTimeTick ();
 	}
-	
-
-
 }
 
 void cEventHandling::handleNetMessages ()
@@ -125,10 +123,6 @@ void cEventHandling::handleNetMessages ()
 	cNetMessage* message;
 	while (eventQueue.size() > 0)
 	{
-		//stop precessing, when there are no messages for the current game time tick anymore
-		if ( Client && Client->gameTimer.currentTickFinished )
-			break;
-
 		message = eventQueue.read();
 		switch (message->getClass())
 		{
@@ -139,6 +133,15 @@ void cEventHandling::handleNetMessages ()
 					break;
 				}
 				Client->HandleNetMessage (message);
+
+				if (message->iType == NET_GAME_TIME_SERVER)
+				{
+					//only handle messages for the current game time.
+					//netmessages after a sync message, are for the next time step, so stop handling for now
+					delete message;
+					return;
+				}
+
 				break;
 			case NET_MSG_SERVER:
 				//should not happen!
@@ -168,4 +171,7 @@ void cEventHandling::handleNetMessages ()
 
 		delete message;
 	}
+
+	if (Client)
+		Log.write("Client calculated game time step, before allowed by server", cLog::eLOG_TYPE_NET_ERROR);
 }
