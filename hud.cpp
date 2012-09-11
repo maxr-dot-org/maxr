@@ -2162,46 +2162,6 @@ void cGameGUI::doCommand (const string& cmd)
 		memset (player->ResourceMap, 1, map->size * map->size);
 		return;
 	}
-
-	if (cmd.compare ("/credits") == 0)
-	{
-		return;
-	}
-	if (cmd.substr (0, 5).compare ("/kill ") == 0)
-	{
-		int x, y;
-		sscanf (cmd.c_str(), "kill %d,%d", &x, &y);
-		/*engine->DestroyObject ( x+y*map->size,false );
-		engine->DestroyObject ( x+y*map->size,true );*/
-		return;
-	}
-	if (cmd.compare ("/load") == 0)
-	{
-		/*if ( SelectedVehicle ) {SelectedVehicle->data.cargo=SelectedVehicle->data.max_cargo;SelectedVehicle->data.ammoCur=SelectedVehicle->data.ammoMax;SelectedVehicle->ShowDetails();}
-		else if ( SelectedBuilding )
-		{
-			if ( SelectedBuilding->data.can_load==TRANS_METAL )
-			{
-				SelectedBuilding->SubBase->Metal-=SelectedBuilding->data.cargo;
-				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
-				SelectedBuilding->SubBase->Metal+=SelectedBuilding->data.cargo;
-			}
-			else if ( SelectedBuilding->data.can_load==TRANS_OIL )
-			{
-				SelectedBuilding->SubBase->Oil-=SelectedBuilding->data.cargo;
-				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
-				SelectedBuilding->SubBase->Oil+=SelectedBuilding->data.cargo;
-			}
-			else if ( SelectedBuilding->data.can_load==TRANS_GOLD )
-			{
-				SelectedBuilding->SubBase->Gold-=SelectedBuilding->data.cargo;
-				SelectedBuilding->data.cargo=SelectedBuilding->data.max_cargo;
-				SelectedBuilding->SubBase->Gold+=SelectedBuilding->data.cargo;
-			}
-			SelectedBuilding->data.ammoCur=SelectedBuilding->data.ammoMax;SelectedBuilding->ShowDetails();
-		}*/
-		return;
-	}
 	if (cmd.substr (0, 7).compare ("/freeze") == 0 && Server)
 	{
 		if (cmd.length() > 7)
