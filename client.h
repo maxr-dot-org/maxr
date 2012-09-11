@@ -172,6 +172,12 @@ private:
 	*/
 	cPlayer* getPlayerFromNumber (int iNum);
 	/**
+	* returns the player identified by playerID
+	*@author eiko
+	*@param playerID Can be a string representation of the player number or player name
+	*/
+	cPlayer* getPlayerFromString (const std::string& playerID);
+	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath
 	*/

@@ -1990,134 +1990,173 @@ void cGameGUI::doScroll (int dir)
 	setOffsetPosition (newOffX, newOffY);
 }
 
-cPlayer* cGameGUI::getPlayerFromName (const string& playerNameStr)
-{
-	if (!Server) return NULL;
-
-	//first try to find player by name
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
-	{
-		if ( (*Server->PlayerList) [i]->name.compare (playerNameStr) == 0) return (*Server->PlayerList) [i];
-	}
-
-	//then by number
-	return Server->getPlayerFromNumber (atoi (playerNameStr.c_str()));
-}
-
 void cGameGUI::doCommand (const string& cmd)
 {
-	if (cmd.compare ("/fps on") == 0) { showFPS = true; return;}
-	if (cmd.compare ("/fps off") == 0) { showFPS = false; return;}
-	if (cmd.compare ("/base client") == 0) { debugBaseClient = true; debugBaseServer = false; return; }
-	if (cmd.compare ("/base server") == 0) { if (Server) debugBaseServer = true; debugBaseClient = false; return; }
-	if (cmd.compare ("/base off") == 0) { debugBaseServer = false; debugBaseClient = false; return; }
-	if (cmd.compare ("/sentry server") == 0) { if (Server) debugSentry = true; return; }
-	if (cmd.compare ("/sentry off") == 0) { debugSentry = false; return; }
-	if (cmd.compare ("/fx on") == 0) { debugFX = true; return; }
-	if (cmd.compare ("/fx off") == 0) { debugFX = false; return; }
-	if (cmd.compare ("/trace server") == 0) { if (Server) debugTraceServer = true; debugTraceClient = false; return; }
-	if (cmd.compare ("/trace client") == 0) { debugTraceClient = true; debugTraceServer = false; return; }
-	if (cmd.compare ("/trace off") == 0) { debugTraceServer = false; debugTraceClient = false; return; }
-	if (cmd.compare ("/ajobs on") == 0) { debugAjobs = true; return; }
-	if (cmd.compare ("/ajobs off") == 0) { debugAjobs = false; return; }
-	if (cmd.compare ("/players on") == 0) { debugPlayers = true; return; }
-	if (cmd.compare ("/players off") == 0) { debugPlayers = false; return; }
-	if (cmd.substr (0, 12).compare ("/cache size ") == 0)
+	if (cmd.compare ("/fps on") == 0) { showFPS = true;}
+	else if (cmd.compare ("/fps off") == 0) { showFPS = false;}
+	else if (cmd.compare ("/base client") == 0) { debugBaseClient = true; debugBaseServer = false;}
+	else if (cmd.compare ("/base server") == 0) { if (Server) debugBaseServer = true; debugBaseClient = false;}
+	else if (cmd.compare ("/base off") == 0) { debugBaseServer = false; debugBaseClient = false;}
+	else if (cmd.compare ("/sentry server") == 0) { if (Server) debugSentry = true;}
+	else if (cmd.compare ("/sentry off") == 0) { debugSentry = false;}
+	else if (cmd.compare ("/fx on") == 0) { debugFX = true;}
+	else if (cmd.compare ("/fx off") == 0) { debugFX = false;}
+	else if (cmd.compare ("/trace server") == 0) { if (Server) debugTraceServer = true; debugTraceClient = false;}
+	else if (cmd.compare ("/trace client") == 0) { debugTraceClient = true; debugTraceServer = false;}
+	else if (cmd.compare ("/trace off") == 0) { debugTraceServer = false; debugTraceClient = false;}
+	else if (cmd.compare ("/ajobs on") == 0) { debugAjobs = true;}
+	else if (cmd.compare ("/ajobs off") == 0) { debugAjobs = false;}
+	else if (cmd.compare ("/players on") == 0) { debugPlayers = true;}
+	else if (cmd.compare ("/players off") == 0) { debugPlayers = false;}
+	else if (cmd.substr (0, 12).compare ("/cache size ") == 0)
 	{
 		int size = atoi (cmd.substr (12, cmd.length()).c_str());
 		//since atoi is too stupid to report an error, do an extra check, when the number is 0
-		if (size == 0 && cmd[12] != '0') return;
-
+		if (size == 0 && cmd[12] != '0') 
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
 		getDCache()->setMaxCacheSize (size);
 	}
-	if (cmd.compare ("/cache flush") == 0)
+	else if (cmd.compare ("/cache flush") == 0)
 	{
 		getDCache()->flush();
 	}
-	if (cmd.compare ("/cache debug on") == 0)
+	else if (cmd.compare ("/cache debug on") == 0)
 	{
 		debugCache = true;
 	}
-	if (cmd.compare ("/cache debug off") == 0)
+	else if (cmd.compare ("/cache debug off") == 0)
 	{
 		debugCache = false;
 	}
-
-	if (cmd.substr (0, 6).compare ("/kick ") == 0)
+	else if (cmd.substr (0, 6).compare ("/kick ") == 0)
 	{
-		if (cmd.length() > 6 && Server)
+		if (!Server)
 		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (6, cmd.length()));
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
+		if (cmd.length() <= 6)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+		cPlayer* Player = Server->getPlayerFromString (cmd.substr (6, cmd.length()));
 
-			// server can not be kicked
-			if (Player->Nr == 0) return;
+		// server can not be kicked
+		if ( !Player || Player->Nr == 0) 
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
 
-			if (!Player) return;
+		// close the socket
+		if (network) network->close (Player->iSocketNum);
+		for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+		{
+			if ( (*Server->PlayerList) [i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList) [i]->iSocketNum < MAX_CLIENTS) (*Server->PlayerList) [i]->iSocketNum--;
+		}
+		// delete the player
+		Server->deletePlayer (Player);
+	}
+	else if (cmd.substr (0, 9).compare ("/credits ") == 0)
+	{
+		if (!Server)
+		{
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
+		if (cmd.length() <= 9)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
 
-			// close the socket
-			if (network) network->close (Player->iSocketNum);
-			for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+		string playerStr = cmd.substr (9, cmd.find_first_of (" ", 9) - 9);
+		string creditsStr = cmd.substr (cmd.find_first_of (" ", 9) + 1, cmd.length());
+
+		cPlayer* Player = Server->getPlayerFromString (playerStr);
+
+		if (!Player)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+
+		int credits = atoi (creditsStr.c_str());
+
+		Player->Credits = credits;
+
+		sendCredits (credits, Player->Nr);
+	}
+	else if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
+	{
+		if (!Server)
+		{
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
+		if (cmd.length() <= 12)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+
+		cPlayer* Player = Server->getPlayerFromString (cmd.substr (12, cmd.length()));
+
+		//server cannot be disconnected
+		//can not disconnect local players
+		if (!player || Player->Nr == 0 || Player->iSocketNum == MAX_CLIENTS)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+
+		cNetMessage* message = new cNetMessage (TCP_CLOSE);
+		message->pushInt16 (Player->iSocketNum);
+		Server->pushEvent (message);
+	}
+	else if (cmd.substr (0, 9).compare ("/deadline") == 0)
+	{
+		if (!Server)
+		{
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
+		if (cmd.length() <= 9)
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+
+		int i = atoi (cmd.substr (9, cmd.length()).c_str());
+		if ( i == 0 && cmd[10] != '0')
+		{
+			Client->addMessage("Wrong parameter");
+			return;
+		}
+
+		Server->setDeadline (i);
+		Log.write ("Deadline changed to "  + iToStr (i) , cLog::eLOG_TYPE_INFO);
+	}
+	else if (cmd.substr (0, 7).compare ("/resync") == 0)
+	{
+		if (cmd.length() > 7)
+		{
+			if (!Server)
 			{
-				if ( (*Server->PlayerList) [i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList) [i]->iSocketNum < MAX_CLIENTS) (*Server->PlayerList) [i]->iSocketNum--;
+				Client->addMessage("Command can only be used by Host");
+				return;
 			}
-			// delete the player
-			Server->deletePlayer (Player);
-		}
-	}
-	if (cmd.substr (0, 9).compare ("/credits ") == 0)
-	{
-		if (cmd.length() > 9 && Server)
-		{
-			string playerStr = cmd.substr (9, cmd.find_first_of (" ", 9) - 9);
-			string creditsStr = cmd.substr (cmd.find_first_of (" ", 9) + 1, cmd.length());
-
-			cPlayer* Player = getPlayerFromName (playerStr);
-
-			if (!Player) return;
-
-			int credits = atoi (creditsStr.c_str());
-
-			Player->Credits = credits;
-
-			sendCredits (credits, Player->Nr);
-		}
-	}
-	if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
-	{
-		if (cmd.length() > 12 && Server)
-		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (12, cmd.length()));
-
-			//server cannot be disconnected
-			if (Player->Nr == 0) return;
-
-			if (!Player) return;
-
-			//can not disconnect local players
-			if (Player->iSocketNum == MAX_CLIENTS) return;
-
-			cNetMessage* message = new cNetMessage (TCP_CLOSE);
-			message->pushInt16 (Player->iSocketNum);
-			Server->pushEvent (message);
-		}
-	}
-	if (cmd.substr (0, 9).compare ("/deadline") == 0)
-	{
-		if (cmd.length() > 9  && Server)
-		{
-			int i = 90;
-			i = atoi (cmd.substr (9, cmd.length()).c_str());
-			Server->setDeadline (i);
-			Log.write ("Deadline changed to "  + iToStr (i) , cLog::eLOG_TYPE_INFO);
-		}
-		return;
-	}
-	if (cmd.substr (0, 7).compare ("/resync") == 0)
-	{
-		if (cmd.length() > 7 && Server)
-		{
-			unsigned int playernum = atoi (cmd.substr (7, 8).c_str());
-			sendRequestResync (playernum);
+			cPlayer* player = Client->getPlayerFromString(cmd.substr (7, 8));
+			if (!player)
+			{
+				Client->addMessage("Wrong parameter");
+				return;
+			}
+			sendRequestResync (player->Nr);
 		}
 		else
 		{
@@ -2133,58 +2172,74 @@ void cGameGUI::doCommand (const string& cmd)
 				sendRequestResync (client->getActivePlayer()->Nr);
 			}
 		}
-		return;
 	}
-	if (cmd.substr (0, 5).compare ("/mark") == 0)
+	else if (cmd.substr (0, 5).compare ("/mark") == 0)
 	{
 		std::string cmdArg (cmd);
 		cmdArg.erase (0, 5);
 		cNetMessage* message = new cNetMessage (GAME_EV_WANT_MARK_LOG);
 		message->pushString (cmdArg);
 		client->sendNetMessage (message);
-		return;
 	}
-	if (cmd.substr (0, 7).compare ("/color ") == 0)
+	else if (cmd.substr (0, 7).compare ("/color ") == 0)
 	{
-		int cl = 0; sscanf (cmd.c_str(), "color %d", &cl); cl %= 8; player->color = OtherData.colors[cl]; return;
+		int cl = 0; sscanf (cmd.c_str(), "color %d", &cl); cl %= 8; player->color = OtherData.colors[cl];
 	}
-	if (cmd.compare ("/fog off") == 0 && Server)
+	else if (cmd.compare ("/fog off") == 0 && Server)
 	{
 		memset (Server->getPlayerFromNumber (player->Nr)->ScanMap, 1, map->size * map->size);
 		memset (player->ScanMap, 1, map->size * map->size);
-		return;
 	}
-
-	if (cmd.compare ("/survey") == 0)
+	else if (cmd.compare ("/survey") == 0 && Server)
 	{
-		if (network && !network->isHost()) return;
 		memcpy (map->Resources , Server->Map->Resources, map->size * map->size * sizeof (sResources));
 		memset (player->ResourceMap, 1, map->size * map->size);
-		return;
 	}
-	if (cmd.substr (0, 7).compare ("/freeze") == 0 && Server)
+	else if (cmd.substr (0, 7).compare ("/freeze") == 0)
 	{
+		if (!Server)
+		{
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
 		if (cmd.length() > 7)
 		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (8, cmd.length()));
+			cPlayer* Player = Server->getPlayerFromString (cmd.substr (8, cmd.length()));
 
-			if (!Player) return;
+			if (!Player)
+			{
+				Client->addMessage("Wrong parameter");
+				return;
+			}
 
 			sendFreeze (true, Player->Nr);
 		}
 		else sendFreeze (true);
 	}
-	if (cmd.substr (0, 9).compare ("/unfreeze") == 0)
+	else if (cmd.substr (0, 9).compare ("/unfreeze") == 0)
 	{
-		if (cmd.length() > 9 && Server)
+		if (!Server)
 		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (10, cmd.length()));
+			Client->addMessage("Command can only be used by Host");
+			return;
+		}
+		if (cmd.length() > 9)
+		{
+			cPlayer* Player = Server->getPlayerFromString (cmd.substr (10, cmd.length()));
 
-			if (!Player) return;
+			if (!Player)
+			{
+				Client->addMessage("Wrong parameter");
+				return;
+			}
 
 			sendUnfreeze (Player->Nr);
 		}
 		else sendUnfreeze();
+	}
+	else
+	{
+		Client->addMessage("Unknown command");
 	}
 }
 

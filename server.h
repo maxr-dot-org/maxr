@@ -344,6 +344,12 @@ public:
 	*@return The wanted player.
 	*/
 	cPlayer* getPlayerFromNumber (int iNum);
+	/**
+	* returns the player identified by playerID
+	*@author eiko
+	*@param playerID Can be a string representation of the player number or player name
+	*/
+	cPlayer* getPlayerFromString (const std::string& playerID);
 
 	/**
 	 * returns if the player is on the disconnected players list
