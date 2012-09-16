@@ -210,7 +210,7 @@ void cDebugOutput::draw()
 				if (Server->gameTimer.getReceivedTime(i)+PAUSE_GAME_TIMEOUT<Server->gameTimer.gameTime)
 					fontType = FONT_LATIN_SMALL_RED;
 				font->showText(DEBUGOUT_X_POS+10, debugOff, "Client " + iToStr(i) + ": ", fontType);
-				font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.getReceivedTime(i) - Server->gameTimer.getReceivedTime(i)), fontType);
+				font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.gameTime - Server->gameTimer.getReceivedTime(i)), fontType);
 				debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			}
 		}
