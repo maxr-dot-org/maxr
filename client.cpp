@@ -2234,11 +2234,11 @@ void cClient::doNextGameTimeTick()
 {
 	if (!gameTimer.nextTickAllowed()) 
 	{
-		/*if (!bWaitForOthers)
+		if (!bWaitForOthers)
 		{
 			gameGUI.setInfoTexts("Waiting for Server","");	//TODO: i18n
 		}
-		bWaitForOthers = true;*/
+		bWaitForOthers = true;
 		return;
 	}
 	else
@@ -2252,11 +2252,14 @@ void cClient::doNextGameTimeTick()
 	gameTimer.gameTime++;
 	doGameActions();
 
-	/*cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
-	message->pushInt32 (gameTimer.gameTime);
-	sendNetMessage (message);
-	*/
- 
+	//send "still alive" message to server
+	if (gameTimer.gameTime % (PAUSE_GAME_TIMEOUT/4) == 0)
+	{
+		cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
+		message->pushInt32 (gameTimer.gameTime);
+		sendNetMessage (message);
+	}
+	 
 }
 
 void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit, bool bAddToMap)

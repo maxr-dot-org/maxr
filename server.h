@@ -107,6 +107,8 @@ private:
 	bool bExit;
 
 
+	/** the server is on halt, because a client is nor responding */
+	int waitForPlayer;
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** true if this is a hotseat game */
@@ -283,10 +285,10 @@ private:
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
 
 	/**
-	* this function returns a player number, when the clients haven't sent a sync message for longer than PAUSE_GAME_TIMEOUT
+	* this function returns a player number, when a client haven't sent a sync message for longer than PAUSE_GAME_TIMEOUT
 	*@author eiko
 	*/
-	int checkClientTimes ();
+	int checkClientTimeouts ();
 
 	/**
 	* sends a sync net message with current gametime and checksum to the player

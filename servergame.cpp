@@ -188,7 +188,7 @@ void cServerGame::run()
 		{
 			if (Server->gameTimer.flag)
 			{
-				int waitForPlayer = Server->checkClientTimes (); //TODO: wait for nobody
+				int waitForPlayer = Server->checkClientTimeouts (); //TODO: wait for nobody
 				if (waitForPlayer == -1)
 				{
 					Server->gameTimer.gameTime++;

@@ -255,14 +255,19 @@ void cServer::run()
 		{
 			if (gameTimer.flag)
 			{
-				int waitForPlayer = -1;//checkClientTimes ();
-				if (waitForPlayer == -1)
+				int newWaitForPlayer = checkClientTimeouts ();
+				if (newWaitForPlayer == -1)
 				{
+					waitForPlayer = -1;
 					gameTimer.gameTime++;
 				}
 				else
 				{
-					sendFreeze(waitForPlayer);
+					if (waitForPlayer == -1)
+					{
+						sendFreeze(waitForPlayer);
+						waitForPlayer = newWaitForPlayer;
+					}
 				}
 				gameTimer.flag = false;
 			}
@@ -276,12 +281,6 @@ void cServer::run()
 
 			if ( gameTimer.timer10ms ) 
 			{
-				static int lastTime = 0;
-				if ( lastTime != gameTimer.gameTime - 1 )
-					int wazzap = 0;
-
-				lastTime = gameTimer.gameTime;
-
 				for (size_t i = 0; i < PlayerList->Size(); i++)
 				{
 					const cPlayer &player = *(*PlayerList)[i];
@@ -293,6 +292,8 @@ void cServer::run()
 
 		if (!event)
 		{
+			//Todo: server verliert ticks, wenn das event, dass
+			//das signal senden soll, gepusht wurde, bevor CondWaid aufgerufen wurde
 			SDL_CondWait (serverResumeCond, NULL);
 		}
 	}
@@ -2122,7 +2123,7 @@ int cServer::HandleNetMessage (cNetMessage* message)
 	return 0;
 }
 
-int cServer::checkClientTimes ()
+int cServer::checkClientTimeouts ()
 {
 	for (int i = 0; i < PlayerList->Size (); i++)
 	{
