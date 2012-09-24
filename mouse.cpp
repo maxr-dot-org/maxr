@@ -42,13 +42,13 @@ cMouse::cMouse()
 // Malt die Maus, und wenn draw_back gesetzt ist, auch den alten Hintergrund:
 void cMouse::draw (bool draw_back, SDL_Surface* sf)
 {
-	SDL_Rect dest;
 	if (!visible || cur == NULL) return;
 	GetPos();
 
 	// restore old background
 	if (back && draw_back && LastX != -100)
 	{
+		SDL_Rect dest;
 		dest.x = LastX;
 		dest.y = LastY;
 		SDL_BlitSurface (back, NULL, sf, &dest);
@@ -56,7 +56,7 @@ void cMouse::draw (bool draw_back, SDL_Surface* sf)
 		SDL_UpdateRect (sf, dest.x, dest.y, dest.w, dest.h);
 	}
 
-	//change size of back surface if nessesary, e.g. when the mouse curor was changed
+	//change size of back surface if necessary, e.g. when the mouse cursor has changed
 	if (!back || back->h != cur->h || back->w != cur->w)
 	{
 		back = SDL_CreateRGBSurface (Video.getSurfaceType(), cur->w, cur->h, 32, 0, 0, 0, 0);
@@ -64,6 +64,7 @@ void cMouse::draw (bool draw_back, SDL_Surface* sf)
 
 	// store new background
 	GetBack (sf);
+	SDL_Rect dest;
 	dest.x = DrawX;
 	dest.y = DrawY;
 	LastX = DrawX;
@@ -76,7 +77,7 @@ void cMouse::draw (bool draw_back, SDL_Surface* sf)
 
 bool cMouse::SetCursor (eCursor const typ)
 {
-	SDL_Surface* const lastCur = cur;
+	const SDL_Surface* const lastCur = cur;
 	switch (typ)
 	{
 		default:
@@ -162,7 +163,7 @@ void cMouse::setPos (int px, int py)
 
 
 // gets the cursor offset. transforms screenspace to clickspace
-void cMouse::getCursorOffset (int& x, int& y)
+void cMouse::getCursorOffset (int& x, int& y) const
 {
 	if (cur == GraphicsData.gfx_Cselect || cur == GraphicsData.gfx_Chelp || cur == GraphicsData.gfx_Cmove || cur == GraphicsData.gfx_Cno || cur == GraphicsData.gfx_Ctransf || cur == GraphicsData.gfx_Cband || cur == GraphicsData.gfx_Cload || cur == GraphicsData.gfx_Cmuni || cur == GraphicsData.gfx_Crepair || cur == GraphicsData.gfx_Cactivate)
 	{
@@ -183,16 +184,17 @@ void cMouse::getCursorOffset (int& x, int& y)
 
 bool cMouse::moved()
 {
-	static int lastX = 0, lastY = 0;
-	bool moved = false;
-	if (lastX != x || lastY != y) moved = true;
+	static int lastX = 0;
+	static int lastY = 0;
+	const bool moved = (lastX != x || lastY != y);
+
 	lastX = x;
 	lastY = y;
 	return moved;
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:
-int cMouse::getKachelX()
+int cMouse::getKachelX() const
 {
 	if (x < 180 || x > 180 + (Video.getResolutionX() - 192))
 	{
@@ -206,7 +208,7 @@ int cMouse::getKachelX()
 	return X;
 }
 
-int cMouse::getKachelY()
+int cMouse::getKachelY() const
 {
 	if (y < 18 || y > 18 + (Video.getResolutionY() - 32))
 	{
