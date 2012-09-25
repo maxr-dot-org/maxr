@@ -1414,10 +1414,10 @@ TiXmlElement* cSavegame::writeUnit (cVehicle* Vehicle, int* unitnum)
 	writeUnitValues (unitNode, &Vehicle->data, &Vehicle->owner->VehicleData[Vehicle->typ->nr]);
 
 	// add additional status information
-	addAttributeElement (unitNode, "Direction", "num", iToStr (Vehicle->dir).c_str());
-	if (Vehicle->data.canCapture || Vehicle->data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", dToStr (Vehicle->CommandoRank).c_str());
+	addAttributeElement (unitNode, "Direction", "num", iToStr (Vehicle->dir));
+	if (Vehicle->data.canCapture || Vehicle->data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", dToStr (Vehicle->CommandoRank));
 	if (Vehicle->data.isBig) addMainElement (unitNode, "IsBig");
-	if (Vehicle->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Vehicle->turnsDisabled).c_str());
+	if (Vehicle->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Vehicle->turnsDisabled));
 	if (Vehicle->LayMines) addMainElement (unitNode, "LayMines");
 	if (Vehicle->sentryActive) addMainElement (unitNode, "OnSentry");
 	if (Vehicle->manualFireActive) addMainElement (unitNode, "ManualFire");
@@ -1440,8 +1440,8 @@ TiXmlElement* cSavegame::writeUnit (cVehicle* Vehicle, int* unitnum)
 			element->SetAttribute ("endy", iToStr (Vehicle->BandY).c_str());
 		}
 	}
-	if (Vehicle->IsClearing) addAttributeElement (unitNode, "Clearing", "turns", iToStr (Vehicle->ClearingRounds).c_str(), "savedpos", iToStr (Vehicle->BuildBigSavedPos).c_str());
-	if (Vehicle->ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (Vehicle->ServerMoveJob->DestX).c_str(), "desty", iToStr (Vehicle->ServerMoveJob->DestY).c_str());
+	if (Vehicle->IsClearing) addAttributeElement (unitNode, "Clearing", "turns", iToStr (Vehicle->ClearingRounds), "savedpos", iToStr (Vehicle->BuildBigSavedPos));
+	if (Vehicle->ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (Vehicle->ServerMoveJob->DestX), "desty", iToStr (Vehicle->ServerMoveJob->DestY));
 
 	// write from which players this unit has been detected
 	if (Vehicle->detectedByPlayerList.Size() > 0)
@@ -1494,7 +1494,7 @@ void cSavegame::writeUnit (cBuilding* Building, int* unitnum)
 	// write additional stauts information
 	if (Building->IsWorking) addMainElement (unitNode, "IsWorking");
 	if (Building->wasWorking) addMainElement (unitNode, "wasWorking");
-	if (Building->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Building->turnsDisabled).c_str());
+	if (Building->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Building->turnsDisabled));
 
 	if (Building->data.canResearch)
 	{
