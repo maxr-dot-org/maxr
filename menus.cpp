@@ -627,11 +627,9 @@ int cMenu::show()
 		EventHandler->HandleEvents();
 		if (Client)
 		{
-			//TODO: is this all thats needed here?
+			Client->gameTimer.run ();
 			Client->gameGUI.handleTimer();
 			Client->runFX();
-
-			//if (Client->timer100ms) Client->gameGUI.incFrame(); what is this?!?
 		}
 
 		// check whether the resolution has been changed

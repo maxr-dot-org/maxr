@@ -75,6 +75,7 @@ class cServer
 {
 	friend class cSavegame;
 	friend class cServerGame;
+	friend class cDebugOutput;
 public:
 	/**
 	 * initialises the server class. turnLimit and scoreLimit should not
@@ -90,8 +91,10 @@ public:
 	void setDeadline (int iDeadline);
 	~cServer();
 
-	cGameTimer gameTimer; //TODO: private?
+	
 private:
+	/** controls the timesynchonous actions on server and client */
+	cGameTimerServer gameTimer;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
@@ -206,7 +209,6 @@ private:
 	void HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message);
-	void HandleNetMessage_NET_GAME_TIME_CLIENT (cNetMessage& message);
 
 public:
 	/**
@@ -283,18 +285,6 @@ private:
 	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
-
-	/**
-	* this function returns a player number, when a client haven't sent a sync message for longer than PAUSE_GAME_TIMEOUT
-	*@author eiko
-	*/
-	int checkClientTimeouts ();
-
-	/**
-	* sends a sync net message with current gametime and checksum to the player
-	*@author eiko
-	*/
-	void sendSyncMessage ( const cPlayer& player);
 
 	/**
 	* changes the owner of a vehicle
@@ -394,6 +384,12 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void run();
+
+	/**
+	* this function is responsible for running all periodically actions on the game modell
+	*@author eiko
+	*/
+	void doGameActions ();
 
 	/**
 	* deletes a Unit

@@ -186,7 +186,7 @@ void cServerGame::run()
 		// don't do anything if games hasn't been started yet!
 		if (Server && Server->bStarted)
 		{
-			if (Server->gameTimer.flag)
+			/*if (Server->gameTimer.flag)
 			{
 				int waitForPlayer = Server->checkClientTimeouts (); //TODO: wait for nobody
 				if (waitForPlayer == -1)
@@ -215,6 +215,8 @@ void cServerGame::run()
 					Server->sendSyncMessage (player);
 				}
 			}
+
+			*/
 
 			if (shouldSave)
 			{

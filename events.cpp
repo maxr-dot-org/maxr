@@ -98,23 +98,9 @@ void cEventHandling::HandleEvents()
 				Quit();
 				break;
 			}
-			case SDL_USEREVENT:
-				if (event.user.code == USER_EV_GAME_TIME_TICK)
-				{
-					if (Client)
-						Client->doNextGameTimeTick ();
-				}
-				break;
-
 			default:
 				break;
 		}
-	}
-
-	//check whether the client time lags too much behind the server time and add an extra increment of the client time
-	if (Client && Client->gameTimer.gameTime + MAX_CLIENT_LAG < Client->gameTimer.getReceivedTime())
-	{
-		Client->doNextGameTimeTick ();
 	}
 }
 

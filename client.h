@@ -227,7 +227,7 @@ private:
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
 
 public:
-	cGameTimer gameTimer; //TODO: private
+	cGameTimerClient gameTimer;
 	/**  the soundstream of the selected unit */
 	int iObjectStream;
 	/** lists with all FX-Animation */
@@ -264,8 +264,6 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleTurnTime();
-
-	void doNextGameTimeTick();
 
 	/**
 	* creates a new moveJob an transmits it to the server

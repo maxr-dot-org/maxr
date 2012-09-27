@@ -25,8 +25,6 @@
 
 class cNetMessage;
 
-#define USER_EV_GAME_TIME_TICK 0x01
-
 /**
  * Class for Event handling.
  *@author alzi alias DoctorDeath

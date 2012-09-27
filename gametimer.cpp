@@ -7,57 +7,78 @@
 #include "clientevents.h"
 #include "events.h"
 
-Uint32 gameTimerCallback (Uint32 interval, void* arg)
+Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
 	reinterpret_cast<cGameTimer*> (arg)->timerCallback();
 	return interval;
 }
 
-cGameTimer::cGameTimer(SDL_cond* conditionVariable)
+cGameTimer::cGameTimer(SDL_cond* conditionVariable) :
+	mutex ()
 {
 	gameTime = 0;
 	lastTimerCall = 0;
-	lastSyncMessage = 0;
+	eventCounter = 0;
+
+	maxEventQueueSize = -1;
 
 	timer10ms = false;
 	timer50ms = false;
 	timer100ms = false;
 	timer400ms = false;
 
-	localChecksum = 0;
-	remoteChecksum = 0;
-	debugRemoteChecksum = 0;
-
-	TimerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
+	timerID = 0;
 	condSignal = conditionVariable;
 }
 
 cGameTimer::~cGameTimer()
 {
-	SDL_RemoveTimer (TimerID);
+	stop();
+}
+
+void cGameTimer::start ()
+{
+	if (timerID == 0)
+		timerID = SDL_AddTimer (GAME_TICK_TIME, gameTimerCallback, this);
+}
+
+void cGameTimer::stop ()
+{
+	if (timerID != 0)
+		SDL_RemoveTimer (timerID);
 }
 
 void cGameTimer::timerCallback()
 {
+	//increase event counter and let the event handler increase the gametime
+	{
+		cMutex::Lock lock(mutex);
+
+		if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
+		{
+			eventCounter++;
+		}
+	}
+
 	if ( condSignal )
 	{
-		//set flag, and signal thread to increase the timer
-		//FIXME: Racecondition: Timer anhalten, bevor condVariable gelöscht wird in ~cServer
-		flag = true;
-		SDL_CondSignal( condSignal );
+		SDL_CondSignal (condSignal);
+	}
+	
+}
+
+bool cGameTimer::popEvent ()
+{
+	cMutex::Lock lock(mutex);
+
+	if (eventCounter > 0)
+	{
+		eventCounter--;
+		return true;
 	}
 	else
 	{
-		//push event to the event queue and let the event handler increase the timer
-		SDL_Event userevent;
-	 
-		userevent.type = SDL_USEREVENT;
-		userevent.user.code = USER_EV_GAME_TIME_TICK;
-		userevent.user.data1 = NULL;
-		userevent.user.data2 = NULL;
-	 
-		SDL_PushEvent (&userevent);
-
+		return false;
 	}
 }
 
@@ -77,17 +98,6 @@ void cGameTimer::handleTimer()
 	}
 }
 
-void cGameTimer::HandleNetMessage_NET_GAME_TIME_SERVER (cNetMessage& message)
-{
-	assert (message.iType == NET_GAME_TIME_SERVER);
-
-	remoteChecksum = message.popInt32();
-
-	int newSyncTime = message.popInt32();
-	if ( newSyncTime != lastSyncMessage + 1 )
-		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
-	lastSyncMessage = newSyncTime;
-}
 
 void cGameTimer::setReceivedTime(unsigned int time, unsigned int nr)
 {
@@ -109,9 +119,147 @@ unsigned int cGameTimer::getReceivedTime(unsigned int nr)
 	return receivedTime[nr];
 }
 
-bool cGameTimer::nextTickAllowed()
+cGameTimerClient::cGameTimerClient () :
+	cGameTimer (NULL),
+	remoteChecksum(0),
+	localChecksum(0),
+	debugRemoteChecksum(0)
 {
-	return gameTime < getReceivedTime();
+}
+
+void cGameTimerClient::handleSyncMessage (cNetMessage& message)
+{
+	assert (message.iType == NET_GAME_TIME_SERVER);
+
+	remoteChecksum = message.popInt32();
+
+	int newSyncTime = message.popInt32();
+	if ( newSyncTime != gameTime + 1 )
+		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
+}
+
+
+bool cGameTimerClient::nextTickAllowed()
+{
+	if (gameTime < getReceivedTime())
+	{
+		//TODO: fix pause modus and waiting for reconnect
+		Client->bWaitForOthers = false;
+		Client->gameGUI.setInfoTexts("","");
+		return true;
+	}
+
+	if (!Client->bWaitForOthers)
+	{
+		Client->gameGUI.setInfoTexts("Waiting for Server","");	//TODO: i18n
+	}
+	Client->bWaitForOthers = true;
+
+	return false;
+}
+
+void cGameTimerClient::run ()
+{
+	while (popEvent () 
+			|| gameTime + MAX_CLIENT_LAG < getReceivedTime())
+	{
+		if (nextTickAllowed ())
+		{
+			gameTime++;
+
+			handleTimer ();
+
+			EventHandler->handleNetMessages();
+			Client->doGameActions();
+
+			//check crc
+			localChecksum = calcPlayerChecksum (*Client->getActivePlayer ());
+			debugRemoteChecksum = remoteChecksum;
+			if ( localChecksum != remoteChecksum )
+			{
+				//gameGUI.debugOutput.debugSync = true;
+				Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+			}
+
+			//send "still alive" message to server
+			//if (gameTimer.gameTime % (PAUSE_GAME_TIMEOUT/4) == 0)
+			{
+				cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
+				message->pushInt32 (gameTime);
+				Client->sendNetMessage (message);
+			}
+		}
+	}
+
+	//check whether the client time lags too much behind the server time and add an extra increment of the client time
+	if (gameTime + MAX_CLIENT_LAG < getReceivedTime())
+	{
+		//inject an extra timer event
+		timerCallback();		
+	}
+}
+
+cGameTimerServer::cGameTimerServer (SDL_cond* serverResumeCond) :
+	cGameTimer (serverResumeCond),
+	waitingForPlayer(-1)
+{
+}
+
+void cGameTimerServer::handleSyncMessage(cNetMessage &message)
+{
+	assert (message.iType == NET_GAME_TIME_CLIENT);
+	setReceivedTime (message.popInt32(), message.iPlayerNr);
+
+}
+
+bool cGameTimerServer::nextTickAllowed ()
+{
+	int newWaitingForPlayer = -1;
+
+	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+	{
+		cPlayer* player = (*Server->PlayerList)[i];
+		if (!Server->isPlayerDisconnected(player) && getReceivedTime(i) + PAUSE_GAME_TIMEOUT < gameTime)
+			newWaitingForPlayer = player->Nr;
+	}
+
+	if (newWaitingForPlayer != -1 && newWaitingForPlayer == waitingForPlayer)
+	{
+		sendFreeze(newWaitingForPlayer);
+	}
+
+	waitingForPlayer = newWaitingForPlayer;
+
+	return waitingForPlayer == -1;
+}
+
+void cGameTimerServer::run ()
+{
+	//TODO:loop?
+	if (popEvent ())
+	{
+		if (nextTickAllowed ())
+		{
+			gameTime++;
+		}
+	}
+
+	handleTimer ();
+	Server->doGameActions ();
+		
+	if (timer10ms)
+	{
+		for (size_t i = 0; i < Server->PlayerList->Size(); i++)
+		{
+			const cPlayer &player = *(*Server->PlayerList)[i];
+
+			cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
+			message->pushInt32 (gameTime);	
+			Uint32 checkSum = calcPlayerChecksum (player);
+			message->pushInt32 (checkSum);
+			Server->sendNetMessage (message, player.Nr);
+		}
+	}
 }
 
 Sint32 calcPlayerChecksum(const cPlayer& player)

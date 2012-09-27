@@ -112,22 +112,30 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 
 	if (!DEDICATED_SERVER)
 		ServerThread = SDL_CreateThread (CallbackRunServerThread, this);
+
+	
+	gameTimer.maxEventQueueSize = 3;
+	gameTimer.start ();
 }
 
 //-------------------------------------------------------------------------------------
 cServer::~cServer()
 {
 	bExit = true;
+	gameTimer.stop ();
+	
 	if (casualtiesTracker != 0)
 	{
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
-
+	
+	//make sure the serverthread is not suspended, before waiting for it to exit
+	SDL_CondSignal (serverResumeCond);
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread (ServerThread, NULL);
 
-	//FIXME: RACE COND: timerCallback using serverResumeCond still running.
+	
 	SDL_DestroyCond(serverResumeCond);
 
 	while (eventQueue.size())
@@ -253,61 +261,22 @@ void cServer::run()
 		// don't do anything if games hasn't been started yet!
 		if (bStarted)
 		{
-			if (gameTimer.flag)
-			{
-				int newWaitForPlayer = checkClientTimeouts ();
-				if (newWaitForPlayer == -1)
-				{
-					waitForPlayer = -1;
-					gameTimer.gameTime++;
-				}
-				else
-				{
-					if (waitForPlayer == -1)
-					{
-						sendFreeze(waitForPlayer);
-						waitForPlayer = newWaitForPlayer;
-					}
-				}
-				gameTimer.flag = false;
-			}
-
-			gameTimer.handleTimer();
-
-			checkPlayerUnits();
-			checkDeadline();
-			handleMoveJobs();
-			handleWantEnd();
-
-			if ( gameTimer.timer10ms ) 
-			{
-				for (size_t i = 0; i < PlayerList->Size(); i++)
-				{
-					const cPlayer &player = *(*PlayerList)[i];
-					sendSyncMessage (player);
-				}
-			}
-
+			gameTimer.run ();
 		}
 
 		if (!event)
 		{
-			//Todo: server verliert ticks, wenn das event, dass
-			//das signal senden soll, gepusht wurde, bevor CondWaid aufgerufen wurde
 			SDL_CondWait (serverResumeCond, NULL);
 		}
 	}
 }
 
-void cServer::sendSyncMessage ( const cPlayer& player)
+void cServer::doGameActions()
 {
-	cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
-
-	message->pushInt32 (gameTimer.gameTime);	
-	Uint32 checkSum = calcPlayerChecksum (player);
-	message->pushInt32 (checkSum);
-
-	sendNetMessage (message, player.Nr);
+	checkPlayerUnits();
+	checkDeadline();
+	handleMoveJobs();
+	handleWantEnd();
 }
 
 //-------------------------------------------------------------------------------------
@@ -2052,14 +2021,6 @@ void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::HandleNetMessage_NET_GAME_TIME_CLIENT (cNetMessage& message)
-{
-	assert (message.iType == NET_GAME_TIME_CLIENT);
-
-	gameTimer.setReceivedTime (message.popInt32(), message.iPlayerNr);
-}
-
-//-------------------------------------------------------------------------------------
 int cServer::HandleNetMessage (cNetMessage* message)
 {
 	if (message->iType != NET_GAME_TIME_CLIENT)
@@ -2114,25 +2075,13 @@ int cServer::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_WANT_SELFDESTROY: HandleNetMessage_GAME_EV_WANT_SELFDESTROY (*message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (*message); break;
 		case GAME_EV_END_MOVE_ACTION: HandleNetMessage_GAME_EV_END_MOVE_ACTION (*message); break;
-		case NET_GAME_TIME_CLIENT: HandleNetMessage_NET_GAME_TIME_CLIENT (*message); break;
+		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (*message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	CHECK_MEMORY;
 	return 0;
-}
-
-int cServer::checkClientTimeouts ()
-{
-	for (int i = 0; i < PlayerList->Size (); i++)
-	{
-		cPlayer* player = (*PlayerList)[i];
-		if (!isPlayerDisconnected(player) && gameTimer.getReceivedTime(i) + PAUSE_GAME_TIMEOUT < gameTimer.gameTime)
-			return player->Nr;
-	}
-
-	return -1;
 }
 
 //-------------------------------------------------------------------------------------

@@ -201,6 +201,11 @@ void cDebugOutput::draw()
 			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
+			font->showText(DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+
 			font->showText(DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
@@ -719,6 +724,7 @@ int cGameGUI::show()
 	while (!end)
 	{
 		EventHandler->HandleEvents();
+		Client->gameTimer.run ();
 
 		mouse->GetPos();
 		if (mouse->moved())

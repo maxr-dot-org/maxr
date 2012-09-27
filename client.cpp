@@ -142,10 +142,14 @@ cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	scoreLimit = turnLimit = 0;
 
 	casualtiesTracker = new cCasualtiesTracker();
+
+	gameTimer.start ();
 }
 
 cClient::~cClient()
 {
+	gameTimer.stop ();
+
 	delete casualtiesTracker;
 
 	StopFXLoop (iObjectStream);
@@ -269,6 +273,8 @@ void cClient::startGroupMove()
 void cClient::runFX()
 {
 	//TODO: add flag "gameTimeSynchronous" for fx
+	//TODO: timerIntervall prüfen
+
 	if (!gameGUI.timer100ms) return;
 	for (unsigned int i = 0; i < FXList.Size(); i++)
 	{
@@ -2220,7 +2226,7 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_VICTORY_CONDITIONS: HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (*message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (*message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (*message); break;
-		case NET_GAME_TIME_SERVER: gameTimer.HandleNetMessage_NET_GAME_TIME_SERVER (*message); break;
+		case NET_GAME_TIME_SERVER: gameTimer.handleSyncMessage (*message); break;
 
 		default:
 			Log.write ("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
@@ -2228,38 +2234,6 @@ int cClient::HandleNetMessage (cNetMessage* message)
 	}
 
 	return 0;
-}
-
-void cClient::doNextGameTimeTick()
-{
-	if (!gameTimer.nextTickAllowed()) 
-	{
-		if (!bWaitForOthers)
-		{
-			gameGUI.setInfoTexts("Waiting for Server","");	//TODO: i18n
-		}
-		bWaitForOthers = true;
-		return;
-	}
-	else
-	{
-		bWaitForOthers = false;
-		gameGUI.setInfoTexts("","");
-	}
-
-	EventHandler->handleNetMessages();
-
-	gameTimer.gameTime++;
-	doGameActions();
-
-	//send "still alive" message to server
-	if (gameTimer.gameTime % (PAUSE_GAME_TIMEOUT/4) == 0)
-	{
-		cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
-		message->pushInt32 (gameTimer.gameTime);
-		sendNetMessage (message);
-	}
-	 
 }
 
 void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit, bool bAddToMap)
@@ -2622,8 +2596,6 @@ void cClient::doGameActions()
 	//TODO: hud actions in menus?
 	//TODO: gameSynchronous actions here
 
-	gameTimer.handleTimer();
-
 	//run attackJobs
 	if (gameTimer.timer50ms)
 		cClientAttackJob::handleAttackJobs();
@@ -2635,16 +2607,6 @@ void cClient::doGameActions()
 	//run surveyor ai
 	if (gameTimer.timer50ms)
 		cAutoMJob::handleAutoMoveJobs();
-
-	//check crc
-	//TODO: logik in gameTimer verschieben
-	gameTimer.localChecksum = calcPlayerChecksum (*ActivePlayer);
-	gameTimer.debugRemoteChecksum = gameTimer.remoteChecksum;
-	if ( gameTimer.localChecksum != gameTimer.remoteChecksum )
-	{
-		//gameGUI.debugOutput.debugSync = true;
-		Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
-	}
 }
 
 sSubBase* cClient::getSubBaseFromID (int iID)
