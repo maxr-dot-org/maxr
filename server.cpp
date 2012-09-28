@@ -3215,6 +3215,9 @@ void cServer::handleMoveJobs()
 			}
 			if (MoveJob->bEndForNow)
 			{
+				Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+				sendNextMove (Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
+				ActiveMJobs.Delete (i);
 				continue;
 			}
 		}

@@ -221,7 +221,7 @@ bool cGameTimerServer::nextTickAllowed ()
 			newWaitingForPlayer = player->Nr;
 	}
 
-	if (newWaitingForPlayer != -1 && newWaitingForPlayer == waitingForPlayer)
+	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
 	{
 		sendFreeze(newWaitingForPlayer);
 	}
