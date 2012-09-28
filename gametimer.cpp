@@ -134,7 +134,7 @@ void cGameTimerClient::handleSyncMessage (cNetMessage& message)
 	remoteChecksum = message.popInt32();
 
 	int newSyncTime = message.popInt32();
-	if ( newSyncTime != gameTime + 1 )
+	if ( newSyncTime != gameTime + 1 ) //TODO: ERRORRRRR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
 }
 
@@ -160,16 +160,14 @@ bool cGameTimerClient::nextTickAllowed()
 
 void cGameTimerClient::run ()
 {
-	while (popEvent () 
-			|| gameTime + MAX_CLIENT_LAG < getReceivedTime())
+	while (popEvent ())
 	{
 		if (nextTickAllowed ())
 		{
-			gameTime++;
-
-			handleTimer ();
-
 			EventHandler->handleNetMessages();
+			
+			gameTime++;
+			handleTimer ();	
 			Client->doGameActions();
 
 			//check crc
