@@ -135,7 +135,15 @@ cServer::~cServer()
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread (ServerThread, NULL);
 
-	
+	//disconect clients
+	if (network)
+	{
+		for (int i = 0; i < PlayerList->Size(); i++)
+		{
+			network->close ((*PlayerList)[i]->iSocketNum);
+		}
+	}
+
 	SDL_DestroyCond(serverResumeCond);
 
 	while (eventQueue.size())
