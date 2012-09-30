@@ -1253,7 +1253,8 @@ void cClientMoveJob::moveVehicle()
 	int iSpeed;
 	if (Vehicle->data.animationMovement)
 	{
-		Vehicle->WalkFrame++;
+		if (Client->gameTimer.timer50ms)
+			Vehicle->WalkFrame++;
 		if (Vehicle->WalkFrame >= 13) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED / 2;
 	}
