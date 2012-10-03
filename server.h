@@ -34,6 +34,7 @@ class cBuilding;
 class cUnit;
 struct sVehicle;
 class cCasualtiesTracker;
+class cJob;
 
 /**
 * The Types which are possible for a game
@@ -95,6 +96,8 @@ public:
 private:
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;
+	/** little helper jobs, that do some time dependent actions */
+	cList<cJob*> helperJobs;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
@@ -303,6 +306,9 @@ private:
 	 */
 	int deleteBuildings (cBuildingIterator building);
 
+	void runJobs ();
+	void releaseJob (cUnit* unit);
+
 public:
 	/** the map */
 	cMap* Map;
@@ -314,6 +320,8 @@ public:
 	cList<cPlayer*>* PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
+
+	void addJob (cJob* job);
 
 	/**
 	 * gets the unit with the ID

@@ -444,15 +444,15 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar();
+		drawHealthBar (*screenPos);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
-		drawMunBar();
+		drawMunBar (*screenPos);
 
 	//draw status
 	if (gameGUI.statusChecked())
-		drawStatus();
+		drawStatus (*screenPos);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())

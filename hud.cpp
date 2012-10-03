@@ -4402,9 +4402,10 @@ void cGameGUI::drawUnitCircles()
 
 	if (selectedVehicle)
 	{
-		cVehicle& v   = *selectedVehicle; // XXX not const is suspicious
-		int const spx = v.getScreenPosX();
-		int const spy = v.getScreenPosY();
+		cVehicle& v   = *selectedVehicle;
+		bool movementOffset = !v.IsBuilding && !v.IsClearing;
+		int const spx = v.getScreenPosX (movementOffset);
+		int const spy = v.getScreenPosY (movementOffset);
 		if (scanChecked())
 		{
 			if (v.data.isBig)

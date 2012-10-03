@@ -30,6 +30,7 @@ class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
 class cClientSpeedCtrl;
+class cJob;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
@@ -103,6 +104,8 @@ private:
 	/** the active Player */
 	cPlayer* ActivePlayer;
 
+	cList<cJob*> helperJobs;
+
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** number of current turn */
@@ -159,6 +162,10 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	void unfreeze();
+
+	void runJobs ();
+	void releaseJob (cUnit* unit);
+
 
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
@@ -252,6 +259,8 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void handleEnd();
+
+	void addJob (cJob* job);
 
 	/**
 	* handles the game relevant actions (for example moving the current position of a rocket)

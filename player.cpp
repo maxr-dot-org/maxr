@@ -979,28 +979,27 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 				i--;
 				continue;
 			}
-			const int spx = elem->v->getScreenPosX();
-			const int spy = elem->v->getScreenPosY();
+			const SDL_Rect screenPos = {elem->v->getScreenPosX(), elem->v->getScreenPosY(), 0, 0};
 
 			if (gameGUI.scanChecked())
 			{
 				if (elem->v->data.isBig)
-					drawCircle (spx + tileSize, spy + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
+					drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
 				else
-					drawCircle (spx + tileSize / 2, spy + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
+					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
-				elem->v->drawMunBar();
+				elem->v->drawMunBar(screenPos);
 			if (gameGUI.hitsChecked())
-				elem->v->drawHealthBar();
+				elem->v->drawHealthBar(screenPos);
 		}
 		else if (elem->b)
 		{
@@ -1011,33 +1010,32 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 				i--;
 				continue;
 			}
-			const int spx = elem->b->getScreenPosX();
-			const int spy = elem->b->getScreenPosY();
+			const SDL_Rect screenPos = {elem->v->getScreenPosX(), elem->v->getScreenPosY(), 0, 0};
 
 			if (gameGUI.scanChecked())
 			{
 				if (elem->b->data.isBig)
-					drawCircle (spx + tileSize,
-								spy + tileSize,
+					drawCircle (screenPos.x + tileSize,
+								screenPos.y + tileSize,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 				else
-					drawCircle (spx + tileSize / 2,
-								spy + tileSize / 2,
+					drawCircle (screenPos.x + tileSize / 2,
+								screenPos.y + tileSize / 2,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) && !elem->b->data.explodesOnContact)
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 
 			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
-				elem->b->drawMunBar();
+				elem->b->drawMunBar(screenPos);
 			if (gameGUI.hitsChecked())
-				elem->b->drawHealthBar();
+				elem->b->drawHealthBar(screenPos);
 		}
 	}
 }

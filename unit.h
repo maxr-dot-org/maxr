@@ -27,6 +27,7 @@ class cPlayer;
 class cMap;
 class cVehicle;
 class cGameGUI;
+class cJob;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -64,15 +65,15 @@ public:
 	virtual void executeLayMinesCommand() {}
 	virtual void executeClearMinesCommand() {}
 
-	int getScreenPosX() const;
-	int getScreenPosY() const;
+	int getScreenPosX (bool movementOffset = true) const;
+	int getScreenPosY (bool movementOffset = true) const;
 	void center() const;
 
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
 
-	void drawMunBar() const;
-	void drawHealthBar() const;
+	void drawMunBar( const SDL_Rect& screenPos ) const;
+	void drawHealthBar( const SDL_Rect& screenPos ) const;
 	void rotateTo (int newDir);
 
 	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
@@ -112,6 +113,7 @@ public:
 	cList<cPlayer*> seenByPlayerList; ///< a list were the numbers of all players who can see this unit are stored in
 	cList<cPlayer*> detectedByPlayerList; ///< a list were the numbers of all players who have deteced this unit are stored in
 
+	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
 
 	//-----------------------------------------------------------------------------
 protected:
@@ -120,7 +122,7 @@ protected:
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
 	std::string name;		// name of the building
 
-	void drawStatus() const;
+	void drawStatus (const SDL_Rect& screenPos) const;
 	int getNumberOfMenuEntries() const;
 
 	virtual bool isUnitLoaded() const { return false; }

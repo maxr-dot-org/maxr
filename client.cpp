@@ -40,6 +40,7 @@
 #include "player.h"
 #include "casualtiestracker.h"
 #include "gametimer.h"
+#include "jobs.h"
 
 using namespace std;
 
@@ -1141,9 +1142,11 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	int iBuildX = message.popInt16();
 	int iBuildY = message.popInt16();
-	bool bBuildBig = message.popBool();
+	bool buildBig = message.popBool();
+	int oldPosX = Vehicle->PosX;
+	int oldPosY = Vehicle->PosY;
 
-	if (bBuildBig)
+	if (buildBig)
 	{
 		getMap()->moveVehicleBig (Vehicle, iBuildX, iBuildY);
 		Vehicle->owner->DoScan();
@@ -1167,6 +1170,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	}
 
 	Vehicle->IsBuilding = true;
+	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, buildBig));
 
 	if (Vehicle == gameGUI.getSelVehicle())
 	{
@@ -1529,11 +1533,18 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
 				break;
 			}
+			int orgX = Vehicle->PosX;
+			int orgY = Vehicle->PosY;
 
 			Vehicle->ClearingRounds = message.popInt16();
 			int bigoffset = message.popInt16();
-			if (bigoffset >= 0) getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+			if (bigoffset >= 0) 
+			{
+				getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+				Vehicle->owner->DoScan ();
+			}
 			Vehicle->IsClearing = true;
+			addJob (new cStartBuildJob(Vehicle, orgX, orgY, (bigoffset > 0)));
 
 			if (gameGUI.getSelVehicle() == Vehicle)
 			{
@@ -1567,7 +1578,11 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	}
 
 	int bigoffset = message.popInt16();
-	if (bigoffset >= 0) getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+	if (bigoffset >= 0) 
+	{
+		getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+		Vehicle->owner->DoScan ();
+	}
 	Vehicle->IsClearing = false;
 	Vehicle->ClearingRounds = 0;
 
@@ -2607,6 +2622,8 @@ void cClient::doGameActions()
 	//run surveyor ai
 	if (gameTimer.timer50ms)
 		cAutoMJob::handleAutoMoveJobs();
+
+	runJobs ();
 }
 
 sSubBase* cClient::getSubBaseFromID (int iID)
@@ -2703,4 +2720,41 @@ void cClient::deletePlayer (cPlayer* player)
 			getPlayerList()->Delete ( i );
 		}
 	}*/
+}
+
+void cClient::addJob (cJob* job)
+{
+	//only one job per unit
+	releaseJob (job->unit);
+
+	helperJobs.Add (job);
+	job->unit->job = job;
+}
+
+void cClient::runJobs ()
+{
+	for (unsigned int i = 0; i < helperJobs.Size(); i++)
+	{
+		if (!helperJobs[i]->finished)
+		{
+			helperJobs[i]->run (gameTimer);
+		}
+		if (helperJobs[i]->finished)
+		{
+			if (helperJobs[i]->unit)
+				helperJobs[i]->unit->job = NULL;
+			delete helperJobs[i];
+			helperJobs.Delete(i);
+			i--;
+		}
+	}
+}
+
+void cClient::releaseJob (cUnit* unit)
+{
+	if (unit->job)
+	{
+		unit->job->unit = NULL;
+		unit->job->finished = true;
+	}
 }

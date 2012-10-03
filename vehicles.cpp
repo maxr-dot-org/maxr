@@ -168,15 +168,6 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	//rotate vehicles to the right direction for building/clearing
-	if ( (IsBuilding || IsClearing) && gameGUI.timer100ms)
-	{
-		if (data.isBig)
-			dir = 0;
-		else
-			rotateTo (0);
-	}
-
 	//run start up effect
 	if (StartUp)
 	{
@@ -193,7 +184,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	if (IsBuilding && dir == 0 && BigBetonAlpha < 255)
+	if (IsBuilding && !job && BigBetonAlpha < 255)
 	{
 		if (gameGUI.timer50ms)
 			BigBetonAlpha += 25;
@@ -206,11 +197,9 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	int ox = (int) (OffX * gameGUI.getZoom());
 	int oy = (int) (OffY * gameGUI.getZoom());
 
-	if (!IsBuilding && !IsClearing)
-	{
-		screenPosition.x += ox;
-		screenPosition.y += oy;
-	}
+	screenPosition.x += ox;
+	screenPosition.y += oy;
+
 	if (FlightHigh > 0)
 	{
 		screenPosition.x += ditherX;
@@ -257,6 +246,13 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		screenPosition.y -= ditherY;
 	}
 
+	//remove movement offset for working units
+	if (IsBuilding || IsClearing)
+	{
+		screenPosition.x -= ox;
+		screenPosition.y -= oy;
+	}
+
 	// draw indication, when building is complete
 	if (IsBuilding && BuildRounds == 0  && owner == gameGUI.getClient()->getActivePlayer() && !BuildPath)
 	{
@@ -280,7 +276,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		t = d;
 		SDL_FillRect (buffer, &d, nr);
 		d = t;
-		d.y = screenPosition.y + 2 + oy;
+		d.y = screenPosition.y + 2;
 		d.w = 3;
 		d.h = max;
 		t = d;
@@ -400,15 +396,15 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar();
+		drawHealthBar (screenPosition);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack)
-		drawMunBar();
+		drawMunBar (screenPosition);
 
 	//draw status info
 	if (gameGUI.statusChecked())
-		drawStatus();
+		drawStatus (screenPosition);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -456,7 +452,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || (IsClearing && data.isBig)) && dir == 0)
+	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL)
 	{
 		//draw beton if nessesary
 		tmp = dest;
@@ -488,7 +484,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		return;
 	}
 
-	if ( (IsClearing && !data.isBig) && dir == 0)
+	if ( (IsClearing && !data.isBig) && job == NULL)
 	{
 		// draw shadow
 		tmp = dest;

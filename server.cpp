@@ -36,6 +36,7 @@
 #include "player.h"
 #include "savegame.h"
 #include "gametimer.h"
+#include "jobs.h"
 #if DEDICATED_SERVER_APPLICATION
 #include "dedicatedserver.h"
 #endif
@@ -131,6 +132,8 @@ cServer::~cServer()
 	}
 	
 	//make sure the serverthread is not suspended, before waiting for it to exit
+	if (!serverResumeCond)
+		Log.write("EVIL!!!");
 	SDL_CondSignal (serverResumeCond);
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread (ServerThread, NULL);
@@ -138,7 +141,7 @@ cServer::~cServer()
 	//disconect clients
 	if (network)
 	{
-		for (int i = 0; i < PlayerList->Size(); i++)
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
 			network->close ((*PlayerList)[i]->iSocketNum);
 		}
@@ -281,10 +284,14 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	checkPlayerUnits();
-	checkDeadline();
-	handleMoveJobs();
-	handleWantEnd();
+	checkPlayerUnits ();
+	checkDeadline ();
+	handleMoveJobs ();
+	handleWantEnd ();
+	if (gameTimer.timer10ms)
+	{
+		runJobs ();
+	}
 }
 
 //-------------------------------------------------------------------------------------
@@ -645,6 +652,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (iBuildOff < 0 || iBuildOff >= Map->size * Map->size) return;
 	int buildX = iBuildOff % Map->size;
 	int buildY = iBuildOff / Map->size;
+	int oldPosX = Vehicle->PosX;
+	int oldPosY = Vehicle->PosY;
 
 	if (Vehicle->data.canBuild.compare (Data.buildAs) != 0) return;
 
@@ -696,6 +705,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (true, Vehicle);
+	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -1366,6 +1376,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
+	Vehicle->owner->DoScan ();
+	addJob (new cStartBuildJob(Vehicle, off % Map->size, off / Map->size, building->data.isBig));
 
 	sendClearAnswer (0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
@@ -1395,6 +1407,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		if (Vehicle->data.isBig)
 		{
 			Map->moveVehicle (Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size);
+			Vehicle->owner->DoScan ();
 			sendStopClear (Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
@@ -3935,4 +3948,42 @@ void cServer::makeAdditionalSaveRequest (int saveNum)
 int cServer::getTurn() const
 {
 	return iTurn;
+}
+
+
+void cServer::addJob (cJob* job)
+{
+	//only one job per unit
+	releaseJob (job->unit);
+
+	helperJobs.Add (job);
+	job->unit->job = job;
+}
+
+void cServer::runJobs ()
+{
+	for (unsigned int i = 0; i < helperJobs.Size(); i++)
+	{
+		if (!helperJobs[i]->finished)
+		{
+			helperJobs[i]->run (gameTimer);
+		}
+		if (helperJobs[i]->finished)
+		{
+			if (helperJobs[i]->unit)
+				helperJobs[i]->unit->job = NULL;
+			delete helperJobs[i];
+			helperJobs.Delete(i);
+			i--;
+		}
+	}
+}
+
+void cServer::releaseJob (cUnit* unit)
+{
+	if (unit->job)
+	{
+		unit->job->unit = NULL;
+		unit->job->finished = true;
+	}
 }
