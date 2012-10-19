@@ -1010,7 +1010,7 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 				i--;
 				continue;
 			}
-			const SDL_Rect screenPos = {elem->v->getScreenPosX(), elem->v->getScreenPosY(), 0, 0};
+			const SDL_Rect screenPos = {elem->b->getScreenPosX(), elem->b->getScreenPosY(), 0, 0};
 
 			if (gameGUI.scanChecked())
 			{
