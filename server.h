@@ -156,6 +156,8 @@ private:
 	int turnLimit, scoreLimit;
 
 	cCasualtiesTracker* casualtiesTracker;
+
+	sFreezeModes freezeModes;
 public:
 	cCasualtiesTracker* getCasualtiesTracker() {return casualtiesTracker;}
 
@@ -489,6 +491,9 @@ public:
 	int getTurn() const;
 
 	bool isTurnBasedGame() const { return bPlayTurns; }
+
+	void enableFreezeMode  (eFreezeMode mode, int playerNumber = -1);
+	void disableFreezeMode (eFreezeMode mode);
 
 } EX* Server;
 

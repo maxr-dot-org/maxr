@@ -84,7 +84,7 @@ cAutoMJob::~cAutoMJob()
 void cAutoMJob::DoAutoMove()
 {
 	if (vehicle->isBeeingAttacked) return;
-	if (Client->bWaitForOthers) return;
+	if (Client->isFreezed ()) return;
 	if (vehicle->owner != Client->getActivePlayer()) return;
 
 	if (vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished)

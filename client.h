@@ -123,6 +123,9 @@ private:
 
 	cCasualtiesTracker* casualtiesTracker;
 
+	sFreezeModes freezeModes;
+
+
 	/**
 	* adds the unit to the map and player.
 	*@author alzi alias DoctorDeath
@@ -152,16 +155,6 @@ private:
 	*@param iID Id of the subbase
 	*/
 	sSubBase* getSubBaseFromID (int iID);
-	/**
-	* freezes the client so that no input of him is possible anymore.
-	*@author alzi alias DoctorDeath
-	*/
-	void freeze();
-	/**
-	* unfreezes the client.
-	*@author alzi alias DoctorDeath
-	*/
-	void unfreeze();
 
 	void runJobs ();
 	void releaseJob (cUnit* unit);
@@ -206,8 +199,6 @@ private:
 	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WAIT_RECON (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
@@ -245,15 +236,20 @@ public:
 	/** List with all active movejobs */
 	cList<cClientMoveJob*> ActiveMJobs;
 	/** the hud */
-	cGameGUI gameGUI;
+	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client
+
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
 	
-	/** shows if the player has to wait for other players */
-	bool bWaitForOthers;
-	bool waitReconnect;
+
+	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
+	void disableFreezeMode (eFreezeMode mode);
+	bool isFreezed ();
+	int getFreezeInfoPlayerNumber ();
+	bool getFreezeMode (eFreezeMode mode);
+	
 	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath

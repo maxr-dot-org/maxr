@@ -717,7 +717,7 @@ int cGameGUI::show()
 	// do startup actions
 	makePanel (true);
 	startup = true;
-	if (client->bWaitForOthers) setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", client->getPlayerFromNumber (0)->name), "");
+	if (client->isFreezed ()) setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", client->getPlayerFromNumber (0)->name), "");
 
 	int lastMouseX = 0, lastMouseY = 0;
 
@@ -817,6 +817,41 @@ int cGameGUI::show()
 void cGameGUI::returnToCallback()
 {
 	ActiveMenu = this;
+}
+
+void cGameGUI::updateInfoTexts ()
+{
+	int playerNumber = Client->getFreezeInfoPlayerNumber ();
+	cPlayer* player = Client->getPlayerFromNumber (playerNumber);
+
+	if (Client->getFreezeMode(FREEZE_WAIT_FOR_OTHERS))
+	{
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->name), "");
+	}
+	else if (Client->getFreezeMode(FREEZE_PAUSE))
+	{
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Frozen"), ""); //TODO: langfile anpassen
+	}
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_PLAYER))
+	{
+		setInfoTexts ("No network response from Player " + player->name + ". Waiting...","");	//TODO: i18n
+	}
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_RECONNECT))
+	{
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), lngPack.i18n ("Text~Multiplayer~Abort_Waiting")); //TODO: aditional test nur auf dem Server
+	}
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_TURNEND))
+	{
+		setInfoTexts ("Please wail while turnend is excecuted.", ""); //TODO i18n
+	}
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_SERVER))
+	{
+		setInfoTexts("Waiting for Server","");	//TODO: i18n
+	}
+	else 
+	{
+		setInfoTexts("","");
+	}
 }
 
 SDL_Surface* cGameGUI::generateSurface()
@@ -1912,7 +1947,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		activeItem = NULL;
 	}
 
-	bool changeAllowed = !client->bWaitForOthers;
+	bool changeAllowed = !client->isFreezed ();
 
 	savedMouseState = mouseState;
 
@@ -2622,29 +2657,13 @@ void cGameGUI::doCommand (const string& cmd)
 		}*/
 		return;
 	}
-	if (cmd.substr (0, 7).compare ("/freeze") == 0 && Server)
+	if (cmd.substr (0, 6).compare ("/pause") == 0 && Server)
 	{
-		if (cmd.length() > 7)
-		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (8, cmd.length()));
-
-			if (!Player) return;
-
-			sendFreeze (true, Player->Nr);
-		}
-		else sendFreeze (true);
+		Server->enableFreezeMode(FREEZE_PAUSE);
 	}
-	if (cmd.substr (0, 9).compare ("/unfreeze") == 0)
+	if (cmd.substr (0, 7).compare ("/resume") == 0 && Server)
 	{
-		if (cmd.length() > 9 && Server)
-		{
-			cPlayer* Player = getPlayerFromName (cmd.substr (10, cmd.length()));
-
-			if (!Player) return;
-
-			sendUnfreeze (Player->Nr);
-		}
-		else sendUnfreeze();
+		Server->disableFreezeMode(FREEZE_PAUSE);
 	}
 }
 
@@ -2838,7 +2857,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 
 	// first check whether the end key was pressed
-	if ( (activeItem != &chatBox || chatBox.isDisabled()) && activeItem != &selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->bWaitForOthers)
+	if ( (activeItem != &chatBox || chatBox.isDisabled()) && activeItem != &selUnitNameEdit && key.keysym.sym == KeysList.KeyEndTurn && !client->isFreezed ())
 	{
 		if (key.state == SDL_PRESSED && !endButton.getIsClicked()) endButton.clicked (this);
 		else if (key.state == SDL_RELEASED && endButton.getIsClicked() && !client->bWantToEnd) endButton.released (this);
@@ -2849,7 +2868,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	if (key.state != SDL_PRESSED) return;
 
 	// check whether the player wants to abort waiting
-	if (client->bWaitForOthers && client->waitReconnect && key.keysym.sym == SDLK_F2)
+	if (client->getFreezeMode (FREEZE_WAIT_FOR_RECONNECT) && key.keysym.sym == SDLK_F2)
 	{
 		sendAbortWaiting();
 	}
@@ -2903,36 +2922,36 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0) jumpToSavedPos (2);
 	else if (key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0) jumpToSavedPos (3);
 	// Hotkeys for the unit menues
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		sendWantStopMove (selectedVehicle->iID);
 		cBuildingsBuildMenu buildMenu (player, selectedVehicle);
 		buildMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cVehiclesBuildMenu buildMenu (player, selectedBuilding);
 		buildMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		mouseInputMode = transferMode;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedBuilding && selectedBuilding->data.storeResType != sUnitData::STORE_RES_NONE && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		mouseInputMode = transferMode;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -2940,11 +2959,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		selectedVehicle->executeAutoMoveJobCommand();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty()) && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		sendWantStartWork (selectedBuilding);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		if (selectedVehicle->ClientMoveJob)
 		{
@@ -2971,11 +2990,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			sendWantStopClear (selectedVehicle);
 		}
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		sendWantStopWork (selectedBuilding);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -2983,7 +3002,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		sendWantStartClear (selectedVehicle);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -2994,11 +3013,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		sendChangeSentry (selectedVehicle->iID, true);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack) && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		sendChangeSentry (selectedBuilding->iID, false);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -3010,37 +3029,37 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		sendChangeManualFireStatus (selectedVehicle->iID, true);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack) && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		sendChangeManualFireStatus (selectedBuilding->iID, false);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		cStorageMenu storageMenu (selectedVehicle->storedUnits, selectedVehicle, NULL);
 		storageMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cStorageMenu storageMenu (selectedBuilding->storedUnits, NULL, selectedBuilding);
 		storageMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		toggleMouseInputMode (loadMode);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		toggleMouseInputMode (loadMode);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		client->gameGUI.mouseInputMode = muniActive;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		client->gameGUI.mouseInputMode = repairActive;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -3048,7 +3067,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		selectedVehicle->executeLayMinesCommand();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
@@ -3056,11 +3075,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		selectedVehicle->executeClearMinesCommand();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		mouseInputMode = disableMode;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !client->bWaitForOthers && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuSteal && selectedVehicle && selectedVehicle->data.canCapture && selectedVehicle->data.shotsCur && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		mouseInputMode = stealMode;
 	}
@@ -3074,22 +3093,22 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		cUnitHelpMenu helpMenu (&selectedBuilding->data, selectedBuilding->owner);
 		helpMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cMineManagerMenu mineManager (selectedBuilding);
 		mineManager.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDialogResearch researchDialog (selectedBuilding->owner);
 		researchDialog.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cUpgradeMenu upgradeMenu (selectedBuilding->owner);
 		upgradeMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->bWaitForOthers && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDestructMenu destructMenu;
 		if (destructMenu.show() == 0) sendWantSelfDestroy (selectedBuilding);

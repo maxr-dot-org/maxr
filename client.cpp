@@ -138,7 +138,6 @@ cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	bUpShowBuild = true;
 	bUpShowTNT = false;
 	bAlienTech = false;
-	bWaitForOthers = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
 
@@ -742,8 +741,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	if (nextPlayerNum != ActivePlayer->Nr)
 	{
-		bWaitForOthers = true;
-		gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", getPlayerFromNumber (nextPlayerNum)->name), "");
+		enableFreezeMode(FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 		gameGUI.setEndButtonLock (true);
 	}
 }
@@ -776,13 +774,11 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		if (iNextPlayerNum != ActivePlayer->Nr)
 		{
-			bWaitForOthers = true;
-			gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", getPlayerFromNumber (iNextPlayerNum)->name), "");
+			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
 		}
 		else
 		{
-			bWaitForOthers = false;
-			gameGUI.setInfoTexts ("", "");
+			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 			gameGUI.setEndButtonLock (false);
 		}
 	}
@@ -1631,40 +1627,17 @@ void cClient::HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FREEZE);
 
-	freeze();
-	cPlayer* waitForPlayer = getPlayerFromNumber (message.popInt16 ());
-	if (!waitForPlayer)
-	{
-		gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Frozen"), "");
-	}
-	else
-	{		
-		gameGUI.setInfoTexts ("Waiting for Player " + waitForPlayer->name,"");	//TODO: i18n
-	}
+	eFreezeMode mode =  (eFreezeMode) message.popInt16 ();
+	int playerNumber = message.popInt16 ();
+	enableFreezeMode (mode, playerNumber);
 }
 
 void cClient::HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_UNFREEZE);
 
-	unfreeze();
-	gameGUI.setInfoTexts ("", "");
-}
-
-void cClient::HandleNetMessage_GAME_EV_WAIT_RECON (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WAIT_RECON);
-
-	freeze();
-	gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), lngPack.i18n ("Text~Multiplayer~Abort_Waiting"));
-}
-
-void cClient::HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ABORT_WAIT_RECON);
-
-	unfreeze();
-	gameGUI.setInfoTexts ("", "");
+	eFreezeMode mode = (eFreezeMode) message.popInt16 ();
+	disableFreezeMode (mode);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
@@ -2214,8 +2187,6 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (*message); break;
 		case GAME_EV_FREEZE: HandleNetMessage_GAME_EV_FREEZE (*message); break;
 		case GAME_EV_UNFREEZE: HandleNetMessage_GAME_EV_UNFREEZE (*message); break;
-		case GAME_EV_WAIT_RECON: HandleNetMessage_GAME_EV_WAIT_RECON (*message); break;
-		case GAME_EV_ABORT_WAIT_RECON: HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (*message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (*message); break;
 		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (*message); break;
 		case GAME_EV_HUD_SETTINGS: HandleNetMessage_GAME_EV_HUD_SETTINGS (*message); break;
@@ -2424,7 +2395,7 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 
 void cClient::handleEnd()
 {
-	if (bWaitForOthers) return;
+	if (isFreezed ()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn();
 }
@@ -2476,7 +2447,7 @@ void cClient::handleTurnTime()
 	static int lastCheckTime = SDL_GetTicks();
 	if (!gameGUI.timer50ms) return;
 	// stop time when waiting for reconnection
-	if (bWaitForOthers)
+	if (isFreezed ())
 	{
 		iStartTurnTime += SDL_GetTicks() - lastCheckTime;
 	}
@@ -2689,21 +2660,6 @@ void cClient::getVictoryConditions (int* turnLimit, int* scoreLimit) const
 }
 
 //-------------------------------------------------------------------------------------
-void cClient::freeze()
-{
-	bWaitForOthers = true;
-	waitReconnect = true; //Todo: remove flag
-}
-
-//-------------------------------------------------------------------------------------
-void cClient::unfreeze()
-{
-	bWaitForOthers = false;
-	waitReconnect = false;
-}
-
-
-//-------------------------------------------------------------------------------------
 void cClient::deletePlayer (cPlayer* player)
 {
 	player->isRemovedFromGame = true;
@@ -2758,3 +2714,96 @@ void cClient::releaseJob (cUnit* unit)
 		unit->job->finished = true;
 	}
 }
+
+void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
+{
+	switch (mode)
+	{
+	case FREEZE_WAIT_FOR_SERVER:
+		freezeModes.waitForServer = true;
+		break;
+	case FREEZE_WAIT_FOR_OTHERS:
+		freezeModes.waitForOthers = true;
+		break;
+	case FREEZE_PAUSE:
+		freezeModes.pause = true;
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = true;
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = true;
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = true;		
+		break;
+	}
+
+	freezeModes.playerNumber = playerNumber;
+
+	gameGUI.updateInfoTexts();
+}
+
+void cClient::disableFreezeMode (eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_WAIT_FOR_SERVER:
+		freezeModes.waitForServer = false;
+		break;
+	case FREEZE_WAIT_FOR_OTHERS:
+		freezeModes.waitForOthers = false;
+		break;
+	case FREEZE_PAUSE:
+		freezeModes.pause = false;
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = false;
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = false;
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = false;		
+		break;
+	}
+
+	gameGUI.updateInfoTexts ();
+}
+
+bool cClient::isFreezed ()
+{
+	return	freezeModes.pause			||
+			freezeModes.waitForOthers	||
+			freezeModes.waitForPlayer	||
+			freezeModes.waitForReconnect||
+			freezeModes.waitForServer	||
+			freezeModes.waitForTurnEnd;
+}
+
+bool cClient::getFreezeMode(eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		return freezeModes.pause;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		return freezeModes.waitForReconnect;
+	case FREEZE_WAIT_FOR_OTHERS:
+		return freezeModes.waitForOthers;
+	case FREEZE_WAIT_FOR_TURNEND:
+		return freezeModes.waitForTurnEnd;
+	case FREEZE_WAIT_FOR_PLAYER:
+		return freezeModes.waitForPlayer;
+	case FREEZE_WAIT_FOR_SERVER:
+		return freezeModes.waitForServer;
+	default:
+		return false;
+	}
+}
+
+int cClient::getFreezeInfoPlayerNumber ()
+{
+	return freezeModes.playerNumber;
+}
+

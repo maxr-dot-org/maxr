@@ -961,7 +961,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 int cUnit::getScreenPosX (bool movementOffset) const
 {
 	int offset = movementOffset ? getMovementOffsetX() : 0;
-	return 180 - ( (int) ( (Client->gameGUI.getOffsetX() - movementOffset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosX;
+	return 180 - ( (int) ( (Client->gameGUI.getOffsetX() - offset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosX;
 }
 
 //--------------------------------------------------------------------------
@@ -970,7 +970,7 @@ int cUnit::getScreenPosX (bool movementOffset) const
 int cUnit::getScreenPosY(bool movementOffset) const
 {
 	int offset = movementOffset ? getMovementOffsetY() : 0;
-	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - movementOffset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
+	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - offset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
 }
 
 //-----------------------------------------------------------------------------

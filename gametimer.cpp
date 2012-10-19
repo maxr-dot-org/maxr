@@ -46,6 +46,8 @@ void cGameTimer::stop ()
 {
 	if (timerID != 0)
 		SDL_RemoveTimer (timerID);
+
+	timerID = 0;
 }
 
 void cGameTimer::timerCallback()
@@ -143,18 +145,11 @@ bool cGameTimerClient::nextTickAllowed()
 {
 	if (gameTime < getReceivedTime())
 	{
-		//TODO: fix pause modus and waiting for reconnect
-		Client->bWaitForOthers = false;
-		Client->gameGUI.setInfoTexts("","");
+		Client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 		return true;
 	}
 
-	if (!Client->bWaitForOthers)
-	{
-		Client->gameGUI.setInfoTexts("Waiting for Server","");	//TODO: i18n
-	}
-	Client->bWaitForOthers = true;
-
+	Client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 	return false;
 }
 
@@ -223,7 +218,11 @@ bool cGameTimerServer::nextTickAllowed ()
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
 	{
-		sendFreeze(newWaitingForPlayer);
+		Server->enableFreezeMode(FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);
+	}
+	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
+	{
+		Server->disableFreezeMode(FREEZE_WAIT_FOR_PLAYER);
 	}
 
 	waitingForPlayer = newWaitingForPlayer;

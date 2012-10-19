@@ -251,30 +251,19 @@ void sendNoFog (int iPlayer);
 */
 void sendDefeated (cPlayer* Player, int iPlayerNum = -1);
 /**
-* sends that a client has to wait untill a player reconnects
-*@author alzi alias DoctorDeath
-*/
-void sendWaitReconnect (int iPlayer = -1);
-/**
-* sends that a client has to abort waiting for the reconnection
-*@author alzi alias DoctorDeath
-*/
-void sendAbortWaitReconnect (int iPlayer = -1);
-/**
 * sends that a client has to wait untill he will be defrezzed
 *@param waitForPlayer tells the client, for which other player he is waiting
 */
-void sendFreeze (int waitForPlayer = -1, int iPlayer = -1);
+void sendFreeze (eFreezeMode mode, int waitForPlayer = -1);
+/**
+* sends that the client can abort waiting
+*/
+void sendUnfreeze (eFreezeMode mode);
 /**
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath
 */
 void sendWaitFor (int waitForPlayerNr, int iPlayer = -1);
-/**
-* sends that the client can abort waiting
-*@author alzi alias DoctorDeath
-*/
-void sendUnfreeze (int iPlayer = -1);
 /**
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath

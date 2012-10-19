@@ -407,6 +407,8 @@ class cGameGUI : public cMenu
 	static void unitNameReturnPressed (void* parent);
 
 	void recalcPosition (bool resetItemPositions);
+	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
+
 public:
 	cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList);
 	~cGameGUI();
@@ -428,6 +430,8 @@ public:
 	void setClient (cClient* client);
 	int show();
 	void returnToCallback();
+
+	void updateInfoTexts();
 
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
@@ -526,9 +530,6 @@ public:
 	void selectUnit (cVehicle* vehicle);
 	void selectUnit (cBuilding* building);
 	void deselectUnit();
-
-
-	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise

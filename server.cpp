@@ -348,7 +348,7 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 		// freeze clients
 		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
-			sendWaitReconnect();
+			enableFreezeMode(FREEZE_WAIT_FOR_RECONNECT);
 		sendChatMessageToClient ("Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name);
 
 		DisconnectedPlayerList.Add (Player);
@@ -1432,16 +1432,8 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 
 	if (DisconnectedPlayerList.Size() < 1) return;
 	// only server player can abort the waiting
-	cPlayer* LocalPlayer = NULL;
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
-	{
-		if ( (*PlayerList) [i]->iSocketNum == MAX_CLIENTS)
-		{
-			LocalPlayer = (*PlayerList) [i];
-			break;
-		}
-	}
-	if (message.iPlayerNr != LocalPlayer->Nr) return;
+	cPlayer* LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
+	if (LocalPlayer->iSocketNum != MAX_CLIENTS) return;
 
 	// delete disconnected players
 	for (unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++)
@@ -1449,7 +1441,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 		deletePlayer (DisconnectedPlayerList[i]);
 		DisconnectedPlayerList.Delete (i);
 	}
-	sendAbortWaitReconnect();
+	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
 }
 
@@ -1492,7 +1484,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	}
 	resyncPlayer (Player);
 
-	sendAbortWaitReconnect();
+	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
 }
 
@@ -2675,7 +2667,6 @@ void cServer::handleEnd (int iPlayerNum)
 		// send report to player
 		sendMakeTurnEnd (true, false, -1, iPlayerNum);
 		sendTurnReport ( (*PlayerList) [0]);
-		//sendUnfreeze();
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || bPlayTurns)
 	{
@@ -2785,7 +2776,6 @@ void cServer::handleEnd (int iPlayerNum)
 			{
 				sendTurnReport ( (*PlayerList) [i]);
 			}
-			//sendUnfreeze();
 		}
 	}
 }
@@ -2862,6 +2852,9 @@ bool cServer::checkEndActions (int iPlayer)
 //-------------------------------------------------------------------------------------
 void cServer::makeTurnEnd()
 {
+	Server->enableFreezeMode (FREEZE_WAIT_FOR_TURNEND); //Todo: - find a better place for this (before remaining movements are executed!)
+														//		- leave freezed untils all clients reported their autosave info.
+															   
 	// reload all buildings
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
@@ -2990,6 +2983,8 @@ void cServer::makeTurnEnd()
 	checkDefeats();
 
 	iWantPlayerEndNum = -1;
+
+	Server->disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 }
 
 //-------------------------------------------------------------------------------------
@@ -3987,3 +3982,64 @@ void cServer::releaseJob (cUnit* unit)
 		unit->job->finished = true;
 	}
 }
+
+void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		freezeModes.pause = true;
+		gameTimer.stop ();
+		sendFreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = true;
+		gameTimer.stop ();
+		sendFreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = true;
+		sendFreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = true;		
+		gameTimer.stop ();
+		sendFreeze (mode, playerNumber);
+		break;
+	default:
+		Log.write(" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+	}
+
+	freezeModes.playerNumber = playerNumber;
+}
+
+void cServer::disableFreezeMode (eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		freezeModes.pause = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = false;		
+		sendUnfreeze (mode);
+		break;
+	default:
+		Log.write(" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+	}
+
+	if ( !(freezeModes.pause || freezeModes.waitForReconnect || freezeModes.waitForPlayer))
+	{
+		gameTimer.start ();
+	}
+}
+

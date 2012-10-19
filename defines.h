@@ -71,8 +71,6 @@
 # define CHECK_MEMORY
 #endif
 
-#endif
-
 //some defines for typical menus
 
 
@@ -164,3 +162,6 @@
 #else
 # define DEDICATED_SERVER false
 #endif
+
+#endif
+

@@ -1017,3 +1017,14 @@ void blittAlphaSurface( SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, S
 	else
 		SDL_BlitSurface( src, srcrect, dst, dstrect );
 }
+
+sFreezeModes::sFreezeModes() :
+	waitForOthers(false),
+	waitForServer(false),
+	waitForReconnect(false),
+	waitForTurnEnd(false),
+	pause(false),
+	waitForPlayer(false),
+	playerNumber(-1)
+{};
+	

@@ -471,10 +471,6 @@ string cNetMessage::getTypeAsString() const
 			return string ("GAME_EV_FREEZE");
 		case GAME_EV_UNFREEZE:
 			return string ("GAME_EV_UNFREEZE");
-		case GAME_EV_WAIT_RECON:
-			return string ("GAME_EV_WAIT_RECON");
-		case GAME_EV_ABORT_WAIT_RECON:
-			return string ("GAME_EV_ABORT_WAIT_RECON");
 		case GAME_EV_DEL_PLAYER:
 			return string ("GAME_EV_DEL_PLAYER");
 		case GAME_EV_IDENTIFICATION:
