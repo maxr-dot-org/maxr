@@ -3201,6 +3201,7 @@ void cServer::handleMoveJobs()
 			{
 				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
 				{
+					addJob (new cStartBuildJob(Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
 					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
@@ -3989,12 +3990,12 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 	{
 	case FREEZE_PAUSE:
 		freezeModes.pause = true;
-		gameTimer.stop ();
+		//gameTimer.stop ();
 		sendFreeze (mode);
 		break;
 	case FREEZE_WAIT_FOR_RECONNECT:
 		freezeModes.waitForReconnect = true;
-		gameTimer.stop ();
+		//gameTimer.stop ();
 		sendFreeze (mode);
 		break;
 	case FREEZE_WAIT_FOR_TURNEND:
@@ -4003,7 +4004,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
 		freezeModes.waitForPlayer = true;		
-		gameTimer.stop ();
+		//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
 		sendFreeze (mode, playerNumber);
 		break;
 	default:
