@@ -309,7 +309,7 @@
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Or insuffisant. Impossible de démarrer."/>
 			<Team_Insufficient ENG="Cannot start, workers needed." localized="Ouvriers insuffisants. Impossible de démarrer."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Energie nécessaire, désactivation générateur impossible."/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production Carburant augmentée de "/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production carburant augmentée de "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining increased by " localized="Ajustement effectué : production minerai augmentée de "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Ajustement effectué : production or augmentée de "/>
 			<Cheat ENG="used cheat" localized="a triché :"/>
