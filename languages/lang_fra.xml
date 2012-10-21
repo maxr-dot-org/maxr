@@ -33,22 +33,22 @@
 			<Fonts ENG="Loading fonts..." localized="Chargement polices..."/>
 			<GFX ENG="Loading graphics..." localized="Chargement graphismes..."/>
 			<Effects ENG="Loading effects..." localized="Chargement effets..."/>
-			<Terrain ENG="Loading terrain..." localized="Chargement Terrains..."/>
-			<Vehicles ENG="Loading vehicles..." localized="Chargement Véhicules..."/>
+			<Terrain ENG="Loading terrain..." localized="Chargement terrain..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Chargement véhicules..."/>
 			<Buildings ENG="Loading buildings..." localized="Chargement bâtiments..."/>
-			<Music ENG="Loading music..." localized="Chargement musiques..."/>
+			<Music ENG="Loading music..." localized="Chargement musique..."/>
 			<Sounds ENG="Loading sounds..." localized="Chargement sons..."/>
 			<Voices ENG="Loading voices..." localized="Chargement voix..."/>
-			<Clans ENG="Loading clans..." localized="Chargement Clans..."/>
+			<Clans ENG="Loading clans..." localized="Chargement clans..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien technology" localized="Technologie Alien "/>
-			<BridgeHead ENG="Bridgehead" localized="Emplac. départ "/>
+			<Alien_Tech ENG="Alien technology" localized="Technologie Alien"/>
+			<BridgeHead ENG="Bridgehead" localized="Tête de pont "/>
 			<Build ENG="Build menu" localized="Menu construction"/>
-			<Cargo ENG="Cargo" localized="Cargo"/>
+			<Cargo ENG="Cargo" localized="Charge"/>
 			<Choose_Planet ENG="Choose planet" localized="Choix planète"/>
-			<Clan ENG="Clan" localized="Choix clan "/>
-			<Clans ENG="Clans" localized="Clans"/>
+			<Clan ENG="Clan" localized="Clan"/>
+			<Clans ENG="Clans" localized="Clans "/>
 			<Color ENG="Color:" localized="Couleur :"/>
 			<Computer ENG="Computer" localized="Ordinateur"/>
 			<Connect ENG="Connect" localized="Connecter"/>
@@ -62,11 +62,11 @@
 			<Load ENG="Load Menu" localized="Menu Chargement"/>
 			<LoadSave ENG="Load/Save Menu" localized="Menu Charger/Sauver"/>
 			<MainMenu ENG="Main Menu" localized="Menu principal"/>
-			<Map ENG="Map" localized="Map"/>
+			<Map ENG="Map" localized="Carte"/>
 			<Metal ENG="Materials" localized="Minerai "/>
-			<Mine ENG="Allocation menu" localized="Gestion mine"/>
-			<Nobody ENG="Nobody" localized="Aucun"/>
-			<Oil ENG="Fuel" localized="Fioul "/>
+			<Mine ENG="Allocation menu" localized="Menu d'allocation"/>
+			<Nobody ENG="Nobody" localized="Personne"/>
+			<Oil ENG="Fuel" localized="Carburant "/>
 			<Options ENG="Options" localized="Options"/>
 			<Player_Name ENG="Playername:" localized="Nom joueur :"/>
 			<Player_Select ENG="Playeroptions" localized="Options joueur"/>
@@ -99,7 +99,7 @@
 			<Game_Options ENG="Game Options" localized="Options jeu"/>
 			<Game_Save ENG="Save Game" localized="Sauver jeu"/>
 			<Ground_Units ENG="Landunits" localized="Unités terrestres"/>
-			<Host_Start ENG="Start Host" localized="Démarrer en hôte"/>
+			<Host_Start ENG="Start Host" localized="Démarrer hôte"/>
 			<Hot ENG="Hot" localized="Attention"/>
 			<HotSeat_Load ENG="Load Hot Seat" localized="Charger emplacement"/>
 			<HotSeat_New ENG="New Hot Seat" localized="Nouvel emplacement"/>
@@ -112,7 +112,7 @@
 			<No ENG="No" localized="Non"/>
 			<OK ENG="OK" localized="Ok"/>
 			<Path ENG="Path" localized="Chemin"/>
-			<Produce_Units ENG="Producing units" localized="Unités de production"/>
+			<Produce_Units ENG="Producing units" localized="Unités production"/>
 			<Reload ENG="Reload" localized="Recharger"/>
 			<Repair ENG="Repair" localized="Réparer"/>
 			<Reports ENG="Reports" localized="Rapports"/>
@@ -131,15 +131,15 @@
 			<Yes ENG="Yes" localized="Oui"/>
 		</Button>
 		<Context>
-			<Active ENG="Activ." localized="Activ."/>
-			<Attack ENG="Attack" localized="Attaquer"/>
+			<Active ENG="Activ." localized="Activer"/>
+			<Attack ENG="Attack" localized="Attaque"/>
 			<Auto ENG="Auto" localized="Auto"/>
-			<Build ENG="Build" localized="Constr."/>
-			<Clear ENG="Clear" localized="Nett."/>
+			<Build ENG="Build" localized="Créer"/>
+			<Clear ENG="Clear" localized="Dégager"/>
 			<Destroy ENG="Delete" localized="Détruire"/>
 			<Disable ENG="Disable" localized="Désact."/>
-			<Dist ENG="Distr." localized="Distr."/>
-			<Done ENG="Done" localized="Fini"/>
+			<Dist ENG="Distr." localized="Allouer"/>
+			<Done ENG="Done" localized="Fermer"/>
 			<Info ENG="Info" localized="Info"/>
 			<Load ENG="Load" localized="Charger"/>
 			<Manual ENG="Manual" localized="Manuel"/>
@@ -151,7 +151,7 @@
 			<Start ENG="Start" localized="Démarrer"/>
 			<Steal ENG="Steal" localized="Voler"/>
 			<Stop ENG="Stop" localized="Stop"/>
-			<Transfer ENG="X-fer" localized="Transf."/>
+			<Transfer ENG="X-fer" localized="Échange"/>
 			<UpAll ENG="Up. all" localized="MàJ tout"/>
 			<Upgrade ENG="Upgrade" localized="MàJ"/>
 			<Upgrades ENG="Upgrades" localized="MàJ"/>
@@ -160,7 +160,7 @@
 			<Ammo ENG="Ammo" localized="Munitions"/>
 			<AmmoShort ENG="Ammo" localized="Munit."/>
 			<Armor ENG="Armor" localized="Blindage"/>
-			<Cargo ENG="Gargo" localized="Charge"/>
+			<Cargo ENG="Cargo" localized="Charge"/>
 			<Chat ENG="Chat" localized="Chat"/>
 			<Color ENG="Color" localized="Couleur"/>
 			<End ENG="End" localized="Fin"/>
@@ -168,18 +168,18 @@
 			<Files ENG="Files" localized="Fichiers"/>
 			<Fog ENG="Fog" localized="Brouillard"/>
 			<Grid ENG="Grid" localized="Grille"/>
-			<Hitpoints ENG="Hits" localized="Points"/>
+			<Hitpoints ENG="Hits" localized="Vie"/>
 			<Log ENG="Log" localized="Log"/>
 			<Proceed ENG="Do" localized="OK"/>
 			<Range ENG="Range" localized="Portée"/>
-			<Scan ENG="Scan" localized="Scan"/>
-			<Score ENG="Score" localized="Score"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Score ENG="Score" localized="Pointage"/>
 			<Settings ENG="Settings" localized="Paramètres"/>
 			<Shots ENG="Shots" localized="Tirs"/>
-			<Speed ENG="Speed" localized="Mouvement"/>
+			<Speed ENG="Speed" localized="Vitesse"/>
 			<Status ENG="Status" localized="Statut"/>
-			<Survey ENG="Survey" localized="Sondage"/>
-			<Teams ENG="Teams" localized="Equipes"/>
+			<Survey ENG="Survey" localized="Gisements"/>
+			<Teams ENG="Teams" localized="Équipes"/>
 			<Total ENG="Total" localized="Total"/>
 			<Usage ENG="Usage" localized="Usage"/>
 		</Hud>
@@ -191,30 +191,30 @@
 			<Much ENG="much" localized="haut"/>
 			<More ENG="very much" localized="très haut"/>
 			<Most ENG="most" localized="maximum"/>
-			<Thick ENG="thick" localized="haut"/>
-			<Thin ENG="thin" localized="faible"/>
-			<On ENG="on" localized="on"/>
-			<Off ENG="off" localized="off"/>
-			<Definite ENG="definite" localized="hasard"/>
-			<Mobile ENG="mobile" localized="au choix"/>
-			<Type_Turns ENG="turns" localized="tour à tour"/>
-			<Type_Simu ENG="simultaneous" localized="simultanés"/>
+			<Thick ENG="thick" localized="commun"/>
+			<Thin ENG="thin" localized="rare"/>
+			<On ENG="on" localized="activé"/>
+			<Off ENG="off" localized="désactivé"/>
+			<Definite ENG="definite" localized="fixe"/>
+			<Mobile ENG="mobile" localized="mobile"/>
+			<Type_Turns ENG="turns" localized="tours alternés"/>
+			<Type_Simu ENG="simultaneous" localized="tours simultanés"/>
 		</Option>
 		<Settings>
-			<Alphaeffects ENG="Alphaeffects" localized="Effets de transp."/>
+			<Alphaeffects ENG="Alphaeffects" localized="Transparence"/>
 			<Animation ENG="Animations" localized="Animations"/>
-			<Autosave ENG="Autosave" localized="Sauveg. auto"/>
+			<Autosave ENG="Autosave" localized="Sauv. auto"/>
 			<Disable ENG="Disable" localized="Désactiver"/>
 			<Effects ENG="Effects" localized="Effets"/>
 			<Intro ENG="Show intro" localized="Montrer intro"/>
 			<Music ENG="Music" localized="Musique"/>
 			<Preferences ENG="Preferences" localized="Préférences"/>
 			<Resolution ENG="Resolution" localized="Résolution"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Vit. défilement"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Défilement"/>
 			<Shadows ENG="Shadows" localized="Ombres"/>
-			<ShowDamage ENG="Buildingdamage" localized="Dégâts visibles"/>
-			<ShowDamageVehicle ENG="Vehicledamage" localized="Dégâts véhicules visibles"/>
-			<Tracks ENG="Vehicletracks" localized="Chemins véhicules"/>
+			<ShowDamage ENG="Buildingdamage" localized="Dégâts bâtiments"/>
+			<ShowDamageVehicle ENG="Vehicledamage" localized="Dégâts véhicules"/>
+			<Tracks ENG="Vehicletracks" localized="Traces véhicules"/>
 			<Voices ENG="Voices" localized="Voix"/>
 			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Fenêtré"/>
@@ -249,13 +249,13 @@
 			<Network_Connected_Not ENG="Not connected" localized="Pas connecté"/>
 			<Network_Connecting ENG="Connecting to " localized="Connexion à "/>
 			<Network_Error_Connect ENG="Could not connect to " localized="Impossible de se connecter à "/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Erreur ouverture Socket"/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Erreur ouverture socket"/>
 			<Network_New ENG="New connection" localized="Nouvelle connexion"/>
 			<Network_Open ENG="Game open" localized="Ouvrir jeu"/>
 			<Network_Syncing ENG="Synchronizing..." localized="Synchronisation..."/>
 			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Impossible de charger la carte %s. Lancement jeu impossible."/>
 			<Not_Ready ENG="is not ready" localized="n'est pas prêt"/>
-			<Option_NoSet ENG="--no options set--" localized="--pas d'option choisie--"/>
+			<Option_NoSet ENG="--no options set--" localized="--pas d'options choisies--"/>
 			<Player ENG="Player" localized="Joueur"/>
 			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Veuillez choisir le nombre de joueurs. Il doit y avoir deux joueurs humains au minimum pour commencer une partie locale. Le maximum est de 8 joueurs."/>
 			<Player_Color_Taken ENG="All player colors should be unique" localized="Les couleurs des joueurs doivent être uniques"/>
@@ -284,19 +284,19 @@
 			<Range ENG="Range" localized="Portée"/>
 			<Ammo ENG="Ammo" localized="Munitions"/>
 			<Armor ENG="Armor" localized="Blindage"/>
-			<Hitpoints ENG="Hitpoints" localized="Points"/>
+			<Hitpoints ENG="Hitpoints" localized="Vie"/>
 			<Scan ENG="Scan" localized="Radar"/>
-			<Speed ENG="Speed" localized="Mvmts"/>
-			<Cargo ENG="Cargo" localized="Chgmt"/>
-			<Costs ENG="Costs" localized="Coûte"/>
+			<Speed ENG="Speed" localized="Vitesse"/>
+			<Cargo ENG="Cargo" localized="Charge"/>
+			<Costs ENG="Costs" localized="Coûts"/>
 			<Produce ENG="Produces" localized="Produit"/>
 			<Usage ENG="Usage" localized="Usage"/>
 		</Vehicles>
 		<Comp>
-			<Path_interrupted ENG="l'ordre de construction a été interrompu."/>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Ordre de construction interrompu."/>
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Point d'atterrissage trop proche d'un autre joueur. Veuillez choisir un autre emplacement."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Point d'atterrissage proche d'un autre joueur. Veuillez confirmer en cliquant dans le cercle rouge, sinon choississez un autre emplacment."/>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Fioul insuffisant, générateur désactivé !"/>
+			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Point d'atterrissage proche d'un autre joueur. Veuillez confirmer en cliquant dans le cercle rouge, ou choisissez un autre emplacment."/>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Carburant insuffisant, générateur désactivé !"/>
 			<Energy_Low ENG="To low energy, disabled consumer!" localized="Energie insuffisante, usine désactivé !"/>
 			<Metal_Low ENG="To low metal, disabled consumer!" localized="Minerai insuffisant, usine désactivé !"/>
 			<Gold_Low ENG="To low gold, disabled consumer!" localized="Or insuffisant, raffinerie désactivée !"/>
@@ -304,12 +304,12 @@
 			<Building_Disabled ENG="Building disabled" localized="Bâtiment désactivé"/>
 			<Energy_Insufficient ENG="Cannot start, energy needed." localized="Energie insuffisante. Impossible de démarrer."/>
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Besoin de plus d'énergie. Activation de générateur d'énergie."/>
-			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Fioul insuffisant. Impossible de démarrer."/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Carburant insuffisant. Impossible de démarrer."/>
 			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Minerai insuffisant. Impossible de démarrer."/>
 			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Or insuffisant. Impossible de démarrer."/>
 			<Team_Insufficient ENG="Cannot start, workers needed." localized="Ouvriers insuffisants. Impossible de démarrer."/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Energie nécessaire, désactivation générateur impossible."/>
-			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production fioul augmentée de "/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Ajustement effectué : production Carburant augmentée de "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining increased by " localized="Ajustement effectué : production minerai augmentée de "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Ajustement effectué : production or augmentée de "/>
 			<Cheat ENG="used cheat" localized="a triché :"/>
@@ -328,16 +328,16 @@
 			<Research_Shoots ENG="Research 'Shoots' completed" localized="Recherche 'Tirs' terminée"/>
 			<Research_Range ENG="Research 'Range' completed" localized="Recherche 'Portée' terminée"/>
 			<Research_Armor ENG="Research 'Armor' completed" localized="Recherche 'Armure' terminée"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Recherche 'Points' terminée"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Recherche 'Mouvements' terminée"/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Recherche 'Points de vie' terminée"/>
+			<Research_Speed ENG="Research 'Speed' completed" localized="Recherche 'Vitesse' terminée"/>
 			<Research_Scan ENG="Research 'Scan' completed" localized="Recherche 'Radar' terminée"/>
 			<Research_Costs ENG="Research 'Costs' completed" localized="Recherche 'Coût' terminée"/>
 			<Upgrades_Done ENG="Upgraded" localized="Mis à jour"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unité(s) de type %s"/>
-			<Working ENG="working" localized="en cours"/>
+			<Working ENG="working" localized="en fonctionnement"/>
 			<Waits ENG="waits" localized="en attente"/>
 			<Disabled ENG="disabled" localized="désactivé"/>
-			<Producing ENG="Producing" localized="En marche"/>
+			<Producing ENG="Producing" localized="Produit"/>
 			<Producing_Fin ENG="finished producing" localized="Production terminée"/>
 			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Chantier bloqué ou ressources insuffisantes."/>
 			<Moving ENG="moving" localized="en mouvement"/>
@@ -353,21 +353,21 @@
 			<Expert ENG="Expert" localized="Expert"/>
 			<Elite ENG="Elite" localized="Crack"/>
 			<Description ENG="Description" localized="Description"/>
-			<Repeat ENG="Again" localized="Encore"/>
+			<Repeat ENG="Again" localized="Répéter"/>
 			<Dated ENG="dated" localized="datés"/>
 			<Labs ENG="Labs" localized="Labos"/>
 			<Themes ENG="Themes" localized="Thèmes"/>
 			<Turns ENG="Turns" localized="Tours"/>
 			<Turn ENG="Turn" localized="Tour"/>
 			<Reserve ENG="Reserve" localized="Réserve"/>
-			<Surveying ENG="surveying" localized="Sondage"/>
+			<Surveying ENG="surveying" localized="prospection"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Veuillez redémarrer 'Mechanized Assault and eXploration Reloaded' pour appliquer le changement de mode vidéo."/>
-			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : mode vidéo non supporté"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Attention : la config définit un mode vidéo non supporté"/>
 			<Point ENG="point" localized="point"/>
 			<Points ENG="points" localized="points"/>
 			<EcoSphere ENG="eco-sphere" localized="éco-sphère"/>
 			<EcoSpheres ENG="eco-spheres" localized="éco-sphères"/>
-			<GameEndsAt ENG="Game ends at" localized="Le jeu termine à"/>
+			<GameEndsAt ENG="Game ends at" localized="Le jeu se termine à"/>
 			<NoLimit ENG="Fight to the death!" localized="Combat à mort!"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Mort subite! Le premier joueur qui augmente son score gagne!"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Capture d'écran sauvegardée: %s"/>
@@ -405,60 +405,60 @@
 		<Unit ID="0 20" ENG="Mine layer" localized="Poseur de mines">Poseur de mines\n\nEngin léger spécialisé dans la pose de mines. Il est capable de récupérer les mines déjà posées et les reconvertir en minerai. Ne peut retirer les mines ennemis, qui doivent être explosées pour libérer une zone.</Unit>
 		<Unit ID="0 21" ENG="Missile Crawler" localized="Lance-missile mobile">Lance-missile mobile\n\nVersion mobile terrestre du lance-missile. A la fois lent et fragile, il sert avant tout à ralentir la progression ennemie avec sa longue portée.</Unit>
 		<Unit ID="0 22" ENG="Missile Cruiser" localized="Croiseur lance-missile">Croiseur lance-missile\n\nNavire équipé d'un lance-missile. Blindage moyen, longue portée et attaque puissante en font une excellente unité.</Unit>
-		<Unit ID="0 23" ENG="Mobile Anti Aircraft" localized="Canon DCA mobile">Canon DCA mobile\n\nVersion mobile du canon anti-aérien. Unité essentielle dans la protection de vos unités terrestres de combat, elle sert à la défense en repoussant les bombardiers ennemis.</Unit>
+		<Unit ID="0 23" ENG="Mobile Anti Aircraft" localized="DCA mobile">DCA mobile\n\nVersion mobile du canon anti-aérien. Unité essentielle dans la protection de vos unités terrestres de combat, elle sert à la défense en repoussant les bombardiers ennemis.</Unit>
 		<Unit ID="0 24" ENG="Engineer" localized="Ingénieur">Ingénieur\n\nPetit engin spécialisé dans la construction des petites installations et d'unités d'artillerie fixes.</Unit>
 		<Unit ID="0 25" ENG="Repair Unit" localized="Réparateur">Réparateur\n\nEngin servant à réparer les unités terrestres aussi bien fixes que mobiles, et transportant une réserve de minerai. Plus les dégâts sont importants, plus le coût en minerai augmente.</Unit>
-		<Unit ID="0 26" ENG="Scanner" localized="Radar mobile">Radar mobile\n\nVersion mobile du radar. Moins rapide et plus cher qu'un scout, sa portée de scan est bien plus importante. Utile dans la détection d'unité d'attaque ennemie à longue portée, et l'anticipation des mouvements ennemis.</Unit>
-		<Unit ID="0 27" ENG="Scout" localized="Scout">Scout\n\nUnité terrestre très mobile, le scout permet une rapide reconnaissance des lieux grâce à son radar moyenne portée. Il est aussi capable de se déplacer sur l'eau à plus faible vitesse, et est équipé d'une petite arme de défense. Fragile, mais très faible coût.</Unit>
+		<Unit ID="0 26" ENG="Scanner" localized="Radar mobile">Radar mobile\n\nVersion mobile du radar. Moins rapide et plus cher qu'un éclaireur, sa portée de scan est bien plus importante. Utile dans la détection d'unité d'attaque ennemie à longue portée, et l'anticipation des mouvements ennemis.</Unit>
+		<Unit ID="0 27" ENG="Scout" localized="Éclaireur">Éclaireur\n\nUnité terrestre très mobile, l'éclaireur permet une rapide reconnaissance des lieux grâce à son radar moyenne portée. Il est aussi capable de se déplacer sur l'eau à plus faible vitesse, et est équipé d'une petite arme de défense. Fragile, mais très faible coût.</Unit>
 		<Unit ID="0 28" ENG="Sea Mine Layer" localized="Poseur de mine naval">Poseur de mine naval\n\nVersion marine du poseur de mine. Comme celui sur terre, il est capable de détecter et récupérer les mines navales en les recyclant en minerai. Les mines navales sont très efficaces contre les sous-marins.</Unit>
 		<Unit ID="0 29" ENG="Sea Transport" localized="Transp. marin">Transporteur marin\n\nNavire capable de transporter six unités terrestres à la fois. Plus lent que la version aérienne, il est toutefois plus solide.</Unit>
 		<Unit ID="0 30" ENG="Submarine" localized="Sous-marin">Sous-marin\n\nEspionnant sous l'eau, les sous-marins peuvent infiltrer le chantier naval ennemi et faire feu de leurs puissantes torpilles. Possédant un sonar furtif, seul les corvettes sont capable de les détecter, face à qui ils sont vulnérables ainsi qu'aux bombardiers.</Unit>
-		<Unit ID="0 31" ENG="Surveyor" localized="Sondeur">Sondeur\n\nEngin léger, permettant de scruter et de détecter les ressources souterraines. Amphibien, il est toutefois plus rapide sur terre que sur l'eau.</Unit>
+		<Unit ID="0 31" ENG="Surveyor" localized="Prospecteur">Prospecteur\n\nEngin léger, permettant de scruter et de détecter les ressources souterraines. Amphibien, il est toutefois plus rapide sur terre que sur l'eau.</Unit>
 		<Unit ID="0 32" ENG="Tank" localized="Char d'assault">Char d'assault\n\nChar lourdement blindé permettant d'encaisser les tirs du front et laisser les unités plus puissantes riposter sans encombre.</Unit>
-		<Unit ID="0 33" ENG="Camion d'or" localized="Camion d'or">Camion d'or\n\nVéhicule transportant des réserves d'or d'un point à un autre. Utile lorsque il y a plusieurs sous-bases non interconnectées.</Unit>
-		<Unit ID="0 34" ENG="Camion de minerai" localized="Camion de minerai">Camion de minerai\n\nVéhicule transportant des réserves de minerai d'un point à un autre. Utile lorsque il y a plusieurs sous-bases non interconnectées.</Unit>
-		<Unit ID="0 35" ENG="Camion de fioul" localized="Camion de fioul">Camion de fioul\n\nVéhicule transportant des réserves de fioul d'un point à un autre. Utile lorsque il y a plusieurs sous-bases non interconnectées.</Unit>
+		<Unit ID="0 33" ENG="Camion d'or" localized="Camion d'or">Camion d'or\n\nVéhicule transportant des réserves d'or d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées.</Unit>
+		<Unit ID="0 34" ENG="Camion de minerai" localized="Camion de minerai">Camion de minerai\n\nVéhicule transportant des réserves de minerai d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées.</Unit>
+		<Unit ID="0 35" ENG="Fuel Truck" localized="Camion-citerne">Camion-citerne\n\nVéhicule transportant des réserves de carburant d'un point à un autre. Utile lorsque il y a plusieurs bases non interconnectées.</Unit>
 		<Unit ID="1 1" ENG="Barracks" localized="Caserne">Caserne\n\nBâtiments où peuvent séjourner les commandos infanteries. La caserne permet de mettre à jour l'équipement des soldats et les soigner, selon les réserves de minerai disponibles.</Unit>
 		<Unit ID="1 2" ENG="Concrete Block" localized="Bloc de béton">Bloc de béton\n\nBéton lourdement blindé permettant de bloquer les mouvements de troupes ennemis.</Unit>
 		<Unit ID="1 3" ENG="Bridge" localized="Pont flottant">Pont flottant\n\nPont flottant permettant aux unités terrestres de franchir les mers. Le pont ne bloque pas le trafic naval lorsqu'aucune unité terrestre ne s'y trouve.</Unit>
-		<Unit ID="1 4" ENG="Connector" localized="Connecteur">Connecteur\n\nLes bâtiments doivent être connectés pour partager les ressources de minerai, de fioul et d'or nécessaire à leur bon fonctionnement. Les bâtiments accollés sont automatiquement connectés entre eux, sinon les joindre avec des connecteurs est nécessaire, à l'aide d'engin du génie. La destruction d'un connecteur peut nuire au bon fonctionnement de la base, ce qui en fait une construction stratégique.</Unit>
-		<Unit ID="1 5" ENG="Depot" localized="Hangar">Hangar\n\nLe hangar stocke les unités mécaniques mobiles pour les réparer, les recharger ou les mettre à jour niveau technologie, nécessitant alors du minerai. Peut stocker douze unités.</Unit>
-		<Unit ID="1 6" ENG="Dock" localized="Dock">Dock\n\nEquivalent naval du hangar, pour les navires. Il permet de les réparer, les recharger ou les mettre à jour niveau technologie, nécessitant alors du minerai. Peut stocker six unités.</Unit>
-		<Unit ID="1 7" ENG="Power Station" localized="Station d'énergie">Station d'énergie\n\nUne station d'énergie consomme six unités de fioul par tour, en fournissant assez d'énergie pour six usines ou stations minières. Erigé à l'aide d'un constructeur.</Unit>
-		<Unit ID="1 8" ENG="Power Generator" localized="Générateur d'énergie">Générateur d'énergie\n\nGénérateur d'énergie basique, consommant deux unités de fioul par tour et fournissant assez d'énergie pour une seule usine ou station minière. Erigé à l'aide d'un ingénieur.</Unit>
+		<Unit ID="1 4" ENG="Connector" localized="Connecteur">Connecteur\n\nLes bâtiments doivent être connectés pour partager les ressources de minerai, de carburant et d'or nécessaire à leur bon fonctionnement. Les bâtiments accollés sont automatiquement connectés entre eux, sinon les joindre avec des connecteurs est nécessaire, à l'aide d'engin du génie. La destruction d'un connecteur peut nuire au bon fonctionnement de la base, ce qui en fait une construction stratégique.</Unit>
+		<Unit ID="1 5" ENG="Depot" localized="Hangar">Hangar\n\nLe hangar stocke les unités mécaniques mobiles pour les réparer, les recharger ou les mettre à jour technologiquement, nécessitant alors du minerai. Peut stocker douze unités.</Unit>
+		<Unit ID="1 6" ENG="Dock" localized="Dock">Dock\n\nEquivalent naval du hangar, pour les navires. Il permet de les réparer, les recharger ou les mettre à jour technologiquement, nécessitant alors du minerai. Peut stocker six unités.</Unit>
+		<Unit ID="1 7" ENG="Power Station" localized="Station d'énergie">Station d'énergie\n\nUne station d'énergie consomme six unités de carburant par tour, en fournissant assez d'énergie pour six usines ou stations minières. Erigé à l'aide d'un constructeur.</Unit>
+		<Unit ID="1 8" ENG="Power Generator" localized="Générateur d'énergie">Générateur d'énergie\n\nGénérateur d'énergie basique, consommant deux unités de carburant par tour et fournissant assez d'énergie pour une seule usine ou station minière. Erigé à l'aide d'un ingénieur.</Unit>
 		<Unit ID="1 9" ENG="Air Units Plant" localized="Usine d'unité aérienne">Usine d'unité aérienne\n\nUsine permettant de fabriquer les avions. Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner.</Unit>
 		<Unit ID="1 10" ENG="Alien Units Plant" localized="Usine à avions alien">Usine à avions alien</Unit>
 		<Unit ID="1 11" ENG="Heavy Vehicle Plant" localized="Usine à engin lourd">Usine à engin lourd\n\nUsine permettant la fabrication d'engins lourds, comme les constructeurs, radar mobile, ainsi que les unités de combat : tanks, chars d'assaut, lances-missile mobiles... Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner.</Unit>
 		<Unit ID="1 12" ENG="Shipyard" localized="Chantier naval">Chantier naval\n\nUsine permettant la construction de navire : corvettes, destroyers, sous-marins, transporteurs marins...</Unit>
-		<Unit ID="1 13" ENG="Light Vehicle Plant" localized="Usine de véhicule léger">Usine de véhicule léger\n\nUsine permettant la construction d'engin léger : ingénieur, sondeur, poseur de mine, camions, réparateur, bulldozer, transporteur, scouts et DCA mobile. Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner.</Unit>
+		<Unit ID="1 13" ENG="Light Vehicle Plant" localized="Usine de véhicule léger">Usine de véhicule léger\n\nUsine permettant la construction d'engin léger : ingénieur, prospecteur, poseur de mine, camions, réparateur, bulldozer, transporteur, éclaireurs et DCA mobile. Nécessite de l'énergie et du minerai en quantité suffisante pour fonctionner.</Unit>
 		<Unit ID="1 14" ENG="Gold Refinery" localized="Raffinerie d'or">Raffinerie d'or\n\nRaffinerie convertissant l'or récolté en crédits, qui sont nécessaires à la mise à jour technologique immédiate des unités et bâtiments. Nécessite de l'énergie et de l'or en quantité suffisante pour fonctionner.</Unit>
 		<Unit ID="1 15" ENG="Anti Aircraft" localized="Canon DCA">Canon DCA\n\nCanon anti-aérien, à cadence de tir rapide. Redoutable contre les avions, mais impuissants contre les unités terrestres.</Unit>
 		<Unit ID="1 16" ENG="Artillery" localized="Artillerie">Atillerie\n\nCanon d'attaque d'unité terrestre à moyenne portée et moyennement blindé. L'artillerie est un compromis entre la robuste tourelle à canon et la longue portée du lance-missile.</Unit>
 		<Unit ID="1 17" ENG="Missile Launcher" localized="Lance-missile">Lance-missile\n\nInstallation à très grande portée permettant de tenir éloignées les troupes ennemis. légèrement plus puissant et robuste que sa version mobile, il doit cependant être protégé par un canon DCA.</Unit>
-		<Unit ID="1 18" ENG="Gun Turret" localized="Tourelle à canon">Tourelle à canon\n\nInstallation économique de défense, la tourelle à canon est robuste avec son lourd blindage. Sa rapide édification permet de repousser les troupes ennemis qui ont éventuellement réussi à percer la défense.</Unit>
-		<Unit ID="1 19" ENG="Habitat" localized="Habitat">Habitat\n\nDemeure pour les colonisateurs humains. Nécessaire au fonctionnement des centres de recherche, aux éco-sphères et aux hall d'entraînement d'infanterie. Nécessite aussi d'être connecté à ces bâtiments pour les faire fonctionner.</Unit>
+		<Unit ID="1 18" ENG="Gun Turret" localized="Tourelle à canon">Tourelle à canon\n\nInstallation économique de défense, la tourelle à canon est robuste grâce à son lourd blindage. Sa rapide édification permet de repousser les troupes ennemies qui ont auraient réussi à percer la défense.</Unit>
+		<Unit ID="1 19" ENG="Habitat" localized="Habitat">Habitat\n\nDemeure pour les colons humains. Nécessaire au fonctionnement des centres de recherche, aux éco-sphères et aux hall d'entraînement d'infanterie. Nécessite aussi d'être connecté à ces bâtiments pour les faire fonctionner.</Unit>
 		<Unit ID="1 20" ENG="Hangar" localized="Hangar à avion">Hangar à avion\n\nIl stocke les unités aériennes permettant leur réparation, leurs mises à jour ou leurs recharges nécessitant alors du minerai. Peut stocker douze unités.</Unit>
-		<Unit ID="1 21" ENG="Land Mine" localized="Mine">Mine\n\nExplosifs invisibles et redoutables pour les unités de combat, les mines peuvent être détectées uniquement par les poseurs de mines, les commandos et les sondeurs. Une fois découvertes, n'importe quel dégât suffit à les faire exploser et dégager le terrain.</Unit>
+		<Unit ID="1 21" ENG="Land Mine" localized="Mine">Mine\n\nExplosifs invisibles et redoutables pour les unités de combat, les mines peuvent être détectées uniquement par les poseurs de mines, les commandos et les prospecteurs. Une fois découvertes, n'importe quel dégât suffit à les faire exploser et dégager le terrain.</Unit>
 		<Unit ID="1 22" ENG="Mining Station" localized="Station minière">Station minière\n\nStation extrayant les ressources souterraines. Sous la zone couverte de la station minière doit se trouver au moins une des trois ressources pour pouvoir fonctionner, en plus d'être reliée à un générateur ou station d'énergie. Les ressources extraites doivent être stockées si elles ne sont pas exploitées immédiatement, sinon elles sont perdues.</Unit>
 		<Unit ID="1 23" ENG="Deep Mine" localized="Mine alien">Mine alien</Unit>
 		<Unit ID="1 24" ENG="Landing Pad" localized="Plan d'atterrissage">Plan d'atterrissage\n\nPlan favorable à l'atterrissage des unités aériennes pour être rechargées en munition ou pour être réparées un à un par un réparateur. Erigé par un ingénieur.</Unit>
 		<Unit ID="1 25" ENG="Water Platform" localized="Plateforme marine">Plateforme marine\n\nPlateforme permettant la construction d'installation sur l'eau, par exemple des stations minières. Contrairement au pont flottant, la plateforme marine bloque le passage aux navires. Construite par l'ingénieur.</Unit>
 		<Unit ID="1 26" ENG="Radar" localized="Radar">Radar\n\nInstallation fixe à radar. Avec un scanner à longue portée, les radars sont les yeux de la base, permettant aux lances-missiles d'exploiter pleinement la portée de leurs tirs.</Unit>
-		<Unit ID="1 27" ENG="Research Center" localized="Centre de recherche">Centre de recherche\n\nLes centres de recherche explorent les possibilités de progression technologique des unités. Contrairement aux mises à jour à l'aide des crédits élaborés par les raffineries d'or, les mises à jour par la recherche prennent du temps, et sont par palier. Cependant, les progrès apportés par la recherche affectent sans distinction toutes les unités et installations. Nécessite des colonisateurs proventant d'habitats et de l'énergie pour opérer.</Unit>
+		<Unit ID="1 27" ENG="Research Center" localized="Centre de recherche">Centre de recherche\n\nLes centres de recherche explorent les possibilités de progression technologique des unités. Contrairement aux mises à jour à l'aide des crédits élaborés par les raffineries d'or, les mises à jour par la recherche prennent du temps, et sont par palier. Cependant, les progrès apportés par la recherche affectent sans distinction toutes les unités et installations. Nécessite des colons proventant d'habitats et de l'énergie pour opérer.</Unit>
 		<Unit ID="1 28" ENG="Road" localized="Route">Route\n\nLes unités terrestres doublent leur vitesse sur les routes goudronnées.</Unit>
-		<Unit ID="1 29" ENG="Sea Mine" localized="Mine marine">Mine marine\n\nExplosifs invisibles et redoutables face aux unités navales, les mines marines peuvent être détectées uniquement par les poseurs de mines et les sondeurs. Une fois découverte, un simple dégât suffit à les faire exploser et dégager le chemin.</Unit>
+		<Unit ID="1 29" ENG="Sea Mine" localized="Mine marine">Mine marine\n\nExplosifs invisibles et redoutables face aux unités navales, les mines marines peuvent être détectées uniquement par les poseurs de mines et les prospecteurs. Une fois découverte, un simple dégât suffit à les faire exploser et dégager le chemin.</Unit>
 		<Unit ID="1 30" ENG="Shield" localized="Bouclier (alien)">Bouclier (alien)</Unit>
 		<Unit ID="1 31" ENG="Gold Vault" localized="Réserve d'or">Réserve d'or\n\nEntrepose les réserves d'or extrait. Nécessite d'être connecté à une station minière.</Unit>
 		<Unit ID="1 32" ENG="Storage Unit" localized="Unité de d'entreposage">Unité d'entreposage\n\nEntrepose les réserves de minerai extrait. Nécessite d'être connecté à une station minière.</Unit>
-		<Unit ID="1 33" ENG="Fuel Tank" localized="Réservoir à fioul">Réservoir à fioul\n\nEntrepose les réserves de fioul extrait. Nécessite d'être connecté à une station minière.</Unit>
-		<Unit ID="1 34" ENG="Training Hall" localized="Hall d'entraînement">Hall d'entraînement\n\nEntraîne les commandos et les infanteries. Nécessite des colonisateurs provenant d'habitats et de l'énergie pour opérer.</Unit>
+		<Unit ID="1 33" ENG="Fuel Tank" localized="Réservoir à carburant">Réservoir à carburant\n\nEntrepose les réserves de carburant extrait. Nécessite d'être connecté à une station minière.</Unit>
+		<Unit ID="1 34" ENG="Training Hall" localized="Hall d'entraînement">Hall d'entraînement\n\nEntraîne les commandos et l'infanterie. Nécessite des colons provenant d'habitats et de l'énergie pour opérer.</Unit>
 		<Unit ID="1 35" ENG="Eco-sphere" localized="Éco-sphère">Éco-sphère\n\nVotre but premier est la construction d'éco-sphères. Chaque éco-sphère vous donne un point de colonie par tour.\n\nDéfendez bien vos éco-sphères, car si l'une d'entre elles est détruite, vous perdez tous les points qu'elle avait accumulés!</Unit>
 	</Units>
 	<Clans>
 		<Clan ID="0" ENG="The Chosen" localized="The Chosen">Meilleures unités aériennes</Clan>
 		<Clan ID="1" ENG="Crimson Path" localized="Crimson Path">Meilleures unités marines</Clan>
 		<Clan ID="2" ENG="Von Griffin" localized="Von Griffin">Espionnage amélioré</Clan>
-		<Clan ID="3" ENG="Ayer's Hand" localized="Ayer's Hand">Meilleures lance-missiles</Clan>
+		<Clan ID="3" ENG="Ayer's Hand" localized="Ayer's Hand">Meilleurs lance-missiles</Clan>
 		<Clan ID="4" ENG="Musashi" localized="Musashi">Meilleurs véhicules blindés</Clan>
 		<Clan ID="5" ENG="Sacred Eights" localized="Sacred Eights">Meilleures unités rapides</Clan>
 		<Clan ID="6" ENG="7 Knights" localized="7 Knights">Meilleure défense</Clan>
