@@ -13,7 +13,7 @@ Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 	return interval;
 }
 
-cGameTimer::cGameTimer(SDL_cond* conditionVariable) :
+cGameTimer::cGameTimer() :
 	mutex ()
 {
 	gameTime = 0;
@@ -28,7 +28,6 @@ cGameTimer::cGameTimer(SDL_cond* conditionVariable) :
 	timer400ms = false;
 
 	timerID = 0;
-	condSignal = conditionVariable;
 }
 
 cGameTimer::~cGameTimer()
@@ -60,13 +59,7 @@ void cGameTimer::timerCallback()
 		{
 			eventCounter++;
 		}
-	}
-
-	if ( condSignal )
-	{
-		SDL_CondSignal (condSignal);
-	}
-	
+	}	
 }
 
 bool cGameTimer::popEvent ()
@@ -122,7 +115,7 @@ unsigned int cGameTimer::getReceivedTime(unsigned int nr)
 }
 
 cGameTimerClient::cGameTimerClient () :
-	cGameTimer (NULL),
+	cGameTimer (),
 	remoteChecksum(0),
 	localChecksum(0),
 	debugRemoteChecksum(0),
@@ -197,8 +190,7 @@ void cGameTimerClient::run ()
 	}
 }
 
-cGameTimerServer::cGameTimerServer (SDL_cond* serverResumeCond) :
-	cGameTimer (serverResumeCond),
+cGameTimerServer::cGameTimerServer () :
 	waitingForPlayer(-1)
 {
 }

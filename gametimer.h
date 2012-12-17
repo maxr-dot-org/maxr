@@ -18,11 +18,10 @@ class cGameTimer
 protected:
 	static Uint32 gameTimerCallback (Uint32 interval, void* arg);
 	
-	cGameTimer (SDL_cond* conditionVariable = NULL);
+	cGameTimer ();
 
 	/** SDL_Timer that controls the game time */
 	SDL_TimerID timerID;
-	SDL_cond* condSignal;
 	cMutex mutex;
 	int eventCounter;
 	unsigned int lastTimerCall;
@@ -60,7 +59,7 @@ private:
 	
 	bool nextTickAllowed ();
 public:
-	cGameTimerServer (SDL_cond* conditionVariable = NULL );
+	cGameTimerServer ();
 
 	void run ();
 	void handleSyncMessage (cNetMessage& message);

@@ -103,10 +103,6 @@ private:
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
 	
-	SDL_cond* serverResumeCond; //TODO:remove
-
-	
-
 	/** the thread the server runs in */
 	SDL_Thread* ServerThread;
 	/** true if the server should exit and end his thread */

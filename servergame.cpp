@@ -230,10 +230,7 @@ void cServerGame::run()
 
 		if (!event)
 		{
-			if (Server)
-				SDL_CondWait (Server->serverResumeCond, NULL);	//TODO: warum hängt das hier beim beenden?
-			else
-				SDL_Delay (20);
+			SDL_Delay (10);
 		}
 	}
 

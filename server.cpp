@@ -86,7 +86,7 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: lastEvent (0)
 	, casualtiesTracker (0)
-	, gameTimer(serverResumeCond = SDL_CreateCond())
+	, gameTimer()
 {
 	assert (! (turnLimit && scoreLimit));
 
@@ -130,11 +130,7 @@ cServer::~cServer()
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
-	
-	//make sure the serverthread is not suspended, before waiting for it to exit
-	if (!serverResumeCond)
-		Log.write("EVIL!!!");
-	SDL_CondSignal (serverResumeCond);
+
 	if (!DEDICATED_SERVER)
 		SDL_WaitThread (ServerThread, NULL);
 
@@ -146,8 +142,6 @@ cServer::~cServer()
 			network->close ((*PlayerList)[i]->iSocketNum);
 		}
 	}
-
-	SDL_DestroyCond(serverResumeCond);
 
 	while (eventQueue.size())
 	{
@@ -208,7 +202,6 @@ cNetMessage* cServer::pollEvent()
 int cServer::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);
-	SDL_CondSignal (serverResumeCond);
 	return 0;
 }
 
@@ -277,7 +270,7 @@ void cServer::run()
 
 		if (!event)
 		{
-			SDL_CondWait (serverResumeCond, NULL);
+			SDL_Delay(10);
 		}
 	}
 }
