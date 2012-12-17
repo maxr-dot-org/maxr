@@ -90,6 +90,7 @@ public:
 	 */
 	cServer (cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
 	void setDeadline (int iDeadline);
+	void stop ();
 	~cServer();
 
 	

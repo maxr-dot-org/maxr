@@ -107,7 +107,7 @@ void cEventHandling::HandleEvents()
 void cEventHandling::handleNetMessages ()
 {
 	cNetMessage* message;
-	while (eventQueue.size() > 0 && !Client->gameTimer.nextMsgIsNextGameTime)
+	while (eventQueue.size() > 0 && (!Client || !Client->gameTimer.nextMsgIsNextGameTime))
 	{
 		message = eventQueue.read();
 

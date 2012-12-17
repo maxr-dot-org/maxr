@@ -119,20 +119,31 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 	gameTimer.start ();
 }
 
-//-------------------------------------------------------------------------------------
-cServer::~cServer()
+void cServer::stop ()
 {
 	bExit = true;
 	gameTimer.stop ();
+
+	if (!DEDICATED_SERVER)
+	{
+		if (ServerThread)
+		{
+			SDL_WaitThread (ServerThread, NULL);
+			ServerThread = NULL;
+		}
+	}
+}
+//-------------------------------------------------------------------------------------
+cServer::~cServer()
+{
 	
+	stop ();
+
 	if (casualtiesTracker != 0)
 	{
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
-
-	if (!DEDICATED_SERVER)
-		SDL_WaitThread (ServerThread, NULL);
 
 	//disconect clients
 	if (network)

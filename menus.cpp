@@ -223,6 +223,10 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 	}
 	players.Clear();
 
+	if (isServer)
+	{
+		Server->stop ();
+	}
 	delete Client;
 	Client = NULL;
 
@@ -283,7 +287,8 @@ void cGameDataContainer::runSavedGame (int player)
 		delete clientPlayerList[i];
 	}
 	clientPlayerList.Clear();
-
+	
+	Server->stop ();
 	delete Client;
 	Client = NULL;
 	delete Server;
@@ -3438,6 +3443,7 @@ bool cNetworkHostMenu::runSavedGame()
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
+	Server->stop ();
 	delete Client;
 	Client = NULL;
 	delete Server;
