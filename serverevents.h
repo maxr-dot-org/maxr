@@ -292,6 +292,7 @@ void sendResearchSettings (cList<cBuilding*>& researchCentersToChangeArea, cList
 void sendResearchLevel (cResearch* researchLevel, int player);
 void sendRefreshResearchCount (int player);
 void sendClansToClients (const cList<cPlayer*>* playerList);
+void sendGameTime(cPlayer* player, int gameTime);
 void sendSetAutomoving (cVehicle* Vehicle);
 /**
 * sends the result of a infiltrating action to the client

@@ -3616,6 +3616,9 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		}
 		sendDeleteEverything (Player->Nr);
 	}
+
+	sendGameTime(Player, gameTimer.gameTime);
+
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
 		sendClansToClients (PlayerList);

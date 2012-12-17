@@ -223,6 +223,7 @@ private:
 	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 
 public:
 	cGameTimerClient gameTimer;

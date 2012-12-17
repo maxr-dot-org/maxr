@@ -2131,7 +2131,15 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	vehicle->ClientMoveJob->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
+void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_SET_GAME_TIME);
+	
+	unsigned int newGameTime = message.popInt32 ();
+	Client->gameTimer.gameTime = newGameTime;
 
+	//TODO: was ist mit receivedTime?
+}
 
 int cClient::HandleNetMessage (cNetMessage* message)
 {
@@ -2206,6 +2214,7 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_VICTORY_CONDITIONS: HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (*message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (*message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (*message); break;
+		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (*message); break;
 		case NET_GAME_TIME_SERVER: gameTimer.handleSyncMessage (*message); break;
 
 		default:

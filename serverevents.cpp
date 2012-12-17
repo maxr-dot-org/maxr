@@ -954,6 +954,14 @@ void sendClans (const cList<cPlayer*>* playerList, cPlayer* toPlayer)
 }
 
 //-------------------------------------------------------------------------------------
+void sendGameTime(cPlayer* player, int gameTime)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_SET_GAME_TIME);
+	message->pushInt32 (gameTime);
+	Server->sendNetMessage (message, player->Nr);
+}
+
+//-------------------------------------------------------------------------------------
 void sendClansToClients (const cList<cPlayer*>* playerList)
 {
 	for (unsigned int n = 0; n < playerList->Size(); n++)
