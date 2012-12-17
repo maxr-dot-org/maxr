@@ -1788,24 +1788,18 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 		{
 			vehicle->deleteStoredUnits();
 		}
+		for (cBuilding* building = Player.BuildingList; building; building = static_cast<cBuilding*> (building->next))
+		{
+			building->deleteStoredUnits();
+		}
 
 		while (Player.VehicleList)
 		{
-			cVehicle* vehicle = static_cast<cVehicle*> (Player.VehicleList->next);
-			Player.VehicleList->sentryActive = false;
-			getMap()->deleteVehicle (Player.VehicleList);
-			delete Player.VehicleList;
-			Player.VehicleList = vehicle;
+			deleteUnit(Player.VehicleList);
 		}
 		while (Player.BuildingList)
 		{
-			cBuilding* building = static_cast<cBuilding*> (Player.BuildingList->next);
-			Player.BuildingList->sentryActive = false;
-			Player.BuildingList->deleteStoredUnits();
-
-			getMap()->deleteBuilding (Player.BuildingList);
-			delete Player.BuildingList;
-			Player.BuildingList = building;
+			deleteUnit(Player.BuildingList);
 		}
 	}
 
