@@ -32,6 +32,8 @@
 
 void cEventHandling::pushEvent (cNetMessage* message)
 {
+	eventQueue.write (message);
+
 	if (Client && message->iType == NET_GAME_TIME_SERVER )
 	{
 		//FIXME: race cond on exit: client deleted while server pushed event
@@ -42,8 +44,6 @@ void cEventHandling::pushEvent (cNetMessage* message)
 		Client->gameTimer.setReceivedTime (message->popInt32());
 		message->rewind();
 	}
-
-	eventQueue.write (message);
 }
 
 void cEventHandling::HandleEvents()
@@ -107,9 +107,10 @@ void cEventHandling::HandleEvents()
 void cEventHandling::handleNetMessages ()
 {
 	cNetMessage* message;
-	while (eventQueue.size() > 0)
+	while (eventQueue.size() > 0 && !Client->gameTimer.nextMsgIsNextGameTime)
 	{
 		message = eventQueue.read();
+
 		switch (message->getClass())
 		{
 			case NET_MSG_CLIENT:
@@ -119,15 +120,6 @@ void cEventHandling::handleNetMessages ()
 					break;
 				}
 				Client->HandleNetMessage (message);
-
-				if (message->iType == NET_GAME_TIME_SERVER)
-				{
-					//only handle messages for the current game time.
-					//netmessages after a sync message, are for the next time step, so stop handling for now
-					delete message;
-					return;
-				}
-
 				break;
 			case NET_MSG_SERVER:
 				//should not happen!

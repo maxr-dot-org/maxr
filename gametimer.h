@@ -73,10 +73,11 @@ class cGameTimerClient : public cGameTimer
 private:
 	unsigned int remoteChecksum;
 	unsigned int localChecksum;
-	unsigned int debugRemoteChecksum; //saved data for debug only
+	unsigned int debugRemoteChecksum; //saved data for debug view only
 
 	bool nextTickAllowed ();
 public:
+	bool nextMsgIsNextGameTime;
 	cGameTimerClient ();
 
 	void run ();

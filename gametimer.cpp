@@ -125,7 +125,8 @@ cGameTimerClient::cGameTimerClient () :
 	cGameTimer (NULL),
 	remoteChecksum(0),
 	localChecksum(0),
-	debugRemoteChecksum(0)
+	debugRemoteChecksum(0),
+	nextMsgIsNextGameTime(false)
 {
 }
 
@@ -138,12 +139,14 @@ void cGameTimerClient::handleSyncMessage (cNetMessage& message)
 	int newSyncTime = message.popInt32();
 	if ( newSyncTime != gameTime + 1 )
 		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
+
+	nextMsgIsNextGameTime = true;
 }
 
 
 bool cGameTimerClient::nextTickAllowed()
 {
-	if (gameTime < getReceivedTime())
+	if (nextMsgIsNextGameTime)
 	{
 		Client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 		return true;
@@ -157,10 +160,10 @@ void cGameTimerClient::run ()
 {
 	while (popEvent ())
 	{
+		EventHandler->handleNetMessages();
+
 		if (nextTickAllowed ())
 		{
-			EventHandler->handleNetMessages();
-			
 			gameTime++;
 			handleTimer ();	
 			Client->doGameActions();
@@ -173,6 +176,8 @@ void cGameTimerClient::run ()
 				//gameGUI.debugOutput.debugSync = true;
 				Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 			}
+
+			nextMsgIsNextGameTime = false;
 
 			//send "still alive" message to server
 			//if (gameTimer.gameTime % (PAUSE_GAME_TIMEOUT/4) == 0)
@@ -218,7 +223,7 @@ bool cGameTimerServer::nextTickAllowed ()
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
 	{
-		Server->enableFreezeMode(FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);
+		Server->enableFreezeMode(FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
 	}
 	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
 	{

@@ -103,7 +103,7 @@ private:
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
 	
-	SDL_cond* serverResumeCond;
+	SDL_cond* serverResumeCond; //TODO:remove
 
 	
 
