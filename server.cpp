@@ -2760,7 +2760,7 @@ void cServer::handleEnd (int iPlayerNum)
 		if (PlayerEndList.Size() >= PlayerList->Size())
 		{
 			iDeadlineStartTime = 0;
-			if (checkEndActions (-1)) //bug!!!! freezemode zu früh aufgehoben, wenn endActions!
+			if (checkEndActions (-1))
 			{
 				iWantPlayerEndNum = iPlayerNum;
 				return;
@@ -2847,7 +2847,6 @@ bool cServer::checkEndActions (int iPlayer)
 	}
 	if (!sMessage.empty())
 	{
-		//sendFreeze( false );
 		if (iPlayer != -1)
 		{
 			if (iWantPlayerEndNum == -1)
