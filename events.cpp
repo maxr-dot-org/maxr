@@ -36,8 +36,6 @@ void cEventHandling::pushEvent (cNetMessage* message)
 
 	if (Client && message->iType == NET_GAME_TIME_SERVER )
 	{
-		//FIXME: race cond on exit: client deleted while server pushed event
-
 		//this is a preview for the client to know how many sync messages are in queue
 		//used to detect a growing lag behind the server time
 		message->popInt32();
@@ -149,7 +147,5 @@ void cEventHandling::handleNetMessages ()
 
 		delete message;
 	}
-
-	if (Client)
-		Log.write("Client calculated game time step, before allowed by server", cLog::eLOG_TYPE_NET_ERROR);
 }
+

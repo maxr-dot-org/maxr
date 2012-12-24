@@ -29,7 +29,6 @@ class cPlayer;
 class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
-class cClientSpeedCtrl;
 class cJob;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -90,7 +89,6 @@ public:
 	~cClient();
 
 private:
-	//friend class cGameGUI;
 	friend class cDebugOutput;
 	friend class cPlayer;
 	friend class cBuilding;
@@ -111,7 +109,7 @@ private:
 	/** number of current turn */
 	int iTurn;
 	/** flags what should be displaxed in the raffinery */
-	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT; //TODO: GameGUI!
+	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT; //TODO: this should be in GameGUI!
 	/** true if the player has been defeated */
 	bool bDefeated;
 	/** how many seconds will be left for this turn */
@@ -228,7 +226,7 @@ private:
 public:
 	cGameTimerClient gameTimer;
 	/**  the soundstream of the selected unit */
-	int iObjectStream;
+	int iObjectStream;	//TODO: move to gui
 	/** lists with all FX-Animation */
 	cList<sFX*> FXList;
 	cList<sFX*> FXListBottom;
@@ -237,7 +235,7 @@ public:
 	/** List with all active movejobs */
 	cList<cClientMoveJob*> ActiveMJobs;
 	/** the hud */
-	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client
+	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client for ai implementation
 
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;

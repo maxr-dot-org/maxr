@@ -163,18 +163,13 @@ void cServerGame::run()
 				cout << "...saved to slot " << saveGameNumber << endl;
 				shouldSave = false;
 			}
-
 		}
 
-		if (!event)
-		{
+		if (event == 0)
 			SDL_Delay (10);
-		}
 	}
-
 	if (Server)
 		terminateServer();
-
 }
 
 //-------------------------------------------------------------------------------------

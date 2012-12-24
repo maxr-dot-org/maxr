@@ -2585,8 +2585,7 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 
 void cClient::doGameActions()
 {
-	//TODO: hud actions in menus?
-	//TODO: gameSynchronous actions here
+	//TODO: gameSynchronous fx actions here
 
 	//run attackJobs
 	if (gameTimer.timer50ms)

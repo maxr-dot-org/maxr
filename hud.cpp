@@ -830,23 +830,23 @@ void cGameGUI::updateInfoTexts ()
 	}
 	else if (Client->getFreezeMode(FREEZE_PAUSE))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Frozen"), ""); //TODO: langfile anpassen
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_PLAYER))
 	{
-		setInfoTexts ("No network response from Player " + player->name + ". Waiting...","");	//TODO: i18n
+		setInfoTexts (lngPack.i18n ("Text~Muiltiplayer~No_Response", player->name),"");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_RECONNECT))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), lngPack.i18n ("Text~Multiplayer~Abort_Waiting")); //TODO: aditional test nur auf dem Server
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), Server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_TURNEND))
 	{
-		setInfoTexts ("Please wail while turnend is excecuted.", ""); //TODO i18n
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_SERVER))
 	{
-		setInfoTexts("Waiting for Server","");	//TODO: i18n
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"),"");
 	}
 	else 
 	{

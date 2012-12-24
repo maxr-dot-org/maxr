@@ -2015,7 +2015,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 
 	int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
-	SDL_Delay(2000); //TODO: remove me
 
 	if (unit != 0)
 	{
@@ -2716,7 +2715,6 @@ void cServer::handleEnd (int iPlayerNum)
 		}
 		// send report to next player
 		sendTurnReport ( (*PlayerList) [iActiveTurnPlayerNr]);
-		//sendUnfreeze();
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
