@@ -87,6 +87,8 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 	: lastEvent (0)
 	, casualtiesTracker (0)
 	, gameTimer()
+	, lastTurnEnd(0)
+	, executingRemainingMovements(false)
 {
 	assert (! (turnLimit && scoreLimit));
 
@@ -2668,9 +2670,7 @@ void cServer::handleEnd (int iPlayerNum)
 		}
 		iTurn++;
 		makeTurnEnd();
-		// send report to player
-		sendMakeTurnEnd (true, false, -1, iPlayerNum);
-		sendTurnReport ( (*PlayerList) [0]);
+
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || bPlayTurns)
 	{
@@ -2760,7 +2760,7 @@ void cServer::handleEnd (int iPlayerNum)
 		if (PlayerEndList.Size() >= PlayerList->Size())
 		{
 			iDeadlineStartTime = 0;
-			if (checkEndActions (-1))
+			if (checkEndActions (-1)) //bug!!!! freezemode zu früh aufgehoben, wenn endActions!
 			{
 				iWantPlayerEndNum = iPlayerNum;
 				return;
@@ -2771,15 +2771,6 @@ void cServer::handleEnd (int iPlayerNum)
 			iTurn++;
 			makeTurnEnd();
 
-			// send reports to all players
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendMakeTurnEnd (true, false, -1, i);
-			}
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendTurnReport ( (*PlayerList) [i]);
-			}
 		}
 	}
 }
@@ -2788,6 +2779,34 @@ void cServer::handleEnd (int iPlayerNum)
 void cServer::handleWantEnd()
 {
 	if (!gameTimer.timer50ms) return;
+
+	//wait until all clients have reported a gametime that is after the turn end.
+	//that means they have finished prosessing all the turn end messages, and we can start the new turn sumultaiously on all clients
+	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
+	{
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			cPlayer* player = (*PlayerList)[i];
+			if (!isPlayerDisconnected(player) && gameTimer.getReceivedTime(i) <= lastTurnEnd)
+				return;
+		}
+
+		// send reports to all players
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			sendMakeTurnEnd (true, false, -1, i);
+		}
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			sendTurnReport ( (*PlayerList) [i]);
+		}
+
+		//begin the new turn
+		disableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+	}
+	
+
+
 	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
 	{
 		for (unsigned int i = 0; i < PlayerEndList.Size(); i++)
@@ -2801,7 +2820,9 @@ void cServer::handleWantEnd()
 //-------------------------------------------------------------------------------------
 bool cServer::checkEndActions (int iPlayer)
 {
-	std::string sMessage = "";
+	enableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+
+	std::string sMessage;
 	if (ActiveMJobs.Size() > 0)
 	{
 		sMessage = "Text~Comp~Turn_Wait";
@@ -2817,18 +2838,14 @@ bool cServer::checkEndActions (int iPlayer)
 				if (NextVehicle->ServerMoveJob && NextVehicle->data.speedCur > 0 && !NextVehicle->moving)
 				{
 					// restart movejob
-					NextVehicle->ServerMoveJob->calcNextDir();
-					NextVehicle->ServerMoveJob->bEndForNow = false;
-					NextVehicle->ServerMoveJob->SrcX = NextVehicle->PosX;
-					NextVehicle->ServerMoveJob->SrcY = NextVehicle->PosY;
-					addActiveMoveJob (NextVehicle->ServerMoveJob);
+					NextVehicle->ServerMoveJob->resume();
 					sMessage = "Text~Comp~Turn_Automove";
 				}
 				NextVehicle = static_cast<cVehicle*> (NextVehicle->next);
 			}
 		}
 	}
-	if (sMessage.length() > 0)
+	if (!sMessage.empty())
 	{
 		//sendFreeze( false );
 		if (iPlayer != -1)
@@ -2848,17 +2865,19 @@ bool cServer::checkEndActions (int iPlayer)
 				}
 			}
 		}
+		executingRemainingMovements = true;
 		return true;
 	}
+	executingRemainingMovements = false;
 	return false;
 }
 
 //-------------------------------------------------------------------------------------
 void cServer::makeTurnEnd()
 {
-	Server->enableFreezeMode (FREEZE_WAIT_FOR_TURNEND); //Todo: - find a better place for this (before remaining movements are executed!)
-														//		- leave freezed untils all clients reported their autosave info.
-															   
+	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
+	lastTurnEnd = gameTimer.gameTime;
+
 	// reload all buildings
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
@@ -2987,8 +3006,6 @@ void cServer::makeTurnEnd()
 	checkDefeats();
 
 	iWantPlayerEndNum = -1;
-
-	Server->disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 }
 
 //-------------------------------------------------------------------------------------
@@ -3136,17 +3153,9 @@ void cServer::checkDeadline()
 
 			PlayerEndList.Clear();
 
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendMakeTurnEnd (true, false, -1, i);
-			}
 			iTurn++;
 			iDeadlineStartTime = 0;
 			makeTurnEnd();
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendTurnReport ( (*PlayerList) [i]);
-			}
 		}
 	}
 }
@@ -3997,28 +4006,25 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 	{
 	case FREEZE_PAUSE:
 		freezeModes.pause = true;
-		//gameTimer.stop ();
-		sendFreeze (mode);
+		gameTimer.stop ();
 		break;
 	case FREEZE_WAIT_FOR_RECONNECT:
 		freezeModes.waitForReconnect = true;
-		//gameTimer.stop ();
-		sendFreeze (mode);
+		gameTimer.stop ();
 		break;
 	case FREEZE_WAIT_FOR_TURNEND:
 		freezeModes.waitForTurnEnd = true;
-		sendFreeze (mode);
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
 		freezeModes.waitForPlayer = true;		
 		//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
-		sendFreeze (mode, playerNumber);
+		freezeModes.playerNumber = playerNumber;
 		break;
 	default:
 		Log.write(" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	freezeModes.playerNumber = playerNumber;
+	sendFreeze (mode, freezeModes.playerNumber);
 }
 
 void cServer::disableFreezeMode (eFreezeMode mode)

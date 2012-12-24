@@ -9,7 +9,7 @@ class cNetMessage;
 
 #define GAME_TICK_TIME 10
 #define MAX_CLIENT_LAG 30
-#define PAUSE_GAME_TIMEOUT 1000
+#define PAUSE_GAME_TIMEOUT 200
 
 //TODO: comments
 class cGameTimer

@@ -2136,9 +2136,12 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	assert (message.iType == GAME_EV_SET_GAME_TIME);
 	
 	unsigned int newGameTime = message.popInt32 ();
-	Client->gameTimer.gameTime = newGameTime;
+	gameTimer.gameTime = newGameTime;
 
-	//TODO: was ist mit receivedTime?
+	//confirm new time to the server
+	cNetMessage *response = new cNetMessage(NET_GAME_TIME_CLIENT);
+	response->pushInt32 (gameTimer.gameTime);
+	sendNetMessage (response);
 }
 
 int cClient::HandleNetMessage (cNetMessage* message)
@@ -2742,7 +2745,8 @@ void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 		break;
 	}
 
-	freezeModes.playerNumber = playerNumber;
+	if (playerNumber != -1)
+		freezeModes.playerNumber = playerNumber;
 
 	gameGUI.updateInfoTexts();
 }

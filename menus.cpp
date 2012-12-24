@@ -2610,6 +2610,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 
 			draw();
+			mouseMoved(this);	//update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
 			ActiveMenu = NULL;

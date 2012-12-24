@@ -254,7 +254,7 @@ void sendDefeated (cPlayer* Player, int iPlayerNum = -1);
 * sends that a client has to wait untill he will be defrezzed
 *@param waitForPlayer tells the client, for which other player he is waiting
 */
-void sendFreeze (eFreezeMode mode, int waitForPlayer = -1);
+void sendFreeze (eFreezeMode mode, int waitForPlayer);
 /**
 * sends that the client can abort waiting
 */

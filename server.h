@@ -148,6 +148,10 @@ private:
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
+	/** stores the gametime of the last turn end. */
+	unsigned int lastTurnEnd;
+	/** sever is executon all remaining movements, before turn end is processed */
+	bool executingRemainingMovements;
 
 	/** victory conditions. One or both must be zero. **/
 	int turnLimit, scoreLimit;
