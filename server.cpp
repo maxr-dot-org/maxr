@@ -2657,6 +2657,26 @@ cPlayer* cServer::getPlayerFromNumber (int iNum)
 }
 
 //-------------------------------------------------------------------------------------
+cPlayer* cServer::getPlayerFromString (const std::string& playerID)
+{
+	//first try to find player by number
+	int playerNr = atoi(playerID.c_str());
+	if (playerNr != 0 || playerID[0] == '0')
+	{
+		return getPlayerFromNumber(playerNr);
+	}
+
+	//try to find plyer by name
+	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+	{
+		if ( (*PlayerList)[i]->name.compare (playerID) == 0) return (*PlayerList)[i];
+	}
+
+	return NULL;
+
+}
+
+//-------------------------------------------------------------------------------------
 void cServer::handleEnd (int iPlayerNum)
 {
 	if (gameType == GAME_TYPE_SINGLE)

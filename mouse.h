@@ -53,18 +53,18 @@ public:
 	void restoreBack (SDL_Surface* sf);
 	void GetPos();
 	void setPos (int px, int py);
-	void getCursorOffset (int& x, int& y);
+	void getCursorOffset (int& x, int& y) const;
 	bool moved();
 	void Show() {LastX = -100; visible = true;}
 	void Hide() {visible = false;}
 	/**
 	* return the X Coordinate of the Cursor on the map
 	*/
-	int getKachelX();
+	int getKachelX() const;
 	/**
 	* return the Y Coordinate of the Cursor on the map
 	*/
-	int getKachelY();
+	int getKachelY() const;
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

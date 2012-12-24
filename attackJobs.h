@@ -88,7 +88,6 @@ public:
 	int iAgressorOffset;
 	int iTargetOffset;
 	int wait;
-	bool mineExplosion;
 
 	enum eAJStates { ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;

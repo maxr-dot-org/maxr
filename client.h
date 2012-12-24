@@ -136,6 +136,7 @@ private:
 	*/
 	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
 	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
+
 	/**
 	* handles the end of a hotseat game
 	*@author alzi alias DoctorDeath
@@ -289,6 +290,12 @@ public:
 	*@return The wanted player.
 	*/
 	cPlayer* getPlayerFromNumber (int iNum);
+	/**
+	* returns the player identified by playerID
+	*@author eiko
+	*@param playerID Can be a string representation of the player number or player name
+	*/
+	cPlayer* getPlayerFromString (const std::string& playerID);
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath

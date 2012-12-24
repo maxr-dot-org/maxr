@@ -154,7 +154,7 @@ void cServerGame::run()
 		// don't do anything if games hasn't been started yet!
 		if (Server && Server->bStarted)
 		{
-			gameTimer.run ();
+			Server->gameTimer.run ();
 
 			if (shouldSave)
 			{

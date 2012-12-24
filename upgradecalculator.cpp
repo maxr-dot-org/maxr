@@ -60,16 +60,16 @@ void cUpgradeCalculator::setupLookupTables()
 	hitpointsArmorAmmo_6 [13] = 491;
 	hitpointsArmorAmmo_6 [14] = 780;
 
-	hitpointsArmorAmmo_7 [7]  = 3; // TODO: this are only dummy values right now
-	hitpointsArmorAmmo_7 [8]  = 9;
-	hitpointsArmorAmmo_7 [9]  = 15;
-	hitpointsArmorAmmo_7 [10] = 35;
-	hitpointsArmorAmmo_7 [11] = 58;
-	hitpointsArmorAmmo_7 [12] = 100;
-	hitpointsArmorAmmo_7 [13] = 164;
-	hitpointsArmorAmmo_7 [14] = 257;
-	hitpointsArmorAmmo_7 [15] = 390;
-	hitpointsArmorAmmo_7 [16] = 542;
+	hitpointsArmorAmmo_7 [7]  = 3;
+	hitpointsArmorAmmo_7 [8]  = 8;
+	hitpointsArmorAmmo_7 [9]  = 16;
+	hitpointsArmorAmmo_7 [10] = 30;
+	hitpointsArmorAmmo_7 [11] = 54;
+	hitpointsArmorAmmo_7 [12] = 94;
+	hitpointsArmorAmmo_7 [13] = 155;
+	hitpointsArmorAmmo_7 [14] = 245;
+	hitpointsArmorAmmo_7 [15] = 378;
+	hitpointsArmorAmmo_7 [16] = 567;
 
 	hitpointsArmorAmmo_8  [8]  = 2;
 	hitpointsArmorAmmo_8  [9]  = 6;
