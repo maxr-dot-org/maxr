@@ -52,14 +52,12 @@ void cGameTimer::stop ()
 void cGameTimer::timerCallback()
 {
 	//increase event counter and let the event handler increase the gametime
-	{
-		cMutex::Lock lock(mutex);
+	cMutex::Lock lock(mutex);
 
-		if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
-		{
-			eventCounter++;
-		}
-	}	
+	if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
+	{
+		eventCounter++;
+	}
 }
 
 bool cGameTimer::popEvent ()
@@ -119,7 +117,9 @@ cGameTimerClient::cGameTimerClient () :
 	remoteChecksum(0),
 	localChecksum(0),
 	debugRemoteChecksum(0),
-	nextMsgIsNextGameTime(false)
+	nextMsgIsNextGameTime(false),
+	gameTimeAdjustment(0),
+	waitingForServer(0)
 {
 }
 
@@ -142,10 +142,17 @@ bool cGameTimerClient::nextTickAllowed()
 	if (nextMsgIsNextGameTime)
 	{
 		Client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
+		waitingForServer = 0;
 		return true;
 	}
 
-	Client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
+	gameTimeAdjustment--;
+
+	waitingForServer++;
+	if (waitingForServer > MAX_WAITING_FOR_SERVER)
+	{
+		Client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
+	}
 	return false;
 }
 
@@ -173,7 +180,7 @@ void cGameTimerClient::run ()
 			nextMsgIsNextGameTime = false;
 
 			//send "still alive" message to server
-			//if (gameTimer.gameTime % (PAUSE_GAME_TIMEOUT/4) == 0)
+			//if (gameTime % (PAUSE_GAME_TIMEOUT/10) == 0)
 			{
 				cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
 				message->pushInt32 (gameTime);
@@ -186,7 +193,8 @@ void cGameTimerClient::run ()
 	if (gameTime + MAX_CLIENT_LAG < getReceivedTime())
 	{
 		//inject an extra timer event
-		timerCallback();		
+		timerCallback();	
+		gameTimeAdjustment++;
 	}
 }
 
@@ -229,7 +237,6 @@ bool cGameTimerServer::nextTickAllowed ()
 
 void cGameTimerServer::run ()
 {
-	//TODO:loop?
 	if (popEvent ())
 	{
 		if (nextTickAllowed ())

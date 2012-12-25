@@ -117,7 +117,7 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 		ServerThread = SDL_CreateThread (CallbackRunServerThread, this);
 
 	
-	gameTimer.maxEventQueueSize = 3;
+	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start ();
 }
 
@@ -281,7 +281,7 @@ void cServer::run()
 			gameTimer.run ();
 		}
 
-		if (!event)
+		if (!event && !gameTimer.timer10ms) //nothing to do
 		{
 			SDL_Delay(10);
 		}

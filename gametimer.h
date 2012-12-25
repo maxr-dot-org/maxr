@@ -10,6 +10,8 @@ class cNetMessage;
 #define GAME_TICK_TIME 10
 #define MAX_CLIENT_LAG 30
 #define PAUSE_GAME_TIMEOUT 200
+#define MAX_SERVER_EVENT_COUNTER 15
+#define MAX_WAITING_FOR_SERVER 10
 
 //TODO: comments
 class cGameTimer
@@ -72,7 +74,9 @@ class cGameTimerClient : public cGameTimer
 private:
 	unsigned int remoteChecksum;
 	unsigned int localChecksum;
-	unsigned int debugRemoteChecksum; //saved data for debug view only
+	unsigned int waitingForServer;
+	unsigned int debugRemoteChecksum;	//saved data for debug view only
+	int gameTimeAdjustment;				//saved data for debug view only
 
 	bool nextTickAllowed ();
 public:
