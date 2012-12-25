@@ -201,6 +201,10 @@ void cDebugOutput::draw()
 			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
+			font->showText(DEBUGOUT_X_POS, debugOff, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
+			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
 			font->showText(DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
 			font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
@@ -237,6 +241,14 @@ void cDebugOutput::draw()
 		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
+		font->showText(DEBUGOUT_X_POS, debugOff, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(EventHandler->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
 		font->showText(DEBUGOUT_X_POS, debugOff, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
 		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.getReceivedTime()-Client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
@@ -245,6 +257,17 @@ void cDebugOutput::draw()
 		static unsigned int lastGameTime = 0;
 		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.gameTime-lastGameTime), FONT_LATIN_SMALL_WHITE);
 		lastGameTime = Client->gameTimer.gameTime;
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "Time Adjustment: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(Client->gameTimer.gameTimeAdjustment), FONT_LATIN_SMALL_WHITE);
+		static int totalAdjust = 0;
+		totalAdjust += Client->gameTimer.gameTimeAdjustment;
+		Client->gameTimer.gameTimeAdjustment = 0;
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+
+		font->showText(DEBUGOUT_X_POS, debugOff, "TotalAdj.: ", FONT_LATIN_SMALL_WHITE);
+		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(totalAdjust), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		
 	}
@@ -834,7 +857,7 @@ void cGameGUI::updateInfoTexts ()
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_PLAYER))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Muiltiplayer~No_Response", player->name),"");
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->name),"");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_RECONNECT))
 	{
@@ -2648,13 +2671,23 @@ void cGameGUI::doCommand (const string& cmd)
 	{
 		int cl = 0; sscanf (cmd.c_str(), "color %d", &cl); cl %= 8; player->color = OtherData.colors[cl];
 	}
-	else if (cmd.compare ("/fog off") == 0 && Server)
+	else if (cmd.compare ("/fog off") == 0)
 	{
+		if (!Server)
+		{
+			addMessage("Command can only be used by Host");
+			return;
+		}
 		memset (Server->getPlayerFromNumber (player->Nr)->ScanMap, 1, map->size * map->size);
 		memset (player->ScanMap, 1, map->size * map->size);
 	}
-	else if (cmd.compare ("/survey") == 0 && Server)
+	else if (cmd.compare ("/survey") == 0)
 	{
+		if (!Server)
+		{
+			addMessage("Command can only be used by Host");
+			return;
+		}
 		memcpy (map->Resources , Server->Map->Resources, map->size * map->size * sizeof (sResources));
 		memset (player->ResourceMap, 1, map->size * map->size);
 	}
