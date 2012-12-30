@@ -1033,7 +1033,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
-	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", SrcX: " + iToStr (iDestX) + ", SrcY: " + iToStr (iDestY) + ", Type: " + iToStr (iType) + ", Time: " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->ClientMoveJob)
