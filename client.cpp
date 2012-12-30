@@ -1029,10 +1029,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	assert (message.iType == GAME_EV_NEXT_MOVE);
 
 	int iID = message.popInt16();
-	int iDestX = message.popInt16();
-	int iDestY = message.popInt16();
 	int iType = message.popChar();
-	int height = message.popChar();
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
@@ -1041,7 +1038,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->ClientMoveJob)
 	{
-		Vehicle->ClientMoveJob->handleNextMove (iDestX, iDestY, iType, iSavedSpeed, height);
+		Vehicle->ClientMoveJob->handleNextMove (iType, iSavedSpeed);
 	}
 	else
 	{

@@ -1111,7 +1111,7 @@ void cClientMoveJob::release()
 	Log.write (" Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
-void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed, int height)
+void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 {
 	// the client is faster than the server and has already
 	// reached the last field or the next will be the last,

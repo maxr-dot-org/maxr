@@ -244,7 +244,7 @@ public:
 	bool generateFromMessage (cNetMessage* message);
 
 	void release();
-	void handleNextMove (int iServerPositionX, int iServerPositionY, int iType, int iSavedSpeed, int heigth);
+	void handleNextMove (int iType, int iSavedSpeed);
 	void moveVehicle();
 	void doEndMoveVehicle();
 	void calcNextDir();
