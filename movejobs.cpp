@@ -1155,7 +1155,6 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 		{
 			Log.write (" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 			if (Vehicle->moving) doEndMoveVehicle();
-			setVehicleToCoords (iServerPositionX, iServerPositionY, height);
 			if (bEndForNow) Client->addActiveMoveJob (this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
@@ -1167,14 +1166,12 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 		{
 			Log.write (" Client: The movejob is finished", cLog::eLOG_TYPE_NET_DEBUG);
 			if (Vehicle->moving) doEndMoveVehicle();
-			setVehicleToCoords (iServerPositionX, iServerPositionY, height);
 			release();
 		}
 		break;
 		case MJOB_BLOCKED:
 		{
 			if (Vehicle->moving) doEndMoveVehicle();
-			setVehicleToCoords (iServerPositionX, iServerPositionY, height);
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->X) + ", DestY: " + iToStr (Waypoints->next->Y), cLog::eLOG_TYPE_NET_DEBUG);
 
 			if (Vehicle->owner != Client->getActivePlayer())
@@ -1183,6 +1180,7 @@ void cClientMoveJob::handleNextMove (int iServerPositionX, int iServerPositionY,
 				break;
 			}
 
+			bEndForNow = true;
 			sWaypoint* path = calcPath (Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
 			if (path)
 			{

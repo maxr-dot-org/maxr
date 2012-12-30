@@ -47,6 +47,7 @@ void cGameTimer::stop ()
 		SDL_RemoveTimer (timerID);
 
 	timerID = 0;
+	eventCounter = 0;
 }
 
 void cGameTimer::timerCallback()
