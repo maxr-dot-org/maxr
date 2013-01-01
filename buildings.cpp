@@ -46,10 +46,11 @@ using namespace std;
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base)
+cBuilding::cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID)
 	: cUnit (cUnit::kUTBuilding,
-			 ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
-			 Owner)
+			( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
+			 Owner,
+			 ID)
 {
 	RubbleTyp = 0;
 	RubbleValue = 0;

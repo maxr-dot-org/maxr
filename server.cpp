@@ -2277,12 +2277,11 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //-------------------------------------------------------------------------------------
-cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap)
+cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
 {
 	cVehicle* AddedVehicle;
 	// generate the vehicle:
-	AddedVehicle = Player->AddVehicle (iPosX, iPosY, Vehicle);
-	AddedVehicle->iID = iNextUnitID;
+	AddedVehicle = Player->AddVehicle (iPosX, iPosY, Vehicle, ID ? ID : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
@@ -2313,15 +2312,14 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Pl
 }
 
 //-------------------------------------------------------------------------------------
-cBuilding* cServer::addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit)
+cBuilding* cServer::addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
 {
 	cBuilding* AddedBuilding;
 	// generate the building:
-	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building);
+	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building, ID ? ID : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd();
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
-	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
 
 	int iOff = iPosX + Map->size * iPosY;
@@ -3509,13 +3507,12 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL);
+	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, iNextUnitID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;
 	rubble->prev = NULL;
 
-	rubble->iID = iNextUnitID;
 	iNextUnitID++;
 
 	rubble->PosX = x;
@@ -3652,18 +3649,15 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	sendTurn (iTurn, Player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (-1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);
 	sendResources (Player);
+
 	// send all units to the client
 	Vehicle = Player->VehicleList;
-	
-	//send backwards to avaid false out of sync detection because of different order of units on client and server
-	while (Vehicle->next)	
-		Vehicle = static_cast<cVehicle*> (Vehicle->next);
-
 	while (Vehicle)
 	{
 		if (!Vehicle->Loaded) resyncVehicle (Vehicle, Player);
-		Vehicle = static_cast<cVehicle*> (Vehicle->prev);
+		Vehicle = static_cast<cVehicle*> (Vehicle->next);
 	}
+
 	Building = Player->BuildingList;
 	while (Building)
 	{
@@ -3777,7 +3771,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	if (vehicle->owner && casualtiesTracker)
 		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->Nr);
 
-	// delete vehicle in the list of he old player
+	// delete vehicle in the list of the old player
 	cPlayer* oldOwner = vehicle->owner;
 	cVehicle* vehicleList = oldOwner->VehicleList;
 	while (vehicleList)
@@ -3801,10 +3795,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	}
 	// add the vehicle to the list of the new player
 	vehicle->owner = newOwner;
-	vehicle->next = newOwner->VehicleList;
-	vehicle->prev = NULL;
-	newOwner->VehicleList->prev = vehicle;
-	newOwner->VehicleList = vehicle;
+	newOwner->addUnitToList (vehicle);
 
 	//the vehicle is fully operational for the new owner
 	if (vehicle->turnsDisabled > 0)

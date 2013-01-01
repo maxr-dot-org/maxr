@@ -615,8 +615,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
-	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID.getBuilding (Player));
-	AddedBuilding->iID = message.popInt16();
+	unsigned int ID = message.popInt16();
+	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID.getBuilding (Player), ID);
 
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
@@ -645,10 +645,10 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
-	cVehicle* AddedVehicle = Player->AddVehicle (PosX, PosY, UnitID.getVehicle (Player));
-	AddedVehicle->iID = message.popInt16();
+	unsigned int ID = message.popInt16();
 	bool bAddToMap = message.popBool();
 
+	cVehicle* AddedVehicle = Player->AddVehicle (PosX, PosY, UnitID.getVehicle (Player), ID);
 	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
 }
 
@@ -693,11 +693,14 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	UnitID.iSecondPart = message.popInt16();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
-	cVehicle* AddedVehicle = Player->AddVehicle (iPosX, iPosY, UnitID.getVehicle (Player));
+	int dir = message.popInt16();
+	int ID = message.popInt16();
+	int version = message.popInt16();
 
-	AddedVehicle->dir = message.popInt16();
-	AddedVehicle->iID = message.popInt16();
-	AddedVehicle->data.version = message.popInt16();
+	cVehicle* AddedVehicle = Player->AddVehicle (iPosX, iPosY, UnitID.getVehicle (Player), ID);
+
+	AddedVehicle->dir = dir;
+	AddedVehicle->data.version = version;
 
 	addUnit (iPosX, iPosY, AddedVehicle, false);
 }
@@ -718,9 +721,9 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	UnitID.iSecondPart = message.popInt16();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
+	int ID = message.popInt16();
 
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID.getBuilding (Player));
-	AddedBuilding->iID = message.popInt16();
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID.getBuilding (Player), ID);
 	AddedBuilding->data.version = message.popInt16();
 	addUnit (iPosX, iPosY, AddedBuilding, false);
 
@@ -1472,16 +1475,22 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_RUBBLE);
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL);
+	
+
+	bool big = message.popBool();
+	int typ = message.popInt16();
+	int value = message.popInt16();
+	unsigned int ID = message.popInt16();
+
+	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, ID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;
 	rubble->prev = NULL;
 
-	rubble->data.isBig = message.popBool();
-	rubble->RubbleTyp = message.popInt16();
-	rubble->RubbleValue = message.popInt16();
-	rubble->iID = message.popInt16();
+	rubble->data.isBig = big;
+	rubble->RubbleTyp = typ;
+	rubble->RubbleValue = value;
 	rubble->PosY = message.popInt16();
 	rubble->PosX = message.popInt16();
 

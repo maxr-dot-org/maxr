@@ -598,10 +598,9 @@ void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
-	cVehicle* vehicle = Server->addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL);
-
 	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
-	vehicle->iID = tmpinteger;
+	cVehicle* vehicle = Server->addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
 
@@ -733,10 +732,9 @@ void cSavegame::loadBuilding (TiXmlElement* unitNode, sID& ID)
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
-	cBuilding* building = Server->addUnit (x, y, &UnitsData.building[number], owner, true);
-
 	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
-	building->iID = tmpinteger;
+	cBuilding* building = Server->addUnit (x, y, &UnitsData.building[number], owner, true, tmpinteger);
+
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
 

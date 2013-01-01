@@ -163,12 +163,14 @@ public:
 	void setClan (int newClan);
 	int getClan() const { return clan; }
 
+	void addUnitToList (cUnit* addedUnit);
+
 private:
 	void refreshSentryAir();
 	void refreshSentryGround();
 
-	cVehicle* AddVehicle (int posx, int posy, sVehicle* v);
-	cBuilding* addBuilding (int posx, int posy, sBuilding* b);
+	cVehicle* AddVehicle (int posx, int posy, sVehicle* v, unsigned int ID);
+	cBuilding* addBuilding (int posx, int posy, sBuilding* b, unsigned int ID);
 
 	int clan;
 };

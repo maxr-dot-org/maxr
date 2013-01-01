@@ -172,7 +172,7 @@ void cGameTimerClient::run ()
 			Client->doGameActions();
 
 			//check crc
-			localChecksum = calcPlayerChecksum (*Client->getActivePlayer ());
+			localChecksum = calcClientChecksum();
 			debugRemoteChecksum = remoteChecksum;
 			if ( localChecksum != remoteChecksum )
 			{
@@ -268,31 +268,58 @@ void cGameTimerServer::run ()
 	{
 		for (size_t i = 0; i < Server->PlayerList->Size(); i++)
 		{
-			const cPlayer &player = *(*Server->PlayerList)[i];
+			cPlayer *player = (*Server->PlayerList)[i];
 
 			cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
 			message->pushInt32 (gameTime);	
-			Uint32 checkSum = calcPlayerChecksum (player);
+			Uint32 checkSum = calcServerChecksum (player);
 			message->pushInt32 (checkSum);
-			Server->sendNetMessage (message, player.Nr);
+			Server->sendNetMessage (message, player->Nr);
 		}
 	}
 }
 
-Sint32 calcPlayerChecksum(const cPlayer& player)
+Uint32 calcClientChecksum()
 {
 	Uint32 crc = 0;
-	cVehicle* vehicle = player.VehicleList;
-	while (vehicle)
+	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
 	{
-		crc = calcCheckSum(vehicle->iID,  crc );
-		crc = calcCheckSum(vehicle->PosX, crc );
-		crc = calcCheckSum(vehicle->PosY, crc );
-		crc = calcCheckSum(vehicle->OffX, crc );
-		crc = calcCheckSum(vehicle->OffY, crc );
-		crc = calcCheckSum(vehicle->dir,  crc );
+		cVehicle* vehicle = (*Client->getPlayerList())[i]->VehicleList;
+		while (vehicle)
+		{
+			crc = calcCheckSum(vehicle->iID,  crc );
+			crc = calcCheckSum(vehicle->PosX, crc );
+			crc = calcCheckSum(vehicle->PosY, crc );
+			crc = calcCheckSum(vehicle->OffX, crc );
+			crc = calcCheckSum(vehicle->OffY, crc );
+			crc = calcCheckSum(vehicle->dir,  crc );
 
-		vehicle = (cVehicle*) vehicle->next;
+			vehicle = (cVehicle*) vehicle->next;
+		}
+	}
+	return crc;
+}
+
+Uint32 calcServerChecksum(cPlayer* player)
+{
+	Uint32 crc = 0;
+	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	{
+		cVehicle* vehicle = (*Server->PlayerList)[i]->VehicleList;
+		while (vehicle)
+		{
+			if (vehicle->seenByPlayerList.Contains (player) || vehicle->owner == player)
+			{
+				crc = calcCheckSum(vehicle->iID,  crc );
+				crc = calcCheckSum(vehicle->PosX, crc );
+				crc = calcCheckSum(vehicle->PosY, crc );
+				crc = calcCheckSum(vehicle->OffX, crc );
+				crc = calcCheckSum(vehicle->OffY, crc );
+				crc = calcCheckSum(vehicle->dir,  crc );
+			}
+
+			vehicle = (cVehicle*) vehicle->next;
+		}
 	}
 	return crc;
 }

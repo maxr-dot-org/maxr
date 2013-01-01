@@ -34,8 +34,8 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
-	: iID (0)
+cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner, unsigned int ID)
+	: iID (ID)
 	, PosX (0)
 	, PosY (0)
 	, dir (0)

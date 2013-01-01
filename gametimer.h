@@ -89,7 +89,8 @@ public:
 
 };
 
-int calcPlayerChecksum(const cPlayer& player);
+Uint32 calcClientChecksum();
+Uint32 calcServerChecksum(cPlayer* player);
 
 void compareGameData();
 

@@ -435,8 +435,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true);
-	cBuilding* addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit = false);
+	cVehicle* addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
+	cBuilding* addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath

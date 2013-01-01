@@ -39,7 +39,7 @@ public:
 		kUTVehicle
 	};
 
-	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
+	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
 	bool isVehicle() const { return unitType == kUTVehicle; }
@@ -92,7 +92,7 @@ public:
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
-	unsigned int iID; ///< the identification number of this unit
+	const unsigned int iID; ///< the identification number of this unit
 	int PosX, PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
 	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
