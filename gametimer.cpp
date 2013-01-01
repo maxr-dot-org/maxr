@@ -7,6 +7,8 @@
 #include "clientevents.h"
 #include "events.h"
 
+bool cGameTimer::syncDebugSingleStep = false;
+
 Uint32 cGameTimer::gameTimerCallback (Uint32 interval, void* arg)
 {
 	reinterpret_cast<cGameTimer*> (arg)->timerCallback();
@@ -178,6 +180,9 @@ void cGameTimerClient::run ()
 				Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 			}
 
+			if (syncDebugSingleStep)
+				compareGameData();
+
 			nextMsgIsNextGameTime = false;
 
 			//send "still alive" message to server
@@ -213,6 +218,16 @@ void cGameTimerServer::handleSyncMessage(cNetMessage &message)
 
 bool cGameTimerServer::nextTickAllowed ()
 {
+
+	if (syncDebugSingleStep)
+	{
+		cPlayer* player = Server->getPlayerFromNumber(0);
+		if (getReceivedTime(0) < gameTime)
+				return false;
+
+		return true;
+	}
+
 	int newWaitingForPlayer = -1;
 
 	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
@@ -280,4 +295,27 @@ Sint32 calcPlayerChecksum(const cPlayer& player)
 		vehicle = (cVehicle*) vehicle->next;
 	}
 	return crc;
+}
+
+void compareGameData()
+{
+	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
+	{
+		cPlayer* clientPlayer = (*Client->getPlayerList())[i];
+
+		cVehicle* clientVehicle = clientPlayer->VehicleList;
+		cVehicle* serverVehicle;
+		while (clientVehicle)
+		{
+			serverVehicle = (cVehicle*) Server->getUnitFromID(clientVehicle->iID);
+
+			assert(clientVehicle->PosX == serverVehicle->PosX);
+			assert(clientVehicle->PosY == serverVehicle->PosY);
+			assert(clientVehicle->OffX == serverVehicle->OffX);
+			assert(clientVehicle->OffY == serverVehicle->OffY);
+			assert(clientVehicle->dir == serverVehicle->dir);
+
+			clientVehicle = (cVehicle*) clientVehicle->next;
+		}
+	}
 }

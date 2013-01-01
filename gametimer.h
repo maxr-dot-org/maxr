@@ -51,6 +51,7 @@ public:
 	void start ();
 	void stop ();
 
+	static bool syncDebugSingleStep;
 };
 
 class cGameTimerServer : public cGameTimer
@@ -89,5 +90,7 @@ public:
 };
 
 int calcPlayerChecksum(const cPlayer& player);
+
+void compareGameData();
 
 #endif

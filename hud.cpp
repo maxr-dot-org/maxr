@@ -2494,6 +2494,7 @@ void cGameGUI::doCommand (const string& cmd)
 	else if (cmd.compare ("/ajobs off") == 0) { debugOutput.debugAjobs = false;}
 	else if (cmd.compare ("/players on") == 0) { debugOutput.debugPlayers = true;}
 	else if (cmd.compare ("/players off") == 0) { debugOutput.debugPlayers = false;}
+	else if (cmd.compare ("/singlestep") == 0) { cGameTimer::syncDebugSingleStep = !cGameTimer::syncDebugSingleStep;}
 	else if (cmd.substr (0, 12).compare ("/cache size ") == 0)
 	{
 		int size = atoi (cmd.substr (12, cmd.length()).c_str());
