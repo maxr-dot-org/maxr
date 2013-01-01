@@ -238,9 +238,7 @@ public:
 	bool bSoundRunning;
 
 	sWaypoint* Waypoints;
-	sWaypoint* lastWaypoints;
 
-	void setVehicleToCoords (int x, int y, int height);
 	bool generateFromMessage (cNetMessage* message);
 
 	void release();

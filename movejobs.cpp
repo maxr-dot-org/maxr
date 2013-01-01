@@ -919,8 +919,7 @@ void cEndMoveAction::executeAttackAction()
 }
 
 cClientMoveJob::cClientMoveJob (int iSrcOff, int iDestOff, cVehicle* Vehicle) :
-	Waypoints (NULL),
-	lastWaypoints (NULL)
+	Waypoints (NULL)
 {
 	DestX = iDestOff % Client->getMap()->size;
 	DestY = iDestOff / Client->getMap()->size;
@@ -959,7 +958,6 @@ void cClientMoveJob::init (int iSrcOff, cVehicle* Vehicle)
 	bEndForNow = false;
 	bSoundRunning = false;
 	iSavedSpeed = 0;
-	lastWaypoints = NULL;
 	bSuspended = false;
 
 	if (Vehicle->ClientMoveJob)
@@ -981,12 +979,6 @@ cClientMoveJob::~cClientMoveJob()
 		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
-	while (lastWaypoints)
-	{
-		NextWaypoint = lastWaypoints->next;
-		delete lastWaypoints;
-		lastWaypoints = NextWaypoint;
-	}
 
 	for (unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++)
 	{
@@ -997,73 +989,6 @@ cClientMoveJob::~cClientMoveJob()
 		}
 	}
 	delete endMoveAction;
-}
-
-void cClientMoveJob::setVehicleToCoords (int x, int y, int height)
-{
-	if (x == Waypoints->X && y == Waypoints->Y) return;
-
-	Log.write (" Client: mjob: setting vehicle " + iToStr (Vehicle->iID) + " to position " + iToStr (x) + " : " + iToStr (y), cLog::eLOG_TYPE_NET_DEBUG);
-	//determine direction
-	bool bForward = false;
-	sWaypoint* Waypoint = Waypoints;
-	while (Waypoint)
-	{
-		if (Waypoint->X == x && Waypoint->Y == y)
-		{
-			bForward = true;
-			break;
-		}
-		Waypoint = Waypoint->next;
-	}
-
-
-	Map->moveVehicle (Vehicle, x, y, height);
-
-	if (bForward)
-	{
-		Waypoint = Waypoints;
-		while (Waypoint)
-		{
-			if (Waypoint->X != x || Waypoint->Y != y)
-			{
-				Vehicle->DecSpeed (Waypoint->next->Costs);
-				Waypoints = Waypoints->next;
-				Waypoint->next = lastWaypoints;
-				lastWaypoints = Waypoint;
-
-				Waypoint = Waypoints;
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-	else
-	{
-		Waypoint = lastWaypoints;
-		while (Waypoint)
-		{
-			Vehicle->DecSpeed (-Waypoints->Costs);
-			lastWaypoints = lastWaypoints->next;
-			Waypoint->next = Waypoints;
-			Waypoints = Waypoint;
-			if (Waypoint->X == x && Waypoint->Y == y)
-			{
-				break;
-			}
-			Waypoint = lastWaypoints;
-		}
-	}
-
-	calcNextDir();
-	Vehicle->owner->DoScan();
-	Client->gameGUI.updateMouseCursor();
-	Client->gameGUI.callMiniMapDraw();
-	Vehicle->moving = false;
-	Vehicle->OffX = Vehicle->OffY = 0;
-
 }
 
 bool cClientMoveJob::generateFromMessage (cNetMessage* message)
@@ -1337,8 +1262,7 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	sWaypoint* Waypoint = Waypoints;
 	Waypoints = Waypoints->next;
-	Waypoint->next = lastWaypoints;
-	lastWaypoints = Waypoint;
+	delete Waypoint;
 
 	Vehicle->moving = false;
 
