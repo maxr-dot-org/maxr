@@ -149,6 +149,8 @@ void cServerGame::run()
 				Server->HandleNetMessage (event);
 			else
 				handleNetMessage (event);
+
+			Server->checkPlayerUnits();
 		}
 
 		// don't do anything if games hasn't been started yet!
@@ -165,7 +167,7 @@ void cServerGame::run()
 			}
 		}
 
-		if (event == 0)
+		if (!event && !Server->gameTimer.timer10ms) //nothing to do
 			SDL_Delay (10);
 	}
 	if (Server)

@@ -273,6 +273,7 @@ void cServer::run()
 		if (event)
 		{
 			HandleNetMessage (event);
+			checkPlayerUnits();
 		}
 
 		// don't do anything if games hasn't been started yet!
@@ -290,14 +291,11 @@ void cServer::run()
 
 void cServer::doGameActions()
 {
-	checkPlayerUnits ();
 	checkDeadline ();
 	handleMoveJobs ();
+	runJobs ();
 	handleWantEnd ();
-	if (gameTimer.timer10ms)
-	{
-		runJobs ();
-	}
+	checkPlayerUnits ();
 }
 
 //-------------------------------------------------------------------------------------
@@ -2517,7 +2515,17 @@ void cServer::checkPlayerUnits()
 						NextVehicle->seenByPlayerList.Add (MapPlayer);
 						sendAddEnemyUnit (NextVehicle, MapPlayer->Nr);
 						sendUnitData (NextVehicle, MapPlayer->Nr);
-						if (NextVehicle->ServerMoveJob) sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
+						if (NextVehicle->ServerMoveJob)
+						{
+							sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
+							if (NextVehicle->MoveJobActive)
+							{
+								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
+								message->pushChar (MJOB_OK);
+								message->pushInt16 (NextVehicle->iID);
+								Server->sendNetMessage (message, MapPlayer->Nr);
+							}
+						}
 					}
 				}
 				else

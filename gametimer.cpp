@@ -258,23 +258,20 @@ void cGameTimerServer::run ()
 		if (nextTickAllowed ())
 		{
 			gameTime++;
-		}
-	}
+			handleTimer ();
+			Server->doGameActions ();
 
-	handleTimer ();
-	Server->doGameActions ();
-		
-	if (timer10ms)
-	{
-		for (size_t i = 0; i < Server->PlayerList->Size(); i++)
-		{
-			cPlayer *player = (*Server->PlayerList)[i];
+			for (size_t i = 0; i < Server->PlayerList->Size(); i++)
+			{
+				cPlayer *player = (*Server->PlayerList)[i];
 
-			cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
-			message->pushInt32 (gameTime);	
-			Uint32 checkSum = calcServerChecksum (player);
-			message->pushInt32 (checkSum);
-			Server->sendNetMessage (message, player->Nr);
+				cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
+				message->pushInt32 (gameTime);	
+				Uint32 checkSum = calcServerChecksum (player);
+				message->pushInt32 (checkSum);
+				Server->sendNetMessage (message, player->Nr);
+			}
+
 		}
 	}
 }
