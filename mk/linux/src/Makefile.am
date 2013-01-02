@@ -15,8 +15,10 @@ drawingcache.cpp \
 events.cpp \
 extendedtinyxml.cpp \
 files.cpp \
+gametimer.cpp \
 hud.cpp \
 input.cpp \
+jobs.cpp \
 keys.cpp \
 language.cpp \
 loaddata.cpp \
