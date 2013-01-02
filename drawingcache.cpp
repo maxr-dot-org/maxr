@@ -324,6 +324,12 @@ bool cDrawingCache::canCache (cBuilding* building)
 
 bool cDrawingCache::canCache (cVehicle* vehicle)
 {
+	if ((vehicle->IsBuilding || vehicle->IsClearing) && vehicle->job)
+	{
+		notCached++;
+		return false;
+	}
+
 	if (vehicle->StartUp)
 	{
 		notCached++;
