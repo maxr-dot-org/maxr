@@ -11,7 +11,7 @@ class cNetMessage;
 #define MAX_CLIENT_LAG 30
 #define PAUSE_GAME_TIMEOUT 200
 #define MAX_SERVER_EVENT_COUNTER 15
-#define MAX_WAITING_FOR_SERVER 10
+#define MAX_WAITING_FOR_SERVER 50
 
 //TODO: comments
 class cGameTimer

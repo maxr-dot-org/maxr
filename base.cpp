@@ -841,7 +841,7 @@ void sSubBase::makeTurnend()
 				sendUnitData (Building, Building->seenByPlayerList[j]->Nr);
 			}
 		}
-		if (Building->hasBeenAttacked) Building->hasBeenAttacked = false;
+		Building->hasBeenAttacked = false;
 
 		// reload:
 		if (Building->data.canAttack && Building->data.ammoCur == 0 && Metal > 0)
