@@ -256,7 +256,7 @@
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, drücke F2 um das Warten abzubrechen"/>
-      <Frozen ENG="You have been frozen by the server." localized="Du wurdest vom Server eingefroren."/>
+      <Pause ENG="Game has been paused." localized="Pause"/>
 			<Save_Only_Host ENG="Only the host can save games." localized="Nur der Server kann Spielstände speichern"/>
 			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
 			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
@@ -271,6 +271,9 @@
 			<MapDL_Download localized="Karte %s vom Server an."/>
 			<MapDL_DownloadRequestInvalid localized="Karte nicht installiert: Die Karte %s"/>
 			<MapDL_DownloadInvalid localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
+      <No_Response localized="Warte auf Netzwerkantwort von Spieler %s"/>
+      <Wait_TurnEnd localized="Rundenende wird ausgeführt." />
+      <Wait_For_Server localized="Warte auf Netzwerkantwort vom Server" />
 		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Damage" localized="Angriff"/>

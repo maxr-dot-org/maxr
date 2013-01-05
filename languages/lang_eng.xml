@@ -264,7 +264,7 @@
 			<Lost_Connection ENG="Lost connection to %s."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting."/>
-			<Frozen ENG="You have been frozen by the server."/>
+			<Pause ENG="Game has been paused."/>
 			<Save_Only_Host ENG="Only the host can save games."/>
 			<Player_Joined ENG="%s has joined"/>
 			<Player_Left ENG="%s has left"/>
@@ -279,7 +279,10 @@
 			<MapDL_Download ENG="map %s from server."/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
-		</Multiplayer>
+      <No_Response ENG="Waiting for network response from player %s"/>
+      <Wait_TurnEnd ENG="Please wait while turn end is executed." />
+      <Wait_For_Server ENG="Waiting for network response from server" />
+    </Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
 			<Shoots ENG="Shoots"/>
