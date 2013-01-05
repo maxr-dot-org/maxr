@@ -156,6 +156,11 @@ public:
 	*return 0 on succes, -1 if an error occurs
 	*/
 	int connect();
+
+	/**
+	* checks whether the given socket is connected
+	*/
+	bool isConnected (int socketNr);
 	/**
 	* Closes the connection to the socket.
 	*@author alzi alias DoctorDeath

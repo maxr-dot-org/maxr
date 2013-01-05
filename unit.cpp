@@ -34,8 +34,8 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
-	: iID (0)
+cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner, unsigned int ID)
+	: iID (ID)
 	, PosX (0)
 	, PosY (0)
 	, dir (0)
@@ -52,6 +52,7 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner)
 	, owner (owner)
 	, unitType (unitType)
 	, isOriginalName (true)
+	, job (NULL)
 {
 	if (unitData != 0)
 		data = *unitData;
@@ -957,17 +958,19 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 //--------------------------------------------------------------------------
 /** Returns the screen x position of the unit */
 //--------------------------------------------------------------------------
-int cUnit::getScreenPosX() const
+int cUnit::getScreenPosX (bool movementOffset) const
 {
-	return 180 - ( (int) ( (Client->gameGUI.getOffsetX() - getMovementOffsetX()) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosX;
+	int offset = movementOffset ? getMovementOffsetX() : 0;
+	return 180 - ( (int) ( (Client->gameGUI.getOffsetX() - offset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosX;
 }
 
 //--------------------------------------------------------------------------
 /** Returns the screen y position of the unit */
 //--------------------------------------------------------------------------
-int cUnit::getScreenPosY() const
+int cUnit::getScreenPosY(bool movementOffset) const
 {
-	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - getMovementOffsetY()) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
+	int offset = movementOffset ? getMovementOffsetY() : 0;
+	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - offset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
 }
 
 //-----------------------------------------------------------------------------
@@ -983,16 +986,16 @@ void cUnit::center() const
 //-----------------------------------------------------------------------------
 /** Draws the ammunition bar over the unit */
 //-----------------------------------------------------------------------------
-void cUnit::drawMunBar() const
+void cUnit::drawMunBar (const SDL_Rect& screenPos) const
 {
 	if (owner != Client->getActivePlayer())
 		return;
 
 	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize() / 10 + 1;
+	r1.x = screenPos.x + Client->gameGUI.getTileSize() / 10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize() / 10 + Client->gameGUI.getTileSize() / 8;
+	r1.y = screenPos.y + Client->gameGUI.getTileSize() / 10 + Client->gameGUI.getTileSize() / 8;
 
 	if (r1.h <= 2)
 	{
@@ -1018,13 +1021,13 @@ void cUnit::drawMunBar() const
 //------------------------------------------------------------------------
 /** draws the health bar over the unit */
 //--------------------------------------------------------------------------
-void cUnit::drawHealthBar() const
+void cUnit::drawHealthBar (const SDL_Rect& screenPos) const
 {
 	SDL_Rect r1, r2;
-	r1.x = getScreenPosX() + Client->gameGUI.getTileSize() / 10 + 1;
+	r1.x = screenPos.x + Client->gameGUI.getTileSize() / 10 + 1;
 	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
 	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = getScreenPosY() + Client->gameGUI.getTileSize() / 10;
+	r1.y = screenPos.y + Client->gameGUI.getTileSize() / 10;
 
 	if (data.isBig)
 	{
@@ -1051,7 +1054,7 @@ void cUnit::drawHealthBar() const
 }
 
 //-----------------------------------------------------------------------------
-void cUnit::drawStatus() const
+void cUnit::drawStatus(const SDL_Rect& screenPos) const
 {
 	SDL_Rect dest;
 	SDL_Rect speedSymbol = {244, 97, 8, 10};
@@ -1062,14 +1065,14 @@ void cUnit::drawStatus() const
 	{
 		if (Client->gameGUI.getTileSize() < 25)
 			return;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 12;
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() / 2 - 12;
+		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 12;
+		dest.y = screenPos.y + Client->gameGUI.getTileSize() / 2 - 12;
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
 	}
 	else
 	{
-		dest.y = getScreenPosY() + Client->gameGUI.getTileSize() - 11;
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 4;
+		dest.y = screenPos.y + Client->gameGUI.getTileSize() - 11;
+		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 4;
 		if (data.isBig)
 		{
 			dest.y += (Client->gameGUI.getTileSize() / 2);
@@ -1084,7 +1087,7 @@ void cUnit::drawStatus() const
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
 		}
 
-		dest.x = getScreenPosX() + Client->gameGUI.getTileSize() / 2 - 4;
+		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 4;
 		if (data.shotsCur)
 		{
 			if (data.speedCur)

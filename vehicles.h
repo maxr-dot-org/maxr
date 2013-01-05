@@ -117,7 +117,7 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (sVehicle* v, cPlayer* Owner);
+	cVehicle (sVehicle* v, cPlayer* Owner, unsigned int ID);
 	~cVehicle();
 
 	int OffX, OffY;  // Offset während der Bewegung

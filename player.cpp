@@ -206,18 +206,14 @@ void cPlayer::setClan (int newClan)
 //--------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
 //--------------------------------------------------------------------------
-cVehicle* cPlayer::AddVehicle (int posx, int posy, sVehicle* v)
+cVehicle* cPlayer::AddVehicle (int posx, int posy, sVehicle* v, unsigned int ID)
 {
-	cVehicle* n = new cVehicle (v, this);
+	cVehicle* n = new cVehicle (v, this ,ID);
 	n->PosX = posx;
 	n->PosY = posy;
-	n->prev = NULL;
-	if (VehicleList != NULL)
-	{
-		VehicleList->prev = n;
-	}
-	n->next = VehicleList;
-	VehicleList = n;
+	
+	addUnitToList (n);
+
 	drawSpecialCircle (n->PosX, n->PosY, n->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
 	if (n->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectLandMap, (int) sqrt ( (double) MapSize));
 	if (n->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int) sqrt ( (double) MapSize));
@@ -265,22 +261,59 @@ void cPlayer::InitMaps (int MapSizeX, cMap* map)
 	memset (DetectMinesMap, 0, MapSize);
 }
 
+void cPlayer::addUnitToList (cUnit* addedUnit)
+{
+	//units in the linked list are sorted in increasing order of IDs
+
+	//find unit before the added unit
+	cUnit* prevUnit = addedUnit->isBuilding() ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+	if (prevUnit && prevUnit->iID > addedUnit->iID)
+		prevUnit = NULL;
+
+	while (prevUnit && prevUnit->next && prevUnit->next->iID < addedUnit->iID)
+		prevUnit = prevUnit->next;
+
+	//find unit after the added unit
+	cUnit* nextUnit = NULL;
+	if (prevUnit)
+		nextUnit = prevUnit->next;
+	else
+		nextUnit = addedUnit->isBuilding() ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+
+	//link addedUnit
+	addedUnit->prev = prevUnit;
+	addedUnit->next = nextUnit;
+
+	//link prevUnit
+	if (prevUnit)
+	{
+		prevUnit->next = addedUnit;
+	}
+	else
+	{
+		if (addedUnit->isBuilding ())
+			BuildingList = (cBuilding*) addedUnit;
+		else
+			VehicleList = (cVehicle*) addedUnit;
+	}
+
+	//link nextUnit
+	if (nextUnit)
+		nextUnit->prev = addedUnit;
+}
+
 //--------------------------------------------------------------------------
 /** Adds the building to the list of the player */
 //--------------------------------------------------------------------------
-cBuilding* cPlayer::addBuilding (int posx, int posy, sBuilding* b)
+cBuilding* cPlayer::addBuilding (int posx, int posy, sBuilding* b, unsigned int ID)
 {
-	cBuilding* Building = new cBuilding (b, this, &base);
+	cBuilding* Building = new cBuilding (b, this, &base, ID);
 
 	Building->PosX = posx;
 	Building->PosY = posy;
-	Building->prev = NULL;
-	if (BuildingList != NULL)
-	{
-		BuildingList->prev = Building;
-	}
-	Building->next = BuildingList;
-	BuildingList = Building;
+	
+	addUnitToList (Building);
+
 	if (Building->data.scan)
 	{
 		if (Building->data.isBig) drawSpecialCircleBig (Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
@@ -979,28 +1012,27 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 				i--;
 				continue;
 			}
-			const int spx = elem->v->getScreenPosX();
-			const int spy = elem->v->getScreenPosY();
+			const SDL_Rect screenPos = {elem->v->getScreenPosX(), elem->v->getScreenPosY(), 0, 0};
 
 			if (gameGUI.scanChecked())
 			{
 				if (elem->v->data.isBig)
-					drawCircle (spx + tileSize, spy + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
+					drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
 				else
-					drawCircle (spx + tileSize / 2, spy + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
+					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
-				elem->v->drawMunBar();
+				elem->v->drawMunBar(screenPos);
 			if (gameGUI.hitsChecked())
-				elem->v->drawHealthBar();
+				elem->v->drawHealthBar(screenPos);
 		}
 		else if (elem->b)
 		{
@@ -1011,33 +1043,32 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 				i--;
 				continue;
 			}
-			const int spx = elem->b->getScreenPosX();
-			const int spy = elem->b->getScreenPosY();
+			const SDL_Rect screenPos = {elem->b->getScreenPosX(), elem->b->getScreenPosY(), 0, 0};
 
 			if (gameGUI.scanChecked())
 			{
 				if (elem->b->data.isBig)
-					drawCircle (spx + tileSize,
-								spy + tileSize,
+					drawCircle (screenPos.x + tileSize,
+								screenPos.y + tileSize,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 				else
-					drawCircle (spx + tileSize / 2,
-								spy + tileSize / 2,
+					drawCircle (screenPos.x + tileSize / 2,
+								screenPos.y + tileSize / 2,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) && !elem->b->data.explodesOnContact)
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR))
-				drawCircle (spx + tileSize / 2,
-							spy + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2,
+							screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 
 			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
-				elem->b->drawMunBar();
+				elem->b->drawMunBar(screenPos);
 			if (gameGUI.hitsChecked())
-				elem->b->drawHealthBar();
+				elem->b->drawHealthBar(screenPos);
 		}
 	}
 }

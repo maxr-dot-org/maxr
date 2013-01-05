@@ -471,10 +471,6 @@ string cNetMessage::getTypeAsString() const
 			return string ("GAME_EV_FREEZE");
 		case GAME_EV_UNFREEZE:
 			return string ("GAME_EV_UNFREEZE");
-		case GAME_EV_WAIT_RECON:
-			return string ("GAME_EV_WAIT_RECON");
-		case GAME_EV_ABORT_WAIT_RECON:
-			return string ("GAME_EV_ABORT_WAIT_RECON");
 		case GAME_EV_DEL_PLAYER:
 			return string ("GAME_EV_DEL_PLAYER");
 		case GAME_EV_IDENTIFICATION:
@@ -565,6 +561,10 @@ string cNetMessage::getTypeAsString() const
 			return string ("GAME_EV_END_MOVE_ACTION_SERVER");
 		case GAME_EV_END_MOVE_ACTION:
 			return string ("GAME_EV_END_MOVE_ACTION");
+		case NET_GAME_TIME_SERVER:
+			return string("NET_GAME_TIME_SERVER");
+		case NET_GAME_TIME_CLIENT:
+			return string("NET_GAME_TIME_CLIENT");
 		default:
 			return iToStr (iType);
 	}

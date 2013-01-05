@@ -42,6 +42,21 @@ class cClient;
 
 #define MAX_SAVE_POSITIONS	4
 
+
+/** structure for the messages displayed in the game */
+struct sMessage
+{
+public:
+	sMessage (std::string const&, unsigned int age);
+	~sMessage();
+
+public:
+	char*        msg;
+	int          chars;
+	int          len;
+	unsigned int age;
+};
+
 struct sHudStateContainer
 {
 	bool tntChecked;
@@ -94,8 +109,53 @@ enum eMouseInputMode
 	stealMode
 };
 
+
+/**
+ * This class draws all the debug output on the screen. It is an seperate class, so you can add an "friend class cDebugOutput;" to the class, 
+ * which contains the data to display. So there is no need to make members public only to use them in the debug output.
+ *@author eiko
+ */
+class cDebugOutput
+{
+public:
+	/** show infos about the running attackjobs */
+	bool debugAjobs;
+	/** show infos about the bases of the server. Only works on the host */
+	bool debugBaseServer;
+	/** show infos about the bases of the client */
+	bool debugBaseClient;
+	/** show infos about the sentries */
+	bool debugSentry;
+	/** show FX-infos */
+	bool debugFX;
+	/** show infos from the server about the unit under the mouse */
+	bool debugTraceServer;
+	/** show infos from the client about the unit under the mouse */
+	bool debugTraceClient;
+	/** show infos from the client about the unit under the mouse */
+	bool debugPlayers;
+	/** show FPS information */
+	bool showFPS;
+	/** show drawing cache debug information */
+	bool debugCache;
+	bool debugSync;
+
+	//data for debugSync
+	unsigned int remoteChecksum;
+	unsigned int localChecksum;
+
+	cDebugOutput();
+	void draw();
+private:
+	void trace();
+	void traceVehicle (cVehicle* vehicle, int* iY, int iX);
+	void traceBuilding (cBuilding* Building, int* iY, int iX);
+};
+
 class cGameGUI : public cMenu
 {
+	friend class cDebugOutput;
+	
 	cClient* client;
 	SDL_Surface* panelTopGraphic, *panelBottomGraphic;
 
@@ -105,6 +165,10 @@ class cGameGUI : public cMenu
 	cList<cVehicle*> selectedVehiclesGroup;
 	/** the currently selected building */
 	cBuilding* selectedBuilding;
+	/** list with all messages */
+	cList<sMessage*> messages;
+	/** Coordinates to a important message */
+	int msgCoordsX, msgCoordsY;
 
 	cPlayer* player;
 	cMap* map;
@@ -140,26 +204,7 @@ class cGameGUI : public cMenu
 	/** true when the FLC-animation should be played */
 	bool playFLC;
 
-	/** show infos about the running attackjobs */
-	bool debugAjobs;
-	/** show infos about the bases of the server. Only works on the host */
-	bool debugBaseServer;
-	/** show infos about the bases of the client */
-	bool debugBaseClient;
-	/** show infos about the sentries */
-	bool debugSentry;
-	/** show FX-infos */
-	bool debugFX;
-	/** show infos from the server about the unit under the mouse */
-	bool debugTraceServer;
-	/** show infos from the client about the unit under the mouse */
-	bool debugTraceClient;
-	/** show infos from the client about the unit under the mouse */
-	bool debugPlayers;
-	/** show FPS information */
-	bool showFPS;
-	/** show drawing cache debug information */
-	bool debugCache;
+	cDebugOutput debugOutput;
 
 	/** displays additional information about the players in the game */
 	bool showPlayers;
@@ -195,15 +240,16 @@ class cGameGUI : public cMenu
 	void drawConnectors (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawPlanes (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawResources (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
-	void drawDebugSentry();
 	void drawSelectionBox (int zoomOffX, int zoomOffY);
 	void drawUnitCircles();
-	void drawDebugOutput();
 
 	void displayMessages();
 
 	void scaleSurfaces();
 	void scaleColors();
+
+	/** handles the game messages	*/
+	void handleMessages();
 
 	/**
 	* opens or closes the panal over the hud
@@ -211,28 +257,6 @@ class cGameGUI : public cMenu
 	*@param bOpen if true the panal will be opened, else closed
 	*/
 	void makePanel (bool open);
-
-	/**
-	* shows the information for the field under the mouse
-	*@author alzi alias DoctorDeath
-	*/
-	void trace();
-	/**
-	* displays information about the vehicle on the screen
-	*@author alzi alias DoctorDeath
-	*@param Vehicle The vehicle for that the information should be displayed
-	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
-	*@param iX The X coords where the text should be drawn
-	*/
-	void traceVehicle (cVehicle* vehicle, int* iY, int iX);
-	/**
-	* displays information about the building on the screen
-	*@author alzi alias DoctorDeath
-	*@param Building The building for that the information should be displayed
-	*@param iY pointer to the Y coords where the text should be drawn. this value will be increased
-	*@param iX The X coords where the text should be drawn
-	*/
-	void traceBuilding (cBuilding* Building, int* iY, int iX);
 
 	/**
 	* displays the effects
@@ -377,13 +401,31 @@ class cGameGUI : public cMenu
 	static void unitNameReturnPressed (void* parent);
 
 	void recalcPosition (bool resetItemPositions);
+	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
+
 public:
 	cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList);
 	~cGameGUI();
 
+	/** SDL_Timer for animations */
+	SDL_TimerID TimerID;
+	/** will be incremented by the Timer */
+	unsigned int iTimerTime;
+	/** gui timers for animations only */
+	bool timer10ms, timer50ms, timer100ms, timer400ms;
+	void handleTimer();
+	void Timer();
+
+	/** Adds an message to be displayed in the game */
+	void addMessage (const std::string& sMsg);
+	/** displays a message with 'goto' coordinates */
+	std::string addCoords (const std::string& msg, int x, int y);
+
 	void setClient (cClient* client);
 	int show();
 	void returnToCallback();
+
+	void updateInfoTexts();
 
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
@@ -457,7 +499,7 @@ public:
 	unsigned int getFrame() const { return frame; }
 	unsigned int getBlinkColor() const { return blinkColor; }
 
-	bool getAJobDebugStatus() const { return debugAjobs; }
+	bool getAJobDebugStatus() const { return debugOutput.debugAjobs; }
 
 	float getWindDir() const { return windDir; }
 
@@ -482,9 +524,6 @@ public:
 	void selectUnit (cVehicle* vehicle);
 	void selectUnit (cBuilding* building);
 	void deselectUnit();
-
-
-	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
 
 	/**
 	* activates 'mode' if not active, activates 'normalInput' otherwise

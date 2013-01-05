@@ -27,6 +27,7 @@ class cPlayer;
 class cMap;
 class cVehicle;
 class cGameGUI;
+class cJob;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -38,7 +39,7 @@ public:
 		kUTVehicle
 	};
 
-	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner);
+	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
 	bool isVehicle() const { return unitType == kUTVehicle; }
@@ -64,15 +65,15 @@ public:
 	virtual void executeLayMinesCommand() {}
 	virtual void executeClearMinesCommand() {}
 
-	int getScreenPosX() const;
-	int getScreenPosY() const;
+	int getScreenPosX (bool movementOffset = true) const;
+	int getScreenPosY (bool movementOffset = true) const;
 	void center() const;
 
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
 
-	void drawMunBar() const;
-	void drawHealthBar() const;
+	void drawMunBar( const SDL_Rect& screenPos ) const;
+	void drawHealthBar( const SDL_Rect& screenPos ) const;
 	void rotateTo (int newDir);
 
 	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
@@ -91,7 +92,7 @@ public:
 	//------------------------------- public members: TODO: make protected and make getters/setters
 
 	sUnitData data; ///< basic data of the unit
-	unsigned int iID; ///< the identification number of this unit
+	const unsigned int iID; ///< the identification number of this unit
 	int PosX, PosY;
 	int dir; // ?Frame of the unit/current direction the unit is facing?
 	int turnsDisabled;  ///< the number of turns this unit will be disabled, 0 if the unit is active
@@ -112,6 +113,7 @@ public:
 	cList<cPlayer*> seenByPlayerList; ///< a list were the numbers of all players who can see this unit are stored in
 	cList<cPlayer*> detectedByPlayerList; ///< a list were the numbers of all players who have deteced this unit are stored in
 
+	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
 
 	//-----------------------------------------------------------------------------
 protected:
@@ -120,7 +122,7 @@ protected:
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
 	std::string name;		// name of the building
 
-	void drawStatus() const;
+	void drawStatus (const SDL_Rect& screenPos) const;
 	int getNumberOfMenuEntries() const;
 
 	virtual bool isUnitLoaded() const { return false; }

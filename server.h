@@ -24,6 +24,7 @@
 #include "ringbuffer.h"
 #include "main.h" // for sID
 #include "map.h"
+#include "gametimer.h"
 
 class cPlayer;
 class cServerAttackJob;
@@ -33,6 +34,7 @@ class cBuilding;
 class cUnit;
 struct sVehicle;
 class cCasualtiesTracker;
+class cJob;
 
 /**
 * The Types which are possible for a game
@@ -73,6 +75,8 @@ struct sLandingUnit;
 class cServer
 {
 	friend class cSavegame;
+	friend class cServerGame;
+	friend class cDebugOutput;
 public:
 	/**
 	 * initialises the server class. turnLimit and scoreLimit should not
@@ -86,20 +90,28 @@ public:
 	 */
 	cServer (cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
 	void setDeadline (int iDeadline);
+	void stop ();
 	~cServer();
 
+	
 private:
+	/** controls the timesynchonous actions on server and client */
+	cGameTimerServer gameTimer;
+	/** little helper jobs, that do some time dependent actions */
+	cList<cJob*> helperJobs;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
-
+	
 	/** the thread the server runs in */
 	SDL_Thread* ServerThread;
 	/** true if the server should exit and end his thread */
 	bool bExit;
 
 
+	/** the server is on halt, because a client is nor responding */
+	int waitForPlayer;
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
 	/** true if this is a hotseat game */
@@ -128,12 +140,6 @@ private:
 	int iWantPlayerEndNum;
 	/** The ID for the next unit*/
 	unsigned int iNextUnitID;
-	/** will be incremented by the Timer */
-	unsigned int iTimerTime;
-	/** diffrent timers */
-	bool timer50ms, timer100ms, timer400ms;
-	/** ID of the timer */
-	SDL_TimerID TimerID;
 	/** if this is true the map will be opened for a defeated player */
 	bool openMapDefeat;
 	/** List with disconnected players */
@@ -142,11 +148,17 @@ private:
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
 	int savingIndex;
+	/** stores the gametime of the last turn end. */
+	unsigned int lastTurnEnd;
+	/** sever is executon all remaining movements, before turn end is processed */
+	bool executingRemainingMovements;
 
 	/** victory conditions. One or both must be zero. **/
 	int turnLimit, scoreLimit;
 
 	cCasualtiesTracker* casualtiesTracker;
+
+	sFreezeModes freezeModes;
 public:
 	cCasualtiesTracker* getCasualtiesTracker() {return casualtiesTracker;}
 
@@ -266,11 +278,6 @@ public:
 	*/
 	void checkDeadline();
 	/**
-	* handles the timers timer50ms, timer100ms and timer400ms
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTimer();
-	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
 	*/
@@ -284,6 +291,7 @@ private:
 	int getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 						 int newDamage, int newMaxShots, int newRange, int newMaxAmmo,
 						 int newArmor, int newMaxHitPoints, int newScan, int newMaxSpeed);
+
 	/**
 	* changes the owner of a vehicle
 	*@author alzi alias DoctorDeath
@@ -301,6 +309,9 @@ private:
 	 */
 	int deleteBuildings (cBuildingIterator building);
 
+	void runJobs ();
+	void releaseJob (cUnit* unit);
+
 public:
 	/** the map */
 	cMap* Map;
@@ -312,6 +323,8 @@ public:
 	cList<cPlayer*>* PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
+
+	void addJob (cJob* job);
 
 	/**
 	 * gets the unit with the ID
@@ -390,6 +403,12 @@ public:
 	void run();
 
 	/**
+	* this function is responsible for running all periodically actions on the game modell
+	*@author eiko
+	*/
+	void doGameActions ();
+
+	/**
 	* deletes a Unit
 	*@author alzi alias DoctorDeath
 	*@param unit the unit which should be deleted.
@@ -416,8 +435,8 @@ public:
 	*@param Player Player whose vehicle should be added.
 	*@param bInit true if this is a initialisation call.
 	*/
-	cVehicle* addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true);
-	cBuilding* addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit = false);
+	cVehicle* addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
+	cBuilding* addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath
@@ -432,11 +451,6 @@ public:
 	 *
 	 */
 	void correctLandingPos (int& iX, int& iY);
-	/**
-	* increments the iTimeTimer.
-	*@author alzi alias DoctorDeath
-	*/
-	void Timer();
 	/**
 	* adds a report to the reportlist
 	*@author alzi alias DoctorDeath
@@ -484,6 +498,9 @@ public:
 	int getTurn() const;
 
 	bool isTurnBasedGame() const { return bPlayTurns; }
+
+	void enableFreezeMode  (eFreezeMode mode, int playerNumber = -1);
+	void disableFreezeMode (eFreezeMode mode);
 
 } EX* Server;
 

@@ -52,7 +52,6 @@ public:
 	*/
 	void restoreBack (SDL_Surface* sf);
 	void GetPos();
-	void setPos (int px, int py);
 	void getCursorOffset (int& x, int& y) const;
 	bool moved();
 	void Show() {LastX = -100; visible = true;}

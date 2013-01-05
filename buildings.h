@@ -128,7 +128,7 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base);
+	cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID);
 	~cBuilding();
 
 	sBuilding* typ;  // Typ des Buildings

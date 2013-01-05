@@ -189,7 +189,7 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 
 	// init client and his players
 	Client = new cClient (map, &players);
-	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->bWaitForOthers = true;
+	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	for (unsigned int i = 0; i < players.Size(); i++)
 	{
 		players[i]->InitMaps (map->size, map);
@@ -223,6 +223,10 @@ void cGameDataContainer::runGame (int playerNr, bool reconnect)
 	}
 	players.Clear();
 
+	if (isServer)
+	{
+		Server->stop ();
+	}
 	delete Client;
 	Client = NULL;
 
@@ -283,7 +287,8 @@ void cGameDataContainer::runSavedGame (int player)
 		delete clientPlayerList[i];
 	}
 	clientPlayerList.Clear();
-
+	
+	Server->stop ();
 	delete Client;
 	Client = NULL;
 	delete Server;
@@ -627,8 +632,9 @@ int cMenu::show()
 		EventHandler->HandleEvents();
 		if (Client)
 		{
-			Client->doGameActions();
-			if (Client->timer100ms) Client->gameGUI.incFrame();
+			Client->gameTimer.run ();
+			Client->gameGUI.handleTimer();
+			Client->runFX();
 		}
 
 		// check whether the resolution has been changed
@@ -832,7 +838,7 @@ void cMainMenu::infoImageReleased (void* parent)
 //------------------------------------------------------------------------------
 cStartMenu::cStartMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"));
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"),FONT_LATIN_NORMAL);
 	titleLabel->setCentered (true);
 	menuItems.Add (titleLabel);
 
@@ -2604,6 +2610,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 
 			draw();
+			mouseMoved(this);	//update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
 			ActiveMenu = NULL;
@@ -3437,6 +3444,7 @@ bool cNetworkHostMenu::runSavedGame()
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
+	Server->stop ();
 	delete Client;
 	Client = NULL;
 	delete Server;

@@ -46,10 +46,11 @@ using namespace std;
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base)
+cBuilding::cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID)
 	: cUnit (cUnit::kUTBuilding,
-			 ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
-			 Owner)
+			( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
+			 Owner,
+			 ID)
 {
 	RubbleTyp = 0;
 	RubbleValue = 0;
@@ -253,7 +254,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	float factor = (float) gameGUI.getTileSize() / (float) 64.0;
 
 	// draw the damage effects
-	if (gameGUI.getClient()->timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
+	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
 		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense);
@@ -301,7 +302,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	if (StartUp)
 	{
-		if (gameGUI.getClient()->timer100ms)
+		if (gameGUI.timer100ms)
 			StartUp += 25;
 
 		if (StartUp >= 255)
@@ -317,7 +318,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 		CHECK_SCALING (typ->eff, typ->eff_org, factor);
 		SDL_BlitSurface (typ->eff, NULL, buffer, &tmp);
 
-		if (gameGUI.getClient()->timer100ms)
+		if (gameGUI.timer100ms)
 		{
 			if (EffectInc)
 			{
@@ -444,15 +445,15 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar();
+		drawHealthBar (*screenPos);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
-		drawMunBar();
+		drawMunBar (*screenPos);
 
 	//draw status
 	if (gameGUI.statusChecked())
-		drawStatus();
+		drawStatus (*screenPos);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())

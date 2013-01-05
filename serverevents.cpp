@@ -278,33 +278,18 @@ void sendDoStopWork (cBuilding* building)
 //-------------------------------------------------------------------------------------
 void sendNextMove (cVehicle* vehicle, int iType, int iSavedSpeed)
 {
-	char height = 0;
-	cVehicleIterator planes = (*Server->Map) [vehicle->PosX + vehicle->PosY * Server->Map->size].getPlanes();
-	while (!planes.end)
-	{
-		if (planes == vehicle)
-			height = planes.getIndex();
-		planes++;
-	}
-
 	for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 		if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
-		message->pushChar (height);
 		message->pushChar (iType);
-		message->pushInt16 (vehicle->PosY);
-		message->pushInt16 (vehicle->PosX);
 		message->pushInt16 (vehicle->iID);
 		Server->sendNetMessage (message, vehicle->seenByPlayerList[i]->Nr);
 	}
 
 	cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 	if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
-	message->pushChar (height);
 	message->pushChar (iType);
-	message->pushInt16 (vehicle->PosY);
-	message->pushInt16 (vehicle->PosX);
 	message->pushInt16 (vehicle->iID);
 	Server->sendNetMessage (message, vehicle->owner->Nr);
 }
@@ -665,25 +650,20 @@ void sendDefeated (cPlayer* Player, int iPlayer)
 }
 
 //-------------------------------------------------------------------------------------
-void sendWaitReconnect (int iPlayer)
-{
-	cNetMessage* message = new cNetMessage (GAME_EV_WAIT_RECON);
-	Server->sendNetMessage (message, iPlayer);
-}
-
-//-------------------------------------------------------------------------------------
-void sendAbortWaitReconnect (int iPlayer)
-{
-	cNetMessage* message = new cNetMessage (GAME_EV_ABORT_WAIT_RECON);
-	Server->sendNetMessage (message, iPlayer);
-}
-
-//-------------------------------------------------------------------------------------
-void sendFreeze (bool sendNotification, int iPlayer)
+void sendFreeze (eFreezeMode mode, int waitForPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_FREEZE);
-	message->pushBool (sendNotification);
-	Server->sendNetMessage (message, iPlayer);
+	message->pushInt16 (waitForPlayer);
+	message->pushInt16 (mode);
+	Server->sendNetMessage (message, -1);
+}
+
+//-------------------------------------------------------------------------------------
+void sendUnfreeze (eFreezeMode mode)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_UNFREEZE);
+	message->pushInt16 (mode);
+	Server->sendNetMessage (message, -1);
 }
 
 //-------------------------------------------------------------------------------------
@@ -691,13 +671,6 @@ void sendWaitFor (int waitForPlayerNr, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WAIT_FOR);
 	message->pushInt16 (waitForPlayerNr);
-	Server->sendNetMessage (message, iPlayer);
-}
-
-//-------------------------------------------------------------------------------------
-void sendUnfreeze (int iPlayer)
-{
-	cNetMessage* message = new cNetMessage (GAME_EV_UNFREEZE);
 	Server->sendNetMessage (message, iPlayer);
 }
 
@@ -963,6 +936,14 @@ void sendClans (const cList<cPlayer*>* playerList, cPlayer* toPlayer)
 		message->pushChar ( (*playerList) [i]->Nr);
 	}
 	Server->sendNetMessage (message, toPlayer->Nr);
+}
+
+//-------------------------------------------------------------------------------------
+void sendGameTime(cPlayer* player, int gameTime)
+{
+	cNetMessage* message = new cNetMessage (GAME_EV_SET_GAME_TIME);
+	message->pushInt32 (gameTime);
+	Server->sendNetMessage (message, player->Nr);
 }
 
 //-------------------------------------------------------------------------------------

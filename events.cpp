@@ -19,6 +19,7 @@
 #include "events.h"
 #include "network.h"
 #include "serverevents.h"
+#include "clientevents.h"
 #include "menuevents.h"
 #include "netmessage.h"
 #include "client.h"
@@ -31,11 +32,30 @@
 
 void cEventHandling::pushEvent (cNetMessage* message)
 {
-	eventQueue.write (message);
+
+	if (Client && message->iType == NET_GAME_TIME_SERVER )
+	{
+		//this is a preview for the client to know how many sync messages are in queue
+		//used to detect a growing lag behind the server time
+		message->popInt32();
+		unsigned int receivedTime = message->popInt32();
+		message->rewind();
+
+		eventQueue.write (message);
+
+		Client->gameTimer.setReceivedTime (receivedTime);
+	}
+	else
+	{
+		eventQueue.write (message);
+	}
 }
 
 void cEventHandling::HandleEvents()
 {
+	if (!Client)
+		handleNetMessages();
+	
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{
@@ -67,7 +87,7 @@ void cEventHandling::HandleEvents()
 					Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
 					SDL_SaveBMP (screen, screenshotfile.c_str());
 					if (Client != 0)
-						Client->addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
+						Client->gameGUI.addMessage (lngPack.i18n ("Text~Comp~Screenshot_Done", screenshotfile));
 				}
 				else
 				{
@@ -83,16 +103,19 @@ void cEventHandling::HandleEvents()
 				Quit();
 				break;
 			}
-
 			default:
 				break;
 		}
 	}
+}
 
+void cEventHandling::handleNetMessages ()
+{
 	cNetMessage* message;
-	while (eventQueue.size() > 0)
+	while (eventQueue.size() > 0 && (!Client || !Client->gameTimer.nextMsgIsNextGameTime))
 	{
 		message = eventQueue.read();
+
 		switch (message->getClass())
 		{
 			case NET_MSG_CLIENT:
@@ -132,3 +155,4 @@ void cEventHandling::HandleEvents()
 		delete message;
 	}
 }
+

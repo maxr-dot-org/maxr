@@ -415,6 +415,30 @@ private:
 
 } EX UnitsData;
 
+struct sFreezeModes
+{
+	sFreezeModes();
+
+	bool waitForOthers;		//waiting for the others turn, in turn based mode
+	bool waitForServer;		//waiting response from server
+	bool waitForReconnect;	//game is paused, because the connection to a player is lost
+	bool waitForTurnEnd;	//server is processing the turn end
+	bool pause;				//pause, because... pause
+	bool waitForPlayer;		//waiting for response from a client
+
+	int  playerNumber;
+};
+enum eFreezeMode 
+{ 
+	FREEZE_NONE,
+	FREEZE_WAIT_FOR_SERVER,		//waiting response from server
+	FREEZE_WAIT_FOR_OTHERS,		//waiting for the others turn, in turn based mode
+	FREEZE_PAUSE,				//pause, because... pause
+	FREEZE_WAIT_FOR_RECONNECT,	//game is paused, because the connection to a player is lost
+	FREEZE_WAIT_FOR_TURNEND,	//server is processing the turn end
+	FREEZE_WAIT_FOR_PLAYER		//waiting for response from a client
+};
+
 // OtherData - Class containing the rest of surfaces //////////////////////////
 class cOtherData
 {
@@ -463,6 +487,9 @@ int random (int x);
 /**Converts integer to string
 */
 std::string iToStr (int x);
+/**Converts integer to string in hex representation
+*/
+std::string iToHex ( unsigned int x);
 /**Converts double to string
 */
 std::string dToStr (double x);

@@ -82,6 +82,7 @@ enum SERVER_EVENT_TYPES
 	// DEDICATED_SERVER
 	GAME_EV_WANT_DISCONNECT,		// the player wants to disconnect (but later reconnect to the dedicated server)
 	GAME_EV_REQUEST_CASUALTIES_REPORT, // a client wants to have the current casualties data
+	NET_GAME_TIME_CLIENT,			//reports the current gametime of the client to server
 };
 
 /**
@@ -100,7 +101,7 @@ void sendAddUnit (int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int 
 *@param unit unit that has to be deleted
 *@param iClient The client who schould receive this event. -1 for all Clients who can see the unit
 */
-void sendDeleteUnit (cUnit* unit, int iCLient);
+void sendDeleteUnit (cUnit* unit, int iClient);
 void sendDeleteUnitMessage (cUnit* unit, int playerNr);  ///< playerNr must be the number of a valid player
 /**
 * adds a rubble object to the client
@@ -250,30 +251,19 @@ void sendNoFog (int iPlayer);
 */
 void sendDefeated (cPlayer* Player, int iPlayerNum = -1);
 /**
-* sends that a client has to wait untill a player reconnects
-*@author alzi alias DoctorDeath
-*/
-void sendWaitReconnect (int iPlayer = -1);
-/**
-* sends that a client has to abort waiting for the reconnection
-*@author alzi alias DoctorDeath
-*/
-void sendAbortWaitReconnect (int iPlayer = -1);
-/**
 * sends that a client has to wait untill he will be defrezzed
-*@author alzi alias DoctorDeath
+*@param waitForPlayer tells the client, for which other player he is waiting
 */
-void sendFreeze (bool sendNotification, int iPlayer = -1);
+void sendFreeze (eFreezeMode mode, int waitForPlayer);
+/**
+* sends that the client can abort waiting
+*/
+void sendUnfreeze (eFreezeMode mode);
 /**
 * sends that a client has to wait for another player to end his turn
 *@author alzi alias DoctorDeath
 */
 void sendWaitFor (int waitForPlayerNr, int iPlayer = -1);
-/**
-* sends that the client can abort waiting
-*@author alzi alias DoctorDeath
-*/
-void sendUnfreeze (int iPlayer = -1);
 /**
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath
@@ -302,6 +292,7 @@ void sendResearchSettings (cList<cBuilding*>& researchCentersToChangeArea, cList
 void sendResearchLevel (cResearch* researchLevel, int player);
 void sendRefreshResearchCount (int player);
 void sendClansToClients (const cList<cPlayer*>* playerList);
+void sendGameTime(cPlayer* player, int gameTime);
 void sendSetAutomoving (cVehicle* Vehicle);
 /**
 * sends the result of a infiltrating action to the client

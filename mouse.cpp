@@ -127,7 +127,7 @@ void cMouse::restoreBack (SDL_Surface* sf)
 	SDL_BlitSurface (back, NULL, sf, &dest);
 }
 
-// Liest die aktuelle Mausposition aus:
+//updates the internal mouse position
 void cMouse::GetPos()
 {
 	SDL_GetMouseState (&x, &y);
@@ -138,29 +138,9 @@ void cMouse::GetPos()
 
 	getCursorOffset (offX, offY);
 
-	if (offX == 0 && offY == 0)
-	{
-		if (x > Video.getResolutionX() - cur->w)
-		{
-			x = Video.getResolutionX() - cur->w;
-			SDL_WarpMouse (x, y);
-		}
-		if (y > Video.getResolutionY() - cur->h)
-		{
-			y = Video.getResolutionY() - cur->h;
-			SDL_WarpMouse (x, y);
-		}
-	}
-
 	DrawX = x + offX;
 	DrawY = y + offY;
 }
-// sets the mouse cursor to the given coordinates in windowspace
-void cMouse::setPos (int px, int py)
-{
-	SDL_WarpMouse (px, py);
-}
-
 
 // gets the cursor offset. transforms screenspace to clickspace
 void cMouse::getCursorOffset (int& x, int& y) const

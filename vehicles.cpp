@@ -44,8 +44,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cVehicle::cVehicle (sVehicle* v, cPlayer* Owner)
-	: cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner)
+cVehicle::cVehicle (sVehicle* v, cPlayer* Owner, unsigned int ID)
+	: cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID)
 {
 	typ = v;
 	BandX = 0;
@@ -123,14 +123,14 @@ cVehicle::~cVehicle()
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
 	//make damage effect
-	if (gameGUI.getClient()->timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
+	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
 		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense);
 	}
 
 	//make landing and take off of planes
-	if (data.factorAir > 0 && gameGUI.getClient()->timer50ms)
+	if (data.factorAir > 0 && gameGUI.timer50ms)
 	{
 		if (canLand (*gameGUI.getClient()->getMap()))
 		{
@@ -145,7 +145,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// make the dithering
-	if (gameGUI.getClient()->timer100ms)
+	if (gameGUI.timer100ms)
 	{
 		if (FlightHigh > 0)
 		{
@@ -168,19 +168,10 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	//rotate vehicles to the right direction for building/clearing
-	if ( (IsBuilding || IsClearing) && gameGUI.getClient()->timer100ms)
-	{
-		if (data.isBig)
-			dir = 0;
-		else
-			rotateTo (0);
-	}
-
 	//run start up effect
 	if (StartUp)
 	{
-		if (gameGUI.getClient()->timer50ms)
+		if (gameGUI.timer50ms)
 			StartUp += 25;
 
 		if (StartUp >= 255)
@@ -193,9 +184,9 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	if (IsBuilding && dir == 0 && BigBetonAlpha < 255)
+	if (IsBuilding && !job && BigBetonAlpha < 255)
 	{
-		if (gameGUI.getClient()->timer50ms)
+		if (gameGUI.timer50ms)
 			BigBetonAlpha += 25;
 
 		if (BigBetonAlpha > 255)
@@ -206,11 +197,9 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	int ox = (int) (OffX * gameGUI.getZoom());
 	int oy = (int) (OffY * gameGUI.getZoom());
 
-	if (!IsBuilding && !IsClearing)
-	{
-		screenPosition.x += ox;
-		screenPosition.y += oy;
-	}
+	screenPosition.x += ox;
+	screenPosition.y += oy;
+
 	if (FlightHigh > 0)
 	{
 		screenPosition.x += ditherX;
@@ -257,6 +246,13 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		screenPosition.y -= ditherY;
 	}
 
+	//remove movement offset for working units
+	if (IsBuilding || IsClearing)
+	{
+		screenPosition.x -= ox;
+		screenPosition.y -= oy;
+	}
+
 	// draw indication, when building is complete
 	if (IsBuilding && BuildRounds == 0  && owner == gameGUI.getClient()->getActivePlayer() && !BuildPath)
 	{
@@ -280,7 +276,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		t = d;
 		SDL_FillRect (buffer, &d, nr);
 		d = t;
-		d.y = screenPosition.y + 2 + oy;
+		d.y = screenPosition.y + 2;
 		d.w = 3;
 		d.h = max;
 		t = d;
@@ -400,15 +396,15 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar();
+		drawHealthBar (screenPosition);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack)
-		drawMunBar();
+		drawMunBar (screenPosition);
 
 	//draw status info
 	if (gameGUI.statusChecked())
-		drawStatus();
+		drawStatus (screenPosition);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -456,7 +452,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || (IsClearing && data.isBig)) && dir == 0)
+	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL)
 	{
 		//draw beton if nessesary
 		tmp = dest;
@@ -488,7 +484,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		return;
 	}
 
-	if ( (IsClearing && !data.isBig) && dir == 0)
+	if ( (IsClearing && !data.isBig) && job == NULL)
 	{
 		// draw shadow
 		tmp = dest;

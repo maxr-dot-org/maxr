@@ -84,7 +84,7 @@ cAutoMJob::~cAutoMJob()
 void cAutoMJob::DoAutoMove()
 {
 	if (vehicle->isBeeingAttacked) return;
-	if (Client->bWaitForOthers) return;
+	if (Client->isFreezed ()) return;
 	if (vehicle->owner != Client->getActivePlayer()) return;
 
 	if (vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished)
@@ -294,14 +294,14 @@ void cAutoMJob::PlanLongMove()
 		else
 		{
 			string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
-			Client->getActivePlayer()->addSavedReport (Client->addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+			Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 			finished = true;
 		}
 	}
 	else
 	{
 		string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		Client->getActivePlayer()->addSavedReport (Client->addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 		finished = true;
 	}
 }

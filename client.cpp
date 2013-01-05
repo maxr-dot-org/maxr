@@ -39,6 +39,8 @@
 #include "vehicles.h"
 #include "player.h"
 #include "casualtiestracker.h"
+#include "gametimer.h"
+#include "jobs.h"
 
 using namespace std;
 
@@ -63,7 +65,7 @@ sFX::sFX (eFXTyps typ, int x, int y)
 	this->typ = typ;
 	PosX = x;
 	PosY = y;
-	StartTime = Client->iTimerTime;
+	StartTime = Client->gameGUI.iTimerTime;
 	param = 0;
 	rocketInfo = NULL;
 	smokeInfo = NULL;
@@ -111,13 +113,6 @@ sFX::~sFX()
 	delete trackInfo;
 }
 
-Uint32 TimerCallback (Uint32 interval, void* arg)
-{
-	reinterpret_cast<cClient*> (arg)->Timer();
-	return interval;
-}
-
-
 //------------------------------------------------------------------------
 // cClient implementation
 //------------------------------------------------------------------------
@@ -128,16 +123,13 @@ cClient* Client = 0; // global instance
 cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map (Map),
 	PlayerList (playerList),
-	gameGUI (NULL, Map, playerList)
+	gameGUI (NULL, Map, playerList),
+	gameTimer ()
 {
 	gameGUI.setClient (this);
-	TimerID = SDL_AddTimer (50, TimerCallback, this);
-	iTimerTime = 0;
 	neutralBuildings = NULL;
 	iObjectStream = -1;
 	bDefeated = false;
-	iMsgCoordsX = -1;
-	iMsgCoordsY = -1;
 	iTurn = 1;
 	bWantToEnd = false;
 	bUpShowTank = true;
@@ -146,23 +138,21 @@ cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	bUpShowBuild = true;
 	bUpShowTNT = false;
 	bAlienTech = false;
-	bWaitForOthers = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
 
 	casualtiesTracker = new cCasualtiesTracker();
+
+	gameTimer.start ();
 }
 
 cClient::~cClient()
 {
+	gameTimer.stop ();
+
 	delete casualtiesTracker;
 
-	SDL_RemoveTimer (TimerID);
 	StopFXLoop (iObjectStream);
-	for (size_t i = 0; i != messages.Size(); ++i)
-	{
-		delete messages[i];
-	}
 	for (size_t i = 0; i != FXList.Size(); ++i)
 	{
 		delete FXList[i];
@@ -187,7 +177,8 @@ void cClient::sendNetMessage (cNetMessage* message)
 {
 	message->iPlayerNr = ActivePlayer->Nr;
 
-	Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	if (message->iType != NET_GAME_TIME_CLIENT)
+		Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	if (!network || network->isHost())
 	{
@@ -201,11 +192,6 @@ void cClient::sendNetMessage (cNetMessage* message)
 		network->send (message->iLength, message->serialize());
 		delete message;
 	}
-}
-
-void cClient::Timer()
-{
-	iTimerTime++;
 }
 
 void cClient::initPlayer (cPlayer* Player)
@@ -284,28 +270,12 @@ void cClient::startGroupMove()
 	}
 }
 
-void cClient::handleTimer()
-{
-	//timer50ms: 50ms
-	//timer100ms: 100ms
-	//timer400ms: 400ms
-
-	static unsigned int iLast = 0;
-	timer50ms = false;
-	timer100ms = false;
-	timer400ms = false;
-	if (iTimerTime != iLast)
-	{
-		iLast = iTimerTime;
-		timer50ms = true;
-		if (iTimerTime & 0x1) timer100ms = true;
-		if ( (iTimerTime & 0x3) == 3) timer400ms = true;
-	}
-}
-
 void cClient::runFX()
 {
-	if (!timer100ms) return;
+	//TODO: add flag "gameTimeSynchronous" for fx
+	//TODO: timerIntervall prüfen
+
+	if (!gameGUI.timer100ms) return;
 	for (unsigned int i = 0; i < FXList.Size(); i++)
 	{
 		sFX* fx = FXList[i];
@@ -567,52 +537,13 @@ void cClient::addFX (sFX* n)
 	}
 }
 
-// Adds an message to be displayed in the game
-void cClient::addMessage (const string& sMsg)
-{
-	sMessage* const Message = new sMessage (sMsg, SDL_GetTicks());
-	messages.Add (Message);
-	if (cSettings::getInstance().isDebug()) Log.write (Message->msg, cLog::eLOG_TYPE_DEBUG);
-}
-
-// displays a message with 'goto' coordinates
-string cClient::addCoords (const string& msg, int x, int y)
-{
-	stringstream strStream;
-	//e.g. [85,22] missel MK I is under attack (F1)
-	strStream << "[" << x << "," << y << "] " << msg << " (" << GetKeyString (KeysList.KeyJumpToAction) << ")";
-	addMessage (strStream.str());
-	iMsgCoordsX = x;
-	iMsgCoordsY = y;
-	return strStream.str();
-}
-
-void cClient::handleMessages()
-{
-	int iHeight = 0;
-	sMessage* message;
-	if (messages.Size() == 0) return;
-	// Alle alten Nachrichten lˆschen:
-	for (int i = (int) messages.Size() - 1; i >= 0; i--)
-	{
-		message = messages[i];
-		if (message->age + MSG_TICKS < SDL_GetTicks() || iHeight > 200)
-		{
-			delete message;
-			messages.Delete (i);
-			continue;
-		}
-		iHeight += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
-	}
-}
-
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE);
 
 	network->close (message.popInt16());
 	string msgString = lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server");
-	addMessage (msgString);
+	gameGUI.addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	//TODO: ask user for reconnect
 }
@@ -627,7 +558,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 		{
 			PlayFX (SoundData.SNDChat);
 			const string msgString = message.popString();
-			addMessage (msgString);
+			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_CHAT);
 			break;
 		}
@@ -635,7 +566,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 		{
 			PlayFX (SoundData.SNDQuitsch);
 			const string msgString = lngPack.i18n (message.popString());
-			addMessage (msgString);
+			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			break;
 		}
@@ -646,7 +577,7 @@ void cClient::HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message)
 			string msgString;
 			if (!inserttext.compare ("")) msgString = lngPack.i18n (translationpath);
 			else msgString = lngPack.i18n (translationpath, inserttext);
-			addMessage (msgString);
+			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			break;
 		}
@@ -684,8 +615,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
-	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID.getBuilding (Player));
-	AddedBuilding->iID = message.popInt16();
+	unsigned int ID = message.popInt16();
+	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID.getBuilding (Player), ID);
 
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
@@ -714,10 +645,10 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
-	cVehicle* AddedVehicle = Player->AddVehicle (PosX, PosY, UnitID.getVehicle (Player));
-	AddedVehicle->iID = message.popInt16();
+	unsigned int ID = message.popInt16();
 	bool bAddToMap = message.popBool();
 
+	cVehicle* AddedVehicle = Player->AddVehicle (PosX, PosY, UnitID.getVehicle (Player), ID);
 	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
 }
 
@@ -762,11 +693,14 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	UnitID.iSecondPart = message.popInt16();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
-	cVehicle* AddedVehicle = Player->AddVehicle (iPosX, iPosY, UnitID.getVehicle (Player));
+	int dir = message.popInt16();
+	int ID = message.popInt16();
+	int version = message.popInt16();
 
-	AddedVehicle->dir = message.popInt16();
-	AddedVehicle->iID = message.popInt16();
-	AddedVehicle->data.version = message.popInt16();
+	cVehicle* AddedVehicle = Player->AddVehicle (iPosX, iPosY, UnitID.getVehicle (Player), ID);
+
+	AddedVehicle->dir = dir;
+	AddedVehicle->data.version = version;
 
 	addUnit (iPosX, iPosY, AddedVehicle, false);
 }
@@ -787,9 +721,9 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	UnitID.iSecondPart = message.popInt16();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
+	int ID = message.popInt16();
 
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID.getBuilding (Player));
-	AddedBuilding->iID = message.popInt16();
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID.getBuilding (Player), ID);
 	AddedBuilding->data.version = message.popInt16();
 	addUnit (iPosX, iPosY, AddedBuilding, false);
 
@@ -810,8 +744,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	if (nextPlayerNum != ActivePlayer->Nr)
 	{
-		bWaitForOthers = true;
-		gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", getPlayerFromNumber (nextPlayerNum)->name), "");
+		enableFreezeMode(FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 		gameGUI.setEndButtonLock (true);
 	}
 }
@@ -844,13 +777,11 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 	{
 		if (iNextPlayerNum != ActivePlayer->Nr)
 		{
-			bWaitForOthers = true;
-			gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", getPlayerFromNumber (iNextPlayerNum)->name), "");
+			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
 		}
 		else
 		{
-			bWaitForOthers = false;
-			gameGUI.setInfoTexts ("", "");
+			disableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 			gameGUI.setEndButtonLock (false);
 		}
 	}
@@ -881,7 +812,7 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 		if (iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1)
 		{
 			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->name) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay));
-			addMessage (msgString);
+			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
 		iTurnTime = iTimeDelay;
@@ -890,7 +821,7 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 	else if (iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1)
 	{
 		string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->name);
-		addMessage (msgString);
+		gameGUI.addMessage (msgString);
 		ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	}
 }
@@ -960,7 +891,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer)
 		{
-			if (Vehicle->turnsDisabled > 0) ActivePlayer->addSavedReport (addCoords (Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
+			if (Vehicle->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
 			Vehicle->owner->DoScan();
 		}
 		Data = &Vehicle->data;
@@ -987,7 +918,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 
 		if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer)
 		{
-			if (Building->turnsDisabled > 0) ActivePlayer->addSavedReport (addCoords (Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Building->PosX, Building->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
+			if (Building->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Building->PosX, Building->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
 			Building->owner->DoScan();
 		}
 		Data = &Building->data;
@@ -1093,7 +1024,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	cClientMoveJob* MoveJob = new cClientMoveJob (iSrcOff, iDestOff, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (&message)) return;
-	Log.write (" Client: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Added received movejob at time "+ iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
@@ -1101,19 +1032,16 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	assert (message.iType == GAME_EV_NEXT_MOVE);
 
 	int iID = message.popInt16();
-	int iDestX = message.popInt16();
-	int iDestY = message.popInt16();
 	int iType = message.popChar();
-	int height = message.popChar();
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
-	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", SrcX: " + iToStr (iDestX) + ", SrcY: " + iToStr (iDestY) + ", Type: " + iToStr (iType), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->ClientMoveJob)
 	{
-		Vehicle->ClientMoveJob->handleNextMove (iDestX, iDestY, iType, iSavedSpeed, height);
+		Vehicle->ClientMoveJob->handleNextMove (iType, iSavedSpeed);
 	}
 	else
 	{
@@ -1187,13 +1115,13 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 			if (!Vehicle->BuildPath)
 			{
 				msgString = lngPack.i18n ("Text~Comp~Producing_Err");
-				addMessage (msgString);
+				gameGUI.addMessage (msgString);
 				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 			}
 			else if (Vehicle->BandX != Vehicle->PosX || Vehicle->BandY != Vehicle->PosY)
 			{
 				msgString =  lngPack.i18n ("Text~Comp~Path_interrupted");
-				addCoords (msgString, Vehicle->PosX, Vehicle->PosY);
+				gameGUI.addCoords (msgString, Vehicle->PosX, Vehicle->PosY);
 				ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID , Vehicle->PosX, Vehicle->PosY);
 			}
 		}
@@ -1210,9 +1138,11 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	int iBuildX = message.popInt16();
 	int iBuildY = message.popInt16();
-	bool bBuildBig = message.popBool();
+	bool buildBig = message.popBool();
+	int oldPosX = Vehicle->PosX;
+	int oldPosY = Vehicle->PosY;
 
-	if (bBuildBig)
+	if (buildBig)
 	{
 		getMap()->moveVehicleBig (Vehicle, iBuildX, iBuildY);
 		Vehicle->owner->DoScan();
@@ -1236,6 +1166,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	}
 
 	Vehicle->IsBuilding = true;
+	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, buildBig));
 
 	if (Vehicle == gameGUI.getSelVehicle())
 	{
@@ -1411,8 +1342,8 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 		sReportMsg += " " + lngPack.i18n ("Text~Comp~Finished2") + ".";
 		if (!bFinishedResearch && playVoice) PlayVoice (VoiceData.VOIStartMore);
 	}
-	addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
-	if (sReportMsg.length() > 0) addMessage (sReportMsg);
+	gameGUI.addMessage (lngPack.i18n ("Text~Comp~Turn_Start") + " " + iToStr (iTurn));
+	if (sReportMsg.length() > 0) gameGUI.addMessage (sReportMsg);
 	string researchMsgString = "";
 	if (bFinishedResearch)
 	{
@@ -1443,7 +1374,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 					researchMsgString += ", ";
 			}
 		}
-		addMessage (researchMsgString);
+		gameGUI.addMessage (researchMsgString);
 	}
 
 	// Save the report
@@ -1544,16 +1475,22 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_RUBBLE);
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL);
+	
+
+	bool big = message.popBool();
+	int typ = message.popInt16();
+	int value = message.popInt16();
+	unsigned int ID = message.popInt16();
+
+	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, ID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;
 	rubble->prev = NULL;
 
-	rubble->data.isBig = message.popBool();
-	rubble->RubbleTyp = message.popInt16();
-	rubble->RubbleValue = message.popInt16();
-	rubble->iID = message.popInt16();
+	rubble->data.isBig = big;
+	rubble->RubbleTyp = typ;
+	rubble->RubbleValue = value;
 	rubble->PosY = message.popInt16();
 	rubble->PosX = message.popInt16();
 
@@ -1598,11 +1535,18 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Log.write ("Client: Can not find vehicle with id " + iToStr (id) + " for clearing", LOG_TYPE_NET_WARNING);
 				break;
 			}
+			int orgX = Vehicle->PosX;
+			int orgY = Vehicle->PosY;
 
 			Vehicle->ClearingRounds = message.popInt16();
 			int bigoffset = message.popInt16();
-			if (bigoffset >= 0) getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+			if (bigoffset >= 0) 
+			{
+				getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+				Vehicle->owner->DoScan ();
+			}
 			Vehicle->IsClearing = true;
+			addJob (new cStartBuildJob(Vehicle, orgX, orgY, (bigoffset > 0)));
 
 			if (gameGUI.getSelVehicle() == Vehicle)
 			{
@@ -1613,7 +1557,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 		break;
 		case 1:
 			// TODO: add blocked message
-			// addMessage ( "blocked" );
+			// gameGUI.addMessage ( "blocked" );
 			break;
 		case 2:
 			Log.write ("Client: warning on start of clearing", LOG_TYPE_NET_WARNING);
@@ -1636,7 +1580,11 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	}
 
 	int bigoffset = message.popInt16();
-	if (bigoffset >= 0) getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+	if (bigoffset >= 0) 
+	{
+		getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+		Vehicle->owner->DoScan ();
+	}
 	Vehicle->IsClearing = false;
 	Vehicle->ClearingRounds = 0;
 
@@ -1667,7 +1615,7 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	}
 	Player->isDefeated = true;
 	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n ("Text~Comp~Defeated");
-	addMessage (msgString);
+	gameGUI.addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 #if 0
 	for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
@@ -1685,32 +1633,17 @@ void cClient::HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FREEZE);
 
-	freeze();
-	if (message.popBool()) gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Frozen"), "");
+	eFreezeMode mode =  (eFreezeMode) message.popInt16 ();
+	int playerNumber = message.popInt16 ();
+	enableFreezeMode (mode, playerNumber);
 }
 
 void cClient::HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_UNFREEZE);
 
-	unfreeze();
-	gameGUI.setInfoTexts ("", "");
-}
-
-void cClient::HandleNetMessage_GAME_EV_WAIT_RECON (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_WAIT_RECON);
-
-	freeze();
-	gameGUI.setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), lngPack.i18n ("Text~Multiplayer~Abort_Waiting"));
-}
-
-void cClient::HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (cNetMessage& message)
-{
-	assert (message.iType == GAME_EV_ABORT_WAIT_RECON);
-
-	unfreeze();
-	gameGUI.setInfoTexts ("", "");
+	eFreezeMode mode = (eFreezeMode) message.popInt16 ();
+	disableFreezeMode (mode);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
@@ -1728,7 +1661,7 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
 	string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->name);
-	addMessage (msgString);
+	gameGUI.addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 
 	deletePlayer (Player);
@@ -1861,24 +1794,18 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 		{
 			vehicle->deleteStoredUnits();
 		}
+		for (cBuilding* building = Player.BuildingList; building; building = static_cast<cBuilding*> (building->next))
+		{
+			building->deleteStoredUnits();
+		}
 
 		while (Player.VehicleList)
 		{
-			cVehicle* vehicle = static_cast<cVehicle*> (Player.VehicleList->next);
-			Player.VehicleList->sentryActive = false;
-			getMap()->deleteVehicle (Player.VehicleList);
-			delete Player.VehicleList;
-			Player.VehicleList = vehicle;
+			deleteUnit(Player.VehicleList);
 		}
 		while (Player.BuildingList)
 		{
-			cBuilding* building = static_cast<cBuilding*> (Player.BuildingList->next);
-			Player.BuildingList->sentryActive = false;
-			Player.BuildingList->deleteStoredUnits();
-
-			getMap()->deleteBuilding (Player.BuildingList);
-			delete Player.BuildingList;
-			Player.BuildingList = building;
+			deleteUnit(Player.BuildingList);
 		}
 	}
 
@@ -1978,7 +1905,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 		ostringstream os;
 		os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << buildingsInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", buildingName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
 		string sTmp (os.str());
-		addMessage (sTmp);
+		gameGUI.addMessage (sTmp);
 		ActivePlayer->addSavedReport (sTmp, sSavedReportMessage::REPORT_TYPE_COMP);
 		if (scanNecessary)
 			ActivePlayer->DoScan();
@@ -2024,7 +1951,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 		os << lngPack.i18n ("Text~Comp~Upgrades_Done") << " " << vehiclesInMsg << " " << lngPack.i18n ("Text~Comp~Upgrades_Done2", vehicleName)  << " (" << lngPack.i18n ("Text~Vehicles~Costs") << ": " << totalCosts << ")";
 
 		string printStr (os.str());
-		addMessage (printStr);
+		gameGUI.addMessage (printStr);
 		ActivePlayer->addSavedReport (printStr, sSavedReportMessage::REPORT_TYPE_COMP);
 	}
 }
@@ -2210,11 +2137,23 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 	vehicle->ClientMoveJob->endMoveAction = new cEndMoveAction (vehicle, destID, type);
 }
 
+void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
+{
+	assert (message.iType == GAME_EV_SET_GAME_TIME);
+	
+	unsigned int newGameTime = message.popInt32 ();
+	gameTimer.gameTime = newGameTime;
 
+	//confirm new time to the server
+	cNetMessage *response = new cNetMessage(NET_GAME_TIME_CLIENT);
+	response->pushInt32 (gameTimer.gameTime);
+	sendNetMessage (response);
+}
 
 int cClient::HandleNetMessage (cNetMessage* message)
 {
-	Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	if ( message->iType != NET_GAME_TIME_SERVER )
+		Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{
@@ -2259,8 +2198,6 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_DEFEATED: HandleNetMessage_GAME_EV_DEFEATED (*message); break;
 		case GAME_EV_FREEZE: HandleNetMessage_GAME_EV_FREEZE (*message); break;
 		case GAME_EV_UNFREEZE: HandleNetMessage_GAME_EV_UNFREEZE (*message); break;
-		case GAME_EV_WAIT_RECON: HandleNetMessage_GAME_EV_WAIT_RECON (*message); break;
-		case GAME_EV_ABORT_WAIT_RECON: HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (*message); break;
 		case GAME_EV_DEL_PLAYER: HandleNetMessage_GAME_EV_DEL_PLAYER (*message); break;
 		case GAME_EV_TURN: HandleNetMessage_GAME_EV_TURN (*message); break;
 		case GAME_EV_HUD_SETTINGS: HandleNetMessage_GAME_EV_HUD_SETTINGS (*message); break;
@@ -2286,6 +2223,8 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_VICTORY_CONDITIONS: HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (*message); break;
 		case GAME_EV_SELFDESTROY: HandleNetMessage_GAME_EV_SELFDESTROY (*message); break;
 		case GAME_EV_END_MOVE_ACTION_SERVER: HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (*message); break;
+		case GAME_EV_SET_GAME_TIME: HandleNetMessage_GAME_EV_SET_GAME_TIME (*message); break;
+		case NET_GAME_TIME_SERVER: gameTimer.handleSyncMessage (*message); break;
 
 		default:
 			Log.write ("Client: Can not handle message type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
@@ -2309,13 +2248,13 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 	{
 		//this unit was captured by an infiltrator
 		PlayVoice (VoiceData.VOIUnitStolenByEnemy);
-		getActivePlayer()->addSavedReport (addCoords (lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
+		getActivePlayer()->addSavedReport (gameGUI.addCoords (lngPack.i18n ("Text~Comp~CapturedByEnemy", AddedVehicle->getDisplayName()), AddedVehicle->PosX, AddedVehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, AddedVehicle->PosX, AddedVehicle->PosY);
 	}
 	else if (AddedVehicle->owner != ActivePlayer)
 	{
 		// make report
 		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->name + ") " + lngPack.i18n ("Text~Comp~Detected");
-		getActivePlayer()->addSavedReport (addCoords (message, iPosX, iPosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
+		getActivePlayer()->addSavedReport (gameGUI.addCoords (message, iPosX, iPosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
 
 		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)
 			PlayVoice (VoiceData.VOISubDetected);
@@ -2487,19 +2426,21 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 
 void cClient::handleEnd()
 {
-	if (bWaitForOthers) return;
+	if (isFreezed ()) return;
 	bWantToEnd = true;
 	sendWantToEndTurn();
 }
 
+
 void cClient::makeHotSeatEnd (int iNextPlayerNum)
 {
 	// clear the messages
-	for (size_t i = 0; i != messages.Size(); ++i)
+	/*for (size_t i = 0; i != messages.Size(); ++i)
 	{
 		delete messages[i];
 	}
 	messages.Clear();
+	*/
 	// save information and set next player
 	/*int iZoom, iX, iY;
 	//ActivePlayer->HotHud = Hud;
@@ -2533,10 +2474,11 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 
 void cClient::handleTurnTime()
 {
+	//TODO: rewrite to gameTime, instead of SDL_Ticks
 	static int lastCheckTime = SDL_GetTicks();
-	if (!timer50ms) return;
+	if (!gameGUI.timer50ms) return;
 	// stop time when waiting for reconnection
-	if (bWaitForOthers)
+	if (isFreezed ())
 	{
 		iStartTurnTime += SDL_GetTicks() - lastCheckTime;
 	}
@@ -2612,12 +2554,18 @@ void cClient::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur)
 		{
 			// rotate vehicle
-			if (timer100ms) Vehicle->rotateTo (MoveJob->iNextDir);
+			if (gameTimer.timer100ms) 
+			{
+				Vehicle->rotateTo (MoveJob->iNextDir);
+			}
 		}
 		else if (Vehicle->MoveJobActive)
 		{
 			// move vehicle
-			if (timer50ms) MoveJob->moveVehicle();
+			if (gameTimer.timer10ms) 
+			{
+				MoveJob->moveVehicle();
+			}
 		}
 	}
 }
@@ -2662,21 +2610,21 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 
 void cClient::doGameActions()
 {
-	handleMessages();
-
-	handleTimer();
-	if (!timer50ms) return;
+	//TODO: gameSynchronous fx actions here
 
 	//run attackJobs
-	cClientAttackJob::handleAttackJobs();
-	//run moveJobs - this has to be called before handling the auto movejobs
-	handleMoveJobs();
-	//run surveyor ai
-	cAutoMJob::handleAutoMoveJobs();
-	//run effects
-	runFX();
+	if (gameTimer.timer50ms)
+		cClientAttackJob::handleAttackJobs();
 
-	handleTurnTime();
+	//run moveJobs - this has to be called before handling the auto movejobs
+	if (gameTimer.timer10ms)
+		handleMoveJobs();
+	
+	//run surveyor ai
+	if (gameTimer.timer50ms)
+		cAutoMJob::handleAutoMoveJobs();
+
+	runJobs ();
 }
 
 sSubBase* cClient::getSubBaseFromID (int iID)
@@ -2728,67 +2676,6 @@ void cClient::destroyUnit (cBuilding* building)
 		addFX (fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
 	}
 }
-
-void cClient::checkVehiclePositions (cNetMessage* message)
-{
-
-	static cList<cVehicle*>  vehicleList;
-	bool lastMessagePart = message->popBool();
-
-	if (vehicleList.Size() == 0 && !lastMessagePart)
-	{
-		//generate list with all vehicles
-		for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
-		{
-			cVehicle* vehicle = (*getPlayerList()) [i]->VehicleList;
-			while (vehicle)
-			{
-				vehicleList.Add (vehicle);
-				vehicle = static_cast<cVehicle*> (vehicle->next);
-			}
-		}
-	}
-
-	//check all sent positions
-	while (message->iLength > 6)
-	{
-		int id = message->popInt32();
-		int PosY = message->popInt16();
-		int PosX = message->popInt16();
-		cVehicle* vehicle = getVehicleFromID (id);
-		if (vehicle == NULL)
-		{
-			Log.write ("   --Vehicle not present, ID: " + iToStr (id), cLog::eLOG_TYPE_NET_ERROR);
-			continue;
-		}
-
-		if (PosX != -1 && PosY != -1 && (vehicle->PosX != PosX || vehicle->PosY != PosY) && !vehicle->ClientMoveJob)
-		{
-			Log.write ("   --wrong position, ID: " + iToStr (id) + ", is: " + iToStr (vehicle->PosX) + ":" + iToStr (vehicle->PosY) + ", should: " + iToStr (PosX) + ":" + iToStr (PosY) , cLog::eLOG_TYPE_NET_ERROR);
-		}
-
-		//remove vehicle from list
-		for (unsigned int i = 0; i < vehicleList.Size(); i++)
-		{
-			if (vehicleList[i] == vehicle)
-			{
-				vehicleList.Delete (i);
-				break;
-			}
-		}
-	}
-
-	if (lastMessagePart)
-	{
-		//check remaining vehicles
-		for (size_t i = 0; i != vehicleList.Size(); ++i)
-		{
-			Log.write ("   --vehicle should not exist, ID: " + iToStr (vehicleList[i]->iID), cLog::eLOG_TYPE_NET_ERROR);
-		}
-		vehicleList.Clear();
-	}
-}
-
 //-------------------------------------------------------------------------------------
 int cClient::getTurn() const
 {
@@ -2801,21 +2688,6 @@ void cClient::getVictoryConditions (int* turnLimit, int* scoreLimit) const
 	*turnLimit = this->turnLimit;
 	*scoreLimit = this->scoreLimit;
 }
-
-//-------------------------------------------------------------------------------------
-void cClient::freeze()
-{
-	bWaitForOthers = true;
-	waitReconnect = true;
-}
-
-//-------------------------------------------------------------------------------------
-void cClient::unfreeze()
-{
-	bWaitForOthers = false;
-	waitReconnect = false;
-}
-
 
 //-------------------------------------------------------------------------------------
 void cClient::deletePlayer (cPlayer* player)
@@ -2835,3 +2707,134 @@ void cClient::deletePlayer (cPlayer* player)
 		}
 	}*/
 }
+
+void cClient::addJob (cJob* job)
+{
+	//only one job per unit
+	releaseJob (job->unit);
+
+	helperJobs.Add (job);
+	job->unit->job = job;
+}
+
+void cClient::runJobs ()
+{
+	for (unsigned int i = 0; i < helperJobs.Size(); i++)
+	{
+		if (!helperJobs[i]->finished)
+		{
+			helperJobs[i]->run (gameTimer);
+		}
+		if (helperJobs[i]->finished)
+		{
+			if (helperJobs[i]->unit)
+				helperJobs[i]->unit->job = NULL;
+			delete helperJobs[i];
+			helperJobs.Delete(i);
+			i--;
+		}
+	}
+}
+
+void cClient::releaseJob (cUnit* unit)
+{
+	if (unit->job)
+	{
+		unit->job->unit = NULL;
+		unit->job->finished = true;
+	}
+}
+
+void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
+{
+	switch (mode)
+	{
+	case FREEZE_WAIT_FOR_SERVER:
+		freezeModes.waitForServer = true;
+		break;
+	case FREEZE_WAIT_FOR_OTHERS:
+		freezeModes.waitForOthers = true;
+		break;
+	case FREEZE_PAUSE:
+		freezeModes.pause = true;
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = true;
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = true;
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = true;		
+		break;
+	}
+
+	if (playerNumber != -1)
+		freezeModes.playerNumber = playerNumber;
+
+	gameGUI.updateInfoTexts();
+}
+
+void cClient::disableFreezeMode (eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_WAIT_FOR_SERVER:
+		freezeModes.waitForServer = false;
+		break;
+	case FREEZE_WAIT_FOR_OTHERS:
+		freezeModes.waitForOthers = false;
+		break;
+	case FREEZE_PAUSE:
+		freezeModes.pause = false;
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = false;
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = false;
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = false;		
+		break;
+	}
+
+	gameGUI.updateInfoTexts ();
+}
+
+bool cClient::isFreezed ()
+{
+	return	freezeModes.pause			||
+			freezeModes.waitForOthers	||
+			freezeModes.waitForPlayer	||
+			freezeModes.waitForReconnect||
+			freezeModes.waitForServer	||
+			freezeModes.waitForTurnEnd;
+}
+
+bool cClient::getFreezeMode(eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		return freezeModes.pause;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		return freezeModes.waitForReconnect;
+	case FREEZE_WAIT_FOR_OTHERS:
+		return freezeModes.waitForOthers;
+	case FREEZE_WAIT_FOR_TURNEND:
+		return freezeModes.waitForTurnEnd;
+	case FREEZE_WAIT_FOR_PLAYER:
+		return freezeModes.waitForPlayer;
+	case FREEZE_WAIT_FOR_SERVER:
+		return freezeModes.waitForServer;
+	default:
+		return false;
+	}
+}
+
+int cClient::getFreezeInfoPlayerNumber ()
+{
+	return freezeModes.playerNumber;
+}
+

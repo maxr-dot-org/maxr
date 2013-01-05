@@ -26,9 +26,9 @@
 #define RANGE_AIR_COLOR		0xFCA800	// color of range circles for air attack
 #define PFEIL_COLOR			0x00FF00	// color of a waypointarrow
 #define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
-#define MOVE_SPEED			7			// speed of vehcilemovements
+#define MOVE_SPEED			2			// speed of vehcilemovements
 #define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
-#define ANIMATION_SPEED		((int)(Client->iTimerTime/(2)))		// this means every 100ms because Client->iTimerTime will increase every 50ms.
+#define ANIMATION_SPEED		((int)(Client->gameGUI.iTimerTime/(2)))		// this means every 100ms because Client->gameGUI.iTimerTime will increase every 50ms.
 #define LANDING_DISTANCE_WARNING	28
 #define LANDING_DISTANCE_TOO_CLOSE	10
 #define MAX_PLANES_PER_FIELD		5
@@ -69,8 +69,6 @@
 # define CHECK_MEMORY //_ASSERTE( _CrtCheckMemory( ) );
 #else
 # define CHECK_MEMORY
-#endif
-
 #endif
 
 //some defines for typical menus
@@ -147,7 +145,7 @@
 # ifdef RELEASE
 #  define PACKAGE_REV "Releaseversion"
 # else
-#  define PACKAGE_REV "SVN Rev 3005"
+#  define PACKAGE_REV "SVN Rev 3067"
 # endif
 #endif
 
@@ -158,8 +156,12 @@
 # define PACKAGE_NAME "M.A.X.R."
 #endif
 
+//#define DEDICATED_SERVER_APPLICATION 1
 #if DEDICATED_SERVER_APPLICATION
 # define DEDICATED_SERVER true
 #else
 # define DEDICATED_SERVER false
 #endif
+
+#endif
+

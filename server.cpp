@@ -35,21 +35,48 @@
 #include "vehicles.h"
 #include "player.h"
 #include "savegame.h"
+#include "gametimer.h"
+#include "jobs.h"
 #if DEDICATED_SERVER_APPLICATION
 #include "dedicatedserver.h"
 #endif
 #include "casualtiestracker.h"
 
-//-------------------------------------------------------------------------------------
-Uint32 ServerTimerCallback (Uint32 interval, void* arg)
+#ifdef _MSC_VER
+#include <windows.h>
+const DWORD MS_VC_EXCEPTION=0x406D1388;
+
+#pragma pack(push,8)
+typedef struct tagTHREADNAME_INFO
 {
-	reinterpret_cast<cServer*> (arg)->Timer();
-	return interval;
-}
+   DWORD dwType; // Must be 0x1000.
+   LPCSTR szName; // Pointer to name (in user addr space).
+   DWORD dwThreadID; // Thread ID (-1=caller thread).
+   DWORD dwFlags; // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+#endif
+
 
 //-------------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
+#if defined _MSC_VER && defined DEBUG //set a readable thread name for debugging
+   THREADNAME_INFO info;
+   info.dwType = 0x1000;
+   info.szName = "Server Thread";
+   info.dwThreadID = -1;
+   info.dwFlags = 0;
+
+   __try
+   {
+      RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+   }
+   __except(EXCEPTION_EXECUTE_HANDLER)
+   {
+   }
+#endif
+
 	cServer* Server = reinterpret_cast<cServer*> (arg);
 	Server->run();
 	return 0;
@@ -59,6 +86,9 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: lastEvent (0)
 	, casualtiesTracker (0)
+	, gameTimer()
+	, lastTurnEnd(0)
+	, executingRemainingMovements(false)
 {
 	assert (! (turnLimit && scoreLimit));
 
@@ -77,9 +107,7 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 	iDeadlineStartTime = 0;
 	iTurnDeadline = 90; // just temporary set to 90 seconds
 	iNextUnitID = 1;
-	iTimerTime = 0;
 	iWantPlayerEndNum = -1;
-	TimerID = SDL_AddTimer (50, ServerTimerCallback, this);
 	savingID = 0;
 	savingIndex = -1;
 
@@ -87,21 +115,46 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 
 	if (!DEDICATED_SERVER)
 		ServerThread = SDL_CreateThread (CallbackRunServerThread, this);
+
+	
+	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
+	gameTimer.start ();
 }
 
+void cServer::stop ()
+{
+	bExit = true;
+	gameTimer.stop ();
+
+	if (!DEDICATED_SERVER)
+	{
+		if (ServerThread)
+		{
+			SDL_WaitThread (ServerThread, NULL);
+			ServerThread = NULL;
+		}
+	}
+}
 //-------------------------------------------------------------------------------------
 cServer::~cServer()
 {
-	bExit = true;
+	
+	stop ();
+
 	if (casualtiesTracker != 0)
 	{
 		delete casualtiesTracker;
 		casualtiesTracker = 0;
 	}
 
-	if (!DEDICATED_SERVER)
-		SDL_WaitThread (ServerThread, NULL);
-	SDL_RemoveTimer (TimerID);
+	//disconect clients
+	if (network)
+	{
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			network->close ((*PlayerList)[i]->iSocketNum);
+		}
+	}
 
 	while (eventQueue.size())
 	{
@@ -170,7 +223,10 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 {
 	message->iPlayerNr = iPlayerNum;
 
-	Log.write ("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	message->serialize();
+	if (message->iType != NET_GAME_TIME_SERVER)
+		Log.write ("Server: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+
 	if (iPlayerNum == -1)
 	{
 		if (network)
@@ -217,21 +273,29 @@ void cServer::run()
 		if (event)
 		{
 			HandleNetMessage (event);
+			checkPlayerUnits();
 		}
 
 		// don't do anything if games hasn't been started yet!
 		if (bStarted)
 		{
-
-			checkPlayerUnits();
-			checkDeadline();
-			handleMoveJobs();
-			handleTimer();
-			handleWantEnd();
+			gameTimer.run ();
 		}
 
-		if (!event) SDL_Delay (10);
+		if (!event && !gameTimer.timer10ms) //nothing to do
+		{
+			SDL_Delay(10);
+		}
 	}
+}
+
+void cServer::doGameActions()
+{
+	checkDeadline ();
+	handleMoveJobs ();
+	runJobs ();
+	handleWantEnd ();
+	checkPlayerUnits ();
 }
 
 //-------------------------------------------------------------------------------------
@@ -288,7 +352,7 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 		// freeze clients
 		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
-			sendWaitReconnect();
+			enableFreezeMode(FREEZE_WAIT_FOR_RECONNECT);
 		sendChatMessageToClient ("Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name);
 
 		DisconnectedPlayerList.Add (Player);
@@ -592,6 +656,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (iBuildOff < 0 || iBuildOff >= Map->size * Map->size) return;
 	int buildX = iBuildOff % Map->size;
 	int buildY = iBuildOff / Map->size;
+	int oldPosX = Vehicle->PosX;
+	int oldPosY = Vehicle->PosY;
 
 	if (Vehicle->data.canBuild.compare (Data.buildAs) != 0) return;
 
@@ -643,6 +709,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (true, Vehicle);
+	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -1313,6 +1380,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
+	Vehicle->owner->DoScan ();
+	addJob (new cStartBuildJob(Vehicle, off % Map->size, off / Map->size, building->data.isBig));
 
 	sendClearAnswer (0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
@@ -1342,6 +1411,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		if (Vehicle->data.isBig)
 		{
 			Map->moveVehicle (Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size);
+			Vehicle->owner->DoScan ();
 			sendStopClear (Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
@@ -1366,16 +1436,8 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 
 	if (DisconnectedPlayerList.Size() < 1) return;
 	// only server player can abort the waiting
-	cPlayer* LocalPlayer = NULL;
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
-	{
-		if ( (*PlayerList) [i]->iSocketNum == MAX_CLIENTS)
-		{
-			LocalPlayer = (*PlayerList) [i];
-			break;
-		}
-	}
-	if (message.iPlayerNr != LocalPlayer->Nr) return;
+	cPlayer* LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
+	if (LocalPlayer->iSocketNum != MAX_CLIENTS) return;
 
 	// delete disconnected players
 	for (unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++)
@@ -1383,7 +1445,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 		deletePlayer (DisconnectedPlayerList[i]);
 		DisconnectedPlayerList.Delete (i);
 	}
-	sendAbortWaitReconnect();
+	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
 }
 
@@ -1426,7 +1488,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	}
 	resyncPlayer (Player);
 
-	sendAbortWaitReconnect();
+	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
 }
 
@@ -1951,6 +2013,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 
 	int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
+
 	if (unit != 0)
 	{
 		unit->changeName (message.popString());
@@ -1976,7 +2039,8 @@ void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 //-------------------------------------------------------------------------------------
 int cServer::HandleNetMessage (cNetMessage* message)
 {
-	Log.write ("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	if (message->iType != NET_GAME_TIME_CLIENT)
+		Log.write ("Server: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{
@@ -2027,6 +2091,7 @@ int cServer::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_WANT_SELFDESTROY: HandleNetMessage_GAME_EV_WANT_SELFDESTROY (*message); break;
 		case GAME_EV_WANT_CHANGE_UNIT_NAME: HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (*message); break;
 		case GAME_EV_END_MOVE_ACTION: HandleNetMessage_GAME_EV_END_MOVE_ACTION (*message); break;
+		case NET_GAME_TIME_CLIENT: gameTimer.handleSyncMessage (*message); break;
 		default:
 			Log.write ("Server: Can not handle message, type " + message->getTypeAsString(), cLog::eLOG_TYPE_NET_ERROR);
 	}
@@ -2210,12 +2275,11 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //-------------------------------------------------------------------------------------
-cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap)
+cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
 {
 	cVehicle* AddedVehicle;
 	// generate the vehicle:
-	AddedVehicle = Player->AddVehicle (iPosX, iPosY, Vehicle);
-	AddedVehicle->iID = iNextUnitID;
+	AddedVehicle = Player->AddVehicle (iPosX, iPosY, Vehicle, ID ? ID : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
@@ -2246,15 +2310,14 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Pl
 }
 
 //-------------------------------------------------------------------------------------
-cBuilding* cServer::addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit)
+cBuilding* cServer::addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
 {
 	cBuilding* AddedBuilding;
 	// generate the building:
-	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building);
+	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building, ID ? ID : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd();
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
-	AddedBuilding->iID = iNextUnitID;
 	iNextUnitID++;
 
 	int iOff = iPosX + Map->size * iPosY;
@@ -2452,7 +2515,17 @@ void cServer::checkPlayerUnits()
 						NextVehicle->seenByPlayerList.Add (MapPlayer);
 						sendAddEnemyUnit (NextVehicle, MapPlayer->Nr);
 						sendUnitData (NextVehicle, MapPlayer->Nr);
-						if (NextVehicle->ServerMoveJob) sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
+						if (NextVehicle->ServerMoveJob)
+						{
+							sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
+							if (NextVehicle->MoveJobActive)
+							{
+								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
+								message->pushChar (MJOB_OK);
+								message->pushInt16 (NextVehicle->iID);
+								Server->sendNetMessage (message, MapPlayer->Nr);
+							}
+						}
 					}
 				}
 				else
@@ -2557,7 +2630,13 @@ void cServer::checkPlayerUnits()
 //-------------------------------------------------------------------------------------
 bool cServer::isPlayerDisconnected (cPlayer* player) const
 {
-	return DisconnectedPlayerList.Contains (player);
+	if (player->iSocketNum == MAX_CLIENTS)
+		return false;
+
+	if (network)
+		return !network->isConnected (player->iSocketNum);
+
+	return true;
 }
 
 //-------------------------------------------------------------------------------------
@@ -2616,10 +2695,7 @@ void cServer::handleEnd (int iPlayerNum)
 		}
 		iTurn++;
 		makeTurnEnd();
-		// send report to player
-		sendMakeTurnEnd (true, false, -1, iPlayerNum);
-		sendTurnReport ( (*PlayerList) [0]);
-		//sendUnfreeze();
+
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || bPlayTurns)
 	{
@@ -2665,7 +2741,6 @@ void cServer::handleEnd (int iPlayerNum)
 		}
 		// send report to next player
 		sendTurnReport ( (*PlayerList) [iActiveTurnPlayerNr]);
-		//sendUnfreeze();
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
@@ -2720,16 +2795,6 @@ void cServer::handleEnd (int iPlayerNum)
 			iTurn++;
 			makeTurnEnd();
 
-			// send reports to all players
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendMakeTurnEnd (true, false, -1, i);
-			}
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendTurnReport ( (*PlayerList) [i]);
-			}
-			//sendUnfreeze();
 		}
 	}
 }
@@ -2737,7 +2802,35 @@ void cServer::handleEnd (int iPlayerNum)
 //-------------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
-	if (!timer50ms) return;
+	if (!gameTimer.timer50ms) return;
+
+	//wait until all clients have reported a gametime that is after the turn end.
+	//that means they have finished prosessing all the turn end messages, and we can start the new turn sumultaiously on all clients
+	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
+	{
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			cPlayer* player = (*PlayerList)[i];
+			if (!isPlayerDisconnected(player) && gameTimer.getReceivedTime(i) <= lastTurnEnd)
+				return;
+		}
+
+		// send reports to all players
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			sendMakeTurnEnd (true, false, -1, i);
+		}
+		for (unsigned int i = 0; i < PlayerList->Size(); i++)
+		{
+			sendTurnReport ( (*PlayerList) [i]);
+		}
+
+		//begin the new turn
+		disableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+	}
+	
+
+
 	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
 	{
 		for (unsigned int i = 0; i < PlayerEndList.Size(); i++)
@@ -2751,7 +2844,9 @@ void cServer::handleWantEnd()
 //-------------------------------------------------------------------------------------
 bool cServer::checkEndActions (int iPlayer)
 {
-	std::string sMessage = "";
+	enableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+
+	std::string sMessage;
 	if (ActiveMJobs.Size() > 0)
 	{
 		sMessage = "Text~Comp~Turn_Wait";
@@ -2767,20 +2862,15 @@ bool cServer::checkEndActions (int iPlayer)
 				if (NextVehicle->ServerMoveJob && NextVehicle->data.speedCur > 0 && !NextVehicle->moving)
 				{
 					// restart movejob
-					NextVehicle->ServerMoveJob->calcNextDir();
-					NextVehicle->ServerMoveJob->bEndForNow = false;
-					NextVehicle->ServerMoveJob->SrcX = NextVehicle->PosX;
-					NextVehicle->ServerMoveJob->SrcY = NextVehicle->PosY;
-					addActiveMoveJob (NextVehicle->ServerMoveJob);
+					NextVehicle->ServerMoveJob->resume();
 					sMessage = "Text~Comp~Turn_Automove";
 				}
 				NextVehicle = static_cast<cVehicle*> (NextVehicle->next);
 			}
 		}
 	}
-	if (sMessage.length() > 0)
+	if (!sMessage.empty())
 	{
-		//sendFreeze( false );
 		if (iPlayer != -1)
 		{
 			if (iWantPlayerEndNum == -1)
@@ -2798,14 +2888,19 @@ bool cServer::checkEndActions (int iPlayer)
 				}
 			}
 		}
+		executingRemainingMovements = true;
 		return true;
 	}
+	executingRemainingMovements = false;
 	return false;
 }
 
 //-------------------------------------------------------------------------------------
 void cServer::makeTurnEnd()
 {
+	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
+	lastTurnEnd = gameTimer.gameTime;
+
 	// reload all buildings
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
@@ -3063,7 +3158,7 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 //-------------------------------------------------------------------------------------
 void cServer::checkDeadline()
 {
-	if (!timer50ms) return;
+	if (!gameTimer.timer50ms) return;
 	Uint32 currentTicks = SDL_GetTicks();
 	if (iTurnDeadline >= 0 && iDeadlineStartTime > 0)
 	{
@@ -3081,17 +3176,9 @@ void cServer::checkDeadline()
 
 			PlayerEndList.Clear();
 
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendMakeTurnEnd (true, false, -1, i);
-			}
 			iTurn++;
 			iDeadlineStartTime = 0;
 			makeTurnEnd();
-			for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			{
-				sendTurnReport ( (*PlayerList) [i]);
-			}
 		}
 	}
 }
@@ -3150,6 +3237,7 @@ void cServer::handleMoveJobs()
 			{
 				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
 				{
+					addJob (new cStartBuildJob(Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
 					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
@@ -3178,44 +3266,31 @@ void cServer::handleMoveJobs()
 				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
 				continue;
 			}
+			if (MoveJob->bEndForNow)
+			{
+				Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
+				sendNextMove (Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
+				ActiveMJobs.Delete (i);
+				continue;
+			}
 		}
 
 		if (MoveJob->iNextDir != Vehicle->dir)
 		{
 			// rotate vehicle
-			if (timer100ms) Vehicle->rotateTo (MoveJob->iNextDir);
+			if (gameTimer.timer100ms) 
+			{
+				Vehicle->rotateTo (MoveJob->iNextDir);
+			}
 		}
 		else
 		{
 			//move the vehicle
-			if (timer50ms) MoveJob->moveVehicle();
+			if (gameTimer.timer10ms) 
+			{
+				MoveJob->moveVehicle();
+			}
 		}
-	}
-}
-
-//-------------------------------------------------------------------------------------
-void cServer::Timer()
-{
-	iTimerTime++;
-}
-
-//-------------------------------------------------------------------------------------
-void cServer::handleTimer()
-{
-	//timer50ms: 50ms
-	//timer100ms: 100ms
-	//timer400ms: 400ms
-
-	static unsigned int iLast = 0;
-	timer50ms = false;
-	timer100ms = false;
-	timer400ms = false;
-	if (iTimerTime != iLast)
-	{
-		iLast = iTimerTime;
-		timer50ms = true;
-		if (iTimerTime & 0x1) timer100ms = true;
-		if ( (iTimerTime & 0x3) == 3) timer400ms = true;
 	}
 }
 
@@ -3440,13 +3515,12 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL);
+	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, iNextUnitID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;
 	rubble->prev = NULL;
 
-	rubble->iID = iNextUnitID;
 	iNextUnitID++;
 
 	rubble->PosX = x;
@@ -3573,6 +3647,9 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		}
 		sendDeleteEverything (Player->Nr);
 	}
+
+	sendGameTime(Player, gameTimer.gameTime);
+
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
 		sendClansToClients (PlayerList);
@@ -3580,6 +3657,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	sendTurn (iTurn, Player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (-1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);
 	sendResources (Player);
+
 	// send all units to the client
 	Vehicle = Player->VehicleList;
 	while (Vehicle)
@@ -3587,6 +3665,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		if (!Vehicle->Loaded) resyncVehicle (Vehicle, Player);
 		Vehicle = static_cast<cVehicle*> (Vehicle->next);
 	}
+
 	Building = Player->BuildingList;
 	while (Building)
 	{
@@ -3700,7 +3779,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	if (vehicle->owner && casualtiesTracker)
 		casualtiesTracker->logCasualty (vehicle->data.ID, vehicle->owner->Nr);
 
-	// delete vehicle in the list of he old player
+	// delete vehicle in the list of the old player
 	cPlayer* oldOwner = vehicle->owner;
 	cVehicle* vehicleList = oldOwner->VehicleList;
 	while (vehicleList)
@@ -3724,10 +3803,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	}
 	// add the vehicle to the list of the new player
 	vehicle->owner = newOwner;
-	vehicle->next = newOwner->VehicleList;
-	vehicle->prev = NULL;
-	newOwner->VehicleList->prev = vehicle;
-	newOwner->VehicleList = vehicle;
+	newOwner->addUnitToList (vehicle);
 
 	//the vehicle is fully operational for the new owner
 	if (vehicle->turnsDisabled > 0)
@@ -3901,3 +3977,99 @@ int cServer::getTurn() const
 {
 	return iTurn;
 }
+
+
+void cServer::addJob (cJob* job)
+{
+	//only one job per unit
+	releaseJob (job->unit);
+
+	helperJobs.Add (job);
+	job->unit->job = job;
+}
+
+void cServer::runJobs ()
+{
+	for (unsigned int i = 0; i < helperJobs.Size(); i++)
+	{
+		if (!helperJobs[i]->finished)
+		{
+			helperJobs[i]->run (gameTimer);
+		}
+		if (helperJobs[i]->finished)
+		{
+			if (helperJobs[i]->unit)
+				helperJobs[i]->unit->job = NULL;
+			delete helperJobs[i];
+			helperJobs.Delete(i);
+			i--;
+		}
+	}
+}
+
+void cServer::releaseJob (cUnit* unit)
+{
+	if (unit->job)
+	{
+		unit->job->unit = NULL;
+		unit->job->finished = true;
+	}
+}
+
+void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		freezeModes.pause = true;
+		gameTimer.stop ();
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = true;
+		gameTimer.stop ();
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = true;
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = true;		
+		//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
+		freezeModes.playerNumber = playerNumber;
+		break;
+	default:
+		Log.write(" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+	}
+
+	sendFreeze (mode, freezeModes.playerNumber);
+}
+
+void cServer::disableFreezeMode (eFreezeMode mode)
+{
+	switch (mode)
+	{
+	case FREEZE_PAUSE:
+		freezeModes.pause = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_RECONNECT:
+		freezeModes.waitForReconnect = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_TURNEND:
+		freezeModes.waitForTurnEnd = false;
+		sendUnfreeze (mode);
+		break;
+	case FREEZE_WAIT_FOR_PLAYER:
+		freezeModes.waitForPlayer = false;		
+		sendUnfreeze (mode);
+		break;
+	default:
+		Log.write(" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+	}
+
+	if ( !(freezeModes.pause || freezeModes.waitForReconnect || freezeModes.waitForPlayer))
+	{
+		gameTimer.start ();
+	}
+}
+

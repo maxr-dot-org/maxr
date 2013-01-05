@@ -29,23 +29,10 @@ class cPlayer;
 class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
+class cJob;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
-
-/** structure for the messages displayed in the game */
-struct sMessage
-{
-public:
-	sMessage (std::string const&, unsigned int age);
-	~sMessage();
-
-public:
-	char*        msg;
-	int          chars;
-	int          len;
-	unsigned int age;
-};
 
 /** FX types */
 enum eFXTyps {fxMuzzleBig, fxMuzzleSmall, fxMuzzleMed, fxMuzzleMedLong, fxExploSmall, fxExploBig, fxExploAir, fxExploWater, fxHit, fxSmoke, fxRocket, fxDarkSmoke, fxTorpedo, fxTracks, fxBubbles, fxCorpse, fxAbsorb};
@@ -102,7 +89,7 @@ public:
 	~cClient();
 
 private:
-	friend class cGameGUI;
+	friend class cDebugOutput;
 	friend class cPlayer;
 	friend class cBuilding;
 	friend class cVehicle;
@@ -115,21 +102,14 @@ private:
 	/** the active Player */
 	cPlayer* ActivePlayer;
 
+	cList<cJob*> helperJobs;
+
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
-	/** ID of the timer */
-	SDL_TimerID TimerID;
-	/** list with all messages */
-	cList<sMessage*> messages;
 	/** number of current turn */
 	int iTurn;
-	/** lists with all FX-Animation */
-	cList<sFX*> FXList;
-	cList<sFX*> FXListBottom;
 	/** flags what should be displaxed in the raffinery */
-	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT;
-	/** Coordinates to a important message */
-	int iMsgCoordsX, iMsgCoordsY;
+	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT; //TODO: this should be in GameGUI!
 	/** true if the player has been defeated */
 	bool bDefeated;
 	/** how many seconds will be left for this turn */
@@ -141,16 +121,8 @@ private:
 
 	cCasualtiesTracker* casualtiesTracker;
 
-	/**
-	* handles the game relevant actions (for example moving the current position of a rocket)
-	* of the fx-effects, so that they are handled also, when the effects are not drawn.
-	*/
-	void runFX();
-	/**
-	* handles the game messages
-	*@author alzi alias DoctorDeath
-	*/
-	void handleMessages();
+	sFreezeModes freezeModes;
+
 
 	/**
 	* adds the unit to the map and player.
@@ -164,35 +136,13 @@ private:
 	*/
 	void addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit = false, bool bAddToMap = true);
 	void addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit = false);
-	/**
-	* returns the player with the given number
-	*@author alzi alias DoctorDeath
-	*@param iNum The number of the player.
-	*@return The wanted player.
-	*/
-	cPlayer* getPlayerFromNumber (int iNum);
-	/**
-	* returns the player identified by playerID
-	*@author eiko
-	*@param playerID Can be a string representation of the player number or player name
-	*/
-	cPlayer* getPlayerFromString (const std::string& playerID);
-	/**
-	* handles the end of a turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleEnd();
+
 	/**
 	* handles the end of a hotseat game
 	*@author alzi alias DoctorDeath
 	*@param iNextPlayerNum Number of Player who has ended his turn
 	*/
 	void makeHotSeatEnd (int iNextPlayerNum);
-	/**
-	* handles the rest-time of the current turn
-	*@author alzi alias DoctorDeath
-	*/
-	void handleTurnTime();
 	/**
 	* handles all active movejobs
 	*@author alzi alias DoctorDeath
@@ -204,16 +154,10 @@ private:
 	*@param iID Id of the subbase
 	*/
 	sSubBase* getSubBaseFromID (int iID);
-	/**
-	* freezes the client so that no input of him is possible anymore.
-	*@author alzi alias DoctorDeath
-	*/
-	void freeze();
-	/**
-	* unfreezes the client.
-	*@author alzi alias DoctorDeath
-	*/
-	void unfreeze();
+
+	void runJobs ();
+	void releaseJob (cUnit* unit);
+
 
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
@@ -254,8 +198,6 @@ private:
 	void HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_UNFREEZE (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_WAIT_RECON (cNetMessage& message);
-	void HandleNetMessage_GAME_EV_ABORT_WAIT_RECON (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message);
@@ -280,33 +222,54 @@ private:
 	void HandleNetMessage_GAME_EV_VICTORY_CONDITIONS (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_SELFDESTROY (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& message);
+	void HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message);
 
 public:
+	cGameTimerClient gameTimer;
 	/**  the soundstream of the selected unit */
-	int iObjectStream;
+	int iObjectStream;	//TODO: move to gui
+	/** lists with all FX-Animation */
+	cList<sFX*> FXList;
+	cList<sFX*> FXListBottom;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
 	cList<cClientMoveJob*> ActiveMJobs;
 	/** the hud */
-	cGameGUI gameGUI;
+	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client for ai implementation
+
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
-	/** will be incremented by the Timer */
-	unsigned int iTimerTime;
-	/** diffrent timers */
-	bool timer50ms, timer100ms, timer400ms;
-	/** shows if the player has to wait for other players */
-	bool bWaitForOthers;
-	bool waitReconnect;
+	
 
+	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
+	void disableFreezeMode (eFreezeMode mode);
+	bool isFreezed ();
+	int getFreezeInfoPlayerNumber ();
+	bool getFreezeMode (eFreezeMode mode);
+	
 	/**
-	* handles the timers timer50ms, timer100ms and timer400ms
+	* handles the end of a turn
 	*@author alzi alias DoctorDeath
 	*/
-	void handleTimer();
+	void handleEnd();
+
+	void addJob (cJob* job);
+
+	/**
+	* handles the game relevant actions (for example moving the current position of a rocket)
+	* of the fx-effects, so that they are handled also, when the effects are not drawn.
+	*/
+	void runFX();
+
+	/**
+	* handles the rest-time of the current turn
+	*@author alzi alias DoctorDeath
+	*/
+	void handleTurnTime();
+
 	/**
 	* creates a new moveJob an transmits it to the server
 	* @param vehicle the vehicle to be moved
@@ -320,6 +283,19 @@ public:
 	*@param MJob the movejob to be added
 	*/
 	void addActiveMoveJob (cClientMoveJob* MJob);
+	/**
+	* returns the player with the given number
+	*@author alzi alias DoctorDeath
+	*@param iNum The number of the player.
+	*@return The wanted player.
+	*/
+	cPlayer* getPlayerFromNumber (int iNum);
+	/**
+	* returns the player identified by playerID
+	*@author eiko
+	*@param playerID Can be a string representation of the player number or player name
+	*/
+	cPlayer* getPlayerFromString (const std::string& playerID);
 	/**
 	* deletes the unit
 	*@author alzi alias DoctorDeath
@@ -349,6 +325,7 @@ public:
 	*@param Player The player.
 	*/
 	void initPlayer (cPlayer* Player);
+	
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops
@@ -377,24 +354,12 @@ public:
 	void addFX (sFX* iNum);
 
 	/**
-	* increments the iTimeTimer.
-	*@author alzi alias DoctorDeath
-	*/
-	void Timer();
-	/**
-	* Adds an message to be displayed in the game
-	*/
-	void addMessage (const std::string& sMsg);
-	/** displays a message with 'goto' coordinates */
-	std::string addCoords (const std::string& msg, int x, int y);
-	/**
 	*destroys a unit
 	*play FX, add rubble and delete Unit
 	*/
 	void destroyUnit (cVehicle* vehicle);
 	void destroyUnit (cBuilding* building);
 
-	void checkVehiclePositions (cNetMessage* message);
 	void getVictoryConditions (int* turnLimit, int* scoreLimit) const;
 	int getTurn() const;
 

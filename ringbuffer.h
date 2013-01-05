@@ -35,6 +35,7 @@ private:
 	int write_;
 	int capacity;
 	cMutex mutex;
+	void checkCapacity();
 
 
 public:
@@ -44,7 +45,6 @@ public:
 	int size();
 	void write (const T element);
 	T read();
-
 };
 
 template<typename T> int cRingbuffer<T>::size()
@@ -61,6 +61,20 @@ template<typename T> void cRingbuffer<T>::write (const T element)
 {
 	cMutex::Lock lock (mutex);
 
+	checkCapacity();
+
+	elements[write_] = element;
+
+	write_++;
+	if (write_ >= capacity)
+	{
+		write_ = 0;
+	}
+
+}
+
+template<typename T> void cRingbuffer<T>::checkCapacity ()
+{
 	int s = size();
 	if (s >= capacity - 1)
 	{
@@ -81,15 +95,6 @@ template<typename T> void cRingbuffer<T>::write (const T element)
 		read_ = 0;
 		capacity = newCapacity;
 	}
-
-	elements[write_] = element;
-
-	write_++;
-	if (write_ >= capacity)
-	{
-		write_ = 0;
-	}
-
 }
 
 template<typename T> T cRingbuffer<T>::read()

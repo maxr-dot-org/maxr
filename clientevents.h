@@ -65,8 +65,6 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_STOP_CLEARING,			// a bulldowzer has to stop clearing
 	GAME_EV_NOFOG,					// the player can disable his fog
 	GAME_EV_DEFEATED,				// a player has been defeated
-	GAME_EV_WAIT_RECON,				// a client has to wait for a reconnection
-	GAME_EV_ABORT_WAIT_RECON,		// a client has to finish waiting for a reconnection
 	GAME_EV_FREEZE,					// a client has to be freezed
 	GAME_EV_UNFREEZE,				// a client has to be defreezed
 	GAME_EV_WAIT_FOR,				// a client has to wait for an other player to finish his turn
@@ -93,6 +91,8 @@ enum CLIENT_EVENT_TYPES
 	GAME_EV_SELFDESTROY,
 	GAME_EV_END_MOVE_ACTION_SERVER,	// the server has added an end move action to a movejob
 	GAME_EV_CASUALTIES_REPORT,		// sends the casualties stats to a client
+	NET_GAME_TIME_SERVER,			// notification about current server time
+	GAME_EV_SET_GAME_TIME,			// used to resync the gametime of a client
 };
 
 enum CHAT_MESSAGE_TYPES
