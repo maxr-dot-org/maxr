@@ -855,22 +855,23 @@ void cGameGUI::updateInfoTexts ()
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
 	}
-	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_PLAYER))
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_SERVER))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->name),"");
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"),"");
 	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_RECONNECT))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), Server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "");
 	}
+	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_PLAYER))
+	{
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->name),"");
+	}
 	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_TURNEND))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 	}
-	else if (Client->getFreezeMode(FREEZE_WAIT_FOR_SERVER))
-	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"),"");
-	}
+
 	else 
 	{
 		setInfoTexts("","");

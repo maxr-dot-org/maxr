@@ -4067,7 +4067,7 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 		Log.write(" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	if ( !(freezeModes.pause || freezeModes.waitForReconnect || freezeModes.waitForPlayer))
+	if ( !(freezeModes.pause || freezeModes.waitForReconnect))
 	{
 		gameTimer.start ();
 	}
