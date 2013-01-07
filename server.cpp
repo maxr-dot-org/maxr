@@ -3669,7 +3669,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	Building = Player->BuildingList;
 	while (Building)
 	{
-		sendAddUnit (Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, false);
+		sendAddUnit (Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, true);
 		for (unsigned int i = 0; i < Building->storedUnits.Size(); i++)
 		{
 			cVehicle* StoredVehicle = Building->storedUnits[i];
@@ -3738,7 +3738,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 //-------------------------------------------------------------------------------------
 void cServer::resyncVehicle (cVehicle* Vehicle, cPlayer* Player)
 {
-	sendAddUnit (Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, false, !Vehicle->Loaded);
+	sendAddUnit (Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, true, !Vehicle->Loaded);
 	if (Vehicle->ServerMoveJob) sendMoveJobServer (Vehicle->ServerMoveJob, Player->Nr);
 	for (unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++)
 	{
