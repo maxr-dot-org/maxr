@@ -242,14 +242,14 @@ public:
 	bool bWantToEnd;
 	/** true if allian technologies are activated */
 	bool bAlienTech;
-	
+
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
-	bool isFreezed ();
-	int getFreezeInfoPlayerNumber ();
-	bool getFreezeMode (eFreezeMode mode);
-	
+	bool isFreezed () const;
+	int getFreezeInfoPlayerNumber () const;
+	bool getFreezeMode (eFreezeMode mode) const;
+
 	/**
 	* handles the end of a turn
 	*@author alzi alias DoctorDeath
@@ -325,7 +325,7 @@ public:
 	*@param Player The player.
 	*/
 	void initPlayer (cPlayer* Player);
-	
+
 	/**
 	* handles move and attack jobs
 	* this function should be called in all menu loops

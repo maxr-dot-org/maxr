@@ -119,10 +119,10 @@ cGameTimerClient::cGameTimerClient () :
 	cGameTimer (),
 	remoteChecksum(0),
 	localChecksum(0),
+	waitingForServer(0),
 	debugRemoteChecksum(0),
-	nextMsgIsNextGameTime(false),
 	gameTimeAdjustment(0),
-	waitingForServer(0)
+	nextMsgIsNextGameTime(false)
 {
 }
 
@@ -168,7 +168,7 @@ void cGameTimerClient::run ()
 		if (nextTickAllowed ())
 		{
 			gameTime++;
-			handleTimer ();	
+			handleTimer ();
 			Client->doGameActions();
 
 			//check crc
@@ -199,7 +199,7 @@ void cGameTimerClient::run ()
 	if (gameTime + MAX_CLIENT_LAG < getReceivedTime())
 	{
 		//inject an extra timer event
-		timerCallback();	
+		timerCallback();
 		gameTimeAdjustment++;
 	}
 }
@@ -218,10 +218,8 @@ void cGameTimerServer::handleSyncMessage(cNetMessage &message)
 
 bool cGameTimerServer::nextTickAllowed ()
 {
-
 	if (syncDebugSingleStep)
 	{
-		cPlayer* player = Server->getPlayerFromNumber(0);
 		if (getReceivedTime(0) < gameTime)
 				return false;
 
@@ -266,7 +264,7 @@ void cGameTimerServer::run ()
 				cPlayer *player = (*Server->PlayerList)[i];
 
 				cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
-				message->pushInt32 (gameTime);	
+				message->pushInt32 (gameTime);
 				Uint32 checkSum = calcServerChecksum (player);
 				message->pushInt32 (checkSum);
 				Server->sendNetMessage (message, player->Nr);

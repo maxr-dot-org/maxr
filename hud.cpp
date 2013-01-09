@@ -269,7 +269,7 @@ void cDebugOutput::draw()
 		font->showText(DEBUGOUT_X_POS, debugOff, "TotalAdj.: ", FONT_LATIN_SMALL_WHITE);
 		font->showText(DEBUGOUT_X_POS + 110, debugOff, iToStr(totalAdjust), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		
+
 	}
 }
 
@@ -443,14 +443,13 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 
 cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList) :
 	cMenu (generateSurface()),
-	iTimerTime(0),
 	client (NULL),
+	msgCoordsX (-1),
+	msgCoordsY (-1),
 	player (player_),
 	map (map_),
 	miniMapOffX (0),
 	miniMapOffY (0),
-	msgCoordsX (-1),
-	msgCoordsY (-1),
 	shiftPressed (false),
 	overUnitField (NULL),
 	zoomSlider (20, 274, calcMinZoom(), 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
@@ -491,7 +490,8 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	infoTextAdditionalLabel (HUD_LEFT_WIDTH + (Video.getResolutionX() - HUD_TOTAL_WIDTH) / 2, 235 + font->getFontHeight (FONT_LATIN_BIG), ""),
 	selUnitStatusStr (12, 40, "", FONT_LATIN_SMALL_WHITE),
 	selUnitNamePrefixStr (12, 30, "", FONT_LATIN_SMALL_GREEN),
-	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT)
+	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
+	iTimerTime(0)
 {
 	unitMenuActive = false;
 	frame = 0;
@@ -872,7 +872,7 @@ void cGameGUI::updateInfoTexts ()
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 	}
 
-	else 
+	else
 	{
 		setInfoTexts("","");
 	}
@@ -2500,7 +2500,7 @@ void cGameGUI::doCommand (const string& cmd)
 	{
 		int size = atoi (cmd.substr (12, cmd.length()).c_str());
 		//since atoi is too stupid to report an error, do an extra check, when the number is 0
-		if (size == 0 && cmd[12] != '0') 
+		if (size == 0 && cmd[12] != '0')
 		{
 			addMessage("Wrong parameter");
 			return;
@@ -2534,7 +2534,7 @@ void cGameGUI::doCommand (const string& cmd)
 		cPlayer* Player = Server->getPlayerFromString (cmd.substr (6, cmd.length()));
 
 		// server can not be kicked
-		if ( !Player || Player->Nr == 0) 
+		if ( !Player || Player->Nr == 0)
 		{
 			addMessage("Wrong parameter");
 			return;

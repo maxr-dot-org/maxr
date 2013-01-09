@@ -84,11 +84,11 @@ int CallbackRunServerThread (void* arg)
 
 //-------------------------------------------------------------------------------------
 cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
-	: lastEvent (0)
-	, casualtiesTracker (0)
-	, gameTimer()
+	: gameTimer()
+	, lastEvent (0)
 	, lastTurnEnd(0)
 	, executingRemainingMovements(false)
+	, casualtiesTracker (0)
 {
 	assert (! (turnLimit && scoreLimit));
 
@@ -116,7 +116,7 @@ cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes
 	if (!DEDICATED_SERVER)
 		ServerThread = SDL_CreateThread (CallbackRunServerThread, this);
 
-	
+
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start ();
 }
@@ -138,7 +138,7 @@ void cServer::stop ()
 //-------------------------------------------------------------------------------------
 cServer::~cServer()
 {
-	
+
 	stop ();
 
 	if (casualtiesTracker != 0)
@@ -2828,7 +2828,7 @@ void cServer::handleWantEnd()
 		//begin the new turn
 		disableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
 	}
-	
+
 
 
 	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
@@ -3278,7 +3278,7 @@ void cServer::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir)
 		{
 			// rotate vehicle
-			if (gameTimer.timer100ms) 
+			if (gameTimer.timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -3286,7 +3286,7 @@ void cServer::handleMoveJobs()
 		else
 		{
 			//move the vehicle
-			if (gameTimer.timer10ms) 
+			if (gameTimer.timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}
@@ -4032,7 +4032,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 		freezeModes.waitForTurnEnd = true;
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = true;		
+		freezeModes.waitForPlayer = true;
 		//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
 		freezeModes.playerNumber = playerNumber;
 		break;
@@ -4060,7 +4060,7 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 		sendUnfreeze (mode);
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = false;		
+		freezeModes.waitForPlayer = false;
 		sendUnfreeze (mode);
 		break;
 	default:

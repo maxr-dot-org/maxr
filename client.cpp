@@ -123,8 +123,8 @@ cClient* Client = 0; // global instance
 cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map (Map),
 	PlayerList (playerList),
-	gameGUI (NULL, Map, playerList),
-	gameTimer ()
+	gameTimer (),
+	gameGUI (NULL, Map, playerList)
 {
 	gameGUI.setClient (this);
 	neutralBuildings = NULL;
@@ -1475,7 +1475,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_RUBBLE);
 
-	
+
 
 	bool big = message.popBool();
 	int typ = message.popInt16();
@@ -1540,7 +1540,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 
 			Vehicle->ClearingRounds = message.popInt16();
 			int bigoffset = message.popInt16();
-			if (bigoffset >= 0) 
+			if (bigoffset >= 0)
 			{
 				getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
 				Vehicle->owner->DoScan ();
@@ -1580,7 +1580,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	}
 
 	int bigoffset = message.popInt16();
-	if (bigoffset >= 0) 
+	if (bigoffset >= 0)
 	{
 		getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
 		Vehicle->owner->DoScan ();
@@ -2140,7 +2140,7 @@ void cClient::HandleNetMessage_GAME_EV_END_MOVE_ACTION_SERVER (cNetMessage& mess
 void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SET_GAME_TIME);
-	
+
 	unsigned int newGameTime = message.popInt32 ();
 	gameTimer.gameTime = newGameTime;
 
@@ -2554,7 +2554,7 @@ void cClient::handleMoveJobs()
 		if (MoveJob->iNextDir != Vehicle->dir && Vehicle->data.speedCur)
 		{
 			// rotate vehicle
-			if (gameTimer.timer100ms) 
+			if (gameTimer.timer100ms)
 			{
 				Vehicle->rotateTo (MoveJob->iNextDir);
 			}
@@ -2562,7 +2562,7 @@ void cClient::handleMoveJobs()
 		else if (Vehicle->MoveJobActive)
 		{
 			// move vehicle
-			if (gameTimer.timer10ms) 
+			if (gameTimer.timer10ms)
 			{
 				MoveJob->moveVehicle();
 			}
@@ -2619,7 +2619,7 @@ void cClient::doGameActions()
 	//run moveJobs - this has to be called before handling the auto movejobs
 	if (gameTimer.timer10ms)
 		handleMoveJobs();
-	
+
 	//run surveyor ai
 	if (gameTimer.timer50ms)
 		cAutoMJob::handleAutoMoveJobs();
@@ -2765,7 +2765,7 @@ void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 		freezeModes.waitForTurnEnd = true;
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = true;		
+		freezeModes.waitForPlayer = true;
 		break;
 	}
 
@@ -2795,14 +2795,14 @@ void cClient::disableFreezeMode (eFreezeMode mode)
 		freezeModes.waitForTurnEnd = false;
 		break;
 	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = false;		
+		freezeModes.waitForPlayer = false;
 		break;
 	}
 
 	gameGUI.updateInfoTexts ();
 }
 
-bool cClient::isFreezed ()
+bool cClient::isFreezed () const
 {
 	return	freezeModes.pause			||
 			freezeModes.waitForOthers	||
@@ -2812,7 +2812,7 @@ bool cClient::isFreezed ()
 			freezeModes.waitForTurnEnd;
 }
 
-bool cClient::getFreezeMode(eFreezeMode mode)
+bool cClient::getFreezeMode(eFreezeMode mode) const
 {
 	switch (mode)
 	{
@@ -2833,7 +2833,7 @@ bool cClient::getFreezeMode(eFreezeMode mode)
 	}
 }
 
-int cClient::getFreezeInfoPlayerNumber ()
+int cClient::getFreezeInfoPlayerNumber () const
 {
 	return freezeModes.playerNumber;
 }

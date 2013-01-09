@@ -50,9 +50,9 @@ cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner, unsigned i
 	, prev (0)
 	, selectedMenuButtonIndex (-1)
 	, owner (owner)
+	, job (NULL)
 	, unitType (unitType)
 	, isOriginalName (true)
-	, job (NULL)
 {
 	if (unitData != 0)
 		data = *unitData;

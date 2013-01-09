@@ -428,9 +428,8 @@ struct sFreezeModes
 
 	int  playerNumber;
 };
-enum eFreezeMode 
-{ 
-	FREEZE_NONE,
+enum eFreezeMode
+{
 	FREEZE_WAIT_FOR_SERVER,		//waiting response from server
 	FREEZE_WAIT_FOR_OTHERS,		//waiting for the others turn, in turn based mode
 	FREEZE_PAUSE,				//pause, because... pause
