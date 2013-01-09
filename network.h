@@ -160,7 +160,7 @@ public:
 	/**
 	* checks whether the given socket is connected
 	*/
-	bool isConnected (int socketNr);
+	bool isConnected (int socketNr) const;
 	/**
 	* Closes the connection to the socket.
 	*@author alzi alias DoctorDeath

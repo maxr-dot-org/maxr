@@ -8,7 +8,7 @@ class cGameTimer;
 class cJob
 {
 protected:
-	cJob (cUnit* unit_);
+	explicit cJob (cUnit* unit_);
 public:
 	bool finished;
 	virtual void run (const cGameTimer& gameTimer) = 0;
@@ -24,7 +24,7 @@ private:
 	bool big;
 public:
 	cStartBuildJob (cUnit* unit_, int orgX_, int orgY_, bool big_);
-	void run (const cGameTimer& gameTimer);
+	virtual void run (const cGameTimer& gameTimer);
 };
 
 
@@ -34,5 +34,5 @@ private:
 	bool takeoff;
 public:
 	cPlaneTakeoffJob (cUnit* unit_, bool takeoff_);
-	void run (const cGameTimer& gameTimer);
+	virtual void run (const cGameTimer& gameTimer);
 };

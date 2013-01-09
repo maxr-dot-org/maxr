@@ -149,7 +149,7 @@ int cTCP::connect()
 	return 0;
 }
 
-bool cTCP::isConnected (int socketNr)
+bool cTCP::isConnected (int socketNr) const
 {
 	if (socketNr == MAX_CLIENTS)
 		return true;
