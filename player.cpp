@@ -208,10 +208,10 @@ void cPlayer::setClan (int newClan)
 //--------------------------------------------------------------------------
 cVehicle* cPlayer::AddVehicle (int posx, int posy, sVehicle* v, unsigned int ID)
 {
-	cVehicle* n = new cVehicle (v, this ,ID);
+	cVehicle* n = new cVehicle (v, this , ID);
 	n->PosX = posx;
 	n->PosY = posy;
-	
+
 	addUnitToList (n);
 
 	drawSpecialCircle (n->PosX, n->PosY, n->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
@@ -266,7 +266,7 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 	//units in the linked list are sorted in increasing order of IDs
 
 	//find unit before the added unit
-	cUnit* prevUnit = addedUnit->isBuilding() ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+	cUnit* prevUnit = addedUnit->isBuilding() ? (cUnit*) BuildingList : (cUnit*) VehicleList;
 	if (prevUnit && prevUnit->iID > addedUnit->iID)
 		prevUnit = NULL;
 
@@ -278,7 +278,7 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 	if (prevUnit)
 		nextUnit = prevUnit->next;
 	else
-		nextUnit = addedUnit->isBuilding() ? (cUnit*)BuildingList : (cUnit*)VehicleList;
+		nextUnit = addedUnit->isBuilding() ? (cUnit*) BuildingList : (cUnit*) VehicleList;
 
 	//link addedUnit
 	addedUnit->prev = prevUnit;
@@ -311,7 +311,7 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, sBuilding* b, unsigned int 
 
 	Building->PosX = posx;
 	Building->PosY = posy;
-	
+
 	addUnitToList (Building);
 
 	if (Building->data.scan)
@@ -1030,9 +1030,9 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
-				elem->v->drawMunBar(screenPos);
+				elem->v->drawMunBar (screenPos);
 			if (gameGUI.hitsChecked())
-				elem->v->drawHealthBar(screenPos);
+				elem->v->drawHealthBar (screenPos);
 		}
 		else if (elem->b)
 		{
@@ -1066,9 +1066,9 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 
 			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
-				elem->b->drawMunBar(screenPos);
+				elem->b->drawMunBar (screenPos);
 			if (gameGUI.hitsChecked())
-				elem->b->drawHealthBar(screenPos);
+				elem->b->drawHealthBar (screenPos);
 		}
 	}
 }

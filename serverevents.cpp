@@ -939,7 +939,7 @@ void sendClans (const cList<cPlayer*>* playerList, cPlayer* toPlayer)
 }
 
 //-------------------------------------------------------------------------------------
-void sendGameTime(cPlayer* player, int gameTime)
+void sendGameTime (cPlayer* player, int gameTime)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SET_GAME_TIME);
 	message->pushInt32 (gameTime);

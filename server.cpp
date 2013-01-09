@@ -44,15 +44,15 @@
 
 #ifdef _MSC_VER
 #include <windows.h>
-const DWORD MS_VC_EXCEPTION=0x406D1388;
+const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
 #pragma pack(push,8)
 typedef struct tagTHREADNAME_INFO
 {
-   DWORD dwType; // Must be 0x1000.
-   LPCSTR szName; // Pointer to name (in user addr space).
-   DWORD dwThreadID; // Thread ID (-1=caller thread).
-   DWORD dwFlags; // Reserved for future use, must be zero.
+	DWORD dwType; // Must be 0x1000.
+	LPCSTR szName; // Pointer to name (in user addr space).
+	DWORD dwThreadID; // Thread ID (-1=caller thread).
+	DWORD dwFlags; // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 #pragma pack(pop)
 #endif
@@ -62,19 +62,19 @@ typedef struct tagTHREADNAME_INFO
 int CallbackRunServerThread (void* arg)
 {
 #if defined _MSC_VER && defined DEBUG //set a readable thread name for debugging
-   THREADNAME_INFO info;
-   info.dwType = 0x1000;
-   info.szName = "Server Thread";
-   info.dwThreadID = -1;
-   info.dwFlags = 0;
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = "Server Thread";
+	info.dwThreadID = -1;
+	info.dwFlags = 0;
 
-   __try
-   {
-      RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
-   }
-   __except(EXCEPTION_EXECUTE_HANDLER)
-   {
-   }
+	__try
+	{
+		RaiseException (MS_VC_EXCEPTION, 0, sizeof (info) / sizeof (ULONG_PTR), (ULONG_PTR*) &info);
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+	}
 #endif
 
 	cServer* Server = reinterpret_cast<cServer*> (arg);
@@ -86,8 +86,8 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: gameTimer()
 	, lastEvent (0)
-	, lastTurnEnd(0)
-	, executingRemainingMovements(false)
+	, lastTurnEnd (0)
+	, executingRemainingMovements (false)
 	, casualtiesTracker (0)
 {
 	assert (! (turnLimit && scoreLimit));
@@ -152,7 +152,7 @@ cServer::~cServer()
 	{
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
-			network->close ((*PlayerList)[i]->iSocketNum);
+			network->close ( (*PlayerList) [i]->iSocketNum);
 		}
 	}
 
@@ -284,7 +284,7 @@ void cServer::run()
 
 		if (!event && !gameTimer.timer10ms) //nothing to do
 		{
-			SDL_Delay(10);
+			SDL_Delay (10);
 		}
 	}
 }
@@ -352,7 +352,7 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 		// freeze clients
 		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
-			enableFreezeMode(FREEZE_WAIT_FOR_RECONNECT);
+			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 		sendChatMessageToClient ("Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name);
 
 		DisconnectedPlayerList.Add (Player);
@@ -709,7 +709,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (true, Vehicle);
-	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, Data.isBig));
+	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -1381,7 +1381,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
 	Vehicle->owner->DoScan ();
-	addJob (new cStartBuildJob(Vehicle, off % Map->size, off / Map->size, building->data.isBig));
+	addJob (new cStartBuildJob (Vehicle, off % Map->size, off / Map->size, building->data.isBig));
 
 	sendClearAnswer (0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
@@ -2666,16 +2666,16 @@ cPlayer* cServer::getPlayerFromNumber (int iNum)
 cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 {
 	//first try to find player by number
-	int playerNr = atoi(playerID.c_str());
+	int playerNr = atoi (playerID.c_str());
 	if (playerNr != 0 || playerID[0] == '0')
 	{
-		return getPlayerFromNumber(playerNr);
+		return getPlayerFromNumber (playerNr);
 	}
 
 	//try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		if ( (*PlayerList)[i]->name.compare (playerID) == 0) return (*PlayerList)[i];
+		if ( (*PlayerList) [i]->name.compare (playerID) == 0) return (*PlayerList) [i];
 	}
 
 	return NULL;
@@ -2810,8 +2810,8 @@ void cServer::handleWantEnd()
 	{
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
-			cPlayer* player = (*PlayerList)[i];
-			if (!isPlayerDisconnected(player) && gameTimer.getReceivedTime(i) <= lastTurnEnd)
+			cPlayer* player = (*PlayerList) [i];
+			if (!isPlayerDisconnected (player) && gameTimer.getReceivedTime (i) <= lastTurnEnd)
 				return;
 		}
 
@@ -2826,7 +2826,7 @@ void cServer::handleWantEnd()
 		}
 
 		//begin the new turn
-		disableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	}
 
 
@@ -2844,7 +2844,7 @@ void cServer::handleWantEnd()
 //-------------------------------------------------------------------------------------
 bool cServer::checkEndActions (int iPlayer)
 {
-	enableFreezeMode(FREEZE_WAIT_FOR_TURNEND);
+	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 
 	std::string sMessage;
 	if (ActiveMJobs.Size() > 0)
@@ -3237,7 +3237,7 @@ void cServer::handleMoveJobs()
 			{
 				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
 				{
-					addJob (new cStartBuildJob(Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
+					addJob (new cStartBuildJob (Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
 					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
@@ -3648,7 +3648,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendDeleteEverything (Player->Nr);
 	}
 
-	sendGameTime(Player, gameTimer.gameTime);
+	sendGameTime (Player, gameTimer.gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
@@ -4001,7 +4001,7 @@ void cServer::runJobs ()
 			if (helperJobs[i]->unit)
 				helperJobs[i]->unit->job = NULL;
 			delete helperJobs[i];
-			helperJobs.Delete(i);
+			helperJobs.Delete (i);
 			i--;
 		}
 	}
@@ -4020,24 +4020,24 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	switch (mode)
 	{
-	case FREEZE_PAUSE:
-		freezeModes.pause = true;
-		gameTimer.stop ();
-		break;
-	case FREEZE_WAIT_FOR_RECONNECT:
-		freezeModes.waitForReconnect = true;
-		gameTimer.stop ();
-		break;
-	case FREEZE_WAIT_FOR_TURNEND:
-		freezeModes.waitForTurnEnd = true;
-		break;
-	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = true;
-		//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
-		freezeModes.playerNumber = playerNumber;
-		break;
-	default:
-		Log.write(" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+		case FREEZE_PAUSE:
+			freezeModes.pause = true;
+			gameTimer.stop ();
+			break;
+		case FREEZE_WAIT_FOR_RECONNECT:
+			freezeModes.waitForReconnect = true;
+			gameTimer.stop ();
+			break;
+		case FREEZE_WAIT_FOR_TURNEND:
+			freezeModes.waitForTurnEnd = true;
+			break;
+		case FREEZE_WAIT_FOR_PLAYER:
+			freezeModes.waitForPlayer = true;
+			//gameTimer.stop ();	//done in cGameTimer::nextTickAllowed();
+			freezeModes.playerNumber = playerNumber;
+			break;
+		default:
+			Log.write (" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
 	sendFreeze (mode, freezeModes.playerNumber);
@@ -4047,27 +4047,27 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case FREEZE_PAUSE:
-		freezeModes.pause = false;
-		sendUnfreeze (mode);
-		break;
-	case FREEZE_WAIT_FOR_RECONNECT:
-		freezeModes.waitForReconnect = false;
-		sendUnfreeze (mode);
-		break;
-	case FREEZE_WAIT_FOR_TURNEND:
-		freezeModes.waitForTurnEnd = false;
-		sendUnfreeze (mode);
-		break;
-	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = false;
-		sendUnfreeze (mode);
-		break;
-	default:
-		Log.write(" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
+		case FREEZE_PAUSE:
+			freezeModes.pause = false;
+			sendUnfreeze (mode);
+			break;
+		case FREEZE_WAIT_FOR_RECONNECT:
+			freezeModes.waitForReconnect = false;
+			sendUnfreeze (mode);
+			break;
+		case FREEZE_WAIT_FOR_TURNEND:
+			freezeModes.waitForTurnEnd = false;
+			sendUnfreeze (mode);
+			break;
+		case FREEZE_WAIT_FOR_PLAYER:
+			freezeModes.waitForPlayer = false;
+			sendUnfreeze (mode);
+			break;
+		default:
+			Log.write (" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	if ( !(freezeModes.pause || freezeModes.waitForReconnect))
+	if (! (freezeModes.pause || freezeModes.waitForReconnect))
 	{
 		gameTimer.start ();
 	}

@@ -33,7 +33,7 @@
 void cEventHandling::pushEvent (cNetMessage* message)
 {
 
-	if (Client && message->iType == NET_GAME_TIME_SERVER )
+	if (Client && message->iType == NET_GAME_TIME_SERVER)
 	{
 		//this is a preview for the client to know how many sync messages are in queue
 		//used to detect a growing lag behind the server time
@@ -55,7 +55,7 @@ void cEventHandling::HandleEvents()
 {
 	if (!Client)
 		handleNetMessages();
-	
+
 	SDL_Event event;
 	while (SDL_PollEvent (&event))
 	{

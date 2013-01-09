@@ -1253,7 +1253,7 @@ void cClientMoveJob::doEndMoveVehicle()
 		// this is just to avoid errors, this should normaly never happen.
 		bFinished = true;
 		return;
-	} 
+	}
 
 	Vehicle->data.speedCur += iSavedSpeed;
 	iSavedSpeed = 0;

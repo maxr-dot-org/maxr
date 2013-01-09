@@ -287,7 +287,7 @@ void cGameDataContainer::runSavedGame (int player)
 		delete clientPlayerList[i];
 	}
 	clientPlayerList.Clear();
-	
+
 	Server->stop ();
 	delete Client;
 	Client = NULL;
@@ -838,7 +838,7 @@ void cMainMenu::infoImageReleased (void* parent)
 //------------------------------------------------------------------------------
 cStartMenu::cStartMenu()
 {
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"),FONT_LATIN_NORMAL);
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"), FONT_LATIN_NORMAL);
 	titleLabel->setCentered (true);
 	menuItems.Add (titleLabel);
 
@@ -1787,8 +1787,8 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 {
 	selectionChangedFunc = NULL;
 
-	titleLabel.setCentered(true);
-	menuItems.Add(&titleLabel);
+	titleLabel.setCentered (true);
+	menuItems.Add (&titleLabel);
 
 	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	menuItems.Add (doneButton);
@@ -2519,7 +2519,7 @@ void cLandingMenu::mapClicked (void* parent)
 	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionX() - 192)));
 	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
-	menu->backButton->setLocked(true);
+	menu->backButton->setLocked (true);
 	{
 		AutoSurface circleSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0));
 		SDL_FillRect (circleSurface, NULL, 0xFF00FF);
@@ -2547,7 +2547,7 @@ void cLandingMenu::mouseMoved (void* parent)
 {
 	const cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
 
-	if (menu->mapImage->overItem(mouse->x, mouse->y))
+	if (menu->mapImage->overItem (mouse->x, mouse->y))
 	{
 		const sTerrain* terrain = menu->getMapTile (mouse->x - 180, mouse->y - 18);
 		if (terrain && ! (terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
@@ -2604,13 +2604,13 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 		case MU_MSG_RESELECT_LANDING:
 			Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
 			landData.landingState = (eLandingState) message->popChar();
-			backButton->setLocked(landData.landingState == LANDING_POSITION_OK || landData.landingState == LANDING_POSITION_CONFIRMED);
+			backButton->setLocked (landData.landingState == LANDING_POSITION_OK || landData.landingState == LANDING_POSITION_CONFIRMED);
 
 			if (landData.landingState == LANDING_POSITION_TOO_CLOSE) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Too_Close"));
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 
 			draw();
-			mouseMoved(this);	//update cursor
+			mouseMoved (this);	//update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
 			ActiveMenu = NULL;

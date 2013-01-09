@@ -744,7 +744,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	if (nextPlayerNum != ActivePlayer->Nr)
 	{
-		enableFreezeMode(FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
+		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 		gameGUI.setEndButtonLock (true);
 	}
 }
@@ -1024,7 +1024,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	cClientMoveJob* MoveJob = new cClientMoveJob (iSrcOff, iDestOff, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (&message)) return;
-	Log.write (" Client: Added received movejob at time "+ iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 }
 
 void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
@@ -1036,7 +1036,7 @@ void cClient::HandleNetMessage_GAME_EV_NEXT_MOVE (cNetMessage& message)
 	int iSavedSpeed = -1;
 	if (iType == MJOB_STOP) iSavedSpeed = message.popChar();
 
-	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr(gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
+	Log.write (" Client: Received information for next move: ID: " + iToStr (iID) + ", Type: " + iToStr (iType) + ", Time: " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);
 
 	cVehicle* Vehicle = getVehicleFromID (iID);
 	if (Vehicle && Vehicle->ClientMoveJob)
@@ -1166,7 +1166,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	}
 
 	Vehicle->IsBuilding = true;
-	addJob (new cStartBuildJob(Vehicle, oldPosX, oldPosY, buildBig));
+	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, buildBig));
 
 	if (Vehicle == gameGUI.getSelVehicle())
 	{
@@ -1546,7 +1546,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Vehicle->owner->DoScan ();
 			}
 			Vehicle->IsClearing = true;
-			addJob (new cStartBuildJob(Vehicle, orgX, orgY, (bigoffset > 0)));
+			addJob (new cStartBuildJob (Vehicle, orgX, orgY, (bigoffset > 0)));
 
 			if (gameGUI.getSelVehicle() == Vehicle)
 			{
@@ -1633,7 +1633,7 @@ void cClient::HandleNetMessage_GAME_EV_FREEZE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FREEZE);
 
-	eFreezeMode mode =  (eFreezeMode) message.popInt16 ();
+	eFreezeMode mode = (eFreezeMode) message.popInt16 ();
 	int playerNumber = message.popInt16 ();
 	enableFreezeMode (mode, playerNumber);
 }
@@ -1801,11 +1801,11 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 
 		while (Player.VehicleList)
 		{
-			deleteUnit(Player.VehicleList);
+			deleteUnit (Player.VehicleList);
 		}
 		while (Player.BuildingList)
 		{
-			deleteUnit(Player.BuildingList);
+			deleteUnit (Player.BuildingList);
 		}
 	}
 
@@ -2145,14 +2145,14 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	gameTimer.gameTime = newGameTime;
 
 	//confirm new time to the server
-	cNetMessage *response = new cNetMessage(NET_GAME_TIME_CLIENT);
+	cNetMessage* response = new cNetMessage (NET_GAME_TIME_CLIENT);
 	response->pushInt32 (gameTimer.gameTime);
 	sendNetMessage (response);
 }
 
 int cClient::HandleNetMessage (cNetMessage* message)
 {
-	if ( message->iType != NET_GAME_TIME_SERVER )
+	if (message->iType != NET_GAME_TIME_SERVER)
 		Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
@@ -2290,16 +2290,16 @@ cPlayer* cClient::getPlayerFromNumber (int iNum)
 cPlayer* cClient::getPlayerFromString (const string& playerID)
 {
 	//first try to find player by number
-	int playerNr = atoi(playerID.c_str());
+	int playerNr = atoi (playerID.c_str());
 	if (playerNr != 0 || playerID[0] == '0')
 	{
-		return getPlayerFromNumber(playerNr);
+		return getPlayerFromNumber (playerNr);
 	}
 
 	//try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		if ( (*PlayerList)[i]->name.compare (playerID) == 0) return (*PlayerList)[i];
+		if ( (*PlayerList) [i]->name.compare (playerID) == 0) return (*PlayerList) [i];
 	}
 
 	return NULL;
@@ -2730,7 +2730,7 @@ void cClient::runJobs ()
 			if (helperJobs[i]->unit)
 				helperJobs[i]->unit->job = NULL;
 			delete helperJobs[i];
-			helperJobs.Delete(i);
+			helperJobs.Delete (i);
 			i--;
 		}
 	}
@@ -2749,24 +2749,24 @@ void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)
 {
 	switch (mode)
 	{
-	case FREEZE_WAIT_FOR_SERVER:
-		freezeModes.waitForServer = true;
-		break;
-	case FREEZE_WAIT_FOR_OTHERS:
-		freezeModes.waitForOthers = true;
-		break;
-	case FREEZE_PAUSE:
-		freezeModes.pause = true;
-		break;
-	case FREEZE_WAIT_FOR_RECONNECT:
-		freezeModes.waitForReconnect = true;
-		break;
-	case FREEZE_WAIT_FOR_TURNEND:
-		freezeModes.waitForTurnEnd = true;
-		break;
-	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = true;
-		break;
+		case FREEZE_WAIT_FOR_SERVER:
+			freezeModes.waitForServer = true;
+			break;
+		case FREEZE_WAIT_FOR_OTHERS:
+			freezeModes.waitForOthers = true;
+			break;
+		case FREEZE_PAUSE:
+			freezeModes.pause = true;
+			break;
+		case FREEZE_WAIT_FOR_RECONNECT:
+			freezeModes.waitForReconnect = true;
+			break;
+		case FREEZE_WAIT_FOR_TURNEND:
+			freezeModes.waitForTurnEnd = true;
+			break;
+		case FREEZE_WAIT_FOR_PLAYER:
+			freezeModes.waitForPlayer = true;
+			break;
 	}
 
 	if (playerNumber != -1)
@@ -2779,24 +2779,24 @@ void cClient::disableFreezeMode (eFreezeMode mode)
 {
 	switch (mode)
 	{
-	case FREEZE_WAIT_FOR_SERVER:
-		freezeModes.waitForServer = false;
-		break;
-	case FREEZE_WAIT_FOR_OTHERS:
-		freezeModes.waitForOthers = false;
-		break;
-	case FREEZE_PAUSE:
-		freezeModes.pause = false;
-		break;
-	case FREEZE_WAIT_FOR_RECONNECT:
-		freezeModes.waitForReconnect = false;
-		break;
-	case FREEZE_WAIT_FOR_TURNEND:
-		freezeModes.waitForTurnEnd = false;
-		break;
-	case FREEZE_WAIT_FOR_PLAYER:
-		freezeModes.waitForPlayer = false;
-		break;
+		case FREEZE_WAIT_FOR_SERVER:
+			freezeModes.waitForServer = false;
+			break;
+		case FREEZE_WAIT_FOR_OTHERS:
+			freezeModes.waitForOthers = false;
+			break;
+		case FREEZE_PAUSE:
+			freezeModes.pause = false;
+			break;
+		case FREEZE_WAIT_FOR_RECONNECT:
+			freezeModes.waitForReconnect = false;
+			break;
+		case FREEZE_WAIT_FOR_TURNEND:
+			freezeModes.waitForTurnEnd = false;
+			break;
+		case FREEZE_WAIT_FOR_PLAYER:
+			freezeModes.waitForPlayer = false;
+			break;
 	}
 
 	gameGUI.updateInfoTexts ();
@@ -2807,29 +2807,29 @@ bool cClient::isFreezed () const
 	return	freezeModes.pause			||
 			freezeModes.waitForOthers	||
 			freezeModes.waitForPlayer	||
-			freezeModes.waitForReconnect||
+			freezeModes.waitForReconnect ||
 			freezeModes.waitForServer	||
 			freezeModes.waitForTurnEnd;
 }
 
-bool cClient::getFreezeMode(eFreezeMode mode) const
+bool cClient::getFreezeMode (eFreezeMode mode) const
 {
 	switch (mode)
 	{
-	case FREEZE_PAUSE:
-		return freezeModes.pause;
-	case FREEZE_WAIT_FOR_RECONNECT:
-		return freezeModes.waitForReconnect;
-	case FREEZE_WAIT_FOR_OTHERS:
-		return freezeModes.waitForOthers;
-	case FREEZE_WAIT_FOR_TURNEND:
-		return freezeModes.waitForTurnEnd;
-	case FREEZE_WAIT_FOR_PLAYER:
-		return freezeModes.waitForPlayer;
-	case FREEZE_WAIT_FOR_SERVER:
-		return freezeModes.waitForServer;
-	default:
-		return false;
+		case FREEZE_PAUSE:
+			return freezeModes.pause;
+		case FREEZE_WAIT_FOR_RECONNECT:
+			return freezeModes.waitForReconnect;
+		case FREEZE_WAIT_FOR_OTHERS:
+			return freezeModes.waitForOthers;
+		case FREEZE_WAIT_FOR_TURNEND:
+			return freezeModes.waitForTurnEnd;
+		case FREEZE_WAIT_FOR_PLAYER:
+			return freezeModes.waitForPlayer;
+		case FREEZE_WAIT_FOR_SERVER:
+			return freezeModes.waitForServer;
+		default:
+			return false;
 	}
 }
 

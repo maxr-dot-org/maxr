@@ -174,13 +174,14 @@ std::string getUserScreenshotsDir()
 	return screenshotsFolder;
 }
 
-Uint32 calcCheckSum(Uint32 data, Uint32 checksum)
+Uint32 calcCheckSum (Uint32 data, Uint32 checksum)
 {
-	return calcCheckSum((char*) &SDL_SwapLE32(data), 4, checksum);
+	return calcCheckSum ( (char*) &SDL_SwapLE32 (data), 4, checksum);
 }
 
-Uint32 calcCheckSum(const char* data, size_t dataSize, Uint32 checksum)
-{ // NOTE: The calculation must be endian safe.
+Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum)
+{
+	// NOTE: The calculation must be endian safe.
 	for (const char* i = data; i != data + dataSize; ++i)
 	{
 		checksum  = checksum << 1 | checksum >> 31; // Rotate left by one.

@@ -55,7 +55,7 @@ void cGameTimer::stop ()
 void cGameTimer::timerCallback()
 {
 	//increase event counter and let the event handler increase the gametime
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock (mutex);
 
 	if (eventCounter < maxEventQueueSize || maxEventQueueSize == -1)
 	{
@@ -65,7 +65,7 @@ void cGameTimer::timerCallback()
 
 bool cGameTimer::popEvent ()
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock (mutex);
 
 	if (eventCounter > 0)
 	{
@@ -95,19 +95,19 @@ void cGameTimer::handleTimer()
 }
 
 
-void cGameTimer::setReceivedTime(unsigned int time, unsigned int nr)
+void cGameTimer::setReceivedTime (unsigned int time, unsigned int nr)
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock (mutex);
 
 	while (receivedTime.Size() <= nr)
-		receivedTime.Add(0);
+		receivedTime.Add (0);
 
 	receivedTime[nr] = time;
 }
 
-unsigned int cGameTimer::getReceivedTime(unsigned int nr)
+unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 {
-	cMutex::Lock lock(mutex);
+	cMutex::Lock lock (mutex);
 
 	if (receivedTime.Size() <= nr)
 		return 0;
@@ -117,12 +117,12 @@ unsigned int cGameTimer::getReceivedTime(unsigned int nr)
 
 cGameTimerClient::cGameTimerClient () :
 	cGameTimer (),
-	remoteChecksum(0),
-	localChecksum(0),
-	waitingForServer(0),
-	debugRemoteChecksum(0),
-	gameTimeAdjustment(0),
-	nextMsgIsNextGameTime(false)
+	remoteChecksum (0),
+	localChecksum (0),
+	waitingForServer (0),
+	debugRemoteChecksum (0),
+	gameTimeAdjustment (0),
+	nextMsgIsNextGameTime (false)
 {
 }
 
@@ -133,8 +133,8 @@ void cGameTimerClient::handleSyncMessage (cNetMessage& message)
 	remoteChecksum = message.popInt32();
 
 	int newSyncTime = message.popInt32();
-	if ( newSyncTime != gameTime + 1 )
-		Log.write("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
+	if (newSyncTime != gameTime + 1)
+		Log.write ("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
 
 	nextMsgIsNextGameTime = true;
 }
@@ -174,10 +174,10 @@ void cGameTimerClient::run ()
 			//check crc
 			localChecksum = calcClientChecksum();
 			debugRemoteChecksum = remoteChecksum;
-			if ( localChecksum != remoteChecksum )
+			if (localChecksum != remoteChecksum)
 			{
 				//gameGUI.debugOutput.debugSync = true;
-				Log.write("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
+				Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 			}
 
 			if (syncDebugSingleStep)
@@ -188,7 +188,7 @@ void cGameTimerClient::run ()
 			//send "still alive" message to server
 			//if (gameTime % (PAUSE_GAME_TIMEOUT/10) == 0)
 			{
-				cNetMessage *message = new cNetMessage(NET_GAME_TIME_CLIENT);
+				cNetMessage* message = new cNetMessage (NET_GAME_TIME_CLIENT);
 				message->pushInt32 (gameTime);
 				Client->sendNetMessage (message);
 			}
@@ -205,11 +205,11 @@ void cGameTimerClient::run ()
 }
 
 cGameTimerServer::cGameTimerServer () :
-	waitingForPlayer(-1)
+	waitingForPlayer (-1)
 {
 }
 
-void cGameTimerServer::handleSyncMessage(cNetMessage &message)
+void cGameTimerServer::handleSyncMessage (cNetMessage& message)
 {
 	assert (message.iType == NET_GAME_TIME_CLIENT);
 	setReceivedTime (message.popInt32(), message.iPlayerNr);
@@ -220,8 +220,8 @@ bool cGameTimerServer::nextTickAllowed ()
 {
 	if (syncDebugSingleStep)
 	{
-		if (getReceivedTime(0) < gameTime)
-				return false;
+		if (getReceivedTime (0) < gameTime)
+			return false;
 
 		return true;
 	}
@@ -230,18 +230,18 @@ bool cGameTimerServer::nextTickAllowed ()
 
 	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
 	{
-		cPlayer* player = (*Server->PlayerList)[i];
-		if (!Server->isPlayerDisconnected(player) && getReceivedTime(i) + PAUSE_GAME_TIMEOUT < gameTime)
+		cPlayer* player = (*Server->PlayerList) [i];
+		if (!Server->isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
 			newWaitingForPlayer = player->Nr;
 	}
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
 	{
-		Server->enableFreezeMode(FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
+		Server->enableFreezeMode (FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
 	}
 	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
 	{
-		Server->disableFreezeMode(FREEZE_WAIT_FOR_PLAYER);
+		Server->disableFreezeMode (FREEZE_WAIT_FOR_PLAYER);
 	}
 
 	waitingForPlayer = newWaitingForPlayer;
@@ -261,9 +261,9 @@ void cGameTimerServer::run ()
 
 			for (size_t i = 0; i < Server->PlayerList->Size(); i++)
 			{
-				cPlayer *player = (*Server->PlayerList)[i];
+				cPlayer* player = (*Server->PlayerList) [i];
 
-				cNetMessage *message = new cNetMessage(NET_GAME_TIME_SERVER);
+				cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
 				message->pushInt32 (gameTime);
 				Uint32 checkSum = calcServerChecksum (player);
 				message->pushInt32 (checkSum);
@@ -279,15 +279,15 @@ Uint32 calcClientChecksum()
 	Uint32 crc = 0;
 	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
 	{
-		cVehicle* vehicle = (*Client->getPlayerList())[i]->VehicleList;
+		cVehicle* vehicle = (*Client->getPlayerList()) [i]->VehicleList;
 		while (vehicle)
 		{
-			crc = calcCheckSum(vehicle->iID,  crc );
-			crc = calcCheckSum(vehicle->PosX, crc );
-			crc = calcCheckSum(vehicle->PosY, crc );
-			crc = calcCheckSum(vehicle->OffX, crc );
-			crc = calcCheckSum(vehicle->OffY, crc );
-			crc = calcCheckSum(vehicle->dir,  crc );
+			crc = calcCheckSum (vehicle->iID,  crc);
+			crc = calcCheckSum (vehicle->PosX, crc);
+			crc = calcCheckSum (vehicle->PosY, crc);
+			crc = calcCheckSum (vehicle->OffX, crc);
+			crc = calcCheckSum (vehicle->OffY, crc);
+			crc = calcCheckSum (vehicle->dir,  crc);
 
 			vehicle = (cVehicle*) vehicle->next;
 		}
@@ -295,22 +295,22 @@ Uint32 calcClientChecksum()
 	return crc;
 }
 
-Uint32 calcServerChecksum(cPlayer* player)
+Uint32 calcServerChecksum (cPlayer* player)
 {
 	Uint32 crc = 0;
 	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
-		cVehicle* vehicle = (*Server->PlayerList)[i]->VehicleList;
+		cVehicle* vehicle = (*Server->PlayerList) [i]->VehicleList;
 		while (vehicle)
 		{
 			if (vehicle->seenByPlayerList.Contains (player) || vehicle->owner == player)
 			{
-				crc = calcCheckSum(vehicle->iID,  crc );
-				crc = calcCheckSum(vehicle->PosX, crc );
-				crc = calcCheckSum(vehicle->PosY, crc );
-				crc = calcCheckSum(vehicle->OffX, crc );
-				crc = calcCheckSum(vehicle->OffY, crc );
-				crc = calcCheckSum(vehicle->dir,  crc );
+				crc = calcCheckSum (vehicle->iID,  crc);
+				crc = calcCheckSum (vehicle->PosX, crc);
+				crc = calcCheckSum (vehicle->PosY, crc);
+				crc = calcCheckSum (vehicle->OffX, crc);
+				crc = calcCheckSum (vehicle->OffY, crc);
+				crc = calcCheckSum (vehicle->dir,  crc);
 			}
 
 			vehicle = (cVehicle*) vehicle->next;
@@ -323,19 +323,19 @@ void compareGameData()
 {
 	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
 	{
-		cPlayer* clientPlayer = (*Client->getPlayerList())[i];
+		cPlayer* clientPlayer = (*Client->getPlayerList()) [i];
 
 		cVehicle* clientVehicle = clientPlayer->VehicleList;
 		cVehicle* serverVehicle;
 		while (clientVehicle)
 		{
-			serverVehicle = (cVehicle*) Server->getUnitFromID(clientVehicle->iID);
+			serverVehicle = (cVehicle*) Server->getUnitFromID (clientVehicle->iID);
 
-			assert(clientVehicle->PosX == serverVehicle->PosX);
-			assert(clientVehicle->PosY == serverVehicle->PosY);
-			assert(clientVehicle->OffX == serverVehicle->OffX);
-			assert(clientVehicle->OffY == serverVehicle->OffY);
-			assert(clientVehicle->dir == serverVehicle->dir);
+			assert (clientVehicle->PosX == serverVehicle->PosX);
+			assert (clientVehicle->PosY == serverVehicle->PosY);
+			assert (clientVehicle->OffX == serverVehicle->OffX);
+			assert (clientVehicle->OffY == serverVehicle->OffY);
+			assert (clientVehicle->dir == serverVehicle->dir);
 
 			clientVehicle = (cVehicle*) clientVehicle->next;
 		}

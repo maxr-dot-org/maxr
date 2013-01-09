@@ -19,7 +19,7 @@ class cGameTimer
 	friend class cDebugOutput;
 protected:
 	static Uint32 gameTimerCallback (Uint32 interval, void* arg);
-	
+
 	cGameTimer ();
 
 	/** SDL_Timer that controls the game time */
@@ -59,7 +59,7 @@ class cGameTimerServer : public cGameTimer
 	friend class cDebugOutput;
 private:
 	int waitingForPlayer;
-	
+
 	bool nextTickAllowed ();
 public:
 	cGameTimerServer ();
@@ -90,7 +90,7 @@ public:
 };
 
 Uint32 calcClientChecksum();
-Uint32 calcServerChecksum(cPlayer* player);
+Uint32 calcServerChecksum (cPlayer* player);
 
 void compareGameData();
 

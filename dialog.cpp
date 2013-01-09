@@ -580,7 +580,7 @@ cDialogTransfer::cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_
 	decButton.setReleasedFunction (&decReleased);
 	menuItems.Add (&decButton);
 
-	resBar = new cMenuMaterialBar(position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
+	resBar = new cMenuMaterialBar (position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
 	resBar->setClickedFunction (&barClicked);
 	menuItems.Add (resBar);
 

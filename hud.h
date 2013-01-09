@@ -111,7 +111,7 @@ enum eMouseInputMode
 
 
 /**
- * This class draws all the debug output on the screen. It is an seperate class, so you can add an "friend class cDebugOutput;" to the class, 
+ * This class draws all the debug output on the screen. It is an seperate class, so you can add an "friend class cDebugOutput;" to the class,
  * which contains the data to display. So there is no need to make members public only to use them in the debug output.
  *@author eiko
  */
@@ -155,7 +155,7 @@ private:
 class cGameGUI : public cMenu
 {
 	friend class cDebugOutput;
-	
+
 	cClient* client;
 	SDL_Surface* panelTopGraphic, *panelBottomGraphic;
 

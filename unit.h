@@ -72,8 +72,8 @@ public:
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
 
-	void drawMunBar( const SDL_Rect& screenPos ) const;
-	void drawHealthBar( const SDL_Rect& screenPos ) const;
+	void drawMunBar (const SDL_Rect& screenPos) const;
+	void drawHealthBar (const SDL_Rect& screenPos) const;
 	void rotateTo (int newDir);
 
 	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}

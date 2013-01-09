@@ -151,7 +151,7 @@ int cTCP::connect()
 
 bool cTCP::isConnected (int socketNr)
 {
-	if (socketNr == MAX_CLIENTS) 
+	if (socketNr == MAX_CLIENTS)
 		return true;
 
 	if (Sockets[socketNr].iState == STATE_NEW || Sockets[socketNr].iState == STATE_READY)

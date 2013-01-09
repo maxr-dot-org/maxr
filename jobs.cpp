@@ -9,7 +9,7 @@ cJob::cJob (cUnit* unit_) :
 {}
 
 
-cStartBuildJob::cStartBuildJob (cUnit* unit_, int orgX_, int orgY_, bool big_) : 
+cStartBuildJob::cStartBuildJob (cUnit* unit_, int orgX_, int orgY_, bool big_) :
 	cJob (unit_),
 	orgX (orgX_),
 	orgY (orgY_),
@@ -20,7 +20,7 @@ cStartBuildJob::cStartBuildJob (cUnit* unit_, int orgX_, int orgY_, bool big_) :
 	vehicle->OffY = (vehicle->PosY < orgY ? 64 : 0);
 }
 
-void cStartBuildJob::run (const cGameTimer &gameTimer)
+void cStartBuildJob::run (const cGameTimer& gameTimer)
 {
 	cVehicle* vehicle = dynamic_cast<cVehicle*> (unit);
 
@@ -45,7 +45,7 @@ void cStartBuildJob::run (const cGameTimer &gameTimer)
 		if (vehicle->OffX == 32)
 		{
 			if (!gameTimer.timer100ms) return;
-			vehicle->rotateTo(0);
+			vehicle->rotateTo (0);
 			if (vehicle->dir == 0)
 			{
 				finished = true;
@@ -58,7 +58,7 @@ void cStartBuildJob::run (const cGameTimer &gameTimer)
 			vehicle->OffX += deltaX;
 			vehicle->OffY += deltaY;
 
-			if ( (vehicle->OffX > 32 && deltaX > 0) || (vehicle->OffX < 32 && deltaX < 0) )
+			if ( (vehicle->OffX > 32 && deltaX > 0) || (vehicle->OffX < 32 && deltaX < 0))
 			{
 				vehicle->OffX = 32;
 				vehicle->OffY = 32;
@@ -67,13 +67,13 @@ void cStartBuildJob::run (const cGameTimer &gameTimer)
 		else
 		{
 			if (!gameTimer.timer100ms) return;
-			vehicle->rotateTo(dir);
+			vehicle->rotateTo (dir);
 		}
 	}
 	else
 	{
 		if (!gameTimer.timer100ms) return;
-		vehicle->rotateTo(0);
+		vehicle->rotateTo (0);
 		if (vehicle->dir == 0)
 		{
 			finished = true;
@@ -81,18 +81,18 @@ void cStartBuildJob::run (const cGameTimer &gameTimer)
 	}
 }
 
-cPlaneTakeoffJob::cPlaneTakeoffJob(cUnit* unit_, bool takeoff_) : 
+cPlaneTakeoffJob::cPlaneTakeoffJob (cUnit* unit_, bool takeoff_) :
 	cJob (unit_),
 	takeoff (takeoff_)
 {}
 
-void cPlaneTakeoffJob::run (const cGameTimer &gameTimer)
+void cPlaneTakeoffJob::run (const cGameTimer& gameTimer)
 {
 	cVehicle* plane = dynamic_cast<cVehicle*> (unit);
 	if (takeoff)
 	{
 		plane->FlightHigh += 2;
-		if (plane->FlightHigh < 0) 
+		if (plane->FlightHigh < 0)
 		{
 			plane->FlightHigh = 0;
 			finished = true;

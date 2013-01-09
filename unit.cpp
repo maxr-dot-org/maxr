@@ -967,7 +967,7 @@ int cUnit::getScreenPosX (bool movementOffset) const
 //--------------------------------------------------------------------------
 /** Returns the screen y position of the unit */
 //--------------------------------------------------------------------------
-int cUnit::getScreenPosY(bool movementOffset) const
+int cUnit::getScreenPosY (bool movementOffset) const
 {
 	int offset = movementOffset ? getMovementOffsetY() : 0;
 	return 18 - ( (int) ( (Client->gameGUI.getOffsetY() - offset) * Client->gameGUI.getZoom())) + (int) (Client->gameGUI.getTileSize()) * PosY;
@@ -1054,7 +1054,7 @@ void cUnit::drawHealthBar (const SDL_Rect& screenPos) const
 }
 
 //-----------------------------------------------------------------------------
-void cUnit::drawStatus(const SDL_Rect& screenPos) const
+void cUnit::drawStatus (const SDL_Rect& screenPos) const
 {
 	SDL_Rect dest;
 	SDL_Rect speedSymbol = {244, 97, 8, 10};

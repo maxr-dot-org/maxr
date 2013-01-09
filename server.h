@@ -93,7 +93,7 @@ public:
 	void stop ();
 	~cServer();
 
-	
+
 private:
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;
@@ -103,7 +103,7 @@ private:
 	cRingbuffer<cNetMessage*> eventQueue;
 	/** the event that was polled last from the eventQueue*/
 	cNetMessage* lastEvent;
-	
+
 	/** the thread the server runs in */
 	SDL_Thread* ServerThread;
 	/** true if the server should exit and end his thread */
@@ -499,7 +499,7 @@ public:
 
 	bool isTurnBasedGame() const { return bPlayTurns; }
 
-	void enableFreezeMode  (eFreezeMode mode, int playerNumber = -1);
+	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 
 } EX* Server;
