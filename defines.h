@@ -127,7 +127,7 @@
 #define MAX_NET_LOG		"net.log"
 #define CLANS_XML		(cSettings::getInstance().getDataDir() + "clans.xml").c_str()
 #define KEYS_XML		(cSettings::getInstance().getDataDir() + "keys.xml").c_str()
-#define SPLASH_BACKGROUND	(cSettings::getInstance().getDataDir() + "init.pcx").c_str()
+#define SPLASH_BACKGROUND	(cSettings::getInstance().getDataDir() + "init.pcx")
 #ifdef MAC
 # define MAXR_ICON  (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
 #else

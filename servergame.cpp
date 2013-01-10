@@ -325,7 +325,6 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 						{
 							int credits = atoi (tokens[1].c_str());
 							if (credits != SETTING_CREDITS_LOWEST
-								&& credits != SETTING_CREDITS_LOWEST
 								&& credits != SETTING_CREDITS_LOWER
 								&& credits != SETTING_CREDITS_LOW
 								&& credits != SETTING_CREDITS_NORMAL
