@@ -2421,7 +2421,7 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 
 	delete Vehicle;
 
-	if (owner) owner->DoScan();
+	owner->DoScan();
 }
 
 void cClient::handleEnd()

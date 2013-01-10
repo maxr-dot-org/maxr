@@ -140,10 +140,6 @@ public:
 	bool debugCache;
 	bool debugSync;
 
-	//data for debugSync
-	unsigned int remoteChecksum;
-	unsigned int localChecksum;
-
 	cDebugOutput();
 	void draw();
 private:

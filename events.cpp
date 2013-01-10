@@ -77,7 +77,6 @@ void cEventHandling::HandleEvents()
 					time_t tTime;
 					tm* tmTime;
 					char timestr[16];
-					std::string sTime;
 					tTime = time (NULL);
 					tmTime = localtime (&tTime);
 					strftime (timestr, 16, "%d.%m.%y-%H%M%S", tmTime);

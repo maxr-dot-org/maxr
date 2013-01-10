@@ -633,13 +633,13 @@ static int LoadMusic (const char* path)
 		Log.write ("Can't load music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode (MusicXml, "Music", "Menus", "main", NULL);
+	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Menus", "main", NULL);
 	if (! (pXmlNode->XmlReadNodeData (MainMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text")))
 	{
 		Log.write ("Can't find \"main\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	pXmlNode = pXmlNode->XmlGetFirstNode (MusicXml, "Music", "Menus", "credits", NULL);
+	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Menus", "credits", NULL);
 	if (! (pXmlNode->XmlReadNodeData (CreditsMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text")))
 	{
 		Log.write ("Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR);
@@ -647,7 +647,7 @@ static int LoadMusic (const char* path)
 	}
 
 
-	pXmlNode = pXmlNode->XmlGetFirstNode (MusicXml, "Music", "Game", "bkgcount", NULL);
+	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Game", "bkgcount", NULL);
 	if (!pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
 	{
 		Log.write ("Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR);
@@ -658,7 +658,7 @@ static int LoadMusic (const char* path)
 	{
 		sprintf (sztmp, "%d", i);
 		sTmpString = "bkg"; sTmpString += sztmp;
-		pXmlNode = pXmlNode->XmlGetFirstNode (MusicXml, "Music", "Game", sTmpString.c_str(), NULL);
+		pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Game", sTmpString.c_str(), NULL);
 		if (pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
 		{
 			sTmpString.insert (0, PATH_DELIMITER);
@@ -1712,7 +1712,7 @@ int getXMLNodeInt (TiXmlDocument& document, const char* path0, const char* path1
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode (document, path0, path1, path2, NULL);
+	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
 
 	string pathText = "";
 	if (path0) pathText += (string) path0;
@@ -1737,7 +1737,7 @@ float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* p
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode (document, path0, path1, path2, NULL);
+	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
 
 	double tmpDouble;
 	string pathText = "";
@@ -1763,7 +1763,7 @@ string getXMLNodeString (TiXmlDocument& document, const char* attribut, const ch
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode (document, path0, path1, path2, NULL);
+	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
 
 	string pathText = "";
 	if (path0) pathText += (string) path0;
@@ -1788,7 +1788,7 @@ bool getXMLNodeBool (TiXmlDocument& document, const char* path0, const char* pat
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = pExXmlNode->XmlGetFirstNode (document, path0, path1, path2, path3, NULL);
+	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, path3, NULL);
 
 	string pathText = "";
 	if (path0) pathText += (string) path0;
