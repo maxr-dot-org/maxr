@@ -102,7 +102,7 @@ public:
 	* calculates the costs for moving from the source- to the destinationfield
 	*@author alzi alias DoctorDeath
 	*/
-	int calcNextCost (int srcX, int srcY, int destX, int destY);
+	int calcNextCost (int srcX, int srcY, int destX, int destY) const;
 
 	/* the map on which the path will be calculated */
 	cMap* Map;
