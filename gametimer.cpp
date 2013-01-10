@@ -132,7 +132,7 @@ void cGameTimerClient::handleSyncMessage (cNetMessage& message)
 
 	remoteChecksum = message.popInt32();
 
-	int newSyncTime = message.popInt32();
+	const unsigned int newSyncTime = message.popInt32();
 	if (newSyncTime != gameTime + 1)
 		Log.write ("Game Synchonisation Error: Received out of order sync message", cLog::eLOG_TYPE_NET_ERROR);
 
