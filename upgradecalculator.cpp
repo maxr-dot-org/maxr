@@ -738,34 +738,20 @@ int cUpgradeCalculator::getCostForUpgrade (int orgValue, int curValue, int newVa
 //--------------------------------------------------
 int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType) const
 {
-	int neededTurns = kNoResearchAvailable;
-
 	switch (upgradeType)
 	{
 		case kHitpoints:
 		case kArmor:
 		{
-			if (curResearchLevel < 10) neededTurns = 8;
-			else if (curResearchLevel < 20)  neededTurns = 15;
-			else if (curResearchLevel < 30)  neededTurns = 25;
-			else if (curResearchLevel < 40)  neededTurns = 42;
-			else if (curResearchLevel < 50)  neededTurns = 67;
-			else if (curResearchLevel < 60)  neededTurns = 104;
-			else if (curResearchLevel < 70)  neededTurns = 156;
-			else if (curResearchLevel < 80)  neededTurns = 229;
-			else if (curResearchLevel < 90)  neededTurns = 328;
-			else if (curResearchLevel < 100) neededTurns = 462;
-			else if (curResearchLevel < 110) neededTurns = 639;
-			else if (curResearchLevel < 120) neededTurns = 871;
-			else if (curResearchLevel < 130) neededTurns = 1171;
-			else if (curResearchLevel < 140) neededTurns = 1553;
-			else if (curResearchLevel < 150) neededTurns = 2036;
-			else if (curResearchLevel < 160) neededTurns = 2640;
-			else if (curResearchLevel < 170) neededTurns = 3389;
-			else if (curResearchLevel < 180) neededTurns = 4311;
-			else if (curResearchLevel < 190) neededTurns = 5437;
-			else if (curResearchLevel < 200) neededTurns = 6803;
-			else if (curResearchLevel < 210) neededTurns = 8448;
+			const unsigned int index = curResearchLevel / 10;
+			const int values[] = {
+				8, 15, 25, 42, 67, 104, 156, 229, 328, 462,
+				639, 871, 1171, 1553, 2036, 2640, 3389, 4311, 5437, 6803,
+				8448
+			};
+
+			if (index < sizeof (values) / sizeof (*values))
+				return values[index];
 			break;
 		}
 
@@ -773,27 +759,15 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		case kSpeed:
 		case kShots:
 		{
-			if (curResearchLevel < 10) neededTurns = 16;
-			else if (curResearchLevel < 20)  neededTurns = 30;
-			else if (curResearchLevel < 30)  neededTurns = 51;
-			else if (curResearchLevel < 40)  neededTurns = 85;
-			else if (curResearchLevel < 50)  neededTurns = 135;
-			else if (curResearchLevel < 60)  neededTurns = 208;
-			else if (curResearchLevel < 70)  neededTurns = 312;
-			else if (curResearchLevel < 80)  neededTurns = 458;
-			else if (curResearchLevel < 90)  neededTurns = 657;
-			else if (curResearchLevel < 100) neededTurns = 924;
-			else if (curResearchLevel < 110) neededTurns = 1278;
-			else if (curResearchLevel < 120) neededTurns = 1742;
-			else if (curResearchLevel < 130) neededTurns = 2342;
-			else if (curResearchLevel < 140) neededTurns = 3106;
-			else if (curResearchLevel < 150) neededTurns = 4072;
-			else if (curResearchLevel < 160) neededTurns = 5280;
-			else if (curResearchLevel < 170) neededTurns = 6778;
-			else if (curResearchLevel < 180) neededTurns = 8622;
-			else if (curResearchLevel < 190) neededTurns = 10874;
-			else if (curResearchLevel < 200) neededTurns = 13606;
-			else if (curResearchLevel < 210) neededTurns = 16896;
+			const unsigned int index = curResearchLevel / 10;
+			const int values[] = {
+				16, 30, 51, 85, 135, 208, 312, 458, 657, 924,
+				1278, 1742, 2342, 3106, 4072, 5280, 6778, 8622, 10874, 13606,
+				16896
+			};
+
+			if (index < sizeof (values) / sizeof (*values))
+				return values[index];
 			break;
 		}
 
@@ -801,27 +775,15 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		case kScan:
 		case kCost:
 		{
-			if (curResearchLevel < 10) neededTurns = 33;
-			else if (curResearchLevel < 20)  neededTurns = 60;
-			else if (curResearchLevel < 30)  neededTurns = 103;
-			else if (curResearchLevel < 40)  neededTurns = 170;
-			else if (curResearchLevel < 50)  neededTurns = 270;
-			else if (curResearchLevel < 60)  neededTurns = 416;
-			else if (curResearchLevel < 70)  neededTurns = 625;
-			else if (curResearchLevel < 80)  neededTurns = 916;
-			else if (curResearchLevel < 90)  neededTurns = 1314;
-			else if (curResearchLevel < 100) neededTurns = 1849;
-			else if (curResearchLevel < 110) neededTurns = 2559;
-			else if (curResearchLevel < 120) neededTurns = 3487;
-			else if (curResearchLevel < 130) neededTurns = 4684;
-			else if (curResearchLevel < 140) neededTurns = 6213;
-			else if (curResearchLevel < 150) neededTurns = 8144;
-			else if (curResearchLevel < 160) neededTurns = 10560;
-			else if (curResearchLevel < 170) neededTurns = 13556;
-			else if (curResearchLevel < 180) neededTurns = 17244;
-			else if (curResearchLevel < 190) neededTurns = 21748;
-			else if (curResearchLevel < 200) neededTurns = 27212;
-			else if (curResearchLevel < 210) neededTurns = 33792;
+			const unsigned int index = curResearchLevel / 10;
+			const int values[] = {
+				33, 60, 103, 170, 270, 416, 625, 916, 1314, 1849,
+				2559, 3487, 4684, 6213, 8144, 10560, 13556, 17244, 21748, 27212,
+				33792
+			};
+
+			if (index < sizeof (values) / sizeof (*values))
+				return values[index];
 			break;
 		}
 
@@ -829,7 +791,7 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		default: break;
 	}
 
-	return neededTurns;
+	return kNoResearchAvailable;
 }
 
 //--------------------------------------------------
