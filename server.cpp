@@ -277,12 +277,14 @@ void cServer::run()
 		}
 
 		// don't do anything if games hasn't been started yet!
+		static int lastTime = 0;
+		lastTime = gameTimer.gameTime;
 		if (bStarted)
 		{
 			gameTimer.run ();
 		}
-
-		if (!event && !gameTimer.timer10ms) //nothing to do
+		
+		if (!event && lastTime == gameTimer.gameTime) //nothing to do
 		{
 			SDL_Delay (10);
 		}
