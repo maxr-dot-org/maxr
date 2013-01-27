@@ -153,9 +153,11 @@ void cServerGame::run()
 			Server->checkPlayerUnits();
 		}
 
-		// don't do anything if games hasn't been started yet!
 		static int lastTime = 0;
-		lastTime = Server->gameTimer.gameTime;
+		if (Server)
+			lastTime = Server->gameTimer.gameTime;
+
+		// don't do anything if games hasn't been started yet!
 		if (Server && Server->bStarted)
 		{
 			Server->gameTimer.run ();
@@ -169,7 +171,7 @@ void cServerGame::run()
 			}
 		}
 
-		if (!event && lastTime == Server->gameTimer.gameTime) //nothing to do
+		if (!event && (!Server || lastTime == Server->gameTimer.gameTime)) //nothing to do
 			SDL_Delay (10);
 	}
 	if (Server)
