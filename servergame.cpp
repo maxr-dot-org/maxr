@@ -146,11 +146,16 @@ void cServerGame::run()
 		if (event)
 		{
 			if (Server != 0)
+			{
 				Server->HandleNetMessage (event);
+				Server->checkPlayerUnits();
+			}
 			else
+			{
 				handleNetMessage (event);
+			}
 
-			Server->checkPlayerUnits();
+			
 		}
 
 		static int lastTime = 0;
