@@ -51,7 +51,7 @@ Uint32 getPlayerColour (cPlayer* p)
 
 void plot (SDL_Surface* s, int x, int y, Uint32 colour)
 {
-	SDL_Rect rect = {x, y, 1, 1};
+	SDL_Rect rect = {Sint16 (x), Sint16 (y), 1, 1};
 	SDL_FillRect (s, &rect, colour);
 }
 
@@ -861,7 +861,7 @@ void cMenuDestroyButton::draw()
 
 	if (glassHeight < 56)
 	{
-		SDL_Rect src = { 0, glassHeight, 59, 56 - glassHeight };
+		SDL_Rect src = { 0, Sint16 (glassHeight), 59, Uint16(56 - glassHeight) };
 		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, buffer, &position);
 	}
 
@@ -1079,7 +1079,7 @@ void cMenuCheckButton::draw()
 			if (checked)
 			{
 #define SELECTION_COLOR 0xE3DACF
-				SDL_Rect dest = { position.x + position.w + 2, position.y - 1, 1, position.h + 2 };
+				SDL_Rect dest = { Sint16 (position.x + position.w + 2), Sint16 (position.y - 1), 1, Uint16 (position.h + 2) };
 				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
 				dest.x -= position.w + 4;
 				SDL_FillRect (buffer, &dest, SELECTION_COLOR);
@@ -1312,7 +1312,7 @@ void cMenuUnitListItem::draw()
 
 int cMenuUnitListItem::drawName (bool withNumber)
 {
-	SDL_Rect dest = { position.x + 32 + 4, position.y + 12, position.w - (32 + 4) - 12, 0 };
+	SDL_Rect dest = { Sint16(position.x + 32 + 4), Sint16 (position.y + 12), Uint16 (position.w - (32 + 4) - 12), 0 };
 	string name = ( (string) unitID.getUnitDataCurrentVersion (owner)->name);
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
@@ -1346,7 +1346,7 @@ void cMenuUnitListItem::drawCargo (int destY)
 {
 	if (!unitID.getVehicle()) return;
 
-	SDL_Rect dest = { position.x + 32 + 4, destY, 0, 0 };
+	SDL_Rect dest = { Sint16 (position.x + 32 + 4), Sint16 (destY), 0, 0 };
 
 	if (unitID.getUnitDataOriginalVersion()->storeResType != sUnitData::STORE_RES_NONE)
 	{
@@ -1592,8 +1592,8 @@ void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 			bool isInMenuSelected = false;
 			if (unitsList[i]->selected)
 			{
-				if (i + 1 < (int) unitsList.Size()) nextSelUnit = unitsList[i + 1];
-				else if ( ( (int) i) - 1 >= 0) nextSelUnit = unitsList[i - 1];
+				if (i + 1 < unitsList.Size()) nextSelUnit = unitsList[i + 1];
+				else if (i >= 1) nextSelUnit = unitsList[i - 1];
 				if (unitsList[i] == parentMenu->getSelectedUnit()) isInMenuSelected = true;
 			}
 			delete unitsList[i];
@@ -1667,7 +1667,7 @@ void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y
 		}
 	}
 
-	SDL_Rect dest = {x, y, 0, 0};
+	SDL_Rect dest = {Sint16 (x), Sint16 (y), 0, 0};
 
 	int oriSrcX = src.x;
 	for (int i = 0; i < toValue; i++)
@@ -1861,7 +1861,7 @@ void cMenuUnitDetails::draw()
 {
 	if (drawLines)
 	{
-		SDL_Rect lineRect = { position.x + 2, position.y + 14, 153, 1 };
+		SDL_Rect lineRect = { Sint16 (position.x + 2), Sint16 (position.y + 14), 153, 1 };
 		SDL_FillRect (buffer , &lineRect, 0x743904);
 		lineRect.y += 12;
 		SDL_FillRect (buffer , &lineRect, 0x743904);
@@ -3625,7 +3625,7 @@ void cMenuReportsScreen::drawUnitsScreen()
 	if (selected >= index * maxItems && selected < (index + 1) *maxItems)
 	{
 		int selIndex = selected - index * maxItems;
-		SDL_Rect selDest = { position.x + 13, position.y + 26 + 55 * selIndex, 8, 1 };
+		SDL_Rect selDest = { Sint16 (position.x + 13), Sint16 (position.y + 26 + 55 * selIndex), 8, 1 };
 
 		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x += 30;
@@ -3728,7 +3728,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 				{
 					{
 						//SDL_Rect src = { 0, 0, 32, 32 };
-						SDL_Rect dest = { position.x + 17, position.y + 28 + (displayedEntryIndex - (index * 10)) * 42, 0, 0 };
+						SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 28 + (displayedEntryIndex - (index * 10)) * 42), 0, 0 };
 						AutoSurface surface;
 						if (unitID.getBuilding())
 						{
@@ -3793,7 +3793,7 @@ void cMenuReportsScreen::drawScoreScreen()
 		int score = p->getScore (Client->getTurn());
 		int ecos = p->numEcos;
 
-		SDL_Rect r = {position.x + 24, position.y + y + 3, 8, 8};
+		SDL_Rect r = {Sint16 (position.x + 24), Sint16 (position.y + y + 3), 8, 8};
 		SDL_FillRect (buffer, &r, getPlayerColour (p));
 
 		std::stringstream ss;
@@ -3945,7 +3945,7 @@ void cMenuReportsScreen::drawScoreGraph()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawReportsScreen()
 {
-	SDL_Rect textDest = { position.x + 54, position.y + 25, 410, 30 };
+	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
 	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.Size(); i++)
 	{
 		if ( (int) i >= (index + 1) *maxItems) break;
@@ -3958,7 +3958,7 @@ void cMenuReportsScreen::drawReportsScreen()
 				break;
 			case sSavedReportMessage::REPORT_TYPE_UNIT:
 			{
-				SDL_Rect dest = { position.x + 17, position.y + 30 + (i - (index) *maxItems) * 55, 0, 0 };
+				SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 30 + (i - (index) *maxItems) * 55), 0, 0 };
 
 				AutoSurface surface;
 				if (savedReport.unitID.getVehicle())
@@ -3989,7 +3989,7 @@ void cMenuReportsScreen::drawReportsScreen()
 		if (selected == (int) i)
 		{
 			int selIndex = selected - index * maxItems;
-			SDL_Rect selDest = { position.x + 15, position.y + 23 + 55 * selIndex, 1, 53 };
+			SDL_Rect selDest = { Sint16 (position.x + 15), Sint16 (position.y + 23 + 55 * selIndex), 1, 53 };
 
 			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 			selDest.x += 450;
@@ -4039,8 +4039,8 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 	int& count = (*count_);
 	count = 0;
 
-	SDL_Rect dest = { position.x + 17, position.y + 30, 0, 0 };
-	SDL_Rect nameDest = { position.x + 54, position.y + 25, 75, 30 };
+	SDL_Rect dest = { Sint16 (position.x + 17), Sint16 (position.y + 30), 0, 0 };
+	SDL_Rect nameDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 75, 30 };
 
 	cVehicle* nextVehicle = vehicles;
 	while (nextVehicle && count < maxCount)
@@ -4316,7 +4316,7 @@ void cMenuPlayerInfo::draw()
 
 	if (GraphicsData.gfx_hud_extra_players)
 	{
-		SDL_Rect srcRect = { sourceX, 0, GraphicsData.gfx_hud_extra_players->w, GraphicsData.gfx_hud_extra_players->h};
+		SDL_Rect srcRect = { Sint16 (sourceX), 0, Uint16 (GraphicsData.gfx_hud_extra_players->w), Uint16 (GraphicsData.gfx_hud_extra_players->h)};
 
 		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position);
 	}
@@ -4326,14 +4326,14 @@ void cMenuPlayerInfo::draw()
 	{
 		if (GraphicsData.gfx_player_ready)
 		{
-			SDL_Rect srcDotRect = { player->bFinishedTurn ? 10 : 0, 0, 10, 10 };
-			SDL_Rect destDotRect = { position.x + 23 - sourceX, position.y + 6, srcDotRect.w, srcDotRect.h };
+			SDL_Rect srcDotRect = { Sint16 (player->bFinishedTurn ? 10 : 0), 0, 10, 10 };
+			SDL_Rect destDotRect = { Sint16 (position.x + 23 - sourceX), Sint16 (position.y + 6), srcDotRect.w, srcDotRect.h };
 
 			SDL_BlitSurface (GraphicsData.gfx_player_ready, &srcDotRect, buffer, &destDotRect);
 		}
 
 		SDL_Rect srcColorRect = { 0, 0, 10, 12 };
-		SDL_Rect destColorRect = { position.x + 40 - sourceX, position.y + 6, srcColorRect.w, srcColorRect.h };
+		SDL_Rect destColorRect = { Sint16 (position.x + 40 - sourceX), Sint16 (position.y + 6), srcColorRect.w, srcColorRect.h };
 		SDL_BlitSurface (player->color, &srcColorRect, buffer, &destColorRect);
 	}
 	else

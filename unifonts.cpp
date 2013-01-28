@@ -355,7 +355,7 @@ void cUnicodeFont::showText (int x, int y, const string& text, eUnicodeFontType 
 			}
 			if (chars[uni] != NULL)
 			{
-				SDL_Rect rTmp = {offX, offY, 16, 16};
+				SDL_Rect rTmp = {Sint16(offX), Sint16(offY), 16, 16};
 				SDL_BlitSurface (chars[uni], NULL, surface, &rTmp);
 
 				//move one px forward for space between signs

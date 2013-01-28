@@ -10,8 +10,10 @@ class cJob
 protected:
 	explicit cJob (cUnit* unit_);
 public:
-	bool finished;
+	virtual ~cJob() {}
 	virtual void run (const cGameTimer& gameTimer) = 0;
+public:
+	bool finished;
 	cUnit* unit;
 };
 

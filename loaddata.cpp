@@ -358,8 +358,8 @@ int LoadData (void*)
 {
 	if (!DEDICATED_SERVER)
 	{
-		SDL_Rect rDest = {22, 152, 228, font->getFontHeight (FONT_LATIN_BIG_GOLD) };
-		SDL_Rect rDest2 = {250, 152, 230, font->getFontHeight (FONT_LATIN_BIG_GOLD) };
+		SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
+		SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
 		SDL_Rect rSrc;
 
 		switch (ok)

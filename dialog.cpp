@@ -848,7 +848,7 @@ void cDialogTransfer::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle*
 
 void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surface* surface)
 {
-	SDL_Rect dest = {x, y, 42, 21};
+	SDL_Rect dest = {Sint16 (x), Sint16 (y), 42, 21};
 	SDL_Rect src = {0, 0, 42, 21}; //default button deselected
 	if (bPressed) src.y += 21;
 

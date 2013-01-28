@@ -370,8 +370,8 @@ protected:
 	static Uint32 sdlTimerCallback (Uint32 intervall, void* param);
 
 	bool state;
-	cMenuTimerBase (Uint32 intervall);
-	~cMenuTimerBase();
+	explicit cMenuTimerBase (Uint32 intervall);
+	virtual ~cMenuTimerBase();
 	SDL_TimerID timerID;
 
 };

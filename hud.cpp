@@ -84,10 +84,10 @@ void cDebugOutput::draw()
 		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ( (int) Client->PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-		SDL_Rect rDest = { DEBUGOUT_X_POS, debugOff, 20, 10 };
+		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
-		SDL_Rect rDotDest = {DEBUGOUT_X_POS - 10, debugOff, 10, 10 };
-		SDL_Rect rBlackOut = {DEBUGOUT_X_POS + 20, debugOff, 0, 10 };
+		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
+		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
 		for (unsigned int i = 0; i < Client->PlayerList->Size(); i++)
 		{
 			//HACK SHOWFINISHEDPLAYERS
@@ -3438,7 +3438,7 @@ void cGameGUI::preDrawFunction()
 
 	if (timer400ms) map->generateNextAnimationFrame();
 
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
 
 	drawTerrain (zoomOffX, zoomOffY);
@@ -3552,7 +3552,7 @@ void cGameGUI::displayFX()
 {
 	if (!client->FXList.Size()) return;
 
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
 
 	for (int i = (int) client->FXList.Size() - 1; i >= 0; i--)
@@ -3825,7 +3825,7 @@ void cGameGUI::displayBottomFX()
 	if (!client->FXListBottom.Size()) return;
 
 	SDL_Rect oldClipRect = buffer->clip_rect;
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
 
 	for (int i = (int) client->FXListBottom.Size() - 1; i >= 0; i--)
@@ -3988,7 +3988,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 						if (debugOutput.debugBaseClient && building->SubBase)
 						{
 							sSubBase* sb;
-							SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
+							SDL_Rect tmp = { dest.x, dest.y, Uint16(getTileSize()), 8 };
 							if (building->data.isBig) tmp.w *= 2;
 							sb = building->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
@@ -4009,7 +4009,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 							sSubBase* sb = Server->Map->fields[pos].getBuildings()->SubBase;;
 							if (sb)
 							{
-								SDL_Rect tmp = { dest.x, dest.y, getTileSize(), 8 };
+								SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
 								if (building->data.isBig) tmp.w *= 2;
 
 								// the VS compiler gives a warning on casting a pointer to long.
@@ -4196,7 +4196,7 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	int tileSize = client->gameGUI.getTileSize();
-	SDL_Rect dest, tmp, src = { 0, 0, tileSize, tileSize };
+	SDL_Rect dest, tmp, src = { 0, 0, Uint16 (tileSize), Uint16 (tileSize) };
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -4289,7 +4289,7 @@ void cGameGUI::displayMessages()
 		message = messages[i];
 		height += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
 	}
-	SDL_Rect scr = { 0, 0, Video.getResolutionX() - 200, height + 6 };
+	SDL_Rect scr = { 0, 0, Uint16 (Video.getResolutionX() - 200), Uint16 (height + 6) };
 	SDL_Rect dest = { 180, 30, 0, 0 };
 
 	if (cSettings::getInstance().isAlphaEffects()) SDL_BlitSurface (GraphicsData.gfx_shadow, &scr, buffer, &dest);
@@ -4326,7 +4326,7 @@ void cGameGUI::displayMessages()
 		if (color != -1)
 		{
 #define CELLSPACE 3
-			SDL_Rect rColorSrc = { 0, 0, 10, font->getFontHeight() };
+			SDL_Rect rColorSrc = { 0, 0, 10, Uint16 (font->getFontHeight()) };
 			SDL_Rect rDest = dest;
 			rDest.w = rColorSrc.w;
 			rDest.h = rColorSrc.h;
@@ -4420,8 +4420,8 @@ void cGameGUI::makePanel (bool open)
 	if (open)
 	{
 		PlayFX (SoundData.SNDPanelOpen);
-		SDL_Rect top = { 0, (Video.getResolutionY() / 2) - 479, 171, 479 };
-		SDL_Rect bottom = { 0, (Video.getResolutionY() / 2) , 171, 481 };
+		SDL_Rect top = { 0, Sint16 ((Video.getResolutionY() / 2) - 479), 171, 479 };
+		SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY() / 2) , 171, 481 };
 		SDL_BlitSurface (GraphicsData.gfx_panel_top, NULL, buffer, &tmp);
 		tmp = bottom;
 		SDL_BlitSurface (GraphicsData.gfx_panel_bottom , NULL, buffer, &tmp);
@@ -4442,7 +4442,7 @@ void cGameGUI::makePanel (bool open)
 	{
 		PlayFX (SoundData.SNDPanelClose);
 		SDL_Rect top = { 0, -480, 171, 479 };
-		SDL_Rect bottom = { 0, Video.getResolutionY() , 171, 481 };
+		SDL_Rect bottom = { 0, Sint16 (Video.getResolutionY()) , 171, 481 };
 		while (bottom.y > Video.getResolutionY() / 2)
 		{
 			Video.draw();
@@ -4466,7 +4466,7 @@ void cGameGUI::makePanel (bool open)
 
 void cGameGUI::drawUnitCircles()
 {
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH, Video.getResolutionY() - HUD_TOTAL_HIGHT };
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
 
 	if (selectedVehicle)

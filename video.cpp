@@ -325,7 +325,7 @@ bool cVideo::doDetection()
 	}
 
 	/* Print and store detected modes */
-	for (int i = 0; rDetectedModes[i]; ++i)
+	for (unsigned int i = 0; rDetectedModes[i]; ++i)
 	{
 		//write detected video modes (don't write modes *below* the minimum mode'
 		if (rDetectedModes[i]->w >= MINWIDTH && rDetectedModes[i]->h >= MINHEIGHT)
