@@ -14,6 +14,10 @@
 		9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
 		9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
+		9F44576E16C19C0C00A80C81 /* gametimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F44576A16C19C0C00A80C81 /* gametimer.cpp */; };
+		9F44576F16C19C0C00A80C81 /* jobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F44576C16C19C0C00A80C81 /* jobs.cpp */; };
+		9F44577016C19C0C00A80C81 /* gametimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F44576A16C19C0C00A80C81 /* gametimer.cpp */; };
+		9F44577116C19C0C00A80C81 /* jobs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F44576C16C19C0C00A80C81 /* jobs.cpp */; };
 		9F5DA1450FB8B74100CC2B17 /* menuevents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */; };
 		9F5DA1460FB8B74100CC2B17 /* menuitems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */; };
 		9F5DA1470FB8B74100CC2B17 /* menus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DA1430FB8B74100CC2B17 /* menus.cpp */; };
@@ -146,6 +150,10 @@
 		9F191B0C14CF580F002426E2 /* notifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = notifications.cpp; path = ../notifications.cpp; sourceTree = SOURCE_ROOT; };
 		9F33BF7114A9EF2200379C9E /* unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unit.h; path = ../unit.h; sourceTree = SOURCE_ROOT; };
 		9F33BF7214A9EF2200379C9E /* unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unit.cpp; path = ../unit.cpp; sourceTree = SOURCE_ROOT; };
+		9F44576A16C19C0C00A80C81 /* gametimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gametimer.cpp; path = ../gametimer.cpp; sourceTree = SOURCE_ROOT; };
+		9F44576B16C19C0C00A80C81 /* gametimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gametimer.h; path = ../gametimer.h; sourceTree = SOURCE_ROOT; };
+		9F44576C16C19C0C00A80C81 /* jobs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jobs.cpp; path = ../jobs.cpp; sourceTree = SOURCE_ROOT; };
+		9F44576D16C19C0C00A80C81 /* jobs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jobs.h; path = ../jobs.h; sourceTree = SOURCE_ROOT; };
 		9F5DA13F0FB8B74100CC2B17 /* menuevents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuevents.cpp; path = ../menuevents.cpp; sourceTree = SOURCE_ROOT; };
 		9F5DA1400FB8B74100CC2B17 /* menuevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menuevents.h; path = ../menuevents.h; sourceTree = SOURCE_ROOT; };
 		9F5DA1410FB8B74100CC2B17 /* menuitems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menuitems.cpp; path = ../menuitems.cpp; sourceTree = SOURCE_ROOT; };
@@ -340,10 +348,14 @@
 				9FC0DB890EE2B17400F23D2C /* extendedtinyxml.h */,
 				9FC0DB8A0EE2B17400F23D2C /* files.cpp */,
 				9FC0DB8B0EE2B17400F23D2C /* files.h */,
+				9F44576A16C19C0C00A80C81 /* gametimer.cpp */,
+				9F44576B16C19C0C00A80C81 /* gametimer.h */,
 				9FC0DB900EE2B17400F23D2C /* hud.cpp */,
 				9FC0DB910EE2B17400F23D2C /* hud.h */,
 				9FC2DCB90F17B2D60022714E /* input.cpp */,
 				9FC2DCBA0F17B2D60022714E /* input.h */,
+				9F44576C16C19C0C00A80C81 /* jobs.cpp */,
+				9F44576D16C19C0C00A80C81 /* jobs.h */,
 				9FC0DB940EE2B17400F23D2C /* keys.cpp */,
 				9FC0DB950EE2B17400F23D2C /* keys.h */,
 				9FC0DB960EE2B17400F23D2C /* language.cpp */,
@@ -584,6 +596,8 @@
 				9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */,
 				9F0B084114D08559007F3D00 /* notifications.cpp in Sources */,
 				9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
+				9F44577016C19C0C00A80C81 /* gametimer.cpp in Sources */,
+				9F44577116C19C0C00A80C81 /* jobs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,6 +654,8 @@
 				9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */,
 				9F0B084014D08558007F3D00 /* notifications.cpp in Sources */,
 				9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
+				9F44576E16C19C0C00A80C81 /* gametimer.cpp in Sources */,
+				9F44576F16C19C0C00A80C81 /* jobs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
