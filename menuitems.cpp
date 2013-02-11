@@ -3538,7 +3538,7 @@ void cMenuScrollerHandler::draw()
 void cMenuScrollerHandler::setValue (int value)
 {
 	currentValue = value;
-	int pos = position.x + (position.w - 14) / maxValue * currentValue;
+	int pos = position.x + ((position.w - 14) * currentValue) / maxValue;
 	scroller->move (pos);
 }
 
