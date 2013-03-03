@@ -1045,6 +1045,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		Log.write (" Client: Client has already reached the last field", cLog::eLOG_TYPE_NET_DEBUG);
 		bEndForNow = true;
 		Vehicle->OffX = Vehicle->OffY = 0;
+		return;
 	}
 
 	switch (iType)
@@ -1241,6 +1242,8 @@ void cClientMoveJob::moveVehicle()
 	}
 
 	setOffset (Vehicle, iNextDir, iSpeed);
+	//assert( Vehicle->OffX >= -64 && Vehicle->OffX <= 64 && Vehicle->OffY >= -64 && Vehicle->OffY <= 64);
+
 }
 
 void cClientMoveJob::doEndMoveVehicle()
