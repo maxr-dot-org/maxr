@@ -29,6 +29,11 @@
 #include "file.h"
 #include "wave.h"
 #include "ogg_encode.h"
+#include <iostream>
+#include <algorithm>		// for transform toupper
+#include <vector>		//for vectorLanguages
+using namespace std;
+
 #if MAC
 #include "mac/sources/resinstallerGUI.h"
 #endif
@@ -4063,14 +4068,6 @@ void trimQuotes(string& str)
 	str.erase(pos);
 }
 
-#if MAC
-#else
-	// this is needed to prevent a linker error with MinGW
-	#ifdef main
-	#undef main
-	#endif
-#endif
-
 //-------------------------------------------------------------
 int main ( int argc, char* argv[] )
 {
@@ -4171,82 +4168,86 @@ int main ( int argc, char* argv[] )
 		else
 			sVoicePath = sMAXPath; // default - but should not happen
 #else
-		
-		//make menu
-		cout << "\nThe following voice samples are available from your install source:\n";
-		cout << "1.) english\n";
-		int iTmp = 2;
-		if (bGerman){
-			cout << iTmp << ".) german\n";
-			iTmp++;
+
+		//make menu values
+		vector<string> vectorLanguages; //initialize empty vector of strings
+		vectorLanguages.push_back("english");
+
+		if (bGerman)
+		{
+			vectorLanguages.push_back("german");
 		}
-		if ( bItalian == true ){
-			cout << iTmp << ".) italian\n";
-			iTmp++;
+		if (bItalian)
+		{
+			vectorLanguages.push_back("italian");
 		}
-		if ( bFrench == true ){
-			cout << iTmp << ".) french\n";
-			iTmp++;
+		if (bFrench)
+		{
+			vectorLanguages.push_back("french");
 		}
 
-		string input;
-		while ( 1 )
+		do
 		{
-			cout << "\nEnter your preferred language: ";
-			//read lang from cin
-			getline(cin, input);
-			trimSpaces(input);
-			int number = 1;
-			if ( input.compare("english") == 0 || input.compare(iToStr(number)) )
+			//make menu output
+			cout << "\nThe following voice samples are available from your install source:\n";
+			cout << "\n No. | as word\n";
+			cout << " ------------- " << endl; 
+			for(unsigned ii = 0; ii < vectorLanguages.size(); ii++)
 			{
-				sVoicePath = sMAXPath;
-				break;
+				cout << "  " << ii+1 << "  | " << vectorLanguages[ii] << endl; //output languages from vector with increased number to start menu with 1 instead of 0
+				cout << " ------------- " << endl; 
 			}
 			
-			number++;
-			if ( bGerman && (input.compare("german") == 0 || input.compare(iToStr(number))) )
+			cout << "\nPlease enter your preferred language (as number or word): ";
+
+			//read lang from cin
+			string input;
+			getline(cin, input);
+			trimSpaces(input);
+			transform(input.begin(), input.end(), input.begin(), ::tolower);
+			
+			long int value = strtol( input.c_str(), NULL, 10 ); //If no valid conversion could be performed, a zero value is returned
+			if ( value > 0 && value <= (long)vectorLanguages.size() )
 			{
-				if ( bUppercase )
+				input = vectorLanguages[value-1];
+			}
+			string errormsg;
+			if ( value < 0 || value > (long)vectorLanguages.size() )
+			{
+				errormsg = "you inserted an invalid number";
+			}
+			else //no number entered. Search language by string
+			{
+				for(unsigned ii = 0; ii < vectorLanguages.size(); ii++)
 				{
-					sVoicePath = sMAXPath + "GERMAN" + PATH_DELIMITER;
+					if (input == "english")
+					{
+						sVoicePath = sMAXPath;
+					}
+					else if ( !bUppercase && input == vectorLanguages[ii] )
+					{
+						sVoicePath = sMAXPath + input + PATH_DELIMITER;
+					}
+					else if ( bUppercase && input == vectorLanguages[ii] )
+					{
+						transform(input.begin(), input.end(), input.begin(), ::toupper);
+						sVoicePath = sMAXPath + input + PATH_DELIMITER;
+					}
 				}
-				else
-				{
-					sVoicePath = sMAXPath + "german" + PATH_DELIMITER;
-				}
-				break;
 			}
 
-			if ( bGerman ) number++;
-			if ( bItalian && (input.compare("italian") == 0 || input.compare(iToStr(number))) )
+			if (errormsg.empty() && sVoicePath.empty())
 			{
-				if ( bUppercase )
-				{
-					sVoicePath = sMAXPath + "ITALIAN" + PATH_DELIMITER;
-				}
-				else
-				{
-					sVoicePath = sMAXPath + "italian" + PATH_DELIMITER;
-				}
-				break;
+				errormsg = "you inserted an invalid word as language";
 			}
-
-			if ( bItalian ) number++;
-			if ( bFrench && (input.compare("french") == 0 || input.compare(iToStr(number))) )
+			if (sVoicePath.empty())
 			{
-				if ( bUppercase )
-				{
-					sVoicePath = sMAXPath + "FRENCH" + PATH_DELIMITER;
-				}
-				else
-				{
-					sVoicePath = sMAXPath + "french" + PATH_DELIMITER;
-				}
-				break;
+				cout << "\nSo sorry, but " << errormsg << endl;
+				cout << " Please try it again...\n";
 			}
-
-			cout << "Language not recognized\n";
 		}
+		while (sVoicePath.empty());
+
 #endif
 	}
 	
