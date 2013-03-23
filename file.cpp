@@ -22,6 +22,11 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#ifdef WIN32
+	#include <direct.h>
+	#include <io.h>
+	#include <sys/stat.h>
+#endif
 #include "resinstaller.h"
 #include "converter.h"
 
@@ -103,4 +108,31 @@ void copyFile( string source, string dest )
 	if (sourceFile) SDL_RWclose( sourceFile );
 	if (destFile)   SDL_RWclose( destFile );
 
+}
+
+bool makeDir (const std::string& path)
+{
+#ifdef WIN32
+	return mkdir (path.c_str()) == 0;
+#else
+	return mkdir (path.c_str(), 0755) == 0;
+#endif
+}
+
+//--------------------------------------------------------------
+bool DirExists (const std::string& path)
+{
+#ifdef WIN32
+	if (_access (path.c_str(), 0) == 0)
+	{
+		struct stat status;
+		stat (path.c_str(), &status);
+
+		if (status.st_mode & S_IFDIR) return true;
+		else return false;	// The path is not a directory
+	}
+	else return false;
+#else
+	return FileExists (path.c_str());	// on linux everything is a file
+#endif
 }

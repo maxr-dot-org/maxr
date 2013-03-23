@@ -22,6 +22,9 @@
 #define __resinstaller__
 #include <SDL.h>
 #include <string>
+#include <iostream>
+#include <algorithm>	// for transform toupper
+#include <vector>		//for vectorLanguages
 #include "defines.h"
 #include "resinstaller.h"
 #include "converter.h"
@@ -29,14 +32,15 @@
 #include "file.h"
 #include "wave.h"
 #include "ogg_encode.h"
-#include <iostream>
-#include <algorithm>		// for transform toupper
-#include <vector>		//for vectorLanguages
-using namespace std;
 
 #if MAC
-#include "mac/sources/resinstallerGUI.h"
+	#include "mac/sources/resinstallerGUI.h"
+#elif WIN32
+	#include <Shlobj.h>
 #endif
+
+
+using namespace std;
 
 //-------------------------------------------------------------
 int installMVEs()
@@ -3759,8 +3763,33 @@ void showIntroduction ()
 //-------------------------------------------------------------
 void createLogFile ()
 {
-	//create log file
-	logFile = SDL_RWFromFile("resinstaller.log", "w" );
+	string path;
+#ifdef WIN32
+	//write log file to user home dir
+	TCHAR szPath[MAX_PATH];
+	if (SHGetFolderPath (NULL, CSIDL_PERSONAL, NULL, 0, szPath) == S_OK)
+	{
+		path = szPath;
+		path += "\\maxr\\";
+		if (!DirExists (path))
+		{
+			if (makeDir (path) != 0)
+			{
+				path = "";
+			}
+		}
+
+	}
+	if (path.empty())
+	{
+		cout << "Warning: Couldn't determine home directory. Writing log to current directory instead.\n";
+	}
+
+	
+#endif
+
+	string fileName = path + "resinstaller.log";
+	logFile = SDL_RWFromFile(fileName.c_str(), "a" );
 	if ( logFile == NULL )
 	{
 		cout << "Warning: Couldn't create log file. Writing to stdout instead.\n";
@@ -3771,6 +3800,50 @@ void createLogFile ()
 	}
 	
 	writeLog(string("resinstaller version ") + VERSION + TEXT_FILE_LF);	
+}
+
+void checkWritePermissions()
+{
+#ifdef WIN32
+	//create test file
+	string testFileName = sOutputPath + "\\writeTest.txt";
+	SDL_RWops* testFile = SDL_RWFromFile(testFileName.c_str(), "w");
+
+	if (testFile == 0)
+	{
+		writeLog(string("Couldn't write to output directory") + TEXT_FILE_LF);
+		if (!bDoNotElevate)
+		{
+			writeLog(string("Retrying with admin rights...") + TEXT_FILE_LF);	
+			SDL_RWclose(logFile);
+			string parameter = "\"" + sMAXPath + "\"\" \"" + sOutputPath + "\"\" " + sLanguage + " /donotelevate";
+
+			HINSTANCE result = ShellExecute(
+				NULL,
+				"runas",			//request elevated rights
+				sAppName.c_str(),
+				parameter.c_str(),
+				NULL,				//working directory
+				SW_SHOW);
+
+			if ( (int)result > 32)
+				exit(0);	//success
+		}
+		
+		cout << "Failed. Please restart the application with admin rights." << endl;
+		
+		//wait for key press
+		FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+		getch();
+
+		exit(-1);
+	}
+
+	SDL_RWclose(testFile);
+	remove(testFileName.c_str());
+
+#endif
+
 }
 
 //-------------------------------------------------------------
@@ -3843,6 +3916,7 @@ string getMAXPathFromUser (string cmdLineMaxPath)
 	// test, if a path was given from the command line
 	if (cmdLineMaxPath.size () != 0)
 	{
+		trimQuotes(cmdLineMaxPath);
 		writeLog ("sMAXPath from command line: " + cmdLineMaxPath + TEXT_FILE_LF);
 		cout << "Path was given as command line argument: " << cmdLineMaxPath << endl;
 		if (validateMAXPath (cmdLineMaxPath))
@@ -3917,6 +3991,7 @@ string getOutputPathFromUser (string cmdLineOutputPath)
 	// test, if a path was given from the command line
 	if (cmdLineOutputPath.size () != 0)
 	{
+		trimQuotes(cmdLineOutputPath);
 		writeLog ("sOutputPath from command line: " + cmdLineOutputPath + TEXT_FILE_LF);
 		cout << "Path was given as command line argument: " << cmdLineOutputPath << endl;
 		if (validateOutputPath (cmdLineOutputPath))
@@ -4076,6 +4151,8 @@ int main ( int argc, char* argv[] )
 	createLogFile ();
 	wasError = false;
 
+	sAppName = argv[0];
+
 	// look for paths in argv[]
 	if (argc > 1) sMAXPath = argv[1];
 	else sMAXPath = "";
@@ -4085,7 +4162,12 @@ int main ( int argc, char* argv[] )
 	
 	if (argc > 3) sLanguage = argv[3];
 	else sLanguage = "";
-	
+
+	if (string(argv[argc-1]) == "/donotelevate")
+		bDoNotElevate = true;
+	else
+		bDoNotElevate = false;
+
 	sMAXPath = getMAXPathFromUser (sMAXPath); // if the user cancled, sMAXPath will be empty (at least on MAC)
 	if (sMAXPath.size () == 0)
 		exit (-1);
@@ -4211,6 +4293,7 @@ int main ( int argc, char* argv[] )
 			{
 				input = vectorLanguages[value-1];
 			}
+			sLanguage = input;
 			string errormsg;
 			if ( value < 0 || value > (long)vectorLanguages.size() )
 			{
@@ -4250,6 +4333,9 @@ int main ( int argc, char* argv[] )
 
 #endif
 	}
+
+	//check if we need admin rights for the selected output directory
+	checkWritePermissions();
 	
 	//init res converter
 	SDL_RWseek( res, 0, SEEK_END );

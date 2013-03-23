@@ -40,7 +40,8 @@ using namespace std;
 #pragma warning(disable:4996)
 #endif
 
-
+EX bool bDoNotElevate;
+EX string sAppName;
 EX string sMAXPath;
 EX string sVoicePath;
 EX string sOutputPath;
