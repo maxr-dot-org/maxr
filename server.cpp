@@ -2522,6 +2522,7 @@ void cServer::checkPlayerUnits()
 							sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
 							if (NextVehicle->MoveJobActive)
 							{
+								Log.write(" Server: sending extra MJOB_OK for unit ID " + iToStr(NextVehicle->iID) + " to client " + iToStr(MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 								message->pushChar (MJOB_OK);
 								message->pushInt16 (NextVehicle->iID);

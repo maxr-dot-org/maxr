@@ -1242,7 +1242,11 @@ void cClientMoveJob::moveVehicle()
 	}
 
 	setOffset (Vehicle, iNextDir, iSpeed);
-	//assert( Vehicle->OffX >= -64 && Vehicle->OffX <= 64 && Vehicle->OffY >= -64 && Vehicle->OffY <= 64);
+
+	if ( Vehicle->OffX < -70 || Vehicle->OffX > 70 || Vehicle->OffY < -70 || Vehicle->OffY > 70)
+	{
+		Log.write(" Client: Flying dutchmen detected! Unit ID: " + iToStr(Vehicle->iID) + " at position (" + iToStr(Vehicle->PosX) + ":" + iToStr(Vehicle->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+	}
 
 }
 
