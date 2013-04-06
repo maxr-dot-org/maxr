@@ -28,6 +28,7 @@
 #include "vehicles.h"
 #include "buildings.h"
 #include "player.h"
+#include "fxeffects.h"
 
 using namespace std;
 
@@ -599,6 +600,7 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 {
 	state = ROTATING;
 	wait = 0;
+	length = 0;
 	this->iID = message->popInt16();
 	iTargetOffset = -1;
 	vehicle = NULL;
@@ -730,11 +732,11 @@ void cClientAttackJob::playMuzzle()
 		PlayFX (building->typ->Attack);
 		if (Client->getMap()->isWater (building->PosX, building->PosY))
 		{
-			Client->addFX (fxExploWater, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
+			Client->addFx (new cFxExploWater (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
 		else
 		{
-			Client->addFX (fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
+			Client->addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
 		Client->deleteUnit (building);
 		return;
@@ -781,11 +783,11 @@ void cClientAttackJob::playMuzzle()
 			}
 			if (vehicle)
 			{
-				Client->addFX (fxMuzzleBig, vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir);
+				Client->addFx (new cFxMuzzleBig (vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 			}
 			else if (building)
 			{
-				Client->addFX (fxMuzzleBig, building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir);
+				Client->addFx (new cFxMuzzleBig (building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_SMALL:
@@ -796,23 +798,32 @@ void cClientAttackJob::playMuzzle()
 			}
 			if (vehicle)
 			{
-				Client->addFX (fxMuzzleSmall, vehicle->PosX * 64, vehicle->PosY * 64, iFireDir);
+				Client->addFx (new cFxMuzzleSmall( vehicle->PosX * 64, vehicle->PosY * 64, iFireDir));
 			}
 			else if (building)
 			{
-				Client->addFX (fxMuzzleSmall, building->PosX * 64, building->PosY * 64, iFireDir);
+				Client->addFx (new cFxMuzzleSmall( building->PosX * 64, building->PosY * 64, iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_ROCKET:
 		case sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
 		{
-			if (wait++ != 0) return;
+			if (wait++ != 0) 
+			{
+				if (wait > length ) state = FINISHED;
+
+				return;
+			}
 
 			int PosX = iAgressorOffset % Client->getMap()->size;
 			int PosY = iAgressorOffset / Client->getMap()->size;
-			Client->addFX (fxRocket, PosX * 64, PosY * 64, this, iTargetOffset, iFireDir);
-
+			int endX = iTargetOffset   % Client->getMap()->size;
+			int endY = iTargetOffset   / Client->getMap()->size;
+			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, false);
+			length = rocket->getLength() / 5;
+			Client->addFx (rocket);
 			break;
+
 		}
 		case sUnitData::MUZZLE_TYPE_MED:
 		case sUnitData::MUZZLE_TYPE_MED_LONG:
@@ -856,32 +867,41 @@ void cClientAttackJob::playMuzzle()
 			{
 				if (vehicle)
 				{
-					Client->addFX (fxMuzzleMed, vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir);
+					Client->addFx (new cFxMuzzleMed( vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 				}
 				else if (building)
 				{
-					Client->addFX (fxMuzzleMed, building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir);
+					Client->addFx (new cFxMuzzleMed( building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 				}
 			}
 			else
 			{
 				if (vehicle)
 				{
-					Client->addFX (fxMuzzleMedLong, vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir);
+					Client->addFx (new cFxMuzzleMedLong( vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 				}
 				else if (building)
 				{
-					Client->addFX (fxMuzzleMedLong, building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir);
+					Client->addFx (new cFxMuzzleMedLong( building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 				}
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_TORPEDO:
 		{
-			if (wait++ != 0) return;
+			if (wait++ != 0) 
+			{
+				if (wait > length ) state = FINISHED;
+
+				return;
+			}
 
 			int PosX = iAgressorOffset % Client->getMap()->size;
 			int PosY = iAgressorOffset / Client->getMap()->size;
-			Client->addFX (fxTorpedo, PosX * 64, PosY * 64, this, iTargetOffset, iFireDir);
+			int endX = iTargetOffset   % Client->getMap()->size;
+			int endY = iTargetOffset   / Client->getMap()->size;
+			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, true);
+			length = rocket->getLength() / 5;
+			Client->addFx (rocket);
 
 			break;
 		}
@@ -991,7 +1011,7 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
 		// TODO:  PlayFX ( SoundData.hit );
-		Client->addFX (fxHit, x * 64 + offX, y * 64 + offY, 0);
+		Client->addFx (new cFxHit (x * 64 + offX + 32, y * 64 + offY + 32));
 	}
 
 	if (ownUnit)

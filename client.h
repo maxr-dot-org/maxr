@@ -30,53 +30,9 @@ class cClientAttackJob;
 class cClientMoveJob;
 class cCasualtiesTracker;
 class cJob;
+class cFx;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
-
-
-/** FX types */
-enum eFXTyps {fxMuzzleBig, fxMuzzleSmall, fxMuzzleMed, fxMuzzleMedLong, fxExploSmall, fxExploBig, fxExploAir, fxExploWater, fxHit, fxSmoke, fxRocket, fxDarkSmoke, fxTorpedo, fxTracks, fxBubbles, fxCorpse, fxAbsorb};
-
-/** struct for the rocked data */
-struct sFXRocketInfos
-{
-	int ScrX, ScrY;
-	int DestX, DestY;
-	int dir;
-	float fpx, fpy, mx, my;
-	cClientAttackJob* aj;
-};
-
-/** struct for the dark smoke data */
-struct sFXDarkSmoke
-{
-	int alpha;
-	float fx, fy;
-	float dx, dy;
-};
-
-/** struct for the tracks effect */
-struct sFXTracks
-{
-	int alpha;
-	int dir;
-};
-
-/** struct for an FX effect */
-struct sFX
-{
-public:
-	sFX (eFXTyps typ, int x, int y);
-	~sFX();
-
-	eFXTyps typ;
-	int PosX, PosY;
-	int StartTime;
-	int param;
-	sFXRocketInfos* rocketInfo;
-	sFXDarkSmoke* smokeInfo;
-	sFXTracks* trackInfo;
-};
 
 /**
 * Client class which handles the in and output for a player
@@ -229,8 +185,7 @@ public:
 	/**  the soundstream of the selected unit */
 	int iObjectStream;	//TODO: move to gui
 	/** lists with all FX-Animation */
-	cList<sFX*> FXList;
-	cList<sFX*> FXListBottom;
+	cList<cFx*> FxList;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
@@ -262,7 +217,7 @@ public:
 	* handles the game relevant actions (for example moving the current position of a rocket)
 	* of the fx-effects, so that they are handled also, when the effects are not drawn.
 	*/
-	void runFX();
+	void runFx ();
 
 	/**
 	* handles the rest-time of the current turn
@@ -339,19 +294,8 @@ public:
 	*@return 0 for success
 	*/
 	int HandleNetMessage (cNetMessage* message);
-	/**
-	* adds an effect
-	*@author alzi alias DoctorDeath
-	*@param typ typ of the effect
-	*@param iX X coordinate were the effect should be added
-	*@param iY Y coordinate were the effect should be added
-	*@param iParam
-	*@param param
-	*@param iNum
-	*/
-	void addFX (eFXTyps typ, int iX, int iY, int iParam);
-	void addFX (eFXTyps typ, int x, int y, cClientAttackJob* aj, int iDestOff, int iFireDir);
-	void addFX (sFX* iNum);
+
+	void addFx (cFx* fx);
 
 	/**
 	*destroys a unit

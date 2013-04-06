@@ -88,6 +88,7 @@ public:
 	int iAgressorOffset;
 	int iTargetOffset;
 	int wait;
+	int length;
 
 	enum eAJStates { ROTATING, PLAYING_MUZZLE, FINISHED };
 	eAJStates state;

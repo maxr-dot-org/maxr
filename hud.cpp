@@ -39,6 +39,7 @@
 #include "buildings.h"
 #include "vehicles.h"
 #include "attackJobs.h"
+#include "fxeffects.h"
 
 using namespace std;
 
@@ -671,6 +672,10 @@ cGameGUI::~cGameGUI()
 	{
 		delete messages[i];
 	}
+	for (size_t i = 0; i != FxList.Size(); ++i)
+	{
+		delete FxList[i];
+	}
 }
 
 void cGameGUI::Timer()
@@ -779,11 +784,11 @@ int cGameGUI::show()
 		handleMessages();
 
 		handleTimer();
-		if (timer50ms)
+		if (timer10ms)
 		{
-			//run effects
-			Client->runFX();
-			Client->handleTurnTime();
+			//run effects, which are not synchronous to game time
+			runFx ();
+			Client->handleTurnTime(); //TODO: remove
 		}
 
 		checkScroll();
@@ -3444,7 +3449,7 @@ void cGameGUI::preDrawFunction()
 	drawTerrain (zoomOffX, zoomOffY);
 	if (gridChecked()) drawGrid (zoomOffX, zoomOffY);
 
-	displayBottomFX();
+	drawFx (true);
 
 	dCache.resetStatistics();
 
@@ -3477,7 +3482,7 @@ void cGameGUI::preDrawFunction()
 	if (selectedVehicle && unitMenuActive) selectedVehicle->drawMenu (*this);
 	else if (selectedBuilding && unitMenuActive) selectedBuilding->drawMenu (*this);
 
-	displayFX();
+	drawFx (false);
 
 	displayMessages();
 }
@@ -3548,382 +3553,58 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 	}
 }
 
-void cGameGUI::displayFX()
+void cGameGUI::addFx (cFx* fx)
 {
-	if (!client->FXList.Size()) return;
+	FxList.Insert (0, fx);
+	fx->playSound();
+}
 
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
+void cGameGUI::drawFx (bool bottom) const
+{
+	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };	SDL_SetClipRect (buffer, &clipRect);
 	SDL_SetClipRect (buffer, &clipRect);
 
-	for (int i = (int) client->FXList.Size() - 1; i >= 0; i--)
+	for (unsigned int i = 0; i < Client->FxList.Size (); i++)
 	{
-		drawFX (i);
+		if (Client->FxList[i]->bottom == bottom)
+		{
+			Client->FxList[i]->draw ();
+		}
 	}
+
+	for (unsigned int i = 0; i < FxList.Size (); i++)
+	{
+		if (FxList[i]->bottom == bottom)
+		{
+			FxList[i]->draw ();
+		}
+	}
+
 	SDL_SetClipRect (buffer, NULL);
 }
 
-void cGameGUI::drawFX (int num)
+void cGameGUI::runFx ()
 {
-	SDL_Rect scr, dest;
-	sFX* fx;
-
-	fx = client->FXList[num];
-	if (!player->ScanMap[fx->PosX / 64 + fx->PosY / 64 * map->size] && fx->typ != fxRocket) return;
-
-	switch (fx->typ)
+	for (unsigned int i = 0; i < FxList.Size (); i++)
 	{
-		case fxMuzzleBig:
-			if (!EffectsData.fx_muzzle_big) break;
-			CHECK_SCALING (EffectsData.fx_muzzle_big[1], EffectsData.fx_muzzle_big[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * fx->param;
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_muzzle_big[1], &scr, buffer, &dest);
-			break;
-		case fxMuzzleSmall:
-			if (!EffectsData.fx_muzzle_small) break;
-			CHECK_SCALING (EffectsData.fx_muzzle_small[1], EffectsData.fx_muzzle_small[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * fx->param;
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_muzzle_small[1], &scr, buffer, &dest);
-			break;
-		case fxMuzzleMed:
-			if (!EffectsData.fx_muzzle_med) break;
-			CHECK_SCALING (EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 2)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * fx->param;
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_muzzle_med[1], &scr, buffer, &dest);
-			break;
-		case fxMuzzleMedLong:
-			if (!EffectsData.fx_muzzle_med) break;
-			CHECK_SCALING (EffectsData.fx_muzzle_med[1], EffectsData.fx_muzzle_med[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 5)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * fx->param;
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_muzzle_med[1], &scr, buffer, &dest);
-			break;
-		case fxHit:
-			if (!EffectsData.fx_hit) break;
-			CHECK_SCALING (EffectsData.fx_hit[1], EffectsData.fx_hit[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 5)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_hit[1], &scr, buffer, &dest);
-			break;
-		case fxExploSmall:
-			if (!EffectsData.fx_explo_small) break;
-			CHECK_SCALING (EffectsData.fx_explo_small[1], EffectsData.fx_explo_small[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
-			scr.y = 0;
-			scr.w = (int) ( (int) (getZoom() * 64.0) * 114 / 64.0);
-			scr.h = (int) ( (int) (getZoom() * 64.0) * 108 / 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - 57)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - 54)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_explo_small[1], &scr, buffer, &dest);
-			break;
-		case fxExploBig:
-			if (!EffectsData.fx_explo_big) break;
-			CHECK_SCALING (EffectsData.fx_explo_big[1], EffectsData.fx_explo_big[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 28)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 307 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
-			scr.y = 0;
-			scr.w = (int) ( (int) (getZoom() * 64.0) * 307 / 64.0);
-			scr.h = (int) ( (int) (getZoom() * 64.0) * 194 / 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - 134)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - 85)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_explo_big[1], &scr, buffer, &dest);
-			break;
-		case fxExploWater:
-			if (!EffectsData.fx_explo_water) break;
-			CHECK_SCALING (EffectsData.fx_explo_water[1], EffectsData.fx_explo_water[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 114 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
-			scr.y = 0;
-			scr.w = (int) ( (int) (getZoom() * 64.0) * 114 / 64.0);
-			scr.h = (int) ( (int) (getZoom() * 64.0) * 108 / 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - 57)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - 54)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_explo_water[1], &scr, buffer, &dest);
-			break;
-		case fxExploAir:
-			if (!EffectsData.fx_explo_air) break;
-			CHECK_SCALING (EffectsData.fx_explo_air[1], EffectsData.fx_explo_air[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 14)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) ( (int) (getZoom() * 64.0) * 137 * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) / 64.0);
-			scr.y = 0;
-			scr.w = (int) ( (int) (getZoom() * 64.0) * 137 / 64.0);
-			scr.h = (int) ( (int) (getZoom() * 64.0) * 121 / 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - 61)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - 68)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_explo_air[1], &scr, buffer, &dest);
-			break;
-		case fxSmoke:
-			if (!EffectsData.fx_smoke) break;
-			CHECK_SCALING (EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 100 / 4)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) * 4);
-			scr.y = scr.x = 0;
-			scr.w = EffectsData.fx_smoke[1]->h;
-			scr.h = EffectsData.fx_smoke[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - EffectsData.fx_smoke[0]->h / 2 + 32)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - EffectsData.fx_smoke[0]->h / 2 + 32)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_smoke[1], &scr, buffer, &dest);
-			break;
-		case fxRocket:
+		FxList[i]->run ();
+
+		if (FxList[i]->isFinished () )
 		{
-			if (!EffectsData.fx_rocket) break;
-			CHECK_SCALING (EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], getZoom());
-			sFXRocketInfos* ri;
-			ri = fx->rocketInfo;
-
-			scr.x = ri->dir * EffectsData.fx_rocket[1]->h;
-			scr.y = 0;
-			scr.h = scr.w = EffectsData.fx_rocket[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - EffectsData.fx_rocket[0]->h / 2 + 32)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - EffectsData.fx_rocket[0]->h / 2 + 32)) * getZoom()));
-
-			if (player->ScanMap[fx->PosX / 64 + fx->PosY / 64 * map->size])
-				SDL_BlitSurface (EffectsData.fx_rocket[1], &scr, buffer, &dest);
-
-			break;
-		}
-		case fxDarkSmoke:
-		{
-			if (!EffectsData.fx_dark_smoke) break;
-			CHECK_SCALING (EffectsData.fx_dark_smoke[1], EffectsData.fx_dark_smoke[0], getZoom());
-			sFXDarkSmoke* dsi;
-			dsi = fx->smokeInfo;
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 50 || dsi->alpha <= 1)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (0.375 * (int) (getZoom() * 64.0)) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
-			scr.y = 0;
-			scr.w = EffectsData.fx_dark_smoke[1]->h;
-			scr.h = EffectsData.fx_dark_smoke[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - ( (int) dsi->fx)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - ( (int) dsi->fy)) * getZoom()));
-
-			SDL_SetAlpha (EffectsData.fx_dark_smoke[1], SDL_SRCALPHA, dsi->alpha);
-			SDL_BlitSurface (EffectsData.fx_dark_smoke[1], &scr, buffer, &dest);
-
-			if (timer50ms)
-			{
-				dsi->fx += dsi->dx;
-				dsi->fy += dsi->dy;
-				dsi->alpha -= 3;
-				if (dsi->alpha <= 0) dsi->alpha = 1;
-			}
-			break;
-		}
-		case fxAbsorb:
-		{
-			if (!EffectsData.fx_absorb) break;
-			CHECK_SCALING (EffectsData.fx_absorb[1], EffectsData.fx_absorb[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 10)
-			{
-				delete fx;
-				client->FXList.Delete (num);
-				return;
-			}
-			scr.x = (int) (getZoom() * 64.0) * ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2);
-			scr.y = 0;
-			scr.w = (int) (getZoom() * 64.0);
-			scr.h = (int) (getZoom() * 64.0);
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_absorb[1], &scr, buffer, &dest);
-			break;
-		}
-		case fxTorpedo:
-		case fxTracks:
-		case fxBubbles:
-		case fxCorpse:
-		{
-			break;
+			delete FxList[i];
+			FxList.Delete(i);
+			i--;
 		}
 	}
 }
 
-void cGameGUI::displayBottomFX()
+SDL_Rect cGameGUI::calcScreenPos(int x, int y) const
 {
-	if (!client->FXListBottom.Size()) return;
+	SDL_Rect pos;
+	pos.x = HUD_LEFT_WIDTH - ( (int) ( (offX - x) * getZoom()));
+	pos.y = HUD_TOP_HIGHT  - ( (int) ( (offY - y) * getZoom()));
 
-	SDL_Rect oldClipRect = buffer->clip_rect;
-	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
-	SDL_SetClipRect (buffer, &clipRect);
-
-	for (int i = (int) client->FXListBottom.Size() - 1; i >= 0; i--)
-	{
-		drawBottomFX (i);
-	}
-	SDL_SetClipRect (buffer, &oldClipRect);
-}
-
-void cGameGUI::drawBottomFX (int num)
-{
-	SDL_Rect scr, dest;
-
-	sFX* fx = client->FXListBottom[num];
-	if ( (!player->ScanMap[fx->PosX / 64 + fx->PosY / 64 * map->size]) && fx->typ != fxTorpedo && fx->typ != fxTracks) return;
-	switch (fx->typ)
-	{
-		case fxTorpedo:
-		{
-			CHECK_SCALING (EffectsData.fx_rocket[1], EffectsData.fx_rocket[0], getZoom());
-			sFXRocketInfos* ri;
-			ri = fx->rocketInfo;
-
-			scr.x = ri->dir * EffectsData.fx_rocket[1]->h;
-			scr.y = 0;
-			scr.h = scr.w = EffectsData.fx_rocket[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - EffectsData.fx_rocket[0]->h / 2 + 32)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - EffectsData.fx_rocket[0]->h / 2 + 32)) * getZoom()));
-
-			if (player->ScanMap[fx->PosX / 64 + fx->PosY / 64 * map->size])
-			{
-				SDL_BlitSurface (EffectsData.fx_rocket[1], &scr, buffer, &dest);
-			}
-			break;
-		}
-		case fxTracks:
-		{
-			CHECK_SCALING (EffectsData.fx_tracks[1], EffectsData.fx_tracks[0], getZoom());
-			sFXTracks* tri;
-			tri = fx->trackInfo;
-			if (tri->alpha <= 1)
-			{
-				delete fx;
-				client->FXListBottom.Delete (num);
-				return;
-			}
-
-			SDL_SetAlpha (EffectsData.fx_tracks[1], SDL_SRCALPHA, tri->alpha);
-			if (timer50ms)
-			{
-				tri->alpha--;
-			}
-
-			if (!player->ScanMap[fx->PosX / 64 + fx->PosY / 64 * map->size]) return;
-			scr.y = 0;
-			scr.w = scr.h = EffectsData.fx_tracks[1]->h;
-			scr.x = tri->dir * scr.w;
-			dest.x = HUD_LEFT_WIDTH - (int) ( (offX - fx->PosX) * getZoom());
-			dest.y = HUD_TOP_HIGHT - (int) ( (offY - fx->PosY) * getZoom());
-			SDL_BlitSurface (EffectsData.fx_tracks[1], &scr, buffer, &dest);
-			break;
-		}
-		case fxBubbles:
-			CHECK_SCALING (EffectsData.fx_smoke[1], EffectsData.fx_smoke[0], getZoom());
-			if ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2 > 100 / 4)
-			{
-				delete fx;
-				client->FXListBottom.Delete (num);
-				return;
-			}
-			SDL_SetAlpha (EffectsData.fx_smoke[1], SDL_SRCALPHA, 100 - ( (Client->gameGUI.iTimerTime - fx->StartTime) / 2) * 4);
-			scr.y = scr.x = 0;
-			scr.w = EffectsData.fx_smoke[1]->h;
-			scr.h = EffectsData.fx_smoke[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - (fx->PosX - EffectsData.fx_smoke[0]->h / 2 + 32)) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - (fx->PosY - EffectsData.fx_smoke[0]->h / 2 + 32)) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_smoke[1], &scr, buffer, &dest);
-			break;
-		case fxCorpse:
-			CHECK_SCALING (EffectsData.fx_corpse[1], EffectsData.fx_corpse[0], getZoom());
-			SDL_SetAlpha (EffectsData.fx_corpse[1], SDL_SRCALPHA, fx->param--);
-			scr.y = scr.x = 0;
-			scr.w = EffectsData.fx_corpse[1]->h;
-			scr.h = EffectsData.fx_corpse[1]->h;
-			dest.x = HUD_LEFT_WIDTH - ( (int) ( (offX - fx->PosX) * getZoom()));
-			dest.y = HUD_TOP_HIGHT - ( (int) ( (offY - fx->PosY) * getZoom()));
-			SDL_BlitSurface (EffectsData.fx_corpse[1], &scr, buffer, &dest);
-
-			if (fx->param <= 0)
-			{
-				delete fx;
-				client->FXListBottom.Delete (num);
-				return;
-			}
-			break;
-		default:
-			break;
-	}
+	return pos;
 }
 
 void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)

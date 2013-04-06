@@ -634,7 +634,6 @@ int cMenu::show()
 		{
 			Client->gameTimer.run ();
 			Client->gameGUI.handleTimer();
-			Client->runFX();
 		}
 
 		// check whether the resolution has been changed

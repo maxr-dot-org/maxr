@@ -41,6 +41,7 @@
 #include "casualtiestracker.h"
 #include "gametimer.h"
 #include "jobs.h"
+#include "fxeffects.h"
 
 using namespace std;
 
@@ -58,59 +59,6 @@ sMessage::sMessage (std::string const& s, unsigned int const age_)
 sMessage::~sMessage()
 {
 	delete [] msg;
-}
-
-sFX::sFX (eFXTyps typ, int x, int y)
-{
-	this->typ = typ;
-	PosX = x;
-	PosY = y;
-	StartTime = Client->gameGUI.iTimerTime;
-	param = 0;
-	rocketInfo = NULL;
-	smokeInfo = NULL;
-	trackInfo = NULL;
-	param = 0;
-
-	switch (typ)
-	{
-		case fxRocket:
-		case fxTorpedo:
-			rocketInfo = new sFXRocketInfos();
-			rocketInfo->ScrX = 0;
-			rocketInfo->ScrY = 0;
-			rocketInfo->DestX = 0;
-			rocketInfo->DestY = 0;
-			rocketInfo->dir = 0;
-			rocketInfo->fpx = 0;
-			rocketInfo->fpy = 0;
-			rocketInfo->mx = 0;
-			rocketInfo->my = 0;
-			rocketInfo->aj = NULL;
-			break;
-		case fxDarkSmoke:
-			smokeInfo = new sFXDarkSmoke();
-			smokeInfo->alpha = 0;
-			smokeInfo->fx = 0;
-			smokeInfo->fy = 0;
-			smokeInfo->dx = 0;
-			smokeInfo->dy = 0;
-			break;
-		case fxTracks:
-			trackInfo = new sFXTracks();
-			trackInfo->alpha = 0;
-			trackInfo->dir = 0;
-			break;
-		default:
-			break;
-	}
-}
-
-sFX::~sFX()
-{
-	delete rocketInfo;
-	delete smokeInfo;
-	delete trackInfo;
 }
 
 //------------------------------------------------------------------------
@@ -153,13 +101,9 @@ cClient::~cClient()
 	delete casualtiesTracker;
 
 	StopFXLoop (iObjectStream);
-	for (size_t i = 0; i != FXList.Size(); ++i)
+	for (size_t i = 0; i != FxList.Size(); ++i)
 	{
-		delete FXList[i];
-	}
-	for (size_t i = 0; i != FXListBottom.Size(); ++i)
-	{
-		delete FXListBottom[i];
+		delete FxList[i];
 	}
 	for (unsigned int i = 0; i < attackJobs.Size(); i++)
 	{
@@ -270,271 +214,25 @@ void cClient::startGroupMove()
 	}
 }
 
-void cClient::runFX()
+void cClient::runFx ()
 {
-	//TODO: add flag "gameTimeSynchronous" for fx
-	//TODO: timerIntervall prüfen
-
-	if (!gameGUI.timer100ms) return;
-	for (unsigned int i = 0; i < FXList.Size(); i++)
+	for (unsigned int i = 0; i < FxList.Size (); i++)
 	{
-		sFX* fx = FXList[i];
-		switch (fx->typ)
+		FxList[i]->run ();
+
+		if (FxList[i]->isFinished () )
 		{
-			case fxRocket:
-			{
-				sFXRocketInfos* ri = fx->rocketInfo;
-				if (abs (fx->PosX - ri->DestX) < 64 && abs (fx->PosY - ri->DestY) < 64)
-				{
-					ri->aj->state = cClientAttackJob::FINISHED;
-					delete fx;
-					FXList.Delete (i);
-					return;
-				}
-
-				for (int k = 0; k < 64; k += 8)
-				{
-					if (cSettings::getInstance().isAlphaEffects())
-					{
-						addFX (fxSmoke, (int) ri->fpx, (int) ri->fpy, 0);
-						gameGUI.drawFX ( (int) FXList.Size() - 1);
-					}
-					ri->fpx += ri->mx * 8;
-					ri->fpy -= ri->my * 8;
-				}
-
-				fx->PosX = (int) ri->fpx;
-				fx->PosY = (int) ri->fpy;
-			}
-			break;
-			default:
-				break;
-		}
-	}
-
-	for (unsigned int i = 0; i < FXListBottom.Size(); i++)
-	{
-		sFX* fx = FXListBottom[i];
-		switch (fx->typ)
-		{
-			case fxTorpedo:
-			{
-				sFXRocketInfos* ri = fx->rocketInfo;
-				if (abs (fx->PosX - ri->DestX) < 64 && abs (fx->PosY - ri->DestY) < 64)
-				{
-					ri->aj->state = cClientAttackJob::FINISHED;
-					delete fx;
-					FXListBottom.Delete (i);
-					return;
-				}
-
-				for (int k = 0; k < 64; k += 8)
-				{
-					if (cSettings::getInstance().isAlphaEffects())
-					{
-						addFX (fxBubbles, (int) ri->fpx, (int) ri->fpy, 0);
-						gameGUI.drawBottomFX ( (int) FXListBottom.Size() - 1);
-					}
-					ri->fpx += ri->mx * 8;
-					ri->fpy -= ri->my * 8;
-				}
-
-				fx->PosX = (int) (ri->fpx);
-				fx->PosY = (int) (ri->fpy);
-			}
-			default:
-				break;
+			delete FxList[i];
+			FxList.Delete(i);
+			i--;
 		}
 	}
 }
 
-// F¸gt einen FX-Effekt ein:
-void cClient::addFX (eFXTyps typ, int x, int y, cClientAttackJob* aj, int iDestOff, int iFireDir)
+void cClient::addFx (cFx* fx)
 {
-	sFX* n = new sFX (typ, x, y);
-	sFXRocketInfos* ri = n->rocketInfo;
-	ri->ScrX = x;
-	ri->ScrY = y;
-	ri->DestX = (iDestOff % getMap()->size) * 64;
-	ri->DestY = (iDestOff / getMap()->size) * 64;
-	ri->aj = aj;
-	ri->dir = iFireDir;
-	addFX (n);
-}
-
-// F¸gt einen FX-Effekt ein:
-void cClient::addFX (eFXTyps typ, int x, int y, int param)
-{
-	sFX* n = new sFX (typ, x, y);
-	n->param = param;
-	addFX (n);
-}
-
-// F¸gt einen FX-Effekt ein:
-void cClient::addFX (sFX* n)
-{
-	if (n->typ == fxTracks || n->typ == fxTorpedo || n->typ == fxBubbles || n->typ == fxCorpse)
-	{
-		FXListBottom.Add (n);
-	}
-	else
-	{
-		FXList.Add (n);
-	}
-	switch (n->typ)
-	{
-		case fxExploAir:
-			int nr;
-			nr = random (3);
-			if (nr == 0)
-			{
-				PlayFX (SoundData.EXPSmall0);
-			}
-			else if (nr == 1)
-			{
-				PlayFX (SoundData.EXPSmall1);
-			}
-			else
-			{
-				PlayFX (SoundData.EXPSmall2);
-			}
-			break;
-		case fxExploSmall:
-		case fxExploWater:
-			if (getMap()->isWater (n->PosX / 64, n->PosY / 64))
-			{
-				int nr;
-				nr = random (3);
-				if (nr == 0)
-				{
-					PlayFX (SoundData.EXPSmallWet0);
-				}
-				else if (nr == 1)
-				{
-					PlayFX (SoundData.EXPSmallWet1);
-				}
-				else
-				{
-					PlayFX (SoundData.EXPSmallWet2);
-				}
-			}
-			else
-			{
-				int nr;
-				nr =  random (3);
-				if (nr == 0)
-				{
-					PlayFX (SoundData.EXPSmall0);
-				}
-				else if (nr == 1)
-				{
-					PlayFX (SoundData.EXPSmall1);
-				}
-				else
-				{
-					PlayFX (SoundData.EXPSmall2);
-				}
-			}
-			break;
-		case fxExploBig:
-			if (getMap()->isWater (n->PosX / 64, n->PosY / 64))
-			{
-				if (random (2))
-				{
-					PlayFX (SoundData.EXPBigWet0);
-				}
-				else
-				{
-					PlayFX (SoundData.EXPBigWet1);
-				}
-			}
-			else
-			{
-				int nr;
-				nr = random (4);
-				if (nr == 0)
-				{
-					PlayFX (SoundData.EXPBig0);
-				}
-				else if (nr == 1)
-				{
-					PlayFX (SoundData.EXPBig1);
-				}
-				else if (nr == 2)
-				{
-					PlayFX (SoundData.EXPBig2);
-				}
-				else
-				{
-					PlayFX (SoundData.EXPBig3);
-				}
-			}
-			break;
-		case fxRocket:
-		case fxTorpedo:
-		{
-			sFXRocketInfos* ri;
-			int dx, dy;
-			ri = n->rocketInfo;
-			ri->fpx = (float) n->PosX;
-			ri->fpy = (float) n->PosY;
-			dx = ri->ScrX - ri->DestX;
-			dy = ri->ScrY - ri->DestY;
-			if (abs (dx) > abs (dy))
-			{
-				if (ri->ScrX > ri->DestX) ri->mx = -1;
-				else ri->mx = 1;
-				ri->my = dy / (float) dx * (-ri->mx);
-			}
-			else
-			{
-				if (ri->ScrY < ri->DestY) ri->my = -1;
-				else ri->my = 1;
-				ri->mx = dx / (float) dy * (-ri->my);
-			}
-			break;
-		}
-		case fxDarkSmoke:
-		{
-			float x, y, ax, ay;
-			sFXDarkSmoke* dsi = n->smokeInfo;
-			dsi->alpha = n->param;
-			if (dsi->alpha > 150) dsi->alpha = 150;
-			dsi->fx = (float) n->PosX;
-			dsi->fy = (float) n->PosY;
-
-			ax = x = sin (gameGUI.getWindDir());
-			ay = y = cos (gameGUI.getWindDir());
-			if (ax < 0) ax = -ax;
-			if (ay < 0) ay = -ay;
-			if (ax > ay)
-			{
-				dsi->dx = (float) (x * 2 + random (5)        / 10.0);
-				dsi->dy = (float) (y * 2 + (random (15) - 7) / 14.0);
-			}
-			else
-			{
-				dsi->dx = (float) (x * 2 + (random (15) - 7) / 14.0);
-				dsi->dy = (float) (y * 2 + random (5)        / 10.0);
-			}
-			break;
-		}
-		case fxTracks:
-		{
-			sFXTracks* tri = n->trackInfo;
-			tri->alpha = 100;
-			tri->dir = n->param;
-			break;
-		}
-		case fxCorpse:
-			n->param = 255;
-			break;
-		case fxAbsorb:
-			PlayFX (SoundData.SNDAbsorb);
-			break;
-		default:
-			break;
-	}
+	FxList.Add (fx);
+	fx->playSound();
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)
@@ -1827,17 +1525,8 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 	}
 	attackJobs.Clear();
 
-	//delete FX effects, because a finished rocked animations would do a callback on an attackjob
-	for (size_t i = 0; i != FXList.Size(); ++i)
-	{
-		delete FXList[i];
-	}
-	FXList.Clear();
-	for (size_t i = 0; i != FXListBottom.Size(); ++i)
-	{
-		delete FXListBottom[i];
-	}
-	FXListBottom.Clear();
+	//TODO: delete fx effects???
+
 	// delete all eventually remaining pointers on the map, to prevent crashes after a resync.
 	// Normally there shouldn't be any pointers left after deleting all units, but a resync is not
 	// executed in normal situations and there are situations, when this happens.
@@ -2610,15 +2299,14 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 
 void cClient::doGameActions()
 {
-	//TODO: gameSynchronous fx actions here
+	runFx ();
 
 	//run attackJobs
 	if (gameTimer.timer50ms)
 		cClientAttackJob::handleAttackJobs();
 
 	//run moveJobs - this has to be called before handling the auto movejobs
-	if (gameTimer.timer10ms)
-		handleMoveJobs();
+	handleMoveJobs();
 
 	//run surveyor ai
 	if (gameTimer.timer50ms)
@@ -2641,25 +2329,25 @@ void cClient::destroyUnit (cVehicle* vehicle)
 	//play explosion
 	if (vehicle->data.isBig)
 	{
-		addFX (fxExploBig, vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64, 0);
+		addFx (new cFxExploBig( vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64));
 	}
 	else if (vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0)
 	{
-		addFX (fxExploAir, vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32, 0);
+		addFx (new cFxExploAir( vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
 	else if (getMap()->isWater (vehicle->PosX, vehicle->PosY))
 	{
-		addFX (fxExploWater, vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32, 0);
+		addFx (new cFxExploWater (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
 	else
 	{
-		addFX (fxExploSmall, vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32, 0);
+		addFx (new cFxExploSmall (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
 
 	if (vehicle->data.hasCorpse)
 	{
 		//add corpse
-		addFX (fxCorpse,  vehicle->PosX * 64 + vehicle->OffX, vehicle->PosY * 64 + vehicle->OffY, 0);
+		addFx (new cFxCorpse (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
 }
 
@@ -2669,11 +2357,11 @@ void cClient::destroyUnit (cBuilding* building)
 	cBuilding* topBuilding = getMap()->fields[building->PosX + building->PosY * getMap()->size].getBuildings();
 	if (topBuilding && topBuilding->data.isBig)
 	{
-		addFX (fxExploBig, topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64, 0);
+		addFx (new cFxExploBig (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64));
 	}
 	else
 	{
-		addFX (fxExploSmall, building->PosX * 64 + 32, building->PosY * 64 + 32, 0);
+		addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
 	}
 }
 //-------------------------------------------------------------------------------------

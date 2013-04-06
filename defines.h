@@ -145,7 +145,7 @@
 # ifdef RELEASE
 #  define PACKAGE_REV "Releaseversion"
 # else
-#  define PACKAGE_REV "SVN Rev 3067"
+#  define PACKAGE_REV "SVN Rev 3093"
 # endif
 #endif
 

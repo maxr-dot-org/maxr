@@ -24,6 +24,7 @@
 #include "drawingcache.h"
 
 class cClient;
+class cFx;
 
 // TODO-list for the gameGUI:
 //
@@ -221,6 +222,9 @@ class cGameGUI : public cMenu
 	/** Saved positions for hotkeys F5-F8 */
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
+	/** lists with all FX-Animations. Gui-only (= not synchonous to game time) */
+	cList<cFx*> FxList;
+
 	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();
 
@@ -253,17 +257,6 @@ class cGameGUI : public cMenu
 	*@param bOpen if true the panal will be opened, else closed
 	*/
 	void makePanel (bool open);
-
-	/**
-	* displays the effects
-	*@author alzi alias DoctorDeath
-	*/
-	void displayFX();
-	/**
-	* displays the bottom-effects
-	*@author alzi alias DoctorDeath
-	*/
-	void displayBottomFX();
 
 	bool checkScroll();
 	void updateUnderMouseObject();
@@ -399,6 +392,9 @@ class cGameGUI : public cMenu
 	void recalcPosition (bool resetItemPositions);
 	void setInfoTexts (const std::string& infoText, const std::string& additionalInfoText);
 
+	void drawFx (bool bottom) const;
+	void runFx ();
+
 public:
 	cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList);
 	~cGameGUI();
@@ -411,6 +407,8 @@ public:
 	bool timer10ms, timer50ms, timer100ms, timer400ms;
 	void handleTimer();
 	void Timer();
+	
+	void addFx (cFx* fx);
 
 	/** Adds an message to be displayed in the game */
 	void addMessage (const std::string& sMsg);
@@ -453,21 +451,6 @@ public:
 	void setTwoX (bool checked) { resetMiniMapOffset(); twoXButton.setChecked (checked); PlayFX (SoundData.SNDHudSwitch); }
 
 	/**
-	* draws an effect
-	*@author alzi alias DoctorDeath
-	*@param iNum Number of effect to draw
-	*/
-	// TODO: find a solution that this function will not need to be public.
-	// yet it is public because the client has to call the drawing for rockets out of cClient::runFX()
-	void drawFX (int num);
-	/**
-	* draws an bottom-effect
-	*@author alzi alias DoctorDeath
-	*@param iNum Number of effect to draw
-	*/
-	void drawBottomFX (int num);
-
-	/**
 	* draws an exitpoint on the ground
 	*@author alzi alias DoctorDeath
 	*@param iX X coordinate
@@ -481,6 +464,8 @@ public:
 	void checkOffsetPosition();
 	int getOffsetX() const { return offX; }
 	int getOffsetY() const { return offY; }
+
+	SDL_Rect calcScreenPos(int x, int y) const;
 
 	void setZoom (float newZoom, bool setScroller, bool centerToMouse);
 	float getZoom() const;

@@ -38,6 +38,7 @@
 #include "vehicles.h"
 #include "player.h"
 #include "attackJobs.h"
+#include "fxeffects.h"
 
 using namespace std;
 
@@ -257,12 +258,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
 		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
-		gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense);
+		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));
 
 		if (data.isBig && intense > 50)
 		{
 			intense -= 50;
-			gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX2, PosY * 64 + DamageFXPointY2, intense);
+			gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX2, PosY * 64 + DamageFXPointY2, intense, gameGUI.getWindDir ()));
 		}
 	}
 

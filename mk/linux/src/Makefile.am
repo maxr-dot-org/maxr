@@ -15,6 +15,7 @@ drawingcache.cpp \
 events.cpp \
 extendedtinyxml.cpp \
 files.cpp \
+fxeffects.cpp \
 gametimer.cpp \
 hud.cpp \
 input.cpp \

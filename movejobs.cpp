@@ -29,6 +29,7 @@
 #include "settings.h"
 #include "buildings.h"
 #include "vehicles.h"
+#include "fxeffects.h"
 
 cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	type (type_),
@@ -1200,24 +1201,24 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 0:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY, 0);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY, 0));
 					break;
 				case 4:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY, 0);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY, 0));
 					break;
 				case 2:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
 					break;
 				case 6:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
 					break;
 				case 1:
 				case 5:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 1);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 1));
 					break;
 				case 3:
 				case 7:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 3);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 3));
 					break;
 			}
 		}
@@ -1226,16 +1227,16 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 1:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 1);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 1));
 					break;
 				case 5:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 1);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 1));
 					break;
 				case 3:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 3);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 3));
 					break;
 				case 7:
-					Client->addFX (fxTracks, Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 3);
+					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 3));
 					break;
 			}
 		}

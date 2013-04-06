@@ -36,6 +36,7 @@
 #include "settings.h"
 #include "hud.h"
 #include "video.h"
+#include "fxeffects.h"
 
 using namespace std;
 
@@ -126,7 +127,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
 		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
-		gameGUI.getClient()->addFX (fxDarkSmoke, PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense);
+		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir ()));
 	}
 
 	//make landing and take off of planes
