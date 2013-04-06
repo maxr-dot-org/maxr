@@ -22,10 +22,13 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include <sys/stat.h>
 #ifdef WIN32
 	#include <direct.h>
 	#include <io.h>
-	#include <sys/stat.h>
+#else
+	#include <sys/types.h>
+	#include <unistd.h>
 #endif
 #include "resinstaller.h"
 #include "converter.h"
@@ -133,6 +136,7 @@ bool DirExists (const std::string& path)
 	}
 	else return false;
 #else
-	return FileExists (path.c_str());	// on linux everything is a file
+	struct stat st;
+	return stat(path.c_str(), &st) == 0 && (st.st_mode & S_IFDIR) != 0;
 #endif
 }
