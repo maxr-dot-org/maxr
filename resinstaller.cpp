@@ -2302,7 +2302,7 @@ int installFX()
 		output = getImageFromRes("HITEXPLD", 0);
 		resizeSurface( output, 13, 15, 320, 64);
 		
-		SDL_Rect dst_rect = { 64, 15, 0, 0 };
+		SDL_Rect dst_rect = { 77, 15, 0, 0 };
 		for ( int i = 1; i < 5; i++)
 		{
 			surface = getImageFromRes("HITEXPLD", i );
