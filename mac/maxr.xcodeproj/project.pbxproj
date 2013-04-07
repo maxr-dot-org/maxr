@@ -12,6 +12,8 @@
 		9F0B084114D08559007F3D00 /* notifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F191B0C14CF580F002426E2 /* notifications.cpp */; };
 		9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
 		9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */; };
+		9F1D13171711EE7C00C45BC0 /* fxeffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */; };
+		9F1D13181711EE7C00C45BC0 /* fxeffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */; };
 		9F33BF7314A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F33BF7414A9EF2200379C9E /* unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F33BF7214A9EF2200379C9E /* unit.cpp */; };
 		9F44576E16C19C0C00A80C81 /* gametimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F44576A16C19C0C00A80C81 /* gametimer.cpp */; };
@@ -148,6 +150,8 @@
 		9F141F6B14CAF4C6009AC1D7 /* casualtiestracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = casualtiestracker.cpp; path = ../casualtiestracker.cpp; sourceTree = SOURCE_ROOT; };
 		9F191B0B14CF580F002426E2 /* notifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = notifications.h; path = ../notifications.h; sourceTree = SOURCE_ROOT; };
 		9F191B0C14CF580F002426E2 /* notifications.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = notifications.cpp; path = ../notifications.cpp; sourceTree = SOURCE_ROOT; };
+		9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fxeffects.cpp; path = ../fxeffects.cpp; sourceTree = SOURCE_ROOT; };
+		9F1D13161711EE7C00C45BC0 /* fxeffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fxeffects.h; path = ../fxeffects.h; sourceTree = SOURCE_ROOT; };
 		9F33BF7114A9EF2200379C9E /* unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unit.h; path = ../unit.h; sourceTree = SOURCE_ROOT; };
 		9F33BF7214A9EF2200379C9E /* unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unit.cpp; path = ../unit.cpp; sourceTree = SOURCE_ROOT; };
 		9F44576A16C19C0C00A80C81 /* gametimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gametimer.cpp; path = ../gametimer.cpp; sourceTree = SOURCE_ROOT; };
@@ -348,6 +352,8 @@
 				9FC0DB890EE2B17400F23D2C /* extendedtinyxml.h */,
 				9FC0DB8A0EE2B17400F23D2C /* files.cpp */,
 				9FC0DB8B0EE2B17400F23D2C /* files.h */,
+				9F1D13151711EE7C00C45BC0 /* fxeffects.cpp */,
+				9F1D13161711EE7C00C45BC0 /* fxeffects.h */,
 				9F44576A16C19C0C00A80C81 /* gametimer.cpp */,
 				9F44576B16C19C0C00A80C81 /* gametimer.h */,
 				9FC0DB900EE2B17400F23D2C /* hud.cpp */,
@@ -598,6 +604,7 @@
 				9F0B084314D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
 				9F44577016C19C0C00A80C81 /* gametimer.cpp in Sources */,
 				9F44577116C19C0C00A80C81 /* jobs.cpp in Sources */,
+				9F1D13181711EE7C00C45BC0 /* fxeffects.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,6 +663,7 @@
 				9F0B084214D0855D007F3D00 /* casualtiestracker.cpp in Sources */,
 				9F44576E16C19C0C00A80C81 /* gametimer.cpp in Sources */,
 				9F44576F16C19C0C00A80C81 /* jobs.cpp in Sources */,
+				9F1D13171711EE7C00C45BC0 /* fxeffects.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
