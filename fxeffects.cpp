@@ -24,11 +24,11 @@
 #include "main.h"
 
 cFx::cFx (bool bottom_, int x, int y) :
-	bottom (bottom_),
-	length (-1),
 	posX (x),
 	posY (y),
-	tick (0)
+	tick (0),
+	length (-1),
+	bottom (bottom_)
 {}
 
 cFx::~cFx ()
@@ -55,8 +55,8 @@ void cFx::run ()
 //----------------------------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 	cFx (false, x, y),
-	dir (dir_),
-	image (NULL)
+	image (NULL),
+	dir (dir_)
 {}
 
 void cFxMuzzle::draw() const
@@ -110,8 +110,8 @@ cFxMuzzleSmall::cFxMuzzleSmall(int x, int y, int dir_) :
 //----------------------------------------------------------------------------------------------------
 cFxExplo::cFxExplo (int x, int y, int frames_) :
 	cFx(false, x, y),
-	frames(frames_),
-	image(NULL)
+	image(NULL),
+	frames(frames_)
 {}
 
 void cFxExplo::draw () const
@@ -121,7 +121,7 @@ void cFxExplo::draw () const
 	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
-	
+
 	SDL_Rect src, dest;
 	src.x = (int) (image[0]->w * Client->gameGUI.getZoom() * frame / frames);
 	src.y = 0;
@@ -134,17 +134,17 @@ void cFxExplo::draw () const
 
 
 //----------------------------------------------------------------------------------------------------
-cFxExploSmall::cFxExploSmall(int x, int y) : 
+cFxExploSmall::cFxExploSmall(int x, int y) :
 	cFxExplo(x, y, 14)
 {
-	length  = 140;
+	length = 140;
 	image = EffectsData.fx_explo_small;
-};
+}
 
 void cFxExploSmall::playSound() const
 {
 	int nr;
-	nr =  random (3);
+	nr = random (3);
 	if (nr == 0)
 	{
 		PlayFX (SoundData.EXPSmall0);
@@ -160,12 +160,12 @@ void cFxExploSmall::playSound() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxExploBig::cFxExploBig(int x, int y) : 
+cFxExploBig::cFxExploBig(int x, int y) :
 	cFxExplo(x, y, 28)
 {
-	length  = 280;
+	length = 280;
 	image = EffectsData.fx_explo_big;
-};
+}
 
 
 void cFxExploBig::playSound() const
@@ -205,12 +205,12 @@ void cFxExploBig::playSound() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxExploAir::cFxExploAir(int x, int y) : 
+cFxExploAir::cFxExploAir(int x, int y) :
 	cFxExplo(x, y, 14)
 {
-	length  = 140;
+	length = 140;
 	image = EffectsData.fx_explo_air;
-};
+}
 
 void cFxExploAir::playSound() const
 {
@@ -231,12 +231,12 @@ void cFxExploAir::playSound() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxExploWater::cFxExploWater(int x, int y) : 
+cFxExploWater::cFxExploWater(int x, int y) :
 	cFxExplo(x, y, 14)
 {
-	length  = 140;
+	length = 140;
 	image = EffectsData.fx_explo_water;
-};
+}
 
 void cFxExploWater::playSound() const
 {
@@ -257,12 +257,12 @@ void cFxExploWater::playSound() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxHit::cFxHit(int x, int y) : 
+cFxHit::cFxHit(int x, int y) :
 	cFxExplo(x, y, 5)
 {
-	length  = 50;
+	length = 50;
 	image = EffectsData.fx_hit;
-};
+}
 
 void cFxHit::playSound() const
 {
@@ -270,12 +270,12 @@ void cFxHit::playSound() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxAbsorb::cFxAbsorb(int x, int y) : 
+cFxAbsorb::cFxAbsorb(int x, int y) :
 	cFxExplo(x, y, 10)
 {
-	length  = 100;
+	length = 100;
 	image = EffectsData.fx_absorb;
-};
+}
 
 void cFxAbsorb::playSound() const
 {
@@ -285,9 +285,9 @@ void cFxAbsorb::playSound() const
 //----------------------------------------------------------------------------------------------------
 cFxFade::cFxFade(int x, int y, bool bottom, int start, int end) :
 	cFx(bottom, x, y),
+	image(NULL),
 	alphaStart(start),
-	alphaEnd(end),
-	image(NULL)
+	alphaEnd(end)
 {}
 
 void cFxFade::draw() const
@@ -305,7 +305,7 @@ void cFxFade::draw() const
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxSmoke::cFxSmoke(int x, int y, bool bottom) : 
+cFxSmoke::cFxSmoke(int x, int y, bool bottom) :
 	cFxFade(x, y, bottom, 100, 0)
 {
 	length = 50;
@@ -313,20 +313,20 @@ cFxSmoke::cFxSmoke(int x, int y, bool bottom) :
 }
 
 //----------------------------------------------------------------------------------------------------
-cFxCorpse::cFxCorpse(int x, int y) : 
+cFxCorpse::cFxCorpse(int x, int y) :
 	cFxFade(x, y, true, 255, 0)
 {
 	length = 1024;
 	image = EffectsData.fx_corpse;
 }
 
-//----------------------------------------------------------------------------------------------------	
-cFxTracks::cFxTracks(int x, int y, int dir_) : 
+//----------------------------------------------------------------------------------------------------
+cFxTracks::cFxTracks(int x, int y, int dir_) :
 	cFx(true, x, y),
+	image(NULL),
 	alphaStart(100),
 	alphaEnd(0),
-	dir(dir_),
-	image(NULL)
+	dir(dir_)
 {
 	length = 1024;
 	image = EffectsData.fx_tracks;
@@ -340,7 +340,7 @@ void cFxTracks::draw() const
 
 	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
-	
+
 	SDL_Rect src, dest;
 	src.y = 0;
 	src.x = image[0]->w * dir / 4;
@@ -349,21 +349,21 @@ void cFxTracks::draw() const
 	dest = Client->gameGUI.calcScreenPos (posX, posY);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
-};
+}
 
-//----------------------------------------------------------------------------------------------------	
-cFxRocket::cFxRocket(int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom) : 
+//----------------------------------------------------------------------------------------------------
+cFxRocket::cFxRocket(int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom) :
 	cFx(bottom, startX_, startY_),
+	speed(8),
+	image(NULL),
+	dir(dir_),
+	distance(0),
 	startX(startX_),
 	startY(startY_),
 	endX(endX_),
-	endY(endY_),
-	speed(8),
-	dir(dir_),
-	distance(0),
-	image(NULL)
+	endY(endY_)
 {
-	distance = (int) sqrt (pow ((float)(endX - startX), 2) + pow ((float)(endY - startY), 2)); 
+	distance = (int) sqrt (pow ((float)(endX - startX), 2) + pow ((float)(endY - startY), 2));
 	length = distance / speed;
 	image = EffectsData.fx_rocket;
 }
@@ -396,7 +396,6 @@ void cFxRocket::draw() const
 	dest = Client->gameGUI.calcScreenPos(posX - image[0]->w / 16, posY - image[0]->h / 2);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
-
 }
 
 void cFxRocket::run()
@@ -424,8 +423,6 @@ void cFxRocket::run()
 	tick++;
 	posX = startX + speed * (endX - startX) * tick / distance;
 	posY = startY + speed * (endY - startY) * tick / distance;
-
-	
 }
 
 bool cFxRocket::isFinished () const
@@ -435,10 +432,10 @@ bool cFxRocket::isFinished () const
 
 cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 	cFx (false, x, y),
-	alphaStart (alpha),
-	alphaEnd (0),
 	dx (0),
 	dy (0),
+	alphaStart (alpha),
+	alphaEnd (0),
 	frames (50),
 	image (NULL)
 {
@@ -464,7 +461,6 @@ void cFxDarkSmoke::draw() const
 	//if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
-
 
 	const int frame = tick * frames / length;
 

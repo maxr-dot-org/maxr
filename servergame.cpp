@@ -154,11 +154,9 @@ void cServerGame::run()
 			{
 				handleNetMessage (event);
 			}
-
-			
 		}
 
-		static int lastTime = 0;
+		static unsigned int lastTime = 0;
 		if (Server)
 			lastTime = Server->gameTimer.gameTime;
 

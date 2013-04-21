@@ -18,14 +18,13 @@ public:
 	virtual ~cFx ();
 
 	const bool bottom;
-	
+
 	virtual bool isFinished () const;
 	int getLength () const;
 
 	virtual void draw () const = 0;
 	virtual void playSound () const;
 	virtual void run ();
-
 };
 
 class cFxMuzzle : public cFx
@@ -33,7 +32,7 @@ class cFxMuzzle : public cFx
 protected:
 	cFxMuzzle (int x, int y, int dir_);
 	void draw () const;
-	
+
 	SDL_Surface** image;
 	int dir;
 };
@@ -169,7 +168,7 @@ public:
 	~cFxRocket ();
 	void draw () const;
 	void run ();
-	bool isFinished () const; //return true, when the last smoke effect is finished. 
+	bool isFinished () const; //return true, when the last smoke effect is finished.
 	                          //getLength() returns only the time until the rocket has reached the destiantion
 };
 
