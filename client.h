@@ -64,8 +64,6 @@ private:
 	cBuilding* neutralBuildings;
 	/** number of current turn */
 	int iTurn;
-	/** flags what should be displaxed in the raffinery */
-	bool bUpShowTank, bUpShowPlane, bUpShowShip, bUpShowBuild, bUpShowTNT; //TODO: this should be in GameGUI!
 	/** true if the player has been defeated */
 	bool bDefeated;
 	/** how many seconds will be left for this turn */

@@ -80,11 +80,6 @@ cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	bDefeated = false;
 	iTurn = 1;
 	bWantToEnd = false;
-	bUpShowTank = true;
-	bUpShowPlane = true;
-	bUpShowShip = true;
-	bUpShowBuild = true;
-	bUpShowTNT = false;
 	bAlienTech = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
