@@ -1340,10 +1340,10 @@ void cClientMoveJob::stopMoveSound()
 		bool water = Client->getMap()->isWater (Vehicle->PosX, Vehicle->PosY, true);
 		if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		StopFXLoop (Client->iObjectStream);
+		StopFXLoop (Client->gameGUI.iObjectStream);
 		if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
 		else PlayFX (Vehicle->typ->Stop);
 
-		Client->iObjectStream = Vehicle->playStream();
+		Client->gameGUI.iObjectStream = Vehicle->playStream();
 	}
 }

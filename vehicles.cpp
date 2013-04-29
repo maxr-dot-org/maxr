@@ -621,8 +621,8 @@ void cVehicle::Deselct()
 	groupSelected = false;
 	if (Client->gameGUI.mouseInputMode == placeBand) BuildPath = false;
 	// redraw the background
-	StopFXLoop (Client->iObjectStream);
-	Client->iObjectStream = -1;
+	StopFXLoop (Client->gameGUI.iObjectStream);
+	Client->gameGUI.iObjectStream = -1;
 	Client->gameGUI.setFLC (NULL);
 	Client->gameGUI.setUnitDetailsData (NULL, NULL);
 }
@@ -1001,7 +1001,7 @@ void cVehicle::StartMoveSound()
 	cBuilding* building = Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding();
 	water = Client->getMap()->isWater (PosX, PosY, true);
 	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
-	StopFXLoop (Client->iObjectStream);
+	StopFXLoop (Client->gameGUI.iObjectStream);
 
 	if (!MoveJobActive)
 	{
@@ -1012,9 +1012,9 @@ void cVehicle::StartMoveSound()
 	}
 
 	if (water && data.factorSea != 0)
-		Client->iObjectStream = PlayFXLoop (typ->DriveWater);
+		Client->gameGUI.iObjectStream = PlayFXLoop (typ->DriveWater);
 	else
-		Client->iObjectStream = PlayFXLoop (typ->Drive);
+		Client->gameGUI.iObjectStream = PlayFXLoop (typ->Drive);
 }
 
 //-----------------------------------------------------------------------------

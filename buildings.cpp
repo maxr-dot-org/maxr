@@ -674,7 +674,7 @@ void cBuilding::CheckNeighbours (cMap* Map)
 		if ( b && b->owner == owner && b->data.connectsToBase )			\
 		{m=true;}else{m=false;}							\
 	}														\
-	 
+
 	if (!data.isBig)
 	{
 		CHECK_NEIGHBOUR (PosX    , PosY - 1, BaseN)
@@ -987,9 +987,9 @@ void cBuilding::ClientStartWork (cGameGUI& gameGUI)
 	EffectAlpha = 0;
 	if (gameGUI.getSelBuilding() == this)
 	{
-		StopFXLoop (gameGUI.getClient()->iObjectStream);
+		StopFXLoop (gameGUI.iObjectStream);
 		PlayFX (typ->Start);
-		gameGUI.getClient()->iObjectStream = playStream();
+		gameGUI.iObjectStream = playStream();
 	}
 	if (data.canResearch)
 		owner->startAResearch (researchArea);
@@ -1079,9 +1079,9 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 	IsWorking = false;
 	if (gameGUI.getSelBuilding() == this)
 	{
-		StopFXLoop (gameGUI.getClient()->iObjectStream);
+		StopFXLoop (gameGUI.iObjectStream);
 		PlayFX (typ->Stop);
-		gameGUI.getClient()->iObjectStream = playStream();
+		gameGUI.iObjectStream = playStream();
 	}
 	if (data.canResearch)
 		owner->stopAResearch (researchArea);
@@ -1703,8 +1703,8 @@ void cBuilding::Select()
 void cBuilding::Deselct()
 {
 	// Den Hintergrund wiederherstellen:
-	StopFXLoop (Client->iObjectStream);
-	Client->iObjectStream = -1;
+	StopFXLoop (Client->gameGUI.iObjectStream);
+	Client->gameGUI.iObjectStream = -1;
 	Client->gameGUI.setVideoSurface (NULL);
 	Client->gameGUI.setUnitDetailsData (NULL, NULL);
 }

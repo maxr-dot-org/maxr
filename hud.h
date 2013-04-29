@@ -162,6 +162,10 @@ class cGameGUI : public cMenu
 	cList<cVehicle*> selectedVehiclesGroup;
 	/** the currently selected building */
 	cBuilding* selectedBuilding;
+public:
+	/**  the soundstream of the selected unit */
+	int iObjectStream;
+private:
 	/** list with all messages */
 	cList<sMessage*> messages;
 	/** Coordinates to a important message */
@@ -173,8 +177,6 @@ class cGameGUI : public cMenu
 	float minZoom;
 
 	float calcMinZoom();
-
-	bool closed;
 
 	int offX, offY;
 	int miniMapOffX, miniMapOffY;
@@ -407,7 +409,7 @@ public:
 	bool timer10ms, timer50ms, timer100ms, timer400ms;
 	void handleTimer();
 	void Timer();
-	
+
 	void addFx (cFx* fx);
 
 	/** Adds an message to be displayed in the game */

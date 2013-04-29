@@ -445,6 +445,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList) :
 	cMenu (generateSurface()),
 	client (NULL),
+	iObjectStream(-1),
 	msgCoordsX (-1),
 	msgCoordsY (-1),
 	player (player_),
@@ -516,8 +517,6 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	calcMinZoom();
 
 	setWind (random (360));
-
-	closed = false;
 
 	zoomSlider.setMoveCallback (&zoomSliderMoved);
 	menuItems.Add (&zoomSlider);
@@ -1531,7 +1530,7 @@ void cGameGUI::selectUnit (cVehicle* vehicle)
 	mouseInputMode = normalInput;
 
 	vehicle->Select();
-	client->iObjectStream = vehicle->playStream();
+	iObjectStream = vehicle->playStream();
 
 	updateMouseCursor();
 }
@@ -1547,7 +1546,7 @@ void cGameGUI::selectUnit (cBuilding* building)
 	mouseInputMode = normalInput;
 
 	building->Select();
-	client->iObjectStream = building->playStream();
+	iObjectStream = building->playStream();
 
 	updateMouseCursor();
 }
@@ -1558,13 +1557,13 @@ void cGameGUI::deselectUnit()
 	{
 		selectedBuilding->Deselct();
 		selectedBuilding = NULL;
-		StopFXLoop (client->iObjectStream);
+		StopFXLoop (iObjectStream);
 	}
 	else if (selectedVehicle)
 	{
 		selectedVehicle->Deselct();
 		selectedVehicle = NULL;
-		StopFXLoop (client->iObjectStream);
+		StopFXLoop (iObjectStream);
 	}
 
 	mouseInputMode = normalInput;

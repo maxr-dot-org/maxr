@@ -180,8 +180,6 @@ private:
 
 public:
 	cGameTimerClient gameTimer;
-	/**  the soundstream of the selected unit */
-	int iObjectStream;	//TODO: move to gui
 	/** lists with all FX-Animation */
 	cList<cFx*> FxList;
 	/** list with the running clientAttackJobs */
@@ -193,8 +191,6 @@ public:
 
 	/** true if the turn should be end after all movejobs have been finished */
 	bool bWantToEnd;
-	/** true if allian technologies are activated */
-	bool bAlienTech;
 
 
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);

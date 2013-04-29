@@ -76,11 +76,9 @@ cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 {
 	gameGUI.setClient (this);
 	neutralBuildings = NULL;
-	iObjectStream = -1;
 	bDefeated = false;
 	iTurn = 1;
 	bWantToEnd = false;
-	bAlienTech = false;
 	iTurnTime = 0;
 	scoreLimit = turnLimit = 0;
 
@@ -95,7 +93,7 @@ cClient::~cClient()
 
 	delete casualtiesTracker;
 
-	StopFXLoop (iObjectStream);
+	StopFXLoop (gameGUI.iObjectStream);
 	for (size_t i = 0; i != FxList.Size(); ++i)
 	{
 		delete FxList[i];
@@ -644,7 +642,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI.getSelVehicle()) StopFXLoop (iObjectStream);
+		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI.getSelVehicle()) StopFXLoop (gameGUI.iObjectStream);
 
 		Vehicle->FlightHigh = message.popInt16();
 	}
@@ -863,8 +861,8 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (Vehicle == gameGUI.getSelVehicle())
 	{
-		StopFXLoop (iObjectStream);
-		iObjectStream = Vehicle->playStream();
+		StopFXLoop (gameGUI.iObjectStream);
+		gameGUI.iObjectStream = Vehicle->playStream();
 	}
 
 	if (Vehicle->ClientMoveJob) Vehicle->ClientMoveJob->release();
@@ -897,8 +895,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 
 	if (gameGUI.getSelVehicle() == Vehicle)
 	{
-		StopFXLoop (iObjectStream);
-		iObjectStream = Vehicle->playStream();
+		StopFXLoop (gameGUI.iObjectStream);
+		gameGUI.iObjectStream = Vehicle->playStream();
 	}
 }
 
@@ -1243,8 +1241,8 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 
 			if (gameGUI.getSelVehicle() == Vehicle)
 			{
-				StopFXLoop (iObjectStream);
-				iObjectStream = Vehicle->playStream();
+				StopFXLoop (gameGUI.iObjectStream);
+				gameGUI.iObjectStream = Vehicle->playStream();
 			}
 		}
 		break;
@@ -1283,8 +1281,8 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 
 	if (gameGUI.getSelVehicle() == Vehicle)
 	{
-		StopFXLoop (iObjectStream);
-		iObjectStream = Vehicle->playStream();
+		StopFXLoop (gameGUI.iObjectStream);
+		gameGUI.iObjectStream = Vehicle->playStream();
 	}
 }
 
