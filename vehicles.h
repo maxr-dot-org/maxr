@@ -175,9 +175,9 @@ public:
 	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr() const;
 	int playStream();
-	void StartMoveSound();
+	void StartMoveSound(cGameGUI& gameGUI);
 	void DecSpeed (int value);
-	void DrawAttackCursor (int x, int y);
+	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();

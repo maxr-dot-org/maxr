@@ -1030,9 +1030,9 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 							screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
-				elem->v->drawMunBar (screenPos);
+				elem->v->drawMunBar (gameGUI, screenPos);
 			if (gameGUI.hitsChecked())
-				elem->v->drawHealthBar (screenPos);
+				elem->v->drawHealthBar (gameGUI, screenPos);
 		}
 		else if (elem->b)
 		{
@@ -1066,9 +1066,9 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 
 			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
-				elem->b->drawMunBar (screenPos);
+				elem->b->drawMunBar (gameGUI, screenPos);
 			if (gameGUI.hitsChecked())
-				elem->b->drawHealthBar (screenPos);
+				elem->b->drawHealthBar (gameGUI, screenPos);
 		}
 	}
 }

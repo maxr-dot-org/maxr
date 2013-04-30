@@ -1434,11 +1434,11 @@ void cGameGUI::updateUnderMouseObject()
 		{
 			if (selectedVehicle)
 			{
-				selectedVehicle->DrawAttackCursor (x, y);
+				selectedVehicle->DrawAttackCursor (*this, x, y);
 			}
 			else if (selectedBuilding)
 			{
-				selectedBuilding->DrawAttackCursor (x, y);
+				selectedBuilding->DrawAttackCursor (*this, x, y);
 			}
 		}
 	}
@@ -1449,11 +1449,11 @@ void cGameGUI::updateUnderMouseObject()
 		{
 			if (selectedVehicle)
 			{
-				selectedVehicle->DrawAttackCursor (x, y);
+				selectedVehicle->DrawAttackCursor (*this, x, y);
 			}
 			else if (selectedBuilding)
 			{
-				selectedBuilding->DrawAttackCursor (x, y);
+				selectedBuilding->DrawAttackCursor (*this, x, y);
 			}
 		}
 	}
@@ -1464,11 +1464,11 @@ void cGameGUI::updateUnderMouseObject()
 		{
 			if (selectedVehicle)
 			{
-				selectedVehicle->DrawAttackCursor (x, y);
+				selectedVehicle->DrawAttackCursor (*this, x, y);
 			}
 			else if (selectedBuilding)
 			{
-				selectedBuilding->DrawAttackCursor (x, y);
+				selectedBuilding->DrawAttackCursor (*this, x, y);
 			}
 		}
 	}
@@ -1479,11 +1479,11 @@ void cGameGUI::updateUnderMouseObject()
 		{
 			if (selectedVehicle)
 			{
-				selectedVehicle->DrawAttackCursor (x, y);
+				selectedVehicle->DrawAttackCursor (*this, x, y);
 			}
 			else if (selectedBuilding)
 			{
-				selectedBuilding->DrawAttackCursor (x, y);
+				selectedBuilding->DrawAttackCursor (*this, x, y);
 			}
 		}
 	}
@@ -1653,7 +1653,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if (mouse->SetCursor (CAttack))
 				{
-					selectedVehicle->DrawAttackCursor (mouse->getKachelX(), mouse->getKachelY());
+					selectedVehicle->DrawAttackCursor (*this, mouse->getKachelX(), mouse->getKachelY());
 				}
 			}
 			else
@@ -1709,7 +1709,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if (mouse->SetCursor (CAttack))
 				{
-					selectedBuilding->DrawAttackCursor (mouse->getKachelX(), mouse->getKachelY());
+					selectedBuilding->DrawAttackCursor (*this, mouse->getKachelX(), mouse->getKachelY());
 				}
 			}
 			else
@@ -1721,14 +1721,14 @@ void cGameGUI::updateMouseCursor()
 		{
 			if (mouse->SetCursor (CAttack))
 			{
-				selectedVehicle->DrawAttackCursor (mouse->getKachelX(), mouse->getKachelY());
+				selectedVehicle->DrawAttackCursor (*this, mouse->getKachelX(), mouse->getKachelY());
 			}
 		}
 		else if (selectedBuilding && selectedBuilding->owner == client->getActivePlayer() && selectedBuilding->canAttackObjectAt (mouse->getKachelX(), mouse->getKachelY(), client->getMap()))
 		{
 			if (mouse->SetCursor (CAttack))
 			{
-				selectedBuilding->DrawAttackCursor (mouse->getKachelX(), mouse->getKachelY());
+				selectedBuilding->DrawAttackCursor (*this, mouse->getKachelX(), mouse->getKachelY());
 			}
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == muniActive)

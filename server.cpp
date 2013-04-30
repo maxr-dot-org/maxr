@@ -1189,7 +1189,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 
 	cNetMessage* message2 = new cNetMessage (GAME_EV_MARK_LOG);
 	message2->pushString (message.popString());
-	Server->sendNetMessage (message2);
+	sendNetMessage (message2);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1550,7 +1550,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		//sidestep stealth units if nessesary
 		sideStepStealthUnit (x, y, StoredVehicle);
 
-		if (StoringVehicle->canExitTo (x, y, Server->Map, StoredVehicle->typ))
+		if (StoringVehicle->canExitTo (x, y, Map, StoredVehicle->typ))
 		{
 			StoringVehicle->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
@@ -1586,7 +1586,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		//sidestep stealth units if nessesary
 		sideStepStealthUnit (x, y, StoredVehicle);
 
-		if (StoringBuilding->canExitTo (x, y, Server->Map, StoredVehicle->typ))
+		if (StoringBuilding->canExitTo (x, y, Map, StoredVehicle->typ))
 		{
 			StoringBuilding->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
@@ -2520,13 +2520,13 @@ void cServer::checkPlayerUnits()
 						if (NextVehicle->ServerMoveJob)
 						{
 							sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
-							if (Server->ActiveMJobs.Contains(NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
+							if (ActiveMJobs.Contains(NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
 							{
 								Log.write(" Server: sending extra MJOB_OK for unit ID " + iToStr(NextVehicle->iID) + " to client " + iToStr(MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 								message->pushChar (MJOB_OK);
 								message->pushInt16 (NextVehicle->iID);
-								Server->sendNetMessage (message, MapPlayer->Nr);
+								sendNetMessage (message, MapPlayer->Nr);
 							}
 						}
 					}
@@ -3238,7 +3238,7 @@ void cServer::handleMoveJobs()
 			//continue path building
 			if (Vehicle && Vehicle->BuildPath)
 			{
-				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Server->Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
+				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
 				{
 					addJob (new cStartBuildJob (Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
 					Vehicle->IsBuilding = true;
@@ -3877,7 +3877,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	if (vehicleData.factorAir > 0) return;
 
 	//first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Map->fields[PosX + PosY * Server->Map->size].getVehicles();
+	cVehicle* stealthVehicle = Map->fields[PosX + PosY * Map->size].getVehicles();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->owner == vehicleOwner) return;
 	if (stealthVehicle->data.isStealthOn == TERRAIN_NONE) return;
@@ -3892,25 +3892,25 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	int bestX, bestY;
 	for (int x = PosX - 1; x <= PosX + 1; x++)
 	{
-		if (x < 0 || x >= Server->Map->size) continue;
+		if (x < 0 || x >= Map->size) continue;
 		for (int y = PosY - 1; y <= PosY + 1; y++)
 		{
-			if (y < 0 || y >= Server->Map->size) continue;
+			if (y < 0 || y >= Map->size) continue;
 			if (x == PosX && y == PosY) continue;
 
 			//when a bigOffet was passed, for example a contructor needs space for a big building
 			//so not all directions are allowed for the side stepping
 			if (bigOffset != -1)
 			{
-				int off = x + y * Server->Map->size;
+				int off = x + y * Map->size;
 				if (off == bigOffset ||
 					off == bigOffset + 1 ||
-					off == bigOffset + Server->Map->size ||
-					off == bigOffset + Server->Map->size + 1) 	continue;
+					off == bigOffset + Map->size ||
+					off == bigOffset + Map->size + 1) continue;
 			}
 
 			//check whether this field is a possible destination
-			if (!Server->Map->possiblePlace (stealthVehicle, x, y)) continue;
+			if (!Map->possiblePlace (stealthVehicle, x, y)) continue;
 
 			//check costs of the move
 			cPathCalculator pathCalculator (0, 0, 0, 0, Map, stealthVehicle);
@@ -3921,21 +3921,21 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			bool detectOnDest = false;
 			if (stealthVehicle->data.isStealthOn & TERRAIN_GROUND)
 			{
-				for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+				for (unsigned int i = 0; i < PlayerList->Size(); i++)
 				{
-					if ( (*Server->PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*Server->PlayerList) [i]->DetectLandMap[x + y * Map->size]) detectOnDest = true;
+					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
+					if ( (*PlayerList) [i]->DetectLandMap[x + y * Map->size]) detectOnDest = true;
 				}
-				if (Server->Map->isWater (x, y, true)) detectOnDest = true;
+				if (Map->isWater (x, y, true)) detectOnDest = true;
 			}
 			if (stealthVehicle->data.isStealthOn & TERRAIN_SEA)
 			{
-				for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+				for (unsigned int i = 0; i < PlayerList->Size(); i++)
 				{
-					if ( (*Server->PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*Server->PlayerList) [i]->DetectSeaMap[x + y * Map->size]) detectOnDest = true;
+					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
+					if ( (*PlayerList) [i]->DetectSeaMap[x + y * Map->size]) detectOnDest = true;
 				}
-				if (!Server->Map->isWater (x, y, true)) detectOnDest = true;
+				if (!Map->isWater (x, y, true)) detectOnDest = true;
 
 				if (stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0)
 				{
@@ -3959,14 +3959,14 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 
 	if (placeFound)
 	{
-		Server->addMoveJob (PosX, PosY, bestX, bestY, stealthVehicle);
-		stealthVehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
+		addMoveJob (PosX, PosY, bestX, bestY, stealthVehicle);
+		stealthVehicle->ServerMoveJob->checkMove(); //begin the movment immediately, so no other unit can block the destination field
 		return;
 	}
 
 	//sidestepping failed. Uncover the vehicle.
 	stealthVehicle->setDetectedByPlayer (vehicleOwner);
-	Server->checkPlayerUnits();
+	checkPlayerUnits();
 }
 
 void cServer::makeAdditionalSaveRequest (int saveNum)

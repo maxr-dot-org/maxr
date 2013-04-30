@@ -1168,7 +1168,7 @@ void cClientMoveJob::moveVehicle()
 
 			if (wasWater != water)
 			{
-				Vehicle->StartMoveSound();
+				Vehicle->StartMoveSound(Client->gameGUI);
 			}
 		}
 
@@ -1324,7 +1324,7 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 void cClientMoveJob::startMoveSound()
 {
-	if (Vehicle == Client->gameGUI.getSelVehicle()) Vehicle->StartMoveSound();
+	if (Vehicle == Client->gameGUI.getSelVehicle()) Vehicle->StartMoveSound(Client->gameGUI);
 	bSoundRunning = true;
 }
 

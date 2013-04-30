@@ -179,7 +179,7 @@ public:
 	void ClientStopWork (cGameGUI& gameGUI);
 	bool CanTransferTo (cMapField* OverUnitField);  /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd();
-	void DrawAttackCursor (int x, int y);
+	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (sVehicle* typ, cGameGUI& gameGUI);
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;

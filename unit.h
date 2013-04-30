@@ -72,8 +72,8 @@ public:
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
 
-	void drawMunBar (const SDL_Rect& screenPos) const;
-	void drawHealthBar (const SDL_Rect& screenPos) const;
+	void drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
+	void drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
 	void rotateTo (int newDir);
 
 	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
@@ -122,7 +122,7 @@ protected:
 	bool isOriginalName;	// indicates whether the name has been changed by the player or not
 	std::string name;		// name of the building
 
-	void drawStatus (const SDL_Rect& screenPos) const;
+	void drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
 	int getNumberOfMenuEntries() const;
 
 	virtual bool isUnitLoaded() const { return false; }

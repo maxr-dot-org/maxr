@@ -986,16 +986,16 @@ void cUnit::center() const
 //-----------------------------------------------------------------------------
 /** Draws the ammunition bar over the unit */
 //-----------------------------------------------------------------------------
-void cUnit::drawMunBar (const SDL_Rect& screenPos) const
+void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	if (owner != Client->getActivePlayer())
 		return;
 
 	SDL_Rect r1, r2;
-	r1.x = screenPos.x + Client->gameGUI.getTileSize() / 10 + 1;
-	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = screenPos.y + Client->gameGUI.getTileSize() / 10 + Client->gameGUI.getTileSize() / 8;
+	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
+	r1.w = gameGUI.getTileSize() * 8 / 10 ;
+	r1.h = gameGUI.getTileSize() / 8;
+	r1.y = screenPos.y + gameGUI.getTileSize() / 10 + gameGUI.getTileSize() / 8;
 
 	if (r1.h <= 2)
 	{
@@ -1021,17 +1021,17 @@ void cUnit::drawMunBar (const SDL_Rect& screenPos) const
 //------------------------------------------------------------------------
 /** draws the health bar over the unit */
 //--------------------------------------------------------------------------
-void cUnit::drawHealthBar (const SDL_Rect& screenPos) const
+void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	SDL_Rect r1, r2;
-	r1.x = screenPos.x + Client->gameGUI.getTileSize() / 10 + 1;
-	r1.w = Client->gameGUI.getTileSize() * 8 / 10 ;
-	r1.h = Client->gameGUI.getTileSize() / 8;
-	r1.y = screenPos.y + Client->gameGUI.getTileSize() / 10;
+	r1.x = screenPos.x + gameGUI.getTileSize() / 10 + 1;
+	r1.w = gameGUI.getTileSize() * 8 / 10 ;
+	r1.h = gameGUI.getTileSize() / 8;
+	r1.y = screenPos.y + gameGUI.getTileSize() / 10;
 
 	if (data.isBig)
 	{
-		r1.w += Client->gameGUI.getTileSize();
+		r1.w += gameGUI.getTileSize();
 		r1.h *= 2;
 	}
 
@@ -1054,7 +1054,7 @@ void cUnit::drawHealthBar (const SDL_Rect& screenPos) const
 }
 
 //-----------------------------------------------------------------------------
-void cUnit::drawStatus (const SDL_Rect& screenPos) const
+void cUnit::drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	SDL_Rect dest;
 	SDL_Rect speedSymbol = {244, 97, 8, 10};
@@ -1063,35 +1063,35 @@ void cUnit::drawStatus (const SDL_Rect& screenPos) const
 
 	if (turnsDisabled > 0)
 	{
-		if (Client->gameGUI.getTileSize() < 25)
+		if (gameGUI.getTileSize() < 25)
 			return;
-		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 12;
-		dest.y = screenPos.y + Client->gameGUI.getTileSize() / 2 - 12;
+		dest.x = screenPos.x + gameGUI.getTileSize() / 2 - 12;
+		dest.y = screenPos.y + gameGUI.getTileSize() / 2 - 12;
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &disabledSymbol, buffer, &dest);
 	}
 	else
 	{
-		dest.y = screenPos.y + Client->gameGUI.getTileSize() - 11;
-		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 4;
+		dest.y = screenPos.y + gameGUI.getTileSize() - 11;
+		dest.x = screenPos.x + gameGUI.getTileSize() / 2 - 4;
 		if (data.isBig)
 		{
-			dest.y += (Client->gameGUI.getTileSize() / 2);
-			dest.x += (Client->gameGUI.getTileSize() / 2);
+			dest.y += (gameGUI.getTileSize() / 2);
+			dest.x += (gameGUI.getTileSize() / 2);
 		}
 		if (data.speedCur >= 4)
 		{
 			if (data.shotsCur)
-				dest.x -= Client->gameGUI.getTileSize() / 4;
+				dest.x -= gameGUI.getTileSize() / 4;
 
 			SDL_Rect destCopy = dest;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &speedSymbol, buffer, &destCopy);
 		}
 
-		dest.x = screenPos.x + Client->gameGUI.getTileSize() / 2 - 4;
+		dest.x = screenPos.x + gameGUI.getTileSize() / 2 - 4;
 		if (data.shotsCur)
 		{
 			if (data.speedCur)
-				dest.x += Client->gameGUI.getTileSize() / 4;
+				dest.x += gameGUI.getTileSize() / 4;
 			SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &shotsSymbol, buffer, &dest);
 		}
 	}

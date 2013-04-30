@@ -397,15 +397,15 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar (screenPosition);
+		drawHealthBar (gameGUI, screenPosition);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack)
-		drawMunBar (screenPosition);
+		drawMunBar (gameGUI, screenPosition);
 
 	//draw status info
 	if (gameGUI.statusChecked())
-		drawStatus (screenPosition);
+		drawStatus (gameGUI, screenPosition);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -994,14 +994,14 @@ int cVehicle::playStream()
 //-----------------------------------------------------------------------------
 /** Starts the MoveSound */
 //-----------------------------------------------------------------------------
-void cVehicle::StartMoveSound()
+void cVehicle::StartMoveSound(cGameGUI& gameGUI)
 {
 	bool water;
 
 	cBuilding* building = Client->getMap()->fields[PosX + PosY * Client->getMap()->size].getBaseBuilding();
 	water = Client->getMap()->isWater (PosX, PosY, true);
 	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
-	StopFXLoop (Client->gameGUI.iObjectStream);
+	StopFXLoop (gameGUI.iObjectStream);
 
 	if (!MoveJobActive)
 	{
@@ -1012,9 +1012,9 @@ void cVehicle::StartMoveSound()
 	}
 
 	if (water && data.factorSea != 0)
-		Client->gameGUI.iObjectStream = PlayFXLoop (typ->DriveWater);
+		gameGUI.iObjectStream = PlayFXLoop (typ->DriveWater);
 	else
-		Client->gameGUI.iObjectStream = PlayFXLoop (typ->Drive);
+		gameGUI.iObjectStream = PlayFXLoop (typ->Drive);
 }
 
 //-----------------------------------------------------------------------------
@@ -1039,7 +1039,7 @@ void cVehicle::DecSpeed (int value)
 //-----------------------------------------------------------------------------
 /** Draws the attack cursor */
 //-----------------------------------------------------------------------------
-void cVehicle::DrawAttackCursor (int x, int y)
+void cVehicle::DrawAttackCursor (const cGameGUI& gameGUI, int x, int y)
 {
 	SDL_Rect r;
 	int wp, wc, t;
@@ -1048,7 +1048,7 @@ void cVehicle::DrawAttackCursor (int x, int y)
 
 	selectTarget (v, b, x, y, data.canAttack, Client->getMap());
 
-	if (! (v || b) || (v && v == Client->gameGUI.getSelVehicle()) || (b && b == Client->gameGUI.getSelBuilding()))
+	if (! (v || b) || (v && v == gameGUI.getSelVehicle()) || (b && b == gameGUI.getSelBuilding()))
 	{
 		r.x = 1;
 		r.y = 29;

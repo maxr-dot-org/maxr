@@ -446,15 +446,15 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	//draw health bar
 	if (gameGUI.hitsChecked())
-		drawHealthBar (*screenPos);
+		drawHealthBar (gameGUI, *screenPos);
 
 	//draw ammo bar
 	if (gameGUI.ammoChecked() && data.canAttack && data.ammoMax > 0)
-		drawMunBar (*screenPos);
+		drawMunBar (gameGUI, *screenPos);
 
 	//draw status
 	if (gameGUI.statusChecked())
-		drawStatus (*screenPos);
+		drawStatus (gameGUI, *screenPos);
 
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
@@ -1490,7 +1490,7 @@ void cBuilding::CheckRessourceProd()
 //--------------------------------------------------------------------------
 /** Draw the attack cursor */
 //--------------------------------------------------------------------------
-void cBuilding::DrawAttackCursor (int x, int y)
+void cBuilding::DrawAttackCursor (const cGameGUI& gameGUI, int x, int y)
 {
 	SDL_Rect r;
 	int wp = 0, wc = 0, t = 0;
@@ -1499,7 +1499,7 @@ void cBuilding::DrawAttackCursor (int x, int y)
 
 	selectTarget (v, b, x, y, data.canAttack, Client->getMap());
 
-	if (! (v || b) || (v && v == Client->gameGUI.getSelVehicle()) || (b && b == Client->gameGUI.getSelBuilding()))
+	if (! (v || b) || (v && v == gameGUI.getSelVehicle()) || (b && b == gameGUI.getSelBuilding()))
 	{
 		r.x = 1;
 		r.y = 29;
