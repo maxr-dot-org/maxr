@@ -44,7 +44,7 @@ std::string plural (int n, const std::string& sing, const std::string& plu)
 	return ss.str();
 }
 
-Uint32 getPlayerColour (cPlayer* p)
+Uint32 getPlayerColour (const cPlayer* p)
 {
 	return ( (Uint32*) (p->color->pixels)) [0];
 }

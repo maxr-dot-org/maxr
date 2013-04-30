@@ -638,7 +638,7 @@ void cBuilding::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFa
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::updateNeighbours (cMap* Map)
+void cBuilding::updateNeighbours (const cMap* Map)
 {
 	int iPosOff = PosX + PosY * Map->size;
 	if (!data.isBig)
@@ -665,12 +665,12 @@ void cBuilding::updateNeighbours (cMap* Map)
 //--------------------------------------------------------------------------
 /** Checks, if there are neighbours */
 //--------------------------------------------------------------------------
-void cBuilding::CheckNeighbours (cMap* Map)
+void cBuilding::CheckNeighbours (const cMap* Map)
 {
 #define CHECK_NEIGHBOUR(x,y,m)								\
 	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
 	{														\
-		cBuilding* b = Map->fields[(x) + (y) * Map->size].getTopBuilding();		\
+		const cBuilding* b = Map->fields[(x) + (y) * Map->size].getTopBuilding();		\
 		if ( b && b->owner == owner && b->data.connectsToBase )			\
 		{m=true;}else{m=false;}							\
 	}														\
@@ -1182,7 +1182,7 @@ bool cBuilding::canExitTo (const int x, const int y, const cMap* map, const sVeh
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (int x, int y, cMap* Map, bool checkPosition)
+bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition)
 {
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
 	int offset = x + y * Map->size;

@@ -69,14 +69,14 @@ public:
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader (std::string* name, std::string* type, std::string* time);
-	std::string getMapName();
-	std::string getPlayerNames();
+	std::string getMapName() const;
+	std::string getPlayerNames() const;
 
 	/**
 	* ---
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, cPlayer* player);
+	void writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, const cPlayer* player);
 
 	//--------------------------------------------------------------------------
 private:
@@ -108,27 +108,27 @@ private:
 	* saves the map infos
 	*@author alzi alias DoctorDeath
 	*/
-	void writeMap (cMap* Map);
+	void writeMap (const cMap* Map);
 	/**
 	* saves the information for the player to a new node
 	*@author alzi alias DoctorDeath
 	*/
-	void writePlayer (cPlayer* Player, int number);
+	void writePlayer (const cPlayer* Player, int number);
 	/**
 	* saves the values of a upgraded unit
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, sUnitData* data, sUnitData* originaldata);
+	void writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata);
 	/**
 	 * save the research level values of a player
 	 *@author pagra
 	 */
-	void writeResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel);
+	void writeResearchLevel (TiXmlElement* researchLevelNode, const cResearch& researchLevel);
 	/**
 	 * save the number of research centers that are working on each area of a player
 	 *@author pagra
 	 */
-	void writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player);
+	void writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, const cPlayer* player);
 	/**
 	 * save the casualties of all players
 	 *@author pagra
@@ -138,27 +138,27 @@ private:
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* writeUnit (cVehicle* Vehicle, int* unitnum);
+	TiXmlElement* writeUnit (const cVehicle* Vehicle, int* unitnum);
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit (cBuilding* Building, int* unitnum);
+	void writeUnit (const cBuilding* Building, int* unitnum);
 	/**
 	* saves the information of the rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void writeRubble (cBuilding* Building, int rubblenum);
+	void writeRubble (const cBuilding* Building, int rubblenum);
 	/**
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnitValues (TiXmlElement* unitNode, sUnitData* Data, sUnitData* OwnerData);
+	void writeUnitValues (TiXmlElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData);
 	/**
 	* saves the standard unit values from the unit xmls
 	*@author alzi alias DoctorDeath
 	*/
-	void writeStandardUnitValues (sUnitData* Data, int unitnum);
+	void writeStandardUnitValues (const sUnitData* Data, int unitnum);
 
 	/**
 	* loads the main game information
@@ -250,12 +250,12 @@ private:
 	* converts the resource data to an string in HEX format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertDataToString (sResources* resources, int size);
+	std::string convertDataToString (const sResources* resources, int size) const;
 	/**
 	* returns the HEX-string of a single byte
 	*@author alzi alias DoctorDeath
 	*/
-	std::string getHexValue (unsigned char byte);
+	std::string getHexValue (unsigned char byte) const;
 	/**
 	* converts the resource from HEX-string to byte-data
 	*@author alzi alias DoctorDeath
@@ -265,12 +265,12 @@ private:
 	* returns the byte value of a single HEX-string
 	*@author alzi alias DoctorDeath
 	*/
-	unsigned char getByteValue (const std::string& str);
+	unsigned char getByteValue (const std::string& str) const;
 	/**
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertScanMapToString (const char* data, int size);
+	std::string convertScanMapToString (const char* data, int size) const;
 	/**
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath

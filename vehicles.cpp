@@ -1657,7 +1657,7 @@ void cVehicle::DrawExitPoints (const sVehicle* const typ, cGameGUI& gameGUI) con
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();
-	cMap* map = Client->getMap();
+	const cMap* map = Client->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),
 						   T_2<int> (-1, 0),                  T_2<int> (1, 0),
@@ -1682,7 +1682,7 @@ bool cVehicle::canExitTo (const int x, const int y, const cMap* map, const sVehi
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canLoad (int x, int y, cMap* Map, bool checkPosition) const
+bool cVehicle::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
 
@@ -1866,7 +1866,7 @@ bool cVehicle::clearMine()
 //-----------------------------------------------------------------------------
 /** Checks if the target is on a neighbour field and if it can be stolen or disabled */
 //-----------------------------------------------------------------------------
-bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
+bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) const
 {
 	if ( (steal && data.canCapture == false) || (steal == false && data.canDisable == false))
 		return false;
@@ -1875,22 +1875,20 @@ bool cVehicle::canDoCommandoAction (int x, int y, cMap* map, bool steal) const
 		return false;
 
 	int off = x + y * map->size;
-	cUnit* vehicle  = map->fields[off].getVehicles();
-	cUnit* building = map->fields[off].getBuildings();
-	cUnit* unit = vehicle ? vehicle : building;
+	const cUnit* vehicle  = map->fields[off].getVehicles();
+	const cUnit* building = map->fields[off].getBuildings();
+	const cUnit* unit = vehicle ? vehicle : building;
 
 	if (unit != 0)
 	{
-		bool result = true;
 		if (unit->isBuilding() && unit->owner == 0) return false;   // rubble
 		if (steal && unit->data.canBeCaptured == false) return false;
 		if (steal == false && unit->data.canBeDisabled == false) return false;
 		if (steal && unit->storedUnits.Size() > 0) return false;
 		if (unit->owner == owner) return false;
-		if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<cVehicle*> (unit)->FlightHigh > 0) return false;
+		if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
-		if (result)
-			return true;
+		return true;
 	}
 	return false;
 }

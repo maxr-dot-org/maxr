@@ -171,8 +171,8 @@ public:
 	*/
 	int refreshData();
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
-	void updateNeighbours (cMap* map);
-	void CheckNeighbours (cMap* Map);
+	void updateNeighbours (const cMap* map);
+	void CheckNeighbours (const cMap* Map);
 	void ServerStartWork();
 	void ClientStartWork (cGameGUI& gameGUI);
 	void ServerStopWork (bool override);
@@ -183,7 +183,7 @@ public:
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (sVehicle* typ, cGameGUI& gameGUI);
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
-	bool canLoad (int x, int y, cMap* Map, bool checkPosition = true);
+	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true);
 	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);

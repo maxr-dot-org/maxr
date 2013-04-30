@@ -329,7 +329,7 @@ void sendMoveJobServer (cServerMoveJob* MoveJob, int iPlayer)
 }
 
 //-------------------------------------------------------------------------------------
-void sendVehicleResources (cVehicle* Vehicle, cMap* Map)
+void sendVehicleResources (const cVehicle* Vehicle, const cMap* Map)
 {
 	int iCount = 0;
 	cNetMessage* message = new cNetMessage (GAME_EV_RESOURCES);

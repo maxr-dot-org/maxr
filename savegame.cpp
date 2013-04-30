@@ -57,9 +57,9 @@ int cSavegame::save (const string& saveName)
 	int unitnum = 0;
 	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
-		cPlayer* Player = (*Server->PlayerList) [i];
+		const cPlayer* Player = (*Server->PlayerList) [i];
 		writePlayer (Player, i);
-		cVehicle* Vehicle = Player->VehicleList;
+		const cVehicle* Vehicle = Player->VehicleList;
 		while (Vehicle)
 		{
 			if (!Vehicle->Loaded)
@@ -67,28 +67,28 @@ int cSavegame::save (const string& saveName)
 				writeUnit (Vehicle, &unitnum);
 				unitnum++;
 			}
-			Vehicle = static_cast<cVehicle*> (Vehicle->next);
+			Vehicle = static_cast<const cVehicle*> (Vehicle->next);
 		}
-		cBuilding* Building = Player->BuildingList;
+		const cBuilding* Building = Player->BuildingList;
 		while (Building)
 		{
 			writeUnit (Building, &unitnum);
 			unitnum++;
-			Building = static_cast<cBuilding*> (Building->next);
+			Building = static_cast<const cBuilding*> (Building->next);
 		}
 	}
 	int rubblenum = 0;
-	cBuilding* Rubble = Server->neutralBuildings;
+	const cBuilding* Rubble = Server->neutralBuildings;
 	while (Rubble)
 	{
 		writeRubble (Rubble, rubblenum);
 		rubblenum++;
-		Rubble = static_cast<cBuilding*> (Rubble->next);
+		Rubble = static_cast<const cBuilding*> (Rubble->next);
 	}
 
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); i++)
 	{
-		sUnitData* Data;
+		const sUnitData* Data;
 		if (i < UnitsData.getNrVehicles()) Data = &UnitsData.vehicle[i].data;
 		else Data = &UnitsData.building[i - UnitsData.getNrVehicles()].data;
 		writeStandardUnitValues (Data, i);
@@ -108,7 +108,6 @@ int cSavegame::save (const string& saveName)
 //--------------------------------------------------------------------------
 int cSavegame::load()
 {
-
 	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str()))
 	{
 		return 0;
@@ -213,22 +212,22 @@ void cSavegame::loadHeader (string* name, string* type, string* time)
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::getMapName()
+string cSavegame::getMapName() const
 {
-	TiXmlElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
+	const TiXmlElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != NULL) return mapNode->FirstChildElement ("Name")->Attribute ("string");
 	else return "";
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::getPlayerNames()
+string cSavegame::getPlayerNames() const
 {
 	string playernames = "";
-	TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
+	const TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode != NULL)
 	{
 		int playernum = 0;
-		TiXmlElement* playerNode = playersNode->FirstChildElement ("Player_0");
+		const TiXmlElement* playerNode = playersNode->FirstChildElement ("Player_0");
 		while (playerNode)
 		{
 			playernames += ( (string) playerNode->FirstChildElement ("Name")->Attribute ("string")) + "\n";
@@ -1128,7 +1127,7 @@ cPlayer* cSavegame::getPlayerFromNumber (cList<cPlayer*>* PlayerList, int number
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertDataToString (sResources* resources, int size)
+string cSavegame::convertDataToString (const sResources* resources, int size) const
 {
 	string str = "";
 	for (int i = 0; i < size; i++)
@@ -1140,7 +1139,7 @@ string cSavegame::convertDataToString (sResources* resources, int size)
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::getHexValue (unsigned char byte)
+string cSavegame::getHexValue (unsigned char byte) const
 {
 	string str = "";
 	const char hexChars[] = "0123456789ABCDEF";
@@ -1163,7 +1162,7 @@ void cSavegame::convertStringToData (const string& str, int size, sResources* re
 }
 
 //--------------------------------------------------------------------------
-unsigned char cSavegame::getByteValue (const string& str)
+unsigned char cSavegame::getByteValue (const string& str) const
 {
 	unsigned char first = str[0] - '0';
 	unsigned char second = str[1] - '0';
@@ -1176,7 +1175,7 @@ unsigned char cSavegame::getByteValue (const string& str)
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertScanMapToString (const char* data, int size)
+string cSavegame::convertScanMapToString (const char* data, int size) const
 {
 	string str = "";
 	for (int i = 0; i < size; i++)
@@ -1240,7 +1239,7 @@ void cSavegame::writeGameInfo()
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeMap (cMap* Map)
+void cSavegame::writeMap (const cMap* Map)
 {
 	TiXmlElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
 	addAttributeElement (mapNode, "Name", "string", Map->MapName);
@@ -1248,7 +1247,7 @@ void cSavegame::writeMap (cMap* Map)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writePlayer (cPlayer* Player, int number)
+void cSavegame::writePlayer (const cPlayer* Player, int number)
 {
 	// generate players node if it doesn't exists
 	TiXmlElement* playersNode;
@@ -1310,7 +1309,7 @@ void cSavegame::writePlayer (cPlayer* Player, int number)
 	TiXmlElement* subbasesNode = addMainElement (playerNode, "Subbases");
 	for (unsigned int i = 0; i < Player->base.SubBases.Size(); i++)
 	{
-		sSubBase* SubBase = Player->base.SubBases[i];
+		const sSubBase* SubBase = Player->base.SubBases[i];
 		TiXmlElement* subbaseNode = addMainElement (subbasesNode, "Subbase_" + iToStr (i));
 
 		//write the ID of the first building, to identify the subbase at load time
@@ -1323,7 +1322,7 @@ void cSavegame::writePlayer (cPlayer* Player, int number)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, sUnitData* data, sUnitData* originaldata)
+void cSavegame::writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata)
 {
 	TiXmlElement* upgradeNode = addMainElement (upgradesNode, "Unit_" + iToStr (upgradenumber));
 	addAttributeElement (upgradeNode, "Type", "string", data->ID.getText());
@@ -1340,7 +1339,7 @@ void cSavegame::writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, sUn
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel)
+void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, const cResearch& researchLevel)
 {
 	TiXmlElement* levelNode = addMainElement (researchLevelNode, "Level");
 	levelNode->SetAttribute ("attack", iToStr (researchLevel.getCurResearchLevel (cResearch::kAttackResearch)).c_str());
@@ -1364,7 +1363,7 @@ void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, cResearch& 
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player)
+void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, const cPlayer* player)
 {
 	researchCentersWorkingOnAreaNode->SetAttribute ("attack", iToStr (player->researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str());
 	researchCentersWorkingOnAreaNode->SetAttribute ("shots", iToStr (player->researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str());
@@ -1387,7 +1386,7 @@ void cSavegame::writeCasualties()
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement* cSavegame::writeUnit (cVehicle* Vehicle, int* unitnum)
+TiXmlElement* cSavegame::writeUnit (const cVehicle* Vehicle, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1464,7 +1463,7 @@ TiXmlElement* cSavegame::writeUnit (cVehicle* Vehicle, int* unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUnit (cBuilding* Building, int* unitnum)
+void cSavegame::writeUnit (const cBuilding* Building, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1542,7 +1541,7 @@ void cSavegame::writeUnit (cBuilding* Building, int* unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeRubble (cBuilding* Building, int rubblenum)
+void cSavegame::writeRubble (const cBuilding* Building, int rubblenum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1561,7 +1560,7 @@ void cSavegame::writeRubble (cBuilding* Building, int rubblenum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUnitValues (TiXmlElement* unitNode, sUnitData* Data, sUnitData* OwnerData)
+void cSavegame::writeUnitValues (TiXmlElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData)
 {
 	// write the standard status values
 	if (Data->hitpointsCur != Data->hitpointsMax) addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data->hitpointsCur));
@@ -1590,7 +1589,7 @@ void cSavegame::writeUnitValues (TiXmlElement* unitNode, sUnitData* Data, sUnitD
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeStandardUnitValues (sUnitData* Data, int unitnum)
+void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 {
 	// add the main node if it doesn't exists
 	TiXmlElement* unitValuesNode;
@@ -1686,7 +1685,7 @@ void cSavegame::writeStandardUnitValues (sUnitData* Data, int unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, cPlayer* player)
+void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, const cPlayer* player)
 {
 	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str())) return;
 	if (!SaveFile.RootElement()) return;
