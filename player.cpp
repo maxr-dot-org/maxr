@@ -461,10 +461,9 @@ void cPlayer::DoScan()
 //--------------------------------------------------------------------------
 /** Returns the next unit that can still fire/shoot */
 //--------------------------------------------------------------------------
-cUnit* cPlayer::getNextUnit()
+cUnit* cPlayer::getNextUnit(cUnit* start)
 {
 	//find the first unit to look at
-	cUnit* start = Client->gameGUI.getSelectedUnit();
 	if (start)
 	{
 		if (start->next)
@@ -541,10 +540,9 @@ cUnit* cPlayer::getNextUnit()
 //--------------------------------------------------------------------------
 /** Returns the previous vehicle, that can still move / shoot */
 //--------------------------------------------------------------------------
-cUnit* cPlayer::getPrevUnit()
+cUnit* cPlayer::getPrevUnit(cUnit* start)
 {
 	//find the first unit to look at
-	cUnit* start = Client->gameGUI.getSelectedUnit();
 	if (start)
 	{
 		if (start->prev)

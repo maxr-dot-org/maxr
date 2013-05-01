@@ -2317,7 +2317,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 	cBuilding* AddedBuilding;
 	// generate the building:
 	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building, ID ? ID : iNextUnitID);
-	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd();
+	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd(*this);
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
 	iNextUnitID++;

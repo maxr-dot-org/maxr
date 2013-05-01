@@ -1416,70 +1416,70 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 //-------------------------------------------------------------------------------
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
-void cBuilding::CheckRessourceProd()
+void cBuilding::CheckRessourceProd(const cServer& server)
 {
-	int pos = PosX + PosY * Server->Map->size;
+	int pos = PosX + PosY * server.Map->size;
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
 
-	if (Server->Map->Resources[pos].typ == RES_METAL)
+	if (server.Map->Resources[pos].typ == RES_METAL)
 	{
-		MaxMetalProd += Server->Map->Resources[pos].value;
+		MaxMetalProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_OIL)
+	else if (server.Map->Resources[pos].typ == RES_OIL)
 	{
-		MaxOilProd += Server->Map->Resources[pos].value;
+		MaxOilProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_GOLD)
+	else if (server.Map->Resources[pos].typ == RES_GOLD)
 	{
-		MaxGoldProd += Server->Map->Resources[pos].value;
+		MaxGoldProd += server.Map->Resources[pos].value;
 	}
 
 	pos++;
 
-	if (Server->Map->Resources[pos].typ == RES_METAL)
+	if (server.Map->Resources[pos].typ == RES_METAL)
 	{
-		MaxMetalProd += Server->Map->Resources[pos].value;
+		MaxMetalProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_OIL)
+	else if (server.Map->Resources[pos].typ == RES_OIL)
 	{
-		MaxOilProd += Server->Map->Resources[pos].value;
+		MaxOilProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_GOLD)
+	else if (server.Map->Resources[pos].typ == RES_GOLD)
 	{
-		MaxGoldProd += Server->Map->Resources[pos].value;
+		MaxGoldProd += server.Map->Resources[pos].value;
 	}
 
-	pos += Server->Map->size;
+	pos += server.Map->size;
 
-	if (Server->Map->Resources[pos].typ == RES_METAL)
+	if (server.Map->Resources[pos].typ == RES_METAL)
 	{
-		MaxMetalProd += Server->Map->Resources[pos].value;
+		MaxMetalProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_OIL)
+	else if (server.Map->Resources[pos].typ == RES_OIL)
 	{
-		MaxOilProd += Server->Map->Resources[pos].value;
+		MaxOilProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_GOLD)
+	else if (server.Map->Resources[pos].typ == RES_GOLD)
 	{
-		MaxGoldProd += Server->Map->Resources[pos].value;
+		MaxGoldProd += server.Map->Resources[pos].value;
 	}
 
 	pos--;
 
-	if (Server->Map->Resources[pos].typ == RES_METAL)
+	if (server.Map->Resources[pos].typ == RES_METAL)
 	{
-		MaxMetalProd += Server->Map->Resources[pos].value;
+		MaxMetalProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_OIL)
+	else if (server.Map->Resources[pos].typ == RES_OIL)
 	{
-		MaxOilProd += Server->Map->Resources[pos].value;
+		MaxOilProd += server.Map->Resources[pos].value;
 	}
-	else if (Server->Map->Resources[pos].typ == RES_GOLD)
+	else if (server.Map->Resources[pos].typ == RES_GOLD)
 	{
-		MaxGoldProd += Server->Map->Resources[pos].value;
+		MaxGoldProd += server.Map->Resources[pos].value;
 	}
 
 	MaxMetalProd = min (MaxMetalProd, data.canMineMaxRes);
@@ -1665,17 +1665,17 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::Select()
+void cBuilding::Select(cGameGUI& gameGUI)
 {
 	if (!owner) return;
 
 	//load video
-	if (Client->gameGUI.getFLC() != NULL)
+	if (gameGUI.getFLC() != NULL)
 	{
-		FLI_Close (Client->gameGUI.getFLC());
-		Client->gameGUI.setFLC (NULL);
+		FLI_Close (gameGUI.getFLC());
+		gameGUI.setFLC (NULL);
 	}
-	Client->gameGUI.setVideoSurface (typ->video);
+	gameGUI.setVideoSurface (typ->video);
 
 	// play sound:
 	if (owner->researchFinished && data.canResearch)
@@ -1696,17 +1696,17 @@ void cBuilding::Select()
 		PlayFX (SoundData.SNDHudButton);
 
 	// display the details:
-	Client->gameGUI.setUnitDetailsData (NULL, this);
+	gameGUI.setUnitDetailsData (NULL, this);
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::Deselct()
+void cBuilding::Deselct(cGameGUI& gameGUI)
 {
 	// Den Hintergrund wiederherstellen:
-	StopFXLoop (Client->gameGUI.iObjectStream);
-	Client->gameGUI.iObjectStream = -1;
-	Client->gameGUI.setVideoSurface (NULL);
-	Client->gameGUI.setUnitDetailsData (NULL, NULL);
+	StopFXLoop (gameGUI.iObjectStream);
+	gameGUI.iObjectStream = -1;
+	gameGUI.setVideoSurface (NULL);
+	gameGUI.setUnitDetailsData (NULL, NULL);
 }
 
 //----------------------------------------------------------------

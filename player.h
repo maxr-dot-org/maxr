@@ -116,8 +116,8 @@ public:
 
 	void InitMaps (int MapSizeX, cMap* map = NULL);  // TODO: remove ' = NULL'
 	void DoScan();
-	cUnit* getNextUnit();
-	cUnit* getPrevUnit();
+	cUnit* getNextUnit(cUnit* start);
+	cUnit* getPrevUnit(cUnit* start);
 	void addSentry (cUnit* u);
 	void deleteSentry (cUnit* u);
 	void startAResearch (int researchArea);

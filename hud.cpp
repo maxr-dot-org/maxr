@@ -1529,7 +1529,7 @@ void cGameGUI::selectUnit (cVehicle* vehicle)
 	unitMenuActive = false;
 	mouseInputMode = normalInput;
 
-	vehicle->Select();
+	vehicle->Select(*this);
 	iObjectStream = vehicle->playStream();
 
 	updateMouseCursor();
@@ -1545,7 +1545,7 @@ void cGameGUI::selectUnit (cBuilding* building)
 	unitMenuActive = false;
 	mouseInputMode = normalInput;
 
-	building->Select();
+	building->Select(*this);
 	iObjectStream = building->playStream();
 
 	updateMouseCursor();
@@ -1555,13 +1555,13 @@ void cGameGUI::deselectUnit()
 {
 	if (selectedBuilding)
 	{
-		selectedBuilding->Deselct();
+		selectedBuilding->Deselct(*this);
 		selectedBuilding = NULL;
 		StopFXLoop (iObjectStream);
 	}
 	else if (selectedVehicle)
 	{
-		selectedVehicle->Deselct();
+		selectedVehicle->Deselct(*this);
 		selectedVehicle = NULL;
 		StopFXLoop (iObjectStream);
 	}
@@ -3212,7 +3212,7 @@ void cGameGUI::chatReleased (void* parent)
 void cGameGUI::nextReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->player->getNextUnit();
+	cUnit* unit = gui->player->getNextUnit(gui->getSelectedUnit());
 	if (unit)
 	{
 		if (unit->isBuilding())
@@ -3228,7 +3228,7 @@ void cGameGUI::nextReleased (void* parent)
 void cGameGUI::prevReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->player->getPrevUnit();
+	cUnit* unit = gui->player->getPrevUnit(gui->getSelectedUnit());
 	if (unit)
 	{
 		if (unit->isBuilding())

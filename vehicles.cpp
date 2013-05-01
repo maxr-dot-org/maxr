@@ -594,37 +594,37 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 //-----------------------------------------------------------------------------
 /** Selects the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Select()
+void cVehicle::Select(cGameGUI& gameGUI)
 {
 	// load the video
-	if (Client->gameGUI.getFLC() != NULL) FLI_Close (Client->gameGUI.getFLC());
+	if (gameGUI.getFLC() != NULL) FLI_Close (gameGUI.getFLC());
 	if (FileExists (typ->FLCFile))
 	{
-		Client->gameGUI.setFLC (FLI_Open (SDL_RWFromFile (typ->FLCFile, "rb"), NULL));
+		gameGUI.setFLC (FLI_Open (SDL_RWFromFile (typ->FLCFile, "rb"), NULL));
 	}
 	else
 	{
 		//in case the flc video doesn't exist we use the storage image instead
-		Client->gameGUI.setFLC (NULL);
-		Client->gameGUI.setVideoSurface (typ->storage);
+		gameGUI.setFLC (NULL);
+		gameGUI.setVideoSurface (typ->storage);
 	}
 
 	MakeReport();
-	Client->gameGUI.setUnitDetailsData (this, NULL);
+	gameGUI.setUnitDetailsData (this, NULL);
 }
 
 //-----------------------------------------------------------------------------
 /** Deselects the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Deselct()
+void cVehicle::Deselct(cGameGUI& gameGUI)
 {
 	groupSelected = false;
-	if (Client->gameGUI.mouseInputMode == placeBand) BuildPath = false;
+	if (gameGUI.mouseInputMode == placeBand) BuildPath = false;
 	// redraw the background
-	StopFXLoop (Client->gameGUI.iObjectStream);
-	Client->gameGUI.iObjectStream = -1;
-	Client->gameGUI.setFLC (NULL);
-	Client->gameGUI.setUnitDetailsData (NULL, NULL);
+	StopFXLoop (gameGUI.iObjectStream);
+	gameGUI.iObjectStream = -1;
+	gameGUI.setFLC (NULL);
+	gameGUI.setUnitDetailsData (NULL, NULL);
 }
 
 //-----------------------------------------------------------------------------

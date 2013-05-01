@@ -25,13 +25,14 @@
 #include "main.h" // for sUnitData, sID
 #include "unit.h"
 
-class cPlayer;
 class cBase;
-struct sVehicle;
+class cGameGUI;
+class cPlayer;
 class cVehicle;
 class cMap;
 class cMapField;
-class cGameGUI;
+class cServer;
+struct sVehicle;
 
 //--------------------------------------------------------------------------
 /** Struct for one upgrade (one kind of value, e.g. hitpointsMax) */
@@ -159,8 +160,8 @@ public:
 	* draws the building to the screen. It takes the main image from the drawing cache, or calls the cBuilding::render() function.
 	*/
 	void draw (SDL_Rect* dest, cGameGUI& gameGUI);
-	void Select();
-	void Deselct();
+	void Select(cGameGUI& gameGUI);
+	void Deselct(cGameGUI& gameGUI);
 
 	int playStream();
 	std::string getStatusStr() const;
@@ -178,7 +179,7 @@ public:
 	void ServerStopWork (bool override);
 	void ClientStopWork (cGameGUI& gameGUI);
 	bool CanTransferTo (cMapField* OverUnitField);  /** check whether a transfer to an unit on the field is possible */
-	void CheckRessourceProd();
+	void CheckRessourceProd(const cServer& server);
 	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);
