@@ -211,7 +211,7 @@ public:
 	*@author eiko
 	*/
 	void refreshSubbases();
-	sSubBase* checkNeighbour (int iOff, cBuilding* Building);
+	sSubBase* checkNeighbour (int iOff, const cBuilding* Building);
 };
 
 #endif

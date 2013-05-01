@@ -117,14 +117,14 @@ class cVehicle : public cUnit
 {
 	//-----------------------------------------------------------------------------
 public:
-	cVehicle (sVehicle* v, cPlayer* Owner, unsigned int ID);
+	cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID);
 	~cVehicle();
 
 	int OffX, OffY;  // Offset während der Bewegung
 	virtual int getMovementOffsetX() const {return OffX;}
 	virtual int getMovementOffsetY() const {return OffY;}
 
-	sVehicle* typ;   // Typ des Vehicles
+	const sVehicle* typ;   // Typ des Vehicles
 	bool groupSelected;
 	cServerMoveJob* ServerMoveJob;
 	cClientMoveJob* ClientMoveJob;

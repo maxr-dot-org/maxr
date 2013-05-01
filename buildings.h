@@ -128,10 +128,10 @@ enum ResourceKind
 class cBuilding : public cUnit
 {
 public:
-	cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID);
+	cBuilding (const sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID);
 	~cBuilding();
 
-	sBuilding* typ;  // Typ des Buildings
+	const sBuilding* typ;  // Typ des Buildings
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks
 	int StartUp;     // counter for the startup animation
@@ -181,7 +181,7 @@ public:
 	void CheckRessourceProd();
 	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
-	void DrawExitPoints (sVehicle* typ, cGameGUI& gameGUI);
+	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
 	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true);
 	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);

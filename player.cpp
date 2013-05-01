@@ -206,7 +206,7 @@ void cPlayer::setClan (int newClan)
 //--------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
 //--------------------------------------------------------------------------
-cVehicle* cPlayer::AddVehicle (int posx, int posy, sVehicle* v, unsigned int ID)
+cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned int ID)
 {
 	cVehicle* n = new cVehicle (v, this , ID);
 	n->PosX = posx;
@@ -305,7 +305,7 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 //--------------------------------------------------------------------------
 /** Adds the building to the list of the player */
 //--------------------------------------------------------------------------
-cBuilding* cPlayer::addBuilding (int posx, int posy, sBuilding* b, unsigned int ID)
+cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding* b, unsigned int ID)
 {
 	cBuilding* Building = new cBuilding (b, this, &base, ID);
 
@@ -355,7 +355,7 @@ void cPlayer::refreshSentryAir()
 {
 	memset (SentriesMapAir, 0, MapSize);
 
-	for (cUnit* unit = VehicleList; unit; unit = unit->next)
+	for (const cUnit* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
@@ -363,7 +363,7 @@ void cPlayer::refreshSentryAir()
 		}
 	}
 
-	for (cUnit* unit = BuildingList; unit; unit = unit->next)
+	for (const cUnit* unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
@@ -377,7 +377,7 @@ void cPlayer::refreshSentryGround()
 {
 	memset (SentriesMapGround, 0, MapSize);
 
-	for (cUnit* unit = VehicleList; unit; unit = unit->next)
+	for (const cUnit* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
@@ -385,7 +385,7 @@ void cPlayer::refreshSentryGround()
 		}
 	}
 
-	for (cUnit* unit = BuildingList; unit; unit = unit->next)
+	for (const cUnit* unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
@@ -406,7 +406,7 @@ void cPlayer::DoScan()
 	memset (DetectMinesMap, 0, MapSize);
 
 	// iterate the vehicle list
-	for (cVehicle* vp = VehicleList; vp; vp = static_cast<cVehicle*> (vp->next))
+	for (const cVehicle* vp = VehicleList; vp; vp = static_cast<const cVehicle*> (vp->next))
 	{
 		if (vp->Loaded) continue;
 
@@ -440,7 +440,7 @@ void cPlayer::DoScan()
 	}
 
 	// iterate the building list
-	for (cBuilding* bp = BuildingList; bp; bp = static_cast<cBuilding*> (bp->next))
+	for (const cBuilding* bp = BuildingList; bp; bp = static_cast<const cBuilding*> (bp->next))
 	{
 		if (bp->turnsDisabled)
 			ScanMap[bp->PosX + bp->PosY * (int) sqrt ( (double) MapSize)] = 1;
@@ -714,7 +714,7 @@ void cPlayer::CountEcoSpheres()
 {
 	numEcos = 0;
 
-	for (cBuilding* bp = BuildingList; bp; bp = static_cast<cBuilding*> (bp->next))
+	for (const cBuilding* bp = BuildingList; bp; bp = static_cast<const cBuilding*> (bp->next))
 	{
 		if (bp->typ->data.canScore && bp->IsWorking)
 			numEcos ++;
@@ -864,7 +864,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 
-	for (cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = static_cast<cBuilding*> (curBuilding->next))
+	for (const cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = static_cast<const cBuilding*> (curBuilding->next))
 	{
 		if (curBuilding->data.canResearch && curBuilding->IsWorking)
 		{
@@ -938,7 +938,7 @@ void cPlayer::DeleteLock (cBuilding* b)
 //------------------------------------------------------------
 /** Checks if the building is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (cBuilding* b) const
+bool cPlayer::InLockList (const cBuilding* b) const
 {
 	sLockElem* elem;
 	for (unsigned int i = 0; i < LockList.Size(); i++)
@@ -953,7 +953,7 @@ bool cPlayer::InLockList (cBuilding* b) const
 //------------------------------------------------------------
 /** Checks if the vehicle is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (cVehicle* v) const
+bool cPlayer::InLockList (const cVehicle* v) const
 {
 	sLockElem* elem;
 	for (unsigned int i = 0; i < LockList.Size(); i++)

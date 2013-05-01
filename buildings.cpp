@@ -47,7 +47,7 @@ using namespace std;
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID)
+cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID)
 	: cUnit (cUnit::kUTBuilding,
 			 ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
 			 Owner,
@@ -1153,7 +1153,7 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 //--------------------------------------------------------------------------
 /** draws the exit points for a vehicle of the given type: */
 //--------------------------------------------------------------------------
-void cBuilding::DrawExitPoints (sVehicle* typ, cGameGUI& gameGUI)
+void cBuilding::DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI)
 {
 	int const spx = getScreenPosX();
 	int const spy = getScreenPosY();

@@ -2277,7 +2277,7 @@ void cServer::correctLandingPos (int& iX, int& iY)
 }
 
 //-------------------------------------------------------------------------------------
-cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
+cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
 {
 	cVehicle* AddedVehicle;
 	// generate the vehicle:
@@ -2312,7 +2312,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, sVehicle* Vehicle, cPlayer* Pl
 }
 
 //-------------------------------------------------------------------------------------
-cBuilding* cServer::addUnit (int iPosX, int iPosY, sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
+cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
 {
 	cBuilding* AddedBuilding;
 	// generate the building:

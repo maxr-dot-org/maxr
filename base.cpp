@@ -191,7 +191,7 @@ int sSubBase::calcMaxProd (int ressourceType) const
 	int maxProd = 0;
 	for (unsigned int i = 0; i < buildings.Size(); i++)
 	{
-		cBuilding* building = buildings[i];
+		const cBuilding* building = buildings[i];
 
 		if (! (building->data.canMineMaxRes > 0 && building->IsWorking)) continue;
 
@@ -262,7 +262,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	//distribute ressources, that do not decrease the possible production of the others
 	for (unsigned int i = 0; i < buildings.Size(); i++)
 	{
-		cBuilding* building = buildings[i];
+		const cBuilding* building = buildings[i];
 
 		if (! (building->data.canMineMaxRes > 0 && building->IsWorking)) continue;
 
@@ -283,7 +283,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	//distribute ressources, that do not decrease the possible production of A
 	for (unsigned int i = 0; i < buildings.Size(); i++)
 	{
-		cBuilding* building = buildings[i];
+		const cBuilding* building = buildings[i];
 
 		if (! (building->data.canMineMaxRes > 0 && building->IsWorking)) continue;
 
@@ -317,7 +317,6 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 bool sSubBase::increaseEnergyProd (int i)
 {
-
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
 	cList<cBuilding*> onlineStations;
 	cList<cBuilding*> onlineGenerators;
@@ -766,7 +765,6 @@ bool sSubBase::checkEnergy()
 
 void sSubBase::prepareTurnend()
 {
-
 	if (checkMetalConsumer())
 		sendChatMessageToClient ("Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
@@ -1044,7 +1042,7 @@ cBase::~cBase()
 	}
 }
 
-sSubBase* cBase::checkNeighbour (int iOff, cBuilding* Building)
+sSubBase* cBase::checkNeighbour (int iOff, const cBuilding* Building)
 {
 	if (iOff < 0 || iOff >= map->size * map->size) return NULL;
 	cBuilding* b = map->fields[iOff].getBuildings();

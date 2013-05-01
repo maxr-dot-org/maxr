@@ -130,8 +130,8 @@ public:
 	void AddLock (cVehicle* v);
 	void DeleteLock (cBuilding* b);
 	void DeleteLock (cVehicle* v);
-	bool InLockList (cBuilding* b) const;
-	bool InLockList (cVehicle* v) const;
+	bool InLockList (const cBuilding* b) const;
+	bool InLockList (const cVehicle* v) const;
 	void ToggelLock (cMapField* OverUnitField);
 	void DrawLockList (cGameGUI& gameGUI);
 	void CountEcoSpheres();
@@ -169,8 +169,8 @@ private:
 	void refreshSentryAir();
 	void refreshSentryGround();
 
-	cVehicle* AddVehicle (int posx, int posy, sVehicle* v, unsigned int ID);
-	cBuilding* addBuilding (int posx, int posy, sBuilding* b, unsigned int ID);
+	cVehicle* AddVehicle (int posx, int posy, const sVehicle* v, unsigned int ID);
+	cBuilding* addBuilding (int posx, int posy, const sBuilding* b, unsigned int ID);
 
 	int clan;
 };

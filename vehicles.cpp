@@ -45,7 +45,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cVehicle::cVehicle (sVehicle* v, cPlayer* Owner, unsigned int ID)
+cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID)
 	: cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID)
 {
 	typ = v;

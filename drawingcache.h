@@ -43,11 +43,11 @@ struct sDrawingCacheEntry
 	bool BaseBS;
 	bool BaseW;
 	bool BaseBW;
-	sBuilding* buildingTyp;
+	const sBuilding* buildingTyp;
 	int clan;
 
 	//vehicle properties
-	sVehicle* vehicleTyp;
+	const sVehicle* vehicleTyp;
 	int frame;
 	int flightHigh;
 	bool big;
