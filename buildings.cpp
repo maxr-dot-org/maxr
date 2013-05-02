@@ -1814,7 +1814,7 @@ void cBuilding::executeMineManagerCommand()
 //-----------------------------------------------------------------------------
 void cBuilding::executeStopCommand()
 {
-	sendWantStopWork (this);
+	sendWantStopWork (*Client, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -1835,7 +1835,7 @@ void cBuilding::executeSelfDestroyCommand()
 {
 	cDestructMenu destructMenu;
 	if (destructMenu.show() == 0)
-		sendWantSelfDestroy (this);
+		sendWantSelfDestroy (*Client, this);
 }
 
 //-----------------------------------------------------------------------------

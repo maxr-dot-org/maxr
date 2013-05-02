@@ -259,7 +259,7 @@ public:
 	*@author Eiko
 	*@param message The netMessage to be send.
 	*/
-	void sendNetMessage (cNetMessage* message);
+	void sendNetMessage (cNetMessage* message) const;
 	/**
 	* gets the vehicle with the ID
 	*@author alzi alias DoctorDeath
@@ -304,10 +304,11 @@ public:
 	void deletePlayer (cPlayer* player);
 
 	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
+	const cMap* getMap() const { return Map; }
 	cMap* getMap() { return Map; }
 	cList<cPlayer*>* getPlayerList() { return PlayerList; }
-	cPlayer* getActivePlayer() { return ActivePlayer; };
-
+	const cPlayer* getActivePlayer() const { return ActivePlayer; }
+	cPlayer* getActivePlayer() { return ActivePlayer; }
 };
 
 extern cClient* Client;

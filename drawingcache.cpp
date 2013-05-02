@@ -40,12 +40,14 @@ void sDrawingCacheEntry::init (cVehicle* vehicle)
 	else
 		frame = ANIMATION_SPEED % 4;
 
-	water = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
+	const cGameGUI& gameGUI = Client->gameGUI;
+	const cMap& map = *Client->getMap();
+	water = map.isWater (vehicle->PosX, vehicle->PosY) && !map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 
-	bool isOnWaterAndNotCoast = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY, true);
+	bool isOnWaterAndNotCoast = map.isWater (vehicle->PosX, vehicle->PosY, true);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
+	cBuilding* building = map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 	if (vehicle->data.factorGround > 0 && building
 		&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -58,15 +60,15 @@ void sDrawingCacheEntry::init (cVehicle* vehicle)
 	else
 		stealth = false;
 
-	zoom = Client->gameGUI.getZoom();
-	lastUsed = Client->gameGUI.getFrame();
+	zoom = gameGUI.getZoom();
+	lastUsed = gameGUI.getFrame();
 
 	//determine needed size of the surface
 	int height = (int) std::max (vehicle->typ->img_org[vehicle->dir]->h * zoom, vehicle->typ->shw_org[vehicle->dir]->h * zoom);
 	int width  = (int) std::max (vehicle->typ->img_org[vehicle->dir]->w * zoom, vehicle->typ->shw_org[vehicle->dir]->w * zoom);
 	if (vehicle->FlightHigh > 0)
 	{
-		int shwOff = ( (int) (Client->gameGUI.getTileSize() * (vehicle->FlightHigh / 64.0)));
+		int shwOff = ( (int) (gameGUI.getTileSize() * (vehicle->FlightHigh / 64.0)));
 		height += shwOff;
 		width  += shwOff;
 	}
@@ -97,8 +99,9 @@ void sDrawingCacheEntry::init (cBuilding* building)
 	vehicleTyp = NULL;
 	clan = building->owner->getClan();
 
-	zoom = Client->gameGUI.getZoom();
-	lastUsed = Client->gameGUI.getFrame();
+	const cGameGUI& gameGUI = Client->gameGUI;
+	zoom = gameGUI.getZoom();
+	lastUsed = gameGUI.getFrame();
 
 	//determine needed size of the surface
 	int height = (int) std::max (building->typ->img_org->h * zoom, building->typ->shw_org->h * zoom);
@@ -130,6 +133,7 @@ cDrawingCache::~cDrawingCache()
 SDL_Surface* cDrawingCache::getCachedImage (cBuilding* building)
 {
 	if (!canCache (building)) return NULL;
+	const cGameGUI& gameGUI = Client->gameGUI;
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -158,13 +162,13 @@ SDL_Surface* cDrawingCache::getCachedImage (cBuilding* building)
 		{
 			if (entry.dir != building->dir) continue;
 		}
-		if (entry.zoom != Client->gameGUI.getZoom()) continue;
+		if (entry.zoom != gameGUI.getZoom()) continue;
 
 		if (building->data.hasClanLogos && building->owner->getClan() != entry.clan) continue;
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = Client->gameGUI.getFrame();
+		entry.lastUsed = gameGUI.getFrame();
 		return entry.surface;
 	}
 
@@ -199,9 +203,12 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 		{
 			if (entry.frame != ANIMATION_SPEED % 4) continue;
 		}
-		if (entry.zoom != Client->gameGUI.getZoom()) continue;
+		const cGameGUI& gameGUI = Client->gameGUI;
+		const cMap& map = *Client->getMap();
 
-		bool water = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY) && !Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
+		if (entry.zoom != gameGUI.getZoom()) continue;
+
+		bool water = map.isWater (vehicle->PosX, vehicle->PosY) && !map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 		if (vehicle->IsBuilding)
 		{
 			if (water != entry.water) continue;
@@ -210,8 +217,8 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 		//check the stealth flag
 		bool stealth = false;
 
-		bool isOnWaterAndNotCoast = Client->getMap()->isWater (vehicle->PosX, vehicle->PosY, true);
-		cBuilding* building = Client->getMap()->fields[vehicle->PosX + vehicle->PosY * Client->getMap()->size].getBaseBuilding();
+		bool isOnWaterAndNotCoast = map.isWater (vehicle->PosX, vehicle->PosY, true);
+		const cBuilding* building = map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 		if (vehicle->data.factorGround > 0 && building
 			&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -228,15 +235,14 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = Client->gameGUI.getFrame();
+		entry.lastUsed = gameGUI.getFrame();
 		return entry.surface;
-
 	}
 
 	//cache miss!
 	cacheMisses++;
 	return NULL;
-};
+}
 
 SDL_Surface* cDrawingCache::createNewEntry (cBuilding* building)
 {

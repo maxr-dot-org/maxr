@@ -3573,7 +3573,7 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cPlayer* own
 	if (Client->getCasualties() != 0)
 	{
 		Client->getCasualties()->addNotificationListener (this);
-		sendRequestCasualtiesReport();
+		sendRequestCasualtiesReport (*Client);
 	}
 }
 
@@ -4278,12 +4278,14 @@ void cMenuReportsScreen::released (void* parent)
 			{
 				sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];
 				parentMenu->close();
-				Client->gameGUI.addMessage (savedReport.message);
+				cGameGUI& gameGUI = Client->gameGUI;
+
+				gameGUI.addMessage (savedReport.message);
 				if (savedReport.type == sSavedReportMessage::REPORT_TYPE_UNIT)
 				{
-					int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
-					int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * Client->gameGUI.getTileSize())) * 64)) + 32;
-					Client->gameGUI.setOffsetPosition (offX, offY);
+					int offX = savedReport.xPos * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+					int offY = savedReport.yPos * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32) / (2 * gameGUI.getTileSize())) * 64)) + 32;
+					gameGUI.setOffsetPosition (offX, offY);
 				}
 				return;
 			}

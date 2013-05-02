@@ -110,7 +110,7 @@ cClient::~cClient()
 	}
 }
 
-void cClient::sendNetMessage (cNetMessage* message)
+void cClient::sendNetMessage (cNetMessage* message) const
 {
 	message->iPlayerNr = ActivePlayer->Nr;
 
@@ -149,7 +149,7 @@ int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, cList<cVehicle
 	sWaypoint* path = cClientMoveJob::calcPath (vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if (path)
 	{
-		sendMoveJob (path, vehicle->iID);
+		sendMoveJob (*this, path, vehicle->iID);
 		Log.write (" Client: Added new movejob: VehicleID: " + iToStr (vehicle->iID) + ", SrcX: " + iToStr (vehicle->PosX) + ", SrcY: " + iToStr (vehicle->PosY) + ", DestX: " + iToStr (DestX) + ", DestY: " + iToStr (DestY), cLog::eLOG_TYPE_NET_DEBUG);
 		return 1;
 	}
@@ -1725,16 +1725,16 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	int saveingID = message.popInt16();
-	if (gameGUI.getSelVehicle()) sendSaveHudInfo (gameGUI.getSelVehicle()->iID, ActivePlayer->Nr, saveingID);
-	else if (gameGUI.getSelBuilding()) sendSaveHudInfo (gameGUI.getSelBuilding()->iID, ActivePlayer->Nr, saveingID);
-	else sendSaveHudInfo (-1, ActivePlayer->Nr, saveingID);
+	if (gameGUI.getSelVehicle()) sendSaveHudInfo (*this, gameGUI.getSelVehicle()->iID, ActivePlayer->Nr, saveingID);
+	else if (gameGUI.getSelBuilding()) sendSaveHudInfo (*this, gameGUI.getSelBuilding()->iID, ActivePlayer->Nr, saveingID);
+	else sendSaveHudInfo (*this, -1, ActivePlayer->Nr, saveingID);
 
 	for (int i = ActivePlayer->savedReportsList.Size() - 50; i < (int) ActivePlayer->savedReportsList.Size(); i++)
 	{
 		if (i < 0) continue;
-		sendSaveReportInfo (&ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID);
+		sendSaveReportInfo (*this, &ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID);
 	}
-	sendFinishedSendSaveInfo (ActivePlayer->Nr, saveingID);
+	sendFinishedSendSaveInfo (*this, ActivePlayer->Nr, saveingID);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
@@ -2110,7 +2110,7 @@ void cClient::handleEnd()
 {
 	if (isFreezed ()) return;
 	bWantToEnd = true;
-	sendWantToEndTurn();
+	sendWantToEndTurn (*this);
 }
 
 

@@ -797,13 +797,13 @@ void cDialogTransfer::doneReleased (void* parent)
 	{
 		if (menu->srcBuilding)
 		{
-			if (menu->destBuilding) sendWantTransfer (false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
-			else sendWantTransfer (false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*Client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			else sendWantTransfer (*Client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
 		}
 		else
 		{
-			if (menu->destBuilding) sendWantTransfer (true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
-			else sendWantTransfer (true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*Client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			else sendWantTransfer (*Client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
 		}
 	}
 
@@ -1005,7 +1005,7 @@ void cDialogResearch::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 void cDialogResearch::doneReleased (void* parent)
 {
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	sendWantResearchChange (menu->newResearchSettings, menu->owner->Nr);
+	sendWantResearchChange (*Client, menu->newResearchSettings, menu->owner->Nr);
 	menu->end = true;
 }
 

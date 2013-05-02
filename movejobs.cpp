@@ -1110,8 +1110,8 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			sWaypoint* path = calcPath (Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
 			if (path)
 			{
-				sendMoveJob (path, Vehicle->iID);
-				if (endMoveAction) sendEndMoveAction (Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
+				sendMoveJob (*Client, path, Vehicle->iID);
+				if (endMoveAction) sendEndMoveAction (*Client, Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
 			}
 			else
 			{
@@ -1333,17 +1333,18 @@ void cClientMoveJob::stopMoveSound()
 	if (!bSoundRunning) return;
 
 	bSoundRunning = false;
+	cGameGUI& gameGUI = Client->gameGUI;
 
-	if (Vehicle == Client->gameGUI.getSelVehicle())
+	if (Vehicle == gameGUI.getSelVehicle())
 	{
-		cBuilding* building = Client->getMap()->fields[Vehicle->PosX + Vehicle->PosY * Client->getMap()->size].getBaseBuilding();
-		bool water = Client->getMap()->isWater (Vehicle->PosX, Vehicle->PosY, true);
+		cBuilding* building = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getBaseBuilding();
+		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY, true);
 		if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
-		StopFXLoop (Client->gameGUI.iObjectStream);
+		StopFXLoop (gameGUI.iObjectStream);
 		if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
 		else PlayFX (Vehicle->typ->Stop);
 
-		Client->gameGUI.iObjectStream = Vehicle->playStream();
+		gameGUI.iObjectStream = Vehicle->playStream();
 	}
 }

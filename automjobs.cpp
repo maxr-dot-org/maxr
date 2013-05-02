@@ -59,7 +59,7 @@ cAutoMJob::cAutoMJob (cVehicle* vehicle)
 	lastDestX = vehicle->PosX;
 	lastDestY = vehicle->PosY;
 	n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
-	sendSetAutoStatus (vehicle->iID, true);
+	sendSetAutoStatus (*Client, vehicle->iID, true);
 }
 
 //destruktor for cAutoMJob
@@ -67,9 +67,9 @@ cAutoMJob::~cAutoMJob()
 {
 	if (!playerMJob)
 	{
-		sendWantStopMove (vehicle->iID);
+		sendWantStopMove (*Client, vehicle->iID);
 	}
-	sendSetAutoStatus (vehicle->iID, false);
+	sendSetAutoStatus (*Client, vehicle->iID, false);
 	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
@@ -162,7 +162,9 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor (int PosX, int PosY)
 {
-	if (!Client->getMap()->possiblePlace (vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
+	const cMap& map = *Client->getMap();
+
+	if (!map.possiblePlace (vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -172,16 +174,16 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	for (x = PosX - 1; x <= PosX + 1; x ++)
 	{
 		// check for map borders
-		if (x < 0 || x >= Client->getMap()->size) continue;
+		if (x < 0 || x >= map.size) continue;
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			// check for map borders
-			if (y < 0 || y >= Client->getMap()->size) continue;
+			if (y < 0 || y >= map.size) continue;
 
-			int iPos = x + y * Client->getMap()->size;
+			int iPos = x + y * map.size;
 
-			// int terrainNr = Client->getMap()->Kacheln[x + y * Client->getMap()->size]; !the line where this variable is needed was commented out earlier!
-			if (vehicle->owner->ResourceMap[iPos] == 0)  //&& !Client->getMap()->terrain[terrainNr].blocked )
+			// int terrainNr = map.Kacheln[x + y * map.size]; !the line where this variable is needed was commented out earlier!
+			if (vehicle->owner->ResourceMap[iPos] == 0)  //&& !map.terrain[terrainNr].blocked )
 			{
 				NrSurvFields++;
 			}
@@ -197,16 +199,16 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	for (x = PosX - 1; x <= PosX + 1; x ++)
 	{
 		// check for map borders
-		if (x < 0 || x >= Client->getMap()->size) continue;
+		if (x < 0 || x >= map.size) continue;
 		for (y = PosY - 1; y <= PosY + 1; y++)
 		{
 			// check for map borders
-			if (y < 0 || y >= Client->getMap()->size) continue;
+			if (y < 0 || y >= map.size) continue;
 
-			int iPos = x + y * Client->getMap()->size;
+			int iPos = x + y * map.size;
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle->owner->ResourceMap[iPos] != 0 && Client->getMap()->Resources[iPos].typ != 0)
+			if (vehicle->owner->ResourceMap[iPos] != 0 && map.Resources[iPos].typ != 0)
 			{
 				NrResFound++;
 			}

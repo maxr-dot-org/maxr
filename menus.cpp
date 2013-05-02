@@ -265,7 +265,7 @@ void cGameDataContainer::runSavedGame (int player)
 
 	// in singleplayer only the first player is important
 	(*Server->PlayerList) [player]->iSocketNum = MAX_CLIENTS;
-	sendRequestResync ( (*Server->PlayerList) [player]->Nr);
+	sendRequestResync (*Client, (*Server->PlayerList) [player]->Nr);
 
 	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
@@ -3429,7 +3429,7 @@ bool cNetworkHostMenu::runSavedGame()
 	// send data to all players
 	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 	{
-		sendRequestResync ( (*Server->PlayerList) [i]->Nr);
+		sendRequestResync (*Client, (*Server->PlayerList) [i]->Nr);
 		sendHudSettings (* (*Server->PlayerList) [i]->savedHud, (*Server->PlayerList) [i]);
 		cList<sSavedReportMessage>& reportList = (*Server->PlayerList) [i]->savedReportsList;
 		for (size_t j = 0; j != reportList.Size(); ++j)
@@ -4221,7 +4221,7 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cMenu*) parent);
 	if (!menu->selectedUnit->getUnitData()->isBig)
 	{
-		sendWantBuild (menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size, false, 0);
+		sendWantBuild (*Client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size, false, 0);
 	}
 	else
 	{
@@ -4352,21 +4352,22 @@ void cVehiclesBuildMenu::generateSelectionList()
 			}
 			else if (j == 5 || j == 7) x += 3;
 			else x++;
+			cMap& map = *Client->getMap();
 
-			if (x < 0 || x >= Client->getMap()->size || y < 0 || y >= Client->getMap()->size) continue;
+			if (x < 0 || x >= map.size || y < 0 || y >= map.size) continue;
 
-			int off = x + y * Client->getMap()->size;
-			cBuildingIterator bi = Client->getMap()->fields[off].getBuildings();
+			int off = x + y * map.size;
+			cBuildingIterator bi = map.fields[off].getBuildings();
 			while (bi && (bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) bi++;
 
-			if (!Client->getMap()->isWater (x, y) || (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (Client->getMap()->isWater (x, y) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWater (x, y) || (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWater (x, y) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if (Client->getMap()->isWater (x, y)) water = true;
+			else if (map.isWater (x, y)) water = true;
 		}
 
 		if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water) continue;
@@ -4416,7 +4417,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 		buildList.Add (buildItem);
 	}
 	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
-	sendWantBuildList (menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
+	sendWantBuildList (*Client, menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
 	menu->end = true;
 }
 
@@ -5033,7 +5034,7 @@ void cStorageMenu::activateReleased (void* parent)
 	if (menu->ownerVehicle)
 	{
 		menu->ownerVehicle->VehicleToActivate = index;
-		if (menu->unitData.factorAir > 0) sendWantActivate (menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
+		if (menu->unitData.factorAir > 0) sendWantActivate (*Client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
 		else Client->gameGUI.mouseInputMode = activateVehicle;
 	}
 	else if (menu->ownerBuilding)
@@ -5051,7 +5052,7 @@ void cStorageMenu::reloadReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->reloadButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantSupply (menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
+	sendWantSupply (*Client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
 	menu->voiceTypeAll = false;
 	menu->voicePlayed = false;
 }
@@ -5063,7 +5064,7 @@ void cStorageMenu::repairReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->repairButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantSupply (menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
+	sendWantSupply (*Client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
 	menu->voiceTypeAll = false;
 	menu->voicePlayed = false;
 }
@@ -5075,7 +5076,7 @@ void cStorageMenu::upgradeReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->upgradeButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantUpgrade (menu->ownerBuilding->iID, index, false);
+	sendWantUpgrade (*Client, menu->ownerBuilding->iID, index, false);
 }
 
 //------------------------------------------------------------------------------
@@ -5104,7 +5105,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, Client->getMap(), vehicle->typ)))
 					 && !hasCheckedPlace[poscount])
 				{
-					sendWantActivate (id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
+					sendWantActivate (*Client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
 					hasCheckedPlace[poscount] = true;
 					activated = true;
 					break;
@@ -5131,7 +5132,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 		cVehicle* vehicle = menu->storageList[i];
 		if (vehicle->data.ammoCur != vehicle->data.ammoMax)
 		{
-			sendWantSupply (vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
+			sendWantSupply (*Client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
 			resources--;
 		}
 	}
@@ -5152,7 +5153,7 @@ void cStorageMenu::repairAllReleased (void* parent)
 		cVehicle* vehicle = menu->storageList[i];
 		if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax)
 		{
-			sendWantSupply (vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
+			sendWantSupply (*Client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
 			int value = vehicle->data.hitpointsCur;
 			while (value < vehicle->data.hitpointsMax)
 			{
@@ -5169,7 +5170,7 @@ void cStorageMenu::upgradeAllReleased (void* parent)
 	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
 	if (!menu->ownerBuilding) return;
 
-	sendWantUpgrade (menu->ownerBuilding->iID, 0, true);
+	sendWantUpgrade (*Client, menu->ownerBuilding->iID, 0, true);
 }
 
 //------------------------------------------------------------------------------
@@ -5374,7 +5375,7 @@ string cMineManagerMenu::secondBarText (int prod, int need)
 void cMineManagerMenu::doneReleased (void* parent)
 {
 	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ( (cMenu*) parent);
-	sendChangeResources (menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd());
+	sendChangeResources (*Client, menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd());
 	menu->end = true;
 }
 

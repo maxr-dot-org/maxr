@@ -177,7 +177,7 @@ public:
 	int playStream();
 	void StartMoveSound(cGameGUI& gameGUI);
 	void DecSpeed (int value);
-	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
+	void DrawAttackCursor (cGameGUI& gameGUI, int x, int y);
 	void FindNextband();
 	void doSurvey();
 	void MakeReport();
@@ -220,8 +220,8 @@ public:
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath
 	*/
-	int calcCommandoChance (cUnit* destUnit, bool steal) const;
-	int calcCommandoTurns (cUnit* destUnit) const;
+	int calcCommandoChance (const cUnit* destUnit, bool steal) const;
+	int calcCommandoTurns (const cUnit* destUnit) const;
 	/**
 	* returns whether this player has detected this unit or not
 	*@author alzi alias DoctorDeath

@@ -180,9 +180,11 @@ int cMouse::getKachelX() const
 	{
 		return -1;
 	}
+	const cGameGUI& gameGUI = Client->gameGUI;
+	const cMap& map = *Client->getMap();
 
-	int X = (int) ( (x - 180 + Client->gameGUI.getOffsetX() * Client->gameGUI.getZoom()) / Client->gameGUI.getTileSize());
-	X = std::min (X, Client->getMap()->size - 1);
+	int X = (int) ( (x - 180 + gameGUI.getOffsetX() * gameGUI.getZoom()) / gameGUI.getTileSize());
+	X = std::min (X, map.size - 1);
 
 	return X;
 }
@@ -193,9 +195,10 @@ int cMouse::getKachelY() const
 	{
 		return -1;
 	}
-
-	int Y = (int) ( (y - 18 + Client->gameGUI.getOffsetY() * Client->gameGUI.getZoom()) / Client->gameGUI.getTileSize());
-	Y = std::min (Y, Client->getMap()->size - 1);
+	const cGameGUI& gameGUI = Client->gameGUI;
+	const cMap& map = *Client->getMap();
+	int Y = (int) ( (y - 18 + gameGUI.getOffsetY() * gameGUI.getZoom()) / gameGUI.getTileSize());
+	Y = std::min (Y, map.size - 1);
 
 	return Y;
 }

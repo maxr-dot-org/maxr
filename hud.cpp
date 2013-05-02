@@ -2170,40 +2170,40 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 
 			if (selectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 			{
-				sendWantBuild (selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->BandX + selectedVehicle->BandY * map->size, false, 0);
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->BandX + selectedVehicle->BandY * map->size, false, 0);
 			}
 			else
 			{
-				sendWantBuild (selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX + selectedVehicle->PosY * map->size, true, selectedVehicle->BandX + selectedVehicle->BandY * map->size);
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX + selectedVehicle->PosY * map->size, true, selectedVehicle->BandX + selectedVehicle->BandY * map->size);
 			}
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (selectedBuilding->iID, false, selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->iID, mouse->getKachelX(), mouse->getKachelY());
+			sendWantActivate (*client, selectedBuilding->iID, false, selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->iID, mouse->getKachelX(), mouse->getKachelY());
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedVehicle && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (selectedVehicle->iID, true, selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouse->getKachelX(), mouse->getKachelY());
+			sendWantActivate (*client, selectedVehicle->iID, true, selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouse->getKachelX(), mouse->getKachelY());
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->Size())
 		{
-			sendWantExitFinishedVehicle (selectedBuilding, mouse->getKachelX(), mouse->getKachelY());
+			sendWantExitFinishedVehicle (*client, selectedBuilding, mouse->getKachelX(), mouse->getKachelY());
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && mouseInputMode == loadMode)
 		{
 			if (overVehicle && selectedBuilding->canLoad (overVehicle, false))
 			{
-				if (selectedBuilding->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (selectedBuilding->iID, false, overVehicle->iID);
+				if (selectedBuilding->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (*client, selectedBuilding->iID, false, overVehicle->iID);
 				else
 				{
 					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, NULL, selectedBuilding, client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
-						sendMoveJob (path, overVehicle->iID);
-						sendEndMoveAction (overVehicle->iID, selectedBuilding->iID, EMAT_GET_IN);
+						sendMoveJob (*client, path, overVehicle->iID);
+						sendEndMoveAction (*client, overVehicle->iID, selectedBuilding->iID, EMAT_GET_IN);
 					}
 					else
 					{
@@ -2214,15 +2214,15 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			}
 			else if (overPlane && selectedBuilding->canLoad (overPlane, false))
 			{
-				if (selectedBuilding->isNextTo (overPlane->PosX, overPlane->PosY)) sendWantLoad (selectedBuilding->iID, false, overPlane->iID);
+				if (selectedBuilding->isNextTo (overPlane->PosX, overPlane->PosY)) sendWantLoad (*client, selectedBuilding->iID, false, overPlane->iID);
 				else
 				{
 					cPathCalculator pc (overPlane->PosX, overPlane->PosY, NULL, selectedBuilding, client->getMap(), overPlane, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
-						sendMoveJob (path, overPlane->iID);
-						sendEndMoveAction (overPlane->iID, selectedBuilding->iID, EMAT_GET_IN);
+						sendMoveJob (*client, path, overPlane->iID);
+						sendEndMoveAction (*client, overPlane->iID, selectedBuilding->iID, EMAT_GET_IN);
 					}
 					else
 					{
@@ -2236,15 +2236,15 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (selectedVehicle->data.factorAir > 0 && overVehicle)
 			{
-				if (overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY) sendWantLoad (selectedVehicle->iID, true, overVehicle->iID);
+				if (overVehicle->PosX == selectedVehicle->PosX && overVehicle->PosY == selectedVehicle->PosY) sendWantLoad (*client, selectedVehicle->iID, true, overVehicle->iID);
 				else
 				{
 					cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, overVehicle->PosX, overVehicle->PosY, client->getMap(), selectedVehicle);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
-						sendMoveJob (path, selectedVehicle->iID);
-						sendEndMoveAction (selectedVehicle->iID, overVehicle->iID, EMAT_LOAD);
+						sendMoveJob (*client, path, selectedVehicle->iID);
+						sendEndMoveAction (*client, selectedVehicle->iID, overVehicle->iID, EMAT_LOAD);
 					}
 					else
 					{
@@ -2255,36 +2255,35 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			}
 			else if (overVehicle)
 			{
-				if (selectedVehicle->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (selectedVehicle->iID, true, overVehicle->iID);
+				if (selectedVehicle->isNextTo (overVehicle->PosX, overVehicle->PosY)) sendWantLoad (*client, selectedVehicle->iID, true, overVehicle->iID);
 				else
 				{
 					cPathCalculator pc (overVehicle->PosX, overVehicle->PosY, selectedVehicle, NULL, client->getMap(), overVehicle, true);
 					sWaypoint* path = pc.calcPath();
 					if (path)
 					{
-						sendMoveJob (path, overVehicle->iID);
-						sendEndMoveAction (overVehicle->iID, selectedVehicle->iID, EMAT_GET_IN);
+						sendMoveJob (*client, path, overVehicle->iID);
+						sendEndMoveAction (*client, overVehicle->iID, selectedVehicle->iID, EMAT_GET_IN);
 					}
 					else
 					{
 						if (random (2)) PlayVoice (VoiceData.VOINoPath1);
 						else PlayVoice (VoiceData.VOINoPath2);
 					}
-
 				}
 			}
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cmuni && selectedVehicle && mouseInputMode == muniActive)
 		{
-			if (overVehicle) sendWantSupply (overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
-			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
-			else if (overBuilding) sendWantSupply (overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			if (overVehicle) sendWantSupply (*client, overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (*client, overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
+			else if (overBuilding) sendWantSupply (*client, overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REARM);
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Crepair && selectedVehicle && mouseInputMode == repairActive)
 		{
-			if (overVehicle) sendWantSupply (overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
-			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
-			else if (overBuilding) sendWantSupply (overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			if (overVehicle) sendWantSupply (*client, overVehicle->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if (overPlane && overPlane->FlightHigh == 0) sendWantSupply (*client, overPlane->iID, true, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
+			else if (overBuilding) sendWantSupply (*client, overBuilding->iID, false, selectedVehicle->iID, true, SUPPLY_TYPE_REPAIR);
 		}
 		else if (!helpActive)
 		{
@@ -2309,7 +2308,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						if (vehicle) targetId = vehicle->iID;
 
 						Log.write (" Client: want to attack " + iToStr (mouse->getKachelX()) + ":" + iToStr (mouse->getKachelY()) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-						sendWantAttack (targetId, mouse->getKachelX() + mouse->getKachelY() *client->getMap()->size, selectedVehicle->iID, true);
+						sendWantAttack (*client, targetId, mouse->getKachelX() + mouse->getKachelY() *client->getMap()->size, selectedVehicle->iID, true);
 					}
 					else if (vehicle || building)
 					{
@@ -2317,8 +2316,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						sWaypoint* path = pc.calcPath();
 						if (path)
 						{
-							sendMoveJob (path, selectedVehicle->iID);
-							sendEndMoveAction (selectedVehicle->iID, vehicle ? vehicle->iID : building->iID, EMAT_ATTACK);
+							sendMoveJob (*client, path, selectedVehicle->iID);
+							sendEndMoveAction (*client, selectedVehicle->iID, vehicle ? vehicle->iID : building->iID, EMAT_ATTACK);
 						}
 						else
 						{
@@ -2337,18 +2336,18 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					if (vehicle) targetId = vehicle->iID;
 
 					int offset = selectedBuilding->PosX + selectedBuilding->PosY * map->size;
-					sendWantAttack (targetId, mouse->getKachelX() + mouse->getKachelY() *client->getMap()->size, offset, false);
+					sendWantAttack (*client, targetId, mouse->getKachelX() + mouse->getKachelY() *client->getMap()->size, offset, false);
 				}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 				{
-					if (overVehicle) sendWantComAction (selectedVehicle->iID, overVehicle->iID, true, true);
-					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (selectedVehicle->iID, overVehicle->iID, true, true);
+					if (overVehicle) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, true);
+					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, true);
 				}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle)
 				{
-					if (overVehicle) sendWantComAction (selectedVehicle->iID, overVehicle->iID, true, false);
-					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (selectedVehicle->iID, overPlane->iID, true, false);
-					else if (overBuilding) sendWantComAction (selectedVehicle->iID, overBuilding->iID, false, false);
+					if (overVehicle) sendWantComAction (*client, selectedVehicle->iID, overVehicle->iID, true, false);
+					else if (overPlane && overPlane->FlightHigh == 0) sendWantComAction (*client, selectedVehicle->iID, overPlane->iID, true, false);
+					else if (overBuilding) sendWantComAction (*client, selectedVehicle->iID, overBuilding->iID, false, false);
 				}
 				else if (MouseStyle == OldSchool && overUnitField && selectUnit (overUnitField, false))
 				{}
@@ -2356,7 +2355,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				{
 					if (selectedVehicle->IsBuilding)
 					{
-						sendWantEndBuilding (selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						sendWantEndBuilding (*client, selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 					}
 					else
 					{
@@ -2648,7 +2647,7 @@ void cGameGUI::doCommand (const string& cmd)
 				addMessage ("Wrong parameter");
 				return;
 			}
-			sendRequestResync (player->Nr);
+			sendRequestResync (*client, player->Nr);
 		}
 		else
 		{
@@ -2656,12 +2655,12 @@ void cGameGUI::doCommand (const string& cmd)
 			{
 				for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 				{
-					sendRequestResync ( (*Server->PlayerList) [i]->Nr);
+					sendRequestResync (*client, (*Server->PlayerList) [i]->Nr);
 				}
 			}
 			else
 			{
-				sendRequestResync (client->getActivePlayer()->Nr);
+				sendRequestResync (*client, client->getActivePlayer()->Nr);
 			}
 		}
 	}
@@ -2924,7 +2923,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	// check whether the player wants to abort waiting
 	if (client->getFreezeMode (FREEZE_WAIT_FOR_RECONNECT) && key.keysym.sym == SDLK_F2)
 	{
-		sendAbortWaiting();
+		sendAbortWaiting (*client);
 	}
 
 	if (key.keysym.sym == KeysList.KeyExit)
@@ -2988,7 +2987,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		sendWantStopMove (selectedVehicle->iID);
+		sendWantStopMove (*client, selectedVehicle->iID);
 		cBuildingsBuildMenu buildMenu (player, selectedVehicle);
 		buildMenu.show();
 	}
@@ -3015,7 +3014,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendWantStartWork (selectedBuilding);
+		sendWantStartWork (*client, selectedBuilding);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3023,38 +3022,38 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (selectedVehiclesGroup[i]->iID);
+				if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (*client, selectedVehiclesGroup[i]->iID);
 			}
-			sendWantStopMove (selectedVehicle->iID);
+			sendWantStopMove (*client, selectedVehicle->iID);
 		}
 		else if (selectedVehicle->IsBuilding)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (selectedVehiclesGroup[i]->iID);
+				if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
 			}
-			sendWantStopBuilding (selectedVehicle->iID);
+			sendWantStopBuilding (*client, selectedVehicle->iID);
 		}
 		else if (selectedVehicle->IsClearing)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (selectedVehiclesGroup[i]);
+				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, selectedVehiclesGroup[i]);
 			}
-			sendWantStopClear (selectedVehicle);
+			sendWantStopClear (*client, selectedVehicle);
 		}
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendWantStopWork (selectedBuilding);
+		sendWantStopWork (*client, selectedBuilding);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
-			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (selectedVehiclesGroup[i]);
+			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, selectedVehiclesGroup[i]);
 		}
-		sendWantStartClear (selectedVehicle);
+		sendWantStartClear (*client, selectedVehicle);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3062,14 +3061,14 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		{
 			if (selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
 			{
-				sendChangeSentry (selectedVehiclesGroup[i]->iID, true);
+				sendChangeSentry (*client, selectedVehiclesGroup[i]->iID, true);
 			}
 		}
-		sendChangeSentry (selectedVehicle->iID, true);
+		sendChangeSentry (*client, selectedVehicle->iID, true);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedBuilding && (selectedBuilding->sentryActive || selectedBuilding->data.canAttack) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendChangeSentry (selectedBuilding->iID, false);
+		sendChangeSentry (*client, selectedBuilding->iID, false);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3078,14 +3077,14 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
 				 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
 			{
-				sendChangeManualFireStatus (selectedVehiclesGroup[i]->iID, true);
+				sendChangeManualFireStatus (*client, selectedVehiclesGroup[i]->iID, true);
 			}
 		}
-		sendChangeManualFireStatus (selectedVehicle->iID, true);
+		sendChangeManualFireStatus (*client, selectedVehicle->iID, true);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedBuilding && (selectedBuilding->manualFireActive || selectedBuilding->data.canAttack) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendChangeManualFireStatus (selectedBuilding->iID, false);
+		sendChangeManualFireStatus (*client, selectedBuilding->iID, false);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3165,7 +3164,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDestructMenu destructMenu;
-		if (destructMenu.show() == 0) sendWantSelfDestroy (selectedBuilding);
+		if (destructMenu.show() == 0) sendWantSelfDestroy (*client, selectedBuilding);
 	}
 	// Hotkeys for the hud
 	else if (key.keysym.sym == KeysList.KeyFog) setFog (!fogChecked());
@@ -3246,7 +3245,7 @@ void cGameGUI::doneReleased (void* parent)
 
 	if (gui->shiftPressed)
 	{
-		sendMoveJobResume (0);
+		sendMoveJobResume (*gui->client, 0);
 		return;
 	}
 
@@ -3257,7 +3256,7 @@ void cGameGUI::doneReleased (void* parent)
 	{
 		unit->center();
 		unit->isMarkedAsDone = true;
-		sendMoveJobResume (unit->iID);
+		sendMoveJobResume (*gui->client, unit->iID);
 	}
 }
 
@@ -3406,7 +3405,7 @@ void cGameGUI::chatBoxReturnPressed (void* parent)
 	if (!chatString.empty())
 	{
 		if (chatString[0] == '/') gui->doCommand (chatString);
-		else sendChatMessageToServer (gui->player->name + ": " + chatString);
+		else sendChatMessageToServer (*gui->client, gui->player->name + ": " + chatString);
 		gui->chatBox.setText ("");
 	}
 	gui->chatBox.setActivity (false);
@@ -3419,8 +3418,8 @@ void cGameGUI::unitNameReturnPressed (void* parent)
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	string nameString = gui->selUnitNameEdit.getText();
 
-	if (gui->selectedVehicle) sendWantChangeUnitName (nameString, gui->selectedVehicle->iID);
-	else if (gui->selectedBuilding) sendWantChangeUnitName (nameString, gui->selectedBuilding->iID);
+	if (gui->selectedVehicle) sendWantChangeUnitName (*gui->client, nameString, gui->selectedVehicle->iID);
+	else if (gui->selectedBuilding) sendWantChangeUnitName (*gui->client, nameString, gui->selectedBuilding->iID);
 
 	gui->selUnitNameEdit.setActivity (false);
 	gui->activeItem = NULL;
