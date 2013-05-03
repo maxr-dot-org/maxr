@@ -746,14 +746,14 @@ void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_LOCK_TARGET (cNetMessage& messa
 {
 	assert (message.iType == GAME_EV_ATTACKJOB_LOCK_TARGET);
 
-	cClientAttackJob::lockTarget (&message);
+	cClientAttackJob::lockTarget (*this, &message);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_FIRE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ATTACKJOB_FIRE);
 
-	cClientAttackJob* job = new cClientAttackJob (&message);
+	cClientAttackJob* job = new cClientAttackJob (this, &message);
 	attackJobs.Add (job);
 }
 
@@ -764,7 +764,7 @@ void cClient::HandleNetMessage_GAME_EV_ATTACKJOB_IMPACT (cNetMessage& message)
 	int id = message.popInt16();
 	int remainingHP = message.popInt16();
 	int offset = message.popInt32();
-	cClientAttackJob::makeImpact (offset, remainingHP, id);
+	cClientAttackJob::makeImpact (*this, offset, remainingHP, id);
 }
 
 void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
@@ -1166,14 +1166,12 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ADD_RUBBLE);
 
-
-
 	bool big = message.popBool();
 	int typ = message.popInt16();
 	int value = message.popInt16();
 	unsigned int ID = message.popInt16();
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, ID);
+	cBuilding* rubble = new cBuilding (NULL, NULL, ID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;
@@ -1690,7 +1688,7 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 			delete Vehicle->autoMJob;
 			Vehicle->autoMJob = NULL;
 		}
-		Vehicle->autoMJob = new cAutoMJob (Vehicle);
+		Vehicle->autoMJob = new cAutoMJob (*this, Vehicle);
 	}
 }
 
@@ -2296,7 +2294,7 @@ void cClient::doGameActions()
 
 	//run attackJobs
 	if (gameTimer.timer50ms)
-		cClientAttackJob::handleAttackJobs();
+		cClientAttackJob::handleAttackJobs(*this);
 
 	//run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();

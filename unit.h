@@ -23,11 +23,12 @@
 #include <SDL.h>
 #include "main.h" /// for sUnitData -> move that to cUnit, too?
 
-class cPlayer;
-class cMap;
-class cVehicle;
+class cClient;
 class cGameGUI;
 class cJob;
+class cMap;
+class cPlayer;
+class cVehicle;
 
 //-----------------------------------------------------------------------------
 class cUnit
@@ -39,7 +40,7 @@ public:
 		kUTVehicle
 	};
 
-	cUnit (UnitType type, sUnitData* unitData, cPlayer* owner, unsigned int ID);
+	cUnit (UnitType type, const sUnitData* unitData, cPlayer* owner, unsigned int ID);
 	virtual ~cUnit();
 
 	bool isVehicle() const { return unitType == kUTVehicle; }
@@ -61,7 +62,7 @@ public:
 	void setMenuSelection();
 	void drawMenu (cGameGUI& gameGUI);
 	void menuReleased (cGameGUI& gameGUI);
-	virtual void executeAutoMoveJobCommand() {}
+	virtual void executeAutoMoveJobCommand(cClient& client) {}
 	virtual void executeLayMinesCommand() {}
 	virtual void executeClearMinesCommand() {}
 

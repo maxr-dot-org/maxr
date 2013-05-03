@@ -3518,7 +3518,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	cBuilding* rubble = new cBuilding (NULL, NULL, NULL, iNextUnitID);
+	cBuilding* rubble = new cBuilding (NULL, NULL, iNextUnitID);
 	rubble->next = neutralBuildings;
 	if (neutralBuildings) neutralBuildings->prev = rubble;
 	neutralBuildings = rubble;

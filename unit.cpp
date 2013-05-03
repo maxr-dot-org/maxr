@@ -34,7 +34,7 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-cUnit::cUnit (UnitType unitType, sUnitData* unitData, cPlayer* owner, unsigned int ID)
+cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, PosX (0)
 	, PosY (0)
@@ -632,7 +632,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		return;
 
 	int nr = 0;
-	const cClient& client = *gameGUI.getClient();
+	cClient& client = *gameGUI.getClient();
 
 	// attack:
 	if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
@@ -706,7 +706,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeAutoMoveJobCommand();
+			executeAutoMoveJobCommand(client);
 			return;
 		}
 		nr++;

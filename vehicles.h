@@ -254,7 +254,7 @@ public:
 	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
 	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
-	virtual void executeAutoMoveJobCommand();
+	virtual void executeAutoMoveJobCommand(cClient& client);
 	virtual void executeLayMinesCommand();
 	virtual void executeClearMinesCommand();
 

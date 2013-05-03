@@ -523,16 +523,17 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::lockTarget (cNetMessage* message)
+void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 {
 	bool bIsAir = message->popBool();
 	int offset = message->popInt32();
-	int x = offset % Client->getMap()->size;
-	int y = offset / Client->getMap()->size;
+	cMap& map = *client.getMap();
+	int x = offset % map.size;
+	int y = offset / map.size;
 	int ID = message->popInt32();
 	if (ID != 0)
 	{
-		cVehicle* vehicle = Client->getVehicleFromID (ID);
+		cVehicle* vehicle = client.getVehicleFromID (ID);
 		if (vehicle == NULL)
 		{
 			Log.write (" Client: vehicle with ID " + iToStr (ID) + " not found", cLog::eLOG_TYPE_NET_ERROR);
@@ -545,7 +546,7 @@ void cClientAttackJob::lockTarget (cNetMessage* message)
 		if (vehicle->PosX != x || vehicle->PosY != y)
 		{
 			Log.write (" Client: changed vehicle position to (" + iToStr (x) + ":" + iToStr (y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
-			Client->getMap()->moveVehicle (vehicle, x, y);
+			map.moveVehicle (vehicle, x, y);
 			vehicle->owner->DoScan();
 
 			vehicle->OffY = message->popChar();
@@ -554,7 +555,7 @@ void cClientAttackJob::lockTarget (cNetMessage* message)
 	}
 	if (!bIsAir)
 	{
-		cBuildingIterator buildings = (*Client->getMap()) [offset].getBuildings();
+		cBuildingIterator buildings = map[offset].getBuildings();
 		while (!buildings.end)
 		{
 			buildings->isBeeingAttacked = true;
@@ -564,25 +565,25 @@ void cClientAttackJob::lockTarget (cNetMessage* message)
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::handleAttackJobs()
+void cClientAttackJob::handleAttackJobs (cClient& client)
 {
-	for (unsigned int i = 0; i < Client->attackJobs.Size(); i++)
+	for (unsigned int i = 0; i < client.attackJobs.Size(); i++)
 	{
-		cClientAttackJob* job = Client->attackJobs[i];
+		cClientAttackJob* job = client.attackJobs[i];
 		switch (job->state)
 		{
 			case FINISHED:
 			{
-				job->sendFinishMessage();
+				job->sendFinishMessage(client);
 				if (job->vehicle)  job->vehicle->attacking  = false;
 				if (job->building) job->building->attacking = false;
 				delete job;
-				Client->attackJobs.Delete (i);
+				client.attackJobs.Delete (i);
 				break;
 			}
 			case PLAYING_MUZZLE:
 			{
-				job->playMuzzle();
+				job->playMuzzle(client);
 				break;
 			}
 			case ROTATING:
@@ -596,7 +597,7 @@ void cClientAttackJob::handleAttackJobs()
 }
 
 //--------------------------------------------------------------------------
-cClientAttackJob::cClientAttackJob (cNetMessage* message)
+cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 {
 	state = ROTATING;
 	wait = 0;
@@ -607,9 +608,9 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 	building = NULL;
 
 	//check for duplicate jobs
-	for (unsigned int i = 0; i < Client->attackJobs.Size(); i++)
+	for (unsigned int i = 0; i < client->attackJobs.Size(); i++)
 	{
-		if (Client->attackJobs[i]->iID == this->iID)
+		if (client->attackJobs[i]->iID == this->iID)
 		{
 			state = FINISHED;
 			return;
@@ -631,8 +632,8 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 	}
 	else
 	{
-		vehicle  = Client->getVehicleFromID (unitID);
-		building = Client->getBuildingFromID (unitID);
+		vehicle  = client->getVehicleFromID (unitID);
+		building = client->getBuildingFromID (unitID);
 		if (!vehicle && !building)
 		{
 			state = FINISHED;
@@ -644,11 +645,11 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 
 		if (vehicle)
 		{
-			iAgressorOffset = vehicle->PosX + vehicle->PosY * Client->getMap()->size;
+			iAgressorOffset = vehicle->PosX + vehicle->PosY * client->getMap()->size;
 		}
 		else
 		{
-			iAgressorOffset = building->PosX + building->PosY * Client->getMap()->size;
+			iAgressorOffset = building->PosX + building->PosY * client->getMap()->size;
 		}
 	}
 
@@ -674,19 +675,19 @@ cClientAttackJob::cClientAttackJob (cNetMessage* message)
 	}
 
 	bool sentryReaction = message->popBool();
-	if (sentryReaction && ( (building && building->owner == Client->getActivePlayer()) || (vehicle && vehicle->owner == Client->getActivePlayer())))
+	if (sentryReaction && ( (building && building->owner == client->getActivePlayer()) || (vehicle && vehicle->owner == client->getActivePlayer())))
 	{
 		int x = vehicle ? vehicle->PosX : building->PosX;
 		int y = vehicle ? vehicle->PosY : building->PosY;
 		string name = vehicle ? vehicle->getDisplayName() : building->getDisplayName();
 		sID id = vehicle ? vehicle->data.ID : building->data.ID;
-		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (lngPack.i18n ("Text~Comp~AttackingEnemy", name), x, y), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
+		client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (lngPack.i18n ("Text~Comp~AttackingEnemy", name), x, y), sSavedReportMessage::REPORT_TYPE_UNIT, id, x, y);
 		if (random (2))
 			PlayVoice (VoiceData.VOIAttackingEnemy1);
 		else
 			PlayVoice (VoiceData.VOIAttackingEnemy2);
 	}
-	Client->gameGUI.checkMouseInputMode();
+	client->gameGUI.checkMouseInputMode();
 }
 
 //--------------------------------------------------------------------------
@@ -721,24 +722,24 @@ void cClientAttackJob::rotate()
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::playMuzzle()
+void cClientAttackJob::playMuzzle(cClient& client)
 {
-
 	int offx = 0, offy = 0;
+	const cMap& map = *client.getMap();
 
 	if (building && building->data.explodesOnContact)
 	{
 		state = FINISHED;
 		PlayFX (building->typ->Attack);
-		if (Client->getMap()->isWater (building->PosX, building->PosY))
+		if (map.isWater (building->PosX, building->PosY))
 		{
-			Client->addFx (new cFxExploWater (building->PosX * 64 + 32, building->PosY * 64 + 32));
+			client.addFx (new cFxExploWater (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
 		else
 		{
-			Client->addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
+			client.addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
-		Client->deleteUnit (building);
+		client.deleteUnit (building);
 		return;
 	}
 
@@ -783,11 +784,11 @@ void cClientAttackJob::playMuzzle()
 			}
 			if (vehicle)
 			{
-				Client->addFx (new cFxMuzzleBig (vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
+				client.addFx (new cFxMuzzleBig (vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 			}
 			else if (building)
 			{
-				Client->addFx (new cFxMuzzleBig (building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
+				client.addFx (new cFxMuzzleBig (building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_SMALL:
@@ -798,30 +799,30 @@ void cClientAttackJob::playMuzzle()
 			}
 			if (vehicle)
 			{
-				Client->addFx (new cFxMuzzleSmall( vehicle->PosX * 64, vehicle->PosY * 64, iFireDir));
+				client.addFx (new cFxMuzzleSmall( vehicle->PosX * 64, vehicle->PosY * 64, iFireDir));
 			}
 			else if (building)
 			{
-				Client->addFx (new cFxMuzzleSmall( building->PosX * 64, building->PosY * 64, iFireDir));
+				client.addFx (new cFxMuzzleSmall( building->PosX * 64, building->PosY * 64, iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_ROCKET:
 		case sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER:
 		{
-			if (wait++ != 0) 
+			if (wait++ != 0)
 			{
 				if (wait > length ) state = FINISHED;
 
 				return;
 			}
 
-			int PosX = iAgressorOffset % Client->getMap()->size;
-			int PosY = iAgressorOffset / Client->getMap()->size;
-			int endX = iTargetOffset   % Client->getMap()->size;
-			int endY = iTargetOffset   / Client->getMap()->size;
+			int PosX = iAgressorOffset % map.size;
+			int PosY = iAgressorOffset / map.size;
+			int endX = iTargetOffset % map.size;
+			int endY = iTargetOffset / map.size;
 			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, false);
 			length = rocket->getLength() / 5;
-			Client->addFx (rocket);
+			client.addFx (rocket);
 			break;
 
 		}
@@ -867,41 +868,41 @@ void cClientAttackJob::playMuzzle()
 			{
 				if (vehicle)
 				{
-					Client->addFx (new cFxMuzzleMed( vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
+					client.addFx (new cFxMuzzleMed (vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 				}
 				else if (building)
 				{
-					Client->addFx (new cFxMuzzleMed( building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
+					client.addFx (new cFxMuzzleMed (building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 				}
 			}
 			else
 			{
 				if (vehicle)
 				{
-					Client->addFx (new cFxMuzzleMedLong( vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
+					client.addFx (new cFxMuzzleMedLong (vehicle->PosX * 64 + offx, vehicle->PosY * 64 + offy, iFireDir));
 				}
 				else if (building)
 				{
-					Client->addFx (new cFxMuzzleMedLong( building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
+					client.addFx (new cFxMuzzleMedLong (building->PosX * 64 + offx, building->PosY * 64 + offy, iFireDir));
 				}
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_TORPEDO:
 		{
-			if (wait++ != 0) 
+			if (wait++ != 0)
 			{
 				if (wait > length ) state = FINISHED;
 
 				return;
 			}
 
-			int PosX = iAgressorOffset % Client->getMap()->size;
-			int PosY = iAgressorOffset / Client->getMap()->size;
-			int endX = iTargetOffset   % Client->getMap()->size;
-			int endY = iTargetOffset   / Client->getMap()->size;
+			int PosX = iAgressorOffset % map.size;
+			int PosY = iAgressorOffset / map.size;
+			int endX = iTargetOffset % map.size;
+			int endY = iTargetOffset / map.size;
 			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, true);
 			length = rocket->getLength() / 5;
-			Client->addFx (rocket);
+			client.addFx (rocket);
 
 			break;
 		}
@@ -921,24 +922,25 @@ void cClientAttackJob::playMuzzle()
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::sendFinishMessage()
+void cClientAttackJob::sendFinishMessage(cClient& client)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_FINISHED);
 	message->pushInt16 (iID);
-	Client->sendNetMessage (message);
+	client.sendNetMessage (message);
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
+void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP, int id)
 {
-	if (offset < 0 || offset > Client->getMap()->size * Client->getMap()->size)
+	cMap& map = *client.getMap();
+	if (offset < 0 || offset > map.size * map.size)
 	{
 		Log.write (" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 
-	cVehicle* targetVehicle = Client->getVehicleFromID (id);
-	cBuilding* targetBuilding = Client->getBuildingFromID (id);
+	cVehicle* targetVehicle = client.getVehicleFromID (id);
+	cBuilding* targetBuilding = client.getBuildingFromID (id);
 
 	bool playImpact = false;
 	bool ownUnit = false;
@@ -965,11 +967,11 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 			Log.write (" Client: vehicle '" + targetVehicle->getDisplayName() + "' (ID: " + iToStr (targetVehicle->iID) + ") hit. Remaining HP: " + iToStr (targetVehicle->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetVehicle->getDisplayName();
-			if (targetVehicle->owner == Client->getActivePlayer()) ownUnit = true;
+			if (targetVehicle->owner == client.getActivePlayer()) ownUnit = true;
 
 			if (targetVehicle->data.hitpointsCur <= 0)
 			{
-				Client->destroyUnit (targetVehicle);
+				client.destroyUnit (targetVehicle);
 				targetVehicle = NULL;
 				destroyed = true;
 			}
@@ -982,18 +984,17 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 		}
 		else
 		{
-
 			unitID = targetBuilding->data.ID;
 			targetBuilding->data.hitpointsCur = remainingHP;
 
 			Log.write (" Client: building '" + targetBuilding->getDisplayName() + "' (ID: " + iToStr (targetBuilding->iID) + ") hit. Remaining HP: " + iToStr (targetBuilding->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 
 			name = targetBuilding->getDisplayName();
-			if (targetBuilding->owner == Client->getActivePlayer()) ownUnit = true;
+			if (targetBuilding->owner == client.getActivePlayer()) ownUnit = true;
 
 			if (targetBuilding->data.hitpointsCur <= 0)
 			{
-				Client->destroyUnit (targetBuilding);
+				client.destroyUnit (targetBuilding);
 				targetBuilding = NULL;
 				destroyed = true;
 			}
@@ -1002,16 +1003,16 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 				playImpact = true;
 			}
 		}
-		Client->gameGUI.updateMouseCursor();
+		client.gameGUI.updateMouseCursor();
 	}
 
-	int x = offset % Client->getMap()->size;
-	int y = offset / Client->getMap()->size;
+	int x = offset % map.size;
+	int y = offset / map.size;
 
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
 		// TODO:  PlayFX ( SoundData.hit );
-		Client->addFx (new cFxHit (x * 64 + offX + 32, y * 64 + offY + 32));
+		client.addFx (new cFxHit (x * 64 + offX + 32, y * 64 + offY + 32));
 	}
 
 	if (ownUnit)
@@ -1034,7 +1035,7 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 			else
 				PlayVoice (VoiceData.VOIAttackingUs3);
 		}
-		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, x, y), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
+		client.getActivePlayer()->addSavedReport (client.gameGUI.addCoords (message, x, y), sSavedReportMessage::REPORT_TYPE_UNIT, unitID, x, y);
 	}
 
 	//clean up
@@ -1042,7 +1043,7 @@ void cClientAttackJob::makeImpact (int offset, int remainingHP, int id)
 
 	if (!isAir)
 	{
-		cBuildingIterator buildings = (*Client->getMap()) [offset].getBuildings();
+		cBuildingIterator buildings = map[offset].getBuildings();
 		while (!buildings.end)
 		{
 			buildings->isBeeingAttacked = false;

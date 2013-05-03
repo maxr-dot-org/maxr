@@ -47,7 +47,8 @@ void cAutoMJob::handleAutoMoveJobs()
 //functions of cAutoMJobs
 
 //construktor for cAutoMJob
-cAutoMJob::cAutoMJob (cVehicle* vehicle)
+cAutoMJob::cAutoMJob (cClient& client_, cVehicle* vehicle) :
+	client(&client_)
 {
 	iNumber = (int) autoMJobs.Size();
 	autoMJobs.Add (this);
@@ -59,7 +60,7 @@ cAutoMJob::cAutoMJob (cVehicle* vehicle)
 	lastDestX = vehicle->PosX;
 	lastDestY = vehicle->PosY;
 	n = iNumber % WAIT_FRAMES; //this is just to prevent, that posibly all surveyors try to calc their next move in the same frame
-	sendSetAutoStatus (*Client, vehicle->iID, true);
+	sendSetAutoStatus (*client, vehicle->iID, true);
 }
 
 //destruktor for cAutoMJob
@@ -67,9 +68,9 @@ cAutoMJob::~cAutoMJob()
 {
 	if (!playerMJob)
 	{
-		sendWantStopMove (*Client, vehicle->iID);
+		sendWantStopMove (*client, vehicle->iID);
 	}
-	sendSetAutoStatus (*Client, vehicle->iID, false);
+	sendSetAutoStatus (*client, vehicle->iID, false);
 	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
@@ -84,8 +85,8 @@ cAutoMJob::~cAutoMJob()
 void cAutoMJob::DoAutoMove()
 {
 	if (vehicle->isBeeingAttacked) return;
-	if (Client->isFreezed ()) return;
-	if (vehicle->owner != Client->getActivePlayer()) return;
+	if (client->isFreezed ()) return;
+	if (vehicle->owner != client->getActivePlayer()) return;
 
 	if (vehicle->ClientMoveJob == NULL || vehicle->ClientMoveJob->bFinished)
 	{
@@ -108,11 +109,10 @@ void cAutoMJob::DoAutoMove()
 		}
 		if (vehicle->ClientMoveJob->bSuspended && vehicle->data.speedCur)
 		{
-			Client->addMoveJob (vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY);
+			client->addMoveJob (vehicle, vehicle->ClientMoveJob->DestX, vehicle->ClientMoveJob->DestY);
 			n = iNumber % WAIT_FRAMES; //prevent, that all surveyors try to calc their next move in the same frame
 		}
 	}
-
 }
 
 //think about the next move:
@@ -148,7 +148,7 @@ void cAutoMJob::PlanNextMove()
 
 	if (maxFactor != FIELD_BLOCKED)
 	{
-		Client->addMoveJob (vehicle, bestX, bestY);
+		client->addMoveJob (vehicle, bestX, bestY);
 		lastDestX = bestX;
 		lastDestY = bestY;
 	}
@@ -162,7 +162,7 @@ void cAutoMJob::PlanNextMove()
 //calculates an "importance-factor" for a given field
 float cAutoMJob::CalcFactor (int PosX, int PosY)
 {
-	const cMap& map = *Client->getMap();
+	const cMap& map = *client->getMap();
 
 	if (!map.possiblePlace (vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
 
@@ -253,13 +253,14 @@ void cAutoMJob::PlanLongMove()
 	float distanceOP, distanceSurv;
 	float factor;
 	float minValue = 0;
+	const cMap& map = *client->getMap();
 
-	for (x = 0; x < Client->getMap()->size; x++)
+	for (x = 0; x < map.size; x++)
 	{
-		for (y = 0; y < Client->getMap()->size; y++)
+		for (y = 0; y < map.size; y++)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if (!Client->getMap()->possiblePlace (vehicle, x, y) || vehicle->owner->ResourceMap[x + y * Client->getMap()->size] == 1) continue;
+			if (!map.possiblePlace (vehicle, x, y) || vehicle->owner->ResourceMap[x + y * map.size] == 1) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;
@@ -288,7 +289,7 @@ void cAutoMJob::PlanLongMove()
 	}
 	if (minValue != 0)
 	{
-		if (Client->addMoveJob (vehicle, bestX, bestY))
+		if (client->addMoveJob (vehicle, bestX, bestY))
 		{
 			lastDestX = bestX;
 			lastDestY = bestY;
@@ -296,14 +297,14 @@ void cAutoMJob::PlanLongMove()
 		else
 		{
 			string message = "Surveyor AI: I'm totally confused. Don't know what to do...";
-			Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+			client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 			finished = true;
 		}
 	}
 	else
 	{
 		string message = "Surveyor AI: My life is so senseless. I've nothing to do...";
-		Client->getActivePlayer()->addSavedReport (Client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
+		client->getActivePlayer()->addSavedReport (client->gameGUI.addCoords (message, vehicle->PosX, vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, vehicle->data.ID, vehicle->PosX, vehicle->PosY);
 		finished = true;
 	}
 }

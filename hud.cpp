@@ -751,7 +751,7 @@ int cGameGUI::show()
 	while (!end)
 	{
 		EventHandler->HandleEvents();
-		Client->gameTimer.run ();
+		client->gameTimer.run ();
 
 		mouse->GetPos();
 		if (mouse->moved())
@@ -787,7 +787,7 @@ int cGameGUI::show()
 		{
 			//run effects, which are not synchronous to game time
 			runFx ();
-			Client->handleTurnTime(); //TODO: remove
+			client->handleTurnTime(); //TODO: remove
 		}
 
 		checkScroll();
@@ -848,30 +848,30 @@ void cGameGUI::returnToCallback()
 
 void cGameGUI::updateInfoTexts ()
 {
-	int playerNumber = Client->getFreezeInfoPlayerNumber ();
-	cPlayer* player = Client->getPlayerFromNumber (playerNumber);
+	int playerNumber = client->getFreezeInfoPlayerNumber ();
+	cPlayer* player = client->getPlayerFromNumber (playerNumber);
 
-	if (Client->getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
+	if (client->getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->name), "");
 	}
-	else if (Client->getFreezeMode (FREEZE_PAUSE))
+	else if (client->getFreezeMode (FREEZE_PAUSE))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Pause"), "");
 	}
-	else if (Client->getFreezeMode (FREEZE_WAIT_FOR_SERVER))
+	else if (client->getFreezeMode (FREEZE_WAIT_FOR_SERVER))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_For_Server"), "");
 	}
-	else if (Client->getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
+	else if (client->getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), Server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "");
 	}
-	else if (Client->getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
+	else if (client->getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->name), "");
 	}
-	else if (Client->getFreezeMode (FREEZE_WAIT_FOR_TURNEND))
+	else if (client->getFreezeMode (FREEZE_WAIT_FOR_TURNEND))
 	{
 		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_TurnEnd"), "");
 	}
@@ -2641,7 +2641,7 @@ void cGameGUI::doCommand (const string& cmd)
 				addMessage ("Command can only be used by Host");
 				return;
 			}
-			cPlayer* player = Client->getPlayerFromString (cmd.substr (7, 8));
+			cPlayer* player = client->getPlayerFromString (cmd.substr (7, 8));
 			if (!player)
 			{
 				addMessage ("Wrong parameter");
@@ -3008,9 +3008,9 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
-			selectedVehiclesGroup[i]->executeAutoMoveJobCommand();
+			selectedVehiclesGroup[i]->executeAutoMoveJobCommand(*client);
 		}
-		selectedVehicle->executeAutoMoveJobCommand();
+		selectedVehicle->executeAutoMoveJobCommand(*client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
@@ -3106,11 +3106,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuReload && selectedVehicle && selectedVehicle->data.canRearm && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		client->gameGUI.mouseInputMode = muniActive;
+		mouseInputMode = muniActive;
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuRepair && selectedVehicle && selectedVehicle->data.canRepair && selectedVehicle->data.storageResCur >= 2 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		client->gameGUI.mouseInputMode = repairActive;
+		mouseInputMode = repairActive;
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3487,7 +3487,7 @@ void cGameGUI::preDrawFunction()
 
 void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 {
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	SDL_Rect dest, tmp;
 	dest.y = HUD_TOP_HIGHT - zoomOffY;
 	// draw the terrain
@@ -3529,7 +3529,7 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 
 void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 {
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	SDL_Rect dest;
 	dest.x = HUD_LEFT_WIDTH;
 	dest.y = HUD_TOP_HIGHT + tileSize - (zoomOffY % tileSize);
@@ -3562,11 +3562,11 @@ void cGameGUI::drawFx (bool bottom) const
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };	SDL_SetClipRect (buffer, &clipRect);
 	SDL_SetClipRect (buffer, &clipRect);
 
-	for (unsigned int i = 0; i < Client->FxList.Size (); i++)
+	for (unsigned int i = 0; i < client->FxList.Size (); i++)
 	{
-		if (Client->FxList[i]->bottom == bottom)
+		if (client->FxList[i]->bottom == bottom)
 		{
-			Client->FxList[i]->draw ();
+			client->FxList[i]->draw ();
 		}
 	}
 
@@ -3607,7 +3607,7 @@ SDL_Rect cGameGUI::calcScreenPos(int x, int y) const
 
 void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	SDL_Rect dest;
 	//draw rubble and all base buildings (without bridges)
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
@@ -3644,7 +3644,7 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	//draw top buildings (except connectors)
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
@@ -3718,7 +3718,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 void cGameGUI::drawShips (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -3744,7 +3744,7 @@ void cGameGUI::drawShips (int startX, int startY, int endX, int endY, int zoomOf
 void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -3795,7 +3795,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -3821,7 +3821,7 @@ void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoo
 void cGameGUI::drawConnectors (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -3847,7 +3847,7 @@ void cGameGUI::drawConnectors (int startX, int startY, int endX, int endY, int z
 void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
 	{
@@ -3874,7 +3874,7 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 
 void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
-	int tileSize = client->gameGUI.getTileSize();
+	int tileSize = getTileSize();
 	SDL_Rect dest, tmp, src = { 0, 0, Uint16 (tileSize), Uint16 (tileSize) };
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
 	for (int y = startY; y <= endY; y++)
@@ -3987,9 +3987,9 @@ void cGameGUI::displayMessages()
 			if (msgString[i] == ':')   //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr (0, i);
-				for (size_t i = 0; i < Client->getPlayerList()->Size(); i++)
+				for (size_t i = 0; i < client->getPlayerList()->Size(); i++)
 				{
-					cPlayer* const Player = (*Client->getPlayerList()) [i];
+					cPlayer* const Player = (*client->getPlayerList()) [i];
 					if (Player)
 					{
 						if (tmpString.compare (Player->name) == 0)

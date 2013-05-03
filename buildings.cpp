@@ -47,7 +47,7 @@ using namespace std;
 //--------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------
-cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, cBase* Base, unsigned int ID)
+cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID)
 	: cUnit (cUnit::kUTBuilding,
 			 ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
 			 Owner,
@@ -1090,16 +1090,14 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 //------------------------------------------------------------
 bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 {
-	cBuilding* b;
-	cVehicle* v;
 	int x = mouse->getKachelX();
 	int y = mouse->getKachelY();
 
 	if (OverUnitField->getVehicles())
 	{
-		v = OverUnitField->getVehicles();
+		const cVehicle* v = OverUnitField->getVehicles();
 
-		if (v->owner != Client->getActivePlayer())
+		if (v->owner != this->owner)
 			return false;
 
 		if (v->data.storeResType != data.storeResType)
@@ -1110,7 +1108,7 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 
 		for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
 		{
-			b = SubBase->buildings[i];
+			const cBuilding* b = SubBase->buildings[i];
 
 			if (b->data.isBig)
 			{
@@ -1130,7 +1128,7 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 	}
 	else if (OverUnitField->getTopBuilding())
 	{
-		b = OverUnitField->getTopBuilding();
+		const cBuilding* b = OverUnitField->getTopBuilding();
 
 		if (b == this)
 			return false;
@@ -1138,7 +1136,7 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 		if (b->SubBase != SubBase)
 			return false;
 
-		if (b->owner != Client->getActivePlayer())
+		if (b->owner != this->owner)
 			return false;
 
 		if (data.storeResType != b->data.storeResType)

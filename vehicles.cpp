@@ -1436,7 +1436,7 @@ bool cVehicle::CanTransferTo (cMapField* OverUnitField) const
 		if (v == this)
 			return false;
 
-		if (v->owner != Client->getActivePlayer())
+		if (v->owner != this->owner)
 			return false;
 
 		if (v->data.storeResType != data.storeResType)
@@ -1449,9 +1449,9 @@ bool cVehicle::CanTransferTo (cMapField* OverUnitField) const
 	}
 	else if (OverUnitField->getTopBuilding())
 	{
-		cBuilding* b = OverUnitField->getTopBuilding();
+		const cBuilding* b = OverUnitField->getTopBuilding();
 
-		if (b->owner != Client->getActivePlayer())
+		if (b->owner != this->owner)
 			return false;
 
 		if (!b->SubBase)
@@ -2248,13 +2248,13 @@ void cVehicle::executeStopCommand()
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeAutoMoveJobCommand()
+void cVehicle::executeAutoMoveJobCommand(cClient& client)
 {
 	if (data.canSurvey == false)
 		return;
 	if (autoMJob == 0)
 	{
-		autoMJob = new cAutoMJob (this);
+		autoMJob = new cAutoMJob (client, this);
 	}
 	else
 	{

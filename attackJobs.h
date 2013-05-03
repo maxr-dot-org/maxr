@@ -21,12 +21,13 @@
 
 #include "clist.h"
 
-class cVehicle;
 class cBuilding;
-class cUnit;
+class cClient;
 class cMap;
-class cPlayer;
 class cNetMessage;
+class cPlayer;
+class cUnit;
+class cVehicle;
 
 
 /**
@@ -79,7 +80,6 @@ private:
 class cClientAttackJob
 {
 public:
-
 	int iID;
 	cVehicle* vehicle;
 	cBuilding* building;
@@ -96,15 +96,15 @@ public:
 	/** prepares a mapsquare to be attacked
 	* @author Eiko
 	*/
-	static void lockTarget (cNetMessage* message);
-	static void handleAttackJobs();
-	static void makeImpact (int offset, int remainingHP, int id);
+	static void lockTarget (cClient& client, cNetMessage* message);
+	static void handleAttackJobs(cClient& client);
+	static void makeImpact (cClient& client, int offset, int remainingHP, int id);
 
-	cClientAttackJob (cNetMessage* message);
+	cClientAttackJob (cClient* client, cNetMessage* message);
 
 	void rotate();
-	void playMuzzle();
-	void sendFinishMessage();
+	void playMuzzle(cClient& client);
+	void sendFinishMessage(cClient& client);
 };
 
 

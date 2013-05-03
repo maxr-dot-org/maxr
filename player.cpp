@@ -307,7 +307,7 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 //--------------------------------------------------------------------------
 cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding* b, unsigned int ID)
 {
-	cBuilding* Building = new cBuilding (b, this, &base, ID);
+	cBuilding* Building = new cBuilding (b, this, ID);
 
 	Building->PosX = posx;
 	Building->PosY = posy;
