@@ -31,7 +31,7 @@
 #include "vehicles.h"
 #include "fxeffects.h"
 
-cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, const cVehicle* srcVehicle_, const cBuilding* destBuilding_, const cVehicle* destVehicle_) :
 	type (type_),
 	srcVehicle (srcVehicle_),
 	destBuilding (destBuilding_),
@@ -77,26 +77,26 @@ int cPathDestHandler::heuristicCost (int srcX, int srcY) const
 	}
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL, NULL);
 	init (ScrX, ScrY, Map, Vehicle, group);
 }
 
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, cVehicle* destVehicle, cBuilding* destBuilding, cMap* Map, cVehicle* Vehicle, bool load)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cVehicle* destVehicle, const cBuilding* destBuilding, const cMap* Map, const cVehicle* Vehicle, bool load)
 {
 	destHandler = new cPathDestHandler (load ? PATH_DEST_TYPE_LOAD : PATH_DEST_TYPE_ATTACK, 0, 0, Vehicle, destBuilding, destVehicle);
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, int attackX, int attackY)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, int attackX, int attackY)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_ATTACK, attackX, attackY, Vehicle, NULL, NULL);
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-void cPathCalculator::init (int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group)
+void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group)
 {
 	this->ScrX = ScrX;
 	this->ScrY = ScrY;
@@ -882,16 +882,14 @@ void cEndMoveAction::executeGetInAction()
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr);
-
 	}
-
 }
 
 void cEndMoveAction::executeAttackAction()
 {
 	//get the target unit
-	cVehicle* destVehicle = Server->getVehicleFromID (destID_);
-	cBuilding* destBuilding = Server->getBuildingFromID (destID_);
+	const cVehicle* destVehicle = Server->getVehicleFromID (destID_);
+	const cBuilding* destBuilding = Server->getBuildingFromID (destID_);
 
 	int x, y;
 	if (destVehicle)
@@ -918,18 +916,21 @@ void cEndMoveAction::executeAttackAction()
 	Server->AJobs.Add (new cServerAttackJob (vehicle_, offset, false));
 }
 
-cClientMoveJob::cClientMoveJob (int iSrcOff, int iDestOff, cVehicle* Vehicle) :
+cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle) :
+	client(&client_),
 	Waypoints (NULL)
 {
-	DestX = iDestOff % Client->getMap()->size;
-	DestY = iDestOff / Client->getMap()->size;
+	DestX = iDestOff % client->getMap()->size;
+	DestY = iDestOff / client->getMap()->size;
 	init (iSrcOff, Vehicle);
 }
 
-cClientMoveJob::cClientMoveJob (int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle)
+#if 0
+cClientMoveJob::cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle) :
+	client(client_)
 {
 	this->Waypoints = Waypoints;
-	sWaypoint* nextWaypoint = Waypoints;
+	const sWaypoint* nextWaypoint = Waypoints;
 	while (nextWaypoint)
 	{
 		if (!nextWaypoint->next)
@@ -944,12 +945,11 @@ cClientMoveJob::cClientMoveJob (int iSrcOff, sWaypoint* Waypoints, cVehicle* Veh
 
 	init (iSrcOff, Vehicle);
 }
+#endif
 
 void cClientMoveJob::init (int iSrcOff, cVehicle* Vehicle)
 {
-	if (!Client) return;
-
-	Map = Client->getMap();
+	Map = client->getMap();
 	this->Vehicle = Vehicle;
 	ScrX = iSrcOff % Map->size;
 	ScrY = iSrcOff / Map->size;
@@ -980,11 +980,11 @@ cClientMoveJob::~cClientMoveJob()
 		Waypoints = NextWaypoint;
 	}
 
-	for (unsigned int i = 0; i < Client->ActiveMJobs.Size(); i++)
+	for (unsigned int i = 0; i < client->ActiveMJobs.Size(); i++)
 	{
-		if (Client->ActiveMJobs[i] == this)
+		if (client->ActiveMJobs[i] == this)
 		{
-			Client->ActiveMJobs.Delete (i);
+			client->ActiveMJobs.Delete (i);
 			i--;
 		}
 	}
@@ -1017,11 +1017,11 @@ bool cClientMoveJob::generateFromMessage (cNetMessage* message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath (int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group)
+sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group)
 {
 	if (SrcX == DestX && SrcY == DestY) return 0;
 
-	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, Client->getMap(), vehicle, group);
+	cPathCalculator PathCalculator (SrcX, SrcY, DestX, DestY, &map, vehicle, group);
 	sWaypoint* waypoints = PathCalculator.calcPath();
 
 	return waypoints;
@@ -1032,7 +1032,7 @@ void cClientMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	Log.write (" Client: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG);
-	Client->addActiveMoveJob (this);
+	client->addActiveMoveJob (this);
 	Log.write (" Client: Added released movejob to avtive ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
@@ -1056,13 +1056,13 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (!Vehicle->MoveJobActive)
 			{
 				startMoveSound();
-				Client->addActiveMoveJob (this);
-				if (Client->gameGUI.getSelVehicle() == Vehicle) Client->gameGUI.unitMenuActive = false;
+				client->addActiveMoveJob (this);
+				if (client->gameGUI.getSelVehicle() == Vehicle) client->gameGUI.unitMenuActive = false;
 			}
 			if (bEndForNow)
 			{
 				bEndForNow = false;
-				Client->addActiveMoveJob (Vehicle->ClientMoveJob);
+				client->addActiveMoveJob (Vehicle->ClientMoveJob);
 				Log.write (" Client: reactivated movejob; Vehicle-ID: " + iToStr (Vehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 			}
 			Vehicle->MoveJobActive = true;
@@ -1081,7 +1081,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 		{
 			Log.write (" Client: The movejob will end for now", cLog::eLOG_TYPE_NET_DEBUG);
 			if (Vehicle->moving) doEndMoveVehicle();
-			if (bEndForNow) Client->addActiveMoveJob (this);
+			if (bEndForNow) client->addActiveMoveJob (this);
 			this->iSavedSpeed = iSavedSpeed;
 			Vehicle->data.speedCur = 0;
 			bSuspended = true;
@@ -1100,24 +1100,24 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (Vehicle->moving) doEndMoveVehicle();
 			Log.write (" Client: next field is blocked: DestX: " + iToStr (Waypoints->next->X) + ", DestY: " + iToStr (Waypoints->next->Y), cLog::eLOG_TYPE_NET_DEBUG);
 
-			if (Vehicle->owner != Client->getActivePlayer())
+			if (Vehicle->owner != client->getActivePlayer())
 			{
 				bFinished = true;
 				break;
 			}
 
 			bEndForNow = true;
-			sWaypoint* path = calcPath (Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
+			sWaypoint* path = calcPath (*client->getMap(), Vehicle->PosX, Vehicle->PosY, DestX, DestY, Vehicle);
 			if (path)
 			{
-				sendMoveJob (*Client, path, Vehicle->iID);
-				if (endMoveAction) sendEndMoveAction (*Client, Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
+				sendMoveJob (*client, path, Vehicle->iID);
+				if (endMoveAction) sendEndMoveAction (*client, Vehicle->iID, endMoveAction->destID_, endMoveAction->type_);
 			}
 			else
 			{
 				bFinished = true;
 
-				if (Vehicle == Client->gameGUI.getSelVehicle())
+				if (Vehicle == client->gameGUI.getSelVehicle())
 				{
 					if (random (2))
 						PlayVoice (VoiceData.VOINoPath1);
@@ -1161,23 +1161,22 @@ void cClientMoveJob::moveVehicle()
 
 
 		//restart movesound, when drinving into or out of water
-		if (Vehicle == Client->gameGUI.getSelVehicle())
+		if (Vehicle == client->gameGUI.getSelVehicle())
 		{
 			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y, true);
 			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
 
 			if (wasWater != water)
 			{
-				Vehicle->StartMoveSound(Client->gameGUI);
+				Vehicle->StartMoveSound(client->gameGUI);
 			}
 		}
-
 	}
 
 	int iSpeed;
 	if (Vehicle->data.animationMovement)
 	{
-		if (Client->gameTimer.timer50ms)
+		if (client->gameTimer.timer50ms)
 			Vehicle->WalkFrame++;
 		if (Vehicle->WalkFrame >= 13) Vehicle->WalkFrame = 1;
 		iSpeed = MOVE_SPEED / 2;
@@ -1194,31 +1193,31 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWater (Vehicle->PosX, Vehicle->PosY, false) && !
 		(Waypoints && Waypoints->next && Map->terrain[Map->Kacheln[Waypoints->next->X + Waypoints->next->Y * Map->size]].water) &&
-		(Vehicle->owner == Client->getActivePlayer() || Client->getActivePlayer()->ScanMap[Vehicle->PosX + Vehicle->PosY * Map->size]))
+		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->ScanMap[Vehicle->PosX + Vehicle->PosY * Map->size]))
 	{
 		if (abs (Vehicle->OffX) == 64 || abs (Vehicle->OffY) == 64)
 		{
 			switch (Vehicle->dir)
 			{
 				case 0:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY, 0));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 - 10 + Vehicle->OffY, 0));
 					break;
 				case 4:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY, 0));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + 10 + Vehicle->OffY, 0));
 					break;
 				case 2:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
 					break;
 				case 6:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 10 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 2));
 					break;
 				case 1:
 				case 5:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 1));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 1));
 					break;
 				case 3:
 				case 7:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 3));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + Vehicle->OffX, Vehicle->PosY * 64 + Vehicle->OffY, 3));
 					break;
 			}
 		}
@@ -1227,16 +1226,16 @@ void cClientMoveJob::moveVehicle()
 			switch (Vehicle->dir)
 			{
 				case 1:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 1));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 1));
 					break;
 				case 5:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 1));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 1));
 					break;
 				case 3:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 3));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 + 26 + Vehicle->OffX, Vehicle->PosY * 64 + 26 + Vehicle->OffY, 3));
 					break;
 				case 7:
-					Client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 3));
+					client->addFx (new cFxTracks (Vehicle->PosX * 64 - 26 + Vehicle->OffX, Vehicle->PosY * 64 - 26 + Vehicle->OffY, 3));
 					break;
 			}
 		}
@@ -1248,7 +1247,6 @@ void cClientMoveJob::moveVehicle()
 	{
 		Log.write(" Client: Flying dutchmen detected! Unit ID: " + iToStr(Vehicle->iID) + " at position (" + iToStr(Vehicle->PosX) + ":" + iToStr(Vehicle->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 	}
-
 }
 
 void cClientMoveJob::doEndMoveVehicle()
@@ -1276,8 +1274,8 @@ void cClientMoveJob::doEndMoveVehicle()
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 
-	Client->gameGUI.callMiniMapDraw();
-	Client->gameGUI.updateMouseCursor();
+	client->gameGUI.callMiniMapDraw();
+	client->gameGUI.updateMouseCursor();
 	Vehicle->owner->DoScan();
 
 	calcNextDir();
@@ -1314,17 +1312,18 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 
 	if (bSpezial)
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - Client->gameGUI.getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeileSpecial[iIndex][64 - client->gameGUI.getTileSize()], NULL, buffer, &Dest);
 	}
 	else
 	{
-		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - Client->gameGUI.getTileSize()], NULL, buffer, &Dest);
+		SDL_BlitSurface (OtherData.WayPointPfeile[iIndex][64 - client->gameGUI.getTileSize()], NULL, buffer, &Dest);
 	}
 }
 
 void cClientMoveJob::startMoveSound()
 {
-	if (Vehicle == Client->gameGUI.getSelVehicle()) Vehicle->StartMoveSound(Client->gameGUI);
+	cGameGUI& gameGUI = client->gameGUI;
+	if (Vehicle == gameGUI.getSelVehicle()) Vehicle->StartMoveSound(gameGUI);
 	bSoundRunning = true;
 }
 
@@ -1333,7 +1332,7 @@ void cClientMoveJob::stopMoveSound()
 	if (!bSoundRunning) return;
 
 	bSoundRunning = false;
-	cGameGUI& gameGUI = Client->gameGUI;
+	cGameGUI& gameGUI = client->gameGUI;
 
 	if (Vehicle == gameGUI.getSelVehicle())
 	{

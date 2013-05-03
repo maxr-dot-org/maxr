@@ -146,7 +146,7 @@ void cClient::initPlayer (cPlayer* Player)
 
 int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group)
 {
-	sWaypoint* path = cClientMoveJob::calcPath (vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
+	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if (path)
 	{
 		sendMoveJob (*this, path, vehicle->iID);
@@ -712,7 +712,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 		return;
 	}
 
-	cClientMoveJob* MoveJob = new cClientMoveJob (iSrcOff, iDestOff, Vehicle);
+	cClientMoveJob* MoveJob = new cClientMoveJob (*this, iSrcOff, iDestOff, Vehicle);
 	MoveJob->iSavedSpeed = iSavedSpeed;
 	if (!MoveJob->generateFromMessage (&message)) return;
 	Log.write (" Client: Added received movejob at time " + iToStr (gameTimer.gameTime), cLog::eLOG_TYPE_NET_DEBUG);

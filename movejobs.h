@@ -22,10 +22,11 @@
 #include <SDL.h>
 #include "clist.h"
 
-class cVehicle;
 class cBuilding;
+class cClient;
 class cMap;
 class cNetMessage;
+class cVehicle;
 
 /* Size of a memory block while pathfinding */
 #define MEM_BLOCK_SIZE 10
@@ -71,13 +72,13 @@ class cPathDestHandler
 {
 	ePathDestinationTypes type;
 
-	cVehicle* srcVehicle;
+	const cVehicle* srcVehicle;
 
-	cBuilding* destBuilding;
-	cVehicle* destVehicle;
+	const cBuilding* destBuilding;
+	const cVehicle* destVehicle;
 	int destX, destY;
 public:
-	cPathDestHandler (ePathDestinationTypes type_, int destX, int destY, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
+	cPathDestHandler (ePathDestinationTypes type_, int destX, int destY, const cVehicle* srcVehicle_, const cBuilding* destBuilding_, const cVehicle* destVehicle_);
 
 	bool hasReachedDestination (int x, int y) const;
 	int heuristicCost (int srcX, int srcY) const;
@@ -85,12 +86,12 @@ public:
 
 class cPathCalculator
 {
-	void init (int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group);
+	void init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group);
 
 public:
-	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, cMap* Map, cVehicle* Vehicle, cList<cVehicle*>* group = NULL);
-	cPathCalculator (int ScrX, int ScrY, cVehicle* destVehicle, cBuilding* destBuilding, cMap* Map, cVehicle* Vehicle, bool load);
-	cPathCalculator (int ScrX, int ScrY, cMap* Map, cVehicle* Vehicle, int attackX, int attackY);
+	cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group = NULL);
+	cPathCalculator (int ScrX, int ScrY, const cVehicle* destVehicle, const cBuilding* destBuilding, const cMap* Map, const cVehicle* Vehicle, bool load);
+	cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, int attackX, int attackY);
 	~cPathCalculator();
 
 	/**
@@ -105,9 +106,9 @@ public:
 	int calcNextCost (int srcX, int srcY, int destX, int destY) const;
 
 	/* the map on which the path will be calculated */
-	cMap* Map;
+	const cMap* Map;
 	/* the moving vehicle */
-	cVehicle* Vehicle;
+	const cVehicle* Vehicle;
 	/* if more then one vehicle is moving in a group this is the list of all moving vehicles */
 	cList<cVehicle*>* group;
 	/* source and destination coords */
@@ -216,12 +217,14 @@ public:
 
 class cClientMoveJob
 {
+	cClient* client;
+
 	void init (int iSrcOff, cVehicle* Vehicle);
 public:
-	static sWaypoint* calcPath (int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group = NULL);
+	static sWaypoint* calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group = NULL);
 
-	cClientMoveJob (int iSrcOff, int iDestOff, cVehicle* Vehicle);
-	cClientMoveJob (int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle);
+	cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle);
+//	cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle);
 	~cClientMoveJob();
 	cMap* Map;
 	cVehicle* Vehicle;
