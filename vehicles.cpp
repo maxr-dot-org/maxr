@@ -2232,7 +2232,7 @@ void cVehicle::executeBuildCommand()
 {
 	if (ClientMoveJob)
 		sendWantStopMove (*Client, iID);
-	cBuildingsBuildMenu buildMenu (owner, this);
+	cBuildingsBuildMenu buildMenu (*Client, owner, this);
 	buildMenu.show();
 }
 
@@ -2266,7 +2266,7 @@ void cVehicle::executeAutoMoveJobCommand(cClient& client)
 //-----------------------------------------------------------------------------
 void cVehicle::executeActivateStoredVehiclesCommand()
 {
-	cStorageMenu storageMenu (storedUnits, this, 0);
+	cStorageMenu storageMenu (*Client, storedUnits, this, 0);
 	storageMenu.show();
 }
 

@@ -925,6 +925,7 @@ public:
 class cBuildingsBuildMenu : public cHangarMenu
 {
 protected:
+	cClient* client;
 	cVehicle* vehicle;
 
 	AutoPtr<cMenuLabel>::type titleLabel;
@@ -932,7 +933,7 @@ protected:
 	AutoPtr<cMenuBuildSpeedHandler>::type speedHandler;
 
 public:
-	cBuildingsBuildMenu (cPlayer* player_, cVehicle* vehicle_);
+	cBuildingsBuildMenu (cClient& client, cPlayer* player_, cVehicle* vehicle_);
 
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);
@@ -1019,6 +1020,7 @@ class cStorageMenu : public cMenu
 {
 	friend class cClient;
 protected:
+	cClient* client;
 	cVehicle* ownerVehicle;
 	cBuilding* ownerBuilding;
 	cList<cVehicle*>& storageList;
@@ -1062,7 +1064,7 @@ protected:
 
 	int getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons) [6]);
 public:
-	cStorageMenu (cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
+	cStorageMenu (cClient& client_, cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
 
 	static void doneReleased (void* parent);
 
@@ -1127,6 +1129,7 @@ public:
 
 class cReportsMenu : public cMenu
 {
+	cClient* client;
 	cPlayer* owner;
 
 	AutoPtr<cMenuRadioGroup>::type typeButtonGroup;
@@ -1149,7 +1152,7 @@ class cReportsMenu : public cMenu
 
 	AutoPtr<cMenuReportsScreen>::type dataScreen;
 public:
-	cReportsMenu (cPlayer* owner_);
+	cReportsMenu (cClient& client, cPlayer* owner_);
 
 	static void doneReleased (void* parent);
 

@@ -1818,7 +1818,7 @@ void cBuilding::executeStopCommand()
 //-----------------------------------------------------------------------------
 void cBuilding::executeActivateStoredVehiclesCommand()
 {
-	cStorageMenu storageMenu (storedUnits, 0, this);
+	cStorageMenu storageMenu (*Client, storedUnits, 0, this);
 	storageMenu.show();
 }
 

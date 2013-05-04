@@ -331,7 +331,7 @@ void sendRequestMap (const string& mapName, int playerNr)
 	cMenu::sendMessage (msg);
 }
 
-void sendTakenUpgrades (sUnitUpgrade (*unitUpgrades) [8], cPlayer* player)
+void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player)
 {
 	cNetMessage* msg = NULL;
 	int iCount = 0;
@@ -379,7 +379,7 @@ void sendTakenUpgrades (sUnitUpgrade (*unitUpgrades) [8], cPlayer* player)
 			{
 				msg->pushInt16 (iCount);
 				msg->pushInt16 (player->Nr);
-				Client->sendNetMessage (msg);
+				client.sendNetMessage (msg);
 				msg = NULL;
 			}
 
@@ -389,7 +389,7 @@ void sendTakenUpgrades (sUnitUpgrade (*unitUpgrades) [8], cPlayer* player)
 	{
 		msg->pushInt16 (iCount);
 		msg->pushInt16 (player->Nr);
-		Client->sendNetMessage (msg);
+		client.sendNetMessage (msg);
 	}
 }
 

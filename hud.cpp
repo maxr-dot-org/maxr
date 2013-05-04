@@ -2988,7 +2988,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedVehicle && !selectedVehicle->data.canBuild.empty() && !selectedVehicle->IsBuilding && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		sendWantStopMove (*client, selectedVehicle->iID);
-		cBuildingsBuildMenu buildMenu (player, selectedVehicle);
+		cBuildingsBuildMenu buildMenu (*client, player, selectedVehicle);
 		buildMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed () && selectedBuilding->owner == player)
@@ -3088,12 +3088,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		cStorageMenu storageMenu (selectedVehicle->storedUnits, selectedVehicle, NULL);
+		cStorageMenu storageMenu (*client, selectedVehicle->storedUnits, selectedVehicle, NULL);
 		storageMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		cStorageMenu storageMenu (selectedBuilding->storedUnits, NULL, selectedBuilding);
+		cStorageMenu storageMenu (*client, selectedBuilding->storedUnits, NULL, selectedBuilding);
 		storageMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
@@ -3195,7 +3195,7 @@ void cGameGUI::centerReleased (void* parent)
 void cGameGUI::reportsReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cReportsMenu reportMenu (gui->player);
+	cReportsMenu reportMenu (*gui->getClient(), gui->player);
 	reportMenu.show();
 }
 

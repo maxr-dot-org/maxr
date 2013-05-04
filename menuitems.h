@@ -37,9 +37,10 @@ class cNetworkMenu;
 class cMenuRadioGroup;
 class cMenuUnitsList;
 class cReportsMenu;
-class cVehicle;
 class cBuilding;
+class cClient;
 class cUnit;
+class cVehicle;
 
 /**
  * A struct that contains information of a savegame.
@@ -1283,6 +1284,7 @@ public:
 //-----------------------------------------------------------------------------
 class cMenuReportsScreen : public cMenuItem, public INotificationListener
 {
+	cClient* client;
 	cPlayer* owner;
 	cReportsMenu* parentMenu;
 
@@ -1328,7 +1330,7 @@ class cMenuReportsScreen : public cMenuItem, public INotificationListener
 
 	//-----------------------------------------------------------------------------
 public:
-	cMenuReportsScreen (int x, int y, int w, int h, cPlayer* owner_, cReportsMenu* parentMenu_);
+	cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cPlayer* owner_, cReportsMenu* parentMenu_);
 	~cMenuReportsScreen();
 
 	virtual void draw();

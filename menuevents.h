@@ -76,7 +76,7 @@ void sendReconnectionSuccess (int playerNr);
 
 void sendRequestMap (const std::string& mapName, int playerNr);
 
-void sendTakenUpgrades (sUnitUpgrade (*unitUpgrades) [8], cPlayer* player);
+void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player);
 
 int findUpgradeValue (sUnitUpgrade upgrades[8], int upgradeType, int defaultValue = 0);
 

@@ -4153,11 +4153,10 @@ void cLoadSaveMenu::extendedSlotClicked (int oldSelection)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cBuildingsBuildMenu::cBuildingsBuildMenu (cPlayer* player_, cVehicle* vehicle_)
-	: cHangarMenu (LoadPCX (GFXOD_BUILD_SCREEN), player_, MNU_BG_ALPHA)
+cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cVehicle* vehicle_)
+	: cHangarMenu (LoadPCX (GFXOD_BUILD_SCREEN), player_, MNU_BG_ALPHA),
+	client(&client_)
 {
-	if (!Client) terminate = true;
-
 	vehicle = vehicle_;
 
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
@@ -4221,12 +4220,12 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cMenu*) parent);
 	if (!menu->selectedUnit->getUnitData()->isBig)
 	{
-		sendWantBuild (*Client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size, false, 0);
+		sendWantBuild (*menu->client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * menu->client->getMap()->size, false, 0);
 	}
 	else
 	{
-		Client->gameGUI.mouseInputMode = placeBand;
-		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * Client->getMap()->size;
+		menu->client->gameGUI.mouseInputMode = placeBand;
+		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * menu->client->getMap()->size;
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
@@ -4245,7 +4244,7 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-	Client->gameGUI.mouseInputMode = placeBand;
+	menu->client->gameGUI.mouseInputMode = placeBand;
 	menu->end = true;
 }
 
@@ -4638,7 +4637,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 {
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	sendTakenUpgrades (menu->unitUpgrades, menu->player);
+	sendTakenUpgrades (*Client, menu->unitUpgrades, menu->player);
 	menu->end = true;
 }
 
@@ -4791,8 +4790,9 @@ void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* d
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStorageMenu::cStorageMenu (cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
+cStorageMenu::cStorageMenu (cClient& client_, cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
 	cMenu (LoadPCX (GFXOD_STORAGE), MNU_BG_ALPHA),
+	client(&client_),
 	ownerVehicle (vehicle),
 	ownerBuilding (building),
 	storageList (storageList_),
@@ -5034,13 +5034,13 @@ void cStorageMenu::activateReleased (void* parent)
 	if (menu->ownerVehicle)
 	{
 		menu->ownerVehicle->VehicleToActivate = index;
-		if (menu->unitData.factorAir > 0) sendWantActivate (*Client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
-		else Client->gameGUI.mouseInputMode = activateVehicle;
+		if (menu->unitData.factorAir > 0) sendWantActivate (*menu->client, menu->ownerVehicle->iID, true, menu->storageList[index]->iID, menu->ownerVehicle->PosX, menu->ownerVehicle->PosY);
+		else menu->client->gameGUI.mouseInputMode = activateVehicle;
 	}
 	else if (menu->ownerBuilding)
 	{
 		menu->ownerBuilding->VehicleToActivate = index;
-		Client->gameGUI.mouseInputMode = activateVehicle;
+		menu->client->gameGUI.mouseInputMode = activateVehicle;
 	}
 	menu->end = true;
 }
@@ -5052,7 +5052,7 @@ void cStorageMenu::reloadReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->reloadButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantSupply (*Client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
+	sendWantSupply (*menu->client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
 	menu->voiceTypeAll = false;
 	menu->voicePlayed = false;
 }
@@ -5064,7 +5064,7 @@ void cStorageMenu::repairReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->repairButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantSupply (*Client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
+	sendWantSupply (*menu->client, menu->storageList[index]->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
 	menu->voiceTypeAll = false;
 	menu->voicePlayed = false;
 }
@@ -5076,7 +5076,7 @@ void cStorageMenu::upgradeReleased (void* parent)
 	int index = menu->getClickedButtonVehIndex (menu->upgradeButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
-	sendWantUpgrade (*Client, menu->ownerBuilding->iID, index, false);
+	sendWantUpgrade (*menu->client, menu->ownerBuilding->iID, index, false);
 }
 
 //------------------------------------------------------------------------------
@@ -5090,6 +5090,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 	int unitYPos = menu->ownerBuilding ? menu->ownerBuilding->PosY : menu->ownerVehicle->PosY;
 	int id = menu->ownerBuilding ? menu->ownerBuilding->iID : menu->ownerVehicle->iID;
 	bool isBig = menu->unitData.isBig;
+	const cMap& map = *menu->client->getMap();
 
 	for (unsigned int i = 0; i < menu->storageList.Size(); i++)
 	{
@@ -5097,15 +5098,15 @@ void cStorageMenu::activateAllReleased (void* parent)
 		bool activated = false;
 		for (int ypos = unitYPos - 1, poscount = 0; ypos <= unitYPos + (isBig ? 2 : 1); ypos++)
 		{
-			if (ypos < 0 || ypos >= Client->getMap()->size) continue;
+			if (ypos < 0 || ypos >= map.size) continue;
 			for (int xpos = unitXPos - 1; xpos <= unitXPos + (isBig ? 2 : 1); xpos++, poscount++)
 			{
-				if (xpos < 0 || xpos >= Client->getMap()->size || ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) && ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig)))) continue;
-				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, Client->getMap(), vehicle->typ)) ||
-					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, Client->getMap(), vehicle->typ)))
+				if (xpos < 0 || xpos >= map.size || ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) && ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig)))) continue;
+				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
+					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
 					 && !hasCheckedPlace[poscount])
 				{
-					sendWantActivate (*Client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
+					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
 					hasCheckedPlace[poscount] = true;
 					activated = true;
 					break;
@@ -5132,7 +5133,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 		cVehicle* vehicle = menu->storageList[i];
 		if (vehicle->data.ammoCur != vehicle->data.ammoMax)
 		{
-			sendWantSupply (*Client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
+			sendWantSupply (*menu->client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REARM);
 			resources--;
 		}
 	}
@@ -5153,7 +5154,7 @@ void cStorageMenu::repairAllReleased (void* parent)
 		cVehicle* vehicle = menu->storageList[i];
 		if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax)
 		{
-			sendWantSupply (*Client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
+			sendWantSupply (*menu->client, vehicle->iID, true, menu->ownerBuilding->iID, false, SUPPLY_TYPE_REPAIR);
 			int value = vehicle->data.hitpointsCur;
 			while (value < vehicle->data.hitpointsMax)
 			{
@@ -5170,7 +5171,7 @@ void cStorageMenu::upgradeAllReleased (void* parent)
 	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
 	if (!menu->ownerBuilding) return;
 
-	sendWantUpgrade (*Client, menu->ownerBuilding->iID, 0, true);
+	sendWantUpgrade (*menu->client, menu->ownerBuilding->iID, 0, true);
 }
 
 //------------------------------------------------------------------------------
@@ -5211,7 +5212,6 @@ void cStorageMenu::playVoice (int Type)
 				PlayVoice (VoiceData.VOIRepaired2);
 		}
 	}
-
 }
 
 
@@ -5457,8 +5457,9 @@ void cMineManagerMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cReportsMenu::cReportsMenu (cPlayer* owner_)
+cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	: cMenu (LoadPCX (GFXOD_REPORTS), MNU_BG_ALPHA)
+	, client(&client_)
 	, owner (owner_)
 {
 	typeButtonGroup = new cMenuRadioGroup();
@@ -5515,7 +5516,7 @@ cReportsMenu::cReportsMenu (cPlayer* owner_)
 	menuItems.Add (doneButton);
 
 	// its important that the screen will be added before the up and down buttons
-	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, owner, this);
+	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, *client, owner, this);
 	menuItems.Add (dataScreen);
 
 	upButton = new cMenuButton (position.x + 492, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG);
@@ -5592,7 +5593,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			{
 				if (storingVehicle->storedUnits[i] == vehicle)
 				{
-					Client->gameGUI.selectUnit (storingVehicle);
+					client->gameGUI.selectUnit (storingVehicle);
 					storingVehicle->center();
 					return;
 				}
@@ -5608,7 +5609,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			{
 				if (storingBuilding->storedUnits[i] == vehicle)
 				{
-					Client->gameGUI.selectUnit (storingBuilding);
+					client->gameGUI.selectUnit (storingBuilding);
 					storingBuilding->center();
 					return;
 				}
@@ -5622,12 +5623,12 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 
 	if (vehicle)
 	{
-		Client->gameGUI.selectUnit (vehicle);
+		client->gameGUI.selectUnit (vehicle);
 		vehicle->center();
 	}
 	else if (building)
 	{
-		Client->gameGUI.selectUnit (building);
+		client->gameGUI.selectUnit (building);
 		building->center();
 	}
 }
