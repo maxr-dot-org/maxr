@@ -56,7 +56,8 @@ sMouseBox::sMouseBox() :
 	endY (-1)
 {}
 
-cDebugOutput::cDebugOutput()
+cDebugOutput::cDebugOutput() :
+	server(0), client(0)
 {
 	debugAjobs = false;
 	debugBaseServer = false;
@@ -71,37 +72,46 @@ cDebugOutput::cDebugOutput()
 	debugSync = true;
 }
 
+void cDebugOutput::setClient(cClient* client_)
+{
+	client = client_;
+}
+void cDebugOutput::setServer(cServer* server_)
+{
+	server = server_;
+}
+
 void cDebugOutput::draw()
 {
 #define DEBUGOUT_X_POS		(Video.getResolutionX()-200)
 
 	int debugOff = 30;
 
-	cClient& client = *Client;
-	const cGameGUI& gui = client.gameGUI;
-	const cPlayer* player = client.gameGUI.player;
+	const cGameGUI& gui = client->gameGUI;
+	const cPlayer* player = client->gameGUI.player;
 
 	if (debugPlayers)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ( (int) client.PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
 		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
 		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
-		for (unsigned int i = 0; i < client.PlayerList->Size(); i++)
+		const cList<cPlayer*>& playerList = *client->PlayerList;
+		for (unsigned int i = 0; i < playerList.Size(); i++)
 		{
 			//HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
 
-			if ( (*client.PlayerList) [i]->bFinishedTurn/* && (*client->PlayerList)[i] != player*/)
+			if (playerList[i]->bFinishedTurn /* && playerList[i] != player*/)
 			{
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
 			}
-			/*else if( (*client->PlayerList)[i] == player && client->bWantToEnd )
+			/*else if (playerList[i] == player && client->bWantToEnd)
 			{
-				SDL_BlitSurface( GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest );
+				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
 			}*/
 			else
 			{
@@ -109,34 +119,33 @@ void cDebugOutput::draw()
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
 			}
 
-			SDL_BlitSurface ( (*client.PlayerList) [i]->color, &rSrc, buffer, &rDest);
-			if ( (*client.PlayerList) [i] == player)
+			SDL_BlitSurface (playerList[i]->color, &rSrc, buffer, &rDest);
+			if (playerList[i] == player)
 			{
-				string sTmpLine = " " + (*client.PlayerList) [i]->name + ", nr: " + iToStr ( (*client.PlayerList) [i]->Nr) + " << you! ";
+				string sTmpLine = " " + playerList[i]->name + ", nr: " + iToStr (playerList[i]->Nr) + " << you! ";
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
 				SDL_FillRect (buffer, &rBlackOut, 0x000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			else
 			{
-				string sTmpLine = " " + (*client.PlayerList) [i]->name + ", nr: " + iToStr ( (*client.PlayerList) [i]->Nr) + " ";
+				string sTmpLine = " " + playerList[i]->name + ", nr: " + iToStr (playerList[i]->Nr) + " ";
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
 				SDL_FillRect (buffer, &rBlackOut, 0x000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			debugOff += 10; //use 10 for pixel high of dots instead of text high
 			rDest.y = rDotDest.y = rBlackOut.y = debugOff;
-
 		}
 	}
 
 	if (debugAjobs)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client.attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		if (Server)
+		if (server)
 		{
-			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) Server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
 	}
@@ -149,7 +158,7 @@ void cDebugOutput::draw()
 
 	if (debugBaseServer)
 	{
-		cPlayer* serverPlayer = Server->getPlayerFromNumber (player->Nr);
+		cPlayer* serverPlayer = server->getPlayerFromNumber (player->Nr);
 		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
@@ -195,33 +204,33 @@ void cDebugOutput::draw()
 	{
 		font->showText (DEBUGOUT_X_POS - 20, debugOff, "Sync debug:", FONT_LATIN_SMALL_YELLOW);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
-		if (Server)
+		if (server)
 		{
 			font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Server:", FONT_LATIN_SMALL_YELLOW);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			font->showText (DEBUGOUT_X_POS, debugOff, "Server Time: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (Server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 			font->showText (DEBUGOUT_X_POS, debugOff, "Net MSG Queue: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (Server->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 			font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
-			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (Server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 
 			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+			for (unsigned int i = 0; i < server->PlayerList->Size(); i++)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
-				if (Server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < Server->gameTimer.gameTime)
+				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
 					fontType = FONT_LATIN_SMALL_RED;
 				font->showText (DEBUGOUT_X_POS + 10, debugOff, "Client " + iToStr (i) + ": ", fontType);
-				font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (Server->gameTimer.gameTime - Server->gameTimer.getReceivedTime (i)), fontType);
+				font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (server->gameTimer.gameTime - server->gameTimer.getReceivedTime (i)), fontType);
 				debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 			}
 		}
@@ -229,18 +238,18 @@ void cDebugOutput::draw()
 		font->showText (DEBUGOUT_X_POS - 10, debugOff, "-Client:", FONT_LATIN_SMALL_YELLOW);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		eUnicodeFontType fontType = FONT_LATIN_SMALL_GREEN;
-		if (client.gameTimer.debugRemoteChecksum != client.gameTimer.localChecksum)
+		if (client->gameTimer.debugRemoteChecksum != client->gameTimer.localChecksum)
 			fontType = FONT_LATIN_SMALL_RED;
 		font->showText (DEBUGOUT_X_POS, debugOff, "Server Checksum: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client.gameTimer.debugRemoteChecksum), fontType);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.debugRemoteChecksum), fontType);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Client Checksum: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client.gameTimer.localChecksum), fontType);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, "0x" + iToHex (client->gameTimer.localChecksum), fontType);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Client Time: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client.gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
@@ -248,24 +257,24 @@ void cDebugOutput::draw()
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client.gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.eventCounter), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Time Buffer: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client.gameTimer.getReceivedTime() - client.gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.getReceivedTime() - client->gameTimer.gameTime), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Ticks per Frame ", FONT_LATIN_SMALL_WHITE);
 		static unsigned int lastGameTime = 0;
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client.gameTimer.gameTime - lastGameTime), FONT_LATIN_SMALL_WHITE);
-		lastGameTime = client.gameTimer.gameTime;
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTime - lastGameTime), FONT_LATIN_SMALL_WHITE);
+		lastGameTime = client->gameTimer.gameTime;
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Time Adjustment: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client.gameTimer.gameTimeAdjustment), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->gameTimer.gameTimeAdjustment), FONT_LATIN_SMALL_WHITE);
 		static int totalAdjust = 0;
-		totalAdjust += client.gameTimer.gameTimeAdjustment;
-		client.gameTimer.gameTimeAdjustment = 0;
+		totalAdjust += client->gameTimer.gameTimeAdjustment;
+		client->gameTimer.gameTimeAdjustment = 0;
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "TotalAdj.: ", FONT_LATIN_SMALL_WHITE);
@@ -283,8 +292,8 @@ void cDebugOutput::trace()
 	int y = mouse->getKachelY();
 	if (x < 0 || y < 0) return;
 
-	if (debugTraceServer) field = &Server->Map->fields[Server->Map->size * y + x];
-	else field = &Client->Map->fields[Client->Map->size * y + x];
+	if (debugTraceServer) field = &server->Map->fields[server->Map->size * y + x];
+	else field = &client->Map->fields[client->Map->size * y + x];
 
 	y = 18 + 5 + 8;
 	x = 180 + 5;
@@ -295,7 +304,7 @@ void cDebugOutput::trace()
 	while (!bi.end) { traceBuilding (bi, &y, x); y += 20; bi++;}
 }
 
-void cDebugOutput::traceVehicle (cVehicle* vehicle, int* y, int x)
+void cDebugOutput::traceVehicle (const cVehicle* vehicle, int* y, int x)
 {
 	string tmpString;
 
@@ -339,7 +348,7 @@ void cDebugOutput::traceVehicle (cVehicle* vehicle, int* y, int x)
 
 	if (vehicle->storedUnits.Size())
 	{
-		cUnit* storedVehicle;
+		const cUnit* storedVehicle;
 		for (unsigned int i = 0; i < vehicle->storedUnits.Size(); i++)
 		{
 			storedVehicle = vehicle->storedUnits[i];
@@ -364,7 +373,7 @@ void cDebugOutput::traceVehicle (cVehicle* vehicle, int* y, int x)
 	*y += 8;
 }
 
-void cDebugOutput::traceBuilding (cBuilding* building, int* y, int x)
+void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
 {
 	string tmpString;
 
@@ -388,14 +397,13 @@ void cDebugOutput::traceBuilding (cBuilding* building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString =
-		" stored_vehicles_count: " + iToStr ( (int) building->storedUnits.Size());
+	tmpString = " stored_vehicles_count: " + iToStr ((int) building->storedUnits.Size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
 	if (building->storedUnits.Size())
 	{
-		cUnit* storedVehicle;
+		const cUnit* storedVehicle;
 		for (unsigned int i = 0; i < building->storedUnits.Size(); i++)
 		{
 			storedVehicle = building->storedUnits[i];
@@ -413,7 +421,7 @@ void cDebugOutput::traceBuilding (cBuilding* building, int* y, int x)
 
 	if (building->BuildList && building->BuildList->Size())
 	{
-		sBuildList* BuildingList;
+		const sBuildList* BuildingList;
 		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
 		{
 			BuildingList = (*building->BuildList) [i];
@@ -495,6 +503,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
 	iTimerTime (0)
 {
+	debugOutput.setServer(Server);
 	unitMenuActive = false;
 	frame = 0;
 	zoom = 1.0;
@@ -628,6 +637,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 void cGameGUI::setClient (cClient* client)
 {
 	this->client = client;
+	debugOutput.setClient(client);
 }
 
 float cGameGUI::calcMinZoom()
@@ -2142,12 +2152,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (overVehicle)
 			{
-				cDialogTransfer transferDialog (NULL, selectedVehicle, NULL, overVehicle);
+				cDialogTransfer transferDialog (*client, NULL, selectedVehicle, NULL, overVehicle);
 				transferDialog.show();
 			}
 			else if (overBuilding)
 			{
-				cDialogTransfer transferDialog (NULL, selectedVehicle, overBuilding, NULL);
+				cDialogTransfer transferDialog (*client, NULL, selectedVehicle, overBuilding, NULL);
 				transferDialog.show();
 			}
 		}
@@ -2155,12 +2165,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (overVehicle)
 			{
-				cDialogTransfer transferDialog (selectedBuilding, NULL, NULL, overVehicle);
+				cDialogTransfer transferDialog (*client, selectedBuilding, NULL, NULL, overVehicle);
 				transferDialog.show();
 			}
 			else if (overBuilding)
 			{
-				cDialogTransfer transferDialog (selectedBuilding, NULL, overBuilding, NULL);
+				cDialogTransfer transferDialog (*client, selectedBuilding, NULL, overBuilding, NULL);
 				transferDialog.show();
 			}
 		}
@@ -3153,7 +3163,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		cDialogResearch researchDialog (selectedBuilding->owner);
+		cDialogResearch researchDialog (*client, selectedBuilding->owner);
 		researchDialog.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed () && selectedBuilding->owner == player)
@@ -3369,7 +3379,8 @@ void cGameGUI::endReleased (void* parent)
 
 void cGameGUI::preferencesReleased (void* parent)
 {
-	cDialogPreferences preferencesDialog;
+	cGameGUI* gui = static_cast<cGameGUI*> (parent);
+	cDialogPreferences preferencesDialog(gui->getClient()->getActivePlayer());
 	preferencesDialog.show();
 }
 

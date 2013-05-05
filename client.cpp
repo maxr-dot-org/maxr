@@ -71,10 +71,11 @@ cClient* Client = 0; // global instance
 cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
 	Map (Map),
 	PlayerList (playerList),
-	gameTimer (),
+	gameTimer(),
 	gameGUI (NULL, Map, playerList)
 {
 	gameGUI.setClient (this);
+	gameTimer.setClient(this);
 	neutralBuildings = NULL;
 	bDefeated = false;
 	iTurn = 1;

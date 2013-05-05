@@ -117,6 +117,7 @@ unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 
 cGameTimerClient::cGameTimerClient () :
 	cGameTimer (),
+	client(0),
 	remoteChecksum (0),
 	localChecksum (0),
 	waitingForServer (0),
@@ -124,6 +125,11 @@ cGameTimerClient::cGameTimerClient () :
 	gameTimeAdjustment (0),
 	nextMsgIsNextGameTime (false)
 {
+}
+
+void cGameTimerClient::setClient(cClient* client_)
+{
+	client = client_;
 }
 
 void cGameTimerClient::handleSyncMessage (cNetMessage& message)
@@ -144,7 +150,7 @@ bool cGameTimerClient::nextTickAllowed()
 {
 	if (nextMsgIsNextGameTime)
 	{
-		Client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
+		client->disableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 		waitingForServer = 0;
 		return true;
 	}
@@ -154,7 +160,7 @@ bool cGameTimerClient::nextTickAllowed()
 	waitingForServer++;
 	if (waitingForServer > MAX_WAITING_FOR_SERVER)
 	{
-		Client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
+		client->enableFreezeMode (FREEZE_WAIT_FOR_SERVER);
 	}
 	return false;
 }
@@ -169,10 +175,10 @@ void cGameTimerClient::run ()
 		{
 			gameTime++;
 			handleTimer ();
-			Client->doGameActions();
+			client->doGameActions();
 
 			//check crc
-			localChecksum = calcClientChecksum();
+			localChecksum = calcClientChecksum(*client);
 			debugRemoteChecksum = remoteChecksum;
 			if (localChecksum != remoteChecksum)
 			{
@@ -181,7 +187,7 @@ void cGameTimerClient::run ()
 			}
 
 			if (syncDebugSingleStep)
-				compareGameData();
+				compareGameData(*client, *Server);
 
 			nextMsgIsNextGameTime = false;
 
@@ -190,7 +196,7 @@ void cGameTimerClient::run ()
 			{
 				cNetMessage* message = new cNetMessage (NET_GAME_TIME_CLIENT);
 				message->pushInt32 (gameTime);
-				Client->sendNetMessage (message);
+				client->sendNetMessage (message);
 			}
 		}
 	}
@@ -274,12 +280,13 @@ void cGameTimerServer::run ()
 	}
 }
 
-Uint32 calcClientChecksum()
+Uint32 calcClientChecksum (const cClient& client)
 {
 	Uint32 crc = 0;
-	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
+	const cList<cPlayer*>& playerList = *client.getPlayerList();
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cVehicle* vehicle = (*Client->getPlayerList()) [i]->VehicleList;
+		const cVehicle* vehicle = playerList[i]->VehicleList;
 		while (vehicle)
 		{
 			crc = calcCheckSum (vehicle->iID,  crc);
@@ -289,18 +296,19 @@ Uint32 calcClientChecksum()
 			crc = calcCheckSum (vehicle->OffY, crc);
 			crc = calcCheckSum (vehicle->dir,  crc);
 
-			vehicle = (cVehicle*) vehicle->next;
+			vehicle = (const cVehicle*) vehicle->next;
 		}
 	}
 	return crc;
 }
 
-Uint32 calcServerChecksum (cPlayer* player)
+Uint32 calcServerChecksum (const cPlayer* player)
 {
 	Uint32 crc = 0;
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	const cList<cPlayer*>& playerList = *Server->PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cVehicle* vehicle = (*Server->PlayerList) [i]->VehicleList;
+		const cVehicle* vehicle = playerList[i]->VehicleList;
 		while (vehicle)
 		{
 			if (vehicle->seenByPlayerList.Contains (player) || vehicle->owner == player)
@@ -313,23 +321,23 @@ Uint32 calcServerChecksum (cPlayer* player)
 				crc = calcCheckSum (vehicle->dir,  crc);
 			}
 
-			vehicle = (cVehicle*) vehicle->next;
+			vehicle = (const cVehicle*) vehicle->next;
 		}
 	}
 	return crc;
 }
 
-void compareGameData()
+void compareGameData (const cClient& client, const cServer& server)
 {
-	for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
+	const cList<cPlayer*>& playerList = *client.getPlayerList();
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* clientPlayer = (*Client->getPlayerList()) [i];
-
-		cVehicle* clientVehicle = clientPlayer->VehicleList;
-		cVehicle* serverVehicle;
+		const cPlayer* clientPlayer = playerList[i];
+		const cVehicle* clientVehicle = clientPlayer->VehicleList;
+		const cVehicle* serverVehicle;
 		while (clientVehicle)
 		{
-			serverVehicle = (cVehicle*) Server->getUnitFromID (clientVehicle->iID);
+			serverVehicle = (const cVehicle*) server.getUnitFromID (clientVehicle->iID);
 
 			assert (clientVehicle->PosX == serverVehicle->PosX);
 			assert (clientVehicle->PosY == serverVehicle->PosY);
@@ -337,7 +345,8 @@ void compareGameData()
 			assert (clientVehicle->OffY == serverVehicle->OffY);
 			assert (clientVehicle->dir == serverVehicle->dir);
 
-			clientVehicle = (cVehicle*) clientVehicle->next;
+			clientVehicle = (const cVehicle*) clientVehicle->next;
 		}
 	}
 }
+

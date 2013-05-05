@@ -112,6 +112,7 @@ private:
 */
 class cDialogPreferences : public cMenu
 {
+	cPlayer* player;
 	int oldMusicVolume, oldEffectsVolume, oldVoicesVolume;
 	bool oldMusicMute, oldEffectsMute, oldVoicesMute;
 
@@ -152,7 +153,7 @@ class cDialogPreferences : public cMenu
 
 	void saveValues();
 public:
-	cDialogPreferences();
+	explicit cDialogPreferences(cPlayer* player_);
 
 	static void okReleased (void* parent);
 	static void cancelReleased (void* parent);
@@ -168,6 +169,7 @@ public:
 
 class cDialogTransfer : public cMenu
 {
+	cClient* client;
 	cBuilding* srcBuilding, *destBuilding;
 	cVehicle* srcVehicle, *destVehicle;
 
@@ -194,7 +196,7 @@ class cDialogTransfer : public cMenu
 	void getNamesNCargoNImages();
 	void setCargos();
 public:
-	cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
+	cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
 	~cDialogTransfer();
 
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
@@ -212,6 +214,7 @@ public:
 
 class cDialogResearch : public cMenu
 {
+	cClient* client;
 	cPlayer* owner;
 	int newResearchSettings[cResearch::kNrResearchAreas];
 	int unusedResearch;
@@ -237,7 +240,7 @@ class cDialogResearch : public cMenu
 
 	void setData();
 public:
-	explicit cDialogResearch (cPlayer* owner_);
+	explicit cDialogResearch (cClient& client_, cPlayer* owner_);
 
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 

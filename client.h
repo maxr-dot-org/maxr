@@ -306,6 +306,7 @@ public:
 	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
 	const cMap* getMap() const { return Map; }
 	cMap* getMap() { return Map; }
+	const cList<cPlayer*>* getPlayerList() const { return PlayerList; }
 	cList<cPlayer*>* getPlayerList() { return PlayerList; }
 	const cPlayer* getActivePlayer() const { return ActivePlayer; }
 	cPlayer* getActivePlayer() { return ActivePlayer; }

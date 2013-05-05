@@ -249,7 +249,7 @@ public:
 	void tryResetOfDetectionStateAfterMove();
 	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList();
-	bool wasDetectedInThisTurnByPlayer (cPlayer* player) const;
+	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
 
 	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 

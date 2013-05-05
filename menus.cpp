@@ -885,8 +885,9 @@ void cStartMenu::multiPlayerReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartMenu::preferencesReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ( (cMenu*) parent);
-	cDialogPreferences preferencesDialog;
+	cStartMenu* menu = static_cast<cStartMenu*> ((cMenu*) parent);
+	cPlayer* activePlayer = 0;
+	cDialogPreferences preferencesDialog(activePlayer);
 	preferencesDialog.show();
 	menu->draw();
 }

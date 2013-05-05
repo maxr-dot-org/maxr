@@ -2034,7 +2034,7 @@ void cVehicle::resetDetectedByPlayer (cPlayer* player)
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::wasDetectedInThisTurnByPlayer (cPlayer* player) const
+bool cVehicle::wasDetectedInThisTurnByPlayer (const cPlayer* player) const
 {
 	return detectedInThisTurnByPlayerList.Contains (player);
 }

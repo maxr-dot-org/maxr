@@ -118,6 +118,8 @@ enum eMouseInputMode
  */
 class cDebugOutput
 {
+	cServer* server;
+	cClient* client;
 public:
 	/** show infos about the running attackjobs */
 	bool debugAjobs;
@@ -142,11 +144,13 @@ public:
 	bool debugSync;
 
 	cDebugOutput();
+	void setServer(cServer* server_);
+	void setClient(cClient* client_);
 	void draw();
 private:
 	void trace();
-	void traceVehicle (cVehicle* vehicle, int* iY, int iX);
-	void traceBuilding (cBuilding* Building, int* iY, int iX);
+	void traceVehicle (const cVehicle* vehicle, int* iY, int iX);
+	void traceBuilding (const cBuilding* Building, int* iY, int iX);
 };
 
 class cGameGUI : public cMenu

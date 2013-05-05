@@ -857,7 +857,7 @@ void sendUpgradeBuildings (cList<cBuilding*>& upgradedBuildings, int totalCosts,
 	// send to other players
 	for (unsigned int n = 0; n < Server->PlayerList->Size(); n++)
 	{
-		cPlayer* curPlayer = (*Server->PlayerList) [n];
+		const cPlayer* curPlayer = (*Server->PlayerList) [n];
 		if (curPlayer == 0 || curPlayer->Nr == player)   // don't send to the owner of the buildings
 			continue;
 

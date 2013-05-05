@@ -5,7 +5,9 @@
 #include "clist.h"
 #include "player.h"
 
+class cClient;
 class cNetMessage;
+class cServer;
 
 #define GAME_TICK_TIME 10
 #define MAX_CLIENT_LAG 15
@@ -73,6 +75,7 @@ class cGameTimerClient : public cGameTimer
 {
 	friend class cDebugOutput;
 private:
+	cClient* client;
 	unsigned int remoteChecksum;
 	unsigned int localChecksum;
 	unsigned int waitingForServer;
@@ -83,15 +86,16 @@ private:
 public:
 	bool nextMsgIsNextGameTime;
 	cGameTimerClient ();
+	void setClient(cClient* client);
 
 	void run ();
 	void handleSyncMessage (cNetMessage& message);
 
 };
 
-Uint32 calcClientChecksum();
-Uint32 calcServerChecksum (cPlayer* player);
+Uint32 calcClientChecksum (const cClient& client);
+Uint32 calcServerChecksum (const cPlayer* player);
 
-void compareGameData();
+void compareGameData (const cClient& client, const cServer& server);
 
 #endif

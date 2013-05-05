@@ -297,7 +297,8 @@ void cDialogLicence::downReleased (void* parent)
 	menu->resetText();
 }
 
-cDialogPreferences::cDialogPreferences() : cMenu (LoadPCX (GFXOD_DIALOG5), MNU_BG_ALPHA),
+cDialogPreferences::cDialogPreferences(cPlayer* player_) : cMenu (LoadPCX (GFXOD_DIALOG5), MNU_BG_ALPHA),
+	player(player_),
 	titleLabel (position.x + position.w / 2, position.y + 15, lngPack.i18n ("Text~Settings~Preferences")),
 	volumeLabel (position.x + 25, position.y + 56, lngPack.i18n ("Text~Settings~Volume") + ":"),
 	musicLabel (position.x + 25, position.y + 56 + 20, lngPack.i18n ("Text~Settings~Music")),
@@ -443,7 +444,7 @@ cDialogPreferences::cDialogPreferences() : cMenu (LoadPCX (GFXOD_DIALOG5), MNU_B
 void cDialogPreferences::saveValues()
 {
 	cSettings::getInstance().setPlayerName (nameEdit.getText().c_str());
-	if (Client) Client->getActivePlayer()->name = cSettings::getInstance().getPlayerName();
+	if (player) player->name = cSettings::getInstance().getPlayerName();
 
 	cSettings::getInstance().setAutosave (autosaveChBox.isChecked());
 	cSettings::getInstance().setAnimations (animationChBox.isChecked());
@@ -552,8 +553,9 @@ void cDialogPreferences::voicesMuteChanged (void* parent)
 	cSettings::getInstance().setVoiceMute (menu->disableVoicesChBox.isChecked());
 }
 
-cDialogTransfer::cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+cDialogTransfer::cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
+	client(&client_),
 	srcBuilding (srcBuilding_),
 	destBuilding (destBuilding_),
 	srcVehicle (srcVehicle_),
@@ -615,7 +617,7 @@ cDialogTransfer::cDialogTransfer (cBuilding* srcBuilding_, cVehicle* srcVehicle_
 
 cDialogTransfer::~cDialogTransfer()
 {
-	Client->gameGUI.mouseInputMode = normalInput;
+	client->gameGUI.mouseInputMode = normalInput;
 }
 
 void cDialogTransfer::getTransferType()
@@ -797,13 +799,13 @@ void cDialogTransfer::doneReleased (void* parent)
 	{
 		if (menu->srcBuilding)
 		{
-			if (menu->destBuilding) sendWantTransfer (*Client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
-			else sendWantTransfer (*Client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*menu->client, false, menu->srcBuilding->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
+			else sendWantTransfer (*menu->client, false, menu->srcBuilding->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcBuilding->data.storeResType);
 		}
 		else
 		{
-			if (menu->destBuilding) sendWantTransfer (*Client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
-			else sendWantTransfer (*Client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			if (menu->destBuilding) sendWantTransfer (*menu->client, true, menu->srcVehicle->iID, false, menu->destBuilding->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
+			else sendWantTransfer (*menu->client, true, menu->srcVehicle->iID, true, menu->destVehicle->iID, menu->transferValue, menu->srcVehicle->data.storeResType);
 		}
 	}
 
@@ -856,7 +858,8 @@ void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surf
 	font->showTextCentered (dest.x + dest.w / 2, dest.y + (dest.h / 2 - font->getFontHeight (FONT_LATIN_SMALL_WHITE) / 2) + 1, sText, FONT_LATIN_SMALL_WHITE);
 }
 
-cDialogResearch::cDialogResearch (cPlayer* owner_) : cMenu (LoadPCX (GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA), owner (owner_),
+cDialogResearch::cDialogResearch (cClient& client_, cPlayer* owner_) :
+	cMenu (LoadPCX (GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA), client(&client_), owner (owner_),
 	titleLabel (position.x + position.w / 2, position.y + 19, lngPack.i18n ("Text~Title~Labs")),
 	centersLabel (position.x + 58, position.y + 52, lngPack.i18n ("Text~Comp~Labs")),
 	themeLabel (position.x + 200, position.y + 52, lngPack.i18n ("Text~Comp~Themes")),
@@ -1005,7 +1008,7 @@ void cDialogResearch::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 void cDialogResearch::doneReleased (void* parent)
 {
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	sendWantResearchChange (*Client, menu->newResearchSettings, menu->owner->Nr);
+	sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->Nr);
 	menu->end = true;
 }
 
