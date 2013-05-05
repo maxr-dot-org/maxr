@@ -654,7 +654,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeBuildCommand();
+			executeBuildCommand (gameGUI);
 			return;
 		}
 		nr++;
@@ -667,7 +667,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeMineManagerCommand();
+			executeMineManagerCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;
@@ -719,7 +719,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeStopCommand();
+			executeStopCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;
@@ -772,7 +772,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeActivateStoredVehiclesCommand();
+			executeActivateStoredVehiclesCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;
@@ -824,7 +824,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeUpdateBuildingCommmand (true);
+			executeUpdateBuildingCommmand (*gameGUI.getClient(), true);
 			return;
 		}
 		nr++;
@@ -834,7 +834,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeUpdateBuildingCommmand (false);
+			executeUpdateBuildingCommmand (*gameGUI.getClient(), false);
 			return;
 		}
 		nr++;
@@ -847,7 +847,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeSelfDestroyCommand();
+			executeSelfDestroyCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;
@@ -886,7 +886,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeLayMinesCommand();
+			executeLayMinesCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;
@@ -899,7 +899,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeClearMinesCommand();
+			executeClearMinesCommand (*gameGUI.getClient());
 			return;
 		}
 		nr++;

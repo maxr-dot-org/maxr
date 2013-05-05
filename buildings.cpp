@@ -1645,13 +1645,13 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 }
 
 //------------------------------------------------------------------------
-void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
+void cBuilding::sendUpgradeBuilding (const cClient& client, const cBuilding* building, bool upgradeAll)
 {
 	if (building == 0 || building->owner == 0)
 		return;
 
-	sUnitData& currentVersion = building->data;
-	sUnitData& upgradedVersion = building->owner->BuildingData[building->typ->nr];
+	const sUnitData& currentVersion = building->data;
+	const sUnitData& upgradedVersion = building->owner->BuildingData[building->typ->nr];
 	if (currentVersion.version >= upgradedVersion.version)
 		return; // already uptodate
 
@@ -1659,7 +1659,7 @@ void cBuilding::sendUpgradeBuilding (cBuilding* building, bool upgradeAll)
 	msg->pushBool (upgradeAll);
 	msg->pushInt32 (building->iID);
 
-	Client->sendNetMessage (msg);
+	client.sendNetMessage (msg);
 }
 
 //--------------------------------------------------------------------------
@@ -1796,44 +1796,44 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeBuildCommand()
+void cBuilding::executeBuildCommand (cGameGUI& gameGUI)
 {
-	cVehiclesBuildMenu buildMenu (owner, this);
+	cVehiclesBuildMenu buildMenu (gameGUI, owner, this);
 	buildMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeMineManagerCommand()
+void cBuilding::executeMineManagerCommand (const cClient& client)
 {
-	cMineManagerMenu mineManager (this);
+	cMineManagerMenu mineManager (client, this);
 	mineManager.show();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeStopCommand()
+void cBuilding::executeStopCommand (const cClient& client)
 {
-	sendWantStopWork (*Client, this);
+	sendWantStopWork (client, this);
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeActivateStoredVehiclesCommand()
+void cBuilding::executeActivateStoredVehiclesCommand (cClient& client)
 {
-	cStorageMenu storageMenu (*Client, storedUnits, 0, this);
+	cStorageMenu storageMenu (client, storedUnits, 0, this);
 	storageMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeUpdateBuildingCommmand (bool updateAllOfSameType)
+void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType)
 {
-	sendUpgradeBuilding (this, updateAllOfSameType);
+	sendUpgradeBuilding (client, this, updateAllOfSameType);
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeSelfDestroyCommand()
+void cBuilding::executeSelfDestroyCommand (const cClient& client)
 {
 	cDestructMenu destructMenu;
 	if (destructMenu.show() == 0)
-		sendWantSelfDestroy (*Client, this);
+		sendWantSelfDestroy (client, this);
 }
 
 //-----------------------------------------------------------------------------

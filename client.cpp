@@ -226,7 +226,7 @@ void cClient::runFx ()
 void cClient::addFx (cFx* fx)
 {
 	FxList.Add (fx);
-	fx->playSound();
+	fx->playSound (gameGUI);
 }
 
 void cClient::HandleNetMessage_TCP_CLOSE (cNetMessage& message)

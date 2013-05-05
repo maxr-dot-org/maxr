@@ -4,6 +4,8 @@
 
 #include "clist.h"
 
+class cGameGUI;
+
 class cFx
 {
 protected:
@@ -22,8 +24,8 @@ public:
 	virtual bool isFinished () const;
 	int getLength () const;
 
-	virtual void draw () const = 0;
-	virtual void playSound () const;
+	virtual void draw (const cGameGUI& gameGUI) const = 0;
+	virtual void playSound (const cGameGUI& gameGUI) const;
 	virtual void run ();
 };
 
@@ -31,7 +33,7 @@ class cFxMuzzle : public cFx
 {
 protected:
 	cFxMuzzle (int x, int y, int dir_);
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 
 	SDL_Surface** image;
 	int dir;
@@ -65,7 +67,7 @@ class cFxExplo : public cFx
 {
 protected:
 	cFxExplo (int x, int y, int frames_);
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 
 	SDL_Surface** image;
 	const int frames; //TODO: frames could be calculated (frames = w / h), if the width and height
@@ -76,49 +78,49 @@ class cFxExploSmall : public cFxExplo
 {
 public:
 	cFxExploSmall(int x, int y); //x, y is the center of the explosion
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploBig : public cFxExplo
 {
 public:
 	cFxExploBig(int x, int y);
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploAir : public cFxExplo
 {
 public:
 	cFxExploAir(int x, int y);
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxExploWater : public cFxExplo
 {
 public:
 	cFxExploWater(int x, int y);
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxHit : public cFxExplo
 {
 public:
 	cFxHit(int x, int y);
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxAbsorb : public cFxExplo
 {
 public:
 	cFxAbsorb(int x, int y);
-	void playSound () const;
+	void playSound (const cGameGUI& gameGUI) const;
 };
 
 class cFxFade : public cFx
 {
 protected:
 	cFxFade (int x, int y, bool bottom, int start, int end);
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 
 	SDL_Surface** image;
 	const int alphaStart;
@@ -147,7 +149,7 @@ private:
 	const int dir;
 public:
 	cFxTracks(int x, int y, int dir_);
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 };
 
 
@@ -166,7 +168,7 @@ private:
 public:
 	cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom);
 	~cFxRocket ();
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 	void run ();
 	bool isFinished () const; //return true, when the last smoke effect is finished.
 	                          //getLength() returns only the time until the rocket has reached the destiantion
@@ -183,7 +185,7 @@ private:
 	SDL_Surface** image;
 public:
 	cFxDarkSmoke (int x, int y, int alpha, float windDir);
-	void draw () const;
+	void draw (const cGameGUI& gameGUI) const;
 };
 
 

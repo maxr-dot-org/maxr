@@ -952,6 +952,7 @@ public:
 class cVehiclesBuildMenu : public cAdvListHangarMenu
 {
 protected:
+	const cGameGUI* gameGUI;
 	cBuilding* building;
 
 	AutoPtr<cMenuLabel>::type titleLabel;
@@ -961,7 +962,7 @@ protected:
 
 	void createBuildList();
 public:
-	cVehiclesBuildMenu (cPlayer* player_, cBuilding* building_);
+	cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_);
 
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);
@@ -1087,6 +1088,7 @@ public:
 
 class cMineManagerMenu : public cMenu
 {
+	const cClient* client;
 	cBuilding* building;
 	sSubBase subBase;
 
@@ -1115,7 +1117,7 @@ class cMineManagerMenu : public cMenu
 
 	std::string secondBarText (int prod, int need);
 public:
-	cMineManagerMenu (cBuilding* building_);
+	cMineManagerMenu (const cClient& client_, cBuilding* building_);
 
 	static void doneReleased (void* parent);
 

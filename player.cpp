@@ -997,13 +997,13 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 {
 	if (!gameGUI.lockChecked()) return;
 	const int tileSize = gameGUI.getTileSize();
-
+	const cMap& map = *gameGUI.getClient()->getMap();
 	for (unsigned int i = 0; i < LockList.Size(); i++)
 	{
 		sLockElem* elem = LockList[i];
 		if (elem->v)
 		{
-			const int off = elem->v->PosX + elem->v->PosY * Client->getMap()->size;
+			const int off = elem->v->PosX + elem->v->PosY * map.size;
 			if (!ScanMap[off])
 			{
 				DeleteLock (elem->v);
@@ -1034,7 +1034,7 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 		}
 		else if (elem->b)
 		{
-			const int off = elem->b->PosX + elem->b->PosY * Client->getMap()->size;
+			const int off = elem->b->PosX + elem->b->PosY * map.size;
 			if (!ScanMap[off])
 			{
 				DeleteLock (elem->b);

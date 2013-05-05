@@ -25,7 +25,7 @@
 #include "vehicles.h"
 #include "player.h"
 
-void sDrawingCacheEntry::init (cVehicle* vehicle)
+void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle* vehicle)
 {
 	dir = vehicle->dir;
 	owner = vehicle->owner;
@@ -40,8 +40,7 @@ void sDrawingCacheEntry::init (cVehicle* vehicle)
 	else
 		frame = ANIMATION_SPEED % 4;
 
-	const cGameGUI& gameGUI = Client->gameGUI;
-	const cMap& map = *Client->getMap();
+	const cMap& map = *gameGUI.getClient()->getMap();
 	water = map.isWater (vehicle->PosX, vehicle->PosY) && !map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 
 	bool isOnWaterAndNotCoast = map.isWater (vehicle->PosX, vehicle->PosY, true);
@@ -55,7 +54,7 @@ void sDrawingCacheEntry::init (cVehicle* vehicle)
 	{
 		isOnWaterAndNotCoast = false;
 	}
-	if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer())
+	if ((vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == gameGUI.getClient()->getActivePlayer())
 		stealth = true;
 	else
 		stealth = false;
@@ -81,9 +80,9 @@ void sDrawingCacheEntry::init (cVehicle* vehicle)
 
 	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
-};
+}
 
-void sDrawingCacheEntry::init (cBuilding* building)
+void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cBuilding* building)
 {
 	BaseN  = building->BaseN;
 	BaseBN = building->BaseBN;
@@ -99,7 +98,6 @@ void sDrawingCacheEntry::init (cBuilding* building)
 	vehicleTyp = NULL;
 	clan = building->owner->getClan();
 
-	const cGameGUI& gameGUI = Client->gameGUI;
 	zoom = gameGUI.getZoom();
 	lastUsed = gameGUI.getFrame();
 
@@ -112,7 +110,7 @@ void sDrawingCacheEntry::init (cBuilding* building)
 
 	SDL_FillRect (surface, NULL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGBA (surface->format, 255, 0, 255, 0));
-};
+}
 
 cDrawingCache::cDrawingCache()
 {
@@ -122,18 +120,21 @@ cDrawingCache::cDrawingCache()
 	cacheSize = 0;
 	maxCacheSize = cSettings::getInstance().getCacheSize(); //set cache size from config
 	cachedImages = new sDrawingCacheEntry[maxCacheSize];
-
-};
+}
 
 cDrawingCache::~cDrawingCache()
 {
 	delete[] cachedImages;
-};
+}
 
-SDL_Surface* cDrawingCache::getCachedImage (cBuilding* building)
+void cDrawingCache::setGameGUI(const cGameGUI& gameGUI_)
+{
+	gameGUI = &gameGUI_;
+}
+
+SDL_Surface* cDrawingCache::getCachedImage (const cBuilding* building)
 {
 	if (!canCache (building)) return NULL;
-	const cGameGUI& gameGUI = Client->gameGUI;
 
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
@@ -162,22 +163,22 @@ SDL_Surface* cDrawingCache::getCachedImage (cBuilding* building)
 		{
 			if (entry.dir != building->dir) continue;
 		}
-		if (entry.zoom != gameGUI.getZoom()) continue;
+		if (entry.zoom != gameGUI->getZoom()) continue;
 
 		if (building->data.hasClanLogos && building->owner->getClan() != entry.clan) continue;
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = gameGUI.getFrame();
+		entry.lastUsed = gameGUI->getFrame();
 		return entry.surface;
 	}
 
 	//cache miss!
 	cacheMisses++;
 	return NULL;
-};
+}
 
-SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
+SDL_Surface* cDrawingCache::getCachedImage (const cVehicle* vehicle)
 {
 	if (!canCache (vehicle)) return NULL;
 
@@ -203,10 +204,9 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 		{
 			if (entry.frame != ANIMATION_SPEED % 4) continue;
 		}
-		const cGameGUI& gameGUI = Client->gameGUI;
-		const cMap& map = *Client->getMap();
+		const cMap& map = *gameGUI->getClient()->getMap();
 
-		if (entry.zoom != gameGUI.getZoom()) continue;
+		if (entry.zoom != gameGUI->getZoom()) continue;
 
 		bool water = map.isWater (vehicle->PosX, vehicle->PosY) && !map.fields[vehicle->PosX + vehicle->PosY * map.size].getBaseBuilding();
 		if (vehicle->IsBuilding)
@@ -227,7 +227,7 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 			isOnWaterAndNotCoast = false;
 		}
 
-		if ( (vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == Client->getActivePlayer())
+		if ((vehicle->data.isStealthOn & TERRAIN_SEA) && isOnWaterAndNotCoast && vehicle->detectedByPlayerList.Size() == 0 && vehicle->owner == gameGUI->getClient()->getActivePlayer())
 			stealth = true;
 
 		if (entry.stealth != stealth) continue;
@@ -235,7 +235,7 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 
 		//cache hit!
 		cacheHits++;
-		entry.lastUsed = gameGUI.getFrame();
+		entry.lastUsed = gameGUI->getFrame();
 		return entry.surface;
 	}
 
@@ -244,7 +244,7 @@ SDL_Surface* cDrawingCache::getCachedImage (cVehicle* vehicle)
 	return NULL;
 }
 
-SDL_Surface* cDrawingCache::createNewEntry (cBuilding* building)
+SDL_Surface* cDrawingCache::createNewEntry (const cBuilding* building)
 {
 	if (!canCache (building)) return NULL;
 
@@ -254,7 +254,7 @@ SDL_Surface* cDrawingCache::createNewEntry (cBuilding* building)
 		cacheSize++;
 
 		//set properties of the cached image
-		entry.init (building);
+		entry.init (*gameGUI, building);
 
 		return entry.surface;
 	}
@@ -262,22 +262,22 @@ SDL_Surface* cDrawingCache::createNewEntry (cBuilding* building)
 	//try to find an old entry to reuse
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
-		if (Client->gameGUI.getFrame() - cachedImages[i].lastUsed < 5)  continue;
+		if (gameGUI->getFrame() - cachedImages[i].lastUsed < 5)  continue;
 		//entry has not been used for 5 frames. Use it for the new entry.
 
 		sDrawingCacheEntry& entry = cachedImages[i];
 
 		//set properties of the cached image
-		entry.init (building);
+		entry.init (*gameGUI, building);
 
 		return entry.surface;
 	}
 
 	//there are no old entries in the cache.
 	return NULL;
-};
+}
 
-SDL_Surface* cDrawingCache::createNewEntry (cVehicle* vehicle)
+SDL_Surface* cDrawingCache::createNewEntry (const cVehicle* vehicle)
 {
 	if (!canCache (vehicle))
 		return NULL;
@@ -287,7 +287,7 @@ SDL_Surface* cDrawingCache::createNewEntry (cVehicle* vehicle)
 		sDrawingCacheEntry& entry = cachedImages[cacheSize];
 
 		//set properties of the cached image
-		entry.init (vehicle);
+		entry.init (*gameGUI, vehicle);
 
 		cacheSize++;
 		return entry.surface;
@@ -296,41 +296,40 @@ SDL_Surface* cDrawingCache::createNewEntry (cVehicle* vehicle)
 	//try to find an old entry to reuse
 	for (unsigned int i = 0; i < cacheSize; i++)
 	{
-		if (Client->gameGUI.getFrame() - cachedImages[i].lastUsed < 5)  continue;
+		if (gameGUI->getFrame() - cachedImages[i].lastUsed < 5)  continue;
 
 		//entry has not been used for 5 frames. Use it for the new entry.
 		sDrawingCacheEntry& entry = cachedImages[i];
 
 		//set properties of the cached image
-		entry.init (vehicle);
+		entry.init (*gameGUI, vehicle);
 		return entry.surface;
 	}
 
 	//there are no old entries in the cache.
 	return NULL;
-};
+}
 
 void cDrawingCache::flush()
 {
 	cacheSize = 0;
-};
+}
 
-bool cDrawingCache::canCache (cBuilding* building)
+bool cDrawingCache::canCache (const cBuilding* building)
 {
-	if (!building->owner   ||
+	if (!building->owner ||
 		building->StartUp ||
 		building->data.isAnimated)
 	{
 		notCached++;
 		return false;
 	}
-
 	return true;
-};
+}
 
-bool cDrawingCache::canCache (cVehicle* vehicle)
+bool cDrawingCache::canCache (const cVehicle* vehicle)
 {
-	if ( (vehicle->IsBuilding || vehicle->IsClearing) && vehicle->job)
+	if ((vehicle->IsBuilding || vehicle->IsClearing) && vehicle->job)
 	{
 		notCached++;
 		return false;
@@ -354,19 +353,19 @@ bool cDrawingCache::canCache (cVehicle* vehicle)
 		return false;
 	}
 	return true;
-};
+}
 
 void cDrawingCache::resetStatistics()
 {
 	cacheMisses = 0;
 	cacheHits = 0;
 	notCached = 0;
-};
+}
 
 int cDrawingCache::getMaxCacheSize() const
 {
 	return maxCacheSize;
-};
+}
 
 void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 {
@@ -376,24 +375,24 @@ void cDrawingCache::setMaxCacheSize (unsigned int newSize)
 	cacheSize = 0;
 
 	cSettings::getInstance().setCacheSize (newSize);
-};
+}
 
 int cDrawingCache::getCacheSize() const
 {
 	return cacheSize;
-};
+}
 
 int cDrawingCache::getCacheHits() const
 {
 	return cacheHits;
-};
+}
 
 int cDrawingCache::getCacheMisses() const
 {
 	return cacheMisses;
-};
+}
 
 int cDrawingCache::getNotCached() const
 {
 	return notCached / 2;
-};
+}

@@ -1232,7 +1232,7 @@ void cMenuUnitListItem::init()
 	{
 		cVehicle vehicle = cVehicle (unitID.getVehicle(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) 64.0;
-		vehicle.render (surface, dest, zoomFactor, false);
+		vehicle.render (Client, surface, dest, zoomFactor, false);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor);
 	}
 	else if (unitID.getBuilding())
@@ -4187,7 +4187,7 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		vehicle->render (surface, dest, zoomFactor, false);
+		vehicle->render (client, surface, dest, zoomFactor, false);
 		vehicle->drawOverlayAnimation (surface, dest, zoomFactor);
 	}
 

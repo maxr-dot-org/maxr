@@ -44,7 +44,7 @@ bool cFx::isFinished () const
 	return tick >= length;
 }
 
-void cFx::playSound () const
+void cFx::playSound (const cGameGUI& gameGUI) const
 {}
 
 void cFx::run ()
@@ -59,18 +59,20 @@ cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 	dir (dir_)
 {}
 
-void cFxMuzzle::draw() const
+void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 {
-	if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
+	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
 	if (image == NULL) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	SDL_Rect src, dest;
-	src.x = (int) (image[0]->w * Client->gameGUI.getZoom() * dir / 8);
+	src.x = (int) (image[0]->w * gameGUI.getZoom() * dir / 8);
 	src.y = 0;
 	src.w = image[1]->w / 8;
 	src.h = image[1]->h;
-	dest = Client->gameGUI.calcScreenPos (posX, posY);
+	dest = gameGUI.calcScreenPos (posX, posY);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
@@ -114,20 +116,22 @@ cFxExplo::cFxExplo (int x, int y, int frames_) :
 	frames(frames_)
 {}
 
-void cFxExplo::draw () const
+void cFxExplo::draw (const cGameGUI& gameGUI) const
 {
-	if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
+	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
 	if (!image) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
 
 	SDL_Rect src, dest;
-	src.x = (int) (image[0]->w * Client->gameGUI.getZoom() * frame / frames);
+	src.x = (int) (image[0]->w * gameGUI.getZoom() * frame / frames);
 	src.y = 0;
 	src.w = image[1]->w / frames;
 	src.h = image[1]->h;
-	dest = Client->gameGUI.calcScreenPos (posX - image[0]->w / (frames * 2) , posY - image[0]->h/2);
+	dest = gameGUI.calcScreenPos (posX - image[0]->w / (frames * 2) , posY - image[0]->h/2);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
@@ -141,7 +145,7 @@ cFxExploSmall::cFxExploSmall(int x, int y) :
 	image = EffectsData.fx_explo_small;
 }
 
-void cFxExploSmall::playSound() const
+void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
 {
 	int nr;
 	nr = random (3);
@@ -168,9 +172,10 @@ cFxExploBig::cFxExploBig(int x, int y) :
 }
 
 
-void cFxExploBig::playSound() const
+void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 {
-	if (Client->getMap()->isWater (posX / 64, posY / 64))
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (map.isWater (posX / 64, posY / 64))
 	{
 		if (random (2))
 		{
@@ -212,7 +217,7 @@ cFxExploAir::cFxExploAir(int x, int y) :
 	image = EffectsData.fx_explo_air;
 }
 
-void cFxExploAir::playSound() const
+void cFxExploAir::playSound (const cGameGUI& gameGUI) const
 {
 	int nr;
 	nr = random (3);
@@ -238,7 +243,7 @@ cFxExploWater::cFxExploWater(int x, int y) :
 	image = EffectsData.fx_explo_water;
 }
 
-void cFxExploWater::playSound() const
+void cFxExploWater::playSound (const cGameGUI& gameGUI) const
 {
 	int nr;
 	nr = random (3);
@@ -264,7 +269,7 @@ cFxHit::cFxHit(int x, int y) :
 	image = EffectsData.fx_hit;
 }
 
-void cFxHit::playSound() const
+void cFxHit::playSound (const cGameGUI& gameGUI) const
 {
 	//TODO
 }
@@ -277,7 +282,7 @@ cFxAbsorb::cFxAbsorb(int x, int y) :
 	image = EffectsData.fx_absorb;
 }
 
-void cFxAbsorb::playSound() const
+void cFxAbsorb::playSound (const cGameGUI& gameGUI) const
 {
 	PlayFX (SoundData.SNDAbsorb);
 }
@@ -290,17 +295,19 @@ cFxFade::cFxFade(int x, int y, bool bottom, int start, int end) :
 	alphaEnd(end)
 {}
 
-void cFxFade::draw() const
+void cFxFade::draw (const cGameGUI& gameGUI) const
 {
-	if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
+	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
 	if (!image) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
 
 	SDL_Rect dest;
-	dest = Client->gameGUI.calcScreenPos (posX - image[0]->w / 2, posY - image[0]->h / 2);
+	dest = gameGUI.calcScreenPos (posX - image[0]->w / 2, posY - image[0]->h / 2);
 	SDL_BlitSurface (image[1], NULL, buffer, &dest);
 }
 
@@ -332,11 +339,13 @@ cFxTracks::cFxTracks(int x, int y, int dir_) :
 	image = EffectsData.fx_tracks;
 }
 
-void cFxTracks::draw() const
+void cFxTracks::draw (const cGameGUI& gameGUI) const
 {
-	if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;	//ja, nein, vielleicht?
+	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return; //ja, nein, vielleicht?
 	if (!image) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
@@ -346,7 +355,7 @@ void cFxTracks::draw() const
 	src.x = image[0]->w * dir / 4;
 	src.w = image[0]->w / 4;
 	src.h = image[0]->h;
-	dest = Client->gameGUI.calcScreenPos (posX, posY);
+	dest = gameGUI.calcScreenPos (posX, posY);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
@@ -374,26 +383,28 @@ cFxRocket::~cFxRocket ()
 		delete subEffects[i];
 }
 
-void cFxRocket::draw() const
+void cFxRocket::draw (const cGameGUI& gameGUI) const
 {
 	//draw smoke effect
 	for (unsigned i = 0; i < subEffects.Size(); i++)
 	{
-		subEffects[i]->draw();
+		subEffects[i]->draw(gameGUI);
 	}
 
 	//draw rocket
-	if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
+	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
+	const cMap& map = *gameGUI.getClient()->getMap();
+	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
 	if (!image) return;
 	if (tick >= length) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	SDL_Rect src, dest;
 	src.x = dir * image[1]->w / 8;
 	src.y = 0;
 	src.h = image[1]->h;
 	src.w = image[1]->w / 8;
-	dest = Client->gameGUI.calcScreenPos(posX - image[0]->w / 16, posY - image[0]->h / 2);
+	dest = gameGUI.calcScreenPos(posX - image[0]->w / 16, posY - image[0]->h / 2);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
@@ -456,20 +467,20 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 	}
 }
 
-void cFxDarkSmoke::draw() const
+void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 {
-	//if (!Client->getActivePlayer()->ScanMap[posX / 64 + posY / 64 * Client->getMap()->size]) return;
+	//if (!client.getActivePlayer()->ScanMap[posX / 64 + posY / 64 * client.getMap()->size]) return;
 	if (!image) return;
-	CHECK_SCALING (image[1], image[0], Client->gameGUI.getZoom());
+	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
 	const int frame = tick * frames / length;
 
 	SDL_Rect src, dest;
-	src.x = (int) (image[0]->w * Client->gameGUI.getZoom() * frame / frames);
+	src.x = (int) (image[0]->w * gameGUI.getZoom() * frame / frames);
 	src.y = 0;
 	src.w = image[1]->w / frames;
 	src.h = image[1]->h;
-	dest = Client->gameGUI.calcScreenPos((int) (posX + tick * dx), (int) (posY + tick * dy));
+	dest = gameGUI.calcScreenPos((int) (posX + tick * dx), (int) (posY + tick * dy));
 
 	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);

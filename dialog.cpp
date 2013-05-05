@@ -703,7 +703,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	else if (srcVehicle)
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
-		srcVehicle->render (unitImage1, dest, zoomFactor, false);
+		srcVehicle->render (client, unitImage1, dest, zoomFactor, false);
 		srcVehicle->drawOverlayAnimation (unitImage1, dest, zoomFactor);
 
 		unitNameLabels[0]->setText (srcVehicle->data.name);
@@ -746,7 +746,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	else
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
-		destVehicle->render (unitImage2, dest, zoomFactor, false);
+		destVehicle->render (client, unitImage2, dest, zoomFactor, false);
 		destVehicle->drawOverlayAnimation (unitImage2, dest, zoomFactor);
 
 		unitNameLabels[1]->setText (destVehicle->data.name);

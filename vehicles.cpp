@@ -227,7 +227,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (drawingSurface, dest, (float) gameGUI.getTileSize() / (float) 64.0, cSettings::getInstance().isShadows());
+		render (gameGUI.getClient(), drawingSurface, dest, (float) gameGUI.getTileSize() / (float) 64.0, cSettings::getInstance().isShadows());
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -447,18 +447,18 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 	}
 }
 
-void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
+void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)
 {
-	const cClient& client = *Client;
 	//Note: when changing something in this function, make sure to update the caching rules!
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL)
+	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
 	{
 		//draw beton if nessesary
 		tmp = dest;
-		if (IsBuilding && data.isBig && (!client.getMap()->isWater (PosX, PosY) || client.getMap()->fields[PosX + PosY * client.getMap()->size].getBaseBuilding()))
+		const cMap& map = *client->getMap();
+		if (IsBuilding && data.isBig && (!map.isWater (PosX, PosY) || map.fields[PosX + PosY * map.size].getBaseBuilding()))
 		{
 			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha);
 			CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
@@ -519,7 +519,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow && !( (data.isStealthOn & TERRAIN_SEA) && Client && client.getMap()->isWater (PosX, PosY, true)))
+	if (drawShadow && !( (data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY, true)))
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
 		else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
@@ -528,7 +528,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		// draw shadow
 		if (FlightHigh > 0)
 		{
-			int high = ( (int) ( (int) (client.gameGUI.getTileSize()) * (FlightHigh / 64.0)));
+			int high = ( (int) ( (int) (client->gameGUI.getTileSize()) * (FlightHigh / 64.0)));
 			tmp.x += high;
 			tmp.y += high;
 
@@ -559,13 +559,12 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	else
 		blitWithPreScale (typ->img_org[dir], typ->img[dir], NULL, GraphicsData.gfx_tmp, NULL, zoomFactor);
 
-
 	// draw the vehicle
 	src.x = 0;
 	src.y = 0;
 	tmp = dest;
 
-	if (Client)
+	if (client)
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects())
 		{
@@ -573,13 +572,14 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 		}
 		else
 		{
-			bool water = client.getMap()->isWater (PosX, PosY, true);
+			const cMap& map = *client->getMap();
+			bool water = map.isWater (PosX, PosY, true);
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
-			cBuilding* building = client.getMap()->fields[PosX + PosY * client.getMap()->size].getBaseBuilding();
+			cBuilding* building = map.fields[PosX + PosY * map.size].getBaseBuilding();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if ( (data.isStealthOn & TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == client.getActivePlayer()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 100);
+			if ( (data.isStealthOn & TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == client->getActivePlayer()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 100);
 			else SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
 		}
 	}
@@ -587,9 +587,7 @@ void cVehicle::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFac
 	{
 		SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
 	}
-
 	blittAlphaSurface (GraphicsData.gfx_tmp, &src, surface, &tmp);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -2228,23 +2226,23 @@ bool cVehicle::canBeStoppedViaUnitMenu() const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeBuildCommand()
+void cVehicle::executeBuildCommand (cGameGUI& gameGUI)
 {
 	if (ClientMoveJob)
-		sendWantStopMove (*Client, iID);
-	cBuildingsBuildMenu buildMenu (*Client, owner, this);
+		sendWantStopMove (*gameGUI.getClient(), iID);
+	cBuildingsBuildMenu buildMenu (*gameGUI.getClient(), owner, this);
 	buildMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeStopCommand()
+void cVehicle::executeStopCommand (const cClient& client)
 {
 	if (ClientMoveJob != 0)
-		sendWantStopMove (*Client, iID);
+		sendWantStopMove (client, iID);
 	else if (isUnitBuildingABuilding())
-		sendWantStopBuilding (*Client, iID);
+		sendWantStopBuilding (client, iID);
 	else if (isUnitClearing())
-		sendWantStopClear (*Client, this);
+		sendWantStopClear (client, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2264,26 +2262,26 @@ void cVehicle::executeAutoMoveJobCommand(cClient& client)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeActivateStoredVehiclesCommand()
+void cVehicle::executeActivateStoredVehiclesCommand (cClient& client)
 {
-	cStorageMenu storageMenu (*Client, storedUnits, this, 0);
+	cStorageMenu storageMenu (client, storedUnits, this, 0);
 	storageMenu.show();
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeLayMinesCommand()
+void cVehicle::executeLayMinesCommand (const cClient& client)
 {
 	LayMines = !LayMines;
 	ClearMines = false;
-	sendMineLayerStatus (*Client, this);
+	sendMineLayerStatus (client, this);
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeClearMinesCommand()
+void cVehicle::executeClearMinesCommand (const cClient& client)
 {
 	ClearMines = !ClearMines;
 	LayMines = false;
-	sendMineLayerStatus (*Client, this);
+	sendMineLayerStatus (client, this);
 }
 
 //-----------------------------------------------------------------------------

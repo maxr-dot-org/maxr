@@ -503,6 +503,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
 	iTimerTime (0)
 {
+	dCache.setGameGUI(*this);
 	debugOutput.setServer(Server);
 	unitMenuActive = false;
 	frame = 0;
@@ -3003,7 +3004,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		cVehiclesBuildMenu buildMenu (player, selectedBuilding);
+		cVehiclesBuildMenu buildMenu (*this, player, selectedBuilding);
 		buildMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
@@ -3126,17 +3127,17 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
-			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand();
+			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand (*client);
 		}
-		selectedVehicle->executeLayMinesCommand();
+		selectedVehicle->executeLayMinesCommand (*client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
 		{
-			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand();
+			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand (*client);
 		}
-		selectedVehicle->executeClearMinesCommand();
+		selectedVehicle->executeClearMinesCommand (*client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDisable && selectedVehicle && selectedVehicle->data.canDisable && selectedVehicle->data.shotsCur && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3158,7 +3159,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		cMineManagerMenu mineManager (selectedBuilding);
+		cMineManagerMenu mineManager (*client, selectedBuilding);
 		mineManager.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
@@ -3565,7 +3566,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 void cGameGUI::addFx (cFx* fx)
 {
 	FxList.Insert (0, fx);
-	fx->playSound();
+	fx->playSound(*this);
 }
 
 void cGameGUI::drawFx (bool bottom) const
@@ -3577,7 +3578,7 @@ void cGameGUI::drawFx (bool bottom) const
 	{
 		if (client->FxList[i]->bottom == bottom)
 		{
-			client->FxList[i]->draw ();
+			client->FxList[i]->draw (*this);
 		}
 	}
 
@@ -3585,7 +3586,7 @@ void cGameGUI::drawFx (bool bottom) const
 	{
 		if (FxList[i]->bottom == bottom)
 		{
-			FxList[i]->draw ();
+			FxList[i]->draw (*this);
 		}
 	}
 

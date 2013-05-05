@@ -188,7 +188,7 @@ public:
 	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
-	void sendUpgradeBuilding (cBuilding* building, bool upgradeAll);  //TODO: move to other file (clientevents?)
+	void sendUpgradeBuilding (const cClient& client, const cBuilding* building, bool upgradeAll);  //TODO: move to other file (clientevents?)
 
 	/**
 	* returns whether this player has detected this unit or not
@@ -232,12 +232,12 @@ protected:
 	virtual bool canBeStoppedViaUnitMenu() const { return isUnitWorking(); }
 
 	// methods needed for execution of unit menu commands
-	virtual void executeBuildCommand();
-	virtual void executeMineManagerCommand();
-	virtual void executeStopCommand();
-	virtual void executeActivateStoredVehiclesCommand();
-	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType);
-	virtual void executeSelfDestroyCommand();
+	virtual void executeBuildCommand (cGameGUI& gameGUI);
+	virtual void executeMineManagerCommand (const cClient& client);
+	virtual void executeStopCommand (const cClient& client);
+	virtual void executeActivateStoredVehiclesCommand (cClient& client);
+	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
+	virtual void executeSelfDestroyCommand (const cClient& client);
 
 	virtual sUnitData* getUpgradedUnitData() const;
 };

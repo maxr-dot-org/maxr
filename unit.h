@@ -62,9 +62,9 @@ public:
 	void setMenuSelection();
 	void drawMenu (cGameGUI& gameGUI);
 	void menuReleased (cGameGUI& gameGUI);
-	virtual void executeAutoMoveJobCommand(cClient& client) {}
-	virtual void executeLayMinesCommand() {}
-	virtual void executeClearMinesCommand() {}
+	virtual void executeAutoMoveJobCommand (cClient& client) {}
+	virtual void executeLayMinesCommand (const cClient& client) {}
+	virtual void executeClearMinesCommand (const cClient& client) {}
 
 	int getScreenPosX (bool movementOffset = true) const;
 	int getScreenPosY (bool movementOffset = true) const;
@@ -139,12 +139,12 @@ protected:
 	virtual bool buildingCanBeUpgraded() const { return false; }
 	virtual bool canBeStoppedViaUnitMenu() const { return false; }
 
-	virtual void executeBuildCommand() {}
-	virtual void executeMineManagerCommand() {}
-	virtual void executeStopCommand() {}
-	virtual void executeActivateStoredVehiclesCommand() {}
-	virtual void executeUpdateBuildingCommmand (bool updateAllOfSameType) {}
-	virtual void executeSelfDestroyCommand() {}
+	virtual void executeBuildCommand (cGameGUI&) = 0;
+	virtual void executeMineManagerCommand (const cClient& client) {}
+	virtual void executeStopCommand (const cClient& client) = 0;
+	virtual void executeActivateStoredVehiclesCommand (cClient& client) = 0;
+	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) {}
+	virtual void executeSelfDestroyCommand (const cClient& client) {}
 
 	virtual sUnitData* getUpgradedUnitData() const = 0;
 };

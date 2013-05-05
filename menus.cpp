@@ -4289,12 +4289,10 @@ bool cBuildingsBuildMenu::selListDoubleClicked (cMenuUnitsList* list, void* pare
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cVehiclesBuildMenu::cVehiclesBuildMenu (cPlayer* player_, cBuilding* building_)
+cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_)
 	: cHangarMenu (LoadPCX (GFXOD_FAC_BUILD_SCREEN), player_, MNU_BG_ALPHA)
-	, cAdvListHangarMenu (NULL, player_)
+	, cAdvListHangarMenu (NULL, player_), gameGUI (&gameGUI_)
 {
-	if (!Client) terminate = true;
-
 	building = building_;
 
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
@@ -4352,7 +4350,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 			}
 			else if (j == 5 || j == 7) x += 3;
 			else x++;
-			cMap& map = *Client->getMap();
+			const cMap& map = *gameGUI->getClient()->getMap();
 
 			if (x < 0 || x >= map.size || y < 0 || y >= map.size) continue;
 
@@ -4417,7 +4415,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 		buildList.Add (buildItem);
 	}
 	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
-	sendWantBuildList (*Client, menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
+	sendWantBuildList (*menu->gameGUI->getClient(), menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
 	menu->end = true;
 }
 
@@ -5221,8 +5219,9 @@ void cStorageMenu::playVoice (int Type)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cMineManagerMenu::cMineManagerMenu (cBuilding* building_) :
+cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_) :
 	cMenu (LoadPCX (GFXOD_MINEMANAGER), MNU_BG_ALPHA),
+	client (&client_),
 	building (building_),
 	subBase (*building_->SubBase)
 {
@@ -5375,8 +5374,8 @@ string cMineManagerMenu::secondBarText (int prod, int need)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::doneReleased (void* parent)
 {
-	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ( (cMenu*) parent);
-	sendChangeResources (*Client, menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd());
+	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ((cMenu*) parent);
+	sendChangeResources (*menu->client, menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd());
 	menu->end = true;
 }
 

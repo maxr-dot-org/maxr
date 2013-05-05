@@ -254,9 +254,9 @@ public:
 	void blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dest, SDL_Rect* destrect, float factor, int frames = 1);
 
 	// methods needed for execution of unit menu commands - refactored during cUnit-refactoring
-	virtual void executeAutoMoveJobCommand(cClient& client);
-	virtual void executeLayMinesCommand();
-	virtual void executeClearMinesCommand();
+	virtual void executeAutoMoveJobCommand (cClient& client);
+	virtual void executeLayMinesCommand (const cClient& client);
+	virtual void executeClearMinesCommand (const cClient& client);
 
 	/**
 	* Is this a plane and is there a landing platform beneath it, that can be used to land on?
@@ -268,7 +268,7 @@ public:
 	/**
 	* draws the main image of the vehicle onto the passed surface
 	*/
-	void render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
+	void render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow);
 	/**
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
@@ -307,9 +307,9 @@ protected:
 	virtual bool canBeStoppedViaUnitMenu() const;
 
 	// methods needed for execution of unit menu commands
-	virtual void executeBuildCommand();
-	virtual void executeStopCommand();
-	virtual void executeActivateStoredVehiclesCommand();
+	virtual void executeBuildCommand (cGameGUI& gameGUI);
+	virtual void executeStopCommand (const cClient& client);
+	virtual void executeActivateStoredVehiclesCommand (cClient& client);
 
 	virtual sUnitData* getUpgradedUnitData() const;
 };
