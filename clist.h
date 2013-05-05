@@ -8,6 +8,18 @@
 
 #define MALLOCN(type, count)  static_cast<type*>(malloc(sizeof(type) * (count)))
 
+template <typename T>
+struct trait_add_const
+{
+	typedef const T type;
+};
+
+template <typename T>
+struct trait_add_const<T*>
+{
+	typedef const T* type;
+};
+
 
 template<typename T> class cList
 {
@@ -39,7 +51,7 @@ public:
 
 	void Reserve (size_t const n);
 
-	bool Contains (const T& e) const;
+	bool Contains (const typename trait_add_const<T>::type& e) const;
 
 	void RemoveDuplicates();
 
@@ -138,7 +150,7 @@ template<typename T> void cList<T>::Reserve (size_t const n)
 	free (old_v);
 }
 
-template<typename T> bool cList<T>::Contains (const T& e) const
+template<typename T> bool cList<T>::Contains (const typename trait_add_const<T>::type& e) const
 {
 	for (size_t idx = 0; idx < size_; idx++)
 	{
