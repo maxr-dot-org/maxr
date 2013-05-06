@@ -1243,15 +1243,7 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 // Unloads a vehicle
 void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 {
-	for (unsigned int i = 0; i < storedUnits.Size(); i++)
-	{
-		if (storedUnits[i] == Vehicle)
-		{
-			storedUnits.Delete (i);
-			break;
-		}
-		if (i == storedUnits.Size() - 1) return;
-	}
+	storedUnits.Remove (Vehicle);
 
 	data.storageUnitsCur--;
 
@@ -1739,10 +1731,7 @@ void cBuilding::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTu
 //--------------------------------------------------------------------------
 void cBuilding::resetDetectedByPlayer (const cPlayer* player)
 {
-	for (unsigned int i = 0; i < detectedByPlayerList.Size(); i++)
-	{
-		if (detectedByPlayerList[i] == player) detectedByPlayerList.Delete (i);
-	}
+	detectedByPlayerList.Remove (player);
 }
 
 //--------------------------------------------------------------------------

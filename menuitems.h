@@ -358,7 +358,7 @@ public:
 	virtual void somewhereReleased();
 
 	void addItem (cMenuItem* item);
-	void removeItem (cMenuItem* item);
+	void removeItem (const cMenuItem* item);
 };
 
 class cMenuTimerBase

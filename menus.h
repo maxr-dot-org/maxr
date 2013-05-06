@@ -198,7 +198,7 @@ public:
 
 	/** Runs the game. If isServer is true, which means that he is the host, a server will be started.
 	 * Else only a client will be started. When reconnect is true, it will be reconnected to a running game.
-	 * When the conatainer contains a savegamenumber, the savegame will be loaded
+	 * When the container contains a savegamenumber, the savegame will be loaded
 	 *@author alzi
 	 */
 	void runGame (int playerNr, bool reconnect = false);

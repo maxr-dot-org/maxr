@@ -979,15 +979,7 @@ cClientMoveJob::~cClientMoveJob()
 		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
-
-	for (unsigned int i = 0; i < client->ActiveMJobs.Size(); i++)
-	{
-		if (client->ActiveMJobs[i] == this)
-		{
-			client->ActiveMJobs.Delete (i);
-			i--;
-		}
-	}
+	client->ActiveMJobs.Remove (this);
 	delete endMoveAction;
 }
 

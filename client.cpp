@@ -2093,10 +2093,7 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 		gameGUI.deselectUnit();
 	}
 	cList<cVehicle*>& selGroup = *gameGUI.getSelVehiclesGroup();
-	for (size_t i = 0; i < selGroup.Size(); i++)
-	{
-		if (selGroup[i] == Vehicle) selGroup.Delete (i);
-	}
+	selGroup.Remove (Vehicle);
 
 	owner->lastDeletedUnit = Vehicle->iID;
 

@@ -3623,29 +3623,20 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 			Vehicle = UnitPlayer->VehicleList;
 			while (Vehicle)
 			{
-				for (unsigned int j = 0; j < Vehicle->seenByPlayerList.Size(); j++)
-				{
-					if (Vehicle->seenByPlayerList[j] == Player) Vehicle->seenByPlayerList.Delete (j);
-				}
+				Vehicle->seenByPlayerList.Remove (Player);
 				Vehicle = static_cast<cVehicle*> (Vehicle->next);
 			}
 			Building = UnitPlayer->BuildingList;
 			while (Building)
 			{
-				for (unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++)
-				{
-					if (Building->seenByPlayerList[j] == Player) Building->seenByPlayerList.Delete (j);
-				}
+				Building->seenByPlayerList.Remove (Player);
 				Building = static_cast<cBuilding*> (Building->next);
 			}
 		}
 		Building = neutralBuildings;
 		while (Building)
 		{
-			for (unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++)
-			{
-				if (Building->seenByPlayerList[j] == Player) Building->seenByPlayerList.Delete (j);
-			}
+			Building->seenByPlayerList.Remove (Player);
 			Building = static_cast<cBuilding*> (Building->next);
 		}
 		sendDeleteEverything (Player->Nr);

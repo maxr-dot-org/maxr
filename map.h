@@ -51,7 +51,7 @@ private:
 	cList<T*>* list;
 	int index;
 public:
-	cMapIterator<T> (cList<T*>* list_);
+	explicit cMapIterator<T> (cList<T*>* list_);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size() const;
 	//T& operator[](unsigned const int i) const;
@@ -61,7 +61,6 @@ public:
 	cMapIterator operator++ (int);
 	/** go to previous vehicle on this field */
 	cMapIterator operator-- (int);
-	bool operator== (T* v) const;
 	operator T* () const;
 	void setToEnd();
 	void rewind();
@@ -157,15 +156,6 @@ cMapIterator<T> cMapIterator<T>::operator-- (int)
 }
 
 template <typename T>
-bool cMapIterator<T>::operator == (T* unit) const
-{
-	if (unit == NULL && (end || rend)) return true;
-	if ( (*list) [index] == unit) return true;
-
-	return false;
-}
-
-template <typename T>
 cMapIterator<T>::operator T* () const
 {
 	if (end || rend) return NULL;
@@ -206,14 +196,8 @@ void cMapIterator<T>::rewind()
 template <typename T>
 bool cMapIterator<T>::contains (const T& v) const
 {
-	for (size_t i = 0; i < list->Size(); i++)
-	{
-		if ( (*list) [i] == &v)
-			return true;
-	}
-	return false;
+	return list->Contains (&v);
 }
-
 
 template <typename T>
 size_t cMapIterator<T>::getIndex() const
@@ -236,7 +220,6 @@ private:
 	* the top vehicle is always stored at fist position */
 	cList<cVehicle*> planes;
 
-
 public:
 
 	/** returns a Iterator for the vehicles on this field */
@@ -254,7 +237,6 @@ public:
 	cBuilding* getRubble();
 	/** returns a pointer to an expl. mine, if there is one */
 	cBuilding* getMine();
-
 };
 
 struct sTerrain
@@ -325,11 +307,11 @@ public:
 	*/
 	void moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y);
 
-	void deleteBuilding (cBuilding* building);
-	void deleteVehicle (cVehicle* vehicle);
+	void deleteBuilding (const cBuilding* building);
+	void deleteVehicle (const cVehicle* vehicle);
 
-	int getMapLevel (cBuilding* building) const;
-	int getMapLevel (cVehicle* vehicle) const;
+	int getMapLevel (const cBuilding* building) const;
+	int getMapLevel (const cVehicle* vehicle) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle

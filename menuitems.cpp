@@ -354,16 +354,9 @@ void cMenuItemContainer::addItem (cMenuItem* item)
 	if (item->position.y + item->position.h > position.y + position.h) position.h = item->position.y + item->position.h - position.y;
 }
 
-void cMenuItemContainer::removeItem (cMenuItem* item)
+void cMenuItemContainer::removeItem (const cMenuItem* item)
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
-	{
-		if (item == itemList[i])
-		{
-			itemList.Delete (i);
-			break;
-		}
-	}
+	itemList.Remove (item);
 	// TODO: renew position
 }
 

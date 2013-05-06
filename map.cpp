@@ -54,7 +54,6 @@ cBuilding* cMapField::getTopBuilding()
 {
 	cBuildingIterator buildingIterator (&buildings);
 
-
 	if (buildingIterator && (buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND || buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) && buildingIterator->owner)
 	{
 		return buildingIterator;
@@ -128,12 +127,13 @@ cMapField& cMap::operator[] (unsigned int offset) const
 
 bool cMap::isWater (int x, int y, bool not_coast) const
 {
-	int off = x + y * size;
+	const int off = x + y * size;
+	const sTerrain& terrainType = terrain[Kacheln[off]];
 
-	if (!terrain[Kacheln[off]].water && !terrain[Kacheln[off]].coast) return false;
+	if (!terrainType.water && !terrainType.coast) return false;
 
-	if (not_coast) return terrain[Kacheln[off]].water;
-	else return terrain[Kacheln[off]].water || terrain[Kacheln[off]].coast;
+	if (not_coast) return terrainType.water;
+	else return terrainType.water || terrainType.coast;
 }
 
 SDL_Surface* cMap::LoadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum)
@@ -328,14 +328,12 @@ bool cMap::LoadMap (const std::string& filename_)
 }
 
 // Erstellt eine neue Map:
-void cMap::NewMap (int size, int iTerrainGrphCount)
+void cMap::NewMap (int size_, int iTerrainGrphCount)
 {
-
-	if (size < 16) size = 16;
 	DeleteMap();
-	this->size = size;
+	size = std::max(16, size_);
 	Kacheln = new int[size * size];
-	memset (Kacheln, 0, sizeof (int) *size * size);
+	memset (Kacheln, 0, sizeof (int) * size * size);
 
 	fields = new cMapField[size * size];
 	Resources = new sResources[size * size];
@@ -349,10 +347,10 @@ void cMap::DeleteMap()
 {
 	if (!Kacheln) return;
 	delete [] Kacheln;
-	delete[] fields;
+	delete [] fields;
 	delete [] Resources;
 	Kacheln = NULL;
-	delete[] terrain;
+	delete [] terrain;
 }
 
 void cMap::generateNextAnimationFrame()
@@ -526,7 +524,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 }
 
 
-int cMap::getMapLevel (cBuilding* building) const
+int cMap::getMapLevel (const cBuilding* building) const
 {
 	const sUnitData& data = building->data;
 
@@ -540,7 +538,7 @@ int cMap::getMapLevel (cBuilding* building) const
 	return 1;	// other buildings
 }
 
-int cMap::getMapLevel (cVehicle* vehicle) const
+int cMap::getMapLevel (const cVehicle* vehicle) const
 {
 	if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0) return 8;	// ships
 	if (vehicle->data.factorAir > 0) return 0;	// planes
@@ -607,68 +605,56 @@ void cMap::addVehicle (cVehicle* vehicle, unsigned int offset)
 	}
 }
 
-void cMap::deleteBuilding (cBuilding* building)
+void cMap::deleteBuilding (const cBuilding* building)
 {
 	int offset = building->PosX + building->PosY * size;
 
 	cList<cBuilding*>* buildings = &fields[offset].buildings;
-	for (unsigned int i = 0; i < buildings->Size(); i++)
-		if ( (*buildings) [i] == building) buildings->Delete (i);
+	buildings->Remove (building);
 
 	if (building->data.isBig)
 	{
 		offset++;
 		buildings = &fields[offset].buildings;
-		for (unsigned int i = 0; i < buildings->Size(); i++)
-			if ( (*buildings) [i] == building) buildings->Delete (i);
+		buildings->Remove (building);
 
 		offset += size;
 		buildings = &fields[offset].buildings;
-		for (unsigned int i = 0; i < buildings->Size(); i++)
-			if ( (*buildings) [i] == building) buildings->Delete (i);
+		buildings->Remove (building);
 
 		offset--;
 		buildings = &fields[offset].buildings;
-		for (unsigned int i = 0; i < buildings->Size(); i++)
-			if ( (*buildings) [i] == building) buildings->Delete (i);
-
+		buildings->Remove (building);
 	}
 }
 
-void cMap::deleteVehicle (cVehicle* vehicle)
+void cMap::deleteVehicle (const cVehicle* vehicle)
 {
 	int offset = vehicle->PosX + vehicle->PosY * size;
 
 	if (vehicle->data.factorAir > 0)
 	{
 		cList<cVehicle*>& planes = fields[offset].planes;
-		for (unsigned int i = 0; i < planes.Size(); i++)
-			if (planes[i] == vehicle) { planes.Delete (i); break; }
+		planes.Remove (vehicle);
 	}
 	else
 	{
 		cList<cVehicle*>* vehicles = &fields[offset].vehicles;
-		for (unsigned int i = 0; i < vehicles->Size(); i++)
-			if ( (*vehicles) [i] == vehicle) { vehicles->Delete (i); break; }
+		vehicles->Remove (vehicle);
 
 		if (vehicle->data.isBig)
 		{
 			offset++;
 			vehicles = &fields[offset].vehicles;
-			for (unsigned int i = 0; i < vehicles->Size(); i++)
-				if ( (*vehicles) [i] == vehicle) { vehicles->Delete (i); break; }
-
+			vehicles->Remove (vehicle);
 
 			offset += size;
 			vehicles = &fields[offset].vehicles;
-			for (unsigned int i = 0; i < vehicles->Size(); i++)
-				if ( (*vehicles) [i] == vehicle) { vehicles->Delete (i); break; }
-
+			vehicles->Remove (vehicle);
 
 			offset--;
 			vehicles = &fields[offset].vehicles;
-			for (unsigned int i = 0; i < vehicles->Size(); i++)
-				if ( (*vehicles) [i] == vehicle) { vehicles->Delete (i); break; }
+			vehicles->Remove (vehicle);
 		}
 	}
 }
@@ -684,10 +670,7 @@ void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int h
 	if (vehicle->data.factorAir > 0)
 	{
 		cList<cVehicle*>& planes = fields[oldOffset].planes;
-		for (unsigned int i = 0; i < planes.Size(); i++)
-		{
-			if (planes[i] == vehicle) planes.Delete (i);
-		}
+		planes.Remove (vehicle);
 		if (height > (int) fields[newOffset].planes.Size())
 			height = fields[newOffset].planes.Size();
 		fields[newOffset].planes.Insert (height, vehicle);
@@ -695,10 +678,7 @@ void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int h
 	else
 	{
 		cList<cVehicle*>& vehicles = fields[oldOffset].vehicles;
-		for (unsigned int i = 0; i < vehicles.Size(); i++)
-		{
-			if (vehicles[i] == vehicle) vehicles.Delete (i);
-		}
+		vehicles.Remove (vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
 		if (vehicle->data.isBig)

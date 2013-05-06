@@ -51,6 +51,8 @@ public:
 
 	void Reserve (size_t const n);
 
+	void Remove (const typename trait_add_const<T>::type& e);
+
 	bool Contains (const typename trait_add_const<T>::type& e) const;
 
 	void RemoveDuplicates();
@@ -148,6 +150,18 @@ template<typename T> void cList<T>::Reserve (size_t const n)
 
 	for (size_t k = old_size; k != 0;) old_v[--k].~T();
 	free (old_v);
+}
+
+template<typename T> void cList<T>::Remove (const typename trait_add_const<T>::type& e)
+{
+	for (size_t idx = 0; idx < size_; idx++)
+	{
+		if (v_[idx] == e)
+		{
+			Delete(idx);
+			--idx;
+		}
+	}
 }
 
 template<typename T> bool cList<T>::Contains (const typename trait_add_const<T>::type& e) const

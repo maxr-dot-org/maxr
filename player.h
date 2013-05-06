@@ -67,7 +67,6 @@ typedef std::vector<int> PointsHistory;
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer
 {
-
 	friend class cServer;
 	friend class cClient;
 public:
@@ -114,7 +113,7 @@ public:
 	bool researchFinished;
 	unsigned int lastDeletedUnit;  /**used for detecting ownerchanges of a unit, e.g. a unit is readded with different player*/
 
-	void InitMaps (int MapSizeX, cMap* map = NULL);  // TODO: remove ' = NULL'
+	void InitMaps (int MapSizeX, cMap* map);
 	void DoScan();
 	cUnit* getNextUnit(cUnit* start);
 	cUnit* getPrevUnit(cUnit* start);

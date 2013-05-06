@@ -1129,14 +1129,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	{
 		sb->buildings[i]->SubBase = NULL;
 	}
-	for (unsigned int i = 0; i < SubBases.Size(); ++i)
-	{
-		if (SubBases[i] == sb)
-		{
-			SubBases.Delete (i);
-			break;
-		}
-	}
+	SubBases.Remove (sb);
 
 	//save ressource allocation
 	int metal = sb->getMetalProd();
