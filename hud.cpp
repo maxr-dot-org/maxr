@@ -2858,8 +2858,8 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 
 void cGameGUI::updateStatusText()
 {
-	if (selectedVehicle) selUnitStatusStr.setText (selectedVehicle->getStatusStr());
-	else if (selectedBuilding) selUnitStatusStr.setText (selectedBuilding->getStatusStr());
+	if (selectedVehicle) selUnitStatusStr.setText (selectedVehicle->getStatusStr (*this));
+	else if (selectedBuilding) selUnitStatusStr.setText (selectedBuilding->getStatusStr (*this));
 	else selUnitStatusStr.setText ("");
 }
 
@@ -3169,7 +3169,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		cUpgradeMenu upgradeMenu (selectedBuilding->owner);
+		cUpgradeMenu upgradeMenu (*client, selectedBuilding->owner);
 		upgradeMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed () && selectedBuilding->owner == player)

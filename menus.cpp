@@ -4603,9 +4603,10 @@ int cUpgradeHangarMenu::getCredits()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cUpgradeMenu::cUpgradeMenu (cPlayer* player)
+cUpgradeMenu::cUpgradeMenu (cClient& client_, cPlayer* player)
 	: cHangarMenu (LoadPCX (GFXOD_UPGRADE), player, MNU_BG_ALPHA)
 	, cUpgradeHangarMenu (player)
+	, client (&client_)
 {
 	credits = player->Credits;
 
@@ -4636,7 +4637,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 {
 	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	sendTakenUpgrades (*Client, menu->unitUpgrades, menu->player);
+	sendTakenUpgrades (*menu->client, menu->unitUpgrades, menu->player);
 	menu->end = true;
 }
 

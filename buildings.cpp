@@ -124,9 +124,10 @@ cBuilding::~cBuilding()
 
 	if (IsLocked)
 	{
-		for (unsigned int i = 0; i < Client->getPlayerList()->Size(); i++)
+		cList<cPlayer*>& playerList = *Client->getPlayerList();
+		for (unsigned int i = 0; i < playerList.Size(); i++)
 		{
-			cPlayer* p = (*Client->getPlayerList()) [i];
+			cPlayer* p = playerList[i];
 			p->DeleteLock (this);
 		}
 	}
@@ -135,7 +136,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 /** Returns a string with the current state */
 //----------------------------------------------------
-string cBuilding::getStatusStr() const
+string cBuilding::getStatusStr(const cGameGUI& gameGUI) const
 {
 	if (turnsDisabled > 0)
 	{
@@ -144,11 +145,11 @@ string cBuilding::getStatusStr() const
 		sText += iToStr (turnsDisabled) + ")";
 		return sText;
 	}
-
 	if (IsWorking)
 	{
+		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
-		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == Client->getActivePlayer())
+		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == activePlayer)
 		{
 			sBuildList* buildListItem = (*BuildList) [0];
 
@@ -178,7 +179,7 @@ string cBuilding::getStatusStr() const
 		}
 
 		// Research Center
-		if (data.canResearch && owner == Client->getActivePlayer())
+		if (data.canResearch && owner == activePlayer)
 		{
 			string sText = lngPack.i18n ("Text~Comp~Working") + "\n";
 			for (int area = 0; area < cResearch::kNrResearchAreas; area++)
@@ -203,7 +204,7 @@ string cBuilding::getStatusStr() const
 		}
 
 		// Goldraffinerie:
-		if (data.convertsGold && owner == Client->getActivePlayer())
+		if (data.convertsGold && owner == activePlayer)
 		{
 			string sText;
 			sText = lngPack.i18n ("Text~Comp~Working") + "\n";

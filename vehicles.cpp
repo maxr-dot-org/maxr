@@ -892,7 +892,7 @@ void cVehicle::DrawPath (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 /** Returns a string with the current state */
 //-----------------------------------------------------------------------------
-string cVehicle::getStatusStr() const
+string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 {
 	if (turnsDisabled > 0)
 	{
@@ -911,7 +911,7 @@ string cVehicle::getStatusStr() const
 		return lngPack.i18n ("Text~Comp~Sentry");
 	else if (IsBuilding)
 	{
-		if (owner != Client->getActivePlayer())
+		if (owner != gameGUI.getClient()->getActivePlayer())
 			return lngPack.i18n ("Text~Comp~Producing");
 		else
 		{
@@ -954,7 +954,7 @@ string cVehicle::getStatusStr() const
 		else
 			return lngPack.i18n ("Text~Comp~Clearing_Fin");
 	}
-	else if ( (data.canCapture || data.canDisable) && owner == Client->getActivePlayer())
+	else if ( (data.canCapture || data.canDisable) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		string sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
 
@@ -1287,22 +1287,22 @@ void cVehicle::FindNextband()
 //-----------------------------------------------------------------------------
 /** Scans for resources ( This function is only called by the server) */
 //-----------------------------------------------------------------------------
-void cVehicle::doSurvey()
+void cVehicle::doSurvey (const cServer& server)
 {
-	char* ptr;
-	ptr = owner->ResourceMap;
+	char* ptr = owner->ResourceMap;
 
 	if (!ptr) return;
 
-	ptr[PosX + PosY * Server->Map->size] = 1;
-	if (PosX > 0) ptr[PosX - 1 + PosY * Server->Map->size] = 1;
-	if (PosX < Server->Map->size - 1) ptr[PosX + 1 + PosY * Server->Map->size] = 1;
-	if (PosY > 0) ptr[PosX + (PosY - 1) *Server->Map->size] = 1;
-	if (PosX > 0 && PosY > 0) ptr[PosX - 1 + (PosY - 1) *Server->Map->size] = 1;
-	if (PosX < Server->Map->size - 1 && PosY > 0) ptr[PosX + 1 + (PosY - 1) *Server->Map->size] = 1;
-	if (PosY < Server->Map->size - 1) ptr[PosX + (PosY + 1) *Server->Map->size] = 1;
-	if (PosX > 0 && PosY < Server->Map->size - 1) ptr[PosX - 1 + (PosY + 1) *Server->Map->size] = 1;
-	if (PosX < Server->Map->size - 1 && PosY < Server->Map->size - 1) ptr[PosX + 1 + (PosY + 1) *Server->Map->size] = 1;
+	const cMap& map = *server.Map;
+	ptr[PosX + PosY * map.size] = 1;
+	if (PosX > 0) ptr[PosX - 1 + PosY * map.size] = 1;
+	if (PosX < map.size - 1) ptr[PosX + 1 + PosY * map.size] = 1;
+	if (PosY > 0) ptr[PosX + (PosY - 1) * map.size] = 1;
+	if (PosX > 0 && PosY > 0) ptr[PosX - 1 + (PosY - 1) * map.size] = 1;
+	if (PosX < map.size - 1 && PosY > 0) ptr[PosX + 1 + (PosY - 1) * map.size] = 1;
+	if (PosY < map.size - 1) ptr[PosX + (PosY + 1) * map.size] = 1;
+	if (PosX > 0 && PosY < map.size - 1) ptr[PosX - 1 + (PosY + 1) * map.size] = 1;
+	if (PosX < map.size - 1 && PosY < map.size - 1) ptr[PosX + 1 + (PosY + 1) * map.size] = 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -1820,19 +1820,20 @@ bool cVehicle::canSupply (cUnit* unit, int supplyType) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::layMine()
+bool cVehicle::layMine (cServer& server)
 {
 	if (data.storageResCur <= 0) return false;
 
+	const cMap& map = *server.Map;
 	if ( (data.factorSea > 0 && data.factorGround == 0))
 	{
-		if (!Server->Map->possiblePlaceBuilding (*specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		Server->addUnit (PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
+		if (!map.possiblePlaceBuilding (*specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		server.addUnit (PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
 	}
 	else
 	{
-		if (!Server->Map->possiblePlaceBuilding (*specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		Server->addUnit (PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
+		if (!map.possiblePlaceBuilding (*specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		server.addUnit (PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
 	}
 	data.storageResCur--;
 
@@ -1842,15 +1843,16 @@ bool cVehicle::layMine()
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::clearMine()
+bool cVehicle::clearMine (cServer& server)
 {
-	cBuilding* Mine = Server->Map->fields[PosX + PosY * Server->Map->size].getMine();
+	const cMap& map = *server.Map;
+	cBuilding* Mine = map.fields[PosX + PosY * map.size].getMine();
 
 	if (!Mine || Mine->owner != owner || data.storageResCur >= data.storageResMax) return false;
 	if (Mine->data.factorGround > 0 && data.factorGround == 0) return false;
 	if (Mine->data.factorSea > 0 && data.factorSea == 0) return false;
 
-	Server->deleteUnit (Mine);
+	server.deleteUnit (Mine);
 	data.storageResCur++;
 
 	if (data.storageResCur >= data.storageResMax) ClearMines = false;
@@ -2107,16 +2109,17 @@ void cVehicle::makeDetection()
 	//detect other units
 	if (data.canDetectStealthOn)
 	{
+		cMap& map = *Server->Map;
 		for (int x = PosX - data.scan; x < PosX + data.scan; x++)
 		{
-			if (x < 0 || x >= Server->Map->size) continue;
+			if (x < 0 || x >= map.size) continue;
 			for (int y = PosY - data.scan; y < PosY + data.scan; y++)
 			{
-				if (y < 0 || y >= Server->Map->size) continue;
+				if (y < 0 || y >= map.size) continue;
 
-				int offset = x + y * Server->Map->size;
-				cVehicle* vehicle = Server->Map->fields[offset].getVehicles();
-				cBuilding* building = Server->Map->fields[offset].getMine();
+				int offset = x + y * map.size;
+				cVehicle* vehicle = map.fields[offset].getVehicles();
+				cBuilding* building = map.fields[offset].getMine();
 
 				if (vehicle && vehicle->owner != owner)
 				{

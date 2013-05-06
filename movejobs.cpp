@@ -772,7 +772,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canSurvey)
 	{
 		sendVehicleResources (Vehicle, Map);
-		Vehicle->doSurvey();
+		Vehicle->doSurvey (*Server);
 	}
 
 	//handle detection
@@ -785,8 +785,8 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canPlaceMines)
 	{
 		bool bResult = false;
-		if (Vehicle->LayMines) bResult = Vehicle->layMine();
-		else if (Vehicle->ClearMines) bResult = Vehicle->clearMine();
+		if (Vehicle->LayMines) bResult = Vehicle->layMine (*Server);
+		else if (Vehicle->ClearMines) bResult = Vehicle->clearMine (*Server);
 		if (bResult)
 		{
 			// send new unit values

@@ -25,14 +25,15 @@
 #include "main.h" // for sUnitData
 #include "unit.h"
 
-class cPlayer;
-class cBuilding;
 class cAutoMJob;
-class cMap;
-class cMapField;
-class cServerMoveJob;
+class cBuilding;
 class cClientMoveJob;
 class cGameGUI;
+class cMap;
+class cMapField;
+class cPlayer;
+class cServer;
+class cServerMoveJob;
 struct sSentry;
 
 //-----------------------------------------------------------------------------
@@ -173,13 +174,13 @@ public:
 	*/
 	int refreshData();
 	void DrawPath (cGameGUI& gameGUI);
-	std::string getStatusStr() const;
+	std::string getStatusStr (const cGameGUI& gameGUI) const;
 	int playStream();
 	void StartMoveSound(cGameGUI& gameGUI);
 	void DecSpeed (int value);
 	void DrawAttackCursor (cGameGUI& gameGUI, int x, int y);
 	void FindNextband();
-	void doSurvey();
+	void doSurvey (const cServer& server);
 	void MakeReport();
 	bool CanTransferTo (cMapField* OverUnitField) const;
 	bool InSentryRange();
@@ -199,13 +200,13 @@ public:
 	*@author alzi alias DoctorDeath
 	*@return true if a mine has been layed
 	*/
-	bool layMine();
+	bool layMine (cServer& server);
 	/**
 	* clears a field from a mine. Should only be called by the server!
 	*@author alzi alias DoctorDeath
 	*@return true if there was a mine to be cleared
 	*/
-	bool clearMine();
+	bool clearMine (cServer& server);
 	/**
 	* checks whether the commando action can be performed or not
 	*@author alzi alias DoctorDeath

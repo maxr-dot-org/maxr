@@ -4055,7 +4055,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			unitDetails[count - minCount]->setSelection (nextVehicle, NULL);
 
 			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
-			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr());
+			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->gameGUI));
 			dest.y += 55; nameDest.y += 55;
 		}
 		if (vehicle && count == selected) (*vehicle) = nextVehicle;
@@ -4087,7 +4087,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 				unitDetails[count - minCount]->setSelection (NULL, nextBuilding);
 
 				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
-				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr());
+				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->gameGUI));
 
 				dest.y += 55; nameDest.y += 55;
 			}

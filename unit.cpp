@@ -809,7 +809,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			cUpgradeMenu upgradeMenu (owner);
+			cUpgradeMenu upgradeMenu (client, owner);
 			upgradeMenu.show();
 			return;
 		}

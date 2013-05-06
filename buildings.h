@@ -164,7 +164,7 @@ public:
 	void Deselct(cGameGUI& gameGUI);
 
 	int playStream();
-	std::string getStatusStr() const;
+	std::string getStatusStr (const cGameGUI& gameGUI) const;
 	/**
 	* refreshes the shotsCur of this building
 	*@author alzi alias DoctorDeath

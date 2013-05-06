@@ -983,9 +983,10 @@ class cUpgradeMenu : public cUpgradeHangarMenu
 	static bool ship;
 	static bool build;
 	static bool tnt;
+	cClient* client;
 protected:
 public:
-	cUpgradeMenu (cPlayer* player);
+	cUpgradeMenu (cClient& client_, cPlayer* player);
 
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);

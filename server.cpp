@@ -607,8 +607,8 @@ void cServer::HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 	}
 
 	bool result = false;
-	if (Vehicle->ClearMines) result = Vehicle->clearMine();
-	if (Vehicle->LayMines) result = Vehicle->layMine();
+	if (Vehicle->ClearMines) result = Vehicle->clearMine (*this);
+	if (Vehicle->LayMines) result = Vehicle->layMine (*this);
 
 	if (result)
 	{
@@ -1558,7 +1558,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (StoredVehicle, Map);
-				StoredVehicle->doSurvey();
+				StoredVehicle->doSurvey (*this);
 			}
 
 			if (StoredVehicle->canLand (*Map))
@@ -1594,7 +1594,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			if (StoredVehicle->data.canSurvey)
 			{
 				sendVehicleResources (StoredVehicle, Map);
-				StoredVehicle->doSurvey();
+				StoredVehicle->doSurvey (*this);
 			}
 			StoredVehicle->InSentryRange();
 		}
@@ -2291,7 +2291,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	if (AddedVehicle->data.canSurvey)
 	{
 		sendVehicleResources (AddedVehicle, Map);
-		AddedVehicle->doSurvey();
+		AddedVehicle->doSurvey (*this);
 	}
 	if (!bInit) AddedVehicle->InSentryRange();
 
@@ -3828,7 +3828,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	if (vehicle->data.canSurvey)
 	{
 		sendVehicleResources (vehicle, Map);
-		vehicle->doSurvey();
+		vehicle->doSurvey (*this);
 	}
 	vehicle->makeDetection();
 }
