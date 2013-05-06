@@ -2952,7 +2952,7 @@ SDL_Rect cMenuLineEdit::getTextDrawOffset() const
 	}
 }
 
-int cMenuLineEdit::getBorderSize()
+int cMenuLineEdit::getBorderSize() const
 {
 	switch (lineEditType)
 	{

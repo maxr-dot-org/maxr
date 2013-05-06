@@ -237,7 +237,6 @@ cMapSender::cMapSender (int toSocket, const std::string& mapName, const std::str
 	, mapSize (0)
 	, bytesSent (0)
 	, sendBuffer (0)
-	, hostMenu (0)
 	, thread (0)
 	, canceled (false)
 {

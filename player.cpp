@@ -115,7 +115,6 @@ cPlayer::cPlayer (const cPlayer& Player)
 	}
 	reportResearchAreasFinished = Player.reportResearchAreasFinished;
 
-	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	bFinishedTurn = Player.bFinishedTurn;
 

@@ -214,7 +214,7 @@ private:
 
 	bool helpActive;
 
-	bool needMapDraw, needMiniMapDraw;
+	bool needMiniMapDraw;
 
 	bool shiftPressed;
 

@@ -80,7 +80,6 @@ private:
 	int mapSize;
 	int bytesSent;
 	char* sendBuffer;
-	cNetworkHostMenu* hostMenu;
 
 	SDL_Thread* thread;
 	bool canceled;

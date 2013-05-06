@@ -940,6 +940,7 @@ public:
  */
 class cMenuScroller : public cMenuItem
 {
+	using cMenuItem::move;
 public:
 	enum eMenuScrollerTypes
 	{
@@ -1063,7 +1064,7 @@ protected:
 	void deleteRight();
 
 	SDL_Rect getTextDrawOffset() const;
-	virtual int getBorderSize();
+	virtual int getBorderSize() const;
 public:
 	cMenuLineEdit (int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_ = FONT_LATIN_NORMAL, eLineEditType lineEditType_ = LE_TYPE_IN_BOX);
 	virtual void draw();
