@@ -118,11 +118,8 @@ cClan::~cClan()
 {
 	for (unsigned int i = 0; i < stats.Size(); i++)
 	{
-		if (stats[i] != 0)
-		{
-			delete stats[i];
-			stats[i] = 0;
-		}
+		delete stats[i];
+		stats[i] = 0;
 	}
 }
 
@@ -187,11 +184,8 @@ cClanData::~cClanData()
 {
 	for (unsigned int i = 0; i < clans.Size(); i++)
 	{
-		if (clans[i] != 0)
-		{
-			delete clans[i];
-			clans[i] = 0;
-		}
+		delete clans[i];
+		clans[i] = 0;
 	}
 }
 

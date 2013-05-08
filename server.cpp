@@ -141,11 +141,8 @@ cServer::~cServer()
 
 	stop ();
 
-	if (casualtiesTracker != 0)
-	{
-		delete casualtiesTracker;
-		casualtiesTracker = 0;
-	}
+	delete casualtiesTracker;
+	casualtiesTracker = 0;
 
 	//disconect clients
 	if (network)
@@ -160,11 +157,8 @@ cServer::~cServer()
 	{
 		delete eventQueue.read();
 	}
-	if (lastEvent != 0)
-	{
-		delete lastEvent;
-		lastEvent = 0;
-	}
+	delete lastEvent;
+	lastEvent = 0;
 
 	for (size_t i = 0; i != AJobs.Size(); ++i)
 	{

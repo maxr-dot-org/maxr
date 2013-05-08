@@ -68,17 +68,11 @@ cServerGame::~cServerGame()
 	for (size_t i = 0; i < menuPlayers.Size(); i++)
 		delete menuPlayers[i];
 
-	if (gameData != 0)
-	{
-		delete gameData;
-		gameData = 0;
-	}
+	delete gameData;
+	gameData = 0;
 
-	if (lastEvent != 0)
-	{
-		delete lastEvent;
-		lastEvent = 0;
-	}
+	delete lastEvent;
+	lastEvent = 0;
 }
 
 //-------------------------------------------------------------------------------

@@ -1684,11 +1684,7 @@ void cClient::HandleNetMessage_GAME_EV_SET_AUTOMOVE (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle)
 	{
-		if (Vehicle->autoMJob)
-		{
-			delete Vehicle->autoMJob;
-			Vehicle->autoMJob = NULL;
-		}
+		delete Vehicle->autoMJob;
 		Vehicle->autoMJob = new cAutoMJob (*this, Vehicle);
 	}
 }

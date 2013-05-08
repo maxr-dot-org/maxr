@@ -77,11 +77,8 @@ cDedicatedServer::cDedicatedServer()
 //------------------------------------------------------------------------
 cDedicatedServer::~cDedicatedServer()
 {
-	if (network != 0)
-	{
-		delete network;
-		network = 0;
-	}
+	delete network;
+	network = 0;
 
 	for (size_t i = 0; i < games.size(); i++)
 		delete games[i];
