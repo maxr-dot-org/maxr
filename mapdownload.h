@@ -25,6 +25,8 @@
 
 class cNetMessage;
 class cNetworkHostMenu;
+class cTCP;
+
 int mapSenderThreadFunction (void* data);
 
 namespace MapDownload
@@ -66,7 +68,7 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (int toSocket, const std::string& mapName, const std::string& receivingPlayerName);
+	cMapSender (cTCP& network_, int toSocket, const std::string& mapName, const std::string& receivingPlayerName);
 	virtual ~cMapSender();
 
 	int getToSocket() const { return toSocket; }
@@ -74,6 +76,7 @@ public:
 	void runInThread (cNetworkHostMenu* hostMenu);
 	//-------------------------------------------------------------------------------
 private:
+	cTCP* network;
 	int toSocket;
 	std::string receivingPlayerName;
 	std::string mapName;
@@ -87,7 +90,7 @@ private:
 	friend int mapSenderThreadFunction (void* data);
 
 	void run();
-	bool sendMsg (cNetMessage* msg);
+	void sendMsg (cNetMessage& msg);
 };
 
 #endif // mapdownloadH

@@ -106,7 +106,7 @@ int cSavegame::save (const string& saveName)
 }
 
 //--------------------------------------------------------------------------
-int cSavegame::load()
+int cSavegame::load (cTCP* network)
 {
 	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str()))
 	{
@@ -149,13 +149,13 @@ int cSavegame::load()
 
 	string gametype;
 	loadHeader (NULL, &gametype, NULL);
-	if (!gametype.compare ("IND")) Server = new cServer (map, PlayerList, GAME_TYPE_SINGLE, false);
-	else if (!gametype.compare ("HOT")) Server = new cServer (map, PlayerList, GAME_TYPE_HOTSEAT, false);
-	else if (!gametype.compare ("NET")) Server = new cServer (map, PlayerList, GAME_TYPE_TCPIP, false);
+	if (!gametype.compare ("IND")) Server = new cServer (network, map, PlayerList, GAME_TYPE_SINGLE, false);
+	else if (!gametype.compare ("HOT")) Server = new cServer (network, map, PlayerList, GAME_TYPE_HOTSEAT, false);
+	else if (!gametype.compare ("NET")) Server = new cServer (network, map, PlayerList, GAME_TYPE_TCPIP, false);
 	else
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
-		Server = new cServer (map, PlayerList, GAME_TYPE_SINGLE, false);
+		Server = new cServer (network, map, PlayerList, GAME_TYPE_SINGLE, false);
 	}
 
 	loadGameInfo();

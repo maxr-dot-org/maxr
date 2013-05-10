@@ -683,16 +683,16 @@ void sendDeletePlayer (cPlayer* Player, int iPlayer)
 }
 
 //-------------------------------------------------------------------------------------
-void sendRequestIdentification (int iSocket)
+void sendRequestIdentification (cTCP& network, int iSocket)
 {
 	cNetMessage message (GAME_EV_REQ_RECON_IDENT);
 	message.pushInt16 (iSocket);
 	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	network->sendTo (iSocket, message.iLength, message.serialize());
+	network.sendTo (iSocket, message.iLength, message.serialize());
 }
 
 //-------------------------------------------------------------------------------------
-void sendReconnectAnswer (bool okay, int socketNumber, cPlayer* Player)
+void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, cPlayer* Player)
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
 	if (okay && Player != NULL)
@@ -713,7 +713,7 @@ void sendReconnectAnswer (bool okay, int socketNumber, cPlayer* Player)
 	message.pushBool (okay);
 
 	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	network->sendTo (socketNumber, message.iLength, message.serialize());
+	network.sendTo (socketNumber, message.iLength, message.serialize());
 }
 
 //-------------------------------------------------------------------------------------

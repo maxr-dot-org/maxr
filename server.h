@@ -31,6 +31,7 @@ class cServerAttackJob;
 class cServerMoveJob;
 class cNetMessage;
 class cBuilding;
+class cTCP;
 class cUnit;
 struct sVehicle;
 class cCasualtiesTracker;
@@ -88,12 +89,13 @@ public:
 	 *@param turnLimit Game ends after this many turns
 	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer (cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
+	cServer (cTCP* network_, cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
 	void setDeadline (int iDeadline);
 	void stop ();
 	~cServer();
 
 
+	cTCP* network;
 private:
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;

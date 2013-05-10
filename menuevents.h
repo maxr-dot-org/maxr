@@ -46,35 +46,35 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage (const std::string& chatMsg, sMenuPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
+void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, sMenuPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
 
-void sendRequestIdentification (sMenuPlayer* player);
+void sendRequestIdentification (cTCP& network, const sMenuPlayer* player);
 
-void sendPlayerList (cList<sMenuPlayer*>* players);
+void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players);
 
-void sendGameData (cGameDataContainer* gameData, const std::string& saveGameString, sMenuPlayer* player = NULL);
+void sendGameData (cTCP& network, const cGameDataContainer* gameData, const std::string& saveGameString, sMenuPlayer* player = NULL);
 
-void sendGo();
+void sendGo (cTCP& network);
 
-void sendIdentification (sMenuPlayer* player);
+void sendIdentification (cTCP& network, const sMenuPlayer* player);
 
-void sendClan (int clanNr, int ownerNr, bool isServer);
+void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer);
 
-void sendLandingUnits (cList<sLandingUnit>* landingList, int ownerNr, bool isServer);
+void sendLandingUnits (cTCP& network, const cList<sLandingUnit>* landingList, int ownerNr, bool isServer);
 
-void sendUnitUpgrades (cPlayer* player, bool isServer);
+void sendUnitUpgrades (cTCP* network, const cPlayer* player, bool isServer);
 
-void sendLandingCoords (sClientLandData& c, int ownerNr, bool isServer);
+void sendLandingCoords (cTCP& network, const sClientLandData& c, int ownerNr, bool isServer);
 
-void sendReselectLanding (eLandingState state, sMenuPlayer* player);
+void sendReselectLanding (cTCP& network, eLandingState state, sMenuPlayer* player);
 
-void sendAllLanded();
+void sendAllLanded (cTCP& network);
 
-void sendGameIdentification (sMenuPlayer* player, int socket);
+void sendGameIdentification (cTCP& network, const sMenuPlayer* player, int socket);
 
-void sendReconnectionSuccess (int playerNr);
+void sendReconnectionSuccess (cTCP& network, int playerNr);
 
-void sendRequestMap (const std::string& mapName, int playerNr);
+void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
 
 void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player);
 

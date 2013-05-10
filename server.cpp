@@ -83,8 +83,9 @@ int CallbackRunServerThread (void* arg)
 }
 
 //-------------------------------------------------------------------------------------
-cServer::cServer (cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
-	: gameTimer()
+cServer::cServer (cTCP* network_, cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
+	: network(network_)
+	, gameTimer()
 	, lastEvent (0)
 	, lastTurnEnd (0)
 	, executingRemainingMovements (false)
@@ -299,7 +300,7 @@ void cServer::HandleNetMessage_TCT_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
-	sendRequestIdentification (message.popInt16());
+	sendRequestIdentification (*network, message.popInt16());
 }
 
 //-------------------------------------------------------------------------------------
@@ -1458,11 +1459,11 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 		if (!playerName.compare (DisconnectedPlayerList[i]->name))
 		{
 			DisconnectedPlayerList[i]->iSocketNum = socketNumber;
-			sendReconnectAnswer (true, socketNumber, DisconnectedPlayerList[i]);
+			sendReconnectAnswer (*network, true, socketNumber, DisconnectedPlayerList[i]);
 			break;
 		}
 	}
-	if (i == DisconnectedPlayerList.Size()) sendReconnectAnswer (false, socketNumber, NULL);
+	if (i == DisconnectedPlayerList.Size()) sendReconnectAnswer (*network, false, socketNumber, NULL);
 }
 
 //-------------------------------------------------------------------------------------

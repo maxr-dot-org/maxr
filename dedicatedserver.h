@@ -90,6 +90,7 @@ protected:
 private:
 	cDedicatedServer();
 	virtual ~cDedicatedServer();
+	cTCP* network;
 };
 
 #endif

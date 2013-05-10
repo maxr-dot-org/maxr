@@ -230,8 +230,9 @@ int mapSenderThreadFunction (void* data)
 }
 
 //-------------------------------------------------------------------------------
-cMapSender::cMapSender (int toSocket, const std::string& mapName, const std::string& receivingPlayerName)
-	: toSocket (toSocket)
+cMapSender::cMapSender (cTCP& network_, int toSocket, const std::string& mapName, const std::string& receivingPlayerName)
+	: network(&network_)
+	, toSocket (toSocket)
 	, receivingPlayerName (receivingPlayerName)
 	, mapName (mapName)
 	, mapSize (0)
@@ -256,7 +257,7 @@ cMapSender::~cMapSender()
 		delete[] sendBuffer;
 		// the thread was not finished yet (else it would have deleted sendBuffer already)
 		// send a canceled msg to the client
-		cNetMessage* msg = new cNetMessage (MU_MSG_CANCELED_MAP_DOWNLOAD);
+		cNetMessage msg (MU_MSG_CANCELED_MAP_DOWNLOAD);
 		sendMsg (msg);
 		Log.write ("MapSender: Canceling an unfinished upload thread", cLog::eLOG_TYPE_DEBUG);
 	}
@@ -302,24 +303,25 @@ void cMapSender::run()
 
 	if (canceled) return;
 
-	cNetMessage* msg = new cNetMessage (MU_MSG_START_MAP_DOWNLOAD);
-	msg->pushString (mapName);
-	msg->pushInt32 (mapSize);
-	sendMsg (msg);
-
+	{
+		cNetMessage msg (MU_MSG_START_MAP_DOWNLOAD);
+		msg.pushString (mapName);
+		msg.pushInt32 (mapSize);
+		sendMsg (msg);
+	}
 	int msgCount = 0;
 	while (bytesSent < mapSize)
 	{
 		if (canceled) return;
 
-		msg = new cNetMessage (MU_MSG_MAP_DOWNLOAD_DATA);
+		cNetMessage msg (MU_MSG_MAP_DOWNLOAD_DATA);
 		int bytesToSend = mapSize - bytesSent;
-		if (msg->iLength + bytesToSend + 4 > PACKAGE_LENGTH)
-			bytesToSend = PACKAGE_LENGTH - msg->iLength - 4;
+		if (msg.iLength + bytesToSend + 4 > PACKAGE_LENGTH)
+			bytesToSend = PACKAGE_LENGTH - msg.iLength - 4;
 		for (int i = 0; i < bytesToSend; i++)
-			msg->pushChar (sendBuffer[bytesSent + i]);
+			msg.pushChar (sendBuffer[bytesSent + i]);
 		bytesSent += bytesToSend;
-		msg->pushInt32 (bytesToSend);
+		msg.pushInt32 (bytesToSend);
 		sendMsg (msg);
 
 		msgCount++;
@@ -330,9 +332,11 @@ void cMapSender::run()
 	// finished
 	delete[] sendBuffer;
 	sendBuffer = 0;
-	msg = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
-	msg->pushString (receivingPlayerName);
+
+	cNetMessage msg (MU_MSG_FINISHED_MAP_DOWNLOAD);
+	msg.pushString (receivingPlayerName);
 	sendMsg (msg);
+
 	// Push message also to client, that belongs to the host, to give feedback about the finished upload state.
 	// The EventHandler mechanism is used, because this code runs in another thread than the code, that must display the msg.
 	if (EventHandler)
@@ -344,16 +348,10 @@ void cMapSender::run()
 }
 
 //-------------------------------------------------------------------------------
-bool cMapSender::sendMsg (cNetMessage* msg)
+void cMapSender::sendMsg (cNetMessage& msg)
 {
-	if (network == 0)
-		return false;
+	msg.iPlayerNr = -1;
+	network->sendTo (toSocket, msg.iLength, msg.serialize());
 
-	msg->iPlayerNr = -1;
-	network->sendTo (toSocket, msg->iLength, msg->serialize());
-
-	Log.write ("MapSender: <-- " + msg->getTypeAsString() + ", Hexdump: " + msg->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
-	delete msg;
-
-	return true;
+	Log.write ("MapSender: <-- " + msg.getTypeAsString() + ", Hexdump: " + msg.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 }

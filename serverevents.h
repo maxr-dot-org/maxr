@@ -273,12 +273,12 @@ void sendDeletePlayer (cPlayer* Player, int iPlayer = -1);
 * the server wants to get an identification of the new connected player
 *@author alzi alias DoctorDeath
 */
-void sendRequestIdentification (int iSocket);
+void sendRequestIdentification (cTCP& network, int iSocket);
 /**
 * the server gives his ok to the reconnection
 *@author alzi alias DoctorDeath
 */
-void sendReconnectAnswer (bool okay, int socketNumber, cPlayer* Player);
+void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, cPlayer* Player);
 void sendTurn (int turn, cPlayer* Player);
 void sendHudSettings (sHudStateContainer hudStates, cPlayer* Player);
 void sendStoreVehicle (int unitid, bool vehicle, int storedunitid, int player);

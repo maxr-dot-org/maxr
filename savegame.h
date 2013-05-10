@@ -27,6 +27,7 @@ class cMap;
 class cPlayer;
 class cVehicle;
 class cBuilding;
+class cTCP;
 struct sResources;
 struct sUnitData;
 struct sID;
@@ -65,7 +66,7 @@ public:
 	/* saves the current gamestate to a file */
 	int save (const std::string& saveName);
 	/* loads a savegame */
-	int load();
+	int load (cTCP* network);
 
 	/* loads the header of a savefile and returns some values to the pointers */
 	void loadHeader (std::string* name, std::string* type, std::string* time);

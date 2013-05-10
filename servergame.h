@@ -31,6 +31,8 @@ struct sMenuPlayer;
 class cPlayer;
 class cMap;
 class cNetMessage;
+class cTCP;
+
 int serverGameThreadFunction (void* data);
 
 //------------------------------------------------------------------------
@@ -41,7 +43,7 @@ int serverGameThreadFunction (void* data);
 class cServerGame
 {
 public:
-	cServerGame();
+	explicit cServerGame (cTCP& network_);
 	virtual ~cServerGame();
 	void prepareGameData();
 	bool loadGame (int saveGameNumber);
@@ -58,6 +60,7 @@ public:
 
 	//------------------------------------------------------------------------
 protected:
+	cTCP* network;
 	SDL_Thread* thread;
 	bool canceled;
 	bool shouldSave;

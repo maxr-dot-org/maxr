@@ -32,6 +32,7 @@ int GetColorNr (const SDL_Surface* sf);
 class cMapReceiver;
 class cMapSender;
 class cServer;
+class cTCP;
 
 struct sColor
 {
@@ -201,7 +202,7 @@ public:
 	 * When the container contains a savegamenumber, the savegame will be loaded
 	 *@author alzi
 	 */
-	void runGame (int playerNr, bool reconnect = false);
+	void runGame (cTCP* network, int playerNr, bool reconnect = false);
 
 	/** handles incoming clan information
 	 *  @author pagra */
@@ -220,7 +221,7 @@ public:
 	/** handles an incoming landing position
 	 *@author alzi
 	 */
-	void receiveLandingPosition (cNetMessage* message);
+	void receiveLandingPosition (cTCP& network, cNetMessage* message);
 
 private:
 	/** checks whether the landing positions are okay
@@ -230,7 +231,7 @@ private:
 	/** loads and runs a saved game
 	 *@author alzi
 	 */
-	void runSavedGame (int player);
+	void runSavedGame (cTCP* network, int player);
 };
 
 enum eMenuBackgrounds
@@ -337,7 +338,7 @@ public:
 	 * sends a netmessage to the given player.
 	 *@author alzi
 	 */
-	static void sendMessage (cNetMessage* message, sMenuPlayer* player = NULL, int fromPlayerNr = -1);
+	static void sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer* player = NULL, int fromPlayerNr = -1);
 	/**
 	 * this method will receive the menu-net-messages when this menu is active in the moment the message
 	 * has been received. If the message should be handled overwrite this virtual method.
@@ -485,6 +486,7 @@ public:
 class cPlanetsSelectionMenu : public cMenu
 {
 protected:
+	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
 	AutoPtr<cMenuLabel>::type titleLabel;
@@ -503,7 +505,7 @@ protected:
 	int offset;
 
 public:
-	cPlanetsSelectionMenu (cGameDataContainer* gameDataContainer_);
+	cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_);
 
 	void loadMaps();
 	void showMaps();
@@ -523,6 +525,7 @@ public:
 class cClanSelectionMenu : public cMenu
 {
 protected:
+	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
 	AutoPtr<cMenuLabel>::type titleLabel;
@@ -542,7 +545,7 @@ protected:
 	void updateClanDescription();
 
 public:
-	cClanSelectionMenu (cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn);
+	cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn);
 
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
@@ -650,6 +653,7 @@ public:
 class cStartupHangarMenu : public cUpgradeHangarMenu, public cAdvListHangarMenu
 {
 protected:
+	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 
 	AutoPtr<cMenuRadioGroup>::type upgradeBuyGroup;
@@ -669,7 +673,7 @@ protected:
 
 	void updateUnitData();
 public:
-	cStartupHangarMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
+	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
 
 	static void selectionChanged (void* parent);
 
@@ -692,7 +696,7 @@ public:
 class cLandingMenu : public cMenu
 {
 public:
-	cLandingMenu (cGameDataContainer* gameDataContainer_, cPlayer* player_);
+	cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_);
 
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 	void handleNetMessage (cNetMessage* message);
@@ -707,6 +711,7 @@ protected:
 	static void backReleased (void* parent);
 
 protected:
+	cTCP* network;
 	cGameDataContainer* gameDataContainer;
 	cPlayer* player;
 
@@ -733,6 +738,7 @@ protected:
 class cNetworkMenu : public cMenu
 {
 protected:
+	cTCP* network;
 	std::string ip;
 	int port;
 	cList<sMenuPlayer*> players;

@@ -68,7 +68,8 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 cClient* Client = 0; // global instance
 
-cClient::cClient (cMap* const Map, cList<cPlayer*>* const playerList) :
+cClient::cClient (cTCP* network_, cMap* const Map, cList<cPlayer*>* const playerList) :
+	network(network_),
 	Map (Map),
 	PlayerList (playerList),
 	gameTimer(),

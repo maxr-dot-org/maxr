@@ -70,7 +70,7 @@ cDedicatedServer& cDedicatedServer::instance()
 //------------------------------------------------------------------------
 cDedicatedServer::cDedicatedServer()
 {
-	network = 0; // TODO: would be nicer as member or real singleton (not as global)
+	network = 0;
 	configuration = new cDedicatedServerConfig();
 }
 
@@ -78,13 +78,11 @@ cDedicatedServer::cDedicatedServer()
 cDedicatedServer::~cDedicatedServer()
 {
 	delete network;
-	network = 0;
 
 	for (size_t i = 0; i < games.size(); i++)
 		delete games[i];
 
 	delete configuration;
-	configuration = 0;
 }
 
 //------------------------------------------------------------------------
@@ -206,7 +204,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 void cDedicatedServer::startNewGame()
 {
 	cout << "Setting up new game..." << endl;
-	cServerGame* game = new cServerGame();
+	cServerGame* game = new cServerGame (*network);
 	game->prepareGameData();
 	games.push_back (game);
 	game->runInThread();
@@ -216,7 +214,7 @@ void cDedicatedServer::startNewGame()
 void cDedicatedServer::loadSaveGame (int saveGameNumber)
 {
 	cout << "Setting up game from saved game number " << saveGameNumber << " ..." << endl;
-	cServerGame* game = new cServerGame();
+	cServerGame* game = new cServerGame (*network);
 	if (game->loadGame (saveGameNumber) == false)
 	{
 		delete game;

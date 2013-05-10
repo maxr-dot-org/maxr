@@ -222,6 +222,6 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void HandleNetworkThread();
-} EX* network;
+};
 
 #endif // networkH

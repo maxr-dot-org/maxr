@@ -31,6 +31,7 @@ class cClientMoveJob;
 class cCasualtiesTracker;
 class cJob;
 class cFx;
+class cTCP;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
 
@@ -41,7 +42,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient
 {
 public:
-	cClient (cMap* Map, cList<cPlayer*>* PlayerList);
+	cClient (cTCP* network_, cMap* Map, cList<cPlayer*>* PlayerList);
 	~cClient();
 
 private:
@@ -51,6 +52,7 @@ private:
 	friend class cVehicle;
 	friend class cUnit;
 
+	cTCP* network;
 	/** the map */
 	cMap* Map;
 	/** List with all players */

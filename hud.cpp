@@ -2555,7 +2555,7 @@ void cGameGUI::doCommand (const string& cmd)
 		}
 
 		// close the socket
-		if (network) network->close (Player->iSocketNum);
+		if (Server->network) Server->network->close (Player->iSocketNum);
 		for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
 		{
 			if ( (*Server->PlayerList) [i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList) [i]->iSocketNum < MAX_CLIENTS) (*Server->PlayerList) [i]->iSocketNum--;

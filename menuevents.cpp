@@ -27,23 +27,23 @@
 
 using namespace std;
 
-void sendMenuChatMessage (const string& chatMsg, sMenuPlayer* player, int fromPlayerNr, bool translationText)
+void sendMenuChatMessage (cTCP& network, const string& chatMsg, sMenuPlayer* player, int fromPlayerNr, bool translationText)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_CHAT);
 	message->pushString (chatMsg);
 	message->pushBool (translationText);
-	cMenu::sendMessage (message, player, fromPlayerNr);
+	cMenu::sendMessage (network, message, player, fromPlayerNr);
 }
 
-void sendRequestIdentification (sMenuPlayer* player)
+void sendRequestIdentification (cTCP& network, const sMenuPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_REQ_IDENTIFIKATION);
 	message->pushInt16 (player->nr);
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
-	cMenu::sendMessage (message, player);
+	cMenu::sendMessage (network, message, player);
 }
 
-void sendPlayerList (cList<sMenuPlayer*>* players)
+void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
@@ -56,10 +56,10 @@ void sendPlayerList (cList<sMenuPlayer*>* players)
 		message->pushString (player->name);
 	}
 	message->pushInt16 ( (int) players->Size());
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 }
 
-void sendGameData (cGameDataContainer* gameData, const string& saveGameString, sMenuPlayer* player)
+void sendGameData (cTCP& network, const cGameDataContainer* gameData, const string& saveGameString, sMenuPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_OPTINS);
 
@@ -89,16 +89,16 @@ void sendGameData (cGameDataContainer* gameData, const string& saveGameString, s
 	}
 	message->pushBool (gameData->settings != NULL);
 
-	cMenu::sendMessage (message, player);
+	cMenu::sendMessage (network, message, player);
 }
 
-void sendGo()
+void sendGo (cTCP& network)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_GO);
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 }
 
-void sendIdentification (sMenuPlayer* player)
+void sendIdentification (cTCP& network, const sMenuPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_IDENTIFIKATION);
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
@@ -106,10 +106,10 @@ void sendIdentification (sMenuPlayer* player)
 	message->pushString (player->name);
 	message->pushInt16 (player->color);
 	message->pushInt16 (player->nr);
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 }
 
-void sendClan (int clanNr, int ownerNr, bool isServer)
+void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_CLAN);
 
@@ -122,10 +122,10 @@ void sendClan (int clanNr, int ownerNr, bool isServer)
 		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage (message);
+	else cMenu::sendMessage (network, message);
 }
 
-void sendLandingUnits (cList<sLandingUnit>* landingList, int ownerNr, bool isServer)
+void sendLandingUnits (cTCP& network, const cList<sLandingUnit>* landingList, int ownerNr, bool isServer)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
 
@@ -144,10 +144,10 @@ void sendLandingUnits (cList<sLandingUnit>* landingList, int ownerNr, bool isSer
 		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage (message);
+	else cMenu::sendMessage (network, message);
 }
 
-void sendUnitUpgrades (cPlayer* player, bool isServer)
+void sendUnitUpgrades (cTCP* network, const cPlayer* player, bool isServer)
 {
 	cNetMessage* message = NULL;
 	int count = 0;
@@ -192,7 +192,7 @@ void sendUnitUpgrades (cPlayer* player, bool isServer)
 				ActiveMenu->handleNetMessage (message);
 				delete message;
 			}
-			else cMenu::sendMessage (message);
+			else if (network) cMenu::sendMessage (*network, message);
 			message = NULL;
 			count = 0;
 		}
@@ -206,7 +206,7 @@ void sendUnitUpgrades (cPlayer* player, bool isServer)
 			ActiveMenu->handleNetMessage (message);
 			delete message;
 		}
-		else cMenu::sendMessage (message);
+		else if (network) cMenu::sendMessage (*network, message);
 		message = NULL;
 		count = 0;
 	}
@@ -249,7 +249,7 @@ void sendUnitUpgrades (cPlayer* player, bool isServer)
 				ActiveMenu->handleNetMessage (message);
 				delete message;
 			}
-			else cMenu::sendMessage (message);
+			else if (network) cMenu::sendMessage (*network, message);
 			message = NULL;
 			count = 0;
 		}
@@ -263,11 +263,11 @@ void sendUnitUpgrades (cPlayer* player, bool isServer)
 			ActiveMenu->handleNetMessage (message);
 			delete message;
 		}
-		else cMenu::sendMessage (message);
+		else if (network) cMenu::sendMessage (*network, message);
 	}
 }
 
-void sendLandingCoords (sClientLandData& c, int ownerNr, bool isServer)
+void sendLandingCoords (cTCP& network, const sClientLandData& c, int ownerNr, bool isServer)
 {
 	Log.write ("Client: sending landing coords", cLog::eLOG_TYPE_NET_DEBUG);
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_COORDS);
@@ -280,10 +280,10 @@ void sendLandingCoords (sClientLandData& c, int ownerNr, bool isServer)
 		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage (message);
+	else cMenu::sendMessage (network, message);
 }
 
-void sendReselectLanding (eLandingState state, sMenuPlayer* player)
+void sendReselectLanding (cTCP& network, eLandingState state, sMenuPlayer* player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_RESELECT_LANDING);
 	message->pushChar (state);
@@ -293,13 +293,13 @@ void sendReselectLanding (eLandingState state, sMenuPlayer* player)
 		ActiveMenu->handleNetMessage (message);
 		delete message;
 	}
-	else cMenu::sendMessage (message, player);
+	else cMenu::sendMessage (network, message, player);
 }
 
-void sendAllLanded()
+void sendAllLanded (cTCP& network)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_ALL_LANDED);
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 	if (ActiveMenu)
 	{
 		message = new cNetMessage (MU_MSG_ALL_LANDED);
@@ -308,27 +308,27 @@ void sendAllLanded()
 	}
 }
 
-void sendGameIdentification (sMenuPlayer* player, int socket)
+void sendGameIdentification (cTCP& network, const sMenuPlayer* player, int socket)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_IDENTIFICATION);
 	message->pushInt16 (socket);
 	message->pushString (player->name);
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 }
 
-void sendReconnectionSuccess (int playerNr)
+void sendReconnectionSuccess (cTCP& network, int playerNr)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_RECON_SUCESS);
 	message->pushInt16 (playerNr);
-	cMenu::sendMessage (message);
+	cMenu::sendMessage (network, message);
 }
 
-void sendRequestMap (const string& mapName, int playerNr)
+void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 {
 	cNetMessage* msg = new cNetMessage (MU_MSG_REQUEST_MAP);
 	msg->pushString (mapName);
 	msg->pushInt16 (playerNr);
-	cMenu::sendMessage (msg);
+	cMenu::sendMessage (network, msg);
 }
 
 void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player)
