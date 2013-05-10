@@ -40,22 +40,18 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 class cServerAttackJob
 {
 public:
-	cServerAttackJob (cServer& server, cUnit* _unit, int targetOff, bool sentry);
+	cServerAttackJob (cServer& server_, cUnit* _unit, int targetOff, bool sentry);
 	~cServerAttackJob();
 
 	void sendFireCommand (cPlayer* player);
 	void clientFinished (int playerNr);
-
-	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
-	cUnit* unit;
-	int iID;
 
 	//--------------------------------------------------------------------------
 private:
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko
 	*/
-	void lockTarget (cServer& server, int offset);
+	void lockTarget (int offset);
 	void lockTargetCluster();
 	void sendFireCommand();
 	void makeImpact (int x, int y);
@@ -64,7 +60,14 @@ private:
 
 	bool isMuzzleTypeRocket() const;
 
+public:
+	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
+	cUnit* unit;
+	int iID;
+
+private:
 	static int iNextID;
+	cServer* server;
 	bool sentryFire;
 	int iAgressorOff;
 	int iMuzzleType;

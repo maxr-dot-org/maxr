@@ -315,7 +315,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	return maxAllowedProd;
 }
 
-bool sSubBase::increaseEnergyProd (int i)
+bool sSubBase::increaseEnergyProd (cServer& server, int i)
 {
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
 	cList<cBuilding*> onlineStations;
@@ -356,7 +356,7 @@ bool sSubBase::increaseEnergyProd (int i)
 	//calc the optimum amount of energy stations and generators
 	int energy = EnergyProd + i;
 
-	int stations   = min ( (energy + 3) / 6, availableStations);
+	int stations   = min ((energy + 3) / 6, availableStations);
 	int generators = max (energy - stations * 6, 0);
 
 	if (generators > availableGenerators)
@@ -375,54 +375,53 @@ bool sSubBase::increaseEnergyProd (int i)
 	if (neededFuel > Oil + getMaxOilProd())
 	{
 		//not possible to produce enough fuel
-		sendChatMessageToClient ("Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr);
 		return false;
 	}
 
 	//stop unneeded buildings
 	for (int i = (int) onlineStations.Size() - stations; i > 0; i--)
 	{
-		onlineStations[0]->ServerStopWork (true);
+		onlineStations[0]->ServerStopWork (server, true);
 		onlineStations.Delete (0);
 	}
 	for (int i = (int) onlineGenerators.Size() - generators; i > 0; i--)
 	{
-		onlineGenerators[0]->ServerStopWork (true);
+		onlineGenerators[0]->ServerStopWork (server, true);
 		onlineGenerators.Delete (0);
 	}
 
 	//start needed buildings
 	for (int i = stations - (int) onlineStations.Size(); i > 0; i--)
 	{
-		offlineStations[0]->ServerStartWork();
+		offlineStations[0]->ServerStartWork (server);
 		offlineStations.Delete (0);
 	}
 	for (int i = generators - (int) onlineGenerators.Size(); i > 0; i--)
 	{
-		offlineGenerators[0]->ServerStartWork();
+		offlineGenerators[0]->ServerStartWork (server);
 		offlineGenerators.Delete (0);
 	}
 
 	return true;
 }
 
-
-void sSubBase::addMetal (int i)
+void sSubBase::addMetal (cServer& server, int i)
 {
-	addRessouce (sUnitData::STORE_RES_METAL, i);
+	addRessouce (server, sUnitData::STORE_RES_METAL, i);
 }
 
-void sSubBase::addOil (int i)
+void sSubBase::addOil (cServer& server, int i)
 {
-	addRessouce (sUnitData::STORE_RES_OIL, i);
+	addRessouce (server, sUnitData::STORE_RES_OIL, i);
 }
 
-void sSubBase::addGold (int i)
+void sSubBase::addGold (cServer& server, int i)
 {
-	addRessouce (sUnitData::STORE_RES_GOLD, i);
+	addRessouce (server, sUnitData::STORE_RES_GOLD, i);
 }
 
-void sSubBase::addRessouce (sUnitData::eStorageResType storeResType, int value)
+void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value)
 {
 	cBuilding* b;
 	int* storedRessources = NULL;
@@ -441,7 +440,6 @@ void sSubBase::addRessouce (sUnitData::eStorageResType storeResType, int value)
 			assert (0);
 			break;
 	}
-
 
 	if (*storedRessources + value < 0) value -= *storedRessources + value;
 	if (!value) return;
@@ -479,10 +477,10 @@ void sSubBase::addRessouce (sUnitData::eStorageResType storeResType, int value)
 				b->data.storageResCur = b->data.storageResMax;
 			}
 		}
-		if (iStartValue != value) sendUnitData (b, owner->Nr);
+		if (iStartValue != value) sendUnitData (server, b, owner->Nr);
 		if (value == 0) break;
 	}
-	sendSubbaseValues (this, owner->Nr);
+	sendSubbaseValues (server, this, owner->Nr);
 }
 
 void sSubBase::refresh()
@@ -527,7 +525,7 @@ void sSubBase::refresh()
 
 }
 
-bool sSubBase::checkHumanConsumer()
+bool sSubBase::checkHumanConsumer (cServer& server)
 {
 	if (HumanNeed > HumanProd)
 	{
@@ -536,7 +534,7 @@ bool sSubBase::checkHumanConsumer()
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsHumans || !building.IsWorking) continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (HumanNeed <= HumanProd) break;
 		}
@@ -545,9 +543,9 @@ bool sSubBase::checkHumanConsumer()
 	}
 
 	return false;
-};
+}
 
-bool sSubBase::checkGoldConsumer()
+bool sSubBase::checkGoldConsumer (cServer& server)
 {
 	if (GoldNeed > GoldProd + Gold)
 	{
@@ -556,7 +554,7 @@ bool sSubBase::checkGoldConsumer()
 			cBuilding& building = *buildings[i];
 			if (!building.data.convertsGold || !building.IsWorking) continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (GoldNeed <= GoldProd + Gold) break;
 		}
@@ -567,7 +565,7 @@ bool sSubBase::checkGoldConsumer()
 	return false;
 };
 
-bool sSubBase::checkMetalConsumer()
+bool sSubBase::checkMetalConsumer (cServer& server)
 {
 	if (MetalNeed > MetalProd + Metal)
 	{
@@ -576,7 +574,7 @@ bool sSubBase::checkMetalConsumer()
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsMetal || !building.IsWorking) continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (MetalNeed <= MetalProd + Metal) break;
 		}
@@ -587,7 +585,7 @@ bool sSubBase::checkMetalConsumer()
 	return false;
 };
 
-bool sSubBase::checkOil()
+bool sSubBase::checkOil (cServer& server)
 {
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
 	cList<cBuilding*> onlineStations;
@@ -671,34 +669,34 @@ bool sSubBase::checkOil()
 		setGoldProd (gold);
 		setMetalProd (metal);
 
-		sendChatMessageToClient ("Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (missingOil));
+		sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (missingOil));
 		if (getMetalProd() < metal)
-			sendChatMessageToClient ("Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (metal - MetalProd));
+			sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (metal - MetalProd));
 		if (getGoldProd() < gold)
-			sendChatMessageToClient ("Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (gold - GoldProd));
+			sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (gold - GoldProd));
 	}
 
 	//stop unneeded buildings
 	for (int i = (int) onlineStations.Size() - stations; i > 0; i--)
 	{
-		onlineStations[0]->ServerStopWork (true);
+		onlineStations[0]->ServerStopWork (server, true);
 		onlineStations.Delete (0);
 	}
 	for (int i = (int) onlineGenerators.Size() - generators; i > 0; i--)
 	{
-		onlineGenerators[0]->ServerStopWork (true);
+		onlineGenerators[0]->ServerStopWork (server, true);
 		onlineGenerators.Delete (0);
 	}
 
 	//start needed buildings
 	for (int i = stations - (int) onlineStations.Size(); i > 0; i--)
 	{
-		offlineStations[0]->ServerStartWork();
+		offlineStations[0]->ServerStartWork (server);
 		offlineStations.Delete (0);
 	}
 	for (int i = generators - (int) onlineGenerators.Size(); i > 0; i--)
 	{
-		offlineGenerators[0]->ServerStartWork();
+		offlineGenerators[0]->ServerStartWork (server);
 		offlineGenerators.Delete (0);
 	}
 
@@ -713,7 +711,7 @@ bool sSubBase::checkOil()
 	return oilMissing;
 };
 
-bool sSubBase::checkEnergy()
+bool sSubBase::checkEnergy (cServer& server)
 {
 	if (EnergyNeed > EnergyProd)
 	{
@@ -727,7 +725,7 @@ bool sSubBase::checkEnergy()
 				building.MaxGoldProd > 0 ||
 				building.MaxMetalProd > 0)	continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (EnergyNeed <= EnergyProd)	return true;
 
@@ -741,7 +739,7 @@ bool sSubBase::checkEnergy()
 			//do not shut down oil producers in the second run
 			if (building.MaxOilProd > 0) continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (EnergyNeed <= EnergyProd)	return true;
 
@@ -753,7 +751,7 @@ bool sSubBase::checkEnergy()
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsEnergy || !building.IsWorking) continue;
 
-			building.ServerStopWork (false);
+			building.ServerStopWork (server, false);
 
 			if (EnergyNeed <= EnergyProd) return true;
 		}
@@ -763,16 +761,16 @@ bool sSubBase::checkEnergy()
 	return false;
 }
 
-void sSubBase::prepareTurnend()
+void sSubBase::prepareTurnend (cServer& server)
 {
-	if (checkMetalConsumer())
-		sendChatMessageToClient ("Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (checkMetalConsumer (server))
+		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
-	if (checkHumanConsumer())
-		sendChatMessageToClient ("Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (checkHumanConsumer (server))
+		sendChatMessageToClient (server, "Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
-	if (checkGoldConsumer())
-		sendChatMessageToClient ("Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (checkGoldConsumer (server))
+		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
 	//there is a loop around checkOil/checkEnergy, because a lack of energy can lead to less fuel,
 	//that can lead to less energy, etc...
@@ -782,43 +780,43 @@ void sSubBase::prepareTurnend()
 	while (changed)
 	{
 		changed = false;
-		if (checkOil())
+		if (checkOil (server))
 		{
 			changed = true;
 			oilMissing = true;
 		}
 
-		if (checkEnergy())
+		if (checkEnergy (server))
 		{
 			changed = true;
 			energyMissing = true;
 		}
 	}
-	if (oilMissing) sendChatMessageToClient ("Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->Nr);
-	if (energyMissing) sendChatMessageToClient ("Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (oilMissing) sendChatMessageToClient (server, "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (energyMissing) sendChatMessageToClient (server, "Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
 	//recheck metal and gold, because metal and gold producers could have been shut down, due to a lack of energy
-	if (checkMetalConsumer())
-		sendChatMessageToClient ("Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (checkMetalConsumer (server))
+		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
 
-	if (checkGoldConsumer())
-		sendChatMessageToClient ("Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (checkGoldConsumer (server))
+		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
 }
 
-void sSubBase::makeTurnend()
+void sSubBase::makeTurnend (cServer& server)
 {
-	prepareTurnend();
+	prepareTurnend (server);
 
 	//produce ressources
-	addOil (OilProd - OilNeed);
-	addMetal (MetalProd - MetalNeed);
-	addGold (GoldProd - GoldNeed);
+	addOil (server, OilProd - OilNeed);
+	addMetal (server, MetalProd - MetalNeed);
+	addGold (server, GoldProd - GoldNeed);
 
 	//produce credits
 	if (GoldNeed)
 	{
 		owner->Credits += GoldNeed;
-		sendCredits (owner->Credits, owner->Nr);
+		sendCredits (server, owner->Credits, owner->Nr);
 	}
 
 	// make repairs/build/reload
@@ -832,11 +830,11 @@ void sSubBase::makeTurnend()
 			// calc new hitpoints
 			Building->data.hitpointsCur += Round ( ( (float) Building->data.hitpointsMax / Building->data.buildCosts) * 4);
 			if (Building->data.hitpointsCur > Building->data.hitpointsMax) Building->data.hitpointsCur = Building->data.hitpointsMax;
-			addMetal (-1);
-			sendUnitData (Building, owner->Nr);
+			addMetal (server, -1);
+			sendUnitData (server, Building, owner->Nr);
 			for (unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++)
 			{
-				sendUnitData (Building, Building->seenByPlayerList[j]->Nr);
+				sendUnitData (server, Building, Building->seenByPlayerList[j]->Nr);
 			}
 		}
 		Building->hasBeenAttacked = false;
@@ -845,9 +843,9 @@ void sSubBase::makeTurnend()
 		if (Building->data.canAttack && Building->data.ammoCur == 0 && Metal > 0)
 		{
 			Building->data.ammoCur = Building->data.ammoMax;
-			addMetal (-1);
+			addMetal (server, -1);
 			//ammo is not visible to enemies. So only send to the owner
-			sendUnitData (Building, owner->Nr);
+			sendUnitData (server, Building, owner->Nr);
 		}
 
 		// build:
@@ -865,13 +863,13 @@ void sSubBase::makeTurnend()
 				if (BuildListItem->metall_remaining < 0) BuildListItem->metall_remaining = 0;
 
 				MetalNeed += min (Building->MetalPerRound, BuildListItem->metall_remaining);
-				sendBuildList (Building);
-				sendSubbaseValues (this, owner->Nr);
+				sendBuildList (server, Building);
+				sendSubbaseValues (server, this, owner->Nr);
 			}
 			if (BuildListItem->metall_remaining <= 0)
 			{
-				Server->addReport (BuildListItem->type, true, owner->Nr);
-				Building->ServerStopWork (false);
+				server.addReport (BuildListItem->type, true, owner->Nr);
+				Building->ServerStopWork (server, false);
 			}
 		}
 	}
@@ -886,7 +884,7 @@ void sSubBase::makeTurnend()
 	if (Oil   < 0) Oil   = 0;
 	if (Gold  < 0) Gold  = 0;
 
-	sendSubbaseValues (this, owner->Nr);
+	sendSubbaseValues (server, this, owner->Nr);
 }
 
 void sSubBase::merge (sSubBase* sb)
@@ -1096,7 +1094,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		NewSubBase->addBuilding (building);
 		SubBases.Add (NewSubBase);
 
-		if (bServer) sendSubbaseValues (NewSubBase, NewSubBase->owner->Nr);
+		if (bServer) sendSubbaseValues (*Server, NewSubBase, NewSubBase->owner->Nr);
 
 		return;
 	}
@@ -1116,7 +1114,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		delete SubBase;
 	}
 	NeighbourList.Clear();
-	if (bServer) sendSubbaseValues (firstNeighbour, building->owner->Nr);
+	if (bServer) sendSubbaseValues (*Server, firstNeighbour, building->owner->Nr);
 }
 
 void cBase::deleteBuilding (cBuilding* building, bool bServer)
@@ -1180,7 +1178,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 		//send subbase values to client
 		for (unsigned int i = 0; i < newSubBases.Size(); i++)
 		{
-			sendSubbaseValues (newSubBases[i], building->owner->Nr);
+			sendSubbaseValues (*Server, newSubBases[i], building->owner->Nr);
 		}
 	}
 
@@ -1189,12 +1187,12 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 
 
 
-void cBase::handleTurnend()
+void cBase::handleTurnend (cServer& server)
 {
 
 	for (unsigned int i = 0; i < SubBases.Size(); ++i)
 	{
-		SubBases[i]->makeTurnend();
+		SubBases[i]->makeTurnend (server);
 	}
 }
 

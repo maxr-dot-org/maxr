@@ -174,9 +174,9 @@ public:
 	void DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf);
 	void updateNeighbours (const cMap* map);
 	void CheckNeighbours (const cMap* Map);
-	void ServerStartWork();
+	void ServerStartWork (cServer& server);
 	void ClientStartWork (cGameGUI& gameGUI);
-	void ServerStopWork (bool override);
+	void ServerStopWork (cServer& server, bool override);
 	void ClientStopWork (cGameGUI& gameGUI);
 	bool CanTransferTo (cMapField* OverUnitField);  /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd(const cServer& server);

@@ -733,7 +733,7 @@ int cVehicle::refreshData()
 						IsBuilding = false;
 					}
 					BuildPath = false;
-					sendBuildAnswer (false, this);
+					sendBuildAnswer (server, false, this);
 				}
 			}
 			else
@@ -766,18 +766,18 @@ int cVehicle::refreshData()
 			{
 				int size = map.size;
 				map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
-				sendStopClear (this, BuildBigSavedPos, owner->Nr);
+				sendStopClear (server, this, BuildBigSavedPos, owner->Nr);
 				for (unsigned int i = 0; i < seenByPlayerList.Size(); i++)
 				{
-					sendStopClear (this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
+					sendStopClear (server, this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
 				}
 			}
 			else
 			{
-				sendStopClear (this, -1, owner->Nr);
+				sendStopClear (server, this, -1, owner->Nr);
 				for (unsigned int i = 0; i < seenByPlayerList.Size(); i++)
 				{
-					sendStopClear (this, -1, seenByPlayerList[i]->Nr);
+					sendStopClear (server, this, -1, seenByPlayerList[i]->Nr);
 				}
 			}
 			data.storageResCur += Rubble->RubbleValue;
@@ -2008,7 +2008,7 @@ void cVehicle::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTur
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.Add (player);
 
-	if (!wasDetected) sendDetectionState (this);
+	if (!wasDetected) sendDetectionState (*Server, this);
 
 	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
 		detectedInThisTurnByPlayerList.Add (player);
@@ -2022,7 +2022,7 @@ void cVehicle::resetDetectedByPlayer (cPlayer* player)
 	detectedByPlayerList.Remove (player);
 	detectedInThisTurnByPlayerList.Remove (player);
 
-	if (wasDetected && detectedByPlayerList.Size() == 0) sendDetectionState (this);
+	if (wasDetected && detectedByPlayerList.Size() == 0) sendDetectionState (*Server, this);
 }
 
 //-----------------------------------------------------------------------------

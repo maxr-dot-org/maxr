@@ -683,9 +683,9 @@ void cPlayer::doResearch()
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
 		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
-			sendUnitUpgrades (upgradedUnitDatas[i], Nr);
+			sendUnitUpgrades (*Server, upgradedUnitDatas[i], Nr);
 	}
-	sendResearchLevel (&researchLevel, Nr);
+	sendResearchLevel (*Server, &researchLevel, Nr);
 }
 
 void cPlayer::accumulateScore()
@@ -700,11 +700,11 @@ void cPlayer::accumulateScore()
 			bp->points ++;
 			deltaScore ++;
 
-			sendUnitScore (bp);
+			sendUnitScore (*Server, bp);
 		}
 	}
 	setScore (getScore (now) + deltaScore, now);
-	sendScore (this, now);
+	sendScore (*Server, this, now);
 }
 
 void cPlayer::CountEcoSpheres()

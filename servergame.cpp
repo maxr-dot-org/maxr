@@ -158,7 +158,7 @@ void cServerGame::run()
 		// don't do anything if games hasn't been started yet!
 		if (Server && Server->bStarted)
 		{
-			Server->gameTimer.run ();
+			Server->gameTimer.run (*Server);
 
 			if (shouldSave)
 			{
@@ -477,7 +477,7 @@ void cServerGame::startGameServer()
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.Size(); n++)
-		sendVictoryConditions (nTurns, nScore, gameData->players[n]);
+		sendVictoryConditions (*Server, nTurns, nScore, gameData->players[n]);
 
 	// place resources
 	for (unsigned int i = 0; i < gameData->players.Size(); i++)
@@ -490,7 +490,7 @@ void cServerGame::startGameServer()
 
 	// send clan info to clients
 	if (gameData->settings->clans == SETTING_CLANS_ON)
-		sendClansToClients (& (gameData->players));
+		sendClansToClients (*Server, &gameData->players);
 
 	// make the landing
 	for (unsigned int i = 0; i < gameData->players.Size(); i++)

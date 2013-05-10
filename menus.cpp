@@ -176,7 +176,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.Size(); n++)
-			sendVictoryConditions (nTurns, nScore, players[n]);
+			sendVictoryConditions (*Server, nTurns, nScore, players[n]);
 
 		// place resources
 		for (unsigned int i = 0; i < players.Size(); i++)
@@ -200,7 +200,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	{
 		// send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
-			sendClansToClients (&players);
+			sendClansToClients (*Server, &players);
 
 		// make the landing
 		for (unsigned int i = 0; i < players.Size(); i++)
@@ -242,7 +242,8 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
 	cSavegame savegame (savegameNum);
 	if (savegame.load (network) != 1) return;
-	if (player >= (int) Server->PlayerList->Size()) return;
+	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
+	if (player >= (int) serverPlayerList.Size()) return;
 
 	// copy map for client
 	cMap clientMap;
@@ -251,9 +252,9 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cList<cPlayer*> clientPlayerList;
 
 	// copy players for client
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
-		clientPlayerList.Add (new cPlayer (* (*Server->PlayerList) [i]));
+		clientPlayerList.Add (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
 	Client = new cClient (network, &clientMap, &clientPlayerList);
@@ -264,16 +265,16 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 
 	// in singleplayer only the first player is important
-	(*Server->PlayerList) [player]->iSocketNum = MAX_CLIENTS;
-	sendRequestResync (*Client, (*Server->PlayerList) [player]->Nr);
+	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
+	sendRequestResync (*Client, serverPlayerList[player]->Nr);
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
-		sendHudSettings (* (*Server->PlayerList) [i]->savedHud, (*Server->PlayerList) [i]);
-		cList<sSavedReportMessage>& reportList = (*Server->PlayerList) [i]->savedReportsList;
+		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
+		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.Size(); ++j)
 		{
-			sendSavedReport (reportList[j], (*Server->PlayerList) [i]->Nr);
+			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
 		}
 		reportList.Clear();
 	}
@@ -3341,12 +3342,13 @@ bool cNetworkHostMenu::runSavedGame()
 	cSavegame savegame (gameDataContainer.savegameNum);
 	if (savegame.load (network) != 1) return false;
 
+	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	// first we check whether all necessary players are connected
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
 		for (unsigned int j = 0; j < players.Size(); j++)
 		{
-			if ( (*Server->PlayerList) [i]->name == players[j]->name) break;
+			if (serverPlayerList[i]->name == players[j]->name) break;
 			// stop when a player is missing
 			if (j == players.Size() - 1)
 			{
@@ -3359,12 +3361,12 @@ bool cNetworkHostMenu::runSavedGame()
 	// then remove all players that do not belong to the save
 	for (unsigned int i = 0; i < players.Size(); i++)
 	{
-		for (unsigned int j = 0; j < Server->PlayerList->Size(); j++)
+		for (unsigned int j = 0; j < serverPlayerList.Size(); j++)
 		{
-			if (players[i]->name == (*Server->PlayerList) [j]->name) break;
+			if (players[i]->name == serverPlayerList[j]->name) break;
 
 			// the player isn't in the list when the loop has gone trough all players and no match was found
-			if (j == Server->PlayerList->Size() - 1)
+			if (j == serverPlayerList.Size() - 1)
 			{
 				sendMenuChatMessage (*network, "Text~Multiplayer~Disconnect_Not_In_Save", players[i], -1, true);
 				network->close (players[i]->socket);
@@ -3378,18 +3380,18 @@ bool cNetworkHostMenu::runSavedGame()
 		}
 	}
 	// and now set sockets, playernumbers and colors
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
 		for (unsigned int j = 0; j < players.Size(); j++)
 		{
-			if ( (*Server->PlayerList) [i]->name == players[j]->name)
+			if (serverPlayerList[i]->name == players[j]->name)
 			{
 				// set the sockets in the servers PlayerList
-				if ( (*Server->PlayerList) [i]->name == actPlayer->name) (*Server->PlayerList) [i]->iSocketNum = MAX_CLIENTS;
-				else (*Server->PlayerList) [i]->iSocketNum = players[j]->socket;
+				if (serverPlayerList[i]->name == actPlayer->name) serverPlayerList[i]->iSocketNum = MAX_CLIENTS;
+				else serverPlayerList[i]->iSocketNum = players[j]->socket;
 				// set the numbers and colors in the menues players-list
-				players[j]->nr = (*Server->PlayerList) [i]->Nr;
-				players[j]->color = GetColorNr ( (*Server->PlayerList) [i]->color);
+				players[j]->nr = serverPlayerList[i]->Nr;
+				players[j]->color = GetColorNr (serverPlayerList[i]->color);
 				break;
 			}
 		}
@@ -3413,11 +3415,11 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// copy players for client
 	cPlayer* localPlayer = NULL;
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
-		cPlayer* addedPlayer = new cPlayer (* (*Server->PlayerList) [i]);
+		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
 		clientPlayerList.Add (addedPlayer);
-		if ( (*Server->PlayerList) [i]->iSocketNum == MAX_CLIENTS) localPlayer = clientPlayerList[i];
+		if (serverPlayerList[i]->iSocketNum == MAX_CLIENTS) localPlayer = clientPlayerList[i];
 		// reinit unit values
 		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan()).data;
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
@@ -3431,14 +3433,14 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 
 	// send data to all players
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
-		sendRequestResync (*Client, (*Server->PlayerList) [i]->Nr);
-		sendHudSettings (* (*Server->PlayerList) [i]->savedHud, (*Server->PlayerList) [i]);
-		cList<sSavedReportMessage>& reportList = (*Server->PlayerList) [i]->savedReportsList;
+		sendRequestResync (*Client, serverPlayerList[i]->Nr);
+		sendHudSettings (*Server, * serverPlayerList[i]->savedHud, serverPlayerList[i]);
+		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.Size(); ++j)
 		{
-			sendSavedReport (reportList[j], (*Server->PlayerList) [i]->Nr);
+			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
 		}
 		reportList.Clear();
 	}

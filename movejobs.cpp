@@ -447,10 +447,10 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
 	}
-	sendUnitData (Vehicle, Vehicle->owner->Nr);
+	sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 	{
-		sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+		sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 	}
 
 	if (Vehicle->ServerMoveJob)
@@ -520,7 +520,7 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 	delete endAction;
 
 	endAction = new cEndMoveAction (Vehicle, destID, type);
-	sendEndMoveActionToClient (Vehicle, destID, type);
+	sendEndMoveActionToClient (*server, Vehicle, destID, type);
 
 }
 
@@ -673,7 +673,7 @@ bool cServerMoveJob::checkMove()
 		// else delete the movejob and inform the client that he has to find a new path
 		else
 		{
-			sendNextMove (Vehicle, MJOB_BLOCKED);
+			sendNextMove (*server, Vehicle, MJOB_BLOCKED);
 		}
 		return false;
 	}
@@ -703,7 +703,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->tryResetOfDetectionStateAfterMove();
 
 	// send move command to all players who can see the unit
-	sendNextMove (Vehicle, MJOB_OK);
+	sendNextMove (*server, Vehicle, MJOB_OK);
 
 	Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
 	Vehicle->owner->DoScan();
@@ -770,7 +770,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	// search for resources if necessary
 	if (Vehicle->data.canSurvey)
 	{
-		sendVehicleResources (Vehicle, Map);
+		sendVehicleResources (*server, Vehicle, Map);
 		Vehicle->doSurvey (*server);
 	}
 
@@ -789,10 +789,10 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (Vehicle, Vehicle->owner->Nr);
+			sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
-				sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+				sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 			}
 		}
 	}
@@ -859,7 +859,7 @@ void cEndMoveAction::executeLoadAction()
 		if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (vehicle_->iID, true, destVehicle->iID, vehicle_->owner->Nr);
+		sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, vehicle_->owner->Nr);
 	}
 }
 
@@ -875,14 +875,14 @@ void cEndMoveAction::executeGetInAction()
 		destVehicle->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (destVehicle->iID, true, vehicle_->iID, destVehicle->owner->Nr);
+		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, destVehicle->owner->Nr);
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
 		destBuilding->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr);
+		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr);
 	}
 }
 

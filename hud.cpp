@@ -2591,7 +2591,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		Player->Credits = credits;
 
-		sendCredits (credits, Player->Nr);
+		sendCredits (*Server, credits, Player->Nr);
 	}
 	else if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
 	{

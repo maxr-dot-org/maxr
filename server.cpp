@@ -276,7 +276,7 @@ void cServer::run()
 		lastTime = gameTimer.gameTime;
 		if (bStarted)
 		{
-			gameTimer.run ();
+			gameTimer.run (*this);
 		}
 
 		if (!event && lastTime == gameTimer.gameTime) //nothing to do
@@ -350,7 +350,7 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 		// freeze clients
 		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-		sendChatMessageToClient ("Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name);
+		sendChatMessageToClient (*this, "Text~Multiplayer~Lost_Connection", SERVER_INFO_MESSAGE, -1, Player->name);
 
 		DisconnectedPlayerList.Add (Player);
 
@@ -363,7 +363,7 @@ void cServer::HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHAT_CLIENT);
 
-	sendChatMessageToClient (message.popString(), USER_MESSAGE);
+	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE);
 }
 
 //-------------------------------------------------------------------------------------
@@ -390,7 +390,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 	if (building == NULL || building->owner->Nr != message.iPlayerNr) return;
 
 	//handle message
-	building->ServerStartWork();
+	building->ServerStartWork (*this);
 }
 
 //-------------------------------------------------------------------------------------
@@ -404,7 +404,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 	if (building == NULL || building->owner->Nr != message.iPlayerNr) return;
 
 	//handle message
-	building->ServerStopWork (false);
+	building->ServerStopWork (*this, false);
 }
 
 //-------------------------------------------------------------------------------------
@@ -422,10 +422,10 @@ void cServer::HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 	Log.write (" Server: Added received movejob", cLog::eLOG_TYPE_NET_DEBUG);
 	// send the movejob to all players who can see this unit
 	const cVehicle& vehicle = *MoveJob->Vehicle;
-	sendMoveJobServer (MoveJob, vehicle.owner->Nr);
+	sendMoveJobServer (*this, MoveJob, vehicle.owner->Nr);
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.Size(); i++)
 	{
-		sendMoveJobServer (MoveJob, vehicle.seenByPlayerList[i]->Nr);
+		sendMoveJobServer (*this, MoveJob, vehicle.seenByPlayerList[i]->Nr);
 	}
 }
 
@@ -607,10 +607,10 @@ void cServer::HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 
 	if (result)
 	{
-		sendUnitData (Vehicle, Vehicle->owner->Nr);
+		sendUnitData (*this, Vehicle, Vehicle->owner->Nr);
 		for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 		{
-			sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 		}
 	}
 }
@@ -646,7 +646,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0)
 	{
 		// TODO: differ between diffrent aborting types ( buildposition blocked, not enough material, ... )
-		sendBuildAnswer (false, Vehicle);
+		sendBuildAnswer (*this, false, Vehicle);
 		return;
 	}
 
@@ -670,7 +670,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 			   Map->possiblePlaceBuilding (Data, buildX,     buildY + 1, Vehicle) &&
 			   Map->possiblePlaceBuilding (Data, buildX + 1, buildY + 1, Vehicle)))
 		{
-			sendBuildAnswer (false, Vehicle);
+			sendBuildAnswer (*this, false, Vehicle);
 			return;
 		}
 		Vehicle->BuildBigSavedPos = Vehicle->PosX + Vehicle->PosY * Map->size;
@@ -685,7 +685,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 
 		if (!Map->possiblePlaceBuilding (Data, iBuildOff, Vehicle))
 		{
-			sendBuildAnswer (false, Vehicle);
+			sendBuildAnswer (*this, false, Vehicle);
 			return;
 		}
 	}
@@ -705,7 +705,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->IsBuilding = true;
 	Vehicle->BuildPath = bBuildPath;
 
-	sendBuildAnswer (true, Vehicle);
+	sendBuildAnswer (*this, true, Vehicle);
 	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
@@ -806,8 +806,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 
 			DestBuilding->data.storageResCur += iTranfer;
 			SrcBuilding->data.storageResCur -= iTranfer;
-			sendUnitData (DestBuilding, DestBuilding->owner->Nr);
-			sendUnitData (SrcBuilding, SrcBuilding->owner->Nr);
+			sendUnitData (*this, DestBuilding, DestBuilding->owner->Nr);
+			sendUnitData (*this, SrcBuilding, SrcBuilding->owner->Nr);
 		}
 		else
 		{
@@ -819,26 +819,26 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 				case sUnitData::STORE_RES_METAL:
 				{
 					if (SrcBuilding->SubBase->Metal - iTranfer > SrcBuilding->SubBase->MaxMetal || SrcBuilding->SubBase->Metal - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->SubBase->addMetal (-iTranfer);
+					if (!bBreakSwitch) SrcBuilding->SubBase->addMetal (*this, -iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_OIL:
 				{
 					if (SrcBuilding->SubBase->Oil - iTranfer > SrcBuilding->SubBase->MaxOil || SrcBuilding->SubBase->Oil - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->SubBase->addOil (-iTranfer);
+					if (!bBreakSwitch) SrcBuilding->SubBase->addOil (*this, -iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_GOLD:
 				{
 					if (SrcBuilding->SubBase->Gold - iTranfer > SrcBuilding->SubBase->MaxGold || SrcBuilding->SubBase->Gold - iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) SrcBuilding->SubBase->addGold (-iTranfer);
+					if (!bBreakSwitch) SrcBuilding->SubBase->addGold (*this, -iTranfer);
 				}
 				break;
 			}
 			if (bBreakSwitch) return;
-			sendSubbaseValues (SrcBuilding->SubBase, SrcBuilding->owner->Nr);
+			sendSubbaseValues (*this, SrcBuilding->SubBase, SrcBuilding->owner->Nr);
 			DestVehicle->data.storageResCur += iTranfer;
-			sendUnitData (DestVehicle, DestVehicle->owner->Nr);
+			sendUnitData (*this, DestVehicle, DestVehicle->owner->Nr);
 		}
 	}
 	else
@@ -853,24 +853,24 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 				case sUnitData::STORE_RES_METAL:
 				{
 					if (DestBuilding->SubBase->Metal + iTranfer > DestBuilding->SubBase->MaxMetal || DestBuilding->SubBase->Metal + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->SubBase->addMetal (iTranfer);
+					if (!bBreakSwitch) DestBuilding->SubBase->addMetal (*this, iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_OIL:
 				{
 					if (DestBuilding->SubBase->Oil + iTranfer > DestBuilding->SubBase->MaxOil || DestBuilding->SubBase->Oil + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->SubBase->addOil (iTranfer);
+					if (!bBreakSwitch) DestBuilding->SubBase->addOil (*this, iTranfer);
 				}
 				break;
 				case sUnitData::STORE_RES_GOLD:
 				{
 					if (DestBuilding->SubBase->Gold + iTranfer > DestBuilding->SubBase->MaxGold || DestBuilding->SubBase->Gold + iTranfer < 0) bBreakSwitch = true;
-					if (!bBreakSwitch) DestBuilding->SubBase->addGold (iTranfer);
+					if (!bBreakSwitch) DestBuilding->SubBase->addGold (*this, iTranfer);
 				}
 				break;
 			}
 			if (bBreakSwitch) return;
-			sendSubbaseValues (DestBuilding->SubBase, DestBuilding->owner->Nr);
+			sendSubbaseValues (*this, DestBuilding->SubBase, DestBuilding->owner->Nr);
 		}
 		else
 		{
@@ -878,10 +878,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 			if (DestVehicle->data.storeResType != iType) return;
 			if (DestVehicle->data.storageResCur + iTranfer > DestVehicle->data.storageResMax || DestVehicle->data.storageResCur + iTranfer < 0) return;
 			DestVehicle->data.storageResCur += iTranfer;
-			sendUnitData (DestVehicle, DestVehicle->owner->Nr);
+			sendUnitData (*this, DestVehicle, DestVehicle->owner->Nr);
 		}
 		SrcVehicle->data.storageResCur -= iTranfer;
-		sendUnitData (SrcVehicle, SrcVehicle->owner->Nr);
+		sendUnitData (*this, SrcVehicle, SrcVehicle->owner->Nr);
 	}
 }
 
@@ -933,7 +933,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	// reset building status
 	if (Building->IsWorking)
 	{
-		Building->ServerStopWork (false);
+		Building->ServerStopWork (*this, false);
 	}
 
 	int iBuildSpeed = message.popInt16();
@@ -998,10 +998,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		Building->BuildSpeed = iBuildSpeed;
 		if ( (*Building->BuildList) [0]->metall_remaining > 0)
 		{
-			Building->ServerStartWork();
+			Building->ServerStartWork (*this);
 		}
 	}
-	sendBuildList (Building);
+	sendBuildList (*this, Building);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1056,9 +1056,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 			BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
 		}
 
-		Building->ServerStartWork();
+		Building->ServerStartWork (*this);
 	}
-	sendBuildList (Building);
+	sendBuildList (*this, Building);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1086,7 +1086,7 @@ void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	SubBase->setGoldProd (iGoldProd);
 	SubBase->setOilProd (iOilProd);
 
-	sendSubbaseValues (SubBase, Building->owner->Nr);
+	sendSubbaseValues (*this, SubBase, Building->owner->Nr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1105,9 +1105,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Vehicle->owner->deleteSentry (Vehicle);
 		}
 
-		sendUnitData (Vehicle, Vehicle->owner->Nr);
+		sendUnitData (*this, Vehicle, Vehicle->owner->Nr);
 		for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
-			sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 	}
 	else	// building
 	{
@@ -1120,9 +1120,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 			Building->owner->deleteSentry (Building);
 		}
 
-		sendUnitData (Building, Building->owner->Nr);
+		sendUnitData (*this, Building, Building->owner->Nr);
 		for (unsigned int i = 0; i < Building->seenByPlayerList.Size(); i++)
-			sendUnitData (Building, Building->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, Building, Building->seenByPlayerList[i]->Nr);
 	}
 }
 
@@ -1147,10 +1147,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			vehicle->manualFireActive = false;
 		}
 
-		sendUnitData (vehicle, vehicle->owner->Nr);
+		sendUnitData (*this, vehicle, vehicle->owner->Nr);
 		for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
 		{
-			sendUnitData (vehicle, vehicle->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, vehicle, vehicle->seenByPlayerList[i]->Nr);
 		}
 	}
 	else	// building
@@ -1161,7 +1161,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 		if (building->sentryActive)
 		{
 			building->owner->deleteSentry (building);
-
 		}
 		else
 		{
@@ -1169,10 +1168,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 			building->manualFireActive = false;
 		}
 
-		sendUnitData (building, building->owner->Nr);
+		sendUnitData (*this, building, building->owner->Nr);
 		for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
 		{
-			sendUnitData (building, building->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, building, building->seenByPlayerList[i]->Nr);
 		}
 	}
 }
@@ -1230,7 +1229,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 			}
 			if (iValue > DestData->hitpointsMax) iValue = DestData->hitpointsMax;
 		}
-		sendUnitData (SrcVehicle, SrcVehicle->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
+		sendUnitData (*this, SrcVehicle, SrcVehicle->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 	}
 	else
 	{
@@ -1241,7 +1240,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		if (iType == SUPPLY_TYPE_REARM)
 		{
 			if (SrcBuilding->SubBase->Metal < 1) return;
-			SrcBuilding->SubBase->addMetal (-1);
+			SrcBuilding->SubBase->addMetal (*this, -1);
 			iValue = DestVehicle->data.ammoMax;
 		}
 		else
@@ -1251,11 +1250,11 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 			while (SrcBuilding->SubBase->Metal > 0 && iValue < DestVehicle->data.hitpointsMax)
 			{
 				iValue += Round ( ( (float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
-				SrcBuilding->SubBase->addMetal (-1);
+				SrcBuilding->SubBase->addMetal (*this, -1);
 			}
 			if (iValue > DestVehicle->data.hitpointsMax) iValue = DestVehicle->data.hitpointsMax;
 		}
-		sendUnitData (SrcBuilding, SrcBuilding->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
+		sendUnitData (*this, SrcBuilding, SrcBuilding->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 	}
 
 	// repair or reload the destination unit
@@ -1264,22 +1263,22 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 		if (iType == SUPPLY_TYPE_REARM) DestVehicle->data.ammoCur = DestVehicle->data.ammoMax;
 		else DestVehicle->data.hitpointsCur = iValue;
 
-		sendSupply (DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr);
+		sendSupply (*this, DestVehicle->iID, true, iValue, iType, DestVehicle->owner->Nr);
 
 		//send unitdata to the players who are not the owner
 		for (unsigned int i = 0; i < DestVehicle->seenByPlayerList.Size(); i++)
-			sendUnitData (DestVehicle, DestVehicle->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, DestVehicle, DestVehicle->seenByPlayerList[i]->Nr);
 	}
 	else
 	{
 		if (iType == SUPPLY_TYPE_REARM) DestBuilding->data.ammoCur = DestBuilding->data.ammoMax;
 		else DestBuilding->data.hitpointsCur = iValue;
 
-		sendSupply (DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr);
+		sendSupply (*this, DestBuilding->iID, false, iValue, iType, DestBuilding->owner->Nr);
 
 		//send unitdata to the players who are not the owner
 		for (unsigned int i = 0; i < DestBuilding->seenByPlayerList.Size(); i++)
-			sendUnitData (DestBuilding, DestBuilding->seenByPlayerList[i]->Nr);
+			sendUnitData (*this, DestBuilding, DestBuilding->seenByPlayerList[i]->Nr);
 	}
 }
 
@@ -1323,10 +1322,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 	if (upgradedVehicles.Size() > 0)
 	{
 		if (totalCosts > 0)
-			storingBuilding->SubBase->addMetal (-totalCosts);
+			storingBuilding->SubBase->addMetal (*this, -totalCosts);
 		for (unsigned int i = 0; i < upgradedVehicles.Size(); i++)
 			upgradedVehicles[i]->upgradeToCurrentVersion();
-		sendUpgradeVehicles (upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->Nr);
+		sendUpgradeVehicles (*this, upgradedVehicles, totalCosts, storingBuilding->iID, storingBuilding->owner->Nr);
 	}
 }
 
@@ -1348,7 +1347,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	if (!building)
 	{
-		sendClearAnswer (2, Vehicle, 0, -1, Vehicle->owner->Nr);
+		sendClearAnswer (*this, 2, Vehicle, 0, -1, Vehicle->owner->Nr);
 		return;
 	}
 
@@ -1367,7 +1366,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 			 (!Map->possiblePlace (Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->size != off) ||
 			 (!Map->possiblePlace (Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->size + 1 != off))
 		{
-			sendClearAnswer (1, Vehicle, 0, -1, Vehicle->owner->Nr);
+			sendClearAnswer (*this, 1, Vehicle, 0, -1, Vehicle->owner->Nr);
 			return;
 		}
 
@@ -1380,10 +1379,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	Vehicle->owner->DoScan ();
 	addJob (new cStartBuildJob (Vehicle, off % Map->size, off / Map->size, building->data.isBig));
 
-	sendClearAnswer (0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
+	sendClearAnswer (*this, 0, Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 	{
-		sendClearAnswer (0, Vehicle, 0, rubbleoffset, Vehicle->seenByPlayerList[i]->Nr);
+		sendClearAnswer (*this, 0, Vehicle, 0, rubbleoffset, Vehicle->seenByPlayerList[i]->Nr);
 	}
 }
 
@@ -1409,18 +1408,18 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		{
 			Map->moveVehicle (Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size);
 			Vehicle->owner->DoScan ();
-			sendStopClear (Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
+			sendStopClear (*this, Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
-				sendStopClear (Vehicle, Vehicle->BuildBigSavedPos, Vehicle->seenByPlayerList[i]->Nr);
+				sendStopClear (*this, Vehicle, Vehicle->BuildBigSavedPos, Vehicle->seenByPlayerList[i]->Nr);
 			}
 		}
 		else
 		{
-			sendStopClear (Vehicle, -1, Vehicle->owner->Nr);
+			sendStopClear (*this, Vehicle, -1, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
 			{
-				sendStopClear (Vehicle, -1, Vehicle->seenByPlayerList[i]->Nr);
+				sendStopClear (*this, Vehicle, -1, Vehicle->seenByPlayerList[i]->Nr);
 			}
 		}
 	}
@@ -1443,7 +1442,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 		DisconnectedPlayerList.Delete (i);
 	}
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
+	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1486,7 +1485,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	resyncPlayer (Player);
 
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
-	if (bPlayTurns) sendWaitFor (iActiveTurnPlayerNr);
+	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1507,7 +1506,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 			StoringVehicle->storeVehicle (StoredVehicle, Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->Nr);
+			sendStoreVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, StoringVehicle->owner->Nr);
 		}
 	}
 	else
@@ -1520,7 +1519,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 			StoringBuilding->storeVehicle (StoredVehicle, Map);
 			if (StoredVehicle->ServerMoveJob) StoredVehicle->ServerMoveJob->release();
 			//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-			sendStoreVehicle (StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->Nr);
+			sendStoreVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, StoringBuilding->owner->Nr);
 		}
 	}
 }
@@ -1549,10 +1548,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		{
 			StoringVehicle->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr);
+			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
 			{
-				sendVehicleResources (StoredVehicle, Map);
+				sendVehicleResources (*this, StoredVehicle, Map);
 				StoredVehicle->doSurvey (*this);
 			}
 
@@ -1566,7 +1565,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			}
 			StoredVehicle->InSentryRange (*this);
 		}
-
 
 	}
 	else
@@ -1585,10 +1583,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		{
 			StoringBuilding->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
-			sendActivateVehicle (StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr);
+			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
 			{
-				sendVehicleResources (StoredVehicle, Map);
+				sendVehicleResources (*this, StoredVehicle, Map);
 				StoredVehicle->doSurvey (*this);
 			}
 			StoredVehicle->InSentryRange (*this);
@@ -1655,11 +1653,11 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 			player->Credits -= costs;
 			updateCredits = true;
 
-			sendUnitUpgrades (upgradedUnit, iPlayerNr);
+			sendUnitUpgrades (*this, upgradedUnit, iPlayerNr);
 		}
 	}
 	if (updateCredits)
-		sendCredits (player->Credits, iPlayerNr);
+		sendCredits (*this, player->Credits, iPlayerNr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1712,7 +1710,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 	}
 
 	if (totalCosts > 0)
-		building->SubBase->addMetal (-totalCosts);
+		building->SubBase->addMetal (*this, -totalCosts);
 	if (upgradedBuildings.Size() > 0)
 	{
 		bool scanNecessary = false;
@@ -1726,7 +1724,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 
 			upgradedBuildings[i]->upgradeToCurrentVersion();
 		}
-		sendUpgradeBuildings (upgradedBuildings, totalCosts, player->Nr);
+		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, player->Nr);
 		if (scanNecessary)
 			player->DoScan();
 		if (refreshSentry)
@@ -1791,13 +1789,13 @@ void cServer::HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 		return;
 
 	for (unsigned int i = 0; i < researchCentersToStop.Size(); i++)
-		researchCentersToStop[i]->ServerStopWork (false);
+		researchCentersToStop[i]->ServerStopWork (*this, false);
 
 	for (unsigned int i = 0; i < researchCentersToChangeArea.Size(); i++)
 		researchCentersToChangeArea[i]->researchArea = newAreasForResearchCenters[i];
 	player->refreshResearchCentersWorkingOnArea();
 
-	sendResearchSettings (researchCentersToChangeArea, newAreasForResearchCenters, iPlayerNr);
+	sendResearchSettings (*this, researchCentersToChangeArea, newAreasForResearchCenters, iPlayerNr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1867,10 +1865,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 
 				if (destVehicle->IsBuilding) stopVehicleBuilding (destVehicle);
 				if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
-				sendUnitData (destVehicle, destVehicle->owner->Nr);
+				sendUnitData (*this, destVehicle, destVehicle->owner->Nr);
 				for (unsigned int i = 0; i < destVehicle->seenByPlayerList.Size(); i++)
 				{
-					sendUnitData (destVehicle, destVehicle->seenByPlayerList[i]->Nr);
+					sendUnitData (*this, destVehicle, destVehicle->seenByPlayerList[i]->Nr);
 				}
 				destVehicle->owner->DoScan();
 				checkPlayerUnits();
@@ -1885,12 +1883,12 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 
 				destBuilding->data.shotsCur = 0;
 				destBuilding->wasWorking = destBuilding->IsWorking;
-				destBuilding->ServerStopWork (true);
-				sendDoStopWork (destBuilding);
-				sendUnitData (destBuilding, destBuilding->owner->Nr);
+				destBuilding->ServerStopWork (*this, true);
+				sendDoStopWork (*this, destBuilding);
+				sendUnitData (*this, destBuilding, destBuilding->owner->Nr);
 				for (unsigned int i = 0; i < destBuilding->seenByPlayerList.Size(); i++)
 				{
-					sendUnitData (destBuilding, destBuilding->seenByPlayerList[i]->Nr);
+					sendUnitData (*this, destBuilding, destBuilding->seenByPlayerList[i]->Nr);
 				}
 				destBuilding->owner->DoScan();
 				checkPlayerUnits();
@@ -1915,8 +1913,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.shotsCur--;
-	sendUnitData (srcVehicle, srcVehicle->owner->Nr);
-	sendCommandoAnswer (success, steal, srcVehicle, srcVehicle->owner->Nr);
+	sendUnitData (*this, srcVehicle, srcVehicle->owner->Nr);
+	sendCommandoAnswer (*this, success, steal, srcVehicle, srcVehicle->owner->Nr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1988,7 +1986,7 @@ void cServer::HandleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 {
 	assert (message.iType == GAME_EV_REQUEST_CASUALTIES_REPORT);
 
-	sendCasualtiesReport (message.iPlayerNr);
+	sendCasualtiesReport (*this, message.iPlayerNr);
 }
 
 //-------------------------------------------------------------------------------------
@@ -1999,7 +1997,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	cBuilding* building = getBuildingFromID (message.popInt16());
 	if (!building || building->owner->Nr != message.iPlayerNr) return;
 
-	sendSelfDestroy (building);
+	sendSelfDestroy (*this, building);
 	destroyUnit (building);
 }
 
@@ -2015,8 +2013,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 	{
 		unit->changeName (message.popString());
 		for (unsigned int i = 0; i < unit->seenByPlayerList.Size(); i++)
-			sendUnitData (unit, i);
-		sendUnitData (unit, unit->owner->Nr);
+			sendUnitData (*this, unit, i);
+		sendUnitData (*this, unit, unit->owner->Nr);
 	}
 }
 
@@ -2237,7 +2235,7 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, cList<sLandingUnit>*
 		if (Landing.cargo && Vehicle)
 		{
 			Vehicle->data.storageResCur = Landing.cargo;
-			sendUnitData (Vehicle, Vehicle->owner->Nr);
+			sendUnitData (*this, Vehicle, Vehicle->owner->Nr);
 		}
 	}
 }
@@ -2285,7 +2283,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	// scan with surveyor:
 	if (AddedVehicle->data.canSurvey)
 	{
-		sendVehicleResources (AddedVehicle, Map);
+		sendVehicleResources (*this, AddedVehicle, Map);
 		AddedVehicle->doSurvey (*this);
 	}
 	if (!bInit) AddedVehicle->InSentryRange (*this);
@@ -2299,7 +2297,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 		AddedVehicle->FlightHigh = 64;
 	}
 
-	sendAddUnit (iPosX, iPosY, AddedVehicle->iID, true, Vehicle->data.ID, Player->Nr, bInit);
+	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, Vehicle->data.ID, Player->Nr, bInit);
 
 	//detection must be done, after the vehicle has been sent to clients
 	AddedVehicle->makeDetection();
@@ -2323,7 +2321,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 
 	Map->addBuilding (AddedBuilding, iPosX, iPosY);
 
-	sendAddUnit (iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit);
+	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit);
 
 	// integrate the building to the base:
 	Player->base.addBuilding (AddedBuilding, true);
@@ -2395,8 +2393,8 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 
 	if (AddedBuilding->data.canMineMaxRes > 0)
 	{
-		sendProduceValues (AddedBuilding);
-		AddedBuilding->ServerStartWork();
+		sendProduceValues (*this, AddedBuilding);
+		AddedBuilding->ServerStartWork (*this);
 	}
 	AddedBuilding->makeDetection();
 	return AddedBuilding;
@@ -2460,7 +2458,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	if (unit->isBuilding() && static_cast<cBuilding*> (unit)->points != 0)
 	{
 		unit->owner->setScore (unit->owner->getScore (iTurn) - static_cast<cBuilding*> (unit)->points, iTurn);
-		sendScore (unit->owner, iTurn);
+		sendScore (*this, unit->owner, iTurn);
 	}
 
 	if (unit->isBuilding())
@@ -2469,7 +2467,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		Map->deleteVehicle (static_cast<cVehicle*> (unit));
 
 	if (notifyClient)
-		sendDeleteUnit (unit, -1);
+		sendDeleteUnit (*this, unit, -1);
 
 	if (unit->isBuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
 		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), true);
@@ -2510,11 +2508,11 @@ void cServer::checkPlayerUnits()
 					if (i == NextVehicle->seenByPlayerList.Size())
 					{
 						NextVehicle->seenByPlayerList.Add (MapPlayer);
-						sendAddEnemyUnit (NextVehicle, MapPlayer->Nr);
-						sendUnitData (NextVehicle, MapPlayer->Nr);
+						sendAddEnemyUnit (*this, NextVehicle, MapPlayer->Nr);
+						sendUnitData (*this, NextVehicle, MapPlayer->Nr);
 						if (NextVehicle->ServerMoveJob)
 						{
-							sendMoveJobServer (NextVehicle->ServerMoveJob, MapPlayer->Nr);
+							sendMoveJobServer (*this, NextVehicle->ServerMoveJob, MapPlayer->Nr);
 							if (ActiveMJobs.Contains(NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
 							{
 								Log.write(" Server: sending extra MJOB_OK for unit ID " + iToStr(NextVehicle->iID) + " to client " + iToStr(MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
@@ -2534,7 +2532,7 @@ void cServer::checkPlayerUnits()
 						if (NextVehicle->seenByPlayerList[i] == MapPlayer)
 						{
 							NextVehicle->seenByPlayerList.Delete (i);
-							sendDeleteUnit (NextVehicle, MapPlayer->Nr);
+							sendDeleteUnit (*this, NextVehicle, MapPlayer->Nr);
 							break;
 						}
 					}
@@ -2562,8 +2560,8 @@ void cServer::checkPlayerUnits()
 					if (i == NextBuilding->seenByPlayerList.Size())
 					{
 						NextBuilding->seenByPlayerList.Add (MapPlayer);
-						sendAddEnemyUnit (NextBuilding, MapPlayer->Nr);
-						sendUnitData (NextBuilding, MapPlayer->Nr);
+						sendAddEnemyUnit (*this, NextBuilding, MapPlayer->Nr);
+						sendUnitData (*this, NextBuilding, MapPlayer->Nr);
 					}
 				}
 				else
@@ -2574,7 +2572,7 @@ void cServer::checkPlayerUnits()
 						if (NextBuilding->seenByPlayerList[i] == MapPlayer)
 						{
 							NextBuilding->seenByPlayerList.Delete (i);
-							sendDeleteUnit (NextBuilding, MapPlayer->Nr);
+							sendDeleteUnit (*this, NextBuilding, MapPlayer->Nr);
 
 							break;
 						}
@@ -2604,7 +2602,7 @@ void cServer::checkPlayerUnits()
 				if (i == building->seenByPlayerList.Size())
 				{
 					building->seenByPlayerList.Add (MapPlayer);
-					sendAddRubble (building, MapPlayer->Nr);
+					sendAddRubble (*this, building, MapPlayer->Nr);
 				}
 			}
 			else
@@ -2615,7 +2613,7 @@ void cServer::checkPlayerUnits()
 					if (building->seenByPlayerList[i] == MapPlayer)
 					{
 						building->seenByPlayerList.Delete (i);
-						sendDeleteUnit (building, MapPlayer->Nr);
+						sendDeleteUnit (*this, building, MapPlayer->Nr);
 						break;
 					}
 				}
@@ -2685,7 +2683,7 @@ void cServer::handleEnd (int iPlayerNum)
 {
 	if (gameType == GAME_TYPE_SINGLE)
 	{
-		sendTurnFinished (iPlayerNum, -1);
+		sendTurnFinished (*this, iPlayerNum, -1);
 		if (checkEndActions (iPlayerNum))
 		{
 			iWantPlayerEndNum = iPlayerNum;
@@ -2712,13 +2710,13 @@ void cServer::handleEnd (int iPlayerNum)
 
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, iPlayerNum);
+				sendMakeTurnEnd (*this, true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, iPlayerNum);
 			}
 			else
 			{
 				for (unsigned int i = 0; i < PlayerList->Size(); i++)
 				{
-					sendMakeTurnEnd (true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, (*PlayerList) [i]->Nr);
+					sendMakeTurnEnd (*this, true, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, (*PlayerList) [i]->Nr);
 				}
 			}
 		}
@@ -2726,19 +2724,19 @@ void cServer::handleEnd (int iPlayerNum)
 		{
 			if (gameType == GAME_TYPE_HOTSEAT)
 			{
-				sendMakeTurnEnd (false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, iPlayerNum);
+				sendMakeTurnEnd (*this, false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, iPlayerNum);
 				// TODO: in hotseat: maybe send information to client about the next player
 			}
 			else
 			{
 				for (unsigned int i = 0; i < PlayerList->Size(); i++)
 				{
-					sendMakeTurnEnd (false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, i);
+					sendMakeTurnEnd (*this, false, bWaitForPlayer, (*PlayerList) [iActiveTurnPlayerNr]->Nr, i);
 				}
 			}
 		}
 		// send report to next player
-		sendTurnReport ( (*PlayerList) [iActiveTurnPlayerNr]);
+		sendTurnReport (*this, (*PlayerList) [iActiveTurnPlayerNr]);
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
@@ -2770,12 +2768,12 @@ void cServer::handleEnd (int iPlayerNum)
 			// but wait till all players pressed "End".
 			if (firstTimeEnded && (DEDICATED_SERVER == false || DisconnectedPlayerList.Size() == 0))
 			{
-				sendTurnFinished (iPlayerNum, iTurnDeadline);
+				sendTurnFinished (*this, iPlayerNum, iTurnDeadline);
 				iDeadlineStartTime = SDL_GetTicks();
 			}
 			else
 			{
-				sendTurnFinished (iPlayerNum, -1);
+				sendTurnFinished (*this, iPlayerNum, -1);
 			}
 		}
 
@@ -2816,11 +2814,11 @@ void cServer::handleWantEnd()
 		// send reports to all players
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
-			sendMakeTurnEnd (true, false, -1, i);
+			sendMakeTurnEnd (*this, true, false, -1, i);
 		}
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
 		{
-			sendTurnReport ( (*PlayerList) [i]);
+			sendTurnReport (*this, (*PlayerList) [i]);
 		}
 
 		//begin the new turn
@@ -2873,7 +2871,7 @@ bool cServer::checkEndActions (int iPlayer)
 		{
 			if (iWantPlayerEndNum == -1)
 			{
-				sendChatMessageToClient (sMessage, SERVER_INFO_MESSAGE, iPlayer);
+				sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, iPlayer);
 			}
 		}
 		else
@@ -2882,7 +2880,7 @@ bool cServer::checkEndActions (int iPlayer)
 			{
 				for (unsigned int i = 0; i < PlayerList->Size(); i++)
 				{
-					sendChatMessageToClient (sMessage, SERVER_INFO_MESSAGE, (*PlayerList) [i]->Nr);
+					sendChatMessageToClient (*this, sMessage, SERVER_INFO_MESSAGE, (*PlayerList) [i]->Nr);
 				}
 			}
 		}
@@ -2915,7 +2913,7 @@ void cServer::makeTurnEnd()
 				Building->turnsDisabled--;
 				if (Building->turnsDisabled == 0 && Building->wasWorking)
 				{
-					Building->ServerStartWork();
+					Building->ServerStartWork (*this);
 					Building->wasWorking = false;
 				}
 				forceSendUnitData = true;
@@ -2924,9 +2922,9 @@ void cServer::makeTurnEnd()
 			{
 				for (unsigned int k = 0; k < Building->seenByPlayerList.Size(); k++)
 				{
-					sendUnitData (Building, Building->seenByPlayerList[k]->Nr);
+					sendUnitData (*this, Building, Building->seenByPlayerList[k]->Nr);
 				}
-				sendUnitData (Building, Building->owner->Nr);
+				sendUnitData (*this, Building, Building->owner->Nr);
 			}
 			Building = static_cast<cBuilding*> (Building->next);
 		}
@@ -2952,9 +2950,9 @@ void cServer::makeTurnEnd()
 			{
 				for (unsigned int k = 0; k < Vehicle->seenByPlayerList.Size(); k++)
 				{
-					sendUnitData (Vehicle, Vehicle->seenByPlayerList[k]->Nr);
+					sendUnitData (*this, Vehicle, Vehicle->seenByPlayerList[k]->Nr);
 				}
-				sendUnitData (Vehicle, Vehicle->owner->Nr);
+				sendUnitData (*this, Vehicle, Vehicle->owner->Nr);
 			}
 			if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->bEndForNow = false;
 			Vehicle = static_cast<cVehicle*> (Vehicle->next);
@@ -2978,7 +2976,7 @@ void cServer::makeTurnEnd()
 	// produce resources
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		(*PlayerList) [i]->base.handleTurnend();
+		(*PlayerList) [i]->base.handleTurnend (*this);
 	}
 
 	// do research:
@@ -3020,7 +3018,7 @@ void cServer::makeTurnEnd()
 #if DEDICATED_SERVER_APPLICATION
 	else
 	{
-		cDedicatedServer::instance().doAutoSave();
+		cDedicatedServer::instance().doAutoSave(*this);
 	}
 #endif
 
@@ -3092,13 +3090,13 @@ void cServer::checkDefeats()
 		cPlayer* Player = *i;
 
 		Player->isDefeated = true;
-		sendDefeated (Player);
+		sendDefeated (*this, Player);
 
 		if (openMapDefeat && Player->iSocketNum != -1)
 		{
 			memset (Player->ScanMap, 1, Map->size * Map->size);
 			checkPlayerUnits();
-			sendNoFog (Player->Nr);
+			sendNoFog (*this, Player->Nr);
 		}
 	}
 
@@ -3110,7 +3108,7 @@ void cServer::checkDefeats()
 	if (winners.size() > 1)
 	{
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
-			sendChatMessageToClient ("Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
+			sendChatMessageToClient (*this, "Text~Comp~SuddenDeath", SERVER_INFO_MESSAGE, i);
 	}
 }
 
@@ -3206,7 +3204,7 @@ void cServer::handleMoveJobs()
 		if (MoveJob->bEndForNow && Vehicle)
 		{
 			Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-			sendNextMove (Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
+			sendNextMove (*this, Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
 			ActiveMJobs.Delete (i);
 			continue;
 		}
@@ -3219,7 +3217,7 @@ void cServer::handleMoveJobs()
 				Vehicle->moving = false;
 				Vehicle->MoveJobActive = false;
 
-				sendNextMove (Vehicle, MJOB_FINISHED);
+				sendNextMove (*this, Vehicle, MJOB_FINISHED);
 			}
 			else Log.write (" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -3239,12 +3237,12 @@ void cServer::handleMoveJobs()
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
 					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
-					sendBuildAnswer (true, Vehicle);
+					sendBuildAnswer (*this, true, Vehicle);
 				}
 				else
 				{
 					Vehicle->BuildPath = false;
-					sendBuildAnswer (false, Vehicle);
+					sendBuildAnswer (*this, false, Vehicle);
 				}
 			}
 
@@ -3267,7 +3265,7 @@ void cServer::handleMoveJobs()
 			if (MoveJob->bEndForNow)
 			{
 				Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
-				sendNextMove (Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
+				sendNextMove (*this, Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
 				ActiveMJobs.Delete (i);
 				continue;
 			}
@@ -3555,10 +3553,9 @@ void cServer::deleteRubble (cBuilding* rubble)
 		if (rubble->next)
 			rubble->next->prev = rubble->prev;
 	}
-	sendDeleteUnit (rubble, -1);
+	sendDeleteUnit (*this, rubble, -1);
 
 	delete rubble;
-
 }
 
 //-------------------------------------------------------------------------------------
@@ -3590,7 +3587,7 @@ void cServer::deletePlayer (cPlayer* Player)
 		}
 	}
 	// delete the player
-	sendDeletePlayer (Player);
+	sendDeletePlayer (*this, Player);
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
 		if (Player == (*PlayerList) [i])
@@ -3634,18 +3631,18 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 			Building->seenByPlayerList.Remove (Player);
 			Building = static_cast<cBuilding*> (Building->next);
 		}
-		sendDeleteEverything (Player->Nr);
+		sendDeleteEverything (*this, Player->Nr);
 	}
 
-	sendGameTime (Player, gameTimer.gameTime);
+	sendGameTime (*this, Player, gameTimer.gameTime);
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
-		sendClansToClients (PlayerList);
+		sendClansToClients (*this, PlayerList);
 	}
-	sendTurn (iTurn, Player);
-	if (iDeadlineStartTime > 0) sendTurnFinished (-1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);
-	sendResources (Player);
+	sendTurn (*this, iTurn, Player);
+	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);
+	sendResources (*this, Player);
 
 	// send all units to the client
 	Vehicle = Player->VehicleList;
@@ -3658,22 +3655,22 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	Building = Player->BuildingList;
 	while (Building)
 	{
-		sendAddUnit (Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, true);
+		sendAddUnit (*this, Building->PosX, Building->PosY, Building->iID, false, Building->data.ID, Player->Nr, true);
 		for (unsigned int i = 0; i < Building->storedUnits.Size(); i++)
 		{
 			cVehicle* StoredVehicle = Building->storedUnits[i];
 			resyncVehicle (StoredVehicle, Player);
-			sendStoreVehicle (Building->iID, false, StoredVehicle->iID, Player->Nr);
+			sendStoreVehicle (*this, Building->iID, false, StoredVehicle->iID, Player->Nr);
 		}
-		sendUnitData (Building, Player->Nr);
-		if (Building->data.canMineMaxRes > 0) sendProduceValues (Building);
-		if (Building->BuildList && Building->BuildList->Size() > 0) sendBuildList (Building);
+		sendUnitData (*this, Building, Player->Nr);
+		if (Building->data.canMineMaxRes > 0) sendProduceValues (*this, Building);
+		if (Building->BuildList && Building->BuildList->Size() > 0) sendBuildList (*this, Building);
 		Building = static_cast<cBuilding*> (Building->next);
 	}
 	// send all subbases
 	for (unsigned int i = 0; i < Player->base.SubBases.Size(); i++)
 	{
-		sendSubbaseValues (Player->base.SubBases[i], Player->Nr);
+		sendSubbaseValues (*this, Player->base.SubBases[i], Player->Nr);
 	}
 	// refresh enemy units
 	Player->DoScan();
@@ -3683,30 +3680,30 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	{
 		if (Player->VehicleData[i].version > 0
 			|| Player->VehicleData[i].buildCosts != UnitsData.getVehicle (i, Player->getClan()).data.buildCosts)    // if only costs were researched, the version is not incremented
-			sendUnitUpgrades (&Player->VehicleData[i], Player->Nr);
+			sendUnitUpgrades (*this, &Player->VehicleData[i], Player->Nr);
 	}
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
 		if (Player->BuildingData[i].version > 0
 			|| Player->BuildingData[i].buildCosts != UnitsData.getBuilding (i, Player->getClan()).data.buildCosts)    // if only costs were researched, the version is not incremented
-			sendUnitUpgrades (&Player->BuildingData[i], Player->Nr);
+			sendUnitUpgrades (*this, &Player->BuildingData[i], Player->Nr);
 	}
 	// send credits
-	sendCredits (Player->Credits, Player->Nr);
+	sendCredits (*this, Player->Credits, Player->Nr);
 	// send research
-	sendResearchLevel (& (Player->researchLevel), Player->Nr);
-	sendRefreshResearchCount (Player->Nr);
+	sendResearchLevel (*this, &Player->researchLevel, Player->Nr);
+	sendRefreshResearchCount (*this, Player->Nr);
 
 	// send all players' score histories & eco-counts
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
 		cPlayer* subj = (*PlayerList) [i];
 		for (int t = 1; t <= iTurn; t++)
-			sendScore (subj, t, Player);
-		sendNumEcos (subj, Player);
+			sendScore (*this, subj, t, Player);
+		sendNumEcos (*this, subj, Player);
 	}
 
-	sendVictoryConditions (turnLimit, scoreLimit, Player);
+	sendVictoryConditions (*this, turnLimit, scoreLimit, Player);
 
 	// send attackJobs
 	for (unsigned int i = 0; i < AJobs.Size(); i++)
@@ -3727,18 +3724,18 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 //-------------------------------------------------------------------------------------
 void cServer::resyncVehicle (cVehicle* Vehicle, cPlayer* Player)
 {
-	sendAddUnit (Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, true, !Vehicle->Loaded);
-	if (Vehicle->ServerMoveJob) sendMoveJobServer (Vehicle->ServerMoveJob, Player->Nr);
+	sendAddUnit (*this, Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->Nr, true, !Vehicle->Loaded);
+	if (Vehicle->ServerMoveJob) sendMoveJobServer (*this, Vehicle->ServerMoveJob, Player->Nr);
 	for (unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++)
 	{
 		cVehicle* StoredVehicle = Vehicle->storedUnits[i];
 		resyncVehicle (StoredVehicle, Player);
-		sendStoreVehicle (Vehicle->iID, true, StoredVehicle->iID, Player->Nr);
+		sendStoreVehicle (*this, Vehicle->iID, true, StoredVehicle->iID, Player->Nr);
 	}
-	sendUnitData (Vehicle, Player->Nr);
-	sendSpecificUnitData (Vehicle);
-	if (Vehicle->hasAutoMoveJob) sendSetAutomoving (Vehicle);
-	if (Vehicle->detectedByPlayerList.Size() > 0) sendDetectionState (Vehicle);
+	sendUnitData (*this, Vehicle, Player->Nr);
+	sendSpecificUnitData (*this, Vehicle);
+	if (Vehicle->hasAutoMoveJob) sendSetAutomoving (*this, Vehicle);
+	if (Vehicle->detectedByPlayerList.Size() > 0) sendDetectionState (*this, Vehicle);
 }
 
 //--------------------------------------------------------------------------
@@ -3752,10 +3749,10 @@ bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* ve
 		return false;
 	}
 
-	sendMoveJobServer (MoveJob, vehicle->owner->Nr);
+	sendMoveJobServer (*this, MoveJob, vehicle->owner->Nr);
 	for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
 	{
-		sendMoveJobServer (MoveJob, vehicle->seenByPlayerList[i]->Nr);
+		sendMoveJobServer (*this, MoveJob, vehicle->seenByPlayerList[i]->Nr);
 	}
 
 	addActiveMoveJob (MoveJob);
@@ -3804,16 +3801,16 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 
 
 	// delete the unit on the clients and add it with new owner again
-	sendDeleteUnit (vehicle, oldOwner->Nr);
+	sendDeleteUnit (*this, vehicle, oldOwner->Nr);
 	for (size_t i = 0; i != vehicle->seenByPlayerList.Size(); ++i)
 	{
-		sendDeleteUnit (vehicle, vehicle->seenByPlayerList[i]->Nr);
+		sendDeleteUnit (*this, vehicle, vehicle->seenByPlayerList[i]->Nr);
 	}
 	vehicle->seenByPlayerList.Clear();
 	vehicle->detectedByPlayerList.Clear();
-	sendAddUnit (vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false);
-	sendUnitData (vehicle, vehicle->owner->Nr);
-	sendSpecificUnitData (vehicle);
+	sendAddUnit (*this, vehicle->PosX, vehicle->PosY, vehicle->iID, true, vehicle->data.ID, vehicle->owner->Nr, false);
+	sendUnitData (*this, vehicle, vehicle->owner->Nr);
+	sendSpecificUnitData (*this, vehicle);
 
 	oldOwner->DoScan();
 	newOwner->DoScan();
@@ -3822,7 +3819,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	// let the unit work for his new owner
 	if (vehicle->data.canSurvey)
 	{
-		sendVehicleResources (vehicle, Map);
+		sendVehicleResources (*this, vehicle, Map);
 		vehicle->doSurvey (*this);
 	}
 	vehicle->makeDetection();
@@ -3844,10 +3841,10 @@ void cServer::stopVehicleBuilding (cVehicle* vehicle)
 		iPos = vehicle->BuildBigSavedPos;
 		vehicle->owner->DoScan();
 	}
-	sendStopBuild (vehicle->iID, iPos, vehicle->owner->Nr);
+	sendStopBuild (*this, vehicle->iID, iPos, vehicle->owner->Nr);
 	for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
 	{
-		sendStopBuild (vehicle->iID, iPos, vehicle->seenByPlayerList[i]->Nr);
+		sendStopBuild (*this, vehicle->iID, iPos, vehicle->seenByPlayerList[i]->Nr);
 	}
 }
 
@@ -3959,7 +3956,7 @@ void cServer::makeAdditionalSaveRequest (int saveNum)
 {
 	savingID++;
 	savingIndex = saveNum;
-	sendRequestSaveInfo (savingID);
+	sendRequestSaveInfo (*this, savingID);
 }
 
 int cServer::getTurn() const
@@ -4029,7 +4026,7 @@ void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)
 			Log.write (" Server: Tried to enable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
 	}
 
-	sendFreeze (mode, freezeModes.playerNumber);
+	sendFreeze (*this, mode, freezeModes.playerNumber);
 }
 
 void cServer::disableFreezeMode (eFreezeMode mode)
@@ -4038,19 +4035,19 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 	{
 		case FREEZE_PAUSE:
 			freezeModes.pause = false;
-			sendUnfreeze (mode);
+			sendUnfreeze (*this, mode);
 			break;
 		case FREEZE_WAIT_FOR_RECONNECT:
 			freezeModes.waitForReconnect = false;
-			sendUnfreeze (mode);
+			sendUnfreeze (*this, mode);
 			break;
 		case FREEZE_WAIT_FOR_TURNEND:
 			freezeModes.waitForTurnEnd = false;
-			sendUnfreeze (mode);
+			sendUnfreeze (*this, mode);
 			break;
 		case FREEZE_WAIT_FOR_PLAYER:
 			freezeModes.waitForPlayer = false;
-			sendUnfreeze (mode);
+			sendUnfreeze (*this, mode);
 			break;
 		default:
 			Log.write (" Server: Tried to disable unsupportet freeze mode: " + iToStr (mode), cLog::eLOG_TYPE_NET_ERROR);
