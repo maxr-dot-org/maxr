@@ -26,6 +26,7 @@ class cBuilding;
 class cClient;
 class cMap;
 class cNetMessage;
+class cServer;
 class cVehicle;
 
 /* Size of a memory block while pathfinding */
@@ -184,8 +185,9 @@ public:
 
 class cServerMoveJob
 {
+	cServer* server;
 public:
-	cServerMoveJob (int srcX_, int srcY_, int destX_, int destY_, cVehicle* Vehicle);
+	cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* Vehicle);
 	~cServerMoveJob();
 
 	cMap* Map;
@@ -202,7 +204,7 @@ public:
 
 	sWaypoint* Waypoints;
 
-	static cServerMoveJob* generateFromMessage (cNetMessage* message);
+	static cServerMoveJob* generateFromMessage (cServer& server, cNetMessage* message);
 
 	bool calcPath();
 	void release();

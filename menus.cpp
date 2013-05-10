@@ -4115,7 +4115,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 	}
 
 	cSavegame savegame (menu->selected + 1);
-	savegame.save (menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
+	savegame.save (*Server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
 	Server->makeAdditionalSaveRequest (menu->selected + 1);
 
 	PlayVoice (VoiceData.VOISaved);

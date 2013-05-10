@@ -426,11 +426,10 @@ static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
 	}
 }
 
-cServerMoveJob::cServerMoveJob (int srcX_, int srcY_, int destX_, int destY_, cVehicle* vehicle)
+cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* vehicle) :
+	server(&server_)
 {
-	if (!Server) return;
-
-	Map = Server->Map;
+	Map = server->Map;
 	this->Vehicle = vehicle;
 	SrcX = srcX_;
 	SrcY = srcY_;
@@ -512,7 +511,7 @@ void cServerMoveJob::resume()
 		bEndForNow = false;
 		SrcX = Vehicle->PosX;
 		SrcY = Vehicle->PosY;
-		Server->addActiveMoveJob (this);
+		server->addActiveMoveJob (this);
 	}
 }
 
@@ -525,12 +524,12 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 
 }
 
-cServerMoveJob* cServerMoveJob::generateFromMessage (cNetMessage* message)
+cServerMoveJob* cServerMoveJob::generateFromMessage (cServer& server, cNetMessage* message)
 {
 	if (message->iType != GAME_EV_MOVE_JOB_CLIENT) return NULL;
 
 	int iVehicleID = message->popInt32();
-	cVehicle* vehicle = Server->getVehicleFromID (iVehicleID);
+	cVehicle* vehicle = server.getVehicleFromID (iVehicleID);
 	if (vehicle == NULL)
 	{
 		Log.write (" Server: Can't find vehicle with id " + iToStr (iVehicleID), cLog::eLOG_TYPE_NET_WARNING);
@@ -601,7 +600,7 @@ cServerMoveJob* cServerMoveJob::generateFromMessage (cNetMessage* message)
 
 	//everything is ok. Construct the movejob
 	Log.write (" Server: Received MoveJob: VehicleID: " + iToStr (vehicle->iID) + ", SrcX: " + iToStr (path->X) + ", SrcY: " + iToStr (path->Y) + ", DestX: " + iToStr (dest->X) + ", DestY: " + iToStr (dest->Y) + ", WaypointCount: " + iToStr (iReceivedCount), cLog::eLOG_TYPE_NET_DEBUG);
-	cServerMoveJob* mjob = new cServerMoveJob (path->X, path->Y, dest->X, dest->Y, vehicle);
+	cServerMoveJob* mjob = new cServerMoveJob (server, path->X, path->Y, dest->X, dest->Y, vehicle);
 	mjob->Waypoints = path;
 
 	mjob->calcNextDir();
@@ -628,11 +627,11 @@ void cServerMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	Log.write (" Server: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG);
-	for (unsigned int i = 0; i < Server->ActiveMJobs.Size(); i++)
+	for (unsigned int i = 0; i < server->ActiveMJobs.Size(); i++)
 	{
-		if (this == Server->ActiveMJobs[i]) return;
+		if (this == server->ActiveMJobs[i]) return;
 	}
-	Server->addActiveMoveJob (this);
+	server->addActiveMoveJob (this);
 	Log.write (" Server: Added released movejob to active ones", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
@@ -655,15 +654,15 @@ bool cServerMoveJob::checkMove()
 		return true;
 	}
 
-	bInSentryRange = Vehicle->InSentryRange();
+	bInSentryRange = Vehicle->InSentryRange (*server);
 
-	if (!Server->Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange)
+	if (!Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange)
 	{
-		Server->sideStepStealthUnit (Waypoints->next->X, Waypoints->next->Y, Vehicle);
+		server->sideStepStealthUnit (Waypoints->next->X, Waypoints->next->Y, Vehicle);
 	}
 
 	//when the next field is still blocked, inform the client
-	if (!Server->Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange)    //TODO: bInSentryRange?? Why?
+	if (!Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange)    //TODO: bInSentryRange?? Why?
 	{
 		Log.write (" Server: Next point is blocked: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->X) + ", Y: " + iToStr (Waypoints->next->Y), LOG_TYPE_NET_DEBUG);
 		// if the next point would be the last, finish the job here
@@ -691,8 +690,8 @@ bool cServerMoveJob::checkMove()
 	//reset detected flag, when a water stealth unit drives into the water
 	if (Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround)
 	{
-		bool wasOnLand = !Server->Map->isWater (Waypoints->X, Waypoints->Y, true);
-		bool driveIntoWater = Server->Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
+		bool wasOnLand = !Map->isWater (Waypoints->X, Waypoints->Y, true);
+		bool driveIntoWater = Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
 
 		if (wasOnLand && driveIntoWater)
 		{
@@ -764,7 +763,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	cBuilding* mine = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getMine();
 	if (Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner)
 	{
-		Server->AJobs.Add (new cServerAttackJob (mine, Vehicle->PosX + Vehicle->PosY * Map->size, false));
+		server->AJobs.Add (new cServerAttackJob (*server, mine, Vehicle->PosX + Vehicle->PosY * Map->size, false));
 		bEndForNow = true;
 	}
 
@@ -772,21 +771,21 @@ void cServerMoveJob::doEndMoveVehicle()
 	if (Vehicle->data.canSurvey)
 	{
 		sendVehicleResources (Vehicle, Map);
-		Vehicle->doSurvey (*Server);
+		Vehicle->doSurvey (*server);
 	}
 
 	//handle detection
 	Vehicle->makeDetection();
 
 	// let other units fire on this one
-	Vehicle->InSentryRange();
+	Vehicle->InSentryRange (*server);
 
 	// lay/clear mines if necessary
 	if (Vehicle->data.canPlaceMines)
 	{
 		bool bResult = false;
-		if (Vehicle->LayMines) bResult = Vehicle->layMine (*Server);
-		else if (Vehicle->ClearMines) bResult = Vehicle->clearMine (*Server);
+		if (Vehicle->LayMines) bResult = Vehicle->layMine (*server);
+		else if (Vehicle->ClearMines) bResult = Vehicle->clearMine (*server);
 		if (bResult)
 		{
 			// send new unit values
@@ -801,7 +800,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	Vehicle->moving = false;
 	calcNextDir();
 
-	if (Vehicle->canLand (*Server->Map))
+	if (Vehicle->canLand (*server->Map))
 	{
 		Vehicle->FlightHigh = 0;
 	}
@@ -850,12 +849,13 @@ void cEndMoveAction::execute()
 
 void cEndMoveAction::executeLoadAction()
 {
-	cVehicle* destVehicle = Server->getVehicleFromID (destID_);
+	cServer& server = *Server;
+	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	if (!destVehicle) return;
 
 	if (vehicle_->canLoad (destVehicle))
 	{
-		vehicle_->storeVehicle (destVehicle, Server->Map);
+		vehicle_->storeVehicle (destVehicle, server.Map);
 		if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
@@ -865,20 +865,21 @@ void cEndMoveAction::executeLoadAction()
 
 void cEndMoveAction::executeGetInAction()
 {
-	cVehicle* destVehicle = Server->getVehicleFromID (destID_);
-	cBuilding* destBuilding = Server->getBuildingFromID (destID_);
+	cServer& server = *Server;
+	cVehicle* destVehicle = server.getVehicleFromID (destID_);
+	cBuilding* destBuilding = server.getBuildingFromID (destID_);
 
 	// execute the loading if possible
 	if (destVehicle && destVehicle->canLoad (vehicle_))
 	{
-		destVehicle->storeVehicle (vehicle_, Server->Map);
+		destVehicle->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (destVehicle->iID, true, vehicle_->iID, destVehicle->owner->Nr);
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
-		destBuilding->storeVehicle (vehicle_, Server->Map);
+		destBuilding->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
 		sendStoreVehicle (destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr);
@@ -887,9 +888,10 @@ void cEndMoveAction::executeGetInAction()
 
 void cEndMoveAction::executeAttackAction()
 {
+	cServer& server = *Server;
 	//get the target unit
-	const cVehicle* destVehicle = Server->getVehicleFromID (destID_);
-	const cBuilding* destBuilding = Server->getBuildingFromID (destID_);
+	const cVehicle* destVehicle = server.getVehicleFromID (destID_);
+	const cBuilding* destBuilding = server.getBuildingFromID (destID_);
 
 	int x, y;
 	if (destVehicle)
@@ -905,15 +907,16 @@ void cEndMoveAction::executeAttackAction()
 	else
 		return;
 
-	int offset = x + y * Server->Map->size;
+	cMap& map = *server.Map;
+	const int offset = x + y * map.size;
 
 	//check, whether the attack is now possible
-	if (!vehicle_->canAttackObjectAt (x, y, Server->Map, true, true)) return;
+	if (!vehicle_->canAttackObjectAt (x, y, &map, true, true)) return;
 
 	//is the target in sight?
 	if (!vehicle_->owner->ScanMap[offset]) return;
 
-	Server->AJobs.Add (new cServerAttackJob (vehicle_, offset, false));
+	server.AJobs.Add (new cServerAttackJob (server, vehicle_, offset, false));
 }
 
 cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle) :

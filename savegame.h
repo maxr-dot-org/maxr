@@ -27,6 +27,7 @@ class cMap;
 class cPlayer;
 class cVehicle;
 class cBuilding;
+class cServer;
 class cTCP;
 struct sResources;
 struct sUnitData;
@@ -64,7 +65,7 @@ public:
 	cSavegame (int number);
 
 	/* saves the current gamestate to a file */
-	int save (const std::string& saveName);
+	int save (const cServer& server, const std::string& saveName);
 	/* loads a savegame */
 	int load (cTCP* network);
 
@@ -235,7 +236,7 @@ private:
 	* recalculates the subbase values after loading all units
 	*@author eiko
 	*/
-	void recalcSubbases();
+	void recalcSubbases(cServer& server);
 	/**
 	* calculates and adds the movejobs after all units has been loaded
 	*@author alzi alias DoctorDeath

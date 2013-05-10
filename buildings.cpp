@@ -1744,9 +1744,10 @@ void cBuilding::makeDetection()
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
 		int offset = PosX + PosY * Server->Map->size;
-		for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+		cList<cPlayer*>& playerList = *Server->PlayerList;
+		for (unsigned int i = 0; i < playerList.Size(); i++)
 		{
-			cPlayer* player = (*Server->PlayerList) [i];
+			cPlayer* player = playerList[i];
 			if (player == owner) continue;
 			if (player->DetectMinesMap[offset])
 			{

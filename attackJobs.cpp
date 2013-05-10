@@ -88,7 +88,7 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 int cServerAttackJob::iNextID = 0;
 
 //--------------------------------------------------------------------------
-cServerAttackJob::cServerAttackJob (cUnit* _unit, int targetOff, bool sentry)
+cServerAttackJob::cServerAttackJob (cServer& server, cUnit* _unit, int targetOff, bool sentry)
 {
 	unit = _unit;
 
@@ -101,13 +101,13 @@ cServerAttackJob::cServerAttackJob (cUnit* _unit, int targetOff, bool sentry)
 	sentryFire = sentry;
 
 	iMuzzleType = unit->data.muzzleType;
-	iAgressorOff = unit->PosX + unit->PosY * Server->Map->size;
+	iAgressorOff = unit->PosX + unit->PosY * server.Map->size;
 
 	//lock targets
 	if (unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 		lockTargetCluster();
 	else
-		lockTarget (targetOff);
+		lockTarget (server, targetOff);
 
 	unit->data.shotsCur--;
 	unit->data.ammoCur--;
@@ -119,7 +119,7 @@ cServerAttackJob::cServerAttackJob (cUnit* _unit, int targetOff, bool sentry)
 
 	if (unit->isBuilding() && unit->data.explodesOnContact)
 	{
-		Server->deleteUnit (unit, false);
+		server.deleteUnit (unit, false);
 		unit = 0;
 	}
 }
@@ -132,14 +132,15 @@ cServerAttackJob::~cServerAttackJob()
 }
 
 //--------------------------------------------------------------------------
-void cServerAttackJob::lockTarget (int offset)
+void cServerAttackJob::lockTarget (cServer& server, int offset)
 {
 	//make sure, that the unit data has been send to all clients
-	Server->checkPlayerUnits();
+	server.checkPlayerUnits();
 
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
-	selectTarget (targetVehicle, targetBuilding, offset % Server->Map->size, offset / Server->Map->size, attackMode, Server->Map);
+	cMap& map = *server.Map;
+	selectTarget (targetVehicle, targetBuilding, offset % map.size, offset / map.size, attackMode, &map);
 	if (targetVehicle)
 		targetVehicle->isBeeingAttacked = true;
 
@@ -157,7 +158,7 @@ void cServerAttackJob::lockTarget (int offset)
 
 	if (!isAir)
 	{
-		cBuildingIterator buildings = (*Server->Map) [offset].getBuildings();
+		cBuildingIterator buildings = map[offset].getBuildings();
 		while (!buildings.end)
 		{
 			targetBuilding = buildings;
@@ -171,11 +172,12 @@ void cServerAttackJob::lockTarget (int offset)
 
 	//change offset, to match the upper left field of big vehicles
 	if (targetVehicle != 0 && targetVehicle->data.isBig)
-		offset = targetVehicle->PosX + targetVehicle->PosY * Server->Map->size;
+		offset = targetVehicle->PosX + targetVehicle->PosY * map.size;
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	const cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i  < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
+		const cPlayer* player = playerList[i];
 
 		//targed in sight?
 		if (player->ScanMap[offset] == 0)
@@ -196,27 +198,29 @@ void cServerAttackJob::lockTarget (int offset)
 		message->pushInt32 (offset);
 		message->pushBool (isAir);
 
-		Server->sendNetMessage (message, player->Nr);
+		server.sendNetMessage (message, player->Nr);
 	}
 }
 
 //--------------------------------------------------------------------------
 void cServerAttackJob::lockTargetCluster()
 {
-	int PosX = iTargetOff % Server->Map->size;
-	int PosY = iTargetOff / Server->Map->size;
+	cServer& server = *Server;
+	const int mapSize = server.Map->size;
+	int PosX = iTargetOff % mapSize;
+	int PosY = iTargetOff / mapSize;
 
 	for (int x = PosY - 2; x <= PosY + 2; x++)
 	{
-		if (x < 0 || x >= Server->Map->size)
+		if (x < 0 || x >= mapSize)
 			continue;
 		for (int y = PosY - 2; y <= PosY + 2; y++)
 		{
-			if (y < 0 || y >= Server->Map->size)
+			if (y < 0 || y >= mapSize)
 				continue;
 			if (abs (PosX - x) + abs (PosY - y) > 2)
 				continue;
-			lockTarget (x + y * Server->Map->size);
+			lockTarget (server, x + y * mapSize);
 		}
 	}
 }
@@ -228,9 +232,11 @@ void cServerAttackJob::sendFireCommand()
 		return;
 
 	//make the agressor visible on all clients who can see the agressor offset
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	cServer& server = *Server;
+	cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
+		cPlayer* player = playerList[i];
 		if (player->ScanMap[iAgressorOff] == false)
 			continue;
 
@@ -239,13 +245,14 @@ void cServerAttackJob::sendFireCommand()
 
 		unit->setDetectedByPlayer (player);
 	}
-	Server->checkPlayerUnits();
+	server.checkPlayerUnits();
 
 	//calculate fire direction
-	int targetX = iTargetOff % Server->Map->size;
-	int targetY = iTargetOff / Server->Map->size;
-	int agressorX = iAgressorOff % Server->Map->size;
-	int agressorY = iAgressorOff / Server->Map->size;
+	const int mapSize = server.Map->size;
+	int targetX = iTargetOff % mapSize;
+	int targetY = iTargetOff / mapSize;
+	int agressorX = iAgressorOff % mapSize;
+	int agressorY = iAgressorOff / mapSize;
 
 	float dx = (float) targetX - (float) agressorX;
 	float dy = (float) - (targetY - agressorY);
@@ -281,9 +288,9 @@ void cServerAttackJob::sendFireCommand()
 	unit->dir = fireDir;
 
 	// send the fire message to all clients who can see the attack
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
+		cPlayer* player = playerList[i];
 
 		if (player->ScanMap[iAgressorOff]
 			|| (player->ScanMap[iTargetOff] && isMuzzleTypeRocket()))
@@ -355,13 +362,15 @@ void cServerAttackJob::clientFinished (int playerNr)
 //--------------------------------------------------------------------------
 void cServerAttackJob::makeImpact (int x, int y)
 {
-	if (x < 0 || x >= Server->Map->size || y < 0 || y >= Server->Map->size)
+	cServer& server = *Server;
+	cMap& map = *server.Map;
+	if (x < 0 || x >= map.size || y < 0 || y >= map.size)
 		return;
-	int offset = x + y * Server->Map->size;
+	int offset = x + y * map.size;
 
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;
-	selectTarget (targetVehicle, targetBuilding, x, y, attackMode, Server->Map);
+	selectTarget (targetVehicle, targetBuilding, x, y, attackMode, &map);
 
 	//check, whether the target is already in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
@@ -390,7 +399,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (targetVehicle != 0 && targetVehicle->isBeeingAttacked == false)
 	{
 		Log.write (" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG);
-		lockTarget (offset);
+		lockTarget (server, offset);
 	}
 
 	// if target found, make the impact
@@ -400,16 +409,17 @@ void cServerAttackJob::makeImpact (int x, int y)
 		// if taget is a stealth unit, make it visible on all clients
 		if (targetUnit->data.isStealthOn != TERRAIN_NONE)
 		{
-			for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+			cList<cPlayer*> playerList = *server.PlayerList;
+			for (unsigned int i = 0; i < playerList.Size(); i++)
 			{
-				cPlayer* player = (*Server->PlayerList) [i];
+				cPlayer* player = playerList[i];
 				if (targetUnit->owner == player)
 					continue;
 				if (!player->ScanMap[offset])
 					continue;
 				targetUnit->setDetectedByPlayer (player);
 			}
-			Server->checkPlayerUnits();
+			server.checkPlayerUnits();
 		}
 
 		id = targetUnit->iID;
@@ -430,12 +440,12 @@ void cServerAttackJob::makeImpact (int x, int y)
 	//remove the destroyed units
 	if (targetBuilding && targetBuilding->data.hitpointsCur <= 0)
 	{
-		Server->destroyUnit (targetBuilding);
+		server.destroyUnit (targetBuilding);
 		targetBuilding = 0;
 	}
 	else if (targetVehicle && targetVehicle->data.hitpointsCur <= 0)
 	{
-		Server->destroyUnit (targetVehicle);
+		server.destroyUnit (targetVehicle);
 		targetVehicle = 0;
 	}
 
@@ -445,7 +455,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	if (isAir == false)
 	{
-		cBuildingIterator buildings = (*Server->Map) [offset].getBuildings();
+		cBuildingIterator buildings = map[offset].getBuildings();
 		while (buildings.end == false)
 		{
 			buildings->isBeeingAttacked = false;
@@ -457,18 +467,19 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	//check whether a following sentry mode attack is possible
 	if (targetVehicle)
-		targetVehicle->InSentryRange();
+		targetVehicle->InSentryRange (server);
 	//check whether the agressor itself is in sentry range
 	if (unit && unit->isVehicle())
-		static_cast<cVehicle*> (unit)->InSentryRange();
+		static_cast<cVehicle*> (unit)->InSentryRange (server);
 }
 
 //--------------------------------------------------------------------------
 void cServerAttackJob::makeImpactCluster()
 {
+	const int mapSize = Server->Map->size;
 	int clusterDamage = damage;
-	int PosX = iTargetOff % Server->Map->size;
-	int PosY = iTargetOff / Server->Map->size;
+	int PosX = iTargetOff % mapSize;
+	int PosY = iTargetOff / mapSize;
 
 	//full damage
 	makeImpact (PosX, PosY);
@@ -493,15 +504,16 @@ void cServerAttackJob::makeImpactCluster()
 	makeImpact (PosX + 2, PosY);
 	makeImpact (PosX    , PosY - 2);
 	makeImpact (PosX    , PosY + 2);
-
 }
 
 //--------------------------------------------------------------------------
 void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 {
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	cServer& server = *Server;
+	const cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
+		const cPlayer* player = playerList[i];
 
 		//targed in sight?
 		if (player->ScanMap[offset] == 0)
@@ -512,11 +524,9 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 		message->pushInt16 (remainingHP);
 		message->pushInt16 (id);
 
-		Server->sendNetMessage (message, player->Nr);
+		server.sendNetMessage (message, player->Nr);
 	}
 }
-
-
 
 //--------------------------------------------------------------------------
 // cClientAttackJob implementation

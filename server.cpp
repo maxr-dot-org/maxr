@@ -412,7 +412,7 @@ void cServer::HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVE_JOB_CLIENT);
 
-	cServerMoveJob* MoveJob = cServerMoveJob::generateFromMessage (&message);
+	cServerMoveJob* MoveJob = cServerMoveJob::generateFromMessage (*this, &message);
 	if (!MoveJob)
 	{
 		return;
@@ -550,7 +550,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
 	}
-	AJobs.Add (new cServerAttackJob (attackingUnit, targetOffset, false));
+	AJobs.Add (new cServerAttackJob (*this, attackingUnit, targetOffset, false));
 }
 
 //-------------------------------------------------------------------------------------
@@ -1564,7 +1564,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			{
 				StoredVehicle->FlightHigh = 64;
 			}
-			StoredVehicle->InSentryRange();
+			StoredVehicle->InSentryRange (*this);
 		}
 
 
@@ -1591,7 +1591,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 				sendVehicleResources (StoredVehicle, Map);
 				StoredVehicle->doSurvey (*this);
 			}
-			StoredVehicle->InSentryRange();
+			StoredVehicle->InSentryRange (*this);
 		}
 	}
 }
@@ -1912,7 +1912,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			srcVehicle->setDetectedByPlayer (player);
 		}
 		checkPlayerUnits();
-		srcVehicle->InSentryRange();
+		srcVehicle->InSentryRange (*this);
 	}
 	srcVehicle->data.shotsCur--;
 	sendUnitData (srcVehicle, srcVehicle->owner->Nr);
@@ -2288,7 +2288,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 		sendVehicleResources (AddedVehicle, Map);
 		AddedVehicle->doSurvey (*this);
 	}
-	if (!bInit) AddedVehicle->InSentryRange();
+	if (!bInit) AddedVehicle->InSentryRange (*this);
 
 	if (AddedVehicle->canLand (*Map))
 	{
@@ -3001,7 +3001,7 @@ void cServer::makeTurnEnd()
 		Vehicle = Player->VehicleList;
 		while (Vehicle)
 		{
-			Vehicle->InSentryRange();
+			Vehicle->InSentryRange (*this);
 			Vehicle = static_cast<cVehicle*> (Vehicle->next);
 		}
 	}
@@ -3013,7 +3013,7 @@ void cServer::makeTurnEnd()
 		if (cSettings::getInstance().shouldAutosave())
 		{
 			cSavegame Savegame (10);	// autosaves are always in slot 10
-			Savegame.save (lngPack.i18n ("Text~Settings~Autosave") + " " + lngPack.i18n ("Text~Comp~Turn") + " " + iToStr (iTurn));
+			Savegame.save (*this, lngPack.i18n ("Text~Settings~Autosave") + " " + lngPack.i18n ("Text~Comp~Turn") + " " + iToStr (iTurn));
 			makeAdditionalSaveRequest (10);
 		}
 	}
@@ -3744,7 +3744,7 @@ void cServer::resyncVehicle (cVehicle* Vehicle, cPlayer* Player)
 //--------------------------------------------------------------------------
 bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* vehicle)
 {
-	cServerMoveJob* MoveJob = new cServerMoveJob (srcX, srcY, destX, destY, vehicle);
+	cServerMoveJob* MoveJob = new cServerMoveJob (*this, srcX, srcY, destX, destY, vehicle);
 	if (!MoveJob->calcPath())
 	{
 		delete MoveJob;

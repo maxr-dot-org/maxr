@@ -26,6 +26,7 @@ class cClient;
 class cMap;
 class cNetMessage;
 class cPlayer;
+class cServer;
 class cUnit;
 class cVehicle;
 
@@ -39,7 +40,7 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 class cServerAttackJob
 {
 public:
-	cServerAttackJob (cUnit* _unit, int targetOff, bool sentry);
+	cServerAttackJob (cServer& server, cUnit* _unit, int targetOff, bool sentry);
 	~cServerAttackJob();
 
 	void sendFireCommand (cPlayer* player);
@@ -54,7 +55,7 @@ private:
 	/** syncronizes positions of target, locks target and suspents move job if nessesary
 	* @author Eiko
 	*/
-	void lockTarget (int offset);
+	void lockTarget (cServer& server, int offset);
 	void lockTargetCluster();
 	void sendFireCommand();
 	void makeImpact (int x, int y);

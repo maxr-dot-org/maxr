@@ -94,7 +94,7 @@ public:
 };
 
 Uint32 calcClientChecksum (const cClient& client);
-Uint32 calcServerChecksum (const cPlayer* player);
+Uint32 calcServerChecksum (const cServer& server, const cPlayer* player);
 
 void compareGameData (const cClient& client, const cServer& server);
 

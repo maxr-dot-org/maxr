@@ -183,7 +183,7 @@ public:
 	void doSurvey (const cServer& server);
 	void MakeReport();
 	bool CanTransferTo (cMapField* OverUnitField) const;
-	bool InSentryRange();
+	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI) const;
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
 	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true) const;

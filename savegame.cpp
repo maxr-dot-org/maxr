@@ -43,7 +43,7 @@ cSavegame::cSavegame (int number) :
 }
 
 //--------------------------------------------------------------------------
-int cSavegame::save (const string& saveName)
+int cSavegame::save (const cServer& server, const string& saveName)
 {
 	TiXmlElement* rootnode = new TiXmlElement ("MAXR_SAVE_FILE");
 	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
@@ -51,13 +51,14 @@ int cSavegame::save (const string& saveName)
 
 	writeHeader (saveName);
 	writeGameInfo();
-	writeMap (Server->Map);
+	writeMap (server.Map);
 	writeCasualties();
 
 	int unitnum = 0;
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	const cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		const cPlayer* Player = (*Server->PlayerList) [i];
+		const cPlayer* Player = playerList[i];
 		writePlayer (Player, i);
 		const cVehicle* Vehicle = Player->VehicleList;
 		while (Vehicle)
@@ -78,7 +79,7 @@ int cSavegame::save (const string& saveName)
 		}
 	}
 	int rubblenum = 0;
-	const cBuilding* Rubble = Server->neutralBuildings;
+	const cBuilding* Rubble = server.neutralBuildings;
 	while (Rubble)
 	{
 		writeRubble (Rubble, rubblenum);
@@ -162,22 +163,23 @@ int cSavegame::load (cTCP* network)
 	loadUnits();
 	loadCasualties();
 
-	recalcSubbases();
+	recalcSubbases(*Server);
 	return 1;
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::recalcSubbases()
+void cSavegame::recalcSubbases(cServer& server)
 {
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		(*Server->PlayerList) [i]->base.refreshSubbases();
+		playerList[i]->base.refreshSubbases();
 	}
 
 	//set the loaded ressource production values
 	for (unsigned int i = 0; i < SubBasesLoad.Size(); i++)
 	{
-		cBuilding* building = Server->getBuildingFromID (SubBasesLoad[i]->buildingID);
+		cBuilding* building = server.getBuildingFromID (SubBasesLoad[i]->buildingID);
 		if (!building) continue;
 
 		sSubBase& sb = *building->SubBase;
@@ -1103,15 +1105,16 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 //--------------------------------------------------------------------------
 void cSavegame::generateMoveJobs()
 {
+	cServer& server = *Server;
 	for (unsigned int i = 0; i < MoveJobsLoad.Size(); i++)
 	{
-		cServerMoveJob* MoveJob = new cServerMoveJob (MoveJobsLoad[i]->vehicle->PosX, MoveJobsLoad[i]->vehicle->PosY, MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY, MoveJobsLoad[i]->vehicle);
+		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->PosX, MoveJobsLoad[i]->vehicle->PosY, MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY, MoveJobsLoad[i]->vehicle);
 		if (!MoveJob->calcPath())
 		{
 			delete MoveJob;
 			MoveJobsLoad[i]->vehicle->ServerMoveJob = NULL;
 		}
-		else Server->addActiveMoveJob (MoveJob);
+		else server.addActiveMoveJob (MoveJob);
 		delete MoveJobsLoad[i];
 	}
 }

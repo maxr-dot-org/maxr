@@ -163,7 +163,7 @@ void cServerGame::run()
 			if (shouldSave)
 			{
 				cSavegame saveGame (saveGameNumber);
-				saveGame.save ("Dedicated Server Savegame");
+				saveGame.save (*Server, "Dedicated Server Savegame");
 				cout << "...saved to slot " << saveGameNumber << endl;
 				shouldSave = false;
 			}

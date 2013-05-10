@@ -234,20 +234,22 @@ bool cGameTimerServer::nextTickAllowed ()
 
 	int newWaitingForPlayer = -1;
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size (); i++)
+	cServer& server = *Server;
+	cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
-		if (!Server->isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
+		cPlayer* player = playerList[i];
+		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
 			newWaitingForPlayer = player->Nr;
 	}
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
 	{
-		Server->enableFreezeMode (FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
+		server.enableFreezeMode (FREEZE_WAIT_FOR_PLAYER, newWaitingForPlayer);	//TODO: betreffenden player nicht mit freezenachrichten zuballern. Das ist kontraproduktiv.
 	}
 	else if (newWaitingForPlayer == -1 && waitingForPlayer != -1)
 	{
-		Server->disableFreezeMode (FREEZE_WAIT_FOR_PLAYER);
+		server.disableFreezeMode (FREEZE_WAIT_FOR_PLAYER);
 	}
 
 	waitingForPlayer = newWaitingForPlayer;
@@ -263,17 +265,18 @@ void cGameTimerServer::run ()
 		{
 			gameTime++;
 			handleTimer ();
-			Server->doGameActions ();
-
-			for (size_t i = 0; i < Server->PlayerList->Size(); i++)
+			cServer& server = *Server;
+			server.doGameActions();
+			const cList<cPlayer*>& playerList = *server.PlayerList;
+			for (size_t i = 0; i < playerList.Size(); i++)
 			{
-				cPlayer* player = (*Server->PlayerList) [i];
+				const cPlayer* player = playerList[i];
 
 				cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
 				message->pushInt32 (gameTime);
-				Uint32 checkSum = calcServerChecksum (player);
+				Uint32 checkSum = calcServerChecksum (server, player);
 				message->pushInt32 (checkSum);
-				Server->sendNetMessage (message, player->Nr);
+				server.sendNetMessage (message, player->Nr);
 			}
 
 		}
@@ -302,10 +305,10 @@ Uint32 calcClientChecksum (const cClient& client)
 	return crc;
 }
 
-Uint32 calcServerChecksum (const cPlayer* player)
+Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 {
 	Uint32 crc = 0;
-	const cList<cPlayer*>& playerList = *Server->PlayerList;
+	const cList<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
 		const cVehicle* vehicle = playerList[i]->VehicleList;
