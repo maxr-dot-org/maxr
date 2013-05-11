@@ -489,8 +489,8 @@ void cDedicatedServer::sendChatMessage (const string& text, int type, int socket
 }
 
 //------------------------------------------------------------------------
-void cDedicatedServer::doAutoSave()
+void cDedicatedServer::doAutoSave (cServer& server)
 {
 	cSavegame Savegame (kAutoSaveSlot);	// dedicated server autosaves are always in slot kAutoSaveSlot
-	Savegame.save (*Server, "Dedicated Server Autosave");
+	Savegame.save (server, "Dedicated Server Autosave");
 }

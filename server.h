@@ -162,6 +162,7 @@ private:
 
 	sFreezeModes freezeModes;
 public:
+	const cCasualtiesTracker* getCasualtiesTracker() const {return casualtiesTracker;}
 	cCasualtiesTracker* getCasualtiesTracker() {return casualtiesTracker;}
 
 private:

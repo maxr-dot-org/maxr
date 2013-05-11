@@ -26,6 +26,7 @@
 class cPlayer;
 class cBuilding;
 class cMap;
+class cServer;
 
 struct sSubBase
 {
@@ -77,9 +78,9 @@ public:
 	* adds/substracts a ressource to/from the subbase
 	* @author eiko
 	*/
-	void addMetal (int i);
-	void addOil (int i);
-	void addGold (int i);
+	void addMetal (cServer& server, int i);
+	void addOil (cServer& server, int i);
+	void addGold (cServer& server, int i);
 
 
 	/**
@@ -92,7 +93,7 @@ public:
 	* inreases the energy production of the subbase by starting offline generators/stations
 	* @author eiko
 	*/
-	bool increaseEnergyProd (int i);
+	bool increaseEnergyProd (cServer& server, int i);
 
 	//-----------------------------------
 	//turn end manangement:
@@ -102,9 +103,9 @@ public:
 	* @return returns true, if consumers have been shut down
 	* @author eiko
 	*/
-	bool checkGoldConsumer();
-	bool checkHumanConsumer();
-	bool checkMetalConsumer();
+	bool checkGoldConsumer (cServer& server);
+	bool checkHumanConsumer (cServer& server);
+	bool checkMetalConsumer (cServer& server);
 	/**
 	* - switch off unneeded fuel consumers(=energy producers)
 	* - sets the optimal amount of generators and stations to minimize fuel consumption
@@ -113,23 +114,23 @@ public:
 	* @return: returns true, if oil consumers have been shut down, due to a lack of oil
 	* @author eiko
 	*/
-	bool checkOil();
+	bool checkOil (cServer& server);
 	/**
 	* switch off energy consumers, if nessesary
 	* @return returns true, if a energy consumers have been shut down
 	* @author eiko
 	*/
-	bool checkEnergy();
+	bool checkEnergy (cServer& server);
 	/**
 	* checks, if there are consumers, that have to be shut down, due to a lack of a ressources
 	* @author eiko
 	*/
-	void prepareTurnend();
+	void prepareTurnend (cServer& server);
 	/**
 	* produce ressources, rapair/reload buildings etc.
 	* @author eiko
 	*/
-	void makeTurnend();
+	void makeTurnend (cServer& server);
 
 	//------------------------------------
 	//ressource management:
@@ -178,7 +179,7 @@ private:
 	* adds/substracts ressourcec of the type storeResType  to/from the subbase
 	* @author eiko
 	*/
-	void addRessouce (sUnitData::eStorageResType storeResType, int value);
+	void addRessouce (cServer& server, sUnitData::eStorageResType storeResType, int value);
 
 };
 
@@ -205,7 +206,7 @@ public:
 	* @author eiko
 	*/
 	void deleteBuilding (cBuilding* building, bool bServer);
-	void handleTurnend();
+	void handleTurnend (cServer& server);
 	/**
 	* recalculates the values of all subbases
 	*@author eiko

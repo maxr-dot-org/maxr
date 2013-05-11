@@ -204,13 +204,13 @@ public:
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true);
+	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true);
 	/**
 	* - checks whether the building has been detected by an other unit
 	* the detection maps have to be up to date, when calling this funktion
 	* this function has to be called on the server everytime a building is added
 	*/
-	void makeDetection();
+	void makeDetection (cServer& server);
 
 	/**
 	* draws the main image of the building onto the given surface

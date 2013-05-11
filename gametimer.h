@@ -62,11 +62,11 @@ class cGameTimerServer : public cGameTimer
 private:
 	int waitingForPlayer;
 
-	bool nextTickAllowed ();
+	bool nextTickAllowed (cServer& server);
 public:
 	cGameTimerServer ();
 
-	void run ();
+	void run (cServer& server);
 	void handleSyncMessage (cNetMessage& message);
 
 };

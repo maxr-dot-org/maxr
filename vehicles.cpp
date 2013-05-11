@@ -1475,11 +1475,10 @@ bool cVehicle::CanTransferTo (cMapField* OverUnitField) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, const string& reasonForLog) const
+bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;
-	cServer& server = *Server;
 	selectTarget (targetVehicle, targetBuilding, PosX, PosY, opponentUnit->data.canAttack, server.Map);
 	if (targetVehicle == this)
 	{
@@ -1494,11 +1493,11 @@ bool cVehicle::makeAttackOnThis (cUnit* opponentUnit, const string& reasonForLog
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::makeSentryAttack (cUnit* sentryUnit) const
+bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 {
-	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, Server->Map, true))
+	if (sentryUnit != 0 && sentryUnit->sentryActive && sentryUnit->canAttackObjectAt (PosX, PosY, server.Map, true))
 	{
-		if (makeAttackOnThis (sentryUnit, "sentry reaction"))
+		if (makeAttackOnThis (server, sentryUnit, "sentry reaction"))
 			return true;
 	}
 	return false;
@@ -1525,36 +1524,36 @@ bool cVehicle::InSentryRange (cServer& server)
 		cUnit* unit = static_cast<cUnit*> (Player->VehicleList);
 		while (unit)
 		{
-			if (makeSentryAttack (unit))
+			if (makeSentryAttack (server, unit))
 				return true;
 			unit = unit->next;
 		}
 		unit = static_cast<cUnit*> (Player->BuildingList);
 		while (unit)
 		{
-			if (makeSentryAttack (unit))
+			if (makeSentryAttack (server, unit))
 				return true;
 			unit = unit->next;
 		}
 	}
 
-	return provokeReactionFire();
+	return provokeReactionFire (server);
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isOtherUnitOffendedByThis (cUnit* otherUnit) const
+bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit* otherUnit) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
 	bool otherUnitIsCheapBuilding = (otherUnit->isBuilding() && otherUnit->data.ID.getUnitDataOriginalVersion()->buildCosts > 2);
 
 	if (otherUnitIsCheapBuilding == false
 		&& isInRange (otherUnit->PosX, otherUnit->PosY)
-		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, Server->Map, true, false))
+		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
 		cVehicle* selectedTargetVehicle = 0;
 		cBuilding* selectedTargetBuilding = 0;
-		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, Server->Map);
+		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, server.Map);
 		if (selectedTargetVehicle == otherUnit || selectedTargetBuilding == otherUnit)
 			return true;
 	}
@@ -1562,9 +1561,9 @@ bool cVehicle::isOtherUnitOffendedByThis (cUnit* otherUnit) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const
+bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server, const cPlayer* player) const
 {
-	if (Server->isTurnBasedGame())
+	if (server.isTurnBasedGame())
 	{
 		// In the turn based game style, the opponent always fires on the unit if he can, regardless if the unit is offending or not.
 		return true;
@@ -1573,54 +1572,54 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player)
 	{
 		// check if there is a vehicle or building of player, that is offended
 
-		cUnit* opponentVehicle = player->VehicleList;
+		const cUnit* opponentVehicle = player->VehicleList;
 		while (opponentVehicle != 0)
 		{
-			if (isOtherUnitOffendedByThis (opponentVehicle))
+			if (isOtherUnitOffendedByThis (server, opponentVehicle))
 				return true;
 			opponentVehicle = opponentVehicle->next;
 		}
-		cUnit* opponentBuilding = player->BuildingList;
+		const cUnit* opponentBuilding = player->BuildingList;
 		while (opponentBuilding != 0)
 		{
-			if (isOtherUnitOffendedByThis (opponentBuilding))
+			if (isOtherUnitOffendedByThis (server, opponentBuilding))
 				return true;
-			opponentBuilding = static_cast<cBuilding*> (opponentBuilding->next);
+			opponentBuilding = static_cast<const cBuilding*> (opponentBuilding->next);
 		}
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFireForUnit (cUnit* opponentUnit) const
+bool cVehicle::doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const
 {
 	if (opponentUnit->sentryActive == false && opponentUnit->manualFireActive == false
-		&& opponentUnit->canAttackObjectAt (PosX, PosY, Server->Map, true)
+		&& opponentUnit->canAttackObjectAt (PosX, PosY, server.Map, true)
 		// Possible TODO: better handling of stealth units. e.g. do reaction fire, if already detected?
 		&& (opponentUnit->isVehicle() == false || opponentUnit->data.isStealthOn == TERRAIN_NONE))
 	{
-		if (makeAttackOnThis (opponentUnit, "reaction fire"))
+		if (makeAttackOnThis (server, opponentUnit, "reaction fire"))
 			return true;
 	}
 	return false;
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::doReactionFire (cPlayer* player) const
+bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
 	cUnit* opponentBuilding = player->BuildingList;
 	while (opponentBuilding != 0)
 	{
-		if (doReactionFireForUnit (opponentBuilding))
+		if (doReactionFireForUnit (server, opponentBuilding))
 			return true;
 		opponentBuilding = opponentBuilding->next;
 	}
 	cUnit* opponentVehicle = player->VehicleList;
 	while (opponentVehicle != 0)
 	{
-		if (doReactionFireForUnit (opponentVehicle))
+		if (doReactionFireForUnit (server, opponentVehicle))
 			return true;
 		opponentVehicle = opponentVehicle->next;
 	}
@@ -1628,17 +1627,18 @@ bool cVehicle::doReactionFire (cPlayer* player) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::provokeReactionFire()
+bool cVehicle::provokeReactionFire (cServer& server)
 {
 	// unit can't fire, so it can't provoke a reaction fire
 	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
 		return false;
 
-	int iOff = PosX + PosY * Server->Map->size;
+	int iOff = PosX + PosY * server.Map->size;
 
-	for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+	cList<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
-		cPlayer* player = (*Server->PlayerList) [i];
+		cPlayer* player = playerList[i];
 		if (player == owner)
 			continue;
 
@@ -1648,10 +1648,10 @@ bool cVehicle::provokeReactionFire()
 		if (player->ScanMap[iOff] == false)   // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
 			continue;
 
-		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (player) == false)
+		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (server, player) == false)
 			continue;
 
-		if (doReactionFire (player))
+		if (doReactionFire (server, player))
 			return true;
 	}
 	return false;
@@ -2001,28 +2001,28 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList)
+void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
 	bool wasDetected = (detectedByPlayerList.Size() > 0);
 
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.Add (player);
 
-	if (!wasDetected) sendDetectionState (*Server, this);
+	if (!wasDetected) sendDetectionState (server, this);
 
 	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
 		detectedInThisTurnByPlayerList.Add (player);
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::resetDetectedByPlayer (cPlayer* player)
+void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 {
 	bool wasDetected = (detectedByPlayerList.Size() > 0);
 
 	detectedByPlayerList.Remove (player);
 	detectedInThisTurnByPlayerList.Remove (player);
 
-	if (wasDetected && detectedByPlayerList.Size() == 0) sendDetectionState (*Server, this);
+	if (wasDetected && detectedByPlayerList.Size() == 0) sendDetectionState (server, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2038,9 +2038,9 @@ void cVehicle::clearDetectedInThisTurnPlayerList()
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::tryResetOfDetectionStateAfterMove()
+void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 {
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer();
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 
 	bool foundPlayerToReset = true;
 	while (foundPlayerToReset)
@@ -2051,7 +2051,7 @@ void cVehicle::tryResetOfDetectionStateAfterMove()
 			if (playersThatDetectThisVehicle.Contains (detectedByPlayerList[i]) == false
 				&& detectedInThisTurnByPlayerList.Contains (detectedByPlayerList[i]) == false)
 			{
-				resetDetectedByPlayer (detectedByPlayerList[i]);
+				resetDetectedByPlayer (server, detectedByPlayerList[i]);
 				foundPlayerToReset = true;
 				break;
 			}
@@ -2060,13 +2060,12 @@ void cVehicle::tryResetOfDetectionStateAfterMove()
 }
 
 //-----------------------------------------------------------------------------
-cList<cPlayer*> cVehicle::calcDetectedByPlayer() const
+cList<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 {
 	cList<cPlayer*> playersThatDetectThisVehicle;
 	//check whether the vehicle has been detected by others
 	if (data.isStealthOn != TERRAIN_NONE)   // the vehicle is a stealth vehicle
 	{
-		cServer& server = *Server;
 		cMap& map = *server.Map;
 		int offset = PosX + PosY * map.size;
 		cList<cPlayer*>& playerList = *server.PlayerList;
@@ -2108,17 +2107,17 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer() const
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::makeDetection()
+void cVehicle::makeDetection (cServer& server)
 {
 	//check whether the vehicle has been detected by others
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer();
+	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 	for (unsigned int i = 0; i < playersThatDetectThisVehicle.Size(); i++)
-		setDetectedByPlayer (playersThatDetectThisVehicle[i]);
+		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
 
 	//detect other units
 	if (data.canDetectStealthOn)
 	{
-		cMap& map = *Server->Map;
+		cMap& map = *server.Map;
 		for (int x = PosX - data.scan; x < PosX + data.scan; x++)
 		{
 			if (x < 0 || x >= map.size) continue;
@@ -2134,18 +2133,18 @@ void cVehicle::makeDetection()
 				{
 					if ( (data.canDetectStealthOn & TERRAIN_GROUND) && owner->DetectLandMap[offset] && (vehicle->data.isStealthOn & TERRAIN_GROUND))
 					{
-						vehicle->setDetectedByPlayer (owner);
+						vehicle->setDetectedByPlayer (server, owner);
 					}
 					if ( (data.canDetectStealthOn & TERRAIN_SEA) && owner->DetectSeaMap[offset] && (vehicle->data.isStealthOn & TERRAIN_SEA))
 					{
-						vehicle->setDetectedByPlayer (owner);
+						vehicle->setDetectedByPlayer (server, owner);
 					}
 				}
 				if (building && building->owner != owner)
 				{
 					if ( (data.canDetectStealthOn & AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn & AREA_EXP_MINE))
 					{
-						building->setDetectedByPlayer (owner);
+						building->setDetectedByPlayer (server, owner);
 					}
 				}
 			}

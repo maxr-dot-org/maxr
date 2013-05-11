@@ -121,8 +121,8 @@ public:
 	void deleteSentry (cUnit* u);
 	void startAResearch (int researchArea);
 	void stopAResearch (int researchArea);
-	void doResearch();  ///< proceed with the research at turn end
-	void accumulateScore(); // at turn end
+	void doResearch (cServer& server);  ///< proceed with the research at turn end
+	void accumulateScore (cServer& server); // at turn end
 	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void AddLock (cBuilding* b);

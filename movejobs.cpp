@@ -696,11 +696,11 @@ bool cServerMoveJob::checkMove()
 		if (wasOnLand && driveIntoWater)
 		{
 			while (Vehicle->detectedByPlayerList.Size())
-				Vehicle->resetDetectedByPlayer (Vehicle->detectedByPlayerList[0]);
+				Vehicle->resetDetectedByPlayer (*server, Vehicle->detectedByPlayerList[0]);
 		}
 	}
 	// resetDetected for players, that can't _detect_ the unit anymore and if the unit was not in the detected area of that player in this turn, too
-	Vehicle->tryResetOfDetectionStateAfterMove();
+	Vehicle->tryResetOfDetectionStateAfterMove (*server);
 
 	// send move command to all players who can see the unit
 	sendNextMove (*server, Vehicle, MJOB_OK);
@@ -775,7 +775,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	}
 
 	//handle detection
-	Vehicle->makeDetection();
+	Vehicle->makeDetection (*server);
 
 	// let other units fire on this one
 	Vehicle->InSentryRange (*server);
@@ -831,25 +831,24 @@ cEndMoveAction::cEndMoveAction (cVehicle* vehicle, int destID, eEndMoveActionTyp
 	vehicle_ = vehicle;
 }
 
-void cEndMoveAction::execute()
+void cEndMoveAction::execute (cServer& server)
 {
 	switch (type_)
 	{
 		case EMAT_LOAD:
-			executeLoadAction();
+			executeLoadAction (server);
 			break;
 		case EMAT_GET_IN:
-			executeGetInAction();
+			executeGetInAction (server);
 			break;
 		case EMAT_ATTACK:
-			executeAttackAction();
+			executeAttackAction (server);
 			break;
 	}
 }
 
-void cEndMoveAction::executeLoadAction()
+void cEndMoveAction::executeLoadAction (cServer& server)
 {
-	cServer& server = *Server;
 	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	if (!destVehicle) return;
 
@@ -863,9 +862,8 @@ void cEndMoveAction::executeLoadAction()
 	}
 }
 
-void cEndMoveAction::executeGetInAction()
+void cEndMoveAction::executeGetInAction (cServer& server)
 {
-	cServer& server = *Server;
 	cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	cBuilding* destBuilding = server.getBuildingFromID (destID_);
 
@@ -886,9 +884,8 @@ void cEndMoveAction::executeGetInAction()
 	}
 }
 
-void cEndMoveAction::executeAttackAction()
+void cEndMoveAction::executeAttackAction (cServer& server)
 {
-	cServer& server = *Server;
 	//get the target unit
 	const cVehicle* destVehicle = server.getVehicleFromID (destID_);
 	const cBuilding* destBuilding = server.getBuildingFromID (destID_);

@@ -174,13 +174,15 @@ public:
 	int destID_;		//we store the ID and not a pointer to vehicle/building,
 	//so we don't have to invalidate the pointer, when the dest unit gets destroyed
 
-	void executeLoadAction();
-	void executeGetInAction();
-	void executeAttackAction();
+private:
+	void executeLoadAction (cServer& server);
+	void executeGetInAction (cServer& server);
+	void executeAttackAction (cServer& server);
 
+public:
 	cEndMoveAction (cVehicle* vehicle, int destID, eEndMoveActionType type);
 
-	void execute();
+	void execute (cServer& server);
 };
 
 class cServerMoveJob

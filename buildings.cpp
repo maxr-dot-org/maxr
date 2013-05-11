@@ -1723,7 +1723,7 @@ bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList)
+void cBuilding::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.Add (player);
@@ -1736,22 +1736,22 @@ void cBuilding::resetDetectedByPlayer (const cPlayer* player)
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::makeDetection()
+void cBuilding::makeDetection (cServer& server)
 {
 	//check whether the building has been detected by others
 	if (data.isStealthOn == TERRAIN_NONE) return;
 
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
-		int offset = PosX + PosY * Server->Map->size;
-		cList<cPlayer*>& playerList = *Server->PlayerList;
+		int offset = PosX + PosY * server.Map->size;
+		cList<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int i = 0; i < playerList.Size(); i++)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner) continue;
 			if (player->DetectMinesMap[offset])
 			{
-				setDetectedByPlayer (player);
+				setDetectedByPlayer (server, player);
 			}
 		}
 	}

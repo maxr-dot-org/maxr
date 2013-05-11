@@ -242,7 +242,7 @@ void cServerAttackJob::sendFireCommand()
 		if (unit->owner == player)
 			continue;
 
-		unit->setDetectedByPlayer (player);
+		unit->setDetectedByPlayer (*server, player);
 	}
 	server->checkPlayerUnits();
 
@@ -415,7 +415,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 					continue;
 				if (!player->ScanMap[offset])
 					continue;
-				targetUnit->setDetectedByPlayer (player);
+				targetUnit->setDetectedByPlayer (*server, player);
 			}
 			server->checkPlayerUnits();
 		}

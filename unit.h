@@ -28,6 +28,7 @@ class cGameGUI;
 class cJob;
 class cMap;
 class cPlayer;
+class cServer;
 class cVehicle;
 
 //-----------------------------------------------------------------------------
@@ -77,7 +78,7 @@ public:
 	void drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
 	void rotateTo (int newDir);
 
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true) {}
+	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true) = 0;
 
 	/** checks if the unit can attack something at the offset
 	 *  when forceAttack is false, the function only returns true, if there is an enemy unit

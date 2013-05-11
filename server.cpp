@@ -77,8 +77,8 @@ int CallbackRunServerThread (void* arg)
 	}
 #endif
 
-	cServer* Server = reinterpret_cast<cServer*> (arg);
-	Server->run();
+	cServer* server = reinterpret_cast<cServer*> (arg);
+	server->run();
 	return 0;
 }
 
@@ -545,7 +545,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 
 	//check if attack is possible
 	cUnit* attackingUnit = bIsVehicle ? (cUnit*) attackingVehicle : (cUnit*) attackingBuilding;
-	if (attackingUnit->canAttackObjectAt (targetOffset % Map->size, targetOffset / Map->size, Server->Map, true) == false)
+	if (attackingUnit->canAttackObjectAt (targetOffset % Map->size, targetOffset / Map->size, Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -1907,7 +1907,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			if (player == srcVehicle->owner) continue;
 			if (!player->ScanMap[srcVehicle->PosX + srcVehicle->PosY * Map->size]) continue;
 
-			srcVehicle->setDetectedByPlayer (player);
+			srcVehicle->setDetectedByPlayer (*this, player);
 		}
 		checkPlayerUnits();
 		srcVehicle->InSentryRange (*this);
@@ -2300,7 +2300,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	sendAddUnit (*this, iPosX, iPosY, AddedVehicle->iID, true, Vehicle->data.ID, Player->Nr, bInit);
 
 	//detection must be done, after the vehicle has been sent to clients
-	AddedVehicle->makeDetection();
+	AddedVehicle->makeDetection (*this);
 	return AddedVehicle;
 }
 
@@ -2396,7 +2396,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 		sendProduceValues (*this, AddedBuilding);
 		AddedBuilding->ServerStartWork (*this);
 	}
-	AddedBuilding->makeDetection();
+	AddedBuilding->makeDetection (*this);
 	return AddedBuilding;
 }
 
@@ -2968,7 +2968,7 @@ void cServer::makeTurnEnd()
 		while (vehicle)
 		{
 			vehicle->clearDetectedInThisTurnPlayerList();
-			vehicle->makeDetection();
+			vehicle->makeDetection (*this);
 			vehicle = static_cast<cVehicle*> (vehicle->next);
 		}
 	}
@@ -2981,12 +2981,12 @@ void cServer::makeTurnEnd()
 
 	// do research:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
-		(*PlayerList) [i]->doResearch();
+		(*PlayerList) [i]->doResearch (*this);
 
 	// eco-spheres:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		(*PlayerList) [i]->accumulateScore();
+		(*PlayerList) [i]->accumulateScore (*this);
 	}
 
 	// Gun'em down:
@@ -3222,7 +3222,7 @@ void cServer::handleMoveJobs()
 			else Log.write (" Server: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 
 			//execute endMoveAction
-			if (Vehicle && MoveJob->endAction) MoveJob->endAction->execute();
+			if (Vehicle && MoveJob->endAction) MoveJob->endAction->execute (*this);
 
 			delete MoveJob;
 			ActiveMJobs.Delete (i);
@@ -3582,7 +3582,7 @@ void cServer::deletePlayer (cPlayer* Player)
 		Vehicle = UnitPlayer->VehicleList;
 		while (Vehicle)
 		{
-			if (Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer (Player)) Vehicle->resetDetectedByPlayer (Player);
+			if (Vehicle->data.isStealthOn != TERRAIN_NONE && Vehicle->isDetectedByPlayer (Player)) Vehicle->resetDetectedByPlayer (*this, Player);
 			Vehicle = static_cast<cVehicle*> (Vehicle->next);
 		}
 	}
@@ -3822,7 +3822,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 		sendVehicleResources (*this, vehicle, Map);
 		vehicle->doSurvey (*this);
 	}
-	vehicle->makeDetection();
+	vehicle->makeDetection (*this);
 }
 
 //--------------------------------------------------------------------------
@@ -3948,7 +3948,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	}
 
 	//sidestepping failed. Uncover the vehicle.
-	stealthVehicle->setDetectedByPlayer (vehicleOwner);
+	stealthVehicle->setDetectedByPlayer (*this, vehicleOwner);
 	checkPlayerUnits();
 }
 

@@ -222,7 +222,7 @@ void cGameTimerServer::handleSyncMessage (cNetMessage& message)
 
 }
 
-bool cGameTimerServer::nextTickAllowed ()
+bool cGameTimerServer::nextTickAllowed (cServer& server)
 {
 	if (syncDebugSingleStep)
 	{
@@ -234,7 +234,6 @@ bool cGameTimerServer::nextTickAllowed ()
 
 	int newWaitingForPlayer = -1;
 
-	cServer& server = *Server;
 	cList<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.Size(); i++)
 	{
@@ -257,15 +256,14 @@ bool cGameTimerServer::nextTickAllowed ()
 	return waitingForPlayer == -1;
 }
 
-void cGameTimerServer::run ()
+void cGameTimerServer::run (cServer& server)
 {
 	if (popEvent ())
 	{
-		if (nextTickAllowed ())
+		if (nextTickAllowed (server))
 		{
 			gameTime++;
 			handleTimer ();
-			cServer& server = *Server;
 			server.doGameActions();
 			const cList<cPlayer*>& playerList = *server.PlayerList;
 			for (size_t i = 0; i < playerList.Size(); i++)

@@ -49,10 +49,10 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
 	SaveFile.LinkEndChild (rootnode);
 
-	writeHeader (saveName);
-	writeGameInfo();
+	writeHeader (server, saveName);
+	writeGameInfo (server);
 	writeMap (server.Map);
-	writeCasualties();
+	writeCasualties (server);
 
 	int unitnum = 0;
 	const cList<cPlayer*>& playerList = *server.PlayerList;
@@ -65,7 +65,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		{
 			if (!Vehicle->Loaded)
 			{
-				writeUnit (Vehicle, &unitnum);
+				writeUnit (server, Vehicle, &unitnum);
 				unitnum++;
 			}
 			Vehicle = static_cast<const cVehicle*> (Vehicle->next);
@@ -73,7 +73,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		const cBuilding* Building = Player->BuildingList;
 		while (Building)
 		{
-			writeUnit (Building, &unitnum);
+			writeUnit (server, Building, &unitnum);
 			unitnum++;
 			Building = static_cast<const cBuilding*> (Building->next);
 		}
@@ -82,7 +82,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	const cBuilding* Rubble = server.neutralBuildings;
 	while (Rubble)
 	{
-		writeRubble (Rubble, rubblenum);
+		writeRubble (server, Rubble, rubblenum);
 		rubblenum++;
 		Rubble = static_cast<const cBuilding*> (Rubble->next);
 	}
@@ -158,12 +158,12 @@ int cSavegame::load (cTCP* network)
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
 		Server = new cServer (network, map, PlayerList, GAME_TYPE_SINGLE, false);
 	}
+	cServer& server = *Server;
+	loadGameInfo (server);
+	loadUnits (server);
+	loadCasualties (server);
 
-	loadGameInfo();
-	loadUnits();
-	loadCasualties();
-
-	recalcSubbases(*Server);
+	recalcSubbases (server);
 	return 1;
 }
 
@@ -241,25 +241,25 @@ string cSavegame::getPlayerNames() const
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadGameInfo()
+void cSavegame::loadGameInfo (cServer& server)
 {
 	TiXmlElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
 	if (!gameInfoNode) return;
 
-	gameInfoNode->FirstChildElement ("Turn")->Attribute ("num", &Server->iTurn);
+	gameInfoNode->FirstChildElement ("Turn")->Attribute ("num", &server.iTurn);
 	if (TiXmlElement* const element = gameInfoNode->FirstChildElement ("Hotseat"))
 	{
-		Server->bHotSeat = true;
-		element->Attribute ("activeplayer", &Server->iHotSeatPlayer);
+		server.bHotSeat = true;
+		element->Attribute ("activeplayer", &server.iHotSeatPlayer);
 	}
 	if (TiXmlElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
-		Server->bPlayTurns = true;
-		element->Attribute ("activeplayer", &Server->iActiveTurnPlayerNr);
+		server.bPlayTurns = true;
+		element->Attribute ("activeplayer", &server.iActiveTurnPlayerNr);
 	}
 
-	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("TurnLimit"))  e->Attribute ("num", &Server->turnLimit);
-	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) e->Attribute ("num", &Server->scoreLimit);
+	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("TurnLimit"))  e->Attribute ("num", &server.turnLimit);
+	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) e->Attribute ("num", &server.scoreLimit);
 }
 
 //--------------------------------------------------------------------------
@@ -531,23 +531,21 @@ void cSavegame::loadResearchCentersWorkingOnArea (TiXmlElement* researchCentersW
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadCasualties()
+void cSavegame::loadCasualties (cServer& server)
 {
-	if (Server == 0 || Server->getCasualtiesTracker() == 0)
+	if (server.getCasualtiesTracker() == 0)
 		return;
 
 	TiXmlElement* casualtiesNode = SaveFile.RootElement()->FirstChildElement ("Casualties");
 	if (casualtiesNode == 0)
 		return;
 
-	Server->getCasualtiesTracker()->initFromXML (casualtiesNode);
+	server.getCasualtiesTracker()->initFromXML (casualtiesNode);
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadUnits()
+void cSavegame::loadUnits (cServer& server)
 {
-	if (!Server) return;
-
 	TiXmlElement* unitsNode = SaveFile.RootElement()->FirstChildElement ("Units");
 	if (unitsNode != NULL)
 	{
@@ -557,8 +555,8 @@ void cSavegame::loadUnits()
 		{
 			sID ID;
 			ID.generate (unitNode->FirstChildElement ("Type")->Attribute ("string"));
-			if (ID.iFirstPart == 0) loadVehicle (unitNode, ID);
-			else if (ID.iFirstPart == 1) loadBuilding (unitNode, ID);
+			if (ID.iFirstPart == 0) loadVehicle (server, unitNode, ID);
+			else if (ID.iFirstPart == 1) loadBuilding (server, unitNode, ID);
 
 			unitnum++;
 			unitNode = unitsNode->FirstChildElement ( ("Unit_" + iToStr (unitnum)).c_str());
@@ -566,24 +564,23 @@ void cSavegame::loadUnits()
 		// read nextid-value before loading rubble, so that the rubble will get new ids.
 		int nextID;
 		unitsNode->FirstChildElement ("NextUnitID")->Attribute ("num", &nextID);
-		Server->iNextUnitID = nextID;
+		server.iNextUnitID = nextID;
 
 		int rubblenum = 0;
 		TiXmlElement* rubbleNode = unitsNode->FirstChildElement ("Rubble_0");
 		while (rubbleNode)
 		{
-			loadRubble (rubbleNode);
+			loadRubble (server, rubbleNode);
 			rubblenum++;
 			rubbleNode = unitsNode->FirstChildElement ( ("Rubble_" + iToStr (rubblenum)).c_str());
 		}
-		generateMoveJobs();
+		generateMoveJobs (server);
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
+void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 {
-	if (!Server) return;
 	int tmpinteger, number = -1, x, y;
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
@@ -595,12 +592,12 @@ void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
 		if (i == UnitsData.getNrVehicles() - 1) return;
 	}
 	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (Server->PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
-	cVehicle* vehicle = Server->addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
+	cVehicle* vehicle = server.addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		vehicle->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -614,7 +611,7 @@ void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
 		element->Attribute ("num", &tmpdouble);
 		vehicle->CommandoRank = (float) tmpdouble;
 	}
-	if (unitNode->FirstChildElement ("IsBig")) Server->Map->moveVehicleBig (vehicle, x, y);
+	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (vehicle, x, y);
 	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->Attribute ("turns", &vehicle->turnsDisabled);
 	if (unitNode->FirstChildElement ("LayMines")) vehicle->LayMines = true;
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
@@ -678,11 +675,10 @@ void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
 			if (element->Attribute ("ThisTurn", &wasDetectedThisTurnAttrib) == 0)
 				wasDetectedThisTurnAttrib = 1; // for old savegames, that don't have this attribute, set it to "detected this turn"
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
-			cPlayer* Player = Server->getPlayerFromNumber (playerNum);
+			cPlayer* Player = server.getPlayerFromNumber (playerNum);
 			if (Player)
 			{
-				vehicle->setDetectedByPlayer (Player, wasDetectedThisTurn);
-
+				vehicle->setDetectedByPlayer (server, Player, wasDetectedThisTurn);
 			}
 			playerNodeNum++;
 		}
@@ -697,27 +693,26 @@ void cSavegame::loadVehicle (TiXmlElement* unitNode, sID& ID)
 		element->Attribute ("is_vehicle", &isVehicle);
 		if (isVehicle)
 		{
-			cVehicle* StoringVehicle = Server->getVehicleFromID (storedInID);
+			cVehicle* StoringVehicle = server.getVehicleFromID (storedInID);
 			if (!StoringVehicle) return;
 
 			StoringVehicle->data.storageUnitsCur--;
-			StoringVehicle->storeVehicle (vehicle, Server->Map);
+			StoringVehicle->storeVehicle (vehicle, server.Map);
 		}
 		else
 		{
-			cBuilding* StoringBuilding = Server->getBuildingFromID (storedInID);
+			cBuilding* StoringBuilding = server.getBuildingFromID (storedInID);
 			if (!StoringBuilding) return;
 
 			StoringBuilding->data.storageUnitsCur--;
-			StoringBuilding->storeVehicle (vehicle, Server->Map);
+			StoringBuilding->storeVehicle (vehicle, server.Map);
 		}
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadBuilding (TiXmlElement* unitNode, sID& ID)
+void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 {
-	if (!Server) return;
 	int tmpinteger, number = -1, x, y;
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
@@ -729,12 +724,12 @@ void cSavegame::loadBuilding (TiXmlElement* unitNode, sID& ID)
 		if (i == UnitsData.getNrBuildings() - 1) return;
 	}
 	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (Server->PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
 	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
-	cBuilding* building = Server->addUnit (x, y, &UnitsData.building[number], owner, true, tmpinteger);
+	cBuilding* building = server.addUnit (x, y, &UnitsData.building[number], owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
 		building->changeName (unitNode->FirstChildElement ("Name")->Attribute ("string"));
@@ -799,10 +794,10 @@ void cSavegame::loadBuilding (TiXmlElement* unitNode, sID& ID)
 		{
 			int playerNum;
 			element->Attribute ("nr", &playerNum);
-			cPlayer* Player = Server->getPlayerFromNumber (playerNum);
+			cPlayer* Player = server.getPlayerFromNumber (playerNum);
 			if (Player)
 			{
-				building->setDetectedByPlayer (Player);
+				building->setDetectedByPlayer (server, Player);
 			}
 			playerNodeNum++;
 		}
@@ -810,7 +805,7 @@ void cSavegame::loadBuilding (TiXmlElement* unitNode, sID& ID)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadRubble (TiXmlElement* rubbleNode)
+void cSavegame::loadRubble (cServer& server, TiXmlElement* rubbleNode)
 {
 	int x, y, rubblevalue;
 	bool big = false;
@@ -821,7 +816,7 @@ void cSavegame::loadRubble (TiXmlElement* rubbleNode)
 
 	if (rubbleNode->FirstChildElement ("Big")) big = true;
 
-	Server->addRubble (x, y, rubblevalue, big);
+	server.addRubble (x, y, rubblevalue, big);
 }
 
 //--------------------------------------------------------------------------
@@ -1103,9 +1098,8 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::generateMoveJobs()
+void cSavegame::generateMoveJobs (cServer& server)
 {
-	cServer& server = *Server;
 	for (unsigned int i = 0; i < MoveJobsLoad.Size(); i++)
 	{
 		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->PosX, MoveJobsLoad[i]->vehicle->PosY, MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY, MoveJobsLoad[i]->vehicle);
@@ -1200,13 +1194,13 @@ void cSavegame::convertStringToScanMap (const string& str, char* data)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeHeader (const string& saveName)
+void cSavegame::writeHeader (const cServer& server, const string& saveName)
 {
 	TiXmlElement* headerNode = addMainElement (SaveFile.RootElement(), "Header");
 
 	addAttributeElement (headerNode, "Game_Version", "string", PACKAGE_VERSION);
 	addAttributeElement (headerNode, "Name", "string", saveName);
-	switch (Server->gameType)
+	switch (server.gameType)
 	{
 		case GAME_TYPE_SINGLE:
 			addAttributeElement (headerNode, "Type", "string", "IND");
@@ -1229,16 +1223,16 @@ void cSavegame::writeHeader (const string& saveName)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeGameInfo()
+void cSavegame::writeGameInfo (const cServer& server)
 {
 	TiXmlElement* gemeinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
-	addAttributeElement (gemeinfoNode, "Turn", "num", iToStr (Server->iTurn));
-	if (Server->bHotSeat) addAttributeElement (gemeinfoNode, "Hotseat", "activeplayer", iToStr (Server->iHotSeatPlayer));
-	if (Server->bPlayTurns) addAttributeElement (gemeinfoNode, "PlayTurns", "activeplayer", iToStr (Server->iActiveTurnPlayerNr));
+	addAttributeElement (gemeinfoNode, "Turn", "num", iToStr (server.iTurn));
+	if (server.bHotSeat) addAttributeElement (gemeinfoNode, "Hotseat", "activeplayer", iToStr (server.iHotSeatPlayer));
+	if (server.bPlayTurns) addAttributeElement (gemeinfoNode, "PlayTurns", "activeplayer", iToStr (server.iActiveTurnPlayerNr));
 
-	addAttributeElement (gemeinfoNode, "TurnLimit", "num", iToStr (Server->turnLimit));
-	addAttributeElement (gemeinfoNode, "ScoreLimit", "num", iToStr (Server->scoreLimit));
+	addAttributeElement (gemeinfoNode, "TurnLimit", "num", iToStr (server.turnLimit));
+	addAttributeElement (gemeinfoNode, "ScoreLimit", "num", iToStr (server.scoreLimit));
 }
 
 //--------------------------------------------------------------------------
@@ -1379,24 +1373,24 @@ void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement* researchCenters
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeCasualties()
+void cSavegame::writeCasualties (const cServer& server)
 {
-	if (Server == 0 || Server->getCasualtiesTracker() == 0)
+	if (server.getCasualtiesTracker() == 0)
 		return;
 
 	TiXmlElement* casualtiesNode = addMainElement (SaveFile.RootElement(), "Casualties");
-	Server->getCasualtiesTracker()->storeToXML (casualtiesNode);
+	server.getCasualtiesTracker()->storeToXML (casualtiesNode);
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement* cSavegame::writeUnit (const cVehicle* Vehicle, int* unitnum)
+TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle* Vehicle, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
-		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (Server->iNextUnitID));
+		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (server.iNextUnitID));
 	}
 
 	// add the unit node
@@ -1459,21 +1453,21 @@ TiXmlElement* cSavegame::writeUnit (const cVehicle* Vehicle, int* unitnum)
 	for (unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (Vehicle->storedUnits[i], unitnum);
+		TiXmlElement* storedNode = writeUnit (server, Vehicle->storedUnits[i], unitnum);
 		addAttributeElement (storedNode, "Stored_In", "id", iToStr (Vehicle->iID), "is_vehicle", "1");
 	}
 	return unitNode;
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUnit (const cBuilding* Building, int* unitnum)
+void cSavegame::writeUnit (const cServer& server, const cBuilding* Building, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
-		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (Server->iNextUnitID));
+		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (server.iNextUnitID));
 	}
 
 	// add the unit node
@@ -1538,20 +1532,20 @@ void cSavegame::writeUnit (const cBuilding* Building, int* unitnum)
 	for (unsigned int i = 0; i < Building->storedUnits.Size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (Building->storedUnits[i], unitnum);
+		TiXmlElement* storedNode = writeUnit (server, Building->storedUnits[i], unitnum);
 		addAttributeElement (storedNode, "Stored_In", "id", iToStr (Building->iID), "is_vehicle", "0");
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeRubble (const cBuilding* Building, int rubblenum)
+void cSavegame::writeRubble (const cServer& server, const cBuilding* Building, int rubblenum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
-		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (Server->iNextUnitID));
+		addAttributeElement (unitsNode, "NextUnitID", "num", iToStr (server.iNextUnitID));
 	}
 
 	// add the rubble node

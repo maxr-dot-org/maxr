@@ -659,7 +659,7 @@ void cPlayer::stopAResearch (int researchArea)
 //--------------------------------------------------------------
 /** At turnend update the research level */
 //--------------------------------------------------------------
-void cPlayer::doResearch()
+void cPlayer::doResearch (cServer& server)
 {
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas;
@@ -683,14 +683,14 @@ void cPlayer::doResearch()
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
 		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
-			sendUnitUpgrades (*Server, upgradedUnitDatas[i], Nr);
+			sendUnitUpgrades (server, upgradedUnitDatas[i], Nr);
 	}
-	sendResearchLevel (*Server, &researchLevel, Nr);
+	sendResearchLevel (server, &researchLevel, Nr);
 }
 
-void cPlayer::accumulateScore()
+void cPlayer::accumulateScore (cServer& server)
 {
-	const int now = Server->getTurn();
+	const int now = server.getTurn();
 	int deltaScore = 0;
 
 	for (cBuilding* bp = BuildingList; bp; bp = static_cast<cBuilding*> (bp->next))
@@ -700,11 +700,11 @@ void cPlayer::accumulateScore()
 			bp->points ++;
 			deltaScore ++;
 
-			sendUnitScore (*Server, bp);
+			sendUnitScore (server, bp);
 		}
 	}
 	setScore (getScore (now) + deltaScore, now);
-	sendScore (*Server, this, now);
+	sendScore (server, this, now);
 }
 
 void cPlayer::CountEcoSpheres()

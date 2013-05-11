@@ -2556,9 +2556,10 @@ void cGameGUI::doCommand (const string& cmd)
 
 		// close the socket
 		if (Server->network) Server->network->close (Player->iSocketNum);
-		for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+		cList<cPlayer*>& playerList = *Server->PlayerList;
+		for (unsigned int i = 0; i < playerList.Size(); i++)
 		{
-			if ( (*Server->PlayerList) [i]->iSocketNum > Player->iSocketNum && (*Server->PlayerList) [i]->iSocketNum < MAX_CLIENTS) (*Server->PlayerList) [i]->iSocketNum--;
+			if (playerList[i]->iSocketNum > Player->iSocketNum && playerList[i]->iSocketNum < MAX_CLIENTS) playerList[i]->iSocketNum--;
 		}
 		// delete the player
 		Server->deletePlayer (Player);
@@ -2664,9 +2665,10 @@ void cGameGUI::doCommand (const string& cmd)
 		{
 			if (Server)
 			{
-				for (unsigned int i = 0; i < Server->PlayerList->Size(); i++)
+				const cList<cPlayer*>& playerList = *Server->PlayerList;
+				for (unsigned int i = 0; i < playerList.Size(); i++)
 				{
-					sendRequestResync (*client, (*Server->PlayerList) [i]->Nr);
+					sendRequestResync (*client, playerList[i]->Nr);
 				}
 			}
 			else

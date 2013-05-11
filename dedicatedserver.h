@@ -25,6 +25,7 @@
 
 class cDedicatedServerConfig;
 class cTCP;
+class cServer;
 class cServerGame;
 class cNetMessage;
 
@@ -40,7 +41,7 @@ public:
 	void run();
 	void pushEvent (cNetMessage* message);
 
-	void doAutoSave();
+	void doAutoSave (cServer& server);
 
 	//------------------------------------------------------------------------
 protected:

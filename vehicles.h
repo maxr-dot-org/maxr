@@ -233,21 +233,21 @@ public:
 	/**
 	* removes a player from the detectedByPlayerList
 	*/
-	void resetDetectedByPlayer (cPlayer* player);
+	void resetDetectedByPlayer (cServer& server, cPlayer* player);
 	/**
 	* adds a player to the DetecedByPlayerList
 	*/
-	virtual void setDetectedByPlayer (cPlayer* player, bool addToDetectedInThisTurnList = true);
+	virtual void setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList = true);
 	/**
 	* - detects stealth units in the scan range of the vehicle
 	* - checks whether the vehicle has been detected by an other unit
 	* the detection maps have to be up to date, when calling this funktion
 	* this function has to be called on the server everytime a unit was moved, builded, unloaded...
 	*/
-	void makeDetection();
+	void makeDetection (cServer& server);
 
 	/** After a movement the detection state of a unit might be reset, if it was not detected in _this_ turn. */
-	void tryResetOfDetectionStateAfterMove();
+	void tryResetOfDetectionStateAfterMove (cServer& server);
 	/** Resets the list of players, that detected this unit in this turn (is called at turn end). */
 	void clearDetectedInThisTurnPlayerList();
 	bool wasDetectedInThisTurnByPlayer (const cPlayer* player) const;
@@ -283,15 +283,15 @@ private:
 	 * An opponent unit only fires as reaction to the movement, if the moving unit is an "offense" for that opponent (i.e. it could attack a unit/building of the opponent).
 	 * @author: pagra
 	 */
-	bool provokeReactionFire();
-	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cPlayer* player) const;
-	bool makeAttackOnThis (cUnit* opponentUnit, const std::string& reasonForLog) const;
-	bool makeSentryAttack (cUnit* unit) const;
-	bool isOtherUnitOffendedByThis (cUnit* otherUnit) const;
-	bool doReactionFire (cPlayer* player) const;
-	bool doReactionFireForUnit (cUnit* opponentUnit) const;
+	bool provokeReactionFire (cServer& server);
+	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server, const cPlayer* player) const;
+	bool makeAttackOnThis (cServer& server, cUnit* opponentUnit, const std::string& reasonForLog) const;
+	bool makeSentryAttack (cServer& server, cUnit* unit) const;
+	bool isOtherUnitOffendedByThis (cServer& server, const cUnit* otherUnit) const;
+	bool doReactionFire (cServer& server, cPlayer* player) const;
+	bool doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const;
 
-	cList<cPlayer*> calcDetectedByPlayer() const;  ///< helper method that returns a list of all players, that can detect this unit
+	cList<cPlayer*> calcDetectedByPlayer (cServer& server) const;  ///< helper method that returns a list of all players, that can detect this unit
 	cList<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
 
 	//-----------------------------------------------------------------------------

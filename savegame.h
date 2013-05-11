@@ -100,12 +100,12 @@ private:
 	* writes the saveheader
 	*@author alzi alias DoctorDeath
 	*/
-	void writeHeader (const std::string& saveName);
+	void writeHeader (const cServer& server, const std::string& saveName);
 	/**
 	* writes game infos such as turn or mode
 	*@author alzi alias DoctorDeath
 	*/
-	void writeGameInfo();
+	void writeGameInfo (const cServer& server);
 	/**
 	* saves the map infos
 	*@author alzi alias DoctorDeath
@@ -135,22 +135,22 @@ private:
 	 * save the casualties of all players
 	 *@author pagra
 	 */
-	void writeCasualties();
+	void writeCasualties (const cServer& server);
 	/**
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* writeUnit (const cVehicle* Vehicle, int* unitnum);
+	TiXmlElement* writeUnit (const cServer& server, const cVehicle* Vehicle, int* unitnum);
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit (const cBuilding* Building, int* unitnum);
+	void writeUnit (const cServer& server, const cBuilding* Building, int* unitnum);
 	/**
 	* saves the information of the rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void writeRubble (const cBuilding* Building, int rubblenum);
+	void writeRubble (const cServer& server, const cBuilding* Building, int rubblenum);
 	/**
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
@@ -166,7 +166,7 @@ private:
 	* loads the main game information
 	*@author alzi alias DoctorDeath
 	*/
-	void loadGameInfo();
+	void loadGameInfo (cServer& server);
 	/**
 	* loads the map
 	*@author alzi alias DoctorDeath
@@ -201,27 +201,27 @@ private:
 	 * loads the casualties of all players
 	 *@author pagra
 	 */
-	void loadCasualties();
+	void loadCasualties (cServer& server);
 	/**
 	* loads all units
 	*@author alzi alias DoctorDeath
 	*/
-	void loadUnits();
+	void loadUnits (cServer& server);
 	/**
 	* loads a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void loadVehicle (TiXmlElement* unitNode, sID& ID);
+	void loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID);
 	/**
 	* loads a building
 	*@author alzi alias DoctorDeath
 	*/
-	void loadBuilding (TiXmlElement* unitNode, sID& ID);
+	void loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID);
 	/**
 	* loads rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void loadRubble (TiXmlElement* rubbleNode);
+	void loadRubble (cServer& server, TiXmlElement* rubbleNode);
 	/**
 	* loads unit data values that are the same for buildings and vehicles
 	*@author alzi alias DoctorDeath
@@ -241,7 +241,7 @@ private:
 	* calculates and adds the movejobs after all units has been loaded
 	*@author alzi alias DoctorDeath
 	*/
-	void generateMoveJobs();
+	void generateMoveJobs (cServer& server);
 
 	/**
 	* returns the player with the number
