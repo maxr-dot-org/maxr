@@ -3436,7 +3436,7 @@ bool cNetworkHostMenu::runSavedGame()
 	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
 	{
 		sendRequestResync (*Client, serverPlayerList[i]->Nr);
-		sendHudSettings (*Server, * serverPlayerList[i]->savedHud, serverPlayerList[i]);
+		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
 		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.Size(); ++j)
 		{
@@ -3598,7 +3598,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 				settings->clans = (eSettingsClans) message->popChar();
 				settings->gameType = (eSettingsGameType) message->popChar();
 			}
-			else if (gameDataContainer.settings)
+			else
 			{
 				delete gameDataContainer.settings;
 				gameDataContainer.settings = NULL;

@@ -188,11 +188,8 @@ void cServer::setDeadline (int iDeadline)
 //-------------------------------------------------------------------------------------
 cNetMessage* cServer::pollEvent()
 {
-	if (lastEvent != NULL)
-	{
-		delete lastEvent;
-		lastEvent = NULL;
-	}
+	delete lastEvent;
+	lastEvent = NULL;
 
 	cNetMessage* event;
 	if (eventQueue.size() <= 0)
