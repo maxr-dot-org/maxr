@@ -85,7 +85,6 @@ private:
 
 	//------------------------------------------------------------------------
 	cRingbuffer<cNetMessage*> eventQueue;
-	cNetMessage* lastEvent;
 };
 
 #endif

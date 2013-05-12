@@ -335,10 +335,9 @@ void compareGameData (const cClient& client, const cServer& server)
 	{
 		const cPlayer* clientPlayer = playerList[i];
 		const cVehicle* clientVehicle = clientPlayer->VehicleList;
-		const cVehicle* serverVehicle;
 		while (clientVehicle)
 		{
-			serverVehicle = (const cVehicle*) server.getUnitFromID (clientVehicle->iID);
+			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);
 
 			assert (clientVehicle->PosX == serverVehicle->PosX);
 			assert (clientVehicle->PosY == serverVehicle->PosY);

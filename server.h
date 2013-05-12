@@ -103,8 +103,6 @@ private:
 	cList<cJob*> helperJobs;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
-	/** the event that was polled last from the eventQueue*/
-	cNetMessage* lastEvent;
 
 	/** the thread the server runs in */
 	SDL_Thread* ServerThread;
@@ -371,7 +369,7 @@ public:
 	 * returns if the player is on the disconnected players list
 	 *@author pagra
 	 */
-	bool isPlayerDisconnected (cPlayer* player) const;
+	bool isPlayerDisconnected (const cPlayer* player) const;
 
 	/**
 	 * puts all players on the disconnected list. This is useful for loading a
@@ -384,9 +382,8 @@ public:
 	* pushes an event to the eventqueue of the server. This is threadsafe.
 	*@author alzi alias DoctorDeath
 	*@param event The SDL_Event to be pushed.
-	*@return 0 for success
 	*/
-	int pushEvent (cNetMessage* event);
+	void pushEvent (cNetMessage* event);
 
 
 	/**

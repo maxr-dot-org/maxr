@@ -86,7 +86,6 @@ int CallbackRunServerThread (void* arg)
 cServer::cServer (cTCP* network_, cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: network(network_)
 	, gameTimer()
-	, lastEvent (0)
 	, lastTurnEnd (0)
 	, executingRemainingMovements (false)
 	, casualtiesTracker (0)
@@ -158,8 +157,6 @@ cServer::~cServer()
 	{
 		delete eventQueue.read();
 	}
-	delete lastEvent;
-	lastEvent = 0;
 
 	for (size_t i = 0; i != AJobs.Size(); ++i)
 	{
@@ -188,26 +185,17 @@ void cServer::setDeadline (int iDeadline)
 //-------------------------------------------------------------------------------------
 cNetMessage* cServer::pollEvent()
 {
-	delete lastEvent;
-	lastEvent = NULL;
-
-	cNetMessage* event;
 	if (eventQueue.size() <= 0)
 	{
 		return NULL;
 	}
-
-	event = eventQueue.read();
-	lastEvent = event;
-
-	return event;
+	return eventQueue.read();
 }
 
 //-------------------------------------------------------------------------------------
-int cServer::pushEvent (cNetMessage* message)
+void cServer::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);
-	return 0;
 }
 
 //-------------------------------------------------------------------------------------
@@ -228,11 +216,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 		return;
 	}
 
-	cPlayer* Player = NULL;
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
-	{
-		if ( (Player = (*PlayerList) [i])->Nr == iPlayerNum) break;
-	}
+	cPlayer* Player = getPlayerFromNumber (iPlayerNum);
 
 	if (Player == NULL)
 	{
@@ -260,7 +244,7 @@ void cServer::run()
 {
 	while (!bExit)
 	{
-		cNetMessage* event = pollEvent();
+		AutoPtr<cNetMessage>::type event (pollEvent());
 
 		if (event)
 		{
@@ -269,8 +253,7 @@ void cServer::run()
 		}
 
 		// don't do anything if games hasn't been started yet!
-		static unsigned int lastTime = 0;
-		lastTime = gameTimer.gameTime;
+		unsigned int lastTime = gameTimer.gameTime;
 		if (bStarted)
 		{
 			gameTimer.run (*this);
@@ -313,14 +296,8 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 	}
 	else // a client disconnected. Usefull for play with DEDICATED_SERVER
 	{
-		for (unsigned int i = 0; i < PlayerList->Size(); i++)
-		{
-			if (message.iPlayerNr == (*PlayerList) [i]->Nr)
-			{
-				iSocketNumber = (*PlayerList) [i]->iSocketNum;
-				break;
-			}
-		}
+		const cPlayer* player = getPlayerFromNumber (message.iPlayerNr);
+		if (player != NULL) iSocketNumber = player->iSocketNum;
 	}
 	if (iSocketNumber == -1)
 		return;
@@ -370,7 +347,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 
 	if (bPlayTurns)
 	{
-		cPlayer* Player = getPlayerFromNumber (message.iPlayerNr);
+		const cPlayer* Player = getPlayerFromNumber (message.iPlayerNr);
 		if ( (*PlayerList) [iActiveTurnPlayerNr] != Player) return;
 	}
 	handleEnd (message.iPlayerNr);
@@ -381,7 +358,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_START_WORK);
 
-	int iID = message.popInt32();
+	const int iID = message.popInt32();
 
 	cBuilding* building = getBuildingFromID (iID);
 	if (building == NULL || building->owner->Nr != message.iPlayerNr) return;
@@ -395,7 +372,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_WORK);
 
-	int iID = message.popInt32();
+	const int iID = message.popInt32();
 
 	cBuilding* building = getBuildingFromID (iID);
 	if (building == NULL || building->owner->Nr != message.iPlayerNr) return;
@@ -442,7 +419,7 @@ void cServer::HandleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVEJOB_RESUME);
 
-	int id = message.popInt32();
+	const int id = message.popInt32();
 	if (id == 0)
 	{
 		cPlayer* player = getPlayerFromNumber (message.iPlayerNr);
@@ -472,12 +449,12 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_ATTACK);
 	//identify agressor
-	bool bIsVehicle = message.popBool();
+	const bool bIsVehicle = message.popBool();
 	cVehicle* attackingVehicle = NULL;
 	cBuilding* attackingBuilding = NULL;
 	if (bIsVehicle)
 	{
-		int ID = message.popInt32();
+		const int ID = message.popInt32();
 		attackingVehicle = getVehicleFromID (ID);
 		if (attackingVehicle == NULL)
 		{
@@ -493,7 +470,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	}
 	else
 	{
-		int offset = message.popInt32();
+		const int offset = message.popInt32();
 		if (offset < 0 || offset > Map->size * Map->size)
 		{
 			Log.write (" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
@@ -521,7 +498,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 		return;
 	}
 
-	int targetID = message.popInt32();
+	const int targetID = message.popInt32();
 	if (targetID != 0)
 	{
 		cVehicle* targetVehicle = getVehicleFromID (targetID);
@@ -530,7 +507,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 			Log.write (" Server: vehicle with ID " + iToStr (targetID) + " not found!", cLog::eLOG_TYPE_NET_WARNING);
 			return;
 		}
-		int oldOffset = targetOffset;
+		const int oldOffset = targetOffset;
 		//the target offset doesn't need to match the vehicle position, when it is big
 		if (!targetVehicle->data.isBig)
 		{
@@ -555,7 +532,7 @@ void cServer::HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ATTACKJOB_FINISHED);
 
-	int ID = message.popInt16();
+	const int ID = message.popInt16();
 	cServerAttackJob* aJob = NULL;
 
 	unsigned int i = 0;
@@ -688,7 +665,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	}
 
 	Vehicle->BuildingTyp = BuildingTyp;
-	bool bBuildPath = message.popBool();
+	const bool bBuildPath = message.popBool();
 	iPathOff = message.popInt32();
 	if (iPathOff < 0 || iPathOff >= Map->size * Map->size) return;
 	Vehicle->BandX = iPathOff % Map->size;
@@ -716,8 +693,8 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (Vehicle == NULL) return;
 
-	int iEscapeX = message.popInt16();
-	int iEscapeY = message.popInt16();
+	const int iEscapeX = message.popInt16();
+	const int iEscapeY = message.popInt16();
 
 	if (!Vehicle->IsBuilding || Vehicle->BuildRounds > 0) return;
 	if (!Map->possiblePlace (Vehicle, iEscapeX, iEscapeY))
@@ -733,7 +710,6 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	Vehicle->IsBuilding = false;
 	Vehicle->BuildPath = false;
 
-
 	// set the vehicle to the border
 	if (Vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 	{
@@ -747,12 +723,14 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 		checkPlayerUnits();
 	}
 
-	/*// send new vehicle status and position		//done implicitly by addMoveJob()
-	sendUnitData ( Vehicle, Vehicle->owner->Nr );
-	for ( unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++ )
+#if 0
+	// send new vehicle status and position //done implicitly by addMoveJob()
+	sendUnitData (Vehicle, Vehicle->owner->Nr);
+	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); ++i)
 	{
-		sendUnitData(Vehicle, Vehicle->seenByPlayerList[i]->Nr );
-	}*/
+		sendUnitData (Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+	}
+#endif
 
 	// drive away from the building lot
 	addMoveJob (Vehicle->PosX, Vehicle->PosY, iEscapeX, iEscapeY, Vehicle);
@@ -786,8 +764,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 
 	if ( (!SrcBuilding && !SrcVehicle) || (!DestBuilding && !DestVehicle)) return;
 
-	int iTranfer = message.popInt16();
-	int iType = message.popInt16();
+	const int iTranfer = message.popInt16();
+	const int iType = message.popInt16();
 
 	if (SrcBuilding)
 	{
@@ -924,7 +902,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 			break;
 		}
 		else if (Map->isWater (iX, iY)) bWater = true;
-
 	}
 
 	// reset building status
@@ -933,14 +910,14 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		Building->ServerStopWork (*this, false);
 	}
 
-	int iBuildSpeed = message.popInt16();
+	const int iBuildSpeed = message.popInt16();
 	if (iBuildSpeed == 0) Building->MetalPerRound =  1 * Building->data.needsMetal;
 	if (iBuildSpeed == 1) Building->MetalPerRound =  4 * Building->data.needsMetal;
 	if (iBuildSpeed == 2) Building->MetalPerRound = 12 * Building->data.needsMetal;
 
 	cList<sBuildList*>* NewBuildList = new cList<sBuildList*>;
 
-	int iCount = message.popInt16();
+	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
 		sID Type;
@@ -1011,9 +988,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
-	int iX = message.popInt16();
+	const int iX = message.popInt16();
 	if (iX < 0 || iX > Map->size) return;
-	int iY = message.popInt16();
+	const int iY = message.popInt16();
 	if (iY < 0 || iY > Map->size) return;
 
 	if (Building->BuildList->Size() <= 0) return;
@@ -1068,9 +1045,9 @@ void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
-	unsigned int iMetalProd = message.popInt16();
-	unsigned int iOilProd = message.popInt16();
-	unsigned int iGoldProd = message.popInt16();
+	const unsigned int iMetalProd = message.popInt16();
+	const unsigned int iOilProd = message.popInt16();
+	const unsigned int iGoldProd = message.popInt16();
 
 	SubBase = Building->SubBase;
 
@@ -1136,7 +1113,6 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 		if (vehicle->sentryActive)
 		{
 			vehicle->owner->deleteSentry (vehicle);
-
 		}
 		else
 		{
@@ -1284,7 +1260,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 {
 	assert (message.iType == GAME_EV_WANT_VEHICLE_UPGRADE);
 
-	bool upgradeAll = message.popBool();
+	const bool upgradeAll = message.popBool();
 	unsigned int storageSlot = 0;
 	if (!upgradeAll)
 		storageSlot = message.popInt16();
@@ -1293,7 +1269,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 		return;
 
 	int totalCosts = 0;
-	int availableMetal = storingBuilding->SubBase->Metal;
+	const int availableMetal = storingBuilding->SubBase->Metal;
 
 	cList<cVehicle*> upgradedVehicles;
 	for (unsigned int i = 0; i < storingBuilding->storedUnits.Size(); i++)
@@ -1301,12 +1277,12 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 		if (upgradeAll || i == storageSlot)
 		{
 			cVehicle* vehicle = storingBuilding->storedUnits[i];
-			sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
+			const sUnitData& upgradedVersion = storingBuilding->owner->VehicleData[vehicle->typ->nr];
 
 			if (vehicle->data.version >= upgradedVersion.version)
 				continue; // already uptodate
 			cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-			int upgradeCost = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
+			const int upgradeCost = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
 
 			if (availableMetal >= totalCosts + upgradeCost)
 			{
@@ -1331,7 +1307,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_START_CLEAR);
 
-	int id = message.popInt16();
+	const int id = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == NULL)
 	{
@@ -1339,7 +1315,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		return;
 	}
 
-	int off = Vehicle->PosX + Vehicle->PosY * Map->size;
+	const int off = Vehicle->PosX + Vehicle->PosY * Map->size;
 	cBuilding* building = (*Map) [off].getRubble();
 
 	if (!building)
@@ -1388,7 +1364,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_CLEAR);
 
-	int id = message.popInt16();
+	const int id = message.popInt16();
 	cVehicle* Vehicle = getVehicleFromID (id);
 	if (Vehicle == NULL)
 	{
@@ -1468,7 +1444,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	assert (message.iType == GAME_EV_RECON_SUCESS);
 
 	cPlayer* Player = NULL;
-	int playerNum = message.popInt16();
+	const int playerNum = message.popInt16();
 	// remove the player from the disconnected list
 	for (unsigned int i = 0; i < DisconnectedPlayerList.Size(); i++)
 	{
@@ -1534,8 +1510,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 		cVehicle* StoringVehicle = getVehicleFromID (message.popInt16());
 		if (!StoringVehicle) return;
 
-		int x = message.popInt16();
-		int y = message.popInt16();
+		const int x = message.popInt16();
+		const int y = message.popInt16();
 		if (!StoringVehicle->isNextTo (x, y)) return;
 
 		//sidestep stealth units if nessesary
@@ -1605,27 +1581,27 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUY_UPGRADES);
 
-	int iPlayerNr = message.popInt16();
+	const int iPlayerNr = message.popInt16();
 	cPlayer* player = getPlayerFromNumber (iPlayerNr);
 	if (player == 0)
 		return;
 
 	bool updateCredits = false;
 
-	int iCount = message.popInt16(); // get the number of upgrades in this message
+	const int iCount = message.popInt16(); // get the number of upgrades in this message
 	for (int i = 0; i < iCount; i++)
 	{
 		sID ID;
 		ID.iFirstPart = message.popInt16();
 		ID.iSecondPart = message.popInt16();
 
-		int newDamage = message.popInt16();
-		int newMaxShots = message.popInt16();
-		int newRange = message.popInt16();
-		int newMaxAmmo = message.popInt16();
-		int newArmor = message.popInt16();
-		int newMaxHitPoints = message.popInt16();
-		int newScan = message.popInt16();
+		const int newDamage = message.popInt16();
+		const int newMaxShots = message.popInt16();
+		const int newRange = message.popInt16();
+		const int newMaxAmmo = message.popInt16();
+		const int newArmor = message.popInt16();
+		const int newMaxHitPoints = message.popInt16();
+		const int newScan = message.popInt16();
 		int newMaxSpeed = 0;
 		if (ID.iFirstPart == 0) newMaxSpeed = message.popInt16();
 
@@ -1633,7 +1609,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		if (upgradedUnit == 0)
 			continue; // skip this upgrade, because there is no such unitData
 
-		int costs = getUpgradeCosts (ID, player, ID.iFirstPart == 0, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
+		const int costs = getUpgradeCosts (ID, player, ID.iFirstPart == 0, newDamage, newMaxShots, newRange, newMaxAmmo, newArmor, newMaxHitPoints, newScan, newMaxSpeed);
 		if (costs <= player->Credits)
 		{
 			// update the unitData of the player and send an ack-msg for this upgrade to the player
@@ -1662,21 +1638,21 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 {
 	assert (message.iType == GAME_EV_WANT_BUILDING_UPGRADE);
 
-	unsigned int unitID = message.popInt32();
-	bool upgradeAll = message.popBool();
+	const unsigned int unitID = message.popInt32();
+	const bool upgradeAll = message.popBool();
 
 	cBuilding* building = getBuildingFromID (unitID);
 	cPlayer* player = ( (building != 0) ? building->owner : 0);
 	if (player == 0)
 		return;
 
-	int availableMetal = building->SubBase->Metal;
+	const int availableMetal = building->SubBase->Metal;
 
-	sUnitData& upgradedVersion = player->BuildingData[building->typ->nr];
+	const sUnitData& upgradedVersion = player->BuildingData[building->typ->nr];
 	if (building->data.version >= upgradedVersion.version)
 		return; // already uptodate
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
-	int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
+	const int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
 	int totalCosts = 0;
 	cList<cBuilding*> upgradedBuildings;
 
@@ -1737,7 +1713,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 {
 	assert (message.iType == GAME_EV_WANT_RESEARCH_CHANGE);
 
-	int iPlayerNr = message.popInt16();
+	const int iPlayerNr = message.popInt16();
 	cPlayer* player = getPlayerFromNumber (iPlayerNr);
 	if (player == 0)
 		return;
@@ -1817,7 +1793,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	if (message.popBool()) destVehicle = getVehicleFromID (message.popInt16());
 	else destBuilding = getBuildingFromID (message.popInt16());
 
-	bool steal = message.popBool();
+	const bool steal = message.popBool();
 	// check whether the commando action is possible
 	if (! ( (destVehicle && srcVehicle->canDoCommandoAction (destVehicle->PosX, destVehicle->PosY, Map, steal)) ||
 			(destBuilding && srcVehicle->canDoCommandoAction (destBuilding->PosX, destBuilding->PosY, Map, steal)) ||
@@ -1826,7 +1802,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			(destBuilding && destBuilding->data.isBig && srcVehicle->canDoCommandoAction (destBuilding->PosX + 1, destBuilding->PosY + 1, Map, steal)))) return;
 
 	// check whether the action is successfull or not
-	int chance = srcVehicle->calcCommandoChance (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding, steal);
+	const int chance = srcVehicle->calcCommandoChance (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding, steal);
 	bool success = false;
 	if (random (100) < chance)
 	{
@@ -1846,7 +1822,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 			// every 5 rankings he needs one succesfull disabling more, to get to the next ranking
 			srcVehicle->CommandoRank += (float) 1 / ( (int) ( ( (int) srcVehicle->CommandoRank + 5) / 5));
 
-			int strength = srcVehicle->calcCommandoTurns (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding);
+			const int strength = srcVehicle->calcCommandoTurns (destVehicle ? (cUnit*) destVehicle : (cUnit*) destBuilding);
 			if (destVehicle)
 			{
 				// stop the vehicle and make it disabled
@@ -1919,7 +1895,7 @@ void cServer::HandleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVE_HUD_INFO);
 
-	int msgSaveingID = message.popInt16();
+	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
 	cPlayer* player = getPlayerFromNumber (message.popInt16());
 	if (player == NULL) return;
@@ -1947,7 +1923,7 @@ void cServer::HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVE_REPORT_INFO);
 
-	int msgSaveingID = message.popInt16();
+	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
 	cPlayer* player = getPlayerFromNumber (message.popInt16());
 	if (player == NULL) return;
@@ -1969,7 +1945,7 @@ void cServer::HandleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FIN_SEND_SAVE_INFO);
 
-	int msgSaveingID = message.popInt16();
+	const int msgSaveingID = message.popInt16();
 	if (msgSaveingID != savingID) return;
 	cPlayer* player = getPlayerFromNumber (message.popInt16());
 	if (player == NULL) return;
@@ -2003,7 +1979,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_UNIT_NAME);
 
-	int unitID = message.popInt16();
+	const int unitID = message.popInt16();
 	cUnit* unit = getUnitFromID (unitID);
 
 	if (unit != 0)
@@ -2023,7 +1999,7 @@ void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 	cVehicle* vehicle = getVehicleFromID (message.popInt32());
 	if (!vehicle || !vehicle->ServerMoveJob) return;
 
-	int destID = message.popInt32();
+	const int destID = message.popInt32();
 	eEndMoveActionType type = (eEndMoveActionType) message.popChar();
 	vehicle->ServerMoveJob->addEndAction (destID, type);
 }
@@ -2098,16 +2074,16 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)
 {
-	sUnitData* currentVersion = ID.getUnitDataCurrentVersion (player);
-	sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
+	const sUnitData* currentVersion = ID.getUnitDataCurrentVersion (player);
+	const sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
 	if (currentVersion == 0 || startVersion == 0)
 		return 1000000; // error (unbelievably high cost...)
 
 	int cost = 0;
-	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
+	const cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	if (newDamage > currentVersion->damage)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->damage, currentVersion->damage, newDamage, cUpgradeCalculator::kAttack, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2115,7 +2091,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxShots > currentVersion->shotsMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->shotsMax, currentVersion->shotsMax, newMaxShots, cUpgradeCalculator::kShots, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2123,7 +2099,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newRange > currentVersion->range)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->range, currentVersion->range, newRange, cUpgradeCalculator::kRange, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2131,7 +2107,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxAmmo > currentVersion->ammoMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->ammoMax, currentVersion->ammoMax, newMaxAmmo, cUpgradeCalculator::kAmmo, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2139,7 +2115,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newArmor > currentVersion->armor)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->armor, currentVersion->armor, newArmor, cUpgradeCalculator::kArmor, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2147,7 +2123,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newMaxHitPoints > currentVersion->hitpointsMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->hitpointsMax, currentVersion->hitpointsMax, newMaxHitPoints, cUpgradeCalculator::kHitpoints, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2155,7 +2131,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (newScan > currentVersion->scan)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->scan, currentVersion->scan, newScan, cUpgradeCalculator::kScan, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2163,7 +2139,7 @@ int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
 	}
 	if (bVehicle && newMaxSpeed > currentVersion->speedMax)
 	{
-		int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
+		const int costForUpgrade = uc.getCostForUpgrade (startVersion->speedMax / 4, currentVersion->speedMax / 4, newMaxSpeed / 4, cUpgradeCalculator::kSpeed, player->researchLevel);
 		if (costForUpgrade > 0)
 			cost += costForUpgrade;
 		else
@@ -2181,7 +2157,6 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 	{
 		for (int k = -iWidth / 2; k < iWidth / 2; k++)
 		{
-
 			if (!Map->possiblePlaceVehicle (Vehicle->data, iX + k, iY + i, Player)) continue;
 
 			addUnit (iX + k, iY + i, Vehicle, Player, true);
@@ -2221,7 +2196,7 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, cList<sLandingUnit>*
 	iHeight = 2;
 	for (unsigned int i = 0; i < List->Size(); i++)
 	{
-		sLandingUnit& Landing = (*List) [i];
+		const sLandingUnit& Landing = (*List) [i];
 		Vehicle = landVehicle (iX, iY, iWidth, iHeight, Landing.unitID.getVehicle(), Player);
 		while (!Vehicle)
 		{
@@ -2242,7 +2217,7 @@ void cServer::correctLandingPos (int& iX, int& iY)
 {
 	int iWidth = 2;
 	int iHeight = 2;
-	int margin = 1;
+	const int margin = 1;
 	while (true)
 	{
 		for (int i = -iHeight / 2; i < iHeight / 2; i++)
@@ -2492,9 +2467,9 @@ void cServer::checkPlayerUnits()
 			{
 				if (iMapPlayerNum == iUnitPlayerNum) continue;
 				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				int iOff = NextVehicle->PosX + NextVehicle->PosY * Map->size;
+				const int iOff = NextVehicle->PosX + NextVehicle->PosY * Map->size;
 
-				bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
+				const bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
 				if (MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)) && !NextVehicle->Loaded)
 				{
 					unsigned int i;
@@ -2544,8 +2519,8 @@ void cServer::checkPlayerUnits()
 			{
 				if (iMapPlayerNum == iUnitPlayerNum) continue;
 				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
-				bool stealthUnit = NextBuilding->data.isStealthOn != TERRAIN_NONE;
+				const int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
+				const bool stealthUnit = NextBuilding->data.isStealthOn != TERRAIN_NONE;
 
 				if (MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)))
 				{
@@ -2587,7 +2562,7 @@ void cServer::checkPlayerUnits()
 		for (unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->Size(); iMapPlayerNum++)
 		{
 			MapPlayer = (*PlayerList) [iMapPlayerNum];
-			int iOff = building->PosX + building->PosY * Map->size;
+			const int iOff = building->PosX + building->PosY * Map->size;
 
 			if (MapPlayer->ScanMap[iOff] == 1)
 			{
@@ -2621,7 +2596,7 @@ void cServer::checkPlayerUnits()
 }
 
 //-------------------------------------------------------------------------------------
-bool cServer::isPlayerDisconnected (cPlayer* player) const
+bool cServer::isPlayerDisconnected (const cPlayer* player) const
 {
 	if (player->iSocketNum == MAX_CLIENTS)
 		return false;
@@ -2659,7 +2634,7 @@ cPlayer* cServer::getPlayerFromNumber (int iNum)
 cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 {
 	//first try to find player by number
-	int playerNr = atoi (playerID.c_str());
+	const int playerNr = atoi (playerID.c_str());
 	if (playerNr != 0 || playerID[0] == '0')
 	{
 		return getPlayerFromNumber (playerNr);
@@ -2672,7 +2647,6 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	}
 
 	return NULL;
-
 }
 
 //-------------------------------------------------------------------------------------
@@ -2688,11 +2662,10 @@ void cServer::handleEnd (int iPlayerNum)
 		}
 		iTurn++;
 		makeTurnEnd();
-
 	}
 	else if (gameType == GAME_TYPE_HOTSEAT || bPlayTurns)
 	{
-		bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && bPlayTurns);
+		const bool bWaitForPlayer = (gameType == GAME_TYPE_TCPIP && bPlayTurns);
 		if (checkEndActions (iPlayerNum))
 		{
 			iWantPlayerEndNum = iPlayerNum;
@@ -2746,7 +2719,7 @@ void cServer::handleEnd (int iPlayerNum)
 			if (PlayerEndList[i]->Nr == iPlayerNum) return;
 		}
 		PlayerEndList.Add (getPlayerFromNumber (iPlayerNum));
-		bool firstTimeEnded = PlayerEndList.Size() == 1;
+		const bool firstTimeEnded = PlayerEndList.Size() == 1;
 
 		// make sure that all defeated players are added to the endlist
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
@@ -2787,7 +2760,6 @@ void cServer::handleEnd (int iPlayerNum)
 
 			iTurn++;
 			makeTurnEnd();
-
 		}
 	}
 }
@@ -2798,7 +2770,7 @@ void cServer::handleWantEnd()
 	if (!gameTimer.timer50ms) return;
 
 	//wait until all clients have reported a gametime that is after the turn end.
-	//that means they have finished prosessing all the turn end messages, and we can start the new turn sumultaiously on all clients
+	//that means they have finished processing all the turn end messages, and we can start the new turn simultanously on all clients
 	if (freezeModes.waitForTurnEnd && !executingRemainingMovements)
 	{
 		for (unsigned int i = 0; i < PlayerList->Size(); i++)
@@ -2821,8 +2793,6 @@ void cServer::handleWantEnd()
 		//begin the new turn
 		disableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
 	}
-
-
 
 	if (iWantPlayerEndNum != -1 && iWantPlayerEndNum != -2)
 	{
@@ -2897,11 +2867,8 @@ void cServer::makeTurnEnd()
 	// reload all buildings
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		cBuilding* Building;
-		cPlayer* Player;
-		Player = (*PlayerList) [i];
-
-		Building = Player->BuildingList;
+		cPlayer* Player = (*PlayerList) [i];
+		cBuilding* Building = Player->BuildingList;
 		while (Building)
 		{
 			bool forceSendUnitData = false;
@@ -2930,11 +2897,8 @@ void cServer::makeTurnEnd()
 	// reload all vehicles
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		cVehicle* Vehicle;
-		cPlayer* Player;
-		Player = (*PlayerList) [i];
-
-		Vehicle = Player->VehicleList;
+		cPlayer* Player = (*PlayerList) [i];
+		cVehicle* Vehicle = Player->VehicleList;
 		while (Vehicle)
 		{
 			bool forceSendUnitData = false;
@@ -2989,11 +2953,8 @@ void cServer::makeTurnEnd()
 	// Gun'em down:
 	for (unsigned int i = 0; i < PlayerList->Size(); i++)
 	{
-		cVehicle* Vehicle;
-		cPlayer* Player;
-		Player = (*PlayerList) [i];
-
-		Vehicle = Player->VehicleList;
+		cPlayer* Player = (*PlayerList) [i];
+		cVehicle* Vehicle = Player->VehicleList;
 		while (Vehicle)
 		{
 			Vehicle->InSentryRange (*this);
@@ -3035,7 +2996,7 @@ void cServer::checkDefeats()
 		cPlayer* Player = (*PlayerList) [i];
 		if (!Player->isDefeated)
 		{
-			int score = Player->getScore (iTurn);
+			const int score = Player->getScore (iTurn);
 			if (
 				(scoreLimit && score >= scoreLimit) ||
 				(turnLimit && iTurn >= turnLimit)
@@ -3187,11 +3148,8 @@ void cServer::handleMoveJobs()
 {
 	for (int i = ActiveMJobs.Size() - 1; i >= 0; i--)
 	{
-		cServerMoveJob* MoveJob;
-		cVehicle* Vehicle;
-
-		MoveJob = ActiveMJobs[i];
-		Vehicle = MoveJob->Vehicle;
+		cServerMoveJob* MoveJob = ActiveMJobs[i];
+		cVehicle* Vehicle = MoveJob->Vehicle;
 
 		//suspend movejobs of attacked vehicles
 		if (Vehicle && Vehicle->isBeeingAttacked)
@@ -3247,7 +3205,6 @@ void cServer::handleMoveJobs()
 		}
 
 		if (Vehicle == NULL) continue;
-
 
 		if (!Vehicle->moving)
 		{
@@ -3331,7 +3288,7 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 //-------------------------------------------------------------------------------------
 void cServer::destroyUnit (cVehicle* vehicle)
 {
-	int offset = vehicle->PosX + vehicle->PosY * Map->size;
+	const int offset = vehicle->PosX + vehicle->PosY * Map->size;
 	int value = 0;
 	int oldRubbleValue = 0;
 	bool bigRubble = false;
@@ -3598,7 +3555,6 @@ void cServer::deletePlayer (cPlayer* Player)
 //-------------------------------------------------------------------------------------
 void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 {
-
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 	cVehicle* Vehicle;
 	cBuilding* Building;
@@ -3961,7 +3917,6 @@ int cServer::getTurn() const
 	return iTurn;
 }
 
-
 void cServer::addJob (cJob* job)
 {
 	//only one job per unit
@@ -4055,4 +4010,3 @@ void cServer::disableFreezeMode (eFreezeMode mode)
 		gameTimer.start ();
 	}
 }
-

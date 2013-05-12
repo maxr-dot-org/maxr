@@ -52,7 +52,6 @@ cServerGame::cServerGame(cTCP& network_)
 	, saveGameNumber (-1)
 	, gameData (0)
 	, serverMap (0)
-	, lastEvent (0)
 {
 }
 
@@ -71,9 +70,6 @@ cServerGame::~cServerGame()
 
 	delete gameData;
 	gameData = 0;
-
-	delete lastEvent;
-	lastEvent = 0;
 }
 
 //-------------------------------------------------------------------------------
@@ -136,7 +132,7 @@ void cServerGame::run()
 {
 	while (canceled == false)
 	{
-		cNetMessage* event = pollEvent();
+		AutoPtr<cNetMessage>::type event (pollEvent());
 
 		if (event)
 		{
@@ -526,16 +522,9 @@ void cServerGame::terminateServer()
 //-------------------------------------------------------------------------------------
 cNetMessage* cServerGame::pollEvent()
 {
-	delete lastEvent;
-	lastEvent = NULL;
-
 	if (eventQueue.size() <= 0)
 		return NULL;
-
-	cNetMessage* event = eventQueue.read();
-	lastEvent = event;
-
-	return event;
+	return eventQueue.read();
 }
 
 //------------------------------------------------------------------------
