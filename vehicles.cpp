@@ -45,8 +45,10 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID)
-	: cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID)
+cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID) :
+	cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID),
+	next(0),
+	prev(0)
 {
 	typ = v;
 	BandX = 0;
@@ -1517,23 +1519,19 @@ bool cVehicle::InSentryRange (cServer& server)
 		if (Player == owner) continue;
 
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (Player)) continue;	//don't attack undiscovered stealth units
-		if (Player->ScanMap[iOff] == 0) continue;											//don't attack units out of scan range
-		if (data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0) continue;		   //check sentry type
-		if (data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		   //check sentry type
+		if (Player->ScanMap[iOff] == 0) continue;										//don't attack units out of scan range
+		if (data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0) continue;			//check sentry type
+		if (data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		//check sentry type
 
-		cUnit* unit = static_cast<cUnit*> (Player->VehicleList);
-		while (unit)
+		for (cVehicle* vehicle = Player->VehicleList; vehicle; vehicle = vehicle->next)
 		{
-			if (makeSentryAttack (server, unit))
+			if (makeSentryAttack (server, vehicle))
 				return true;
-			unit = unit->next;
 		}
-		unit = static_cast<cUnit*> (Player->BuildingList);
-		while (unit)
+		for (cBuilding* building = Player->BuildingList; building; building = building->next)
 		{
-			if (makeSentryAttack (server, unit))
+			if (makeSentryAttack (server, building))
 				return true;
-			unit = unit->next;
 		}
 	}
 
@@ -1572,19 +1570,19 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 	{
 		// check if there is a vehicle or building of player, that is offended
 
-		const cUnit* opponentVehicle = player->VehicleList;
-		while (opponentVehicle != 0)
+		for (const cVehicle* opponentVehicle = player->VehicleList;
+			 opponentVehicle != 0;
+			 opponentVehicle = opponentVehicle->next)
 		{
 			if (isOtherUnitOffendedByThis (server, opponentVehicle))
 				return true;
-			opponentVehicle = opponentVehicle->next;
 		}
-		const cUnit* opponentBuilding = player->BuildingList;
-		while (opponentBuilding != 0)
+		for (const cBuilding* opponentBuilding = player->BuildingList;
+			 opponentBuilding != 0;
+			 opponentBuilding = opponentBuilding->next)
 		{
 			if (isOtherUnitOffendedByThis (server, opponentBuilding))
 				return true;
-			opponentBuilding = static_cast<const cBuilding*> (opponentBuilding->next);
 		}
 	}
 	return false;
@@ -1609,19 +1607,19 @@ bool cVehicle::doReactionFire (cServer& server, cPlayer* player) const
 {
 	// search a unit of the opponent, that could fire on this vehicle
 	// first look for a building
-	cUnit* opponentBuilding = player->BuildingList;
-	while (opponentBuilding != 0)
+	for (cBuilding* opponentBuilding = player->BuildingList;
+		 opponentBuilding != 0;
+		 opponentBuilding = opponentBuilding->next)
 	{
 		if (doReactionFireForUnit (server, opponentBuilding))
 			return true;
-		opponentBuilding = opponentBuilding->next;
 	}
-	cUnit* opponentVehicle = player->VehicleList;
-	while (opponentVehicle != 0)
+	for (cVehicle* opponentVehicle = player->VehicleList;
+		 opponentVehicle != 0;
+		 opponentVehicle = opponentVehicle->next)
 	{
 		if (doReactionFireForUnit (server, opponentVehicle))
 			return true;
-		opponentVehicle = opponentVehicle->next;
 	}
 	return false;
 }

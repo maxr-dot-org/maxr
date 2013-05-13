@@ -5592,8 +5592,9 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 	if (vehicle && vehicle->Loaded)
 	{
 		//find storing unit
-		cVehicle* storingVehicle = vehicle->owner->VehicleList;
-		while (storingVehicle)
+		for (cVehicle* storingVehicle = vehicle->owner->VehicleList;
+			 storingVehicle;
+			 storingVehicle = storingVehicle->next)
 		{
 			for (unsigned i = 0; i < storingVehicle->storedUnits.Size(); i++)
 			{
@@ -5604,12 +5605,11 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 					return;
 				}
 			}
-
-			storingVehicle = static_cast<cVehicle*> (storingVehicle->next);
 		}
 
-		cBuilding* storingBuilding = vehicle->owner->BuildingList;
-		while (storingBuilding)
+		for (cBuilding* storingBuilding = vehicle->owner->BuildingList;
+			 storingBuilding;
+			 storingBuilding = storingBuilding->next)
 		{
 			for (unsigned i = 0; i < storingBuilding->storedUnits.Size(); i++)
 			{
@@ -5620,8 +5620,6 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 					return;
 				}
 			}
-
-			storingBuilding = static_cast<cBuilding*> (storingBuilding->next);
 		}
 
 		return;

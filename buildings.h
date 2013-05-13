@@ -132,6 +132,8 @@ public:
 	cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID);
 	~cBuilding();
 
+	cBuilding* next; ///< "next"-pointer for the double linked list
+	cBuilding* prev; ///< "prev"-pointer for the double linked list
 	const sBuilding* typ;  // Typ des Buildings
 	int RubbleTyp;     // Typ des Drecks
 	int RubbleValue;   // Wert des Drecks

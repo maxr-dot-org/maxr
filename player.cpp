@@ -128,7 +128,7 @@ cPlayer::~cPlayer()
 {
 	// Erst alle geladenen Vehicles lˆschen:
 
-	for (cVehicle* ptr = VehicleList; ptr; ptr = static_cast<cVehicle*> (ptr->next))
+	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
 	{
 		if (ptr->storedUnits.Size())
 		{
@@ -138,14 +138,14 @@ cPlayer::~cPlayer()
 	// Jetzt alle Vehicles lˆschen:
 	while (VehicleList)
 	{
-		cVehicle* ptr = static_cast<cVehicle*> (VehicleList->next);
+		cVehicle* ptr = VehicleList->next;
 		VehicleList->sentryActive = false;
 		delete VehicleList;
 		VehicleList = ptr;
 	}
 	while (BuildingList)
 	{
-		cBuilding* ptr = static_cast<cBuilding*> (BuildingList->next);
+		cBuilding* ptr = BuildingList->next;
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
@@ -260,45 +260,36 @@ void cPlayer::InitMaps (int MapSizeX, cMap* map)
 	memset (DetectMinesMap, 0, MapSize);
 }
 
+template <typename T>
+T* getPreviousUnitById(T* root, unsigned int id)
+{
+	if (root == 0 || id < root->iID) return 0;
+	T* it = root;
+	for (; it->next; it = it->next)
+	{
+		if (it->next->iID < id)
+			return it;
+	}
+	return it;
+}
+
 void cPlayer::addUnitToList (cUnit* addedUnit)
 {
 	//units in the linked list are sorted in increasing order of IDs
 
 	//find unit before the added unit
-	cUnit* prevUnit = addedUnit->isBuilding() ? (cUnit*) BuildingList : (cUnit*) VehicleList;
-	if (prevUnit && prevUnit->iID > addedUnit->iID)
-		prevUnit = NULL;
-
-	while (prevUnit && prevUnit->next && prevUnit->next->iID < addedUnit->iID)
-		prevUnit = prevUnit->next;
-
-	//find unit after the added unit
-	cUnit* nextUnit = NULL;
-	if (prevUnit)
-		nextUnit = prevUnit->next;
-	else
-		nextUnit = addedUnit->isBuilding() ? (cUnit*) BuildingList : (cUnit*) VehicleList;
-
-	//link addedUnit
-	addedUnit->prev = prevUnit;
-	addedUnit->next = nextUnit;
-
-	//link prevUnit
-	if (prevUnit)
+	if (addedUnit->isBuilding())
 	{
-		prevUnit->next = addedUnit;
+		cBuilding* addedBuilding = static_cast<cBuilding*>(addedUnit);
+		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit->iID);
+		insert_after_in_intrusivelist (BuildingList, prev, *addedBuilding);
 	}
 	else
 	{
-		if (addedUnit->isBuilding ())
-			BuildingList = (cBuilding*) addedUnit;
-		else
-			VehicleList = (cVehicle*) addedUnit;
+		cVehicle* addedVehicle = static_cast<cVehicle*>(addedUnit);
+		cVehicle* prev = getPreviousUnitById (VehicleList, addedUnit->iID);
+		insert_after_in_intrusivelist (VehicleList, prev, *addedVehicle);
 	}
-
-	//link nextUnit
-	if (nextUnit)
-		nextUnit->prev = addedUnit;
 }
 
 //--------------------------------------------------------------------------
@@ -354,7 +345,7 @@ void cPlayer::refreshSentryAir()
 {
 	memset (SentriesMapAir, 0, MapSize);
 
-	for (const cUnit* unit = VehicleList; unit; unit = unit->next)
+	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
@@ -362,7 +353,7 @@ void cPlayer::refreshSentryAir()
 		}
 	}
 
-	for (const cUnit* unit = BuildingList; unit; unit = unit->next)
+	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
@@ -376,7 +367,7 @@ void cPlayer::refreshSentryGround()
 {
 	memset (SentriesMapGround, 0, MapSize);
 
-	for (const cUnit* unit = VehicleList; unit; unit = unit->next)
+	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
@@ -384,7 +375,7 @@ void cPlayer::refreshSentryGround()
 		}
 	}
 
-	for (const cUnit* unit = BuildingList; unit; unit = unit->next)
+	for (const cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
@@ -456,179 +447,164 @@ void cPlayer::DoScan()
 	}
 }
 
+cVehicle* cPlayer::getNextVehicle (cVehicle* start)
+{
+	start = (start == NULL) ? VehicleList : start->next;
+	for (cVehicle* it = start; it; it = it->next)
+	{
+		if (!it->isMarkedAsDone && (!it->IsBuilding || it->BuildRounds == 0)
+			&& !it->IsClearing && !it->sentryActive && !it->Loaded
+			&& (it->data.speedCur || it->data.shotsCur))
+			return it;
+	}
+	return NULL;
+}
+
+cBuilding* cPlayer::getNextBuilding (cBuilding* start)
+{
+	start = (start == NULL) ? BuildingList : start->next;
+	for (cBuilding* it = start; it; it = it->next)
+	{
+		if (!it->isMarkedAsDone && !it->IsWorking && !it->sentryActive
+			&& (!it->data.canBuild.empty() || it->data.shotsCur
+				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
+				|| it->data.canResearch))
+			return it;
+	}
+	return NULL;
+}
+
+cBuilding* cPlayer::getNextMiningStation (cBuilding* start)
+{
+	start = (start == NULL) ? BuildingList : start->next;
+	for (cBuilding* it = start; it; it = it->next)
+	{
+		if (it->data.canMineMaxRes > 0)
+			return it;
+	}
+	return NULL;
+}
 
 //--------------------------------------------------------------------------
 /** Returns the next unit that can still fire/shoot */
 //--------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit(cUnit* start)
 {
-	//find the first unit to look at
-	if (start)
+	if (start == 0)
 	{
-		if (start->next)
+		cVehicle* nextVehicle = getNextVehicle (NULL);
+		if (nextVehicle) return nextVehicle;
+		cBuilding* nextBuilding = getNextBuilding (NULL);
+		if (nextBuilding) return nextBuilding;
+		return getNextMiningStation (NULL);
+	}
+	else if (start->isVehicle())
+	{
+		cVehicle* nextVehicle = getNextVehicle (static_cast<cVehicle*> (start));
+		if (nextVehicle) return nextVehicle;
+		cBuilding* nextBuilding = getNextBuilding (NULL);
+		if (nextBuilding) return nextBuilding;
+		nextVehicle = getNextVehicle (NULL);
+		if (nextVehicle) return nextVehicle;
+		return getNextMiningStation (NULL);
+	}
+	else
+	{
+		cBuilding* building = static_cast<cBuilding*>(start);
+		if (building->data.canMineMaxRes == 0)
 		{
-			start = start->next;
+			cBuilding* nextBuilding = getNextBuilding (building);
+			if (nextBuilding) return nextBuilding;
+			cVehicle* nextVehicle = getNextVehicle (NULL);
+			if (nextVehicle) return nextVehicle;
+			return getNextMiningStation (NULL);
 		}
 		else
 		{
-			if (start->isBuilding())
-				start = VehicleList;
-			else
-				start = BuildingList;
+			return getNextMiningStation (building);
 		}
 	}
-	if (!start || start->owner != this)
-	{
-		start = VehicleList;
-	}
-	if (!start)
-	{
-		start = BuildingList;
-	}
-	if (!start)
-	{
-		return NULL;
-	}
+}
 
-	cUnit* unit = start;
-	do
+
+
+cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
+{
+	start = (start == NULL) ? get_last_of_intrusivelist (VehicleList) : start->prev;
+	for (cVehicle* it = start; it; it = it->prev)
 	{
-		//check if this unit is the next one to be selected
-		if (unit->isBuilding())
-		{
-			cBuilding* building = static_cast<cBuilding*> (unit);
-			if (!building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && (!building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
-				return unit;
-		}
-		else
-		{
-			cVehicle* vehicle = static_cast<cVehicle*> (unit);
-			if (!vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && (vehicle->data.speedCur || vehicle->data.shotsCur))
-				return unit;
-		}
-
-		//otherwise get next unit
-		if (unit->next)
-		{
-			unit = unit->next;
-		}
-		else
-		{
-			if (unit->isBuilding())
-			{
-				unit = VehicleList ? (cUnit*) VehicleList : (cUnit*) BuildingList;
-			}
-			else
-			{
-				unit = BuildingList ? (cUnit*) BuildingList : (cUnit*) VehicleList;
-			}
-		}
+		if (!it->isMarkedAsDone && (!it->IsBuilding || it->BuildRounds == 0)
+			&& !it->IsClearing && !it->sentryActive && !it->Loaded
+			&& (it->data.speedCur || it->data.shotsCur))
+			return it;
 	}
-	while (unit != start);
+	return NULL;
+}
 
-	//when no unit is found, go to mining station
-	for (unit = BuildingList; unit; unit = unit->next)
+cBuilding* cPlayer::getPrevBuilding (cBuilding* start)
+{
+	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
+	for (cBuilding* it = start; it; it = it->prev)
 	{
-		if (unit->data.canMineMaxRes > 0)
-			return unit;
+		if (!it->isMarkedAsDone && !it->IsWorking && !it->sentryActive
+			&& (!it->data.canBuild.empty() || it->data.shotsCur
+				|| it->data.canMineMaxRes > 0 || it->data.convertsGold > 0
+				|| it->data.canResearch))
+			return it;
 	}
+	return NULL;
+}
 
+cBuilding* cPlayer::getPrevMiningStation (cBuilding* start)
+{
+	start = (start == NULL) ? get_last_of_intrusivelist (BuildingList) : start->prev;
+	for (cBuilding* it = start; it; it = it->prev)
+	{
+		if (it->data.canMineMaxRes > 0)
+			return it;
+	}
 	return NULL;
 }
 
 //--------------------------------------------------------------------------
 /** Returns the previous vehicle, that can still move / shoot */
 //--------------------------------------------------------------------------
-cUnit* cPlayer::getPrevUnit(cUnit* start)
+cUnit* cPlayer::getPrevUnit (cUnit* start)
 {
-	//find the first unit to look at
-	if (start)
+	if (start == 0)
 	{
-		if (start->prev)
+		cVehicle* prevVehicle = getPrevVehicle (NULL);
+		if (prevVehicle) return prevVehicle;
+		cBuilding* prevBuilding = getPrevBuilding (NULL);
+		if (prevBuilding) return prevBuilding;
+		return getPrevMiningStation (NULL);
+	}
+	else if (start->isVehicle())
+	{
+		cVehicle* prevVehicle = getPrevVehicle (static_cast<cVehicle*> (start));
+		if (prevVehicle) return prevVehicle;
+		cBuilding* prevBuilding = getPrevBuilding (NULL);
+		if (prevBuilding) return prevBuilding;
+		prevVehicle = getPrevVehicle (NULL);
+		if (prevVehicle) return prevVehicle;
+		return getPrevMiningStation (NULL);
+	}
+	else
+	{
+		cBuilding* building = static_cast<cBuilding*>(start);
+		if (building->data.canMineMaxRes == 0)
 		{
-			start = start->prev;
+			cBuilding* prevBuilding = getPrevBuilding (building);
+			if (prevBuilding) return prevBuilding;
+			cVehicle* prevVehicle = getPrevVehicle (NULL);
+			if (prevVehicle) return prevVehicle;
+			return getPrevMiningStation (NULL);
 		}
 		else
 		{
-			if (start->isBuilding())
-			{
-				start = VehicleList;
-				while (start && start->next)
-					start = start->next;
-			}
-			else
-			{
-				start = BuildingList;
-				while (start && start->next)
-					start = start->next;
-			}
+			return getPrevMiningStation (building);
 		}
 	}
-	if (!start || start->owner != this)
-	{
-		start = VehicleList;
-		while (start && start->next)
-			start = start->next;
-	}
-	if (!start)
-	{
-		start = BuildingList;
-		while (start && start->next)
-			start = start->next;
-	}
-	if (!start)
-	{
-		return NULL;
-	}
-
-
-	cUnit* unit = start;
-	do
-	{
-		//check if this unit is the next one to be selected
-		if (unit->isBuilding())
-		{
-			cBuilding* building = static_cast<cBuilding*> (unit);
-			if (!building->isMarkedAsDone && !building->IsWorking && !building->sentryActive && (!building->data.canBuild.empty() || building->data.shotsCur || building->data.canMineMaxRes > 0 || building->data.convertsGold > 0 || building->data.canResearch))
-				return unit;
-		}
-		else
-		{
-			cVehicle* vehicle = static_cast<cVehicle*> (unit);
-			if (!vehicle->isMarkedAsDone && (!vehicle->IsBuilding || vehicle->BuildRounds == 0) && !vehicle->IsClearing && !vehicle->sentryActive && !vehicle->Loaded && (vehicle->data.speedCur || vehicle->data.shotsCur))
-				return unit;
-		}
-
-		//otherwise get next unit
-		if (unit->prev)
-		{
-			unit = unit->prev;
-		}
-		else
-		{
-			if (unit->isBuilding())
-			{
-				unit = VehicleList ? (cUnit*) VehicleList : (cUnit*) BuildingList;
-				while (unit && unit->next)
-					unit = unit->next;
-			}
-			else
-			{
-				unit = BuildingList ? (cUnit*) BuildingList : (cUnit*) VehicleList;
-				while (unit && unit->next)
-					unit = unit->next;
-			}
-		}
-	}
-	while (unit != start);
-
-	//when no unit is found, go to mining station
-	for (unit = BuildingList; unit; unit = unit->next)
-	{
-		if (unit->data.canMineMaxRes > 0)
-			return unit;
-	}
-	return NULL;
 }
 
 //--------------------------------------------------------------
@@ -693,7 +669,7 @@ void cPlayer::accumulateScore (cServer& server)
 	const int now = server.getTurn();
 	int deltaScore = 0;
 
-	for (cBuilding* bp = BuildingList; bp; bp = static_cast<cBuilding*> (bp->next))
+	for (cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->typ->data.canScore && bp->IsWorking)
 		{
@@ -729,12 +705,12 @@ void cPlayer::setScore (int s, int turn)
 
 void cPlayer::clearDone()
 {
-	for (cUnit* unit = VehicleList; unit; unit = unit->next)
+	for (cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
 		unit->isMarkedAsDone = false;
 	}
 
-	for (cUnit* unit = BuildingList; unit; unit = unit->next)
+	for (cBuilding* unit = BuildingList; unit; unit = unit->next)
 	{
 		unit->isMarkedAsDone = false;
 	}

@@ -106,7 +106,7 @@ cClient::~cClient()
 	}
 	while (neutralBuildings)
 	{
-		cBuilding* nextBuilding = static_cast<cBuilding*> (neutralBuildings->next);
+		cBuilding* nextBuilding = neutralBuildings->next;
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
@@ -1108,7 +1108,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 		{
 			// get the building which has loaded the unit
 			cBuilding* Building = DestVehicle->owner->BuildingList;
-			while (Building)
+			for (; Building; Building = Building->next)
 			{
 				bool found = false;
 				for (unsigned int i = 0; i < Building->storedUnits.Size(); i++)
@@ -1120,7 +1120,6 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 					}
 				}
 				if (found) break;
-				Building = static_cast<cBuilding*> (Building->next);
 			}
 			if (Building != NULL && ActiveMenu != NULL)
 			{
@@ -1174,10 +1173,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	unsigned int ID = message.popInt16();
 
 	cBuilding* rubble = new cBuilding (NULL, NULL, ID);
-	rubble->next = neutralBuildings;
-	if (neutralBuildings) neutralBuildings->prev = rubble;
-	neutralBuildings = rubble;
-	rubble->prev = NULL;
+	push_front_into_intrusivelist (neutralBuildings, *rubble);
 
 	rubble->data.isBig = big;
 	rubble->RubbleTyp = typ;
@@ -1481,11 +1477,11 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 	{
 		cPlayer& Player = * (*getPlayerList()) [i];
 
-		for (cVehicle* vehicle = Player.VehicleList; vehicle; vehicle = static_cast<cVehicle*> (vehicle->next))
+		for (cVehicle* vehicle = Player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
 			vehicle->deleteStoredUnits();
 		}
-		for (cBuilding* building = Player.BuildingList; building; building = static_cast<cBuilding*> (building->next))
+		for (cBuilding* building = Player.BuildingList; building; building = building->next)
 		{
 			building->deleteStoredUnits();
 		}
@@ -1505,7 +1501,7 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 
 	while (neutralBuildings)
 	{
-		cBuilding* nextBuilding = static_cast<cBuilding*> (neutralBuildings->next);
+		cBuilding* nextBuilding = neutralBuildings->next;
 		getMap()->deleteBuilding (neutralBuildings);
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
@@ -1994,18 +1990,7 @@ void cClient::deleteUnit (cBuilding* Building)
 
 	if (!Building->owner)
 	{
-		if (!Building->prev)
-		{
-			neutralBuildings = static_cast<cBuilding*> (Building->next);
-			if (Building->next)
-				Building->next->prev = NULL;
-		}
-		else
-		{
-			Building->prev->next = Building->next;
-			if (Building->next)
-				Building->next->prev = Building->prev;
-		}
+		remove_from_intrusivelist(neutralBuildings, *Building);
 		delete Building;
 		return;
 	}
@@ -2017,23 +2002,7 @@ void cClient::deleteUnit (cBuilding* Building)
 			attackJobs[i]->building = NULL;
 		}
 	}
-
-	if (Building->prev)
-	{
-		Building->prev->next = Building->next;
-		if (Building->next)
-		{
-			Building->next->prev = Building->prev;
-		}
-	}
-	else
-	{
-		Building->owner->BuildingList = static_cast<cBuilding*> (Building->next);
-		if (Building->next)
-		{
-			Building->next->prev = NULL;
-		}
-	}
+	remove_from_intrusivelist(Building->owner->BuildingList, *Building);
 
 	if (gameGUI.getSelBuilding() == Building)
 	{
@@ -2047,7 +2016,6 @@ void cClient::deleteUnit (cBuilding* Building)
 	delete Building;
 
 	owner->DoScan();
-
 }
 
 void cClient::deleteUnit (cVehicle* Vehicle)
@@ -2068,22 +2036,7 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 	gameGUI.callMiniMapDraw();
 
 	cPlayer* owner = Vehicle->owner;
-	if (Vehicle->prev)
-	{
-		Vehicle->prev->next = Vehicle->next;
-		if (Vehicle->next)
-		{
-			Vehicle->next->prev = Vehicle->prev;
-		}
-	}
-	else
-	{
-		owner->VehicleList = static_cast<cVehicle*> (Vehicle->next);
-		if (Vehicle->next)
-		{
-			Vehicle->next->prev = NULL;
-		}
-	}
+	remove_from_intrusivelist(Vehicle->owner->VehicleList, *Vehicle);
 
 	if (gameGUI.getSelVehicle() == Vehicle)
 	{
@@ -2247,14 +2200,12 @@ void cClient::handleMoveJobs()
 
 cVehicle* cClient::getVehicleFromID (unsigned int iID)
 {
-	cVehicle* Vehicle;
 	for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
 	{
-		Vehicle = (*getPlayerList()) [i]->VehicleList;
-		while (Vehicle)
+		cPlayer* player = (*getPlayerList()) [i];
+		for (cVehicle* vehicle = player->VehicleList; vehicle; vehicle = vehicle->next)
 		{
-			if (Vehicle->iID == iID) return Vehicle;
-			Vehicle = static_cast<cVehicle*> (Vehicle->next);
+			if (vehicle->iID == iID) return vehicle;
 		}
 	}
 	return NULL;
@@ -2262,24 +2213,19 @@ cVehicle* cClient::getVehicleFromID (unsigned int iID)
 
 cBuilding* cClient::getBuildingFromID (unsigned int iID)
 {
-	cBuilding* Building;
 	for (unsigned int i = 0; i < getPlayerList()->Size(); i++)
 	{
-		Building = (*getPlayerList()) [i]->BuildingList;
-		while (Building)
+		cPlayer* player = (*getPlayerList()) [i];
+
+		for (cBuilding* building = player->BuildingList; building; building = building->next)
 		{
-			if (Building->iID == iID) return Building;
-			Building = static_cast<cBuilding*> (Building->next);
+			if (building->iID == iID) return building;
 		}
 	}
-
-	Building = neutralBuildings;
-	while (Building)
+	for (cBuilding* building = neutralBuildings; building; building = building->next)
 	{
-		if (Building->iID == iID) return Building;
-		Building = static_cast<cBuilding*> (Building->next);
+		if (building->iID == iID) return building;
 	}
-
 	return NULL;
 }
 

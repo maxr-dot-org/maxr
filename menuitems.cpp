@@ -4039,7 +4039,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 		bool inFilter = checkFilter (nextVehicle->data, true);
 		if (!inFilter || count < minCount)
 		{
-			nextVehicle = static_cast<cVehicle*> (nextVehicle->next);
+			nextVehicle = nextVehicle->next;
 			if (inFilter) count++;
 			continue;
 		}
@@ -4060,7 +4060,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 		}
 		if (vehicle && count == selected) (*vehicle) = nextVehicle;
 		count++;
-		nextVehicle = static_cast<cVehicle*> (nextVehicle->next);
+		nextVehicle = nextVehicle->next;
 	}
 
 	cBuilding* nextBuilding = buildings;
@@ -4071,7 +4071,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			bool inFilter = checkFilter (nextBuilding->data, false);
 			if (!inFilter || count < minCount)
 			{
-				nextBuilding = static_cast<cBuilding*> (nextBuilding->next);
+				nextBuilding = nextBuilding->next;
 				if (inFilter) count++;
 				continue;
 			}
@@ -4093,7 +4093,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			}
 			if (building && count == selected) (*building) = nextBuilding;
 			count++;
-			nextBuilding = static_cast<cBuilding*> (nextBuilding->next);
+			nextBuilding = nextBuilding->next;
 		}
 	}
 

@@ -46,8 +46,6 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 	, isBeeingAttacked (false)
 	, isMarkedAsDone (false)
 	, hasBeenAttacked (false)
-	, next (0)
-	, prev (0)
 	, selectedMenuButtonIndex (-1)
 	, owner (owner)
 	, job (NULL)
@@ -1235,21 +1233,7 @@ void cUnit::deleteStoredUnits()
 	for (size_t i = 0; i != storedUnits.Size(); ++i)
 	{
 		cVehicle* unit = storedUnits[i];
-		if (unit->prev)
-		{
-			cUnit* prevUnit = unit->prev;
-			prevUnit->next = unit->next;
-
-			if (unit->next)
-				unit->next->prev = prevUnit;
-		}
-		else
-		{
-			unit->owner->VehicleList = static_cast<cVehicle*> (unit->next);
-
-			if (unit->next)
-				unit->next->prev = 0;
-		}
+		remove_from_intrusivelist(unit->owner->VehicleList, *unit);
 		if (unit->isVehicle())
 			unit->deleteStoredUnits();
 

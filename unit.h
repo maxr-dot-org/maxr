@@ -105,8 +105,6 @@ public:
 	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
 	bool hasBeenAttacked; //the unit was attacked in this turn
 
-	cUnit* next; ///< "next"-pointer for the double linked list
-	cUnit* prev; ///< "prev"-pointer for the double linked list
 	cList<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
 	int selectedMenuButtonIndex;
@@ -149,5 +147,52 @@ protected:
 
 	virtual sUnitData* getUpgradedUnitData() const = 0;
 };
+
+//
+// double linked-list with elements of type T.
+// Following member should exist
+// T* T::next;
+// T* T::prev;
+//
+template <typename T>
+void remove_from_intrusivelist (T*& root, T& elem)
+{
+	if (&elem == root) root = elem.next;
+	if (elem.next) elem.next->prev = elem.prev;
+	if (elem.prev) elem.prev->next = elem.next;
+	elem.next = NULL;
+	elem.prev = NULL;
+}
+
+template<typename T>
+void push_front_into_intrusivelist (T*& root, T& elem)
+{
+	elem.prev = NULL;
+	elem.next = root;
+	if (root != NULL) root->prev = &elem;
+	root = &elem;
+}
+
+template<typename T> void insert_after_in_intrusivelist (T*& root, T* it, T& elem)
+{
+	if (it == NULL)
+	{
+		push_front_into_intrusivelist(root, elem);
+		return;
+	}
+	elem.next = it->next;
+	if (elem.next != NULL) elem.next->prev = &elem;
+	it->next = &elem;
+	elem.prev = it;
+}
+
+template <typename T> T* get_last_of_intrusivelist(T* root)
+{
+	if (root == NULL) return NULL;
+	T* it = root;
+	for (; it->next; it = it->next)
+		; // Nothing
+	return it;
+}
 
 #endif

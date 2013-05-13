@@ -121,6 +121,8 @@ public:
 	cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID);
 	~cVehicle();
 
+	cVehicle* next; ///< "next"-pointer for the double linked list
+	cVehicle* prev; ///< "prev"-pointer for the double linked list
 	int OffX, OffY;  // Offset während der Bewegung
 	virtual int getMovementOffsetX() const {return OffX;}
 	virtual int getMovementOffsetY() const {return OffY;}
