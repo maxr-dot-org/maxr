@@ -165,6 +165,14 @@ public:
 	void addUnitToList (cUnit* addedUnit);
 
 private:
+	cBuilding* getNextBuilding (cBuilding* start);
+	cBuilding* getNextMiningStation (cBuilding* start);
+	cVehicle* getNextVehicle (cVehicle* start);
+
+	cBuilding* getPrevBuilding (cBuilding* start);
+	cBuilding* getPrevMiningStation (cBuilding* start);
+	cVehicle* getPrevVehicle (cVehicle* start);
+
 	void refreshSentryAir();
 	void refreshSentryGround();
 
