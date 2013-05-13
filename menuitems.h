@@ -1121,7 +1121,7 @@ struct sMenuPlayer
  */
 class cMenuPlayersBox : public cMenuItemContainer
 {
-	cList<sMenuPlayer*>* players;
+	std::vector<sMenuPlayer*>* players;
 
 	cNetworkMenu* parentMenu;
 	int maxDrawPlayers;
@@ -1138,7 +1138,7 @@ public:
 	~cMenuPlayersBox();
 	virtual void draw();
 
-	void setPlayers (cList<sMenuPlayer*>* player_);
+	void setPlayers (std::vector<sMenuPlayer*>* player_);
 };
 
 /**

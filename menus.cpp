@@ -320,8 +320,8 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 		landingUnits.push_back (NULL);
 	}
 
-	if (landingUnits[playerNr] == NULL) landingUnits[playerNr] = new cList<sLandingUnit>;
-	cList<sLandingUnit>* playerLandingUnits = landingUnits[playerNr];
+	if (landingUnits[playerNr] == NULL) landingUnits[playerNr] = new std::vector<sLandingUnit>;
+	std::vector<sLandingUnit>* playerLandingUnits = landingUnits[playerNr];
 
 	int iCount = message->popInt16();
 	for (int i = 0; i < iCount; i++)
@@ -1151,15 +1151,15 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	iCurrentLine += iLineHeight * 3;
 
 	// Other options (AlienTechs and Clans):
-	/** //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
+#if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
 	alienTechLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") +":" );
-	menuItems.Add ( alienTechLabel );
+	menuItems.push_back ( alienTechLabel );
 	aliensGroup = new cMenuRadioGroup();
 	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
 	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.Add ( aliensGroup );
+	menuItems.push_back ( aliensGroup );
 	iCurrentLine += iLineHeight;
-	*/
+#endif
 
 	clansLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Clans") + ":");
 	menuItems.push_back (clansLabel);
@@ -1394,7 +1394,7 @@ void cPlanetsSelectionMenu::loadMaps()
 	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!getUserMapsDir().empty())
 	{
-		AutoPtr<cList<string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
+		AutoPtr<cList<std::string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
 		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
 		{
 			if (!maps->Contains ( (*userMaps) [i]))
@@ -2137,7 +2137,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 
 	menu->updateUnitData();
 
-	cList<sLandingUnit>* landingUnits  = new cList<sLandingUnit>;
+	std::vector<sLandingUnit>* landingUnits  = new std::vector<sLandingUnit>;
 	for (int i = 0; i < menu->secondList->getSize(); i++)
 	{
 		sLandingUnit landingUnit;
@@ -2152,7 +2152,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
 	{
 		sendClan (*menu->network, menu->player->getClan(), menu->player->Nr, menu->gameDataContainer->isServer);
-		sendLandingUnits (*menu->network, landingUnits, menu->player->Nr, menu->gameDataContainer->isServer);
+		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr, menu->gameDataContainer->isServer);
 	}
 
 	sendUnitUpgrades (menu->network, menu->player, menu->gameDataContainer->isServer);
@@ -3198,7 +3198,7 @@ void cNetworkHostMenu::startReleased (void* parent)
 void cNetworkHostMenu::playerSettingsChanged()
 {
 	checkTakenPlayerAttr (actPlayer);
-	sendPlayerList (*network, &players);
+	sendPlayerList (*network, players);
 }
 
 //-----------------------------------------------------------------------------------------
@@ -3248,7 +3248,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 				if (players[i]->socket == socket)
 				{
 					playerName = players[i]->name;
-					players.Delete (i);
+					players.erase (players.begin() + i);
 				}
 			}
 
@@ -3268,7 +3268,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Left", playerName));
 
 			draw();
-			sendPlayerList (*network, &players);
+			sendPlayerList (*network, players);
 
 			playersBox->setPlayers (&players);
 		}
@@ -3278,7 +3278,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			int playerNr = message->popInt16();
 			if (playerNr < 0 || playerNr >= (int) players.size())
 			{
-				sendPlayerList (*network, &players);
+				sendPlayerList (*network, players);
 				break;
 			}
 			sMenuPlayer* player = players[playerNr];
@@ -3296,7 +3296,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			checkTakenPlayerAttr (player);
 
 			draw();
-			sendPlayerList (*network, &players);
+			sendPlayerList (*network, players);
 			sendGameData (*network, &gameDataContainer, saveGameString, player);
 		}
 		break;
@@ -3375,7 +3375,7 @@ bool cNetworkHostMenu::runSavedGame()
 					if (players[k]->socket > players[i]->socket && players[k]->socket < MAX_CLIENTS) players[k]->socket--;
 				}
 				delete players[i];
-				players.Delete (i);
+				players.erase (players.begin() + i);
 			}
 		}
 	}
@@ -3402,7 +3402,7 @@ bool cNetworkHostMenu::runSavedGame()
 		sendRequestIdentification (*network, players[i]);
 
 	// now we can send the menus players-list with the right numbers and colors of each player.
-	sendPlayerList (*network, &players);
+	sendPlayerList (*network, players);
 
 	// send client that the game has to be started
 	sendGo (*network);
@@ -3543,7 +3543,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				if (players[i]->nr == actPlayer->nr) continue;
-				players.Delete (i);
+				players.erase (players.begin() + i);
 			}
 			actPlayer->ready = false;
 			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
@@ -4411,7 +4411,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 {
 	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cMenu*) parent);
 	if (!menu) return;
-	cList<sBuildList> buildList;
+	std::vector<sBuildList> buildList;
 	for (int i = 0; i < menu->secondList->getSize(); i++)
 	{
 		sBuildList buildItem;

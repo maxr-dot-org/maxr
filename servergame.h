@@ -75,7 +75,7 @@ protected:
 	void terminateServer();
 
 	cGameDataContainer* gameData;
-	cList<sMenuPlayer*> menuPlayers;
+	std::vector<sMenuPlayer*> menuPlayers;
 
 	cMap* serverMap;
 	cList<cPlayer*> serverPlayers;

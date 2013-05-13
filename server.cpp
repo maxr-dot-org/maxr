@@ -2163,7 +2163,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::makeLanding (int iX, int iY, cPlayer* Player, cList<sLandingUnit>* List, bool bFixed)
+void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLandingUnit>* List, bool bFixed)
 {
 	cVehicle* Vehicle;
 	int iWidth, iHeight;
@@ -3877,7 +3877,7 @@ void cServer::runJobs ()
 			if (helperJobs[i]->unit)
 				helperJobs[i]->unit->job = NULL;
 			delete helperJobs[i];
-			helperJobs.Delete (i);
+			 helperJobs.erase (helperJobs.begin() + i);
 			i--;
 		}
 	}

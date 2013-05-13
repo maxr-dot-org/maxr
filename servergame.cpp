@@ -200,7 +200,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 				if (menuPlayers[i]->socket == socket)
 				{
 					playerName = menuPlayers[i]->name;
-					menuPlayers.Delete (i);
+					menuPlayers.erase (menuPlayers.begin() + i);
 				}
 			}
 
@@ -217,7 +217,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 				menuPlayers[i]->nr = i;
 				sendRequestIdentification (*network, menuPlayers[i]);
 			}
-			sendPlayerList (*network, &menuPlayers);
+			sendPlayerList (*network, menuPlayers);
 
 			break;
 		}
@@ -241,7 +241,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			// search double taken name or color
 			//checkTakenPlayerAttr( player );
 
-			sendPlayerList (*network, &menuPlayers);
+			sendPlayerList (*network, menuPlayers);
 			//sendGameData (*network, gameData, saveGameString, player);
 			sendGameData (*network, gameData, "", player);
 

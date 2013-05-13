@@ -200,7 +200,7 @@ void sendWantTransfer (const cClient &client, bool bSrcVehicle, int iSrcID, bool
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */
-void sendWantBuildList (const cClient &client, const cBuilding* Building, const cList<sBuildList>& BuildList, bool bRepeat, int buildSpeed);
+void sendWantBuildList (const cClient &client, const cBuilding* Building, const std::vector<sBuildList>& BuildList, bool bRepeat, int buildSpeed);
 /**
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath

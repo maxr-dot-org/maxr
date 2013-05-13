@@ -165,10 +165,12 @@ void cDebugOutput::draw()
 
 	if (debugFX)
 	{
-		/*font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.Size() + (int)FXListBottom.Size()), FONT_LATIN_SMALL_WHITE);
+#if 0
+		font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.size() + (int)FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
 		font->showText(DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);*/
+		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+#endif
 	}
 	if (debugTraceServer || debugTraceClient)
 	{

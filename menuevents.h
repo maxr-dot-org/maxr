@@ -50,7 +50,7 @@ void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, sMenuPlayer
 
 void sendRequestIdentification (cTCP& network, const sMenuPlayer* player);
 
-void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players);
+void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players);
 
 void sendGameData (cTCP& network, const cGameDataContainer* gameData, const std::string& saveGameString, sMenuPlayer* player = NULL);
 
@@ -60,7 +60,7 @@ void sendIdentification (cTCP& network, const sMenuPlayer* player);
 
 void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer);
 
-void sendLandingUnits (cTCP& network, const cList<sLandingUnit>* landingList, int ownerNr, bool isServer);
+void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingList, int ownerNr, bool isServer);
 
 void sendUnitUpgrades (cTCP* network, const cPlayer* player, bool isServer);
 

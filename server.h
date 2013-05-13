@@ -25,6 +25,7 @@
 #include "main.h" // for sID
 #include "map.h"
 #include "gametimer.h"
+#include <vector>
 
 class cPlayer;
 class cServerAttackJob;
@@ -100,7 +101,7 @@ private:
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;
 	/** little helper jobs, that do some time dependent actions */
-	cList<cJob*> helperJobs;
+	std::vector<cJob*> helperJobs;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 
@@ -446,7 +447,7 @@ public:
 	*@param List List with all units to land.
 	*@param bFixed true if the bridgehead is fixed.
 	*/
-	void makeLanding (int iX, int iY, cPlayer* Player, cList<sLandingUnit>* List, bool bFixed);
+	void makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLandingUnit>* List, bool bFixed);
 	/**
 	 *
 	 */

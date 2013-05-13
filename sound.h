@@ -20,7 +20,7 @@
 #define soundH
 #include <string.h>
 #include "defines.h"
-#include "clist.h"
+#include <vector>
 
 #define sSOUND struct Mix_Chunk
 
@@ -36,7 +36,7 @@ EX int SoundLoopChannel;
 // Musik /////////////////////////////////////////////////////////////////////
 EX std::string MainMusicFile;
 EX std::string CreditsMusicFile;
-EX cList<std::string> MusicFiles;
+EX std::vector<std::string> MusicFiles;
 
 // Sounds ////////////////////////////////////////////////////////////////////
 class cSoundData

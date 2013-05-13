@@ -29,6 +29,7 @@
 
 // forward declarations
 int GetColorNr (const SDL_Surface* sf);
+class cGameGUI;
 class cMapReceiver;
 class cMapSender;
 class cServer;
@@ -180,9 +181,9 @@ public:
 	/** list with all players for the game*/
 	cList<cPlayer*> players;
 	/** list with the selected landing units by each player*/
-	cList<cList<sLandingUnit>*> landingUnits;
+	std::vector<std::vector<sLandingUnit>*> landingUnits;
 	/** the client landing data (landing positions) of the players*/
-	cList<sClientLandData*> landData;
+	std::vector<sClientLandData*> landData;
 	/** indicates, whether all players have landed */
 	bool allLanded;
 
@@ -741,7 +742,7 @@ protected:
 	cTCP* network;
 	std::string ip;
 	int port;
-	cList<sMenuPlayer*> players;
+	std::vector<sMenuPlayer*> players;
 	sMenuPlayer* actPlayer;
 
 	AutoPtr<cMenuButton>::type backButton;

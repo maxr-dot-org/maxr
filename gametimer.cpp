@@ -1,11 +1,13 @@
 #include <SDL.h>
 #include "gametimer.h"
+
 #include "client.h"
-#include "netmessage.h"
-#include "files.h"
-#include "vehicles.h"
 #include "clientevents.h"
 #include "events.h"
+#include "files.h"
+#include "netmessage.h"
+#include "player.h"
+#include "vehicles.h"
 
 bool cGameTimer::syncDebugSingleStep = false;
 

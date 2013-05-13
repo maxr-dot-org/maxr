@@ -360,7 +360,7 @@ private:
 	cMenuLabel selUnitNamePrefixStr;
 	cMenuLineEdit selUnitNameEdit;
 
-	cList<cMenuPlayerInfo*> playersInfo;
+	std::vector<cMenuPlayerInfo*> playersInfo;
 
 	static void helpReleased (void* parent);
 	static void centerReleased (void* parent);

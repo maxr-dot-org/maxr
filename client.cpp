@@ -218,7 +218,7 @@ void cClient::runFx ()
 		if (FxList[i]->isFinished () )
 		{
 			delete FxList[i];
-			FxList.Delete(i);
+			FxList.erase (FxList.begin() + i);
 			i--;
 		}
 	}
@@ -2063,18 +2063,20 @@ void cClient::handleEnd()
 
 void cClient::makeHotSeatEnd (int iNextPlayerNum)
 {
+#if 0
 	// clear the messages
-	/*for (size_t i = 0; i != messages.Size(); ++i)
+	for (size_t i = 0; i != messages.size(); ++i)
 	{
 		delete messages[i];
 	}
 	messages.Clear();
-	*/
+#endif
+#if 0
 	// save information and set next player
-	/*int iZoom, iX, iY;
+	int iZoom, iX, iY;
 	//ActivePlayer->HotHud = Hud;
 	iZoom = Hud.LastZoom;
-	ActivePlayer = getPlayerFromNumber( iNextPlayerNum );	// TODO: maybe here must be done more than just set the next player!
+	ActivePlayer = getPlayerFromNumber( iNextPlayerNum ); // TODO: maybe here must be done more than just set the next player!
 	//Hud = ActivePlayer->HotHud;
 	iX = Hud.OffX;
 	iY = Hud.OffY;
@@ -2084,8 +2086,8 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 		Hud.ScaleSurfaces();
 	}
 	Hud.OffX = iX;
-	Hud.OffY = iY;*/
-
+	Hud.OffY = iY;
+#endif
 	// reset the screen
 	gameGUI.deselectUnit();
 	SDL_Surface* sf;
@@ -2319,14 +2321,16 @@ void cClient::deletePlayer (cPlayer* player)
 	// (e.g. in the playersInfo in the gameGUI)
 	// or we may need him for some statistics.
 	// uncomment this if we can make sure all references have been removed or at least been set to NULL.
-	/*for ( unsigned int i = 0; i < getPlayerList()->Size(); i++ )
+#if 0
+	for (unsigned int i = 0; i < getPlayerList()->size(); i++ )
 	{
 		if ( player == (*getPlayerList())[i] )
 		{
 			delete (*getPlayerList())[i];
 			getPlayerList()->Delete ( i );
 		}
-	}*/
+	}
+#endif
 }
 
 void cClient::addJob (cJob* job)
@@ -2351,7 +2355,7 @@ void cClient::runJobs ()
 			if (helperJobs[i]->unit)
 				helperJobs[i]->unit->job = NULL;
 			delete helperJobs[i];
-			helperJobs.Delete (i);
+			helperJobs.erase (helperJobs.begin() + i);
 			i--;
 		}
 	}

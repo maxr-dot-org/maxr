@@ -214,7 +214,7 @@ void cCasualtiesTracker::updateCasualtiesFromNetMessage (cNetMessage* message)
 }
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messages, int msgType)
+void cCasualtiesTracker::prepareNetMessagesForClient (std::vector<cNetMessage*>& messages, int msgType)
 {
 	cNetMessage* message = 0;
 	int entriesInMessageForPlayer = 0;

@@ -165,7 +165,7 @@ void sendWantTransfer (const cClient &client, bool bSrcVehicle, int iSrcID, bool
 	client.sendNetMessage (message);
 }
 
-void sendWantBuildList (const cClient &client, const cBuilding* Building, const cList<sBuildList>& BuildList, bool bRepeat, int buildSpeed)
+void sendWantBuildList (const cClient &client, const cBuilding* Building, const std::vector<sBuildList>& BuildList, bool bRepeat, int buildSpeed)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILDLIST);
 	message->pushBool (bRepeat);

@@ -294,10 +294,10 @@ void cDedicatedServer::printMaps() const
 string cDedicatedServer::getAvailableMapsString() const
 {
 	stringstream oss;
-	cList<string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	cList<std::string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (getUserMapsDir().empty() == false)
 	{
-		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir());
+		cList<std::string>* userMaps = getFilesOfDirectory (getUserMapsDir());
 		if (userMaps != 0)
 		{
 			for (unsigned int i = 0; i < userMaps->size(); i++)

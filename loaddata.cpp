@@ -973,8 +973,8 @@ static int LoadVehicles()
 		return 0;
 	}
 	// read vehicles.xml
-	cList<string> VehicleList;
-	cList<string> IDList;
+	std::vector<std::string> VehicleList;
+	std::vector<std::string> IDList;
 	pXmlNode = pXmlNode->FirstChildElement();
 	pXmlElement = pXmlNode->ToElement();
 	if (pXmlElement)
@@ -1491,8 +1491,8 @@ static int LoadBuildings()
 		Log.write ("Can't read \"BuildingData->Building\" node!", LOG_TYPE_ERROR);
 		return 0;
 	}
-	cList<string> BuildingList;
-	cList<string> IDList;
+	std::vector<std::string> BuildingList;
+	std::vector<std::string> IDList;
 	pXmlNode = pXmlNode->FirstChildElement();
 	if (!pXmlNode)
 	{

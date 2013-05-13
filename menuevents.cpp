@@ -43,19 +43,19 @@ void sendRequestIdentification (cTCP& network, const sMenuPlayer* player)
 	cMenu::sendMessage (network, message, player);
 }
 
-void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players)
+void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
-	for (int i = (int) players->size() - 1; i >= 0; i--)
+	for (int i = (int) players.size() - 1; i >= 0; i--)
 	{
-		const sMenuPlayer* player = (*players) [i];
+		const sMenuPlayer* player = players[i];
 		message->pushInt16 (player->nr);
 		message->pushBool (player->ready);
 		message->pushInt16 (player->color);
 		message->pushString (player->name);
 	}
-	message->pushInt16 ( (int) players->size());
+	message->pushInt16 ((int) players.size());
 	cMenu::sendMessage (network, message);
 }
 
@@ -125,17 +125,17 @@ void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer)
 	else cMenu::sendMessage (network, message);
 }
 
-void sendLandingUnits (cTCP& network, const cList<sLandingUnit>* landingList, int ownerNr, bool isServer)
+void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingList, int ownerNr, bool isServer)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
 
-	for (unsigned int i = 0; i < landingList->size(); i++)
+	for (unsigned int i = 0; i < landingList.size(); i++)
 	{
-		message->pushInt16 ( (*landingList) [i].unitID.iSecondPart);
-		message->pushInt16 ( (*landingList) [i].unitID.iFirstPart);
-		message->pushInt16 ( (*landingList) [i].cargo);
+		message->pushInt16 (landingList[i].unitID.iSecondPart);
+		message->pushInt16 (landingList[i].unitID.iFirstPart);
+		message->pushInt16 (landingList[i].cargo);
 	}
-	message->pushInt16 ( (int) landingList->size());
+	message->pushInt16 ( (int) landingList.size());
 	message->pushInt16 (ownerNr);
 
 	// the host has not to send the message over tcpip and we can handle the message directly

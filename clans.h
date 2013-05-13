@@ -75,7 +75,7 @@ private:
 	int num;
 	std::string description;
 	std::string name;
-	cList<cClanUnitStat*> stats;
+	std::vector<cClanUnitStat*> stats;
 };
 
 //-------------------------------------------------------------------------
@@ -92,7 +92,7 @@ public:
 	//-------------------------------------------------------------------------
 private:
 	cClanData() {}
-	cList<cClan*> clans;
+	std::vector<cClan*> clans;
 };
 
 

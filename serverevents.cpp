@@ -1012,7 +1012,7 @@ void sendCasualtiesReport (cServer& server, int player)
 	cCasualtiesTracker* casualtiesTracker = server.getCasualtiesTracker();
 	if (casualtiesTracker)
 	{
-		cList<cNetMessage*> messages;
+		std::vector<cNetMessage*> messages;
 		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
 		for (size_t i = 0; i < messages.size(); i++)
 			server.sendNetMessage (messages[i], player);

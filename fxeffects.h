@@ -2,7 +2,7 @@
 #ifndef _FX_EFFECTS_H
 #define _FX_EFFECTS_H
 
-#include "clist.h"
+#include <vector>
 
 class cGameGUI;
 
@@ -157,7 +157,7 @@ class cFxRocket : public cFx
 {
 private:
 	const int speed;
-	cList<cFx*> subEffects;
+	std::vector<cFx*> subEffects;
 	SDL_Surface** image;
 	int dir;
 	int distance;

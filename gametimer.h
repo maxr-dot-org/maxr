@@ -2,11 +2,12 @@
 #define SIMSPEEDCTRL_H
 
 
-#include "clist.h"
-#include "player.h"
+#include "cmutex.h"
+#include <vector>
 
 class cClient;
 class cNetMessage;
+class cPlayer;
 class cServer;
 
 #define GAME_TICK_TIME 10
@@ -29,7 +30,7 @@ protected:
 	cMutex mutex;
 	int eventCounter;
 	unsigned int lastTimerCall;
-	cList<unsigned int> receivedTime;
+	std::vector<unsigned int> receivedTime;
 
 	void timerCallback ();
 	void handleTimer ();
@@ -90,7 +91,6 @@ public:
 
 	void run ();
 	void handleSyncMessage (cNetMessage& message);
-
 };
 
 Uint32 calcClientChecksum (const cClient& client);

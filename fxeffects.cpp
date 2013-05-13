@@ -22,6 +22,7 @@
 #include "fxeffects.h"
 #include "client.h"
 #include "main.h"
+#include "player.h"
 
 cFx::cFx (bool bottom_, int x, int y) :
 	posX (x),
@@ -418,7 +419,7 @@ void cFxRocket::run()
 		if (subEffects[i]->isFinished())
 		{
 			delete subEffects[i];
-			subEffects.Delete(i);
+			subEffects.erase (subEffects.begin() + i);
 			i--;
 		}
 	}

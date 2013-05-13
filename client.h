@@ -60,7 +60,7 @@ private:
 	/** the active Player */
 	cPlayer* ActivePlayer;
 
-	cList<cJob*> helperJobs;
+	std::vector<cJob*> helperJobs;
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
@@ -183,7 +183,7 @@ private:
 public:
 	cGameTimerClient gameTimer;
 	/** lists with all FX-Animation */
-	cList<cFx*> FxList;
+	std::vector<cFx*> FxList;
 	/** list with the running clientAttackJobs */
 	cList<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
