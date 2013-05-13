@@ -56,7 +56,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 
 	int unitnum = 0;
 	const cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* Player = playerList[i];
 		writePlayer (Player, i);
@@ -171,13 +171,13 @@ int cSavegame::load (cTCP* network)
 void cSavegame::recalcSubbases(cServer& server)
 {
 	cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		playerList[i]->base.refreshSubbases();
 	}
 
 	//set the loaded ressource production values
-	for (unsigned int i = 0; i < SubBasesLoad.Size(); i++)
+	for (unsigned int i = 0; i < SubBasesLoad.size(); i++)
 	{
 		cBuilding* building = server.getBuildingFromID (SubBasesLoad[i]->buildingID);
 		if (!building) continue;
@@ -294,7 +294,7 @@ cList<cPlayer*>* cSavegame::loadPlayers (cMap* map)
 		TiXmlElement* playerNode = playersNode->FirstChildElement ("Player_0");
 		while (playerNode)
 		{
-			PlayerList->Add (loadPlayer (playerNode, map));
+			PlayerList->push_back (loadPlayer (playerNode, map));
 			playernum++;
 			playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
 		}
@@ -386,7 +386,7 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 			reportElement->Attribute ("yPos", &savedReport.yPos);
 			savedReport.unitID.generate (reportElement->Attribute ("id"));
 			reportElement->Attribute ("colorNr", &savedReport.colorNr);
-			Player->savedReportsList.Add (savedReport);
+			Player->savedReportsList.push_back (savedReport);
 			reportElement = reportElement->NextSiblingElement();
 		}
 	}
@@ -445,7 +445,7 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 				subbaseNode->FirstChildElement ("Production")->Attribute ("metal", &subBaseLoad->metalProd);
 				subbaseNode->FirstChildElement ("Production")->Attribute ("oil", &subBaseLoad->oilProd);
 				subbaseNode->FirstChildElement ("Production")->Attribute ("gold", &subBaseLoad->goldProd);
-				SubBasesLoad.Add (subBaseLoad);
+				SubBasesLoad.push_back (subBaseLoad);
 			}
 			subbasenum++;
 			subbaseNode = subbasesNode->FirstChildElement ( ("Subbase_" + iToStr (subbasenum)).c_str());
@@ -660,7 +660,7 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 		element->Attribute ("destx", &MoveJob->destX);
 		element->Attribute ("desty", &MoveJob->destY);
 
-		MoveJobsLoad.Add (MoveJob);
+		MoveJobsLoad.push_back (MoveJob);
 	}
 
 	// read the players which have detected this unit
@@ -779,7 +779,7 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 				listitem->type = UnitsData.vehicle[typenr].data.ID;
 			}
 			itemElement->Attribute ("metall_remaining", &listitem->metall_remaining);
-			building->BuildList->Add (listitem);
+			building->BuildList->push_back (listitem);
 
 			itemnum++;
 			itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ( ("Item_" + iToStr (itemnum)).c_str());
@@ -1100,7 +1100,7 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 //--------------------------------------------------------------------------
 void cSavegame::generateMoveJobs (cServer& server)
 {
-	for (unsigned int i = 0; i < MoveJobsLoad.Size(); i++)
+	for (unsigned int i = 0; i < MoveJobsLoad.size(); i++)
 	{
 		cServerMoveJob* MoveJob = new cServerMoveJob (server, MoveJobsLoad[i]->vehicle->PosX, MoveJobsLoad[i]->vehicle->PosY, MoveJobsLoad[i]->destX, MoveJobsLoad[i]->destY, MoveJobsLoad[i]->vehicle);
 		if (!MoveJob->calcPath())
@@ -1116,7 +1116,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 //--------------------------------------------------------------------------
 cPlayer* cSavegame::getPlayerFromNumber (cList<cPlayer*>* PlayerList, int number)
 {
-	for (unsigned int i = 0; i < PlayerList->Size(); i++)
+	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		if ( (*PlayerList) [i]->Nr == number) return (*PlayerList) [i];
 	}
@@ -1304,7 +1304,7 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 
 	// write subbases
 	TiXmlElement* subbasesNode = addMainElement (playerNode, "Subbases");
-	for (unsigned int i = 0; i < Player->base.SubBases.Size(); i++)
+	for (unsigned int i = 0; i < Player->base.SubBases.size(); i++)
 	{
 		const sSubBase* SubBase = Player->base.SubBases[i];
 		TiXmlElement* subbaseNode = addMainElement (subbasesNode, "Subbase_" + iToStr (i));
@@ -1438,10 +1438,10 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle* Vehic
 	if (Vehicle->ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (Vehicle->ServerMoveJob->DestX), "desty", iToStr (Vehicle->ServerMoveJob->DestY));
 
 	// write from which players this unit has been detected
-	if (Vehicle->detectedByPlayerList.Size() > 0)
+	if (Vehicle->detectedByPlayerList.size() > 0)
 	{
 		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
-		for (unsigned int i = 0; i < Vehicle->detectedByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < Vehicle->detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i),
 								 "nr", iToStr (Vehicle->detectedByPlayerList[i]->Nr),
@@ -1450,7 +1450,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle* Vehic
 	}
 
 	// write all stored vehicles
-	for (unsigned int i = 0; i < Vehicle->storedUnits.Size(); i++)
+	for (unsigned int i = 0; i < Vehicle->storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
 		TiXmlElement* storedNode = writeUnit (server, Vehicle->storedUnits[i], unitnum);
@@ -1504,7 +1504,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding* Building, int
 	if (Building->hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
 
 	// write the buildlist
-	if (Building->BuildList && Building->BuildList->Size() > 0)
+	if (Building->BuildList && Building->BuildList->size() > 0)
 	{
 		TiXmlElement* buildNode = addMainElement (unitNode, "Building");
 		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (Building->BuildSpeed));
@@ -1512,24 +1512,24 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding* Building, int
 		if (Building->RepeatBuild) addMainElement (buildNode, "RepeatBuild");
 
 		TiXmlElement* buildlistNode = addMainElement (buildNode, "BuildList");
-		for (unsigned int i = 0; i < Building->BuildList->Size(); i++)
+		for (unsigned int i = 0; i < Building->BuildList->size(); i++)
 		{
 			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", (*Building->BuildList) [i]->type.getText(), "metall_remaining", iToStr ( (*Building->BuildList) [i]->metall_remaining));
 		}
 	}
 
 	// write from which players this unit has been detected
-	if (Building->detectedByPlayerList.Size() > 0)
+	if (Building->detectedByPlayerList.size() > 0)
 	{
 		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
-		for (unsigned int i = 0; i < Building->detectedByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < Building->detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (Building->detectedByPlayerList[i]->Nr));
 		}
 	}
 
 	// write all stored vehicles
-	for (unsigned int i = 0; i < Building->storedUnits.Size(); i++)
+	for (unsigned int i = 0; i < Building->storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
 		TiXmlElement* storedNode = writeUnit (server, Building->storedUnits[i], unitnum);
@@ -1723,7 +1723,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedRe
 	// add reports
 	TiXmlElement* reportsNode = addMainElement (playerNode, "Reports");
 
-	for (size_t i = 0; i != list.Size(); ++i)
+	for (size_t i = 0; i != list.size(); ++i)
 	{
 		TiXmlElement* reportElement = addMainElement (reportsNode, "Report");
 		reportElement->SetAttribute ("msg", list[i].message.c_str());
@@ -1733,7 +1733,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedRe
 		reportElement->SetAttribute ("id", list[i].unitID.getText().c_str());
 		reportElement->SetAttribute ("colorNr", iToStr (list[i].colorNr).c_str());
 	}
-	list.Clear();
+	list.clear();
 
 	if (!DirExists (cSettings::getInstance().getSavesPath()))
 	{

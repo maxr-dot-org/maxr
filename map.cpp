@@ -561,28 +561,27 @@ void cMap::addBuilding (cBuilding* building, unsigned int offset)
 	if (building->data.isBig)
 	{
 		i = 0;
-		while (i < fields[offset].buildings.Size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.Insert (i, building);
 
 		offset += 1;
 		i = 0;
-		while (i < fields[offset].buildings.Size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.Insert (i, building);
 
 		offset += size;
 		i = 0;
-		while (i < fields[offset].buildings.Size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.Insert (i, building);
 
 		offset -= 1;
 		i = 0;
-		while (i < fields[offset].buildings.Size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.Insert (i, building);
 	}
 	else
 	{
-
-		while (i < fields[offset].buildings.Size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.Insert (i, building);
 	}
 }
@@ -671,8 +670,8 @@ void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int h
 	{
 		cList<cVehicle*>& planes = fields[oldOffset].planes;
 		planes.Remove (vehicle);
-		if (height > (int) fields[newOffset].planes.Size())
-			height = fields[newOffset].planes.Size();
+		if (height > (int) fields[newOffset].planes.size())
+			height = fields[newOffset].planes.size();
 		fields[newOffset].planes.Insert (height, vehicle);
 	}
 	else
@@ -744,7 +743,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	{
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 		//only one plane per field for now
-		if (fields[offset].planes.Size() >= MAX_PLANES_PER_FIELD) return false;
+		if (fields[offset].planes.size() >= MAX_PLANES_PER_FIELD) return false;
 	}
 	if (vehicleData.factorGround > 0)
 	{
@@ -764,7 +763,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
-		if (fields[offset].vehicles.Size() > 0) return false;
+		if (fields[offset].vehicles.size() > 0) return false;
 		if (building)
 		{
 			//only base buildings and rubbe is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
@@ -784,7 +783,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
-		if (fields[offset].vehicles.Size() > 0) return false;
+		if (fields[offset].vehicles.size() > 0) return false;
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
 		if (building && ! (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA))
@@ -876,7 +875,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, cVe
 	//can not build on rubble
 	if (bi && !bi->owner && ! (buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE || buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) return false;
 
-	if (field.vehicles.Size() > 0)
+	if (field.vehicles.size() > 0)
 	{
 		if (!vehicle) return false;
 		if (vehicle != field.vehicles[0]) return false;
@@ -887,8 +886,8 @@ void cMap::reset()
 {
 	for (int i = 0; i < size * size; i++)
 	{
-		fields[i].buildings.Clear();
-		fields[i].vehicles.Clear();
-		fields[i].planes.Clear();
+		fields[i].buildings.clear();
+		fields[i].vehicles.clear();
+		fields[i].planes.clear();
 	}
 }

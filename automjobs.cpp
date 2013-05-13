@@ -34,7 +34,7 @@ static cList<cAutoMJob*> autoMJobs;
 //this function is periodically called by the engine
 void cAutoMJob::handleAutoMoveJobs()
 {
-	for (size_t i = 0; i < autoMJobs.Size(); ++i)
+	for (size_t i = 0; i < autoMJobs.size(); ++i)
 	{
 		autoMJobs[i]->DoAutoMove();
 		if (autoMJobs[i]->finished)
@@ -50,8 +50,8 @@ void cAutoMJob::handleAutoMoveJobs()
 cAutoMJob::cAutoMJob (cClient& client_, cVehicle* vehicle) :
 	client(&client_)
 {
-	iNumber = (int) autoMJobs.Size();
-	autoMJobs.Add (this);
+	iNumber = (int) autoMJobs.size();
+	autoMJobs.push_back (this);
 	this->vehicle = vehicle;
 	finished = false;
 	OPX = vehicle->PosX;
@@ -71,7 +71,7 @@ cAutoMJob::~cAutoMJob()
 		sendWantStopMove (*client, vehicle->iID);
 	}
 	sendSetAutoStatus (*client, vehicle->iID, false);
-	for (unsigned int i = iNumber; i < autoMJobs.Size() - 1; i++)
+	for (unsigned int i = iNumber; i < autoMJobs.size() - 1; i++)
 	{
 		autoMJobs[i] = autoMJobs[i + 1];
 		autoMJobs[i]->iNumber = (int) i;
@@ -222,7 +222,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	//the distance to other surveyors
 	float newDistancesSurv = 0;
 	float temp;
-	for (size_t i = 0; i < autoMJobs.Size(); ++i)
+	for (size_t i = 0; i < autoMJobs.size(); ++i)
 	{
 		if (i == iNumber) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
@@ -265,7 +265,7 @@ void cAutoMJob::PlanLongMove()
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;
 			float temp;
-			for (size_t i = 0; i < autoMJobs.Size(); ++i)
+			for (size_t i = 0; i < autoMJobs.size(); ++i)
 			{
 				// skip our selves and other Players' surveyors
 				if (i == iNumber || autoMJobs[i]->vehicle->owner != vehicle->owner) continue;

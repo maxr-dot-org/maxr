@@ -70,7 +70,6 @@ int main (int argc, char* argv[])
 		Quit();
 		return -1;
 	}
-
 	if (initSDL() == -1) return -1;    //stop on error during init of SDL basics. WARNINGS will be ignored!
 
 	{
@@ -280,8 +279,8 @@ void Quit()
 	delete InputHandler;
 	delete EventHandler;
 
-	UnitsData.vehicle.Clear();
-	UnitsData.building.Clear();
+	UnitsData.vehicle.clear();
+	UnitsData.building.clear();
 
 	//unload files here
 	CloseSound();
@@ -700,7 +699,7 @@ void cUnitsData::initializeClanUnitData()
 			continue;
 
 		vector<sVehicle> clanListVehicles;
-		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.Size(); vehicleIdx++)
+		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.size(); vehicleIdx++)
 		{
 			// make a copy of the vehicle's stats
 			sVehicle curVehicle = vehicle[vehicleIdx];
@@ -728,7 +727,7 @@ void cUnitsData::initializeClanUnitData()
 		clanUnitDataVehicles.push_back (clanListVehicles);
 
 		vector<sBuilding> clanListBuildings;
-		for (unsigned int buildingIdx = 0; buildingIdx < building.Size(); buildingIdx++)
+		for (unsigned int buildingIdx = 0; buildingIdx < building.size(); buildingIdx++)
 		{
 			// make a copy of the building's stats
 			sBuilding curBuilding = building[buildingIdx];

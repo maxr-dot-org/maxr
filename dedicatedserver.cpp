@@ -300,16 +300,16 @@ string cDedicatedServer::getAvailableMapsString() const
 		cList<string>* userMaps = getFilesOfDirectory (getUserMapsDir());
 		if (userMaps != 0)
 		{
-			for (unsigned int i = 0; i < userMaps->Size(); i++)
+			for (unsigned int i = 0; i < userMaps->size(); i++)
 			{
 				if (maps->Contains ( (*userMaps) [i]) == false)
-					maps->Add ( (*userMaps) [i]);
+					maps->push_back ( (*userMaps) [i]);
 			}
 			delete userMaps;
 		}
 	}
 	oss << "----- Available maps: ------" << endl;
-	for (unsigned int i = 0; i < maps->Size(); i++)
+	for (unsigned int i = 0; i < maps->size(); i++)
 	{
 		string mapFilename = (*maps) [i];
 		if (mapFilename.substr (mapFilename.length() - 3, 3).compare ("WRL") == 0

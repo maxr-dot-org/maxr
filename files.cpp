@@ -97,7 +97,7 @@ cList<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 		{
 			if (DataFile.attrib & _A_SUBDIR) continue;
 			if (DataFile.name[0] == '.')     continue;
-			List->Add (DataFile.name);
+			List->push_back (DataFile.name);
 		}
 		while (_findnext (lFile, &DataFile) == 0);
 		_findclose (lFile);
@@ -109,7 +109,7 @@ cList<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 		{
 			char const* const name = entry->d_name;
 			if (name[0] == '.') continue;
-			List->Add (name);
+			List->push_back (name);
 		}
 		closedir (dir);
 	}

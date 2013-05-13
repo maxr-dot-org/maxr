@@ -80,9 +80,9 @@ sSubBase::sSubBase (const sSubBase& sb) :
 	OilProd (sb.OilProd),
 	GoldProd (sb.GoldProd)
 {
-	for (unsigned int i = 0; i < sb.buildings.Size(); i++)
+	for (unsigned int i = 0; i < sb.buildings.size(); i++)
 	{
-		buildings.Add (sb.buildings[i]);
+		buildings.push_back (sb.buildings[i]);
 	}
 }
 
@@ -189,7 +189,7 @@ void sSubBase::changeGoldProd (int i)
 int sSubBase::calcMaxProd (int ressourceType) const
 {
 	int maxProd = 0;
-	for (unsigned int i = 0; i < buildings.Size(); i++)
+	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
 		const cBuilding* building = buildings[i];
 
@@ -260,7 +260,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 	//step one:
 	//distribute ressources, that do not decrease the possible production of the others
-	for (unsigned int i = 0; i < buildings.Size(); i++)
+	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
 		const cBuilding* building = buildings[i];
 
@@ -281,7 +281,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 	//step two:
 	//distribute ressources, that do not decrease the possible production of A
-	for (unsigned int i = 0; i < buildings.Size(); i++)
+	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
 		const cBuilding* building = buildings[i];
 
@@ -326,7 +326,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 	int availableGenerators = 0;
 
 	//generate lists with energy producers
-	for (unsigned int n = 0; n < buildings.Size(); n++)
+	for (unsigned int n = 0; n < buildings.size(); n++)
 	{
 		cBuilding* b = buildings[n];
 
@@ -337,18 +337,18 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 			availableGenerators++;
 
 			if (b->IsWorking)
-				onlineGenerators.Add (b);
+				onlineGenerators.push_back (b);
 			else
-				offlineGenerators.Add (b);
+				offlineGenerators.push_back (b);
 		}
 		else
 		{
 			availableStations++;
 
 			if (b->IsWorking)
-				onlineStations.Add (b);
+				onlineStations.push_back (b);
 			else
-				offlineStations.Add (b);
+				offlineStations.push_back (b);
 		}
 
 	}
@@ -380,24 +380,24 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 	}
 
 	//stop unneeded buildings
-	for (int i = (int) onlineStations.Size() - stations; i > 0; i--)
+	for (int i = (int) onlineStations.size() - stations; i > 0; i--)
 	{
 		onlineStations[0]->ServerStopWork (server, true);
 		onlineStations.Delete (0);
 	}
-	for (int i = (int) onlineGenerators.Size() - generators; i > 0; i--)
+	for (int i = (int) onlineGenerators.size() - generators; i > 0; i--)
 	{
 		onlineGenerators[0]->ServerStopWork (server, true);
 		onlineGenerators.Delete (0);
 	}
 
 	//start needed buildings
-	for (int i = stations - (int) onlineStations.Size(); i > 0; i--)
+	for (int i = stations - (int) onlineStations.size(); i > 0; i--)
 	{
 		offlineStations[0]->ServerStartWork (server);
 		offlineStations.Delete (0);
 	}
-	for (int i = generators - (int) onlineGenerators.Size(); i > 0; i--)
+	for (int i = generators - (int) onlineGenerators.size(); i > 0; i--)
 	{
 		offlineGenerators[0]->ServerStartWork (server);
 		offlineGenerators.Delete (0);
@@ -446,7 +446,7 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 
 	*storedRessources += value;
 
-	for (unsigned int i = 0; i < buildings.Size(); i++)
+	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
 		b = buildings[i];
 		if (b->data.storeResType != storeResType) continue;
@@ -487,13 +487,13 @@ void sSubBase::refresh()
 {
 	//copy buildings list
 	cList<cBuilding*> buildingsCopy;
-	for (unsigned int i = 0; i < buildings.Size(); i++)
+	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
-		buildingsCopy.Add (buildings[i]);
+		buildingsCopy.push_back (buildings[i]);
 	}
 
 	//reset subbase
-	buildings.Clear();
+	buildings.clear();
 	MaxMetal = 0;
 	Metal = 0;
 	MaxOil = 0;
@@ -518,7 +518,7 @@ void sSubBase::refresh()
 	MaxHumanNeed = 0;
 
 	//readd all buildings
-	for (unsigned int i = 0; i < buildingsCopy.Size(); i++)
+	for (unsigned int i = 0; i < buildingsCopy.size(); i++)
 	{
 		addBuilding (buildingsCopy[i]);
 	}
@@ -529,7 +529,7 @@ bool sSubBase::checkHumanConsumer (cServer& server)
 {
 	if (HumanNeed > HumanProd)
 	{
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsHumans || !building.IsWorking) continue;
@@ -549,7 +549,7 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 {
 	if (GoldNeed > GoldProd + Gold)
 	{
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.convertsGold || !building.IsWorking) continue;
@@ -569,7 +569,7 @@ bool sSubBase::checkMetalConsumer (cServer& server)
 {
 	if (MetalNeed > MetalProd + Metal)
 	{
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsMetal || !building.IsWorking) continue;
@@ -597,7 +597,7 @@ bool sSubBase::checkOil (cServer& server)
 	bool oilMissing = false;
 
 	//generate lists with energy producers
-	for (unsigned int n = 0; n < buildings.Size(); n++)
+	for (unsigned int n = 0; n < buildings.size(); n++)
 	{
 		cBuilding* b = buildings[n];
 
@@ -608,18 +608,18 @@ bool sSubBase::checkOil (cServer& server)
 			availableGenerators++;
 
 			if (b->IsWorking)
-				onlineGenerators.Add (b);
+				onlineGenerators.push_back (b);
 			else
-				offlineGenerators.Add (b);
+				offlineGenerators.push_back (b);
 		}
 		else
 		{
 			availableStations++;
 
 			if (b->IsWorking)
-				onlineStations.Add (b);
+				onlineStations.push_back (b);
 			else
-				offlineStations.Add (b);
+				offlineStations.push_back (b);
 		}
 
 	}
@@ -677,24 +677,24 @@ bool sSubBase::checkOil (cServer& server)
 	}
 
 	//stop unneeded buildings
-	for (int i = (int) onlineStations.Size() - stations; i > 0; i--)
+	for (int i = (int) onlineStations.size() - stations; i > 0; i--)
 	{
 		onlineStations[0]->ServerStopWork (server, true);
 		onlineStations.Delete (0);
 	}
-	for (int i = (int) onlineGenerators.Size() - generators; i > 0; i--)
+	for (int i = (int) onlineGenerators.size() - generators; i > 0; i--)
 	{
 		onlineGenerators[0]->ServerStopWork (server, true);
 		onlineGenerators.Delete (0);
 	}
 
 	//start needed buildings
-	for (int i = stations - (int) onlineStations.Size(); i > 0; i--)
+	for (int i = stations - (int) onlineStations.size(); i > 0; i--)
 	{
 		offlineStations[0]->ServerStartWork (server);
 		offlineStations.Delete (0);
 	}
-	for (int i = generators - (int) onlineGenerators.Size(); i > 0; i--)
+	for (int i = generators - (int) onlineGenerators.size(); i > 0; i--)
 	{
 		offlineGenerators[0]->ServerStartWork (server);
 		offlineGenerators.Delete (0);
@@ -715,7 +715,7 @@ bool sSubBase::checkEnergy (cServer& server)
 {
 	if (EnergyNeed > EnergyProd)
 	{
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsEnergy || !building.IsWorking) continue;
@@ -731,7 +731,7 @@ bool sSubBase::checkEnergy (cServer& server)
 
 		}
 
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsEnergy || !building.IsWorking) continue;
@@ -746,7 +746,7 @@ bool sSubBase::checkEnergy (cServer& server)
 		}
 
 		//if energy is still missing, shut down also oil producers
-		for (unsigned int i = 0; i < buildings.Size(); i++)
+		for (unsigned int i = 0; i < buildings.size(); i++)
 		{
 			cBuilding& building = *buildings[i];
 			if (!building.data.needsEnergy || !building.IsWorking) continue;
@@ -820,7 +820,7 @@ void sSubBase::makeTurnend (cServer& server)
 	}
 
 	// make repairs/build/reload
-	for (unsigned int k = 0; k < buildings.Size(); k++)
+	for (unsigned int k = 0; k < buildings.size(); k++)
 	{
 		cBuilding* Building = buildings[k];
 
@@ -832,7 +832,7 @@ void sSubBase::makeTurnend (cServer& server)
 			if (Building->data.hitpointsCur > Building->data.hitpointsMax) Building->data.hitpointsCur = Building->data.hitpointsMax;
 			addMetal (server, -1);
 			sendUnitData (server, Building, owner->Nr);
-			for (unsigned int j = 0; j < Building->seenByPlayerList.Size(); j++)
+			for (unsigned int j = 0; j < Building->seenByPlayerList.size(); j++)
 			{
 				sendUnitData (server, Building, Building->seenByPlayerList[j]->Nr);
 			}
@@ -849,7 +849,7 @@ void sSubBase::makeTurnend (cServer& server)
 		}
 
 		// build:
-		if (Building->IsWorking && !Building->data.canBuild.empty() && Building->BuildList->Size())
+		if (Building->IsWorking && !Building->data.canBuild.empty() && Building->BuildList->size())
 		{
 			sBuildList* BuildListItem;
 			BuildListItem = (*Building->BuildList) [0];
@@ -899,13 +899,13 @@ void sSubBase::merge (sSubBase* sb)
 	oil   += sb->getOilProd();
 
 	//merge buildings
-	for (size_t i = 0; i != sb->buildings.Size(); ++i)
+	for (size_t i = 0; i != sb->buildings.size(); ++i)
 	{
 		cBuilding* building = sb->buildings[i];
 		addBuilding (building);
 		building->SubBase = this;
 	}
-	sb->buildings.Clear();
+	sb->buildings.clear();
 
 	//set ressource allocation
 	setMetalProd (0);
@@ -918,7 +918,7 @@ void sSubBase::merge (sSubBase* sb)
 
 	// delete the subbase from the subbase list
 	cList<sSubBase*>& SubBases = owner->base.SubBases;
-	for (unsigned int i = 0; i < SubBases.Size(); i++)
+	for (unsigned int i = 0; i < SubBases.size(); i++)
 	{
 		if (SubBases[i] == sb)
 		{
@@ -930,14 +930,14 @@ void sSubBase::merge (sSubBase* sb)
 
 int sSubBase::getID() const
 {
-	assert (buildings.Size());
+	assert (buildings.size());
 
 	return buildings[0]->iID;
 }
 
 void sSubBase::addBuilding (cBuilding* b)
 {
-	buildings.Add (b);
+	buildings.push_back (b);
 	// calculate storage level
 	switch (b->data.storeResType)
 	{
@@ -1034,7 +1034,7 @@ cBase::cBase() : map()
 
 cBase::~cBase()
 {
-	for (size_t i = 0; i != SubBases.Size(); ++i)
+	for (size_t i = 0; i != SubBases.size(); ++i)
 	{
 		delete SubBases[i];
 	}
@@ -1064,35 +1064,35 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	if (!building->data.isBig)
 	{
 		// small building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size, building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 1        , building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size, building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1        , building)) NeighbourList.Add (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size, building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 1        , building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size, building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1        , building)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// big building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size,         building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size + 1,     building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2,                 building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2 + map->size,     building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2,     building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2 + 1, building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1,                 building)) NeighbourList.Add (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1 + map->size,       building)) NeighbourList.Add (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size,         building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size + 1,     building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 2,                 building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 2 + map->size,     building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2,     building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2 + 1, building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1,                 building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1 + map->size,     building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (map);
 
 	NeighbourList.RemoveDuplicates();
 
-	if (NeighbourList.Size() == 0)
+	if (NeighbourList.size() == 0)
 	{
 		// no neigbours found, just generate new subbase and add the building
 		sSubBase* NewSubBase;
 		NewSubBase = new sSubBase (building->owner);
 		building->SubBase = NewSubBase;
 		NewSubBase->addBuilding (building);
-		SubBases.Add (NewSubBase);
+		SubBases.push_back (NewSubBase);
 
 		if (bServer) sendSubbaseValues (*Server, NewSubBase, NewSubBase->owner->Nr);
 
@@ -1106,14 +1106,14 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	NeighbourList.Delete (0);
 
 	// now merge the other neigbours to the first one, if nessesary
-	for (size_t i = 0; i != NeighbourList.Size(); ++i)
+	for (size_t i = 0; i != NeighbourList.size(); ++i)
 	{
 		sSubBase* const SubBase = NeighbourList[i];
 		firstNeighbour->merge (SubBase);
 
 		delete SubBase;
 	}
-	NeighbourList.Clear();
+	NeighbourList.clear();
 	if (bServer) sendSubbaseValues (*Server, firstNeighbour, building->owner->Nr);
 }
 
@@ -1123,7 +1123,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	sSubBase* sb = building->SubBase;
 
 	// remove the current subbase
-	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
+	for (unsigned int i = 0; i < sb->buildings.size(); i++)
 	{
 		sb->buildings[i]->SubBase = NULL;
 	}
@@ -1135,7 +1135,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	int oil = sb->getOilProd();
 
 	// add all the buildings again
-	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
+	for (unsigned int i = 0; i < sb->buildings.size(); i++)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
@@ -1144,16 +1144,16 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 
 	//generate list, with the new subbases
 	cList<sSubBase*> newSubBases;
-	for (unsigned int i = 0; i < sb->buildings.Size(); i++)
+	for (unsigned int i = 0; i < sb->buildings.size(); i++)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
-		newSubBases.Add (n->SubBase);
+		newSubBases.push_back (n->SubBase);
 	}
 	newSubBases.RemoveDuplicates();
 
 	//try to restore ressource allocation
-	for (unsigned int i = 0; i < newSubBases.Size(); i++)
+	for (unsigned int i = 0; i < newSubBases.size(); i++)
 	{
 		sSubBase& subBase = *newSubBases[i];
 
@@ -1176,7 +1176,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	if (bServer)
 	{
 		//send subbase values to client
-		for (unsigned int i = 0; i < newSubBases.Size(); i++)
+		for (unsigned int i = 0; i < newSubBases.size(); i++)
 		{
 			sendSubbaseValues (*Server, newSubBases[i], building->owner->Nr);
 		}
@@ -1190,7 +1190,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 void cBase::handleTurnend (cServer& server)
 {
 
-	for (unsigned int i = 0; i < SubBases.Size(); ++i)
+	for (unsigned int i = 0; i < SubBases.size(); ++i)
 	{
 		SubBases[i]->makeTurnend (server);
 	}
@@ -1199,7 +1199,7 @@ void cBase::handleTurnend (cServer& server)
 // recalculates all subbase values (after a load)
 void cBase::refreshSubbases()
 {
-	for (unsigned int i = 0; i < SubBases.Size(); i++)
+	for (unsigned int i = 0; i < SubBases.size(); i++)
 	{
 		SubBases[i]->refresh();
 	}

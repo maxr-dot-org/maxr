@@ -278,7 +278,7 @@ cMenuItemContainer::cMenuItemContainer (int x, int y) : cMenuItem (x, y)
 
 void cMenuItemContainer::draw()
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		itemList[i]->draw();
 	}
@@ -287,7 +287,7 @@ void cMenuItemContainer::draw()
 void cMenuItemContainer::clicked (void* parent)
 {
 	preClicked();
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->clicked (this);
 	}
@@ -295,7 +295,7 @@ void cMenuItemContainer::clicked (void* parent)
 
 void cMenuItemContainer::released (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->released (this);
 		else itemList[i]->somewhereReleased();
@@ -304,7 +304,7 @@ void cMenuItemContainer::released (void* parent)
 
 void cMenuItemContainer::hoveredOn (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		if (itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
 	}
@@ -312,7 +312,7 @@ void cMenuItemContainer::hoveredOn (void* parent)
 
 void cMenuItemContainer::hoveredAway (void* parent)
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		itemList[i]->hoveredAway (this);
 	}
@@ -320,7 +320,7 @@ void cMenuItemContainer::hoveredAway (void* parent)
 
 void cMenuItemContainer::movedMouseOver (int lastMouseX, int lastMouseY, void* parent)
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		if (itemList[i]->overItem (lastMouseX, lastMouseY) && !itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredAway (this);
 		else if (!itemList[i]->overItem (lastMouseX, lastMouseY) && itemList[i]->overItem (mouse->x, mouse->y)) itemList[i]->hoveredOn (this);
@@ -330,7 +330,7 @@ void cMenuItemContainer::movedMouseOver (int lastMouseX, int lastMouseY, void* p
 
 void cMenuItemContainer::somewhereReleased()
 {
-	for (unsigned int i = 0; i < itemList.Size() ; i++)
+	for (unsigned int i = 0; i < itemList.size() ; i++)
 	{
 		itemList[i]->somewhereReleased();
 	}
@@ -338,7 +338,7 @@ void cMenuItemContainer::somewhereReleased()
 
 void cMenuItemContainer::addItem (cMenuItem* item)
 {
-	itemList.Add (item);
+	itemList.push_back (item);
 	if (item->position.x == 0 && item->position.y == 0 && item->position.w == 0 && item->position.h == 0) return;
 	if (item->position.x < position.x)
 	{
@@ -1126,7 +1126,7 @@ void cMenuCheckButton::limitTextSize (int w)
 
 cMenuRadioGroup::~cMenuRadioGroup()
 {
-	for (size_t i = 0; i != buttonList.Size(); ++i)
+	for (size_t i = 0; i != buttonList.size(); ++i)
 	{
 		delete buttonList[i];
 	}
@@ -1134,7 +1134,7 @@ cMenuRadioGroup::~cMenuRadioGroup()
 
 void cMenuRadioGroup::draw()
 {
-	for (unsigned int i = 0; i < buttonList.Size(); i++)
+	for (unsigned int i = 0; i < buttonList.size(); i++)
 	{
 		buttonList[i]->draw();
 	}
@@ -1143,18 +1143,18 @@ void cMenuRadioGroup::draw()
 void cMenuRadioGroup::addButton (cMenuCheckButton* button)
 {
 	button->group = this;
-	buttonList.Add (button);
+	buttonList.push_back (button);
 }
 
 bool cMenuRadioGroup::buttonIsChecked (int index) const
 {
-	if (index >= 0 && index < (int) buttonList.Size() && buttonList[index]->isChecked())  return true;
+	if (index >= 0 && index < (int) buttonList.size() && buttonList[index]->isChecked())  return true;
 	return false;
 }
 
 void cMenuRadioGroup::checkedButton (cMenuCheckButton* button)
 {
-	for (unsigned int i = 0; i < buttonList.Size(); i++)
+	for (unsigned int i = 0; i < buttonList.size(); i++)
 	{
 		if (buttonList[i] != button) buttonList[i]->checked = false;
 		buttonList[i]->renewButtonSurface();
@@ -1163,7 +1163,7 @@ void cMenuRadioGroup::checkedButton (cMenuCheckButton* button)
 
 bool cMenuRadioGroup::overItem (int x, int y) const
 {
-	for (unsigned int i = 0; i < buttonList.Size(); i++)
+	for (unsigned int i = 0; i < buttonList.size(); i++)
 	{
 		if (buttonList[i]->overItem (x, y))
 			return true;
@@ -1174,7 +1174,7 @@ bool cMenuRadioGroup::overItem (int x, int y) const
 void cMenuRadioGroup::clicked (void* parent)
 {
 	mouse->GetPos();
-	for (unsigned int i = 0; i < buttonList.Size(); i++)
+	for (unsigned int i = 0; i < buttonList.size(); i++)
 	{
 		if (buttonList[i]->overItem (mouse->x, mouse->y))
 		{
@@ -1312,7 +1312,7 @@ int cMenuUnitListItem::drawName (bool withNumber)
 		// numerate the unit.
 		int nrOfSameUnits = 1;
 		// search the landing list for other units of the same type.
-		for (int otherUnitIdx = 0; otherUnitIdx < (int) parentList->unitsList.Size(); otherUnitIdx++)
+		for (int otherUnitIdx = 0; otherUnitIdx < (int) parentList->unitsList.size(); otherUnitIdx++)
 		{
 			if (!parentList->unitsList[otherUnitIdx]->unitID.getVehicle()) continue;
 			if (parentList->unitsList[otherUnitIdx] == this) break;
@@ -1448,7 +1448,7 @@ cMenuUnitsList::cMenuUnitsList (int x, int y, int w, int h, cHangarMenu* parent,
 
 cMenuUnitsList::~cMenuUnitsList()
 {
-	for (size_t i = 0; i != unitsList.Size(); ++i)
+	for (size_t i = 0; i != unitsList.size(); ++i)
 	{
 		delete unitsList[i];
 	}
@@ -1458,7 +1458,7 @@ void cMenuUnitsList::draw()
 {
 	for (int i = offset; i < offset + maxDisplayUnits; i++)
 	{
-		if (i >= (int) unitsList.Size()) break;
+		if (i >= (int) unitsList.size()) break;
 		unitsList[i]->position.x = position.x + 10;
 		unitsList[i]->position.y = position.y + 8 + (i - offset) * 34;
 		unitsList[i]->draw();
@@ -1470,7 +1470,7 @@ void cMenuUnitsList::released (void* parent)
 	mouse->GetPos();
 	for (int i = offset; i < offset + maxDisplayUnits; i++)
 	{
-		if (i >= (int) unitsList.Size()) break;
+		if (i >= (int) unitsList.size()) break;
 		if (unitsList[i]->overItem (mouse->x, mouse->y))
 		{
 			if (selectedUnit == unitsList[i])
@@ -1485,12 +1485,12 @@ void cMenuUnitsList::released (void* parent)
 
 int cMenuUnitsList::getSize() const
 {
-	return (int) unitsList.Size();
+	return (int) unitsList.size();
 }
 
 cMenuUnitListItem* cMenuUnitsList::getItem (int index)
 {
-	if (index >= 0 && index < (int) unitsList.Size()) return unitsList[index];
+	if (index >= 0 && index < (int) unitsList.size()) return unitsList[index];
 	else return NULL;
 }
 
@@ -1521,12 +1521,12 @@ void cMenuUnitsList::scrollUp()
 
 void cMenuUnitsList::scrollDown()
 {
-	if (offset + maxDisplayUnits < (int) unitsList.Size())
+	if (offset + maxDisplayUnits < (int) unitsList.size())
 	{
 		offset += maxDisplayUnits;
-		if (offset + maxDisplayUnits > (int) unitsList.Size() && (int) unitsList.Size() > maxDisplayUnits)
+		if (offset + maxDisplayUnits > (int) unitsList.size() && (int) unitsList.size() > maxDisplayUnits)
 		{
-			offset = (int) unitsList.Size() - maxDisplayUnits;
+			offset = (int) unitsList.size() - maxDisplayUnits;
 		}
 	}
 	else return;
@@ -1535,7 +1535,7 @@ void cMenuUnitsList::scrollDown()
 
 void cMenuUnitsList::setSelection (cMenuUnitListItem* selectedUnit_)
 {
-	for (unsigned int i = 0; i < unitsList.Size(); i++)
+	for (unsigned int i = 0; i < unitsList.size(); i++)
 	{
 		if (unitsList[i] == selectedUnit_)
 		{
@@ -1552,11 +1552,11 @@ void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 	unitItem->setReleaseSound (SoundData.SNDObjectMenu);
 	unitItem->position.h = 32;
 	unitItem->position.w = position.w - 20;
-	unitsList.Add (unitItem);
+	unitsList.push_back (unitItem);
 	if (selectedUnit) selectedUnit->selected = false;
 	selectedUnit = unitItem;
 	selectedUnit->selected = true;
-	if (scroll && (int) unitsList.Size() > offset + maxDisplayUnits) scrollDown();
+	if (scroll && (int) unitsList.size() > offset + maxDisplayUnits) scrollDown();
 }
 
 cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
@@ -1575,7 +1575,7 @@ cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, sUnitUpg
 
 void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 {
-	for (unsigned int i = 0; i < unitsList.Size(); i++)
+	for (unsigned int i = 0; i < unitsList.size(); i++)
 	{
 		if (unitsList[i] == item)
 		{
@@ -1583,7 +1583,7 @@ void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 			bool isInMenuSelected = false;
 			if (unitsList[i]->selected)
 			{
-				if (i + 1 < unitsList.Size()) nextSelUnit = unitsList[i + 1];
+				if (i + 1 < unitsList.size()) nextSelUnit = unitsList[i + 1];
 				else if (i >= 1) nextSelUnit = unitsList[i - 1];
 				if (unitsList[i] == parentMenu->getSelectedUnit()) isInMenuSelected = true;
 			}
@@ -1593,7 +1593,7 @@ void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 			selectedUnit = nextSelUnit;
 			if (isInMenuSelected) parentMenu->setSelectedUnit (nextSelUnit);
 			if (selectedUnit) selectedUnit->selected = true;
-			if (offset >= (int) unitsList.Size()) scrollUp();
+			if (offset >= (int) unitsList.size()) scrollUp();
 			break;
 		}
 	}
@@ -1603,11 +1603,11 @@ void cMenuUnitsList::clear()
 {
 	parentMenu->setSelectedUnit (NULL);
 	selectedUnit = NULL;
-	for (size_t i = 0; i != unitsList.Size(); ++i)
+	for (size_t i = 0; i != unitsList.size(); ++i)
 	{
 		delete unitsList[i];
 	}
-	unitsList.Clear();
+	unitsList.clear();
 	offset = 0;
 }
 
@@ -2654,12 +2654,12 @@ cMenuScrollBar::cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* pare
 
 	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	upButton->setReleasedFunction (&upButtonReleased);
-	itemList.Add (upButton);
+	itemList.push_back (upButton);
 	downButton = new cMenuButton (position.x, position.y + position.h - 17, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	downButton->setReleasedFunction (&downButtonReleased);
-	itemList.Add (downButton);
+	itemList.push_back (downButton);
 	scroller = new cMenuScroller (position.x, position.y + 17, cMenuScroller::SCROLLER_TYPE_VERT, this);
-	itemList.Add (upButton);
+	itemList.push_back (upButton);
 }
 
 void cMenuScrollBar::createSurface()
@@ -2739,7 +2739,7 @@ cMenuListBox::cMenuListBox (int x, int y, int w, int h, int maxLines_, cMenu* pa
 	maxDrawLines = (position.h - 24) / 14;
 
 	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
-	itemList.Add (scrollBar);
+	itemList.push_back (scrollBar);
 }
 
 void cMenuListBox::draw()
@@ -2748,7 +2748,7 @@ void cMenuListBox::draw()
 
 	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawLines; i++)
 	{
-		if (i >= (int) lines.Size()) break;
+		if (i >= (int) lines.size()) break;
 		font->showText (position.x + 12, position.y + 12 + 14 * (i - scrollBar->offset), lines[i]);
 	}
 }
@@ -2762,14 +2762,14 @@ void cMenuListBox::addLine (const string& line)
 	{
 		length = line_.length() - pos;
 		while (font->getTextWide (line_.substr (pos, length)) > position.w - 24 - 17) length--;
-		lines.Add (line_.substr (pos, length));
+		lines.push_back (line_.substr (pos, length));
 		pos += length;
 		if (pos == line_.length()) break;
 		line_.insert (pos, "	");
 	}
 	while (pos < line_.length());
 
-	scrollBar->setMaximalScroll ( (int) lines.Size() * 14);
+	scrollBar->setMaximalScroll ( (int) lines.size() * 14);
 }
 
 cMenuLineEdit::cMenuLineEdit (int x, int y, int w, int h, cMenu* parentMenu_, eUnicodeFontType fontType_, eLineEditType lineEditType_) :
@@ -3094,16 +3094,16 @@ cMenuPlayersBox::cMenuPlayersBox (int x, int y, int w, int h, cNetworkMenu* pare
 	maxDrawPlayers = (position.h - 24) / 14;
 
 	scrollBar = new cMenuScrollBar (position.x + position.w - 17, position.y, position.h, 14, parentMenu, this);
-	itemList.Add (scrollBar);
+	itemList.push_back (scrollBar);
 
 	for (int i = 0; i < maxDrawPlayers; i++)
 	{
 		cMenuImage* colorImage = new cMenuImage (position.x + 12, position.y + 12 + 14 * i);
 		cMenuLabel* nameLabel = new cMenuLabel (position.x + 12 + 16, position.y + 12 + 14 * i);
 		cMenuImage* readyImage = new cMenuImage (position.x + position.w - 17 - 15, position.y + 12 + 14 * i);
-		playerColors.Add (colorImage);
-		playerNames.Add (nameLabel);
-		playerReadys.Add (readyImage);
+		playerColors.push_back (colorImage);
+		playerNames.push_back (nameLabel);
+		playerReadys.push_back (readyImage);
 	}
 }
 
@@ -3134,7 +3134,7 @@ void cMenuPlayersBox::draw()
 
 	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 	{
-		if (i < (int) players->Size())
+		if (i < (int) players->size())
 		{
 			if ( (*players) [i]->ready) playerReadys[i - scrollBar->offset]->setImage (readySurface);
 			else playerReadys[i - scrollBar->offset]->setImage (notReadySurface);
@@ -3165,7 +3165,7 @@ bool cMenuPlayersBox::preClicked()
 	{
 		for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 		{
-			if (i >= (int) players->Size()) break;
+			if (i >= (int) players->size()) break;
 			if (mouse->y > position.y + 12 + 14 * (i - scrollBar->offset) && mouse->y < position.y + 12 + 14 * (i - scrollBar->offset) + 10)
 			{
 				parentMenu->playerReadyClicked ( (*players) [i]);
@@ -3179,7 +3179,7 @@ void cMenuPlayersBox::setPlayers (cList<sMenuPlayer*>* player_)
 {
 	players = player_;
 
-	scrollBar->setMaximalScroll ( (int) players->Size() * 14);
+	scrollBar->setMaximalScroll ( (int) players->size() * 14);
 }
 
 cMenuSaveSlot::cMenuSaveSlot (int x, int y, cMenu* parent) : cMenuItem (x, y)
@@ -3645,7 +3645,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 	if (client->getPlayerList() == 0)
 		return;
 
-	for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->Size(); playerIdx++)
+	for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->size(); playerIdx++)
 	{
 		cPlayer* player = (*client->getPlayerList()) [playerIdx];
 		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
@@ -3662,7 +3662,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 
 		int displayedEntryIndex = 0;
 
-		for (size_t i = 0; i < UnitsData.building.Size(); i++)
+		for (size_t i = 0; i < UnitsData.building.size(); i++)
 		{
 			sID unitID = UnitsData.building[i].data.ID;
 			sBuilding* buildingImgs = unitID.getBuilding();
@@ -3676,7 +3676,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 				break;
 		}
 
-		for (size_t i = 0; i < UnitsData.vehicle.Size(); i++)
+		for (size_t i = 0; i < UnitsData.vehicle.size(); i++)
 		{
 			sID unitID = UnitsData.vehicle[i].data.ID;
 			sVehicle* vehicleImgs = unitID.getVehicle();
@@ -3741,7 +3741,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
 
-					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->Size(); playerIdx++)
+					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->size(); playerIdx++)
 					{
 						const cPlayer* player = (*client->getPlayerList()) [playerIdx];
 						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
@@ -3779,7 +3779,7 @@ void cMenuReportsScreen::drawScoreScreen()
 		font->showText (position.x + 25, position.y + 20, ss.str());
 	}
 
-	for (unsigned n = 0, y = 36; n < client->getPlayerList()->Size(); n++, y += 16)
+	for (unsigned n = 0, y = 36; n < client->getPlayerList()->size(); n++, y += 16)
 	{
 		cPlayer* p = (*client->getPlayerList()) [n];
 		int score = p->getScore (client->getTurn());
@@ -3838,7 +3838,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	*/
 	int highest_score = 0;
 	int lowest_score = 0x7FFFFFFF;
-	for (unsigned n = 0; n < client->getPlayerList()->Size(); n++)
+	for (unsigned n = 0; n < client->getPlayerList()->size(); n++)
 	{
 		for (int turn = min_turns; turn < max_turns; turn++)
 		{
@@ -3904,7 +3904,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Score Lines
 	*/
-	for (unsigned n = 0, y = 40; n < client->getPlayerList()->Size(); n++, y += 25)
+	for (unsigned n = 0, y = 40; n < client->getPlayerList()->size(); n++, y += 25)
 	{
 		const cPlayer* p = (*client->getPlayerList()) [n];
 		Uint32 player_colour = getPlayerColour (p);
@@ -3937,7 +3937,7 @@ void cMenuReportsScreen::drawScoreGraph()
 void cMenuReportsScreen::drawReportsScreen()
 {
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
-	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.Size(); i++)
+	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.size(); i++)
 	{
 		if ( (int) i >= (index + 1) *maxItems) break;
 		sSavedReportMessage& savedReport = owner->savedReportsList[i];
@@ -4152,7 +4152,7 @@ void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool s
 	else if (scoreChecked) screenType = REP_SCR_TYPE_SCORE;
 	else if (reportsChecked)
 	{
-		index = owner->savedReportsList.Size() / maxItems;
+		index = owner->savedReportsList.size() / maxItems;
 		screenType = REP_SCR_TYPE_REPORTS;
 	}
 
@@ -4202,7 +4202,7 @@ void cMenuReportsScreen::updateScrollButtons()
 			parentMenu->scrollCallback (false, false);
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			parentMenu->scrollCallback (index > 0, (index + 1) *maxItems < (int) owner->savedReportsList.Size());
+			parentMenu->scrollCallback (index > 0, (index + 1) *maxItems < (int) owner->savedReportsList.size());
 			break;
 	}
 }
@@ -4221,7 +4221,7 @@ void cMenuReportsScreen::scrollDown()
 				index++;
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if ( (index + 1) *maxItems < (int) owner->savedReportsList.Size())
+			if ( (index + 1) *maxItems < (int) owner->savedReportsList.size())
 				index++;
 			break;
 		case REP_SCR_TYPE_SCORE:
@@ -4264,7 +4264,7 @@ void cMenuReportsScreen::released (void* parent)
 		case REP_SCR_TYPE_SCORE:
 			break;
 		case REP_SCR_TYPE_REPORTS:
-			if (clickedIndex > (int) owner->savedReportsList.Size()) return;
+			if (clickedIndex > (int) owner->savedReportsList.size()) return;
 			if (clickedIndex == selected)
 			{
 				sSavedReportMessage& savedReport = owner->savedReportsList[clickedIndex];

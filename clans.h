@@ -68,7 +68,7 @@ public:
 	cClanUnitStat* getUnitStat (int idFirstPart, int idSecPart) const;
 	cClanUnitStat* getUnitStat (unsigned int index) const;
 	cClanUnitStat* addUnitStat (int idFirstPart, int idSecPart);
-	int getNrUnitStats() const { return static_cast<int> (stats.Size()); }
+	int getNrUnitStats() const { return static_cast<int> (stats.size()); }
 
 	//-------------------------------------------------------------------------
 private:
@@ -87,7 +87,7 @@ public:
 
 	cClan* addClan();
 	cClan* getClan (unsigned int num);
-	int getNrClans() const { return static_cast<int> (clans.Size()); }
+	int getNrClans() const { return static_cast<int> (clans.size()); }
 
 	//-------------------------------------------------------------------------
 private:

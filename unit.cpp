@@ -1230,7 +1230,7 @@ void cUnit::upgradeToCurrentVersion()
 //-----------------------------------------------------------------------------
 void cUnit::deleteStoredUnits()
 {
-	for (size_t i = 0; i != storedUnits.Size(); ++i)
+	for (size_t i = 0; i != storedUnits.size(); ++i)
 	{
 		cVehicle* unit = storedUnits[i];
 		remove_from_intrusivelist(unit->owner->VehicleList, *unit);
@@ -1239,5 +1239,5 @@ void cUnit::deleteStoredUnits()
 
 		delete unit;
 	}
-	storedUnits.Clear();
+	storedUnits.clear();
 }

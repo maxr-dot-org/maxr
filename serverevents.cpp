@@ -79,7 +79,7 @@ void sendDeleteUnit (cServer& server, const cUnit* unit, int iClient)
 {
 	if (iClient == -1)
 	{
-		for (unsigned int i = 0; i < unit->seenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < unit->seenByPlayerList.size(); i++)
 			sendDeleteUnitMessage (server, unit, unit->seenByPlayerList[i]->Nr);
 
 		//send message to owner, since he is not in the seenByPlayerList
@@ -244,7 +244,7 @@ void sendDoStartWork (cServer& server, const cBuilding* building)
 
 	//check all players
 	const cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
 
@@ -264,7 +264,7 @@ void sendDoStopWork (cServer& server, const cBuilding* building)
 
 	//check all players
 	const cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
 
@@ -280,7 +280,7 @@ void sendDoStopWork (cServer& server, const cBuilding* building)
 //-------------------------------------------------------------------------------------
 void sendNextMove (cServer& server, const cVehicle* vehicle, int iType, int iSavedSpeed)
 {
-	for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < vehicle->seenByPlayerList.size(); i++)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 		if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
@@ -393,7 +393,7 @@ void sendScore (cServer& server, const cPlayer* Subject, int turn, const cPlayer
 	if (!Receiver)
 	{
 		const cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int n = 0; n < playerList.Size(); n++)
+		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendScore (server, Subject, turn, playerList[n]);
 	}
 	else
@@ -422,7 +422,7 @@ void sendNumEcos (cServer& server, cPlayer* Subject, const cPlayer* Receiver)
 	if (!Receiver)
 	{
 		cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int n = 0; n < playerList.Size(); n++)
+		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendNumEcos (server, Subject, playerList[n]);
 	}
 	else
@@ -440,7 +440,7 @@ void sendVictoryConditions (cServer& server, const int turnLimit, int scoreLimit
 	if (!Receiver)
 	{
 		const cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int n = 0; n < playerList.Size(); n++)
+		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendVictoryConditions (server, turnLimit, scoreLimit, playerList[n]);
 	}
 	else
@@ -475,7 +475,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle* vehicle)
 	server.sendNetMessage (message, vehicle->owner->Nr);
 
 	//message for the enemys
-	for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < vehicle->seenByPlayerList.size(); i++)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_BUILD_ANSWER);
 		if (bOK)
@@ -545,13 +545,13 @@ void sendBuildList (cServer& server, const cBuilding* Building)
 	message->pushBool (Building->RepeatBuild);
 	message->pushInt16 (Building->BuildSpeed);
 	message->pushInt16 (Building->MetalPerRound);
-	for (int i = (int) Building->BuildList->Size() - 1; i >= 0; i--)
+	for (int i = (int) Building->BuildList->size() - 1; i >= 0; i--)
 	{
 		message->pushInt16 ( (*Building->BuildList) [i]->metall_remaining);
 		message->pushInt16 ( (*Building->BuildList) [i]->type.iSecondPart);
 		message->pushInt16 ( (*Building->BuildList) [i]->type.iFirstPart);
 	}
-	message->pushInt16 ( (int) Building->BuildList->Size());
+	message->pushInt16 ( (int) Building->BuildList->size());
 	message->pushInt16 (Building->iID);
 	server.sendNetMessage (message, Building->owner->Nr);
 }
@@ -575,12 +575,12 @@ void sendTurnReport (cServer& server, cPlayer* Player)
 	cNetMessage* message = new cNetMessage (GAME_EV_TURN_REPORT);
 	int iCount = 0;
 
-	int nrResearchAreasFinished = Player->reportResearchAreasFinished.Size();
+	int nrResearchAreasFinished = Player->reportResearchAreasFinished.size();
 	for (int i = nrResearchAreasFinished - 1; i >= 0; i--)   // count down to get the correct order at the client conveniently
 		message->pushChar (Player->reportResearchAreasFinished[i]);
 	message->pushChar (nrResearchAreasFinished);
 
-	for (size_t i = 0; i != Player->ReportBuildings.Size(); ++i)
+	for (size_t i = 0; i != Player->ReportBuildings.size(); ++i)
 	{
 		const sTurnstartReport* Report = Player->ReportBuildings[i];
 		message->pushInt16 (Report->iAnz);
@@ -589,8 +589,8 @@ void sendTurnReport (cServer& server, cPlayer* Player)
 		delete Report;
 		iCount++;
 	}
-	Player->ReportBuildings.Clear();
-	for (size_t i = 0; i != Player->ReportVehicles.Size(); ++i)
+	Player->ReportBuildings.clear();
+	for (size_t i = 0; i != Player->ReportVehicles.size(); ++i)
 	{
 		sTurnstartReport* Report = Player->ReportVehicles[i];
 		message->pushInt16 (Report->iAnz);
@@ -599,7 +599,7 @@ void sendTurnReport (cServer& server, cPlayer* Player)
 		delete Report;
 		iCount++;
 	}
-	Player->ReportVehicles.Clear();
+	Player->ReportVehicles.clear();
 	message->pushInt16 (iCount);
 	server.sendNetMessage (message, Player->Nr);
 }
@@ -619,7 +619,7 @@ void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, in
 void sendDetectionState (cServer& server, const cVehicle* vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DETECTION_STATE);
-	message->pushBool (vehicle->detectedByPlayerList.Size() > 0);
+	message->pushBool (vehicle->detectedByPlayerList.size() > 0);
 	message->pushInt32 (vehicle->iID);
 	server.sendNetMessage (message, vehicle->owner->Nr);
 }
@@ -709,7 +709,7 @@ void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPla
 	{
 		cServer& server = *Server;
 		const cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer const* SecondPlayer = playerList[i];
 			if (Player == SecondPlayer) continue;
@@ -717,7 +717,7 @@ void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPla
 			message.pushInt16 (GetColorNr (SecondPlayer->color));
 			message.pushString (SecondPlayer->name);
 		}
-		message.pushInt16 ( (int) playerList.Size());
+		message.pushInt16 ( (int) playerList.size());
 		message.pushString (server.Map->MapName);
 		message.pushInt16 (GetColorNr (Player->color));
 		message.pushInt16 (Player->Nr);
@@ -840,7 +840,7 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 	// send to owner
 	cNetMessage* message = NULL;
 	int buildingsInMsg = 0;
-	for (unsigned int i = 0; i < upgradedBuildings.Size(); i++)
+	for (unsigned int i = 0; i < upgradedBuildings.size(); i++)
 	{
 		if (message == NULL)
 		{
@@ -852,7 +852,7 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 		buildingsInMsg++;
 		if (message->iLength + 8 > PACKAGE_LENGTH)
 		{
-			message->pushInt16 ( (totalCosts * buildingsInMsg) / (int) upgradedBuildings.Size());
+			message->pushInt16 ( (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 			message->pushInt16 (buildingsInMsg);
 			server.sendNetMessage (message, player);
 			message = NULL;
@@ -860,7 +860,7 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 	}
 	if (message != NULL)
 	{
-		message->pushInt16 ( (int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.Size());
+		message->pushInt16 ( (int) (totalCosts * buildingsInMsg) / (int) upgradedBuildings.size());
 		message->pushInt16 (buildingsInMsg);
 		server.sendNetMessage (message, player);
 		message = NULL;
@@ -868,13 +868,13 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 
 	// send to other players
 	const cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int n = 0; n < playerList.Size(); n++)
+	for (unsigned int n = 0; n < playerList.size(); n++)
 	{
 		const cPlayer* curPlayer = playerList[n];
 		if (curPlayer == 0 || curPlayer->Nr == player)   // don't send to the owner of the buildings
 			continue;
 
-		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.Size(); buildingIdx++)
+		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.size(); buildingIdx++)
 		{
 			if (upgradedBuildings[buildingIdx]->seenByPlayerList.Contains (curPlayer))    // that player can see the building
 				sendUnitData (server, upgradedBuildings[buildingIdx], curPlayer->Nr);
@@ -885,19 +885,19 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 //-------------------------------------------------------------------------------------
 void sendUpgradeVehicles (cServer& server, const cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
 {
-	if (upgradedVehicles.Size() * 4 > PACKAGE_LENGTH - 50)
+	if (upgradedVehicles.size() * 4 > PACKAGE_LENGTH - 50)
 	{
 		Log.write ("Server: sendUpgradeVehicles: Message would exceed messagesize!!!", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 	// send to owner
 	cNetMessage* message = new cNetMessage (GAME_EV_UPGRADED_VEHICLES);
-	for (unsigned int i = 0; i < upgradedVehicles.Size(); i++)
+	for (unsigned int i = 0; i < upgradedVehicles.size(); i++)
 		message->pushInt32 (upgradedVehicles[i]->iID);
 
 	message->pushInt32 (storingBuildingID);
 	message->pushInt16 (totalCosts);
-	message->pushInt16 ( (int) upgradedVehicles.Size());
+	message->pushInt16 ( (int) upgradedVehicles.size());
 	server.sendNetMessage (message, player);
 
 	//TODO: send to other players as well?
@@ -906,12 +906,12 @@ void sendUpgradeVehicles (cServer& server, const cList<cVehicle*>& upgradedVehic
 //-------------------------------------------------------------------------------------
 void sendResearchSettings (cServer& server, const cList<cBuilding*>& researchCentersToChangeArea, const cList<int>& newAreasForResearchCenters, int player)
 {
-	if (researchCentersToChangeArea.Size() != newAreasForResearchCenters.Size())
+	if (researchCentersToChangeArea.size() != newAreasForResearchCenters.size())
 		return;
 
 	cNetMessage* message = NULL;
 	int buildingsInMsg = 0;
-	for (unsigned int i = 0; i < researchCentersToChangeArea.Size(); i++)
+	for (unsigned int i = 0; i < researchCentersToChangeArea.size(); i++)
 	{
 		if (message == NULL)
 		{
@@ -943,7 +943,7 @@ void sendClans (cServer& server, const cList<cPlayer*>* playerList, const cPlaye
 	if (playerList == 0 || toPlayer == 0)
 		return;
 	cNetMessage* message = new cNetMessage (GAME_EV_PLAYER_CLANS);
-	for (unsigned int i = 0; i < playerList->Size(); i++)
+	for (unsigned int i = 0; i < playerList->size(); i++)
 	{
 		message->pushChar ( (*playerList) [i]->getClan());
 		message->pushChar ( (*playerList) [i]->Nr);
@@ -962,7 +962,7 @@ void sendGameTime (cServer& server, const cPlayer* player, int gameTime)
 //-------------------------------------------------------------------------------------
 void sendClansToClients (cServer& server, const cList<cPlayer*>* playerList)
 {
-	for (unsigned int n = 0; n < playerList->Size(); n++)
+	for (unsigned int n = 0; n < playerList->size(); n++)
 		sendClans (server, playerList, (*playerList) [n]);
 }
 
@@ -1014,7 +1014,7 @@ void sendCasualtiesReport (cServer& server, int player)
 	{
 		cList<cNetMessage*> messages;
 		casualtiesTracker->prepareNetMessagesForClient (messages, GAME_EV_CASUALTIES_REPORT);
-		for (size_t i = 0; i < messages.Size(); i++)
+		for (size_t i = 0; i < messages.size(); i++)
 			server.sendNetMessage (messages[i], player);
 	}
 }
@@ -1026,7 +1026,7 @@ void sendSelfDestroy (cServer& server, const cBuilding* building)
 	message->pushInt16 (building->iID);
 	server.sendNetMessage (message, building->owner->Nr);
 
-	for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < building->seenByPlayerList.size(); i++)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_SELFDESTROY);
 		message->pushInt16 (building->iID);

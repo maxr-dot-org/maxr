@@ -48,13 +48,13 @@ cDialogYesNo::cDialogYesNo (const string& text) :
 {
 	textLabel.setBox (232, 142);
 	//textLabel.setBox(position.w - 40, position.h - 150);
-	menuItems.Add (&textLabel);
+	menuItems.push_back (&textLabel);
 
 	yesButton.setReleasedFunction (&yesReleased);
-	menuItems.Add (&yesButton);
+	menuItems.push_back (&yesButton);
 
 	noButton.setReleasedFunction (&noReleased);
-	menuItems.Add (&noButton);
+	menuItems.push_back (&noButton);
 }
 
 void cDialogYesNo::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
@@ -99,10 +99,10 @@ cDialogOK::cDialogOK (const string& text) :
 	okButton (position.x + 111, position.y + 185, lngPack.i18n ("Text~Button~OK"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL)
 {
 	textLabel.setBox (232, 142);
-	menuItems.Add (&textLabel);
+	menuItems.push_back (&textLabel);
 
 	okButton.setReleasedFunction (&okReleased);
-	menuItems.Add (&okButton);
+	menuItems.push_back (&okButton);
 }
 
 void cDialogOK::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
@@ -130,14 +130,14 @@ cDestructMenu::cDestructMenu() :
 	destroyButton (position.x + 15, position.y + 13, this)
 {
 	cancelButton.setReleasedFunction (&cancelReleased);
-	menuItems.Add (&cancelButton);
+	menuItems.push_back (&cancelButton);
 
 	armButton.setReleasedFunction (&armReleased);
-	menuItems.Add (&armButton);
+	menuItems.push_back (&armButton);
 
 	destroyButton.setReleasedFunction (&destroyReleased);
 	destroyButton.setReleaseSound (SoundData.SNDMenuButton);
-	menuItems.Add (&destroyButton);
+	menuItems.push_back (&destroyButton);
 }
 
 void cDestructMenu::cancelReleased (void* parent)
@@ -171,22 +171,22 @@ cDialogLicence::cDialogLicence() :
 	generateLicenceTexts();
 
 	maxrLabel.setCentered (true);
-	menuItems.Add (&maxrLabel);
+	menuItems.push_back (&maxrLabel);
 
 	headerLabel.setCentered (true);
-	menuItems.Add (&headerLabel);
+	menuItems.push_back (&headerLabel);
 
 	textLabel.setBox (232, 142);
-	menuItems.Add (&textLabel);
+	menuItems.push_back (&textLabel);
 
 	okButton.setReleasedFunction (&okReleased);
-	menuItems.Add (&okButton);
+	menuItems.push_back (&okButton);
 
 	upButton.setReleasedFunction (&upReleased);
-	menuItems.Add (&upButton);
+	menuItems.push_back (&upButton);
 
 	downButton.setReleasedFunction (&downReleased);
-	menuItems.Add (&downButton);
+	menuItems.push_back (&downButton);
 
 	offset = 0;
 	resetText();
@@ -333,54 +333,54 @@ cDialogPreferences::cDialogPreferences(cPlayer* player_) : cMenu (LoadPCX (GFXOD
 	SDL_BlitSurface (background, &src, background, &dest);
 
 	titleLabel.setCentered (true);
-	menuItems.Add (&titleLabel);
-	menuItems.Add (&volumeLabel);
-	menuItems.Add (&musicLabel);
-	menuItems.Add (&effectsLabel);
-	menuItems.Add (&voicesLabel);
+	menuItems.push_back (&titleLabel);
+	menuItems.push_back (&volumeLabel);
+	menuItems.push_back (&musicLabel);
+	menuItems.push_back (&effectsLabel);
+	menuItems.push_back (&voicesLabel);
 
 	disableMusicChBox.setClickedFunction (&musicMuteChanged);
-	menuItems.Add (&disableMusicChBox);
+	menuItems.push_back (&disableMusicChBox);
 	disableEffectsChBox.setClickedFunction (&effectsMuteChanged);
-	menuItems.Add (&disableEffectsChBox);
+	menuItems.push_back (&disableEffectsChBox);
 	disableVoicesChBox.setClickedFunction (&voicesMuteChanged);
-	menuItems.Add (&disableVoicesChBox);
+	menuItems.push_back (&disableVoicesChBox);
 
 	musicSlider.setValue ( (float) cSettings::getInstance().getMusicVol());
 	musicSlider.setMoveCallback (&musicVolumeChanged);
-	menuItems.Add (&musicSlider);
-	menuItems.Add (musicSlider.scroller);
+	menuItems.push_back (&musicSlider);
+	menuItems.push_back (musicSlider.scroller);
 
 	effectsSlider.setValue ( (float) cSettings::getInstance().getSoundVol());
 	effectsSlider.setMoveCallback (&effectsVolumeChanged);
-	menuItems.Add (&effectsSlider);
-	menuItems.Add (effectsSlider.scroller);
+	menuItems.push_back (&effectsSlider);
+	menuItems.push_back (effectsSlider.scroller);
 
 	voicesSlider.setValue ( (float) cSettings::getInstance().getVoiceVol());
 	voicesSlider.setMoveCallback (&voicesVolumeChanged);
-	menuItems.Add (&voicesSlider);
-	menuItems.Add (voicesSlider.scroller);
+	menuItems.push_back (&voicesSlider);
+	menuItems.push_back (voicesSlider.scroller);
 
-	menuItems.Add (&nameLabel);
+	menuItems.push_back (&nameLabel);
 
 	nameEdit.setText (cSettings::getInstance().getPlayerName());
-	menuItems.Add (&nameEdit);
+	menuItems.push_back (&nameEdit);
 
-	menuItems.Add (&animationChBox);
-	menuItems.Add (&shadowsChBox);
-	menuItems.Add (&alphaChBox);
-	menuItems.Add (&demageBuilChBox);
-	menuItems.Add (&demageVehChBox);
-	menuItems.Add (&tracksChBox);
+	menuItems.push_back (&animationChBox);
+	menuItems.push_back (&shadowsChBox);
+	menuItems.push_back (&alphaChBox);
+	menuItems.push_back (&demageBuilChBox);
+	menuItems.push_back (&demageVehChBox);
+	menuItems.push_back (&tracksChBox);
 
-	menuItems.Add (&scrollSpeedLabel);
+	menuItems.push_back (&scrollSpeedLabel);
 	scrollSpeedSlider.setValue ( (float) cSettings::getInstance().getScrollSpeed());
-	menuItems.Add (&scrollSpeedSlider);
-	menuItems.Add (scrollSpeedSlider.scroller);
+	menuItems.push_back (&scrollSpeedSlider);
+	menuItems.push_back (scrollSpeedSlider.scroller);
 
-	menuItems.Add (&autosaveChBox);
-	menuItems.Add (&introChBox);
-	menuItems.Add (&windowChBox);
+	menuItems.push_back (&autosaveChBox);
+	menuItems.push_back (&introChBox);
+	menuItems.push_back (&windowChBox);
 
 	//BEGIN SCREEN RESOLUTION CHECKBOXES
 	//FIXME: need dropdown box item for this. This is very dirty code fixed to 9 possible resolution values. Odd things might occur if less than 9 useable screen resolutions are found here.
@@ -421,15 +421,15 @@ cDialogPreferences::cDialogPreferences(cPlayer* player_) : cMenu (LoadPCX (GFXOD
 		}
 	}
 
-	menuItems.Add (&resoulutionGroup);
+	menuItems.push_back (&resoulutionGroup);
 
 	//END SCREEN RESOLUTION CHECKBOXES
 
 	okButton.setReleasedFunction (&okReleased);
-	menuItems.Add (&okButton);
+	menuItems.push_back (&okButton);
 
 	cancelButton.setReleasedFunction (&cancelReleased);
-	menuItems.Add (&cancelButton);
+	menuItems.push_back (&cancelButton);
 
 	// save old volumes
 	oldMusicVolume = cSettings::getInstance().getMusicVol();
@@ -571,45 +571,45 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVe
 	getTransferType();
 
 	doneButton.setReleasedFunction (&doneReleased);
-	menuItems.Add (&doneButton);
+	menuItems.push_back (&doneButton);
 
 	cancelButton.setReleasedFunction (&cancelReleased);
-	menuItems.Add (&cancelButton);
+	menuItems.push_back (&cancelButton);
 
 	incButton.setReleasedFunction (&incReleased);
-	menuItems.Add (&incButton);
+	menuItems.push_back (&incButton);
 
 	decButton.setReleasedFunction (&decReleased);
-	menuItems.Add (&decButton);
+	menuItems.push_back (&decButton);
 
 	resBar = new cMenuMaterialBar (position.x + 43, position.y + 159, 0, 0, 223, transferType, false, false),
 	resBar->setClickedFunction (&barClicked);
-	menuItems.Add (resBar);
+	menuItems.push_back (resBar);
 
 	unitNameLabels[0] = new cMenuLabel (position.x + 70, position.y + 105, "", FONT_LATIN_SMALL_WHITE);
 	unitNameLabels[0]->setCentered (true);
-	menuItems.Add (unitNameLabels[0]);
+	menuItems.push_back (unitNameLabels[0]);
 
 	unitNameLabels[1] = new cMenuLabel (position.x + 240, position.y + 105, "", FONT_LATIN_SMALL_WHITE);
 	unitNameLabels[1]->setCentered (true);
-	menuItems.Add (unitNameLabels[1]);
+	menuItems.push_back (unitNameLabels[1]);
 
 	unitCargoLabels[0] = new cMenuLabel (position.x + 30, position.y + 60, "", FONT_LATIN_SMALL_WHITE);
 	unitCargoLabels[0]->setCentered (true);
-	menuItems.Add (unitCargoLabels[0]);
+	menuItems.push_back (unitCargoLabels[0]);
 
 	unitCargoLabels[1] = new cMenuLabel (position.x + 280, position.y + 60, "", FONT_LATIN_SMALL_WHITE);
 	unitCargoLabels[1]->setCentered (true);
-	menuItems.Add (unitCargoLabels[1]);
+	menuItems.push_back (unitCargoLabels[1]);
 
 	transferLabel.setCentered (true);
-	menuItems.Add (&transferLabel);
+	menuItems.push_back (&transferLabel);
 
 	unitImages[0] = new cMenuImage (position.x + 39, position.y + 26);
-	menuItems.Add (unitImages[0]);
+	menuItems.push_back (unitImages[0]);
 
 	unitImages[1] = new cMenuImage (position.x + 208, position.y + 26);
-	menuItems.Add (unitImages[1]);
+	menuItems.push_back (unitImages[1]);
 
 	getNamesNCargoNImages();
 	setCargos();
@@ -870,22 +870,22 @@ cDialogResearch::cDialogResearch (cClient& client_, cPlayer* owner_) :
 	owner->researchFinished = false;
 
 	titleLabel.setCentered (true);
-	menuItems.Add (&titleLabel);
+	menuItems.push_back (&titleLabel);
 
 	centersLabel.setCentered (true);
-	menuItems.Add (&centersLabel);
+	menuItems.push_back (&centersLabel);
 
 	themeLabel.setCentered (true);
-	menuItems.Add (&themeLabel);
+	menuItems.push_back (&themeLabel);
 
 	turnsLabel.setCentered (true);
-	menuItems.Add (&turnsLabel);
+	menuItems.push_back (&turnsLabel);
 
 	doneButton.setReleasedFunction (&doneReleased);
-	menuItems.Add (&doneButton);
+	menuItems.push_back (&doneButton);
 
 	cancelButton.setReleasedFunction (&cancelReleased);
-	menuItems.Add (&cancelButton);
+	menuItems.push_back (&cancelButton);
 
 	const string themeNames[8] =
 	{
@@ -938,30 +938,30 @@ cDialogResearch::cDialogResearch (cClient& client_, cPlayer* owner_) :
 	{
 		centerCountLabels[i] = new cMenuLabel (position.x + 43, position.y + 71 + 28 * i, "0");
 		centerCountLabels[i]->setCentered (true);
-		menuItems.Add (centerCountLabels[i]);
+		menuItems.push_back (centerCountLabels[i]);
 
 		themeNameLabels[i] = new cMenuLabel (position.x + 183, position.y + 71 + 28 * i, themeNames[i]);
-		menuItems.Add (themeNameLabels[i]);
+		menuItems.push_back (themeNameLabels[i]);
 
 		percentageLabels[i] = new cMenuLabel (position.x + 258, position.y + 71 + 28 * i, "+" + iToStr (owner->researchLevel.getCurResearchLevel (i)) + "%");
 		percentageLabels[i]->setCentered (true);
-		menuItems.Add (percentageLabels[i]);
+		menuItems.push_back (percentageLabels[i]);
 
 		turnsLabels[i] = new cMenuLabel (position.x + 313, position.y + 71 + 28 * i, "");
 		turnsLabels[i]->setCentered (true);
-		menuItems.Add (turnsLabels[i]);
+		menuItems.push_back (turnsLabels[i]);
 
 		incButtons[i] = new cMenuButton (position.x + 143, position.y + 70 + 28 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL);
 		incButtons[i]->setReleasedFunction (&incReleased);
-		menuItems.Add (incButtons[i]);
+		menuItems.push_back (incButtons[i]);
 
 		decButtons[i] = new cMenuButton (position.x + 71, position.y + 70 + 28 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL);
 		decButtons[i]->setReleasedFunction (&decReleased);
-		menuItems.Add (decButtons[i]);
+		menuItems.push_back (decButtons[i]);
 
 		scroller[i] = new cMenuScrollerHandler (position.x + 90, position.y + 70 + 28 * i, 51, owner->ResearchCount);
 		scroller[i]->setClickedFunction (&sliderClicked);
-		menuItems.Add (scroller[i]);
+		menuItems.push_back (scroller[i]);
 	}
 
 	unusedResearch = owner->ResearchCount;

@@ -47,7 +47,7 @@ void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_PLAYERLIST);
 
-	for (int i = (int) players->Size() - 1; i >= 0; i--)
+	for (int i = (int) players->size() - 1; i >= 0; i--)
 	{
 		const sMenuPlayer* player = (*players) [i];
 		message->pushInt16 (player->nr);
@@ -55,7 +55,7 @@ void sendPlayerList (cTCP& network, const cList<sMenuPlayer*>* players)
 		message->pushInt16 (player->color);
 		message->pushString (player->name);
 	}
-	message->pushInt16 ( (int) players->Size());
+	message->pushInt16 ( (int) players->size());
 	cMenu::sendMessage (network, message);
 }
 
@@ -129,13 +129,13 @@ void sendLandingUnits (cTCP& network, const cList<sLandingUnit>* landingList, in
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_LANDING_VEHICLES);
 
-	for (unsigned int i = 0; i < landingList->Size(); i++)
+	for (unsigned int i = 0; i < landingList->size(); i++)
 	{
 		message->pushInt16 ( (*landingList) [i].unitID.iSecondPart);
 		message->pushInt16 ( (*landingList) [i].unitID.iFirstPart);
 		message->pushInt16 ( (*landingList) [i].cargo);
 	}
-	message->pushInt16 ( (int) landingList->Size());
+	message->pushInt16 ( (int) landingList->size());
 	message->pushInt16 (ownerNr);
 
 	// the host has not to send the message over tcpip and we can handle the message directly

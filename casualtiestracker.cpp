@@ -246,7 +246,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messa
 				message->pushInt16 (currentPlayer);
 				message->pushInt16 (dataSetsInMessage);
 				entriesInMessageForPlayer = 0;
-				messages.Add (message);
+				messages.push_back (message);
 				message = 0;
 			}
 		}
@@ -259,7 +259,7 @@ void cCasualtiesTracker::prepareNetMessagesForClient (cList<cNetMessage*>& messa
 	if (message != 0)
 	{
 		message->pushInt16 (dataSetsInMessage);
-		messages.Add (message);
+		messages.push_back (message);
 	}
 }
 

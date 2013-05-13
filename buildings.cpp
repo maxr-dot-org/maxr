@@ -117,7 +117,7 @@ cBuilding::~cBuilding()
 {
 	if (BuildList)
 	{
-		for (size_t i = 0; i != BuildList->Size(); ++i)
+		for (size_t i = 0; i != BuildList->size(); ++i)
 		{
 			delete (*BuildList) [i];
 		}
@@ -127,7 +127,7 @@ cBuilding::~cBuilding()
 	if (IsLocked)
 	{
 		cList<cPlayer*>& playerList = *Client->getPlayerList();
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* p = playerList[i];
 			p->DeleteLock (this);
@@ -151,7 +151,7 @@ string cBuilding::getStatusStr(const cGameGUI& gameGUI) const
 	{
 		const cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 		// Factory:
-		if (!data.canBuild.empty() && BuildList && BuildList->Size() && owner == activePlayer)
+		if (!data.canBuild.empty() && BuildList && BuildList->size() && owner == activePlayer)
 		{
 			sBuildList* buildListItem = (*BuildList) [0];
 
@@ -348,7 +348,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ( (BuildList && BuildList->Size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if ( ( (BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
@@ -1109,7 +1109,7 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 		if (v->IsBuilding || v->IsClearing)
 			return false;
 
-		for (unsigned int i = 0; i < SubBase->buildings.Size(); i++)
+		for (unsigned int i = 0; i < SubBase->buildings.size(); i++)
 		{
 			const cBuilding* b = SubBase->buildings[i];
 
@@ -1236,7 +1236,7 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 
 	Vehicle->Loaded = true;
 
-	storedUnits.Add (Vehicle);
+	storedUnits.push_back (Vehicle);
 	data.storageUnitsCur++;
 
 	owner->DoScan();
@@ -1717,7 +1717,7 @@ int cBuilding::playStream()
 //--------------------------------------------------------------------------
 bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
 {
-	for (unsigned int i = 0; i < detectedByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < detectedByPlayerList.size(); i++)
 	{
 		if (detectedByPlayerList[i] == player) return true;
 	}
@@ -1728,7 +1728,7 @@ bool cBuilding::isDetectedByPlayer (const cPlayer* player) const
 void cBuilding::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
 	if (!isDetectedByPlayer (player))
-		detectedByPlayerList.Add (player);
+		detectedByPlayerList.push_back (player);
 }
 
 //--------------------------------------------------------------------------
@@ -1747,7 +1747,7 @@ void cBuilding::makeDetection (cServer& server)
 	{
 		int offset = PosX + PosY * server.Map->size;
 		cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner) continue;
@@ -1785,7 +1785,7 @@ sUnitData* cBuilding::getUpgradedUnitData() const
 //-----------------------------------------------------------------------------
 bool cBuilding::factoryHasJustFinishedBuilding() const
 {
-	return (BuildList && BuildList->Size() > 0 && isUnitWorking() == false && (*BuildList) [0]->metall_remaining <= 0);
+	return (BuildList && BuildList->size() > 0 && isUnitWorking() == false && (*BuildList) [0]->metall_remaining <= 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1833,7 +1833,7 @@ void cBuilding::executeSelfDestroyCommand (const cClient& client)
 bool cBuilding::buildingCanBeStarted() const
 {
 	return (data.canWork && isUnitWorking() == false
-			&& ( (BuildList && BuildList->Size() > 0) || data.canBuild.empty()));
+			&& ( (BuildList && BuildList->size() > 0) || data.canBuild.empty()));
 }
 
 //-----------------------------------------------------------------------------

@@ -236,7 +236,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [x + y * Map->size].getPlanes();
 					else blockingUnit = (*Map) [x + y * Map->size].getVehicles();
 					// check whether the blocking unit is the group
-					for (unsigned int i = 0; i < group->Size(); i++)
+					for (unsigned int i = 0; i < group->size(); i++)
 					{
 						if ( (*group) [i] == blockingUnit)
 						{
@@ -448,7 +448,7 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 		Vehicle->owner->deleteSentry (Vehicle);
 	}
 	sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
-	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 	{
 		sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 	}
@@ -627,7 +627,7 @@ void cServerMoveJob::release()
 	bEndForNow = false;
 	bFinished = true;
 	Log.write (" Server: Released old movejob", cLog::eLOG_TYPE_NET_DEBUG);
-	for (unsigned int i = 0; i < server->ActiveMJobs.Size(); i++)
+	for (unsigned int i = 0; i < server->ActiveMJobs.size(); i++)
 	{
 		if (this == server->ActiveMJobs[i]) return;
 	}
@@ -695,7 +695,7 @@ bool cServerMoveJob::checkMove()
 
 		if (wasOnLand && driveIntoWater)
 		{
-			while (Vehicle->detectedByPlayerList.Size())
+			while (Vehicle->detectedByPlayerList.size())
 				Vehicle->resetDetectedByPlayer (*server, Vehicle->detectedByPlayerList[0]);
 		}
 	}
@@ -763,7 +763,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	cBuilding* mine = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getMine();
 	if (Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner)
 	{
-		server->AJobs.Add (new cServerAttackJob (*server, mine, Vehicle->PosX + Vehicle->PosY * Map->size, false));
+		server->AJobs.push_back (new cServerAttackJob (*server, mine, Vehicle->PosX + Vehicle->PosY * Map->size, false));
 		bEndForNow = true;
 	}
 
@@ -790,7 +790,7 @@ void cServerMoveJob::doEndMoveVehicle()
 		{
 			// send new unit values
 			sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
-			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.Size(); i++)
+			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			{
 				sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 			}
@@ -913,7 +913,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	//is the target in sight?
 	if (!vehicle_->owner->ScanMap[offset]) return;
 
-	server.AJobs.Add (new cServerAttackJob (server, vehicle_, offset, false));
+	server.AJobs.push_back (new cServerAttackJob (server, vehicle_, offset, false));
 }
 
 cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle) :

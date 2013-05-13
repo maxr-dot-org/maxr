@@ -130,7 +130,7 @@ cPlayer::~cPlayer()
 
 	for (cVehicle* ptr = VehicleList; ptr; ptr = ptr->next)
 	{
-		if (ptr->storedUnits.Size())
+		if (ptr->storedUnits.size())
 		{
 			ptr->deleteStoredUnits();
 		}
@@ -149,9 +149,9 @@ cPlayer::~cPlayer()
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
-		while (BuildingList->storedUnits.Size() > 0)
+		while (BuildingList->storedUnits.size() > 0)
 		{
-			BuildingList->storedUnits.Delete (BuildingList->storedUnits.Size() - 1);
+			BuildingList->storedUnits.Delete (BuildingList->storedUnits.size() - 1);
 		}
 
 		delete BuildingList;
@@ -168,21 +168,21 @@ cPlayer::~cPlayer()
 	delete [] DetectSeaMap;
 	delete [] DetectMinesMap;
 
-	for (size_t i = 0; i != ReportVehicles.Size(); ++i)
+	for (size_t i = 0; i != ReportVehicles.size(); ++i)
 	{
 		delete ReportVehicles[i];
 	}
-	ReportVehicles.Clear();
-	for (size_t i = 0; i != ReportBuildings.Size(); ++i)
+	ReportVehicles.clear();
+	for (size_t i = 0; i != ReportBuildings.size(); ++i)
 	{
 		delete ReportBuildings[i];
 	}
-	ReportBuildings.Clear();
-	for (size_t i = 0; i != LockList.Size(); ++i)
+	ReportBuildings.clear();
+	for (size_t i = 0; i != LockList.size(); ++i)
 	{
 		delete LockList[i];
 	}
-	LockList.Clear();
+	LockList.clear();
 
 	delete savedHud;
 }
@@ -640,7 +640,7 @@ void cPlayer::doResearch (cServer& server)
 	bool researchFinished = false;
 	cList<sUnitData*> upgradedUnitDatas;
 	cList<int> areasReachingNextLevel;
-	reportResearchAreasFinished.Clear();
+	reportResearchAreasFinished.clear();
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
 		if (researchCentersWorkingOnArea[area] > 0)
@@ -648,8 +648,8 @@ void cPlayer::doResearch (cServer& server)
 			if (researchLevel.doResearch (researchCentersWorkingOnArea[area], area))
 			{
 				// next level reached
-				areasReachingNextLevel.Add (area);
-				reportResearchAreasFinished.Add (area);
+				areasReachingNextLevel.push_back (area);
+				reportResearchAreasFinished.push_back (area);
 				researchFinished = true;
 			}
 		}
@@ -658,7 +658,7 @@ void cPlayer::doResearch (cServer& server)
 	{
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
-		for (unsigned int i = 0; i < upgradedUnitDatas.Size(); i++)
+		for (unsigned int i = 0; i < upgradedUnitDatas.size(); i++)
 			sendUnitUpgrades (server, upgradedUnitDatas[i], Nr);
 	}
 	sendResearchLevel (server, &researchLevel, Nr);
@@ -736,7 +736,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
 		bool incrementVersion = false;
-		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
+		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{
 			int researchArea = areasReachingNextLevel[areaCounter];
 			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
@@ -775,7 +775,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
 				if (!resultUpgradedUnitDatas.Contains (& (VehicleData[i])))
-					resultUpgradedUnitDatas.Add (& (VehicleData[i]));
+					resultUpgradedUnitDatas.push_back (& (VehicleData[i]));
 			}
 		}
 		if (incrementVersion)
@@ -785,7 +785,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
 		bool incrementVersion = false;
-		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.Size(); areaCounter++)
+		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{
 			int researchArea = areasReachingNextLevel[areaCounter];
 			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
@@ -822,7 +822,7 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
 				if (!resultUpgradedUnitDatas.Contains (& (BuildingData[i])))
-					resultUpgradedUnitDatas.Add (& (BuildingData[i]));
+					resultUpgradedUnitDatas.push_back (& (BuildingData[i]));
 			}
 		}
 		if (incrementVersion)
@@ -857,7 +857,7 @@ void cPlayer::AddLock (cBuilding* b)
 	elem->b = b;
 	elem->v = NULL;
 	b->IsLocked = true;
-	LockList.Add (elem);
+	LockList.push_back (elem);
 }
 
 //------------------------------------------------------------
@@ -869,7 +869,7 @@ void cPlayer::AddLock (cVehicle* v)
 	elem->v = v;
 	elem->b = NULL;
 	v->IsLocked = true;
-	LockList.Add (elem);
+	LockList.push_back (elem);
 }
 
 //------------------------------------------------------------
@@ -877,7 +877,7 @@ void cPlayer::AddLock (cVehicle* v)
 //------------------------------------------------------------
 void cPlayer::DeleteLock (cVehicle* v)
 {
-	for (size_t i = 0; i < LockList.Size(); i++)
+	for (size_t i = 0; i < LockList.size(); i++)
 	{
 		sLockElem* elem = LockList[i];
 		if (elem->v == v)
@@ -895,7 +895,7 @@ void cPlayer::DeleteLock (cVehicle* v)
 //------------------------------------------------------------
 void cPlayer::DeleteLock (cBuilding* b)
 {
-	for (size_t i = 0; i < LockList.Size(); i++)
+	for (size_t i = 0; i < LockList.size(); i++)
 	{
 		sLockElem* elem = LockList[i];
 		if (elem->b == b)
@@ -914,7 +914,7 @@ void cPlayer::DeleteLock (cBuilding* b)
 bool cPlayer::InLockList (const cBuilding* b) const
 {
 	sLockElem* elem;
-	for (unsigned int i = 0; i < LockList.Size(); i++)
+	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
 		elem = LockList[i];
 		if (elem->b == b)
@@ -929,7 +929,7 @@ bool cPlayer::InLockList (const cBuilding* b) const
 bool cPlayer::InLockList (const cVehicle* v) const
 {
 	sLockElem* elem;
-	for (unsigned int i = 0; i < LockList.Size(); i++)
+	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
 		elem = LockList[i];
 		if (elem->v == v)
@@ -973,7 +973,7 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 	if (!gameGUI.lockChecked()) return;
 	const int tileSize = gameGUI.getTileSize();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	for (unsigned int i = 0; i < LockList.Size(); i++)
+	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
 		sLockElem* elem = LockList[i];
 		if (elem->v)
@@ -1155,5 +1155,5 @@ void cPlayer::addSavedReport (const string& message, sSavedReportMessage::eRepor
 	savedReport.unitID = unitID;
 	savedReport.colorNr = colorNr;
 
-	savedReportsList.Add (savedReport);
+	savedReportsList.push_back (savedReport);
 }

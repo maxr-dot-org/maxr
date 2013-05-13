@@ -99,8 +99,8 @@ void cGameTimer::setReceivedTime (unsigned int time, unsigned int nr)
 {
 	cMutex::Lock lock (mutex);
 
-	while (receivedTime.Size() <= nr)
-		receivedTime.Add (0);
+	while (receivedTime.size() <= nr)
+		receivedTime.push_back (0);
 
 	receivedTime[nr] = time;
 }
@@ -109,7 +109,7 @@ unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 {
 	cMutex::Lock lock (mutex);
 
-	if (receivedTime.Size() <= nr)
+	if (receivedTime.size() <= nr)
 		return 0;
 
 	return receivedTime[nr];
@@ -235,7 +235,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 	int newWaitingForPlayer = -1;
 
 	cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
 		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
@@ -266,7 +266,7 @@ void cGameTimerServer::run (cServer& server)
 			handleTimer ();
 			server.doGameActions();
 			const cList<cPlayer*>& playerList = *server.PlayerList;
-			for (size_t i = 0; i < playerList.Size(); i++)
+			for (size_t i = 0; i < playerList.size(); i++)
 			{
 				const cPlayer* player = playerList[i];
 
@@ -285,7 +285,7 @@ Uint32 calcClientChecksum (const cClient& client)
 {
 	Uint32 crc = 0;
 	const cList<cPlayer*>& playerList = *client.getPlayerList();
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cVehicle* vehicle = playerList[i]->VehicleList;
 		while (vehicle)
@@ -307,7 +307,7 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 {
 	Uint32 crc = 0;
 	const cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cVehicle* vehicle = playerList[i]->VehicleList;
 		while (vehicle)
@@ -331,7 +331,7 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 void compareGameData (const cClient& client, const cServer& server)
 {
 	const cList<cPlayer*>& playerList = *client.getPlayerList();
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* clientPlayer = playerList[i];
 		const cVehicle* clientVehicle = clientPlayer->VehicleList;

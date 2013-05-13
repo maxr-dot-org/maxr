@@ -132,7 +132,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	}
 
 	cPlayer* actPlayer = NULL;
-	for (unsigned int i = 0; i < players.Size(); i++)
+	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		if (players[i]->Nr == playerNr)
 			actPlayer = players[i];
@@ -156,9 +156,9 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		}
 
 		// copy playerlist for server
-		for (unsigned int i = 0; i < players.Size(); i++)
+		for (unsigned int i = 0; i < players.size(); i++)
 		{
-			serverPlayers.Add (new cPlayer ( (*players[i])));
+			serverPlayers.push_back (new cPlayer ( (*players[i])));
 
 			serverPlayers[i]->InitMaps (serverMap.size, &serverMap);
 		}
@@ -175,11 +175,11 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		Server = new cServer (network, &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 		// send victory conditions to clients
-		for (unsigned n = 0; n < players.Size(); n++)
+		for (unsigned n = 0; n < players.size(); n++)
 			sendVictoryConditions (*Server, nTurns, nScore, players[n]);
 
 		// place resources
-		for (unsigned int i = 0; i < players.Size(); i++)
+		for (unsigned int i = 0; i < players.size(); i++)
 		{
 			Server->correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
 			serverMap.placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency);
@@ -190,7 +190,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	// init client and his players
 	Client = new cClient (network, map, &players);
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-	for (unsigned int i = 0; i < players.Size(); i++)
+	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		players[i]->InitMaps (map->size, map);
 	}
@@ -203,7 +203,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			sendClansToClients (*Server, &players);
 
 		// make the landing
-		for (unsigned int i = 0; i < players.Size(); i++)
+		for (unsigned int i = 0; i < players.size(); i++)
 		{
 			Server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 			delete landData[i];
@@ -217,11 +217,11 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		sendReconnectionSuccess (*network, playerNr);
 	Client->gameGUI.show();
 
-	for (size_t i = 0; i != players.Size(); ++i)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		delete players[i];
 	}
-	players.Clear();
+	players.clear();
 
 	if (isServer)
 	{
@@ -243,7 +243,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cSavegame savegame (savegameNum);
 	if (savegame.load (network) != 1) return;
 	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
-	if (player >= (int) serverPlayerList.Size()) return;
+	if (player >= (int) serverPlayerList.size()) return;
 
 	// copy map for client
 	cMap clientMap;
@@ -252,14 +252,14 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cList<cPlayer*> clientPlayerList;
 
 	// copy players for client
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		clientPlayerList.Add (new cPlayer (*serverPlayerList[i]));
+		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
 	Client = new cClient (network, &clientMap, &clientPlayerList);
 	Client->initPlayer (clientPlayerList[player]);
-	for (unsigned int i = 0; i < clientPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
 		clientPlayerList[i]->InitMaps (clientMap.size, &clientMap);
 	}
@@ -268,26 +268,26 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
 	sendRequestResync (*Client, serverPlayerList[player]->Nr);
 
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
 		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.Size(); ++j)
+		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
 		}
-		reportList.Clear();
+		reportList.clear();
 	}
 
 	// exit menu and start game
 	Server->bStarted = true;
 	Client->gameGUI.show();
 
-	for (size_t i = 0; i != clientPlayerList.Size(); ++i)
+	for (size_t i = 0; i != clientPlayerList.size(); ++i)
 	{
 		delete clientPlayerList[i];
 	}
-	clientPlayerList.Clear();
+	clientPlayerList.clear();
 
 	Server->stop ();
 	delete Client;
@@ -315,9 +315,9 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 
 	unsigned int playerNr = message->popInt16();
 
-	for (unsigned int i = (unsigned int) landingUnits.Size(); i < players.Size(); i++)
+	for (unsigned int i = (unsigned int) landingUnits.size(); i < players.size(); i++)
 	{
-		landingUnits.Add (NULL);
+		landingUnits.push_back (NULL);
 	}
 
 	if (landingUnits[playerNr] == NULL) landingUnits[playerNr] = new cList<sLandingUnit>;
@@ -330,7 +330,7 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 		unit.cargo = message->popInt16();
 		unit.unitID.iFirstPart = message->popInt16();
 		unit.unitID.iSecondPart = message->popInt16();
-		playerLandingUnits->Add (unit);
+		playerLandingUnits->push_back (unit);
 	}
 }
 
@@ -366,9 +366,9 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	int playerNr = message->popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	for (unsigned int i = (unsigned int) landData.Size(); i < players.Size(); i++)
+	for (unsigned int i = (unsigned int) landData.size(); i < players.size(); i++)
 	{
-		landData.Add (NULL);
+		landData.push_back (NULL);
 	}
 
 	if (landData[playerNr] == NULL) landData[playerNr] = new sClientLandData;
@@ -380,13 +380,13 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	c->iLandY = message->popInt16();
 	c->receivedOK = true;
 
-	for (int player = 0; player < (int) landData.Size(); player++)
+	for (int player = 0; player < (int) landData.size(); player++)
 	{
 		if (landData[player] == NULL || !landData[player]->receivedOK) return;
 	}
 
 	//now check the landing positions
-	for (int player = 0; player < (int) landData.Size(); player++)
+	for (int player = 0; player < (int) landData.size(); player++)
 	{
 		eLandingState state = checkLandingState (player);
 
@@ -412,7 +412,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 
 	// now remove all players with warning
 	bool ok = true;
-	for (size_t player = 0; player < landData.Size(); ++player)
+	for (size_t player = 0; player < landData.size(); ++player)
 	{
 		if (landData[player]->landingState != LANDING_POSITION_OK && landData[player]->landingState != LANDING_POSITION_CONFIRMED)
 		{
@@ -437,7 +437,7 @@ eLandingState cGameDataContainer::checkLandingState (int playerNr)
 	bool bPositionWarning = false;
 
 	//check distances to all other players
-	for (int i = 0; i < (int) players.Size(); i++)
+	for (int i = 0; i < (int) players.size(); i++)
 	{
 		const sClientLandData* c = landData[i];
 		if (c == NULL) continue;
@@ -555,7 +555,7 @@ void cMenu::recalcPosition (bool resetItemPositions)
 
 	if (resetItemPositions)
 	{
-		for (unsigned int i = 0; i < menuItems.Size(); i++)
+		for (unsigned int i = 0; i < menuItems.size(); i++)
 		{
 			int xOffset = menuItems[i]->getPosition().x - oldPosition.x;
 			int yOffset = menuItems[i]->getPosition().y - oldPosition.y;
@@ -599,7 +599,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 	mouse->Show();
 
 	// draw all menu items
-	for (unsigned int i = 0; i < menuItems.Size(); i++)
+	for (unsigned int i = 0; i < menuItems.size(); i++)
 	{
 		menuItems[i]->draw();
 	}
@@ -650,7 +650,7 @@ int cMenu::show()
 		{
 			mouse->draw (true, screen);
 
-			for (unsigned int i = 0; i < menuItems.Size(); i++)
+			for (unsigned int i = 0; i < menuItems.size(); i++)
 			{
 				cMenuItem* menuItem = menuItems[i];
 				if (menuItem->overItem (lastMouseX, lastMouseY) && !menuItem->overItem (mouse->x, mouse->y)) menuItem->hoveredAway (this);
@@ -661,7 +661,7 @@ int cMenu::show()
 		}
 
 		//run timer callbacks
-		for (unsigned int i = 0; i < menuTimers.Size(); i++)
+		for (unsigned int i = 0; i < menuTimers.size(); i++)
 			if (menuTimers[i]->getState()) menuTimers[i]->callback();
 
 		lastMouseX = mouse->x;
@@ -710,7 +710,7 @@ void cMenu::handleMouseInput (sMouseState mouseState)
 	mouse->GetPos();
 	mouse->isDoubleClick = mouseState.isDoubleClick;
 
-	for (unsigned int i = 0; i < menuItems.Size(); i++)
+	for (unsigned int i = 0; i < menuItems.size(); i++)
 	{
 		cMenuItem* menuItem = menuItems[i];
 		if (menuItem->overItem (mouse->x, mouse->y) && mouseState.leftButtonPressed)
@@ -758,7 +758,7 @@ void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer*
 //------------------------------------------------------------------------------
 void cMenu::addTimer (cMenuTimerBase* timer)
 {
-	menuTimers.Add (timer);
+	menuTimers.push_back (timer);
 }
 
 
@@ -773,11 +773,11 @@ cMainMenu::cMainMenu()
 	infoImage = new cMenuImage (position.x + 16, position.y + 182, getRandomInfoImage());
 	infoImage->setReleasedFunction (&infoImageReleased);
 	infoImage->setClickSound (SoundData.SNDHudButton);
-	menuItems.Add (infoImage);
+	menuItems.push_back (infoImage);
 
 	creditsLabel = new cMenuLabel (position.x + position.w / 2, position.y + 465, lngPack.i18n ("Text~Main~Credits_Reloaded") + " " + PACKAGE_VERSION);
 	creditsLabel->setCentered (true);
-	menuItems.Add (creditsLabel);
+	menuItems.push_back (creditsLabel);
 }
 
 //------------------------------------------------------------------------------
@@ -838,27 +838,27 @@ cStartMenu::cStartMenu()
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Title~MainMenu"), FONT_LATIN_NORMAL);
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	singleButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~Single_Player"));
 	singleButton->setReleasedFunction (&singlePlayerReleased);
-	menuItems.Add (singleButton);
+	menuItems.push_back (singleButton);
 
 	multiButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~Multi_Player"));
 	multiButton->setReleasedFunction (&multiPlayerReleased);
-	menuItems.Add (multiButton);
+	menuItems.push_back (multiButton);
 
 	preferenceButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Settings~Preferences"));
 	preferenceButton->setReleasedFunction (&preferencesReleased);
-	menuItems.Add (preferenceButton);
+	menuItems.push_back (preferenceButton);
 
 	licenceButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Button~Mani"));
 	licenceButton->setReleasedFunction (&licenceReleased);
-	menuItems.Add (licenceButton);
+	menuItems.push_back (licenceButton);
 
 	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&exitReleased);
-	menuItems.Add (exitButton);
+	menuItems.push_back (exitButton);
 
 	PlayMusic ( (cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
 }
@@ -917,19 +917,19 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Button~Single_Player"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	newGameButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~Game_New"));
 	newGameButton->setReleasedFunction (&newGameReleased);
-	menuItems.Add (newGameButton);
+	menuItems.push_back (newGameButton);
 
 	loadGameButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~Game_Load"));
 	loadGameButton->setReleasedFunction (&loadGameReleased);
-	menuItems.Add (loadGameButton);
+	menuItems.push_back (loadGameButton);
 
 	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 }
 
 //------------------------------------------------------------------------------
@@ -977,33 +977,33 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 147, lngPack.i18n ("Text~Button~Multi_Player"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	tcpHostButton = new cMenuButton (position.x + 390, position.y + 190, lngPack.i18n ("Text~Button~TCPIP_Host"));
 	tcpHostButton->setReleasedFunction (&tcpHostReleased);
-	menuItems.Add (tcpHostButton);
+	menuItems.push_back (tcpHostButton);
 
 	tcpClientButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE, lngPack.i18n ("Text~Button~TCPIP_Client"));
 	tcpClientButton->setReleasedFunction (&tcpClientReleased);
-	menuItems.Add (tcpClientButton);
+	menuItems.push_back (tcpClientButton);
 
 #ifndef RELEASE
 
 	newHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Button~HotSeat_New"));
 	newHotseatButton->setReleasedFunction (&newHotseatReleased);
 	//newHotseatButton->setLocked(true); //disable, not implemented yet
-	menuItems.Add (newHotseatButton);
+	menuItems.push_back (newHotseatButton);
 
 	loadHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 3, lngPack.i18n ("Text~Button~HotSeat_Load"));
 	loadHotseatButton->setReleasedFunction (&loadHotseatReleased);
 	//loadHotseatButton->setLocked(true); //disable, not implemented yet
-	menuItems.Add (loadHotseatButton);
+	menuItems.push_back (loadHotseatButton);
 
 #endif
 
 	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 }
 
 //------------------------------------------------------------------------------
@@ -1074,80 +1074,80 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	// Title
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 13, lngPack.i18n ("Text~Button~Game_Options"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	// OK button
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&okReleased);
-	menuItems.Add (okButton);
+	menuItems.push_back (okButton);
 
 	// Back button
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 
 	// Resources field
 	metalLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Metal") + ":");
-	menuItems.Add (metalLabel);
+	menuItems.push_back (metalLabel);
 	metalGroup = new cMenuRadioGroup();
 	metalGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.metal == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.metal == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.metal == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	metalGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.metal == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (metalGroup);
+	menuItems.push_back (metalGroup);
 	iCurrentLine += iLineHeight;
 
 	oilLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Oil") + ":");
-	menuItems.Add (oilLabel);
+	menuItems.push_back (oilLabel);
 	oilGroup = new cMenuRadioGroup();
 	oilGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.oil == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.oil == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.oil == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	oilGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.oil == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (oilGroup);
+	menuItems.push_back (oilGroup);
 	iCurrentLine += iLineHeight;
 
 	goldLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Gold") + ":");
-	menuItems.Add (goldLabel);
+	menuItems.push_back (goldLabel);
 	goldGroup = new cMenuRadioGroup();
 	goldGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Low"), settings.gold == SETTING_RESVAL_LOW, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.gold == SETTING_RESVAL_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much"), settings.gold == SETTING_RESVAL_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	goldGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.gold == SETTING_RESVAL_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (goldGroup);
+	menuItems.push_back (goldGroup);
 	iCurrentLine += iLineHeight;
 
 	// Resource frequency field
 	resFrequencyLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Resource_Density") + ":");
-	menuItems.Add (resFrequencyLabel);
+	menuItems.push_back (resFrequencyLabel);
 
 	resFrequencyGroup = new cMenuRadioGroup();
 	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Thin"), settings.resFrequency == SETTING_RESFREQ_THIN, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Normal"), settings.resFrequency == SETTING_RESFREQ_NORMAL, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 2, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Thick"), settings.resFrequency == SETTING_RESFREQ_THICK, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	resFrequencyGroup->addButton (new cMenuCheckButton (position.x + 240 + 86 * 3, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Most"), settings.resFrequency == SETTING_RESFREQ_MOST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (resFrequencyGroup);
+	menuItems.push_back (resFrequencyGroup);
 	iCurrentLine += iLineHeight * 3;
 
 	// Bridgehead field
 	bridgeheadLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~BridgeHead") + ":");
-	menuItems.Add (bridgeheadLabel);
+	menuItems.push_back (bridgeheadLabel);
 
 	bridgeheadGroup = new cMenuRadioGroup();
 	bridgeheadGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Mobile"), settings.bridgeHead == SETTING_BRIDGEHEAD_MOBILE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	bridgeheadGroup->addButton (new cMenuCheckButton (position.x + 240 + 173, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Definite"), settings.bridgeHead == SETTING_BRIDGEHEAD_DEFINITE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (bridgeheadGroup);
+	menuItems.push_back (bridgeheadGroup);
 	iCurrentLine += iLineHeight;
 
 	// Game type field
 	gameTypeLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Game_Type") + ":");
-	menuItems.Add (gameTypeLabel);
+	menuItems.push_back (gameTypeLabel);
 
 	gameTypeGroup = new cMenuRadioGroup();
 	gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Turns"), settings.gameType == SETTINGS_GAMETYPE_TURNS, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	gameTypeGroup->addButton (new cMenuCheckButton (position.x + 240 + 173, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Type_Simu"), settings.gameType == SETTINGS_GAMETYPE_SIMU, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (gameTypeGroup);
+	menuItems.push_back (gameTypeGroup);
 	iCurrentLine += iLineHeight * 3;
 
 	// Other options (AlienTechs and Clans):
@@ -1162,18 +1162,18 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	*/
 
 	clansLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Clans") + ":");
-	menuItems.Add (clansLabel);
+	menuItems.push_back (clansLabel);
 	clansGroup = new cMenuRadioGroup();
 	clansGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~On"), settings.clans == SETTING_CLANS_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	clansGroup->addButton (new cMenuCheckButton (position.x + 240 + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Off"), settings.clans == SETTING_CLANS_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (clansGroup);
+	menuItems.push_back (clansGroup);
 	iCurrentLine += iLineHeight * 3;
 
 	int tmpLine = iCurrentLine;
 
 	// Credits field - this is where the money goes
 	creditsLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Credits") + ":");
-	menuItems.Add (creditsLabel);
+	menuItems.push_back (creditsLabel);
 	iCurrentLine += iLineHeight;
 	creditsGroup = new cMenuRadioGroup();
 	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~None") + " (" + iToStr (SETTING_CREDITS_LOWEST) + ")", settings.credits == SETTING_CREDITS_LOWEST, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
@@ -1187,7 +1187,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Much") + " (" + iToStr (SETTING_CREDITS_MUCH) + ")", settings.credits == SETTING_CREDITS_MUCH, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
 	iCurrentLine += iLineHeight;
 	creditsGroup->addButton (new cMenuCheckButton (position.x + 140, position.y + iCurrentLine, lngPack.i18n ("Text~Option~More") + " (" + iToStr (SETTING_CREDITS_MORE) + ")", settings.credits == SETTING_CREDITS_MORE, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
-	menuItems.Add (creditsGroup);
+	menuItems.push_back (creditsGroup);
 
 	iCurrentLine = tmpLine;
 
@@ -1208,7 +1208,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 		position.x + 300, position.y + iCurrentLine,
 		lngPack.i18n ("Text~Comp~GameEndsAt")
 	);
-	menuItems.Add (victoryLabel);
+	menuItems.push_back (victoryLabel);
 
 	tmpLine = iCurrentLine += iLineHeight;
 
@@ -1224,7 +1224,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	victoryGroup->addButton (new cMenuCheckButton (position.x + 500, position.y + iCurrentLine, "400 " + strPoints, bPoints && bLong,  true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
 
 	victoryGroup->addButton (new cMenuCheckButton (position.x + 440, position.y + iCurrentLine, strNoLimit, bAnnih, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY)); iCurrentLine += iLineHeight;
-	menuItems.Add (victoryGroup);
+	menuItems.push_back (victoryGroup);
 }
 
 //------------------------------------------------------------------------------
@@ -1344,24 +1344,24 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Choose_Planet"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&okReleased);
 	okButton->setLocked (true);
-	menuItems.Add (okButton);
+	menuItems.push_back (okButton);
 
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	arrowUpButton = new cMenuButton (position.x + 292, position.y + 435, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG);
 	arrowUpButton->setReleasedFunction (&arrowUpReleased);
-	menuItems.Add (arrowUpButton);
+	menuItems.push_back (arrowUpButton);
 
 	arrowDownButton = new cMenuButton (position.x + 321, position.y + 435, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG);
 	arrowDownButton->setReleasedFunction (&arrowDownReleased);
-	menuItems.Add (arrowDownButton);
+	menuItems.push_back (arrowDownButton);
 
 	int index = 0;
 	for (int y = 0; y < 2; y++)
@@ -1371,11 +1371,11 @@ cPlanetsSelectionMenu::cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer
 			planetImages[index] = new cMenuImage (position.x + 21 + 158 * x, position.y + 86 + 198 * y);
 			planetImages[index]->setReleasedFunction (&mapReleased);
 			planetImages[index]->setClickSound (SoundData.SNDHudButton);
-			menuItems.Add (planetImages[index]);
+			menuItems.push_back (planetImages[index]);
 
 			planetTitles[index] = new cMenuLabel (position.x + 77 + 158 * x, position.y + 48 + 198 * y);
 			planetTitles[index]->setCentered (true);
-			menuItems.Add (planetTitles[index]);
+			menuItems.push_back (planetTitles[index]);
 
 			index++;
 		}
@@ -1395,13 +1395,13 @@ void cPlanetsSelectionMenu::loadMaps()
 	if (!getUserMapsDir().empty())
 	{
 		AutoPtr<cList<string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
-		for (unsigned int i = 0; userMaps != 0 && i < userMaps->Size(); i++)
+		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
 		{
 			if (!maps->Contains ( (*userMaps) [i]))
-				maps->Add ( (*userMaps) [i]);
+				maps->push_back ( (*userMaps) [i]);
 		}
 	}
-	for (unsigned int i = 0; i < maps->Size(); i++)
+	for (unsigned int i = 0; i < maps->size(); i++)
 	{
 		string const& map = (*maps) [i];
 		if (map.substr (map.length() - 3, 3).compare ("WRL") != 0 && map.substr (map.length() - 3, 3).compare ("wrl") != 0)
@@ -1417,7 +1417,7 @@ void cPlanetsSelectionMenu::showMaps()
 {
 	for (int i = 0; i < 8; i++)   //only 8 maps on one screen
 	{
-		if (i + offset < (int) maps->Size())
+		if (i + offset < (int) maps->size())
 		{
 			string mapName = (*maps) [i + offset];
 			string mapPath = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
@@ -1528,7 +1528,7 @@ void cPlanetsSelectionMenu::backReleased (void* parent)
 void cPlanetsSelectionMenu::okReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
-	if (menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int) menu->maps->Size())
+	if (menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int) menu->maps->size())
 	{
 		menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
 		menu->gameDataContainer->map->LoadMap ( (*menu->maps) [menu->selectedMapIndex]);
@@ -1539,7 +1539,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 			case GAME_TYPE_SINGLE:
 			{
 				cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS);   // Socketnumber MAX_CLIENTS for lokal client
-				menu->gameDataContainer->players.Add (player);
+				menu->gameDataContainer->players.push_back (player);
 
 				bool started = false;
 				while (!started)
@@ -1579,7 +1579,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 void cPlanetsSelectionMenu::arrowDownReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
-	if (menu->offset + 8 < (int) menu->maps->Size())
+	if (menu->offset + 8 < (int) menu->maps->size())
 	{
 		menu->offset += 8;
 		menu->showMaps();
@@ -1631,16 +1631,16 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&okReleased);
-	menuItems.Add (okButton);
+	menuItems.push_back (okButton);
 
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
 	backButton->setReleasedFunction (&backReleased);
 	if (noReturn) backButton->setLocked (true);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, "Choose Clan");
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	vector<string> clanLogoPaths;
 	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo1.pcx");
@@ -1665,20 +1665,20 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 		SDL_SetColorKey (img, SDL_SRCCOLORKEY, 0xFF00FF);
 		clanImages[i] = new cMenuImage (position.x + 88 + xCount * 154 - (img ? (img->w / 2) : 0), position.y + 48 + yCount * 150, img);
 		clanImages[i]->setReleasedFunction (&clanSelected);
-		menuItems.Add (clanImages[i]);
+		menuItems.push_back (clanImages[i]);
 
 		clanNames[i] = new cMenuLabel (position.x + 87 + xCount * 154, position.y + 144 + yCount * 150, cClanData::instance().getClan (i)->getName());
 		clanNames[i]->setCentered (true);
-		menuItems.Add (clanNames[i]);
+		menuItems.push_back (clanNames[i]);
 	}
 	clanNames[clan]->setText (">" + cClanData::instance().getClan (clan)->getName() + "<");
 
 	clanDescription1 = new cMenuLabel (position.x + 47, position.y + 362, "");
-	menuItems.Add (clanDescription1);
+	menuItems.push_back (clanDescription1);
 	clanDescription2 = new cMenuLabel (position.x + 380, position.y + 362, "");
-	menuItems.Add (clanDescription2);
+	menuItems.push_back (clanDescription2);
 	clanShortDescription = new cMenuLabel (position.x + 47, position.y + 349, "");
-	menuItems.Add (clanShortDescription);
+	menuItems.push_back (clanShortDescription);
 	updateClanDescription();
 }
 
@@ -1791,38 +1791,38 @@ cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackg
 	selectionChangedFunc = NULL;
 
 	titleLabel.setCentered (true);
-	menuItems.Add (&titleLabel);
+	menuItems.push_back (&titleLabel);
 
 	doneButton = new cMenuButton (position.x + 447, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	menuItems.Add (doneButton);
+	menuItems.push_back (doneButton);
 
 	backButton = new cMenuButton (position.x + 349, position.y + 452, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	infoImage = new cMenuImage (position.x + 11, position.y + 13);
-	menuItems.Add (infoImage);
+	menuItems.push_back (infoImage);
 
 	infoText = new cMenuLabel (position.x + 21, position.y + 23);
 	infoText->setBox (280, 220);
-	menuItems.Add (infoText);
+	menuItems.push_back (infoText);
 
 	infoTextCheckBox = new cMenuCheckButton (position.x + 291, position.y + 264, lngPack.i18n ("Text~Comp~Description"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD, cMenuCheckButton::TEXT_ORIENT_LEFT);
 	infoTextCheckBox->setClickedFunction (&infoCheckBoxClicked);
-	menuItems.Add (infoTextCheckBox);
+	menuItems.push_back (infoTextCheckBox);
 
 	unitDetails = new cMenuUnitDetailsBig (position.x + 16, position.y + 297);
-	menuItems.Add (unitDetails);
+	menuItems.push_back (unitDetails);
 
 	selectionList = new cMenuUnitsList (position.x + 477,  position.y + 50, 154, 326, this, MUL_DIS_TYPE_COSTS);
-	menuItems.Add (selectionList);
+	menuItems.push_back (selectionList);
 
 	selListUpButton = new cMenuButton (position.x + 471, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	selListUpButton->setReleasedFunction (&selListUpReleased);
-	menuItems.Add (selListUpButton);
+	menuItems.push_back (selListUpButton);
 
 	selListDownButton = new cMenuButton (position.x + 491, position.y + 387, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	selListDownButton->setReleasedFunction (&selListDownReleased);
-	menuItems.Add (selListDownButton);
+	menuItems.push_back (selListDownButton);
 
 	selectedUnit = NULL;
 }
@@ -1892,17 +1892,17 @@ cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* playe
 {
 	secondList = new cMenuUnitsList (position.x + 330,  position.y + 12, 130, 225, this, MUL_DIS_TYPE_CARGO);
 	secondList->setDoubleClickedFunction (&secondListDoubleClicked);
-	menuItems.Add (secondList);
+	menuItems.push_back (secondList);
 
 	selectionList->setDoubleClickedFunction (&selListDoubleClicked);
 
 	secondListUpButton = new cMenuButton (position.x + 327, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	secondListUpButton->setReleasedFunction (&secondListUpReleased);
-	menuItems.Add (secondListUpButton);
+	menuItems.push_back (secondListUpButton);
 
 	secondListDownButton = new cMenuButton (position.x + 348, position.y + 240, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	secondListDownButton->setReleasedFunction (&secondListDownReleased);
-	menuItems.Add (secondListDownButton);
+	menuItems.push_back (secondListDownButton);
 }
 
 //------------------------------------------------------------------------------
@@ -1984,25 +1984,25 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445, lngPack.i18n ("Text~Button~Buy"), true, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
 	upgradeBuyGroup->addButton (new cMenuCheckButton (position.x + 542, position.y + 445 + 17, lngPack.i18n ("Text~Button~Upgrade"), false, false, cMenuCheckButton::RADIOBTN_TYPE_BTN_ROUND));
 	upgradeBuyGroup->setClickedFunction (&subButtonsChanged);
-	menuItems.Add (upgradeBuyGroup);
+	menuItems.push_back (upgradeBuyGroup);
 
 	materialBar = new cMenuMaterialBar (position.x + 421, position.y + 301, position.x + 430, position.y + 275, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL);
 	materialBar->setClickedFunction (materialBarClicked);
-	menuItems.Add (materialBar);
+	menuItems.push_back (materialBar);
 	materialBarLabel = new cMenuLabel (position.x + 430, position.y + 285, lngPack.i18n ("Text~Title~Cargo"));
 	materialBarLabel->setCentered (true);
-	menuItems.Add (materialBarLabel);
+	menuItems.push_back (materialBarLabel);
 
 	goldBar->setMaximalValue (credits);
 	goldBar->setCurrentValue (credits);
 
 	materialBarUpButton = new cMenuButton (position.x + 413, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	materialBarUpButton->setReleasedFunction (&materialBarUpReleased);
-	menuItems.Add (materialBarUpButton);
+	menuItems.push_back (materialBarUpButton);
 
 	materialBarDownButton = new cMenuButton (position.x + 433, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	materialBarDownButton->setReleasedFunction (&materialBarDownReleased);
-	menuItems.Add (materialBarDownButton);
+	menuItems.push_back (materialBarDownButton);
 
 	generateSelectionList();
 
@@ -2143,10 +2143,10 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		sLandingUnit landingUnit;
 		landingUnit.unitID = menu->secondList->getItem (i)->getUnitID();
 		landingUnit.cargo = menu->secondList->getItem (i)->getResValue();
-		landingUnits->Add (landingUnit);
+		landingUnits->push_back (landingUnit);
 	}
-	if (menu->gameDataContainer->landingUnits.Size() == 0)   // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
-		menu->gameDataContainer->landingUnits.Add (landingUnits);   // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
+	if (menu->gameDataContainer->landingUnits.size() == 0)   // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
+		menu->gameDataContainer->landingUnits.push_back (landingUnits);   // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
@@ -2414,23 +2414,23 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	createMap();
 	mapImage = new cMenuImage (180, 18, mapSurface);
 	mapImage->setClickedFunction (&mapClicked);
-	menuItems.Add (mapImage);
+	menuItems.push_back (mapImage);
 
 	circlesImage = new cMenuImage (180, 18, NULL);
-	menuItems.Add (circlesImage);
+	menuItems.push_back (circlesImage);
 
 	createHud();
 	hudImage = new cMenuImage (0, 0, hudSurface);
 	hudImage->setMovedOverFunction (&mouseMoved);
-	menuItems.Add (hudImage);
+	menuItems.push_back (hudImage);
 
 	infoLabel = new cMenuLabel (position.x + 180 + (position.w - 180) / 2 - (Video.getResolutionX() - 200) / 2, position.y + position.h / 2 - font->getFontHeight (FONT_LATIN_BIG), "", FONT_LATIN_BIG);
 	infoLabel->setBox ( (Video.getResolutionX() - 200), font->getFontHeight (FONT_LATIN_BIG) * 2);
-	menuItems.Add (infoLabel);
+	menuItems.push_back (infoLabel);
 
 	backButton = new cMenuButton (position.x + 35, position.y + 255, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	PlayVoice (VoiceData.VOILanding);
 }
@@ -2633,7 +2633,7 @@ void cLandingMenu::hitPosition()
 		case GAME_TYPE_SINGLE:
 		{
 			draw();
-			gameDataContainer->landData.Add (new sClientLandData (landData));
+			gameDataContainer->landData.push_back (new sClientLandData (landData));
 
 			ActiveMenu = NULL;
 			gameDataContainer->runGame (network, 0);
@@ -2665,79 +2665,79 @@ cNetworkMenu::cNetworkMenu()
 	port = cSettings::getInstance().getPort();
 
 	playersBox = new cMenuPlayersBox (position.x + 465, position.y + 284, 167, 124, this);
-	menuItems.Add (playersBox);
+	menuItems.push_back (playersBox);
 
 	actPlayer = new sMenuPlayer (cSettings::getInstance().getPlayerName(), cSettings::getInstance().getPlayerColor(), false, 0, MAX_CLIENTS);
-	players.Add (actPlayer);
+	players.push_back (actPlayer);
 	playersBox->setPlayers (&players);
 
 	backButton = new cMenuButton (position.x + 50, position.y + 450, lngPack.i18n ("Text~Button~Back"));
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	sendButton = new cMenuButton (position.x + 470, position.y + 416, lngPack.i18n ("Text~Title~Send"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	sendButton->setReleasedFunction (&sendReleased);
-	menuItems.Add (sendButton);
+	menuItems.push_back (sendButton);
 
 	mapImage = new cMenuImage (position.x + 33, position.y + 106);
-	menuItems.Add (mapImage);
+	menuItems.push_back (mapImage);
 
 	mapLabel = new cMenuLabel (position.x + 90, position.y + 65);
 	mapLabel->setCentered (true);
-	menuItems.Add (mapLabel);
+	menuItems.push_back (mapLabel);
 
 	settingsText = new cMenuLabel (position.x + 192, position.y + 52);
 	settingsText->setBox (246, 146);
-	menuItems.Add (settingsText);
+	menuItems.push_back (settingsText);
 	showSettingsText();
 
 	chatBox = new cMenuListBox (position.x + 14, position.y + 284, 439, 124, 50, this);
-	menuItems.Add (chatBox);
+	menuItems.push_back (chatBox);
 
 	chatLine = new cMenuLineEdit (position.x + 15, position.y + 420, 438, 17, this);
 	chatLine->setReturnPressedFunc (&sendReleased);
-	menuItems.Add (chatLine);
+	menuItems.push_back (chatLine);
 
 	ipLabel = new cMenuLabel (position.x + 20, position.y + 245, lngPack.i18n ("Text~Title~IP"));
-	menuItems.Add (ipLabel);
+	menuItems.push_back (ipLabel);
 	portLabel = new cMenuLabel (position.x + 228, position.y + 245, lngPack.i18n ("Text~Title~Port"));
-	menuItems.Add (portLabel);
+	menuItems.push_back (portLabel);
 
 	nameLabel = new cMenuLabel (position.x + 352, position.y + 245, lngPack.i18n ("Text~Title~Player_Name"));
-	menuItems.Add (nameLabel);
+	menuItems.push_back (nameLabel);
 	colorLabel = new cMenuLabel (position.x + 500, position.y + 245, lngPack.i18n ("Text~Title~Color"));
-	menuItems.Add (colorLabel);
+	menuItems.push_back (colorLabel);
 
 	ipLine = new cMenuLineEdit (position.x + 15, position.y + 256, 188, 17, this);
 	ipLine->setWasKeyInputFunction (&portIpChanged);
-	menuItems.Add (ipLine);
+	menuItems.push_back (ipLine);
 
 	portLine = new cMenuLineEdit (position.x + 224, position.y + 256, 84, 17, this);
 	portLine->setWasKeyInputFunction (&portIpChanged);
 	portLine->setText (iToStr (port));
 	portLine->setTaking (false, true);
-	menuItems.Add (portLine);
+	menuItems.push_back (portLine);
 
 	//little icon that restores our default port on click. TODO: find a proper gfx for this or change menu style to dropdown
 	setDefaultPortImage = new cMenuImage (position.x + 224 + 85, position.y + 253);
 	setDefaultPortImage->setImage (GraphicsData.gfx_Cpfeil2);
 	setDefaultPortImage->setClickedFunction (&setDefaultPort);
-	menuItems.Add (setDefaultPortImage);
+	menuItems.push_back (setDefaultPortImage);
 
 	nameLine = new cMenuLineEdit (position.x + 347, position.y + 256, 90, 17, this);
 	nameLine->setText (actPlayer->name);
 	nameLine->setWasKeyInputFunction (&wasNameImput);
-	menuItems.Add (nameLine);
+	menuItems.push_back (nameLine);
 
 	nextColorButton = new cMenuButton (position.x + 596, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	nextColorButton->setReleasedFunction (&nextColorReleased);
-	menuItems.Add (nextColorButton);
+	menuItems.push_back (nextColorButton);
 	prevColorButton = new cMenuButton (position.x + 478, position.y + 256, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	prevColorButton->setReleasedFunction (&prevColorReleased);
-	menuItems.Add (prevColorButton);
+	menuItems.push_back (prevColorButton);
 	colorImage = new cMenuImage (position.x + 505, position.y + 260);
 	setColor (actPlayer->color);
-	menuItems.Add (colorImage);
+	menuItems.push_back (colorImage);
 
 	gameDataContainer.type = GAME_TYPE_TCPIP;
 
@@ -2991,27 +2991,27 @@ cNetworkHostMenu::cNetworkHostMenu()
 
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Host"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	okButton = new cMenuButton (position.x + 390, position.y + 450, lngPack.i18n ("Text~Button~OK"));
 	okButton->setReleasedFunction (&okReleased);
-	menuItems.Add (okButton);
+	menuItems.push_back (okButton);
 
 	mapButton = new cMenuButton (position.x + 470, position.y + 42, lngPack.i18n ("Text~Title~Choose_Planet"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	mapButton->setReleasedFunction (&mapReleased);
-	menuItems.Add (mapButton);
+	menuItems.push_back (mapButton);
 
 	settingsButton = new cMenuButton (position.x + 470, position.y + 77, lngPack.i18n ("Text~Title~Options"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	settingsButton->setReleasedFunction (&settingsReleased);
-	menuItems.Add (settingsButton);
+	menuItems.push_back (settingsButton);
 
 	loadButton = new cMenuButton (position.x + 470, position.y + 120, lngPack.i18n ("Text~Button~Game_Load"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	loadButton->setReleasedFunction (&loadReleased);
-	menuItems.Add (loadButton);
+	menuItems.push_back (loadButton);
 
 	startButton = new cMenuButton (position.x + 470, position.y + 200, lngPack.i18n ("Text~Button~Host_Start"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	startButton->setReleasedFunction (&startReleased);
-	menuItems.Add (startButton);
+	menuItems.push_back (startButton);
 
 	ipLine->setText ("-");
 	ipLine->setReadOnly (true);
@@ -3031,7 +3031,7 @@ void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 {
 	if (player->ready)
 	{
-		for (size_t i = 0; i < players.Size(); ++i)
+		for (size_t i = 0; i < players.size(); ++i)
 		{
 			if (static_cast<int> (i) == player->nr) continue;
 			if (players[i]->name == player->name)
@@ -3055,7 +3055,7 @@ void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 //-----------------------------------------------------------------------------------------
 int cNetworkHostMenu::checkAllPlayersReady()
 {
-	for (unsigned int i = 0; i < players.Size(); i++)
+	for (unsigned int i = 0; i < players.size(); i++)
 	{
 		if (!players[i]->ready) return i;
 	}
@@ -3100,10 +3100,10 @@ void cNetworkHostMenu::okReleased (void* parent)
 	{
 		sendGo (*menu->network);
 
-		for (unsigned int i = 0; i < menu->players.Size(); i++)
+		for (unsigned int i = 0; i < menu->players.size(); i++)
 		{
 			cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
-			menu->gameDataContainer.players.Add (player);
+			menu->gameDataContainer.players.push_back (player);
 		}
 
 		bool started = false;
@@ -3218,7 +3218,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 				PlayFX (SoundData.SNDChat);   //play some chattersound if we got a player message
 			}
 			// send to other clients
-			for (unsigned int i = 1; i < players.Size(); i++)
+			for (unsigned int i = 1; i < players.size(); i++)
 			{
 				if (players[i]->nr == message->iPlayerNr) continue;
 				sendMenuChatMessage (*network, chatText, players[i], -1, translationText);
@@ -3229,8 +3229,8 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 		case TCP_ACCEPT:
 		{
 #define UNIDENTIFIED_PLAYER_NAME "unidentified"
-			sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.Size(), message->popInt16());
-			players.Add (player);
+			sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.size(), message->popInt16());
+			players.push_back (player);
 			sendRequestIdentification (*network, player);
 			playersBox->setPlayers (&players);
 			draw();
@@ -3243,7 +3243,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			string playerName;
 
 			//delete player
-			for (unsigned int i = 0; i < players.Size(); i++)
+			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				if (players[i]->socket == socket)
 				{
@@ -3253,13 +3253,13 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			}
 
 			//resort socket numbers
-			for (unsigned int playerNr = 0; playerNr < players.Size(); playerNr++)
+			for (unsigned int playerNr = 0; playerNr < players.size(); playerNr++)
 			{
 				if (players[playerNr]->socket > socket && players[playerNr]->socket < MAX_CLIENTS) players[playerNr]->socket--;
 			}
 
 			//resort player numbers
-			for (unsigned int i = 0; i < players.Size(); i++)
+			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				players[i]->nr = i;
 				sendRequestIdentification (*network, players[i]);
@@ -3276,7 +3276,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 		case MU_MSG_IDENTIFIKATION:
 		{
 			int playerNr = message->popInt16();
-			if (playerNr < 0 || playerNr >= (int) players.Size())
+			if (playerNr < 0 || playerNr >= (int) players.size())
 			{
 				sendPlayerList (*network, &players);
 				break;
@@ -3305,7 +3305,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			if (gameDataContainer.map != 0 && !MapDownload::isMapOriginal (gameDataContainer.map->MapName))
 			{
 				int receiverNr = message->popInt16();
-				if (receiverNr >= 0 && receiverNr < (int) players.Size())
+				if (receiverNr >= 0 && receiverNr < (int) players.size())
 				{
 					int socketNr = players[receiverNr]->socket;
 					// check, if there is already a map sender, that uploads to the same socketNr. If yes, terminate the old map sender.
@@ -3344,13 +3344,13 @@ bool cNetworkHostMenu::runSavedGame()
 
 	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	// first we check whether all necessary players are connected
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		for (unsigned int j = 0; j < players.Size(); j++)
+		for (unsigned int j = 0; j < players.size(); j++)
 		{
 			if (serverPlayerList[i]->name == players[j]->name) break;
 			// stop when a player is missing
-			if (j == players.Size() - 1)
+			if (j == players.size() - 1)
 			{
 				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
 				draw();
@@ -3359,18 +3359,18 @@ bool cNetworkHostMenu::runSavedGame()
 		}
 	}
 	// then remove all players that do not belong to the save
-	for (unsigned int i = 0; i < players.Size(); i++)
+	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		for (unsigned int j = 0; j < serverPlayerList.Size(); j++)
+		for (unsigned int j = 0; j < serverPlayerList.size(); j++)
 		{
 			if (players[i]->name == serverPlayerList[j]->name) break;
 
 			// the player isn't in the list when the loop has gone trough all players and no match was found
-			if (j == serverPlayerList.Size() - 1)
+			if (j == serverPlayerList.size() - 1)
 			{
 				sendMenuChatMessage (*network, "Text~Multiplayer~Disconnect_Not_In_Save", players[i], -1, true);
 				network->close (players[i]->socket);
-				for (unsigned int k = 0; k < players.Size(); k++)
+				for (unsigned int k = 0; k < players.size(); k++)
 				{
 					if (players[k]->socket > players[i]->socket && players[k]->socket < MAX_CLIENTS) players[k]->socket--;
 				}
@@ -3380,9 +3380,9 @@ bool cNetworkHostMenu::runSavedGame()
 		}
 	}
 	// and now set sockets, playernumbers and colors
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		for (unsigned int j = 0; j < players.Size(); j++)
+		for (unsigned int j = 0; j < players.size(); j++)
 		{
 			if (serverPlayerList[i]->name == players[j]->name)
 			{
@@ -3398,7 +3398,7 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 
 	// send the correct player numbers to client
-	for (unsigned int i = 0; i < players.Size(); i++)
+	for (unsigned int i = 0; i < players.size(); i++)
 		sendRequestIdentification (*network, players[i]);
 
 	// now we can send the menus players-list with the right numbers and colors of each player.
@@ -3415,10 +3415,10 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// copy players for client
 	cPlayer* localPlayer = NULL;
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
-		clientPlayerList.Add (addedPlayer);
+		clientPlayerList.push_back (addedPlayer);
 		if (serverPlayerList[i]->iSocketNum == MAX_CLIENTS) localPlayer = clientPlayerList[i];
 		// reinit unit values
 		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan()).data;
@@ -3427,22 +3427,22 @@ bool cNetworkHostMenu::runSavedGame()
 	// init client and his player
 	Client = new cClient (network, &clientMap, &clientPlayerList);
 	Client->initPlayer (localPlayer);
-	for (unsigned int i = 0; i < clientPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
 		clientPlayerList[i]->InitMaps (clientMap.size, &clientMap);
 	}
 
 	// send data to all players
-	for (unsigned int i = 0; i < serverPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		sendRequestResync (*Client, serverPlayerList[i]->Nr);
 		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
 		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
-		for (size_t j = 0; j != reportList.Size(); ++j)
+		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
 		}
-		reportList.Clear();
+		reportList.clear();
 	}
 
 	// exit menu and start game
@@ -3474,11 +3474,11 @@ cNetworkClientMenu::cNetworkClientMenu()
 
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Button~TCPIP_Client"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	connectButton = new cMenuButton (position.x + 470, position.y + 200, lngPack.i18n ("Text~Title~Connect"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
 	connectButton->setReleasedFunction (&connectReleased);
-	menuItems.Add (connectButton);
+	menuItems.push_back (connectButton);
 
 	ipLine->setText (ip);
 }
@@ -3540,7 +3540,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 		break;
 		case TCP_CLOSE:
 		{
-			for (unsigned int i = 0; i < players.Size(); i++)
+			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				if (players[i]->nr == actPlayer->nr) continue;
 				players.Delete (i);
@@ -3560,11 +3560,11 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 		{
 			int playerCount = message->popInt16();
 			int actPlayerNr = actPlayer->nr;
-			for (size_t i = 0; i != players.Size(); ++i)
+			for (size_t i = 0; i != players.size(); ++i)
 			{
 				delete players[i];
 			}
-			players.Clear();
+			players.clear();
 			for (int i = 0; i < playerCount; i++)
 			{
 				string name = message->popString();
@@ -3573,7 +3573,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 				int nr = message->popInt16();
 				sMenuPlayer* player = new sMenuPlayer (name, color, ready, nr);
 				if (player->nr == actPlayerNr) actPlayer = player;
-				players.Add (player);
+				players.push_back (player);
 			}
 			playersBox->setPlayers (&players);
 			draw();
@@ -3701,10 +3701,10 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 		case MU_MSG_GO:
 		{
 			saveOptions();
-			for (unsigned int i = 0; i < players.Size(); i++)
+			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				cPlayer* player = new cPlayer (players[i]->name, OtherData.colors[players[i]->color], players[i]->nr, players[i]->socket);
-				gameDataContainer.players.Add (player);
+				gameDataContainer.players.push_back (player);
 			}
 			if (!saveGameString.empty())
 			{
@@ -3756,18 +3756,18 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 
 				int playerCount = message->popInt16();
 
-				gameDataContainer.players.Add (new cPlayer (actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr));
+				gameDataContainer.players.push_back (new cPlayer (actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr));
 				while (playerCount > 1)
 				{
 					string playername = message->popString();
 					int playercolor = message->popInt16();
 					int playernr = message->popInt16();
-					gameDataContainer.players.Add (new cPlayer (playername, OtherData.colors[playercolor], playernr));
+					gameDataContainer.players.push_back (new cPlayer (playername, OtherData.colors[playercolor], playernr));
 					playerCount--;
 				}
 
 				bool changed = false;
-				int size = (int) gameDataContainer.players.Size();
+				int size = (int) gameDataContainer.players.size();
 				do
 				{
 					changed = false;
@@ -3878,23 +3878,23 @@ cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds b
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 12, lngPack.i18n ("Text~Title~Load"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	backButton->setReleasedFunction (&backReleased);
-	menuItems.Add (backButton);
+	menuItems.push_back (backButton);
 
 	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Button~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	loadButton->setReleasedFunction (&loadReleased);
-	menuItems.Add (loadButton);
+	menuItems.push_back (loadButton);
 
 	upButton = new cMenuButton (position.x + 33, position.y + 438, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG);
 	upButton->setReleasedFunction (&upReleased);
-	menuItems.Add (upButton);
+	menuItems.push_back (upButton);
 
 	downButton = new cMenuButton (position.x + 63, position.y + 438, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG);
 	downButton->setReleasedFunction (&downReleased);
-	menuItems.Add (downButton);
+	menuItems.push_back (downButton);
 
 	for (int x = 0; x < 2; x++)
 	{
@@ -3903,7 +3903,7 @@ cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds b
 			saveSlots[5 * x + y] = new cMenuSaveSlot (position.x + 17 + 402 * x, position.y + 45 + 76 * y, this);
 			saveSlots[5 * x + y]->setReleasedFunction (&slotClicked);
 			saveSlots[5 * x + y]->setClickSound (SoundData.SNDObjectMenu);
-			menuItems.Add (saveSlots[5 * x + y]);
+			menuItems.push_back (saveSlots[5 * x + y]);
 		}
 	}
 
@@ -3920,7 +3920,7 @@ cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds b
 cLoadMenu::~cLoadMenu()
 {
 	delete files;
-	for (size_t i = 0; i != savefiles.Size(); ++i)
+	for (size_t i = 0; i != savefiles.size(); ++i)
 	{
 		delete savefiles[i];
 	}
@@ -3929,7 +3929,7 @@ cLoadMenu::~cLoadMenu()
 //------------------------------------------------------------------------------
 void cLoadMenu::loadSaves()
 {
-	for (unsigned int i = 0; i < files->Size(); i++)
+	for (unsigned int i = 0; i < files->size(); i++)
 	{
 		// only check for xml files and numbers for this offset
 		string const& file = (*files) [i];
@@ -3943,7 +3943,7 @@ void cLoadMenu::loadSaves()
 		if (file.length() < 8 || (number = atoi (file.substr (file.length() - 7, 3).c_str())) < offset || number > offset + 10) continue;
 		// don't add files twice
 		bool found = false;
-		for (unsigned int j = 0; j < savefiles.Size(); j++)
+		for (unsigned int j = 0; j < savefiles.size(); j++)
 		{
 			if (savefiles[j]->number == number)
 			{
@@ -3958,7 +3958,7 @@ void cLoadMenu::loadSaves()
 		savefile->filename = file;
 		cSavegame Savegame (number);
 		Savegame.loadHeader (&savefile->gamename, &savefile->type, &savefile->time);
-		savefiles.Add (savefile);
+		savefiles.push_back (savefile);
 	}
 }
 
@@ -3972,7 +3972,7 @@ void cLoadMenu::displaySaves()
 			int filenum = x * 5 + y;
 			cMenuSaveSlot* slot = saveSlots[filenum];
 			sSaveFile* savefile = NULL;
-			for (unsigned int i = 0; i < savefiles.Size(); i++)
+			for (unsigned int i = 0; i < savefiles.size(); i++)
 			{
 				if (savefiles[i]->number == offset + filenum + 1)
 				{
@@ -4000,7 +4000,7 @@ void cLoadMenu::loadReleased (void* parent)
 {
 	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
 	sSaveFile* savefile = NULL;
-	for (unsigned int i = 0; i < menu->savefiles.Size(); i++)
+	for (unsigned int i = 0; i < menu->savefiles.size(); i++)
 	{
 		if (menu->savefiles[i]->number == menu->selected + 1)
 		{
@@ -4075,11 +4075,11 @@ cLoadSaveMenu::cLoadSaveMenu (cGameDataContainer* gameDataContainer_) : cLoadMen
 {
 	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&exitReleased);
-	menuItems.Add (exitButton);
+	menuItems.push_back (exitButton);
 
 	saveButton = new cMenuButton (position.x + 132, position.y + 438, lngPack.i18n ("Text~Button~Save"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	saveButton->setReleasedFunction (&saveReleased);
-	menuItems.Add (saveButton);
+	menuItems.push_back (saveButton);
 
 	loadButton->setLocked (true);
 }
@@ -4124,7 +4124,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 
 	delete menu->files;
 	menu->files = getFilesOfDirectory (cSettings::getInstance().getSavesPath());
-	for (unsigned int i = 0; i < menu->savefiles.Size(); i++)
+	for (unsigned int i = 0; i < menu->savefiles.size(); i++)
 	{
 		if (menu->savefiles[i]->number == menu->selected + 1)
 		{
@@ -4167,7 +4167,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	doneButton->move (position.x + 387, position.y + 452);
 	doneButton->setReleasedFunction (&doneReleased);
@@ -4184,11 +4184,11 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 	{
 		pathButton = new cMenuButton (position.x + 338, position.y + 428, lngPack.i18n ("Text~Button~Path"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 		pathButton->setReleasedFunction (&pathReleased);
-		menuItems.Add (pathButton);
+		menuItems.push_back (pathButton);
 	}
 
 	speedHandler = new cMenuBuildSpeedHandler (position.x + 292, position.y + 345);
-	menuItems.Add (speedHandler);
+	menuItems.push_back (speedHandler);
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -4302,7 +4302,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* playe
 
 	titleLabel = new cMenuLabel (position.x + 405, position.y + 11, lngPack.i18n ("Text~Title~Build"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	doneButton->move (position.x + 387, position.y + 452);
 	doneButton->setReleasedFunction (&doneReleased);
@@ -4322,10 +4322,10 @@ cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* playe
 
 	speedHandler = new cMenuBuildSpeedHandler (position.x + 292, position.y + 345);
 	speedHandler->setBuildSpeed (building->BuildSpeed);
-	menuItems.Add (speedHandler);
+	menuItems.push_back (speedHandler);
 
 	repeatButton = new cMenuCheckButton (position.x + 447, position.y + 322, lngPack.i18n ("Text~Comp~Repeat"), building->RepeatBuild, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD, cMenuCheckButton::TEXT_ORIENT_LEFT);
-	menuItems.Add (repeatButton);
+	menuItems.push_back (repeatButton);
 
 	selectionChangedFunc = &selectionChanged;
 
@@ -4394,7 +4394,7 @@ void cVehiclesBuildMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehic
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::createBuildList()
 {
-	for (unsigned int i = 0; i < building->BuildList->Size(); i++)
+	for (unsigned int i = 0; i < building->BuildList->size(); i++)
 	{
 		secondList->addUnit ( (*building->BuildList) [i]->type, building->owner, NULL, true, false);
 		secondList->getItem (secondList->getSize() - 1)->setResValue ( (*building->BuildList) [i]->metall_remaining, false);
@@ -4417,7 +4417,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 		sBuildList buildItem;
 		buildItem.type = menu->secondList->getItem (i)->getUnitID();
 		buildItem.metall_remaining = menu->secondList->getItem (i)->getResValue();
-		buildList.Add (buildItem);
+		buildList.push_back (buildItem);
 	}
 	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
 	sendWantBuildList (*menu->gameGUI->getClient(), menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
@@ -4461,16 +4461,16 @@ cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (
 	upgradeFilter->setPlaneChecked (true);
 	upgradeFilter->setShipChecked (true);
 	upgradeFilter->setBuildingChecked (true);
-	menuItems.Add (upgradeFilter);
+	menuItems.push_back (upgradeFilter);
 
 	upgradeButtons = new cMenuUpgradeHandler (position.x + 283, position.y + 293, this);
-	menuItems.Add (upgradeButtons);
+	menuItems.push_back (upgradeButtons);
 
 	goldBar = new cMenuMaterialBar (position.x + 372, position.y + 301, position.x + 381, position.y + 275, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD);
-	menuItems.Add (goldBar);
+	menuItems.push_back (goldBar);
 	goldBarLabel = new cMenuLabel (position.x + 381, position.y + 285, lngPack.i18n ("Text~Title~Gold"));
 	goldBarLabel->setCentered (true);
-	menuItems.Add (goldBarLabel);
+	menuItems.push_back (goldBarLabel);
 
 	initUpgrades (owner);
 }
@@ -4747,22 +4747,22 @@ void cUnitHelpMenu::init (sID unitID)
 {
 	titleLabel = new cMenuLabel (position.x + 406, position.y + 11, lngPack.i18n ("Text~Title~Unitinfo"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	doneButton = new cMenuButton (position.x + 474, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&doneReleased);
-	menuItems.Add (doneButton);
+	menuItems.push_back (doneButton);
 
 	infoImage = new cMenuImage (position.x + 11, position.y + 13);
-	menuItems.Add (infoImage);
+	menuItems.push_back (infoImage);
 
 	infoText = new cMenuLabel (position.x + 354, position.y + 67);
 	infoText->setBox (269, 176);
-	menuItems.Add (infoText);
+	menuItems.push_back (infoText);
 
 	unitDetails = new cMenuUnitDetailsBig (position.x + 16, position.y + 297);
 	unitDetails->setSelection (unit);
-	menuItems.Add (unitDetails);
+	menuItems.push_back (unitDetails);
 
 	if (unitID.getVehicle())
 	{
@@ -4827,35 +4827,35 @@ cStorageMenu::cStorageMenu (cClient& client_, cList<cVehicle*>& storageList_, cV
 
 	doneButton = new cMenuButton (position.x + 518, position.y + 371, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&doneReleased);
-	menuItems.Add (doneButton);
+	menuItems.push_back (doneButton);
 
 	upButton = new cMenuButton (position.x + 504, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG, FONT_LATIN_NORMAL);
 	upButton->setReleasedFunction (&upReleased);
-	menuItems.Add (upButton);
+	menuItems.push_back (upButton);
 
 	downButton = new cMenuButton (position.x + 532, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG, FONT_LATIN_NORMAL);
 	downButton->setReleasedFunction (&downReleased);
-	menuItems.Add (downButton);
+	menuItems.push_back (downButton);
 
 	activateAllButton = new cMenuButton (position.x + 518, position.y + 246, lngPack.i18n ("Text~Button~Active"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	activateAllButton->setReleasedFunction (&activateAllReleased);
-	menuItems.Add (activateAllButton);
+	menuItems.push_back (activateAllButton);
 
 	reloadAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Reload") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	reloadAllButton->setReleasedFunction (&reloadAllReleased);
-	menuItems.Add (reloadAllButton);
+	menuItems.push_back (reloadAllButton);
 
 	repairAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 2, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Repair") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	repairAllButton->setReleasedFunction (&repairAllReleased);
-	menuItems.Add (repairAllButton);
+	menuItems.push_back (repairAllButton);
 
 	upgradeAllButton = new cMenuButton (position.x + 518, position.y + 246 + 25 * 3, canRepairReloadUpgrade ? lngPack.i18n ("Text~Button~Upgrade") : "", cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	upgradeAllButton->setReleasedFunction (&upgradeAllReleased);
-	menuItems.Add (upgradeAllButton);
+	menuItems.push_back (upgradeAllButton);
 
 	metalBar = new cMenuMaterialBar (position.x + 546, position.y + 106, position.x + 557, position.y + 86, metalValue, cMenuMaterialBar::MAT_BAR_TYPE_METAL);
 	metalBar->setCurrentValue (metalValue);
-	menuItems.Add (metalBar);
+	menuItems.push_back (metalBar);
 
 	generateItems();
 
@@ -4889,14 +4889,14 @@ void cStorageMenu::generateItems()
 			unitNames[index]->setBox (canStorePlanes ? 190 : 118, 118);
 			unitInfo[index] = new cMenuStoredUnitDetails (position.x + startX + 17 + x * xStepImage, position.y + 143 + y * 236);
 
-			menuItems.Add (activateButtons[index]);
-			menuItems.Add (reloadButtons[index]);
-			menuItems.Add (repairButtons[index]);
-			menuItems.Add (upgradeButtons[index]);
+			menuItems.push_back (activateButtons[index]);
+			menuItems.push_back (reloadButtons[index]);
+			menuItems.push_back (repairButtons[index]);
+			menuItems.push_back (upgradeButtons[index]);
 
-			menuItems.Add (unitImages[index]);
-			menuItems.Add (unitNames[index]);
-			menuItems.Add (unitInfo[index]);
+			menuItems.push_back (unitImages[index]);
+			menuItems.push_back (unitNames[index]);
+			menuItems.push_back (unitInfo[index]);
 		}
 	}
 }
@@ -4916,7 +4916,7 @@ void cStorageMenu::resetInfos()
 			SDL_Surface* srcSurface;
 			string name;
 
-			if (index < (int) storageList.Size())
+			if (index < (int) storageList.size())
 			{
 				cVehicle* vehicle = storageList[index];
 				srcSurface = vehicle->typ->storage;
@@ -4957,14 +4957,14 @@ void cStorageMenu::resetInfos()
 		}
 	}
 
-	activateAllButton->setLocked (storageList.Size() == 0);
+	activateAllButton->setLocked (storageList.size() == 0);
 
 	reloadAllButton->setLocked (true);
 	repairAllButton->setLocked (true);
 	upgradeAllButton->setLocked (true);
 	if (canRepairReloadUpgrade && metalValue >= 2)
 	{
-		for (unsigned int i = 0; i < storageList.Size(); i++)
+		for (unsigned int i = 0; i < storageList.size(); i++)
 		{
 			cVehicle* vehicle = storageList[i];
 			if (vehicle->data.ammoCur != vehicle->data.ammoMax) reloadAllButton->setLocked (false);
@@ -4979,7 +4979,7 @@ void cStorageMenu::resetInfos()
 		metalBar->setCurrentValue (metalValue);
 	}
 
-	if ( (offset + 1) *maxX * 2 < unitData.storageUnitsMax && (offset + 1) *maxX * 2 < (int) storageList.Size()) downButton->setLocked (false);
+	if ( (offset + 1) *maxX * 2 < unitData.storageUnitsMax && (offset + 1) *maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
 	else downButton->setLocked (true);
 
 	if (offset > 0) upButton->setLocked (false);
@@ -5021,7 +5021,7 @@ int cStorageMenu::getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons
 		for (int y = 0; y < 2; y++)
 		{
 			int index = offset * maxX * 2 + x + y * maxX;
-			if (index >= (int) storageList.Size()) break;
+			if (index >= (int) storageList.size()) break;
 
 			if (buttons[x + y * maxX]->overItem (mouse->x, mouse->y)) return index;
 		}
@@ -5097,7 +5097,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 	bool isBig = menu->unitData.isBig;
 	const cMap& map = *menu->client->getMap();
 
-	for (unsigned int i = 0; i < menu->storageList.Size(); i++)
+	for (unsigned int i = 0; i < menu->storageList.size(); i++)
 	{
 		cVehicle* vehicle = menu->storageList[i];
 		bool activated = false;
@@ -5132,7 +5132,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 	menu->voiceTypeAll = true;
 	menu->voicePlayed = false;
 	int resources = menu->metalValue;
-	for (unsigned int i = 0; i < menu->storageList.Size(); i++)
+	for (unsigned int i = 0; i < menu->storageList.size(); i++)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
@@ -5153,7 +5153,7 @@ void cStorageMenu::repairAllReleased (void* parent)
 	menu->voiceTypeAll = true;
 	menu->voicePlayed = false;
 	int resources = menu->metalValue;
-	for (unsigned int i = 0; i < menu->storageList.Size(); i++)
+	for (unsigned int i = 0; i < menu->storageList.size(); i++)
 	{
 		if (resources < 1) break;
 		cVehicle* vehicle = menu->storageList[i];
@@ -5233,60 +5233,60 @@ cMineManagerMenu::cMineManagerMenu (const cClient& client_, cBuilding* building_
 {
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Mine"));
 	titleLabel->setCentered (true);
-	menuItems.Add (titleLabel);
+	menuItems.push_back (titleLabel);
 
 	doneButton = new cMenuButton (position.x + 514, position.y + 430, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_HUGE);
 	doneButton->setReleasedFunction (doneReleased);
-	menuItems.Add (doneButton);
+	menuItems.push_back (doneButton);
 
 	// add the bars before the labels so that the bars will be drawn under the labels
 	for (int i = 0; i < 3; i++)
 	{
 		metalBars[i] = new cMenuMaterialBar (position.x + 174, position.y + 70 + 37 * i, position.x + 174 + 120, position.y + 70 + 15 + 37 * i, 0, cMenuMaterialBar::MAT_BAR_TYPE_METAL_HORI_BIG, false, false);
-		menuItems.Add (metalBars[i]);
+		menuItems.push_back (metalBars[i]);
 		oilBars[i] = new cMenuMaterialBar (position.x + 174, position.y + 190 + 37 * i, position.x + 174 + 120, position.y + 190 + 15 + 37 * i, 0, cMenuMaterialBar::MAT_BAR_TYPE_OIL_HORI_BIG, false, false);
-		menuItems.Add (oilBars[i]);
+		menuItems.push_back (oilBars[i]);
 		goldBars[i] = new cMenuMaterialBar (position.x + 174, position.y + 310 + 37 * i, position.x + 174 + 120, position.y + 310 + 15 + 37 * i, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD_HORI_BIG, false, false);
-		menuItems.Add (goldBars[i]);
+		menuItems.push_back (goldBars[i]);
 
 		noneBars[i] = new cMenuMaterialBar (position.x + 174, position.y + 70 + 120 * i, position.x + 174 + 120, position.y + 310 + 15 + 37 * i, 0, cMenuMaterialBar::MAT_BAR_TYPE_NONE_HORI_BIG, true, false);
-		menuItems.Add (noneBars[i]);
+		menuItems.push_back (noneBars[i]);
 	}
 
 	for (int i = 0; i < 3; i++)
 	{
 		incButtons[i] = new cMenuButton (position.x + 421, position.y + 70 + 120 * i, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_BIG);
 		incButtons[i]->setReleasedFunction (&increaseReleased);
-		menuItems.Add (incButtons[i]);
+		menuItems.push_back (incButtons[i]);
 		decButtons[i] = new cMenuButton (position.x + 139, position.y + 70 + 120 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_BIG);
 		decButtons[i]->setReleasedFunction (&decreseReleased);
-		menuItems.Add (decButtons[i]);
+		menuItems.push_back (decButtons[i]);
 
 		if (i == 0) resourceLabels[i] = new cMenuLabel (position.x + 81, position.y + 78, lngPack.i18n ("Text~Title~Metal"));
 		else if (i == 1) resourceLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 121, lngPack.i18n ("Text~Title~Oil"));
 		else  resourceLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 121 * 2, lngPack.i18n ("Text~Title~Gold"));
 		resourceLabels[i]->setCentered (true);
-		menuItems.Add (resourceLabels[i]);
+		menuItems.push_back (resourceLabels[i]);
 
 		usageLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 37 + 121 * i, lngPack.i18n ("Text~Vehicles~Usage"));
 		usageLabels[i]->setCentered (true);
-		menuItems.Add (usageLabels[i]);
+		menuItems.push_back (usageLabels[i]);
 
 		reserveLabels[i] = new cMenuLabel (position.x + 81, position.y + 78 + 37 * 2 + 121 * i, lngPack.i18n ("Text~Comp~Reserve"));
 		reserveLabels[i]->setCentered (true);
-		menuItems.Add (reserveLabels[i]);
+		menuItems.push_back (reserveLabels[i]);
 
 		metalBarLabels[i] = new cMenuLabel (position.x + 174 + 120, position.y + 70 + 8 + 37 * i, "", FONT_LATIN_BIG);
 		metalBarLabels[i]->setCentered (true);
-		menuItems.Add (metalBarLabels[i]);
+		menuItems.push_back (metalBarLabels[i]);
 
 		oilBarLabels[i] = new cMenuLabel (position.x + 174 + 120, position.y + 190 + 8 + 37 * i, "", FONT_LATIN_BIG);
 		oilBarLabels[i]->setCentered (true);
-		menuItems.Add (oilBarLabels[i]);
+		menuItems.push_back (oilBarLabels[i]);
 
 		goldBarLabels[i] = new cMenuLabel (position.x + 174 + 120, position.y + 310 + 8 + 37 * i, "", FONT_LATIN_BIG);
 		goldBarLabels[i]->setCentered (true);
-		menuItems.Add (goldBarLabels[i]);
+		menuItems.push_back (goldBarLabels[i]);
 	}
 	metalBars[0]->setClickedFunction (&barReleased);
 	oilBars[0]->setClickedFunction (&barReleased);
@@ -5469,7 +5469,7 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	, owner (owner_)
 {
 	typeButtonGroup = new cMenuRadioGroup();
-	menuItems.Add (typeButtonGroup);
+	menuItems.push_back (typeButtonGroup);
 
 	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71, lngPack.i18n ("Text~Button~Units"), true, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
 	typeButtonGroup->addButton (new cMenuCheckButton (position.x + 524, position.y + 71 + 29, lngPack.i18n ("Text~Button~Disadvantages"), false, false, cMenuCheckButton::RADIOBTN_TYPE_ANGULAR_BUTTON));
@@ -5478,60 +5478,60 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	typeButtonGroup->setClickedFunction (&typeChanged);
 
 	includedLabel = new cMenuLabel (position.x + 497, position.y + 207, lngPack.i18n ("Text~Button~Included") + ":");
-	menuItems.Add (includedLabel);
+	menuItems.push_back (includedLabel);
 
 	planesCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218, lngPack.i18n ("Text~Button~Air_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	planesCheckBtn->setClickedFunction (&filterClicked);
 	planesCheckBtn->limitTextSize (123);
-	menuItems.Add (planesCheckBtn);
+	menuItems.push_back (planesCheckBtn);
 	groundCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18, lngPack.i18n ("Text~Button~Ground_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	groundCheckBtn->setClickedFunction (&filterClicked);
 	groundCheckBtn->limitTextSize (123);
-	menuItems.Add (groundCheckBtn);
+	menuItems.push_back (groundCheckBtn);
 	seaCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 2, lngPack.i18n ("Text~Button~Sea_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	seaCheckBtn->setClickedFunction (&filterClicked);
 	seaCheckBtn->limitTextSize (123);
-	menuItems.Add (seaCheckBtn);
+	menuItems.push_back (seaCheckBtn);
 	stationaryCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 218 + 18 * 3, lngPack.i18n ("Text~Button~Stationary_Units"), true, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	stationaryCheckBtn->setClickedFunction (&filterClicked);
 	stationaryCheckBtn->limitTextSize (123);
-	menuItems.Add (stationaryCheckBtn);
+	menuItems.push_back (stationaryCheckBtn);
 
 	borderedLabel = new cMenuLabel (position.x + 497, position.y + 299, lngPack.i18n ("Text~Button~Limited_To") + ":");
-	menuItems.Add (borderedLabel);
+	menuItems.push_back (borderedLabel);
 
 	buildCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312, lngPack.i18n ("Text~Button~Produce_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	buildCheckBtn->setClickedFunction (&filterClicked);
 	buildCheckBtn->limitTextSize (123);
-	menuItems.Add (buildCheckBtn);
+	menuItems.push_back (buildCheckBtn);
 	fightCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18, lngPack.i18n ("Text~Button~Fight_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	fightCheckBtn->setClickedFunction (&filterClicked);
 	fightCheckBtn->limitTextSize (123);
-	menuItems.Add (fightCheckBtn);
+	menuItems.push_back (fightCheckBtn);
 	damagedCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 2, lngPack.i18n ("Text~Button~Damaged_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	damagedCheckBtn->setClickedFunction (&filterClicked);
 	damagedCheckBtn->limitTextSize (123);
-	menuItems.Add (damagedCheckBtn);
+	menuItems.push_back (damagedCheckBtn);
 	stealthCheckBtn = new cMenuCheckButton (position.x + 496, position.y + 312 + 18 * 3, lngPack.i18n ("Text~Button~Stealth_Units"), false, false, cMenuCheckButton::CHECKBOX_TYPE_STANDARD);
 	stealthCheckBtn->setClickedFunction (&filterClicked);
 	stealthCheckBtn->limitTextSize (123);
-	menuItems.Add (stealthCheckBtn);
+	menuItems.push_back (stealthCheckBtn);
 
 	doneButton = new cMenuButton (position.x + 524, position.y + 398, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
 	doneButton->setReleasedFunction (&doneReleased);
-	menuItems.Add (doneButton);
+	menuItems.push_back (doneButton);
 
 	// its important that the screen will be added before the up and down buttons
 	dataScreen = new cMenuReportsScreen (position.x + 7, position.y + 6, 479, 467, *client, owner, this);
-	menuItems.Add (dataScreen);
+	menuItems.push_back (dataScreen);
 
 	upButton = new cMenuButton (position.x + 492, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG);
 	upButton->setReleasedFunction (&upReleased);
-	menuItems.Add (upButton);
+	menuItems.push_back (upButton);
 
 	downButton = new cMenuButton (position.x + 525, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_DOWN_BIG);
 	downButton->setReleasedFunction (&downReleased);
-	menuItems.Add (downButton);
+	menuItems.push_back (downButton);
 
 	filterClicked (this);
 }
@@ -5596,7 +5596,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			 storingVehicle;
 			 storingVehicle = storingVehicle->next)
 		{
-			for (unsigned i = 0; i < storingVehicle->storedUnits.Size(); i++)
+			for (unsigned i = 0; i < storingVehicle->storedUnits.size(); i++)
 			{
 				if (storingVehicle->storedUnits[i] == vehicle)
 				{
@@ -5611,7 +5611,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			 storingBuilding;
 			 storingBuilding = storingBuilding->next)
 		{
-			for (unsigned i = 0; i < storingBuilding->storedUnits.Size(); i++)
+			for (unsigned i = 0; i < storingBuilding->storedUnits.size(); i++)
 			{
 				if (storingBuilding->storedUnits[i] == vehicle)
 				{

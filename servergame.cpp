@@ -65,7 +65,7 @@ cServerGame::~cServerGame()
 		thread = 0;
 	}
 
-	for (size_t i = 0; i < menuPlayers.Size(); i++)
+	for (size_t i = 0; i < menuPlayers.size(); i++)
 		delete menuPlayers[i];
 
 	delete gameData;
@@ -182,8 +182,8 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
 		case TCP_ACCEPT:
 		{
-			sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.Size(), message->popInt16());
-			menuPlayers.Add (player);
+			sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.size(), message->popInt16());
+			menuPlayers.push_back (player);
 			sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
 			sendRequestIdentification (*network, player);
 			break;
@@ -195,7 +195,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			string playerName;
 
 			// delete menuPlayer
-			for (size_t i = 0; i < menuPlayers.Size(); i++)
+			for (size_t i = 0; i < menuPlayers.size(); i++)
 			{
 				if (menuPlayers[i]->socket == socket)
 				{
@@ -205,14 +205,14 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			}
 
 			// resort socket numbers
-			for (size_t playerNr = 0; playerNr < menuPlayers.Size(); playerNr++)
+			for (size_t playerNr = 0; playerNr < menuPlayers.size(); playerNr++)
 			{
 				if (menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS)
 					menuPlayers[playerNr]->socket--;
 			}
 
 			// resort player numbers
-			for (size_t i = 0; i < menuPlayers.Size(); i++)
+			for (size_t i = 0; i < menuPlayers.size(); i++)
 			{
 				menuPlayers[i]->nr = i;
 				sendRequestIdentification (*network, menuPlayers[i]);
@@ -224,7 +224,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 		case MU_MSG_IDENTIFIKATION:
 		{
 			unsigned int playerNr = message->popInt16();
-			if (playerNr >= menuPlayers.Size())
+			if (playerNr >= menuPlayers.size())
 				break;
 			sMenuPlayer* player = menuPlayers[playerNr];
 
@@ -253,7 +253,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			string chatText = message->popString();
 
 			unsigned int senderPlyerNr = message->iPlayerNr;
-			if (senderPlyerNr >= menuPlayers.Size())
+			if (senderPlyerNr >= menuPlayers.size())
 				break;
 			sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
 
@@ -271,7 +271,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 					if (tokens[0].compare ("go") == 0)
 					{
 						bool allReady = true;
-						for (size_t i = 0; i < menuPlayers.Size(); i++)
+						for (size_t i = 0; i < menuPlayers.size(); i++)
 						{
 							if (menuPlayers[i]->ready == false)
 							{
@@ -281,10 +281,10 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 						}
 						if (allReady)
 						{
-							for (size_t i = 0; i < menuPlayers.Size(); i++)
+							for (size_t i = 0; i < menuPlayers.size(); i++)
 							{
 								cPlayer* player = new cPlayer (menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket);
-								gameData->players.Add (player);
+								gameData->players.push_back (player);
 							}
 
 							sendGo (*network);
@@ -349,7 +349,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			else
 			{
 				// send to other clients
-				for (size_t i = 0; i < menuPlayers.Size(); i++)
+				for (size_t i = 0; i < menuPlayers.size(); i++)
 				{
 					if (menuPlayers[i]->nr == message->iPlayerNr)
 						continue;
@@ -443,9 +443,9 @@ void cServerGame::startGameServer()
 	}
 
 	// copy playerlist for server
-	for (unsigned int i = 0; i < gameData->players.Size(); i++)
+	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
-		serverPlayers.Add (new cPlayer (* (gameData->players[i])));
+		serverPlayers.push_back (new cPlayer (* (gameData->players[i])));
 		serverPlayers[i]->InitMaps (serverMap->size, serverMap);
 	}
 
@@ -472,11 +472,11 @@ void cServerGame::startGameServer()
 	Server = new cServer (network, serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 	// send victory conditions to clients
-	for (unsigned n = 0; n < gameData->players.Size(); n++)
+	for (unsigned n = 0; n < gameData->players.size(); n++)
 		sendVictoryConditions (*Server, nTurns, nScore, gameData->players[n]);
 
 	// place resources
-	for (unsigned int i = 0; i < gameData->players.Size(); i++)
+	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
 		Server->correctLandingPos (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY);
 		serverMap->placeRessourcesAddPlayer (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY, gameData->settings->resFrequency);
@@ -489,7 +489,7 @@ void cServerGame::startGameServer()
 		sendClansToClients (*Server, &gameData->players);
 
 	// make the landing
-	for (unsigned int i = 0; i < gameData->players.Size(); i++)
+	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
 		Server->makeLanding (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
 							 serverPlayers[i], gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
@@ -505,11 +505,11 @@ void cServerGame::terminateServer()
 {
 	if (gameData != 0)
 	{
-		for (size_t i = 0; i != gameData->players.Size(); ++i)
+		for (size_t i = 0; i != gameData->players.size(); ++i)
 		{
 			delete gameData->players[i];
 		}
-		gameData->players.Clear();
+		gameData->players.clear();
 	}
 
 	delete serverMap;
@@ -540,7 +540,7 @@ std::string cServerGame::getGameState() const
 	result << "GameState: ";
 	if (Server != 0)
 		result << "Game is active" << endl;
-	else if (gameData != 0 && gameData->players.Size() == 0)
+	else if (gameData != 0 && gameData->players.size() == 0)
 		result << "Game is open for new players" << endl;
 	else
 		result << "Game has started, players are setting up" << endl;
@@ -550,22 +550,22 @@ std::string cServerGame::getGameState() const
 		result << "Turn: " << Server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (Server != 0 && serverPlayers.Size() > 0)
+	if (Server != 0 && serverPlayers.size() > 0)
 	{
-		for (size_t i = 0; i < serverPlayers.Size(); i++)
+		for (size_t i = 0; i < serverPlayers.size(); i++)
 		{
 			cPlayer* player = serverPlayers[i];
 			result << " " << player->name << (Server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
-	else if (gameData->players.Size() > 0)
+	else if (gameData->players.size() > 0)
 	{
-		for (size_t i = 0; i < gameData->players.Size(); i++)
+		for (size_t i = 0; i < gameData->players.size(); i++)
 			result << " " << gameData->players[i]->name << endl;
 	}
-	else if (menuPlayers.Size() > 0)
+	else if (menuPlayers.size() > 0)
 	{
-		for (size_t i = 0; i < menuPlayers.Size(); i++)
+		for (size_t i = 0; i < menuPlayers.size(); i++)
 			result << " " << menuPlayers[i]->name << endl;
 	}
 	return result.str();
@@ -580,7 +580,7 @@ int cServerGame::getSocketForPlayerNr (int playerNr)
 		if (player != 0)
 			return player->iSocketNum;
 	}
-	for (size_t i = 0; i < menuPlayers.Size(); i++)
+	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{
 		if (menuPlayers[i]->nr == playerNr)
 			return menuPlayers[i]->socket;

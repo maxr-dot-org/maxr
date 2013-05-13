@@ -26,12 +26,12 @@ template<typename T> class cList
 public:
 	cList() : v_(), capacity_(), size_() {}
 
-	~cList() { Clear(); }
+	~cList() { clear(); }
 
 	cList (const cList& list);
 	cList& operator= (const cList& list);
 
-	size_t Size() const { return size_; }
+	size_t size() const { return size_; }
 
 	T&       Back()       { return v_[size_ - 1]; }
 	T const& Back() const { return v_[size_ - 1]; }
@@ -39,13 +39,13 @@ public:
 	T&       operator [] (size_t const idx)       { assert (idx < size_); return v_[idx]; }
 	T const& operator [] (size_t const idx) const { assert (idx < size_); return v_[idx]; }
 
-	void Add (T const& elem);
+	void push_back (T const& elem);
 
 	void Insert (size_t const i, T const& e);
 
 	void Delete (size_t const idx);
 
-	void Clear() { Reserve (0); }
+	void clear() { Reserve (0); }
 
 	void PopBack();
 
@@ -91,7 +91,7 @@ cList<T>& cList<T>::operator= (const cList& list)
 }
 
 
-template<typename T> void cList<T>::Add (T const& e)
+template<typename T> void cList<T>::push_back (T const& e)
 {
 	if (size_ >= capacity_) Reserve (std::max ( (size_t) 1U, size_ * 2));
 	new (&v_[size_]) T (e);

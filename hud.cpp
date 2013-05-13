@@ -92,7 +92,7 @@ void cDebugOutput::draw()
 
 	if (debugPlayers)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->PlayerList->Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "Players: " + iToStr ((int) client->PlayerList->size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		SDL_Rect rDest = { Sint16 (DEBUGOUT_X_POS), Sint16 (debugOff), 20, 10 };
@@ -100,7 +100,7 @@ void cDebugOutput::draw()
 		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
 		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
 		const cList<cPlayer*>& playerList = *client->PlayerList;
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			//HACK SHOWFINISHEDPLAYERS
 			SDL_Rect rDot = { 10 , 0, 10, 10 }; //for green dot
@@ -141,25 +141,25 @@ void cDebugOutput::draw()
 
 	if (debugAjobs)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client->attackJobs.Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "ClientAttackJobs: " + iToStr ( (int) client->attackJobs.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		if (server)
 		{
-			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) server->AJobs.Size()), FONT_LATIN_SMALL_WHITE);
+			font->showText (DEBUGOUT_X_POS, debugOff, "ServerAttackJobs: " + iToStr ( (int) server->AJobs.size()), FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 		}
 	}
 
 	if (debugBaseClient)
 	{
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) player->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) player->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
 	if (debugBaseServer)
 	{
 		cPlayer* serverPlayer = server->getPlayerFromNumber (player->Nr);
-		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.Size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
 
@@ -224,7 +224,7 @@ void cDebugOutput::draw()
 			font->showText (DEBUGOUT_X_POS, debugOff, "-Client Lag: ", FONT_LATIN_SMALL_WHITE);
 			debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
-			for (unsigned int i = 0; i < server->PlayerList->Size(); i++)
+			for (unsigned int i = 0; i < server->PlayerList->size(); i++)
 			{
 				eUnicodeFontType fontType = FONT_LATIN_SMALL_WHITE;
 				if (server->gameTimer.getReceivedTime (i) + PAUSE_GAME_TIMEOUT < server->gameTimer.gameTime)
@@ -342,14 +342,14 @@ void cDebugOutput::traceVehicle (const cVehicle* vehicle, int* y, int x)
 
 	tmpString =
 		" vehicle_to_activate: +"  + iToStr (vehicle->VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr ( (int) vehicle->storedUnits.Size());
+		" stored_vehicles_count: " + iToStr ( (int) vehicle->storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (vehicle->storedUnits.Size())
+	if (vehicle->storedUnits.size())
 	{
 		const cUnit* storedVehicle;
-		for (unsigned int i = 0; i < vehicle->storedUnits.Size(); i++)
+		for (unsigned int i = 0; i < vehicle->storedUnits.size(); i++)
 		{
 			storedVehicle = vehicle->storedUnits[i];
 			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
@@ -360,7 +360,7 @@ void cDebugOutput::traceVehicle (const cVehicle* vehicle, int* y, int x)
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < vehicle->seenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < vehicle->seenByPlayerList.size(); i++)
 		{
 			tmpString += ", \"" + vehicle->seenByPlayerList[i]->name + "\"";
 		}
@@ -397,14 +397,14 @@ void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ((int) building->storedUnits.Size());
+	tmpString = " stored_vehicles_count: " + iToStr ((int) building->storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building->storedUnits.Size())
+	if (building->storedUnits.size())
 	{
 		const cUnit* storedVehicle;
-		for (unsigned int i = 0; i < building->storedUnits.Size(); i++)
+		for (unsigned int i = 0; i < building->storedUnits.size(); i++)
 		{
 			storedVehicle = building->storedUnits[i];
 			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
@@ -415,14 +415,14 @@ void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
 	tmpString =
 		"build_speed: "        + iToStr (building->BuildSpeed)  +
 		" repeat_build: "      + iToStr (building->RepeatBuild) +
-		" build_list_count: +" + iToStr (building->BuildList ? (int) building->BuildList->Size() : 0);
+		" build_list_count: +" + iToStr (building->BuildList ? (int) building->BuildList->size() : 0);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building->BuildList && building->BuildList->Size())
+	if (building->BuildList && building->BuildList->size())
 	{
 		const sBuildList* BuildingList;
-		for (unsigned int i = 0; i < building->BuildList->Size(); i++)
+		for (unsigned int i = 0; i < building->BuildList->size(); i++)
 		{
 			BuildingList = (*building->BuildList) [i];
 			font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
@@ -433,7 +433,7 @@ void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < building->seenByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < building->seenByPlayerList.size(); i++)
 		{
 			tmpString += ", \"" + building->seenByPlayerList[i]->name + "\"";
 		}
@@ -529,107 +529,107 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerL
 	setWind (random (360));
 
 	zoomSlider.setMoveCallback (&zoomSliderMoved);
-	menuItems.Add (&zoomSlider);
-	menuItems.Add (zoomSlider.scroller);
+	menuItems.push_back (&zoomSlider);
+	menuItems.push_back (zoomSlider.scroller);
 
 	endButton.setReleasedFunction (&endReleased);
-	menuItems.Add (&endButton);
+	menuItems.push_back (&endButton);
 
 	preferencesButton.setReleasedFunction (&preferencesReleased);
-	menuItems.Add (&preferencesButton);
+	menuItems.push_back (&preferencesButton);
 	filesButton.setReleasedFunction (&filesReleased);
-	menuItems.Add (&filesButton);
+	menuItems.push_back (&filesButton);
 
 	playButton.setReleasedFunction (&playReleased);
-	menuItems.Add (&playButton);
+	menuItems.push_back (&playButton);
 	stopButton.setReleasedFunction (&stopReleased);
-	menuItems.Add (&stopButton);
+	menuItems.push_back (&stopButton);
 
 	FLCImage.setReleasedFunction (&swithAnimationReleased);
-	menuItems.Add (&FLCImage);
+	menuItems.push_back (&FLCImage);
 
-	menuItems.Add (&unitDetails);
+	menuItems.push_back (&unitDetails);
 
 	// generate checkbuttons
-	menuItems.Add (&surveyButton);
-	menuItems.Add (&hitsButton);
-	menuItems.Add (&scanButton);
-	menuItems.Add (&statusButton);
-	menuItems.Add (&ammoButton);
-	menuItems.Add (&gridButton);
-	menuItems.Add (&colorButton);
-	menuItems.Add (&rangeButton);
-	menuItems.Add (&fogButton);
-	menuItems.Add (&lockButton);
+	menuItems.push_back (&surveyButton);
+	menuItems.push_back (&hitsButton);
+	menuItems.push_back (&scanButton);
+	menuItems.push_back (&statusButton);
+	menuItems.push_back (&ammoButton);
+	menuItems.push_back (&gridButton);
+	menuItems.push_back (&colorButton);
+	menuItems.push_back (&rangeButton);
+	menuItems.push_back (&fogButton);
+	menuItems.push_back (&lockButton);
 
 	TNTButton.setClickedFunction (&changedMiniMap);
-	menuItems.Add (&TNTButton);
+	menuItems.push_back (&TNTButton);
 	twoXButton.setClickedFunction (&twoXReleased);
-	menuItems.Add (&twoXButton);
+	menuItems.push_back (&twoXButton);
 	playersButton.setClickedFunction (&playersReleased);
-	menuItems.Add (&playersButton);
+	menuItems.push_back (&playersButton);
 
 	helpButton.setReleasedFunction (&helpReleased);
-	menuItems.Add (&helpButton);
+	menuItems.push_back (&helpButton);
 	centerButton.setReleasedFunction (&centerReleased);
-	menuItems.Add (&centerButton);
+	menuItems.push_back (&centerButton);
 
 	reportsButton.setReleasedFunction (&reportsReleased);
-	menuItems.Add (&reportsButton);
+	menuItems.push_back (&reportsButton);
 	chatButton.setReleasedFunction (&chatReleased);
-	menuItems.Add (&chatButton);
+	menuItems.push_back (&chatButton);
 
 	nextButton.setReleasedFunction (&nextReleased);
-	menuItems.Add (&nextButton);
+	menuItems.push_back (&nextButton);
 	prevButton.setReleasedFunction (&prevReleased);
-	menuItems.Add (&prevButton);
+	menuItems.push_back (&prevButton);
 	doneButton.setReleasedFunction (&doneReleased);
-	menuItems.Add (&doneButton);
+	menuItems.push_back (&doneButton);
 
 	miniMapImage.setClickedFunction (&miniMapClicked);
 	miniMapImage.setRightClickedFunction (&miniMapRightClicked);
-	menuItems.Add (&miniMapImage);
+	menuItems.push_back (&miniMapImage);
 
 	coordsLabel.setCentered (true);
-	menuItems.Add (&coordsLabel);
+	menuItems.push_back (&coordsLabel);
 
 	unitNameLabel.setCentered (true);
-	menuItems.Add (&unitNameLabel);
+	menuItems.push_back (&unitNameLabel);
 
 	turnLabel.setCentered (true);
-	menuItems.Add (&turnLabel);
+	menuItems.push_back (&turnLabel);
 
 	timeLabel.setCentered (true);
-	menuItems.Add (&timeLabel);
+	menuItems.push_back (&timeLabel);
 
 	chatBox.setDisabled (true);
 	chatBox.setReturnPressedFunc (&chatBoxReturnPressed);
-	menuItems.Add (&chatBox);
+	menuItems.push_back (&chatBox);
 
 	infoTextLabel.setCentered (true);
 	infoTextLabel.setDisabled (true);
-	menuItems.Add (&infoTextLabel);
+	menuItems.push_back (&infoTextLabel);
 
 	infoTextAdditionalLabel.setCentered (true);
 	infoTextAdditionalLabel.setDisabled (true);
-	menuItems.Add (&infoTextAdditionalLabel);
+	menuItems.push_back (&infoTextAdditionalLabel);
 
-	menuItems.Add (&selUnitStatusStr);
-	menuItems.Add (&selUnitNamePrefixStr);
+	menuItems.push_back (&selUnitStatusStr);
+	menuItems.push_back (&selUnitNamePrefixStr);
 
 	selUnitNameEdit.setReturnPressedFunc (unitNameReturnPressed);
-	menuItems.Add (&selUnitNameEdit);
+	menuItems.push_back (&selUnitNameEdit);
 
-	for (size_t i = 0; i < playerList->Size(); i++)
+	for (size_t i = 0; i < playerList->size(); i++)
 	{
 		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
 		const int yPos = Video.getResolutionY() >= 768 ? (482 + GraphicsData.gfx_hud_extra_players->h * i) : (480 - 82 - GraphicsData.gfx_hud_extra_players->h * i);
 
 		cMenuPlayerInfo* playerInfo = new cMenuPlayerInfo (xPos, yPos, (*playerList) [i]);
 		playerInfo->setDisabled (true);
-		playersInfo.Add (playerInfo);
+		playersInfo.push_back (playerInfo);
 
-		menuItems.Add (playerInfo);
+		menuItems.push_back (playerInfo);
 	}
 
 	updateTurn (1);
@@ -674,15 +674,15 @@ cGameGUI::~cGameGUI()
 	SDL_RemoveTimer (TimerID);
 
 	if (FLC) FLI_Close (FLC);
-	for (size_t i = 0; i != playersInfo.Size(); ++i)
+	for (size_t i = 0; i != playersInfo.size(); ++i)
 	{
 		delete playersInfo[i];
 	}
-	for (size_t i = 0; i != messages.Size(); ++i)
+	for (size_t i = 0; i != messages.size(); ++i)
 	{
 		delete messages[i];
 	}
-	for (size_t i = 0; i != FxList.Size(); ++i)
+	for (size_t i = 0; i != FxList.size(); ++i)
 	{
 		delete FxList[i];
 	}
@@ -712,9 +712,9 @@ void cGameGUI::handleMessages()
 {
 	int iHeight = 0;
 	sMessage* message;
-	if (messages.Size() == 0) return;
+	if (messages.size() == 0) return;
 	//delete old messages
-	for (int i = (int) messages.Size() - 1; i >= 0; i--)
+	for (int i = (int) messages.size() - 1; i >= 0; i--)
 	{
 		message = messages[i];
 		if (message->age + MSG_TICKS < SDL_GetTicks() || iHeight > 200)
@@ -730,7 +730,7 @@ void cGameGUI::handleMessages()
 void cGameGUI::addMessage (const string& sMsg)
 {
 	sMessage* const Message = new sMessage (sMsg, SDL_GetTicks());
-	messages.Add (Message);
+	messages.push_back (Message);
 	if (cSettings::getInstance().isDebug()) Log.write (Message->msg, cLog::eLOG_TYPE_DEBUG);
 }
 
@@ -769,7 +769,7 @@ int cGameGUI::show()
 		{
 			handleMouseMove();
 
-			for (unsigned int i = 0; i < menuItems.Size(); i++)
+			for (unsigned int i = 0; i < menuItems.size(); i++)
 			{
 				cMenuItem* menuItem = menuItems[i];
 				if (menuItem->overItem (lastMouseX, lastMouseY) && !menuItem->overItem (mouse->x, mouse->y)) menuItem->hoveredAway (this);
@@ -1597,7 +1597,7 @@ void cGameGUI::updateMouseCursor()
 	int x = mouse->x;
 	int y = mouse->y;
 
-	for (unsigned int i = 0; i < menuItems.Size(); i++)
+	for (unsigned int i = 0; i < menuItems.size(); i++)
 	{
 		if (menuItems[i]->overItem (x, y) && !menuItems[i]->isDisabled())
 		{
@@ -1814,7 +1814,7 @@ void cGameGUI::updateMouseCursor()
 					 (
 						 (
 							 !selectedBuilding->BuildList                    ||
-							 !selectedBuilding->BuildList->Size()            ||
+							 !selectedBuilding->BuildList->size()            ||
 							 selectedBuilding->IsWorking                     ||
 							 (*selectedBuilding->BuildList) [0]->metall_remaining > 0
 						 ) &&
@@ -1883,7 +1883,7 @@ void cGameGUI::updateMouseCursor()
 			selectedBuilding                                &&
 			selectedBuilding->owner == client->getActivePlayer() &&
 			selectedBuilding->BuildList                     &&
-			selectedBuilding->BuildList->Size()             &&
+			selectedBuilding->BuildList->size()             &&
 			!selectedBuilding->IsWorking                    &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0)
 		{
@@ -1975,7 +1975,7 @@ void cGameGUI::handleMouseMove()
 
 void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 {
-	for (unsigned int i = 0; i < menuItems.Size(); i++)
+	for (unsigned int i = 0; i < menuItems.size(); i++)
 	{
 		if (!menuItems[i]->isDisabled() && menuItems[i]->overItem (mouseState.x, mouseState.y)) return;
 	}
@@ -2198,7 +2198,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			sendWantActivate (*client, selectedVehicle->iID, true, selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouse->getKachelX(), mouse->getKachelY());
 			updateMouseCursor();
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->Size())
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
 		{
 			sendWantExitFinishedVehicle (*client, selectedBuilding, mouse->getKachelX(), mouse->getKachelY());
 		}
@@ -2370,7 +2370,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					}
 					else
 					{
-						if (selectedVehiclesGroup.Size() > 1) client->startGroupMove();
+						if (selectedVehiclesGroup.size() > 1) client->startGroupMove();
 						else client->addMoveJob (selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 					}
 				}
@@ -2557,7 +2557,7 @@ void cGameGUI::doCommand (const string& cmd)
 		// close the socket
 		if (Server->network) Server->network->close (Player->iSocketNum);
 		cList<cPlayer*>& playerList = *Server->PlayerList;
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			if (playerList[i]->iSocketNum > Player->iSocketNum && playerList[i]->iSocketNum < MAX_CLIENTS) playerList[i]->iSocketNum--;
 		}
@@ -2666,7 +2666,7 @@ void cGameGUI::doCommand (const string& cmd)
 			if (Server)
 			{
 				const cList<cPlayer*>& playerList = *Server->PlayerList;
-				for (unsigned int i = 0; i < playerList.Size(); i++)
+				for (unsigned int i = 0; i < playerList.size(); i++)
 				{
 					sendRequestResync (*client, playerList[i]->Nr);
 				}
@@ -2842,16 +2842,16 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 					newSelected = false;
 					selectedVehiclesGroup.Insert (0, vehicle);
 				}
-				else selectedVehiclesGroup.Add (vehicle);
+				else selectedVehiclesGroup.push_back (vehicle);
 				vehicle->groupSelected = true;
 			}
 		}
 	}
-	if (newSelected && selectedVehiclesGroup.Size() > 0)
+	if (newSelected && selectedVehiclesGroup.size() > 0)
 	{
 		selectUnit (selectedVehiclesGroup[0]);
 	}
-	if (selectedVehiclesGroup.Size() == 1)
+	if (selectedVehiclesGroup.size() == 1)
 	{
 		selectedVehiclesGroup[0]->groupSelected = false;
 		selectedVehiclesGroup.Delete (0);
@@ -2867,11 +2867,11 @@ void cGameGUI::updateStatusText()
 
 void cGameGUI::deselectGroup()
 {
-	for (size_t i = 0; i != selectedVehiclesGroup.Size(); ++i)
+	for (size_t i = 0; i != selectedVehiclesGroup.size(); ++i)
 	{
 		selectedVehiclesGroup[i]->groupSelected = false;
 	}
-	selectedVehiclesGroup.Clear();
+	selectedVehiclesGroup.clear();
 }
 
 void cGameGUI::changeWindDir()
@@ -3019,13 +3019,13 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuAutomove && selectedVehicle && selectedVehicle->data.canSurvey && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			selectedVehiclesGroup[i]->executeAutoMoveJobCommand(*client);
 		}
 		selectedVehicle->executeAutoMoveJobCommand(*client);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->Size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		sendWantStartWork (*client, selectedBuilding);
 	}
@@ -3033,7 +3033,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		if (selectedVehicle->ClientMoveJob)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
 				if (selectedVehiclesGroup[i]->ClientMoveJob) sendWantStopMove (*client, selectedVehiclesGroup[i]->iID);
 			}
@@ -3041,7 +3041,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (selectedVehicle->IsBuilding)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
 				if (selectedVehiclesGroup[i]->IsBuilding && selectedVehiclesGroup[i]->BuildRounds) sendWantStopBuilding (*client, selectedVehiclesGroup[i]->iID);
 			}
@@ -3049,7 +3049,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		}
 		else if (selectedVehicle->IsClearing)
 		{
-			for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
 				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, selectedVehiclesGroup[i]);
 			}
@@ -3062,7 +3062,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, selectedVehiclesGroup[i]);
 		}
@@ -3070,7 +3070,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			if (selectedVehicle->sentryActive == selectedVehiclesGroup[i]->sentryActive)
 			{
@@ -3085,7 +3085,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuManualFire && selectedVehicle && (selectedVehicle->manualFireActive || selectedVehicle->data.canAttack) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
 				 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
@@ -3127,7 +3127,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuLayMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur > 0 && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur > 0) selectedVehiclesGroup[i]->executeLayMinesCommand (*client);
 		}
@@ -3135,7 +3135,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuClearMine && selectedVehicle && selectedVehicle->data.canPlaceMines && selectedVehicle->data.storageResCur < selectedVehicle->data.storageResMax && !client->isFreezed () && selectedVehicle->owner == player)
 	{
-		for (unsigned int i = 1; i < selectedVehiclesGroup.Size(); i++)
+		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
 			if (selectedVehiclesGroup[i]->data.canPlaceMines || selectedVehiclesGroup[i]->data.storageResCur < selectedVehiclesGroup[i]->data.storageResMax) selectedVehiclesGroup[i]->executeClearMinesCommand (*client);
 		}
@@ -3286,7 +3286,7 @@ void cGameGUI::playersReleased (void* parent)
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	gui->showPlayers = gui->playersButton.isChecked();
 
-	for (unsigned int i = 0; i < gui->playersInfo.Size(); i++)
+	for (unsigned int i = 0; i < gui->playersInfo.size(); i++)
 	{
 		gui->playersInfo[i]->setDisabled (!gui->showPlayers);
 	}
@@ -3576,7 +3576,7 @@ void cGameGUI::drawFx (bool bottom) const
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };	SDL_SetClipRect (buffer, &clipRect);
 	SDL_SetClipRect (buffer, &clipRect);
 
-	for (unsigned int i = 0; i < client->FxList.Size (); i++)
+	for (unsigned int i = 0; i < client->FxList.size(); i++)
 	{
 		if (client->FxList[i]->bottom == bottom)
 		{
@@ -3584,7 +3584,7 @@ void cGameGUI::drawFx (bool bottom) const
 		}
 	}
 
-	for (unsigned int i = 0; i < FxList.Size (); i++)
+	for (unsigned int i = 0; i < FxList.size(); i++)
 	{
 		if (FxList[i]->bottom == bottom)
 		{
@@ -3597,7 +3597,7 @@ void cGameGUI::drawFx (bool bottom) const
 
 void cGameGUI::runFx ()
 {
-	for (unsigned int i = 0; i < FxList.Size (); i++)
+	for (unsigned int i = 0; i < FxList.size(); i++)
 	{
 		FxList[i]->run ();
 
@@ -3973,11 +3973,11 @@ void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 
 void cGameGUI::displayMessages()
 {
-	if (messages.Size() == 0) return;
+	if (messages.size() == 0) return;
 
 	sMessage* message;
 	int height = 0;
-	for (int i = (int) messages.Size() - 1; i >= 0; i--)
+	for (int i = (int) messages.size() - 1; i >= 0; i--)
 	{
 		message = messages[i];
 		height += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
@@ -3990,7 +3990,7 @@ void cGameGUI::displayMessages()
 	dest.w = Video.getResolutionX() - 204;
 	dest.h = height;
 
-	for (unsigned int i = 0; i < messages.Size(); i++)
+	for (unsigned int i = 0; i < messages.size(); i++)
 	{
 		message = messages[i];
 		string msgString = message->msg;
@@ -4001,7 +4001,7 @@ void cGameGUI::displayMessages()
 			if (msgString[i] == ':')   //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr (0, i);
-				for (size_t i = 0; i < client->getPlayerList()->Size(); i++)
+				for (size_t i = 0; i < client->getPlayerList()->size(); i++)
 				{
 					cPlayer* const Player = (*client->getPlayerList()) [i];
 					if (Player)
@@ -4287,7 +4287,7 @@ void cGameGUI::drawUnitCircles()
 		}
 
 		if (selectedBuilding->BuildList                              &&
-			selectedBuilding->BuildList->Size()                      &&
+			selectedBuilding->BuildList->size()                      &&
 			!selectedBuilding->IsWorking                             &&
 			(*selectedBuilding->BuildList) [0]->metall_remaining <= 0 &&
 			selectedBuilding->owner == player)

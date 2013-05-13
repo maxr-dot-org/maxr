@@ -79,7 +79,7 @@ cMapIterator<T>::cMapIterator (cList<T*>* list_)
 	index = 0;
 	list = list_;
 
-	if (list->Size() == 0)
+	if (list->size() == 0)
 	{
 		end = true;
 		rend = true;
@@ -94,7 +94,7 @@ cMapIterator<T>::cMapIterator (cList<T*>* list_)
 template <typename T>
 unsigned int cMapIterator<T>::size() const
 {
-	return (unsigned int) list->Size();
+	return (unsigned int) list->size();
 }
 
 template <typename T>
@@ -130,7 +130,7 @@ cMapIterator<T> cMapIterator<T>::operator++ (int)
 	{
 		index++;
 	}
-	if (index >= (int) list->Size()) end = true;
+	if (index >= (int) list->size()) end = true;
 
 	return i;
 }
@@ -143,7 +143,7 @@ cMapIterator<T> cMapIterator<T>::operator-- (int)
 
 	if (end)
 	{
-		index = (int) list->Size() - 1;
+		index = (int) list->size() - 1;
 		end = false;
 	}
 	else
@@ -165,9 +165,9 @@ cMapIterator<T>::operator T* () const
 template <typename T>
 void cMapIterator<T>::setToEnd()
 {
-	if (list->Size() > 0)
+	if (list->size() > 0)
 	{
-		index = list->Size() - 1;
+		index = list->size() - 1;
 	}
 	else
 	{
@@ -181,7 +181,7 @@ template <typename T>
 void cMapIterator<T>::rewind()
 {
 	index = 0;
-	if (list->Size() == 0)
+	if (list->size() == 0)
 	{
 		rend = true;
 		end = true;

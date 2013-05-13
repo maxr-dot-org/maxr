@@ -112,7 +112,7 @@ cVehicle::~cVehicle()
 
 	if (IsLocked)
 	{
-		for (size_t i = 0; i < Client->PlayerList->Size(); i++)
+		for (size_t i = 0; i < Client->PlayerList->size(); i++)
 		{
 			cPlayer* p = (*Client->PlayerList) [i];
 			p->DeleteLock (this);
@@ -181,7 +181,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY, true) && detectedByPlayerList.Size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
+		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY, true) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -581,7 +581,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 			cBuilding* building = map.fields[PosX + PosY * map.size].getBaseBuilding();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
-			if ( (data.isStealthOn & TERRAIN_SEA) && water && detectedByPlayerList.Size() == 0 && owner == client->getActivePlayer()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 100);
+			if ( (data.isStealthOn & TERRAIN_SEA) && water && detectedByPlayerList.size() == 0 && owner == client->getActivePlayer()) SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 100);
 			else SDL_SetAlpha (GraphicsData.gfx_tmp, SDL_SRCALPHA, 255);
 		}
 	}
@@ -769,7 +769,7 @@ int cVehicle::refreshData()
 				int size = map.size;
 				map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
 				sendStopClear (server, this, BuildBigSavedPos, owner->Nr);
-				for (unsigned int i = 0; i < seenByPlayerList.Size(); i++)
+				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 				{
 					sendStopClear (server, this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
 				}
@@ -777,7 +777,7 @@ int cVehicle::refreshData()
 			else
 			{
 				sendStopClear (server, this, -1, owner->Nr);
-				for (unsigned int i = 0; i < seenByPlayerList.Size(); i++)
+				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 				{
 					sendStopClear (server, this, -1, seenByPlayerList[i]->Nr);
 				}
@@ -1486,7 +1486,7 @@ bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const str
 	{
 		int iOff = PosX + PosY * server.Map->size;
 		Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
-		server.AJobs.Add (new cServerAttackJob (server, opponentUnit, iOff, true));
+		server.AJobs.push_back (new cServerAttackJob (server, opponentUnit, iOff, true));
 		if (ServerMoveJob != 0)
 			ServerMoveJob->bFinished = true;
 		return true;
@@ -1512,7 +1512,7 @@ bool cVehicle::InSentryRange (cServer& server)
 
 	int iOff = PosX + PosY * server.Map->size;
 	cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		Player = playerList[i];
 
@@ -1634,7 +1634,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 	int iOff = PosX + PosY * server.Map->size;
 
 	cList<cPlayer*>& playerList = *server.PlayerList;
-	for (unsigned int i = 0; i < playerList.Size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
 		if (player == owner)
@@ -1736,7 +1736,7 @@ void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 
 	Vehicle->Loaded = true;
 
-	storedUnits.Add (Vehicle);
+	storedUnits.push_back (Vehicle);
 	data.storageUnitsCur++;
 
 	owner->DoScan();
@@ -1885,7 +1885,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 		if (unit->isBuilding() && unit->owner == 0) return false;   // rubble
 		if (steal && unit->data.canBeCaptured == false) return false;
 		if (steal == false && unit->data.canBeDisabled == false) return false;
-		if (steal && unit->storedUnits.Size() > 0) return false;
+		if (steal && unit->storedUnits.size() > 0) return false;
 		if (unit->owner == owner) return false;
 		if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0) return false;
 
@@ -1991,7 +1991,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 {
-	for (unsigned int i = 0; i < detectedByPlayerList.Size(); i++)
+	for (unsigned int i = 0; i < detectedByPlayerList.size(); i++)
 	{
 		if (detectedByPlayerList[i] == player) return true;
 	}
@@ -2001,26 +2001,26 @@ bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addToDetectedInThisTurnList)
 {
-	bool wasDetected = (detectedByPlayerList.Size() > 0);
+	bool wasDetected = (detectedByPlayerList.size() > 0);
 
 	if (!isDetectedByPlayer (player))
-		detectedByPlayerList.Add (player);
+		detectedByPlayerList.push_back (player);
 
 	if (!wasDetected) sendDetectionState (server, this);
 
 	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
-		detectedInThisTurnByPlayerList.Add (player);
+		detectedInThisTurnByPlayerList.push_back (player);
 }
 
 //-----------------------------------------------------------------------------
 void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 {
-	bool wasDetected = (detectedByPlayerList.Size() > 0);
+	bool wasDetected = (detectedByPlayerList.size() > 0);
 
 	detectedByPlayerList.Remove (player);
 	detectedInThisTurnByPlayerList.Remove (player);
 
-	if (wasDetected && detectedByPlayerList.Size() == 0) sendDetectionState (server, this);
+	if (wasDetected && detectedByPlayerList.size() == 0) sendDetectionState (server, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2032,7 +2032,7 @@ bool cVehicle::wasDetectedInThisTurnByPlayer (const cPlayer* player) const
 //-----------------------------------------------------------------------------
 void cVehicle::clearDetectedInThisTurnPlayerList()
 {
-	detectedInThisTurnByPlayerList.Clear();
+	detectedInThisTurnByPlayerList.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -2044,7 +2044,7 @@ void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 	while (foundPlayerToReset)
 	{
 		foundPlayerToReset = false;
-		for (unsigned int i = 0; i < detectedByPlayerList.Size(); i++)
+		for (unsigned int i = 0; i < detectedByPlayerList.size(); i++)
 		{
 			if (playersThatDetectThisVehicle.Contains (detectedByPlayerList[i]) == false
 				&& detectedInThisTurnByPlayerList.Contains (detectedByPlayerList[i]) == false)
@@ -2067,7 +2067,7 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 		cMap& map = *server.Map;
 		int offset = PosX + PosY * map.size;
 		cList<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int i = 0; i < playerList.Size(); i++)
+		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner)
@@ -2091,13 +2091,13 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 				 && (player->DetectLandMap[offset] || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
 					 || isOnWater))
 			{
-				playersThatDetectThisVehicle.Add (player);
+				playersThatDetectThisVehicle.push_back (player);
 			}
 
 			if ( (data.isStealthOn & TERRAIN_SEA)
 				 && (player->DetectSeaMap[offset] || isOnWater == false))
 			{
-				playersThatDetectThisVehicle.Add (player);
+				playersThatDetectThisVehicle.push_back (player);
 			}
 		}
 	}
@@ -2109,7 +2109,7 @@ void cVehicle::makeDetection (cServer& server)
 {
 	//check whether the vehicle has been detected by others
 	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
-	for (unsigned int i = 0; i < playersThatDetectThisVehicle.Size(); i++)
+	for (unsigned int i = 0; i < playersThatDetectThisVehicle.size(); i++)
 		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
 
 	//detect other units

@@ -169,12 +169,12 @@ void sendWantBuildList (const cClient &client, const cBuilding* Building, const 
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILDLIST);
 	message->pushBool (bRepeat);
-	for (int i = (int) BuildList.Size() - 1; i >= 0; i--)
+	for (int i = (int) BuildList.size() - 1; i >= 0; i--)
 	{
 		message->pushInt16 (BuildList[i].type.iSecondPart);
 		message->pushInt16 (BuildList[i].type.iFirstPart);
 	}
-	message->pushInt16 ( (int) BuildList.Size());
+	message->pushInt16 ( (int) BuildList.size());
 	message->pushInt16 (buildSpeed);
 	message->pushInt16 (Building->iID);
 	client.sendNetMessage (message);

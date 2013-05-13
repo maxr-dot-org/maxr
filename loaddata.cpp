@@ -674,7 +674,7 @@ static int LoadMusic (const char* path)
 		}
 		if (!FileExists (sTmpString.c_str()))
 			continue;
-		MusicFiles.Add (sTmpString);
+		MusicFiles.push_back (sTmpString);
 	}
 
 	return 1;
@@ -981,7 +981,7 @@ static int LoadVehicles()
 	{
 		pszTmp = pXmlElement->Attribute ("directory");
 		if (pszTmp != 0)
-			VehicleList.Add (pszTmp);
+			VehicleList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -990,7 +990,7 @@ static int LoadVehicles()
 		}
 		pszTmp = pXmlElement->Attribute ("num");
 		if (pszTmp != 0)
-			IDList.Add (pszTmp);
+			IDList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
@@ -1009,7 +1009,7 @@ static int LoadVehicles()
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute ("directory");
 		if (pszTmp != 0)
-			VehicleList.Add (pszTmp);
+			VehicleList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -1018,7 +1018,7 @@ static int LoadVehicles()
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute ("num");
 		if (pszTmp != 0)
-			IDList.Add (pszTmp);
+			IDList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
@@ -1027,9 +1027,9 @@ static int LoadVehicles()
 		}
 	}
 	// load found units
-	UnitsData.vehicle.Clear();
-	UnitsData.vehicle.Reserve (VehicleList.Size());
-	for (unsigned int i = 0; i < VehicleList.Size(); i++)
+	UnitsData.vehicle.clear();
+	UnitsData.vehicle.Reserve (VehicleList.size());
+	for (unsigned int i = 0; i < VehicleList.size(); i++)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
 		sVehiclePath += PATH_DELIMITER;
@@ -1037,7 +1037,7 @@ static int LoadVehicles()
 		sVehiclePath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.vehicle.Add (sVehicle());
+		UnitsData.vehicle.push_back (sVehicle());
 		sVehicle& v = UnitsData.vehicle[i];
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
@@ -1351,7 +1351,7 @@ static int LoadVehicles()
 		LoadUnitSoundfile (v.Attack,     sVehiclePath.c_str(), "attack.ogg");
 	}
 
-	for (unsigned int i = 0 ; i < UnitsData.vehicle.Size(); ++i) UnitsData.vehicle[i].nr = (int) i;
+	for (unsigned int i = 0 ; i < UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
 	return 1;
 }
 
@@ -1408,7 +1408,7 @@ bool translateUnitData (sID ID, bool vehicle)
 
 	if (vehicle)
 	{
-		for (size_t i = 0; i != UnitsData.vehicle.Size(); ++i)
+		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
 		{
 			if (UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart)
 			{
@@ -1419,7 +1419,7 @@ bool translateUnitData (sID ID, bool vehicle)
 	}
 	else
 	{
-		for (size_t i = 0; i != UnitsData.building.Size(); ++i)
+		for (size_t i = 0; i != UnitsData.building.size(); ++i)
 		{
 			if (UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart)
 			{
@@ -1504,7 +1504,7 @@ static int LoadBuildings()
 	{
 		pszTmp = pXmlElement->Attribute ("directory");
 		if (pszTmp != 0)
-			BuildingList.Add (pszTmp);
+			BuildingList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -1513,7 +1513,7 @@ static int LoadBuildings()
 		}
 		pszTmp = pXmlElement->Attribute ("num");
 		if (pszTmp != 0)
-			IDList.Add (pszTmp);
+			IDList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
@@ -1525,12 +1525,12 @@ static int LoadBuildings()
 		if (pszTmp != 0)
 		{
 			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
+			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
 			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}
@@ -1545,7 +1545,7 @@ static int LoadBuildings()
 			continue;
 		pszTmp = pXmlNode->ToElement()->Attribute ("directory");
 		if (pszTmp != 0)
-			BuildingList.Add (pszTmp);
+			BuildingList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read dierectory-attribute from \"\" - node";
@@ -1554,7 +1554,7 @@ static int LoadBuildings()
 		}
 		pszTmp = pXmlNode->ToElement()->Attribute ("num");
 		if (pszTmp != 0)
-			IDList.Add (pszTmp);
+			IDList.push_back (pszTmp);
 		else
 		{
 			sTmpString = "Can't read num-attribute from \"\" - node";
@@ -1566,12 +1566,12 @@ static int LoadBuildings()
 		if (pszTmp != 0)
 		{
 			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.Size() - 1].c_str());
+			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
 			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}
@@ -1585,9 +1585,9 @@ static int LoadBuildings()
 
 	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
 	// load found units
-	UnitsData.building.Clear();
-	UnitsData.building.Reserve (BuildingList.Size());
-	for (unsigned int i = 0; i < BuildingList.Size(); i++)
+	UnitsData.building.clear();
+	UnitsData.building.Reserve (BuildingList.size());
+	for (unsigned int i = 0; i < BuildingList.size(); i++)
 	{
 		sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
@@ -1595,7 +1595,7 @@ static int LoadBuildings()
 		sBuildingPath += PATH_DELIMITER;
 
 		// Prepare memory for next unit
-		UnitsData.building.Add (sBuilding());
+		UnitsData.building.push_back (sBuilding());
 
 		sBuilding& b = UnitsData.building.Back();
 		LoadUnitData (&b.data, sBuildingPath.c_str(), atoi (IDList[i].c_str()));
@@ -1700,7 +1700,7 @@ static int LoadBuildings()
 	LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
 
 	// set building numbers
-	for (unsigned int i = 0; i < UnitsData.building.Size(); ++i)
+	for (unsigned int i = 0; i < UnitsData.building.size(); ++i)
 	{
 		UnitsData.building[i].nr = (int) i;
 	}
@@ -1839,7 +1839,7 @@ void LoadUnitData (sUnitData* const Data, char const* const directory, int const
 	Data->ID.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
 	if (Data->ID.iFirstPart == 0)
 	{
-		for (size_t i = 0; i < UnitsData.vehicle.Size(); ++i)
+		for (size_t i = 0; i < UnitsData.vehicle.size(); ++i)
 		{
 			if (UnitsData.vehicle[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
@@ -1851,7 +1851,7 @@ void LoadUnitData (sUnitData* const Data, char const* const directory, int const
 	}
 	else
 	{
-		for (size_t i = 0; i < UnitsData.building.Size(); ++i)
+		for (size_t i = 0; i < UnitsData.building.size(); ++i)
 		{
 			if (UnitsData.building[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{

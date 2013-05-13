@@ -116,7 +116,7 @@ string cClanUnitStat::getClanStatsDescription() const
 //--------------------------------------------------
 cClan::~cClan()
 {
-	for (unsigned int i = 0; i < stats.Size(); i++)
+	for (unsigned int i = 0; i < stats.size(); i++)
 	{
 		delete stats[i];
 		stats[i] = 0;
@@ -126,7 +126,7 @@ cClan::~cClan()
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
 {
-	for (unsigned int statIdx = 0; statIdx < stats.Size(); statIdx++)
+	for (unsigned int statIdx = 0; statIdx < stats.size(); statIdx++)
 		if (stats[statIdx]->getUnitIdFirstPart() == idFirstPart && stats[statIdx]->getUnitIdSecPart() == idSecPart)
 			return stats[statIdx];
 	return 0;
@@ -135,7 +135,7 @@ cClanUnitStat* cClan::getUnitStat (int idFirstPart, int idSecPart) const
 //--------------------------------------------------
 cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 {
-	if (index < stats.Size())
+	if (index < stats.size())
 		return stats[index];
 	return 0;
 }
@@ -144,7 +144,7 @@ cClanUnitStat* cClan::getUnitStat (unsigned int index) const
 cClanUnitStat* cClan::addUnitStat (int idFirstPart, int idSecPart)
 {
 	cClanUnitStat* newStat = new cClanUnitStat (idFirstPart, idSecPart);
-	stats.Add (newStat);
+	stats.push_back (newStat);
 	return newStat;
 }
 
@@ -182,7 +182,7 @@ cClanData& cClanData::instance()
 //--------------------------------------------------
 cClanData::~cClanData()
 {
-	for (unsigned int i = 0; i < clans.Size(); i++)
+	for (unsigned int i = 0; i < clans.size(); i++)
 	{
 		delete clans[i];
 		clans[i] = 0;
@@ -192,15 +192,15 @@ cClanData::~cClanData()
 //--------------------------------------------------
 cClan* cClanData::addClan()
 {
-	cClan* clan = new cClan ( (int) clans.Size());
-	clans.Add (clan);
+	cClan* clan = new cClan ( (int) clans.size());
+	clans.push_back (clan);
 	return clan;
 }
 
 //--------------------------------------------------
 cClan* cClanData::getClan (unsigned int num)
 {
-	if (num < clans.Size())
+	if (num < clans.size())
 		return clans[num];
 
 	return NULL;

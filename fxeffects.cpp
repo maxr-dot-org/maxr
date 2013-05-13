@@ -379,14 +379,14 @@ cFxRocket::cFxRocket(int startX_, int startY_, int endX_, int endY_, int dir_, b
 
 cFxRocket::~cFxRocket ()
 {
-	for (unsigned int i = 0; i < subEffects.Size (); i++)
+	for (unsigned int i = 0; i < subEffects.size (); i++)
 		delete subEffects[i];
 }
 
 void cFxRocket::draw (const cGameGUI& gameGUI) const
 {
 	//draw smoke effect
-	for (unsigned i = 0; i < subEffects.Size(); i++)
+	for (unsigned i = 0; i < subEffects.size(); i++)
 	{
 		subEffects[i]->draw(gameGUI);
 	}
@@ -412,7 +412,7 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 void cFxRocket::run()
 {
 	//run smoke effect
-	for (unsigned i = 0; i < subEffects.Size(); i++)
+	for (unsigned i = 0; i < subEffects.size(); i++)
 	{
 		subEffects[i]->run();
 		if (subEffects[i]->isFinished())
@@ -427,7 +427,7 @@ void cFxRocket::run()
 	if (tick >= length) return;
 	if (cSettings::getInstance().isAlphaEffects())
 	{
-		subEffects.Add (new cFxSmoke (posX, posY, bottom));
+		subEffects.push_back (new cFxSmoke (posX, posY, bottom));
 	}
 
 	//update rocket position
@@ -438,7 +438,7 @@ void cFxRocket::run()
 
 bool cFxRocket::isFinished () const
 {
-	return tick >= length && subEffects.Size() == 0;
+	return tick >= length && subEffects.size() == 0;
 }
 
 cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
