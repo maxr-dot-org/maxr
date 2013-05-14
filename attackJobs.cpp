@@ -175,7 +175,7 @@ void cServerAttackJob::lockTarget (int offset)
 	if (targetVehicle != 0 && targetVehicle->data.isBig)
 		offset = targetVehicle->PosX + targetVehicle->PosY * map.size;
 
-	const cList<cPlayer*>& playerList = *server->PlayerList;
+	const std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i  < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -232,7 +232,7 @@ void cServerAttackJob::sendFireCommand()
 		return;
 
 	//make the agressor visible on all clients who can see the agressor offset
-	cList<cPlayer*>& playerList = *server->PlayerList;
+	std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
@@ -344,7 +344,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 	for (unsigned int i = 0; i < executingClients.size(); i++)
 	{
 		if (executingClients[i]->Nr == playerNr)
-			executingClients.Delete (i);
+			executingClients.erase (executingClients.begin() + i);
 	}
 
 	Log.write (" Server: waiting for " + iToStr ( (int) executingClients.size()) + " clients", cLog::eLOG_TYPE_NET_DEBUG);
@@ -407,7 +407,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 		// if taget is a stealth unit, make it visible on all clients
 		if (targetUnit->data.isStealthOn != TERRAIN_NONE)
 		{
-			cList<cPlayer*> playerList = *server->PlayerList;
+			std::vector<cPlayer*> playerList = *server->PlayerList;
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
 				cPlayer* player = playerList[i];
@@ -507,7 +507,7 @@ void cServerAttackJob::makeImpactCluster()
 //--------------------------------------------------------------------------
 void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 {
-	const cList<cPlayer*>& playerList = *server->PlayerList;
+	const std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -585,7 +585,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client)
 				if (job->vehicle)  job->vehicle->attacking  = false;
 				if (job->building) job->building->attacking = false;
 				delete job;
-				client.attackJobs.Delete (i);
+				client.attackJobs.erase (client.attackJobs.begin() + i);
 				break;
 			}
 			case PLAYING_MUZZLE:

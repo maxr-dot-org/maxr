@@ -40,7 +40,6 @@
 #include "tinyxml.h"
 #include "defines.h"
 #include "language.h"
-#include "clist.h"
 
 // Predeclarations
 class cPlayer;
@@ -377,16 +376,16 @@ public:
 	cUnitsData();
 
 	// Vehicles
-	cList<sVehicle> vehicle; // the standard version without clan modifications
+	std::vector<sVehicle> vehicle; // the standard version without clan modifications
 
 	// Buildings
-	cList<sBuilding> building;  // the standard version without clan modifications
+	std::vector<sBuilding> building;  // the standard version without clan modifications
 
 	sVehicle& getVehicle (int nr, int clan = -1);  ///< -1: game without clans
 	sBuilding& getBuilding (int nr, int clan = -1);  ///< -1: game without clans
 
-	unsigned int getNrVehicles() const { return (int) vehicle.size(); }
-	unsigned int getNrBuildings() const { return (int) building.size(); }
+	unsigned int getNrVehicles() const;
+	unsigned int getNrBuildings() const;
 
 
 	SDL_Surface* dirt_small_org;

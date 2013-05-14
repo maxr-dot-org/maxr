@@ -2,11 +2,7 @@
 #define CLIST_H
 
 #include <algorithm>
-#include <cstdlib>
-#include <assert.h>
-
-
-#define MALLOCN(type, count)  static_cast<type*>(malloc(sizeof(type) * (count)))
+#include <vector>
 
 template <typename T>
 struct trait_add_const
@@ -20,171 +16,29 @@ struct trait_add_const<T*>
 	typedef const T* type;
 };
 
-
-template<typename T> class cList
+template <typename T>
+bool Contains (const std::vector<T>& container, const typename trait_add_const<T>::type& elem)
 {
-public:
-	cList() : v_(), capacity_(), size_() {}
+	return std::find (container.begin(), container.end(), elem) != container.end();
+}
 
-	~cList() { clear(); }
-
-	cList (const cList& list);
-	cList& operator= (const cList& list);
-
-	size_t size() const { return size_; }
-
-	T&       Back()       { return v_[size_ - 1]; }
-	T const& Back() const { return v_[size_ - 1]; }
-
-	T&       operator [] (size_t const idx)       { assert (idx < size_); return v_[idx]; }
-	T const& operator [] (size_t const idx) const { assert (idx < size_); return v_[idx]; }
-
-	void push_back (T const& elem);
-
-	void Insert (size_t const i, T const& e);
-
-	void Delete (size_t const idx);
-
-	void clear() { Reserve (0); }
-
-	void PopBack();
-
-	void Reserve (size_t const n);
-
-	void Remove (const typename trait_add_const<T>::type& e);
-
-	bool Contains (const typename trait_add_const<T>::type& e) const;
-
-	void RemoveDuplicates();
-
-private:
-	T*     v_;
-	size_t capacity_;
-	size_t size_;
-};
-
-template<typename T>
-cList<T>::cList (const cList& list) :
-	capacity_ (list.capacity_),
-	size_ (list.size_)
+template <typename T>
+void Remove (std::vector<T>& container, const typename trait_add_const<T>::type& elem)
 {
-	v_ = new T[list.capacity_];
-	for (size_t i = 0; i < size_; i++)
-		new (&v_[i]) T (list.v_[i]);
+	container.erase (std::remove (container.begin(), container.end(), elem), container.end());
 }
 
 template<typename T>
-cList<T>& cList<T>::operator= (const cList& list)
+void RemoveDuplicates (std::vector<T>& container)
 {
-	for (size_t i = 0; i < size_; i++)
-		v_[i].~T();
-	delete[] v_;
-
-	capacity_ = list.capacity_;
-	size_ = list.size_;
-
-	v_ = new T[capacity_];
-	for (size_t i = 0; i < size_; i++)
-		new (&v_[i]) T (list.v_[i]);
-
-	return *this;
-}
-
-
-template<typename T> void cList<T>::push_back (T const& e)
-{
-	if (size_ >= capacity_) Reserve (std::max ( (size_t) 1U, size_ * 2));
-	new (&v_[size_]) T (e);
-	++size_;
-}
-
-template<typename T> void cList<T>::Insert (size_t const i, T const& e)
-{
-	if (i > size_) throw;
-	if (size_ >= capacity_) Reserve (std::max ( (size_t) 1U, size_ * 2));
-
-	for (size_t n = size_; n > i; --n) v_[n] = v_[n - 1];
-	new (&v_[i]) T (e);
-	++size_;
-}
-
-template<typename T> void cList<T>::Delete (size_t const idx)
-{
-	if (idx >= size_)
-		return; // XXX should throw exception
-
-	for (size_t i = idx; i < size_ - 1; ++i) v_[i] = v_[i + 1];
-	PopBack();
-}
-
-
-template<typename T> void cList<T>::PopBack()
-{
-	--size_;
-	v_[size_].~T();
-}
-
-
-template<typename T> void cList<T>::Reserve (size_t const n)
-{
-	T* const new_v = n == 0 ? 0 : MALLOCN (T, n);
-
-	size_t       i;
-	T*     const old_v    = v_;
-	size_t const old_size = size_;
-	size_t const new_size = std::min (old_size, n);
-	try
+	for (unsigned int i = 0; i < container.size(); i++)
 	{
-		for (i = 0; i < new_size; ++i) new (&new_v[i]) T (old_v[i]);
-	}
-	catch (...)
-	{
-		for (size_t k = i; k != 0;) new_v[--i].~T();
-		free (new_v);
-		throw;
-	}
-
-	v_        = new_v;
-	capacity_ = n;
-	size_     = new_size;
-
-	for (size_t k = old_size; k != 0;) old_v[--k].~T();
-	free (old_v);
-}
-
-template<typename T> void cList<T>::Remove (const typename trait_add_const<T>::type& e)
-{
-	for (size_t idx = 0; idx < size_; idx++)
-	{
-		if (v_[idx] == e)
+		for (unsigned int k = i + 1; k < container.size(); k++)
 		{
-			Delete(idx);
-			--idx;
-		}
-	}
-}
-
-template<typename T> bool cList<T>::Contains (const typename trait_add_const<T>::type& e) const
-{
-	for (size_t idx = 0; idx < size_; idx++)
-	{
-		if (v_[idx] == e)
-			return true;
-	}
-	return false;
-}
-
-template<typename T> void cList<T>::RemoveDuplicates()
-{
-	for (unsigned int i = 0; i < size_; i++)
-	{
-		for (unsigned int k = i + 1; k < size_; k++)
-		{
-			if (v_[i] == v_[k])
+			if (container[i] == container[k])
 			{
-				Delete (i);
-				i--;
-				break;
+				container.erase (container.begin() + k);
+				k--;
 			}
 		}
 	}

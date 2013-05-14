@@ -23,7 +23,7 @@
 
 #include "autosurface.h"
 #include "defines.h"
-#include "clist.h"
+#include <vector>
 #include "t_2.h"
 
 class cVehicle;
@@ -48,10 +48,10 @@ template<typename T>
 class cMapIterator
 {
 private:
-	cList<T*>* list;
+	std::vector<T*>* list;
 	int index;
 public:
-	explicit cMapIterator<T> (cList<T*>* list_);
+	explicit cMapIterator<T> (std::vector<T*>* list_);
 	/** returns the number of vehicles in the List, the Iterator points to. */
 	unsigned int size() const;
 	//T& operator[](unsigned const int i) const;
@@ -74,7 +74,7 @@ typedef cMapIterator<cVehicle> cVehicleIterator;
 typedef cMapIterator<cBuilding> cBuildingIterator;
 
 template <typename T>
-cMapIterator<T>::cMapIterator (cList<T*>* list_)
+cMapIterator<T>::cMapIterator (std::vector<T*>* list_)
 {
 	index = 0;
 	list = list_;
@@ -196,7 +196,7 @@ void cMapIterator<T>::rewind()
 template <typename T>
 bool cMapIterator<T>::contains (const T& v) const
 {
-	return list->Contains (&v);
+	return Contains (*list, &v);
 }
 
 template <typename T>
@@ -212,13 +212,13 @@ private:
 	friend class cMap;
 	/**the list with all buildings on this field
 	* the top building is always stored at fist position */
-	cList<cBuilding*> buildings;
+	std::vector<cBuilding*> buildings;
 	/** the list with all planes on this field
 	* the top plane is always stored at fist position */
-	cList<cVehicle*> vehicles;
+	std::vector<cVehicle*> vehicles;
 	/**the list with all vehicles on this field
 	* the top vehicle is always stored at fist position */
-	cList<cVehicle*> planes;
+	std::vector<cVehicle*> planes;
 
 public:
 

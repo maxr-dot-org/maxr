@@ -19,7 +19,7 @@
 #ifndef attackjobsH
 #define attackjobsH
 
-#include "clist.h"
+#include <vector>
 
 class cBuilding;
 class cClient;
@@ -61,7 +61,7 @@ private:
 	bool isMuzzleTypeRocket() const;
 
 public:
-	cList<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
+	std::vector<cPlayer*> executingClients; /** the clients on which the attack job is currently running */
 	cUnit* unit;
 	int iID;
 
@@ -75,8 +75,8 @@ private:
 	int iTargetOff;
 	int damage;
 	char attackMode;
-	cList<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
-	cList<cBuilding*> buildingTargets;
+	std::vector<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
+	std::vector<cBuilding*> buildingTargets;
 };
 
 

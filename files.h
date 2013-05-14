@@ -23,7 +23,7 @@
 
 #include <string>
 #include "defines.h"
-#include "clist.h"
+#include <vector>
 
 
 /**
@@ -55,7 +55,7 @@ bool makeDir (const std::string& path);
 * @param sDirectory Directory in which to search
 * @return A new list with all filenames (the caller is owner of the list)
 */
-cList<std::string>* getFilesOfDirectory (const std::string& sDirectory);
+std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory);
 
 /**
 * Gets the map folder of the user's custom maps.

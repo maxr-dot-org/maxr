@@ -486,7 +486,7 @@ void cServerGame::startGameServer()
 
 	// send clan info to clients
 	if (gameData->settings->clans == SETTING_CLANS_ON)
-		sendClansToClients (*Server, &gameData->players);
+		sendClansToClients (*Server, gameData->players);
 
 	// make the landing
 	for (unsigned int i = 0; i < gameData->players.size(); i++)

@@ -16,27 +16,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "math.h"
+#include <math.h>
+
 #include "vehicles.h"
-#include "buildings.h"
-#include "player.h"
-#include "unifonts.h"
-#include "mouse.h"
-#include "sound.h"
-#include "map.h"
-#include "dialog.h"
-#include "files.h"
-#include "pcx.h"
-#include "events.h"
-#include "client.h"
-#include "server.h"
-#include "clientevents.h"
+
 #include "attackJobs.h"
-#include "menus.h"
-#include "settings.h"
-#include "hud.h"
-#include "video.h"
+#include "buildings.h"
+#include "client.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "dialog.h"
+#include "events.h"
+#include "files.h"
 #include "fxeffects.h"
+#include "hud.h"
+#include "map.h"
+#include "menus.h"
+#include "mouse.h"
+#include "pcx.h"
+#include "player.h"
+#include "server.h"
+#include "settings.h"
+#include "sound.h"
+#include "unifonts.h"
+#include "video.h"
 
 using namespace std;
 
@@ -1511,7 +1514,7 @@ bool cVehicle::InSentryRange (cServer& server)
 	cPlayer* Player = 0;
 
 	int iOff = PosX + PosY * server.Map->size;
-	cList<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		Player = playerList[i];
@@ -1633,7 +1636,7 @@ bool cVehicle::provokeReactionFire (cServer& server)
 
 	int iOff = PosX + PosY * server.Map->size;
 
-	cList<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
@@ -1747,7 +1750,7 @@ void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 //-----------------------------------------------------------------------------
 void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 {
-	storedUnits.Remove (Vehicle);
+	Remove (storedUnits, Vehicle);
 
 	data.storageUnitsCur--;
 
@@ -2008,7 +2011,7 @@ void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addTo
 
 	if (!wasDetected) sendDetectionState (server, this);
 
-	if (addToDetectedInThisTurnList && detectedInThisTurnByPlayerList.Contains (player) == false)
+	if (addToDetectedInThisTurnList && Contains (detectedInThisTurnByPlayerList, player) == false)
 		detectedInThisTurnByPlayerList.push_back (player);
 }
 
@@ -2017,8 +2020,8 @@ void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 {
 	bool wasDetected = (detectedByPlayerList.size() > 0);
 
-	detectedByPlayerList.Remove (player);
-	detectedInThisTurnByPlayerList.Remove (player);
+	Remove (detectedByPlayerList, player);
+	Remove (detectedInThisTurnByPlayerList, player);
 
 	if (wasDetected && detectedByPlayerList.size() == 0) sendDetectionState (server, this);
 }
@@ -2026,7 +2029,7 @@ void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 //-----------------------------------------------------------------------------
 bool cVehicle::wasDetectedInThisTurnByPlayer (const cPlayer* player) const
 {
-	return detectedInThisTurnByPlayerList.Contains (player);
+	return Contains (detectedInThisTurnByPlayerList, player);
 }
 
 //-----------------------------------------------------------------------------
@@ -2038,7 +2041,7 @@ void cVehicle::clearDetectedInThisTurnPlayerList()
 //-----------------------------------------------------------------------------
 void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 {
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
+	std::vector<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 
 	bool foundPlayerToReset = true;
 	while (foundPlayerToReset)
@@ -2046,8 +2049,8 @@ void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 		foundPlayerToReset = false;
 		for (unsigned int i = 0; i < detectedByPlayerList.size(); i++)
 		{
-			if (playersThatDetectThisVehicle.Contains (detectedByPlayerList[i]) == false
-				&& detectedInThisTurnByPlayerList.Contains (detectedByPlayerList[i]) == false)
+			if (Contains (playersThatDetectThisVehicle, detectedByPlayerList[i]) == false
+				&& Contains (detectedInThisTurnByPlayerList, detectedByPlayerList[i]) == false)
 			{
 				resetDetectedByPlayer (server, detectedByPlayerList[i]);
 				foundPlayerToReset = true;
@@ -2058,15 +2061,15 @@ void cVehicle::tryResetOfDetectionStateAfterMove (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-cList<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
+std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 {
-	cList<cPlayer*> playersThatDetectThisVehicle;
+	std::vector<cPlayer*> playersThatDetectThisVehicle;
 	//check whether the vehicle has been detected by others
 	if (data.isStealthOn != TERRAIN_NONE)   // the vehicle is a stealth vehicle
 	{
 		cMap& map = *server.Map;
 		int offset = PosX + PosY * map.size;
-		cList<cPlayer*>& playerList = *server.PlayerList;
+		std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];
@@ -2108,7 +2111,7 @@ cList<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 void cVehicle::makeDetection (cServer& server)
 {
 	//check whether the vehicle has been detected by others
-	cList<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
+	std::vector<cPlayer*> playersThatDetectThisVehicle = calcDetectedByPlayer (server);
 	for (unsigned int i = 0; i < playersThatDetectThisVehicle.size(); i++)
 		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
 

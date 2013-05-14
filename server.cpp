@@ -18,29 +18,33 @@
  ***************************************************************************/
 #include <cassert>
 #include <set>
+
 #include "server.h"
-#include "hud.h"
-#include "events.h"
-#include "network.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "netmessage.h"
+
 #include "attackJobs.h"
-#include "movejobs.h"
-#include "upgradecalculator.h"
-#include "menus.h"
-#include "settings.h"
-#include "ringbuffer.h"
 #include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
-#include "savegame.h"
+#include "casualtiestracker.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "events.h"
 #include "gametimer.h"
+#include "hud.h"
 #include "jobs.h"
+#include "menus.h"
+#include "movejobs.h"
+#include "netmessage.h"
+#include "network.h"
+#include "player.h"
+#include "ringbuffer.h"
+#include "savegame.h"
+#include "serverevents.h"
+#include "settings.h"
+#include "upgradecalculator.h"
+#include "vehicles.h"
+
 #if DEDICATED_SERVER_APPLICATION
 #include "dedicatedserver.h"
 #endif
-#include "casualtiestracker.h"
 
 #ifdef _MSC_VER
 #include <windows.h>
@@ -83,7 +87,7 @@ int CallbackRunServerThread (void* arg)
 }
 
 //-------------------------------------------------------------------------------------
-cServer::cServer (cTCP* network_, cMap* const map, cList<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
+cServer::cServer (cTCP* network_, cMap* const map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: network(network_)
 	, gameTimer()
 	, lastTurnEnd (0)
@@ -548,7 +552,7 @@ void cServer::HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message)
 	aJob->clientFinished (message.iPlayerNr);
 	if (aJob->executingClients.size() == 0)
 	{
-		AJobs.Delete (i);
+		AJobs.erase (AJobs.begin() + i);
 		delete aJob;
 	}
 }
@@ -911,7 +915,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	if (iBuildSpeed == 1) Building->MetalPerRound =  4 * Building->data.needsMetal;
 	if (iBuildSpeed == 2) Building->MetalPerRound = 12 * Building->data.needsMetal;
 
-	cList<sBuildList*>* NewBuildList = new cList<sBuildList*>;
+	std::vector<sBuildList*>* NewBuildList = new std::vector<sBuildList*>;
 
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
@@ -1004,7 +1008,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	addUnit (iX, iY, BuildingListItem->type.getVehicle(), Building->owner, false);
 
 	//start new buildjob
-	Building->BuildList->Delete (0);
+	Building->BuildList->erase (Building->BuildList->begin());
 	if (Building->RepeatBuild)
 	{
 		BuildingListItem->metall_remaining = -1;
@@ -1267,7 +1271,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 	int totalCosts = 0;
 	const int availableMetal = storingBuilding->SubBase->Metal;
 
-	cList<cVehicle*> upgradedVehicles;
+	std::vector<cVehicle*> upgradedVehicles;
 	for (unsigned int i = 0; i < storingBuilding->storedUnits.size(); i++)
 	{
 		if (upgradeAll || i == storageSlot)
@@ -1408,7 +1412,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	for (unsigned int i = 0; i < DisconnectedPlayerList.size(); i++)
 	{
 		deletePlayer (DisconnectedPlayerList[i]);
-		DisconnectedPlayerList.Delete (i);
+		DisconnectedPlayerList.erase (DisconnectedPlayerList.begin() + i);
 	}
 	disableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
 	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
@@ -1447,7 +1451,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 		if (DisconnectedPlayerList[i]->Nr == playerNum)
 		{
 			Player = DisconnectedPlayerList[i];
-			DisconnectedPlayerList.Delete (i);
+			DisconnectedPlayerList.erase (DisconnectedPlayerList.begin() + i);
 			break;
 		}
 	}
@@ -1650,7 +1654,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 	cUpgradeCalculator& uc = cUpgradeCalculator::instance();
 	const int upgradeCostPerBuilding = uc.getMaterialCostForUpgrading (upgradedVersion.buildCosts);
 	int totalCosts = 0;
-	cList<cBuilding*> upgradedBuildings;
+	std::vector<cBuilding*> upgradedBuildings;
 
 	// in any case update the selected building
 	if (availableMetal >= totalCosts + upgradeCostPerBuilding)
@@ -1723,9 +1727,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	if (newUsedResearch > player->ResearchCount)
 		return; // can't turn on research centers automatically!
 
-	cList<cBuilding*> researchCentersToStop; // needed, if newUsedResearch < player->ResearchCount
-	cList<cBuilding*> researchCentersToChangeArea;
-	cList<int> newAreasForResearchCenters;
+	std::vector<cBuilding*> researchCentersToStop; // needed, if newUsedResearch < player->ResearchCount
+	std::vector<cBuilding*> researchCentersToChangeArea;
+	std::vector<int> newAreasForResearchCenters;
 
 	bool error = false;
 	cBuilding* curBuilding = player->BuildingList;
@@ -2475,7 +2479,7 @@ void cServer::checkPlayerUnits()
 						if (NextVehicle->ServerMoveJob)
 						{
 							sendMoveJobServer (*this, NextVehicle->ServerMoveJob, MapPlayer->Nr);
-							if (ActiveMJobs.Contains(NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
+							if (Contains (ActiveMJobs, NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
 							{
 								Log.write(" Server: sending extra MJOB_OK for unit ID " + iToStr(NextVehicle->iID) + " to client " + iToStr(MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
@@ -2493,7 +2497,7 @@ void cServer::checkPlayerUnits()
 					{
 						if (NextVehicle->seenByPlayerList[i] == MapPlayer)
 						{
-							NextVehicle->seenByPlayerList.Delete (i);
+							NextVehicle->seenByPlayerList.erase (NextVehicle->seenByPlayerList.begin() + i);
 							sendDeleteUnit (*this, NextVehicle, MapPlayer->Nr);
 							break;
 						}
@@ -2533,7 +2537,7 @@ void cServer::checkPlayerUnits()
 					{
 						if (NextBuilding->seenByPlayerList[i] == MapPlayer)
 						{
-							NextBuilding->seenByPlayerList.Delete (i);
+							NextBuilding->seenByPlayerList.erase (NextBuilding->seenByPlayerList.begin() + i);
 							sendDeleteUnit (*this, NextBuilding, MapPlayer->Nr);
 
 							break;
@@ -2572,7 +2576,7 @@ void cServer::checkPlayerUnits()
 				{
 					if (building->seenByPlayerList[i] == MapPlayer)
 					{
-						building->seenByPlayerList.Delete (i);
+						building->seenByPlayerList.erase (building->seenByPlayerList.begin() + i);
 						sendDeleteUnit (*this, building, MapPlayer->Nr);
 						break;
 					}
@@ -2600,7 +2604,7 @@ void cServer::markAllPlayersAsDisconnected()
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		cPlayer* player = (*PlayerList) [i];
-		if (DisconnectedPlayerList.Contains (player) == false)
+		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
 		memset (player->ScanMap, 0, Map->size * Map->size);
 	}
@@ -2785,7 +2789,8 @@ void cServer::handleWantEnd()
 	{
 		for (unsigned int i = 0; i < PlayerEndList.size(); i++)
 		{
-			if (iWantPlayerEndNum == PlayerEndList[i]->Nr) PlayerEndList.Delete (i);
+			if (iWantPlayerEndNum == PlayerEndList[i]->Nr)
+				PlayerEndList.erase (PlayerEndList.begin() + i);
 		}
 		handleEnd (iWantPlayerEndNum);
 	}
@@ -3141,7 +3146,7 @@ void cServer::handleMoveJobs()
 		{
 			Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 			sendNextMove (*this, Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
-			ActiveMJobs.Delete (i);
+			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			continue;
 		}
 		else if (MoveJob->bFinished || MoveJob->Vehicle == NULL)
@@ -3161,7 +3166,7 @@ void cServer::handleMoveJobs()
 			if (Vehicle && MoveJob->endAction) MoveJob->endAction->execute (*this);
 
 			delete MoveJob;
-			ActiveMJobs.Delete (i);
+			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 
 
 			//continue path building
@@ -3191,7 +3196,7 @@ void cServer::handleMoveJobs()
 		{
 			if (!MoveJob->checkMove() && !MoveJob->bFinished)
 			{
-				ActiveMJobs.Delete (i);
+				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				delete MoveJob;
 				Vehicle->ServerMoveJob = NULL;
 				Log.write (" Server: Movejob deleted and informed the clients to stop this movejob", LOG_TYPE_NET_DEBUG);
@@ -3201,7 +3206,7 @@ void cServer::handleMoveJobs()
 			{
 				Log.write (" Server: Movejob has end for now and will be stoped (delete from active ones)", cLog::eLOG_TYPE_NET_DEBUG);
 				sendNextMove (*this, Vehicle, MJOB_STOP, MoveJob->iSavedSpeed);
-				ActiveMJobs.Delete (i);
+				ActiveMJobs.erase (ActiveMJobs.begin() + i);
 				continue;
 			}
 		}
@@ -3512,7 +3517,7 @@ void cServer::deletePlayer (cPlayer* Player)
 	{
 		if (Player == (*PlayerList) [i])
 		{
-			PlayerList->Delete (i);
+			PlayerList->erase (PlayerList->begin() + i);
 			delete Player;
 		}
 	}
@@ -3531,18 +3536,18 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 
 			for (cVehicle* Vehicle = UnitPlayer->VehicleList; Vehicle; Vehicle = Vehicle->next)
 			{
-				Vehicle->seenByPlayerList.Remove (Player);
+				Remove (Vehicle->seenByPlayerList, Player);
 			}
 
 			for (cBuilding* Building = UnitPlayer->BuildingList; Building; Building = Building->next)
 			{
-				Building->seenByPlayerList.Remove (Player);
+				Remove (Building->seenByPlayerList, Player);
 			}
 		}
 
 		for (cBuilding* Building = neutralBuildings; Building; Building = Building->next)
 		{
-			Building->seenByPlayerList.Remove (Player);
+			Remove (Building->seenByPlayerList, Player);
 		}
 		sendDeleteEverything (*this, Player->Nr);
 	}
@@ -3551,7 +3556,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 
 	//if (settings->clans == SETTING_CLANS_ON)
 	{
-		sendClansToClients (*this, PlayerList);
+		sendClansToClients (*this, *PlayerList);
 	}
 	sendTurn (*this, iTurn, Player);
 	if (iDeadlineStartTime > 0) sendTurnFinished (*this, -1, iTurnDeadline - Round ( (SDL_GetTicks() - iDeadlineStartTime) / 1000), Player);

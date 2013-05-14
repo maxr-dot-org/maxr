@@ -24,7 +24,6 @@
 #include <string>
 #include <vector>
 #include "ringbuffer.h"
-#include "clist.h"
 
 class cGameDataContainer;
 struct sMenuPlayer;
@@ -78,7 +77,7 @@ protected:
 	std::vector<sMenuPlayer*> menuPlayers;
 
 	cMap* serverMap;
-	cList<cPlayer*> serverPlayers;
+	std::vector<cPlayer*> serverPlayers;
 
 private:
 	void configRessources (std::vector<std::string>& tokens, sMenuPlayer* senderPlayer);

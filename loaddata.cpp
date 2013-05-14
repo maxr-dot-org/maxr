@@ -1028,7 +1028,7 @@ static int LoadVehicles()
 	}
 	// load found units
 	UnitsData.vehicle.clear();
-	UnitsData.vehicle.Reserve (VehicleList.size());
+	UnitsData.vehicle.reserve (VehicleList.size());
 	for (unsigned int i = 0; i < VehicleList.size(); i++)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
@@ -1586,7 +1586,7 @@ static int LoadBuildings()
 	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
 	// load found units
 	UnitsData.building.clear();
-	UnitsData.building.Reserve (BuildingList.size());
+	UnitsData.building.reserve (BuildingList.size());
 	for (unsigned int i = 0; i < BuildingList.size(); i++)
 	{
 		sBuildingPath = cSettings::getInstance().getBuildingsPath();
@@ -1597,7 +1597,7 @@ static int LoadBuildings()
 		// Prepare memory for next unit
 		UnitsData.building.push_back (sBuilding());
 
-		sBuilding& b = UnitsData.building.Back();
+		sBuilding& b = UnitsData.building.back();
 		LoadUnitData (&b.data, sBuildingPath.c_str(), atoi (IDList[i].c_str()));
 		translateUnitData (b.data.ID, false);
 

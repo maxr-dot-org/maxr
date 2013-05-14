@@ -42,7 +42,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient
 {
 public:
-	cClient (cTCP* network_, cMap* Map, cList<cPlayer*>* PlayerList);
+	cClient (cTCP* network_, cMap* Map, std::vector<cPlayer*>* PlayerList);
 	~cClient();
 
 private:
@@ -56,7 +56,7 @@ private:
 	/** the map */
 	cMap* Map;
 	/** List with all players */
-	cList<cPlayer*>* PlayerList;
+	std::vector<cPlayer*>* PlayerList;
 	/** the active Player */
 	cPlayer* ActivePlayer;
 
@@ -185,9 +185,9 @@ public:
 	/** lists with all FX-Animation */
 	std::vector<cFx*> FxList;
 	/** list with the running clientAttackJobs */
-	cList<cClientAttackJob*> attackJobs;
+	std::vector<cClientAttackJob*> attackJobs;
 	/** List with all active movejobs */
-	cList<cClientMoveJob*> ActiveMJobs;
+	std::vector<cClientMoveJob*> ActiveMJobs;
 	/** the hud */
 	cGameGUI gameGUI; //TODO: this should be a pointer to the gameGui instance, so it is possible to have a GUI-less client for ai implementation
 
@@ -226,7 +226,7 @@ public:
 	* @param vehicle the vehicle to be moved
 	* @param iDestOffset the Destination
 	*/
-	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group = NULL);
+	int addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group = NULL);
 	void startGroupMove();
 	/**
 	* adds an new movejob
@@ -308,8 +308,8 @@ public:
 	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
 	const cMap* getMap() const { return Map; }
 	cMap* getMap() { return Map; }
-	const cList<cPlayer*>* getPlayerList() const { return PlayerList; }
-	cList<cPlayer*>* getPlayerList() { return PlayerList; }
+	const std::vector<cPlayer*>* getPlayerList() const { return PlayerList; }
+	std::vector<cPlayer*>* getPlayerList() { return PlayerList; }
 	const cPlayer* getActivePlayer() const { return ActivePlayer; }
 	cPlayer* getActivePlayer() { return ActivePlayer; }
 };

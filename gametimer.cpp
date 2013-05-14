@@ -3,6 +3,7 @@
 
 #include "client.h"
 #include "clientevents.h"
+#include "clist.h"
 #include "events.h"
 #include "files.h"
 #include "netmessage.h"
@@ -236,7 +237,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 
 	int newWaitingForPlayer = -1;
 
-	cList<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
@@ -267,7 +268,7 @@ void cGameTimerServer::run (cServer& server)
 			gameTime++;
 			handleTimer ();
 			server.doGameActions();
-			const cList<cPlayer*>& playerList = *server.PlayerList;
+			const std::vector<cPlayer*>& playerList = *server.PlayerList;
 			for (size_t i = 0; i < playerList.size(); i++)
 			{
 				const cPlayer* player = playerList[i];
@@ -286,7 +287,7 @@ void cGameTimerServer::run (cServer& server)
 Uint32 calcClientChecksum (const cClient& client)
 {
 	Uint32 crc = 0;
-	const cList<cPlayer*>& playerList = *client.getPlayerList();
+	const std::vector<cPlayer*>& playerList = *client.getPlayerList();
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cVehicle* vehicle = playerList[i]->VehicleList;
@@ -308,13 +309,13 @@ Uint32 calcClientChecksum (const cClient& client)
 Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 {
 	Uint32 crc = 0;
-	const cList<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cVehicle* vehicle = playerList[i]->VehicleList;
 		while (vehicle)
 		{
-			if (vehicle->seenByPlayerList.Contains (player) || vehicle->owner == player)
+			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
 			{
 				crc = calcCheckSum (vehicle->iID,  crc);
 				crc = calcCheckSum (vehicle->PosX, crc);
@@ -324,7 +325,7 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 				crc = calcCheckSum (vehicle->dir,  crc);
 			}
 
-			vehicle = (const cVehicle*) vehicle->next;
+			vehicle = vehicle->next;
 		}
 	}
 	return crc;
@@ -332,7 +333,7 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 
 void compareGameData (const cClient& client, const cServer& server)
 {
-	const cList<cPlayer*>& playerList = *client.getPlayerList();
+	const std::vector<cPlayer*>& playerList = *client.getPlayerList();
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* clientPlayer = playerList[i];

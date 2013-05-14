@@ -17,19 +17,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "serverevents.h"
-#include "clientevents.h"
-#include "menuevents.h"
-#include "network.h"
-#include "netmessage.h"
-#include "events.h"
-#include "server.h"
-#include "movejobs.h"
-#include "upgradecalculator.h"
-#include "hud.h"
+
 #include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
 #include "casualtiestracker.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "events.h"
+#include "hud.h"
+#include "menuevents.h"
+#include "movejobs.h"
+#include "netmessage.h"
+#include "network.h"
+#include "player.h"
+#include "server.h"
+#include "upgradecalculator.h"
+#include "vehicles.h"
 
 //-------------------------------------------------------------------------------------
 void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap)
@@ -243,7 +245,7 @@ void sendDoStartWork (cServer& server, const cBuilding* building)
 	int offset = building->PosX + building->PosY * server.Map->size;
 
 	//check all players
-	const cList<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -263,7 +265,7 @@ void sendDoStopWork (cServer& server, const cBuilding* building)
 	int offset = building->PosX + building->PosY * server.Map->size;
 
 	//check all players
-	const cList<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* player = playerList[i];
@@ -392,7 +394,7 @@ void sendScore (cServer& server, const cPlayer* Subject, int turn, const cPlayer
 {
 	if (!Receiver)
 	{
-		const cList<cPlayer*>& playerList = *server.PlayerList;
+		const std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendScore (server, Subject, turn, playerList[n]);
 	}
@@ -421,7 +423,7 @@ void sendNumEcos (cServer& server, cPlayer* Subject, const cPlayer* Receiver)
 
 	if (!Receiver)
 	{
-		cList<cPlayer*>& playerList = *server.PlayerList;
+		std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendNumEcos (server, Subject, playerList[n]);
 	}
@@ -439,7 +441,7 @@ void sendVictoryConditions (cServer& server, const int turnLimit, int scoreLimit
 {
 	if (!Receiver)
 	{
-		const cList<cPlayer*>& playerList = *server.PlayerList;
+		const std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int n = 0; n < playerList.size(); n++)
 			sendVictoryConditions (server, turnLimit, scoreLimit, playerList[n]);
 	}
@@ -708,7 +710,7 @@ void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPla
 	if (okay && Player != NULL)
 	{
 		cServer& server = *Server;
-		const cList<cPlayer*>& playerList = *server.PlayerList;
+		const std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer const* SecondPlayer = playerList[i];
@@ -835,7 +837,7 @@ void sendCredits (cServer& server, int newCredits, int player)
 }
 
 //-------------------------------------------------------------------------------------
-void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBuildings, int totalCosts, int player)
+void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, int player)
 {
 	// send to owner
 	cNetMessage* message = NULL;
@@ -867,7 +869,7 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 	}
 
 	// send to other players
-	const cList<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int n = 0; n < playerList.size(); n++)
 	{
 		const cPlayer* curPlayer = playerList[n];
@@ -876,14 +878,14 @@ void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBui
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.size(); buildingIdx++)
 		{
-			if (upgradedBuildings[buildingIdx]->seenByPlayerList.Contains (curPlayer))    // that player can see the building
+			if (Contains (upgradedBuildings[buildingIdx]->seenByPlayerList, curPlayer)) // that player can see the building
 				sendUnitData (server, upgradedBuildings[buildingIdx], curPlayer->Nr);
 		}
 	}
 }
 
 //-------------------------------------------------------------------------------------
-void sendUpgradeVehicles (cServer& server, const cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
+void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
 {
 	if (upgradedVehicles.size() * 4 > PACKAGE_LENGTH - 50)
 	{
@@ -904,7 +906,7 @@ void sendUpgradeVehicles (cServer& server, const cList<cVehicle*>& upgradedVehic
 }
 
 //-------------------------------------------------------------------------------------
-void sendResearchSettings (cServer& server, const cList<cBuilding*>& researchCentersToChangeArea, const cList<int>& newAreasForResearchCenters, int player)
+void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<int>& newAreasForResearchCenters, int player)
 {
 	if (researchCentersToChangeArea.size() != newAreasForResearchCenters.size())
 		return;
@@ -938,15 +940,15 @@ void sendResearchSettings (cServer& server, const cList<cBuilding*>& researchCen
 }
 
 //-------------------------------------------------------------------------------------
-void sendClans (cServer& server, const cList<cPlayer*>* playerList, const cPlayer* toPlayer)
+void sendClans (cServer& server, const std::vector<cPlayer*>& playerList, const cPlayer* toPlayer)
 {
-	if (playerList == 0 || toPlayer == 0)
+	if (toPlayer == 0)
 		return;
 	cNetMessage* message = new cNetMessage (GAME_EV_PLAYER_CLANS);
-	for (unsigned int i = 0; i < playerList->size(); i++)
+	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		message->pushChar ( (*playerList) [i]->getClan());
-		message->pushChar ( (*playerList) [i]->Nr);
+		message->pushChar (playerList[i]->getClan());
+		message->pushChar (playerList[i]->Nr);
 	}
 	server.sendNetMessage (message, toPlayer->Nr);
 }
@@ -960,10 +962,10 @@ void sendGameTime (cServer& server, const cPlayer* player, int gameTime)
 }
 
 //-------------------------------------------------------------------------------------
-void sendClansToClients (cServer& server, const cList<cPlayer*>* playerList)
+void sendClansToClients (cServer& server, const std::vector<cPlayer*>& playerList)
 {
-	for (unsigned int n = 0; n < playerList->size(); n++)
-		sendClans (server, playerList, (*playerList) [n]);
+	for (unsigned int n = 0; n < playerList.size(); n++)
+		sendClans (server, playerList, playerList[n]);
 }
 
 //-------------------------------------------------------------------------------------

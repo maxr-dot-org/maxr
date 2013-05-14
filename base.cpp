@@ -18,12 +18,14 @@
  ***************************************************************************/
 #include <assert.h>
 #include "base.h"
-#include "map.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "server.h"
+
 #include "buildings.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "map.h"
 #include "player.h"
+#include "server.h"
+#include "serverevents.h"
 
 using namespace std;
 
@@ -318,10 +320,10 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 bool sSubBase::increaseEnergyProd (cServer& server, int i)
 {
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
-	cList<cBuilding*> onlineStations;
-	cList<cBuilding*> onlineGenerators;
-	cList<cBuilding*> offlineStations;
-	cList<cBuilding*> offlineGenerators;
+	std::vector<cBuilding*> onlineStations;
+	std::vector<cBuilding*> onlineGenerators;
+	std::vector<cBuilding*> offlineStations;
+	std::vector<cBuilding*> offlineGenerators;
 	int availableStations = 0;
 	int availableGenerators = 0;
 
@@ -383,24 +385,24 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 	for (int i = (int) onlineStations.size() - stations; i > 0; i--)
 	{
 		onlineStations[0]->ServerStopWork (server, true);
-		onlineStations.Delete (0);
+		onlineStations.erase (onlineStations.begin());
 	}
 	for (int i = (int) onlineGenerators.size() - generators; i > 0; i--)
 	{
 		onlineGenerators[0]->ServerStopWork (server, true);
-		onlineGenerators.Delete (0);
+		onlineGenerators.erase (onlineGenerators.begin());
 	}
 
 	//start needed buildings
 	for (int i = stations - (int) onlineStations.size(); i > 0; i--)
 	{
 		offlineStations[0]->ServerStartWork (server);
-		offlineStations.Delete (0);
+		offlineStations.erase (offlineStations.begin());
 	}
 	for (int i = generators - (int) onlineGenerators.size(); i > 0; i--)
 	{
 		offlineGenerators[0]->ServerStartWork (server);
-		offlineGenerators.Delete (0);
+		offlineGenerators.erase (offlineGenerators.begin());
 	}
 
 	return true;
@@ -486,7 +488,7 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 void sSubBase::refresh()
 {
 	//copy buildings list
-	cList<cBuilding*> buildingsCopy;
+	std::vector<cBuilding*> buildingsCopy;
 	for (unsigned int i = 0; i < buildings.size(); i++)
 	{
 		buildingsCopy.push_back (buildings[i]);
@@ -588,10 +590,10 @@ bool sSubBase::checkMetalConsumer (cServer& server)
 bool sSubBase::checkOil (cServer& server)
 {
 	//TODO: the energy production and fuel consumption of generators and stations are hardcoded in this function
-	cList<cBuilding*> onlineStations;
-	cList<cBuilding*> onlineGenerators;
-	cList<cBuilding*> offlineStations;
-	cList<cBuilding*> offlineGenerators;
+	std::vector<cBuilding*> onlineStations;
+	std::vector<cBuilding*> onlineGenerators;
+	std::vector<cBuilding*> offlineStations;
+	std::vector<cBuilding*> offlineGenerators;
 	int availableStations = 0;
 	int availableGenerators = 0;
 	bool oilMissing = false;
@@ -680,24 +682,24 @@ bool sSubBase::checkOil (cServer& server)
 	for (int i = (int) onlineStations.size() - stations; i > 0; i--)
 	{
 		onlineStations[0]->ServerStopWork (server, true);
-		onlineStations.Delete (0);
+		onlineStations.erase (onlineStations.begin());
 	}
 	for (int i = (int) onlineGenerators.size() - generators; i > 0; i--)
 	{
 		onlineGenerators[0]->ServerStopWork (server, true);
-		onlineGenerators.Delete (0);
+		onlineGenerators.erase (onlineGenerators.begin());
 	}
 
 	//start needed buildings
 	for (int i = stations - (int) onlineStations.size(); i > 0; i--)
 	{
 		offlineStations[0]->ServerStartWork (server);
-		offlineStations.Delete (0);
+		offlineStations.erase (offlineStations.begin());
 	}
 	for (int i = generators - (int) onlineGenerators.size(); i > 0; i--)
 	{
 		offlineGenerators[0]->ServerStartWork (server);
-		offlineGenerators.Delete (0);
+		offlineGenerators.erase (offlineGenerators.begin());
 	}
 
 	//temporary debug check
@@ -917,12 +919,12 @@ void sSubBase::merge (sSubBase* sb)
 	setOilProd (oil);
 
 	// delete the subbase from the subbase list
-	cList<sSubBase*>& SubBases = owner->base.SubBases;
+	std::vector<sSubBase*>& SubBases = owner->base.SubBases;
 	for (unsigned int i = 0; i < SubBases.size(); i++)
 	{
 		if (SubBases[i] == sb)
 		{
-			SubBases.Delete (i);
+			SubBases.erase (SubBases.begin() + i);
 			break;
 		}
 	}
@@ -1058,7 +1060,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	int pos;
 	if (!building->data.connectsToBase) return;
 	pos = building->PosX + building->PosY * map->size;
-	cList<sSubBase*> NeighbourList;
+	std::vector<sSubBase*> NeighbourList;
 
 	//check for neighbours
 	if (!building->data.isBig)
@@ -1083,7 +1085,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	}
 	building->CheckNeighbours (map);
 
-	NeighbourList.RemoveDuplicates();
+	RemoveDuplicates (NeighbourList);
 
 	if (NeighbourList.size() == 0)
 	{
@@ -1103,7 +1105,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	sSubBase* const firstNeighbour = NeighbourList[0];
 	firstNeighbour->addBuilding (building);
 	building->SubBase = firstNeighbour;
-	NeighbourList.Delete (0);
+	NeighbourList.erase (NeighbourList.begin());
 
 	// now merge the other neigbours to the first one, if nessesary
 	for (size_t i = 0; i != NeighbourList.size(); ++i)
@@ -1127,7 +1129,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	{
 		sb->buildings[i]->SubBase = NULL;
 	}
-	SubBases.Remove (sb);
+	Remove (SubBases, sb);
 
 	//save ressource allocation
 	int metal = sb->getMetalProd();
@@ -1143,14 +1145,14 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	}
 
 	//generate list, with the new subbases
-	cList<sSubBase*> newSubBases;
+	std::vector<sSubBase*> newSubBases;
 	for (unsigned int i = 0; i < sb->buildings.size(); i++)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
 		newSubBases.push_back (n->SubBase);
 	}
-	newSubBases.RemoveDuplicates();
+	RemoveDuplicates (newSubBases);
 
 	//try to restore ressource allocation
 	for (unsigned int i = 0; i < newSubBases.size(); i++)

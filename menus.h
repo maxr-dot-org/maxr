@@ -179,7 +179,7 @@ public:
 	cMap* map;
 
 	/** list with all players for the game*/
-	cList<cPlayer*> players;
+	std::vector<cPlayer*> players;
 	/** list with the selected landing units by each player*/
 	std::vector<std::vector<sLandingUnit>*> landingUnits;
 	/** the client landing data (landing positions) of the players*/
@@ -270,9 +270,9 @@ protected:
 	 */
 	SDL_Rect position;
 
-	cList<cMenuTimerBase*> menuTimers;
+	std::vector<cMenuTimerBase*> menuTimers;
 	/** The list with all menuitems (buttons, images, etc.) of this menu. */
-	cList<cMenuItem*> menuItems;
+	std::vector<cMenuItem*> menuItems;
 	/** Pointer to the currently active menuitem. This one will receive keyboard input. */
 	cMenuItem* activeItem;
 
@@ -501,7 +501,7 @@ protected:
 	AutoPtr<cMenuImage>::type planetImages[8];
 	AutoPtr<cMenuLabel>::type planetTitles[8];
 
-	cList<std::string>* maps;
+	std::vector<std::string>* maps;
 	int selectedMapIndex;
 	int offset;
 
@@ -882,8 +882,8 @@ protected:
 
 	AutoPtr<cMenuSaveSlot>::type saveSlots[10];
 
-	cList<std::string>* files;
-	cList<sSaveFile*> savefiles;
+	std::vector<std::string>* files;
+	std::vector<sSaveFile*> savefiles;
 
 	int offset;
 	int selected;
@@ -1032,7 +1032,7 @@ protected:
 	cClient* client;
 	cVehicle* ownerVehicle;
 	cBuilding* ownerBuilding;
-	cList<cVehicle*>& storageList;
+	std::vector<cVehicle*>& storageList;
 	sUnitData unitData;
 	sSubBase* subBase;
 
@@ -1073,7 +1073,7 @@ protected:
 
 	int getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons) [6]);
 public:
-	cStorageMenu (cClient& client_, cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
+	cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
 
 	static void doneReleased (void* parent);
 

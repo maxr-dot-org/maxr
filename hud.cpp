@@ -19,27 +19,29 @@
 #include <math.h>
 #include <sstream>
 
-#include "autosurface.h"
 #include "hud.h"
-#include "main.h"
-#include "mouse.h"
-#include "sound.h"
-#include "dialog.h"
-#include "unifonts.h"
+
+#include "attackJobs.h"
+#include "autosurface.h"
+#include "buildings.h"
 #include "client.h"
 #include "clientevents.h"
-#include "netmessage.h"
-#include "keys.h"
+#include "clist.h"
+#include "dialog.h"
+#include "events.h"
+#include "fxeffects.h"
 #include "input.h"
+#include "keys.h"
+#include "main.h"
+#include "mouse.h"
+#include "netmessage.h"
 #include "pcx.h"
 #include "player.h"
 #include "settings.h"
-#include "events.h"
-#include "video.h"
-#include "buildings.h"
+#include "sound.h"
+#include "unifonts.h"
 #include "vehicles.h"
-#include "attackJobs.h"
-#include "fxeffects.h"
+#include "video.h"
 
 using namespace std;
 
@@ -99,7 +101,7 @@ void cDebugOutput::draw()
 		SDL_Rect rSrc = { 0, 0, 20, 10 };
 		SDL_Rect rDotDest = { Sint16 (DEBUGOUT_X_POS - 10), Sint16 (debugOff), 10, 10 };
 		SDL_Rect rBlackOut = { Sint16 (DEBUGOUT_X_POS + 20), Sint16 (debugOff), 0, 10 };
-		const cList<cPlayer*>& playerList = *client->PlayerList;
+		const std::vector<cPlayer*>& playerList = *client->PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			//HACK SHOWFINISHEDPLAYERS
@@ -452,7 +454,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 }
 
 
-cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList) :
+cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const playerList) :
 	cMenu (generateSurface()),
 	client (NULL),
 	iObjectStream(-1),
@@ -722,7 +724,7 @@ void cGameGUI::handleMessages()
 		if (message->age + MSG_TICKS < SDL_GetTicks() || iHeight > 200)
 		{
 			delete message;
-			messages.Delete (i);
+			messages.erase (messages.begin() + i);
 			continue;
 		}
 		iHeight += 17 + font->getFontHeight() * (message->len  / (Video.getResolutionX() - 300));
@@ -2558,7 +2560,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		// close the socket
 		if (Server->network) Server->network->close (Player->iSocketNum);
-		cList<cPlayer*>& playerList = *Server->PlayerList;
+		std::vector<cPlayer*>& playerList = *Server->PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			if (playerList[i]->iSocketNum > Player->iSocketNum && playerList[i]->iSocketNum < MAX_CLIENTS) playerList[i]->iSocketNum--;
@@ -2667,7 +2669,7 @@ void cGameGUI::doCommand (const string& cmd)
 		{
 			if (Server)
 			{
-				const cList<cPlayer*>& playerList = *Server->PlayerList;
+				const std::vector<cPlayer*>& playerList = *Server->PlayerList;
 				for (unsigned int i = 0; i < playerList.size(); i++)
 				{
 					sendRequestResync (*client, playerList[i]->Nr);
@@ -2842,7 +2844,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 				if (vehicle == selectedVehicle)
 				{
 					newSelected = false;
-					selectedVehiclesGroup.Insert (0, vehicle);
+					selectedVehiclesGroup.insert(selectedVehiclesGroup.begin(), vehicle);
 				}
 				else selectedVehiclesGroup.push_back (vehicle);
 				vehicle->groupSelected = true;
@@ -2856,7 +2858,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 	if (selectedVehiclesGroup.size() == 1)
 	{
 		selectedVehiclesGroup[0]->groupSelected = false;
-		selectedVehiclesGroup.Delete (0);
+		selectedVehiclesGroup.erase (selectedVehiclesGroup.begin());
 	}
 }
 
@@ -3569,7 +3571,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 
 void cGameGUI::addFx (cFx* fx)
 {
-	FxList.Insert (0, fx);
+	FxList.insert (FxList.begin(), fx);
 	fx->playSound(*this);
 }
 
@@ -3606,7 +3608,7 @@ void cGameGUI::runFx ()
 		if (FxList[i]->isFinished () )
 		{
 			delete FxList[i];
-			FxList.Delete(i);
+			FxList.erase (FxList.begin() + i);
 			i--;
 		}
 	}

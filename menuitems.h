@@ -26,7 +26,6 @@
 #include "unifonts.h"
 #include "upgradecalculator.h"
 #include "sound.h"
-#include "clist.h"
 #include "main.h" // for sID
 #include "notifications.h"
 
@@ -344,7 +343,7 @@ public:
 class cMenuItemContainer : public cMenuItem
 {
 protected:
-	cList<cMenuItem*> itemList;
+	std::vector<cMenuItem*> itemList;
 public:
 	cMenuItemContainer (int x, int y);
 	virtual void draw();
@@ -637,7 +636,7 @@ class cMenuRadioGroup : public cMenuItem
 {
 	friend class cMenuCheckButton;
 protected:
-	cList<cMenuCheckButton*> buttonList;
+	std::vector<cMenuCheckButton*> buttonList;
 
 	void checkedButton (cMenuCheckButton* button);
 
@@ -766,7 +765,7 @@ protected:
 
 	eMenuUnitListDisplayTypes displayType;
 
-	cList<cMenuUnitListItem*> unitsList;
+	std::vector<cMenuUnitListItem*> unitsList;
 	cMenuUnitListItem* selectedUnit;
 	int offset;
 	int maxDisplayUnits;
@@ -1016,7 +1015,7 @@ class cMenuListBox : public cMenuItemContainer
 protected:
 	cMenu* parentMenu;
 
-	cList<std::string> lines;
+	std::vector<std::string> lines;
 	int maxLines;
 	int maxDrawLines;
 
@@ -1126,9 +1125,9 @@ class cMenuPlayersBox : public cMenuItemContainer
 	cNetworkMenu* parentMenu;
 	int maxDrawPlayers;
 
-	cList<cMenuImage*> playerColors;
-	cList<cMenuLabel*> playerNames;
-	cList<cMenuImage*> playerReadys;
+	std::vector<cMenuImage*> playerColors;
+	std::vector<cMenuLabel*> playerNames;
+	std::vector<cMenuImage*> playerReadys;
 
 	AutoPtr<cMenuScrollBar>::type scrollBar;
 

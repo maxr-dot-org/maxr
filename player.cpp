@@ -17,12 +17,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include <math.h>
+
 #include "player.h"
+
+#include "buildings.h"
 #include "client.h"
+#include "clist.h"
+#include "hud.h"
 #include "server.h"
 #include "serverevents.h"
-#include "hud.h"
-#include "buildings.h"
 #include "vehicles.h"
 
 using namespace std;
@@ -149,10 +152,7 @@ cPlayer::~cPlayer()
 		BuildingList->sentryActive = false;
 
 		// Stored Vehicles are already deleted; just clear the list
-		while (BuildingList->storedUnits.size() > 0)
-		{
-			BuildingList->storedUnits.Delete (BuildingList->storedUnits.size() - 1);
-		}
+		BuildingList->storedUnits.clear();
 
 		delete BuildingList;
 		BuildingList = ptr;
@@ -638,8 +638,8 @@ void cPlayer::stopAResearch (int researchArea)
 void cPlayer::doResearch (cServer& server)
 {
 	bool researchFinished = false;
-	cList<sUnitData*> upgradedUnitDatas;
-	cList<int> areasReachingNextLevel;
+	std::vector<sUnitData*> upgradedUnitDatas;
+	std::vector<int> areasReachingNextLevel;
 	reportResearchAreasFinished.clear();
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
@@ -731,7 +731,7 @@ int cPlayer::getScore (int turn) const
 }
 
 //--------------------------------------------------------------
-void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas)
+void cPlayer::upgradeUnitTypes (std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas)
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
@@ -774,8 +774,8 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
-				if (!resultUpgradedUnitDatas.Contains (& (VehicleData[i])))
-					resultUpgradedUnitDatas.push_back (& (VehicleData[i]));
+				if (!Contains (resultUpgradedUnitDatas, &(VehicleData[i])))
+					resultUpgradedUnitDatas.push_back (&(VehicleData[i]));
 			}
 		}
 		if (incrementVersion)
@@ -821,8 +821,8 @@ void cPlayer::upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitD
 				}
 				if (researchArea != cResearch::kCostResearch)   // don't increment the version, if the only change are the costs
 					incrementVersion = true;
-				if (!resultUpgradedUnitDatas.Contains (& (BuildingData[i])))
-					resultUpgradedUnitDatas.push_back (& (BuildingData[i]));
+				if (!Contains (resultUpgradedUnitDatas, &(BuildingData[i])))
+					resultUpgradedUnitDatas.push_back (&(BuildingData[i]));
 			}
 		}
 		if (incrementVersion)
@@ -884,7 +884,7 @@ void cPlayer::DeleteLock (cVehicle* v)
 		{
 			v->IsLocked = false;
 			delete elem;
-			LockList.Delete (i);
+			LockList.erase (LockList.begin() + i);
 			return;
 		}
 	}
@@ -902,7 +902,7 @@ void cPlayer::DeleteLock (cBuilding* b)
 		{
 			b->IsLocked = false;
 			delete elem;
-			LockList.Delete (i);
+			LockList.erase (LockList.begin() + i);
 			return;
 		}
 	}

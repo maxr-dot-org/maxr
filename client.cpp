@@ -19,29 +19,31 @@
 #include <math.h>
 #include <sstream>
 #include "client.h"
-#include "server.h"
-#include "events.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "pcx.h"
-#include "mouse.h"
-#include "keys.h"
-#include "unifonts.h"
-#include "netmessage.h"
-#include "main.h"
+
 #include "attackJobs.h"
-#include "menus.h"
-#include "dialog.h"
-#include "settings.h"
-#include "hud.h"
-#include "video.h"
 #include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
 #include "casualtiestracker.h"
-#include "gametimer.h"
-#include "jobs.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "dialog.h"
+#include "events.h"
 #include "fxeffects.h"
+#include "gametimer.h"
+#include "hud.h"
+#include "jobs.h"
+#include "keys.h"
+#include "main.h"
+#include "menus.h"
+#include "mouse.h"
+#include "netmessage.h"
+#include "pcx.h"
+#include "player.h"
+#include "server.h"
+#include "serverevents.h"
+#include "settings.h"
+#include "unifonts.h"
+#include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 
@@ -68,7 +70,7 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 cClient* Client = 0; // global instance
 
-cClient::cClient (cTCP* network_, cMap* const Map, cList<cPlayer*>* const playerList) :
+cClient::cClient (cTCP* network_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
 	network(network_),
 	Map (Map),
 	PlayerList (playerList),
@@ -146,7 +148,7 @@ void cClient::initPlayer (cPlayer* Player)
 	}
 }
 
-int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, cList<cVehicle*>* group)
+int cClient::addMoveJob (cVehicle* vehicle, int DestX, int DestY, std::vector<cVehicle*>* group)
 {
 	sWaypoint* path = cClientMoveJob::calcPath (*getMap(), vehicle->PosX, vehicle->PosY, DestX, DestY, vehicle, group);
 	if (path)
@@ -174,7 +176,7 @@ void cClient::startGroupMove()
 	int mainDestY = mouse->getKachelY();
 
 	// copy the selected-units-list
-	cList<cVehicle*> group;
+	std::vector<cVehicle*> group;
 	for (unsigned int i = 0; i < gameGUI.getSelVehiclesGroup()->size(); i++) group.push_back ((*gameGUI.getSelVehiclesGroup()) [i]);
 
 	// go trough all vehicles in the list
@@ -205,7 +207,7 @@ void cClient::startGroupMove()
 		int destY = mainDestY + vehicle->PosY - mainPosY ;
 		addMoveJob (vehicle, destX, destY, gameGUI.getSelVehiclesGroup());
 		// delete the unit from the copyed list
-		group.Delete (shortestWayVehNum);
+		group.erase (group.begin() + shortestWayVehNum);
 	}
 }
 
@@ -963,7 +965,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	while (Building->BuildList->size())
 	{
 		delete (*Building->BuildList) [0];
-		Building->BuildList->Delete (0);
+		Building->BuildList->erase (Building->BuildList->begin());
 	}
 	int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
@@ -2043,8 +2045,8 @@ void cClient::deleteUnit (cVehicle* Vehicle)
 	{
 		gameGUI.deselectUnit();
 	}
-	cList<cVehicle*>& selGroup = *gameGUI.getSelVehiclesGroup();
-	selGroup.Remove (Vehicle);
+	std::vector<cVehicle*>& selGroup = *gameGUI.getSelVehiclesGroup();
+	Remove (selGroup, Vehicle);
 
 	owner->lastDeletedUnit = Vehicle->iID;
 
@@ -2161,7 +2163,7 @@ void cClient::handleMoveJobs()
 				Vehicle->MoveJobActive = false;
 			}
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
-			ActiveMJobs.Delete (i);
+			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
 			if (Vehicle == gameGUI.getSelVehicle()) gameGUI.updateMouseCursor();
 			continue;
@@ -2174,7 +2176,7 @@ void cClient::handleMoveJobs()
 				Vehicle->MoveJobActive = false;
 				Vehicle->moving = false;
 			}
-			ActiveMJobs.Delete (i);
+			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			if (Vehicle == gameGUI.getSelVehicle()) gameGUI.updateMouseCursor();
 			continue;
 		}

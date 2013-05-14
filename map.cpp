@@ -18,12 +18,14 @@
  ***************************************************************************/
 
 #include "map.h"
+
+#include "buildings.h"
+#include "clist.h"
+#include "files.h"
 #include "player.h"
 #include "settings.h"
-#include "files.h"
-#include "video.h"
-#include "buildings.h"
 #include "vehicles.h"
+#include "video.h"
 
 sTerrain::sTerrain() :
 	water (false),
@@ -562,27 +564,27 @@ void cMap::addBuilding (cBuilding* building, unsigned int offset)
 	{
 		i = 0;
 		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.Insert (i, building);
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset += 1;
 		i = 0;
 		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.Insert (i, building);
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset += size;
 		i = 0;
 		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.Insert (i, building);
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset -= 1;
 		i = 0;
 		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.Insert (i, building);
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 	}
 	else
 	{
 		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.Insert (i, building);
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 	}
 }
 
@@ -596,11 +598,11 @@ void cMap::addVehicle (cVehicle* vehicle, unsigned int offset)
 {
 	if (vehicle->data.factorAir > 0)
 	{
-		fields[offset].planes.Insert (0, vehicle);
+		fields[offset].planes.insert (fields[offset].planes.begin(), vehicle);
 	}
 	else
 	{
-		fields[offset].vehicles.Insert (0, vehicle);
+		fields[offset].vehicles.insert (fields[offset].vehicles.begin(), vehicle);
 	}
 }
 
@@ -608,22 +610,22 @@ void cMap::deleteBuilding (const cBuilding* building)
 {
 	int offset = building->PosX + building->PosY * size;
 
-	cList<cBuilding*>* buildings = &fields[offset].buildings;
-	buildings->Remove (building);
+	std::vector<cBuilding*>* buildings = &fields[offset].buildings;
+	Remove (*buildings, building);
 
 	if (building->data.isBig)
 	{
 		offset++;
 		buildings = &fields[offset].buildings;
-		buildings->Remove (building);
+		Remove (*buildings, building);
 
 		offset += size;
 		buildings = &fields[offset].buildings;
-		buildings->Remove (building);
+		Remove (*buildings, building);
 
 		offset--;
 		buildings = &fields[offset].buildings;
-		buildings->Remove (building);
+		Remove (*buildings, building);
 	}
 }
 
@@ -633,27 +635,27 @@ void cMap::deleteVehicle (const cVehicle* vehicle)
 
 	if (vehicle->data.factorAir > 0)
 	{
-		cList<cVehicle*>& planes = fields[offset].planes;
-		planes.Remove (vehicle);
+		std::vector<cVehicle*>& planes = fields[offset].planes;
+		Remove (planes, vehicle);
 	}
 	else
 	{
-		cList<cVehicle*>* vehicles = &fields[offset].vehicles;
-		vehicles->Remove (vehicle);
+		std::vector<cVehicle*>* vehicles = &fields[offset].vehicles;
+		Remove (*vehicles, vehicle);
 
 		if (vehicle->data.isBig)
 		{
 			offset++;
 			vehicles = &fields[offset].vehicles;
-			vehicles->Remove (vehicle);
+			Remove (*vehicles, vehicle);
 
 			offset += size;
 			vehicles = &fields[offset].vehicles;
-			vehicles->Remove (vehicle);
+			Remove (*vehicles, vehicle);
 
 			offset--;
 			vehicles = &fields[offset].vehicles;
-			vehicles->Remove (vehicle);
+			Remove (*vehicles, vehicle);
 		}
 	}
 }
@@ -668,31 +670,31 @@ void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int h
 
 	if (vehicle->data.factorAir > 0)
 	{
-		cList<cVehicle*>& planes = fields[oldOffset].planes;
-		planes.Remove (vehicle);
+		std::vector<cVehicle*>& planes = fields[oldOffset].planes;
+		Remove (planes, vehicle);
 		if (height > (int) fields[newOffset].planes.size())
 			height = fields[newOffset].planes.size();
-		fields[newOffset].planes.Insert (height, vehicle);
+		fields[newOffset].planes.insert (fields[newOffset].planes.begin() + height, vehicle);
 	}
 	else
 	{
-		cList<cVehicle*>& vehicles = fields[oldOffset].vehicles;
-		vehicles.Remove (vehicle);
+		std::vector<cVehicle*>& vehicles = fields[oldOffset].vehicles;
+		Remove (vehicles, vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
 		if (vehicle->data.isBig)
 		{
 			oldOffset++;
-			fields[oldOffset].vehicles.Delete (0);
+			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 			oldOffset += size;
-			fields[oldOffset].vehicles.Delete (0);
+			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 			oldOffset--;
-			fields[oldOffset].vehicles.Delete (0);
+			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
 			vehicle->data.isBig = false;
 		}
 
-		fields[newOffset].vehicles.Insert (0, vehicle);
+		fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
 	}
 }
 
@@ -709,18 +711,18 @@ void cMap::moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y)
 	int oldOffset = vehicle->PosX + vehicle->PosY * size;
 	int newOffset = x + y * size;
 
-	fields[oldOffset].vehicles.Delete (0);
+	fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
 	vehicle->PosX = x;
 	vehicle->PosY = y;
 
-	fields[newOffset].vehicles.Insert (0, vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
 	newOffset++;
-	fields[newOffset].vehicles.Insert (0, vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
 	newOffset += size;
-	fields[newOffset].vehicles.Insert (0, vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
 	newOffset--;
-	fields[newOffset].vehicles.Insert (0, vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
 
 	vehicle->data.isBig = true;
 }

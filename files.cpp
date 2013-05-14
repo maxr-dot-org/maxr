@@ -85,9 +85,9 @@ bool DirExists (const std::string& path)
 }
 
 //--------------------------------------------------------------
-cList<std::string>* getFilesOfDirectory (const std::string& sDirectory)
+std::vector<std::string>* getFilesOfDirectory (const std::string& sDirectory)
 {
-	cList<std::string>* List = new cList<std::string>;
+	std::vector<std::string>* List = new std::vector<std::string>;
 #ifdef _WIN32
 	_finddata_t DataFile;
 	intptr_t const lFile = _findfirst ( (sDirectory + PATH_DELIMITER "*.*").c_str(), &DataFile);

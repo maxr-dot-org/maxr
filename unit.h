@@ -105,13 +105,13 @@ public:
 	bool isMarkedAsDone; ///< the player has pressed the done button for this unit
 	bool hasBeenAttacked; //the unit was attacked in this turn
 
-	cList<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
+	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
 
 	int selectedMenuButtonIndex;
 
 	cPlayer* owner;
-	cList<cPlayer*> seenByPlayerList; ///< a list were the numbers of all players who can see this unit are stored in
-	cList<cPlayer*> detectedByPlayerList; ///< a list were the numbers of all players who have deteced this unit are stored in
+	std::vector<cPlayer*> seenByPlayerList; ///< a list of all players who can see this unit
+	std::vector<cPlayer*> detectedByPlayerList; ///< a list of all players who have detected this unit
 
 	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
 

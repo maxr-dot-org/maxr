@@ -86,9 +86,9 @@ public:
 	char* ScanMap;             // Map mit dem Scannerflags.
 	char* ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
 	cBase base;               // Die Basis dieses Spielers.
-	//cList<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
+	//std::vector<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
 	char* SentriesMapAir;				/** the covered air area */
-	//cList<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
+	//std::vector<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
 	char* SentriesMapGround;			/** the covered ground area */
 	char* DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
 	char* DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
@@ -99,11 +99,11 @@ public:
 	int Credits;               // Anzahl der erworbenen Credits.
 	mutable PointsHistory pointsHistory; // history of player's total score (from eco-spheres) for graph
 	sHudStateContainer* savedHud;
-	cList<sTurnstartReport*> ReportVehicles; // Reportlisten.
-	cList<sTurnstartReport*> ReportBuildings; // Reportlisten.
-	cList<sSavedReportMessage> savedReportsList;
-	cList<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
-	cList<sLockElem*> LockList;           // Liste mit gelockten Objekten.
+	std::vector<sTurnstartReport*> ReportVehicles; // Reportlisten.
+	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
+	std::vector<sSavedReportMessage> savedReportsList;
+	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
+	std::vector<sLockElem*> LockList;           // Liste mit gelockten Objekten.
 	int iSocketNum;			// Number of socket over which this player is connected in network game
 	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
@@ -123,7 +123,7 @@ public:
 	void stopAResearch (int researchArea);
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
-	void upgradeUnitTypes (cList<int>& areasReachingNextLevel, cList<sUnitData*>& resultUpgradedUnitDatas);
+	void upgradeUnitTypes (std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void AddLock (cBuilding* b);
 	void AddLock (cVehicle* v);

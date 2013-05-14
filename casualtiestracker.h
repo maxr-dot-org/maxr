@@ -21,7 +21,6 @@
 #define casualtiestracker_H
 
 #include "main.h"
-#include "clist.h"
 #include "notifications.h"
 #include <vector>
 

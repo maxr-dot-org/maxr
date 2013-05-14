@@ -286,12 +286,12 @@ void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activat
 void sendDeleteEverything (cServer& server, int player);
 void sendUnitUpgrades (cServer& server, const sUnitData* Data, int player);
 void sendCredits (cServer& server, int newCredits, int player);
-void sendUpgradeBuildings (cServer& server, const cList<cBuilding*>& upgradedBuildings, int totalCosts, int player);
-void sendUpgradeVehicles (cServer& server, const cList<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
-void sendResearchSettings (cServer& server, const cList<cBuilding*>& researchCentersToChangeArea, const cList<int>& newAreasForResearchCenters, int player);
+void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, int player);
+void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
+void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<int>& newAreasForResearchCenters, int player);
 void sendResearchLevel (cServer& server, const cResearch* researchLevel, int player);
 void sendRefreshResearchCount (cServer& server, int player);
-void sendClansToClients (cServer& server, const cList<cPlayer*>* playerList);
+void sendClansToClients (cServer& server, const std::vector<cPlayer*>& playerList);
 void sendGameTime (cServer& server, const cPlayer* player, int gameTime);
 void sendSetAutomoving (cServer& server, const cVehicle* Vehicle);
 /**

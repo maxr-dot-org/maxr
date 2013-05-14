@@ -21,16 +21,19 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+
 #include "menuitems.h"
-#include "menus.h"
-#include "settings.h"
-#include "client.h"
+
 #include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
-#include "mouse.h"
 #include "casualtiestracker.h"
+#include "client.h"
 #include "clientevents.h"
+#include "clist.h"
+#include "menus.h"
+#include "mouse.h"
+#include "player.h"
+#include "settings.h"
+#include "vehicles.h"
 
 using namespace std;
 
@@ -356,7 +359,7 @@ void cMenuItemContainer::addItem (cMenuItem* item)
 
 void cMenuItemContainer::removeItem (const cMenuItem* item)
 {
-	itemList.Remove (item);
+	Remove (itemList, item);
 	// TODO: renew position
 }
 
@@ -1588,7 +1591,7 @@ void cMenuUnitsList::removeUnit (cMenuUnitListItem* item)
 				if (unitsList[i] == parentMenu->getSelectedUnit()) isInMenuSelected = true;
 			}
 			delete unitsList[i];
-			unitsList.Delete (i);
+			unitsList.erase (unitsList.begin() + i);
 
 			selectedUnit = nextSelUnit;
 			if (isInMenuSelected) parentMenu->setSelectedUnit (nextSelUnit);

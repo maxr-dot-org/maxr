@@ -26,7 +26,7 @@
 
 using namespace std;
 
-static cList<cAutoMJob*> autoMJobs;
+static std::vector<cAutoMJob*> autoMJobs;
 
 //static functions of cAutoMJob
 
@@ -76,7 +76,7 @@ cAutoMJob::~cAutoMJob()
 		autoMJobs[i] = autoMJobs[i + 1];
 		autoMJobs[i]->iNumber = (int) i;
 	}
-	autoMJobs.PopBack();
+	autoMJobs.pop_back();
 
 	vehicle->autoMJob = NULL;
 }

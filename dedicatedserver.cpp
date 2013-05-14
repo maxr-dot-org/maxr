@@ -18,23 +18,24 @@
  ***************************************************************************/
 
 #include "dedicatedserver.h"
+
+#include "clientevents.h"
+#include "clist.h"
+#include "defines.h"
+#include "files.h"
+#include "menuevents.h"
+#include "netmessage.h"
+#include "network.h"
+#include "savegame.h"
+#include "serverevents.h"
 #include "servergame.h"
-#include <iostream>
-#include <sstream>
-#include <iterator>
-#include <vector>
+
 #include <algorithm>
 #include <assert.h>
-
-#include "defines.h"
-#include "network.h"
-#include "netmessage.h"
-#include "menuevents.h"
-#include "clientevents.h"
-#include "serverevents.h"
-#include "savegame.h"
-
-#include "files.h"
+#include <iostream>
+#include <iterator>
+#include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -294,16 +295,16 @@ void cDedicatedServer::printMaps() const
 string cDedicatedServer::getAvailableMapsString() const
 {
 	stringstream oss;
-	cList<std::string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
+	std::vector<std::string>* maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (getUserMapsDir().empty() == false)
 	{
-		cList<std::string>* userMaps = getFilesOfDirectory (getUserMapsDir());
+		std::vector<std::string>* userMaps = getFilesOfDirectory (getUserMapsDir());
 		if (userMaps != 0)
 		{
 			for (unsigned int i = 0; i < userMaps->size(); i++)
 			{
-				if (maps->Contains ( (*userMaps) [i]) == false)
-					maps->push_back ( (*userMaps) [i]);
+				if (Contains (*maps, (*userMaps) [i]) == false)
+					maps->push_back ((*userMaps) [i]);
 			}
 			delete userMaps;
 		}

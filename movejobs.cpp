@@ -18,18 +18,20 @@
  ***************************************************************************/
 
 #include "movejobs.h"
+
 #include "attackJobs.h"
-#include "player.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "server.h"
-#include "client.h"
-#include "netmessage.h"
-#include "math.h"
-#include "settings.h"
 #include "buildings.h"
-#include "vehicles.h"
+#include "client.h"
+#include "clientevents.h"
+#include "clist.h"
 #include "fxeffects.h"
+#include "math.h"
+#include "netmessage.h"
+#include "player.h"
+#include "server.h"
+#include "serverevents.h"
+#include "settings.h"
+#include "vehicles.h"
 
 cPathDestHandler::cPathDestHandler (ePathDestinationTypes type_, int destX_, int destY_, const cVehicle* srcVehicle_, const cBuilding* destBuilding_, const cVehicle* destVehicle_) :
 	type (type_),
@@ -77,7 +79,7 @@ int cPathDestHandler::heuristicCost (int srcX, int srcY) const
 	}
 }
 
-cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group)
+cPathCalculator::cPathCalculator (int ScrX, int ScrY, int DestX, int DestY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group)
 {
 	destHandler = new cPathDestHandler (PATH_DEST_TYPE_POS, DestX, DestY, NULL, NULL, NULL);
 	init (ScrX, ScrY, Map, Vehicle, group);
@@ -96,7 +98,7 @@ cPathCalculator::cPathCalculator (int ScrX, int ScrY, const cMap* Map, const cVe
 	init (ScrX, ScrY, Map, Vehicle, NULL);
 }
 
-void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, cList<cVehicle*>* group)
+void cPathCalculator::init (int ScrX, int ScrY, const cMap* Map, const cVehicle* Vehicle, std::vector<cVehicle*>* group)
 {
 	this->ScrX = ScrX;
 	this->ScrY = ScrY;
@@ -979,7 +981,7 @@ cClientMoveJob::~cClientMoveJob()
 		delete Waypoints;
 		Waypoints = NextWaypoint;
 	}
-	client->ActiveMJobs.Remove (this);
+	Remove (client->ActiveMJobs, this);
 	delete endMoveAction;
 }
 
@@ -1009,7 +1011,7 @@ bool cClientMoveJob::generateFromMessage (cNetMessage* message)
 	return true;
 }
 
-sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, cList<cVehicle*>* group)
+sWaypoint* cClientMoveJob::calcPath (const cMap& map, int SrcX, int SrcY, int DestX, int DestY, cVehicle* vehicle, std::vector<cVehicle*>* group)
 {
 	if (SrcX == DestX && SrcY == DestY) return 0;
 

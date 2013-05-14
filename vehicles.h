@@ -20,10 +20,10 @@
 #define vehiclesH
 #include "defines.h"
 #include <SDL.h>
-#include "clist.h"
 #include "automjobs.h"
 #include "main.h" // for sUnitData
 #include "unit.h"
+#include <vector>
 
 class cAutoMJob;
 class cBuilding;
@@ -293,8 +293,8 @@ private:
 	bool doReactionFire (cServer& server, cPlayer* player) const;
 	bool doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const;
 
-	cList<cPlayer*> calcDetectedByPlayer (cServer& server) const;  ///< helper method that returns a list of all players, that can detect this unit
-	cList<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
+	std::vector<cPlayer*> calcDetectedByPlayer (cServer& server) const;  ///< helper method that returns a list of all players, that can detect this unit
+	std::vector<cPlayer*> detectedInThisTurnByPlayerList; ///< list of players, that detected this vehicle in this turn
 
 	//-----------------------------------------------------------------------------
 protected:

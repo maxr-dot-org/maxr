@@ -20,7 +20,8 @@
 #define savegameH
 #include "defines.h"
 #include "tinyxml.h"
-#include "clist.h"
+#include <vector>
+
 
 class cResearch;
 class cMap;
@@ -78,7 +79,7 @@ public:
 	* ---
 	*@author alzi alias DoctorDeath
 	*/
-	void writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, const cPlayer* player);
+	void writeAdditionalInfo (sHudStateContainer hudState, std::vector<sSavedReportMessage>& list, const cPlayer* player);
 
 	//--------------------------------------------------------------------------
 private:
@@ -92,9 +93,9 @@ private:
 	std::string version;
 
 	/* list with loaded movejobs */
-	cList<sMoveJobLoad*> MoveJobsLoad;
+	std::vector<sMoveJobLoad*> MoveJobsLoad;
 	/* list with loaded subbases */
-	cList<sSubBaseLoad*> SubBasesLoad;
+	std::vector<sSubBaseLoad*> SubBasesLoad;
 
 	/**
 	* writes the saveheader
@@ -176,7 +177,7 @@ private:
 	* loads all players from savefile
 	*@author alzi alias DoctorDeath
 	*/
-	cList<cPlayer*>* loadPlayers (cMap* map);
+	std::vector<cPlayer*>* loadPlayers (cMap* map);
 	/**
 	* loads a player
 	*@author alzi alias DoctorDeath
@@ -247,7 +248,7 @@ private:
 	* returns the player with the number
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* getPlayerFromNumber (cList<cPlayer*>* PlayerList, int number);
+	cPlayer* getPlayerFromNumber (std::vector<cPlayer*>* PlayerList, int number);
 	/**
 	* converts the resource data to an string in HEX format
 	*@author alzi alias DoctorDeath

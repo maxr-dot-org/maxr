@@ -20,7 +20,6 @@
 #define serverH
 #include <SDL.h>
 #include "defines.h"
-#include "clist.h"
 #include "ringbuffer.h"
 #include "main.h" // for sID
 #include "map.h"
@@ -90,7 +89,7 @@ public:
 	 *@param turnLimit Game ends after this many turns
 	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer (cTCP* network_, cMap* map, cList<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
+	cServer (cTCP* network_, cMap* map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
 	void setDeadline (int iDeadline);
 	void stop ();
 	~cServer();
@@ -130,7 +129,7 @@ private:
 	/** the type of the current game */
 	eGameTypes gameType;
 	/** a list with the numbers of all players who have ended theire turn */
-	cList<cPlayer*> PlayerEndList;
+	std::vector<cPlayer*> PlayerEndList;
 	/** number of current turn */
 	int iTurn;
 	/** deadline in seconds if the first player has finished his turn*/
@@ -144,7 +143,7 @@ private:
 	/** if this is true the map will be opened for a defeated player */
 	bool openMapDefeat;
 	/** List with disconnected players */
-	cList<cPlayer*> DisconnectedPlayerList;
+	std::vector<cPlayer*> DisconnectedPlayerList;
 	/** a sequential id for identifying additional save information from clients */
 	int savingID;
 	/** the index of the saveslot where additional save info should be added */
@@ -318,11 +317,11 @@ public:
 	/** the map */
 	cMap* Map;
 	/** List with all attackjobs */
-	cList<cServerAttackJob*> AJobs;
+	std::vector<cServerAttackJob*> AJobs;
 	/** List with all active movejobs */
-	cList<cServerMoveJob*> ActiveMJobs;
+	std::vector<cServerMoveJob*> ActiveMJobs;
 	/** List with all players */
-	cList<cPlayer*>* PlayerList;
+	std::vector<cPlayer*>* PlayerList;
 	/** true if the game has been started */
 	bool bStarted;
 

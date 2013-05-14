@@ -21,28 +21,29 @@
 #include <cassert>
 
 #include "menus.h"
-#include "mouse.h"
-#include "pcx.h"
-#include "events.h"
-#include "buildings.h"
-#include "files.h"
-#include "server.h"
-#include "client.h"
-#include "menuevents.h"
-#include "loaddata.h"
-#include "clientevents.h"
-#include "clans.h"
-#include "serverevents.h"
-#include "netmessage.h"
-#include "dialog.h"
-#include "mapdownload.h"
-#include "settings.h"
-#include "video.h"
-#include "vehicles.h"
-#include "player.h"
-#include "savegame.h"
 
 #include "autoptr.h"
+#include "buildings.h"
+#include "clans.h"
+#include "client.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "dialog.h"
+#include "events.h"
+#include "files.h"
+#include "loaddata.h"
+#include "mapdownload.h"
+#include "menuevents.h"
+#include "mouse.h"
+#include "netmessage.h"
+#include "pcx.h"
+#include "player.h"
+#include "savegame.h"
+#include "server.h"
+#include "serverevents.h"
+#include "settings.h"
+#include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 
@@ -141,7 +142,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		return;
 
 	cMap serverMap;
-	cList<cPlayer*> serverPlayers;
+	std::vector<cPlayer*> serverPlayers;
 	if (isServer)
 	{
 		// copy map for server
@@ -200,7 +201,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	{
 		// send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
-			sendClansToClients (*Server, &players);
+			sendClansToClients (*Server, players);
 
 		// make the landing
 		for (unsigned int i = 0; i < players.size(); i++)
@@ -242,14 +243,14 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
 	cSavegame savegame (savegameNum);
 	if (savegame.load (network) != 1) return;
-	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
+	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
 	// copy map for client
 	cMap clientMap;
 	clientMap.LoadMap (Server->Map->MapName);
 
-	cList<cPlayer*> clientPlayerList;
+	std::vector<cPlayer*> clientPlayerList;
 
 	// copy players for client
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
@@ -271,7 +272,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
-		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
+		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
@@ -1394,11 +1395,11 @@ void cPlanetsSelectionMenu::loadMaps()
 	maps = getFilesOfDirectory (cSettings::getInstance().getMapsPath());
 	if (!getUserMapsDir().empty())
 	{
-		AutoPtr<cList<std::string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
+		AutoPtr<std::vector<std::string> >::type userMaps (getFilesOfDirectory (getUserMapsDir()));
 		for (unsigned int i = 0; userMaps != 0 && i < userMaps->size(); i++)
 		{
-			if (!maps->Contains ( (*userMaps) [i]))
-				maps->push_back ( (*userMaps) [i]);
+			if (!Contains (*maps, (*userMaps)[i]))
+				maps->push_back ((*userMaps)[i]);
 		}
 	}
 	for (unsigned int i = 0; i < maps->size(); i++)
@@ -1406,7 +1407,7 @@ void cPlanetsSelectionMenu::loadMaps()
 		string const& map = (*maps) [i];
 		if (map.substr (map.length() - 3, 3).compare ("WRL") != 0 && map.substr (map.length() - 3, 3).compare ("wrl") != 0)
 		{
-			maps->Delete (i);
+			maps->erase (maps->begin() + i);
 			i--;
 		}
 	}
@@ -1550,7 +1551,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 						if (clanMenu.show() != 0)
 						{
 							menu->draw();
-							menu->gameDataContainer->players.Delete (0);
+							menu->gameDataContainer->players.erase (menu->gameDataContainer->players.begin());
 							return;
 						}
 					}
@@ -1560,7 +1561,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 					else if (menu->gameDataContainer->settings->clans == SETTING_CLANS_OFF)
 					{
 						menu->draw();
-						menu->gameDataContainer->players.Delete (0);
+						menu->gameDataContainer->players.erase (menu->gameDataContainer->players.begin());
 						return;
 					}
 				}
@@ -3342,7 +3343,7 @@ bool cNetworkHostMenu::runSavedGame()
 	cSavegame savegame (gameDataContainer.savegameNum);
 	if (savegame.load (network) != 1) return false;
 
-	const cList<cPlayer*>& serverPlayerList = *Server->PlayerList;
+	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	// first we check whether all necessary players are connected
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
@@ -3411,7 +3412,7 @@ bool cNetworkHostMenu::runSavedGame()
 	cMap clientMap;
 	clientMap.LoadMap (Server->Map->MapName);
 
-	cList<cPlayer*> clientPlayerList;
+	std::vector<cPlayer*> clientPlayerList;
 
 	// copy players for client
 	cPlayer* localPlayer = NULL;
@@ -3437,7 +3438,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		sendRequestResync (*Client, serverPlayerList[i]->Nr);
 		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
-		cList<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
+		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
 			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
@@ -3935,7 +3936,7 @@ void cLoadMenu::loadSaves()
 		string const& file = (*files) [i];
 		if (file.length() < 4 || file.substr (file.length() - 3, 3).compare ("xml") != 0)
 		{
-			files->Delete (i);
+			files->erase (files->begin() + i);
 			i--;
 			continue;
 		}
@@ -4129,7 +4130,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 		if (menu->savefiles[i]->number == menu->selected + 1)
 		{
 			delete menu->savefiles[i];
-			menu->savefiles.Delete (i);
+			menu->savefiles.erase (menu->savefiles.begin() + i);
 			break;
 		}
 	}
@@ -4795,7 +4796,7 @@ void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* d
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStorageMenu::cStorageMenu (cClient& client_, cList<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
+cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
 	cMenu (LoadPCX (GFXOD_STORAGE), MNU_BG_ALPHA),
 	client(&client_),
 	ownerVehicle (vehicle),

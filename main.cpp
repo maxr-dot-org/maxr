@@ -688,6 +688,16 @@ sBuilding& cUnitsData::getBuilding (int nr, int clan)
 	return clanUnitDataBuildings.at (clan).at (nr);   //[clan][nr];
 }
 
+unsigned int cUnitsData::getNrVehicles() const
+{
+	return (int) vehicle.size();
+}
+
+unsigned int cUnitsData::getNrBuildings() const
+{
+	return (int) building.size();
+}
+
 //----------------------------------------------------------------------------------
 void cUnitsData::initializeClanUnitData()
 {

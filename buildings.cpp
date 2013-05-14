@@ -16,29 +16,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "math.h"
+#include <math.h>
 #include "buildings.h"
-#include "main.h"
-#include "unifonts.h"
-#include "mouse.h"
-#include "files.h"
-#include "pcx.h"
-#include "events.h"
-#include "serverevents.h"
-#include "clientevents.h"
-#include "client.h"
-#include "server.h"
-#include "netmessage.h"
-#include "upgradecalculator.h"
-#include "menus.h"
-#include "dialog.h"
-#include "settings.h"
-#include "hud.h"
-#include "video.h"
-#include "vehicles.h"
-#include "player.h"
+
 #include "attackJobs.h"
+#include "client.h"
+#include "clientevents.h"
+#include "clist.h"
+#include "dialog.h"
+#include "events.h"
+#include "files.h"
 #include "fxeffects.h"
+#include "hud.h"
+#include "main.h"
+#include "menus.h"
+#include "mouse.h"
+#include "netmessage.h"
+#include "pcx.h"
+#include "player.h"
+#include "server.h"
+#include "serverevents.h"
+#include "settings.h"
+#include "unifonts.h"
+#include "upgradecalculator.h"
+#include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 
@@ -94,7 +96,7 @@ cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
 	BuildList = NULL;
 
 	if (!data.canBuild.empty())
-		BuildList = new cList<sBuildList*>;
+		BuildList = new std::vector<sBuildList*>;
 
 	if (data.isBig)
 	{
@@ -126,7 +128,7 @@ cBuilding::~cBuilding()
 
 	if (IsLocked)
 	{
-		cList<cPlayer*>& playerList = *Client->getPlayerList();
+		std::vector<cPlayer*>& playerList = *Client->getPlayerList();
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* p = playerList[i];
@@ -1246,7 +1248,7 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 // Unloads a vehicle
 void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 {
-	storedUnits.Remove (Vehicle);
+	Remove (storedUnits, Vehicle);
 
 	data.storageUnitsCur--;
 
@@ -1734,7 +1736,7 @@ void cBuilding::setDetectedByPlayer (cServer& server, cPlayer* player, bool addT
 //--------------------------------------------------------------------------
 void cBuilding::resetDetectedByPlayer (const cPlayer* player)
 {
-	detectedByPlayerList.Remove (player);
+	Remove (detectedByPlayerList, player);
 }
 
 //--------------------------------------------------------------------------
@@ -1746,7 +1748,7 @@ void cBuilding::makeDetection (cServer& server)
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
 		int offset = PosX + PosY * server.Map->size;
-		cList<cPlayer*>& playerList = *server.PlayerList;
+		std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* player = playerList[i];

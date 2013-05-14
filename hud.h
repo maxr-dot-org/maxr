@@ -163,7 +163,7 @@ class cGameGUI : public cMenu
 	/** the currently selected vehicle */
 	cVehicle* selectedVehicle;
 	/** the currently selected group of vehicles */
-	cList<cVehicle*> selectedVehiclesGroup;
+	std::vector<cVehicle*> selectedVehiclesGroup;
 	/** the currently selected building */
 	cBuilding* selectedBuilding;
 public:
@@ -171,7 +171,7 @@ public:
 	int iObjectStream;
 private:
 	/** list with all messages */
-	cList<sMessage*> messages;
+	std::vector<sMessage*> messages;
 	/** Coordinates to a important message */
 	int msgCoordsX, msgCoordsY;
 
@@ -229,7 +229,7 @@ private:
 	sHudPosition savedPositions[MAX_SAVE_POSITIONS];
 
 	/** lists with all FX-Animations. Gui-only (= not synchonous to game time) */
-	cList<cFx*> FxList;
+	std::vector<cFx*> FxList;
 
 	SDL_Surface* generateMiniMapSurface();
 	bool loadPanelGraphics();
@@ -402,7 +402,7 @@ private:
 	void runFx ();
 
 public:
-	cGameGUI (cPlayer* player_, cMap* map_, cList<cPlayer*>* const playerList);
+	cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const playerList);
 	~cGameGUI();
 
 	/** SDL_Timer for animations */
@@ -505,7 +505,7 @@ public:
 	void setStartup (bool startup_);
 
 	const cVehicle* getSelVehicle() const { return selectedVehicle; }
-	cList<cVehicle*>* getSelVehiclesGroup() { return &selectedVehiclesGroup; }
+	std::vector<cVehicle*>* getSelVehiclesGroup() { return &selectedVehiclesGroup; }
 	const cBuilding* getSelBuilding() const { return selectedBuilding; }
 	cUnit* getSelectedUnit() { return selectedVehicle ? (cUnit*) selectedVehicle : (cUnit*) selectedBuilding; }
 

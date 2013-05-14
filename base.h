@@ -20,7 +20,7 @@
 #define baseH
 #include <SDL.h>
 #include "defines.h"
-#include "clist.h"
+#include <vector>
 #include "main.h" // for sUnitData and sUnitData::eStorageResType
 
 class cPlayer;
@@ -34,7 +34,7 @@ public:
 	sSubBase (cPlayer* owner_);
 	sSubBase (const sSubBase& sb);
 
-	cList<cBuilding*> buildings;
+	std::vector<cBuilding*> buildings;
 	cPlayer* owner;
 
 	int MaxMetal;
@@ -189,7 +189,7 @@ public:
 	cBase();
 	~cBase();
 
-	cList<sSubBase*> SubBases;
+	std::vector<sSubBase*> SubBases;
 	cMap* map;
 
 	/**

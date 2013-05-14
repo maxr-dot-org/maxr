@@ -20,7 +20,6 @@
 #ifndef clansH
 #define clansH
 
-#include "clist.h"
 #include <string>
 #include <map>
 #include <vector>

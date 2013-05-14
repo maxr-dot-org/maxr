@@ -55,7 +55,7 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	writeCasualties (server);
 
 	int unitnum = 0;
-	const cList<cPlayer*>& playerList = *server.PlayerList;
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* Player = playerList[i];
@@ -146,7 +146,7 @@ int cSavegame::load (cTCP* network)
 
 	cMap* map = loadMap();
 	if (!map) return 0;
-	cList<cPlayer*>* PlayerList = loadPlayers (map);
+	std::vector<cPlayer*>* PlayerList = loadPlayers (map);
 
 	string gametype;
 	loadHeader (NULL, &gametype, NULL);
@@ -170,7 +170,7 @@ int cSavegame::load (cTCP* network)
 //--------------------------------------------------------------------------
 void cSavegame::recalcSubbases(cServer& server)
 {
-	cList<cPlayer*>& playerList = *server.PlayerList;
+	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		playerList[i]->base.refreshSubbases();
@@ -283,9 +283,9 @@ cMap* cSavegame::loadMap()
 }
 
 //--------------------------------------------------------------------------
-cList<cPlayer*>* cSavegame::loadPlayers (cMap* map)
+std::vector<cPlayer*>* cSavegame::loadPlayers (cMap* map)
 {
-	cList<cPlayer*>* PlayerList = new cList<cPlayer*>;
+	std::vector<cPlayer*>* PlayerList = new std::vector<cPlayer*>;
 
 	TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode != NULL)
@@ -1114,7 +1114,7 @@ void cSavegame::generateMoveJobs (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-cPlayer* cSavegame::getPlayerFromNumber (cList<cPlayer*>* PlayerList, int number)
+cPlayer* cSavegame::getPlayerFromNumber (std::vector<cPlayer*>* PlayerList, int number)
 {
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
@@ -1682,7 +1682,7 @@ void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, cList<sSavedReportMessage>& list, const cPlayer* player)
+void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sSavedReportMessage>& list, const cPlayer* player)
 {
 	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str())) return;
 	if (!SaveFile.RootElement()) return;
