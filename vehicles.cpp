@@ -141,12 +141,12 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		if (canLand (*gameGUI.getClient()->getMap()))
 		{
 			FlightHigh -= 8;
-			if (FlightHigh < 0) FlightHigh = 0;
+			FlightHigh = std::max (FlightHigh, 0);
 		}
 		else
 		{
 			FlightHigh += 8;
-			if (FlightHigh > 64) FlightHigh = 64;
+			FlightHigh = std::min (64, FlightHigh);
 		}
 	}
 
@@ -190,13 +190,12 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		}
 	}
 
-	if (IsBuilding && !job && BigBetonAlpha < 255)
+	if (IsBuilding && !job && BigBetonAlpha < 255u)
 	{
 		if (gameGUI.timer50ms)
 			BigBetonAlpha += 25;
 
-		if (BigBetonAlpha > 255)
-			BigBetonAlpha = 255;
+		BigBetonAlpha = std::min (255u, BigBetonAlpha);
 	}
 
 	//calculate screen position
@@ -673,7 +672,7 @@ int cVehicle::refreshData()
 		data.storageResCur -= (BuildCosts / BuildRounds);
 		BuildCosts -= (BuildCosts / BuildRounds);
 
-		if (data.storageResCur < 0) data.storageResCur = 0;
+		data.storageResCur = std::max (this->data.storageResCur, 0);
 
 		BuildRounds--;
 
@@ -786,7 +785,7 @@ int cVehicle::refreshData()
 				}
 			}
 			data.storageResCur += Rubble->RubbleValue;
-			if (data.storageResCur > data.storageResMax) data.storageResCur = data.storageResMax;
+			data.storageResCur = std::min (data.storageResMax, data.storageResCur);
 			server.deleteRubble (Rubble);
 		}
 
@@ -1957,8 +1956,7 @@ int cVehicle::calcCommandoChance (const cUnit* destUnit, bool steal) const
 	higher chance then stealing.
 	*/
 	int chance = Round ( (float) (8 * srcLevel) / (35 * destTurn) * factor * 100);
-	if (chance > 90)
-		chance = 90;
+	chance = std::min (90, chance);
 
 	return chance;
 }
@@ -1986,8 +1984,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 	}
 
 	int turns = (int) (1.0 / destTurn * srcLevel);
-	if (turns < 1)
-		turns = 1;
+	turns = std::max (turns, 1);
 	return turns;
 }
 

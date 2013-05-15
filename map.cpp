@@ -333,7 +333,7 @@ bool cMap::LoadMap (const std::string& filename_)
 void cMap::NewMap (int size_, int iTerrainGrphCount)
 {
 	DeleteMap();
-	size = std::max(16, size_);
+	size = std::max (16, size_);
 	Kacheln = new int[size * size];
 	memset (Kacheln, 0, sizeof (int) * size * size);
 
@@ -514,7 +514,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 						if (p == pos) Resources[index].value += 3 + 2 + frequencies[type];
 					}
 
-					if (Resources[index].value > 16) Resources[index].value = 16;
+					Resources[index].value = std::min<unsigned char> (16, Resources[index].value);
 				}
 			}
 		}
@@ -672,8 +672,7 @@ void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int h
 	{
 		std::vector<cVehicle*>& planes = fields[oldOffset].planes;
 		Remove (planes, vehicle);
-		if (height > (int) fields[newOffset].planes.size())
-			height = fields[newOffset].planes.size();
+		height = std::min<int> (this->fields[newOffset].planes.size(), height);
 		fields[newOffset].planes.insert (fields[newOffset].planes.begin() + height, vehicle);
 	}
 	else

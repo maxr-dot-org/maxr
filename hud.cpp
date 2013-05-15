@@ -1002,10 +1002,10 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		if (offY < miniMapOffY * 64) miniMapOffY -= cSettings::getInstance().getScrollSpeed() / 10;
 		else if (offY + displayedMapHight > miniMapOffY * 64 + (MINIMAP_SIZE * 64) / MINIMAP_ZOOM_FACTOR) miniMapOffY += cSettings::getInstance().getScrollSpeed() / 10;
 
-		if (miniMapOffX < 0) miniMapOffX = 0;
-		if (miniMapOffY < 0) miniMapOffY = 0;
-		if (miniMapOffX > map->size - (map->size / zoomFactor)) miniMapOffX = map->size - (map->size / zoomFactor);
-		if (miniMapOffY > map->size - (map->size / zoomFactor)) miniMapOffY = map->size - (map->size / zoomFactor);
+		miniMapOffX = std::max (miniMapOffX, 0);
+		miniMapOffY = std::max (miniMapOffY, 0);
+		miniMapOffX = std::min (map->size - (map->size / zoomFactor), miniMapOffX);
+		miniMapOffY = std::min (map->size - (map->size / zoomFactor), miniMapOffY);
 	}
 
 	//draw the landscape
@@ -1060,7 +1060,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 
 		//the size of the rect, that is drawn for each unit
 		int size = (int) ceil ( (float) MINIMAP_SIZE * zoomFactor / map->size);
-		if (size < 2) size = 2;
+		size = std::max (size, 2);
 		SDL_Rect rect;
 		rect.h = size;
 		rect.w = size;
@@ -1177,8 +1177,8 @@ void cGameGUI::checkOffsetPosition()
 void cGameGUI::setZoom (float newZoom, bool setScroller, bool centerToMouse)
 {
 	zoom = newZoom;
-	if (zoom < minZoom) zoom = minZoom;
-	if (zoom > 1.0) zoom = 1.0;
+	zoom = std::max (zoom, minZoom);
+	zoom = std::min (zoom, 1.f);
 
 	if (setScroller) this->zoomSlider.setValue (zoom);
 
@@ -3314,10 +3314,10 @@ void cGameGUI::resetMiniMapOffset()
 		miniMapOffX = centerPosX - (map->size / (zoomFactor * 2));
 		miniMapOffY = centerPosY - (map->size / (zoomFactor * 2));
 
-		if (miniMapOffX < 0) miniMapOffX = 0;
-		if (miniMapOffY < 0) miniMapOffY = 0;
-		if (miniMapOffX > map->size - (map->size / zoomFactor)) miniMapOffX = map->size - (map->size / zoomFactor);
-		if (miniMapOffY > map->size - (map->size / zoomFactor)) miniMapOffY = map->size - (map->size / zoomFactor);
+		miniMapOffX = std::max (miniMapOffX, 0);
+		miniMapOffY = std::max (miniMapOffY, 0);
+		miniMapOffX = std::min (map->size - (map->size / zoomFactor), miniMapOffX);
+		miniMapOffY = std::min (map->size - (map->size / zoomFactor), miniMapOffY);
 	}
 }
 

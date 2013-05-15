@@ -1391,15 +1391,15 @@ void cMenuUnitListItem::setResValue (int resValue_, bool cargoCheck)
 {
 	if (fixedResValue) return;
 	resValue = resValue_;
-	if (resValue < minResValue) resValue = minResValue;
-	if (cargoCheck && resValue < 0) resValue = 0;
-	if (cargoCheck && resValue > unitID.getUnitDataOriginalVersion()->storageResMax) resValue = unitID.getUnitDataOriginalVersion()->storageResMax;
+	resValue = std::max (resValue, minResValue);
+	if (cargoCheck) resValue = std::max (resValue, 0);
+	if (cargoCheck) resValue = std::min (resValue, unitID.getUnitDataOriginalVersion()->storageResMax);
 }
 
 void cMenuUnitListItem::setMinResValue (int minResValue_)
 {
 	minResValue = minResValue_;
-	if (resValue < minResValue) resValue = minResValue;
+	resValue = std::max (resValue, minResValue);
 }
 
 void cMenuUnitListItem::setMarked (bool marked_)
@@ -2922,7 +2922,7 @@ void cMenuLineEdit::deleteLeft()
 		}
 		text.erase (cursorPos - 1, 1);
 		cursorPos--;
-		if (endOffset > (int) text.length()) endOffset = (int) text.length();
+		endOffset = std::min<int> (text.length(), endOffset);
 		scrollLeft (false);
 	}
 }
@@ -2936,7 +2936,7 @@ void cMenuLineEdit::deleteRight()
 		if ( (c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
 		else if ( (c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
 		else text.erase (cursorPos, 1);
-		if (endOffset > (int) text.length()) endOffset = (int) text.length();
+		endOffset = std::min<int> (text.length(), endOffset);;
 	}
 }
 
@@ -3847,10 +3847,8 @@ void cMenuReportsScreen::drawScoreGraph()
 		{
 			const cPlayer* p = (*client->getPlayerList()) [n];
 			int score = extrapolateScore (p, client->getTurn(), turn);
-			if (score > highest_score)
-				highest_score = score;
-			if (score < lowest_score)
-				lowest_score = score;
+			highest_score = std::max (highest_score, score);
+			lowest_score = std::min (score, lowest_score);
 		}
 	}
 
@@ -3863,8 +3861,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	if (num_points)
 	{
 		pix_per_point = (float) h / num_points;
-		if (pix_per_point > default_pix_per_point)
-			pix_per_point = default_pix_per_point;
+		pix_per_point = std::min (default_pix_per_point, pix_per_point);
 	}
 	else
 		pix_per_point = default_pix_per_point;

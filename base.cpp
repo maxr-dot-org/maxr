@@ -138,11 +138,8 @@ void sSubBase::setMetalProd (int i)
 {
 	int max = getMaxAllowedMetalProd();
 
-	if (i < 0)
-		i = 0;
-
-	if (i > max)
-		i = max;
+	i = std::max (i, 0);
+	i = std::min (max, i);
 
 	MetalProd = i;
 }
@@ -151,11 +148,8 @@ void sSubBase::setGoldProd (int i)
 {
 	int max = getMaxAllowedGoldProd();
 
-	if (i < 0)
-		i = 0;
-
-	if (i > max)
-		i = max;
+	i = std::max (i, 0);
+	i = std::min (max, i);
 
 	GoldProd = i;
 }
@@ -164,11 +158,8 @@ void sSubBase::setOilProd (int i)
 {
 	int max = getMaxAllowedOilProd();
 
-	if (i < 0)
-		i = 0;
-
-	if (i > max)
-		i = max;
+	i = std::max (i, 0);
+	i = std::min (max, i);
 
 	OilProd = i;
 }
@@ -278,8 +269,8 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 
 	}
 
-	if (ressourceToDistributeB < 0) ressourceToDistributeB = 0;
-	if (ressourceToDistributeC < 0) ressourceToDistributeC = 0;
+	ressourceToDistributeB = std::max (ressourceToDistributeB, 0);
+	ressourceToDistributeC = std::max (ressourceToDistributeC, 0);
 
 	//step two:
 	//distribute ressources, that do not decrease the possible production of A
@@ -312,7 +303,7 @@ int sSubBase::calcMaxAllowedProd (int ressourceType) const
 	//the remaining amount of B and C have to be subtracted from the maximum allowed production of A
 	maxAllowedProd -= (ressourceToDistributeB + ressourceToDistributeC);
 
-	if (maxAllowedProd < 0) maxAllowedProd = 0;
+	maxAllowedProd = std::max (maxAllowedProd, 0);
 
 	return maxAllowedProd;
 }
@@ -827,7 +818,7 @@ void sSubBase::makeTurnend (cServer& server)
 		{
 			// calc new hitpoints
 			Building->data.hitpointsCur += Round ( ( (float) Building->data.hitpointsMax / Building->data.buildCosts) * 4);
-			if (Building->data.hitpointsCur > Building->data.hitpointsMax) Building->data.hitpointsCur = Building->data.hitpointsMax;
+			Building->data.hitpointsCur = std::min (Building->data.hitpointsMax, Building->data.hitpointsCur);
 			addMetal (server, -1);
 			sendUnitData (server, Building, owner->Nr);
 			for (unsigned int j = 0; j < Building->seenByPlayerList.size(); j++)
@@ -858,7 +849,7 @@ void sSubBase::makeTurnend (cServer& server)
 				MetalNeed -= min (Building->MetalPerRound, BuildListItem->metall_remaining);
 
 				BuildListItem->metall_remaining -= min (Building->MetalPerRound, BuildListItem->metall_remaining);
-				if (BuildListItem->metall_remaining < 0) BuildListItem->metall_remaining = 0;
+				BuildListItem->metall_remaining = std::max (BuildListItem->metall_remaining, 0);
 
 				MetalNeed += min (Building->MetalPerRound, BuildListItem->metall_remaining);
 				sendBuildList (server, Building);
@@ -873,14 +864,14 @@ void sSubBase::makeTurnend (cServer& server)
 	}
 
 	//check maximum storage limits
-	if (Metal > MaxMetal) Metal = MaxMetal;
-	if (Oil   > MaxOil) Oil   = MaxOil;
-	if (Gold  > MaxGold) Gold  = MaxGold;
+	Metal = std::min (this->MaxMetal, this->Metal);
+	Oil = std::min (this->MaxOil, this->Oil);
+	Gold = std::min (this->MaxGold, this->Gold);
 
 	//should not happen, but to be sure:
-	if (Metal < 0) Metal = 0;
-	if (Oil   < 0) Oil   = 0;
-	if (Gold  < 0) Gold  = 0;
+	Metal = std::max (this->Metal, 0);
+	Oil = std::max (this->Oil, 0);
+	Gold = std::max (this->Gold, 0);
 
 	sendSubbaseValues (server, this, owner->Nr);
 }

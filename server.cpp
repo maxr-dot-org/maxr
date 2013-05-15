@@ -1200,7 +1200,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 				iValue += Round ( ( (float) DestData->hitpointsMax / DestData->buildCosts) * 4);
 				SrcVehicle->data.storageResCur--;
 			}
-			if (iValue > DestData->hitpointsMax) iValue = DestData->hitpointsMax;
+			iValue = std::min (DestData->hitpointsMax, iValue);
 		}
 		sendUnitData (*this, SrcVehicle, SrcVehicle->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 	}
@@ -1225,7 +1225,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 				iValue += Round ( ( (float) DestVehicle->data.hitpointsMax / DestVehicle->data.buildCosts) * 4);
 				SrcBuilding->SubBase->addMetal (*this, -1);
 			}
-			if (iValue > DestVehicle->data.hitpointsMax) iValue = DestVehicle->data.hitpointsMax;
+			iValue = std::min (DestVehicle->data.hitpointsMax, iValue);
 		}
 		sendUnitData (*this, SrcBuilding, SrcBuilding->owner->Nr);	// the changed values aren't interesting for enemy players, so only send the new data to the owner
 	}

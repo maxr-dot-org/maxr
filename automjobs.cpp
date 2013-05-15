@@ -236,13 +236,9 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 
 	float factor = (float) (A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv);
 
-	if (factor < FIELD_BLOCKED)
-	{
-		factor = FIELD_BLOCKED;
-	}
+	factor = std::max<float> (factor, FIELD_BLOCKED);
 
-	return  factor;
-
+	return factor;
 }
 
 //searches the map for a location where the surveyor can resume
