@@ -290,8 +290,9 @@ Uint32 calcClientChecksum (const cClient& client)
 	const std::vector<cPlayer*>& playerList = *client.getPlayerList();
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		const cVehicle* vehicle = playerList[i]->VehicleList;
-		while (vehicle)
+		for (const cVehicle* vehicle = playerList[i]->VehicleList;
+			 vehicle;
+			 vehicle = vehicle->next)
 		{
 			crc = calcCheckSum (vehicle->iID,  crc);
 			crc = calcCheckSum (vehicle->PosX, crc);
@@ -299,8 +300,6 @@ Uint32 calcClientChecksum (const cClient& client)
 			crc = calcCheckSum (vehicle->OffX, crc);
 			crc = calcCheckSum (vehicle->OffY, crc);
 			crc = calcCheckSum (vehicle->dir,  crc);
-
-			vehicle = (const cVehicle*) vehicle->next;
 		}
 	}
 	return crc;
@@ -312,8 +311,9 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		const cVehicle* vehicle = playerList[i]->VehicleList;
-		while (vehicle)
+		for (const cVehicle* vehicle = playerList[i]->VehicleList;
+			 vehicle;
+			 vehicle = vehicle->next)
 		{
 			if (Contains (vehicle->seenByPlayerList, player) || vehicle->owner == player)
 			{
@@ -324,8 +324,6 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 				crc = calcCheckSum (vehicle->OffY, crc);
 				crc = calcCheckSum (vehicle->dir,  crc);
 			}
-
-			vehicle = vehicle->next;
 		}
 	}
 	return crc;
@@ -337,8 +335,10 @@ void compareGameData (const cClient& client, const cServer& server)
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		const cPlayer* clientPlayer = playerList[i];
-		const cVehicle* clientVehicle = clientPlayer->VehicleList;
-		while (clientVehicle)
+
+		for (const cVehicle* clientVehicle = clientPlayer->VehicleList;
+			 clientVehicle;
+			 clientVehicle = clientVehicle->next)
 		{
 			const cVehicle* serverVehicle = server.getVehicleFromID (clientVehicle->iID);
 
@@ -347,8 +347,6 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->OffX == serverVehicle->OffX);
 			assert (clientVehicle->OffY == serverVehicle->OffY);
 			assert (clientVehicle->dir == serverVehicle->dir);
-
-			clientVehicle = (const cVehicle*) clientVehicle->next;
 		}
 	}
 }

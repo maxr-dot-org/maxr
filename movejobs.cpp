@@ -232,20 +232,12 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				// when we have a group of units, the units will not block each other
 				if (group)
 				{
-					bool isInGroup = false;
 					// get the blocking unit
 					cVehicle* blockingUnit;
 					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [x + y * Map->size].getPlanes();
 					else blockingUnit = (*Map) [x + y * Map->size].getVehicles();
 					// check whether the blocking unit is the group
-					for (unsigned int i = 0; i < group->size(); i++)
-					{
-						if ( (*group) [i] == blockingUnit)
-						{
-							isInGroup = true;
-							break;
-						}
-					}
+					bool isInGroup = Contains (*group, blockingUnit);
 					if (!isInGroup) continue;
 				}
 				else continue;

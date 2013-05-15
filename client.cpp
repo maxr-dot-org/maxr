@@ -1112,16 +1112,7 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 			cBuilding* Building = DestVehicle->owner->BuildingList;
 			for (; Building; Building = Building->next)
 			{
-				bool found = false;
-				for (unsigned int i = 0; i < Building->storedUnits.size(); i++)
-				{
-					if (Building->storedUnits[i] == DestVehicle)
-					{
-						found = true;
-						break;
-					}
-				}
-				if (found) break;
+				if (Contains (Building->storedUnits, DestVehicle)) break;
 			}
 			if (Building != NULL && ActiveMenu != NULL)
 			{

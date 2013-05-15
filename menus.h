@@ -170,7 +170,7 @@ public:
 
 	/** Number of the savegame or -1 for no savegame*/
 	int savegameNum;
-	/** name of the savegame if the savefile is only on the server and this container is set by an client*/
+	/** name of the savegame if the savefile is only on the server and this container is set by a client*/
 	std::string savegame;
 
 	/** The settings for the game*/

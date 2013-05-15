@@ -53,13 +53,13 @@ using namespace std;
 int GetColorNr (const SDL_Surface* sf)
 {
 	if (sf == OtherData.colors[cl_red])		return cl_red;
-	if (sf == OtherData.colors[cl_blue])		return cl_blue;
-	if (sf == OtherData.colors[cl_green])		return cl_green;
-	if (sf == OtherData.colors[cl_grey])		return cl_grey;
+	if (sf == OtherData.colors[cl_blue])	return cl_blue;
+	if (sf == OtherData.colors[cl_green])	return cl_green;
+	if (sf == OtherData.colors[cl_grey])	return cl_grey;
 	if (sf == OtherData.colors[cl_orange])	return cl_orange;
 	if (sf == OtherData.colors[cl_yellow])	return cl_yellow;
 	if (sf == OtherData.colors[cl_purple])	return cl_purple;
-	if (sf == OtherData.colors[cl_aqua])		return cl_aqua;
+	if (sf == OtherData.colors[cl_aqua])	return cl_aqua;
 	return cl_red;
 }
 
@@ -3493,7 +3493,7 @@ void cNetworkClientMenu::connectReleased (void* parent)
 {
 	cNetworkClientMenu* menu = static_cast<cNetworkClientMenu*> ( (cMenu*) parent);
 
-	if (menu->network->getConnectionStatus() == 0)   // Connect only if there isn't a connection jet
+	if (menu->network->getConnectionStatus() == 0) // Connect only if there isn't a connection yet
 	{
 		menu->network->setPort (menu->port);
 		menu->network->setIP (menu->ip);
@@ -4094,7 +4094,6 @@ void cLoadSaveMenu::exitReleased (void* parent)
 	if (yesNoDialog.show() == 0)
 	{
 		menu->end = true;
-
 	}
 	else
 	{
@@ -5597,14 +5596,11 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			 storingVehicle;
 			 storingVehicle = storingVehicle->next)
 		{
-			for (unsigned i = 0; i < storingVehicle->storedUnits.size(); i++)
+			if (Contains (storingVehicle->storedUnits, vehicle))
 			{
-				if (storingVehicle->storedUnits[i] == vehicle)
-				{
-					client->gameGUI.selectUnit (storingVehicle);
-					storingVehicle->center();
-					return;
-				}
+				client->gameGUI.selectUnit (storingVehicle);
+				storingVehicle->center();
+				return;
 			}
 		}
 
@@ -5612,14 +5608,11 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			 storingBuilding;
 			 storingBuilding = storingBuilding->next)
 		{
-			for (unsigned i = 0; i < storingBuilding->storedUnits.size(); i++)
+			if (Contains (storingBuilding->storedUnits, vehicle))
 			{
-				if (storingBuilding->storedUnits[i] == vehicle)
-				{
-					client->gameGUI.selectUnit (storingBuilding);
-					storingBuilding->center();
-					return;
-				}
+				client->gameGUI.selectUnit (storingBuilding);
+				storingBuilding->center();
+				return;
 			}
 		}
 

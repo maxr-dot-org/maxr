@@ -1994,11 +1994,7 @@ int cVehicle::calcCommandoTurns (const cUnit* destUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::isDetectedByPlayer (const cPlayer* player) const
 {
-	for (unsigned int i = 0; i < detectedByPlayerList.size(); i++)
-	{
-		if (detectedByPlayerList[i] == player) return true;
-	}
-	return false;
+	return Contains (detectedByPlayerList, player);
 }
 
 //-----------------------------------------------------------------------------

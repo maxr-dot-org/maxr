@@ -19,16 +19,18 @@
 
 #include <math.h>
 #include "attackJobs.h"
-#include "server.h"
+
+#include "buildings.h"
 #include "client.h"
-#include "serverevents.h"
 #include "clientevents.h"
+#include "clist.h"
+#include "fxeffects.h"
 #include "netmessage.h"
+#include "player.h"
+#include "server.h"
+#include "serverevents.h"
 #include "settings.h"
 #include "vehicles.h"
-#include "buildings.h"
-#include "player.h"
-#include "fxeffects.h"
 
 using namespace std;
 
@@ -371,17 +373,11 @@ void cServerAttackJob::makeImpact (int x, int y)
 	selectTarget (targetVehicle, targetBuilding, x, y, attackMode, &map);
 
 	//check, whether the target is already in the target list.
-	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multible times
-	for (unsigned int i = 0; i < vehicleTargets.size(); i++)
-	{
-		if (vehicleTargets[i] == targetVehicle)
-			return;
-	}
-	for (unsigned int i = 0; i < buildingTargets.size(); i++)
-	{
-		if (buildingTargets[i] == targetBuilding)
-			return;
-	}
+	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multiple times
+	if (Contains (vehicleTargets, targetVehicle))
+		return;
+	if (Contains (buildingTargets, targetBuilding))
+		return;
 	if (targetVehicle != 0)
 		vehicleTargets.push_back (targetVehicle);
 	if (targetBuilding != 0)

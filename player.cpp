@@ -396,7 +396,7 @@ void cPlayer::DoScan()
 	memset (DetectMinesMap, 0, MapSize);
 
 	// iterate the vehicle list
-	for (const cVehicle* vp = VehicleList; vp; vp = static_cast<const cVehicle*> (vp->next))
+	for (const cVehicle* vp = VehicleList; vp; vp = vp->next)
 	{
 		if (vp->Loaded) continue;
 
@@ -430,7 +430,7 @@ void cPlayer::DoScan()
 	}
 
 	// iterate the building list
-	for (const cBuilding* bp = BuildingList; bp; bp = static_cast<const cBuilding*> (bp->next))
+	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->turnsDisabled)
 			ScanMap[bp->PosX + bp->PosY * (int) sqrt ( (double) MapSize)] = 1;
@@ -687,7 +687,7 @@ void cPlayer::CountEcoSpheres()
 {
 	numEcos = 0;
 
-	for (const cBuilding* bp = BuildingList; bp; bp = static_cast<const cBuilding*> (bp->next))
+	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->typ->data.canScore && bp->IsWorking)
 			numEcos ++;
@@ -837,7 +837,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
 		researchCentersWorkingOnArea[i] = 0;
 
-	for (const cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = static_cast<const cBuilding*> (curBuilding->next))
+	for (const cBuilding* curBuilding = BuildingList; curBuilding; curBuilding = curBuilding->next)
 	{
 		if (curBuilding->data.canResearch && curBuilding->IsWorking)
 		{

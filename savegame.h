@@ -248,7 +248,7 @@ private:
 	* returns the player with the number
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* getPlayerFromNumber (std::vector<cPlayer*>* PlayerList, int number);
+	cPlayer* getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList, int number);
 	/**
 	* converts the resource data to an string in HEX format
 	*@author alzi alias DoctorDeath

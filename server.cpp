@@ -1425,17 +1425,17 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 
 	std::string playerName = message.popString();
 	int socketNumber = message.popInt16();
-	unsigned int i;
-	for (i = 0; i < DisconnectedPlayerList.size(); i++)
+
+	for (unsigned int i = 0; i < DisconnectedPlayerList.size(); i++)
 	{
 		if (!playerName.compare (DisconnectedPlayerList[i]->name))
 		{
 			DisconnectedPlayerList[i]->iSocketNum = socketNumber;
 			sendReconnectAnswer (*network, true, socketNumber, DisconnectedPlayerList[i]);
-			break;
+			return;
 		}
 	}
-	if (i == DisconnectedPlayerList.size()) sendReconnectAnswer (*network, false, socketNumber, NULL);
+	sendReconnectAnswer (*network, false, socketNumber, NULL);
 }
 
 //-------------------------------------------------------------------------------------
@@ -2466,12 +2466,7 @@ void cServer::checkPlayerUnits()
 				const bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
 				if (MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)) && !NextVehicle->Loaded)
 				{
-					unsigned int i;
-					for (i = 0; i < NextVehicle->seenByPlayerList.size(); i++)
-					{
-						if (NextVehicle->seenByPlayerList[i] == MapPlayer) break;
-					}
-					if (i == NextVehicle->seenByPlayerList.size())
+					if (Contains (NextVehicle->seenByPlayerList, MapPlayer) == false)
 					{
 						NextVehicle->seenByPlayerList.push_back (MapPlayer);
 						sendAddEnemyUnit (*this, NextVehicle, MapPlayer->Nr);
@@ -2518,12 +2513,7 @@ void cServer::checkPlayerUnits()
 
 				if (MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)))
 				{
-					unsigned int i;
-					for (i = 0; i < NextBuilding->seenByPlayerList.size(); i++)
-					{
-						if (NextBuilding->seenByPlayerList[i] == MapPlayer) break;
-					}
-					if (i == NextBuilding->seenByPlayerList.size())
+					if (Contains (NextBuilding->seenByPlayerList, MapPlayer) == false)
 					{
 						NextBuilding->seenByPlayerList.push_back (MapPlayer);
 						sendAddEnemyUnit (*this, NextBuilding, MapPlayer->Nr);
@@ -2558,12 +2548,7 @@ void cServer::checkPlayerUnits()
 
 			if (MapPlayer->ScanMap[iOff] == 1)
 			{
-				unsigned int i;
-				for (i = 0; i < building->seenByPlayerList.size(); i++)
-				{
-					if (building->seenByPlayerList[i] == MapPlayer) break;
-				}
-				if (i == building->seenByPlayerList.size())
+				if (Contains (building->seenByPlayerList, MapPlayer) == false)
 				{
 					building->seenByPlayerList.push_back (MapPlayer);
 					sendAddRubble (*this, building, MapPlayer->Nr);
@@ -2715,11 +2700,10 @@ void cServer::handleEnd (int iPlayerNum)
 		// make sure that all defeated players are added to the endlist
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
 		{
-			if ( (*PlayerList) [i]->isDefeated)
+			if ((*PlayerList)[i]->isDefeated)
 			{
-				bool isAdded = false;
-				for (unsigned int j = 0; j < PlayerEndList.size(); j++) if (PlayerEndList[j] == (*PlayerList) [i]) isAdded = true;
-				if (!isAdded) PlayerEndList.push_back ( (*PlayerList) [i]);
+				if (Contains (PlayerEndList, (*PlayerList)[i]) == false)
+					PlayerEndList.push_back ((*PlayerList)[i]);
 			}
 		}
 

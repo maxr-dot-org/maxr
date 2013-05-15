@@ -60,31 +60,32 @@ int cSavegame::save (const cServer& server, const string& saveName)
 	{
 		const cPlayer* Player = playerList[i];
 		writePlayer (Player, i);
-		const cVehicle* Vehicle = Player->VehicleList;
-		while (Vehicle)
+
+		for (const cVehicle* Vehicle = Player->VehicleList;
+			 Vehicle;
+			 Vehicle = Vehicle->next)
 		{
 			if (!Vehicle->Loaded)
 			{
 				writeUnit (server, Vehicle, &unitnum);
 				unitnum++;
 			}
-			Vehicle = static_cast<const cVehicle*> (Vehicle->next);
 		}
-		const cBuilding* Building = Player->BuildingList;
-		while (Building)
+
+		for (const cBuilding* Building = Player->BuildingList;
+			 Building;
+			 Building = Building->next)
 		{
 			writeUnit (server, Building, &unitnum);
 			unitnum++;
-			Building = static_cast<const cBuilding*> (Building->next);
 		}
 	}
 	int rubblenum = 0;
-	const cBuilding* Rubble = server.neutralBuildings;
-	while (Rubble)
+
+	for (const cBuilding* Rubble = server.neutralBuildings; Rubble; Rubble = Rubble->next)
 	{
 		writeRubble (server, Rubble, rubblenum);
 		rubblenum++;
-		Rubble = static_cast<const cBuilding*> (Rubble->next);
 	}
 
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); i++)
@@ -592,7 +593,7 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 		if (i == UnitsData.getNrVehicles() - 1) return;
 	}
 	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
@@ -724,7 +725,7 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 		if (i == UnitsData.getNrBuildings() - 1) return;
 	}
 	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
-	cPlayer* owner = getPlayerFromNumber (server.PlayerList, tmpinteger);
+	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
 
 	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
 	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
@@ -1114,11 +1115,11 @@ void cSavegame::generateMoveJobs (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-cPlayer* cSavegame::getPlayerFromNumber (std::vector<cPlayer*>* PlayerList, int number)
+cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList, int number)
 {
-	for (unsigned int i = 0; i < PlayerList->size(); i++)
+	for (unsigned int i = 0; i < PlayerList.size(); i++)
 	{
-		if ( (*PlayerList) [i]->Nr == number) return (*PlayerList) [i];
+		if (PlayerList[i]->Nr == number) return PlayerList[i];
 	}
 	return NULL;
 }

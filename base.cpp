@@ -488,11 +488,7 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 void sSubBase::refresh()
 {
 	//copy buildings list
-	std::vector<cBuilding*> buildingsCopy;
-	for (unsigned int i = 0; i < buildings.size(); i++)
-	{
-		buildingsCopy.push_back (buildings[i]);
-	}
+	const std::vector<cBuilding*> buildingsCopy = buildings;
 
 	//reset subbase
 	buildings.clear();
@@ -711,7 +707,7 @@ bool sSubBase::checkOil (cServer& server)
 	}
 
 	return oilMissing;
-};
+}
 
 bool sSubBase::checkEnergy (cServer& server)
 {
