@@ -25,33 +25,18 @@
 #ifndef loaddataH
 #define loaddataH
 
-#include <map>
-#include <string>
-#include "defines.h"
-#include "main.h" // for sID
-
-class TiXmlDocument;
-struct sUnitData;
-
 ///////////////////////////////////////////////////////////////////////////////
 // Defines
 // ------------------------
 //
 ///////////////////////////////////////////////////////////////////////////////
-#define LOAD_GOING 0
-#define LOAD_ERROR 1
-#define LOAD_FINISHED 2
 
-#define NECESSARY_FILE_FAILURE { Log.write ( "Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR ); LoadingData=LOAD_ERROR; return 0; }
-
-///////////////////////////////////////////////////////////////////////////////
-// Globals
-// ------------------------
-//
-///////////////////////////////////////////////////////////////////////////////
-
-EX int LoadingData;
-
+enum eLoadingState
+{
+	LOAD_GOING = 0,
+	LOAD_ERROR = 1,
+	LOAD_FINISHED = 2
+};
 ///////////////////////////////////////////////////////////////////////////////
 // Predeclerations
 // ------------------------
@@ -59,36 +44,10 @@ EX int LoadingData;
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
-* Loads all relevant files and datas
+* Loads all relevant files and data
 * @return 1 on success
 */
-int LoadData (void*);
-
-/**
- * Loades the unitdata from the data.xml in the unitfolder
- * @param directory Unitdirectory , relativ to the main game directory
- */
-void LoadUnitData (sUnitData*, char const* directory, int iID);
-
-void LoadUnitGraphicData (sUnitData*, char const* directory);
-
-int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
-float getXMLNodeFloat (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
-std::string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL);
-bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL);
-
-/**
-* Gets the name and (text) description for clan with internal id num from language file
-* If no translation exists a warning is issued and the existing strings are not altered
-* @param num engine internal ID of clan sorted by oder of clans in clan.xml
-*/
-void translateClanData (int num);
-
-/**
-* Gets the name and the description for the unit from the selected language file
-* @param ID Id of the unit
-*/
-bool translateUnitData (sID ID, bool vehicle);
+int LoadData (void* loadingState);
 
 void reloadUnitValues();
 

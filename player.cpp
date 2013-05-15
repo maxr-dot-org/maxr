@@ -89,7 +89,7 @@ cPlayer::cPlayer (const cPlayer& Player)
 	numEcos = Player.numEcos;
 	lastDeletedUnit = Player.lastDeletedUnit;
 
-	// copy vehicle and building datas
+	// copy vehicle and building data
 	VehicleData = new sUnitData[UnitsData.getNrVehicles()];
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 		VehicleData[i] = Player.VehicleData[i];

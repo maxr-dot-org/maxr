@@ -29,39 +29,39 @@
 #include <SDL_getenv.h>
 
 #define __main__
-#include "autosurface.h"
-#include "defines.h"
 #include "main.h"
-#include "files.h"
-#include "mouse.h"
-#include "pcx.h"
-#include "keys.h"
-#include "sound.h"
-#include "map.h"
-#include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
+
+#include "autosurface.h"
 #include "base.h"
-#include "network.h"
-#include "log.h"
-#include "loaddata.h"
-#include "tinyxml.h"
-#include "events.h"
-#include "savegame.h"
-#include "mveplayer.h"
-#include "input.h"
-#include "unifonts.h"
-#include "menus.h"
+#include "buildings.h"
 #include "clans.h"
-#include "settings.h"
-#include "video.h"
 #include "dedicatedserver.h"
+#include "events.h"
+#include "files.h"
+#include "input.h"
+#include "keys.h"
+#include "loaddata.h"
+#include "log.h"
+#include "map.h"
+#include "menus.h"
+#include "mouse.h"
+#include "mveplayer.h"
+#include "network.h"
+#include "pcx.h"
+#include "player.h"
+#include "savegame.h"
+#include "settings.h"
+#include "sound.h"
+#include "tinyxml.h"
+#include "unifonts.h"
+#include "vehicles.h"
+#include "video.h"
 
 using namespace std;
 
-static int  initNet();
-static int  initSDL();
-static int  initSound();
+static int initNet();
+static int initSDL();
+static int initSound();
 
 int main (int argc, char* argv[])
 {
@@ -97,30 +97,29 @@ int main (int argc, char* argv[])
 		Log.write (sBuild , cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	srand ( (unsigned) time (NULL));      // start random number generator
-
-	// detect some video modes for us
-	if (!DEDICATED_SERVER)
-		Video.doDetection();
+	srand ((unsigned) time (NULL));      // start random number generator
 
 	if (!DEDICATED_SERVER)
 	{
+		// detect some video modes for us
+		Video.doDetection();
+
 		Video.initSplash(); // show splashscreen
 		initSound(); // now config is loaded and we can init sound and net
 	}
 	initNet();
 
 	// load files
-	SDL_Thread* DataThread = NULL;
-	DataThread = SDL_CreateThread (LoadData, NULL);
+	int loadingState = LOAD_GOING;
+	SDL_Thread* dataThread = SDL_CreateThread (LoadData, &loadingState);
 
 	SDL_Event event;
-	while (LoadingData != LOAD_FINISHED)
+	while (loadingState != LOAD_FINISHED)
 	{
-		if (LoadingData == LOAD_ERROR)
+		if (loadingState == LOAD_ERROR)
 		{
 			Log.write ("Error while loading data!", cLog::eLOG_TYPE_ERROR);
-			SDL_WaitThread (DataThread, NULL);
+			SDL_WaitThread (dataThread, NULL);
 			Quit();
 		}
 		while (SDL_PollEvent (&event))
@@ -139,7 +138,7 @@ int main (int argc, char* argv[])
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
 		{
-			if (FileExists ( (cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+			if (FileExists ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
 			{
 				// Close maxr sound for intro movie
 				CloseSound();
@@ -167,7 +166,7 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	SDL_WaitThread (DataThread, NULL);
+	SDL_WaitThread (dataThread, NULL);
 
 	if (!DEDICATED_SERVER)
 	{

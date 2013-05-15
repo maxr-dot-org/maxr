@@ -18,7 +18,7 @@
  ***************************************************************************/
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Loads all relevant files and datas at the start of the game.
+// Loads all relevant files and data at the start of the game.
 //
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -34,20 +34,21 @@
 #endif
 
 #include "loaddata.h"
+
 #include "autosurface.h"
 #include "buildings.h"
+#include "clans.h"
 #include "extendedtinyxml.h"
 #include "files.h"
-#include "log.h"
-#include "pcx.h"
-#include "unifonts.h"
 #include "keys.h"
-#include "vehicles.h"
-#include "clans.h"
+#include "log.h"
 #include "main.h"
+#include "pcx.h"
 #include "settings.h"
-#include "video.h"
 #include "sound.h"
+#include "unifonts.h"
+#include "vehicles.h"
+#include "video.h"
 
 #ifdef WIN32
 #	include <shlobj.h>
@@ -127,20 +128,38 @@ static int LoadSounds (const char* path);
  */
 static int LoadVoices (const char* path);
 
+/**
+ * Loads the unitdata from the data.xml in the unitfolder
+ * @param directory Unitdirectory , relative to the main game directory
+ */
+static void LoadUnitData (sUnitData*, char const* directory, int iID);
+
+
+static bool translateUnitData (sID ID, bool vehicle);
+
+static void LoadUnitGraphicData (sUnitData* Data, char const* directory);
+
 // LoadData ///////////////////////////////////////////////////////////////////
-// Loads all relevant files and datas:
-int LoadData (void*)
+// Loads all relevant files and data:
+int LoadData (void* data)
 {
-	LoadingData = LOAD_GOING;
+	int& loadingState = *static_cast<int*>(data);
+	loadingState = LOAD_GOING;
 
 	if (!DEDICATED_SERVER)
 	{
-		if (!FileExists ( (cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_normal.pcx").c_str())) NECESSARY_FILE_FAILURE
-			if (!FileExists ( (cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big.pcx").c_str())) NECESSARY_FILE_FAILURE
-				if (!FileExists ( (cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_big_gold.pcx").c_str())) NECESSARY_FILE_FAILURE
-					if (!FileExists ( (cSettings::getInstance().getFontPath() + PATH_DELIMITER + "latin_small.pcx").c_str())) NECESSARY_FILE_FAILURE
+		const std::string& fontPath = cSettings::getInstance().getFontPath() + PATH_DELIMITER;
+		if (!FileExists ((fontPath + "latin_normal.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_big.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_big_gold.pcx").c_str())
+			|| !FileExists ((fontPath + "latin_small.pcx").c_str()))
+		{
+			Log.write ("Missing a file needed for game. Check log and config! ", LOG_TYPE_ERROR);
+			loadingState = LOAD_ERROR;
+			return 0;
+		}
 
-						font = new cUnicodeFont; //init ascii fonts
+		font = new cUnicodeFont; //init ascii fonts
 
 		Log.mark();
 	}
@@ -158,7 +177,7 @@ int LoadData (void*)
 	string sTmpString;
 	string sLang = cSettings::getInstance().getLanguage();
 	//FIXME: here is the assumption made that the file always exists with lower cases
-	for (int i = 0 ; i <= 2 ; i++)
+	for (int i = 0; i <= 2; i++)
 	{
 		if (sLang[i] < 97)
 		{
@@ -173,7 +192,7 @@ int LoadData (void*)
 	if (LoadLanguage() != 1 || !FileExists (sTmpString.c_str()))
 	{
 		MakeLog ("", -1, 2);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		SDL_Delay (5000);
 		return -1;
 	}
@@ -191,7 +210,7 @@ int LoadData (void*)
 	{
 		MakeLog ("", -1, 3);
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -202,18 +221,9 @@ int LoadData (void*)
 
 	// Load Fonts
 	MakeLog (lngPack.i18n ("Text~Init~Fonts"), 0, 4);
-	/* -- little bit crude but fonts are already loaded. what to do with this now? -- beko
-	if (LoadFonts ( cSettings::getInstance().getFontPath().c_str() ) != 1 )
-	{
-		MakeLog("",-1,4);
-		SDL_Delay(5000);
-		LoadingData = LOAD_ERROR;
-		return -1;
-	}
-	else
-	{*/
+	// -- little bit crude but fonts are already loaded. what to do with this now? -- beko
+	// Really loaded with new cUnicodeFont
 	MakeLog ("", 1, 4);
-	//}
 	Log.mark();
 
 	// Load Graphics
@@ -224,7 +234,7 @@ int LoadData (void*)
 		MakeLog ("", -1, 5);
 		Log.write ("Error while loading graphics", LOG_TYPE_ERROR);
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -240,7 +250,7 @@ int LoadData (void*)
 	{
 		MakeLog ("", -1, 6);
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -256,7 +266,7 @@ int LoadData (void*)
 	{
 		MakeLog ("", -1, 7);
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -272,7 +282,7 @@ int LoadData (void*)
 	{
 		MakeLog ("", -1, 8);
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -287,7 +297,7 @@ int LoadData (void*)
 	if (LoadClans() != 1)
 	{
 		SDL_Delay (5000);
-		LoadingData = LOAD_ERROR;
+		loadingState = LOAD_ERROR;
 		return -1;
 	}
 	else
@@ -306,7 +316,7 @@ int LoadData (void*)
 		{
 			MakeLog ("", -1, 10);
 			SDL_Delay (5000);
-			LoadingData = LOAD_ERROR;
+			loadingState = LOAD_ERROR;
 			return -1;
 		}
 		else
@@ -321,7 +331,7 @@ int LoadData (void*)
 		{
 			MakeLog ("", -1, 11);
 			SDL_Delay (5000);
-			LoadingData = LOAD_ERROR;
+			loadingState = LOAD_ERROR;
 			return -1;
 		}
 		else
@@ -337,7 +347,7 @@ int LoadData (void*)
 		{
 			MakeLog ("", -1, 12);
 			SDL_Delay (5000);
-			LoadingData = LOAD_ERROR;
+			loadingState = LOAD_ERROR;
 			return -1;
 		}
 		else
@@ -348,7 +358,7 @@ int LoadData (void*)
 	}
 
 	SDL_Delay (1000);
-	LoadingData = LOAD_FINISHED;
+	loadingState = LOAD_FINISHED;
 	return 1;
 }
 
@@ -356,49 +366,49 @@ int LoadData (void*)
 // Writes a Logmessage on the SplashScreen:
 /* static */ void MakeLog (const string& sTxt, int ok, int pos)
 {
-	if (!DEDICATED_SERVER)
+	if (DEDICATED_SERVER)
 	{
-		SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
-		SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
-		SDL_Rect rSrc;
-
-		switch (ok)
-		{
-			case 0:
-				font->showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
-				rSrc = rDest;
-				rSrc.y = rDest.y + rDest.h * pos;
-				if (pos == 0)   //need full line for first entry version information
-				{
-					SDL_BlitSurface (buffer, NULL, screen, NULL);
-					SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w + rDest2.w, rDest.h);
-				}
-				else
-				{
-					SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
-					SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w, rDest.h);
-				}
-				break;
-
-			case 1:
-				font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD);
-				break;
-
-			default:
-				font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
-				break;
-		}
-
-		if (ok != 0)
-		{
-			rSrc = rDest2;
-			rSrc.y = rDest2.y + rDest2.h * pos;
-			SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
-			SDL_UpdateRect (screen, rDest2.x, rDest2.y + rDest2.h * pos, rDest2.w, rDest2.h);
-		}
-	}
-	else // dedicated server
 		cout << sTxt << endl;
+		return;
+	}
+	const SDL_Rect rDest = {22, 152, 228, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
+	const SDL_Rect rDest2 = {250, 152, 230, Uint16 (font->getFontHeight (FONT_LATIN_BIG_GOLD)) };
+	SDL_Rect rSrc;
+
+	switch (ok)
+	{
+		case 0:
+			font->showText (rDest.x, rDest.y + rDest.h * pos, sTxt, FONT_LATIN_NORMAL);
+			rSrc = rDest;
+			rSrc.y = rDest.y + rDest.h * pos;
+			if (pos == 0)   //need full line for first entry version information
+			{
+				SDL_BlitSurface (buffer, NULL, screen, NULL);
+				SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w + rDest2.w, rDest.h);
+			}
+			else
+			{
+				SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
+				SDL_UpdateRect (screen, rDest.x, rDest.y + rDest.h * pos, rDest.w, rDest.h);
+			}
+			break;
+
+		case 1:
+			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "OK", FONT_LATIN_BIG_GOLD);
+			break;
+
+		default:
+			font->showText (rDest2.x, rDest2.y + rDest2.h * pos, "ERROR ..check maxr.log!", FONT_LATIN_BIG_GOLD);
+			break;
+	}
+
+	if (ok != 0)
+	{
+		rSrc = rDest2;
+		rSrc.y = rDest2.y + rDest2.h * pos;
+		SDL_BlitSurface (buffer, &rSrc, screen, &rSrc);
+		SDL_UpdateRect (screen, rDest2.x, rDest2.y + rDest2.h * pos, rDest2.w, rDest2.h);
+	}
 }
 
 static SDL_Surface* CloneSDLSurface (SDL_Surface* src)
@@ -426,10 +436,8 @@ static int LoadGraphicToSurface (SDL_Surface*& dest, const char* directory, cons
 	{
 		dest = NULL;
 		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
-
 	dest = LoadPCX (filepath);
 
 	filepath.insert (0, "File loaded: ");
@@ -457,10 +465,8 @@ static int LoadEffectGraphicToSurface (SDL_Surface**& dest, const char* director
 	if (!FileExists (filepath.c_str()))
 	{
 		Log.write ("Missing GFX - your MAXR install seems to be incomplete!", cLog::eLOG_TYPE_ERROR);
-		//LoadingData=LOAD_ERROR;
 		return 0;
 	}
-
 
 	dest = new SDL_Surface*[2];
 	if (!dest) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
@@ -474,7 +480,7 @@ static int LoadEffectGraphicToSurface (SDL_Surface**& dest, const char* director
 }
 
 // LoadEffectAlphacToSurface /////////////////////////////////////////////////
-// Loades a effectgraphic as aplha to the surface:
+// Loads a effectgraphic as aplha to the surface:
 int LoadEffectAlphaToSurface (SDL_Surface**& dest, const char* directory, const char* filename, int alpha)
 {
 	string filepath;
@@ -501,7 +507,7 @@ int LoadEffectAlphaToSurface (SDL_Surface**& dest, const char* directory, const 
 }
 
 /**
- * Loades a soundfile to the Mix_Chunk
+ * Loads a soundfile to the Mix_Chunk
  * @param dest Destination Mix_Chunk
  * @param directory Directory of the file
  * @param filename Name of the file
@@ -540,14 +546,13 @@ static int LoadSoundfile (sSOUND*& dest, const char* directory, const char* file
 }
 
 /**
- * Loades a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
+ * Loads a unitsoundfile to the Mix_Chunk. If the file doesn't exists a dummy file will be loaded
  * @param dest Destination Mix_Chunk
- * @param directory Directory of the file, relativ to the main vehicles directory
+ * @param directory Directory of the file, relative to the main vehicles directory
  * @param filename Name of the file
  */
 static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char* filename)
 {
-	SDL_RWops* file;
 	string filepath;
 	if (strcmp (directory, ""))
 		filepath += directory;
@@ -564,7 +569,8 @@ static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char*
 		}
 	}
 	// Not using FileExists to avoid unnecessary warnings in log file
-	if (! (file = SDL_RWFromFile (filepath.c_str(), "r")))
+	SDL_RWops* file  = SDL_RWFromFile (filepath.c_str(), "r");
+	if (!file)
 	{
 		dest = SoundData.DummySound;
 		return;
@@ -576,13 +582,13 @@ static void LoadUnitSoundfile (sSOUND*& dest, const char* directory, const char*
 
 static int LoadLanguage()
 {
-	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0)			// Set the language code
+	if (lngPack.SetCurrentLanguage (cSettings::getInstance().getLanguage()) != 0) // Set the language code
 	{
 		// Not a valid language code, critical fail!
 		Log.write ("Not a valid language code!" , cLog::eLOG_TYPE_ERROR);
 		return 0;
 	}
-	if (lngPack.ReadLanguagePack() != 0)					// Load the translations
+	if (lngPack.ReadLanguagePack() != 0) // Load the translations
 	{
 		// Could not load the language, critical fail!
 		Log.write ("Could not load the language!" , cLog::eLOG_TYPE_ERROR);
@@ -646,7 +652,6 @@ static int LoadMusic (const char* path)
 		return 0;
 	}
 
-
 	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Game", "bkgcount", NULL);
 	if (!pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
 	{
@@ -676,7 +681,6 @@ static int LoadMusic (const char* path)
 			continue;
 		MusicFiles.push_back (sTmpString);
 	}
-
 	return 1;
 }
 
@@ -869,15 +873,8 @@ static int LoadGraphics (const char* path)
 
 	OtherData.colors_org = new SDL_Surface*[PLAYERCOLORS];
 	if (!OtherData.colors) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
-	LoadGraphicToSurface (OtherData.colors_org[cl_red], path, "cl_red.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_blue], path, "cl_blue.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_green], path, "cl_green.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_grey], path, "cl_grey.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_orange], path, "cl_orange.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_yellow], path, "cl_yellow.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_purple], path, "cl_purple.pcx");
-	LoadGraphicToSurface (OtherData.colors_org[cl_aqua], path, "cl_aqua.pcx");
-
+	for (int i = 0; i != PLAYERCOLORS; ++i)
+		OtherData.colors_org[i] = CloneSDLSurface (OtherData.colors[i]);
 
 	if (!DEDICATED_SERVER)
 	{
@@ -923,21 +920,21 @@ static int LoadGraphics (const char* path)
 		//metal
 		if (LoadGraphicToSurface (ResourceData.res_metal_org, path, "res.pcx") == 1)
 		{
-			LoadGraphicToSurface (ResourceData.res_metal, path, "res.pcx");
+			ResourceData.res_metal = CloneSDLSurface (ResourceData.res_metal_org);
 			SDL_SetColorKey (ResourceData.res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
 
-		//fuel
+		//gold
 		if (LoadGraphicToSurface (ResourceData.res_gold_org, path, "gold.pcx") == 1)
 		{
-			LoadGraphicToSurface (ResourceData.res_gold, path, "gold.pcx");
+			ResourceData.res_gold = CloneSDLSurface (ResourceData.res_gold_org);
 			SDL_SetColorKey (ResourceData.res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
 
 		//fuel
 		if (LoadGraphicToSurface (ResourceData.res_oil_org, path, "fuel.pcx") == 1)
 		{
-			LoadGraphicToSurface (ResourceData.res_oil, path, "fuel.pcx");
+			ResourceData.res_oil = CloneSDLSurface (ResourceData.res_oil_org);
 			SDL_SetColorKey (ResourceData.res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
 	}
@@ -1063,8 +1060,6 @@ static int LoadVehicles()
 					sprintf (sztmp, "img%d_%.2d.pcx", n, j);
 					sTmpString += sztmp;
 
-
-
 					if (FileExists (sTmpString.c_str()))
 					{
 						AutoSurface sfTempSurface (LoadPCX (sTmpString));
@@ -1159,7 +1154,6 @@ static int LoadVehicles()
 		v.FLCFile = new char[sTmpString.length() + 1];
 		if (!v.FLCFile) { Log.write ("Out of memory", cLog::eLOG_TYPE_MEM); }
 		strcpy (v.FLCFile, sTmpString.c_str());
-
 
 		// load infoimage
 		sTmpString = sVehiclePath;
@@ -1355,51 +1349,51 @@ static int LoadVehicles()
 	return 1;
 }
 
-void translateClanData (int num)
+/**
+* Gets the name and (text) description for clan with internal id num from language file
+* If no translation exists a warning is issued and the existing strings are not altered
+* @param num engine internal ID of clan sorted by oder of clans in clan.xml
+*/
+static void translateClanData (int num)
 {
-	TiXmlNode* pXmlNode = NULL;
-	cClan* clan = NULL;
 	cClanData& clanData = cClanData::instance();
-	clan = clanData.getClan (num);
+	cClan* clan = clanData.getClan (num);
 
-	if (clan)
+	if (clan == 0)
 	{
-		pXmlNode = LanguageFile.FirstChild ("MAX_Language_File")->FirstChildElement ("Clans");
-		if (!pXmlNode)
+		Log.write ("Can't find clan id " + iToStr (num) + " for translation", LOG_TYPE_WARNING);
+		return;
+	}
+	TiXmlNode* pXmlNode = LanguageFile.FirstChild ("MAX_Language_File")->FirstChildElement ("Clans");
+	if (!pXmlNode)
+	{
+		Log.write ("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
+		return;
+	}
+
+	for (pXmlNode = pXmlNode->FirstChildElement(); pXmlNode; pXmlNode = pXmlNode->NextSibling())
+	{
+		if (atoi (pXmlNode->ToElement()->Attribute ("ID")) != num)
+			continue;
+
+		Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
+		if (cSettings::getInstance().getLanguage().compare ("ENG") != 0)
 		{
-			Log.write ("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
+			clan->setName (pXmlNode->ToElement()->Attribute ("localized"));
 		}
 		else
 		{
-			pXmlNode = pXmlNode->FirstChildElement();
-
-			while (pXmlNode)
-			{
-				if (atoi (pXmlNode->ToElement()->Attribute ("ID")) == num)
-				{
-					Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
-					if (cSettings::getInstance().getLanguage().compare ("ENG") != 0)
-					{
-						clan->setName (pXmlNode->ToElement()->Attribute ("localized"));
-					}
-					else
-					{
-						clan->setName (pXmlNode->ToElement()->Attribute ("ENG"));
-					}
-					clan->setDescription (pXmlNode->ToElement()->GetText());
-				}
-				pXmlNode = pXmlNode->NextSibling();
-
-			}
+			clan->setName (pXmlNode->ToElement()->Attribute ("ENG"));
 		}
-	}
-	else
-	{
-		Log.write ("Can't find clan id " + iToStr (num) + " for translation", LOG_TYPE_WARNING);
+		clan->setDescription (pXmlNode->ToElement()->GetText());
 	}
 }
 
-bool translateUnitData (sID ID, bool vehicle)
+/**
+* Gets the name and the description for the unit from the selected language file
+* @param ID Id of the unit
+*/
+static bool translateUnitData (sID ID, bool vehicle)
 {
 	sUnitData* Data = NULL;
 	TiXmlNode* pXmlNode = NULL;
@@ -1657,7 +1651,7 @@ static int LoadBuildings()
 		}
 
 		// load sounds
-		LoadUnitSoundfile (b.Wait,   sBuildingPath.c_str(), "wait.ogg");
+		LoadUnitSoundfile (b.Wait,    sBuildingPath.c_str(), "wait.ogg");
 		LoadUnitSoundfile (b.Start,   sBuildingPath.c_str(), "start.ogg");
 		LoadUnitSoundfile (b.Running, sBuildingPath.c_str(), "running.ogg");
 		LoadUnitSoundfile (b.Stop,    sBuildingPath.c_str(), "stop.ogg");
@@ -1688,16 +1682,16 @@ static int LoadBuildings()
 	}
 
 	// Dirtsurfaces
-	LoadGraphicToSurface (UnitsData.dirt_big, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
 	LoadGraphicToSurface (UnitsData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
-	LoadGraphicToSurface (UnitsData.dirt_big_shw, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-	if (UnitsData.dirt_big_shw) SDL_SetAlpha (UnitsData.dirt_big_shw, SDL_SRCALPHA, 50);
+	UnitsData.dirt_big = CloneSDLSurface (UnitsData.dirt_big_org);
 	LoadGraphicToSurface (UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-	LoadGraphicToSurface (UnitsData.dirt_small, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-	LoadGraphicToSurface (UnitsData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-	LoadGraphicToSurface (UnitsData.dirt_small_shw, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
-	if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
+	UnitsData.dirt_big_shw = CloneSDLSurface (UnitsData.dirt_big_shw_org);
+	if (UnitsData.dirt_big_shw) SDL_SetAlpha (UnitsData.dirt_big_shw, SDL_SRCALPHA, 50);
+	LoadGraphicToSurface (UnitsData.dirt_small_org,   cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
+	UnitsData.dirt_small = CloneSDLSurface (UnitsData.dirt_small_org);
 	LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
+	UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
+	if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
 
 	// set building numbers
 	for (unsigned int i = 0; i < UnitsData.building.size(); ++i)
@@ -1708,7 +1702,7 @@ static int LoadBuildings()
 }
 
 //-------------------------------------------------------------------------------------
-int getXMLNodeInt (TiXmlDocument& document, const char* path0, const char* path1, const char* path2)
+static int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
@@ -1733,7 +1727,7 @@ int getXMLNodeInt (TiXmlDocument& document, const char* path0, const char* path1
 }
 
 //-------------------------------------------------------------------------------------
-float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* path1, const char* path2)
+static float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* path1, const char* path2)
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
@@ -1759,7 +1753,7 @@ float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* p
 }
 
 //-------------------------------------------------------------------------------------
-string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0, const char* path1, const char* path2)
+static string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
@@ -1784,7 +1778,7 @@ string getXMLNodeString (TiXmlDocument& document, const char* attribut, const ch
 }
 
 //-------------------------------------------------------------------------------------
-bool getXMLNodeBool (TiXmlDocument& document, const char* path0, const char* path1, const char* path2, const char* path3)
+static bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL)
 {
 	string tmpString;
 	ExTiXmlNode* pExXmlNode = NULL;
@@ -1814,7 +1808,7 @@ bool getXMLNodeBool (TiXmlDocument& document, const char* path0, const char* pat
 }
 
 //-------------------------------------------------------------------------------------
-void LoadUnitData (sUnitData* const Data, char const* const directory, int const iID)
+static void LoadUnitData (sUnitData* const Data, char const* const directory, int const iID)
 {
 	TiXmlDocument unitDataXml;
 
@@ -2040,7 +2034,7 @@ void LoadUnitData (sUnitData* const Data, char const* const directory, int const
 }
 
 //-------------------------------------------------------------------------------------
-void LoadUnitGraphicData (sUnitData* Data, char const* directory)
+static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 {
 	TiXmlDocument unitGraphicsXml;
 
@@ -2140,7 +2134,6 @@ static int LoadClans()
 					}
 				}
 			}
-
 		}
 	}
 	return 1;
