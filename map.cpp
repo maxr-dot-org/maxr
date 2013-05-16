@@ -31,7 +31,7 @@ sTerrain::sTerrain() :
 	water (false),
 	coast (false),
 	blocked (false)
-{};
+{}
 
 cVehicleIterator cMapField::getVehicles()
 {
@@ -160,20 +160,20 @@ void cMap::CopySrfToTerData (SDL_Surface* surface, int iNum)
 	//This is needed to make sure, that the pixeldata is copied 1:1
 
 	//copy the normal terrains
-	terrain[iNum].sf_org = SDL_CreateRGBSurface (Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0);
+	terrain[iNum].sf_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrain[iNum].sf_org, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrain[iNum].sf_org, NULL);
 
-	terrain[iNum].sf = SDL_CreateRGBSurface (Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0);
+	terrain[iNum].sf = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrain[iNum].sf, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrain[iNum].sf, NULL);
 
 	//copy the terrains with fog
-	terrain[iNum].shw_org = SDL_CreateRGBSurface (Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0);
+	terrain[iNum].shw_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrain[iNum].shw_org, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrain[iNum].shw_org, NULL);
 
-	terrain[iNum].shw = SDL_CreateRGBSurface (Video.getSurfaceType() , 64, 64, 8, 0, 0, 0, 0);
+	terrain[iNum].shw = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
 	SDL_SetColors (terrain[iNum].shw, surface->format->palette->colors, 0, 256);
 	SDL_BlitSurface (surface, NULL, terrain[iNum].shw, NULL);
 
@@ -188,8 +188,8 @@ bool cMap::LoadMap (const std::string& filename_)
 	std::string filename (filename_);
 	SDL_RWops* fpMapFile;
 	short sWidth, sHeight;
-	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos;	// Positions in map-file
-	unsigned char cByte;	// one Byte
+	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos; // Positions in map-file
+	unsigned char cByte; // one Byte
 	char szFileTyp[4];
 
 	// Open File
@@ -234,14 +234,14 @@ bool cMap::LoadMap (const std::string& filename_)
 	Log.write ("SizeX: " + iToStr (sWidth), cLog::eLOG_TYPE_DEBUG);
 	sHeight = SDL_ReadLE16 (fpMapFile);
 	Log.write ("SizeY: " + iToStr (sHeight), cLog::eLOG_TYPE_DEBUG);
-	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR);	// Ignore Mini-Map
-	iDataPos = SDL_RWtell (fpMapFile);						// Map-Data
+	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
+	iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
-	iNumberOfTerrains = SDL_ReadLE16 (fpMapFile);				// Read PicCount
+	iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
 	Log.write ("Number of terrains: " + iToStr (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
-	iGraphicsPos = SDL_RWtell (fpMapFile);					// Terrain Graphics
-	iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64;		// Palette
-	iInfoPos = iPalettePos + 256 * 3;							// Special informations
+	iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
+	iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
+	iInfoPos = iPalettePos + 256 * 3; // Special informations
 
 	if (sWidth != sHeight)
 	{
@@ -293,10 +293,9 @@ bool cMap::LoadMap (const std::string& filename_)
 			default:
 				Log.write ("unknown terrain type " + iToStr (cByte) + " on tile " + iToStr (iNum) + " found. Handled as blocked!", cLog::eLOG_TYPE_WARNING);
 				terrain[iNum].blocked = true;
-				//SDL_RWclose( fpMapFile );
+				//SDL_RWclose (fpMapFile);
 				//return false;
 		}
-
 
 		//load terrain graphic
 		AutoSurface surface (LoadTerrGraph (fpMapFile, iGraphicsPos, palette, iNum));
@@ -379,9 +378,9 @@ void cMap::generateNextAnimationFrame()
 	for (int i = 0; i < iNumberOfTerrains; i++)
 	{
 		SDL_SetColors (terrain[i].sf, palette + 96, 96, 127);
-		//SDL_SetColors( TerrainInUse[i]->sf_org, palette + 96, 96, 127);
+		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
 		SDL_SetColors (terrain[i].shw, palette_shw + 96, 96, 127);
-		//SDL_SetColors( TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
+		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
 	}
 }
 
@@ -526,26 +525,26 @@ void cMap::placeRessources (int metal, int oil, int gold)
 }
 
 
-int cMap::getMapLevel (const cBuilding* building) const
+int cMap::getMapLevel (const cBuilding& building) const
 {
-	const sUnitData& data = building->data;
+	const sUnitData& data = building.data;
 
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA) return 9;		// seamine
-	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA) return 7;	// bridge
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6;	// platform
-	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE) return 5;	// road
-	if (!building->owner) return 4;	// rubble
-	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return 3;	// landmine
+	if (data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA) return 9; // seamine
+	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA) return 7; // bridge
+	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE && data.canBeOverbuild) return 6; // platform
+	if (data.surfacePosition == sUnitData::SURFACE_POS_BASE) return 5; // road
+	if (!building.owner) return 4; // rubble
+	if (data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE) return 3; // landmine
 
-	return 1;	// other buildings
+	return 1; // other buildings
 }
 
-int cMap::getMapLevel (const cVehicle* vehicle) const
+int cMap::getMapLevel (const cVehicle& vehicle) const
 {
-	if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0) return 8;	// ships
-	if (vehicle->data.factorAir > 0) return 0;	// planes
+	if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0) return 8; // ships
+	if (vehicle.data.factorAir > 0) return 0; // planes
 
-	return 2;	// other vehicles
+	return 2; // other vehicles
 }
 
 void cMap::addBuilding (cBuilding* building, unsigned int x, unsigned int y)
@@ -557,33 +556,33 @@ void cMap::addBuilding (cBuilding* building, unsigned int offset)
 {
 	if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig && building->owner) return;   //big base building are not implemented
 
-	int mapLevel = getMapLevel (building);
+	int mapLevel = getMapLevel (*building);
 	unsigned int i = 0;
 
 	if (building->data.isBig)
 	{
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset += 1;
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset += size;
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 
 		offset -= 1;
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 	}
 	else
 	{
-		while (i < fields[offset].buildings.size() && getMapLevel (fields[offset].buildings[i]) < mapLevel) i++;
+		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
 		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
 	}
 }
@@ -726,9 +725,9 @@ void cMap::moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y)
 	vehicle->data.isBig = true;
 }
 
-bool cMap::possiblePlace (const cVehicle* vehicle, int x, int y, bool checkPlayer) const
+bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer) const
 {
-	return possiblePlaceVehicle (vehicle->data, x, y, vehicle->owner, checkPlayer);
+	return possiblePlaceVehicle (vehicle.data, x, y, vehicle.owner, checkPlayer);
 }
 
 bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer) const
@@ -802,19 +801,19 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	return true;
 }
 
-bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, cVehicle* vehicle) const
+bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, const cVehicle* vehicle) const
 {
 	return possiblePlaceBuildingWithMargin (buildingData, x, y, 0, vehicle);
 }
 
 // can't place it too near to the map border
-bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle) const
+bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle) const
 {
 	if (x < margin || x >= size - margin || y < margin || y >= size - margin) return false;
 	return possiblePlaceBuilding (buildingData, x + y * size, vehicle);
 }
 
-bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, cVehicle* vehicle) const
+bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const
 {
 	if (offset < 0 || offset >= size * size) return false;
 	if (terrain[Kacheln[offset]].blocked) return false;
@@ -869,9 +868,9 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, cVe
 		}
 		bi++;
 	}
-	if ( (water && buildingData.factorSea == 0) ||
-		 (coast && buildingData.factorCoast == 0) ||
-		 (ground && buildingData.factorGround == 0)) return false;
+	if ((water && buildingData.factorSea == 0) ||
+		(coast && buildingData.factorCoast == 0) ||
+		(ground && buildingData.factorGround == 0)) return false;
 
 	//can not build on rubble
 	if (bi && !bi->owner && ! (buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE || buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) return false;

@@ -190,7 +190,7 @@ public:
 	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
-	void sendUpgradeBuilding (const cClient& client, const cBuilding* building, bool upgradeAll);  //TODO: move to other file (clientevents?)
+	void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll) const;  //TODO: move to other file (clientevents?)
 
 	/**
 	* returns whether this player has detected this unit or not

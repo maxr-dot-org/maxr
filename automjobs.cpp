@@ -164,7 +164,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 {
 	const cMap& map = *client->getMap();
 
-	if (!map.possiblePlace (vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
+	if (!map.possiblePlace (*vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -256,7 +256,7 @@ void cAutoMJob::PlanLongMove()
 		for (y = 0; y < map.size; y++)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if (!map.possiblePlace (vehicle, x, y) || vehicle->owner->ResourceMap[x + y * map.size] == 1) continue;
+			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[x + y * map.size] == 1) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;

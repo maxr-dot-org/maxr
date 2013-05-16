@@ -214,12 +214,12 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	SDL_Rect dest;
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
 	if (drawingSurface == NULL)
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = gameGUI.getDCache()->createNewEntry (this);
+		drawingSurface = gameGUI.getDCache()->createNewEntry (*this);
 	}
 
 	if (drawingSurface == NULL)
@@ -701,11 +701,11 @@ int cVehicle::refreshData()
 					if (PosY > BandY) nextY--;
 					if (PosY < BandY) nextY++;
 					// Can we move to this position? If not, we need to kill the path building now.
-					if (!map.possiblePlace (this, nextX, nextY))
+					if (!map.possiblePlace (*this, nextX, nextY))
 					{
 						// Try sidestepping stealth units before giving up.
 						server.sideStepStealthUnit (nextX, nextY, this);
-						if (!map.possiblePlace (this, nextX, nextY))
+						if (!map.possiblePlace (*this, nextX, nextY))
 						{
 							// We can't build along this path any more.
 							break;
@@ -737,7 +737,7 @@ int cVehicle::refreshData()
 						IsBuilding = false;
 					}
 					BuildPath = false;
-					sendBuildAnswer (server, false, this);
+					sendBuildAnswer (server, false, *this);
 				}
 			}
 			else
@@ -770,18 +770,18 @@ int cVehicle::refreshData()
 			{
 				int size = map.size;
 				map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
-				sendStopClear (server, this, BuildBigSavedPos, owner->Nr);
+				sendStopClear (server, *this, BuildBigSavedPos, owner->Nr);
 				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 				{
-					sendStopClear (server, this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
+					sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
 				}
 			}
 			else
 			{
-				sendStopClear (server, this, -1, owner->Nr);
+				sendStopClear (server, *this, -1, owner->Nr);
 				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 				{
-					sendStopClear (server, this, -1, seenByPlayerList[i]->Nr);
+					sendStopClear (server, *this, -1, seenByPlayerList[i]->Nr);
 				}
 			}
 			data.storageResCur += Rubble->RubbleValue;
@@ -1541,20 +1541,20 @@ bool cVehicle::InSentryRange (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit* otherUnit) const
+bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-	bool otherUnitIsCheapBuilding = (otherUnit->isBuilding() && otherUnit->data.ID.getUnitDataOriginalVersion()->buildCosts > 2);
+	bool otherUnitIsCheapBuilding = (otherUnit.isBuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2);
 
 	if (otherUnitIsCheapBuilding == false
-		&& isInRange (otherUnit->PosX, otherUnit->PosY)
-		&& canAttackObjectAt (otherUnit->PosX, otherUnit->PosY, server.Map, true, false))
+		&& isInRange (otherUnit.PosX, otherUnit.PosY)
+		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
 		cVehicle* selectedTargetVehicle = 0;
 		cBuilding* selectedTargetBuilding = 0;
-		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit->PosX, otherUnit->PosY, data.canAttack, server.Map);
-		if (selectedTargetVehicle == otherUnit || selectedTargetBuilding == otherUnit)
+		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map);
+		if (selectedTargetVehicle == &otherUnit || selectedTargetBuilding == &otherUnit)
 			return true;
 	}
 	return false;
@@ -1576,14 +1576,14 @@ bool cVehicle::doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server,
 			 opponentVehicle != 0;
 			 opponentVehicle = opponentVehicle->next)
 		{
-			if (isOtherUnitOffendedByThis (server, opponentVehicle))
+			if (isOtherUnitOffendedByThis (server, *opponentVehicle))
 				return true;
 		}
 		for (const cBuilding* opponentBuilding = player->BuildingList;
 			 opponentBuilding != 0;
 			 opponentBuilding = opponentBuilding->next)
 		{
-			if (isOtherUnitOffendedByThis (server, opponentBuilding))
+			if (isOtherUnitOffendedByThis (server, *opponentBuilding))
 				return true;
 		}
 	}
@@ -2002,7 +2002,7 @@ void cVehicle::setDetectedByPlayer (cServer& server, cPlayer* player, bool addTo
 	if (!isDetectedByPlayer (player))
 		detectedByPlayerList.push_back (player);
 
-	if (!wasDetected) sendDetectionState (server, this);
+	if (!wasDetected) sendDetectionState (server, *this);
 
 	if (addToDetectedInThisTurnList && Contains (detectedInThisTurnByPlayerList, player) == false)
 		detectedInThisTurnByPlayerList.push_back (player);
@@ -2016,7 +2016,7 @@ void cVehicle::resetDetectedByPlayer (cServer& server, cPlayer* player)
 	Remove (detectedByPlayerList, player);
 	Remove (detectedInThisTurnByPlayerList, player);
 
-	if (wasDetected && detectedByPlayerList.size() == 0) sendDetectionState (server, this);
+	if (wasDetected && detectedByPlayerList.size() == 0) sendDetectionState (server, *this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2233,7 +2233,7 @@ void cVehicle::executeStopCommand (const cClient& client)
 	else if (isUnitBuildingABuilding())
 		sendWantStopBuilding (client, iID);
 	else if (isUnitClearing())
-		sendWantStopClear (client, this);
+		sendWantStopClear (client, *this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2264,7 +2264,7 @@ void cVehicle::executeLayMinesCommand (const cClient& client)
 {
 	LayMines = !LayMines;
 	ClearMines = false;
-	sendMineLayerStatus (client, this);
+	sendMineLayerStatus (client, *this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2272,7 +2272,7 @@ void cVehicle::executeClearMinesCommand (const cClient& client)
 {
 	ClearMines = !ClearMines;
 	LayMines = false;
-	sendMineLayerStatus (client, this);
+	sendMineLayerStatus (client, *this);
 }
 
 //-----------------------------------------------------------------------------

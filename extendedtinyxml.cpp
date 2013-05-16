@@ -333,11 +333,11 @@ void debugToLog (void* pointer , const char* pname)
 	sprintf (szMsg , "%s = %p", pname, pointer);
 
 	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
-};
+}
 
 void debugToLog (const std::string& szMsg)
 {
 	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
-};
+}
 
 #endif

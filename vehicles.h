@@ -289,7 +289,7 @@ private:
 	bool doesPlayerWantToFireOnThisVehicleAsReactionFire (cServer& server, const cPlayer* player) const;
 	bool makeAttackOnThis (cServer& server, cUnit* opponentUnit, const std::string& reasonForLog) const;
 	bool makeSentryAttack (cServer& server, cUnit* unit) const;
-	bool isOtherUnitOffendedByThis (cServer& server, const cUnit* otherUnit) const;
+	bool isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const;
 	bool doReactionFire (cServer& server, cPlayer* player) const;
 	bool doReactionFireForUnit (cServer& server, cUnit* opponentUnit) const;
 

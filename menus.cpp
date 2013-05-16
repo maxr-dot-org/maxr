@@ -173,7 +173,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			case SETTINGS_VICTORY_ANNIHILATION: nTurns = nScore = 0; break;
 			default: assert (0);
 		}
-		Server = new cServer (network, &serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+		Server = new cServer (network, serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
@@ -271,7 +271,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
+		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
@@ -1539,7 +1539,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 		{
 			case GAME_TYPE_SINGLE:
 			{
-				cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS);   // Socketnumber MAX_CLIENTS for lokal client
+				cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
 				menu->gameDataContainer->players.push_back (player);
 
 				bool started = false;
@@ -2156,7 +2156,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr, menu->gameDataContainer->isServer);
 	}
 
-	sendUnitUpgrades (menu->network, menu->player, menu->gameDataContainer->isServer);
+	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer);
 
 	cLandingMenu landingMenu (menu->network, menu->gameDataContainer, menu->player);
 	if (landingMenu.show() == 1)
@@ -3131,7 +3131,7 @@ void cNetworkHostMenu::mapReleased (void* parent)
 	planetsSelectionMenu.show();
 	menu->showSettingsText();
 	menu->showMap();
-	sendGameData (*menu->network, &menu->gameDataContainer, menu->saveGameString);
+	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3142,7 +3142,7 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 	cSettingsMenu settingsMenu (&menu->gameDataContainer);
 	settingsMenu.show();
 	menu->showSettingsText();
-	sendGameData (*menu->network, &menu->gameDataContainer, menu->saveGameString);
+	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
 	menu->draw();
 }
 
@@ -3165,7 +3165,7 @@ void cNetworkHostMenu::loadReleased (void* parent)
 		map->LoadMap (savegame.getMapName());
 		menu->gameDataContainer.map = map;
 
-		sendGameData (*menu->network, &menu->gameDataContainer, menu->saveGameString);
+		sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
 		menu->showSettingsText();
 		menu->showMap();
 	}
@@ -3232,7 +3232,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 #define UNIDENTIFIED_PLAYER_NAME "unidentified"
 			sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.size(), message->popInt16());
 			players.push_back (player);
-			sendRequestIdentification (*network, player);
+			sendRequestIdentification (*network, *player);
 			playersBox->setPlayers (&players);
 			draw();
 		}
@@ -3263,7 +3263,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			for (unsigned int i = 0; i < players.size(); i++)
 			{
 				players[i]->nr = i;
-				sendRequestIdentification (*network, players[i]);
+				sendRequestIdentification (*network, *players[i]);
 			}
 
 			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Left", playerName));
@@ -3298,7 +3298,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 
 			draw();
 			sendPlayerList (*network, players);
-			sendGameData (*network, &gameDataContainer, saveGameString, player);
+			sendGameData (*network, gameDataContainer, saveGameString, player);
 		}
 		break;
 		case MU_MSG_REQUEST_MAP:
@@ -3400,7 +3400,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// send the correct player numbers to client
 	for (unsigned int i = 0; i < players.size(); i++)
-		sendRequestIdentification (*network, players[i]);
+		sendRequestIdentification (*network, *players[i]);
 
 	// now we can send the menus players-list with the right numbers and colors of each player.
 	sendPlayerList (*network, players);
@@ -3437,7 +3437,7 @@ bool cNetworkHostMenu::runSavedGame()
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		sendRequestResync (*Client, serverPlayerList[i]->Nr);
-		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, serverPlayerList[i]);
+		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
@@ -3520,7 +3520,7 @@ void cNetworkClientMenu::connectReleased (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkClientMenu::playerSettingsChanged()
 {
-	sendIdentification (*network, actPlayer);
+	sendIdentification (*network, *actPlayer);
 }
 
 //------------------------------------------------------------------------------
@@ -3555,7 +3555,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 		case MU_MSG_REQ_IDENTIFIKATION:
 			Log.write ("game version of server is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
 			actPlayer->nr = message->popInt16();
-			sendIdentification (*network, actPlayer);
+			sendIdentification (*network, *actPlayer);
 			break;
 		case MU_MSG_PLAYERLIST:
 		{
@@ -3735,7 +3735,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 			cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Multiplayer~Reconnect"));
 			if (yesNoDialog.show() == 0)
 			{
-				sendGameIdentification (*network, actPlayer, message->popInt16());
+				sendGameIdentification (*network, *actPlayer, message->popInt16());
 			}
 			else
 			{
@@ -4420,7 +4420,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 		buildList.push_back (buildItem);
 	}
 	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
-	sendWantBuildList (*menu->gameGUI->getClient(), menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
+	sendWantBuildList (*menu->gameGUI->getClient(), *menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
 	menu->end = true;
 }
 
@@ -5381,7 +5381,7 @@ string cMineManagerMenu::secondBarText (int prod, int need)
 void cMineManagerMenu::doneReleased (void* parent)
 {
 	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ((cMenu*) parent);
-	sendChangeResources (*menu->client, menu->building, menu->subBase.getMetalProd(),  menu->subBase.getOilProd(),  menu->subBase.getGoldProd());
+	sendChangeResources (*menu->client, *menu->building, menu->subBase.getMetalProd(), menu->subBase.getOilProd(), menu->subBase.getGoldProd());
 	menu->end = true;
 }
 

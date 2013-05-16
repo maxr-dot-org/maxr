@@ -274,12 +274,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	dest.x = dest.y = 0;
 	bool bDraw = false;
-	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (this);
+	SDL_Surface* drawingSurface = gameGUI.getDCache()->getCachedImage (*this);
 	if (drawingSurface == NULL)
 	{
 		//no cached image found. building needs to be redrawn.
 		bDraw = true;
-		drawingSurface = gameGUI.getDCache()->createNewEntry (this);
+		drawingSurface = gameGUI.getDCache()->createNewEntry (*this);
 	}
 
 	if (drawingSurface == NULL)
@@ -648,21 +648,21 @@ void cBuilding::updateNeighbours (const cMap* Map)
 	int iPosOff = PosX + PosY * Map->size;
 	if (!data.isBig)
 	{
-		owner->base.checkNeighbour (iPosOff - Map->size, this);
-		owner->base.checkNeighbour (iPosOff + 1, this);
-		owner->base.checkNeighbour (iPosOff + Map->size, this);
-		owner->base.checkNeighbour (iPosOff - 1, this);
+		owner->base.checkNeighbour (iPosOff - Map->size, *this);
+		owner->base.checkNeighbour (iPosOff + 1, *this);
+		owner->base.checkNeighbour (iPosOff + Map->size, *this);
+		owner->base.checkNeighbour (iPosOff - 1, *this);
 	}
 	else
 	{
-		owner->base.checkNeighbour (iPosOff - Map->size, this);
-		owner->base.checkNeighbour (iPosOff - Map->size + 1, this);
-		owner->base.checkNeighbour (iPosOff + 2, this);
-		owner->base.checkNeighbour (iPosOff + 2 + Map->size, this);
-		owner->base.checkNeighbour (iPosOff + Map->size * 2, this);
-		owner->base.checkNeighbour (iPosOff + Map->size * 2 + 1, this);
-		owner->base.checkNeighbour (iPosOff - 1, this);
-		owner->base.checkNeighbour (iPosOff - 1 + Map->size, this);
+		owner->base.checkNeighbour (iPosOff - Map->size, *this);
+		owner->base.checkNeighbour (iPosOff - Map->size + 1, *this);
+		owner->base.checkNeighbour (iPosOff + 2, *this);
+		owner->base.checkNeighbour (iPosOff + 2 + Map->size, *this);
+		owner->base.checkNeighbour (iPosOff + Map->size * 2, *this);
+		owner->base.checkNeighbour (iPosOff + Map->size * 2 + 1, *this);
+		owner->base.checkNeighbour (iPosOff - 1, *this);
+		owner->base.checkNeighbour (iPosOff - 1 + Map->size, *this);
 	}
 	CheckNeighbours (Map);
 }
@@ -824,7 +824,7 @@ void cBuilding::ServerStartWork (cServer& server)
 {
 	if (IsWorking)
 	{
-		sendDoStartWork (server, this);
+		sendDoStartWork (server, *this);
 		return;
 	}
 
@@ -974,11 +974,11 @@ void cBuilding::ServerStartWork (cServer& server)
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, owner);
+		sendNumEcos (server, *owner);
 	}
 
-	sendSubbaseValues (server, SubBase, owner->Nr);
-	sendDoStartWork (server, this);
+	sendSubbaseValues (server, *SubBase, owner->Nr);
+	sendDoStartWork (server, *this);
 }
 
 //------------------------------------------------------------
@@ -1007,7 +1007,7 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 {
 	if (!IsWorking)
 	{
-		sendDoStopWork (server, this);
+		sendDoStopWork (server, *this);
 		return;
 	}
 
@@ -1067,11 +1067,11 @@ void cBuilding::ServerStopWork (cServer& server, bool override)
 
 	if (data.canScore)
 	{
-		sendNumEcos (server, owner);
+		sendNumEcos (server, *owner);
 	}
 
-	sendSubbaseValues (server, SubBase, owner->Nr);
-	sendDoStopWork (server, this);
+	sendSubbaseValues (server, *SubBase, owner->Nr);
+	sendDoStopWork (server, *this);
 }
 
 //------------------------------------------------------------
@@ -1642,19 +1642,19 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 }
 
 //------------------------------------------------------------------------
-void cBuilding::sendUpgradeBuilding (const cClient& client, const cBuilding* building, bool upgradeAll)
+void cBuilding::sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll) const
 {
-	if (building == 0 || building->owner == 0)
+	if (building.owner == 0)
 		return;
 
-	const sUnitData& currentVersion = building->data;
-	const sUnitData& upgradedVersion = building->owner->BuildingData[building->typ->nr];
+	const sUnitData& currentVersion = building.data;
+	const sUnitData& upgradedVersion = building.owner->BuildingData[building.typ->nr];
 	if (currentVersion.version >= upgradedVersion.version)
 		return; // already uptodate
 
 	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
 	msg->pushBool (upgradeAll);
-	msg->pushInt32 (building->iID);
+	msg->pushInt32 (building.iID);
 
 	client.sendNetMessage (msg);
 }
@@ -1803,7 +1803,7 @@ void cBuilding::executeMineManagerCommand (const cClient& client)
 //-----------------------------------------------------------------------------
 void cBuilding::executeStopCommand (const cClient& client)
 {
-	sendWantStopWork (client, this);
+	sendWantStopWork (client, *this);
 }
 
 //-----------------------------------------------------------------------------
@@ -1816,7 +1816,7 @@ void cBuilding::executeActivateStoredVehiclesCommand (cClient& client)
 //-----------------------------------------------------------------------------
 void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType)
 {
-	sendUpgradeBuilding (client, this, updateAllOfSameType);
+	sendUpgradeBuilding (client, *this, updateAllOfSameType);
 }
 
 //-----------------------------------------------------------------------------
@@ -1824,7 +1824,7 @@ void cBuilding::executeSelfDestroyCommand (const cClient& client)
 {
 	cDestructMenu destructMenu;
 	if (destructMenu.show() == 0)
-		sendWantSelfDestroy (client, this);
+		sendWantSelfDestroy (client, *this);
 }
 
 //-----------------------------------------------------------------------------

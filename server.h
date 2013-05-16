@@ -89,7 +89,7 @@ public:
 	 *@param turnLimit Game ends after this many turns
 	 *@param scoreLimit First player to this many points wins
 	 */
-	cServer (cTCP* network_, cMap* map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
+	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
 	void setDeadline (int iDeadline);
 	void stop ();
 	~cServer();

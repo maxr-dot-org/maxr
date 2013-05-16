@@ -68,7 +68,7 @@ struct sUnitData;
 // Struktur f¸r die IDs
 struct sID
 {
-	sID() : iFirstPart (0), iSecondPart (0) {};
+	sID() : iFirstPart (0), iSecondPart (0) {}
 
 	int iFirstPart;
 	int iSecondPart;

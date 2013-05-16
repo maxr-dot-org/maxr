@@ -118,13 +118,13 @@ void sendWantToEndTurn (const cClient &client);
 * sends a request to start a building to the Server
 *@author Eiko
 */
-void sendWantStartWork (const cClient &client, const cUnit* building);
+void sendWantStartWork (const cClient &client, const cUnit& building);
 
 /**
 * sends a request to stop a building to the Server
 *@author Eiko
 */
-void sendWantStopWork (const cClient &client, const cUnit* building);
+void sendWantStopWork (const cClient &client, const cUnit& building);
 
 /**
 * sends all waypoints of a movejob to the server.
@@ -160,7 +160,7 @@ void sendWantAttack (const cClient &client, int targetID, int targetOffset, int 
 *@author alzi alias DoctorDeath
 *@param Vehicle the vehicle which status has to be send
 */
-void sendMineLayerStatus (const cClient &client, const cVehicle* Vehicle);
+void sendMineLayerStatus (const cClient &client, const cVehicle& vehicle);
 /**
 * sends that a vehicle wants to start building
 *@author alzi alias DoctorDeath
@@ -171,7 +171,7 @@ void sendMineLayerStatus (const cClient &client, const cVehicle* Vehicle);
 *@param bBuildPath true if the vehicle is building in path
 *@param iPathOff offset were the path will end
 */
-void sendWantBuild (const cClient &client, int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff);
+void sendWantBuild (const cClient &client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff);
 /**
 * sends that a vehicle wants to leave the building lot
 *@author alzi alias DoctorDeath
@@ -179,7 +179,7 @@ void sendWantBuild (const cClient &client, int iVehicleID, sID BuildingTypeID, i
 *@param EscapeX X coordinate to which he wants do move now
 *@param EscapeY Y coordinate to which he wants do move now
 */
-void sendWantEndBuilding (const cClient &client, const cVehicle* Vehicle, int EscapeX, int EscapeY);
+void sendWantEndBuilding (const cClient &client, const cVehicle& vehicle, int escapeX, int escapeY);
 /**
 * sends that the player wants a vehicle to stop building
 *@author alzi alias DoctorDeath
@@ -200,17 +200,17 @@ void sendWantTransfer (const cClient &client, bool bSrcVehicle, int iSrcID, bool
 * sends a request for building all vehicles in the buildlist of the building
 *@author alzi alias DoctorDeath
 */
-void sendWantBuildList (const cClient &client, const cBuilding* Building, const std::vector<sBuildList>& BuildList, bool bRepeat, int buildSpeed);
+void sendWantBuildList (const cClient &client, const cBuilding& building, const std::vector<sBuildList>& buildList, bool bRepeat, int buildSpeed);
 /**
 * sends that the client wants to exit the finished vehicle
 *@author alzi alias DoctorDeath
 */
-void sendWantExitFinishedVehicle (const cClient &client, const cBuilding* Building, int iX, int iY);
+void sendWantExitFinishedVehicle (const cClient &client, const cBuilding& building, int iX, int iY);
 /**
 * sends that the client wants to change the produce values in the minemanager of a building
 *@author alzi alias DoctorDeath
 */
-void sendChangeResources (const cClient &client, const cBuilding* Building, int iMetalProd, int iOilProd, int iGoldProd);
+void sendChangeResources (const cClient &client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd);
 /**
  * sends that the client wants to change the manual fire status of a unit
  *@author pagra
@@ -230,12 +230,12 @@ void sendWantSupply (const cClient &client, int iDestID, bool bDestVehicle, int 
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStartClear (const cClient &client, const cUnit* unit);
+void sendWantStartClear (const cClient &client, const cUnit& unit);
 /**
 * sends that the client wants to stop clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStopClear (const cClient &client, const cUnit* unit);
+void sendWantStopClear (const cClient &client, const cUnit& unit);
 /**
 * sends that the client wants to abort waiting for the reconnect of a disconnected player
 *@author alzi alias DoctorDeath
@@ -262,10 +262,10 @@ void sendWantComAction (const cClient &client, int srcUnitID, int destUnitID, bo
 void sendWantUpgrade (const cClient &client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient &client, int (&newResearchSettings)[cResearch::kNrResearchAreas], int ownerNr);
 void sendSaveHudInfo (const cClient &client, int selectedUnitID, int ownerNr, int savingID);
-void sendSaveReportInfo (const cClient &client, const sSavedReportMessage* savedReport, int ownerNr, int savingID);
+void sendSaveReportInfo (const cClient &client, const sSavedReportMessage& savedReport, int ownerNr, int savingID);
 void sendFinishedSendSaveInfo (const cClient &client, int ownerNr, int savingID);
 
-void sendWantSelfDestroy (const cClient &client, const cUnit* building);
+void sendWantSelfDestroy (const cClient &client, const cBuilding& building);
 void sendWantChangeUnitName (const cClient &client, const std::string& newName, int unitID);
 
 void sendEndMoveAction (const cClient &client, int vehicleID, int destID, eEndMoveActionType type);

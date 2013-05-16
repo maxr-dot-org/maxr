@@ -61,30 +61,30 @@ int cSavegame::save (const cServer& server, const string& saveName)
 		const cPlayer* Player = playerList[i];
 		writePlayer (Player, i);
 
-		for (const cVehicle* Vehicle = Player->VehicleList;
-			 Vehicle;
-			 Vehicle = Vehicle->next)
+		for (const cVehicle* vehicle = Player->VehicleList;
+			 vehicle;
+			 vehicle = vehicle->next)
 		{
-			if (!Vehicle->Loaded)
+			if (!vehicle->Loaded)
 			{
-				writeUnit (server, Vehicle, &unitnum);
+				writeUnit (server, *vehicle, &unitnum);
 				unitnum++;
 			}
 		}
 
-		for (const cBuilding* Building = Player->BuildingList;
-			 Building;
-			 Building = Building->next)
+		for (const cBuilding* building = Player->BuildingList;
+			 building;
+			 building = building->next)
 		{
-			writeUnit (server, Building, &unitnum);
+			writeUnit (server, *building, &unitnum);
 			unitnum++;
 		}
 	}
 	int rubblenum = 0;
 
-	for (const cBuilding* Rubble = server.neutralBuildings; Rubble; Rubble = Rubble->next)
+	for (const cBuilding* rubble = server.neutralBuildings; rubble; rubble = rubble->next)
 	{
-		writeRubble (server, Rubble, rubblenum);
+		writeRubble (server, *rubble, rubblenum);
 		rubblenum++;
 	}
 
@@ -151,13 +151,13 @@ int cSavegame::load (cTCP* network)
 
 	string gametype;
 	loadHeader (NULL, &gametype, NULL);
-	if (!gametype.compare ("IND")) Server = new cServer (network, map, PlayerList, GAME_TYPE_SINGLE, false);
-	else if (!gametype.compare ("HOT")) Server = new cServer (network, map, PlayerList, GAME_TYPE_HOTSEAT, false);
-	else if (!gametype.compare ("NET")) Server = new cServer (network, map, PlayerList, GAME_TYPE_TCPIP, false);
+	if (!gametype.compare ("IND")) Server = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE, false);
+	else if (!gametype.compare ("HOT")) Server = new cServer (network, *map, PlayerList, GAME_TYPE_HOTSEAT, false);
+	else if (!gametype.compare ("NET")) Server = new cServer (network, *map, PlayerList, GAME_TYPE_TCPIP, false);
 	else
 	{
 		Log.write ("Unknown gametype \"" + gametype + "\". Starting as singleplayergame.", cLog::eLOG_TYPE_INFO);
-		Server = new cServer (network, map, PlayerList, GAME_TYPE_SINGLE, false);
+		Server = new cServer (network, *map, PlayerList, GAME_TYPE_SINGLE, false);
 	}
 	cServer& server = *Server;
 	loadGameInfo (server);
@@ -1384,7 +1384,7 @@ void cSavegame::writeCasualties (const cServer& server)
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle* Vehicle, int* unitnum)
+TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1398,70 +1398,70 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle* Vehic
 	TiXmlElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
 
 	// write main information
-	addAttributeElement (unitNode, "Type", "string", Vehicle->data.ID.getText());
-	addAttributeElement (unitNode, "ID", "num", iToStr (Vehicle->iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (Vehicle->owner->Nr));
-	addAttributeElement (unitNode, "Position", "x", iToStr (Vehicle->PosX), "y", iToStr (Vehicle->PosY));
+	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
+	addAttributeElement (unitNode, "ID", "num", iToStr (vehicle.iID));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.owner->Nr));
+	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.PosX), "y", iToStr (vehicle.PosY));
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
-	addAttributeElement (unitNode, "Name", "string", Vehicle->isNameOriginal() ? Vehicle->data.name : Vehicle->getName(), "notDefault", Vehicle->isNameOriginal() ? "0" : "1");
+	addAttributeElement (unitNode, "Name", "string", vehicle.isNameOriginal() ? vehicle.data.name : vehicle.getName(), "notDefault", vehicle.isNameOriginal() ? "0" : "1");
 
 	// write the standard unit values which are the same for vehicles and buildings
-	writeUnitValues (unitNode, &Vehicle->data, &Vehicle->owner->VehicleData[Vehicle->typ->nr]);
+	writeUnitValues (unitNode, &vehicle.data, &vehicle.owner->VehicleData[vehicle.typ->nr]);
 
 	// add additional status information
-	addAttributeElement (unitNode, "Direction", "num", iToStr (Vehicle->dir));
-	if (Vehicle->data.canCapture || Vehicle->data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", dToStr (Vehicle->CommandoRank));
-	if (Vehicle->data.isBig) addMainElement (unitNode, "IsBig");
-	if (Vehicle->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Vehicle->turnsDisabled));
-	if (Vehicle->LayMines) addMainElement (unitNode, "LayMines");
-	if (Vehicle->sentryActive) addMainElement (unitNode, "OnSentry");
-	if (Vehicle->manualFireActive) addMainElement (unitNode, "ManualFire");
-	if (Vehicle->hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
+	addAttributeElement (unitNode, "Direction", "num", iToStr (vehicle.dir));
+	if (vehicle.data.canCapture || vehicle.data.canDisable) addAttributeElement (unitNode, "CommandoRank", "num", dToStr (vehicle.CommandoRank));
+	if (vehicle.data.isBig) addMainElement (unitNode, "IsBig");
+	if (vehicle.turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (vehicle.turnsDisabled));
+	if (vehicle.LayMines) addMainElement (unitNode, "LayMines");
+	if (vehicle.sentryActive) addMainElement (unitNode, "OnSentry");
+	if (vehicle.manualFireActive) addMainElement (unitNode, "ManualFire");
+	if (vehicle.hasAutoMoveJob) addMainElement (unitNode, "AutoMoving");
 
-	if (Vehicle->IsBuilding)
+	if (vehicle.IsBuilding)
 	{
 		TiXmlElement* element = addMainElement (unitNode, "Building");
-		element->SetAttribute ("type_id", Vehicle->BuildingTyp.getText().c_str());
-		element->SetAttribute ("turns", iToStr (Vehicle->BuildRounds).c_str());
-		element->SetAttribute ("costs", iToStr (Vehicle->BuildCosts).c_str());
-		if (Vehicle->data.isBig) element->SetAttribute ("savedpos", iToStr (Vehicle->BuildBigSavedPos).c_str());
+		element->SetAttribute ("type_id", vehicle.BuildingTyp.getText().c_str());
+		element->SetAttribute ("turns", iToStr (vehicle.BuildRounds).c_str());
+		element->SetAttribute ("costs", iToStr (vehicle.BuildCosts).c_str());
+		if (vehicle.data.isBig) element->SetAttribute ("savedpos", iToStr (vehicle.BuildBigSavedPos).c_str());
 
-		if (Vehicle->BuildPath)
+		if (vehicle.BuildPath)
 		{
 			element->SetAttribute ("path", "1");
-			element->SetAttribute ("turnsstart", iToStr (Vehicle->BuildRoundsStart).c_str());
-			element->SetAttribute ("costsstart", iToStr (Vehicle->BuildCostsStart).c_str());
-			element->SetAttribute ("endx", iToStr (Vehicle->BandX).c_str());
-			element->SetAttribute ("endy", iToStr (Vehicle->BandY).c_str());
+			element->SetAttribute ("turnsstart", iToStr (vehicle.BuildRoundsStart).c_str());
+			element->SetAttribute ("costsstart", iToStr (vehicle.BuildCostsStart).c_str());
+			element->SetAttribute ("endx", iToStr (vehicle.BandX).c_str());
+			element->SetAttribute ("endy", iToStr (vehicle.BandY).c_str());
 		}
 	}
-	if (Vehicle->IsClearing) addAttributeElement (unitNode, "Clearing", "turns", iToStr (Vehicle->ClearingRounds), "savedpos", iToStr (Vehicle->BuildBigSavedPos));
-	if (Vehicle->ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (Vehicle->ServerMoveJob->DestX), "desty", iToStr (Vehicle->ServerMoveJob->DestY));
+	if (vehicle.IsClearing) addAttributeElement (unitNode, "Clearing", "turns", iToStr (vehicle.ClearingRounds), "savedpos", iToStr (vehicle.BuildBigSavedPos));
+	if (vehicle.ServerMoveJob) addAttributeElement (unitNode, "Movejob", "destx", iToStr (vehicle.ServerMoveJob->DestX), "desty", iToStr (vehicle.ServerMoveJob->DestY));
 
 	// write from which players this unit has been detected
-	if (Vehicle->detectedByPlayerList.size() > 0)
+	if (vehicle.detectedByPlayerList.size() > 0)
 	{
 		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
-		for (unsigned int i = 0; i < Vehicle->detectedByPlayerList.size(); i++)
+		for (unsigned int i = 0; i < vehicle.detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i),
-								 "nr", iToStr (Vehicle->detectedByPlayerList[i]->Nr),
-								 "ThisTurn", Vehicle->wasDetectedInThisTurnByPlayer (Vehicle->detectedByPlayerList[i]) ? "1" : "0");
+								 "nr", iToStr (vehicle.detectedByPlayerList[i]->Nr),
+								 "ThisTurn", vehicle.wasDetectedInThisTurnByPlayer (vehicle.detectedByPlayerList[i]) ? "1" : "0");
 		}
 	}
 
 	// write all stored vehicles
-	for (unsigned int i = 0; i < Vehicle->storedUnits.size(); i++)
+	for (unsigned int i = 0; i < vehicle.storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (server, Vehicle->storedUnits[i], unitnum);
-		addAttributeElement (storedNode, "Stored_In", "id", iToStr (Vehicle->iID), "is_vehicle", "1");
+		TiXmlElement* storedNode = writeUnit (server, *vehicle.storedUnits[i], unitnum);
+		addAttributeElement (storedNode, "Stored_In", "id", iToStr (vehicle.iID), "is_vehicle", "1");
 	}
 	return unitNode;
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUnit (const cServer& server, const cBuilding* Building, int* unitnum)
+void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int* unitnum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1475,71 +1475,71 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding* Building, int
 	TiXmlElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
 
 	// write main information
-	addAttributeElement (unitNode, "Type", "string", Building->data.ID.getText());
-	addAttributeElement (unitNode, "ID", "num", iToStr (Building->iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (Building->owner->Nr));
-	addAttributeElement (unitNode, "Position", "x", iToStr (Building->PosX), "y", iToStr (Building->PosY));
+	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
+	addAttributeElement (unitNode, "ID", "num", iToStr (building.iID));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (building.owner->Nr));
+	addAttributeElement (unitNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
-	addAttributeElement (unitNode, "Name", "string", Building->isNameOriginal() ? Building->data.name : Building->getName(), "notDefault", Building->isNameOriginal() ? "0" : "1");
+	addAttributeElement (unitNode, "Name", "string", building.isNameOriginal() ? building.data.name : building.getName(), "notDefault", building.isNameOriginal() ? "0" : "1");
 
 	// write the standard values
-	writeUnitValues (unitNode, &Building->data, &Building->owner->BuildingData[Building->typ->nr]);
+	writeUnitValues (unitNode, &building.data, &building.owner->BuildingData[building.typ->nr]);
 
 	// write additional stauts information
-	if (Building->IsWorking) addMainElement (unitNode, "IsWorking");
-	if (Building->wasWorking) addMainElement (unitNode, "wasWorking");
-	if (Building->turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (Building->turnsDisabled));
+	if (building.IsWorking) addMainElement (unitNode, "IsWorking");
+	if (building.wasWorking) addMainElement (unitNode, "wasWorking");
+	if (building.turnsDisabled > 0) addAttributeElement (unitNode, "Disabled", "turns", iToStr (building.turnsDisabled));
 
-	if (Building->data.canResearch)
+	if (building.data.canResearch)
 	{
 		TiXmlElement* researchNode = addMainElement (unitNode, "ResearchArea");
-		researchNode->SetAttribute ("area", iToStr (Building->researchArea).c_str());
+		researchNode->SetAttribute ("area", iToStr (building.researchArea).c_str());
 	}
-	if (Building->data.canScore)
+	if (building.data.canScore)
 	{
-		addAttributeElement (unitNode, "Score", "num", iToStr (Building->points));
+		addAttributeElement (unitNode, "Score", "num", iToStr (building.points));
 	}
-	if (Building->sentryActive) addMainElement (unitNode, "OnSentry");
-	if (Building->manualFireActive) addMainElement (unitNode, "ManualFire");
-	if (Building->hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
+	if (building.sentryActive) addMainElement (unitNode, "OnSentry");
+	if (building.manualFireActive) addMainElement (unitNode, "ManualFire");
+	if (building.hasBeenAttacked) addMainElement (unitNode, "HasBeenAttacked");
 
 	// write the buildlist
-	if (Building->BuildList && Building->BuildList->size() > 0)
+	if (building.BuildList && building.BuildList->size() > 0)
 	{
 		TiXmlElement* buildNode = addMainElement (unitNode, "Building");
-		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (Building->BuildSpeed));
-		addAttributeElement (buildNode, "MetalPerRound", "num", iToStr (Building->MetalPerRound));
-		if (Building->RepeatBuild) addMainElement (buildNode, "RepeatBuild");
+		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.BuildSpeed));
+		addAttributeElement (buildNode, "MetalPerRound", "num", iToStr (building.MetalPerRound));
+		if (building.RepeatBuild) addMainElement (buildNode, "RepeatBuild");
 
 		TiXmlElement* buildlistNode = addMainElement (buildNode, "BuildList");
-		for (unsigned int i = 0; i < Building->BuildList->size(); i++)
+		for (unsigned int i = 0; i < building.BuildList->size(); i++)
 		{
-			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", (*Building->BuildList) [i]->type.getText(), "metall_remaining", iToStr ( (*Building->BuildList) [i]->metall_remaining));
+			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", (*building.BuildList) [i]->type.getText(), "metall_remaining", iToStr ( (*building.BuildList) [i]->metall_remaining));
 		}
 	}
 
 	// write from which players this unit has been detected
-	if (Building->detectedByPlayerList.size() > 0)
+	if (building.detectedByPlayerList.size() > 0)
 	{
 		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
-		for (unsigned int i = 0; i < Building->detectedByPlayerList.size(); i++)
+		for (unsigned int i = 0; i < building.detectedByPlayerList.size(); i++)
 		{
-			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (Building->detectedByPlayerList[i]->Nr));
+			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (building.detectedByPlayerList[i]->Nr));
 		}
 	}
 
 	// write all stored vehicles
-	for (unsigned int i = 0; i < Building->storedUnits.size(); i++)
+	for (unsigned int i = 0; i < building.storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (server, Building->storedUnits[i], unitnum);
-		addAttributeElement (storedNode, "Stored_In", "id", iToStr (Building->iID), "is_vehicle", "0");
+		TiXmlElement* storedNode = writeUnit (server, *building.storedUnits[i], unitnum);
+		addAttributeElement (storedNode, "Stored_In", "id", iToStr (building.iID), "is_vehicle", "0");
 	}
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeRubble (const cServer& server, const cBuilding* Building, int rubblenum)
+void cSavegame::writeRubble (const cServer& server, const cBuilding& building, int rubblenum)
 {
 	// add units node if it doesn't exists
 	TiXmlElement* unitsNode;
@@ -1552,9 +1552,9 @@ void cSavegame::writeRubble (const cServer& server, const cBuilding* Building, i
 	// add the rubble node
 	TiXmlElement* rubbleNode = addMainElement (unitsNode, "Rubble_" + iToStr (rubblenum));
 
-	addAttributeElement (rubbleNode, "Position", "x", iToStr (Building->PosX), "y", iToStr (Building->PosY));
-	addAttributeElement (rubbleNode, "RubbleValue", "num", iToStr (Building->RubbleValue));
-	if (Building->data.isBig) addMainElement (rubbleNode, "Big");
+	addAttributeElement (rubbleNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
+	addAttributeElement (rubbleNode, "RubbleValue", "num", iToStr (building.RubbleValue));
+	if (building.data.isBig) addMainElement (rubbleNode, "Big");
 }
 
 //--------------------------------------------------------------------------

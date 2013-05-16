@@ -26,7 +26,7 @@
 #include "video.h"
 
 
-/** diffrent fonttypes*/
+/** different fonttypes*/
 enum eUnicodeFontType
 {
 	FONT_LATIN_NORMAL,
@@ -38,7 +38,7 @@ enum eUnicodeFontType
 	FONT_LATIN_SMALL_YELLOW,
 };
 
-/** diffrent sizes that fonttypes can have*/
+/** different sizes that fonttypes can have*/
 enum eUnicodeFontSize
 {
 	FONT_SIZE_NORMAL,
@@ -46,10 +46,10 @@ enum eUnicodeFontSize
 	FONT_SIZE_SMALL,
 };
 
-/** diffrent ISO-8559-X charsets*/
+/** different ISO-8559-X charsets*/
 enum eUnicodeFontCharset
 {
-	CHARSET_ISO8559_ALL,	// main part of the charsets which is the same in all charsets
+	CHARSET_ISO8559_ALL, // main part of the charsets which is the same in all charsets
 	CHARSET_ISO8559_1,
 	CHARSET_ISO8559_2,
 	CHARSET_ISO8559_3,
@@ -61,7 +61,7 @@ enum eUnicodeFontCharset
 	CHARSET_ISO8559_9,
 	CHARSET_ISO8559_10,
 	CHARSET_ISO8559_11,
-	CHARSET_ISO8559_12,		// doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
+	CHARSET_ISO8559_12, // doesn't exists but is just a placeholder that the enum-numbers are the same as the iso-numbers
 	CHARSET_ISO8559_13,
 	CHARSET_ISO8559_14,
 	CHARSET_ISO8559_15,

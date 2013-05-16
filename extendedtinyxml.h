@@ -78,8 +78,8 @@ public:
 	int XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode);
 
 	bool XmlDataToBool (std::string& rstrData);
-	inline long XmlDataToLong (std::string& rstrData) { return atol (rstrData.c_str()); };
-	inline double XmlDataToDouble (std::string& rstrData) { return atof (rstrData.c_str()); };
+	inline long XmlDataToLong (std::string& rstrData) const { return atol (rstrData.c_str()); }
+	inline double XmlDataToDouble (std::string& rstrData) const { return atof (rstrData.c_str()); }
 	int CheckTimeStamp (std::string& rstrData);
 };
 

@@ -247,9 +247,9 @@ struct sTerrain
 	AutoSurface sf_org;  /** the original surface of the terrain */
 	AutoSurface shw;     /** the scaled surface of the terrain in the fog */
 	AutoSurface shw_org; /** the original surface of the terrain in the fog */
-	bool water;				/** is this terrain water? */
-	bool coast;				/** is this terrain a coast? */
-	bool blocked;			/** is this terrain blocked? */
+	bool water;          /** is this terrain water? */
+	bool coast;          /** is this terrain a coast? */
+	bool blocked;        /** is this terrain blocked? */
 };
 
 
@@ -267,12 +267,12 @@ public:
 	*/
 	cMapField* fields;
 	sResources* Resources; // field with the ressource data
-	std::string MapName;  // name of the current map
+	std::string MapName;   // name of the current map
 
-	SDL_Color palette[256];	//Palette with all Colors for the terrain graphics
+	SDL_Color palette[256]; //Palette with all Colors for the terrain graphics
 	SDL_Color palette_shw[256];
 
-	int iNumberOfTerrains;		// Number of terrain graphics for this map
+	int iNumberOfTerrains; // Number of terrain graphics for this map
 	sTerrain* terrain; // Terrain graphics
 
 	bool isWater (int x, int y, bool not_coast = false) const;
@@ -310,14 +310,14 @@ public:
 	void deleteBuilding (const cBuilding* building);
 	void deleteVehicle (const cVehicle* vehicle);
 
-	int getMapLevel (const cBuilding* building) const;
-	int getMapLevel (const cVehicle* vehicle) const;
+	int getMapLevel (const cBuilding& building) const;
+	int getMapLevel (const cVehicle& vehicle) const;
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
 	* if checkPlayer is passed, the function uses the players point of view, so it does not check for units that are not in sight
 	*/
-	bool possiblePlace (const cVehicle* vehicle, int x, int y, bool checkPlayer = false) const;
+	bool possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer = false) const;
 	bool possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer = false) const;
 
 	/**
@@ -325,9 +325,9 @@ public:
 	* if a vehicle is passed, it will be ignored in the check, so a constructing vehicle does not block its own position
 	* note, that the function can only check for map border overflows (with margin), if you pass xy coordinates instead of an offset
 	*/
-	bool possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, cVehicle* vehicle = NULL) const;
-	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, cVehicle* vehicle = NULL) const;
-	bool possiblePlaceBuilding (const sUnitData& buildingData, int offset, cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, const cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle = NULL) const;
+	bool possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle = NULL) const;
 
 	/**
 	* removes all units from the map structure

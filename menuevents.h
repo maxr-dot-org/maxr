@@ -46,31 +46,31 @@ enum eMenuMessages
 	MU_MSG_ALL_LANDED,			// all players have selcted there landing points and clients can start game
 };
 
-void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, sMenuPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
+void sendMenuChatMessage (cTCP& network, const std::string& chatMsg, const sMenuPlayer* player = NULL, int fromPlayerNr = -1, bool translationText = false);
 
-void sendRequestIdentification (cTCP& network, const sMenuPlayer* player);
+void sendRequestIdentification (cTCP& network, const sMenuPlayer& player);
 
 void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players);
 
-void sendGameData (cTCP& network, const cGameDataContainer* gameData, const std::string& saveGameString, sMenuPlayer* player = NULL);
+void sendGameData (cTCP& network, const cGameDataContainer& gameData, const std::string& saveGameString, const sMenuPlayer* player = NULL);
 
 void sendGo (cTCP& network);
 
-void sendIdentification (cTCP& network, const sMenuPlayer* player);
+void sendIdentification (cTCP& network, const sMenuPlayer& player);
 
 void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer);
 
 void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingList, int ownerNr, bool isServer);
 
-void sendUnitUpgrades (cTCP* network, const cPlayer* player, bool isServer);
+void sendUnitUpgrades (cTCP* network, const cPlayer& player, bool isServer);
 
 void sendLandingCoords (cTCP& network, const sClientLandData& c, int ownerNr, bool isServer);
 
-void sendReselectLanding (cTCP& network, eLandingState state, sMenuPlayer* player);
+void sendReselectLanding (cTCP& network, eLandingState state, const sMenuPlayer* player);
 
 void sendAllLanded (cTCP& network);
 
-void sendGameIdentification (cTCP& network, const sMenuPlayer* player, int socket);
+void sendGameIdentification (cTCP& network, const sMenuPlayer& player, int socket);
 
 void sendReconnectionSuccess (cTCP& network, int playerNr);
 

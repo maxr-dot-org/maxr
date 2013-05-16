@@ -185,7 +185,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.size(), message->popInt16());
 			menuPlayers.push_back (player);
 			sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
-			sendRequestIdentification (*network, player);
+			sendRequestIdentification (*network, *player);
 			break;
 		}
 		case TCP_CLOSE: // TODO: this is only ok in cNetwork(Host)Menu. when server runs already, it must be treated another way
@@ -215,7 +215,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			for (size_t i = 0; i < menuPlayers.size(); i++)
 			{
 				menuPlayers[i]->nr = i;
-				sendRequestIdentification (*network, menuPlayers[i]);
+				sendRequestIdentification (*network, *menuPlayers[i]);
 			}
 			sendPlayerList (*network, menuPlayers);
 
@@ -239,11 +239,11 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 			//	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name)); // TODO: instead send a chat message to all players?
 
 			// search double taken name or color
-			//checkTakenPlayerAttr( player );
+			//checkTakenPlayerAttr (player);
 
 			sendPlayerList (*network, menuPlayers);
 			//sendGameData (*network, gameData, saveGameString, player);
-			sendGameData (*network, gameData, "", player);
+			sendGameData (*network, *gameData, "", player);
 
 			break;
 		}
@@ -305,7 +305,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 						}
 						if (gameData->map != 0 && gameData->map->LoadMap (mapName))
 						{
-							sendGameData (*network, gameData, "");
+							sendGameData (*network, *gameData, "");
 							string reply = senderPlayer->name;
 							reply += " changed the map.";
 							sendMenuChatMessage (*network, reply);
@@ -334,7 +334,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 							else
 							{
 								gameData->settings->credits = (eSettingsCredits) credits;
-								sendGameData (*network, gameData, "");
+								sendGameData (*network, *gameData, "");
 								string reply = senderPlayer->name;
 								reply += " changed the starting credits.";
 								sendMenuChatMessage (*network, reply);
@@ -390,7 +390,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 		if (density != -1)
 		{
 			gameData->settings->resFrequency = (eSettingResFrequency) density;
-			sendGameData (*network, gameData, "");
+			sendGameData (*network, *gameData, "");
 			string reply = senderPlayer->name;
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
@@ -412,7 +412,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 			if (tokens[0].compare ("oil") == 0) gameData->settings->oil = (eSettingResourceValue) ammount;
 			else if (tokens[0].compare ("metal") == 0) gameData->settings->metal = (eSettingResourceValue) ammount;
 			else if (tokens[0].compare ("gold") == 0) gameData->settings->gold = (eSettingResourceValue) ammount;
-			sendGameData (*network, gameData, "");
+			sendGameData (*network, *gameData, "");
 			string reply = senderPlayer->name;
 			reply += " changed the resource density of ";
 			reply += tokens[0];
@@ -469,7 +469,7 @@ void cServerGame::startGameServer()
 		default:
 			assert (0);
 	}
-	Server = new cServer (network, serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+	Server = new cServer (network, *serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.size(); n++)

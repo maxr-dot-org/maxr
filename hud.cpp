@@ -302,60 +302,59 @@ void cDebugOutput::trace()
 	y = 18 + 5 + 8;
 	x = 180 + 5;
 
-	if (field->getVehicles()) { traceVehicle (field->getVehicles(), &y, x); y += 20; }
-	if (field->getPlanes()) { traceVehicle (field->getPlanes(), &y, x); y += 20; }
+	if (field->getVehicles()) { traceVehicle (*field->getVehicles(), &y, x); y += 20; }
+	if (field->getPlanes()) { traceVehicle (*field->getPlanes(), &y, x); y += 20; }
 	cBuildingIterator bi = field->getBuildings();
-	while (!bi.end) { traceBuilding (bi, &y, x); y += 20; bi++;}
+	while (!bi.end) { traceBuilding (*bi, &y, x); y += 20; bi++;}
 }
 
-void cDebugOutput::traceVehicle (const cVehicle* vehicle, int* y, int x)
+void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 {
 	string tmpString;
 
-	tmpString = "name: \"" + vehicle->getDisplayName() + "\" id: \"" + iToStr (vehicle->iID) + "\" owner: \"" + vehicle->owner->name + "\" posX: +" + iToStr (vehicle->PosX) + " posY: " + iToStr (vehicle->PosY) + " offX: " + iToStr (vehicle->OffX) + " offY: " + iToStr (vehicle->OffY);
+	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.owner->name + "\" posX: +" + iToStr (vehicle.PosX) + " posY: " + iToStr (vehicle.PosY) + " offX: " + iToStr (vehicle.OffX) + " offY: " + iToStr (vehicle.OffY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "dir: " + iToStr (vehicle->dir) + " moving: +" + iToStr (vehicle->moving) + " mjob: "  + pToStr (vehicle->ClientMoveJob) + " speed: " + iToStr (vehicle->data.speedCur) + " mj_active: " + iToStr (vehicle->MoveJobActive);
+	tmpString = "dir: " + iToStr (vehicle.dir) + " moving: +" + iToStr (vehicle.moving) + " mjob: "  + pToStr (vehicle.ClientMoveJob) + " speed: " + iToStr (vehicle.data.speedCur) + " mj_active: " + iToStr (vehicle.MoveJobActive);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " attacking: " + iToStr (vehicle->attacking) + " on sentry: +" + iToStr (vehicle->sentryActive) + " ditherx: " + iToStr (vehicle->ditherX) + " dithery: " + iToStr (vehicle->ditherY);
+	tmpString = " attacking: " + iToStr (vehicle.attacking) + " on sentry: +" + iToStr (vehicle.sentryActive) + " ditherx: " + iToStr (vehicle.ditherX) + " dithery: " + iToStr (vehicle.ditherY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_building: " + iToStr (vehicle->IsBuilding) + " building_typ: " + vehicle->BuildingTyp.getText() + " build_costs: +" + iToStr (vehicle->BuildCosts) + " build_rounds: " + iToStr (vehicle->BuildRounds) + " build_round_start: " + iToStr (vehicle->BuildRoundsStart);
+	tmpString = "is_building: " + iToStr (vehicle.IsBuilding) + " building_typ: " + vehicle.BuildingTyp.getText() + " build_costs: +" + iToStr (vehicle.BuildCosts) + " build_rounds: " + iToStr (vehicle.BuildRounds) + " build_round_start: " + iToStr (vehicle.BuildRoundsStart);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " bandx: " + iToStr (vehicle->BandX) + " bandy: +" + iToStr (vehicle->BandY) + " build_big_saved_pos: " + iToStr (vehicle->BuildBigSavedPos) + " build_path: " + iToStr (vehicle->BuildPath);
+	tmpString = " bandx: " + iToStr (vehicle.BandX) + " bandy: +" + iToStr (vehicle.BandY) + " build_big_saved_pos: " + iToStr (vehicle.BuildBigSavedPos) + " build_path: " + iToStr (vehicle.BuildPath);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " is_clearing: " + iToStr (vehicle->IsClearing) + " clearing_rounds: +" + iToStr (vehicle->ClearingRounds) + " clear_big: " + iToStr (vehicle->data.isBig) + " loaded: " + iToStr (vehicle->Loaded);
+	tmpString = " is_clearing: " + iToStr (vehicle.IsClearing) + " clearing_rounds: +" + iToStr (vehicle.ClearingRounds) + " clear_big: " + iToStr (vehicle.data.isBig) + " loaded: " + iToStr (vehicle.Loaded);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "commando_rank: " + dToStr (Round (vehicle->CommandoRank, 2)) + " disabled: " + iToStr (vehicle->turnsDisabled);
+	tmpString = "commando_rank: " + dToStr (Round (vehicle.CommandoRank, 2)) + " disabled: " + iToStr (vehicle.turnsDisabled);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (vehicle->IsLocked) + " clear_mines: +" + iToStr (vehicle->ClearMines) + " lay_mines: " + iToStr (vehicle->LayMines);
+	tmpString = "is_locked: " + iToStr (vehicle.IsLocked) + " clear_mines: +" + iToStr (vehicle.ClearMines) + " lay_mines: " + iToStr (vehicle.LayMines);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
 	tmpString =
-		" vehicle_to_activate: +"  + iToStr (vehicle->VehicleToActivate) +
-		" stored_vehicles_count: " + iToStr ( (int) vehicle->storedUnits.size());
+		" vehicle_to_activate: +"  + iToStr (vehicle.VehicleToActivate) +
+		" stored_vehicles_count: " + iToStr ((int) vehicle.storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (vehicle->storedUnits.size())
+	if (vehicle.storedUnits.size())
 	{
-		const cUnit* storedVehicle;
-		for (unsigned int i = 0; i < vehicle->storedUnits.size(); i++)
+		for (unsigned int i = 0; i < vehicle.storedUnits.size(); i++)
 		{
-			storedVehicle = vehicle->storedUnits[i];
+			const cVehicle* storedVehicle = vehicle.storedUnits[i];
 			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
 			*y += 8;
 		}
@@ -364,71 +363,70 @@ void cDebugOutput::traceVehicle (const cVehicle* vehicle, int* y, int x)
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < vehicle->seenByPlayerList.size(); i++)
+		for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
 		{
-			tmpString += ", \"" + vehicle->seenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + vehicle.seenByPlayerList[i]->name + "\"";
 		}
 		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y += 8;
 	}
 
-	tmpString = "flight height: " + iToStr (vehicle->FlightHigh);
+	tmpString = "flight height: " + iToStr (vehicle.FlightHigh);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 }
 
-void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
+void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 {
 	string tmpString;
 
-	tmpString = "name: \"" + building->getDisplayName() + "\" id: \"" + iToStr (building->iID) + "\" owner: \"" + (building->owner ? building->owner->name : "<null>") + "\" posX: +" + iToStr (building->PosX) + " posY: " + iToStr (building->PosY);
+	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.owner ? building.owner->name : "<null>") + "\" posX: +" + iToStr (building.PosX) + " posY: " + iToStr (building.PosY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "dir: " + iToStr (building->dir) + " on sentry: +" + iToStr (building->sentryActive) + " sub_base: " + pToStr (building->SubBase);
+	tmpString = "dir: " + iToStr (building.dir) + " on sentry: +" + iToStr (building.sentryActive) + " sub_base: " + pToStr (building.SubBase);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "attacking: " + iToStr (building->attacking) + " UnitsData.dirt_typ: " + iToStr (building->RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building->RubbleValue) + " big_dirt: " + iToStr (building->data.isBig) + " is_working: " + iToStr (building->IsWorking);
+	tmpString = "attacking: " + iToStr (building.attacking) + " UnitsData.dirt_typ: " + iToStr (building.RubbleTyp) + " UnitsData.dirt_value: +" + iToStr (building.RubbleValue) + " big_dirt: " + iToStr (building.data.isBig) + " is_working: " + iToStr (building.IsWorking);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " max_metal_p: " + iToStr (building->MaxMetalProd) + " max_oil_p: " + iToStr (building->MaxOilProd) + " max_gold_p: " + iToStr (building->MaxGoldProd);
+	tmpString = " max_metal_p: " + iToStr (building.MaxMetalProd) + " max_oil_p: " + iToStr (building.MaxOilProd) + " max_gold_p: " + iToStr (building.MaxGoldProd);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (building->IsLocked) + " disabled: " + iToStr (building->turnsDisabled) + " vehicle_to_activate: " + iToStr (building->VehicleToActivate);
+	tmpString = "is_locked: " + iToStr (building.IsLocked) + " disabled: " + iToStr (building.turnsDisabled) + " vehicle_to_activate: " + iToStr (building.VehicleToActivate);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = " stored_vehicles_count: " + iToStr ((int) building->storedUnits.size());
+	tmpString = " stored_vehicles_count: " + iToStr ((int) building.storedUnits.size());
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building->storedUnits.size())
+	if (building.storedUnits.size())
 	{
-		const cUnit* storedVehicle;
-		for (unsigned int i = 0; i < building->storedUnits.size(); i++)
+		for (unsigned int i = 0; i < building.storedUnits.size(); i++)
 		{
-			storedVehicle = building->storedUnits[i];
+			const cVehicle* storedVehicle = building.storedUnits[i];
 			font->showText (x, *y, " store " + iToStr (i) + ": \"" + storedVehicle->getDisplayName() + "\"", FONT_LATIN_SMALL_WHITE);
 			*y += 8;
 		}
 	}
 
 	tmpString =
-		"build_speed: "        + iToStr (building->BuildSpeed)  +
-		" repeat_build: "      + iToStr (building->RepeatBuild) +
-		" build_list_count: +" + iToStr (building->BuildList ? (int) building->BuildList->size() : 0);
+		"build_speed: "        + iToStr (building.BuildSpeed)  +
+		" repeat_build: "      + iToStr (building.RepeatBuild) +
+		" build_list_count: +" + iToStr (building.BuildList ? (int) building.BuildList->size() : 0);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	if (building->BuildList && building->BuildList->size())
+	if (building.BuildList && building.BuildList->size())
 	{
 		const sBuildList* BuildingList;
-		for (unsigned int i = 0; i < building->BuildList->size(); i++)
+		for (unsigned int i = 0; i < building.BuildList->size(); i++)
 		{
-			BuildingList = (*building->BuildList) [i];
+			BuildingList = (*building.BuildList) [i];
 			font->showText (x, *y, "  build " + iToStr (i) + ": " + BuildingList->type.getText() + " \"" + BuildingList->type.getVehicle()->data.name + "\"", FONT_LATIN_SMALL_WHITE);
 			*y += 8;
 		}
@@ -437,9 +435,9 @@ void cDebugOutput::traceBuilding (const cBuilding* building, int* y, int x)
 	if (debugTraceServer)
 	{
 		tmpString = "seen by players: owner";
-		for (unsigned int i = 0; i < building->seenByPlayerList.size(); i++)
+		for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
 		{
-			tmpString += ", \"" + building->seenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + building.seenByPlayerList[i]->name + "\"";
 		}
 		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y += 8;
@@ -1860,7 +1858,7 @@ void cGameGUI::updateMouseCursor()
 				{
 					mouse->SetCursor (CNo);
 				}
-				else if (client->getMap()->possiblePlace (selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true))
+				else if (client->getMap()->possiblePlace (*selectedVehicle, mouse->getKachelX(), mouse->getKachelY(), true))
 				{
 					mouse->SetCursor (CMove);
 				}
@@ -1873,7 +1871,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if ( ( (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds == 0) ||
 					   (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds == 0)) &&
-					 client->getMap()->possiblePlace (selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo (mouse->getKachelX(), mouse->getKachelY()))
+					 client->getMap()->possiblePlace (*selectedVehicle, mouse->getKachelX(), mouse->getKachelY()) && selectedVehicle->isNextTo (mouse->getKachelX(), mouse->getKachelY()))
 				{
 					mouse->SetCursor (CMove);
 				}
@@ -2204,7 +2202,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
 		{
-			sendWantExitFinishedVehicle (*client, selectedBuilding, mouse->getKachelX(), mouse->getKachelY());
+			sendWantExitFinishedVehicle (*client, *selectedBuilding, mouse->getKachelX(), mouse->getKachelY());
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cload && selectedBuilding && mouseInputMode == loadMode)
 		{
@@ -2370,7 +2368,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				{
 					if (selectedVehicle->IsBuilding)
 					{
-						sendWantEndBuilding (*client, selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
+						sendWantEndBuilding (*client, *selectedVehicle, mouse->getKachelX(), mouse->getKachelY());
 					}
 					else
 					{
@@ -3031,7 +3029,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendWantStartWork (*client, selectedBuilding);
+		sendWantStartWork (*client, *selectedBuilding);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedVehicle && (selectedVehicle->ClientMoveJob || (selectedVehicle->IsBuilding && selectedVehicle->BuildRounds) || (selectedVehicle->IsClearing && selectedVehicle->ClearingRounds)) && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3055,22 +3053,22 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		{
 			for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 			{
-				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, selectedVehiclesGroup[i]);
+				if (selectedVehiclesGroup[i]->IsClearing && selectedVehiclesGroup[i]->ClearingRounds) sendWantStopClear (*client, *selectedVehiclesGroup[i]);
 			}
-			sendWantStopClear (*client, selectedVehicle);
+			sendWantStopClear (*client, *selectedVehicle);
 		}
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStop && selectedBuilding && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
-		sendWantStopWork (*client, selectedBuilding);
+		sendWantStopWork (*client, *selectedBuilding);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
-			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, selectedVehiclesGroup[i]);
+			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
 		}
-		sendWantStartClear (*client, selectedVehicle);
+		sendWantStartClear (*client, *selectedVehicle);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuSentry && selectedVehicle && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -3181,7 +3179,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDestructMenu destructMenu;
-		if (destructMenu.show() == 0) sendWantSelfDestroy (*client, selectedBuilding);
+		if (destructMenu.show() == 0) sendWantSelfDestroy (*client, *selectedBuilding);
 	}
 	// Hotkeys for the hud
 	else if (key.keysym.sym == KeysList.KeyFog) setFog (!fogChecked());
@@ -4196,29 +4194,29 @@ void cGameGUI::drawUnitCircles()
 		{
 			if (v.data.isBig)
 			{
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(),     spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,                spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(),     spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX + 2, v.PosY - 1)) drawExitPoint (spx + getTileSize() * 2, spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(),     spy);
-				if (map->possiblePlace (&v, v.PosX + 2, v.PosY)) drawExitPoint (spx + getTileSize() * 2, spy);
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(),     spy + getTileSize());
-				if (map->possiblePlace (&v, v.PosX + 2, v.PosY + 1)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize());
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY + 2)) drawExitPoint (spx - getTileSize(),     spy + getTileSize() * 2);
-				if (map->possiblePlace (&v, v.PosX    , v.PosY + 2)) drawExitPoint (spx,                spy + getTileSize() * 2);
-				if (map->possiblePlace (&v, v.PosX + 1, v.PosY + 2)) drawExitPoint (spx + getTileSize(),     spy + getTileSize() * 2);
-				if (map->possiblePlace (&v, v.PosX + 2, v.PosY + 2)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize() * 2);
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(),     spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,                spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(),     spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX + 2, v.PosY - 1)) drawExitPoint (spx + getTileSize() * 2, spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(),     spy);
+				if (map->possiblePlace (v, v.PosX + 2, v.PosY)) drawExitPoint (spx + getTileSize() * 2, spy);
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(),     spy + getTileSize());
+				if (map->possiblePlace (v, v.PosX + 2, v.PosY + 1)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize());
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY + 2)) drawExitPoint (spx - getTileSize(),     spy + getTileSize() * 2);
+				if (map->possiblePlace (v, v.PosX    , v.PosY + 2)) drawExitPoint (spx,                spy + getTileSize() * 2);
+				if (map->possiblePlace (v, v.PosX + 1, v.PosY + 2)) drawExitPoint (spx + getTileSize(),     spy + getTileSize() * 2);
+				if (map->possiblePlace (v, v.PosX + 2, v.PosY + 2)) drawExitPoint (spx + getTileSize() * 2, spy + getTileSize() * 2);
 			}
 			else
 			{
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(), spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,            spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(), spy - getTileSize());
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(), spy);
-				if (map->possiblePlace (&v, v.PosX + 1, v.PosY)) drawExitPoint (spx + getTileSize(), spy);
-				if (map->possiblePlace (&v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(), spy + getTileSize());
-				if (map->possiblePlace (&v, v.PosX    , v.PosY + 1)) drawExitPoint (spx,            spy + getTileSize());
-				if (map->possiblePlace (&v, v.PosX + 1, v.PosY + 1)) drawExitPoint (spx + getTileSize(), spy + getTileSize());
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY - 1)) drawExitPoint (spx - getTileSize(), spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX    , v.PosY - 1)) drawExitPoint (spx,            spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX + 1, v.PosY - 1)) drawExitPoint (spx + getTileSize(), spy - getTileSize());
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY)) drawExitPoint (spx - getTileSize(), spy);
+				if (map->possiblePlace (v, v.PosX + 1, v.PosY)) drawExitPoint (spx + getTileSize(), spy);
+				if (map->possiblePlace (v, v.PosX - 1, v.PosY + 1)) drawExitPoint (spx - getTileSize(), spy + getTileSize());
+				if (map->possiblePlace (v, v.PosX    , v.PosY + 1)) drawExitPoint (spx,            spy + getTileSize());
+				if (map->possiblePlace (v, v.PosX + 1, v.PosY + 1)) drawExitPoint (spx + getTileSize(), spy + getTileSize());
 			}
 		}
 		if (mouseInputMode == placeBand)

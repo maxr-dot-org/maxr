@@ -105,7 +105,7 @@ public:
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
 	std::vector<sLockElem*> LockList;           // Liste mit gelockten Objekten.
 	int iSocketNum;			// Number of socket over which this player is connected in network game
-	// if MAX_CLIENTS its the lokal connected player; -1 for unknown
+	// if MAX_CLIENTS its the local connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
 	bool isDefeated;			// true if the player has been defeated
 	bool isRemovedFromGame;		// true if the player has been removed from the game.
@@ -129,8 +129,8 @@ public:
 	void AddLock (cVehicle* v);
 	void DeleteLock (cBuilding* b);
 	void DeleteLock (cVehicle* v);
-	bool InLockList (const cBuilding* b) const;
-	bool InLockList (const cVehicle* v) const;
+	bool InLockList (const cBuilding& b) const;
+	bool InLockList (const cVehicle& v) const;
 	void ToggelLock (cMapField* OverUnitField);
 	void DrawLockList (cGameGUI& gameGUI);
 	void CountEcoSpheres();

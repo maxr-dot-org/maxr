@@ -123,7 +123,7 @@ void cClient::sendNetMessage (cNetMessage* message) const
 
 	if (!network || network->isHost())
 	{
-		//push an event to the lokal server in singleplayer, HotSeat or if this machine is the host
+		//push an event to the local server in singleplayer, HotSeat or if this machine is the host
 		Server->pushEvent (message);
 	}
 	else // else send it over the net
@@ -1718,7 +1718,7 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	for (int i = ActivePlayer->savedReportsList.size() - 50; i < (int) ActivePlayer->savedReportsList.size(); i++)
 	{
 		if (i < 0) continue;
-		sendSaveReportInfo (*this, &ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID);
+		sendSaveReportInfo (*this, ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID);
 	}
 	sendFinishedSendSaveInfo (*this, ActivePlayer->Nr, saveingID);
 }

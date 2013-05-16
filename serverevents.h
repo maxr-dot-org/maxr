@@ -101,19 +101,19 @@ void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle,
 *@param unit unit that has to be deleted
 *@param iClient The client who schould receive this event. -1 for all Clients who can see the unit
 */
-void sendDeleteUnit (cServer& server, const cUnit* unit, int iClient);
-void sendDeleteUnitMessage (cServer& server, const cUnit* unit, int playerNr);  ///< playerNr must be the number of a valid player
+void sendDeleteUnit (cServer& server, const cUnit& unit, int iClient);
+void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr);  ///< playerNr must be the number of a valid player
 /**
 * adds a rubble object to the client
 */
-void sendAddRubble (cServer& server, const cBuilding* building, int iPlayer);
+void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer);
 /**
 * Sends an event to a player that he has detected an enemy unit and should add it
 *@author alzi alias DoctorDeath
 *@param unit The unit that should be added by the player
 *@param iCLient The client who schould receive this event
 */
-void sendAddEnemyUnit (cServer& server, const cUnit* unit, int iCLient);
+void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iCLient);
 /**
 * A client has to make a turnend
 *@author alzi alias DoctorDeath
@@ -137,9 +137,9 @@ void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cP
 *@param unit The unit from which the data should be taken
 *@param iPlayer Player who should receive this message
 */
-void sendUnitData (cServer& server, const cUnit* unit, int iPlayer);
+void sendUnitData (cServer& server, const cUnit& unit, int iPlayer);
 
-void sendSpecificUnitData (cServer& server, const cVehicle* Vehicle);
+void sendSpecificUnitData (cServer& server, const cVehicle& Vehicle);
 
 /**
 * sends a text message to one or all client
@@ -154,37 +154,37 @@ void sendChatMessageToClient (cServer& server, const std::string& message, int i
 * sends all nessesary information to all clients to start the building
 *@ author Eiko
 */
-void sendDoStartWork (cServer& server, const cBuilding* building);
+void sendDoStartWork (cServer& server, const cBuilding& building);
 
 /**
 * sends all nessesary information to all clients to stop the building
 *@ author Eiko
 */
-void sendDoStopWork (cServer& server, const cBuilding* building);
+void sendDoStopWork (cServer& server, const cBuilding& building);
 
 /**
 * sends information about the move to the next field of a client
 *@author alzi alias DoctorDeath
 */
-void sendNextMove (cServer& server, const cVehicle* vehicle, int iType, int iSavedSpeed = -1);
+void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed = -1);
 
 /**
 * sends all waypoints of a movejob to a client. If the movejob is already running,
 * the sourceoffset will be changed to the actual position of the vehicle
 *@author alzi alias DoctorDeath
 */
-void sendMoveJobServer (cServer& server, const cServerMoveJob* MoveJob, int iPlayer);
+void sendMoveJobServer (cServer& server, const cServerMoveJob& MoveJob, int iPlayer);
 /**
 * sends the resourcedata of new scaned fields around the unit to a client
 *@author alzi alias DoctorDeath
 */
-void sendVehicleResources (cServer& server, const cVehicle* Vehicle, const cMap* Map);
-void sendResources (cServer& server, const cPlayer* Player);
+void sendVehicleResources (cServer& server, const cVehicle& vehicle, const cMap& map);
+void sendResources (cServer& server, const cPlayer& player);
 /**
 * sends an answer to a client wheter and how he has to build.
 *@author alzi alias DoctorDeath
 */
-void sendBuildAnswer (cServer& server, bool bOK, const cVehicle* vehicle);
+void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle);
 /**
 * sends that a vehicle has to stop building
 *@author alzi alias DoctorDeath
@@ -193,27 +193,27 @@ void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer);
 /**
 * send the values if a subbase.
 *@author alzi alias DoctorDeath
-*@param SubBase the subbase which values should be send
+*@param subbase the subbase which values should be send
 */
-void sendSubbaseValues (cServer& server, const sSubBase* SubBase, int iPlayer);
+void sendSubbaseValues (cServer& server, const sSubBase& subbase, int iPlayer);
 /**
 * sends a list with all units which are wanted to be produced by the building
 *@author alzi alias DoctorDeath
-*@param Building the building which buildlist should be send
+*@param building the building which buildlist should be send
 */
-void sendBuildList (cServer& server, const cBuilding* Building);
+void sendBuildList (cServer& server, const cBuilding& building);
 /**
 * send the new values of resource production of a building
 *@author alzi alias DoctorDeath
-*@param Building the building which producevalues should be send
+*@param building the building which producevalues should be send
 */
-void sendProduceValues (cServer& server, const cBuilding* Building);
+void sendProduceValues (cServer& server, const cBuilding& building);
 /**
 * sends the turnstart report of a player
 *@author alzi alias DoctorDeath
 *@param Player player to who his report should be send
 */
-void sendTurnReport (cServer& server, cPlayer* Player);
+void sendTurnReport (cServer& server, cPlayer& player);
 /**
 * sends that a unit has to be rearmed or repaired
 *@author alzi alias DoctorDeath
@@ -228,18 +228,18 @@ void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, in
 * informs the owner of the vehicle wether the vehicle has been detected by another player.
 * this is used by the client for correct drawing of the unit
 */
-void sendDetectionState (cServer& server, const cVehicle* vehicle);
+void sendDetectionState (cServer& server, const cVehicle& vehicle);
 
 /**
 * sends whether and how the unit has to clean the field
 *@author alzi alias DoctorDeath
 */
-void sendClearAnswer (cServer& server, int answertype, const cVehicle* Vehicle, int turns, int bigoffset, int iPlayer);
+void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, int bigoffset, int iPlayer);
 /**
 * sends that a unit has to stop clearing
 *@author alzi alias DoctorDeath
 */
-void sendStopClear (cServer& server, const cVehicle* Vehicle, int bigoffset, int iPlayer);
+void sendStopClear (cServer& server, const cVehicle& vehicle, int bigoffset, int iPlayer);
 /**
 * sends that the player has to set his hole ScanMap to 1
 *@author alzi alias DoctorDeath
@@ -249,7 +249,7 @@ void sendNoFog (cServer& server, int iPlayer);
 * sends that a player has been defeated
 *@author alzi alias DoctorDeath
 */
-void sendDefeated (cServer& server, const cPlayer* Player, int iPlayerNum = -1);
+void sendDefeated (cServer& server, const cPlayer& player, int iPlayerNum = -1);
 /**
 * sends that a client has to wait untill he will be defrezzed
 *@param waitForPlayer tells the client, for which other player he is waiting
@@ -268,50 +268,50 @@ void sendWaitFor (cServer& server, int waitForPlayerNr, int iPlayer = -1);
 * sends that a player has to be deleted
 *@author alzi alias DoctorDeath
 */
-void sendDeletePlayer (cServer& server, const cPlayer* Player, int iPlayer = -1);
+void sendDeletePlayer (cServer& server, const cPlayer& player, int iPlayer = -1);
 /**
 * the server wants to get an identification of the new connected player
 *@author alzi alias DoctorDeath
 */
 void sendRequestIdentification (cTCP& network, int iSocket);
 /**
-* the server gives his ok to the reconnection
+* the server gives its ok to the reconnection
 *@author alzi alias DoctorDeath
 */
-void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPlayer* Player);
-void sendTurn (cServer& server, int turn, const cPlayer* Player);
-void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer* Player);
+void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPlayer* player);
+void sendTurn (cServer& server, int turn, const cPlayer& player);
+void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, int player);
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, int x, int y, int player);
 void sendDeleteEverything (cServer& server, int player);
-void sendUnitUpgrades (cServer& server, const sUnitData* Data, int player);
+void sendUnitUpgrades (cServer& server, const sUnitData& Data, int player);
 void sendCredits (cServer& server, int newCredits, int player);
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, int player);
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player);
 void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<int>& newAreasForResearchCenters, int player);
-void sendResearchLevel (cServer& server, const cResearch* researchLevel, int player);
+void sendResearchLevel (cServer& server, const cResearch& researchLevel, int player);
 void sendRefreshResearchCount (cServer& server, int player);
 void sendClansToClients (cServer& server, const std::vector<cPlayer*>& playerList);
-void sendGameTime (cServer& server, const cPlayer* player, int gameTime);
-void sendSetAutomoving (cServer& server, const cVehicle* Vehicle);
+void sendGameTime (cServer& server, const cPlayer& player, int gameTime);
+void sendSetAutomoving (cServer& server, const cVehicle& vehicle);
 /**
 * sends the result of a infiltrating action to the client
 *@author alzi alias DoctorDeath
 */
-void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehicle* srcUnit, int player);
+void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehicle& srcUnit, int player);
 void sendRequestSaveInfo (cServer& server, const int saveingID);
 void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, int player);
 
 void sendCasualtiesReport (cServer& server, int player);
 
-void sendScore (cServer& server, const cPlayer* Subject, int turn, const cPlayer* Receiver = 0);
-void sendNumEcos (cServer& server, cPlayer* Subject, const cPlayer* Receiver = 0);
-void sendUnitScore (cServer& server, const cBuilding*);
+void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* Receiver = 0);
+void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* Receiver = 0);
+void sendUnitScore (cServer& server, const cBuilding&);
 void sendVictoryConditions (cServer& server, int turnLimit, int scoreLimit, const cPlayer* receiver = 0);
 
-void sendSelfDestroy (cServer& server, const cBuilding* building);
+void sendSelfDestroy (cServer& server, const cBuilding& building);
 
-void sendEndMoveActionToClient (cServer& server, const cVehicle* vehicle, int destID, eEndMoveActionType type);
+void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type);
 
 
 #endif // servereventsH

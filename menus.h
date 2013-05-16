@@ -284,7 +284,7 @@ protected:
 	 */
 	cMenu (SDL_Surface* background_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 
-	virtual void preDrawFunction() {};
+	virtual void preDrawFunction() {}
 
 	/** Recalculates the position and size of the menu.
 	 */

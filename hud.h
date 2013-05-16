@@ -149,8 +149,8 @@ public:
 	void draw();
 private:
 	void trace();
-	void traceVehicle (const cVehicle* vehicle, int* iY, int iX);
-	void traceBuilding (const cBuilding* Building, int* iY, int iX);
+	void traceVehicle (const cVehicle& vehicle, int* iY, int iX);
+	void traceBuilding (const cBuilding& Building, int* iY, int iX);
 };
 
 class cGameGUI : public cMenu

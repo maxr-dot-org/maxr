@@ -41,17 +41,17 @@ void sendWantToEndTurn(const cClient &client)
 	client.sendNetMessage (message);
 }
 
-void sendWantStartWork (const cClient &client, const cUnit* building)
+void sendWantStartWork (const cClient &client, const cUnit& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_START_WORK);
-	message->pushInt32 (building->iID);
+	message->pushInt32 (building.iID);
 	client.sendNetMessage (message);
 }
 
-void sendWantStopWork (const cClient &client, const cUnit* building)
+void sendWantStopWork (const cClient &client, const cUnit& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_STOP_WORK);
-	message->pushInt32 (building->iID);
+	message->pushInt32 (building.iID);
 	client.sendNetMessage (message);
 }
 
@@ -115,34 +115,34 @@ void sendWantAttack (const cClient &client, int targetID, int targetOffset, int 
 	client.sendNetMessage (message);
 }
 
-void sendMineLayerStatus (const cClient &client, const cVehicle* Vehicle)
+void sendMineLayerStatus (const cClient &client, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MINELAYERSTATUS);
-	message->pushBool (Vehicle->LayMines);
-	message->pushBool (Vehicle->ClearMines);
-	message->pushInt16 (Vehicle->iID);
+	message->pushBool (vehicle.LayMines);
+	message->pushBool (vehicle.ClearMines);
+	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
 
-void sendWantBuild (const cClient &client, int iVehicleID, sID BuildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff)
+void sendWantBuild (const cClient &client, int iVehicleID, sID buildingTypeID, int iBuildSpeed, int iBuildOff, bool bBuildPath, int iPathOff)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILD);
 	message->pushInt32 (iPathOff);
 	message->pushBool (bBuildPath);
 	message->pushInt32 (iBuildOff);
 	message->pushInt16 (iBuildSpeed);
-	message->pushInt16 (BuildingTypeID.iSecondPart);
-	message->pushInt16 (BuildingTypeID.iFirstPart);
+	message->pushInt16 (buildingTypeID.iSecondPart);
+	message->pushInt16 (buildingTypeID.iFirstPart);
 	message->pushInt16 (iVehicleID);
 	client.sendNetMessage (message);
 }
 
-void sendWantEndBuilding (const cClient &client, const cVehicle* Vehicle, int EscapeX, int EscapeY)
+void sendWantEndBuilding (const cClient &client, const cVehicle& vehicle, int escapeX, int escapeY)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_END_BUILDING);
-	message->pushInt16 (EscapeY);
-	message->pushInt16 (EscapeX);
-	message->pushInt16 (Vehicle->iID);
+	message->pushInt16 (escapeY);
+	message->pushInt16 (escapeX);
+	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
 
@@ -165,37 +165,37 @@ void sendWantTransfer (const cClient &client, bool bSrcVehicle, int iSrcID, bool
 	client.sendNetMessage (message);
 }
 
-void sendWantBuildList (const cClient &client, const cBuilding* Building, const std::vector<sBuildList>& BuildList, bool bRepeat, int buildSpeed)
+void sendWantBuildList (const cClient &client, const cBuilding& building, const std::vector<sBuildList>& buildList, bool bRepeat, int buildSpeed)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_BUILDLIST);
 	message->pushBool (bRepeat);
-	for (int i = (int) BuildList.size() - 1; i >= 0; i--)
+	for (int i = (int) buildList.size() - 1; i >= 0; i--)
 	{
-		message->pushInt16 (BuildList[i].type.iSecondPart);
-		message->pushInt16 (BuildList[i].type.iFirstPart);
+		message->pushInt16 (buildList[i].type.iSecondPart);
+		message->pushInt16 (buildList[i].type.iFirstPart);
 	}
-	message->pushInt16 ( (int) BuildList.size());
+	message->pushInt16 ((int) buildList.size());
 	message->pushInt16 (buildSpeed);
-	message->pushInt16 (Building->iID);
+	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);
 }
 
-void sendWantExitFinishedVehicle (const cClient &client, const cBuilding* Building, int iX, int iY)
+void sendWantExitFinishedVehicle (const cClient &client, const cBuilding& building, int iX, int iY)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_EXIT_FIN_VEH);
 	message->pushInt16 (iY);
 	message->pushInt16 (iX);
-	message->pushInt16 (Building->iID);
+	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);
 }
 
-void sendChangeResources (const cClient &client, const cBuilding* Building, int iMetalProd, int iOilProd, int iGoldProd)
+void sendChangeResources (const cClient &client, const cBuilding& building, int iMetalProd, int iOilProd, int iGoldProd)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_CHANGE_RESOURCES);
 	message->pushInt16 (iGoldProd);
 	message->pushInt16 (iOilProd);
 	message->pushInt16 (iMetalProd);
-	message->pushInt16 (Building->iID);
+	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);
 }
 
@@ -226,17 +226,17 @@ void sendWantSupply (const cClient &client, int iDestID, bool bDestVehicle, int 
 	client.sendNetMessage (message);
 }
 
-void sendWantStartClear (const cClient &client, const cUnit* unit)
+void sendWantStartClear (const cClient &client, const cUnit& unit)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_START_CLEAR);
-	message->pushInt16 (unit->iID);
+	message->pushInt16 (unit.iID);
 	client.sendNetMessage (message);
 }
 
-void sendWantStopClear (const cClient &client, const cUnit* unit)
+void sendWantStopClear (const cClient &client, const cUnit& unit)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_STOP_CLEAR);
-	message->pushInt16 (unit->iID);
+	message->pushInt16 (unit.iID);
 	client.sendNetMessage (message);
 }
 
@@ -266,10 +266,10 @@ void sendWantActivate (const cClient &client, int unitid, bool vehicle, int acti
 	client.sendNetMessage (message);
 }
 
-void sendRequestResync (const cClient &client, char PlayerNr)
+void sendRequestResync (const cClient &client, char playerNr)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_REQUEST_RESYNC);
-	message->pushChar (PlayerNr);
+	message->pushChar (playerNr);
 	client.sendNetMessage (message);
 }
 
@@ -335,16 +335,16 @@ void sendSaveHudInfo (const cClient &client, int selectedUnitID, int ownerNr, in
 	client.sendNetMessage (message);
 }
 
-void sendSaveReportInfo (const cClient &client, const sSavedReportMessage* savedReport, int ownerNr, int savingID)
+void sendSaveReportInfo (const cClient &client, const sSavedReportMessage& savedReport, int ownerNr, int savingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_REPORT_INFO);
-	message->pushInt16 (savedReport->colorNr);
-	message->pushInt16 (savedReport->unitID.iSecondPart);
-	message->pushInt16 (savedReport->unitID.iFirstPart);
-	message->pushInt16 (savedReport->yPos);
-	message->pushInt16 (savedReport->xPos);
-	message->pushInt16 (savedReport->type);
-	message->pushString (savedReport->message);
+	message->pushInt16 (savedReport.colorNr);
+	message->pushInt16 (savedReport.unitID.iSecondPart);
+	message->pushInt16 (savedReport.unitID.iFirstPart);
+	message->pushInt16 (savedReport.yPos);
+	message->pushInt16 (savedReport.xPos);
+	message->pushInt16 (savedReport.type);
+	message->pushString (savedReport.message);
 	message->pushInt16 (ownerNr);
 	message->pushInt16 (savingID);
 	client.sendNetMessage (message);
@@ -364,10 +364,10 @@ void sendRequestCasualtiesReport(const cClient &client)
 	client.sendNetMessage (message);
 }
 
-void sendWantSelfDestroy (const cClient &client, const cUnit* building)
+void sendWantSelfDestroy (const cClient &client, const cBuilding& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_SELFDESTROY);
-	message->pushInt16 (building->iID);
+	message->pushInt16 (building.iID);
 	client.sendNetMessage (message);
 }
 

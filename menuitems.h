@@ -65,7 +65,7 @@ struct sSaveFile
  */
 struct sUnitUpgrade
 {
-	/** The diffrent values of a unit that can be upgraded*/
+	/** The different values of a unit that can be upgraded*/
 	enum eUpgradeTypes
 	{
 		UPGRADE_TYPE_DAMAGE,
@@ -472,7 +472,7 @@ public:
 class cMenuButton : public cMenuItem
 {
 public:
-	/** the diffrent button types that are provided by the graphics in menu_stuff.pcx*/
+	/** the different button types that are provided by the graphics in menu_stuff.pcx*/
 	enum eButtonTypes
 	{
 		BUTTON_TYPE_STANDARD_BIG,
@@ -528,7 +528,7 @@ public:
 };
 
 /**
- * the big red destroy botton
+ * the big red destroy button
  *@author eiko
  */
 class cMenuDestroyButton : public cMenuItem
@@ -564,7 +564,7 @@ class cMenuCheckButton : public cMenuItem
 	friend class cMenuRadioGroup;
 
 public:
-	/** the diffrent button types that are provided by the graphics in menu_stuff.pcx*/
+	/** the different button types that are provided by the graphics in menu_stuff.pcx*/
 	enum eCheckButtonTypes
 	{
 		RADIOBTN_TYPE_TEXT_ONLY,
@@ -629,7 +629,8 @@ public:
 };
 
 /**
- * an item that handles a group of radiobuttons, and makes sure that alway only one of his childs is checked.
+ * an item that handles a group of radiobuttons,
+ * and makes sure that always only one of its childs is checked.
  *@author alzi
  */
 class cMenuRadioGroup : public cMenuItem
@@ -652,7 +653,7 @@ public:
 	bool buttonIsChecked (int index) const;
 };
 
-/** The diffrent display types for a unit list item */
+/** The different display types for a unit list item */
 enum eMenuUnitListDisplayTypes
 {
 	/** Displays the unitimage, -name and -costs.*/
@@ -664,7 +665,8 @@ enum eMenuUnitListDisplayTypes
 };
 
 /**
- * the item of a unitslist. This item handles some additional information as the cargo and handles the drawing.
+ * the item of a unitslist. This item handles some additional information
+ * as the cargo and handles the drawing.
  *@author alzi
  */
 class cMenuUnitListItem : public cMenuItem
@@ -790,10 +792,10 @@ public:
 	/**
 	 * adds a new unit to the list.
 	 *@author alzi
-	 *@param unitID the it of the new unit
+	 *@param unitID the id of the new unit
 	 *@param owner the owner of the unit
 	 *@param upgrades the struct with the upgrade-values for this unit
-	 *@param scroll	if this is true the list will automatically scrolled to the new added item.
+	 *@param scroll if this is true the list will automatically scrolled to the new added item.
 	 *@param fixedCargo if this is true the new unit will set with a fixed cargo.
 	 */
 	cMenuUnitListItem* addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades = NULL, bool scroll = false, bool fixedCargo = false);
@@ -806,7 +808,7 @@ public:
 class cUnitDataSymbolHandler
 {
 public:
-	/** the diffrent symbol types */
+	/** the different symbol types */
 	enum eUnitDataSymbols
 	{
 		MENU_SYMBOLS_SPEED,
@@ -912,7 +914,8 @@ public:
 };
 
 /**
- * an itemconatainer that handles the many arrow buttons for upgrading units. This should be used together with the cMenuUnitDetailsBig item.
+ * an item container that handles the many arrow buttons for upgrading units.
+ * This should be used together with the cMenuUnitDetailsBig item.
  *@author alzi
  */
 class cMenuUpgradeHandler : public cMenuItemContainer

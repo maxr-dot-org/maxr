@@ -691,7 +691,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			sendWantStartWork (client, this);
+			sendWantStartWork (client, *this);
 			return;
 		}
 		nr++;
@@ -730,7 +730,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			sendWantStartClear (client, this);
+			sendWantStartClear (client, *this);
 			return;
 		}
 		nr++;
@@ -1190,10 +1190,10 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (forceAttack)
 		return true;
 
-	if (targetBuilding && isVehicle() && data.factorAir == 0 && map->possiblePlace (static_cast<const cVehicle*> (this), x, y))     //do not fire on e. g. platforms, connectors etc.
+	if (targetBuilding && isVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))     //do not fire on e.g. platforms, connectors etc.
 		return false;																	//see ticket #436 on bug tracker
 
-	if ( (targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
+	if ((targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
 		return false;
 
 	if (targetBuilding == 0 && targetVehicle == 0)

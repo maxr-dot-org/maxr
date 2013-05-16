@@ -659,9 +659,9 @@ void cPlayer::doResearch (cServer& server)
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
 		for (unsigned int i = 0; i < upgradedUnitDatas.size(); i++)
-			sendUnitUpgrades (server, upgradedUnitDatas[i], Nr);
+			sendUnitUpgrades (server, *upgradedUnitDatas[i], Nr);
 	}
-	sendResearchLevel (server, &researchLevel, Nr);
+	sendResearchLevel (server, researchLevel, Nr);
 }
 
 void cPlayer::accumulateScore (cServer& server)
@@ -673,14 +673,14 @@ void cPlayer::accumulateScore (cServer& server)
 	{
 		if (bp->typ->data.canScore && bp->IsWorking)
 		{
-			bp->points ++;
-			deltaScore ++;
+			bp->points++;
+			deltaScore++;
 
-			sendUnitScore (server, bp);
+			sendUnitScore (server, *bp);
 		}
 	}
 	setScore (getScore (now) + deltaScore, now);
-	sendScore (server, this, now);
+	sendScore (server, *this, now);
 }
 
 void cPlayer::CountEcoSpheres()
@@ -911,13 +911,12 @@ void cPlayer::DeleteLock (cBuilding* b)
 //------------------------------------------------------------
 /** Checks if the building is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (const cBuilding* b) const
+bool cPlayer::InLockList (const cBuilding& b) const
 {
-	sLockElem* elem;
 	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
-		elem = LockList[i];
-		if (elem->b == b)
+		const sLockElem* elem = LockList[i];
+		if (elem->b == &b)
 			return true;
 	}
 	return false;
@@ -926,13 +925,12 @@ bool cPlayer::InLockList (const cBuilding* b) const
 //------------------------------------------------------------
 /** Checks if the vehicle is contained in the lock list. */
 //------------------------------------------------------------
-bool cPlayer::InLockList (const cVehicle* v) const
+bool cPlayer::InLockList (const cVehicle& v) const
 {
-	sLockElem* elem;
 	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
-		elem = LockList[i];
-		if (elem->v == v)
+		const sLockElem* elem = LockList[i];
+		if (elem->v == &v)
 			return true;
 	}
 	return false;
@@ -945,22 +943,22 @@ void cPlayer::ToggelLock (cMapField* OverUnitField)
 {
 	if (OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != this)
 	{
-		if (InLockList (OverUnitField->getBaseBuilding())) DeleteLock (OverUnitField->getBaseBuilding());
+		if (InLockList (*OverUnitField->getBaseBuilding())) DeleteLock (OverUnitField->getBaseBuilding());
 		else AddLock (OverUnitField->getBaseBuilding());
 	}
 	if (OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner != this)
 	{
-		if (InLockList (OverUnitField->getTopBuilding())) DeleteLock (OverUnitField->getTopBuilding());
+		if (InLockList (*OverUnitField->getTopBuilding())) DeleteLock (OverUnitField->getTopBuilding());
 		else AddLock (OverUnitField->getTopBuilding());
 	}
 	if (OverUnitField->getVehicles() && OverUnitField->getVehicles()->owner != this)
 	{
-		if (InLockList (OverUnitField->getVehicles())) DeleteLock (OverUnitField->getVehicles());
+		if (InLockList (*OverUnitField->getVehicles())) DeleteLock (OverUnitField->getVehicles());
 		else AddLock (OverUnitField->getVehicles());
 	}
 	if (OverUnitField->getPlanes() && OverUnitField->getPlanes()->owner != this)
 	{
-		if (InLockList (OverUnitField->getPlanes())) DeleteLock (OverUnitField->getPlanes());
+		if (InLockList (*OverUnitField->getPlanes())) DeleteLock (OverUnitField->getPlanes());
 		else AddLock (OverUnitField->getPlanes());
 	}
 }

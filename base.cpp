@@ -470,10 +470,10 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 				b->data.storageResCur = b->data.storageResMax;
 			}
 		}
-		if (iStartValue != value) sendUnitData (server, b, owner->Nr);
+		if (iStartValue != value) sendUnitData (server, *b, owner->Nr);
 		if (value == 0) break;
 	}
-	sendSubbaseValues (server, this, owner->Nr);
+	sendSubbaseValues (server, *this, owner->Nr);
 }
 
 void sSubBase::refresh()
@@ -552,7 +552,7 @@ bool sSubBase::checkGoldConsumer (cServer& server)
 	}
 
 	return false;
-};
+}
 
 bool sSubBase::checkMetalConsumer (cServer& server)
 {
@@ -572,7 +572,7 @@ bool sSubBase::checkMetalConsumer (cServer& server)
 	}
 
 	return false;
-};
+}
 
 bool sSubBase::checkOil (cServer& server)
 {
@@ -820,10 +820,10 @@ void sSubBase::makeTurnend (cServer& server)
 			Building->data.hitpointsCur += Round ( ( (float) Building->data.hitpointsMax / Building->data.buildCosts) * 4);
 			Building->data.hitpointsCur = std::min (Building->data.hitpointsMax, Building->data.hitpointsCur);
 			addMetal (server, -1);
-			sendUnitData (server, Building, owner->Nr);
+			sendUnitData (server, *Building, owner->Nr);
 			for (unsigned int j = 0; j < Building->seenByPlayerList.size(); j++)
 			{
-				sendUnitData (server, Building, Building->seenByPlayerList[j]->Nr);
+				sendUnitData (server, *Building, Building->seenByPlayerList[j]->Nr);
 			}
 		}
 		Building->hasBeenAttacked = false;
@@ -834,7 +834,7 @@ void sSubBase::makeTurnend (cServer& server)
 			Building->data.ammoCur = Building->data.ammoMax;
 			addMetal (server, -1);
 			//ammo is not visible to enemies. So only send to the owner
-			sendUnitData (server, Building, owner->Nr);
+			sendUnitData (server, *Building, owner->Nr);
 		}
 
 		// build:
@@ -852,8 +852,8 @@ void sSubBase::makeTurnend (cServer& server)
 				BuildListItem->metall_remaining = std::max (BuildListItem->metall_remaining, 0);
 
 				MetalNeed += min (Building->MetalPerRound, BuildListItem->metall_remaining);
-				sendBuildList (server, Building);
-				sendSubbaseValues (server, this, owner->Nr);
+				sendBuildList (server, *Building);
+				sendSubbaseValues (server, *this, owner->Nr);
 			}
 			if (BuildListItem->metall_remaining <= 0)
 			{
@@ -873,7 +873,7 @@ void sSubBase::makeTurnend (cServer& server)
 	Oil = std::max (this->Oil, 0);
 	Gold = std::max (this->Gold, 0);
 
-	sendSubbaseValues (server, this, owner->Nr);
+	sendSubbaseValues (server, *this, owner->Nr);
 }
 
 void sSubBase::merge (sSubBase* sb)
@@ -1019,7 +1019,7 @@ void sSubBase::addBuilding (cBuilding* b)
 
 
 cBase::cBase() : map()
-{};
+{}
 
 cBase::~cBase()
 {
@@ -1029,12 +1029,12 @@ cBase::~cBase()
 	}
 }
 
-sSubBase* cBase::checkNeighbour (int iOff, const cBuilding* Building)
+sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 {
 	if (iOff < 0 || iOff >= map->size * map->size) return NULL;
 	cBuilding* b = map->fields[iOff].getBuildings();
 
-	if (b && b->owner == Building->owner && b->SubBase)
+	if (b && b->owner == building.owner && b->SubBase)
 	{
 		b->CheckNeighbours (map);
 		return b->SubBase ;
@@ -1053,22 +1053,22 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 	if (!building->data.isBig)
 	{
 		// small building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size, building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 1        , building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size, building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1        , building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size, *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 1        , *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size, *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1        , *building)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// big building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size,         building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size + 1,     building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2,                 building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2 + map->size,     building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2,     building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2 + 1, building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1,                 building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1 + map->size,     building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size,         *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->size + 1,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 2,                 *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 2 + map->size,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2 + 1, *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1,                 *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1 + map->size,     *building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (map);
 
@@ -1083,7 +1083,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
 
-		if (bServer) sendSubbaseValues (*Server, NewSubBase, NewSubBase->owner->Nr);
+		if (bServer) sendSubbaseValues (*Server, *NewSubBase, NewSubBase->owner->Nr);
 
 		return;
 	}
@@ -1103,7 +1103,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (bServer) sendSubbaseValues (*Server, firstNeighbour, building->owner->Nr);
+	if (bServer) sendSubbaseValues (*Server, *firstNeighbour, building->owner->Nr);
 }
 
 void cBase::deleteBuilding (cBuilding* building, bool bServer)
@@ -1167,7 +1167,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 		//send subbase values to client
 		for (unsigned int i = 0; i < newSubBases.size(); i++)
 		{
-			sendSubbaseValues (*Server, newSubBases[i], building->owner->Nr);
+			sendSubbaseValues (*Server, *newSubBases[i], building->owner->Nr);
 		}
 	}
 

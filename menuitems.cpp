@@ -4124,7 +4124,7 @@ void cMenuReportsScreen::setIncludeFilter (bool filterPlanes_, bool filterGround
 	index = 0;
 	selected = -1;
 	parentMenu->scrollCallback (index > 0, goThroughUnits (false));
-};
+}
 
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::setBorderedFilter (bool filterBuild_, bool filterAttack_, bool filterDamaged_, bool filterStealth_)
@@ -4163,7 +4163,6 @@ void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool s
 //-----------------------------------------------------------------------------
 SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 {
-
 	const int UNIT_IMAGE_SIZE = 32;
 	float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) (unit->data.isBig ? 128.0 : 64.0);
 	SDL_Rect dest = { 0, 0, 0, 0};

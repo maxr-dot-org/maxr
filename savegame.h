@@ -141,17 +141,17 @@ private:
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* writeUnit (const cServer& server, const cVehicle* Vehicle, int* unitnum);
+	TiXmlElement* writeUnit (const cServer& server, const cVehicle& Vehicle, int* unitnum);
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnit (const cServer& server, const cBuilding* Building, int* unitnum);
+	void writeUnit (const cServer& server, const cBuilding& building, int* unitnum);
 	/**
 	* saves the information of the rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void writeRubble (const cServer& server, const cBuilding* Building, int rubblenum);
+	void writeRubble (const cServer& server, const cBuilding& building, int rubblenum);
 	/**
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath

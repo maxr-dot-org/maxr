@@ -227,7 +227,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 			if (x < 0 || x >= Map->size) continue;
 			if (x == ParentNode->x && y == ParentNode->y) continue;
 
-			if (!Map->possiblePlace (Vehicle, x, y, true))
+			if (!Map->possiblePlace (*Vehicle, x, y, true))
 			{
 				// when we have a group of units, the units will not block each other
 				if (group)
@@ -441,10 +441,10 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
 	}
-	sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
+	sendUnitData (*server, *Vehicle, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 	{
-		sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+		sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 	}
 
 	if (Vehicle->ServerMoveJob)
@@ -514,7 +514,7 @@ void cServerMoveJob::addEndAction (int destID, eEndMoveActionType type)
 	delete endAction;
 
 	endAction = new cEndMoveAction (Vehicle, destID, type);
-	sendEndMoveActionToClient (*server, Vehicle, destID, type);
+	sendEndMoveActionToClient (*server, *Vehicle, destID, type);
 
 }
 
@@ -650,13 +650,13 @@ bool cServerMoveJob::checkMove()
 
 	bInSentryRange = Vehicle->InSentryRange (*server);
 
-	if (!Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange)
+	if (!Map->possiblePlace (*Vehicle, Waypoints->next->X, Waypoints->next->Y) && !bInSentryRange)
 	{
 		server->sideStepStealthUnit (Waypoints->next->X, Waypoints->next->Y, Vehicle);
 	}
 
 	//when the next field is still blocked, inform the client
-	if (!Map->possiblePlace (Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange)    //TODO: bInSentryRange?? Why?
+	if (!Map->possiblePlace (*Vehicle, Waypoints->next->X, Waypoints->next->Y) || bInSentryRange)    //TODO: bInSentryRange?? Why?
 	{
 		Log.write (" Server: Next point is blocked: ID: " + iToStr (Vehicle->iID) + ", X: " + iToStr (Waypoints->next->X) + ", Y: " + iToStr (Waypoints->next->Y), LOG_TYPE_NET_DEBUG);
 		// if the next point would be the last, finish the job here
@@ -667,7 +667,7 @@ bool cServerMoveJob::checkMove()
 		// else delete the movejob and inform the client that he has to find a new path
 		else
 		{
-			sendNextMove (*server, Vehicle, MJOB_BLOCKED);
+			sendNextMove (*server, *Vehicle, MJOB_BLOCKED);
 		}
 		return false;
 	}
@@ -697,7 +697,7 @@ bool cServerMoveJob::checkMove()
 	Vehicle->tryResetOfDetectionStateAfterMove (*server);
 
 	// send move command to all players who can see the unit
-	sendNextMove (*server, Vehicle, MJOB_OK);
+	sendNextMove (*server, *Vehicle, MJOB_OK);
 
 	Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
 	Vehicle->owner->DoScan();
@@ -764,7 +764,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	// search for resources if necessary
 	if (Vehicle->data.canSurvey)
 	{
-		sendVehicleResources (*server, Vehicle, Map);
+		sendVehicleResources (*server, *Vehicle, *Map);
 		Vehicle->doSurvey (*server);
 	}
 
@@ -783,10 +783,10 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (*server, Vehicle, Vehicle->owner->Nr);
+			sendUnitData (*server, *Vehicle, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			{
-				sendUnitData (*server, Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+				sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->Nr);
 			}
 		}
 	}
