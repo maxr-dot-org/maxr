@@ -1279,7 +1279,7 @@ void cClient::HandleNetMessage_GAME_EV_NOFOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_NOFOG);
 
-	memset (ActivePlayer->ScanMap, 1, getMap()->size * getMap()->size);
+	ActivePlayer->revealMap();
 }
 
 void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)

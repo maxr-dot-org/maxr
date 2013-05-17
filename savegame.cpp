@@ -1173,10 +1173,11 @@ unsigned char cSavegame::getByteValue (const string& str) const
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertScanMapToString (const char* data, int size) const
+string cSavegame::convertScanMapToString (const std::vector<char>& data) const
 {
 	string str = "";
-	for (int i = 0; i < size; i++)
+	str.reserve (data.size());
+	for (size_t i = 0; i < data.size(); ++i)
 	{
 		if (data[i] > 0) str += "1";
 		else str += "0";
@@ -1185,7 +1186,7 @@ string cSavegame::convertScanMapToString (const char* data, int size) const
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::convertStringToScanMap (const string& str, char* data)
+void cSavegame::convertStringToScanMap (const string& str, std::vector<char>& data)
 {
 	for (unsigned int i = 0; i < str.length(); i++)
 	{
@@ -1263,7 +1264,7 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player->getClan()));
 	addAttributeElement (playerNode, "Color", "num", iToStr (GetColorNr (Player->color)));
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player->Nr));
-	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player->ResourceMap, Server->Map->size * Server->Map->size));
+	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player->ResourceMap));
 
 	// player score
 	TiXmlElement* scoreNode = addMainElement (playerNode, "ScoreHistory");

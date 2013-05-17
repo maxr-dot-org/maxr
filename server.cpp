@@ -279,7 +279,7 @@ void cServer::doGameActions()
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::HandleNetMessage_TCT_ACCEPT (cNetMessage& message)
+void cServer::HandleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
 
@@ -287,7 +287,7 @@ void cServer::HandleNetMessage_TCT_ACCEPT (cNetMessage& message)
 }
 
 //-------------------------------------------------------------------------------------
-void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message)
+void cServer::HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE || message.iType == GAME_EV_WANT_DISCONNECT);
 
@@ -331,7 +331,7 @@ void cServer::HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 		DisconnectedPlayerList.push_back (Player);
 
-		memset (Player->ScanMap, 0, Map->size * Map->size);
+		Player->revealMap();
 	}
 }
 
@@ -2011,10 +2011,10 @@ int cServer::HandleNetMessage (cNetMessage* message)
 
 	switch (message->iType)
 	{
-		case TCP_ACCEPT: HandleNetMessage_TCT_ACCEPT (*message); break;
+		case TCP_ACCEPT: HandleNetMessage_TCP_ACCEPT (*message); break;
 		case TCP_CLOSE: // Follow
 		case GAME_EV_WANT_DISCONNECT:
-			HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (*message);
+			HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (*message);
 			break;
 		case GAME_EV_CHAT_CLIENT: HandleNetMessage_GAME_EV_CHAT_CLIENT (*message); break;
 		case GAME_EV_WANT_TO_END_TURN: HandleNetMessage_GAME_EV_WANT_TO_END_TURN (*message); break;
@@ -2591,7 +2591,7 @@ void cServer::markAllPlayersAsDisconnected()
 		cPlayer* player = (*PlayerList) [i];
 		if (Contains (DisconnectedPlayerList, player) == false)
 			DisconnectedPlayerList.push_back (player);
-		memset (player->ScanMap, 0, Map->size * Map->size);
+		player->revealMap();
 	}
 }
 
@@ -3022,7 +3022,7 @@ void cServer::checkDefeats()
 
 		if (openMapDefeat && Player->iSocketNum != -1)
 		{
-			memset (Player->ScanMap, 1, Map->size * Map->size);
+			Player->revealMap();
 			checkPlayerUnits();
 			sendNoFog (*this, Player->Nr);
 		}

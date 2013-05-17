@@ -172,8 +172,8 @@ private:
 	*/
 	cNetMessage* pollEvent();
 
-	void HandleNetMessage_TCT_ACCEPT (cNetMessage& message);
-	void HandleNetMessage_TCT_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
+	void HandleNetMessage_TCP_ACCEPT (cNetMessage& message);
+	void HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message);

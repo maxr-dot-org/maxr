@@ -82,17 +82,18 @@ public:
 	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.
 	sUnitData* BuildingData; // Daten aller Buildings f¸r diesen Player.
 	cBuilding* BuildingList;     // Liste aller Buildings des Spielers.
-	int MapSize;               // Kartengrˆﬂe
-	char* ScanMap;             // Map mit dem Scannerflags.
-	char* ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
 	cBase base;               // Die Basis dieses Spielers.
-	//std::vector<sSentry*> SentriesAir;		/** list with all units on sentry that can attack planes */
-	char* SentriesMapAir;				/** the covered air area */
-	//std::vector<sSentry*> SentriesGround;	/** list with all units on sentry that can attack ground units */
-	char* SentriesMapGround;			/** the covered ground area */
-	char* DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
-	char* DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
-	char* DetectMinesMap;				/** the area where the player can detect mines */
+
+	int mapSize; // Width (and Height) of the map.
+	std::vector<char> ScanMap;             // Map mit dem Scannerflags.
+	std::vector<char> ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
+	//std::vector<sSentry*> SentriesAir;   /** list with all units on sentry that can attack planes */
+	std::vector<char> SentriesMapAir;      /** the covered air area */
+	//std::vector<sSentry*> SentriesGround; /** list with all units on sentry that can attack ground units */
+	std::vector<char> SentriesMapGround;   /** the covered ground area */
+	std::vector<char> DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
+	std::vector<char> DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
+	std::vector<char> DetectMinesMap;      /** the area where the player can detect mines */
 	cResearch researchLevel;	///< stores the current research level of the player
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
 	int ResearchCount;         ///< number of working research centers
@@ -115,6 +116,9 @@ public:
 
 	void InitMaps (int MapSizeX, cMap* map);
 	void DoScan();
+	void revealMap();
+	void revealResource();
+
 	cUnit* getNextUnit(cUnit* start);
 	cUnit* getPrevUnit(cUnit* start);
 	void addSentry (cUnit* u);
@@ -146,7 +150,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircle (int iX, int iY, int iRadius, char* map, int mapsize);
+	void drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
 	/**
 	* draws a big circle on the map for the fog
 	*@author alzi alias DoctorDeath
@@ -155,7 +159,7 @@ public:
 	*@param iRadius radius of the circle
 	*@param map map were to store the data of the circle
 	*/
-	void drawSpecialCircleBig (int iX, int iY, int iRadius, char* map, int mapsize);
+	void drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize);
 
 	void addSavedReport (const std::string& message, sSavedReportMessage::eReportTypes type, sID unitID = sID(), int xPos = -1, int yPos = -1, int colorNr = -1);
 

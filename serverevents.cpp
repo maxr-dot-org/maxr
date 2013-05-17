@@ -365,7 +365,7 @@ void sendResources (cServer& server, const cPlayer& player)
 {
 	int iCount = 0;
 	cNetMessage* message = new cNetMessage (GAME_EV_RESOURCES);
-	for (int i = 0; i < player.MapSize; i++)
+	for (size_t i = 0; i < player.ResourceMap.size(); ++i)
 	{
 		if (player.ResourceMap[i] == 1)
 		{

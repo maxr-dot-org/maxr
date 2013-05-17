@@ -53,15 +53,8 @@ cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		BuildingData[i] = UnitsData.getBuilding (i).data;  // get the default (no clan) building data
 
-	DetectLandMap = NULL;
-	DetectSeaMap = NULL;
-	DetectMinesMap = NULL;
-	ScanMap = NULL;
-	SentriesMapAir = NULL;
-	SentriesMapGround = NULL;
 	VehicleList = NULL;
 	BuildingList = NULL;
-	ResourceMap = NULL;
 
 	ResearchCount = 0;
 	for (int i = 0; i < cResearch::kNrResearchAreas; i++)
@@ -97,15 +90,12 @@ cPlayer::cPlayer (const cPlayer& Player)
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		BuildingData[i] = Player.BuildingData[i];
 
-	DetectLandMap = NULL;
-	DetectSeaMap = NULL;
-	DetectMinesMap = NULL;
-	ScanMap = NULL;
-	SentriesMapAir = NULL;
-	SentriesMapGround = NULL;
+	// Don't copy ScanMap, ResourceMap, DetectLandMap, DetectSeaMap,
+	//  DetectMinesMap, SentriesMapAir, SentriesMapGround
+	// there should be empty.
+
 	VehicleList = NULL;
 	BuildingList = NULL;
-	ResourceMap = NULL;
 
 	Credits = Player.Credits;
 	ResearchCount = Player.ResearchCount;
@@ -159,14 +149,6 @@ cPlayer::~cPlayer()
 	}
 	delete [] VehicleData;
 	delete [] BuildingData;
-	delete [] ScanMap;
-	delete [] SentriesMapAir;
-	delete [] SentriesMapGround;
-	delete [] ResourceMap;
-
-	delete [] DetectLandMap;
-	delete [] DetectSeaMap;
-	delete [] DetectMinesMap;
 
 	for (size_t i = 0; i != ReportVehicles.size(); ++i)
 	{
@@ -213,18 +195,18 @@ cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned i
 
 	addUnitToList (n);
 
-	drawSpecialCircle (n->PosX, n->PosY, n->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
-	if (n->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectLandMap, (int) sqrt ( (double) MapSize));
-	if (n->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectSeaMap, (int) sqrt ( (double) MapSize));
+	drawSpecialCircle (n->PosX, n->PosY, n->data.scan, ScanMap, mapSize);
+	if (n->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectLandMap, mapSize);
+	if (n->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectSeaMap, mapSize);
 	if (n->data.canDetectStealthOn & AREA_EXP_MINE)
 	{
 		for (int x = n->PosX - 1; x <= n->PosX + 1; x++)
 		{
-			if (x < 0 || x >= (int) sqrt ( (double) MapSize)) continue;
+			if (x < 0 || x >= mapSize) continue;
 			for (int y = n->PosY - 1; y <= n->PosY + 1; y++)
 			{
-				if (y < 0 || y >= (int) sqrt ( (double) MapSize)) continue;
-				DetectMinesMap[x + (int) sqrt ( (double) MapSize) *y] = 1;
+				if (y < 0 || y >= mapSize) continue;
+				DetectMinesMap[x + mapSize * y] = 1;
 			}
 		}
 	}
@@ -236,28 +218,29 @@ cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned i
 //--------------------------------------------------------------------------
 void cPlayer::InitMaps (int MapSizeX, cMap* map)
 {
-	MapSize = MapSizeX * MapSizeX;
+	mapSize = MapSizeX;
+	const int size = MapSizeX * MapSizeX;
 	// Scanner-Map:
-	ScanMap = new char[MapSize];
-	memset (ScanMap, 0, MapSize);
+	ScanMap.clear();
+	ScanMap.resize (size, 0);
 	// Ressource-Map
-	ResourceMap = new char[MapSize];
-	memset (ResourceMap, 0, MapSize);
+	ResourceMap.clear();
+	ResourceMap.resize (size, 0);
 
 	base.map = map;
 	// Sentry-Map:
-	SentriesMapAir = new char[MapSize];
-	memset (SentriesMapAir, 0, MapSize);
-	SentriesMapGround = new char[MapSize];
-	memset (SentriesMapGround, 0, MapSize);
+	SentriesMapAir.clear();
+	SentriesMapAir.resize (size, 0);
+	SentriesMapGround.clear();
+	SentriesMapGround.resize (size, 0);
 
 	// Detect-Maps:
-	DetectLandMap = new char[MapSize];
-	memset (DetectLandMap, 0, MapSize);
-	DetectSeaMap = new char[MapSize];
-	memset (DetectSeaMap, 0, MapSize);
-	DetectMinesMap = new char[MapSize];
-	memset (DetectMinesMap, 0, MapSize);
+	DetectLandMap.clear();
+	DetectLandMap.resize (size, 0);
+	DetectSeaMap.clear();
+	DetectSeaMap.resize (size, 0);
+	DetectMinesMap.clear();
+	DetectMinesMap.resize (size, 0);
 }
 
 template <typename T>
@@ -306,8 +289,8 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding* b, unsigne
 
 	if (Building->data.scan)
 	{
-		if (Building->data.isBig) drawSpecialCircleBig (Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
-		else drawSpecialCircle (Building->PosX, Building->PosY, Building->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
+		if (Building->data.isBig) drawSpecialCircleBig (Building->PosX, Building->PosY, Building->data.scan, ScanMap, mapSize);
+		else drawSpecialCircle (Building->PosX, Building->PosY, Building->data.scan, ScanMap, mapSize);
 	}
 	return Building;
 }
@@ -318,11 +301,11 @@ void cPlayer::addSentry (cUnit* u)
 	u->sentryActive = true;
 	if (u->data.canAttack & TERRAIN_AIR)
 	{
-		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapAir, (int) sqrt ( (double) MapSize));
+		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapAir, mapSize);
 	}
 	if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
 	{
-		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapGround, (int) sqrt ( (double) MapSize));
+		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapGround, mapSize);
 	}
 }
 
@@ -343,13 +326,13 @@ void cPlayer::deleteSentry (cUnit* u)
 //--------------------------------------------------------------------------
 void cPlayer::refreshSentryAir()
 {
-	memset (SentriesMapAir, 0, MapSize);
+	std::fill (SentriesMapAir.begin(), SentriesMapAir.end(), 0);
 
 	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int) sqrt ( (double) MapSize));
+			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, mapSize);
 		}
 	}
 
@@ -357,7 +340,7 @@ void cPlayer::refreshSentryAir()
 	{
 		if (unit->sentryActive && unit->data.canAttack & TERRAIN_AIR)
 		{
-			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, (int) sqrt ( (double) MapSize));
+			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapAir, mapSize);
 		}
 	}
 }
@@ -365,13 +348,13 @@ void cPlayer::refreshSentryAir()
 //--------------------------------------------------------------------------
 void cPlayer::refreshSentryGround()
 {
-	memset (SentriesMapGround, 0, MapSize);
+	std::fill (SentriesMapGround.begin(), SentriesMapGround.end(), 0);
 
 	for (const cVehicle* unit = VehicleList; unit; unit = unit->next)
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int) sqrt ( (double) MapSize));
+			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
 
@@ -379,7 +362,7 @@ void cPlayer::refreshSentryGround()
 	{
 		if (unit->sentryActive && ( (unit->data.canAttack & TERRAIN_GROUND) || (unit->data.canAttack & TERRAIN_SEA)))
 		{
-			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, (int) sqrt ( (double) MapSize));
+			drawSpecialCircle (unit->PosX, unit->PosY, unit->data.range, SentriesMapGround, mapSize);
 		}
 	}
 }
@@ -390,10 +373,10 @@ void cPlayer::refreshSentryGround()
 void cPlayer::DoScan()
 {
 	if (isDefeated) return;
-	memset (ScanMap,       0, MapSize);
-	memset (DetectLandMap, 0, MapSize);
-	memset (DetectSeaMap,  0, MapSize);
-	memset (DetectMinesMap, 0, MapSize);
+	std::fill (ScanMap.begin(), ScanMap.end(), 0);
+	std::fill (DetectLandMap.begin(), DetectLandMap.end(), 0);
+	std::fill (DetectSeaMap.begin(), DetectSeaMap.end(), 0);
+	std::fill (DetectMinesMap.begin(), DetectMinesMap.end(), 0);
 
 	// iterate the vehicle list
 	for (const cVehicle* vp = VehicleList; vp; vp = vp->next)
@@ -401,28 +384,28 @@ void cPlayer::DoScan()
 		if (vp->Loaded) continue;
 
 		if (vp->turnsDisabled)
-			ScanMap[vp->PosX + vp->PosY * (int) sqrt ( (double) MapSize)] = 1;
+			ScanMap[vp->PosX + vp->PosY * mapSize] = 1;
 		else
 		{
 			if (vp->data.isBig)
-				drawSpecialCircleBig (vp->PosX, vp->PosY, vp->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
+				drawSpecialCircleBig (vp->PosX, vp->PosY, vp->data.scan, ScanMap, mapSize);
 			else
-				drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
+				drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, ScanMap, mapSize);
 
 			//detection maps
-			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, (int) sqrt ( (double) MapSize));
-			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, (int) sqrt ( (double) MapSize));
+			if (vp->data.canDetectStealthOn & TERRAIN_GROUND) drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, DetectLandMap, mapSize);
+			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, mapSize);
 			if (vp->data.canDetectStealthOn & AREA_EXP_MINE)
 			{
 				for (int x = vp->PosX - 1; x <= vp->PosX + 1; x++)
 				{
-					if (x < 0 || x >= (int) sqrt ( (double) MapSize))
+					if (x < 0 || x >= mapSize)
 						continue;
 					for (int y = vp->PosY - 1; y <= vp->PosY + 1; y++)
 					{
-						if (y < 0 || y >= (int) sqrt ( (double) MapSize))
+						if (y < 0 || y >= mapSize)
 							continue;
-						DetectMinesMap[x + (int) sqrt ( (double) MapSize) *y] = 1;
+						DetectMinesMap[x + mapSize * y] = 1;
 					}
 				}
 			}
@@ -433,19 +416,31 @@ void cPlayer::DoScan()
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->turnsDisabled)
-			ScanMap[bp->PosX + bp->PosY * (int) sqrt ( (double) MapSize)] = 1;
+			ScanMap[bp->PosX + bp->PosY * mapSize] = 1;
 		else
 		{
 			if (bp->data.scan)
 			{
 				if (bp->data.isBig)
-					drawSpecialCircleBig (bp->PosX, bp->PosY, bp->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
+					drawSpecialCircleBig (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
 				else
-					drawSpecialCircle (bp->PosX, bp->PosY, bp->data.scan, ScanMap, (int) sqrt ( (double) MapSize));
+					drawSpecialCircle (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
 			}
 		}
 	}
 }
+
+
+void cPlayer::revealMap()
+{
+	std::fill (ScanMap.begin(), ScanMap.end(), 1);
+}
+
+void cPlayer::revealResource()
+{
+	std::fill (ResourceMap.begin(), ResourceMap.end(), 1);
+}
+
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start)
 {
@@ -1045,7 +1040,7 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, char* map, int mapsize)
+void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
 	float w = (float) (PI_ON_180 * 45), step;
@@ -1088,7 +1083,7 @@ void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, char* map, int map
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, char* map, int mapsize)
+void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
 	float w = (float) (PI_ON_180 * 45), step;

@@ -273,12 +273,12 @@ private:
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath
 	*/
-	std::string convertScanMapToString (const char* data, int size) const;
+	std::string convertScanMapToString (const std::vector<char>& data) const;
 	/**
 	* converts the resource-scanmap from string format back to the byte data
 	*@author alzi alias DoctorDeath
 	*/
-	void convertStringToScanMap (const std::string& str, char* data);
+	void convertStringToScanMap (const std::string& str, std::vector<char>& data);
 
 	/**
 	* adds an node without undernodes

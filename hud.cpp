@@ -2662,8 +2662,8 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		memset (Server->getPlayerFromNumber (player->Nr)->ScanMap, 1, map->size * map->size);
-		memset (player->ScanMap, 1, map->size * map->size);
+		Server->getPlayerFromNumber (player->Nr)->revealMap();
+		player->revealMap();
 	}
 	else if (cmd.compare ("/survey") == 0)
 	{
@@ -2673,7 +2673,7 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 		memcpy (map->Resources , Server->Map->Resources, map->size * map->size * sizeof (sResources));
-		memset (player->ResourceMap, 1, map->size * map->size);
+		player->revealResource();
 	}
 	else if (cmd.substr (0, 6).compare ("/pause") == 0)
 	{
@@ -3620,7 +3620,7 @@ void cGameGUI::drawAttackCursor(int x, int y) const
 		else if (b)
 			wp = (int) ((float) t / b->data.hitpointsMax * 35);
 	}
-	SDL_Rect r = {1, 29, wp, 3};
+	SDL_Rect r = {1, 29, Uint16 (wp), 3};
 
 	if (r.w)
 		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);

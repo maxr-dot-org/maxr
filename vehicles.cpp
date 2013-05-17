@@ -1218,9 +1218,9 @@ void cVehicle::FindNextband()
 //-----------------------------------------------------------------------------
 void cVehicle::doSurvey (const cServer& server)
 {
-	char* ptr = owner->ResourceMap;
+	std::vector<char>& ptr = owner->ResourceMap;
 
-	if (!ptr) return;
+	if (ptr.empty()) return;
 
 	const cMap& map = *server.Map;
 	ptr[PosX + PosY * map.size] = 1;
