@@ -51,52 +51,47 @@ cBuildingIterator cMapField::getBuildings()
 	return b;
 }
 
-
 cBuilding* cMapField::getTopBuilding()
 {
-	cBuildingIterator buildingIterator (&buildings);
+	if (buildings.empty()) return NULL;
+	cBuilding* building = *buildings.begin();
 
-	if (buildingIterator && (buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_GROUND || buildingIterator->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) && buildingIterator->owner)
-	{
-		return buildingIterator;
-	}
-	else
-	{
-		return NULL;
-	}
+	if ((building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND ||
+		 building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) &&
+		 building->owner)
+		return building;
+	return NULL;
 }
 
 cBuilding* cMapField::getBaseBuilding()
 {
-	cBuildingIterator building (&buildings);
-
-	while (!building.end)
+	for (size_t i = 0; i != buildings.size(); ++i)
 	{
-		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE && building->owner) return building;
-		building++;
+		cBuilding* building = buildings[i];
+		if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND &&
+			building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+			building->owner)
+		{
+			return building;
+		}
 	}
-
 	return NULL;
 }
 
 cBuilding* cMapField::getRubble()
 {
-	cBuildingIterator building (&buildings);
-	while (!building.end)
-	{
-		if (!building->owner) return building;
-		building++;
-	}
-
+	for (size_t i = 0; i != buildings.size(); ++i)
+		if (!buildings[i]->owner)
+			return buildings[i];
 	return NULL;
 }
 
 cBuilding* cMapField::getMine()
 {
-	cBuildingIterator building (&buildings);
-	while (building && !building->data.explodesOnContact) building++;
-
-	return building;
+	for (size_t i = 0; i != buildings.size(); ++i)
+		if (buildings[i]->data.explodesOnContact)
+			return buildings[i];
+	return NULL;
 }
 
 // Funktionen der Map-Klasse /////////////////////////////////////////////////

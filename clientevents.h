@@ -259,6 +259,7 @@ void sendSetAutoStatus (const cClient &client, int unitID, bool set);
 *@author alzi alias DoctorDeath
 */
 void sendWantComAction (const cClient &client, int srcUnitID, int destUnitID, bool destIsVehicle, bool steal);
+void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll);
 void sendWantUpgrade (const cClient &client, int buildingID, int storageSlot, bool upgradeAll);
 void sendWantResearchChange (const cClient &client, int (&newResearchSettings)[cResearch::kNrResearchAreas], int ownerNr);
 void sendSaveHudInfo (const cClient &client, int selectedUnitID, int ownerNr, int savingID);

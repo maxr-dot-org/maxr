@@ -180,7 +180,6 @@ public:
 	int playStream();
 	void StartMoveSound(cGameGUI& gameGUI);
 	void DecSpeed (int value);
-	void DrawAttackCursor (cGameGUI& gameGUI, int x, int y);
 	void FindNextband();
 	void doSurvey (const cServer& server);
 	void MakeReport();

@@ -1185,7 +1185,7 @@ bool cBuilding::canExitTo (const int x, const int y, const cMap* map, const sVeh
 }
 
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition)
+bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
 	int offset = x + y * Map->size;
@@ -1199,7 +1199,7 @@ bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition)
 //--------------------------------------------------------------------------
 /** returns, if the vehicle can be loaded from its position: */
 //--------------------------------------------------------------------------
-bool cBuilding::canLoad (cVehicle* Vehicle, bool checkPosition)
+bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 {
 	if (!Vehicle) return false;
 
@@ -1483,86 +1483,6 @@ void cBuilding::CheckRessourceProd(const cServer& server)
 }
 
 //--------------------------------------------------------------------------
-/** Draw the attack cursor */
-//--------------------------------------------------------------------------
-void cBuilding::DrawAttackCursor (const cGameGUI& gameGUI, int x, int y)
-{
-	SDL_Rect r;
-	int wp = 0, wc = 0, t = 0;
-	cVehicle* v;
-	cBuilding* b;
-
-	selectTarget (v, b, x, y, data.canAttack, Client->getMap());
-
-	if (! (v || b) || (v && v == gameGUI.getSelVehicle()) || (b && b == gameGUI.getSelBuilding()))
-	{
-		r.x = 1;
-		r.y = 29;
-		r.h = 3;
-		r.w = 35;
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
-		return;
-	}
-
-	if (v)
-		t = v->data.hitpointsCur;
-	else if (b)
-		t = b->data.hitpointsCur;
-
-	if (t)
-	{
-		if (v)
-			wc = (int) ( (float) t / v->data.hitpointsMax * 35);
-		else if (b)
-			wc = (int) ( (float) t / b->data.hitpointsMax * 35);
-	}
-	else
-	{
-		wc = 0;
-	}
-
-	if (v)
-		t = v->calcHealth (data.damage);
-	else if (b)
-		t = b->calcHealth (data.damage);
-
-	if (t)
-	{
-		if (v)
-			wp = (int) ( (float) t / v->data.hitpointsMax * 35);
-		else if (b)
-			wp = (int) ( (float) t / b->data.hitpointsMax * 35);
-	}
-	else
-	{
-		wp = 0;
-	}
-
-	r.x = 1;
-
-	r.y = 29;
-	r.h = 3;
-	r.w = wp;
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0x00FF00);
-
-	r.x += r.w;
-
-	r.w = wc - wp;
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0xFF0000);
-
-	r.x += r.w;
-
-	r.w = 35 - wc;
-
-	if (r.w)
-		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
-}
-
-//--------------------------------------------------------------------------
 /** calculates the costs and the duration of the 3 buildspeeds for the vehicle with the given base costs
 	iRemainingMetal is only needed for recalculating costs of vehicles in the Buildqueue and is set per default to -1 */
 //--------------------------------------------------------------------------
@@ -1639,24 +1559,6 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 		iTurboBuildRounds[1] = 0;
 		iTurboBuildRounds[2] = 0;
 	}
-}
-
-//------------------------------------------------------------------------
-void cBuilding::sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll) const
-{
-	if (building.owner == 0)
-		return;
-
-	const sUnitData& currentVersion = building.data;
-	const sUnitData& upgradedVersion = building.owner->BuildingData[building.typ->nr];
-	if (currentVersion.version >= upgradedVersion.version)
-		return; // already uptodate
-
-	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
-	msg->pushBool (upgradeAll);
-	msg->pushInt32 (building.iID);
-
-	client.sendNetMessage (msg);
 }
 
 //--------------------------------------------------------------------------

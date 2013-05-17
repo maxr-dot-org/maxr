@@ -236,6 +236,7 @@ private:
 
 	void preDrawFunction();
 
+	void drawAttackCursor(int x, int y) const;
 	void drawTerrain (int zoomOffX, int zoomOffY);
 	void drawGrid (int zoomOffX, int zoomOffY);
 	void drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
@@ -254,7 +255,7 @@ private:
 	void scaleSurfaces();
 	void scaleColors();
 
-	/** handles the game messages	*/
+	/** handles the game messages */
 	void handleMessages();
 
 	/**
@@ -400,6 +401,9 @@ private:
 
 	void drawFx (bool bottom) const;
 	void runFx ();
+
+	void selectUnit_vehicle (cVehicle* vehicle);
+	void selectUnit_building (cBuilding* building);
 
 public:
 	cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const playerList);

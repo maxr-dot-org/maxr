@@ -291,6 +291,24 @@ void sendWantComAction (const cClient &client, int srcUnitID, int destUnitID, bo
 	client.sendNetMessage (message);
 }
 
+//------------------------------------------------------------------------
+void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll)
+{
+	if (building.owner == 0)
+		return;
+
+	const sUnitData& currentVersion = building.data;
+	const sUnitData& upgradedVersion = building.owner->BuildingData[building.typ->nr];
+	if (currentVersion.version >= upgradedVersion.version)
+		return; // already uptodate
+
+	cNetMessage* msg = new cNetMessage (GAME_EV_WANT_BUILDING_UPGRADE);
+	msg->pushBool (upgradeAll);
+	msg->pushInt32 (building.iID);
+
+	client.sendNetMessage (msg);
+}
+
 void sendWantUpgrade (const cClient &client, int buildingID, int storageSlot, bool upgradeAll)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_VEHICLE_UPGRADE);

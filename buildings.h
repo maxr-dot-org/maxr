@@ -182,15 +182,13 @@ public:
 	void ClientStopWork (cGameGUI& gameGUI);
 	bool CanTransferTo (cMapField* OverUnitField);  /** check whether a transfer to an unit on the field is possible */
 	void CheckRessourceProd(const cServer& server);
-	void DrawAttackCursor (const cGameGUI& gameGUI, int x, int y);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);
 	bool canExitTo (const int x, const int y, const cMap* map, const sVehicle* typ) const;
-	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true);
-	bool canLoad (cVehicle* Vehicle, bool checkPosition = true);
+	bool canLoad (int x, int y, const cMap* Map, bool checkPosition = true) const;
+	bool canLoad (const cVehicle* Vehicle, bool checkPosition = true) const;
 	void storeVehicle (cVehicle* Vehicle, cMap* Map);
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
-	void sendUpgradeBuilding (const cClient& client, const cBuilding& building, bool upgradeAll) const;  //TODO: move to other file (clientevents?)
 
 	/**
 	* returns whether this player has detected this unit or not
