@@ -171,207 +171,245 @@ void cServerGame::run()
 }
 
 //-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
+{
+	assert (message->iType == TCP_ACCEPT);
+
+	sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.size(), message->popInt16());
+	menuPlayers.push_back (player);
+	sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
+	sendRequestIdentification (*network, *player);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
+{
+	assert (message->iType == TCP_CLOSE);
+
+	// TODO: this is only ok in cNetwork(Host)Menu.
+	// when server runs already, it must be treated another way
+	int socket = message->popInt16();
+	network->close (socket);
+	string playerName;
+
+	// delete menuPlayer
+	for (size_t i = 0; i < menuPlayers.size(); i++)
+	{
+		if (menuPlayers[i]->socket == socket)
+		{
+			playerName = menuPlayers[i]->name;
+			menuPlayers.erase (menuPlayers.begin() + i);
+		}
+	}
+
+	// resort socket numbers
+	for (size_t playerNr = 0; playerNr < menuPlayers.size(); playerNr++)
+	{
+		if (menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS)
+			menuPlayers[playerNr]->socket--;
+	}
+
+	// resort player numbers
+	for (size_t i = 0; i < menuPlayers.size(); i++)
+	{
+		menuPlayers[i]->nr = i;
+		sendRequestIdentification (*network, *menuPlayers[i]);
+	}
+	sendPlayerList (*network, menuPlayers);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_IDENTIFIKATION);
+
+	unsigned int playerNr = message->popInt16();
+	if (playerNr >= menuPlayers.size())
+		return;
+	sMenuPlayer* player = menuPlayers[playerNr];
+
+	//bool freshJoined = (player->name.compare ("unidentified") == 0);
+	player->color = message->popInt16();
+	player->name = message->popString();
+	player->ready = message->popBool();
+
+	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	//if (freshJoined)
+	//	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name)); // TODO: instead send a chat message to all players?
+
+	// search double taken name or color
+	//checkTakenPlayerAttr (player);
+
+	sendPlayerList (*network, menuPlayers);
+	//sendGameData (*network, gameData, saveGameString, player);
+	sendGameData (*network, *gameData, "", player);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_CHAT);
+
+	bool translationText = message->popBool();
+	string chatText = message->popString();
+
+	unsigned int senderPlyerNr = message->iPlayerNr;
+	if (senderPlyerNr >= menuPlayers.size())
+		return;
+	sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
+
+	// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
+	size_t serverStringPos = chatText.find ("--server");
+	if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
+	{
+		string command = chatText.substr (serverStringPos + 9);
+		vector<string> tokens;
+		istringstream iss (command);
+		copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
+		if (tokens.size() == 1)
+		{
+			if (tokens[0].compare ("go") == 0)
+			{
+				bool allReady = true;
+				for (size_t i = 0; i < menuPlayers.size(); i++)
+				{
+					if (menuPlayers[i]->ready == false)
+					{
+						allReady = false;
+						break;
+					}
+				}
+				if (allReady)
+				{
+					for (size_t i = 0; i < menuPlayers.size(); i++)
+					{
+						cPlayer* player = new cPlayer (menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket);
+						gameData->players.push_back (player);
+					}
+
+					sendGo (*network);
+				}
+				else
+					sendMenuChatMessage (*network, "Not all players are ready...", senderPlayer);
+			}
+		}
+		else if (tokens.size() >= 2)
+		{
+			if (tokens[0].compare ("map") == 0)
+			{
+				string mapName = tokens[1];
+				for (size_t i = 2; i < tokens.size(); i++)
+				{
+					mapName += " ";
+					mapName += tokens[i];
+				}
+				if (gameData->map != 0 && gameData->map->LoadMap (mapName))
+				{
+					sendGameData (*network, *gameData, "");
+					string reply = senderPlayer->name;
+					reply += " changed the map.";
+					sendMenuChatMessage (*network, reply);
+				}
+				else
+				{
+					string reply = "Could not load map ";
+					reply += mapName;
+					sendMenuChatMessage (*network, reply, senderPlayer);
+				}
+			}
+			if (tokens.size() == 2)
+			{
+				if (tokens[0].compare ("credits") == 0)
+				{
+					int credits = atoi (tokens[1].c_str());
+					if (credits != SETTING_CREDITS_LOWEST
+						&& credits != SETTING_CREDITS_LOWER
+						&& credits != SETTING_CREDITS_LOW
+						&& credits != SETTING_CREDITS_NORMAL
+						&& credits != SETTING_CREDITS_MUCH
+						&& credits != SETTING_CREDITS_MORE)
+					{
+						sendMenuChatMessage (*network, "Credits must be one of: 0 50 100 150 200 250", senderPlayer);
+					}
+					else
+					{
+						gameData->settings->credits = (eSettingsCredits) credits;
+						sendGameData (*network, *gameData, "");
+						string reply = senderPlayer->name;
+						reply += " changed the starting credits.";
+						sendMenuChatMessage (*network, reply);
+					}
+				}
+				else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
+						 || tokens[0].compare ("res") == 0)
+					configRessources (tokens, senderPlayer);
+			}
+		}
+	}
+	else
+	{
+		// send to other clients
+		for (size_t i = 0; i < menuPlayers.size(); i++)
+		{
+			if (menuPlayers[i]->nr == message->iPlayerNr)
+				continue;
+			sendMenuChatMessage (*network, chatText, menuPlayers[i], -1, translationText);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_CLAN (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_CLAN);
+
+	gameData->receiveClan (message);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_LANDING_VEHICLES);
+
+	gameData->receiveLandingUnits (message);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_UPGRADES);
+
+	gameData->receiveUnitUpgrades (message);
+}
+
+//-------------------------------------------------------------------------------------
+void cServerGame::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_LANDING_COORDS);
+
+	gameData->receiveLandingPosition (*network, message);
+	if (gameData->allLanded)
+		startGameServer();
+}
+
 void cServerGame::handleNetMessage (cNetMessage* message)
 {
 	cout << "Msg received: " << message->getTypeAsString() << endl;
 
+	// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
 	switch (message->iType)
 	{
-			// TODO: reduce/avoid duplicate code with cNetwork(Host)Menu
-		case TCP_ACCEPT:
-		{
-			sMenuPlayer* player = new sMenuPlayer ("unidentified", 0, false, menuPlayers.size(), message->popInt16());
-			menuPlayers.push_back (player);
-			sendMenuChatMessage (*network, "type --server help for dedicated server help", player);
-			sendRequestIdentification (*network, *player);
-			break;
-		}
-		case TCP_CLOSE: // TODO: this is only ok in cNetwork(Host)Menu. when server runs already, it must be treated another way
-		{
-			int socket = message->popInt16();
-			network->close (socket);
-			string playerName;
-
-			// delete menuPlayer
-			for (size_t i = 0; i < menuPlayers.size(); i++)
-			{
-				if (menuPlayers[i]->socket == socket)
-				{
-					playerName = menuPlayers[i]->name;
-					menuPlayers.erase (menuPlayers.begin() + i);
-				}
-			}
-
-			// resort socket numbers
-			for (size_t playerNr = 0; playerNr < menuPlayers.size(); playerNr++)
-			{
-				if (menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS)
-					menuPlayers[playerNr]->socket--;
-			}
-
-			// resort player numbers
-			for (size_t i = 0; i < menuPlayers.size(); i++)
-			{
-				menuPlayers[i]->nr = i;
-				sendRequestIdentification (*network, *menuPlayers[i]);
-			}
-			sendPlayerList (*network, menuPlayers);
-
-			break;
-		}
-		case MU_MSG_IDENTIFIKATION:
-		{
-			unsigned int playerNr = message->popInt16();
-			if (playerNr >= menuPlayers.size())
-				break;
-			sMenuPlayer* player = menuPlayers[playerNr];
-
-			//bool freshJoined = (player->name.compare ("unidentified") == 0);
-			player->color = message->popInt16();
-			player->name = message->popString();
-			player->ready = message->popBool();
-
-			Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
-
-			//if (freshJoined)
-			//	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name)); // TODO: instead send a chat message to all players?
-
-			// search double taken name or color
-			//checkTakenPlayerAttr (player);
-
-			sendPlayerList (*network, menuPlayers);
-			//sendGameData (*network, gameData, saveGameString, player);
-			sendGameData (*network, *gameData, "", player);
-
-			break;
-		}
-		case MU_MSG_CHAT:
-		{
-			bool translationText = message->popBool();
-			string chatText = message->popString();
-
-			unsigned int senderPlyerNr = message->iPlayerNr;
-			if (senderPlyerNr >= menuPlayers.size())
-				break;
-			sMenuPlayer* senderPlayer = menuPlayers[senderPlyerNr];
-
-
-			// temporary workaround. TODO: good solution - player, who opened games must have "host" gui and new commands to send options/go to server
-			size_t serverStringPos = chatText.find ("--server");
-			if (serverStringPos != string::npos && chatText.length() > serverStringPos + 9)
-			{
-				string command = chatText.substr (serverStringPos + 9);
-				vector<string> tokens;
-				istringstream iss (command);
-				copy (istream_iterator<string> (iss), istream_iterator<string> (), back_inserter<vector<string> > (tokens));
-				if (tokens.size() == 1)
-				{
-					if (tokens[0].compare ("go") == 0)
-					{
-						bool allReady = true;
-						for (size_t i = 0; i < menuPlayers.size(); i++)
-						{
-							if (menuPlayers[i]->ready == false)
-							{
-								allReady = false;
-								break;
-							}
-						}
-						if (allReady)
-						{
-							for (size_t i = 0; i < menuPlayers.size(); i++)
-							{
-								cPlayer* player = new cPlayer (menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket);
-								gameData->players.push_back (player);
-							}
-
-							sendGo (*network);
-						}
-						else
-							sendMenuChatMessage (*network, "Not all players are ready...", senderPlayer);
-					}
-				}
-				else if (tokens.size() >= 2)
-				{
-					if (tokens[0].compare ("map") == 0)
-					{
-						string mapName = tokens[1];
-						for (size_t i = 2; i < tokens.size(); i++)
-						{
-							mapName += " ";
-							mapName += tokens[i];
-						}
-						if (gameData->map != 0 && gameData->map->LoadMap (mapName))
-						{
-							sendGameData (*network, *gameData, "");
-							string reply = senderPlayer->name;
-							reply += " changed the map.";
-							sendMenuChatMessage (*network, reply);
-						}
-						else
-						{
-							string reply = "Could not load map ";
-							reply += mapName;
-							sendMenuChatMessage (*network, reply, senderPlayer);
-						}
-					}
-					if (tokens.size() == 2)
-					{
-						if (tokens[0].compare ("credits") == 0)
-						{
-							int credits = atoi (tokens[1].c_str());
-							if (credits != SETTING_CREDITS_LOWEST
-								&& credits != SETTING_CREDITS_LOWER
-								&& credits != SETTING_CREDITS_LOW
-								&& credits != SETTING_CREDITS_NORMAL
-								&& credits != SETTING_CREDITS_MUCH
-								&& credits != SETTING_CREDITS_MORE)
-							{
-								sendMenuChatMessage (*network, "Credits must be one of: 0 50 100 150 200 250", senderPlayer);
-							}
-							else
-							{
-								gameData->settings->credits = (eSettingsCredits) credits;
-								sendGameData (*network, *gameData, "");
-								string reply = senderPlayer->name;
-								reply += " changed the starting credits.";
-								sendMenuChatMessage (*network, reply);
-							}
-						}
-						else if (tokens[0].compare ("oil") == 0 || tokens[0].compare ("gold") == 0 || tokens[0].compare ("metal") == 0
-								 || tokens[0].compare ("res") == 0)
-							configRessources (tokens, senderPlayer);
-					}
-				}
-			}
-			else
-			{
-				// send to other clients
-				for (size_t i = 0; i < menuPlayers.size(); i++)
-				{
-					if (menuPlayers[i]->nr == message->iPlayerNr)
-						continue;
-					sendMenuChatMessage (*network, chatText, menuPlayers[i], -1, translationText);
-				}
-			}
-			break;
-		}
-		case MU_MSG_CLAN:
-			gameData->receiveClan (message);
-			break;
-		case MU_MSG_LANDING_VEHICLES:
-			gameData->receiveLandingUnits (message);
-			break;
-		case MU_MSG_UPGRADES:
-			gameData->receiveUnitUpgrades (message);
-			break;
-		case MU_MSG_LANDING_COORDS:
-			gameData->receiveLandingPosition (*network, message);
-			if (gameData->allLanded)
-				startGameServer();
-			break;
-			//		case MU_MSG_ALL_LANDED:
-			//			break;
+		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
+		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
+		case MU_MSG_IDENTIFIKATION: handleNetMessage_MU_MSG_IDENTIFIKATION (message); break;
+		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
+		case MU_MSG_CLAN: handleNetMessage_MU_MSG_CLAN (message); break;
+		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (message); break;
+		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (message); break;
+		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (message); break;
+		//case MU_MSG_ALL_LANDED: break;
+		default: break;
 	}
 }
 

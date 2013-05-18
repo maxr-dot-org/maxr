@@ -70,6 +70,15 @@ protected:
 	cNetMessage* pollEvent();
 	void handleNetMessage (cNetMessage* message);
 
+	void handleNetMessage_TCP_ACCEPT (cNetMessage* message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
+	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
+	void handleNetMessage_MU_MSG_CLAN (cNetMessage* message);
+	void handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message);
+	void handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message);
+	void handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message);
+
 	void startGameServer();
 	void terminateServer();
 
