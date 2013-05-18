@@ -242,7 +242,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
 	cSavegame savegame (savegameNum);
-	if (savegame.load (network) != 1) return;
+	if (savegame.load (&Server, network) != 1) return;
 	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
@@ -3341,7 +3341,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 bool cNetworkHostMenu::runSavedGame()
 {
 	cSavegame savegame (gameDataContainer.savegameNum);
-	if (savegame.load (network) != 1) return false;
+	if (savegame.load (&Server, network) != 1) return false;
 
 	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
 	// first we check whether all necessary players are connected

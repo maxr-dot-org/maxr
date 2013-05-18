@@ -2459,16 +2459,17 @@ void cGameGUI::doScroll (int dir)
 
 void cGameGUI::doCommand (const string& cmd)
 {
+	cServer* server = Server;
 	if (cmd.compare ("/fps on") == 0) { debugOutput.showFPS = true;}
 	else if (cmd.compare ("/fps off") == 0) { debugOutput.showFPS = false;}
 	else if (cmd.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false;}
-	else if (cmd.compare ("/base server") == 0) { if (Server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false;}
+	else if (cmd.compare ("/base server") == 0) { if (server) debugOutput.debugBaseServer = true; debugOutput.debugBaseClient = false;}
 	else if (cmd.compare ("/base off") == 0) { debugOutput.debugBaseServer = false; debugOutput.debugBaseClient = false;}
-	else if (cmd.compare ("/sentry server") == 0) { if (Server) debugOutput.debugSentry = true;}
+	else if (cmd.compare ("/sentry server") == 0) { if (server) debugOutput.debugSentry = true;}
 	else if (cmd.compare ("/sentry off") == 0) { debugOutput.debugSentry = false;}
 	else if (cmd.compare ("/fx on") == 0) { debugOutput.debugFX = true;}
 	else if (cmd.compare ("/fx off") == 0) { debugOutput.debugFX = false;}
-	else if (cmd.compare ("/trace server") == 0) { if (Server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false;}
+	else if (cmd.compare ("/trace server") == 0) { if (server) debugOutput.debugTraceServer = true; debugOutput.debugTraceClient = false;}
 	else if (cmd.compare ("/trace client") == 0) { debugOutput.debugTraceClient = true; debugOutput.debugTraceServer = false;}
 	else if (cmd.compare ("/trace off") == 0) { debugOutput.debugTraceServer = false; debugOutput.debugTraceClient = false;}
 	else if (cmd.compare ("/ajobs on") == 0) { debugOutput.debugAjobs = true;}
@@ -2501,7 +2502,7 @@ void cGameGUI::doCommand (const string& cmd)
 	}
 	else if (cmd.substr (0, 6).compare ("/kick ") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
@@ -2511,7 +2512,7 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Wrong parameter");
 			return;
 		}
-		cPlayer* Player = Server->getPlayerFromString (cmd.substr (6, cmd.length()));
+		cPlayer* Player = server->getPlayerFromString (cmd.substr (6, cmd.length()));
 
 		// server can not be kicked
 		if (!Player || Player->Nr == 0)
@@ -2521,18 +2522,18 @@ void cGameGUI::doCommand (const string& cmd)
 		}
 
 		// close the socket
-		if (Server->network) Server->network->close (Player->iSocketNum);
-		std::vector<cPlayer*>& playerList = *Server->PlayerList;
+		if (server->network) server->network->close (Player->iSocketNum);
+		std::vector<cPlayer*>& playerList = *server->PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			if (playerList[i]->iSocketNum > Player->iSocketNum && playerList[i]->iSocketNum < MAX_CLIENTS) playerList[i]->iSocketNum--;
 		}
 		// delete the player
-		Server->deletePlayer (Player);
+		server->deletePlayer (Player);
 	}
 	else if (cmd.substr (0, 9).compare ("/credits ") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
@@ -2546,7 +2547,7 @@ void cGameGUI::doCommand (const string& cmd)
 		string playerStr = cmd.substr (9, cmd.find_first_of (" ", 9) - 9);
 		string creditsStr = cmd.substr (cmd.find_first_of (" ", 9) + 1, cmd.length());
 
-		cPlayer* Player = Server->getPlayerFromString (playerStr);
+		cPlayer* Player = server->getPlayerFromString (playerStr);
 
 		if (!Player)
 		{
@@ -2558,11 +2559,11 @@ void cGameGUI::doCommand (const string& cmd)
 
 		Player->Credits = credits;
 
-		sendCredits (*Server, credits, Player->Nr);
+		sendCredits (*server, credits, Player->Nr);
 	}
 	else if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
@@ -2573,7 +2574,7 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 
-		cPlayer* Player = Server->getPlayerFromString (cmd.substr (12, cmd.length()));
+		cPlayer* Player = server->getPlayerFromString (cmd.substr (12, cmd.length()));
 
 		//server cannot be disconnected
 		//can not disconnect local players
@@ -2585,11 +2586,11 @@ void cGameGUI::doCommand (const string& cmd)
 
 		cNetMessage* message = new cNetMessage (TCP_CLOSE);
 		message->pushInt16 (Player->iSocketNum);
-		Server->pushEvent (message);
+		server->pushEvent (message);
 	}
 	else if (cmd.substr (0, 9).compare ("/deadline") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
@@ -2607,14 +2608,14 @@ void cGameGUI::doCommand (const string& cmd)
 			return;
 		}
 
-		Server->setDeadline (i);
+		server->setDeadline (i);
 		Log.write ("Deadline changed to "  + iToStr (i) , cLog::eLOG_TYPE_INFO);
 	}
 	else if (cmd.substr (0, 7).compare ("/resync") == 0)
 	{
 		if (cmd.length() > 7)
 		{
-			if (!Server)
+			if (!server)
 			{
 				addMessage ("Command can only be used by Host");
 				return;
@@ -2629,9 +2630,9 @@ void cGameGUI::doCommand (const string& cmd)
 		}
 		else
 		{
-			if (Server)
+			if (server)
 			{
-				const std::vector<cPlayer*>& playerList = *Server->PlayerList;
+				const std::vector<cPlayer*>& playerList = *server->PlayerList;
 				for (unsigned int i = 0; i < playerList.size(); i++)
 				{
 					sendRequestResync (*client, playerList[i]->Nr);
@@ -2657,41 +2658,41 @@ void cGameGUI::doCommand (const string& cmd)
 	}
 	else if (cmd.compare ("/fog off") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		Server->getPlayerFromNumber (player->Nr)->revealMap();
+		server->getPlayerFromNumber (player->Nr)->revealMap();
 		player->revealMap();
 	}
 	else if (cmd.compare ("/survey") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		memcpy (map->Resources , Server->Map->Resources, map->size * map->size * sizeof (sResources));
+		memcpy (map->Resources, server->Map->Resources, map->size * map->size * sizeof (sResources));
 		player->revealResource();
 	}
 	else if (cmd.substr (0, 6).compare ("/pause") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		Server->enableFreezeMode (FREEZE_PAUSE);
+		server->enableFreezeMode (FREEZE_PAUSE);
 	}
 	else if (cmd.substr (0, 7).compare ("/resume") == 0)
 	{
-		if (!Server)
+		if (!server)
 		{
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		Server->disableFreezeMode (FREEZE_PAUSE);
+		server->disableFreezeMode (FREEZE_PAUSE);
 	}
 	else
 	{
