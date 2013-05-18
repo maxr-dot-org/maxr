@@ -47,6 +47,9 @@
 #endif
 
 #ifdef _MSC_VER
+
+#define NOMINMAX // do not use min, max as macro
+
 #include <windows.h>
 const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
