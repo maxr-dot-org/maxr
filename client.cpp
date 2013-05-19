@@ -75,7 +75,7 @@ cClient::cClient (cTCP* network_, cMap* const Map, std::vector<cPlayer*>* const 
 	Map (Map),
 	PlayerList (playerList),
 	gameTimer(),
-	gameGUI (NULL, Map, playerList)
+	gameGUI (NULL, Map)
 {
 	gameGUI.setClient (this);
 	gameTimer.setClient(this);
@@ -283,7 +283,7 @@ void cClient::HandleNetMessage_GAME_EV_PLAYER_CLANS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_PLAYER_CLANS);
 
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
 		int playerNr = message.popChar();
 		int clan = message.popChar();
@@ -462,9 +462,9 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 		gameGUI.updateTurnTime (-1);
 		ActivePlayer->clearDone();
 		Log.write ("######### Round " + iToStr (iTurn) + " ###########", cLog::eLOG_TYPE_NET_DEBUG);
-		for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+		for (unsigned int i = 0; i < getPlayerList().size(); i++)
 		{
-			(*getPlayerList()) [i]->bFinishedTurn = false;
+			getPlayerList()[i]->bFinishedTurn = false;
 		}
 	}
 
@@ -1466,9 +1466,9 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_DELETE_EVERYTHING);
 
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer& Player = * (*getPlayerList()) [i];
+		cPlayer& Player = *getPlayerList()[i];
 
 		for (cVehicle* vehicle = Player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -1742,8 +1742,7 @@ void cClient::HandleNetMessage_GAME_EV_CASUALTIES_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CASUALTIES_REPORT);
 
-	if (casualtiesTracker != NULL)
-		casualtiesTracker->updateCasualtiesFromNetMessage (&message);
+	casualtiesTracker->updateCasualtiesFromNetMessage (&message);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SCORE (cNetMessage& message)
@@ -1947,10 +1946,10 @@ void cClient::addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bIni
 
 cPlayer* cClient::getPlayerFromNumber (int iNum)
 {
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer* const p = (*getPlayerList()) [i];
-		if (p->Nr == iNum) return p;
+		cPlayer& p = *getPlayerList()[i];
+		if (p.Nr == iNum) return &p;
 	}
 	return NULL;
 }
@@ -1971,7 +1970,6 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	}
 
 	return NULL;
-
 }
 
 void cClient::deleteUnit (cBuilding* Building)
@@ -2196,10 +2194,10 @@ void cClient::handleMoveJobs()
 
 cVehicle* cClient::getVehicleFromID (unsigned int iID)
 {
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer* player = (*getPlayerList()) [i];
-		for (cVehicle* vehicle = player->VehicleList; vehicle; vehicle = vehicle->next)
+		cPlayer& player = *getPlayerList()[i];
+		for (cVehicle* vehicle = player.VehicleList; vehicle; vehicle = vehicle->next)
 		{
 			if (vehicle->iID == iID) return vehicle;
 		}
@@ -2209,11 +2207,11 @@ cVehicle* cClient::getVehicleFromID (unsigned int iID)
 
 cBuilding* cClient::getBuildingFromID (unsigned int iID)
 {
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
+	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
-		cPlayer* player = (*getPlayerList()) [i];
+		cPlayer& player = *getPlayerList()[i];
 
-		for (cBuilding* building = player->BuildingList; building; building = building->next)
+		for (cBuilding* building = player.BuildingList; building; building = building->next)
 		{
 			if (building->iID == iID) return building;
 		}

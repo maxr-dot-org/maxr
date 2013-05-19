@@ -454,7 +454,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 }
 
 
-cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const playerList) :
+cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
 	cMenu (generateSurface()),
 	client (NULL),
 	iObjectStream(-1),
@@ -624,18 +624,6 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const p
 	selUnitNameEdit.setReturnPressedFunc (unitNameReturnPressed);
 	menuItems.push_back (&selUnitNameEdit);
 
-	for (size_t i = 0; i < playerList->size(); i++)
-	{
-		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
-		const int yPos = Video.getResolutionY() >= 768 ? (482 + GraphicsData.gfx_hud_extra_players->h * i) : (480 - 82 - GraphicsData.gfx_hud_extra_players->h * i);
-
-		cMenuPlayerInfo* playerInfo = new cMenuPlayerInfo (xPos, yPos, (*playerList) [i]);
-		playerInfo->setDisabled (true);
-		playersInfo.push_back (playerInfo);
-
-		menuItems.push_back (playerInfo);
-	}
-
 	updateTurn (1);
 }
 
@@ -643,6 +631,19 @@ void cGameGUI::setClient (cClient* client)
 {
 	this->client = client;
 	debugOutput.setClient(client);
+
+	for (size_t i = 0; i < client->getPlayerList().size(); i++)
+	{
+		cPlayer& p = *client->getPlayerList()[i];
+		const int xPos = Video.getResolutionY() >= 768 ? 3 : 161;
+		const int yPos = Video.getResolutionY() >= 768 ? (482 + GraphicsData.gfx_hud_extra_players->h * i) : (480 - 82 - GraphicsData.gfx_hud_extra_players->h * i);
+
+		cMenuPlayerInfo* playerInfo = new cMenuPlayerInfo (xPos, yPos, p);
+		playerInfo->setDisabled (true);
+		playersInfo.push_back (playerInfo);
+
+		menuItems.push_back (playerInfo);
+	}
 }
 
 float cGameGUI::calcMinZoom()
@@ -4019,9 +4020,9 @@ void cGameGUI::displayMessages()
 			if (msgString[i] == ':')   //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr (0, i);
-				for (size_t i = 0; i < client->getPlayerList()->size(); i++)
+				for (size_t i = 0; i < client->getPlayerList().size(); ++i)
 				{
-					cPlayer* const Player = (*client->getPlayerList()) [i];
+					cPlayer* const Player = client->getPlayerList()[i];
 					if (Player)
 					{
 						if (tmpString.compare (Player->name) == 0)

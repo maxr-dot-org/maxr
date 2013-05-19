@@ -128,7 +128,7 @@ cBuilding::~cBuilding()
 
 	if (IsLocked)
 	{
-		std::vector<cPlayer*>& playerList = *Client->getPlayerList();
+		std::vector<cPlayer*>& playerList = Client->getPlayerList();
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* p = playerList[i];

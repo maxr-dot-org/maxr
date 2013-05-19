@@ -3565,18 +3565,14 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& cli
 		unitDetails[i] = new cMenuUnitDetails (position.x + 127, position.y + 17 + 55 * i, true, owner);
 	}
 	screenType = REP_SCR_TYPE_UNITS;
-	if (client->getCasualties() != 0)
-	{
-		client->getCasualties()->addNotificationListener (this);
-		sendRequestCasualtiesReport (*client);
-	}
+	client->getCasualties().addNotificationListener (this);
+	sendRequestCasualtiesReport (*client);
 }
 
 //-----------------------------------------------------------------------------
 cMenuReportsScreen::~cMenuReportsScreen()
 {
-	if (client->getCasualties() != 0)
-		client->getCasualties()->removeNotificationListener (this);
+	client->getCasualties().removeNotificationListener (this);
 
 	delete [] unitDetails;
 }
@@ -3645,73 +3641,62 @@ void cMenuReportsScreen::drawUnitsScreen()
 //-----------------------------------------------------------------------------
 void cMenuReportsScreen::drawDisadvantagesScreen()
 {
-	if (client->getPlayerList() == 0)
+	for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList().size(); playerIdx++)
+	{
+		const cPlayer& player = *client->getPlayerList()[playerIdx];
+		const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
+		const int posy = position.y + (playerIdx < 4 ? 9 : 22);
+		font->showTextCentered (posx, posy, player.name);
+	}
+
+
+	cCasualtiesTracker& casualties = client->getCasualties();
+
+	vector<sID> unitTypesWithLosses = casualties.getUnitTypesWithLosses();
+	if (unitTypesWithLosses.empty())
 		return;
 
-	for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->size(); playerIdx++)
+	int displayedEntryIndex = 0;
+
+	for (size_t i = 0; i < UnitsData.building.size(); i++)
 	{
-		cPlayer* player = (*client->getPlayerList()) [playerIdx];
-		font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
-								position.y + (playerIdx < 4 ? 9 : 22), player->name);
+		sID unitID = UnitsData.building[i].data.ID;
+		sBuilding* buildingImgs = unitID.getBuilding();
+		SDL_Surface* unitImg = buildingImgs ? buildingImgs->img_org : 0;
+		if (unitImg == 0)   // shouldn't happen
+			continue;
+		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
+			displayedEntryIndex++;
+
+		if (displayedEntryIndex >= (index + 1) * 10)
+			break;
 	}
 
-
-	cCasualtiesTracker* casualties = client->getCasualties();
-	if (casualties != 0)
+	for (size_t i = 0; i < UnitsData.vehicle.size(); i++)
 	{
-		vector<sID> unitTypesWithLosses = casualties->getUnitTypesWithLosses();
-		if (unitTypesWithLosses.empty())
-			return;
+		sID unitID = UnitsData.vehicle[i].data.ID;
+		sVehicle* vehicleImgs = unitID.getVehicle();
+		SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->img_org[0] : 0;
+		if (unitImg == 0)   // shouldn't happen
+			continue;
+		if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
+			displayedEntryIndex++;
 
-		int displayedEntryIndex = 0;
-
-		for (size_t i = 0; i < UnitsData.building.size(); i++)
-		{
-			sID unitID = UnitsData.building[i].data.ID;
-			sBuilding* buildingImgs = unitID.getBuilding();
-			SDL_Surface* unitImg = buildingImgs ? buildingImgs->img_org : 0;
-			if (unitImg == 0)   // shouldn't happen
-				continue;
-			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
-				displayedEntryIndex++;
-
-			if (displayedEntryIndex >= (index + 1) * 10)
-				break;
-		}
-
-		for (size_t i = 0; i < UnitsData.vehicle.size(); i++)
-		{
-			sID unitID = UnitsData.vehicle[i].data.ID;
-			sVehicle* vehicleImgs = unitID.getVehicle();
-			SDL_Surface* unitImg = vehicleImgs ? vehicleImgs->img_org[0] : 0;
-			if (unitImg == 0)   // shouldn't happen
-				continue;
-			if (drawDisadvantageEntryIfNeeded (unitID, unitImg, unitTypesWithLosses, displayedEntryIndex))
-				displayedEntryIndex++;
-
-			if (displayedEntryIndex >= (index + 1) * 10)
-				break;
-		}
+		if (displayedEntryIndex >= (index + 1) * 10)
+			break;
 	}
-	else
-		font->showText (position.x + 17, position.y + 30, "Error: casualties are not initialized. Tell developers of this message.");
 }
 
 //-----------------------------------------------------------------------------
 int cMenuReportsScreen::countDisadvantageEntries() const
 {
-	cCasualtiesTracker* casualties = client->getCasualties();
-	if (casualties != 0)
-		return casualties->getUnitTypesWithLosses().size();
-	return 0;
+	return client->getCasualties().getUnitTypesWithLosses().size();
 }
 
 //-----------------------------------------------------------------------------
 bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface* unitImg, vector<sID>& unitTypesWithLosses, int displayedEntryIndex)
 {
-	cCasualtiesTracker* casualties = client->getCasualties();
-	if (casualties == 0)
-		return false;
+	cCasualtiesTracker& casualties = client->getCasualties();
 	for (size_t i = 0; i < unitTypesWithLosses.size(); i++)
 	{
 		if (unitID == unitTypesWithLosses[i])
@@ -3744,12 +3729,13 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 
 					font->showText (position.x + 54, position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, unitData->name);
 
-					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList()->size(); playerIdx++)
+					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList().size(); playerIdx++)
 					{
-						const cPlayer* player = (*client->getPlayerList()) [playerIdx];
-						int lossesOfPlayer = casualties->getCasualtiesOfUnitType (unitData->ID, player->Nr);
-						font->showTextCentered (position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37),
-												position.y + 38 + (displayedEntryIndex - (index * 10)) * 42, iToStr (lossesOfPlayer));
+						const cPlayer& player = *client->getPlayerList()[playerIdx];
+						const int lossesOfPlayer = casualties.getCasualtiesOfUnitType (unitData->ID, player.Nr);
+						const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
+						const int posy = position.y + 38 + (displayedEntryIndex - (index * 10)) * 42;
+						font->showTextCentered (posx, posy, iToStr (lossesOfPlayer));
 					}
 				}
 			}
@@ -3782,17 +3768,17 @@ void cMenuReportsScreen::drawScoreScreen()
 		font->showText (position.x + 25, position.y + 20, ss.str());
 	}
 
-	for (unsigned n = 0, y = 36; n < client->getPlayerList()->size(); n++, y += 16)
+	for (unsigned n = 0, y = 36; n < client->getPlayerList().size(); n++, y += 16)
 	{
-		cPlayer* p = (*client->getPlayerList()) [n];
-		int score = p->getScore (client->getTurn());
-		int ecos = p->numEcos;
+		const cPlayer& p = *client->getPlayerList()[n];
+		int score = p.getScore (client->getTurn());
+		int ecos = p.numEcos;
 
 		SDL_Rect r = {Sint16 (position.x + 24), Sint16 (position.y + y + 3), 8, 8};
-		SDL_FillRect (buffer, &r, getPlayerColour (p));
+		SDL_FillRect (buffer, &r, getPlayerColour (&p));
 
 		std::stringstream ss;
-		ss << p->name << ": "
+		ss << p.name << ": "
 		   << plural (score, "Text~Comp~Point", "Text~Comp~Points") << ", "
 		   << plural (ecos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
@@ -3841,12 +3827,12 @@ void cMenuReportsScreen::drawScoreGraph()
 	*/
 	int highest_score = 0;
 	int lowest_score = 0x7FFFFFFF;
-	for (unsigned n = 0; n < client->getPlayerList()->size(); n++)
+	for (unsigned n = 0; n < client->getPlayerList().size(); n++)
 	{
 		for (int turn = min_turns; turn < max_turns; turn++)
 		{
-			const cPlayer* p = (*client->getPlayerList()) [n];
-			int score = extrapolateScore (p, client->getTurn(), turn);
+			const cPlayer& p = *client->getPlayerList()[n];
+			int score = extrapolateScore (&p, client->getTurn(), turn);
 			highest_score = std::max (highest_score, score);
 			lowest_score = std::min (score, lowest_score);
 		}
@@ -3904,19 +3890,17 @@ void cMenuReportsScreen::drawScoreGraph()
 	/*
 		Draw Score Lines
 	*/
-	for (unsigned n = 0, y = 40; n < client->getPlayerList()->size(); n++, y += 25)
+	for (unsigned n = 0, y = 40; n < client->getPlayerList().size(); n++, y += 25)
 	{
-		const cPlayer* p = (*client->getPlayerList()) [n];
-		Uint32 player_colour = getPlayerColour (p);
-
+		const cPlayer& p = *client->getPlayerList()[n];
+		const Uint32 player_colour = getPlayerColour (&p);
 		int lx, ly;
 
 		for (int turn = min_turns; turn < max_turns; turn++)
 		{
-			int points = extrapolateScore (p, client->getTurn(), turn);
-
-			int x = x0 + pix_per_turn * (turn - min_turns);
-			int y = y1 - (int) (pix_per_point * (points - min_points));
+			const int points = extrapolateScore (&p, client->getTurn(), turn);
+			const int x = x0 + pix_per_turn * (turn - min_turns);
+			const int y = y1 - (int) (pix_per_point * (points - min_points));
 
 			if (turn != min_turns)
 				drawLine (buffer, lx, ly, x, y, player_colour);
@@ -3926,9 +3910,7 @@ void cMenuReportsScreen::drawScoreGraph()
 		}
 	}
 
-	/*
-		Draw Axes
-	*/
+	// Draw Axes
 	drawLine (buffer, x0, y0, x0, y1, axis_colour);
 	drawLine (buffer, x0, y1, x1, y1, axis_colour);
 }
@@ -3939,7 +3921,7 @@ void cMenuReportsScreen::drawReportsScreen()
 	SDL_Rect textDest = { Sint16 (position.x + 54), Sint16 (position.y + 25), 410, 30 };
 	for (unsigned int i = (index) * maxItems; i < owner->savedReportsList.size(); i++)
 	{
-		if ( (int) i >= (index + 1) *maxItems) break;
+		if ( (int) i >= (index + 1) * maxItems) break;
 		sSavedReportMessage& savedReport = owner->savedReportsList[i];
 
 		switch (savedReport.type)
@@ -4293,9 +4275,9 @@ void cMenuReportsScreen::released (void* parent)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-cMenuPlayerInfo::cMenuPlayerInfo (int x, int y, cPlayer* player_) :
+cMenuPlayerInfo::cMenuPlayerInfo (int x, int y, const cPlayer& player_) :
 	cMenuItem (x, y),
-	player (player_)
+	player (&player_)
 {}
 
 //-----------------------------------------------------------------------------

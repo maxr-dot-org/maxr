@@ -1361,9 +1361,9 @@ public:
 class cMenuPlayerInfo : public cMenuItem
 {
 private:
-	cPlayer* player;
+	const cPlayer* player;
 public:
-	cMenuPlayerInfo (int x, int y, cPlayer* player_);
+	cMenuPlayerInfo (int x, int y, const cPlayer& player_);
 
 	virtual void draw();
 };

@@ -48,9 +48,6 @@ public:
 private:
 	friend class cDebugOutput;
 	friend class cPlayer;
-	friend class cBuilding;
-	friend class cVehicle;
-	friend class cUnit;
 
 	cTCP* network;
 	/** the map */
@@ -113,8 +110,6 @@ private:
 
 	void runJobs ();
 	void releaseJob (cUnit* unit);
-
-
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message);
@@ -305,11 +300,11 @@ public:
 
 	void deletePlayer (cPlayer* player);
 
-	cCasualtiesTracker* getCasualties() {return casualtiesTracker;}
+	cCasualtiesTracker& getCasualties() { return *casualtiesTracker; }
 	const cMap* getMap() const { return Map; }
 	cMap* getMap() { return Map; }
-	const std::vector<cPlayer*>* getPlayerList() const { return PlayerList; }
-	std::vector<cPlayer*>* getPlayerList() { return PlayerList; }
+	const std::vector<cPlayer*>& getPlayerList() const { return *PlayerList; }
+	std::vector<cPlayer*>& getPlayerList() { return *PlayerList; }
 	const cPlayer* getActivePlayer() const { return ActivePlayer; }
 	cPlayer* getActivePlayer() { return ActivePlayer; }
 };

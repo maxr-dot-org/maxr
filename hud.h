@@ -406,7 +406,7 @@ private:
 	void selectUnit_building (cBuilding* building);
 
 public:
-	cGameGUI (cPlayer* player_, cMap* map_, std::vector<cPlayer*>* const playerList);
+	cGameGUI (cPlayer* player_, cMap* map_);
 	~cGameGUI();
 
 	/** SDL_Timer for animations */

@@ -115,9 +115,10 @@ cVehicle::~cVehicle()
 
 	if (IsLocked)
 	{
-		for (size_t i = 0; i < Client->PlayerList->size(); i++)
+		std::vector<cPlayer*>& playerList = Client->getPlayerList();
+		for (size_t i = 0; i < playerList.size(); i++)
 		{
-			cPlayer* p = (*Client->PlayerList) [i];
+			cPlayer* p = playerList[i];
 			p->DeleteLock (this);
 		}
 	}
