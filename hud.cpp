@@ -508,7 +508,6 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
 	iTimerTime (0)
 {
 	dCache.setGameGUI(*this);
-	debugOutput.setServer(Server);
 	unitMenuActive = false;
 	frame = 0;
 	zoom = 1.0;
@@ -630,7 +629,8 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
 void cGameGUI::setClient (cClient* client)
 {
 	this->client = client;
-	debugOutput.setClient(client);
+	debugOutput.setClient (client);
+	debugOutput.setServer (client->getServer());
 
 	for (size_t i = 0; i < client->getPlayerList().size(); i++)
 	{
@@ -840,7 +840,7 @@ int cGameGUI::show()
 	}
 
 	// code to work with DEDICATED_SERVER - network client sends the server, that it disconnects itself
-	if (Server == 0)
+	if (client->getServer() == 0)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_WANT_DISCONNECT);
 		client->sendNetMessage (message);
@@ -879,7 +879,8 @@ void cGameGUI::updateInfoTexts ()
 	}
 	else if (client->getFreezeMode (FREEZE_WAIT_FOR_RECONNECT))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), Server ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "");
+		std::string s = client->getServer() ? lngPack.i18n ("Text~Multiplayer~Abort_Waiting") : "";
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Reconnect"), s);
 	}
 	else if (client->getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
 	{
@@ -2460,7 +2461,7 @@ void cGameGUI::doScroll (int dir)
 
 void cGameGUI::doCommand (const string& cmd)
 {
-	cServer* server = Server;
+	cServer* server = client->getServer();
 	if (cmd.compare ("/fps on") == 0) { debugOutput.showFPS = true;}
 	else if (cmd.compare ("/fps off") == 0) { debugOutput.showFPS = false;}
 	else if (cmd.compare ("/base client") == 0) { debugOutput.debugBaseClient = true; debugOutput.debugBaseServer = false;}
@@ -3719,7 +3720,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 						}
 						if (debugOutput.debugBaseServer && building->SubBase)
 						{
-							sSubBase* sb = Server->Map->fields[pos].getBuildings()->SubBase;;
+							sSubBase* sb = client->getServer()->Map->fields[pos].getBuildings()->SubBase;
 							if (sb)
 							{
 								SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };

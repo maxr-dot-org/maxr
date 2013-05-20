@@ -195,17 +195,17 @@ public:
 	/**
 	* adds a building to the base and updates the subbase structures
 	* @param building the building, that is added to the base
-	* @param bServer when true, the resulting subbase values are sent to the client
+	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void addBuilding (cBuilding* building, bool bServer);
+	void addBuilding (cBuilding* building, cServer* server);
 	/**
 	* deletes a building from the base and updates the subbase structures
 	* @param building the building, that is deleted to the base
-	* @param bServer when true, the resulting subbase values are sent to the client
+	* @param server when not null, the resulting subbase values are sent to the client
 	* @author eiko
 	*/
-	void deleteBuilding (cBuilding* building, bool bServer);
+	void deleteBuilding (cBuilding* building, cServer* server);
 	void handleTurnend (cServer& server);
 	/**
 	* recalculates the values of all subbases

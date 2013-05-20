@@ -55,7 +55,7 @@ public:
 	// retrieve state
 	std::string getGameState() const;
 
-	int getSocketForPlayerNr (int playerNr);
+	int getSocketForPlayerNr (int playerNr) const;
 
 	//------------------------------------------------------------------------
 protected:

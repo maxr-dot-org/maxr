@@ -1042,7 +1042,7 @@ sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 	else return NULL;
 }
 
-void cBase::addBuilding (cBuilding* building, bool bServer)
+void cBase::addBuilding (cBuilding* building, cServer* server)
 {
 	int pos;
 	if (!building->data.connectsToBase) return;
@@ -1083,7 +1083,7 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
 
-		if (bServer) sendSubbaseValues (*Server, *NewSubBase, NewSubBase->owner->Nr);
+		if (server) sendSubbaseValues (*server, *NewSubBase, NewSubBase->owner->Nr);
 
 		return;
 	}
@@ -1103,10 +1103,10 @@ void cBase::addBuilding (cBuilding* building, bool bServer)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (bServer) sendSubbaseValues (*Server, *firstNeighbour, building->owner->Nr);
+	if (server) sendSubbaseValues (*server, *firstNeighbour, building->owner->Nr);
 }
 
-void cBase::deleteBuilding (cBuilding* building, bool bServer)
+void cBase::deleteBuilding (cBuilding* building, cServer* server)
 {
 	if (!building->data.connectsToBase) return;
 	sSubBase* sb = building->SubBase;
@@ -1128,7 +1128,7 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	{
 		cBuilding* n = sb->buildings[i];
 		if (n == building) continue;
-		addBuilding (n, false);
+		addBuilding (n, NULL);
 	}
 
 	//generate list, with the new subbases
@@ -1162,12 +1162,12 @@ void cBase::deleteBuilding (cBuilding* building, bool bServer)
 	if (building->IsWorking && building->data.canResearch)
 		building->owner->stopAResearch (building->researchArea);
 
-	if (bServer)
+	if (server)
 	{
 		//send subbase values to client
 		for (unsigned int i = 0; i < newSubBases.size(); i++)
 		{
-			sendSubbaseValues (*Server, *newSubBases[i], building->owner->Nr);
+			sendSubbaseValues (*server, *newSubBases[i], building->owner->Nr);
 		}
 	}
 

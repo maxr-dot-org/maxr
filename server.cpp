@@ -2298,7 +2298,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit);
 
 	// integrate the building to the base:
-	Player->base.addBuilding (AddedBuilding, true);
+	Player->base.addBuilding (AddedBuilding, this);
 
 	//if this is a top building, delete connectors, mines and roads
 	if (AddedBuilding->data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
@@ -2438,7 +2438,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		sendDeleteUnit (*this, *unit, -1);
 
 	if (unit->isBuilding() && static_cast<cBuilding*> (unit)->SubBase != 0)
-		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), true);
+		unit->owner->base.deleteBuilding (static_cast<cBuilding*> (unit), this);
 
 	cPlayer* owner = unit->owner;
 	delete unit;

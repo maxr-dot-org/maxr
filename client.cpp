@@ -70,8 +70,9 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 cClient* Client = 0; // global instance
 
-cClient::cClient (cTCP* network_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
-	network(network_),
+cClient::cClient (cServer* server_, cTCP* network_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
+	server (server_),
+	network (network_),
 	Map (Map),
 	PlayerList (playerList),
 	gameTimer(),
@@ -121,10 +122,10 @@ void cClient::sendNetMessage (cNetMessage* message) const
 	if (message->iType != NET_GAME_TIME_CLIENT)
 		Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
-	if (!network || network->isHost())
+	if (server)
 	{
 		//push an event to the local server in singleplayer, HotSeat or if this machine is the host
-		Server->pushEvent (message);
+		server->pushEvent (message);
 	}
 	else // else send it over the net
 	{
@@ -315,7 +316,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
-	Player->base.addBuilding (AddedBuilding, false);
+	Player->base.addBuilding (AddedBuilding, NULL);
 
 	// play placesound if it is a mine
 	if (UnitID == specialIDLandMine && Player == ActivePlayer) PlayFX (SoundData.SNDLandMinePlace);
@@ -2002,7 +2003,7 @@ void cClient::deleteUnit (cBuilding* Building)
 	}
 
 	if (Building->owner == ActivePlayer)
-		Building->owner->base.deleteBuilding (Building, false);
+		Building->owner->base.deleteBuilding (Building, NULL);
 
 	cPlayer* owner = Building->owner;
 	delete Building;

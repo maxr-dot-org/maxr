@@ -189,7 +189,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	}
 
 	// init client and his players
-	Client = new cClient (network, map, &players);
+	Client = new cClient (Server, network, map, &players);
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -258,7 +258,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	Client = new cClient (network, &clientMap, &clientPlayerList);
+	Client = new cClient (Server, network, &clientMap, &clientPlayerList);
 	Client->initPlayer (clientPlayerList[player]);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
@@ -3426,7 +3426,7 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	Client = new cClient (network, &clientMap, &clientPlayerList);
+	Client = new cClient (Server, network, &clientMap, &clientPlayerList);
 	Client->initPlayer (localPlayer);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
@@ -4107,8 +4107,9 @@ void cLoadSaveMenu::exitReleased (void* parent)
 void cLoadSaveMenu::saveReleased (void* parent)
 {
 	cLoadSaveMenu* menu = static_cast<cLoadSaveMenu*> ( (cMenu*) parent);
-	if (menu->selected < 0 ||  menu->selected > 99) return;
-	if (!Server)
+	if (menu->selected < 0 || menu->selected > 99) return;
+	cServer* server = Server;
+	if (!server)
 	{
 		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
 		okDialog.show();
@@ -4117,8 +4118,8 @@ void cLoadSaveMenu::saveReleased (void* parent)
 	}
 
 	cSavegame savegame (menu->selected + 1);
-	savegame.save (*Server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
-	Server->makeAdditionalSaveRequest (menu->selected + 1);
+	savegame.save (*server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
+	server->makeAdditionalSaveRequest (menu->selected + 1);
 
 	PlayVoice (VoiceData.VOISaved);
 

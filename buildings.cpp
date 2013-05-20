@@ -464,8 +464,9 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
 	{
-		cBuilding* serverBuilding = NULL;
-		if (Server) serverBuilding = Server->Map->fields[PosX + PosY * Server->Map->size].getBuildings();
+		cServer* server = gameGUI.getClient()->getServer();
+		const cBuilding* serverBuilding = NULL;
+		if (server) serverBuilding = server->Map->fields[PosX + PosY * server->Map->size].getBuildings();
 		if (isBeeingAttacked) font->showText (dest.x + 1, dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
 		if (serverBuilding && serverBuilding->isBeeingAttacked) font->showText (dest.x + 1, dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
 		if (attacking) font->showText (dest.x + 1, dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);

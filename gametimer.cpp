@@ -190,7 +190,7 @@ void cGameTimerClient::run ()
 			}
 
 			if (syncDebugSingleStep)
-				compareGameData(*client, *Server);
+				compareGameData(*client, *client->getServer());
 
 			nextMsgIsNextGameTime = false;
 

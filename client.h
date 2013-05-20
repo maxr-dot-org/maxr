@@ -31,6 +31,7 @@ class cClientMoveJob;
 class cCasualtiesTracker;
 class cJob;
 class cFx;
+class cServer;
 class cTCP;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -42,13 +43,17 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient
 {
 public:
-	cClient (cTCP* network_, cMap* Map, std::vector<cPlayer*>* PlayerList);
+	cClient (cServer* server_, cTCP* network_, cMap* Map, std::vector<cPlayer*>* PlayerList);
 	~cClient();
 
+	// Return local server if any.
+	// TODO: should be const cServer*
+	cServer* getServer() const { return server; }
 private:
 	friend class cDebugOutput;
 	friend class cPlayer;
 
+	cServer* server;
 	cTCP* network;
 	/** the map */
 	cMap* Map;

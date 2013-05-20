@@ -572,9 +572,10 @@ void cServerGame::pushEvent (cNetMessage* message)
 //------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
+	cServer* server = Server;
 	std::stringstream result;
 	result << "GameState: ";
-	if (Server != 0)
+	if (server != NULL)
 		result << "Game is active" << endl;
 	else if (gameData != 0 && gameData->players.size() == 0)
 		result << "Game is open for new players" << endl;
@@ -582,16 +583,16 @@ std::string cServerGame::getGameState() const
 		result << "Game has started, players are setting up" << endl;
 
 	result << "Map: " << (gameData != 0 ? gameData->map->MapName : "none") << endl;
-	if (Server != 0)
-		result << "Turn: " << Server->getTurn() << endl;
+	if (server != NULL)
+		result << "Turn: " << server->getTurn() << endl;
 
 	result << "Players:" << endl;
-	if (Server != 0 && serverPlayers.size() > 0)
+	if (server != NULL && serverPlayers.size() > 0)
 	{
 		for (size_t i = 0; i < serverPlayers.size(); i++)
 		{
 			cPlayer* player = serverPlayers[i];
-			result << " " << player->name << (Server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
+			result << " " << player->name << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
 	else if (gameData->players.size() > 0)
@@ -608,11 +609,12 @@ std::string cServerGame::getGameState() const
 }
 
 //------------------------------------------------------------------------
-int cServerGame::getSocketForPlayerNr (int playerNr)
+int cServerGame::getSocketForPlayerNr (int playerNr) const
 {
-	if (Server != 0)
+	cServer* server = Server;
+	if (server != 0)
 	{
-		cPlayer* player = Server->getPlayerFromNumber (playerNr);
+		const cPlayer* player = server->getPlayerFromNumber (playerNr);
 		if (player != 0)
 			return player->iSocketNum;
 	}

@@ -415,8 +415,9 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	//attack job debug output
 	if (gameGUI.getAJobDebugStatus())
 	{
+		cServer* server = gameGUI.getClient()->getServer();
 		cVehicle* serverVehicle = NULL;
-		if (Server) serverVehicle = Server->Map->fields[PosX + PosY * Server->Map->size].getVehicles();
+		if (server) serverVehicle = server->Map->fields[PosX + PosY * server->Map->size].getVehicles();
 		if (isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
 		if (serverVehicle && serverVehicle->isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
 		if (attacking) font->showText (screenPosition.x + 1, screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
