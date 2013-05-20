@@ -491,7 +491,6 @@ cUnit* cPlayer::getNextUnit(cUnit* start)
 		if (nextVehicle) return nextVehicle;
 		cBuilding* nextBuilding = getNextBuilding (NULL);
 		if (nextBuilding) return nextBuilding;
-		return getNextMiningStation (NULL);
 	}
 	else if (start->isVehicle())
 	{
@@ -501,27 +500,22 @@ cUnit* cPlayer::getNextUnit(cUnit* start)
 		if (nextBuilding) return nextBuilding;
 		nextVehicle = getNextVehicle (NULL);
 		if (nextVehicle) return nextVehicle;
-		return getNextMiningStation (NULL);
 	}
 	else
 	{
+		assert (start->isBuilding());
 		cBuilding* building = static_cast<cBuilding*>(start);
-		if (building->data.canMineMaxRes == 0)
-		{
-			cBuilding* nextBuilding = getNextBuilding (building);
-			if (nextBuilding) return nextBuilding;
-			cVehicle* nextVehicle = getNextVehicle (NULL);
-			if (nextVehicle) return nextVehicle;
-			return getNextMiningStation (NULL);
-		}
-		else
-		{
-			return getNextMiningStation (building);
-		}
+		cBuilding* nextBuilding = getNextBuilding (building);
+		if (nextBuilding) return nextBuilding;
+		cVehicle* nextVehicle = getNextVehicle (NULL);
+		if (nextVehicle) return nextVehicle;
+		nextBuilding = getNextBuilding (NULL);
+		if (nextBuilding) return nextBuilding;
 	}
+	// finally, return the more recent built Mining station.
+	// since list order is by increasing age, take the first in list.
+	return getNextMiningStation (NULL);
 }
-
-
 
 cVehicle* cPlayer::getPrevVehicle (cVehicle* start)
 {
@@ -572,7 +566,6 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 		if (prevVehicle) return prevVehicle;
 		cBuilding* prevBuilding = getPrevBuilding (NULL);
 		if (prevBuilding) return prevBuilding;
-		return getPrevMiningStation (NULL);
 	}
 	else if (start->isVehicle())
 	{
@@ -582,24 +575,21 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 		if (prevBuilding) return prevBuilding;
 		prevVehicle = getPrevVehicle (NULL);
 		if (prevVehicle) return prevVehicle;
-		return getPrevMiningStation (NULL);
 	}
 	else
 	{
+		assert (start->isBuilding());
 		cBuilding* building = static_cast<cBuilding*>(start);
-		if (building->data.canMineMaxRes == 0)
-		{
-			cBuilding* prevBuilding = getPrevBuilding (building);
-			if (prevBuilding) return prevBuilding;
-			cVehicle* prevVehicle = getPrevVehicle (NULL);
-			if (prevVehicle) return prevVehicle;
-			return getPrevMiningStation (NULL);
-		}
-		else
-		{
-			return getPrevMiningStation (building);
-		}
+		cBuilding* prevBuilding = getPrevBuilding (building);
+		if (prevBuilding) return prevBuilding;
+		cVehicle* prevVehicle = getPrevVehicle (NULL);
+		if (prevVehicle) return prevVehicle;
+		prevBuilding = getPrevBuilding (NULL);
+		if (prevBuilding) return prevBuilding;
 	}
+	// finally, return the more recent built Mining station.
+	// since list order is by increasing age, take the first in list.
+	return getNextMiningStation (NULL);
 }
 
 //--------------------------------------------------------------
