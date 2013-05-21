@@ -3178,9 +3178,7 @@ void cNetworkHostMenu::startReleased (void* parent)
 	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
 	if (menu->network->getConnectionStatus() == 0)   // Connect only if there isn't a connection jet
 	{
-		menu->network->setPort (menu->port);
-
-		if (menu->network->create() == -1)
+		if (menu->network->create (menu->port) == -1)
 		{
 			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
 			Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
@@ -3495,13 +3493,10 @@ void cNetworkClientMenu::connectReleased (void* parent)
 
 	if (menu->network->getConnectionStatus() == 0) // Connect only if there isn't a connection yet
 	{
-		menu->network->setPort (menu->port);
-		menu->network->setIP (menu->ip);
-
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Connecting") + menu->ip + ":" + iToStr (menu->port));    // e.g. Connecting to 127.0.0.1:55800
 		Log.write ( ("Connecting to " + menu->ip + ":" + iToStr (menu->port)), cLog::eLOG_TYPE_INFO);
 
-		if (menu->network->connect() == -1)
+		if (menu->network->connect (menu->ip, menu->port) == -1)
 		{
 			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Connect") + menu->ip + ":" + iToStr (menu->port));
 			Log.write ("Error on connecting " + menu->ip + ":" + iToStr (menu->port), cLog::eLOG_TYPE_WARNING);

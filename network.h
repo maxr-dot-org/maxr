@@ -25,14 +25,14 @@
 
 class cNetMessage;
 
-#define MAX_CLIENTS				10			// maximal number of clients that can connect to the server
-#define PACKAGE_LENGTH			1024		// maximal length of a TCP/IP package
-#define START_CHAR				(char)0xFF	// start character in netmessages
+#define MAX_CLIENTS     10   // maximal number of clients that can connect to the server
+#define PACKAGE_LENGTH  1024 // maximal length of a TCP/IP package
+#define START_CHAR      (char(0xFF)) // start character in netmessages
 
 // the first client message must be smaller then the first menu message!
-#define FIRST_SERVER_MESSAGE	10
-#define FIRST_CLIENT_MESSAGE	100
-#define FIRST_MENU_MESSAGE		1000
+#define FIRST_SERVER_MESSAGE 10
+#define FIRST_CLIENT_MESSAGE 100
+#define FIRST_MENU_MESSAGE   1000
 
 /**
 * Callback for the networkthread
@@ -115,58 +115,29 @@ public:
 	 */
 	~cTCP();
 
-private:
-	cMutex TCPMutex;
-
-
-	SDL_Thread* TCPHandleThread;
-	bool bExit;
-	bool bHost;
-
-	int iPort;
-	int iLast_Socket;
-	std::string sIP;
-	sSocket Sockets[MAX_CLIENTS];
-	SDLNet_SocketSet SocketSet;
-	IPaddress ipaddr;
-
 	/**
-	* Searchs for the first unused socket and allocates memory for a new one if there are no free sockets.
-	*@author alzi alias DoctorDeath
-	*@return index of found socket
-	*/
-	int getFreeSocket();
-	/**
-	* Deletes the socket, frees its memory and sorts the rest sockets in the list.
-	*@author alzi alias DoctorDeath
-	*/
-	void deleteSocket (int iNum);
-
-	int pushEvent (cNetMessage* message);
-public:
-	/**
-	* Creates a new server on the port which has to be set before.
+	* Creates a new server on the port.
 	*@author alzi alias DoctorDeath
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int create();
+	int create (int port);
 	/**
-	* Connects as client to the IP on the port which both have to be set before.
+	* Connects as client to the IP on the port.
 	*@author alzi alias DoctorDeath
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int connect();
+	int connect (const std::string& sIP, int port);
 
 	/**
 	* checks whether the given socket is connected
 	*/
-	bool isConnected (int socketNr) const;
+	bool isConnected (unsigned int socketIndex) const;
 	/**
 	* Closes the connection to the socket.
 	*@author alzi alias DoctorDeath
 	*param iClientNumber Number of client/socket to which the connection should be closed.
 	*/
-	void close (int iClientNumber);
+	void close (unsigned int iClientNumber);
 
 	/**
 	* Sends data of an given lenght to the client/socket.
@@ -176,7 +147,7 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int sendTo (int iClientNumber, int iLength, const char* buffer);
+	int sendTo (unsigned int iClientNumber, unsigned int iLength, const char* buffer);
 	/**
 	* Sends the data to all sockets to which this machine is connected.
 	*@author alzi alias DoctorDeath
@@ -184,20 +155,8 @@ public:
 	*param buffer buffer with data to be send.
 	*return 0 on succes, -1 if an error occurs
 	*/
-	int send (int iLength, const char* buffer);
+	int send (unsigned int iLength, const char* buffer);
 
-	/**
-	* Sets a new port.
-	*@author alzi alias DoctorDeath
-	*param iPort New port number.
-	*/
-	void setPort (int iPort);
-	/**
-	* Sets a new IP.
-	*@author alzi alias DoctorDeath
-	*param iPort New IP.
-	*/
-	void setIP (const std::string& sIP);
 	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath
@@ -222,6 +181,40 @@ public:
 	*@author alzi alias DoctorDeath
 	*/
 	void HandleNetworkThread();
+
+private:
+	/**
+	* Searchs for the first unused socket and allocates memory for a new one if there are no free sockets.
+	*@author alzi alias DoctorDeath
+	*@return index of found socket
+	*/
+	int getFreeSocket();
+	/**
+	* Deletes the socket, frees its memory and sorts the rest sockets in the list.
+	*@author alzi alias DoctorDeath
+	*/
+	void deleteSocket (int socketIndex);
+
+	int pushEvent (cNetMessage* message);
+
+	void pushEventTCP_Close (unsigned int socketIndex);
+
+	void HandleNetworkThread_STATE_NEW (unsigned int socketIndex);
+	void HandleNetworkThread_SERVER (unsigned int socketIndex);
+	void HandleNetworkThread_CLIENT (unsigned int socketIndex);
+	void HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex);
+
+private:
+	cMutex TCPMutex;
+
+	SDL_Thread* TCPHandleThread;
+	volatile bool bExit;
+	bool bHost;
+
+	unsigned int iLast_Socket;
+	sSocket Sockets[MAX_CLIENTS];
+	SDLNet_SocketSet SocketSet;
+	IPaddress ipaddr;
 };
 
 #endif // networkH
