@@ -181,7 +181,7 @@ bool cDedicatedServer::startServer (int saveGameNumber)
 
 	assert (network == 0);
 	network = new cTCP();
-
+	network->setMessageReceiver (this);
 	if (network->create (configuration->port) == -1)
 	{
 		cout << "ERROR: Initializing network failed." << endl;

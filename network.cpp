@@ -19,12 +19,9 @@
 
 #include "network.h"
 #include "events.h"
+#include "log.h"
+#include "main.h"
 #include "netmessage.h"
-// It's ugly, that the network has to know about the Server, dedicated server and the EventHandler.
-// Better way would be to have a single eventQueue in the cTCP class, from which the interested
-// classes can poll events. (Pagra - 12/2010)
-#include "server.h"
-#include "dedicatedserver.h"
 
 //------------------------------------------------------------------------
 // sSocket implementation
@@ -82,7 +79,8 @@ void sDataBuffer::deleteFront (int n)
 
 //------------------------------------------------------------------------
 cTCP::cTCP() :
-	TCPMutex()
+	TCPMutex(),
+	messageReceiver(NULL)
 {
 	SocketSet = SDLNet_AllocSocketSet (MAX_CLIENTS);
 
@@ -357,21 +355,14 @@ void cTCP::HandleNetworkThread()
 }
 
 //------------------------------------------------------------------------
-int cTCP::pushEvent (cNetMessage* message)
+void cTCP::pushEvent (cNetMessage* message)
 {
-	if (DEDICATED_SERVER)
-	{
-		cDedicatedServer::instance().pushEvent (message);
+	if (messageReceiver == NULL) {
+		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
+		delete message;
+		return;
 	}
-	else if (Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER))
-	{
-		Server->pushEvent (message);
-	}
-	else if (EventHandler)
-	{
-		EventHandler->pushEvent (message);
-	}
-	return 0;
+	messageReceiver->pushEvent (message);
 }
 
 //------------------------------------------------------------------------
@@ -406,6 +397,14 @@ void cTCP::deleteSocket (int iNum)
 	Sockets[iLast_Socket - 1].messagelength = 0;
 	Sockets[iLast_Socket - 1].buffer.clear();
 	iLast_Socket--;
+}
+
+//------------------------------------------------------------------------
+void cTCP::setMessageReceiver (INetMessageReceiver* messageReceiver_)
+{
+	cMutex::Lock lock (TCPMutex);
+
+	this->messageReceiver = messageReceiver_;
 }
 
 //------------------------------------------------------------------------

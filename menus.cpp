@@ -2658,6 +2658,22 @@ void cLandingMenu::hitPosition()
 // cNetworkMenu implementation
 //------------------------------------------------------------------------------
 
+class cDefaultMessageReceiver : public INetMessageReceiver
+{
+public:
+	void pushEvent (cNetMessage* message)
+	{
+		if (Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER))
+		{
+			Server->pushEvent (message);
+		}
+		else if (EventHandler)
+		{
+			EventHandler->pushEvent (message);
+		}
+	}
+};
+
 //------------------------------------------------------------------------------
 cNetworkMenu::cNetworkMenu()
 	: cMenu (LoadPCX (GFXOD_MULT))
@@ -2743,7 +2759,8 @@ cNetworkMenu::cNetworkMenu()
 	gameDataContainer.type = GAME_TYPE_TCPIP;
 
 	network = new cTCP;
-
+	static cDefaultMessageReceiver defaultMessageReceiver;
+	network->setMessageReceiver (&defaultMessageReceiver);
 	triedLoadMap = "";
 
 	Log.write (string (PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG);

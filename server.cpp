@@ -121,8 +121,10 @@ cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const Player
 	casualtiesTracker = new cCasualtiesTracker();
 
 	if (!DEDICATED_SERVER)
+	{
+		if (network) network->setMessageReceiver (this);
 		ServerThread = SDL_CreateThread (CallbackRunServerThread, this);
-
+	}
 
 	gameTimer.maxEventQueueSize = MAX_SERVER_EVENT_COUNTER;
 	gameTimer.start ();

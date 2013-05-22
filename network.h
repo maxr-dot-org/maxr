@@ -95,6 +95,16 @@ struct sSocket
 	unsigned int messagelength;
 };
 
+/**
+* Interface called each time a message is received by network.
+*/
+class INetMessageReceiver
+{
+public:
+	virtual ~INetMessageReceiver() {}
+	virtual void pushEvent (cNetMessage* message) = 0;
+};
+
 //------------------------------------------------------------------------
 /**
 * Class for the handling of events over TCP/IP
@@ -158,6 +168,12 @@ public:
 	int send (unsigned int iLength, const char* buffer);
 
 	/**
+	* Set message receiver.
+	* @author joris alias Jarod
+	*/
+	void setMessageReceiver (INetMessageReceiver* messageReceiver);
+
+	/**
 	* Gets the number of currently connected sockets.
 	*@author alzi alias DoctorDeath
 	*return Number of sockets.
@@ -195,7 +211,7 @@ private:
 	*/
 	void deleteSocket (int socketIndex);
 
-	int pushEvent (cNetMessage* message);
+	void pushEvent (cNetMessage* message);
 
 	void pushEventTCP_Close (unsigned int socketIndex);
 
@@ -215,6 +231,7 @@ private:
 	sSocket Sockets[MAX_CLIENTS];
 	SDLNet_SocketSet SocketSet;
 	IPaddress ipaddr;
+	INetMessageReceiver* messageReceiver;
 };
 
 #endif // networkH

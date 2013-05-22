@@ -22,6 +22,7 @@
 
 #include <string>
 #include <vector>
+#include "network.h"
 
 class cDedicatedServerConfig;
 class cTCP;
@@ -33,7 +34,7 @@ class cNetMessage;
 /** cDedicatedServer class manages the server resources and handles command line input.
  *  @author Paul Grathwohl
  */
-class cDedicatedServer
+class cDedicatedServer : public INetMessageReceiver
 {
 public:
 	static cDedicatedServer& instance();

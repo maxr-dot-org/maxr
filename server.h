@@ -23,6 +23,7 @@
 #include "ringbuffer.h"
 #include "main.h" // for sID
 #include "map.h"
+#include "network.h"
 #include "gametimer.h"
 #include <vector>
 
@@ -73,7 +74,7 @@ struct sLandingUnit;
 * Server class which takes all calculations for the game and has the data of all players
 *@author alzi alias DoctorDeath
 */
-class cServer
+class cServer : public INetMessageReceiver
 {
 	friend class cSavegame;
 	friend class cServerGame;
