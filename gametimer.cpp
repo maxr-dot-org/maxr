@@ -331,6 +331,7 @@ Uint32 calcServerChecksum (const cServer& server, const cPlayer* player)
 
 void compareGameData (const cClient& client, const cServer& server)
 {
+#if !defined (NDEBUG)
 	const std::vector<cPlayer*>& players = client.getPlayerList();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -349,5 +350,6 @@ void compareGameData (const cClient& client, const cServer& server)
 			assert (clientVehicle->dir == serverVehicle->dir);
 		}
 	}
+#endif
 }
 
