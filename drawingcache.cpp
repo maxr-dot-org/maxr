@@ -38,7 +38,7 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 	if (vehicle.data.animationMovement)
 		frame = vehicle.WalkFrame;
 	else
-		frame = ANIMATION_SPEED % 4;
+		frame = gameGUI.getAnimationSpeed() % 4;
 
 	const cMap& map = *gameGUI.getClient()->getMap();
 	water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[vehicle.PosX + vehicle.PosY * map.size].getBaseBuilding();
@@ -202,7 +202,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 		}
 		if (vehicle.IsBuilding || vehicle.IsClearing)
 		{
-			if (entry.frame != ANIMATION_SPEED % 4) continue;
+			if (entry.frame != gameGUI->getAnimationSpeed() % 4) continue;
 		}
 		const cMap& map = *gameGUI->getClient()->getMap();
 

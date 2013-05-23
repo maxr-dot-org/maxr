@@ -409,6 +409,9 @@ public:
 	cGameGUI (cPlayer* player_, cMap* map_);
 	~cGameGUI();
 
+	// this means every 100ms because iTimerTime will increase every 50ms.
+	unsigned int getAnimationSpeed() const { return iTimerTime / 2; }
+
 	/** SDL_Timer for animations */
 	SDL_TimerID TimerID;
 	/** will be incremented by the Timer */

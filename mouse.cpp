@@ -174,14 +174,13 @@ bool cMouse::moved()
 }
 
 // Liefert die Koordinaten der Kachel unter der Maus:
-int cMouse::getKachelX() const
+int cMouse::getKachelX (const cGameGUI& gameGUI) const
 {
 	if (x < 180 || x > 180 + (Video.getResolutionX() - 192))
 	{
 		return -1;
 	}
-	const cGameGUI& gameGUI = Client->gameGUI;
-	const cMap& map = *Client->getMap();
+	const cMap& map = *gameGUI.getClient()->getMap();
 
 	int X = (int) ( (x - 180 + gameGUI.getOffsetX() * gameGUI.getZoom()) / gameGUI.getTileSize());
 	X = std::min (X, map.size - 1);
@@ -189,14 +188,13 @@ int cMouse::getKachelX() const
 	return X;
 }
 
-int cMouse::getKachelY() const
+int cMouse::getKachelY (const cGameGUI& gameGUI) const
 {
 	if (y < 18 || y > 18 + (Video.getResolutionY() - 32))
 	{
 		return -1;
 	}
-	const cGameGUI& gameGUI = Client->gameGUI;
-	const cMap& map = *Client->getMap();
+	const cMap& map = *gameGUI.getClient()->getMap();
 	int Y = (int) ( (y - 18 + gameGUI.getOffsetY() * gameGUI.getZoom()) / gameGUI.getTileSize());
 	Y = std::min (Y, map.size - 1);
 

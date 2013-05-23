@@ -350,11 +350,11 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw the mark, when a build order is finished
-	if ( ( (BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
+	if (((BuildList && BuildList->size() && !IsWorking && (*BuildList) [0]->metall_remaining <= 0) || (data.canResearch && owner->researchFinished)) && owner == gameGUI.getClient()->getActivePlayer())
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ( (ANIMATION_SPEED % 0x8) * 0x1000);
+		nr = 0xFF00 - ((gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
 		max = (int) (gameGUI.getTileSize() - 2) * 2;
 		d.x = dest.x + 2;
 		d.y = dest.y + 2;
@@ -598,9 +598,10 @@ void cBuilding::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFa
 
 	if (data.hasFrames)
 	{
-		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && Client)
+		cClient* client = Client;
+		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && client)
 		{
-			src.x = (ANIMATION_SPEED % data.hasFrames) * Round (64.0 * zoomFactor);
+			src.x = (client->gameGUI.getAnimationSpeed() % data.hasFrames) * Round (64.0 * zoomFactor);
 		}
 		else
 		{
@@ -1094,10 +1095,10 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 }
 
 //------------------------------------------------------------
-bool cBuilding::CanTransferTo (cMapField* OverUnitField)
+bool cBuilding::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField)
 {
-	int x = mouse->getKachelX();
-	int y = mouse->getKachelY();
+	int x = mouse->getKachelX (gameGUI);
+	int y = mouse->getKachelY (gameGUI);
 
 	if (OverUnitField->getVehicles())
 	{

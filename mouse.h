@@ -23,6 +23,8 @@
 #include "defines.h"
 #include <SDL.h>
 
+class cGameGUI;
+
 // Die Mauszeigertypen ///////////////////////////////////////////////////////
 enum eCursor {CHand, CNo, CSelect, CMove, CPfeil1, CPfeil2, CPfeil3, CPfeil4, CPfeil6, CPfeil7, CPfeil8, CPfeil9, CHelp, CAttack, CBand, CTransf, CLoad, CMuni, CRepair, CSteal, CDisable, CActivate};
 
@@ -59,11 +61,11 @@ public:
 	/**
 	* return the X Coordinate of the Cursor on the map
 	*/
-	int getKachelX() const;
+	int getKachelX (const cGameGUI& gameGUI) const;
 	/**
 	* return the Y Coordinate of the Cursor on the map
 	*/
-	int getKachelY() const;
+	int getKachelY (const cGameGUI& gameGUI) const;
 };
 
 // Die Maus //////////////////////////////////////////////////////////////////

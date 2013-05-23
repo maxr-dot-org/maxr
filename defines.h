@@ -28,7 +28,6 @@
 #define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
 #define MOVE_SPEED			2			// speed of vehcilemovements
 #define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
-#define ANIMATION_SPEED		((int)(Client->gameGUI.iTimerTime/(2)))		// this means every 100ms because Client->gameGUI.iTimerTime will increase every 50ms.
 #define LANDING_DISTANCE_WARNING	28
 #define LANDING_DISTANCE_TOO_CLOSE	10
 #define MAX_PLANES_PER_FIELD		5

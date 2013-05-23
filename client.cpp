@@ -173,8 +173,8 @@ void cClient::startGroupMove()
 {
 	int mainPosX = (*gameGUI.getSelVehiclesGroup()) [0]->PosX;
 	int mainPosY = (*gameGUI.getSelVehiclesGroup()) [0]->PosY;
-	int mainDestX = mouse->getKachelX();
-	int mainDestY = mouse->getKachelY();
+	int mainDestX = mouse->getKachelX (gameGUI);
+	int mainDestY = mouse->getKachelY (gameGUI);
 
 	// copy the selected-units-list
 	std::vector<cVehicle*> group;
@@ -1414,8 +1414,8 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 		StoringBuilding->storeVehicle (StoredVehicle, getMap());
 	}
 
-	int mouseX = mouse->getKachelX();
-	int mouseY = mouse->getKachelY();
+	int mouseX = mouse->getKachelX (gameGUI);
+	int mouseY = mouse->getKachelY (gameGUI);
 	if (StoredVehicle->PosX == mouseX && StoredVehicle->PosY == mouseY) gameGUI.updateMouseCursor();
 
 	gameGUI.checkMouseInputMode();

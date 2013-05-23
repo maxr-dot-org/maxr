@@ -157,7 +157,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		if (FlightHigh > 0)
 		{
 
-			if (moving || ANIMATION_SPEED % 10 == 0)
+			if (moving || gameGUI.getAnimationSpeed() % 10 == 0)
 			{
 				ditherX = 0;
 				ditherY = 0;
@@ -264,7 +264,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	{
 		SDL_Rect d, t;
 		int max, nr;
-		nr = 0xFF00 - ( (ANIMATION_SPEED % 0x8) * 0x1000);
+		nr = 0xFF00 - ((gameGUI.getAnimationSpeed() % 0x8) * 0x1000);
 
 		if (data.isBig)
 			max = (gameGUI.getTileSize() * 2) - 3;
@@ -432,9 +432,10 @@ void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest,
 		SDL_Rect src, tmp;
 
 		int frameNr = 0;
-		if (Client && turnsDisabled == 0)
+		cClient* client = Client;
+		if (client && turnsDisabled == 0)
 		{
-			frameNr = ANIMATION_SPEED % (typ->overlay_org->w / typ->overlay_org->h);
+			frameNr = client->gameGUI.getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
 		}
 
 		tmp = dest;
@@ -459,7 +460,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 	SDL_Rect src, tmp;
 
 	//draw working engineers and bulldozers:
-	if ( (IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
+	if ((IsBuilding || (IsClearing && data.isBig)) && job == NULL && client)
 	{
 		//draw beton if nessesary
 		tmp = dest;
@@ -478,7 +479,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int) (typ->build_org->h * zoomFactor);
-		src.x = (ANIMATION_SPEED % 4) * src.w;
+		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
 		SDL_BlitSurface (owner->color, NULL, GraphicsData.gfx_tmp, NULL);
 		blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
@@ -492,7 +493,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		return;
 	}
 
-	if ( (IsClearing && !data.isBig) && job == NULL)
+	if (IsClearing && !data.isBig && job == NULL && client)
 	{
 		// draw shadow
 		tmp = dest;
@@ -502,7 +503,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		// draw player color
 		src.y = 0;
 		src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
-		src.x = (ANIMATION_SPEED % 4) * src.w;
+		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
 		SDL_BlitSurface (owner->color, NULL, GraphicsData.gfx_tmp, NULL);
 
 		blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
@@ -525,7 +526,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow && !( (data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY, true)))
+	if (drawShadow && !((data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY, true)))
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
 		else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
@@ -1113,8 +1114,8 @@ void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBu
 void cVehicle::FindNextband (cGameGUI& gameGUI)
 {
 	bool pos[4] = {false, false, false, false};
-	int x = mouse->getKachelX();
-	int y = mouse->getKachelY();
+	int x = mouse->getKachelX (gameGUI);
+	int y = mouse->getKachelY (gameGUI);
 	const cMap& map = *gameGUI.getClient()->getMap();
 
 	//check, which positions are available
@@ -1350,10 +1351,10 @@ void cVehicle::MakeReport (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 /** checks, if resources can be transfered to the unit */
 //-----------------------------------------------------------------------------
-bool cVehicle::CanTransferTo (cMapField* OverUnitField) const
+bool cVehicle::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const
 {
-	const int x = mouse->getKachelX();
-	const int y = mouse->getKachelY();
+	const int x = mouse->getKachelX (gameGUI);
+	const int y = mouse->getKachelY (gameGUI);
 
 	if (x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1)
 		return false;
@@ -1690,7 +1691,7 @@ void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 //-----------------------------------------------------------------------------
 bool cVehicle::canSupply (const cClient& client, int x, int y, int supplyType) const
 {
-	const cMap& map = *Client->getMap();
+	const cMap& map = *client.getMap();
 
 	if (x < 0 || x >= map.size || y < 0 || y >= map.size)
 		return false;
