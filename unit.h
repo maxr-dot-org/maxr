@@ -58,18 +58,18 @@ public:
 	std::string getDisplayName() const;
 	void changeName (const std::string& newName);
 
-	SDL_Rect getMenuSize() const;
-	bool areCoordsOverMenu (int x, int y) const;
-	void setMenuSelection();
+	SDL_Rect getMenuSize (const cGameGUI& gameGUI) const;
+	bool areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const;
+	void setMenuSelection (cGameGUI& gameGUI);
 	void drawMenu (cGameGUI& gameGUI);
 	void menuReleased (cGameGUI& gameGUI);
 	virtual void executeAutoMoveJobCommand (cClient& client) {}
 	virtual void executeLayMinesCommand (const cClient& client) {}
 	virtual void executeClearMinesCommand (const cClient& client) {}
 
-	int getScreenPosX (bool movementOffset = true) const;
-	int getScreenPosY (bool movementOffset = true) const;
-	void center() const;
+	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
+	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
+	void center (cGameGUI& gameGUI) const;
 
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}
@@ -123,7 +123,7 @@ protected:
 	std::string name;		// name of the building
 
 	void drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const;
-	int getNumberOfMenuEntries() const;
+	int getNumberOfMenuEntries (const cClient& client) const;
 
 	virtual bool isUnitLoaded() const { return false; }
 	virtual bool isUnitMoving() const { return false; }

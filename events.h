@@ -21,6 +21,7 @@
 #define EVENTS_H
 
 #include "defines.h"
+#include "network.h"
 #include "ringbuffer.h"
 
 class cNetMessage;
@@ -29,7 +30,7 @@ class cNetMessage;
  * Class for Event handling.
  *@author alzi alias DoctorDeath
  */
-class cEventHandling
+class cEventHandling : public INetMessageReceiver
 {
 	friend class cDebugOutput;
 public:
@@ -38,7 +39,7 @@ public:
 	 * @author Eiko
 	 * @param message pointer to message which should be pushed to the queue
 	 */
-	void pushEvent (cNetMessage* message);
+	virtual void pushEvent (cNetMessage* message);
 
 	/**
 	 * Handles input events and the network events.

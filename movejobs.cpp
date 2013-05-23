@@ -1330,6 +1330,6 @@ void cClientMoveJob::stopMoveSound()
 		if (water && Vehicle->data.factorSea > 0) PlayFX (Vehicle->typ->StopWater);
 		else PlayFX (Vehicle->typ->Stop);
 
-		gameGUI.iObjectStream = Vehicle->playStream();
+		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 	}
 }

@@ -2658,23 +2658,6 @@ void cLandingMenu::hitPosition()
 // cNetworkMenu implementation
 //------------------------------------------------------------------------------
 
-class cDefaultMessageReceiver : public INetMessageReceiver
-{
-public:
-	void pushEvent (cNetMessage* message)
-	{
-		if (Server && Server->bStarted && (message->getClass() == NET_MSG_STATUS || message->getClass() == NET_MSG_SERVER))
-		{
-			Server->pushEvent (message);
-		}
-		else if (EventHandler)
-		{
-			EventHandler->pushEvent (message);
-		}
-	}
-};
-
-//------------------------------------------------------------------------------
 cNetworkMenu::cNetworkMenu()
 	: cMenu (LoadPCX (GFXOD_MULT))
 {
@@ -2759,8 +2742,7 @@ cNetworkMenu::cNetworkMenu()
 	gameDataContainer.type = GAME_TYPE_TCPIP;
 
 	network = new cTCP;
-	static cDefaultMessageReceiver defaultMessageReceiver;
-	network->setMessageReceiver (&defaultMessageReceiver);
+	network->setMessageReceiver (EventHandler);
 	triedLoadMap = "";
 
 	Log.write (string (PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG);
@@ -4250,7 +4232,7 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 		menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
 
-		menu->vehicle->FindNextband();
+		menu->vehicle->FindNextband (menu->client->gameGUI);
 	}
 	menu->end = true;
 }
@@ -5612,7 +5594,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			if (Contains (storingVehicle->storedUnits, vehicle))
 			{
 				client->gameGUI.selectUnit (storingVehicle);
-				storingVehicle->center();
+				storingVehicle->center (client->gameGUI);
 				return;
 			}
 		}
@@ -5624,7 +5606,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 			if (Contains (storingBuilding->storedUnits, vehicle))
 			{
 				client->gameGUI.selectUnit (storingBuilding);
-				storingBuilding->center();
+				storingBuilding->center (client->gameGUI);
 				return;
 			}
 		}
@@ -5635,11 +5617,11 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 	if (vehicle)
 	{
 		client->gameGUI.selectUnit (vehicle);
-		vehicle->center();
+		vehicle->center (client->gameGUI);
 	}
 	else if (building)
 	{
 		client->gameGUI.selectUnit (building);
-		building->center();
+		building->center (client->gameGUI);
 	}
 }

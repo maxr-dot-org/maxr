@@ -177,12 +177,12 @@ public:
 	int refreshData();
 	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
-	int playStream();
+	int playStream (const cGameGUI& gameGUI);
 	void StartMoveSound(cGameGUI& gameGUI);
 	void DecSpeed (int value);
-	void FindNextband();
+	void FindNextband (cGameGUI& gameGUI);
 	void doSurvey (const cServer& server);
-	void MakeReport();
+	void MakeReport (cGameGUI& gameGUI);
 	bool CanTransferTo (cMapField* OverUnitField) const;
 	bool InSentryRange (cServer& server);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI) const;
@@ -193,8 +193,8 @@ public:
 	void exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map);
 #define SUPPLY_TYPE_REARM	0
 #define SUPPLY_TYPE_REPAIR	1
-	bool canSupply (int x, int y, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
-	bool canSupply (cUnit* unit, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (const cClient& client, int x, int y, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
+	bool canSupply (const cUnit* unit, int supplyType) const;  ///< supplyType: one of SUPPLY_TYPE_REARM and SUPPLY_TYPE_REPAIR
 	void calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBuildCosts, int iBuild_Costs);
 	/**
 	* lays a mine. Should only be called by the server!
@@ -217,7 +217,7 @@ public:
 	* draws the commando curser for stealing or disabling with the calculated chance
 	*@author alzi alias DoctorDeath
 	*/
-	void drawCommandoCursor (int x, int y, bool steal) const;
+	void drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) const;
 	/**
 	* calculates the chance for disabling or stealing the target unit
 	*@author alzi alias DoctorDeath

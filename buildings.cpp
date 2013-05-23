@@ -1159,8 +1159,8 @@ bool cBuilding::CanTransferTo (cMapField* OverUnitField)
 //--------------------------------------------------------------------------
 void cBuilding::DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI)
 {
-	int const spx = getScreenPosX();
-	int const spy = getScreenPosY();
+	int const spx = getScreenPosX (gameGUI);
+	int const spy = getScreenPosY (gameGUI);
 	cMap* map = gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[12] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1), T_2<int> (2, -1),

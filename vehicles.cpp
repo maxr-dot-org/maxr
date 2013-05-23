@@ -599,7 +599,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 //-----------------------------------------------------------------------------
 /** Selects the vehicle */
 //-----------------------------------------------------------------------------
-void cVehicle::Select(cGameGUI& gameGUI)
+void cVehicle::Select (cGameGUI& gameGUI)
 {
 	// load the video
 	if (gameGUI.getFLC() != NULL) FLI_Close (gameGUI.getFLC());
@@ -614,7 +614,7 @@ void cVehicle::Select(cGameGUI& gameGUI)
 		gameGUI.setVideoSurface (typ->storage);
 	}
 
-	MakeReport();
+	MakeReport (gameGUI);
 	gameGUI.setUnitDetailsData (this, NULL);
 }
 
@@ -985,9 +985,9 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 //-----------------------------------------------------------------------------
 /** Plays the soundstream, that belongs to this vehicle */
 //-----------------------------------------------------------------------------
-int cVehicle::playStream()
+int cVehicle::playStream (const cGameGUI& gameGUI)
 {
-	const cClient& client = *Client;
+	const cClient& client = *gameGUI.getClient();
 	const cMap& map = *client.getMap();
 	const cBuilding* building = map[PosX + PosY * map.size].getBaseBuilding();
 	bool water = map.isWater (PosX, PosY, true);
@@ -1110,12 +1110,12 @@ void cVehicle::calcTurboBuild (int* const iTurboBuildRounds, int* const iTurboBu
 //-----------------------------------------------------------------------------
 /** Finds the next fitting position for the band */
 //-----------------------------------------------------------------------------
-void cVehicle::FindNextband()
+void cVehicle::FindNextband (cGameGUI& gameGUI)
 {
 	bool pos[4] = {false, false, false, false};
 	int x = mouse->getKachelX();
 	int y = mouse->getKachelY();
-	const cMap& map = *Client->getMap();
+	const cMap& map = *gameGUI.getClient()->getMap();
 
 	//check, which positions are available
 	sUnitData BuildingType = *BuildingTyp.getUnitDataOriginalVersion();
@@ -1239,9 +1239,9 @@ void cVehicle::doSurvey (const cServer& server)
 //-----------------------------------------------------------------------------
 /** Makes the report */
 //-----------------------------------------------------------------------------
-void cVehicle::MakeReport()
+void cVehicle::MakeReport (cGameGUI& gameGUI)
 {
-	if (owner != Client->getActivePlayer())
+	if (owner != gameGUI.getClient()->getActivePlayer())
 		return;
 
 	if (turnsDisabled > 0)
@@ -1584,9 +1584,9 @@ bool cVehicle::provokeReactionFire (cServer& server)
 //-----------------------------------------------------------------------------
 void cVehicle::DrawExitPoints (const sVehicle* const typ, cGameGUI& gameGUI) const
 {
-	int const spx = getScreenPosX();
-	int const spy = getScreenPosY();
-	const cMap* map = Client->getMap();
+	int const spx = getScreenPosX (gameGUI);
+	int const spy = getScreenPosY (gameGUI);
+	const cMap* map = gameGUI.getClient()->getMap();
 	const int tilesize = gameGUI.getTileSize();
 	T_2<int> offsets[8] = {T_2<int> (-1, -1), T_2<int> (0, -1), T_2<int> (1, -1),
 						   T_2<int> (-1, 0),                  T_2<int> (1, 0),
@@ -1688,7 +1688,7 @@ void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 //-----------------------------------------------------------------------------
 /** Checks, if an object can get ammunition. */
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (int x, int y, int supplyType) const
+bool cVehicle::canSupply (const cClient& client, int x, int y, int supplyType) const
 {
 	const cMap& map = *Client->getMap();
 
@@ -1704,7 +1704,7 @@ bool cVehicle::canSupply (int x, int y, int supplyType) const
 }
 
 //-----------------------------------------------------------------------------
-bool cVehicle::canSupply (cUnit* unit, int supplyType) const
+bool cVehicle::canSupply (const cUnit* unit, int supplyType) const
 {
 	if (unit == 0)
 		return false;
@@ -1723,20 +1723,20 @@ bool cVehicle::canSupply (cUnit* unit, int supplyType) const
 			return false;
 	}
 
-	if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<cVehicle*> (unit)->FlightHigh > 0)
+	if (unit->isVehicle() && unit->data.factorAir > 0 && static_cast<const cVehicle*> (unit)->FlightHigh > 0)
 		return false;
 
 	switch (supplyType)
 	{
 		case SUPPLY_TYPE_REARM:
 			if (unit == this || unit->data.canAttack == false || unit->data.ammoCur >= unit->data.ammoMax
-				|| (unit->isVehicle() && static_cast<cVehicle*> (unit)->isUnitMoving())
+				|| (unit->isVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->attacking)
 				return false;
 			break;
 		case SUPPLY_TYPE_REPAIR:
 			if (unit == this || unit->data.hitpointsCur >= unit->data.hitpointsMax
-				|| (unit->isVehicle() && static_cast<cVehicle*> (unit)->isUnitMoving())
+				|| (unit->isVehicle() && static_cast<const cVehicle*> (unit)->isUnitMoving())
 				|| unit->attacking)
 				return false;
 			break;
@@ -1821,9 +1821,9 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 //-----------------------------------------------------------------------------
 /** draws the commando-cursors: */
 //-----------------------------------------------------------------------------
-void cVehicle::drawCommandoCursor (int x, int y, bool steal) const
+void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) const
 {
-	cMap& map = *Client->getMap();
+	cMap& map = *gameGUI.getClient()->getMap();
 	cMapField& field = map.fields[x + y * map.size];
 	SDL_Surface* sf;
 	const cUnit* unit = 0;

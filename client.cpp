@@ -867,7 +867,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	if (Vehicle == gameGUI.getSelVehicle())
 	{
 		StopFXLoop (gameGUI.iObjectStream);
-		gameGUI.iObjectStream = Vehicle->playStream();
+		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 	}
 
 	if (Vehicle->ClientMoveJob) Vehicle->ClientMoveJob->release();
@@ -901,7 +901,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	if (gameGUI.getSelVehicle() == Vehicle)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
-		gameGUI.iObjectStream = Vehicle->playStream();
+		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 	}
 }
 
@@ -1232,7 +1232,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			if (gameGUI.getSelVehicle() == Vehicle)
 			{
 				StopFXLoop (gameGUI.iObjectStream);
-				gameGUI.iObjectStream = Vehicle->playStream();
+				gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 			}
 		}
 		break;
@@ -1272,7 +1272,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	if (gameGUI.getSelVehicle() == Vehicle)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
-		gameGUI.iObjectStream = Vehicle->playStream();
+		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
 	}
 }
 

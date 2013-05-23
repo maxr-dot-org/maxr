@@ -218,15 +218,15 @@ void cUnit::changeName (const string& newName)
 //-----------------------------------------------------------------------------
 /** Returns the size of the menu and the position */
 //-----------------------------------------------------------------------------
-SDL_Rect cUnit::getMenuSize() const
+SDL_Rect cUnit::getMenuSize (const cGameGUI& gameGUI) const
 {
 	SDL_Rect dest;
-	int i, size;
-	dest.x = getScreenPosX();
-	dest.y = getScreenPosY();
-	dest.h = i = getNumberOfMenuEntries() * 22;
+	dest.x = getScreenPosX (gameGUI);
+	dest.y = getScreenPosY (gameGUI);
+	dest.h = getNumberOfMenuEntries (*gameGUI.getClient()) * 22;
 	dest.w = 42;
-	size = Client->gameGUI.getTileSize();
+	const int i = dest.h;
+	int size = gameGUI.getTileSize();
 
 	if (data.isBig)
 		size *= 2;
@@ -255,9 +255,9 @@ SDL_Rect cUnit::getMenuSize() const
 //-----------------------------------------------------------------------------
 /** Returns true, if the coordinates are in the menu's space */
 //-----------------------------------------------------------------------------
-bool cUnit::areCoordsOverMenu (int x, int y) const
+bool cUnit::areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const
 {
-	SDL_Rect r = getMenuSize();
+	SDL_Rect r = getMenuSize (gameGUI);
 
 	if (x < r.x || x > r.x + r.w)
 		return false;
@@ -269,16 +269,15 @@ bool cUnit::areCoordsOverMenu (int x, int y) const
 }
 
 //--------------------------------------------------------------------------
-void cUnit::setMenuSelection()
+void cUnit::setMenuSelection (cGameGUI& gameGUI)
 {
-	SDL_Rect dest = getMenuSize();
+	SDL_Rect dest = getMenuSize (gameGUI);
 	selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
 }
 
 //--------------------------------------------------------------------------
-int cUnit::getNumberOfMenuEntries() const
+int cUnit::getNumberOfMenuEntries (const cClient& client) const
 {
-	const cClient& client = *Client;
 	int result = 2; // Info/Help + Done
 
 	if (owner != client.getActivePlayer())
@@ -376,7 +375,7 @@ int cUnit::getNumberOfMenuEntries() const
 void cUnit::drawMenu (cGameGUI& gameGUI)
 {
 	int nr = 0;
-	SDL_Rect dest = getMenuSize();
+	SDL_Rect dest = getMenuSize (gameGUI);
 
 	if (isBeeingAttacked)
 		return;
@@ -392,7 +391,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	if (factoryHasJustFinishedBuilding())
 		return;
 
-	bool markerPossible = (areCoordsOverMenu (mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
+	bool markerPossible = (areCoordsOverMenu (gameGUI, mouse->x, mouse->y) && (selectedMenuButtonIndex == (mouse->y - dest.y) / 22));
 	const cClient& client = *gameGUI.getClient();
 	// Attack:
 	if (data.canAttack && data.shotsCur && owner == client.getActivePlayer())
@@ -611,10 +610,10 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 //--------------------------------------------------------------------------
 void cUnit::menuReleased (cGameGUI& gameGUI)
 {
-	SDL_Rect dest = getMenuSize();
+	SDL_Rect dest = getMenuSize (gameGUI);
 
 	int exeNr = -1000;
-	if (areCoordsOverMenu (mouse->x, mouse->y))
+	if (areCoordsOverMenu (gameGUI, mouse->x, mouse->y))
 		exeNr = (mouse->y - dest.y) / 22;
 
 	if (exeNr != selectedMenuButtonIndex)
@@ -958,29 +957,26 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 //--------------------------------------------------------------------------
 /** Returns the screen x position of the unit */
 //--------------------------------------------------------------------------
-int cUnit::getScreenPosX (bool movementOffset) const
+int cUnit::getScreenPosX (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetX() : 0;
-	const cGameGUI& gameGUI = Client->gameGUI;
 	return 180 - ((int) ((gameGUI.getOffsetX() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosX;
 }
 
 //--------------------------------------------------------------------------
 /** Returns the screen y position of the unit */
 //--------------------------------------------------------------------------
-int cUnit::getScreenPosY (bool movementOffset) const
+int cUnit::getScreenPosY (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetY() : 0;
-	const cGameGUI& gameGUI = Client->gameGUI;
 	return 18 - ((int) ((gameGUI.getOffsetY() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosY;
 }
 
 //-----------------------------------------------------------------------------
 /** Centers on this unit */
 //-----------------------------------------------------------------------------
-void cUnit::center() const
+void cUnit::center (cGameGUI& gameGUI) const
 {
-	cGameGUI& gameGUI = Client->gameGUI;
 	const int offX = PosX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
 	const int offY = PosY * 64 - ( (int) ( ( (float) (Video.getResolutionY() - 32)  / (2 * gameGUI.getTileSize())) * 64)) + 32;
 	gameGUI.setOffsetPosition (offX, offY);
@@ -991,7 +987,7 @@ void cUnit::center() const
 //-----------------------------------------------------------------------------
 void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
-	if (owner != Client->getActivePlayer())
+	if (owner != gameGUI.getClient()->getActivePlayer())
 		return;
 
 	SDL_Rect r1, r2;

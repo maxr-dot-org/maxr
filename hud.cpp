@@ -790,8 +790,8 @@ int cGameGUI::show()
 
 		if (startup)
 		{
-			if (player->BuildingList) player->BuildingList->center();
-			else if (player->VehicleList) player->VehicleList->center();
+			if (player->BuildingList) player->BuildingList->center (*this);
+			else if (player->VehicleList) player->VehicleList->center (*this);
 			startup = false;
 		}
 
@@ -1421,11 +1421,11 @@ void cGameGUI::updateUnderMouseObject()
 	overUnitField = map->fields + (x + y * map->size);
 	if (mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 	{
-		selectedVehicle->drawCommandoCursor (x, y, true);
+		selectedVehicle->drawCommandoCursor (*this, x, y, true);
 	}
 	else if (mouse->cur == GraphicsData.gfx_Cdisable && selectedVehicle)
 	{
-		selectedVehicle->drawCommandoCursor (x, y, false);
+		selectedVehicle->drawCommandoCursor (*this, x, y, false);
 	}
 	if (overUnitField->getVehicles() != NULL)
 	{
@@ -1481,7 +1481,7 @@ void cGameGUI::updateUnderMouseObject()
 	// place band:
 	if (selectedVehicle && mouseInputMode == placeBand)
 	{
-		selectedVehicle->FindNextband();
+		selectedVehicle->FindNextband (*this);
 	}
 }
 
@@ -1509,7 +1509,7 @@ void cGameGUI::selectUnit (cVehicle* vehicle)
 	mouseInputMode = normalInput;
 
 	vehicle->Select(*this);
-	iObjectStream = vehicle->playStream();
+	iObjectStream = vehicle->playStream (*this);
 
 	updateMouseCursor();
 }
@@ -1621,8 +1621,8 @@ void cGameGUI::updateMouseCursor()
 			return;
 		}
 
-		if ((selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (x, y)) ||
-			(selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (x, y)))
+		if ((selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, x, y)) ||
+			(selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, x, y)))
 		{
 			mouse->SetCursor (CHand);
 		}
@@ -1646,7 +1646,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if (mouse->SetCursor (CDisable))
 				{
-					selectedVehicle->drawCommandoCursor (mouse->getKachelX(), mouse->getKachelY(), false);
+					selectedVehicle->drawCommandoCursor (*this, mouse->getKachelX(), mouse->getKachelY(), false);
 				}
 			}
 			else
@@ -1660,7 +1660,7 @@ void cGameGUI::updateMouseCursor()
 			{
 				if (mouse->SetCursor (CSteal))
 				{
-					selectedVehicle->drawCommandoCursor (mouse->getKachelX(), mouse->getKachelY(), true);
+					selectedVehicle->drawCommandoCursor (*this, mouse->getKachelX(), mouse->getKachelY(), true);
 				}
 			}
 			else
@@ -1672,14 +1672,14 @@ void cGameGUI::updateMouseCursor()
 		{
 			if (mouse->SetCursor (CDisable))
 			{
-				selectedVehicle->drawCommandoCursor (mouse->getKachelX(), mouse->getKachelY(), false);
+				selectedVehicle->drawCommandoCursor (*this, mouse->getKachelX(), mouse->getKachelY(), false);
 			}
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouse->getKachelX(), mouse->getKachelY(), client->getMap(), true))
 		{
 			if (mouse->SetCursor (CSteal))
 			{
-				selectedVehicle->drawCommandoCursor (mouse->getKachelX(), mouse->getKachelY(), true);
+				selectedVehicle->drawCommandoCursor (*this, mouse->getKachelX(), mouse->getKachelY(), true);
 			}
 		}
 		else if (selectedBuilding && mouseInputMode == mouseInputAttackMode && selectedBuilding->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
@@ -1712,7 +1712,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == muniActive)
 		{
-			if (selectedVehicle->canSupply (mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REARM))
+			if (selectedVehicle->canSupply (*client, mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REARM))
 			{
 				mouse->SetCursor (CMuni);
 			}
@@ -1723,7 +1723,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && mouseInputMode == repairActive)
 		{
-			if (selectedVehicle->canSupply (mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REPAIR))
+			if (selectedVehicle->canSupply (*client, mouse->getKachelX(), mouse->getKachelY(), SUPPLY_TYPE_REPAIR))
 			{
 				mouse->SetCursor (CRepair);
 			}
@@ -1970,15 +1970,15 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (mouseState.x, mouseState.y))
+	if (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
 	{
-		if (mouseState.leftButtonPressed) selectedVehicle->setMenuSelection();
+		if (mouseState.leftButtonPressed) selectedVehicle->setMenuSelection (*this);
 		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedVehicle->menuReleased (*this);
 		return;
 	}
-	else if (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (mouseState.x, mouseState.y))
+	else if (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
 	{
-		if (mouseState.leftButtonPressed) selectedBuilding->setMenuSelection();
+		if (mouseState.leftButtonPressed) selectedBuilding->setMenuSelection (*this);
 		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedBuilding->menuReleased (*this);
 		return;
 	}
@@ -2268,8 +2268,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			//Hud.CheckButtons();
 			// check whether the mouse is over an unit menu:
-			if ( (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (mouseState.x, mouseState.y)) ||
-				 (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (mouseState.x, mouseState.y)))
+			if ( (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, mouseState.x, mouseState.y)) ||
+				 (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, mouseState.x, mouseState.y)))
 			{
 			}
 			else
@@ -2934,8 +2934,8 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb) setZoom ( (float) (getZoom() + 0.05), true, false);
 	else if (key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb) setZoom ( (float) (getZoom() - 0.05), true, false);
 	// position handling hotkeys
-	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle) selectedVehicle->center();
-	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding) selectedBuilding->center();
+	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle) selectedVehicle->center (*this);
+	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding) selectedBuilding->center (*this);
 	else if (key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT) savePosition (0);
 	else if (key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT) savePosition (1);
 	else if (key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT) savePosition (2);
@@ -3158,8 +3158,8 @@ void cGameGUI::helpReleased (void* parent)
 void cGameGUI::centerReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	if (gui->selectedVehicle) gui->selectedVehicle->center();
-	else if (gui->selectedBuilding) gui->selectedBuilding->center();
+	if (gui->selectedVehicle) gui->selectedVehicle->center (*gui);
+	else if (gui->selectedBuilding) gui->selectedBuilding->center (*gui);
 }
 
 void cGameGUI::reportsReleased (void* parent)
@@ -3189,7 +3189,7 @@ void cGameGUI::nextReleased (void* parent)
 		else
 			gui->selectUnit (static_cast<cVehicle*> (unit));
 
-		unit->center();
+		unit->center (*gui);
 	}
 }
 
@@ -3205,7 +3205,7 @@ void cGameGUI::prevReleased (void* parent)
 		else
 			gui->selectUnit (static_cast<cVehicle*> (unit));
 
-		unit->center();
+		unit->center (*gui);
 	}
 }
 
@@ -3224,7 +3224,7 @@ void cGameGUI::doneReleased (void* parent)
 
 	if (unit && unit->owner == gui->client->getActivePlayer())
 	{
-		unit->center();
+		unit->center (*gui);
 		unit->isMarkedAsDone = true;
 		sendMoveJobResume (*gui->client, unit->iID);
 	}
@@ -4185,8 +4185,8 @@ void cGameGUI::drawUnitCircles()
 	{
 		cVehicle& v = *selectedVehicle;
 		bool movementOffset = !v.IsBuilding && !v.IsClearing;
-		int const spx = v.getScreenPosX (movementOffset);
-		int const spy = v.getScreenPosY (movementOffset);
+		int const spx = v.getScreenPosX (*this, movementOffset);
+		int const spy = v.getScreenPosY (*this, movementOffset);
 		if (scanChecked())
 		{
 			if (v.data.isBig)
@@ -4274,8 +4274,8 @@ void cGameGUI::drawUnitCircles()
 	}
 	else if (selectedBuilding)
 	{
-		int spx = selectedBuilding->getScreenPosX();
-		int spy = selectedBuilding->getScreenPosY();
+		int spx = selectedBuilding->getScreenPosX (*this);
+		int spy = selectedBuilding->getScreenPosY (*this);
 		if (scanChecked())
 		{
 			if (selectedBuilding->data.isBig)
