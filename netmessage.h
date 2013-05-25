@@ -41,11 +41,11 @@ enum eNetMessageClass { NET_MSG_SERVER, NET_MSG_CLIENT, NET_MSG_MENU, NET_MSG_ST
 class cNetMessage
 {
 public:
-	char data[PACKAGE_LENGTH];		//the data of the netMessage
+	char data[PACKAGE_LENGTH]; //the data of the netMessage
 
 	/** length of the containing data in bytes */
 	int iLength;
-	/** should be set by the send function. Client->Host: message source, Host->Client: message destiantion */
+	/** should be set by the send function. Client->Host: message source, Host->Client: message destination */
 	int iPlayerNr;
 	/** the type of the message */
 	int iType;
@@ -64,7 +64,7 @@ public:
 
 	//~cNetMessage();
 
-	/** return a pointer to a platform independed serial representation of the NetMessage
+	/** return a pointer to a platform independend serial representation of the NetMessage
 	* Byte 0: START_CHAR
 	* Bytes 1 - 2: Total length of the message, in little endian
 	* Bytes 3 - 4: Type of the message, little endian
@@ -87,13 +87,13 @@ public:
 	*/
 	void pushChar (char c);
 
-	/** pops an char from the end of the netMessage
+	/** pops a char from the end of the netMessage
 	* @author Eiko
 	* @return the char poped from the message
 	*/
 	char popChar();
 
-	/** pushes an Sint16 to the end of the netMessage
+	/** pushes a Sint16 to the end of the netMessage
 	* @author Eiko
 	* @param i the Sint16 to push to the message
 	*/

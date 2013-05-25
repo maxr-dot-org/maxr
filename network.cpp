@@ -290,8 +290,10 @@ void cTCP::HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex
 				s.iState = STATE_DYING;
 				break;
 			}
-
-			s.messagelength = SDL_SwapLE16 (* (Sint16*) (s.buffer.data + readPos + 1));
+			// Use temporary variable to avoid gcc warning:
+			// "dereferencing type-punned pointer will break strict-aliasing rules"
+			const Sint16* data16 = reinterpret_cast<Sint16*>(s.buffer.data + readPos + 1);
+			s.messagelength = SDL_SwapLE16 (*data16);
 			if (s.messagelength > PACKAGE_LENGTH)
 			{
 				Log.write ("Length of received message exceeds PACKAGE_LENGTH", LOG_TYPE_NET_ERROR);

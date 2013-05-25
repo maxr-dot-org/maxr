@@ -19,20 +19,23 @@
 
 #include <string>
 #include "netmessage.h"
-#include "events.h"
-#include "network.h"
+
 #include "clientevents.h"
-#include "serverevents.h"
+#include "events.h"
 #include "menuevents.h"
+#include "network.h"
+#include "serverevents.h"
 
 using namespace std;
 
 cNetMessage::cNetMessage (const char* c)
 {
 	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", LOG_TYPE_NET_ERROR);
-
-	iLength = SDL_SwapLE16 ( ( (Sint16*) (c + 1)) [0]);
-	iType = SDL_SwapLE16 ( ( (Sint16*) (c + 1)) [1]);
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	const Sint16* data16 = reinterpret_cast<const Sint16*>(c + 1);
+	iLength = SDL_SwapLE16 (data16[0]);
+	iType = SDL_SwapLE16 (data16[1]);
 	iPlayerNr = c[5];
 
 	data[0] = START_CHAR;
@@ -43,10 +46,11 @@ cNetMessage::cNetMessage (int iType)
 {
 	this->iType = iType;
 
-	data[0] = START_CHAR;	// 0:	  reserved for startchar
+	data[0] = START_CHAR;
+	// 0:     reserved for startchar
 	// 1 - 2: reserved for length
 	// 3 - 4: reserved for message type
-	// 5:	  reserved for playernumber
+	// 5:     reserved for playernumber
 	iLength = 6;
 	iPlayerNr = -1;
 }
@@ -55,10 +59,13 @@ char* cNetMessage::serialize()
 {
 	//set start character
 	data[0] = START_CHAR;
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	Sint16* data16 = reinterpret_cast<Sint16*>(data + 1);
 	//write iLenght to byte array
-	* ( (Sint16*) (data + 1)) = SDL_SwapLE16 ( (Sint16) iLength);
+	*data16 = SDL_SwapLE16 ((Sint16) iLength);
 	//write iType to byte array
-	* ( (Sint16*) (data + 3)) = SDL_SwapLE16 ( (Sint16) iType);
+	*(data16 + 1) = SDL_SwapLE16 ((Sint16) iType);
 	//write iPlayernr to byte array
 	data[5] = (char) iPlayerNr;
 
@@ -67,7 +74,10 @@ char* cNetMessage::serialize()
 
 void cNetMessage::rewind()
 {
-	iLength = SDL_SwapLE16 ( ( (Sint16*) (data + 1)) [0]);
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	const Sint16 *data16 = reinterpret_cast<Sint16*>(data + 1);
+	iLength = SDL_SwapLE16 (*data16);
 }
 
 eNetMessageClass cNetMessage::getClass() const
@@ -114,7 +124,10 @@ void cNetMessage::pushInt16 (Sint16 i)
 		return;
 	}
 
-	* ( (Sint16*) (data + iLength)) = SDL_SwapLE16 (i);
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	Sint16* data16 = reinterpret_cast<Sint16*>(data + iLength);
+	*data16 = SDL_SwapLE16 (i);
 	iLength += 2;
 }
 
@@ -126,7 +139,10 @@ Sint16 cNetMessage::popInt16()
 		return 0;
 	}
 	iLength -= 2;
-	return SDL_SwapLE16 (* ( (Sint16*) (data + iLength)));
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	const Sint16* data16 = reinterpret_cast<Sint16*>(data + iLength);
+	return SDL_SwapLE16 (*data16);
 }
 
 void cNetMessage::pushInt32 (Sint32 i)
@@ -136,8 +152,10 @@ void cNetMessage::pushInt32 (Sint32 i)
 		Log.write ("Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-
-	* ( (Sint32*) (data + iLength)) = SDL_SwapLE32 (i);
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	Sint32* data32 = reinterpret_cast<Sint32*>(data + iLength);
+	*data32 = SDL_SwapLE32 (i);
 	iLength += 4;
 }
 
@@ -149,7 +167,10 @@ Sint32 cNetMessage::popInt32()
 		return 0;
 	}
 	iLength -= 4;
-	return SDL_SwapLE32 (* ( (Sint32*) (data + iLength)));
+	// Use temporary variable to avoid gcc warning:
+	// "dereferencing type-punned pointer will break strict-aliasing rules"
+	const Sint32* data32 = reinterpret_cast<Sint32*>(data + iLength);
+	return SDL_SwapLE32 (*data32);
 }
 
 void cNetMessage::pushString (const string& s)
@@ -201,14 +222,13 @@ string cNetMessage::popString()
 
 void cNetMessage::pushBool (bool b)
 {
-
 	if (iLength > PACKAGE_LENGTH - 1)
 	{
 		Log.write ("Size of netMessage exceeds MAX_MESSAGE_LENGTH", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
 
-	data[iLength] = b;
+	data[iLength] = b ? 1 : 0;
 	iLength++;
 }
 
@@ -222,20 +242,18 @@ bool cNetMessage::popBool()
 
 	iLength--;
 
-	if (data[iLength] != 0) return 1;
-	else return 0;
-
+	if (data[iLength] != 0) return true;
+	else return false;
 }
 
 void cNetMessage::pushFloat (float f)
 {
-
 	float fnorm;
 	int shift;
 	Uint32 sign, exp, significand;
 	unsigned significandbits = BITS - EXPBITS - 1; // -1 for sign bit
 
-	if (f == 0.0)
+	if (f == 0.0f)
 	{
 		pushInt32 (0);
 		return;
@@ -255,27 +273,26 @@ void cNetMessage::pushFloat (float f)
 
 	// get the normalized form of f and track the exponent
 	shift = 0;
-	while (fnorm >= 2.0)
+	while (fnorm >= 2.0f)
 	{
-		fnorm /= 2.0;
+		fnorm /= 2.0f;
 		shift++;
 	}
-	while (fnorm < 1.0)
+	while (fnorm < 1.0f)
 	{
-		fnorm *= 2.0;
+		fnorm *= 2.0f;
 		shift--;
 	}
-	fnorm -= 1.0;
+	fnorm -= 1.0f;
 
 	// calculate the binary form (non-float) of the significand data
 	significand = Uint32 (fnorm * ( (1LL << significandbits) + 0.5f));
 
 	// get the biased exponent
-	exp = shift + ( (1 << (EXPBITS - 1)) - 1);      // shift + bias
+	exp = shift + ((1 << (EXPBITS - 1)) - 1);      // shift + bias
 
 	//store result in netMessage
-	pushInt32 ( (sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
-
+	pushInt32 ((sign << (BITS - 1)) | (exp << (BITS - EXPBITS - 1)) | significand);
 }
 
 float cNetMessage::popFloat()
@@ -288,29 +305,29 @@ float cNetMessage::popFloat()
 	//get data from netMessage
 	Uint32 i = popInt32();
 
-	if (i == 0) return 0.0;
+	if (i == 0) return 0.0f;
 
 	// pull the significand
-	result = float (i & ( (1LL << significandbits) - 1));     // mask
+	result = float (i & ((1LL << significandbits) - 1));     // mask
 	result /= (1LL << significandbits);   // convert back to float
 	result += 1.0f; // add the one back on
 
 	// deal with the exponent
 	bias = (1 << (EXPBITS - 1)) - 1;
-	shift = ( (i >> significandbits) & ( (1LL << EXPBITS) - 1)) - bias;
+	shift = ((i >> significandbits) & ((1LL << EXPBITS) - 1)) - bias;
 	while (shift > 0)
 	{
-		result *= 2.0;
+		result *= 2.0f;
 		shift--;
 	}
 	while (shift < 0)
 	{
-		result /= 2.0;
+		result /= 2.0f;
 		shift++;
 	}
 
 	// sign it
-	result *= float ( (i >> (BITS - 1)) & 1 ? -1.0 : 1.0);
+	result *= ((i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
 
 	return result;
 }
@@ -321,252 +338,129 @@ string cNetMessage::getTypeAsString() const
 	//should be updated when implementing a new message type
 	switch (iType)
 	{
-		case TCP_CLOSE:
-			return string ("TCP_CLOSE");
-		case TCP_ACCEPT:
-			return string ("TCP_ACCEPT");
-		case MU_MSG_CHAT:
-			return string ("MU_MSG_CHAT");
-		case MU_MSG_REQ_IDENTIFIKATION:
-			return string ("MU_MSG_REQ_IDENTIFIKATION");
-		case MU_MSG_IDENTIFIKATION:
-			return string ("MU_MSG_IDENTIFIKATION");
-		case MU_MSG_PLAYERLIST:
-			return string ("MU_MSG_PLAYERLIST");
-		case MU_MSG_OPTINS:
-			return string ("MU_MSG_OPTINS");
-		case MU_MSG_GO:
-			return string ("MU_MSG_GO");
-		case MU_MSG_CLAN:
-			return string ("MU_MSG_CLAN");
-		case MU_MSG_LANDING_VEHICLES:
-			return string ("MU_MSG_LANDING_VEHICLES");
-		case MU_MSG_UPGRADES:
-			return string ("MU_MSG_UPGRADES");
-		case MU_MSG_LANDING_COORDS:
-			return string ("MU_MSG_LANDING_COORDS");
-		case MU_MSG_RESELECT_LANDING:
-			return string ("MU_MSG_RESELECT_LANDING");
-		case MU_MSG_ALL_LANDED:
-			return string ("MU_MSG_ALL_LANDED");
-		case MU_MSG_START_MAP_DOWNLOAD:
-			return string ("MU_MSG_START_MAP_DOWNLOAD");
-		case MU_MSG_MAP_DOWNLOAD_DATA:
-			return string ("MU_MSG_MAP_DOWNLOAD_DATA");
-		case MU_MSG_CANCELED_MAP_DOWNLOAD:
-			return string ("MU_MSG_CANCELED_MAP_DOWNLOAD");
-		case MU_MSG_FINISHED_MAP_DOWNLOAD:
-			return string ("MU_MSG_FINISHED_MAP_DOWNLOAD");
-		case MU_MSG_REQUEST_MAP:
-			return string ("MU_MSG_REQUEST_MAP");
-		case GAME_EV_PLAYER_CLANS:
-			return string ("GAME_EV_PLAYER_CLANS");
-		case GAME_EV_ADD_BUILDING:
-			return string ("GAME_EV_ADD_BUILDING");
-		case GAME_EV_ADD_VEHICLE:
-			return string ("GAME_EV_ADD_VEHICLE");
-		case GAME_EV_DEL_BUILDING:
-			return string ("GAME_EV_DEL_BUILDING");
-		case GAME_EV_DEL_VEHICLE:
-			return string ("GAME_EV_DEL_VEHICLE");
-		case GAME_EV_ADD_ENEM_BUILDING:
-			return string ("GAME_EV_ADD_ENEM_BUILDING");
-		case GAME_EV_ADD_ENEM_VEHICLE:
-			return string ("GAME_EV_ADD_ENEM_VEHICLE");
-		case GAME_EV_CHAT_SERVER:
-			return string ("GAME_EV_CHAT_SERVER");
-		case GAME_EV_CHAT_CLIENT:
-			return string ("GAME_EV_CHAT_CLIENT");
-		case GAME_EV_WANT_TO_END_TURN:
-			return string ("GAME_EV_WANT_TO_END_TURN");
-		case GAME_EV_MAKE_TURNEND:
-			return string ("GAME_EV_MAKE_TURNEND");
-		case GAME_EV_FINISHED_TURN:
-			return string ("GAME_EV_FINISHED_TURN");
-		case GAME_EV_UNIT_DATA:
-			return string ("GAME_EV_UNIT_DATA");
-		case GAME_EV_WANT_START_WORK:
-			return ("GAME_EV_WANT_START_WORK");
-		case GAME_EV_WANT_STOP_WORK:
-			return ("GAME_EV_WANT_STOP_WORK");
-		case GAME_EV_DO_START_WORK:
-			return ("GAME_EV_DO_START_WORK");
-		case GAME_EV_DO_STOP_WORK:
-			return ("GAME_EV_DO_STOP_WORK");
-		case GAME_EV_NEXT_MOVE:
-			return string ("GAME_EV_NEXT_MOVE");
-		case GAME_EV_MOVE_JOB_SERVER:
-			return string ("GAME_EV_MOVE_JOB_SERVER");
-		case GAME_EV_MOVE_JOB_CLIENT:
-			return string ("GAME_EV_MOVE_JOB_CLIENT");
-		case GAME_EV_WANT_STOP_MOVE:
-			return string ("GAME_EV_WANT_STOP_MOVE");
-		case GAME_EV_WANT_ATTACK:
-			return string ("GAME_EV_WANT_ATTACK");
-		case GAME_EV_ATTACKJOB_LOCK_TARGET:
-			return string ("GAME_EV_ATTACKJOB_LOCK_TARGET");
-		case GAME_EV_ATTACKJOB_FIRE:
-			return string ("GAME_EV_ATTACKJOB_FIRE");
-		case GAME_EV_ATTACKJOB_FINISHED:
-			return string ("GAME_EV_ATTACKJOB_FINISHED");
-		case GAME_EV_RESOURCES:
-			return string ("GAME_EV_RESOURCES");
-		case GAME_EV_MINELAYERSTATUS:
-			return string ("GAME_EV_MINELAYERSTATUS");
-		case GAME_EV_WANT_BUILD:
-			return string ("GAME_EV_WANT_BUILD");
-		case GAME_EV_BUILD_ANSWER:
-			return string ("GAME_EV_BUILD_ANSWER");
-		case GAME_EV_STOP_BUILD:
-			return string ("GAME_EV_STOP_BUILD");
-		case GAME_EV_END_BUILDING:
-			return string ("GAME_EV_END_BUILDING");
-		case GAME_EV_WANT_STOP_BUILDING:
-			return string ("GAME_EV_WANT_STOP_BUILDING");
-		case GAME_EV_SUBBASE_VALUES:
-			return string ("GAME_EV_SUBBASE_VALUES");
-		case GAME_EV_WANT_TRANSFER:
-			return string ("GAME_EV_WANT_TRANSFER");
-		case GAME_EV_WANT_BUILDLIST:
-			return string ("GAME_EV_WANT_BUILDLIST");
-		case GAME_EV_BUILDLIST:
-			return string ("GAME_EV_BUILDLIST");
-		case GAME_EV_WANT_EXIT_FIN_VEH:
-			return string ("GAME_EV_WANT_EXIT_FIN_VEH");
-		case GAME_EV_MINE_PRODUCE_VALUES:
-			return string ("GAME_EV_MINE_PRODUCE_VALUES");
-		case GAME_EV_CHANGE_RESOURCES:
-			return string ("GAME_EV_CHANGE_RESOURCES");
-		case GAME_EV_ATTACKJOB_IMPACT:
-			return string ("GAME_EV_ATTACKJOB_IMPACT");
-		case GAME_EV_TURN_REPORT:
-			return string ("GAME_EV_TURN_REPORT");
-		case GAME_EV_WANT_CHANGE_MANUAL_FIRE:
-			return string ("GAME_EV_WANT_CHANGE_MANUAL_FIRE");
-		case GAME_EV_WANT_CHANGE_SENTRY:
-			return string ("GAME_EV_WANT_CHANGE_SENTRY");
-		case GAME_EV_ADD_RUBBLE:
-			return string ("GAME_EV_ADD_RUBBLE");
-		case GAME_EV_WANT_SUPPLY:
-			return string ("GAME_EV_WANT_SUPPLY");
-		case GAME_EV_SUPPLY:
-			return string ("GAME_EV_SUPPLY");
-		case GAME_EV_DETECTION_STATE:
-			return string ("GAME_EV_DETECTION_STATE");
-		case GAME_EV_CLEAR_ANSWER:
-			return string ("GAME_EV_CLEAR_ANSWER");
-		case GAME_EV_STOP_CLEARING:
-			return string ("GAME_EV_STOP_CLEARING");
-		case GAME_EV_NOFOG:
-			return string ("GAME_EV_NOFOG");
-		case GAME_EV_WANT_START_CLEAR:
-			return string ("GAME_EV_WANT_START_CLEAR");
-		case GAME_EV_WANT_STOP_CLEAR:
-			return string ("GAME_EV_WANT_STOP_CLEAR");
-		case GAME_EV_DEFEATED:
-			return string ("GAME_EV_DEFEATED");
-		case GAME_EV_ABORT_WAITING:
-			return string ("GAME_EV_ABORT_WAITING");
-		case GAME_EV_FREEZE:
-			return string ("GAME_EV_FREEZE");
-		case GAME_EV_UNFREEZE:
-			return string ("GAME_EV_UNFREEZE");
-		case GAME_EV_DEL_PLAYER:
-			return string ("GAME_EV_DEL_PLAYER");
-		case GAME_EV_IDENTIFICATION:
-			return string ("GAME_EV_IDENTIFICATION");
-		case GAME_EV_RECON_SUCESS:
-			return string ("GAME_EV_RECON_SUCESS");
-		case GAME_EV_REQ_RECON_IDENT:
-			return string ("GAME_EV_REQ_RECON_IDENT");
-		case GAME_EV_RECONNECT_ANSWER:
-			return string ("GAME_EV_RECONNECT_ANSWER");
-		case GAME_EV_SPECIFIC_UNIT_DATA:
-			return string ("GAME_EV_SPECIFIC_UNIT_DATA");
-		case GAME_EV_TURN:
-			return string ("GAME_EV_TURN");
-		case GAME_EV_HUD_SETTINGS:
-			return string ("GAME_EV_HUD_SETTINGS");
-		case GAME_EV_WANT_LOAD:
-			return string ("GAME_EV_WANT_LOAD");
-		case GAME_EV_WANT_EXIT:
-			return string ("GAME_EV_WANT_EXIT");
-		case GAME_EV_STORE_UNIT:
-			return string ("GAME_EV_STORE_UNIT");
-		case GAME_EV_EXIT_UNIT:
-			return string ("GAME_EV_EXIT_UNIT");
-		case GAME_EV_UNIT_UPGRADE_VALUES:
-			return string ("GAME_EV_UNIT_UPGRADE_VALUES");
-		case GAME_EV_WANT_MARK_LOG:
-			return string ("GAME_EV_WANT_MARK_LOG");
-		case GAME_EV_MARK_LOG:
-			return string ("GAME_EV_MARK_LOG");
-		case GAME_EV_CREDITS_CHANGED:
-			return string ("GAME_EV_CREDITS_CHANGED");
-		case GAME_EV_UPGRADED_BUILDINGS:
-			return string ("GAME_EV_UPGRADED_BUILDINGS");
-		case GAME_EV_UPGRADED_VEHICLES:
-			return string ("GAME_EV_UPGRADED_VEHICLES");
-		case GAME_EV_RESEARCH_SETTINGS:
-			return string ("GAME_EV_RESEARCH_SETTINGS");
-		case GAME_EV_RESEARCH_LEVEL:
-			return string ("GAME_EV_RESEARCH_LEVEL");
-		case GAME_EV_REFRESH_RESEARCH_COUNT:
-			return string ("GAME_EV_REFRESH_RESEARCH_COUNT");
-		case GAME_EV_WANT_VEHICLE_UPGRADE:
-			return string ("GAME_EV_WANT_VEHICLE_UPGRADE");
-		case GAME_EV_WANT_BUY_UPGRADES:
-			return string ("GAME_EV_WANT_BUY_UPGRADES");
-		case GAME_EV_WANT_BUILDING_UPGRADE:
-			return string ("GAME_EV_WANT_BUILDING_UPGRADE");
-		case GAME_EV_WANT_RESEARCH_CHANGE:
-			return string ("GAME_EV_WANT_RESEARCH_CHANGE");
-		case GAME_EV_AUTOMOVE_STATUS:
-			return string ("GAME_EV_AUTOMOVE_STATUS");
-		case GAME_EV_SET_AUTOMOVE:
-			return string ("GAME_EV_SET_AUTOMOVE");
-		case GAME_EV_WANT_COM_ACTION:
-			return string ("GAME_EV_WANT_COM_ACTION");
-		case GAME_EV_COMMANDO_ANSWER:
-			return string ("GAME_EV_COMMANDO_ANSWER");
-		case GAME_EV_REQ_SAVE_INFO:
-			return string ("GAME_EV_REQ_SAVE_INFO");
-		case GAME_EV_SAVED_REPORT:
-			return string ("GAME_EV_SAVED_REPORT");
-		case GAME_EV_CASUALTIES_REPORT:
-			return string ("GAME_EV_CASUALTIES_REPORT");
-		case GAME_EV_SAVE_HUD_INFO:
-			return string ("GAME_EV_SAVE_HUD_INFO");
-		case GAME_EV_SAVE_REPORT_INFO:
-			return string ("GAME_EV_SAVE_REPORT_INFO");
-		case GAME_EV_FIN_SEND_SAVE_INFO:
-			return string ("GAME_EV_FIN_SEND_SAVE_INFO");
-		case GAME_EV_REQUEST_CASUALTIES_REPORT:
-			return string ("GAME_EV_REQUEST_CASUALTIES_REPORT");
-		case GAME_EV_REQUEST_RESYNC:
-			return string ("GAME_EV_REQUEST_RESYNC");
-		case GAME_EV_DELETE_EVERYTHING:
-			return string ("GAME_EV_DELETE_EVERYTHING");
-		case GAME_EV_SCORE:
-			return string ("GAME_EV_SCORE");
-		case GAME_EV_NUM_ECOS:
-			return string ("GAME_EV_NUM_ECOS");
-		case GAME_EV_UNIT_SCORE:
-			return string ("GAME_EV_UNIT_SCORE");
-		case GAME_EV_VICTORY_CONDITIONS:
-			return string ("GAME_EV_VICTORY_CONDITIONS");
-		case GAME_EV_WAIT_FOR:
-			return string ("GAME_EV_WAIT_FOR");
-		case GAME_EV_END_MOVE_ACTION_SERVER:
-			return string ("GAME_EV_END_MOVE_ACTION_SERVER");
-		case GAME_EV_END_MOVE_ACTION:
-			return string ("GAME_EV_END_MOVE_ACTION");
-		case NET_GAME_TIME_SERVER:
-			return string ("NET_GAME_TIME_SERVER");
-		case NET_GAME_TIME_CLIENT:
-			return string ("NET_GAME_TIME_CLIENT");
-		default:
-			return iToStr (iType);
+		case TCP_CLOSE: return "TCP_CLOSE";
+		case TCP_ACCEPT: return "TCP_ACCEPT";
+		case MU_MSG_CHAT: return "MU_MSG_CHAT";
+		case MU_MSG_REQ_IDENTIFIKATION: return "MU_MSG_REQ_IDENTIFIKATION";
+		case MU_MSG_IDENTIFIKATION: return "MU_MSG_IDENTIFIKATION";
+		case MU_MSG_PLAYERLIST: return "MU_MSG_PLAYERLIST";
+		case MU_MSG_OPTINS: return "MU_MSG_OPTINS";
+		case MU_MSG_GO: return "MU_MSG_GO";
+		case MU_MSG_CLAN: return "MU_MSG_CLAN";
+		case MU_MSG_LANDING_VEHICLES: return "MU_MSG_LANDING_VEHICLES";
+		case MU_MSG_UPGRADES: return "MU_MSG_UPGRADES";
+		case MU_MSG_LANDING_COORDS: return "MU_MSG_LANDING_COORDS";
+		case MU_MSG_RESELECT_LANDING: return "MU_MSG_RESELECT_LANDING";
+		case MU_MSG_ALL_LANDED: return "MU_MSG_ALL_LANDED";
+		case MU_MSG_START_MAP_DOWNLOAD: return "MU_MSG_START_MAP_DOWNLOAD";
+		case MU_MSG_MAP_DOWNLOAD_DATA:return "MU_MSG_MAP_DOWNLOAD_DATA";
+		case MU_MSG_CANCELED_MAP_DOWNLOAD: return "MU_MSG_CANCELED_MAP_DOWNLOAD";
+		case MU_MSG_FINISHED_MAP_DOWNLOAD: return "MU_MSG_FINISHED_MAP_DOWNLOAD";
+		case MU_MSG_REQUEST_MAP: return "MU_MSG_REQUEST_MAP";
+		case GAME_EV_PLAYER_CLANS: return "GAME_EV_PLAYER_CLANS";
+		case GAME_EV_ADD_BUILDING: return "GAME_EV_ADD_BUILDING";
+		case GAME_EV_ADD_VEHICLE: return "GAME_EV_ADD_VEHICLE";
+		case GAME_EV_DEL_BUILDING: return "GAME_EV_DEL_BUILDING";
+		case GAME_EV_DEL_VEHICLE: return "GAME_EV_DEL_VEHICLE";
+		case GAME_EV_ADD_ENEM_BUILDING: return "GAME_EV_ADD_ENEM_BUILDING";
+		case GAME_EV_ADD_ENEM_VEHICLE: return "GAME_EV_ADD_ENEM_VEHICLE";
+		case GAME_EV_CHAT_SERVER: return "GAME_EV_CHAT_SERVER";
+		case GAME_EV_CHAT_CLIENT: return "GAME_EV_CHAT_CLIENT";
+		case GAME_EV_WANT_TO_END_TURN: return "GAME_EV_WANT_TO_END_TURN";
+		case GAME_EV_MAKE_TURNEND: return "GAME_EV_MAKE_TURNEND";
+		case GAME_EV_FINISHED_TURN: return "GAME_EV_FINISHED_TURN";
+		case GAME_EV_UNIT_DATA: return "GAME_EV_UNIT_DATA";
+		case GAME_EV_WANT_START_WORK: return "GAME_EV_WANT_START_WORK";
+		case GAME_EV_WANT_STOP_WORK: return "GAME_EV_WANT_STOP_WORK";
+		case GAME_EV_DO_START_WORK: return "GAME_EV_DO_START_WORK";
+		case GAME_EV_DO_STOP_WORK: return "GAME_EV_DO_STOP_WORK";
+		case GAME_EV_NEXT_MOVE: return "GAME_EV_NEXT_MOVE";
+		case GAME_EV_MOVE_JOB_SERVER: return "GAME_EV_MOVE_JOB_SERVER";
+		case GAME_EV_MOVE_JOB_CLIENT: return "GAME_EV_MOVE_JOB_CLIENT";
+		case GAME_EV_WANT_STOP_MOVE: return "GAME_EV_WANT_STOP_MOVE";
+		case GAME_EV_WANT_ATTACK: return "GAME_EV_WANT_ATTACK";
+		case GAME_EV_ATTACKJOB_LOCK_TARGET: return "GAME_EV_ATTACKJOB_LOCK_TARGET";
+		case GAME_EV_ATTACKJOB_FIRE: return "GAME_EV_ATTACKJOB_FIRE";
+		case GAME_EV_ATTACKJOB_FINISHED: return "GAME_EV_ATTACKJOB_FINISHED";
+		case GAME_EV_RESOURCES: return "GAME_EV_RESOURCES";
+		case GAME_EV_MINELAYERSTATUS: return "GAME_EV_MINELAYERSTATUS";
+		case GAME_EV_WANT_BUILD: return "GAME_EV_WANT_BUILD";
+		case GAME_EV_BUILD_ANSWER: return "GAME_EV_BUILD_ANSWER";
+		case GAME_EV_STOP_BUILD: return "GAME_EV_STOP_BUILD";
+		case GAME_EV_END_BUILDING: return "GAME_EV_END_BUILDING";
+		case GAME_EV_WANT_STOP_BUILDING: return "GAME_EV_WANT_STOP_BUILDING";
+		case GAME_EV_SUBBASE_VALUES: return "GAME_EV_SUBBASE_VALUES";
+		case GAME_EV_WANT_TRANSFER: return "GAME_EV_WANT_TRANSFER";
+		case GAME_EV_WANT_BUILDLIST: return "GAME_EV_WANT_BUILDLIST";
+		case GAME_EV_BUILDLIST: return "GAME_EV_BUILDLIST";
+		case GAME_EV_WANT_EXIT_FIN_VEH: return "GAME_EV_WANT_EXIT_FIN_VEH";
+		case GAME_EV_MINE_PRODUCE_VALUES: return "GAME_EV_MINE_PRODUCE_VALUES";
+		case GAME_EV_CHANGE_RESOURCES: return "GAME_EV_CHANGE_RESOURCES";
+		case GAME_EV_ATTACKJOB_IMPACT: return "GAME_EV_ATTACKJOB_IMPACT";
+		case GAME_EV_TURN_REPORT: return "GAME_EV_TURN_REPORT";
+		case GAME_EV_WANT_CHANGE_MANUAL_FIRE: return "GAME_EV_WANT_CHANGE_MANUAL_FIRE";
+		case GAME_EV_WANT_CHANGE_SENTRY: return "GAME_EV_WANT_CHANGE_SENTRY";
+		case GAME_EV_ADD_RUBBLE: return "GAME_EV_ADD_RUBBLE";
+		case GAME_EV_WANT_SUPPLY: return "GAME_EV_WANT_SUPPLY";
+		case GAME_EV_SUPPLY: return "GAME_EV_SUPPLY";
+		case GAME_EV_DETECTION_STATE: return "GAME_EV_DETECTION_STATE";
+		case GAME_EV_CLEAR_ANSWER: return "GAME_EV_CLEAR_ANSWER";
+		case GAME_EV_STOP_CLEARING: return "GAME_EV_STOP_CLEARING";
+		case GAME_EV_NOFOG: return "GAME_EV_NOFOG";
+		case GAME_EV_WANT_START_CLEAR: return "GAME_EV_WANT_START_CLEAR";
+		case GAME_EV_WANT_STOP_CLEAR: return "GAME_EV_WANT_STOP_CLEAR";
+		case GAME_EV_DEFEATED: return "GAME_EV_DEFEATED";
+		case GAME_EV_ABORT_WAITING: return "GAME_EV_ABORT_WAITING";
+		case GAME_EV_FREEZE: return "GAME_EV_FREEZE";
+		case GAME_EV_UNFREEZE: return "GAME_EV_UNFREEZE";
+		case GAME_EV_DEL_PLAYER: return "GAME_EV_DEL_PLAYER";
+		case GAME_EV_IDENTIFICATION: return "GAME_EV_IDENTIFICATION";
+		case GAME_EV_RECON_SUCESS: return "GAME_EV_RECON_SUCESS";
+		case GAME_EV_REQ_RECON_IDENT: return "GAME_EV_REQ_RECON_IDENT";
+		case GAME_EV_RECONNECT_ANSWER: return "GAME_EV_RECONNECT_ANSWER";
+		case GAME_EV_SPECIFIC_UNIT_DATA: return "GAME_EV_SPECIFIC_UNIT_DATA";
+		case GAME_EV_TURN: return "GAME_EV_TURN";
+		case GAME_EV_HUD_SETTINGS: return "GAME_EV_HUD_SETTINGS";
+		case GAME_EV_WANT_LOAD: return "GAME_EV_WANT_LOAD";
+		case GAME_EV_WANT_EXIT: return "GAME_EV_WANT_EXIT";
+		case GAME_EV_STORE_UNIT: return "GAME_EV_STORE_UNIT";
+		case GAME_EV_EXIT_UNIT: return "GAME_EV_EXIT_UNIT";
+		case GAME_EV_UNIT_UPGRADE_VALUES: return "GAME_EV_UNIT_UPGRADE_VALUES";
+		case GAME_EV_WANT_MARK_LOG: return "GAME_EV_WANT_MARK_LOG";
+		case GAME_EV_MARK_LOG: return "GAME_EV_MARK_LOG";
+		case GAME_EV_CREDITS_CHANGED: return "GAME_EV_CREDITS_CHANGED";
+		case GAME_EV_UPGRADED_BUILDINGS: return "GAME_EV_UPGRADED_BUILDINGS";
+		case GAME_EV_UPGRADED_VEHICLES: return "GAME_EV_UPGRADED_VEHICLES";
+		case GAME_EV_RESEARCH_SETTINGS: return "GAME_EV_RESEARCH_SETTINGS";
+		case GAME_EV_RESEARCH_LEVEL: return "GAME_EV_RESEARCH_LEVEL";
+		case GAME_EV_REFRESH_RESEARCH_COUNT: return "GAME_EV_REFRESH_RESEARCH_COUNT";
+		case GAME_EV_WANT_VEHICLE_UPGRADE: return "GAME_EV_WANT_VEHICLE_UPGRADE";
+		case GAME_EV_WANT_BUY_UPGRADES: return "GAME_EV_WANT_BUY_UPGRADES";
+		case GAME_EV_WANT_BUILDING_UPGRADE: return "GAME_EV_WANT_BUILDING_UPGRADE";
+		case GAME_EV_WANT_RESEARCH_CHANGE: return "GAME_EV_WANT_RESEARCH_CHANGE";
+		case GAME_EV_AUTOMOVE_STATUS: return "GAME_EV_AUTOMOVE_STATUS";
+		case GAME_EV_SET_AUTOMOVE: return "GAME_EV_SET_AUTOMOVE";
+		case GAME_EV_WANT_COM_ACTION: return "GAME_EV_WANT_COM_ACTION";
+		case GAME_EV_COMMANDO_ANSWER: return "GAME_EV_COMMANDO_ANSWER";
+		case GAME_EV_REQ_SAVE_INFO: return "GAME_EV_REQ_SAVE_INFO";
+		case GAME_EV_SAVED_REPORT: return "GAME_EV_SAVED_REPORT";
+		case GAME_EV_CASUALTIES_REPORT: return "GAME_EV_CASUALTIES_REPORT";
+		case GAME_EV_SAVE_HUD_INFO: return "GAME_EV_SAVE_HUD_INFO";
+		case GAME_EV_SAVE_REPORT_INFO: return "GAME_EV_SAVE_REPORT_INFO";
+		case GAME_EV_FIN_SEND_SAVE_INFO: return "GAME_EV_FIN_SEND_SAVE_INFO";
+		case GAME_EV_REQUEST_CASUALTIES_REPORT: return "GAME_EV_REQUEST_CASUALTIES_REPORT";
+		case GAME_EV_REQUEST_RESYNC: return "GAME_EV_REQUEST_RESYNC";
+		case GAME_EV_DELETE_EVERYTHING: return "GAME_EV_DELETE_EVERYTHING";
+		case GAME_EV_SCORE: return "GAME_EV_SCORE";
+		case GAME_EV_NUM_ECOS: return "GAME_EV_NUM_ECOS";
+		case GAME_EV_UNIT_SCORE: return "GAME_EV_UNIT_SCORE";
+		case GAME_EV_VICTORY_CONDITIONS: return "GAME_EV_VICTORY_CONDITIONS";
+		case GAME_EV_WAIT_FOR: return "GAME_EV_WAIT_FOR";
+		case GAME_EV_END_MOVE_ACTION_SERVER: return "GAME_EV_END_MOVE_ACTION_SERVER";
+		case GAME_EV_END_MOVE_ACTION: return "GAME_EV_END_MOVE_ACTION";
+		case NET_GAME_TIME_SERVER: return "NET_GAME_TIME_SERVER";
+		case NET_GAME_TIME_CLIENT: return "NET_GAME_TIME_CLIENT";
+		default: return iToStr (iType);
 	}
 }
 
