@@ -257,10 +257,10 @@ void cServerAttackJob::sendFireCommand()
 
 	float dx = (float) targetX - (float) agressorX;
 	float dy = (float) - (targetY - agressorY);
-	float r = sqrt (dx * dx + dy * dy);
+	float r = sqrtf (dx * dx + dy * dy);
 
 	int fireDir = unit->dir;
-	if (r <= 0.001)
+	if (r <= 0.001f)
 	{
 		//do not rotate agressor
 	}

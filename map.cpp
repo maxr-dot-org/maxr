@@ -397,7 +397,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 // Platziert die Ressourcen (0-wenig,3-viel):
 void cMap::placeRessources (int metal, int oil, int gold)
 {
-	memset (Resources, 0, sizeof (sResources) *size * size);
+	memset (Resources, 0, sizeof (sResources) * size * size);
 
 	int frequencies[RES_COUNT];
 

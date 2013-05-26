@@ -466,7 +466,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
 	miniMapOffY (0),
 	shiftPressed (false),
 	overUnitField (NULL),
-	zoomSlider (20, 274, calcMinZoom(), 1.0, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
+	zoomSlider (20, 274, calcMinZoom(), 1.0f, this, 130, cMenuSlider::SLIDER_TYPE_HUD_ZOOM, cMenuSlider::SLIDER_DIR_RIGHTMIN),
 	endButton (391, 4, lngPack.i18n ("Text~Hud~End"), cMenuButton::BUTTON_TYPE_HUD_END, FONT_LATIN_NORMAL),
 	preferencesButton (86, 4, lngPack.i18n ("Text~Hud~Settings"), cMenuButton::BUTTON_TYPE_HUD_PREFERENCES, FONT_LATIN_SMALL_WHITE),
 	filesButton (17, 3, lngPack.i18n ("Text~Hud~Files"), cMenuButton::BUTTON_TYPE_HUD_FILES, FONT_LATIN_SMALL_WHITE),
@@ -510,7 +510,7 @@ cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
 	dCache.setGameGUI(*this);
 	unitMenuActive = false;
 	frame = 0;
-	zoom = 1.0;
+	zoom = 1.0f;
 	offX = offY = 0;
 	framesPerSecond = cyclesPerSecond = 0;
 	loadValue = 0;
@@ -649,7 +649,7 @@ void cGameGUI::setClient (cClient* client)
 float cGameGUI::calcMinZoom()
 {
 	minZoom = (float) ((max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) map->size) / 64.0);
-	minZoom = max (minZoom, ((int) (64.0 * minZoom) + (minZoom >= 1.0 ? 0 : 1)) / (float) 64.0);
+	minZoom = max (minZoom, ((int) (64.0 * minZoom) + (minZoom >= 1.0 ? 0 : 1)) / 64.0f);
 
 	return minZoom;
 }
@@ -662,7 +662,7 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 	// reset minimal zoom
 	calcMinZoom();
 	setZoom (zoom, true, false);
-	zoomSlider.setBorders (minZoom, 1.0);
+	zoomSlider.setBorders (minZoom, 1.0f);
 
 	// move some items around
 	coordsLabel.move (coordsLabel.getPosition().x, (Video.getResolutionY() - 21) + 3);
@@ -674,7 +674,7 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 
 cGameGUI::~cGameGUI()
 {
-	zoom = 1.0;
+	zoom = 1.0f;
 	scaleSurfaces();
 	SDL_RemoveTimer (TimerID);
 
@@ -1171,7 +1171,7 @@ void cGameGUI::setZoom (float newZoom, bool setScroller, bool centerToMouse)
 
 	if (setScroller) this->zoomSlider.setValue (zoom);
 
-	static float lastZoom = 1.0;
+	static float lastZoom = 1.f;
 	if (lastZoom != getZoom())
 	{
 		//change x screen offset
@@ -2414,11 +2414,11 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	// check getZoom() via mousewheel
 	if (mouseState.wheelUp)
 	{
-		setZoom (getZoom() + (float) 0.05, true, true);
+		setZoom (getZoom() + 0.05f, true, true);
 	}
 	else if (mouseState.wheelDown)
 	{
-		setZoom (getZoom() - (float) 0.05, true, true);
+		setZoom (getZoom() - 0.05f, true, true);
 	}
 }
 

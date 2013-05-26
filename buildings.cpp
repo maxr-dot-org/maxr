@@ -257,12 +257,12 @@ int cBuilding::refreshData()
 void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 {
 	SDL_Rect dest, tmp;
-	float factor = (float) gameGUI.getTileSize() / (float) 64.0;
+	float factor = (float) gameGUI.getTileSize() / 64.0f;
 
 	// draw the damage effects
 	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
 	{
-		int intense = (int) (200 - 200 * ( (float) data.hitpointsCur / data.hitpointsMax));
+		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));
 
 		if (data.isBig && intense > 50)
@@ -291,7 +291,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (drawingSurface, dest, (float) gameGUI.getTileSize() / (float) 64.0, cSettings::getInstance().isShadows(), true);
+		render (drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
 	}
 
 	//now check, whether the image has to be blitted to screen buffer

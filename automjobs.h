@@ -19,20 +19,20 @@
 #ifndef automjobsH
 #define automjobsH
 
-const int FIELD_BLOCKED = -10000;
+const float FIELD_BLOCKED = -10000.f;
 const int WAIT_FRAMES = 4;
 
 //main tuning knobs of the AI:
 const double A = 1.0;	//how important is it, to survey as much fields as possible with each move
 const double B = 1.49;  //how important is it, to stay near the operation point
 const double C = 9.0;	//how important is it, to hold a distance to other surveyors
-const double EXP = -2;	//an negative integer; the influence of other surveyors is falling over the distance with x^EXP
+const float EXP = -2.f; //a negative integer; the influence of other surveyors is falling over the distance with x^EXP
 
 //when there are no fields to survey next to the surveyor, where should the surveyor resume?
 //if the surveyor seems to plan long senseless moves, rebalancing the following factors might help
 const double D = 1;		//more likely near the operation point
 const double E = 3;		//more likely near his position
-const double EXP2 = -2;
+const float EXP2 = -2.f;
 const double F = 100;	//more likely far away from other surveyors
 const double G = 1.8;	// how important is to go to directions where resources has been found already
 

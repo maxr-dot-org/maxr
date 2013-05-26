@@ -164,7 +164,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 {
 	const cMap& map = *client->getMap();
 
-	if (!map.possiblePlace (*vehicle, PosX, PosY, true)) return (float) FIELD_BLOCKED;
+	if (!map.possiblePlace (*vehicle, PosX, PosY, true)) return FIELD_BLOCKED;
 
 	//calculate some values, on which the "importance-factor" may depend
 
@@ -212,12 +212,11 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 			{
 				NrResFound++;
 			}
-
 		}
 	}
 
 	//the distance to the OP
-	float newDistanceOP = sqrt (pow ( (float) PosX - OPX , 2) + pow ( (float) PosY - OPY , 2));
+	float newDistanceOP = sqrtf (powf (PosX - OPX , 2) + powf (PosY - OPY , 2));
 
 	//the distance to other surveyors
 	float newDistancesSurv = 0;
@@ -226,17 +225,17 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	{
 		if (i == iNumber) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-		temp = sqrt (pow ( (float) PosX - autoMJobs[i]->vehicle->PosX , (float) 2.0) + pow ( (float) PosY - autoMJobs[i]->vehicle->PosY , (float) 2.0));
-		newDistancesSurv += pow ( (float) temp, (float) EXP);
+		temp = sqrtf (powf (PosX - autoMJobs[i]->vehicle->PosX , 2.0f) + powf (PosY - autoMJobs[i]->vehicle->PosY , 2.0f));
+		newDistancesSurv += powf (temp, EXP);
 	}
 
 	//and now calc the "importance-factor"
 
-	if (NrSurvFields == 0) return (float) FIELD_BLOCKED;
+	if (NrSurvFields == 0) return FIELD_BLOCKED;
 
 	float factor = (float) (A * NrSurvFields + G * NrResFound - B * newDistanceOP - C * newDistancesSurv);
 
-	factor = std::max<float> (factor, FIELD_BLOCKED);
+	factor = std::max (factor, FIELD_BLOCKED);
 
 	return factor;
 }
@@ -244,16 +243,15 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 //searches the map for a location where the surveyor can resume
 void cAutoMJob::PlanLongMove()
 {
-	int x, y;
 	int bestX = -1, bestY = -1;
 	float distanceOP, distanceSurv;
 	float factor;
 	float minValue = 0;
 	const cMap& map = *client->getMap();
 
-	for (x = 0; x < map.size; x++)
+	for (int x = 0; x < map.size; x++)
 	{
-		for (y = 0; y < map.size; y++)
+		for (int y = 0; y < map.size; y++)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
 			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[x + y * map.size] == 1) continue;
@@ -265,16 +263,16 @@ void cAutoMJob::PlanLongMove()
 			{
 				// skip our selves and other Players' surveyors
 				if (i == iNumber || autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-				temp = sqrt (pow ( (float) x - autoMJobs[i]->vehicle->PosX , (float) 2.0) + pow ( (float) y - autoMJobs[i]->vehicle->PosY , (float) 2.0));
-				distancesSurv += pow ( (float) temp, (float) EXP2);
+				temp = sqrtf (powf (x - autoMJobs[i]->vehicle->PosX , 2.0f) + powf (y - autoMJobs[i]->vehicle->PosY , 2.0f));
+				distancesSurv += powf (temp, EXP2);
 			}
 
-			distanceOP = sqrt (pow ( (float) x - OPX , 2) + pow ( (float) y - OPY , 2));
-			distanceSurv = sqrt (pow ( (float) x - vehicle->PosX , 2) + pow ( (float) y - vehicle->PosY , 2));
+			distanceOP = sqrtf (powf (x - OPX , 2) + powf (y - OPY , 2));
+			distanceSurv = sqrtf (powf (x - vehicle->PosX , 2) + powf (y - vehicle->PosY , 2));
 			//TODO: take into account the length of the path to the coordinates too (I seen a case, when a surveyor took 7 additional senseless steps just to avoid or by-pass an impassable rocky terrain)
 			factor = (float) (D * distanceOP + E * distanceSurv + F * distancesSurv);
 
-			if ( (factor < minValue) || (minValue == 0))
+			if ((factor < minValue) || (minValue == 0))
 			{
 				minValue = factor;
 				bestX = x;
@@ -317,7 +315,7 @@ void cAutoMJob::changeOP()
 	}
 	else
 	{
-		float distanceOP = sqrt (pow ( (float) vehicle->PosX - OPX , 2) + pow ( (float) vehicle->PosY - OPY , 2));
+		float distanceOP = sqrtf (powf (vehicle->PosX - OPX, 2) + powf (vehicle->PosY - OPY , 2));
 		if (distanceOP > MAX_DISTANCE_OP)
 		{
 			OPX = (int) (vehicle->PosX + (OPX - vehicle->PosX) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);

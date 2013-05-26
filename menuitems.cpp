@@ -1227,14 +1227,14 @@ void cMenuUnitListItem::init()
 	if (unitID.getVehicle())
 	{
 		cVehicle vehicle = cVehicle (unitID.getVehicle(), owner, 0);
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) 64.0;
+		float zoomFactor = (float) UNIT_IMAGE_SIZE / 64.0f;
 		vehicle.render (Client, surface, dest, zoomFactor, false);
 		vehicle.drawOverlayAnimation (surface, dest, zoomFactor);
 	}
 	else if (unitID.getBuilding())
 	{
 		cBuilding building = cBuilding (unitID.getBuilding(), owner, 0);
-		float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) (building.data.isBig ? 128.0 : 64.0);
+		float zoomFactor = (float) UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
 		building.render (surface, dest, zoomFactor, false, false);
 	}
 	else surface = NULL;
@@ -2652,7 +2652,7 @@ cMenuScrollBar::cMenuScrollBar (int x, int y, int h, int pageSteps_, cMenu* pare
 	offset = 0;
 	scrollerSteps = 0;
 
-	if (position.h < 48) position.h = 48;
+	std::max<Uint16> (this->position.h, 48);
 	createSurface();
 
 	upButton = new cMenuButton (position.x, position.y, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BAR, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);

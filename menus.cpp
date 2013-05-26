@@ -444,7 +444,7 @@ eLandingState cGameDataContainer::checkLandingState (int playerNr)
 		if (c == NULL) continue;
 		if (i == playerNr) continue;
 
-		int distance = (int) sqrt (pow ( (float) c->iLandX - posX, 2) + pow ( (float) c->iLandY - posY, 2));
+		int distance = (int) sqrtf (powf (c->iLandX - posX, 2) + powf (c->iLandY - posY, 2));
 
 		if (distance < LANDING_DISTANCE_TOO_CLOSE)
 		{
@@ -469,7 +469,7 @@ eLandingState cGameDataContainer::checkLandingState (int playerNr)
 	{
 		if (lastState == LANDING_POSITION_WARNING)
 		{
-			int delta = (int) sqrt (pow ( (float) posX - lastPosX, 2) + pow ( (float) posY - lastPosY, 2));
+			int delta = (int) sqrtf (powf (posX - lastPosX, 2) + powf (posY - lastPosY, 2));
 			if (delta <= LANDING_DISTANCE_TOO_CLOSE)
 			{
 				//the player has choosen the same position after a warning

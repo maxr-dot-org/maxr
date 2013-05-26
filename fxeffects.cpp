@@ -373,7 +373,7 @@ cFxRocket::cFxRocket(int startX_, int startY_, int endX_, int endY_, int dir_, b
 	endX(endX_),
 	endY(endY_)
 {
-	distance = (int) sqrt (pow ((float)(endX - startX), 2) + pow ((float)(endY - startY), 2));
+	distance = (int) sqrtf (powf (endX - startX, 2) + powf (endY - startY, 2));
 	length = distance / speed;
 	image = EffectsData.fx_rocket;
 }
