@@ -49,7 +49,7 @@ struct sDrawingCacheEntry
 
 	//vehicle properties
 	const sVehicle* vehicleTyp;
-	int frame;
+	unsigned int frame;
 	int flightHigh;
 	bool big;
 	bool isBuilding;

@@ -155,7 +155,7 @@ public:
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde
 	int DamageFXPointX, DamageFXPointY; // Die Punkte, an denen Rauch bei beschädigung aufsteigen wird
-	int WalkFrame;    // Frame der Geh-Annimation
+	unsigned int WalkFrame; // Frame der Geh-Annimation
 	float CommandoRank; // Rang des Commandos
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured

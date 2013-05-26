@@ -232,7 +232,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (gameGUI.getClient(), drawingSurface, dest, (float) gameGUI.getTileSize() / (float) 64.0, cSettings::getInstance().isShadows());
+		render (gameGUI.getClient(), drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows());
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
