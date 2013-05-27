@@ -22,7 +22,7 @@
 
   <Abilities>
     <Armor Num="4"/>
-    <Hitpoints Num="24"/>
+    <Hitpoints Num="20"/>
     <Scan_Range Num="3"/>
     <Can_Be_Captured YN="Yes"/>
     <Can_Be_Disabled YN="Yes"/>
