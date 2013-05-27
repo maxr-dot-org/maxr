@@ -143,6 +143,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 
 	cMap serverMap;
 	std::vector<cPlayer*> serverPlayers;
+	cServer* server = NULL;
 	if (isServer)
 	{
 		// copy map for server
@@ -173,23 +174,23 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			case SETTINGS_VICTORY_ANNIHILATION: nTurns = nScore = 0; break;
 			default: assert (0);
 		}
-		Server = new cServer (network, serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+		server = new cServer (network, serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
-			sendVictoryConditions (*Server, nTurns, nScore, players[n]);
+			sendVictoryConditions (*server, nTurns, nScore, players[n]);
 
 		// place resources
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
-			Server->correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
+			server->correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
 			serverMap.placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency);
 		}
 		serverMap.placeRessources (settings->metal, settings->oil, settings->gold);
 	}
 
 	// init client and his players
-	Client = new cClient (Server, network, map, &players);
+	Client = new cClient (server, network, map, &players);
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -201,17 +202,17 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	{
 		// send clan info to clients
 		if (settings->clans == SETTING_CLANS_ON)
-			sendClansToClients (*Server, players);
+			sendClansToClients (*server, players);
 
 		// make the landing
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
-			Server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
+			server->makeLanding (landData[i]->iLandX, landData[i]->iLandY, serverPlayers[i], landingUnits[i], settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 			delete landData[i];
 			delete landingUnits[i];
 		}
 
-		Server->bStarted = true;
+		server->bStarted = true;
 	}
 
 	if (reconnect && network)
@@ -226,29 +227,28 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 
 	if (isServer)
 	{
-		Server->stop ();
+		server->stop ();
 	}
 	delete Client;
 	Client = NULL;
 
-	if (isServer)
-	{
-		delete Server;
-		Server = NULL;
-	}
+	delete server;
+	server = NULL;
 }
 
 //------------------------------------------------------------------------------
 void cGameDataContainer::runSavedGame (cTCP* network, int player)
 {
+	cServer* server = NULL;
 	cSavegame savegame (savegameNum);
-	if (savegame.load (&Server, network) != 1) return;
-	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
+	if (savegame.load (&server, network) != 1) return;
+	assert(server != NULL);
+	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
 
 	// copy map for client
 	cMap clientMap;
-	clientMap.LoadMap (Server->Map->MapName);
+	clientMap.LoadMap (server->Map->MapName);
 
 	std::vector<cPlayer*> clientPlayerList;
 
@@ -258,7 +258,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	Client = new cClient (Server, network, &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, &clientMap, &clientPlayerList);
 	Client->initPlayer (clientPlayerList[player]);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
@@ -271,17 +271,17 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
+			sendSavedReport (*server, reportList[j], serverPlayerList[i]->Nr);
 		}
 		reportList.clear();
 	}
 
 	// exit menu and start game
-	Server->bStarted = true;
+	server->bStarted = true;
 	Client->gameGUI.show();
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
@@ -290,11 +290,11 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 	clientPlayerList.clear();
 
-	Server->stop ();
+	server->stop ();
 	delete Client;
 	Client = NULL;
-	delete Server;
-	Server = NULL;
+	delete server;
+	server = NULL;
 
 	reloadUnitValues();
 }
@@ -3337,10 +3337,11 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 //-----------------------------------------------------------------------------------------
 bool cNetworkHostMenu::runSavedGame()
 {
+	cServer* server = NULL;
 	cSavegame savegame (gameDataContainer.savegameNum);
-	if (savegame.load (&Server, network) != 1) return false;
-
-	const std::vector<cPlayer*>& serverPlayerList = *Server->PlayerList;
+	if (savegame.load (&server, network) != 1) return false;
+	assert (server != NULL);
+	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	// first we check whether all necessary players are connected
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
@@ -3352,6 +3353,7 @@ bool cNetworkHostMenu::runSavedGame()
 			{
 				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Wrong"));
 				draw();
+				// memleak ? (server)
 				return false;
 			}
 		}
@@ -3407,7 +3409,7 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// copy map for client
 	cMap clientMap;
-	clientMap.LoadMap (Server->Map->MapName);
+	clientMap.LoadMap (server->Map->MapName);
 
 	std::vector<cPlayer*> clientPlayerList;
 
@@ -3423,7 +3425,7 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	Client = new cClient (Server, network, &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, &clientMap, &clientPlayerList);
 	Client->initPlayer (localPlayer);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
@@ -3434,24 +3436,24 @@ bool cNetworkHostMenu::runSavedGame()
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
 		sendRequestResync (*Client, serverPlayerList[i]->Nr);
-		sendHudSettings (*Server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
+		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*Server, reportList[j], serverPlayerList[i]->Nr);
+			sendSavedReport (*server, reportList[j], serverPlayerList[i]->Nr);
 		}
 		reportList.clear();
 	}
 
 	// exit menu and start game
-	Server->bStarted = true;
+	server->bStarted = true;
 	Client->gameGUI.show();
 
-	Server->stop ();
+	server->stop ();
 	delete Client;
 	Client = NULL;
-	delete Server;
-	Server = NULL;
+	delete server;
+	server = NULL;
 
 	reloadUnitValues();
 

@@ -44,14 +44,15 @@ int serverGameThreadFunction (void* data)
 }
 
 //------------------------------------------------------------------------
-cServerGame::cServerGame(cTCP& network_)
-	: network(&network_)
-	, thread (0)
-	, canceled (false)
-	, shouldSave (false)
-	, saveGameNumber (-1)
-	, gameData (0)
-	, serverMap (0)
+cServerGame::cServerGame(cTCP& network_) :
+	server (NULL),
+	network (&network_),
+	thread (0),
+	canceled (false),
+	shouldSave (false),
+	saveGameNumber (-1),
+	gameData (0),
+	serverMap (0)
 {
 }
 
@@ -82,18 +83,18 @@ void cServerGame::runInThread()
 bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSavegame savegame (saveGameNumber);
-	if (savegame.load (&Server, network) != 1)
+	if (savegame.load (&server, network) != 1)
 		return false;
-	assert (Server != 0);
-	Server->markAllPlayersAsDisconnected();
-	Server->bStarted = true;
+	assert (server != 0);
+	server->markAllPlayersAsDisconnected();
+	server->bStarted = true;
 	return true;
 }
 
 //------------------------------------------------------------------------
 void cServerGame::saveGame (int saveGameNumber)
 {
-	if (Server == 0)
+	if (server == NULL)
 	{
 		cout << "Server not running. Can't save game." << endl;
 		return;
@@ -134,10 +135,10 @@ void cServerGame::run()
 
 		if (event)
 		{
-			if (Server != 0)
+			if (server != 0)
 			{
-				Server->HandleNetMessage (event);
-				Server->checkPlayerUnits();
+				server->HandleNetMessage (event);
+				server->checkPlayerUnits();
 			}
 			else
 			{
@@ -146,27 +147,27 @@ void cServerGame::run()
 		}
 
 		static unsigned int lastTime = 0;
-		if (Server)
-			lastTime = Server->gameTimer.gameTime;
+		if (server)
+			lastTime = server->gameTimer.gameTime;
 
 		// don't do anything if games hasn't been started yet!
-		if (Server && Server->bStarted)
+		if (server && server->bStarted)
 		{
-			Server->gameTimer.run (*Server);
+			server->gameTimer.run (*server);
 
 			if (shouldSave)
 			{
 				cSavegame saveGame (saveGameNumber);
-				saveGame.save (*Server, "Dedicated Server Savegame");
+				saveGame.save (*server, "Dedicated Server Savegame");
 				cout << "...saved to slot " << saveGameNumber << endl;
 				shouldSave = false;
 			}
 		}
 
-		if (!event && (!Server || lastTime == Server->gameTimer.gameTime)) //nothing to do
+		if (!event && (!server || lastTime == server->gameTimer.gameTime)) //nothing to do
 			SDL_Delay (10);
 	}
-	if (Server)
+	if (server)
 		terminateServer();
 }
 
@@ -481,7 +482,7 @@ void cServerGame::startGameServer()
 	// copy playerlist for server
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
-		serverPlayers.push_back (new cPlayer (* (gameData->players[i])));
+		serverPlayers.push_back (new cPlayer (*gameData->players[i]));
 		serverPlayers[i]->InitMaps (serverMap->size, serverMap);
 	}
 
@@ -505,16 +506,16 @@ void cServerGame::startGameServer()
 		default:
 			assert (0);
 	}
-	Server = new cServer (network, *serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+	server = new cServer (network, *serverMap, &serverPlayers, gameData->type, gameData->settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 	// send victory conditions to clients
 	for (unsigned n = 0; n < gameData->players.size(); n++)
-		sendVictoryConditions (*Server, nTurns, nScore, gameData->players[n]);
+		sendVictoryConditions (*server, nTurns, nScore, gameData->players[n]);
 
 	// place resources
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
-		Server->correctLandingPos (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY);
+		server->correctLandingPos (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY);
 		serverMap->placeRessourcesAddPlayer (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY, gameData->settings->resFrequency);
 	}
 	serverMap->placeRessources (gameData->settings->metal, gameData->settings->oil, gameData->settings->gold);
@@ -522,18 +523,18 @@ void cServerGame::startGameServer()
 
 	// send clan info to clients
 	if (gameData->settings->clans == SETTING_CLANS_ON)
-		sendClansToClients (*Server, gameData->players);
+		sendClansToClients (*server, gameData->players);
 
 	// make the landing
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
-		Server->makeLanding (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
+		server->makeLanding (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY,
 							 serverPlayers[i], gameData->landingUnits[i], gameData->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE);
 		delete gameData->landData[i];
 		delete gameData->landingUnits[i];
 	}
 
-	Server->bStarted = true;
+	server->bStarted = true;
 }
 
 //-------------------------------------------------------------------------------------
@@ -551,8 +552,8 @@ void cServerGame::terminateServer()
 	delete serverMap;
 	serverMap = NULL;
 
-	delete Server;
-	Server = NULL;
+	delete server;
+	server = NULL;
 }
 
 //-------------------------------------------------------------------------------------
@@ -572,7 +573,6 @@ void cServerGame::pushEvent (cNetMessage* message)
 //------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
-	cServer* server = Server;
 	std::stringstream result;
 	result << "GameState: ";
 	if (server != NULL)
@@ -611,8 +611,7 @@ std::string cServerGame::getGameState() const
 //------------------------------------------------------------------------
 int cServerGame::getSocketForPlayerNr (int playerNr) const
 {
-	cServer* server = Server;
-	if (server != 0)
+	if (server != NULL)
 	{
 		const cPlayer* player = server->getPlayerFromNumber (playerNr);
 		if (player != 0)

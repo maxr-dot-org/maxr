@@ -26,11 +26,12 @@
 #include "ringbuffer.h"
 
 class cGameDataContainer;
-struct sMenuPlayer;
-class cPlayer;
 class cMap;
 class cNetMessage;
+class cPlayer;
+class cServer;
 class cTCP;
+struct sMenuPlayer;
 
 int serverGameThreadFunction (void* data);
 
@@ -59,6 +60,7 @@ public:
 
 	//------------------------------------------------------------------------
 protected:
+	cServer* server;
 	cTCP* network;
 	SDL_Thread* thread;
 	bool canceled;

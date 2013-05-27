@@ -503,6 +503,6 @@ public:
 	void enableFreezeMode (eFreezeMode mode, int playerNumber = -1);
 	void disableFreezeMode (eFreezeMode mode);
 
-} EX* Server;
+};
 
 #endif
