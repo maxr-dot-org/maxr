@@ -425,7 +425,7 @@
 		<Unit ID="0 35" ENG="Fuel Truck">Fuel Truck\n\nTruck for moving fuel.</Unit>
 		<Unit ID="1 1" ENG="Barracks">Barracks\n\nA barracks holds infiltrators and infantry units. Inside the barracks is a machine shop for repairing and improving powered suits, and for manufacturing ammunition. The barracks needs raw materials to repair, upgrade or resupply, so it should be connected to a storage unit or a minig station.</Unit>
 		<Unit ID="1 2" ENG="Concrete Block">Concrete Block\n\nHardened, armored block for blocking enemy movement.</Unit>
-		<Unit ID="1 3" ENG="Bridge">Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships.</Unit>
+		<Unit ID="1 3" ENG="Bridge">Bridge\n\nPontoon bridge for crossing water. Bridges, unlike water platforms, do not block the movement of ships. Moreover units move twice as fast over bridge squares.</Unit>
 		<Unit ID="1 4" ENG="Connector">Connector\n\nBuildings must be connected to share power, fuel, raw materials and gold. You can connect buildings by placing them next to each other, or by building connectors from one building to the other.</Unit>
 		<Unit ID="1 5" ENG="Depot">Depot\n\nA depot can repair damage, manufacture ammunition, and refit ground units with the newest technology. All of these operations require raw materials, so depots should be connected to stored materials.</Unit>
 		<Unit ID="1 6" ENG="Dock">Dock\n\nA dock can repair damage, manufacture ammunition and refit ships with the newest technology. All of these operations require raw materials, so docks should be connected to stored materials.</Unit>
