@@ -1760,7 +1760,7 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 	switch (message->iType)
 	{
 		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, false, message->popInt16(), NULL);
+			sendReconnectAnswer (*network, message->popInt16());
 			break;
 		case MU_MSG_CLAN:
 			gameDataContainer->receiveClan (message);
@@ -2349,7 +2349,7 @@ void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
 	switch (message->iType)
 	{
 		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, false, message->popInt16(), NULL);
+			sendReconnectAnswer (*network, message->popInt16());
 			break;
 		case MU_MSG_CLAN:
 			gameDataContainer->receiveClan (message);
@@ -2593,7 +2593,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 	switch (message->iType)
 	{
 		case TCP_ACCEPT:
-			sendReconnectAnswer (*network, false, message->popInt16(), NULL);
+			sendReconnectAnswer (*network, message->popInt16());
 			break;
 		case MU_MSG_CLAN:
 			gameDataContainer->receiveClan (message);
@@ -4066,7 +4066,9 @@ void cLoadMenu::slotClicked (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLoadSaveMenu::cLoadSaveMenu (cGameDataContainer* gameDataContainer_) : cLoadMenu (gameDataContainer_, MNU_BG_ALPHA)
+cLoadSaveMenu::cLoadSaveMenu (cServer* server_) :
+	cLoadMenu (&gameDataContainer, MNU_BG_ALPHA),
+	server(server_)
 {
 	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&exitReleased);
@@ -4102,8 +4104,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 {
 	cLoadSaveMenu* menu = static_cast<cLoadSaveMenu*> ( (cMenu*) parent);
 	if (menu->selected < 0 || menu->selected > 99) return;
-	cServer* server = Server;
-	if (!server)
+	if (!menu->server)
 	{
 		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
 		okDialog.show();
@@ -4112,8 +4113,8 @@ void cLoadSaveMenu::saveReleased (void* parent)
 	}
 
 	cSavegame savegame (menu->selected + 1);
-	savegame.save (*server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
-	server->makeAdditionalSaveRequest (menu->selected + 1);
+	savegame.save (*menu->server, menu->saveSlots[menu->selected - menu->offset]->getNameEdit()->getText());
+	menu->server->makeAdditionalSaveRequest (menu->selected + 1);
 
 	PlayVoice (VoiceData.VOISaved);
 

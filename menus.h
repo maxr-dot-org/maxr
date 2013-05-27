@@ -913,11 +913,13 @@ public:
 class cLoadSaveMenu : public cLoadMenu
 {
 protected:
+	cGameDataContainer gameDataContainer;
+	cServer* server;
 	AutoPtr<cMenuButton>::type exitButton;
 	AutoPtr<cMenuButton>::type saveButton;
 
 public:
-	cLoadSaveMenu (cGameDataContainer* gameDataContainer_);
+	explicit cLoadSaveMenu (cServer* server_);
 
 	static void exitReleased (void* parent);
 	static void saveReleased (void* parent);

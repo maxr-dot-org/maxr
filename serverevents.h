@@ -278,7 +278,9 @@ void sendRequestIdentification (cTCP& network, int iSocket);
 * the server gives its ok to the reconnection
 *@author alzi alias DoctorDeath
 */
-void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPlayer* player);
+void sendReconnectAnswer (cTCP& network, int socketNumber);
+void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player);
+
 void sendTurn (cServer& server, int turn, const cPlayer& player);
 void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer& player);
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, int player);

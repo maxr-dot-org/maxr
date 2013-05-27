@@ -633,13 +633,134 @@ void cVehicle::Deselct(cGameGUI& gameGUI)
 	gameGUI.setUnitDetailsData (NULL, NULL);
 }
 
+bool cVehicle::refreshData_Build (cServer& server)
+{
+	if (IsBuilding == false || BuildRounds == 0) return false;
+
+	data.storageResCur -= (BuildCosts / BuildRounds);
+	BuildCosts -= (BuildCosts / BuildRounds);
+
+	data.storageResCur = std::max (this->data.storageResCur, 0);
+
+	BuildRounds--;
+	if (BuildRounds != 0) return true;
+
+	const cMap& map = *server.Map;
+	server.addReport (BuildingTyp, false, owner->Nr);
+
+	//handle pathbuilding
+	//here the new building is added (if possible) and the move job to the next field is generated
+	//the new build event is generated in cServer::handleMoveJobs()
+	if (BuildPath)
+	{
+		// Find a next position that either a) is something we can't move to (in which case we cancel
+		// the path building, or b) doesn't have a building type that we're trying to build.
+		int  nextX       = PosX;
+		int  nextY       = PosY;
+		bool found_next  = false;
+
+		while (!found_next && ((nextX != BandX) || (nextY != BandY)))
+		{
+			// Calculate the next position in the path.
+			if (PosX > BandX) nextX--;
+			if (PosX < BandX) nextX++;
+			if (PosY > BandY) nextY--;
+			if (PosY < BandY) nextY++;
+			// Can we move to this position? If not, we need to kill the path building now.
+			if (!map.possiblePlace (*this, nextX, nextY))
+			{
+				// Try sidestepping stealth units before giving up.
+				server.sideStepStealthUnit (nextX, nextY, this);
+				if (!map.possiblePlace (*this, nextX, nextY))
+				{
+					// We can't build along this path any more.
+					break;
+				}
+			}
+			// Can we build at this next position?
+			if (map.possiblePlaceBuilding (BuildingTyp.getBuilding()->data, nextX, nextY))
+			{
+				// We can build here.
+				found_next = true;
+				break;
+			}
+		}
+
+		// If we've found somewhere to move to, move there now.
+		if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
+		{
+			IsBuilding = false;
+			server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+			// Begin the movment immediately, so no other unit can block the destination field.
+			this->ServerMoveJob->checkMove();
+		}
+
+		else
+		{
+			if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
+			{
+				server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+				IsBuilding = false;
+			}
+			BuildPath = false;
+			sendBuildAnswer (server, false, *this);
+		}
+	}
+	else
+	{
+		//add building immediatly if it doesn't require the engineer to drive away
+		if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
+		{
+			IsBuilding = false;
+			server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
+		}
+	}
+	return true;
+}
+
+bool cVehicle::refreshData_Clear (cServer& server)
+{
+	if (IsClearing == false || ClearingRounds == 0) return false;
+
+	ClearingRounds--;
+
+	cMap& map = *server.Map;
+
+	if (ClearingRounds != 0) return true;
+
+	IsClearing = false;
+	cBuilding* Rubble = map.fields[PosX + PosY * map.size].getRubble();
+	if (data.isBig)
+	{
+		int size = map.size;
+		map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
+		sendStopClear (server, *this, BuildBigSavedPos, owner->Nr);
+		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
+		{
+			sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
+		}
+	}
+	else
+	{
+		sendStopClear (server, *this, -1, owner->Nr);
+		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
+		{
+			sendStopClear (server, *this, -1, seenByPlayerList[i]->Nr);
+		}
+	}
+	data.storageResCur += Rubble->RubbleValue;
+	data.storageResCur = std::min (data.storageResMax, data.storageResCur);
+	server.deleteRubble (Rubble);
+
+	return true;
+}
+
 //-----------------------------------------------------------------------------
 /** Initializes all unit data to its maxiumum values */
 //-----------------------------------------------------------------------------
-int cVehicle::refreshData()
-{
-	int iReturn = 0;
 
+bool cVehicle::refreshData()
+{
 	if (turnsDisabled > 0)
 	{
 		lastSpeed = data.speedMax;
@@ -649,7 +770,7 @@ int cVehicle::refreshData()
 		else
 			lastShots = data.ammoCur;
 
-		return 1;
+		return true;
 	}
 	if (data.speedCur < data.speedMax || data.shotsCur < data.shotsMax)
 	{
@@ -661,140 +782,13 @@ int cVehicle::refreshData()
 			data.shotsCur = data.ammoCur;
 
 		/*// Regenerieren:
-		if ( data.is_alien && data.hitpointsCur < data.hitpointsMax )
+		if (data.is_alien && data.hitpointsCur < data.hitpointsMax)
 		{
 			data.hitpointsCur++;
 		}*/
-		iReturn = 1;
+		return true;
 	}
-
-	// Build
-	if (IsBuilding && BuildRounds)
-	{
-
-		data.storageResCur -= (BuildCosts / BuildRounds);
-		BuildCosts -= (BuildCosts / BuildRounds);
-
-		data.storageResCur = std::max (this->data.storageResCur, 0);
-
-		BuildRounds--;
-
-		if (BuildRounds == 0)
-		{
-			cServer& server = *Server;
-			const cMap& map = *server.Map;
-			server.addReport (BuildingTyp, false, owner->Nr);
-
-			//handle pathbuilding
-			//here the new building is added (if possible) and the move job to the next field is generated
-			//the new build event is generated in cServer::handleMoveJobs()
-			if (BuildPath)
-			{
-				// Find a next position that either a) is something we can't move to (in which case we cancel
-				// the path building, or b) doesn't have a building type that we're trying to build.
-				int     nextX       = PosX;
-				int     nextY       = PosY;
-				bool    found_next  = false;
-
-				while (!found_next && ( (nextX != BandX) || (nextY != BandY)))
-				{
-					// Calculate the next position in the path.
-					if (PosX > BandX) nextX--;
-					if (PosX < BandX) nextX++;
-					if (PosY > BandY) nextY--;
-					if (PosY < BandY) nextY++;
-					// Can we move to this position? If not, we need to kill the path building now.
-					if (!map.possiblePlace (*this, nextX, nextY))
-					{
-						// Try sidestepping stealth units before giving up.
-						server.sideStepStealthUnit (nextX, nextY, this);
-						if (!map.possiblePlace (*this, nextX, nextY))
-						{
-							// We can't build along this path any more.
-							break;
-						}
-					}
-					// Can we build at this next position?
-					if (map.possiblePlaceBuilding (BuildingTyp.getBuilding()->data, nextX, nextY))
-					{
-						// We can build here.
-						found_next = true;
-						break;
-					}
-				}
-
-				// If we've found somewhere to move to, move there now.
-				if (found_next && server.addMoveJob (PosX, PosY, nextX, nextY, this))
-				{
-					IsBuilding = false;
-					server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
-					// Begin the movment immediately, so no other unit can block the destination field.
-					this->ServerMoveJob->checkMove();
-				}
-
-				else
-				{
-					if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != sUnitData::SURFACE_POS_GROUND)
-					{
-						server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
-						IsBuilding = false;
-					}
-					BuildPath = false;
-					sendBuildAnswer (server, false, *this);
-				}
-			}
-			else
-			{
-				//add building immediatly if it doesn't require the engineer to drive away
-				if (BuildingTyp.getUnitDataOriginalVersion()->surfacePosition != data.surfacePosition)
-				{
-					IsBuilding = false;
-					server.addUnit (PosX, PosY, BuildingTyp.getBuilding(), owner);
-				}
-			}
-		}
-
-		iReturn = 1;
-	}
-
-	// removing dirt
-	if (IsClearing && ClearingRounds)
-	{
-		ClearingRounds--;
-
-		cServer& server = *Server;
-		cMap& map = *server.Map;
-
-		if (ClearingRounds == 0)
-		{
-			IsClearing = false;
-			cBuilding* Rubble = map.fields[PosX + PosY * map.size].getRubble();
-			if (data.isBig)
-			{
-				int size = map.size;
-				map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
-				sendStopClear (server, *this, BuildBigSavedPos, owner->Nr);
-				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
-				{
-					sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
-				}
-			}
-			else
-			{
-				sendStopClear (server, *this, -1, owner->Nr);
-				for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
-				{
-					sendStopClear (server, *this, -1, seenByPlayerList[i]->Nr);
-				}
-			}
-			data.storageResCur += Rubble->RubbleValue;
-			data.storageResCur = std::min (data.storageResMax, data.storageResCur);
-			server.deleteRubble (Rubble);
-		}
-
-		iReturn = 1;
-	}
-	return iReturn;
+	return false;
 }
 
 //-----------------------------------------------------------------------------

@@ -1436,11 +1436,11 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 		if (!playerName.compare (DisconnectedPlayerList[i]->name))
 		{
 			DisconnectedPlayerList[i]->iSocketNum = socketNumber;
-			sendReconnectAnswer (*network, true, socketNumber, DisconnectedPlayerList[i]);
+			sendReconnectAnswer (*this, socketNumber, *DisconnectedPlayerList[i]);
 			return;
 		}
 	}
-	sendReconnectAnswer (*network, false, socketNumber, NULL);
+	sendReconnectAnswer (*network, socketNumber);
 }
 
 //-------------------------------------------------------------------------------------
@@ -2888,7 +2888,11 @@ void cServer::makeTurnEnd()
 				Vehicle->turnsDisabled--;
 				forceSendUnitData = true;
 			}
-			if (Vehicle->refreshData() || forceSendUnitData)
+			bool isModified = Vehicle->refreshData();
+			isModified |= Vehicle->refreshData_Build (*this);
+			isModified |= Vehicle->refreshData_Clear (*this);
+
+			if (isModified || forceSendUnitData)
 			{
 				for (unsigned int k = 0; k < Vehicle->seenByPlayerList.size(); k++)
 				{

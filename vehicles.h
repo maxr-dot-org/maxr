@@ -172,9 +172,12 @@ public:
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing
 	*@author alzi alias DoctorDeath
-	*@return 1 if there has been refreshed something else 0.
+	*@return true if there has been refreshed something else false.
 	*/
-	int refreshData();
+	bool refreshData();
+	bool refreshData_Build (cServer& server);
+	bool refreshData_Clear (cServer& server);
+
 	void DrawPath (cGameGUI& gameGUI);
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
 	int playStream (const cGameGUI& gameGUI);

@@ -3351,7 +3351,7 @@ void cGameGUI::preferencesReleased (void* parent)
 void cGameGUI::filesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cLoadSaveMenu loadSaveMenu (new cGameDataContainer);   // TODO: memory leak?
+	cLoadSaveMenu loadSaveMenu (gui->getClient()->getServer());
 	if (loadSaveMenu.show() != 1) gui->end = true;
 }
 

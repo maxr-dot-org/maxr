@@ -704,30 +704,38 @@ void sendRequestIdentification (cTCP& network, int iSocket)
 }
 
 //-------------------------------------------------------------------------------------
-void sendReconnectAnswer (cTCP& network, bool okay, int socketNumber, const cPlayer* player)
+void sendReconnectAnswer (cTCP& network, int socketNumber)
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
-	if (okay && player != NULL)
-	{
-		cServer& server = *Server;
-		const std::vector<cPlayer*>& playerList = *server.PlayerList;
-		for (unsigned int i = 0; i < playerList.size(); i++)
-		{
-			cPlayer const* SecondPlayer = playerList[i];
-			if (player == SecondPlayer) continue;
-			message.pushInt16 (SecondPlayer->Nr);
-			message.pushInt16 (GetColorNr (SecondPlayer->color));
-			message.pushString (SecondPlayer->name);
-		}
-		message.pushInt16 ( (int) playerList.size());
-		message.pushString (server.Map->MapName);
-		message.pushInt16 (GetColorNr (player->color));
-		message.pushInt16 (player->Nr);
-	}
-	message.pushBool (okay);
+	message.pushBool (false);
 
 	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	network.sendTo (socketNumber, message.iLength, message.serialize());
+}
+
+//-------------------------------------------------------------------------------------
+void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player)
+{
+	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
+
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	for (unsigned int i = 0; i < playerList.size(); i++)
+	{
+		cPlayer const* SecondPlayer = playerList[i];
+		if (&player == SecondPlayer) continue;
+		message.pushInt16 (SecondPlayer->Nr);
+		message.pushInt16 (GetColorNr (SecondPlayer->color));
+		message.pushString (SecondPlayer->name);
+	}
+	message.pushInt16 ((int) playerList.size());
+	message.pushString (server.Map->MapName);
+	message.pushInt16 (GetColorNr (player.color));
+	message.pushInt16 (player.Nr);
+
+	message.pushBool (true);
+
+	Log.write ("Server: <-- " + message.getTypeAsString() + ", Hexdump: " + message.getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+	server.network->sendTo (socketNumber, message.iLength, message.serialize());
 }
 
 //-------------------------------------------------------------------------------------
