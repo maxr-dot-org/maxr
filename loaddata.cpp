@@ -2009,18 +2009,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
 
 	string storeUnitsString = getXMLNodeString (unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type");
-	if (storeUnitsString.length() > 0)
-	{
-		int pos = -1;
-		do
-		{
-			int lastpos = pos;
-			pos = storeUnitsString.find_first_of ("+", pos + 1);
-			if (pos == string::npos) pos = storeUnitsString.length();
-			Data->storeUnitsTypes.push_back (storeUnitsString.substr (lastpos + 1, pos - (lastpos + 1)));
-		}
-		while (pos < (int) storeUnitsString.length());
-	}
+	Split (storeUnitsString, "+", Data->storeUnitsTypes);
 
 	Data->isStorageType = getXMLNodeString (unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type");
 

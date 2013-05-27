@@ -1268,12 +1268,10 @@ void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 //-------------------------------------------------------------------------------
 void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int value, int orgvalue, SDL_Surface* sf)
 {
-	SDL_Rect src, dest;
-	int i, offx;
+	SDL_Rect src = {0, 0, 0, 0};
 
 	switch (sym)
 	{
-
 		case SBSpeed:
 			src.x = 0;
 			src.y = 109;
@@ -1373,7 +1371,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 		maxx -= src.w + 3;
 	}
 
-	offx = src.w;
+	int offx = src.w;
 
 	while (offx * value >= maxx)
 	{
@@ -1387,11 +1385,11 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 		}
 	}
 
+	SDL_Rect dest;
 	dest.x = x;
-
 	dest.y = y;
 
-	for (i = 0; i < value; i++)
+	for (int i = 0; i < value; i++)
 	{
 		if (i == orgvalue)
 		{

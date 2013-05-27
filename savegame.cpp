@@ -18,18 +18,19 @@
  ***************************************************************************/
 
 #include "savegame.h"
-#include "server.h"
-#include "loaddata.h"
-#include "upgradecalculator.h"
-#include "menus.h"
-#include "settings.h"
-#include "hud.h"
-#include "files.h"
+
 #include "buildings.h"
-#include "vehicles.h"
-#include "player.h"
-#include "movejobs.h"
 #include "casualtiestracker.h"
+#include "files.h"
+#include "hud.h"
+#include "loaddata.h"
+#include "menus.h"
+#include "movejobs.h"
+#include "player.h"
+#include "server.h"
+#include "settings.h"
+#include "upgradecalculator.h"
+#include "vehicles.h"
 
 using namespace std;
 
@@ -854,6 +855,21 @@ void cSavegame::loadUnitValues (TiXmlElement* unitNode, sUnitData* Data)
 	else Data->shotsCur = Data->shotsMax;
 }
 
+void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
+{
+	if (s.empty()) return;
+	size_t beg = 0;
+	size_t end = s.find_first_of (seps, beg);
+
+	while (end != string::npos)
+	{
+		words.push_back (s.substr (beg, end - beg));
+		beg = end + 1;
+		end = s.find_first_of (seps, beg);
+	}
+	words.push_back (s.substr (beg));
+}
+
 //--------------------------------------------------------------------------
 void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 {
@@ -953,18 +969,7 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 	if (TiXmlElement* const Element = unitNode->FirstChildElement ("StoreUnitsTypes"))
 	{
 		string storeUnitsString = Element->Attribute ("string");
-		if (storeUnitsString.length() > 0)
-		{
-			int pos = -1;
-			do
-			{
-				int lastpos = pos;
-				pos = storeUnitsString.find_first_of ("+", pos + 1);
-				if (pos == string::npos) pos = storeUnitsString.length();
-				Data->storeUnitsTypes.push_back (storeUnitsString.substr (lastpos + 1, pos - (lastpos + 1)));
-			}
-			while (pos < (int) storeUnitsString.length());
-		}
+		Split (storeUnitsString, "+", Data->storeUnitsTypes);
 	}
 
 	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Needs_Energy"))     Element->Attribute ("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;

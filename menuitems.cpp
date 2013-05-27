@@ -1037,18 +1037,19 @@ bool cMenuCheckButton::preClicked()
 
 void cMenuCheckButton::draw()
 {
-	SDL_Rect textDest = { -1, -1, -1, -1 };
+	int textDestx = -1;
+	int textDesty = -1;
 	if (surface)
 	{
 		switch (textOrientation)
 		{
 			case TEXT_ORIENT_RIGHT:
-				textDest.x = position.x + surface->w + 2;
-				textDest.y = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
+				textDestx = position.x + surface->w + 2;
+				textDesty = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
 				break;
 			case TEXT_ORIENT_LEFT:
-				textDest.x = position.x - (font->getTextWide (text, fontType) + 2);
-				textDest.y = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
+				textDestx = position.x - (font->getTextWide (text, fontType) + 2);
+				textDesty = position.y + (position.h / 2) - (font->getFontHeight (fontType) / 2);
 				break;
 		}
 	}
@@ -1059,7 +1060,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_TYPE_STANDARD:
 		case RADIOBTN_TYPE_BTN_ROUND:
 			SDL_BlitSurface (surface, NULL, buffer, &position);
-			font->showText (textDest.x , textDest.y, text, fontType);
+			font->showText (textDestx , textDesty, text, fontType);
 			break;
 		case CHECKBOX_TYPE_TANK:
 		case CHECKBOX_TYPE_PLANE:
@@ -1092,19 +1093,19 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_HUD_INDEX_00:
 		case CHECKBOX_HUD_INDEX_01:
 		case CHECKBOX_HUD_INDEX_02:
-			textDest.y = 7;
+			textDesty = 7;
 		case CHECKBOX_HUD_INDEX_10:
 		case CHECKBOX_HUD_INDEX_11:
 		case CHECKBOX_HUD_INDEX_12:
-			if (textDest.y != 7) textDest.y = 6;
+			if (textDesty != 7) textDesty = 6;
 		case CHECKBOX_HUD_INDEX_20:
 		case CHECKBOX_HUD_INDEX_21:
 		case CHECKBOX_HUD_INDEX_22:
-			if (textDest.y != 6 && textDest.y != 7) textDest.y = 5;
+			if (textDesty != 6 && textDesty != 7) textDesty = 5;
 			SDL_BlitSurface (surface, NULL, buffer, &position);
-			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDest.y, text, FONT_LATIN_SMALL_GREEN);
-			else font->showTextCentered (position.x + position.w / 2, position.y + textDest.y - 1, text, FONT_LATIN_SMALL_RED);
-			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDest.y - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
+			if (checked) font->showTextCentered (position.x + position.w / 2, position.y + textDesty, text, FONT_LATIN_SMALL_GREEN);
+			else font->showTextCentered (position.x + position.w / 2, position.y + textDesty - 1, text, FONT_LATIN_SMALL_RED);
+			font->showTextCentered (position.x + position.w / 2 - 1, position.y + textDesty - 1 + (checked ? 1 : 0), text, FONT_LATIN_SMALL_WHITE);
 			break;
 	}
 }
@@ -3803,9 +3804,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	const int x0 = px +  40, x1 = x0 + w;
 	const int y0 = py + 130, y1 = y0 + h;
 
-	/*
-		Calculate time axis
-	*/
+	// Calculate time axis
 	const int pix_per_turn = 5;
 	const int now = client->getTurn();
 
@@ -3822,9 +3821,7 @@ void cMenuReportsScreen::drawScoreGraph()
 
 	const int now_x = x0 + (now - min_turns) * pix_per_turn;
 
-	/*
-		Calculate points axis
-	*/
+	// Calculate points axis
 	int highest_score = 0;
 	int lowest_score = 0x7FFFFFFF;
 	for (unsigned n = 0; n < client->getPlayerList().size(); n++)
@@ -3852,9 +3849,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	else
 		pix_per_point = default_pix_per_point;
 
-	/*
-		Draw Limits
-	*/
+	// Draw Limits
 	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
 
 	int turn_lim, points_lim;
@@ -3862,23 +3857,21 @@ void cMenuReportsScreen::drawScoreGraph()
 
 	if (turn_lim && turn_lim > min_turns && turn_lim < max_turns)
 	{
-		int x = x0 + (turn_lim - min_turns) * pix_per_turn;
+		const int x = x0 + (turn_lim - min_turns) * pix_per_turn;
 
 		drawLine (buffer, x, y0, x, y1, limit_colour);
 		font->showTextCentered (x, y1 + 8, iToStr (turn_lim), FONT_LATIN_SMALL_WHITE);
 	}
 	if (points_lim && points_lim > min_points && points_lim < max_points)
 	{
-		int y = y1 - (int) ( (points_lim - min_points) * pix_per_point);
+		const int y = y1 - (int) ((points_lim - min_points) * pix_per_point);
 
 		drawLine (buffer, x0, y, x1, y, limit_colour);
 		font->showText (x0 - 16, y - 3, iToStr (points_lim), FONT_LATIN_SMALL_WHITE);
 	}
 
-	/*
-		Draw Labels
-	*/
-	int my = y1 - (int) ( (max_points - min_points) * pix_per_point);
+	// Draw Labels
+	int my = y1 - (int) ((max_points - min_points) * pix_per_point);
 
 	font->showTextCentered (x0,    y1 + 8, iToStr (min_turns), FONT_LATIN_SMALL_WHITE);
 	font->showTextCentered (now_x, y1 + 8, iToStr (now),       FONT_LATIN_SMALL_WHITE);
@@ -3887,24 +3880,22 @@ void cMenuReportsScreen::drawScoreGraph()
 	font->showText (x0 - 16, y1 - 3, iToStr (min_points), FONT_LATIN_SMALL_WHITE);
 	font->showText (x0 - 16, my - 3, iToStr (max_points), FONT_LATIN_SMALL_WHITE);
 
-	/*
-		Draw Score Lines
-	*/
+	// Draw Score Lines
 	for (unsigned n = 0, y = 40; n < client->getPlayerList().size(); n++, y += 25)
 	{
 		const cPlayer& p = *client->getPlayerList()[n];
 		const Uint32 player_colour = getPlayerColour (&p);
-		int lx, ly;
+		int lx = x0;
+		const int initialPoint = extrapolateScore (&p, client->getTurn(), min_turns);
+		int ly = y1 - (int) (pix_per_point * (initialPoint - min_points));
 
-		for (int turn = min_turns; turn < max_turns; turn++)
+		for (int turn = min_turns + 1; turn < max_turns; turn++)
 		{
 			const int points = extrapolateScore (&p, client->getTurn(), turn);
 			const int x = x0 + pix_per_turn * (turn - min_turns);
 			const int y = y1 - (int) (pix_per_point * (points - min_points));
 
-			if (turn != min_turns)
-				drawLine (buffer, lx, ly, x, y, player_colour);
-
+			drawLine (buffer, lx, ly, x, y, player_colour);
 			lx = x;
 			ly = y;
 		}

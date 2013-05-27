@@ -297,4 +297,9 @@ private:
 	void addAttributeElement (TiXmlElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
 };
 
+/**
+* Splits a string s by "word" according to one of separators seps.
+*/
+void Split(const std::string& s, const char* seps, std::vector<std::string>& words);
+
 #endif // savegameH

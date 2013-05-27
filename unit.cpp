@@ -18,18 +18,20 @@
  ***************************************************************************/
 
 #include "unit.h"
-#include "math.h"
-#include "client.h"
-#include "video.h"
-#include "mouse.h"
-#include "dialog.h"
-#include "player.h"
-#include "attackJobs.h"
-#include "menus.h"
-#include "clientevents.h"
 
-#include "vehicles.h"
+#include "attackJobs.h"
+#include "client.h"
+#include "clientevents.h"
+#include "dialog.h"
+#include "menus.h"
+#include "mouse.h"
+#include "player.h"
+#include "video.h"
+
 #include "buildings.h"
+#include "vehicles.h"
+
+#include <math.h>
 
 using namespace std;
 
