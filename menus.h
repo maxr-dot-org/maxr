@@ -48,11 +48,11 @@ struct sLandingUnit
 
 enum eLandingState
 {
-	LANDING_STATE_UNKNOWN,		//initial state
-	LANDING_POSITION_OK,		//there are no other players near the position
-	LANDING_POSITION_WARNING,	//there are players within the warning distance
-	LANDING_POSITION_TOO_CLOSE,	//the position is too close to another player
-	LANDING_POSITION_CONFIRMED	//warnings about nearby players will be ignored, because the player has confirmed his position
+	LANDING_STATE_UNKNOWN,      //initial state
+	LANDING_POSITION_OK,        //there are no other players near the position
+	LANDING_POSITION_WARNING,   //there are players within the warning distance
+	LANDING_POSITION_TOO_CLOSE, //the position is too close to another player
+	LANDING_POSITION_CONFIRMED  //warnings about nearby players will be ignored, because the player has confirmed his position
 };
 
 struct sClientLandData
@@ -162,7 +162,6 @@ struct sSettings
 class cGameDataContainer
 {
 public:
-
 	/** The type of the game. See eGameTypes*/
 	eGameTypes type;
 	/** Should this instance of maxr act as the server for a TCP/IP game. */
@@ -187,6 +186,7 @@ public:
 	/** indicates, whether all players have landed */
 	bool allLanded;
 
+public:
 	cGameDataContainer() :
 		type (GAME_TYPE_SINGLE),
 		isServer (false),
@@ -346,7 +346,7 @@ public:
 	 *@author alzi
 	 */
 	virtual void handleNetMessage (cNetMessage* message) {}
-	virtual void handleDestroyUnit (cBuilding* building = NULL, cVehicle* vehicle = NULL) {}
+	virtual void handleDestroyUnit (cBuilding* building, cVehicle* vehicle) {}
 
 	void addTimer (cMenuTimerBase* timer);
 
@@ -369,7 +369,9 @@ class cMainMenu : public cMenu
 public:
 	cMainMenu();
 
+private:
 	SDL_Surface* getRandomInfoImage();
+private:
 	static void infoImageReleased (void* parent);
 };
 
@@ -389,6 +391,7 @@ class cStartMenu : public cMainMenu
 public:
 	cStartMenu();
 
+private:
 	static void singlePlayerReleased (void* parent);
 	static void multiPlayerReleased (void* parent);
 	static void preferencesReleased (void* parent);
@@ -408,7 +411,7 @@ class cSinglePlayerMenu : public cMainMenu
 	AutoPtr<cMenuButton>::type backButton;
 public:
 	cSinglePlayerMenu();
-
+private:
 	static void newGameReleased (void* parent);
 	static void loadGameReleased (void* parent);
 	static void backReleased (void* parent);
@@ -428,7 +431,7 @@ class cMultiPlayersMenu : public cMainMenu
 	AutoPtr<cMenuButton>::type backButton;
 public:
 	cMultiPlayersMenu();
-
+private:
 	static void tcpHostReleased (void* parent);
 	static void tcpClientReleased (void* parent);
 	static void newHotseatReleased (void* parent);
@@ -475,7 +478,7 @@ protected:
 	void updateSettings();
 public:
 	cSettingsMenu (cGameDataContainer* gameDataContainer_);
-
+private:
 	static void backReleased (void* parent);
 	static void okReleased (void* parent);
 };
@@ -508,9 +511,10 @@ protected:
 public:
 	cPlanetsSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_);
 
+private:
 	void loadMaps();
 	void showMaps();
-
+private:
 	static void backReleased (void* parent);
 	static void okReleased (void* parent);
 	static void arrowDownReleased (void* parent);
@@ -548,11 +552,13 @@ protected:
 public:
 	cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn);
 
+private:
+	virtual void handleNetMessage (cNetMessage* message);
+
+private:
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
 	static void backReleased (void* parent);
-
-	void handleNetMessage (cNetMessage* message);
 };
 
 /**
@@ -587,14 +593,14 @@ protected:
 public:
 	cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 
-	static void infoCheckBoxClicked (void* parent);
-	static void selListUpReleased (void* parent);
-	static void selListDownReleased (void* parent);
-
 	void setSelectedUnit (cMenuUnitListItem* selectedUnit_);
 	cMenuUnitListItem* getSelectedUnit();
 
-	virtual void generateSelectionList() {}
+	virtual void generateSelectionList() = 0;
+private:
+	static void infoCheckBoxClicked (void* parent);
+	static void selListUpReleased (void* parent);
+	static void selListDownReleased (void* parent);
 };
 
 /**
@@ -609,12 +615,13 @@ protected:
 	AutoPtr<cMenuButton>::type secondListUpButton;
 	AutoPtr<cMenuButton>::type secondListDownButton;
 
-	virtual bool checkAddOk (cMenuUnitListItem* item) { return true; }
+	virtual bool checkAddOk (const cMenuUnitListItem* item) const { return true; }
 	virtual void addedCallback (cMenuUnitListItem* item) {}
 	virtual void removedCallback (cMenuUnitListItem* item) {}
 public:
 	cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_);
 
+private:
 	static bool selListDoubleClicked (cMenuUnitsList* list, void* parent);
 	static bool secondListDoubleClicked (cMenuUnitsList* list, void* parent);
 
@@ -642,7 +649,6 @@ protected:
 public:
 	cUpgradeHangarMenu (cPlayer* owner);
 	~cUpgradeHangarMenu();
-
 	void setCredits (int credits_);
 	int getCredits();
 };
@@ -666,28 +672,27 @@ protected:
 	AutoPtr<cMenuButton>::type materialBarUpButton;
 	AutoPtr<cMenuButton>::type materialBarDownButton;
 
-	bool isInLandingList (cMenuUnitListItem* item);
+	bool isInLandingList (const cMenuUnitListItem* item) const;
 
-	bool checkAddOk (cMenuUnitListItem* item);
-	void addedCallback (cMenuUnitListItem* item);
-	void removedCallback (cMenuUnitListItem* item);
+	virtual bool checkAddOk (const cMenuUnitListItem* item) const;
+	virtual void addedCallback (cMenuUnitListItem* item);
+	virtual void removedCallback (cMenuUnitListItem* item);
 
 	void updateUnitData();
 public:
 	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
 
+private:
+	virtual void generateSelectionList();
+	virtual void handleNetMessage (cNetMessage* message);
+private:
 	static void selectionChanged (void* parent);
-
 	static void backReleased (void* parent);
 	static void doneReleased (void* parent);
 	static void subButtonsChanged (void* parent);
 	static void materialBarUpReleased (void* parent);
 	static void materialBarDownReleased (void* parent);
 	static void materialBarClicked (void* parent);
-
-	void handleNetMessage (cNetMessage* message);
-
-	void generateSelectionList();
 };
 
 /**
@@ -699,14 +704,16 @@ class cLandingMenu : public cMenu
 public:
 	cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_);
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-	void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessage (cNetMessage* message);
 protected:
 	void createHud();
 	void createMap();
 	const sTerrain* getMapTile (int x, int y) const;
 	void hitPosition();
 
+private:
 	static void mapClicked (void* parent);
 	static void mouseMoved (void* parent);
 	static void backReleased (void* parent);
@@ -789,6 +796,10 @@ public:
 
 	void playerReadyClicked (sMenuPlayer* player);
 
+private:
+	virtual void playerSettingsChanged() = 0;
+
+private:
 	static void backReleased (void* parent);
 	static void sendReleased (void* parent);
 
@@ -798,8 +809,6 @@ public:
 	static void wasNameImput (void* parent);
 	static void portIpChanged (void* parent);
 	static void setDefaultPort (void* parent);
-
-	virtual void playerSettingsChanged() {}
 };
 
 /**
@@ -828,14 +837,16 @@ public:
 	cNetworkHostMenu();
 	~cNetworkHostMenu();
 
+private:
+	virtual void handleNetMessage (cNetMessage* message);
+	virtual void playerSettingsChanged();
+
+private:
 	static void okReleased (void* parent);
 	static void mapReleased (void* parent);
 	static void settingsReleased (void* parent);
 	static void loadReleased (void* parent);
 	static void startReleased (void* parent);
-
-	void handleNetMessage (cNetMessage* message);
-	void playerSettingsChanged();
 };
 
 /**
@@ -858,9 +869,11 @@ public:
 	cNetworkClientMenu();
 	~cNetworkClientMenu();
 
+private:
+	virtual void handleNetMessage (cNetMessage* message);
+	virtual void playerSettingsChanged();
+private:
 	static void connectReleased (void* parent);
-	void handleNetMessage (cNetMessage* message);
-	void playerSettingsChanged();
 };
 
 /**
@@ -895,15 +908,15 @@ public:
 	cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds backgroundType_ = MNU_BG_BLACK);
 	~cLoadMenu();
 
+private:
+	virtual void extendedSlotClicked (int oldSelection) {}
+
+private:
 	static void backReleased (void* parent);
 	static void loadReleased (void* parent);
-
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);
-
 	static void slotClicked (void* parent);
-
-	virtual void extendedSlotClicked (int oldSelection) {}
 };
 
 /**
@@ -921,10 +934,11 @@ protected:
 public:
 	explicit cLoadSaveMenu (cServer* server_);
 
+private:
+	virtual void extendedSlotClicked (int oldSelection);
+private:
 	static void exitReleased (void* parent);
 	static void saveReleased (void* parent);
-
-	void extendedSlotClicked (int oldSelection);
 };
 
 /**
@@ -944,14 +958,16 @@ protected:
 public:
 	cBuildingsBuildMenu (cClient& client, cPlayer* player_, cVehicle* vehicle_);
 
+private:
+	virtual void generateSelectionList();
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+
+private:
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);
 	static void pathReleased (void* parent);
 	static void selectionChanged (void* parent);
 	static bool selListDoubleClicked (cMenuUnitsList* list, void* parent);
-
-	void generateSelectionList();
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 /**
@@ -973,12 +989,14 @@ protected:
 public:
 	cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_);
 
+private:
+	virtual void generateSelectionList();
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+
+private:
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);
 	static void selectionChanged (void* parent);
-
-	void generateSelectionList();
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 /**
@@ -997,11 +1015,12 @@ protected:
 public:
 	cUpgradeMenu (cClient& client_, cPlayer* player);
 
+private:
+	virtual void generateSelectionList();
+private:
 	static void doneReleased (void* parent);
 	static void backReleased (void* parent);
 	static void selectionChanged (void* parent);
-
-	void generateSelectionList();
 };
 
 class cUnitHelpMenu : public cMenu
@@ -1023,13 +1042,14 @@ public:
 	cUnitHelpMenu (sID unitID, cPlayer* owner);
 	cUnitHelpMenu (sUnitData* unitData, cPlayer* owner);
 
+private:
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+private:
 	static void doneReleased (void* parent);
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 class cStorageMenu : public cMenu
 {
-	friend class cClient;
 protected:
 	cClient* client;
 	cVehicle* ownerVehicle;
@@ -1071,12 +1091,18 @@ protected:
 
 	void generateItems();
 
-	void resetInfos();
-
 	int getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons) [6]);
 public:
 	cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
 
+private:
+	friend class cClient;
+	void resetInfos();
+	void playVoice (int Type);
+private:
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+
+private:
 	static void doneReleased (void* parent);
 
 	static void upReleased (void* parent);
@@ -1091,9 +1117,6 @@ public:
 	static void reloadAllReleased (void* parent);
 	static void repairAllReleased (void* parent);
 	static void upgradeAllReleased (void* parent);
-
-	void playVoice (int Type);
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 class cMineManagerMenu : public cMenu
@@ -1129,14 +1152,16 @@ class cMineManagerMenu : public cMenu
 public:
 	cMineManagerMenu (const cClient& client_, cBuilding* building_);
 
+private:
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
+
+private:
 	static void doneReleased (void* parent);
 
 	static void increaseReleased (void* parent);
 	static void decreseReleased (void* parent);
 
 	static void barReleased (void* parent);
-
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 class cReportsMenu : public cMenu
@@ -1166,6 +1191,9 @@ class cReportsMenu : public cMenu
 public:
 	cReportsMenu (cClient& client, cPlayer* owner_);
 
+	void scrollCallback (bool upPossible, bool downPossible);
+	void doubleClicked (cVehicle* vehicle, cBuilding* building);
+private:
 	static void doneReleased (void* parent);
 
 	static void upReleased (void* parent);
@@ -1174,10 +1202,6 @@ public:
 	static void typeChanged (void* parent);
 
 	static void filterClicked (void* parent);
-
-	void scrollCallback (bool upPossible, bool downPossible);
-
-	void doubleClicked (cVehicle* vehicle, cBuilding* building);
 };
 
 #endif //menusH

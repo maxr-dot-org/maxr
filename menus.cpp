@@ -367,7 +367,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	int playerNr = message->popChar();
 	Log.write ("Server: received landing coords from Player " + iToStr (playerNr), cLog::eLOG_TYPE_NET_DEBUG);
 
-	for (unsigned int i = (unsigned int) landData.size(); i < players.size(); i++)
+	for (size_t i = landData.size(); i < players.size(); i++)
 	{
 		landData.push_back (NULL);
 	}
@@ -381,13 +381,13 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	c->iLandY = message->popInt16();
 	c->receivedOK = true;
 
-	for (int player = 0; player < (int) landData.size(); player++)
+	for (size_t player = 0; player < landData.size(); player++)
 	{
 		if (landData[player] == NULL || !landData[player]->receivedOK) return;
 	}
 
 	//now check the landing positions
-	for (int player = 0; player < (int) landData.size(); player++)
+	for (size_t player = 0; player < landData.size(); player++)
 	{
 		eLandingState state = checkLandingState (player);
 
@@ -624,7 +624,8 @@ int cMenu::show()
 	cMenu* lastActiveMenu = ActiveMenu;
 	ActiveMenu = this;
 
-	int lastMouseX = 0, lastMouseY = 0;
+	int lastMouseX = 0;
+	int lastMouseY = 0;
 
 	int lastResX = Video.getResolutionX();
 	int lastResY = Video.getResolutionY();
@@ -671,7 +672,7 @@ int cMenu::show()
 
 		if (terminate)
 		{
-			EventHandler->HandleEvents();	//flush event queue before exiting menu
+			EventHandler->HandleEvents(); //flush event queue before exiting menu
 
 			if (lastActiveMenu) lastActiveMenu->returnToCallback();
 			else ActiveMenu = NULL;
@@ -679,7 +680,7 @@ int cMenu::show()
 		}
 	}
 
-	EventHandler->HandleEvents();	//flush event queue before exiting menu
+	EventHandler->HandleEvents(); //flush event queue before exiting menu
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	else ActiveMenu = NULL;
@@ -732,7 +733,6 @@ void cMenu::handleMouseInput (sMouseState mouseState)
 			menuItem->rightClicked (this);
 		}
 	}
-
 	handleMouseInputExtended (mouseState);
 }
 
@@ -745,8 +745,9 @@ void cMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 //------------------------------------------------------------------------------
 void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer* player, int fromPlayerNr)
 {
-	// Attention: The playernumber will only be the real player number when it is passed to this function explicitly.
-	//			Otherwise it is only -1!
+	// Attention: The playernumber will only be the real player number
+	// when it is passed to this function explicitly.
+	// Otherwise it is only -1!
 	message->iPlayerNr = fromPlayerNr;
 
 	if (player == NULL) network.send (message->iLength, message->serialize());
@@ -761,7 +762,6 @@ void cMenu::addTimer (cMenuTimerBase* timer)
 {
 	menuTimers.push_back (timer);
 }
-
 
 //------------------------------------------------------------------------------
 // cMainMenu implementation
@@ -793,22 +793,22 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 	int unitShow = -1;
 	SDL_Surface* surface = NULL;
 
-	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0)    //that's a 33% chance that we show a building on 1
+	if (showBuilding == 1 && UnitsData.getNrBuildings() > 0) //that's a 33% chance that we show a building on 1
 	{
 		do
 		{
-			unitShow = random ( (int) UnitsData.getNrBuildings() - 1);
+			unitShow = random (UnitsData.getNrBuildings() - 1);
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1);	//make sure we don't show same unit twice
+		while (unitShow == lastUnitShow && UnitsData.getNrBuildings() > 1); //make sure we don't show same unit twice
 		surface = UnitsData.building[unitShow].info;
 	}
-	else if (UnitsData.getNrVehicles() > 0)    //and a 66% chance to show a vehicle on 0 or 2
+	else if (UnitsData.getNrVehicles() > 0) //and a 66% chance to show a vehicle on 0 or 2
 	{
 		do
 		{
-			unitShow = random ( (int) UnitsData.getNrVehicles() - 1);
+			unitShow = random (UnitsData.getNrVehicles() - 1);
 		}
-		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1);	//make sure we don't show same unit twice
+		while (unitShow == lastUnitShow && UnitsData.getNrVehicles() > 1); //make sure we don't show same unit twice
 		surface = UnitsData.vehicle[unitShow].info;
 	}
 	else surface = NULL;
@@ -819,16 +819,15 @@ SDL_Surface* cMainMenu::getRandomInfoImage()
 //------------------------------------------------------------------------------
 void cMainMenu::infoImageReleased (void* parent)
 {
-	cMainMenu* menu = dynamic_cast<cMainMenu*> ( (cMenu*) parent);
+	cMainMenu* menu = reinterpret_cast<cMainMenu*> (parent);
 	// get a new random info image
-	SDL_Surface* surface = ( (cMainMenu*) parent)->getRandomInfoImage();
+	SDL_Surface* surface = menu->getRandomInfoImage();
 	// draw the new image
 	menu->infoImage->setImage (surface);
 	menu->infoImage->draw();
 	Video.draw();
 	mouse->draw (false, screen);
 }
-
 
 //------------------------------------------------------------------------------
 // cStartMenu implementation
@@ -861,13 +860,13 @@ cStartMenu::cStartMenu()
 	exitButton->setReleasedFunction (&exitReleased);
 	menuItems.push_back (exitButton);
 
-	PlayMusic ( (cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
+	PlayMusic ((cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
 }
 
 //------------------------------------------------------------------------------
 void cStartMenu::singlePlayerReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ( (cMenu*) parent);
+	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cSinglePlayerMenu singlePlayerMenu;
 	singlePlayerMenu.show();
 	menu->draw();
@@ -876,7 +875,7 @@ void cStartMenu::singlePlayerReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartMenu::multiPlayerReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ( (cMenu*) parent);
+	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cMultiPlayersMenu multiPlayerMenu;
 	multiPlayerMenu.show();
 	menu->draw();
@@ -885,9 +884,9 @@ void cStartMenu::multiPlayerReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartMenu::preferencesReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ((cMenu*) parent);
+	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cPlayer* activePlayer = 0;
-	cDialogPreferences preferencesDialog(activePlayer);
+	cDialogPreferences preferencesDialog (activePlayer);
 	preferencesDialog.show();
 	menu->draw();
 }
@@ -895,7 +894,7 @@ void cStartMenu::preferencesReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartMenu::licenceReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ( (cMenu*) parent);
+	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cDialogLicence licenceDialog;
 	licenceDialog.show();
 	menu->draw();
@@ -904,10 +903,9 @@ void cStartMenu::licenceReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartMenu::exitReleased (void* parent)
 {
-	cStartMenu* menu = static_cast<cStartMenu*> ( (cMenu*) parent);
+	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	menu->end = true;
 }
-
 
 //------------------------------------------------------------------------------
 // cSinglePlayerMenu
@@ -936,7 +934,7 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 //------------------------------------------------------------------------------
 void cSinglePlayerMenu::newGameReleased (void* parent)
 {
-	cSinglePlayerMenu* menu = static_cast<cSinglePlayerMenu*> ( (cMenu*) parent);
+	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
 	cSettingsMenu settingsMenu (&gameDataContainer);
@@ -947,7 +945,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 //------------------------------------------------------------------------------
 void cSinglePlayerMenu::loadGameReleased (void* parent)
 {
-	cSinglePlayerMenu* menu = static_cast<cSinglePlayerMenu*> ( (cMenu*) parent);
+	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
 	cLoadMenu loadMenu (&gameDataContainer);
@@ -964,10 +962,9 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 //------------------------------------------------------------------------------
 void cSinglePlayerMenu::backReleased (void* parent)
 {
-	cSinglePlayerMenu* menu = static_cast<cSinglePlayerMenu*> ( (cMenu*) parent);
+	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	menu->end = true;
 }
-
 
 //------------------------------------------------------------------------------
 // cMultiPlayersMenu implementation
@@ -989,7 +986,6 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	menuItems.push_back (tcpClientButton);
 
 #ifndef RELEASE
-
 	newHotseatButton = new cMenuButton (position.x + 390, position.y + 190 + MAIN_MENU_BTN_SPACE * 2, lngPack.i18n ("Text~Button~HotSeat_New"));
 	newHotseatButton->setReleasedFunction (&newHotseatReleased);
 	//newHotseatButton->setLocked(true); //disable, not implemented yet
@@ -999,7 +995,6 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 	loadHotseatButton->setReleasedFunction (&loadHotseatReleased);
 	//loadHotseatButton->setLocked(true); //disable, not implemented yet
 	menuItems.push_back (loadHotseatButton);
-
 #endif
 
 	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
@@ -1010,7 +1005,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::tcpHostReleased (void* parent)
 {
-	cMultiPlayersMenu* menu = static_cast<cMultiPlayersMenu*> ( (cMenu*) parent);
+	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cNetworkHostMenu networkMenu;
 	if (networkMenu.show() == 1)
 	{
@@ -1023,7 +1018,7 @@ void cMultiPlayersMenu::tcpHostReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::tcpClientReleased (void* parent)
 {
-	cMultiPlayersMenu* menu = static_cast<cMultiPlayersMenu*> ( (cMenu*) parent);
+	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cNetworkClientMenu networkMenu;
 	if (networkMenu.show() == 1)
 	{
@@ -1036,7 +1031,7 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
-	cMultiPlayersMenu* menu = static_cast<cMultiPlayersMenu*> ( (cMenu*) parent);
+	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show();
 	menu->draw();
@@ -1045,7 +1040,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 {
-	cMultiPlayersMenu* menu = static_cast<cMultiPlayersMenu*> ( (cMenu*) parent);
+	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show();
 	menu->draw();
@@ -1054,23 +1049,25 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMultiPlayersMenu::backReleased (void* parent)
 {
-	cMultiPlayersMenu* menu = static_cast<cMultiPlayersMenu*> ( (cMenu*) parent);
+	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	menu->end = true;
 }
-
 
 //------------------------------------------------------------------------------
 // cSettingsMenu
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (LoadPCX (GFXOD_OPTIONS)), gameDataContainer (gameDataContainer_)
+cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) :
+	cMenu (LoadPCX (GFXOD_OPTIONS)),
+	gameDataContainer (gameDataContainer_)
 {
 	if (gameDataContainer->settings) settings = (*gameDataContainer->settings);
 
 	int iCurrentLine = 57;
 	int iLineHeight = 16; //pixels after we start a new line
-	//black window screen on gfx is 510 width. calculation for most option fields starts at px 240x. and is 347 width.
+	// black window screen on gfx is 510 width.
+	// calculation for most option fields starts at px 240x. and is 347 width.
 
 	// Title
 	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 13, lngPack.i18n ("Text~Button~Game_Options"));
@@ -1086,7 +1083,6 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
 	backButton->setReleasedFunction (&backReleased);
 	menuItems.push_back (backButton);
-
 
 	// Resources field
 	metalLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Metal") + ":");
@@ -1154,11 +1150,11 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 	// Other options (AlienTechs and Clans):
 #if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
 	alienTechLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") +":" );
-	menuItems.push_back ( alienTechLabel );
+	menuItems.push_back (alienTechLabel);
 	aliensGroup = new cMenuRadioGroup();
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240, position.y+iCurrentLine, lngPack.i18n( "Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	aliensGroup->addButton ( new cMenuCheckButton ( position.x+240+64, position.y+iCurrentLine, lngPack.i18n( "Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY ) );
-	menuItems.push_back ( aliensGroup );
+	aliensGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	aliensGroup->addButton (new cMenuCheckButton (position.x + 240 + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Option~Off"), settings.alienTech == SETTING_ALIENTECH_OFF, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
+	menuItems.push_back (aliensGroup);
 	iCurrentLine += iLineHeight;
 #endif
 
@@ -1231,7 +1227,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) : cMenu (L
 //------------------------------------------------------------------------------
 void cSettingsMenu::backReleased (void* parent)
 {
-	cSettingsMenu* menu = static_cast<cSettingsMenu*> ( (cMenu*) parent);
+	cSettingsMenu* menu = reinterpret_cast<cSettingsMenu*> (parent);
 	menu->gameDataContainer->settings = NULL;
 	menu->terminate = true;
 }
@@ -1239,7 +1235,7 @@ void cSettingsMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cSettingsMenu::okReleased (void* parent)
 {
-	cSettingsMenu* menu = static_cast<cSettingsMenu*> ( (cMenu*) parent);
+	cSettingsMenu* menu = reinterpret_cast<cSettingsMenu*> (parent);
 	menu->updateSettings();
 	delete menu->gameDataContainer->settings;
 	menu->gameDataContainer->settings = new sSettings (menu->settings);
@@ -1298,10 +1294,10 @@ void cSettingsMenu::updateSettings()
 	if (bridgeheadGroup->buttonIsChecked (0)) settings.bridgeHead = SETTING_BRIDGEHEAD_MOBILE;
 	else settings.bridgeHead = SETTING_BRIDGEHEAD_DEFINITE;
 
-	/** //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
-	if ( aliensGroup->buttonIsChecked ( 0 ) ) settings.alienTech = SETTING_ALIENTECH_ON;
+#if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
+	if (aliensGroup->buttonIsChecked (0)) settings.alienTech = SETTING_ALIENTECH_ON;
 	else settings.alienTech = SETTING_ALIENTECH_OFF;
-	*/
+#endif
 	settings.alienTech = SETTING_ALIENTECH_OFF;
 
 	if (clansGroup->buttonIsChecked (0)) settings.clans = SETTING_CLANS_ON;
@@ -1329,9 +1325,7 @@ void cSettingsMenu::updateSettings()
 				break;
 			}
 		}
-
 }
-
 
 //------------------------------------------------------------------------------
 // cPlanetsSelectionMenu
@@ -1416,7 +1410,7 @@ void cPlanetsSelectionMenu::loadMaps()
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::showMaps()
 {
-	for (int i = 0; i < 8; i++)   //only 8 maps on one screen
+	for (int i = 0; i < 8; i++) //only 8 maps on one screen
 	{
 		if (i + offset < (int) maps->size())
 		{
@@ -1462,14 +1456,14 @@ void cPlanetsSelectionMenu::showMaps()
 					}
 					SDL_RWclose (mapFile);
 
-#define MAPWINSIZE 112
-					if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE)   // resize map
+					const int MAPWINSIZE = 112;
+					if (mapSurface->w != MAPWINSIZE || mapSurface->h != MAPWINSIZE) // resize map
 					{
 						mapSurface = scaleSurface (mapSurface, NULL, MAPWINSIZE, MAPWINSIZE);
 					}
 
-#define SELECTED 0x00C000
-#define UNSELECTED 0x000000
+					const int SELECTED = 0x00C000;
+					const int UNSELECTED = 0x000000;
 					AutoSurface imageSurface (SDL_CreateRGBSurface (Video.getSurfaceType(), MAPWINSIZE + 8, MAPWINSIZE + 8, Video.getColDepth(), 0, 0, 0, 0));
 
 					if (selectedMapIndex == i + offset)
@@ -1520,7 +1514,7 @@ void cPlanetsSelectionMenu::showMaps()
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::backReleased (void* parent)
 {
-	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
+	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	menu->gameDataContainer->map = NULL; // TODO: fix memory leak
 	menu->terminate = true;
 }
@@ -1528,11 +1522,11 @@ void cPlanetsSelectionMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::okReleased (void* parent)
 {
-	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
+	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	if (menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int) menu->maps->size())
 	{
 		menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
-		menu->gameDataContainer->map->LoadMap ( (*menu->maps) [menu->selectedMapIndex]);
+		menu->gameDataContainer->map->LoadMap ((*menu->maps) [menu->selectedMapIndex]);
 		if (!menu->gameDataContainer->map) return;
 
 		switch (menu->gameDataContainer->type)
@@ -1579,7 +1573,7 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::arrowDownReleased (void* parent)
 {
-	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
+	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	if (menu->offset + 8 < (int) menu->maps->size())
 	{
 		menu->offset += 8;
@@ -1590,7 +1584,7 @@ void cPlanetsSelectionMenu::arrowDownReleased (void* parent)
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::arrowUpReleased (void* parent)
 {
-	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
+	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	if (menu->offset - 8 >= 0)
 	{
 		menu->offset -= 8;
@@ -1601,7 +1595,7 @@ void cPlanetsSelectionMenu::arrowUpReleased (void* parent)
 //------------------------------------------------------------------------------
 void cPlanetsSelectionMenu::mapReleased (void* parent)
 {
-	cPlanetsSelectionMenu* menu = static_cast<cPlanetsSelectionMenu*> ( (cMenu*) parent);
+	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
 	int index = 0;
 	if (mouse->x > menu->position.x + 160) index++;
 	if (mouse->x > menu->position.x + 320) index++;
@@ -1616,7 +1610,6 @@ void cPlanetsSelectionMenu::mapReleased (void* parent)
 	menu->okButton->setLocked (false);
 	menu->draw();
 }
-
 
 //-----------------------------------------------------------------------------------
 // cClanSelectionMenu
@@ -1644,14 +1637,15 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	menuItems.push_back (titleLabel);
 
 	vector<string> clanLogoPaths;
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo1.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo2.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo3.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo4.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo5.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo6.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo7.pcx");
-	clanLogoPaths.push_back (cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "clanlogo8.pcx");
+	const std::string gfxPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER;
+	clanLogoPaths.push_back (gfxPath + "clanlogo1.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo2.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo3.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo4.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo5.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo6.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo7.pcx");
+	clanLogoPaths.push_back (gfxPath + "clanlogo8.pcx");
 
 	int xCount = 0;
 	int yCount = 0;
@@ -1686,9 +1680,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 //-----------------------------------------------------------------------------------
 void cClanSelectionMenu::okReleased (void* parent)
 {
-	cClanSelectionMenu* menu = dynamic_cast<cClanSelectionMenu*> ( (cMenu*) parent);
-	if (menu == 0)
-		return;
+	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
 	menu->player->setClan (menu->clan);
 	menu->end = true;
 }
@@ -1696,17 +1688,14 @@ void cClanSelectionMenu::okReleased (void* parent)
 //-----------------------------------------------------------------------------------
 void cClanSelectionMenu::backReleased (void* parent)
 {
-	cClanSelectionMenu* menu = static_cast<cClanSelectionMenu*> ( (cMenu*) parent);
+	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
 	menu->terminate = true;
 }
 
 //-----------------------------------------------------------------------------------
 void cClanSelectionMenu::clanSelected (void* parent)
 {
-	cClanSelectionMenu* menu = dynamic_cast<cClanSelectionMenu*> ( (cMenu*) parent);
-	if (menu == 0)
-		return;
-
+	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
 	int newClan = (mouse->x - menu->position.x - 47) / 154;
 	if (mouse->y > menu->position.y + 48 + 140)
 		newClan += 4;
@@ -1776,8 +1765,6 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 			break;
 	}
 }
-
-
 
 //-----------------------------------------------------------------------------------
 // cHangarMenu
@@ -1849,7 +1836,7 @@ void cHangarMenu::drawUnitInformation()
 //------------------------------------------------------------------------------
 void cHangarMenu::infoCheckBoxClicked (void* parent)
 {
-	cHangarMenu* menu = static_cast<cHangarMenu*> ( (cMenu*) parent);
+	cHangarMenu* menu = reinterpret_cast<cHangarMenu*> (parent);
 	menu->drawUnitInformation();
 	menu->draw();
 }
@@ -1857,14 +1844,14 @@ void cHangarMenu::infoCheckBoxClicked (void* parent)
 //------------------------------------------------------------------------------
 void cHangarMenu::selListUpReleased (void* parent)
 {
-	cHangarMenu* menu = static_cast<cHangarMenu*> ( (cMenu*) parent);
+	cHangarMenu* menu = reinterpret_cast<cHangarMenu*> (parent);
 	menu->selectionList->scrollUp();
 }
 
 //------------------------------------------------------------------------------
 void cHangarMenu::selListDownReleased (void* parent)
 {
-	cHangarMenu* menu = static_cast<cHangarMenu*> ( (cMenu*) parent);
+	cHangarMenu* menu = reinterpret_cast<cHangarMenu*> (parent);
 	menu->selectionList->scrollDown();
 }
 
@@ -1883,7 +1870,6 @@ cMenuUnitListItem* cHangarMenu::getSelectedUnit()
 	return selectedUnit;
 }
 
-
 //------------------------------------------------------------------------------
 // cAdvListHangarMenu implementation
 //------------------------------------------------------------------------------
@@ -1891,7 +1877,7 @@ cMenuUnitListItem* cHangarMenu::getSelectedUnit()
 //------------------------------------------------------------------------------
 cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* player_) : cHangarMenu (background_, player_)
 {
-	secondList = new cMenuUnitsList (position.x + 330,  position.y + 12, 130, 225, this, MUL_DIS_TYPE_CARGO);
+	secondList = new cMenuUnitsList (position.x + 330, position.y + 12, 130, 225, this, MUL_DIS_TYPE_CARGO);
 	secondList->setDoubleClickedFunction (&secondListDoubleClicked);
 	menuItems.push_back (secondList);
 
@@ -1909,7 +1895,7 @@ cAdvListHangarMenu::cAdvListHangarMenu (SDL_Surface* background_, cPlayer* playe
 //------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListUpReleased (void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->secondList->scrollUp();
 }
@@ -1917,7 +1903,7 @@ void cAdvListHangarMenu::secondListUpReleased (void* parent)
 //------------------------------------------------------------------------------
 void cAdvListHangarMenu::secondListDownReleased (void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->secondList->scrollDown();
 }
@@ -1925,7 +1911,7 @@ void cAdvListHangarMenu::secondListDownReleased (void* parent)
 //------------------------------------------------------------------------------
 bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cHangarMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
 	if (!menu) return false;
 	if (menu->selectedUnit && menu->selectedUnit == menu->selectionList->getSelectedUnit())
 	{
@@ -1946,7 +1932,7 @@ bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* paren
 //------------------------------------------------------------------------------
 bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
-	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ( (cHangarMenu*) parent);
+	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
 	if (!menu || !menu->selectedUnit) return false;
 
 	if (menu->selectedUnit == menu->secondList->getSelectedUnit())
@@ -1960,7 +1946,6 @@ bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* pa
 	}
 	return false;
 }
-
 
 //------------------------------------------------------------------------------
 // cStartupHangarMenu
@@ -2125,7 +2110,7 @@ void cStartupHangarMenu::updateUnitData()
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::backReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->terminate = true;
 }
@@ -2133,7 +2118,7 @@ void cStartupHangarMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::doneReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 
 	menu->updateUnitData();
@@ -2146,8 +2131,8 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		landingUnit.cargo = menu->secondList->getItem (i)->getResValue();
 		landingUnits->push_back (landingUnit);
 	}
-	if (menu->gameDataContainer->landingUnits.size() == 0)   // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
-		menu->gameDataContainer->landingUnits.push_back (landingUnits);   // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
+	if (menu->gameDataContainer->landingUnits.size() == 0) // the size can be != 0, if a client sent his landingunits before the host is done with the startup hangar
+		menu->gameDataContainer->landingUnits.push_back (landingUnits); // TODO: alzi, for clients it shouldn't be necessary to store the landing units, or? (pagra)
 	else
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
@@ -2170,7 +2155,7 @@ void cStartupHangarMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::subButtonsChanged (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->generateSelectionList();
 	menu->draw();
@@ -2178,7 +2163,7 @@ void cStartupHangarMenu::subButtonsChanged (void* parent)
 
 void cStartupHangarMenu::materialBarUpReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
@@ -2200,7 +2185,7 @@ void cStartupHangarMenu::materialBarUpReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarDownReleased (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
@@ -2222,14 +2207,14 @@ void cStartupHangarMenu::materialBarDownReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::materialBarClicked (void* parent)
 {
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ( (cMenu*) parent);
+	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	if (!menu->secondList->getSelectedUnit()) return;
 	sVehicle* vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player);
 	if (vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
 	{
 		int oldCargo = menu->secondList->getSelectedUnit()->getResValue();
-		int newCargo = (int) ( (float) (menu->position.y + 301 + 115 - mouse->y) / 115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion (menu->player)->storageResMax);
+		int newCargo = (int) ((float) (menu->position.y + 301 + 115 - mouse->y) / 115 * menu->secondList->getSelectedUnit()->getUnitID().getUnitDataOriginalVersion (menu->player)->storageResMax);
 		if (newCargo % 5 < 3) newCargo -= newCargo % 5;
 		else newCargo += 5 - newCargo % 5;
 
@@ -2301,7 +2286,7 @@ void cStartupHangarMenu::generateSelectionList()
 }
 
 //------------------------------------------------------------------------------
-bool cStartupHangarMenu::isInLandingList (cMenuUnitListItem* item)
+bool cStartupHangarMenu::isInLandingList (const cMenuUnitListItem* item) const
 {
 	for (int i = 0; i < secondList->getSize(); i++)
 	{
@@ -2311,9 +2296,9 @@ bool cStartupHangarMenu::isInLandingList (cMenuUnitListItem* item)
 }
 
 //------------------------------------------------------------------------------
-bool cStartupHangarMenu::checkAddOk (cMenuUnitListItem* item)
+bool cStartupHangarMenu::checkAddOk (const cMenuUnitListItem* item) const
 {
-	sVehicle* vehicle = item->getUnitID().getVehicle (player);
+	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
 	if (!vehicle) return false;
 
 	if (vehicle->data.factorGround == 0) return false;
@@ -2325,7 +2310,7 @@ bool cStartupHangarMenu::checkAddOk (cMenuUnitListItem* item)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 {
-	sVehicle* vehicle = item->getUnitID().getVehicle (player);
+	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
 	if (!vehicle) return;
 
 	credits -= vehicle->data.buildCosts;
@@ -2370,8 +2355,8 @@ void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
 void cStartupHangarMenu::selectionChanged (void* parent)
 {
 	cStartupHangarMenu* menu;
-	menu = dynamic_cast<cStartupHangarMenu*> ( (cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ( (cStartupHangarMenu*) parent);
+	menu = dynamic_cast<cStartupHangarMenu*> ((cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ((cStartupHangarMenu*) parent);
 	if (!menu) return;
 	sVehicle* vehicle;
 	if (menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player)) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
@@ -2397,7 +2382,6 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
 }
-
 
 //------------------------------------------------------------------------------
 // cLandingMenu implementation
@@ -2462,7 +2446,7 @@ void cLandingMenu::createMap()
 	{
 		int terrainx = (x * map->size) / mapSurface->w;
 		if (terrainx >= map->size) terrainx = map->size - 1;
-		int offsetx  = ( (x * map->size) % mapSurface->w) * 64 / mapSurface->w;
+		int offsetx = ((x * map->size) % mapSurface->w) * 64 / mapSurface->w;
 
 		for (int y = 0; y < mapSurface->h; y++)
 		{
@@ -2472,9 +2456,9 @@ void cLandingMenu::createMap()
 
 			unsigned int terrainNumber = map->Kacheln[terrainx + terrainy * map->size];
 			sTerrain* t	= map->terrain + terrainNumber;
-			unsigned int ColorNr = * ( (unsigned char*) (t->sf_org->pixels) + (offsetx + offsety * 64));
+			unsigned int ColorNr = *((unsigned char*) (t->sf_org->pixels) + (offsetx + offsety * 64));
 
-			unsigned char* pixel = (unsigned char*) & ( (Sint32*) (mapSurface->pixels)) [x + y * mapSurface->w];
+			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels))[x + y * mapSurface->w];
 			pixel[0] = map->palette[ColorNr].b;
 			pixel[1] = map->palette[ColorNr].g;
 			pixel[2] = map->palette[ColorNr].r;
@@ -2513,17 +2497,17 @@ const sTerrain* cLandingMenu::getMapTile (int x, int y) const
 //------------------------------------------------------------------------------
 void cLandingMenu::mapClicked (void* parent)
 {
-	cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
+	cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
 
 	if (menu->landData.landingState == LANDING_POSITION_OK) return;
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	float fakx = (float) ( (Video.getResolutionX() - 192.0) / menu->map->size);     //pixel per field in x direction
-	float faky = (float) ( (Video.getResolutionY() - 32.0) / menu->map->size);     //pixel per field in y direction
+	float fakx = (float) ((Video.getResolutionX() - 192.0) / menu->map->size); //pixel per field in x direction
+	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->size);  //pixel per field in y direction
 
-	menu->landData.iLandX = (int) ( (mouse->x - 180) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionX() - 192)));
-	menu->landData.iLandY = (int) ( (mouse->y - 18) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionY() - 32)));
+	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionX() - 192)));
+	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
@@ -2535,8 +2519,8 @@ void cLandingMenu::mapClicked (void* parent)
 		int posY = (int) (menu->landData.iLandY * faky);
 		//for non 4:3 screen resolutions, the size of the circles is
 		//only correct in x dimension, because I don't draw an ellipse
-		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
-		drawCircle (posX, posY, (int) ( (LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
+		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_WARNING   / 2) * fakx), SCAN_COLOR,         circleSurface);
+		drawCircle (posX, posY, (int) ((LANDING_DISTANCE_TOO_CLOSE / 2) * fakx), RANGE_GROUND_COLOR, circleSurface);
 
 		menu->circlesImage->setImage (circleSurface);
 	}
@@ -2551,12 +2535,12 @@ void cLandingMenu::mapClicked (void* parent)
 //------------------------------------------------------------------------------
 void cLandingMenu::mouseMoved (void* parent)
 {
-	const cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
+	const cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
 
 	if (menu->mapImage->overItem (mouse->x, mouse->y))
 	{
 		const sTerrain* terrain = menu->getMapTile (mouse->x - 180, mouse->y - 18);
-		if (terrain && ! (terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
+		if (terrain && !(terrain->water || terrain->coast || terrain->blocked)) mouse->SetCursor (CMove);
 		else mouse->SetCursor (CNo);
 	}
 	else mouse->SetCursor (CHand);
@@ -2565,7 +2549,7 @@ void cLandingMenu::mouseMoved (void* parent)
 //------------------------------------------------------------------------------
 void cLandingMenu::backReleased (void* parent)
 {
-	cLandingMenu* menu = static_cast<cLandingMenu*> ( (cMenu*) parent);
+	cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
 
 	menu->terminate = true;
 }
@@ -2616,7 +2600,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			else if (landData.landingState == LANDING_POSITION_WARNING) infoLabel->setText (lngPack.i18n ("Text~Comp~Landing_Warning"));
 
 			draw();
-			mouseMoved (this);	//update cursor
+			mouseMoved (this); //update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
 			ActiveMenu = NULL;
@@ -2652,7 +2636,6 @@ void cLandingMenu::hitPosition()
 			break;
 	}
 }
-
 
 //------------------------------------------------------------------------------
 // cNetworkMenu implementation
@@ -2757,9 +2740,7 @@ cNetworkMenu::~cNetworkMenu()
 //------------------------------------------------------------------------------
 void cNetworkMenu::showSettingsText()
 {
-	string text;
-
-	text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
+	string text = lngPack.i18n ("Text~Main~Version", PACKAGE_VERSION) + "\n";
 	//text += "Checksum: " + iToStr( cSettings::getInstance().Checksum ) + "\n\n";
 
 	if (!saveGameString.empty()) text += lngPack.i18n ("Text~Title~Savegame") + ":\n  " + saveGameString + "\n";
@@ -2799,9 +2780,9 @@ void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
 	int size;
-	SDL_RWops* fp = SDL_RWFromFile ( (cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->MapName).c_str(), "rb");
-	if (fp == 0 && !getUserMapsDir().empty())
-		fp = SDL_RWFromFile ( (getUserMapsDir() + gameDataContainer.map->MapName).c_str(), "rb");
+	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->MapName).c_str(), "rb");
+	if (fp == NULL && !getUserMapsDir().empty())
+		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->MapName).c_str(), "rb");
 	if (fp != NULL)
 	{
 		SDL_RWseek (fp, 5, SEEK_SET);
@@ -2911,7 +2892,7 @@ void cNetworkMenu::playerReadyClicked (sMenuPlayer* player)
 //------------------------------------------------------------------------------
 void cNetworkMenu::backReleased (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->saveOptions();
 	menu->terminate = true;
 }
@@ -2919,7 +2900,7 @@ void cNetworkMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::sendReleased (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	string chatText = menu->chatLine->getText();
 	if (!chatText.empty() && !menu->enteredCommand (chatText))
 	{
@@ -2934,7 +2915,7 @@ void cNetworkMenu::sendReleased (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::nextColorReleased (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->actPlayer->color++;
 	if (menu->actPlayer->color >= PLAYERCOLORS) menu->actPlayer->color = 0;
 	menu->setColor (menu->actPlayer->color);
@@ -2945,7 +2926,7 @@ void cNetworkMenu::nextColorReleased (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::prevColorReleased (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->actPlayer->color--;
 	if (menu->actPlayer->color < 0) menu->actPlayer->color = PLAYERCOLORS - 1;
 	menu->setColor (menu->actPlayer->color);
@@ -2956,7 +2937,7 @@ void cNetworkMenu::prevColorReleased (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::wasNameImput (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->actPlayer->name = menu->nameLine->getText();
 	menu->playerSettingsChanged();
 }
@@ -2964,7 +2945,7 @@ void cNetworkMenu::wasNameImput (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::portIpChanged (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->port = atoi (menu->portLine->getText().c_str());
 	if (menu->ipLine->getText().compare ("-") != 0) menu->ip = menu->ipLine->getText();
 }
@@ -2972,13 +2953,12 @@ void cNetworkMenu::portIpChanged (void* parent)
 //------------------------------------------------------------------------------
 void cNetworkMenu::setDefaultPort (void* parent)
 {
-	cNetworkMenu* menu = static_cast<cNetworkMenu*> ( (cMenu*) parent);
+	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
 	menu->portLine->setText (iToStr (DEFAULTPORT));
 	menu->draw();
 	menu->portLine->setClickedFunction (&portIpChanged);
 	menu->port = atoi (menu->portLine->getText().c_str());
 }
-
 
 //-----------------------------------------------------------------------------------------
 // cNetworkHostMenu implementation
@@ -3029,25 +3009,24 @@ cNetworkHostMenu::~cNetworkHostMenu()
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 {
-	if (player->ready)
+	if (player->ready == false) return;
+
+	for (size_t i = 0; i < players.size(); ++i)
 	{
-		for (size_t i = 0; i < players.size(); ++i)
+		if (static_cast<int> (i) == player->nr) continue;
+		if (players[i]->name == player->name)
 		{
-			if (static_cast<int> (i) == player->nr) continue;
-			if (players[i]->name == player->name)
-			{
-				if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Name_Taken", player, actPlayer->nr, true);
-				else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
-				player->ready = false;
-				break;
-			}
-			if (players[i]->color == player->color)
-			{
-				if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", player, actPlayer->nr, true);
-				else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
-				player->ready = false;
-				break;
-			}
+			if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Name_Taken", player, actPlayer->nr, true);
+			else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
+			player->ready = false;
+			break;
+		}
+		if (players[i]->color == player->color)
+		{
+			if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", player, actPlayer->nr, true);
+			else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
+			player->ready = false;
+			break;
 		}
 	}
 }
@@ -3065,16 +3044,16 @@ int cNetworkHostMenu::checkAllPlayersReady()
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::okReleased (void* parent)
 {
-	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
+	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 
 	int playerNr;
-	if ( (!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->gameDataContainer.savegame.empty())
+	if ((!menu->gameDataContainer.settings || !menu->gameDataContainer.map) && menu->gameDataContainer.savegame.empty())
 	{
 		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Missing_Settings"));
 		menu->draw();
 		return;
 	}
-	else if ( (playerNr = menu->checkAllPlayersReady()) != -1)
+	else if ((playerNr = menu->checkAllPlayersReady()) != -1)
 	{
 		menu->chatBox->addLine (menu->players[playerNr]->name + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
 		menu->draw();
@@ -3125,7 +3104,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::mapReleased (void* parent)
 {
-	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
+	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 	cPlanetsSelectionMenu planetsSelectionMenu (menu->network, &menu->gameDataContainer);
 	planetsSelectionMenu.show();
 	menu->showSettingsText();
@@ -3137,7 +3116,7 @@ void cNetworkHostMenu::mapReleased (void* parent)
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::settingsReleased (void* parent)
 {
-	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
+	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 	cSettingsMenu settingsMenu (&menu->gameDataContainer);
 	settingsMenu.show();
 	menu->showSettingsText();
@@ -3148,7 +3127,7 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::loadReleased (void* parent)
 {
-	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
+	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 	cLoadMenu loadMenu (&menu->gameDataContainer);
 	loadMenu.show();
 	if (!menu->gameDataContainer.savegame.empty())
@@ -3174,22 +3153,22 @@ void cNetworkHostMenu::loadReleased (void* parent)
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::startReleased (void* parent)
 {
-	cNetworkHostMenu* menu = static_cast<cNetworkHostMenu*> ( (cMenu*) parent);
-	if (menu->network->getConnectionStatus() == 0)   // Connect only if there isn't a connection jet
+	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
+	// Connect only if there isn't a connection yet
+	if (menu->network->getConnectionStatus() != 0) return;
+
+	if (menu->network->create (menu->port) == -1)
 	{
-		if (menu->network->create (menu->port) == -1)
-		{
-			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
-			Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
-		}
-		else
-		{
-			menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (menu->port) + ")");
-			Log.write ("Game open (Port: " + iToStr (menu->port) + ")", cLog::eLOG_TYPE_INFO);
-			menu->portLine->setReadOnly (true);
-		}
-		menu->draw();
+		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Error_Socket"));
+		Log.write ("Error opening socket", cLog::eLOG_TYPE_WARNING);
 	}
+	else
+	{
+		menu->chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Network_Open") + " (" + lngPack.i18n ("Text~Title~Port") + ": "  + iToStr (menu->port) + ")");
+		Log.write ("Game open (Port: " + iToStr (menu->port) + ")", cLog::eLOG_TYPE_INFO);
+		menu->portLine->setReadOnly (true);
+	}
+	menu->draw();
 }
 
 //-----------------------------------------------------------------------------------------
@@ -3213,7 +3192,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 			else
 			{
 				chatBox->addLine (chatText);
-				PlayFX (SoundData.SNDChat);   //play some chattersound if we got a player message
+				PlayFX (SoundData.SNDChat); //play some chattersound if we got a player message
 			}
 			// send to other clients
 			for (unsigned int i = 1; i < players.size(); i++)
@@ -3460,7 +3439,6 @@ bool cNetworkHostMenu::runSavedGame()
 	return true;
 }
 
-
 //-----------------------------------------------------------------------------------------
 // cNetworkClientMenu implementation
 //-----------------------------------------------------------------------------------------
@@ -3490,7 +3468,7 @@ cNetworkClientMenu::~cNetworkClientMenu()
 
 void cNetworkClientMenu::connectReleased (void* parent)
 {
-	cNetworkClientMenu* menu = static_cast<cNetworkClientMenu*> ( (cMenu*) parent);
+	cNetworkClientMenu* menu = reinterpret_cast<cNetworkClientMenu*> (parent);
 
 	if (menu->network->getConnectionStatus() == 0) // Connect only if there isn't a connection yet
 	{
@@ -3862,8 +3840,6 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 	mapReceiver = 0;
 }
 
-
-
 //-----------------------------------------------------------------------------------------
 // cLoadMenu implementation
 //-----------------------------------------------------------------------------------------
@@ -3988,14 +3964,14 @@ void cLoadMenu::displaySaves()
 //------------------------------------------------------------------------------
 void cLoadMenu::backReleased (void* parent)
 {
-	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
+	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
 void cLoadMenu::loadReleased (void* parent)
 {
-	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
+	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	sSaveFile* savefile = NULL;
 	for (unsigned int i = 0; i < menu->savefiles.size(); i++)
 	{
@@ -4015,7 +3991,7 @@ void cLoadMenu::loadReleased (void* parent)
 //------------------------------------------------------------------------------
 void cLoadMenu::upReleased (void* parent)
 {
-	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
+	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	if (menu->offset > 0)
 	{
 		menu->offset -= 10;
@@ -4028,7 +4004,7 @@ void cLoadMenu::upReleased (void* parent)
 //------------------------------------------------------------------------------
 void cLoadMenu::downReleased (void* parent)
 {
-	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
+	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	if (menu->offset < 90)
 	{
 		menu->offset += 10;
@@ -4038,11 +4014,10 @@ void cLoadMenu::downReleased (void* parent)
 	}
 }
 
-
 //------------------------------------------------------------------------------
 void cLoadMenu::slotClicked (void* parent)
 {
-	cLoadMenu* menu = static_cast<cLoadMenu*> ( (cMenu*) parent);
+	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
 	int x = mouse->x > menu->position.x + menu->position.w / 2 ? 1 : 0;
 	int y = 0;
 	if (mouse->y > menu->position.y + 118) y++;
@@ -4061,7 +4036,6 @@ void cLoadMenu::slotClicked (void* parent)
 		loadReleased (parent);
 	}
 }
-
 
 //------------------------------------------------------------------------------
 // cLoadSaveMenu implementation
@@ -4086,7 +4060,7 @@ cLoadSaveMenu::cLoadSaveMenu (cServer* server_) :
 //------------------------------------------------------------------------------
 void cLoadSaveMenu::exitReleased (void* parent)
 {
-	cLoadSaveMenu* menu = static_cast<cLoadSaveMenu*> ( (cMenu*) parent);
+	cLoadSaveMenu* menu = reinterpret_cast<cLoadSaveMenu*> (parent);
 
 	cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
 	if (yesNoDialog.show() == 0)
@@ -4097,14 +4071,13 @@ void cLoadSaveMenu::exitReleased (void* parent)
 	{
 		menu->draw();
 	}
-
 	//menu->end = true;
 }
 
 //------------------------------------------------------------------------------
 void cLoadSaveMenu::saveReleased (void* parent)
 {
-	cLoadSaveMenu* menu = static_cast<cLoadSaveMenu*> ( (cMenu*) parent);
+	cLoadSaveMenu* menu = reinterpret_cast<cLoadSaveMenu*> (parent);
 	if (menu->selected < 0 || menu->selected > 99) return;
 	if (!menu->server)
 	{
@@ -4150,7 +4123,6 @@ void cLoadSaveMenu::extendedSlotClicked (int oldSelection)
 	activeItem = saveSlots[selected - offset]->getNameEdit();
 	saveSlots[selected - offset]->getNameEdit()->setReadOnly (false);
 }
-
 
 //------------------------------------------------------------------------------
 // cBuildsBuildMenu implementation
@@ -4221,7 +4193,7 @@ void cBuildingsBuildMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehi
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::doneReleased (void* parent)
 {
-	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cMenu*) parent);
+	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 	if (!menu->selectedUnit->getUnitData()->isBig)
 	{
 		sendWantBuild (*menu->client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * menu->client->getMap()->size, false, 0);
@@ -4243,7 +4215,7 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::pathReleased (void* parent)
 {
-	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cMenu*) parent);
+	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 
 	menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
 	menu->vehicle->BuildRounds = menu->speedHandler->getBuildSpeed();
@@ -4255,15 +4227,15 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::backReleased (void* parent)
 {
-	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cMenu*) parent);
+	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
 void cBuildingsBuildMenu::selectionChanged (void* parent)
 {
-	cBuildingsBuildMenu* menu = dynamic_cast<cBuildingsBuildMenu*> ( (cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cBuildingsBuildMenu*> ( (cBuildingsBuildMenu*) parent);
+	cBuildingsBuildMenu* menu = dynamic_cast<cBuildingsBuildMenu*> ((cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cBuildingsBuildMenu*> ((cBuildingsBuildMenu*) parent);
 	if (!menu->selectedUnit) return;
 
 	sUnitData* buildingData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion (menu->player);
@@ -4281,11 +4253,10 @@ void cBuildingsBuildMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 bool cBuildingsBuildMenu::selListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
-	cBuildingsBuildMenu* menu = static_cast<cBuildingsBuildMenu*> ( (cHangarMenu*) parent);
+	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 	menu->doneReleased (menu);
 	return true;
 }
-
 
 //------------------------------------------------------------------------------
 // cVehiclesBuildMenu implementation
@@ -4407,7 +4378,7 @@ void cVehiclesBuildMenu::createBuildList()
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::doneReleased (void* parent)
 {
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cMenu*) parent);
+	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	std::vector<sBuildList> buildList;
 	for (int i = 0; i < menu->secondList->getSize(); i++)
@@ -4425,7 +4396,7 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::backReleased (void* parent)
 {
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cMenu*) parent);
+	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->terminate = true;
 }
@@ -4433,8 +4404,8 @@ void cVehiclesBuildMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cVehiclesBuildMenu::selectionChanged (void* parent)
 {
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ( (cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cVehiclesBuildMenu*> ( (cVehiclesBuildMenu*) parent);
+	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cVehiclesBuildMenu*> ((cVehiclesBuildMenu*) parent);
 	if (!menu) return;
 
 	if (!menu->selectedUnit) return;
@@ -4445,7 +4416,6 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 
 	menu->speedHandler->setValues (turboBuildTurns, turboBuildCosts);
 }
-
 
 //------------------------------------------------------------------------------
 // cUpgradeHangarMenu implementation
@@ -4600,7 +4570,6 @@ int cUpgradeHangarMenu::getCredits()
 	return credits;
 }
 
-
 //------------------------------------------------------------------------------
 // cUpgradeMenu
 //------------------------------------------------------------------------------
@@ -4638,7 +4607,7 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_, cPlayer* player)
 //------------------------------------------------------------------------------
 void cUpgradeMenu::doneReleased (void* parent)
 {
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
+	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	sendTakenUpgrades (*menu->client, menu->unitUpgrades, menu->player);
 	menu->end = true;
@@ -4647,7 +4616,7 @@ void cUpgradeMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cUpgradeMenu::backReleased (void* parent)
 {
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cMenu*) parent);
+	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cMenu*) parent);
 	if (!menu) return;
 	menu->terminate = true;
 }
@@ -4655,8 +4624,8 @@ void cUpgradeMenu::backReleased (void* parent)
 //------------------------------------------------------------------------------
 void cUpgradeMenu::selectionChanged (void* parent)
 {
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ( (cHangarMenu*) parent);
-	if (!menu) menu = dynamic_cast<cUpgradeMenu*> ( (cUpgradeMenu*) parent);
+	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cHangarMenu*) parent);
+	if (!menu) menu = dynamic_cast<cUpgradeMenu*> ((cUpgradeMenu*) parent);
 	if (!menu) return;
 	menu->upgradeButtons->setSelection (menu->selectedUnit);
 	menu->draw();
@@ -4720,7 +4689,6 @@ void cUpgradeMenu::generateSelectionList()
 		selectionList->setSelection (selectionList->getItem (0));
 }
 
-
 //------------------------------------------------------------------------------
 // cUnitHelpMenu
 //------------------------------------------------------------------------------
@@ -4777,16 +4745,15 @@ void cUnitHelpMenu::init (sID unitID)
 //------------------------------------------------------------------------------
 void cUnitHelpMenu::doneReleased (void* parent)
 {
-	cUnitHelpMenu* menu = dynamic_cast<cUnitHelpMenu*> ( (cMenu*) parent);
+	cUnitHelpMenu* menu = reinterpret_cast<cUnitHelpMenu*> (parent);
 	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
 void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle)
 {
-	if ( (&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData()) terminate = true;
+	if ((&destroyedBuilding->data) == unit->getUnitData() || (&destroyedVehicle->data) == unit->getUnitData()) terminate = true;
 }
-
 
 //------------------------------------------------------------------------------
 // cStorageMenu implementation
@@ -4977,7 +4944,7 @@ void cStorageMenu::resetInfos()
 		metalBar->setCurrentValue (metalValue);
 	}
 
-	if ( (offset + 1) *maxX * 2 < unitData.storageUnitsMax && (offset + 1) *maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
+	if ((offset + 1) * maxX * 2 < unitData.storageUnitsMax && (offset + 1) * maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
 	else downButton->setLocked (true);
 
 	if (offset > 0) upButton->setLocked (false);
@@ -4987,15 +4954,15 @@ void cStorageMenu::resetInfos()
 //------------------------------------------------------------------------------
 void cStorageMenu::doneReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
 void cStorageMenu::upReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
-	menu->offset--;;
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
+	menu->offset--;
 	menu->resetInfos();
 	menu->draw();
 }
@@ -5003,7 +4970,7 @@ void cStorageMenu::upReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::downReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	menu->offset++;
 	menu->resetInfos();
 	menu->draw();
@@ -5030,7 +4997,7 @@ int cStorageMenu::getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons
 //------------------------------------------------------------------------------
 void cStorageMenu::activateReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	int index = menu->getClickedButtonVehIndex (menu->activateButtons);
 	if (index == -1) return;
 
@@ -5051,7 +5018,7 @@ void cStorageMenu::activateReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::reloadReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	int index = menu->getClickedButtonVehIndex (menu->reloadButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
@@ -5063,7 +5030,7 @@ void cStorageMenu::reloadReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::repairReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	int index = menu->getClickedButtonVehIndex (menu->repairButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
@@ -5075,7 +5042,7 @@ void cStorageMenu::repairReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::upgradeReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	int index = menu->getClickedButtonVehIndex (menu->upgradeButtons);
 	if (index == -1 || !menu->ownerBuilding) return;
 
@@ -5085,7 +5052,7 @@ void cStorageMenu::upgradeReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::activateAllReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	bool hasCheckedPlace[16];
 	fill_n (hasCheckedPlace, 16, false);
 
@@ -5105,8 +5072,8 @@ void cStorageMenu::activateAllReleased (void* parent)
 			for (int xpos = unitXPos - 1; xpos <= unitXPos + (isBig ? 2 : 1); xpos++, poscount++)
 			{
 				if (xpos < 0 || xpos >= map.size || ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) && ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig)))) continue;
-				if ( ( (menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
-					   (menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
+				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
+					(menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
 					 && !hasCheckedPlace[poscount])
 				{
 					sendWantActivate (*menu->client, id, menu->ownerVehicle != NULL, vehicle->iID, xpos, ypos);
@@ -5124,7 +5091,7 @@ void cStorageMenu::activateAllReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::reloadAllReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	if (!menu->ownerBuilding) return;
 
 	menu->voiceTypeAll = true;
@@ -5145,7 +5112,7 @@ void cStorageMenu::reloadAllReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::repairAllReleased (void* parent)
 {
-	cStorageMenu* menu = dynamic_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	if (!menu->ownerBuilding) return;
 
 	menu->voiceTypeAll = true;
@@ -5171,7 +5138,7 @@ void cStorageMenu::repairAllReleased (void* parent)
 //------------------------------------------------------------------------------
 void cStorageMenu::upgradeAllReleased (void* parent)
 {
-	cStorageMenu* menu = static_cast<cStorageMenu*> ( (cMenu*) parent);
+	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
 	if (!menu->ownerBuilding) return;
 
 	sendWantUpgrade (*menu->client, menu->ownerBuilding->iID, 0, true);
@@ -5216,7 +5183,6 @@ void cStorageMenu::playVoice (int Type)
 		}
 	}
 }
-
 
 //------------------------------------------------------------------------------
 // cMineManagerMenu implementation
@@ -5378,7 +5344,7 @@ string cMineManagerMenu::secondBarText (int prod, int need)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::doneReleased (void* parent)
 {
-	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ((cMenu*) parent);
+	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	sendChangeResources (*menu->client, *menu->building, menu->subBase.getMetalProd(), menu->subBase.getOilProd(), menu->subBase.getGoldProd());
 	menu->end = true;
 }
@@ -5386,7 +5352,7 @@ void cMineManagerMenu::doneReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::increaseReleased (void* parent)
 {
-	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ( (cMenu*) parent);
+	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	if (menu->incButtons[0]->overItem (mouse->x, mouse->y) && menu->subBase.getMaxAllowedMetalProd() - menu->subBase.getMetalProd() > 0)
 	{
 		menu->subBase.changeMetalProd (+1);
@@ -5407,7 +5373,7 @@ void cMineManagerMenu::increaseReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::decreseReleased (void* parent)
 {
-	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ( (cMenu*) parent);
+	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	if (menu->decButtons[0]->overItem (mouse->x, mouse->y) && menu->subBase.getMetalProd() > 0)
 	{
 		menu->subBase.changeMetalProd (-1);
@@ -5428,7 +5394,7 @@ void cMineManagerMenu::decreseReleased (void* parent)
 //------------------------------------------------------------------------------
 void cMineManagerMenu::barReleased (void* parent)
 {
-	cMineManagerMenu* menu = static_cast<cMineManagerMenu*> ( (cMenu*) parent);
+	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	if (menu->metalBars[0]->overItem (mouse->x, mouse->y))
 	{
 		int metal =  Round ( (mouse->x - menu->metalBars[0]->getPosition().x) * (menu->subBase.getMaxMetalProd() / (float) menu->metalBars[0]->getPosition().w));
@@ -5454,7 +5420,6 @@ void cMineManagerMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle
 {
 	if (destroyedBuilding && destroyedBuilding->SubBase == building->SubBase) terminate = true;
 }
-
 
 //------------------------------------------------------------------------------
 // cReportsMenu implementation
@@ -5537,14 +5502,14 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 //------------------------------------------------------------------------------
 void cReportsMenu::doneReleased (void* parent)
 {
-	cReportsMenu* menu = static_cast<cReportsMenu*> ( (cMenu*) parent);
+	cReportsMenu* menu = reinterpret_cast<cReportsMenu*> (parent);
 	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
 void cReportsMenu::upReleased (void* parent)
 {
-	cReportsMenu* menu = static_cast<cReportsMenu*> ( (cMenu*) parent);
+	cReportsMenu* menu = reinterpret_cast<cReportsMenu*> (parent);
 	menu->dataScreen->scrollUp();
 	menu->draw();
 }

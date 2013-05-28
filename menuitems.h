@@ -346,7 +346,11 @@ protected:
 	std::vector<cMenuItem*> itemList;
 public:
 	cMenuItemContainer (int x, int y);
+
+	void addItem (cMenuItem* item);
+	void removeItem (const cMenuItem* item);
 	virtual void draw();
+private:
 
 	virtual void clicked (void* parent);
 	virtual void released (void* parent);
@@ -355,9 +359,6 @@ public:
 
 	virtual void movedMouseOver (int lastMouseX, int lastMouseY, void* parent);
 	virtual void somewhereReleased();
-
-	void addItem (cMenuItem* item);
-	void removeItem (const cMenuItem* item);
 };
 
 class cMenuTimerBase
@@ -373,7 +374,6 @@ protected:
 	explicit cMenuTimerBase (Uint32 intervall);
 	virtual ~cMenuTimerBase();
 	SDL_TimerID timerID;
-
 };
 
 /**
@@ -426,8 +426,8 @@ class cMenuImage : public cMenuItem
 public:
 	cMenuImage (int x, int y, SDL_Surface* image_ = NULL);
 	void setImage (SDL_Surface* image_);
-	virtual void draw();
 
+	virtual void draw();
 private:
 	AutoSurface image;
 };
@@ -461,6 +461,7 @@ public:
 	 *@author alzi
 	 */
 	void setBox (int width, int height);
+
 	virtual void draw();
 	virtual void move (int x, int y);
 };
@@ -533,7 +534,6 @@ public:
  */
 class cMenuDestroyButton : public cMenuItem
 {
-
 protected:
 	int glassHeight;
 	cMenuTimer<cMenuDestroyButton>* timer;
@@ -546,11 +546,11 @@ protected:
 	virtual bool preHoveredOn();
 	virtual bool preHoveredAway();
 	virtual bool preSetLocked (bool locked_);
+	virtual void draw();
 
 public:
 	cMenuDestroyButton (int x, int y, cMenu* menu);
 	~cMenuDestroyButton();
-	virtual void draw();
 
 	bool opening;
 };

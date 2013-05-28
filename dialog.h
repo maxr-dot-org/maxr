@@ -31,8 +31,10 @@ class cDialogYesNo : public cMenu
 public:
 	explicit cDialogYesNo (const std::string& text);
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
+private:
 	static void yesReleased (void* parent);
 	static void noReleased (void* parent);
 
@@ -50,8 +52,9 @@ class cDialogOK : public cMenu
 public:
 	explicit cDialogOK (const std::string& text);
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-
+private:
 	static void okReleased (void* parent);
 
 private:
@@ -64,6 +67,7 @@ class cDestructMenu : public cMenu
 public:
 	cDestructMenu();
 
+private:
 	static void armReleased (void* parent);
 	static void cancelReleased (void* parent);
 	static void destroyReleased (void* parent);
@@ -82,8 +86,10 @@ class cDialogLicence : public cMenu
 public:
 	cDialogLicence();
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
+private:
 	static void okReleased (void* parent);
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);
@@ -155,6 +161,7 @@ class cDialogPreferences : public cMenu
 public:
 	explicit cDialogPreferences(cPlayer* player_);
 
+private:
 	static void okReleased (void* parent);
 	static void cancelReleased (void* parent);
 
@@ -199,8 +206,11 @@ public:
 	cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
 	~cDialogTransfer();
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
 
+private:
 	static void doneReleased (void* parent);
 	static void cancelReleased (void* parent);
 
@@ -208,8 +218,6 @@ public:
 	static void decReleased (void* parent);
 
 	static void barClicked (void* parent);
-
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 class cDialogResearch : public cMenu
@@ -242,8 +250,11 @@ class cDialogResearch : public cMenu
 public:
 	explicit cDialogResearch (cClient& client_, cPlayer* owner_);
 
+private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
+	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
 
+private:
 	static void doneReleased (void* parent);
 	static void cancelReleased (void* parent);
 
@@ -251,8 +262,6 @@ public:
 	static void decReleased (void* parent);
 
 	static void sliderClicked (void* parent);
-
-	void handleDestroyUnit (cBuilding* destroyedBuilding = NULL, cVehicle* destroyedVehicle = NULL);
 };
 
 /** Draws a context menu item

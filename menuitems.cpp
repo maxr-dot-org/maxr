@@ -2866,9 +2866,9 @@ void cMenuLineEdit::doPosIncrease (int& value, int pos)
 	if (pos < (int) text.length())
 	{
 		unsigned char c = text[pos];
-		if ( (c & 0xE0) == 0xE0) value += 3;
-		else if ( (c & 0xC0) == 0xC0) value += 2;
-		else  value += 1;
+		if ((c & 0xE0) == 0xE0) value += 3;
+		else if ((c & 0xC0) == 0xC0) value += 2;
+		else value += 1;
 	}
 }
 
@@ -2877,7 +2877,7 @@ void cMenuLineEdit::doPosDecrease (int& pos)
 	if (pos > 0)
 	{
 		unsigned char c = text[pos - 1];
-		while ( ( (c & 0xE0) != 0xE0) && ( (c & 0xC0) != 0xC0) && ( (c & 0x80) == 0x80))
+		while (((c & 0xE0) != 0xE0) && ((c & 0xC0) != 0xC0) && ((c & 0x80) == 0x80))
 		{
 			pos--;
 			c = text[pos - 1];
@@ -2937,7 +2937,7 @@ void cMenuLineEdit::deleteRight()
 		if ( (c & 0xE0) == 0xE0) text.erase (cursorPos, 3);
 		else if ( (c & 0xC0) == 0xC0) text.erase (cursorPos, 2);
 		else text.erase (cursorPos, 1);
-		endOffset = std::min<int> (text.length(), endOffset);;
+		endOffset = std::min<int> (text.length(), endOffset);
 	}
 }
 
@@ -3172,7 +3172,7 @@ bool cMenuPlayersBox::preClicked()
 			if (i >= (int) players->size()) break;
 			if (mouse->y > position.y + 12 + 14 * (i - scrollBar->offset) && mouse->y < position.y + 12 + 14 * (i - scrollBar->offset) + 10)
 			{
-				parentMenu->playerReadyClicked ( (*players) [i]);
+				parentMenu->playerReadyClicked ((*players)[i]);
 			}
 		}
 	}
@@ -3183,7 +3183,7 @@ void cMenuPlayersBox::setPlayers (std::vector<sMenuPlayer*>* player_)
 {
 	players = player_;
 
-	scrollBar->setMaximalScroll ( (int) players->size() * 14);
+	scrollBar->setMaximalScroll (players->size() * 14);
 }
 
 cMenuSaveSlot::cMenuSaveSlot (int x, int y, cMenu* parent) : cMenuItem (x, y)
@@ -3558,7 +3558,7 @@ cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& cli
 	filterPlanes = filterGround = filterSea = filterBuilding = false;
 	filterBuild = filterAttack = filterDamaged = filterStealth = false;
 
-	maxItems = ( (position.h - 25) / 55);
+	maxItems = (position.h - 25) / 55;
 
 	unitDetails = new AutoPtr<cMenuUnitDetails>::type [maxItems];
 	for (int i = 0; i < maxItems; i++)
@@ -3649,7 +3649,6 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 		const int posy = position.y + (playerIdx < 4 ? 9 : 22);
 		font->showTextCentered (posx, posy, player.name);
 	}
-
 
 	cCasualtiesTracker& casualties = client->getCasualties();
 
@@ -3839,15 +3838,13 @@ void cMenuReportsScreen::drawScoreGraph()
 	const int min_points = lowest_score;
 	const int num_points = max_points - min_points;
 
-	const float default_pix_per_point = 5;
-	float pix_per_point;
+	const float default_pix_per_point = 5.f;
+	float pix_per_point = default_pix_per_point;
 	if (num_points)
 	{
 		pix_per_point = (float) h / num_points;
 		pix_per_point = std::min (default_pix_per_point, pix_per_point);
 	}
-	else
-		pix_per_point = default_pix_per_point;
 
 	// Draw Limits
 	drawLine (buffer, now_x, y0, now_x, y1, limit_colour);
@@ -4137,7 +4134,7 @@ void cMenuReportsScreen::setType (bool unitsChecked, bool disadvaChecked, bool s
 SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 {
 	const int UNIT_IMAGE_SIZE = 32;
-	float zoomFactor = (float) UNIT_IMAGE_SIZE / (float) (unit->data.isBig ? 128.0 : 64.0);
+	float zoomFactor = (float) UNIT_IMAGE_SIZE / (unit->data.isBig ? 128.0f : 64.0f);
 	SDL_Rect dest = { 0, 0, 0, 0};
 
 	SDL_Surface* surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);

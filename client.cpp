@@ -1978,7 +1978,7 @@ void cClient::deleteUnit (cBuilding* Building)
 	if (!Building) return;
 	gameGUI.callMiniMapDraw();
 
-	if (ActiveMenu) ActiveMenu->handleDestroyUnit (Building);
+	if (ActiveMenu) ActiveMenu->handleDestroyUnit (Building, NULL);
 	getMap()->deleteBuilding (Building);
 
 	if (!Building->owner)
