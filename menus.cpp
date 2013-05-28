@@ -764,6 +764,20 @@ void cMenu::addTimer (cMenuTimerBase* timer)
 }
 
 //------------------------------------------------------------------------------
+/*static*/ void cMenu::cancelReleased (void* parent)
+{
+	cMenu* menu = reinterpret_cast<cMenu*> (parent);
+	menu->terminate = true;
+}
+
+//------------------------------------------------------------------------------
+/*static*/ void cMenu::doneReleased (void* parent)
+{
+	cMenu* menu = reinterpret_cast<cMenu*> (parent);
+	menu->end = true;
+}
+
+//------------------------------------------------------------------------------
 // cMainMenu implementation
 //------------------------------------------------------------------------------
 
@@ -857,7 +871,7 @@ cStartMenu::cStartMenu()
 	menuItems.push_back (licenceButton);
 
 	exitButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL, FONT_LATIN_BIG, SoundData.SNDMenuButton);
-	exitButton->setReleasedFunction (&exitReleased);
+	exitButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (exitButton);
 
 	PlayMusic ((cSettings::getInstance().getMusicPath() + PATH_DELIMITER + "main.ogg").c_str());
@@ -901,13 +915,6 @@ void cStartMenu::licenceReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cStartMenu::exitReleased (void* parent)
-{
-	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
-	menu->end = true;
-}
-
-//------------------------------------------------------------------------------
 // cSinglePlayerMenu
 //------------------------------------------------------------------------------
 
@@ -927,7 +934,7 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 	menuItems.push_back (loadGameButton);
 
 	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 }
 
@@ -957,13 +964,6 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 		menu->end = true;
 	}
 	else menu->draw();
-}
-
-//------------------------------------------------------------------------------
-void cSinglePlayerMenu::backReleased (void* parent)
-{
-	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
-	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
@@ -998,7 +998,7 @@ cMultiPlayersMenu::cMultiPlayersMenu()
 #endif
 
 	backButton = new cMenuButton (position.x + 415, position.y + 190 + MAIN_MENU_BTN_SPACE * 6, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_STANDARD_SMALL);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 }
 
@@ -1044,13 +1044,6 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show();
 	menu->draw();
-}
-
-//------------------------------------------------------------------------------
-void cMultiPlayersMenu::backReleased (void* parent)
-{
-	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
-	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
@@ -1628,7 +1621,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	menuItems.push_back (okButton);
 
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	if (noReturn) backButton->setLocked (true);
 	menuItems.push_back (backButton);
 
@@ -1683,13 +1676,6 @@ void cClanSelectionMenu::okReleased (void* parent)
 	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
 	menu->player->setClan (menu->clan);
 	menu->end = true;
-}
-
-//-----------------------------------------------------------------------------------
-void cClanSelectionMenu::backReleased (void* parent)
-{
-	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
-	menu->terminate = true;
 }
 
 //-----------------------------------------------------------------------------------
@@ -1963,7 +1949,7 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	selectionChangedFunc = &selectionChanged;
 
 	doneButton->setReleasedFunction (&doneReleased);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	if (noReturn) backButton->setLocked (true);
 
 	upgradeBuyGroup = new cMenuRadioGroup();
@@ -2105,14 +2091,6 @@ void cStartupHangarMenu::updateUnitData()
 			}
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cStartupHangarMenu::backReleased (void* parent)
-{
-	cStartupHangarMenu* menu = dynamic_cast<cStartupHangarMenu*> ((cMenu*) parent);
-	if (!menu) return;
-	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -2414,7 +2392,7 @@ cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContaine
 	menuItems.push_back (infoLabel);
 
 	backButton = new cMenuButton (position.x + 35, position.y + 255, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
 	PlayVoice (VoiceData.VOILanding);
@@ -2544,14 +2522,6 @@ void cLandingMenu::mouseMoved (void* parent)
 		else mouse->SetCursor (CNo);
 	}
 	else mouse->SetCursor (CHand);
-}
-
-//------------------------------------------------------------------------------
-void cLandingMenu::backReleased (void* parent)
-{
-	cLandingMenu* menu = reinterpret_cast<cLandingMenu*> (parent);
-
-	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -3854,7 +3824,7 @@ cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds b
 	menuItems.push_back (titleLabel);
 
 	backButton = new cMenuButton (position.x + 353, position.y + 438, lngPack.i18n ("Text~Button~Back"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
 	loadButton = new cMenuButton (position.x + 514, position.y + 438, lngPack.i18n ("Text~Button~Load"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
@@ -3959,13 +3929,6 @@ void cLoadMenu::displaySaves()
 			else slot->reset (offset + filenum + 1, selected == filenum + offset);
 		}
 	}
-}
-
-//------------------------------------------------------------------------------
-void cLoadMenu::backReleased (void* parent)
-{
-	cLoadMenu* menu = reinterpret_cast<cLoadMenu*> (parent);
-	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4142,7 +4105,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 	doneButton->move (position.x + 387, position.y + 452);
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->move (position.x + 300, position.y + 452);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
 	selectionList->move (position.x + 477,  position.y + 48);
 	selectionList->resize (154, 390);
@@ -4225,13 +4188,6 @@ void cBuildingsBuildMenu::pathReleased (void* parent)
 }
 
 //------------------------------------------------------------------------------
-void cBuildingsBuildMenu::backReleased (void* parent)
-{
-	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
-	menu->terminate = true;
-}
-
-//------------------------------------------------------------------------------
 void cBuildingsBuildMenu::selectionChanged (void* parent)
 {
 	cBuildingsBuildMenu* menu = dynamic_cast<cBuildingsBuildMenu*> ((cHangarMenu*) parent);
@@ -4276,7 +4232,7 @@ cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* playe
 	doneButton->move (position.x + 387, position.y + 452);
 	doneButton->setReleasedFunction (&doneReleased);
 	backButton->move (position.x + 300, position.y + 452);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
 	selectionList->move (position.x + 477,  position.y + 48);
 	selectionList->resize (154, 390);
@@ -4391,14 +4347,6 @@ void cVehiclesBuildMenu::doneReleased (void* parent)
 	//menu->building->BuildSpeed = menu->speedHandler->getBuildSpeed();	//TODO: setting buildspeed here is probably an error
 	sendWantBuildList (*menu->gameGUI->getClient(), *menu->building, buildList, menu->repeatButton->isChecked(), menu->speedHandler->getBuildSpeed());
 	menu->end = true;
-}
-
-//------------------------------------------------------------------------------
-void cVehiclesBuildMenu::backReleased (void* parent)
-{
-	cVehiclesBuildMenu* menu = dynamic_cast<cVehiclesBuildMenu*> ((cMenu*) parent);
-	if (!menu) return;
-	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4583,7 +4531,7 @@ cUpgradeMenu::cUpgradeMenu (cClient& client_, cPlayer* player)
 	credits = player->Credits;
 
 	doneButton->setReleasedFunction (&doneReleased);
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
 	goldBar->setMaximalValue (credits);
 	goldBar->setCurrentValue (credits);
@@ -4611,14 +4559,6 @@ void cUpgradeMenu::doneReleased (void* parent)
 	if (!menu) return;
 	sendTakenUpgrades (*menu->client, menu->unitUpgrades, menu->player);
 	menu->end = true;
-}
-
-//------------------------------------------------------------------------------
-void cUpgradeMenu::backReleased (void* parent)
-{
-	cUpgradeMenu* menu = dynamic_cast<cUpgradeMenu*> ((cMenu*) parent);
-	if (!menu) return;
-	menu->terminate = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4716,7 +4656,7 @@ void cUnitHelpMenu::init (sID unitID)
 	menuItems.push_back (titleLabel);
 
 	doneButton = new cMenuButton (position.x + 474, position.y + 452, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	doneButton->setReleasedFunction (&doneReleased);
+	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton);
 
 	infoImage = new cMenuImage (position.x + 11, position.y + 13);
@@ -4740,13 +4680,6 @@ void cUnitHelpMenu::init (sID unitID)
 		infoImage->setImage (unitID.getBuilding()->info);
 		infoText->setText (unitID.getBuilding()->data.description);
 	}
-}
-
-//------------------------------------------------------------------------------
-void cUnitHelpMenu::doneReleased (void* parent)
-{
-	cUnitHelpMenu* menu = reinterpret_cast<cUnitHelpMenu*> (parent);
-	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4791,7 +4724,7 @@ cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageLis
 	}
 
 	doneButton = new cMenuButton (position.x + 518, position.y + 371, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	doneButton->setReleasedFunction (&doneReleased);
+	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton);
 
 	upButton = new cMenuButton (position.x + 504, position.y + 426, "", cMenuButton::BUTTON_TYPE_ARROW_UP_BIG, FONT_LATIN_NORMAL);
@@ -4949,13 +4882,6 @@ void cStorageMenu::resetInfos()
 
 	if (offset > 0) upButton->setLocked (false);
 	else upButton->setLocked (true);
-}
-
-//------------------------------------------------------------------------------
-void cStorageMenu::doneReleased (void* parent)
-{
-	cStorageMenu* menu = reinterpret_cast<cStorageMenu*> (parent);
-	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
@@ -5481,7 +5407,7 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	menuItems.push_back (stealthCheckBtn);
 
 	doneButton = new cMenuButton (position.x + 524, position.y + 398, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL);
-	doneButton->setReleasedFunction (&doneReleased);
+	doneButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (doneButton);
 
 	// its important that the screen will be added before the up and down buttons
@@ -5497,13 +5423,6 @@ cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	menuItems.push_back (downButton);
 
 	filterClicked (this);
-}
-
-//------------------------------------------------------------------------------
-void cReportsMenu::doneReleased (void* parent)
-{
-	cReportsMenu* menu = reinterpret_cast<cReportsMenu*> (parent);
-	menu->end = true;
 }
 
 //------------------------------------------------------------------------------

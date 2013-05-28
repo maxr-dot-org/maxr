@@ -50,10 +50,10 @@ cDialogYesNo::cDialogYesNo (const string& text) :
 	//textLabel.setBox(position.w - 40, position.h - 150);
 	menuItems.push_back (&textLabel);
 
-	yesButton.setReleasedFunction (&yesReleased);
+	yesButton.setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (&yesButton);
 
-	noButton.setReleasedFunction (&noReleased);
+	noButton.setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (&noButton);
 }
 
@@ -80,19 +80,6 @@ void cDialogYesNo::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 }
 
-
-void cDialogYesNo::yesReleased (void* parent)
-{
-	cDialogYesNo* menu = reinterpret_cast<cDialogYesNo*> (parent);
-	menu->end = true;
-}
-
-void cDialogYesNo::noReleased (void* parent)
-{
-	cDialogYesNo* menu = reinterpret_cast<cDialogYesNo*> (parent);
-	menu->terminate = true;
-}
-
 cDialogOK::cDialogOK (const string& text) :
 	cMenu (LoadPCX (GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel (position.x + 40, position.y + 40, text),
@@ -101,7 +88,7 @@ cDialogOK::cDialogOK (const string& text) :
 	textLabel.setBox (232, 142);
 	menuItems.push_back (&textLabel);
 
-	okButton.setReleasedFunction (&okReleased);
+	okButton.setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (&okButton);
 }
 
@@ -117,33 +104,21 @@ void cDialogOK::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 }
 
-void cDialogOK::okReleased (void* parent)
-{
-	cDialogOK* menu = reinterpret_cast<cDialogOK*> (parent);
-	menu->end = true;
-}
-
 cDestructMenu::cDestructMenu() :
 	cMenu (LoadPCX (GFXOD_DESTRUCTION), MNU_BG_ALPHA),
 	armButton (position.x + 88, position.y + 14, lngPack.i18n ("Text~Button~Hot"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	cancelButton (position.x + 88, position.y + 46, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	destroyButton (position.x + 15, position.y + 13, this)
 {
-	cancelButton.setReleasedFunction (&cancelReleased);
+	cancelButton.setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (&cancelButton);
 
 	armButton.setReleasedFunction (&armReleased);
 	menuItems.push_back (&armButton);
 
-	destroyButton.setReleasedFunction (&destroyReleased);
+	destroyButton.setReleasedFunction (&cMenu::doneReleased);
 	destroyButton.setReleaseSound (SoundData.SNDMenuButton);
 	menuItems.push_back (&destroyButton);
-}
-
-void cDestructMenu::cancelReleased (void* parent)
-{
-	cDestructMenu* menu = reinterpret_cast<cDestructMenu*> (parent);
-	menu->terminate = true;
 }
 
 void cDestructMenu::armReleased (void* parent)
@@ -151,12 +126,6 @@ void cDestructMenu::armReleased (void* parent)
 	cDestructMenu* menu = reinterpret_cast<cDestructMenu*> (parent);
 	menu->armButton.setLocked (true);
 	menu->destroyButton.setLocked (false);
-}
-
-void cDestructMenu::destroyReleased (void* parent)
-{
-	cDestructMenu* menu = reinterpret_cast<cDestructMenu*> (parent);
-	menu->end = true;
 }
 
 cDialogLicence::cDialogLicence() :
@@ -179,7 +148,7 @@ cDialogLicence::cDialogLicence() :
 	textLabel.setBox (232, 142);
 	menuItems.push_back (&textLabel);
 
-	okButton.setReleasedFunction (&okReleased);
+	okButton.setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (&okButton);
 
 	upButton.setReleasedFunction (&upReleased);
@@ -275,12 +244,6 @@ void cDialogLicence::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 			case SDL_RELEASED: if (okButton.getIsClicked())  okButton.released (this); break;
 		}
 	}
-}
-
-void cDialogLicence::okReleased (void* parent)
-{
-	cDialogLicence* menu = reinterpret_cast<cDialogLicence*> (parent);
-	menu->end = true;
 }
 
 void cDialogLicence::upReleased (void* parent)
@@ -573,7 +536,7 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVe
 	doneButton.setReleasedFunction (&doneReleased);
 	menuItems.push_back (&doneButton);
 
-	cancelButton.setReleasedFunction (&cancelReleased);
+	cancelButton.setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (&cancelButton);
 
 	incButton.setReleasedFunction (&incReleased);
@@ -812,12 +775,6 @@ void cDialogTransfer::doneReleased (void* parent)
 	menu->end = true;
 }
 
-void cDialogTransfer::cancelReleased (void* parent)
-{
-	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*> (parent);
-	menu->terminate = true;
-}
-
 void cDialogTransfer::incReleased (void* parent)
 {
 	cDialogTransfer* menu = reinterpret_cast<cDialogTransfer*> (parent);
@@ -884,7 +841,7 @@ cDialogResearch::cDialogResearch (cClient& client_, cPlayer* owner_) :
 	doneButton.setReleasedFunction (&doneReleased);
 	menuItems.push_back (&doneButton);
 
-	cancelButton.setReleasedFunction (&cancelReleased);
+	cancelButton.setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (&cancelButton);
 
 	const string themeNames[8] =
@@ -1010,12 +967,6 @@ void cDialogResearch::doneReleased (void* parent)
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
 	sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->Nr);
 	menu->end = true;
-}
-
-void cDialogResearch::cancelReleased (void* parent)
-{
-	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	menu->terminate = true;
 }
 
 void cDialogResearch::incReleased (void* parent)

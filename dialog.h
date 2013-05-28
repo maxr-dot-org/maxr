@@ -35,10 +35,6 @@ private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
 private:
-	static void yesReleased (void* parent);
-	static void noReleased (void* parent);
-
-private:
 	cMenuLabel textLabel;
 	cMenuButton yesButton;
 	cMenuButton noButton;
@@ -54,8 +50,6 @@ public:
 
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
-private:
-	static void okReleased (void* parent);
 
 private:
 	cMenuLabel textLabel;
@@ -69,8 +63,6 @@ public:
 
 private:
 	static void armReleased (void* parent);
-	static void cancelReleased (void* parent);
-	static void destroyReleased (void* parent);
 
 private:
 	cMenuButton armButton;
@@ -90,7 +82,6 @@ private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 
 private:
-	static void okReleased (void* parent);
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);
 
@@ -212,7 +203,6 @@ private:
 
 private:
 	static void doneReleased (void* parent);
-	static void cancelReleased (void* parent);
 
 	static void incReleased (void* parent);
 	static void decReleased (void* parent);
@@ -256,7 +246,6 @@ private:
 
 private:
 	static void doneReleased (void* parent);
-	static void cancelReleased (void* parent);
 
 	static void incReleased (void* parent);
 	static void decReleased (void* parent);

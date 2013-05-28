@@ -350,6 +350,9 @@ public:
 
 	void addTimer (cMenuTimerBase* timer);
 
+protected:
+	static void cancelReleased (void* parent);
+	static void doneReleased (void* parent);
 private:
 	int lastScreenResX, lastScreenResY;
 };
@@ -396,7 +399,6 @@ private:
 	static void multiPlayerReleased (void* parent);
 	static void preferencesReleased (void* parent);
 	static void licenceReleased (void* parent);
-	static void exitReleased (void* parent);
 };
 
 /**
@@ -414,7 +416,6 @@ public:
 private:
 	static void newGameReleased (void* parent);
 	static void loadGameReleased (void* parent);
-	static void backReleased (void* parent);
 };
 
 /**
@@ -436,7 +437,6 @@ private:
 	static void tcpClientReleased (void* parent);
 	static void newHotseatReleased (void* parent);
 	static void loadHotseatReleased (void* parent);
-	static void backReleased (void* parent);
 };
 
 /**
@@ -558,7 +558,6 @@ private:
 private:
 	static void clanSelected (void* parent);
 	static void okReleased (void* parent);
-	static void backReleased (void* parent);
 };
 
 /**
@@ -687,7 +686,6 @@ private:
 	virtual void handleNetMessage (cNetMessage* message);
 private:
 	static void selectionChanged (void* parent);
-	static void backReleased (void* parent);
 	static void doneReleased (void* parent);
 	static void subButtonsChanged (void* parent);
 	static void materialBarUpReleased (void* parent);
@@ -716,7 +714,6 @@ protected:
 private:
 	static void mapClicked (void* parent);
 	static void mouseMoved (void* parent);
-	static void backReleased (void* parent);
 
 protected:
 	cTCP* network;
@@ -995,7 +992,6 @@ private:
 
 private:
 	static void doneReleased (void* parent);
-	static void backReleased (void* parent);
 	static void selectionChanged (void* parent);
 };
 
@@ -1019,7 +1015,6 @@ private:
 	virtual void generateSelectionList();
 private:
 	static void doneReleased (void* parent);
-	static void backReleased (void* parent);
 	static void selectionChanged (void* parent);
 };
 
@@ -1044,8 +1039,6 @@ public:
 
 private:
 	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
-private:
-	static void doneReleased (void* parent);
 };
 
 class cStorageMenu : public cMenu
@@ -1103,8 +1096,6 @@ private:
 	virtual void handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* destroyedVehicle);
 
 private:
-	static void doneReleased (void* parent);
-
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);
 
@@ -1194,8 +1185,6 @@ public:
 	void scrollCallback (bool upPossible, bool downPossible);
 	void doubleClicked (cVehicle* vehicle, cBuilding* building);
 private:
-	static void doneReleased (void* parent);
-
 	static void upReleased (void* parent);
 	static void downReleased (void* parent);
 
