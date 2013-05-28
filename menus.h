@@ -649,7 +649,7 @@ public:
 	cUpgradeHangarMenu (cPlayer* owner);
 	~cUpgradeHangarMenu();
 	void setCredits (int credits_);
-	int getCredits();
+	int getCredits() const;
 };
 
 /**
@@ -678,6 +678,8 @@ protected:
 	virtual void removedCallback (cMenuUnitListItem* item);
 
 	void updateUnitData();
+	void generateInitialLandingUnits();
+
 public:
 	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
 
@@ -824,7 +826,7 @@ protected:
 	AutoPtr<cMenuButton>::type loadButton;
 	AutoPtr<cMenuButton>::type startButton;
 
-	int checkAllPlayersReady();
+	int checkAllPlayersReady() const;
 	void checkTakenPlayerAttr (sMenuPlayer* player);
 	bool runSavedGame();
 
@@ -835,6 +837,13 @@ public:
 	~cNetworkHostMenu();
 
 private:
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
+	void handleNetMessage_TCP_ACCEPT (cNetMessage* message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
+	void handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message);
+	void handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message);
+	void handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage* message);
+
 	virtual void handleNetMessage (cNetMessage* message);
 	virtual void playerSettingsChanged();
 
@@ -857,16 +866,25 @@ class cNetworkClientMenu : public cNetworkMenu
 
 	cMapReceiver* mapReceiver;
 	std::string lastRequestedMap;
-	void initMapDownload (cNetMessage* message);
-	void receiveMapData (cNetMessage* message);
-	void canceledMapDownload (cNetMessage* message);
-	void finishedMapDownload (cNetMessage* message);
 
 public:
 	cNetworkClientMenu();
 	~cNetworkClientMenu();
 
 private:
+	void handleNetMessage_MU_MSG_CHAT (cNetMessage* message);
+	void handleNetMessage_TCP_CLOSE (cNetMessage* message);
+	void handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage* message);
+	void handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* message);
+	void handleNetMessage_MU_MSG_OPTINS (cNetMessage* message);
+	void initMapDownload (cNetMessage* message);
+	void receiveMapData (cNetMessage* message);
+	void canceledMapDownload (cNetMessage* message);
+	void finishedMapDownload (cNetMessage* message);
+	void handleNetMessage_MU_MSG_GO (cNetMessage* message);
+	void handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* message);
+	void handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage* message);
+
 	virtual void handleNetMessage (cNetMessage* message);
 	virtual void playerSettingsChanged();
 private:

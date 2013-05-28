@@ -2119,7 +2119,25 @@ void cVehicle::blitWithPreScale (SDL_Surface* org_src, SDL_Surface* src, SDL_Rec
 	blittAlphaSurface (src, srcrect, dest, destrect);
 }
 
+cBuilding* cVehicle::getContainerBuilding()
+{
+	if (!Loaded) return NULL;
 
+	for (cBuilding* building = owner->BuildingList; building; building = building->next)
+		if (Contains (building->storedUnits, this)) return building;
+
+	return NULL;
+}
+
+cVehicle* cVehicle::getContainerVehicle()
+{
+	if (!Loaded) return NULL;
+
+	for (cVehicle* vehicle = owner->VehicleList; vehicle; vehicle = vehicle->next)
+		if (Contains (vehicle->storedUnits, this)) return vehicle;
+
+	return NULL;
+}
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

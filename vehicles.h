@@ -280,6 +280,12 @@ public:
 	*/
 	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
 
+	/**
+	* return the unit which contains this vehicle
+	*/
+	cBuilding* getContainerBuilding();
+	cVehicle* getContainerVehicle();
+
 private:
 	//---- sentry and reaction fire helpers ---------------------------------------
 	/**

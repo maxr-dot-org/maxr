@@ -374,7 +374,8 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 
 	if (landData[playerNr] == NULL) landData[playerNr] = new sClientLandData;
 	sClientLandData* c = landData[playerNr];
-	//save last coords, so that a player can confirm his position after a warning about nearby players
+	// save last coords, so that a player can confirm his position
+	// after a warning about nearby players
 	c->iLastLandX = c->iLandX;
 	c->iLastLandY = c->iLandY;
 	c->iLandX = message->popInt16();
@@ -1032,6 +1033,7 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 void cMultiPlayersMenu::newHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
+	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show();
 	menu->draw();
@@ -1041,6 +1043,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
+	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
 	okDialog.show();
 	menu->draw();
@@ -1194,10 +1197,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) :
 	const std::string strPoints = lngPack.i18n ("Text~Comp~Points");
 	const std::string strNoLimit = lngPack.i18n ("Text~Comp~NoLimit");
 
-	victoryLabel = new cMenuLabel (
-		position.x + 300, position.y + iCurrentLine,
-		lngPack.i18n ("Text~Comp~GameEndsAt")
-	);
+	victoryLabel = new cMenuLabel (position.x + 300, position.y + iCurrentLine, lngPack.i18n ("Text~Comp~GameEndsAt"));
 	menuItems.push_back (victoryLabel);
 
 	tmpLine = iCurrentLine += iLineHeight;
@@ -1898,39 +1898,34 @@ void cAdvListHangarMenu::secondListDownReleased (void* parent)
 bool cAdvListHangarMenu::selListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
 	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
-	if (!menu) return false;
-	if (menu->selectedUnit && menu->selectedUnit == menu->selectionList->getSelectedUnit())
+	if (!menu || menu->selectedUnit == NULL) return false;
+	if (menu->selectedUnit != menu->selectionList->getSelectedUnit()) return false;
+
+	sVehicle* vehicle = menu->selectedUnit->getUnitID().getVehicle (menu->player);
+	if (vehicle && menu->checkAddOk (menu->selectedUnit))
 	{
-		sVehicle* vehicle = menu->selectedUnit->getUnitID().getVehicle (menu->player);
-		if (vehicle && menu->checkAddOk (menu->selectedUnit))
-		{
-			if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
-			else menu->secondList->addUnit (&menu->player->VehicleData[vehicle->nr], menu->player, NULL, true);
-			menu->secondList->getItem (menu->secondList->getSize() - 1)->setResValue (menu->selectedUnit->getResValue(), false);
-			menu->addedCallback (menu->selectedUnit);
-			menu->draw();
-		}
-		return true;
+		if (menu->selectedUnit->getUpgrades()) menu->secondList->addUnit (vehicle->data.ID, menu->player, menu->selectedUnit->getUpgrades(), true, menu->selectedUnit->getFixedResValue());
+		else menu->secondList->addUnit (&menu->player->VehicleData[vehicle->nr], menu->player, NULL, true);
+		menu->secondList->getItem (menu->secondList->getSize() - 1)->setResValue (menu->selectedUnit->getResValue(), false);
+		menu->addedCallback (menu->selectedUnit);
+		menu->draw();
 	}
-	return false;
+	return true;
 }
 
 //------------------------------------------------------------------------------
 bool cAdvListHangarMenu::secondListDoubleClicked (cMenuUnitsList* list, void* parent)
 {
 	cAdvListHangarMenu* menu = dynamic_cast<cAdvListHangarMenu*> ((cHangarMenu*) parent);
-	if (!menu || !menu->selectedUnit) return false;
+	if (!menu || menu->selectedUnit == NULL) return false;
+	if (menu->selectedUnit != menu->secondList->getSelectedUnit()) return false;
+	if (menu->selectedUnit->getFixedStatus()) return false;
 
-	if (menu->selectedUnit == menu->secondList->getSelectedUnit())
-	{
-		if (menu->selectedUnit->getFixedStatus()) return false;
-		menu->removedCallback (menu->selectedUnit);
-		menu->secondList->removeUnit (menu->selectedUnit);
-		if (menu->selectedUnit == NULL && menu->selectionList->getSelectedUnit()) menu->setSelectedUnit (menu->selectionList->getSelectedUnit());
-		menu->draw();
-		return true;
-	}
-	return false;
+	menu->removedCallback (menu->selectedUnit);
+	menu->secondList->removeUnit (menu->selectedUnit);
+	if (menu->selectedUnit == NULL && menu->selectionList->getSelectedUnit()) menu->setSelectedUnit (menu->selectionList->getSelectedUnit());
+	menu->draw();
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1978,74 +1973,79 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 
 	generateSelectionList();
 
-	if (gameDataContainer->settings->bridgeHead == SETTING_BRIDGEHEAD_DEFINITE)
+	generateInitialLandingUnits();
+	if (selectionList->getSize() > 0) setSelectedUnit (selectionList->getItem (0));
+}
+
+void cStartupHangarMenu::generateInitialLandingUnits()
+{
+	if (gameDataContainer->settings->bridgeHead != SETTING_BRIDGEHEAD_DEFINITE) return;
+
+	for (int i = 0; i < selectionList->getSize(); i++)
 	{
-		for (int i = 0; i < selectionList->getSize(); i++)
+		const sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
+		if (!vehicle) continue;
+		if (vehicle->data.canBuild.compare ("BigBuilding") == 0 || vehicle->data.canBuild.compare ("SmallBuilding") == 0 || vehicle->data.canSurvey)
 		{
-			sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
-			if (!vehicle) continue;
-			if (vehicle->data.canBuild.compare ("BigBuilding") == 0 || vehicle->data.canBuild.compare ("SmallBuilding") == 0 || vehicle->data.canSurvey)
+			cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
+			if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
+				unit->setMinResValue (40);
+			else if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
+				unit->setMinResValue (20);
+			unit->setFixed (true);
+		}
+	}
+
+	if (gameDataContainer->settings->clans != SETTING_CLANS_ON || player->getClan() != 7) return;
+	// Additional Units for Axis Inc. Clan
+
+	const int startCredits = gameDataContainer->settings->credits;
+	int numAddConstructors = 0;
+	int numAddEngineers = 0;
+	if (startCredits < 100)
+		numAddEngineers = 1;
+	else if (startCredits < 150)
+	{
+		numAddEngineers = 1;
+		numAddConstructors = 1;
+	}
+	else if (startCredits < 200)
+	{
+		numAddEngineers = 2;
+		numAddConstructors = 1;
+	}
+	else if (startCredits < 300)
+	{
+		numAddEngineers = 2;
+		numAddConstructors = 2;
+	}
+	else
+	{
+		numAddEngineers = 3;
+		numAddConstructors = 2;
+	}
+	for (int i = 0; i < selectionList->getSize(); i++)
+	{
+		sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
+		if (!vehicle) continue;
+
+		if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
+		{
+			for (int j = 0; j < numAddConstructors; j++)
 			{
 				cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-				if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
-					unit->setMinResValue (40);
-				else if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
-					unit->setMinResValue (20);
 				unit->setFixed (true);
 			}
 		}
-		if (gameDataContainer->settings->clans == SETTING_CLANS_ON && player->getClan() == 7)   // Additional Units for Axis Inc. Clan
+		if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
 		{
-			int startCredits = gameDataContainer->settings->credits;
-			int numAddConstructors = 0;
-			int numAddEngineers = 0;
-			if (startCredits < 100)
-				numAddEngineers = 1;
-			else if (startCredits < 150)
+			for (int j = 0; j < numAddEngineers; j++)
 			{
-				numAddEngineers = 1;
-				numAddConstructors = 1;
-			}
-			else if (startCredits < 200)
-			{
-				numAddEngineers = 2;
-				numAddConstructors = 1;
-			}
-			else if (startCredits < 300)
-			{
-				numAddEngineers = 2;
-				numAddConstructors = 2;
-			}
-			else
-			{
-				numAddEngineers = 3;
-				numAddConstructors = 2;
-			}
-			for (int i = 0; i < selectionList->getSize(); i++)
-			{
-				sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
-				if (!vehicle) continue;
-
-				if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
-				{
-					for (int j = 0; j < numAddConstructors; j++)
-					{
-						cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-						unit->setFixed (true);
-					}
-				}
-				if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
-				{
-					for (int j = 0; j < numAddEngineers; j++)
-					{
-						cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-						unit->setFixed (true);
-					}
-				}
+				cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
+				unit->setFixed (true);
 			}
 		}
 	}
-	if (selectionList->getSize() > 0) setSelectedUnit (selectionList->getItem (0));
 }
 
 //------------------------------------------------------------------------------
@@ -2223,33 +2223,35 @@ void cStartupHangarMenu::generateSelectionList()
 	if (selectionList->getSelectedUnit()) oldSelectdUnit = selectionList->getSelectedUnit()->getUnitID();
 
 	selectionList->clear();
-	bool tank = upgradeFilter->TankIsChecked();
-	bool plane = upgradeFilter->PlaneIsChecked();
-	bool ship = upgradeFilter->ShipIsChecked();
-	bool build = upgradeFilter->BuildingIsChecked();
-	bool tnt = upgradeFilter->TNTIsChecked();
-	bool buy = upgradeBuyGroup->buttonIsChecked (0);
+	const bool buy = upgradeBuyGroup->buttonIsChecked (0);
+	const bool tank = upgradeFilter->TankIsChecked();
+	const bool plane = upgradeFilter->PlaneIsChecked() && !buy;
+	const bool ship = upgradeFilter->ShipIsChecked() && !buy;
+	const bool build = upgradeFilter->BuildingIsChecked() && !buy;
+	const bool tnt = upgradeFilter->TNTIsChecked();
 
-	if (buy) plane = ship = build = false;
-
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+	if (tank || ship || plane)
 	{
-		if (!tank && !ship && !plane) continue;
-		sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
-		if (data.isHuman && buy) continue;
-		if (tnt && !data.canAttack) continue;
-		if (data.factorAir > 0 && !plane) continue;
-		if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
-		if (data.factorGround > 0 && !tank) continue;
-		selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+		{
+			sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
+			if (data.isHuman && buy) continue;
+			if (tnt && !data.canAttack) continue;
+			if (data.factorAir > 0 && !plane) continue;
+			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
+			if (data.factorGround > 0 && !tank) continue;
+			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+		}
 	}
 
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+	if (build)
 	{
-		if (!build) continue;
-		sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
-		if (tnt && !data.canAttack) continue;
-		selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+		{
+			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
+			if (tnt && !data.canAttack) continue;
+			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+		}
 	}
 
 	for (int i = 0; i < selectionList->getSize(); i++)
@@ -2299,7 +2301,7 @@ void cStartupHangarMenu::addedCallback (cMenuUnitListItem* item)
 //------------------------------------------------------------------------------
 void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 {
-	sVehicle* vehicle = item->getUnitID().getVehicle (player);
+	const sVehicle* vehicle = item->getUnitID().getVehicle (player);
 	if (!vehicle) return;
 
 	credits += vehicle->data.buildCosts + item->getResValue() / 5;
@@ -2336,7 +2338,7 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 	menu = dynamic_cast<cStartupHangarMenu*> ((cHangarMenu*) parent);
 	if (!menu) menu = dynamic_cast<cStartupHangarMenu*> ((cStartupHangarMenu*) parent);
 	if (!menu) return;
-	sVehicle* vehicle;
+	const sVehicle* vehicle;
 	if (menu->secondList->getSelectedUnit() && (vehicle = menu->secondList->getSelectedUnit()->getUnitID().getVehicle (menu->player)) && vehicle->data.storeResType != sUnitData::STORE_RES_NONE && vehicle->data.storeResType != sUnitData::STORE_RES_GOLD)
 	{
 		menu->materialBar->setMaximalValue (vehicle->data.storageResMax);
@@ -2433,7 +2435,7 @@ void cLandingMenu::createMap()
 			int offsety  = ( (y * map->size) % mapSurface->h) * 64 / mapSurface->h;
 
 			unsigned int terrainNumber = map->Kacheln[terrainx + terrainy * map->size];
-			sTerrain* t	= map->terrain + terrainNumber;
+			sTerrain* t = map->terrain + terrainNumber;
 			unsigned int ColorNr = *((unsigned char*) (t->sf_org->pixels) + (offsetx + offsety * 64));
 
 			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels))[x + y * mapSurface->w];
@@ -2671,7 +2673,8 @@ cNetworkMenu::cNetworkMenu()
 	portLine->setTaking (false, true);
 	menuItems.push_back (portLine);
 
-	//little icon that restores our default port on click. TODO: find a proper gfx for this or change menu style to dropdown
+	// little icon that restores our default port on click.
+	// TODO: find a proper gfx for this or change menu style to dropdown
 	setDefaultPortImage = new cMenuImage (position.x + 224 + 85, position.y + 253);
 	setDefaultPortImage->setImage (GraphicsData.gfx_Cpfeil2);
 	setDefaultPortImage->setClickedFunction (&setDefaultPort);
@@ -3002,7 +3005,7 @@ void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 }
 
 //-----------------------------------------------------------------------------------------
-int cNetworkHostMenu::checkAllPlayersReady()
+int cNetworkHostMenu::checkAllPlayersReady() const
 {
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -3064,7 +3067,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 				clanMenu.show();
 			}
 
-			cStartupHangarMenu hangarMenu (menu->network, &menu->gameDataContainer, menu->gameDataContainer.players[0], menu->gameDataContainer.settings->clans == SETTING_CLANS_OFF) ;
+			cStartupHangarMenu hangarMenu (menu->network, &menu->gameDataContainer, menu->gameDataContainer.players[0], menu->gameDataContainer.settings->clans == SETTING_CLANS_OFF);
 			if (hangarMenu.show() == 0) started = true;
 		}
 	}
@@ -3148,138 +3151,156 @@ void cNetworkHostMenu::playerSettingsChanged()
 	sendPlayerList (*network, players);
 }
 
+void cNetworkHostMenu::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_CHAT);
+
+	bool translationText = message->popBool();
+	string chatText = message->popString();
+	if (translationText) chatBox->addLine (lngPack.i18n (chatText));
+	else
+	{
+		chatBox->addLine (chatText);
+		PlayFX (SoundData.SNDChat); //play some chattersound if we got a player message
+	}
+	// send to other clients
+	for (unsigned int i = 1; i < players.size(); i++)
+	{
+		if (players[i]->nr == message->iPlayerNr) continue;
+		sendMenuChatMessage (*network, chatText, players[i], -1, translationText);
+	}
+	draw();
+}
+
+#define UNIDENTIFIED_PLAYER_NAME "unidentified"
+void cNetworkHostMenu::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
+{
+	assert (message->iType == TCP_ACCEPT);
+
+	sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.size(), message->popInt16());
+	players.push_back (player);
+	sendRequestIdentification (*network, *player);
+	playersBox->setPlayers (&players);
+	draw();
+}
+
+void cNetworkHostMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
+{
+	assert (message->iType == TCP_CLOSE);
+
+	int socket = message->popInt16();
+	network->close (socket);
+	string playerName;
+
+	//delete player
+	for (unsigned int i = 0; i < players.size(); i++)
+	{
+		if (players[i]->socket == socket)
+		{
+			playerName = players[i]->name;
+			players.erase (players.begin() + i);
+		}
+	}
+
+	//resort socket numbers
+	for (unsigned int playerNr = 0; playerNr < players.size(); playerNr++)
+	{
+		if (players[playerNr]->socket > socket && players[playerNr]->socket < MAX_CLIENTS) players[playerNr]->socket--;
+	}
+
+	//resort player numbers
+	for (unsigned int i = 0; i < players.size(); i++)
+	{
+		players[i]->nr = i;
+		sendRequestIdentification (*network, *players[i]);
+	}
+
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Left", playerName));
+
+	draw();
+	sendPlayerList (*network, players);
+
+	playersBox->setPlayers (&players);
+}
+
+void cNetworkHostMenu::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_IDENTIFIKATION);
+
+	int playerNr = message->popInt16();
+	if (playerNr < 0 || playerNr >= (int) players.size())
+	{
+		sendPlayerList (*network, players);
+		return;
+	}
+	sMenuPlayer* player = players[playerNr];
+
+	bool freshJoined = (player->name.compare (UNIDENTIFIED_PLAYER_NAME) == 0);
+	player->color = message->popInt16();
+	player->name = message->popString();
+	player->ready = message->popBool();
+
+	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
+
+	if (freshJoined) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name));
+
+	// search double taken name or color
+	checkTakenPlayerAttr (player);
+
+	draw();
+	sendPlayerList (*network, players);
+	sendGameData (*network, gameDataContainer, saveGameString, player);
+}
+
+void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_REQUEST_MAP);
+
+	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->MapName)) return;
+
+	const size_t receiverNr = message->popInt16();
+	if (receiverNr >= players.size()) return;
+	int socketNr = players[receiverNr]->socket;
+	// check, if there is already a map sender, that uploads to the same socketNr.
+	// If yes, terminate the old map sender.
+	for (int i = (int) mapSenders.size() - 1; i >= 0; i--)
+	{
+		if (mapSenders[i] != 0 && mapSenders[i]->getToSocket() == socketNr)
+		{
+			delete mapSenders[i];
+			mapSenders.erase (mapSenders.begin() + i);
+		}
+	}
+	cMapSender* mapSender = new cMapSender (*network, socketNr, gameDataContainer.map->MapName, players[receiverNr]->name);
+	mapSenders.push_back (mapSender);
+	mapSender->runInThread (this);
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
+	draw();
+}
+
+void cNetworkHostMenu::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_FINISHED_MAP_DOWNLOAD);
+
+	string receivingPlayerName = message->popString();
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", receivingPlayerName));
+	draw();
+}
+
 //-----------------------------------------------------------------------------------------
 void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 {
 	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
+
 	switch (message->iType)
 	{
-		case MU_MSG_CHAT:
-		{
-			bool translationText = message->popBool();
-			string chatText = message->popString();
-			if (translationText) chatBox->addLine (lngPack.i18n (chatText));
-			else
-			{
-				chatBox->addLine (chatText);
-				PlayFX (SoundData.SNDChat); //play some chattersound if we got a player message
-			}
-			// send to other clients
-			for (unsigned int i = 1; i < players.size(); i++)
-			{
-				if (players[i]->nr == message->iPlayerNr) continue;
-				sendMenuChatMessage (*network, chatText, players[i], -1, translationText);
-			}
-			draw();
-		}
-		break;
-		case TCP_ACCEPT:
-		{
-#define UNIDENTIFIED_PLAYER_NAME "unidentified"
-			sMenuPlayer* player = new sMenuPlayer (UNIDENTIFIED_PLAYER_NAME, 0, false, (int) players.size(), message->popInt16());
-			players.push_back (player);
-			sendRequestIdentification (*network, *player);
-			playersBox->setPlayers (&players);
-			draw();
-		}
-		break;
-		case TCP_CLOSE:
-		{
-			int socket = message->popInt16();
-			network->close (socket);
-			string playerName;
-
-			//delete player
-			for (unsigned int i = 0; i < players.size(); i++)
-			{
-				if (players[i]->socket == socket)
-				{
-					playerName = players[i]->name;
-					players.erase (players.begin() + i);
-				}
-			}
-
-			//resort socket numbers
-			for (unsigned int playerNr = 0; playerNr < players.size(); playerNr++)
-			{
-				if (players[playerNr]->socket > socket && players[playerNr]->socket < MAX_CLIENTS) players[playerNr]->socket--;
-			}
-
-			//resort player numbers
-			for (unsigned int i = 0; i < players.size(); i++)
-			{
-				players[i]->nr = i;
-				sendRequestIdentification (*network, *players[i]);
-			}
-
-			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Left", playerName));
-
-			draw();
-			sendPlayerList (*network, players);
-
-			playersBox->setPlayers (&players);
-		}
-		break;
-		case MU_MSG_IDENTIFIKATION:
-		{
-			int playerNr = message->popInt16();
-			if (playerNr < 0 || playerNr >= (int) players.size())
-			{
-				sendPlayerList (*network, players);
-				break;
-			}
-			sMenuPlayer* player = players[playerNr];
-
-			bool freshJoined = (player->name.compare (UNIDENTIFIED_PLAYER_NAME) == 0);
-			player->color = message->popInt16();
-			player->name = message->popString();
-			player->ready = message->popBool();
-
-			Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
-
-			if (freshJoined) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name));
-
-			// search double taken name or color
-			checkTakenPlayerAttr (player);
-
-			draw();
-			sendPlayerList (*network, players);
-			sendGameData (*network, gameDataContainer, saveGameString, player);
-		}
-		break;
-		case MU_MSG_REQUEST_MAP:
-		{
-			if (gameDataContainer.map != 0 && !MapDownload::isMapOriginal (gameDataContainer.map->MapName))
-			{
-				int receiverNr = message->popInt16();
-				if (receiverNr >= 0 && receiverNr < (int) players.size())
-				{
-					int socketNr = players[receiverNr]->socket;
-					// check, if there is already a map sender, that uploads to the same socketNr. If yes, terminate the old map sender.
-					for (int i = (int) mapSenders.size() - 1; i >= 0; i--)
-					{
-						if (mapSenders[i] != 0 && mapSenders[i]->getToSocket() == socketNr)
-						{
-							delete mapSenders[i];
-							mapSenders.erase (mapSenders.begin() + i);
-						}
-					}
-					cMapSender* mapSender = new cMapSender (*network, socketNr, gameDataContainer.map->MapName, players[receiverNr]->name);
-					mapSenders.push_back (mapSender);
-					mapSender->runInThread (this);
-					chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
-					draw();
-				}
-			}
-		}
-		break;
-		case MU_MSG_FINISHED_MAP_DOWNLOAD:
-		{
-			string receivingPlayerName = message->popString();
-			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_UploadFinished", receivingPlayerName));
-			draw();
-		}
-		break;
+		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
+		case TCP_ACCEPT: handleNetMessage_TCP_ACCEPT (message); break;
+		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
+		case MU_MSG_IDENTIFIKATION: handleNetMessage_MU_MSG_IDENTIFIKATION (message); break;
+		case MU_MSG_REQUEST_MAP: handleNetMessage_MU_MSG_REQUEST_MAP (message); break;
+		case MU_MSG_FINISHED_MAP_DOWNLOAD: handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (message); break;
+		default: break;
 	}
 }
 
@@ -3468,281 +3489,296 @@ void cNetworkClientMenu::playerSettingsChanged()
 }
 
 //------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_CHAT);
+
+	bool translationText = message->popBool();
+	string chatText = message->popString();
+	if (translationText) chatBox->addLine (lngPack.i18n (chatText));
+	else chatBox->addLine (chatText);
+	draw();
+}
+
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
+{
+	assert (message->iType == TCP_CLOSE);
+
+	for (unsigned int i = 0; i < players.size(); i++)
+	{
+		if (players[i]->nr == actPlayer->nr) continue;
+		players.erase (players.begin() + i);
+	}
+	actPlayer->ready = false;
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
+	playersBox->setPlayers (&players);
+	draw();
+}
+
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_REQ_IDENTIFIKATION);
+
+	Log.write ("game version of server is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
+	actPlayer->nr = message->popInt16();
+	sendIdentification (*network, *actPlayer);
+}
+
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_PLAYERLIST);
+
+	int playerCount = message->popInt16();
+	int actPlayerNr = actPlayer->nr;
+	for (size_t i = 0; i != players.size(); ++i)
+	{
+		delete players[i];
+	}
+	players.clear();
+	for (int i = 0; i < playerCount; i++)
+	{
+		string name = message->popString();
+		int color = message->popInt16();
+		bool ready = message->popBool();
+		int nr = message->popInt16();
+		sMenuPlayer* player = new sMenuPlayer (name, color, ready, nr);
+		if (player->nr == actPlayerNr) actPlayer = player;
+		players.push_back (player);
+	}
+	playersBox->setPlayers (&players);
+	draw();
+}
+
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_OPTINS);
+
+	if (message->popBool())
+	{
+		if (!gameDataContainer.settings) gameDataContainer.settings = new sSettings;
+		sSettings* settings = gameDataContainer.settings;
+
+		settings->duration = (eSettingsDuration) message->popInt16();
+		settings->victoryType = (eSettingsVictoryType) message->popChar();
+		settings->metal = (eSettingResourceValue) message->popChar();
+		settings->oil = (eSettingResourceValue) message->popChar();
+		settings->gold = (eSettingResourceValue) message->popChar();
+		settings->resFrequency = (eSettingResFrequency) message->popChar();
+		settings->credits = (eSettingsCredits) message->popInt16();
+		settings->bridgeHead = (eSettingsBridgeHead) message->popChar();
+		settings->alienTech = (eSettingsAlienTech) message->popChar();
+		settings->clans = (eSettingsClans) message->popChar();
+		settings->gameType = (eSettingsGameType) message->popChar();
+	}
+	else
+	{
+		delete gameDataContainer.settings;
+		gameDataContainer.settings = NULL;
+	}
+
+	if (message->popBool())
+	{
+		string mapName = message->popString();
+		Sint32 mapCheckSum = message->popInt32();
+		if (!gameDataContainer.map || gameDataContainer.map->MapName != mapName)
+		{
+			delete gameDataContainer.map;
+
+			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
+			cMap* map = new cMap;
+			if (mapCheckSumsEqual && map->LoadMap (mapName))
+			{
+				gameDataContainer.map = map;
+				triedLoadMap = "";
+			}
+			else
+			{
+				delete map;
+				gameDataContainer.map = NULL;
+
+				if (actPlayer->ready)
+				{
+					chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
+					actPlayer->ready = false;
+					playerSettingsChanged();
+				}
+				triedLoadMap = mapName;
+
+				string existingMapFilePath = MapDownload::getExistingMapFilePath (mapName);
+				bool existsMap = !existingMapFilePath.empty();
+				if (!mapCheckSumsEqual && existsMap)
+				{
+					chatBox->addLine ("You have an incompatible version of the");
+					chatBox->addLine (string ("map \"") + mapName + "\" at");
+					chatBox->addLine (string ("\"") + existingMapFilePath + "\" !");
+					chatBox->addLine ("Move it away or delete it, then reconnect.");
+				}
+				else
+				{
+					if (MapDownload::isMapOriginal (mapName, mapCheckSum) == false)
+					{
+						if (mapName != lastRequestedMap)
+						{
+							lastRequestedMap = mapName;
+							sendRequestMap (*network, mapName, actPlayer->nr);
+							chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
+							chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
+						}
+					}
+					else
+					{
+						chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequestInvalid"));
+						chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadInvalid", mapName));
+					}
+				}
+			}
+			showMap();
+		}
+	}
+	else if (gameDataContainer.map)
+	{
+		delete gameDataContainer.map;
+		gameDataContainer.map = NULL;
+		showMap();
+	}
+
+	if (message->popBool()) saveGameString = message->popString();
+	else saveGameString = "";
+
+	showSettingsText();
+	draw();
+}
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
+{
+	assert (message->iType == MU_MSG_GO);
+
+	saveOptions();
+	for (unsigned int i = 0; i < players.size(); i++)
+	{
+		cPlayer* player = new cPlayer (players[i]->name, OtherData.colors[players[i]->color], players[i]->nr, players[i]->socket);
+		gameDataContainer.players.push_back (player);
+	}
+	if (!saveGameString.empty())
+	{
+		ActiveMenu = NULL;
+		gameDataContainer.runGame (network, actPlayer->nr);
+	}
+	else
+	{
+		bool started = false;
+		while (!started)
+		{
+			if (gameDataContainer.settings->clans == SETTING_CLANS_ON)
+			{
+				cClanSelectionMenu clanMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], true);
+				clanMenu.show();
+			}
+
+			cStartupHangarMenu hangarMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], gameDataContainer.settings->clans == SETTING_CLANS_OFF) ;
+			if (hangarMenu.show() == 0) started = true;
+		}
+	}
+	end = true;
+}
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* message)
+{
+	assert (message->iType == GAME_EV_REQ_RECON_IDENT);
+
+	cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Multiplayer~Reconnect"));
+	if (yesNoDialog.show() == 0)
+	{
+		sendGameIdentification (*network, *actPlayer, message->popInt16());
+	}
+	else
+	{
+		chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
+		network->close (0);
+	}
+	draw();
+}
+//------------------------------------------------------------------------------
+void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage* message)
+{
+	assert (message->iType == GAME_EV_RECONNECT_ANSWER);
+
+	if (message->popBool())
+	{
+		actPlayer->nr = message->popInt16();
+		actPlayer->color = message->popInt16();
+		cMap* Map = new cMap;
+		if (!Map->LoadMap (message->popString())) return;
+		gameDataContainer.map = Map;
+
+		int playerCount = message->popInt16();
+
+		gameDataContainer.players.push_back (new cPlayer (actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr));
+		while (playerCount > 1)
+		{
+			string playername = message->popString();
+			int playercolor = message->popInt16();
+			int playernr = message->popInt16();
+			gameDataContainer.players.push_back (new cPlayer (playername, OtherData.colors[playercolor], playernr));
+			playerCount--;
+		}
+
+		bool changed = false;
+		int size = (int) gameDataContainer.players.size();
+		do
+		{
+			changed = false;
+			for (int i = 0; i < size - 1; i++)
+			{
+				if (gameDataContainer.players[i]->Nr > gameDataContainer.players[i + 1]->Nr)
+				{
+					cPlayer* temp = gameDataContainer.players[i + 1];
+					gameDataContainer.players[i + 1] = gameDataContainer.players[i];
+					gameDataContainer.players[i] = temp;
+					changed = true;
+				}
+			}
+			size--;
+		}
+		while (changed && size);
+
+		ActiveMenu = NULL;
+		gameDataContainer.runGame (network, actPlayer->nr, true);
+		end = true;
+	}
+	else
+	{
+		chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Reconnect_Forbidden"));
+		chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
+		network->close (0);
+		draw();
+	}
+}
+
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 {
 	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 
 	switch (message->iType)
 	{
-		case MU_MSG_CHAT:
-		{
-			bool translationText = message->popBool();
-			string chatText = message->popString();
-			if (translationText) chatBox->addLine (lngPack.i18n (chatText));
-			else chatBox->addLine (chatText);
-			draw();
-		}
-		break;
-		case TCP_CLOSE:
-		{
-			for (unsigned int i = 0; i < players.size(); i++)
-			{
-				if (players[i]->nr == actPlayer->nr) continue;
-				players.erase (players.begin() + i);
-			}
-			actPlayer->ready = false;
-			chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
-			playersBox->setPlayers (&players);
-			draw();
-		}
-		break;
-		case MU_MSG_REQ_IDENTIFIKATION:
-			Log.write ("game version of server is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
-			actPlayer->nr = message->popInt16();
-			sendIdentification (*network, *actPlayer);
-			break;
-		case MU_MSG_PLAYERLIST:
-		{
-			int playerCount = message->popInt16();
-			int actPlayerNr = actPlayer->nr;
-			for (size_t i = 0; i != players.size(); ++i)
-			{
-				delete players[i];
-			}
-			players.clear();
-			for (int i = 0; i < playerCount; i++)
-			{
-				string name = message->popString();
-				int color = message->popInt16();
-				bool ready = message->popBool();
-				int nr = message->popInt16();
-				sMenuPlayer* player = new sMenuPlayer (name, color, ready, nr);
-				if (player->nr == actPlayerNr) actPlayer = player;
-				players.push_back (player);
-			}
-			playersBox->setPlayers (&players);
-			draw();
-		}
-		break;
-		case MU_MSG_OPTINS:
-		{
-			if (message->popBool())
-			{
-				if (!gameDataContainer.settings) gameDataContainer.settings = new sSettings;
-				sSettings* settings = gameDataContainer.settings;
-
-				settings->duration = (eSettingsDuration) message->popInt16();
-				settings->victoryType = (eSettingsVictoryType) message->popChar();
-				settings->metal = (eSettingResourceValue) message->popChar();
-				settings->oil = (eSettingResourceValue) message->popChar();
-				settings->gold = (eSettingResourceValue) message->popChar();
-				settings->resFrequency = (eSettingResFrequency) message->popChar();
-				settings->credits = (eSettingsCredits) message->popInt16();
-				settings->bridgeHead = (eSettingsBridgeHead) message->popChar();
-				settings->alienTech = (eSettingsAlienTech) message->popChar();
-				settings->clans = (eSettingsClans) message->popChar();
-				settings->gameType = (eSettingsGameType) message->popChar();
-			}
-			else
-			{
-				delete gameDataContainer.settings;
-				gameDataContainer.settings = NULL;
-			}
-
-			if (message->popBool())
-			{
-				string mapName = message->popString();
-				Sint32 mapCheckSum = message->popInt32();
-				if (!gameDataContainer.map || gameDataContainer.map->MapName != mapName)
-				{
-					delete gameDataContainer.map;
-
-					bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
-					cMap* map = new cMap;
-					if (mapCheckSumsEqual && map->LoadMap (mapName))
-					{
-						gameDataContainer.map = map;
-						triedLoadMap = "";
-					}
-					else
-					{
-						delete map;
-						gameDataContainer.map = NULL;
-
-						if (actPlayer->ready)
-						{
-							chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
-							actPlayer->ready = false;
-							playerSettingsChanged();
-						}
-						triedLoadMap = mapName;
-
-						string existingMapFilePath = MapDownload::getExistingMapFilePath (mapName);
-						bool existsMap = !existingMapFilePath.empty();
-						if (!mapCheckSumsEqual && existsMap)
-						{
-							chatBox->addLine ("You have an incompatible version of the");
-							chatBox->addLine (string ("map \"") + mapName + "\" at");
-							chatBox->addLine (string ("\"") + existingMapFilePath + "\" !");
-							chatBox->addLine ("Move it away or delete it, then reconnect.");
-						}
-						else
-						{
-							if (MapDownload::isMapOriginal (mapName, mapCheckSum) == false)
-							{
-								if (mapName != lastRequestedMap)
-								{
-									lastRequestedMap = mapName;
-									sendRequestMap (*network, mapName, actPlayer->nr);
-									chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
-									chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
-								}
-							}
-							else
-							{
-								chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequestInvalid"));
-								chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadInvalid", mapName));
-							}
-						}
-					}
-					showMap();
-				}
-			}
-			else if (gameDataContainer.map)
-			{
-				delete gameDataContainer.map;
-				gameDataContainer.map = NULL;
-				showMap();
-			}
-
-			if (message->popBool()) saveGameString = message->popString();
-			else saveGameString = "";
-
-			showSettingsText();
-			draw();
-		}
-		break;
-		case MU_MSG_START_MAP_DOWNLOAD:
-		{
-			initMapDownload (message);
-			break;
-		}
-		case MU_MSG_MAP_DOWNLOAD_DATA:
-		{
-			receiveMapData (message);
-			break;
-		}
-		case MU_MSG_CANCELED_MAP_DOWNLOAD:
-		{
-			canceledMapDownload (message);
-			break;
-		}
-		case MU_MSG_FINISHED_MAP_DOWNLOAD:
-		{
-			finishedMapDownload (message);
-			break;
-		}
-
-		case MU_MSG_GO:
-		{
-			saveOptions();
-			for (unsigned int i = 0; i < players.size(); i++)
-			{
-				cPlayer* player = new cPlayer (players[i]->name, OtherData.colors[players[i]->color], players[i]->nr, players[i]->socket);
-				gameDataContainer.players.push_back (player);
-			}
-			if (!saveGameString.empty())
-			{
-				ActiveMenu = NULL;
-				gameDataContainer.runGame (network, actPlayer->nr);
-			}
-			else
-			{
-				bool started = false;
-				while (!started)
-				{
-					if (gameDataContainer.settings->clans == SETTING_CLANS_ON)
-					{
-						cClanSelectionMenu clanMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], true);
-						clanMenu.show();
-					}
-
-					cStartupHangarMenu hangarMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], gameDataContainer.settings->clans == SETTING_CLANS_OFF) ;
-					if (hangarMenu.show() == 0) started = true;
-				}
-			}
-			end = true;
-		}
-		break;
-		case GAME_EV_REQ_RECON_IDENT:
-		{
-			cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Multiplayer~Reconnect"));
-			if (yesNoDialog.show() == 0)
-			{
-				sendGameIdentification (*network, *actPlayer, message->popInt16());
-			}
-			else
-			{
-				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
-				network->close (0);
-			}
-			draw();
-		}
-		break;
-		case GAME_EV_RECONNECT_ANSWER:
-		{
-			if (message->popBool())
-			{
-				actPlayer->nr = message->popInt16();
-				actPlayer->color = message->popInt16();
-				cMap* Map = new cMap;
-				if (!Map->LoadMap (message->popString())) break;
-				gameDataContainer.map = Map;
-
-				int playerCount = message->popInt16();
-
-				gameDataContainer.players.push_back (new cPlayer (actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr));
-				while (playerCount > 1)
-				{
-					string playername = message->popString();
-					int playercolor = message->popInt16();
-					int playernr = message->popInt16();
-					gameDataContainer.players.push_back (new cPlayer (playername, OtherData.colors[playercolor], playernr));
-					playerCount--;
-				}
-
-				bool changed = false;
-				int size = (int) gameDataContainer.players.size();
-				do
-				{
-					changed = false;
-					for (int i = 0; i < size - 1; i++)
-					{
-						if (gameDataContainer.players[i]->Nr > gameDataContainer.players[i + 1]->Nr)
-						{
-							cPlayer* temp = gameDataContainer.players[i + 1];
-							gameDataContainer.players[i + 1] = gameDataContainer.players[i];
-							gameDataContainer.players[i] = temp;
-							changed = true;
-						}
-					}
-					size--;
-				}
-				while (changed && size);
-
-				ActiveMenu = NULL;
-				gameDataContainer.runGame (network, actPlayer->nr, true);
-				end = true;
-			}
-			else
-			{
-				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Reconnect_Forbidden"));
-				chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Connection_Terminated"));
-				network->close (0);
-				draw();
-			}
-		}
-		break;
+		case MU_MSG_CHAT: handleNetMessage_MU_MSG_CHAT (message); break;
+		case TCP_CLOSE: handleNetMessage_TCP_CLOSE (message); break;
+		case MU_MSG_REQ_IDENTIFIKATION: handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (message); break;
+		case MU_MSG_PLAYERLIST: handleNetMessage_MU_MSG_PLAYERLIST (message); break;
+		case MU_MSG_OPTINS: handleNetMessage_MU_MSG_OPTINS (message); break;
+		case MU_MSG_START_MAP_DOWNLOAD: initMapDownload (message); break;
+		case MU_MSG_MAP_DOWNLOAD_DATA: receiveMapData (message); break;
+		case MU_MSG_CANCELED_MAP_DOWNLOAD: canceledMapDownload (message); break;
+		case MU_MSG_FINISHED_MAP_DOWNLOAD: finishedMapDownload (message); break;
+		case MU_MSG_GO: handleNetMessage_MU_MSG_GO (message); break;
+		case GAME_EV_REQ_RECON_IDENT: handleNetMessage_GAME_EV_REQ_RECON_IDENT (message); break;
+		case GAME_EV_RECONNECT_ANSWER: handleNetMessage_GAME_EV_RECONNECT_ANSWER (message); break;
+		default: break;
 	}
 }
 
@@ -4107,7 +4143,7 @@ cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cV
 	backButton->move (position.x + 300, position.y + 452);
 	backButton->setReleasedFunction (&cMenu::cancelReleased);
 
-	selectionList->move (position.x + 477,  position.y + 48);
+	selectionList->move (position.x + 477, position.y + 48);
 	selectionList->resize (154, 390);
 	selListUpButton->move (position.x + 471, position.y + 440);
 	selListDownButton->move (position.x + 491, position.y + 440);
@@ -4513,7 +4549,7 @@ void cUpgradeHangarMenu::setCredits (int credits_)
 }
 
 //------------------------------------------------------------------------------
-int cUpgradeHangarMenu::getCredits()
+int cUpgradeHangarMenu::getCredits() const
 {
 	return credits;
 }
@@ -4595,23 +4631,27 @@ void cUpgradeMenu::generateSelectionList()
 	build = upgradeFilter->BuildingIsChecked();
 	tnt = upgradeFilter->TNTIsChecked();
 
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+	if (tank || ship || plane)
 	{
-		if (!tank && !ship && !plane) continue;
-		sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
-		if (tnt && !data.canAttack) continue;
-		if (data.factorAir > 0 && !plane) continue;
-		if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
-		if (data.factorGround > 0 && !tank) continue;
-		selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
+		{
+			sUnitData& data = UnitsData.getVehicle (i, player->getClan()).data;
+			if (tnt && !data.canAttack) continue;
+			if (data.factorAir > 0 && !plane) continue;
+			if (data.factorSea > 0 && data.factorGround == 0 && !ship) continue;
+			if (data.factorGround > 0 && !tank) continue;
+			selectionList->addUnit (data.ID, player, unitUpgrades[i]);
+		}
 	}
 
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+	if (build)
 	{
-		if (!build) continue;
-		sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
-		if (tnt && !data.canAttack) continue;
-		selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
+		{
+			sUnitData& data = UnitsData.getBuilding (i, player->getClan()).data;
+			if (tnt && !data.canAttack) continue;
+			selectionList->addUnit (data.ID, player, unitUpgrades[UnitsData.getNrVehicles() + i]);
+		}
 	}
 
 	if (selectOldSelectedUnit)
@@ -4880,8 +4920,7 @@ void cStorageMenu::resetInfos()
 	if ((offset + 1) * maxX * 2 < unitData.storageUnitsMax && (offset + 1) * maxX * 2 < (int) storageList.size()) downButton->setLocked (false);
 	else downButton->setLocked (true);
 
-	if (offset > 0) upButton->setLocked (false);
-	else upButton->setLocked (true);
+	upButton->setLocked (offset <= 0);
 }
 
 //------------------------------------------------------------------------------
@@ -5323,17 +5362,17 @@ void cMineManagerMenu::barReleased (void* parent)
 	cMineManagerMenu* menu = reinterpret_cast<cMineManagerMenu*> (parent);
 	if (menu->metalBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int metal =  Round ( (mouse->x - menu->metalBars[0]->getPosition().x) * (menu->subBase.getMaxMetalProd() / (float) menu->metalBars[0]->getPosition().w));
+		int metal = Round ((mouse->x - menu->metalBars[0]->getPosition().x) * (menu->subBase.getMaxMetalProd() / (float) menu->metalBars[0]->getPosition().w));
 		menu->subBase.setMetalProd (metal);
 	}
 	else if (menu->oilBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int oil =  Round ( (mouse->x - menu->oilBars[0]->getPosition().x) * (menu->subBase.getMaxOilProd() / (float) menu->oilBars[0]->getPosition().w));
+		int oil = Round ((mouse->x - menu->oilBars[0]->getPosition().x) * (menu->subBase.getMaxOilProd() / (float) menu->oilBars[0]->getPosition().w));
 		menu->subBase.setOilProd (oil);
 	}
 	else if (menu->goldBars[0]->overItem (mouse->x, mouse->y))
 	{
-		int gold =  Round ( (mouse->x - menu->goldBars[0]->getPosition().x) * (menu->subBase.getMaxGoldProd() / (float) menu->goldBars[0]->getPosition().w));
+		int gold = Round ((mouse->x - menu->goldBars[0]->getPosition().x) * (menu->subBase.getMaxGoldProd() / (float) menu->goldBars[0]->getPosition().w));
 		menu->subBase.setGoldProd (gold);
 	}
 	menu->setBarValues();
@@ -5474,30 +5513,21 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 	if (vehicle && vehicle->Loaded)
 	{
 		//find storing unit
-		for (cVehicle* storingVehicle = vehicle->owner->VehicleList;
-			 storingVehicle;
-			 storingVehicle = storingVehicle->next)
+		cVehicle* storingVehicle = vehicle->getContainerVehicle();
+		if (storingVehicle)
 		{
-			if (Contains (storingVehicle->storedUnits, vehicle))
-			{
-				client->gameGUI.selectUnit (storingVehicle);
-				storingVehicle->center (client->gameGUI);
-				return;
-			}
+			client->gameGUI.selectUnit (storingVehicle);
+			storingVehicle->center (client->gameGUI);
+			return;
 		}
 
-		for (cBuilding* storingBuilding = vehicle->owner->BuildingList;
-			 storingBuilding;
-			 storingBuilding = storingBuilding->next)
+		cBuilding* storingBuilding = vehicle->getContainerBuilding();
+		if (storingBuilding)
 		{
-			if (Contains (storingBuilding->storedUnits, vehicle))
-			{
-				client->gameGUI.selectUnit (storingBuilding);
-				storingBuilding->center (client->gameGUI);
-				return;
-			}
+			client->gameGUI.selectUnit (storingBuilding);
+			storingBuilding->center (client->gameGUI);
+			return;
 		}
-
 		return;
 	}
 
