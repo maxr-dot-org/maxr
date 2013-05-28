@@ -485,7 +485,7 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start)
 //--------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit(cUnit* start)
 {
-	if (start == 0)
+	if (start == NULL || start->owner != this)
 	{
 		cVehicle* nextVehicle = getNextVehicle (NULL);
 		if (nextVehicle) return nextVehicle;
@@ -560,7 +560,7 @@ cBuilding* cPlayer::getPrevMiningStation (cBuilding* start)
 //--------------------------------------------------------------------------
 cUnit* cPlayer::getPrevUnit (cUnit* start)
 {
-	if (start == 0)
+	if (start == NULL || start->owner != this)
 	{
 		cVehicle* prevVehicle = getPrevVehicle (NULL);
 		if (prevVehicle) return prevVehicle;
