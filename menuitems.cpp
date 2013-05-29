@@ -1498,6 +1498,15 @@ cMenuUnitListItem* cMenuUnitsList::getItem (int index)
 	else return NULL;
 }
 
+cMenuUnitListItem* cMenuUnitsList::getItemByID (sID id)
+{
+	for (size_t i = 0; i != unitsList.size(); ++i)
+	{
+		if (unitsList[i]->getUnitID() == id) return unitsList[i];
+	}
+	return NULL;
+}
+
 cMenuUnitListItem* cMenuUnitsList::getSelectedUnit()
 {
 	return selectedUnit;

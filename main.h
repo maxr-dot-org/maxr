@@ -387,6 +387,9 @@ public:
 	unsigned int getNrVehicles() const;
 	unsigned int getNrBuildings() const;
 
+	const sID& getConstructorID() const { return constructorID; }
+	const sID& getEngineerID() const { return engineerID; }
+	const sID& getSurveyorID() const { return surveyorID; }
 
 	SDL_Surface* dirt_small_org;
 	SDL_Surface* dirt_small;
@@ -411,6 +414,10 @@ private:
 	std::vector<std::vector<sVehicle> > clanUnitDataVehicles; // contains the modified versions for the clans
 	std::vector<std::vector<sBuilding> > clanUnitDataBuildings; // cotains the modified versions for the clans
 	bool initializedClanUnitData;
+
+	sID constructorID;
+	sID engineerID;
+	sID surveyorID;
 
 } EX UnitsData;
 

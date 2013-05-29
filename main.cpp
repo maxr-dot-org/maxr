@@ -656,8 +656,8 @@ bool sID::operator == (const sID& ID) const
 }
 
 //----------------------------------------------------------------------------------
-cUnitsData::cUnitsData()
-	: initializedClanUnitData (false)
+cUnitsData::cUnitsData() :
+	initializedClanUnitData (false)
 {
 }
 
@@ -695,6 +695,48 @@ unsigned int cUnitsData::getNrVehicles() const
 unsigned int cUnitsData::getNrBuildings() const
 {
 	return (int) building.size();
+}
+
+static int getConstructorIndex()
+{
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
+	{
+		const sVehicle &vehicle = UnitsData.vehicle[i];
+
+		if (vehicle.data.canBuild.compare ("BigBuilding") == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+static int getEngineerIndex()
+{
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
+	{
+		const sVehicle &vehicle = UnitsData.vehicle[i];
+
+		if (vehicle.data.canBuild.compare ("SmallBuilding") == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+static int getSurveyorIndex()
+{
+	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
+	{
+		const sVehicle &vehicle = UnitsData.vehicle[i];
+
+		if (vehicle.data.canSurvey)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 //----------------------------------------------------------------------------------
@@ -763,6 +805,19 @@ void cUnitsData::initializeClanUnitData()
 		}
 		clanUnitDataBuildings.push_back (clanListBuildings);
 	}
+
+	int constructorIndex = getConstructorIndex();
+	int engineerIndex = getEngineerIndex();
+	int surveyorIndex = getSurveyorIndex();
+
+	assert (constructorIndex != -1);
+	assert (engineerIndex != -1);
+	assert (surveyorIndex != -1);
+
+	constructorID = vehicle[constructorIndex].data.ID;
+	engineerID = vehicle[engineerIndex].data.ID;
+	surveyorID = vehicle[surveyorIndex].data.ID;
+
 	initializedClanUnitData = true;
 }
 

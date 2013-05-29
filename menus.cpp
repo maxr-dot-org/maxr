@@ -939,15 +939,87 @@ cSinglePlayerMenu::cSinglePlayerMenu()
 	menuItems.push_back (backButton);
 }
 
+namespace
+{
+
+int settingSelection (cGameDataContainer& gameDataContainer)
+{
+	cSettingsMenu settingsMenu (*gameDataContainer.settings);
+
+	if (settingsMenu.show() == 1) return -1;
+	*gameDataContainer.settings = settingsMenu.getSettings();
+	return 1;
+}
+
+int planetSelection (cTCP* network, cGameDataContainer& gameDataContainer)
+{
+	cPlanetsSelectionMenu planetSelectionMenu (network, &gameDataContainer);
+	if (planetSelectionMenu.show() == 1) return -1;
+	return 1;
+}
+
+int clanSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player, bool noReturn)
+{
+	if (gameDataContainer.settings->clans != SETTING_CLANS_ON) return 0;
+
+	cClanSelectionMenu clanMenu (network, &gameDataContainer, &player, noReturn);
+	if (clanMenu.show() == 1)
+	{
+		player.setClan (-1);
+		return -1;
+	}
+	player.setClan (clanMenu.getClan());
+	return 1;
+}
+
+int landingUnitsSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player, bool noReturn)
+{
+	cStartupHangarMenu startupHangarMenu (network, &gameDataContainer, &player, noReturn);
+
+	if (startupHangarMenu.show() == 1) return -1;
+	return 1;
+}
+
+int landingPosSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player)
+{
+	cLandingMenu landingMenu (network, &gameDataContainer, &player);
+	if (landingMenu.show() == 1) return -1;
+	return 1;
+}
+
+}
+
 //------------------------------------------------------------------------------
 void cSinglePlayerMenu::newGameReleased (void* parent)
 {
 	cSinglePlayerMenu* menu = reinterpret_cast<cSinglePlayerMenu*> (parent);
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
-	cSettingsMenu settingsMenu (&gameDataContainer);
-	settingsMenu.show();
-	menu->draw();
+	gameDataContainer.settings = new sSettings;
+	cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
+	gameDataContainer.players.push_back (player);
+
+	int lastDir = 1;
+	int step = 0;
+	cTCP* network = NULL;
+	while (true)
+	{
+		int dir = 0;
+		switch (step)
+		{
+			case -1: menu->draw(); return;
+			case 0: dir = settingSelection (gameDataContainer); break;
+			case 1: dir = planetSelection (network, gameDataContainer); break;
+			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
+			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
+			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
+			case 5: gameDataContainer.runGame (network, player->Nr); menu->draw(); return;
+			default: break;
+		}
+		step += dir;
+		if (dir == 0) step += lastDir;
+		else lastDir = dir;
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -1054,12 +1126,10 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) :
+cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	cMenu (LoadPCX (GFXOD_OPTIONS)),
-	gameDataContainer (gameDataContainer_)
+	settings (settings_)
 {
-	if (gameDataContainer->settings) settings = (*gameDataContainer->settings);
-
 	int iCurrentLine = 57;
 	int iLineHeight = 16; //pixels after we start a new line
 	// black window screen on gfx is 510 width.
@@ -1077,7 +1147,7 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) :
 
 	// Back button
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
-	backButton->setReleasedFunction (&backReleased);
+	backButton->setReleasedFunction (&cMenu::cancelReleased);
 	menuItems.push_back (backButton);
 
 	// Resources field
@@ -1218,38 +1288,10 @@ cSettingsMenu::cSettingsMenu (cGameDataContainer* gameDataContainer_) :
 }
 
 //------------------------------------------------------------------------------
-void cSettingsMenu::backReleased (void* parent)
-{
-	cSettingsMenu* menu = reinterpret_cast<cSettingsMenu*> (parent);
-	menu->gameDataContainer->settings = NULL;
-	menu->terminate = true;
-}
-
-//------------------------------------------------------------------------------
 void cSettingsMenu::okReleased (void* parent)
 {
 	cSettingsMenu* menu = reinterpret_cast<cSettingsMenu*> (parent);
 	menu->updateSettings();
-	delete menu->gameDataContainer->settings;
-	menu->gameDataContainer->settings = new sSettings (menu->settings);
-
-	switch (menu->gameDataContainer->type)
-	{
-		case GAME_TYPE_SINGLE:
-		{
-			cPlanetsSelectionMenu planetSelectionMenu (NULL, menu->gameDataContainer);
-			if (planetSelectionMenu.show() == 1)
-			{
-				menu->draw();
-				return;
-			}
-		}
-		break;
-		case GAME_TYPE_HOTSEAT:
-			break;
-		case GAME_TYPE_TCPIP:
-			break;
-	}
 	menu->end = true;
 }
 
@@ -1516,51 +1558,14 @@ void cPlanetsSelectionMenu::backReleased (void* parent)
 void cPlanetsSelectionMenu::okReleased (void* parent)
 {
 	cPlanetsSelectionMenu* menu = reinterpret_cast<cPlanetsSelectionMenu*> (parent);
-	if (menu->selectedMapIndex >= 0 && menu->selectedMapIndex < (int) menu->maps->size())
-	{
-		menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
-		menu->gameDataContainer->map->LoadMap ((*menu->maps) [menu->selectedMapIndex]);
-		if (!menu->gameDataContainer->map) return;
+	if (menu->selectedMapIndex < 0 || menu->selectedMapIndex >= (int) menu->maps->size()) return;
 
-		switch (menu->gameDataContainer->type)
-		{
-			case GAME_TYPE_SINGLE:
-			{
-				cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
-				menu->gameDataContainer->players.push_back (player);
+	delete menu->gameDataContainer->map;
+	menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
+	menu->gameDataContainer->map->LoadMap ((*menu->maps) [menu->selectedMapIndex]);
+	if (!menu->gameDataContainer->map) return;
 
-				bool started = false;
-				while (!started)
-				{
-					if (menu->gameDataContainer->settings->clans == SETTING_CLANS_ON)
-					{
-						cClanSelectionMenu clanMenu (menu->network, menu->gameDataContainer, player, false);
-						if (clanMenu.show() != 0)
-						{
-							menu->draw();
-							menu->gameDataContainer->players.erase (menu->gameDataContainer->players.begin());
-							return;
-						}
-					}
-
-					cStartupHangarMenu startupHangarMenu (menu->network, menu->gameDataContainer, player, false);
-					if (startupHangarMenu.show() == 0) started = true;
-					else if (menu->gameDataContainer->settings->clans == SETTING_CLANS_OFF)
-					{
-						menu->draw();
-						menu->gameDataContainer->players.erase (menu->gameDataContainer->players.begin());
-						return;
-					}
-				}
-			}
-			break;
-			case GAME_TYPE_HOTSEAT:
-				break;
-			case GAME_TYPE_TCPIP:
-				break;
-		}
-		menu->end = true;
-	}
+	menu->end = true;
 }
 
 //------------------------------------------------------------------------------
@@ -1613,11 +1618,10 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
 	, network(network_)
 	, gameDataContainer (gameDataContainer_)
-	, player (player)
 	, clan (player->getClan() >= 0 ? player->getClan() : 0)
 {
 	okButton = new cMenuButton (position.x + 390, position.y + 440, lngPack.i18n ("Text~Button~OK"));
-	okButton->setReleasedFunction (&okReleased);
+	okButton->setReleasedFunction (&cMenu::doneReleased);
 	menuItems.push_back (okButton);
 
 	backButton = new cMenuButton (position.x + 50, position.y + 440, lngPack.i18n ("Text~Button~Back"));
@@ -1668,14 +1672,6 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	clanShortDescription = new cMenuLabel (position.x + 47, position.y + 349, "");
 	menuItems.push_back (clanShortDescription);
 	updateClanDescription();
-}
-
-//-----------------------------------------------------------------------------------
-void cClanSelectionMenu::okReleased (void* parent)
-{
-	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
-	menu->player->setClan (menu->clan);
-	menu->end = true;
 }
 
 //-----------------------------------------------------------------------------------
@@ -1960,9 +1956,6 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 	materialBarLabel->setCentered (true);
 	menuItems.push_back (materialBarLabel);
 
-	goldBar->setMaximalValue (credits);
-	goldBar->setCurrentValue (credits);
-
 	materialBarUpButton = new cMenuButton (position.x + 413, position.y + 424, "", cMenuButton::BUTTON_TYPE_ARROW_UP_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 	materialBarUpButton->setReleasedFunction (&materialBarUpReleased);
 	menuItems.push_back (materialBarUpButton);
@@ -1973,28 +1966,79 @@ cStartupHangarMenu::cStartupHangarMenu (cTCP* network_, cGameDataContainer* game
 
 	generateSelectionList();
 
+	goldBar->setMaximalValue (credits);
 	generateInitialLandingUnits();
+	addPlayerLandingUnits (*player);
+	goldBar->setCurrentValue (credits);
+
 	if (selectionList->getSize() > 0) setSelectedUnit (selectionList->getItem (0));
+}
+
+class UnitWithSameIdMoreCargo
+{
+public:
+	UnitWithSameIdMoreCargo (sID id, int cargo) : id(id), cargo(cargo) {}
+	bool operator () (const sLandingUnit& it) const
+	{
+		return it.unitID == id && it.cargo >= cargo;
+	}
+private:
+	sID id;
+	int cargo;
+};
+
+void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
+{
+	if (gameDataContainer->landingUnits.empty()) return;
+	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[player.Nr];
+
+	if (units.empty()) return;
+	std::vector<sLandingUnit>::iterator it;
+	for (int i = 0; i != secondList->getSize(); ++i)
+	{
+		cMenuUnitListItem& unit = *secondList->getItem (i);
+		UnitWithSameIdMoreCargo filter (unit.getUnitID(), unit.getResValue());
+		it = std::find_if(units.begin(), units.end(), filter);
+		if (it == units.end()) continue;
+
+		credits -= (it->cargo - unit.getResValue()) / 5;
+		unit.setResValue (it->cargo);
+		units.erase (it);
+	}
+
+	for (size_t i = 0; i != units.size(); ++i)
+	{
+		cMenuUnitListItem* selectedUnit = selectionList->getItemByID (units[i].unitID);
+		cMenuUnitListItem* unit = secondList->addUnit (units[i].unitID, &player, selectedUnit->getUpgrades());
+
+		credits -= unit->getUnitID().getVehicle (&player)->data.buildCosts;
+		credits -= units[i].cargo / 5;
+		unit->setResValue (units[i].cargo);
+	}
 }
 
 void cStartupHangarMenu::generateInitialLandingUnits()
 {
 	if (gameDataContainer->settings->bridgeHead != SETTING_BRIDGEHEAD_DEFINITE) return;
 
-	for (int i = 0; i < selectionList->getSize(); i++)
-	{
-		const sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
-		if (!vehicle) continue;
-		if (vehicle->data.canBuild.compare ("BigBuilding") == 0 || vehicle->data.canBuild.compare ("SmallBuilding") == 0 || vehicle->data.canSurvey)
-		{
-			cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-			if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
-				unit->setMinResValue (40);
-			else if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
-				unit->setMinResValue (20);
-			unit->setFixed (true);
-		}
-	}
+	const sID& constructorID = UnitsData.getConstructorID();
+	const sID& engineerID = UnitsData.getEngineerID();
+	const sID& surveyorID = UnitsData.getSurveyorID();
+
+	sUnitUpgrade* constructorUpgrades = selectionList->getItemByID (constructorID)->getUpgrades();
+	sUnitUpgrade* engineerUpgrades = selectionList->getItemByID (engineerID)->getUpgrades();
+	sUnitUpgrade* surveyorUpgrades = selectionList->getItemByID (surveyorID)->getUpgrades();
+
+	cMenuUnitListItem* constructor = secondList->addUnit (constructorID, player, constructorUpgrades);
+	constructor->setMinResValue (40);
+	constructor->setFixed (true);
+
+	cMenuUnitListItem* engineer = secondList->addUnit (engineerID, player, engineerUpgrades);
+	engineer->setMinResValue (20);
+	engineer->setFixed (true);
+
+	cMenuUnitListItem* surveyor = secondList->addUnit (surveyorID, player, surveyorUpgrades);
+	surveyor->setFixed (true);
 
 	if (gameDataContainer->settings->clans != SETTING_CLANS_ON || player->getClan() != 7) return;
 	// Additional Units for Axis Inc. Clan
@@ -2024,27 +2068,16 @@ void cStartupHangarMenu::generateInitialLandingUnits()
 		numAddEngineers = 3;
 		numAddConstructors = 2;
 	}
-	for (int i = 0; i < selectionList->getSize(); i++)
-	{
-		sVehicle* vehicle = selectionList->getItem (i)->getUnitID().getVehicle (player);
-		if (!vehicle) continue;
 
-		if (vehicle->data.canBuild.compare ("BigBuilding") == 0)
-		{
-			for (int j = 0; j < numAddConstructors; j++)
-			{
-				cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-				unit->setFixed (true);
-			}
-		}
-		if (vehicle->data.canBuild.compare ("SmallBuilding") == 0)
-		{
-			for (int j = 0; j < numAddEngineers; j++)
-			{
-				cMenuUnitListItem* unit = secondList->addUnit (vehicle->data.ID, player, selectionList->getItem (i)->getUpgrades());
-				unit->setFixed (true);
-			}
-		}
+	for (int i = 0; i != numAddConstructors; ++i)
+	{
+		cMenuUnitListItem* constructor = secondList->addUnit (constructorID, player, constructorUpgrades);
+		constructor->setFixed (true);
+	}
+	for (int i = 0; i != numAddEngineers; ++i)
+	{
+		cMenuUnitListItem* engineer = secondList->addUnit (engineerID, player, engineerUpgrades);
+		engineer->setFixed (true);
 	}
 }
 
@@ -2118,15 +2151,8 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		sendClan (*menu->network, menu->player->getClan(), menu->player->Nr, menu->gameDataContainer->isServer);
 		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr, menu->gameDataContainer->isServer);
 	}
-
 	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer);
 
-	cLandingMenu landingMenu (menu->network, menu->gameDataContainer, menu->player);
-	if (landingMenu.show() == 1)
-	{
-		menu->draw();
-		return;
-	}
 	menu->end = true;
 }
 
@@ -2575,8 +2601,6 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			mouseMoved (this); //update cursor
 			break;
 		case MU_MSG_ALL_LANDED:
-			ActiveMenu = NULL;
-			gameDataContainer->runGame (network, player->Nr);
 			end = true;
 			break;
 	}
@@ -2589,11 +2613,7 @@ void cLandingMenu::hitPosition()
 	{
 		case GAME_TYPE_SINGLE:
 		{
-			draw();
 			gameDataContainer->landData.push_back (new sClientLandData (landData));
-
-			ActiveMenu = NULL;
-			gameDataContainer->runGame (network, 0);
 			end = true;
 		}
 		break;
@@ -2934,6 +2954,28 @@ void cNetworkMenu::setDefaultPort (void* parent)
 }
 
 //-----------------------------------------------------------------------------------------
+void cNetworkMenu::runGamePreparation (cPlayer& player)
+{
+	int step = 0;
+	int lastDir = 1;
+	while (true)
+	{
+		int dir = 0;
+		switch (step)
+		{
+			case 0: dir = clanSelection (network, gameDataContainer, player, true); break;
+			case 1: dir = landingUnitsSelection (network, gameDataContainer, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF); break;
+			case 2: dir = landingPosSelection (network, gameDataContainer, player); break;
+			case 3: gameDataContainer.runGame (network, player.Nr); return;
+			default: break;
+		}
+		step += dir;
+		if (dir == 0) step += lastDir;
+		else lastDir = dir;
+	}
+}
+
+//-----------------------------------------------------------------------------------------
 // cNetworkHostMenu implementation
 //-----------------------------------------------------------------------------------------
 
@@ -3050,26 +3092,16 @@ void cNetworkHostMenu::okReleased (void* parent)
 	}
 	else
 	{
-		sendGo (*menu->network);
+	sendGo (*menu->network);
 
-		for (unsigned int i = 0; i < menu->players.size(); i++)
-		{
-			cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
-			menu->gameDataContainer.players.push_back (player);
-		}
+	for (unsigned int i = 0; i < menu->players.size(); i++)
+	{
+		cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
+		menu->gameDataContainer.players.push_back (player);
+	}
+	cPlayer& localPlayer = *menu->gameDataContainer.players[0];
 
-		bool started = false;
-		while (!started)
-		{
-			if (menu->gameDataContainer.settings->clans == SETTING_CLANS_ON)
-			{
-				cClanSelectionMenu clanMenu (menu->network, &menu->gameDataContainer, menu->gameDataContainer.players[0], true);
-				clanMenu.show();
-			}
-
-			cStartupHangarMenu hangarMenu (menu->network, &menu->gameDataContainer, menu->gameDataContainer.players[0], menu->gameDataContainer.settings->clans == SETTING_CLANS_OFF);
-			if (hangarMenu.show() == 0) started = true;
-		}
+	menu->runGamePreparation (localPlayer);
 	}
 	menu->end = true;
 }
@@ -3090,8 +3122,15 @@ void cNetworkHostMenu::mapReleased (void* parent)
 void cNetworkHostMenu::settingsReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
-	cSettingsMenu settingsMenu (&menu->gameDataContainer);
-	settingsMenu.show();
+	if (menu->gameDataContainer.settings == NULL) menu->gameDataContainer.settings = new sSettings;
+
+	cSettingsMenu settingsMenu (*menu->gameDataContainer.settings);
+	if (settingsMenu.show() == 0) *menu->gameDataContainer.settings = settingsMenu.getSettings();
+	else
+	{
+		delete menu->gameDataContainer.settings;
+		menu->gameDataContainer.settings = NULL;
+	}
 	menu->showSettingsText();
 	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
 	menu->draw();
@@ -3670,18 +3709,8 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	}
 	else
 	{
-		bool started = false;
-		while (!started)
-		{
-			if (gameDataContainer.settings->clans == SETTING_CLANS_ON)
-			{
-				cClanSelectionMenu clanMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], true);
-				clanMenu.show();
-			}
-
-			cStartupHangarMenu hangarMenu (network, &gameDataContainer, gameDataContainer.players[actPlayer->nr], gameDataContainer.settings->clans == SETTING_CLANS_OFF) ;
-			if (hangarMenu.show() == 0) started = true;
-		}
+		cPlayer& localPlayer = *gameDataContainer.players[actPlayer->nr];
+		this->runGamePreparation (localPlayer);
 	}
 	end = true;
 }

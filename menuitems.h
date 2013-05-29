@@ -782,6 +782,7 @@ public:
 
 	int getSize() const;
 	cMenuUnitListItem* getItem (int index);
+	cMenuUnitListItem* getItemByID (sID id);
 	cMenuUnitListItem* getSelectedUnit();
 
 	void resize (int w, int h);

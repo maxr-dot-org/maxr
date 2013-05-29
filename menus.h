@@ -446,7 +446,6 @@ private:
 class cSettingsMenu : public cMenu
 {
 protected:
-	cGameDataContainer* gameDataContainer;
 	sSettings settings;
 
 	AutoPtr<cMenuLabel>::type titleLabel;
@@ -477,9 +476,9 @@ protected:
 
 	void updateSettings();
 public:
-	cSettingsMenu (cGameDataContainer* gameDataContainer_);
+	explicit cSettingsMenu (const sSettings& settings_);
+	const sSettings& getSettings() const { return settings; }
 private:
-	static void backReleased (void* parent);
 	static void okReleased (void* parent);
 };
 
@@ -552,6 +551,7 @@ protected:
 public:
 	cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn);
 
+	int getClan() const { return clan; }
 private:
 	virtual void handleNetMessage (cNetMessage* message);
 
@@ -679,6 +679,7 @@ protected:
 
 	void updateUnitData();
 	void generateInitialLandingUnits();
+	void addPlayerLandingUnits (cPlayer& player);
 
 public:
 	cStartupHangarMenu (cTCP* network, cGameDataContainer* gameDataContainer_, cPlayer* player_, bool noReturn);
@@ -788,6 +789,7 @@ protected:
 	void saveOptions();
 	void changePlayerReadyState (sMenuPlayer* player);
 	bool enteredCommand (const std::string& text);
+	void runGamePreparation (cPlayer& player);
 
 public:
 	cNetworkMenu();
