@@ -24,6 +24,8 @@
 #include "network.h"
 #include "ringbuffer.h"
 
+class cClient;
+class cMenu;
 class cNetMessage;
 
 /**
@@ -46,9 +48,9 @@ public:
 	 * Should be the only functions which polls the event queues.
 	 * @author alzi alias DoctorDeath
 	 */
-	void HandleEvents();
+	void HandleEvents (cClient* client, cMenu* activeMenu);
 
-	void handleNetMessages();
+	void handleNetMessages (cClient* client, cMenu* activeMenu);
 
 private:
 	cRingbuffer<cNetMessage*> eventQueue;

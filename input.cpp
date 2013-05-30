@@ -41,14 +41,14 @@ cInput::cInput() :
 	SDL_EnableKeyRepeat (SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
 
-void cInput::inputkey (SDL_KeyboardEvent& key)
+void cInput::inputkey (cMenu* activeMenu, SDL_KeyboardEvent& key)
 {
 	// give the key to the active menu
 	// But do not send events to a menu, after an event triggered the termination
-	// the user wouldn't expects the menu to execute further events after klicking the exit button
-	if (ActiveMenu && !ActiveMenu->exiting())
+	// the user wouldn't expects the menu to execute further events after clicking the exit button
+	if (activeMenu && !activeMenu->exiting())
 	{
-		ActiveMenu->handleKeyInput (key, getUTF16Char (key.keysym.unicode));
+		activeMenu->handleKeyInput (key, getUTF16Char (key.keysym.unicode));
 	}
 }
 
@@ -85,7 +85,7 @@ bool cInput::IsDoubleClicked()
 }
 
 
-void cInput::inputMouseButton (SDL_MouseButtonEvent& button)
+void cInput::inputMouseButton (cMenu* activeMenu, SDL_MouseButtonEvent& button)
 {
 	MouseState.x = button.x;
 	MouseState.y = button.y;
@@ -144,10 +144,10 @@ void cInput::inputMouseButton (SDL_MouseButtonEvent& button)
 		else if (button.button == SDL_BUTTON_WHEELDOWN) MouseState.wheelDown = false;
 	}
 
-	if (ActiveMenu && !ActiveMenu->exiting())   //do not send events to a menu, after an event triggered the termination
+	if (activeMenu && !activeMenu->exiting())   //do not send events to a menu, after an event triggered the termination
 	{
 		//the user wouldn't expects the menu to execute further events after klicking the exit button
-		ActiveMenu->handleMouseInput (MouseState);
+		activeMenu->handleMouseInput (MouseState);
 	}
 }
 

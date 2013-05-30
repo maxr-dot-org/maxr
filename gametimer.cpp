@@ -172,7 +172,7 @@ void cGameTimerClient::run ()
 {
 	while (popEvent ())
 	{
-		EventHandler->handleNetMessages();
+		EventHandler->handleNetMessages (client, NULL);
 
 		if (nextTickAllowed ())
 		{

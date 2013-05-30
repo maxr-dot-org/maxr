@@ -633,8 +633,8 @@ int cMenu::show()
 
 	while (!end)
 	{
-		EventHandler->HandleEvents();
 		cClient* client = Client;
+		EventHandler->HandleEvents (client, ActiveMenu);
 		if (client)
 		{
 			client->gameTimer.run ();
@@ -674,7 +674,7 @@ int cMenu::show()
 
 		if (terminate)
 		{
-			EventHandler->HandleEvents(); //flush event queue before exiting menu
+			EventHandler->HandleEvents (Client, ActiveMenu); //flush event queue before exiting menu
 
 			if (lastActiveMenu) lastActiveMenu->returnToCallback();
 			else ActiveMenu = NULL;
@@ -682,7 +682,7 @@ int cMenu::show()
 		}
 	}
 
-	EventHandler->HandleEvents(); //flush event queue before exiting menu
+	EventHandler->HandleEvents (Client, ActiveMenu); //flush event queue before exiting menu
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	else ActiveMenu = NULL;

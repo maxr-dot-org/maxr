@@ -765,7 +765,7 @@ int cGameGUI::show()
 
 	while (!end)
 	{
-		EventHandler->HandleEvents();
+		EventHandler->HandleEvents (client, ActiveMenu);
 		client->gameTimer.run();
 
 		mouse->GetPos();
@@ -832,7 +832,7 @@ int cGameGUI::show()
 
 		if (terminate)
 		{
-			EventHandler->HandleEvents(); //flush event queue before exiting menu
+			EventHandler->HandleEvents (client, ActiveMenu); //flush event queue before exiting menu
 
 			if (lastActiveMenu) lastActiveMenu->returnToCallback();
 			return 1;
@@ -849,7 +849,7 @@ int cGameGUI::show()
 
 	makePanel (false);
 
-	EventHandler->HandleEvents(); //flush event queue before exiting menu
+	EventHandler->HandleEvents (client, ActiveMenu); //flush event queue before exiting menu
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	return 0;
