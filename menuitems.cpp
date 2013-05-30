@@ -1190,7 +1190,7 @@ void cMenuRadioGroup::clicked (void* parent)
 	if (click) click (parent);
 }
 
-cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sID unitID_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
@@ -1200,10 +1200,10 @@ cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade
 	upgrades (upgrades_),
 	fixedResValue (fixedResValue_)
 {
-	init (Client);
+	init (client);
 }
 
-cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
+cMenuUnitListItem::cMenuUnitListItem (const cClient* client, sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
 	cMenuItem (0, 0),
 	displayType (displayType_),
 	parentList (parent),
@@ -1214,7 +1214,7 @@ cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUn
 {
 	if (unitData != 0)
 		unitID = unitData->ID;
-	init (Client);
+	init (client);
 }
 
 void cMenuUnitListItem::init (const cClient* client)
@@ -1227,7 +1227,7 @@ void cMenuUnitListItem::init (const cClient* client)
 
 	if (unitID.getVehicle())
 	{
-		cVehicle vehicle = cVehicle (unitID.getVehicle(), owner, 0);
+		cVehicle vehicle (unitID.getVehicle(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / 64.0f;
 		vehicle.render (client, surface, dest, zoomFactor, false);
 		vehicle.drawOverlayAnimation (client, surface, dest, zoomFactor);
@@ -1235,7 +1235,7 @@ void cMenuUnitListItem::init (const cClient* client)
 	else if (unitID.getBuilding())
 	{
 		const cGameGUI* gameGUI = client ? &client->gameGUI : NULL;
-		cBuilding building = cBuilding (unitID.getBuilding(), owner, 0);
+		cBuilding building (unitID.getBuilding(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
 		building.render (gameGUI, surface, dest, zoomFactor, false, false);
 	}
@@ -1573,16 +1573,16 @@ void cMenuUnitsList::addUnit (cMenuUnitListItem* unitItem, bool scroll)
 	if (scroll && (int) unitsList.size() > offset + maxDisplayUnits) scrollDown();
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (const cClient* client, sUnitData* unitData, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitData, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (client, unitData, owner, upgrades, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }
 
-cMenuUnitListItem* cMenuUnitsList::addUnit (sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
+cMenuUnitListItem* cMenuUnitsList::addUnit (const cClient* client, sID unitID, cPlayer* owner, sUnitUpgrade* upgrades, bool scroll, bool fixedCargo)
 {
-	cMenuUnitListItem* unitItem = new cMenuUnitListItem (unitID, owner, upgrades, displayType, this, fixedCargo);
+	cMenuUnitListItem* unitItem = new cMenuUnitListItem (client, unitID, owner, upgrades, displayType, this, fixedCargo);
 	addUnit (unitItem, scroll);
 	return unitItem;
 }
@@ -1853,6 +1853,7 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition (eUnitDataSymbols symTyp
 
 cMenuUnitDetails::cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_) :
 	cMenuItem (x, y),
+	client (NULL),
 	owner (owner_),
 	drawLines (drawLines_)
 {
@@ -1905,9 +1906,9 @@ void cMenuUnitDetails::draw()
 	if (data->canScore)
 	{
 		int score = building->points;
-		int tot = building->owner->getScore (Client->getTurn());
+		int tot = building->owner->getScore (client->getTurn());
 		int turnLim, scoreLim;
-		Client->getVictoryConditions (&turnLim, &scoreLim);
+		client->getVictoryConditions (&turnLim, &scoreLim);
 		int lim = scoreLim ? scoreLim : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
@@ -2077,8 +2078,9 @@ void cMenuUnitDetails::setOwner (cPlayer* owner_)
 	owner = owner_;
 }
 
-void cMenuUnitDetails::setSelection (cVehicle* vehicle_, cBuilding* building_)
+void cMenuUnitDetails::setSelection (const cClient &client_, cVehicle* vehicle_, cBuilding* building_)
 {
+	client = &client_;
 	vehicle = vehicle_;
 	building = building_;
 }
@@ -4032,7 +4034,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 			}
 
 			font->showTextAsBlock (nameDest, nextVehicle->getDisplayName());
-			unitDetails[count - minCount]->setSelection (nextVehicle, NULL);
+			unitDetails[count - minCount]->setSelection (*client, nextVehicle, NULL);
 
 			font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextVehicle->PosX) + "," + iToStr (nextVehicle->PosY));
 			font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextVehicle->getStatusStr (client->gameGUI));
@@ -4064,7 +4066,7 @@ bool cMenuReportsScreen::goThroughUnits (bool draw, int* count_, cVehicle** vehi
 				}
 
 				font->showTextAsBlock (nameDest, nextBuilding->getDisplayName());
-				unitDetails[count - minCount]->setSelection (NULL, nextBuilding);
+				unitDetails[count - minCount]->setSelection (*client, NULL, nextBuilding);
 
 				font->showText (position.x + 291, position.y + 35 + 56 * (count - minCount), iToStr (nextBuilding->PosX) + "," + iToStr (nextBuilding->PosY));
 				font->showText (position.x + 343, position.y + 35 + 56 * (count - minCount), nextBuilding->getStatusStr (client->gameGUI));

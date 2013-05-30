@@ -1247,7 +1247,7 @@ void cGameGUI::setPlayer (cPlayer* player_)
 
 void cGameGUI::setUnitDetailsData (cVehicle* vehicle, cBuilding* building)
 {
-	unitDetails.setSelection (vehicle, building);
+	unitDetails.setSelection (*client, vehicle, building);
 
 	if (vehicle)
 	{
@@ -1992,12 +1992,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	{
 		if ( (overVehicle && overVehicle == selectedVehicle) || (overPlane && overPlane == selectedVehicle))
 		{
-			cUnitHelpMenu helpMenu (&selectedVehicle->data, selectedVehicle->owner);
+			cUnitHelpMenu helpMenu (*client, &selectedVehicle->data, selectedVehicle->owner);
 			helpMenu.show();
 		}
 		else if ( (overBuilding && overBuilding == selectedBuilding) || (overBaseBuilding && overBaseBuilding == selectedBuilding))
 		{
-			cUnitHelpMenu helpMenu (&selectedBuilding->data, selectedBuilding->owner);
+			cUnitHelpMenu helpMenu (*client, &selectedBuilding->data, selectedBuilding->owner);
 			helpMenu.show();
 		}
 		else if (overUnitField) selectUnit (overUnitField, true);
@@ -2372,22 +2372,22 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		{
 			if (overPlane)
 			{
-				cUnitHelpMenu helpMenu (&overPlane->data, overPlane->owner);
+				cUnitHelpMenu helpMenu (*client, &overPlane->data, overPlane->owner);
 				helpMenu.show();
 			}
 			else if (overVehicle)
 			{
-				cUnitHelpMenu helpMenu (&overVehicle->data, overVehicle->owner);
+				cUnitHelpMenu helpMenu (*client, &overVehicle->data, overVehicle->owner);
 				helpMenu.show();
 			}
 			else if (overBuilding)
 			{
-				cUnitHelpMenu helpMenu (&overBuilding->data, overBuilding->owner);
+				cUnitHelpMenu helpMenu (*client, &overBuilding->data, overBuilding->owner);
 				helpMenu.show();
 			}
 			else if (overBaseBuilding)
 			{
-				cUnitHelpMenu helpMenu (&overBaseBuilding->data, overBaseBuilding->owner);
+				cUnitHelpMenu helpMenu (*client, &overBaseBuilding->data, overBaseBuilding->owner);
 				helpMenu.show();
 			}
 			helpActive = false;
@@ -3112,12 +3112,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedVehicle)
 	{
-		cUnitHelpMenu helpMenu (&selectedVehicle->data, selectedVehicle->owner);
+		cUnitHelpMenu helpMenu (*client, &selectedVehicle->data, selectedVehicle->owner);
 		helpMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedBuilding)
 	{
-		cUnitHelpMenu helpMenu (&selectedBuilding->data, selectedBuilding->owner);
+		cUnitHelpMenu helpMenu (*client, &selectedBuilding->data, selectedBuilding->owner);
 		helpMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)

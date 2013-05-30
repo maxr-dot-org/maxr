@@ -32,8 +32,8 @@
 
 void cEventHandling::pushEvent (cNetMessage* message)
 {
-
-	if (Client && message->iType == NET_GAME_TIME_SERVER)
+	cClient* client = Client;
+	if (client && message->iType == NET_GAME_TIME_SERVER)
 	{
 		//this is a preview for the client to know how many sync messages are in queue
 		//used to detect a growing lag behind the server time
@@ -43,7 +43,7 @@ void cEventHandling::pushEvent (cNetMessage* message)
 
 		eventQueue.write (message);
 
-		Client->gameTimer.setReceivedTime (receivedTime);
+		client->gameTimer.setReceivedTime (receivedTime);
 	}
 	else
 	{

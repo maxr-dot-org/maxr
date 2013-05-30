@@ -935,7 +935,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	{
 		gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
-		cUnitHelpMenu helpMenu (&data, owner);
+		cUnitHelpMenu helpMenu (*gameGUI.getClient(), &data, owner);
 		helpMenu.show();
 		return;
 	}
