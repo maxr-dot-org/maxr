@@ -1200,7 +1200,7 @@ cMenuUnitListItem::cMenuUnitListItem (sID unitID_, cPlayer* owner_, sUnitUpgrade
 	upgrades (upgrades_),
 	fixedResValue (fixedResValue_)
 {
-	init();
+	init (Client);
 }
 
 cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUnitUpgrade* upgrades_, eMenuUnitListDisplayTypes displayType_, cMenuUnitsList* parent, bool fixedResValue_) :
@@ -1214,10 +1214,10 @@ cMenuUnitListItem::cMenuUnitListItem (sUnitData* unitData_, cPlayer* owner_, sUn
 {
 	if (unitData != 0)
 		unitID = unitData->ID;
-	init();
+	init (Client);
 }
 
-void cMenuUnitListItem::init()
+void cMenuUnitListItem::init (const cClient* client)
 {
 	const int UNIT_IMAGE_SIZE = 32;
 	surface = SDL_CreateRGBSurface (SDL_SRCCOLORKEY, UNIT_IMAGE_SIZE, UNIT_IMAGE_SIZE, Video.getColDepth(), 0, 0, 0, 0);
@@ -1229,14 +1229,15 @@ void cMenuUnitListItem::init()
 	{
 		cVehicle vehicle = cVehicle (unitID.getVehicle(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / 64.0f;
-		vehicle.render (Client, surface, dest, zoomFactor, false);
-		vehicle.drawOverlayAnimation (surface, dest, zoomFactor);
+		vehicle.render (client, surface, dest, zoomFactor, false);
+		vehicle.drawOverlayAnimation (client, surface, dest, zoomFactor);
 	}
 	else if (unitID.getBuilding())
 	{
+		const cGameGUI* gameGUI = client ? &client->gameGUI : NULL;
 		cBuilding building = cBuilding (unitID.getBuilding(), owner, 0);
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (building.data.isBig ? 128.0f : 64.0f);
-		building.render (surface, dest, zoomFactor, false, false);
+		building.render (gameGUI, surface, dest, zoomFactor, false, false);
 	}
 	else surface = NULL;
 
@@ -4153,13 +4154,13 @@ SDL_Surface* cMenuReportsScreen::generateUnitSurface (cUnit* unit)
 	if (unit->isBuilding())
 	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		building->render (surface, dest, zoomFactor, false, false);
+		building->render (&client->gameGUI, surface, dest, zoomFactor, false, false);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
 		vehicle->render (client, surface, dest, zoomFactor, false);
-		vehicle->drawOverlayAnimation (surface, dest, zoomFactor);
+		vehicle->drawOverlayAnimation (client, surface, dest, zoomFactor);
 	}
 
 	return surface;

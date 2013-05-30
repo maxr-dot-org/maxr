@@ -291,7 +291,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 
 	if (bDraw)
 	{
-		render (drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
+		render (&gameGUI, drawingSurface, dest, (float) gameGUI.getTileSize() / 64.0f, cSettings::getInstance().isShadows(), true);
 	}
 
 	//now check, whether the image has to be blitted to screen buffer
@@ -474,7 +474,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 }
 
-void cBuilding::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
+void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow, bool drawConcrete)
 {
 	//Note: when changing something in this function, make sure to update the caching rules!
 	SDL_Rect src, tmp;
@@ -598,10 +598,9 @@ void cBuilding::render (SDL_Surface* surface, const SDL_Rect& dest, float zoomFa
 
 	if (data.hasFrames)
 	{
-		cClient* client = Client;
-		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && client)
+		if (data.isAnimated && cSettings::getInstance().isAnimations() && turnsDisabled == 0 && gameGUI)
 		{
-			src.x = (client->gameGUI.getAnimationSpeed() % data.hasFrames) * Round (64.0 * zoomFactor);
+			src.x = (gameGUI->getAnimationSpeed() % data.hasFrames) * Round (64.0 * zoomFactor);
 		}
 		else
 		{

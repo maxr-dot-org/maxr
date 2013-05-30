@@ -243,7 +243,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 
 	// draw overlay if necessary:
-	drawOverlayAnimation (buffer, screenPosition, gameGUI.getZoom());
+	drawOverlayAnimation (gameGUI.getClient(), buffer, screenPosition, gameGUI.getZoom());
 
 	//remove the dithering for the following operations
 	if (FlightHigh > 0)
@@ -425,33 +425,31 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	}
 }
 
-void cVehicle::drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
+void cVehicle::drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor)
 {
-	if (data.hasOverlay && cSettings::getInstance().isAnimations())
+	if (data.hasOverlay == false || cSettings::getInstance().isAnimations() == false) return;
+
+	SDL_Rect src, tmp;
+
+	int frameNr = 0;
+	if (client && turnsDisabled == 0)
 	{
-		SDL_Rect src, tmp;
-
-		int frameNr = 0;
-		cClient* client = Client;
-		if (client && turnsDisabled == 0)
-		{
-			frameNr = client->gameGUI.getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
-		}
-
-		tmp = dest;
-		src.h = src.w = (int) (typ->overlay_org->h * zoomFactor);
-		tmp.x += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
-		tmp.y += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
-		src.y = 0;
-		src.x = (int) (typ->overlay_org->h * frameNr * zoomFactor);
-
-		if (StartUp && cSettings::getInstance().isAlphaEffects())
-			SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, StartUp);
-		else
-			SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, 255);
-
-		blitWithPreScale (typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor);
+		frameNr = client->gameGUI.getAnimationSpeed() % (typ->overlay_org->w / typ->overlay_org->h);
 	}
+
+	tmp = dest;
+	src.h = src.w = (int) (typ->overlay_org->h * zoomFactor);
+	tmp.x += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
+	tmp.y += (int) (Round (64.0 * zoomFactor)) / 2 - src.h / 2;
+	src.y = 0;
+	src.x = (int) (typ->overlay_org->h * frameNr * zoomFactor);
+
+	if (StartUp && cSettings::getInstance().isAlphaEffects())
+		SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, StartUp);
+	else
+		SDL_SetAlpha (typ->overlay, SDL_SRCALPHA, 255);
+
+	blitWithPreScale (typ->overlay_org, typ->overlay, &src, surface, &tmp, zoomFactor);
 }
 
 void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor, bool drawShadow)

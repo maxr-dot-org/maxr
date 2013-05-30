@@ -634,7 +634,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	if (srcBuilding)
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (srcBuilding->data.isBig ? 128.0f : 64.0f);
-		srcBuilding->render (unitImage1, dest, zoomFactor, false, false);
+		srcBuilding->render (&client->gameGUI, unitImage1, dest, zoomFactor, false, false);
 
 		unitNameLabels[0]->setText (srcBuilding->data.name);
 		if (destVehicle)
@@ -667,7 +667,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (srcVehicle->data.isBig ? 128.0f : 64.0f);
 		srcVehicle->render (client, unitImage1, dest, zoomFactor, false);
-		srcVehicle->drawOverlayAnimation (unitImage1, dest, zoomFactor);
+		srcVehicle->drawOverlayAnimation (client, unitImage1, dest, zoomFactor);
 
 		unitNameLabels[0]->setText (srcVehicle->data.name);
 		maxSrcCargo = srcVehicle->data.storageResMax;
@@ -677,7 +677,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	if (destBuilding)
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (destBuilding->data.isBig ? 128.0f : 64.0f);
-		destBuilding->render (unitImage2, dest, zoomFactor, false, false);
+		destBuilding->render (&client->gameGUI, unitImage2, dest, zoomFactor, false, false);
 
 		unitNameLabels[1]->setText (destBuilding->data.name);
 		if (srcVehicle)
@@ -710,7 +710,7 @@ void cDialogTransfer::getNamesNCargoNImages()
 	{
 		float zoomFactor = (float) UNIT_IMAGE_SIZE / (destVehicle->data.isBig ? 128.0f : 64.0f);
 		destVehicle->render (client, unitImage2, dest, zoomFactor, false);
-		destVehicle->drawOverlayAnimation (unitImage2, dest, zoomFactor);
+		destVehicle->drawOverlayAnimation (client, unitImage2, dest, zoomFactor);
 
 		unitNameLabels[1]->setText (destVehicle->data.name);
 		maxDestCargo = destVehicle->data.storageResMax;

@@ -278,7 +278,7 @@ public:
 	* draws the overlay animation of the vehicle on the given surface
 	*@author: eiko
 	*/
-	void drawOverlayAnimation (SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
+	void drawOverlayAnimation (const cClient* client, SDL_Surface* surface, const SDL_Rect& dest, float zoomFactor);
 
 	/**
 	* return the unit which contains this vehicle
