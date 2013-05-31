@@ -176,7 +176,6 @@ int main (int argc, char* argv[])
 
 		mouse = new cMouse;
 		InputHandler = new cInput;
-		EventHandler = new cEventHandling;
 		cStartMenu mainMenu;
 		mainMenu.show();
 	}
@@ -276,7 +275,6 @@ void Quit()
 	delete mouse;
 	delete font;
 	delete InputHandler;
-	delete EventHandler;
 
 	UnitsData.vehicle.clear();
 	UnitsData.building.clear();
