@@ -62,10 +62,10 @@ public:
 	 * @author alzi alias DoctorDeath
 	 * @param keysym SDL_keysym with pressed key information.
 	 */
-	void inputkey (cMenu* activeMenu, SDL_KeyboardEvent& key);
+	void inputkey (cMenu& activeMenu, SDL_KeyboardEvent& key);
 
 	long LastClickTicks;
-	void inputMouseButton (cMenu* avtiveMenu, SDL_MouseButtonEvent& button);
+	void inputMouseButton (cMenu& avtiveMenu, SDL_MouseButtonEvent& button);
 	bool IsDoubleClicked();
 };
 

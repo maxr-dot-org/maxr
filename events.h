@@ -48,8 +48,9 @@ public:
 	 * Should be the only functions which polls the event queues.
 	 * @author alzi alias DoctorDeath
 	 */
-	void HandleEvents (cClient* client, cMenu* activeMenu);
+	void HandleEvents (cMenu& activeMenu, cClient* client);
 
+	static void handleInputEvents (cMenu& activeMenu, cClient* client);
 	void handleNetMessages (cClient* client, cMenu* activeMenu);
 
 private:

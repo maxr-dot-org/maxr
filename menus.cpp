@@ -631,10 +631,10 @@ int cMenu::show()
 	int lastResX = Video.getResolutionX();
 	int lastResY = Video.getResolutionY();
 
-	while (!end)
+	while (!end && !terminate)
 	{
 		cClient* client = Client;
-		EventHandler->HandleEvents (client, ActiveMenu);
+		EventHandler->HandleEvents (*this, client);
 		if (client)
 		{
 			client->gameTimer.run ();
@@ -671,22 +671,15 @@ int cMenu::show()
 		lastMouseX = mouse->x;
 		lastMouseY = mouse->y;
 		SDL_Delay (1);
-
-		if (terminate)
-		{
-			EventHandler->HandleEvents (Client, ActiveMenu); //flush event queue before exiting menu
-
-			if (lastActiveMenu) lastActiveMenu->returnToCallback();
-			else ActiveMenu = NULL;
-			return 1;
-		}
 	}
 
-	EventHandler->HandleEvents (Client, ActiveMenu); //flush event queue before exiting menu
+	EventHandler->HandleEvents (*this, Client); //flush event queue before exiting menu
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	else ActiveMenu = NULL;
-	return 0;
+	if (end) return 0;
+	assert (terminate);
+	return 1;
 }
 
 //------------------------------------------------------------------------------

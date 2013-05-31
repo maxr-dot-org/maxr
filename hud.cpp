@@ -763,9 +763,9 @@ int cGameGUI::show()
 
 	int lastMouseX = 0, lastMouseY = 0;
 
-	while (!end)
+	while (!end && !terminate)
 	{
-		EventHandler->HandleEvents (client, ActiveMenu);
+		cEventHandling::handleInputEvents (*this, client);
 		client->gameTimer.run();
 
 		mouse->GetPos();
@@ -829,14 +829,6 @@ int cGameGUI::show()
 		frame++;
 
 		handleFramesPerSecond();
-
-		if (terminate)
-		{
-			EventHandler->HandleEvents (client, ActiveMenu); //flush event queue before exiting menu
-
-			if (lastActiveMenu) lastActiveMenu->returnToCallback();
-			return 1;
-		}
 	}
 
 	// code to work with DEDICATED_SERVER - network client sends the server, that it disconnects itself
@@ -849,10 +841,12 @@ int cGameGUI::show()
 
 	makePanel (false);
 
-	EventHandler->HandleEvents (client, ActiveMenu); //flush event queue before exiting menu
+	cEventHandling::handleInputEvents (*this, client); //flush event queue before exiting menu
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
-	return 0;
+	if (end) return 0;
+	assert (terminate);
+	return 1;
 }
 
 void cGameGUI::returnToCallback()
