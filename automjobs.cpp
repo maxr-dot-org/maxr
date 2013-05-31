@@ -191,7 +191,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	}
 	if (vehicle->PosX != PosX && vehicle->PosY != PosY)   //diagonal move
 	{
-		NrSurvFields /= 2;
+		//NrSurvFields /= 1.5;
 	}
 
 	// calculate the number of fields which has already revealed resources
