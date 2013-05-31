@@ -353,9 +353,9 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 
 	SDL_Rect src, dest;
 	src.y = 0;
-	src.x = image[0]->w * dir / 4;
-	src.w = image[0]->w / 4;
-	src.h = image[0]->h;
+	src.x = image[1]->w * dir / 4;
+	src.w = image[1]->w / 4;
+	src.h = image[1]->h;
 	dest = gameGUI.calcScreenPos (posX, posY);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
