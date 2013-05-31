@@ -259,7 +259,7 @@ void cDebugOutput::draw()
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "Net MGS Queue: ", FONT_LATIN_SMALL_WHITE);
-		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (EventHandler->eventQueue.size()), FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS + 110, debugOff, iToStr (client->getEventHandling().eventQueue.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 
 		font->showText (DEBUGOUT_X_POS, debugOff, "EventCounter: ", FONT_LATIN_SMALL_WHITE);

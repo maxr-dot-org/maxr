@@ -26,14 +26,15 @@
 #include <cctype> // std::tolower
 
 #include "mapdownload.h"
-#include "netmessage.h"
-#include "menus.h"
-#include "menuevents.h"
-#include "events.h"
-#include "settings.h"
+
 #include "defines.h"
-#include "log.h"
+#include "events.h"
 #include "files.h"
+#include "log.h"
+#include "menuevents.h"
+#include "menus.h"
+#include "netmessage.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -230,9 +231,10 @@ int mapSenderThreadFunction (void* data)
 }
 
 //-------------------------------------------------------------------------------
-cMapSender::cMapSender (cTCP& network_, int toSocket, const std::string& mapName, const std::string& receivingPlayerName)
+cMapSender::cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName)
 	: network(&network_)
 	, toSocket (toSocket)
+	, eventHandling (eventHandling)
 	, receivingPlayerName (receivingPlayerName)
 	, mapName (mapName)
 	, mapSize (0)
@@ -339,11 +341,11 @@ void cMapSender::run()
 
 	// Push message also to client, that belongs to the host, to give feedback about the finished upload state.
 	// The EventHandler mechanism is used, because this code runs in another thread than the code, that must display the msg.
-	if (EventHandler)
+	if (eventHandling)
 	{
 		cNetMessage* message = new cNetMessage (MU_MSG_FINISHED_MAP_DOWNLOAD);
 		message->pushString (receivingPlayerName);
-		EventHandler->pushEvent (message);
+		eventHandling->pushEvent (message);
 	}
 }
 

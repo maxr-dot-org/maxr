@@ -70,9 +70,10 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 cClient* Client = 0; // global instance
 
-cClient::cClient (cServer* server_, cTCP* network_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
+cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
 	server (server_),
 	network (network_),
+	eventHandling (&eventHandling_),
 	Map (Map),
 	PlayerList (playerList),
 	gameTimer(),
@@ -80,6 +81,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cMap* const Map, std::vector
 {
 	gameGUI.setClient (this);
 	gameTimer.setClient(this);
+	if (server) server->setLocalClient (*this);
 	neutralBuildings = NULL;
 	bDefeated = false;
 	iTurn = 1;

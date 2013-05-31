@@ -29,6 +29,8 @@
 
 // forward declarations
 int GetColorNr (const SDL_Surface* sf);
+
+class cEventHandling;
 class cGameGUI;
 class cMapReceiver;
 class cMapSender;
@@ -187,15 +189,7 @@ public:
 	bool allLanded;
 
 public:
-	cGameDataContainer() :
-		type (GAME_TYPE_SINGLE),
-		isServer (false),
-		savegameNum (-1),
-		settings (0),
-		map (0),
-		allLanded (false)
-	{}
-
+	cGameDataContainer();
 	~cGameDataContainer();
 
 	/** Runs the game. If isServer is true, which means that he is the host, a server will be started.
@@ -224,6 +218,7 @@ public:
 	 */
 	void receiveLandingPosition (cTCP& network, cNetMessage* message);
 
+	cEventHandling& getEventHandler() { return *eventHandler; }
 private:
 	/** checks whether the landing positions are okay
 	 *@author alzi
@@ -233,6 +228,8 @@ private:
 	 *@author alzi
 	 */
 	void runSavedGame (cTCP* network, int player);
+private:
+	cEventHandling* eventHandler;
 };
 
 enum eMenuBackgrounds
@@ -346,6 +343,8 @@ public:
 	 *@author alzi
 	 */
 	virtual void handleNetMessage (cNetMessage* message) {}
+	virtual void handleNetMessages () {}
+
 	virtual void handleDestroyUnit (cBuilding* building, cVehicle* vehicle) {}
 
 	void addTimer (cMenuTimerBase* timer);
@@ -554,6 +553,7 @@ public:
 	int getClan() const { return clan; }
 private:
 	virtual void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessages ();
 
 private:
 	static void clanSelected (void* parent);
@@ -688,6 +688,8 @@ public:
 private:
 	virtual void generateSelectionList();
 	virtual void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessages ();
+
 private:
 	static void selectionChanged (void* parent);
 	static void doneReleased (void* parent);
@@ -709,6 +711,8 @@ public:
 private:
 	virtual void handleKeyInput (SDL_KeyboardEvent& key, const std::string& ch);
 	virtual void handleNetMessage (cNetMessage* message);
+	virtual void handleNetMessages ();
+
 protected:
 	void createHud();
 	void createMap();
@@ -800,6 +804,7 @@ public:
 
 private:
 	virtual void playerSettingsChanged() = 0;
+	virtual void handleNetMessages();
 
 private:
 	static void backReleased (void* parent);

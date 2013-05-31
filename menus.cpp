@@ -117,8 +117,21 @@ string sSettings::getVictoryConditionString() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+cGameDataContainer::cGameDataContainer() :
+	type (GAME_TYPE_SINGLE),
+	isServer (false),
+	savegameNum (-1),
+	settings (0),
+	map (0),
+	allLanded (false),
+	eventHandler (new cEventHandling)
+{
+}
+
+//------------------------------------------------------------------------------
 cGameDataContainer::~cGameDataContainer()
 {
+	delete eventHandler;
 	delete settings;
 	delete map;
 }
@@ -190,7 +203,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	}
 
 	// init client and his players
-	Client = new cClient (server, network, map, &players);
+	Client = new cClient (server, network, *eventHandler, map, &players);
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -258,7 +271,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	Client = new cClient (server, network, &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, *eventHandler, &clientMap, &clientPlayerList);
 	Client->initPlayer (clientPlayerList[player]);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
@@ -634,12 +647,14 @@ int cMenu::show()
 	while (!end && !terminate)
 	{
 		cClient* client = Client;
-		EventHandler->HandleEvents (*this, client);
+		cEventHandling::handleInputEvents (*this, client);
 		if (client)
 		{
 			client->gameTimer.run ();
 			client->gameGUI.handleTimer();
 		}
+		else
+			handleNetMessages ();
 
 		// check whether the resolution has been changed
 		if (!end && !terminate && (lastResX != Video.getResolutionX() || lastResY != Video.getResolutionY()))
@@ -673,7 +688,11 @@ int cMenu::show()
 		SDL_Delay (1);
 	}
 
-	EventHandler->HandleEvents (*this, Client); //flush event queue before exiting menu
+
+	cClient* client = Client;
+	//flush event queue before exiting menu
+	if (!client) handleNetMessages ();
+	cEventHandling::handleInputEvents (*this, client);
 
 	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	else ActiveMenu = NULL;
@@ -1720,6 +1739,12 @@ void cClanSelectionMenu::updateClanDescription()
 	}
 }
 
+//------------------------------------------------------------------------------
+/*virtual*/ void cClanSelectionMenu::handleNetMessages()
+{
+	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+}
+
 //-----------------------------------------------------------------------------------
 void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 {
@@ -1987,7 +2012,7 @@ private:
 void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 {
 	if (gameDataContainer->landingUnits.empty()) return;
-	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[player.Nr];
+	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[0];
 
 	if (units.empty()) return;
 	std::vector<sLandingUnit>::iterator it;
@@ -2332,6 +2357,12 @@ void cStartupHangarMenu::removedCallback (cMenuUnitListItem* item)
 }
 
 //------------------------------------------------------------------------------
+/*virtual*/ void cStartupHangarMenu::handleNetMessages()
+{
+	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+}
+
+//------------------------------------------------------------------------------
 void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
 {
 	switch (message->iType)
@@ -2564,6 +2595,12 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 }
 
 //------------------------------------------------------------------------------
+/*virtual*/ void cLandingMenu::handleNetMessages()
+{
+	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
+}
+
+//------------------------------------------------------------------------------
 void cLandingMenu::handleNetMessage (cNetMessage* message)
 {
 	// because the messages for landing units and landing positions can be send during
@@ -2715,7 +2752,7 @@ cNetworkMenu::cNetworkMenu()
 	gameDataContainer.type = GAME_TYPE_TCPIP;
 
 	network = new cTCP;
-	network->setMessageReceiver (EventHandler);
+	network->setMessageReceiver (&gameDataContainer.getEventHandler());
 	triedLoadMap = "";
 
 	Log.write (string (PACKAGE_NAME) + " " + PACKAGE_VERSION + " " + PACKAGE_REV, cLog::eLOG_TYPE_NET_DEBUG);
@@ -2725,6 +2762,12 @@ cNetworkMenu::cNetworkMenu()
 cNetworkMenu::~cNetworkMenu()
 {
 	delete network;
+}
+
+//------------------------------------------------------------------------------
+/*virtual*/ void cNetworkMenu::handleNetMessages()
+{
+	gameDataContainer.getEventHandler().handleNetMessages (NULL, this);
 }
 
 //------------------------------------------------------------------------------
@@ -3307,7 +3350,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 			mapSenders.erase (mapSenders.begin() + i);
 		}
 	}
-	cMapSender* mapSender = new cMapSender (*network, socketNr, gameDataContainer.map->MapName, players[receiverNr]->name);
+	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->MapName, players[receiverNr]->name);
 	mapSenders.push_back (mapSender);
 	mapSender->runInThread (this);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
@@ -3431,7 +3474,7 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	Client = new cClient (server, network, &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, gameDataContainer.getEventHandler(), &clientMap, &clientPlayerList);
 	Client->initPlayer (localPlayer);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{

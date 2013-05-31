@@ -23,6 +23,7 @@
 #include <string>
 #include <SDL.h>
 
+class cEventHandling;
 class cNetMessage;
 class cNetworkHostMenu;
 class cTCP;
@@ -68,7 +69,7 @@ private:
 class cMapSender
 {
 public:
-	cMapSender (cTCP& network_, int toSocket, const std::string& mapName, const std::string& receivingPlayerName);
+	cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName);
 	virtual ~cMapSender();
 
 	int getToSocket() const { return toSocket; }
@@ -78,6 +79,7 @@ public:
 private:
 	cTCP* network;
 	int toSocket;
+	cEventHandling* eventHandling;
 	std::string receivingPlayerName;
 	std::string mapName;
 	int mapSize;

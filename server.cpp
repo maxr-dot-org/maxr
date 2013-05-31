@@ -24,6 +24,7 @@
 #include "attackJobs.h"
 #include "buildings.h"
 #include "casualtiestracker.h"
+#include "client.h"
 #include "clientevents.h"
 #include "clist.h"
 #include "events.h"
@@ -91,7 +92,8 @@ int CallbackRunServerThread (void* arg)
 
 //-------------------------------------------------------------------------------------
 cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
-	: network(network_)
+	: network (network_)
+	, localClient (NULL)
 	, gameTimer()
 	, lastTurnEnd (0)
 	, executingRemainingMovements (false)
@@ -219,8 +221,8 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	{
 		if (network)
 			network->send (message->iLength, message->data);
-		if (EventHandler != 0)
-			EventHandler->pushEvent (message);
+		if (localClient != NULL)
+			localClient->getEventHandling().pushEvent (message);
 		return;
 	}
 
@@ -236,8 +238,8 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	// Socketnumber MAX_CLIENTS for local client
 	if (Player->iSocketNum == MAX_CLIENTS)
 	{
-		if (EventHandler != 0)
-			EventHandler->pushEvent (message);
+		if (localClient != NULL)
+			localClient->getEventHandling().pushEvent (message);
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
 	else

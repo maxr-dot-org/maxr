@@ -23,14 +23,15 @@
 #include "main.h"
 #include "hud.h"
 
-class cNetMessage;
-class cMap;
-class cPlayer;
+class cCasualtiesTracker;
 class cClientAttackJob;
 class cClientMoveJob;
-class cCasualtiesTracker;
-class cJob;
+class cEventHandling;
 class cFx;
+class cJob;
+class cMap;
+class cNetMessage;
+class cPlayer;
 class cServer;
 class cTCP;
 
@@ -43,18 +44,20 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient
 {
 public:
-	cClient (cServer* server_, cTCP* network_, cMap* Map, std::vector<cPlayer*>* PlayerList);
+	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cMap* Map, std::vector<cPlayer*>* PlayerList);
 	~cClient();
 
 	// Return local server if any.
 	// TODO: should be const cServer*
 	cServer* getServer() const { return server; }
+	cEventHandling& getEventHandling() { return *eventHandling; }
 private:
 	friend class cDebugOutput;
 	friend class cPlayer;
 
 	cServer* server;
 	cTCP* network;
+	cEventHandling* eventHandling;
 	/** the map */
 	cMap* Map;
 	/** List with all players */

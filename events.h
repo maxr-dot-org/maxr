@@ -55,6 +55,6 @@ public:
 
 private:
 	cRingbuffer<cNetMessage*> eventQueue;
-} EX* EventHandler;
+};
 
 #endif

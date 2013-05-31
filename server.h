@@ -91,13 +91,17 @@ public:
 	 *@param scoreLimit First player to this many points wins
 	 */
 	cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* PlayerList, eGameTypes gameType, bool bPlayTurns, int turnLimit = 0, int scoreLimit = 0);
+	~cServer();
 	void setDeadline (int iDeadline);
 	void stop ();
-	~cServer();
 
+	void setLocalClient (cClient& client) { localClient = &client; }
 
 	cTCP* network;
 private:
+	/** local client if any. */
+	cClient* localClient;
+
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;
 	/** little helper jobs, that do some time dependent actions */
