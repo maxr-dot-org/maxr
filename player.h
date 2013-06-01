@@ -78,9 +78,9 @@ public:
 	SDL_Surface* color;
 	int Nr;
 
-	sUnitData* VehicleData; // Daten aller Vehicles f¸r diesen Player.
+	std::vector<sUnitData> VehicleData; // Daten aller Vehicles f¸r diesen Player.
 	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.
-	sUnitData* BuildingData; // Daten aller Buildings f¸r diesen Player.
+	std::vector<sUnitData> BuildingData; // Daten aller Buildings f¸r diesen Player.
 	cBuilding* BuildingList;     // Liste aller Buildings des Spielers.
 	cBase base;               // Die Basis dieses Spielers.
 
@@ -127,7 +127,7 @@ public:
 	void stopAResearch (int researchArea);
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
-	void upgradeUnitTypes (std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
+	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
 	void AddLock (cBuilding* b);
 	void AddLock (cVehicle* v);

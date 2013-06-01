@@ -159,25 +159,27 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, bool isServer)
 		{
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
-		if (player.VehicleData[i].damage != UnitsData.getVehicle (i, player.getClan()).data.damage ||
-			player.VehicleData[i].shotsMax != UnitsData.getVehicle (i, player.getClan()).data.shotsMax ||
-			player.VehicleData[i].range != UnitsData.getVehicle (i, player.getClan()).data.range ||
-			player.VehicleData[i].ammoMax != UnitsData.getVehicle (i, player.getClan()).data.ammoMax ||
-			player.VehicleData[i].armor != UnitsData.getVehicle (i, player.getClan()).data.armor ||
-			player.VehicleData[i].hitpointsMax != UnitsData.getVehicle (i, player.getClan()).data.hitpointsMax ||
-			player.VehicleData[i].scan != UnitsData.getVehicle (i, player.getClan()).data.scan ||
-			player.VehicleData[i].speedMax != UnitsData.getVehicle (i, player.getClan()).data.speedMax)
+		const sUnitData& playerData = player.VehicleData[i];
+		const sUnitData& originalData = UnitsData.getVehicle (i, player.getClan()).data;
+		if (playerData.damage != originalData.damage ||
+			playerData.shotsMax != originalData.shotsMax ||
+			playerData.range != originalData.range ||
+			playerData.ammoMax != originalData.ammoMax ||
+			playerData.armor != originalData.armor ||
+			playerData.hitpointsMax != originalData.hitpointsMax ||
+			playerData.scan != originalData.scan ||
+			playerData.speedMax != originalData.speedMax)
 		{
-			message->pushInt16 (player.VehicleData[i].speedMax);
-			message->pushInt16 (player.VehicleData[i].scan);
-			message->pushInt16 (player.VehicleData[i].hitpointsMax);
-			message->pushInt16 (player.VehicleData[i].armor);
-			message->pushInt16 (player.VehicleData[i].ammoMax);
-			message->pushInt16 (player.VehicleData[i].range);
-			message->pushInt16 (player.VehicleData[i].shotsMax);
-			message->pushInt16 (player.VehicleData[i].damage);
-			message->pushInt16 (player.VehicleData[i].ID.iSecondPart);
-			message->pushInt16 (player.VehicleData[i].ID.iFirstPart);
+			message->pushInt16 (playerData.speedMax);
+			message->pushInt16 (playerData.scan);
+			message->pushInt16 (playerData.hitpointsMax);
+			message->pushInt16 (playerData.armor);
+			message->pushInt16 (playerData.ammoMax);
+			message->pushInt16 (playerData.range);
+			message->pushInt16 (playerData.shotsMax);
+			message->pushInt16 (playerData.damage);
+			message->pushInt16 (playerData.ID.iSecondPart);
+			message->pushInt16 (playerData.ID.iFirstPart);
 			message->pushBool (true);  // true for vehciles
 
 			count++;
@@ -218,23 +220,25 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, bool isServer)
 		{
 			message = new cNetMessage (MU_MSG_UPGRADES);
 		}
-		if (player.BuildingData[i].damage != UnitsData.getBuilding (i, player.getClan()).data.damage ||
-			player.BuildingData[i].shotsMax != UnitsData.getBuilding (i, player.getClan()).data.shotsMax ||
-			player.BuildingData[i].range != UnitsData.getBuilding (i, player.getClan()).data.range ||
-			player.BuildingData[i].ammoMax != UnitsData.getBuilding (i, player.getClan()).data.ammoMax ||
-			player.BuildingData[i].armor != UnitsData.getBuilding (i, player.getClan()).data.armor ||
-			player.BuildingData[i].hitpointsMax != UnitsData.getBuilding (i, player.getClan()).data.hitpointsMax ||
-			player.BuildingData[i].scan != UnitsData.getBuilding (i, player.getClan()).data.scan)
+		const sUnitData& playerData = player.BuildingData[i];
+		const sUnitData& originalData = UnitsData.getBuilding (i, player.getClan()).data;
+		if (playerData.damage != originalData.damage ||
+			playerData.shotsMax != originalData.shotsMax ||
+			playerData.range != originalData.range ||
+			playerData.ammoMax != originalData.ammoMax ||
+			playerData.armor != originalData.armor ||
+			playerData.hitpointsMax != originalData.hitpointsMax ||
+			playerData.scan != originalData.scan)
 		{
-			message->pushInt16 (player.BuildingData[i].scan);
-			message->pushInt16 (player.BuildingData[i].hitpointsMax);
-			message->pushInt16 (player.BuildingData[i].armor);
-			message->pushInt16 (player.BuildingData[i].ammoMax);
-			message->pushInt16 (player.BuildingData[i].range);
-			message->pushInt16 (player.BuildingData[i].shotsMax);
-			message->pushInt16 (player.BuildingData[i].damage);
-			message->pushInt16 (player.BuildingData[i].ID.iSecondPart);
-			message->pushInt16 (player.BuildingData[i].ID.iFirstPart);
+			message->pushInt16 (playerData.scan);
+			message->pushInt16 (playerData.hitpointsMax);
+			message->pushInt16 (playerData.armor);
+			message->pushInt16 (playerData.ammoMax);
+			message->pushInt16 (playerData.range);
+			message->pushInt16 (playerData.shotsMax);
+			message->pushInt16 (playerData.damage);
+			message->pushInt16 (playerData.ID.iSecondPart);
+			message->pushInt16 (playerData.ID.iFirstPart);
 			message->pushBool (false);  // false for buildings
 
 			count++;
@@ -331,6 +335,16 @@ void sendRequestMap (cTCP& network, const string& mapName, int playerNr)
 	cMenu::sendMessage (network, msg);
 }
 
+static int findUpgradeValue (sUnitUpgrade upgrades[8], sUnitUpgrade::eUpgradeTypes upgradeType, int defaultValue)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		if (upgrades[i].active && upgrades[i].type == upgradeType)
+			return upgrades[i].curValue;
+	}
+	return defaultValue; // the specified upgrade was not found...
+}
+
 void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player)
 {
 	cNetMessage* msg = NULL;
@@ -349,110 +363,44 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8],
 			}
 		}
 
-		if (purchased)
+		if (!purchased) continue;
+
+		if (msg == NULL)
 		{
-			if (msg == NULL)
-			{
-				msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
-				iCount = 0;
-			}
+			msg = new cNetMessage (GAME_EV_WANT_BUY_UPGRADES);
+			iCount = 0;
+		}
 
-			sUnitData* currentVersion;
-			if (unitIndex < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[unitIndex];
-			else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
+		const sUnitData* currentVersion;
+		if (unitIndex < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[unitIndex];
+		else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
 
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 0, currentVersion->speedMax));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 1, currentVersion->scan));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 2, currentVersion->hitpointsMax));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 3, currentVersion->armor));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 4, currentVersion->ammoMax));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 5, currentVersion->range));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 6, currentVersion->shotsMax));
-			msg->pushInt16 (findUpgradeValue (curUpgrade, 7, currentVersion->damage));
-			msg->pushInt16 (currentVersion->ID.iSecondPart);
-			msg->pushInt16 (currentVersion->ID.iFirstPart);
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_AMMO, currentVersion->ammoMax));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_RANGE, currentVersion->range));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_SHOTS, currentVersion->shotsMax));
+		msg->pushInt16 (findUpgradeValue (curUpgrade, sUnitUpgrade::UPGRADE_TYPE_DAMAGE, currentVersion->damage));
+		msg->pushInt16 (currentVersion->ID.iSecondPart);
+		msg->pushInt16 (currentVersion->ID.iFirstPart);
 
-			iCount++; // msg contains one more upgrade struct
+		iCount++; // msg contains one more upgrade struct
 
-			// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
-			if (msg->iLength + 38 > PACKAGE_LENGTH)
-			{
-				msg->pushInt16 (iCount);
-				msg->pushInt16 (player->Nr);
-				client.sendNetMessage (msg);
-				msg = NULL;
-			}
-
+		// the msg would be too long, if another upgrade would be written into it. So send it and put the next upgrades in a new message.
+		if (msg->iLength + 38 > PACKAGE_LENGTH)
+		{
+			msg->pushInt16 (iCount);
+			msg->pushInt16 (player->Nr);
+			client.sendNetMessage (msg);
+			msg = NULL;
 		}
 	}
+
 	if (msg != NULL)
 	{
 		msg->pushInt16 (iCount);
 		msg->pushInt16 (player->Nr);
 		client.sendNetMessage (msg);
 	}
-}
-
-int findUpgradeValue (sUnitUpgrade upgrades[8], int upgradeType, int defaultValue)
-{
-	switch (upgradeType)
-	{
-		case 0:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SPEED)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 1:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SCAN)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 2:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_HITS)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 3:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_ARMOR)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 4:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_AMMO)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 5:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_RANGE)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 6:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_SHOTS)
-					return upgrades[i].curValue;
-			}
-			break;
-		case 7:
-			for (int i = 0; i < 8; i++)
-			{
-				if (upgrades[i].active && upgrades[i].type == sUnitUpgrade::UPGRADE_TYPE_DAMAGE)
-					return upgrades[i].curValue;
-			}
-			break;
-	}
-	return defaultValue; // the specified upgrade was not found...
 }

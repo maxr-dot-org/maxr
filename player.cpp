@@ -44,14 +44,14 @@ cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum
 	clan (-1)
 {
 	// copy the vehicle stats
-	VehicleData = new sUnitData[UnitsData.getNrVehicles()];
+	VehicleData.reserve (UnitsData.getNrVehicles());
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
-		VehicleData[i] = UnitsData.getVehicle (i).data;  // get the default (no clan) vehicle data
+		VehicleData.push_back (UnitsData.getVehicle (i).data); // get the default (no clan) vehicle data
 
 	// copy the building stats
-	BuildingData = new sUnitData[UnitsData.getNrBuildings()];
+	BuildingData.reserve (UnitsData.getNrBuildings());
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-		BuildingData[i] = UnitsData.getBuilding (i).data;  // get the default (no clan) building data
+		BuildingData.push_back (UnitsData.getBuilding (i).data); // get the default (no clan) building data
 
 	VehicleList = NULL;
 	BuildingList = NULL;
@@ -83,12 +83,8 @@ cPlayer::cPlayer (const cPlayer& Player)
 	lastDeletedUnit = Player.lastDeletedUnit;
 
 	// copy vehicle and building data
-	VehicleData = new sUnitData[UnitsData.getNrVehicles()];
-	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
-		VehicleData[i] = Player.VehicleData[i];
-	BuildingData = new sUnitData[UnitsData.getNrBuildings()];
-	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-		BuildingData[i] = Player.BuildingData[i];
+	VehicleData = Player.VehicleData;
+	BuildingData = Player.BuildingData;
 
 	// Don't copy ScanMap, ResourceMap, DetectLandMap, DetectSeaMap,
 	//  DetectMinesMap, SentriesMapAir, SentriesMapGround
@@ -147,8 +143,6 @@ cPlayer::~cPlayer()
 		delete BuildingList;
 		BuildingList = ptr;
 	}
-	delete [] VehicleData;
-	delete [] BuildingData;
 
 	for (size_t i = 0; i != ReportVehicles.size(); ++i)
 	{
@@ -189,7 +183,7 @@ void cPlayer::setClan (int newClan)
 //--------------------------------------------------------------------------
 cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned int ID)
 {
-	cVehicle* n = new cVehicle (v, this , ID);
+	cVehicle* n = new cVehicle (v, this, ID);
 	n->PosX = posx;
 	n->PosY = posy;
 
@@ -200,15 +194,13 @@ cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned i
 	if (n->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (n->PosX, n->PosY, n->data.scan, DetectSeaMap, mapSize);
 	if (n->data.canDetectStealthOn & AREA_EXP_MINE)
 	{
-		for (int x = n->PosX - 1; x <= n->PosX + 1; x++)
-		{
-			if (x < 0 || x >= mapSize) continue;
-			for (int y = n->PosY - 1; y <= n->PosY + 1; y++)
-			{
-				if (y < 0 || y >= mapSize) continue;
+		const int minx = std::max (n->PosX - 1, 0);
+		const int maxx = std::min (n->PosX + 1, mapSize - 1);
+		const int miny = std::max (n->PosY - 1, 0);
+		const int maxy = std::min (n->PosY + 1, mapSize - 1);
+		for (int x = minx; x <= maxx; ++x)
+			for (int y = miny; y <= maxy; ++y)
 				DetectMinesMap[x + mapSize * y] = 1;
-			}
-		}
 	}
 	return n;
 }
@@ -303,7 +295,7 @@ void cPlayer::addSentry (cUnit* u)
 	{
 		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapAir, mapSize);
 	}
-	if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	if ((u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
 	{
 		drawSpecialCircle (u->PosX, u->PosY, u->data.range, SentriesMapGround, mapSize);
 	}
@@ -317,7 +309,7 @@ void cPlayer::deleteSentry (cUnit* u)
 	{
 		refreshSentryAir();
 	}
-	else if ( (u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
+	else if ((u->data.canAttack & TERRAIN_GROUND) || (u->data.canAttack & TERRAIN_SEA))
 	{
 		refreshSentryGround();
 	}
@@ -397,14 +389,14 @@ void cPlayer::DoScan()
 			else if (vp->data.canDetectStealthOn & TERRAIN_SEA) drawSpecialCircle (vp->PosX, vp->PosY, vp->data.scan, DetectSeaMap, mapSize);
 			if (vp->data.canDetectStealthOn & AREA_EXP_MINE)
 			{
-				for (int x = vp->PosX - 1; x <= vp->PosX + 1; x++)
+				const int minx = std::max (vp->PosX - 1, 0);
+				const int maxx = std::min (vp->PosX + 1, mapSize - 1);
+				const int miny = std::max (vp->PosY - 1, 0);
+				const int maxy = std::min (vp->PosY + 1, mapSize - 1);
+				for (int x = minx; x <= maxx; ++x)
 				{
-					if (x < 0 || x >= mapSize)
-						continue;
-					for (int y = vp->PosY - 1; y <= vp->PosY + 1; y++)
+					for (int y = miny; y <= maxy; ++y)
 					{
-						if (y < 0 || y >= mapSize)
-							continue;
 						DetectMinesMap[x + mapSize * y] = 1;
 					}
 				}
@@ -417,19 +409,15 @@ void cPlayer::DoScan()
 	{
 		if (bp->turnsDisabled)
 			ScanMap[bp->PosX + bp->PosY * mapSize] = 1;
-		else
+		else if (bp->data.scan)
 		{
-			if (bp->data.scan)
-			{
-				if (bp->data.isBig)
-					drawSpecialCircleBig (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
-				else
-					drawSpecialCircle (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
-			}
+			if (bp->data.isBig)
+				drawSpecialCircleBig (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
+			else
+				drawSpecialCircle (bp->PosX, bp->PosY, bp->data.scan, ScanMap, mapSize);
 		}
 	}
 }
-
 
 void cPlayer::revealMap()
 {
@@ -440,7 +428,6 @@ void cPlayer::revealResource()
 {
 	std::fill (ResourceMap.begin(), ResourceMap.end(), 1);
 }
-
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start)
 {
@@ -628,15 +615,13 @@ void cPlayer::doResearch (cServer& server)
 	reportResearchAreasFinished.clear();
 	for (int area = 0; area < cResearch::kNrResearchAreas; area++)
 	{
-		if (researchCentersWorkingOnArea[area] > 0)
+		if (researchCentersWorkingOnArea[area] > 0 &&
+			researchLevel.doResearch (researchCentersWorkingOnArea[area], area))
 		{
-			if (researchLevel.doResearch (researchCentersWorkingOnArea[area], area))
-			{
-				// next level reached
-				areasReachingNextLevel.push_back (area);
-				reportResearchAreasFinished.push_back (area);
-				researchFinished = true;
-			}
+			// next level reached
+			areasReachingNextLevel.push_back (area);
+			reportResearchAreasFinished.push_back (area);
+			researchFinished = true;
 		}
 	}
 	if (researchFinished)
@@ -718,34 +703,34 @@ int cPlayer::getScore (int turn) const
 }
 
 //--------------------------------------------------------------
-void cPlayer::upgradeUnitTypes (std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas)
+void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas)
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
+		const sUnitData& originalData = UnitsData.getVehicle (i, getClan()).data;
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{
-			int researchArea = areasReachingNextLevel[areaCounter];
-			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
-
+			const int researchArea = areasReachingNextLevel[areaCounter];
+			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = UnitsData.getVehicle (i, getClan()).data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.getVehicle (i, getClan()).data.shotsMax; break;
-				case cResearch::kRangeResearch: startValue = UnitsData.getVehicle (i, getClan()).data.range; break;
-				case cResearch::kArmorResearch: startValue = UnitsData.getVehicle (i, getClan()).data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.getVehicle (i, getClan()).data.hitpointsMax; break;
-				case cResearch::kScanResearch: startValue = UnitsData.getVehicle (i, getClan()).data.scan; break;
-				case cResearch::kSpeedResearch: startValue = UnitsData.getVehicle (i, getClan()).data.speedMax; break;
-				case cResearch::kCostResearch: startValue = UnitsData.getVehicle (i, getClan()).data.buildCosts; break;
+				case cResearch::kAttackResearch: startValue = originalData.damage; break;
+				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
+				case cResearch::kRangeResearch: startValue = originalData.range; break;
+				case cResearch::kArmorResearch: startValue = originalData.armor; break;
+				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
+				case cResearch::kScanResearch: startValue = originalData.scan; break;
+				case cResearch::kSpeedResearch: startValue = originalData.speedMax; break;
+				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-								   UnitsData.getVehicle (i, getClan()).data.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+								   originalData.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			int newResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
-								   UnitsData.getVehicle (i, getClan()).data.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
+								   originalData.isHuman ? cUpgradeCalculator::kInfantry : cUpgradeCalculator::kStandardUnit);
 			if (oldResearchBonus != newResearchBonus)
 			{
 				switch (researchArea)
@@ -771,22 +756,23 @@ void cPlayer::upgradeUnitTypes (std::vector<int>& areasReachingNextLevel, std::v
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 	{
+		const sUnitData& originalData = UnitsData.getBuilding (i, getClan()).data;
 		bool incrementVersion = false;
 		for (unsigned int areaCounter = 0; areaCounter < areasReachingNextLevel.size(); areaCounter++)
 		{
-			int researchArea = areasReachingNextLevel[areaCounter];
-			int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
+			const int researchArea = areasReachingNextLevel[areaCounter];
+			const int newResearchLevel = researchLevel.getCurResearchLevel (researchArea);
 
 			int startValue = 0;
 			switch (researchArea)
 			{
-				case cResearch::kAttackResearch: startValue = UnitsData.getBuilding (i, getClan()).data.damage; break;
-				case cResearch::kShotsResearch: startValue = UnitsData.getBuilding (i, getClan()).data.shotsMax; break;
-				case cResearch::kRangeResearch: startValue = UnitsData.getBuilding (i, getClan()).data.range; break;
-				case cResearch::kArmorResearch: startValue = UnitsData.getBuilding (i, getClan()).data.armor; break;
-				case cResearch::kHitpointsResearch: startValue = UnitsData.getBuilding (i, getClan()).data.hitpointsMax; break;
-				case cResearch::kScanResearch: startValue = UnitsData.getBuilding (i, getClan()).data.scan; break;
-				case cResearch::kCostResearch: startValue = UnitsData.getBuilding (i, getClan()).data.buildCosts; break;
+				case cResearch::kAttackResearch: startValue = originalData.damage; break;
+				case cResearch::kShotsResearch: startValue = originalData.shotsMax; break;
+				case cResearch::kRangeResearch: startValue = originalData.range; break;
+				case cResearch::kArmorResearch: startValue = originalData.armor; break;
+				case cResearch::kHitpointsResearch: startValue = originalData.hitpointsMax; break;
+				case cResearch::kScanResearch: startValue = originalData.scan; break;
+				case cResearch::kCostResearch: startValue = originalData.buildCosts; break;
 			}
 			int oldResearchBonus = cUpgradeCalculator::instance().calcChangeByResearch (startValue, newResearchLevel - 10,
 								   researchArea == cResearch::kCostResearch ? cUpgradeCalculator::kCost : -1,
@@ -924,7 +910,9 @@ bool cPlayer::InLockList (const cVehicle& v) const
 }
 
 //--------------------------------------------------------------------------
-/** Toggles the lock state of a unit under the mouse (when locked it's range and scan is displayed, although the unit is not selected). */
+/** Toggles the lock state of a unit under the mouse
+ * (when locked it's range and scan is displayed, although the unit is not selected).
+*/
 //--------------------------------------------------------------------------
 void cPlayer::ToggelLock (cMapField* OverUnitField)
 {
@@ -980,12 +968,10 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND))
-				drawCircle (screenPos.x + tileSize / 2,
-							screenPos.y + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR))
-				drawCircle (screenPos.x + tileSize / 2,
-							screenPos.y + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
 				elem->v->drawMunBar (gameGUI, screenPos);
@@ -1006,21 +992,17 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 			if (gameGUI.scanChecked())
 			{
 				if (elem->b->data.isBig)
-					drawCircle (screenPos.x + tileSize,
-								screenPos.y + tileSize,
+					drawCircle (screenPos.x + tileSize, screenPos.y + tileSize,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 				else
-					drawCircle (screenPos.x + tileSize / 2,
-								screenPos.y + tileSize / 2,
+					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
 			}
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) && !elem->b->data.explodesOnContact)
-				drawCircle (screenPos.x + tileSize / 2,
-							screenPos.y + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_GROUND_COLOR, buffer);
 			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR))
-				drawCircle (screenPos.x + tileSize / 2,
-							screenPos.y + tileSize / 2,
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
 							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
 
 			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
@@ -1035,29 +1017,29 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
-	float w = (float) (PI_ON_180 * 45), step;
-	int rx, ry, x1, x2;
+	const float PI_ON_4 = PI_ON_180 * 45;
 	if (iRadius <= 0) return;
+
 	iRadius *= 10;
-	step = (float) (PI_ON_180 * 90 - acos (1.0 / iRadius));
-	step /= 2;
-	for (float i = 0; i <= w; i += step)
+	const float step = (PI_ON_180 * 90 - acos (1.0 / iRadius)) / 2;
+
+	for (float angle = 0; angle <= PI_ON_4; angle += step)
 	{
-		rx = (int) (cos (i) * iRadius);
-		ry = (int) (sin (i) * iRadius);
+		int rx = (int) (cos (angle) * iRadius);
+		int ry = (int) (sin (angle) * iRadius);
 		rx /= 10;
 		ry /= 10;
 
-		x1 = rx + iX;
-		x2 = -rx + iX;
+		int x1 = rx + iX;
+		int x2 = -rx + iX;
 		for (int k = x2; k <= x1; k++)
 		{
 			if (k < 0) continue;
 			if (k >= mapsize) break;
 			if (iY + ry >= 0 && iY + ry < mapsize)
-				map[k + (iY + ry) *mapsize] |= 1;
+				map[k + (iY + ry) * mapsize] |= 1;
 			if (iY - ry >= 0 && iY - ry < mapsize)
-				map[k + (iY - ry) *mapsize] |= 1;
+				map[k + (iY - ry) * mapsize] |= 1;
 		}
 
 		x1 = ry + iX;
@@ -1078,22 +1060,21 @@ void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>&
 void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
-	float w = (float) (PI_ON_180 * 45), step;
-	int rx, ry, x1, x2;
-	if (iRadius > 0) iRadius--;
-	else return;
+	const float PI_ON_4 = PI_ON_180 * 45;
+	if (iRadius <= 0) return;
+
+	--iRadius;
 	iRadius *= 10;
-	step = (float) (PI_ON_180 * 90 - acos (1.0 / iRadius));
-	step /= 2;
-	for (float i = 0; i <= w; i += step)
+	const float step = (PI_ON_180 * 90 - acos (1.0 / iRadius)) / 2;
+	for (float angle = 0; angle <= PI_ON_4; angle += step)
 	{
-		rx = (int) (cos (i) * iRadius);
-		ry = (int) (sin (i) * iRadius);
+		int rx = (int) (cos (angle) * iRadius);
+		int ry = (int) (sin (angle) * iRadius);
 		rx /= 10;
 		ry /= 10;
 
-		x1 = rx + iX;
-		x2 = -rx + iX;
+		int x1 = rx + iX;
+		int x2 = -rx + iX;
 		for (int k = x2; k <= x1 + 1; k++)
 		{
 			if (k < 0) continue;
@@ -1125,7 +1106,6 @@ void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<cha
 			if (iY - rx + 1 >= 0 && iY - rx + 1 < mapsize)
 				map[k + (iY - rx + 1) *mapsize] |= 1;
 		}
-
 	}
 }
 

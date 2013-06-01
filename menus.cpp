@@ -4510,7 +4510,7 @@ void cUpgradeHangarMenu::initUpgrades (cPlayer* player)
 	for (unsigned int unitIndex = 0; unitIndex < UnitsData.getNrVehicles() + UnitsData.getNrBuildings(); unitIndex++)
 	{
 		sUnitData* data;
-		sUnitData* oriData;
+		const sUnitData* oriData;
 		if (unitIndex < UnitsData.getNrVehicles())
 		{
 			oriData = &UnitsData.getVehicle (unitIndex, player->getClan()).data;

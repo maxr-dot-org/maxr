@@ -78,6 +78,4 @@ void sendRequestMap (cTCP& network, const std::string& mapName, int playerNr);
 
 void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8], const cPlayer* player);
 
-int findUpgradeValue (sUnitUpgrade upgrades[8], int upgradeType, int defaultValue = 0);
-
 #endif // menueventsH
