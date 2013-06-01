@@ -1346,6 +1346,9 @@ static int LoadVehicles()
 	}
 
 	for (unsigned int i = 0 ; i < UnitsData.vehicle.size(); ++i) UnitsData.vehicle[i].nr = (int) i;
+
+	UnitsData.initializeIDData();
+
 	return 1;
 }
 
@@ -1519,12 +1522,12 @@ static int LoadBuildings()
 		if (pszTmp != 0)
 		{
 			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			if (specialString.compare ("mine") == 0) UnitsData.specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("energy") == 0) UnitsData.specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("connector") == 0) UnitsData.specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("landmine") == 0) UnitsData.specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("seamine") == 0) UnitsData.specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("smallBeton") == 0) UnitsData.specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
 			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}
@@ -1560,24 +1563,24 @@ static int LoadBuildings()
 		if (pszTmp != 0)
 		{
 			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
+			if (specialString.compare ("mine") == 0) UnitsData.specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("energy") == 0) UnitsData.specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("connector") == 0) UnitsData.specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("landmine") == 0) UnitsData.specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("seamine") == 0) UnitsData.specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else if (specialString.compare ("smallBeton") == 0) UnitsData.specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			else Log.write ("Unknown special in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}
 
-	if (specialIDMine.iSecondPart == 0) Log.write ("special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (specialIDSmallGen.iSecondPart == 0) Log.write ("special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (specialIDConnector.iSecondPart == 0) Log.write ("special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (specialIDLandMine.iSecondPart == 0) Log.write ("special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (specialIDSeaMine.iSecondPart == 0) Log.write ("special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (specialIDSmallBeton.iSecondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDMine.iSecondPart == 0) Log.write ("special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDSmallGen.iSecondPart == 0) Log.write ("special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDConnector.iSecondPart == 0) Log.write ("special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDLandMine.iSecondPart == 0) Log.write ("special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDSeaMine.iSecondPart == 0) Log.write ("special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDSmallBeton.iSecondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING);
 
-	specialIDMine.iFirstPart = specialIDSmallGen.iFirstPart = specialIDConnector.iFirstPart = specialIDLandMine.iFirstPart = specialIDSeaMine.iFirstPart = specialIDSmallBeton.iFirstPart = 1;
+	UnitsData.specialIDMine.iFirstPart = UnitsData.specialIDSmallGen.iFirstPart = UnitsData.specialIDConnector.iFirstPart = UnitsData.specialIDLandMine.iFirstPart = UnitsData.specialIDSeaMine.iFirstPart = UnitsData.specialIDSmallBeton.iFirstPart = 1;
 	// load found units
 	UnitsData.building.clear();
 	UnitsData.building.reserve (BuildingList.size());
@@ -1658,7 +1661,7 @@ static int LoadBuildings()
 		LoadUnitSoundfile (b.Attack,  sBuildingPath.c_str(), "attack.ogg");
 
 		// Get Ptr if necessary:
-		if (b.data.ID == specialIDConnector)
+		if (b.data.ID == UnitsData.specialIDConnector)
 		{
 			b.data.isConnectorGraphic = true;
 			UnitsData.ptr_connector = b.img;
@@ -1668,7 +1671,7 @@ static int LoadBuildings()
 			UnitsData.ptr_connector_shw_org = b.shw_org;
 			SDL_SetColorKey (UnitsData.ptr_connector_shw, SDL_SRCCOLORKEY, 0xFF00FF);
 		}
-		else if (b.data.ID == specialIDSmallBeton)
+		else if (b.data.ID == UnitsData.specialIDSmallBeton)
 		{
 			UnitsData.ptr_small_beton = b.img;
 			UnitsData.ptr_small_beton_org = b.img_org;

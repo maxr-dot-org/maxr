@@ -1748,13 +1748,13 @@ bool cVehicle::layMine (cServer& server)
 	const cMap& map = *server.Map;
 	if ( (data.factorSea > 0 && data.factorGround == 0))
 	{
-		if (!map.possiblePlaceBuilding (*specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, specialIDSeaMine.getBuilding(), owner, false);
+		if (!map.possiblePlaceBuilding (*UnitsData.specialIDSeaMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		server.addUnit (PosX, PosY, UnitsData.specialIDSeaMine.getBuilding(), owner, false);
 	}
 	else
 	{
-		if (!map.possiblePlaceBuilding (*specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
-		server.addUnit (PosX, PosY, specialIDLandMine.getBuilding(), owner, false);
+		if (!map.possiblePlaceBuilding (*UnitsData.specialIDLandMine.getUnitDataOriginalVersion(), PosX, PosY, this)) return false;
+		server.addUnit (PosX, PosY, UnitsData.specialIDLandMine.getBuilding(), owner, false);
 	}
 	data.storageResCur--;
 

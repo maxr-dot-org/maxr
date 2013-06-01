@@ -93,14 +93,6 @@ struct sID
 	bool operator== (const sID& ID) const;
 };
 
-// Nummbers of buildings //////////////////////////////////////////////////////
-EX sID specialIDLandMine;
-EX sID specialIDSeaMine;
-EX sID specialIDMine;
-EX sID specialIDSmallGen;
-EX sID specialIDConnector;
-EX sID specialIDSmallBeton;
-
 // struct for vehicle properties
 struct sUnitData
 {
@@ -375,6 +367,8 @@ class cUnitsData
 public:
 	cUnitsData();
 
+	void initializeIDData();
+
 	// Vehicles
 	std::vector<sVehicle> vehicle; // the standard version without clan modifications
 
@@ -418,6 +412,13 @@ private:
 	sID constructorID;
 	sID engineerID;
 	sID surveyorID;
+public:
+	sID specialIDLandMine;
+	sID specialIDSeaMine;
+	sID specialIDMine;
+	sID specialIDSmallGen;
+	sID specialIDConnector;
+	sID specialIDSmallBeton;
 
 } EX UnitsData;
 

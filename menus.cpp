@@ -2012,6 +2012,7 @@ private:
 void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 {
 	if (gameDataContainer->landingUnits.empty()) return;
+	if (gameDataContainer->landingUnits[0] == NULL) return;
 	std::vector<sLandingUnit>& units = *gameDataContainer->landingUnits[0];
 
 	if (units.empty()) return;

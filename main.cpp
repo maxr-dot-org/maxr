@@ -737,9 +737,26 @@ static int getSurveyorIndex()
 	return -1;
 }
 
+void cUnitsData::initializeIDData()
+{
+	int constructorIndex = getConstructorIndex();
+	int engineerIndex = getEngineerIndex();
+	int surveyorIndex = getSurveyorIndex();
+
+	assert (constructorIndex != -1);
+	assert (engineerIndex != -1);
+	assert (surveyorIndex != -1);
+
+	constructorID = vehicle[constructorIndex].data.ID;
+	engineerID = vehicle[engineerIndex].data.ID;
+	surveyorID = vehicle[surveyorIndex].data.ID;
+}
+
 //----------------------------------------------------------------------------------
 void cUnitsData::initializeClanUnitData()
 {
+	if (initializedClanUnitData == true) return;
+
 	cClanData& clanData = cClanData::instance();
 	for (int clanIdx = 0; clanIdx < clanData.getNrClans(); clanIdx++)
 	{
@@ -804,17 +821,6 @@ void cUnitsData::initializeClanUnitData()
 		clanUnitDataBuildings.push_back (clanListBuildings);
 	}
 
-	int constructorIndex = getConstructorIndex();
-	int engineerIndex = getEngineerIndex();
-	int surveyorIndex = getSurveyorIndex();
-
-	assert (constructorIndex != -1);
-	assert (engineerIndex != -1);
-	assert (surveyorIndex != -1);
-
-	constructorID = vehicle[constructorIndex].data.ID;
-	engineerID = vehicle[engineerIndex].data.ID;
-	surveyorID = vehicle[surveyorIndex].data.ID;
 
 	initializedClanUnitData = true;
 }

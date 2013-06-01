@@ -321,8 +321,8 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	Player->base.addBuilding (AddedBuilding, NULL);
 
 	// play placesound if it is a mine
-	if (UnitID == specialIDLandMine && Player == ActivePlayer) PlayFX (SoundData.SNDLandMinePlace);
-	else if (UnitID == specialIDSeaMine && Player == ActivePlayer) PlayFX (SoundData.SNDSeaMinePlace);
+	if (UnitID == UnitsData.specialIDLandMine && Player == ActivePlayer) PlayFX (SoundData.SNDLandMinePlace);
+	else if (UnitID == UnitsData.specialIDSeaMine && Player == ActivePlayer) PlayFX (SoundData.SNDSeaMinePlace);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
@@ -359,8 +359,8 @@ void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
 	if (Building)
 	{
 		// play clearsound if it is a mine
-		if (Building->owner && Building->data.ID == specialIDLandMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDLandMineClear);
-		else if (Building->owner && Building->data.ID == specialIDSeaMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDSeaMineClear);
+		if (Building->owner && Building->data.ID == UnitsData.specialIDLandMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDLandMineClear);
+		else if (Building->owner && Building->data.ID == UnitsData.specialIDSeaMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDSeaMineClear);
 
 		deleteUnit (Building);
 	}

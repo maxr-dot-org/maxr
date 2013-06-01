@@ -2182,15 +2182,15 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLanding
 	// Find place for mine if bridgehead is fixed
 	if (bFixed)
 	{
-		if (Map->possiblePlaceBuilding (*specialIDSmallGen.getUnitDataOriginalVersion(), iX - 1    , iY - 1 + 1) &&
-			Map->possiblePlaceBuilding (*specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1) &&
-			Map->possiblePlaceBuilding (*specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1) &&
-			Map->possiblePlaceBuilding (*specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1 + 1) &&
-			Map->possiblePlaceBuilding (*specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1 + 1))
+		if (Map->possiblePlaceBuilding (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), iX - 1    , iY - 1 + 1) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 2, iY - 1 + 1) &&
+			Map->possiblePlaceBuilding (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX - 1 + 1, iY - 1 + 1))
 		{
 			// place buildings:
-			addUnit (iX - 1,     iY - 1 + 1, &UnitsData.getBuilding (specialIDSmallGen.getBuilding()->nr, Player->getClan()), Player, true);
-			addUnit (iX - 1 + 1, iY - 1,     &UnitsData.getBuilding (specialIDMine.getBuilding()->nr, Player->getClan()), Player, true);
+			addUnit (iX - 1,     iY - 1 + 1, &UnitsData.getBuilding (UnitsData.specialIDSmallGen.getBuilding()->nr, Player->getClan()), Player, true);
+			addUnit (iX - 1 + 1, iY - 1,     &UnitsData.getBuilding (UnitsData.specialIDMine.getBuilding()->nr, Player->getClan()), Player, true);
 		}
 		else
 		{
@@ -2230,11 +2230,11 @@ void cServer::correctLandingPos (int& iX, int& iY)
 		{
 			for (int k = -iWidth / 2; k < iWidth / 2; k++)
 			{
-				if (Map->possiblePlaceBuildingWithMargin (*specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1, margin) &&
-					Map->possiblePlaceBuildingWithMargin (*specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    , margin) &&
-					Map->possiblePlaceBuildingWithMargin (*specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    , margin) &&
-					Map->possiblePlaceBuildingWithMargin (*specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1, margin) &&
-					Map->possiblePlaceBuildingWithMargin (*specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1, margin))
+				if (Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDSmallGen.getUnitDataOriginalVersion(), iX + k    , iY + i + 1, margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i    , margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i    , margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + k + 2, iY + i + 1, margin) &&
+					Map->possiblePlaceBuildingWithMargin (*UnitsData.specialIDMine.getUnitDataOriginalVersion(), iX + k + 1, iY + i + 1, margin))
 				{
 					iX += k + 1;
 					iY += i + 1;
