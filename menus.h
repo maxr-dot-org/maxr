@@ -216,7 +216,7 @@ public:
 	/** handles an incoming landing position
 	 *@author alzi
 	 */
-	void receiveLandingPosition (cTCP& network, cNetMessage* message);
+	void receiveLandingPosition (cTCP& network, cNetMessage* message, cMenu* activeMenu);
 
 	cEventHandling& getEventHandler() { return *eventHandler; }
 private:
@@ -307,7 +307,6 @@ public:
 	 *@author alzi
 	 */
 	void close();
-	virtual void returnToCallback();
 
 	/**
 	 * will the menu be closed after finishing the current action?
@@ -355,9 +354,6 @@ protected:
 private:
 	int lastScreenResX, lastScreenResY;
 };
-
-/** pointer to the currently active menu or NULL if no menu is active */
-EX cMenu* ActiveMenu;
 
 /**
  * A main menu with unit info image and a credits label at the bottom.

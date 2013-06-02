@@ -107,7 +107,7 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
-			client->HandleNetMessage (&message);
+			client->HandleNetMessage (&message, activeMenu);
 			break;
 		case NET_MSG_SERVER:
 			//should not happen!
@@ -124,7 +124,7 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 		case NET_MSG_STATUS:
 			if (client)
 			{
-				client->HandleNetMessage (&message);
+				client->HandleNetMessage (&message, activeMenu);
 			}
 			else if (activeMenu)
 			{

@@ -168,7 +168,7 @@ bool cGameTimerClient::nextTickAllowed()
 	return false;
 }
 
-void cGameTimerClient::run ()
+void cGameTimerClient::run (cMenu* activeMenu)
 {
 	while (popEvent ())
 	{
@@ -178,7 +178,7 @@ void cGameTimerClient::run ()
 		{
 			gameTime++;
 			handleTimer ();
-			client->doGameActions();
+			client->doGameActions (activeMenu);
 
 			//check crc
 			localChecksum = calcClientChecksum(*client);

@@ -58,17 +58,17 @@ void sendGo (cTCP& network);
 
 void sendIdentification (cTCP& network, const sMenuPlayer& player);
 
-void sendClan (cTCP& network, int clanNr, int ownerNr, bool isServer);
+void sendClan (cTCP& network, int clanNr, int ownerNr);
 
-void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingList, int ownerNr, bool isServer);
+void sendLandingUnits (cTCP& network, const std::vector<sLandingUnit>& landingList, int ownerNr);
 
-void sendUnitUpgrades (cTCP* network, const cPlayer& player, bool isServer);
+void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu);
 
-void sendLandingCoords (cTCP& network, const sClientLandData& c, int ownerNr, bool isServer);
+void sendLandingCoords (cTCP& network, const sClientLandData& c, int ownerNr, cMenu* activeMenu);
 
-void sendReselectLanding (cTCP& network, eLandingState state, const sMenuPlayer* player);
+void sendReselectLanding (cTCP& network, eLandingState state, const sMenuPlayer* player, cMenu* activeMenu);
 
-void sendAllLanded (cTCP& network);
+void sendAllLanded (cTCP& network, cMenu* activeMenu);
 
 void sendGameIdentification (cTCP& network, const sMenuPlayer& player, int socket);
 

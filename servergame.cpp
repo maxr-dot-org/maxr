@@ -389,7 +389,7 @@ void cServerGame::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_LANDING_COORDS);
 
-	gameData->receiveLandingPosition (*network, message);
+	gameData->receiveLandingPosition (*network, message, NULL);
 	if (gameData->allLanded)
 		startGameServer();
 }

@@ -430,7 +430,6 @@ public:
 
 	void setClient (cClient* client);
 	int show();
-	void returnToCallback();
 
 	void updateInfoTexts();
 

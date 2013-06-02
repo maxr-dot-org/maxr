@@ -366,7 +366,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
 }
 
-void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message, cMenu* activeMenu)
 {
 	assert (message.iType == GAME_EV_DEL_BUILDING);
 
@@ -378,17 +378,17 @@ void cClient::HandleNetMessage_GAME_EV_DEL_BUILDING (cNetMessage& message)
 		if (Building->owner && Building->data.ID == UnitsData.specialIDLandMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDLandMineClear);
 		else if (Building->owner && Building->data.ID == UnitsData.specialIDSeaMine && Building->owner == ActivePlayer) PlayFX (SoundData.SNDSeaMineClear);
 
-		deleteUnit (Building);
+		deleteUnit (Building, activeMenu);
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_DEL_VEHICLE (cNetMessage& message, cMenu* activeMenu)
 {
 	assert (message.iType == GAME_EV_DEL_VEHICLE);
 
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 
-	if (Vehicle) deleteUnit (Vehicle);
+	if (Vehicle) deleteUnit (Vehicle, activeMenu);
 }
 
 void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
@@ -1107,7 +1107,7 @@ void cClient::HandleNetMessage_GAME_EV_MARK_LOG (cNetMessage& message)
 	Log.write ("=============================================================================================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
-void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message, cMenu* activeMenu)
 {
 	assert (message.iType == GAME_EV_SUPPLY);
 
@@ -1133,10 +1133,10 @@ void cClient::HandleNetMessage_GAME_EV_SUPPLY (cNetMessage& message)
 			{
 				if (Contains (Building->storedUnits, DestVehicle)) break;
 			}
-			if (Building != NULL && ActiveMenu != NULL)
+			if (Building != NULL && activeMenu != NULL)
 			{
-				//FIXME: Is ActiveMenu really an instance of cStorageMenu?
-				cStorageMenu* storageMenu = dynamic_cast<cStorageMenu*> (ActiveMenu);
+				//FIXME: Is activeMenu really an instance of cStorageMenu?
+				cStorageMenu* storageMenu = dynamic_cast<cStorageMenu*> (activeMenu);
 				if (storageMenu)
 				{
 					storageMenuActive = true;
@@ -1481,7 +1481,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 	gameGUI.updateMouseCursor();
 }
 
-void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message, cMenu* activeMenu)
 {
 	assert (message.iType == GAME_EV_DELETE_EVERYTHING);
 
@@ -1500,11 +1500,11 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message)
 
 		while (Player.VehicleList)
 		{
-			deleteUnit (Player.VehicleList);
+			deleteUnit (Player.VehicleList, activeMenu);
 		}
 		while (Player.BuildingList)
 		{
-			deleteUnit (Player.BuildingList);
+			deleteUnit (Player.BuildingList, activeMenu);
 		}
 	}
 
@@ -1603,7 +1603,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 	}
 }
 
-void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
+void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message, cMenu* activeMenu)
 {
 	assert (message.iType == GAME_EV_UPGRADED_VEHICLES);
 
@@ -1629,9 +1629,9 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (cNetMessage& message)
 			}
 		}
 		cBuilding* storingBuilding = getBuildingFromID (storingBuildingID);
-		if (storingBuilding && ActiveMenu)
+		if (storingBuilding && activeMenu)
 		{
-			cStorageMenu* storageMenu = dynamic_cast<cStorageMenu*> (ActiveMenu);
+			cStorageMenu* storageMenu = dynamic_cast<cStorageMenu*> (activeMenu);
 			if (storageMenu)
 			{
 				storageMenu->resetInfos();
@@ -1836,7 +1836,7 @@ void cClient::HandleNetMessage_GAME_EV_SET_GAME_TIME (cNetMessage& message)
 	sendNetMessage (response);
 }
 
-int cClient::HandleNetMessage (cNetMessage* message)
+int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 {
 	if (message->iType != NET_GAME_TIME_SERVER)
 		Log.write ("Client: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
@@ -1851,8 +1851,8 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_PLAYER_CLANS: HandleNetMessage_GAME_EV_PLAYER_CLANS (*message); break;
 		case GAME_EV_ADD_BUILDING: HandleNetMessage_GAME_EV_ADD_BUILDING (*message); break;
 		case GAME_EV_ADD_VEHICLE: HandleNetMessage_GAME_EV_ADD_VEHICLE (*message); break;
-		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (*message); break;
-		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (*message); break;
+		case GAME_EV_DEL_BUILDING: HandleNetMessage_GAME_EV_DEL_BUILDING (*message, activeMenu); break;
+		case GAME_EV_DEL_VEHICLE: HandleNetMessage_GAME_EV_DEL_VEHICLE (*message, activeMenu); break;
 		case GAME_EV_ADD_ENEM_VEHICLE: HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (*message); break;
 		case GAME_EV_ADD_ENEM_BUILDING: HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (*message); break;
 		case GAME_EV_WAIT_FOR: HandleNetMessage_GAME_EV_WAIT_FOR (*message); break;
@@ -1875,7 +1875,7 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_MINE_PRODUCE_VALUES: HandleNetMessage_GAME_EV_MINE_PRODUCE_VALUES (*message); break;
 		case GAME_EV_TURN_REPORT: HandleNetMessage_GAME_EV_TURN_REPORT (*message); break;
 		case GAME_EV_MARK_LOG: HandleNetMessage_GAME_EV_MARK_LOG (*message); break;
-		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (*message); break;
+		case GAME_EV_SUPPLY: HandleNetMessage_GAME_EV_SUPPLY (*message, activeMenu); break;
 		case GAME_EV_ADD_RUBBLE: HandleNetMessage_GAME_EV_ADD_RUBBLE (*message); break;
 		case GAME_EV_DETECTION_STATE: HandleNetMessage_GAME_EV_DETECTION_STATE (*message); break;
 		case GAME_EV_CLEAR_ANSWER: HandleNetMessage_GAME_EV_CLEAR_ANSWER (*message); break;
@@ -1889,11 +1889,11 @@ int cClient::HandleNetMessage (cNetMessage* message)
 		case GAME_EV_HUD_SETTINGS: HandleNetMessage_GAME_EV_HUD_SETTINGS (*message); break;
 		case GAME_EV_STORE_UNIT: HandleNetMessage_GAME_EV_STORE_UNIT (*message); break;
 		case GAME_EV_EXIT_UNIT: HandleNetMessage_GAME_EV_EXIT_UNIT (*message); break;
-		case GAME_EV_DELETE_EVERYTHING: HandleNetMessage_GAME_EV_DELETE_EVERYTHING (*message); break;
+		case GAME_EV_DELETE_EVERYTHING: HandleNetMessage_GAME_EV_DELETE_EVERYTHING (*message, activeMenu); break;
 		case GAME_EV_UNIT_UPGRADE_VALUES: HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (*message); break;
 		case GAME_EV_CREDITS_CHANGED: HandleNetMessage_GAME_EV_CREDITS_CHANGED (*message); break;
 		case GAME_EV_UPGRADED_BUILDINGS: HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (*message); break;
-		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (*message); break;
+		case GAME_EV_UPGRADED_VEHICLES: HandleNetMessage_GAME_EV_UPGRADED_VEHICLES (*message, activeMenu); break;
 		case GAME_EV_RESEARCH_SETTINGS: HandleNetMessage_GAME_EV_RESEARCH_SETTINGS (*message); break;
 		case GAME_EV_RESEARCH_LEVEL: HandleNetMessage_GAME_EV_RESEARCH_LEVEL (*message); break;
 		case GAME_EV_REFRESH_RESEARCH_COUNT: // sent, when the player was resynced (or a game was loaded)
@@ -1991,12 +1991,12 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	return NULL;
 }
 
-void cClient::deleteUnit (cBuilding* Building)
+void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 {
 	if (!Building) return;
 	gameGUI.callMiniMapDraw();
 
-	if (ActiveMenu) ActiveMenu->handleDestroyUnit (Building, NULL);
+	if (activeMenu) activeMenu->handleDestroyUnit (Building, NULL);
 	getMap()->deleteBuilding (Building);
 
 	if (!Building->owner)
@@ -2029,11 +2029,11 @@ void cClient::deleteUnit (cBuilding* Building)
 	owner->DoScan();
 }
 
-void cClient::deleteUnit (cVehicle* Vehicle)
+void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 {
 	if (!Vehicle) return;
 
-	if (ActiveMenu) ActiveMenu->handleDestroyUnit (NULL, Vehicle);
+	if (activeMenu) activeMenu->handleDestroyUnit (NULL, Vehicle);
 	getMap()->deleteVehicle (Vehicle);
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
@@ -2242,13 +2242,13 @@ cBuilding* cClient::getBuildingFromID (unsigned int iID)
 	return NULL;
 }
 
-void cClient::doGameActions()
+void cClient::doGameActions (cMenu* activeMenu)
 {
 	runFx ();
 
 	//run attackJobs
 	if (gameTimer.timer50ms)
-		cClientAttackJob::handleAttackJobs(*this);
+		cClientAttackJob::handleAttackJobs (*this, activeMenu);
 
 	//run moveJobs - this has to be called before handling the auto movejobs
 	handleMoveJobs();

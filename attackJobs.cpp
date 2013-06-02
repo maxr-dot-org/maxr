@@ -568,7 +568,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::handleAttackJobs (cClient& client)
+void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 {
 	for (unsigned int i = 0; i < client.attackJobs.size(); i++)
 	{
@@ -586,7 +586,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client)
 			}
 			case PLAYING_MUZZLE:
 			{
-				job->playMuzzle(client);
+				job->playMuzzle(client, activeMenu);
 				break;
 			}
 			case ROTATING:
@@ -725,7 +725,7 @@ void cClientAttackJob::rotate()
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::playMuzzle(cClient& client)
+void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 {
 	int offx = 0, offy = 0;
 	const cMap& map = *client.getMap();
@@ -742,7 +742,7 @@ void cClientAttackJob::playMuzzle(cClient& client)
 		{
 			client.addFx (new cFxExploSmall (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
-		client.deleteUnit (building);
+		client.deleteUnit (building, activeMenu);
 		return;
 	}
 

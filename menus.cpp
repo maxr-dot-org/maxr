@@ -373,7 +373,7 @@ void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
 }
 
 //------------------------------------------------------------------------------
-void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* message)
+void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* message, cMenu* activeMenu)
 {
 	if (message->iType != MU_MSG_LANDING_COORDS) return;
 
@@ -421,7 +421,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
 		{
 			sMenuPlayer menuPlayer (players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum);
-			sendReselectLanding (network, state, &menuPlayer);
+			sendReselectLanding (network, state, &menuPlayer, activeMenu);
 		}
 	}
 
@@ -438,7 +438,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 	if (!ok) return;
 
 	allLanded = true;
-	sendAllLanded (network);
+	sendAllLanded (network, activeMenu);
 }
 
 //------------------------------------------------------------------------------
@@ -545,8 +545,6 @@ cMenu::cMenu (SDL_Surface* background_, eMenuBackgrounds backgroundType_) :
 //------------------------------------------------------------------------------
 cMenu::~cMenu()
 {
-	if (ActiveMenu == this)
-		ActiveMenu = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -635,9 +633,6 @@ int cMenu::show()
 	mouse->SetCursor (CHand);
 	draw (true);
 
-	cMenu* lastActiveMenu = ActiveMenu;
-	ActiveMenu = this;
-
 	int lastMouseX = 0;
 	int lastMouseY = 0;
 
@@ -650,7 +645,7 @@ int cMenu::show()
 		cEventHandling::handleInputEvents (*this, client);
 		if (client)
 		{
-			client->gameTimer.run ();
+			client->gameTimer.run (this);
 			client->gameGUI.handleTimer();
 		}
 		else
@@ -694,8 +689,7 @@ int cMenu::show()
 	if (!client) handleNetMessages ();
 	cEventHandling::handleInputEvents (*this, client);
 
-	if (lastActiveMenu) lastActiveMenu->returnToCallback();
-	else ActiveMenu = NULL;
+	mouse->SetCursor (CHand);
 	if (end) return 0;
 	assert (terminate);
 	return 1;
@@ -705,13 +699,6 @@ int cMenu::show()
 void cMenu::close()
 {
 	end = true;
-}
-
-//------------------------------------------------------------------------------
-void cMenu::returnToCallback()
-{
-	ActiveMenu = this;
-	mouse->SetCursor (CHand);
 }
 
 //------------------------------------------------------------------------------
@@ -1046,7 +1033,6 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 	loadMenu.show();
 	if (!gameDataContainer.savegame.empty())
 	{
-		ActiveMenu = NULL;
 		gameDataContainer.runGame (NULL, 0);
 		menu->end = true;
 	}
@@ -1763,7 +1749,7 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 			gameDataContainer->receiveUnitUpgrades (message);
 			break;
 		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message);
+			gameDataContainer->receiveLandingPosition (*network, message, this);
 			break;
 	}
 }
@@ -2171,10 +2157,10 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
 	{
-		sendClan (*menu->network, menu->player->getClan(), menu->player->Nr, menu->gameDataContainer->isServer);
-		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr, menu->gameDataContainer->isServer);
+		sendClan (*menu->network, menu->player->getClan(), menu->player->Nr);
+		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr);
 	}
-	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer);
+	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer ? menu : NULL);
 
 	menu->end = true;
 }
@@ -2381,7 +2367,7 @@ void cStartupHangarMenu::handleNetMessage (cNetMessage* message)
 			gameDataContainer->receiveUnitUpgrades (message);
 			break;
 		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message);
+			gameDataContainer->receiveLandingPosition (*network, message, this);
 			break;
 	}
 }
@@ -2586,12 +2572,10 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 {
 	if (key.keysym.sym == SDLK_ESCAPE && key.state == SDL_PRESSED)
 	{
-		ActiveMenu = NULL;
 		// TODO: may use another text here
 		cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
 		if (yesNoDialog.show() == 0) terminate = true;
 		else draw();
-		ActiveMenu = this;
 	}
 }
 
@@ -2622,7 +2606,7 @@ void cLandingMenu::handleNetMessage (cNetMessage* message)
 			gameDataContainer->receiveUnitUpgrades (message);
 			break;
 		case MU_MSG_LANDING_COORDS:
-			gameDataContainer->receiveLandingPosition (*network, message);
+			gameDataContainer->receiveLandingPosition (*network, message, this);
 			break;
 		case MU_MSG_RESELECT_LANDING:
 			Log.write ("Client: received MU_MSG_RESELECT_LANDING", cLog::eLOG_TYPE_NET_DEBUG);
@@ -2655,7 +2639,7 @@ void cLandingMenu::hitPosition()
 		case GAME_TYPE_TCPIP:
 		{
 			infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-			sendLandingCoords (*network, landData, player->Nr, gameDataContainer->isServer);
+			sendLandingCoords (*network, landData, player->Nr, gameDataContainer->isServer ? this : NULL);
 			draw();
 		}
 		break;
@@ -3124,10 +3108,8 @@ void cNetworkHostMenu::okReleased (void* parent)
 	menu->saveOptions();
 	if (!menu->gameDataContainer.savegame.empty())
 	{
-		ActiveMenu = NULL;
 		if (!menu->runSavedGame())
 		{
-			ActiveMenu = menu;
 			return;
 		}
 	}
@@ -3745,7 +3727,6 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	}
 	if (!saveGameString.empty())
 	{
-		ActiveMenu = NULL;
 		gameDataContainer.runGame (network, actPlayer->nr);
 	}
 	else
@@ -3816,7 +3797,6 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 		}
 		while (changed && size);
 
-		ActiveMenu = NULL;
 		gameDataContainer.runGame (network, actPlayer->nr, true);
 		end = true;
 	}

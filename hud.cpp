@@ -753,9 +753,6 @@ int cGameGUI::show()
 {
 	drawnEveryFrame = true;
 
-	cMenu* lastActiveMenu = ActiveMenu;
-	ActiveMenu = this;
-
 	// do startup actions
 	makePanel (true);
 	startup = true;
@@ -766,7 +763,7 @@ int cGameGUI::show()
 	while (!end && !terminate)
 	{
 		cEventHandling::handleInputEvents (*this, client);
-		client->gameTimer.run();
+		client->gameTimer.run (this);
 
 		mouse->GetPos();
 		if (mouse->moved())
@@ -843,15 +840,9 @@ int cGameGUI::show()
 
 	cEventHandling::handleInputEvents (*this, client); //flush event queue before exiting menu
 
-	if (lastActiveMenu) lastActiveMenu->returnToCallback();
 	if (end) return 0;
 	assert (terminate);
 	return 1;
-}
-
-void cGameGUI::returnToCallback()
-{
-	ActiveMenu = this;
 }
 
 void cGameGUI::updateInfoTexts ()

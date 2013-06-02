@@ -6,6 +6,7 @@
 #include <vector>
 
 class cClient;
+class cMenu;
 class cNetMessage;
 class cPlayer;
 class cServer;
@@ -89,7 +90,7 @@ public:
 	cGameTimerClient ();
 	void setClient(cClient* client);
 
-	void run ();
+	void run (cMenu* activeMenu);
 	void handleSyncMessage (cNetMessage& message);
 };
 
