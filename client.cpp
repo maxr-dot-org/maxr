@@ -82,6 +82,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	gameGUI.setClient (this);
 	gameTimer.setClient(this);
 	if (server) server->setLocalClient (*this);
+	else network->setMessageReceiver (this);
 	neutralBuildings = NULL;
 	bDefeated = false;
 	iTurn = 1;
@@ -115,6 +116,21 @@ cClient::~cClient()
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
+}
+
+/*virtual*/ void cClient::pushEvent (cNetMessage* message)
+{
+	if (message->iType == NET_GAME_TIME_SERVER)
+	{
+		//this is a preview for the client to know how many sync messages are in queue
+		//used to detect a growing lag behind the server time
+		message->popInt32();
+		unsigned int receivedTime = message->popInt32();
+		message->rewind();
+
+		gameTimer.setReceivedTime (receivedTime);
+	}
+	eventHandling->pushEvent (message);
 }
 
 void cClient::sendNetMessage (cNetMessage* message) const

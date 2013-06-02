@@ -21,6 +21,7 @@
 #include "SDL_flic.h"
 #include "defines.h"
 #include "main.h"
+#include "network.h"
 #include "hud.h"
 
 class cCasualtiesTracker;
@@ -41,7 +42,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 * Client class which handles the in and output for a player
 *@author alzi alias DoctorDeath
 */
-class cClient
+class cClient : public INetMessageReceiver
 {
 public:
 	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cMap* Map, std::vector<cPlayer*>* PlayerList);
@@ -51,6 +52,8 @@ public:
 	// TODO: should be const cServer*
 	cServer* getServer() const { return server; }
 	cEventHandling& getEventHandling() { return *eventHandling; }
+	virtual void pushEvent (cNetMessage* message);
+
 private:
 	friend class cDebugOutput;
 	friend class cPlayer;

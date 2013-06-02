@@ -222,7 +222,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 		if (network)
 			network->send (message->iLength, message->data);
 		if (localClient != NULL)
-			localClient->getEventHandling().pushEvent (message);
+			localClient->pushEvent (message);
 		return;
 	}
 
@@ -239,7 +239,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	if (Player->iSocketNum == MAX_CLIENTS)
 	{
 		if (localClient != NULL)
-			localClient->getEventHandling().pushEvent (message);
+			localClient->pushEvent (message);
 	}
 	// on all other sockets the netMessage will be send over TCP/IP
 	else
