@@ -115,6 +115,8 @@ public:
 
 	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
 
+	bool IsLocked; // Gibt an, ob dieses Unit in irgend einer Lock-Liste ist
+
 	//-----------------------------------------------------------------------------
 protected:
 	UnitType unitType;

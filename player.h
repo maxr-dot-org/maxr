@@ -38,13 +38,6 @@ class cUnit;
 struct sHudStateContainer;
 struct sTurnstartReport;
 
-// Eintrag in der Lock-Liste /////////////////////////////////////////////////
-struct sLockElem
-{
-	cVehicle* v;
-	cBuilding* b;
-};
-
 struct sSavedReportMessage
 {
 	enum eReportTypes
@@ -104,7 +97,7 @@ public:
 	std::vector<sTurnstartReport*> ReportBuildings; // Reportlisten.
 	std::vector<sSavedReportMessage> savedReportsList;
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
-	std::vector<sLockElem*> LockList;           // Liste mit gelockten Objekten.
+	std::vector<cUnit*> LockList;  // Liste mit gelockten Objekten.
 	int iSocketNum;			// Number of socket over which this player is connected in network game
 	// if MAX_CLIENTS its the local connected player; -1 for unknown
 	bool bFinishedTurn;			//true when player send his turn end
@@ -129,12 +122,7 @@ public:
 	void accumulateScore (cServer& server); // at turn end
 	void upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas);
 	void refreshResearchCentersWorkingOnArea();
-	void AddLock (cBuilding* b);
-	void AddLock (cVehicle* v);
-	void DeleteLock (cBuilding* b);
-	void DeleteLock (cVehicle* v);
-	bool InLockList (const cBuilding& b) const;
-	bool InLockList (const cVehicle& v) const;
+	void DeleteLock (cUnit& unit);
 	void ToggelLock (cMapField* OverUnitField);
 	void DrawLockList (cGameGUI& gameGUI);
 	void CountEcoSpheres();

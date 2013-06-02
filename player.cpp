@@ -154,11 +154,6 @@ cPlayer::~cPlayer()
 		delete ReportBuildings[i];
 	}
 	ReportBuildings.clear();
-	for (size_t i = 0; i != LockList.size(); ++i)
-	{
-		delete LockList[i];
-	}
-	LockList.clear();
 
 	delete savedHud;
 }
@@ -821,92 +816,11 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	ResearchCount = newResearchCount;
 }
 
-//------------------------------------------------------------
-/** Adds a building to the lock list (the range/scan of the building will remain displayed, even if it is unselected). */
-//------------------------------------------------------------
-void cPlayer::AddLock (cBuilding* b)
+//--------------------------------------------------------------------------
+void cPlayer::DeleteLock (cUnit& unit)
 {
-	sLockElem* elem = new sLockElem;
-	elem->b = b;
-	elem->v = NULL;
-	b->IsLocked = true;
-	LockList.push_back (elem);
-}
-
-//------------------------------------------------------------
-/** Adds a vehicle to the lock list (the range/scan of the vehicle will remain displayed, even if it is unselected). */
-//------------------------------------------------------------
-void cPlayer::AddLock (cVehicle* v)
-{
-	sLockElem* elem = new sLockElem;
-	elem->v = v;
-	elem->b = NULL;
-	v->IsLocked = true;
-	LockList.push_back (elem);
-}
-
-//------------------------------------------------------------
-/** Removes a vehicle from the lock list. */
-//------------------------------------------------------------
-void cPlayer::DeleteLock (cVehicle* v)
-{
-	for (size_t i = 0; i < LockList.size(); i++)
-	{
-		sLockElem* elem = LockList[i];
-		if (elem->v == v)
-		{
-			v->IsLocked = false;
-			delete elem;
-			LockList.erase (LockList.begin() + i);
-			return;
-		}
-	}
-}
-
-//------------------------------------------------------------
-/** Removes a building from the lock list. */
-//------------------------------------------------------------
-void cPlayer::DeleteLock (cBuilding* b)
-{
-	for (size_t i = 0; i < LockList.size(); i++)
-	{
-		sLockElem* elem = LockList[i];
-		if (elem->b == b)
-		{
-			b->IsLocked = false;
-			delete elem;
-			LockList.erase (LockList.begin() + i);
-			return;
-		}
-	}
-}
-
-//------------------------------------------------------------
-/** Checks if the building is contained in the lock list. */
-//------------------------------------------------------------
-bool cPlayer::InLockList (const cBuilding& b) const
-{
-	for (unsigned int i = 0; i < LockList.size(); i++)
-	{
-		const sLockElem* elem = LockList[i];
-		if (elem->b == &b)
-			return true;
-	}
-	return false;
-}
-
-//------------------------------------------------------------
-/** Checks if the vehicle is contained in the lock list. */
-//------------------------------------------------------------
-bool cPlayer::InLockList (const cVehicle& v) const
-{
-	for (unsigned int i = 0; i < LockList.size(); i++)
-	{
-		const sLockElem* elem = LockList[i];
-		if (elem->v == &v)
-			return true;
-	}
-	return false;
+	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
+	if (it != LockList.end()) LockList.erase (it);
 }
 
 //--------------------------------------------------------------------------
@@ -916,26 +830,29 @@ bool cPlayer::InLockList (const cVehicle& v) const
 //--------------------------------------------------------------------------
 void cPlayer::ToggelLock (cMapField* OverUnitField)
 {
+	cUnit* unit = NULL;
 	if (OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != this)
 	{
-		if (InLockList (*OverUnitField->getBaseBuilding())) DeleteLock (OverUnitField->getBaseBuilding());
-		else AddLock (OverUnitField->getBaseBuilding());
+		unit = OverUnitField->getBaseBuilding();
 	}
-	if (OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner != this)
+	else if (OverUnitField->getTopBuilding() && OverUnitField->getTopBuilding()->owner != this)
 	{
-		if (InLockList (*OverUnitField->getTopBuilding())) DeleteLock (OverUnitField->getTopBuilding());
-		else AddLock (OverUnitField->getTopBuilding());
+		unit = OverUnitField->getTopBuilding();
 	}
 	if (OverUnitField->getVehicles() && OverUnitField->getVehicles()->owner != this)
 	{
-		if (InLockList (*OverUnitField->getVehicles())) DeleteLock (OverUnitField->getVehicles());
-		else AddLock (OverUnitField->getVehicles());
+		unit = OverUnitField->getVehicles();
 	}
 	if (OverUnitField->getPlanes() && OverUnitField->getPlanes()->owner != this)
 	{
-		if (InLockList (*OverUnitField->getPlanes())) DeleteLock (OverUnitField->getPlanes());
-		else AddLock (OverUnitField->getPlanes());
+		unit = OverUnitField->getPlanes();
 	}
+
+	if (unit == NULL) return;
+	unit->IsLocked = !unit->IsLocked;
+	std::vector<cUnit*>::iterator it = std::find(LockList.begin(), LockList.end(), unit);
+	if (it == LockList.end()) LockList.push_back (unit);
+	else LockList.erase (it);
 }
 
 //--------------------------------------------------------------------------
@@ -948,68 +865,34 @@ void cPlayer::DrawLockList (cGameGUI& gameGUI)
 	const cMap& map = *gameGUI.getClient()->getMap();
 	for (unsigned int i = 0; i < LockList.size(); i++)
 	{
-		sLockElem* elem = LockList[i];
-		if (elem->v)
+		cUnit* unit = LockList[i];
+		const int off = unit->PosX + unit->PosY * map.size;
+		if (!ScanMap[off])
 		{
-			const int off = elem->v->PosX + elem->v->PosY * map.size;
-			if (!ScanMap[off])
-			{
-				DeleteLock (elem->v);
-				i--;
-				continue;
-			}
-			const SDL_Rect screenPos = {Sint16 (elem->v->getScreenPosX (gameGUI)), Sint16 (elem->v->getScreenPosY (gameGUI)), 0, 0};
-
-			if (gameGUI.scanChecked())
-			{
-				if (elem->v->data.isBig)
-					drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
-				else
-					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, elem->v->data.scan * tileSize, SCAN_COLOR, buffer);
-			}
-			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_GROUND))
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-							elem->v->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
-			if (gameGUI.rangeChecked() && (elem->v->data.canAttack & TERRAIN_AIR))
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-							elem->v->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
-			if (gameGUI.ammoChecked() && elem->v->data.canAttack)
-				elem->v->drawMunBar (gameGUI, screenPos);
-			if (gameGUI.hitsChecked())
-				elem->v->drawHealthBar (gameGUI, screenPos);
+			unit->IsLocked = false;
+			LockList.erase (LockList.begin() + i);
+			i--;
+			continue;
 		}
-		else if (elem->b)
+		const SDL_Rect screenPos = {Sint16 (unit->getScreenPosX (gameGUI)), Sint16 (unit->getScreenPosY (gameGUI)), 0, 0};
+
+		if (gameGUI.scanChecked())
 		{
-			const int off = elem->b->PosX + elem->b->PosY * map.size;
-			if (!ScanMap[off])
-			{
-				DeleteLock (elem->b);
-				i--;
-				continue;
-			}
-			const SDL_Rect screenPos = {Sint16 (elem->b->getScreenPosX (gameGUI)), Sint16 (elem->b->getScreenPosY (gameGUI)), 0, 0};
-
-			if (gameGUI.scanChecked())
-			{
-				if (elem->b->data.isBig)
-					drawCircle (screenPos.x + tileSize, screenPos.y + tileSize,
-								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
-				else
-					drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-								elem->b->data.scan * tileSize, SCAN_COLOR, buffer);
-			}
-			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_GROUND) && !elem->b->data.explodesOnContact)
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-							elem->b->data.range * tileSize + 2, RANGE_GROUND_COLOR, buffer);
-			if (gameGUI.rangeChecked() && (elem->b->data.canAttack & TERRAIN_AIR))
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-							elem->b->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
-
-			if (gameGUI.ammoChecked() && elem->b->data.canAttack && !elem->b->data.explodesOnContact)
-				elem->b->drawMunBar (gameGUI, screenPos);
-			if (gameGUI.hitsChecked())
-				elem->b->drawHealthBar (gameGUI, screenPos);
+			if (unit->data.isBig)
+				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, buffer);
+			else
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, buffer);
 		}
+		if (gameGUI.rangeChecked() && (unit->data.canAttack & TERRAIN_GROUND))
+			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
+						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
+		if (gameGUI.rangeChecked() && (unit->data.canAttack & TERRAIN_AIR))
+			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
+						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
+		if (gameGUI.ammoChecked() && unit->data.canAttack)
+			unit->drawMunBar (gameGUI, screenPos);
+		if (gameGUI.hitsChecked())
+			unit->drawHealthBar (gameGUI, screenPos);
 	}
 }
 

@@ -159,7 +159,6 @@ public:
 	float CommandoRank; // Rang des Commandos
 	int lastSpeed;	 //A disabled unit gets this amount of speed back, when it it captured
 	int lastShots;	 //A disabled unit gets this amount of shots back, when it it captured
-	bool IsLocked;    // Gibt an, ob dieses Vehicle in irgend einer Lock-Liste ist
 
 	/**
 	* Draws the vehicle to the screen buffer.

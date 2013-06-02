@@ -155,7 +155,6 @@ public:
 	int lastShots;   //A disabled unit gets this amount of shots back, when it it captured
 	/** true if the building was has been working before it was disabled */
 	bool wasWorking;
-	bool IsLocked;   // Gibt an, ob dieses Building in irgend einer Lock-Liste ist
 	int points;     // accumulated eco-sphere points
 
 	/**

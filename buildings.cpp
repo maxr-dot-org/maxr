@@ -64,7 +64,6 @@ cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
 	StartUp = 0;
 	IsWorking = false;
 	researchArea = cResearch::kAttackResearch;
-	IsLocked = false;
 	typ = b;
 	points = 0;
 	lastShots = 0;
@@ -124,16 +123,6 @@ cBuilding::~cBuilding()
 			delete (*BuildList) [i];
 		}
 		delete BuildList;
-	}
-
-	if (IsLocked)
-	{
-		std::vector<cPlayer*>& playerList = Client->getPlayerList();
-		for (unsigned int i = 0; i < playerList.size(); i++)
-		{
-			cPlayer* p = playerList[i];
-			p->DeleteLock (this);
-		}
 	}
 }
 

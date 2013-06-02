@@ -87,7 +87,6 @@ cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID) :
 	LayMines = false;
 	ClearMines = false;
 	Loaded = false;
-	IsLocked = false;
 	BigBetonAlpha = 0;
 	lastShots = 0;
 	lastSpeed = 0;
@@ -112,16 +111,6 @@ cVehicle::~cVehicle()
 	}
 
 	delete autoMJob;
-
-	if (IsLocked)
-	{
-		std::vector<cPlayer*>& playerList = Client->getPlayerList();
-		for (size_t i = 0; i < playerList.size(); i++)
-		{
-			cPlayer* p = playerList[i];
-			p->DeleteLock (this);
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------
