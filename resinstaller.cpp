@@ -3094,7 +3094,7 @@ int installBuildingSounds()
 
 	//gun turret
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "gun_turret" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "CANFIRE" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "FGUN14" + waveExtension, path + "attack.wav");
 	
 	//landmine
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "landmine" + PATH_DELIMITER;
@@ -3190,7 +3190,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "ATTACK7" + waveExtension, path + "stop.wav");
-	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
 	//alien_ship
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_ship" + PATH_DELIMITER;
@@ -3198,7 +3198,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "JUGGR5" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "JUGGR5" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "JUGGR7" + waveExtension, path + "stop_water.wav");
-	copyWAV( sMAXPath + "FARTY14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "ASGUN14" + waveExtension, path + "attack.wav");
 		
 	//alien_tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "alien_tank" + PATH_DELIMITER;
@@ -3206,7 +3206,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "ALNTK5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "ALNTK5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "ALNTK7" + waveExtension, path + "stop.wav");
-	copyWAV( sMAXPath + "CANFIRE" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
 	//apc
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "apc" + PATH_DELIMITER;
@@ -3240,7 +3240,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "ATTACK5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "ATTACK7" + waveExtension, path + "stop.wav");
-	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
 	//bulldozer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "bulldozer" + PATH_DELIMITER;
@@ -3268,6 +3268,8 @@ int installVehicleSounds()
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "commando" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MANMOVE" + waveExtension, path + "drive.wav");
 	copyWAV( sMAXPath + "INFIL14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "INFIL15" + waveExtension, path + "death1.wav");
+	copyWAV( sMAXPath + "INFIL16" + waveExtension, path + "death2.wav");
 
 	//corvet
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "corvet" + PATH_DELIMITER;
@@ -3283,7 +3285,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "SBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "SBOATSTP" + waveExtension, path + "stop_water.wav");
-	copyWAV( sMAXPath + "FANTI14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "MANTI14" + waveExtension, path + "attack.wav");
 		
 	//fighter
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "fighter" + PATH_DELIMITER;
@@ -3299,23 +3301,25 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "GBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "GBOATSTP" + waveExtension, path + "stop_water.wav");
-	copyWAV( sMAXPath + "FARTY14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "CANFIRE" + waveExtension, path + "attack.wav");
 
 	//infantery
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "infantery" + PATH_DELIMITER;
 	copyWAV( sMAXPath + "MANMOVE" + waveExtension, path + "drive.wav");
 	copyWAV( sMAXPath + "INFAN14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "INFAN15" + waveExtension, path + "death1.wav");
+	copyWAV( sMAXPath + "INFAN16" + waveExtension, path + "death2.wav");
 			
 	//konstrukt
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "konstrukt" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "CONST2" + waveExtension, path + "wait_water.wav");
-	copyPartOfWAV( sMAXPath + "CONST6" + waveExtension, path + "start_water.wav", 0);
-	copyPartOfWAV( sMAXPath + "CONST6" + waveExtension, path + "drive_water.wav", 1);
-	copyWAV( sMAXPath + "CONST8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "CONST1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "CONST5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "CONST5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "CONST7" + waveExtension, path + "stop.wav");
+	copyWAV( sMAXPath + "CONST2" + waveExtension, path + "wait_water.wav");
+	copyPartOfWAV( sMAXPath + "CONST6" + waveExtension, path + "start_water.wav", 0);
+	copyPartOfWAV( sMAXPath + "CONST6" + waveExtension, path + "drive_water.wav", 1);
+	copyWAV( sMAXPath + "CONST8" + waveExtension, path + "stop_water.wav");
 		
 	//minelayer
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "minelayer" + PATH_DELIMITER;
@@ -3338,7 +3342,7 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "MBOATMVE" + waveExtension, path + "start_water.wav", 0);
 	copyPartOfWAV( sMAXPath + "MBOATMVE" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "MBOATSTP" + waveExtension, path + "stop_water.wav");
-	copyWAV( sMAXPath + "MISLFIRE" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "MSLCR14" + waveExtension, path + "attack.wav");
 	
 	//mobile_aa
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "mobile_aa" + PATH_DELIMITER;
@@ -3350,14 +3354,14 @@ int installVehicleSounds()
 		
 	//pionier
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "pionier" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "ENGIN2" + waveExtension, path + "wait_water.wav");
-	copyPartOfWAV( sMAXPath + "ENGIN6" + waveExtension, path + "start_water.wav", 0);
-	copyPartOfWAV( sMAXPath + "ENGIN6" + waveExtension, path + "drive_water.wav", 1);
-	copyWAV( sMAXPath + "ENGIN8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "ENGIN1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "ENGIN5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "ENGIN5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "ENGIN7" + waveExtension, path + "stop.wav");
+	copyWAV( sMAXPath + "ENGIN2" + waveExtension, path + "wait_water.wav");
+	copyPartOfWAV( sMAXPath + "ENGIN6" + waveExtension, path + "start_water.wav", 0);
+	copyPartOfWAV( sMAXPath + "ENGIN6" + waveExtension, path + "drive_water.wav", 1);
+	copyWAV( sMAXPath + "ENGIN8" + waveExtension, path + "stop_water.wav");
 		
 	//repair
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "repair" + PATH_DELIMITER;
@@ -3375,14 +3379,14 @@ int installVehicleSounds()
 		
 	//scout
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "scout" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "SCOUT2" + waveExtension, path + "wait_water.wav");
-	copyPartOfWAV( sMAXPath + "SCOUT6" + waveExtension, path + "start_water.wav", 0);
-	copyPartOfWAV( sMAXPath + "SCOUT6" + waveExtension, path + "drive_water.wav", 1);
-	copyWAV( sMAXPath + "SCOUT8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "SCOUT1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "SCOUT5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "SCOUT5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "SCOUT7" + waveExtension, path + "stop.wav");
+	copyWAV( sMAXPath + "SCOUT2" + waveExtension, path + "wait_water.wav");
+	copyPartOfWAV( sMAXPath + "SCOUT6" + waveExtension, path + "start_water.wav", 0);
+	copyPartOfWAV( sMAXPath + "SCOUT6" + waveExtension, path + "drive_water.wav", 1);
+	copyWAV( sMAXPath + "SCOUT8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "SCOUT14" + waveExtension, path + "attack.wav");
 		
 	//sea_minelayer
@@ -3406,17 +3410,18 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "SUB6" + waveExtension, path + "drive_water.wav", 1);
 	copyWAV( sMAXPath + "SUB8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "SUB14" + waveExtension, path + "attack.wav");
+	copyWAV( sMAXPath + "SUB16" + waveExtension, path + "death1.wav");
 		
 	//surveyor
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "surveyor" + PATH_DELIMITER;
-	copyWAV( sMAXPath + "SURVY2" + waveExtension, path + "wait_water.wav");
-	copyPartOfWAV( sMAXPath + "SURVY6" + waveExtension, path + "start_water.wav", 0);
-	copyPartOfWAV( sMAXPath + "SURVY6" + waveExtension, path + "drive_water.wav", 1);
-	copyWAV( sMAXPath + "SURVY8" + waveExtension, path + "stop_water.wav");
 	copyWAV( sMAXPath + "SURVY1" + waveExtension, path + "wait.wav");
 	copyPartOfWAV( sMAXPath + "SURVY5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "SURVY5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "SURVY7" + waveExtension, path + "stop.wav");
+	copyWAV( sMAXPath + "SURVY2" + waveExtension, path + "wait_water.wav");
+	copyPartOfWAV( sMAXPath + "SURVY6" + waveExtension, path + "start_water.wav", 0);
+	copyPartOfWAV( sMAXPath + "SURVY6" + waveExtension, path + "drive_water.wav", 1);
+	copyWAV( sMAXPath + "SURVY8" + waveExtension, path + "stop_water.wav");
 		
 	//tank
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "tank" + PATH_DELIMITER;
