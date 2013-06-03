@@ -131,8 +131,7 @@ void sendWantBuild (const cClient &client, int iVehicleID, sID buildingTypeID, i
 	message->pushBool (bBuildPath);
 	message->pushInt32 (iBuildOff);
 	message->pushInt16 (iBuildSpeed);
-	message->pushInt16 (buildingTypeID.iSecondPart);
-	message->pushInt16 (buildingTypeID.iFirstPart);
+	message->pushID (buildingTypeID);
 	message->pushInt16 (iVehicleID);
 	client.sendNetMessage (message);
 }
@@ -171,8 +170,7 @@ void sendWantBuildList (const cClient &client, const cBuilding& building, const 
 	message->pushBool (bRepeat);
 	for (int i = (int) buildList.size() - 1; i >= 0; i--)
 	{
-		message->pushInt16 (buildList[i].type.iSecondPart);
-		message->pushInt16 (buildList[i].type.iFirstPart);
+		message->pushID (buildList[i].type);
 	}
 	message->pushInt16 ((int) buildList.size());
 	message->pushInt16 (buildSpeed);
@@ -226,17 +224,17 @@ void sendWantSupply (const cClient &client, int iDestID, bool bDestVehicle, int 
 	client.sendNetMessage (message);
 }
 
-void sendWantStartClear (const cClient &client, const cUnit& unit)
+void sendWantStartClear (const cClient &client, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_START_CLEAR);
-	message->pushInt16 (unit.iID);
+	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
 
-void sendWantStopClear (const cClient &client, const cUnit& unit)
+void sendWantStopClear (const cClient &client, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WANT_STOP_CLEAR);
-	message->pushInt16 (unit.iID);
+	message->pushInt16 (vehicle.iID);
 	client.sendNetMessage (message);
 }
 
@@ -273,11 +271,11 @@ void sendRequestResync (const cClient &client, char playerNr)
 	client.sendNetMessage (message);
 }
 
-void sendSetAutoStatus (const cClient &client, int unitID, bool set)
+void sendSetAutoStatus (const cClient &client, int vehicleID, bool set)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_AUTOMOVE_STATUS);
 	message->pushBool (set);
-	message->pushInt16 (unitID);
+	message->pushInt16 (vehicleID);
 	client.sendNetMessage (message);
 }
 
@@ -357,8 +355,7 @@ void sendSaveReportInfo (const cClient &client, const sSavedReportMessage& saved
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVE_REPORT_INFO);
 	message->pushInt16 (savedReport.colorNr);
-	message->pushInt16 (savedReport.unitID.iSecondPart);
-	message->pushInt16 (savedReport.unitID.iFirstPart);
+	message->pushID (savedReport.unitID);
 	message->pushInt16 (savedReport.yPos);
 	message->pushInt16 (savedReport.xPos);
 	message->pushInt16 (savedReport.type);

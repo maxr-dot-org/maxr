@@ -609,9 +609,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (Vehicle == NULL) return;
 	if (Vehicle->IsBuilding || Vehicle->BuildPath) return;
 
-	sID BuildingTyp;
-	BuildingTyp.iFirstPart = message.popInt16();
-	BuildingTyp.iSecondPart = message.popInt16();
+	const sID BuildingTyp = message.popID();
 	if (BuildingTyp.getUnitDataOriginalVersion() == NULL)
 	{
 		Log.write (" Server: invalid unit: " + iToStr (BuildingTyp.iFirstPart) + "."  + iToStr (BuildingTyp.iSecondPart), cLog::eLOG_TYPE_NET_ERROR);
@@ -927,9 +925,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	const int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
-		sID Type;
-		Type.iFirstPart = message.popInt16();
-		Type.iSecondPart = message.popInt16();
+		const sID Type = message.popID();
 
 		// if the first unit hasn't changed copy it to the new buildlist
 		if (Building->BuildList->size() > 0 && i == 0 && Type == (*Building->BuildList) [0]->type)
@@ -1598,10 +1594,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 	const int iCount = message.popInt16(); // get the number of upgrades in this message
 	for (int i = 0; i < iCount; i++)
 	{
-		sID ID;
-		ID.iFirstPart = message.popInt16();
-		ID.iSecondPart = message.popInt16();
-
+		const sID ID = message.popID();
 		const int newDamage = message.popInt16();
 		const int newMaxShots = message.popInt16();
 		const int newRange = message.popInt16();
@@ -1939,8 +1932,7 @@ void cServer::HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 	savedReport.type = (sSavedReportMessage::eReportTypes) message.popInt16();
 	savedReport.xPos = message.popInt16();
 	savedReport.yPos = message.popInt16();
-	savedReport.unitID.iFirstPart = message.popInt16();
-	savedReport.unitID.iSecondPart = message.popInt16();
+	savedReport.unitID = message.popID();
 	savedReport.colorNr = message.popInt16();
 
 	player->savedReportsList.push_back (savedReport);
@@ -2075,7 +2067,7 @@ int cServer::HandleNetMessage (cNetMessage* message)
 }
 
 //-------------------------------------------------------------------------------------
-int cServer::getUpgradeCosts (sID& ID, cPlayer* player, bool bVehicle,
+int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 							  int newDamage, int newMaxShots, int newRange,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)

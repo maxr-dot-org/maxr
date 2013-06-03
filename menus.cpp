@@ -342,8 +342,7 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 	{
 		sLandingUnit unit;
 		unit.cargo = message->popInt16();
-		unit.unitID.iFirstPart = message->popInt16();
-		unit.unitID.iSecondPart = message->popInt16();
+		unit.unitID = message->popID();
 		playerLandingUnits->push_back (unit);
 	}
 }
@@ -351,24 +350,23 @@ void cGameDataContainer::receiveLandingUnits (cNetMessage* message)
 //------------------------------------------------------------------------------
 void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
 {
-	int playerNr = message->popInt16();
-	int count = message->popInt16();
+	const int playerNr = message->popInt16();
+	const int count = message->popInt16();
 	for (int i = 0; i < count; i++)
 	{
-		bool isVehicle = message->popBool();
-		sID ID;
-		ID.iFirstPart = message->popInt16();
-		ID.iSecondPart = message->popInt16();
+		const bool isVehicle = message->popBool();
+		const sID ID = message->popID();
+		sUnitData* unitData = ID.getUnitDataCurrentVersion (players[playerNr]);
 
-		ID.getUnitDataCurrentVersion (players[playerNr])->damage = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->shotsMax = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->range = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->ammoMax = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->armor = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->hitpointsMax = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->scan = message->popInt16();
-		if (isVehicle) ID.getUnitDataCurrentVersion (players[playerNr])->speedMax = message->popInt16();
-		ID.getUnitDataCurrentVersion (players[playerNr])->version++;
+		unitData->damage = message->popInt16();
+		unitData->shotsMax = message->popInt16();
+		unitData->range = message->popInt16();
+		unitData->ammoMax = message->popInt16();
+		unitData->armor = message->popInt16();
+		unitData->hitpointsMax = message->popInt16();
+		unitData->scan = message->popInt16();
+		if (isVehicle) unitData->speedMax = message->popInt16();
+		unitData->version++;
 	}
 }
 

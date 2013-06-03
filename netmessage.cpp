@@ -22,6 +22,7 @@
 
 #include "clientevents.h"
 #include "events.h"
+#include "main.h"
 #include "menuevents.h"
 #include "network.h"
 #include "serverevents.h"
@@ -330,6 +331,21 @@ float cNetMessage::popFloat()
 	result *= ((i >> (BITS - 1)) & 1) ? -1.0f : 1.0f;
 
 	return result;
+}
+
+void cNetMessage::pushID (const sID& id)
+{
+	pushInt16 (id.iSecondPart);
+	pushInt16 (id.iFirstPart);
+}
+
+sID cNetMessage::popID()
+{
+	sID id;
+
+	id.iFirstPart = popInt16();
+	id.iSecondPart = popInt16();
+	return id;
 }
 
 string cNetMessage::getTypeAsString() const

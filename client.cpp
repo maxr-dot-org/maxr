@@ -323,9 +323,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	sID UnitID;
-	UnitID.iFirstPart = message.popInt16();
-	UnitID.iSecondPart = message.popInt16();
+	const sID UnitID = message.popID();
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
@@ -352,10 +350,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	sID UnitID;
-
-	UnitID.iFirstPart = message.popInt16();
-	UnitID.iSecondPart = message.popInt16();
+	const sID UnitID = message.popID();
 	int PosY = message.popInt16();
 	int PosX = message.popInt16();
 
@@ -401,10 +396,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	sID UnitID;
-
-	UnitID.iFirstPart = message.popInt16();
-	UnitID.iSecondPart = message.popInt16();
+	const sID UnitID = message.popID();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
 	int dir = message.popInt16();
@@ -429,10 +421,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 		Log.write ("Player not found", cLog::eLOG_TYPE_NET_ERROR);
 		return;
 	}
-	sID UnitID;
-
-	UnitID.iFirstPart = message.popInt16();
-	UnitID.iSecondPart = message.popInt16();
+	const sID UnitID = message.popID();
 	int iPosY = message.popInt16();
 	int iPosX = message.popInt16();
 	int ID = message.popInt16();
@@ -678,8 +667,7 @@ void cClient::HandleNetMessage_GAME_EV_SPECIFIC_UNIT_DATA (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (message.popInt16());
 	if (!Vehicle) return;
 	Vehicle->dir = message.popInt16();
-	Vehicle->BuildingTyp.iFirstPart = message.popInt16();
-	Vehicle->BuildingTyp.iSecondPart = message.popInt16();
+	Vehicle->BuildingTyp = message.popID();
 	Vehicle->BuildPath = message.popBool();
 	Vehicle->BandX = message.popInt16();
 	Vehicle->BandY = message.popInt16();
@@ -871,8 +859,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (Vehicle->owner == ActivePlayer)
 	{
-		Vehicle->BuildingTyp.iFirstPart = message.popInt16();
-		Vehicle->BuildingTyp.iSecondPart = message.popInt16();
+		Vehicle->BuildingTyp = message.popID();
 		Vehicle->BuildRounds = message.popInt16();
 		Vehicle->BuildPath = message.popBool();
 		Vehicle->BandX = message.popInt16();
@@ -990,8 +977,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILDLIST (cNetMessage& message)
 	for (int i = 0; i < iCount; i++)
 	{
 		sBuildList* BuildListItem = new sBuildList;
-		BuildListItem->type.iFirstPart = message.popInt16();
-		BuildListItem->type.iSecondPart = message.popInt16();
+		BuildListItem->type = message.popID();
 		BuildListItem->metall_remaining = message.popInt16();
 		Building->BuildList->push_back (BuildListItem);
 	}
@@ -1031,9 +1017,7 @@ void cClient::HandleNetMessage_GAME_EV_TURN_REPORT (cNetMessage& message)
 	int iReportAnz = message.popInt16();
 	while (iReportAnz)
 	{
-		sID Type;
-		Type.iFirstPart = message.popInt16();
-		Type.iSecondPart = message.popInt16();
+		sID Type = message.popID();
 		int iAnz = message.popInt16();
 		if (iCount) sReportMsg += ", ";
 		iCount += iAnz;
@@ -1539,11 +1523,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 {
 	assert (message.iType == GAME_EV_UNIT_UPGRADE_VALUES);
 
-	sID ID;
-	sUnitData* Data;
-	ID.iFirstPart = message.popInt16();
-	ID.iSecondPart = message.popInt16();
-	Data = ID.getUnitDataCurrentVersion (ActivePlayer);
+	const sID ID = message.popID();
+	sUnitData* Data = ID.getUnitDataCurrentVersion (ActivePlayer);
 	if (Data != NULL)
 	{
 		Data->version = message.popInt16();
@@ -1751,8 +1732,7 @@ void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
 	savedReport.type = (sSavedReportMessage::eReportTypes) message.popInt16();
 	savedReport.xPos = message.popInt16();
 	savedReport.yPos = message.popInt16();
-	savedReport.unitID.iFirstPart = message.popInt16();
-	savedReport.unitID.iSecondPart = message.popInt16();
+	savedReport.unitID = message.popID();
 	savedReport.colorNr = message.popInt16();
 	ActivePlayer->savedReportsList.push_back (savedReport);
 }

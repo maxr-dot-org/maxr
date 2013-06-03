@@ -1407,7 +1407,7 @@ static bool translateUnitData (sID ID, bool vehicle)
 	{
 		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
 		{
-			if (UnitsData.vehicle[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.vehicle[i].data.ID.iSecondPart == ID.iSecondPart)
+			if (UnitsData.vehicle[i].data.ID == ID)
 			{
 				Data = &UnitsData.vehicle[i].data;
 				break;
@@ -1418,7 +1418,7 @@ static bool translateUnitData (sID ID, bool vehicle)
 	{
 		for (size_t i = 0; i != UnitsData.building.size(); ++i)
 		{
-			if (UnitsData.building[i].data.ID.iFirstPart == ID.iFirstPart && UnitsData.building[i].data.ID.iSecondPart == ID.iSecondPart)
+			if (UnitsData.building[i].data.ID == ID)
 			{
 				Data = &UnitsData.building[i].data;
 				break;

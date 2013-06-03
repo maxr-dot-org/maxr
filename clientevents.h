@@ -230,12 +230,12 @@ void sendWantSupply (const cClient &client, int iDestID, bool bDestVehicle, int 
 * sends that the client wants to start clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStartClear (const cClient &client, const cUnit& unit);
+void sendWantStartClear (const cClient &client, const cVehicle& vehicle);
 /**
 * sends that the client wants to stop clearing the field under the unit
 *@author alzi alias DoctorDeath
 */
-void sendWantStopClear (const cClient &client, const cUnit& unit);
+void sendWantStopClear (const cClient &client, const cVehicle& vehicle);
 /**
 * sends that the client wants to abort waiting for the reconnect of a disconnected player
 *@author alzi alias DoctorDeath
@@ -253,7 +253,7 @@ void sendRequestCasualtiesReport (const cClient &client);
 /**
 * sends that a unit has been set to automove status
 */
-void sendSetAutoStatus (const cClient &client, int unitID, bool set);
+void sendSetAutoStatus (const cClient &client, int vehicleID, bool set);
 /**
 * sends that the infiltrator wants to infiltrate a unit
 *@author alzi alias DoctorDeath

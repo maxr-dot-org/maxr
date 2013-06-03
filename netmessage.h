@@ -24,6 +24,8 @@
 #include <string>
 #include "network.h"
 
+class sID;
+
 enum eNetStatusMsg
 {
 	TCP_ACCEPT = 0,
@@ -154,6 +156,9 @@ public:
 	* @return the float poped from the message
 	*/
 	float popFloat();
+
+	void pushID (const sID& id);
+	sID popID ();
 
 	/** returns the string representation of iType
 	* this is only for better readability of the netlog

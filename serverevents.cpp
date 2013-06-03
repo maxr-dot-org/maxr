@@ -45,8 +45,7 @@ void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle,
 	message->pushInt16 (iID);
 	message->pushInt16 (iPosX);
 	message->pushInt16 (iPosY);
-	message->pushInt16 (UnitID.iSecondPart);
-	message->pushInt16 (UnitID.iFirstPart);
+	message->pushID (UnitID);
 	message->pushInt16 (iPlayer);
 	message->pushBool (bInit);
 
@@ -103,8 +102,7 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 		message->pushInt16 (unit.dir);
 	message->pushInt16 (unit.PosX);
 	message->pushInt16 (unit.PosY);
-	message->pushInt16 (unit.data.ID.iSecondPart);
-	message->pushInt16 (unit.data.ID.iFirstPart);
+	message->pushID (unit.data.ID);
 	message->pushInt16 (unit.owner->Nr);
 
 	server.sendNetMessage (message, iClient);
@@ -221,8 +219,7 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	message->pushInt16 (vehicle.BandY);
 	message->pushInt16 (vehicle.BandX);
 	message->pushBool (vehicle.BuildPath);
-	message->pushInt16 (vehicle.BuildingTyp.iSecondPart);
-	message->pushInt16 (vehicle.BuildingTyp.iFirstPart);
+	message->pushID (vehicle.BuildingTyp);
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
 	server.sendNetMessage (message, vehicle.owner->Nr);
@@ -465,8 +462,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		message->pushInt16 (vehicle.BandX);
 		message->pushBool (vehicle.BuildPath);
 		message->pushInt16 (vehicle.BuildRounds);
-		message->pushInt16 (vehicle.BuildingTyp.iSecondPart);
-		message->pushInt16 (vehicle.BuildingTyp.iFirstPart);
+		message->pushID (vehicle.BuildingTyp);
 		message->pushBool (vehicle.BuildingTyp.getUnitDataOriginalVersion()->isBig);
 		message->pushInt16 (vehicle.PosY);
 		message->pushInt16 (vehicle.PosX);
@@ -550,8 +546,7 @@ void sendBuildList (cServer& server, const cBuilding& building)
 	for (int i = (int) building.BuildList->size() - 1; i >= 0; i--)
 	{
 		message->pushInt16 ((*building.BuildList) [i]->metall_remaining);
-		message->pushInt16 ((*building.BuildList) [i]->type.iSecondPart);
-		message->pushInt16 ((*building.BuildList) [i]->type.iFirstPart);
+		message->pushID ((*building.BuildList) [i]->type);
 	}
 	message->pushInt16 ( (int) building.BuildList->size());
 	message->pushInt16 (building.iID);
@@ -586,8 +581,7 @@ void sendTurnReport (cServer& server, cPlayer& player)
 	{
 		const sTurnstartReport* report = player.ReportBuildings[i];
 		message->pushInt16 (report->iAnz);
-		message->pushInt16 (report->Type.iSecondPart);
-		message->pushInt16 (report->Type.iFirstPart);
+		message->pushID (report->Type);
 		delete report;
 		iCount++;
 	}
@@ -596,8 +590,7 @@ void sendTurnReport (cServer& server, cPlayer& player)
 	{
 		sTurnstartReport* report = player.ReportVehicles[i];
 		message->pushInt16 (report->iAnz);
-		message->pushInt16 (report->Type.iSecondPart);
-		message->pushInt16 (report->Type.iFirstPart);
+		message->pushID (report->Type);
 		delete report;
 		iCount++;
 	}
@@ -831,8 +824,7 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, int player)
 	message->pushInt16 (unitData.range);
 	message->pushInt16 (unitData.scan);
 	message->pushInt16 (unitData.version);
-	message->pushInt16 (unitData.ID.iSecondPart);
-	message->pushInt16 (unitData.ID.iFirstPart);
+	message->pushID (unitData.ID);
 	server.sendNetMessage (message, player);
 }
 
@@ -1007,8 +999,7 @@ void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, i
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVED_REPORT);
 	message->pushInt16 (savedReport.colorNr);
-	message->pushInt16 (savedReport.unitID.iSecondPart);
-	message->pushInt16 (savedReport.unitID.iFirstPart);
+	message->pushID (savedReport.unitID);
 	message->pushInt16 (savedReport.yPos);
 	message->pushInt16 (savedReport.xPos);
 	message->pushInt16 (savedReport.type);
