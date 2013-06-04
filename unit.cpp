@@ -71,10 +71,9 @@ cUnit::~cUnit()
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{
 			cPlayer* p = playerList[i];
-			p->DeleteLock (*this);
+			p->deleteLock (*this);
 		}
 	}
-
 }
 
 //--------------------------------------------------------------------------

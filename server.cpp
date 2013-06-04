@@ -656,7 +656,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 
 		// set vehicle to build position
 		Map->moveVehicleBig (Vehicle, buildX, buildY);
-		Vehicle->owner->DoScan();
+		Vehicle->owner->doScan();
 	}
 	else
 	{
@@ -1352,7 +1352,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
-	Vehicle->owner->DoScan ();
+	Vehicle->owner->doScan();
 	addJob (new cStartBuildJob (Vehicle, off % Map->size, off / Map->size, building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
@@ -1383,7 +1383,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 		if (Vehicle->data.isBig)
 		{
 			Map->moveVehicle (Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size);
-			Vehicle->owner->DoScan ();
+			Vehicle->owner->doScan();
 			sendStopClear (*this, *Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			{
@@ -1699,7 +1699,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 		}
 		sendUpgradeBuildings (*this, upgradedBuildings, totalCosts, player->Nr);
 		if (scanNecessary)
-			player->DoScan();
+			player->doScan();
 		if (refreshSentry)
 		{
 			player->refreshSentryAir();
@@ -1842,7 +1842,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				{
 					sendUnitData (*this, *destVehicle, destVehicle->seenByPlayerList[i]->Nr);
 				}
-				destVehicle->owner->DoScan();
+				destVehicle->owner->doScan();
 				checkPlayerUnits();
 			}
 			else if (destBuilding)
@@ -1862,7 +1862,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 				{
 					sendUnitData (*this, *destBuilding, destBuilding->seenByPlayerList[i]->Nr);
 				}
-				destBuilding->owner->DoScan();
+				destBuilding->owner->doScan();
 				checkPlayerUnits();
 			}
 		}
@@ -2244,7 +2244,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 {
 	cVehicle* AddedVehicle;
 	// generate the vehicle:
-	AddedVehicle = Player->AddVehicle (iPosX, iPosY, Vehicle, ID ? ID : iNextUnitID);
+	AddedVehicle = Player->addVehicle (iPosX, iPosY, *Vehicle, ID ? ID : iNextUnitID);
 	iNextUnitID++;
 
 	// place the vehicle:
@@ -2279,7 +2279,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 {
 	cBuilding* AddedBuilding;
 	// generate the building:
-	AddedBuilding = Player->addBuilding (iPosX, iPosY, Building, ID ? ID : iNextUnitID);
+	AddedBuilding = Player->addBuilding (iPosX, iPosY, *Building, ID ? ID : iNextUnitID);
 	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd(*this);
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
@@ -2440,7 +2440,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	delete unit;
 
 	if (owner != 0)
-		owner->DoScan();
+		owner->doScan();
 }
 
 //-------------------------------------------------------------------------------------
@@ -2902,7 +2902,7 @@ void cServer::makeTurnEnd()
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
 		cPlayer* player = (*PlayerList) [i];
-		player->DoScan(); //make sure the detection maps are up to date
+		player->doScan(); //make sure the detection maps are up to date
 
 		for (cVehicle* vehicle = player->VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -3574,7 +3574,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 		sendSubbaseValues (*this, *Player->base.SubBases[i], Player->Nr);
 	}
 	// refresh enemy units
-	Player->DoScan();
+	Player->doScan();
 	checkPlayerUnits();
 	// send upgrades
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
@@ -3695,8 +3695,8 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	sendUnitData (*this, *vehicle, vehicle->owner->Nr);
 	sendSpecificUnitData (*this, *vehicle);
 
-	oldOwner->DoScan();
-	newOwner->DoScan();
+	oldOwner->doScan();
+	newOwner->doScan();
 	checkPlayerUnits();
 
 	// let the unit work for his new owner
@@ -3722,7 +3722,7 @@ void cServer::stopVehicleBuilding (cVehicle* vehicle)
 	{
 		Map->moveVehicle (vehicle, vehicle->BuildBigSavedPos % Map->size, vehicle->BuildBigSavedPos / Map->size);
 		iPos = vehicle->BuildBigSavedPos;
-		vehicle->owner->DoScan();
+		vehicle->owner->doScan();
 	}
 	sendStopBuild (*this, vehicle->iID, iPos, vehicle->owner->Nr);
 	for (unsigned int i = 0; i < vehicle->seenByPlayerList.size(); i++)

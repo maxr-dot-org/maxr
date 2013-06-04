@@ -175,7 +175,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		{
 			serverPlayers.push_back (new cPlayer ( (*players[i])));
 
-			serverPlayers[i]->InitMaps (serverMap.size, &serverMap);
+			serverPlayers[i]->initMaps (serverMap.size, &serverMap);
 		}
 
 		// init server
@@ -207,7 +207,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		players[i]->InitMaps (map->size, map);
+		players[i]->initMaps (map->size, map);
 	}
 	Client->initPlayer (actPlayer);
 
@@ -275,7 +275,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	Client->initPlayer (clientPlayerList[player]);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
-		clientPlayerList[i]->InitMaps (clientMap.size, &clientMap);
+		clientPlayerList[i]->initMaps (clientMap.size, &clientMap);
 	}
 
 	// in singleplayer only the first player is important
@@ -3459,7 +3459,7 @@ bool cNetworkHostMenu::runSavedGame()
 	Client->initPlayer (localPlayer);
 	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
 	{
-		clientPlayerList[i]->InitMaps (clientMap.size, &clientMap);
+		clientPlayerList[i]->initMaps (clientMap.size, &clientMap);
 	}
 
 	// send data to all players

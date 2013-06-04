@@ -550,7 +550,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 		{
 			Log.write (" Client: changed vehicle position to (" + iToStr (x) + ":" + iToStr (y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 			map.moveVehicle (vehicle, x, y);
-			vehicle->owner->DoScan();
+			vehicle->owner->doScan();
 
 			vehicle->OffY = message->popChar();
 			vehicle->OffX = message->popChar();

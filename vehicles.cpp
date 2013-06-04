@@ -1645,7 +1645,7 @@ void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 	storedUnits.push_back (Vehicle);
 	data.storageUnitsCur++;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 //-----------------------------------------------------------------------------
@@ -1664,7 +1664,7 @@ void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 	Vehicle->Loaded = false;
 	//Vehicle->data.shotsCur = 0;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 //-----------------------------------------------------------------------------

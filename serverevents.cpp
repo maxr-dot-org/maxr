@@ -416,7 +416,7 @@ void sendUnitScore (cServer& server, const cBuilding& building)
 
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 {
-	subject.CountEcoSpheres();
+	subject.countEcoSpheres();
 
 	if (!receiver)
 	{

@@ -328,7 +328,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_BUILDING (cNetMessage& message)
 	int PosX = message.popInt16();
 
 	unsigned int ID = message.popInt16();
-	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, UnitID.getBuilding (Player), ID);
+	cBuilding* AddedBuilding = Player->addBuilding (PosX, PosY, *UnitID.getBuilding (Player), ID);
 
 	addUnit (PosX, PosY, AddedBuilding, Init);
 
@@ -357,7 +357,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_VEHICLE (cNetMessage& message)
 	unsigned int ID = message.popInt16();
 	bool bAddToMap = message.popBool();
 
-	cVehicle* AddedVehicle = Player->AddVehicle (PosX, PosY, UnitID.getVehicle (Player), ID);
+	cVehicle* AddedVehicle = Player->addVehicle (PosX, PosY, *UnitID.getVehicle (Player), ID);
 	addUnit (PosX, PosY, AddedVehicle, Init, bAddToMap);
 }
 
@@ -403,7 +403,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_VEHICLE (cNetMessage& message)
 	int ID = message.popInt16();
 	int version = message.popInt16();
 
-	cVehicle* AddedVehicle = Player->AddVehicle (iPosX, iPosY, UnitID.getVehicle (Player), ID);
+	cVehicle* AddedVehicle = Player->addVehicle (iPosX, iPosY, *UnitID.getVehicle (Player), ID);
 
 	AddedVehicle->dir = dir;
 	AddedVehicle->data.version = version;
@@ -426,7 +426,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_ENEM_BUILDING (cNetMessage& message)
 	int iPosX = message.popInt16();
 	int ID = message.popInt16();
 
-	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, UnitID.getBuilding (Player), ID);
+	cBuilding* AddedBuilding = Player->addBuilding (iPosX, iPosY, *UnitID.getBuilding (Player), ID);
 	AddedBuilding->data.version = message.popInt16();
 	addUnit (iPosX, iPosY, AddedBuilding, false);
 
@@ -574,7 +574,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			{
 				getMap()->moveVehicle (Vehicle, iPosX, iPosY);
 				if (bBig) getMap()->moveVehicleBig (Vehicle, iPosX, iPosY);
-				Vehicle->owner->DoScan();
+				Vehicle->owner->doScan();
 			}
 		}
 
@@ -595,7 +595,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		if ( (Vehicle->turnsDisabled > 0) != bWasDisabled && Vehicle->owner == ActivePlayer)
 		{
 			if (Vehicle->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Vehicle->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Vehicle->PosX, Vehicle->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Vehicle->data.ID, Vehicle->PosX, Vehicle->PosY);
-			Vehicle->owner->DoScan();
+			Vehicle->owner->doScan();
 		}
 		Data = &Vehicle->data;
 	}
@@ -622,7 +622,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		if ( (Building->turnsDisabled > 0) != bWasDisabled && Building->owner == ActivePlayer)
 		{
 			if (Building->turnsDisabled > 0) ActivePlayer->addSavedReport (gameGUI.addCoords (Building->getDisplayName() + " " + lngPack.i18n ("Text~Comp~Disabled"), Building->PosX, Building->PosY), sSavedReportMessage::REPORT_TYPE_UNIT, Building->data.ID, Building->PosX, Building->PosY);
-			Building->owner->DoScan();
+			Building->owner->doScan();
 		}
 		Data = &Building->data;
 	}
@@ -847,14 +847,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	if (buildBig)
 	{
 		getMap()->moveVehicleBig (Vehicle, iBuildX, iBuildY);
-		Vehicle->owner->DoScan();
+		Vehicle->owner->doScan();
 
 		Vehicle->BigBetonAlpha = 10;
 	}
 	else
 	{
 		getMap()->moveVehicle (Vehicle, iBuildX, iBuildY);
-		Vehicle->owner->DoScan();
+		Vehicle->owner->doScan();
 	}
 
 	if (Vehicle->owner == ActivePlayer)
@@ -897,7 +897,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	if (Vehicle->data.isBig)
 	{
 		getMap()->moveVehicle (Vehicle, iNewPos % getMap()->size, iNewPos / getMap()->size);
-		Vehicle->owner->DoScan();
+		Vehicle->owner->doScan();
 	}
 
 	Vehicle->IsBuilding = false;
@@ -1226,7 +1226,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			if (bigoffset >= 0)
 			{
 				getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
-				Vehicle->owner->DoScan ();
+				Vehicle->owner->doScan ();
 			}
 			Vehicle->IsClearing = true;
 			addJob (new cStartBuildJob (Vehicle, orgX, orgY, (bigoffset > 0)));
@@ -1266,7 +1266,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	if (bigoffset >= 0)
 	{
 		getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
-		Vehicle->owner->DoScan ();
+		Vehicle->owner->doScan ();
 	}
 	Vehicle->IsClearing = false;
 	Vehicle->ClearingRounds = 0;
@@ -1580,7 +1580,7 @@ void cClient::HandleNetMessage_GAME_EV_UPGRADED_BUILDINGS (cNetMessage& message)
 		gameGUI.addMessage (sTmp);
 		ActivePlayer->addSavedReport (sTmp, sSavedReportMessage::REPORT_TYPE_COMP);
 		if (scanNecessary)
-			ActivePlayer->DoScan();
+			ActivePlayer->doScan();
 	}
 }
 
@@ -2006,7 +2006,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 	cPlayer* owner = Building->owner;
 	delete Building;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
@@ -2040,7 +2040,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 
 	delete Vehicle;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 void cClient::handleEnd()

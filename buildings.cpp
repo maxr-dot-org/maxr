@@ -1231,7 +1231,7 @@ void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 	storedUnits.push_back (Vehicle);
 	data.storageUnitsCur++;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 //-----------------------------------------------------------------------
@@ -1248,7 +1248,7 @@ void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 	Vehicle->PosY = offset / Map->size;
 	Vehicle->Loaded = false;
 
-	owner->DoScan();
+	owner->doScan();
 }
 
 //-------------------------------------------------------------------------------

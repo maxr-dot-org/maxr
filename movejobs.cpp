@@ -700,7 +700,7 @@ bool cServerMoveJob::checkMove()
 	sendNextMove (*server, *Vehicle, MJOB_OK);
 
 	Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
-	Vehicle->owner->DoScan();
+	Vehicle->owner->doScan();
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
 	setOffset (Vehicle, iNextDir, -64);
@@ -1056,7 +1056,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 
 			Vehicle->moving = true;
 			Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
-			//Vehicle->owner->DoScan();
+			//Vehicle->owner->doScan();
 			Vehicle->OffX = 0;
 			Vehicle->OffY = 0;
 			setOffset (Vehicle, iNextDir, -64);
@@ -1139,7 +1139,7 @@ void cClientMoveJob::moveVehicle()
 		}
 
 		Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
-		Vehicle->owner->DoScan();
+		Vehicle->owner->doScan();
 		Vehicle->OffX = 0;
 		Vehicle->OffY = 0;
 		setOffset (Vehicle, iNextDir, -64);
@@ -1262,7 +1262,7 @@ void cClientMoveJob::doEndMoveVehicle()
 
 	client->gameGUI.callMiniMapDraw();
 	client->gameGUI.updateMouseCursor();
-	Vehicle->owner->DoScan();
+	Vehicle->owner->doScan();
 
 	calcNextDir();
 }

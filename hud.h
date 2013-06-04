@@ -249,6 +249,7 @@ private:
 	void drawResources (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawSelectionBox (int zoomOffX, int zoomOffY);
 	void drawUnitCircles();
+	void drawLockList (cPlayer& player);
 
 	void displayMessages();
 

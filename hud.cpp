@@ -2382,9 +2382,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		if (overUnitField && lockChecked())
 		{
 			if (selectedVehicle && selectedVehicle != oldSelectedVehicleForLock && selectedVehicle->owner != player)
-				player->ToggelLock (overUnitField);
+				player->toggelLock (overUnitField);
 			else if (selectedBuilding && selectedBuilding != oldSelectedBuildingForLock && selectedBuilding->owner != player)
-				player->ToggelLock (overUnitField);
+				player->toggelLock (overUnitField);
 		}
 
 		mouseBox.startX = mouseBox.startY = -1;
@@ -4306,9 +4306,50 @@ void cGameGUI::drawUnitCircles()
 			selectedBuilding->DrawExitPoints (selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->typ, *this);
 		}
 	}
-	player->DrawLockList (*this);
+	drawLockList (*player);
 
 	SDL_SetClipRect (buffer, NULL);
+}
+
+//--------------------------------------------------------------------------
+/** Draws all entries, that are in the lock list. */
+//--------------------------------------------------------------------------
+void cGameGUI::drawLockList (cPlayer& player)
+{
+	if (!lockChecked()) return;
+	const int tileSize = getTileSize();
+	const cMap& map = *getClient()->getMap();
+	for (size_t i = 0; i < player.LockList.size(); i++)
+	{
+		cUnit* unit = player.LockList[i];
+		const int off = unit->PosX + unit->PosY * map.size;
+		if (!player.ScanMap[off])
+		{
+			unit->IsLocked = false;
+			player.LockList.erase (player.LockList.begin() + i);
+			i--;
+			continue;
+		}
+		const SDL_Rect screenPos = {Sint16 (unit->getScreenPosX (*this)), Sint16 (unit->getScreenPosY (*this)), 0, 0};
+
+		if (scanChecked())
+		{
+			if (unit->data.isBig)
+				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, buffer);
+			else
+				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, buffer);
+		}
+		if (rangeChecked() && (unit->data.canAttack & TERRAIN_GROUND))
+			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
+						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
+		if (rangeChecked() && (unit->data.canAttack & TERRAIN_AIR))
+			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
+						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
+		if (ammoChecked() && unit->data.canAttack)
+			unit->drawMunBar (*this, screenPos);
+		if (hitsChecked())
+			unit->drawHealthBar (*this, screenPos);
+	}
 }
 
 void cGameGUI::drawExitPoint (int x, int y)

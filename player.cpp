@@ -198,9 +198,9 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 //--------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
 //--------------------------------------------------------------------------
-cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned int ID)
+cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID)
 {
-	cVehicle* n = new cVehicle (v, this, ID);
+	cVehicle* n = new cVehicle (&v, this, ID);
 	n->PosX = posx;
 	n->PosY = posy;
 
@@ -225,7 +225,7 @@ cVehicle* cPlayer::AddVehicle (int posx, int posy, const sVehicle* v, unsigned i
 //--------------------------------------------------------------------------
 /** initialize the maps */
 //--------------------------------------------------------------------------
-void cPlayer::InitMaps (int MapSizeX, cMap* map)
+void cPlayer::initMaps (int MapSizeX, cMap* map)
 {
 	mapSize = MapSizeX;
 	const int size = MapSizeX * MapSizeX;
@@ -287,9 +287,9 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 //--------------------------------------------------------------------------
 /** Adds the building to the list of the player */
 //--------------------------------------------------------------------------
-cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding* b, unsigned int ID)
+cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding& b, unsigned int ID)
 {
-	cBuilding* Building = new cBuilding (b, this, ID);
+	cBuilding* Building = new cBuilding (&b, this, ID);
 
 	Building->PosX = posx;
 	Building->PosY = posy;
@@ -379,7 +379,7 @@ void cPlayer::refreshSentryGround()
 //--------------------------------------------------------------------------
 /** Does a scan for all units of the player */
 //--------------------------------------------------------------------------
-void cPlayer::DoScan()
+void cPlayer::doScan()
 {
 	if (isDefeated) return;
 	std::fill (ScanMap.begin(), ScanMap.end(), 0);
@@ -670,14 +670,14 @@ void cPlayer::accumulateScore (cServer& server)
 	sendScore (server, *this, now);
 }
 
-void cPlayer::CountEcoSpheres()
+void cPlayer::countEcoSpheres()
 {
 	numEcos = 0;
 
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->typ->data.canScore && bp->IsWorking)
-			numEcos ++;
+			++numEcos;
 	}
 }
 
@@ -839,7 +839,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 }
 
 //--------------------------------------------------------------------------
-void cPlayer::DeleteLock (cUnit& unit)
+void cPlayer::deleteLock (cUnit& unit)
 {
 	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
 	if (it != LockList.end()) LockList.erase (it);
@@ -850,7 +850,7 @@ void cPlayer::DeleteLock (cUnit& unit)
  * (when locked it's range and scan is displayed, although the unit is not selected).
 */
 //--------------------------------------------------------------------------
-void cPlayer::ToggelLock (cMapField* OverUnitField)
+void cPlayer::toggelLock (cMapField* OverUnitField)
 {
 	cUnit* unit = NULL;
 	if (OverUnitField->getBaseBuilding() && OverUnitField->getBaseBuilding()->owner != this)
@@ -875,47 +875,6 @@ void cPlayer::ToggelLock (cMapField* OverUnitField)
 	std::vector<cUnit*>::iterator it = std::find(LockList.begin(), LockList.end(), unit);
 	if (it == LockList.end()) LockList.push_back (unit);
 	else LockList.erase (it);
-}
-
-//--------------------------------------------------------------------------
-/** Draws all entries, that are in the lock list. */
-//--------------------------------------------------------------------------
-void cPlayer::DrawLockList (cGameGUI& gameGUI)
-{
-	if (!gameGUI.lockChecked()) return;
-	const int tileSize = gameGUI.getTileSize();
-	const cMap& map = *gameGUI.getClient()->getMap();
-	for (unsigned int i = 0; i < LockList.size(); i++)
-	{
-		cUnit* unit = LockList[i];
-		const int off = unit->PosX + unit->PosY * map.size;
-		if (!ScanMap[off])
-		{
-			unit->IsLocked = false;
-			LockList.erase (LockList.begin() + i);
-			i--;
-			continue;
-		}
-		const SDL_Rect screenPos = {Sint16 (unit->getScreenPosX (gameGUI)), Sint16 (unit->getScreenPosY (gameGUI)), 0, 0};
-
-		if (gameGUI.scanChecked())
-		{
-			if (unit->data.isBig)
-				drawCircle (screenPos.x + tileSize, screenPos.y + tileSize, unit->data.scan * tileSize, SCAN_COLOR, buffer);
-			else
-				drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2, unit->data.scan * tileSize, SCAN_COLOR, buffer);
-		}
-		if (gameGUI.rangeChecked() && (unit->data.canAttack & TERRAIN_GROUND))
-			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 1, RANGE_GROUND_COLOR, buffer);
-		if (gameGUI.rangeChecked() && (unit->data.canAttack & TERRAIN_AIR))
-			drawCircle (screenPos.x + tileSize / 2, screenPos.y + tileSize / 2,
-						unit->data.range * tileSize + 2, RANGE_AIR_COLOR, buffer);
-		if (gameGUI.ammoChecked() && unit->data.canAttack)
-			unit->drawMunBar (gameGUI, screenPos);
-		if (gameGUI.hitsChecked())
-			unit->drawHealthBar (gameGUI, screenPos);
-	}
 }
 
 //--------------------------------------------------------------------------
