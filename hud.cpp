@@ -454,13 +454,13 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 }
 
 
-cGameGUI::cGameGUI (cPlayer* player_, cMap* map_) :
+cGameGUI::cGameGUI (cMap* map_) :
 	cMenu (generateSurface()),
 	client (NULL),
 	iObjectStream(-1),
 	msgCoordsX (-1),
 	msgCoordsY (-1),
-	player (player_),
+	player (NULL),
 	map (map_),
 	miniMapOffX (0),
 	miniMapOffY (0),

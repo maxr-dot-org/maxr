@@ -74,9 +74,7 @@ struct sID
 	int iSecondPart;
 	std::string getText() const;
 	void generate (const std::string& text);
-	/** Get the most modern version of a unit, that a player has (including all his upgrades) researched. (Example: Newly built
-		units will have these values. */
-	sUnitData* getUnitDataCurrentVersion (cPlayer* Owner) const;
+
 	/** Get the basic version of a unit.
 		@param Owner If a owner is given, the basic version of this player is returned (with possible clan modifications).
 					 If no owner is given, the basic version without any clan modifications is returned.

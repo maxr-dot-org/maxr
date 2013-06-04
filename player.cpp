@@ -173,6 +173,28 @@ void cPlayer::setClan (int newClan)
 		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
 }
 
+//----------------------------------------------------------------------------------
+sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
+{
+	if (ID.iFirstPart == 0)
+	{
+		for (size_t i = 0; i != VehicleData.size(); ++i)
+		{
+			if (VehicleData[i].ID == ID)
+				return &VehicleData[i];
+		}
+	}
+	else if (ID.iFirstPart == 1)
+	{
+		for (unsigned int i = 0; i < BuildingData.size(); ++i)
+		{
+			if (BuildingData[i].ID == ID)
+				return &BuildingData[i];
+		}
+	}
+	return NULL;
+}
+
 //--------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
 //--------------------------------------------------------------------------

@@ -620,7 +620,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (iBuildSpeed > 2 || iBuildSpeed < 0) return;
 	iBuildOff = message.popInt32();
 
-	Vehicle->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, BuildingTyp.getUnitDataCurrentVersion (Vehicle->owner)->buildCosts);
+	Vehicle->calcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Vehicle->owner->getUnitDataCurrentVersion (BuildingTyp)->buildCosts);
 
 	if (iTurboBuildCosts[iBuildSpeed] > Vehicle->data.storageResCur || iTurboBuildRounds[iBuildSpeed] <= 0)
 	{
@@ -931,7 +931,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		if (Building->BuildList->size() > 0 && i == 0 && Type == (*Building->BuildList) [0]->type)
 		{
 			//recalculate costs, because build speed could have beed changed
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Type.getUnitDataCurrentVersion (Building->owner)->buildCosts, (*Building->BuildList) [0]->metall_remaining);
+			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (Type)->buildCosts, (*Building->BuildList) [0]->metall_remaining);
 			sBuildList* BuildListItem = new sBuildList;
 			BuildListItem->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 			BuildListItem->type = Type;
@@ -967,7 +967,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	{
 		if ( (*Building->BuildList) [0]->metall_remaining == -1)
 		{
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, (*Building->BuildList) [0]->type.getUnitDataCurrentVersion (Building->owner)->buildCosts);
+			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion ((*Building->BuildList)[0]->type)->buildCosts);
 			(*Building->BuildList) [0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 		}
 
@@ -1029,7 +1029,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 		{
 			int iTurboBuildCosts[3];
 			int iTurboBuildRounds[3];
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, BuildingListItem->type.getUnitDataCurrentVersion (Building->owner)->buildCosts);
+			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion (BuildingListItem->type)->buildCosts);
 			BuildingListItem->metall_remaining = iTurboBuildCosts[Building->BuildSpeed];
 		}
 
@@ -1605,7 +1605,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		int newMaxSpeed = 0;
 		if (ID.iFirstPart == 0) newMaxSpeed = message.popInt16();
 
-		sUnitData* upgradedUnit = ID.getUnitDataCurrentVersion (player);
+		sUnitData* upgradedUnit = player->getUnitDataCurrentVersion (ID);
 		if (upgradedUnit == 0)
 			continue; // skip this upgrade, because there is no such unitData
 
@@ -2072,7 +2072,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
 							  int newScan, int newMaxSpeed)
 {
-	const sUnitData* currentVersion = ID.getUnitDataCurrentVersion (player);
+	const sUnitData* currentVersion = player->getUnitDataCurrentVersion (ID);
 	const sUnitData* startVersion = ID.getUnitDataOriginalVersion (player);
 	if (currentVersion == 0 || startVersion == 0)
 		return 1000000; // error (unbelievably high cost...)

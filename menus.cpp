@@ -356,7 +356,7 @@ void cGameDataContainer::receiveUnitUpgrades (cNetMessage* message)
 	{
 		const bool isVehicle = message->popBool();
 		const sID ID = message->popID();
-		sUnitData* unitData = ID.getUnitDataCurrentVersion (players[playerNr]);
+		sUnitData* unitData = players[playerNr]->getUnitDataCurrentVersion (ID);
 
 		unitData->damage = message->popInt16();
 		unitData->shotsMax = message->popInt16();
@@ -4278,7 +4278,7 @@ void cBuildingsBuildMenu::selectionChanged (void* parent)
 	if (!menu) menu = dynamic_cast<cBuildingsBuildMenu*> ((cBuildingsBuildMenu*) parent);
 	if (!menu->selectedUnit) return;
 
-	sUnitData* buildingData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion (menu->player);
+	const sUnitData* buildingData = menu->player->getUnitDataCurrentVersion (menu->selectedUnit->getUnitID());
 	int turboBuildTurns[3], turboBuildCosts[3];
 	menu->vehicle->calcTurboBuild (turboBuildTurns, turboBuildCosts, buildingData->buildCosts);
 
@@ -4442,7 +4442,7 @@ void cVehiclesBuildMenu::selectionChanged (void* parent)
 
 	if (!menu->selectedUnit) return;
 
-	sUnitData* vehicleData = menu->selectedUnit->getUnitID().getUnitDataCurrentVersion (menu->player);
+	const sUnitData* vehicleData = menu->player->getUnitDataCurrentVersion (menu->selectedUnit->getUnitID());
 	int turboBuildTurns[3], turboBuildCosts[3];
 	menu->building->CalcTurboBuild (turboBuildTurns, turboBuildCosts, vehicleData->buildCosts, menu->selectedUnit->getResValue());
 

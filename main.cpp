@@ -601,28 +601,6 @@ sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
 }
 
 //----------------------------------------------------------------------------------
-sUnitData* sID::getUnitDataCurrentVersion (cPlayer* Owner) const
-{
-	if (iFirstPart == 0)
-	{
-		for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
-		{
-			if (Owner->VehicleData[i].ID == *this)
-				return &Owner->VehicleData[i];
-		}
-	}
-	else if (iFirstPart == 1)
-	{
-		for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
-		{
-			if (Owner->BuildingData[i].ID == *this)
-				return &Owner->BuildingData[i];
-		}
-	}
-	return 0;
-}
-
-//----------------------------------------------------------------------------------
 sVehicle* sID::getVehicle (cPlayer* Owner) const
 {
 	if (iFirstPart != 0) return NULL;

@@ -913,7 +913,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 				string sText;
 				sText = lngPack.i18n ("Text~Comp~Producing");
 				sText += ": ";
-				sText += (string) BuildingTyp.getUnitDataCurrentVersion (owner)->name + " (";
+				sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name + " (";
 				sText += iToStr (BuildRounds);
 				sText += ")";
 
@@ -921,7 +921,7 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 				{
 					sText = lngPack.i18n ("Text~Comp~Producing");
 					sText += ":\n";
-					sText += (string) BuildingTyp.getUnitDataCurrentVersion (owner)->name + " (";
+					sText += (string) owner->getUnitDataCurrentVersion (BuildingTyp)->name + " (";
 					sText += iToStr (BuildRounds);
 					sText += ")";
 				}

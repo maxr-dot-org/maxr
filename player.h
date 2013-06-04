@@ -67,6 +67,9 @@ public:
 	~cPlayer();
 	cPlayer (const cPlayer& Player);
 
+	/** Get the most modern version of a unit (including all his upgrades). */
+	sUnitData* getUnitDataCurrentVersion (const sID& ID);
+
 	std::string name;
 	SDL_Surface* color;
 	int Nr;

@@ -144,8 +144,8 @@ public:
 	bool debugSync;
 
 	cDebugOutput();
-	void setServer(cServer* server_);
-	void setClient(cClient* client_);
+	void setServer (cServer* server_);
+	void setClient (cClient* client_);
 	void draw();
 private:
 	void trace();
@@ -167,7 +167,7 @@ class cGameGUI : public cMenu
 	/** the currently selected building */
 	cBuilding* selectedBuilding;
 public:
-	/**  the soundstream of the selected unit */
+	/** the soundstream of the selected unit */
 	int iObjectStream;
 private:
 	/** list with all messages */
@@ -406,7 +406,7 @@ private:
 	void selectUnit_building (cBuilding* building);
 
 public:
-	cGameGUI (cPlayer* player_, cMap* map_);
+	explicit cGameGUI (cMap* map_);
 	~cGameGUI();
 
 	// this means every 100ms because iTimerTime will increase every 50ms.

@@ -1292,7 +1292,7 @@ void cMenuUnitListItem::draw()
 			dest.x = position.x + (32 + 4);
 			dest.y = position.y + 12;
 
-			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, dest.y, iToStr (unitID.getUnitDataCurrentVersion (owner)->buildCosts), FONT_LATIN_SMALL_YELLOW);
+			if (unitID.getVehicle()) font->showTextCentered (position.x + position.w - 12, dest.y, iToStr (owner->getUnitDataCurrentVersion (unitID)->buildCosts), FONT_LATIN_SMALL_YELLOW);
 		}
 		break;
 		default:
@@ -1309,7 +1309,7 @@ void cMenuUnitListItem::draw()
 int cMenuUnitListItem::drawName (bool withNumber)
 {
 	SDL_Rect dest = { Sint16(position.x + 32 + 4), Sint16 (position.y + 12), Uint16 (position.w - (32 + 4) - 12), 0 };
-	string name = ( (string) unitID.getUnitDataCurrentVersion (owner)->name);
+	string name = owner->getUnitDataCurrentVersion (unitID)->name;
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
 	if (withNumber)
@@ -1370,7 +1370,7 @@ sID cMenuUnitListItem::getUnitID() const
 
 sUnitData* cMenuUnitListItem::getUnitData()
 {
-	if (!unitData) return unitID.getUnitDataCurrentVersion (getOwner());
+	if (!unitData) return getOwner()->getUnitDataCurrentVersion (unitID);
 	return unitData;
 }
 
@@ -2097,7 +2097,7 @@ void cMenuUnitDetailsBig::draw()
 	if (!selectedUnit) return;
 	sUnitData* data = selectedUnit->getUnitData();
 	if (data == 0)
-		data = selectedUnit->getUnitID().getUnitDataCurrentVersion (selectedUnit->getOwner());
+		data = selectedUnit->getOwner()->getUnitDataCurrentVersion (selectedUnit->getUnitID());
 	sUnitData* oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion (selectedUnit->getOwner());
 
 #define DETAIL_COLUMN_1 dest.x+27

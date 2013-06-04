@@ -77,7 +77,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	Map (Map),
 	PlayerList (playerList),
 	gameTimer(),
-	gameGUI (NULL, Map)
+	gameGUI (Map)
 {
 	gameGUI.setClient (this);
 	gameTimer.setClient(this);
@@ -1524,7 +1524,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_UPGRADE_VALUES (cNetMessage& message
 	assert (message.iType == GAME_EV_UNIT_UPGRADE_VALUES);
 
 	const sID ID = message.popID();
-	sUnitData* Data = ID.getUnitDataCurrentVersion (ActivePlayer);
+	sUnitData* Data = ActivePlayer->getUnitDataCurrentVersion (ID);
 	if (Data != NULL)
 	{
 		Data->version = message.popInt16();
