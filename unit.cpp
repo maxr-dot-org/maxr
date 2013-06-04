@@ -740,7 +740,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	{
 		if (exeNr == nr)
 		{
-			assert (this->isVehicle);
+			assert (this->isVehicle());
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			sendWantStartClear (client, static_cast<cVehicle&>(*this));
