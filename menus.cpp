@@ -154,28 +154,20 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	if (actPlayer == NULL)
 		return;
 
-	cMap serverMap;
+	AutoPtr<cMap>::type serverMap (NULL);
 	std::vector<cPlayer*> serverPlayers;
 	cServer* server = NULL;
 	if (isServer)
 	{
-		// copy map for server
-		serverMap.NewMap (map->size, map->iNumberOfTerrains);
-		serverMap.MapName = map->MapName;
-		memcpy (serverMap.Kacheln, map->Kacheln, sizeof (int) *map->size * map->size);
-		for (int i = 0; i < map->iNumberOfTerrains; i++)
-		{
-			serverMap.terrain[i].blocked = map->terrain[i].blocked;
-			serverMap.terrain[i].coast = map->terrain[i].coast;
-			serverMap.terrain[i].water = map->terrain[i].water;
-		}
+		serverMap = new cMap (*map);
 
 		// copy playerlist for server
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
 			serverPlayers.push_back (new cPlayer ( (*players[i])));
 
-			serverPlayers[i]->initMaps (serverMap.size, &serverMap);
+			// TODO: move this in cServer.
+			serverPlayers[i]->initMaps (serverMap->size, serverMap);
 		}
 
 		// init server
@@ -187,7 +179,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			case SETTINGS_VICTORY_ANNIHILATION: nTurns = nScore = 0; break;
 			default: assert (0);
 		}
-		server = new cServer (network, serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
+		server = new cServer (network, *serverMap, &serverPlayers, type, settings->gameType == SETTINGS_GAMETYPE_TURNS, nTurns, nScore);
 
 		// send victory conditions to clients
 		for (unsigned n = 0; n < players.size(); n++)
@@ -197,18 +189,14 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
 			server->correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
-			serverMap.placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency);
+			serverMap->placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency);
 		}
-		serverMap.placeRessources (settings->metal, settings->oil, settings->gold);
+		serverMap->placeRessources (settings->metal, settings->oil, settings->gold);
 	}
 
 	// init client and his players
-	Client = new cClient (server, network, *eventHandler, map, &players);
+	Client = new cClient (server, network, *eventHandler, *map, &players);
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-	for (unsigned int i = 0; i < players.size(); i++)
-	{
-		players[i]->initMaps (map->size, map);
-	}
 	Client->initPlayer (actPlayer);
 
 	if (isServer)
@@ -256,12 +244,10 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cSavegame savegame (savegameNum);
 	if (savegame.load (&server, network) != 1) return;
 	assert(server != NULL);
+	AutoPtr<cStaticMap>::type staticMap (server->Map->staticMap);
+	AutoPtr<cMap>::type serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	if (player >= (int) serverPlayerList.size()) return;
-
-	// copy map for client
-	cMap clientMap;
-	clientMap.LoadMap (server->Map->MapName);
 
 	std::vector<cPlayer*> clientPlayerList;
 
@@ -271,12 +257,8 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	Client = new cClient (server, network, *eventHandler, &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList);
 	Client->initPlayer (clientPlayerList[player]);
-	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
-	{
-		clientPlayerList[i]->initMaps (clientMap.size, &clientMap);
-	}
 
 	// in singleplayer only the first player is important
 	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
@@ -1559,8 +1541,8 @@ void cPlanetsSelectionMenu::okReleased (void* parent)
 	if (menu->selectedMapIndex < 0 || menu->selectedMapIndex >= (int) menu->maps->size()) return;
 
 	delete menu->gameDataContainer->map;
-	menu->gameDataContainer->map = new cMap(); // TODO: fix memory leak
-	menu->gameDataContainer->map->LoadMap ((*menu->maps) [menu->selectedMapIndex]);
+	menu->gameDataContainer->map = new cStaticMap(); // TODO: fix memory leak
+	menu->gameDataContainer->map->loadMap ((*menu->maps) [menu->selectedMapIndex]);
 	if (!menu->gameDataContainer->map) return;
 
 	menu->end = true;
@@ -2458,59 +2440,19 @@ void cLandingMenu::createHud()
 //------------------------------------------------------------------------------
 void cLandingMenu::createMap()
 {
-	mapSurface = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX() - 192, Video.getResolutionY() - 32, Video.getColDepth(), 0, 0, 0, 0);
-
-	if (SDL_MUSTLOCK (mapSurface)) SDL_LockSurface (mapSurface);
-	for (int x = 0; x < mapSurface->w; x++)
-	{
-		int terrainx = (x * map->size) / mapSurface->w;
-		if (terrainx >= map->size) terrainx = map->size - 1;
-		int offsetx = ((x * map->size) % mapSurface->w) * 64 / mapSurface->w;
-
-		for (int y = 0; y < mapSurface->h; y++)
-		{
-			int terrainy = (y * map->size) / mapSurface->h;
-			if (terrainy >= map->size) terrainy = map->size - 1;
-			int offsety  = ( (y * map->size) % mapSurface->h) * 64 / mapSurface->h;
-
-			unsigned int terrainNumber = map->Kacheln[terrainx + terrainy * map->size];
-			sTerrain* t = map->terrain + terrainNumber;
-			unsigned int ColorNr = *((unsigned char*) (t->sf_org->pixels) + (offsetx + offsety * 64));
-
-			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels))[x + y * mapSurface->w];
-			pixel[0] = map->palette[ColorNr].b;
-			pixel[1] = map->palette[ColorNr].g;
-			pixel[2] = map->palette[ColorNr].r;
-		}
-	}
-	if (SDL_MUSTLOCK (mapSurface)) SDL_UnlockSurface (mapSurface);
+	mapSurface = map->createBigSurface (Video.getResolutionX() - 192, Video.getResolutionY() - 32);
 }
 
 //------------------------------------------------------------------------------
 const sTerrain* cLandingMenu::getMapTile (int x, int y) const
 {
-	double fak;
-	int nr;
 	if (x < 0 || x >= Video.getResolutionX() - 192 || y < 0 || y >= Video.getResolutionY() - 32) return NULL;
 
 	x = (int) (x * (448.0 / (Video.getResolutionX() - 180)));
 	y = (int) (y * (448.0 / (Video.getResolutionY() - 32)));
-
-	if (map->size < 448)
-	{
-		fak = 448.0 / map->size;
-		x = (int) (x / fak);
-		y = (int) (y / fak);
-		nr = map->Kacheln[x + y * map->size];
-	}
-	else
-	{
-		fak = map->size / 448.0;
-		x = (int) (x * fak);
-		y = (int) (y * fak);
-		nr = map->Kacheln[x + y * map->size];
-	}
-	return &map->terrain[nr];
+	x = (int) (x * map->getSize() / 448.0);
+	y = (int) (y * map->getSize() / 448.0);
+	return &map->getTerrain (x, y);
 }
 
 //------------------------------------------------------------------------------
@@ -2522,11 +2464,11 @@ void cLandingMenu::mapClicked (void* parent)
 
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
-	float fakx = (float) ((Video.getResolutionX() - 192.0) / menu->map->size); //pixel per field in x direction
-	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->size);  //pixel per field in y direction
+	float fakx = (float) ((Video.getResolutionX() - 192.0) / menu->map->getSize()); //pixel per field in x direction
+	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->getSize());  //pixel per field in y direction
 
-	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionX() - 192)));
-	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0 / menu->map->size) * (448.0 / (Video.getResolutionY() - 32)));
+	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0 / menu->map->getSize()) * (448.0 / (Video.getResolutionX() - 192)));
+	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0 / menu->map-> getSize()) * (448.0 / (Video.getResolutionY() - 32)));
 	menu->landData.landingState = LANDING_POSITION_OK;
 	menu->backButton->setLocked (true);
 	{
@@ -2763,8 +2705,8 @@ void cNetworkMenu::showSettingsText()
 
 	if (gameDataContainer.map)
 	{
-		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->MapName;
-		text += " (" + iToStr (gameDataContainer.map->size) + "x" + iToStr (gameDataContainer.map->size) + ")\n";
+		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->getMapName();
+		text += " (" + iToStr (gameDataContainer.map->getSize()) + "x" + iToStr (gameDataContainer.map->getSize()) + ")\n";
 	}
 	else if (gameDataContainer.savegame.empty()) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
 
@@ -2796,9 +2738,9 @@ void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
 	int size;
-	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->MapName).c_str(), "rb");
+	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getMapName()).c_str(), "rb");
 	if (fp == NULL && !getUserMapsDir().empty())
-		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->MapName).c_str(), "rb");
+		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->getMapName()).c_str(), "rb");
 	if (fp != NULL)
 	{
 		SDL_RWseek (fp, 5, SEEK_SET);
@@ -2837,8 +2779,8 @@ void cNetworkMenu::showMap()
 		mapImage->setImage (surface);
 	}
 
-	string mapName = gameDataContainer.map->MapName;
-	size = gameDataContainer.map->size;
+	string mapName = gameDataContainer.map->getMapName();
+	size = gameDataContainer.map->getSize();
 
 	if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
 	{
@@ -3172,8 +3114,8 @@ void cNetworkHostMenu::loadReleased (void* parent)
 		menu->saveGameString += "\n\n" + lngPack.i18n ("Text~Title~Players") + "\n" + savegame.getPlayerNames();
 
 		delete menu->gameDataContainer.map;
-		cMap* map = new cMap;
-		map->LoadMap (savegame.getMapName());
+		cStaticMap* map = new cStaticMap;
+		map->loadMap (savegame.getMapName());
 		menu->gameDataContainer.map = map;
 
 		sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
@@ -3316,7 +3258,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 {
 	assert (message->iType == MU_MSG_REQUEST_MAP);
 
-	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->MapName)) return;
+	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->getMapName())) return;
 
 	const size_t receiverNr = message->popInt16();
 	if (receiverNr >= players.size()) return;
@@ -3331,7 +3273,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 			mapSenders.erase (mapSenders.begin() + i);
 		}
 	}
-	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->MapName, players[receiverNr]->name);
+	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getMapName(), players[receiverNr]->name);
 	mapSenders.push_back (mapSender);
 	mapSender->runInThread (this);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
@@ -3371,6 +3313,8 @@ bool cNetworkHostMenu::runSavedGame()
 	cSavegame savegame (gameDataContainer.savegameNum);
 	if (savegame.load (&server, network) != 1) return false;
 	assert (server != NULL);
+	AutoPtr<cStaticMap>::type staticMap (server->Map->staticMap);
+	AutoPtr<cMap>::type serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
 	// first we check whether all necessary players are connected
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
@@ -3437,10 +3381,6 @@ bool cNetworkHostMenu::runSavedGame()
 	// send client that the game has to be started
 	sendGo (*network);
 
-	// copy map for client
-	cMap clientMap;
-	clientMap.LoadMap (server->Map->MapName);
-
 	std::vector<cPlayer*> clientPlayerList;
 
 	// copy players for client
@@ -3455,12 +3395,8 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	Client = new cClient (server, network, gameDataContainer.getEventHandler(), &clientMap, &clientPlayerList);
+	Client = new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList);
 	Client->initPlayer (localPlayer);
-	for (unsigned int i = 0; i < clientPlayerList.size(); i++)
-	{
-		clientPlayerList[i]->initMaps (clientMap.size, &clientMap);
-	}
 
 	// send data to all players
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
@@ -3644,13 +3580,13 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 	{
 		string mapName = message->popString();
 		Sint32 mapCheckSum = message->popInt32();
-		if (!gameDataContainer.map || gameDataContainer.map->MapName != mapName)
+		if (!gameDataContainer.map || gameDataContainer.map->getMapName() != mapName)
 		{
 			delete gameDataContainer.map;
 
 			bool mapCheckSumsEqual = (MapDownload::calculateCheckSum (mapName) == mapCheckSum);
-			cMap* map = new cMap;
-			if (mapCheckSumsEqual && map->LoadMap (mapName))
+			cStaticMap* map = new cStaticMap;
+			if (mapCheckSumsEqual && map->loadMap (mapName))
 			{
 				gameDataContainer.map = map;
 				triedLoadMap = "";
@@ -3760,8 +3696,8 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 	{
 		actPlayer->nr = message->popInt16();
 		actPlayer->color = message->popInt16();
-		cMap* Map = new cMap;
-		if (!Map->LoadMap (message->popString())) return;
+		cStaticMap* Map = new cStaticMap;
+		if (!Map->loadMap (message->popString())) return;
 		gameDataContainer.map = Map;
 
 		int playerCount = message->popInt16();
@@ -3880,8 +3816,8 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 
 	mapReceiver->finished();
 
-	cMap* map = new cMap;
-	if (map->LoadMap (mapReceiver->getMapName()))
+	cStaticMap* map = new cStaticMap;
+	if (map->loadMap (mapReceiver->getMapName()))
 		gameDataContainer.map = map;
 	else
 		delete map;

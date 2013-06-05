@@ -70,11 +70,11 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 cClient* Client = 0; // global instance
 
-cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cMap* const Map, std::vector<cPlayer*>* const playerList) :
+cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* const playerList) :
 	server (server_),
 	network (network_),
 	eventHandling (&eventHandling_),
-	Map (Map),
+	Map (new cMap (staticMap)),
 	PlayerList (playerList),
 	gameTimer(),
 	gameGUI (Map)
@@ -93,6 +93,10 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	casualtiesTracker = new cCasualtiesTracker();
 
 	gameTimer.start ();
+	for (unsigned int i = 0; i < PlayerList->size(); i++)
+	{
+		(*PlayerList)[i]->initMaps (Map->size, Map);
+	}
 }
 
 cClient::~cClient()
@@ -116,6 +120,7 @@ cClient::~cClient()
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
+	delete Map;
 }
 
 /*virtual*/ void cClient::pushEvent (cNetMessage* message)

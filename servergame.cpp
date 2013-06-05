@@ -121,9 +121,9 @@ void cServerGame::prepareGameData()
 	gameData->settings->gameType = SETTINGS_GAMETYPE_SIMU;
 	gameData->settings->victoryType = SETTINGS_VICTORY_ANNIHILATION;
 	gameData->settings->duration = SETTINGS_DUR_LONG;
-	gameData->map = new cMap();
+	gameData->map = new cStaticMap();
 	string mapName = "Mushroom.wrl";
-	gameData->map->LoadMap (mapName);
+	gameData->map->loadMap (mapName);
 }
 
 //------------------------------------------------------------------------
@@ -305,7 +305,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					mapName += " ";
 					mapName += tokens[i];
 				}
-				if (gameData->map != 0 && gameData->map->LoadMap (mapName))
+				if (gameData->map != 0 && gameData->map->loadMap (mapName))
 				{
 					sendGameData (*network, *gameData, "");
 					string reply = senderPlayer->name;
@@ -466,18 +466,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 //-------------------------------------------------------------------------------------
 void cServerGame::startGameServer()
 {
-	serverMap = new cMap();
-
-	// copy map for server
-	serverMap->NewMap (gameData->map->size, gameData->map->iNumberOfTerrains);
-	serverMap->MapName = gameData->map->MapName;
-	memcpy (serverMap->Kacheln, gameData->map->Kacheln, sizeof (int) * gameData->map->size * gameData->map->size);
-	for (int i = 0; i < gameData->map->iNumberOfTerrains; i++)
-	{
-		serverMap->terrain[i].blocked = gameData->map->terrain[i].blocked;
-		serverMap->terrain[i].coast = gameData->map->terrain[i].coast;
-		serverMap->terrain[i].water = gameData->map->terrain[i].water;
-	}
+	serverMap = new cMap (*gameData->map);
 
 	// copy playerlist for server
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
@@ -582,7 +571,7 @@ std::string cServerGame::getGameState() const
 	else
 		result << "Game has started, players are setting up" << endl;
 
-	result << "Map: " << (gameData != 0 ? gameData->map->MapName : "none") << endl;
+	result << "Map: " << (gameData != 0 ? gameData->map->getMapName() : "none") << endl;
 	if (server != NULL)
 		result << "Turn: " << server->getTurn() << endl;
 

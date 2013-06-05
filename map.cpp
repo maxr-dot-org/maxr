@@ -94,38 +94,46 @@ cBuilding* cMapField::getMine()
 	return NULL;
 }
 
-// Funktionen der Map-Klasse /////////////////////////////////////////////////
-cMap::cMap()
+// cStaticMap //////////////////////////////////////////////////
+
+cStaticMap::cStaticMap() : size (0), terrainCount (0), terrains (NULL)
 {
-	Kacheln = NULL;
-	fields = NULL;
-	Resources = NULL;
-	iNumberOfTerrains = 0;
-	terrain = NULL;
-	resSpots = NULL;
-	resSpotTypes = NULL;
-	resSpotCount = 0;
-	resCurrentSpotCount = 0;
-	NewMap (32, 32);
-	MapName = "";
-	resSpots = NULL;
 }
 
-cMap::~cMap()
+cStaticMap::~cStaticMap()
 {
-	DeleteMap();
+	delete [] terrains;
 }
 
-cMapField& cMap::operator[] (unsigned int offset) const
+const sTerrain& cStaticMap::getTerrain (int offset) const
 {
-	return fields[offset];
+	return terrains[Kacheln[offset]];
 }
 
-
-bool cMap::isWater (int x, int y, bool not_coast) const
+const sTerrain& cStaticMap::getTerrain (int x, int y) const
 {
-	const int off = x + y * size;
-	const sTerrain& terrainType = terrain[Kacheln[off]];
+	return getTerrain (getOffset (x, y));
+}
+
+bool cStaticMap::isBlocked (int offset) const
+{
+	return terrains[Kacheln[offset]].blocked;
+}
+
+bool cStaticMap::isCoast(int offset) const
+{
+	return terrains[Kacheln[offset]].coast;
+}
+
+bool cStaticMap::isWater(int offset) const
+{
+	return terrains[Kacheln[offset]].water;
+}
+
+bool cStaticMap::isWater (int x, int y, bool not_coast) const
+{
+	const int off = getOffset(x, y);
+	const sTerrain& terrainType = terrains[Kacheln[off]];
 
 	if (!terrainType.water && !terrainType.coast) return false;
 
@@ -133,68 +141,27 @@ bool cMap::isWater (int x, int y, bool not_coast) const
 	else return terrainType.water || terrainType.coast;
 }
 
-SDL_Surface* cMap::LoadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum)
+void cStaticMap::clear()
 {
-	// Create new surface and copy palette
-	AutoSurface surface (SDL_CreateRGBSurface (SDL_SWSURFACE, 64, 64, 8, 0, 0, 0, 0));
-	surface->pitch = surface->w;
-
-	SDL_SetColors (surface, Palette, 0, 256);
-
-	// Go to position of filedata
-	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
-
-	// Read pixel data and write to surface
-	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
-	return surface.Release();
-}
-
-void cMap::CopySrfToTerData (SDL_Surface* surface, int iNum)
-{
-	//before the surfaces are copied, the colortable of both surfaces has to be equal
-	//This is needed to make sure, that the pixeldata is copied 1:1
-
-	//copy the normal terrains
-	terrain[iNum].sf_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrain[iNum].sf_org, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrain[iNum].sf_org, NULL);
-
-	terrain[iNum].sf = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrain[iNum].sf, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrain[iNum].sf, NULL);
-
-	//copy the terrains with fog
-	terrain[iNum].shw_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrain[iNum].shw_org, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrain[iNum].shw_org, NULL);
-
-	terrain[iNum].shw = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
-	SDL_SetColors (terrain[iNum].shw, surface->format->palette->colors, 0, 256);
-	SDL_BlitSurface (surface, NULL, terrain[iNum].shw, NULL);
-
-	//now set the palette for the fog terrains
-	SDL_SetColors (terrain[iNum].shw_org, palette_shw, 0, 256);
-	SDL_SetColors (terrain[iNum].shw, palette_shw, 0, 256);
+	MapName.clear();
+	size = 0;
+	delete [] terrains;
+	terrainCount = 0;
+	Kacheln.clear();
 }
 
 /** Loads a map file */
-bool cMap::LoadMap (const std::string& filename_)
+bool cStaticMap::loadMap (const std::string& filename_)
 {
-	std::string filename (filename_);
-	SDL_RWops* fpMapFile;
-	short sWidth, sHeight;
-	int iPalettePos, iGraphicsPos, iInfoPos, iDataPos; // Positions in map-file
-	unsigned char cByte; // one Byte
-	char szFileTyp[4];
-
+	clear();
 	// Open File
-	MapName = filename;
-	Log.write ("Loading map \"" + filename + "\"", cLog::eLOG_TYPE_DEBUG);
+	MapName = filename_;
+	Log.write ("Loading map \"" + filename_ + "\"", cLog::eLOG_TYPE_DEBUG);
 
 	// first try in the factory maps directory
-	filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + MapName;
-	fpMapFile = SDL_RWFromFile (filename.c_str(), "rb");
-	if (fpMapFile == 0)
+	std::string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + MapName;
+	SDL_RWops* fpMapFile = SDL_RWFromFile (filename.c_str(), "rb");
+	if (fpMapFile == NULL)
 	{
 		// now try in the user's map directory
 		std::string userMapsDir = getUserMapsDir();
@@ -204,11 +171,12 @@ bool cMap::LoadMap (const std::string& filename_)
 			fpMapFile = SDL_RWFromFile (filename.c_str(), "rb");
 		}
 	}
-	if (fpMapFile == 0)
+	if (fpMapFile == NULL)
 	{
 		Log.write ("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
+	char szFileTyp[4];
 
 	// check for typ
 	SDL_RWread (fpMapFile, &szFileTyp, 1, 3);
@@ -225,18 +193,18 @@ bool cMap::LoadMap (const std::string& filename_)
 	SDL_RWseek (fpMapFile, 2, SEEK_CUR);
 
 	// Read informations and get positions from the map-file
-	sWidth = SDL_ReadLE16 (fpMapFile);
+	const short sWidth = SDL_ReadLE16 (fpMapFile);
 	Log.write ("SizeX: " + iToStr (sWidth), cLog::eLOG_TYPE_DEBUG);
-	sHeight = SDL_ReadLE16 (fpMapFile);
+	const short sHeight = SDL_ReadLE16 (fpMapFile);
 	Log.write ("SizeY: " + iToStr (sHeight), cLog::eLOG_TYPE_DEBUG);
 	SDL_RWseek (fpMapFile, sWidth * sHeight, SEEK_CUR); // Ignore Mini-Map
-	iDataPos = SDL_RWtell (fpMapFile); // Map-Data
+	const int iDataPos = SDL_RWtell (fpMapFile); // Map-Data
 	SDL_RWseek (fpMapFile, sWidth * sHeight * 2, SEEK_CUR);
-	iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
+	const int iNumberOfTerrains = SDL_ReadLE16 (fpMapFile); // Read PicCount
 	Log.write ("Number of terrains: " + iToStr (iNumberOfTerrains), cLog::eLOG_TYPE_DEBUG);
-	iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
-	iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
-	iInfoPos = iPalettePos + 256 * 3; // Special informations
+	const int iGraphicsPos = SDL_RWtell (fpMapFile); // Terrain Graphics
+	const int iPalettePos = iGraphicsPos + iNumberOfTerrains * 64 * 64; // Palette
+	const int iInfoPos = iPalettePos + 256 * 3; // Special informations
 
 	if (sWidth != sHeight)
 	{
@@ -244,10 +212,12 @@ bool cMap::LoadMap (const std::string& filename_)
 		SDL_RWclose (fpMapFile);
 		return false;
 	}
-	size = sWidth;
 
 	// Generate new Map
-	NewMap (size, iNumberOfTerrains);
+	this->size = std::max<int> (16, sWidth);
+	Kacheln.resize (size * size, 0);
+	terrains = new sTerrain[iNumberOfTerrains];
+	terrainCount = iNumberOfTerrains;
 
 	// Load Color Palette
 	SDL_RWseek (fpMapFile, iPalettePos , SEEK_SET);
@@ -263,10 +233,10 @@ bool cMap::LoadMap (const std::string& filename_)
 		palette_shw[i].b = (unsigned char) (palette[i].b * 0.6);
 	}
 
-
 	// Load necessary Terrain Graphics
 	for (int iNum = 0; iNum < iNumberOfTerrains; iNum++)
 	{
+		unsigned char cByte; // one Byte
 		// load terrain type info
 		SDL_RWseek (fpMapFile, iInfoPos + iNum, SEEK_SET);
 		SDL_RWread (fpMapFile, &cByte, 1, 1);
@@ -277,30 +247,30 @@ bool cMap::LoadMap (const std::string& filename_)
 				//normal terrain without special property
 				break;
 			case 1:
-				terrain[iNum].water = true;
+				terrains[iNum].water = true;
 				break;
 			case 2:
-				terrain[iNum].coast = true;
+				terrains[iNum].coast = true;
 				break;
 			case 3:
-				terrain[iNum].blocked = true;
+				terrains[iNum].blocked = true;
 				break;
 			default:
 				Log.write ("unknown terrain type " + iToStr (cByte) + " on tile " + iToStr (iNum) + " found. Handled as blocked!", cLog::eLOG_TYPE_WARNING);
-				terrain[iNum].blocked = true;
+				terrains[iNum].blocked = true;
 				//SDL_RWclose (fpMapFile);
 				//return false;
 		}
 
 		//load terrain graphic
-		AutoSurface surface (LoadTerrGraph (fpMapFile, iGraphicsPos, palette, iNum));
+		AutoSurface surface (cStaticMap::loadTerrGraph (fpMapFile, iGraphicsPos, palette, iNum));
 		if (surface == NULL)
 		{
 			Log.write ("EOF while loading terrain number " + iToStr (iNum), cLog::eLOG_TYPE_WARNING);
 			SDL_RWclose (fpMapFile);
 			return false;
 		}
-		CopySrfToTerData (surface, iNum);
+		copySrfToTerData (surface, iNum);
 	}
 
 	// Load map data
@@ -323,33 +293,61 @@ bool cMap::LoadMap (const std::string& filename_)
 	return true;
 }
 
-// Erstellt eine neue Map:
-void cMap::NewMap (int size_, int iTerrainGrphCount)
+/*static*/SDL_Surface* cStaticMap::loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum)
 {
-	DeleteMap();
-	size = std::max (16, size_);
-	Kacheln = new int[size * size];
-	memset (Kacheln, 0, sizeof (int) * size * size);
+	// Create new surface and copy palette
+	AutoSurface surface (SDL_CreateRGBSurface (SDL_SWSURFACE, 64, 64, 8, 0, 0, 0, 0));
+	surface->pitch = surface->w;
 
-	fields = new cMapField[size * size];
-	Resources = new sResources[size * size];
+	SDL_SetColors (surface, Palette, 0, 256);
 
-	// alloc memory for terrains
-	terrain = new sTerrain[iTerrainGrphCount];
+	// Go to position of filedata
+	SDL_RWseek (fpMapFile, iGraphicsPos + 64 * 64 * (iNum), SEEK_SET);
+
+	// Read pixel data and write to surface
+	if (SDL_RWread (fpMapFile, surface->pixels, 1, 64 * 64) != 64 * 64) return 0;
+	return surface.Release();
 }
 
-// Löscht die aktuelle Map:
-void cMap::DeleteMap()
+void cStaticMap::copySrfToTerData (SDL_Surface* surface, int iNum)
 {
-	if (!Kacheln) return;
-	delete [] Kacheln;
-	delete [] fields;
-	delete [] Resources;
-	Kacheln = NULL;
-	delete [] terrain;
+	//before the surfaces are copied, the colortable of both surfaces has to be equal
+	//This is needed to make sure, that the pixeldata is copied 1:1
+
+	//copy the normal terrains
+	terrains[iNum].sf_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetColors (terrains[iNum].sf_org, surface->format->palette->colors, 0, 256);
+	SDL_BlitSurface (surface, NULL, terrains[iNum].sf_org, NULL);
+
+	terrains[iNum].sf = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetColors (terrains[iNum].sf, surface->format->palette->colors, 0, 256);
+	SDL_BlitSurface (surface, NULL, terrains[iNum].sf, NULL);
+
+	//copy the terrains with fog
+	terrains[iNum].shw_org = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetColors (terrains[iNum].shw_org, surface->format->palette->colors, 0, 256);
+	SDL_BlitSurface (surface, NULL, terrains[iNum].shw_org, NULL);
+
+	terrains[iNum].shw = SDL_CreateRGBSurface (Video.getSurfaceType(), 64, 64, 8, 0, 0, 0, 0);
+	SDL_SetColors (terrains[iNum].shw, surface->format->palette->colors, 0, 256);
+	SDL_BlitSurface (surface, NULL, terrains[iNum].shw, NULL);
+
+	//now set the palette for the fog terrains
+	SDL_SetColors (terrains[iNum].shw_org, palette_shw, 0, 256);
+	SDL_SetColors (terrains[iNum].shw, palette_shw, 0, 256);
 }
 
-void cMap::generateNextAnimationFrame()
+void cStaticMap::scaleSurfaces (int pixelSize)
+{
+	for (size_t i = 0; i != terrainCount; ++i)
+	{
+		sTerrain& t = terrains[i];
+		scaleSurface (t.sf_org, t.sf, pixelSize, pixelSize);
+		scaleSurface (t.shw_org, t.shw, pixelSize, pixelSize);
+	}
+}
+
+void cStaticMap::generateNextAnimationFrame()
 {
 	//change palettes to display next frame
 	SDL_Color temp = palette[127];
@@ -368,16 +366,69 @@ void cMap::generateNextAnimationFrame()
 	palette_shw[117] = palette_shw[123];
 	palette_shw[123] = temp;
 
-
 	//set the new palette for all terrain surfaces
-	for (int i = 0; i < iNumberOfTerrains; i++)
+	for (size_t i = 0; i != terrainCount; ++i)
 	{
-		SDL_SetColors (terrain[i].sf, palette + 96, 96, 127);
+		SDL_SetColors (terrains[i].sf, palette + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->sf_org, palette + 96, 96, 127);
-		SDL_SetColors (terrain[i].shw, palette_shw + 96, 96, 127);
+		SDL_SetColors (terrains[i].shw, palette_shw + 96, 96, 127);
 		//SDL_SetColors (TerrainInUse[i]->shw_org, palette_shw + 96, 96, 127);
 	}
 }
+
+SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
+{
+	SDL_Surface* mapSurface = SDL_CreateRGBSurface (Video.getSurfaceType(), sizex, sizey, Video.getColDepth(), 0, 0, 0, 0);
+
+	if (SDL_MUSTLOCK (mapSurface)) SDL_LockSurface (mapSurface);
+	for (int x = 0; x < mapSurface->w; ++x)
+	{
+		const int terrainx = std::min ((x * size) / mapSurface->w, size - 1);
+		const int offsetx = ((x * size) % mapSurface->w) * 64 / mapSurface->w;
+
+		for (int y = 0; y < mapSurface->h; y++)
+		{
+			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
+			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
+
+			const sTerrain& t = this->getTerrain(terrainx, terrainy);
+			unsigned int ColorNr = *((const unsigned char*) (t.sf_org->pixels) + (offsetx + offsety * 64));
+
+			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels))[x + y * mapSurface->w];
+			pixel[0] = palette[ColorNr].b;
+			pixel[1] = palette[ColorNr].g;
+			pixel[2] = palette[ColorNr].r;
+		}
+	}
+	if (SDL_MUSTLOCK (mapSurface)) SDL_UnlockSurface (mapSurface);
+	return mapSurface;
+}
+
+// Funktionen der Map-Klasse /////////////////////////////////////////////////
+cMap::cMap (cStaticMap& staticMap_) :
+	staticMap (&staticMap_)
+{
+	size = staticMap->getSize();
+	fields = new cMapField[size * size];
+	Resources = new sResources[size * size];
+
+	resSpots = NULL;
+	resSpotTypes = NULL;
+	resSpotCount = 0;
+	resCurrentSpotCount = 0;
+}
+
+cMap::~cMap()
+{
+	delete [] fields;
+	delete [] Resources;
+}
+
+cMapField& cMap::operator[] (unsigned int offset) const
+{
+	return fields[offset];
+}
+
 
 // Platziert die Ressourcen für einen Spieler.
 void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
@@ -493,8 +544,10 @@ void cMap::placeRessources (int metal, int oil, int gold)
 				T_2<int> absPos = p;
 				int type = (absPos.y % 2) * 2 + (absPos.x % 2);
 
-				int index = absPos.y * size + absPos.x;
-				if (type != RES_NONE && ( (hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) && !terrain[Kacheln[index]].blocked)
+				int index = staticMap->getOffset (absPos.x, absPos.y);
+				if (type != RES_NONE &&
+					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
+					!staticMap->isBlocked(index))
 				{
 					Resources[index].typ = type;
 					if (i >= playerCount)
@@ -742,9 +795,10 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	}
 	if (vehicleData.factorGround > 0)
 	{
-		if (terrain[Kacheln[offset]].blocked) return false;
+		if (staticMap->isBlocked (offset)) return false;
 
-		if ( (terrain[Kacheln[offset]].water && vehicleData.factorSea == 0) || (terrain[Kacheln[offset]].coast && vehicleData.factorCoast == 0))
+		if ((staticMap->isWater (offset) && vehicleData.factorSea == 0) ||
+			(staticMap->isCoast (offset) && vehicleData.factorCoast == 0))
 		{
 			if (checkPlayer && player && !player->ScanMap[offset]) return false;
 
@@ -767,9 +821,9 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	}
 	else if (vehicleData.factorSea > 0)
 	{
-		if (terrain[Kacheln[offset]].blocked) return false;
+		if (staticMap->isBlocked (offset)) return false;
 
-		if (!terrain[Kacheln[offset]].water && (!terrain[Kacheln[offset]].coast || vehicleData.factorCoast == 0)) return false;
+		if (!staticMap->isWater (offset) && (!staticMap->isCoast(offset) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
 		if (player && building && building->owner != player && building->data.explodesOnContact && building->isDetectedByPlayer (player))
@@ -792,7 +846,6 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 			else return false;
 		}
 	}
-
 	return true;
 }
 
@@ -811,7 +864,7 @@ bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x
 bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const
 {
 	if (offset < 0 || offset >= size * size) return false;
-	if (terrain[Kacheln[offset]].blocked) return false;
+	if (staticMap->isBlocked (offset)) return false;
 	cMapField& field = fields[offset];
 
 	// Check all buildings in this field for a building of the same type. This
@@ -832,8 +885,8 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	bi = field.getBuildings();
 
 	// Determine terrain type
-	bool water = terrain[Kacheln[offset]].water;
-	bool coast = terrain[Kacheln[offset]].coast;
+	bool water = staticMap->isWater (offset);
+	bool coast = staticMap->isCoast (offset);
 	bool ground = !water && !coast;
 
 	while (!bi.end)

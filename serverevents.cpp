@@ -721,7 +721,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 		message.pushString (SecondPlayer->name);
 	}
 	message.pushInt16 ((int) playerList.size());
-	message.pushString (server.Map->MapName);
+	message.pushString (server.Map->staticMap->getMapName());
 	message.pushInt16 (GetColorNr (player.color));
 	message.pushInt16 (player.Nr);
 

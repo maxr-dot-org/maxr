@@ -673,8 +673,6 @@ void cGameGUI::recalcPosition (bool resetItemPositions)
 
 cGameGUI::~cGameGUI()
 {
-	zoom = 1.0f;
-	scaleSurfaces();
 	SDL_RemoveTimer (TimerID);
 
 	if (FLC) FLI_Close (FLC);
@@ -1000,9 +998,10 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 			const int offsety  = ((miniMapY * map->size) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 			SDL_Color sdlcolor;
-			Uint8* terrainPixels = (Uint8*) map->terrain[map->Kacheln[terrainx + terrainy * map->size]].sf_org->pixels;
+			const sTerrain& terrain = map->staticMap->getTerrain (terrainx, terrainy);
+			const Uint8* terrainPixels = reinterpret_cast<const Uint8*>(terrain.sf_org->pixels);
 			Uint8 index = terrainPixels[offsetx + offsety * 64];
-			sdlcolor = map->terrain[map->Kacheln[terrainx + terrainy * map->size]].sf_org->format->palette->colors[index];
+			sdlcolor =terrain.sf_org->format->palette->colors[index];
 			Uint32 color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
 
 			minimap[miniMapX + miniMapY * MINIMAP_SIZE] = color;
@@ -3338,7 +3337,7 @@ void cGameGUI::preDrawFunction()
 	int endY = Round (offY / 64.0 + (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getTileSize());
 	if (endY >= map->size) endY = map->size - 1;
 
-	if (timer400ms) map->generateNextAnimationFrame();
+	if (timer400ms) map->staticMap->generateNextAnimationFrame();
 
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
@@ -3390,7 +3389,6 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 	SDL_Rect dest, tmp;
 	dest.y = HUD_TOP_HIGHT - zoomOffY;
 	// draw the terrain
-	struct sTerrain* terr;
 	for (int y = 0; y < map->size; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX;
@@ -3402,18 +3400,18 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 				if (dest.x >= HUD_LEFT_WIDTH - tileSize)
 				{
 					tmp = dest;
-					terr = map->terrain + map->Kacheln[pos];
+					const sTerrain& terr = map->staticMap->getTerrain (pos);
 
 					// draw the fog:
 					if (fogChecked() && !player->ScanMap[pos])
 					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (terr->shw->w != tileSize || terr->shw->h != tileSize)) scaleSurface (terr->shw_org, terr->shw, tileSize, tileSize);
-						SDL_BlitSurface (terr->shw, NULL, buffer, &tmp);
+						if (!cSettings::getInstance().shouldDoPrescale() && (terr.shw->w != tileSize || terr.shw->h != tileSize)) scaleSurface (terr.shw_org, terr.shw, tileSize, tileSize);
+						SDL_BlitSurface (terr.shw, NULL, buffer, &tmp);
 					}
 					else
 					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (terr->sf->w != tileSize || terr->sf->h != tileSize)) scaleSurface (terr->sf_org, terr->sf, tileSize, tileSize);
-						SDL_BlitSurface (terr->sf, NULL, buffer, &tmp);
+						if (!cSettings::getInstance().shouldDoPrescale() && (terr.sf->w != tileSize || terr.sf->h != tileSize)) scaleSurface (terr.sf_org, terr.sf, tileSize, tileSize);
+						SDL_BlitSurface (terr.sf, NULL, buffer, &tmp);
 					}
 				}
 				pos++;
@@ -3846,7 +3844,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 		int pos = y * map->size + startX;
 		for (int x = startX; x <= endX; x++)
 		{
-			if (player->ResourceMap[pos] && !map->terrain[map->Kacheln[pos]].blocked)
+			if (player->ResourceMap[pos] && !map->staticMap->isBlocked(pos))
 			{
 				if (map->Resources[pos].typ == RES_NONE)
 				{
@@ -3997,14 +3995,7 @@ void cGameGUI::scaleColors()
 void cGameGUI::scaleSurfaces()
 {
 	// Terrain:
-	sTerrain*& tlist = map->terrain;
-	int numberOfTerrains = map->iNumberOfTerrains;
-	for (int i = 0; i < numberOfTerrains; ++i)
-	{
-		sTerrain& t = tlist[i];
-		scaleSurface (t.sf_org, t.sf, getTileSize(), getTileSize());
-		scaleSurface (t.shw_org, t.shw, getTileSize(), getTileSize());
-	}
+	map->staticMap->scaleSurfaces (getTileSize());
 	// Vehicles:
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); ++i)
 	{

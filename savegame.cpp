@@ -270,14 +270,15 @@ cMap* cSavegame::loadMap()
 	TiXmlElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != NULL)
 	{
-		cMap* map = new cMap;
+		cStaticMap* staticMap = new cStaticMap;
 		string name = mapNode->FirstChildElement ("Name")->Attribute ("string");
 		string resourcestr = mapNode->FirstChildElement ("Resources")->Attribute ("data");
-		if (!map->LoadMap (name))
+		if (!staticMap->loadMap (name))
 		{
-			delete map;
+			delete staticMap;
 			return NULL;
 		}
+		cMap* map = new cMap (*staticMap);
 		convertStringToData (resourcestr, map->size * map->size, map->Resources);
 		return map;
 	}
@@ -1246,7 +1247,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 void cSavegame::writeMap (const cMap* Map)
 {
 	TiXmlElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
-	addAttributeElement (mapNode, "Name", "string", Map->MapName);
+	addAttributeElement (mapNode, "Name", "string", Map->staticMap->getMapName());
 	addAttributeElement (mapNode, "Resources", "data", convertDataToString (Map->Resources, Map->size * Map->size));
 }
 

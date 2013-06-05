@@ -177,7 +177,7 @@ public:
 	/** The settings for the game*/
 	sSettings* settings;
 	/** The map for the game*/
-	cMap* map;
+	cStaticMap* map;
 
 	/** list with all players for the game*/
 	std::vector<cPlayer*> players;
@@ -724,7 +724,7 @@ protected:
 	cGameDataContainer* gameDataContainer;
 	cPlayer* player;
 
-	cMap* map;
+	cStaticMap* map;
 
 	AutoSurface hudSurface;
 	AutoSurface mapSurface;

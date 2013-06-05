@@ -252,37 +252,62 @@ struct sTerrain
 	bool blocked;        /** is this terrain blocked? */
 };
 
+class cStaticMap
+{
+public:
+	cStaticMap();
+	~cStaticMap();
+
+	void clear();
+	bool loadMap (const std::string& filename);
+
+	const std::string& getMapName() const { return MapName; }
+	int getSize() const { return size; }
+	int getOffset (int x, int y) const { return y * size + x; }
+
+	bool isWater (int x, int y, bool not_coast) const;
+	bool isBlocked(int offset) const;
+	bool isCoast (int offset) const;
+	bool isWater (int offset) const;
+
+	const sTerrain& getTerrain (int offset) const;
+	const sTerrain& getTerrain (int x, int y) const;
+
+	SDL_Surface* createBigSurface (int sizex, int sizey) const;
+	void generateNextAnimationFrame();
+	void scaleSurfaces (int pixelSize);
+private:
+	static SDL_Surface* loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum);
+	void copySrfToTerData (SDL_Surface* surface, int iNum);
+private:
+	std::string MapName;   // Name of the current map
+	int size;
+	unsigned int terrainCount;
+	sTerrain* terrains;       // The different terrain type.
+	std::vector<int> Kacheln; // Terrain numbers of the map fields
+	SDL_Color palette[256];   // Palette with all Colors for the terrain graphics
+	SDL_Color palette_shw[256];
+};
 
 // Die Map-Klasse ////////////////////////////////////////////////////////////
 class cMap
 {
 public:
-	cMap();
+	explicit cMap (cStaticMap& staticMap_);
 	~cMap();
 
+	cStaticMap* staticMap;
 	int size;     // size of the map
-	int* Kacheln; // terrain numbers of the map fields
 	/**
 	* the infomation about the fields
 	*/
 	cMapField* fields;
 	sResources* Resources; // field with the ressource data
-	std::string MapName;   // name of the current map
 
-	SDL_Color palette[256]; //Palette with all Colors for the terrain graphics
-	SDL_Color palette_shw[256];
+	bool isWater (int x, int y, bool not_coast = false) const { return staticMap->isWater(x, y, not_coast); }
 
-	int iNumberOfTerrains; // Number of terrain graphics for this map
-	sTerrain* terrain; // Terrain graphics
-
-	bool isWater (int x, int y, bool not_coast = false) const;
-	void NewMap (int size, int iTerrainGrphCount);
-	void DeleteMap();
-	//bool SaveMap(const std::string& filename, SDL_Surface *preview);
-	bool LoadMap (const std::string& filename);
 	void placeRessourcesAddPlayer (int x, int y, int frequency);
 	void placeRessources (int Metal, int Oil, int Gold);
-	void generateNextAnimationFrame();
 	/**
 	* Access to a map field
 	* @param the offset of the map field
@@ -334,12 +359,7 @@ public:
 	*/
 	void reset();
 
-
 private:
-
-	SDL_Surface* LoadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum);
-	void CopySrfToTerData (SDL_Surface* surface, int iNum);
-
 	T_2<int>* resSpots;
 	int* resSpotTypes;
 	int resSpotCount;

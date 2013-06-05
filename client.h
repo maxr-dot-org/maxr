@@ -34,6 +34,7 @@ class cMap;
 class cNetMessage;
 class cPlayer;
 class cServer;
+class cStaticMap;
 class cTCP;
 
 Uint32 TimerCallback (Uint32 interval, void* arg);
@@ -45,7 +46,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg);
 class cClient : public INetMessageReceiver
 {
 public:
-	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cMap* Map, std::vector<cPlayer*>* PlayerList);
+	cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* PlayerList);
 	~cClient();
 
 	// Return local server if any.
