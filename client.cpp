@@ -654,7 +654,7 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 		Data->speedCur = message.popInt16();
 		Data->speedMax = message.popInt16();
 
-		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI.getSelVehicle()) StopFXLoop (gameGUI.iObjectStream);
+		if (bWasBuilding && !Vehicle->IsBuilding && Vehicle == gameGUI.getSelectedUnit()) StopFXLoop (gameGUI.iObjectStream);
 
 		Vehicle->FlightHigh = message.popInt16();
 	}
@@ -869,7 +869,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	Vehicle->IsBuilding = true;
 	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, buildBig));
 
-	if (Vehicle == gameGUI.getSelVehicle())
+	if (Vehicle == gameGUI.getSelectedUnit())
 	{
 		StopFXLoop (gameGUI.iObjectStream);
 		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
@@ -903,7 +903,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 	Vehicle->IsBuilding = false;
 	Vehicle->BuildPath = false;
 
-	if (gameGUI.getSelVehicle() == Vehicle)
+	if (gameGUI.getSelectedUnit() == Vehicle)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
 		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
@@ -1231,7 +1231,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			Vehicle->IsClearing = true;
 			addJob (new cStartBuildJob (Vehicle, orgX, orgY, (bigoffset > 0)));
 
-			if (gameGUI.getSelVehicle() == Vehicle)
+			if (gameGUI.getSelectedUnit() == Vehicle)
 			{
 				StopFXLoop (gameGUI.iObjectStream);
 				gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
@@ -1271,7 +1271,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	Vehicle->IsClearing = false;
 	Vehicle->ClearingRounds = 0;
 
-	if (gameGUI.getSelVehicle() == Vehicle)
+	if (gameGUI.getSelectedUnit() == Vehicle)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
 		gameGUI.iObjectStream = Vehicle->playStream (gameGUI);
@@ -1363,18 +1363,10 @@ void cClient::HandleNetMessage_GAME_EV_HUD_SETTINGS (cNetMessage& message)
 	assert (message.iType == GAME_EV_HUD_SETTINGS);
 
 	int unitID = message.popInt16();
-	cBuilding* building = NULL;
-	cVehicle* vehicle = getVehicleFromID (unitID);
-	if (!vehicle) building = getBuildingFromID (unitID);
+	cUnit* unit = getVehicleFromID (unitID);
+	if (!unit) unit = getBuildingFromID (unitID);
 
-	if (vehicle)
-	{
-		gameGUI.selectUnit (vehicle);
-	}
-	else if (building)
-	{
-		gameGUI.selectUnit (building);
-	}
+	if (unit) gameGUI.selectUnit (*unit);
 
 	int x = message.popInt16();
 	int y = message.popInt16();
@@ -1422,7 +1414,7 @@ void cClient::HandleNetMessage_GAME_EV_STORE_UNIT (cNetMessage& message)
 
 	gameGUI.checkMouseInputMode();
 
-	if (StoredVehicle == gameGUI.getSelVehicle()) gameGUI.deselectUnit();
+	if (StoredVehicle == gameGUI.getSelectedUnit()) gameGUI.deselectUnit();
 
 	PlayFX (SoundData.SNDLoad);
 }
@@ -1442,7 +1434,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		int x = message.popInt16();
 		int y = message.popInt16();
 		StoringVehicle->exitVehicleTo (StoredVehicle, x + y * getMap()->size, getMap());
-		if (gameGUI.getSelVehicle() == StoringVehicle && gameGUI.mouseInputMode == activateVehicle)
+		if (gameGUI.getSelectedUnit() == StoringVehicle && gameGUI.mouseInputMode == activateVehicle)
 		{
 			gameGUI.mouseInputMode = normalInput;
 		}
@@ -1456,7 +1448,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 		int y = message.popInt16();
 		StoringBuilding->exitVehicleTo (StoredVehicle, x + y * getMap()->size, getMap());
 
-		if (gameGUI.getSelBuilding() == StoringBuilding && gameGUI.mouseInputMode == activateVehicle)
+		if (gameGUI.getSelectedUnit() == StoringBuilding && gameGUI.mouseInputMode == activateVehicle)
 		{
 			gameGUI.mouseInputMode = normalInput;
 		}
@@ -1711,8 +1703,7 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	int saveingID = message.popInt16();
-	if (gameGUI.getSelVehicle()) sendSaveHudInfo (*this, gameGUI.getSelVehicle()->iID, ActivePlayer->Nr, saveingID);
-	else if (gameGUI.getSelBuilding()) sendSaveHudInfo (*this, gameGUI.getSelBuilding()->iID, ActivePlayer->Nr, saveingID);
+	if (gameGUI.getSelectedUnit()) sendSaveHudInfo (*this, gameGUI.getSelectedUnit()->iID, ActivePlayer->Nr, saveingID);
 	else sendSaveHudInfo (*this, -1, ActivePlayer->Nr, saveingID);
 
 	for (int i = ActivePlayer->savedReportsList.size() - 50; i < (int) ActivePlayer->savedReportsList.size(); i++)
@@ -1995,7 +1986,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 	}
 	remove_from_intrusivelist(Building->owner->BuildingList, *Building);
 
-	if (gameGUI.getSelBuilding() == Building)
+	if (gameGUI.getSelectedUnit() == Building)
 	{
 		gameGUI.deselectUnit();
 	}
@@ -2029,7 +2020,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 	cPlayer* owner = Vehicle->owner;
 	remove_from_intrusivelist(Vehicle->owner->VehicleList, *Vehicle);
 
-	if (gameGUI.getSelVehicle() == Vehicle)
+	if (gameGUI.getSelectedUnit() == Vehicle)
 	{
 		gameGUI.deselectUnit();
 	}
@@ -2153,7 +2144,7 @@ void cClient::handleMoveJobs()
 			else Log.write (" Client: Delete movejob with nonactive vehicle (released one)", cLog::eLOG_TYPE_NET_DEBUG);
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
 			delete MoveJob;
-			if (Vehicle == gameGUI.getSelVehicle()) gameGUI.updateMouseCursor();
+			if (Vehicle == gameGUI.getSelectedUnit()) gameGUI.updateMouseCursor();
 			continue;
 		}
 		if (MoveJob->bEndForNow)
@@ -2165,7 +2156,7 @@ void cClient::handleMoveJobs()
 				Vehicle->moving = false;
 			}
 			ActiveMJobs.erase (ActiveMJobs.begin() + i);
-			if (Vehicle == gameGUI.getSelVehicle()) gameGUI.updateMouseCursor();
+			if (Vehicle == gameGUI.getSelectedUnit()) gameGUI.updateMouseCursor();
 			continue;
 		}
 

@@ -342,7 +342,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 		d.y = screenPosition.y + 1;
 		SDL_FillRect (buffer, &d, color);
 	}
-	if (gameGUI.getSelVehicle() == this)
+	if (gameGUI.getSelectedUnit() == this)
 	{
 		SDL_Rect d, t;
 		int len, max;
@@ -604,20 +604,6 @@ void cVehicle::Select (cGameGUI& gameGUI)
 
 	MakeReport (gameGUI);
 	gameGUI.setUnitDetailsData (this, NULL);
-}
-
-//-----------------------------------------------------------------------------
-/** Deselects the vehicle */
-//-----------------------------------------------------------------------------
-void cVehicle::Deselct(cGameGUI& gameGUI)
-{
-	groupSelected = false;
-	if (gameGUI.mouseInputMode == placeBand) BuildPath = false;
-	// redraw the background
-	StopFXLoop (gameGUI.iObjectStream);
-	gameGUI.iObjectStream = -1;
-	gameGUI.setFLC (NULL);
-	gameGUI.setUnitDetailsData (NULL, NULL);
 }
 
 bool cVehicle::refreshData_Build (cServer& server)
@@ -2177,7 +2163,7 @@ void cVehicle::executeAutoMoveJobCommand(cClient& client)
 //-----------------------------------------------------------------------------
 void cVehicle::executeActivateStoredVehiclesCommand (cClient& client)
 {
-	cStorageMenu storageMenu (client, storedUnits, this, 0);
+	cStorageMenu storageMenu (client, storedUnits, *this);
 	storageMenu.show();
 }
 

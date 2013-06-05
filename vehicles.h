@@ -166,7 +166,6 @@ public:
 	*/
 	void draw (SDL_Rect screenPosition, cGameGUI& gameGUI);
 	void Select(cGameGUI& gameGUI);
-	void Deselct(cGameGUI& gameGUI);
 
 	/**
 	* refreshes speedCur and shotsCur and continues building or clearing

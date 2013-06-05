@@ -1108,7 +1108,7 @@ protected:
 
 	int getClickedButtonVehIndex (AutoPtr<cMenuButton>::type (&buttons) [6]);
 public:
-	cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building);
+	cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cUnit& unit);
 
 private:
 	friend class cClient;

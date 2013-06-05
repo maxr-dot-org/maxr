@@ -27,6 +27,7 @@ class cClient;
 class cGameGUI;
 class cJob;
 class cMap;
+class cMapField;
 class cPlayer;
 class cServer;
 class cVehicle;
@@ -70,6 +71,8 @@ public:
 	int getScreenPosX (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	int getScreenPosY (const cGameGUI& gameGUI, bool movementOffset = true) const;
 	void center (cGameGUI& gameGUI) const;
+	virtual bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const = 0;
+	virtual std::string getStatusStr (const cGameGUI& gameGUI) const = 0;
 
 	virtual int getMovementOffsetX() const {return 0;}
 	virtual int getMovementOffsetY() const {return 0;}

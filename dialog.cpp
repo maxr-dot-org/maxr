@@ -516,12 +516,12 @@ void cDialogPreferences::voicesMuteChanged (void* parent)
 	cSettings::getInstance().setVoiceMute (menu->disableVoicesChBox.isChecked());
 }
 
-cDialogTransfer::cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_) :
+cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
 	client(&client_),
-	srcBuilding (srcBuilding_),
+	srcBuilding (NULL),
 	destBuilding (destBuilding_),
-	srcVehicle (srcVehicle_),
+	srcVehicle (NULL),
 	destVehicle (destVehicle_),
 	doneButton (position.x + 159, position.y + 200, lngPack.i18n ("Text~Button~Done"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
@@ -529,6 +529,9 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVe
 	decButton (position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL),
 	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG)
 {
+	if (srcUnit.isVehicle()) srcVehicle = static_cast<cVehicle*>(&srcUnit);
+	else srcBuilding = static_cast<cBuilding*>(&srcUnit);
+
 	// TODO: add changing arrow direction!
 
 	getTransferType();

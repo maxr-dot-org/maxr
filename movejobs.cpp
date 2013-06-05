@@ -1043,7 +1043,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				startMoveSound();
 				client->addActiveMoveJob (this);
-				if (client->gameGUI.getSelVehicle() == Vehicle) client->gameGUI.unitMenuActive = false;
+				if (client->gameGUI.getSelectedUnit() == Vehicle) client->gameGUI.unitMenuActive = false;
 			}
 			if (bEndForNow)
 			{
@@ -1103,7 +1103,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			{
 				bFinished = true;
 
-				if (Vehicle == client->gameGUI.getSelVehicle())
+				if (Vehicle == client->gameGUI.getSelectedUnit())
 				{
 					if (random (2))
 						PlayVoice (VoiceData.VOINoPath1);
@@ -1147,7 +1147,7 @@ void cClientMoveJob::moveVehicle()
 
 
 		//restart movesound, when drinving into or out of water
-		if (Vehicle == client->gameGUI.getSelVehicle())
+		if (Vehicle == client->gameGUI.getSelectedUnit())
 		{
 			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y, true);
 			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
@@ -1309,7 +1309,7 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 void cClientMoveJob::startMoveSound()
 {
 	cGameGUI& gameGUI = client->gameGUI;
-	if (Vehicle == gameGUI.getSelVehicle()) Vehicle->StartMoveSound(gameGUI);
+	if (Vehicle == gameGUI.getSelectedUnit()) Vehicle->StartMoveSound(gameGUI);
 	bSoundRunning = true;
 }
 
@@ -1320,7 +1320,7 @@ void cClientMoveJob::stopMoveSound()
 	bSoundRunning = false;
 	cGameGUI& gameGUI = client->gameGUI;
 
-	if (Vehicle == gameGUI.getSelVehicle())
+	if (Vehicle == gameGUI.getSelectedUnit())
 	{
 		cBuilding* building = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getBaseBuilding();
 		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY, true);

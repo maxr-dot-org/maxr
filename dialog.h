@@ -194,7 +194,7 @@ class cDialogTransfer : public cMenu
 	void getNamesNCargoNImages();
 	void setCargos();
 public:
-	cDialogTransfer (cClient& client_, cBuilding* srcBuilding_, cVehicle* srcVehicle_, cBuilding* destBuilding_, cVehicle* destVehicle_);
+	cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_);
 	~cDialogTransfer();
 
 private:

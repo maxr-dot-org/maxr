@@ -160,12 +160,10 @@ class cGameGUI : public cMenu
 	cClient* client;
 	SDL_Surface* panelTopGraphic, *panelBottomGraphic;
 
-	/** the currently selected vehicle */
-	cVehicle* selectedVehicle;
+	/** the currently selected unit */
+	cUnit* selectedUnit;
 	/** the currently selected group of vehicles */
 	std::vector<cVehicle*> selectedVehiclesGroup;
-	/** the currently selected building */
-	cBuilding* selectedBuilding;
 public:
 	/** the soundstream of the selected unit */
 	int iObjectStream;
@@ -403,8 +401,8 @@ private:
 	void drawFx (bool bottom) const;
 	void runFx ();
 
-	void selectUnit_vehicle (cVehicle* vehicle);
-	void selectUnit_building (cBuilding* building);
+	void selectUnit_vehicle (cVehicle& vehicle);
+	void selectUnit_building (cBuilding& building);
 
 public:
 	explicit cGameGUI (cMap* map_);
@@ -511,13 +509,13 @@ public:
 
 	void setStartup (bool startup_);
 
-	const cVehicle* getSelVehicle() const { return selectedVehicle; }
 	std::vector<cVehicle*>* getSelVehiclesGroup() { return &selectedVehiclesGroup; }
-	const cBuilding* getSelBuilding() const { return selectedBuilding; }
-	cUnit* getSelectedUnit() { return selectedVehicle ? (cUnit*) selectedVehicle : (cUnit*) selectedBuilding; }
+	const cUnit* getSelectedUnit() const { return selectedUnit; }
+	cUnit* getSelectedUnit() { return selectedUnit; }
+	cVehicle* getSelectedVehicle();
+	cBuilding* getSelectedBuilding();
 
-	void selectUnit (cVehicle* vehicle);
-	void selectUnit (cBuilding* building);
+	void selectUnit (cUnit& unit);
 	void deselectUnit();
 
 	/**

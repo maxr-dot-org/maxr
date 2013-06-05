@@ -162,7 +162,6 @@ public:
 	*/
 	void draw (SDL_Rect* dest, cGameGUI& gameGUI);
 	void Select(cGameGUI& gameGUI);
-	void Deselct(cGameGUI& gameGUI);
 
 	int playStream();
 	std::string getStatusStr (const cGameGUI& gameGUI) const;
@@ -179,7 +178,8 @@ public:
 	void ClientStartWork (cGameGUI& gameGUI);
 	void ServerStopWork (cServer& server, bool override);
 	void ClientStopWork (cGameGUI& gameGUI);
-	bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField);  /** check whether a transfer to a unit on the field is possible */
+	/** check whether a transfer to a unit on the field is possible */
+	bool CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const;
 	void CheckRessourceProd(const cServer& server);
 	void CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, int iVehicleCosts, int iRemainingMetal = -1);
 	void DrawExitPoints (const sVehicle* typ, cGameGUI& gameGUI);

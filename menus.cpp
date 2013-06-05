@@ -4781,22 +4781,22 @@ void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* d
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cVehicle* vehicle, cBuilding* building) :
+cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cUnit& unit) :
 	cMenu (LoadPCX (GFXOD_STORAGE), MNU_BG_ALPHA),
 	client(&client_),
-	ownerVehicle (vehicle),
-	ownerBuilding (building),
+	ownerVehicle (NULL),
+	ownerBuilding (NULL),
 	storageList (storageList_),
 	voiceTypeAll (false),
 	voicePlayed (false)
 {
-	if (ownerVehicle) unitData = ownerVehicle->data;
-	else if (ownerBuilding)
+	if (unit.isVehicle()) ownerVehicle = static_cast<cVehicle*>(&unit);
+	else ownerBuilding = static_cast<cBuilding*>(&unit);
+	unitData = unit.data;
+	if (ownerBuilding)
 	{
-		unitData = ownerBuilding->data;
 		subBase = ownerBuilding->SubBase;
 	}
-	else return;
 
 	offset = 0;
 	canStorePlanes = unitData.storeUnitsImageType == sUnitData::STORE_UNIT_IMG_PLANE;
@@ -5564,7 +5564,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 		cVehicle* storingVehicle = vehicle->getContainerVehicle();
 		if (storingVehicle)
 		{
-			client->gameGUI.selectUnit (storingVehicle);
+			client->gameGUI.selectUnit (*storingVehicle);
 			storingVehicle->center (client->gameGUI);
 			return;
 		}
@@ -5572,7 +5572,7 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 		cBuilding* storingBuilding = vehicle->getContainerBuilding();
 		if (storingBuilding)
 		{
-			client->gameGUI.selectUnit (storingBuilding);
+			client->gameGUI.selectUnit (*storingBuilding);
 			storingBuilding->center (client->gameGUI);
 			return;
 		}
@@ -5581,12 +5581,12 @@ void cReportsMenu::doubleClicked (cVehicle* vehicle, cBuilding* building)
 
 	if (vehicle)
 	{
-		client->gameGUI.selectUnit (vehicle);
+		client->gameGUI.selectUnit (*vehicle);
 		vehicle->center (client->gameGUI);
 	}
 	else if (building)
 	{
-		client->gameGUI.selectUnit (building);
+		client->gameGUI.selectUnit (*building);
 		building->center (client->gameGUI);
 	}
 }

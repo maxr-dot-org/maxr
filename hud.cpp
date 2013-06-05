@@ -524,8 +524,7 @@ cGameGUI::cGameGUI (cMap* map_) :
 	mouseInputMode = normalInput;
 	TimerID = SDL_AddTimer (50, TimerCallback, this);
 
-	selectedVehicle = NULL;
-	selectedBuilding = NULL;
+	selectedUnit = NULL;
 
 	calcMinZoom();
 
@@ -1404,6 +1403,7 @@ void cGameGUI::updateUnderMouseObject()
 	}
 	// check wether there is a unit under the mouse:
 	overUnitField = map->fields + (x + y * map->size);
+	cVehicle* selectedVehicle = getSelectedVehicle();
 	if (mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 	{
 		selectedVehicle->drawCommandoCursor (*this, x, y, true);
@@ -1480,55 +1480,59 @@ void cGameGUI::setStartup (bool startup_)
 	startup = startup_;
 }
 
-void cGameGUI::selectUnit (cVehicle* vehicle)
+cVehicle* cGameGUI::getSelectedVehicle()
 {
-	if (vehicle->Loaded)
-		return;
-
-	deselectUnit();
-
-	selectedVehicle = vehicle;
-	selectedBuilding = NULL;
-
-	unitMenuActive = false;
-	mouseInputMode = normalInput;
-
-	vehicle->Select(*this);
-	iObjectStream = vehicle->playStream (*this);
-
-	updateMouseCursor();
+	return static_cast<cVehicle*>(selectedUnit && selectedUnit->isVehicle() ? selectedUnit : NULL);
 }
 
-void cGameGUI::selectUnit (cBuilding* building)
+cBuilding* cGameGUI::getSelectedBuilding()
 {
+	return static_cast<cBuilding*>(selectedUnit && selectedUnit->isBuilding() ? selectedUnit : NULL);
+}
+
+void cGameGUI::selectUnit (cUnit& unit)
+{
+	cVehicle* vehicle = static_cast<cVehicle*>(unit.isVehicle() ? &unit : NULL);
+
+	if (vehicle && vehicle->Loaded) return;
+
+	cBuilding* building = static_cast<cBuilding*>(unit.isBuilding() ? &unit : NULL);
+
 	deselectUnit();
-
-	selectedBuilding = building;
-	selectedVehicle = NULL;
-
+	selectedUnit = &unit;
 	unitMenuActive = false;
 	mouseInputMode = normalInput;
-
-	building->Select(*this);
-	iObjectStream = building->playStream();
-
+	if (vehicle)
+	{
+		vehicle->Select(*this);
+		iObjectStream = vehicle->playStream (*this);
+	}
+	else
+	{
+		building->Select(*this);
+		iObjectStream = building->playStream();
+	}
 	updateMouseCursor();
 }
 
 void cGameGUI::deselectUnit()
 {
-	if (selectedBuilding)
+	if (selectedUnit)
 	{
-		selectedBuilding->Deselct(*this);
-		selectedBuilding = NULL;
+		cVehicle* selectedVehicle = getSelectedVehicle();
+		if (selectedVehicle)
+		{
+			selectedVehicle->groupSelected = false;
+			if (mouseInputMode == placeBand) selectedVehicle->BuildPath = false;
+		}
+		StopFXLoop (iObjectStream);
+		iObjectStream = -1;
+		setVideoSurface (NULL);
+		setUnitDetailsData (NULL, NULL);
+
 		StopFXLoop (iObjectStream);
 	}
-	else if (selectedVehicle)
-	{
-		selectedVehicle->Deselct(*this);
-		selectedVehicle = NULL;
-		StopFXLoop (iObjectStream);
-	}
+	selectedUnit = NULL;
 
 	mouseInputMode = normalInput;
 
@@ -1561,6 +1565,8 @@ void cGameGUI::updateMouseCursor()
 		}
 	}
 
+	cVehicle* selectedVehicle = getSelectedVehicle();
+	cBuilding* selectedBuilding = getSelectedBuilding();
 	if (selectedVehicle && mouseInputMode == placeBand && selectedVehicle->owner == client->getActivePlayer())
 	{
 		if (x >= HUD_LEFT_WIDTH)
@@ -1572,29 +1578,15 @@ void cGameGUI::updateMouseCursor()
 			mouse->SetCursor (CNo);
 		}
 	}
-	else if ( (selectedVehicle && mouseInputMode == transferMode && selectedVehicle->owner == client->getActivePlayer()) || (selectedBuilding && mouseInputMode == transferMode && selectedBuilding->owner == client->getActivePlayer()))
+	else if ((selectedUnit && mouseInputMode == transferMode && selectedUnit->owner == client->getActivePlayer()))
 	{
-		if (selectedVehicle)
+		if (overUnitField && selectedUnit->CanTransferTo (*this, overUnitField))
 		{
-			if (overUnitField && selectedVehicle->CanTransferTo (*this, overUnitField))
-			{
-				mouse->SetCursor (CTransf);
-			}
-			else
-			{
-				mouse->SetCursor (CNo);
-			}
+			mouse->SetCursor (CTransf);
 		}
 		else
 		{
-			if (overUnitField && selectedBuilding->CanTransferTo (*this, overUnitField))
-			{
-				mouse->SetCursor (CTransf);
-			}
-			else
-			{
-				mouse->SetCursor (CNo);
-			}
+			mouse->SetCursor (CNo);
 		}
 	}
 	else if (!helpActive)
@@ -1608,8 +1600,7 @@ void cGameGUI::updateMouseCursor()
 			return;
 		}
 
-		if ((selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, x, y)) ||
-			(selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, x, y)))
+		if (selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, x, y))
 		{
 			mouse->SetCursor (CHand);
 		}
@@ -1957,16 +1948,10 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
 
-	if (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
+	if (selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
 	{
-		if (mouseState.leftButtonPressed) selectedVehicle->setMenuSelection (*this);
-		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedVehicle->menuReleased (*this);
-		return;
-	}
-	else if (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, mouseState.x, mouseState.y))
-	{
-		if (mouseState.leftButtonPressed) selectedBuilding->setMenuSelection (*this);
-		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedBuilding->menuReleased (*this);
+		if (mouseState.leftButtonPressed) selectedUnit->setMenuSelection (*this);
+		else if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed) selectedUnit->menuReleased (*this);
 		return;
 	}
 
@@ -1975,14 +1960,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	// handle input on the map
 	if (MouseStyle == OldSchool && mouseState.rightButtonReleased && !mouseState.leftButtonPressed && overUnitField)
 	{
-		if ( (overVehicle && overVehicle == selectedVehicle) || (overPlane && overPlane == selectedVehicle))
+		if (selectedUnit && (overVehicle == selectedUnit ||
+							 overPlane == selectedUnit ||
+							 overBuilding == selectedUnit ||
+							 overBaseBuilding == selectedUnit))
 		{
-			cUnitHelpMenu helpMenu (*client, &selectedVehicle->data, selectedVehicle->owner);
-			helpMenu.show();
-		}
-		else if ( (overBuilding && overBuilding == selectedBuilding) || (overBaseBuilding && overBaseBuilding == selectedBuilding))
-		{
-			cUnitHelpMenu helpMenu (*client, &selectedBuilding->data, selectedBuilding->owner);
+			cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
 			helpMenu.show();
 		}
 		else if (overUnitField) selectUnit (overUnitField, true);
@@ -1990,13 +1973,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	else
 	{
 		bool mouseOverSelectedUnit = false;
-		if (selectedBuilding && mouseMapX == selectedBuilding->PosX && mouseMapY == selectedBuilding->PosY) mouseOverSelectedUnit = true;
-		if (selectedBuilding && selectedBuilding->data.isBig && mouseMapX >= selectedBuilding->PosX && mouseMapX <= selectedBuilding->PosX + 1
-			&& mouseMapY >= selectedBuilding->PosY && mouseMapY <= selectedBuilding->PosY + 1) mouseOverSelectedUnit = true;
-		if (selectedVehicle && mouseMapX == selectedVehicle->PosX && mouseMapY == selectedVehicle->PosY) mouseOverSelectedUnit = true;
-		if (selectedVehicle && selectedVehicle->data.isBig && mouseMapX >= selectedVehicle->PosX && mouseMapX <= selectedVehicle->PosX + 1
-			&& mouseMapY >= selectedVehicle->PosY && mouseMapY <= selectedVehicle->PosY + 1) mouseOverSelectedUnit = true;
-
+		if (selectedUnit && mouseMapX == selectedUnit->PosX && mouseMapY == selectedUnit->PosY) mouseOverSelectedUnit = true;
+		if (selectedUnit && selectedUnit->data.isBig && mouseMapX >= selectedUnit->PosX && mouseMapX <= selectedUnit->PosX + 1
+			&& mouseMapY >= selectedUnit->PosY && mouseMapY <= selectedUnit->PosY + 1) mouseOverSelectedUnit = true;
 
 		if ((mouseState.rightButtonReleased && !mouseState.leftButtonPressed && rightMouseBox.isTooSmall()) || (MouseStyle == OldSchool && mouseState.leftButtonPressed && mouseState.rightButtonReleased))
 		{
@@ -2012,6 +1991,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					cVehicleIterator planes = overUnitField->getPlanes();
 					int next = 0;
 
+					const cVehicle* selectedVehicle = getSelectedVehicle();
+					const cBuilding* selectedBuilding = getSelectedBuilding();
 					if (selectedVehicle)
 					{
 						if (planes.contains (*selectedVehicle))
@@ -2062,16 +2043,16 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					switch (next)
 					{
 						case 't':
-							selectUnit (overBuilding);
+							selectUnit (*overBuilding);
 							break;
 						case 'b':
-							selectUnit (overBaseBuilding);
+							selectUnit (*overBaseBuilding);
 							break;
 						case 'v':
-							selectUnit (overVehicle);
+							selectUnit (*overVehicle);
 							break;
 						case 'p':
-							selectUnit (planes);
+							selectUnit (*planes);
 							break;
 						default:
 							break;
@@ -2085,6 +2066,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		}
 	}
 
+	cVehicle* selectedVehicle = getSelectedVehicle();
+	cBuilding* selectedBuilding= getSelectedBuilding();
+
 	if (mouseState.rightButtonReleased && !mouseState.leftButtonPressed)
 	{
 		rightMouseBox.startX = rightMouseBox.startY = -1;
@@ -2097,38 +2081,27 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	}
 	if (mouseState.leftButtonReleased && !mouseState.rightButtonPressed)
 	{
-		// Store the currently selected unit to determine if the lock state of the clicked unit maybe has to be changed.
-		// If the selected unit changes during the click handling, then the newly selected unit has to be added / removed from the "locked units" list.
-		cVehicle* oldSelectedVehicleForLock = selectedVehicle;
-		cBuilding* oldSelectedBuildingForLock = selectedBuilding;
+		// Store the currently selected unit to determine
+		// if the lock state of the clicked unit maybe has to be changed.
+		// If the selected unit changes during the click handling,
+		// then the newly selected unit has to be added / removed
+		// from the "locked units" list.
+		cUnit* oldSelectedUnitForLock = selectedUnit;
 
 		if (!mouseBox.isTooSmall())
 		{
 			selectBoxVehicles (mouseBox);
 		}
-		else if (changeAllowed && selectedVehicle && mouse->cur == GraphicsData.gfx_Ctransf)
+		else if (changeAllowed && selectedUnit && mouse->cur == GraphicsData.gfx_Ctransf)
 		{
 			if (overVehicle)
 			{
-				cDialogTransfer transferDialog (*client, NULL, selectedVehicle, NULL, overVehicle);
+				cDialogTransfer transferDialog (*client, *selectedUnit, NULL, overVehicle);
 				transferDialog.show();
 			}
 			else if (overBuilding)
 			{
-				cDialogTransfer transferDialog (*client, NULL, selectedVehicle, overBuilding, NULL);
-				transferDialog.show();
-			}
-		}
-		else if (changeAllowed && selectedBuilding && mouse->cur == GraphicsData.gfx_Ctransf)
-		{
-			if (overVehicle)
-			{
-				cDialogTransfer transferDialog (*client, selectedBuilding, NULL, NULL, overVehicle);
-				transferDialog.show();
-			}
-			else if (overBuilding)
-			{
-				cDialogTransfer transferDialog (*client, selectedBuilding, NULL, overBuilding, NULL);
+				cDialogTransfer transferDialog (*client, *selectedUnit, overBuilding, NULL);
 				transferDialog.show();
 			}
 		}
@@ -2145,14 +2118,9 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX + selectedVehicle->PosY * map->size, true, selectedVehicle->BandX + selectedVehicle->BandY * map->size);
 			}
 		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && mouseInputMode == activateVehicle)
+		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (*client, selectedBuilding->iID, false, selectedBuilding->storedUnits[selectedBuilding->VehicleToActivate]->iID, mouseMapX, mouseMapY);
-			updateMouseCursor();
-		}
-		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedVehicle && mouseInputMode == activateVehicle)
-		{
-			sendWantActivate (*client, selectedVehicle->iID, true, selectedVehicle->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouseMapX, mouseMapY);
+			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isVehicle(), selectedUnit->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())
@@ -2256,9 +2224,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		else if (!helpActive)
 		{
 			//Hud.CheckButtons();
-			// check whether the mouse is over an unit menu:
-			if ( (selectedVehicle && unitMenuActive && selectedVehicle->areCoordsOverMenu (*this, mouseState.x, mouseState.y)) ||
-				 (selectedBuilding && unitMenuActive && selectedBuilding->areCoordsOverMenu (*this, mouseState.x, mouseState.y)))
+			// check whether the mouse is over a unit menu:
+			if ((selectedUnit && unitMenuActive && selectedUnit->areCoordsOverMenu (*this, mouseState.x, mouseState.y)))
 			{
 			}
 			else
@@ -2381,9 +2348,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		// toggle the lock state of an enemy unit, if it is newly selected / deselected
 		if (overUnitField && lockChecked())
 		{
-			if (selectedVehicle && selectedVehicle != oldSelectedVehicleForLock && selectedVehicle->owner != player)
-				player->toggelLock (overUnitField);
-			else if (selectedBuilding && selectedBuilding != oldSelectedBuildingForLock && selectedBuilding->owner != player)
+			if (selectedUnit && selectedUnit != oldSelectedUnitForLock && selectedUnit->owner != player)
 				player->toggelLock (overUnitField);
 		}
 
@@ -2693,15 +2658,15 @@ void cGameGUI::doCommand (const string& cmd)
 
 void cGameGUI::setWind (int dir)
 {
-	windDir = (float) (dir / 57.29577);
+	windDir = (float) (dir / 57.29577f);
 }
 
-void cGameGUI::selectUnit_vehicle (cVehicle* vehicle)
+void cGameGUI::selectUnit_vehicle (cVehicle& vehicle)
 {
 	// TOFIX: add that the unit renaming will be aborted here when active
-	if (selectedVehicle == vehicle)
+	if (selectedUnit == &vehicle)
 	{
-		if (selectedVehicle->owner == player)
+		if (selectedUnit->owner == player)
 		{
 			unitMenuActive = !unitMenuActive;
 			PlayFX (SoundData.SNDHudButton);
@@ -2713,12 +2678,12 @@ void cGameGUI::selectUnit_vehicle (cVehicle* vehicle)
 	}
 }
 
-void cGameGUI::selectUnit_building (cBuilding* building)
+void cGameGUI::selectUnit_building (cBuilding& building)
 {
 	// TOFIX: add that the unit renaming will be aborted here when active
-	if (selectedBuilding == building)
+	if (selectedUnit == &building)
 	{
-		if (selectedBuilding->owner == player)
+		if (selectedUnit->owner == player)
 		{
 			unitMenuActive = !unitMenuActive;
 			PlayFX (SoundData.SNDHudButton);
@@ -2736,25 +2701,26 @@ bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
 	cVehicle* plane = OverUnitField->getPlanes();
 	if (plane && !plane->moving)
 	{
-		selectUnit_vehicle (plane);
+		selectUnit_vehicle (*plane);
 		return true;
 	}
 	cVehicle* vehicle = OverUnitField->getVehicles();
 	if (vehicle && !vehicle->moving && !(plane && (unitMenuActive || vehicle->owner != player)))
 	{
-		selectUnit_vehicle (vehicle);
+		selectUnit_vehicle (*vehicle);
 		return true;
 	}
 	cBuilding* topBuilding = OverUnitField->getTopBuilding();
+	const cVehicle* selectedVehicle = getSelectedVehicle();
 	if (topBuilding && (base || ((topBuilding->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE || !selectedVehicle) && (!OverUnitField->getTopBuilding()->data.canBeLandedOn || (!selectedVehicle || selectedVehicle->data.factorAir == 0)))))
 	{
-		selectUnit_building (topBuilding);
+		selectUnit_building (*topBuilding);
 		return true;
 	}
 	cBuilding* baseBuilding = OverUnitField->getBaseBuilding();
 	if ((base || !selectedVehicle) && baseBuilding && baseBuilding->owner != NULL)
 	{
-		selectUnit_building (baseBuilding);
+		selectUnit_building (*baseBuilding);
 		return true;
 	}
 	return false;
@@ -2783,7 +2749,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 
 			if (vehicle && vehicle->owner == player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
 			{
-				if (vehicle == selectedVehicle)
+				if (vehicle == selectedUnit)
 				{
 					newSelected = false;
 					selectedVehiclesGroup.insert(selectedVehiclesGroup.begin(), vehicle);
@@ -2795,7 +2761,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 	}
 	if (newSelected && selectedVehiclesGroup.size() > 0)
 	{
-		selectUnit (selectedVehiclesGroup[0]);
+		selectUnit (*selectedVehiclesGroup[0]);
 	}
 	if (selectedVehiclesGroup.size() == 1)
 	{
@@ -2806,8 +2772,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 
 void cGameGUI::updateStatusText()
 {
-	if (selectedVehicle) selUnitStatusStr.setText (selectedVehicle->getStatusStr (*this));
-	else if (selectedBuilding) selUnitStatusStr.setText (selectedBuilding->getStatusStr (*this));
+	if (selectedUnit) selUnitStatusStr.setText (selectedUnit->getStatusStr (*this));
 	else selUnitStatusStr.setText ("");
 }
 
@@ -2885,6 +2850,9 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 		sendAbortWaiting (*client);
 	}
 
+	cVehicle* selectedVehicle = getSelectedVehicle();
+	cBuilding* selectedBuilding= getSelectedBuilding();
+
 	if (key.keysym.sym == KeysList.KeyExit)
 	{
 		cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
@@ -2923,8 +2891,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyZoomIna || key.keysym.sym == KeysList.KeyZoomInb) setZoom ( (float) (getZoom() + 0.05), true, false);
 	else if (key.keysym.sym == KeysList.KeyZoomOuta || key.keysym.sym == KeysList.KeyZoomOutb) setZoom ( (float) (getZoom() - 0.05), true, false);
 	// position handling hotkeys
-	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedVehicle) selectedVehicle->center (*this);
-	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedBuilding) selectedBuilding->center (*this);
+	else if (key.keysym.sym == KeysList.KeyCenterUnit && selectedUnit) selectedUnit->center (*this);
 	else if (key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_ALT) savePosition (0);
 	else if (key.keysym.sym == SDLK_F6 && key.keysym.mod & KMOD_ALT) savePosition (1);
 	else if (key.keysym.sym == SDLK_F7 && key.keysym.mod & KMOD_ALT) savePosition (2);
@@ -2934,12 +2901,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == SDLK_F7 && savedPositions[2].offsetX >= 0 && savedPositions[2].offsetY >= 0) jumpToSavedPos (2);
 	else if (key.keysym.sym == SDLK_F8 && savedPositions[3].offsetX >= 0 && savedPositions[3].offsetY >= 0) jumpToSavedPos (3);
 	// Hotkeys for the unit menues
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedVehicle && selectedVehicle->data.canAttack && selectedVehicle->data.shotsCur && !client->isFreezed () && selectedVehicle->owner == player)
-	{
-		mouseInputMode = mouseInputAttackMode;
-		updateMouseCursor();
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedBuilding && selectedBuilding->data.canAttack && selectedBuilding->data.shotsCur && !client->isFreezed () && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuAttack && selectedUnit && selectedUnit->data.canAttack && selectedUnit->data.shotsCur && !client->isFreezed() && selectedUnit->owner == player)
 	{
 		mouseInputMode = mouseInputAttackMode;
 		updateMouseCursor();
@@ -3033,8 +2995,8 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
-			if ( (selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
-				 && selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
+			if ((selectedVehiclesGroup[i]->manualFireActive || selectedVehiclesGroup[i]->data.canAttack)
+				&& selectedVehicle->manualFireActive == selectedVehiclesGroup[i]->manualFireActive)
 			{
 				sendChangeManualFireStatus (*client, selectedVehiclesGroup[i]->iID, true);
 			}
@@ -3045,21 +3007,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		sendChangeManualFireStatus (*client, selectedBuilding->iID, false);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
 	{
-		cStorageMenu storageMenu (*client, selectedVehicle->storedUnits, selectedVehicle, NULL);
+		cStorageMenu storageMenu (*client, selectedUnit->storedUnits, *selectedUnit);
 		storageMenu.show();
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->isFreezed () && selectedBuilding->owner == player)
-	{
-		cStorageMenu storageMenu (*client, selectedBuilding->storedUnits, NULL, selectedBuilding);
-		storageMenu.show();
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedVehicle && selectedVehicle->data.storageUnitsMax > 0 && !client->isFreezed () && selectedVehicle->owner == player)
-	{
-		toggleMouseInputMode (loadMode);
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedBuilding && selectedBuilding->data.storageUnitsMax > 0 && !client->isFreezed () && selectedBuilding->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
 	{
 		toggleMouseInputMode (loadMode);
 	}
@@ -3095,14 +3048,9 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		mouseInputMode = stealMode;
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedVehicle)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)
 	{
-		cUnitHelpMenu helpMenu (*client, &selectedVehicle->data, selectedVehicle->owner);
-		helpMenu.show();
-	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedBuilding)
-	{
-		cUnitHelpMenu helpMenu (*client, &selectedBuilding->data, selectedBuilding->owner);
+		cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
 		helpMenu.show();
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
@@ -3147,8 +3095,7 @@ void cGameGUI::helpReleased (void* parent)
 void cGameGUI::centerReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	if (gui->selectedVehicle) gui->selectedVehicle->center (*gui);
-	else if (gui->selectedBuilding) gui->selectedBuilding->center (*gui);
+	if (gui->selectedUnit) gui->selectedUnit->center (*gui);
 }
 
 void cGameGUI::reportsReleased (void* parent)
@@ -3173,10 +3120,7 @@ void cGameGUI::nextReleased (void* parent)
 	cUnit* unit = gui->player->getNextUnit(gui->getSelectedUnit());
 	if (unit)
 	{
-		if (unit->isBuilding())
-			gui->selectUnit (static_cast<cBuilding*> (unit));
-		else
-			gui->selectUnit (static_cast<cVehicle*> (unit));
+		gui->selectUnit (*unit);
 
 		unit->center (*gui);
 	}
@@ -3189,10 +3133,7 @@ void cGameGUI::prevReleased (void* parent)
 	cUnit* unit = gui->player->getPrevUnit(gui->getSelectedUnit());
 	if (unit)
 	{
-		if (unit->isBuilding())
-			gui->selectUnit (static_cast<cBuilding*> (unit));
-		else
-			gui->selectUnit (static_cast<cVehicle*> (unit));
+		gui->selectUnit (*unit);
 
 		unit->center (*gui);
 	}
@@ -3208,8 +3149,7 @@ void cGameGUI::doneReleased (void* parent)
 		return;
 	}
 
-	cUnit* unit = gui->selectedVehicle;
-	if (!unit) unit = gui->selectedBuilding;
+	cUnit* unit = gui->selectedUnit;
 
 	if (unit && unit->owner == gui->client->getActivePlayer())
 	{
@@ -3291,7 +3231,8 @@ void cGameGUI::miniMapRightClicked (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 
-	if (!gui->selectedVehicle || gui->selectedVehicle->owner != gui->client->getActivePlayer()) return;
+	cVehicle* selectedVehicle = gui->getSelectedVehicle();
+	if (!selectedVehicle || selectedVehicle->owner != gui->client->getActivePlayer()) return;
 
 	int x = mouse->x;
 	int y = mouse->y;
@@ -3300,8 +3241,7 @@ void cGameGUI::miniMapRightClicked (void* parent)
 	int destX = gui->miniMapOffX + ( (x - MINIMAP_POS_X) * gui->map->size) / (MINIMAP_SIZE * zoomFactor);
 	int destY = gui->miniMapOffY + ( (y - MINIMAP_POS_Y) * gui->map->size) / (MINIMAP_SIZE * zoomFactor);
 
-	gui->client->addMoveJob (gui->selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
-
+	gui->client->addMoveJob (selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
 }
 
 void cGameGUI::miniMapMovedOver (void* parent)
@@ -3378,8 +3318,7 @@ void cGameGUI::unitNameReturnPressed (void* parent)
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	string nameString = gui->selUnitNameEdit.getText();
 
-	if (gui->selectedVehicle) sendWantChangeUnitName (*gui->client, nameString, gui->selectedVehicle->iID);
-	else if (gui->selectedBuilding) sendWantChangeUnitName (*gui->client, nameString, gui->selectedBuilding->iID);
+	if (gui->selectedUnit) sendWantChangeUnitName (*gui->client, nameString, gui->selectedUnit->iID);
 
 	gui->selUnitNameEdit.setActivity (false);
 	gui->activeItem = NULL;
@@ -3419,12 +3358,13 @@ void cGameGUI::preDrawFunction()
 	drawConnectors (startX, startY, endX, endY, zoomOffX, zoomOffY);
 	drawPlanes (startX, startY, endX, endY, zoomOffX, zoomOffY);
 
+	cVehicle* selectedVehicle = getSelectedVehicle();
 	if (surveyChecked() || (selectedVehicle && selectedVehicle->owner == player && selectedVehicle->data.canSurvey))
 	{
 		drawResources (startX, startY, endX, endY, zoomOffX, zoomOffY);
 	}
 
-	if (selectedVehicle && ( (selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
+	if (selectedVehicle && ((selectedVehicle->ClientMoveJob && selectedVehicle->ClientMoveJob->bSuspended) || selectedVehicle->BuildPath))
 	{
 		selectedVehicle->DrawPath (*this);
 	}
@@ -3437,8 +3377,7 @@ void cGameGUI::preDrawFunction()
 
 	drawUnitCircles();
 
-	if (selectedVehicle && unitMenuActive) selectedVehicle->drawMenu (*this);
-	else if (selectedBuilding && unitMenuActive) selectedBuilding->drawMenu (*this);
+	if (selectedUnit && unitMenuActive) selectedUnit->drawMenu (*this);
 
 	drawFx (false);
 
@@ -3569,15 +3508,15 @@ void cGameGUI::drawAttackCursor(int x, int y) const
 {
 	assert (mouse->cur == GraphicsData.gfx_Cattack);
 
-	if (selectedVehicle == 0 && selectedBuilding == 0) return;
+	if (selectedUnit == NULL) return;
 
-	const sUnitData& data = selectedVehicle ? selectedVehicle->data : selectedBuilding->data;
+	const sUnitData& data = selectedUnit->data;
 
 	cVehicle* v;
 	cBuilding* b;
 	selectTarget (v, b, x, y, data.canAttack, client->getMap());
 
-	if (!(v || b) || (v && v == getSelVehicle()) || (b && b == getSelBuilding()))
+	if (!(v || b) || (v == selectedUnit) || (b == selectedUnit))
 	{
 		SDL_Rect r = {1, 29, 35, 3};
 		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
@@ -4170,6 +4109,9 @@ void cGameGUI::drawUnitCircles()
 	SDL_Rect clipRect = { HUD_LEFT_WIDTH, HUD_TOP_HIGHT, Uint16 (Video.getResolutionX() - HUD_TOTAL_WIDTH), Uint16 (Video.getResolutionY() - HUD_TOTAL_HIGHT) };
 	SDL_SetClipRect (buffer, &clipRect);
 
+	cVehicle* selectedVehicle = getSelectedVehicle();
+	cBuilding* selectedBuilding= getSelectedBuilding();
+
 	if (selectedVehicle)
 	{
 		cVehicle& v = *selectedVehicle;
@@ -4384,15 +4326,11 @@ void cGameGUI::checkMouseInputMode()
 		case mouseInputAttackMode:
 		case disableMode:
 		case stealMode:
-			if (selectedVehicle && !selectedVehicle->data.shotsCur)
-				mouseInputMode = normalInput;
-			else if (selectedBuilding && !selectedBuilding->data.shotsCur)
+			if (selectedUnit && !selectedUnit->data.shotsCur)
 				mouseInputMode = normalInput;
 			break;
 		case loadMode:
-			if (selectedVehicle && selectedVehicle->data.storageUnitsCur == selectedVehicle->data.storageUnitsMax)
-				mouseInputMode = normalInput;
-			else if (selectedBuilding && selectedBuilding->data.storageUnitsCur == selectedBuilding->data.storageUnitsMax)
+			if (selectedUnit && selectedUnit->data.storageUnitsCur == selectedUnit->data.storageUnitsMax)
 				mouseInputMode = normalInput;
 			break;
 		default:

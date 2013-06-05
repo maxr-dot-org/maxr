@@ -395,7 +395,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	}
 
 	// draw a colored frame if necessary
-	if (gameGUI.getSelBuilding() == this)
+	if (gameGUI.getSelectedUnit() == this)
 	{
 		SDL_Rect d, t;
 		int max = data.isBig ? (int) (gameGUI.getTileSize()) * 2 : (int) (gameGUI.getTileSize());
@@ -980,7 +980,7 @@ void cBuilding::ClientStartWork (cGameGUI& gameGUI)
 		return;
 	IsWorking = true;
 	EffectAlpha = 0;
-	if (gameGUI.getSelBuilding() == this)
+	if (gameGUI.getSelectedUnit() == this)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
 		PlayFX (typ->Start);
@@ -1072,7 +1072,7 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 	if (!IsWorking)
 		return;
 	IsWorking = false;
-	if (gameGUI.getSelBuilding() == this)
+	if (gameGUI.getSelectedUnit() == this)
 	{
 		StopFXLoop (gameGUI.iObjectStream);
 		PlayFX (typ->Stop);
@@ -1083,7 +1083,7 @@ void cBuilding::ClientStopWork (cGameGUI& gameGUI)
 }
 
 //------------------------------------------------------------
-bool cBuilding::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField)
+bool cBuilding::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField) const
 {
 	int x = mouse->getKachelX (gameGUI);
 	int y = mouse->getKachelY (gameGUI);
@@ -1584,16 +1584,6 @@ void cBuilding::Select(cGameGUI& gameGUI)
 	gameGUI.setUnitDetailsData (NULL, this);
 }
 
-//--------------------------------------------------------------------------
-void cBuilding::Deselct(cGameGUI& gameGUI)
-{
-	// Den Hintergrund wiederherstellen:
-	StopFXLoop (gameGUI.iObjectStream);
-	gameGUI.iObjectStream = -1;
-	gameGUI.setVideoSurface (NULL);
-	gameGUI.setUnitDetailsData (NULL, NULL);
-}
-
 //----------------------------------------------------------------
 /** Playback of the soundstream that belongs to this building */
 //----------------------------------------------------------------
@@ -1699,7 +1689,7 @@ void cBuilding::executeStopCommand (const cClient& client)
 //-----------------------------------------------------------------------------
 void cBuilding::executeActivateStoredVehiclesCommand (cClient& client)
 {
-	cStorageMenu storageMenu (client, storedUnits, 0, this);
+	cStorageMenu storageMenu (client, storedUnits, *this);
 	storageMenu.show();
 }
 
