@@ -249,26 +249,7 @@ private:
 	*@author alzi alias DoctorDeath
 	*/
 	cPlayer* getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList, int number);
-	/**
-	* converts the resource data to an string in HEX format
-	*@author alzi alias DoctorDeath
-	*/
-	std::string convertDataToString (const sResources* resources, int size) const;
-	/**
-	* returns the HEX-string of a single byte
-	*@author alzi alias DoctorDeath
-	*/
-	std::string getHexValue (unsigned char byte) const;
-	/**
-	* converts the resource from HEX-string to byte-data
-	*@author alzi alias DoctorDeath
-	*/
-	void convertStringToData (const std::string& str, int size, sResources* resources);
-	/**
-	* returns the byte value of a single HEX-string
-	*@author alzi alias DoctorDeath
-	*/
-	unsigned char getByteValue (const std::string& str) const;
+
 	/**
 	* converts the resource-scanmap to an string format
 	*@author alzi alias DoctorDeath

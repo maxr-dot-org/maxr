@@ -34,6 +34,9 @@ struct sUnitData;
 // Resources Struktur ////////////////////////////////////////////////////////
 struct sResources
 {
+public:
+	sResources() : value (0), typ (0) {}
+public:
 	unsigned char value;
 	unsigned char typ;
 };
@@ -299,6 +302,22 @@ public:
 	int getOffset (int x, int y) const { return staticMap->getOffset (x, y);}
 	bool isWater (int x, int y, bool not_coast = false) const { return staticMap->isWater(x, y, not_coast); }
 
+	const sResources& getResource (int offset) const { return Resources[offset]; }
+	const sResources& getResource (int x, int y) const { return Resources[getOffset (x, y)]; }
+	sResources& getResource (int offset) { return Resources[offset]; }
+	void assignRessources (const cMap& rhs);
+
+	/**
+	* converts the resource data to a string in HEX format
+	*@author alzi alias DoctorDeath
+	*/
+	std::string resourcesToString () const;
+	/**
+	* converts from HEX-string to the resources
+	*@author alzi alias DoctorDeath
+	*/
+	void setResourcesFromString (const std::string& str);
+
 	void placeRessourcesAddPlayer (int x, int y, int frequency);
 	void placeRessources (int Metal, int Oil, int Gold);
 	/**
@@ -359,8 +378,8 @@ public:
 	* the infomation about the fields
 	*/
 	cMapField* fields;
-	sResources* Resources; // field with the ressource data
 private:
+	std::vector<sResources> Resources; // field with the ressource data
 	T_2<int>* resSpots;
 	int* resSpotTypes;
 	int resSpotCount;

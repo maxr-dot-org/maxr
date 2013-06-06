@@ -279,7 +279,7 @@ cMap* cSavegame::loadMap()
 			return NULL;
 		}
 		cMap* map = new cMap (*staticMap);
-		convertStringToData (resourcestr, map->size * map->size, map->Resources);
+		map->setResourcesFromString (resourcestr);
 		return map;
 	}
 	else return NULL;
@@ -1131,54 +1131,6 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertDataToString (const sResources* resources, int size) const
-{
-	string str = "";
-	for (int i = 0; i < size; i++)
-	{
-		str += getHexValue (resources[i].typ);
-		str += getHexValue (resources[i].value);
-	}
-	return str;
-}
-
-//--------------------------------------------------------------------------
-string cSavegame::getHexValue (unsigned char byte) const
-{
-	string str = "";
-	const char hexChars[] = "0123456789ABCDEF";
-	const unsigned char high = (byte >> 4) & 0x0F;
-	const unsigned char low = byte & 0x0F;
-
-	str += hexChars[high];
-	str += hexChars[low];
-	return str;
-}
-
-//--------------------------------------------------------------------------
-void cSavegame::convertStringToData (const string& str, int size, sResources* resources)
-{
-	for (int i = 0; i < size; i++)
-	{
-		resources[i].typ = getByteValue (str.substr (i * 4, 2));
-		resources[i].value = getByteValue (str.substr (i * 4 + 2, 2));
-	}
-}
-
-//--------------------------------------------------------------------------
-unsigned char cSavegame::getByteValue (const string& str) const
-{
-	unsigned char first = str[0] - '0';
-	unsigned char second = str[1] - '0';
-
-	if (first >= 'A' - '0')
-		first -= 'A' - '0' - 10;
-	if (second >= 'A' - '0')
-		second -= 'A' - '0' - 10;
-	return (first * 16 + second);
-}
-
-//--------------------------------------------------------------------------
 string cSavegame::convertScanMapToString (const std::vector<char>& data) const
 {
 	string str = "";
@@ -1248,7 +1200,7 @@ void cSavegame::writeMap (const cMap* Map)
 {
 	TiXmlElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
 	addAttributeElement (mapNode, "Name", "string", Map->staticMap->getMapName());
-	addAttributeElement (mapNode, "Resources", "data", convertDataToString (Map->Resources, Map->size * Map->size));
+	addAttributeElement (mapNode, "Resources", "data", Map->resourcesToString());
 }
 
 //--------------------------------------------------------------------------

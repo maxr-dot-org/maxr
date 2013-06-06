@@ -170,20 +170,17 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 
 	// calculate the number of fields which would be surveyed by this move
 	float NrSurvFields = 0;
-	int x, y;
-	for (x = PosX - 1; x <= PosX + 1; x ++)
+	const int minx = std::max (PosX - 1, 0);
+	const int maxx = std::min (PosX + 1, map.size - 1);
+	const int miny = std::max (PosY - 1, 0);
+	const int maxy = std::min (PosY + 1, map.size - 1);
+	for (int x = minx; x <= maxx; ++x)
 	{
-		// check for map borders
-		if (x < 0 || x >= map.size) continue;
-		for (y = PosY - 1; y <= PosY + 1; y++)
+		for (int y = miny; y <= maxy; ++y)
 		{
-			// check for map borders
-			if (y < 0 || y >= map.size) continue;
+			const int iPos = map.getOffset (x, y);
 
-			int iPos = map.getOffset (x, y);
-
-			// int terrainNr = map.Kacheln[x + y * map.size]; !the line where this variable is needed was commented out earlier!
-			if (vehicle->owner->ResourceMap[iPos] == 0)  //&& !map.terrain[terrainNr].blocked )
+			if (vehicle->owner->ResourceMap[iPos] == 0) //&& !map.staticMap->isBlocked(iPos))
 			{
 				NrSurvFields++;
 			}
@@ -192,19 +189,14 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 
 	// calculate the number of fields which has already revealed resources
 	float NrResFound = 0;
-	for (x = PosX - 1; x <= PosX + 1; x ++)
+	for (int x = minx; x <= maxx; ++x)
 	{
-		// check for map borders
-		if (x < 0 || x >= map.size) continue;
-		for (y = PosY - 1; y <= PosY + 1; y++)
+		for (int y = miny; y <= maxy; ++y)
 		{
-			// check for map borders
-			if (y < 0 || y >= map.size) continue;
-
-			int iPos = map.getOffset (x, y);
+			const int iPos = map.getOffset (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle->owner->ResourceMap[iPos] != 0 && map.Resources[iPos].typ != 0)
+			if (vehicle->owner->ResourceMap[iPos] != 0 && map.getResource(iPos).typ != 0)
 			{
 				NrResFound++;
 			}
@@ -212,7 +204,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	}
 
 	//the distance to the OP
-	float newDistanceOP = sqrtf (powf (PosX - OPX , 2) + powf (PosY - OPY , 2));
+	float newDistanceOP = sqrtf (powf (PosX - OPX, 2) + powf (PosY - OPY, 2));
 
 	//the distance to other surveyors
 	float newDistancesSurv = 0;
@@ -250,7 +242,7 @@ void cAutoMJob::PlanLongMove()
 		for (int y = 0; y < map.size; y++)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[x + y * map.size] == 1) continue;
+			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[map.getOffset(x, y)] == 1) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;
@@ -265,7 +257,9 @@ void cAutoMJob::PlanLongMove()
 
 			distanceOP = sqrtf (powf (x - OPX , 2) + powf (y - OPY , 2));
 			distanceSurv = sqrtf (powf (x - vehicle->PosX , 2) + powf (y - vehicle->PosY , 2));
-			//TODO: take into account the length of the path to the coordinates too (I seen a case, when a surveyor took 7 additional senseless steps just to avoid or by-pass an impassable rocky terrain)
+			//TODO: take into account the length of the path to the coordinates too
+			// (I seen a case, when a surveyor took 7 additional senseless steps
+			// just to avoid or by-pass an impassable rocky terrain)
 			factor = (float) (D * distanceOP + E * distanceSurv + F * distancesSurv);
 
 			if ((factor < minValue) || (minValue == 0))

@@ -790,11 +790,12 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 	int iCount = message.popInt16();
 	for (int i = 0; i < iCount; i++)
 	{
-		int iOff = message.popInt32();
+		const int iOff = message.popInt32();
 		ActivePlayer->ResourceMap[iOff] = 1;
 
-		getMap()->Resources[iOff].typ = (unsigned char) message.popInt16();
-		getMap()->Resources[iOff].value = (unsigned char) message.popInt16();
+		sResources& res = getMap()->getResource (iOff);
+		res.typ = (unsigned char) message.popInt16();
+		res.value = (unsigned char) message.popInt16();
 	}
 }
 

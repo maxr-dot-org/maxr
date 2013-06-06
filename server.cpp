@@ -1527,7 +1527,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
 			{
-				sendVehicleResources (*this, *StoredVehicle, *Map);
+				sendVehicleResources (*this, *StoredVehicle);
 				StoredVehicle->doSurvey (*this);
 			}
 
@@ -1562,7 +1562,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
 			{
-				sendVehicleResources (*this, *StoredVehicle, *Map);
+				sendVehicleResources (*this, *StoredVehicle);
 				StoredVehicle->doSurvey (*this);
 			}
 			StoredVehicle->InSentryRange (*this);
@@ -2253,7 +2253,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	// scan with surveyor:
 	if (AddedVehicle->data.canSurvey)
 	{
-		sendVehicleResources (*this, *AddedVehicle, *Map);
+		sendVehicleResources (*this, *AddedVehicle);
 		AddedVehicle->doSurvey (*this);
 	}
 	if (!bInit) AddedVehicle->InSentryRange (*this);
@@ -3702,7 +3702,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	// let the unit work for his new owner
 	if (vehicle->data.canSurvey)
 	{
-		sendVehicleResources (*this, *vehicle, *Map);
+		sendVehicleResources (*this, *vehicle);
 		vehicle->doSurvey (*this);
 	}
 	vehicle->makeDetection (*this);

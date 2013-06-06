@@ -764,7 +764,7 @@ void cServerMoveJob::doEndMoveVehicle()
 	// search for resources if necessary
 	if (Vehicle->data.canSurvey)
 	{
-		sendVehicleResources (*server, *Vehicle, *Map);
+		sendVehicleResources (*server, *Vehicle);
 		Vehicle->doSurvey (*server);
 	}
 

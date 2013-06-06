@@ -329,28 +329,30 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPla
 }
 
 //-------------------------------------------------------------------------------------
-void sendVehicleResources (cServer& server, const cVehicle& vehicle, const cMap& map)
+void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 {
 	int iCount = 0;
 	cNetMessage* message = new cNetMessage (GAME_EV_RESOURCES);
+	const cMap& map = *server.Map;
+	// TODO: only send new scaned resources
 
-	// only send new scaned resources
-	for (int iX = vehicle.PosX - 1, iY = vehicle.PosY - 1; iY <= vehicle.PosY + 1; iX++)
+	const int minx = std::max (vehicle.PosX - 1, 0);
+	const int maxx = std::min (vehicle.PosX + 1, map.size - 1);
+	const int miny = std::max (vehicle.PosY - 1, 0);
+	const int maxy = std::min (vehicle.PosY + 1, map.size - 1);
+	for (int y = miny; y <= maxy; ++y)
 	{
-		if (iX > vehicle.PosX + 1)
+		for (int x = minx; x <= maxx; ++x)
 		{
-			iX = vehicle.PosX - 1;
-			iY++;
+			const int offset = map.getOffset (x, y);
+			if (vehicle.owner->ResourceMap[offset] != 0) continue;
+
+			const sResources& resource = map.getResource (offset);
+			message->pushInt16 (resource.value);
+			message->pushInt16 (resource.typ);
+			message->pushInt32 (offset);
+			iCount++;
 		}
-
-		if (iY > vehicle.PosY + 1) break;
-		if (iX < 0 || iX >= map.size || iY < 0 || iY >= map.size) continue;
-		if (vehicle.owner->ResourceMap[map.getOffset (iX, iY)] != 0) continue;
-
-		message->pushInt16 (map.Resources[map.getOffset (iX, iY)].value);
-		message->pushInt16 (map.Resources[map.getOffset (iX, iY)].typ);
-		message->pushInt32 (map.getOffset (iX, iY));
-		iCount++;
 	}
 	message->pushInt16 (iCount);
 
@@ -364,13 +366,14 @@ void sendResources (cServer& server, const cPlayer& player)
 	cNetMessage* message = new cNetMessage (GAME_EV_RESOURCES);
 	for (size_t i = 0; i < player.ResourceMap.size(); ++i)
 	{
-		if (player.ResourceMap[i] == 1)
-		{
-			message->pushInt16 (server.Map->Resources[i].value);
-			message->pushInt16 (server.Map->Resources[i].typ);
-			message->pushInt32 (i);
-			iCount++;
-		}
+		if (player.ResourceMap[i] != 1) continue;
+
+		const sResources& resource = server.Map->getResource (i);
+		message->pushInt16 (resource.value);
+		message->pushInt16 (resource.typ);
+		message->pushInt32 (i);
+		iCount++;
+
 		if (message->iLength >= PACKAGE_LENGTH - 10)
 		{
 			message->pushInt16 (iCount);

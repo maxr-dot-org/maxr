@@ -1397,6 +1397,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 //-------------------------------------------------------------------------------
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
+
 void cBuilding::CheckRessourceProd(const cServer& server)
 {
 	int pos = server.Map->getOffset (PosX, PosY);
@@ -1404,63 +1405,40 @@ void cBuilding::CheckRessourceProd(const cServer& server)
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
 	MaxOilProd = 0;
+	const sResources* res = &server.Map->getResource (pos);
 
-	if (server.Map->Resources[pos].typ == RES_METAL)
+	switch (res->typ)
 	{
-		MaxMetalProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_OIL)
-	{
-		MaxOilProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_GOLD)
-	{
-		MaxGoldProd += server.Map->Resources[pos].value;
+		case RES_METAL: MaxMetalProd += res->value; break;
+		case RES_GOLD:  MaxGoldProd  += res->value; break;
+		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
 	pos++;
-
-	if (server.Map->Resources[pos].typ == RES_METAL)
+	res = &server.Map->getResource (pos);
+	switch (res->typ)
 	{
-		MaxMetalProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_OIL)
-	{
-		MaxOilProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_GOLD)
-	{
-		MaxGoldProd += server.Map->Resources[pos].value;
+		case RES_METAL: MaxMetalProd += res->value; break;
+		case RES_GOLD:  MaxGoldProd  += res->value; break;
+		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
 	pos += server.Map->size;
-
-	if (server.Map->Resources[pos].typ == RES_METAL)
+	res = &server.Map->getResource (pos);
+	switch (res->typ)
 	{
-		MaxMetalProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_OIL)
-	{
-		MaxOilProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_GOLD)
-	{
-		MaxGoldProd += server.Map->Resources[pos].value;
+		case RES_METAL: MaxMetalProd += res->value; break;
+		case RES_GOLD:  MaxGoldProd  += res->value; break;
+		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
 	pos--;
-
-	if (server.Map->Resources[pos].typ == RES_METAL)
+	res = &server.Map->getResource (pos);
+	switch (res->typ)
 	{
-		MaxMetalProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_OIL)
-	{
-		MaxOilProd += server.Map->Resources[pos].value;
-	}
-	else if (server.Map->Resources[pos].typ == RES_GOLD)
-	{
-		MaxGoldProd += server.Map->Resources[pos].value;
+		case RES_METAL: MaxMetalProd += res->value; break;
+		case RES_GOLD:  MaxGoldProd  += res->value; break;
+		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
 	MaxMetalProd = min (MaxMetalProd, data.canMineMaxRes);

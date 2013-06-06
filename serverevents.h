@@ -178,7 +178,7 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& MoveJob, int iPla
 * sends the resourcedata of new scaned fields around the unit to a client
 *@author alzi alias DoctorDeath
 */
-void sendVehicleResources (cServer& server, const cVehicle& vehicle, const cMap& map);
+void sendVehicleResources (cServer& server, const cVehicle& vehicle);
 void sendResources (cServer& server, const cPlayer& player);
 /**
 * sends an answer to a client wheter and how he has to build.

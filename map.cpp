@@ -410,7 +410,7 @@ cMap::cMap (cStaticMap& staticMap_) :
 {
 	size = staticMap->getSize();
 	fields = new cMapField[size * size];
-	Resources = new sResources[size * size];
+	Resources.resize(size * size);
 
 	resSpots = NULL;
 	resSpotTypes = NULL;
@@ -421,7 +421,6 @@ cMap::cMap (cStaticMap& staticMap_) :
 cMap::~cMap()
 {
 	delete [] fields;
-	delete [] Resources;
 }
 
 cMapField& cMap::operator[] (unsigned int offset) const
@@ -445,10 +444,62 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 	resCurrentSpotCount++;
 }
 
+void cMap::assignRessources (const cMap& rhs)
+{
+	Resources = rhs.Resources;
+}
+
+//--------------------------------------------------------------------------
+static std::string getHexValue (unsigned char byte)
+{
+	std::string str = "";
+	const char hexChars[] = "0123456789ABCDEF";
+	const unsigned char high = (byte >> 4) & 0x0F;
+	const unsigned char low = byte & 0x0F;
+
+	str += hexChars[high];
+	str += hexChars[low];
+	return str;
+}
+
+//--------------------------------------------------------------------------
+std::string cMap::resourcesToString () const
+{
+	std::string str;
+	str.reserve (4 * Resources.size() + 1);
+	for (size_t i = 0; i != Resources.size(); ++i)
+	{
+		str += getHexValue (Resources[i].typ);
+		str += getHexValue (Resources[i].value);
+	}
+	return str;
+}
+
+//--------------------------------------------------------------------------
+static unsigned char getByteValue (const std::string& str, int index)
+{
+	unsigned char first = str[index + 0] - '0';
+	unsigned char second = str[index + 1] - '0';
+
+	if (first >= 'A' - '0') first -= 'A' - '0' - 10;
+	if (second >= 'A' - '0') second -= 'A' - '0' - 10;
+	return (first * 16 + second);
+}
+
+//--------------------------------------------------------------------------
+void cMap::setResourcesFromString (const std::string& str)
+{
+	for (size_t i = 0; i != Resources.size(); ++i)
+	{
+		Resources[i].typ = getByteValue (str, 4 * i);
+		Resources[i].value = getByteValue (str, 4 * i + 2);
+	}
+}
+
 // Platziert die Ressourcen (0-wenig,3-viel):
 void cMap::placeRessources (int metal, int oil, int gold)
 {
-	memset (Resources, 0, sizeof (sResources) * size * size);
+	std::fill (Resources.begin(), Resources.end(), sResources());
 
 	int frequencies[RES_COUNT];
 

@@ -2628,7 +2628,7 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		memcpy (map->Resources, server->Map->Resources, map->size * map->size * sizeof (sResources));
+		map->assignRessources (*server->Map);
 		player->revealResource();
 	}
 	else if (cmd.substr (0, 6).compare ("/pause") == 0)
@@ -3846,7 +3846,8 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 		{
 			if (player->ResourceMap[pos] && !map->staticMap->isBlocked(pos))
 			{
-				if (map->Resources[pos].typ == RES_NONE)
+				const sResources& resource = map->getResource (pos);
+				if (resource.typ == RES_NONE)
 				{
 					src.x = 0;
 					tmp = dest;
@@ -3855,19 +3856,19 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 				}
 				else
 				{
-					src.x = map->Resources[pos].value * tileSize;
+					src.x = resource.value * tileSize;
 					tmp = dest;
-					if (map->Resources[pos].typ == RES_METAL)
+					if (resource.typ == RES_METAL)
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
 						SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
 					}
-					else if (map->Resources[pos].typ == RES_OIL)
+					else if (resource.typ == RES_OIL)
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
 						SDL_BlitSurface (ResourceData.res_oil, &src, buffer, &tmp);
 					}
-					else
+					else // Gold
 					{
 						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
 						SDL_BlitSurface (ResourceData.res_gold, &src, buffer, &tmp);
