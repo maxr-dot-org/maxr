@@ -64,7 +64,7 @@ void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 {
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
+	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (image == NULL) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
@@ -121,7 +121,7 @@ void cFxExplo::draw (const cGameGUI& gameGUI) const
 {
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
+	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
@@ -300,7 +300,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 {
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
+	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
@@ -344,7 +344,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 {
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return; //ja, nein, vielleicht?
+	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return; //ja, nein, vielleicht?
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
@@ -395,7 +395,7 @@ void cFxRocket::draw (const cGameGUI& gameGUI) const
 	//draw rocket
 	const cPlayer& activePlayer = *gameGUI.getClient()->getActivePlayer();
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (!activePlayer.ScanMap[posX / 64 + posY / 64 * map.size]) return;
+	if (!activePlayer.ScanMap[map.getOffset (posX / 64, posY / 64)]) return;
 	if (!image) return;
 	if (tick >= length) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());

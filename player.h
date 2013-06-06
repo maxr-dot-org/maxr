@@ -69,7 +69,7 @@ public:
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& ID);
 
-	void initMaps (int MapSizeX, cMap* map);
+	void initMaps (cMap& map);
 	void doScan();
 	void revealMap();
 	void revealResource();

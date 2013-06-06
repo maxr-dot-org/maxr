@@ -180,7 +180,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 			// check for map borders
 			if (y < 0 || y >= map.size) continue;
 
-			int iPos = x + y * map.size;
+			int iPos = map.getOffset (x, y);
 
 			// int terrainNr = map.Kacheln[x + y * map.size]; !the line where this variable is needed was commented out earlier!
 			if (vehicle->owner->ResourceMap[iPos] == 0)  //&& !map.terrain[terrainNr].blocked )
@@ -201,7 +201,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 			// check for map borders
 			if (y < 0 || y >= map.size) continue;
 
-			int iPos = x + y * map.size;
+			int iPos = map.getOffset (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
 			if (vehicle->owner->ResourceMap[iPos] != 0 && map.Resources[iPos].typ != 0)

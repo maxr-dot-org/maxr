@@ -95,7 +95,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	gameTimer.start ();
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
-		(*PlayerList)[i]->initMaps (Map->size, Map);
+		(*PlayerList)[i]->initMaps (*Map);
 	}
 }
 

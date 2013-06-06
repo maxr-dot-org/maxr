@@ -518,7 +518,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 		//the target offset doesn't need to match the vehicle position, when it is big
 		if (!targetVehicle->data.isBig)
 		{
-			targetOffset = targetVehicle->PosX + targetVehicle->PosY * Map->size;
+			targetOffset = Map->getOffset (targetVehicle->PosX, targetVehicle->PosY);
 		}
 		Log.write (" Server: attacking vehicle " + targetVehicle->getDisplayName() + ", " + iToStr (targetVehicle->iID), cLog::eLOG_TYPE_NET_DEBUG);
 		if (oldOffset != targetOffset) Log.write (" Server: target offset changed from " + iToStr (oldOffset) + " to " + iToStr (targetOffset), cLog::eLOG_TYPE_NET_DEBUG);
@@ -652,7 +652,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 			sendBuildAnswer (*this, false, *Vehicle);
 			return;
 		}
-		Vehicle->BuildBigSavedPos = Vehicle->PosX + Vehicle->PosY * Map->size;
+		Vehicle->BuildBigSavedPos = Map->getOffset (Vehicle->PosX, Vehicle->PosY);
 
 		// set vehicle to build position
 		Map->moveVehicleBig (Vehicle, buildX, buildY);
@@ -660,7 +660,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	}
 	else
 	{
-		if (iBuildOff != Vehicle->PosX + Vehicle->PosY * Map->size) return;
+		if (iBuildOff != Map->getOffset (Vehicle->PosX, Vehicle->PosY)) return;
 
 		if (!Map->possiblePlaceBuilding (Data, iBuildOff, Vehicle))
 		{
@@ -894,7 +894,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		}
 		if (iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size) continue;
 
-		int iOff = iX + iY * Map->size;
+		int iOff = Map->getOffset (iX, iY);
 
 		cBuildingIterator bi = Map->fields[iOff].getBuildings();
 		while (bi && (bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) bi++;
@@ -1318,7 +1318,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 		return;
 	}
 
-	const int off = Vehicle->PosX + Vehicle->PosY * Map->size;
+	const int off = Map->getOffset (Vehicle->PosX, Vehicle->PosY);
 	cBuilding* building = (*Map) [off].getRubble();
 
 	if (!building)
@@ -1330,7 +1330,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	int rubbleoffset = -1;
 	if (building->data.isBig)
 	{
-		rubbleoffset = building->PosX + building->PosY * Map->size;
+		rubbleoffset = Map->getOffset (building->PosX, building->PosY);
 
 		sideStepStealthUnit (building->PosX    , building->PosY    , Vehicle, rubbleoffset);
 		sideStepStealthUnit (building->PosX + 1, building->PosY    , Vehicle, rubbleoffset);
@@ -1522,7 +1522,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringVehicle->canExitTo (x, y, Map, StoredVehicle->typ))
 		{
-			StoringVehicle->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
+			StoringVehicle->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringVehicle->iID, true, StoredVehicle->iID, x, y, StoringVehicle->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
@@ -1557,7 +1557,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 
 		if (StoringBuilding->canExitTo (x, y, Map, StoredVehicle->typ))
 		{
-			StoringBuilding->exitVehicleTo (StoredVehicle, x + y * Map->size, Map);
+			StoringBuilding->exitVehicleTo (StoredVehicle, Map->getOffset (x, y), Map);
 			//vehicle is added to enemy clients by cServer::checkPlayerUnits()
 			sendActivateVehicle (*this, StoringBuilding->iID, false, StoredVehicle->iID, x, y, StoringBuilding->owner->Nr);
 			if (StoredVehicle->data.canSurvey)
@@ -1877,7 +1877,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		{
 			cPlayer* player = (*PlayerList) [i];
 			if (player == srcVehicle->owner) continue;
-			if (!player->ScanMap[srcVehicle->PosX + srcVehicle->PosY * Map->size]) continue;
+			if (!player->ScanMap[Map->getOffset (srcVehicle->PosX, srcVehicle->PosY)]) continue;
 
 			srcVehicle->setDetectedByPlayer (*this, player);
 		}
@@ -2158,7 +2158,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 			if (!Map->possiblePlaceVehicle (Vehicle->data, iX + k, iY + i, Player)) continue;
 
 			addUnit (iX + k, iY + i, Vehicle, Player, true);
-			VehcilePtr = (*Map) [iX + k + (iY + i) * Map->size].getVehicles();
+			VehcilePtr = (*Map) [Map->getOffset (iX + k, iY + i)].getVehicles();
 			return VehcilePtr;
 		}
 	}
@@ -2285,7 +2285,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 
 	iNextUnitID++;
 
-	int iOff = iPosX + Map->size * iPosY;
+	int iOff = Map->getOffset (iPosX, iPosY);
 
 	cBuilding* buildingToBeDeleted =  Map->fields[iOff].getTopBuilding();
 
@@ -2460,7 +2460,7 @@ void cServer::checkPlayerUnits()
 			{
 				if (iMapPlayerNum == iUnitPlayerNum) continue;
 				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				const int iOff = NextVehicle->PosX + NextVehicle->PosY * Map->size;
+				const int iOff = Map->getOffset (NextVehicle->PosX, NextVehicle->PosY);
 
 				const bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
 				if (MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)) && !NextVehicle->Loaded)
@@ -2507,7 +2507,7 @@ void cServer::checkPlayerUnits()
 			{
 				if (iMapPlayerNum == iUnitPlayerNum) continue;
 				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				const int iOff = NextBuilding->PosX + NextBuilding->PosY * Map->size;
+				const int iOff = Map->getOffset (NextBuilding->PosX, NextBuilding->PosY);
 				const bool stealthUnit = NextBuilding->data.isStealthOn != TERRAIN_NONE;
 
 				if (MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)))
@@ -2543,7 +2543,7 @@ void cServer::checkPlayerUnits()
 		for (unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->size(); iMapPlayerNum++)
 		{
 			MapPlayer = (*PlayerList) [iMapPlayerNum];
-			const int iOff = building->PosX + building->PosY * Map->size;
+			const int iOff = Map->getOffset (building->PosX, building->PosY);
 
 			if (MapPlayer->ScanMap[iOff] == 1)
 			{
@@ -3261,7 +3261,7 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 //-------------------------------------------------------------------------------------
 void cServer::destroyUnit (cVehicle* vehicle)
 {
-	const int offset = vehicle->PosX + vehicle->PosY * Map->size;
+	const int offset = Map->getOffset (vehicle->PosX, vehicle->PosY);
 	int value = 0;
 	int oldRubbleValue = 0;
 	bool bigRubble = false;
@@ -3366,7 +3366,7 @@ int cServer::deleteBuildings (cBuildingIterator building)
 //-------------------------------------------------------------------------------------
 void cServer::destroyUnit (cBuilding* b)
 {
-	int offset = b->PosX + b->PosY * Map->size;
+	int offset = Map->getOffset (b->PosX, b->PosY);
 	int rubble = 0;
 	bool big = false;
 
@@ -3374,7 +3374,7 @@ void cServer::destroyUnit (cBuilding* b)
 	if (topBuilding && topBuilding->data.isBig)
 	{
 		big = true;
-		offset = topBuilding->PosX + topBuilding->PosY * Map->size;
+		offset = Map->getOffset (topBuilding->PosX, topBuilding->PosY);
 
 		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
 		rubble += deleteBuildings (building);
@@ -3713,7 +3713,7 @@ void cServer::stopVehicleBuilding (cVehicle* vehicle)
 {
 	if (!vehicle->IsBuilding) return;
 
-	int iPos = vehicle->PosX + vehicle->PosY * Map->size;
+	int iPos = Map->getOffset (vehicle->PosX, vehicle->PosY);
 
 	vehicle->IsBuilding = false;
 	vehicle->BuildPath = false;
@@ -3743,7 +3743,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	if (vehicleData.factorAir > 0) return;
 
 	//first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Map->fields[PosX + PosY * Map->size].getVehicles();
+	cVehicle* stealthVehicle = Map->fields[Map->getOffset (PosX, PosY)].getVehicles();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->owner == vehicleOwner) return;
 	if (stealthVehicle->data.isStealthOn == TERRAIN_NONE) return;
@@ -3768,7 +3768,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			//so not all directions are allowed for the side stepping
 			if (bigOffset != -1)
 			{
-				int off = x + y * Map->size;
+				int off = Map->getOffset (x, y);
 				if (off == bigOffset ||
 					off == bigOffset + 1 ||
 					off == bigOffset + Map->size ||
@@ -3789,8 +3789,8 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			{
 				for (unsigned int i = 0; i < PlayerList->size(); i++)
 				{
-					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*PlayerList) [i]->DetectLandMap[x + y * Map->size]) detectOnDest = true;
+					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
+					if ((*PlayerList)[i]->DetectLandMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
 				if (Map->isWater (x, y, true)) detectOnDest = true;
 			}
@@ -3798,14 +3798,14 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			{
 				for (unsigned int i = 0; i < PlayerList->size(); i++)
 				{
-					if ( (*PlayerList) [i] == stealthVehicle->owner) continue;
-					if ( (*PlayerList) [i]->DetectSeaMap[x + y * Map->size]) detectOnDest = true;
+					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
+					if ((*PlayerList)[i]->DetectSeaMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
 				if (!Map->isWater (x, y, true)) detectOnDest = true;
 
 				if (stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0)
 				{
-					cBuilding* b = Map->fields[x + y * Map->size].getBaseBuilding();
+					cBuilding* b = Map->fields[Map->getOffset (x, y)].getBaseBuilding();
 					if (b && (b->data.surfacePosition == sUnitData::SURFACE_POS_BASE || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || b->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) detectOnDest = true;
 				}
 			}

@@ -132,7 +132,7 @@ bool cStaticMap::isWater(int offset) const
 
 bool cStaticMap::isWater (int x, int y, bool not_coast) const
 {
-	const int off = getOffset(x, y);
+	const int off = getOffset (x, y);
 	const sTerrain& terrainType = terrains[Kacheln[off]];
 
 	if (!terrainType.water && !terrainType.coast) return false;
@@ -638,7 +638,7 @@ void cMap::addBuilding (cBuilding* building, unsigned int offset)
 
 void cMap::addVehicle (cVehicle* vehicle, unsigned int x, unsigned int y)
 {
-	addVehicle (vehicle, x + y * size);
+	addVehicle (vehicle, getOffset (x, y));
 }
 
 void cMap::addVehicle (cVehicle* vehicle, unsigned int offset)
@@ -655,7 +655,7 @@ void cMap::addVehicle (cVehicle* vehicle, unsigned int offset)
 
 void cMap::deleteBuilding (const cBuilding* building)
 {
-	int offset = building->PosX + building->PosY * size;
+	int offset = getOffset (building->PosX, building->PosY);
 
 	std::vector<cBuilding*>* buildings = &fields[offset].buildings;
 	Remove (*buildings, building);
@@ -678,7 +678,7 @@ void cMap::deleteBuilding (const cBuilding* building)
 
 void cMap::deleteVehicle (const cVehicle* vehicle)
 {
-	int offset = vehicle->PosX + vehicle->PosY * size;
+	int offset = getOffset (vehicle->PosX, vehicle->PosY);
 
 	if (vehicle->data.factorAir > 0)
 	{
@@ -709,8 +709,8 @@ void cMap::deleteVehicle (const cVehicle* vehicle)
 
 void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int height)
 {
-	int oldOffset = vehicle->PosX + vehicle->PosY * size;
-	int newOffset = x + y * size;
+	int oldOffset = getOffset (vehicle->PosX, vehicle->PosY);
+	int newOffset = getOffset (x, y);
 
 	vehicle->PosX = x;
 	vehicle->PosY = y;
@@ -754,8 +754,8 @@ void cMap::moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y)
 		moveVehicle (vehicle, x, y);
 	}
 
-	int oldOffset = vehicle->PosX + vehicle->PosY * size;
-	int newOffset = x + y * size;
+	int oldOffset = getOffset (vehicle->PosX, vehicle->PosY);
+	int newOffset = getOffset (x, y);
 
 	fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
@@ -781,7 +781,7 @@ bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlaye
 bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer) const
 {
 	if (x < 0 || x >= size || y < 0 || y >= size) return false;
-	int offset = x + y * size;
+	int offset = getOffset (x, y);
 
 	//search first building, that is not a connector
 	cBuildingIterator building = fields[offset].getBuildings();
@@ -858,7 +858,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, c
 bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle) const
 {
 	if (x < margin || x >= size - margin || y < margin || y >= size - margin) return false;
-	return possiblePlaceBuilding (buildingData, x + y * size, vehicle);
+	return possiblePlaceBuilding (buildingData, getOffset (x, y), vehicle);
 }
 
 bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const

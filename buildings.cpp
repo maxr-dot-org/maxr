@@ -635,7 +635,7 @@ void cBuilding::render (const cGameGUI* gameGUI, SDL_Surface* surface, const SDL
 //--------------------------------------------------------------------------
 void cBuilding::updateNeighbours (const cMap* Map)
 {
-	int iPosOff = PosX + PosY * Map->size;
+	int iPosOff = Map->getOffset (PosX, PosY);
 	if (!data.isBig)
 	{
 		owner->base.checkNeighbour (iPosOff - Map->size, *this);
@@ -665,10 +665,10 @@ void cBuilding::CheckNeighbours (const cMap* Map)
 #define CHECK_NEIGHBOUR(x,y,m)								\
 	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
 	{														\
-		const cBuilding* b = Map->fields[(x) + (y) * Map->size].getTopBuilding();		\
+		const cBuilding* b = Map->fields[Map->getOffset (x, y)].getTopBuilding(); \
 		if ( b && b->owner == owner && b->data.connectsToBase )			\
 		{m=true;}else{m=false;}							\
-	}														\
+	}
 
 	if (!data.isBig)
 	{
@@ -1178,12 +1178,10 @@ bool cBuilding::canExitTo (const int x, const int y, const cMap* map, const sVeh
 bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
-	int offset = x + y * Map->size;
+	int offset = Map->getOffset (x, y);
 
 	if (canLoad (Map->fields[offset].getPlanes(), checkPosition)) return true;
 	else return canLoad (Map->fields[offset].getVehicles(), checkPosition);
-
-	return false;
 }
 
 //--------------------------------------------------------------------------
@@ -1401,7 +1399,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 //--------------------------------------------------------------------------
 void cBuilding::CheckRessourceProd(const cServer& server)
 {
-	int pos = PosX + PosY * server.Map->size;
+	int pos = server.Map->getOffset (PosX, PosY);
 
 	MaxMetalProd = 0;
 	MaxGoldProd = 0;
@@ -1623,7 +1621,7 @@ void cBuilding::makeDetection (cServer& server)
 
 	if (data.isStealthOn & AREA_EXP_MINE)
 	{
-		int offset = PosX + PosY * server.Map->size;
+		int offset = server.Map->getOffset (PosX, PosY);
 		std::vector<cPlayer*>& playerList = *server.PlayerList;
 		for (unsigned int i = 0; i < playerList.size(); i++)
 		{

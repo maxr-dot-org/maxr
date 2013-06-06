@@ -41,12 +41,12 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 		frame = gameGUI.getAnimationSpeed() % 4;
 
 	const cMap& map = *gameGUI.getClient()->getMap();
-	water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[vehicle.PosX + vehicle.PosY * map.size].getBaseBuilding();
+	water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 
 	bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY, true);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
-	cBuilding* building = map.fields[vehicle.PosX + vehicle.PosY * map.size].getBaseBuilding();
+	cBuilding* building = map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 	if (vehicle.data.factorGround > 0 && building
 		&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 			|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE
@@ -208,7 +208,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 
 		if (entry.zoom != gameGUI->getZoom()) continue;
 
-		bool water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[vehicle.PosX + vehicle.PosY * map.size].getBaseBuilding();
+		bool water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 		if (vehicle.IsBuilding)
 		{
 			if (water != entry.water) continue;
@@ -218,7 +218,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 		bool stealth = false;
 
 		bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY, true);
-		const cBuilding* building = map.fields [vehicle.PosX + vehicle.PosY * map.size].getBaseBuilding();
+		const cBuilding* building = map.fields [map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 		if (vehicle.data.factorGround > 0 && building
 			&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA
 				|| building->data.surfacePosition == sUnitData::SURFACE_POS_BASE

@@ -324,7 +324,7 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 		result++;
 
 	// Remove
-	if (data.canClearArea && client.getMap()->fields[PosX + PosY * client.getMap()->size].getRubble() && isUnitClearing() == false)
+	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false)
 		result++;
 
 	// Manual Fire
@@ -469,7 +469,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	}
 
 	// Remove:
-	if (data.canClearArea && client.getMap()->fields[PosX + PosY * client.getMap()->size].getRubble() && isUnitClearing() == false && owner == client.getActivePlayer())
+	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() && isUnitClearing() == false && owner == client.getActivePlayer())
 	{
 		bool isMarked = markerPossible && selectedMenuButtonIndex == nr;
 		drawContextItem (lngPack.i18n ("Text~Context~Clear"), isMarked, dest.x, dest.y, buffer);
@@ -735,7 +735,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	}
 
 	// remove:
-	if (data.canClearArea && client.getMap()->fields[PosX + PosY * client.getMap()->size].getRubble() != 0 && isUnitClearing() == false && owner == client.getActivePlayer())
+	if (data.canClearArea && client.getMap()->fields[client.getMap()->getOffset (PosX, PosY)].getRubble() != 0 && isUnitClearing() == false && owner == client.getActivePlayer())
 	{
 		if (exeNr == nr)
 		{
@@ -1154,31 +1154,16 @@ void cUnit::rotateTo (int newDir)
 //-----------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
 {
-	int off = x + y * map->size;
+	int off = map->getOffset (x, y);
 
-	if (isUnitLoaded())
-		return false;
-
-	if (data.canAttack == false)
-		return false;
-
-	if (data.shotsCur <= 0)
-		return false;
-
-	if (data.ammoCur <= 0)
-		return false;
-
-	if (attacking)
-		return false;
-
-	if (isBeeingAttacked)
-		return false;
-
-	if (off < 0)
-		return false;
-
-	if (checkRange && isInRange (x, y) == false)
-		return false;
+	if (isUnitLoaded()) return false;
+	if (data.canAttack == false) return false;
+	if (data.shotsCur <= 0) return false;
+	if (data.ammoCur <= 0) return false;
+	if (attacking) return false;
+	if (isBeeingAttacked) return false;
+	if (off < 0) return false;
+	if (checkRange && isInRange (x, y) == false) return false;
 
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater (x, y) == false)
 		return false;
@@ -1187,10 +1172,10 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	cBuilding* targetBuilding = 0;
 	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
 
-	if (targetVehicle && targetVehicle->iID == iID)   //a unit cannot fire on it self
+	if (targetVehicle && targetVehicle->iID == iID)   //a unit cannot fire on itself
 		return false;
 
-	if (targetBuilding && targetBuilding->iID == iID)   //a unit cannot fire on it self
+	if (targetBuilding && targetBuilding->iID == iID)   //a unit cannot fire on itself
 		return false;
 
 	if (owner->ScanMap[off] == false)
@@ -1215,25 +1200,24 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 void cUnit::upgradeToCurrentVersion()
 {
 	sUnitData* upgradeVersion = getUpgradedUnitData();
-	if (upgradeVersion != 0)
-	{
-		data.version = upgradeVersion->version;
+	if (upgradeVersion == NULL) return;
 
-		if (data.hitpointsCur == data.hitpointsMax)
-			data.hitpointsCur = upgradeVersion->hitpointsMax; // TODO: check behaviour in original
-		data.hitpointsMax = upgradeVersion->hitpointsMax;
+	data.version = upgradeVersion->version;
 
-		data.ammoMax = upgradeVersion->ammoMax; // don't change the current ammo-amount!
+	if (data.hitpointsCur == data.hitpointsMax)
+		data.hitpointsCur = upgradeVersion->hitpointsMax; // TODO: check behaviour in original
+	data.hitpointsMax = upgradeVersion->hitpointsMax;
 
-		data.speedMax = upgradeVersion->speedMax;
+	data.ammoMax = upgradeVersion->ammoMax; // don't change the current ammo-amount!
 
-		data.armor = upgradeVersion->armor;
-		data.scan = upgradeVersion->scan;
-		data.range = upgradeVersion->range;
-		data.shotsMax = upgradeVersion->shotsMax; // TODO: check behaviour in original
-		data.damage = upgradeVersion->damage;
-		data.buildCosts = upgradeVersion->buildCosts;
-	}
+	data.speedMax = upgradeVersion->speedMax;
+
+	data.armor = upgradeVersion->armor;
+	data.scan = upgradeVersion->scan;
+	data.range = upgradeVersion->range;
+	data.shotsMax = upgradeVersion->shotsMax; // TODO: check behaviour in original
+	data.damage = upgradeVersion->damage;
+	data.buildCosts = upgradeVersion->buildCosts;
 }
 
 //-----------------------------------------------------------------------------

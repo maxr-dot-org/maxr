@@ -239,7 +239,7 @@ void sendChatMessageToClient (cServer& server, const std::string& message, int i
 //-------------------------------------------------------------------------------------
 void sendDoStartWork (cServer& server, const cBuilding& building)
 {
-	const int offset = building.PosX + building.PosY * server.Map->size;
+	const int offset = server.Map->getOffset (building.PosX, building.PosY);
 
 	//check all players
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
@@ -259,7 +259,7 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 //-------------------------------------------------------------------------------------
 void sendDoStopWork (cServer& server, const cBuilding& building)
 {
-	int offset = building.PosX + building.PosY * server.Map->size;
+	const int offset = server.Map->getOffset (building.PosX, building.PosY);
 
 	//check all players
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
@@ -321,8 +321,8 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPla
 
 	message->pushInt16 (iCount);
 	message->pushInt16 (moveJob.iSavedSpeed);
-	message->pushInt32 (moveJob.DestX + moveJob.DestY * moveJob.Map->size);
-	message->pushInt32 (moveJob.SrcX + moveJob.SrcY * moveJob.Map->size);
+	message->pushInt32 (moveJob.Map->getOffset (moveJob.DestX, moveJob.DestY));
+	message->pushInt32 (moveJob.Map->getOffset (moveJob.SrcX, moveJob.SrcY));
 	message->pushInt32 (moveJob.Vehicle->iID);
 
 	server.sendNetMessage (message, iPlayer);
@@ -345,11 +345,11 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle, const cMap&
 
 		if (iY > vehicle.PosY + 1) break;
 		if (iX < 0 || iX >= map.size || iY < 0 || iY >= map.size) continue;
-		if (vehicle.owner->ResourceMap[iX + iY * map.size] != 0) continue;
+		if (vehicle.owner->ResourceMap[map.getOffset (iX, iY)] != 0) continue;
 
-		message->pushInt16 (map.Resources[iX + iY * map.size].value);
-		message->pushInt16 (map.Resources[iX + iY * map.size].typ);
-		message->pushInt32 (iX + iY * map.size);
+		message->pushInt16 (map.Resources[map.getOffset (iX, iY)].value);
+		message->pushInt16 (map.Resources[map.getOffset (iX, iY)].typ);
+		message->pushInt32 (map.getOffset (iX, iY));
 		iCount++;
 	}
 	message->pushInt16 (iCount);

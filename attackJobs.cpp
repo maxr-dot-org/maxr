@@ -39,9 +39,9 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 {
 	targetVehicle = NULL;
 	targetBuilding = NULL;
-	int offset = x + y * map->size;
+	int offset = map->getOffset (x, y);
 
-	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
+	if ((attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
 		targetVehicle = (*map) [offset].getPlanes();
 
@@ -104,7 +104,7 @@ cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOf
 	sentryFire = sentry;
 
 	iMuzzleType = unit->data.muzzleType;
-	iAgressorOff = unit->PosX + unit->PosY * server->Map->size;
+	iAgressorOff = server->Map->getOffset (unit->PosX, unit->PosY);
 
 	//lock targets
 	if (unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
@@ -175,7 +175,7 @@ void cServerAttackJob::lockTarget (int offset)
 
 	//change offset, to match the upper left field of big vehicles
 	if (targetVehicle != 0 && targetVehicle->data.isBig)
-		offset = targetVehicle->PosX + targetVehicle->PosY * map.size;
+		offset = map.getOffset (targetVehicle->PosX, targetVehicle->PosY);
 
 	const std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i  < playerList.size(); i++)
@@ -366,7 +366,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 	cMap& map = *server->Map;
 	if (x < 0 || x >= map.size || y < 0 || y >= map.size)
 		return;
-	int offset = x + y * map.size;
+	int offset = map.getOffset (x, y);
 
 	cVehicle* targetVehicle = 0;
 	cBuilding* targetBuilding = 0;
@@ -648,11 +648,11 @@ cClientAttackJob::cClientAttackJob (cClient* client, cNetMessage* message)
 
 		if (vehicle)
 		{
-			iAgressorOffset = vehicle->PosX + vehicle->PosY * client->getMap()->size;
+			iAgressorOffset = client->getMap()->getOffset (vehicle->PosX, vehicle->PosY);
 		}
 		else
 		{
-			iAgressorOffset = building->PosX + building->PosY * client->getMap()->size;
+			iAgressorOffset = client->getMap()->getOffset (building->PosX, building->PosY);
 		}
 	}
 

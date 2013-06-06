@@ -154,7 +154,7 @@ sWaypoint* cPathCalculator::calcPath()
 	StartNode->costF = StartNode->costG + StartNode->costH;
 
 	StartNode->prev = NULL;
-	openList[ScrX + ScrY * Map->size] = StartNode;
+	openList[Map->getOffset (ScrX, ScrY)] = StartNode;
 	insertToHeap (StartNode, false);
 
 	while (heapCount > 0)
@@ -163,8 +163,8 @@ sWaypoint* cPathCalculator::calcPath()
 		sPathNode* CurrentNode = nodesHeap[1];
 
 		// move it from the open to the closed list
-		openList[CurrentNode->x + CurrentNode->y * Map->size] = NULL;
-		closedList[CurrentNode->x + CurrentNode->y * Map->size] = CurrentNode;
+		openList[Map->getOffset (CurrentNode->x, CurrentNode->y)] = NULL;
+		closedList[Map->getOffset (CurrentNode->x, CurrentNode->y)] = CurrentNode;
 		deleteFirstFromHeap();
 
 		// generate waypoints when destination has been reached
@@ -234,17 +234,17 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [x + y * Map->size].getPlanes();
-					else blockingUnit = (*Map) [x + y * Map->size].getVehicles();
+					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [Map->getOffset (x, y)].getPlanes();
+					else blockingUnit = (*Map) [Map->getOffset (x, y)].getVehicles();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);
 					if (!isInGroup) continue;
 				}
 				else continue;
 			}
-			if (closedList[x + y * Map->size] != NULL) continue;
+			if (closedList[Map->getOffset (x, y)] != NULL) continue;
 
-			if (openList[x + y * Map->size] == NULL)
+			if (openList[Map->getOffset (x, y)] == NULL)
 			{
 				// generate new node
 				sPathNode* NewNode = allocNode();
@@ -254,7 +254,7 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				NewNode->costH = destHandler->heuristicCost (x, y);
 				NewNode->costF = NewNode->costG + NewNode->costH;
 				NewNode->prev = ParentNode;
-				openList[x + y * Map->size] = NewNode;
+				openList[Map->getOffset (x, y)] = NewNode;
 				insertToHeap (NewNode, false);
 			}
 			else
@@ -264,13 +264,13 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				costG = calcNextCost (ParentNode->x, ParentNode->y, x, y) + ParentNode->costG;
 				costH = destHandler->heuristicCost (x, y);
 				costF = costG + costH;
-				if (costF < openList[x + y * Map->size]->costF)
+				if (costF < openList[Map->getOffset (x, y)]->costF)
 				{
-					openList[x + y * Map->size]->costG = costG;
-					openList[x + y * Map->size]->costH = costH;
-					openList[x + y * Map->size]->costF = costF;
-					openList[x + y * Map->size]->prev = ParentNode;
-					insertToHeap (openList[x + y * Map->size], true);
+					openList[Map->getOffset (x, y)]->costG = costG;
+					openList[Map->getOffset (x, y)]->costH = costH;
+					openList[Map->getOffset (x, y)]->costF = costF;
+					openList[Map->getOffset (x, y)]->prev = ParentNode;
+					insertToHeap (openList[Map->getOffset (x, y)], true);
 				}
 			}
 		}
@@ -366,7 +366,7 @@ int cPathCalculator::calcNextCost (int srcX, int srcY, int destX, int destY) con
 		if (srcX != destX && srcY != destY) return (int) (4 * Vehicle->data.factorAir * 1.5);
 		else return (int) (4 * Vehicle->data.factorAir);
 	}
-	int offset = Map->staticMap->getOffset(destX, destY);
+	int offset = Map->staticMap->getOffset (destX, destY);
 	const cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
 	if (Map->staticMap->isWater(offset) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
@@ -718,7 +718,7 @@ void cServerMoveJob::moveVehicle()
 	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
-		cBuilding* building = Map->fields[Waypoints->next->X + Waypoints->next->Y * Map->size].getBaseBuilding();
+		cBuilding* building = Map->fields[Map->getOffset (Waypoints->next->X, Waypoints->next->Y)].getBaseBuilding();
 		if (building && building->data.modifiesSpeed)
 			iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
 	}
@@ -754,10 +754,10 @@ void cServerMoveJob::doEndMoveVehicle()
 	// check for results of the move
 
 	// make mines explode if necessary
-	cBuilding* mine = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getMine();
+	cBuilding* mine = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getMine();
 	if (Vehicle->data.factorAir == 0 && mine && mine->owner != Vehicle->owner)
 	{
-		server->AJobs.push_back (new cServerAttackJob (*server, mine, Vehicle->PosX + Vehicle->PosY * Map->size, false));
+		server->AJobs.push_back (new cServerAttackJob (*server, mine, Map->getOffset (Vehicle->PosX, Vehicle->PosY), false));
 		bEndForNow = true;
 	}
 
@@ -899,7 +899,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 		return;
 
 	cMap& map = *server.Map;
-	const int offset = x + y * map.size;
+	const int offset = map.getOffset (x, y);
 
 	//check, whether the attack is now possible
 	if (!vehicle_->canAttackObjectAt (x, y, &map, true, true)) return;
@@ -1170,7 +1170,7 @@ void cClientMoveJob::moveVehicle()
 	else if (! (Vehicle->data.factorAir > 0) && ! (Vehicle->data.factorSea > 0 && Vehicle->data.factorGround == 0))
 	{
 		iSpeed = MOVE_SPEED;
-		cBuilding* building = Map->fields[Waypoints->next->X + Waypoints->next->Y * Map->size].getBaseBuilding();
+		cBuilding* building = Map->fields[Map->getOffset (Waypoints->next->X, Waypoints->next->Y)].getBaseBuilding();
 		if (Waypoints && Waypoints->next && building && building->data.modifiesSpeed) iSpeed = (int) (iSpeed / building->data.modifiesSpeed);
 	}
 	else if (Vehicle->data.factorAir > 0) iSpeed = MOVE_SPEED * 2;
@@ -1178,8 +1178,8 @@ void cClientMoveJob::moveVehicle()
 
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWater (Vehicle->PosX, Vehicle->PosY, false) && !
-		(Waypoints && Waypoints->next && Map->staticMap->isWater(Map->staticMap->getOffset(Waypoints->next->X, Waypoints->next->Y))) &&
-		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->ScanMap[Vehicle->PosX + Vehicle->PosY * Map->size]))
+		(Waypoints && Waypoints->next && Map->staticMap->isWater(Map->getOffset (Waypoints->next->X, Waypoints->next->Y))) &&
+		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->ScanMap[Map->getOffset (Vehicle->PosX, Vehicle->PosY)]))
 	{
 		if (abs (Vehicle->OffX) == 64 || abs (Vehicle->OffY) == 64)
 		{
@@ -1322,7 +1322,7 @@ void cClientMoveJob::stopMoveSound()
 
 	if (Vehicle == gameGUI.getSelectedUnit())
 	{
-		cBuilding* building = Map->fields[Vehicle->PosX + Vehicle->PosY * Map->size].getBaseBuilding();
+		cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
 		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY, true);
 		if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 

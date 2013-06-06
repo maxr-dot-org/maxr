@@ -296,14 +296,7 @@ public:
 	explicit cMap (cStaticMap& staticMap_);
 	~cMap();
 
-	cStaticMap* staticMap;
-	int size;     // size of the map
-	/**
-	* the infomation about the fields
-	*/
-	cMapField* fields;
-	sResources* Resources; // field with the ressource data
-
+	int getOffset (int x, int y) const { return staticMap->getOffset (x, y);}
 	bool isWater (int x, int y, bool not_coast = false) const { return staticMap->isWater(x, y, not_coast); }
 
 	void placeRessourcesAddPlayer (int x, int y, int frequency);
@@ -359,6 +352,14 @@ public:
 	*/
 	void reset();
 
+public:
+	cStaticMap* staticMap;
+	int size;     // size of the map
+	/**
+	* the infomation about the fields
+	*/
+	cMapField* fields;
+	sResources* Resources; // field with the ressource data
 private:
 	T_2<int>* resSpots;
 	int* resSpotTypes;

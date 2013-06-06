@@ -167,7 +167,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			serverPlayers.push_back (new cPlayer ( (*players[i])));
 
 			// TODO: move this in cServer.
-			serverPlayers[i]->initMaps (serverMap->size, serverMap);
+			serverPlayers[i]->initMaps (*serverMap);
 		}
 
 		// init server
@@ -4179,12 +4179,12 @@ void cBuildingsBuildMenu::doneReleased (void* parent)
 	cBuildingsBuildMenu* menu = reinterpret_cast<cBuildingsBuildMenu*> (parent);
 	if (!menu->selectedUnit->getUnitData()->isBig)
 	{
-		sendWantBuild (*menu->client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->vehicle->PosX + menu->vehicle->PosY * menu->client->getMap()->size, false, 0);
+		sendWantBuild (*menu->client, menu->vehicle->iID, menu->selectedUnit->getUnitID(), menu->speedHandler->getBuildSpeed(), menu->client->getMap()->getOffset (menu->vehicle->PosX, menu->vehicle->PosY), false, 0);
 	}
 	else
 	{
 		menu->client->gameGUI.mouseInputMode = placeBand;
-		menu->vehicle->BuildBigSavedPos = menu->vehicle->PosX + menu->vehicle->PosY * menu->client->getMap()->size;
+		menu->vehicle->BuildBigSavedPos = menu->client->getMap()->getOffset (menu->vehicle->PosX, menu->vehicle->PosY);
 
 		// save building information temporary to have them when placing band is finished
 		menu->vehicle->BuildingTyp = menu->selectedUnit->getUnitID();
@@ -4304,7 +4304,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 			if (x < 0 || x >= map.size || y < 0 || y >= map.size) continue;
 
-			int off = x + y * map.size;
+			int off = map.getOffset (x, y);
 			cBuildingIterator bi = map.fields[off].getBuildings();
 			while (bi && (bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) bi++;
 

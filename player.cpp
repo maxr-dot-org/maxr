@@ -225,10 +225,10 @@ cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned i
 //--------------------------------------------------------------------------
 /** initialize the maps */
 //--------------------------------------------------------------------------
-void cPlayer::initMaps (int MapSizeX, cMap* map)
+void cPlayer::initMaps (cMap& map)
 {
-	mapSize = MapSizeX;
-	const int size = MapSizeX * MapSizeX;
+	mapSize = map.staticMap->getSize();
+	const int size = mapSize * mapSize;
 	// Scanner-Map:
 	ScanMap.clear();
 	ScanMap.resize (size, 0);
@@ -236,7 +236,7 @@ void cPlayer::initMaps (int MapSizeX, cMap* map)
 	ResourceMap.clear();
 	ResourceMap.resize (size, 0);
 
-	base.map = map;
+	base.map = &map;
 	// Sentry-Map:
 	SentriesMapAir.clear();
 	SentriesMapAir.resize (size, 0);

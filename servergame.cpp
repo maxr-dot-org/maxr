@@ -472,7 +472,7 @@ void cServerGame::startGameServer()
 	for (unsigned int i = 0; i < gameData->players.size(); i++)
 	{
 		serverPlayers.push_back (new cPlayer (*gameData->players[i]));
-		serverPlayers[i]->initMaps (serverMap->size, serverMap);
+		serverPlayers[i]->initMaps (*serverMap);
 	}
 
 	// init server
