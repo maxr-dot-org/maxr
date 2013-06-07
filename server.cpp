@@ -870,16 +870,17 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
 
-	int iTurboBuildRounds[3], iTurboBuildCosts[3];
-	bool bLand = false, bWater = false;
-	int iX, iY;
+	int iTurboBuildRounds[3];
+	int iTurboBuildCosts[3];
+	bool bLand = false;
+	bool bWater = false;
 
 	cBuilding* Building = getBuildingFromID (message.popInt16());
 	if (Building == NULL) return;
 
 	// check whether the building has water and land fields around it
-	iX = Building->PosX - 2;
-	iY = Building->PosY - 1;
+	int iX = Building->PosX - 2;
+	int iY = Building->PosY - 1;
 	for (int i = 0; i < 12; i++)
 	{
 		if (i == 4 ||  i == 6 || i == 8)
@@ -896,11 +897,13 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 
 		int iOff = Map->getOffset (iX, iY);
 
-		cBuildingIterator bi = Map->fields[iOff].getBuildings();
-		while (bi && (bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) bi++;
+		std::vector<cBuilding*>& buildings = Map->fields[iOff].getBuildings();
+		std::vector<cBuilding*>::iterator b_it = buildings.begin();
+		std::vector<cBuilding*>::iterator b_end = buildings.end();
+		while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-		if (!Map->isWater (iX, iY) || (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
-		else if (Map->isWater (iX, iY) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+		if (!Map->isWater (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
+		else if (Map->isWater (iX, iY) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 		{
 			bLand = true;
 			bWater = true;
@@ -2301,62 +2304,59 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 	{
 		if (AddedBuilding->data.isBig)
 		{
-			cBuildingIterator building = Map->fields[iOff].getBuildings();
-			while (building)
+			std::vector<cBuilding*>* buildings = &Map->fields[iOff].getBuildings();
+
+			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if (building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit (building);
-					building--;
+					deleteUnit ((*buildings)[i]);
+					--i;
 				}
-				building++;
 			}
 			iOff++;
-			building = Map->fields[iOff].getBuildings();
-			while (building)
+			buildings = &Map->fields[iOff].getBuildings();
+			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if (building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit (building);
-					building--;
+					deleteUnit ((*buildings)[i]);
+					--i;
 				}
-				building++;
 			}
 			iOff += Map->size;
-			building = Map->fields[iOff].getBuildings();
-			while (building)
+			buildings = &Map->fields[iOff].getBuildings();
+			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if (building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit (building);
-					building--;
+					deleteUnit ((*buildings)[i]);
+					--i;
 				}
-				building++;
 			}
 			iOff--;
-			building = Map->fields[iOff].getBuildings();
-			while (building)
+			buildings = &Map->fields[iOff].getBuildings();
+			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if (building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit (building);
-					building--;
+					deleteUnit ((*buildings)[i]);
+					--i;
 				}
-				building++;
 			}
 		}
 		else
 		{
 			deleteUnit (buildingToBeDeleted);
-			cBuildingIterator building = Map->fields[iOff].getBuildings();
-			while (building)
+
+			std::vector<cBuilding*>& buildings = Map->fields[iOff].getBuildings();
+			for (size_t i = 0; i != buildings.size(); ++i)
 			{
-				if (building->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if (buildings[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit (building);
-					building--;
+					deleteUnit (buildings[i]);
+					--i;
 				}
-				building++;
 			}
 		}
 	}
@@ -3275,59 +3275,63 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	}
 
 	//delete all buildings on the field, except connectors
-	cBuildingIterator bi = (*Map) [offset].getBuildings();
-	if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
+	std::vector<cBuilding*>* buildings = &(*Map)[offset].getBuildings();
+	std::vector<cBuilding*>::iterator b_it = buildings->begin();
+	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 
-	while (!bi.end)
+	while (b_it != buildings->end())
 	{
-		if (bi->owner == 0 && bi->RubbleValue > 0)   // this seems to be rubble
+		if ((*b_it)->owner == 0 && (*b_it)->RubbleValue > 0) // this seems to be rubble
 		{
-			oldRubbleValue += bi->RubbleValue;
-			if (bi->data.isBig)
+			oldRubbleValue += (*b_it)->RubbleValue;
+			if ((*b_it)->data.isBig)
 			{
-				rubblePosX = bi->PosX;
-				rubblePosY = bi->PosY;
+				rubblePosX = (*b_it)->PosX;
+				rubblePosY = (*b_it)->PosY;
 				bigRubble = true;
 			}
 		}
 		else // normal unit
-			value += bi->data.buildCosts;
-		deleteUnit (bi);
-		bi = (*Map) [offset].getBuildings();
-		if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
+			value += (*b_it)->data.buildCosts;
+		deleteUnit (*b_it);
+		b_it = buildings->begin();
+		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 	}
 
 	if (vehicle->data.isBig)
 	{
 		bigRubble = true;
-		bi = (*Map) [offset + 1].getBuildings();
-		if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
-		while (!bi.end)
+		buildings = &(*Map)[offset + 1].getBuildings();
+		b_it = buildings->begin();
+		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+		while (b_it != buildings->end())
 		{
-			value += bi->data.buildCosts;
-			deleteUnit (bi);
-			bi = (*Map) [offset].getBuildings();
-			if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
+			value += (*b_it)->data.buildCosts;
+			deleteUnit (*b_it);
+			b_it = buildings->begin();
+			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		bi = (*Map) [offset + Map->size].getBuildings();
-		if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
-		while (!bi.end)
+		buildings = &(*Map)[offset + Map->size].getBuildings();
+		b_it = buildings->begin();
+		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+		while (b_it != buildings->end())
 		{
-			value += bi->data.buildCosts;
-			deleteUnit (bi);
-			bi = (*Map) [offset].getBuildings();
-			if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
+			value += (*b_it)->data.buildCosts;
+			deleteUnit (*b_it);
+			b_it = buildings->begin();
+			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		bi = (*Map) [offset + 1 + Map->size].getBuildings();
-		if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
-		while (!bi.end)
+		buildings = &(*Map)[offset + 1 + Map->size].getBuildings();
+		b_it = buildings->begin();
+		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
+		while (b_it != buildings->end())
 		{
-			value += bi->data.buildCosts;
-			deleteUnit (bi);
-			bi = (*Map) [offset].getBuildings();
-			if (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) bi++;
+			value += (*b_it)->data.buildCosts;
+			deleteUnit (*b_it);
+			b_it = buildings->begin();
+			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 	}
 
@@ -3345,11 +3349,12 @@ void cServer::destroyUnit (cVehicle* vehicle)
 }
 
 //-------------------------------------------------------------------------------------
-int cServer::deleteBuildings (cBuildingIterator building)
+int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
 {
 	int rubble = 0;
-	while (building.size() > 0)
+	while (buildings.empty() == false)
 	{
+		cBuilding* building = buildings[0];
 		if (building->owner)
 		{
 			rubble += building->data.buildCosts;
@@ -3376,20 +3381,20 @@ void cServer::destroyUnit (cBuilding* b)
 		big = true;
 		offset = Map->getOffset (topBuilding->PosX, topBuilding->PosY);
 
-		cBuildingIterator building = Map->fields[offset + 1].getBuildings();
-		rubble += deleteBuildings (building);
+		std::vector<cBuilding*>* buildings = &Map->fields[offset + 1].getBuildings();
+		rubble += deleteBuildings (*buildings);
 
-		building = Map->fields[offset + Map->size].getBuildings();
-		rubble += deleteBuildings (building);
+		buildings = &Map->fields[offset + Map->size].getBuildings();
+		rubble += deleteBuildings (*buildings);
 
-		building = Map->fields[offset + Map->size + 1].getBuildings();
-		rubble += deleteBuildings (building);
+		buildings = &Map->fields[offset + Map->size + 1].getBuildings();
+		rubble += deleteBuildings (*buildings);
 	}
 
 	sUnitData::eSurfacePosition surfacePosition = b->data.surfacePosition;
 
-	cBuildingIterator building = Map->fields[offset].getBuildings();
-	rubble += deleteBuildings (building);
+	std::vector<cBuilding*>* buildings = &Map->fields[offset].getBuildings();
+	rubble += deleteBuildings (*buildings);
 
 	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)
 		addRubble (offset % Map->size, offset / Map->size, rubble / 2, big);

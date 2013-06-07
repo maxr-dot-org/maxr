@@ -47,126 +47,6 @@ const int RES_OIL   = 2;
 const int RES_GOLD  = 3;
 const int RES_COUNT = 4;
 
-template<typename T>
-class cMapIterator
-{
-private:
-	std::vector<T*>* list;
-	int index;
-public:
-	explicit cMapIterator<T> (std::vector<T*>* list_);
-	/** returns the number of vehicles in the List, the Iterator points to. */
-	unsigned int size() const;
-	//T& operator[](unsigned const int i) const;
-	T* operator->() const;
-	T& operator*() const;
-	/** go to next vehicle on this field */
-	cMapIterator operator++ (int);
-	/** go to previous vehicle on this field */
-	cMapIterator operator-- (int);
-	operator T* () const;
-	size_t getIndex() const;
-	bool end;
-	bool rend;
-};
-
-typedef cMapIterator<cBuilding> cBuildingIterator;
-
-template <typename T>
-cMapIterator<T>::cMapIterator (std::vector<T*>* list_)
-{
-	index = 0;
-	list = list_;
-
-	if (list->size() == 0)
-	{
-		end = true;
-		rend = true;
-	}
-	else
-	{
-		end = false;
-		rend = false;
-	}
-}
-
-template <typename T>
-unsigned int cMapIterator<T>::size() const
-{
-	return (unsigned int) list->size();
-}
-
-template <typename T>
-T* cMapIterator<T>::operator->() const
-{
-	if (!end && !rend)
-		return (*list) [index];
-	else
-		return NULL;
-}
-
-template <typename T>
-T& cMapIterator<T>::operator*() const
-{
-	T* unit = NULL;
-	if (!end && !rend) unit = (*list) [index];
-
-	return *unit;
-}
-
-template <typename T>
-cMapIterator<T> cMapIterator<T>::operator++ (int)
-{
-	cMapIterator<T> i = *this;
-	if (end) return i;
-
-	if (rend)
-	{
-		rend = false;
-		index = 0;
-	}
-	else
-	{
-		index++;
-	}
-	if (index >= (int) list->size()) end = true;
-
-	return i;
-}
-
-template <typename T>
-cMapIterator<T> cMapIterator<T>::operator-- (int)
-{
-	cMapIterator<T> i = *this;
-	if (rend) return i;
-
-	if (end)
-	{
-		index = (int) list->size() - 1;
-		end = false;
-	}
-	else
-	{
-		index--;
-	}
-	if (index < 0) rend = true;
-
-	return i;
-}
-
-template <typename T>
-cMapIterator<T>::operator T* () const
-{
-	if (end || rend) return NULL;
-	return (*list) [index];
-}
-
-template <typename T>
-size_t cMapIterator<T>::getIndex() const
-{
-	return index;
-}
-
 /** contains all information of a map field */
 class cMapField
 {
@@ -188,11 +68,13 @@ public:
 	cVehicle* getVehicle();
 	/** returns a Iterator for the planes on this field */
 	cVehicle* getPlane();
-	/** returns a Iterator for the planes on this field */
+	/** returns the planes on this field */
 	std::vector<cVehicle*>& getPlanes();
-	/** returns a Iterator for the buildings on this field */
-	cBuildingIterator getBuildings();
+	/** returns the buildings on this field */
+	std::vector<cBuilding*>& getBuildings();
 
+	/** returns a Iterator for the buildings on this field */
+	cBuilding* getBuilding();
 	/** returns a pointer to the top building or NULL if the first building is a base type */
 	cBuilding* getTopBuilding();
 	/** returns a pointer to the first base building or NULL if there is no base building */

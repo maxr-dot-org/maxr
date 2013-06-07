@@ -4286,10 +4286,10 @@ void cVehiclesBuildMenu::generateSelectionList()
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
 		const sVehicle& vehicle = UnitsData.getVehicle (i, player->getClan());
-
-		bool land = false, water = false;
-
-		int x = building->PosX - 2, y = building->PosY - 1;
+		bool land = false;
+		bool water = false;
+		int x = building->PosX - 2;
+		int y = building->PosY - 1;
 
 		for (int j = 0; j < 12; j++)
 		{
@@ -4305,11 +4305,14 @@ void cVehiclesBuildMenu::generateSelectionList()
 			if (x < 0 || x >= map.size || y < 0 || y >= map.size) continue;
 
 			int off = map.getOffset (x, y);
-			cBuildingIterator bi = map.fields[off].getBuildings();
-			while (bi && (bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) bi++;
+			std::vector<cBuilding*>& buildings = map.fields[off].getBuildings();
+			std::vector<cBuilding*>::iterator b_it = buildings.begin();
+			std::vector<cBuilding*>::iterator b_end = buildings.end();
 
-			if (!map.isWater (x, y) || (bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWater (x, y) && bi && bi->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
+
+			if (!map.isWater (x, y) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWater (x, y) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;

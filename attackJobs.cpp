@@ -40,38 +40,39 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 	targetVehicle = NULL;
 	targetBuilding = NULL;
 	int offset = map->getOffset (x, y);
+	cMapField& mapField = (*map)[offset];
 
 	if ((attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
-		targetVehicle = (*map) [offset].getPlane();
+		targetVehicle = mapField.getPlane();
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
+		if (!targetVehicle) targetVehicle = mapField.getVehicle();
 		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
 
-		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
+		if (!targetVehicle) targetBuilding = mapField.getBuilding();
 	}
-	else if ( (attackMode & TERRAIN_GROUND) && (attackMode & AREA_SUB))
+	else if ((attackMode & TERRAIN_GROUND) && (attackMode & AREA_SUB))
 	{
-		targetVehicle = (*map) [offset].getPlane();
+		targetVehicle = mapField.getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
+		if (!targetVehicle) targetVehicle = mapField.getVehicle();
 
-		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
+		if (!targetVehicle) targetBuilding = mapField.getBuilding();
 	}
 	else if (attackMode & TERRAIN_GROUND)
 	{
-		targetVehicle = (*map) [offset].getPlane();
+		targetVehicle = mapField.getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
+		if (!targetVehicle) targetVehicle = mapField.getVehicle();
 		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
 
-		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
+		if (!targetVehicle) targetBuilding = mapField.getBuilding();
 	}
 	else if (attackMode & TERRAIN_AIR)
 	{
-		targetVehicle = (*map) [offset].getPlane();
+		targetVehicle = mapField.getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh == 0) targetVehicle = NULL;
 	}
 
@@ -79,8 +80,6 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 	if (targetBuilding && !targetBuilding->owner)
 		targetBuilding = NULL;
 }
-
-
 
 //--------------------------------------------------------------------------
 // cServerAttackJob Implementation
@@ -149,7 +148,8 @@ void cServerAttackJob::lockTarget (int offset)
 
 	bool isAir = (targetVehicle && targetVehicle->data.factorAir > 0);
 
-	//if the agressor can attack air and land units, decide whether it is currently attacking air or land targets
+	// if the agressor can attack air and land units,
+	// decide whether it is currently attacking air or land targets
 	if ( (attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
 		if (isAir)
@@ -161,12 +161,11 @@ void cServerAttackJob::lockTarget (int offset)
 
 	if (!isAir)
 	{
-		cBuildingIterator buildings = map[offset].getBuildings();
-		while (!buildings.end)
+		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
+		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			targetBuilding = buildings;
-			buildings->isBeeingAttacked = true;
-			buildings++;
+			targetBuilding = *it;
+			(*it)->isBeeingAttacked = true;
 		}
 	}
 
@@ -449,12 +448,9 @@ void cServerAttackJob::makeImpact (int x, int y)
 
 	if (isAir == false)
 	{
-		cBuildingIterator buildings = map[offset].getBuildings();
-		while (buildings.end == false)
-		{
-			buildings->isBeeingAttacked = false;
-			buildings++;
-		}
+		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
+		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			(*it)->isBeeingAttacked = false;
 	}
 	if (unit)
 		unit->attacking = false;
@@ -558,12 +554,9 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 	}
 	if (!bIsAir)
 	{
-		cBuildingIterator buildings = map[offset].getBuildings();
-		while (!buildings.end)
-		{
-			buildings->isBeeingAttacked = true;
-			buildings++;
-		}
+		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
+		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			(*it)->isBeeingAttacked = true;
 	}
 }
 
@@ -1046,11 +1039,8 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 
 	if (!isAir)
 	{
-		cBuildingIterator buildings = map[offset].getBuildings();
-		while (!buildings.end)
-		{
-			buildings->isBeeingAttacked = false;
-			buildings++;
-		}
+		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
+		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			(*it)->isBeeingAttacked = false;
 	}
 }

@@ -2276,7 +2276,7 @@ void cClient::destroyUnit (cVehicle* vehicle)
 void cClient::destroyUnit (cBuilding* building)
 {
 	//play explosion animation
-	cBuilding* topBuilding = getMap()->fields[building->PosX + building->PosY * getMap()->size].getBuildings();
+	cBuilding* topBuilding = getMap()->fields[getMap()->getOffset (building->PosX, building->PosY)].getBuilding();
 	if (topBuilding && topBuilding->data.isBig)
 	{
 		addFx (new cFxExploBig (topBuilding->PosX * 64 + 64, topBuilding->PosY * 64 + 64));

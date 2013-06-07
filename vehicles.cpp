@@ -1767,7 +1767,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 
 	int off = map->getOffset (x, y);
 	const cUnit* vehicle  = map->fields[off].getVehicle();
-	const cUnit* building = map->fields[off].getBuildings();
+	const cUnit* building = map->fields[off].getBuilding();
 	const cUnit* unit = vehicle ? vehicle : building;
 
 	if (unit == NULL) return false;
@@ -2192,14 +2192,14 @@ bool cVehicle::canLand (const cMap& map) const
 	if (moving || ClientMoveJob || (ServerMoveJob && ServerMoveJob->Waypoints && ServerMoveJob->Waypoints->next) || attacking) return false;     //vehicle busy?
 
 	//landing pad there?
-	cBuildingIterator bi = map[map.getOffset (PosX, PosY)].getBuildings();
-	while (!bi.end)
+	const std::vector<cBuilding*>& buildings = map[map.getOffset (PosX, PosY)].getBuildings();
+	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
+	for (; b_it != buildings.end(); ++b_it)
 	{
-		if (bi->data.canBeLandedOn)
+		if ((*b_it)->data.canBeLandedOn)
 			break;
-		bi++;
 	}
-	if (bi.end) return false;
+	if (b_it == buildings.end()) return false;
 
 	//is the landing pad already occupied?
 	const std::vector<cVehicle*>& v = map[map.getOffset (PosX, PosY)].getPlanes();
@@ -2214,7 +2214,7 @@ bool cVehicle::canLand (const cMap& map) const
 	//can stay on an enemy landing pad until it is moved
 	if (FlightHigh == 0) return true;
 
-	if (bi->owner != owner) return false;
+	if ((*b_it)->owner != owner) return false;
 
 	return true;
 }

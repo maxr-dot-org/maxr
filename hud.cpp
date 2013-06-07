@@ -306,8 +306,11 @@ void cDebugOutput::trace()
 
 	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), &y, x); y += 20; }
 	if (field->getPlane()) { traceVehicle (*field->getPlane(), &y, x); y += 20; }
-	cBuildingIterator bi = field->getBuildings();
-	while (!bi.end) { traceBuilding (*bi, &y, x); y += 20; bi++;}
+	const std::vector<cBuilding*>& buildings = field->getBuildings();
+	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
+	{
+		traceBuilding (**it, &y, x); y += 20;
+	}
 }
 
 void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
@@ -1053,7 +1056,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				cMapField& field = (*map) [mapx + mapy * map->size];
 
 				//draw building
-				const cBuilding* building = field.getBuildings();
+				const cBuilding* building = field.getBuilding();
 				if (building && building->owner)
 				{
 					if (!tntChecked() || building->data.canAttack)
@@ -1714,8 +1717,8 @@ void cGameGUI::updateMouseCursor()
 					 overUnitField->getVehicle() ||
 					 overUnitField->getPlane() ||
 					 (
-						 overUnitField->getBuildings() &&
-						 overUnitField->getBuildings()->owner
+						 overUnitField->getBuilding() &&
+						 overUnitField->getBuilding()->owner
 					 )
 				 ) &&
 				 (
@@ -3559,21 +3562,24 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 		int pos = y * map->size + startX;
 		for (int x = startX; x <= endX; x++)
 		{
-			cBuildingIterator bi = map->fields[pos].getBuildings();
-			while (!bi.end) bi++;
-			bi--;
-
-			while (!bi.rend && (bi->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || bi->data.surfacePosition == sUnitData::SURFACE_POS_BASE || !bi->owner))
+			std::vector<cBuilding*>& buildings = map->fields[pos].getBuildings();
+			for (std::vector<cBuilding*>::reverse_iterator it = buildings.rbegin(); it != buildings.rend(); ++it)
 			{
+				if ((*it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+					(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+					(*it)->owner) break;
+
 				if (player->ScanMap[pos] ||
-					(bi->data.isBig && ((x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->size]) || (x < endX && y < endY && player->ScanMap[pos + map->size + 1]))))
+					((*it)->data.isBig &&
+					((x < endX && player->ScanMap[pos + 1]) ||
+					 (y < endY && player->ScanMap[pos + map->size]) ||
+					 (x < endX && y < endY && player->ScanMap[pos + map->size + 1]))))
 				{
-					if (bi->PosX == x && bi->PosY == y)
+					if ((*it)->PosX == x && (*it)->PosY == y)
 					{
-						bi->draw (&dest, *this);
+						(*it)->draw (&dest, *this);
 					}
 				}
-				bi--;
 			}
 			pos++;
 			dest.x += tileSize;
@@ -3594,7 +3600,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 		int pos = y * map->size + startX;
 		for (int x = startX; x <= endX; x++)
 		{
-			cBuilding* building = map->fields[pos].getBuildings();
+			cBuilding* building = map->fields[pos].getBuilding();
 			if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
 			{
 				if (player->ScanMap[pos] ||
@@ -3625,7 +3631,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 						}
 						if (debugOutput.debugBaseServer && building->SubBase)
 						{
-							sSubBase* sb = client->getServer()->Map->fields[pos].getBuildings()->SubBase;
+							sSubBase* sb = client->getServer()->Map->fields[pos].getBuilding()->SubBase;
 							if (sb)
 							{
 								SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
@@ -3694,27 +3700,22 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 		{
 			if (player->ScanMap[pos])
 			{
-				cBuildingIterator building = map->fields[pos].getBuildings();
-				do
-				{
-					if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
-					{
-						building->draw (&dest, *this);
-					}
-					building++;
-				}
-				while (!building.end);
+				std::vector<cBuilding*>& buildings = map->fields[pos].getBuildings();
 
-				building = map->fields[pos].getBuildings();
-				do
+				for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 				{
-					if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+					if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 					{
-						building->draw (&dest, *this);
+						(*it)->draw (&dest, *this);
 					}
-					building++;
 				}
-				while (!building.end);
+				for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+				{
+					if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+					{
+						(*it)->draw (&dest, *this);
+					}
+				}
 
 				cVehicle* vehicle = map->fields[pos].getVehicle();
 				if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player->ScanMap[pos] || (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->size]) || (x < endX && y < endY && player->ScanMap[pos + map->size + 1])))

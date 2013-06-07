@@ -310,10 +310,10 @@ private:
 	void stopVehicleBuilding (cVehicle* vehicle);
 
 	/**
-	 * Helper for destroyUnit(cBuilding) that deletes all buildings in the iterator and returns the generated rubble value.
+	 * Helper for destroyUnit(cBuilding) that deletes all buildings and returns the generated rubble value.
 	 * @author Paul Grathwohl
 	 */
-	int deleteBuildings (cBuildingIterator building);
+	int deleteBuildings (std::vector<cBuilding*>& buildings);
 
 	void runJobs ();
 	void releaseJob (cUnit* unit);

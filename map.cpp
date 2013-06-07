@@ -50,10 +50,15 @@ std::vector<cVehicle*>& cMapField::getPlanes()
 	return planes;
 }
 
-cBuildingIterator cMapField::getBuildings()
+std::vector<cBuilding*>& cMapField::getBuildings()
 {
-	cBuildingIterator b (&buildings);
-	return b;
+	return buildings;
+}
+
+cBuilding* cMapField::getBuilding()
+{
+	if (buildings.empty()) return NULL;
+	return buildings[0];
 }
 
 cBuilding* cMapField::getTopBuilding()
@@ -839,9 +844,12 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	if (x < 0 || x >= size || y < 0 || y >= size) return false;
 	int offset = getOffset (x, y);
 
+	const std::vector<cBuilding*>& buildings = fields[offset].getBuildings();
+	std::vector<cBuilding*>::const_iterator b_it = buildings.begin();
+	std::vector<cBuilding*>::const_iterator b_end = buildings.end();
+
 	//search first building, that is not a connector
-	cBuildingIterator building = fields[offset].getBuildings();
-	if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) building++;
+	if (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 
 	if (vehicleData.factorAir > 0)
 	{
@@ -859,45 +867,57 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 			if (checkPlayer && player && !player->ScanMap[offset]) return false;
 
 			//vehicle can drive on water, if there is a bridge, platform or road
-			if (!building) return false;
-			if (! (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) return false;
+			if (b_it == b_end) return false;
+			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 		}
 		//check for enemy mines
-		if (player && building && building->owner != player && building->data.explodesOnContact && (building->isDetectedByPlayer (player) || checkPlayer))
+		if (player && b_it != b_end && (*b_it)->owner != player &&
+			(*b_it)->data.explodesOnContact &&
+			((*b_it)->isDetectedByPlayer (player) || checkPlayer))
 			return false;
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
 		if (fields[offset].vehicles.size() > 0) return false;
-		if (building)
+		if (b_it != b_end)
 		{
-			//only base buildings and rubbe is allowed on the same field with a vehicle (connectors have been skiped, so doesn't matter here)
-			if (! (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || !building->owner)) return false;
+			// only base buildings and rubble is allowed on the same field with a vehicle
+			// (connectors have been skiped, so doesn't matter here)
+			if ((*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE &&
+				(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA &&
+				(*b_it)->owner) return false;
 		}
 	}
 	else if (vehicleData.factorSea > 0)
 	{
 		if (staticMap->isBlocked (offset)) return false;
 
-		if (!staticMap->isWater (offset) && (!staticMap->isCoast(offset) || vehicleData.factorCoast == 0)) return false;
+		if (!staticMap->isWater (offset) &&
+			(!staticMap->isCoast(offset) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
-		if (player && building && building->owner != player && building->data.explodesOnContact && building->isDetectedByPlayer (player))
+		if (player && b_it != b_end && (*b_it)->owner != player &&
+			(*b_it)->data.explodesOnContact && (*b_it)->isDetectedByPlayer (player))
 			return false;
-
 
 		if (checkPlayer && player && !player->ScanMap[offset]) return true;
 
 		if (fields[offset].vehicles.size() > 0) return false;
 
 		//only bridge and sea mine are allowed on the same field with a ship (connectors have been skiped, so doesn't matter here)
-		if (building && ! (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA))
+		if (b_it != b_end &&
+			(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA &&
+			(*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA)
 		{
 			// if the building is a landmine, we have to check whether it's on a bridge or not
-			if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+			if ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
 			{
-				building++;
-				if (building.end || building->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA) return false;
+				++b_it;
+				if (b_it == b_end || (*b_it)->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE_SEA) return false;
 			}
 			else return false;
 		}
@@ -926,37 +946,32 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	// Check all buildings in this field for a building of the same type. This
 	// will prevent roads, connectors and water platforms from building on top
 	// of themselves.
-	cBuildingIterator bi = field.getBuildings();
-	while (!bi.end)
+	const std::vector<cBuilding*>& buildings = field.getBuildings();
+	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
 	{
-		if (bi->data.ID == buildingData.ID)
+		if ((*it)->data.ID == buildingData.ID)
 		{
 			return false;
 		}
-
-		bi++;
 	}
-
-	// Reset the iterator.
-	bi = field.getBuildings();
 
 	// Determine terrain type
 	bool water = staticMap->isWater (offset);
 	bool coast = staticMap->isCoast (offset);
 	bool ground = !water && !coast;
 
-	while (!bi.end)
+	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
 	{
-		if (buildingData.surfacePosition == bi->data.surfacePosition &&
-			bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
-		switch (bi->data.surfacePosition)
+		if (buildingData.surfacePosition == (*it)->data.surfacePosition &&
+			(*it)->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
+		switch ((*it)->data.surfacePosition)
 		{
 			case sUnitData::SURFACE_POS_GROUND:
 			case sUnitData::SURFACE_POS_ABOVE_SEA: // bridge
 				if (buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
 					buildingData.surfacePosition != sUnitData::SURFACE_POS_BASE && // mine can be placed on bridge
 					buildingData.surfacePosition != sUnitData::SURFACE_POS_BENEATH_SEA && // seamine can be placed under bridge
-					bi->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
+					(*it)->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_NO) return false;
 				break;
 			case sUnitData::SURFACE_POS_BENEATH_SEA: // seamine
 			case sUnitData::SURFACE_POS_ABOVE_BASE:  // landmine
@@ -970,14 +985,15 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 			case sUnitData::SURFACE_POS_ABOVE: // connector
 				break;
 		}
-		bi++;
 	}
 	if ((water && buildingData.factorSea == 0) ||
 		(coast && buildingData.factorCoast == 0) ||
 		(ground && buildingData.factorGround == 0)) return false;
 
 	//can not build on rubble
-	if (bi && !bi->owner && ! (buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE || buildingData.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) return false;
+	if (field.getRubble() &&
+		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
+		buildingData.surfacePosition != sUnitData::SURFACE_POS_ABOVE_BASE) return false;
 
 	if (field.vehicles.size() > 0)
 	{
