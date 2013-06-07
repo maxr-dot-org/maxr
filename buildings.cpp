@@ -1088,9 +1088,9 @@ bool cBuilding::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField
 	int x = mouse->getKachelX (gameGUI);
 	int y = mouse->getKachelY (gameGUI);
 
-	if (OverUnitField->getVehicles())
+	if (OverUnitField->getVehicle())
 	{
-		const cVehicle* v = OverUnitField->getVehicles();
+		const cVehicle* v = OverUnitField->getVehicle();
 
 		if (v->owner != this->owner)
 			return false;
@@ -1180,8 +1180,8 @@ bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition) cons
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
 	int offset = Map->getOffset (x, y);
 
-	if (canLoad (Map->fields[offset].getPlanes(), checkPosition)) return true;
-	else return canLoad (Map->fields[offset].getVehicles(), checkPosition);
+	if (canLoad (Map->fields[offset].getPlane(), checkPosition)) return true;
+	else return canLoad (Map->fields[offset].getVehicle(), checkPosition);
 }
 
 //--------------------------------------------------------------------------

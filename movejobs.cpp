@@ -234,8 +234,8 @@ void cPathCalculator::expandNodes (sPathNode* ParentNode)
 				{
 					// get the blocking unit
 					cVehicle* blockingUnit;
-					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [Map->getOffset (x, y)].getPlanes();
-					else blockingUnit = (*Map) [Map->getOffset (x, y)].getVehicles();
+					if (Vehicle->data.factorAir > 0) blockingUnit = (*Map) [Map->getOffset (x, y)].getPlane();
+					else blockingUnit = (*Map) [Map->getOffset (x, y)].getVehicle();
 					// check whether the blocking unit is the group
 					bool isInGroup = Contains (*group, blockingUnit);
 					if (!isInGroup) continue;

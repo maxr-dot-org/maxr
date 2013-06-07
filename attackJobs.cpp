@@ -43,35 +43,35 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 
 	if ((attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
 	{
-		targetVehicle = (*map) [offset].getPlanes();
+		targetVehicle = (*map) [offset].getPlane();
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicles();
+		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
 		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
 
 		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
 	}
 	else if ( (attackMode & TERRAIN_GROUND) && (attackMode & AREA_SUB))
 	{
-		targetVehicle = (*map) [offset].getPlanes();
+		targetVehicle = (*map) [offset].getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicles();
+		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
 
 		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
 	}
 	else if (attackMode & TERRAIN_GROUND)
 	{
-		targetVehicle = (*map) [offset].getPlanes();
+		targetVehicle = (*map) [offset].getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
 
-		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicles();
+		if (!targetVehicle) targetVehicle = (*map) [offset].getVehicle();
 		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
 
 		if (!targetVehicle) targetBuilding = (*map) [offset].getBuildings();
 	}
 	else if (attackMode & TERRAIN_AIR)
 	{
-		targetVehicle = (*map) [offset].getPlanes();
+		targetVehicle = (*map) [offset].getPlane();
 		if (targetVehicle && targetVehicle->FlightHigh == 0) targetVehicle = NULL;
 	}
 

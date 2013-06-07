@@ -406,7 +406,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	{
 		cServer* server = gameGUI.getClient()->getServer();
 		cVehicle* serverVehicle = NULL;
-		if (server) serverVehicle = server->Map->fields[server->Map->getOffset (PosX, PosY)].getVehicles();
+		if (server) serverVehicle = server->Map->fields[server->Map->getOffset (PosX, PosY)].getVehicle();
 		if (isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
 		if (serverVehicle && serverVehicle->isBeeingAttacked) font->showText (screenPosition.x + 1, screenPosition.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
 		if (attacking) font->showText (screenPosition.x + 1, screenPosition.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
@@ -1324,9 +1324,9 @@ bool cVehicle::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField)
 	if (x < PosX - 1 || x > PosX + 1 || y < PosY - 1 || y > PosY + 1)
 		return false;
 
-	if (OverUnitField->getVehicles())
+	if (OverUnitField->getVehicle())
 	{
-		const cVehicle* v = OverUnitField->getVehicles();
+		const cVehicle* v = OverUnitField->getVehicle();
 
 		if (v == this)
 			return false;
@@ -1581,7 +1581,7 @@ bool cVehicle::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
 	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
 
-	return canLoad (Map->fields[Map->getOffset (x, y)].getVehicles(), checkPosition);
+	return canLoad (Map->fields[Map->getOffset (x, y)].getVehicle(), checkPosition);
 }
 
 //-----------------------------------------------------------------------------
@@ -1662,8 +1662,8 @@ bool cVehicle::canSupply (const cClient& client, int x, int y, int supplyType) c
 		return false;
 
 	cMapField& field = map.fields[map.getOffset (x, y)];
-	if (field.getVehicles()) return canSupply (field.getVehicles(), supplyType);
-	else if (field.getPlanes()) return canSupply (field.getPlanes(), supplyType);
+	if (field.getVehicle()) return canSupply (field.getVehicle(), supplyType);
+	else if (field.getPlane()) return canSupply (field.getPlane(), supplyType);
 	else if (field.getTopBuilding()) return canSupply (field.getTopBuilding(), supplyType);
 
 	return false;
@@ -1766,7 +1766,7 @@ bool cVehicle::canDoCommandoAction (int x, int y, const cMap* map, bool steal) c
 		return false;
 
 	int off = map->getOffset (x, y);
-	const cUnit* vehicle  = map->fields[off].getVehicles();
+	const cUnit* vehicle  = map->fields[off].getVehicle();
 	const cUnit* building = map->fields[off].getBuildings();
 	const cUnit* unit = vehicle ? vehicle : building;
 
@@ -1794,12 +1794,12 @@ void cVehicle::drawCommandoCursor (cGameGUI& gameGUI, int x, int y, bool steal) 
 
 	if (steal)
 	{
-		unit = field.getVehicles();
+		unit = field.getVehicle();
 		sf = GraphicsData.gfx_Csteal;
 	}
 	else
 	{
-		unit = field.getVehicles();
+		unit = field.getVehicle();
 		if (unit == 0)
 			unit = field.getTopBuilding();
 		sf = GraphicsData.gfx_Cdisable;
@@ -2006,7 +2006,7 @@ void cVehicle::makeDetection (cServer& server)
 				if (y < 0 || y >= map.size) continue;
 
 				int offset = map.getOffset (x, y);
-				cVehicle* vehicle = map.fields[offset].getVehicles();
+				cVehicle* vehicle = map.fields[offset].getVehicle();
 				cBuilding* building = map.fields[offset].getMine();
 
 				if (vehicle && vehicle->owner != owner)
@@ -2202,18 +2202,17 @@ bool cVehicle::canLand (const cMap& map) const
 	if (bi.end) return false;
 
 	//is the landing pad already occupied?
-	cVehicleIterator vi = map[map.getOffset (PosX, PosY)].getPlanes();
-	while (!vi.end)
+	const std::vector<cVehicle*>& v = map[map.getOffset (PosX, PosY)].getPlanes();
+	for (std::vector<cVehicle*>::const_iterator it = v.begin(); it != v.end(); ++it)
 	{
-		if (vi->FlightHigh < 64 && vi->iID != iID)
+		const cVehicle& vehicle = **it;
+		if (vehicle.FlightHigh < 64 && vehicle.iID != iID)
 			return false;
-		vi++;
 	}
 
 	//returning true before checking owner, because a stolen vehicle
 	//can stay on an enemy landing pad until it is moved
 	if (FlightHigh == 0) return true;
-
 
 	if (bi->owner != owner) return false;
 

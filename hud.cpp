@@ -304,8 +304,8 @@ void cDebugOutput::trace()
 	y = 18 + 5 + 8;
 	x = 180 + 5;
 
-	if (field->getVehicles()) { traceVehicle (*field->getVehicles(), &y, x); y += 20; }
-	if (field->getPlanes()) { traceVehicle (*field->getPlanes(), &y, x); y += 20; }
+	if (field->getVehicle()) { traceVehicle (*field->getVehicle(), &y, x); y += 20; }
+	if (field->getPlane()) { traceVehicle (*field->getPlane(), &y, x); y += 20; }
 	cBuildingIterator bi = field->getBuildings();
 	while (!bi.end) { traceBuilding (*bi, &y, x); y += 20; bi++;}
 }
@@ -1064,7 +1064,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				}
 
 				//draw vehicle
-				const cVehicle* vehicle = field.getVehicles();
+				const cVehicle* vehicle = field.getVehicle();
 				if (vehicle)
 				{
 					if (!tntChecked() || vehicle->data.canAttack)
@@ -1075,7 +1075,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				}
 
 				//draw plane
-				vehicle = field.getPlanes();
+				vehicle = field.getPlane();
 				if (vehicle)
 				{
 					if (!tntChecked() || vehicle->data.canAttack)
@@ -1411,9 +1411,9 @@ void cGameGUI::updateUnderMouseObject()
 	{
 		selectedVehicle->drawCommandoCursor (*this, x, y, false);
 	}
-	if (overUnitField->getVehicles() != NULL)
+	if (overUnitField->getVehicle() != NULL)
 	{
-		const cVehicle& vehicle = *overUnitField->getVehicles();
+		const cVehicle& vehicle = *overUnitField->getVehicle();
 		// FIXME: displaying ownername to unit name may cause an overdraw on the infobox.
 		// This needs either a seperate infobox or a length check in the future.
 		// that goes for unitnames itself too. -- beko
@@ -1423,9 +1423,9 @@ void cGameGUI::updateUnderMouseObject()
 			drawAttackCursor (x, y);
 		}
 	}
-	else if (overUnitField->getPlanes() != NULL)
+	else if (overUnitField->getPlane() != NULL)
 	{
-		const cVehicle& plane = *overUnitField->getPlanes();
+		const cVehicle& plane = *overUnitField->getPlane();
 		unitNameLabel.setText (plane.getDisplayName() + " (" + plane.owner->name + ")");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
@@ -1645,7 +1645,7 @@ void cGameGUI::updateMouseCursor()
 				mouse->SetCursor (CNo);
 			}
 		}
-		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && (!overUnitField->getVehicles() || !overUnitField->getVehicles()->turnsDisabled))
+		else if (selectedVehicle && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT && selectedVehicle->canDoCommandoAction (mouseMapX, mouseMapY, client->getMap(), false) && (!overUnitField->getVehicle() || !overUnitField->getVehicle()->turnsDisabled))
 		{
 			if (mouse->SetCursor (CDisable))
 			{
@@ -1711,8 +1711,8 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (overUnitField &&
 				 (
-					 overUnitField->getVehicles() ||
-					 overUnitField->getPlanes() ||
+					 overUnitField->getVehicle() ||
+					 overUnitField->getPlane() ||
 					 (
 						 overUnitField->getBuildings() &&
 						 overUnitField->getBuildings()->owner
@@ -1724,23 +1724,23 @@ void cGameGUI::updateMouseCursor()
 					 (
 						 (
 							 selectedVehicle->data.factorAir > 0 ||
-							 overUnitField->getVehicles() ||
+							 overUnitField->getVehicle() ||
 							 (
 								 overUnitField->getTopBuilding() &&
 								 overUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE
 							 ) ||
 							 (
 								 MouseStyle == OldSchool &&
-								 overUnitField->getPlanes()
+								 overUnitField->getPlane()
 							 )
 						 ) &&
 						 (
 							 selectedVehicle->data.factorAir == 0 ||
-							 overUnitField->getPlanes() ||
+							 overUnitField->getPlane() ||
 							 (
 								 MouseStyle == OldSchool &&
 								 (
-									 overUnitField->getVehicles() ||
+									 overUnitField->getVehicle() ||
 									 (
 										 overUnitField->getTopBuilding() &&
 										 overUnitField->getTopBuilding()->data.surfacePosition != sUnitData::SURFACE_POS_ABOVE &&
@@ -1941,8 +1941,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	cBuilding* overBaseBuilding = NULL;
 	if (overUnitField)
 	{
-		overVehicle  = overUnitField->getVehicles();
-		overPlane = overUnitField->getPlanes();
+		overVehicle = overUnitField->getVehicle();
+		overPlane = overUnitField->getPlane();
 		overBuilding = overUnitField->getTopBuilding();
 		overBaseBuilding = overUnitField->getBaseBuilding();
 	}
@@ -1987,75 +1987,54 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				deselectGroup();
 				if (overUnitField && mouseOverSelectedUnit)
 				{
-					cVehicleIterator planes = overUnitField->getPlanes();
-					int next = 0;
+					std::vector<cVehicle*>& planes = overUnitField->getPlanes();
+					cUnit* next = NULL;
 
 					const cVehicle* selectedVehicle = getSelectedVehicle();
 					const cBuilding* selectedBuilding = getSelectedBuilding();
 					if (selectedVehicle)
 					{
-						if (planes.contains (*selectedVehicle))
-						{
-							while (!planes.end)
-							{
-								if (planes == selectedVehicle)
-									break;
-								planes++;
-							}
-							planes++;
+						std::vector<cVehicle*>::iterator it = std::find (planes.begin(), planes.end(), selectedVehicle);
 
-							if (!planes.end) next = 'p';
-							else if (overVehicle) next = 'v';
-							else if (overBuilding) next = 't';
-							else if (overBaseBuilding) next = 'b';
-							else if (planes.size() > 1)
-							{
-								next = 'p';
-								planes.rewind();
-							}
+						if (it == planes.end())
+						{
+							if (overBuilding) next = overBuilding;
+							else if (overBaseBuilding) next = overBaseBuilding;
+							else if (overPlane) next = overPlane;
 						}
 						else
 						{
-							if (overBuilding) next = 't';
-							else if (overBaseBuilding) next = 'b';
-							else if (overPlane) next = 'p';
+							++it;
+
+							if (it != planes.end()) next = *it;
+							else if (overVehicle) next = overVehicle;
+							else if (overBuilding) next = overBuilding;
+							else if (overBaseBuilding) next = overBaseBuilding;
+							else if (planes.size() > 1)
+							{
+								next = planes[0];
+							}
 						}
 					}
 					else if (selectedBuilding)
 					{
 						if (overBuilding == selectedBuilding)
 						{
-							if (overBaseBuilding) next = 'b';
-							else if (overPlane) next = 'p';
-							else if (overUnitField->getVehicles()) next = 'v';
+							if (overBaseBuilding) next = overBaseBuilding;
+							else if (overPlane) next = overPlane;
+							else if (overVehicle) next = overVehicle;
 						}
 						else
 						{
-							if (overPlane) next = 'p';
-							else if (overUnitField->getVehicles()) next = 'v';
-							else if (overBuilding) next = 't';
+							if (overPlane) next = overPlane;
+							else if (overVehicle) next = overVehicle;
+							else if (overBuilding) next = overBuilding;
 						}
 					}
 
 					deselectUnit();
 
-					switch (next)
-					{
-						case 't':
-							selectUnit (*overBuilding);
-							break;
-						case 'b':
-							selectUnit (*overBaseBuilding);
-							break;
-						case 'v':
-							selectUnit (*overVehicle);
-							break;
-						case 'p':
-							selectUnit (*planes);
-							break;
-						default:
-							break;
-					}
+					if (next) selectUnit (*next);
 				}
 				else
 				{
@@ -2300,7 +2279,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				else if (overUnitField)
 				{
 					// open unit menu
-					if (changeAllowed && selectedVehicle && (overUnitField->getPlanes().contains (*selectedVehicle) || overVehicle == selectedVehicle))
+					if (changeAllowed && selectedVehicle && (Contains (overUnitField->getPlanes(), selectedVehicle) || overVehicle == selectedVehicle))
 					{
 						if (!selectedVehicle->moving)
 						{
@@ -2697,13 +2676,13 @@ void cGameGUI::selectUnit_building (cBuilding& building)
 bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
 {
 	deselectGroup();
-	cVehicle* plane = OverUnitField->getPlanes();
+	cVehicle* plane = OverUnitField->getPlane();
 	if (plane && !plane->moving)
 	{
 		selectUnit_vehicle (*plane);
 		return true;
 	}
-	cVehicle* vehicle = OverUnitField->getVehicles();
+	cVehicle* vehicle = OverUnitField->getVehicle();
 	if (vehicle && !vehicle->moving && !(plane && (unitMenuActive || vehicle->owner != player)))
 	{
 		selectUnit_vehicle (*vehicle);
@@ -2743,8 +2722,8 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 		{
 			int offset = x + y * map->size;
 
-			cVehicle* vehicle = (*map) [offset].getVehicles();
-			if (!vehicle || vehicle->owner != player) vehicle = (*map) [offset].getPlanes();
+			cVehicle* vehicle = (*map) [offset].getVehicle();
+			if (!vehicle || vehicle->owner != player) vehicle = (*map) [offset].getPlane();
 
 			if (vehicle && vehicle->owner == player && !vehicle->IsBuilding && !vehicle->IsClearing && !vehicle->moving)
 			{
@@ -3689,7 +3668,7 @@ void cGameGUI::drawShips (int startX, int startY, int endX, int endY, int zoomOf
 		{
 			if (player->ScanMap[pos])
 			{
-				cVehicle* vehicle = map->fields[pos].getVehicles();
+				cVehicle* vehicle = map->fields[pos].getVehicle();
 				if (vehicle && vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 				{
 					vehicle->draw (dest, *this);
@@ -3737,7 +3716,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 				}
 				while (!building.end);
 
-				cVehicle* vehicle = map->fields[pos].getVehicles();
+				cVehicle* vehicle = map->fields[pos].getVehicle();
 				if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player->ScanMap[pos] || (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->size]) || (x < endX && y < endY && player->ScanMap[pos + map->size + 1])))
 				{
 					if (vehicle->PosX == x && vehicle->PosY == y) //make sure a big vehicle is drawn only once
@@ -3766,7 +3745,7 @@ void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoo
 		{
 			if (player->ScanMap[pos])
 			{
-				cVehicle* vehicle = map->fields[pos].getVehicles();
+				cVehicle* vehicle = map->fields[pos].getVehicle();
 				if (vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
 				{
 					vehicle->draw (dest, *this);
@@ -3818,12 +3797,13 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 		{
 			if (player->ScanMap[pos])
 			{
-				cVehicleIterator planes = map->fields[pos].getPlanes();
-				planes.setToEnd();
-				while (!planes.rend)
+				std::vector<cVehicle*>& planes = map->fields[pos].getPlanes();
+				for (std::vector<cVehicle*>::reverse_iterator it = planes.rbegin();
+					it != planes.rend();
+					++it)
 				{
-					planes->draw (dest, *this);
-					planes--;
+					cVehicle& plane = **it;
+					plane.draw(dest, *this);
 				}
 			}
 			pos++;

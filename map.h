@@ -65,15 +65,11 @@ public:
 	/** go to previous vehicle on this field */
 	cMapIterator operator-- (int);
 	operator T* () const;
-	void setToEnd();
-	void rewind();
-	bool contains (const T& v) const;
 	size_t getIndex() const;
 	bool end;
 	bool rend;
 };
 
-typedef cMapIterator<cVehicle> cVehicleIterator;
 typedef cMapIterator<cBuilding> cBuildingIterator;
 
 template <typename T>
@@ -166,43 +162,6 @@ cMapIterator<T>::operator T* () const
 }
 
 template <typename T>
-void cMapIterator<T>::setToEnd()
-{
-	if (list->size() > 0)
-	{
-		index = list->size() - 1;
-	}
-	else
-	{
-		index = 0;
-		end = true;
-		rend = true;
-	}
-}
-
-template <typename T>
-void cMapIterator<T>::rewind()
-{
-	index = 0;
-	if (list->size() == 0)
-	{
-		rend = true;
-		end = true;
-	}
-	else
-	{
-		rend = false;
-		end = false;
-	}
-}
-
-template <typename T>
-bool cMapIterator<T>::contains (const T& v) const
-{
-	return Contains (*list, &v);
-}
-
-template <typename T>
 size_t cMapIterator<T>::getIndex() const
 {
 	return index;
@@ -225,10 +184,12 @@ private:
 
 public:
 
-	/** returns a Iterator for the vehicles on this field */
-	cVehicleIterator getVehicles();
+	/** returns the top vehicle on this field */
+	cVehicle* getVehicle();
 	/** returns a Iterator for the planes on this field */
-	cVehicleIterator getPlanes();
+	cVehicle* getPlane();
+	/** returns a Iterator for the planes on this field */
+	std::vector<cVehicle*>& getPlanes();
 	/** returns a Iterator for the buildings on this field */
 	cBuildingIterator getBuildings();
 

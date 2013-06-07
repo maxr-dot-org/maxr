@@ -2158,7 +2158,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 			if (!Map->possiblePlaceVehicle (Vehicle->data, iX + k, iY + i, Player)) continue;
 
 			addUnit (iX + k, iY + i, Vehicle, Player, true);
-			VehcilePtr = (*Map) [Map->getOffset (iX + k, iY + i)].getVehicles();
+			VehcilePtr = (*Map) [Map->getOffset (iX + k, iY + i)].getVehicle();
 			return VehcilePtr;
 		}
 	}
@@ -3743,7 +3743,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	if (vehicleData.factorAir > 0) return;
 
 	//first look for an undetected stealth unit
-	cVehicle* stealthVehicle = Map->fields[Map->getOffset (PosX, PosY)].getVehicles();
+	cVehicle* stealthVehicle = Map->fields[Map->getOffset (PosX, PosY)].getVehicle();
 	if (!stealthVehicle) return;
 	if (stealthVehicle->owner == vehicleOwner) return;
 	if (stealthVehicle->data.isStealthOn == TERRAIN_NONE) return;

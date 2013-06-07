@@ -861,13 +861,13 @@ void cPlayer::toggelLock (cMapField* OverUnitField)
 	{
 		unit = OverUnitField->getTopBuilding();
 	}
-	if (OverUnitField->getVehicles() && OverUnitField->getVehicles()->owner != this)
+	if (OverUnitField->getVehicle() && OverUnitField->getVehicle()->owner != this)
 	{
-		unit = OverUnitField->getVehicles();
+		unit = OverUnitField->getVehicle();
 	}
-	if (OverUnitField->getPlanes() && OverUnitField->getPlanes()->owner != this)
+	if (OverUnitField->getPlane() && OverUnitField->getPlane()->owner != this)
 	{
-		unit = OverUnitField->getPlanes();
+		unit = OverUnitField->getPlane();
 	}
 
 	if (unit == NULL) return;

@@ -33,16 +33,21 @@ sTerrain::sTerrain() :
 	blocked (false)
 {}
 
-cVehicleIterator cMapField::getVehicles()
+cVehicle* cMapField::getVehicle()
 {
-	cVehicleIterator v (&vehicles);
-	return v;
+	if (vehicles.empty()) return NULL;
+	return vehicles[0];
 }
 
-cVehicleIterator cMapField::getPlanes()
+cVehicle* cMapField::getPlane()
 {
-	cVehicleIterator v (&planes);
-	return v;
+	if (planes.empty()) return NULL;
+	return planes[0];
+}
+
+std::vector<cVehicle*>& cMapField::getPlanes()
+{
+	return planes;
 }
 
 cBuildingIterator cMapField::getBuildings()
