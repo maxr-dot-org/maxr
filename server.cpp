@@ -2151,6 +2151,17 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 }
 
 //-------------------------------------------------------------------------------------
+void cServer::placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings)
+{
+	for (size_t i = 0; i != landData.size(); ++i)
+	{
+		correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
+		Map->placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings.resFrequency);
+	}
+	Map->placeRessources (settings.metal, settings.oil, settings.gold);
+}
+
+//-------------------------------------------------------------------------------------
 cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicle* Vehicle, cPlayer* Player)
 {
 	cVehicle* VehcilePtr = NULL;

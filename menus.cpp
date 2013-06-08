@@ -140,11 +140,14 @@ cGameDataContainer::~cGameDataContainer()
 void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 {
 	if (savegameNum >= 0)
-	{
 		runSavedGame (network, playerNr);
-		return;
-	}
+	else
+		runNewGame (network, playerNr, reconnect);
+}
 
+//------------------------------------------------------------------------------
+void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect)
+{
 	cPlayer* actPlayer = NULL;
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
@@ -156,7 +159,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 
 	AutoPtr<cMap>::type serverMap (NULL);
 	std::vector<cPlayer*> serverPlayers;
-	cServer* server = NULL;
+	AutoPtr<cServer>::type server (NULL);
 	if (isServer)
 	{
 		serverMap = new cMap (*map);
@@ -164,7 +167,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 		// copy playerlist for server
 		for (unsigned int i = 0; i < players.size(); i++)
 		{
-			serverPlayers.push_back (new cPlayer ( (*players[i])));
+			serverPlayers.push_back (new cPlayer (*players[i]));
 
 			// TODO: move this in cServer.
 			serverPlayers[i]->initMaps (*serverMap);
@@ -186,12 +189,7 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 			sendVictoryConditions (*server, nTurns, nScore, players[n]);
 
 		// place resources
-		for (unsigned int i = 0; i < players.size(); i++)
-		{
-			server->correctLandingPos (landData[i]->iLandX, landData[i]->iLandY);
-			serverMap->placeRessourcesAddPlayer (landData[i]->iLandX, landData[i]->iLandY, settings->resFrequency);
-		}
-		serverMap->placeRessources (settings->metal, settings->oil, settings->gold);
+		server->placeInitialResources (landData, *settings);
 	}
 
 	// init client and his players
@@ -232,9 +230,6 @@ void cGameDataContainer::runGame (cTCP* network, int playerNr, bool reconnect)
 	}
 	delete Client;
 	Client = NULL;
-
-	delete server;
-	server = NULL;
 }
 
 //------------------------------------------------------------------------------

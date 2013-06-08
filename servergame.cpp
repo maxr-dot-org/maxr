@@ -502,13 +502,7 @@ void cServerGame::startGameServer()
 		sendVictoryConditions (*server, nTurns, nScore, gameData->players[n]);
 
 	// place resources
-	for (unsigned int i = 0; i < gameData->players.size(); i++)
-	{
-		server->correctLandingPos (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY);
-		serverMap->placeRessourcesAddPlayer (gameData->landData[i]->iLandX, gameData->landData[i]->iLandY, gameData->settings->resFrequency);
-	}
-	serverMap->placeRessources (gameData->settings->metal, gameData->settings->oil, gameData->settings->gold);
-
+	server->placeInitialResources (gameData->landData, *gameData->settings);
 
 	// send clan info to clients
 	if (gameData->settings->clans == SETTING_CLANS_ON)

@@ -27,16 +27,18 @@
 #include "gametimer.h"
 #include <vector>
 
+class cBuilding;
+class cCasualtiesTracker;
+class cJob;
+class cNetMessage;
 class cPlayer;
 class cServerAttackJob;
 class cServerMoveJob;
-class cNetMessage;
-class cBuilding;
 class cTCP;
 class cUnit;
+struct sClientLandData;
+struct sSettings;
 struct sVehicle;
-class cCasualtiesTracker;
-class cJob;
 
 /**
 * The Types which are possible for a game
@@ -442,6 +444,10 @@ public:
 	*/
 	cVehicle* addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlayer* Player, bool bInit = false, bool bAddToMap = true, unsigned int ID = 0);
 	cBuilding* addUnit (int iPosX, int iPosY, const sBuilding* Building, cPlayer* Player, bool bInit = false, unsigned int ID = 0);
+
+
+	void placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings);
+
 	/**
 	* lands all units at the given position
 	*@author alzi alias DoctorDeath

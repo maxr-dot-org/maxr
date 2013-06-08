@@ -228,6 +228,9 @@ private:
 	 *@author alzi
 	 */
 	void runSavedGame (cTCP* network, int player);
+
+	void runNewGame (cTCP* network, int playerNr, bool reconnect);
+
 private:
 	cEventHandling* eventHandler;
 };
