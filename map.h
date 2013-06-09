@@ -113,7 +113,7 @@ public:
 
 	bool isValidPos (int x, int y) const;
 
-	bool isWater (int x, int y, bool not_coast) const;
+	bool isWater (int x, int y) const;
 	bool isBlocked(int offset) const;
 	bool isCoast (int offset) const;
 	bool isWater (int offset) const;
@@ -148,8 +148,14 @@ public:
 	int getSize() const { return staticMap->getSize(); }
 	int getOffset (int x, int y) const { return staticMap->getOffset (x, y);}
 	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
+	bool isValidOffset (int offset) const;
 
-	bool isWater (int x, int y, bool not_coast = false) const { return staticMap->isWater(x, y, not_coast); }
+	bool isBlocked(int offset) const { return staticMap->isBlocked (offset); }
+	bool isCoast (int offset) const { return staticMap->isCoast (offset); }
+	bool isWater (int offset) const { return staticMap->isWater (offset); }
+	bool isCoast (int x, int y) const { return staticMap->isCoast (getOffset (x, y)); }
+	bool isWater (int x, int y) const { return staticMap->isWater (x, y); }
+	bool isWaterOrCoast (int x, int y) const;
 
 	const sResources& getResource (int offset) const { return Resources[offset]; }
 	const sResources& getResource (int x, int y) const { return Resources[getOffset (x, y)]; }

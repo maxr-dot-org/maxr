@@ -2257,7 +2257,7 @@ void cClient::destroyUnit (cVehicle* vehicle)
 	{
 		addFx (new cFxExploAir( vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
-	else if (getMap()->isWater (vehicle->PosX, vehicle->PosY))
+	else if (getMap()->isWaterOrCoast (vehicle->PosX, vehicle->PosY))
 	{
 		addFx (new cFxExploWater (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}

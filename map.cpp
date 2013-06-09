@@ -135,7 +135,7 @@ bool cStaticMap::isCoast(int offset) const
 	return terrains[Kacheln[offset]].coast;
 }
 
-bool cStaticMap::isWater(int offset) const
+bool cStaticMap::isWater (int offset) const
 {
 	return terrains[Kacheln[offset]].water;
 }
@@ -145,15 +145,9 @@ bool cStaticMap::isValidPos (int x, int y) const
 	return 0 <= x && x < size && 0 <= y && y < size;
 }
 
-bool cStaticMap::isWater (int x, int y, bool not_coast) const
+bool cStaticMap::isWater (int x, int y) const
 {
-	const int off = getOffset (x, y);
-	const sTerrain& terrainType = terrains[Kacheln[off]];
-
-	if (!terrainType.water && !terrainType.coast) return false;
-
-	if (not_coast) return terrainType.water;
-	else return terrainType.water || terrainType.coast;
+	return isWater (getOffset (x, y));
 }
 
 void cStaticMap::clear()
@@ -443,6 +437,16 @@ cMapField& cMap::operator[] (unsigned int offset) const
 	return fields[offset];
 }
 
+bool cMap::isWaterOrCoast (int x, int y) const
+{
+	const sTerrain& terrainType = staticMap->getTerrain (x, y);
+	return terrainType.water | terrainType.coast;
+}
+
+bool cMap::isValidOffset (int offset) const
+{
+	return 0 <= offset && offset < getSize() * getSize();
+}
 
 // Platziert die Ressourcen für einen Spieler.
 void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
@@ -455,7 +459,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 		resSpotTypes = new int[resSpotCount];
 	}
 	resSpotTypes[resCurrentSpotCount] = RES_METAL;
-	resSpots[resCurrentSpotCount] = T_2<int> ( (x&~1) + (RES_METAL % 2), (y&~1) + ( (RES_METAL / 2) % 2));
+	resSpots[resCurrentSpotCount] = T_2<int> ((x & ~1) + (RES_METAL % 2), (y & ~1) + ((RES_METAL / 2) % 2));
 	resCurrentSpotCount++;
 }
 
@@ -523,7 +527,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 	frequencies[RES_GOLD] = gold;
 
 	int playerCount = resCurrentSpotCount;
-	// create remaining resource possitions
+	// create remaining resource positions
 	while (resCurrentSpotCount < resSpotCount)
 	{
 		T_2<int> pos;
@@ -594,7 +598,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 		resSpots[i].x += type % 2;
 		resSpots[i].y += (type / 2) % 2;
 
-		resSpotTypes[i] = ( (resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
+		resSpotTypes[i] = ((resSpots[i].y % 2) * 2) + (resSpots[i].x % 2);
 	}
 	// Resourcen platzieren
 	for (int i = 0; i < resSpotCount; i++)
@@ -616,7 +620,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 				int index = getOffset (absPos.x, absPos.y);
 				if (type != RES_NONE &&
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
-					!staticMap->isBlocked(index))
+					!isBlocked(index))
 				{
 					Resources[index].typ = type;
 					if (i >= playerCount)
@@ -865,10 +869,10 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	}
 	if (vehicleData.factorGround > 0)
 	{
-		if (staticMap->isBlocked (offset)) return false;
+		if (isBlocked (offset)) return false;
 
-		if ((staticMap->isWater (offset) && vehicleData.factorSea == 0) ||
-			(staticMap->isCoast (offset) && vehicleData.factorCoast == 0))
+		if ((isWater (offset) && vehicleData.factorSea == 0) ||
+			(isCoast (offset) && vehicleData.factorCoast == 0))
 		{
 			if (checkPlayer && player && !player->ScanMap[offset]) return false;
 
@@ -900,10 +904,10 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 	}
 	else if (vehicleData.factorSea > 0)
 	{
-		if (staticMap->isBlocked (offset)) return false;
+		if (isBlocked (offset)) return false;
 
-		if (!staticMap->isWater (offset) &&
-			(!staticMap->isCoast(offset) || vehicleData.factorCoast == 0)) return false;
+		if (!isWater (offset) &&
+			(!isCoast(offset) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->owner != player &&
@@ -945,8 +949,8 @@ bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x
 
 bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const
 {
-	if (offset < 0 || offset >= getSize() * getSize()) return false;
-	if (staticMap->isBlocked (offset)) return false;
+	if (isValidOffset (offset) == false) return false;
+	if (isBlocked (offset)) return false;
 	cMapField& field = fields[offset];
 
 	// Check all buildings in this field for a building of the same type. This
@@ -962,8 +966,8 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 	}
 
 	// Determine terrain type
-	bool water = staticMap->isWater (offset);
-	bool coast = staticMap->isCoast (offset);
+	bool water = isWater (offset);
+	bool coast = isCoast (offset);
 	bool ground = !water && !coast;
 
 	for (std::vector<cBuilding*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it)

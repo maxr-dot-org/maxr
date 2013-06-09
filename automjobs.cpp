@@ -180,7 +180,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 		{
 			const int iPos = map.getOffset (x, y);
 
-			if (vehicle->owner->ResourceMap[iPos] == 0) //&& !map.staticMap->isBlocked(iPos))
+			if (vehicle->owner->ResourceMap[iPos] == 0) //&& !map.isBlocked(iPos))
 			{
 				NrSurvFields++;
 			}

@@ -174,7 +174,7 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 			StartUp = 0;
 
 		//max StartUp value for undetected stealth units is 100, because they stay half visible
-		if ( (data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY, true) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
+		if ((data.isStealthOn & TERRAIN_SEA) && gameGUI.getClient()->getMap()->isWater (PosX, PosY) && detectedByPlayerList.size() == 0 && owner == gameGUI.getClient()->getActivePlayer())
 		{
 			if (StartUp > 100) StartUp = 0;
 		}
@@ -452,7 +452,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		//draw beton if nessesary
 		tmp = dest;
 		const cMap& map = *client->getMap();
-		if (IsBuilding && data.isBig && (!map.isWater (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
+		if (IsBuilding && data.isBig && (!map.isWaterOrCoast (PosX, PosY) || map.fields[map.getOffset (PosX, PosY)].getBaseBuilding()))
 		{
 			SDL_SetAlpha (GraphicsData.gfx_big_beton, SDL_SRCALPHA, BigBetonAlpha);
 			CHECK_SCALING (GraphicsData.gfx_big_beton, GraphicsData.gfx_big_beton_org, zoomFactor);
@@ -513,7 +513,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 
 	// draw shadow
 	tmp = dest;
-	if (drawShadow && !((data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY, true)))
+	if (drawShadow && !((data.isStealthOn & TERRAIN_SEA) && client && client->getMap()->isWater (PosX, PosY)))
 	{
 		if (StartUp && cSettings::getInstance().isAlphaEffects()) SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, StartUp / 5);
 		else SDL_SetAlpha (typ->shw[dir], SDL_SRCALPHA, 50);
@@ -567,9 +567,10 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		else
 		{
 			const cMap& map = *client->getMap();
-			bool water = map.isWater (PosX, PosY, true);
-			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
-			//because the vehicle will drive on the bridge
+			bool water = map.isWater (PosX, PosY);
+			// if the vehicle can also drive on land, we have to check,
+			// whether there is a brige, platform, etc.
+			// because the vehicle will drive on the bridge
 			cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
 			if (building && data.factorGround > 0 && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) water = false;
 
@@ -958,7 +959,7 @@ int cVehicle::playStream (const cGameGUI& gameGUI)
 	const cClient& client = *gameGUI.getClient();
 	const cMap& map = *client.getMap();
 	const cBuilding* building = map[map.getOffset (PosX, PosY)].getBaseBuilding();
-	bool water = map.isWater (PosX, PosY, true);
+	bool water = map.isWater (PosX, PosY);
 	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 	if (IsBuilding && (BuildRounds || client.getActivePlayer() != owner))
@@ -978,7 +979,7 @@ void cVehicle::StartMoveSound(cGameGUI& gameGUI)
 {
 	const cMap& map = *gameGUI.getClient()->getMap();
 	const cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
-	bool water = map.isWater (PosX, PosY, true);
+	bool water = map.isWater (PosX, PosY);
 	if (data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 	StopFXLoop (gameGUI.iObjectStream);
 
@@ -1953,8 +1954,8 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			cPlayer* player = playerList[i];
 			if (player == owner)
 				continue;
-			bool isOnWater = map.isWater (PosX, PosY, true);
-			bool isOnCoast = map.isWater (PosX, PosY) && (isOnWater == false);
+			bool isOnWater = map.isWater (PosX, PosY);
+			bool isOnCoast = map.isCoast (PosX, PosY) && (isOnWater == false);
 
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge

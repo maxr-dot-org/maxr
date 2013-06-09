@@ -371,8 +371,8 @@ int cPathCalculator::calcNextCost (int srcX, int srcY, int destX, int destY) con
 	int offset = Map->getOffset (destX, destY);
 	const cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
-	if (Map->staticMap->isWater(offset) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
-	else if (Map->staticMap->isCoast(offset) && !building && Vehicle->data.factorCoast > 0) costs = (int) (4 * Vehicle->data.factorCoast);
+	if (Map->isWater (offset) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
+	else if (Map->isCoast (offset) && !building && Vehicle->data.factorCoast > 0) costs = (int) (4 * Vehicle->data.factorCoast);
 	else if (Vehicle->data.factorGround > 0) costs = (int) (4 * Vehicle->data.factorGround);
 	else
 	{
@@ -686,8 +686,8 @@ bool cServerMoveJob::checkMove()
 	//reset detected flag, when a water stealth unit drives into the water
 	if (Vehicle->data.isStealthOn & TERRAIN_SEA && Vehicle->data.factorGround)
 	{
-		bool wasOnLand = !Map->isWater (Waypoints->X, Waypoints->Y, true);
-		bool driveIntoWater = Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
+		bool wasOnLand = !Map->isWater (Waypoints->X, Waypoints->Y);
+		bool driveIntoWater = Map->isWater (Waypoints->next->X, Waypoints->next->Y);
 
 		if (wasOnLand && driveIntoWater)
 		{
@@ -1150,8 +1150,8 @@ void cClientMoveJob::moveVehicle()
 		//restart movesound, when drinving into or out of water
 		if (Vehicle == client->gameGUI.getSelectedUnit())
 		{
-			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y, true);
-			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y, true);
+			bool wasWater = Map->isWater (Waypoints->X, Waypoints->Y);
+			bool water = Map->isWater (Waypoints->next->X, Waypoints->next->Y);
 
 			if (wasWater != water)
 			{
@@ -1178,8 +1178,8 @@ void cClientMoveJob::moveVehicle()
 	else iSpeed = MOVE_SPEED;
 
 	// Ggf Tracks malen:
-	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWater (Vehicle->PosX, Vehicle->PosY, false) && !
-		(Waypoints && Waypoints->next && Map->staticMap->isWater(Map->getOffset (Waypoints->next->X, Waypoints->next->Y))) &&
+	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->PosX, Vehicle->PosY) && !
+		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->X, Waypoints->next->Y)) &&
 		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->ScanMap[Map->getOffset (Vehicle->PosX, Vehicle->PosY)]))
 	{
 		if (abs (Vehicle->OffX) == 64 || abs (Vehicle->OffY) == 64)
@@ -1324,7 +1324,7 @@ void cClientMoveJob::stopMoveSound()
 	if (Vehicle == gameGUI.getSelectedUnit())
 	{
 		cBuilding* building = Map->fields[Map->getOffset (Vehicle->PosX, Vehicle->PosY)].getBaseBuilding();
-		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY, true);
+		bool water = Map->isWater (Vehicle->PosX, Vehicle->PosY);
 		if (Vehicle->data.factorGround > 0 && building && (building->data.surfacePosition == sUnitData::SURFACE_POS_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)) water = false;
 
 		StopFXLoop (gameGUI.iObjectStream);

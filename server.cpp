@@ -478,7 +478,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	else
 	{
 		const int offset = message.popInt32();
-		if (offset < 0 || offset > Map->getSize() * Map->getSize())
+		if (Map->isValidOffset (offset) == false)
 		{
 			Log.write (" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
@@ -499,7 +499,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 
 	//find target offset
 	int targetOffset = message.popInt32();
-	if (targetOffset < 0 || targetOffset > Map->getSize() * Map->getSize())
+	if (Map->isValidOffset (targetOffset) == false)
 	{
 		Log.write (" Server: Invalid target offset!", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -629,7 +629,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 		return;
 	}
 
-	if (iBuildOff < 0 || iBuildOff >= Map->getSize() * Map->getSize()) return;
+	if (Map->isValidOffset (iBuildOff) == false) return;
 	int buildX = iBuildOff % Map->getSize();
 	int buildY = iBuildOff / Map->getSize();
 	int oldPosX = Vehicle->PosX;
@@ -644,10 +644,10 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 		sideStepStealthUnit (buildX    , buildY + 1, Vehicle, iBuildOff);
 		sideStepStealthUnit (buildX + 1, buildY + 1, Vehicle, iBuildOff);
 
-		if (! (Map->possiblePlaceBuilding (Data, buildX,     buildY    , Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX + 1, buildY    , Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX,     buildY + 1, Vehicle) &&
-			   Map->possiblePlaceBuilding (Data, buildX + 1, buildY + 1, Vehicle)))
+		if (!(Map->possiblePlaceBuilding (Data, buildX,     buildY    , Vehicle) &&
+			  Map->possiblePlaceBuilding (Data, buildX + 1, buildY    , Vehicle) &&
+			  Map->possiblePlaceBuilding (Data, buildX,     buildY + 1, Vehicle) &&
+			  Map->possiblePlaceBuilding (Data, buildX + 1, buildY + 1, Vehicle)))
 		{
 			sendBuildAnswer (*this, false, *Vehicle);
 			return;
@@ -672,7 +672,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildingTyp = BuildingTyp;
 	const bool bBuildPath = message.popBool();
 	iPathOff = message.popInt32();
-	if (iPathOff < 0 || iPathOff >= Map->getSize() * Map->getSize()) return;
+	if (Map->isValidOffset (iPathOff) == false) return;
 	Vehicle->BandX = iPathOff % Map->getSize();
 	Vehicle->BandY = iPathOff / Map->getSize();
 
@@ -902,14 +902,14 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 		std::vector<cBuilding*>::iterator b_end = buildings.end();
 		while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-		if (!Map->isWater (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
-		else if (Map->isWater (iX, iY) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+		if (!Map->isWaterOrCoast (iX, iY) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) bLand = true;
+		else if (Map->isWaterOrCoast (iX, iY) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 		{
 			bLand = true;
 			bWater = true;
 			break;
 		}
-		else if (Map->isWater (iX, iY)) bWater = true;
+		else if (Map->isWaterOrCoast (iX, iY)) bWater = true;
 	}
 
 	// reset building status
@@ -3415,7 +3415,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 {
 	if (value <= 0) value = 1;
 
-	if (Map->isWater (x, y))
+	if (Map->isWaterOrCoast (x, y))
 	{
 		if (big)
 		{
@@ -3426,8 +3426,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	if (big &&
-		Map->isWater (x + 1, y))
+	if (big && Map->isWaterOrCoast (x + 1, y))
 	{
 		addRubble (x    , y    , value / 4, false);
 		addRubble (x    , y + 1, value / 4, false);
@@ -3435,8 +3434,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	if (big &&
-		Map->isWater (x, y + 1))
+	if (big && Map->isWaterOrCoast (x, y + 1))
 	{
 		addRubble (x    , y    , value / 4, false);
 		addRubble (x + 1, y    , value / 4, false);
@@ -3444,8 +3442,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 		return;
 	}
 
-	if (big &&
-		Map->isWater (x + 1, y + 1))
+	if (big && Map->isWaterOrCoast (x + 1, y + 1))
 	{
 		addRubble (x    , y    , value / 4, false);
 		addRubble (x + 1, y    , value / 4, false);
@@ -3809,7 +3806,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
 					if ((*PlayerList)[i]->DetectLandMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
-				if (Map->isWater (x, y, true)) detectOnDest = true;
+				if (Map->isWater (x, y)) detectOnDest = true;
 			}
 			if (stealthVehicle->data.isStealthOn & TERRAIN_SEA)
 			{
@@ -3818,7 +3815,7 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
 					if ((*PlayerList)[i]->DetectSeaMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
-				if (!Map->isWater (x, y, true)) detectOnDest = true;
+				if (!Map->isWater (x, y)) detectOnDest = true;
 
 				if (stealthVehicle->data.factorGround > 0 && stealthVehicle->data.factorSea > 0)
 				{

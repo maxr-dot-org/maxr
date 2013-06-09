@@ -41,9 +41,9 @@ void sDrawingCacheEntry::init (const cGameGUI& gameGUI, const cVehicle& vehicle)
 		frame = gameGUI.getAnimationSpeed() % 4;
 
 	const cMap& map = *gameGUI.getClient()->getMap();
-	water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+	water = map.isWaterOrCoast (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 
-	bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY, true);
+	bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY);
 	//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 	//because the vehicle will drive on the bridge
 	cBuilding* building = map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
@@ -208,7 +208,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 
 		if (entry.zoom != gameGUI->getZoom()) continue;
 
-		bool water = map.isWater (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
+		bool water = map.isWaterOrCoast (vehicle.PosX, vehicle.PosY) && !map.fields[map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 		if (vehicle.IsBuilding)
 		{
 			if (water != entry.water) continue;
@@ -217,7 +217,7 @@ SDL_Surface* cDrawingCache::getCachedImage (const cVehicle& vehicle)
 		//check the stealth flag
 		bool stealth = false;
 
-		bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY, true);
+		bool isOnWaterAndNotCoast = map.isWater (vehicle.PosX, vehicle.PosY);
 		const cBuilding* building = map.fields [map.getOffset (vehicle.PosX, vehicle.PosY)].getBaseBuilding();
 		if (vehicle.data.factorGround > 0 && building
 			&& (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA

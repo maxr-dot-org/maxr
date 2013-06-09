@@ -4236,7 +4236,7 @@ bool cBuildingsBuildMenu::selListDoubleClicked (cMenuUnitsList* list, void* pare
 //------------------------------------------------------------------------------
 cVehiclesBuildMenu::cVehiclesBuildMenu (const cGameGUI& gameGUI_, cPlayer* player_, cBuilding* building_)
 	: cHangarMenu (LoadPCX (GFXOD_FAC_BUILD_SCREEN), player_, MNU_BG_ALPHA)
-	, cAdvListHangarMenu (gameGUI->getClient(), NULL, player_), gameGUI (&gameGUI_)
+	, cAdvListHangarMenu (gameGUI_.getClient(), NULL, player_), gameGUI (&gameGUI_)
 {
 	building = building_;
 
@@ -4306,14 +4306,14 @@ void cVehiclesBuildMenu::generateSelectionList()
 
 			while (b_it != b_end && ((*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE || (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)) ++b_it;
 
-			if (!map.isWater (x, y) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
-			else if (map.isWater (x, y) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
+			if (!map.isWaterOrCoast (x, y) || (b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_BASE)) land = true;
+			else if (map.isWaterOrCoast (x, y) && b_it != b_end && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 			{
 				land = true;
 				water = true;
 				break;
 			}
-			else if (map.isWater (x, y)) water = true;
+			else if (map.isWaterOrCoast (x, y)) water = true;
 		}
 
 		if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0 && !water) continue;

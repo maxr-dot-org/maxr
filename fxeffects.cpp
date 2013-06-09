@@ -176,7 +176,7 @@ cFxExploBig::cFxExploBig(int x, int y) :
 void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 {
 	const cMap& map = *gameGUI.getClient()->getMap();
-	if (map.isWater (posX / 64, posY / 64))
+	if (map.isWaterOrCoast (posX / 64, posY / 64))
 	{
 		if (random (2))
 		{

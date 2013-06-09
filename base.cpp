@@ -1031,7 +1031,7 @@ cBase::~cBase()
 
 sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 {
-	if (iOff < 0 || iOff >= map->getSize() * map->getSize()) return NULL;
+	if (map->isValidOffset (iOff) == false) return NULL;
 	cBuilding* b = map->fields[iOff].getBuilding();
 
 	if (b && b->owner == building.owner && b->SubBase)

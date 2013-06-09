@@ -1165,7 +1165,7 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (off < 0) return false;
 	if (checkRange && isInRange (x, y) == false) return false;
 
-	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWater (x, y) == false)
+	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWaterOrCoast (x, y) == false)
 		return false;
 
 	cVehicle* targetVehicle = 0;

@@ -1608,7 +1608,7 @@ void cGameGUI::updateMouseCursor()
 		}
 		else if (selectedVehicle && mouseInputMode == mouseInputAttackMode && selectedVehicle->owner == client->getActivePlayer() && x >= HUD_LEFT_WIDTH && y >= HUD_TOP_HIGHT && x < Video.getResolutionX() - HUD_RIGHT_WIDTH && y < Video.getResolutionY() - HUD_BOTTOM_HIGHT)
 		{
-			if (!(selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !client->getMap()->isWater (mouseMapX, mouseMapY)))
+			if (!(selectedVehicle->data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && !client->getMap()->isWaterOrCoast (mouseMapX, mouseMapY)))
 			{
 				if (mouse->SetCursor (CAttack))
 				{
@@ -3825,7 +3825,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
-			if (player->ResourceMap[pos] && !map->staticMap->isBlocked(pos))
+			if (player->ResourceMap[pos] && !map->isBlocked(pos))
 			{
 				const sResources& resource = map->getResource (pos);
 				if (resource.typ == RES_NONE)

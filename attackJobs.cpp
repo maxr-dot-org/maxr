@@ -47,7 +47,7 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 		targetVehicle = mapField.getPlane();
 
 		if (!targetVehicle) targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y)) targetVehicle = NULL;
 
 		if (!targetVehicle) targetBuilding = mapField.getBuilding();
 	}
@@ -66,7 +66,7 @@ void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, 
 		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
 
 		if (!targetVehicle) targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y, true)) targetVehicle = NULL;
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y)) targetVehicle = NULL;
 
 		if (!targetVehicle) targetBuilding = mapField.getBuilding();
 	}
@@ -725,7 +725,7 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 	{
 		state = FINISHED;
 		PlayFX (building->typ->Attack);
-		if (map.isWater (building->PosX, building->PosY))
+		if (map.isWaterOrCoast (building->PosX, building->PosY))
 		{
 			client.addFx (new cFxExploWater (building->PosX * 64 + 32, building->PosY * 64 + 32));
 		}
@@ -927,7 +927,7 @@ void cClientAttackJob::sendFinishMessage(cClient& client)
 void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP, int id)
 {
 	cMap& map = *client.getMap();
-	if (offset < 0 || offset > map.getSize() * map.getSize())
+	if (map.isValidOffset (offset) == false)
 	{
 		Log.write (" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR);
 		return;
