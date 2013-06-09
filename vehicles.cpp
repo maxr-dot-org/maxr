@@ -2128,7 +2128,7 @@ void cVehicle::executeBuildCommand (cGameGUI& gameGUI)
 	if (ClientMoveJob)
 		sendWantStopMove (*gameGUI.getClient(), iID);
 	cBuildingsBuildMenu buildMenu (*gameGUI.getClient(), owner, this);
-	buildMenu.show();
+	buildMenu.show (gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
@@ -2162,7 +2162,7 @@ void cVehicle::executeAutoMoveJobCommand(cClient& client)
 void cVehicle::executeActivateStoredVehiclesCommand (cClient& client)
 {
 	cStorageMenu storageMenu (client, storedUnits, *this);
-	storageMenu.show();
+	storageMenu.show (&client);
 }
 
 //-----------------------------------------------------------------------------

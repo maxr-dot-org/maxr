@@ -441,7 +441,7 @@ void cDialogPreferences::saveValues()
 				//TODO: Tidy up here with oldScreen blabla
 				//Video.setResolution(oldScreenW, oldScreenH);
 				cDialogOK okDialog (lngPack.i18n ("Text~Comp~ResolutionChange"));
-				okDialog.show();
+				okDialog.show (NULL);
 				break;
 			}
 		}

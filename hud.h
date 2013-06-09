@@ -428,7 +428,7 @@ public:
 	std::string addCoords (const std::string& msg, int x, int y);
 
 	void setClient (cClient* client);
-	int show();
+	virtual int show (cClient* client);
 
 	void updateInfoTexts();
 

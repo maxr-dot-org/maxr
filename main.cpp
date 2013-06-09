@@ -177,7 +177,7 @@ int main (int argc, char* argv[])
 		mouse = new cMouse;
 		InputHandler = new cInput;
 		cStartMenu mainMenu;
-		mainMenu.show();
+		mainMenu.show (NULL);
 	}
 	else
 	{

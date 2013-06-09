@@ -749,7 +749,7 @@ string cGameGUI::addCoords (const string& msg, int x, int y)
 	return strStream.str();
 }
 
-int cGameGUI::show()
+int cGameGUI::show (cClient* client)
 {
 	drawnEveryFrame = true;
 
@@ -1968,7 +1968,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 							 overBaseBuilding == selectedUnit))
 		{
 			cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
-			helpMenu.show();
+			helpMenu.show (client);
 		}
 		else if (overUnitField) selectUnit (overUnitField, true);
 	}
@@ -2078,12 +2078,12 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			if (overVehicle)
 			{
 				cDialogTransfer transferDialog (*client, *selectedUnit, NULL, overVehicle);
-				transferDialog.show();
+				transferDialog.show (client);
 			}
 			else if (overBuilding)
 			{
 				cDialogTransfer transferDialog (*client, *selectedUnit, overBuilding, NULL);
-				transferDialog.show();
+				transferDialog.show (client);
 			}
 		}
 		else if (changeAllowed && selectedVehicle && mouseInputMode == placeBand && mouse->cur == GraphicsData.gfx_Cband)
@@ -2306,22 +2306,22 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 			if (overPlane)
 			{
 				cUnitHelpMenu helpMenu (*client, &overPlane->data, overPlane->owner);
-				helpMenu.show();
+				helpMenu.show (client);
 			}
 			else if (overVehicle)
 			{
 				cUnitHelpMenu helpMenu (*client, &overVehicle->data, overVehicle->owner);
-				helpMenu.show();
+				helpMenu.show (client);
 			}
 			else if (overBuilding)
 			{
 				cUnitHelpMenu helpMenu (*client, &overBuilding->data, overBuilding->owner);
-				helpMenu.show();
+				helpMenu.show (client);
 			}
 			else if (overBaseBuilding)
 			{
 				cUnitHelpMenu helpMenu (*client, &overBaseBuilding->data, overBaseBuilding->owner);
-				helpMenu.show();
+				helpMenu.show (client);
 			}
 			helpActive = false;
 		}
@@ -2837,7 +2837,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	if (key.keysym.sym == KeysList.KeyExit)
 	{
 		cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
-		if (yesNoDialog.show() == 0) end = true;
+		if (yesNoDialog.show (client) == 0) end = true;
 	}
 	else if (activeItem && !activeItem->isDisabled() && activeItem->handleKeyInput (key.keysym, ch, this))
 	{}
@@ -2891,12 +2891,12 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		sendWantStopMove (*client, selectedVehicle->iID);
 		cBuildingsBuildMenu buildMenu (*client, player, selectedVehicle);
-		buildMenu.show();
+		buildMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuBuild && selectedBuilding && !selectedBuilding->data.canBuild.empty() && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cVehiclesBuildMenu buildMenu (*this, player, selectedBuilding);
-		buildMenu.show();
+		buildMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuTransfer && selectedVehicle && selectedVehicle->data.storeResType != sUnitData::STORE_RES_NONE && !selectedVehicle->IsBuilding && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
@@ -2991,7 +2991,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyUnitMenuActivate && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
 	{
 		cStorageMenu storageMenu (*client, selectedUnit->storedUnits, *selectedUnit);
-		storageMenu.show();
+		storageMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuLoad && selectedUnit && selectedUnit->data.storageUnitsMax > 0 && !client->isFreezed() && selectedUnit->owner == player)
 	{
@@ -3032,27 +3032,27 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	else if (key.keysym.sym == KeysList.KeyUnitMenuInfo && selectedUnit)
 	{
 		cUnitHelpMenu helpMenu (*client, &selectedUnit->data, selectedUnit->owner);
-		helpMenu.show();
+		helpMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDistribute && selectedBuilding && selectedBuilding->data.canMineMaxRes > 0 && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cMineManagerMenu mineManager (*client, selectedBuilding);
-		mineManager.show();
+		mineManager.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuResearch && selectedBuilding && selectedBuilding->data.canResearch && selectedBuilding->IsWorking && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDialogResearch researchDialog (*client, selectedBuilding->owner);
-		researchDialog.show();
+		researchDialog.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuUpgrade && selectedBuilding && selectedBuilding->data.convertsGold && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cUpgradeMenu upgradeMenu (*client, selectedBuilding->owner);
-		upgradeMenu.show();
+		upgradeMenu.show (client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuDestroy && selectedBuilding && selectedBuilding->data.canSelfDestroy && !client->isFreezed () && selectedBuilding->owner == player)
 	{
 		cDestructMenu destructMenu;
-		if (destructMenu.show() == 0) sendWantSelfDestroy (*client, *selectedBuilding);
+		if (destructMenu.show (client) == 0) sendWantSelfDestroy (*client, *selectedBuilding);
 	}
 	// Hotkeys for the hud
 	else if (key.keysym.sym == KeysList.KeyFog) setFog (!fogChecked());
@@ -3083,7 +3083,7 @@ void cGameGUI::reportsReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	cReportsMenu reportMenu (*gui->getClient(), gui->player);
-	reportMenu.show();
+	reportMenu.show (gui->getClient());
 }
 
 void cGameGUI::chatReleased (void* parent)
@@ -3251,14 +3251,14 @@ void cGameGUI::preferencesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
 	cDialogPreferences preferencesDialog(gui->getClient()->getActivePlayer());
-	preferencesDialog.show();
+	preferencesDialog.show (gui->getClient());
 }
 
 void cGameGUI::filesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cLoadSaveMenu loadSaveMenu (gui->getClient()->getServer());
-	if (loadSaveMenu.show() != 1) gui->end = true;
+	cLoadSaveMenu loadSaveMenu (*gui->getClient(), gui->getClient()->getServer());
+	if (loadSaveMenu.show (gui->getClient()) != 1) gui->end = true;
 }
 
 void cGameGUI::playReleased (void* parent)

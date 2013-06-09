@@ -194,8 +194,9 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	// init client and his players
 	Client = new cClient (server, network, *eventHandler, *map, &players);
-	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) Client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
-	Client->initPlayer (actPlayer);
+	AutoPtr<cClient>::type client (Client);
+	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	client->initPlayer (actPlayer);
 
 	if (isServer)
 	{
@@ -216,7 +217,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	if (reconnect && network)
 		sendReconnectionSuccess (*network, playerNr);
-	Client->gameGUI.show();
+	client->gameGUI.show (client);
 
 	for (size_t i = 0; i != players.size(); ++i)
 	{
@@ -228,7 +229,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	{
 		server->stop ();
 	}
-	delete Client;
 	Client = NULL;
 }
 
@@ -253,11 +253,12 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	}
 	// init client and his player
 	Client = new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList);
-	Client->initPlayer (clientPlayerList[player]);
+	AutoPtr<cClient>::type client (Client);
+	client->initPlayer (clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
 	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
-	sendRequestResync (*Client, serverPlayerList[player]->Nr);
+	sendRequestResync (*client, serverPlayerList[player]->Nr);
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
@@ -272,7 +273,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	// exit menu and start game
 	server->bStarted = true;
-	Client->gameGUI.show();
+	client->gameGUI.show (client);
 
 	for (size_t i = 0; i != clientPlayerList.size(); ++i)
 	{
@@ -281,8 +282,8 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	clientPlayerList.clear();
 
 	server->stop ();
-	delete Client;
 	Client = NULL;
+	client = NULL;
 	delete server;
 	server = NULL;
 
@@ -601,7 +602,7 @@ void cMenu::draw (bool firstDraw, bool showScreen)
 }
 
 //------------------------------------------------------------------------------
-int cMenu::show()
+int cMenu::show (cClient* client)
 {
 	drawnEveryFrame = false;
 
@@ -616,7 +617,6 @@ int cMenu::show()
 
 	while (!end && !terminate)
 	{
-		cClient* client = Client;
 		cEventHandling::handleInputEvents (*this, client);
 		if (client)
 		{
@@ -658,8 +658,6 @@ int cMenu::show()
 		SDL_Delay (1);
 	}
 
-
-	cClient* client = Client;
 	//flush event queue before exiting menu
 	if (!client) handleNetMessages ();
 	cEventHandling::handleInputEvents (*this, client);
@@ -858,7 +856,7 @@ void cStartMenu::singlePlayerReleased (void* parent)
 {
 	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cSinglePlayerMenu singlePlayerMenu;
-	singlePlayerMenu.show();
+	singlePlayerMenu.show (NULL);
 	menu->draw();
 }
 
@@ -867,7 +865,7 @@ void cStartMenu::multiPlayerReleased (void* parent)
 {
 	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cMultiPlayersMenu multiPlayerMenu;
-	multiPlayerMenu.show();
+	multiPlayerMenu.show (NULL);
 	menu->draw();
 }
 
@@ -877,7 +875,7 @@ void cStartMenu::preferencesReleased (void* parent)
 	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cPlayer* activePlayer = 0;
 	cDialogPreferences preferencesDialog (activePlayer);
-	preferencesDialog.show();
+	preferencesDialog.show (NULL);
 	menu->draw();
 }
 
@@ -886,7 +884,7 @@ void cStartMenu::licenceReleased (void* parent)
 {
 	cStartMenu* menu = reinterpret_cast<cStartMenu*> (parent);
 	cDialogLicence licenceDialog;
-	licenceDialog.show();
+	licenceDialog.show (NULL);
 	menu->draw();
 }
 
@@ -921,7 +919,7 @@ int settingSelection (cGameDataContainer& gameDataContainer)
 {
 	cSettingsMenu settingsMenu (*gameDataContainer.settings);
 
-	if (settingsMenu.show() == 1) return -1;
+	if (settingsMenu.show (NULL) == 1) return -1;
 	*gameDataContainer.settings = settingsMenu.getSettings();
 	return 1;
 }
@@ -929,7 +927,7 @@ int settingSelection (cGameDataContainer& gameDataContainer)
 int planetSelection (cTCP* network, cGameDataContainer& gameDataContainer)
 {
 	cPlanetsSelectionMenu planetSelectionMenu (network, &gameDataContainer);
-	if (planetSelectionMenu.show() == 1) return -1;
+	if (planetSelectionMenu.show (NULL) == 1) return -1;
 	return 1;
 }
 
@@ -938,7 +936,7 @@ int clanSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer
 	if (gameDataContainer.settings->clans != SETTING_CLANS_ON) return 0;
 
 	cClanSelectionMenu clanMenu (network, &gameDataContainer, &player, noReturn);
-	if (clanMenu.show() == 1)
+	if (clanMenu.show (NULL) == 1)
 	{
 		player.setClan (-1);
 		return -1;
@@ -952,14 +950,14 @@ int landingUnitsSelection (cTCP* network, cGameDataContainer& gameDataContainer,
 	const cClient* client = NULL;
 	cStartupHangarMenu startupHangarMenu (client, network, &gameDataContainer, &player, noReturn);
 
-	if (startupHangarMenu.show() == 1) return -1;
+	if (startupHangarMenu.show (NULL) == 1) return -1;
 	return 1;
 }
 
 int landingPosSelection (cTCP* network, cGameDataContainer& gameDataContainer, cPlayer& player)
 {
 	cLandingMenu landingMenu (network, &gameDataContainer, &player);
-	if (landingMenu.show() == 1) return -1;
+	if (landingMenu.show (NULL) == 1) return -1;
 	return 1;
 }
 
@@ -1005,7 +1003,7 @@ void cSinglePlayerMenu::loadGameReleased (void* parent)
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
 	cLoadMenu loadMenu (&gameDataContainer);
-	loadMenu.show();
+	loadMenu.show (NULL);
 	if (!gameDataContainer.savegame.empty())
 	{
 		gameDataContainer.runGame (NULL, 0);
@@ -1055,7 +1053,7 @@ void cMultiPlayersMenu::tcpHostReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cNetworkHostMenu networkMenu;
-	if (networkMenu.show() == 1)
+	if (networkMenu.show (NULL) == 1)
 	{
 		menu->draw();
 		return;
@@ -1068,7 +1066,7 @@ void cMultiPlayersMenu::tcpClientReleased (void* parent)
 {
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	cNetworkClientMenu networkMenu;
-	if (networkMenu.show() == 1)
+	if (networkMenu.show (NULL) == 1)
 	{
 		menu->draw();
 		return;
@@ -1082,7 +1080,7 @@ void cMultiPlayersMenu::newHotseatReleased (void* parent)
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
-	okDialog.show();
+	okDialog.show (NULL);
 	menu->draw();
 }
 
@@ -1092,7 +1090,7 @@ void cMultiPlayersMenu::loadHotseatReleased (void* parent)
 	cMultiPlayersMenu* menu = reinterpret_cast<cMultiPlayersMenu*> (parent);
 	// TODO: implement it
 	cDialogOK okDialog (lngPack.i18n ("Text~Error_Messages~INFO_Not_Implemented"));
-	okDialog.show();
+	okDialog.show (NULL);
 	menu->draw();
 }
 
@@ -2509,7 +2507,7 @@ void cLandingMenu::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		// TODO: may use another text here
 		cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
-		if (yesNoDialog.show() == 0) terminate = true;
+		if (yesNoDialog.show (NULL) == 0) terminate = true;
 		else draw();
 	}
 }
@@ -3069,7 +3067,7 @@ void cNetworkHostMenu::mapReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 	cPlanetsSelectionMenu planetsSelectionMenu (menu->network, &menu->gameDataContainer);
-	planetsSelectionMenu.show();
+	planetsSelectionMenu.show (NULL);
 	menu->showSettingsText();
 	menu->showMap();
 	sendGameData (*menu->network, menu->gameDataContainer, menu->saveGameString);
@@ -3083,7 +3081,7 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 	if (menu->gameDataContainer.settings == NULL) menu->gameDataContainer.settings = new sSettings;
 
 	cSettingsMenu settingsMenu (*menu->gameDataContainer.settings);
-	if (settingsMenu.show() == 0) *menu->gameDataContainer.settings = settingsMenu.getSettings();
+	if (settingsMenu.show (NULL) == 0) *menu->gameDataContainer.settings = settingsMenu.getSettings();
 	else
 	{
 		delete menu->gameDataContainer.settings;
@@ -3099,7 +3097,7 @@ void cNetworkHostMenu::loadReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
 	cLoadMenu loadMenu (&menu->gameDataContainer);
-	loadMenu.show();
+	loadMenu.show (NULL);
 	if (!menu->gameDataContainer.savegame.empty())
 	{
 		delete menu->gameDataContainer.settings;
@@ -3391,12 +3389,13 @@ bool cNetworkHostMenu::runSavedGame()
 	}
 	// init client and his player
 	Client = new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList);
-	Client->initPlayer (localPlayer);
+	AutoPtr<cClient>::type client (Client);
+	client->initPlayer (localPlayer);
 
 	// send data to all players
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendRequestResync (*Client, serverPlayerList[i]->Nr);
+		sendRequestResync (*client, serverPlayerList[i]->Nr);
 		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
@@ -3408,11 +3407,11 @@ bool cNetworkHostMenu::runSavedGame()
 
 	// exit menu and start game
 	server->bStarted = true;
-	Client->gameGUI.show();
+	client->gameGUI.show (client);
 
 	server->stop ();
-	delete Client;
 	Client = NULL;
+	client = NULL;
 	delete server;
 	server = NULL;
 
@@ -3671,7 +3670,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_REQ_RECON_IDENT (cNetMessage* 
 	assert (message->iType == GAME_EV_REQ_RECON_IDENT);
 
 	cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Multiplayer~Reconnect"));
-	if (yesNoDialog.show() == 0)
+	if (yesNoDialog.show (NULL) == 0)
 	{
 		sendGameIdentification (*network, *actPlayer, message->popInt16());
 	}
@@ -4020,9 +4019,10 @@ void cLoadMenu::slotClicked (void* parent)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cLoadSaveMenu::cLoadSaveMenu (cServer* server_) :
+cLoadSaveMenu::cLoadSaveMenu (cClient& client_, cServer* server_) :
 	cLoadMenu (&gameDataContainer, MNU_BG_ALPHA),
-	server(server_)
+	client (&client_),
+	server (server_)
 {
 	exitButton = new cMenuButton (position.x + 246, position.y + 438, lngPack.i18n ("Text~Button~Exit"), cMenuButton::BUTTON_TYPE_HUGE, FONT_LATIN_BIG, SoundData.SNDMenuButton);
 	exitButton->setReleasedFunction (&exitReleased);
@@ -4041,7 +4041,7 @@ void cLoadSaveMenu::exitReleased (void* parent)
 	cLoadSaveMenu* menu = reinterpret_cast<cLoadSaveMenu*> (parent);
 
 	cDialogYesNo yesNoDialog (lngPack.i18n ("Text~Comp~End_Game"));
-	if (yesNoDialog.show() == 0)
+	if (yesNoDialog.show (menu->client) == 0)
 	{
 		menu->end = true;
 	}
@@ -4060,7 +4060,7 @@ void cLoadSaveMenu::saveReleased (void* parent)
 	if (!menu->server)
 	{
 		cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Save_Only_Host"));
-		okDialog.show();
+		okDialog.show (menu->client);
 		menu->draw();
 		return;
 	}

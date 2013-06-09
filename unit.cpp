@@ -806,7 +806,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cDialogResearch researchDialog (client, owner);
-			researchDialog.show();
+			researchDialog.show (&client);
 			return;
 		}
 		nr++;
@@ -820,7 +820,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
 			cUpgradeMenu upgradeMenu (client, owner);
-			upgradeMenu.show();
+			upgradeMenu.show (&client);
 			return;
 		}
 		nr++;
@@ -947,7 +947,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		gameGUI.unitMenuActive = false;
 		PlayFX (SoundData.SNDObjectMenu);
 		cUnitHelpMenu helpMenu (*gameGUI.getClient(), &data, owner);
-		helpMenu.show();
+		helpMenu.show (gameGUI.getClient());
 		return;
 	}
 	nr++;

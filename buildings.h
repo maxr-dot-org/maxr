@@ -232,11 +232,11 @@ protected:
 
 	// methods needed for execution of unit menu commands
 	virtual void executeBuildCommand (cGameGUI& gameGUI);
-	virtual void executeMineManagerCommand (const cClient& client);
+	virtual void executeMineManagerCommand (cClient& client);
 	virtual void executeStopCommand (const cClient& client);
 	virtual void executeActivateStoredVehiclesCommand (cClient& client);
 	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType);
-	virtual void executeSelfDestroyCommand (const cClient& client);
+	virtual void executeSelfDestroyCommand (cClient& client);
 
 	virtual sUnitData* getUpgradedUnitData() const;
 };

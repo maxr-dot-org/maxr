@@ -304,7 +304,7 @@ public:
 	 * displays the menu and focuses all input on this menu until end or terminate are set to true.
 	 *@author alzi
 	 */
-	virtual int show();
+	virtual int show (cClient* client);
 	/**
 	 * sets end to true what will close the menu.
 	 *@author alzi
@@ -949,12 +949,13 @@ class cLoadSaveMenu : public cLoadMenu
 {
 protected:
 	cGameDataContainer gameDataContainer;
+	cClient* client;
 	cServer* server;
 	AutoPtr<cMenuButton>::type exitButton;
 	AutoPtr<cMenuButton>::type saveButton;
 
 public:
-	explicit cLoadSaveMenu (cServer* server_);
+	cLoadSaveMenu (cClient& client_, cServer* server_);
 
 private:
 	virtual void extendedSlotClicked (int oldSelection);

@@ -1646,14 +1646,14 @@ bool cBuilding::factoryHasJustFinishedBuilding() const
 void cBuilding::executeBuildCommand (cGameGUI& gameGUI)
 {
 	cVehiclesBuildMenu buildMenu (gameGUI, owner, this);
-	buildMenu.show();
+	buildMenu.show (gameGUI.getClient());
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeMineManagerCommand (const cClient& client)
+void cBuilding::executeMineManagerCommand (cClient& client)
 {
 	cMineManagerMenu mineManager (client, this);
-	mineManager.show();
+	mineManager.show (&client);
 }
 
 //-----------------------------------------------------------------------------
@@ -1666,7 +1666,7 @@ void cBuilding::executeStopCommand (const cClient& client)
 void cBuilding::executeActivateStoredVehiclesCommand (cClient& client)
 {
 	cStorageMenu storageMenu (client, storedUnits, *this);
-	storageMenu.show();
+	storageMenu.show (&client);
 }
 
 //-----------------------------------------------------------------------------
@@ -1676,10 +1676,10 @@ void cBuilding::executeUpdateBuildingCommmand (const cClient& client, bool updat
 }
 
 //-----------------------------------------------------------------------------
-void cBuilding::executeSelfDestroyCommand (const cClient& client)
+void cBuilding::executeSelfDestroyCommand (cClient& client)
 {
 	cDestructMenu destructMenu;
-	if (destructMenu.show() == 0)
+	if (destructMenu.show (&client) == 0)
 		sendWantSelfDestroy (client, *this);
 }
 

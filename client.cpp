@@ -2087,7 +2087,7 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	SDL_BlitSurface (sf, &scr, buffer, &scr);
 
 	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->name));
-	okDialog.show();
+	okDialog.show (this);
 }
 
 void cClient::handleTurnTime()
