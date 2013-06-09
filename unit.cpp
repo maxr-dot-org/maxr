@@ -51,7 +51,7 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 	, selectedMenuButtonIndex (-1)
 	, owner (owner)
 	, job (NULL)
-	, IsLocked (false)
+	, lockerPlayer (NULL)
 	, unitType (unitType)
 	, isOriginalName (true)
 {
@@ -65,14 +65,9 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 cUnit::~cUnit()
 {
 	deleteStoredUnits();
-	if (IsLocked)
+	if (lockerPlayer)
 	{
-		std::vector<cPlayer*>& playerList = Client->getPlayerList();
-		for (unsigned int i = 0; i < playerList.size(); i++)
-		{
-			cPlayer* p = playerList[i];
-			p->deleteLock (*this);
-		}
+		lockerPlayer->deleteLock (*this);
 	}
 }
 

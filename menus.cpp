@@ -193,8 +193,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	}
 
 	// init client and his players
-	Client = new cClient (server, network, *eventHandler, *map, &players);
-	AutoPtr<cClient>::type client (Client);
+	AutoPtr<cClient>::type client (new cClient (server, network, *eventHandler, *map, &players));
 	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	client->initPlayer (actPlayer);
 
@@ -229,7 +228,6 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	{
 		server->stop ();
 	}
-	Client = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -252,8 +250,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		clientPlayerList.push_back (new cPlayer (*serverPlayerList[i]));
 	}
 	// init client and his player
-	Client = new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList);
-	AutoPtr<cClient>::type client (Client);
+	AutoPtr<cClient>::type client (new cClient (server, network, *eventHandler, *server->Map->staticMap, &clientPlayerList));
 	client->initPlayer (clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
@@ -282,8 +279,6 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	clientPlayerList.clear();
 
 	server->stop ();
-	Client = NULL;
-	client = NULL;
 	delete server;
 	server = NULL;
 
@@ -3388,8 +3383,7 @@ bool cNetworkHostMenu::runSavedGame()
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
 	}
 	// init client and his player
-	Client = new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList);
-	AutoPtr<cClient>::type client (Client);
+	AutoPtr<cClient>::type client (new cClient (server, network, gameDataContainer.getEventHandler(), *server->Map->staticMap, &clientPlayerList));
 	client->initPlayer (localPlayer);
 
 	// send data to all players
@@ -3410,8 +3404,6 @@ bool cNetworkHostMenu::runSavedGame()
 	client->gameGUI.show (client);
 
 	server->stop ();
-	Client = NULL;
-	client = NULL;
 	delete server;
 	server = NULL;
 

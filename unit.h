@@ -59,6 +59,8 @@ public:
 	std::string getDisplayName() const;
 	void changeName (const std::string& newName);
 
+	bool isLocked() const { return lockerPlayer != NULL; }
+
 	SDL_Rect getMenuSize (const cGameGUI& gameGUI) const;
 	bool areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const;
 	void setMenuSelection (cGameGUI& gameGUI);
@@ -118,8 +120,7 @@ public:
 
 	cJob* job;	//little jobs, running on the vehicle. e. g. rotating to a spezific direction
 
-	bool IsLocked; // Gibt an, ob dieses Unit in irgend einer Lock-Liste ist
-
+	cPlayer* lockerPlayer; // back pointer to (client) player which lock this unit
 	//-----------------------------------------------------------------------------
 protected:
 	UnitType unitType;

@@ -321,6 +321,4 @@ public:
 	cPlayer* getActivePlayer() { return ActivePlayer; }
 };
 
-extern cClient* Client;
-
 #endif

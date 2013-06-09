@@ -68,8 +68,6 @@ sMessage::~sMessage()
 //------------------------------------------------------------------------
 
 //------------------------------------------------------------------------
-cClient* Client = 0; // global instance
-
 cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandling_, cStaticMap& staticMap, std::vector<cPlayer*>* const playerList) :
 	server (server_),
 	network (network_),

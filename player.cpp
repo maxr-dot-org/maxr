@@ -843,6 +843,7 @@ void cPlayer::deleteLock (cUnit& unit)
 {
 	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
 	if (it != LockList.end()) LockList.erase (it);
+	unit.lockerPlayer = NULL;
 }
 
 //--------------------------------------------------------------------------
@@ -869,12 +870,19 @@ void cPlayer::toggelLock (cMapField* OverUnitField)
 	{
 		unit = OverUnitField->getPlane();
 	}
-
 	if (unit == NULL) return;
-	unit->IsLocked = !unit->IsLocked;
+
 	std::vector<cUnit*>::iterator it = std::find(LockList.begin(), LockList.end(), unit);
-	if (it == LockList.end()) LockList.push_back (unit);
-	else LockList.erase (it);
+	if (it == LockList.end())
+	{
+		unit->lockerPlayer = this;
+		LockList.push_back (unit);
+	}
+	else
+	{
+		unit->lockerPlayer = NULL;
+		LockList.erase (it);
+	}
 }
 
 //--------------------------------------------------------------------------

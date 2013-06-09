@@ -345,7 +345,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (vehicle.IsLocked) + " clear_mines: +" + iToStr (vehicle.ClearMines) + " lay_mines: " + iToStr (vehicle.LayMines);
+	tmpString = "is_locked: " + iToStr (vehicle.isLocked()) + " clear_mines: +" + iToStr (vehicle.ClearMines) + " lay_mines: " + iToStr (vehicle.LayMines);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -401,7 +401,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
-	tmpString = "is_locked: " + iToStr (building.IsLocked) + " disabled: " + iToStr (building.turnsDisabled) + " vehicle_to_activate: " + iToStr (building.VehicleToActivate);
+	tmpString = "is_locked: " + iToStr (building.isLocked()) + " disabled: " + iToStr (building.turnsDisabled) + " vehicle_to_activate: " + iToStr (building.VehicleToActivate);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -4240,7 +4240,7 @@ void cGameGUI::drawLockList (cPlayer& player)
 		const int off = map.getOffset (unit->PosX, unit->PosY);
 		if (!player.ScanMap[off])
 		{
-			unit->IsLocked = false;
+			unit->lockerPlayer = NULL;
 			player.LockList.erase (player.LockList.begin() + i);
 			i--;
 			continue;
