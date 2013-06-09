@@ -53,13 +53,13 @@ class cMapField
 private:
 	friend class cMap;
 	/**the list with all buildings on this field
-	* the top building is always stored at fist position */
+	* the top building is always stored at first position */
 	std::vector<cBuilding*> buildings;
 	/** the list with all planes on this field
-	* the top plane is always stored at fist position */
+	* the top plane is always stored at first position */
 	std::vector<cVehicle*> vehicles;
 	/**the list with all vehicles on this field
-	* the top vehicle is always stored at fist position */
+	* the top vehicle is always stored at first position */
 	std::vector<cVehicle*> planes;
 
 public:
@@ -73,7 +73,7 @@ public:
 	/** returns the buildings on this field */
 	std::vector<cBuilding*>& getBuildings();
 
-	/** returns a Iterator for the buildings on this field */
+	/** returns a pointer for the buildings on this field */
 	cBuilding* getBuilding();
 	/** returns a pointer to the top building or NULL if the first building is a base type */
 	cBuilding* getTopBuilding();
@@ -107,9 +107,11 @@ public:
 	void clear();
 	bool loadMap (const std::string& filename);
 
-	const std::string& getMapName() const { return MapName; }
+	const std::string& getName() const { return filename; }
 	int getSize() const { return size; }
 	int getOffset (int x, int y) const { return y * size + x; }
+
+	bool isValidPos (int x, int y) const;
 
 	bool isWater (int x, int y, bool not_coast) const;
 	bool isBlocked(int offset) const;
@@ -126,7 +128,7 @@ private:
 	static SDL_Surface* loadTerrGraph (SDL_RWops* fpMapFile, int iGraphicsPos, SDL_Color* Palette, int iNum);
 	void copySrfToTerData (SDL_Surface* surface, int iNum);
 private:
-	std::string MapName;   // Name of the current map
+	std::string filename;   // Name of the current map
 	int size;
 	unsigned int terrainCount;
 	sTerrain* terrains;       // The different terrain type.
@@ -142,7 +144,11 @@ public:
 	explicit cMap (cStaticMap& staticMap_);
 	~cMap();
 
+	const std::string& getName() const { return staticMap->getName(); }
+	int getSize() const { return staticMap->getSize(); }
 	int getOffset (int x, int y) const { return staticMap->getOffset (x, y);}
+	bool isValidPos (int x, int y) const { return staticMap->isValidPos (x, y); }
+
 	bool isWater (int x, int y, bool not_coast = false) const { return staticMap->isWater(x, y, not_coast); }
 
 	const sResources& getResource (int offset) const { return Resources[offset]; }
@@ -170,28 +176,28 @@ public:
 	*/
 	cMapField& operator[] (unsigned int offset) const;
 
-	void addBuilding (cBuilding* building, unsigned int x, unsigned int y);
-	void addBuilding (cBuilding* building, unsigned int offset);
-	void addVehicle (cVehicle* vehicle, unsigned int x, unsigned int y);
-	void addVehicle (cVehicle* vehicle, unsigned int offset);
+	void addBuilding (cBuilding& building, unsigned int x, unsigned int y);
+	void addBuilding (cBuilding& building, unsigned int offset);
+	void addVehicle (cVehicle& vehicle, unsigned int x, unsigned int y);
+	void addVehicle (cVehicle& vehicle, unsigned int offset);
 
 	/**
 	* moves a vehicle to the given position
 	* resets the vehicle to a single field, when it was centered on four fields
 	* @param height defines the flight hight, when more then one planes on a field. 0 means top/highest.
 	*/
-	void moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int height = 0);
+	void moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int height = 0);
 
 	/**
 	* places a vehicle on the 4 fields to the right and below the given position
 	*/
-	void moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y);
+	void moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y);
 
-	void deleteBuilding (const cBuilding* building);
-	void deleteVehicle (const cVehicle* vehicle);
+	void deleteBuilding (const cBuilding& building);
+	void deleteVehicle (const cVehicle& vehicle);
 
-	int getMapLevel (const cBuilding& building) const;
-	int getMapLevel (const cVehicle& vehicle) const;
+	static int getMapLevel (const cBuilding& building);
+	static int getMapLevel (const cVehicle& vehicle);
 
 	/**
 	* checks, whether the given field is an allowed place for the vehicle
@@ -216,7 +222,6 @@ public:
 
 public:
 	cStaticMap* staticMap;
-	int size;     // size of the map
 	/**
 	* the infomation about the fields
 	*/

@@ -68,7 +68,7 @@ void sendGameData (cTCP& network, const cGameDataContainer& gameData, const stri
 
 	if (gameData.map)
 	{
-		const std::string mapName = gameData.map->getMapName();
+		const std::string mapName = gameData.map->getName();
 		message->pushInt32 (MapDownload::calculateCheckSum (mapName));
 		message->pushString (mapName);
 	}

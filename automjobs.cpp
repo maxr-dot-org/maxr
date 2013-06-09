@@ -171,9 +171,9 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	// calculate the number of fields which would be surveyed by this move
 	float NrSurvFields = 0;
 	const int minx = std::max (PosX - 1, 0);
-	const int maxx = std::min (PosX + 1, map.size - 1);
+	const int maxx = std::min (PosX + 1, map.getSize() - 1);
 	const int miny = std::max (PosY - 1, 0);
-	const int maxy = std::min (PosY + 1, map.size - 1);
+	const int maxy = std::min (PosY + 1, map.getSize() - 1);
 	for (int x = minx; x <= maxx; ++x)
 	{
 		for (int y = miny; y <= maxy; ++y)
@@ -237,9 +237,9 @@ void cAutoMJob::PlanLongMove()
 	float minValue = 0;
 	const cMap& map = *client->getMap();
 
-	for (int x = 0; x < map.size; x++)
+	for (int x = 0; x < map.getSize(); ++x)
 	{
-		for (int y = 0; y < map.size; y++)
+		for (int y = 0; y < map.getSize(); ++y)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
 			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[map.getOffset(x, y)] == 1) continue;

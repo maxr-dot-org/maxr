@@ -298,8 +298,8 @@ void cDebugOutput::trace()
 	int y = mouse->getKachelY (client->gameGUI);
 	if (x < 0 || y < 0) return;
 
-	if (debugTraceServer) field = &server->Map->fields[server->Map->size * y + x];
-	else field = &client->Map->fields[client->Map->size * y + x];
+	if (debugTraceServer) field = &server->Map->fields[server->Map->getOffset (x, y)];
+	else field = &client->Map->fields[client->Map->getOffset (x, y)];
 
 	y = 18 + 5 + 8;
 	x = 180 + 5;
@@ -650,7 +650,7 @@ void cGameGUI::setClient (cClient* client)
 
 float cGameGUI::calcMinZoom()
 {
-	minZoom = (float) ((max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) map->size) / 64.0);
+	minZoom = (float) ((max (Video.getResolutionY() - HUD_TOTAL_HIGHT, Video.getResolutionX() - HUD_TOTAL_WIDTH) / (float) map->getSize()) / 64.0);
 	minZoom = max (minZoom, ((int) (64.0 * minZoom) + (minZoom >= 1.0 ? 0 : 1)) / 64.0f);
 
 	return minZoom;
@@ -980,31 +980,31 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 
 		miniMapOffX = std::max (miniMapOffX, 0);
 		miniMapOffY = std::max (miniMapOffY, 0);
-		miniMapOffX = std::min (map->size - (map->size / zoomFactor), miniMapOffX);
-		miniMapOffY = std::min (map->size - (map->size / zoomFactor), miniMapOffY);
+		miniMapOffX = std::min (map->getSize() - (map->getSize() / zoomFactor), miniMapOffX);
+		miniMapOffY = std::min (map->getSize() - (map->getSize() / zoomFactor), miniMapOffY);
 	}
 
 	//draw the landscape
 	for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++)
 	{
 		//calculate the field on the map
-		int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
-		terrainx = std::min (terrainx, map->size - 1);
+		int terrainx = (miniMapX * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
+		terrainx = std::min (terrainx, map->getSize() - 1);
 
 		//calculate the position within the terrain graphic (for better rendering of maps < 112)
-		const int offsetx  = ((miniMapX * map->size) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+		const int offsetx  = ((miniMapX * map->getSize()) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 		for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++)
 		{
-			int terrainy = (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
-			terrainy = std::min (terrainy, map->size - 1);
-			const int offsety  = ((miniMapY * map->size) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
+			int terrainy = (miniMapY * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
+			terrainy = std::min (terrainy, map->getSize() - 1);
+			const int offsety  = ((miniMapY * map->getSize()) % (MINIMAP_SIZE * zoomFactor)) * 64 / (MINIMAP_SIZE * zoomFactor);
 
 			SDL_Color sdlcolor;
 			const sTerrain& terrain = map->staticMap->getTerrain (terrainx, terrainy);
 			const Uint8* terrainPixels = reinterpret_cast<const Uint8*>(terrain.sf_org->pixels);
 			Uint8 index = terrainPixels[offsetx + offsety * 64];
-			sdlcolor =terrain.sf_org->format->palette->colors[index];
+			sdlcolor = terrain.sf_org->format->palette->colors[index];
 			Uint32 color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
 
 			minimap[miniMapX + miniMapY * MINIMAP_SIZE] = color;
@@ -1016,12 +1016,12 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		//draw the fog
 		for (int miniMapX = 0; miniMapX < MINIMAP_SIZE; miniMapX++)
 		{
-			int terrainx = (miniMapX * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
+			int terrainx = (miniMapX * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffX;
 			for (int miniMapY = 0; miniMapY < MINIMAP_SIZE; miniMapY++)
 			{
-				int terrainy = (miniMapY * map->size) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
+				int terrainy = (miniMapY * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
-				if (!player->ScanMap[terrainx + terrainy * map->size])
+				if (!player->ScanMap[terrainx + terrainy * map->getSize()])
 				{
 					Uint8* color = (Uint8*) &minimap[miniMapX + miniMapY * MINIMAP_SIZE];
 					color[0] = (Uint8) (color[0] * 0.6);
@@ -1036,24 +1036,24 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		//to make sure, that every unit is diplayed and has the same size on the minimap.
 
 		//the size of the rect, that is drawn for each unit
-		int size = (int) ceil ((float) MINIMAP_SIZE * zoomFactor / map->size);
+		int size = (int) ceil ((float) MINIMAP_SIZE * zoomFactor / map->getSize());
 		size = std::max (size, 2);
 		SDL_Rect rect;
 		rect.h = size;
 		rect.w = size;
 
-		for (int mapx = 0; mapx < map->size; mapx++)
+		for (int mapx = 0; mapx < map->getSize(); mapx++)
 		{
-			rect.x = ((mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->size;
+			rect.x = ((mapx - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->getSize();
 			if (rect.x < 0 || rect.x >= MINIMAP_SIZE) continue;
-			for (int mapy = 0; mapy < map->size; mapy++)
+			for (int mapy = 0; mapy < map->getSize(); mapy++)
 			{
-				rect.y = ((mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->size;
+				rect.y = ((mapy - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->getSize();
 				if (rect.y < 0 || rect.y >= MINIMAP_SIZE) continue;
 
-				if (!player->ScanMap[mapx + mapy * map->size]) continue;
+				if (!player->ScanMap[map->getOffset (mapx, mapy)]) continue;
 
-				cMapField& field = (*map) [mapx + mapy * map->size];
+				cMapField& field = (*map)[map->getOffset (mapx, mapy)];
 
 				//draw building
 				const cBuilding* building = field.getBuilding();
@@ -1092,10 +1092,10 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 	}
 
 	//draw the screen borders
-	int startx = (int) ((((offX / 64.0) - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->size);
-	int starty = (int) ((((offY / 64.0) - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->size);
-	int endx = (int) (startx + ((Video.getResolutionX() - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom() * 64.0)));
-	int endy = (int) (starty + ((Video.getResolutionY() - HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->size * (getZoom() * 64.0)));
+	int startx = (int) ((((offX / 64.0) - miniMapOffX) * MINIMAP_SIZE * zoomFactor) / map->getSize());
+	int starty = (int) ((((offY / 64.0) - miniMapOffY) * MINIMAP_SIZE * zoomFactor) / map->getSize());
+	int endx = (int) (startx + ((Video.getResolutionX() - HUD_TOTAL_WIDTH) * MINIMAP_SIZE * zoomFactor) / (map->getSize() * (getZoom() * 64.0)));
+	int endy = (int) (starty + ((Video.getResolutionY() - HUD_TOTAL_HIGHT) * MINIMAP_SIZE * zoomFactor) / (map->getSize() * (getZoom() * 64.0)));
 
 	if (endx == MINIMAP_SIZE) endx = MINIMAP_SIZE - 1;   //workaround
 	if (endy == MINIMAP_SIZE) endy = MINIMAP_SIZE - 1;
@@ -1140,8 +1140,8 @@ void cGameGUI::checkOffsetPosition()
 	offX = max (offX, 0);
 	offY = max (offY, 0);
 
-	const int maxX = map->size * 64 - (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
-	const int maxY = map->size * 64 - (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
+	const int maxX = map->getSize() * 64 - (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
+	const int maxY = map->getSize() * 64 - (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
 	offX = min (offX, maxX);
 	offY = min (offY, maxY);
 
@@ -1383,17 +1383,17 @@ void cGameGUI::updateUnderMouseObject()
 	int x = mouse->getKachelX (*this);
 	int y = mouse->getKachelY (*this);
 
-	if (x < 0 || y < 0 || x >= map->size || y >= map->size) return;
+	if (map->isValidPos (x, y) == false) return;
 
 	// draw the coordinates:
-	/* array to get map coords in sceme XXX-YYY\0 = 8 characters
+	/* array to get map coords in scheme XXX-YYY\0 = 8 characters
 	a case where I accept an array since I don't know a better
 	method to format x and y easily with leading 0 -- beko */
 	char str[8];
 	sprintf (str, "%.3d-%.3d", x, y);
 	coordsLabel.setText (str);
 
-	if (!player->ScanMap[x + y * map->size])
+	if (!player->ScanMap[map->getOffset (x, y)])
 	{
 		overUnitField = NULL;
 		if (mouse->cur == GraphicsData.gfx_Cattack)
@@ -1404,7 +1404,7 @@ void cGameGUI::updateUnderMouseObject()
 		return;
 	}
 	// check wether there is a unit under the mouse:
-	overUnitField = map->fields + (x + y * map->size);
+	overUnitField = map->fields + (map->getOffset (x, y));
 	cVehicle* selectedVehicle = getSelectedVehicle();
 	if (mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 	{
@@ -2092,11 +2092,11 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 
 			if (selectedVehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 			{
-				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->BandX + selectedVehicle->BandY * map->size, false, 0);
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map->getOffset (selectedVehicle->BandX, selectedVehicle->BandY), false, 0);
 			}
 			else
 			{
-				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, selectedVehicle->PosX + selectedVehicle->PosY * map->size, true, selectedVehicle->BandX + selectedVehicle->BandY * map->size);
+				sendWantBuild (*client, selectedVehicle->iID, selectedVehicle->BuildingTyp, selectedVehicle->BuildRounds, map->getOffset (selectedVehicle->PosX, selectedVehicle->PosY), true, map->getOffset (selectedVehicle->BandX, selectedVehicle->BandY));
 			}
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
@@ -2224,7 +2224,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 						if (vehicle) targetId = vehicle->iID;
 
 						Log.write (" Client: want to attack " + iToStr (mouseMapX) + ":" + iToStr (mouseMapY) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
-						sendWantAttack (*client, targetId, mouseMapX + mouseMapY * client->getMap()->size, selectedVehicle->iID, true);
+						sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), selectedVehicle->iID, true);
 					}
 					else if (vehicle || building)
 					{
@@ -2251,8 +2251,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 					selectTarget (vehicle, building, mouseMapX, mouseMapY, selectedBuilding->data.canAttack, client->getMap());
 					if (vehicle) targetId = vehicle->iID;
 
-					int offset = selectedBuilding->PosX + selectedBuilding->PosY * map->size;
-					sendWantAttack (*client, targetId, mouseMapX + mouseMapY * client->getMap()->size, offset, false);
+					int offset = map->getOffset (selectedBuilding->PosX, selectedBuilding->PosY);
+					sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), offset, false);
 				}
 				else if (changeAllowed && mouse->cur == GraphicsData.gfx_Csteal && selectedVehicle)
 				{
@@ -2723,7 +2723,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 	{
 		for (int y = startFieldY; y <= endFieldY; y++)
 		{
-			int offset = x + y * map->size;
+			int offset = map->getOffset (x, y);
 
 			cVehicle* vehicle = (*map) [offset].getVehicle();
 			if (!vehicle || vehicle->owner != player) vehicle = (*map) [offset].getPlane();
@@ -2949,11 +2949,11 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		sendWantStopWork (*client, *selectedBuilding);
 	}
-	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[selectedVehicle->PosX + selectedVehicle->PosY * map->size].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
+	else if (key.keysym.sym == KeysList.KeyUnitMenuClear && selectedVehicle && selectedVehicle->data.canClearArea && map->fields[map->getOffset (selectedVehicle->PosX, selectedVehicle->PosY)].getRubble() && !selectedVehicle->IsClearing && !client->isFreezed () && selectedVehicle->owner == player)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
-			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[selectedVehiclesGroup[i]->PosX + selectedVehiclesGroup[i]->PosY * map->size].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
+			if (selectedVehiclesGroup[i]->data.canClearArea && map->fields[map->getOffset (selectedVehiclesGroup[i]->PosX, selectedVehiclesGroup[i]->PosY)].getRubble() && !selectedVehiclesGroup[i]->IsClearing) sendWantStartClear (*client, *selectedVehiclesGroup[i]);
 		}
 		sendWantStartClear (*client, *selectedVehicle);
 	}
@@ -3174,13 +3174,13 @@ void cGameGUI::resetMiniMapOffset()
 	{
 		int centerPosX = (int) (offX / 64.0 + (Video.getResolutionX() - 192.0) / (getTileSize() * 2));
 		int centerPosY = (int) (offY / 64.0 + (Video.getResolutionY() -  32.0) / (getTileSize() * 2));
-		miniMapOffX = centerPosX - (map->size / (zoomFactor * 2));
-		miniMapOffY = centerPosY - (map->size / (zoomFactor * 2));
+		miniMapOffX = centerPosX - (map->getSize() / (zoomFactor * 2));
+		miniMapOffY = centerPosY - (map->getSize() / (zoomFactor * 2));
 
 		miniMapOffX = std::max (miniMapOffX, 0);
 		miniMapOffY = std::max (miniMapOffY, 0);
-		miniMapOffX = std::min (map->size - (map->size / zoomFactor), miniMapOffX);
-		miniMapOffY = std::min (map->size - (map->size / zoomFactor), miniMapOffY);
+		miniMapOffX = std::min (map->getSize() - (map->getSize() / zoomFactor), miniMapOffX);
+		miniMapOffY = std::min (map->getSize() - (map->getSize() / zoomFactor), miniMapOffY);
 	}
 }
 
@@ -3197,8 +3197,8 @@ void cGameGUI::miniMapClicked (void* parent)
 	const int displayedMapHight = (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / gui->getZoom());
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
-	gui->offX = gui->miniMapOffX * 64 + ( (x - MINIMAP_POS_X) * gui->map->size * 64) / (MINIMAP_SIZE * zoomFactor);
-	gui->offY = gui->miniMapOffY * 64 + ( (y - MINIMAP_POS_Y) * gui->map->size * 64) / (MINIMAP_SIZE * zoomFactor);
+	gui->offX = gui->miniMapOffX * 64 + ((x - MINIMAP_POS_X) * gui->map->getSize() * 64) / (MINIMAP_SIZE * zoomFactor);
+	gui->offY = gui->miniMapOffY * 64 + ((y - MINIMAP_POS_Y) * gui->map->getSize() * 64) / (MINIMAP_SIZE * zoomFactor);
 	gui->offX -= displayedMapWidth / 2;
 	gui->offY -= displayedMapHight / 2;
 
@@ -3219,8 +3219,8 @@ void cGameGUI::miniMapRightClicked (void* parent)
 	int y = mouse->y;
 	const int zoomFactor = gui->twoXChecked() ? MINIMAP_ZOOM_FACTOR : 1;
 
-	int destX = gui->miniMapOffX + ( (x - MINIMAP_POS_X) * gui->map->size) / (MINIMAP_SIZE * zoomFactor);
-	int destY = gui->miniMapOffY + ( (y - MINIMAP_POS_Y) * gui->map->size) / (MINIMAP_SIZE * zoomFactor);
+	int destX = gui->miniMapOffX + ((x - MINIMAP_POS_X) * gui->map->getSize()) / (MINIMAP_SIZE * zoomFactor);
+	int destY = gui->miniMapOffY + ((y - MINIMAP_POS_Y) * gui->map->getSize()) / (MINIMAP_SIZE * zoomFactor);
 
 	gui->client->addMoveJob (selectedVehicle, destX, destY, &gui->selectedVehiclesGroup);
 }
@@ -3315,9 +3315,9 @@ void cGameGUI::preDrawFunction()
 	int startY = ( (offY - 1) / 64) - 1 < 0 ? 0 : ( (offY - 1) / 64) - 1;
 
 	int endX = Round (offX / 64.0 + (float) (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getTileSize());
-	if (endX >= map->size) endX = map->size - 1;
+	endX = std::min (endX, map->getSize() - 1);
 	int endY = Round (offY / 64.0 + (float) (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getTileSize());
-	if (endY >= map->size) endY = map->size - 1;
+	endY = std::min (endY, map->getSize() - 1);
 
 	if (timer400ms) map->staticMap->generateNextAnimationFrame();
 
@@ -3371,13 +3371,13 @@ void cGameGUI::drawTerrain (int zoomOffX, int zoomOffY)
 	SDL_Rect dest, tmp;
 	dest.y = HUD_TOP_HIGHT - zoomOffY;
 	// draw the terrain
-	for (int y = 0; y < map->size; y++)
+	for (int y = 0; y < map->getSize(); y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX;
 		if (dest.y >= HUD_TOP_HIGHT - tileSize)
 		{
-			int pos = y * map->size;
-			for (int x = 0 ; x < map->size; x++)
+			int pos = y * map->getSize();
+			for (int x = 0 ; x < map->getSize(); x++)
 			{
 				if (dest.x >= HUD_LEFT_WIDTH - tileSize)
 				{
@@ -3559,7 +3559,7 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			std::vector<cBuilding*>& buildings = map->fields[pos].getBuildings();
@@ -3572,8 +3572,8 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 				if (player->ScanMap[pos] ||
 					((*it)->data.isBig &&
 					((x < endX && player->ScanMap[pos + 1]) ||
-					 (y < endY && player->ScanMap[pos + map->size]) ||
-					 (x < endX && y < endY && player->ScanMap[pos + map->size + 1]))))
+					 (y < endY && player->ScanMap[pos + map->getSize()]) ||
+					 (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1]))))
 				{
 					if ((*it)->PosX == x && (*it)->PosY == y)
 					{
@@ -3597,14 +3597,14 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			cBuilding* building = map->fields[pos].getBuilding();
 			if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
 			{
 				if (player->ScanMap[pos] ||
-					(building->data.isBig && ( (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->size]) || (x < endX && y < endY && player->ScanMap[pos + map->size + 1]))))
+					(building->data.isBig && ( (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->getSize()]) || (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1]))))
 				{
 					if (building->PosX == x && building->PosY == y)	//make sure a big building is drawn only once
 					{
@@ -3669,7 +3669,7 @@ void cGameGUI::drawShips (int startX, int startY, int endX, int endY, int zoomOf
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ScanMap[pos])
@@ -3695,7 +3695,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ScanMap[pos])
@@ -3718,7 +3718,7 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 				}
 
 				cVehicle* vehicle = map->fields[pos].getVehicle();
-				if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player->ScanMap[pos] || (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->size]) || (x < endX && y < endY && player->ScanMap[pos + map->size + 1])))
+				if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player->ScanMap[pos] || (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->getSize()]) || (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1])))
 				{
 					if (vehicle->PosX == x && vehicle->PosY == y) //make sure a big vehicle is drawn only once
 					{
@@ -3741,7 +3741,7 @@ void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoo
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ScanMap[pos])
@@ -3767,7 +3767,7 @@ void cGameGUI::drawConnectors (int startX, int startY, int endX, int endY, int z
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ScanMap[pos])
@@ -3793,7 +3793,7 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ScanMap[pos])
@@ -3822,7 +3822,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 	for (int y = startY; y <= endY; y++)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
-		int pos = y * map->size + startX;
+		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
 			if (player->ResourceMap[pos] && !map->staticMap->isBlocked(pos))
@@ -4237,7 +4237,7 @@ void cGameGUI::drawLockList (cPlayer& player)
 	for (size_t i = 0; i < player.LockList.size(); i++)
 	{
 		cUnit* unit = player.LockList[i];
-		const int off = unit->PosX + unit->PosY * map.size;
+		const int off = map.getOffset (unit->PosX, unit->PosY);
 		if (!player.ScanMap[off])
 		{
 			unit->IsLocked = false;

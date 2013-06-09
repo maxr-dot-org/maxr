@@ -565,7 +565,7 @@ std::string cServerGame::getGameState() const
 	else
 		result << "Game has started, players are setting up" << endl;
 
-	result << "Map: " << (gameData != 0 ? gameData->map->getMapName() : "none") << endl;
+	result << "Map: " << (gameData != 0 ? gameData->map->getName() : "none") << endl;
 	if (server != NULL)
 		result << "Turn: " << server->getTurn() << endl;
 

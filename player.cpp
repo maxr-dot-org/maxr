@@ -227,7 +227,7 @@ cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned i
 //--------------------------------------------------------------------------
 void cPlayer::initMaps (cMap& map)
 {
-	mapSize = map.staticMap->getSize();
+	mapSize = map.getSize();
 	const int size = mapSize * mapSize;
 	// Scanner-Map:
 	ScanMap.clear();

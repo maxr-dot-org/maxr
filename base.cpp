@@ -1031,7 +1031,7 @@ cBase::~cBase()
 
 sSubBase* cBase::checkNeighbour (int iOff, const cBuilding& building)
 {
-	if (iOff < 0 || iOff >= map->size * map->size) return NULL;
+	if (iOff < 0 || iOff >= map->getSize() * map->getSize()) return NULL;
 	cBuilding* b = map->fields[iOff].getBuilding();
 
 	if (b && b->owner == building.owner && b->SubBase)
@@ -1052,22 +1052,22 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 	if (!building->data.isBig)
 	{
 		// small building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size, *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 1        , *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size, *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1        , *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - map->getSize(), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + 1             , *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos + map->getSize(), *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* const SubBase = checkNeighbour (pos - 1             , *building)) NeighbourList.push_back (SubBase);
 	}
 	else
 	{
 		// big building
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size,         *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - map->size + 1,     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2,                 *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + 2 + map->size,     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2,     *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos + map->size * 2 + 1, *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1,                 *building)) NeighbourList.push_back (SubBase);
-		if (sSubBase* const SubBase = checkNeighbour (pos - 1 + map->size,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos - map->getSize(),         *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos - map->getSize() + 1,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos + 2,                      *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos + 2 + map->getSize(),     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos + map->getSize() * 2,     *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos + map->getSize() * 2 + 1, *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos - 1,                      *building)) NeighbourList.push_back (SubBase);
+		if (sSubBase* SubBase = checkNeighbour (pos - 1 + map->getSize(),     *building)) NeighbourList.push_back (SubBase);
 	}
 	building->CheckNeighbours (map);
 

@@ -478,7 +478,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	else
 	{
 		const int offset = message.popInt32();
-		if (offset < 0 || offset > Map->size * Map->size)
+		if (offset < 0 || offset > Map->getSize() * Map->getSize())
 		{
 			Log.write (" Server: Invalid agressor offset", cLog::eLOG_TYPE_NET_WARNING);
 			return;
@@ -499,7 +499,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 
 	//find target offset
 	int targetOffset = message.popInt32();
-	if (targetOffset < 0 || targetOffset > Map->size * Map->size)
+	if (targetOffset < 0 || targetOffset > Map->getSize() * Map->getSize())
 	{
 		Log.write (" Server: Invalid target offset!", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -526,7 +526,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 
 	//check if attack is possible
 	cUnit* attackingUnit = bIsVehicle ? (cUnit*) attackingVehicle : (cUnit*) attackingBuilding;
-	if (attackingUnit->canAttackObjectAt (targetOffset % Map->size, targetOffset / Map->size, Map, true) == false)
+	if (attackingUnit->canAttackObjectAt (targetOffset % Map->getSize(), targetOffset / Map->getSize(), Map, true) == false)
 	{
 		Log.write (" Server: The server decided, that the attack is not possible", cLog::eLOG_TYPE_NET_WARNING);
 		return;
@@ -629,9 +629,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 		return;
 	}
 
-	if (iBuildOff < 0 || iBuildOff >= Map->size * Map->size) return;
-	int buildX = iBuildOff % Map->size;
-	int buildY = iBuildOff / Map->size;
+	if (iBuildOff < 0 || iBuildOff >= Map->getSize() * Map->getSize()) return;
+	int buildX = iBuildOff % Map->getSize();
+	int buildY = iBuildOff / Map->getSize();
 	int oldPosX = Vehicle->PosX;
 	int oldPosY = Vehicle->PosY;
 
@@ -655,7 +655,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 		Vehicle->BuildBigSavedPos = Map->getOffset (Vehicle->PosX, Vehicle->PosY);
 
 		// set vehicle to build position
-		Map->moveVehicleBig (Vehicle, buildX, buildY);
+		Map->moveVehicleBig (*Vehicle, buildX, buildY);
 		Vehicle->owner->doScan();
 	}
 	else
@@ -672,9 +672,9 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildingTyp = BuildingTyp;
 	const bool bBuildPath = message.popBool();
 	iPathOff = message.popInt32();
-	if (iPathOff < 0 || iPathOff >= Map->size * Map->size) return;
-	Vehicle->BandX = iPathOff % Map->size;
-	Vehicle->BandY = iPathOff / Map->size;
+	if (iPathOff < 0 || iPathOff >= Map->getSize() * Map->getSize()) return;
+	Vehicle->BandX = iPathOff % Map->getSize();
+	Vehicle->BandY = iPathOff / Map->getSize();
 
 	Vehicle->BuildCosts = iTurboBuildCosts[iBuildSpeed];
 	Vehicle->BuildRounds = iTurboBuildRounds[iBuildSpeed];
@@ -722,7 +722,7 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 		int y = Vehicle->PosY;
 		if (iEscapeX > Vehicle->PosX) x++;
 		if (iEscapeY > Vehicle->PosY) y++;
-		Map->moveVehicle (Vehicle, x, y);
+		Map->moveVehicle (*Vehicle, x, y);
 
 		// refresh SeenByPlayerLists
 		checkPlayerUnits();
@@ -893,7 +893,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 			if (i == 5 || i == 7) iX += 3;
 			else iX++;
 		}
-		if (iX < 0 || iX >= Map->size || iY < 0 || iY >= Map->size) continue;
+		if (Map->isValidPos (iX, iY) == false) continue;
 
 		int iOff = Map->getOffset (iX, iY);
 
@@ -995,9 +995,8 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	if (Building == NULL) return;
 
 	const int iX = message.popInt16();
-	if (iX < 0 || iX > Map->size) return;
 	const int iY = message.popInt16();
-	if (iY < 0 || iY > Map->size) return;
+	if (Map->isValidPos (iX, iY) == false) return;
 
 	if (Building->BuildList->size() <= 0) return;
 	BuildingListItem = (*Building->BuildList) [0];
@@ -1342,21 +1341,21 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 
 		if ( (!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY) && rubbleoffset != off) ||
 			 (!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY) && rubbleoffset + 1 != off) ||
-			 (!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->size != off) ||
-			 (!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->size + 1 != off))
+			 (!Map->possiblePlace (*Vehicle, building->PosX    , building->PosY + 1) && rubbleoffset + Map->getSize() != off) ||
+			 (!Map->possiblePlace (*Vehicle, building->PosX + 1, building->PosY + 1) && rubbleoffset + Map->getSize() + 1 != off))
 		{
 			sendClearAnswer (*this, 1, *Vehicle, 0, -1, Vehicle->owner->Nr);
 			return;
 		}
 
 		Vehicle->BuildBigSavedPos = off;
-		Map->moveVehicleBig (Vehicle, building->PosX, building->PosY);
+		Map->moveVehicleBig (*Vehicle, building->PosX, building->PosY);
 	}
 
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
 	Vehicle->owner->doScan();
-	addJob (new cStartBuildJob (Vehicle, off % Map->size, off / Map->size, building->data.isBig));
+	addJob (new cStartBuildJob (Vehicle, off % Map->getSize(), off / Map->getSize(), building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
@@ -1385,7 +1384,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 
 		if (Vehicle->data.isBig)
 		{
-			Map->moveVehicle (Vehicle, Vehicle->BuildBigSavedPos % Map->size, Vehicle->BuildBigSavedPos / Map->size);
+			Map->moveVehicle (*Vehicle, Vehicle->BuildBigSavedPos % Map->getSize(), Vehicle->BuildBigSavedPos / Map->getSize());
 			Vehicle->owner->doScan();
 			sendStopClear (*this, *Vehicle, Vehicle->BuildBigSavedPos, Vehicle->owner->Nr);
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
@@ -2262,7 +2261,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	iNextUnitID++;
 
 	// place the vehicle:
-	if (bAddToMap) Map->addVehicle (AddedVehicle, iPosX, iPosY);
+	if (bAddToMap) Map->addVehicle (*AddedVehicle, iPosX, iPosY);
 
 	// scan with surveyor:
 	if (AddedVehicle->data.canSurvey)
@@ -2303,7 +2302,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 
 	cBuilding* buildingToBeDeleted =  Map->fields[iOff].getTopBuilding();
 
-	Map->addBuilding (AddedBuilding, iPosX, iPosY);
+	Map->addBuilding (*AddedBuilding, iPosX, iPosY);
 
 	sendAddUnit (*this, iPosX, iPosY, AddedBuilding->iID, false, Building->data.ID, Player->Nr, bInit);
 
@@ -2335,7 +2334,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 					--i;
 				}
 			}
-			iOff += Map->size;
+			iOff += Map->getSize();
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
@@ -2437,9 +2436,9 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	}
 
 	if (unit->isBuilding())
-		Map->deleteBuilding (static_cast<cBuilding*> (unit));
+		Map->deleteBuilding (*static_cast<cBuilding*> (unit));
 	else
-		Map->deleteVehicle (static_cast<cVehicle*> (unit));
+		Map->deleteVehicle (*static_cast<cVehicle*> (unit));
 
 	if (notifyClient)
 		sendDeleteUnit (*this, *unit, -1);
@@ -3323,7 +3322,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = &(*Map)[offset + Map->size].getBuildings();
+		buildings = &(*Map)[offset + Map->getSize()].getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3334,7 +3333,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = &(*Map)[offset + 1 + Map->size].getBuildings();
+		buildings = &(*Map)[offset + 1 + Map->getSize()].getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3395,10 +3394,10 @@ void cServer::destroyUnit (cBuilding* b)
 		std::vector<cBuilding*>* buildings = &Map->fields[offset + 1].getBuildings();
 		rubble += deleteBuildings (*buildings);
 
-		buildings = &Map->fields[offset + Map->size].getBuildings();
+		buildings = &Map->fields[offset + Map->getSize()].getBuildings();
 		rubble += deleteBuildings (*buildings);
 
-		buildings = &Map->fields[offset + Map->size + 1].getBuildings();
+		buildings = &Map->fields[offset + Map->getSize() + 1].getBuildings();
 		rubble += deleteBuildings (*buildings);
 	}
 
@@ -3408,7 +3407,7 @@ void cServer::destroyUnit (cBuilding* b)
 	rubble += deleteBuildings (*buildings);
 
 	if (surfacePosition != sUnitData::SURFACE_POS_ABOVE && rubble > 2)
-		addRubble (offset % Map->size, offset / Map->size, rubble / 2, big);
+		addRubble (offset % Map->getSize(), offset / Map->getSize(), rubble / 2, big);
 }
 
 //-------------------------------------------------------------------------------------
@@ -3465,7 +3464,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 	rubble->data.isBig = big;
 	rubble->RubbleValue = value;
 
-	Map->addBuilding (rubble, x, y);
+	Map->addBuilding (*rubble, x, y);
 
 	if (big)
 	{
@@ -3480,7 +3479,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 //-------------------------------------------------------------------------------------
 void cServer::deleteRubble (cBuilding* rubble)
 {
-	Map->deleteBuilding (rubble);
+	Map->deleteBuilding (*rubble);
 
 	remove_from_intrusivelist(neutralBuildings, *rubble);
 	sendDeleteUnit (*this, *rubble, -1);
@@ -3736,7 +3735,7 @@ void cServer::stopVehicleBuilding (cVehicle* vehicle)
 
 	if (vehicle->BuildingTyp.getUnitDataOriginalVersion()->isBig)
 	{
-		Map->moveVehicle (vehicle, vehicle->BuildBigSavedPos % Map->size, vehicle->BuildBigSavedPos / Map->size);
+		Map->moveVehicle (*vehicle, vehicle->BuildBigSavedPos % Map->getSize(), vehicle->BuildBigSavedPos / Map->getSize());
 		iPos = vehicle->BuildBigSavedPos;
 		vehicle->owner->doScan();
 	}
@@ -3772,12 +3771,14 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 	bool placeFound = false;
 	int minCosts = 99;
 	int bestX, bestY;
-	for (int x = PosX - 1; x <= PosX + 1; x++)
+	const int minx = std::max (PosX - 1, 0);
+	const int maxx = std::min (PosX + 1, Map->getSize() - 1);
+	const int miny = std::max (PosY - 1, 0);
+	const int maxy = std::min (PosY + 1, Map->getSize() - 1);
+	for (int x = minx; x <= maxx; ++x)
 	{
-		if (x < 0 || x >= Map->size) continue;
-		for (int y = PosY - 1; y <= PosY + 1; y++)
+		for (int y = miny; y <= maxy; ++y)
 		{
-			if (y < 0 || y >= Map->size) continue;
 			if (x == PosX && y == PosY) continue;
 
 			//when a bigOffet was passed, for example a contructor needs space for a big building
@@ -3787,8 +3788,8 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 				int off = Map->getOffset (x, y);
 				if (off == bigOffset ||
 					off == bigOffset + 1 ||
-					off == bigOffset + Map->size ||
-					off == bigOffset + Map->size + 1) continue;
+					off == bigOffset + Map->getSize() ||
+					off == bigOffset + Map->getSize() + 1) continue;
 			}
 
 			//check whether this field is a possible destination

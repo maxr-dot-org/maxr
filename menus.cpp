@@ -2700,7 +2700,7 @@ void cNetworkMenu::showSettingsText()
 
 	if (gameDataContainer.map)
 	{
-		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->getMapName();
+		text += lngPack.i18n ("Text~Title~Map") + ": " + gameDataContainer.map->getName();
 		text += " (" + iToStr (gameDataContainer.map->getSize()) + "x" + iToStr (gameDataContainer.map->getSize()) + ")\n";
 	}
 	else if (gameDataContainer.savegame.empty()) text += lngPack.i18n ("Text~Multiplayer~Map_NoSet") + "\n";
@@ -2733,9 +2733,9 @@ void cNetworkMenu::showMap()
 {
 	if (!gameDataContainer.map) return;
 	int size;
-	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getMapName()).c_str(), "rb");
+	SDL_RWops* fp = SDL_RWFromFile ((cSettings::getInstance().getMapsPath() + PATH_DELIMITER + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp == NULL && !getUserMapsDir().empty())
-		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->getMapName()).c_str(), "rb");
+		fp = SDL_RWFromFile ((getUserMapsDir() + gameDataContainer.map->getName()).c_str(), "rb");
 	if (fp != NULL)
 	{
 		SDL_RWseek (fp, 5, SEEK_SET);
@@ -2774,7 +2774,7 @@ void cNetworkMenu::showMap()
 		mapImage->setImage (surface);
 	}
 
-	string mapName = gameDataContainer.map->getMapName();
+	string mapName = gameDataContainer.map->getName();
 	size = gameDataContainer.map->getSize();
 
 	if (font->getTextWide (">" + mapName.substr (0, mapName.length() - 4) + " (" + iToStr (size) + "x" + iToStr (size) + ")<") > 140)
@@ -3253,7 +3253,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 {
 	assert (message->iType == MU_MSG_REQUEST_MAP);
 
-	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->getMapName())) return;
+	if (gameDataContainer.map == NULL || MapDownload::isMapOriginal (gameDataContainer.map->getName())) return;
 
 	const size_t receiverNr = message->popInt16();
 	if (receiverNr >= players.size()) return;
@@ -3268,7 +3268,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 			mapSenders.erase (mapSenders.begin() + i);
 		}
 	}
-	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getMapName(), players[receiverNr]->name);
+	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getName(), players[receiverNr]->name);
 	mapSenders.push_back (mapSender);
 	mapSender->runInThread (this);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
@@ -3575,7 +3575,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 	{
 		string mapName = message->popString();
 		Sint32 mapCheckSum = message->popInt32();
-		if (!gameDataContainer.map || gameDataContainer.map->getMapName() != mapName)
+		if (!gameDataContainer.map || gameDataContainer.map->getName() != mapName)
 		{
 			delete gameDataContainer.map;
 
@@ -4297,7 +4297,7 @@ void cVehiclesBuildMenu::generateSelectionList()
 			else x++;
 			const cMap& map = *gameGUI->getClient()->getMap();
 
-			if (x < 0 || x >= map.size || y < 0 || y >= map.size) continue;
+			if (map.isValidPos (x, y) == false) continue;
 
 			int off = map.getOffset (x, y);
 			std::vector<cBuilding*>& buildings = map.fields[off].getBuildings();
@@ -5015,10 +5015,12 @@ void cStorageMenu::activateAllReleased (void* parent)
 		bool activated = false;
 		for (int ypos = unitYPos - 1, poscount = 0; ypos <= unitYPos + (isBig ? 2 : 1); ypos++)
 		{
-			if (ypos < 0 || ypos >= map.size) continue;
+			if (ypos < 0 || ypos >= map.getSize()) continue;
 			for (int xpos = unitXPos - 1; xpos <= unitXPos + (isBig ? 2 : 1); xpos++, poscount++)
 			{
-				if (xpos < 0 || xpos >= map.size || ( ( (ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) && ( (xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig)))) continue;
+				if (xpos < 0 || xpos >= map.getSize()) continue;
+				if (((ypos == unitYPos && menu->unitData.factorAir == 0) || (ypos == unitYPos + 1 && isBig)) &&
+					((xpos == unitXPos && menu->unitData.factorAir == 0) || (xpos == unitXPos + 1 && isBig))) continue;
 				if (((menu->ownerBuilding && menu->ownerBuilding->canExitTo (xpos, ypos, &map, vehicle->typ)) ||
 					(menu->ownerVehicle && menu->ownerVehicle->canExitTo (xpos, ypos, &map, vehicle->typ)))
 					 && !hasCheckedPlace[poscount])

@@ -140,6 +140,11 @@ bool cStaticMap::isWater(int offset) const
 	return terrains[Kacheln[offset]].water;
 }
 
+bool cStaticMap::isValidPos (int x, int y) const
+{
+	return 0 <= x && x < size && 0 <= y && y < size;
+}
+
 bool cStaticMap::isWater (int x, int y, bool not_coast) const
 {
 	const int off = getOffset (x, y);
@@ -153,7 +158,7 @@ bool cStaticMap::isWater (int x, int y, bool not_coast) const
 
 void cStaticMap::clear()
 {
-	MapName.clear();
+	filename.clear();
 	size = 0;
 	delete [] terrains;
 	terrainCount = 0;
@@ -165,25 +170,25 @@ bool cStaticMap::loadMap (const std::string& filename_)
 {
 	clear();
 	// Open File
-	MapName = filename_;
+	filename = filename_;
 	Log.write ("Loading map \"" + filename_ + "\"", cLog::eLOG_TYPE_DEBUG);
 
 	// first try in the factory maps directory
-	std::string filename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + MapName;
-	SDL_RWops* fpMapFile = SDL_RWFromFile (filename.c_str(), "rb");
+	std::string fullFilename = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + filename;
+	SDL_RWops* fpMapFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
 	if (fpMapFile == NULL)
 	{
 		// now try in the user's map directory
 		std::string userMapsDir = getUserMapsDir();
 		if (!userMapsDir.empty())
 		{
-			filename = userMapsDir + MapName;
-			fpMapFile = SDL_RWFromFile (filename.c_str(), "rb");
+			fullFilename = userMapsDir + filename;
+			fpMapFile = SDL_RWFromFile (fullFilename.c_str(), "rb");
 		}
 	}
 	if (fpMapFile == NULL)
 	{
-		Log.write ("Cannot load map file: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Cannot load map file: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		return false;
 	}
 	char szFileTyp[4];
@@ -196,7 +201,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 	// DMO - for some reason some original maps have this filetype
 	if (strcmp (szFileTyp, "WRL") != 0 && strcmp (szFileTyp, "WRX") != 0 && strcmp (szFileTyp, "DMO") != 0)
 	{
-		Log.write ("Wrong file format: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Wrong file format: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose (fpMapFile);
 		return false;
 	}
@@ -218,7 +223,7 @@ bool cStaticMap::loadMap (const std::string& filename_)
 
 	if (sWidth != sHeight)
 	{
-		Log.write ("Map must be quadratic!: \"" + MapName + "\"", cLog::eLOG_TYPE_WARNING);
+		Log.write ("Map must be quadratic!: \"" + filename + "\"", cLog::eLOG_TYPE_WARNING);
 		SDL_RWclose (fpMapFile);
 		return false;
 	}
@@ -418,7 +423,7 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 cMap::cMap (cStaticMap& staticMap_) :
 	staticMap (&staticMap_)
 {
-	size = staticMap->getSize();
+	const int size = staticMap->getSize();
 	fields = new cMapField[size * size];
 	Resources.resize(size * size);
 
@@ -444,7 +449,7 @@ void cMap::placeRessourcesAddPlayer (int x, int y, int frequency)
 {
 	if (resSpots == NULL)
 	{
-		resSpotCount = (int) (size * size * 0.003 * (1.5 + frequency));
+		resSpotCount = (int) (getSize() * getSize() * 0.003 * (1.5 + frequency));
 		resCurrentSpotCount = 0;
 		resSpots = new T_2<int>[resSpotCount];
 		resSpotTypes = new int[resSpotCount];
@@ -523,8 +528,8 @@ void cMap::placeRessources (int metal, int oil, int gold)
 	{
 		T_2<int> pos;
 
-		pos.x = 2 + random (size - 4);
-		pos.y = 2 + random (size - 4);
+		pos.x = 2 + random (getSize() - 4);
+		pos.y = 2 + random (getSize() - 4);
 		resSpots[resCurrentSpotCount] = pos;
 		resCurrentSpotCount++;
 	}
@@ -534,32 +539,34 @@ void cMap::placeRessources (int metal, int oil, int gold)
 		for (int i = playerCount; i < resSpotCount; i++)
 		{
 			T_2<double> d;
-			for (int j = 0; j < resSpotCount; j++) if (i != j)
-				{
-					int diffx1 = resSpots[i].x - resSpots[j].x;
-					int diffx2 = diffx1 + (size - 4);
-					int diffx3 = diffx1 - (size - 4);
-					int diffy1 = resSpots[i].y - resSpots[j].y;
-					int diffy2 = diffy1 + (size - 4);
-					int diffy3 = diffy1 - (size - 4);
-					if (abs (diffx2) < abs (diffx1)) diffx1 = diffx2;
-					if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
-					if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
-					if (abs (diffy3) < abs (diffy1)) diffy1 = diffy3;
-					T_2<double> diff (diffx1, diffy1);
-					if (diff == T_2<double>::Zero)
-					{
-						diff.x += 1;
-					}
-					double dist = diff.dist();
-					d += diff * (10 / (dist * dist));
+			for (int j = 0; j < resSpotCount; j++)
+			{
+				if (i == j) continue;
 
+				int diffx1 = resSpots[i].x - resSpots[j].x;
+				int diffx2 = diffx1 + (getSize() - 4);
+				int diffx3 = diffx1 - (getSize() - 4);
+				int diffy1 = resSpots[i].y - resSpots[j].y;
+				int diffy2 = diffy1 + (getSize() - 4);
+				int diffy3 = diffy1 - (getSize() - 4);
+				if (abs (diffx2) < abs (diffx1)) diffx1 = diffx2;
+				if (abs (diffx3) < abs (diffx1)) diffx1 = diffx3;
+				if (abs (diffy2) < abs (diffy1)) diffy1 = diffy2;
+				if (abs (diffy3) < abs (diffy1)) diffy1 = diffy3;
+				T_2<double> diff (diffx1, diffy1);
+				if (diff == T_2<double>::Zero)
+				{
+					diff.x += 1;
 				}
+				const double dist = diff.dist();
+				d += diff * (10 / (dist * dist));
+
+			}
 			resSpots[i] += T_2<int> (Round (d.x), Round (d.y));
-			if (resSpots[i].x < 2) resSpots[i].x += size - 4;
-			if (resSpots[i].y < 2) resSpots[i].y += size - 4;
-			if (resSpots[i].x > size - 3) resSpots[i].x -= size - 4;
-			if (resSpots[i].y > size - 3) resSpots[i].y -= size - 4;
+			if (resSpots[i].x < 2) resSpots[i].x += getSize() - 4;
+			if (resSpots[i].y < 2) resSpots[i].y += getSize() - 4;
+			if (resSpots[i].x > getSize() - 3) resSpots[i].x -= getSize() - 4;
+			if (resSpots[i].y > getSize() - 3) resSpots[i].y -= getSize() - 4;
 
 		}
 	}
@@ -570,7 +577,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 		for (int j = 0; j < i; j++)
 		{
 			const double maxDist = 40;
-			double dist = sqrt ( (float) resSpots[i].distSqr (resSpots[j]));
+			double dist = sqrt ((float) resSpots[i].distSqr (resSpots[j]));
 			if (dist < maxDist) amount[resSpotTypes[j]] += 1 - sqrt (dist / maxDist);
 		}
 
@@ -595,17 +602,18 @@ void cMap::placeRessources (int metal, int oil, int gold)
 		T_2<int> pos = resSpots[i];
 		T_2<int> p;
 		bool hasGold = random (100) < 40;
-		for (p.y = pos.y - 1; p.y <= pos.y + 1; p.y++)
+		const int minx = std::max (pos.x - 1, 0);
+		const int maxx = std::min (pos.x + 1, getSize() - 1);
+		const int miny = std::max (pos.y - 1, 0);
+		const int maxy = std::min (pos.y + 1, getSize() - 1);
+		for (p.y = miny; p.y <= maxy; ++p.y)
 		{
-			if (p.y < 0 || p.y > size) continue;
-			for (p.x = pos.x - 1; p.x <= pos.x + 1; p.x++)
+			for (p.x = minx; p.x <= maxx; ++p.x)
 			{
-				if (p.x < 0 || p.x > size) continue;
-
 				T_2<int> absPos = p;
 				int type = (absPos.y % 2) * 2 + (absPos.x % 2);
 
-				int index = staticMap->getOffset (absPos.x, absPos.y);
+				int index = getOffset (absPos.x, absPos.y);
 				if (type != RES_NONE &&
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
 					!staticMap->isBlocked(index))
@@ -626,15 +634,13 @@ void cMap::placeRessources (int metal, int oil, int gold)
 				}
 			}
 		}
-
 	}
 	delete[] resSpots;
 	delete[] resSpotTypes;
 	resSpots = NULL;
 }
 
-
-int cMap::getMapLevel (const cBuilding& building) const
+/* static */ int cMap::getMapLevel (const cBuilding& building)
 {
 	const sUnitData& data = building.data;
 
@@ -648,7 +654,7 @@ int cMap::getMapLevel (const cBuilding& building) const
 	return 1; // other buildings
 }
 
-int cMap::getMapLevel (const cVehicle& vehicle) const
+/* static */ int cMap::getMapLevel (const cVehicle& vehicle)
 {
 	if (vehicle.data.factorSea > 0 && vehicle.data.factorGround == 0) return 8; // ships
 	if (vehicle.data.factorAir > 0) return 0; // planes
@@ -656,182 +662,182 @@ int cMap::getMapLevel (const cVehicle& vehicle) const
 	return 2; // other vehicles
 }
 
-void cMap::addBuilding (cBuilding* building, unsigned int x, unsigned int y)
+void cMap::addBuilding (cBuilding& building, unsigned int x, unsigned int y)
 {
-	addBuilding (building, x + y * size);
+	addBuilding (building, getOffset (x, y));
 }
 
-void cMap::addBuilding (cBuilding* building, unsigned int offset)
+void cMap::addBuilding (cBuilding& building, unsigned int offset)
 {
-	if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building->data.isBig && building->owner) return;   //big base building are not implemented
+	//big base building are not implemented
+	if (building.data.surfacePosition != sUnitData::SURFACE_POS_GROUND && building.data.isBig && building.owner) return;
 
-	int mapLevel = getMapLevel (*building);
+	const int mapLevel = cMap::getMapLevel (building);
 	unsigned int i = 0;
 
-	if (building->data.isBig)
+	if (building.data.isBig)
 	{
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
+		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 
 		offset += 1;
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
+		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 
-		offset += size;
+		offset += getSize();
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
+		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 
 		offset -= 1;
 		i = 0;
-		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
+		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 	}
 	else
 	{
-		while (i < fields[offset].buildings.size() && getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
-		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, building);
+		while (i < fields[offset].buildings.size() && cMap::getMapLevel (*fields[offset].buildings[i]) < mapLevel) i++;
+		fields[offset].buildings.insert (fields[offset].buildings.begin() + i, &building);
 	}
 }
 
-
-void cMap::addVehicle (cVehicle* vehicle, unsigned int x, unsigned int y)
+void cMap::addVehicle (cVehicle& vehicle, unsigned int x, unsigned int y)
 {
 	addVehicle (vehicle, getOffset (x, y));
 }
 
-void cMap::addVehicle (cVehicle* vehicle, unsigned int offset)
+void cMap::addVehicle (cVehicle& vehicle, unsigned int offset)
 {
-	if (vehicle->data.factorAir > 0)
+	if (vehicle.data.factorAir > 0)
 	{
-		fields[offset].planes.insert (fields[offset].planes.begin(), vehicle);
+		fields[offset].planes.insert (fields[offset].planes.begin(), &vehicle);
 	}
 	else
 	{
-		fields[offset].vehicles.insert (fields[offset].vehicles.begin(), vehicle);
+		fields[offset].vehicles.insert (fields[offset].vehicles.begin(), &vehicle);
 	}
 }
 
-void cMap::deleteBuilding (const cBuilding* building)
+void cMap::deleteBuilding (const cBuilding& building)
 {
-	int offset = getOffset (building->PosX, building->PosY);
+	int offset = getOffset (building.PosX, building.PosY);
 
 	std::vector<cBuilding*>* buildings = &fields[offset].buildings;
-	Remove (*buildings, building);
+	Remove (*buildings, &building);
 
-	if (building->data.isBig)
+	if (building.data.isBig)
 	{
 		offset++;
 		buildings = &fields[offset].buildings;
-		Remove (*buildings, building);
+		Remove (*buildings, &building);
 
-		offset += size;
+		offset += getSize();
 		buildings = &fields[offset].buildings;
-		Remove (*buildings, building);
+		Remove (*buildings, &building);
 
 		offset--;
 		buildings = &fields[offset].buildings;
-		Remove (*buildings, building);
+		Remove (*buildings, &building);
 	}
 }
 
-void cMap::deleteVehicle (const cVehicle* vehicle)
+void cMap::deleteVehicle (const cVehicle& vehicle)
 {
-	int offset = getOffset (vehicle->PosX, vehicle->PosY);
+	int offset = getOffset (vehicle.PosX, vehicle.PosY);
 
-	if (vehicle->data.factorAir > 0)
+	if (vehicle.data.factorAir > 0)
 	{
 		std::vector<cVehicle*>& planes = fields[offset].planes;
-		Remove (planes, vehicle);
+		Remove (planes, &vehicle);
 	}
 	else
 	{
 		std::vector<cVehicle*>* vehicles = &fields[offset].vehicles;
-		Remove (*vehicles, vehicle);
+		Remove (*vehicles, &vehicle);
 
-		if (vehicle->data.isBig)
+		if (vehicle.data.isBig)
 		{
 			offset++;
 			vehicles = &fields[offset].vehicles;
-			Remove (*vehicles, vehicle);
+			Remove (*vehicles, &vehicle);
 
-			offset += size;
+			offset += getSize();
 			vehicles = &fields[offset].vehicles;
-			Remove (*vehicles, vehicle);
+			Remove (*vehicles, &vehicle);
 
 			offset--;
 			vehicles = &fields[offset].vehicles;
-			Remove (*vehicles, vehicle);
+			Remove (*vehicles, &vehicle);
 		}
 	}
 }
 
-void cMap::moveVehicle (cVehicle* vehicle, unsigned int x, unsigned int y, int height)
+void cMap::moveVehicle (cVehicle& vehicle, unsigned int x, unsigned int y, int height)
 {
-	int oldOffset = getOffset (vehicle->PosX, vehicle->PosY);
+	int oldOffset = getOffset (vehicle.PosX, vehicle.PosY);
 	int newOffset = getOffset (x, y);
 
-	vehicle->PosX = x;
-	vehicle->PosY = y;
+	vehicle.PosX = x;
+	vehicle.PosY = y;
 
-	if (vehicle->data.factorAir > 0)
+	if (vehicle.data.factorAir > 0)
 	{
 		std::vector<cVehicle*>& planes = fields[oldOffset].planes;
-		Remove (planes, vehicle);
+		Remove (planes, &vehicle);
 		height = std::min<int> (this->fields[newOffset].planes.size(), height);
-		fields[newOffset].planes.insert (fields[newOffset].planes.begin() + height, vehicle);
+		fields[newOffset].planes.insert (fields[newOffset].planes.begin() + height, &vehicle);
 	}
 	else
 	{
 		std::vector<cVehicle*>& vehicles = fields[oldOffset].vehicles;
-		Remove (vehicles, vehicle);
+		Remove (vehicles, &vehicle);
 
 		//check, whether the vehicle is centered on 4 map fields
-		if (vehicle->data.isBig)
+		if (vehicle.data.isBig)
 		{
 			oldOffset++;
 			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
-			oldOffset += size;
+			oldOffset += getSize();
 			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 			oldOffset--;
 			fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
-			vehicle->data.isBig = false;
+			vehicle.data.isBig = false;
 		}
 
-		fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
+		fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 	}
 }
 
-void cMap::moveVehicleBig (cVehicle* vehicle, unsigned int x, unsigned int y)
+void cMap::moveVehicleBig (cVehicle& vehicle, unsigned int x, unsigned int y)
 {
-	if (vehicle->data.isBig)
+	if (vehicle.data.isBig)
 	{
 		Log.write ("Calling moveVehicleBig on a big vehicle", cLog::eLOG_TYPE_NET_ERROR);
-		//calling this this function twice is allways an error.
+		//calling this function twice is always an error.
 		//nevertheless try to proceed by resetting the data.isBig flag
 		moveVehicle (vehicle, x, y);
 	}
 
-	int oldOffset = getOffset (vehicle->PosX, vehicle->PosY);
+	int oldOffset = getOffset (vehicle.PosX, vehicle.PosY);
 	int newOffset = getOffset (x, y);
 
 	fields[oldOffset].vehicles.erase (fields[oldOffset].vehicles.begin());
 
-	vehicle->PosX = x;
-	vehicle->PosY = y;
+	vehicle.PosX = x;
+	vehicle.PosY = y;
 
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 	newOffset++;
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
-	newOffset += size;
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
+	newOffset += getSize();
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 	newOffset--;
-	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), vehicle);
+	fields[newOffset].vehicles.insert (fields[newOffset].vehicles.begin(), &vehicle);
 
-	vehicle->data.isBig = true;
+	vehicle.data.isBig = true;
 }
 
 bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlayer) const
@@ -841,7 +847,7 @@ bool cMap::possiblePlace (const cVehicle& vehicle, int x, int y, bool checkPlaye
 
 bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, const cPlayer* player, bool checkPlayer) const
 {
-	if (x < 0 || x >= size || y < 0 || y >= size) return false;
+	if (isValidPos (x, y) == false) return false;
 	int offset = getOffset (x, y);
 
 	const std::vector<cBuilding*>& buildings = fields[offset].getBuildings();
@@ -933,13 +939,13 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int x, int y, c
 // can't place it too near to the map border
 bool cMap::possiblePlaceBuildingWithMargin (const sUnitData& buildingData, int x, int y, int margin, const cVehicle* vehicle) const
 {
-	if (x < margin || x >= size - margin || y < margin || y >= size - margin) return false;
+	if (x < margin || x >= getSize() - margin || y < margin || y >= getSize() - margin) return false;
 	return possiblePlaceBuilding (buildingData, getOffset (x, y), vehicle);
 }
 
 bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, const cVehicle* vehicle) const
 {
-	if (offset < 0 || offset >= size * size) return false;
+	if (offset < 0 || offset >= getSize() * getSize()) return false;
 	if (staticMap->isBlocked (offset)) return false;
 	cMapField& field = fields[offset];
 
@@ -1004,7 +1010,7 @@ bool cMap::possiblePlaceBuilding (const sUnitData& buildingData, int offset, con
 }
 void cMap::reset()
 {
-	for (int i = 0; i < size * size; i++)
+	for (int i = 0; i < getSize() * getSize(); i++)
 	{
 		fields[i].buildings.clear();
 		fields[i].vehicles.clear();

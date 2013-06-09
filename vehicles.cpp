@@ -705,8 +705,8 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	cBuilding* Rubble = map.fields[map.getOffset (PosX, PosY)].getRubble();
 	if (data.isBig)
 	{
-		int size = map.size;
-		map.moveVehicle (this, BuildBigSavedPos % size, BuildBigSavedPos / size);
+		int size = map.getSize();
+		map.moveVehicle (*this, BuildBigSavedPos % size, BuildBigSavedPos / size);
 		sendStopClear (server, *this, BuildBigSavedPos, owner->Nr);
 		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 		{
@@ -1193,9 +1193,9 @@ void cVehicle::doSurvey (const cServer& server)
 
 	const cMap& map = *server.Map;
 	const int minx = std::max (PosX - 1, 0);
-	const int maxx = std::min (PosX + 1, map.size - 1);
+	const int maxx = std::min (PosX + 1, map.getSize() - 1);
 	const int miny = std::max (PosY - 1, 0);
-	const int maxy = std::min (PosY + 1, map.size - 1);
+	const int maxy = std::min (PosY + 1, map.getSize() - 1);
 
 	for (int y = miny; y <= maxy; ++y)
 		for (int x = minx; x <= maxx; ++x)
@@ -1579,7 +1579,7 @@ bool cVehicle::canExitTo (const int x, const int y, const cMap* map, const sVehi
 //-----------------------------------------------------------------------------
 bool cVehicle::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
-	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
+	if (Map->isValidPos (x, y) == false) return false;
 
 	return canLoad (Map->fields[Map->getOffset (x, y)].getVehicle(), checkPosition);
 }
@@ -1616,7 +1616,7 @@ bool cVehicle::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 //-----------------------------------------------------------------------------
 void cVehicle::storeVehicle (cVehicle* Vehicle, cMap* Map)
 {
-	Map->deleteVehicle (Vehicle);
+	Map->deleteVehicle (*Vehicle);
 	if (Vehicle->sentryActive)
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
@@ -1641,10 +1641,10 @@ void cVehicle::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 
 	data.storageUnitsCur--;
 
-	Map->addVehicle (Vehicle, offset);
+	Map->addVehicle (*Vehicle, offset);
 
-	Vehicle->PosX = offset % Map->size;
-	Vehicle->PosY = offset / Map->size;
+	Vehicle->PosX = offset % Map->getSize();
+	Vehicle->PosY = offset / Map->getSize();
 	Vehicle->Loaded = false;
 	//Vehicle->data.shotsCur = 0;
 
@@ -1658,8 +1658,7 @@ bool cVehicle::canSupply (const cClient& client, int x, int y, int supplyType) c
 {
 	const cMap& map = *client.getMap();
 
-	if (x < 0 || x >= map.size || y < 0 || y >= map.size)
-		return false;
+	if (map.isValidPos (x, y) == false) return false;
 
 	cMapField& field = map.fields[map.getOffset (x, y)];
 	if (field.getVehicle()) return canSupply (field.getVehicle(), supplyType);
@@ -1998,13 +1997,15 @@ void cVehicle::makeDetection (cServer& server)
 	if (data.canDetectStealthOn)
 	{
 		cMap& map = *server.Map;
-		for (int x = PosX - data.scan; x < PosX + data.scan; x++)
-		{
-			if (x < 0 || x >= map.size) continue;
-			for (int y = PosY - data.scan; y < PosY + data.scan; y++)
-			{
-				if (y < 0 || y >= map.size) continue;
+		const int minx = std::max (PosX - data.scan, 0);
+		const int maxx = std::min (PosX + data.scan, map.getSize() - 1);
+		const int miny = std::max (PosY - data.scan, 0);
+		const int maxy = std::min (PosY + data.scan, map.getSize() - 1);
 
+		for (int x = minx; x <= maxx; ++x)
+		{
+			for (int y = miny; y <= maxy; ++y)
+			{
 				int offset = map.getOffset (x, y);
 				cVehicle* vehicle = map.fields[offset].getVehicle();
 				cBuilding* building = map.fields[offset].getMine();
@@ -2022,7 +2023,7 @@ void cVehicle::makeDetection (cServer& server)
 				}
 				if (building && building->owner != owner)
 				{
-					if ( (data.canDetectStealthOn & AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn & AREA_EXP_MINE))
+					if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn & AREA_EXP_MINE))
 					{
 						building->setDetectedByPlayer (server, owner);
 					}

@@ -249,7 +249,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	float factor = (float) gameGUI.getTileSize() / 64.0f;
 
 	// draw the damage effects
-	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[PosX + PosY * gameGUI.getClient()->getMap()->size]))
+	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[gameGUI.getClient()->getMap()->getOffset (PosX, PosY)]))
 	{
 		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));
@@ -638,21 +638,21 @@ void cBuilding::updateNeighbours (const cMap* Map)
 	int iPosOff = Map->getOffset (PosX, PosY);
 	if (!data.isBig)
 	{
-		owner->base.checkNeighbour (iPosOff - Map->size, *this);
+		owner->base.checkNeighbour (iPosOff - Map->getSize(), *this);
 		owner->base.checkNeighbour (iPosOff + 1, *this);
-		owner->base.checkNeighbour (iPosOff + Map->size, *this);
+		owner->base.checkNeighbour (iPosOff + Map->getSize(), *this);
 		owner->base.checkNeighbour (iPosOff - 1, *this);
 	}
 	else
 	{
-		owner->base.checkNeighbour (iPosOff - Map->size, *this);
-		owner->base.checkNeighbour (iPosOff - Map->size + 1, *this);
+		owner->base.checkNeighbour (iPosOff - Map->getSize(), *this);
+		owner->base.checkNeighbour (iPosOff - Map->getSize() + 1, *this);
 		owner->base.checkNeighbour (iPosOff + 2, *this);
-		owner->base.checkNeighbour (iPosOff + 2 + Map->size, *this);
-		owner->base.checkNeighbour (iPosOff + Map->size * 2, *this);
-		owner->base.checkNeighbour (iPosOff + Map->size * 2 + 1, *this);
+		owner->base.checkNeighbour (iPosOff + 2 + Map->getSize(), *this);
+		owner->base.checkNeighbour (iPosOff + Map->getSize() * 2, *this);
+		owner->base.checkNeighbour (iPosOff + Map->getSize() * 2 + 1, *this);
 		owner->base.checkNeighbour (iPosOff - 1, *this);
-		owner->base.checkNeighbour (iPosOff - 1 + Map->size, *this);
+		owner->base.checkNeighbour (iPosOff - 1 + Map->getSize(), *this);
 	}
 	CheckNeighbours (Map);
 }
@@ -662,12 +662,12 @@ void cBuilding::updateNeighbours (const cMap* Map)
 //--------------------------------------------------------------------------
 void cBuilding::CheckNeighbours (const cMap* Map)
 {
-#define CHECK_NEIGHBOUR(x,y,m)								\
-	if(x >= 0 && x < Map->size && y >= 0 && y < Map->size ) \
-	{														\
+#define CHECK_NEIGHBOUR(x, y, m) \
+	if (Map->isValidPos (x, y)) \
+	{ \
 		const cBuilding* b = Map->fields[Map->getOffset (x, y)].getTopBuilding(); \
-		if ( b && b->owner == owner && b->data.connectsToBase )			\
-		{m=true;}else{m=false;}							\
+		if (b && b->owner == owner && b->data.connectsToBase) \
+		{m = true;}else{m = false;} \
 	}
 
 	if (!data.isBig)
@@ -1177,8 +1177,8 @@ bool cBuilding::canExitTo (const int x, const int y, const cMap* map, const sVeh
 //--------------------------------------------------------------------------
 bool cBuilding::canLoad (int x, int y, const cMap* Map, bool checkPosition) const
 {
-	if (x < 0 || x >= Map->size || y < 0 || y >= Map->size) return false;
-	int offset = Map->getOffset (x, y);
+	if (Map->isValidPos (x, y) == false) return false;
+	const int offset = Map->getOffset (x, y);
 
 	if (canLoad (Map->fields[offset].getPlane(), checkPosition)) return true;
 	else return canLoad (Map->fields[offset].getVehicle(), checkPosition);
@@ -1218,7 +1218,7 @@ bool cBuilding::canLoad (const cVehicle* Vehicle, bool checkPosition) const
 //--------------------------------------------------------------------------
 void cBuilding::storeVehicle (cVehicle* Vehicle, cMap* Map)
 {
-	Map->deleteVehicle (Vehicle);
+	Map->deleteVehicle (*Vehicle);
 	if (Vehicle->sentryActive)
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
@@ -1240,10 +1240,10 @@ void cBuilding::exitVehicleTo (cVehicle* Vehicle, int offset, cMap* Map)
 
 	data.storageUnitsCur--;
 
-	Map->addVehicle (Vehicle, offset);
+	Map->addVehicle (*Vehicle, offset);
 
-	Vehicle->PosX = offset % Map->size;
-	Vehicle->PosY = offset / Map->size;
+	Vehicle->PosX = offset % Map->getSize();
+	Vehicle->PosY = offset / Map->getSize();
 	Vehicle->Loaded = false;
 
 	owner->doScan();
@@ -1423,7 +1423,7 @@ void cBuilding::CheckRessourceProd(const cServer& server)
 		case RES_OIL:   MaxOilProd   += res->value; break;
 	}
 
-	pos += server.Map->size;
+	pos += server.Map->getSize();
 	res = &server.Map->getResource (pos);
 	switch (res->typ)
 	{

@@ -577,8 +577,8 @@ void cClient::HandleNetMessage_GAME_EV_UNIT_DATA (cNetMessage& message)
 			// set to server position if vehicle is not moving
 			if (!Vehicle->MoveJobActive)
 			{
-				getMap()->moveVehicle (Vehicle, iPosX, iPosY);
-				if (bBig) getMap()->moveVehicleBig (Vehicle, iPosX, iPosY);
+				getMap()->moveVehicle (*Vehicle, iPosX, iPosY);
+				if (bBig) getMap()->moveVehicleBig (*Vehicle, iPosX, iPosY);
 				Vehicle->owner->doScan();
 			}
 		}
@@ -723,7 +723,7 @@ void cClient::HandleNetMessage_GAME_EV_MOVE_JOB_SERVER (cNetMessage& message)
 	cVehicle* Vehicle = getVehicleFromID (iVehicleID);
 	if (Vehicle == NULL)
 	{
-		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " +  iToStr (iSrcOff % getMap()->size) + "x" + iToStr (iSrcOff / getMap()->size) + " to " + iToStr (iDestOff % getMap()->size) + "x" + iToStr (iDestOff / getMap()->size), cLog::eLOG_TYPE_NET_WARNING);
+		Log.write (" Client: Can't find vehicle with id " + iToStr (iVehicleID) + " for movejob from " +  iToStr (iSrcOff % getMap()->getSize()) + "x" + iToStr (iSrcOff / getMap()->getSize()) + " to " + iToStr (iDestOff % getMap()->getSize()) + "x" + iToStr (iDestOff / getMap()->getSize()), cLog::eLOG_TYPE_NET_WARNING);
 		// TODO: request sync of vehicle
 		return;
 	}
@@ -852,14 +852,14 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 
 	if (buildBig)
 	{
-		getMap()->moveVehicleBig (Vehicle, iBuildX, iBuildY);
+		getMap()->moveVehicleBig (*Vehicle, iBuildX, iBuildY);
 		Vehicle->owner->doScan();
 
 		Vehicle->BigBetonAlpha = 10;
 	}
 	else
 	{
-		getMap()->moveVehicle (Vehicle, iBuildX, iBuildY);
+		getMap()->moveVehicle (*Vehicle, iBuildX, iBuildY);
 		Vehicle->owner->doScan();
 	}
 
@@ -902,7 +902,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_BUILD (cNetMessage& message)
 
 	if (Vehicle->data.isBig)
 	{
-		getMap()->moveVehicle (Vehicle, iNewPos % getMap()->size, iNewPos / getMap()->size);
+		getMap()->moveVehicle (*Vehicle, iNewPos % getMap()->getSize(), iNewPos / getMap()->getSize());
 		Vehicle->owner->doScan();
 	}
 
@@ -1183,7 +1183,7 @@ void cClient::HandleNetMessage_GAME_EV_ADD_RUBBLE (cNetMessage& message)
 	rubble->PosY = message.popInt16();
 	rubble->PosX = message.popInt16();
 
-	getMap()->addBuilding (rubble, rubble->PosX, rubble->PosY);
+	getMap()->addBuilding (*rubble, rubble->PosX, rubble->PosY);
 }
 
 void cClient::HandleNetMessage_GAME_EV_DETECTION_STATE (cNetMessage& message)
@@ -1231,7 +1231,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 			int bigoffset = message.popInt16();
 			if (bigoffset >= 0)
 			{
-				getMap()->moveVehicleBig (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+				getMap()->moveVehicleBig (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 				Vehicle->owner->doScan ();
 			}
 			Vehicle->IsClearing = true;
@@ -1271,7 +1271,7 @@ void cClient::HandleNetMessage_GAME_EV_STOP_CLEARING (cNetMessage& message)
 	int bigoffset = message.popInt16();
 	if (bigoffset >= 0)
 	{
-		getMap()->moveVehicle (Vehicle, bigoffset % getMap()->size, bigoffset / getMap()->size);
+		getMap()->moveVehicle (*Vehicle, bigoffset % getMap()->getSize(), bigoffset / getMap()->getSize());
 		Vehicle->owner->doScan ();
 	}
 	Vehicle->IsClearing = false;
@@ -1439,7 +1439,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		int x = message.popInt16();
 		int y = message.popInt16();
-		StoringVehicle->exitVehicleTo (StoredVehicle, x + y * getMap()->size, getMap());
+		StoringVehicle->exitVehicleTo (StoredVehicle, getMap()->getOffset (x, y), getMap());
 		if (gameGUI.getSelectedUnit() == StoringVehicle && gameGUI.mouseInputMode == activateVehicle)
 		{
 			gameGUI.mouseInputMode = normalInput;
@@ -1452,7 +1452,7 @@ void cClient::HandleNetMessage_GAME_EV_EXIT_UNIT (cNetMessage& message)
 
 		int x = message.popInt16();
 		int y = message.popInt16();
-		StoringBuilding->exitVehicleTo (StoredVehicle, x + y * getMap()->size, getMap());
+		StoringBuilding->exitVehicleTo (StoredVehicle, getMap()->getOffset (x, y), getMap());
 
 		if (gameGUI.getSelectedUnit() == StoringBuilding && gameGUI.mouseInputMode == activateVehicle)
 		{
@@ -1497,7 +1497,7 @@ void cClient::HandleNetMessage_GAME_EV_DELETE_EVERYTHING (cNetMessage& message, 
 	while (neutralBuildings)
 	{
 		cBuilding* nextBuilding = neutralBuildings->next;
-		getMap()->deleteBuilding (neutralBuildings);
+		getMap()->deleteBuilding (*neutralBuildings);
 		delete neutralBuildings;
 		neutralBuildings = nextBuilding;
 	}
@@ -1900,7 +1900,7 @@ int cClient::HandleNetMessage (cNetMessage* message, cMenu* activeMenu)
 void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit, bool bAddToMap)
 {
 	// place the vehicle
-	if (bAddToMap) getMap()->addVehicle (AddedVehicle, iPosX, iPosY);
+	if (bAddToMap) getMap()->addVehicle (*AddedVehicle, iPosX, iPosY);
 
 	if (!bInit) AddedVehicle->StartUp = 10;
 
@@ -1931,7 +1931,7 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 void cClient::addUnit (int iPosX, int iPosY, cBuilding* AddedBuilding, bool bInit)
 {
 	// place the building
-	getMap()->addBuilding (AddedBuilding, iPosX, iPosY);
+	getMap()->addBuilding (*AddedBuilding, iPosX, iPosY);
 
 
 	if (!bInit) AddedBuilding->StartUp = 10;
@@ -1974,7 +1974,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 	gameGUI.callMiniMapDraw();
 
 	if (activeMenu) activeMenu->handleDestroyUnit (Building, NULL);
-	getMap()->deleteBuilding (Building);
+	getMap()->deleteBuilding (*Building);
 
 	if (!Building->owner)
 	{
@@ -2011,7 +2011,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 	if (!Vehicle) return;
 
 	if (activeMenu) activeMenu->handleDestroyUnit (NULL, Vehicle);
-	getMap()->deleteVehicle (Vehicle);
+	getMap()->deleteVehicle (*Vehicle);
 
 	for (unsigned int i = 0; i < attackJobs.size(); i++)
 	{

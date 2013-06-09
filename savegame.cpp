@@ -614,7 +614,7 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 		element->Attribute ("num", &tmpdouble);
 		vehicle->CommandoRank = (float) tmpdouble;
 	}
-	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (vehicle, x, y);
+	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
 	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->Attribute ("turns", &vehicle->turnsDisabled);
 	if (unitNode->FirstChildElement ("LayMines")) vehicle->LayMines = true;
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
@@ -1199,7 +1199,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 void cSavegame::writeMap (const cMap* Map)
 {
 	TiXmlElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
-	addAttributeElement (mapNode, "Name", "string", Map->staticMap->getMapName());
+	addAttributeElement (mapNode, "Name", "string", Map->getName());
 	addAttributeElement (mapNode, "Resources", "data", Map->resourcesToString());
 }
 

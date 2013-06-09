@@ -337,9 +337,9 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 	// TODO: only send new scaned resources
 
 	const int minx = std::max (vehicle.PosX - 1, 0);
-	const int maxx = std::min (vehicle.PosX + 1, map.size - 1);
+	const int maxx = std::min (vehicle.PosX + 1, map.getSize() - 1);
 	const int miny = std::max (vehicle.PosY - 1, 0);
-	const int maxy = std::min (vehicle.PosY + 1, map.size - 1);
+	const int maxy = std::min (vehicle.PosY + 1, map.getSize() - 1);
 	for (int y = miny; y <= maxy; ++y)
 	{
 		for (int x = minx; x <= maxx; ++x)
@@ -724,7 +724,7 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 		message.pushString (SecondPlayer->name);
 	}
 	message.pushInt16 ((int) playerList.size());
-	message.pushString (server.Map->staticMap->getMapName());
+	message.pushString (server.Map->getName());
 	message.pushInt16 (GetColorNr (player.color));
 	message.pushInt16 (player.Nr);
 

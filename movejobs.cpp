@@ -138,12 +138,12 @@ cPathCalculator::~cPathCalculator()
 sWaypoint* cPathCalculator::calcPath()
 {
 	// generate open and closed list
-	nodesHeap = new sPathNode*[Map->size * Map->size + 1];
-	openList = new sPathNode*[Map->size * Map->size + 1];
-	closedList = new sPathNode*[Map->size * Map->size + 1];
-	std::fill <sPathNode**, sPathNode*> (nodesHeap, &nodesHeap[Map->size * Map->size + 1], NULL);
-	std::fill <sPathNode**, sPathNode*> (openList, &openList[Map->size * Map->size + 1], NULL);
-	std::fill <sPathNode**, sPathNode*> (closedList, &closedList[Map->size * Map->size + 1], NULL);
+	nodesHeap = new sPathNode*[Map->getSize() * Map->getSize() + 1];
+	openList = new sPathNode*[Map->getSize() * Map->getSize() + 1];
+	closedList = new sPathNode*[Map->getSize() * Map->getSize() + 1];
+	std::fill <sPathNode**, sPathNode*> (nodesHeap, &nodesHeap[Map->getSize() * Map->getSize() + 1], NULL);
+	std::fill <sPathNode**, sPathNode*> (openList, &openList[Map->getSize() * Map->getSize() + 1], NULL);
+	std::fill <sPathNode**, sPathNode*> (closedList, &closedList[Map->getSize() * Map->getSize() + 1], NULL);
 
 	// generate startnode
 	sPathNode* StartNode = allocNode();
@@ -218,13 +218,15 @@ sWaypoint* cPathCalculator::calcPath()
 void cPathCalculator::expandNodes (sPathNode* ParentNode)
 {
 	// add all nearby nodes
-	for (int y = ParentNode->y - 1; y <= ParentNode->y + 1; y++)
-	{
-		if (y < 0 || y >= Map->size) continue;
+	const int minx = std::max (ParentNode->x - 1, 0);
+	const int maxx = std::min (ParentNode->x + 1, Map->getSize() - 1);
+	const int miny = std::max (ParentNode->y - 1, 0);
+	const int maxy = std::min (ParentNode->y + 1, Map->getSize() - 1);
 
-		for (int x = ParentNode->x - 1; x <= ParentNode->x + 1; x++)
+	for (int y = miny; y <= maxy; ++y)
+	{
+		for (int x = minx; x <= maxx; ++x)
 		{
-			if (x < 0 || x >= Map->size) continue;
 			if (x == ParentNode->x && y == ParentNode->y) continue;
 
 			if (!Map->possiblePlace (*Vehicle, x, y, true))
@@ -366,7 +368,7 @@ int cPathCalculator::calcNextCost (int srcX, int srcY, int destX, int destY) con
 		if (srcX != destX && srcY != destY) return (int) (4 * Vehicle->data.factorAir * 1.5);
 		else return (int) (4 * Vehicle->data.factorAir);
 	}
-	int offset = Map->staticMap->getOffset (destX, destY);
+	int offset = Map->getOffset (destX, destY);
 	const cBuilding* building = Map->fields[offset].getBaseBuilding();
 	// moving on water will cost more
 	if (Map->staticMap->isWater(offset) && (!building || (building->data.surfacePosition == sUnitData::SURFACE_POS_BENEATH_SEA || building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)) && Vehicle->data.factorSea > 0) costs = (int) (4 * Vehicle->data.factorSea);
@@ -699,7 +701,7 @@ bool cServerMoveJob::checkMove()
 	// send move command to all players who can see the unit
 	sendNextMove (*server, *Vehicle, MJOB_OK);
 
-	Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
+	Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
 	Vehicle->owner->doScan();
 	Vehicle->OffX = 0;
 	Vehicle->OffY = 0;
@@ -914,8 +916,8 @@ cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVe
 	client(&client_),
 	Waypoints (NULL)
 {
-	DestX = iDestOff % client->getMap()->size;
-	DestY = iDestOff / client->getMap()->size;
+	DestX = iDestOff % client->getMap()->getSize();
+	DestY = iDestOff / client->getMap()->getSize();
 	init (iSrcOff, Vehicle);
 }
 
@@ -945,8 +947,8 @@ void cClientMoveJob::init (int iSrcOff, cVehicle* Vehicle)
 {
 	Map = client->getMap();
 	this->Vehicle = Vehicle;
-	ScrX = iSrcOff % Map->size;
-	ScrY = iSrcOff / Map->size;
+	ScrX = iSrcOff % Map->getSize();
+	ScrY = iSrcOff / Map->getSize();
 	this->bPlane = (Vehicle->data.factorAir > 0);
 	bFinished = false;
 	bEndForNow = false;
@@ -1055,7 +1057,7 @@ void cClientMoveJob::handleNextMove (int iType, int iSavedSpeed)
 			if (Vehicle->moving) doEndMoveVehicle();
 
 			Vehicle->moving = true;
-			Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
+			Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
 			//Vehicle->owner->doScan();
 			Vehicle->OffX = 0;
 			Vehicle->OffY = 0;
@@ -1138,13 +1140,12 @@ void cClientMoveJob::moveVehicle()
 			return;
 		}
 
-		Map->moveVehicle (Vehicle, Waypoints->next->X, Waypoints->next->Y);
+		Map->moveVehicle (*Vehicle, Waypoints->next->X, Waypoints->next->Y);
 		Vehicle->owner->doScan();
 		Vehicle->OffX = 0;
 		Vehicle->OffY = 0;
 		setOffset (Vehicle, iNextDir, -64);
 		Vehicle->moving = true;
-
 
 		//restart movesound, when drinving into or out of water
 		if (Vehicle == client->gameGUI.getSelectedUnit())

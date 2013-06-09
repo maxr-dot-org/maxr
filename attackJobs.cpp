@@ -142,7 +142,7 @@ void cServerAttackJob::lockTarget (int offset)
 	cVehicle* targetVehicle;
 	cBuilding* targetBuilding;
 	cMap& map = *server->Map;
-	selectTarget (targetVehicle, targetBuilding, offset % map.size, offset / map.size, attackMode, &map);
+	selectTarget (targetVehicle, targetBuilding, offset % map.getSize(), offset / map.getSize(), attackMode, &map);
 	if (targetVehicle)
 		targetVehicle->isBeeingAttacked = true;
 
@@ -207,21 +207,20 @@ void cServerAttackJob::lockTarget (int offset)
 //--------------------------------------------------------------------------
 void cServerAttackJob::lockTargetCluster()
 {
-	const int mapSize = server->Map->size;
-	int PosX = iTargetOff % mapSize;
-	int PosY = iTargetOff / mapSize;
+	const int mapSize = server->Map->getSize();
+	const int PosX = iTargetOff % mapSize;
+	const int PosY = iTargetOff / mapSize;
+	const int minx = std::max (PosX - 2, 0);
+	const int maxx = std::min (PosX + 2, mapSize - 1);
+	const int miny = std::max (PosY - 2, 0);
+	const int maxy = std::min (PosY + 2, mapSize - 1);
 
-	for (int x = PosY - 2; x <= PosY + 2; x++)
+	for (int x = minx; x <= maxx; ++x)
 	{
-		if (x < 0 || x >= mapSize)
-			continue;
-		for (int y = PosY - 2; y <= PosY + 2; y++)
+		for (int y = miny; y <= maxy; ++y)
 		{
-			if (y < 0 || y >= mapSize)
-				continue;
-			if (abs (PosX - x) + abs (PosY - y) > 2)
-				continue;
-			lockTarget (x + y * mapSize);
+			if (abs (PosX - x) + abs (PosY - y) > 2) continue;
+			lockTarget (server->Map->getOffset (x, y));
 		}
 	}
 }
@@ -248,11 +247,11 @@ void cServerAttackJob::sendFireCommand()
 	server->checkPlayerUnits();
 
 	//calculate fire direction
-	const int mapSize = server->Map->size;
-	int targetX = iTargetOff % mapSize;
-	int targetY = iTargetOff / mapSize;
-	int agressorX = iAgressorOff % mapSize;
-	int agressorY = iAgressorOff / mapSize;
+	const int mapSize = server->Map->getSize();
+	const int targetX = iTargetOff % mapSize;
+	const int targetY = iTargetOff / mapSize;
+	const int agressorX = iAgressorOff % mapSize;
+	const int agressorY = iAgressorOff / mapSize;
 
 	float dx = (float) targetX - (float) agressorX;
 	float dy = (float) - (targetY - agressorY);
@@ -355,7 +354,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 		if (unit && unit->data.muzzleType == sUnitData::MUZZLE_TYPE_ROCKET_CLUSTER)
 			makeImpactCluster();
 		else
-			makeImpact (iTargetOff % server->Map->size, iTargetOff / server->Map->size);
+			makeImpact (iTargetOff % server->Map->getSize(), iTargetOff / server->Map->getSize());
 	}
 }
 
@@ -363,8 +362,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 void cServerAttackJob::makeImpact (int x, int y)
 {
 	cMap& map = *server->Map;
-	if (x < 0 || x >= map.size || y < 0 || y >= map.size)
-		return;
+	if (map.isValidPos (x, y) == false) return;
 	int offset = map.getOffset (x, y);
 
 	cVehicle* targetVehicle = 0;
@@ -466,7 +464,7 @@ void cServerAttackJob::makeImpact (int x, int y)
 //--------------------------------------------------------------------------
 void cServerAttackJob::makeImpactCluster()
 {
-	const int mapSize = server->Map->size;
+	const int mapSize = server->Map->getSize();
 	int clusterDamage = damage;
 	int PosX = iTargetOff % mapSize;
 	int PosY = iTargetOff / mapSize;
@@ -527,8 +525,8 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 	bool bIsAir = message->popBool();
 	int offset = message->popInt32();
 	cMap& map = *client.getMap();
-	int x = offset % map.size;
-	int y = offset / map.size;
+	int x = offset % map.getSize();
+	int y = offset / map.getSize();
 	int ID = message->popInt32();
 	if (ID != 0)
 	{
@@ -545,7 +543,7 @@ void cClientAttackJob::lockTarget (cClient& client, cNetMessage* message)
 		if (vehicle->PosX != x || vehicle->PosY != y)
 		{
 			Log.write (" Client: changed vehicle position to (" + iToStr (x) + ":" + iToStr (y) + ")", cLog::eLOG_TYPE_NET_DEBUG);
-			map.moveVehicle (vehicle, x, y);
+			map.moveVehicle (*vehicle, x, y);
 			vehicle->owner->doScan();
 
 			vehicle->OffY = message->popChar();
@@ -812,10 +810,10 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 				return;
 			}
 
-			int PosX = iAgressorOffset % map.size;
-			int PosY = iAgressorOffset / map.size;
-			int endX = iTargetOffset % map.size;
-			int endY = iTargetOffset / map.size;
+			int PosX = iAgressorOffset % map.getSize();
+			int PosY = iAgressorOffset / map.getSize();
+			int endX = iTargetOffset % map.getSize();
+			int endY = iTargetOffset / map.getSize();
 			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, false);
 			length = rocket->getLength() / 5;
 			client.addFx (rocket);
@@ -892,10 +890,10 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 				return;
 			}
 
-			int PosX = iAgressorOffset % map.size;
-			int PosY = iAgressorOffset / map.size;
-			int endX = iTargetOffset % map.size;
-			int endY = iTargetOffset / map.size;
+			int PosX = iAgressorOffset % map.getSize();
+			int PosY = iAgressorOffset / map.getSize();
+			int endX = iTargetOffset % map.getSize();
+			int endY = iTargetOffset / map.getSize();
 			cFx* rocket = new cFxRocket (PosX * 64 + 32, PosY * 64 + 32, endX * 64 + 32, endY * 64 + 32, iFireDir, true);
 			length = rocket->getLength() / 5;
 			client.addFx (rocket);
@@ -929,7 +927,7 @@ void cClientAttackJob::sendFinishMessage(cClient& client)
 void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP, int id)
 {
 	cMap& map = *client.getMap();
-	if (offset < 0 || offset > map.size * map.size)
+	if (offset < 0 || offset > map.getSize() * map.getSize())
 	{
 		Log.write (" Client: Invalid offset", cLog::eLOG_TYPE_NET_ERROR);
 		return;
@@ -1002,8 +1000,8 @@ void cClientAttackJob::makeImpact (cClient& client, int offset, int remainingHP,
 		client.gameGUI.updateMouseCursor();
 	}
 
-	int x = offset % map.size;
-	int y = offset / map.size;
+	int x = offset % map.getSize();
+	int y = offset / map.getSize();
 
 	if (playImpact && cSettings::getInstance().isAlphaEffects())
 	{
