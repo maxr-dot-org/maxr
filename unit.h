@@ -145,11 +145,11 @@ protected:
 	virtual bool canBeStoppedViaUnitMenu() const { return false; }
 
 	virtual void executeBuildCommand (cGameGUI&) = 0;
-	virtual void executeMineManagerCommand (const cClient& client) {}
+	virtual void executeMineManagerCommand (cClient& client) {}
 	virtual void executeStopCommand (const cClient& client) = 0;
 	virtual void executeActivateStoredVehiclesCommand (cClient& client) = 0;
 	virtual void executeUpdateBuildingCommmand (const cClient& client, bool updateAllOfSameType) {}
-	virtual void executeSelfDestroyCommand (const cClient& client) {}
+	virtual void executeSelfDestroyCommand (cClient& client) {}
 
 	virtual sUnitData* getUpgradedUnitData() const = 0;
 };
