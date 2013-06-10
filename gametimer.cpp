@@ -170,38 +170,42 @@ bool cGameTimerClient::nextTickAllowed()
 
 void cGameTimerClient::run (cMenu* activeMenu)
 {
+	// maximum time before GUI update
+	const unsigned int maxWorkingTime = 5; // 50 milliseconds
+	unsigned int startGameTime = gameTime;
+
 	while (popEvent ())
 	{
 		client->getEventHandling().handleNetMessages (client, NULL);
 
-		if (nextTickAllowed ())
+		if (nextTickAllowed () == false) continue;
+
+		gameTime++;
+		handleTimer ();
+		client->doGameActions (activeMenu);
+
+		//check crc
+		localChecksum = calcClientChecksum(*client);
+		debugRemoteChecksum = remoteChecksum;
+		if (localChecksum != remoteChecksum)
 		{
-			gameTime++;
-			handleTimer ();
-			client->doGameActions (activeMenu);
-
-			//check crc
-			localChecksum = calcClientChecksum(*client);
-			debugRemoteChecksum = remoteChecksum;
-			if (localChecksum != remoteChecksum)
-			{
-				//gameGUI.debugOutput.debugSync = true;
-				//Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
-			}
-
-			if (syncDebugSingleStep)
-				compareGameData(*client, *client->getServer());
-
-			nextMsgIsNextGameTime = false;
-
-			//send "still alive" message to server
-			//if (gameTime % (PAUSE_GAME_TIMEOUT/10) == 0)
-			{
-				cNetMessage* message = new cNetMessage (NET_GAME_TIME_CLIENT);
-				message->pushInt32 (gameTime);
-				client->sendNetMessage (message);
-			}
+			//gameGUI.debugOutput.debugSync = true;
+			//Log.write ("OUT OF SYNC", cLog::eLOG_TYPE_NET_ERROR);
 		}
+
+		if (syncDebugSingleStep)
+			compareGameData(*client, *client->getServer());
+
+		nextMsgIsNextGameTime = false;
+
+		//send "still alive" message to server
+		//if (gameTime % (PAUSE_GAME_TIMEOUT / 10) == 0)
+		{
+			cNetMessage* message = new cNetMessage (NET_GAME_TIME_CLIENT);
+			message->pushInt32 (gameTime);
+			client->sendNetMessage (message);
+		}
+		if (gameTime - startGameTime >= maxWorkingTime) break;
 	}
 
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
