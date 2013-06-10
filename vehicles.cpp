@@ -70,7 +70,6 @@ cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID) :
 	BuildRounds = 0;
 	BuildRoundsStart = 0;
 	ClearingRounds = 0;
-	VehicleToActivate = 0;
 	BuildBigSavedPos = 0;
 	groupSelected = false;
 	data.hitpointsCur = data.hitpointsMax;

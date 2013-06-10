@@ -2101,7 +2101,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedUnit && mouseInputMode == activateVehicle)
 		{
-			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isVehicle(), selectedUnit->storedUnits[selectedVehicle->VehicleToActivate]->iID, mouseMapX, mouseMapY);
+			sendWantActivate (*client, selectedUnit->iID, selectedUnit->isVehicle(), selectedUnit->storedUnits[selectedUnit->VehicleToActivate]->iID, mouseMapX, mouseMapY);
 			updateMouseCursor();
 		}
 		else if (changeAllowed && mouse->cur == GraphicsData.gfx_Cactivate && selectedBuilding && selectedBuilding->BuildList && selectedBuilding->BuildList->size())

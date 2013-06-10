@@ -111,6 +111,7 @@ public:
 	bool hasBeenAttacked; //the unit was attacked in this turn
 
 	std::vector<cVehicle*> storedUnits; ///< list with the vehicles, that are stored in this unit
+	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 
 	int selectedMenuButtonIndex;
 

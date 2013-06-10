@@ -150,7 +150,6 @@ public:
 	unsigned int BigBetonAlpha; // AlphaWert des großen Betons
 	int StartUp;      // Zähler für die Startupannimation
 	int FlightHigh;   // Die Flughöhe des Flugzeugs
-	int VehicleToActivate; // Nummer des Vehicles, dass aktiviert werden soll
 	bool LayMines;    // Gibt an, ob Minen gelegt werden sollen
 	bool ClearMines;  // Gibt an, ob Minen geräumt werden sollen
 	bool Loaded;      // Gibt an, ob das Vehicle geladen wurde

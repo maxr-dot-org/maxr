@@ -48,6 +48,7 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 	, isBeeingAttacked (false)
 	, isMarkedAsDone (false)
 	, hasBeenAttacked (false)
+	, VehicleToActivate (0)
 	, selectedMenuButtonIndex (-1)
 	, owner (owner)
 	, job (NULL)
