@@ -34,7 +34,7 @@
 
   <Storage>
     <Capacity_Units Num="6"/>
-    <Capacity_Units_Image_Type Const="Tank"/>
+    <Capacity_Units_Image_Type Const="Ship"/>
     <Capacity_Units_Type String="Ship"/>
   </Storage>
 </Unit>
