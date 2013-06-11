@@ -1597,7 +1597,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	if (noReturn) backButton->setLocked (true);
 	menuItems.push_back (backButton);
 
-	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, "Choose Clan");
+	titleLabel = new cMenuLabel (position.x + position.w / 2, position.y + 11, lngPack.i18n ("Text~Title~Choose_Clan"));
 	titleLabel->setCentered (true);
 	menuItems.push_back (titleLabel);
 
