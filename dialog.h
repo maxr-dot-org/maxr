@@ -189,6 +189,7 @@ class cDialogTransfer : public cMenu
 	AutoPtr<cMenuLabel>::type unitNameLabels[2];
 	AutoPtr<cMenuLabel>::type unitCargoLabels[2];
 	cMenuLabel transferLabel;
+	cMenuImage arrowImage;
 
 	void getTransferType();
 	void getNamesNCargoNImages();

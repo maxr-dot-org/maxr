@@ -527,12 +527,13 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* d
 	cancelButton (position.x + 71, position.y + 200, lngPack.i18n ("Text~Button~Cancel"), cMenuButton::BUTTON_TYPE_ANGULAR, FONT_LATIN_NORMAL),
 	incButton (position.x + 279, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_RIGHT_SMALL),
 	decButton (position.x + 17, position.y + 159, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL),
-	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG)
+	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG),
+	arrowImage (position.x + 140, position.y + 77)
 {
 	if (srcUnit.isVehicle()) srcVehicle = static_cast<cVehicle*>(&srcUnit);
 	else srcBuilding = static_cast<cBuilding*>(&srcUnit);
 
-	// TODO: add changing arrow direction!
+	menuItems.push_back (&arrowImage);
 
 	getTransferType();
 
@@ -725,19 +726,54 @@ void cDialogTransfer::getNamesNCargoNImages()
 	transferValue = maxDestCargo;
 }
 
+// TODO: move function into a better file ?
+static void FlipSurfaceHorizontally (SDL_Surface* surface)
+{
+	assert (surface);
+	if (SDL_MUSTLOCK (surface)) SDL_LockSurface (surface);
+
+	// Assume surface format uses Uint32*
+	// TODO: check surface format (or support more format).
+	Uint32* p = static_cast<Uint32*>(surface->pixels);
+
+	for (int h = 0; h != surface->h; ++h)
+		for (int w = 0; w != surface->w / 2; ++w)
+			std::swap (p[h * surface->w + w], p [(h + 1) * surface->w - w - 1]);
+
+	if (SDL_MUSTLOCK (surface)) SDL_UnlockSurface (surface);
+}
+
 void cDialogTransfer::setCargos()
 {
-	if (srcCargo - transferValue < 0) transferValue += srcCargo - transferValue;
-	if (destCargo + transferValue < 0) transferValue -= destCargo + transferValue;
-	if (destCargo + transferValue > maxDestCargo) transferValue -= (destCargo + transferValue) - maxDestCargo;
-	if (srcCargo - transferValue > maxSrcCargo) transferValue += (srcCargo - transferValue) - maxSrcCargo;
+	transferValue = std::min (transferValue, srcCargo);
+	transferValue = std::max (transferValue, -destCargo);
+	transferValue = std::min (transferValue, maxDestCargo - destCargo);
+	transferValue = std::max (transferValue, srcCargo - maxSrcCargo);
 
 	unitCargoLabels[0]->setText (iToStr (srcCargo - transferValue));
 	unitCargoLabels[1]->setText (iToStr (destCargo + transferValue));
 
+	// Change arrow direction.
+	// TODO: find a better way to (un)hide image.
+	if (transferValue >= 0) arrowImage.setImage (NULL);
+	else
+	{
+		// Set right to left arrow image.
+		// little hack: flip part of the image that represent the arrow
+		const unsigned int w = 40;
+		const unsigned int h = 20;
+		SDL_Surface* arrowSurface = SDL_CreateRGBSurface (Video.getSurfaceType(), w, h, Video.getColDepth(), 0, 0, 0, 0);
+		const Sint16 x = arrowImage.getPosition().x - position.x; // 140
+		const Sint16 y = arrowImage.getPosition().y - position.y; //  77
+		SDL_Rect src = {x, y, w, h};
+		SDL_BlitSurface (background, &src, arrowSurface, NULL);
+		FlipSurfaceHorizontally (arrowSurface);
+
+		arrowImage.setImage (arrowSurface);
+	}
 	transferLabel.setText (iToStr (abs (transferValue)));
 
-	resBar->setCurrentValue ( (int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
+	resBar->setCurrentValue ((int) (223 * (float) (destCargo + transferValue) / maxDestCargo));
 }
 
 void cDialogTransfer::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
