@@ -24,8 +24,8 @@
 #define SCAN_COLOR			0xE3E300	// color of scan circles
 #define RANGE_GROUND_COLOR	0xE20000	// color of range circles for ground attack
 #define RANGE_AIR_COLOR		0xFCA800	// color of range circles for air attack
-#define PFEIL_COLOR			0x00FF00	// color of a waypointarrow
-#define PFEILS_COLOR		0x0000FF	// color of a special waypointarrow
+#define PFEIL_COLOR			0x0000FF	// color of a waypointarrow
+#define PFEILS_COLOR		0x00FF00	// color of a special waypointarrow
 #define MOVE_SPEED			2			// speed of vehcilemovements
 #define MSG_TICKS			30000		// number of ticks for how long a message will be displayed
 #define LANDING_DISTANCE_WARNING	28
