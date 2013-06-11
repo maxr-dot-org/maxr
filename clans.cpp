@@ -52,6 +52,7 @@ string cClanUnitStat::getClanStatsDescription() const
 	unitID.iSecondPart = unitIdSecPart;
 	sUnitData* data = unitID.getUnitDataOriginalVersion();
 	string result = "Unknown";
+	//TODO: for positive values the › + " +" + ‹-construct should be added to the iToStr-value - if there are more mod's in future... else it is e.g. displayed: <xyz> +-16 attack -- nonsinn
 	if (data)
 	{
 		result = string (data->name) + ": ";
@@ -61,42 +62,42 @@ string cClanUnitStat::getClanStatsDescription() const
 		{
 			if (!first)
 				result += ", ";
-			result += "Attack +" + iToStr (getModificationValue ("Damage") - data->damage);
+			result += lngPack.i18n ("Text~Vehicles~Damage") + " +" + iToStr (getModificationValue ("Damage") - data->damage);
 			first = false;
 		}
 		if (hasModification ("Range"))
 		{
 			if (!first)
 				result += ", ";
-			result += "Range +" + iToStr (getModificationValue ("Range") - data->range);
+			result += lngPack.i18n ("Text~Vehicles~Range") + " +" + iToStr (getModificationValue ("Range") - data->range);
 			first = false;
 		}
 		if (hasModification ("Armor"))
 		{
 			if (!first)
 				result += ", ";
-			result += "Armor +" + iToStr (getModificationValue ("Armor") - data->armor);
+			result += lngPack.i18n ("Text~Vehicles~Armor") + " +" + iToStr (getModificationValue ("Armor") - data->armor);
 			first = false;
 		}
 		if (hasModification ("Hitpoints"))
 		{
 			if (!first)
 				result += ", ";
-			result += "Hits +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
+			result += lngPack.i18n ("Text~Vehicles~Hitpoints") + " +" + iToStr (getModificationValue ("Hitpoints") - data->hitpointsMax);
 			first = false;
 		}
 		if (hasModification ("Scan"))
 		{
 			if (!first)
 				result += ", ";
-			result += "Scan +" + iToStr (getModificationValue ("Scan") - data->scan);
+			result += lngPack.i18n ("Text~Vehicles~Scan") + " +" + iToStr (getModificationValue ("Scan") - data->scan);
 			first = false;
 		}
 		if (hasModification ("Speed"))
 		{
 			if (!first)
 				result += ", ";
-			result += "Speed +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
+			result += lngPack.i18n ("Text~Vehicles~Speed") + " +" + iToStr (getModificationValue ("Speed") - (data->speedMax / 4));
 			first = false;
 		}
 		if (hasModification ("Built_Costs"))
@@ -106,7 +107,7 @@ string cClanUnitStat::getClanStatsDescription() const
 			int nrTurns = (getModificationValue ("Built_Costs")) / (unitIdFirstPart == 0 ? 3 : 2);
 			if (data->isHuman)
 				nrTurns = getModificationValue ("Built_Costs");
-			result += iToStr (nrTurns) + " Turns";
+			result += iToStr (nrTurns) + " " + lngPack.i18n ("Text~Comp~Turns");
 			first = false;
 		}
 	}
