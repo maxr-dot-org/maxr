@@ -9,7 +9,7 @@
 	<Header>
 		<Author name="JCK">
 			<Editor name="JCK" time="2007-09-30 13:04:00"/>
-			<Editor name="Someone" time="2007-09-30 13:04:00"/>
+			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -59,7 +59,8 @@
 			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
-			<Choose_Planet ENG="Planetchoosing" localized="Planetenauswahl"/>
+			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
+			<Choose_Clan ENG="Choose Clan" localized="Clanauswahl"/>
 			<Options ENG="Options" localized="Optionen"/>
 			<Connect ENG="Connect" localized="Verbinden"/>
 			<Send ENG="Send" localized="Senden"/>
@@ -282,7 +283,7 @@
 			<Ammo ENG="Ammo" localized="Munition"/>
 			<Armor ENG="Armor" localized="Panzer"/>
 			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
-			<Scan ENG="Scan" localized="Radar"/>
+			<Scan ENG="Scan" localized="Scan"/>
 			<Speed ENG="Speed" localized="Geschw."/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
 			<Costs ENG="Costs" localized="Kosten"/>
@@ -458,7 +459,7 @@
 		<Clan ID="4" localized="Musashi">Verbesserte Panzerung</Clan>
 		<Clan ID="5" localized="Heilige Acht">Schnellere Fahrzeuge</Clan>
 		<Clan ID="6" localized="7 Ritter">Verbesserte Verteidugungsanlagen</Clan>
-		<Clan ID="7" localized="Axis Inc.">Extra Konstrukeure und Pioniere (Hängt vom Startgold ab) </Clan>
+		<Clan ID="7" localized="Axis Inc.">Extra Konstrukeure und Pioniere (Abhängig vom Geld) </Clan>
 	</Clans>
 	<Graphic>
 	</Graphic>

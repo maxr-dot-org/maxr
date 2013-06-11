@@ -14,6 +14,7 @@
 			<Editor name="Shaktazuki" time="2008-08-30 10:04:00"/>
 			<Editor name="Shaktazuki" time="2008-09-01 09:30:00"/>
 			<Editor name="Shaktazuki" time="2008-10-20 21:25:00"/>
+			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -49,6 +50,7 @@
 			<Build ENG="Build menu"/>
 			<Cargo ENG="Cargo"/>
 			<Choose_Planet ENG="Choose planet"/>
+			<Choose_Clan ENG="Choose Clan"/>
 			<Clan ENG="Clan"/>
 			<Clans ENG="Clans"/>
 			<Color ENG="Color:"/>
@@ -279,10 +281,10 @@
 			<MapDL_Download ENG="map %s from server."/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download"/>
 			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!"/>
-      <No_Response ENG="Waiting for network response from player %s"/>
-      <Wait_TurnEnd ENG="Please wait while turn end is executed." />
-      <Wait_For_Server ENG="Waiting for network response from server" />
-    </Multiplayer>
+			<No_Response ENG="Waiting for network response from player %s"/>
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." />
+			<Wait_For_Server ENG="Waiting for network response from server" />
+		</Multiplayer>
 		<Vehicles>
 			<Damage ENG="Attack"/>
 			<Shoots ENG="Shoots"/>
