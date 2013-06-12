@@ -365,6 +365,7 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8],
 		if (unitIndex < UnitsData.getNrVehicles()) currentVersion = &player->VehicleData[unitIndex];
 		else currentVersion = &player->BuildingData[unitIndex - UnitsData.getNrVehicles()];
 
+		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SPEED, currentVersion->speedMax));
 		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_SCAN, currentVersion->scan));
 		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_HITS, currentVersion->hitpointsMax));
 		msg->pushInt16 (findUpgradeValue (curUpgrades, sUnitUpgrade::UPGRADE_TYPE_ARMOR, currentVersion->armor));
