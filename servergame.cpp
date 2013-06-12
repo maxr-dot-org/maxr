@@ -44,7 +44,7 @@ int serverGameThreadFunction (void* data)
 }
 
 //------------------------------------------------------------------------
-cServerGame::cServerGame(cTCP& network_) :
+cServerGame::cServerGame (cTCP& network_) :
 	server (NULL),
 	network (&network_),
 	thread (0),
@@ -409,7 +409,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 		case MU_MSG_LANDING_VEHICLES: handleNetMessage_MU_MSG_LANDING_VEHICLES (message); break;
 		case MU_MSG_UPGRADES: handleNetMessage_MU_MSG_UPGRADES (message); break;
 		case MU_MSG_LANDING_COORDS: handleNetMessage_MU_MSG_LANDING_COORDS (message); break;
-		//case MU_MSG_ALL_LANDED: break;
+			//case MU_MSG_ALL_LANDED: break;
 		default: break;
 	}
 }

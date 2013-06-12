@@ -78,7 +78,7 @@ cClient::cClient (cServer* server_, cTCP* network_, cEventHandling& eventHandlin
 	gameGUI (Map)
 {
 	gameGUI.setClient (this);
-	gameTimer.setClient(this);
+	gameTimer.setClient (this);
 	if (server) server->setLocalClient (*this);
 	else network->setMessageReceiver (this);
 	neutralBuildings = NULL;
@@ -239,7 +239,7 @@ void cClient::runFx ()
 	{
 		FxList[i]->run ();
 
-		if (FxList[i]->isFinished () )
+		if (FxList[i]->isFinished ())
 		{
 			delete FxList[i];
 			FxList.erase (FxList.begin() + i);
@@ -1976,7 +1976,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 
 	if (!Building->owner)
 	{
-		remove_from_intrusivelist(neutralBuildings, *Building);
+		remove_from_intrusivelist (neutralBuildings, *Building);
 		delete Building;
 		return;
 	}
@@ -1988,7 +1988,7 @@ void cClient::deleteUnit (cBuilding* Building, cMenu* activeMenu)
 			attackJobs[i]->building = NULL;
 		}
 	}
-	remove_from_intrusivelist(Building->owner->BuildingList, *Building);
+	remove_from_intrusivelist (Building->owner->BuildingList, *Building);
 
 	if (gameGUI.getSelectedUnit() == Building)
 	{
@@ -2022,7 +2022,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 	gameGUI.callMiniMapDraw();
 
 	cPlayer* owner = Vehicle->owner;
-	remove_from_intrusivelist(Vehicle->owner->VehicleList, *Vehicle);
+	remove_from_intrusivelist (Vehicle->owner->VehicleList, *Vehicle);
 
 	if (gameGUI.getSelectedUnit() == Vehicle)
 	{
@@ -2061,11 +2061,11 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	int iZoom, iX, iY;
 	//ActivePlayer->HotHud = Hud;
 	iZoom = Hud.LastZoom;
-	ActivePlayer = getPlayerFromNumber( iNextPlayerNum ); // TODO: maybe here must be done more than just set the next player!
+	ActivePlayer = getPlayerFromNumber (iNextPlayerNum);  // TODO: maybe here must be done more than just set the next player!
 	//Hud = ActivePlayer->HotHud;
 	iX = Hud.OffX;
 	iY = Hud.OffY;
-	if ( Hud.LastZoom != iZoom )
+	if (Hud.LastZoom != iZoom)
 	{
 		Hud.LastZoom = -1;
 		Hud.ScaleSurfaces();
@@ -2249,11 +2249,11 @@ void cClient::destroyUnit (cVehicle* vehicle)
 	//play explosion
 	if (vehicle->data.isBig)
 	{
-		addFx (new cFxExploBig( vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64));
+		addFx (new cFxExploBig (vehicle->PosX * 64 + 64, vehicle->PosY * 64 + 64));
 	}
 	else if (vehicle->data.factorAir > 0 && vehicle->FlightHigh != 0)
 	{
-		addFx (new cFxExploAir( vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
+		addFx (new cFxExploAir (vehicle->PosX * 64 + vehicle->OffX + 32, vehicle->PosY * 64 + vehicle->OffY + 32));
 	}
 	else if (getMap()->isWaterOrCoast (vehicle->PosX, vehicle->PosY))
 	{
@@ -2307,12 +2307,12 @@ void cClient::deletePlayer (cPlayer* player)
 	// or we may need him for some statistics.
 	// uncomment this if we can make sure all references have been removed or at least been set to NULL.
 #if 0
-	for (unsigned int i = 0; i < getPlayerList()->size(); i++ )
+	for (unsigned int i = 0; i < getPlayerList()->size(); i++)
 	{
-		if ( player == (*getPlayerList())[i] )
+		if (player == (*getPlayerList()) [i])
 		{
 			delete (*getPlayerList())[i];
-			getPlayerList()->Delete ( i );
+			getPlayerList()->Delete (i);
 		}
 	}
 #endif

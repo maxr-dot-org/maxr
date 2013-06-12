@@ -260,8 +260,8 @@ void cDialogLicence::downReleased (void* parent)
 	menu->resetText();
 }
 
-cDialogPreferences::cDialogPreferences(cPlayer* player_) : cMenu (LoadPCX (GFXOD_DIALOG5), MNU_BG_ALPHA),
-	player(player_),
+cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXOD_DIALOG5), MNU_BG_ALPHA),
+	player (player_),
 	titleLabel (position.x + position.w / 2, position.y + 15, lngPack.i18n ("Text~Settings~Preferences")),
 	volumeLabel (position.x + 25, position.y + 56, lngPack.i18n ("Text~Settings~Volume") + ":"),
 	musicLabel (position.x + 25, position.y + 56 + 20, lngPack.i18n ("Text~Settings~Music")),
@@ -518,7 +518,7 @@ void cDialogPreferences::voicesMuteChanged (void* parent)
 
 cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* destBuilding_, cVehicle* destVehicle_) :
 	cMenu (LoadPCX (GFXOD_DIALOG_TRANSFER), MNU_BG_ALPHA),
-	client(&client_),
+	client (&client_),
 	srcBuilding (NULL),
 	destBuilding (destBuilding_),
 	srcVehicle (NULL),
@@ -530,8 +530,8 @@ cDialogTransfer::cDialogTransfer (cClient& client_, cUnit& srcUnit, cBuilding* d
 	transferLabel (position.x + 157, position.y + 49, "", FONT_LATIN_BIG),
 	arrowImage (position.x + 140, position.y + 77)
 {
-	if (srcUnit.isVehicle()) srcVehicle = static_cast<cVehicle*>(&srcUnit);
-	else srcBuilding = static_cast<cBuilding*>(&srcUnit);
+	if (srcUnit.isVehicle()) srcVehicle = static_cast<cVehicle*> (&srcUnit);
+	else srcBuilding = static_cast<cBuilding*> (&srcUnit);
 
 	menuItems.push_back (&arrowImage);
 
@@ -734,7 +734,7 @@ static void FlipSurfaceHorizontally (SDL_Surface* surface)
 
 	// Assume surface format uses Uint32*
 	// TODO: check surface format (or support more format).
-	Uint32* p = static_cast<Uint32*>(surface->pixels);
+	Uint32* p = static_cast<Uint32*> (surface->pixels);
 
 	for (int h = 0; h != surface->h; ++h)
 		for (int w = 0; w != surface->w / 2; ++w)
@@ -855,7 +855,7 @@ void drawContextItem (const string& sText, bool bPressed, int x, int y, SDL_Surf
 }
 
 cDialogResearch::cDialogResearch (cClient& client_, cPlayer* owner_) :
-	cMenu (LoadPCX (GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA), client(&client_), owner (owner_),
+	cMenu (LoadPCX (GFXOD_DIALOG_RESEARCH), MNU_BG_ALPHA), client (&client_), owner (owner_),
 	titleLabel (position.x + position.w / 2, position.y + 19, lngPack.i18n ("Text~Title~Labs")),
 	centersLabel (position.x + 58, position.y + 52, lngPack.i18n ("Text~Comp~Labs")),
 	themeLabel (position.x + 200, position.y + 52, lngPack.i18n ("Text~Comp~Themes")),

@@ -711,7 +711,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 		{
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			executeAutoMoveJobCommand(client);
+			executeAutoMoveJobCommand (client);
 			return;
 		}
 		nr++;
@@ -738,7 +738,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 			assert (this->isVehicle());
 			gameGUI.unitMenuActive = false;
 			PlayFX (SoundData.SNDObjectMenu);
-			sendWantStartClear (client, static_cast<cVehicle&>(*this));
+			sendWantStartClear (client, static_cast<cVehicle&> (*this));
 			return;
 		}
 		nr++;
@@ -1222,7 +1222,7 @@ void cUnit::deleteStoredUnits()
 	for (size_t i = 0; i != storedUnits.size(); ++i)
 	{
 		cVehicle* unit = storedUnits[i];
-		remove_from_intrusivelist(unit->owner->VehicleList, *unit);
+		remove_from_intrusivelist (unit->owner->VehicleList, *unit);
 		if (unit->isVehicle())
 			unit->deleteStoredUnits();
 

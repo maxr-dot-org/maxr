@@ -744,7 +744,8 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		case kArmor:
 		{
 			const unsigned int index = curResearchLevel / 10;
-			const int values[] = {
+			const int values[] =
+			{
 				8, 15, 25, 42, 67, 104, 156, 229, 328, 462,
 				639, 871, 1171, 1553, 2036, 2640, 3389, 4311, 5437, 6803,
 				8448
@@ -760,7 +761,8 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		case kShots:
 		{
 			const unsigned int index = curResearchLevel / 10;
-			const int values[] = {
+			const int values[] =
+			{
 				16, 30, 51, 85, 135, 208, 312, 458, 657, 924,
 				1278, 1742, 2342, 3106, 4072, 5280, 6778, 8622, 10874, 13606,
 				16896
@@ -776,7 +778,8 @@ int cUpgradeCalculator::calcResearchTurns (int curResearchLevel, int upgradeType
 		case kCost:
 		{
 			const unsigned int index = curResearchLevel / 10;
-			const int values[] = {
+			const int values[] =
+			{
 				33, 60, 103, 170, 270, 416, 625, 916, 1314, 1849,
 				2559, 3487, 4684, 6213, 8144, 10560, 13556, 17244, 21748, 27212,
 				33792

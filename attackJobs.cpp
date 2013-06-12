@@ -90,7 +90,7 @@ int cServerAttackJob::iNextID = 0;
 
 //--------------------------------------------------------------------------
 cServerAttackJob::cServerAttackJob (cServer& server_, cUnit* _unit, int targetOff, bool sentry) :
-	server(&server_)
+	server (&server_)
 {
 	unit = _unit;
 
@@ -568,7 +568,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 		{
 			case FINISHED:
 			{
-				job->sendFinishMessage(client);
+				job->sendFinishMessage (client);
 				if (job->vehicle)  job->vehicle->attacking  = false;
 				if (job->building) job->building->attacking = false;
 				delete job;
@@ -577,7 +577,7 @@ void cClientAttackJob::handleAttackJobs (cClient& client, cMenu* activeMenu)
 			}
 			case PLAYING_MUZZLE:
 			{
-				job->playMuzzle(client, activeMenu);
+				job->playMuzzle (client, activeMenu);
 				break;
 			}
 			case ROTATING:
@@ -716,7 +716,7 @@ void cClientAttackJob::rotate()
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
+void cClientAttackJob::playMuzzle (cClient& client, cMenu* activeMenu)
 {
 	int offx = 0, offy = 0;
 	const cMap& map = *client.getMap();
@@ -793,11 +793,11 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 			}
 			if (vehicle)
 			{
-				client.addFx (new cFxMuzzleSmall( vehicle->PosX * 64, vehicle->PosY * 64, iFireDir));
+				client.addFx (new cFxMuzzleSmall (vehicle->PosX * 64, vehicle->PosY * 64, iFireDir));
 			}
 			else if (building)
 			{
-				client.addFx (new cFxMuzzleSmall( building->PosX * 64, building->PosY * 64, iFireDir));
+				client.addFx (new cFxMuzzleSmall (building->PosX * 64, building->PosY * 64, iFireDir));
 			}
 			break;
 		case sUnitData::MUZZLE_TYPE_ROCKET:
@@ -805,7 +805,7 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 		{
 			if (wait++ != 0)
 			{
-				if (wait > length ) state = FINISHED;
+				if (wait > length) state = FINISHED;
 
 				return;
 			}
@@ -885,7 +885,7 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 		{
 			if (wait++ != 0)
 			{
-				if (wait > length ) state = FINISHED;
+				if (wait > length) state = FINISHED;
 
 				return;
 			}
@@ -916,7 +916,7 @@ void cClientAttackJob::playMuzzle(cClient& client, cMenu* activeMenu)
 }
 
 //--------------------------------------------------------------------------
-void cClientAttackJob::sendFinishMessage(cClient& client)
+void cClientAttackJob::sendFinishMessage (cClient& client)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_FINISHED);
 	message->pushInt16 (iID);

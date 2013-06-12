@@ -232,7 +232,7 @@ int mapSenderThreadFunction (void* data)
 
 //-------------------------------------------------------------------------------
 cMapSender::cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName)
-	: network(&network_)
+	: network (&network_)
 	, toSocket (toSocket)
 	, eventHandling (eventHandling)
 	, receivingPlayerName (receivingPlayerName)

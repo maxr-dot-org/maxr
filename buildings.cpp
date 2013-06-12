@@ -54,8 +54,8 @@ cBuilding::cBuilding (const sBuilding* b, cPlayer* Owner, unsigned int ID) :
 		   ( (Owner != 0 && b != 0) ? & (Owner->BuildingData[b->nr]) : 0),
 		   Owner,
 		   ID),
-	next(0),
-	prev(0)
+	next (0),
+	prev (0)
 {
 	RubbleTyp = 0;
 	RubbleValue = 0;
@@ -129,7 +129,7 @@ cBuilding::~cBuilding()
 //----------------------------------------------------
 /** Returns a string with the current state */
 //----------------------------------------------------
-string cBuilding::getStatusStr(const cGameGUI& gameGUI) const
+string cBuilding::getStatusStr (const cGameGUI& gameGUI) const
 {
 	if (turnsDisabled > 0)
 	{
@@ -455,7 +455,7 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 	{
 		cServer* server = gameGUI.getClient()->getServer();
 		const cBuilding* serverBuilding = NULL;
-		if (server) serverBuilding = server->Map->fields[server->Map->getOffset(PosX, PosY)].getBuilding();
+		if (server) serverBuilding = server->Map->fields[server->Map->getOffset (PosX, PosY)].getBuilding();
 		if (isBeeingAttacked) font->showText (dest.x + 1, dest.y + 1, "C: attacked", FONT_LATIN_SMALL_WHITE);
 		if (serverBuilding && serverBuilding->isBeeingAttacked) font->showText (dest.x + 1, dest.y + 9, "S: attacked", FONT_LATIN_SMALL_YELLOW);
 		if (attacking) font->showText (dest.x + 1, dest.y + 17, "C: attacking", FONT_LATIN_SMALL_WHITE);
@@ -1398,7 +1398,7 @@ void cBuilding::DrawSymbolBig (eSymbolsBig sym, int x, int y, int maxx, int valu
 /** checks the resources that are available under the mining station */
 //--------------------------------------------------------------------------
 
-void cBuilding::CheckRessourceProd(const cServer& server)
+void cBuilding::CheckRessourceProd (const cServer& server)
 {
 	int pos = server.Map->getOffset (PosX, PosY);
 
@@ -1526,7 +1526,7 @@ void cBuilding::CalcTurboBuild (int* iTurboBuildRounds, int* iTurboBuildCosts, i
 }
 
 //--------------------------------------------------------------------------
-void cBuilding::Select(cGameGUI& gameGUI)
+void cBuilding::Select (cGameGUI& gameGUI)
 {
 	if (!owner) return;
 

@@ -855,7 +855,7 @@ void cMenuDestroyButton::draw()
 
 	if (glassHeight < 56)
 	{
-		SDL_Rect src = { 0, Sint16 (glassHeight), 59, Uint16(56 - glassHeight) };
+		SDL_Rect src = { 0, Sint16 (glassHeight), 59, Uint16 (56 - glassHeight) };
 		SDL_BlitSurface (GraphicsData.gfx_destruction_glas, &src, buffer, &position);
 	}
 
@@ -1308,7 +1308,7 @@ void cMenuUnitListItem::draw()
 
 int cMenuUnitListItem::drawName (bool withNumber)
 {
-	SDL_Rect dest = { Sint16(position.x + 32 + 4), Sint16 (position.y + 12), Uint16 (position.w - (32 + 4) - 12), 0 };
+	SDL_Rect dest = { Sint16 (position.x + 32 + 4), Sint16 (position.y + 12), Uint16 (position.w - (32 + 4) - 12), 0 };
 	string name = owner->getUnitDataCurrentVersion (unitID)->name;
 	eUnicodeFontType fontType = marked ? FONT_LATIN_SMALL_RED : FONT_LATIN_SMALL_WHITE;
 
@@ -2078,7 +2078,7 @@ void cMenuUnitDetails::setOwner (cPlayer* owner_)
 	owner = owner_;
 }
 
-void cMenuUnitDetails::setSelection (const cClient &client_, cVehicle* vehicle_, cBuilding* building_)
+void cMenuUnitDetails::setSelection (const cClient& client_, cVehicle* vehicle_, cBuilding* building_)
 {
 	client = &client_;
 	vehicle = vehicle_;
@@ -3556,7 +3556,7 @@ void cMenuScrollerHandler::setValue (int value)
 //-----------------------------------------------------------------------------
 cMenuReportsScreen::cMenuReportsScreen (int x, int y, int w, int h, cClient& client_, cPlayer* owner_, cReportsMenu* parentMenu_) :
 	cMenuItem (x, y),
-	client(&client_),
+	client (&client_),
 	owner (owner_),
 	parentMenu (parentMenu_)
 {
@@ -3656,7 +3656,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 {
 	for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList().size(); playerIdx++)
 	{
-		const cPlayer& player = *client->getPlayerList()[playerIdx];
+		const cPlayer& player = *client->getPlayerList() [playerIdx];
 		const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
 		const int posy = position.y + (playerIdx < 4 ? 9 : 22);
 		font->showTextCentered (posx, posy, player.name);
@@ -3743,7 +3743,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 
 					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList().size(); playerIdx++)
 					{
-						const cPlayer& player = *client->getPlayerList()[playerIdx];
+						const cPlayer& player = *client->getPlayerList() [playerIdx];
 						const int lossesOfPlayer = casualties.getCasualtiesOfUnitType (unitData->ID, player.Nr);
 						const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
 						const int posy = position.y + 38 + (displayedEntryIndex - (index * 10)) * 42;
@@ -3782,7 +3782,7 @@ void cMenuReportsScreen::drawScoreScreen()
 
 	for (unsigned n = 0, y = 36; n < client->getPlayerList().size(); n++, y += 16)
 	{
-		const cPlayer& p = *client->getPlayerList()[n];
+		const cPlayer& p = *client->getPlayerList() [n];
 		int score = p.getScore (client->getTurn());
 		int ecos = p.numEcos;
 
@@ -3839,7 +3839,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	{
 		for (int turn = min_turns; turn < max_turns; turn++)
 		{
-			const cPlayer& p = *client->getPlayerList()[n];
+			const cPlayer& p = *client->getPlayerList() [n];
 			int score = extrapolateScore (&p, client->getTurn(), turn);
 			highest_score = std::max (highest_score, score);
 			lowest_score = std::min (score, lowest_score);
@@ -3892,7 +3892,7 @@ void cMenuReportsScreen::drawScoreGraph()
 	// Draw Score Lines
 	for (unsigned n = 0, y = 40; n < client->getPlayerList().size(); n++, y += 25)
 	{
-		const cPlayer& p = *client->getPlayerList()[n];
+		const cPlayer& p = *client->getPlayerList() [n];
 		const Uint32 player_colour = getPlayerColour (&p);
 		int lx = x0;
 		const int initialPoint = extrapolateScore (&p, client->getTurn(), min_turns);
@@ -4290,7 +4290,7 @@ void cMenuPlayerInfo::draw()
 
 	if (GraphicsData.gfx_hud_extra_players)
 	{
-		SDL_Rect srcRect = { Sint16 (sourceX), 0, Uint16 (GraphicsData.gfx_hud_extra_players->w), Uint16 (GraphicsData.gfx_hud_extra_players->h)};
+		SDL_Rect srcRect = { Sint16 (sourceX), 0, Uint16 (GraphicsData.gfx_hud_extra_players->w), Uint16 (GraphicsData.gfx_hud_extra_players->h) };
 
 		SDL_BlitSurface (GraphicsData.gfx_hud_extra_players, &srcRect, buffer, &position);
 	}

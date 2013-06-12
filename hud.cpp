@@ -59,7 +59,7 @@ sMouseBox::sMouseBox() :
 {}
 
 cDebugOutput::cDebugOutput() :
-	server(0), client(0)
+	server (0), client (0)
 {
 	debugAjobs = false;
 	debugBaseServer = false;
@@ -74,11 +74,11 @@ cDebugOutput::cDebugOutput() :
 	debugSync = true;
 }
 
-void cDebugOutput::setClient(cClient* client_)
+void cDebugOutput::setClient (cClient* client_)
 {
 	client = client_;
 }
-void cDebugOutput::setServer(cServer* server_)
+void cDebugOutput::setServer (cServer* server_)
 {
 	server = server_;
 }
@@ -170,10 +170,10 @@ void cDebugOutput::draw()
 	if (debugFX)
 	{
 #if 0
-		font->showText(DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr((int)FXList.size() + (int)FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
-		font->showText(DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr(( int ) ( fWindDir*57.29577 )), FONT_LATIN_SMALL_WHITE);
-		debugOff += font->getFontHeight(FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "fx-count: " + iToStr ( (int) FXList.size() + (int) FXListBottom.size()), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
+		font->showText (DEBUGOUT_X_POS, debugOff, "wind-dir: " + iToStr ( (int) (fWindDir * 57.29577)), FONT_LATIN_SMALL_WHITE);
+		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 #endif
 	}
 	if (debugTraceServer || debugTraceClient)
@@ -460,7 +460,7 @@ Uint32 TimerCallback (Uint32 interval, void* arg)
 cGameGUI::cGameGUI (cMap* map_) :
 	cMenu (generateSurface()),
 	client (NULL),
-	iObjectStream(-1),
+	iObjectStream (-1),
 	msgCoordsX (-1),
 	msgCoordsY (-1),
 	player (NULL),
@@ -510,7 +510,7 @@ cGameGUI::cGameGUI (cMap* map_) :
 	selUnitNameEdit (12, 30, 123, 10, this, FONT_LATIN_SMALL_GREEN, cMenuLineEdit::LE_TYPE_JUST_TEXT),
 	iTimerTime (0)
 {
-	dCache.setGameGUI(*this);
+	dCache.setGameGUI (*this);
 	unitMenuActive = false;
 	frame = 0;
 	zoom = 1.0f;
@@ -902,7 +902,7 @@ SDL_Surface* cGameGUI::generateSurface()
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_top.pcx"));
 		if (tmpSurface)
 		{
-			SDL_Rect src = {0, 0, Uint16(tmpSurface->w), Uint16(tmpSurface->h)};
+			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = HUD_LEFT_WIDTH;
 			dest.y = 0;
 			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
@@ -918,7 +918,7 @@ SDL_Surface* cGameGUI::generateSurface()
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_right.pcx"));
 		if (tmpSurface)
 		{
-			SDL_Rect src = {0, 0, Uint16(tmpSurface->w), Uint16(tmpSurface->h)};
+			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = surface->w - HUD_RIGHT_WIDTH;
 			dest.y = HUD_TOP_HIGHT;
 			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
@@ -929,7 +929,7 @@ SDL_Surface* cGameGUI::generateSurface()
 		AutoSurface tmpSurface (LoadPCX (gfxPath + "hud_bottom.pcx"));
 		if (tmpSurface)
 		{
-			SDL_Rect src = {0, 0, Uint16(tmpSurface->w), Uint16(tmpSurface->h)};
+			SDL_Rect src = {0, 0, Uint16 (tmpSurface->w), Uint16 (tmpSurface->h) };
 			dest.x = HUD_LEFT_WIDTH;
 			dest.y = surface->h - 24;
 			SDL_BlitSurface (tmpSurface, &src, surface, &dest);
@@ -1002,7 +1002,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 
 			SDL_Color sdlcolor;
 			const sTerrain& terrain = map->staticMap->getTerrain (terrainx, terrainy);
-			const Uint8* terrainPixels = reinterpret_cast<const Uint8*>(terrain.sf_org->pixels);
+			const Uint8* terrainPixels = reinterpret_cast<const Uint8*> (terrain.sf_org->pixels);
 			Uint8 index = terrainPixels[offsetx + offsety * 64];
 			sdlcolor = terrain.sf_org->format->palette->colors[index];
 			Uint32 color = (sdlcolor.r << 16) + (sdlcolor.g << 8) + sdlcolor.b;
@@ -1140,8 +1140,8 @@ void cGameGUI::checkOffsetPosition()
 	offX = max (offX, 0);
 	offY = max (offY, 0);
 
-	const int maxX = map->getSize() * 64 - (int) ((Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
-	const int maxY = map->getSize() * 64 - (int) ((Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
+	const int maxX = map->getSize() * 64 - (int) ( (Video.getResolutionX() - HUD_TOTAL_WIDTH) / getZoom());
+	const int maxY = map->getSize() * 64 - (int) ( (Video.getResolutionY() - HUD_TOTAL_HIGHT) / getZoom());
 	offX = min (offX, maxX);
 	offY = min (offY, maxY);
 
@@ -1484,21 +1484,21 @@ void cGameGUI::setStartup (bool startup_)
 
 cVehicle* cGameGUI::getSelectedVehicle()
 {
-	return static_cast<cVehicle*>(selectedUnit && selectedUnit->isVehicle() ? selectedUnit : NULL);
+	return static_cast<cVehicle*> (selectedUnit && selectedUnit->isVehicle() ? selectedUnit : NULL);
 }
 
 cBuilding* cGameGUI::getSelectedBuilding()
 {
-	return static_cast<cBuilding*>(selectedUnit && selectedUnit->isBuilding() ? selectedUnit : NULL);
+	return static_cast<cBuilding*> (selectedUnit && selectedUnit->isBuilding() ? selectedUnit : NULL);
 }
 
 void cGameGUI::selectUnit (cUnit& unit)
 {
-	cVehicle* vehicle = static_cast<cVehicle*>(unit.isVehicle() ? &unit : NULL);
+	cVehicle* vehicle = static_cast<cVehicle*> (unit.isVehicle() ? &unit : NULL);
 
 	if (vehicle && vehicle->Loaded) return;
 
-	cBuilding* building = static_cast<cBuilding*>(unit.isBuilding() ? &unit : NULL);
+	cBuilding* building = static_cast<cBuilding*> (unit.isBuilding() ? &unit : NULL);
 
 	deselectUnit();
 	selectedUnit = &unit;
@@ -1506,12 +1506,12 @@ void cGameGUI::selectUnit (cUnit& unit)
 	mouseInputMode = normalInput;
 	if (vehicle)
 	{
-		vehicle->Select(*this);
+		vehicle->Select (*this);
 		iObjectStream = vehicle->playStream (*this);
 	}
 	else
 	{
-		building->Select(*this);
+		building->Select (*this);
 		iObjectStream = building->playStream();
 	}
 	updateMouseCursor();
@@ -2048,7 +2048,7 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 	}
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
-	cBuilding* selectedBuilding= getSelectedBuilding();
+	cBuilding* selectedBuilding = getSelectedBuilding();
 
 	if (mouseState.rightButtonReleased && !mouseState.leftButtonPressed)
 	{
@@ -2733,7 +2733,7 @@ void cGameGUI::selectBoxVehicles (sMouseBox& box)
 				if (vehicle == selectedUnit)
 				{
 					newSelected = false;
-					selectedVehiclesGroup.insert(selectedVehiclesGroup.begin(), vehicle);
+					selectedVehiclesGroup.insert (selectedVehiclesGroup.begin(), vehicle);
 				}
 				else selectedVehiclesGroup.push_back (vehicle);
 				vehicle->groupSelected = true;
@@ -2832,7 +2832,7 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	}
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
-	cBuilding* selectedBuilding= getSelectedBuilding();
+	cBuilding* selectedBuilding = getSelectedBuilding();
 
 	if (key.keysym.sym == KeysList.KeyExit)
 	{
@@ -2910,9 +2910,9 @@ void cGameGUI::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 	{
 		for (unsigned int i = 1; i < selectedVehiclesGroup.size(); i++)
 		{
-			selectedVehiclesGroup[i]->executeAutoMoveJobCommand(*client);
+			selectedVehiclesGroup[i]->executeAutoMoveJobCommand (*client);
 		}
-		selectedVehicle->executeAutoMoveJobCommand(*client);
+		selectedVehicle->executeAutoMoveJobCommand (*client);
 	}
 	else if (key.keysym.sym == KeysList.KeyUnitMenuStart && selectedBuilding && selectedBuilding->data.canWork && !selectedBuilding->IsWorking && ( (selectedBuilding->BuildList && selectedBuilding->BuildList->size()) || selectedBuilding->data.canBuild.empty()) && !client->isFreezed () && selectedBuilding->owner == player)
 	{
@@ -3098,7 +3098,7 @@ void cGameGUI::chatReleased (void* parent)
 void cGameGUI::nextReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->player->getNextUnit(gui->getSelectedUnit());
+	cUnit* unit = gui->player->getNextUnit (gui->getSelectedUnit());
 	if (unit)
 	{
 		gui->selectUnit (*unit);
@@ -3111,7 +3111,7 @@ void cGameGUI::nextReleased (void* parent)
 void cGameGUI::prevReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cUnit* unit = gui->player->getPrevUnit(gui->getSelectedUnit());
+	cUnit* unit = gui->player->getPrevUnit (gui->getSelectedUnit());
 	if (unit)
 	{
 		gui->selectUnit (*unit);
@@ -3250,7 +3250,7 @@ void cGameGUI::endReleased (void* parent)
 void cGameGUI::preferencesReleased (void* parent)
 {
 	cGameGUI* gui = static_cast<cGameGUI*> (parent);
-	cDialogPreferences preferencesDialog(gui->getClient()->getActivePlayer());
+	cDialogPreferences preferencesDialog (gui->getClient()->getActivePlayer());
 	preferencesDialog.show (gui->getClient());
 }
 
@@ -3433,7 +3433,7 @@ void cGameGUI::drawGrid (int zoomOffX, int zoomOffY)
 void cGameGUI::addFx (cFx* fx)
 {
 	FxList.insert (FxList.begin(), fx);
-	fx->playSound(*this);
+	fx->playSound (*this);
 }
 
 void cGameGUI::drawFx (bool bottom) const
@@ -3466,7 +3466,7 @@ void cGameGUI::runFx ()
 	{
 		FxList[i]->run ();
 
-		if (FxList[i]->isFinished () )
+		if (FxList[i]->isFinished ())
 		{
 			delete FxList[i];
 			FxList.erase (FxList.begin() + i);
@@ -3475,7 +3475,7 @@ void cGameGUI::runFx ()
 	}
 }
 
-SDL_Rect cGameGUI::calcScreenPos(int x, int y) const
+SDL_Rect cGameGUI::calcScreenPos (int x, int y) const
 {
 	SDL_Rect pos;
 	pos.x = HUD_LEFT_WIDTH - ( (int) ( (offX - x) * getZoom()));
@@ -3484,7 +3484,7 @@ SDL_Rect cGameGUI::calcScreenPos(int x, int y) const
 	return pos;
 }
 
-void cGameGUI::drawAttackCursor(int x, int y) const
+void cGameGUI::drawAttackCursor (int x, int y) const
 {
 	assert (mouse->cur == GraphicsData.gfx_Cattack);
 
@@ -3613,7 +3613,7 @@ void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int
 						if (debugOutput.debugBaseClient && building->SubBase)
 						{
 							sSubBase* sb;
-							SDL_Rect tmp = { dest.x, dest.y, Uint16(getTileSize()), 8 };
+							SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
 							if (building->data.isBig) tmp.w *= 2;
 							sb = building->SubBase;
 							// the VS compiler gives a warning on casting a pointer to long.
@@ -3800,11 +3800,11 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 			{
 				std::vector<cVehicle*>& planes = map->fields[pos].getPlanes();
 				for (std::vector<cVehicle*>::reverse_iterator it = planes.rbegin();
-					it != planes.rend();
-					++it)
+					 it != planes.rend();
+					 ++it)
 				{
 					cVehicle& plane = **it;
-					plane.draw(dest, *this);
+					plane.draw (dest, *this);
 				}
 			}
 			pos++;
@@ -3825,7 +3825,7 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 		int pos = map->getOffset (startX, y);
 		for (int x = startX; x <= endX; x++)
 		{
-			if (player->ResourceMap[pos] && !map->isBlocked(pos))
+			if (player->ResourceMap[pos] && !map->isBlocked (pos))
 			{
 				const sResources& resource = map->getResource (pos);
 				if (resource.typ == RES_NONE)
@@ -4083,7 +4083,7 @@ void cGameGUI::drawUnitCircles()
 	SDL_SetClipRect (buffer, &clipRect);
 
 	cVehicle* selectedVehicle = getSelectedVehicle();
-	cBuilding* selectedBuilding= getSelectedBuilding();
+	cBuilding* selectedBuilding = getSelectedBuilding();
 
 	if (selectedVehicle)
 	{

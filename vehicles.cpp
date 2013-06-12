@@ -50,8 +50,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 cVehicle::cVehicle (const sVehicle* v, cPlayer* Owner, unsigned int ID) :
 	cUnit (cUnit::kUTVehicle, & (Owner->VehicleData[v->nr]), Owner, ID),
-	next(0),
-	prev(0)
+	next (0),
+	prev (0)
 {
 	typ = v;
 	BandX = 0;
@@ -632,7 +632,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 		int  nextY       = PosY;
 		bool found_next  = false;
 
-		while (!found_next && ((nextX != BandX) || (nextY != BandY)))
+		while (!found_next && (nextX != BandX || nextY != BandY))
 		{
 			// Calculate the next position in the path.
 			if (PosX > BandX) nextX--;
@@ -974,7 +974,7 @@ int cVehicle::playStream (const cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 /** Starts the MoveSound */
 //-----------------------------------------------------------------------------
-void cVehicle::StartMoveSound(cGameGUI& gameGUI)
+void cVehicle::StartMoveSound (cGameGUI& gameGUI)
 {
 	const cMap& map = *gameGUI.getClient()->getMap();
 	const cBuilding* building = map.fields[map.getOffset (PosX, PosY)].getBaseBuilding();
@@ -2142,7 +2142,7 @@ void cVehicle::executeStopCommand (const cClient& client)
 }
 
 //-----------------------------------------------------------------------------
-void cVehicle::executeAutoMoveJobCommand(cClient& client)
+void cVehicle::executeAutoMoveJobCommand (cClient& client)
 {
 	if (data.canSurvey == false)
 		return;

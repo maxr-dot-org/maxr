@@ -120,7 +120,7 @@ unsigned int cGameTimer::getReceivedTime (unsigned int nr)
 
 cGameTimerClient::cGameTimerClient () :
 	cGameTimer (),
-	client(0),
+	client (0),
 	remoteChecksum (0),
 	localChecksum (0),
 	waitingForServer (0),
@@ -130,7 +130,7 @@ cGameTimerClient::cGameTimerClient () :
 {
 }
 
-void cGameTimerClient::setClient(cClient* client_)
+void cGameTimerClient::setClient (cClient* client_)
 {
 	client = client_;
 }
@@ -185,7 +185,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 		client->doGameActions (activeMenu);
 
 		//check crc
-		localChecksum = calcClientChecksum(*client);
+		localChecksum = calcClientChecksum (*client);
 		debugRemoteChecksum = remoteChecksum;
 		if (localChecksum != remoteChecksum)
 		{
@@ -194,7 +194,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 		}
 
 		if (syncDebugSingleStep)
-			compareGameData(*client, *client->getServer());
+			compareGameData (*client, *client->getServer());
 
 		nextMsgIsNextGameTime = false;
 

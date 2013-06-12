@@ -127,7 +127,7 @@ cDrawingCache::~cDrawingCache()
 	delete[] cachedImages;
 }
 
-void cDrawingCache::setGameGUI(const cGameGUI& gameGUI_)
+void cDrawingCache::setGameGUI (const cGameGUI& gameGUI_)
 {
 	gameGUI = &gameGUI_;
 }

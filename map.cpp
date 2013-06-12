@@ -130,7 +130,7 @@ bool cStaticMap::isBlocked (int offset) const
 	return terrains[Kacheln[offset]].blocked;
 }
 
-bool cStaticMap::isCoast(int offset) const
+bool cStaticMap::isCoast (int offset) const
 {
 	return terrains[Kacheln[offset]].coast;
 }
@@ -400,10 +400,10 @@ SDL_Surface* cStaticMap::createBigSurface (int sizex, int sizey) const
 			const int terrainy = std::min ((y * size) / mapSurface->h, size - 1);
 			const int offsety = ((y * size) % mapSurface->h) * 64 / mapSurface->h;
 
-			const sTerrain& t = this->getTerrain(terrainx, terrainy);
+			const sTerrain& t = this->getTerrain (terrainx, terrainy);
 			unsigned int ColorNr = *((const unsigned char*) (t.sf_org->pixels) + (offsetx + offsety * 64));
 
-			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels))[x + y * mapSurface->w];
+			unsigned char* pixel = (unsigned char*) &((Sint32*) (mapSurface->pixels)) [x + y * mapSurface->w];
 			pixel[0] = palette[ColorNr].b;
 			pixel[1] = palette[ColorNr].g;
 			pixel[2] = palette[ColorNr].r;
@@ -419,7 +419,7 @@ cMap::cMap (cStaticMap& staticMap_) :
 {
 	const int size = staticMap->getSize();
 	fields = new cMapField[size * size];
-	Resources.resize(size * size);
+	Resources.resize (size * size);
 
 	resSpots = NULL;
 	resSpotTypes = NULL;
@@ -620,7 +620,7 @@ void cMap::placeRessources (int metal, int oil, int gold)
 				int index = getOffset (absPos.x, absPos.y);
 				if (type != RES_NONE &&
 					((hasGold && i >= playerCount) || resSpotTypes[i] == RES_GOLD || type != RES_GOLD) &&
-					!isBlocked(index))
+					!isBlocked (index))
 				{
 					Resources[index].typ = type;
 					if (i >= playerCount)
@@ -907,7 +907,7 @@ bool cMap::possiblePlaceVehicle (const sUnitData& vehicleData, int x, int y, con
 		if (isBlocked (offset)) return false;
 
 		if (!isWater (offset) &&
-			(!isCoast(offset) || vehicleData.factorCoast == 0)) return false;
+			(!isCoast (offset) || vehicleData.factorCoast == 0)) return false;
 
 		//check for enemy mines
 		if (player && b_it != b_end && (*b_it)->owner != player &&

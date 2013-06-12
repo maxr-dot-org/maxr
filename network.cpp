@@ -80,7 +80,7 @@ void sDataBuffer::deleteFront (int n)
 //------------------------------------------------------------------------
 cTCP::cTCP() :
 	TCPMutex(),
-	messageReceiver(NULL)
+	messageReceiver (NULL)
 {
 	SocketSet = SDLNet_AllocSocketSet (MAX_CLIENTS);
 
@@ -292,7 +292,7 @@ void cTCP::HandleNetworkThread_CLIENT_pushReadyMessage (unsigned int socketIndex
 			}
 			// Use temporary variable to avoid gcc warning:
 			// "dereferencing type-punned pointer will break strict-aliasing rules"
-			const Sint16* data16 = reinterpret_cast<Sint16*>(s.buffer.data + readPos + 1);
+			const Sint16* data16 = reinterpret_cast<Sint16*> (s.buffer.data + readPos + 1);
 			s.messagelength = SDL_SwapLE16 (*data16);
 			if (s.messagelength > PACKAGE_LENGTH)
 			{
@@ -344,7 +344,7 @@ void cTCP::HandleNetworkThread()
 			}
 			else if (Sockets[i].iType == SERVER_SOCKET && SDLNet_SocketReady (Sockets[i].socket))
 			{
-			// there is a new connection
+				// there is a new connection
 				HandleNetworkThread_SERVER (i);
 			}
 			else if (Sockets[i].iType == CLIENT_SOCKET && Sockets[i].iState == STATE_READY && SDLNet_SocketReady (Sockets[i].socket))
@@ -359,7 +359,8 @@ void cTCP::HandleNetworkThread()
 //------------------------------------------------------------------------
 void cTCP::pushEvent (cNetMessage* message)
 {
-	if (messageReceiver == NULL) {
+	if (messageReceiver == NULL)
+	{
 		Log.write ("Discarded message: no receiver!", LOG_TYPE_NET_ERROR);
 		delete message;
 		return;

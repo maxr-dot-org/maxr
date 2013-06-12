@@ -48,7 +48,7 @@ void cAutoMJob::handleAutoMoveJobs()
 
 //construktor for cAutoMJob
 cAutoMJob::cAutoMJob (cClient& client_, cVehicle* vehicle) :
-	client(&client_)
+	client (&client_)
 {
 	iNumber = (int) autoMJobs.size();
 	autoMJobs.push_back (this);
@@ -196,7 +196,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 			const int iPos = map.getOffset (x, y);
 
 			// check if the surveyor already found some resources in this new direction or not
-			if (vehicle->owner->ResourceMap[iPos] != 0 && map.getResource(iPos).typ != 0)
+			if (vehicle->owner->ResourceMap[iPos] != 0 && map.getResource (iPos).typ != 0)
 			{
 				NrResFound++;
 			}
@@ -242,7 +242,7 @@ void cAutoMJob::PlanLongMove()
 		for (int y = 0; y < map.getSize(); ++y)
 		{
 			// if field is not passable/walkable or if it's already has been explored, continue
-			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[map.getOffset(x, y)] == 1) continue;
+			if (!map.possiblePlace (*vehicle, x, y) || vehicle->owner->ResourceMap[map.getOffset (x, y)] == 1) continue;
 
 			// calculate the distance to other surveyors
 			float distancesSurv = 0;

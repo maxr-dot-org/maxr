@@ -253,7 +253,7 @@ void cPlayer::initMaps (cMap& map)
 }
 
 template <typename T>
-T* getPreviousUnitById(T* root, unsigned int id)
+T* getPreviousUnitById (T* root, unsigned int id)
 {
 	if (root == 0 || id < root->iID) return 0;
 	T* it = root;
@@ -272,13 +272,13 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 	//find unit before the added unit
 	if (addedUnit->isBuilding())
 	{
-		cBuilding* addedBuilding = static_cast<cBuilding*>(addedUnit);
+		cBuilding* addedBuilding = static_cast<cBuilding*> (addedUnit);
 		cBuilding* prev = getPreviousUnitById (BuildingList, addedUnit->iID);
 		insert_after_in_intrusivelist (BuildingList, prev, *addedBuilding);
 	}
 	else
 	{
-		cVehicle* addedVehicle = static_cast<cVehicle*>(addedUnit);
+		cVehicle* addedVehicle = static_cast<cVehicle*> (addedUnit);
 		cVehicle* prev = getPreviousUnitById (VehicleList, addedUnit->iID);
 		insert_after_in_intrusivelist (VehicleList, prev, *addedVehicle);
 	}
@@ -487,7 +487,7 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start)
 //--------------------------------------------------------------------------
 /** Returns the next unit that can still fire/shoot */
 //--------------------------------------------------------------------------
-cUnit* cPlayer::getNextUnit(cUnit* start)
+cUnit* cPlayer::getNextUnit (cUnit* start)
 {
 	if (start == NULL || start->owner != this)
 	{
@@ -508,7 +508,7 @@ cUnit* cPlayer::getNextUnit(cUnit* start)
 	else
 	{
 		assert (start->isBuilding());
-		cBuilding* building = static_cast<cBuilding*>(start);
+		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* nextBuilding = getNextBuilding (building);
 		if (nextBuilding) return nextBuilding;
 		cVehicle* nextVehicle = getNextVehicle (NULL);
@@ -583,7 +583,7 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 	else
 	{
 		assert (start->isBuilding());
-		cBuilding* building = static_cast<cBuilding*>(start);
+		cBuilding* building = static_cast<cBuilding*> (start);
 		cBuilding* prevBuilding = getPrevBuilding (building);
 		if (prevBuilding) return prevBuilding;
 		cVehicle* prevVehicle = getPrevVehicle (NULL);
@@ -872,7 +872,7 @@ void cPlayer::toggelLock (cMapField* OverUnitField)
 	}
 	if (unit == NULL) return;
 
-	std::vector<cUnit*>::iterator it = std::find(LockList.begin(), LockList.end(), unit);
+	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), unit);
 	if (it == LockList.end())
 	{
 		unit->lockerPlayer = this;

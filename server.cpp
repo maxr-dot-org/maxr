@@ -970,7 +970,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	{
 		if ( (*Building->BuildList) [0]->metall_remaining == -1)
 		{
-			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion ((*Building->BuildList)[0]->type)->buildCosts);
+			Building->CalcTurboBuild (iTurboBuildRounds, iTurboBuildCosts, Building->owner->getUnitDataCurrentVersion ((*Building->BuildList) [0]->type)->buildCosts);
 			(*Building->BuildList) [0]->metall_remaining = iTurboBuildCosts[iBuildSpeed];
 		}
 
@@ -2293,7 +2293,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 	cBuilding* AddedBuilding;
 	// generate the building:
 	AddedBuilding = Player->addBuilding (iPosX, iPosY, *Building, ID ? ID : iNextUnitID);
-	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd(*this);
+	if (AddedBuilding->data.canMineMaxRes > 0) AddedBuilding->CheckRessourceProd (*this);
 	if (AddedBuilding->sentryActive) Player->addSentry (AddedBuilding);
 
 	iNextUnitID++;
@@ -2318,9 +2318,9 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ((*buildings)[i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2328,9 +2328,9 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ((*buildings)[i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2338,9 +2338,9 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ((*buildings)[i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2348,9 +2348,9 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 			buildings = &Map->fields[iOff].getBuildings();
 			for (size_t i = 0; i != buildings->size(); ++i)
 			{
-				if ((*buildings)[i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
+				if ((*buildings) [i]->data.canBeOverbuild == sUnitData::OVERBUILD_TYPE_YESNREMOVE)
 				{
-					deleteUnit ((*buildings)[i]);
+					deleteUnit ((*buildings) [i]);
 					--i;
 				}
 			}
@@ -2395,14 +2395,15 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 	if (unit->owner && casualtiesTracker && ( (unit->isBuilding() && unit->data.buildCosts <= 2) == false))
 		casualtiesTracker->logCasualty (unit->data.ID, unit->owner->Nr);
 
-	if (unit->isBuilding()) {
+	if (unit->isBuilding())
+	{
 		cBuilding* building = static_cast<cBuilding*> (unit);
-		remove_from_intrusivelist(building->owner->BuildingList, *building);
+		remove_from_intrusivelist (building->owner->BuildingList, *building);
 	}
 	else
 	{
 		cVehicle* vehicle = static_cast<cVehicle*> (unit);
-		remove_from_intrusivelist(vehicle->owner->VehicleList, *vehicle);
+		remove_from_intrusivelist (vehicle->owner->VehicleList, *vehicle);
 	}
 
 	//detach from attack job
@@ -2485,7 +2486,7 @@ void cServer::checkPlayerUnits()
 							sendMoveJobServer (*this, *NextVehicle->ServerMoveJob, MapPlayer->Nr);
 							if (Contains (ActiveMJobs, NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
 							{
-								Log.write(" Server: sending extra MJOB_OK for unit ID " + iToStr(NextVehicle->iID) + " to client " + iToStr(MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
+								Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (NextVehicle->iID) + " to client " + iToStr (MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
 								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 								message->pushChar (MJOB_OK);
 								message->pushInt16 (NextVehicle->iID);
@@ -2691,7 +2692,7 @@ void cServer::handleEnd (int iPlayerNum)
 			}
 		}
 		// send report to next player
-		sendTurnReport (*this, *(*PlayerList)[iActiveTurnPlayerNr]);
+		sendTurnReport (*this, *(*PlayerList) [iActiveTurnPlayerNr]);
 	}
 	else // it's a simultanous TCP/IP multiplayer game
 	{
@@ -2709,10 +2710,10 @@ void cServer::handleEnd (int iPlayerNum)
 		// make sure that all defeated players are added to the endlist
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
 		{
-			if ((*PlayerList)[i]->isDefeated)
+			if ((*PlayerList) [i]->isDefeated)
 			{
-				if (Contains (PlayerEndList, (*PlayerList)[i]) == false)
-					PlayerEndList.push_back ((*PlayerList)[i]);
+				if (Contains (PlayerEndList, (*PlayerList) [i]) == false)
+					PlayerEndList.push_back ((*PlayerList) [i]);
 			}
 		}
 
@@ -2771,7 +2772,7 @@ void cServer::handleWantEnd()
 		}
 		for (unsigned int i = 0; i < PlayerList->size(); i++)
 		{
-			sendTurnReport (*this, *(*PlayerList)[i]);
+			sendTurnReport (*this, *(*PlayerList) [i]);
 		}
 
 		//begin the new turn
@@ -2962,7 +2963,7 @@ void cServer::makeTurnEnd()
 #if DEDICATED_SERVER_APPLICATION
 	else
 	{
-		cDedicatedServer::instance().doAutoSave(*this);
+		cDedicatedServer::instance().doAutoSave (*this);
 	}
 #endif
 
@@ -3285,7 +3286,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	}
 
 	//delete all buildings on the field, except connectors
-	std::vector<cBuilding*>* buildings = &(*Map)[offset].getBuildings();
+	std::vector<cBuilding*>* buildings = &(*Map) [offset].getBuildings();
 	std::vector<cBuilding*>::iterator b_it = buildings->begin();
 	if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 
@@ -3311,7 +3312,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	if (vehicle->data.isBig)
 	{
 		bigRubble = true;
-		buildings = &(*Map)[offset + 1].getBuildings();
+		buildings = &(*Map) [offset + 1].getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3322,7 +3323,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = &(*Map)[offset + Map->getSize()].getBuildings();
+		buildings = &(*Map) [offset + Map->getSize()].getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3333,7 +3334,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 			if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		}
 
-		buildings = &(*Map)[offset + 1 + Map->getSize()].getBuildings();
+		buildings = &(*Map) [offset + 1 + Map->getSize()].getBuildings();
 		b_it = buildings->begin();
 		if (b_it != buildings->end() && (*b_it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE) ++b_it;
 		while (b_it != buildings->end())
@@ -3478,7 +3479,7 @@ void cServer::deleteRubble (cBuilding* rubble)
 {
 	Map->deleteBuilding (*rubble);
 
-	remove_from_intrusivelist(neutralBuildings, *rubble);
+	remove_from_intrusivelist (neutralBuildings, *rubble);
 	sendDeleteUnit (*this, *rubble, -1);
 
 	delete rubble;
@@ -3488,7 +3489,7 @@ void cServer::deleteRubble (cBuilding* rubble)
 void cServer::deletePlayer (cPlayer* Player)
 {
 	//remove units
-	for (cVehicle* Vehicle = Player->VehicleList; Vehicle; )
+	for (cVehicle* Vehicle = Player->VehicleList; Vehicle;)
 	{
 		cVehicle* nextVehicle = Vehicle->next;
 		if (!Vehicle->Loaded) deleteUnit (Vehicle);
@@ -3681,7 +3682,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	// delete vehicle in the list of the old player
 	cPlayer* oldOwner = vehicle->owner;
 
-	remove_from_intrusivelist(oldOwner->VehicleList, *vehicle);
+	remove_from_intrusivelist (oldOwner->VehicleList, *vehicle);
 	// add the vehicle to the list of the new player
 	vehicle->owner = newOwner;
 	newOwner->addUnitToList (vehicle);
@@ -3803,8 +3804,8 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			{
 				for (unsigned int i = 0; i < PlayerList->size(); i++)
 				{
-					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
-					if ((*PlayerList)[i]->DetectLandMap[Map->getOffset (x, y)]) detectOnDest = true;
+					if ((*PlayerList) [i] == stealthVehicle->owner) continue;
+					if ((*PlayerList) [i]->DetectLandMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
 				if (Map->isWater (x, y)) detectOnDest = true;
 			}
@@ -3812,8 +3813,8 @@ void cServer::sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, c
 			{
 				for (unsigned int i = 0; i < PlayerList->size(); i++)
 				{
-					if ((*PlayerList)[i] == stealthVehicle->owner) continue;
-					if ((*PlayerList)[i]->DetectSeaMap[Map->getOffset (x, y)]) detectOnDest = true;
+					if ((*PlayerList) [i] == stealthVehicle->owner) continue;
+					if ((*PlayerList) [i]->DetectSeaMap[Map->getOffset (x, y)]) detectOnDest = true;
 				}
 				if (!Map->isWater (x, y)) detectOnDest = true;
 
@@ -3883,7 +3884,7 @@ void cServer::runJobs ()
 			if (helperJobs[i]->unit)
 				helperJobs[i]->unit->job = NULL;
 			delete helperJobs[i];
-			 helperJobs.erase (helperJobs.begin() + i);
+			helperJobs.erase (helperJobs.begin() + i);
 			i--;
 		}
 	}

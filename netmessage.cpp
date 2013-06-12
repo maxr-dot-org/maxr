@@ -34,7 +34,7 @@ cNetMessage::cNetMessage (const char* c)
 	if (c[0] != START_CHAR) Log.write ("NetMessage has wrong start character", LOG_TYPE_NET_ERROR);
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	const Sint16* data16 = reinterpret_cast<const Sint16*>(c + 1);
+	const Sint16* data16 = reinterpret_cast<const Sint16*> (c + 1);
 	iLength = SDL_SwapLE16 (data16[0]);
 	iType = SDL_SwapLE16 (data16[1]);
 	iPlayerNr = c[5];
@@ -62,7 +62,7 @@ char* cNetMessage::serialize()
 	data[0] = START_CHAR;
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	Sint16* data16 = reinterpret_cast<Sint16*>(data + 1);
+	Sint16* data16 = reinterpret_cast<Sint16*> (data + 1);
 	//write iLenght to byte array
 	*data16 = SDL_SwapLE16 ((Sint16) iLength);
 	//write iType to byte array
@@ -77,7 +77,7 @@ void cNetMessage::rewind()
 {
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	const Sint16 *data16 = reinterpret_cast<Sint16*>(data + 1);
+	const Sint16* data16 = reinterpret_cast<Sint16*> (data + 1);
 	iLength = SDL_SwapLE16 (*data16);
 }
 
@@ -127,7 +127,7 @@ void cNetMessage::pushInt16 (Sint16 i)
 
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	Sint16* data16 = reinterpret_cast<Sint16*>(data + iLength);
+	Sint16* data16 = reinterpret_cast<Sint16*> (data + iLength);
 	*data16 = SDL_SwapLE16 (i);
 	iLength += 2;
 }
@@ -142,7 +142,7 @@ Sint16 cNetMessage::popInt16()
 	iLength -= 2;
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	const Sint16* data16 = reinterpret_cast<Sint16*>(data + iLength);
+	const Sint16* data16 = reinterpret_cast<Sint16*> (data + iLength);
 	return SDL_SwapLE16 (*data16);
 }
 
@@ -155,7 +155,7 @@ void cNetMessage::pushInt32 (Sint32 i)
 	}
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	Sint32* data32 = reinterpret_cast<Sint32*>(data + iLength);
+	Sint32* data32 = reinterpret_cast<Sint32*> (data + iLength);
 	*data32 = SDL_SwapLE32 (i);
 	iLength += 4;
 }
@@ -170,7 +170,7 @@ Sint32 cNetMessage::popInt32()
 	iLength -= 4;
 	// Use temporary variable to avoid gcc warning:
 	// "dereferencing type-punned pointer will break strict-aliasing rules"
-	const Sint32* data32 = reinterpret_cast<Sint32*>(data + iLength);
+	const Sint32* data32 = reinterpret_cast<Sint32*> (data + iLength);
 	return SDL_SwapLE32 (*data32);
 }
 
@@ -369,7 +369,7 @@ string cNetMessage::getTypeAsString() const
 		case MU_MSG_RESELECT_LANDING: return "MU_MSG_RESELECT_LANDING";
 		case MU_MSG_ALL_LANDED: return "MU_MSG_ALL_LANDED";
 		case MU_MSG_START_MAP_DOWNLOAD: return "MU_MSG_START_MAP_DOWNLOAD";
-		case MU_MSG_MAP_DOWNLOAD_DATA:return "MU_MSG_MAP_DOWNLOAD_DATA";
+		case MU_MSG_MAP_DOWNLOAD_DATA: return "MU_MSG_MAP_DOWNLOAD_DATA";
 		case MU_MSG_CANCELED_MAP_DOWNLOAD: return "MU_MSG_CANCELED_MAP_DOWNLOAD";
 		case MU_MSG_FINISHED_MAP_DOWNLOAD: return "MU_MSG_FINISHED_MAP_DOWNLOAD";
 		case MU_MSG_REQUEST_MAP: return "MU_MSG_REQUEST_MAP";

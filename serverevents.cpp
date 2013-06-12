@@ -175,8 +175,8 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 		const cVehicle& vehicle = *static_cast<const cVehicle*> (&unit);
 		message->pushInt16 (vehicle.ClearingRounds);
 		message->pushInt16 (vehicle.BuildRounds);
-		message->pushBool  (vehicle.IsBuilding);
-		message->pushBool  (vehicle.IsClearing);
+		message->pushBool (vehicle.IsBuilding);
+		message->pushBool (vehicle.IsClearing);
 		message->pushInt16 ( (int) vehicle.CommandoRank);
 	}
 	else

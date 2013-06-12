@@ -236,7 +236,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	cServer* server = NULL;
 	cSavegame savegame (savegameNum);
 	if (savegame.load (&server, network) != 1) return;
-	assert(server != NULL);
+	assert (server != NULL);
 	AutoPtr<cStaticMap>::type staticMap (server->Map->staticMap);
 	AutoPtr<cMap>::type serverMap (server->Map);
 	const std::vector<cPlayer*>& serverPlayerList = *server->PlayerList;
@@ -1183,7 +1183,7 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 
 	// Other options (AlienTechs and Clans):
 #if 0 //alien stuff disabled until we reimplement this proper -- beko Fri Jun 12 20:48:59 CEST 2009
-	alienTechLabel = new cMenuLabel ( position.x+64, position.y+iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") +":" );
+	alienTechLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Alien_Tech") + ":");
 	menuItems.push_back (alienTechLabel);
 	aliensGroup = new cMenuRadioGroup();
 	aliensGroup->addButton (new cMenuCheckButton (position.x + 240, position.y + iCurrentLine, lngPack.i18n ("Text~Option~On"), settings.alienTech == SETTING_ALIENTECH_ON, true, cMenuCheckButton::RADIOBTN_TYPE_TEXT_ONLY));
@@ -1584,7 +1584,7 @@ void cPlanetsSelectionMenu::mapReleased (void* parent)
 //-----------------------------------------------------------------------------------
 cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn)
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
-	, network(network_)
+	, network (network_)
 	, gameDataContainer (gameDataContainer_)
 	, clan (player->getClan() >= 0 ? player->getClan() : 0)
 {
@@ -1953,7 +1953,7 @@ cStartupHangarMenu::cStartupHangarMenu (const cClient* client, cTCP* network_, c
 class UnitWithSameIdMoreCargo
 {
 public:
-	UnitWithSameIdMoreCargo (sID id, int cargo) : id(id), cargo(cargo) {}
+	UnitWithSameIdMoreCargo (sID id, int cargo) : id (id), cargo (cargo) {}
 	bool operator () (const sLandingUnit& it) const
 	{
 		return it.unitID == id && it.cargo >= cargo;
@@ -1975,7 +1975,7 @@ void cStartupHangarMenu::addPlayerLandingUnits (cPlayer& player)
 	{
 		cMenuUnitListItem& unit = *secondList->getItem (i);
 		UnitWithSameIdMoreCargo filter (unit.getUnitID(), unit.getResValue());
-		it = std::find_if(units.begin(), units.end(), filter);
+		it = std::find_if (units.begin(), units.end(), filter);
 		if (it == units.end()) continue;
 
 		credits -= (it->cargo - unit.getResValue()) / 5;
@@ -2379,7 +2379,7 @@ void cStartupHangarMenu::selectionChanged (void* parent)
 //------------------------------------------------------------------------------
 cLandingMenu::cLandingMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player_) :
 	cMenu (NULL),
-	network(network_),
+	network (network_),
 	gameDataContainer (gameDataContainer_),
 	player (player_)
 {
@@ -2453,7 +2453,7 @@ void cLandingMenu::mapClicked (void* parent)
 	if (mouse->cur != GraphicsData.gfx_Cmove) return;
 
 	float fakx = (float) ((Video.getResolutionX() - 192.0) / menu->map->getSize()); //pixel per field in x direction
-	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->getSize());  //pixel per field in y direction
+	float faky = (float) ((Video.getResolutionY() - 32.0) / menu->map->getSize()); //pixel per field in y direction
 
 	menu->landData.iLandX = (int) ((mouse->x - 180) / (448.0 / menu->map->getSize()) * (448.0 / (Video.getResolutionX() - 192)));
 	menu->landData.iLandY = (int) ((mouse->y - 18) / (448.0 / menu->map-> getSize()) * (448.0 / (Video.getResolutionY() - 32)));
@@ -3043,16 +3043,16 @@ void cNetworkHostMenu::okReleased (void* parent)
 	}
 	else
 	{
-	sendGo (*menu->network);
+		sendGo (*menu->network);
 
-	for (unsigned int i = 0; i < menu->players.size(); i++)
-	{
-		cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
-		menu->gameDataContainer.players.push_back (player);
-	}
-	cPlayer& localPlayer = *menu->gameDataContainer.players[0];
+		for (unsigned int i = 0; i < menu->players.size(); i++)
+		{
+			cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
+			menu->gameDataContainer.players.push_back (player);
+		}
+		cPlayer& localPlayer = *menu->gameDataContainer.players[0];
 
-	menu->runGamePreparation (localPlayer);
+		menu->runGamePreparation (localPlayer);
 	}
 	menu->end = true;
 }
@@ -4101,7 +4101,7 @@ void cLoadSaveMenu::extendedSlotClicked (int oldSelection)
 //------------------------------------------------------------------------------
 cBuildingsBuildMenu::cBuildingsBuildMenu (cClient& client_, cPlayer* player_, cVehicle* vehicle_)
 	: cHangarMenu (LoadPCX (GFXOD_BUILD_SCREEN), player_, MNU_BG_ALPHA),
-	client(&client_)
+	  client (&client_)
 {
 	vehicle = vehicle_;
 
@@ -4709,15 +4709,15 @@ void cUnitHelpMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle* d
 //------------------------------------------------------------------------------
 cStorageMenu::cStorageMenu (cClient& client_, std::vector<cVehicle*>& storageList_, cUnit& unit) :
 	cMenu (LoadPCX (GFXOD_STORAGE), MNU_BG_ALPHA),
-	client(&client_),
+	client (&client_),
 	ownerVehicle (NULL),
 	ownerBuilding (NULL),
 	storageList (storageList_),
 	voiceTypeAll (false),
 	voicePlayed (false)
 {
-	if (unit.isVehicle()) ownerVehicle = static_cast<cVehicle*>(&unit);
-	else ownerBuilding = static_cast<cBuilding*>(&unit);
+	if (unit.isVehicle()) ownerVehicle = static_cast<cVehicle*> (&unit);
+	else ownerBuilding = static_cast<cBuilding*> (&unit);
 	unitData = unit.data;
 	if (ownerBuilding)
 	{
@@ -5369,7 +5369,7 @@ void cMineManagerMenu::handleDestroyUnit (cBuilding* destroyedBuilding, cVehicle
 //------------------------------------------------------------------------------
 cReportsMenu::cReportsMenu (cClient& client_, cPlayer* owner_)
 	: cMenu (LoadPCX (GFXOD_REPORTS), MNU_BG_ALPHA)
-	, client(&client_)
+	, client (&client_)
 	, owner (owner_)
 {
 	typeButtonGroup = new cMenuRadioGroup();

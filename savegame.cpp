@@ -170,7 +170,7 @@ int cSavegame::load (cServer** pServer, cTCP* network)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::recalcSubbases(cServer& server)
+void cSavegame::recalcSubbases (cServer& server)
 {
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
@@ -856,7 +856,7 @@ void cSavegame::loadUnitValues (TiXmlElement* unitNode, sUnitData* Data)
 	else Data->shotsCur = Data->shotsMax;
 }
 
-void Split(const std::string& s, const char* seps, std::vector<std::string>& words)
+void Split (const std::string& s, const char* seps, std::vector<std::string>& words)
 {
 	if (s.empty()) return;
 	size_t beg = 0;

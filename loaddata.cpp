@@ -143,7 +143,7 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory);
 // Loads all relevant files and data:
 int LoadData (void* data)
 {
-	int& loadingState = *static_cast<int*>(data);
+	int& loadingState = *static_cast<int*> (data);
 	loadingState = LOAD_GOING;
 
 	if (!DEDICATED_SERVER)

@@ -423,7 +423,7 @@ static void setOffset (cVehicle* Vehicle, int nextDir, int offset)
 }
 
 cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int destX_, int destY_, cVehicle* vehicle) :
-	server(&server_)
+	server (&server_)
 {
 	Map = server->Map;
 	this->Vehicle = vehicle;
@@ -913,7 +913,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 }
 
 cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVehicle* Vehicle) :
-	client(&client_),
+	client (&client_),
 	Waypoints (NULL)
 {
 	DestX = iDestOff % client->getMap()->getSize();
@@ -923,7 +923,7 @@ cClientMoveJob::cClientMoveJob (cClient& client_, int iSrcOff, int iDestOff, cVe
 
 #if 0
 cClientMoveJob::cClientMoveJob (cClient* client_, int iSrcOff, sWaypoint* Waypoints, cVehicle* Vehicle) :
-	client(client_)
+	client (client_)
 {
 	this->Waypoints = Waypoints;
 	const sWaypoint* nextWaypoint = Waypoints;
@@ -1155,7 +1155,7 @@ void cClientMoveJob::moveVehicle()
 
 			if (wasWater != water)
 			{
-				Vehicle->StartMoveSound(client->gameGUI);
+				Vehicle->StartMoveSound (client->gameGUI);
 			}
 		}
 	}
@@ -1230,9 +1230,9 @@ void cClientMoveJob::moveVehicle()
 
 	setOffset (Vehicle, iNextDir, iSpeed);
 
-	if ( Vehicle->OffX < -70 || Vehicle->OffX > 70 || Vehicle->OffY < -70 || Vehicle->OffY > 70)
+	if (Vehicle->OffX < -70 || Vehicle->OffX > 70 || Vehicle->OffY < -70 || Vehicle->OffY > 70)
 	{
-		Log.write(" Client: Flying dutchmen detected! Unit ID: " + iToStr(Vehicle->iID) + " at position (" + iToStr(Vehicle->PosX) + ":" + iToStr(Vehicle->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
+		Log.write (" Client: Flying dutchmen detected! Unit ID: " + iToStr (Vehicle->iID) + " at position (" + iToStr (Vehicle->PosX) + ":" + iToStr (Vehicle->PosY) + ")", cLog::eLOG_TYPE_NET_DEBUG);
 	}
 }
 
@@ -1310,7 +1310,7 @@ void cClientMoveJob::drawArrow (SDL_Rect Dest, SDL_Rect* LastDest, bool bSpezial
 void cClientMoveJob::startMoveSound()
 {
 	cGameGUI& gameGUI = client->gameGUI;
-	if (Vehicle == gameGUI.getSelectedUnit()) Vehicle->StartMoveSound(gameGUI);
+	if (Vehicle == gameGUI.getSelectedUnit()) Vehicle->StartMoveSound (gameGUI);
 	bSoundRunning = true;
 }
 
