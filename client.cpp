@@ -871,7 +871,7 @@ void cClient::HandleNetMessage_GAME_EV_BUILD_ANSWER (cNetMessage& message)
 	}
 
 	Vehicle->IsBuilding = true;
-	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, buildBig));
+	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, buildBig));
 
 	if (Vehicle == gameGUI.getSelectedUnit())
 	{
@@ -1233,7 +1233,7 @@ void cClient::HandleNetMessage_GAME_EV_CLEAR_ANSWER (cNetMessage& message)
 				Vehicle->owner->doScan ();
 			}
 			Vehicle->IsClearing = true;
-			addJob (new cStartBuildJob (Vehicle, orgX, orgY, (bigoffset > 0)));
+			addJob (new cStartBuildJob (*Vehicle, orgX, orgY, (bigoffset > 0)));
 
 			if (gameGUI.getSelectedUnit() == Vehicle)
 			{
@@ -2018,6 +2018,7 @@ void cClient::deleteUnit (cVehicle* Vehicle, cMenu* activeMenu)
 			attackJobs[i]->vehicle = NULL;
 		}
 	}
+	helperJobs.onRemoveUnit (Vehicle);
 
 	gameGUI.callMiniMapDraw();
 
@@ -2320,39 +2321,12 @@ void cClient::deletePlayer (cPlayer* player)
 
 void cClient::addJob (cJob* job)
 {
-	//only one job per unit
-	releaseJob (job->unit);
-
-	helperJobs.push_back (job);
-	job->unit->job = job;
+	helperJobs.addJob (*job);
 }
 
 void cClient::runJobs ()
 {
-	for (unsigned int i = 0; i < helperJobs.size(); i++)
-	{
-		if (!helperJobs[i]->finished)
-		{
-			helperJobs[i]->run (gameTimer);
-		}
-		if (helperJobs[i]->finished)
-		{
-			if (helperJobs[i]->unit)
-				helperJobs[i]->unit->job = NULL;
-			delete helperJobs[i];
-			helperJobs.erase (helperJobs.begin() + i);
-			i--;
-		}
-	}
-}
-
-void cClient::releaseJob (cUnit* unit)
-{
-	if (unit->job)
-	{
-		unit->job->unit = NULL;
-		unit->job->finished = true;
-	}
+	helperJobs.run (gameTimer);
 }
 
 void cClient::enableFreezeMode (eFreezeMode mode, int playerNumber)

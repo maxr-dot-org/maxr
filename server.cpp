@@ -685,7 +685,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	Vehicle->BuildPath = bBuildPath;
 
 	sendBuildAnswer (*this, true, *Vehicle);
-	addJob (new cStartBuildJob (Vehicle, oldPosX, oldPosY, Data.isBig));
+	addJob (new cStartBuildJob (*Vehicle, oldPosX, oldPosY, Data.isBig));
 
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
@@ -1355,7 +1355,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	Vehicle->IsClearing = true;
 	Vehicle->ClearingRounds = building->data.isBig ? 4 : 1;
 	Vehicle->owner->doScan();
-	addJob (new cStartBuildJob (Vehicle, off % Map->getSize(), off / Map->getSize(), building->data.isBig));
+	addJob (new cStartBuildJob (*Vehicle, off % Map->getSize(), off / Map->getSize(), building->data.isBig));
 
 	sendClearAnswer (*this, 0, *Vehicle, Vehicle->ClearingRounds, rubbleoffset, Vehicle->owner->Nr);
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
@@ -2416,6 +2416,8 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		}
 	}
 
+	helperJobs.onRemoveUnit (unit);
+
 	//detach from move job
 	if (!unit->isBuilding())
 	{
@@ -3172,7 +3174,7 @@ void cServer::handleMoveJobs()
 			{
 				if (Vehicle->data.storageResCur >= Vehicle->BuildCostsStart && Map->possiblePlaceBuilding (*Vehicle->BuildingTyp.getUnitDataOriginalVersion(), Vehicle->PosX, Vehicle->PosY , Vehicle))
 				{
-					addJob (new cStartBuildJob (Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
+					addJob (new cStartBuildJob (*Vehicle, Vehicle->PosX, Vehicle->PosY, Vehicle->data.isBig));
 					Vehicle->IsBuilding = true;
 					Vehicle->BuildCosts = Vehicle->BuildCostsStart;
 					Vehicle->BuildRounds = Vehicle->BuildRoundsStart;
@@ -3864,39 +3866,12 @@ int cServer::getTurn() const
 
 void cServer::addJob (cJob* job)
 {
-	//only one job per unit
-	releaseJob (job->unit);
-
-	helperJobs.push_back (job);
-	job->unit->job = job;
+	helperJobs.addJob (*job);
 }
 
 void cServer::runJobs ()
 {
-	for (unsigned int i = 0; i < helperJobs.size(); i++)
-	{
-		if (!helperJobs[i]->finished)
-		{
-			helperJobs[i]->run (gameTimer);
-		}
-		if (helperJobs[i]->finished)
-		{
-			if (helperJobs[i]->unit)
-				helperJobs[i]->unit->job = NULL;
-			delete helperJobs[i];
-			helperJobs.erase (helperJobs.begin() + i);
-			i--;
-		}
-	}
-}
-
-void cServer::releaseJob (cUnit* unit)
-{
-	if (unit->job)
-	{
-		unit->job->unit = NULL;
-		unit->job->finished = true;
-	}
+	helperJobs.run (gameTimer);
 }
 
 void cServer::enableFreezeMode (eFreezeMode mode, int playerNumber)

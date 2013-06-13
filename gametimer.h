@@ -4,6 +4,7 @@
 
 #include "cmutex.h"
 #include <vector>
+#include <SDL.h>
 
 class cClient;
 class cMenu;

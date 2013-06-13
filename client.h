@@ -18,11 +18,13 @@
  ***************************************************************************/
 #ifndef clientH
 #define clientH
+
 #include "SDL_flic.h"
 #include "defines.h"
+#include "hud.h"
+#include "jobs.h"
 #include "main.h"
 #include "network.h"
-#include "hud.h"
 
 class cCasualtiesTracker;
 class cClientAttackJob;
@@ -69,7 +71,7 @@ private:
 	/** the active Player */
 	cPlayer* ActivePlayer;
 
-	std::vector<cJob*> helperJobs;
+	cJobContainer helperJobs;
 
 	/** list with buildings without owner, e. g. rubble fields */
 	cBuilding* neutralBuildings;
@@ -121,7 +123,6 @@ private:
 	sSubBase* getSubBaseFromID (int iID);
 
 	void runJobs ();
-	void releaseJob (cUnit* unit);
 
 	void HandleNetMessage_TCP_CLOSE (cNetMessage& message);
 	void HandleNetMessage_GAME_EV_CHAT_SERVER (cNetMessage& message);

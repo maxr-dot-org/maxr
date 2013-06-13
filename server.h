@@ -20,16 +20,16 @@
 #define serverH
 #include <SDL.h>
 #include "defines.h"
-#include "ringbuffer.h"
+#include "gametimer.h"
+#include "jobs.h"
 #include "main.h" // for sID
 #include "map.h"
 #include "network.h"
-#include "gametimer.h"
+#include "ringbuffer.h"
 #include <vector>
 
 class cBuilding;
 class cCasualtiesTracker;
-class cJob;
 class cNetMessage;
 class cPlayer;
 class cServerAttackJob;
@@ -107,7 +107,7 @@ private:
 	/** controls the timesynchonous actions on server and client */
 	cGameTimerServer gameTimer;
 	/** little helper jobs, that do some time dependent actions */
-	std::vector<cJob*> helperJobs;
+	cJobContainer helperJobs;
 	/** a list with all events for the server */
 	cRingbuffer<cNetMessage*> eventQueue;
 
@@ -318,7 +318,6 @@ private:
 	int deleteBuildings (std::vector<cBuilding*>& buildings);
 
 	void runJobs ();
-	void releaseJob (cUnit* unit);
 
 public:
 	/** the map */
