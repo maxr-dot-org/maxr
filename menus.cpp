@@ -1203,7 +1203,7 @@ cSettingsMenu::cSettingsMenu (const sSettings& settings_) :
 	int tmpLine = iCurrentLine;
 
 	// Credits field - this is where the money goes
-	creditsLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Credits") + ":");
+	creditsLabel = new cMenuLabel (position.x + 64, position.y + iCurrentLine, lngPack.i18n ("Text~Title~Credits_start") + ":");
 	menuItems.push_back (creditsLabel);
 	iCurrentLine += iLineHeight;
 	creditsGroup = new cMenuRadioGroup();
@@ -1730,7 +1730,8 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_) :
 	cMenu (background_, backgroundType_),
 	player (player_),
-	titleLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Hangar"))
+	titleLabel (position.x + 552, position.y + 11, lngPack.i18n ("Text~Title~Choose_Units"))
+	//TODO different Title needed! Remove "Hangar-lable" from original deadline counter location
 {
 	selectionChangedFunc = NULL;
 

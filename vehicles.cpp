@@ -937,11 +937,12 @@ string cVehicle::getStatusStr (const cGameGUI& gameGUI) const
 	{
 		string sTmp = lngPack.i18n ("Text~Comp~Waits") + "\n";
 
-		if (CommandoRank < 1) sTmp += lngPack.i18n ("Text~Comp~Greenhorn");
-		else if (CommandoRank < 3) sTmp += lngPack.i18n ("Text~Comp~Average");
-		else if (CommandoRank < 6) sTmp += lngPack.i18n ("Text~Comp~Veteran");
-		else if (CommandoRank < 11) sTmp += lngPack.i18n ("Text~Comp~Expert");
-		else sTmp += lngPack.i18n ("Text~Comp~Elite");
+		if (CommandoRank < 1) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Greenhorn");
+		else if (CommandoRank < 3) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Average");
+		else if (CommandoRank < 6) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Veteran");
+		else if (CommandoRank < 11) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Expert");
+		else if (CommandoRank < 19) sTmp += lngPack.i18n ("Text~Comp~CommandoRank_Elite");
+		else sTmp += lngPack.i18n ("Text~Comp~CommandoRank_GrandMaster");
 		if (CommandoRank > 0)
 			sTmp += " +" + iToStr ( (int) CommandoRank);
 		return sTmp;
