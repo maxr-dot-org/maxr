@@ -171,7 +171,7 @@ bool cGameTimerClient::nextTickAllowed()
 void cGameTimerClient::run (cMenu* activeMenu)
 {
 	// maximum time before GUI update
-	const unsigned int maxWorkingTime = 5; // 50 milliseconds
+	const unsigned int maxWorkingTime = 50; // 500 milliseconds
 	unsigned int startGameTime = gameTime;
 
 	while (popEvent ())
