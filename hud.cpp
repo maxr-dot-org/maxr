@@ -1021,7 +1021,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 			{
 				int terrainy = (miniMapY * map->getSize()) / (MINIMAP_SIZE * zoomFactor) + miniMapOffY;
 
-				if (!player->ScanMap[terrainx + terrainy * map->getSize()])
+				if (!player->ScanMap[map->getOffset (terrainx, terrainy)])
 				{
 					Uint8* color = (Uint8*) &minimap[miniMapX + miniMapY * MINIMAP_SIZE];
 					color[0] = (Uint8) (color[0] * 0.6);
@@ -3819,47 +3819,44 @@ void cGameGUI::drawResources (int startX, int startY, int endX, int endY, int zo
 	int tileSize = getTileSize();
 	SDL_Rect dest, tmp, src = { 0, 0, Uint16 (tileSize), Uint16 (tileSize) };
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ResourceMap[pos] && !map->isBlocked (pos))
+			if (!player->hasResourceExplored (pos)) continue;
+			if (map->isBlocked (pos)) continue;
+
+			const sResources& resource = map->getResource (pos);
+			if (resource.typ == RES_NONE)
 			{
-				const sResources& resource = map->getResource (pos);
-				if (resource.typ == RES_NONE)
+				src.x = 0;
+				tmp = dest;
+				if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
+				SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
+			}
+			else
+			{
+				src.x = resource.value * tileSize;
+				tmp = dest;
+				if (resource.typ == RES_METAL)
 				{
-					src.x = 0;
-					tmp = dest;
 					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
 					SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
 				}
-				else
+				else if (resource.typ == RES_OIL)
 				{
-					src.x = resource.value * tileSize;
-					tmp = dest;
-					if (resource.typ == RES_METAL)
-					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_metal->w != ResourceData.res_metal_org->w / 64 * tileSize || ResourceData.res_metal->h != tileSize)) scaleSurface (ResourceData.res_metal_org, ResourceData.res_metal, ResourceData.res_metal_org->w / 64 * tileSize, tileSize);
-						SDL_BlitSurface (ResourceData.res_metal, &src, buffer, &tmp);
-					}
-					else if (resource.typ == RES_OIL)
-					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
-						SDL_BlitSurface (ResourceData.res_oil, &src, buffer, &tmp);
-					}
-					else // Gold
-					{
-						if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
-						SDL_BlitSurface (ResourceData.res_gold, &src, buffer, &tmp);
-					}
+					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_oil->w != ResourceData.res_oil_org->w / 64 * tileSize || ResourceData.res_oil->h != tileSize)) scaleSurface (ResourceData.res_oil_org, ResourceData.res_oil, ResourceData.res_oil_org->w / 64 * tileSize, tileSize);
+					SDL_BlitSurface (ResourceData.res_oil, &src, buffer, &tmp);
+				}
+				else // Gold
+				{
+					if (!cSettings::getInstance().shouldDoPrescale() && (ResourceData.res_gold->w != ResourceData.res_gold_org->w / 64 * tileSize || ResourceData.res_gold->h != tileSize)) scaleSurface (ResourceData.res_gold_org, ResourceData.res_gold, ResourceData.res_gold_org->w / 64 * tileSize, tileSize);
+					SDL_BlitSurface (ResourceData.res_gold, &src, buffer, &tmp);
 				}
 			}
-			pos++;
-			dest.x += tileSize;
 		}
-		dest.y += tileSize;
 	}
 }
 

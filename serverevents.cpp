@@ -345,7 +345,7 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 		for (int x = minx; x <= maxx; ++x)
 		{
 			const int offset = map.getOffset (x, y);
-			if (vehicle.owner->ResourceMap[offset] != 0) continue;
+			if (vehicle.owner->hasResourceExplored (offset)) continue;
 
 			const sResources& resource = map.getResource (offset);
 			message->pushInt16 (resource.value);
@@ -364,9 +364,10 @@ void sendResources (cServer& server, const cPlayer& player)
 {
 	int iCount = 0;
 	cNetMessage* message = new cNetMessage (GAME_EV_RESOURCES);
-	for (size_t i = 0; i < player.ResourceMap.size(); ++i)
+	const size_t size = server.Map->getSize() * server.Map->getSize();
+	for (size_t i = 0; i != size; ++i)
 	{
-		if (player.ResourceMap[i] != 1) continue;
+		if (!player.hasResourceExplored (i)) continue;
 
 		const sResources& resource = server.Map->getResource (i);
 		message->pushInt16 (resource.value);

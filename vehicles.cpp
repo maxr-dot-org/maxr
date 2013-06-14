@@ -1189,9 +1189,6 @@ void cVehicle::FindNextband (cGameGUI& gameGUI)
 //-----------------------------------------------------------------------------
 void cVehicle::doSurvey (const cServer& server)
 {
-	std::vector<char>& ptr = owner->ResourceMap;
-	if (ptr.empty()) return;
-
 	const cMap& map = *server.Map;
 	const int minx = std::max (PosX - 1, 0);
 	const int maxx = std::min (PosX + 1, map.getSize() - 1);
@@ -1200,7 +1197,7 @@ void cVehicle::doSurvey (const cServer& server)
 
 	for (int y = miny; y <= maxy; ++y)
 		for (int x = minx; x <= maxx; ++x)
-			ptr[map.getOffset (x, y)] = 1;
+			owner->exploreResource (map.getOffset (x, y));
 }
 
 //-----------------------------------------------------------------------------
@@ -1409,10 +1406,14 @@ bool cVehicle::InSentryRange (cServer& server)
 
 		if (Player == owner) continue;
 
-		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (Player)) continue;	//don't attack undiscovered stealth units
-		if (Player->ScanMap[iOff] == 0) continue;										//don't attack units out of scan range
-		if (data.factorAir > 0 && Player->SentriesMapAir[iOff] == 0) continue;			//check sentry type
-		if (data.factorAir == 0 && Player->SentriesMapGround[iOff] == 0) continue;		//check sentry type
+		// Don't attack undiscovered stealth units
+		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (Player)) continue;
+		// Don't attack units out of scan range
+		if (Player->ScanMap[iOff] == 0) continue;
+		// Check sentry type
+		if (data.factorAir > 0 && Player->hasSentriesAir (iOff) == 0) continue;
+		// Check sentry type
+		if (data.factorAir == 0 && Player->hasSentriesGround (iOff) == 0) continue;
 
 		for (cVehicle* vehicle = Player->VehicleList; vehicle; vehicle = vehicle->next)
 		{
@@ -1954,8 +1955,8 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			cPlayer* player = playerList[i];
 			if (player == owner)
 				continue;
-			bool isOnWater = map.isWater (PosX, PosY);
-			bool isOnCoast = map.isCoast (PosX, PosY) && (isOnWater == false);
+			bool isOnWater = map.isWater (offset);
+			bool isOnCoast = map.isCoast (offset) && (isOnWater == false);
 
 			//if the vehicle can also drive on land, we have to check, whether there is a brige, platform, etc.
 			//because the vehicle will drive on the bridge
@@ -1970,14 +1971,14 @@ std::vector<cPlayer*> cVehicle::calcDetectedByPlayer (cServer& server) const
 			}
 
 			if ( (data.isStealthOn & TERRAIN_GROUND)
-				 && (player->DetectLandMap[offset] || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
+				 && (player->hasLandDetection (offset) || (! (data.isStealthOn & TERRAIN_COAST) && isOnCoast)
 					 || isOnWater))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
 
 			if ( (data.isStealthOn & TERRAIN_SEA)
-				 && (player->DetectSeaMap[offset] || isOnWater == false))
+				 && (player->hasSeaDetection (offset) || isOnWater == false))
 			{
 				playersThatDetectThisVehicle.push_back (player);
 			}
@@ -1995,39 +1996,38 @@ void cVehicle::makeDetection (cServer& server)
 		setDetectedByPlayer (server, playersThatDetectThisVehicle[i]);
 
 	//detect other units
-	if (data.canDetectStealthOn)
+	if (data.canDetectStealthOn == false) return;
+
+	cMap& map = *server.Map;
+	const int minx = std::max (PosX - data.scan, 0);
+	const int maxx = std::min (PosX + data.scan, map.getSize() - 1);
+	const int miny = std::max (PosY - data.scan, 0);
+	const int maxy = std::min (PosY + data.scan, map.getSize() - 1);
+
+	for (int x = minx; x <= maxx; ++x)
 	{
-		cMap& map = *server.Map;
-		const int minx = std::max (PosX - data.scan, 0);
-		const int maxx = std::min (PosX + data.scan, map.getSize() - 1);
-		const int miny = std::max (PosY - data.scan, 0);
-		const int maxy = std::min (PosY + data.scan, map.getSize() - 1);
-
-		for (int x = minx; x <= maxx; ++x)
+		for (int y = miny; y <= maxy; ++y)
 		{
-			for (int y = miny; y <= maxy; ++y)
-			{
-				int offset = map.getOffset (x, y);
-				cVehicle* vehicle = map.fields[offset].getVehicle();
-				cBuilding* building = map.fields[offset].getMine();
+			const int offset = map.getOffset (x, y);
+			cVehicle* vehicle = map.fields[offset].getVehicle();
+			cBuilding* building = map.fields[offset].getMine();
 
-				if (vehicle && vehicle->owner != owner)
+			if (vehicle && vehicle->owner != owner)
+			{
+				if ((data.canDetectStealthOn & TERRAIN_GROUND) && owner->hasLandDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_GROUND))
 				{
-					if ((data.canDetectStealthOn & TERRAIN_GROUND) && owner->DetectLandMap[offset] && (vehicle->data.isStealthOn & TERRAIN_GROUND))
-					{
-						vehicle->setDetectedByPlayer (server, owner);
-					}
-					if ((data.canDetectStealthOn & TERRAIN_SEA) && owner->DetectSeaMap[offset] && (vehicle->data.isStealthOn & TERRAIN_SEA))
-					{
-						vehicle->setDetectedByPlayer (server, owner);
-					}
+					vehicle->setDetectedByPlayer (server, owner);
 				}
-				if (building && building->owner != owner)
+				if ((data.canDetectStealthOn & TERRAIN_SEA) && owner->hasSeaDetection (offset) && (vehicle->data.isStealthOn & TERRAIN_SEA))
 				{
-					if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->DetectMinesMap[offset] && (building->data.isStealthOn & AREA_EXP_MINE))
-					{
-						building->setDetectedByPlayer (server, owner);
-					}
+					vehicle->setDetectedByPlayer (server, owner);
+				}
+			}
+			if (building && building->owner != owner)
+			{
+				if ((data.canDetectStealthOn & AREA_EXP_MINE) && owner->hasMineDetection (offset) && (building->data.isStealthOn & AREA_EXP_MINE))
+				{
+					building->setDetectedByPlayer (server, owner);
 				}
 			}
 		}

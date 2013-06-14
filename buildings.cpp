@@ -1605,7 +1605,7 @@ void cBuilding::makeDetection (cServer& server)
 		{
 			cPlayer* player = playerList[i];
 			if (player == owner) continue;
-			if (player->DetectMinesMap[offset])
+			if (player->hasMineDetection (offset))
 			{
 				setDetectedByPlayer (server, player);
 			}

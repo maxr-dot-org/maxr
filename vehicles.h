@@ -34,7 +34,6 @@ class cMapField;
 class cPlayer;
 class cServer;
 class cServerMoveJob;
-struct sSentry;
 
 //-----------------------------------------------------------------------------
 // Enum for the symbols

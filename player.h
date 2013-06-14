@@ -73,6 +73,7 @@ public:
 	void doScan();
 	void revealMap();
 	void revealResource();
+	unsigned int getMapSize() const { return mapSize; }
 
 	cVehicle* addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID);
 	cBuilding* addBuilding (int posx, int posy, const sBuilding& b, unsigned int ID);
@@ -98,6 +99,14 @@ public:
 	int getClan() const { return clan; }
 
 	void addUnitToList (cUnit* addedUnit);
+
+	void exploreResource (int offset) { ResourceMap[offset] = 1; }
+	bool hasResourceExplored (int offset) const { return ResourceMap[offset]; }
+	bool hasSentriesAir (int offset) const { return SentriesMapAir[offset]; }
+	bool hasSentriesGround (int offset) const { return SentriesMapGround[offset]; }
+	bool hasLandDetection (int offset) const { return DetectLandMap[offset]; }
+	bool hasMineDetection (int offset) const { return DetectMinesMap[offset]; }
+	bool hasSeaDetection (int offset) const { return DetectSeaMap[offset]; }
 
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
@@ -142,17 +151,18 @@ public:
 	std::vector<sUnitData> BuildingData; // Daten aller Buildings f¸r diesen Player.
 	cBuilding* BuildingList;     // Liste aller Buildings des Spielers.
 	cBase base;               // Die Basis dieses Spielers.
-
+private:
 	int mapSize; // Width (and Height) of the map.
+public:
 	std::vector<char> ScanMap;             // Map mit dem Scannerflags.
-	std::vector<char> ResourceMap;         // Map mit aufgedeckten Resourcen. / Map with explored resources.
-	//std::vector<sSentry*> SentriesAir;   /** list with all units on sentry that can attack planes */
-	std::vector<char> SentriesMapAir;      /** the covered air area */
-	//std::vector<sSentry*> SentriesGround; /** list with all units on sentry that can attack ground units */
-	std::vector<char> SentriesMapGround;   /** the covered ground area */
+private:
+	std::vector<char> ResourceMap;         // Map with explored resources.
+	std::vector<char> SentriesMapAir;      /**< the covered air area */
+	std::vector<char> SentriesMapGround;   /**< the covered ground area */
 	std::vector<char> DetectLandMap;       // Map mit den Gebieten, die an Land gesehen werden kˆnnen.
 	std::vector<char> DetectSeaMap;        // Map mit den Gebieten, die im Wasser gesehen werden kˆnnen.
 	std::vector<char> DetectMinesMap;      /** the area where the player can detect mines */
+public:
 	cResearch researchLevel;   ///< stores the current research level of the player
 	int researchCentersWorkingOnArea[cResearch::kNrResearchAreas]; ///< counts the number of research centers that are currently working on each area
 	int ResearchCount;         ///< number of working research centers

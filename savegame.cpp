@@ -346,7 +346,7 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 	Player->setClan (clan);
 
 	string resourceMap = playerNode->FirstChildElement ("ResourceMap")->Attribute ("data");
-	convertStringToScanMap (resourceMap, Player->ResourceMap);
+	convertStringToScanMap (resourceMap, *Player);
 
 	TiXmlElement* hudNode = playerNode->FirstChildElement ("Hud");
 	if (hudNode)
@@ -1131,25 +1131,25 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 }
 
 //--------------------------------------------------------------------------
-string cSavegame::convertScanMapToString (const std::vector<char>& data) const
+string cSavegame::convertScanMapToString (const cPlayer& player) const
 {
 	string str = "";
-	str.reserve (data.size());
-	for (size_t i = 0; i < data.size(); ++i)
+	const size_t size = player.getMapSize();
+	str.reserve (size);
+	for (size_t i = 0; i != size; ++i)
 	{
-		if (data[i] > 0) str += "1";
+		if (player.hasResourceExplored (i)) str += "1";
 		else str += "0";
 	}
 	return str;
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::convertStringToScanMap (const string& str, std::vector<char>& data)
+void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 {
 	for (unsigned int i = 0; i < str.length(); i++)
 	{
-		if (!str.substr (i, 1).compare ("1")) data[i] = 1;
-		else data[i] = 0;
+		if (!str.substr (i, 1).compare ("1")) player.exploreResource (i);
 	}
 }
 
@@ -1222,7 +1222,7 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player->getClan()));
 	addAttributeElement (playerNode, "Color", "num", iToStr (GetColorNr (Player->color)));
 	addAttributeElement (playerNode, "Number", "num", iToStr (Player->Nr));
-	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (Player->ResourceMap));
+	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (*Player));
 
 	// player score
 	TiXmlElement* scoreNode = addMainElement (playerNode, "ScoreHistory");

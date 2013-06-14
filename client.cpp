@@ -789,7 +789,7 @@ void cClient::HandleNetMessage_GAME_EV_RESOURCES (cNetMessage& message)
 	for (int i = 0; i < iCount; i++)
 	{
 		const int iOff = message.popInt32();
-		ActivePlayer->ResourceMap[iOff] = 1;
+		ActivePlayer->exploreResource (iOff);
 
 		sResources& res = getMap()->getResource (iOff);
 		res.typ = (unsigned char) message.popInt16();
