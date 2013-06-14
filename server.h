@@ -319,6 +319,10 @@ private:
 
 	void runJobs ();
 
+	void checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer);
+	void checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer);
+	void checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer);
+
 public:
 	/** the map */
 	cMap* Map;
