@@ -10,5 +10,8 @@
   <Graphic>
     <Has_Damage_Effect YN="Yes"/>
     <Has_Player_Color YN="Yes"/>
+    <Animations>
+      <Makes_Tracks YN="Yes"/>
+    </Animations>
   </Graphic>
 </Unit>
