@@ -883,23 +883,12 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 void cEndMoveAction::executeAttackAction (cServer& server)
 {
 	//get the target unit
-	const cVehicle* destVehicle = server.getVehicleFromID (destID_);
-	const cBuilding* destBuilding = server.getBuildingFromID (destID_);
+	const cUnit* destUnit = server.getVehicleFromID (destID_);
+	if (destUnit == NULL) destUnit = server.getBuildingFromID (destID_);
+	if (destUnit == NULL) return;
 
-	int x, y;
-	if (destVehicle)
-	{
-		x = destVehicle->PosX;
-		y = destVehicle->PosY;
-	}
-	else if (destBuilding)
-	{
-		x = destBuilding->PosX;
-		y = destBuilding->PosY;
-	}
-	else
-		return;
-
+	int x = destUnit->PosX;
+	int y = destUnit->PosY;
 	cMap& map = *server.Map;
 	const int offset = map.getOffset (x, y);
 
@@ -907,7 +896,7 @@ void cEndMoveAction::executeAttackAction (cServer& server)
 	if (!vehicle_->canAttackObjectAt (x, y, &map, true, true)) return;
 
 	//is the target in sight?
-	if (!vehicle_->owner->ScanMap[offset]) return;
+	if (!vehicle_->owner->canSeeAnyAreaUnder (*destUnit)) return;
 
 	server.AJobs.push_back (new cServerAttackJob (server, vehicle_, offset, false));
 }
@@ -1180,7 +1169,7 @@ void cClientMoveJob::moveVehicle()
 	// Ggf Tracks malen:
 	if (cSettings::getInstance().isMakeTracks() && Vehicle->data.makeTracks && !Map->isWaterOrCoast (Vehicle->PosX, Vehicle->PosY) && !
 		(Waypoints && Waypoints->next && Map->isWater (Waypoints->next->X, Waypoints->next->Y)) &&
-		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->ScanMap[Map->getOffset (Vehicle->PosX, Vehicle->PosY)]))
+		(Vehicle->owner == client->getActivePlayer() || client->getActivePlayer()->canSeeAnyAreaUnder (*Vehicle)))
 	{
 		if (abs (Vehicle->OffX) == 64 || abs (Vehicle->OffY) == 64)
 		{

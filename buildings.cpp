@@ -247,9 +247,12 @@ void cBuilding::draw (SDL_Rect* screenPos, cGameGUI& gameGUI)
 {
 	SDL_Rect dest, tmp;
 	float factor = (float) gameGUI.getTileSize() / 64.0f;
-
+	cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
 	// draw the damage effects
-	if (gameGUI.timer100ms && data.hasDamageEffect && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[gameGUI.getClient()->getMap()->getOffset (PosX, PosY)]))
+	if (gameGUI.timer100ms && data.hasDamageEffect &&
+		data.hitpointsCur < data.hitpointsMax &&
+		cSettings::getInstance().isDamageEffects() &&
+		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (200 - 200 * ((float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX, PosY * 64 + DamageFXPointY, intense, gameGUI.getWindDir ()));

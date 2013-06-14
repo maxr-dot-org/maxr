@@ -74,6 +74,8 @@ public:
 	void revealMap();
 	void revealResource();
 	unsigned int getMapSize() const { return mapSize; }
+	unsigned int getOffset (int x, int y) const { return x + y * mapSize; }
+	bool canSeeAnyAreaUnder (const cUnit& unit) const;
 
 	cVehicle* addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID);
 	cBuilding* addBuilding (int posx, int posy, const sBuilding& b, unsigned int ID);

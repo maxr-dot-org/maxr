@@ -239,6 +239,8 @@ private:
 	void drawGrid (int zoomOffX, int zoomOffY);
 	void drawBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawTopBuildings (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
+	void drawTopBuildings_DebugBaseClient (const cBuilding& building, const SDL_Rect& dest);
+	void drawTopBuildings_DebugBaseServer (const cBuilding& building, const SDL_Rect& dest, unsigned int offset);
 	void drawShips (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);
 	void drawVehicles (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY);

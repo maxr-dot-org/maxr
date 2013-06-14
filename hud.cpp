@@ -3569,12 +3569,10 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 					(*it)->data.surfacePosition != sUnitData::SURFACE_POS_BASE &&
 					(*it)->owner) break;
 
-				if (player->ScanMap[pos] ||
-					((*it)->data.isBig &&
-					((x < endX && player->ScanMap[pos + 1]) ||
-					 (y < endY && player->ScanMap[pos + map->getSize()]) ||
-					 (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1]))))
+				if (player->canSeeAnyAreaUnder (**it))
 				{
+					// Draw big unit only once
+					// TODO: bug when (x,y) is outside of the drawing screen.
 					if ((*it)->PosX == x && (*it)->PosY == y)
 					{
 						(*it)->draw (&dest, *this);
@@ -3588,76 +3586,77 @@ void cGameGUI::drawBaseUnits (int startX, int startY, int endX, int endY, int zo
 	}
 }
 
+void cGameGUI::drawTopBuildings_DebugBaseClient (const cBuilding& building, const SDL_Rect& dest)
+{
+	assert (debugOutput.debugBaseClient && building.SubBase);
+	sSubBase* sb;
+	SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
+	if (building.data.isBig) tmp.w *= 2;
+	sb = building.SubBase;
+	// the VS compiler gives a warning on casting a pointer to long.
+	// therefore we will first cast to long long and then cut this to Unit32 again.
+	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
+	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
+	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
+
+	sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
+
+	sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
+}
+
+void cGameGUI::drawTopBuildings_DebugBaseServer (const cBuilding& building, const SDL_Rect& dest, unsigned int offset)
+{
+	assert (debugOutput.debugBaseServer && building.SubBase);
+
+	sSubBase* sb = client->getServer()->Map->fields[offset].getBuilding()->SubBase;
+	if (sb == NULL) return;
+
+	SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
+	if (building.data.isBig) tmp.w *= 2;
+
+	// the VS compiler gives a warning on casting a pointer to long.
+	// therefore we will first cast to long long and then cut this to Unit32 again.
+	SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
+	font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
+	string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
+
+	sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
+
+	sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
+	font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
+}
+
 void cGameGUI::drawTopBuildings (int startX, int startY, int endX, int endY, int zoomOffX, int zoomOffY)
 {
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	//draw top buildings (except connectors)
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
 			cBuilding* building = map->fields[pos].getBuilding();
-			if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_GROUND)
-			{
-				if (player->ScanMap[pos] ||
-					(building->data.isBig && ( (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->getSize()]) || (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1]))))
-				{
-					if (building->PosX == x && building->PosY == y)	//make sure a big building is drawn only once
-					{
-						building->draw (&dest, *this);
+			if (building == NULL) continue;
+			if (building->data.surfacePosition != sUnitData::SURFACE_POS_GROUND) continue;
+			if (!player->canSeeAnyAreaUnder (*building)) continue;
+			// make sure a big building is drawn only once
+			// TODO: BUG: when PosX,PosY is outside of drawing screen
+			if (building->PosX != x || building->PosY != y) continue;
 
-						if (debugOutput.debugBaseClient && building->SubBase)
-						{
-							sSubBase* sb;
-							SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
-							if (building->data.isBig) tmp.w *= 2;
-							sb = building->SubBase;
-							// the VS compiler gives a warning on casting a pointer to long.
-							// therfore we will first cast to long long and then cut this to Unit32 again.
-							SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
-							font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
-							string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
-							font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
-
-							sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
-							font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
-
-							sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
-							font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
-						}
-						if (debugOutput.debugBaseServer && building->SubBase)
-						{
-							sSubBase* sb = client->getServer()->Map->fields[pos].getBuilding()->SubBase;
-							if (sb)
-							{
-								SDL_Rect tmp = { dest.x, dest.y, Uint16 (getTileSize()), 8 };
-								if (building->data.isBig) tmp.w *= 2;
-
-								// the VS compiler gives a warning on casting a pointer to long.
-								// therfore we will first cast to long long and then cut this to Unit32 again.
-								SDL_FillRect (buffer, &tmp, (Uint32) (long long) (sb));
-								font->showText (dest.x + 1, dest.y + 1, iToStr (sb->getID()), FONT_LATIN_SMALL_WHITE);
-								string sTmp = "m " + iToStr (sb->Metal) + "/" + iToStr (sb->MaxMetal) + " +" + iToStr (sb->getMetalProd() - sb->MetalNeed);
-								font->showText (dest.x + 1, dest.y + 1 + 8, sTmp, FONT_LATIN_SMALL_WHITE);
-
-								sTmp = "o " + iToStr (sb->Oil) + "/" + iToStr (sb->MaxOil) + " +" + iToStr (sb->getOilProd() - sb->OilNeed);
-								font->showText (dest.x + 1, dest.y + 1 + 16, sTmp, FONT_LATIN_SMALL_WHITE);
-
-								sTmp = "g " + iToStr (sb->Gold) + "/" + iToStr (sb->MaxGold) + " +" + iToStr (sb->getGoldProd() - sb->GoldNeed);
-								font->showText (dest.x + 1, dest.y + 1 + 24, sTmp, FONT_LATIN_SMALL_WHITE);
-							}
-						}
-					}
-				}
-			}
-			pos++;
-			dest.x += tileSize;
+			building->draw (&dest, *this);
+			if (debugOutput.debugBaseClient && building->SubBase)
+				drawTopBuildings_DebugBaseClient (*building, dest);
+			if (debugOutput.debugBaseServer && building->SubBase)
+				drawTopBuildings_DebugBaseServer (*building, dest, pos);
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -3666,24 +3665,19 @@ void cGameGUI::drawShips (int startX, int startY, int endX, int endY, int zoomOf
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ScanMap[pos])
+			cVehicle* vehicle = map->fields[pos].getVehicle();
+			if (vehicle == NULL) continue;
+			if (vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
 			{
-				cVehicle* vehicle = map->fields[pos].getVehicle();
-				if (vehicle && vehicle->data.factorSea > 0 && vehicle->data.factorGround == 0)
-				{
-					vehicle->draw (dest, *this);
-				}
+				vehicle->draw (dest, *this);
 			}
-			pos++;
-			dest.x += tileSize;
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -3692,44 +3686,41 @@ void cGameGUI::drawAboveSeaBaseUnits (int startX, int startY, int endX, int endY
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ScanMap[pos])
+			std::vector<cBuilding*>& buildings = map->fields[pos].getBuildings();
+
+			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 			{
-				std::vector<cBuilding*>& buildings = map->fields[pos].getBuildings();
-
-				for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
 				{
-					if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_SEA)
-					{
-						(*it)->draw (&dest, *this);
-					}
-				}
-				for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
-				{
-					if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
-					{
-						(*it)->draw (&dest, *this);
-					}
-				}
-
-				cVehicle* vehicle = map->fields[pos].getVehicle();
-				if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) && (player->ScanMap[pos] || (x < endX && player->ScanMap[pos + 1]) || (y < endY && player->ScanMap[pos + map->getSize()]) || (x < endX && y < endY && player->ScanMap[pos + map->getSize() + 1])))
-				{
-					if (vehicle->PosX == x && vehicle->PosY == y) //make sure a big vehicle is drawn only once
-					{
-						vehicle->draw (dest, *this);
-					}
+					(*it)->draw (&dest, *this);
 				}
 			}
-			pos++;
-			dest.x += tileSize;
+			for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
+			{
+				if ((*it)->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE_BASE)
+				{
+					(*it)->draw (&dest, *this);
+				}
+			}
+
+			cVehicle* vehicle = map->fields[pos].getVehicle();
+			if (vehicle && (vehicle->IsClearing || vehicle->IsBuilding) &&
+				player->canSeeAnyAreaUnder (*vehicle))
+			{
+				//make sure a big vehicle is drawn only once
+				// TODO: BUG: when PosX,PosY is outside of drawing screen
+				if (vehicle->PosX == x && vehicle->PosY == y)
+				{
+					vehicle->draw (dest, *this);
+				}
+			}
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -3738,24 +3729,19 @@ void cGameGUI::drawVehicles (int startX, int startY, int endX, int endY, int zoo
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ScanMap[pos])
+			cVehicle* vehicle = map->fields[pos].getVehicle();
+			if (vehicle == NULL) continue;
+			if (vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
 			{
-				cVehicle* vehicle = map->fields[pos].getVehicle();
-				if (vehicle && vehicle->data.factorGround != 0 && !vehicle->IsBuilding && !vehicle->IsClearing)
-				{
-					vehicle->draw (dest, *this);
-				}
+				vehicle->draw (dest, *this);
 			}
-			pos++;
-			dest.x += tileSize;
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -3764,24 +3750,19 @@ void cGameGUI::drawConnectors (int startX, int startY, int endX, int endY, int z
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ScanMap[pos])
+			cBuilding* building = map->fields[pos].getTopBuilding();
+			if (building == NULL) continue;
+			if (building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
 			{
-				cBuilding* building = map->fields[pos].getTopBuilding();
-				if (building && building->data.surfacePosition == sUnitData::SURFACE_POS_ABOVE)
-				{
-					building->draw (&dest, *this);
-				}
+				building->draw (&dest, *this);
 			}
-			pos++;
-			dest.x += tileSize;
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -3790,27 +3771,21 @@ void cGameGUI::drawPlanes (int startX, int startY, int endX, int endY, int zoomO
 	SDL_Rect dest;
 	int tileSize = getTileSize();
 	dest.y = HUD_TOP_HIGHT - zoomOffY + tileSize * startY;
-	for (int y = startY; y <= endY; y++)
+	for (int y = startY; y <= endY; ++y, dest.y += tileSize)
 	{
 		dest.x = HUD_LEFT_WIDTH - zoomOffX + tileSize * startX;
 		int pos = map->getOffset (startX, y);
-		for (int x = startX; x <= endX; x++)
+		for (int x = startX; x <= endX; ++x, ++pos, dest.x += tileSize)
 		{
-			if (player->ScanMap[pos])
+			std::vector<cVehicle*>& planes = map->fields[pos].getPlanes();
+			for (std::vector<cVehicle*>::reverse_iterator it = planes.rbegin();
+				 it != planes.rend();
+				 ++it)
 			{
-				std::vector<cVehicle*>& planes = map->fields[pos].getPlanes();
-				for (std::vector<cVehicle*>::reverse_iterator it = planes.rbegin();
-					 it != planes.rend();
-					 ++it)
-				{
-					cVehicle& plane = **it;
-					plane.draw (dest, *this);
-				}
+				cVehicle& plane = **it;
+				plane.draw (dest, *this);
 			}
-			pos++;
-			dest.x += tileSize;
 		}
-		dest.y += tileSize;
 	}
 }
 
@@ -4230,12 +4205,11 @@ void cGameGUI::drawLockList (cPlayer& player)
 {
 	if (!lockChecked()) return;
 	const int tileSize = getTileSize();
-	const cMap& map = *getClient()->getMap();
 	for (size_t i = 0; i < player.LockList.size(); i++)
 	{
 		cUnit* unit = player.LockList[i];
-		const int off = map.getOffset (unit->PosX, unit->PosY);
-		if (!player.ScanMap[off])
+
+		if (!player.canSeeAnyAreaUnder (*unit))
 		{
 			unit->lockerPlayer = NULL;
 			player.LockList.erase (player.LockList.begin() + i);

@@ -393,7 +393,7 @@ void cPlayer::doScan()
 		if (vp->Loaded) continue;
 
 		if (vp->turnsDisabled)
-			ScanMap[vp->PosX + vp->PosY * mapSize] = 1;
+			ScanMap[getOffset (vp->PosX, vp->PosY)] = 1;
 		else
 		{
 			if (vp->data.isBig)
@@ -425,7 +425,7 @@ void cPlayer::doScan()
 	for (const cBuilding* bp = BuildingList; bp; bp = bp->next)
 	{
 		if (bp->turnsDisabled)
-			ScanMap[bp->PosX + bp->PosY * mapSize] = 1;
+			ScanMap[getOffset (bp->PosX, bp->PosY)] = 1;
 		else if (bp->data.scan)
 		{
 			if (bp->data.isBig)
@@ -444,6 +444,18 @@ void cPlayer::revealMap()
 void cPlayer::revealResource()
 {
 	std::fill (ResourceMap.begin(), ResourceMap.end(), 1);
+}
+
+bool cPlayer::canSeeAnyAreaUnder (const cUnit& unit) const
+{
+	const int offset = getOffset (unit.PosX, unit.PosY);
+
+	if (ScanMap[offset] == 1) return true;
+	if (!unit.data.isBig) return false;
+
+	return (ScanMap[offset + 1] == 1 ||
+			ScanMap[offset + getMapSize()] == 1 ||
+			ScanMap[offset + getMapSize() + 1] == 1);
 }
 
 cVehicle* cPlayer::getNextVehicle (cVehicle* start)

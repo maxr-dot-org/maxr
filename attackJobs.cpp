@@ -181,9 +181,9 @@ void cServerAttackJob::lockTarget (int offset)
 	{
 		const cPlayer* player = playerList[i];
 
-		//targed in sight?
-		if (player->ScanMap[offset] == 0)
-			continue;
+		// target in sight?
+		if (targetVehicle != NULL && !player->canSeeAnyAreaUnder (*targetVehicle)) continue;
+		if (targetBuilding != NULL && !player->canSeeAnyAreaUnder (*targetBuilding)) continue;
 
 		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
 		if (targetVehicle != 0)
@@ -236,11 +236,9 @@ void cServerAttackJob::sendFireCommand()
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		cPlayer* player = playerList[i];
-		if (player->ScanMap[iAgressorOff] == false)
-			continue;
 
-		if (unit->owner == player)
-			continue;
+		if (player->canSeeAnyAreaUnder (*unit) == false) continue;
+		if (unit->owner == player) continue;
 
 		unit->setDetectedByPlayer (*server, player);
 	}
@@ -291,7 +289,7 @@ void cServerAttackJob::sendFireCommand()
 	{
 		cPlayer* player = playerList[i];
 
-		if (player->ScanMap[iAgressorOff]
+		if (player->canSeeAnyAreaUnder (*unit)
 			|| (player->ScanMap[iTargetOff] && isMuzzleTypeRocket()))
 		{
 			sendFireCommand (player);
@@ -316,7 +314,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	if (isMuzzleTypeRocket())
 		message->pushInt32 (iTargetOff);
 
-	if (player->ScanMap[iAgressorOff])
+	if (player->canSeeAnyAreaUnder (*unit))
 		message->pushInt32 (unit->iID);
 	else
 	{
@@ -502,7 +500,7 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 	{
 		const cPlayer* player = playerList[i];
 
-		//targed in sight?
+		// target in sight?
 		if (player->ScanMap[offset] == 0)
 			continue;
 

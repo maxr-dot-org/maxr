@@ -239,8 +239,6 @@ void sendChatMessageToClient (cServer& server, const std::string& message, int i
 //-------------------------------------------------------------------------------------
 void sendDoStartWork (cServer& server, const cBuilding& building)
 {
-	const int offset = server.Map->getOffset (building.PosX, building.PosY);
-
 	//check all players
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
@@ -248,7 +246,7 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 		const cPlayer* player = playerList[i];
 
 		//do not send to players who can't see the building
-		if (!player->ScanMap[offset] && player != building.owner) continue;
+		if (!player->canSeeAnyAreaUnder (building) && player != building.owner) continue;
 
 		cNetMessage* message = new cNetMessage (GAME_EV_DO_START_WORK);
 		message->pushInt32 (building.iID);
@@ -259,8 +257,6 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 //-------------------------------------------------------------------------------------
 void sendDoStopWork (cServer& server, const cBuilding& building)
 {
-	const int offset = server.Map->getOffset (building.PosX, building.PosY);
-
 	//check all players
 	const std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
@@ -268,7 +264,7 @@ void sendDoStopWork (cServer& server, const cBuilding& building)
 		const cPlayer* player = playerList[i];
 
 		//do not send to players who can't see the building
-		if (!player->ScanMap[offset] && player != building.owner) continue;
+		if (!player->canSeeAnyAreaUnder (building) && player != building.owner) continue;
 
 		cNetMessage* message = new cNetMessage (GAME_EV_DO_STOP_WORK);
 		message->pushInt32 (building.iID);

@@ -1879,7 +1879,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 		{
 			cPlayer* player = (*PlayerList) [i];
 			if (player == srcVehicle->owner) continue;
-			if (!player->ScanMap[Map->getOffset (srcVehicle->PosX, srcVehicle->PosY)]) continue;
+			if (!player->canSeeAnyAreaUnder (*srcVehicle)) continue;
 
 			srcVehicle->setDetectedByPlayer (*this, player);
 		}
@@ -2457,95 +2457,124 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 }
 
 //-------------------------------------------------------------------------------------
+void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
+{
+	if (&MapPlayer == vehicle.owner) return;
+
+	std::vector<cPlayer*>& seenByPlayers = vehicle.seenByPlayerList;
+	const bool stealthUnit = vehicle.data.isStealthOn != TERRAIN_NONE;
+
+	if (MapPlayer.canSeeAnyAreaUnder (vehicle) && !vehicle.Loaded &&
+		(!stealthUnit || vehicle.isDetectedByPlayer (&MapPlayer) || (MapPlayer.isDefeated && openMapDefeat)))
+	{
+		if (Contains (seenByPlayers, &MapPlayer) == false)
+		{
+			seenByPlayers.push_back (&MapPlayer);
+			sendAddEnemyUnit (*this, vehicle, MapPlayer.Nr);
+			sendUnitData (*this, vehicle, MapPlayer.Nr);
+			if (vehicle.ServerMoveJob)
+			{
+				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer.Nr);
+				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow)
+				{
+					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.Nr), cLog::eLOG_TYPE_NET_DEBUG);
+					cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
+					message->pushChar (MJOB_OK);
+					message->pushInt16 (vehicle.iID);
+					sendNetMessage (message, MapPlayer.Nr);
+				}
+			}
+		}
+	}
+	else
+	{
+		std::vector<cPlayer*>::iterator it = std::find (seenByPlayers.begin(), seenByPlayers.end(), &MapPlayer);
+
+		if (it != seenByPlayers.end())
+		{
+			seenByPlayers.erase (it);
+			sendDeleteUnit (*this, vehicle, MapPlayer.Nr);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------
+void cServer::checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer)
+{
+	if (&MapPlayer == building.owner) return;
+	std::vector<cPlayer*>& seenByPlayers = building.seenByPlayerList;
+	const bool stealthUnit = building.data.isStealthOn != TERRAIN_NONE;
+
+	if (MapPlayer.canSeeAnyAreaUnder (building) &&
+		(!stealthUnit || building.isDetectedByPlayer (&MapPlayer) || (MapPlayer.isDefeated && openMapDefeat)))
+	{
+		if (Contains (seenByPlayers, &MapPlayer) == false)
+		{
+			seenByPlayers.push_back (&MapPlayer);
+			sendAddEnemyUnit (*this, building, MapPlayer.Nr);
+			sendUnitData (*this, building, MapPlayer.Nr);
+		}
+	}
+	else
+	{
+		std::vector<cPlayer*>::iterator it = std::find (seenByPlayers.begin(), seenByPlayers.end(), &MapPlayer);
+
+		if (it != seenByPlayers.end())
+		{
+			seenByPlayers.erase (it);
+			sendDeleteUnit (*this, building, MapPlayer.Nr);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------
+void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
+{
+	std::vector<cPlayer*>& seenByPlayers = building.seenByPlayerList;
+
+	if (MapPlayer.canSeeAnyAreaUnder (building))
+	{
+		if (Contains (seenByPlayers, &MapPlayer) == false)
+		{
+			seenByPlayers.push_back (&MapPlayer);
+			sendAddRubble (*this, building, MapPlayer.Nr);
+		}
+	}
+	else
+	{
+		std::vector<cPlayer*>::iterator it = std::find (seenByPlayers.begin(), seenByPlayers.end(), &MapPlayer);
+
+		if (it != seenByPlayers.end())
+		{
+			seenByPlayers.erase (it);
+			sendDeleteUnit (*this, building, MapPlayer.Nr);
+		}
+	}
+}
+
+//-------------------------------------------------------------------------------------
 void cServer::checkPlayerUnits()
 {
-	cPlayer* UnitPlayer;	// The player whos unit is it
-	cPlayer* MapPlayer;		// The player who is scaning for new units
-
-	for (unsigned int iUnitPlayerNum = 0; iUnitPlayerNum < PlayerList->size(); iUnitPlayerNum++)
+	for (unsigned int i = 0; i != PlayerList->size(); ++i)
 	{
-		UnitPlayer = (*PlayerList) [iUnitPlayerNum];
+		// The player whos unit is it
+		cPlayer* UnitPlayer = (*PlayerList) [i];
 		for (cVehicle* NextVehicle = UnitPlayer->VehicleList;
 			 NextVehicle != NULL;
 			 NextVehicle = NextVehicle->next)
 		{
-			for (unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->size(); iMapPlayerNum++)
+			for (size_t j = 0; j != PlayerList->size(); ++j)
 			{
-				if (iMapPlayerNum == iUnitPlayerNum) continue;
-				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				const int iOff = Map->getOffset (NextVehicle->PosX, NextVehicle->PosY);
-
-				const bool stealthUnit = NextVehicle->data.isStealthOn != TERRAIN_NONE;
-				if (MapPlayer->ScanMap[iOff] == 1 && (!stealthUnit || NextVehicle->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)) && !NextVehicle->Loaded)
-				{
-					if (Contains (NextVehicle->seenByPlayerList, MapPlayer) == false)
-					{
-						NextVehicle->seenByPlayerList.push_back (MapPlayer);
-						sendAddEnemyUnit (*this, *NextVehicle, MapPlayer->Nr);
-						sendUnitData (*this, *NextVehicle, MapPlayer->Nr);
-						if (NextVehicle->ServerMoveJob)
-						{
-							sendMoveJobServer (*this, *NextVehicle->ServerMoveJob, MapPlayer->Nr);
-							if (Contains (ActiveMJobs, NextVehicle->ServerMoveJob) && !NextVehicle->ServerMoveJob->bFinished && !NextVehicle->ServerMoveJob->bEndForNow)
-							{
-								Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (NextVehicle->iID) + " to client " + iToStr (MapPlayer->Nr), cLog::eLOG_TYPE_NET_DEBUG);
-								cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
-								message->pushChar (MJOB_OK);
-								message->pushInt16 (NextVehicle->iID);
-								sendNetMessage (message, MapPlayer->Nr);
-							}
-						}
-					}
-				}
-				else
-				{
-					unsigned int i;
-					for (i = 0; i < NextVehicle->seenByPlayerList.size(); i++)
-					{
-						if (NextVehicle->seenByPlayerList[i] == MapPlayer)
-						{
-							NextVehicle->seenByPlayerList.erase (NextVehicle->seenByPlayerList.begin() + i);
-							sendDeleteUnit (*this, *NextVehicle, MapPlayer->Nr);
-							break;
-						}
-					}
-				}
+				checkPlayerUnits (*NextVehicle, *(*PlayerList)[j]);
 			}
 		}
 		for (cBuilding* NextBuilding = UnitPlayer->BuildingList;
 			 NextBuilding != NULL;
 			 NextBuilding = NextBuilding->next)
 		{
-			for (unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->size(); iMapPlayerNum++)
+			for (size_t j = 0; j != PlayerList->size(); ++j)
 			{
-				if (iMapPlayerNum == iUnitPlayerNum) continue;
-				MapPlayer = (*PlayerList) [iMapPlayerNum];
-				const int iOff = Map->getOffset (NextBuilding->PosX, NextBuilding->PosY);
-				const bool stealthUnit = NextBuilding->data.isStealthOn != TERRAIN_NONE;
-
-				if (MapPlayer->ScanMap[iOff] == 1  && (!stealthUnit || NextBuilding->isDetectedByPlayer (MapPlayer) || (MapPlayer->isDefeated && openMapDefeat)))
-				{
-					if (Contains (NextBuilding->seenByPlayerList, MapPlayer) == false)
-					{
-						NextBuilding->seenByPlayerList.push_back (MapPlayer);
-						sendAddEnemyUnit (*this, *NextBuilding, MapPlayer->Nr);
-						sendUnitData (*this, *NextBuilding, MapPlayer->Nr);
-					}
-				}
-				else
-				{
-					unsigned int i;
-					for (i = 0; i < NextBuilding->seenByPlayerList.size(); i++)
-					{
-						if (NextBuilding->seenByPlayerList[i] == MapPlayer)
-						{
-							NextBuilding->seenByPlayerList.erase (NextBuilding->seenByPlayerList.begin() + i);
-							sendDeleteUnit (*this, *NextBuilding, MapPlayer->Nr);
-
-							break;
-						}
-					}
-				}
+				checkPlayerUnits (*NextBuilding, *(*PlayerList)[j]);
 			}
 		}
 	}
@@ -2553,32 +2582,9 @@ void cServer::checkPlayerUnits()
 	//check the neutral objects
 	for (cBuilding* building = neutralBuildings; building != NULL; building = building->next)
 	{
-		for (unsigned int iMapPlayerNum = 0; iMapPlayerNum < PlayerList->size(); iMapPlayerNum++)
+		for (unsigned int i = 0; i != PlayerList->size(); ++i)
 		{
-			MapPlayer = (*PlayerList) [iMapPlayerNum];
-			const int iOff = Map->getOffset (building->PosX, building->PosY);
-
-			if (MapPlayer->ScanMap[iOff] == 1)
-			{
-				if (Contains (building->seenByPlayerList, MapPlayer) == false)
-				{
-					building->seenByPlayerList.push_back (MapPlayer);
-					sendAddRubble (*this, *building, MapPlayer->Nr);
-				}
-			}
-			else
-			{
-				unsigned int i;
-				for (i = 0; i < building->seenByPlayerList.size(); i++)
-				{
-					if (building->seenByPlayerList[i] == MapPlayer)
-					{
-						building->seenByPlayerList.erase (building->seenByPlayerList.begin() + i);
-						sendDeleteUnit (*this, *building, MapPlayer->Nr);
-						break;
-					}
-				}
-			}
+			checkPlayerRubbles (*building, *(*PlayerList)[i]);
 		}
 	}
 }

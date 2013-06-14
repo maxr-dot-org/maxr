@@ -118,7 +118,10 @@ cVehicle::~cVehicle()
 void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 {
 	//make damage effect
-	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax && cSettings::getInstance().isDamageEffects() && (owner == gameGUI.getClient()->getActivePlayer() || gameGUI.getClient()->getActivePlayer()->ScanMap[gameGUI.getClient()->getMap()->getOffset (PosX, PosY)]))
+	cPlayer* activePlayer = gameGUI.getClient()->getActivePlayer();
+	if (gameGUI.timer100ms && data.hitpointsCur < data.hitpointsMax &&
+		cSettings::getInstance().isDamageEffects() &&
+		(owner == activePlayer || activePlayer->canSeeAnyAreaUnder (*this)))
 	{
 		int intense = (int) (100 - 100 * ( (float) data.hitpointsCur / data.hitpointsMax));
 		gameGUI.addFx (new cFxDarkSmoke (PosX * 64 + DamageFXPointX + OffX, PosY * 64 + DamageFXPointY + OffY, intense, gameGUI.getWindDir ()));
@@ -1396,20 +1399,18 @@ bool cVehicle::makeSentryAttack (cServer& server, cUnit* sentryUnit) const
 //-----------------------------------------------------------------------------
 bool cVehicle::InSentryRange (cServer& server)
 {
-	cPlayer* Player = 0;
-
 	int iOff = server.Map->getOffset (PosX, PosY);
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
-		Player = playerList[i];
+		cPlayer* Player = playerList[i];
 
 		if (Player == owner) continue;
 
 		// Don't attack undiscovered stealth units
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (Player)) continue;
 		// Don't attack units out of scan range
-		if (Player->ScanMap[iOff] == 0) continue;
+		if (!Player->canSeeAnyAreaUnder (*this)) continue;
 		// Check sentry type
 		if (data.factorAir > 0 && Player->hasSentriesAir (iOff) == 0) continue;
 		// Check sentry type
@@ -1523,8 +1524,6 @@ bool cVehicle::provokeReactionFire (cServer& server)
 	if (data.canAttack == false || data.shotsCur <= 0 || data.ammoCur <= 0)
 		return false;
 
-	int iOff = server.Map->getOffset (PosX, PosY);
-
 	std::vector<cPlayer*>& playerList = *server.PlayerList;
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
@@ -1534,8 +1533,9 @@ bool cVehicle::provokeReactionFire (cServer& server)
 
 		if (data.isStealthOn != TERRAIN_NONE && !isDetectedByPlayer (player))
 			continue;
-
-		if (player->ScanMap[iOff] == false)   // The vehicle can't be seen by the opposing player. No possibility for reaction fire.
+		// The vehicle can't be seen by the opposing player.
+		// No possibility for reaction fire.
+		if (player->canSeeAnyAreaUnder (*this) == false)
 			continue;
 
 		if (doesPlayerWantToFireOnThisVehicleAsReactionFire (server, player) == false)
