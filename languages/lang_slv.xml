@@ -9,7 +9,7 @@
 	<Header>
 		<Author name="Miha Kocevar neo.guardian@artist-trade.si">
 			<Editor name="NeoGuardian" time="2009-04-16 19:00:00"/>
-			<Editor name="Unknown" time="2009-01-01 17:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 		</Author>
 		<Game_Version time="2007-09-30 13:04:00"/>
 	</Header>
@@ -26,16 +26,16 @@
 			</Remarks>
 		</Main>
 		<Init>
-      		<Buildings ENG="Loading buildings..." localized="Nalagam stavbe..."/>
-      		<Effects ENG="Loading effects..." localized="Nalagam efekte..."/>
-      		<Fonts ENG="Loading fonts..." localized="Nalagam znake..."/>
-      		<GFX ENG="Loading gfx..." localized="Nalagam grafiko..."/>
-      		<Keys ENG="Loading keys..." localized="Nalagam tipke..."/>
-      		<Music ENG="Loading music..." localized="Nalagam glasbo..."/>
-      		<Sounds ENG="Loading sounds..." localized="Nalagam zvoke..."/>
-      		<Terrain ENG="Loading terrain..." localized="Nalagam ozemlje..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Nalagam vozila..."/>
+			<Buildings ENG="Loading buildings..." localized="Nalagam stavbe..."/>
+			<Effects ENG="Loading effects..." localized="Nalagam efekte..."/>
+			<Fonts ENG="Loading fonts..." localized="Nalagam znake..."/>
+			<GFX ENG="Loading gfx..." localized="Nalagam grafiko..."/>
+			<Keys ENG="Loading keys..." localized="Nalagam tipke..."/>
 			<Lang ENG="Loading language pack..." localized="Nalagam jezikovni paket..."/>
+			<Music ENG="Loading music..." localized="Nalagam glasbo..."/>
+			<Sounds ENG="Loading sounds..." localized="Nalagam zvoke..."/>
+			<Terrain ENG="Loading terrain..." localized="Nalagam ozemlje..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Nalagam vozila..."/>
 			<Voices ENG="Loading voices..." localized="Nalagam glasove..."/>
 		</Init>
 		<Title>

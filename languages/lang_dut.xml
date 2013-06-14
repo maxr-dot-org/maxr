@@ -9,8 +9,9 @@
 	<Header>
 		<Author name="Arnoud Jagerman A.Jagerman@xs4all.nl">
 			<Editor name="Unknown" time="2008-03-08 09:35:00"/>
-			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>			
+			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-02-21 17:00:00"/>
 			<Editor name="Raul Munoz Repko aka Spanjard" time="2009-09-18 16:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 		</Author>
 		<Game_Version time="2007-09-18 16:04:00"/>
 	</Header>
@@ -27,17 +28,17 @@
 			</Remarks>
 		</Main>
 		<Init>
-      		<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
-      		<Effects ENG="Loading effects..." localized="Laden effecten..."/>
-      		<Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
-      		<GFX ENG="Loading gfx..." localized="Laden gfx..."/>
-      		<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
-      		<Music ENG="Loading music..." localized="Laden muziek..."/>
-      		<Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
-      		<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
+			<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
 			<Clans ENG="Loading clans..." localized="Laden clans..."/>
+			<Effects ENG="Loading effects..." localized="Laden effecten..."/>
+			<Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
+			<GFX ENG="Loading gfx..." localized="Laden gfx..."/>
+			<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
 			<Lang ENG="Loading language pack..." localized="Laden taalpakket..."/>
+			<Music ENG="Loading music..." localized="Laden muziek..."/>
+			<Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
+			<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
 			<Voices ENG="Loading voices..." localized="Laden stemmen..."/>
 		</Init>
 		<Title>
@@ -213,9 +214,9 @@
 			<Window ENG="Windowed" localized="Venstermodus"/>
 		</Settings>
 		<Multiplayer>
-		    <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="U verbinding wordt verbroken omdat uw naam niet in de savgame staat."/>
 			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, druk F2 om wachten af te breken."/>
 			<Deadline ENG="This turn will end in %s seconds." localized="Deze ronde eindigt in %s seconden."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="U verbinding wordt verbroken omdat uw naam niet in de savgame staat."/>
 			<Go ENG="Let's go" localized="Daar gaat ie"/>
 			<Go_Abort ENG="Go aborted" localized="Start afgebroken"/>
 			<Go_Check ENG="Check for go" localized="Controle voor startklaar"/>
@@ -260,7 +261,7 @@
 			<Save_Only_Host ENG="Only the host can save games." localized="Alleen de host kan het spel opslaan."/>
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Wachten voor herverbinding met speler"/>
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Wacht todat %s klaar is met de ronde."/>
-			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>			
+			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>
 		</Multiplayer>
 		<Vehicles>
 			<Ammo ENG="Ammo" localized="Munitie"/>
@@ -277,8 +278,6 @@
 			<Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
-      		<CommandoRank_Elite ENG="Elite" localized="Elite"/>
-      		<CommandoRank_Expert ENG="Expert" localized="Expert"/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Aanpassingen gemaakt: Brandstof mijnen verhoogt met "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Aanpassingen gemaakt: Goud mijnen verlaagt met "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met "/>
@@ -289,6 +288,8 @@
 			<Clearing_Fin ENG="clearing done" localized="opruimen klaar"/>
 			<Clearing_Mine ENG="clearing mines" localized="opruimen mijnen"/>
 			<CommandoRank_Average ENG="Average" localized="Normaal"/>
+			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
+			<CommandoRank_Expert ENG="Expert" localized="Expert"/>
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Groentje"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veteraan"/>
 			<Dated ENG="dated" localized="verouderd"/>
@@ -344,84 +345,84 @@
 			<Working ENG="working" localized="werkt"/>
 		</Comp>
 		<Error_Messages>
-      		<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geinitialiseerd"/>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geinitialiseerd"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geimplementeerd"/>
 		</Error_Messages>
 	</Text>
 	<Units>
-    <Unit ID="0 1" localized="Lucht Transport">Lucht Transport\n\nGroot vliegtuig, geschikt voor het vervoeren van maximaal drie grondeenheden.</Unit>
-    <Unit ID="0 2" localized="Buitenaardse Aanvalseenheid">Buitenaards Aanvalseenheid\n\nKrachtig plasma wapen bevestigd op een snel, middelmatig-gepantserd onderstel. Hoewel niet zo kwetsbaar als een normale aanvalseenheid, kan de buitenaartse aanvalseenheid toch ook beter vijandelijk vuur ontwijken voor zover mogelijk. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
-    <Unit ID="0 3" localized="Buitenaards Vliegtuig">Buitenaards Vliegtuig\n\nBuitenaardse gevechts-bommenwerper. Het buitenaards vliegtuig primair bedoeld is om gronddoelen aan te vallen, maar het kan ook raketten afschieten naar andere vliegtuigen. Hoewel het sterk is, is het buitenaards vliegtuig nog steeds kwetsbaar voor anti-luchtdoel vuur. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
-    <Unit ID="0 4" localized="Buitenaards Ship">Buitenaards Ship\n\nZwaar gepantserd en bewapend oorlogsschip van buitenaards ontwerp. Net als het slagschip is het Buitenaards Ship uitstekend geschikt om andere schepen en gronddoelen in de buurt van de kust te vernietigen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
-    <Unit ID="0 5" localized="Buitenaardse Tank">Buitenaardse Tank\n\nZwaar gepantserde tank van buitenaards ontwerp. De Buitenaardse Tank kan het best gebruikt worden aan het front om vijandig vuur op te vangen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
-    <Unit ID="0 6" localized="Personen Transport">Personen Transport\n\nSnel gepantserd voertuig om infanterie en spionnen te vervoeren. Het Personen Transport kan zich zowel over land als langzaam onderwater voortbewegen. Alleen vijandige covettes kunnnen Personen Transport ontdekken die zich onder water bevinden.</Unit>
-    <Unit ID="0 7" localized="Aanvalseenheid">Aanvalseenheid\n\nLicht gepantserd voertuig met een lange afstandswapen dat sterk-explosieve munitie schiet. Snel en efficient bij het aanvallen, maar kwetsbaar.</Unit>
-    <Unit ID="0 8" localized="AWAC">AWAC\n\nRadarvliegtuig. Feitelijk niet veel meer dan een vliegende radarschotel, essentieel om anti-luchtdoel eenheden te ontdekken voordat andere vliegtuigen binnen hun bereik komen.</Unit>
-    <Unit ID="0 9" localized="Bommenwerper">Bommenwerper\n\nEen zwaar vliegtuig vol met gronddoel-raketten. Bommenwerpers zijn kostbaar, maar de voordelen zijn de kosten waard. Hun grote snelheid brengt ze snel op probleempunten, en alleen gevechtsvliegtuigen en luchtdoel-eenheden kunnen ze aanvallen.</Unit>
-    <Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nVoertuig om wrakken op te ruimen en gebouwen af te breken. Bulldozers kunnen materiaal winnen uit wrakstukken.</Unit>
-    <Unit ID="0 11" localized="Vracht Schip">Vracht Schip\n\nSchip om overwerkt materiaal te vervoeren. Handig om pioniers te bevoorraden en om schepen van nieuwe munitie te voorzien.</Unit>
-    <Unit ID="0 12" localized="Raket Lanceerder">Raket Lanceerder\n\nLicht gepanserd voertuig dat middel-lange afstands rakketten kan afschieten die alle eenheden binnen een straal van 2 vierkanten raakt. Meest effectief tegen groepen vijandige eenheden.</Unit>
-    <Unit ID="0 13" localized="Spion">Spion\n\nCommando getrained om onzichtbaar zijn werk te doen. Spionnen kunnen vijandige eenheden uitschakelen of veroveren. Spionnen zijn onzichtbaar tot ze een fout maken bij het veroveren van vijandige eenheden, of tot ze gezien worden door vijandige infantery of spionnen.</Unit>
-    <Unit ID="0 14" localized="Corvette">Corvette\n\nHoge-snelheids boot met torpedo's en een sonar. Corvettes kunnen alle boten aanvallen, maar hun grootste kracht is hun vermogen om vijandige onderzeeers te ontdekken en aan te vallen.</Unit>
-    <Unit ID="0 15" localized="Escort">Escort\n\nHoge-snelheids boot met een goede radar en snel-vurend luchtdoel-kannon. Escorts zijn de ogen van een vloot, en de bescherming van een vloot tegen vliegtuigen.</Unit>
-    <Unit ID="0 16" localized="Straaljager">Straaljager\n\nSnel maar kwetsbaar vliegtuig met een beperkt aantal lucht-lucht raketten. Straaljagers zijn de beste manier om vijandige vliegtuigen uit een gebied te verjagen, en om een bewegende groep eenheden te beschermen. Luchtdoelsystemen op de grond zijn beter om een vast gebied te verdedigen.</Unit>
-    <Unit ID="0 17" localized="Oorlogsschip">Oorlogsschip\n\nZwaar gepantserd schip met een groot kaliber, middel-lange afstands kannon. Uitstekend geschikt om andere schepen te vernietigen en land-doelen dicht bij de kust te bombarderen.</Unit>
-    <Unit ID="0 18" localized="Infanterie">Infanterie\n\nMenselijke soldaten bewapend met lichte anti-tank raketten. Infanterie eenheden kunnen spionnen ontdekken.</Unit>
-    <Unit ID="0 19" localized="Bouwer">Bouwer\n\nGroot bouwvoertuig geschikt om grote gebouwen te bouwen, zoals mijnen en fabrieken. Een bouwer verbruikt twee materiaal per beurt tijdens het bouwen.</Unit>
-    <Unit ID="0 20" localized="Mijnen legger">Mijnen legger\n\nMijnen leggers zijn speciaal gebouwde voertuigen om mijnen te leggen, ondekken en op te pakken. Mijnen leggers maken zelf hun mijnen met ruw materiaal dat ze vervoeren. Ze kunnen deze mijnen later ook weer oppakken en terug omzetten naar ruw materiaal. Ze kunnen vijandige mijnenvelden niet opruimen, deze moeten vernietigd worden door ze met andere eenheden aan te vallen.</Unit>
-    <Unit ID="0 21" localized="Raket Kruiper">Raket Kruiper\n\nEen licht gepantserde mobiele raketlanceerinstallatie. De Raket Kruiper is iets minder robuust dan de vaste lanceerinstallatie, en heeft meer materiaal nodig om gebouwd te worden. Maar de mogelijkheid om hem te verplaatsen maakt hem veel flexibeler.</Unit>
-    <Unit ID="0 22" localized="Raket Cruiser">Raket Cruiser\n\nEen varende raketlanceerinstallatie. Een uitstekend bereik, hoge aanvalskracht en middelmatige pantsering waardoor dit een krachtige eenheid is.</Unit>
-    <Unit ID="0 23" localized="Mobiele Luchtafweer">Mobiele Luchtafweer\n\nLicht en snel met een snel-vurend luchtafweer kanon. Mobiele Luchtafweer zijn vooral bedoeld voor verdediging, aangezien ze niet zo snel zijn als vliegtuigen en niet tegelijk kunnen bewegen en schieten. Te gebruiken om een gebied te beschermen wanneer straaljagers vijandige bommenwerpers verjaagd hebben.</Unit>
-    <Unit ID="0 24" localized="Pionier">Pionier\n\nKlein bouwvoertuig om kleinen gebouwen en wapengebouwen mee te bouwen.</Unit>
-    <Unit ID="0 25" localized="Reparatie Eenheid">Reparatie Eenheid\n\nLicht voertuig dat snel grondeenheden en gebouwen kan repareren. Voor de reparaties is ruw materiaal nodig. Hoe zwaarder de schade, des te meer materiaal er nodig is. Depots, werven, hangars en kazernes kunnen ook eenheden repareren.</Unit>
-    <Unit ID="0 26" localized="Radarvoertuig">Radarvoertuig\n\nMobiele radar. Trager en duurder dan een verkenner, maar met een beter radar-bereik. Een Radarvoertuig is een uitstekende manier om doelen voor lange-afstandswapens zoals Raket Kruipers te vinden.</Unit>
-    <Unit ID="0 27" localized="Verkenner">Verkenner\n\nHoge snelheids verkenningsvoertuig voor verkenning en het vinden van vijandige eenheden. Kan over water manouvreren zonder dat er een brug nodig is, maar is sneller op land.\n\nZeer snel en een goed radar-bereik, maar veel zwakker dan de meeste gevechtseenheden.</Unit>
-    <Unit ID="0 28" localized="Zeemijnen legger">Zeemijnen legger\n\nVarende versie van de mijnen legger. Net als de land-versie kan de zeemijnen legger mijnen maken, leggen, ontdekken, oppakken en terug omzetten naar ruw materiaal.</Unit>
-    <Unit ID="0 29" localized="Varend Transport">Varend Transport\n\nZwaar gepantserd schip met ruimte voor maximaal zes land-eenheden. Varend Transporters zijn veel langzamer dan Lucht Transport, maar hebben veel meer kans om een vijandelijke aanval te overleven.</Unit>
-    <Unit ID="0 30" localized="Onderzeeer">Onderzeeer\n\nDoor zich onder het wateroppervlak te bewegen kunnen onderzeeers dicht naar de vijand toesluipen om vervolgens hun krachtige torpedo's af te schieten. Onderzeeers hebben geen actieve sonar, aangezien dit hun positie zou kunnen verraden. Alleen corvettes kunnen onderzeeers ontdekken voor de aanvallen. Alleen andere onderzeeers, covettes en bommenwerpers kunnen onderzeeers aanvallen.</Unit>
-    <Unit ID="0 31" localized="Bodemonderzoeker">Bodemonderzoeker\n\nLicht amphibievoertuig met geavanceerde sensoren voor het detecteren van ondergrondse voorraden mineralen en vijandige mijnen. In tegenstelling tot de meeste andere amphibievoertuigen verplaatsen ze zich net zo snel over water als over land.</Unit>
-    <Unit ID="0 32" localized="Tank">Tank\n\nZwaar gepantserd gevechtsvoertuig. Kan het beste gebruikt worden aan het front om te voorkomen dat vijandige eenheden licht bepantserde eenheden zoals aanvalseenheden en raket kruipers kunnen bereiken.</Unit>
-    <Unit ID="0 33" localized="Goud Vrachtwagen">Goud Vrachtwagen\n\nEenheid voor het verplaatsen van gouderts van de ene locatie naar de andere.</Unit>
-    <Unit ID="0 34" localized="Bevoorradings Vrachtwagen">Bevoorradings Vrachtwagen\n\nVrachtwagen voor het verplaatsen van ruw materiaal. Nuttig om pioniers en bouwers te bevoorraden en om gevechtseenheden van nieuwe munitie te voorzien.</Unit>
-    <Unit ID="0 35" localized="Brandstof Vrachtwagen">Brandstof Vrachtwagen\n\nVrachtwagen voor het verplaatsen van brandstof.</Unit>
-    <Unit ID="1 1" localized="Kazerne">Kazerne\n\nEen Kazerne huisvest spionnen en infanterie eenheden. Binnen de kazerne bevindt zich een machine voor het repareren en verbeteren van kracht-pakken, en voor het vervaardigen van munitie. De kazerne heeft ruw materiaal nodig voor reparaties, verbeteringen en het bouwen van munitie, waardoor het het beste verbonden kan zijn met een opslageenheid of mijn.</Unit>
-    <Unit ID="1 2" localized="Betonblok">Betonblok\n\nGehard en gepantserd blok voor het blokkeren van vijandige bewegingen.</Unit>
-    <Unit ID="1 3" localized="Brug">Brug\n\nPonton brug voor het oversteken van water. Bruggen blokkeren, in tegenstelling tot platvormen, geen schepen.</Unit>
-    <Unit ID="1 4" localized="Pijpleiding">Pijpleiding\n\nGebouwen moeten verbonden worden om energie, brandstof, ruw materiaal en goud te delen. Je kunt gebouwen verbinden door ze tegen elkaar aan te bouwen, of door het bouwen van pijpleidingen tussen de gebouwen.</Unit>
-    <Unit ID="1 5" localized="Depot">Depot\n\nEen depot kan schade repareren, munitie bouwen en grondtroepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
-    <Unit ID="1 6" localized="Werf">Werf\n\nEen werf kan schade aan schepen repareren, munitie bouwen en schepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
-    <Unit ID="1 7" localized="Energie Station">Energie Station\n\nEen energie station verbruikt zes brandstof per beurt, en levert genoeg energie voor zes fabrieken of mijnen.</Unit>
-    <Unit ID="1 8" localized="Energie Generator">Energie Generator\n\nEen energie generator verbruikt twee brandstof per beurt, en levert genoeg energie voor 1 fabriek of mijn. De energie generator moet verbonden zijn met de brandstof leverancier (mijn of brandstof opslag) en met het gebouw dat de energie nodig heeft.</Unit>
-    <Unit ID="1 9" localized="Vliegtuig Fabriek">Vliegtuig Fabriek\n\nBouwt straaljagers, bommenwerpers AWACs en lucht transport. Een vliegtuig fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
-    <Unit ID="1 10" localized="Buitenaardse Fabriek">Buitenaardse Fabriek\n\nFabriek voor het bouwen van buitenaardse eenheden.</Unit>
-    <Unit ID="1 11" localized="Zware Voertuigen Fabriek">Zware Voertuigen Fabriek\n\nBouwt bouwers, radarvoertuigen en zware gevechtseenheden:  Tanks, aanvalseenheden, raket lanceerders en raket kruipers. Een zware voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
-    <Unit ID="1 12" localized="Scheepswerf">Scheepswerf\n\nScheepswerven bouwen schepen, zoals onderzeeers, varend transport en raket cruisers. Een scheepswerf heeft drie materiaal en een brandstof per beurt nodig om zijn werk te doen.</Unit>
-    <Unit ID="1 13" localized="Lichte Voertuigen Fabriek">Lichte Voertuigen Fabriek\n\nBouwt lichte voertuigen: Pioniers, vrachtwagens, reparatie eenheden, verkenners en mobiel luchtafweer. Een lichte voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
-    <Unit ID="1 14" localized="Goud Raffinaderij">Goud Raffinaderij\n\nRaffinaderij voor het omzet van gouderts in krediet. Krediet is nodig om verbeteringen te kopen. Om zijn werk te doen heeft een goud raffinaderij een bron van gouderts nodig. Een mijn kan gouderts delven als het zich boven een goudader bevindt.</Unit>
-    <Unit ID="1 15" localized="Luchtafweer">Luchtafweer\n\nKlein kaliber, hoge snelheids luchtafweer kanon. Luchtafweer rekent effectief af met vliegtuigen, maar kan geen gronddoelen aanvallen.</Unit>
-    <Unit ID="1 16" localized="Artillerie">Artillerie\n\nKrachtig vaststaand kanon. Artillerie is een compromis tussen de goedkope, robuuste geweerkoepel en de dure, lange-afstands raket koepel.</Unit>
-    <Unit ID="1 17" localized="Raket Koepel">Raket Koepel\n\nLange afstands lanceerinstallatie op een vaste basis. Uitstekend bereik en vuurkracht, maar slechts bepert beter bepantserd dan de mobiele versie. Het is aan te bevelen om de raket koepel te omgeven met geweerkoepels en luchtafweer.</Unit>
-    <Unit ID="1 18" localized="Geweerkoepel">Geweerkoepel\n\nZwaar gepantserd vaststaande geweerkoepel. Geweerkoepels hebben een goede vuurkracht, zwaar pantser en een gemiddeld bereik. Omdat ze snel te bouwen zijn zijn ze een goede keuze als je snel verdediging nodig hebt.</Unit>
-    <Unit ID="1 19" localized="Verblijf">Verblijf\n\nVerblijven huisvesten kolonisten. Elk verblijf huisvest genoeg kolonisten om drie laboratoria, trainingskampen of kassen te bemannen. Deze gebouwen moeten met het verblijf verbonden zijn voor ze gebruikt kunnen worden.</Unit>
-    <Unit ID="1 20" localized="Hangaar">Hangaar\n\nEen hangaar kan vliegtuigen repareren, munitie maken en vliegtuigen van de nieuwste technologie voorzien. Al deze bewerkingen hebben ruw materiaal nodig, dus een hangaar kan het beste verbonden worden met opgeslagen ruw materiaal.</Unit>
-    <Unit ID="1 21" localized="Landmijn">Landmijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
-    <Unit ID="1 22" localized="Mijn">Mijn\n\nWint iedere beurt ruw materiaal, brandstof en gouderts uit de grond. Gebouwen moeten met een mijn verbonden zijn om deze grondstoffen te gebruiken. Als er niet genoeg opslagruimte is voor het gewonnen materiaal dan gaat dat verloren.</Unit>
-    <Unit ID="1 23" localized="Diepe Mijn">Diepe Mijn\n\n...</Unit>
-    <Unit ID="1 24" localized="Landing Platform">Landing Platform\n\nLandingsplaats voor vliegtuigen. Voert geen reparaties uit en vult geen munitie of brandstof aan. Om een vliegtuig op een landing platform te bevoorraden kan een vrachtwagen of opslagplaats gebruikt worden.</Unit>
-    <Unit ID="1 25" localized="Water Platform">Water Platform\n\nLevert een oppervlak boven water, waarop gebouwen gebouwd kunnen worden. Pioniers kunnen water platformen bouwen op de kust en op open water. Water platformen zijn voornamelijk belangrijk op eiland kaarten en wanneer er zich kostbare grondstof onder water bevindt.</Unit>
-    <Unit ID="1 26" localized="Radar">Radar\n\nVaststaand lange-afstands radar. Lange-afstands eenheden zoals raket lanceerders en artillerie kunnen niet schieten op wat ze niet kunnen zien, dus het is belangrijk om een radarvoertuig of radar in de buurt te hebben.</Unit>
-    <Unit ID="1 27" localized="Laboratorium">Laboratorium\n\nLaboratoria onderzoeken manieren om je eenheden te verbeteren. In tegenstelling tot verbeteringen die gekocht kunnen worden door gouderts te verwerken kost onderzoek tijd en zijn de verbeteringen klein. Maar onderzoek heeft wel effect op alle type eenheden in plaats van slechts een enkel type. Bovendien is er voor onderzoek geen gouderts nodig. Een laboratorium heeft kolonisten van een verblijf nodig om zijn werk te kunnen doen, en heeft bovendien energie nodig.</Unit>
-    <Unit ID="1 28" localized="Weg">Weg\n\nEenheden verplaatsen zich twee keer zo snel over een weg.</Unit>
-    <Unit ID="1 29" localized="Zeemijn">Zeemijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
-    <Unit ID="1 30" localized="Schild">Schild\n\n</Unit>
-    <Unit ID="1 31" localized="Goud Pakhuis">Goud Pakhuis\n\nKan gebruikt worden om gouderts op te slaan. Mijnen produceren elke beurt goud, indien ze boven een goudader gebouwd zijn. Om deze gouderts op te slaan moet een mijn verbonden zijn met een goud pakhuis.</Unit>
-    <Unit ID="1 32" localized="Opslag Eenheid">Opslag Eenheid\n\nKan gebruikt worden om ruw materiaal op te slaan. Mijnen produceren elke beurt ruw materiaal, indien ze boven een plek met ruw materiaal gebouwd zijn. Om extra materiaal op te slaan moet een mijn verbonden zijn met een opslag eenheid.</Unit>
-    <Unit ID="1 33" localized="Brandstof Tank">Brandstof Tank\n\nKan gebruikt worden om brandstof op te slaan. Mijnen produceren elke beurt brandstof, indien ze boven een olie-bron gebouwd zijn. Om extra brandstof op te slaan moet de mijn met een brandstof tank verbonden zijn.</Unit>
-    <Unit ID="1 34" localized="Trainingskamp">Trainingskamp\n\nOpleidingsplek voor spionnen die eenheden kunnen uitschakelen en veroveren, en voor infanterie om tegen spionnen te waken. Een trainingskamp heeft kolonisten uit een verblijf nodig om zijn werk te doen. Ook heeft een trainingskamp energie nodig.</Unit>
-  </Units>
+		<Unit ID="0 1" localized="Lucht Transport">Lucht Transport\n\nGroot vliegtuig, geschikt voor het vervoeren van maximaal drie grondeenheden.</Unit>
+		<Unit ID="0 2" localized="Buitenaardse Aanvalseenheid">Buitenaards Aanvalseenheid\n\nKrachtig plasma wapen bevestigd op een snel, middelmatig-gepantserd onderstel. Hoewel niet zo kwetsbaar als een normale aanvalseenheid, kan de buitenaartse aanvalseenheid toch ook beter vijandelijk vuur ontwijken voor zover mogelijk. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 3" localized="Buitenaards Vliegtuig">Buitenaards Vliegtuig\n\nBuitenaardse gevechts-bommenwerper. Het buitenaards vliegtuig primair bedoeld is om gronddoelen aan te vallen, maar het kan ook raketten afschieten naar andere vliegtuigen. Hoewel het sterk is, is het buitenaards vliegtuig nog steeds kwetsbaar voor anti-luchtdoel vuur. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 4" localized="Buitenaards Ship">Buitenaards Ship\n\nZwaar gepantserd en bewapend oorlogsschip van buitenaards ontwerp. Net als het slagschip is het Buitenaards Ship uitstekend geschikt om andere schepen en gronddoelen in de buurt van de kust te vernietigen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 5" localized="Buitenaardse Tank">Buitenaardse Tank\n\nZwaar gepantserde tank van buitenaards ontwerp. De Buitenaardse Tank kan het best gebruikt worden aan het front om vijandig vuur op te vangen. Alle buitenaartse eenheden repareren zichzelf, en verbeteren hun eigenschappen door ervaring.</Unit>
+		<Unit ID="0 6" localized="Personen Transport">Personen Transport\n\nSnel gepantserd voertuig om infanterie en spionnen te vervoeren. Het Personen Transport kan zich zowel over land als langzaam onderwater voortbewegen. Alleen vijandige covettes kunnnen Personen Transport ontdekken die zich onder water bevinden.</Unit>
+		<Unit ID="0 7" localized="Aanvalseenheid">Aanvalseenheid\n\nLicht gepantserd voertuig met een lange afstandswapen dat sterk-explosieve munitie schiet. Snel en efficient bij het aanvallen, maar kwetsbaar.</Unit>
+		<Unit ID="0 8" localized="AWAC">AWAC\n\nRadarvliegtuig. Feitelijk niet veel meer dan een vliegende radarschotel, essentieel om anti-luchtdoel eenheden te ontdekken voordat andere vliegtuigen binnen hun bereik komen.</Unit>
+		<Unit ID="0 9" localized="Bommenwerper">Bommenwerper\n\nEen zwaar vliegtuig vol met gronddoel-raketten. Bommenwerpers zijn kostbaar, maar de voordelen zijn de kosten waard. Hun grote snelheid brengt ze snel op probleempunten, en alleen gevechtsvliegtuigen en luchtdoel-eenheden kunnen ze aanvallen.</Unit>
+		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nVoertuig om wrakken op te ruimen en gebouwen af te breken. Bulldozers kunnen materiaal winnen uit wrakstukken.</Unit>
+		<Unit ID="0 11" localized="Vracht Schip">Vracht Schip\n\nSchip om overwerkt materiaal te vervoeren. Handig om pioniers te bevoorraden en om schepen van nieuwe munitie te voorzien.</Unit>
+		<Unit ID="0 12" localized="Raket Lanceerder">Raket Lanceerder\n\nLicht gepanserd voertuig dat middel-lange afstands rakketten kan afschieten die alle eenheden binnen een straal van 2 vierkanten raakt. Meest effectief tegen groepen vijandige eenheden.</Unit>
+		<Unit ID="0 13" localized="Spion">Spion\n\nCommando getrained om onzichtbaar zijn werk te doen. Spionnen kunnen vijandige eenheden uitschakelen of veroveren. Spionnen zijn onzichtbaar tot ze een fout maken bij het veroveren van vijandige eenheden, of tot ze gezien worden door vijandige infantery of spionnen.</Unit>
+		<Unit ID="0 14" localized="Corvette">Corvette\n\nHoge-snelheids boot met torpedo's en een sonar. Corvettes kunnen alle boten aanvallen, maar hun grootste kracht is hun vermogen om vijandige onderzeeers te ontdekken en aan te vallen.</Unit>
+		<Unit ID="0 15" localized="Escort">Escort\n\nHoge-snelheids boot met een goede radar en snel-vurend luchtdoel-kannon. Escorts zijn de ogen van een vloot, en de bescherming van een vloot tegen vliegtuigen.</Unit>
+		<Unit ID="0 16" localized="Straaljager">Straaljager\n\nSnel maar kwetsbaar vliegtuig met een beperkt aantal lucht-lucht raketten. Straaljagers zijn de beste manier om vijandige vliegtuigen uit een gebied te verjagen, en om een bewegende groep eenheden te beschermen. Luchtdoelsystemen op de grond zijn beter om een vast gebied te verdedigen.</Unit>
+		<Unit ID="0 17" localized="Oorlogsschip">Oorlogsschip\n\nZwaar gepantserd schip met een groot kaliber, middel-lange afstands kannon. Uitstekend geschikt om andere schepen te vernietigen en land-doelen dicht bij de kust te bombarderen.</Unit>
+		<Unit ID="0 18" localized="Infanterie">Infanterie\n\nMenselijke soldaten bewapend met lichte anti-tank raketten. Infanterie eenheden kunnen spionnen ontdekken.</Unit>
+		<Unit ID="0 19" localized="Bouwer">Bouwer\n\nGroot bouwvoertuig geschikt om grote gebouwen te bouwen, zoals mijnen en fabrieken. Een bouwer verbruikt twee materiaal per beurt tijdens het bouwen.</Unit>
+		<Unit ID="0 20" localized="Mijnen legger">Mijnen legger\n\nMijnen leggers zijn speciaal gebouwde voertuigen om mijnen te leggen, ondekken en op te pakken. Mijnen leggers maken zelf hun mijnen met ruw materiaal dat ze vervoeren. Ze kunnen deze mijnen later ook weer oppakken en terug omzetten naar ruw materiaal. Ze kunnen vijandige mijnenvelden niet opruimen, deze moeten vernietigd worden door ze met andere eenheden aan te vallen.</Unit>
+		<Unit ID="0 21" localized="Raket Kruiper">Raket Kruiper\n\nEen licht gepantserde mobiele raketlanceerinstallatie. De Raket Kruiper is iets minder robuust dan de vaste lanceerinstallatie, en heeft meer materiaal nodig om gebouwd te worden. Maar de mogelijkheid om hem te verplaatsen maakt hem veel flexibeler.</Unit>
+		<Unit ID="0 22" localized="Raket Cruiser">Raket Cruiser\n\nEen varende raketlanceerinstallatie. Een uitstekend bereik, hoge aanvalskracht en middelmatige pantsering waardoor dit een krachtige eenheid is.</Unit>
+		<Unit ID="0 23" localized="Mobiele Luchtafweer">Mobiele Luchtafweer\n\nLicht en snel met een snel-vurend luchtafweer kanon. Mobiele Luchtafweer zijn vooral bedoeld voor verdediging, aangezien ze niet zo snel zijn als vliegtuigen en niet tegelijk kunnen bewegen en schieten. Te gebruiken om een gebied te beschermen wanneer straaljagers vijandige bommenwerpers verjaagd hebben.</Unit>
+		<Unit ID="0 24" localized="Pionier">Pionier\n\nKlein bouwvoertuig om kleinen gebouwen en wapengebouwen mee te bouwen.</Unit>
+		<Unit ID="0 25" localized="Reparatie Eenheid">Reparatie Eenheid\n\nLicht voertuig dat snel grondeenheden en gebouwen kan repareren. Voor de reparaties is ruw materiaal nodig. Hoe zwaarder de schade, des te meer materiaal er nodig is. Depots, werven, hangars en kazernes kunnen ook eenheden repareren.</Unit>
+		<Unit ID="0 26" localized="Radarvoertuig">Radarvoertuig\n\nMobiele radar. Trager en duurder dan een verkenner, maar met een beter radar-bereik. Een Radarvoertuig is een uitstekende manier om doelen voor lange-afstandswapens zoals Raket Kruipers te vinden.</Unit>
+		<Unit ID="0 27" localized="Verkenner">Verkenner\n\nHoge snelheids verkenningsvoertuig voor verkenning en het vinden van vijandige eenheden. Kan over water manouvreren zonder dat er een brug nodig is, maar is sneller op land.\n\nZeer snel en een goed radar-bereik, maar veel zwakker dan de meeste gevechtseenheden.</Unit>
+		<Unit ID="0 28" localized="Zeemijnen legger">Zeemijnen legger\n\nVarende versie van de mijnen legger. Net als de land-versie kan de zeemijnen legger mijnen maken, leggen, ontdekken, oppakken en terug omzetten naar ruw materiaal.</Unit>
+		<Unit ID="0 29" localized="Varend Transport">Varend Transport\n\nZwaar gepantserd schip met ruimte voor maximaal zes land-eenheden. Varend Transporters zijn veel langzamer dan Lucht Transport, maar hebben veel meer kans om een vijandelijke aanval te overleven.</Unit>
+		<Unit ID="0 30" localized="Onderzeeer">Onderzeeer\n\nDoor zich onder het wateroppervlak te bewegen kunnen onderzeeers dicht naar de vijand toesluipen om vervolgens hun krachtige torpedo's af te schieten. Onderzeeers hebben geen actieve sonar, aangezien dit hun positie zou kunnen verraden. Alleen corvettes kunnen onderzeeers ontdekken voor de aanvallen. Alleen andere onderzeeers, covettes en bommenwerpers kunnen onderzeeers aanvallen.</Unit>
+		<Unit ID="0 31" localized="Bodemonderzoeker">Bodemonderzoeker\n\nLicht amphibievoertuig met geavanceerde sensoren voor het detecteren van ondergrondse voorraden mineralen en vijandige mijnen. In tegenstelling tot de meeste andere amphibievoertuigen verplaatsen ze zich net zo snel over water als over land.</Unit>
+		<Unit ID="0 32" localized="Tank">Tank\n\nZwaar gepantserd gevechtsvoertuig. Kan het beste gebruikt worden aan het front om te voorkomen dat vijandige eenheden licht bepantserde eenheden zoals aanvalseenheden en raket kruipers kunnen bereiken.</Unit>
+		<Unit ID="0 33" localized="Goud Vrachtwagen">Goud Vrachtwagen\n\nEenheid voor het verplaatsen van gouderts van de ene locatie naar de andere.</Unit>
+		<Unit ID="0 34" localized="Bevoorradings Vrachtwagen">Bevoorradings Vrachtwagen\n\nVrachtwagen voor het verplaatsen van ruw materiaal. Nuttig om pioniers en bouwers te bevoorraden en om gevechtseenheden van nieuwe munitie te voorzien.</Unit>
+		<Unit ID="0 35" localized="Brandstof Vrachtwagen">Brandstof Vrachtwagen\n\nVrachtwagen voor het verplaatsen van brandstof.</Unit>
+		<Unit ID="1 1" localized="Kazerne">Kazerne\n\nEen Kazerne huisvest spionnen en infanterie eenheden. Binnen de kazerne bevindt zich een machine voor het repareren en verbeteren van kracht-pakken, en voor het vervaardigen van munitie. De kazerne heeft ruw materiaal nodig voor reparaties, verbeteringen en het bouwen van munitie, waardoor het het beste verbonden kan zijn met een opslageenheid of mijn.</Unit>
+		<Unit ID="1 2" localized="Betonblok">Betonblok\n\nGehard en gepantserd blok voor het blokkeren van vijandige bewegingen.</Unit>
+		<Unit ID="1 3" localized="Brug">Brug\n\nPonton brug voor het oversteken van water. Bruggen blokkeren, in tegenstelling tot platvormen, geen schepen.</Unit>
+		<Unit ID="1 4" localized="Pijpleiding">Pijpleiding\n\nGebouwen moeten verbonden worden om energie, brandstof, ruw materiaal en goud te delen. Je kunt gebouwen verbinden door ze tegen elkaar aan te bouwen, of door het bouwen van pijpleidingen tussen de gebouwen.</Unit>
+		<Unit ID="1 5" localized="Depot">Depot\n\nEen depot kan schade repareren, munitie bouwen en grondtroepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 6" localized="Werf">Werf\n\nEen werf kan schade aan schepen repareren, munitie bouwen en schepen opwaarderen met de nieuwste technologie. Al deze bewerkingen vergt ruw materiaal, waardoor het verstandig is ze te verbinden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 7" localized="Energie Station">Energie Station\n\nEen energie station verbruikt zes brandstof per beurt, en levert genoeg energie voor zes fabrieken of mijnen.</Unit>
+		<Unit ID="1 8" localized="Energie Generator">Energie Generator\n\nEen energie generator verbruikt twee brandstof per beurt, en levert genoeg energie voor 1 fabriek of mijn. De energie generator moet verbonden zijn met de brandstof leverancier (mijn of brandstof opslag) en met het gebouw dat de energie nodig heeft.</Unit>
+		<Unit ID="1 9" localized="Vliegtuig Fabriek">Vliegtuig Fabriek\n\nBouwt straaljagers, bommenwerpers AWACs en lucht transport. Een vliegtuig fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 10" localized="Buitenaardse Fabriek">Buitenaardse Fabriek\n\nFabriek voor het bouwen van buitenaardse eenheden.</Unit>
+		<Unit ID="1 11" localized="Zware Voertuigen Fabriek">Zware Voertuigen Fabriek\n\nBouwt bouwers, radarvoertuigen en zware gevechtseenheden:  Tanks, aanvalseenheden, raket lanceerders en raket kruipers. Een zware voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 12" localized="Scheepswerf">Scheepswerf\n\nScheepswerven bouwen schepen, zoals onderzeeers, varend transport en raket cruisers. Een scheepswerf heeft drie materiaal en een brandstof per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 13" localized="Lichte Voertuigen Fabriek">Lichte Voertuigen Fabriek\n\nBouwt lichte voertuigen: Pioniers, vrachtwagens, reparatie eenheden, verkenners en mobiel luchtafweer. Een lichte voertuigen fabriek heeft drie ruw materiaal en een energie per beurt nodig om zijn werk te doen.</Unit>
+		<Unit ID="1 14" localized="Goud Raffinaderij">Goud Raffinaderij\n\nRaffinaderij voor het omzet van gouderts in krediet. Krediet is nodig om verbeteringen te kopen. Om zijn werk te doen heeft een goud raffinaderij een bron van gouderts nodig. Een mijn kan gouderts delven als het zich boven een goudader bevindt.</Unit>
+		<Unit ID="1 15" localized="Luchtafweer">Luchtafweer\n\nKlein kaliber, hoge snelheids luchtafweer kanon. Luchtafweer rekent effectief af met vliegtuigen, maar kan geen gronddoelen aanvallen.</Unit>
+		<Unit ID="1 16" localized="Artillerie">Artillerie\n\nKrachtig vaststaand kanon. Artillerie is een compromis tussen de goedkope, robuuste geweerkoepel en de dure, lange-afstands raket koepel.</Unit>
+		<Unit ID="1 17" localized="Raket Koepel">Raket Koepel\n\nLange afstands lanceerinstallatie op een vaste basis. Uitstekend bereik en vuurkracht, maar slechts bepert beter bepantserd dan de mobiele versie. Het is aan te bevelen om de raket koepel te omgeven met geweerkoepels en luchtafweer.</Unit>
+		<Unit ID="1 18" localized="Geweerkoepel">Geweerkoepel\n\nZwaar gepantserd vaststaande geweerkoepel. Geweerkoepels hebben een goede vuurkracht, zwaar pantser en een gemiddeld bereik. Omdat ze snel te bouwen zijn zijn ze een goede keuze als je snel verdediging nodig hebt.</Unit>
+		<Unit ID="1 19" localized="Verblijf">Verblijf\n\nVerblijven huisvesten kolonisten. Elk verblijf huisvest genoeg kolonisten om drie laboratoria, trainingskampen of kassen te bemannen. Deze gebouwen moeten met het verblijf verbonden zijn voor ze gebruikt kunnen worden.</Unit>
+		<Unit ID="1 20" localized="Hangaar">Hangaar\n\nEen hangaar kan vliegtuigen repareren, munitie maken en vliegtuigen van de nieuwste technologie voorzien. Al deze bewerkingen hebben ruw materiaal nodig, dus een hangaar kan het beste verbonden worden met opgeslagen ruw materiaal.</Unit>
+		<Unit ID="1 21" localized="Landmijn">Landmijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
+		<Unit ID="1 22" localized="Mijn">Mijn\n\nWint iedere beurt ruw materiaal, brandstof en gouderts uit de grond. Gebouwen moeten met een mijn verbonden zijn om deze grondstoffen te gebruiken. Als er niet genoeg opslagruimte is voor het gewonnen materiaal dan gaat dat verloren.</Unit>
+		<Unit ID="1 23" localized="Diepe Mijn">Diepe Mijn\n\n...</Unit>
+		<Unit ID="1 24" localized="Landing Platform">Landing Platform\n\nLandingsplaats voor vliegtuigen. Voert geen reparaties uit en vult geen munitie of brandstof aan. Om een vliegtuig op een landing platform te bevoorraden kan een vrachtwagen of opslagplaats gebruikt worden.</Unit>
+		<Unit ID="1 25" localized="Water Platform">Water Platform\n\nLevert een oppervlak boven water, waarop gebouwen gebouwd kunnen worden. Pioniers kunnen water platformen bouwen op de kust en op open water. Water platformen zijn voornamelijk belangrijk op eiland kaarten en wanneer er zich kostbare grondstof onder water bevindt.</Unit>
+		<Unit ID="1 26" localized="Radar">Radar\n\nVaststaand lange-afstands radar. Lange-afstands eenheden zoals raket lanceerders en artillerie kunnen niet schieten op wat ze niet kunnen zien, dus het is belangrijk om een radarvoertuig of radar in de buurt te hebben.</Unit>
+		<Unit ID="1 27" localized="Laboratorium">Laboratorium\n\nLaboratoria onderzoeken manieren om je eenheden te verbeteren. In tegenstelling tot verbeteringen die gekocht kunnen worden door gouderts te verwerken kost onderzoek tijd en zijn de verbeteringen klein. Maar onderzoek heeft wel effect op alle type eenheden in plaats van slechts een enkel type. Bovendien is er voor onderzoek geen gouderts nodig. Een laboratorium heeft kolonisten van een verblijf nodig om zijn werk te kunnen doen, en heeft bovendien energie nodig.</Unit>
+		<Unit ID="1 28" localized="Weg">Weg\n\nEenheden verplaatsen zich twee keer zo snel over een weg.</Unit>
+		<Unit ID="1 29" localized="Zeemijn">Zeemijn\n\nKlein, moeilijk detecteerbaar explosief. Alleen bodemonderzoekers, mijnen leggers en spionnen kunnen mijnen detecteren. Wanneer ze gedetecteerd zijn is er slechts een minimale schade nodig om ze te vernietigen.</Unit>
+		<Unit ID="1 30" localized="Schild">Schild\n\n</Unit>
+		<Unit ID="1 31" localized="Goud Pakhuis">Goud Pakhuis\n\nKan gebruikt worden om gouderts op te slaan. Mijnen produceren elke beurt goud, indien ze boven een goudader gebouwd zijn. Om deze gouderts op te slaan moet een mijn verbonden zijn met een goud pakhuis.</Unit>
+		<Unit ID="1 32" localized="Opslag Eenheid">Opslag Eenheid\n\nKan gebruikt worden om ruw materiaal op te slaan. Mijnen produceren elke beurt ruw materiaal, indien ze boven een plek met ruw materiaal gebouwd zijn. Om extra materiaal op te slaan moet een mijn verbonden zijn met een opslag eenheid.</Unit>
+		<Unit ID="1 33" localized="Brandstof Tank">Brandstof Tank\n\nKan gebruikt worden om brandstof op te slaan. Mijnen produceren elke beurt brandstof, indien ze boven een olie-bron gebouwd zijn. Om extra brandstof op te slaan moet de mijn met een brandstof tank verbonden zijn.</Unit>
+		<Unit ID="1 34" localized="Trainingskamp">Trainingskamp\n\nOpleidingsplek voor spionnen die eenheden kunnen uitschakelen en veroveren, en voor infanterie om tegen spionnen te waken. Een trainingskamp heeft kolonisten uit een verblijf nodig om zijn werk te doen. Ook heeft een trainingskamp energie nodig.</Unit>
+	</Units>
 	<Graphic>
 		<Dummy/>
 	</Graphic>

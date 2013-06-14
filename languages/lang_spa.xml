@@ -13,13 +13,10 @@
 			<Editor name="Kuan_Ji" time="2009-12-28 23:35:00"/>
 			<Editor name="Kuan_Ji" time="2010-03-18 21:45:00"/>
 			<Editor name="Kuan_Ji" time="2010-12-06 19:01:00"/>
-
-			
-			
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
-	
 	<Text>
 		<Main>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
@@ -33,17 +30,17 @@
 			</Remarks>
 		</Main>
 		<Init>
-      		<Buildings ENG="Loading buildings..." localized="Cargando edificios..."/>
-      		<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
-      		<Fonts ENG="Loading fonts..." localized="Cargando fuentes..."/>
-      		<GFX ENG="Loading graphics..." localized="Cargando gráficos..."/>
-      		<Keys ENG="Loading keys..." localized="Cargando claves..."/>
-      		<Music ENG="Loading music..." localized="Cargando música..."/>
-      		<Sounds ENG="Loading sounds..." localized="Cargando sonidos..."/>
-      		<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
+			<Buildings ENG="Loading buildings..." localized="Cargando edificios..."/>
 			<Clans ENG="Loading clans..." localized="Cargando clanes..."/>
+			<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
+			<Fonts ENG="Loading fonts..." localized="Cargando fuentes..."/>
+			<GFX ENG="Loading graphics..." localized="Cargando gráficos..."/>
+			<Keys ENG="Loading keys..." localized="Cargando claves..."/>
 			<Lang ENG="Loading language pack..." localized="Cargando paquete de idioma..."/>
+			<Music ENG="Loading music..." localized="Cargando música..."/>
+			<Sounds ENG="Loading sounds..." localized="Cargando sonidos..."/>
+			<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
 			<Voices ENG="Loading voices..." localized="Cargando voces..."/>
 		</Init>
 		<Title>
@@ -84,7 +81,8 @@
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
 			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
-		<Button>			<Active ENG="Active" localized="Activo"/>
+		<Button>
+			<Active ENG="Active" localized="Activo"/>
 			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
 			<Back ENG="Back" localized="Atras"/>
 			<Build ENG="Build" localized="Construir"/>
@@ -369,15 +367,14 @@
 			<Working ENG="working" localized="trabajando"/>
 		</Comp>
 		<Error_Messages>
-      		<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichero no encontrado: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Error cargando mapa"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducción perdida: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementado todavía"/>
 		</Error_Messages>
 	</Text>
 	<Units>
-
 		<Unit ID="0 1" localized="Transporte Aereo">Transporte Aereo\n\nAvión con blindaje medio capaz de transportar hasta tres unidades de tierra.</Unit>
 		<Unit ID="0 2" localized="Tanque de asalto alien">Tanque de asalto alien\n\nSe trata de una potentísimo cañón de plasma montado sobre un chasis rápido con blindaje medio. No es tan frágil como los tanques de asalto humanos, y además tiene la habilidad de evitar los disparos enemigos cuando puede. Todas las unidades alien se autoreparan, y mejoran sus habilidades con experiencia.</Unit>
 		<Unit ID="0 3" localized="Avión alien">Avión alien\n\nCaza y bombardero al mismo tiempo. El avión alien fué diseñado principalmente para atacar objetivos terrestres, pero también lleva misiles aire-aire para derribar otros aviones. A pesar de ser muy polivalente sigue siendo debil frente cualquier tipo de defensa antiaerea. Como el resto de unidades alien, se autorepara, y mejora sus habilidades con experiencia.</Unit>
@@ -448,7 +445,7 @@
 		<Unit ID="1 33" localized="Tanque de combustible">Tanque de combustible\n\nGuarda combustible. Las minas producen combustible cada turno. Para guardar combustible, una mina ha de estar conectada a un tanque de combustible.</Unit>
 		<Unit ID="1 34" localized="Area de entrenamiento">Area de entrenamiento\n\nEntrena comandos que pueden desarmar o capturar unidades enemigas, y infantería para protegerse de los comandos. Un área de entrenamiento necesita colonos de un apartamento y energía para funcionar.</Unit>
 		<Unit ID="1 35" localized="Invernadero">Invernadero\n\nTu principal objetivo es la construcción de invernaderos. Cada invernadero te da un punto de colonia por turno. \n\nDefiende bien tus invernadores, ya que si te rompen uno, perderás todos los puntos que este te haya dado.</Unit>
-  </Units>
+	</Units>
 	<Clans>
 		<Clan ID="0" localized="The Chosen">Mejores unidades aéreas</Clan>
 		<Clan ID="1" localized="Crimson Path">Mejores unidades maritimas</Clan>

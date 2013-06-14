@@ -10,6 +10,7 @@
 		<Author name="klei">
 			<Editor name="klei" time="2009-06-12 21:31:00"/>
 			<Editor name="klei" time="2010-03-20 09:00:00"/>
+			<Editor name="nonsinn" time="2013-06-14 12:10:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
@@ -285,7 +286,6 @@
 			<Usage ENG="Usage" localized="Fogyaszt"/>
 		</Vehicles>
 		<Comp>
-		    <CommandoRank_Average ENG="Average" localized="Középszerű"/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Módosítás történt, nőtt az üzemanyag kitermelés: "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Módosítás történt, csökkent az aranykitermelés: "/>
 			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Módosítás történt, csökkent a nyersanyag kitermelés: "/>
@@ -295,6 +295,7 @@
 			<Clearing ENG="Clearing" localized="Takarít"/>
 			<Clearing_Fin ENG="clearing done" localized="elkészült a takarítás"/>
 			<Clearing_Mine ENG="clearing mines" localized="aknát szed fel"/>
+			<CommandoRank_Average ENG="Average" localized="Középszerű"/>
 			<CommandoRank_Elite ENG="Elite" localized="Elit"/>
 			<CommandoRank_Expert ENG="Expert" localized="Szakértő"/>
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Zöldfülű"/>
@@ -363,10 +364,10 @@
 			<Working ENG="working" localized="működik"/>
 		</Comp>
 		<Error_Messages>
-      		<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializálva lett"/>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Nincs meg a fájl: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Hiba a térkép betöltése közben"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="hiányzik a fordítás: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="A nyelv inicializálva lett"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Még nincs implementálva"/>
 		</Error_Messages>
 	</Text>
