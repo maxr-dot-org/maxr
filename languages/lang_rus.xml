@@ -14,364 +14,365 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X.R."/>
-			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
-			<Version ENG="version v%s" localized="версия %s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized=""/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized=""/>
 			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and eXploration" localized="M.A.X.R. основывается на M.A.X. от Interplay"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded"/>
+			<Game_Title ENG="M.A.X.R."/>
+			<Version ENG="version v%s" localized="версия %s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) ещё не реализовано"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading language pack..." localized="Загрузка локализации.."/>
-			<Keys ENG="Loading keys..." localized="Загрузка клавиш..."/>
+			<Buildings ENG="Loading buildings..." localized="Загрузка зданий..."/>
+			<Clans ENG="Loading clans..." localized="Загрузка кланов..."/>
+			<Effects ENG="Loading effects..." localized="Загрузка эффектов..."/>
 			<Fonts ENG="Loading fonts..." localized="Загрузка шрифтов..."/>
 			<GFX ENG="Loading graphics..." localized="Загрузка графики..."/>
-			<Effects ENG="Loading effects..." localized="Загрузка эффектов..."/>
-			<Terrain ENG="Loading terrain..." localized="Загрузка территорий..."/>
-			<Vehicles ENG="Loading vehicles..." localized="Загрузка подразделений..."/>
-			<Buildings ENG="Loading buildings..." localized="Загрузка зданий..."/>
+			<Keys ENG="Loading keys..." localized="Загрузка клавиш..."/>
+			<Lang ENG="Loading language pack..." localized="Загрузка локализации.."/>
 			<Music ENG="Loading music..." localized="Загрузка музыки..."/>
 			<Sounds ENG="Loading sounds..." localized="Загрузка звуков..."/>
+			<Terrain ENG="Loading terrain..." localized="Загрузка территорий..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Загрузка подразделений..."/>
 			<Voices ENG="Loading voices..." localized="Загрузка голосов..."/>
-			<Clans ENG="Loading clans..." localized="Загрузка кланов..."/>
 		</Init>
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Главное меню"/>
-			<Credits ENG="Credits" localized="Деньги"/>
-			<Gold ENG="Gold" localized="Золото"/>
-			<Metal ENG="Materials" localized="Сырьё"/>
-			<Oil ENG="Fuel" localized="Топливо"/>
-			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
 			<Alien_Tech ENG="Alien technology" localized="Техника пришельцев"/>
-			<Resource ENG="Resource density" localized="Ресурсы"/>
-			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
-			<Game_Type ENG="Game Type" localized="Тип игры"/>
-			<Player_Name ENG="Player name:" localized="Имя игрока"/>
-			<Player_Select ENG="Player options" localized="Выбор игроков"/>
-			<Team ENG="Team" localized="Команда"/>
-			<Human ENG="Human" localized="Человек"/>
-			<Computer ENG="Computer" localized="Компьютер"/>
-			<Nobody ENG="Nobody" localized="Никто"/>
-			<Clan ENG="Clan" localized="Клан"/>
-			<Clans ENG="Clans" localized="Кланы"/>
+			<BridgeHead ENG="Starting Base" localized="Начальная база"/>
+			<Build ENG="Build menu" localized="Постройка"/>
 			<Cargo ENG="Cargo" localized="Груз"/>
 			<Choose_Planet ENG="Choose planet" localized="Выбор карты"/>
-			<Options ENG="Options" localized="Опции"/>
-			<Connect ENG="Connect" localized="Соединение"/>
-			<Send ENG="Send" localized="Отправить"/>
+			<Clan ENG="Clan" localized="Клан"/>
+			<Clans ENG="Clans" localized="Кланы"/>
 			<Color ENG="Color:" localized="Цвет"/>
+			<Computer ENG="Computer" localized="Компьютер"/>
+			<Connect ENG="Connect" localized="Соединение"/>
+			<Credits ENG="Credits" localized="Деньги"/>
+			<Game_Type ENG="Game Type" localized="Тип игры"/>
+			<Gold ENG="Gold" localized="Золото"/>
+			<Human ENG="Human" localized="Человек"/>
 			<IP ENG="IP" localized="IP"/>
-			<Port ENG="Port" localized="Порт"/>
-			<Map ENG="Map" localized="Карта"/>
-			<LoadSave ENG="Load/Save Menu" localized="Загрузка/Сохранение"/>
-			<Load ENG="Load Menu" localized="Загрузка"/>
-			<Updates ENG="Update menu" localized="Обновление"/>
-			<Build ENG="Build menu" localized="Постройка"/>
 			<Labs ENG="Research menu" localized="Исследование"/>
+			<Load ENG="Load Menu" localized="Загрузка"/>
+			<LoadSave ENG="Load/Save Menu" localized="Загрузка/Сохранение"/>
+			<MainMenu ENG="Main Menu" localized="Главное меню"/>
+			<Map ENG="Map" localized="Карта"/>
+			<Metal ENG="Materials" localized="Сырьё"/>
 			<Mine ENG="Allocation menu" localized="Распределение ресурсов"/>
-			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
-			<Savegame ENG="Savegame" localized="Сохранение"/>
+			<Nobody ENG="Nobody" localized="Никто"/>
+			<Oil ENG="Fuel" localized="Топливо"/>
+			<Options ENG="Options" localized="Опции"/>
+			<Player_Name ENG="Player name:" localized="Имя игрока"/>
+			<Player_Select ENG="Player options" localized="Выбор игроков"/>
 			<Players ENG="Players:" localized="Игроки:"/>
+			<Port ENG="Port" localized="Порт"/>
+			<Resource ENG="Resource density" localized="Ресурсы"/>
+			<Resource_Density ENG="Resource frequency" localized="Плотность ресурсов"/>
+			<Savegame ENG="Savegame" localized="Сохранение"/>
+			<Send ENG="Send" localized="Отправить"/>
+			<Team ENG="Team" localized="Команда"/>
+			<Unitinfo ENG="Unit status screen" localized="Статус подразделения"/>
+			<Updates ENG="Update menu" localized="Обновление"/>
 		</Title>
 		<Button>
-			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
-			<Single_Player ENG="Singleplayer (No AI)" localized="Одиночная игра (Без ИИ)"/>
-			<Multi_Player ENG="Multiplayer" localized="Мультиплеер"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Редактор карт"/>
-			<Credits ENG="Credits (*)" localized="Разработчики"/>
-			<Mani ENG="Manifestation" localized="Манифест"/>
-			<Exit ENG="Exit" localized="Выход"/>
-			<Back ENG="Back" localized="Назад"/>
-			<OK ENG="OK" localized="OK"/>
-			<Done ENG="Done" localized="Готово"/>
-			<Cancel ENG="Cancel" localized="Отмена"/>
-			<Hot ENG="Hot" localized="Взвод"/>
-			<Yes ENG="Yes" localized="Да"/>
-			<No ENG="No" localized="Нет"/>
-			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Сервер"/>
-			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Клиент"/>
-			<HotSeat_New ENG="New Hot Seat" localized="Новый ХотСит"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Загрузить ХотСит"/>
-			<Game_New ENG="New Game" localized="Новая игра"/>
-			<Game_Load ENG="Load Game" localized="Загрузить игру"/>
-			<Game_Save ENG="Save Game" localized="Сохранить игру"/>
-			<Game_Options ENG="Game Options" localized="Настройка игры"/>
-			<Load ENG="Load" localized="Загрузить"/>
-			<Save ENG="Save" localized="Сохранить"/>
-			<Training ENG="Training" localized="Тренировка"/>
-			<Delete ENG="Delete" localized="Убрать"/>
-			<Buy ENG="Buy" localized="Купить"/>
-			<Path ENG="Path" localized="Путь"/>
-			<Build ENG="Build" localized="Строй"/>
 			<Active ENG="Active" localized="Активац."/>
-			<Repair ENG="Repair" localized="Ремонт"/>
-			<Upgrade ENG="Upgrade" localized="Улучшить"/>
-			<Reload ENG="Reload" localized="Зарядить"/>
-			<Host_Start ENG="Start Host" localized="Создать сервер"/>
-			<Units ENG="Units" localized=""/>
+			<Air_Units ENG="Airunits" localized="Воздушные"/>
+			<Back ENG="Back" localized="Назад"/>
+			<Build ENG="Build" localized="Строй"/>
+			<Buy ENG="Buy" localized="Купить"/>
+			<Cancel ENG="Cancel" localized="Отмена"/>
+			<Credits ENG="Credits (*)" localized="Разработчики"/>
+			<Damaged_Units ENG="Damaged units" localized="Повреждённые"/>
+			<Delete ENG="Delete" localized="Убрать"/>
 			<Disadvantages ENG="Disadvantages" localized=""/>
-			<Score ENG="Score" localized="Очки"/>
-			<Reports ENG="Reports" localized="Отчёты"/>
+			<Done ENG="Done" localized="Готово"/>
+			<Exit ENG="Exit" localized="Выход"/>
+			<Fight_Units ENG="Fighting units" localized="Боевые"/>
+			<Game_Load ENG="Load Game" localized="Загрузить игру"/>
+			<Game_New ENG="New Game" localized="Новая игра"/>
+			<Game_Options ENG="Game Options" localized="Настройка игры"/>
+			<Game_Save ENG="Save Game" localized="Сохранить игру"/>
+			<Ground_Units ENG="Landunits" localized="Наземные"/>
+			<Host_Start ENG="Start Host" localized="Создать сервер"/>
+			<Hot ENG="Hot" localized="Взвод"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Загрузить ХотСит"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Новый ХотСит"/>
 			<Included ENG="Included" localized="Включая"/>
 			<Limited_To ENG="Limited to" localized="Только"/>
-			<Air_Units ENG="Airunits" localized="Воздушные"/>
-			<Ground_Units ENG="Landunits" localized="Наземные"/>
-			<Sea_Units ENG="Seaunits" localized="Морские"/>
-			<Stationary_Units ENG="Stationary Units" localized="Стационарные"/>
+			<Load ENG="Load" localized="Загрузить"/>
+			<Mani ENG="Manifestation" localized="Манифест"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Редактор карт"/>
+			<Multi_Player ENG="Multiplayer" localized="Мультиплеер"/>
+			<No ENG="No" localized="Нет"/>
+			<OK ENG="OK" localized="OK"/>
+			<Path ENG="Path" localized="Путь"/>
 			<Produce_Units ENG="Producing units" localized="Производственные"/>
-			<Fight_Units ENG="Fighting units" localized="Боевые"/>
-			<Damaged_Units ENG="Damaged units" localized="Повреждённые"/>
+			<Reload ENG="Reload" localized="Зарядить"/>
+			<Repair ENG="Repair" localized="Ремонт"/>
+			<Reports ENG="Reports" localized="Отчёты"/>
+			<Save ENG="Save" localized="Сохранить"/>
+			<Score ENG="Score" localized="Очки"/>
+			<Sea_Units ENG="Seaunits" localized="Морские"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Одиночная игра (Без ИИ)"/>
+			<Stationary_Units ENG="Stationary Units" localized="Стационарные"/>
 			<Stealth_Units ENG="Stealth units" localized="Скрытые"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Клиент"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Сервер"/>
+			<Title_Main_Menu ENG="Main Menu" localized="Главное меню"/>
+			<Training ENG="Training" localized="Тренировка"/>
+			<Units ENG="Units" localized=""/>
+			<Upgrade ENG="Upgrade" localized="Улучшить"/>
+			<Yes ENG="Yes" localized="Да"/>
 		</Button>
 		<Context>
-			<Clear ENG="Clear" localized="Чистка"/>
-			<Build ENG="Build" localized="Строить"/>
-			<Transfer ENG="X-fer" localized="Трансф."/>
-			<Sentry ENG="Sentry" localized="Часовой"/>
-			<Manual ENG="Manual" localized="Ручное упр."/>
-			<Done ENG="Done" localized="Готово"/>
-			<Auto ENG="Auto" localized="Авто"/>
-			<Stop ENG="Stop" localized="Стоп"/>
-			<Destroy ENG="Delete" localized="Убрать"/>
-			<Repair ENG="Repair" localized="Ремонт"/>
-			<Disable ENG="Disable" localized="Откл."/>
-			<Steal ENG="Steal" localized="Украсть"/>
-			<Load ENG="Load" localized="Загр."/>
 			<Active ENG="Activ." localized="Актив."/>
-			<Dist ENG="Distr." localized="Распр."/>
-			<Reload ENG="Reload" localized="Заряд."/>
 			<Attack ENG="Attack" localized="Атака"/>
-			<Seed ENG="Seed" localized="Мины"/>
-			<Start ENG="Start" localized="Старт"/>
-			<Research ENG="Research" localized="Иссл."/>
-			<UpAll ENG="Up. all" localized="Ул. все"/>
-			<Upgrades ENG="Upgrades" localized="Улучш."/>
-			<Upgrade ENG="Upgrade" localized="Улучшить"/>
+			<Auto ENG="Auto" localized="Авто"/>
+			<Build ENG="Build" localized="Строить"/>
+			<Clear ENG="Clear" localized="Чистка"/>
+			<Destroy ENG="Delete" localized="Убрать"/>
+			<Disable ENG="Disable" localized="Откл."/>
+			<Dist ENG="Distr." localized="Распр."/>
+			<Done ENG="Done" localized="Готово"/>
 			<Info ENG="Info" localized="Инфо"/>
+			<Load ENG="Load" localized="Загр."/>
+			<Manual ENG="Manual" localized="Ручное упр."/>
+			<Reload ENG="Reload" localized="Заряд."/>
+			<Repair ENG="Repair" localized="Ремонт"/>
+			<Research ENG="Research" localized="Иссл."/>
+			<Seed ENG="Seed" localized="Мины"/>
+			<Sentry ENG="Sentry" localized="Часовой"/>
+			<Start ENG="Start" localized="Старт"/>
+			<Steal ENG="Steal" localized="Украсть"/>
+			<Stop ENG="Stop" localized="Стоп"/>
+			<Transfer ENG="X-fer" localized="Трансф."/>
+			<UpAll ENG="Up. all" localized="Ул. все"/>
+			<Upgrade ENG="Upgrade" localized="Улучшить"/>
+			<Upgrades ENG="Upgrades" localized="Улучш."/>
 		</Context>
 		<Hud>
-			<Files ENG="Files" localized="Файлы"/>
-			<Settings ENG="Settings" localized="Настройки"/>
-			<Proceed ENG="Do" localized="Вып."/>
-			<End ENG="End" localized="Кон. хода"/>
-			<Log ENG="Log" localized="Журнал"/>
-			<Chat ENG="Chat" localized="Чат"/>
-			<Survey ENG="Survey" localized="Геодезист"/>
-			<Status ENG="Status" localized="Статус"/>
-			<Color ENG="Color" localized="Цвет"/>
-			<Hitpoints ENG="Hits" localized="Прочн."/>
 			<Ammo ENG="Ammunition" localized="Боезапас"/>
+			<AmmoShort ENG="Ammo" localized="Боепр."/>
+			<Armor ENG="Armor" localized="Броня"/>
+			<Cargo ENG="Сargo" localized="Груз"/>
+			<Chat ENG="Chat" localized="Чат"/>
+			<Color ENG="Color" localized="Цвет"/>
+			<End ENG="End" localized="Кон. хода"/>
+			<Energy ENG="Power" localized="Энерг."/>
+			<Files ENG="Files" localized="Файлы"/>
+			<Fog ENG="Fog" localized="Туман"/>
+			<Grid ENG="Grid" localized="Сетка"/>
+			<Hitpoints ENG="Hits" localized="Прочн."/>
+			<Log ENG="Log" localized="Журнал"/>
+			<Proceed ENG="Do" localized="Вып."/>
 			<Range ENG="Range" localized="Дальность"/>
 			<Scan ENG="Scan" localized="Сканер"/>
-			<Grid ENG="Grid" localized="Сетка"/>
-			<Fog ENG="Fog" localized="Туман"/>
-			<Speed ENG="Speed" localized="Скор."/>
-			<Cargo ENG="Сargo" localized="Груз"/>
-			<AmmoShort ENG="Ammo" localized="Боепр."/>
-			<Shots ENG="Shots" localized="Выстрел"/>
-			<Armor ENG="Armor" localized="Броня"/>
-			<Total ENG="Total" localized="Всего"/>
-			<Energy ENG="Power" localized="Энерг."/>
-			<Usage ENG="Usage" localized="Исполь."/>
-			<Teams ENG="Teams" localized="Команды"/>
 			<Score ENG="Score" localized="Очки"/>
+			<Settings ENG="Settings" localized="Настройки"/>
+			<Shots ENG="Shots" localized="Выстрел"/>
+			<Speed ENG="Speed" localized="Скор."/>
+			<Status ENG="Status" localized="Статус"/>
+			<Survey ENG="Survey" localized="Геодезист"/>
+			<Teams ENG="Teams" localized="Команды"/>
+			<Total ENG="Total" localized="Всего"/>
+			<Usage ENG="Usage" localized="Исполь."/>
 		</Hud>
 		<Option>
-			<None ENG="None" localized="нет"/>
-			<Lower ENG="Lower" localized="оч. мало"/>
+			<Definite ENG="Built (original)" localized="Уже построена"/>
 			<Low ENG="Low" localized="мало"/>
-			<Normal ENG="Normal" localized="норм"/>
-			<Much ENG="Much" localized="много"/>
+			<Lower ENG="Lower" localized="оч. мало"/>
+			<Mobile ENG="Must build" localized="Нужно построить"/>
 			<More ENG="More" localized="оч. много"/>
 			<Most ENG="Most" localized="макс"/>
+			<Much ENG="Much" localized="много"/>
+			<None ENG="None" localized="нет"/>
+			<Normal ENG="Normal" localized="норм"/>
+			<Off ENG="off" localized="выкл."/>
+			<On ENG="on" localized="вкл."/>
 			<Thick ENG="Dense" localized="высокая"/>
 			<Thin ENG="Sparse" localized="низкая"/>
-			<On ENG="on" localized="вкл."/>
-			<Off ENG="off" localized="выкл."/>
-			<Definite ENG="Built (original)" localized="Уже построена"/>
-			<Mobile ENG="Must build" localized="Нужно построить"/>
-			<Type_Turns ENG="Turn based" localized="По очереди"/>
 			<Type_Simu ENG="Simultaneous" localized="Одновременно"/>
+			<Type_Turns ENG="Turn based" localized="По очереди"/>
 		</Option>
 		<Settings>
-			<Preferences ENG="Preferences" localized="Настройки"/>
-			<Volume ENG="Volume" localized="Громкость"/>
-			<Music ENG="Music" localized="Музыка"/>
-			<Effects ENG="Effects" localized="Эффекты"/>
-			<Voices ENG="Voices" localized="Голоса"/>
-			<Disable ENG="Disable" localized="Отключить"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Скорость прокрутки"/>
-			<Autosave ENG="Autosave" localized="Автосохранение"/>
-			<Animation ENG="Animations" localized="Анимации"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Эффекты прозрачности"/>
+			<Animation ENG="Animations" localized="Анимации"/>
+			<Autosave ENG="Autosave" localized="Автосохранение"/>
+			<Disable ENG="Disable" localized="Отключить"/>
+			<Effects ENG="Effects" localized="Эффекты"/>
+			<Intro ENG="Show intro" localized="Вступление"/>
+			<Music ENG="Music" localized="Музыка"/>
+			<Preferences ENG="Preferences" localized="Настройки"/>
+			<Resolution ENG="Resolution" localized="Разрешение экрана"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Скорость прокрутки"/>
 			<Shadows ENG="Shadows" localized="Тени"/>
 			<ShowDamage ENG="Buildingdamage" localized="Повреждения зданий"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Повреждения транспорта"/>
 			<Tracks ENG="Vehicletracks" localized="Следы транспорта"/>
-			<Intro ENG="Show intro" localized="Вступление"/>
+			<Voices ENG="Voices" localized="Голоса"/>
+			<Volume ENG="Volume" localized="Громкость"/>
 			<Window ENG="Windowed" localized="Оконный режим"/>
-			<Resolution ENG="Resolution" localized="Разрешение экрана"/>
 		</Settings>
 		<Multiplayer>
-			<Player ENG="Player" localized="Игрок"/>
-			<Waiting ENG="Waiting for other players..." localized="Ждём остальных игроков..."/>
-			<Player_Few ENG="Not enough players!" localized="Недостаточно игроков!"/>
-			<Player_Many ENG="Too many players!" localized="Слишком много игроков!"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Имя игрока уже занято: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="должен быть сервером в игре по очереди"/>
-			<Player_Amount ENG="Choose the amount of players please.  There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/>
-			<Player_Turn ENG="%s's turn" localized="%s делает ход"/>
-			<Player_Turn_End ENG="%s ended turn" localized="%s завершил ход"/>
-			<Player_Left ENG="%s has left the game" localized="%s покидает игру"/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Ошбика подключения к сокету"/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Невозможно подключиться к "/>
-			<Network_Open ENG="Game open" localized="Игра началась"/>
-			<Network_Connecting ENG="Connecting to " localized="Соединяюсь с "/>
-			<Network_New ENG="New connection" localized="Новое соединение"/>
-			<Network_Connected ENG="Connected" localized="Соединено"/>
-			<Network_Connected_Not ENG="Not connected" localized="Не соединино"/>
-			<Network_Closed ENG="Connection closed" localized="Соединение закрыто"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Идёт синхронизация..."/>
-			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
-			<Option_NoSet ENG="--no options set--" localized="--не выбраны опции--"/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
+			<Connection_Terminated ENG="Connection terminated." localized="Связь разорвана."/>
+			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/>
+			<Frozen ENG="You have been frozen by the server." localized="Вы были заморожены сервером."/>
 			<Go ENG="Let's go" localized="Поехали"/>
 			<Go_Abort ENG="Go aborted" localized="Отменено"/>
+			<Go_Check ENG="Check for go" localized="Приготовьтесь к началу"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="Сервер хочет начать: Приготовьтесь"/>
 			<Go_Host_No ENG="Host wants to go: No go" localized="Сервер хочет начать: Не готов"/>
 			<Go_Ready ENG="Ready to go" localized="Готов"/>
 			<Go_Ready_No ENG="not ready to go" localized="не готов"/>
-			<Go_Check ENG="Check for go" localized="Приготовьтесь к началу"/>
-			<Missing_Settings ENG="Options, map or savegame are not set" localized="Опции, карта или сохранённая игра не выбраны"/>
-			<Not_Ready ENG="is not ready" localized="не готов"/>
-			<Server_Not_Running ENG="The server is not running." localized="Сервер не запущен"/>
-			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Дождитесь завершения хода игроком %s"/>
-			<Deadline ENG="This turn will end in %s seconds." localized="Ход закончится через %s секунд"/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/>
-			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Переподключение запрещено сервером."/>
-			<Connection_Terminated ENG="Connection terminated." localized="Связь разорвана."/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Потеряна связь с %s."/>
-			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
-			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Сервер, нажмите F2 чтобы прекратить ожидание."/>
-			<Frozen ENG="You have been frozen by the server." localized="Вы были заморожены сервером."/>
-			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
-			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>
-			<Player_Left ENG="%s has left" localized="%s покидает игру"/>
-			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Не могу загрузить карту %s. Вы не готовы."/>
-			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Вас нет в списке сохранённой игры, Вы будете отключены."/>
+			<Map_NoSet ENG="--no map set--" localized="--не выбана карта--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Отменено"/>
+			<MapDL_Download ENG="map %s from server." localized="карты %s с сервера"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Карта не установлена: Запрашиваю загрузку"/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Карта не установлена: Нет права на загрузку"/>
 			<MapDL_Finished ENG="Map download finished." localized="Загрузка карты завершена."/>
-			<MapDL_UploadFinished ENG="Map upload to %s finished." localized="Отправка карты к %s завершена."/>
 			<MapDL_Percent ENG="Map download: %s%" localized="Загрузка карты: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="Отправляю карту %s..."/>
-			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Карта не установлена: Запрашиваю загрузку"/>
-			<MapDL_Download ENG="map %s from server." localized="карты %s с сервера"/>
-			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Карта не установлена: Нет права на загрузку"/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="оригинальной карты M.A.X. %s с сервера (лицензированной)!"/>
+			<MapDL_UploadFinished ENG="Map upload to %s finished." localized="Отправка карты к %s завершена."/>
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Опции, карта или сохранённая игра не выбраны"/>
+			<Network_Closed ENG="Connection closed" localized="Соединение закрыто"/>
+			<Network_Connected ENG="Connected" localized="Соединено"/>
+			<Network_Connected_Not ENG="Not connected" localized="Не соединино"/>
+			<Network_Connecting ENG="Connecting to " localized="Соединяюсь с "/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Невозможно подключиться к "/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Ошбика подключения к сокету"/>
+			<Network_New ENG="New connection" localized="Новое соединение"/>
+			<Network_Open ENG="Game open" localized="Игра началась"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Идёт синхронизация..."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Не могу загрузить карту %s. Вы не готовы."/>
+			<Not_Ready ENG="is not ready" localized="не готов"/>
+			<Option_NoSet ENG="--no options set--" localized="--не выбраны опции--"/>
+			<Player ENG="Player" localized="Игрок"/>
+			<Player_Amount ENG="Choose the amount of players please.  There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Выберете количество игроков. Необходимо минимум два игрока-человека. Максимально возможное количество игроков - 8."/>
+			<Player_Few ENG="Not enough players!" localized="Недостаточно игроков!"/>
+			<Player_Joined ENG="%s has joined" localized="%s вступает в игру"/>
+			<Player_Left ENG="%s has left the game" localized="%s покидает игру"/>
+			<Player_Left ENG="%s has left" localized="%s покидает игру"/>
+			<Player_Many ENG="Too many players!" localized="Слишком много игроков!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="должен быть сервером в игре по очереди"/>
+			<Player_Turn ENG="%s's turn" localized="%s делает ход"/>
+			<Player_Turn_End ENG="%s ended turn" localized="%s завершил ход"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Имя игрока уже занято: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="У игрока неправильное имя"/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Игра уже идёт. Если Вы потеряли связь с сервером, Вы можете подключиться заново. Хотите подключиться?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Переподключение запрещено сервером."/>
+			<Save_Only_Host ENG="Only the host can save games." localized="Только сервер может сохранять игру."/>
+			<Server_Not_Running ENG="The server is not running." localized="Сервер не запущен"/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Ожидаем переподключения игрока."/>
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Дождитесь завершения хода игроком %s"/>
+			<Waiting ENG="Waiting for other players..." localized="Ждём остальных игроков..."/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Attack" localized="Атака"/>
-			<Shoots ENG="Shoots" localized="Выстр."/>
-			<Range ENG="Range" localized="Дальн."/>
 			<Ammo ENG="Ammo" localized="Боезап."/>
 			<Armor ENG="Armor" localized="Броня"/>
-			<Hitpoints ENG="Hits" localized="Прочн."/>
-			<Scan ENG="Scan" localized="Сканер"/>
-			<Speed ENG="Speed" localized="Скор."/>
 			<Cargo ENG="Cargo" localized="Груз"/>
 			<Costs ENG="Costs" localized="Цена"/>
+			<Damage ENG="Attack" localized="Атака"/>
+			<Hitpoints ENG="Hits" localized="Прочн."/>
 			<Produce ENG="Produces" localized="Произв."/>
+			<Range ENG="Range" localized="Дальн."/>
+			<Scan ENG="Scan" localized="Сканер"/>
+			<Shoots ENG="Shoots" localized="Выстр."/>
+			<Speed ENG="Speed" localized="Скор."/>
 			<Usage ENG="Usage" localized="Исп."/>
 		</Vehicles>
 		<Comp>
-			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Возведение построек по заданному маршруту не может быть продолжено."/>
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."/>
-			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Недостаточно топлива, генератор выключен."/>
-			<Energy_Low ENG="Power needed, building turned off." localized="Недостаточно энергии, производство остановлено."/>
-			<Metal_Low ENG="More raw material needed, building turned off." localized="Недостаточно сырья, производство остановлено."/>
-			<Gold_Low ENG="More gold needed, refinery turned off." localized="Недостаточно залота, рафинария отключена."/>
-			<Team_Low ENG="Workers needed, building turned off." localized="Недостаточно рабочих, здание отключено."/>
-			<Building_Disabled ENG="Building disabled" localized="Производство остановлено."/>
-			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Невозможно запустить, недостаточно энергии."/>
-			<Energy_ToLow ENG="More power needed, generator turned on." localized="Необходима дополнительная энергия, генератор включен."/>
-			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Невозможно запустить, недостаточно топлива."/>
-			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Невозможно запустить, недостаточно сырья."/>
-			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Невозможно запустить, недостаточно золота."/>
-			<Team_Insufficient ENG="Cannot start, workers needed." localized="Невозможно запустить, недостаточно людей."/>
-			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Невозможно отключить генератор, требуется энергия."/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Добыча топлива увеличена на "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Добыча сырья уменьшена на "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Добыча золота уменьшена на "/>		
-			<Cheat ENG="used cheat" localized="использован чит"/>
-			<Destroyed ENG="destroyed" localized="- здание разрушено"/>
-			<Defeated ENG="defeated" localized="- игрок повержен"/>
-			<Finished ENG="is finished" localized="- готово"/>
-			<Finished2 ENG="are finished" localized="- готовы"/>
-			<Detected ENG="detected" localized="повреждено"/>
-			<Stolen ENG="stolen" localized="захвачено"/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Добыча сырья уменьшена на "/>
 			<Attacked ENG="is under attack" localized=" - под огнём противника!"/>
-			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
-			<Turn_Start ENG="Start turn" localized="Начался ход"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Подождите пока закончатся все перемещения"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Выполняются оставшиеся перемещения"/>
-			<Research_Attack ENG="Attack research completed" localized="Улучшение атаки завершено"/>
-			<Research_Shoots ENG="Shots research completed" localized="Улучшение скорострельности завершено"/>
-			<Research_Range ENG="Range research completed" localized="Улучшение дальнобойности завершено"/>
-			<Research_Armor ENG="Armor research completed" localized="Улучшение брони завершено"/>
-			<Research_Hitpoints ENG="Hits research completed" localized="Улучшение прочности завершено"/>
-			<Research_Speed ENG="Speed research completed" localized="Улучшение скорости завершено"/>
-			<Research_Scan ENG="Scan research completed" localized="Улучшение радара завершено"/>
-			<Research_Costs ENG="Cost research completed" localized="Улучшение стоимости производства завершено"/>
-			<Upgrades_Done ENG="Upgraded" localized="Улучшенение завершено"/>
-			<Upgrades_Done2 ENG="unit(s) of type %s" localized="(единиц типа %s)"/>
-			<Working ENG="working" localized="работает"/>
-			<Waits ENG="waiting" localized="бездействует"/>
-			<Disabled ENG="disabled" localized="сломано"/>
-			<Producing ENG="Building" localized="производит"/>
-			<Producing_Fin ENG="finished building" localized="закончил производство"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Точка возведения заблокирована или недостаточно ресурсов"/>
-			<Moving ENG="moving" localized="перемещается"/>
-			<Sentry ENG="on sentry" localized="на карауле"/>
-			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
+			<Building_Disabled ENG="Building disabled" localized="Производство остановлено."/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Враг захватил %s"/>
+			<Cheat ENG="used cheat" localized="использован чит"/>
 			<Clearing ENG="Clearing" localized="убирает"/>
-			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
 			<Clearing_Fin ENG="clearing done" localized="уборка закончена"/>
-			<Laying ENG="placing mines" localized="устанавливает мины"/>
-			<Greenhorn ENG="Greenhorn" localized="Молокосос"/>
-			<Average ENG="Average" localized="Среднячок"/>
-			<Veteran ENG="Veteran" localized="Ветеран"/>
-			<Expert ENG="Expert" localized="Эксперт"/>
-			<Elite ENG="Elite" localized="Элита"/>
-			<Description ENG="Description" localized="Описание"/>
-			<Repeat ENG="Again" localized="Ещё раз"/>
+			<Clearing_Mine ENG="clearing mines" localized="убирает мины"/>
+			<CommandoRank_Average ENG="Average" localized="Среднячок"/>
+			<CommandoRank_Elite ENG="Elite" localized="Элита"/>
+			<CommandoRank_Expert ENG="Expert" localized="Эксперт"/>
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Молокосос"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Ветеран"/>
 			<Dated ENG="dated" localized="устаревший"/>
-			<Labs ENG="Labs" localized="лаборатории"/>
-			<Themes ENG="Themes" localized="темы"/>
-			<Turns ENG="Turns" localized="Ходы"/>
-			<Turn ENG="Turn" localized="Ход"/>
-			<Reserve ENG="Reserve" localized="Резерв"/>
-			<Surveying ENG="surveying" localized="георазведка"/>
-			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
-			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
-			<Point ENG="point" localized="очко"/>
-			<Points ENG="points" localized="очки"/>
+			<Defeated ENG="defeated" localized="- игрок повержен"/>
+			<Description ENG="Description" localized="Описание"/>
+			<Destroyed ENG="destroyed" localized="- здание разрушено"/>
+			<Detected ENG="detected" localized="повреждено"/>
+			<Disabled ENG="disabled" localized="сломано"/>
 			<EcoSphere ENG="eco-sphere" localized="эко-сфера"/>
 			<EcoSpheres ENG="eco-spheres" localized="эко-сферы"/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Действительно выйти? \n\nНесохранённые данные будут утеряны."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Невозможно запустить, недостаточно энергии."/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Невозможно отключить генератор, требуется энергия."/>
+			<Energy_Low ENG="Power needed, building turned off." localized="Недостаточно энергии, производство остановлено."/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Необходима дополнительная энергия, генератор включен."/>
+			<Finished ENG="is finished" localized="- готово"/>
+			<Finished2 ENG="are finished" localized="- готовы"/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Невозможно запустить, недостаточно топлива."/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Недостаточно топлива, генератор выключен."/>
 			<GameEndsAt ENG="Game ends at" localized="Играть заканчивается при"/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Невозможно запустить, недостаточно золота."/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Недостаточно залота, рафинария отключена."/>
+			<Labs ENG="Labs" localized="лаборатории"/>
+			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Точка высадки слишком близко к другому игроку. Выберите новую точку высадки."/>
+			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Точка высадки находится недалеко от другого игрока. Подтвердите точку выскадки, щёлкнув по красному кругу или выберите новую точку высадки."/>
+			<Laying ENG="placing mines" localized="устанавливает мины"/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Невозможно запустить, недостаточно сырья."/>
+			<Metal_Low ENG="More raw material needed, building turned off." localized="Недостаточно сырья, производство остановлено."/>
+			<Moving ENG="moving" localized="перемещается"/>
 			<NoLimit ENG="Fight to the death!" localized="Биться насмерть!"/>
-			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Мнгновенная гибель: первый игрок, набравший очки, побеждает!"/>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Возведение построек по заданному маршруту не может быть продолжено."/>
+			<Point ENG="point" localized="очко"/>
+			<Points ENG="points" localized="очки"/>
+			<Producing ENG="Building" localized="производит"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Точка возведения заблокирована или недостаточно ресурсов"/>
+			<Producing_Fin ENG="finished building" localized="закончил производство"/>
+			<ReactionFireOff ENG="Reaction Fire Off" localized="Ответный огонь отключен"/>
+			<Repeat ENG="Again" localized="Ещё раз"/>
+			<Research_Armor ENG="Armor research completed" localized="Улучшение брони завершено"/>
+			<Research_Attack ENG="Attack research completed" localized="Улучшение атаки завершено"/>
+			<Research_Costs ENG="Cost research completed" localized="Улучшение стоимости производства завершено"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Улучшение прочности завершено"/>
+			<Research_Range ENG="Range research completed" localized="Улучшение дальнобойности завершено"/>
+			<Research_Scan ENG="Scan research completed" localized="Улучшение радара завершено"/>
+			<Research_Shoots ENG="Shots research completed" localized="Улучшение скорострельности завершено"/>
+			<Research_Speed ENG="Speed research completed" localized="Улучшение скорости завершено"/>
+			<Reserve ENG="Reserve" localized="Резерв"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Пожалуйста, перезапустите 'Mechanized Assault and eXploration Reloaded' для вступления в силу нового видеорежима"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Внимание: неподдерживаемый видеорежим в конфигурации"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Снимок экрана записан в %s"/>
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Враг захватил %s"/>
-			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s атакует врага"/>
+			<Sentry ENG="on sentry" localized="на карауле"/>
+			<Stolen ENG="stolen" localized="захвачено"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Мнгновенная гибель: первый игрок, набравший очки, побеждает!"/>
+			<Surveying ENG="surveying" localized="георазведка"/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Невозможно запустить, недостаточно людей."/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Недостаточно рабочих, здание отключено."/>
+			<Themes ENG="Themes" localized="темы"/>
+			<Turn ENG="Turn" localized="Ход"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Выполняются оставшиеся перемещения"/>
+			<Turn_Start ENG="Start turn" localized="Начался ход"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Подождите пока закончатся все перемещения"/>
+			<Turns ENG="Turns" localized="Ходы"/>
+			<Upgrades_Done ENG="Upgraded" localized="Улучшенение завершено"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="(единиц типа %s)"/>
+			<Waits ENG="waiting" localized="бездействует"/>
+			<Working ENG="working" localized="работает"/>
+
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Файл не найден: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="нехватает перевода: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Ошибка при загрузке карты"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="нехватает перевода: %s"/>
 			<INFO_Language_initialised ENG="Language is now initialised" localized="Язык не опознан"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Ещё не реализовано"/>
 		</Error_Messages>

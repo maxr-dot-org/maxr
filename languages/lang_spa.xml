@@ -22,383 +22,357 @@
 	
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
-			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
-			<Version ENG="version v%s" localized="versión v%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original por Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Reedición por DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original por Interplay)"/>
 			<Credits_Reloaded ENG="M.A.X.R. based on Interplay's Mechanized Assault and Exploration" localized="M.A.X.R. basado en Mechanized Assault and Exploration de Interplay"/>
+			<Game_Subtitle ENG="Mechanized Assault and eXploration Reloaded" localized="Mechanized Assault and eXploration Reloaded"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
+			<Version ENG="version v%s" localized="versión v%s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*)no implementando todavía"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading language pack..." localized="Cargando paquete de idioma..."/>
-      		<Keys ENG="Loading keys..." localized="Cargando claves..."/>
+      		<Buildings ENG="Loading buildings..." localized="Cargando edificios..."/>
+      		<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
       		<Fonts ENG="Loading fonts..." localized="Cargando fuentes..."/>
       		<GFX ENG="Loading graphics..." localized="Cargando gráficos..."/>
-      		<Effects ENG="Loading effects..." localized="Cargando efectos..."/>
-      		<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
-      		<Buildings ENG="Loading buildings..." localized="Cargando edificios..."/>
+      		<Keys ENG="Loading keys..." localized="Cargando claves..."/>
       		<Music ENG="Loading music..." localized="Cargando música..."/>
       		<Sounds ENG="Loading sounds..." localized="Cargando sonidos..."/>
-			<Voices ENG="Loading voices..." localized="Cargando voces..."/>
+      		<Terrain ENG="Loading terrain..." localized="Cargando terreno..."/>
+      		<Vehicles ENG="Loading vehicles..." localized="Cargando vehículos..."/>
 			<Clans ENG="Loading clans..." localized="Cargando clanes..."/>
+			<Lang ENG="Loading language pack..." localized="Cargando paquete de idioma..."/>
+			<Voices ENG="Loading voices..." localized="Cargando voces..."/>
 		</Init>
-		
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Menú principal"/>
-			<Credits ENG="Credits" localized="Créditos"/>
-			<Gold ENG="Gold" localized="Oro"/>
-			<Metal ENG="Materials" localized="Materiales"/>
-			<Oil ENG="Fuel" localized="Combustible"/>
-			<BridgeHead ENG="Starting base" localized="Base inicial"/>
 			<Alien_Tech ENG="Alien technology" localized="Tecnologia alien"/>
-			<Resource ENG="Resource density" localized="Densidad de recursos"/>
-			<Resource_Density ENG="Resources frequency" localized="Frecuencia de recursos"/>
-			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
-			<Player_Name ENG="Playername:" localized="Nombre:"/>
-			
-			
-			<Player_Select ENG="Player options" localized="Opciones de jugador"/>
-			<Team ENG="Team" localized="Equipo"/>
-			<Human ENG="Human" localized="Humano"/>
-			<Computer ENG="Computer" localized="Ordenador (IA)"/>
-			<Nobody ENG="Nobody" localized="Nadie"/>
-			<Clan ENG="Clan" localized="Clan"/>
-			<Clans ENG="Clans" localized="Clanes"/>
+			<BridgeHead ENG="Starting base" localized="Base inicial"/>
+			<Build ENG="BuildMenu" localized="Menú Construir"/>
 			<Cargo ENG="Cargo" localized="Recursos"/>
 			<Choose_Planet ENG="Choose Planet" localized="Selecciona planeta"/>
-			<Options ENG="Options" localized="Opciones"/>
-			<Connect ENG="Connect" localized="Conectar"/>
-			<Send ENG="Send" localized="Enviar"/>
+			<Clan ENG="Clan" localized="Clan"/>
+			<Clans ENG="Clans" localized="Clanes"/>
 			<Color ENG="Color:" localized="Color:"/>
+			<Computer ENG="Computer" localized="Ordenador (IA)"/>
+			<Connect ENG="Connect" localized="Conectar"/>
+			<Credits ENG="Credits" localized="Créditos"/>
+			<Game_Type ENG="Game Type" localized="Tipo de partida"/>
+			<Gold ENG="Gold" localized="Oro"/>
+			<Human ENG="Human" localized="Humano"/>
 			<IP ENG="IP" localized="IP"/>
-			<Port ENG="Port" localized="Puerto"/>
-			<Map ENG="Map" localized="Mapa"/>
+			<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
+			<Load ENG="Load Menú" localized="Menú Cargar"/>
 			<LoadSave ENG="Load/Save Menú" localized="Menú Cargar/Guardar"/>
-			
-				<Load ENG="Load Menú" localized="Menú Cargar"/>
-				<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
-				<Build ENG="BuildMenu" localized="Menú Construir"/>
-				<Labs ENG="ResearchMenu" localized="Menú Investigar"/>
-				<Mine ENG="Minemanager" localized="Redistribuir minas"/>
+			<MainMenu ENG="Main Menu" localized="Menú principal"/>
+			<Map ENG="Map" localized="Mapa"/>
+			<Metal ENG="Materials" localized="Materiales"/>
+			<Mine ENG="Minemanager" localized="Redistribuir minas"/>
+			<Nobody ENG="Nobody" localized="Nadie"/>
+			<Oil ENG="Fuel" localized="Combustible"/>
+			<Options ENG="Options" localized="Opciones"/>
+			<Player_Name ENG="Playername:" localized="Nombre:"/>
+			<Player_Select ENG="Player options" localized="Opciones de jugador"/>
+			<Players ENG="Players:" localized="Jugadores:"/>
+			<Port ENG="Port" localized="Puerto"/>
+			<Resource ENG="Resource density" localized="Densidad de recursos"/>
+			<Resource_Density ENG="Resources frequency" localized="Frecuencia de recursos"/>
+			<Savegame ENG="Savegame" localized="Guardar Partida"/>
+			<Send ENG="Send" localized="Enviar"/>
+			<Team ENG="Team" localized="Equipo"/>
 			<Unitinfo ENG="Unit status screen" localized="Pantalla de estado de unidad"/>
-            <Savegame ENG="Savegame" localized="Guardar Partida"/>
-            <Players ENG="Players:" localized="Jugadores:"/>
+			<Updates ENG="UpdateMenu" localized="Menú Guardar"/>
 		</Title>
-		<Button>
-			<Title_Main_Menu ENG="Main Menu" localized="Menú principal"/>
-			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sin IA)"/>
-			<Multi_Player ENG="Multiplayer" localized="Multijugador"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Editor de mapas (*)"/>
-			<Credits ENG="Credits (*)" localized="Créditos (*)"/>
-			<Mani ENG="Manifestation" localized="Licenca"/>
-			<Exit ENG="Exit" localized="Salir"/>
-			<Back ENG="Back" localized="Atras"/>
-			<OK ENG="OK" localized="OK"/>
-			<Done ENG="Done" localized="Hecho"/>
-			<Cancel ENG="Cancel" localized="Cancelar"/>
-			<Hot ENG="Hot" localized="Caliente"/>
-			<Yes ENG="Yes" localized="Si"/>
-			<No ENG="No" localized="No"/>
-			<TCPIP_Host ENG="TCP/IP Host" localized="Crear partida TCP/IP"/>
-			<TCPIP_Client ENG="TCP/IP Client" localized="Unirse a partida TCP/IP"/>
-			<HotSeat_New ENG="New Hot Seat" localized="Nuevo Hot Seat"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Cargar Hot Seat"/>
-			<Game_New ENG="New Game" localized="Nueva Partida"/>
-			<Game_Load ENG="Load Game" localized="Cargar partida"/>
-			<Game_Save ENG="Save Game" localized="Guardar partida"/>
-			<Game_Options ENG="Game Options" localized="Opciones de juego"/>
-			<Load ENG="Load" localized="Cargar"/>
-			<Save ENG="Save" localized="Guardar"/>
-			<Training ENG="Training" localized="Entrenando"/>
-			<Delete ENG="Delete" localized="Borrar"/>
-			<Buy ENG="Buy" localized="Comprar"/>
-			<Path ENG="Path" localized="Ruta"/>
-			<Build ENG="Build" localized="Construir"/>
-			<Active ENG="Active" localized="Activo"/>
-			<Repair ENG="Repair" localized="Reparar"/>
-			<Upgrade ENG="Upgrade" localized="Actualizar"/>
-			<Reload ENG="Reload" localized="Recargar"/>
-			<Host_Start ENG="Start Host" localized="Iniciar Servidor"/>
-
-            <Units ENG="Units" localized="Unidades"/>
-            <Disadvantages ENG="Disadvantages" localized="Desventajas"/>
-
-
-			<Score ENG="Score" localized="Puntuación"/>
-			<Reports ENG="Reports" localized="Reportes"/>
-            <Included ENG="Included" localized="Incluido"/>
-            <Limited_To ENG="Limited to" localized="Limitado a"/>
-
+		<Button>			<Active ENG="Active" localized="Activo"/>
 			<Air_Units ENG="Airunits" localized="Unidades aéreas"/>
-            <Ground_Units ENG="Landunits" localized="Unidades de tierra"/>
-            
-			<Sea_Units ENG="Seaunits" localized="Unidades de mar"/>
-			<Stationary_Units ENG="Stationary Units" localized="Unidades estáticas"/>
-			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
-			<Fight_Units ENG="Fighting units" localized="Unidades de combate"/>
+			<Back ENG="Back" localized="Atras"/>
+			<Build ENG="Build" localized="Construir"/>
+			<Buy ENG="Buy" localized="Comprar"/>
+			<Cancel ENG="Cancel" localized="Cancelar"/>
+			<Credits ENG="Credits (*)" localized="Créditos (*)"/>
 			<Damaged_Units ENG="Damaged units" localized="Unidades dañadas"/>
+			<Delete ENG="Delete" localized="Borrar"/>
+			<Disadvantages ENG="Disadvantages" localized="Desventajas"/>
+			<Done ENG="Done" localized="Hecho"/>
+			<Exit ENG="Exit" localized="Salir"/>
+			<Fight_Units ENG="Fighting units" localized="Unidades de combate"/>
+			<Game_Load ENG="Load Game" localized="Cargar partida"/>
+			<Game_New ENG="New Game" localized="Nueva Partida"/>
+			<Game_Options ENG="Game Options" localized="Opciones de juego"/>
+			<Game_Save ENG="Save Game" localized="Guardar partida"/>
+			<Ground_Units ENG="Landunits" localized="Unidades de tierra"/>
+			<Host_Start ENG="Start Host" localized="Iniciar Servidor"/>
+			<Hot ENG="Hot" localized="Caliente"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Cargar Hot Seat"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Nuevo Hot Seat"/>
+			<Included ENG="Included" localized="Incluido"/>
+			<Limited_To ENG="Limited to" localized="Limitado a"/>
+			<Load ENG="Load" localized="Cargar"/>
+			<Mani ENG="Manifestation" localized="Licenca"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Editor de mapas (*)"/>
+			<Multi_Player ENG="Multiplayer" localized="Multijugador"/>
+			<No ENG="No" localized="No"/>
+			<OK ENG="OK" localized="OK"/>
+			<Path ENG="Path" localized="Ruta"/>
+			<Produce_Units ENG="Producing units" localized="Unidades produciendo"/>
+			<Reload ENG="Reload" localized="Recargar"/>
+			<Repair ENG="Repair" localized="Reparar"/>
+			<Reports ENG="Reports" localized="Reportes"/>
+			<Save ENG="Save" localized="Guardar"/>
+			<Score ENG="Score" localized="Puntuación"/>
+			<Sea_Units ENG="Seaunits" localized="Unidades de mar"/>
+			<Single_Player ENG="Singleplayer (No AI)" localized="Un jugador (Sin IA)"/>
+			<Stationary_Units ENG="Stationary Units" localized="Unidades estáticas"/>
 			<Stealth_Units ENG="Stealth units" localized="Unidades ocultas"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="Unirse a partida TCP/IP"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="Crear partida TCP/IP"/>
+			<Title_Main_Menu ENG="Main Menu" localized="Menú principal"/>
+			<Training ENG="Training" localized="Entrenando"/>
+			<Units ENG="Units" localized="Unidades"/>
+			<Upgrade ENG="Upgrade" localized="Actualizar"/>
+			<Yes ENG="Yes" localized="Si"/>
 		</Button>
 		<Context>
-			<Clear ENG="Clear" localized="Limpiar"/>
-			<Build ENG="Build" localized="Construir"/>
-			<Transfer ENG="X-fer" localized="Transferir"/>
-			<Sentry ENG="Sentry" localized="Alerta"/>
-			<Done ENG="Done" localized="Hecho"/>
-			<Auto ENG="Auto" localized="Auto"/>
-			<Stop ENG="Stop" localized="Parar"/>
-			<Destroy ENG="Delete" localized="Borrar"/>
-			<Repair ENG="Repair" localized="Reparar"/>
-			<Disable ENG="Disable" localized="Desactivar"/>
-			<Steal ENG="Steal" localized="Robar"/>
-			<Load ENG="Load" localized="Cargar"/>
 			<Active ENG="Activ." localized="Activar"/>
-			<Dist ENG="Distr." localized="Ajustar"/>
-			<Reload ENG="Reload" localized="Recargar"/>
 			<Attack ENG="Attack" localized="Atacar"/>
-			<Seed ENG="Seed" localized="Plantar"/>
-			<Start ENG="Start" localized="Empezar"/>
-			<Research ENG="Research" localized="Investigar"/>
-			<UpAll ENG="Up. all" localized="Mej. Todo"/>
-			<Upgrades ENG="Upgrades" localized="Mejoras"/>
-			<Upgrade ENG="Upgrade" localized="Mejorar"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Build ENG="Build" localized="Construir"/>
+			<Clear ENG="Clear" localized="Limpiar"/>
+			<Destroy ENG="Delete" localized="Borrar"/>
+			<Disable ENG="Disable" localized="Desactivar"/>
+			<Dist ENG="Distr." localized="Ajustar"/>
+			<Done ENG="Done" localized="Hecho"/>
 			<Info ENG="Info" localized="Info"/>
+			<Load ENG="Load" localized="Cargar"/>
+			<Reload ENG="Reload" localized="Recargar"/>
+			<Repair ENG="Repair" localized="Reparar"/>
+			<Research ENG="Research" localized="Investigar"/>
+			<Seed ENG="Seed" localized="Plantar"/>
+			<Sentry ENG="Sentry" localized="Alerta"/>
+			<Start ENG="Start" localized="Empezar"/>
+			<Steal ENG="Steal" localized="Robar"/>
+			<Stop ENG="Stop" localized="Parar"/>
+			<Transfer ENG="X-fer" localized="Transferir"/>
+			<UpAll ENG="Up. all" localized="Mej. Todo"/>
+			<Upgrade ENG="Upgrade" localized="Mejorar"/>
+			<Upgrades ENG="Upgrades" localized="Mejoras"/>
 		</Context>
 		<Hud>
-			<Files ENG="Files" localized="Ficheros"/>
-			<Settings ENG="Settings" localized="Opciones"/>
-			<Proceed ENG="Do" localized="OK"/>
-			<End ENG="End" localized="Finalizar"/>
-			<Log ENG="Log" localized="Log"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Survey ENG="Survey" localized="Recursos"/>
-			<Status ENG="Status" localized="Estado"/>
-			<Color ENG="Color" localized="Color"/>
-			<Hitpoints ENG="Hits" localized="Vida"/>
 			<Ammo ENG="Ammunition" localized="Munición"/>
+			<AmmoShort ENG="Ammo" localized="Munic."/>
+			<Cargo ENG="Cargo" localized="Carga"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Color ENG="Color" localized="Color"/>
+			<End ENG="End" localized="Finalizar"/>
+			<Energy ENG="Energy" localized="Energía"/>
+			<Files ENG="Files" localized="Ficheros"/>
+			<Fog ENG="Fog" localized="Niebla"/>
+			<Grid ENG="Grid" localized="Cuadrícula"/>
+			<Hitpoints ENG="Hits" localized="Vida"/>
+			<Log ENG="Log" localized="Log"/>
+			<Proceed ENG="Do" localized="OK"/>
 			<Range ENG="Range" localized="Alcance"/>
 			<Scan ENG="Scan" localized="Radar"/>
-			<Grid ENG="Grid" localized="Cuadrícula"/>
-			<Fog ENG="Fog" localized="Niebla"/>
-			<Speed ENG="Speed" localized="Veloc."/>
-			<Cargo ENG="Cargo" localized="Carga"/>
-			<AmmoShort ENG="Ammo" localized="Munic."/>
-			<Shots ENG="Shots" localized="Disparos"/>
-
+			<Score ENG="Score" localized="Puntuación"/>
+			<Settings ENG="Settings" localized="Opciones"/>
 			<Shield ENG="Armor" localized="Escudo"/>
-			<Total ENG="Total" localized="Total"/>
-
-			<Energy ENG="Energy" localized="Energía"/>
-			<Usage ENG="Usage" localized="Uso"/>
+			<Shots ENG="Shots" localized="Disparos"/>
+			<Speed ENG="Speed" localized="Veloc."/>
+			<Status ENG="Status" localized="Estado"/>
+			<Survey ENG="Survey" localized="Recursos"/>
 			<Teams ENG="Teams" localized="Equipos"/>
-            <Score ENG="Score" localized="Puntuación"/>
+			<Total ENG="Total" localized="Total"/>
+			<Usage ENG="Usage" localized="Uso"/>
 		</Hud>
 		<Option>
-			<None ENG="None" localized="Nada"/>
-
-
-			<Lower ENG="Lower" localized="Muy bajo"/>
+			<Definite ENG="Built (original)" localized="Construido (original)"/>
 			<Low ENG="Low" localized="Bajo"/>
-			<Normal ENG="normal" localized="Normal"/>
-			<Much ENG="Much" localized="Alto"/>
-			
-			
+			<Lower ENG="Lower" localized="Muy bajo"/>
+			<Mobile ENG="Must built" localized="Debes construir"/>
 			<More ENG="More" localized="Muy alto"/>
 			<Most ENG="Most" localized="El máximo"/>
+			<Much ENG="Much" localized="Alto"/>
+			<None ENG="None" localized="Nada"/>
+			<Normal ENG="normal" localized="Normal"/>
+			<Off ENG="off" localized="Apagado"/>
+			<On ENG="on" localized="Encendido"/>
 			<Thick ENG="Dense" localized="Denso"/>
 			<Thin ENG="Sparse" localized="Disperso"/>
-
-			<On ENG="on" localized="Encendido"/>
-			<Off ENG="off" localized="Apagado"/>
-			<Definite ENG="Built (original)" localized="Construido (original)"/>
-
-			<Mobile ENG="Must built" localized="Debes construir"/>
-			<Type_Turns ENG="Turn based" localized="Turnos"/>
 			<Type_Simu ENG="Simultaneous" localized="Simultáneo"/>
+			<Type_Turns ENG="Turn based" localized="Turnos"/>
 		</Option>
 		<Settings>
-			<Preferences ENG="Preferences" localized="Preferéncias"/>
-			<Volume ENG="Volume" localized="Volumen"/>
-			<Music ENG="Music" localized="Música"/>
-			<Effects ENG="Effects" localized="Efectos"/>
-			<Voices ENG="Voices" localized="Voces"/>
-			<Disable ENG="Disable" localized="Desactivar"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Desplazamiento"/>
-			<Autosave ENG="Autosave" localized="Autoguardado"/>
-			<Animation ENG="Animations" localized="Animaciones"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Efectos alpha"/>
+			<Animation ENG="Animations" localized="Animaciones"/>
+			<Autosave ENG="Autosave" localized="Autoguardado"/>
+			<Disable ENG="Disable" localized="Desactivar"/>
+			<Effects ENG="Effects" localized="Efectos"/>
+			<Intro ENG="Show intro" localized="Mostrar intro"/>
+			<Music ENG="Music" localized="Música"/>
+			<Preferences ENG="Preferences" localized="Preferéncias"/>
+			<Resolution ENG="Resolution" localized="Resolución"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Desplazamiento"/>
 			<Shadows ENG="Shadows" localized="Sombras"/>
 			<ShowDamage ENG="Buildingdamage" localized="Daño en los edificios"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Daño en los vehículos"/>
 			<Tracks ENG="Vehicletracks" localized="Marca de neumaticos"/>
-			<Intro ENG="Show intro" localized="Mostrar intro"/>
+			<Voices ENG="Voices" localized="Voces"/>
+			<Volume ENG="Volume" localized="Volumen"/>
 			<Window ENG="Windowed" localized="En ventana"/>
-			<Resolution ENG="Resolution" localized="Resolución"/>
 		</Settings>
 		<Multiplayer>
-			<Player ENG="Player" localized="Jugador"/>
-			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
-			<Player_Few ENG="Not enough players!" localized="No hay suficientes jugadores!"/>
-			<Player_Many ENG="Too many players!" localized="Demasiados jugadores!"/>
-			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Se ha perdido un nombre de jugador correcto."/>
-
-			<Player_MustHost ENG="must be host in turnbased game!" localized="El server debe estar en partida basada en turnos!"/>
-			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum" localized="Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."/>
-			<Player_Turn ENG="%s's turn" localized="El turno de %s"/>
-			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
-			<Player_Left ENG="%s has left the game" localized=" %s ha salido de la partida"/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Error abriendo socket"/>
-			<Network_Error_Connect ENG="Could not connect to " localized="No puedo conectar a "/>
-			<Network_Open ENG="Game open" localized="Partida abierta"/>
-			<Network_Connecting ENG="Connecting to " localized="Conectando a "/>
-			<Network_New ENG="New connection" localized="Nueva conexión"/>
-			<Network_Connected ENG="Connected" localized="Conectado"/>
-			<Network_Connected_Not ENG="Not connected" localized="No conectado"/>
-			<Network_Closed ENG="Connection closed" localized="Conexión cerrada"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Sincronizando..."/>
-			<Map_NoSet ENG="--no map set--" localized="--mapa no seleccionado--"/>
-			<Option_NoSet ENG="--no options set--" localized="--opciones no seleccionadas--"/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
+			<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
+			<Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Serás desconectado porque no estás listado en la partida guardada"/>
+			<Frozen ENG="You have been frozen by the server." localized="Has sido congelado por el servidor"/>
 			<Go ENG="Let's go" localized="Vamos a ello"/>
 			<Go_Abort ENG="Go aborted" localized="Comienzo interrumpido"/>
+			<Go_Check ENG="Check for go" localized="Marca cuando estés listo para empezar"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="El servidor quiere empezar: listos para empezar"/>
 			<Go_Host_No ENG="Host wants to go: No go" localized="El servidor quiere empezar: no empezamos"/>
 			<Go_Ready ENG="Ready to go" localized="Listos para empezar"/>
 			<Go_Ready_No ENG="not ready to go" localized="No estamos listos para empezar"/>
-
-			<Go_Check ENG="Check for go" localized="Marca cuando estés listo para empezar"/>
-			<Missing_Settings ENG="Options, map or savegame are not set" localized="Las opciones, el mapa, o el guardado no estan disponibles"/>
-			<Not_Ready ENG="is not ready" localized="no esta listo"/>
-			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
-			<Wait_Until ENG="Please wait until %s has finished his turn." localized="por favor espera hasta que %s haya terminado su turno"/>
-
-			<Deadline ENG="This turn will end in %s seconds." localized=" este turno terminará en %s segundos"/>
-            <Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/>
-			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
-			<Connection_Terminated ENG="Connection terminated." localized="Conexión terminada"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Conexión a %s perdida"/>
-            <Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
-            <Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Servidor, presiona F2 para dejar de esperar."/>
-
-		<Frozen ENG="You have been frozen by the server." localized="Has sido congelado por el servidor"/>
-						<Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
-                        <Player_Joined ENG="%s has joined" localized=" Se ha unido %s"/>
-                        <Player_Left ENG="%s has left" localized="Se ha ido %s"/>
-                        <No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="No se puede cargar el mapa %s. No estás listo."/>
-                        <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Serás desconectado porque no estás listado en la partida guardada"/>
-                        <MapDL_Cancel ENG="Aborted" localized="Anulado"/>
-                        <MapDL_Percent ENG="Map download: %s%" localized="Descargando mapa: %s%"/>
-                        <MapDL_Upload ENG="Uploading map to %s..." localized="Cargando mapa a %s..."/>
-                        <MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Mapa no instalado: Solicitando descarga personalizada"/>
-                        <MapDL_Download ENG="map %s from server." localized="mapa % del sevidor."/>
-                        <MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Mapa no instalado: no tienes permisos para descargar"/>
-                        <MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="Mapa original de M.A.X. %s desde el servidor (registrado)!"/>
+			<Map_NoSet ENG="--no map set--" localized="--mapa no seleccionado--"/>
+			<MapDL_Cancel ENG="Aborted" localized="Anulado"/>
+			<MapDL_Download ENG="map %s from server." localized="mapa % del sevidor."/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="Mapa original de M.A.X. %s desde el servidor (registrado)!"/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Mapa no instalado: Solicitando descarga personalizada"/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Mapa no instalado: no tienes permisos para descargar"/>
+			<MapDL_Percent ENG="Map download: %s%" localized="Descargando mapa: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..." localized="Cargando mapa a %s..."/>
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Las opciones, el mapa, o el guardado no estan disponibles"/>
+			<Network_Closed ENG="Connection closed" localized="Conexión cerrada"/>
+			<Network_Connected ENG="Connected" localized="Conectado"/>
+			<Network_Connected_Not ENG="Not connected" localized="No conectado"/>
+			<Network_Connecting ENG="Connecting to " localized="Conectando a "/>
+			<Network_Error_Connect ENG="Could not connect to " localized="No puedo conectar a "/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Error abriendo socket"/>
+			<Network_New ENG="New connection" localized="Nueva conexión"/>
+			<Network_Open ENG="Game open" localized="Partida abierta"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Sincronizando..."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="No se puede cargar el mapa %s. No estás listo."/>
+			<Not_Ready ENG="is not ready" localized="no esta listo"/>
+			<Option_NoSet ENG="--no options set--" localized="--opciones no seleccionadas--"/>
+			<Player ENG="Player" localized="Jugador"/>
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum" localized="Elige la cantidad de jugadores por favor. Debe haber al menos dos jugadores humanos par empezar una partida. 8 jugadores es el máximo."/>
+			<Player_Few ENG="Not enough players!" localized="No hay suficientes jugadores!"/>
+			<Player_Joined ENG="%s has joined" localized=" Se ha unido %s"/>
+			<Player_Left ENG="%s has left the game" localized=" %s ha salido de la partida"/>
+			<Player_Left ENG="%s has left" localized="Se ha ido %s"/>
+			<Player_Many ENG="Too many players!" localized="Demasiados jugadores!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="El server debe estar en partida basada en turnos!"/>
+			<Player_Turn ENG="%s's turn" localized="El turno de %s"/>
+			<Player_Turn_End ENG="%s ended turn" localized=" turno finalizado por %s"/>
+			<Player_Twice ENG="Playername exists twice: " localized="El nombre de usuario está repetido: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Se ha perdido un nombre de jugador correcto."/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Esta partida está funcionando. Si has perdido la conexión puedes reconectar. ¿Quieres reconectar?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Reconexión prohibida por el servidor"/>
+			<Save_Only_Host ENG="Only the host can save games." localized="Solo el servidor puede guardar partidas"/>
+			<Server_Not_Running ENG="The server is not running." localized="Els servidor no está funcionando"/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Esperando la reconexión del jugador"/>
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="por favor espera hasta que %s haya terminado su turno"/>
+			<Waiting ENG="Waiting for other players..." localized="Esperando a otros jugadores..."/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Attack" localized="Ataque"/>
-			<Shoots ENG="Shoots" localized="Tiros"/>
-			<Range ENG="Range" localized="Alcance"/>
 			<Ammo ENG="Ammo" localized="Munición"/>
 			<Armor ENG="Armor" localized="Escudo"/>
-			<Hitpoints ENG="Hitpoints" localized="Vida"/>
-			<Scan ENG="Scan" localized="Radar"/>
-			<Speed ENG="Speed" localized="Velocidad"/>
 			<Cargo ENG="Cargo" localized="Carga"/>
 			<Costs ENG="Costs" localized="Costes"/>
+			<Damage ENG="Attack" localized="Ataque"/>
+			<Hitpoints ENG="Hitpoints" localized="Vida"/>
 			<Produce ENG="Produces" localized="Producción"/>
+			<Range ENG="Range" localized="Alcance"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Shoots ENG="Shoots" localized="Tiros"/>
+			<Speed ENG="Speed" localized="Velocidad"/>
 			<Usage ENG="Usage" localized="Uso"/>
 		</Vehicles>
 		<Comp>
-                <Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
-                <Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
-                <Fuel_Low ENG="Fuel needed, generator turned off." localized="Se necesita combustible, generador apagado."/>
-                <Energy_Low ENG="Power needed, building turned off." localized="Se necesita energía, edificio apagado."/>
-                <Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
-                <Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
-                <Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
-                <Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
-                <Energy_Insufficient ENG="Cannot turn on, power needed" localized="No se puede encender, se necesita energía"/>
-                <Energy_ToLow ENG="More power needed, generator turned on." localized="Se necesita más energía, generador encendido"/>
-                <Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No se puede encender, se necesita combustible"/>
-                <Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
-                <Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
-                <Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
-                <Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No se puede encender, se necesita energía"/>
-                <Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Se han hecho ajustes: Producción de combustible incrementada en "/>
-                <Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
-                <Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
-
-                <Cheat ENG="used cheat" localized="Se ha usado un truco"/>
-                <Destroyed ENG="destroyed" localized="destruido"/>
-                <Defeated ENG="defeated" localized="derrotado"/>
-                <Finished ENG="is finished" localized="se ha terminado"/>
-                <Finished2 ENG="are finished" localized="se han terminado"/>
-                <Detected ENG="detected" localized="detectado"/>
-                <Stolen ENG="stolen" localized="robado"/>
-                <Attacked ENG="is under attack" localized="está bajo ataque"/>
-                <End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Confirmar salida \n\nLos datos no guardados se perderán."/>
-                <Turn_Start ENG="Start turn" localized="Comienza el turno"/>
-                <Turn_Wait ENG="Please wait until all movements are completed" localized="Por favor espera hasta que todos los movimientos se hayan completado"/>
-                <Turn_Automove ENG="Executing remaining movements" localized="Ejecutando movimientos restantes"/>
-                <Research_Attack ENG="Attack research completed" localized="Investigación de ataque completada"/>
-                <Research_Shoots ENG="Shots research completed" localized="Investigación de tiros completada"/>
-                <Research_Range ENG="Range research completed" localized="Investigación de alcance completada"/>
-                <Research_Armor ENG="Armor research completed" localized="Investigación de blindaje completada"/>
-                <Research_Hitpoints ENG="Hits research completed" localized="Investigación de vida completada"/>
-                <Research_Speed ENG="Speed research completed" localized="Investigación de velocidad completada"/>
-                <Research_Scan ENG="Scan research completed" localized="Investigación de radar completada"/>
-                <Research_Costs ENG="Cost research completed" localized="Investigación de costes completada"/>
-                <Upgrades_Done ENG="Upgraded" localized="Actualizado"/>
-				<Upgrades_Done2 ENG="unit(s) of type %s" localized="unidad(es) de tipo %s"/>
-				<Working ENG="working" localized="trabajando"/>
-                <Waits ENG="waiting" localized="esperando"/>
-                <Disabled ENG="disabled" localized="desactivado"/>
-                <Producing ENG="Building" localized="Edificio"/>
-                <Producing_Fin ENG="finished building" localized="edificio terminado"/>
-				<Producing_Err ENG="Buildposition blocked or insufficient resources"/ localized="Posición de construcción incorrecta o recursos insuficientes">
-                <Moving ENG="moving" localized="moviendose"/>
-                <Sentry ENG="on sentry" localized="en alerta"/>
-                <Clearing ENG="Clearing" localized="limpiando"/>
-                <Clearing_Mine ENG="clearing mines" localized="quitando minas"/>
-                <Clearing_Fin ENG="clearing done" localized="limpieza completada"/>
-                <Laying ENG="placing mines" localized="colocando minas"/>
-	      <Greenhorn ENG="Greenhorn" localized="Novato"/>
- 	      <Average ENG="Average" localized="Intermedio"/>
- 	      <Veteran ENG="Veteran" localized="Veterano"/>
-	      <Expert ENG="Expert" localized="Experto"/>
-	      <Elite ENG="Elite" localized="Elite"/>
-                <Description ENG="Description" localized="Descripción"/>
-                <Repeat ENG="Again" localized="De nuevo"/>
-
-
-                <Dated ENG="dated" localized="a fecha de"/>
-                <Labs ENG="Labs" localized="Laboratorios"/>
-                <Themes ENG="Themes" localized="Temas"/>
-                <Turns ENG="Turns" localized="Turnos"/>
-
-                <Turn ENG="Turn" localized="Turno"/>
-                <Reserve ENG="Reserve" localized="Reserva"/>
-                <Surveying ENG="surveying" localized="explorando"/>
-                <ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
-                <ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
-                <Point ENG="point" localized="punto"/>
-                <Points ENG="points" localized="puntos"/>
-                <EcoSphere ENG="eco-sphere" localized="Invernadero"/>
-                <EcoSpheres ENG="eco-spheres" localized="Invernaderos"/>
-                <GameEndsAt ENG="Game ends at" localized="El juego finaliza en"/>
-                <NoLimit ENG="Fight to the death!" localized="Lucha a muerte"/>
-                <SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="El primer jugador en aumentar su puntuación gana!"/>
-				<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Se han hecho ajustes: Producción de combustible incrementada en "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Se han hecho ajustes: Producción de oro incrementada en "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Se han hecho ajustes: Producción de metal incrementada en "/>
+			<Attacked ENG="is under attack" localized="está bajo ataque"/>
+			<Building_Disabled ENG="Building disabled" localized="Edificio desactivado"/>
+			<Cheat ENG="used cheat" localized="Se ha usado un truco"/>
+			<Clearing ENG="Clearing" localized="limpiando"/>
+			<Clearing_Fin ENG="clearing done" localized="limpieza completada"/>
+			<Clearing_Mine ENG="clearing mines" localized="quitando minas"/>
+			<CommandoRank_Average ENG="Average" localized="Intermedio"/>
+			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
+			<CommandoRank_Expert ENG="Expert" localized="Experto"/>
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Novato"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Veterano"/>
+			<Dated ENG="dated" localized="a fecha de"/>
+			<Defeated ENG="defeated" localized="derrotado"/>
+			<Description ENG="Description" localized="Descripción"/>
+			<Destroyed ENG="destroyed" localized="destruido"/>
+			<Detected ENG="detected" localized="detectado"/>
+			<Disabled ENG="disabled" localized="desactivado"/>
+			<EcoSphere ENG="eco-sphere" localized="Invernadero"/>
+			<EcoSpheres ENG="eco-spheres" localized="Invernaderos"/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Confirmar salida \n\nLos datos no guardados se perderán."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="No se puede encender, se necesita energía"/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="No se puede encender, se necesita energía"/>
+			<Energy_Low ENG="Power needed, building turned off." localized="Se necesita energía, edificio apagado."/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Se necesita más energía, generador encendido"/>
+			<Finished ENG="is finished" localized="se ha terminado"/>
+			<Finished2 ENG="are finished" localized="se han terminado"/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="No se puede encender, se necesita combustible"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Se necesita combustible, generador apagado."/>
+			<GameEndsAt ENG="Game ends at" localized="El juego finaliza en"/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="No se puede encender, se necesita oro"/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Se necesita más oro, refinería apagada."/>
+			<Labs ENG="Labs" localized="Laboratorios"/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="La posición seleccionada coincide con la de otro jugador. Por favor, selecciona otra posición"/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="La posición elegida está demasiado cerca de otro jugador. Por favor, confirmala haciendo clic en el circulo rojo o seleccina otra posición"/>
+			<Laying ENG="placing mines" localized="colocando minas"/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="No se puede encender, se necesita metal"/>
+			<Metal_Low ENG="More raw material needed, building turned off." localized="Se necesitan más materiales, edificio apagado"/>
+			<Moving ENG="moving" localized="moviendose"/>
+			<NoLimit ENG="Fight to the death!" localized="Lucha a muerte"/>
+			<Point ENG="point" localized="punto"/>
+			<Points ENG="points" localized="puntos"/>
+			<Producing ENG="Building" localized="Edificio"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient resources"/ localized="Posición de construcción incorrecta o recursos insuficientes">
+			<Producing_Fin ENG="finished building" localized="edificio terminado"/>
+			<Repeat ENG="Again" localized="De nuevo"/>
+			<Research_Armor ENG="Armor research completed" localized="Investigación de blindaje completada"/>
+			<Research_Attack ENG="Attack research completed" localized="Investigación de ataque completada"/>
+			<Research_Costs ENG="Cost research completed" localized="Investigación de costes completada"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Investigación de vida completada"/>
+			<Research_Range ENG="Range research completed" localized="Investigación de alcance completada"/>
+			<Research_Scan ENG="Scan research completed" localized="Investigación de radar completada"/>
+			<Research_Shoots ENG="Shots research completed" localized="Investigación de tiros completada"/>
+			<Research_Speed ENG="Speed research completed" localized="Investigación de velocidad completada"/>
+			<Reserve ENG="Reserve" localized="Reserva"/>
+			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Por favor reinicia 'Mechanized Assault and eXploration Reloaded' para que los cambios en el modo de vídeo surtan efecto"/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Cuidado: Modo de video no soportado en la configuración"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Pantallazo guardado a %s"/>
+			<Sentry ENG="on sentry" localized="en alerta"/>
+			<Stolen ENG="stolen" localized="robado"/>
+			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="El primer jugador en aumentar su puntuación gana!"/>
+			<Surveying ENG="surveying" localized="explorando"/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="No se puede encender, se necesitan trabajadores"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Se necesitan trabajadores, edificio apagado."/>
+			<Themes ENG="Themes" localized="Temas"/>
+			<Turn ENG="Turn" localized="Turno"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Ejecutando movimientos restantes"/>
+			<Turn_Start ENG="Start turn" localized="Comienza el turno"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Por favor espera hasta que todos los movimientos se hayan completado"/>
+			<Turns ENG="Turns" localized="Turnos"/>
+			<Upgrades_Done ENG="Upgraded" localized="Actualizado"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="unidad(es) de tipo %s"/>
+			<Waits ENG="waiting" localized="esperando"/>
+			<Working ENG="working" localized="trabajando"/>
 		</Comp>
 		<Error_Messages>
-			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichero no encontrado: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducción perdida: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Error cargando mapa"/>
       		<INFO_Language_initialised ENG="Language is now initialised" localized="El idioma está ahora inicializado"/>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Fichero no encontrado: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Error cargando mapa"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="Traducción perdida: %s"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="No implementado todavía"/>
 		</Error_Messages>
 	</Text>

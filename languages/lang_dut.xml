@@ -16,339 +16,338 @@
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X." localized="M.A.X."/>
-			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
-			<Version ENG="version v%s" localized="versie v%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Origineel van Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Herbouw door DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Origineel van Interplay)"/>
 			<Credits_Reloaded ENG="M.A.X. Reloaded based on Interplay's Mechanized Assault and Exploration" localized="M.A.X. Reloaded gebaseerd op Interplays Mechanized Assault and Exploration"/>
+			<Game_Subtitle ENG="Mechanized Assault and Exploration (TM)" localized="Mechanized Assault and Exploration (TM)"/>
+			<Game_Title ENG="M.A.X." localized="M.A.X."/>
+			<Version ENG="version v%s" localized="versie v%s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) nog niet geïmplementeerd"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading language pack..." localized="Laden taalpakket..."/>
-      		<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
+      		<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
+      		<Effects ENG="Loading effects..." localized="Laden effecten..."/>
       		<Fonts ENG="Loading fonts..." localized="Laden lettertypes..."/>
       		<GFX ENG="Loading gfx..." localized="Laden gfx..."/>
-      		<Effects ENG="Loading effects..." localized="Laden effecten..."/>
-      		<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
-      		<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
-      		<Buildings ENG="Loading buildings..." localized="Laden gebouwen..."/>
+      		<Keys ENG="Loading keys..." localized="Laden toetsen..."/>
       		<Music ENG="Loading music..." localized="Laden muziek..."/>
       		<Sounds ENG="Loading sounds..." localized="Laden geluiden..."/>
-			<Voices ENG="Loading voices..." localized="Laden stemmen..."/>			
+      		<Terrain ENG="Loading terrain..." localized="Laden terrein..."/>
+      		<Vehicles ENG="Loading vehicles..." localized="Laden voertuigen..."/>
 			<Clans ENG="Loading clans..." localized="Laden clans..."/>
+			<Lang ENG="Loading language pack..." localized="Laden taalpakket..."/>
+			<Voices ENG="Loading voices..." localized="Laden stemmen..."/>
 		</Init>
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Hoofdmenu"/>
-			<Credits ENG="Credits" localized="Goud"/>
-			<Gold ENG="Gold" localized="Goud"/>
-			<Metal ENG="Metal" localized="Metaal"/>
-			<Oil ENG="Oil" localized="Olie"/>
-			<BridgeHead ENG="Bridgehead" localized="Hoofdbrug"/>
 			<Alien_Tech ENG="Alientechnology" localized="Buitenaardse technologie"/>
-			<Resource ENG="Resources" localized="Bronnen"/>
-			<Resource_Density ENG="Resources Density" localized="Brondichtheid"/>
-			<Game_Type ENG="Game Type" localized="Speltype"/>
-			<Player_Name ENG="Playername:" localized="Spelernaam:"/>
-			<Player_Select ENG="Playeroptions" localized="Speleropties"/>
-			<Team ENG="Team" localized="Team"/>
-			<Human ENG="Human" localized="Mens"/>
-			<Computer ENG="Computer" localized="Computer"/>
-			<Nobody ENG="Nobody" localized="Niemand"/>
-			<Clan ENG="Clan" localized="Clan"/>
-			<Clans ENG="Clans" localized="Clans"/>
+			<BridgeHead ENG="Bridgehead" localized="Hoofdbrug"/>
+			<Build ENG="Buildmenu" localized="Bouwmenu"/>
 			<Cargo ENG="Cargo" localized="Vracht"/>
 			<Choose_Planet ENG="Planetchoosing" localized="Planeetkeuze"/>
-			<Options ENG="Options" localized="Opties"/>
-			<Connect ENG="Connect" localized="Verbinden"/>
-			<Send ENG="Send" localized="Zenden"/>
+			<Clan ENG="Clan" localized="Clan"/>
+			<Clans ENG="Clans" localized="Clans"/>
 			<Color ENG="Color:" localized="Kleur:"/>
+			<Computer ENG="Computer" localized="Computer"/>
+			<Connect ENG="Connect" localized="Verbinden"/>
+			<Credits ENG="Credits" localized="Goud"/>
+			<Game_Type ENG="Game Type" localized="Speltype"/>
+			<Gold ENG="Gold" localized="Goud"/>
+			<Human ENG="Human" localized="Mens"/>
 			<IP ENG="IP" localized="IP"/>
-			<Port ENG="Port" localized="Poort"/>
-			<Map ENG="Map" localized="Kaart"/>
-			<LoadSave ENG="Load/Save Menu" localized="Menu Laden/Opslaan"/>
-			<Load ENG="Load Menu" localized="Menu laden"/>
-			<Updates ENG="Updatemenu" localized="Updatemenu"/>
-			<Build ENG="Buildmenu" localized="Bouwmenu"/>
 			<Labs ENG="Researchmenu" localized="Onderzoeksmenu"/>
+			<Load ENG="Load Menu" localized="Menu laden"/>
+			<LoadSave ENG="Load/Save Menu" localized="Menu Laden/Opslaan"/>
+			<MainMenu ENG="Main Menu" localized="Hoofdmenu"/>
+			<Map ENG="Map" localized="Kaart"/>
+			<Metal ENG="Metal" localized="Metaal"/>
 			<Mine ENG="Minemanager" localized="Mijnmanager"/>
+			<Nobody ENG="Nobody" localized="Niemand"/>
+			<Oil ENG="Oil" localized="Olie"/>
+			<Options ENG="Options" localized="Opties"/>
+			<Player_Name ENG="Playername:" localized="Spelernaam:"/>
+			<Player_Select ENG="Playeroptions" localized="Speleropties"/>
+			<Port ENG="Port" localized="Poort"/>
+			<Resource ENG="Resources" localized="Bronnen"/>
+			<Resource_Density ENG="Resources Density" localized="Brondichtheid"/>
+			<Send ENG="Send" localized="Zenden"/>
+			<Team ENG="Team" localized="Team"/>
 			<Unitinfo ENG="Unitinformations" localized="Eenhedeninformatie"/>
+			<Updates ENG="Updatemenu" localized="Updatemenu"/>
 		</Title>
 		<Button>
-			<Title_Main_Menu ENG="Main Menu" localized="Hoofdmenu"/>
-			<Single_Player ENG="Singleplayer" localized="Enkelspeler"/>
-			<Multi_Player ENG="Multiplayer" localized="Meerspeler"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Kaarteditor (*)"/>
-			<Credits ENG="Credits (*)" localized="Credits (*)"/>
-			<Mani ENG="Manifestation" localized="Manifestering"/>
-			<Exit ENG="Exit" localized="Einde"/>
-			<Back ENG="Back" localized="Terug"/>
-			<OK ENG="OK" localized="Ok"/>
-			<Done ENG="Done" localized="Klaar"/>
-			<Cancel ENG="Cancel" localized="Afbreken"/>
-			<Hot ENG="Hot" localized="Scherp"/>
-			<Yes ENG="Yes" localized="Ja"/>
-			<No ENG="No" localized="Nee"/>
-			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
-			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
-			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
-			<Game_New ENG="New Game" localized="Nieuw Spel"/>
-			<Game_Load ENG="Load Game" localized="Spel laden"/>
-			<Game_Save ENG="Save Game" localized="Spel opslaan"/>
-			<Game_Options ENG="Game Options" localized="Spelopties"/>
-			<Load ENG="Load" localized="Laden"/>
-			<Save ENG="Save" localized="Opslaan"/>
-			<Training ENG="Training" localized="Oefening"/>
-			<Delete ENG="Delete" localized="Verwijder"/>
-			<Buy ENG="Buy" localized="Kopen"/>
-			<Path ENG="Path" localized="Pad"/>
-			<Build ENG="Build" localized="Bouw"/>
 			<Active ENG="Active" localized="Actief"/>
-			<Repair ENG="Repair" localized="Repareer"/>
-			<Upgrade ENG="Upgrade" localized="Verbeter"/>
-			<Reload ENG="Reload" localized="Herladen"/>
-			<Host_Start ENG="Start Host" localized="Start Host"/><Units ENG="Units"/>
+			<Air_Units ENG="Airunits" localized="Lucht-eenheden"/>
+			<Back ENG="Back" localized="Terug"/>
+			<Build ENG="Build" localized="Bouw"/>
+			<Buy ENG="Buy" localized="Kopen"/>
+			<Cancel ENG="Cancel" localized="Afbreken"/>
+			<Credits ENG="Credits (*)" localized="Credits (*)"/>
+			<Damaged_Units ENG="Damaged units" localized="Beschadigte eenheden"/>
+			<Delete ENG="Delete" localized="Verwijder"/>
 			<Disadvantages ENG="Disadvantages" localized="Nadeel"/>
-			<Score ENG="Score" localized="Punten"/>
-			<Reports ENG="Reports" localized="Raporten"/>
+			<Done ENG="Done" localized="Klaar"/>
+			<Exit ENG="Exit" localized="Einde"/>
+			<Fight_Units ENG="Fighting units" localized="Gevechts-eenheden"/>
+			<Game_Load ENG="Load Game" localized="Spel laden"/>
+			<Game_New ENG="New Game" localized="Nieuw Spel"/>
+			<Game_Options ENG="Game Options" localized="Spelopties"/>
+			<Game_Save ENG="Save Game" localized="Spel opslaan"/>
+			<Ground_Units ENG="Landunits" localized="Land-eenheden"/>
+			<Host_Start ENG="Start Host" localized="Start Host"/><Units ENG="Units"/>
+			<Hot ENG="Hot" localized="Scherp"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
 			<Included ENG="Included" localized="Bijgevoegd"/>
 			<Limited_To ENG="Limited to" localized="Gelimiteerd tot"/>
-			<Air_Units ENG="Airunits" localized="Lucht-eenheden"/>
-			<Ground_Units ENG="Landunits" localized="Land-eenheden"/>
-			<Sea_Units ENG="Seaunits" localized="Zee-eenheden"/>
-			<Stationary_Units ENG="Stationary Units" localized="Gestationeerde eenheden"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Mani ENG="Manifestation" localized="Manifestering"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Kaarteditor (*)"/>
+			<Multi_Player ENG="Multiplayer" localized="Meerspeler"/>
+			<No ENG="No" localized="Nee"/>
+			<OK ENG="OK" localized="Ok"/>
+			<Path ENG="Path" localized="Pad"/>
 			<Produce_Units ENG="Producing units" localized="Producerende eenheden"/>
-			<Fight_Units ENG="Fighting units" localized="Gevechts-eenheden"/>
-			<Damaged_Units ENG="Damaged units" localized="Beschadigte eenheden"/>
+			<Reload ENG="Reload" localized="Herladen"/>
+			<Repair ENG="Repair" localized="Repareer"/>
+			<Reports ENG="Reports" localized="Raporten"/>
+			<Save ENG="Save" localized="Opslaan"/>
+			<Score ENG="Score" localized="Punten"/>
+			<Sea_Units ENG="Seaunits" localized="Zee-eenheden"/>
+			<Single_Player ENG="Singleplayer" localized="Enkelspeler"/>
+			<Stationary_Units ENG="Stationary Units" localized="Gestationeerde eenheden"/>
 			<Stealth_Units ENG="Stealth units" localized="Stealh-eenheden"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Title_Main_Menu ENG="Main Menu" localized="Hoofdmenu"/>
+			<Training ENG="Training" localized="Oefening"/>
+			<Upgrade ENG="Upgrade" localized="Verbeter"/>
+			<Yes ENG="Yes" localized="Ja"/>
 		</Button>
 		<Context>
-			<Clear ENG="Clear" localized="opruim."/>
-			<Build ENG="Build" localized="Bouw"/>
-			<Transfer ENG="X-fer" localized="X-fer"/>
-			<Sentry ENG="Sentry" localized="Wacht"/>
-			<Done ENG="Done" localized="Gereed"/>
-			<Auto ENG="Auto" localized="Auto"/>
-			<Stop ENG="Stop" localized="Stop"/>
-			<Destroy ENG="Delete" localized="Verwijd."/>
-			<Repair ENG="Repair" localized="Repareer"/>
-			<Disable ENG="Disable" localized="Uitschak."/>
-			<Steal ENG="Steal" localized="Stelen"/>
-			<Load ENG="Load" localized="Laden"/>
 			<Active ENG="Activ." localized="Actief"/>
-			<Dist ENG="Distr." localized="Distr."/>
-			<Reload ENG="Reload" localized="Herladen"/>
 			<Attack ENG="Attack" localized="Aanval"/>
-			<Seed ENG="Seed" localized="Strooi"/>
-			<Start ENG="Start" localized="Start"/>
-			<Research ENG="Research" localized="Onderzoek"/>
-			<UpAll ENG="Up. all" localized="Vern. alles"/>
-			<Upgrades ENG="Upgrades" localized="Upgrades"/>
-			<Upgrade ENG="Upgrade" localized="Verbeter"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Build ENG="Build" localized="Bouw"/>
+			<Clear ENG="Clear" localized="opruim."/>
+			<Destroy ENG="Delete" localized="Verwijd."/>
+			<Disable ENG="Disable" localized="Uitschak."/>
+			<Dist ENG="Distr." localized="Distr."/>
+			<Done ENG="Done" localized="Gereed"/>
 			<Info ENG="Info" localized="Info"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Reload ENG="Reload" localized="Herladen"/>
+			<Repair ENG="Repair" localized="Repareer"/>
+			<Research ENG="Research" localized="Onderzoek"/>
+			<Seed ENG="Seed" localized="Strooi"/>
+			<Sentry ENG="Sentry" localized="Wacht"/>
+			<Start ENG="Start" localized="Start"/>
+			<Steal ENG="Steal" localized="Stelen"/>
+			<Stop ENG="Stop" localized="Stop"/>
+			<Transfer ENG="X-fer" localized="X-fer"/>
+			<UpAll ENG="Up. all" localized="Vern. alles"/>
+			<Upgrade ENG="Upgrade" localized="Verbeter"/>
+			<Upgrades ENG="Upgrades" localized="Upgrades"/>
 		</Context>
 		<Hud>
-			<Files ENG="Files" localized="Bestanden"/>
-			<Settings ENG="Settings" localized="Instellingen"/>
-			<Proceed ENG="Do" localized="Doe"/>
-			<End ENG="End" localized="Einde"/>
-			<Log ENG="Log" localized="Log"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Survey ENG="Survey" localized="Bodum"/>
-			<Status ENG="Status" localized="Status"/>
-			<Color ENG="Color" localized="Kleur"/>
-			<Hitpoints ENG="Hits" localized="Treffers"/>
 			<Ammo ENG="Ammo" localized="Munitie"/>
+			<AmmoShort ENG="Ammo" localized="Munitie"/>
+			<Cargo ENG="Cargo" localized="Vracht"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Color ENG="Color" localized="Kleur"/>
+			<End ENG="End" localized="Einde"/>
+			<Energy ENG="Energy" localized="Energie"/>
+			<Files ENG="Files" localized="Bestanden"/>
+			<Fog ENG="Fog" localized="Mist"/>
+			<Grid ENG="Grid" localized="Rooster"/>
+			<Hitpoints ENG="Hits" localized="Treffers"/>
+			<Log ENG="Log" localized="Log"/>
+			<Proceed ENG="Do" localized="Doe"/>
 			<Range ENG="Range" localized="Bereik"/>
 			<Scan ENG="Scan" localized="Radar"/>
-			<Grid ENG="Grid" localized="Rooster"/>
-			<Fog ENG="Fog" localized="Mist"/>
-			<Speed ENG="Speed" localized="Snelheid"/>
-			<Cargo ENG="Cargo" localized="Vracht"/>
-			<AmmoShort ENG="Ammo" localized="Munitie"/>
-			<Shots ENG="Shots" localized="Schoten"/>
+			<Settings ENG="Settings" localized="Instellingen"/>
 			<Shield ENG="Shield" localized="Schild"/>
-			<Total ENG="Total" localized="Totaal"/>
-			<Energy ENG="Energy" localized="Energie"/>
-			<Usage ENG="Usage" localized="Verbr."/>
+			<Shots ENG="Shots" localized="Schoten"/>
+			<Speed ENG="Speed" localized="Snelheid"/>
+			<Status ENG="Status" localized="Status"/>
+			<Survey ENG="Survey" localized="Bodum"/>
 			<Teams ENG="Teams" localized="Teams"/>
+			<Total ENG="Total" localized="Totaal"/>
+			<Usage ENG="Usage" localized="Verbr."/>
 		</Hud>
 		<Option>
-			<Lowest ENG="lowest" localized="zeer weinig"/>
-			<Lower ENG="very low" localized="erg weinig"/>
+			<Definite ENG="definite" localized="vaste locatie"/>
 			<Low ENG="low" localized="weinig"/>
-			<Normal ENG="normal" localized="normaal"/>
-			<Much ENG="much" localized="veel"/>
+			<Lower ENG="very low" localized="erg weinig"/>
+			<Lowest ENG="lowest" localized="zeer weinig"/>
+			<Mobile ENG="mobile" localized="mobiel"/>
 			<More ENG="very much" localized="zeer veel"/>
 			<Most ENG="most" localized="hoogst"/>
+			<Much ENG="much" localized="veel"/>
+			<Normal ENG="normal" localized="normaal"/>
+			<Off ENG="off" localized="uit"/>
+			<On ENG="on" localized="aan"/>
 			<Thick ENG="thick" localized="dicht"/>
 			<Thin ENG="thin" localized="dun"/>
-			<On ENG="on" localized="aan"/>
-			<Off ENG="off" localized="uit"/>
-			<Definite ENG="definite" localized="vaste locatie"/>
-			<Mobile ENG="mobile" localized="mobiel"/>
-			<Type_Turns ENG="turns" localized="om de beurt"/>
 			<Type_Simu ENG="simultaneous" localized="gelijktijdig"/>
+			<Type_Turns ENG="turns" localized="om de beurt"/>
 		</Option>
 		<Settings>
-			<Preferences ENG="Preferences" localized="Voorkeuren"/>
-			<Volume ENG="Volume" localized="Volume"/>
-			<Music ENG="Music" localized="Muziek"/>
-			<Effects ENG="Effects" localized="Effecten"/>
-			<Voices ENG="Voices" localized="Stemmen"/>
-			<Disable ENG="Disable" localized="Uitgeschakeld"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Scrollsnelheid"/>
-			<Autosave ENG="Autosave" localized="Auto-opslaan"/>
-			<Animation ENG="Animations" localized="Animaties"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Alpha effecten"/>
+			<Animation ENG="Animations" localized="Animaties"/>
+			<Autosave ENG="Autosave" localized="Auto-opslaan"/>
+			<Disable ENG="Disable" localized="Uitgeschakeld"/>
+			<Effects ENG="Effects" localized="Effecten"/>
+			<Intro ENG="Show intro" localized="Intro afspelen"/>
+			<Music ENG="Music" localized="Muziek"/>
+			<Preferences ENG="Preferences" localized="Voorkeuren"/>
+			<Resolution ENG="Resolution" localized="Resolutie"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Scrollsnelheid"/>
 			<Shadows ENG="Shadows" localized="Schaduwen"/>
 			<ShowDamage ENG="Buildingdamage" localized="Gebouwschade"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Voertuigschade"/>
 			<Tracks ENG="Vehicletracks" localized="Voertuigsporen"/>
-			<Intro ENG="Show intro" localized="Intro afspelen"/>
+			<Voices ENG="Voices" localized="Stemmen"/>
+			<Volume ENG="Volume" localized="Volume"/>
 			<Window ENG="Windowed" localized="Venstermodus"/>
-			<Resolution ENG="Resolution" localized="Resolutie"/>
 		</Settings>
 		<Multiplayer>
-			<Player ENG="Player" localized="Speler"/>
-			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>
-			<Player_Few ENG="Not enough players!" localized="Niet genoeg spelers!"/>
-			<Player_Many ENG="Too many players!" localized="Te veel spelers!"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Dubbele spelernaam: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Mis een correcte speler naam"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="moet host zijn in om-beurten spel!"/>
-			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
-			<Player_Turn ENG="'s turn" localized="'s beurt"/>
-			<Player_Turn_End ENG=" ended turn" localized=" beeindigde de beurt"/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
-			<Network_Open ENG="Game open" localized="Spel open"/>
-			<Network_Connecting ENG="Connecting to " localized="Verbinden met "/>
-			<Network_New ENG="New connection" localized="Nieuwe verbinding"/>
-			<Network_Connected ENG="Connected" localized="Verbinding"/>
-			<Network_Connected_Not ENG="Not connected" localized="Niet verbonden"/>
-			<Network_Closed ENG="Connection closed" localized="Verbinding gesloten"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Synchronizeren..."/>
-			<Map_NoSet ENG="--no map set--" localized="--geen kaart gezet--"/>
-			<Option_NoSet ENG="--no options set--" localized="--geen opties gezet--"/>
+		    <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="U verbinding wordt verbroken omdat uw naam niet in de savgame staat."/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, druk F2 om wachten af te breken."/>
+			<Deadline ENG="This turn will end in %s seconds." localized="Deze ronde eindigt in %s seconden."/>
 			<Go ENG="Let's go" localized="Daar gaat ie"/>
 			<Go_Abort ENG="Go aborted" localized="Start afgebroken"/>
+			<Go_Check ENG="Check for go" localized="Controle voor startklaar"/>
 			<Go_Host ENG="Host wants to go: Ready to go" localized="Host wil starten: Beginnen"/>
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host wil starten: Niet klaar"/>
 			<Go_Ready ENG="Ready to go" localized="Klaar om te starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="niet klaar om te starten"/>
-			<Go_Check ENG="Check for go" localized="Controle voor startklaar"/>
-			<Missing_Settings ENG="Options, map or savegame are not set" localized="Opties, map of savegame zijn niet ingesteld"/>
-			<Not_Ready ENG="is not ready" localized="is niet gereed"/>
-			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Wacht todat %s klaar is met de ronde."/>
-			<Deadline ENG="This turn will end in %s seconds." localized="Deze ronde eindigt in %s seconden."/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u opnieuw verbinden. Wilt u opnieuw verbinden?"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbinding verbroken tot %s"/>
-			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Wachten voor herverbinding met speler"/>
-			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, druk F2 om wachten af te breken."/>
-			<Save_Only_Host ENG="Only the host can save games." localized="Alleen de host kan het spel opslaan."/>
-			<Player_Joined ENG="%s has joined" localized="%s voegt zich aan het spel"/>
-			<Player_Left ENG="%s has left" localized="%s heeft spel verlaten"/>
-			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Kan map %s niet laden. Je kan niet starten."/>
-		    <Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="U verbinding wordt verbroken omdat uw naam niet in de savgame staat."/>
+			<Map_NoSet ENG="--no map set--" localized="--geen kaart gezet--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Afgebroken"/>
+			<MapDL_Download ENG="map %s from server." localized="map %s van server."/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="orginal M.A.X. map  %s van server (licentie)!"/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Map niet geinstalleerd: Aanvraag tot ophalen van custom map"/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Map niet geinstaleerd: Niet toegestaan om op te halen."/>
 			<MapDL_Percent ENG="Map download: %s%" localized="Map ophalen: %s%"/>
 			<MapDL_Upload ENG="Uploading map to %s..." localized="versturen van map naar %s..."/>
-			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Map niet geinstalleerd: Aanvraag tot ophalen van custom map"/>
-			<MapDL_Download ENG="map %s from server." localized="map %s van server."/>
-			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Map niet geinstaleerd: Niet toegestaan om op te halen."/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="orginal M.A.X. map  %s van server (licentie)!"/>
-			
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Opties, map of savegame zijn niet ingesteld"/>
+			<Network_Closed ENG="Connection closed" localized="Verbinding gesloten"/>
+			<Network_Connected ENG="Connected" localized="Verbinding"/>
+			<Network_Connected_Not ENG="Not connected" localized="Niet verbonden"/>
+			<Network_Connecting ENG="Connecting to " localized="Verbinden met "/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Kon niet verbinden met "/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Fout bij openen socket"/>
+			<Network_New ENG="New connection" localized="Nieuwe verbinding"/>
+			<Network_Open ENG="Game open" localized="Spel open"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Synchronizeren..."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Kan map %s niet laden. Je kan niet starten."/>
+			<Not_Ready ENG="is not ready" localized="is niet gereed"/>
+			<Option_NoSet ENG="--no options set--" localized="--geen opties gezet--"/>
+			<Player ENG="Player" localized="Speler"/>
+			<Player_Amount ENG="Amount of players" localized="Aantal spelers"/>
+			<Player_Few ENG="Not enough players!" localized="Niet genoeg spelers!"/>
+			<Player_Joined ENG="%s has joined" localized="%s voegt zich aan het spel"/>
+			<Player_Left ENG="%s has left" localized="%s heeft spel verlaten"/>
+			<Player_Many ENG="Too many players!" localized="Te veel spelers!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="moet host zijn in om-beurten spel!"/>
+			<Player_Turn ENG="'s turn" localized="'s beurt"/>
+			<Player_Turn_End ENG=" ended turn" localized=" beeindigde de beurt"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Dubbele spelernaam: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Mis een correcte speler naam"/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Dit spel is al gaande. Indien u de verbinding van het spel kwijt bent geraakt, kunt u opnieuw verbinden. Wilt u opnieuw verbinden?"/>
+			<Save_Only_Host ENG="Only the host can save games." localized="Alleen de host kan het spel opslaan."/>
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Wachten voor herverbinding met speler"/>
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Wacht todat %s klaar is met de ronde."/>
+			<Waiting ENG="Waiting for other players..." localized="Wachten op andere spelers..."/>			
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Damage" localized="Schade"/>
-			<Shoots ENG="Shoots" localized="Schoten"/>
-			<Range ENG="Range" localized="Bereik"/>
 			<Ammo ENG="Ammo" localized="Munitie"/>
 			<Armor ENG="Armor" localized="Pantser"/>
-			<Hitpoints ENG="Hitpoints" localized="Treffers"/>
-			<Scan ENG="Scan" localized="Radar"/>
-			<Speed ENG="Speed" localized="Snelheid"/>
 			<Cargo ENG="Cargo" localized="Vracht"/>
 			<Costs ENG="Costs" localized="Kosten"/>
+			<Damage ENG="Damage" localized="Schade"/>
+			<Hitpoints ENG="Hitpoints" localized="Treffers"/>
 			<Produce ENG="Produces" localized="Maakt"/>
+			<Range ENG="Range" localized="Bereik"/>
+			<Scan ENG="Scan" localized="Radar"/>
+			<Shoots ENG="Shoots" localized="Schoten"/>
+			<Speed ENG="Speed" localized="Snelheid"/>
 			<Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
-			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="De gekozen landings-positie te dicht bij andere speler. Selecteer aub een andere positie."/>
-			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="De gekozen landings-positie is naarbij een andere speler. Bevestig dit door in de rode kring te klicken, of selecteer een andere positie."/>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Te weinig brandstof, generator uitgeschakeld!"/>
-			<Energy_Low ENG="To low energy, disabled consumer!" localized="Te weinig energie, verbruiker uitgeschakeld!"/>
-			<Metal_Low ENG="To low metal, disabled consumer!" localized="Te weinig metaal, verbruiker uitgeschakeld!"/>
-			<Gold_Low ENG="To low gold, disabled consumer!" localized="Te weinig goud, verbruiker uitgeschakeld!"/>
-			<Team_Low ENG="To low teams, disabled consumer!" localized="Te weinig teams, verbruiker uitgeschakeld!"/>
-			<Building_Disabled ENG="Building disabled" localized="Gebouw uitgeschakelt"/>
-			<Energy_Optimize ENG="Energygeneration optimized" localized="Energiegeneratoren geoptimaliseerd"/>
-			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Niet genoeg energie om te starten!"/>
-			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Niet genoeg energie, generator gestart!"/>
-			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Niet genoeg brandstof om te starten!"/>
-			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Kan niet starten, metaal nodig."/>
-			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Kan niet starten, goud nodig."/>
-			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="Generator kan niet uitgeschakeld worden, de energie is nodig!"/>
+      		<CommandoRank_Elite ENG="Elite" localized="Elite"/>
+      		<CommandoRank_Expert ENG="Expert" localized="Expert"/>
 			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Aanpassingen gemaakt: Brandstof mijnen verhoogt met "/>
-			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met "/>
 			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Aanpassingen gemaakt: Goud mijnen verlaagt met "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: metal mining decreased by " localized="Aanpassingen gemaakt: Metaal mijnen verlaagt met "/>
+			<Attacked ENG="is under attack" localized="wordt aangevallen"/>
+			<Building_Disabled ENG="Building disabled" localized="Gebouw uitgeschakelt"/>
 			<Cheat ENG="used cheat" localized="valsspelen gebruikt"/>
-			<Destroyed ENG="destroyed" localized="vernietigd"/>
+			<Clearing ENG="Clearing" localized="Opruimen"/>
+			<Clearing_Fin ENG="clearing done" localized="opruimen klaar"/>
+			<Clearing_Mine ENG="clearing mines" localized="opruimen mijnen"/>
+			<CommandoRank_Average ENG="Average" localized="Normaal"/>
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Groentje"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Veteraan"/>
+			<Dated ENG="dated" localized="verouderd"/>
 			<Defeated ENG="defeated" localized="verslagen"/>
+			<Description ENG="Description" localized="Omschrijving"/>
+			<Destroyed ENG="destroyed" localized="vernietigd"/>
+			<Detected ENG="detected" localized="ontdekt"/>
+			<Disabled ENG="disabled" localized="uitgeschakeld"/>
+			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Echt stoppen?\n\nNiet opgeslagen speldata gaat verloren."/>
+			<Energy_Insufficient ENG="Insufficient energy for starting!" localized="Niet genoeg energie om te starten!"/>
+			<Energy_IsNeeded ENG="Can't disable generator, engery needed!" localized="Generator kan niet uitgeschakeld worden, de energie is nodig!"/>
+			<Energy_Low ENG="To low energy, disabled consumer!" localized="Te weinig energie, verbruiker uitgeschakeld!"/>
+			<Energy_Optimize ENG="Energygeneration optimized" localized="Energiegeneratoren geoptimaliseerd"/>
+			<Energy_ToLow ENG="Insufficient energy, generator started!" localized="Niet genoeg energie, generator gestart!"/>
 			<Finished ENG="is finished" localized="is klaar"/>
 			<Finished2 ENG="are finished" localized="klaar"/>
-			<Detected ENG="detected" localized="ontdekt"/>
-			<Stolen ENG="stolen" localized="gestolen"/>
-			<Attacked ENG="is under attack" localized="wordt aangevallen"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Echt stoppen?\n\nNiet opgeslagen speldata gaat verloren."/>
-			<Turn_Start ENG="Start turn" localized="Start beurt"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Wacht tot alle verplaatsingen klaar zijn"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Uitvoeren overgebleven verplaatsingen"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Onderzoek 'Aanval' gereed"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Onderzoek 'Schoten' gereed"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Onderzoek 'Bereik' gereed"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Onderzoek 'Pantser' gereed"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Onderzoek 'Treffers' gereed"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Onderzoek 'Snelheid' gereed"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Onderzoek 'Radar' gereed"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Onderzoek 'Kosten' gereed"/>
-			<Working ENG="working" localized="werkt"/>
-			<Waits ENG="waits" localized="wacht"/>
-			<Disabled ENG="disabled" localized="uitgeschakeld"/>
+			<Fuel_Insufficient ENG="Insufficient fuel for starting!" localized="Niet genoeg brandstof om te starten!"/>
+			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Te weinig brandstof, generator uitgeschakeld!"/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Kan niet starten, goud nodig."/>
+			<Gold_Low ENG="To low gold, disabled consumer!" localized="Te weinig goud, verbruiker uitgeschakeld!"/>
+			<Labs ENG="Labs" localized="Laboratoria"/>
+			<Landing_Too_Close ENG="Landing position is too close to an other player. Please reselect your position." localized="De gekozen landings-positie te dicht bij andere speler. Selecteer aub een andere positie."/>
+			<Landing_Warning ENG="Landing position is near an other player. Please confirm the position by clicking in the red circle, or select another position." localized="De gekozen landings-positie is naarbij een andere speler. Bevestig dit door in de rode kring te klicken, of selecteer een andere positie."/>
+			<Laying ENG="laying mines" localized="mijnen leggen"/>
+			<Metal_Insufficient ENG="Cannot start, metal needed." localized="Kan niet starten, metaal nodig."/>
+			<Metal_Low ENG="To low metal, disabled consumer!" localized="Te weinig metaal, verbruiker uitgeschakeld!"/>
+			<Moving ENG="moving" localized="in beweging"/>
 			<Producing ENG="Producing" localized="Produceren"/>
 			<Producing_Fin ENG="finished producing" localized="productie gereed"/>
-			<Moving ENG="moving" localized="in beweging"/>
-			<Sentry ENG="on sentry" localized="op wachposten"/>
-			<Clearing ENG="Clearing" localized="Opruimen"/>
-			<Clearing_Mine ENG="clearing mines" localized="opruimen mijnen"/>
-			<Clearing_Fin ENG="clearing done" localized="opruimen klaar"/>
-			<Laying ENG="laying mines" localized="mijnen leggen"/>
-			<Greenhorn ENG="Greenhorn" localized="Groentje"/>
-			<Average ENG="Average" localized="Normaal"/>
-			<Veteran ENG="Veteran" localized="Veteraan"/>
-      		<Expert ENG="Expert" localized="Expert"/>
-      		<Elite ENG="Elite" localized="Elite"/>
-			<Description ENG="Description" localized="Omschrijving"/>
 			<Repeat ENG="Again" localized="Opnieuw"/>
-			<Dated ENG="dated" localized="verouderd"/>
-			<Labs ENG="Labs" localized="Laboratoria"/>
-			<Themes ENG="Themes" localized="Themas"/>
-			<Turns ENG="Turns" localized="Beurten"/>
-			<Turn ENG="Turn" localized="Beurt"/>
+			<Research_Armor ENG="Research 'Armor' completed" localized="Onderzoek 'Pantser' gereed"/>
+			<Research_Attack ENG="Research 'Attack' completed" localized="Onderzoek 'Aanval' gereed"/>
+			<Research_Costs ENG="Research 'Costs' completed" localized="Onderzoek 'Kosten' gereed"/>
+			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Onderzoek 'Treffers' gereed"/>
+			<Research_Range ENG="Research 'Range' completed" localized="Onderzoek 'Bereik' gereed"/>
+			<Research_Scan ENG="Research 'Scan' completed" localized="Onderzoek 'Radar' gereed"/>
+			<Research_Shoots ENG="Research 'Shoots' completed" localized="Onderzoek 'Schoten' gereed"/>
+			<Research_Speed ENG="Research 'Speed' completed" localized="Onderzoek 'Snelheid' gereed"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
-			<Surveying ENG="surveying" localized="bodum analyseren"/>
 			<ResolutionChange ENG="Please restart 'Mechanized Assault and eXploration Reloaded' for changes in the video mode to take effect" localized="Herstart aub 'Mechanized Assault and eXploration Reloaded' voor veranderingen in de video instellingen"/>
 			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Warschuwing: Niet ondersteunde videomodus in de instellingen"/>
+			<Sentry ENG="on sentry" localized="op wachposten"/>
+			<Stolen ENG="stolen" localized="gestolen"/>
+			<Surveying ENG="surveying" localized="bodum analyseren"/>
+			<Team_Low ENG="To low teams, disabled consumer!" localized="Te weinig teams, verbruiker uitgeschakeld!"/>
+			<Themes ENG="Themes" localized="Themas"/>
+			<Turn ENG="Turn" localized="Beurt"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Uitvoeren overgebleven verplaatsingen"/>
+			<Turn_Start ENG="Start turn" localized="Start beurt"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Wacht tot alle verplaatsingen klaar zijn"/>
+			<Turns ENG="Turns" localized="Beurten"/>
+			<Waits ENG="waits" localized="wacht"/>
+			<Working ENG="working" localized="werkt"/>
 		</Comp>
 		<Error_Messages>
-			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
-			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
       		<INFO_Language_initialised ENG="Language is now initialised" localized="Taal is nu geinitialiseerd"/>
+			<ERROR_File_Not_Found ENG="File not found: %s" localized="Bestand niet gevonden: %s"/>
+			<ERROR_Map_Loading ENG="Error loading map" localized="Fout bij inlezen kaart"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="ontbrekende vertaling: %s"/>
 			<INFO_Not_Implemented ENG="Not yet implemented" localized="Nog niet geimplementeerd"/>
 		</Error_Messages>
 	</Text>

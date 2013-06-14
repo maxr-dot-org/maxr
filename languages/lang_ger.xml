@@ -10,392 +10,400 @@
 		<Author name="JCK">
 			<Editor name="JCK" time="2007-09-30 13:04:00"/>
 			<Editor name="nonsinn" time="2013-06-11 13:30:00"/>
+			<Editor name="nonsinn" time="2013-06-13 02:50:00"/>
 		</Author>
 		<Game_Version time="2008-04-14 19:17:00"/>
 	</Header>
 	<Text>
 		<Main>
-			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
-			<Game_Subtitle localized="Mechanized Assault and eXploration Reloaded"/>
-			<Version ENG="version v%s" localized="Version V%s"/>
-			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
 			<Credits_Doc ENG="Michael Mönch's M.A.X. (Remake by DoctorDeath)" localized="Michael Mönchs M.A.X. (Remake von DoctorDeath)"/>
+			<Credits_MM ENG="Michael Mönch's M.A.X. (Original by Interplay)" localized="Michael Mönchs M.A.X. (Original von Interplay)"/>
 			<Credits_Reloaded localized="M.A.X.R. basierend auf Interplays Mechanized Assault and eXploration"/>
+			<Game_Subtitle localized="Mechanized Assault and eXploration Reloaded"/>
+			<Game_Title ENG="M.A.X.R." localized="M.A.X.R."/>
+			<Version ENG="version v%s" localized="Version V%s"/>
 			<Remarks>
 				<Not_yet_implemented ENG="(*) not yet implemented" localized="(*) noch nicht eingebaut"/>
 			</Remarks>
 		</Main>
 		<Init>
-			<Lang ENG="Loading languagepack..." localized="Lade Sprachpacket..."/>
-			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
-                        <Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
-                        <GFX ENG="Loading gfx..." localized="Lade GFX..."/>
-                        <Effects ENG="Loading effects..." localized="Lade Effekte..."/>
-                        <Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
-                        <Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
-                        <Buildings ENG="Loading buildings..." localized="Lade Gebäude..."/>
-                        <Music ENG="Loading music..." localized="Lade Musik..."/>
-                        <Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
-			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
+			<Buildings ENG="Loading buildings..." localized="Lade Gebäude..."/>
 			<Clans ENG="Loading clans..." localized="Lade Clans..."/>
+			<Effects ENG="Loading effects..." localized="Lade Effekte..."/>
+			<Fonts ENG="Loading fonts..." localized="Lade Schriften..."/>
+			<GFX ENG="Loading gfx..." localized="Lade GFX..."/>
+			<Keys ENG="Loading keys..." localized="Lade Tasten..."/>
+			<Lang ENG="Loading languagepack..." localized="Lade Sprachpaket..."/>
+			<Music ENG="Loading music..." localized="Lade Musik..."/>
+			<Sounds ENG="Loading sounds..." localized="Lade Geräusche..."/>
+			<Terrain ENG="Loading terrain..." localized="Lade Terrain..."/>
+			<Vehicles ENG="Loading vehicles..." localized="Lade Einheiten..."/>
+			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
 		</Init>
 		<Title>
-			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
-			<Credits ENG="Credits" localized="Geld"/>
-			<Gold ENG="Gold" localized="Gold"/>
-			<Metal ENG="Metal" localized="Metall"/>
-			<Oil ENG="Oil" localized="Öl"/>
-			<BridgeHead ENG="Bridgehead" localized="Brückenkopf"/>
-			<Alien_Tech ENG="Alientechnology" localized="Alientechnologie"/>
-			<Resource ENG="Resources" localized="Ressourcen"/>
-			<Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
-			<Game_Type ENG="Game Type" localized="Spielart"/>
-			<Player_Name ENG="Playername:" localized="Spielername:"/>
-			<Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
-			<Team ENG="Team" localized="Team"/>
-			<Human ENG="Human" localized="Mensch"/>
-			<Computer ENG="Computer" localized="Computer"/>
-			<Nobody ENG="Nobody" localized="Niemand"/>
+			<Alien_Tech ENG="Alien wrecks" localized="Alienwracks"/>
+			<BridgeHead ENG="Starting Base" localized="Startbasis"/>
+			<Build ENG="Build menu" localized="Baumenü"/>
+			<Cargo ENG="Cargo" localized="Ladung"/>
+			<Choose_Clan ENG="Choose Clan" localized="Clanauswahl"/>
+			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
+			<Choose_Units ENG="Choose Units" localized="Einheitenauswahl"/>
 			<Clan ENG="Clan" localized="Clan"/>
 			<Clans ENG="Clans" localized="Clans"/>
-			<Cargo ENG="Cargo" localized="Ladung"/>
-			<Choose_Planet ENG="Choose Planet" localized="Planetenauswahl"/>
-			<Choose_Clan ENG="Choose Clan" localized="Clanauswahl"/>
-			<Options ENG="Options" localized="Optionen"/>
-			<Connect ENG="Connect" localized="Verbinden"/>
-			<Send ENG="Send" localized="Senden"/>
 			<Color ENG="Color:" localized="Farbe:"/>
+			<Computer ENG="Computer" localized="Computer"/>
+			<Connect ENG="Connect" localized="Verbinden"/>
+			<Credits ENG="Credits" localized="Kredits"/>
+			<Credits_start ENG="Credits at gamestart" localized="Startkredit"/>
+			<Game_Type ENG="Game Type" localized="Spielart"/>
+			<Gold ENG="Gold" localized="Gold"/>
+			<Human ENG="Human" localized="Mensch"/>
 			<IP ENG="IP" localized="IP"/>
-			<Port ENG="Port" localized="Port"/>
-			<Map ENG="Map" localized="Karte"/>
-			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
+			<Labs ENG="Research menu" localized="Forschungsmenü"/>
 			<Load ENG="Load Menu" localized="Laden Menü"/>
-			<Updates ENG="Updatemenu" localized="Updatemenü"/>
-			<Build ENG="Buildmenu" localized="Baumenü"/>
-			<Labs ENG="Researchmenu" localized="Forschungsmenü"/>
-			<Mine ENG="Minemanager" localized="Minenmanager"/>
-			<Unitinfo ENG="Unitinformations" localized="Einheitendetails"/>
-			<Savegame ENG="Savegame" localized="Spielstand"/>
+			<LoadSave ENG="Load/Save Menu" localized="Laden/Speichern Menü"/>
+			<MainMenu ENG="Main Menu" localized="Hauptmenü"/>
+			<Map ENG="Map" localized="Karte"/>
+			<Metal ENG="Raw Materials" localized="Rohstoff"/>
+			<Mine ENG="Allocation menu" localized="Rohstoffverteilung"/>
+			<Nobody ENG="Nobody" localized="Niemand"/>
+			<Oil ENG="Fuel" localized="Treibstoff"/>
+			<Options ENG="Options" localized="Optionen"/>
+			<Player_Name ENG="Player Name:" localized="Spielername:"/>
+			<Player_Select ENG="Playeroptions" localized="Spielerauswahl"/>
 			<Players ENG="Players:" localized="Spieler:"/>
+			<Port ENG="Port" localized="Port"/>
+			<Resource ENG="Resources" localized="Ressourcen"/>
+			<Resource_Density ENG="Resources Density" localized="Ressourcendichte"/>
+			<Savegame ENG="Saved Games" localized="Gespeicherte Spiele"/>
+			<Send ENG="Send" localized="Senden"/>
+			<Team ENG="Team" localized="Team"/>
+			<Unitinfo ENG="Unit status screen" localized="Einheitendetails"/>
+			<Updates ENG="Update menu" localized="Updatemenü"/>
 		</Title>
 		<Button>
-			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
-			<Single_Player ENG="Singleplayer" localized="Einzelspieler (ohne KI)"/>
-			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
-			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
-			<Credits ENG="Credits (*)" localized="Credits (*)"/>
-			<Mani ENG="Manifestation" localized="Hinweise"/>
-			<Exit ENG="Exit" localized="Beenden"/>
-			<Back ENG="Back" localized="Zurück"/>
-			<OK ENG="OK" localized="Ok"/>
-			<Done ENG="Done" localized="Fertig"/>
-			<Cancel ENG="Cancel" localized="Abbruch"/>
-			<Hot ENG="Hot" localized="Scharf"/>
-			<Yes ENG="Yes" localized="Ja"/>
-			<No ENG="No" localized="Nein"/>
-			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
-			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
-			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
-			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
-			<Game_New ENG="New Game" localized="Neues Spiel"/>
-			<Game_Load ENG="Load Game" localized="Spiel laden"/>
-			<Game_Save ENG="Save Game" localized="Speichern"/>
-			<Game_Options ENG="Game Options" localized="Spieloptionen"/>
-			<Load ENG="Load" localized="Laden"/>
-			<Save ENG="Save" localized="Speichern"/>
-			<Training ENG="Training" localized="Training"/>
-			<Delete ENG="Delete" localized="Löschen"/>
-			<Buy ENG="Buy" localized="Kaufen"/>
-			<Path ENG="Path" localized="Pfad"/>
-			<Build ENG="Build" localized="Bauen"/>
 			<Active ENG="Active" localized="Aktiv"/>
-			<Repair ENG="Repair" localized="Reparieren"/>
-			<Upgrade ENG="Upgrade" localized="Verbessern"/>
-			<Reload ENG="Reload" localized="Aufladen"/>
-			<Host_Start ENG="Start Host" localized="Starte Host"/>
-			<Units ENG="Units" localized="Einheiten"/>
+			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
+			<Back ENG="Back" localized="Zurück"/>
+			<Build ENG="Build" localized="Bauen"/>
+			<Buy ENG="Buy" localized="Kaufen"/>
+			<Cancel ENG="Cancel" localized="Abbruch"/>
+			<Credits ENG="Credits (*)" localized="Credits (*)"/>
+			<Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
+			<Delete ENG="Delete" localized="Löschen"/>
 			<Disadvantages ENG="Disadvantages" localized="Schäden"/>
-			<Score ENG="Score" localized="Spielstand"/>
-			<Reports ENG="Reports" localized="Nachrichten"/>
+			<Done ENG="Done" localized="Fertig"/>
+			<Exit ENG="Exit" localized="Beenden"/>
+			<Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
+			<Game_Load ENG="Load Game" localized="Spiel laden"/>
+			<Game_New ENG="New Game" localized="Neues Spiel"/>
+			<Game_Options ENG="Game Options" localized="Spieloptionen"/>
+			<Game_Save ENG="Save Game" localized="Speichern"/>
+			<Ground_Units ENG="Landunits" localized="Landeinheiten"/>
+			<Host_Start ENG="Start Host" localized="Starte Host"/>
+			<Hot ENG="Hot" localized="Scharf"/>
+			<HotSeat_Load ENG="Load Hot Seat" localized="Hot Seat laden"/>
+			<HotSeat_New ENG="New Hot Seat" localized="Hot Seat starten"/>
 			<Included ENG="Included" localized="Einbezogen"/>
 			<Limited_To ENG="Limited to" localized="Begrenzt auf"/>
-			<Air_Units ENG="Airunits" localized="Lufteinheiten"/>
-			<Ground_Units ENG="Landunits" localized="Landeinheiten"/>
-			<Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
-			<Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Mani ENG="Manifestation" localized="Hinweise"/>
+			<Map_Editor ENG="Mapeditor (*)" localized="Karteneditor (*)"/>
+			<Multi_Player ENG="Multiplayer" localized="Mehrspieler"/>
+			<No ENG="No" localized="Nein"/>
+			<OK ENG="OK" localized="Ok"/>
+			<Path ENG="Path" localized="Pfad"/>
 			<Produce_Units ENG="Producing units" localized="Produktionseinheiten"/>
-			<Fight_Units ENG="Fighting units" localized="Kampfeinheiten"/>
-			<Damaged_Units ENG="Damaged units" localized="Beschädigte Einheiten"/>
+			<Reload ENG="Reload" localized="Aufladen"/>
+			<Repair ENG="Repair" localized="Reparieren"/>
+			<Reports ENG="Reports" localized="Nachrichten"/>
+			<Save ENG="Save" localized="Speichern"/>
+			<Score ENG="Score" localized="Spielstand"/>
+			<Sea_Units ENG="Seaunits" localized="Seeeinheiten"/>
+			<Single_Player ENG="Singleplayer" localized="Einzelspieler (keine KI)"/>
+			<Stationary_Units ENG="Stationary Units" localized="Stationäre Einheiten"/>
 			<Stealth_Units ENG="Stealth units" localized="Getarnte Einheiten"/>
+			<TCPIP_Client ENG="TCP/IP Client" localized="TCP/IP Client"/>
+			<TCPIP_Host ENG="TCP/IP Host" localized="TCP/IP Host"/>
+			<Title_Main_Menu ENG="Main Menu" localized="Hauptmenü"/>
+			<Training ENG="Training" localized="Training"/>
+			<Units ENG="Units" localized="Einheiten"/>
+			<Upgrade ENG="Upgrade" localized="Verbessern"/>
+			<Yes ENG="Yes" localized="Ja"/>
 		</Button>
 		<Context>
-			<Clear ENG="Clear" localized="Entf."/>
-			<Build ENG="Build" localized="Bauen"/>
-			<Transfer ENG="X-fer" localized="Trsfer."/>
-			<Sentry ENG="Sentry" localized="Wachp."/>
-			<Done ENG="Done" localized="Fertig"/>
-			<Auto ENG="Auto" localized="Auto"/>
-			<Stop ENG="Stop" localized="Stopp"/>
-			<Destroy ENG="Delete" localized="Entf."/>
-			<Repair ENG="Repair" localized="Repar."/>
-			<Disable ENG="Disable" localized="Deakt."/>
-			<Steal ENG="Steal" localized="Stehlen"/>
-			<Load ENG="Load" localized="Laden"/>
 			<Active ENG="Activ." localized="Aktiv."/>
-			<Dist ENG="Distr." localized="Verteil."/>
-			<Reload ENG="Reload" localized="Aufladen"/>
 			<Attack ENG="Attack" localized="Angriff"/>
-			<Seed ENG="Seed" localized="Platz."/>
-			<Start ENG="Start" localized="Start"/>
-			<Research ENG="Research" localized="Forschg."/>
-			<UpAll ENG="Up. all" localized="All. Verb."/>
-			<Upgrades ENG="Upgrades" localized="Kaufen"/>
-			<Upgrade ENG="Upgrade" localized="Upgrade"/>
+			<Auto ENG="Auto" localized="Auto"/>
+			<Build ENG="Build" localized="Bauen"/>
+			<Clear ENG="Clear" localized="Entf."/>
+			<Destroy ENG="Delete" localized="Entf."/>
+			<Disable ENG="Disable" localized="Deakt."/>
+			<Dist ENG="Distr." localized="Verteil."/>
+			<Done ENG="Done" localized="Fertig"/>
 			<Info ENG="Info" localized="Info"/>
+			<Load ENG="Load" localized="Laden"/>
+			<Manual ENG="Manual" localized="Manuell"/>
+			<Reload ENG="Reload" localized="Aufladen"/>
+			<Repair ENG="Repair" localized="Repar."/>
+			<Research ENG="Research" localized="Forschg."/>
+			<Seed ENG="Seed" localized="Platz."/>
+			<Sentry ENG="Sentry" localized="Wachp."/>
+			<Start ENG="Start" localized="Start"/>
+			<Steal ENG="Steal" localized="Stehlen"/>
+			<Stop ENG="Stop" localized="Stopp"/>
+			<Transfer ENG="X-fer" localized="Trsfer."/>
+			<UpAll ENG="Up. all" localized="Verb. All."/>
+			<Upgrade ENG="Up. this" localized="Verb. dies"/>
+			<Upgrades ENG="Buy Up." localized="Kaufen"/>
 		</Context>
 		<Hud>
-			<Files ENG="Files" localized="Dateien"/>
-			<Settings ENG="Settings" localized="PRÄFERENZEN"/>
-			<Proceed ENG="Do" localized="Erl."/>
-			<End ENG="End" localized="Ende"/>
-			<Log ENG="Log" localized="Log"/>
-			<Chat ENG="Chat" localized="Chat"/>
-			<Survey ENG="Survey" localized="Studie"/>
-			<Status ENG="Status" localized="Status"/>
-			<Color ENG="Color" localized="Farben"/>
-			<Hitpoints ENG="Hits" localized="Treffer"/>
 			<Ammo ENG="Ammo" localized="Munition"/>
+			<AmmoShort ENG="Ammo" localized="Munni"/>
+			<Armor ENG="Armor" localized="Panzer."/>
+			<Cargo ENG="Gargo" localized="Ladung"/>
+			<Chat ENG="Chat" localized="Chat"/>
+			<Color ENG="Color" localized="Farben"/>
+			<End ENG="End" localized="Ende"/>
+			<Energy ENG="Energy" localized="Energie"/>
+			<Files ENG="Files" localized="Dateien"/>
+			<Fog ENG="Fog" localized="Nebel"/>
+			<Grid ENG="Grid" localized="Gitter"/>
+			<Hitpoints ENG="Hits" localized="Treffer"/>
+			<Log ENG="Log" localized="Log"/>
+			<Proceed ENG="Do" localized="Erl."/>
 			<Range ENG="Range" localized="Reichw."/>
 			<Scan ENG="Scan" localized="Scan"/>
-			<Grid ENG="Grid" localized="Gitter"/>
-			<Fog ENG="Fog" localized="Nebel"/>
+			<Score ENG="Score" localized="Punkte"/>
+			<Settings ENG="Settings" localized="Einstellungen"/>
+			<Shots ENG="Shots" localized="Schüsse"/>
 			<Speed ENG="Speed" localized="Geschw."/>
-			<Cargo ENG="Gargo" localized="Ladung"/>
-			<AmmoShort ENG="Ammo" localized="Munni"/>
-			<Shots ENG="Shots" localized="Schuss"/>
-			<Armor ENG="Armor" localized="Panzer."/>
-			<Total ENG="Total" localized="Total"/>
-			<Energy ENG="Energy" localized="Energie"/>
-			<Usage ENG="Usage" localized="Verbr."/>
+			<Status ENG="Status" localized="Status"/>
+			<Survey ENG="Survey" localized="Studie"/>
 			<Teams ENG="Teams" localized="Teams"/>
-      <Score ENG="Score" localized="Punkte"/>
+			<Total ENG="Total" localized="Total"/>
+			<Usage ENG="Usage" localized="Verbr."/>
 		</Hud>
 		<Option>
+			<Definite ENG="Built (original)" localized="Fest (Original)"/>
+			<Low ENG="Limited" localized="begrenzt"/>
+			<Lower ENG="Low" localized="wenig"/>
+			<Mobile ENG="Must build" localized="Selbstbauen"/>
+			<More ENG="More" localized="sehr viel"/>
+			<Most ENG="Too Much!" localized="zuviel"/>
+			<Much ENG="High" localized="viel"/>
 			<None ENG="None" localized="keines"/>
-			<Lower ENG="very low" localized="sehr wenig"/>
-			<Low ENG="low" localized="wenige"/>
 			<Normal ENG="normal" localized="normal"/>
-			<Much ENG="much" localized="viele"/>
-			<More ENG="very much" localized="sehr viel"/>
-			<Most ENG="most" localized="extrem"/>
+			<Off ENG="off" localized="Aus"/>
+			<On ENG="on" localized="Ein"/>
 			<Thick ENG="thick" localized="dicht"/>
 			<Thin ENG="thin" localized="dünn"/>
-			<On ENG="on" localized="Ein"/>
-			<Off ENG="off" localized="Aus"/>
-			<Definite ENG="definite" localized="Fest"/>
-			<Mobile ENG="mobile" localized="Mobil"/>
-			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
 			<Type_Simu ENG="simultaneous" localized="Simultane Bewegung"/>
+			<Type_Turns ENG="turns" localized="Rundenbasierend"/>
 		</Option>
 		<Settings>
-			<Preferences ENG="Preferences" localized="Einstellungen"/>
-			<Volume ENG="Volume" localized="Lautstärke"/>
-			<Music ENG="Music" localized="Musik"/>
-			<Effects ENG="Effects" localized="Effekte"/>
-			<Voices ENG="Voices" localized="Stimmen"/>
-			<Disable ENG="Disable" localized="Deaktivieren"/>
-			<Scrollspeed ENG="Scrollspeed" localized="Scrolltempo"/>
-			<Autosave ENG="Autosave" localized="Autospeichern"/>
-			<Animation ENG="Animations" localized="Animationen"/>
 			<Alphaeffects ENG="Alphaeffects" localized="Alphaeffekte"/>
-			<Shadows ENG="Shadows" localized="Schatteneffekte"/>
+			<Animation ENG="Animations" localized="Animationen"/>
+			<Autosave ENG="Autosave" localized="Autospeichern"/>
+			<Disable ENG="Disable" localized="Deaktivieren"/>
+			<Effects ENG="Effects" localized="Effekte"/>
+			<Intro ENG="Show intro" localized="Zeige Intro"/>
+			<Music ENG="Music" localized="Musik"/>
+			<Preferences ENG="Preferences" localized="Einstellungen"/>
+			<Resolution ENG="Resolution" localized="Auflösung"/>
+			<Scrollspeed ENG="Scrollspeed" localized="Scrolltempo"/>
+			<Shadows ENG="Shadows" localized="Schatten"/>
 			<ShowDamage ENG="Buildingdamage" localized="Gebäudeschäden"/>
 			<ShowDamageVehicle ENG="Vehicledamage" localized="Fahrzeugschäden"/>
 			<Tracks ENG="Vehicletracks" localized="Fahrzeugspuren"/>
-			<Intro ENG="Show intro" localized="Zeige Intro"/>
+			<Voices ENG="Voices" localized="Stimmen"/>
+			<Volume ENG="Volume" localized="Lautstärke"/>
 			<Window ENG="Windowed" localized="Fenstermodus"/>
-			<Resolution ENG="Resolution" localized="Auflösung"/>
 		</Settings>
 		<Multiplayer>
-			<Player ENG="Player" localized="Spieler"/>
-			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
-			<Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
-			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
-			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
-			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
-			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
-			<Player_Amount ENG="Amount of players" localized="Bitte wählt die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
-			<Player_Turn ENG="%s's turn" localized="%s ist am Zug"/>
-			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
-			<Player_Left ENG="%s has left the game" localized="%s hat das Spiel verlassen"/>
-			<Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
-			<Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
-			<Network_Open ENG="Game open" localized="Spiel offen"/>
-			<Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
-			<Network_New ENG="New connection" localized="Neue Verbindung"/>
-			<Network_Connected ENG="Connected" localized="Verbunden"/>
-			<Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
-			<Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
-			<Network_Syncing ENG="Synchronizing..." localized="Synchronisieren..."/>
-			<Map_NoSet ENG="--no map set--" localized="--keine Map gewählt--"/>
-			<Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
-			<Go ENG="Let's go" localized="Los gehts"/>
+			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Drücken Sie als Server F2 um das Warten abzubrechen"/>
+			<Connection_Terminated ENG="Connection terminated." localized="Verbindung getrennt."/>
+			<Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
+			<Disconnect_Not_In_Save ENG="You will be disconnected because you are not listed in the savegame." localized="Sie werden getrennt, da Sie nicht im Spielstand aufgeführt sind."/>
+			<Go ENG="Let's go" localized="Auf gehts!"/>
 			<Go_Abort ENG="Go aborted" localized="Abgebrochen"/>
-			<Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Fertigmachen"/>
+			<Go_Check ENG="Check for go" localized="Prüfe ob zum Starten bereit"/>
+			<Go_Host ENG="Host wants to go: Ready to go" localized="Host will starten: Machen Sie sich startklar"/>
 			<Go_Host_No ENG="Host wants to go: No go" localized="Host will starten: Nicht fertig"/>
 			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
-			<Go_Check ENG="Check for go" localized="Prüfe auf Fertig zum Starten"/>
-			<Missing_Settings ENG="Options, map or savegame are not set" localized="Optionen, Karte oder Speicherstand sind nicht gesetzt"/>
-			<Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
-      <Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
-			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
-			<Deadline ENG="This turn will end in %s seconds." localized="Diese Runde wird in %s Sekunden enden."/>
-			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Das Spiel läuft bereits. Falls du die Verbindung zu diesem Spiel verloren hast, kannst du dich neu verbinden. Möchtest du dich neu verbinden?"/>
-      <Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Wiederbindung vom Server unterbunden."/>
-      <Connection_Terminated ENG="Connection terminated." localized="Verbindung getrennt."/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
-			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
-			<Abort_Waiting ENG="Server, press F2 to abort waiting." localized="Server, drücke F2 um das Warten abzubrechen"/>
-      <Pause ENG="Game has been paused." localized="Pause"/>
-			<Save_Only_Host ENG="Only the host can save games." localized="Nur der Server kann Spielstände speichern"/>
+			<Map_NoSet ENG="--no map set--" localized="--keine Karte ausgewählt--"/>
+			<MapDL_Cancel ENG="Aborted" localized="Abgebrochen"/>
+			<MapDL_Download ENG="map %s from server." localized="Karte %s vom Server an."/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
+			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Karte nicht installiert: Fordere die "/>
+			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Karte nicht installiert: Die Karte %s"/>
+			<MapDL_Finished ENG="Map download finished." localized="Karte wurde vollständig heruntergeladen."/>
+			<MapDL_Percent ENG="Map download: %s%" localized="Lade Karte: %s%"/>
+			<MapDL_Upload ENG="Uploading map to %s..." localized="Übertrage Karte zu %s..."/>
+			<MapDL_UploadFinished localized="Karte wurde vollständig zu %s übertragen."/>
+			<Missing_Settings ENG="Options, map or savegame are not set" localized="Karte oder Optionen noch einstellen oder Speicherstand laden."/>
+			<Network_Closed ENG="Connection closed" localized="Verbindung geschlossen"/>
+			<Network_Connected ENG="Connected" localized="Verbunden"/>
+			<Network_Connected_Not ENG="Not connected" localized="Nicht verbunden"/>
+			<Network_Connecting ENG="Connecting to " localized="Verbinde mit "/>
+			<Network_Error_Connect ENG="Could not connect to " localized="Konnte nicht verbinden zu "/>
+			<Network_Error_Socket ENG="Error opening socket" localized="Fehler beim Öffnen des Sockets"/>
+			<Network_New ENG="New connection" localized="Neue Verbindung"/>
+			<Network_Open ENG="Game open" localized="Spiel offen"/>
+			<Network_Syncing ENG="Synchronizing..." localized="Synchronisieren..."/>
+			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Daher können Sie nicht loslegen."/>
+			<No_Response ENG="Waiting for network response from player %s" localized="Warte auf Netzwerkantwort von Spieler %s"/>
+			<Not_Ready ENG="is not ready" localized="ist nicht bereit"/>
+			<Option_NoSet ENG="--no options set--" localized="--keine Optionen gewählt--"/>
+			<Pause ENG="Game has been paused." localized="Spiel wurde pausiert"/>
+			<Player ENG="Player" localized="Spieler"/>
+			<Player_Amount ENG="Choose the amount of players please. There must be at least two human players to begin a hot seat game. 8 players is the maximum." localized="Bitte wählten Sie die Anzahl der Spieler. Für ein HotSeat Spiel werden mindestens 2 Spieler benötigt. Maximal sind 8 Spieler möglich. "/>
+			<Player_Color_Taken ENG="Playercolor already in use, please select an other color to be unique" localized="Spielerfarbe bereits in Verwendung, bitte wählen Sie eine andere Farbe um unverwechselbar zu sein."/>
+			<Player_Few ENG="Not enough players!" localized="Nicht genug Spieler!"/>
 			<Player_Joined ENG="%s has joined" localized="%s ist beigetreten"/>"
+			<Player_Left ENG="%s has left the game" localized="%s hat das Spiel verlassen"/>
 			<Player_Left ENG="%s has left" localized="%s hat den Raum verlassen"/>"
-			<No_Map_No_Ready ENG="Can not load map %s. You can not go ready." localized="Die Karte %s konnte nicht geladen werden. Du kannst nicht bereit gehen."/>
-			<Disconnect_Not_In_Save ENG="You will be disconnected becouse you are not listed in the savegame." localized="Du wirst getrennt, da du nicht im Spielstand aufgeführt bist."/>
-			<MapDL_Cancel localized="Abgebrochen"/>
-			<MapDL_Finished localized="Karte wurde vollständig heruntergeladen."/>
-			<MapDL_UploadFinished localized="Karte wurde vollständig zu %s hochgeladen."/>
-			<MapDL_Percent localized="Lade Karte: %s%"/>
-			<MapDL_Upload localized="Kopiere Karte für %s..."/>
-			<MapDL_DownloadRequest localized="Karte nicht installiert: Fordere die "/>
-			<MapDL_Download localized="Karte %s vom Server an."/>
-			<MapDL_DownloadRequestInvalid localized="Karte nicht installiert: Die Karte %s"/>
-			<MapDL_DownloadInvalid localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
-      <No_Response localized="Warte auf Netzwerkantwort von Spieler %s"/>
-      <Wait_TurnEnd localized="Rundenende wird ausgeführt." />
-      <Wait_For_Server localized="Warte auf Netzwerkantwort vom Server" />
+			<Player_Many ENG="Too many players!" localized="Zu viele Spieler!"/>
+			<Player_MustHost ENG="must be host in turnbased game!" localized="muss der Host im Rundenspiel sein"/>
+			<Player_Color_Taken ENG="Playername already in use, please select an other name to be unique" localized="Spielername bereits in Verwendung, bitte wählen Sie einen anderen Namen um unverwechselbar zu sein."/>
+			<Player_Turn ENG="%s's turn" localized="%s ist am Zug"/>
+			<Player_Turn_End ENG="%s ended turn" localized="%s hat den Zug beendet"/>
+			<Player_Twice ENG="Playername exists twice: " localized="Spielername existiert doppelt: "/>
+			<Player_Wrong ENG="Missing a correct player's name" localized="Ein Spieler hat nicht den richtigen Namen!"/>
+			<Reconnect ENG="This game is running already. If you have lost connection to the game, you can reconnect. Do you want to reconnect?" localized="Das Spiel läuft bereits. Falls Sie die Verbindung zum Spiel verloren haben, können Sie sich neu verbinden. Möchten Sie sich neu verbinden?"/>
+			<Reconnect_Forbidden ENG="Reconnecting forbidden by server." localized="Wiederbindung vom Server unterbunden."/>
+			<Save_Only_Host ENG="Only the host can save the current games." localized="Nur der Server kann das aktuelle Spiel speichern"/>
+			<Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
+			<Wait_For_Server ENG="Waiting for network response from server"localized="Warte auf Netzwerkantwort vom Server" />
+			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Rundenende wird ausgeführt." />
+			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
+			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
 		</Multiplayer>
 		<Vehicles>
-			<Damage ENG="Damage" localized="Angriff"/>
-			<Shoots ENG="Shoots" localized="Schüsse"/>
-			<Range ENG="Range" localized="Reichweite"/>
 			<Ammo ENG="Ammo" localized="Munition"/>
 			<Armor ENG="Armor" localized="Panzer"/>
-			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
-			<Scan ENG="Scan" localized="Scan"/>
-			<Speed ENG="Speed" localized="Geschw."/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
 			<Costs ENG="Costs" localized="Kosten"/>
+			<Damage ENG="Damage" localized="Angriff"/>
+			<Hitpoints ENG="Hitpoints" localized="Treffer"/>
 			<Produce ENG="Produces" localized="Produz."/>
+			<Range ENG="Range" localized="Reichweite"/>
+			<Scan ENG="Scan" localized="Scan"/>
+			<Shoots ENG="Shoots" localized="Schüsse"/>
+			<Speed ENG="Speed" localized="Geschw."/>
 			<Usage ENG="Usage" localized="Verbr."/>
 		</Vehicles>
 		<Comp>
-			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Pfadbauauftrag konnte nicht fortgesetzt werden."/>
-			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen, oder neue Position wählen"/>
-			<Fuel_Low ENG="To low fuel, generator disabled!" localized="Zu wenig Treibstoff, Generatoren werden abgeschaltet!"/>
-			<Energy_Low ENG="To low energy, disabled consumer!" localized="Zu wenig Energie, Verbraucher werden abgeschaltet!"/>
-			<Metal_Low ENG="To low metal, disabled consumer!" localized="Zu wenig Metall, Verbraucher werden abgeschaltet!"/>
-			<Gold_Low ENG="To low gold, disabled consumer!" localized="Zu wenig Gold, Verbraucher werden abgeschaltet!"/>
-			<Team_Low ENG="To low teams, disabled consumer!" localized="Zu wenig Teams, Verbraucher werden ausgeschaltet!"/>
-			<Building_Disabled ENG="Building disabled" localized="Gebäude abgeschaltet"/>
-			<Energy_Insufficient localized="Nicht genug Energie zum Einschalten vorhanden!"/>
-			<Energy_ToLow localized="Zu wenig Energie, Generator eingeschaltet!"/>
-			<Fuel_Insufficient localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
-			<Metal_Insufficient localized="Nicht genug Metall zum Einschalten vorhanden!"/>
-			<Gold_Insufficient localized="Nicht genug Gold zum Einschalten vorhanden!"/>
-			<Team_Insufficient localized="Nicht genug Teams zum Einschalten vorhanden!"/>
-			<Energy_IsNeeded localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
-			<Adjustments_Fuel_Increased localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
-			<Adjustments_Metal_Decreased localized="Änderungen vorgenommen: Metallproduktion verringert um "/>
-			<Adjustments_Gold_Decreased localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
-			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
-			<Destroyed ENG="destroyed" localized="zerstört"/>
-			<Defeated ENG="defeated" localized="besiegt"/>
-			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
-			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
-			<Detected ENG="detected" localized="entdeckt"/>
-			<Stolen ENG="stolen" localized="gestohlen"/>
+			<Adjustments_Fuel_Increased ENG="Adjustments made: fuel mining increased by " localized="Änderungen vorgenommen: Treibstoffproduktion erhöht um "/>
+			<Adjustments_Gold_Decreased ENG="Adjustments made: gold mining decreased by " localized="Änderungen vorgenommen: Goldproduktion verringert um "/>
+			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Änderungen vorgenommen: Rohstoffproduktion verringert um "/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
-			<End_Game ENG="Exit really?\n\nNot saved gamedata will be lost." localized="Wirklich beenden? \n\nNicht gespeicherte Spieldaten gehen dabei verloren."/>
-			<Turn_Start ENG="Start turn" localized="Starten Sie Runde"/>
-			<Turn_Wait ENG="Please wait until all movements are completed" localized="Warten Sie bis alle Bewegungen abgeschlossen sind"/>
-			<Turn_Automove ENG="Executing remaining movements" localized="Verbleibende Bewegungen werden durchgeführt"/>
-			<Research_Attack ENG="Research 'Attack' completed" localized="Angriffsforschung abgeschlossen"/>
-			<Research_Shoots ENG="Research 'Shoots' completed" localized="Schüsseforschung abgeschlossen"/>
-			<Research_Range ENG="Research 'Range' completed" localized="Reichweitenforschung abgeschlossen"/>
-			<Research_Armor ENG="Research 'Armor' completed" localized="Panzerungsforschung abgeschlossen"/>
-			<Research_Hitpoints ENG="Research 'Hitpoints' completed" localized="Trefferpunkteforschung abgeschlossen"/>
-			<Research_Speed ENG="Research 'Speed' completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
-			<Research_Scan ENG="Research 'Scan' completed" localized="Scanforschung abgeschlossen"/>
-			<Research_Costs ENG="Research 'Costs' completed" localized="Kostenforschung abgeschlossen"/>
-			<Upgrades_Done ENG="Upgraded" localized="Verbesserte"/>
-			<Upgrades_Done2 ENG="unit(s) of type %s" localized="Einheite(n) vom Typ %s"/>
-			<Working ENG="working" localized="arbeitet"/>
-			<Waits ENG="waits" localized="wartet"/>
-			<Disabled ENG="disabled" localized="außer Gefecht gesetzt"/>
-			<Producing ENG="Producing" localized="beim Bau"/>
-			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Position blockiert oder ungenügende Ressourcen"/>
-			<Moving ENG="moving" localized="in bewegung"/>
-			<Sentry ENG="on sentry" localized="auf wachposten"/>
+			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s greift den Feind an"/>
+			<Building_Disabled ENG="Building disabled" localized="Gebäude abgeschaltet"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s wurde vom Feind unter Kontrolle gebracht"/>
+			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
 			<Clearing ENG="Clearing" localized="Beim Räumen"/>
-			<Clearing_Mine ENG="clearing mines" localized="Räume Minen"/>
 			<Clearing_Fin ENG="clearing done" localized="Räumen abgeschlossen"/>
-			<Laying ENG="laying mines" localized="Lege Minen"/>
-			<Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
-			<Average ENG="Average" localized="Durchschnitt"/>
-			<Veteran ENG="Veteran" localized="Veteran"/>
-			<Expert ENG="Expert" localized="Experte"/>
-			<Elite ENG="Elite" localized="Elite"/>
-			<Description ENG="Description" localized="Beschreibung"/>
-			<Repeat ENG="Again" localized="Wieder"/>
+			<Clearing_Mine ENG="clearing mines" localized="Räume Minen"/>
+			<CommandoRank_Average ENG="Average" localized="Durchschnitt"/>
+			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
+			<CommandoRank_Expert ENG="Expert" localized="Experte"/>
+			<CommandoRank_GrandMaster ENG="Großmeister"/>
+			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
+			<CommandoRank_Veteran ENG="Veteran" localized="Veteran"/>
 			<Dated ENG="dated" localized="veraltet"/>
-			<Labs ENG="Labs" localized="Labore"/>
-			<Themes ENG="Themes" localized="Bereich"/>
-			<Turns ENG="Turns" localized="Runden"/>
-			<Turn ENG="Turn" localized="Runde"/>
-			<Reserve ENG="Reserve" localized="Reserve"/>
-			<Surveying ENG="surveying" localized="vermesse"/>
-			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um Änderungen in der Bildschirmauflösung wirksam zu machen."/>
-			<ResolutionWarning localized="Achtung: Gelesene Auflösung ungültig"/>
-			<Point ENG="point" localized="Punkt"/>
-			<Points ENG="points" localized="Punkte"/>
+			<Defeated ENG="defeated" localized="besiegt"/>
+			<Description ENG="Description" localized="Beschreibung"/>
+			<Destroyed ENG="destroyed" localized="zerstört"/>
+			<Detected ENG="detected" localized="entdeckt"/>
+			<Disabled ENG="disabled" localized="außer Gefecht gesetzt"/>
 			<EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
 			<EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Beenden bestätigen\n\nNicht gespeicherte Spielfortschritte gehen dabei verloren."/>
+			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nicht genug Energie zum Einschalten vorhanden!"/>
+			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
+			<Energy_Low ENG="Insufficient Power, building turned off." localized="Unzureichend Energie, Verbraucher abgeschaltet!"/>
+			<Energy_ToLow ENG="More power needed, generator turned on." localized="Mehr Energie benötigt, Generator eingeschaltet!"/>
+			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
+			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
+			<Fuel_Insufficient ENG="Cannot start, fuel needed." localized="Nicht genug Treibstoff zum Einschalten vorhanden!"/>
+			<Fuel_Low ENG="Fuel needed, generator turned off." localized="Treibstoff benötigt, Generator wurde abgeschalten!"/>
 			<GameEndsAt ENG="Game ends at" localized="Spiel endet bei"/>
-			<NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod"/>
+			<Gold_Insufficient ENG="Cannot start, gold needed." localized="Nicht genug Gold zum Einschalten vorhanden!"/>
+			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
+			<Labs ENG="Labs" localized="Labore"/>
+			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
+			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen, oder neue Position wählen"/>
+			<Laying ENG="minelaying" localized="Lege Minen"/>
+			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Nicht genügend Rohstoff zum Einschalten vorhanden!"/>
+			<Metal_Low ENG="More raw materials needed, building turned off." localized="Mehr Rohstoff benötigt, Verbraucher wurden abgeschaltet!"/>
+			<Moving ENG="moving" localized="in bewegung"/>
+			<NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod!"/>
+			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Pfadbauauftrag konnte nicht fortgesetzt werden."/>
+			<Point ENG="point" localized="Punkt"/>
+			<Points ENG="points" localized="Punkte"/>
+			<Producing ENG="Building" localized="beim Bau"/>
+			<Producing_Err ENG="Buildposition blocked or insufficient raw materials to build" localized="Position blockiert oder ungenügend Rohstoff zum Bauen"/>
+			<Producing_Fin ENG="finished producing" localized="Bau abgeschlossen"/>
+			<ReactionFireOff ENG="Reaction Fire Off" localized="Manuell schießen"/>
+			<Repeat ENG="Again" localized="Wieder"/>
+			<Research_Armor ENG="Armor research completed" localized="Panzerungsforschung abgeschlossen"/>
+			<Research_Attack ENG="Attack research completed" localized="Angriffsforschung abgeschlossen"/>
+			<Research_Costs ENG="Cost research completed" localized="Kostenforschung abgeschlossen"/>
+			<Research_Hitpoints ENG="Hits research completed" localized="Trefferpunkteforschung abgeschlossen"/>
+			<Research_Range ENG="Range research completed" localized="Reichweitenforschung abgeschlossen"/>
+			<Research_Scan ENG="Scan research completed" localized="Scanforschung abgeschlossen"/>
+			<Research_Shoots ENG="Shots research completed" localized="Schüsseforschung abgeschlossen"/>
+			<Research_Speed ENG="Speed research completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
+			<Reserve ENG="Reserve" localized="Reserve"/>
+			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um die Änderungen der Bildschirmauflösung wirksam zu machen."/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Gelesene Auflösung ungültig"/>
+			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto gespeichet unter %s "/>
+			<Sentry ENG="on sentry" localized="auf wachposten"/>
+			<Stolen ENG="stolen" localized="gestohlen"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
-			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto nach %s gespeichert"/>
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s wurde vom Feind unter Kontrolle gebracht"/>
-			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s feuert auf feindliche Einheit"/>
-	</Comp>
+			<Surveying ENG="surveying" localized="vermesse"/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Nicht genug Teams zum Einschalten vorhanden!"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Teams benötigt, Verbraucher wurden ausgeschaltet!"/>
+			<Themes ENG="Themes" localized="Bereich"/>
+			<Turn ENG="Turn" localized="Runde"/>
+			<Turn_Automove ENG="Executing remaining movements" localized="Verbleibende Bewegungen werden durchgeführt"/>
+			<Turn_Start ENG="Start turn" localized="Beginnen Sie die Runde"/>
+			<Turn_Wait ENG="Please wait until all movements are completed" localized="Bitte warten Sie, bis alle Bewegungen abgeschlossen sind"/>
+			<Turns ENG="Turns" localized="Runden"/>
+			<Upgrades_Done ENG="Upgraded" localized="Verbesserte"/>
+			<Upgrades_Done2 ENG="unit(s) of type %s" localized="Einheite(n) vom Typ %s"/>
+			<Waits ENG="waiting" localized="wartend"/>
+			<Working ENG="working" localized="arbeitet"/>
+		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
-			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fehler beim Laden der Karte"/>
-      			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht implementiert"/>
+			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht realisiert"/>
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" localized="Frachtflugzeug">Transportflugzeug\n\nSchweres Flugzeug, fähig bis zu drei Bodeneinheiten zu transportieren.</Unit>
-		<Unit ID="0 2" localized="Sturmgeschütz (Alien)">Aliensturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittelgepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgeschütze ist, sollte das Aliensturmgeschütz dennoch Feindfeuer vermeiden. Alle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 3" localized="Kampfbomber (Alien)">Alien Jäger Bomber\n\nObwohl das Alienflugzeug hauptsächlich für einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alieneinheiten, können Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten.</Unit>
+		<Unit ID="0 1" localized="Frachtflugzeug">Transportflugzeug\n\nFlugzeug, fähig bis zu drei Bodeneinheiten zu transportieren.</Unit>
+		<Unit ID="0 2" localized="Alien-Sturmgeschütz">Alien-Sturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittel-gepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgeschütze ist, sollte das Aliensturmgeschütz dennoch Feindfeuer vermeiden. Alle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 3" localized="Jagdbomber (Alien)">Alien Jäger Bomber\n\nObwohl das Alienflugzeug hauptsächlich für einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alieneinheiten, können Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten.</Unit>
 		<Unit ID="0 4" localized="Kanonenboot (Alien)">Alienkanonenboot\n\nSchwer gepanzertes und bewaffnetes Alien Kriegsschiff Design: Wie ein menschliches Kanonenboot herausragend beim Zerstören von anderen Schiffen und Landzielen in Ufernähe. Alle Alien Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 5" localized="Panzer (Alien)">Alienpanzer\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am bessten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 5" localized="Panzer (Alien)">Alienpanzer\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am besten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
 		<Unit ID="0 6" localized="APC">Gepanzerter Personentransporter\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
 		<Unit ID="0 7" localized="Sturmgeschütz">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
-		<Unit ID="0 8" localized="AWAC">AWAC\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWAC ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
+		<Unit ID="0 8" localized="AWACS">AWACS\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWACS ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
 		<Unit ID="0 9" localized="Bomber">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert.</Unit>
-		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herausfiltern.</Unit>
+		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herstellen.</Unit>
 		<Unit ID="0 11" localized="Frachtschiff">Frachtschiff\n\nSchiffe für den Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Seekampfeinheiten wieder mit Munition aufzuladen.</Unit>
 		<Unit ID="0 12" localized="Raketenwerfer">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstreckenraketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Flächen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
 		<Unit ID="0 13" localized="Infiltrator">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
 		<Unit ID="0 14" localized="Korvette">Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Korvetten können jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen.</Unit>
 		<Unit ID="0 15" localized="Eskorte">Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und Schnellschussluftabwehrkanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
-		<Unit ID="0 16" localized="Jäger">Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Missilen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
+		<Unit ID="0 16" localized="Jäger">Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Raketen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
 		<Unit ID="0 17" localized="Kanonenboot">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer großkalibrigen Kanone mit mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen.</Unit>
 		<Unit ID="0 18" localized="Infanterie">Infanterie\n\nSoldaten, die mit leichten Panzerabwehrwaffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
 		<Unit ID="0 19" localized="Konstrukteur">Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude, wie Bergwerke und Fabriken.</Unit>
@@ -404,18 +412,18 @@
 		<Unit ID="0 22" localized="Missilenschiff">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
 		<Unit ID="0 23" localized="Luftabwehr">Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Kanone zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben.</Unit>
 		<Unit ID="0 24" localized="Pionier">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Gebäude und stationäre Waffen baut.</Unit>
-		<Unit ID="0 25" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Peparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
+		<Unit ID="0 25" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Reparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
 		<Unit ID="0 26" localized="Scanner">Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen.</Unit>
-		<Unit ID="0 27" localized="Späher">Späher\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, is jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwächer als die meisten Kampfeinheiten.</Unit>
+		<Unit ID="0 27" localized="Späher">Späher\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, ist jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwächer als die meisten Kampfeinheiten.</Unit>
 		<Unit ID="0 28" localized="Seeminenleger">Seeminenleger\n\nSeevariante des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspähen, und die in Rohstoffe zurückverwandeln.</Unit>
 		<Unit ID="0 29" localized="Seetransporter">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff.</Unit>
-		<Unit ID="0 30" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Desweiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen.</Unit>
-		<Unit ID="0 31" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Untergrundrohstoffen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
+		<Unit ID="0 30" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Des Weiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen.</Unit>
+		<Unit ID="0 31" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Bodenschätzen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
 		<Unit ID="0 32" localized="Panzer">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern können, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer zu erreichen.</Unit>
 		<Unit ID="0 33" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nächsten zu bewegen.</Unit>
 		<Unit ID="0 34" localized="Versorgungstruck">Versorgungstruck\n\nLkw zum Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
 		<Unit ID="0 35" localized="Tankwagen">Tankwagen\n\nLkw, um Treibstoff zu transportieren.</Unit>
-		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung, und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Berkwerk angeschlossen sein sollte.</Unit>
+		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung, und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Bergwerk angeschlossen sein sollte.</Unit>
 		<Unit ID="1 2" localized="Betonklotz">Betonklotz\n\nGehärteter, gepanzerter Block zur Blockade feindlicher Bewegungen.</Unit>
 		<Unit ID="1 3" localized="Brücke">Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht. Zudem bewegen sich Einheiten mit doppelter Geschwindigkeit über Brücken.</Unit>
 		<Unit ID="1 4" localized="Kopplung">Kopplung\n\nGebäude müssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem Gebäude zum anderen bauen.</Unit>
@@ -423,14 +431,14 @@
 		<Unit ID="1 6" localized="Dock">Dock\n\nEin Dock kann Schäden reparieren, Munition liefern und Schiffe mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Depot an die Lagerreserven angeschlossen sein.</Unit>
 		<Unit ID="1 7" localized="Energiestation">Energiestation\n\nEine Energiestation verbraucht sechs Treibstoffeinheiten in jeder Runde und liefert genug Energie für sechs Fabriken oder Berkwerke.\n\nEnergiestationen benötigen eine längere Bauzeit als Energiegeneratoren, aber sie sind auch effizienter.</Unit>
 		<Unit ID="1 8" localized="Kleiner Generator">Kleiner Generator\n\nEin Generator verbraucht in jeder Runde zwei Treibstoffeinheiten und liefert genug Energie um ein Berkwerk oder eine Fabrik zu betreiben. Der Energiegenerator muss an die Treibstoffquelle (Berkwerk oder Treibstofftank) und an das Gebäude, das Energie benötigt, angeschlossen sein.</Unit>
-		<Unit ID="1 9" localized="Flugzeugfabrik">Lufteinheitenfabrik\n\nBaut Jäger, Bomber, AWACs und Lufttransportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und benötigt Energie.</Unit>
+		<Unit ID="1 9" localized="Flugzeugfabrik">Lufteinheitenfabrik\n\nBaut Jäger, Bomber, AWACS und Transportflugzeuge. Eine Lufteinheitenfabrik verbraucht drei Rohstoffe pro Runde und benötigt Energie.</Unit>
 		<Unit ID="1 10" localized="Einheitenfabrik (Alien)">Alieneinheitenfabrik</Unit>
 		<Unit ID="1 11" localized="Schwere Fahrzeugfabrik">Schwere Fahrzeugfabrik\n\nSchwere Fahrzeugfabriken bauen Konstrukeure, mobile Scanner und die schweren Kampfeinheiten: Panzer, Sturmgeschütze, Raketenwerfer und mobile Missilenwerfer. Eine Schwere Fahrzeugfabrik verbraucht drei Rohmaterialien pro Runde und benötigt Energie.</Unit>
 		<Unit ID="1 12" localized="Schiffswerft">Schiffswerft\n\nSchiffswerften bauen Schiffe, wie U-Boote, See-Transporter und Missilenschiffe. Eine Schiffswerft benötigt drei Rohmaterialien in jeder Runde, um zu operieren, sowie Energie.</Unit>
 		<Unit ID="1 13" localized="Leichte Fahrzeugfabrik">Leichte Fahrzeugfabrik\n\nBaut leichte Fahrzeuge: Pioniere, Lkws, mobile Anti-Lufteinheiten.</Unit>
-		<Unit ID="1 14" localized="Goldraffinierie">Goldraffinerie\n\nRaffinerie, um Gold in Upgradepunkte umzuwandeln. Upgradepunkte werden benötigt, um Einheitenverbesserungen zu erwerben. Um zu arbeiten, benötigt eine Goldraffinerie eine Energiequelle und eine Golderzquelle. Ein Berkwerk kann Golderz fördern, wenn eine seiner vier Flächen eine Fläche mit unterirdischem Gold bedeckt.</Unit>
+		<Unit ID="1 14" localized="Goldraffinerie">Goldraffinerie\n\nRaffinerie, um Gold in Upgradepunkte umzuwandeln. Upgradepunkte werden benötigt, um Einheitenverbesserungen zu erwerben. Um zu arbeiten, benötigt eine Goldraffinerie eine Energiequelle und eine Golderzquelle. Ein Berkwerk kann Golderz fördern, wenn eine seiner vier Flächen eine Fläche mit unterirdischem Gold bedeckt.</Unit>
 		<Unit ID="1 15" localized="Luftabwehr">Luftabwehr\n\nDie Luftabwehr verschießt Kleinkalibrige Hochgeschwindigkeitsmunition. Luftabwehren machen kurzen Prozess mit Flugzeugen, können aber Bodeneinheiten nicht angreifen.</Unit>
-		<Unit ID="1 16" localized="Artillerie">Atillerie\n\nStarke stationäre Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer.</Unit>
+		<Unit ID="1 16" localized="Artillerie">Artillerie\n\nStarke stationäre Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer.</Unit>
 		<Unit ID="1 17" localized="Missilenwerfer">Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtstürmen und Luftabwehr.</Unit>
 		<Unit ID="1 18" localized="Gefechtsturm">Gefechtsturm\n\nSchwer gepanzerter stationärer Gefechtsturm. Gefechtstürme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden können, sind sie eine gute Wahl, wenn Sie möglichst schnell Verteidigung benötigen.</Unit>
 		<Unit ID="1 19" localized="Behausung">Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder Ökosphären zu betreiben. Diese Gebäude müssen an eine Behausung angeschlossen sein, bevor sie operieren können.</Unit>
@@ -439,15 +447,15 @@
 		<Unit ID="1 22" localized="Bergwerk">Berkwerk\n\nFördert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Gebäude müssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergebäude vorhanden sind, um überschüssiges Material zu Lagern, gehen diese Überschüsse verloren.</Unit>
 		<Unit ID="1 23" localized="Bergwerk (Alien)">Alien Bergwerk\n\n unbekannt</Unit>
 		<Unit ID="1 24" localized="Landefläche">Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
-		<Unit ID="1 25" localized="Wasserplattform">Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserülattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
+		<Unit ID="1 25" localized="Wasserplattform">Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserplattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
 		<Unit ID="1 26" localized="Radar">Radar\n\nStationäres Radargerät mit großer Reichweite. Einheiten mit größerer Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen können, daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben.</Unit>
 		<Unit ID="1 27" localized="Forschungslabor">Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern können. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benötigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benötigt keine Golderzquelle. Ein Forschungszentrum benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
 		<Unit ID="1 28" localized="Strasse">Straße\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit über Straßen.</Unit>
 		<Unit ID="1 29" localized="Seemine">Seemine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Guachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
 		<Unit ID="1 30" localized="Schildgenerator (Alien)">Alien Schildgenerator\n\n unbekannt</Unit>
-		<Unit ID="1 31" localized="Goldtresor">Goldtresor\n\nBeinhaltet unrafiniertes Golderz. Berkwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Berkwerk mit einem Goldtresor verbunden sein.</Unit>
+		<Unit ID="1 31" localized="Goldtresor">Goldtresor\n\nBeinhaltet unraffiniertes Golderz. Bergwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Bergwerk mit einem Goldtresor verbunden sein.</Unit>
 		<Unit ID="1 32" localized="Lagereinheit">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
-		<Unit ID="1 33" localized="Treibstofftank">Treibstofftank\n\nLagert Treibstoffreserven. Berkwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Berkwerk an einen Treibstofftank angeschlossen sein.</Unit>
+		<Unit ID="1 33" localized="Treibstofftank">Treibstofftank\n\nLagert Treibstoffreserven. Bergwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Bergwerk an einen Treibstofftank angeschlossen sein.</Unit>
 		<Unit ID="1 34" localized="Trainingshalle">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
 		<Unit ID="1 35" localized="Ökosphäre">Ökosphäre\n\nGewölbtes Gebäude, das eine erdenähnliche Umgebung enthält. Ihr ultimatives Ziel ist es, Ihre Kolonisten mit so vielen Ökosphären wie möglich zu versorgen. Jede Runde, die eine Ökosphäre läuft, verbessert Ihren Punktestand. Wenn sie zerstört wird, verlieren sie alle Punkte, die diese Ökosphäre bisher erzeugt hat. Ökosphären benötigen Kolonisten einer Behausung und Energie.</Unit>
 	</Units>
@@ -458,11 +466,13 @@
 		<Clan ID="3" localized="Ayer's Hand">Verbesserte Langstreckenwaffen</Clan>
 		<Clan ID="4" localized="Musashi">Verbesserte Panzerung</Clan>
 		<Clan ID="5" localized="Heilige Acht">Schnellere Fahrzeuge</Clan>
-		<Clan ID="6" localized="7 Ritter">Verbesserte Verteidugungsanlagen</Clan>
-		<Clan ID="7" localized="Axis Inc.">Extra Konstrukeure und Pioniere (Abhängig vom Geld) </Clan>
+		<Clan ID="6" localized="7 Ritter">Verbesserte Verteidigungsanlagen</Clan>
+		<Clan ID="7" localized="Axis Inc.">Extra Konstrukteure und Pioniere (Abhängig vom Geld) </Clan>
 	</Clans>
 	<Graphic>
+		<Dummy/>
 	</Graphic>
 	<Speech>
+		<Dummy/>
 	</Speech>
 </MAX_Language_File>
