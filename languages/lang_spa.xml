@@ -334,7 +334,7 @@
 			<Point ENG="point" localized="punto"/>
 			<Points ENG="points" localized="puntos"/>
 			<Producing ENG="Building" localized="Edificio"/>
-			<Producing_Err ENG="Buildposition blocked or insufficient resources"/ localized="Posición de construcción incorrecta o recursos insuficientes">
+			<Producing_Err ENG="Buildposition blocked or insufficient resources" localized="Posición de construcción incorrecta o recursos insuficientes" />
 			<Producing_Fin ENG="finished building" localized="edificio terminado"/>
 			<Repeat ENG="Again" localized="De nuevo"/>
 			<Research_Armor ENG="Armor research completed" localized="Investigación de blindaje completada"/>
