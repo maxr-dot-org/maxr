@@ -50,7 +50,14 @@ bool cLog::open (int TYPE)
 	if (bFirstRun)
 	{
 		time_t tTime = time (NULL);
+#if defined (_MSC_VER)
+		tm tm_;
+		tm* tmTime = &tm_;
+		localtime_s (tmTime, &tTime);
+#else
+		// Not thread safe, but we have a mutex which protects also that.
 		tm* tmTime = localtime (&tTime);
+#endif
 		char timestr[25];
 		strftime (timestr, 21, "-%d.%m.%y-%H%M.log", tmTime);
 		std::string sTime = timestr;
