@@ -3075,6 +3075,7 @@ int installBuildingSounds()
 	copyWAV( sMAXPath + "LVP18" + waveExtension, path + "stop.wav");
 	
 	//goldraff
+	//goldraff is using the monopole-mine sound in original game - nonsinn
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "goldraff" + PATH_DELIMITER;
 	copyPartOfWAV( sMAXPath + "MONOP17" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "MONOP17" + waveExtension, path + "running.wav", 1);
@@ -3112,11 +3113,12 @@ int installBuildingSounds()
 	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
 	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
 
-	//mine deep
+	//mine deep (monopol-mine)
+	//while monopole sound is used for goldraff, we can use the goldraff sound for monopol mine => both have a different sound - nonsinn
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "mine_deep" + PATH_DELIMITER;
-	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "start.wav", 0);
-	copyPartOfWAV( sMAXPath + "HVP17" + waveExtension, path + "running.wav", 1);
-	copyWAV( sMAXPath + "MSTAT18" + waveExtension, path + "stop.wav");
+	copyPartOfWAV( sMAXPath + "GOLDR17" + waveExtension, path + "start.wav", 0); 
+	copyPartOfWAV( sMAXPath + "GOLDR17" + waveExtension, path + "running.wav", 1);
+	copyWAV( sMAXPath + "GOLDR18" + waveExtension, path + "stop.wav");
 	
 	//radar
 	path = sOutputPath + "buildings" + PATH_DELIMITER + "radar" + PATH_DELIMITER;
