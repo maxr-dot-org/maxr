@@ -204,7 +204,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	}
 
 	//the distance to the OP
-	float newDistanceOP = sqrtf (powf (PosX - OPX, 2) + powf (PosY - OPY, 2));
+	float newDistanceOP = sqrtf (float (Square (PosX - OPX) + Square (PosY - OPY)));
 
 	//the distance to other surveyors
 	float newDistancesSurv = 0;
@@ -213,7 +213,7 @@ float cAutoMJob::CalcFactor (int PosX, int PosY)
 	{
 		if (i == iNumber) continue;
 		if (autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-		temp = sqrtf (powf (PosX - autoMJobs[i]->vehicle->PosX , 2.0f) + powf (PosY - autoMJobs[i]->vehicle->PosY , 2.0f));
+		temp = sqrtf (float (Square (PosX - autoMJobs[i]->vehicle->PosX) + Square (PosY - autoMJobs[i]->vehicle->PosY)));
 		newDistancesSurv += powf (temp, EXP);
 	}
 
@@ -252,12 +252,12 @@ void cAutoMJob::PlanLongMove()
 			{
 				// skip our selves and other Players' surveyors
 				if (i == iNumber || autoMJobs[i]->vehicle->owner != vehicle->owner) continue;
-				temp = sqrtf (powf (x - autoMJobs[i]->vehicle->PosX , 2.0f) + powf (y - autoMJobs[i]->vehicle->PosY , 2.0f));
+				temp = sqrtf (float (Square (x - autoMJobs[i]->vehicle->PosX) + Square (y - autoMJobs[i]->vehicle->PosY)));
 				distancesSurv += powf (temp, EXP2);
 			}
 
-			distanceOP = sqrtf (powf (x - OPX , 2) + powf (y - OPY , 2));
-			distanceSurv = sqrtf (powf (x - vehicle->PosX , 2) + powf (y - vehicle->PosY , 2));
+			distanceOP = sqrtf (float (Square (x - OPX) + Square (y - OPY)));
+			distanceSurv = sqrtf (float (Square (x - vehicle->PosX) + Square (y - vehicle->PosY)));
 			//TODO: take into account the length of the path to the coordinates too
 			// (I seen a case, when a surveyor took 7 additional senseless steps
 			// just to avoid or by-pass an impassable rocky terrain)
@@ -306,11 +306,12 @@ void cAutoMJob::changeOP()
 	}
 	else
 	{
-		float distanceOP = sqrtf (powf (vehicle->PosX - OPX, 2) + powf (vehicle->PosY - OPY , 2));
-		if (distanceOP > MAX_DISTANCE_OP)
+		const int sqDistanceOP = Square (vehicle->PosX - OPX) + Square (vehicle->PosY - OPY);
+
+		if (float (sqDistanceOP) > Square (MAX_DISTANCE_OP))
 		{
-			OPX = (int) (vehicle->PosX + (OPX - vehicle->PosX) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
-			OPY = (int) (vehicle->PosY + (OPY - vehicle->PosY) * (float) DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+			OPX = (int) (vehicle->PosX + (OPX - vehicle->PosX) * DISTANCE_NEW_OP / MAX_DISTANCE_OP);
+			OPY = (int) (vehicle->PosY + (OPY - vehicle->PosY) * DISTANCE_NEW_OP / MAX_DISTANCE_OP);
 		}
 	}
 }

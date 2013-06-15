@@ -2709,12 +2709,12 @@ bool cGameGUI::selectUnit (cMapField* OverUnitField, bool base)
 
 void cGameGUI::selectBoxVehicles (sMouseBox& box)
 {
-	if (box.startX < 0 || box.startY < 0 || box.endX < 0 || box.endY < 0) return;
+	if (box.startX < 0.f || box.startY < 0.f || box.endX < 0.f || box.endY < 0.f) return;
 
-	int startFieldX = std::min (box.startX, box.endX);
-	int startFieldY = std::min (box.startY, box.endY);
-	int endFieldX = std::max (box.startX, box.endX);
-	int endFieldY = std::max (box.startY, box.endY);
+	int startFieldX = (int) std::min (box.startX, box.endX);
+	int startFieldY = (int) std::min (box.startY, box.endY);
+	int endFieldX = (int) std::max (box.startX, box.endX);
+	int endFieldY = (int) std::max (box.startY, box.endY);
 
 	deselectGroup();
 
@@ -3842,10 +3842,10 @@ void cGameGUI::drawSelectionBox (int zoomOffX, int zoomOffY)
 	Uint32 color = 0xFFFF00;
 	SDL_Rect d;
 
-	const int mouseStartX = min (mouseBox.startX, mouseBox.endX) * getTileSize();
-	const int mouseStartY = min (mouseBox.startY, mouseBox.endY) * getTileSize();
-	const int mouseEndX = max (mouseBox.startX, mouseBox.endX) * getTileSize();
-	const int mouseEndY = max (mouseBox.startY, mouseBox.endY) * getTileSize();
+	const int mouseStartX = (int) min (mouseBox.startX, mouseBox.endX) * getTileSize();
+	const int mouseStartY = (int) min (mouseBox.startY, mouseBox.endY) * getTileSize();
+	const int mouseEndX = (int) max (mouseBox.startX, mouseBox.endX) * getTileSize();
+	const int mouseEndY = (int) max (mouseBox.startY, mouseBox.endY) * getTileSize();
 
 	d.h = 1;
 	d.w = mouseEndX - mouseStartX;

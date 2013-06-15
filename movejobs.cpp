@@ -49,12 +49,12 @@ bool cPathDestHandler::hasReachedDestination (int x, int y) const
 		case PATH_DEST_TYPE_POS:
 			return (x == destX && y == destY);
 		case PATH_DEST_TYPE_LOAD:
-			return ( (destBuilding && destBuilding->isNextTo (x, y)) ||
-					 (destVehicle && destVehicle->isNextTo (x, y)));
+			return (destBuilding && destBuilding->isNextTo (x, y)) ||
+				   (destVehicle && destVehicle->isNextTo (x, y));
 		case PATH_DEST_TYPE_ATTACK:
 			x -= destX;
 			y -= destY;
-			return (sqrt ( (double) (x * x + y * y)) <= srcVehicle->data.range);
+			return Square (x) + Square (y) <= Square (srcVehicle->data.range);
 		default:
 			return true;
 	}

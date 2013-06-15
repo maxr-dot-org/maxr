@@ -515,6 +515,10 @@ std::string pToStr (void* x);
 */
 double Round (double num, unsigned int n);
 
+
+template <typename T>
+T Square (T v) { return v * v; }
+
 /**
 * Rounds given param num without numbers after decimal point<br>
 * Example:<br>

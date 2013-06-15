@@ -102,7 +102,7 @@ bool cUnit::isInRange (int x, int y) const
 	x -= PosX;
 	y -= PosY;
 
-	return (sqrt ( (double) (x * x + y * y)) <= data.range);
+	return (Square (x) + Square (y)) <= Square (data.range);
 }
 
 //-----------------------------------------------------------------------------

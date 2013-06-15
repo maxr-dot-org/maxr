@@ -413,7 +413,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 }
 
 //------------------------------------------------------------------------------
-eLandingState cGameDataContainer::checkLandingState (int playerNr)
+eLandingState cGameDataContainer::checkLandingState (unsigned int playerNr)
 {
 	int posX = landData[playerNr]->iLandX;
 	int posY = landData[playerNr]->iLandY;
@@ -423,19 +423,19 @@ eLandingState cGameDataContainer::checkLandingState (int playerNr)
 	bool bPositionWarning = false;
 
 	//check distances to all other players
-	for (int i = 0; i < (int) players.size(); i++)
+	for (size_t i = 0; i != players.size(); ++i)
 	{
 		const sClientLandData* c = landData[i];
 		if (c == NULL) continue;
 		if (i == playerNr) continue;
 
-		int distance = (int) sqrtf (powf (c->iLandX - posX, 2) + powf (c->iLandY - posY, 2));
+		const int sqDistance = Square (c->iLandX - posX) + Square (c->iLandY - posY);
 
-		if (distance < LANDING_DISTANCE_TOO_CLOSE)
+		if (sqDistance < Square (LANDING_DISTANCE_TOO_CLOSE))
 		{
 			bPositionTooClose = true;
 		}
-		if (distance < LANDING_DISTANCE_WARNING)
+		if (sqDistance < Square (LANDING_DISTANCE_WARNING))
 		{
 			bPositionWarning = true;
 		}
@@ -454,8 +454,8 @@ eLandingState cGameDataContainer::checkLandingState (int playerNr)
 	{
 		if (lastState == LANDING_POSITION_WARNING)
 		{
-			int delta = (int) sqrtf (powf (posX - lastPosX, 2) + powf (posY - lastPosY, 2));
-			if (delta <= LANDING_DISTANCE_TOO_CLOSE)
+			const int sqDelta = Square (posX - lastPosX) + Square (posY - lastPosY);
+			if (sqDelta <= Square (LANDING_DISTANCE_TOO_CLOSE))
 			{
 				//the player has choosen the same position after a warning
 				//so further warnings will be ignored

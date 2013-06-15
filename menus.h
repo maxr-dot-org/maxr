@@ -223,7 +223,7 @@ private:
 	/** checks whether the landing positions are okay
 	 *@author alzi
 	 */
-	eLandingState checkLandingState (int playerNr);
+	eLandingState checkLandingState (unsigned int playerNr);
 	/** loads and runs a saved game
 	 *@author alzi
 	 */
