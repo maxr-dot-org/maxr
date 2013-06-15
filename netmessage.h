@@ -24,7 +24,7 @@
 #include <string>
 #include "network.h"
 
-class sID;
+struct sID;
 
 enum eNetStatusMsg
 {

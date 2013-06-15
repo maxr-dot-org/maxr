@@ -103,12 +103,12 @@ public:
 	void addUnitToList (cUnit* addedUnit);
 
 	void exploreResource (int offset) { ResourceMap[offset] = 1; }
-	bool hasResourceExplored (int offset) const { return ResourceMap[offset]; }
-	bool hasSentriesAir (int offset) const { return SentriesMapAir[offset]; }
-	bool hasSentriesGround (int offset) const { return SentriesMapGround[offset]; }
-	bool hasLandDetection (int offset) const { return DetectLandMap[offset]; }
-	bool hasMineDetection (int offset) const { return DetectMinesMap[offset]; }
-	bool hasSeaDetection (int offset) const { return DetectSeaMap[offset]; }
+	bool hasResourceExplored (int offset) const { return ResourceMap[offset] != 0; }
+	bool hasSentriesAir (int offset) const { return SentriesMapAir[offset] != 0; }
+	bool hasSentriesGround (int offset) const { return SentriesMapGround[offset] != 0; }
+	bool hasLandDetection (int offset) const { return DetectLandMap[offset] != 0; }
+	bool hasMineDetection (int offset) const { return DetectMinesMap[offset] != 0; }
+	bool hasSeaDetection (int offset) const { return DetectSeaMap[offset] != 0; }
 
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end

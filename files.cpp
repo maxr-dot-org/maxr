@@ -21,22 +21,23 @@
 #include <SDL_endian.h>
 
 #include "files.h"
+
 #include "log.h"
 #include "settings.h"
 
 #ifdef _WIN32
-#include <io.h>
-#include <direct.h>
+# include <io.h>
+# include <direct.h>
 #else
-#include <dirent.h>
+# include <dirent.h>
 #endif
 
 #ifdef WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 #else
-#include <sys/stat.h>
-#include <unistd.h>
+# include <sys/stat.h>
+# include <unistd.h>
 #endif
 
 
@@ -60,7 +61,7 @@ bool FileExists (const char* path)
 bool makeDir (const std::string& path)
 {
 #ifdef WIN32
-	return mkdir (path.c_str()) == 0;
+	return _mkdir (path.c_str()) == 0;
 #else
 	return mkdir (path.c_str(), 0755) == 0;
 #endif

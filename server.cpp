@@ -16,8 +16,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include <cassert>
 #include <set>
+
+#ifdef _MSC_VER
+
+# define NOMINMAX // do not use min, max as macro
+# include <windows.h>
+const DWORD MS_VC_EXCEPTION = 0x406D1388;
+
+# pragma pack (push, 8)
+typedef struct tagTHREADNAME_INFO
+{
+	DWORD dwType; // Must be 0x1000.
+	LPCSTR szName; // Pointer to name (in user addr space).
+	DWORD dwThreadID; // Thread ID (-1=caller thread).
+	DWORD dwFlags; // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+# pragma pack (pop)
+#endif
+
 
 #include "server.h"
 
@@ -44,27 +63,8 @@
 #include "vehicles.h"
 
 #if DEDICATED_SERVER_APPLICATION
-#include "dedicatedserver.h"
+# include "dedicatedserver.h"
 #endif
-
-#ifdef _MSC_VER
-
-#define NOMINMAX // do not use min, max as macro
-
-#include <windows.h>
-const DWORD MS_VC_EXCEPTION = 0x406D1388;
-
-#pragma pack(push,8)
-typedef struct tagTHREADNAME_INFO
-{
-	DWORD dwType; // Must be 0x1000.
-	LPCSTR szName; // Pointer to name (in user addr space).
-	DWORD dwThreadID; // Thread ID (-1=caller thread).
-	DWORD dwFlags; // Reserved for future use, must be zero.
-} THREADNAME_INFO;
-#pragma pack(pop)
-#endif
-
 
 //-------------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)

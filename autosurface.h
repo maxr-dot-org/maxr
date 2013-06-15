@@ -8,6 +8,6 @@
 typedef AutoObj<SDL_Surface, SDL_FreeSurface> AutoSurface;
 
 /* Prevent accidently freeing the SDL_Surface owned by an AutoSurface */
-void SDL_FreeSurface (AutoSurface const&) DELETE;
+void SDL_FreeSurface (AutoSurface const&) DELETE_CPP11;
 
 #endif
