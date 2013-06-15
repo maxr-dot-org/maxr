@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- * The English attributes are not needed. They are not interpreted.      -->
 <!-- * The "%s" is a placeholder for another part of the text.               -->
 <!-- * "\n" indicates a new line. The game will add additinal line feeds, if -->
@@ -41,7 +41,7 @@
 			<Voices ENG="Loading voices..." localized="Lade Stimmen..."/>
 		</Init>
 		<Title>
-			<Alien_Tech ENG="Alien wrecks" localized="Alienwracks"/>
+			<Alien_Tech ENG="Alien remains" localized="Alienüberreste"/>
 			<BridgeHead ENG="Starting Base" localized="Startbasis"/>
 			<Build ENG="Build menu" localized="Baumenü"/>
 			<Cargo ENG="Cargo" localized="Ladung"/>
@@ -233,10 +233,10 @@
 			<Go_Ready ENG="Ready to go" localized="Fertig zum Starten"/>
 			<Go_Ready_No ENG="not ready to go" localized="Nicht fertig zum Starten"/>
 			<Lost_Connection ENG="Lost connection to %s." localized="Verbindung zu %s verloren."/>
-			<Map_NoSet ENG="--no map set--" localized="--keine Karte ausgewählt--"/>
+			<Map_NoSet ENG="--no map selected--" localized="--keine Karte ausgewählt--"/>
 			<MapDL_Cancel ENG="Aborted" localized="Abgebrochen"/>
 			<MapDL_Download ENG="map %s from server." localized="Karte %s vom Server an."/>
-			<MapDL_DownloadInvalid ENG="original M.A.X. map  %s from server (licensed)!" localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
+			<MapDL_DownloadInvalid ENG="original M.A.X. map %s from server (licensed)!" localized="vom Original M.A.X. kann nicht geladen werden (Lizenz)!"/>
 			<MapDL_DownloadRequest ENG="Map not installed: Requesting to download custom" localized="Karte nicht installiert: Fordere die "/>
 			<MapDL_DownloadRequestInvalid ENG="Map not installed: Not allowed to download" localized="Karte nicht installiert: Die Karte %s"/>
 			<MapDL_Finished ENG="Map download finished." localized="Karte wurde vollständig heruntergeladen."/>
@@ -278,7 +278,7 @@
 			<Server_Not_Running ENG="The server is not running." localized="Der Server ist nicht gestartet."/>
 			<Wait_For_Server ENG="Waiting for network response from server"localized="Warte auf Netzwerkantwort vom Server" />
 			<Wait_Reconnect ENG="Waiting for reconnection of player." localized="Warte auf Wiederverbindung eines Spielers"/>
-			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Rundenende wird ausgeführt." />
+			<Wait_TurnEnd ENG="Please wait while turn end is executed." localized="Bitte warten Sie, während das Rundenende ausgeführt wird." />
 			<Wait_Until ENG="Please wait until %s has finished his turn." localized="Bitte warten Sie bis %s seine Runde beendet hat."/>
 			<Waiting ENG="Waiting for other players..." localized="Warte auf andere Spieler..."/>
 		</Multiplayer>
@@ -302,16 +302,16 @@
 			<Adjustments_Metal_Decreased ENG="Adjustments made: raw materials mining decreased by " localized="Änderungen vorgenommen: Rohstoffproduktion verringert um "/>
 			<Attacked ENG="is under attack" localized="wird angegriffen"/>
 			<AttackingEnemy ENG="%s is attacking the enemy" localized="%s greift den Feind an"/>
-			<Building_Disabled ENG="Building disabled" localized="Gebäude abgeschaltet"/>
-			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="%s wurde vom Feind unter Kontrolle gebracht"/>
+			<Building_Disabled ENG="Building turned off" localized="Gebäude ausgeschaltet"/>
+			<CapturedByEnemy ENG="%s has been captured by the enemy" localized="Feind hat %s erbeutet"/>
 			<Cheat ENG="used cheat" localized="hat einen Cheat benutzt:"/>
-			<Clearing ENG="Clearing" localized="Beim Räumen"/>
+			<Clearing ENG="clearing" localized="beim räumen"/>
 			<Clearing_Fin ENG="clearing done" localized="Räumen abgeschlossen"/>
-			<Clearing_Mine ENG="clearing mines" localized="Räume Minen"/>
+			<Clearing_Mine ENG="clearing mines" localized="räume Minen"/>
 			<CommandoRank_Average ENG="Average" localized="Durchschnitt"/>
 			<CommandoRank_Elite ENG="Elite" localized="Elite"/>
 			<CommandoRank_Expert ENG="Expert" localized="Experte"/>
-			<CommandoRank_GrandMaster ENG="Großmeister"/>
+			<CommandoRank_GrandMaster ENG="Grand Master" localized="Großmeister"/>
 			<CommandoRank_Greenhorn ENG="Greenhorn" localized="Grünschnabel"/>
 			<CommandoRank_Veteran ENG="Veteran" localized="Veteran"/>
 			<Dated ENG="dated" localized="veraltet"/>
@@ -322,10 +322,10 @@
 			<Disabled ENG="disabled" localized="außer Gefecht gesetzt"/>
 			<EcoSphere ENG="eco-sphere" localized="Ökosphäre"/>
 			<EcoSpheres ENG="eco-spheres" localized="Ökosphären"/>
-			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Beenden bestätigen\n\nNicht gespeicherte Spielfortschritte gehen dabei verloren."/>
+			<End_Game ENG="Confirm Exit\n\nUnsaved game data will be lost." localized="Beenden bestätigen\n\nNicht gespeicherter Spielfortschritt geht dabei verloren!"/>
 			<Energy_Insufficient ENG="Cannot turn on, power needed" localized="Nicht genug Energie zum Einschalten vorhanden!"/>
 			<Energy_IsNeeded ENG="Cannot turn off generator, power needed." localized="Kann Generator nicht abschalten, Energie wird benötigt!"/>
-			<Energy_Low ENG="Insufficient Power, building turned off." localized="Unzureichend Energie, Verbraucher abgeschaltet!"/>
+			<Energy_Low ENG="Lack of power, energy consumer turned off." localized="Energiemangel, Verbraucher abgeschaltet!"/>
 			<Energy_ToLow ENG="More power needed, generator turned on." localized="Mehr Energie benötigt, Generator eingeschaltet!"/>
 			<Finished ENG="is finished" localized="wurde fertig gestellt"/>
 			<Finished2 ENG="are finished" localized="wurden fertig gestellt"/>
@@ -336,12 +336,12 @@
 			<Gold_Low ENG="More gold needed, refinery turned off." localized="Mehr Gold benötigt, Raffinerie abgeschaltet!"/>
 			<Labs ENG="Labs" localized="Labore"/>
 			<Landing_Too_Close ENG="Landingposition is too close to an other player. Please reselect your position." localized="Landeposition zu nah an einem anderen Spieler. Bitte neu wählen."/>
-			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen, oder neue Position wählen"/>
-			<Laying ENG="minelaying" localized="Lege Minen"/>
+			<Landing_Warning ENG="Landingposition is near an other player. Please confirm the position by clicking in the red circle, or select an other position." localized="Landeposition liegt nah bei einem anderen Spieler. Bitte durch klicken in den roten Kreis bestätigen oder neue Position wählen"/>
+			<Laying ENG="minelaying" localized="lege Minen"/>
 			<Metal_Insufficient ENG="Cannot start, raw materials needed." localized="Nicht genügend Rohstoff zum Einschalten vorhanden!"/>
-			<Metal_Low ENG="More raw materials needed, building turned off." localized="Mehr Rohstoff benötigt, Verbraucher wurden abgeschaltet!"/>
+			<Metal_Low ENG="More raw materials needed, factory turned off." localized="Mehr Rohstoff benötigt, Verbraucher wurde abgeschaltet!"/>
 			<Moving ENG="moving" localized="in bewegung"/>
-			<NoLimit ENG="Fight to the death!"  localized="Auf Leben und Tod!"/>
+			<NoLimit ENG="Fight to the death!" localized="Auf Leben und Tod!"/>
 			<Path_interrupted ENG="Pathbuilding order could not be resumed." localized="Pfadbauauftrag konnte nicht fortgesetzt werden."/>
 			<Point ENG="point" localized="Punkt"/>
 			<Points ENG="points" localized="Punkte"/>
@@ -359,71 +359,71 @@
 			<Research_Shoots ENG="Shots research completed" localized="Schüsseforschung abgeschlossen"/>
 			<Research_Speed ENG="Speed research completed" localized="Geschwindigkeitsforschung abgeschlossen"/>
 			<Reserve ENG="Reserve" localized="Reserve"/>
-			<ResolutionChange localized="Bitte starte 'Mechanized Assault and eXploration Reloaded' neu um die Änderungen der Bildschirmauflösung wirksam zu machen."/>
-			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Gelesene Auflösung ungültig"/>
+			<ResolutionChange localized="Bitte starten Sie 'Mechanized Assault and eXploration Reloaded' neu um die Änderung der Bildschirmauflösung wirksam zu machen."/>
+			<ResolutionWarning ENG="Warning: Unsupported videomode in config" localized="Achtung: Nichtunterstützte Bildschirmauflösung in der Konfiguration gefunden"/>
 			<Screenshot_Done ENG="Screenshot saved to %s" localized="Bildschirmfoto gespeichet unter %s "/>
 			<Sentry ENG="on sentry" localized="auf wachposten"/>
 			<Stolen ENG="stolen" localized="gestohlen"/>
 			<SuddenDeath ENG="Sudden death! The first player to increase their score wins!" localized="Sudden death! Der erste Spieler der einen Punktevorsprung erzielt, gewinnt!"/>
 			<Surveying ENG="surveying" localized="vermesse"/>
-			<Team_Insufficient ENG="Cannot start, workers needed." localized="Nicht genug Teams zum Einschalten vorhanden!"/>
-			<Team_Low ENG="Workers needed, building turned off." localized="Teams benötigt, Verbraucher wurden ausgeschaltet!"/>
+			<Team_Insufficient ENG="Cannot start, workers needed." localized="Nicht genug Arbeiter zum Einschalten vorhanden!"/>
+			<Team_Low ENG="Workers needed, building turned off." localized="Arbeiter benötigt, Gebäute wurde abgeschaltet!"/>
 			<Themes ENG="Themes" localized="Bereich"/>
 			<Turn ENG="Turn" localized="Runde"/>
 			<Turn_Automove ENG="Executing remaining movements" localized="Verbleibende Bewegungen werden durchgeführt"/>
 			<Turn_Start ENG="Start turn" localized="Beginnen Sie die Runde"/>
 			<Turn_Wait ENG="Please wait until all movements are completed" localized="Bitte warten Sie, bis alle Bewegungen abgeschlossen sind"/>
 			<Turns ENG="Turns" localized="Runden"/>
-			<Upgrades_Done ENG="Upgraded" localized="Verbesserte"/>
+			<Upgrades_Done ENG="Upgraded" localized="Verbessert"/>
 			<Upgrades_Done2 ENG="unit(s) of type %s" localized="Einheite(n) vom Typ %s"/>
 			<Waits ENG="waiting" localized="wartend"/>
-			<Working ENG="working" localized="arbeitet"/>
+			<Working ENG="working" localized="arbeitend"/>
 		</Comp>
 		<Error_Messages>
 			<ERROR_File_Not_Found ENG="File not found: %s" localized="Datei nicht gefunden: %s"/>
 			<ERROR_Map_Loading ENG="Error loading map" localized="Fehler beim Laden der Karte"/>
 			<ERROR_Missing_Translation ENG="missing translation: %s" localized="fehlende Übersetzung: %s"/>
-			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprachpaket ist jetzt initialisiert"/>
-			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht realisiert"/>
+			<INFO_Language_initialised ENG="Language is now initialised" localized="Sprach ist nun initialisiert"/>
+			<INFO_Not_Implemented ENG="Not yet implemented" localized="Noch nicht umgesetzt"/>
 		</Error_Messages>
 	</Text>
 	<Units>
-		<Unit ID="0 1" localized="Frachtflugzeug">Transportflugzeug\n\nFlugzeug, fähig bis zu drei Bodeneinheiten zu transportieren.</Unit>
-		<Unit ID="0 2" localized="Alien-Sturmgeschütz">Alien-Sturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittel-gepanzertes Gestell montiert ist. Obwohl es nicht so verletzbar wie menschliche Sturmgeschütze ist, sollte das Aliensturmgeschütz dennoch Feindfeuer vermeiden. Alle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 3" localized="Jagdbomber (Alien)">Alien Jäger Bomber\n\nObwohl das Alienflugzeug hauptsächlich für einen Angriff von Bodenzielen entworfen wurde, kann es auch auf andere Flugzeuge feuern. Obwohl leistungsstark ist das Alienflugzeug dennoch verletzbar durch Luftabwehrfeuer. Wie andere Alieneinheiten, können Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten.</Unit>
-		<Unit ID="0 4" localized="Kanonenboot (Alien)">Alienkanonenboot\n\nSchwer gepanzertes und bewaffnetes Alien Kriegsschiff Design: Wie ein menschliches Kanonenboot herausragend beim Zerstören von anderen Schiffen und Landzielen in Ufernähe. Alle Alien Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 5" localized="Panzer (Alien)">Alienpanzer\n\nSchwer gepanzerter Panzer im Aliendesign. Alienpanzer werden am besten an der Front eines Angriffs eingesetzt, um feindliche Feuer abzufangen. Alle Alieneinheiten reparieren sich selbst, und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
-		<Unit ID="0 6" localized="APC">Gepanzerter Personentransporter\n\nSchnell, gepanzert, um Infanterie und Infiltratoren zu transportieren. Das APC kann sich langsam sowohl unter Wasser als auch auf Land bewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegendes APC entdecken.</Unit>
-		<Unit ID="0 7" localized="Sturmgeschütz">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mit großer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber recht verwundbar.</Unit>
-		<Unit ID="0 8" localized="AWACS">AWACS\n\nLuftwarnung und Kontrollflugzeug. Im Grunde ein fliegender Radar Reflektor. Ein AWACS ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
-		<Unit ID="0 9" localized="Bomber">Bomber\n\nEin schwereres Flugzeug, das eine volle Ladung Luft zu Bodenmissilen transportiert. Teuer, aber die Geschwindigkeit und die Fähigkeit mit Genehmigung alles außer Jäger und Luftabwehr anzugreifen ist's wert.</Unit>
-		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Geröll und zerstörte Gebäude zu räumen. Bulldozer können Material aus Schutt herstellen.</Unit>
-		<Unit ID="0 11" localized="Frachtschiff">Frachtschiff\n\nSchiffe für den Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Seekampfeinheiten wieder mit Munition aufzuladen.</Unit>
-		<Unit ID="0 12" localized="Raketenwerfer">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug, das Mittelstreckenraketen abfeuert, die alle Einheiten in Mitleidenschaft ziehen, die sich innerhalb von 2 Flächen um das Ziel herum befinden. Gegen Gruppen feindlicher Einheiten am effektivsten.</Unit>
-		<Unit ID="0 13" localized="Infiltrator">Infiltrator\n\nKommando, das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind normalerweise unsichtbar, bis sie einen Fehler machen, wenn sie versuchen feindliche Einheiten gefangen zu nehmen, oder bis sie von Infanterie oder Infiltratoren gesichtet worden sind.</Unit>
+		<Unit ID="0 1" localized="Frachtflugzeug">Transportflugzeug\n\nFlugzeug mit der  Fähigkeit bis zu drei Bodeneinheiten zu transportieren.</Unit>
+		<Unit ID="0 2" localized="Alien-Sturmgeschütz">Alien-Sturmgeschütz\n\nLeistungsstarke Plasmawaffe, die auf ein schnelles, mittelstark gepanzertes Gestell montiert ist. Obwohl es nicht so zerbrechlich wie ein menschliches Sturmgeschütze ist, sollte das Alien-Sturmgeschütz dennoch Feindfeuer vermeiden.\nAlle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 3" localized="Alien-Jagdbomber">Alien-Jagdbomber\n\nObwohl es hauptsächlich für einen Angriff von Bodenzielen entworfen wurde kann es auch andere Flugzeuge angreifen. Obwohl das Alienflugzeug leistungsstark ist, ist es dennoch durch Luftabwehrfeuer zerstörbar.\nWie andere Alieneinheiten, können auch Alienflugzeuge sich selbst reparieren und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 4" localized="Alien-Kanonenboot">Alien-Kanonenboot\n\nSchwer gepanzertes und bewaffnetes Kriegsschiff im Alien Design. Wie ein menschliches Kanonenboot ist es hervorragend zum Zerstören von anderen Schiffen und Landzielen in Ufernähe geeignet.\nAlle Alien Einheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 5" localized="Alien-Panzer">Alien-Panzer\n\nSchwer gepanzerter Panzer im Aliendesign. Ein Alien-Panzer wird am besten an der Front eines Angriffs eingesetzt um feindliches Feuer abzufangen.\nAlle Alieneinheiten reparieren sich selbst und verbessern ihre Fähigkeiten durch Erfahrung.</Unit>
+		<Unit ID="0 6" localized="MTW">Mannschaftstransportwagen\n\nSchnelles, gepanzertes Gefährt zum transportieren von Infanterie und Infiltratoren. Der MTW bewegt sich mit normaler Geschwindigkeit auf dem Land, kann sich aber auch langsamer unter Wasser fortbewegen. Nur feindliche Korvetten können ein sich unter Wasser bewegenden MTW entdecken.</Unit>
+		<Unit ID="0 7" localized="Sturmgeschütz">Sturmgeschütz\n\nLeicht gepanzertes Fahrzeug mit einer Waffe mittlerer Reichweite, die hochexplosieve Granaten feuert. Schnell und effektiv im Angriff, aber ebensoleicht zerstörbar.</Unit>
+		<Unit ID="0 8" localized="AWACS">AWACS\n\nLuftgestütztes Frühwarnsystem - im Grunde ein fliegenders Radar. Ein AWACS ist notwendig, um feindliche Luftabwehr auszumachen, bevor ihre Flugzeuge in Feuerreichweite fliegen.</Unit>
+		<Unit ID="0 9" localized="Bomber">Bomber\n\nEin schwereres und teures Flugzeug, das eine volle Ladung Luft-Boden-Raketen transportiert.\nDer Vorteile der hohen Geschwindigkeit sowie die Fähigkeit alle Boden- und Seeeinheiten (vorallem aber U-Boote) angreifen zu können, rechtfertigen jedoch die Herstellungskosten.</Unit>
+		<Unit ID="0 10" localized="Bulldozer">Bulldozer\n\nFahrzeug, um Schutt zerstörter Gebäude und Einheiten wegzuräumen. Bulldozer gewinnen dabei Rohstoff aus dem Schutt.</Unit>
+		<Unit ID="0 11" localized="Frachtschiff">Frachtschiff\n\nSchiff für den Transport von Rohstoff. Nützlich um Pionierfahrzeuge mit Rohstoff zu versorgen und die Munition von Seekampfeinheiten nachzuladen.</Unit>
+		<Unit ID="0 12" localized="Raketenwerfer">Raketenwerfer\n\nLeicht gepanzertes Fahrzeug das Mittelstreckenraketen abfeuert. Alle Einheiten die sich innerhalb von 2 Feldern um das Ziel herum befinden werden dabei auch beschädigt. Am effektivsten gegen Gruppen feindlicher Einheiten.</Unit>
+		<Unit ID="0 13" localized="Infiltrator">Infiltrator\n\nKommando das in der Kunst der lautlosen und elektronischen Kriegsführung trainiert ist. Infiltratoren können feindliche Einheiten unschädlich machen oder gefangen nehmen.\nInfiltratoren sind für den Feind unsichtbar, es sei denn das sie bei ihrer arbeit scheitern. Zudem können sie von feindlicher Infanterie und Infiltratoren aufgespürt werden.</Unit>
 		<Unit ID="0 14" localized="Korvette">Korvette\n\nHochgeschwindigkeitsschiff mit Torpedos und Echolot. Korvetten können jede Marineeinheit angreifen, aber ihre wirkliche Stärke ist die Fähigkeit, U-Boote zu sichten und anzugreifen.</Unit>
-		<Unit ID="0 15" localized="Eskorte">Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und Schnellschussluftabwehrkanone. Geleitschiffe sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
-		<Unit ID="0 16" localized="Jäger">Jäger\n\nSchnelles aber empfindliches Flugzeug, das eine begrenzte Anzahl von Luft-Luft Raketen transportiert. Jäger sind das beste Mittel, um feindliche Flugzeuge zu vertreiben und, um eine sich bewegende Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
+		<Unit ID="0 15" localized="Eskorte">Eskorte\n\nHochgeschwindigkeitsschiff mit gutem Radar und schnellfeuer Luftabwehrgeschütz. Eskorten sind die Augen einer Flotte und ihr Schutz vor Flugzeugen.</Unit>
+		<Unit ID="0 16" localized="Jäger">Jäger\n\nSchnelles aber zerbrechliches Flugzeug das eine begrenzte Anzahl von Luft-Luft Raketen mitführt. Jäger sind das beste Mittel um feindliche Flugzeuge zu vertreiben und um eine mobile Armee zu verteidigen. Stationäre Luftabwehr ist die bessere Wahl, um ein bestimmtes Gebiet zu verteidigen.</Unit>
 		<Unit ID="0 17" localized="Kanonenboot">Kanonenboot\n\nSchwer gepanzertes Schiff mit einer großkalibrigen Kanone mit mittlerer Reichweite. Exzellent beim Zerstören von anderen Schiffen und beim Bombardieren von Küstenzielen.</Unit>
-		<Unit ID="0 18" localized="Infanterie">Infanterie\n\nSoldaten, die mit leichten Panzerabwehrwaffen ausgestattet sind. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
-		<Unit ID="0 19" localized="Konstrukteur">Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude, wie Bergwerke und Fabriken.</Unit>
-		<Unit ID="0 20" localized="Minenleger">Minenleger\n\nMinenleger sind spezialisierte Konstruktionsfahrzeuge, die Minen plazieren, ausspähen und entfernen können. Minenleger können an Board Rohstoffe in Minen verwandeln. Sie können diese Minen später auch wieder entfernen und in Rohstoffe zurückverwandeln. Sie können keine feindlichen Minenfelder entfernen - diese müssen mit Kanonen und Raketen zum Explodieren gebracht werden.</Unit>
-		<Unit ID="0 21" localized="Mobiler Missilenwerfer">mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert mehr Material beim Bau. Allerdings macht ihn seine Bewegungsfähigkeit wesendlich flexibler.</Unit>
-		<Unit ID="0 22" localized="Missilenschiff">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer kraftvollen Einheit.</Unit>
-		<Unit ID="0 23" localized="Luftabwehr">Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einer schnellen Kanone zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben.</Unit>
-		<Unit ID="0 24" localized="Pionier">Pionier\n\nKleines Konstruktionsfahrzeug, das kleine Gebäude und stationäre Waffen baut.</Unit>
-		<Unit ID="0 25" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug, das schnell Bodeneinheiten und Gebäude reparieren kann. Reparaturen erfordern Materialien. Je größer der Schaden ist, desto mehr Materialien benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
-		<Unit ID="0 26" localized="Scanner">Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel, um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen.</Unit>
-		<Unit ID="0 27" localized="Späher">Späher\n\nHochgeschwindigkeitsfahrzeug, das feindliche Einheiten auskundschaftet und ausspäht. Kann Wasser ohne Brücke überqueren, ist jedoch schneller auf Land.\n\nSehr schnell und gute Scanreichweite, aber viel schwächer als die meisten Kampfeinheiten.</Unit>
-		<Unit ID="0 28" localized="Seeminenleger">Seeminenleger\n\nSeevariante des Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen, sie ausspähen, und die in Rohstoffe zurückverwandeln.</Unit>
+		<Unit ID="0 18" localized="Infanterie">Infanterie\n\nSoldat, der mit einer leichten Panzerabwehrwaffe ausgestattet ist. Infanterie kann feindliche Infiltratoren ausfindig machen.</Unit>
+		<Unit ID="0 19" localized="Konstrukteur">Konstrukteur\n\nGroßes Konstruktionsfahrzeug zum Errichten großer Gebäude wie Bergwerke und Fabriken.</Unit>
+		<Unit ID="0 20" localized="Minenleger">Minenleger\n\nEin Minenleger ist ein spezialisiertes Konstruktionsfahrzeug, das Minen plazieren, ausspähen und entfernen kann. Minenleger kann an intern Rohstoffe in Minen verwandeln. Sie können diese Minen später auch wieder einsammeln und in Rohstoffe zurückverwandeln. Sie können jedoch keine feindlichen Minenfelder entfernen - diese müssen Sie mit Kanonen oder Raketen angreifen.</Unit>
+		<Unit ID="0 21" localized="Mobiler Missilenwerfer">Mobiler Missilenwerfer\n\nMissilenwerfer auf einem leicht gepanzerten Fahrgestell. Dieser mobile Werfer ist ein bisschen weniger robust als die stationäre Version und erfordert zudem mehr Material beim Bau. Allerdings ist er durch seine Bewegungsfähigkeit wesentlich flexibler einsetzbar.</Unit>
+		<Unit ID="0 22" localized="Missilenschiff">Missilenschiff\n\nAuf einem Schiff montierter Missilenwerfer. Exzellente Reichweite, große Angriffsstärke und mittlere Panzerung machen dies zu einer starken Einheit.</Unit>
+		<Unit ID="0 23" localized="Mobile Luftabwehr">Mobile Luftabwehr\n\nLeichtes, schnelles Fahrzeug mit einem schnellen Geschütz zum Abschießen vom feindlichen Flugzeugen. Mobile Luftabwehr sind normalerweise Verteidigungseinheiten, da sie nicht so schnell wie Flugzeuge sind und sich nicht bewegen können, solange sie feuern. Benutzen Sie sie, um ein Gebiet zu beschützen, nachdem ihre Jäger die feindlichen Bomber verjagt haben.</Unit>
+		<Unit ID="0 24" localized="Pionier">Pionier\n\nKleines Konstruktionsfahrzeug zum Bau kleiner Gebäude und stationäre Waffen.</Unit>
+		<Unit ID="0 25" localized="Repariereinheit">Repariereinheit\n\nLeichtes Fahrzeug das schnell Bodeneinheiten und Gebäude reparieren kann. Reparaturen erfordern Rohstoff. Je größer der Schaden ist, desto mehr Rohstoff benötigt die Instandsetzung. Depots, Docks, Hangars und Kasernen können auch Einheiten reparieren.</Unit>
+		<Unit ID="0 26" localized="Scanner">Scanner\n\nMobile Radarplattform. Langsamer und teuer als ein Späher, aber mit einer besseren Scanreichweite. Ein Scanner ist ein exzellentes Mittel um Ziele für Einheiten mit sehr großer Reichweite wie mobile Missilenwerfer auszuspähen.</Unit>
+		<Unit ID="0 27" localized="Späher">Späher\n\nHochgeschwindigkeitsfahrzeug zum Erkunden sowie zum Aufspähen von gegnerischen Einheiten. Kann Wasser ohne Brücke überqueren ist jedoch schneller auf Land.\n\nSehr schnell und und mit guter Scanreichweite aber viel schwächer als die meisten Kampfeinheiten.</Unit>
+		<Unit ID="0 28" localized="Seeminenleger">Seeminenleger\n\nSeevariante eines Minenlegers. Wie sein Gegenpart auf dem Land, kann er Minen herstellen und auch diese wieder in Rohstoffe zurückverwandeln. Zudem kann er feindliche Seeminen aufspühren.</Unit>
 		<Unit ID="0 29" localized="Seetransporter">Seetransporter\n\nSchwer gepanzertes Schiff mit Platz, um bis zu sechs Landeinheiten zu transportieren. Seetransporter sind langsamer als Transportflugzeuge, aber sie überleben auch eher einen feindlichen Angriff.</Unit>
-		<Unit ID="0 30" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boot nah an den Feind heranschleichen, um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot ausspähen. Des Weiteren verrät das Abfeuern eines Torpedos ihre Position.Nur U-Boote, Korvetten und Bomber können sie angreifen.</Unit>
-		<Unit ID="0 31" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Bodenschätzen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser fast genauso schnell wie auf Land.</Unit>
-		<Unit ID="0 32" localized="Panzer">Panzer\n\nSchwer gepanzerte Kampffahrzeuge. Am besten an der Frontlinie eingesetzt, wo sie feindliche Einheiten daran hindern können, leicht gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer zu erreichen.</Unit>
-		<Unit ID="0 33" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Golderz von einem Ort zum nächsten zu bewegen.</Unit>
-		<Unit ID="0 34" localized="Versorgungstruck">Versorgungstruck\n\nLkw zum Transport von Rohstoffen. Nützlich, um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
+		<Unit ID="0 30" localized="U-Boot">U-Boot\n\nDicht unter der Wasseroberfläche lauernd, können sich U-Boote nah an den Feind heranschleichen um ihre kraftvollen Torpedos abzufeuern. Nur Korvetten können ein U-Boot aufspühren bevor diese einen Torpeto abschießen. Nur U-Boote, Korvetten und Bomber können U-Boote angreifen.</Unit>
+		<Unit ID="0 31" localized="Gutachter">Gutachter\n\nLeichtes, amphibisches Fahrzeug mit sehr feinen Sensoren zum Auffinden von Bodenschätzen und feindlichen Minen. Im Gegensatz zu den meisten amphibischen Einheiten sind Gutachter auf Wasser genauso schnell wie auf Land.</Unit>
+		<Unit ID="0 32" localized="Panzer">Panzer\n\nSchwer gepanzertes Kampffahrzeuge. Am besten an der Frontlinie eingesetzt um feindliche Einheiten daran zu hindern, leichter gepanzerte Hilfseinheiten wie z.B. Sturmgeschütze und Raketenwerfer anzugreifen.</Unit>
+		<Unit ID="0 33" localized="Goldtransporter">Goldtransporter\n\nEinheit, um Gold von einem Ort zum nächsten zu transportieren.</Unit>
+		<Unit ID="0 34" localized="Versorgungstruck">Versorgungstruck\n\nLkw zum Transport von Rohstoff. Nützlich um Pionierfahrzeuge und Konstrukteure zu versorgen und um Kampfeinheiten wieder mit Munition aufzuladen.</Unit>
 		<Unit ID="0 35" localized="Tankwagen">Tankwagen\n\nLkw, um Treibstoff zu transportieren.</Unit>
-		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung, und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Bergwerk angeschlossen sein sollte.</Unit>
+		<Unit ID="1 1" localized="Kaserne">Kaserne\n\nIn einer Kaserne befinden sich Infiltratoren und Infanterie Einheiten. In der Kaserne gibt es eine Werkstatt für Aufrüstung und Reparatur von Ausrüstung und für die Produktion von Munition. Die Kaserne benötigt Rohstoffe zum Reparieren, Aufrüsten oder Aufladen, so dass sie an eine Lagereinheit oder ein Bergwerk angeschlossen sein sollte.</Unit>
 		<Unit ID="1 2" localized="Betonklotz">Betonklotz\n\nGehärteter, gepanzerter Block zur Blockade feindlicher Bewegungen.</Unit>
 		<Unit ID="1 3" localized="Brücke">Brücke\n\nPontonbrücke zum Überqueren von Wasser. Brücken, im Gegensatz zu Wasserplattformen, blockieren die Bewegungen der Schiffe nicht. Zudem bewegen sich Einheiten mit doppelter Geschwindigkeit über Brücken.</Unit>
 		<Unit ID="1 4" localized="Kopplung">Kopplung\n\nGebäude müssen verbunden sein, um Energie, Treibstoff und Gold zu teilen. Sie können Gebäude verbinden, indem Sie sie nebeneinander plazieren oder, indem Sie Kopplungen von einem Gebäude zum anderen bauen.</Unit>
@@ -441,22 +441,22 @@
 		<Unit ID="1 16" localized="Artillerie">Artillerie\n\nStarke stationäre Waffe. Artillerie ist ein Kompromiss zwischen dem billigen, robusten Gefechtsturm und dem teuren Missilenwerfer.</Unit>
 		<Unit ID="1 17" localized="Missilenwerfer">Missilenwerfer\n\nLangstreckenraketenwerfer auf einem festen Gestell. Exzellente Reichweite und Feuerkraft, aber nur wenig mehr Panzerung als bei der mobilen Version. Am besten umgeben von Gefechtstürmen und Luftabwehr.</Unit>
 		<Unit ID="1 18" localized="Gefechtsturm">Gefechtsturm\n\nSchwer gepanzerter stationärer Gefechtsturm. Gefechtstürme haben gute Feuerkraft, schwere Panzerung und eine mittlere Reichweite. Da sie in kurzer Zeit gebaut werden können, sind sie eine gute Wahl, wenn Sie möglichst schnell Verteidigung benötigen.</Unit>
-		<Unit ID="1 19" localized="Behausung">Behausung\n\nBehausungen beherbergen Kolonisten. Jede Behausung beherbergt genug Kolonisten, um drei Forschungszentren, Trainingshallen oder Ökosphären zu betreiben. Diese Gebäude müssen an eine Behausung angeschlossen sein, bevor sie operieren können.</Unit>
-		<Unit ID="1 20" localized="Hangar">Hangar\n\nEin Hangar kann Schäden reparieren, Munition liefern, und Flugzeuge mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
+		<Unit ID="1 19" localized="Behausung">Behausung\n\nBehausungen beherbergen drei Arbeiter. Arbeiter werden in Forschungszentren, Trainingshallen und Ökosphären benötigt. Diese Gebäude müssen mit eine Behausung verbunden sein bevor sie in Betrieb gehen können.</Unit>
+		<Unit ID="1 20" localized="Hangar">Hangar\n\nEin Hangar kann Schäden reparieren, Munition liefern und Flugzeuge mit der neusten Technologie aufrüsten. All diese Operationen erfordern Rohstoffe, daher sollte ein Hangar an die Lagerreserven angeschlossen sein.</Unit>
 		<Unit ID="1 21" localized="Landmine">Landmine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Gutachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
 		<Unit ID="1 22" localized="Bergwerk">Berkwerk\n\nFördert in jeder Runde Rohstoffe, Treibstoff und Gold aus der Erde. Gebäude müssen an ein Berkwerk angeschlossen sein, um die Dinge zu nutzen, die es Produziert. Wenn keine Lagergebäude vorhanden sind, um überschüssiges Material zu Lagern, gehen diese Überschüsse verloren.</Unit>
 		<Unit ID="1 23" localized="Bergwerk (Alien)">Alien Bergwerk\n\n unbekannt</Unit>
 		<Unit ID="1 24" localized="Landefläche">Landefläche\n\nLandemöglichkeit für Flugzeuge. Kann Flugzeuge weder reparieren, noch aufladen. Um ein Flugzeug auf einer Landefläche wieder aufzuladen oder zu reparieren, benutzen Sie einen nahegelegenen Lkw oder eine Lagereinheit, bzw. eine Repariereinheit.</Unit>
 		<Unit ID="1 25" localized="Wasserplattform">Wasserplattform\n\nLiefert eine Fläche auf dem Wasser, auf der andere Gebäude errichtet werden können. Pionierfahrzeuge können Wasserplattformen sowohl über Ufer als auch über offenes Gewässer bauen. Wasserplattformen sind besonders wichtig auf Inselkarten oder, wenn wertvolle Rohstoffe unter dem Wasser sind.</Unit>
 		<Unit ID="1 26" localized="Radar">Radar\n\nStationäres Radargerät mit großer Reichweite. Einheiten mit größerer Reichweite wie Missilenwerfer und Artillerie können nicht auf etwas schießen, das sie nicht sehen können, daher ist es wichtig, einen Scanner oder ein Radar in der Nähe zu haben.</Unit>
-		<Unit ID="1 27" localized="Forschungslabor">Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern können. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benötigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benötigt keine Golderzquelle. Ein Forschungszentrum benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
+		<Unit ID="1 27" localized="Forschungslabor">Forschungslabor\n\nForschungszentren erforschen, wie Sie Ihre Einheiten verbessern können. Im Unterschied zu Upgrades, die mit raffiniertem Gold erworben werden, benötigt Forschung Zeit und die Verbesserungen sind klein. Allerdings betriff die Forschung alle Ihrer Einheiten statt nur eine Art und benötigt keine Golderzquelle. Ein Forschungszentrum benötigt Arbeiter einer Behausung und Energie, um operieren zu können.</Unit>
 		<Unit ID="1 28" localized="Strasse">Straße\n\nEinheiten bewegen sich mit doppelter Geschwindigkeit über Straßen.</Unit>
 		<Unit ID="1 29" localized="Seemine">Seemine\n\nKleines, schwer zu entdeckendes, explosives Geschütz. Nur Guachter, Minenleger und Infiltratoren können Minen ausspähen. Sobald sie entdeckt werden, wird fast jede Beschädigung sie zerstören.</Unit>
 		<Unit ID="1 30" localized="Schildgenerator (Alien)">Alien Schildgenerator\n\n unbekannt</Unit>
 		<Unit ID="1 31" localized="Goldtresor">Goldtresor\n\nBeinhaltet unraffiniertes Golderz. Bergwerke produzieren in jeder Runde Gold, wenn sich Goldadern unter ihnen befinden. Um das Erz zu lagern, muss ein Bergwerk mit einem Goldtresor verbunden sein.</Unit>
 		<Unit ID="1 32" localized="Lagereinheit">Lagereinheit\n\nLagert Rohstoffe. Bergwerke produzieren Rohstoffe in jeder Runde. Um Überschüssige Rohstoffe zu lagern, muss ein Bergwerk an eine Lagereinheit angeschlossen sein.</Unit>
 		<Unit ID="1 33" localized="Treibstofftank">Treibstofftank\n\nLagert Treibstoffreserven. Bergwerke produzieren in jeder Runde Treibstoff. Um überschüssigen Treibstoff zu lagern, muss das Bergwerk an einen Treibstofftank angeschlossen sein.</Unit>
-		<Unit ID="1 34" localized="Trainingshalle">Trainingshalle\n\nTrainiert Infiltratoren, die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können, und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Kolonisten einer Behausung und Energie, um operieren zu können.</Unit>
+		<Unit ID="1 34" localized="Trainingshalle">Trainingshalle\n\nTrainiert Infiltratoren die feindliche Einheiten außer Gefecht setzen oder gefangen nehmen können und Infanterie. Nur Infanterie und andere Infiltratoren können Infiltratoren ausspähen. Eine Trainingshalle benötigt Arbeiter einer Behausung und Energie, um operieren zu können.</Unit>
 		<Unit ID="1 35" localized="Ökosphäre">Ökosphäre\n\nGewölbtes Gebäude, das eine erdenähnliche Umgebung enthält. Ihr ultimatives Ziel ist es, Ihre Kolonisten mit so vielen Ökosphären wie möglich zu versorgen. Jede Runde, die eine Ökosphäre läuft, verbessert Ihren Punktestand. Wenn sie zerstört wird, verlieren sie alle Punkte, die diese Ökosphäre bisher erzeugt hat. Ökosphären benötigen Kolonisten einer Behausung und Energie.</Unit>
 	</Units>
 	<Clans>
