@@ -8,7 +8,6 @@
     <Last_Change time="2007-10-02 19:51:00"/>
   </Header>
   <Vehicles>
-    <Air_Transporter directory="air_transport" num="1"/>
     <Surveyor directory="surveyor" num="31"/>
     <APC directory="apc" num="6"/>
     <Pionier directory="pionier" num="24"/>
