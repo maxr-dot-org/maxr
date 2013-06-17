@@ -40,6 +40,18 @@
 
 using namespace std;
 
+#if defined (_MSC_VER)
+// The purpose of this warning is to avoid to use not fully constructed object.
+// As we use 'this' only to save back reference
+// and use it later once object is fully initialized
+// just ignore the warning.
+# pragma warning (disable:4355) // 'this': used in base member initializer list
+// appear in cDestructMenu constructor
+// appear in cDialogPreferences constructor
+#endif
+
+
+
 cDialogYesNo::cDialogYesNo (const string& text) :
 	cMenu (LoadPCX (GFXOD_DIALOG2), MNU_BG_ALPHA),
 	textLabel (position.x + 40, position.y + 40, text),

@@ -45,6 +45,15 @@
 
 using namespace std;
 
+#if defined (_MSC_VER)
+// The purpose of this warning is to avoid to use not fully constructed object.
+// As we use 'this' only to save back reference
+// and use it later once object is fully initialized
+// just ignore the warning.
+# pragma warning (disable:4355) // 'this': used in base member initializer list
+// appear in cGameGUI constructor
+#endif
+
 bool sMouseBox::isTooSmall() const
 {
 	if (startX == -1 || startY == -1 || endX == -1 || endY == -1) return true;
