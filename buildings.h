@@ -81,6 +81,7 @@ struct sBuilding
 	struct Mix_Chunk* Attack;
 	struct Mix_Chunk* Wait;
 
+	sBuilding();
 	void scaleSurfaces (float faktor);
 };
 

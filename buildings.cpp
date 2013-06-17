@@ -1617,6 +1617,22 @@ void cBuilding::makeDetection (cServer& server)
 }
 
 //--------------------------------------------------------------------------
+sBuilding::sBuilding() :
+	img (NULL), img_org (NULL),
+	shw (NULL), shw_org (NULL),
+	eff (NULL), eff_org (NULL),
+	video (NULL),
+	data (),
+	nr (-1),
+	info (NULL),
+	Start (NULL),
+	Running (NULL),
+	Stop (NULL),
+	Attack (NULL),
+	Wait (NULL)
+{}
+
+//--------------------------------------------------------------------------
 void sBuilding::scaleSurfaces (float factor)
 {
 	scaleSurface (img_org, img, (int) (img_org->w * factor), (int) (img_org->h * factor));

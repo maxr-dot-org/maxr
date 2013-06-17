@@ -106,6 +106,7 @@ struct sVehicle
 	struct Mix_Chunk* DriveWater;
 	struct Mix_Chunk* Attack;
 
+	sVehicle();
 	void scaleSurfaces (float factor);
 };
 

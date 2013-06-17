@@ -29,8 +29,8 @@
 #ifdef WIN32
 
 #else
-#include <sys/stat.h>
-#include <unistd.h>
+# include <sys/stat.h>
+# include <unistd.h>
 #endif
 
 #include "loaddata.h"
@@ -51,8 +51,8 @@
 #include "video.h"
 
 #ifdef WIN32
-#	include <shlobj.h>
-#	include <direct.h>
+# include <shlobj.h>
+# include <direct.h>
 #endif
 
 using namespace std;
@@ -174,7 +174,6 @@ int LoadData (void* data)
 	// Load Languagepack
 	MakeLog ("Loading languagepack...", 0, 2);
 
-	string sTmpString;
 	string sLang = cSettings::getInstance().getLanguage();
 	//FIXME: here is the assumption made that the file always exists with lower cases
 	for (int i = 0; i <= 2; i++)
@@ -184,7 +183,7 @@ int LoadData (void* data)
 			sLang[i] += 32;
 		}
 	}
-	sTmpString = cSettings::getInstance().getLangPath();
+	string sTmpString = cSettings::getInstance().getLangPath();
 	sTmpString += PATH_DELIMITER "lang_";
 	sTmpString += sLang;
 	sTmpString += ".xml";
@@ -446,6 +445,14 @@ static int LoadGraphicToSurface (SDL_Surface*& dest, const char* directory, cons
 	return 1;
 }
 
+static int LoadGraphicToSurface (AutoSurface& dest, const char* directory, const char* filename)
+{
+	SDL_Surface* surface = NULL;
+	const int res = LoadGraphicToSurface (surface, directory, filename);
+	dest = surface;
+	return res;
+}
+
 /**
  * Loads a effectgraphic to the surface
  * @param dest Destination surface
@@ -601,6 +608,8 @@ static int LoadEffects (const char* path)
 {
 	Log.write ("Loading Effects", LOG_TYPE_INFO);
 
+	if (DEDICATED_SERVER) return 1;
+
 	LoadEffectGraphicToSurface (EffectsData.fx_explo_small, path, "explo_small.pcx");
 	LoadEffectGraphicToSurface (EffectsData.fx_explo_big, path, "explo_big.pcx");
 	LoadEffectGraphicToSurface (EffectsData.fx_explo_water, path, "explo_water.pcx");
@@ -622,13 +631,12 @@ static int LoadEffects (const char* path)
 static int LoadMusic (const char* path)
 {
 	Log.write ("Loading music", LOG_TYPE_INFO);
-	string sTmpString;
 	char sztmp[32];
 
 	// Prepare music.xml for reading
 	TiXmlDocument MusicXml;
 	ExTiXmlNode* pXmlNode = NULL;
-	sTmpString = path;
+	string sTmpString = path;
 	sTmpString += PATH_DELIMITER "music.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
@@ -828,11 +836,11 @@ static int LoadGraphics (const char* path)
 		LoadGraphicToSurface (GraphicsData.gfx_context_menu, path, "object_menu2.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_destruction, path, "destruction.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_band_small_org, path, "band_small.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_band_small, path, "band_small.pcx");
+		GraphicsData.gfx_band_small = CloneSDLSurface (GraphicsData.gfx_band_small_org);
 		LoadGraphicToSurface (GraphicsData.gfx_band_big_org, path, "band_big.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_band_big, path, "band_big.pcx");
+		GraphicsData.gfx_band_big = CloneSDLSurface (GraphicsData.gfx_band_big_org);
 		LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, path, "big_beton.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_big_beton, path, "big_beton.pcx");
+		GraphicsData.gfx_big_beton = CloneSDLSurface (GraphicsData.gfx_big_beton_org);
 		LoadGraphicToSurface (GraphicsData.gfx_storage, path, "storage.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_storage_ground, path, "storage_ground.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_dialog, path, "dialog.pcx");
@@ -843,7 +851,7 @@ static int LoadGraphics (const char* path)
 		LoadGraphicToSurface (GraphicsData.gfx_player_human, path, "player_human.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_player_none, path, "player_none.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_exitpoints, path, "activate_field.pcx");
+		GraphicsData.gfx_exitpoints = CloneSDLSurface (GraphicsData.gfx_exitpoints_org);
 		LoadGraphicToSurface (GraphicsData.gfx_player_select, path, "customgame_menu.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx");
 		LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
@@ -1042,9 +1050,11 @@ static int LoadVehicles()
 		if (!translateUnitData (v.data.ID, true))
 			Log.write ("Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING);
 
+		if (DEDICATED_SERVER) continue;
+
 		Log.write ("Loading graphics", cLog::eLOG_TYPE_DEBUG);
 
-		// laod infantery graphics
+		// load infantery graphics
 		if (v.data.animationMovement)
 		{
 			SDL_Rect rcDest;
@@ -1598,6 +1608,8 @@ static int LoadBuildings()
 		LoadUnitData (&b.data, sBuildingPath.c_str(), atoi (IDList[i].c_str()));
 		translateUnitData (b.data.ID, false);
 
+		if (DEDICATED_SERVER) continue;
+
 		// load img
 		sTmpString = sBuildingPath;
 		sTmpString += "img.pcx";
@@ -1685,17 +1697,19 @@ static int LoadBuildings()
 	}
 
 	// Dirtsurfaces
-	LoadGraphicToSurface (UnitsData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
-	UnitsData.dirt_big = CloneSDLSurface (UnitsData.dirt_big_org);
-	LoadGraphicToSurface (UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
-	UnitsData.dirt_big_shw = CloneSDLSurface (UnitsData.dirt_big_shw_org);
-	if (UnitsData.dirt_big_shw) SDL_SetAlpha (UnitsData.dirt_big_shw, SDL_SRCALPHA, 50);
-	LoadGraphicToSurface (UnitsData.dirt_small_org,   cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
-	UnitsData.dirt_small = CloneSDLSurface (UnitsData.dirt_small_org);
-	LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
-	UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
-	if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
-
+	if (!DEDICATED_SERVER)
+	{
+		LoadGraphicToSurface (UnitsData.dirt_big_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big.pcx");
+		UnitsData.dirt_big = CloneSDLSurface (UnitsData.dirt_big_org);
+		LoadGraphicToSurface (UnitsData.dirt_big_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_big_shw.pcx");
+		UnitsData.dirt_big_shw = CloneSDLSurface (UnitsData.dirt_big_shw_org);
+		if (UnitsData.dirt_big_shw) SDL_SetAlpha (UnitsData.dirt_big_shw, SDL_SRCALPHA, 50);
+		LoadGraphicToSurface (UnitsData.dirt_small_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small.pcx");
+		UnitsData.dirt_small = CloneSDLSurface (UnitsData.dirt_small_org);
+		LoadGraphicToSurface (UnitsData.dirt_small_shw_org, cSettings::getInstance().getBuildingsPath().c_str(), "dirt_small_shw.pcx");
+		UnitsData.dirt_small_shw = CloneSDLSurface (UnitsData.dirt_small_shw_org);
+		if (UnitsData.dirt_small_shw) SDL_SetAlpha (UnitsData.dirt_small_shw, SDL_SRCALPHA, 50);
+	}
 	// set building numbers
 	for (unsigned int i = 0; i < UnitsData.building.size(); ++i)
 	{

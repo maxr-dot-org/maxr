@@ -2035,6 +2035,30 @@ void cVehicle::makeDetection (cServer& server)
 }
 
 //-----------------------------------------------------------------------------
+sVehicle::sVehicle() :
+	build (NULL), build_org (NULL),
+	build_shw (NULL), build_shw_org (NULL),
+	clear_small (NULL), clear_small_org (NULL),
+	clear_small_shw (NULL), clear_small_shw_org (NULL),
+	overlay (NULL), overlay_org (NULL),
+	storage (NULL),
+	FLCFile (NULL),
+	data(),
+	nr (-1),
+	info (NULL),
+	Wait (NULL), WaitWater (NULL),
+	Start (NULL), StartWater (NULL),
+	Stop (NULL), StopWater (NULL),
+	Drive (NULL), DriveWater (NULL),
+	Attack (NULL)
+{
+	for (int i = 0; i != 8; ++i) img[i] = NULL;
+	for (int i = 0; i != 8; ++i) img_org[i] = NULL;
+	for (int i = 0; i != 8; ++i) shw[i] = NULL;
+	for (int i = 0; i != 8; ++i) shw_org[i] = NULL;
+}
+
+//-----------------------------------------------------------------------------
 void sVehicle::scaleSurfaces (float factor)
 {
 	int width, height;

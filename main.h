@@ -37,6 +37,7 @@
 #include <vector>
 #include <time.h>
 #include <SDL.h>
+#include "autosurface.h"
 #include "tinyxml.h"
 #include "defines.h"
 #include "language.h"
@@ -268,59 +269,59 @@ struct sUnitData
 class cGraphicsData
 {
 public:
-	SDL_Surface* gfx_Chand;
-	SDL_Surface* gfx_Cno;
-	SDL_Surface* gfx_Cselect;
-	SDL_Surface* gfx_Cmove;
-	SDL_Surface* gfx_Chelp;
-	SDL_Surface* gfx_Cattack;
-	SDL_Surface* gfx_Cpfeil1;
-	SDL_Surface* gfx_Cpfeil2;
-	SDL_Surface* gfx_Cpfeil3;
-	SDL_Surface* gfx_Cpfeil4;
-	SDL_Surface* gfx_Cpfeil6;
-	SDL_Surface* gfx_Cpfeil7;
-	SDL_Surface* gfx_Cpfeil8;
-	SDL_Surface* gfx_Cpfeil9;
-	SDL_Surface* gfx_hud_stuff;
-	SDL_Surface* gfx_shadow;
-	SDL_Surface* gfx_tmp;
-	SDL_Surface* gfx_context_menu;
-	SDL_Surface* gfx_destruction;
-	SDL_Surface* gfx_destruction_glas;
-	SDL_Surface* gfx_Cband;
-	SDL_Surface* gfx_band_small;
-	SDL_Surface* gfx_band_big;
-	SDL_Surface* gfx_band_small_org;
-	SDL_Surface* gfx_band_big_org;
-	SDL_Surface* gfx_big_beton_org;
-	SDL_Surface* gfx_big_beton;
-	SDL_Surface* gfx_Ctransf;
-	SDL_Surface* gfx_Cload;
-	SDL_Surface* gfx_Cactivate;
-	SDL_Surface* gfx_storage;
-	SDL_Surface* gfx_storage_ground;
-	SDL_Surface* gfx_dialog;
-	SDL_Surface* gfx_edock;
-	SDL_Surface* gfx_ehangar;
-	SDL_Surface* gfx_edepot;
-	SDL_Surface* gfx_Cmuni;
-	SDL_Surface* gfx_Crepair;
-	SDL_Surface* gfx_panel_top;
-	SDL_Surface* gfx_panel_bottom;
-	SDL_Surface* gfx_Csteal;
-	SDL_Surface* gfx_Cdisable;
-	SDL_Surface* gfx_menu_stuff;
-	SDL_Surface* gfx_hud_extra_players;
-	SDL_Surface* gfx_player_pc;
-	SDL_Surface* gfx_player_human;
-	SDL_Surface* gfx_player_none;
-	SDL_Surface* gfx_player_select;
-	SDL_Surface* gfx_exitpoints_org;
-	SDL_Surface* gfx_exitpoints;
-	SDL_Surface* gfx_menu_buttons;
-	SDL_Surface* gfx_player_ready;
-	SDL_Surface* gfx_hud_chatbox;
+	AutoSurface gfx_Chand;
+	AutoSurface gfx_Cno;
+	AutoSurface gfx_Cselect;
+	AutoSurface gfx_Cmove;
+	AutoSurface gfx_Chelp;
+	AutoSurface gfx_Cattack;
+	AutoSurface gfx_Cpfeil1;
+	AutoSurface gfx_Cpfeil2;
+	AutoSurface gfx_Cpfeil3;
+	AutoSurface gfx_Cpfeil4;
+	AutoSurface gfx_Cpfeil6;
+	AutoSurface gfx_Cpfeil7;
+	AutoSurface gfx_Cpfeil8;
+	AutoSurface gfx_Cpfeil9;
+	AutoSurface gfx_hud_stuff;
+	AutoSurface gfx_shadow;
+	AutoSurface gfx_tmp;
+	AutoSurface gfx_context_menu;
+	AutoSurface gfx_destruction;
+	AutoSurface gfx_destruction_glas;
+	AutoSurface gfx_Cband;
+	AutoSurface gfx_band_small;
+	AutoSurface gfx_band_big;
+	AutoSurface gfx_band_small_org;
+	AutoSurface gfx_band_big_org;
+	AutoSurface gfx_big_beton_org;
+	AutoSurface gfx_big_beton;
+	AutoSurface gfx_Ctransf;
+	AutoSurface gfx_Cload;
+	AutoSurface gfx_Cactivate;
+	AutoSurface gfx_storage;
+	AutoSurface gfx_storage_ground;
+	AutoSurface gfx_dialog;
+	AutoSurface gfx_edock;
+	AutoSurface gfx_ehangar;
+	AutoSurface gfx_edepot;
+	AutoSurface gfx_Cmuni;
+	AutoSurface gfx_Crepair;
+	AutoSurface gfx_panel_top;
+	AutoSurface gfx_panel_bottom;
+	AutoSurface gfx_Csteal;
+	AutoSurface gfx_Cdisable;
+	AutoSurface gfx_menu_stuff;
+	AutoSurface gfx_hud_extra_players;
+	AutoSurface gfx_player_pc;
+	AutoSurface gfx_player_human;
+	AutoSurface gfx_player_none;
+	AutoSurface gfx_player_select;
+	AutoSurface gfx_exitpoints_org;
+	AutoSurface gfx_exitpoints;
+	AutoSurface gfx_menu_buttons;
+	AutoSurface gfx_player_ready;
+	AutoSurface gfx_hud_chatbox;
 
 	std::string DialogPath;
 	std::string Dialog2Path;
@@ -351,12 +352,12 @@ public:
 class cResourceData
 {
 public:
-	SDL_Surface* res_metal_org;
-	SDL_Surface* res_metal;
-	SDL_Surface* res_oil_org;
-	SDL_Surface* res_oil;
-	SDL_Surface* res_gold_org;
-	SDL_Surface* res_gold;
+	AutoSurface res_metal_org;
+	AutoSurface res_metal;
+	AutoSurface res_oil_org;
+	AutoSurface res_oil;
+	AutoSurface res_gold_org;
+	AutoSurface res_gold;
 } EX ResourceData;
 
 // UnitsData - Class containing all building/vehicle surfaces & data ///////////////
@@ -383,21 +384,21 @@ public:
 	const sID& getEngineerID() const { return engineerID; }
 	const sID& getSurveyorID() const { return surveyorID; }
 
-	SDL_Surface* dirt_small_org;
-	SDL_Surface* dirt_small;
-	SDL_Surface* dirt_small_shw_org;
-	SDL_Surface* dirt_small_shw;
-	SDL_Surface* dirt_big_org;
-	SDL_Surface* dirt_big;
-	SDL_Surface* dirt_big_shw_org;
-	SDL_Surface* dirt_big_shw;
+	AutoSurface dirt_small_org;
+	AutoSurface dirt_small;
+	AutoSurface dirt_small_shw_org;
+	AutoSurface dirt_small_shw;
+	AutoSurface dirt_big_org;
+	AutoSurface dirt_big;
+	AutoSurface dirt_big_shw_org;
+	AutoSurface dirt_big_shw;
 
-	SDL_Surface* ptr_small_beton;
-	SDL_Surface* ptr_small_beton_org;
-	SDL_Surface* ptr_connector;
-	SDL_Surface* ptr_connector_org;
-	SDL_Surface* ptr_connector_shw;
-	SDL_Surface* ptr_connector_shw_org;
+	AutoSurface ptr_small_beton;
+	AutoSurface ptr_small_beton_org;
+	AutoSurface ptr_connector;
+	AutoSurface ptr_connector_org;
+	AutoSurface ptr_connector_shw;
+	AutoSurface ptr_connector_shw_org;
 
 	//------------------------------------------------------------
 private:
