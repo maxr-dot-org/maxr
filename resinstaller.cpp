@@ -3216,10 +3216,10 @@ int installVehicleSounds()
 	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "start.wav", 0);
 	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "drive.wav", 1);
 	copyWAV( sMAXPath + "APC7" + waveExtension, path + "stop.wav");
-	copyWAV( sMAXPath + "SUB2" + waveExtension, path + "wait_water.wav");
-	copyPartOfWAV( sMAXPath + "SUB6" + waveExtension, path + "start_water.wav", 0);
-	copyPartOfWAV( sMAXPath + "SUB6" + waveExtension, path + "drive_water.wav", 1);
-	copyWAV( sMAXPath + "SUB8" + waveExtension, path + "stop_water.wav");
+	copyWAV( sMAXPath + "APC1" + waveExtension, path + "wait_water.wav");
+	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "start_water.wav", 0);
+	copyPartOfWAV( sMAXPath + "APC5" + waveExtension, path + "drive_water.wav", 1);
+	copyWAV( sMAXPath + "APC7" + waveExtension, path + "stop_water.wav");
 		
 	//assault
 	path = sOutputPath + "vehicles" + PATH_DELIMITER + "assault" + PATH_DELIMITER;
