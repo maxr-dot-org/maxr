@@ -8,6 +8,7 @@
     <Last_Change time="2007-10-02 19:51:00"/>
   </Header>
   <Vehicles>
+    <Scout directory="scout" num="27"/>
     <Surveyor directory="surveyor" num="31"/>
     <APC directory="apc" num="6"/>
     <Pionier directory="pionier" num="24"/>
