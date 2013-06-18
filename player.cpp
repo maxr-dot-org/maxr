@@ -259,7 +259,7 @@ T* getPreviousUnitById (T* root, unsigned int id)
 	T* it = root;
 	for (; it->next; it = it->next)
 	{
-		if (it->next->iID < id)
+		if (it->next->iID > id)
 			return it;
 	}
 	return it;
