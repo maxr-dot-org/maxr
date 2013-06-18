@@ -51,7 +51,7 @@ void cJobContainer::run (cGameTimer& gameTimer)
 
 		if (!job->finished) job->run (gameTimer);
 
-		if (job->finished) releaseJob (it);
+		if (job->finished) it = releaseJob (it);
 		else ++it;
 	}
 }
