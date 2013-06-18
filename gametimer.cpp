@@ -171,8 +171,8 @@ bool cGameTimerClient::nextTickAllowed()
 void cGameTimerClient::run (cMenu* activeMenu)
 {
 	// maximum time before GUI update
-	const unsigned int maxWorkingTime = 50; // 500 milliseconds
-	unsigned int startGameTime = gameTime;
+	const unsigned int maxWorkingTime = 500; // 500 milliseconds
+	unsigned int startGameTime = SDL_GetTicks();
 
 	while (popEvent ())
 	{
@@ -205,7 +205,8 @@ void cGameTimerClient::run (cMenu* activeMenu)
 			message->pushInt32 (gameTime);
 			client->sendNetMessage (message);
 		}
-		if (gameTime - startGameTime >= maxWorkingTime) break;
+		if (SDL_GetTicks() - startGameTime >= maxWorkingTime) 
+			break;
 	}
 
 	//check whether the client time lags too much behind the server time and add an extra increment of the client time
