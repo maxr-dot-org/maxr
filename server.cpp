@@ -2475,7 +2475,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 			if (vehicle.ServerMoveJob)
 			{
 				sendMoveJobServer (*this, *vehicle.ServerMoveJob, MapPlayer.Nr);
-				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow)
+				if (Contains (ActiveMJobs, vehicle.ServerMoveJob) && !vehicle.ServerMoveJob->bFinished && !vehicle.ServerMoveJob->bEndForNow && vehicle.moving)
 				{
 					Log.write (" Server: sending extra MJOB_OK for unit ID " + iToStr (vehicle.iID) + " to client " + iToStr (MapPlayer.Nr), cLog::eLOG_TYPE_NET_DEBUG);
 					cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
