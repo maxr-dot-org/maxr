@@ -45,6 +45,7 @@ public:
 	int size();
 	void write (const T element);
 	T read();
+	const T peep();
 };
 
 template<typename T> int cRingbuffer<T>::size()
@@ -112,5 +113,13 @@ template<typename T> T cRingbuffer<T>::read()
 	}
 	return element;
 }
+
+template<typename T> const T cRingbuffer<T>::peep()
+{
+	cMutex::Lock lock (mutex);
+
+	return elements[read_];
+}
+
 
 #endif //ringbuffer_h
