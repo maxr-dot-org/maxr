@@ -105,7 +105,7 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 			if (!client)
 			{
 				//should not happen
-				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR); //TODO: wir sind noch im landing menü. Was also tun mit der message? :-/
+				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
 				break;
 			}
 			client->HandleNetMessage (&message, activeMenu);
