@@ -1370,10 +1370,8 @@ bool cVehicle::CanTransferTo (const cGameGUI& gameGUI, cMapField* OverUnitField)
 //-----------------------------------------------------------------------------
 bool cVehicle::makeAttackOnThis (cServer& server, cUnit* opponentUnit, const string& reasonForLog) const
 {
-	cVehicle* targetVehicle = 0;
-	cBuilding* targetBuilding = 0;
-	selectTarget (targetVehicle, targetBuilding, PosX, PosY, opponentUnit->data.canAttack, server.Map);
-	if (targetVehicle == this)
+	cUnit* target = selectTarget (PosX, PosY, opponentUnit->data.canAttack, server.Map);
+	if (target == this)
 	{
 		int iOff = server.Map->getOffset (PosX, PosY);
 		Log.write (" Server: " + reasonForLog + ": attacking offset " + iToStr (iOff) + " Agressor ID: " + iToStr (opponentUnit->iID), cLog::eLOG_TYPE_NET_DEBUG);
@@ -1435,17 +1433,15 @@ bool cVehicle::InSentryRange (cServer& server)
 bool cVehicle::isOtherUnitOffendedByThis (cServer& server, const cUnit& otherUnit) const
 {
 	// don't treat the cheap buildings (connectors, roads, beton blocks) as offendable
-	bool otherUnitIsCheapBuilding = (otherUnit.isBuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2);
+	bool otherUnitIsCheapBuilding = (otherUnit.isBuilding() && otherUnit.data.ID.getUnitDataOriginalVersion()->buildCosts > 2); //FIXME: isn't the check inverted?
 
 	if (otherUnitIsCheapBuilding == false
 		&& isInRange (otherUnit.PosX, otherUnit.PosY)
 		&& canAttackObjectAt (otherUnit.PosX, otherUnit.PosY, server.Map, true, false))
 	{
 		// test, if this vehicle can really attack the opponentVehicle
-		cVehicle* selectedTargetVehicle = 0;
-		cBuilding* selectedTargetBuilding = 0;
-		selectTarget (selectedTargetVehicle, selectedTargetBuilding, otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map);
-		if (selectedTargetVehicle == &otherUnit || selectedTargetBuilding == &otherUnit)
+		cUnit* target = selectTarget (otherUnit.PosX, otherUnit.PosY, data.canAttack, server.Map);
+		if (target == &otherUnit)
 			return true;
 	}
 	return false;

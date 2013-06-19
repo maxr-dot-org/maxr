@@ -35,50 +35,34 @@
 using namespace std;
 
 //--------------------------------------------------------------------------
-void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map)
+cUnit* selectTarget (int x, int y, char attackMode, cMap* map)
 {
-	targetVehicle = NULL;
-	targetBuilding = NULL;
+	cVehicle* targetVehicle = NULL;
+	cBuilding* targetBuilding = NULL;
 	int offset = map->getOffset (x, y);
 	cMapField& mapField = (*map)[offset];
 
-	if ((attackMode & TERRAIN_AIR) && (attackMode & TERRAIN_GROUND))
+
+	//planes
+	targetVehicle = mapField.getPlane();
+	if (targetVehicle && targetVehicle->FlightHigh >  0 && !(attackMode & TERRAIN_AIR)   ) targetVehicle = NULL;
+	if (targetVehicle && targetVehicle->FlightHigh == 0 && !(attackMode & TERRAIN_GROUND)) targetVehicle = NULL;
+
+	//vehicles
+	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
 	{
-		targetVehicle = mapField.getPlane();
-
-		if (!targetVehicle) targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y)) targetVehicle = NULL;
-
-		if (!targetVehicle) targetBuilding = mapField.getBuilding();
-	}
-	else if ((attackMode & TERRAIN_GROUND) && (attackMode & AREA_SUB))
-	{
-		targetVehicle = mapField.getPlane();
-		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
-
-		if (!targetVehicle) targetVehicle = mapField.getVehicle();
-
-		if (!targetVehicle) targetBuilding = mapField.getBuilding();
-	}
-	else if (attackMode & TERRAIN_GROUND)
-	{
-		targetVehicle = mapField.getPlane();
-		if (targetVehicle && targetVehicle->FlightHigh > 0) targetVehicle = NULL;
-
-		if (!targetVehicle) targetVehicle = mapField.getVehicle();
-		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y)) targetVehicle = NULL;
-
-		if (!targetVehicle) targetBuilding = mapField.getBuilding();
-	}
-	else if (attackMode & TERRAIN_AIR)
-	{
-		targetVehicle = mapField.getPlane();
-		if (targetVehicle && targetVehicle->FlightHigh == 0) targetVehicle = NULL;
+		targetVehicle = mapField.getVehicle();
+		if (targetVehicle && (targetVehicle->data.isStealthOn & TERRAIN_SEA) && map->isWater (x, y) && !(attackMode & AREA_SUB)) targetVehicle = NULL;
 	}
 
-	//check for rubble
-	if (targetBuilding && !targetBuilding->owner)
-		targetBuilding = NULL;
+	//buildings
+	if (!targetVehicle && (attackMode & TERRAIN_GROUND))
+	{
+		targetBuilding = mapField.getBuilding();
+		if (targetBuilding && !targetBuilding->owner) targetBuilding = NULL;
+	}
+
+	return targetVehicle ? static_cast<cUnit*> (targetVehicle) : static_cast<cUnit*> (targetBuilding);
 }
 
 //--------------------------------------------------------------------------
@@ -139,14 +123,12 @@ void cServerAttackJob::lockTarget (int offset)
 	//make sure, that the unit data has been send to all clients
 	server->checkPlayerUnits();
 
-	cVehicle* targetVehicle;
-	cBuilding* targetBuilding;
 	cMap& map = *server->Map;
-	selectTarget (targetVehicle, targetBuilding, offset % map.getSize(), offset / map.getSize(), attackMode, &map);
-	if (targetVehicle)
-		targetVehicle->isBeeingAttacked = true;
+	cUnit* target = selectTarget (offset % map.getSize(), offset / map.getSize(), attackMode, &map);
+	if (target)
+		target->isBeeingAttacked = true;
 
-	bool isAir = (targetVehicle && targetVehicle->data.factorAir > 0);
+	bool isAir = (target && target->isVehicle() && static_cast<cVehicle*> (target)->FlightHigh > 0);
 
 	// if the agressor can attack air and land units,
 	// decide whether it is currently attacking air or land targets
@@ -164,17 +146,16 @@ void cServerAttackJob::lockTarget (int offset)
 		std::vector<cBuilding*>& buildings = map[offset].getBuildings();
 		for (std::vector<cBuilding*>::iterator it = buildings.begin(); it != buildings.end(); ++it)
 		{
-			targetBuilding = *it;
 			(*it)->isBeeingAttacked = true;
 		}
 	}
 
-	if (targetVehicle == 0 && targetBuilding == 0)
+	if (target == NULL)
 		return;
 
-	//change offset, to match the upper left field of big vehicles
-	if (targetVehicle != 0 && targetVehicle->data.isBig)
-		offset = map.getOffset (targetVehicle->PosX, targetVehicle->PosY);
+	//change offset, to match the upper left field of big units
+	if (target && target->data.isBig)
+		offset = map.getOffset (target->PosX, target->PosY);
 
 	const std::vector<cPlayer*>& playerList = *server->PlayerList;
 	for (unsigned int i = 0; i  < playerList.size(); i++)
@@ -182,15 +163,15 @@ void cServerAttackJob::lockTarget (int offset)
 		const cPlayer* player = playerList[i];
 
 		// target in sight?
-		if (targetVehicle != NULL && !player->canSeeAnyAreaUnder (*targetVehicle)) continue;
-		if (targetBuilding != NULL && !player->canSeeAnyAreaUnder (*targetBuilding)) continue;
+		if (!player->canSeeAnyAreaUnder (*target)) continue;
 
 		cNetMessage* message = new cNetMessage (GAME_EV_ATTACKJOB_LOCK_TARGET);
-		if (targetVehicle != 0)
+		if (target->isVehicle())
 		{
-			message->pushChar (targetVehicle->OffX);
-			message->pushChar (targetVehicle->OffY);
-			message->pushInt32 (targetVehicle->iID);
+			cVehicle* v = (cVehicle*) target;
+			message->pushChar (v->OffX);
+			message->pushChar (v->OffY);
+			message->pushInt32 (v->iID);
 		}
 		else
 		{
@@ -363,60 +344,54 @@ void cServerAttackJob::makeImpact (int x, int y)
 	if (map.isValidPos (x, y) == false) return;
 	int offset = map.getOffset (x, y);
 
-	cVehicle* targetVehicle = 0;
-	cBuilding* targetBuilding = 0;
-	selectTarget (targetVehicle, targetBuilding, x, y, attackMode, &map);
+	cUnit* target = selectTarget (x, y, attackMode, &map);
 
 	//check, whether the target is already in the target list.
 	//this is needed, to make sure, that a cluster attack doesn't hit the same unit multiple times
-	if (Contains (vehicleTargets, targetVehicle))
+	if (Contains (targets, target))
 		return;
-	if (Contains (buildingTargets, targetBuilding))
-		return;
-	if (targetVehicle != 0)
-		vehicleTargets.push_back (targetVehicle);
-	if (targetBuilding != 0)
-		buildingTargets.push_back (targetBuilding);
+
+	if (target != 0)
+		targets.push_back (target);
 
 	int remainingHP = 0;
 	int id = 0;
 	cPlayer* owner = 0;
-	bool isAir = (targetVehicle != 0 && targetVehicle->data.factorAir > 0);
+	bool isAir = (target && target->isVehicle() && static_cast<cVehicle*>(target)->FlightHigh > 0);
 
 	// in the time between the first locking and the impact, it is possible that a vehicle drove onto the target field
 	// so relock the target, to ensure synchronity
-	if (targetVehicle != 0 && targetVehicle->isBeeingAttacked == false)
+	if (target && target->isBeeingAttacked == false)
 	{
 		Log.write (" Server: relocking target", cLog::eLOG_TYPE_NET_DEBUG);
 		lockTarget (offset);
 	}
 
 	// if target found, make the impact
-	cUnit* targetUnit = ( (targetVehicle != 0) ? (cUnit*) targetVehicle : (cUnit*) targetBuilding);
-	if (targetUnit != 0)
+	if (target != 0)
 	{
 		// if taget is a stealth unit, make it visible on all clients
-		if (targetUnit->data.isStealthOn != TERRAIN_NONE)
+		if (target->data.isStealthOn != TERRAIN_NONE)
 		{
 			std::vector<cPlayer*> playerList = *server->PlayerList;
 			for (unsigned int i = 0; i < playerList.size(); i++)
 			{
 				cPlayer* player = playerList[i];
-				if (targetUnit->owner == player)
+				if (target->owner == player)
 					continue;
 				if (!player->ScanMap[offset])
 					continue;
-				targetUnit->setDetectedByPlayer (*server, player);
+				target->setDetectedByPlayer (*server, player);
 			}
 			server->checkPlayerUnits();
 		}
 
-		id = targetUnit->iID;
-		targetUnit->data.hitpointsCur = targetUnit->calcHealth (damage);
-		remainingHP = targetUnit->data.hitpointsCur;
-		targetUnit->hasBeenAttacked = true;
-		owner = targetUnit->owner;
-		Log.write (" Server: unit '" + targetUnit->getDisplayName() + "' (ID: " + iToStr (targetUnit->iID) + ") hit. Remaining HP: " + iToStr (targetUnit->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
+		id = target->iID;
+		target->data.hitpointsCur = target->calcHealth (damage);
+		remainingHP = target->data.hitpointsCur;
+		target->hasBeenAttacked = true;
+		owner = target->owner;
+		Log.write (" Server: unit '" + target->getDisplayName() + "' (ID: " + iToStr (target->iID) + ") hit. Remaining HP: " + iToStr (target->data.hitpointsCur), cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
 	//workaround
@@ -427,20 +402,19 @@ void cServerAttackJob::makeImpact (int x, int y)
 	sendAttackJobImpact (offset, remainingHP, id);
 
 	//remove the destroyed units
-	if (targetBuilding && targetBuilding->data.hitpointsCur <= 0)
+	if (target && target->data.hitpointsCur <= 0)
 	{
-		server->destroyUnit (targetBuilding);
-		targetBuilding = 0;
-	}
-	else if (targetVehicle && targetVehicle->data.hitpointsCur <= 0)
-	{
-		server->destroyUnit (targetVehicle);
-		targetVehicle = 0;
+		if (target->isBuilding())
+			server->destroyUnit (static_cast<cBuilding*>(target));
+		else
+			server->destroyUnit (static_cast<cVehicle*>(target));
+
+		target = 0;
 	}
 
 	//attack finished. reset attacking and isBeeingAttacked flags
-	if (targetVehicle)
-		targetVehicle->isBeeingAttacked = false;
+	if (target)
+		target->isBeeingAttacked = false;
 
 	if (isAir == false)
 	{
@@ -452,8 +426,9 @@ void cServerAttackJob::makeImpact (int x, int y)
 		unit->attacking = false;
 
 	//check whether a following sentry mode attack is possible
-	if (targetVehicle)
-		targetVehicle->InSentryRange (*server);
+	if (target && target->isVehicle())
+		static_cast<cVehicle*> (target)->InSentryRange (*server);
+
 	//check whether the agressor itself is in sentry range
 	if (unit && unit->isVehicle())
 		static_cast<cVehicle*> (unit)->InSentryRange (*server);

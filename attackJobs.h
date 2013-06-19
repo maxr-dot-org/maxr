@@ -35,7 +35,7 @@ class cVehicle;
 /**
 * selects a target unit from a map field, depending on the attack mode.
 */
-void selectTarget (cVehicle*& targetVehicle, cBuilding*& targetBuilding, int x, int y, char attackMode, cMap* map);
+cUnit* selectTarget (int x, int y, char attackMode, cMap* map);
 
 //--------------------------------------------------------------------------
 class cServerAttackJob
@@ -76,8 +76,7 @@ private:
 	int iTargetOff;
 	int damage;
 	char attackMode;
-	std::vector<cVehicle*> vehicleTargets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
-	std::vector<cBuilding*> buildingTargets;
+	std::vector<cUnit*> targets; /** these lists are only used to sort out duplicate targets, when making a cluster impact */
 };
 
 

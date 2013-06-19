@@ -2222,27 +2222,25 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				// check, if the player wants to attack:
 				if (changeAllowed && mouse->cur == GraphicsData.gfx_Cattack && selectedVehicle && !selectedVehicle->attacking && !selectedVehicle->MoveJobActive)
 				{
-					cVehicle* vehicle;
-					cBuilding* building;
-					selectTarget (vehicle, building, mouseMapX, mouseMapY, selectedVehicle->data.canAttack, client->getMap());
+					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedVehicle->data.canAttack, client->getMap());
 
 					if (selectedVehicle->isInRange (mouseMapX, mouseMapY))
 					{
 						//find target ID
 						int targetId = 0;
-						if (vehicle) targetId = vehicle->iID;
+						if (target && target->isVehicle()) targetId = target->iID;
 
 						Log.write (" Client: want to attack " + iToStr (mouseMapX) + ":" + iToStr (mouseMapY) + ", Vehicle ID: " + iToStr (targetId), cLog::eLOG_TYPE_NET_DEBUG);
 						sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), selectedVehicle->iID, true);
 					}
-					else if (vehicle || building)
+					else if (target)
 					{
 						cPathCalculator pc (selectedVehicle->PosX, selectedVehicle->PosY, client->getMap(), selectedVehicle, mouseMapX, mouseMapY);
 						sWaypoint* path = pc.calcPath();
 						if (path)
 						{
 							sendMoveJob (*client, path, selectedVehicle->iID);
-							sendEndMoveAction (*client, selectedVehicle->iID, vehicle ? vehicle->iID : building->iID, EMAT_ATTACK);
+							sendEndMoveAction (*client, selectedVehicle->iID, target->iID, EMAT_ATTACK);
 						}
 						else
 						{
@@ -2255,10 +2253,8 @@ void cGameGUI::handleMouseInputExtended (sMouseState mouseState)
 				{
 					//find target ID
 					int targetId = 0;
-					cVehicle* vehicle;
-					cBuilding* building;
-					selectTarget (vehicle, building, mouseMapX, mouseMapY, selectedBuilding->data.canAttack, client->getMap());
-					if (vehicle) targetId = vehicle->iID;
+					cUnit* target = selectTarget (mouseMapX, mouseMapY, selectedBuilding->data.canAttack, client->getMap());
+					if (target && target->isVehicle()) targetId = target->iID;
 
 					int offset = map->getOffset (selectedBuilding->PosX, selectedBuilding->PosY);
 					sendWantAttack (*client, targetId, client->getMap()->getOffset (mouseMapX, mouseMapY), offset, false);
@@ -3501,44 +3497,24 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 
 	const sUnitData& data = selectedUnit->data;
 
-	cVehicle* v;
-	cBuilding* b;
-	selectTarget (v, b, x, y, data.canAttack, client->getMap());
+	cUnit* target = selectTarget (x, y, data.canAttack, client->getMap());
 
-	if (!(v || b) || (v == selectedUnit) || (b == selectedUnit))
+	if (!target || (target == selectedUnit))
 	{
 		SDL_Rect r = {1, 29, 35, 3};
 		SDL_FillRect (GraphicsData.gfx_Cattack, &r, 0);
 		return;
 	}
 
-	int t = 0;
-	if (v)
-		t = v->data.hitpointsCur;
-	else if (b)
-		t = b->data.hitpointsCur;
+	int t = target->data.hitpointsCur;
+	int wc = (int) ( (float) t / target->data.hitpointsMax * 35);
 
-	int wc = 0;
-	if (t)
-	{
-		if (v)
-			wc = (int) ( (float) t / v->data.hitpointsMax * 35);
-		else if (b)
-			wc = (int) ( (float) t / b->data.hitpointsMax * 35);
-	}
-
-	if (v)
-		t = v->calcHealth (data.damage);
-	else if (b)
-		t = b->calcHealth (data.damage);
-
+	t = target->calcHealth (data.damage);
+	
 	int wp = 0;
 	if (t)
 	{
-		if (v)
-			wp = (int) ((float) t / v->data.hitpointsMax * 35);
-		else if (b)
-			wp = (int) ((float) t / b->data.hitpointsMax * 35);
+		wp = (int) ((float) t / target->data.hitpointsMax * 35);
 	}
 	SDL_Rect r = {1, 29, Uint16 (wp), 3};
 

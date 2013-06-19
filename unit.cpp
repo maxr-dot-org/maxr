@@ -1164,29 +1164,24 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	if (data.muzzleType == sUnitData::MUZZLE_TYPE_TORPEDO && map->isWaterOrCoast (x, y) == false)
 		return false;
 
-	cVehicle* targetVehicle = 0;
-	cBuilding* targetBuilding = 0;
-	selectTarget (targetVehicle, targetBuilding, x, y, data.canAttack, map);
+	cUnit* target = selectTarget (x, y, data.canAttack, map);
 
-	if (targetVehicle && targetVehicle->iID == iID)   //a unit cannot fire on itself
+	if (target && target->iID == iID)   //a unit cannot fire on itself
 		return false;
 
-	if (targetBuilding && targetBuilding->iID == iID)   //a unit cannot fire on itself
+	if (owner->ScanMap[off] == false && !forceAttack)
 		return false;
-
-	if (owner->ScanMap[off] == false)
-		return forceAttack ? true : false;
 
 	if (forceAttack)
 		return true;
 
-	if (targetBuilding && isVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))     //do not fire on e.g. platforms, connectors etc.
-		return false;																	//see ticket #436 on bug tracker
-
-	if ((targetBuilding && targetBuilding->owner == owner) || (targetVehicle && targetVehicle->owner == owner))
+	if (target == NULL)
 		return false;
 
-	if (targetBuilding == 0 && targetVehicle == 0)
+	if (target->isBuilding() && isVehicle() && data.factorAir == 0 && map->possiblePlace (*static_cast<const cVehicle*> (this), x, y))     //do not fire on e.g. platforms, connectors etc.
+		return false;                                                                                                                      //see ticket #436 on bug tracker
+
+	if (target->owner == owner)
 		return false;
 
 	return true;
