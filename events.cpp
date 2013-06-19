@@ -104,7 +104,8 @@ static void HandleNetMessage (cClient* client, cMenu* activeMenu, cNetMessage& m
 		case NET_MSG_CLIENT:
 			if (!client)
 			{
-				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR);
+				//should not happen
+				Log.write ("Got a message for client, before the client was started!", cLog::eLOG_TYPE_NET_ERROR); //TODO: wir sind noch im landing menü. Was also tun mit der message? :-/
 				break;
 			}
 			client->HandleNetMessage (&message, activeMenu);
@@ -151,6 +152,13 @@ void cEventHandling::HandleEvents (cMenu& activeMenu, cClient* client)
 
 void cEventHandling::handleNetMessages (cClient* client, cMenu* activeMenu)
 {
+	//do not read client messages, until client is started
+	if ( !client && eventQueue.size() > 0 && eventQueue.peep()->getClass() == NET_MSG_CLIENT )
+	{
+		Log.write("Netmessage for Client received, but no client active. Net event handling paused", cLog::eLOG_TYPE_NET_DEBUG);
+		return;
+	}
+
 	while (eventQueue.size() > 0 && (!client || !client->gameTimer.nextMsgIsNextGameTime))
 	{
 		cNetMessage* message = eventQueue.read();
