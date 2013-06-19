@@ -1866,7 +1866,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		{
 			if (UnitsData.building[i].data.ID.iSecondPart == atoi (idString.substr (idString.find (" ", 0), idString.length()).c_str()))
 			{
-				sprintf (szTmp, "unit with id %.2d %.2d already exists", UnitsData.vehicle[i].data.ID.iFirstPart, UnitsData.vehicle[i].data.ID.iSecondPart);
+				sprintf (szTmp, "unit with id %.2d %.2d already exists", UnitsData.building[i].data.ID.iFirstPart, UnitsData.building[i].data.ID.iSecondPart);
 				Log.write (szTmp, LOG_TYPE_WARNING);
 				return ;
 			}
