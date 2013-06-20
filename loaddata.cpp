@@ -800,70 +800,69 @@ static int LoadGraphics (const char* path)
 {
 	Log.write ("Loading Graphics", LOG_TYPE_INFO);
 	string stmp;
-	if (!DEDICATED_SERVER)
-	{
-		Log.write ("Gamegraphics...", LOG_TYPE_DEBUG);
-		if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, path, "hand.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cno, path, "no.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cselect, path, "select.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cmove, path, "move.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Chelp, path, "help.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Ctransf, path, "transf.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cload, path, "load.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cmuni, path, "muni.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cband, path, "band_cur.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cactivate, path, "activate.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Crepair, path, "repair.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Csteal, path, "steal.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cdisable, path, "disable.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_Cattack, path, "attack.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_hud_stuff, path, "hud_stuff.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_hud_extra_players, path, "hud_extra_players.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_panel_top, path, "panel_top.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_panel_bottom, path, "panel_bottom.pcx") ||
-			!LoadGraphicToSurface (GraphicsData.gfx_menu_stuff, path, "menu_stuff.pcx"))
-		{
-			return 0;
-		}
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, path, "pf_1.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, path, "pf_2.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, path, "pf_3.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil4, path, "pf_4.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil6, path, "pf_6.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil7, path, "pf_7.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil8, path, "pf_8.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_Cpfeil9, path, "pf_9.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_context_menu, path, "object_menu2.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_destruction, path, "destruction.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_band_small_org, path, "band_small.pcx");
-		GraphicsData.gfx_band_small = CloneSDLSurface (GraphicsData.gfx_band_small_org);
-		LoadGraphicToSurface (GraphicsData.gfx_band_big_org, path, "band_big.pcx");
-		GraphicsData.gfx_band_big = CloneSDLSurface (GraphicsData.gfx_band_big_org);
-		LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, path, "big_beton.pcx");
-		GraphicsData.gfx_big_beton = CloneSDLSurface (GraphicsData.gfx_big_beton_org);
-		LoadGraphicToSurface (GraphicsData.gfx_storage, path, "storage.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_storage_ground, path, "storage_ground.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_dialog, path, "dialog.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_edock, path, "edock.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_edepot, path, "edepot.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_ehangar, path, "ehangar.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_player_pc, path, "player_pc.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_player_human, path, "player_human.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_player_none, path, "player_none.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx");
-		GraphicsData.gfx_exitpoints = CloneSDLSurface (GraphicsData.gfx_exitpoints_org);
-		LoadGraphicToSurface (GraphicsData.gfx_player_select, path, "customgame_menu.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
-		LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, path, "hud_chatbox.pcx");
+	if (DEDICATED_SERVER) return 1;
 
-		GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
-		GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
-		GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
-		FileExists (GraphicsData.DialogPath.c_str());
-		FileExists (GraphicsData.Dialog2Path.c_str());
-		FileExists (GraphicsData.Dialog3Path.c_str());
+	Log.write ("Gamegraphics...", LOG_TYPE_DEBUG);
+	if (!LoadGraphicToSurface (GraphicsData.gfx_Chand, path, "hand.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cno, path, "no.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cselect, path, "select.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmove, path, "move.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Chelp, path, "help.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Ctransf, path, "transf.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cload, path, "load.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cmuni, path, "muni.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cband, path, "band_cur.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cactivate, path, "activate.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Crepair, path, "repair.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Csteal, path, "steal.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cdisable, path, "disable.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_Cattack, path, "attack.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_hud_stuff, path, "hud_stuff.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_hud_extra_players, path, "hud_extra_players.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_panel_top, path, "panel_top.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_panel_bottom, path, "panel_bottom.pcx") ||
+		!LoadGraphicToSurface (GraphicsData.gfx_menu_stuff, path, "menu_stuff.pcx"))
+	{
+		return 0;
 	}
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil1, path, "pf_1.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil2, path, "pf_2.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil3, path, "pf_3.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil4, path, "pf_4.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil6, path, "pf_6.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil7, path, "pf_7.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil8, path, "pf_8.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_Cpfeil9, path, "pf_9.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_context_menu, path, "object_menu2.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_destruction, path, "destruction.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_band_small_org, path, "band_small.pcx");
+	GraphicsData.gfx_band_small = CloneSDLSurface (GraphicsData.gfx_band_small_org);
+	LoadGraphicToSurface (GraphicsData.gfx_band_big_org, path, "band_big.pcx");
+	GraphicsData.gfx_band_big = CloneSDLSurface (GraphicsData.gfx_band_big_org);
+	LoadGraphicToSurface (GraphicsData.gfx_big_beton_org, path, "big_beton.pcx");
+	GraphicsData.gfx_big_beton = CloneSDLSurface (GraphicsData.gfx_big_beton_org);
+	LoadGraphicToSurface (GraphicsData.gfx_storage, path, "storage.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_storage_ground, path, "storage_ground.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_dialog, path, "dialog.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_edock, path, "edock.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_edepot, path, "edepot.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_ehangar, path, "ehangar.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_pc, path, "player_pc.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_human, path, "player_human.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_none, path, "player_none.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_exitpoints_org, path, "activate_field.pcx");
+	GraphicsData.gfx_exitpoints = CloneSDLSurface (GraphicsData.gfx_exitpoints_org);
+	LoadGraphicToSurface (GraphicsData.gfx_player_select, path, "customgame_menu.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_menu_buttons, path, "menu_buttons.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_player_ready, path, "player_ready.pcx");
+	LoadGraphicToSurface (GraphicsData.gfx_hud_chatbox, path, "hud_chatbox.pcx");
+
+	GraphicsData.DialogPath = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog.pcx";
+	GraphicsData.Dialog2Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog2.pcx";
+	GraphicsData.Dialog3Path = cSettings::getInstance().getGfxPath() + PATH_DELIMITER + "dialog3.pcx";
+	FileExists (GraphicsData.DialogPath.c_str());
+	FileExists (GraphicsData.Dialog2Path.c_str());
+	FileExists (GraphicsData.Dialog3Path.c_str());
 
 	// load colors even for dedicated server
 	// Colors:
@@ -884,67 +883,64 @@ static int LoadGraphics (const char* path)
 	for (int i = 0; i != PLAYERCOLORS; ++i)
 		OtherData.colors_org[i] = CloneSDLSurface (OtherData.colors[i]);
 
-	if (!DEDICATED_SERVER)
+	Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
+	// Shadow:
+	GraphicsData.gfx_shadow = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX(),
+													Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
+	SDL_FillRect (GraphicsData.gfx_shadow, NULL, 0x0);
+	SDL_SetAlpha (GraphicsData.gfx_shadow, SDL_SRCALPHA, 50);
+	GraphicsData.gfx_tmp = SDL_CreateRGBSurface (Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0);
+	SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF);
+
+	// Glas:
+	Log.write ("Glassgraphic...", LOG_TYPE_DEBUG);
+	LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
+	SDL_SetAlpha (GraphicsData.gfx_destruction_glas, SDL_SRCALPHA, 150);
+
+	// Waypoints:
+	Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
+	for (int i = 0; i < 60; i++)
 	{
-		Log.write ("Shadowgraphics...", LOG_TYPE_DEBUG);
-		// Shadow:
-		GraphicsData.gfx_shadow = SDL_CreateRGBSurface (Video.getSurfaceType(), Video.getResolutionX(),
-														Video.getResolutionY(), Video.getColDepth(), 0, 0, 0, 0);
-		SDL_FillRect (GraphicsData.gfx_shadow, NULL, 0x0);
-		SDL_SetAlpha (GraphicsData.gfx_shadow, SDL_SRCALPHA, 50);
-		GraphicsData.gfx_tmp = SDL_CreateRGBSurface (Video.getSurfaceType(), 128, 128, Video.getColDepth(), 0, 0, 0, 0);
-		SDL_SetColorKey (GraphicsData.gfx_tmp, SDL_SRCCOLORKEY, 0xFF00FF);
+		OtherData.WayPointPfeile[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEIL_COLOR, 64 - i);
+		OtherData.WayPointPfeile[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEIL_COLOR, 64 - i);
 
-		// Glas:
-		Log.write ("Glassgraphic...", LOG_TYPE_DEBUG);
-		LoadGraphicToSurface (GraphicsData.gfx_destruction_glas, path, "destruction_glas.pcx");
-		SDL_SetAlpha (GraphicsData.gfx_destruction_glas, SDL_SRCALPHA, 150);
+		OtherData.WayPointPfeileSpecial[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEILS_COLOR, 64 - i);
+		OtherData.WayPointPfeileSpecial[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEILS_COLOR, 64 - i);
+	}
 
-		// Waypoints:
-		Log.write ("Waypointgraphics...", LOG_TYPE_DEBUG);
-		for (int i = 0; i < 60; i++)
-		{
-			OtherData.WayPointPfeile[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEIL_COLOR, 64 - i);
-			OtherData.WayPointPfeile[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEIL_COLOR, 64 - i);
+	// Resources:
+	Log.write ("Resourcegraphics...", LOG_TYPE_DEBUG);
+	//metal
+	if (LoadGraphicToSurface (ResourceData.res_metal_org, path, "res.pcx") == 1)
+	{
+		ResourceData.res_metal = CloneSDLSurface (ResourceData.res_metal_org);
+		SDL_SetColorKey (ResourceData.res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
+	}
 
-			OtherData.WayPointPfeileSpecial[0][i] = CreatePfeil (26, 11, 51, 36, 14, 48, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[1][i] = CreatePfeil (14, 14, 49, 14, 31, 49, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[2][i] = CreatePfeil (37, 11, 12, 36, 49, 48, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[3][i] = CreatePfeil (49, 14, 49, 49, 14, 31, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[4][i] = CreatePfeil (14, 14, 14, 49, 49, 31, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[5][i] = CreatePfeil (15, 14, 52, 26, 27, 51, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[6][i] = CreatePfeil (31, 14, 14, 49, 49, 49, PFEILS_COLOR, 64 - i);
-			OtherData.WayPointPfeileSpecial[7][i] = CreatePfeil (48, 14, 36, 51, 11, 26, PFEILS_COLOR, 64 - i);
-		}
+	//gold
+	if (LoadGraphicToSurface (ResourceData.res_gold_org, path, "gold.pcx") == 1)
+	{
+		ResourceData.res_gold = CloneSDLSurface (ResourceData.res_gold_org);
+		SDL_SetColorKey (ResourceData.res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
+	}
 
-		// Resources:
-		Log.write ("Resourcegraphics...", LOG_TYPE_DEBUG);
-		//metal
-		if (LoadGraphicToSurface (ResourceData.res_metal_org, path, "res.pcx") == 1)
-		{
-			ResourceData.res_metal = CloneSDLSurface (ResourceData.res_metal_org);
-			SDL_SetColorKey (ResourceData.res_metal, SDL_SRCCOLORKEY, 0xFF00FF);
-		}
-
-		//gold
-		if (LoadGraphicToSurface (ResourceData.res_gold_org, path, "gold.pcx") == 1)
-		{
-			ResourceData.res_gold = CloneSDLSurface (ResourceData.res_gold_org);
-			SDL_SetColorKey (ResourceData.res_gold, SDL_SRCCOLORKEY, 0xFF00FF);
-		}
-
-		//fuel
-		if (LoadGraphicToSurface (ResourceData.res_oil_org, path, "fuel.pcx") == 1)
-		{
-			ResourceData.res_oil = CloneSDLSurface (ResourceData.res_oil_org);
-			SDL_SetColorKey (ResourceData.res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
-		}
+	//fuel
+	if (LoadGraphicToSurface (ResourceData.res_oil_org, path, "fuel.pcx") == 1)
+	{
+		ResourceData.res_oil = CloneSDLSurface (ResourceData.res_oil_org);
+		SDL_SetColorKey (ResourceData.res_oil, SDL_SRCCOLORKEY, 0xFF00FF);
 	}
 
 	return 1;
