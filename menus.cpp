@@ -952,7 +952,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
 	gameDataContainer.settings = new sSettings;
-	cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), OtherData.colors[cl_red], 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
+	cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), cl_red, 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
 	gameDataContainer.players.push_back (player);
 
 	int lastDir = 1;
@@ -3035,7 +3035,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 
 		for (unsigned int i = 0; i < menu->players.size(); i++)
 		{
-			cPlayer* player = new cPlayer (menu->players[i]->name, OtherData.colors[menu->players[i]->color], menu->players[i]->nr, menu->players[i]->socket);
+			cPlayer* player = new cPlayer (menu->players[i]->name, menu->players[i]->color, menu->players[i]->nr, menu->players[i]->socket);
 			menu->gameDataContainer.players.push_back (player);
 		}
 		cPlayer& localPlayer = *menu->gameDataContainer.players[0];
@@ -3630,7 +3630,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	saveOptions();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		cPlayer* player = new cPlayer (players[i]->name, OtherData.colors[players[i]->color], players[i]->nr, players[i]->socket);
+		cPlayer* player = new cPlayer (players[i]->name, players[i]->color, players[i]->nr, players[i]->socket);
 		gameDataContainer.players.push_back (player);
 	}
 	if (!saveGameString.empty())
@@ -3676,13 +3676,13 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 		int playerCount = message->popInt16();
 
-		gameDataContainer.players.push_back (new cPlayer (actPlayer->name, OtherData.colors[actPlayer->color], actPlayer->nr));
+		gameDataContainer.players.push_back (new cPlayer (actPlayer->name, actPlayer->color, actPlayer->nr));
 		while (playerCount > 1)
 		{
 			string playername = message->popString();
 			int playercolor = message->popInt16();
 			int playernr = message->popInt16();
-			gameDataContainer.players.push_back (new cPlayer (playername, OtherData.colors[playercolor], playernr));
+			gameDataContainer.players.push_back (new cPlayer (playername, playercolor, playernr));
 			playerCount--;
 		}
 

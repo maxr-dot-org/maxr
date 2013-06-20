@@ -64,15 +64,15 @@ class cPlayer
 	friend class cGameDataContainer; // TODO:Remove.
 	friend class cNetworkHostMenu; // TODO:Remove.
 public:
-	cPlayer (const std::string& Name, SDL_Surface* Color, int nr, int iSocketNum = -1);
+	cPlayer (const std::string& Name, unsigned int colorIndex, int nr, int iSocketNum = -1);
 	cPlayer (const cPlayer& Player);
 	~cPlayer();
 
 	const std::string& getName () const { return name; }
 	void setName (const std::string& name_) { name = name_; }
-	int getColor() const;
+	unsigned int getColor() const { return color; }
 	void setColor (unsigned int index);
-	SDL_Surface* getColorSurface() const { return color; }
+	SDL_Surface* getColorSurface() const;
 	int getNr() const { return Nr; }
 	int getSocketNum() const { return iSocketNum; }
 
@@ -155,7 +155,7 @@ private:
 
 private:
 	std::string name;
-	SDL_Surface* color;
+	unsigned int color;
 	int Nr;
 	int iSocketNum; // Number of socket over which this player is connected in network game
 					// if MAX_CLIENTS its the local connected player; -1 for unknown

@@ -285,7 +285,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				{
 					for (size_t i = 0; i < menuPlayers.size(); i++)
 					{
-						cPlayer* player = new cPlayer (menuPlayers[i]->name, OtherData.colors[menuPlayers[i]->color], menuPlayers[i]->nr, menuPlayers[i]->socket);
+						cPlayer* player = new cPlayer (menuPlayers[i]->name, menuPlayers[i]->color, menuPlayers[i]->nr, menuPlayers[i]->socket);
 						gameData->players.push_back (player);
 					}
 

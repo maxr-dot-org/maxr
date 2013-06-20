@@ -30,14 +30,14 @@
 
 using namespace std;
 
-//-----------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Implementation cPlayer class
-//-----------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------
-cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum) :
+//------------------------------------------------------------------------------
+cPlayer::cPlayer (const string& Name, unsigned int colorIndex, int nr, int iSocketNum) :
 	name (Name),
-	color (Color),
+	color (colorIndex),
 	Nr (nr),
 	iSocketNum (iSocketNum),
 	numEcos (0),
@@ -70,7 +70,7 @@ cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum
 	researchFinished = false;
 }
 
-//-----------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cPlayer::cPlayer (const cPlayer& Player)
 {
 	name = Player.name;
@@ -112,7 +112,7 @@ cPlayer::cPlayer (const cPlayer& Player)
 	researchFinished = Player.researchFinished;
 }
 
-//-----------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cPlayer::~cPlayer()
 {
 	// Erst alle geladenen Vehicles lˆschen:
@@ -158,7 +158,7 @@ cPlayer::~cPlayer()
 	delete savedHud;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::setClan (int newClan)
 {
 	if (newClan == clan || newClan < -1 || 7 < newClan)
@@ -174,33 +174,19 @@ void cPlayer::setClan (int newClan)
 }
 
 //------------------------------------------------------------------------------
-static int GetColorNr (const SDL_Surface* sf)
+SDL_Surface* cPlayer::getColorSurface() const
 {
-	if (sf == OtherData.colors[cl_red])    return cl_red;
-	if (sf == OtherData.colors[cl_blue])   return cl_blue;
-	if (sf == OtherData.colors[cl_green])  return cl_green;
-	if (sf == OtherData.colors[cl_grey])   return cl_grey;
-	if (sf == OtherData.colors[cl_orange]) return cl_orange;
-	if (sf == OtherData.colors[cl_yellow]) return cl_yellow;
-	if (sf == OtherData.colors[cl_purple]) return cl_purple;
-	if (sf == OtherData.colors[cl_aqua])   return cl_aqua;
-	return cl_red;
+	return OtherData.colors[color];
 }
 
-//----------------------------------------------------------------------------------
-int cPlayer::getColor() const
-{
-	return GetColorNr (color);
-}
-
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::setColor (unsigned int index)
 {
 	assert (index < 8);
-	color = OtherData.colors[index];
+	color = index;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 {
 	if (ID.iFirstPart == 0)
@@ -222,9 +208,9 @@ sUnitData* cPlayer::getUnitDataCurrentVersion (const sID& ID)
 	return NULL;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Adds the vehicle to the list of the player */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned int ID)
 {
 	cVehicle* n = new cVehicle (&v, this, ID);
@@ -249,9 +235,9 @@ cVehicle* cPlayer::addVehicle (int posx, int posy, const sVehicle& v, unsigned i
 	return n;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** initialize the maps */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::initMaps (cMap& map)
 {
 	mapSize = map.getSize();
@@ -311,9 +297,9 @@ void cPlayer::addUnitToList (cUnit* addedUnit)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Adds the building to the list of the player */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding& b, unsigned int ID)
 {
 	cBuilding* Building = new cBuilding (&b, this, ID);
@@ -331,7 +317,7 @@ cBuilding* cPlayer::addBuilding (int posx, int posy, const sBuilding& b, unsigne
 	return Building;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::addSentry (cUnit* u)
 {
 	u->sentryActive = true;
@@ -345,7 +331,7 @@ void cPlayer::addSentry (cUnit* u)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::deleteSentry (cUnit* u)
 {
 	u->sentryActive = false;
@@ -359,7 +345,7 @@ void cPlayer::deleteSentry (cUnit* u)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::refreshSentryAir()
 {
 	std::fill (SentriesMapAir.begin(), SentriesMapAir.end(), 0);
@@ -381,7 +367,7 @@ void cPlayer::refreshSentryAir()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::refreshSentryGround()
 {
 	std::fill (SentriesMapGround.begin(), SentriesMapGround.end(), 0);
@@ -403,9 +389,9 @@ void cPlayer::refreshSentryGround()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Does a scan for all units of the player */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::doScan()
 {
 	if (isDefeated) return;
@@ -523,9 +509,9 @@ cBuilding* cPlayer::getNextMiningStation (cBuilding* start)
 	return NULL;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the next unit that can still fire/shoot */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnit* cPlayer::getNextUnit (cUnit* start)
 {
 	if (start == NULL || start->owner != this)
@@ -598,9 +584,9 @@ cBuilding* cPlayer::getPrevMiningStation (cBuilding* start)
 	return NULL;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the previous vehicle, that can still move / shoot */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnit* cPlayer::getPrevUnit (cUnit* start)
 {
 	if (start == NULL || start->owner != this)
@@ -635,9 +621,9 @@ cUnit* cPlayer::getPrevUnit (cUnit* start)
 	return getNextMiningStation (NULL);
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Starts a research center. */
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::startAResearch (int researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
@@ -647,9 +633,9 @@ void cPlayer::startAResearch (int researchArea)
 	}
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Stops a research center. */
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::stopAResearch (int researchArea)
 {
 	if (0 <= researchArea && researchArea <= cResearch::kNrResearchAreas)
@@ -660,9 +646,9 @@ void cPlayer::stopAResearch (int researchArea)
 	}
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** At turnend update the research level */
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::doResearch (cServer& server)
 {
 	bool researchFinished = false;
@@ -758,7 +744,7 @@ int cPlayer::getScore (int turn) const
 	return pointsHistory[t - 1];
 }
 
-//--------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, std::vector<sUnitData*>& resultUpgradedUnitDatas)
 {
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
@@ -859,7 +845,7 @@ void cPlayer::upgradeUnitTypes (const std::vector<int>& areasReachingNextLevel, 
 	}
 }
 
-//------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::refreshResearchCentersWorkingOnArea()
 {
 	int newResearchCount = 0;
@@ -877,7 +863,7 @@ void cPlayer::refreshResearchCentersWorkingOnArea()
 	ResearchCount = newResearchCount;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::deleteLock (cUnit& unit)
 {
 	std::vector<cUnit*>::iterator it = std::find (LockList.begin(), LockList.end(), &unit);
@@ -885,11 +871,11 @@ void cPlayer::deleteLock (cUnit& unit)
 	unit.lockerPlayer = NULL;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Toggles the lock state of a unit under the mouse
  * (when locked it's range and scan is displayed, although the unit is not selected).
 */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::toggelLock (cMapField* OverUnitField)
 {
 	cUnit* unit = NULL;
@@ -924,7 +910,7 @@ void cPlayer::toggelLock (cMapField* OverUnitField)
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
@@ -967,7 +953,7 @@ void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>&
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<char>& map, int mapsize)
 {
 	const float PI_ON_180 = 0.017453f;
@@ -1020,7 +1006,7 @@ void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<cha
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cPlayer::addSavedReport (const string& message, sSavedReportMessage::eReportTypes type, sID unitID, int xPos, int yPos, int colorNr)
 {
 	sSavedReportMessage savedReport;
