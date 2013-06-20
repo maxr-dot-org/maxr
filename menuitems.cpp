@@ -3150,27 +3150,28 @@ void cMenuPlayersBox::draw()
 
 	for (int i = scrollBar->offset; i < scrollBar->offset + maxDrawPlayers; i++)
 	{
+		int index = i - scrollBar->offset;
 		if (i < (int) players->size())
 		{
-			if ( (*players) [i]->ready) playerReadys[i - scrollBar->offset]->setImage (readySurface);
-			else playerReadys[i - scrollBar->offset]->setImage (notReadySurface);
+			if ( (*players) [i]->isReady()) playerReadys[index]->setImage (readySurface);
+			else playerReadys[index]->setImage (notReadySurface);
 
 			AutoSurface colorSurface (SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0));
-			SDL_BlitSurface (OtherData.colors[ (*players) [i]->color], &src, colorSurface, NULL);
-			playerColors[i - scrollBar->offset]->setImage (colorSurface);
+			SDL_BlitSurface ((*players) [i]->getColorSurface(), &src, colorSurface, NULL);
+			playerColors[index]->setImage (colorSurface);
 
-			playerNames[i - scrollBar->offset]->setText ( (*players) [i]->name);
+			playerNames[index]->setText ( (*players) [i]->getName());
 		}
 		else
 		{
-			playerColors[i - scrollBar->offset]->setImage (NULL);
-			playerReadys[i - scrollBar->offset]->setImage (NULL);
-			playerNames[i - scrollBar->offset]->setText ("");
+			playerColors[index]->setImage (NULL);
+			playerReadys[index]->setImage (NULL);
+			playerNames[index]->setText ("");
 		}
 
-		playerColors[i - scrollBar->offset]->draw();
-		playerNames[i - scrollBar->offset]->draw();
-		playerReadys[i - scrollBar->offset]->draw();
+		playerColors[index]->draw();
+		playerNames[index]->draw();
+		playerReadys[index]->draw();
 	}
 	scrollBar->draw();
 }

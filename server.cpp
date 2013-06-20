@@ -66,7 +66,7 @@ typedef struct tagTHREADNAME_INFO
 # include "dedicatedserver.h"
 #endif
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int CallbackRunServerThread (void* arg)
 {
 #if defined _MSC_VER && defined DEBUG //set a readable thread name for debugging
@@ -90,7 +90,7 @@ int CallbackRunServerThread (void* arg)
 	return 0;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cServer::cServer (cTCP* network_, cMap& map, std::vector<cPlayer*>* const PlayerList, eGameTypes const gameType, bool const bPlayTurns, int turnLimit, int scoreLimit)
 	: network (network_)
 	, localClient (NULL)
@@ -146,7 +146,7 @@ void cServer::stop ()
 		}
 	}
 }
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cServer::~cServer()
 {
 	stop ();
@@ -186,13 +186,13 @@ cServer::~cServer()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::setDeadline (int iDeadline)
 {
 	iTurnDeadline = iDeadline;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetMessage* cServer::pollEvent()
 {
 	if (eventQueue.size() <= 0)
@@ -202,13 +202,13 @@ cNetMessage* cServer::pollEvent()
 	return eventQueue.read();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 {
 	message->iPlayerNr = iPlayerNum;
@@ -235,8 +235,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 		delete message;
 		return;
 	}
-	// Socketnumber MAX_CLIENTS for local client
-	if (Player->getSocketNum() == MAX_CLIENTS)
+	if (Player->isLocal())
 	{
 		if (localClient != NULL)
 			localClient->pushEvent (message);
@@ -249,7 +248,7 @@ void cServer::sendNetMessage (cNetMessage* message, int iPlayerNum)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::run()
 {
 	while (!bExit)
@@ -285,7 +284,7 @@ void cServer::doGameActions()
 	checkPlayerUnits ();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_TCP_ACCEPT (cNetMessage& message)
 {
 	assert (message.iType == TCP_ACCEPT);
@@ -293,7 +292,7 @@ void cServer::HandleNetMessage_TCP_ACCEPT (cNetMessage& message)
 	sendRequestIdentification (*network, message.popInt16());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage& message)
 {
 	assert (message.iType == TCP_CLOSE || message.iType == GAME_EV_WANT_DISCONNECT);
@@ -315,22 +314,19 @@ void cServer::HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 
 	cPlayer* Player = NULL;
 	// resort socket numbers of the players
-	for (unsigned int i = 0; i < PlayerList->size(); i++)
+	for (size_t i = 0; i != PlayerList->size(); ++i)
 	{
 		if ( (*PlayerList) [i]->getSocketNum() == iSocketNumber)
 		{
 			Player = (*PlayerList) [i];
-		}
-		else if ( (*PlayerList) [i]->getSocketNum() > iSocketNumber && (*PlayerList) [i]->getSocketNum() != MAX_CLIENTS)
-		{
-			(*PlayerList) [i]->iSocketNum--;
+			break;
 		}
 	}
+	for (size_t i = 0; i != PlayerList->size(); ++i)
+		(*PlayerList) [i]->onSocketIndexDisconnected (iSocketNumber);
 
 	if (Player)
 	{
-		Player->iSocketNum = -1;
-
 		// freeze clients
 		if (DEDICATED_SERVER == false)   // the dedicated server doesn't force to wait for reconnect, because it's expected client behaviour
 			enableFreezeMode (FREEZE_WAIT_FOR_RECONNECT);
@@ -342,7 +338,7 @@ void cServer::HandleNetMessage_TCP_CLOSE_OR_GAME_EV_WANT_DISCONNECT (cNetMessage
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHAT_CLIENT);
@@ -350,7 +346,7 @@ void cServer::HandleNetMessage_GAME_EV_CHAT_CLIENT (cNetMessage& message)
 	sendChatMessageToClient (*this, message.popString(), USER_MESSAGE);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TO_END_TURN);
@@ -363,7 +359,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TO_END_TURN (cNetMessage& message)
 	handleEnd (message.iPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_START_WORK);
@@ -377,7 +373,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_WORK (cNetMessage& message)
 	building->ServerStartWork (*this);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_WORK);
@@ -391,7 +387,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_WORK (cNetMessage& message)
 	building->ServerStopWork (*this, false);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVE_JOB_CLIENT);
@@ -413,7 +409,7 @@ void cServer::HandleNetMessage_GAME_EV_MOVE_JOB_CLIENT (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_MOVE);
@@ -424,7 +420,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_MOVE (cNetMessage& message)
 	Vehicle->ServerMoveJob->stop();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MOVEJOB_RESUME);
@@ -451,7 +447,7 @@ void cServer::HandleNetMessage_GAME_EV_MOVEJOB_RESUME (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_ATTACK);
@@ -534,7 +530,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_ATTACK (cNetMessage& message)
 	AJobs.push_back (new cServerAttackJob (*this, attackingUnit, targetOffset, false));
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ATTACKJOB_FINISHED);
@@ -564,7 +560,7 @@ void cServer::HandleNetMessage_GAME_EV_ATTACKJOB_FINISHED (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_MINELAYERSTATUS);
@@ -596,7 +592,7 @@ void cServer::HandleNetMessage_GAME_EV_MINELAYERSTATUS (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILD);
@@ -690,7 +686,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILD (cNetMessage& message)
 	if (Vehicle->ServerMoveJob) Vehicle->ServerMoveJob->release();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_END_BUILDING);
@@ -742,7 +738,7 @@ void cServer::HandleNetMessage_GAME_EV_END_BUILDING (cNetMessage& message)
 	Vehicle->ServerMoveJob->checkMove();	//begin the movment immediately, so no other unit can block the destination field
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_BUILDING);
@@ -753,7 +749,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_BUILDING (cNetMessage& message)
 	stopVehicleBuilding (Vehicle);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_TRANSFER);
@@ -865,7 +861,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_TRANSFER (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDLIST);
@@ -984,7 +980,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDLIST (cNetMessage& message)
 	sendBuildList (*this, *Building);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_EXIT_FIN_VEH);
@@ -1040,7 +1036,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT_FIN_VEH (cNetMessage& message)
 	sendBuildList (*this, *Building);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_CHANGE_RESOURCES);
@@ -1068,7 +1064,7 @@ void cServer::HandleNetMessage_GAME_EV_CHANGE_RESOURCES (cNetMessage& message)
 	sendSubbaseValues (*this, *SubBase, Building->owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_MANUAL_FIRE);
@@ -1105,7 +1101,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_MANUAL_FIRE (cNetMessage& mes
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_SENTRY);
@@ -1154,7 +1150,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_SENTRY (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_MARK_LOG);
@@ -1164,7 +1160,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_MARK_LOG (cNetMessage& message)
 	sendNetMessage (message2);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_SUPPLY);
@@ -1264,7 +1260,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SUPPLY (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_VEHICLE_UPGRADE);
@@ -1311,7 +1307,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_VEHICLE_UPGRADE (cNetMessage& messag
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_START_CLEAR);
@@ -1368,7 +1364,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_START_CLEAR (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_STOP_CLEAR);
@@ -1407,7 +1403,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_STOP_CLEAR (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_ABORT_WAITING);
@@ -1415,7 +1411,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	if (DisconnectedPlayerList.size() < 1) return;
 	// only server player can abort the waiting
 	cPlayer* LocalPlayer = getPlayerFromNumber (message.iPlayerNr);
-	if (LocalPlayer->getSocketNum() != MAX_CLIENTS) return;
+	if (LocalPlayer->isLocal() == false) return;
 
 	// delete disconnected players
 	for (unsigned int i = 0; i < DisconnectedPlayerList.size(); i++)
@@ -1427,7 +1423,7 @@ void cServer::HandleNetMessage_GAME_EV_ABORT_WAITING (cNetMessage& message)
 	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_IDENTIFICATION);
@@ -1439,7 +1435,7 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 	{
 		if (!playerName.compare (DisconnectedPlayerList[i]->getName()))
 		{
-			DisconnectedPlayerList[i]->iSocketNum = socketNumber;
+			DisconnectedPlayerList[i]->setSocketIndex (socketNumber);
 			sendReconnectAnswer (*this, socketNumber, *DisconnectedPlayerList[i]);
 			return;
 		}
@@ -1447,7 +1443,7 @@ void cServer::HandleNetMessage_GAME_EV_IDENTIFICATION (cNetMessage& message)
 	sendReconnectAnswer (*network, socketNumber);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_RECON_SUCESS);
@@ -1470,7 +1466,7 @@ void cServer::HandleNetMessage_GAME_EV_RECON_SUCESS (cNetMessage& message)
 	if (bPlayTurns) sendWaitFor (*this, iActiveTurnPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_LOAD);
@@ -1506,7 +1502,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_LOAD (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_EXIT);
@@ -1576,7 +1572,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_EXIT (cNetMessage& message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_RESYNC);
@@ -1585,7 +1581,7 @@ void cServer::HandleNetMessage_GAME_EV_REQUEST_RESYNC (cNetMessage& message)
 	if (player) resyncPlayer (player, true);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUY_UPGRADES);
@@ -1639,7 +1635,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUY_UPGRADES (cNetMessage& message)
 		sendCredits (*this, player->Credits, iPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_BUILDING_UPGRADE);
@@ -1714,7 +1710,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_BUILDING_UPGRADE (cNetMessage& messa
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_RESEARCH_CHANGE);
@@ -1776,7 +1772,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_RESEARCH_CHANGE (cNetMessage& messag
 	sendResearchSettings (*this, researchCentersToChangeArea, newAreasForResearchCenters, iPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_AUTOMOVE_STATUS);
@@ -1785,7 +1781,7 @@ void cServer::HandleNetMessage_GAME_EV_AUTOMOVE_STATUS (cNetMessage& message)
 	if (Vehicle) Vehicle->hasAutoMoveJob = message.popBool();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_COM_ACTION);
@@ -1895,7 +1891,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_COM_ACTION (cNetMessage& message)
 	sendCommandoAnswer (*this, success, steal, *srcVehicle, srcVehicle->owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVE_HUD_INFO);
@@ -1923,7 +1919,7 @@ void cServer::HandleNetMessage_GAME_EV_SAVE_HUD_INFO (cNetMessage& message)
 	player->savedHud->tntChecked = message.popBool();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_SAVE_REPORT_INFO);
@@ -1944,7 +1940,7 @@ void cServer::HandleNetMessage_GAME_EV_SAVE_REPORT_INFO (cNetMessage& message)
 	player->savedReportsList.push_back (savedReport);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_FIN_SEND_SAVE_INFO);
@@ -1958,7 +1954,7 @@ void cServer::HandleNetMessage_GAME_EV_FIN_SEND_SAVE_INFO (cNetMessage& message)
 	savegame.writeAdditionalInfo (*player->savedHud, player->savedReportsList, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_REQUEST_CASUALTIES_REPORT);
@@ -1966,7 +1962,7 @@ void cServer::HandleNetMessage_GAME_EV_REQUEST_CASUALTIES_REPORT (cNetMessage& m
 	sendCasualtiesReport (*this, message.iPlayerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_SELFDESTROY);
@@ -1978,7 +1974,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_SELFDESTROY (cNetMessage& message)
 	destroyUnit (building);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_WANT_CHANGE_UNIT_NAME);
@@ -1995,7 +1991,7 @@ void cServer::HandleNetMessage_GAME_EV_WANT_CHANGE_UNIT_NAME (cNetMessage& messa
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 {
 	assert (message.iType == GAME_EV_END_MOVE_ACTION);
@@ -2008,7 +2004,7 @@ void cServer::HandleNetMessage_GAME_EV_END_MOVE_ACTION (cNetMessage& message)
 	vehicle->ServerMoveJob->addEndAction (destID, type);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cServer::HandleNetMessage (cNetMessage* message)
 {
 	if (message->iType != NET_GAME_TIME_CLIENT)
@@ -2072,7 +2068,7 @@ int cServer::HandleNetMessage (cNetMessage* message)
 	return 0;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 							  int newDamage, int newMaxShots, int newRange,
 							  int newMaxAmmo, int newArmor, int newMaxHitPoints,
@@ -2153,7 +2149,7 @@ int cServer::getUpgradeCosts (const sID& ID, cPlayer* player, bool bVehicle,
 	return cost;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::placeInitialResources (const std::vector<sClientLandData*>& landData, const sSettings& settings)
 {
 	for (size_t i = 0; i != landData.size(); ++i)
@@ -2164,7 +2160,7 @@ void cServer::placeInitialResources (const std::vector<sClientLandData*>& landDa
 	Map->placeRessources (settings.metal, settings.oil, settings.gold);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicle* Vehicle, cPlayer* Player)
 {
 	cVehicle* VehcilePtr = NULL;
@@ -2182,7 +2178,7 @@ cVehicle* cServer::landVehicle (int iX, int iY, int iWidth, int iHeight, sVehicl
 	return VehcilePtr;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLandingUnit>* List, bool bFixed)
 {
 	cVehicle* Vehicle;
@@ -2227,7 +2223,7 @@ void cServer::makeLanding (int iX, int iY, cPlayer* Player, std::vector<sLanding
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::correctLandingPos (int& iX, int& iY)
 {
 	int iWidth = 2;
@@ -2256,7 +2252,7 @@ void cServer::correctLandingPos (int& iX, int& iY)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlayer* Player, bool bInit, bool bAddToMap, unsigned int ID)
 {
 	cVehicle* AddedVehicle;
@@ -2291,7 +2287,7 @@ cVehicle* cServer::addUnit (int iPosX, int iPosY, const sVehicle* Vehicle, cPlay
 	return AddedVehicle;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cPlayer* Player, bool bInit, unsigned int ID)
 {
 	cBuilding* AddedBuilding;
@@ -2384,7 +2380,7 @@ cBuilding* cServer::addUnit (int iPosX, int iPosY, const sBuilding* Building, cP
 	return AddedBuilding;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 {
 	if (unit == 0)
@@ -2460,7 +2456,7 @@ void cServer::deleteUnit (cUnit* unit, bool notifyClient)
 		owner->doScan();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 {
 	if (&MapPlayer == vehicle.owner) return;
@@ -2502,7 +2498,7 @@ void cServer::checkPlayerUnits (cVehicle& vehicle, cPlayer& MapPlayer)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer)
 {
 	if (&MapPlayer == building.owner) return;
@@ -2531,7 +2527,7 @@ void cServer::checkPlayerUnits (cBuilding& building, cPlayer& MapPlayer)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 {
 	std::vector<cPlayer*>& seenByPlayers = building.seenByPlayerList;
@@ -2556,7 +2552,7 @@ void cServer::checkPlayerRubbles (cBuilding& building, cPlayer& MapPlayer)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkPlayerUnits()
 {
 	for (unsigned int i = 0; i != PlayerList->size(); ++i)
@@ -2593,11 +2589,10 @@ void cServer::checkPlayerUnits()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cServer::isPlayerDisconnected (const cPlayer* player) const
 {
-	if (player->getSocketNum() == MAX_CLIENTS)
-		return false;
+	if (player->isLocal()) return false;
 
 	if (network)
 		return !network->isConnected (player->getSocketNum());
@@ -2605,25 +2600,21 @@ bool cServer::isPlayerDisconnected (const cPlayer* player) const
 	return true;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::kickPlayer (cPlayer* player)
 {
 	// close the socket
-	if (network) network->close (player->getSocketNum());
-	std::vector<cPlayer*>& playerList = *PlayerList;
-	for (size_t i = 0; i < playerList.size(); ++i)
+	int socketIndex = player->getSocketNum();
+	if (network) network->close (socketIndex);
+	for (size_t i = 0; i < PlayerList->size(); ++i)
 	{
-		if (playerList[i]->getSocketNum() > player->getSocketNum() &&
-			playerList[i]->getSocketNum() < MAX_CLIENTS)
-		{
-			playerList[i]->iSocketNum--;
-		}
+		(*PlayerList)[i]->onSocketIndexDisconnected (socketIndex);
 	}
 	// delete the player
 	deletePlayer (player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::markAllPlayersAsDisconnected()
 {
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -2635,7 +2626,7 @@ void cServer::markAllPlayersAsDisconnected()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cPlayer* cServer::getPlayerFromNumber (int iNum)
 {
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -2646,7 +2637,7 @@ cPlayer* cServer::getPlayerFromNumber (int iNum)
 	return NULL;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 {
 	//first try to find player by number
@@ -2665,7 +2656,7 @@ cPlayer* cServer::getPlayerFromString (const std::string& playerID)
 	return NULL;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::handleEnd (int iPlayerNum)
 {
 	if (gameType == GAME_TYPE_SINGLE)
@@ -2779,7 +2770,7 @@ void cServer::handleEnd (int iPlayerNum)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::handleWantEnd()
 {
 	if (!gameTimer.timer50ms) return;
@@ -2820,7 +2811,7 @@ void cServer::handleWantEnd()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cServer::checkEndActions (int iPlayer)
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
@@ -2873,7 +2864,7 @@ bool cServer::checkEndActions (int iPlayer)
 	return false;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::makeTurnEnd()
 {
 	enableFreezeMode (FREEZE_WAIT_FOR_TURNEND);
@@ -3002,7 +2993,7 @@ void cServer::makeTurnEnd()
 	iWantPlayerEndNum = -1;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkDefeats()
 {
 	std::set<cPlayer*> winners, losers;
@@ -3084,7 +3075,7 @@ void cServer::checkDefeats()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 {
 	sTurnstartReport* Report;
@@ -3123,7 +3114,7 @@ void cServer::addReport (sID Type, bool bVehicle, int iPlayerNum)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::checkDeadline()
 {
 	if (!gameTimer.timer50ms) return;
@@ -3151,13 +3142,13 @@ void cServer::checkDeadline()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::addActiveMoveJob (cServerMoveJob* MoveJob)
 {
 	ActiveMJobs.push_back (MoveJob);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::handleMoveJobs()
 {
 	for (int i = ActiveMJobs.size() - 1; i >= 0; i--)
@@ -3258,7 +3249,7 @@ void cServer::handleMoveJobs()
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnit* cServer::getUnitFromID (unsigned int iID) const
 {
 	cUnit* result = getVehicleFromID (iID);
@@ -3267,7 +3258,7 @@ cUnit* cServer::getUnitFromID (unsigned int iID) const
 	return result;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 {
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -3283,7 +3274,7 @@ cVehicle* cServer::getVehicleFromID (unsigned int iID) const
 	return 0;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 {
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
@@ -3299,7 +3290,7 @@ cBuilding* cServer::getBuildingFromID (unsigned int iID) const
 	return 0;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::destroyUnit (cVehicle* vehicle)
 {
 	const int offset = Map->getOffset (vehicle->PosX, vehicle->PosY);
@@ -3389,7 +3380,7 @@ void cServer::destroyUnit (cVehicle* vehicle)
 	deleteUnit (vehicle);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
 {
 	int rubble = 0;
@@ -3409,7 +3400,7 @@ int cServer::deleteBuildings (std::vector<cBuilding*>& buildings)
 	return rubble;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::destroyUnit (cBuilding* b)
 {
 	int offset = Map->getOffset (b->PosX, b->PosY);
@@ -3441,7 +3432,7 @@ void cServer::destroyUnit (cBuilding* b)
 		addRubble (offset % Map->getSize(), offset / Map->getSize(), rubble / 2, big);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::addRubble (int x, int y, int value, bool big)
 {
 	if (value <= 0) value = 1;
@@ -3504,7 +3495,7 @@ void cServer::addRubble (int x, int y, int value, bool big)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::deleteRubble (cBuilding* rubble)
 {
 	Map->deleteBuilding (*rubble);
@@ -3515,7 +3506,7 @@ void cServer::deleteRubble (cBuilding* rubble)
 	delete rubble;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::deletePlayer (cPlayer* Player)
 {
 	//remove units
@@ -3553,7 +3544,7 @@ void cServer::deletePlayer (cPlayer* Player)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 {
 	Log.write (" Server:  ============================= begin resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
@@ -3665,7 +3656,7 @@ void cServer::resyncPlayer (cPlayer* Player, bool firstDelete)
 	Log.write (" Server:  ============================= end resync  ==========================", cLog::eLOG_TYPE_NET_DEBUG);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::resyncVehicle (cVehicle* Vehicle, cPlayer* Player)
 {
 	sendAddUnit (*this, Vehicle->PosX, Vehicle->PosY, Vehicle->iID, true, Vehicle->data.ID, Player->getNr(), true, !Vehicle->Loaded);
@@ -3682,7 +3673,7 @@ void cServer::resyncVehicle (cVehicle* Vehicle, cPlayer* Player)
 	if (Vehicle->detectedByPlayerList.size() > 0) sendDetectionState (*this, *Vehicle);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* vehicle)
 {
 	cServerMoveJob* MoveJob = new cServerMoveJob (*this, srcX, srcY, destX, destY, vehicle);
@@ -3703,7 +3694,7 @@ bool cServer::addMoveJob (int srcX, int srcY, int destX, int destY, cVehicle* ve
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 {
 	if (vehicle->owner && casualtiesTracker)
@@ -3751,7 +3742,7 @@ void cServer::changeUnitOwner (cVehicle* vehicle, cPlayer* newOwner)
 	vehicle->makeDetection (*this);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServer::stopVehicleBuilding (cVehicle* vehicle)
 {
 	if (!vehicle->IsBuilding) return;

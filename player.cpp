@@ -31,15 +31,66 @@
 using namespace std;
 
 //------------------------------------------------------------------------------
+sPlayer::sPlayer (const string& name_, unsigned int colorIndex_, int nr_, int socketIndex_) :
+	name (name_),
+	colorIndex (colorIndex_),
+	Nr (nr_),
+	socketIndex (socketIndex_)
+{
+	assert (colorIndex < PLAYERCOLORS);
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setLocal()
+{
+	socketIndex = MAX_CLIENTS;
+}
+
+//------------------------------------------------------------------------------
+bool sPlayer::isLocal() const
+{
+	return socketIndex == MAX_CLIENTS;
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::onSocketIndexDisconnected (int socketIndex_)
+{
+	if (isLocal() || socketIndex == -1) return;
+	if (socketIndex == socketIndex_)
+	{
+		socketIndex = -1;
+	}
+	else if (socketIndex > socketIndex_)
+	{
+		--socketIndex;
+	}
+}
+
+//------------------------------------------------------------------------------
+SDL_Surface* sPlayer::getColorSurface() const
+{
+	return OtherData.colors[getColorIndex()];
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setToNextColorIndex()
+{
+	setColorIndex ((colorIndex + 1) % PLAYERCOLORS);
+}
+
+//------------------------------------------------------------------------------
+void sPlayer::setToPrevColorIndex()
+{
+	setColorIndex ((colorIndex - 1 + PLAYERCOLORS) % PLAYERCOLORS);
+}
+
+//------------------------------------------------------------------------------
 // Implementation cPlayer class
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer (const string& Name, unsigned int colorIndex, int nr, int iSocketNum) :
-	name (Name),
-	color (colorIndex),
-	Nr (nr),
-	iSocketNum (iSocketNum),
+cPlayer::cPlayer (const sPlayer& splayer_) :
+	splayer (splayer_),
 	numEcos (0),
 	lastDeletedUnit (0),
 	clan (-1)
@@ -71,12 +122,9 @@ cPlayer::cPlayer (const string& Name, unsigned int colorIndex, int nr, int iSock
 }
 
 //------------------------------------------------------------------------------
-cPlayer::cPlayer (const cPlayer& Player)
+cPlayer::cPlayer (const cPlayer& Player) :
+	splayer (Player.splayer)
 {
-	name = Player.name;
-	color = Player.color;
-	Nr = Player.Nr;
-	iSocketNum = Player.iSocketNum;
 	clan = Player.clan;
 	pointsHistory = Player.pointsHistory;
 	numEcos = Player.numEcos;
@@ -171,19 +219,6 @@ void cPlayer::setClan (int newClan)
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
-}
-
-//------------------------------------------------------------------------------
-SDL_Surface* cPlayer::getColorSurface() const
-{
-	return OtherData.colors[color];
-}
-
-//------------------------------------------------------------------------------
-void cPlayer::setColor (unsigned int index)
-{
-	assert (index < 8);
-	color = index;
 }
 
 //------------------------------------------------------------------------------
@@ -671,9 +706,9 @@ void cPlayer::doResearch (cServer& server)
 		upgradeUnitTypes (areasReachingNextLevel, upgradedUnitDatas);
 
 		for (unsigned int i = 0; i < upgradedUnitDatas.size(); i++)
-			sendUnitUpgrades (server, *upgradedUnitDatas[i], Nr);
+			sendUnitUpgrades (server, *upgradedUnitDatas[i], getNr());
 	}
-	sendResearchLevel (server, researchLevel, Nr);
+	sendResearchLevel (server, researchLevel, getNr());
 }
 
 void cPlayer::accumulateScore (cServer& server)

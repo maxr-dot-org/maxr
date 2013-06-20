@@ -2512,7 +2512,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		//server cannot be disconnected
 		//can not disconnect local players
-		if (!player || Player->getNr() == 0 || Player->getSocketNum() == MAX_CLIENTS)
+		if (!player || Player->getNr() == 0 || Player->isLocal())
 		{
 			addMessage ("Wrong parameter");
 			return;
@@ -3505,7 +3505,7 @@ void cGameGUI::drawAttackCursor (int x, int y) const
 	int wc = (int) ( (float) t / target->data.hitpointsMax * 35);
 
 	t = target->calcHealth (data.damage);
-	
+
 	int wp = 0;
 	if (t)
 	{

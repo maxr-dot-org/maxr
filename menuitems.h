@@ -23,6 +23,7 @@
 #include "autoptr.h"
 #include "autosurface.h"
 #include "defines.h"
+#include "player.h"
 #include "unifonts.h"
 #include "upgradecalculator.h"
 #include "sound.h"
@@ -1108,15 +1109,27 @@ public:
  */
 struct sMenuPlayer
 {
-	std::string name;
-	int color;
+public:
+	sMenuPlayer (const std::string& name_, int color_, bool ready_, int nr_, int socket_ = -1)
+		: splayer (name_, color_, nr_, socket_), ready (ready_) {}
+
+	const std::string& getName() const { return splayer.getName(); }
+	void setName (const std::string& name) { splayer.setName (name); }
+	int getNr() const { return splayer.getNr(); }
+	void setNr (int index) { splayer.setNr (index); }
+	int getColorIndex() const { return splayer.getColorIndex(); }
+	void setColorIndex (int colorIndex) { splayer.setColorIndex (colorIndex); }
+	void setToNextColorIndex() { splayer.setToNextColorIndex(); }
+	void setToPrevColorIndex() { splayer.setToPrevColorIndex(); }
+	SDL_Surface* getColorSurface() const { return splayer.getColorSurface(); }
+	int getSocketIndex() const { return splayer.getSocketIndex(); }
+	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex);}
+	void setReady (bool ready_) { ready = ready_; }
+	bool isReady() const { return ready; }
+	const sPlayer& getsPlayer() const { return splayer; }
+private:
+	sPlayer splayer;
 	bool ready;
-
-	int nr;
-	int socket;
-
-	sMenuPlayer (const std::string& name_ = "", int color_ = 0, bool ready_ = false, int nr_ = 0, int socket_ = -1)
-		: name (name_), color (color_), ready (ready_), nr (nr_), socket (socket_) {}
 };
 
 /**

@@ -318,7 +318,7 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 	playerNode->FirstChildElement ("Number")->Attribute ("num", &number);
 	playerNode->FirstChildElement ("Color")->Attribute ("num", &color);
 
-	cPlayer* Player = new cPlayer (name, color, number);
+	cPlayer* Player = new cPlayer (sPlayer (name, color, number));
 	Player->initMaps (*map);
 
 	playerNode->FirstChildElement ("Credits")->Attribute ("num", &Player->Credits);

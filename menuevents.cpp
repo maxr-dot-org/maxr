@@ -38,7 +38,7 @@ void sendMenuChatMessage (cTCP& network, const string& chatMsg, const sMenuPlaye
 void sendRequestIdentification (cTCP& network, const sMenuPlayer& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_REQ_IDENTIFIKATION);
-	message->pushInt16 (player.nr);
+	message->pushInt16 (player.getNr());
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
 	cMenu::sendMessage (network, message, &player);
 }
@@ -50,10 +50,10 @@ void sendPlayerList (cTCP& network, const std::vector<sMenuPlayer*>& players)
 	for (int i = (int) players.size() - 1; i >= 0; i--)
 	{
 		const sMenuPlayer* player = players[i];
-		message->pushInt16 (player->nr);
-		message->pushBool (player->ready);
-		message->pushInt16 (player->color);
-		message->pushString (player->name);
+		message->pushInt16 (player->getNr());
+		message->pushBool (player->isReady());
+		message->pushInt16 (player->getColorIndex());
+		message->pushString (player->getName());
 	}
 	message->pushInt16 ((int) players.size());
 	cMenu::sendMessage (network, message);
@@ -103,10 +103,10 @@ void sendIdentification (cTCP& network, const sMenuPlayer& player)
 {
 	cNetMessage* message = new cNetMessage (MU_MSG_IDENTIFIKATION);
 	message->pushString (string (PACKAGE_VERSION) + " " + PACKAGE_REV);
-	message->pushBool (player.ready);
-	message->pushString (player.name);
-	message->pushInt16 (player.color);
-	message->pushInt16 (player.nr);
+	message->pushBool (player.isReady());
+	message->pushString (player.getName());
+	message->pushInt16 (player.getColorIndex());
+	message->pushInt16 (player.getNr());
 	cMenu::sendMessage (network, message);
 }
 
@@ -282,7 +282,7 @@ void sendReselectLanding (cTCP& network, eLandingState state, const sMenuPlayer*
 	cNetMessage* message = new cNetMessage (MU_MSG_RESELECT_LANDING);
 	message->pushChar (state);
 
-	if (!DEDICATED_SERVER && player->nr == 0 && activeMenu)
+	if (!DEDICATED_SERVER && player->getNr() == 0 && activeMenu)
 	{
 		activeMenu->handleNetMessage (message);
 		delete message;
@@ -306,7 +306,7 @@ void sendGameIdentification (cTCP& network, const sMenuPlayer& player, int socke
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_IDENTIFICATION);
 	message->pushInt16 (socket);
-	message->pushString (player.name);
+	message->pushString (player.getName());
 	cMenu::sendMessage (network, message);
 }
 

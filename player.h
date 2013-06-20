@@ -26,17 +26,18 @@
 #include "main.h" // for sID
 #include "upgradecalculator.h"
 
-struct sVehicle;
-struct sUnitData;
-struct sBuilding;
-class cVehicle;
 class cBuilding;
 class cGameGUI;
 class cHud;
 class cMapField;
 class cUnit;
+class cVehicle;
+
+struct sBuilding;
 struct sHudStateContainer;
 struct sTurnstartReport;
+struct sUnitData;
+struct sVehicle;
 
 struct sSavedReportMessage
 {
@@ -56,25 +57,57 @@ struct sSavedReportMessage
 
 typedef std::vector<int> PointsHistory;
 
+class sPlayer
+{
+public:
+	sPlayer (const std::string& name_, unsigned int color_, int Nr_, int socketIndex_ = -1);
+
+	const std::string& getName() const { return name; }
+	void setName (const std::string& name_) { name = name_; }
+	unsigned int getColorIndex() const { return colorIndex; }
+	void setColorIndex (unsigned int index) { assert (index < PLAYERCOLORS); colorIndex = index; }
+	void setToNextColorIndex();
+	void setToPrevColorIndex();
+	SDL_Surface* getColorSurface() const;
+	int getNr() const { return Nr; }
+	void setNr (int index) { Nr = index; }
+	int getSocketIndex() const { return socketIndex; }
+	void setSocketIndex (int index) { socketIndex = index; }
+	void setLocal();
+	bool isLocal() const;
+	void onSocketIndexDisconnected (int socketIndex);
+
+private:
+	std::string name;
+	unsigned int colorIndex;
+	int Nr; //!< Index in playerList
+
+	// Index in socket array of cServer::network
+	// if MAX_CLIENTS it's the local connected player
+	// -1 for unknown
+	int socketIndex;
+};
+
 
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer
 {
-	friend class cServer; // TODO:Remove.
-	friend class cGameDataContainer; // TODO:Remove.
-	friend class cNetworkHostMenu; // TODO:Remove.
 public:
-	cPlayer (const std::string& Name, unsigned int colorIndex, int nr, int iSocketNum = -1);
+	cPlayer (const sPlayer& splayer);
 	cPlayer (const cPlayer& Player);
 	~cPlayer();
 
-	const std::string& getName () const { return name; }
-	void setName (const std::string& name_) { name = name_; }
-	unsigned int getColor() const { return color; }
-	void setColor (unsigned int index);
-	SDL_Surface* getColorSurface() const;
-	int getNr() const { return Nr; }
-	int getSocketNum() const { return iSocketNum; }
+	const std::string& getName () const { return splayer.getName(); }
+	void setName (const std::string& name) { splayer.setName (name); }
+	unsigned int getColor() const { return splayer.getColorIndex(); }
+	void setColor (unsigned int index) { return splayer.setColorIndex (index); }
+	SDL_Surface* getColorSurface() const { return splayer.getColorSurface(); }
+	int getNr() const { return splayer.getNr(); }
+	int getSocketNum() const { return splayer.getSocketIndex(); }
+	void setSocketIndex (int index) { splayer.setSocketIndex (index); }
+	void setLocal() { splayer.setLocal(); }
+	bool isLocal() const { return splayer.isLocal(); }
+	void onSocketIndexDisconnected (unsigned int socketIndex) { splayer.onSocketIndexDisconnected (socketIndex);}
 
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& ID);
@@ -154,11 +187,7 @@ private:
 	cVehicle* getPrevVehicle (cVehicle* start);
 
 private:
-	std::string name;
-	unsigned int color;
-	int Nr;
-	int iSocketNum; // Number of socket over which this player is connected in network game
-					// if MAX_CLIENTS its the local connected player; -1 for unknown
+	sPlayer splayer;
 public:
 	std::vector<sUnitData> VehicleData; // Daten aller Vehicles f¸r diesen Player.
 	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.

@@ -241,7 +241,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 	client->initPlayer (clientPlayerList[player]);
 
 	// in singleplayer only the first player is important
-	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
+	serverPlayerList[player]->setLocal();
 	sendRequestResync (*client, serverPlayerList[player]->getNr());
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
@@ -707,7 +707,7 @@ void cMenu::sendMessage (cTCP& network, cNetMessage* message, const sMenuPlayer*
 	message->iPlayerNr = fromPlayerNr;
 
 	if (player == NULL) network.send (message->iLength, message->serialize());
-	else network.sendTo (player->socket, message->iLength, message->serialize());
+	else network.sendTo (player->getSocketIndex(), message->iLength, message->serialize());
 
 	Log.write ("Menu: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
 	delete message;
@@ -952,7 +952,9 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 	cGameDataContainer gameDataContainer;
 	gameDataContainer.isServer = true;
 	gameDataContainer.settings = new sSettings;
-	cPlayer* player = new cPlayer (cSettings::getInstance().getPlayerName(), cl_red, 0, MAX_CLIENTS); // Socketnumber MAX_CLIENTS for local client
+	sPlayer splayer (cSettings::getInstance().getPlayerName(), cl_red, 0);
+	splayer.setLocal();
+	cPlayer* player = new cPlayer (splayer);
 	gameDataContainer.players.push_back (player);
 
 	int lastDir = 1;
@@ -1564,11 +1566,11 @@ void cPlanetsSelectionMenu::mapReleased (void* parent)
 	menu->draw();
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cClanSelectionMenu
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* gameDataContainer_, cPlayer* player, bool noReturn)
 	: cMenu (LoadPCX (GFXOD_CLAN_SELECT))
 	, network (network_)
@@ -1629,7 +1631,7 @@ cClanSelectionMenu::cClanSelectionMenu (cTCP* network_, cGameDataContainer* game
 	updateClanDescription();
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cClanSelectionMenu::clanSelected (void* parent)
 {
 	cClanSelectionMenu* menu = reinterpret_cast<cClanSelectionMenu*> (parent);
@@ -1647,7 +1649,7 @@ void cClanSelectionMenu::clanSelected (void* parent)
 	}
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cClanSelectionMenu::updateClanDescription()
 {
 	cClan* clanInfo = cClanData::instance().getClan (clan);
@@ -1686,7 +1688,7 @@ void cClanSelectionMenu::updateClanDescription()
 	gameDataContainer->getEventHandler().handleNetMessages (NULL, this);
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 {
 	switch (message->iType)
@@ -1709,9 +1711,9 @@ void cClanSelectionMenu::handleNetMessage (cNetMessage* message)
 	}
 }
 
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cHangarMenu
-//-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 cHangarMenu::cHangarMenu (SDL_Surface* background_, cPlayer* player_, eMenuBackgrounds backgroundType_) :
@@ -2636,7 +2638,7 @@ cNetworkMenu::cNetworkMenu()
 	menuItems.push_back (setDefaultPortImage);
 
 	nameLine = new cMenuLineEdit (position.x + 347, position.y + 256, 90, 17, this);
-	nameLine->setText (actPlayer->name);
+	nameLine->setText (actPlayer->getName());
 	nameLine->setWasKeyInputFunction (&wasNameImput);
 	menuItems.push_back (nameLine);
 
@@ -2647,7 +2649,7 @@ cNetworkMenu::cNetworkMenu()
 	prevColorButton->setReleasedFunction (&prevColorReleased);
 	menuItems.push_back (prevColorButton);
 	colorImage = new cMenuImage (position.x + 505, position.y + 260);
-	setColor (actPlayer->color);
+	setColor (actPlayer->getColorIndex());
 	menuItems.push_back (colorImage);
 
 	gameDataContainer.type = GAME_TYPE_TCPIP;
@@ -2782,9 +2784,9 @@ void cNetworkMenu::setColor (int color)
 //------------------------------------------------------------------------------
 void cNetworkMenu::saveOptions()
 {
-	cSettings::getInstance().setPlayerName (actPlayer->name.c_str());
+	cSettings::getInstance().setPlayerName (actPlayer->getName().c_str());
 	cSettings::getInstance().setPort (port);
-	cSettings::getInstance().setPlayerColor (actPlayer->color);
+	cSettings::getInstance().setPlayerColor (actPlayer->getColorIndex());
 	if (ip.compare ("-") != 0)
 	{
 		cSettings::getInstance().setIP (ip.c_str());
@@ -2797,10 +2799,10 @@ void cNetworkMenu::changePlayerReadyState (sMenuPlayer* player)
 	if (player != actPlayer) return;
 	if (!gameDataContainer.map && !triedLoadMap.empty())
 	{
-		if (!player->ready) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMap));
-		player->ready = false;
+		if (!player->isReady()) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", triedLoadMap));
+		player->setReady (false);
 	}
-	else player->ready = !player->ready;
+	else player->setReady (!player->isReady());
 	playerSettingsChanged();
 }
 
@@ -2840,7 +2842,7 @@ void cNetworkMenu::sendReleased (void* parent)
 	{
 		chatText = menu->nameLine->getText() + ": " + chatText;
 		menu->chatBox->addLine (chatText);
-		sendMenuChatMessage (*menu->network, chatText, NULL, menu->actPlayer->nr);
+		sendMenuChatMessage (*menu->network, chatText, NULL, menu->actPlayer->getNr());
 	}
 	menu->chatLine->setText ("");
 	menu->draw();
@@ -2850,9 +2852,8 @@ void cNetworkMenu::sendReleased (void* parent)
 void cNetworkMenu::nextColorReleased (void* parent)
 {
 	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
-	menu->actPlayer->color++;
-	if (menu->actPlayer->color >= PLAYERCOLORS) menu->actPlayer->color = 0;
-	menu->setColor (menu->actPlayer->color);
+	menu->actPlayer->setToNextColorIndex();
+	menu->setColor (menu->actPlayer->getColorIndex());
 	menu->playerSettingsChanged();
 	menu->draw();
 }
@@ -2861,9 +2862,8 @@ void cNetworkMenu::nextColorReleased (void* parent)
 void cNetworkMenu::prevColorReleased (void* parent)
 {
 	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
-	menu->actPlayer->color--;
-	if (menu->actPlayer->color < 0) menu->actPlayer->color = PLAYERCOLORS - 1;
-	menu->setColor (menu->actPlayer->color);
+	menu->actPlayer->setToPrevColorIndex();
+	menu->setColor (menu->actPlayer->getColorIndex());
 	menu->playerSettingsChanged();
 	menu->draw();
 }
@@ -2872,7 +2872,7 @@ void cNetworkMenu::prevColorReleased (void* parent)
 void cNetworkMenu::wasNameImput (void* parent)
 {
 	cNetworkMenu* menu = reinterpret_cast<cNetworkMenu*> (parent);
-	menu->actPlayer->name = menu->nameLine->getText();
+	menu->actPlayer->setName (menu->nameLine->getText());
 	menu->playerSettingsChanged();
 }
 
@@ -2894,7 +2894,7 @@ void cNetworkMenu::setDefaultPort (void* parent)
 	menu->port = atoi (menu->portLine->getText().c_str());
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkMenu::runGamePreparation (cPlayer& player)
 {
 	int step = 0;
@@ -2916,11 +2916,11 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 	}
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cNetworkHostMenu implementation
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetworkHostMenu::cNetworkHostMenu()
 {
 	gameDataContainer.isServer = true;
@@ -2953,7 +2953,7 @@ cNetworkHostMenu::cNetworkHostMenu()
 	ipLine->setReadOnly (true);
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetworkHostMenu::~cNetworkHostMenu()
 {
 	for (size_t i = 0; i < mapSenders.size(); i++)
@@ -2962,42 +2962,42 @@ cNetworkHostMenu::~cNetworkHostMenu()
 	}
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::checkTakenPlayerAttr (sMenuPlayer* player)
 {
-	if (player->ready == false) return;
+	if (player->isReady() == false) return;
 
 	for (size_t i = 0; i < players.size(); ++i)
 	{
-		if (static_cast<int> (i) == player->nr) continue;
-		if (players[i]->name == player->name)
+		if (static_cast<int> (i) == player->getNr()) continue;
+		if (players[i]->getName() == player->getName())
 		{
-			if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Name_Taken", player, actPlayer->nr, true);
+			if (player->getNr() != actPlayer->getNr()) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Name_Taken", player, actPlayer->getNr(), true);
 			else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Name_Taken"));
-			player->ready = false;
+			player->setReady (false);
 			break;
 		}
-		if (players[i]->color == player->color)
+		if (players[i]->getColorIndex() == player->getColorIndex())
 		{
-			if (player->nr != actPlayer->nr) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", player, actPlayer->nr, true);
+			if (player->getNr() != actPlayer->getNr()) sendMenuChatMessage (*network, "Text~Multiplayer~Player_Color_Taken", player, actPlayer->getNr(), true);
 			else chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Color_Taken"));
-			player->ready = false;
+			player->setReady (false);
 			break;
 		}
 	}
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cNetworkHostMenu::checkAllPlayersReady() const
 {
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		if (!players[i]->ready) return i;
+		if (!players[i]->isReady()) return i;
 	}
 	return -1;
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::okReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
@@ -3011,7 +3011,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 	}
 	else if ((playerNr = menu->checkAllPlayersReady()) != -1)
 	{
-		menu->chatBox->addLine (menu->players[playerNr]->name + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
+		menu->chatBox->addLine (menu->players[playerNr]->getName() + " " + lngPack.i18n ("Text~Multiplayer~Not_Ready"));
 		menu->draw();
 		return;
 	}
@@ -3035,7 +3035,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 
 		for (unsigned int i = 0; i < menu->players.size(); i++)
 		{
-			cPlayer* player = new cPlayer (menu->players[i]->name, menu->players[i]->color, menu->players[i]->nr, menu->players[i]->socket);
+			cPlayer* player = new cPlayer (menu->players[i]->getsPlayer());
 			menu->gameDataContainer.players.push_back (player);
 		}
 		cPlayer& localPlayer = *menu->gameDataContainer.players[0];
@@ -3045,7 +3045,7 @@ void cNetworkHostMenu::okReleased (void* parent)
 	menu->end = true;
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::mapReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
@@ -3057,7 +3057,7 @@ void cNetworkHostMenu::mapReleased (void* parent)
 	menu->draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::settingsReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
@@ -3075,7 +3075,7 @@ void cNetworkHostMenu::settingsReleased (void* parent)
 	menu->draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::loadReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
@@ -3101,7 +3101,7 @@ void cNetworkHostMenu::loadReleased (void* parent)
 	menu->draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::startReleased (void* parent)
 {
 	cNetworkHostMenu* menu = reinterpret_cast<cNetworkHostMenu*> (parent);
@@ -3122,7 +3122,7 @@ void cNetworkHostMenu::startReleased (void* parent)
 	menu->draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::playerSettingsChanged()
 {
 	checkTakenPlayerAttr (actPlayer);
@@ -3144,7 +3144,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 	// send to other clients
 	for (unsigned int i = 1; i < players.size(); i++)
 	{
-		if (players[i]->nr == message->iPlayerNr) continue;
+		if (players[i]->getNr() == message->iPlayerNr) continue;
 		sendMenuChatMessage (*network, chatText, players[i], -1, translationText);
 	}
 	draw();
@@ -3173,23 +3173,24 @@ void cNetworkHostMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 	//delete player
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		if (players[i]->socket == socket)
+		if (players[i]->getSocketIndex() == socket)
 		{
-			playerName = players[i]->name;
+			playerName = players[i]->getName();
 			players.erase (players.begin() + i);
+			break;
 		}
 	}
 
 	//resort socket numbers
 	for (unsigned int playerNr = 0; playerNr < players.size(); playerNr++)
 	{
-		if (players[playerNr]->socket > socket && players[playerNr]->socket < MAX_CLIENTS) players[playerNr]->socket--;
+		players[playerNr]->onSocketIndexDisconnected (socket);
 	}
 
 	//resort player numbers
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		players[i]->nr = i;
+		players[i]->setNr (i);
 		sendRequestIdentification (*network, *players[i]);
 	}
 
@@ -3213,14 +3214,14 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* mess
 	}
 	sMenuPlayer* player = players[playerNr];
 
-	bool freshJoined = (player->name.compare (UNIDENTIFIED_PLAYER_NAME) == 0);
-	player->color = message->popInt16();
-	player->name = message->popString();
-	player->ready = message->popBool();
+	bool freshJoined = (player->getName().compare (UNIDENTIFIED_PLAYER_NAME) == 0);
+	player->setColorIndex (message->popInt16());
+	player->setName (message->popString());
+	player->setReady (message->popBool());
 
 	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
-	if (freshJoined) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->name));
+	if (freshJoined) chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Player_Joined", player->getName()));
 
 	// search double taken name or color
 	checkTakenPlayerAttr (player);
@@ -3238,7 +3239,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 
 	const size_t receiverNr = message->popInt16();
 	if (receiverNr >= players.size()) return;
-	int socketNr = players[receiverNr]->socket;
+	int socketNr = players[receiverNr]->getSocketIndex();
 	// check, if there is already a map sender, that uploads to the same socketNr.
 	// If yes, terminate the old map sender.
 	for (int i = (int) mapSenders.size() - 1; i >= 0; i--)
@@ -3249,10 +3250,10 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_REQUEST_MAP (cNetMessage* message
 			mapSenders.erase (mapSenders.begin() + i);
 		}
 	}
-	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getName(), players[receiverNr]->name);
+	cMapSender* mapSender = new cMapSender (*network, socketNr, &gameDataContainer.getEventHandler(), gameDataContainer.map->getName(), players[receiverNr]->getName());
 	mapSenders.push_back (mapSender);
 	mapSender->runInThread (this);
-	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->name));
+	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Upload", players[receiverNr]->getName()));
 	draw();
 }
 
@@ -3265,7 +3266,7 @@ void cNetworkHostMenu::handleNetMessage_MU_MSG_FINISHED_MAP_DOWNLOAD (cNetMessag
 	draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 {
 	Log.write ("Menu: --> " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
@@ -3282,7 +3283,7 @@ void cNetworkHostMenu::handleNetMessage (cNetMessage* message)
 	}
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cNetworkHostMenu::runSavedGame()
 {
 	cServer* server = NULL;
@@ -3297,7 +3298,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < players.size(); j++)
 		{
-			if (serverPlayerList[i]->getName() == players[j]->name) break;
+			if (serverPlayerList[i]->getName() == players[j]->getName()) break;
 			// stop when a player is missing
 			if (j == players.size() - 1)
 			{
@@ -3313,16 +3314,17 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < serverPlayerList.size(); j++)
 		{
-			if (players[i]->name == serverPlayerList[j]->getName()) break;
+			if (players[i]->getName() == serverPlayerList[j]->getName()) break;
 
 			// the player isn't in the list when the loop has gone trough all players and no match was found
 			if (j == serverPlayerList.size() - 1)
 			{
 				sendMenuChatMessage (*network, "Text~Multiplayer~Disconnect_Not_In_Save", players[i], -1, true);
-				network->close (players[i]->socket);
+				const int socketIndex = players[i]->getSocketIndex();
+				network->close (socketIndex);
 				for (unsigned int k = 0; k < players.size(); k++)
 				{
-					if (players[k]->socket > players[i]->socket && players[k]->socket < MAX_CLIENTS) players[k]->socket--;
+					players[k]->onSocketIndexDisconnected (socketIndex);
 				}
 				delete players[i];
 				players.erase (players.begin() + i);
@@ -3334,14 +3336,14 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < players.size(); j++)
 		{
-			if (serverPlayerList[i]->getName() == players[j]->name)
+			if (serverPlayerList[i]->getName() == players[j]->getName())
 			{
 				// set the sockets in the servers PlayerList
-				if (serverPlayerList[i]->getName() == actPlayer->name) serverPlayerList[i]->iSocketNum = MAX_CLIENTS;
-				else serverPlayerList[i]->iSocketNum = players[j]->socket;
+				if (serverPlayerList[i]->getName() == actPlayer->getName()) serverPlayerList[i]->setLocal();
+				else serverPlayerList[i]->setSocketIndex (players[j]->getSocketIndex());
 				// set the numbers and colors in the menues players-list
-				players[j]->nr = serverPlayerList[i]->getNr();
-				players[j]->color = serverPlayerList[i]->getColor();
+				players[j]->setNr (serverPlayerList[i]->getNr());
+				players[j]->setColorIndex (serverPlayerList[i]->getColor());
 				break;
 			}
 		}
@@ -3365,7 +3367,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
 		clientPlayerList.push_back (addedPlayer);
-		if (serverPlayerList[i]->getSocketNum() == MAX_CLIENTS) localPlayer = clientPlayerList[i];
+		if (serverPlayerList[i]->isLocal()) localPlayer = clientPlayerList[i];
 		// reinit unit values
 		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan()).data;
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
@@ -3400,11 +3402,11 @@ bool cNetworkHostMenu::runSavedGame()
 	return true;
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cNetworkClientMenu implementation
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetworkClientMenu::cNetworkClientMenu()
 	: mapReceiver (0)
 	, lastRequestedMap ("")
@@ -3477,10 +3479,11 @@ void cNetworkClientMenu::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		if (players[i]->nr == actPlayer->nr) continue;
+		if (players[i]->getNr() == actPlayer->getNr()) continue;
 		players.erase (players.begin() + i);
+		// memleak ?
 	}
-	actPlayer->ready = false;
+	actPlayer->setReady (false);
 	chatBox->addLine (lngPack.i18n ("Text~Multiplayer~Lost_Connection", "server"));
 	playersBox->setPlayers (&players);
 	draw();
@@ -3492,7 +3495,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_REQ_IDENTIFIKATION (cNetMessage
 	assert (message->iType == MU_MSG_REQ_IDENTIFIKATION);
 
 	Log.write ("game version of server is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
-	actPlayer->nr = message->popInt16();
+	actPlayer->setNr (message->popInt16());
 	sendIdentification (*network, *actPlayer);
 }
 
@@ -3502,7 +3505,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* messag
 	assert (message->iType == MU_MSG_PLAYERLIST);
 
 	int playerCount = message->popInt16();
-	int actPlayerNr = actPlayer->nr;
+	int actPlayerNr = actPlayer->getNr();
 	for (size_t i = 0; i != players.size(); ++i)
 	{
 		delete players[i];
@@ -3515,7 +3518,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_PLAYERLIST (cNetMessage* messag
 		bool ready = message->popBool();
 		int nr = message->popInt16();
 		sMenuPlayer* player = new sMenuPlayer (name, color, ready, nr);
-		if (player->nr == actPlayerNr) actPlayer = player;
+		if (player->getNr() == actPlayerNr) actPlayer = player;
 		players.push_back (player);
 	}
 	playersBox->setPlayers (&players);
@@ -3570,10 +3573,10 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 				delete map;
 				gameDataContainer.map = NULL;
 
-				if (actPlayer->ready)
+				if (actPlayer->isReady())
 				{
 					chatBox->addLine (lngPack.i18n ("Text~Multiplayer~No_Map_No_Ready", mapName));
-					actPlayer->ready = false;
+					actPlayer->setReady (false);
 					playerSettingsChanged();
 				}
 				triedLoadMap = mapName;
@@ -3594,7 +3597,7 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_OPTINS (cNetMessage* message)
 						if (mapName != lastRequestedMap)
 						{
 							lastRequestedMap = mapName;
-							sendRequestMap (*network, mapName, actPlayer->nr);
+							sendRequestMap (*network, mapName, actPlayer->getNr());
 							chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_DownloadRequest"));
 							chatBox->addLine (lngPack.i18n ("Text~Multiplayer~MapDL_Download", mapName));
 						}
@@ -3630,16 +3633,16 @@ void cNetworkClientMenu::handleNetMessage_MU_MSG_GO (cNetMessage* message)
 	saveOptions();
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		cPlayer* player = new cPlayer (players[i]->name, players[i]->color, players[i]->nr, players[i]->socket);
+		cPlayer* player = new cPlayer (players[i]->getsPlayer());
 		gameDataContainer.players.push_back (player);
 	}
 	if (!saveGameString.empty())
 	{
-		gameDataContainer.runGame (network, actPlayer->nr);
+		gameDataContainer.runGame (network, actPlayer->getNr());
 	}
 	else
 	{
-		cPlayer& localPlayer = *gameDataContainer.players[actPlayer->nr];
+		cPlayer& localPlayer = *gameDataContainer.players[actPlayer->getNr()];
 		this->runGamePreparation (localPlayer);
 	}
 	end = true;
@@ -3668,21 +3671,22 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 
 	if (message->popBool())
 	{
-		actPlayer->nr = message->popInt16();
-		actPlayer->color = message->popInt16();
+		actPlayer->setNr (message->popInt16());
+		actPlayer->setColorIndex (message->popInt16());
 		cStaticMap* Map = new cStaticMap;
 		if (!Map->loadMap (message->popString())) return;
 		gameDataContainer.map = Map;
 
 		int playerCount = message->popInt16();
 
-		gameDataContainer.players.push_back (new cPlayer (actPlayer->name, actPlayer->color, actPlayer->nr));
+		gameDataContainer.players.push_back (new cPlayer (actPlayer->getsPlayer()));
 		while (playerCount > 1)
 		{
 			string playername = message->popString();
 			int playercolor = message->popInt16();
 			int playernr = message->popInt16();
-			gameDataContainer.players.push_back (new cPlayer (playername, playercolor, playernr));
+			sPlayer splayer (playername, playercolor, playernr);
+			gameDataContainer.players.push_back (new cPlayer (splayer));
 			playerCount--;
 		}
 
@@ -3705,7 +3709,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 		}
 		while (changed && size);
 
-		gameDataContainer.runGame (network, actPlayer->nr, true);
+		gameDataContainer.runGame (network, actPlayer->getNr(), true);
 		end = true;
 	}
 	else
@@ -3740,7 +3744,7 @@ void cNetworkClientMenu::handleNetMessage (cNetMessage* message)
 	}
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::initMapDownload (cNetMessage* message)
 {
 	int mapSize = message->popInt32();
@@ -3750,7 +3754,7 @@ void cNetworkClientMenu::initMapDownload (cNetMessage* message)
 	mapReceiver = new cMapReceiver (mapName, mapSize);
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 {
 	if (mapReceiver == 0)
@@ -3769,7 +3773,7 @@ void cNetworkClientMenu::receiveMapData (cNetMessage* message)
 	draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::canceledMapDownload (cNetMessage* message)
 {
 	if (mapReceiver == 0)
@@ -3782,7 +3786,7 @@ void cNetworkClientMenu::canceledMapDownload (cNetMessage* message)
 	draw();
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 {
 	if (mapReceiver == 0)
@@ -3804,11 +3808,11 @@ void cNetworkClientMenu::finishedMapDownload (cNetMessage* message)
 	mapReceiver = 0;
 }
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cLoadMenu implementation
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cLoadMenu::cLoadMenu (cGameDataContainer* gameDataContainer_, eMenuBackgrounds backgroundType_)
 	: cMenu (LoadPCX (GFXOD_SAVELOAD), backgroundType_)
 	, gameDataContainer (gameDataContainer_)

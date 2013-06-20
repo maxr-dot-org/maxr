@@ -196,24 +196,24 @@ void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 	// delete menuPlayer
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{
-		if (menuPlayers[i]->socket == socket)
+		if (menuPlayers[i]->getSocketIndex() == socket)
 		{
-			playerName = menuPlayers[i]->name;
+			playerName = menuPlayers[i]->getName();
 			menuPlayers.erase (menuPlayers.begin() + i);
+			break;
 		}
 	}
 
 	// resort socket numbers
 	for (size_t playerNr = 0; playerNr < menuPlayers.size(); playerNr++)
 	{
-		if (menuPlayers[playerNr]->socket > socket && menuPlayers[playerNr]->socket < MAX_CLIENTS)
-			menuPlayers[playerNr]->socket--;
+		menuPlayers[playerNr]->onSocketIndexDisconnected (socket);
 	}
 
 	// resort player numbers
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{
-		menuPlayers[i]->nr = i;
+		menuPlayers[i]->setNr (i);
 		sendRequestIdentification (*network, *menuPlayers[i]);
 	}
 	sendPlayerList (*network, menuPlayers);
@@ -230,9 +230,9 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 	sMenuPlayer* player = menuPlayers[playerNr];
 
 	//bool freshJoined = (player->name.compare ("unidentified") == 0);
-	player->color = message->popInt16();
-	player->name = message->popString();
-	player->ready = message->popBool();
+	player->setColorIndex (message->popInt16());
+	player->setName (message->popString());
+	player->setReady (message->popBool());
 
 	Log.write ("game version of client " + iToStr (playerNr) + " is: " + message->popString(), cLog::eLOG_TYPE_NET_DEBUG);
 
@@ -275,7 +275,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				bool allReady = true;
 				for (size_t i = 0; i < menuPlayers.size(); i++)
 				{
-					if (menuPlayers[i]->ready == false)
+					if (menuPlayers[i]->isReady() == false)
 					{
 						allReady = false;
 						break;
@@ -285,7 +285,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				{
 					for (size_t i = 0; i < menuPlayers.size(); i++)
 					{
-						cPlayer* player = new cPlayer (menuPlayers[i]->name, menuPlayers[i]->color, menuPlayers[i]->nr, menuPlayers[i]->socket);
+						cPlayer* player = new cPlayer (menuPlayers[i]->getsPlayer());
 						gameData->players.push_back (player);
 					}
 
@@ -308,7 +308,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 				if (gameData->map != 0 && gameData->map->loadMap (mapName))
 				{
 					sendGameData (*network, *gameData, "");
-					string reply = senderPlayer->name;
+					string reply = senderPlayer->getName();
 					reply += " changed the map.";
 					sendMenuChatMessage (*network, reply);
 				}
@@ -337,7 +337,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 					{
 						gameData->settings->credits = (eSettingsCredits) credits;
 						sendGameData (*network, *gameData, "");
-						string reply = senderPlayer->name;
+						string reply = senderPlayer->getName();
 						reply += " changed the starting credits.";
 						sendMenuChatMessage (*network, reply);
 					}
@@ -353,7 +353,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 		// send to other clients
 		for (size_t i = 0; i < menuPlayers.size(); i++)
 		{
-			if (menuPlayers[i]->nr == message->iPlayerNr)
+			if (menuPlayers[i]->getNr() == message->iPlayerNr)
 				continue;
 			sendMenuChatMessage (*network, chatText, menuPlayers[i], -1, translationText);
 		}
@@ -428,7 +428,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 		{
 			gameData->settings->resFrequency = (eSettingResFrequency) density;
 			sendGameData (*network, *gameData, "");
-			string reply = senderPlayer->name;
+			string reply = senderPlayer->getName();
 			reply += " changed the resource frequency to ";
 			reply += tokens[1];
 			reply += ".";
@@ -450,7 +450,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 			else if (tokens[0].compare ("metal") == 0) gameData->settings->metal = (eSettingResourceValue) ammount;
 			else if (tokens[0].compare ("gold") == 0) gameData->settings->gold = (eSettingResourceValue) ammount;
 			sendGameData (*network, *gameData, "");
-			string reply = senderPlayer->name;
+			string reply = senderPlayer->getName();
 			reply += " changed the resource density of ";
 			reply += tokens[0];
 			reply += " to ";
@@ -586,7 +586,7 @@ std::string cServerGame::getGameState() const
 	else if (menuPlayers.size() > 0)
 	{
 		for (size_t i = 0; i < menuPlayers.size(); i++)
-			result << " " << menuPlayers[i]->name << endl;
+			result << " " << menuPlayers[i]->getName() << endl;
 	}
 	return result.str();
 }
@@ -602,8 +602,8 @@ int cServerGame::getSocketForPlayerNr (int playerNr) const
 	}
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{
-		if (menuPlayers[i]->nr == playerNr)
-			return menuPlayers[i]->socket;
+		if (menuPlayers[i]->getNr() == playerNr)
+			return menuPlayers[i]->getSocketIndex();
 	}
 	return -1;
 }
