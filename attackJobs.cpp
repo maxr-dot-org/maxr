@@ -181,7 +181,7 @@ void cServerAttackJob::lockTarget (int offset)
 		message->pushInt32 (offset);
 		message->pushBool (isAir);
 
-		server->sendNetMessage (message, player->Nr);
+		server->sendNetMessage (message, player->getNr());
 	}
 }
 
@@ -306,7 +306,7 @@ void cServerAttackJob::sendFireCommand (cPlayer* player)
 	}
 	message->pushInt16 (iID);
 
-	server->sendNetMessage (message, player->Nr);
+	server->sendNetMessage (message, player->getNr());
 }
 
 //--------------------------------------------------------------------------
@@ -322,7 +322,7 @@ void cServerAttackJob::clientFinished (int playerNr)
 {
 	for (unsigned int i = 0; i < executingClients.size(); i++)
 	{
-		if (executingClients[i]->Nr == playerNr)
+		if (executingClients[i]->getNr() == playerNr)
 			executingClients.erase (executingClients.begin() + i);
 	}
 
@@ -484,7 +484,7 @@ void cServerAttackJob::sendAttackJobImpact (int offset, int remainingHP, int id)
 		message->pushInt16 (remainingHP);
 		message->pushInt16 (id);
 
-		server->sendNetMessage (message, player->Nr);
+		server->sendNetMessage (message, player->getNr());
 	}
 }
 

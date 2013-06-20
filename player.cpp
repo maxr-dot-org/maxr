@@ -39,6 +39,7 @@ cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum
 	name (Name),
 	color (Color),
 	Nr (nr),
+	iSocketNum (iSocketNum),
 	numEcos (0),
 	lastDeletedUnit (0),
 	clan (-1)
@@ -61,7 +62,6 @@ cPlayer::cPlayer (const string& Name, SDL_Surface* Color, int nr, int iSocketNum
 		researchCentersWorkingOnArea[i] = 0;
 	Credits = 0;
 
-	this->iSocketNum = iSocketNum;
 	isDefeated = false;
 	isRemovedFromGame = false;
 	bFinishedTurn = false;
@@ -171,6 +171,33 @@ void cPlayer::setClan (int newClan)
 
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
 		BuildingData[i] = UnitsData.getBuilding (i, clan).data;
+}
+
+//------------------------------------------------------------------------------
+static int GetColorNr (const SDL_Surface* sf)
+{
+	if (sf == OtherData.colors[cl_red])    return cl_red;
+	if (sf == OtherData.colors[cl_blue])   return cl_blue;
+	if (sf == OtherData.colors[cl_green])  return cl_green;
+	if (sf == OtherData.colors[cl_grey])   return cl_grey;
+	if (sf == OtherData.colors[cl_orange]) return cl_orange;
+	if (sf == OtherData.colors[cl_yellow]) return cl_yellow;
+	if (sf == OtherData.colors[cl_purple]) return cl_purple;
+	if (sf == OtherData.colors[cl_aqua])   return cl_aqua;
+	return cl_red;
+}
+
+//----------------------------------------------------------------------------------
+int cPlayer::getColor() const
+{
+	return GetColorNr (color);
+}
+
+//----------------------------------------------------------------------------------
+void cPlayer::setColor (unsigned int index)
+{
+	assert (index < 8);
+	color = OtherData.colors[index];
 }
 
 //----------------------------------------------------------------------------------

@@ -287,8 +287,8 @@ void cVehicle::draw (SDL_Rect screenPosition, cGameGUI& gameGUI)
 	if (gameGUI.colorChecked())
 	{
 		SDL_Rect d, t;
-		int max, nr;
-		nr = * (unsigned int*) owner->color->pixels;
+		int max;
+		int nr = *static_cast<Uint32*> (owner->getColorSurface()->pixels);
 
 		if (data.isBig) max = (gameGUI.getTileSize() - 1) * 2;
 		else max = gameGUI.getTileSize() - 1;
@@ -469,7 +469,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		src.y = 0;
 		src.h = src.w = (int) (typ->build_org->h * zoomFactor);
 		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
-		SDL_BlitSurface (owner->color, NULL, GraphicsData.gfx_tmp, NULL);
+		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 		blitWithPreScale (typ->build_org, typ->build, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
 		// draw vehicle
@@ -493,7 +493,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 		src.y = 0;
 		src.h = src.w = (int) (typ->clear_small_org->h * zoomFactor);
 		src.x = (client->gameGUI.getAnimationSpeed() % 4) * src.w;
-		SDL_BlitSurface (owner->color, NULL, GraphicsData.gfx_tmp, NULL);
+		SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 
 		blitWithPreScale (typ->clear_small_org, typ->clear_small, &src, GraphicsData.gfx_tmp, NULL, zoomFactor, 4);
 
@@ -543,7 +543,7 @@ void cVehicle::render (const cClient* client, SDL_Surface* surface, const SDL_Re
 	}
 
 	// draw player color
-	SDL_BlitSurface (owner->color, NULL, GraphicsData.gfx_tmp, NULL);
+	SDL_BlitSurface (owner->getColorSurface(), NULL, GraphicsData.gfx_tmp, NULL);
 
 	if (data.animationMovement)
 	{
@@ -622,7 +622,7 @@ bool cVehicle::refreshData_Build (cServer& server)
 	if (BuildRounds != 0) return true;
 
 	const cMap& map = *server.Map;
-	server.addReport (BuildingTyp, false, owner->Nr);
+	server.addReport (BuildingTyp, false, owner->getNr());
 
 	//handle pathbuilding
 	//here the new building is added (if possible) and the move job to the next field is generated
@@ -710,18 +710,18 @@ bool cVehicle::refreshData_Clear (cServer& server)
 	{
 		int size = map.getSize();
 		map.moveVehicle (*this, BuildBigSavedPos % size, BuildBigSavedPos / size);
-		sendStopClear (server, *this, BuildBigSavedPos, owner->Nr);
+		sendStopClear (server, *this, BuildBigSavedPos, owner->getNr());
 		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 		{
-			sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->Nr);
+			sendStopClear (server, *this, BuildBigSavedPos, seenByPlayerList[i]->getNr());
 		}
 	}
 	else
 	{
-		sendStopClear (server, *this, -1, owner->Nr);
+		sendStopClear (server, *this, -1, owner->getNr());
 		for (unsigned int i = 0; i < seenByPlayerList.size(); i++)
 		{
-			sendStopClear (server, *this, -1, seenByPlayerList[i]->Nr);
+			sendStopClear (server, *this, -1, seenByPlayerList[i]->getNr());
 		}
 	}
 	data.storageResCur += Rubble->RubbleValue;

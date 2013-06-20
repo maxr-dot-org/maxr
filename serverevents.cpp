@@ -33,7 +33,7 @@
 #include "upgradecalculator.h"
 #include "vehicles.h"
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle, sID UnitID, int iPlayer, bool bInit, bool bAddToMap)
 {
 	cNetMessage* message;
@@ -52,7 +52,7 @@ void sendAddUnit (cServer& server, int iPosX, int iPosY, int iID, bool bVehicle,
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_ADD_RUBBLE);
@@ -67,7 +67,7 @@ void sendAddRubble (cServer& server, const cBuilding& building, int iPlayer)
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr)
 {
 	cNetMessage* message = new cNetMessage (unit.isBuilding() ? GAME_EV_DEL_BUILDING : GAME_EV_DEL_VEHICLE);
@@ -75,23 +75,23 @@ void sendDeleteUnitMessage (cServer& server, const cUnit& unit, int playerNr)
 	server.sendNetMessage (message, playerNr);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDeleteUnit (cServer& server, const cUnit& unit, int iClient)
 {
 	if (iClient == -1)
 	{
 		for (unsigned int i = 0; i < unit.seenByPlayerList.size(); i++)
-			sendDeleteUnitMessage (server, unit, unit.seenByPlayerList[i]->Nr);
+			sendDeleteUnitMessage (server, unit, unit.seenByPlayerList[i]->getNr());
 
 		//send message to owner, since he is not in the seenByPlayerList
 		if (unit.owner != 0)
-			sendDeleteUnitMessage (server, unit, unit.owner->Nr);
+			sendDeleteUnitMessage (server, unit, unit.owner->getNr());
 	}
 	else
 		sendDeleteUnitMessage (server, unit, iClient);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 {
 	cNetMessage* message = new cNetMessage (unit.isBuilding() ? GAME_EV_ADD_ENEM_BUILDING : GAME_EV_ADD_ENEM_VEHICLE);
@@ -103,12 +103,12 @@ void sendAddEnemyUnit (cServer& server, const cUnit& unit, int iClient)
 	message->pushInt16 (unit.PosX);
 	message->pushInt16 (unit.PosY);
 	message->pushID (unit.data.ID);
-	message->pushInt16 (unit.owner->Nr);
+	message->pushInt16 (unit.owner->getNr());
 
 	server.sendNetMessage (message, iClient);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, int iNextPlayerNum, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MAKE_TURNEND);
@@ -120,7 +120,7 @@ void sendMakeTurnEnd (cServer& server, bool bEndTurn, bool bWaitForNextPlayer, i
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cPlayer* Player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_FINISHED_TURN);
@@ -128,11 +128,11 @@ void sendTurnFinished (cServer& server, int iPlayerNum, int iTimeDelay, const cP
 	message->pushInt16 (iTimeDelay);
 	message->pushInt16 (iPlayerNum);
 
-	if (Player != NULL) server.sendNetMessage (message, Player->Nr);
+	if (Player != NULL) server.sendNetMessage (message, Player->getNr());
 	else server.sendNetMessage (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_UNIT_DATA);
@@ -162,8 +162,9 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	message->pushInt16 (unit.data.buildCosts);
 
 	// Current state of the unit
-	//TODO: remove information such sentrystatus, build or clearrounds from normal data
-	//		because this data will be received by enemys, too
+	// TODO: remove information such sentrystatus,
+	//       build or clearrounds from normal data
+	//       because this data will be received by enemys, too
 	if (unit.isBuilding())
 		message->pushInt16 (static_cast<const cBuilding*> (&unit)->points);
 
@@ -207,12 +208,12 @@ void sendUnitData (cServer& server, const cUnit& unit, int iPlayer)
 	message->pushInt16 (unit.PosY);
 	message->pushBool (unit.isVehicle());
 	message->pushInt16 (unit.iID);
-	message->pushInt16 (unit.owner->Nr);
+	message->pushInt16 (unit.owner->getNr());
 
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SPECIFIC_UNIT_DATA);
@@ -222,10 +223,10 @@ void sendSpecificUnitData (cServer& server, const cVehicle& vehicle)
 	message->pushID (vehicle.BuildingTyp);
 	message->pushInt16 (vehicle.dir);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendChatMessageToClient (cServer& server, const std::string& message, int iType, int iPlayer, const std::string& inserttext)
 {
 	cNetMessage* newMessage;
@@ -236,7 +237,7 @@ void sendChatMessageToClient (cServer& server, const std::string& message, int i
 	server.sendNetMessage (newMessage, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDoStartWork (cServer& server, const cBuilding& building)
 {
 	//check all players
@@ -250,11 +251,11 @@ void sendDoStartWork (cServer& server, const cBuilding& building)
 
 		cNetMessage* message = new cNetMessage (GAME_EV_DO_START_WORK);
 		message->pushInt32 (building.iID);
-		server.sendNetMessage (message, player->Nr);
+		server.sendNetMessage (message, player->getNr());
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDoStopWork (cServer& server, const cBuilding& building)
 {
 	//check all players
@@ -268,11 +269,11 @@ void sendDoStopWork (cServer& server, const cBuilding& building)
 
 		cNetMessage* message = new cNetMessage (GAME_EV_DO_STOP_WORK);
 		message->pushInt32 (building.iID);
-		server.sendNetMessage (message, player->Nr);
+		server.sendNetMessage (message, player->getNr());
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSavedSpeed)
 {
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
@@ -281,17 +282,17 @@ void sendNextMove (cServer& server, const cVehicle& vehicle, int iType, int iSav
 		if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
 		message->pushChar (iType);
 		message->pushInt16 (vehicle.iID);
-		server.sendNetMessage (message, vehicle.seenByPlayerList[i]->Nr);
+		server.sendNetMessage (message, vehicle.seenByPlayerList[i]->getNr());
 	}
 
 	cNetMessage* message = new cNetMessage (GAME_EV_NEXT_MOVE);
 	if (iSavedSpeed >= 0) message->pushChar (iSavedSpeed);
 	message->pushChar (iType);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MOVE_JOB_SERVER);
@@ -324,7 +325,7 @@ void sendMoveJobServer (cServer& server, const cServerMoveJob& moveJob, int iPla
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 {
 	int iCount = 0;
@@ -352,10 +353,10 @@ void sendVehicleResources (cServer& server, const cVehicle& vehicle)
 	}
 	message->pushInt16 (iCount);
 
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendResources (cServer& server, const cPlayer& player)
 {
 	int iCount = 0;
@@ -374,7 +375,7 @@ void sendResources (cServer& server, const cPlayer& player)
 		if (message->iLength >= PACKAGE_LENGTH - 10)
 		{
 			message->pushInt16 (iCount);
-			server.sendNetMessage (message, player.Nr);
+			server.sendNetMessage (message, player.getNr());
 			message = new cNetMessage (GAME_EV_RESOURCES);
 			iCount = 0;
 		}
@@ -382,11 +383,11 @@ void sendResources (cServer& server, const cPlayer& player)
 	if (iCount > 0)
 	{
 		message->pushInt16 (iCount);
-		server.sendNetMessage (message, player.Nr);
+		server.sendNetMessage (message, player.getNr());
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer* receiver)
 {
 	if (!receiver)
@@ -400,9 +401,9 @@ void sendScore (cServer& server, const cPlayer& subject, int turn, const cPlayer
 		cNetMessage* msg = new cNetMessage (GAME_EV_SCORE);
 		msg->pushInt16 (subject.getScore (turn));
 		msg->pushInt16 (turn);
-		msg->pushInt16 (subject.Nr);
+		msg->pushInt16 (subject.getNr());
 
-		server.sendNetMessage (msg, receiver->Nr);
+		server.sendNetMessage (msg, receiver->getNr());
 	}
 }
 
@@ -411,7 +412,7 @@ void sendUnitScore (cServer& server, const cBuilding& building)
 	cNetMessage* msg = new cNetMessage (GAME_EV_UNIT_SCORE);
 	msg->pushInt16 (building.points);
 	msg->pushInt16 (building.iID);
-	server.sendNetMessage (msg, building.owner->Nr);
+	server.sendNetMessage (msg, building.owner->getNr());
 }
 
 void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
@@ -428,9 +429,9 @@ void sendNumEcos (cServer& server, cPlayer& subject, const cPlayer* receiver)
 	{
 		cNetMessage* msg = new cNetMessage (GAME_EV_NUM_ECOS);
 		msg->pushInt16 (subject.numEcos);
-		msg->pushInt16 (subject.Nr);
+		msg->pushInt16 (subject.getNr());
 
-		server.sendNetMessage (msg, receiver->Nr);
+		server.sendNetMessage (msg, receiver->getNr());
 	}
 }
 
@@ -447,11 +448,11 @@ void sendVictoryConditions (cServer& server, const int turnLimit, int scoreLimit
 		cNetMessage* msg = new cNetMessage (GAME_EV_VICTORY_CONDITIONS);
 		msg->pushInt16 (turnLimit);
 		msg->pushInt16 (scoreLimit);
-		server.sendNetMessage (msg, receiver->Nr);
+		server.sendNetMessage (msg, receiver->getNr());
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 {
 	//message for the owner
@@ -470,7 +471,7 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 
 	message->pushInt16 (vehicle.iID);
 	message->pushBool (bOK);
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 
 	//message for the enemys
 	for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
@@ -484,11 +485,11 @@ void sendBuildAnswer (cServer& server, bool bOK, const cVehicle& vehicle)
 		}
 		message->pushInt16 (vehicle.iID);
 		message->pushBool (bOK);
-		server.sendNetMessage (message, vehicle.seenByPlayerList[i]->Nr);
+		server.sendNetMessage (message, vehicle.seenByPlayerList[i]->getNr());
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_STOP_BUILD);
@@ -497,7 +498,7 @@ void sendStopBuild (cServer& server, int iVehicleID, int iNewPos, int iPlayer)
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSubbaseValues (cServer& server, const sSubBase& subBase, int iPlayer)
 {
 	//temporary debug check
@@ -536,7 +537,7 @@ void sendSubbaseValues (cServer& server, const sSubBase& subBase, int iPlayer)
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendBuildList (cServer& server, const cBuilding& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_BUILDLIST);
@@ -550,10 +551,10 @@ void sendBuildList (cServer& server, const cBuilding& building)
 	}
 	message->pushInt16 ( (int) building.BuildList->size());
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.owner->Nr);
+	server.sendNetMessage (message, building.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendProduceValues (cServer& server, const cBuilding& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_MINE_PRODUCE_VALUES);
@@ -561,10 +562,10 @@ void sendProduceValues (cServer& server, const cBuilding& building)
 	message->pushInt16 (building.MaxOilProd);
 	message->pushInt16 (building.MaxMetalProd);
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.owner->Nr);
+	server.sendNetMessage (message, building.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendTurnReport (cServer& server, cPlayer& player)
 {
 	// TODO: make sure, that the message size is not exceeded!
@@ -596,10 +597,10 @@ void sendTurnReport (cServer& server, cPlayer& player)
 	}
 	player.ReportVehicles.clear();
 	message->pushInt16 (iCount);
-	server.sendNetMessage (message, player.Nr);
+	server.sendNetMessage (message, player.getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, int iType, int iPlayerNum)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SUPPLY);
@@ -610,16 +611,16 @@ void sendSupply (cServer& server, int iDestID, bool bDestVehicle, int iValue, in
 	server.sendNetMessage (message, iPlayerNum);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDetectionState (cServer& server, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DETECTION_STATE);
 	message->pushBool (vehicle.detectedByPlayerList.size() > 0);
 	message->pushInt32 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, int turns, int bigoffset, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_CLEAR_ANSWER);
@@ -630,7 +631,7 @@ void sendClearAnswer (cServer& server, int answertype, const cVehicle& vehicle, 
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendStopClear (cServer& server, const cVehicle& vehicle, int bigoffset, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_STOP_CLEARING);
@@ -639,22 +640,22 @@ void sendStopClear (cServer& server, const cVehicle& vehicle, int bigoffset, int
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendNoFog (cServer& server, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_NOFOG);
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDefeated (cServer& server, const cPlayer& player, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DEFEATED);
-	message->pushInt16 (player.Nr);
+	message->pushInt16 (player.getNr());
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_FREEZE);
@@ -663,7 +664,7 @@ void sendFreeze (cServer& server, eFreezeMode mode, int waitForPlayer)
 	server.sendNetMessage (message, -1);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendUnfreeze (cServer& server, eFreezeMode mode)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_UNFREEZE);
@@ -671,7 +672,7 @@ void sendUnfreeze (cServer& server, eFreezeMode mode)
 	server.sendNetMessage (message, -1);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendWaitFor (cServer& server, int waitForPlayerNr, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_WAIT_FOR);
@@ -679,15 +680,15 @@ void sendWaitFor (cServer& server, int waitForPlayerNr, int iPlayer)
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDeletePlayer (cServer& server, const cPlayer& player, int iPlayer)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DEL_PLAYER);
-	message->pushInt16 (player.Nr);
+	message->pushInt16 (player.getNr());
 	server.sendNetMessage (message, iPlayer);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendRequestIdentification (cTCP& network, int iSocket)
 {
 	cNetMessage message (GAME_EV_REQ_RECON_IDENT);
@@ -696,7 +697,7 @@ void sendRequestIdentification (cTCP& network, int iSocket)
 	network.sendTo (iSocket, message.iLength, message.serialize());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendReconnectAnswer (cTCP& network, int socketNumber)
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
@@ -706,7 +707,7 @@ void sendReconnectAnswer (cTCP& network, int socketNumber)
 	network.sendTo (socketNumber, message.iLength, message.serialize());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& player)
 {
 	cNetMessage message (GAME_EV_RECONNECT_ANSWER);
@@ -716,14 +717,14 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 	{
 		cPlayer const* SecondPlayer = playerList[i];
 		if (&player == SecondPlayer) continue;
-		message.pushInt16 (SecondPlayer->Nr);
-		message.pushInt16 (GetColorNr (SecondPlayer->color));
-		message.pushString (SecondPlayer->name);
+		message.pushInt16 (SecondPlayer->getNr());
+		message.pushInt16 (SecondPlayer->getColor());
+		message.pushString (SecondPlayer->getName());
 	}
 	message.pushInt16 ((int) playerList.size());
 	message.pushString (server.Map->getName());
-	message.pushInt16 (GetColorNr (player.color));
-	message.pushInt16 (player.Nr);
+	message.pushInt16 (player.getColor());
+	message.pushInt16 (player.getNr());
 
 	message.pushBool (true);
 
@@ -731,15 +732,15 @@ void sendReconnectAnswer (cServer& server, int socketNumber, const cPlayer& play
 	server.network->sendTo (socketNumber, message.iLength, message.serialize());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendTurn (cServer& server, int turn, const cPlayer& player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_TURN);
 	message->pushInt16 (turn);
-	server.sendNetMessage (message, player.Nr);
+	server.sendNetMessage (message, player.getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, const cPlayer& player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_HUD_SETTINGS);
@@ -759,10 +760,10 @@ void sendHudSettings (cServer& server, const sHudStateContainer& hudStates, cons
 	message->pushInt16 (hudStates.offY);
 	message->pushInt16 (hudStates.offX);
 	message->pushInt16 (hudStates.selUnitID);
-	server.sendNetMessage (message, player.Nr);
+	server.sendNetMessage (message, player.getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunitid, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_STORE_UNIT);
@@ -772,7 +773,7 @@ void sendStoreVehicle (cServer& server, int unitid, bool vehicle, int storedunit
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activatunitid, int x, int y, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_EXIT_UNIT);
@@ -784,14 +785,14 @@ void sendActivateVehicle (cServer& server, int unitid, bool vehicle, int activat
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendDeleteEverything (cServer& server, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_DELETE_EVERYTHING);
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendResearchLevel (cServer& server, const cResearch& researchLevel, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_RESEARCH_LEVEL);
@@ -803,14 +804,14 @@ void sendResearchLevel (cServer& server, const cResearch& researchLevel, int pla
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendRefreshResearchCount (cServer& server, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_REFRESH_RESEARCH_COUNT);
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendUnitUpgrades (cServer& server, const sUnitData& unitData, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_UNIT_UPGRADE_VALUES);
@@ -828,7 +829,7 @@ void sendUnitUpgrades (cServer& server, const sUnitData& unitData, int player)
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendCredits (cServer& server, int newCredits, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_CREDITS_CHANGED);
@@ -836,7 +837,7 @@ void sendCredits (cServer& server, int newCredits, int player)
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgradedBuildings, int totalCosts, int player)
 {
 	// send to owner
@@ -873,18 +874,18 @@ void sendUpgradeBuildings (cServer& server, const std::vector<cBuilding*>& upgra
 	for (unsigned int n = 0; n < playerList.size(); n++)
 	{
 		const cPlayer* curPlayer = playerList[n];
-		if (curPlayer == 0 || curPlayer->Nr == player) // don't send to the owner of the buildings
-			continue;
+		// don't send to the owner of the buildings
+		if (curPlayer == 0 || curPlayer->getNr() == player) continue;
 
 		for (unsigned int buildingIdx = 0; buildingIdx < upgradedBuildings.size(); buildingIdx++)
 		{
 			if (Contains (upgradedBuildings[buildingIdx]->seenByPlayerList, curPlayer)) // that player can see the building
-				sendUnitData (server, *upgradedBuildings[buildingIdx], curPlayer->Nr);
+				sendUnitData (server, *upgradedBuildings[buildingIdx], curPlayer->getNr());
 		}
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgradedVehicles, int totalCosts, unsigned int storingBuildingID, int player)
 {
 	if (upgradedVehicles.size() * 4 > PACKAGE_LENGTH - 50)
@@ -905,7 +906,7 @@ void sendUpgradeVehicles (cServer& server, const std::vector<cVehicle*>& upgrade
 	//TODO: send to other players as well?
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& researchCentersToChangeArea, const std::vector<int>& newAreasForResearchCenters, int player)
 {
 	if (researchCentersToChangeArea.size() != newAreasForResearchCenters.size())
@@ -939,7 +940,7 @@ void sendResearchSettings (cServer& server, const std::vector<cBuilding*>& resea
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendClans (cServer& server, const std::vector<cPlayer*>& playerList, const cPlayer* toPlayer)
 {
 	if (toPlayer == NULL)
@@ -948,35 +949,35 @@ void sendClans (cServer& server, const std::vector<cPlayer*>& playerList, const 
 	for (unsigned int i = 0; i < playerList.size(); i++)
 	{
 		message->pushChar (playerList[i]->getClan());
-		message->pushChar (playerList[i]->Nr);
+		message->pushChar (playerList[i]->getNr());
 	}
-	server.sendNetMessage (message, toPlayer->Nr);
+	server.sendNetMessage (message, toPlayer->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendGameTime (cServer& server, const cPlayer& player, int gameTime)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SET_GAME_TIME);
 	message->pushInt32 (gameTime);
-	server.sendNetMessage (message, player.Nr);
+	server.sendNetMessage (message, player.getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendClansToClients (cServer& server, const std::vector<cPlayer*>& playerList)
 {
 	for (unsigned int n = 0; n < playerList.size(); n++)
 		sendClans (server, playerList, playerList[n]);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSetAutomoving (cServer& server, const cVehicle& vehicle)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SET_AUTOMOVE);
 	message->pushInt16 (vehicle.iID);
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehicle& srcUnit, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_COMMANDO_ANSWER);
@@ -986,7 +987,7 @@ void sendCommandoAnswer (cServer& server, bool succsess, bool steal, const cVehi
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendRequestSaveInfo (cServer& server, int saveingID)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_REQ_SAVE_INFO);
@@ -994,7 +995,7 @@ void sendRequestSaveInfo (cServer& server, int saveingID)
 	server.sendNetMessage (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, int player)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SAVED_REPORT);
@@ -1007,7 +1008,7 @@ void sendSavedReport (cServer& server, const sSavedReportMessage& savedReport, i
 	server.sendNetMessage (message, player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendCasualtiesReport (cServer& server, int player)
 {
 	cCasualtiesTracker* casualtiesTracker = server.getCasualtiesTracker();
@@ -1020,21 +1021,22 @@ void sendCasualtiesReport (cServer& server, int player)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sendSelfDestroy (cServer& server, const cBuilding& building)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_SELFDESTROY);
 	message->pushInt16 (building.iID);
-	server.sendNetMessage (message, building.owner->Nr);
+	server.sendNetMessage (message, building.owner->getNr());
 
 	for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
 	{
 		cNetMessage* message = new cNetMessage (GAME_EV_SELFDESTROY);
 		message->pushInt16 (building.iID);
-		server.sendNetMessage (message, building.seenByPlayerList[i]->Nr);
+		server.sendNetMessage (message, building.seenByPlayerList[i]->getNr());
 	}
 }
 
+//------------------------------------------------------------------------------
 void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int destID, eEndMoveActionType type)
 {
 	cNetMessage* message = new cNetMessage (GAME_EV_END_MOVE_ACTION_SERVER);
@@ -1042,5 +1044,5 @@ void sendEndMoveActionToClient (cServer& server, const cVehicle& vehicle, int de
 	message->pushInt32 (destID);
 	message->pushInt32 (vehicle.iID);
 
-	server.sendNetMessage (message, vehicle.owner->Nr);
+	server.sendNetMessage (message, vehicle.owner->getNr());
 }

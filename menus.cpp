@@ -16,6 +16,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
 #include <math.h>
 #include <sstream>
 #include <cassert>
@@ -48,20 +49,6 @@
 using namespace std;
 
 #define MAIN_MENU_BTN_SPACE 35
-
-//------------------------------------------------------------------------------
-int GetColorNr (const SDL_Surface* sf)
-{
-	if (sf == OtherData.colors[cl_red])		return cl_red;
-	if (sf == OtherData.colors[cl_blue])	return cl_blue;
-	if (sf == OtherData.colors[cl_green])	return cl_green;
-	if (sf == OtherData.colors[cl_grey])	return cl_grey;
-	if (sf == OtherData.colors[cl_orange])	return cl_orange;
-	if (sf == OtherData.colors[cl_yellow])	return cl_yellow;
-	if (sf == OtherData.colors[cl_purple])	return cl_purple;
-	if (sf == OtherData.colors[cl_aqua])	return cl_aqua;
-	return cl_red;
-}
 
 //------------------------------------------------------------------------------
 string sSettings::getResValString (eSettingResourceValue type) const
@@ -151,7 +138,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 	cPlayer* actPlayer = NULL;
 	for (unsigned int i = 0; i < players.size(); i++)
 	{
-		if (players[i]->Nr == playerNr)
+		if (players[i]->getNr() == playerNr)
 			actPlayer = players[i];
 	}
 	if (actPlayer == NULL)
@@ -194,7 +181,7 @@ void cGameDataContainer::runNewGame (cTCP* network, int playerNr, bool reconnect
 
 	// init client and his players
 	AutoPtr<cClient>::type client (new cClient (server, network, *eventHandler, *map, &players));
-	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->Nr != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
+	if (settings && settings->gameType == SETTINGS_GAMETYPE_TURNS && actPlayer->getNr() != 0) client->enableFreezeMode (FREEZE_WAIT_FOR_OTHERS);
 	client->initPlayer (actPlayer);
 
 	if (isServer)
@@ -255,7 +242,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 
 	// in singleplayer only the first player is important
 	serverPlayerList[player]->iSocketNum = MAX_CLIENTS;
-	sendRequestResync (*client, serverPlayerList[player]->Nr);
+	sendRequestResync (*client, serverPlayerList[player]->getNr());
 
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
@@ -263,7 +250,7 @@ void cGameDataContainer::runSavedGame (cTCP* network, int player)
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*server, reportList[j], serverPlayerList[i]->Nr);
+			sendSavedReport (*server, reportList[j], serverPlayerList[i]->getNr());
 		}
 		reportList.clear();
 	}
@@ -391,7 +378,7 @@ void cGameDataContainer::receiveLandingPosition (cTCP& network, cNetMessage* mes
 
 		if (state == LANDING_POSITION_WARNING || state == LANDING_POSITION_TOO_CLOSE)
 		{
-			sMenuPlayer menuPlayer (players[player]->name, 0, false, players[player]->Nr, players[player]->iSocketNum);
+			sMenuPlayer menuPlayer (players[player]->getName(), 0, false, players[player]->getNr(), players[player]->getSocketNum());
 			sendReselectLanding (network, state, &menuPlayer, activeMenu);
 		}
 	}
@@ -982,7 +969,7 @@ void cSinglePlayerMenu::newGameReleased (void* parent)
 			case 2: dir = clanSelection (network, gameDataContainer, *player, false); break;
 			case 3: dir = landingUnitsSelection (network, gameDataContainer, *player, false); break;
 			case 4: dir = landingPosSelection (network, gameDataContainer, *player); break;
-			case 5: gameDataContainer.runGame (network, player->Nr); menu->draw(); return;
+			case 5: gameDataContainer.runGame (network, player->getNr()); menu->draw(); return;
 			default: break;
 		}
 		step += dir;
@@ -2126,8 +2113,8 @@ void cStartupHangarMenu::doneReleased (void* parent)
 		menu->gameDataContainer->landingUnits[0] = landingUnits;
 	if (menu->gameDataContainer->type == GAME_TYPE_TCPIP && menu->gameDataContainer->isServer == false)
 	{
-		sendClan (*menu->network, menu->player->getClan(), menu->player->Nr);
-		sendLandingUnits (*menu->network, *landingUnits, menu->player->Nr);
+		sendClan (*menu->network, menu->player->getClan(), menu->player->getNr());
+		sendLandingUnits (*menu->network, *landingUnits, menu->player->getNr());
 	}
 	sendUnitUpgrades (menu->network, *menu->player, menu->gameDataContainer->isServer ? menu : NULL);
 
@@ -2568,7 +2555,7 @@ void cLandingMenu::hitPosition()
 		case GAME_TYPE_TCPIP:
 		{
 			infoLabel->setText (lngPack.i18n ("Text~Multiplayer~Waiting"));
-			sendLandingCoords (*network, landData, player->Nr, gameDataContainer->isServer ? this : NULL);
+			sendLandingCoords (*network, landData, player->getNr(), gameDataContainer->isServer ? this : NULL);
 			draw();
 		}
 		break;
@@ -2920,7 +2907,7 @@ void cNetworkMenu::runGamePreparation (cPlayer& player)
 			case 0: dir = clanSelection (network, gameDataContainer, player, true); break;
 			case 1: dir = landingUnitsSelection (network, gameDataContainer, player, gameDataContainer.settings->clans == SETTING_CLANS_OFF); break;
 			case 2: dir = landingPosSelection (network, gameDataContainer, player); break;
-			case 3: gameDataContainer.runGame (network, player.Nr); return;
+			case 3: gameDataContainer.runGame (network, player.getNr()); return;
 			default: break;
 		}
 		step += dir;
@@ -3310,7 +3297,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < players.size(); j++)
 		{
-			if (serverPlayerList[i]->name == players[j]->name) break;
+			if (serverPlayerList[i]->getName() == players[j]->name) break;
 			// stop when a player is missing
 			if (j == players.size() - 1)
 			{
@@ -3326,7 +3313,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < serverPlayerList.size(); j++)
 		{
-			if (players[i]->name == serverPlayerList[j]->name) break;
+			if (players[i]->name == serverPlayerList[j]->getName()) break;
 
 			// the player isn't in the list when the loop has gone trough all players and no match was found
 			if (j == serverPlayerList.size() - 1)
@@ -3347,14 +3334,14 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		for (unsigned int j = 0; j < players.size(); j++)
 		{
-			if (serverPlayerList[i]->name == players[j]->name)
+			if (serverPlayerList[i]->getName() == players[j]->name)
 			{
 				// set the sockets in the servers PlayerList
-				if (serverPlayerList[i]->name == actPlayer->name) serverPlayerList[i]->iSocketNum = MAX_CLIENTS;
+				if (serverPlayerList[i]->getName() == actPlayer->name) serverPlayerList[i]->iSocketNum = MAX_CLIENTS;
 				else serverPlayerList[i]->iSocketNum = players[j]->socket;
 				// set the numbers and colors in the menues players-list
-				players[j]->nr = serverPlayerList[i]->Nr;
-				players[j]->color = GetColorNr (serverPlayerList[i]->color);
+				players[j]->nr = serverPlayerList[i]->getNr();
+				players[j]->color = serverPlayerList[i]->getColor();
 				break;
 			}
 		}
@@ -3378,7 +3365,7 @@ bool cNetworkHostMenu::runSavedGame()
 	{
 		cPlayer* addedPlayer = new cPlayer (*serverPlayerList[i]);
 		clientPlayerList.push_back (addedPlayer);
-		if (serverPlayerList[i]->iSocketNum == MAX_CLIENTS) localPlayer = clientPlayerList[i];
+		if (serverPlayerList[i]->getSocketNum() == MAX_CLIENTS) localPlayer = clientPlayerList[i];
 		// reinit unit values
 		for (unsigned int j = 0; j < UnitsData.getNrVehicles(); j++) clientPlayerList[i]->VehicleData[j] = UnitsData.getVehicle (j, addedPlayer->getClan()).data;
 		for (unsigned int j = 0; j < UnitsData.getNrBuildings(); j++) clientPlayerList[i]->BuildingData[j] = UnitsData.getBuilding (j, addedPlayer->getClan()).data;
@@ -3390,12 +3377,12 @@ bool cNetworkHostMenu::runSavedGame()
 	// send data to all players
 	for (unsigned int i = 0; i < serverPlayerList.size(); i++)
 	{
-		sendRequestResync (*client, serverPlayerList[i]->Nr);
+		sendRequestResync (*client, serverPlayerList[i]->getNr());
 		sendHudSettings (*server, *serverPlayerList[i]->savedHud, *serverPlayerList[i]);
 		std::vector<sSavedReportMessage>& reportList = serverPlayerList[i]->savedReportsList;
 		for (size_t j = 0; j != reportList.size(); ++j)
 		{
-			sendSavedReport (*server, reportList[j], serverPlayerList[i]->Nr);
+			sendSavedReport (*server, reportList[j], serverPlayerList[i]->getNr());
 		}
 		reportList.clear();
 	}
@@ -3706,7 +3693,7 @@ void cNetworkClientMenu::handleNetMessage_GAME_EV_RECONNECT_ANSWER (cNetMessage*
 			changed = false;
 			for (int i = 0; i < size - 1; i++)
 			{
-				if (gameDataContainer.players[i]->Nr > gameDataContainer.players[i + 1]->Nr)
+				if (gameDataContainer.players[i]->getNr() > gameDataContainer.players[i + 1]->getNr())
 				{
 					cPlayer* temp = gameDataContainer.players[i + 1];
 					gameDataContainer.players[i + 1] = gameDataContainer.players[i];

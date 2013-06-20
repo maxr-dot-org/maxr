@@ -132,17 +132,17 @@ void cDebugOutput::draw()
 				SDL_BlitSurface (GraphicsData.gfx_player_ready, &rDot, buffer, &rDotDest);
 			}
 
-			SDL_BlitSurface (playerList[i]->color, &rSrc, buffer, &rDest);
+			SDL_BlitSurface (playerList[i]->getColorSurface(), &rSrc, buffer, &rDest);
 			if (playerList[i] == player)
 			{
-				string sTmpLine = " " + playerList[i]->name + ", nr: " + iToStr (playerList[i]->Nr) + " << you! ";
+				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " << you! ";
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
 				SDL_FillRect (buffer, &rBlackOut, 0x000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
 			}
 			else
 			{
-				string sTmpLine = " " + playerList[i]->name + ", nr: " + iToStr (playerList[i]->Nr) + " ";
+				string sTmpLine = " " + playerList[i]->getName() + ", nr: " + iToStr (playerList[i]->getNr()) + " ";
 				rBlackOut.w = font->getTextWide (sTmpLine, FONT_LATIN_SMALL_WHITE);  //black out background for better recognizing
 				SDL_FillRect (buffer, &rBlackOut, 0x000000);
 				font->showText (rBlackOut.x, debugOff + 1, sTmpLine , FONT_LATIN_SMALL_WHITE);
@@ -171,7 +171,7 @@ void cDebugOutput::draw()
 
 	if (debugBaseServer)
 	{
-		cPlayer* serverPlayer = server->getPlayerFromNumber (player->Nr);
+		cPlayer* serverPlayer = server->getPlayerFromNumber (player->getNr());
 		font->showText (DEBUGOUT_X_POS, debugOff, "subbases: " + iToStr ( (int) serverPlayer->base.SubBases.size()), FONT_LATIN_SMALL_WHITE);
 		debugOff += font->getFontHeight (FONT_LATIN_SMALL_WHITE);
 	}
@@ -326,7 +326,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 {
 	string tmpString;
 
-	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.owner->name + "\" posX: +" + iToStr (vehicle.PosX) + " posY: " + iToStr (vehicle.PosY) + " offX: " + iToStr (vehicle.OffX) + " offY: " + iToStr (vehicle.OffY);
+	tmpString = "name: \"" + vehicle.getDisplayName() + "\" id: \"" + iToStr (vehicle.iID) + "\" owner: \"" + vehicle.owner->getName() + "\" posX: +" + iToStr (vehicle.PosX) + " posY: " + iToStr (vehicle.PosY) + " offX: " + iToStr (vehicle.OffX) + " offY: " + iToStr (vehicle.OffY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -379,7 +379,7 @@ void cDebugOutput::traceVehicle (const cVehicle& vehicle, int* y, int x)
 		tmpString = "seen by players: owner";
 		for (unsigned int i = 0; i < vehicle.seenByPlayerList.size(); i++)
 		{
-			tmpString += ", \"" + vehicle.seenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + vehicle.seenByPlayerList[i]->getName() + "\"";
 		}
 		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y += 8;
@@ -394,7 +394,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 {
 	string tmpString;
 
-	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.owner ? building.owner->name : "<null>") + "\" posX: +" + iToStr (building.PosX) + " posY: " + iToStr (building.PosY);
+	tmpString = "name: \"" + building.getDisplayName() + "\" id: \"" + iToStr (building.iID) + "\" owner: \"" + (building.owner ? building.owner->getName() : "<null>") + "\" posX: +" + iToStr (building.PosX) + " posY: " + iToStr (building.PosY);
 	font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 	*y += 8;
 
@@ -451,7 +451,7 @@ void cDebugOutput::traceBuilding (const cBuilding& building, int* y, int x)
 		tmpString = "seen by players: owner";
 		for (unsigned int i = 0; i < building.seenByPlayerList.size(); i++)
 		{
-			tmpString += ", \"" + building.seenByPlayerList[i]->name + "\"";
+			tmpString += ", \"" + building.seenByPlayerList[i]->getName() + "\"";
 		}
 		font->showText (x, *y, tmpString, FONT_LATIN_SMALL_WHITE);
 		*y += 8;
@@ -765,7 +765,7 @@ int cGameGUI::show (cClient* client)
 	// do startup actions
 	makePanel (true);
 	startup = true;
-	if (client->isFreezed ()) setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", client->getPlayerFromNumber (0)->name), "");
+	if (client->isFreezed ()) setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", client->getPlayerFromNumber (0)->getName()), "");
 
 	int lastMouseX = 0, lastMouseY = 0;
 
@@ -861,7 +861,7 @@ void cGameGUI::updateInfoTexts ()
 
 	if (client->getFreezeMode (FREEZE_WAIT_FOR_OTHERS))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->name), "");
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~Wait_Until", player->getName()), "");
 	}
 	else if (client->getFreezeMode (FREEZE_PAUSE))
 	{
@@ -878,7 +878,7 @@ void cGameGUI::updateInfoTexts ()
 	}
 	else if (client->getFreezeMode (FREEZE_WAIT_FOR_PLAYER))
 	{
-		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->name), "");
+		setInfoTexts (lngPack.i18n ("Text~Multiplayer~No_Response", player->getName()), "");
 	}
 	else if (client->getFreezeMode (FREEZE_WAIT_FOR_TURNEND))
 	{
@@ -1070,7 +1070,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				{
 					if (!tntChecked() || building->data.canAttack)
 					{
-						unsigned int color = *((unsigned int*) building->owner->color->pixels);
+						unsigned int color = *static_cast<Uint32*> (building->owner->getColorSurface()->pixels);
 						SDL_FillRect (minimapSurface, &rect, color);
 					}
 				}
@@ -1081,7 +1081,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				{
 					if (!tntChecked() || vehicle->data.canAttack)
 					{
-						unsigned int color = *((unsigned int*) vehicle->owner->color->pixels);
+						unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface()->pixels);
 						SDL_FillRect (minimapSurface, &rect, color);
 					}
 				}
@@ -1092,7 +1092,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 				{
 					if (!tntChecked() || vehicle->data.canAttack)
 					{
-						unsigned int color = *((unsigned int*) vehicle->owner->color->pixels);
+						unsigned int color = *static_cast<Uint32*> (vehicle->owner->getColorSurface()->pixels);
 						SDL_FillRect (minimapSurface, &rect, color);
 					}
 				}
@@ -1429,7 +1429,7 @@ void cGameGUI::updateUnderMouseObject()
 		// FIXME: displaying ownername to unit name may cause an overdraw on the infobox.
 		// This needs either a seperate infobox or a length check in the future.
 		// that goes for unitnames itself too. -- beko
-		unitNameLabel.setText (vehicle.getDisplayName() + " (" + vehicle.owner->name + ")");
+		unitNameLabel.setText (vehicle.getDisplayName() + " (" + vehicle.owner->getName() + ")");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
 			drawAttackCursor (x, y);
@@ -1438,7 +1438,7 @@ void cGameGUI::updateUnderMouseObject()
 	else if (overUnitField->getPlane() != NULL)
 	{
 		const cVehicle& plane = *overUnitField->getPlane();
-		unitNameLabel.setText (plane.getDisplayName() + " (" + plane.owner->name + ")");
+		unitNameLabel.setText (plane.getDisplayName() + " (" + plane.owner->getName() + ")");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
 			drawAttackCursor (x, y);
@@ -1447,7 +1447,7 @@ void cGameGUI::updateUnderMouseObject()
 	else if (overUnitField->getTopBuilding() != NULL)
 	{
 		const cBuilding& topBuilding = *overUnitField->getTopBuilding();
-		unitNameLabel.setText (topBuilding.getDisplayName() + " (" + topBuilding.owner->name + ")");
+		unitNameLabel.setText (topBuilding.getDisplayName() + " (" + topBuilding.owner->getName() + ")");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
 			drawAttackCursor (x, y);
@@ -1456,7 +1456,7 @@ void cGameGUI::updateUnderMouseObject()
 	else if (overUnitField->getBaseBuilding() && overUnitField->getBaseBuilding()->owner)
 	{
 		const cBuilding& baseBuilding = *overUnitField->getBaseBuilding();
-		unitNameLabel.setText (baseBuilding.getDisplayName() + " (" + baseBuilding.owner->name + ")");
+		unitNameLabel.setText (baseBuilding.getDisplayName() + " (" + baseBuilding.owner->getName() + ")");
 		if (mouse->cur == GraphicsData.gfx_Cattack)
 		{
 			drawAttackCursor (x, y);
@@ -2457,21 +2457,13 @@ void cGameGUI::doCommand (const string& cmd)
 		cPlayer* Player = server->getPlayerFromString (cmd.substr (6, cmd.length()));
 
 		// server can not be kicked
-		if (!Player || Player->Nr == 0)
+		if (!Player || Player->getNr() == 0)
 		{
 			addMessage ("Wrong parameter");
 			return;
 		}
 
-		// close the socket
-		if (server->network) server->network->close (Player->iSocketNum);
-		std::vector<cPlayer*>& playerList = *server->PlayerList;
-		for (unsigned int i = 0; i < playerList.size(); i++)
-		{
-			if (playerList[i]->iSocketNum > Player->iSocketNum && playerList[i]->iSocketNum < MAX_CLIENTS) playerList[i]->iSocketNum--;
-		}
-		// delete the player
-		server->deletePlayer (Player);
+		server->kickPlayer (Player);
 	}
 	else if (cmd.substr (0, 9).compare ("/credits ") == 0)
 	{
@@ -2501,7 +2493,7 @@ void cGameGUI::doCommand (const string& cmd)
 
 		Player->Credits = credits;
 
-		sendCredits (*server, credits, Player->Nr);
+		sendCredits (*server, credits, Player->getNr());
 	}
 	else if (cmd.substr (0, 12).compare ("/disconnect ") == 0)
 	{
@@ -2520,14 +2512,14 @@ void cGameGUI::doCommand (const string& cmd)
 
 		//server cannot be disconnected
 		//can not disconnect local players
-		if (!player || Player->Nr == 0 || Player->iSocketNum == MAX_CLIENTS)
+		if (!player || Player->getNr() == 0 || Player->getSocketNum() == MAX_CLIENTS)
 		{
 			addMessage ("Wrong parameter");
 			return;
 		}
 
 		cNetMessage* message = new cNetMessage (TCP_CLOSE);
-		message->pushInt16 (Player->iSocketNum);
+		message->pushInt16 (Player->getSocketNum());
 		server->pushEvent (message);
 	}
 	else if (cmd.substr (0, 9).compare ("/deadline") == 0)
@@ -2568,7 +2560,7 @@ void cGameGUI::doCommand (const string& cmd)
 				addMessage ("Wrong parameter");
 				return;
 			}
-			sendRequestResync (*client, player->Nr);
+			sendRequestResync (*client, player->getNr());
 		}
 		else
 		{
@@ -2577,12 +2569,12 @@ void cGameGUI::doCommand (const string& cmd)
 				const std::vector<cPlayer*>& playerList = *server->PlayerList;
 				for (unsigned int i = 0; i < playerList.size(); i++)
 				{
-					sendRequestResync (*client, playerList[i]->Nr);
+					sendRequestResync (*client, playerList[i]->getNr());
 				}
 			}
 			else
 			{
-				sendRequestResync (*client, client->getActivePlayer()->Nr);
+				sendRequestResync (*client, client->getActivePlayer()->getNr());
 			}
 		}
 	}
@@ -2596,7 +2588,10 @@ void cGameGUI::doCommand (const string& cmd)
 	}
 	else if (cmd.substr (0, 7).compare ("/color ") == 0)
 	{
-		int cl = 0; sscanf (cmd.c_str(), "color %d", &cl); cl %= 8; player->color = OtherData.colors[cl];
+		int cl = 0;
+		sscanf (cmd.c_str(), "color %d", &cl);
+		cl %= 8;
+		player->setColor (cl);
 	}
 	else if (cmd.compare ("/fog off") == 0)
 	{
@@ -2605,7 +2600,7 @@ void cGameGUI::doCommand (const string& cmd)
 			addMessage ("Command can only be used by Host");
 			return;
 		}
-		server->getPlayerFromNumber (player->Nr)->revealMap();
+		server->getPlayerFromNumber (player->getNr())->revealMap();
 		player->revealMap();
 	}
 	else if (cmd.compare ("/survey") == 0)
@@ -3291,7 +3286,7 @@ void cGameGUI::chatBoxReturnPressed (void* parent)
 	if (!chatString.empty())
 	{
 		if (chatString[0] == '/') gui->doCommand (chatString);
-		else sendChatMessageToServer (*gui->client, gui->player->name + ": " + chatString);
+		else sendChatMessageToServer (*gui->client, gui->player->getName() + ": " + chatString);
 		gui->chatBox.setText ("");
 	}
 	gui->chatBox.setActivity (false);
@@ -3880,35 +3875,28 @@ void cGameGUI::displayMessages()
 		const sMessage* message = messages[i];
 		string msgString = message->msg;
 		//HACK TO SHOW PLAYERCOLOR IN CHAT
-		int color = -1;
+		SDL_Surface* color = NULL;
 		for (unsigned int i = 0; i < msgString.length(); i++)
 		{
 			if (msgString[i] == ':')   //scan for chatmessages from _players_
 			{
 				string tmpString = msgString.substr (0, i);
-				for (size_t i = 0; i < client->getPlayerList().size(); ++i)
+				cPlayer* const Player = client->getPlayerFromString (tmpString);
+				if (Player)
 				{
-					cPlayer* const Player = client->getPlayerList()[i];
-					if (Player)
-					{
-						if (tmpString.compare (Player->name) == 0)
-						{
-							color = GetColorNr (Player->color);
-							break;
-						}
-					}
+					color = Player->getColorSurface();
 				}
 				break;
 			}
 		}
-		if (color != -1)
+		if (color != NULL)
 		{
 			const int CELLSPACE = 3;
 			SDL_Rect rColorSrc = { 0, 0, 10, Uint16 (font->getFontHeight()) };
 			SDL_Rect rDest = dest;
 			rDest.w = rColorSrc.w;
 			rDest.h = rColorSrc.h;
-			SDL_BlitSurface (OtherData.colors[color], &rColorSrc, buffer, &rDest);  //blit color
+			SDL_BlitSurface (color, &rColorSrc, buffer, &rDest);  //blit color
 			dest.x += rColorSrc.w + CELLSPACE; //add border for color
 			dest.w -= rColorSrc.w + CELLSPACE;
 			dest.y = font->showTextAsBlock (dest, msgString);

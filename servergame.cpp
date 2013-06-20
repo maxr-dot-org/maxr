@@ -575,13 +575,13 @@ std::string cServerGame::getGameState() const
 		for (size_t i = 0; i < serverPlayers.size(); i++)
 		{
 			cPlayer* player = serverPlayers[i];
-			result << " " << player->name << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
+			result << " " << player->getName() << (server->isPlayerDisconnected (player) ? " (disconnected)" : " (online)") << endl;
 		}
 	}
 	else if (gameData->players.size() > 0)
 	{
 		for (size_t i = 0; i < gameData->players.size(); i++)
-			result << " " << gameData->players[i]->name << endl;
+			result << " " << gameData->players[i]->getName() << endl;
 	}
 	else if (menuPlayers.size() > 0)
 	{
@@ -598,7 +598,7 @@ int cServerGame::getSocketForPlayerNr (int playerNr) const
 	{
 		const cPlayer* player = server->getPlayerFromNumber (playerNr);
 		if (player != 0)
-			return player->iSocketNum;
+			return player->getSocketNum();
 	}
 	for (size_t i = 0; i < menuPlayers.size(); i++)
 	{

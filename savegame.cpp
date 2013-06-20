@@ -1125,7 +1125,7 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 {
 	for (unsigned int i = 0; i < PlayerList.size(); i++)
 	{
-		if (PlayerList[i]->Nr == number) return PlayerList[i];
+		if (PlayerList[i]->getNr() == number) return PlayerList[i];
 	}
 	return NULL;
 }
@@ -1217,11 +1217,11 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 	TiXmlElement* playerNode = addMainElement (playersNode, "Player_" + iToStr (number));
 
 	// write the main information
-	addAttributeElement (playerNode, "Name", "string", Player->name);
+	addAttributeElement (playerNode, "Name", "string", Player->getName());
 	addAttributeElement (playerNode, "Credits", "num", iToStr (Player->Credits));
 	addAttributeElement (playerNode, "Clan", "num", iToStr (Player->getClan()));
-	addAttributeElement (playerNode, "Color", "num", iToStr (GetColorNr (Player->color)));
-	addAttributeElement (playerNode, "Number", "num", iToStr (Player->Nr));
+	addAttributeElement (playerNode, "Color", "num", iToStr (Player->getColor()));
+	addAttributeElement (playerNode, "Number", "num", iToStr (Player->getNr()));
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (*Player));
 
 	// player score
@@ -1359,7 +1359,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (vehicle.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.owner->Nr));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (vehicle.owner->getNr()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (vehicle.PosX), "y", iToStr (vehicle.PosY));
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
 	addAttributeElement (unitNode, "Name", "string", vehicle.isNameOriginal() ? vehicle.data.name : vehicle.getName(), "notDefault", vehicle.isNameOriginal() ? "0" : "1");
@@ -1404,7 +1404,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 		for (unsigned int i = 0; i < vehicle.detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i),
-								 "nr", iToStr (vehicle.detectedByPlayerList[i]->Nr),
+								 "nr", iToStr (vehicle.detectedByPlayerList[i]->getNr()),
 								 "ThisTurn", vehicle.wasDetectedInThisTurnByPlayer (vehicle.detectedByPlayerList[i]) ? "1" : "0");
 		}
 	}
@@ -1436,7 +1436,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
 	addAttributeElement (unitNode, "ID", "num", iToStr (building.iID));
-	addAttributeElement (unitNode, "Owner", "num", iToStr (building.owner->Nr));
+	addAttributeElement (unitNode, "Owner", "num", iToStr (building.owner->getNr()));
 	addAttributeElement (unitNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
 
 	// add information whether the unitname isn't serverdefault, so that it would be readed when loading but is in the save to make him more readable
@@ -1484,7 +1484,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
 		for (unsigned int i = 0; i < building.detectedByPlayerList.size(); i++)
 		{
-			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (building.detectedByPlayerList[i]->Nr));
+			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (building.detectedByPlayerList[i]->getNr()));
 		}
 	}
 
@@ -1657,7 +1657,7 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 		if (!playerNode) return;
 		int number;
 		playerNode->FirstChildElement ("Number")->Attribute ("num", &number);
-		if (number == player->Nr) break;
+		if (number == player->getNr()) break;
 		playernum++;
 	}
 	while (playerNode != NULL);

@@ -205,7 +205,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 			message->pushInt32 (gameTime);
 			client->sendNetMessage (message);
 		}
-		if (SDL_GetTicks() - startGameTime >= maxWorkingTime) 
+		if (SDL_GetTicks() - startGameTime >= maxWorkingTime)
 			break;
 	}
 
@@ -247,7 +247,7 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 	{
 		cPlayer* player = playerList[i];
 		if (!server.isPlayerDisconnected (player) && getReceivedTime (i) + PAUSE_GAME_TIMEOUT < gameTime)
-			newWaitingForPlayer = player->Nr;
+			newWaitingForPlayer = player->getNr();
 	}
 
 	if (newWaitingForPlayer != -1 && newWaitingForPlayer != waitingForPlayer)
@@ -266,26 +266,22 @@ bool cGameTimerServer::nextTickAllowed (cServer& server)
 
 void cGameTimerServer::run (cServer& server)
 {
-	if (popEvent ())
+	if (popEvent () == false) return;
+	if (nextTickAllowed (server) == false) return;
+
+	gameTime++;
+	handleTimer ();
+	server.doGameActions();
+	const std::vector<cPlayer*>& playerList = *server.PlayerList;
+	for (size_t i = 0; i < playerList.size(); i++)
 	{
-		if (nextTickAllowed (server))
-		{
-			gameTime++;
-			handleTimer ();
-			server.doGameActions();
-			const std::vector<cPlayer*>& playerList = *server.PlayerList;
-			for (size_t i = 0; i < playerList.size(); i++)
-			{
-				const cPlayer* player = playerList[i];
+		const cPlayer* player = playerList[i];
 
-				cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
-				message->pushInt32 (gameTime);
-				Uint32 checkSum = calcServerChecksum (server, player);
-				message->pushInt32 (checkSum);
-				server.sendNetMessage (message, player->Nr);
-			}
-
-		}
+		cNetMessage* message = new cNetMessage (NET_GAME_TIME_SERVER);
+		message->pushInt32 (gameTime);
+		Uint32 checkSum = calcServerChecksum (server, player);
+		message->pushInt32 (checkSum);
+		server.sendNetMessage (message, player->getNr());
 	}
 }
 

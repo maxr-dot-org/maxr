@@ -443,10 +443,10 @@ cServerMoveJob::cServerMoveJob (cServer& server_, int srcX_, int srcY_, int dest
 	{
 		Vehicle->owner->deleteSentry (Vehicle);
 	}
-	sendUnitData (*server, *Vehicle, Vehicle->owner->Nr);
+	sendUnitData (*server, *Vehicle, Vehicle->owner->getNr());
 	for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 	{
-		sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+		sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->getNr());
 	}
 
 	if (Vehicle->ServerMoveJob)
@@ -785,10 +785,10 @@ void cServerMoveJob::doEndMoveVehicle()
 		if (bResult)
 		{
 			// send new unit values
-			sendUnitData (*server, *Vehicle, Vehicle->owner->Nr);
+			sendUnitData (*server, *Vehicle, Vehicle->owner->getNr());
 			for (unsigned int i = 0; i < Vehicle->seenByPlayerList.size(); i++)
 			{
-				sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->Nr);
+				sendUnitData (*server, *Vehicle, Vehicle->seenByPlayerList[i]->getNr());
 			}
 		}
 	}
@@ -854,7 +854,7 @@ void cEndMoveAction::executeLoadAction (cServer& server)
 		if (destVehicle->ServerMoveJob) destVehicle->ServerMoveJob->release();
 
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, vehicle_->owner->Nr);
+		sendStoreVehicle (server, vehicle_->iID, true, destVehicle->iID, vehicle_->owner->getNr());
 	}
 }
 
@@ -869,14 +869,14 @@ void cEndMoveAction::executeGetInAction (cServer& server)
 		destVehicle->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, destVehicle->owner->Nr);
+		sendStoreVehicle (server, destVehicle->iID, true, vehicle_->iID, destVehicle->owner->getNr());
 	}
 	else if (destBuilding && destBuilding->canLoad (vehicle_))
 	{
 		destBuilding->storeVehicle (vehicle_, server.Map);
 		if (vehicle_->ServerMoveJob) vehicle_->ServerMoveJob->release();
 		//vehicle is removed from enemy clients by cServer::checkPlayerUnits()
-		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->Nr);
+		sendStoreVehicle (server, destBuilding->iID, false, vehicle_->iID, destBuilding->owner->getNr());
 	}
 }
 

@@ -138,7 +138,7 @@ cClient::~cClient()
 
 void cClient::sendNetMessage (cNetMessage* message) const
 {
-	message->iPlayerNr = ActivePlayer->Nr;
+	message->iPlayerNr = ActivePlayer->getNr();
 
 	if (message->iType != NET_GAME_TIME_CLIENT)
 		Log.write ("Client: <-- " + message->getTypeAsString() + ", Hexdump: " + message->getHexDump(), cLog::eLOG_TYPE_NET_DEBUG);
@@ -448,7 +448,7 @@ void cClient::HandleNetMessage_GAME_EV_WAIT_FOR (cNetMessage& message)
 
 	int nextPlayerNum = message.popInt16();
 
-	if (nextPlayerNum != ActivePlayer->Nr)
+	if (nextPlayerNum != ActivePlayer->getNr())
 	{
 		enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, nextPlayerNum);
 		gameGUI.setEndButtonLock (true);
@@ -481,7 +481,7 @@ void cClient::HandleNetMessage_GAME_EV_MAKE_TURNEND (cNetMessage& message)
 
 	if (bWaitForNextPlayer)
 	{
-		if (iNextPlayerNum != ActivePlayer->Nr)
+		if (iNextPlayerNum != ActivePlayer->getNr())
 		{
 			enableFreezeMode (FREEZE_WAIT_FOR_OTHERS, iNextPlayerNum);
 		}
@@ -515,18 +515,18 @@ void cClient::HandleNetMessage_GAME_EV_FINISHED_TURN (cNetMessage& message)
 
 	if (iTimeDelay != -1)
 	{
-		if (iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1)
+		if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 		{
-			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->name) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay));
+			string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName()) + ". " + lngPack.i18n ("Text~Multiplayer~Deadline", iToStr (iTimeDelay));
 			gameGUI.addMessage (msgString);
 			ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 		}
 		iTurnTime = iTimeDelay;
 		iStartTurnTime = SDL_GetTicks();
 	}
-	else if (iPlayerNum != ActivePlayer->Nr && iPlayerNum != -1)
+	else if (iPlayerNum != ActivePlayer->getNr() && iPlayerNum != -1)
 	{
-		string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->name);
+		string msgString = lngPack.i18n ("Text~Multiplayer~Player_Turn_End", Player->getName());
 		gameGUI.addMessage (msgString);
 		ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 	}
@@ -1301,7 +1301,7 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 		return;
 	}
 	Player->isDefeated = true;
-	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->name + " " + lngPack.i18n ("Text~Comp~Defeated");
+	string msgString = lngPack.i18n ("Text~Multiplayer~Player") + " " + Player->getName() + " " + lngPack.i18n ("Text~Comp~Defeated");
 	gameGUI.addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 #if 0
@@ -1309,7 +1309,7 @@ void cClient::HandleNetMessage_GAME_EV_DEFEATED (cNetMessage& message)
 	{
 		if (Player == (*getPlayerList()) [i])
 		{
-			Hud.ExtraPlayers (Player->name + " (d)", GetColorNr (Player->color), i, Player->bFinishedTurn, false);
+			Hud.ExtraPlayers (Player->getName() + " (d)", Player->getColor(), i, Player->bFinishedTurn, false);
 			return;
 		}
 	}
@@ -1347,7 +1347,7 @@ void cClient::HandleNetMessage_GAME_EV_DEL_PLAYER (cNetMessage& message)
 	{
 		Log.write ("Client: Player to be deleted has some units left !", LOG_TYPE_NET_ERROR);
 	}
-	string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->name);
+	string msgString = lngPack.i18n ("Text~Multiplayer~Player_Left", Player->getName());
 	gameGUI.addMessage (msgString);
 	ActivePlayer->addSavedReport (msgString, sSavedReportMessage::REPORT_TYPE_COMP);
 
@@ -1707,15 +1707,15 @@ void cClient::HandleNetMessage_GAME_EV_REQ_SAVE_INFO (cNetMessage& message)
 	assert (message.iType == GAME_EV_REQ_SAVE_INFO);
 
 	int saveingID = message.popInt16();
-	if (gameGUI.getSelectedUnit()) sendSaveHudInfo (*this, gameGUI.getSelectedUnit()->iID, ActivePlayer->Nr, saveingID);
-	else sendSaveHudInfo (*this, -1, ActivePlayer->Nr, saveingID);
+	if (gameGUI.getSelectedUnit()) sendSaveHudInfo (*this, gameGUI.getSelectedUnit()->iID, ActivePlayer->getNr(), saveingID);
+	else sendSaveHudInfo (*this, -1, ActivePlayer->getNr(), saveingID);
 
 	for (int i = ActivePlayer->savedReportsList.size() - 50; i < (int) ActivePlayer->savedReportsList.size(); i++)
 	{
 		if (i < 0) continue;
-		sendSaveReportInfo (*this, ActivePlayer->savedReportsList[i], ActivePlayer->Nr, saveingID);
+		sendSaveReportInfo (*this, ActivePlayer->savedReportsList[i], ActivePlayer->getNr(), saveingID);
 	}
-	sendFinishedSendSaveInfo (*this, ActivePlayer->Nr, saveingID);
+	sendFinishedSendSaveInfo (*this, ActivePlayer->getNr(), saveingID);
 }
 
 void cClient::HandleNetMessage_GAME_EV_SAVED_REPORT (cNetMessage& message)
@@ -1914,7 +1914,7 @@ void cClient::addUnit (int iPosX, int iPosY, cVehicle* AddedVehicle, bool bInit,
 	else if (AddedVehicle->owner != ActivePlayer)
 	{
 		// make report
-		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->name + ") " + lngPack.i18n ("Text~Comp~Detected");
+		string message = AddedVehicle->getDisplayName() + " (" + AddedVehicle->owner->getName() + ") " + lngPack.i18n ("Text~Comp~Detected");
 		getActivePlayer()->addSavedReport (gameGUI.addCoords (message, iPosX, iPosY), sSavedReportMessage::REPORT_TYPE_UNIT, AddedVehicle->data.ID, iPosX, iPosY);
 
 		if (AddedVehicle->data.isStealthOn & TERRAIN_SEA && AddedVehicle->data.canAttack)
@@ -1943,7 +1943,7 @@ cPlayer* cClient::getPlayerFromNumber (int iNum)
 	for (unsigned int i = 0; i < getPlayerList().size(); i++)
 	{
 		cPlayer& p = *getPlayerList()[i];
-		if (p.Nr == iNum) return &p;
+		if (p.getNr() == iNum) return &p;
 	}
 	return NULL;
 }
@@ -1960,7 +1960,7 @@ cPlayer* cClient::getPlayerFromString (const string& playerID)
 	//try to find plyer by name
 	for (unsigned int i = 0; i < PlayerList->size(); i++)
 	{
-		if ( (*PlayerList) [i]->name.compare (playerID) == 0) return (*PlayerList) [i];
+		if ( (*PlayerList) [i]->getName().compare (playerID) == 0) return (*PlayerList) [i];
 	}
 
 	return NULL;
@@ -2085,7 +2085,7 @@ void cClient::makeHotSeatEnd (int iNextPlayerNum)
 	SDL_BlitSurface (sf, NULL, buffer, NULL);
 	SDL_BlitSurface (sf, &scr, buffer, &scr);
 
-	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->name));
+	cDialogOK okDialog (lngPack.i18n ("Text~Multiplayer~Player_Turn", ActivePlayer->getName()));
 	okDialog.show (this);
 }
 

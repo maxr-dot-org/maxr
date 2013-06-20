@@ -27,9 +27,6 @@
 #include "server.h"
 #include "base.h" // for sSubBase
 
-// forward declarations
-int GetColorNr (const SDL_Surface* sf);
-
 class cEventHandling;
 class cGameGUI;
 class cMapReceiver;

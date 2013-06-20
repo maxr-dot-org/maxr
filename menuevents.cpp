@@ -178,7 +178,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 		if (message->iLength + 38 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.Nr);
+			message->pushInt16 (player.getNr());
 			if (activeMenu)
 			{
 				activeMenu->handleNetMessage (message);
@@ -192,7 +192,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 	if (message != NULL)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.Nr);
+		message->pushInt16 (player.getNr());
 		if (activeMenu)
 		{
 			activeMenu->handleNetMessage (message);
@@ -237,7 +237,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 		if (message->iLength + 34 > PACKAGE_LENGTH)
 		{
 			message->pushInt16 (count);
-			message->pushInt16 (player.Nr);
+			message->pushInt16 (player.getNr());
 			if (activeMenu)
 			{
 				activeMenu->handleNetMessage (message);
@@ -251,7 +251,7 @@ void sendUnitUpgrades (cTCP* network, const cPlayer& player, cMenu* activeMenu)
 	if (message != NULL)
 	{
 		message->pushInt16 (count);
-		message->pushInt16 (player.Nr);
+		message->pushInt16 (player.getNr());
 		if (activeMenu)
 		{
 			activeMenu->handleNetMessage (message);
@@ -381,7 +381,7 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8],
 		if (msg->iLength + 38 > PACKAGE_LENGTH)
 		{
 			msg->pushInt16 (iCount);
-			msg->pushInt16 (player->Nr);
+			msg->pushInt16 (player->getNr());
 			client.sendNetMessage (msg);
 			msg = NULL;
 		}
@@ -390,7 +390,7 @@ void sendTakenUpgrades (const cClient& client, sUnitUpgrade (*unitUpgrades) [8],
 	if (msg != NULL)
 	{
 		msg->pushInt16 (iCount);
-		msg->pushInt16 (player->Nr);
+		msg->pushInt16 (player->getNr());
 		client.sendNetMessage (msg);
 	}
 }

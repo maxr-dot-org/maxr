@@ -419,7 +419,7 @@ cDialogPreferences::cDialogPreferences (cPlayer* player_) : cMenu (LoadPCX (GFXO
 void cDialogPreferences::saveValues()
 {
 	cSettings::getInstance().setPlayerName (nameEdit.getText().c_str());
-	if (player) player->name = cSettings::getInstance().getPlayerName();
+	if (player) player->setName (cSettings::getInstance().getPlayerName());
 
 	cSettings::getInstance().setAutosave (autosaveChBox.isChecked());
 	cSettings::getInstance().setAnimations (animationChBox.isChecked());
@@ -1016,7 +1016,7 @@ void cDialogResearch::handleKeyInput (SDL_KeyboardEvent& key, const string& ch)
 void cDialogResearch::doneReleased (void* parent)
 {
 	cDialogResearch* menu = reinterpret_cast<cDialogResearch*> (parent);
-	sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->Nr);
+	sendWantResearchChange (*menu->client, menu->newResearchSettings, menu->owner->getNr());
 	menu->end = true;
 }
 

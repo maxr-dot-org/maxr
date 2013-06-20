@@ -504,6 +504,9 @@ public:
 	*/
 	void deletePlayer (cPlayer* Player);
 
+	void kickPlayer (cPlayer* player);
+
+
 	void sideStepStealthUnit (int PosX, int PosY, cVehicle* vehicle, int bigOffset = -1);
 	void sideStepStealthUnit (int PosX, int PosY, sUnitData& vehicleData, cPlayer* vehicleOwner, int bigOffset = -1);
 

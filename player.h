@@ -60,11 +60,21 @@ typedef std::vector<int> PointsHistory;
 // Die Player-Klasse /////////////////////////////////////////////////////////
 class cPlayer
 {
-	friend class cServer;
+	friend class cServer; // TODO:Remove.
+	friend class cGameDataContainer; // TODO:Remove.
+	friend class cNetworkHostMenu; // TODO:Remove.
 public:
 	cPlayer (const std::string& Name, SDL_Surface* Color, int nr, int iSocketNum = -1);
 	cPlayer (const cPlayer& Player);
 	~cPlayer();
+
+	const std::string& getName () const { return name; }
+	void setName (const std::string& name_) { name = name_; }
+	int getColor() const;
+	void setColor (unsigned int index);
+	SDL_Surface* getColorSurface() const { return color; }
+	int getNr() const { return Nr; }
+	int getSocketNum() const { return iSocketNum; }
 
 	/** Get the most modern version of a unit (including all his upgrades). */
 	sUnitData* getUnitDataCurrentVersion (const sID& ID);
@@ -112,6 +122,9 @@ public:
 
 	void doResearch (cServer& server);  ///< proceed with the research at turn end
 	void accumulateScore (cServer& server); // at turn end
+
+	void refreshSentryAir();
+	void refreshSentryGround();
 private:
 	/**
 	* draws a circle on the map for the fog
@@ -140,14 +153,13 @@ private:
 	cBuilding* getPrevMiningStation (cBuilding* start);
 	cVehicle* getPrevVehicle (cVehicle* start);
 
-	void refreshSentryAir();
-	void refreshSentryGround();
-
-public:
+private:
 	std::string name;
 	SDL_Surface* color;
 	int Nr;
-
+	int iSocketNum; // Number of socket over which this player is connected in network game
+					// if MAX_CLIENTS its the local connected player; -1 for unknown
+public:
 	std::vector<sUnitData> VehicleData; // Daten aller Vehicles f¸r diesen Player.
 	cVehicle* VehicleList;     // Liste aller Vehicles des Spielers.
 	std::vector<sUnitData> BuildingData; // Daten aller Buildings f¸r diesen Player.
@@ -176,8 +188,6 @@ public:
 	std::vector<sSavedReportMessage> savedReportsList;
 	std::vector<int> reportResearchAreasFinished; ///< stores, which research areas were just finished (for reporting at turn end)
 	std::vector<cUnit*> LockList;  // Liste mit gelockten Objekten.
-	int iSocketNum; // Number of socket over which this player is connected in network game
-					// if MAX_CLIENTS its the local connected player; -1 for unknown
 	bool bFinishedTurn;     //true when player send his turn end
 	bool isDefeated;        // true if the player has been defeated
 	bool isRemovedFromGame; // true if the player has been removed from the game.

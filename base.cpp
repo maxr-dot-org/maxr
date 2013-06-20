@@ -368,7 +368,7 @@ bool sSubBase::increaseEnergyProd (cServer& server, int i)
 	if (neededFuel > Oil + getMaxOilProd())
 	{
 		//not possible to produce enough fuel
-		sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Fuel_Insufficient", SERVER_ERROR_MESSAGE, owner->getNr());
 		return false;
 	}
 
@@ -470,10 +470,10 @@ void sSubBase::addRessouce (cServer& server, sUnitData::eStorageResType storeRes
 				b->data.storageResCur = b->data.storageResMax;
 			}
 		}
-		if (iStartValue != value) sendUnitData (server, *b, owner->Nr);
+		if (iStartValue != value) sendUnitData (server, *b, owner->getNr());
 		if (value == 0) break;
 	}
-	sendSubbaseValues (server, *this, owner->Nr);
+	sendSubbaseValues (server, *this, owner->getNr());
 }
 
 void sSubBase::refresh()
@@ -658,11 +658,11 @@ bool sSubBase::checkOil (cServer& server)
 		setGoldProd (gold);
 		setMetalProd (metal);
 
-		sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (missingOil));
+		sendChatMessageToClient (server, "Text~Comp~Adjustments_Fuel_Increased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (missingOil));
 		if (getMetalProd() < metal)
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (metal - MetalProd));
+			sendChatMessageToClient (server, "Text~Comp~Adjustments_Metal_Decreased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (metal - MetalProd));
 		if (getGoldProd() < gold)
-			sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->Nr, iToStr (gold - GoldProd));
+			sendChatMessageToClient (server, "Text~Comp~Adjustments_Gold_Decreased", SERVER_INFO_MESSAGE, owner->getNr(), iToStr (gold - GoldProd));
 	}
 
 	//stop unneeded buildings
@@ -753,13 +753,13 @@ bool sSubBase::checkEnergy (cServer& server)
 void sSubBase::prepareTurnend (cServer& server)
 {
 	if (checkMetalConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->getNr());
 
 	if (checkHumanConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Team_Low", SERVER_INFO_MESSAGE, owner->getNr());
 
 	if (checkGoldConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->getNr());
 
 	//there is a loop around checkOil/checkEnergy, because a lack of energy can lead to less fuel,
 	//that can lead to less energy, etc...
@@ -781,15 +781,15 @@ void sSubBase::prepareTurnend (cServer& server)
 			energyMissing = true;
 		}
 	}
-	if (oilMissing) sendChatMessageToClient (server, "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->Nr);
-	if (energyMissing) sendChatMessageToClient (server, "Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner->Nr);
+	if (oilMissing) sendChatMessageToClient (server, "Text~Comp~Fuel_Low", SERVER_INFO_MESSAGE, owner->getNr());
+	if (energyMissing) sendChatMessageToClient (server, "Text~Comp~Energy_Low", SERVER_INFO_MESSAGE, owner->getNr());
 
 	//recheck metal and gold, because metal and gold producers could have been shut down, due to a lack of energy
 	if (checkMetalConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Metal_Low", SERVER_INFO_MESSAGE, owner->getNr());
 
 	if (checkGoldConsumer (server))
-		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->Nr);
+		sendChatMessageToClient (server, "Text~Comp~Gold_Low", SERVER_INFO_MESSAGE, owner->getNr());
 }
 
 void sSubBase::makeTurnend (cServer& server)
@@ -805,7 +805,7 @@ void sSubBase::makeTurnend (cServer& server)
 	if (GoldNeed)
 	{
 		owner->Credits += GoldNeed;
-		sendCredits (server, owner->Credits, owner->Nr);
+		sendCredits (server, owner->Credits, owner->getNr());
 	}
 
 	// make repairs/build/reload
@@ -820,10 +820,10 @@ void sSubBase::makeTurnend (cServer& server)
 			Building->data.hitpointsCur += Round ( ( (float) Building->data.hitpointsMax / Building->data.buildCosts) * 4);
 			Building->data.hitpointsCur = std::min (Building->data.hitpointsMax, Building->data.hitpointsCur);
 			addMetal (server, -1);
-			sendUnitData (server, *Building, owner->Nr);
+			sendUnitData (server, *Building, owner->getNr());
 			for (unsigned int j = 0; j < Building->seenByPlayerList.size(); j++)
 			{
-				sendUnitData (server, *Building, Building->seenByPlayerList[j]->Nr);
+				sendUnitData (server, *Building, Building->seenByPlayerList[j]->getNr());
 			}
 		}
 		Building->hasBeenAttacked = false;
@@ -834,7 +834,7 @@ void sSubBase::makeTurnend (cServer& server)
 			Building->data.ammoCur = Building->data.ammoMax;
 			addMetal (server, -1);
 			//ammo is not visible to enemies. So only send to the owner
-			sendUnitData (server, *Building, owner->Nr);
+			sendUnitData (server, *Building, owner->getNr());
 		}
 
 		// build:
@@ -853,11 +853,11 @@ void sSubBase::makeTurnend (cServer& server)
 
 				MetalNeed += min (Building->MetalPerRound, BuildListItem->metall_remaining);
 				sendBuildList (server, *Building);
-				sendSubbaseValues (server, *this, owner->Nr);
+				sendSubbaseValues (server, *this, owner->getNr());
 			}
 			if (BuildListItem->metall_remaining <= 0)
 			{
-				server.addReport (BuildListItem->type, true, owner->Nr);
+				server.addReport (BuildListItem->type, true, owner->getNr());
 				Building->ServerStopWork (server, false);
 			}
 		}
@@ -873,7 +873,7 @@ void sSubBase::makeTurnend (cServer& server)
 	Oil = std::max (this->Oil, 0);
 	Gold = std::max (this->Gold, 0);
 
-	sendSubbaseValues (server, *this, owner->Nr);
+	sendSubbaseValues (server, *this, owner->getNr());
 }
 
 void sSubBase::merge (sSubBase* sb)
@@ -1082,7 +1082,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		NewSubBase->addBuilding (building);
 		SubBases.push_back (NewSubBase);
 
-		if (server) sendSubbaseValues (*server, *NewSubBase, NewSubBase->owner->Nr);
+		if (server) sendSubbaseValues (*server, *NewSubBase, NewSubBase->owner->getNr());
 
 		return;
 	}
@@ -1102,7 +1102,7 @@ void cBase::addBuilding (cBuilding* building, cServer* server)
 		delete SubBase;
 	}
 	NeighbourList.clear();
-	if (server) sendSubbaseValues (*server, *firstNeighbour, building->owner->Nr);
+	if (server) sendSubbaseValues (*server, *firstNeighbour, building->owner->getNr());
 }
 
 void cBase::deleteBuilding (cBuilding* building, cServer* server)
@@ -1166,7 +1166,7 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 		//send subbase values to client
 		for (unsigned int i = 0; i < newSubBases.size(); i++)
 		{
-			sendSubbaseValues (*server, *newSubBases[i], building->owner->Nr);
+			sendSubbaseValues (*server, *newSubBases[i], building->owner->getNr());
 		}
 	}
 
@@ -1177,7 +1177,6 @@ void cBase::deleteBuilding (cBuilding* building, cServer* server)
 
 void cBase::handleTurnend (cServer& server)
 {
-
 	for (unsigned int i = 0; i < SubBases.size(); ++i)
 	{
 		SubBases[i]->makeTurnend (server);

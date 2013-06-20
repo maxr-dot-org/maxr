@@ -49,7 +49,7 @@ std::string plural (int n, const std::string& sing, const std::string& plu)
 
 Uint32 getPlayerColour (const cPlayer* p)
 {
-	return ( (Uint32*) (p->color->pixels)) [0];
+	return static_cast<Uint32*> (p->getColorSurface()->pixels) [0];
 }
 
 void plot (SDL_Surface* s, int x, int y, Uint32 colour)
@@ -3659,7 +3659,7 @@ void cMenuReportsScreen::drawDisadvantagesScreen()
 		const cPlayer& player = *client->getPlayerList() [playerIdx];
 		const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
 		const int posy = position.y + (playerIdx < 4 ? 9 : 22);
-		font->showTextCentered (posx, posy, player.name);
+		font->showTextCentered (posx, posy, player.getName());
 	}
 
 	cCasualtiesTracker& casualties = client->getCasualties();
@@ -3744,7 +3744,7 @@ bool cMenuReportsScreen::drawDisadvantageEntryIfNeeded (sID& unitID, SDL_Surface
 					for (unsigned int playerIdx = 0; playerIdx < client->getPlayerList().size(); playerIdx++)
 					{
 						const cPlayer& player = *client->getPlayerList() [playerIdx];
-						const int lossesOfPlayer = casualties.getCasualtiesOfUnitType (unitData->ID, player.Nr);
+						const int lossesOfPlayer = casualties.getCasualtiesOfUnitType (unitData->ID, player.getNr());
 						const int posx = position.x + 17 + 200 + (75 * (playerIdx % 4)) + (playerIdx < 4 ? 0 : 37);
 						const int posy = position.y + 38 + (displayedEntryIndex - (index * 10)) * 42;
 						font->showTextCentered (posx, posy, iToStr (lossesOfPlayer));
@@ -3790,7 +3790,7 @@ void cMenuReportsScreen::drawScoreScreen()
 		SDL_FillRect (buffer, &r, getPlayerColour (&p));
 
 		std::stringstream ss;
-		ss << p.name << ": "
+		ss << p.getName() << ": "
 		   << plural (score, "Text~Comp~Point", "Text~Comp~Points") << ", "
 		   << plural (ecos, "Text~Comp~EcoSphere", "Text~Comp~EcoSpheres");
 
@@ -4308,12 +4308,12 @@ void cMenuPlayerInfo::draw()
 
 		SDL_Rect srcColorRect = { 0, 0, 10, 12 };
 		SDL_Rect destColorRect = { Sint16 (position.x + 40 - sourceX), Sint16 (position.y + 6), srcColorRect.w, srcColorRect.h };
-		SDL_BlitSurface (player->color, &srcColorRect, buffer, &destColorRect);
+		SDL_BlitSurface (player->getColorSurface(), &srcColorRect, buffer, &destColorRect);
 	}
 	else
 	{
 		font->showText (position.x + 43 - sourceX, position.y + 8, "X", FONT_LATIN_SMALL_RED);
 	}
 
-	font->showText (position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->name + " (-)" : player->name);
+	font->showText (position.x + 59 - sourceX, position.y + 5, player->isRemovedFromGame ? player->getName() + " (-)" : player->getName());
 }
