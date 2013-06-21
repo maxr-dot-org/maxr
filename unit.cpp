@@ -35,7 +35,7 @@
 
 using namespace std;
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsigned int ID)
 	: iID (ID)
 	, PosX (0)
@@ -62,7 +62,7 @@ cUnit::cUnit (UnitType unitType, const sUnitData* unitData, cPlayer* owner, unsi
 	sentryActive = (isBuilding() && data.canAttack != TERRAIN_NONE);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnit::~cUnit()
 {
 	deleteStoredUnits();
@@ -72,9 +72,9 @@ cUnit::~cUnit()
 	}
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** returns the remaining hitpoints after an attack */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnit::calcHealth (int damage) const
 {
 	damage -= data.armor;
@@ -94,9 +94,9 @@ int cUnit::calcHealth (int damage) const
 	return hp;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Checks if the target is in range */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cUnit::isInRange (int x, int y) const
 {
 	x -= PosX;
@@ -105,7 +105,7 @@ bool cUnit::isInRange (int x, int y) const
 	return (Square (x) + Square (y)) <= Square (data.range);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cUnit::isNextTo (int x, int y) const
 {
 	if (x + 1 < PosX || y + 1 < PosY)
@@ -125,9 +125,9 @@ bool cUnit::isNextTo (int x, int y) const
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** generates the name for the unit depending on the versionnumber */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 string cUnit::getNamePrefix() const
 {
 	int tmp;
@@ -206,26 +206,26 @@ string cUnit::getNamePrefix() const
 	return "MK " + rome;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the name of the vehicle how it should be displayed */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 string cUnit::getDisplayName() const
 {
 	return getNamePrefix() + " " + (isNameOriginal() ? data.name : name);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** changes the name of the unit and indicates it as "not default" */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::changeName (const string& newName)
 {
 	name = newName;
 	isOriginalName = false;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the size of the menu and the position */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 SDL_Rect cUnit::getMenuSize (const cGameGUI& gameGUI) const
 {
 	SDL_Rect dest;
@@ -260,9 +260,9 @@ SDL_Rect cUnit::getMenuSize (const cGameGUI& gameGUI) const
 	return dest;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns true, if the coordinates are in the menu's space */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cUnit::areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const
 {
 	SDL_Rect r = getMenuSize (gameGUI);
@@ -276,14 +276,14 @@ bool cUnit::areCoordsOverMenu (const cGameGUI& gameGUI, int x, int y) const
 	return true;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::setMenuSelection (cGameGUI& gameGUI)
 {
 	SDL_Rect dest = getMenuSize (gameGUI);
 	selectedMenuButtonIndex = (mouse->y - dest.y) / 22;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnit::getNumberOfMenuEntries (const cClient& client) const
 {
 	int result = 2; // Info/Help + Done
@@ -379,7 +379,7 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::drawMenu (cGameGUI& gameGUI)
 {
 	int nr = 0;
@@ -615,7 +615,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	drawContextItem (lngPack.i18n ("Text~Context~Done"), isMarked, dest.x, dest.y, buffer);
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::menuReleased (cGameGUI& gameGUI)
 {
 	SDL_Rect dest = getMenuSize (gameGUI);
@@ -963,27 +963,27 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 }
 
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the screen x position of the unit */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnit::getScreenPosX (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetX() : 0;
 	return 180 - ((int) ((gameGUI.getOffsetX() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosX;
 }
 
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Returns the screen y position of the unit */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cUnit::getScreenPosY (const cGameGUI& gameGUI, bool movementOffset) const
 {
 	const int offset = movementOffset ? getMovementOffsetY() : 0;
 	return 18 - ((int) ((gameGUI.getOffsetY() - offset) * gameGUI.getZoom())) + (int) (gameGUI.getTileSize()) * PosY;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Centers on this unit */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::center (cGameGUI& gameGUI) const
 {
 	const int offX = PosX * 64 - ( (int) ( ( (float) (Video.getResolutionX() - 192) / (2 * gameGUI.getTileSize())) * 64)) + 32;
@@ -991,9 +991,9 @@ void cUnit::center (cGameGUI& gameGUI) const
 	gameGUI.setOffsetPosition (offX, offY);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Draws the ammunition bar over the unit */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	if (owner != gameGUI.getClient()->getActivePlayer())
@@ -1026,9 +1026,9 @@ void cUnit::drawMunBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 		SDL_FillRect (buffer, &r2, 0xE60000);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** draws the health bar over the unit */
-//--------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	SDL_Rect r1, r2;
@@ -1061,7 +1061,7 @@ void cUnit::drawHealthBar (const cGameGUI& gameGUI, const SDL_Rect& screenPos) c
 		SDL_FillRect (buffer, &r2, 0xE60000);
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) const
 {
 	SDL_Rect dest;
@@ -1105,9 +1105,9 @@ void cUnit::drawStatus (const cGameGUI& gameGUI, const SDL_Rect& screenPos) cons
 	}
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** rotates the unit to the given direction */
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::rotateTo (int newDir)
 {
 	if (newDir < 0 || newDir >= 8 || newDir == dir)
@@ -1145,9 +1145,9 @@ void cUnit::rotateTo (int newDir)
 
 
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 /** Checks, if the unit can attack an object at the given coordinates*/
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool checkRange) const
 {
 	int off = map->getOffset (x, y);
@@ -1187,7 +1187,7 @@ bool cUnit::canAttackObjectAt (int x, int y, cMap* map, bool forceAttack, bool c
 	return true;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::upgradeToCurrentVersion()
 {
 	sUnitData* upgradeVersion = getUpgradedUnitData();
@@ -1211,7 +1211,7 @@ void cUnit::upgradeToCurrentVersion()
 	data.buildCosts = upgradeVersion->buildCosts;
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnit::deleteStoredUnits()
 {
 	for (size_t i = 0; i != storedUnits.size(); ++i)

@@ -1714,7 +1714,7 @@ static int LoadBuildings()
 	return 1;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
 {
 	string tmpString;
@@ -1739,7 +1739,7 @@ static int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, con
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* path1, const char* path2)
 {
 	string tmpString;
@@ -1765,7 +1765,7 @@ static float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const 
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
 {
 	string tmpString;
@@ -1790,7 +1790,7 @@ static string getXMLNodeString (TiXmlDocument& document, const char* attribut, c
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL)
 {
 	string tmpString;
@@ -1820,7 +1820,7 @@ static bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, c
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void LoadUnitData (sUnitData* const Data, char const* const directory, int const iID)
 {
 	TiXmlDocument unitDataXml;
@@ -2035,7 +2035,7 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	return ;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 {
 	TiXmlDocument unitGraphicsXml;
@@ -2064,7 +2064,7 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 	Data->makeTracks = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks");
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static int LoadClans()
 {
 	TiXmlDocument clansXml;

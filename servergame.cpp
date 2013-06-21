@@ -35,7 +35,7 @@
 
 using namespace std;
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int serverGameThreadFunction (void* data)
 {
 	cServerGame* serverGame = reinterpret_cast<cServerGame*> (data);
@@ -43,7 +43,7 @@ int serverGameThreadFunction (void* data)
 	return 0;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cServerGame::cServerGame (cTCP& network_) :
 	server (NULL),
 	network (&network_),
@@ -56,7 +56,7 @@ cServerGame::cServerGame (cTCP& network_) :
 {
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cServerGame::~cServerGame()
 {
 	if (thread != 0)
@@ -73,13 +73,13 @@ cServerGame::~cServerGame()
 	gameData = 0;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::runInThread()
 {
 	thread = SDL_CreateThread (serverGameThreadFunction, this);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cServerGame::loadGame (int saveGameNumber)
 {
 	cSavegame savegame (saveGameNumber);
@@ -91,7 +91,7 @@ bool cServerGame::loadGame (int saveGameNumber)
 	return true;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::saveGame (int saveGameNumber)
 {
 	if (server == NULL)
@@ -104,7 +104,7 @@ void cServerGame::saveGame (int saveGameNumber)
 	shouldSave = true;
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::prepareGameData()
 {
 	gameData = new cGameDataContainer();
@@ -126,7 +126,7 @@ void cServerGame::prepareGameData()
 	gameData->map->loadMap (mapName);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::run()
 {
 	while (canceled == false)
@@ -171,7 +171,7 @@ void cServerGame::run()
 		terminateServer();
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
 {
 	assert (message->iType == TCP_ACCEPT);
@@ -182,7 +182,7 @@ void cServerGame::handleNetMessage_TCP_ACCEPT (cNetMessage* message)
 	sendRequestIdentification (*network, *player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 {
 	assert (message->iType == TCP_CLOSE);
@@ -219,7 +219,7 @@ void cServerGame::handleNetMessage_TCP_CLOSE (cNetMessage* message)
 	sendPlayerList (*network, menuPlayers);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_IDENTIFIKATION);
@@ -247,7 +247,7 @@ void cServerGame::handleNetMessage_MU_MSG_IDENTIFIKATION (cNetMessage* message)
 	sendGameData (*network, *gameData, "", player);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_CHAT);
@@ -360,7 +360,7 @@ void cServerGame::handleNetMessage_MU_MSG_CHAT (cNetMessage* message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_CLAN (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_CLAN);
@@ -368,7 +368,7 @@ void cServerGame::handleNetMessage_MU_MSG_CLAN (cNetMessage* message)
 	gameData->receiveClan (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_LANDING_VEHICLES);
@@ -376,7 +376,7 @@ void cServerGame::handleNetMessage_MU_MSG_LANDING_VEHICLES (cNetMessage* message
 	gameData->receiveLandingUnits (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_UPGRADES);
@@ -384,7 +384,7 @@ void cServerGame::handleNetMessage_MU_MSG_UPGRADES (cNetMessage* message)
 	gameData->receiveUnitUpgrades (message);
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::handleNetMessage_MU_MSG_LANDING_COORDS (cNetMessage* message)
 {
 	assert (message->iType == MU_MSG_LANDING_COORDS);
@@ -414,7 +414,7 @@ void cServerGame::handleNetMessage (cNetMessage* message)
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderPlayer)
 {
 	if (tokens[0].compare ("res") == 0)
@@ -463,7 +463,7 @@ void cServerGame::configRessources (vector<string>& tokens, sMenuPlayer* senderP
 	}
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::startGameServer()
 {
 	serverMap = new cMap (*gameData->map);
@@ -520,7 +520,7 @@ void cServerGame::startGameServer()
 	server->bStarted = true;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::terminateServer()
 {
 	if (gameData != 0)
@@ -539,7 +539,7 @@ void cServerGame::terminateServer()
 	server = NULL;
 }
 
-//-------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cNetMessage* cServerGame::pollEvent()
 {
 	if (eventQueue.size() <= 0)
@@ -547,13 +547,13 @@ cNetMessage* cServerGame::pollEvent()
 	return eventQueue.read();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cServerGame::pushEvent (cNetMessage* message)
 {
 	eventQueue.write (message);
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string cServerGame::getGameState() const
 {
 	std::stringstream result;
@@ -591,7 +591,7 @@ std::string cServerGame::getGameState() const
 	return result.str();
 }
 
-//------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int cServerGame::getSocketForPlayerNr (int playerNr) const
 {
 	if (server != NULL)

@@ -38,7 +38,7 @@
 
 using namespace std;
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
 {
 	std::string lowerMapName (mapName);
@@ -103,7 +103,7 @@ bool MapDownload::isMapOriginal (const std::string& mapName, Sint32 checksum)
 	return false;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 {
 	string filenameFactory = cSettings::getInstance().getMapsPath() + PATH_DELIMITER + mapName;
@@ -118,7 +118,7 @@ std::string MapDownload::getExistingMapFilePath (const std::string& mapName)
 	return "";
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
 {
 	Sint32 result = 0;
@@ -155,11 +155,11 @@ Sint32 MapDownload::calculateCheckSum (const std::string& mapName)
 	return result;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cMapReceiver implementation
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize)
 	: mapName (mapName)
 	, mapSize (mapSize)
@@ -170,13 +170,13 @@ cMapReceiver::cMapReceiver (const std::string& mapName, int mapSize)
 		readBuffer = new char [mapSize];
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMapReceiver::~cMapReceiver()
 {
 	delete[] readBuffer;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
 {
 	if (readBuffer == 0 || message == 0 || bytesInMsg <= 0 || bytesReceived + bytesInMsg > mapSize)
@@ -192,7 +192,7 @@ bool cMapReceiver::receiveData (cNetMessage* message, int bytesInMsg)
 	return true;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool cMapReceiver::finished()
 {
 	Log.write ("MapReceiver: Received complete map", cLog::eLOG_TYPE_DEBUG);
@@ -218,11 +218,11 @@ bool cMapReceiver::finished()
 }
 
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // cMapSender implementation
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int mapSenderThreadFunction (void* data)
 {
 	cMapSender* mapSender = reinterpret_cast<cMapSender*> (data);
@@ -230,11 +230,11 @@ int mapSenderThreadFunction (void* data)
 	return 0;
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMapSender::cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandling_, const std::string& mapName, const std::string& receivingPlayerName)
 	: network (&network_)
 	, toSocket (toSocket)
-	, eventHandling (eventHandling)
+	, eventHandling (eventHandling_)
 	, receivingPlayerName (receivingPlayerName)
 	, mapName (mapName)
 	, mapSize (0)
@@ -245,7 +245,7 @@ cMapSender::cMapSender (cTCP& network_, int toSocket, cEventHandling* eventHandl
 {
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cMapSender::~cMapSender()
 {
 	if (thread != 0)
@@ -265,13 +265,13 @@ cMapSender::~cMapSender()
 	}
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cMapSender::runInThread (cNetworkHostMenu* hostMenu)
 {
 	thread = SDL_CreateThread (mapSenderThreadFunction, this);  // the thread will quit, when it finished uploading the map
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cMapSender::run()
 {
 	if (canceled) return;
@@ -349,7 +349,7 @@ void cMapSender::run()
 	}
 }
 
-//-------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cMapSender::sendMsg (cNetMessage& msg)
 {
 	msg.iPlayerNr = -1;

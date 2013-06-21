@@ -61,7 +61,9 @@ void CloseSound()
 	Mix_CloseAudio();
 }
 
-//FIXME: internal play function, should not be accessed from outside and held more sanity checks and take care of sound channels to e.g. open new channels if needed
+// FIXME: internal play function, should not be accessed from outside
+// and held more sanity checks and take care of sound channels
+// to e.g. open new channels if needed
 void play (sSOUND* snd)
 {
 	if (snd == NULL) return;
@@ -69,7 +71,8 @@ void play (sSOUND* snd)
 	{
 		Log.write ("Could not play sound:", cLog::eLOG_TYPE_WARNING);
 		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
-		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
+		// TODO: maybe that just the channel wasn't free.
+		// we could allocate another channel in that case -- beko
 	}
 }
 
@@ -148,7 +151,8 @@ int PlayFXLoop (sSOUND* snd)
 	{
 		Log.write ("Could not play loop sound", cLog::eLOG_TYPE_WARNING);
 		Log.write (Mix_GetError(), cLog::eLOG_TYPE_WARNING);
-		//TODO: maybe that just the channel wasn't free. we could allocate another channel in that case -- beko
+		// TODO: maybe that just the channel wasn't free.
+		// we could allocate another channel in that case -- beko
 	}
 	Mix_Volume (SoundLoopChannel, cSettings::getInstance().getSoundVol());
 	return SoundLoopChannel;

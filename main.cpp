@@ -70,8 +70,8 @@ int main (int argc, char* argv[])
 		Quit();
 		return -1;
 	}
-	if (initSDL() == -1) return -1;    //stop on error during init of SDL basics. WARNINGS will be ignored!
-
+	//stop on error during init of SDL basics. WARNINGS will be ignored!
+	if (initSDL() == -1) return -1;
 	{
 		string sVersion = PACKAGE_NAME; sVersion += " ";
 		sVersion += PACKAGE_VERSION; sVersion += " ";
@@ -97,7 +97,7 @@ int main (int argc, char* argv[])
 		Log.write (sBuild , cLog::eLOG_TYPE_NET_DEBUG);
 	}
 
-	srand ((unsigned) time (NULL));      // start random number generator
+	srand ( (unsigned) time (NULL)); // start random number generator
 
 	if (!DEDICATED_SERVER)
 	{
@@ -138,7 +138,7 @@ int main (int argc, char* argv[])
 		// play intro if we're supposed to and the file exists
 		if (cSettings::getInstance().shouldShowIntro())
 		{
-			if (FileExists ((cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
+			if (FileExists ( (cSettings::getInstance().getMvePath() + PATH_DELIMITER + "MAXINT.MVE").c_str()))
 			{
 				// Close maxr sound for intro movie
 				CloseSound();
@@ -292,10 +292,13 @@ void Quit()
 /**
  * draws one line of the source surface scaled to the destination surface.
  * @author alzi alias DoctorDeath
- * @param srcPixelData pointer to the first byte of the line in the pixeldate of the source surface.
+ * @param srcPixelData pointer to the first byte of the line in the pixeldate
+ *        of the source surface.
  * @param srcWidth width of the line in the sourcesurface.
- * @param destPixelData pointer to the first byte where in the pixeldate of the source surface the line should be drawn.
- * @param destWidth Directory width of the line how it should be drawn to the destination surface.
+ * @param destPixelData pointer to the first byte where in the pixeldate
+ *        of the source surface the line should be drawn.
+ * @param destWidth Directory width of the line how it should be drawn
+ *        to the destination surface.
  */
 template<typename Type> static void drawStetchedLine (Type* srcPixelData, int srcWidth, Type* destPixelData, int destWidth)
 {
@@ -347,12 +350,14 @@ SDL_Surface* scaleSurface (SDL_Surface* scr, SDL_Surface* dest, int width, int h
 	if (SDL_MUSTLOCK (scr)) SDL_LockSurface (scr);
 	if (SDL_MUSTLOCK (surface)) SDL_LockSurface (surface);
 
+#if 0
 	// just blit the surface when the new size is identic to the old one
-	/*if ( scr->w == width && scr->h == height )
+	if (scr->w == width && scr->h == height)
 	{
-		SDL_BlitSurface ( scr, NULL, surface, NULL );
+		SDL_BlitSurface (scr, NULL, surface, NULL);
 		return surface;
-	}*/
+	}
+#endif
 	// copy palette when necessary
 	if (scr->format->BitsPerPixel == 8 && !dest)
 	{
@@ -397,9 +402,11 @@ drawline:
 		i += scr->h;
 		// break when we have already finished
 		if (destRow == surface->h) break;
-		// draw the line once more when the destiniation surface has a bigger height then the source surface
+		// draw the line once more when the destiniation surface has
+		// a bigger height than the source surface
 		if (i < surface->h) goto drawline;
-		// skip lines in the source surface when the destiniation surface has a smaller height then the source surface
+		// skip lines in the source surface when the destination surface has
+		// a smaller height than the source surface
 		do
 		{
 			i -= surface->h;
@@ -419,16 +426,21 @@ drawline:
 SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, unsigned int color, int size)
 {
 	SDL_Surface* sf;
-	float fak;
 	sf = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, size, size, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (sf, SDL_SRCCOLORKEY, 0xFF00FF);
 	SDL_FillRect (sf, NULL, 0xFF00FF);
 	SDL_LockSurface (sf);
 
-	fak = (float) (size / 64.0);
-	line ( (int) Round (p1x * fak), (int) Round (p1y * fak), (int) Round (p2x * fak), (int) Round (p2y * fak), color, sf);
-	line ( (int) Round (p2x * fak), (int) Round (p2y * fak), (int) Round (p3x * fak), (int) Round (p3y * fak), color, sf);
-	line ( (int) Round (p3x * fak), (int) Round (p3y * fak), (int) Round (p1x * fak), (int) Round (p1y * fak), color, sf);
+	const float fak = size / 64.0f;
+	p1x = (int) Round (p1x * fak);
+	p1y = (int) Round (p1y * fak);
+	p2x = (int) Round (p2x * fak);
+	p2y = (int) Round (p2y * fak);
+	p3x = (int) Round (p3x * fak);
+	p3y = (int) Round (p3y * fak);
+	line (p1x, p1y, p2x, p2y, color, sf);
+	line (p2x, p2y, p3x, p3y, color, sf);
+	line (p3x, p3y, p1x, p1y, color, sf);
 
 	SDL_UnlockSurface (sf);
 	return sf;
@@ -437,17 +449,17 @@ SDL_Surface* CreatePfeil (int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, 
 
 void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
 {
-	int dx, dy, dir = 1, error = 0, *ptr;
-	ptr = (int*) (sf->pixels);
 	if (x2 < x1)
 	{
-		dx = x1; dy = y1;
-		x1 = x2; y1 = y2;
-		x2 = dx; y2 = dy;
+		std::swap (x1, x2);
+		std::swap (y1, y2);
 	}
-	dx = x2 - x1;
-	dy = y2 - y1;
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	int dir = 1;
 	if (dy < 0) {dy = -dy; dir = -1;}
+	int error = 0;
+	Uint32* ptr = static_cast<Uint32*> (sf->pixels);
 	if (dx > dy)
 	{
 		for (; x1 != x2; x1++, error += dy)
@@ -467,18 +479,18 @@ void line (int x1, int y1, int x2, int y2, unsigned int color, SDL_Surface* sf)
 }
 void drawCircle (int iX, int iY, int iRadius, int iColor, SDL_Surface* surface)
 {
-	int d, da, db, xx, yy, bry;
-	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() || iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
+	if (iX + iRadius < 0 || iX - iRadius > Video.getResolutionX() ||
+		iY + iRadius < 0 || iY - iRadius > Video.getResolutionY()) return;
 	SDL_LockSurface (surface);
 
-	d = 0;
-	xx = 0;
-	yy = iRadius;
-	bry = (int) Round (0.70710678 * iRadius, 0);
+	int d = 0;
+	int xx = 0;
+	int yy = iRadius;
+	int bry = (int) Round (0.70710678 * iRadius, 0);
 	while (yy > bry)
 	{
-		da = d + (xx << 1) + 1;
-		db = da - (yy << 1) + 1;
+		int da = d + (xx << 1) + 1;
+		int db = da - (yy << 1) + 1;
 		if (abs (da) < abs (db))
 		{
 			d = da;
@@ -507,9 +519,10 @@ void setPixel (SDL_Surface* surface, int x, int y, int iColor)
 	//check the surface size
 	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) return;
 	//check the clip rect
-	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w || y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
+	if (x < surface->clip_rect.x || x >= surface->clip_rect.x + surface->clip_rect.w ||
+		y < surface->clip_rect.y || y >= surface->clip_rect.y + surface->clip_rect.h) return;
 
-	( (unsigned int*) surface->pixels) [x + y * surface->w] = iColor;
+	static_cast<Uint32*>(surface->pixels) [x + y * surface->w] = iColor;
 }
 
 int random (int const x)
@@ -549,12 +562,12 @@ std::string pToStr (void* x)
 // Rounds a Number to 'iDecimalPlace' digits after the comma:
 double Round (double dValueToRound, unsigned int iDecimalPlace)
 {
-	dValueToRound *= pow ( (double) 10, (int) iDecimalPlace);
+	dValueToRound *= pow (10., (int) iDecimalPlace);
 	if (dValueToRound >= 0)
 		dValueToRound = floor (dValueToRound + 0.5);
 	else
 		dValueToRound = ceil (dValueToRound - 0.5);
-	dValueToRound /= pow ( (double) 10, (int) iDecimalPlace);
+	dValueToRound /= pow (10., (int) iDecimalPlace);
 	return dValueToRound;
 }
 
@@ -564,11 +577,11 @@ int Round (double dValueToRound)
 }
 
 
-//----------------------------------------------------------------------------------
-// ----------- sID Implementation --------------------------------------------------
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// ----------- sID Implementation ----------------------------------------------
+//------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 string sID::getText() const
 {
 	char tmp[6];
@@ -576,31 +589,31 @@ string sID::getText() const
 	return tmp;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void sID::generate (const string& text)
 {
 	iFirstPart = atoi (text.substr (0, text.find (" ", 0)).c_str());
 	iSecondPart = atoi (text.substr (text.find (" ", 0), text.length()).c_str());
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sUnitData* sID::getUnitDataOriginalVersion (cPlayer* Owner) const
 {
 	switch (iFirstPart)
 	{
 		case 0:
 			if (!getVehicle (Owner)) return NULL;
-			return & (getVehicle (Owner)->data);
+			return &getVehicle (Owner)->data;
 		case 1:
 			if (!getBuilding (Owner)) return NULL;
-			return & (getBuilding (Owner)->data);
+			return &getBuilding (Owner)->data;
 		default:
 			return NULL;
 	}
 	return NULL;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sVehicle* sID::getVehicle (cPlayer* Owner) const
 {
 	if (iFirstPart != 0) return NULL;
@@ -612,7 +625,7 @@ sVehicle* sID::getVehicle (cPlayer* Owner) const
 	return NULL;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sBuilding* sID::getBuilding (cPlayer* Owner) const
 {
 	if (iFirstPart != 1) return NULL;
@@ -624,20 +637,20 @@ sBuilding* sID::getBuilding (cPlayer* Owner) const
 	return NULL;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool sID::operator == (const sID& ID) const
 {
 	if (iFirstPart == ID.iFirstPart && iSecondPart == ID.iSecondPart) return true;
 	return false;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cUnitsData::cUnitsData() :
 	initializedClanUnitData (false)
 {
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sVehicle& cUnitsData::getVehicle (int nr, int clan)
 {
 	if (!initializedClanUnitData)
@@ -650,7 +663,7 @@ sVehicle& cUnitsData::getVehicle (int nr, int clan)
 	return clanUnitDataVehicles.at (clan).at (nr);   //[clan][nr];
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sBuilding& cUnitsData::getBuilding (int nr, int clan)
 {
 	if (!initializedClanUnitData)
@@ -677,7 +690,7 @@ static int getConstructorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
 	{
-		const sVehicle &vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.vehicle[i];
 
 		if (vehicle.data.canBuild.compare ("BigBuilding") == 0)
 		{
@@ -691,7 +704,7 @@ static int getEngineerIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles(); ++i)
 	{
-		const sVehicle &vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.vehicle[i];
 
 		if (vehicle.data.canBuild.compare ("SmallBuilding") == 0)
 		{
@@ -705,7 +718,7 @@ static int getSurveyorIndex()
 {
 	for (unsigned int i = 0; i != UnitsData.getNrVehicles (); ++i)
 	{
-		const sVehicle &vehicle = UnitsData.vehicle[i];
+		const sVehicle& vehicle = UnitsData.vehicle[i];
 
 		if (vehicle.data.canSurvey)
 		{
@@ -730,7 +743,7 @@ void cUnitsData::initializeIDData()
 	surveyorID = vehicle[surveyorIndex].data.ID;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void cUnitsData::initializeClanUnitData()
 {
 	if (initializedClanUnitData == true) return;
@@ -742,68 +755,66 @@ void cUnitsData::initializeClanUnitData()
 		if (clan == 0)
 			continue;
 
-		vector<sVehicle> clanListVehicles;
+		clanUnitDataVehicles.push_back (std::vector<sVehicle>());
+		vector<sVehicle>& clanListVehicles = clanUnitDataVehicles.back();
 		for (unsigned int vehicleIdx = 0; vehicleIdx < vehicle.size(); vehicleIdx++)
 		{
 			// make a copy of the vehicle's stats
-			sVehicle curVehicle = vehicle[vehicleIdx];
+			const sVehicle& curVehicle = vehicle[vehicleIdx];
 			clanListVehicles.push_back (curVehicle);
 
 			cClanUnitStat* changedStat = clan->getUnitStat (curVehicle.data.ID.iFirstPart, curVehicle.data.ID.iSecondPart);
-			if (changedStat != 0)
-			{
-				if (changedStat->hasModification ("Damage"))
-					clanListVehicles.back().data.damage = changedStat->getModificationValue ("Damage");
-				if (changedStat->hasModification ("Range"))
-					clanListVehicles.back().data.range = changedStat->getModificationValue ("Range");
-				if (changedStat->hasModification ("Armor"))
-					clanListVehicles.back().data.armor = changedStat->getModificationValue ("Armor");
-				if (changedStat->hasModification ("Hitpoints"))
-					clanListVehicles.back().data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
-				if (changedStat->hasModification ("Scan"))
-					clanListVehicles.back().data.scan = changedStat->getModificationValue ("Scan");
-				if (changedStat->hasModification ("Speed"))
-					clanListVehicles.back().data.speedMax = changedStat->getModificationValue ("Speed") * 4;
-				if (changedStat->hasModification ("Built_Costs"))
-					clanListVehicles.back().data.buildCosts = changedStat->getModificationValue ("Built_Costs");
-			}
-		}
-		clanUnitDataVehicles.push_back (clanListVehicles);
+			if (changedStat == NULL) continue;
 
-		vector<sBuilding> clanListBuildings;
+			sVehicle& clanVehicle = clanListVehicles.back();
+			if (changedStat->hasModification ("Damage"))
+				clanVehicle.data.damage = changedStat->getModificationValue ("Damage");
+			if (changedStat->hasModification ("Range"))
+				clanVehicle.data.range = changedStat->getModificationValue ("Range");
+			if (changedStat->hasModification ("Armor"))
+				clanVehicle.data.armor = changedStat->getModificationValue ("Armor");
+			if (changedStat->hasModification ("Hitpoints"))
+				clanVehicle.data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+			if (changedStat->hasModification ("Scan"))
+				clanVehicle.data.scan = changedStat->getModificationValue ("Scan");
+			if (changedStat->hasModification ("Speed"))
+				clanVehicle.data.speedMax = changedStat->getModificationValue ("Speed") * 4;
+			if (changedStat->hasModification ("Built_Costs"))
+				clanVehicle.data.buildCosts = changedStat->getModificationValue ("Built_Costs");
+		}
+
+		clanUnitDataBuildings.push_back (std::vector<sBuilding>());
+		vector<sBuilding>& clanListBuildings = clanUnitDataBuildings.back();
 		for (unsigned int buildingIdx = 0; buildingIdx < building.size(); buildingIdx++)
 		{
 			// make a copy of the building's stats
-			sBuilding curBuilding = building[buildingIdx];
+			const sBuilding& curBuilding = building[buildingIdx];
 			clanListBuildings.push_back (curBuilding);
 
 			cClanUnitStat* changedStat = clan->getUnitStat (curBuilding.data.ID.iFirstPart, curBuilding.data.ID.iSecondPart);
-			if (changedStat != 0)
-			{
-				if (changedStat->hasModification ("Damage"))
-					clanListBuildings.back().data.damage = changedStat->getModificationValue ("Damage");
-				if (changedStat->hasModification ("Range"))
-					clanListBuildings.back().data.range = changedStat->getModificationValue ("Range");
-				if (changedStat->hasModification ("Armor"))
-					clanListBuildings.back().data.armor = changedStat->getModificationValue ("Armor");
-				if (changedStat->hasModification ("Hitpoints"))
-					clanListBuildings.back().data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
-				if (changedStat->hasModification ("Scan"))
-					clanListBuildings.back().data.scan = changedStat->getModificationValue ("Scan");
-				if (changedStat->hasModification ("Speed"))
-					clanListBuildings.back().data.speedMax = changedStat->getModificationValue ("Speed") * 4;
-				if (changedStat->hasModification ("Built_Costs"))
-					clanListBuildings.back().data.buildCosts = changedStat->getModificationValue ("Built_Costs");
-			}
+			if (changedStat == NULL) continue;
+			sBuilding& clanBuilding = clanListBuildings.back();
+			if (changedStat->hasModification ("Damage"))
+				clanBuilding.data.damage = changedStat->getModificationValue ("Damage");
+			if (changedStat->hasModification ("Range"))
+				clanBuilding.data.range = changedStat->getModificationValue ("Range");
+			if (changedStat->hasModification ("Armor"))
+				clanBuilding.data.armor = changedStat->getModificationValue ("Armor");
+			if (changedStat->hasModification ("Hitpoints"))
+				clanBuilding.data.hitpointsMax = changedStat->getModificationValue ("Hitpoints");
+			if (changedStat->hasModification ("Scan"))
+				clanBuilding.data.scan = changedStat->getModificationValue ("Scan");
+			if (changedStat->hasModification ("Speed"))
+				clanBuilding.data.speedMax = changedStat->getModificationValue ("Speed") * 4;
+			if (changedStat->hasModification ("Built_Costs"))
+				clanBuilding.data.buildCosts = changedStat->getModificationValue ("Built_Costs");
 		}
-		clanUnitDataBuildings.push_back (clanListBuildings);
 	}
-
 
 	initializedClanUnitData = true;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 sUnitData::sUnitData()
 {
 	version = 0;
@@ -902,7 +913,7 @@ sUnitData::sUnitData()
 	hasFrames = 0;
 }
 
-//----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SDL_Surface* dst, SDL_Rect* dstrect)
 {
 	SDL_Rect temp1, temp2;
@@ -911,7 +922,7 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 
 	//check surface formats
 	if (!dst->format->Amask) return;
-	if (src->format->Amask || ! (src->flags & SDL_SRCALPHA)) return;
+	if (src->format->Amask || !(src->flags & SDL_SRCALPHA)) return;
 
 	if (srcrect == NULL)
 	{
@@ -943,14 +954,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		height += srcrect->y;
 		srcrect->y = 0;
 	}
-	if (srcrect->x + width > src->w)
-	{
-		width = src->w - srcrect->x;
-	}
-	if (srcrect->y + height > src->h)
-	{
-		height = src->h - srcrect->y;
-	}
+	width  = std::min (src->w - srcrect->x, width);
+	height = std::min (src->h - srcrect->y, height);
 
 	//clip the dest rect to the destination clip rect
 	if (dstrect->x < dst->clip_rect.x)
@@ -965,15 +970,8 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 		srcrect->y += dst->clip_rect.y - dstrect->y;
 		dstrect->y = dst->clip_rect.y;
 	}
-	if (dstrect->x + width > dst->clip_rect.x + dst->clip_rect.w)
-	{
-		width -= dstrect->x + width - dst->clip_rect.x - dst->clip_rect.w;
-	}
-	if (dstrect->y + height > dst->clip_rect.y + dst->clip_rect.h)
-	{
-		height -= dstrect->y + height - dst->clip_rect.y - dst->clip_rect.h;
-	}
-
+	width  = std::min (dst->clip_rect.x + dst->clip_rect.w - dstrect->x, width);
+	height = std::min (dst->clip_rect.y + dst->clip_rect.h - dstrect->y, height);
 
 	if (width <= 0 || height <= 0)
 	{
@@ -986,31 +984,30 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 	if (SDL_MUSTLOCK (dst)) SDL_LockSurface (dst);
 
 	//setup needed variables
-	Uint32 srcAlpha = src->format->alpha;
-	int srmask = src->format->Rmask;
-	int sgmask = src->format->Gmask;
-	int sbmask = src->format->Bmask;
-	int damask = dst->format->Amask;
-	int drmask = dst->format->Rmask;
-	int dgmask = dst->format->Gmask;
-	int dbmask = dst->format->Bmask;
-	int rshift = src->format->Rshift - dst->format->Rshift;
-	int gshift = src->format->Gshift - dst->format->Gshift;
-	int bshift = src->format->Bshift - dst->format->Bshift;
-	int ashift = dst->format->Ashift;
-	Uint32 colorKey = src->format->colorkey;
-	bool useColorKey = (src->flags & SDL_SRCCOLORKEY) != 0;
+	const Uint32 srcAlpha = src->format->alpha;
+	const int srmask = src->format->Rmask;
+	const int sgmask = src->format->Gmask;
+	const int sbmask = src->format->Bmask;
+	const int damask = dst->format->Amask;
+	const int drmask = dst->format->Rmask;
+	const int dgmask = dst->format->Gmask;
+	const int dbmask = dst->format->Bmask;
+	const int rshift = src->format->Rshift - dst->format->Rshift;
+	const int gshift = src->format->Gshift - dst->format->Gshift;
+	const int bshift = src->format->Bshift - dst->format->Bshift;
+	const int ashift = dst->format->Ashift;
+	const Uint32 colorKey = src->format->colorkey;
+	const bool useColorKey = (src->flags & SDL_SRCCOLORKEY) != 0;
 
-
-	Uint32* dstPixel = ( (Uint32*) dst->pixels) + dstrect->x + dstrect->y * dst->w;
-	Uint32* srcPixel = ( (Uint32*) src->pixels) + srcrect->x + srcrect->y * src->w;
+	Uint32* dstPixel = static_cast<Uint32*> (dst->pixels) + dstrect->x + dstrect->y * dst->w;
+	Uint32* srcPixel = static_cast<Uint32*> (src->pixels) + srcrect->x + srcrect->y * src->w;
 
 	for (int y = 0; y < height; y++)
 	{
 		for (int x = 0; x < width; x++)
 		{
-			Uint32 dcolor = *dstPixel;
-			Uint32 scolor = *srcPixel;
+			const Uint32 dcolor = *dstPixel;
+			const Uint32 scolor = *srcPixel;
 
 			if (useColorKey && scolor == colorKey)
 			{
@@ -1022,13 +1019,13 @@ void blittPerSurfaceAlphaToAlphaChannel (SDL_Surface* src, SDL_Rect* srcrect, SD
 			Uint32 r = (scolor & srmask) >> rshift;
 			Uint32 g = (scolor & sgmask) >> gshift;
 			Uint32 b = (scolor & sbmask) >> bshift;
-			Uint32  dalpha = (dcolor & damask) >> ashift;
+			Uint32 dalpha = (dcolor & damask) >> ashift;
 
-			r = ( ( (dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha + r * srcAlpha);
-			g = ( ( ( (dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha);
-			b = ( ( ( (dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha);
+			r = (((dcolor & drmask) >> 8) * (255 - srcAlpha) * dalpha) + r * srcAlpha;
+			g = (((dcolor & dgmask) * (255 - srcAlpha) * dalpha) >> 8) + g * srcAlpha;
+			b = (((dcolor & dbmask) * (255 - srcAlpha) * dalpha) >> 8) + b * srcAlpha;
 
-			Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;;
+			const Uint8 a = srcAlpha + dalpha - (srcAlpha * dalpha) / 255;
 
 			if (a > 0)
 			{

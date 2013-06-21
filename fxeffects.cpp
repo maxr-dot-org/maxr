@@ -35,12 +35,12 @@ cFx::cFx (bool bottom_, int x, int y) :
 cFx::~cFx ()
 {}
 
-int cFx::getLength () const
+int cFx::getLength() const
 {
 	return length;
 }
 
-bool cFx::isFinished () const
+bool cFx::isFinished() const
 {
 	return tick >= length;
 }
@@ -48,12 +48,12 @@ bool cFx::isFinished () const
 void cFx::playSound (const cGameGUI& gameGUI) const
 {}
 
-void cFx::run ()
+void cFx::run()
 {
 	tick++;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzle::cFxMuzzle (int x, int y, int dir_) :
 	cFx (false, x, y),
 	image (NULL),
@@ -68,17 +68,17 @@ void cFxMuzzle::draw (const cGameGUI& gameGUI) const
 	if (image == NULL) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
-	SDL_Rect src, dest;
+	SDL_Rect src;
 	src.x = (int) (image[0]->w * gameGUI.getZoom() * dir / 8);
 	src.y = 0;
 	src.w = image[1]->w / 8;
 	src.h = image[1]->h;
-	dest = gameGUI.calcScreenPos (posX, posY);
+	SDL_Rect dest = gameGUI.calcScreenPos (posX, posY);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleBig::cFxMuzzleBig (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
@@ -86,7 +86,7 @@ cFxMuzzleBig::cFxMuzzleBig (int x, int y, int dir_) :
 	length = 6;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleMed::cFxMuzzleMed (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
@@ -94,7 +94,7 @@ cFxMuzzleMed::cFxMuzzleMed (int x, int y, int dir_) :
 	length = 6;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleMedLong::cFxMuzzleMedLong (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
@@ -102,7 +102,7 @@ cFxMuzzleMedLong::cFxMuzzleMedLong (int x, int y, int dir_) :
 	image = EffectsData.fx_muzzle_med;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxMuzzleSmall::cFxMuzzleSmall (int x, int y, int dir_) :
 	cFxMuzzle (x, y, dir_)
 {
@@ -110,7 +110,7 @@ cFxMuzzleSmall::cFxMuzzleSmall (int x, int y, int dir_) :
 	image = EffectsData.fx_muzzle_small;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExplo::cFxExplo (int x, int y, int frames_) :
 	cFx (false, x, y),
 	image (NULL),
@@ -132,13 +132,13 @@ void cFxExplo::draw (const cGameGUI& gameGUI) const
 	src.y = 0;
 	src.w = image[1]->w / frames;
 	src.h = image[1]->h;
-	dest = gameGUI.calcScreenPos (posX - image[0]->w / (frames * 2) , posY - image[0]->h / 2);
+	dest = gameGUI.calcScreenPos (posX - image[0]->w / (frames * 2), posY - image[0]->h / 2);
 
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
 
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploSmall::cFxExploSmall (int x, int y) :
 	cFxExplo (x, y, 14)
 {
@@ -148,8 +148,7 @@ cFxExploSmall::cFxExploSmall (int x, int y) :
 
 void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
 {
-	int nr;
-	nr = random (3);
+	const int nr = random (3);
 	if (nr == 0)
 	{
 		PlayFX (SoundData.EXPSmall0);
@@ -164,7 +163,7 @@ void cFxExploSmall::playSound (const cGameGUI& gameGUI) const
 	}
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploBig::cFxExploBig (int x, int y) :
 	cFxExplo (x, y, 28)
 {
@@ -189,8 +188,7 @@ void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 	}
 	else
 	{
-		int nr;
-		nr = random (4);
+		const int nr = random (4);
 		if (nr == 0)
 		{
 			PlayFX (SoundData.EXPBig0);
@@ -210,7 +208,7 @@ void cFxExploBig::playSound (const cGameGUI& gameGUI) const
 	}
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploAir::cFxExploAir (int x, int y) :
 	cFxExplo (x, y, 14)
 {
@@ -220,8 +218,7 @@ cFxExploAir::cFxExploAir (int x, int y) :
 
 void cFxExploAir::playSound (const cGameGUI& gameGUI) const
 {
-	int nr;
-	nr = random (3);
+	const int nr = random (3);
 	if (nr == 0)
 	{
 		PlayFX (SoundData.EXPSmall0);
@@ -236,7 +233,7 @@ void cFxExploAir::playSound (const cGameGUI& gameGUI) const
 	}
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxExploWater::cFxExploWater (int x, int y) :
 	cFxExplo (x, y, 14)
 {
@@ -246,8 +243,7 @@ cFxExploWater::cFxExploWater (int x, int y) :
 
 void cFxExploWater::playSound (const cGameGUI& gameGUI) const
 {
-	int nr;
-	nr = random (3);
+	const int nr = random (3);
 	if (nr == 0)
 	{
 		PlayFX (SoundData.EXPSmallWet0);
@@ -262,7 +258,7 @@ void cFxExploWater::playSound (const cGameGUI& gameGUI) const
 	}
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxHit::cFxHit (int x, int y) :
 	cFxExplo (x, y, 5)
 {
@@ -275,7 +271,7 @@ void cFxHit::playSound (const cGameGUI& gameGUI) const
 	//TODO
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxAbsorb::cFxAbsorb (int x, int y) :
 	cFxExplo (x, y, 10)
 {
@@ -288,7 +284,7 @@ void cFxAbsorb::playSound (const cGameGUI& gameGUI) const
 	PlayFX (SoundData.SNDAbsorb);
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxFade::cFxFade (int x, int y, bool bottom, int start, int end) :
 	cFx (bottom, x, y),
 	image (NULL),
@@ -304,7 +300,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
-	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
+	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
 
 	SDL_Rect dest;
@@ -312,7 +308,7 @@ void cFxFade::draw (const cGameGUI& gameGUI) const
 	SDL_BlitSurface (image[1], NULL, buffer, &dest);
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxSmoke::cFxSmoke (int x, int y, bool bottom) :
 	cFxFade (x, y, bottom, 100, 0)
 {
@@ -320,7 +316,7 @@ cFxSmoke::cFxSmoke (int x, int y, bool bottom) :
 	image = EffectsData.fx_smoke;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxCorpse::cFxCorpse (int x, int y) :
 	cFxFade (x, y, true, 255, 0)
 {
@@ -328,7 +324,7 @@ cFxCorpse::cFxCorpse (int x, int y) :
 	image = EffectsData.fx_corpse;
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxTracks::cFxTracks (int x, int y, int dir_) :
 	cFx (true, x, y),
 	image (NULL),
@@ -348,7 +344,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	if (!image) return;
 	CHECK_SCALING (image[1], image[0], gameGUI.getZoom());
 
-	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
+	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
 
 	SDL_Rect src, dest;
@@ -361,7 +357,7 @@ void cFxTracks::draw (const cGameGUI& gameGUI) const
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }
 
-//----------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 cFxRocket::cFxRocket (int startX_, int startY_, int endX_, int endY_, int dir_, bool bottom) :
 	cFx (bottom, startX_, startY_),
 	speed (8),
@@ -454,17 +450,17 @@ cFxDarkSmoke::cFxDarkSmoke (int x, int y, int alpha, float windDir) :
 	length = 200;
 	image = EffectsData.fx_dark_smoke;
 
-	float ax = abs (sin (windDir));
-	float ay = abs (cos (windDir));
+	const float ax = abs (sinf (windDir));
+	const float ay = abs (cosf (windDir));
 	if (ax > ay)
 	{
-		dx = (float) (ax +  random (5)       / 20.0) / 2;
-		dy = (float) (ay + (random (15) - 7) / 28.0) / 2;
+		dx = (ax +  random (5)       / 20.0f) / 2.f;
+		dy = (ay + (random (15) - 7) / 28.0f) / 2.f;
 	}
 	else
 	{
-		dx = (float) (ax + (random (15) - 7) / 28.0) / 2;
-		dy = (float) (ay +  random (5)       / 20.0) / 2;
+		dx = (ax + (random (15) - 7) / 28.0f) / 2.f;
+		dy = (ay +  random (5)       / 20.0f) / 2.f;
 	}
 }
 
@@ -483,7 +479,7 @@ void cFxDarkSmoke::draw (const cGameGUI& gameGUI) const
 	src.h = image[1]->h;
 	dest = gameGUI.calcScreenPos ((int) (posX + tick * dx), (int) (posY + tick * dy));
 
-	int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
+	const int alpha = (alphaEnd - alphaStart) * tick / length + alphaStart;
 	SDL_SetAlpha (image[1], SDL_SRCALPHA, alpha);
 	SDL_BlitSurface (image[1], &src, buffer, &dest);
 }

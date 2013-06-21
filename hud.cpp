@@ -1045,7 +1045,7 @@ SDL_Surface* cGameGUI::generateMiniMapSurface()
 		//to make sure, that every unit is diplayed and has the same size on the minimap.
 
 		//the size of the rect, that is drawn for each unit
-		int size = (int) ceil ((float) MINIMAP_SIZE * zoomFactor / map->getSize());
+		int size = (int) ceilf ((float) MINIMAP_SIZE * zoomFactor / map->getSize());
 		size = std::max (size, 2);
 		SDL_Rect rect;
 		rect.h = size;

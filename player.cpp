@@ -957,8 +957,8 @@ void cPlayer::drawSpecialCircle (int iX, int iY, int iRadius, std::vector<char>&
 
 	for (float angle = 0; angle <= PI_ON_4; angle += step)
 	{
-		int rx = (int) (cos (angle) * iRadius);
-		int ry = (int) (sin (angle) * iRadius);
+		int rx = (int) (cosf (angle) * iRadius);
+		int ry = (int) (sinf (angle) * iRadius);
 		rx /= 10;
 		ry /= 10;
 
@@ -1000,8 +1000,8 @@ void cPlayer::drawSpecialCircleBig (int iX, int iY, int iRadius, std::vector<cha
 	const float step = (PI_ON_180 * 90 - acosf (1.0f / iRadius)) / 2;
 	for (float angle = 0; angle <= PI_ON_4; angle += step)
 	{
-		int rx = (int) (cos (angle) * iRadius);
-		int ry = (int) (sin (angle) * iRadius);
+		int rx = (int) (cosf (angle) * iRadius);
+		int ry = (int) (sinf (angle) * iRadius);
 		rx /= 10;
 		ry /= 10;
 
