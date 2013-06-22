@@ -1134,7 +1134,7 @@ cPlayer* cSavegame::getPlayerFromNumber (const std::vector<cPlayer*>& PlayerList
 string cSavegame::convertScanMapToString (const cPlayer& player) const
 {
 	string str = "";
-	const size_t size = player.getMapSize();
+	const size_t size = (int) pow( (float)player.getMapSize(), 2);
 	str.reserve (size);
 	for (size_t i = 0; i != size; ++i)
 	{
