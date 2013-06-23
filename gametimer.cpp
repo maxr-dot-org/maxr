@@ -176,7 +176,7 @@ void cGameTimerClient::run (cMenu* activeMenu)
 
 	while (popEvent ())
 	{
-		client->getEventHandling().handleNetMessages (client, NULL);
+		client->getEventHandling().handleNetMessages (client, activeMenu);
 
 		if (nextTickAllowed () == false) continue;
 
