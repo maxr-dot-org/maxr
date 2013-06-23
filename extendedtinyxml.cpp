@@ -35,6 +35,9 @@
 #include "extendedtinyxml.h"
 #include "defines.h"
 #include "log.h"
+#include "tinyxml2.h"
+
+using namespace tinyxml2;
 
 #if 0
 void debugToLog (const std::string& szMsg);
@@ -255,18 +258,40 @@ bool ExTiXmlNode::XmlDataToBool (std::string& rstrData)
 	}
 }
 
-#if 0
-void debugToLog (void* pointer , const char* pname)
+XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* rootElement, ...)
 {
-	char szMsg[256] = ""; //JCK
-	sprintf (szMsg , "%s = %p", pname, pointer);
+	va_list vaList;
+	va_start (vaList, rootElement);
 
-	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
+	XMLElement* xmlElement;
+
+	xmlElement = xmlDoc.RootElement();
+	if (xmlElement == NULL)
+	{
+		va_end (vaList);
+		return NULL;
+	}
+
+	if (strcmp (xmlElement->Value(), rootElement) != 0)
+	{
+		va_end (vaList);
+		return NULL;
+	}
+
+	char* elementName;
+	while ((elementName = va_arg (vaList, char*)) != NULL)
+	{
+		xmlElement = xmlElement->FirstChildElement (elementName);
+		if (xmlElement == NULL)
+		{
+			va_end (vaList);
+			return NULL;
+		}
+	}
+
+	va_end (vaList);
+	return xmlElement;
 }
 
-void debugToLog (const std::string& szMsg)
-{
-	Log.write (szMsg, cLog::eLOG_TYPE_DEBUG);
-}
 
-#endif
+

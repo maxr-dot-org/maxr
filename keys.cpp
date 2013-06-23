@@ -25,21 +25,23 @@
 #include "keys.h"
 #include "log.h"
 #include "settings.h"
+#include "tinyxml2.h"
 
 using namespace std;
+using namespace tinyxml2;
 
 // Funktionen ////////////////////////////////////////////////////////////////
 
-static void LoadSingleKey (TiXmlDocument& KeysXml, const char* keyString, SDLKey& key, const char* defaultKeyString)
+static void LoadSingleKey (XMLDocument& KeysXml, const char* keyString, SDLKey& key, const char* defaultKeyString)
 {
-	ExTiXmlNode* pXmlNode = ExTiXmlNode::XmlGetFirstNode (KeysXml, "Controles", "Keys", keyString, NULL);
-	std::string sTmpString;
+	XMLElement* xmlElement = XmlGetFirstElement (KeysXml, "Controles", "Keys", keyString, NULL);
+	string value = xmlElement->Attribute("Text");
 
-	if (pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
-		key = GetKeyFromString (sTmpString);
+	if (!value.empty())
+		key = GetKeyFromString (value);
 	else
 	{
-		std::string msg = "keys: Can't load ";
+		string msg = "keys: Can't load ";
 		msg += keyString;
 		msg += " from keys.xml: using default value";
 
@@ -66,10 +68,7 @@ int LoadKeys()
 		Log.write ("User key-file in use", LOG_TYPE_INFO);
 	}
 	
-	TiXmlDocument KeysXml;
-	ExTiXmlNode* pXmlNode = NULL;
-	string sTmpString;
-
+	XMLDocument KeysXml;
 	if (!KeysXml.LoadFile (KEYS_XMLUsers))
 	{
 		Log.write ("cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING);
@@ -130,9 +129,8 @@ int LoadKeys()
 	LoadSingleKey (KeysXml, "KeyUnitMenuUpgrade", KeysList.KeyUnitMenuUpgrade, "U");
 	LoadSingleKey (KeysXml, "KeyUnitMenuDestroy", KeysList.KeyUnitMenuDestroy, "D");
 
-	pXmlNode = pXmlNode->XmlGetFirstNode (KeysXml, "Controles", "Mouse", "MOUSE_STYLE", NULL);
-	pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Text");
-	if (sTmpString.compare ("OLD_SCHOOL") == 0)
+	XMLElement* element = XmlGetFirstElement(KeysXml, "Controles", "Mouse", "MOUSE_STYLE", NULL);
+	if (element->Attribute("Text", "OLD_SCHOOL"))
 		MouseStyle = OldSchool;
 	else
 		MouseStyle = Modern;

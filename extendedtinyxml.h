@@ -35,6 +35,7 @@
 #define EXTENDEDTINYXML_H
 
 #include "tinyxml.h"
+#include "tinyxml2.h"
 #include <stdarg.h>
 #include <string>
 
@@ -83,6 +84,8 @@ public:
 };
 
 
+tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* rootElement, ...);
+//};
 /*
 int _tmain(int argc, _TCHAR* argv[])
 {
