@@ -59,9 +59,7 @@
 #include <string>
 #include "log.h"
 #include "defines.h"
-
-#include "tinyxml.h"
-#include "extendedtinyxml.h"
+#include "tinyxml2.h"
 
 class cLanguage
 {
@@ -78,14 +76,16 @@ public:
 private:
 	typedef std::map<std::string, std::string> StrStrMap;
 
-	int         ReadSingleTranslation (std::string& strResult, char const* pszCurrent, ...);
+	int         ReadSingleTranslation (char const* pszCurrent, ...);
 	std::string ReadSingleTranslation (const std::string& strInput);
 	int         ReadLanguagePackHeader();
 	int         ReadLanguagePackHeader (const std::string& strLanguageCode);
 	int         ReadLanguageMaster();
-	int         ReadRecursiveLanguagePack (ExTiXmlNode* pXmlStartingNode, const std::string& szNodePath);
+	int         ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
 
-	TiXmlDocument m_XmlDoc;
+	int         checkTimeStamp (std::string& rstrData);
+
+	tinyxml2::XMLDocument m_XmlDoc;
 	std::string   m_szLanguage; // Use ISO 639-2 codes to identify languages (http://www.loc.gov/standards/iso639-2/php/code_list.php)
 	std::string   m_szLanguageFile;
 	std::string   m_szLanguageFileMaster;

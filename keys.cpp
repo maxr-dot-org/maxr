@@ -69,7 +69,7 @@ int LoadKeys()
 	}
 	
 	XMLDocument KeysXml;
-	if (!KeysXml.LoadFile (KEYS_XMLUsers))
+	if (KeysXml.LoadFile (KEYS_XMLUsers) != XML_NO_ERROR)
 	{
 		Log.write ("cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING);
 		GenerateKeysXml();
