@@ -20,6 +20,7 @@
 #define savegameH
 #include "defines.h"
 #include "tinyxml.h"
+#include "tinyxml2.h"
 #include <vector>
 
 
@@ -85,10 +86,12 @@ public:
 private:
 	/* the number of the savefile */
 	int number;
+	/* filename of the last loaded savefile */
+	std::string loadedXMLFileName;
 	/* the number of the savefile as string with 3 chars */
 	char numberstr[4];
 	/* the xml save document */
-	TiXmlDocument SaveFile;
+	tinyxml2::XMLDocument SaveFile;
 	/* the version of a loaded savegame */
 	std::string version;
 
@@ -121,17 +124,17 @@ private:
 	* saves the values of a upgraded unit
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata);
+	void writeUpgrade (tinyxml2::XMLElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata);
 	/**
 	 * save the research level values of a player
 	 *@author pagra
 	 */
-	void writeResearchLevel (TiXmlElement* researchLevelNode, const cResearch& researchLevel);
+	void writeResearchLevel (tinyxml2::XMLElement* researchLevelNode, const cResearch& researchLevel);
 	/**
 	 * save the number of research centers that are working on each area of a player
 	 *@author pagra
 	 */
-	void writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, const cPlayer* player);
+	void writeResearchCentersWorkingOnArea (tinyxml2::XMLElement* researchCentersWorkingOnAreaNode, const cPlayer* player);
 	/**
 	 * save the casualties of all players
 	 *@author pagra
@@ -141,7 +144,7 @@ private:
 	* saves the information of the vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* writeUnit (const cServer& server, const cVehicle& Vehicle, int* unitnum);
+	tinyxml2::XMLElement* writeUnit (const cServer& server, const cVehicle& Vehicle, int* unitnum);
 	/**
 	* saves the information of the building
 	*@author alzi alias DoctorDeath
@@ -156,7 +159,7 @@ private:
 	* saves the unit data values which are identic for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void writeUnitValues (TiXmlElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData);
+	void writeUnitValues (tinyxml2::XMLElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData);
 	/**
 	* saves the standard unit values from the unit xmls
 	*@author alzi alias DoctorDeath
@@ -182,22 +185,22 @@ private:
 	* loads a player
 	*@author alzi alias DoctorDeath
 	*/
-	cPlayer* loadPlayer (TiXmlElement* playerNode, cMap* map);
+	cPlayer* loadPlayer (tinyxml2::XMLElement* playerNode, cMap* map);
 	/**
 	* loads the upgrade values of a unit in the players data
 	*@author alzi alias DoctorDeath
 	*/
-	void loadUpgrade (TiXmlElement* upgradeNode, sUnitData* data);
+	void loadUpgrade (tinyxml2::XMLElement* upgradeNode, sUnitData* data);
 	/**
 	 * loads the research level of a player into the players researchLevel
 	 * @author pagra
 	 */
-	void loadResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel);
+	void loadResearchLevel (tinyxml2::XMLElement* researchLevelNode, cResearch& researchLevel);
 	/**
 	 * loads the number of research centers of a player that are working on each area
 	 * @author pagra
 	 */
-	void loadResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player);
+	void loadResearchCentersWorkingOnArea (tinyxml2::XMLElement* researchCentersWorkingOnAreaNode, cPlayer* player);
 	/**
 	 * loads the casualties of all players
 	 *@author pagra
@@ -212,27 +215,27 @@ private:
 	* loads a vehicle
 	*@author alzi alias DoctorDeath
 	*/
-	void loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID);
+	void loadVehicle (cServer& server, tinyxml2::XMLElement* unitNode, sID& ID);
 	/**
 	* loads a building
 	*@author alzi alias DoctorDeath
 	*/
-	void loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID);
+	void loadBuilding (cServer& server, tinyxml2::XMLElement* unitNode, sID& ID);
 	/**
 	* loads rubble
 	*@author alzi alias DoctorDeath
 	*/
-	void loadRubble (cServer& server, TiXmlElement* rubbleNode);
+	void loadRubble (cServer& server, tinyxml2::XMLElement* rubbleNode);
 	/**
 	* loads unit data values that are the same for buildings and vehicles
 	*@author alzi alias DoctorDeath
 	*/
-	void loadUnitValues (TiXmlElement* unitNode, sUnitData* Data);
+	void loadUnitValues (tinyxml2::XMLElement* unitNode, sUnitData* Data);
 	/**
 	* loads the standard unit values
 	*@author alzi alias DoctorDeath
 	*/
-	void loadStandardUnitValues (TiXmlElement* unitNode);
+	void loadStandardUnitValues (tinyxml2::XMLElement* unitNode);
 	/**
 	* recalculates the subbase values after loading all units
 	*@author eiko
@@ -265,17 +268,17 @@ private:
 	* adds an node without undernodes
 	*@author alzi alias DoctorDeath
 	*/
-	TiXmlElement* addMainElement (TiXmlElement* node, const std::string& nodename);
+	tinyxml2::XMLElement* addMainElement (tinyxml2::XMLElement* node, const std::string& nodename);
 	/**
 	* adds an attribute with given value to the node
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttribute (TiXmlElement* element, const std::string& attributename, const std::string& value);
+	void addAttribute (tinyxml2::XMLElement* element, const std::string& attributename, const std::string& value);
 	/**
 	* adds an node with maximal two attributes and there values
 	*@author alzi alias DoctorDeath
 	*/
-	void addAttributeElement (TiXmlElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
+	void addAttributeElement (tinyxml2::XMLElement* node, const std::string& nodename, const std::string& attributename, const std::string& value, const std::string& attributename2 = "", const std::string& value2 = "");
 };
 
 /**

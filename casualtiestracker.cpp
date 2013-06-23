@@ -22,28 +22,30 @@
 #include "casualtiestracker.h"
 #include "netmessage.h"
 #include "tinyxml.h"
+#include "tinyxml2.h"
 
 using namespace std;
+using namespace tinyxml2;
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::initFromXML (TiXmlElement* casualtiesNode)
+void cCasualtiesTracker::initFromXML (XMLElement* casualtiesNode)
 {
 	casualtiesPerPlayer.clear();
 
-	TiXmlElement* playerNode = casualtiesNode->FirstChildElement ("PlayerCasualties");
+	XMLElement* playerNode = casualtiesNode->FirstChildElement ("PlayerCasualties");
 	while (playerNode != 0)
 	{
 		int playerNr = 0;
-		if (playerNode->Attribute ("PlayerNr", &playerNr) != 0)
+		if (playerNode->QueryIntAttribute ("PlayerNr", &playerNr) != 0)
 		{
-			TiXmlElement* casualtyNode = playerNode->FirstChildElement ("Casualty");
+			XMLElement* casualtyNode = playerNode->FirstChildElement ("Casualty");
 			while (casualtyNode != 0)
 			{
 				sID unitID;
 				int losses;
-				if (casualtyNode->Attribute ("ID_Fst", & (unitID.iFirstPart)) != 0
-					&& casualtyNode->Attribute ("ID_Snd", & (unitID.iSecondPart)) != 0
-					&& casualtyNode->Attribute ("Losses", & (losses)) != 0)
+				if (casualtyNode->QueryIntAttribute ("ID_Fst", & (unitID.iFirstPart)) != 0
+					&& casualtyNode->QueryIntAttribute ("ID_Snd", & (unitID.iSecondPart)) != 0
+					&& casualtyNode->QueryIntAttribute ("Losses", & (losses)) != 0)
 				{
 					setCasualty (unitID, losses, playerNr);
 				}
@@ -55,14 +57,14 @@ void cCasualtiesTracker::initFromXML (TiXmlElement* casualtiesNode)
 }
 
 //--------------------------------------------------------------------------
-void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode) const
+void cCasualtiesTracker::storeToXML (XMLElement* casualtiesNode) const
 {
 	// add sub elements for every player that contain all his casualties
 	for (size_t i = 0; i < casualtiesPerPlayer.size(); i++)
 	{
 		const CasualtiesOfPlayer& casualtiesOfPlayer = casualtiesPerPlayer[i];
 
-		TiXmlElement* playerNode = new TiXmlElement ("PlayerCasualties");
+		XMLElement* playerNode = casualtiesNode->GetDocument()->NewElement ("PlayerCasualties");
 		casualtiesNode->LinkEndChild (playerNode);  // playerNode is now owned by casualtiesNode
 		playerNode->SetAttribute ("PlayerNr", iToStr (casualtiesOfPlayer.playerNr).c_str());
 
@@ -71,7 +73,7 @@ void cCasualtiesTracker::storeToXML (TiXmlElement* casualtiesNode) const
 		{
 			const Casualty& casualty = casualtiesOfPlayer.casualties[j];
 
-			TiXmlElement* casualtyNode = new TiXmlElement ("Casualty");
+			XMLElement* casualtyNode = casualtiesNode->GetDocument()->NewElement ("Casualty");
 			playerNode->LinkEndChild (casualtyNode);  // casualtyNode is now owned by playerNode
 			casualtyNode->SetAttribute ("ID_Fst", iToStr (casualty.unitID.iFirstPart).c_str());
 			casualtyNode->SetAttribute ("ID_Snd", iToStr (casualty.unitID.iSecondPart).c_str());

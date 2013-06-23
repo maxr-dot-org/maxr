@@ -33,6 +33,7 @@
 #include "vehicles.h"
 
 using namespace std;
+using namespace tinyxml2;
 
 //--------------------------------------------------------------------------
 cSavegame::cSavegame (int number) :
@@ -46,7 +47,7 @@ cSavegame::cSavegame (int number) :
 //--------------------------------------------------------------------------
 int cSavegame::save (const cServer& server, const string& saveName)
 {
-	TiXmlElement* rootnode = new TiXmlElement ("MAXR_SAVE_FILE");
+	XMLElement* rootnode = SaveFile.NewElement ("MAXR_SAVE_FILE");
 	rootnode->SetAttribute ("version", (SAVE_FORMAT_VERSION).c_str());
 	SaveFile.LinkEndChild (rootnode);
 
@@ -111,11 +112,13 @@ int cSavegame::save (const cServer& server, const string& saveName)
 //--------------------------------------------------------------------------
 int cSavegame::load (cServer** pServer, cTCP* network)
 {
-	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str()))
+	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
+	if (SaveFile.LoadFile ( fileName.c_str()) != 0)
 	{
 		return 0;
 	}
 	if (!SaveFile.RootElement()) return 0;
+	loadedXMLFileName = fileName;
 
 	version = SaveFile.RootElement()->Attribute ("version");
 	if (version.compare (SAVE_FORMAT_VERSION))
@@ -131,11 +134,11 @@ int cSavegame::load (cServer** pServer, cTCP* network)
 	}
 	else
 	{
-		TiXmlElement* unitValuesNode = SaveFile.RootElement()->FirstChildElement ("UnitValues");
+		XMLElement* unitValuesNode = SaveFile.RootElement()->FirstChildElement ("UnitValues");
 		if (unitValuesNode != NULL)
 		{
 			int unitnum = 0;
-			TiXmlElement* unitNode = unitValuesNode->FirstChildElement ("UnitVal_0");
+			XMLElement* unitNode = unitValuesNode->FirstChildElement ("UnitVal_0");
 			while (unitNode)
 			{
 				loadStandardUnitValues (unitNode);
@@ -199,16 +202,18 @@ void cSavegame::recalcSubbases (cServer& server)
 void cSavegame::loadHeader (string* name, string* type, string* time)
 {
 	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml";
-	if (fileName != SaveFile.Value())
+	if (fileName != loadedXMLFileName)
 	{
-		if (!SaveFile.LoadFile (fileName.c_str()))
+		loadedXMLFileName.clear();
+		if (SaveFile.LoadFile (fileName.c_str()) != 0)
 		{
 			return;
 		}
 	}
 	if (!SaveFile.RootElement()) return;
+	loadedXMLFileName = fileName;
 
-	TiXmlElement* headerNode = SaveFile.RootElement()->FirstChildElement ("Header");
+	XMLElement* headerNode = SaveFile.RootElement()->FirstChildElement ("Header");
 
 	if (name) *name = headerNode->FirstChildElement ("Name")->Attribute ("string");
 	if (type) *type = headerNode->FirstChildElement ("Type")->Attribute ("string");
@@ -218,7 +223,7 @@ void cSavegame::loadHeader (string* name, string* type, string* time)
 //--------------------------------------------------------------------------
 string cSavegame::getMapName() const
 {
-	const TiXmlElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
+	const XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != NULL) return mapNode->FirstChildElement ("Name")->Attribute ("string");
 	else return "";
 }
@@ -227,11 +232,11 @@ string cSavegame::getMapName() const
 string cSavegame::getPlayerNames() const
 {
 	string playernames = "";
-	const TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
+	const XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode != NULL)
 	{
 		int playernum = 0;
-		const TiXmlElement* playerNode = playersNode->FirstChildElement ("Player_0");
+		const XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
 		while (playerNode)
 		{
 			playernames += ( (string) playerNode->FirstChildElement ("Name")->Attribute ("string")) + "\n";
@@ -245,29 +250,29 @@ string cSavegame::getPlayerNames() const
 //--------------------------------------------------------------------------
 void cSavegame::loadGameInfo (cServer& server)
 {
-	TiXmlElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
+	XMLElement* gameInfoNode = SaveFile.RootElement()->FirstChildElement ("Game");
 	if (!gameInfoNode) return;
 
-	gameInfoNode->FirstChildElement ("Turn")->Attribute ("num", &server.iTurn);
-	if (TiXmlElement* const element = gameInfoNode->FirstChildElement ("Hotseat"))
+	server.iTurn = gameInfoNode->FirstChildElement ("Turn")->IntAttribute ("num");
+	if (XMLElement* const element = gameInfoNode->FirstChildElement ("Hotseat"))
 	{
 		server.bHotSeat = true;
-		element->Attribute ("activeplayer", &server.iHotSeatPlayer);
+		server.iHotSeatPlayer = element->IntAttribute ("activeplayer");
 	}
-	if (TiXmlElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
+	if (XMLElement* const element = gameInfoNode->FirstChildElement ("PlayTurns"))
 	{
 		server.bPlayTurns = true;
-		element->Attribute ("activeplayer", &server.iActiveTurnPlayerNr);
+		server.iActiveTurnPlayerNr = element->IntAttribute ("activeplayer");
 	}
 
-	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("TurnLimit"))  e->Attribute ("num", &server.turnLimit);
-	if (TiXmlElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) e->Attribute ("num", &server.scoreLimit);
+	if (XMLElement* const e = gameInfoNode->FirstChildElement ("TurnLimit"))  server.turnLimit  = e->IntAttribute ("num");
+	if (XMLElement* const e = gameInfoNode->FirstChildElement ("ScoreLimit")) server.scoreLimit = e->IntAttribute ("num");
 }
 
 //--------------------------------------------------------------------------
 cMap* cSavegame::loadMap()
 {
-	TiXmlElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
+	XMLElement* mapNode = SaveFile.RootElement()->FirstChildElement ("Map");
 	if (mapNode != NULL)
 	{
 		cStaticMap* staticMap = new cStaticMap;
@@ -290,11 +295,11 @@ std::vector<cPlayer*>* cSavegame::loadPlayers (cMap* map)
 {
 	std::vector<cPlayer*>* PlayerList = new std::vector<cPlayer*>;
 
-	TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
+	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	if (playersNode != NULL)
 	{
 		int playernum = 0;
-		TiXmlElement* playerNode = playersNode->FirstChildElement ("Player_0");
+		XMLElement* playerNode = playersNode->FirstChildElement ("Player_0");
 		while (playerNode)
 		{
 			PlayerList->push_back (loadPlayer (playerNode, map));
@@ -310,26 +315,26 @@ std::vector<cPlayer*>* cSavegame::loadPlayers (cMap* map)
 }
 
 //--------------------------------------------------------------------------
-cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
+cPlayer* cSavegame::loadPlayer (XMLElement* playerNode, cMap* map)
 {
 	int number, color;
 
 	string name = playerNode->FirstChildElement ("Name")->Attribute ("string");
-	playerNode->FirstChildElement ("Number")->Attribute ("num", &number);
-	playerNode->FirstChildElement ("Color")->Attribute ("num", &color);
+	number = playerNode->FirstChildElement ("Number")->IntAttribute ("num");
+	color  = playerNode->FirstChildElement ("Color")->IntAttribute ("num");
 
 	cPlayer* Player = new cPlayer (sPlayer (name, color, number));
 	Player->initMaps (*map);
 
-	playerNode->FirstChildElement ("Credits")->Attribute ("num", &Player->Credits);
+	Player->Credits = playerNode->FirstChildElement ("Credits")->IntAttribute ("num");
 
-	if (TiXmlElement* const e = playerNode->FirstChildElement ("ScoreHistory"))
+	if (XMLElement* const e = playerNode->FirstChildElement ("ScoreHistory"))
 	{
-		TiXmlElement* s = e->FirstChildElement ("Score");
+		XMLElement* s = e->FirstChildElement ("Score");
 		int num = 0, i = 0;
 		while (s)
 		{
-			s->Attribute ("num", &num);
+			num = s->IntAttribute ("num");
 			Player->pointsHistory.resize (i + 1);
 			Player->pointsHistory[i] = num;
 			i++;
@@ -342,20 +347,20 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 		number = 0;
 
 	int clan = -1;
-	if (TiXmlElement* const element = playerNode->FirstChildElement ("Clan")) element->Attribute ("num", &clan);
+	if (XMLElement* const element = playerNode->FirstChildElement ("Clan")) clan = element->IntAttribute ("num");
 	Player->setClan (clan);
 
 	string resourceMap = playerNode->FirstChildElement ("ResourceMap")->Attribute ("data");
 	convertStringToScanMap (resourceMap, *Player);
 
-	TiXmlElement* hudNode = playerNode->FirstChildElement ("Hud");
+	XMLElement* hudNode = playerNode->FirstChildElement ("Hud");
 	if (hudNode)
 	{
 		double tmpDouble;
 		// save the loaded hudoptions to the "HotHud" of the player so that the server can send them later to the clients
-		hudNode->FirstChildElement ("Offset")->Attribute ("x", &Player->savedHud->offX);
-		hudNode->FirstChildElement ("Offset")->Attribute ("y", &Player->savedHud->offY);
-		hudNode->FirstChildElement ("Zoom")->Attribute ("num", &tmpDouble);
+		Player->savedHud->offX = hudNode->FirstChildElement ("Offset")->IntAttribute ("x");
+		Player->savedHud->offY = hudNode->FirstChildElement ("Offset")->IntAttribute ("y");
+		tmpDouble = hudNode->FirstChildElement ("Zoom")->DoubleAttribute ("num");
 		Player->savedHud->zoom = (float) tmpDouble;
 		if (hudNode->FirstChildElement ("Colors")) Player->savedHud->colorsChecked = true;
 		if (hudNode->FirstChildElement ("Grid")) Player->savedHud->gridChecked = true;
@@ -369,36 +374,36 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 		if (hudNode->FirstChildElement ("MinimapZoom")) Player->savedHud->twoXChecked = true;
 		if (hudNode->FirstChildElement ("TNT")) Player->savedHud->tntChecked = true;
 		if (hudNode->FirstChildElement ("Lock")) Player->savedHud->lockChecked = true;
-		if (hudNode->FirstChildElement ("SelectedUnit")) hudNode->FirstChildElement ("SelectedUnit")->Attribute ("num", &Player->savedHud->selUnitID);
+		if (hudNode->FirstChildElement ("SelectedUnit")) Player->savedHud->selUnitID = hudNode->FirstChildElement ("SelectedUnit")->IntAttribute ("num");
 	}
 
 	// read reports
-	TiXmlElement* reportsNode = playerNode->FirstChildElement ("Reports");
+	XMLElement* reportsNode = playerNode->FirstChildElement ("Reports");
 	if (reportsNode)
 	{
-		TiXmlElement* reportElement = reportsNode->FirstChildElement ("Report");
+		XMLElement* reportElement = reportsNode->FirstChildElement ("Report");
 		while (reportElement)
 		{
 			if (reportElement->Parent() != reportsNode) break;
 			sSavedReportMessage savedReport;
 			savedReport.message = reportElement->Attribute ("msg");
 			int tmpInt;
-			reportElement->Attribute ("type", &tmpInt);
+			tmpInt = reportElement->IntAttribute ("type");
 			savedReport.type = (sSavedReportMessage::eReportTypes) tmpInt;
-			reportElement->Attribute ("xPos", &savedReport.xPos);
-			reportElement->Attribute ("yPos", &savedReport.yPos);
+			savedReport.xPos = reportElement->IntAttribute ("xPos");
+			savedReport.yPos = reportElement->IntAttribute ("yPos");
 			savedReport.unitID.generate (reportElement->Attribute ("id"));
-			reportElement->Attribute ("colorNr", &savedReport.colorNr);
+			savedReport.colorNr = reportElement->IntAttribute ("colorNr");
 			Player->savedReportsList.push_back (savedReport);
 			reportElement = reportElement->NextSiblingElement();
 		}
 	}
 
-	TiXmlElement* upgradesNode = playerNode->FirstChildElement ("Upgrades");
+	XMLElement* upgradesNode = playerNode->FirstChildElement ("Upgrades");
 	if (upgradesNode)
 	{
 		int upgradenum = 0;
-		TiXmlElement* upgradeNode = upgradesNode->FirstChildElement ("Unit_0");
+		XMLElement* upgradeNode = upgradesNode->FirstChildElement ("Unit_0");
 		while (upgradeNode)
 		{
 			sID ID;
@@ -420,34 +425,34 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 		}
 	}
 
-	TiXmlElement* researchNode = playerNode->FirstChildElement ("Research");
+	XMLElement* researchNode = playerNode->FirstChildElement ("Research");
 	if (researchNode)
 	{
-		researchNode->Attribute ("researchCount", & (Player->ResearchCount));
-		TiXmlElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
+		Player->ResearchCount = researchNode->IntAttribute ("researchCount");
+		XMLElement* researchLevelNode = researchNode->FirstChildElement ("ResearchLevel");
 		if (researchLevelNode)
 			loadResearchLevel (researchLevelNode, Player->researchLevel);
-		TiXmlElement* researchCentersWorkingOnAreaNode = researchNode->FirstChildElement ("CentersWorkingOnArea");
+		XMLElement* researchCentersWorkingOnAreaNode = researchNode->FirstChildElement ("CentersWorkingOnArea");
 		if (researchCentersWorkingOnAreaNode)
 			loadResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player);
 	}
 
-	if (TiXmlElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
+	if (XMLElement* const subbasesNode = playerNode->FirstChildElement ("Subbases"))
 	{
 		int subbasenum = 0;
-		TiXmlElement* subbaseNode = subbasesNode->FirstChildElement ("Subbase_0");
+		XMLElement* subbaseNode = subbasesNode->FirstChildElement ("Subbase_0");
 		while (subbaseNode)
 		{
 
-			TiXmlElement* buildingIDNode = subbaseNode->FirstChildElement ("buildingID");
+			XMLElement* buildingIDNode = subbaseNode->FirstChildElement ("buildingID");
 			if (buildingIDNode)
 			{
 				sSubBaseLoad* subBaseLoad = new sSubBaseLoad;
 
-				buildingIDNode->Attribute ("num", &subBaseLoad->buildingID);
-				subbaseNode->FirstChildElement ("Production")->Attribute ("metal", &subBaseLoad->metalProd);
-				subbaseNode->FirstChildElement ("Production")->Attribute ("oil", &subBaseLoad->oilProd);
-				subbaseNode->FirstChildElement ("Production")->Attribute ("gold", &subBaseLoad->goldProd);
+				subBaseLoad->buildingID = buildingIDNode->IntAttribute ("num");
+				subBaseLoad->metalProd = subbaseNode->FirstChildElement ("Production")->IntAttribute ("metal");
+				subBaseLoad->oilProd = subbaseNode->FirstChildElement ("Production")->IntAttribute ("oil");
+				subBaseLoad->goldProd = subbaseNode->FirstChildElement ("Production")->IntAttribute ("gold");
 				SubBasesLoad.push_back (subBaseLoad);
 			}
 			subbasenum++;
@@ -458,78 +463,77 @@ cPlayer* cSavegame::loadPlayer (TiXmlElement* playerNode, cMap* map)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadUpgrade (TiXmlElement* upgradeNode, sUnitData* data)
+void cSavegame::loadUpgrade (XMLElement* upgradeNode, sUnitData* data)
 {
-	upgradeNode->FirstChildElement ("Version")->Attribute ("num", &data->version);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Ammo"))      element->Attribute ("num", &data->ammoMax);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("HitPoints")) element->Attribute ("num", &data->hitpointsMax);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Shots"))     element->Attribute ("num", &data->shotsMax);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Speed"))     element->Attribute ("num", &data->speedMax);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Armor"))     element->Attribute ("num", &data->armor);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Costs"))     element->Attribute ("num", &data->buildCosts);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Damage"))    element->Attribute ("num", &data->damage);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Range"))     element->Attribute ("num", &data->range);
-	if (TiXmlElement* const element = upgradeNode->FirstChildElement ("Scan"))      element->Attribute ("num", &data->scan);
+	data->version = upgradeNode->FirstChildElement ("Version")->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("HitPoints")) data->hitpointsMax = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Shots"))     data->shotsMax = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Speed"))     data->speedMax = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Armor"))     data->armor = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Costs"))     data->buildCosts = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Damage"))    data->damage = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Range"))     data->range = element->IntAttribute ("num");
+	if (XMLElement* const element = upgradeNode->FirstChildElement ("Scan"))      data->scan = element->IntAttribute ("num");
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadResearchLevel (TiXmlElement* researchLevelNode, cResearch& researchLevel)
+void cSavegame::loadResearchLevel (XMLElement* researchLevelNode, cResearch& researchLevel)
 {
 	int value;
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("attack", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("attack");
 	researchLevel.setCurResearchLevel (value, cResearch::kAttackResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("shots", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("shots");
 	researchLevel.setCurResearchLevel (value, cResearch::kShotsResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("range", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("range");
 	researchLevel.setCurResearchLevel (value, cResearch::kRangeResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("armor", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("armor");
 	researchLevel.setCurResearchLevel (value, cResearch::kArmorResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("hitpoints", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("hitpoints");
 	researchLevel.setCurResearchLevel (value, cResearch::kHitpointsResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("speed", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("speed");
 	researchLevel.setCurResearchLevel (value, cResearch::kSpeedResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("scan", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("scan");
 	researchLevel.setCurResearchLevel (value, cResearch::kScanResearch);
-	researchLevelNode->FirstChildElement ("Level")->Attribute ("cost", &value);
+	value = researchLevelNode->FirstChildElement ("Level")->IntAttribute ("cost");
 	researchLevel.setCurResearchLevel (value, cResearch::kCostResearch);
 
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("attack", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("attack");
 	researchLevel.setCurResearchPoints (value, cResearch::kAttackResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("shots", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("shots");
 	researchLevel.setCurResearchPoints (value, cResearch::kShotsResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("range", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("range");
 	researchLevel.setCurResearchPoints (value, cResearch::kRangeResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("armor", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("armor");
 	researchLevel.setCurResearchPoints (value, cResearch::kArmorResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("hitpoints", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("hitpoints");
 	researchLevel.setCurResearchPoints (value, cResearch::kHitpointsResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("speed", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("speed");
 	researchLevel.setCurResearchPoints (value, cResearch::kSpeedResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("scan", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("scan");
 	researchLevel.setCurResearchPoints (value, cResearch::kScanResearch);
-	researchLevelNode->FirstChildElement ("CurPoints")->Attribute ("cost", &value);
+	value = researchLevelNode->FirstChildElement ("CurPoints")->IntAttribute ("cost");
 	researchLevel.setCurResearchPoints (value, cResearch::kCostResearch);
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, cPlayer* player)
+void cSavegame::loadResearchCentersWorkingOnArea (XMLElement* researchCentersWorkingOnAreaNode, cPlayer* player)
 {
 	int value;
-	researchCentersWorkingOnAreaNode->Attribute ("attack", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("attack");
 	player->researchCentersWorkingOnArea[cResearch::kAttackResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("shots", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("shots");
 	player->researchCentersWorkingOnArea[cResearch::kShotsResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("range", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("range");
 	player->researchCentersWorkingOnArea[cResearch::kRangeResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("armor", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("armor");
 	player->researchCentersWorkingOnArea[cResearch::kArmorResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("hitpoints", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("hitpoints");
 	player->researchCentersWorkingOnArea[cResearch::kHitpointsResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("speed", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("speed");
 	player->researchCentersWorkingOnArea[cResearch::kSpeedResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("scan", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("scan");
 	player->researchCentersWorkingOnArea[cResearch::kScanResearch] = value;
-	researchCentersWorkingOnAreaNode->Attribute ("cost", &value);
+	value = researchCentersWorkingOnAreaNode->IntAttribute ("cost");
 	player->researchCentersWorkingOnArea[cResearch::kCostResearch] = value;
 }
 
@@ -539,7 +543,7 @@ void cSavegame::loadCasualties (cServer& server)
 	if (server.getCasualtiesTracker() == 0)
 		return;
 
-	TiXmlElement* casualtiesNode = SaveFile.RootElement()->FirstChildElement ("Casualties");
+	XMLElement* casualtiesNode = SaveFile.RootElement()->FirstChildElement ("Casualties");
 	if (casualtiesNode == 0)
 		return;
 
@@ -549,11 +553,11 @@ void cSavegame::loadCasualties (cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::loadUnits (cServer& server)
 {
-	TiXmlElement* unitsNode = SaveFile.RootElement()->FirstChildElement ("Units");
+	XMLElement* unitsNode = SaveFile.RootElement()->FirstChildElement ("Units");
 	if (unitsNode != NULL)
 	{
 		int unitnum = 0;
-		TiXmlElement* unitNode = unitsNode->FirstChildElement ("Unit_0");
+		XMLElement* unitNode = unitsNode->FirstChildElement ("Unit_0");
 		while (unitNode)
 		{
 			sID ID;
@@ -566,11 +570,11 @@ void cSavegame::loadUnits (cServer& server)
 		}
 		// read nextid-value before loading rubble, so that the rubble will get new ids.
 		int nextID;
-		unitsNode->FirstChildElement ("NextUnitID")->Attribute ("num", &nextID);
+		nextID = unitsNode->FirstChildElement ("NextUnitID")->IntAttribute ("num");
 		server.iNextUnitID = nextID;
 
 		int rubblenum = 0;
-		TiXmlElement* rubbleNode = unitsNode->FirstChildElement ("Rubble_0");
+		XMLElement* rubbleNode = unitsNode->FirstChildElement ("Rubble_0");
 		while (rubbleNode)
 		{
 			loadRubble (server, rubbleNode);
@@ -582,7 +586,7 @@ void cSavegame::loadUnits (cServer& server)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
+void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 {
 	int tmpinteger, number = -1, x, y;
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
@@ -594,12 +598,12 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 		}
 		if (i == UnitsData.getNrVehicles() - 1) return;
 	}
-	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
+	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
 	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
 
-	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
-	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
-	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
+	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
+	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
+	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
 	cVehicle* vehicle = server.addUnit (x, y, &UnitsData.vehicle[number], owner, true, unitNode->FirstChildElement ("Stored_In") == NULL, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
@@ -607,15 +611,15 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 
 	loadUnitValues (unitNode, &vehicle->data);
 
-	unitNode->FirstChildElement ("Direction")->Attribute ("num", &vehicle->dir);
+	unitNode->FirstChildElement ("Direction")->QueryIntAttribute ("num", &vehicle->dir);
 	double tmpdouble;
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("CommandoRank"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("CommandoRank"))
 	{
-		element->Attribute ("num", &tmpdouble);
+		element->QueryDoubleAttribute ("num", &tmpdouble);
 		vehicle->CommandoRank = (float) tmpdouble;
 	}
 	if (unitNode->FirstChildElement ("IsBig")) server.Map->moveVehicleBig (*vehicle, x, y);
-	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->Attribute ("turns", &vehicle->turnsDisabled);
+	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &vehicle->turnsDisabled);
 	if (unitNode->FirstChildElement ("LayMines")) vehicle->LayMines = true;
 	if (unitNode->FirstChildElement ("AutoMoving")) vehicle->hasAutoMoveJob = true;
 	if (unitNode->FirstChildElement ("OnSentry"))
@@ -624,7 +628,7 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 	}
 	if (unitNode->FirstChildElement ("ManualFire")) vehicle->manualFireActive = true;
 
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("Building"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
 		vehicle->IsBuilding = true;
 		if (element->Attribute ("type_id") != NULL)
@@ -636,46 +640,46 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 		{
 			//element->Attribute ( "type", &vehicle->BuildingTyp );
 		}
-		element->Attribute ("turns", &vehicle->BuildRounds);
-		element->Attribute ("costs", &vehicle->BuildCosts);
-		element->Attribute ("savedpos", &vehicle->BuildBigSavedPos);
+		element->QueryIntAttribute ("turns", &vehicle->BuildRounds);
+		element->QueryIntAttribute ("costs", &vehicle->BuildCosts);
+		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
 
 		if (element->Attribute ("path"))
 		{
 			vehicle->BuildPath = true;
-			element->Attribute ("turnsstart", &vehicle->BuildRoundsStart);
-			element->Attribute ("costsstart", &vehicle->BuildCostsStart);
-			element->Attribute ("endx", &vehicle->BandX);
-			element->Attribute ("endy", &vehicle->BandY);
+			element->QueryIntAttribute ("turnsstart", &vehicle->BuildRoundsStart);
+			element->QueryIntAttribute ("costsstart", &vehicle->BuildCostsStart);
+			element->QueryIntAttribute ("endx", &vehicle->BandX);
+			element->QueryIntAttribute ("endy", &vehicle->BandY);
 		}
 	}
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("Clearing"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("Clearing"))
 	{
 		vehicle->IsClearing = true;
-		element->Attribute ("turns", &vehicle->ClearingRounds);
-		element->Attribute ("savedpos", &vehicle->BuildBigSavedPos);
+		element->QueryIntAttribute ("turns", &vehicle->ClearingRounds);
+		element->QueryIntAttribute ("savedpos", &vehicle->BuildBigSavedPos);
 	}
 
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("Movejob"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("Movejob"))
 	{
 		sMoveJobLoad* MoveJob = new sMoveJobLoad;
 		MoveJob->vehicle = vehicle;
-		element->Attribute ("destx", &MoveJob->destX);
-		element->Attribute ("desty", &MoveJob->destY);
+		element->QueryIntAttribute ("destx", &MoveJob->destX);
+		element->QueryIntAttribute ("desty", &MoveJob->destY);
 
 		MoveJobsLoad.push_back (MoveJob);
 	}
 
 	// read the players which have detected this unit
-	if (TiXmlElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
+	if (XMLElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while (TiXmlElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
+		while (XMLElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
 		{
 			int playerNum;
-			element->Attribute ("nr", &playerNum);
+			element->QueryIntAttribute ("nr", &playerNum);
 			int wasDetectedThisTurnAttrib = 1;
-			if (element->Attribute ("ThisTurn", &wasDetectedThisTurnAttrib) == 0)
+			if (element->QueryIntAttribute ("ThisTurn", &wasDetectedThisTurnAttrib) == 0)
 				wasDetectedThisTurnAttrib = 1; // for old savegames, that don't have this attribute, set it to "detected this turn"
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
 			cPlayer* Player = server.getPlayerFromNumber (playerNum);
@@ -688,12 +692,12 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 	}
 
 	// since we write all stored vehicles imediatly after the storing unit we can be sure that this one has been loaded yet
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("Stored_In"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("Stored_In"))
 	{
 		int storedInID;
 		int isVehicle;
-		element->Attribute ("id", &storedInID);
-		element->Attribute ("is_vehicle", &isVehicle);
+		element->QueryIntAttribute ("id", &storedInID);
+		element->QueryIntAttribute ("is_vehicle", &isVehicle);
 		if (isVehicle)
 		{
 			cVehicle* StoringVehicle = server.getVehicleFromID (storedInID);
@@ -714,7 +718,7 @@ void cSavegame::loadVehicle (cServer& server, TiXmlElement* unitNode, sID& ID)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
+void cSavegame::loadBuilding (cServer& server, XMLElement* unitNode, sID& ID)
 {
 	int tmpinteger, number = -1, x, y;
 	for (unsigned int i = 0; i < UnitsData.getNrBuildings(); i++)
@@ -726,12 +730,12 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 		}
 		if (i == UnitsData.getNrBuildings() - 1) return;
 	}
-	unitNode->FirstChildElement ("Owner")->Attribute ("num", &tmpinteger);
+	unitNode->FirstChildElement ("Owner")->QueryIntAttribute ("num", &tmpinteger);
 	cPlayer* owner = getPlayerFromNumber (*server.PlayerList, tmpinteger);
 
-	unitNode->FirstChildElement ("Position")->Attribute ("x", &x);
-	unitNode->FirstChildElement ("Position")->Attribute ("y", &y);
-	unitNode->FirstChildElement ("ID")->Attribute ("num", &tmpinteger);
+	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
+	unitNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
+	unitNode->FirstChildElement ("ID")->QueryIntAttribute ("num", &tmpinteger);
 	cBuilding* building = server.addUnit (x, y, &UnitsData.building[number], owner, true, tmpinteger);
 
 	if (unitNode->FirstChildElement ("Name")->Attribute ("notDefault") && strcmp (unitNode->FirstChildElement ("Name")->Attribute ("notDefault"), "1") == 0)
@@ -741,9 +745,9 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 
 	if (unitNode->FirstChildElement ("IsWorking")) building->IsWorking = true;
 	if (unitNode->FirstChildElement ("wasWorking")) building->wasWorking = true;
-	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->Attribute ("turns", &building->turnsDisabled);
-	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->Attribute ("area", & (building->researchArea));
-	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->Attribute ("num", & (building->points));
+	if (unitNode->FirstChildElement ("Disabled")) unitNode->FirstChildElement ("Disabled")->QueryIntAttribute ("turns", &building->turnsDisabled);
+	if (unitNode->FirstChildElement ("ResearchArea")) unitNode->FirstChildElement ("ResearchArea")->QueryIntAttribute ("area", & (building->researchArea));
+	if (unitNode->FirstChildElement ("Score")) unitNode->FirstChildElement ("Score")->QueryIntAttribute ("num", & (building->points));
 	if (unitNode->FirstChildElement ("OnSentry"))
 	{
 		if (!building->sentryActive)
@@ -758,15 +762,15 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 	if (unitNode->FirstChildElement ("ManualFire")) building->manualFireActive = true;
 	if (unitNode->FirstChildElement ("HasBeenAttacked")) building->hasBeenAttacked = true;
 
-	if (TiXmlElement* const element = unitNode->FirstChildElement ("Building"))
+	if (XMLElement* const element = unitNode->FirstChildElement ("Building"))
 	{
-		TiXmlElement* buildNode = element;
-		if (TiXmlElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    element->Attribute ("num", &building->BuildSpeed);
-		if (TiXmlElement* const element = buildNode->FirstChildElement ("MetalPerRound")) element->Attribute ("num", &building->MetalPerRound);
+		XMLElement* buildNode = element;
+		if (XMLElement* const element = buildNode->FirstChildElement ("BuildSpeed"))    element->QueryIntAttribute ("num", &building->BuildSpeed);
+		if (XMLElement* const element = buildNode->FirstChildElement ("MetalPerRound")) element->QueryIntAttribute ("num", &building->MetalPerRound);
 		if (buildNode->FirstChildElement ("RepeatBuild")) building->RepeatBuild = true;
 
 		int itemnum = 0;
-		TiXmlElement* itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ("Item_0");
+		XMLElement* itemElement = buildNode->FirstChildElement ("BuildList")->FirstChildElement ("Item_0");
 		while (itemElement)
 		{
 			sBuildList* listitem = new sBuildList;
@@ -778,10 +782,10 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 			else if (itemElement->Attribute ("type") != NULL)
 			{
 				int typenr;
-				itemElement->Attribute ("type", &typenr);
+				itemElement->QueryIntAttribute ("type", &typenr);
 				listitem->type = UnitsData.vehicle[typenr].data.ID;
 			}
-			itemElement->Attribute ("metall_remaining", &listitem->metall_remaining);
+			itemElement->QueryIntAttribute ("metall_remaining", &listitem->metall_remaining);
 			building->BuildList->push_back (listitem);
 
 			itemnum++;
@@ -790,13 +794,13 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 	}
 
 	// read the players which have detected this unit
-	if (TiXmlElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
+	if (XMLElement* const detectedNode = unitNode->FirstChildElement ("IsDetectedByPlayers"))
 	{
 		int playerNodeNum = 0;
-		while (TiXmlElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
+		while (XMLElement* const element = detectedNode->FirstChildElement ( ("Player_" + iToStr (playerNodeNum)).c_str()))
 		{
 			int playerNum;
-			element->Attribute ("nr", &playerNum);
+			element->QueryIntAttribute ("nr", &playerNum);
 			cPlayer* Player = server.getPlayerFromNumber (playerNum);
 			if (Player)
 			{
@@ -808,14 +812,14 @@ void cSavegame::loadBuilding (cServer& server, TiXmlElement* unitNode, sID& ID)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadRubble (cServer& server, TiXmlElement* rubbleNode)
+void cSavegame::loadRubble (cServer& server, XMLElement* rubbleNode)
 {
 	int x, y, rubblevalue;
 	bool big = false;
 
-	rubbleNode->FirstChildElement ("Position")->Attribute ("x", &x);
-	rubbleNode->FirstChildElement ("Position")->Attribute ("y", &y);
-	rubbleNode->FirstChildElement ("RubbleValue")->Attribute ("num", &rubblevalue);
+	rubbleNode->FirstChildElement ("Position")->QueryIntAttribute ("x", &x);
+	rubbleNode->FirstChildElement ("Position")->QueryIntAttribute ("y", &y);
+	rubbleNode->FirstChildElement ("RubbleValue")->QueryIntAttribute ("num", &rubblevalue);
 
 	if (rubbleNode->FirstChildElement ("Big")) big = true;
 
@@ -823,36 +827,36 @@ void cSavegame::loadRubble (cServer& server, TiXmlElement* rubbleNode)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadUnitValues (TiXmlElement* unitNode, sUnitData* Data)
+void cSavegame::loadUnitValues (XMLElement* unitNode, sUnitData* Data)
 {
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Version")) Element->Attribute ("num", &Data->version);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Version")) Element->QueryIntAttribute ("num", &Data->version);
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Max_Hitpoints")) Element->Attribute ("num", &Data->hitpointsMax);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Max_Ammo"))      Element->Attribute ("num", &Data->ammoMax);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Max_Speed"))     Element->Attribute ("num", &Data->speedMax);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Max_Shots"))     Element->Attribute ("num", &Data->shotsMax);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Armor"))         Element->Attribute ("num", &Data->armor);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Damage"))        Element->Attribute ("num", &Data->damage);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Range"))         Element->Attribute ("num", &Data->range);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Scan"))          Element->Attribute ("num", &Data->scan);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Hitpoints")) Element->QueryIntAttribute ("num", &Data->hitpointsMax);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Ammo"))      Element->QueryIntAttribute ("num", &Data->ammoMax);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Speed"))     Element->QueryIntAttribute ("num", &Data->speedMax);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Shots"))     Element->QueryIntAttribute ("num", &Data->shotsMax);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Armor"))         Element->QueryIntAttribute ("num", &Data->armor);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage"))        Element->QueryIntAttribute ("num", &Data->damage);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))         Element->QueryIntAttribute ("num", &Data->range);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))          Element->QueryIntAttribute ("num", &Data->scan);
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Hitpoints")) Element->Attribute ("num", &Data->hitpointsCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Hitpoints")) Element->QueryIntAttribute ("num", &Data->hitpointsCur);
 	else Data->hitpointsCur = Data->hitpointsMax;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Ammo")) Element->Attribute ("num", &Data->ammoCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo")) Element->QueryIntAttribute ("num", &Data->ammoCur);
 	else Data->ammoCur = Data->ammoMax;
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Element->Attribute ("num", &Data->storageResCur);
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Element->Attribute ("num", &Data->storageUnitsCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("ResCargo"))  Element->QueryIntAttribute ("num", &Data->storageResCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("UnitCargo")) Element->QueryIntAttribute ("num", &Data->storageUnitsCur);
 	// look for "Cargo" to be savegamecompatible
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Cargo"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Cargo"))
 	{
-		Element->Attribute ("num", &Data->storageResCur);
+		Element->QueryIntAttribute ("num", &Data->storageResCur);
 		Data->storageUnitsCur = Data->storageResCur;
 	}
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Speed")) Element->Attribute ("num", &Data->speedCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Speed")) Element->QueryIntAttribute ("num", &Data->speedCur);
 	else Data->speedCur = Data->speedMax;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Shots")) Element->Attribute ("num", &Data->shotsCur);
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots")) Element->QueryIntAttribute ("num", &Data->shotsCur);
 	else Data->shotsCur = Data->shotsMax;
 }
 
@@ -872,7 +876,7 @@ void Split (const std::string& s, const char* seps, std::vector<std::string>& wo
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
+void cSavegame::loadStandardUnitValues (XMLElement* unitNode)
 {
 	if (unitNode == NULL) return;
 	sUnitData* Data = NULL;
@@ -909,32 +913,32 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 
 	Data->name = unitNode->FirstChildElement ("Name")->Attribute ("string");
 
-	unitNode->FirstChildElement ("Hitpoints")->Attribute ("num", &Data->hitpointsMax);
-	unitNode->FirstChildElement ("Armor")->Attribute ("num", &Data->armor);
-	unitNode->FirstChildElement ("Built_Costs")->Attribute ("num", &Data->buildCosts);
+	unitNode->FirstChildElement ("Hitpoints")->QueryIntAttribute ("num", &Data->hitpointsMax);
+	unitNode->FirstChildElement ("Armor")->QueryIntAttribute ("num", &Data->armor);
+	unitNode->FirstChildElement ("Built_Costs")->QueryIntAttribute ("num", &Data->buildCosts);
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Scan"))     Element->Attribute ("num", &Data->scan);     else Data->scan     = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Movement")) Element->Attribute ("num", &Data->speedMax); else Data->speedMax = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Scan"))     Element->QueryIntAttribute ("num", &Data->scan);     else Data->scan     = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Movement")) Element->QueryIntAttribute ("num", &Data->speedMax); else Data->speedMax = 0;
 	Data->speedMax *= 4;
 
 	int tmpInt;
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("MuzzleType"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("MuzzleType"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->muzzleType = (sUnitData::eMuzzleType) tmpInt;
 	}
 	else
 	{
 		Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Shots"))  Element->Attribute ("num", &Data->shotsMax); else Data->shotsMax = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Ammo"))   Element->Attribute ("num", &Data->ammoMax);  else Data->ammoMax  = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Range"))  Element->Attribute ("num", &Data->range);    else Data->range    = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Damage")) Element->Attribute ("num", &Data->damage);   else Data->damage   = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Can_Attack"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Shots"))  Element->QueryIntAttribute ("num", &Data->shotsMax); else Data->shotsMax = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Ammo"))   Element->QueryIntAttribute ("num", &Data->ammoMax);  else Data->ammoMax  = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Range"))  Element->QueryIntAttribute ("num", &Data->range);    else Data->range    = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Damage")) Element->QueryIntAttribute ("num", &Data->damage);   else Data->damage   = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Attack"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->canAttack = tmpInt;
 	}
 	else
@@ -942,43 +946,43 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 		Data->canAttack = TERRAIN_NONE;
 	}
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Can_Build"))        Data->canBuild = Element->Attribute ("string");    else Data->canBuild = "";
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Build_As"))         Data->buildAs  = Element->Attribute ("string");    else Data->buildAs = "";
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Max_Build_Factor")) Element->Attribute ("num", &Data->maxBuildFactor); else Data->maxBuildFactor = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Build"))        Data->canBuild = Element->Attribute ("string");    else Data->canBuild = "";
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Build_As"))         Data->buildAs  = Element->Attribute ("string");    else Data->buildAs = "";
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Max_Build_Factor")) Element->QueryIntAttribute ("num", &Data->maxBuildFactor); else Data->maxBuildFactor = 0;
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Storage_Res_Max"))   Element->Attribute ("num", &Data->storageResMax);   else Data->storageResMax   = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Storage_Units_Max")) Element->Attribute ("num", &Data->storageUnitsMax); else Data->storageUnitsMax = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Store_Res_Type"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Storage_Res_Max"))   Element->QueryIntAttribute ("num", &Data->storageResMax);   else Data->storageResMax   = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Storage_Units_Max")) Element->QueryIntAttribute ("num", &Data->storageUnitsMax); else Data->storageUnitsMax = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Store_Res_Type"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->storeResType = (sUnitData::eStorageResType) tmpInt;
 	}
 	else
 	{
 		Data->storeResType = sUnitData::STORE_RES_NONE;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("StoreUnits_Image_Type"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("StoreUnits_Image_Type"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->storeUnitsImageType = (sUnitData::eStorageUnitsImageType) tmpInt;
 	}
 	else
 	{
 		Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_NONE;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Is_Storage_Type")) Data->isStorageType = Element->Attribute ("string"); else Data->isStorageType = "";
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("StoreUnitsTypes"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Is_Storage_Type")) Data->isStorageType = Element->Attribute ("string"); else Data->isStorageType = "";
+	if (XMLElement* const Element = unitNode->FirstChildElement ("StoreUnitsTypes"))
 	{
 		string storeUnitsString = Element->Attribute ("string");
 		Split (storeUnitsString, "+", Data->storeUnitsTypes);
 	}
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Needs_Energy"))     Element->Attribute ("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Needs_Humans"))     Element->Attribute ("num", &Data->needsHumans);   else Data->needsHumans   = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Needs_Oil"))        Element->Attribute ("num", &Data->needsOil);      else Data->needsOil      = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Needs_Metal"))      Element->Attribute ("num", &Data->needsMetal);    else Data->needsMetal    = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Converts_Gold"))    Element->Attribute ("num", &Data->convertsGold);  else Data->convertsGold  = 0;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Can_Mine_Max_Res")) Element->Attribute ("num", &Data->canMineMaxRes); else Data->canMineMaxRes = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Energy"))     Element->QueryIntAttribute ("num", &Data->needsEnergy);   else Data->needsEnergy   = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Humans"))     Element->QueryIntAttribute ("num", &Data->needsHumans);   else Data->needsHumans   = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Oil"))        Element->QueryIntAttribute ("num", &Data->needsOil);      else Data->needsOil      = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Needs_Metal"))      Element->QueryIntAttribute ("num", &Data->needsMetal);    else Data->needsMetal    = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Converts_Gold"))    Element->QueryIntAttribute ("num", &Data->convertsGold);  else Data->convertsGold  = 0;
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Mine_Max_Res")) Element->QueryIntAttribute ("num", &Data->canMineMaxRes); else Data->canMineMaxRes = 0;
 	if (Data->needsEnergy < 0)
 	{
 		Data->produceEnergy = abs (Data->needsEnergy);
@@ -992,18 +996,18 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 	}
 	else Data->produceHumans = 0;
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Is_Stealth_On"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Is_Stealth_On"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->isStealthOn = tmpInt;
 	}
 	else
 	{
 		Data->isStealthOn = TERRAIN_NONE;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Can_Detect_Stealth_On"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Detect_Stealth_On"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->canDetectStealthOn = tmpInt;
 	}
 	else
@@ -1011,18 +1015,18 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 		Data->canDetectStealthOn = TERRAIN_NONE;
 	}
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Surface_Position"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Surface_Position"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->surfacePosition = (sUnitData::eSurfacePosition) tmpInt;
 	}
 	else
 	{
 		Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Can_Be_Overbuild"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Can_Be_Overbuild"))
 	{
-		Element->Attribute ("num", &tmpInt);
+		Element->QueryIntAttribute ("num", &tmpInt);
 		Data->canBeOverbuild = (sUnitData::eOverbuildType) tmpInt;
 	}
 	else
@@ -1031,36 +1035,36 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 	}
 
 	double tmpdouble;
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Factor_Air"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Air"))
 	{
-		Element->Attribute ("num", &tmpdouble);
+		Element->QueryDoubleAttribute ("num", &tmpdouble);
 		Data->factorAir = (float) tmpdouble;
 	}
 	else
 	{
 		Data->factorAir = 0;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Factor_Coast"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Coast"))
 	{
-		Element->Attribute ("num", &tmpdouble);
+		Element->QueryDoubleAttribute ("num", &tmpdouble);
 		Data->factorCoast = (float) tmpdouble;
 	}
 	else
 	{
 		Data->factorCoast = 0;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Factor_Ground"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Ground"))
 	{
-		Element->Attribute ("num", &tmpdouble);
+		Element->QueryDoubleAttribute ("num", &tmpdouble);
 		Data->factorGround = (float) tmpdouble;
 	}
 	else
 	{
 		Data->factorGround = 0;
 	}
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
 	{
-		Element->Attribute ("num", &tmpdouble);
+		Element->QueryDoubleAttribute ("num", &tmpdouble);
 		Data->factorSea = (float) tmpdouble;
 	}
 	else
@@ -1068,9 +1072,9 @@ void cSavegame::loadStandardUnitValues (TiXmlElement* unitNode)
 		Data->factorSea = 0;
 	}
 
-	if (TiXmlElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
+	if (XMLElement* const Element = unitNode->FirstChildElement ("Factor_Sea"))
 	{
-		Element->Attribute ("num", &tmpdouble);
+		Element->QueryDoubleAttribute ("num", &tmpdouble);
 		Data->modifiesSpeed = (float) tmpdouble;
 	}
 	else
@@ -1136,7 +1140,7 @@ string cSavegame::convertScanMapToString (const cPlayer& player) const
 	string str = "";
 	const size_t size = Square (player.getMapSize());
 	str.reserve (size);
-	for (size_t i = 0; i != size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		if (player.hasResourceExplored (i)) str += "1";
 		else str += "0";
@@ -1156,7 +1160,7 @@ void cSavegame::convertStringToScanMap (const string& str, cPlayer& player)
 //--------------------------------------------------------------------------
 void cSavegame::writeHeader (const cServer& server, const string& saveName)
 {
-	TiXmlElement* headerNode = addMainElement (SaveFile.RootElement(), "Header");
+	XMLElement* headerNode = addMainElement (SaveFile.RootElement(), "Header");
 
 	addAttributeElement (headerNode, "Game_Version", "string", PACKAGE_VERSION);
 	addAttributeElement (headerNode, "Name", "string", saveName);
@@ -1185,7 +1189,7 @@ void cSavegame::writeHeader (const cServer& server, const string& saveName)
 //--------------------------------------------------------------------------
 void cSavegame::writeGameInfo (const cServer& server)
 {
-	TiXmlElement* gemeinfoNode = addMainElement (SaveFile.RootElement(), "Game");
+	XMLElement* gemeinfoNode = addMainElement (SaveFile.RootElement(), "Game");
 
 	addAttributeElement (gemeinfoNode, "Turn", "num", iToStr (server.iTurn));
 	if (server.bHotSeat) addAttributeElement (gemeinfoNode, "Hotseat", "activeplayer", iToStr (server.iHotSeatPlayer));
@@ -1198,7 +1202,7 @@ void cSavegame::writeGameInfo (const cServer& server)
 //--------------------------------------------------------------------------
 void cSavegame::writeMap (const cMap* Map)
 {
-	TiXmlElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
+	XMLElement* mapNode = addMainElement (SaveFile.RootElement(), "Map");
 	addAttributeElement (mapNode, "Name", "string", Map->getName());
 	addAttributeElement (mapNode, "Resources", "data", Map->resourcesToString());
 }
@@ -1207,14 +1211,14 @@ void cSavegame::writeMap (const cMap* Map)
 void cSavegame::writePlayer (const cPlayer* Player, int number)
 {
 	// generate players node if it doesn't exists
-	TiXmlElement* playersNode;
+	XMLElement* playersNode;
 	if (! (playersNode = SaveFile.RootElement()->FirstChildElement ("Players")))
 	{
 		playersNode = addMainElement (SaveFile.RootElement(), "Players");
 	}
 
 	// add node for the player
-	TiXmlElement* playerNode = addMainElement (playersNode, "Player_" + iToStr (number));
+	XMLElement* playerNode = addMainElement (playersNode, "Player_" + iToStr (number));
 
 	// write the main information
 	addAttributeElement (playerNode, "Name", "string", Player->getName());
@@ -1225,15 +1229,15 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 	addAttributeElement (playerNode, "ResourceMap", "data", convertScanMapToString (*Player));
 
 	// player score
-	TiXmlElement* scoreNode = addMainElement (playerNode, "ScoreHistory");
+	XMLElement* scoreNode = addMainElement (playerNode, "ScoreHistory");
 	for (unsigned int i = 0; i < Player->pointsHistory.size(); i++)
 	{
-		TiXmlElement* e = addMainElement (scoreNode, "Score");
+		XMLElement* e = addMainElement (scoreNode, "Score");
 		e->SetAttribute ("num", iToStr (Player->pointsHistory[i]).c_str());
 	}
 
 	// write data of upgraded units
-	TiXmlElement* upgradesNode = addMainElement (playerNode, "Upgrades");
+	XMLElement* upgradesNode = addMainElement (playerNode, "Upgrades");
 	int upgrades = 0;
 	for (unsigned int i = 0; i < UnitsData.getNrVehicles(); i++)
 	{
@@ -1254,24 +1258,24 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 		}
 	}
 
-	TiXmlElement* researchNode = addMainElement (playerNode, "Research");
+	XMLElement* researchNode = addMainElement (playerNode, "Research");
 	researchNode->SetAttribute ("researchCount", iToStr (Player->ResearchCount).c_str());
-	TiXmlElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
+	XMLElement* researchLevelNode = addMainElement (researchNode, "ResearchLevel");
 	writeResearchLevel (researchLevelNode, Player->researchLevel);
-	TiXmlElement* researchCentersWorkingOnAreaNode = addMainElement (researchNode, "CentersWorkingOnArea");
+	XMLElement* researchCentersWorkingOnAreaNode = addMainElement (researchNode, "CentersWorkingOnArea");
 	writeResearchCentersWorkingOnArea (researchCentersWorkingOnAreaNode, Player);
 
 
 	// write subbases
-	TiXmlElement* subbasesNode = addMainElement (playerNode, "Subbases");
+	XMLElement* subbasesNode = addMainElement (playerNode, "Subbases");
 	for (unsigned int i = 0; i < Player->base.SubBases.size(); i++)
 	{
 		const sSubBase* SubBase = Player->base.SubBases[i];
-		TiXmlElement* subbaseNode = addMainElement (subbasesNode, "Subbase_" + iToStr (i));
+		XMLElement* subbaseNode = addMainElement (subbasesNode, "Subbase_" + iToStr (i));
 
 		//write the ID of the first building, to identify the subbase at load time
 		addAttributeElement (subbaseNode, "buildingID", "num", iToStr (SubBase->buildings[0]->iID));
-		TiXmlElement* element = addMainElement (subbaseNode, "Production");
+		XMLElement* element = addMainElement (subbaseNode, "Production");
 		element->SetAttribute ("metal", iToStr (SubBase->getMetalProd()).c_str());
 		element->SetAttribute ("oil", iToStr (SubBase->getOilProd()).c_str());
 		element->SetAttribute ("gold", iToStr (SubBase->getGoldProd()).c_str());
@@ -1279,9 +1283,9 @@ void cSavegame::writePlayer (const cPlayer* Player, int number)
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata)
+void cSavegame::writeUpgrade (XMLElement* upgradesNode, int upgradenumber, const sUnitData* data, const sUnitData* originaldata)
 {
-	TiXmlElement* upgradeNode = addMainElement (upgradesNode, "Unit_" + iToStr (upgradenumber));
+	XMLElement* upgradeNode = addMainElement (upgradesNode, "Unit_" + iToStr (upgradenumber));
 	addAttributeElement (upgradeNode, "Type", "string", data->ID.getText());
 	addAttributeElement (upgradeNode, "Version", "num", iToStr (data->version));
 	if (data->ammoMax != originaldata->ammoMax) addAttributeElement (upgradeNode, "Ammo", "num", iToStr (data->ammoMax));
@@ -1296,9 +1300,9 @@ void cSavegame::writeUpgrade (TiXmlElement* upgradesNode, int upgradenumber, con
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, const cResearch& researchLevel)
+void cSavegame::writeResearchLevel (XMLElement* researchLevelNode, const cResearch& researchLevel)
 {
-	TiXmlElement* levelNode = addMainElement (researchLevelNode, "Level");
+	XMLElement* levelNode = addMainElement (researchLevelNode, "Level");
 	levelNode->SetAttribute ("attack", iToStr (researchLevel.getCurResearchLevel (cResearch::kAttackResearch)).c_str());
 	levelNode->SetAttribute ("shots", iToStr (researchLevel.getCurResearchLevel (cResearch::kShotsResearch)).c_str());
 	levelNode->SetAttribute ("range", iToStr (researchLevel.getCurResearchLevel (cResearch::kRangeResearch)).c_str());
@@ -1308,7 +1312,7 @@ void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, const cRese
 	levelNode->SetAttribute ("scan", iToStr (researchLevel.getCurResearchLevel (cResearch::kScanResearch)).c_str());
 	levelNode->SetAttribute ("cost", iToStr (researchLevel.getCurResearchLevel (cResearch::kCostResearch)).c_str());
 
-	TiXmlElement* curPointsNode = addMainElement (researchLevelNode, "CurPoints");
+	XMLElement* curPointsNode = addMainElement (researchLevelNode, "CurPoints");
 	curPointsNode->SetAttribute ("attack", iToStr (researchLevel.getCurResearchPoints (cResearch::kAttackResearch)).c_str());
 	curPointsNode->SetAttribute ("shots", iToStr (researchLevel.getCurResearchPoints (cResearch::kShotsResearch)).c_str());
 	curPointsNode->SetAttribute ("range", iToStr (researchLevel.getCurResearchPoints (cResearch::kRangeResearch)).c_str());
@@ -1320,7 +1324,7 @@ void cSavegame::writeResearchLevel (TiXmlElement* researchLevelNode, const cRese
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeResearchCentersWorkingOnArea (TiXmlElement* researchCentersWorkingOnAreaNode, const cPlayer* player)
+void cSavegame::writeResearchCentersWorkingOnArea (XMLElement* researchCentersWorkingOnAreaNode, const cPlayer* player)
 {
 	researchCentersWorkingOnAreaNode->SetAttribute ("attack", iToStr (player->researchCentersWorkingOnArea[cResearch::kAttackResearch]).c_str());
 	researchCentersWorkingOnAreaNode->SetAttribute ("shots", iToStr (player->researchCentersWorkingOnArea[cResearch::kShotsResearch]).c_str());
@@ -1338,15 +1342,15 @@ void cSavegame::writeCasualties (const cServer& server)
 	if (server.getCasualtiesTracker() == 0)
 		return;
 
-	TiXmlElement* casualtiesNode = addMainElement (SaveFile.RootElement(), "Casualties");
+	XMLElement* casualtiesNode = addMainElement (SaveFile.RootElement(), "Casualties");
 	server.getCasualtiesTracker()->storeToXML (casualtiesNode);
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle, int* unitnum)
+XMLElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehicle, int* unitnum)
 {
 	// add units node if it doesn't exists
-	TiXmlElement* unitsNode;
+	XMLElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
@@ -1354,7 +1358,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 	}
 
 	// add the unit node
-	TiXmlElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
+	XMLElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
 
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", vehicle.data.ID.getText());
@@ -1379,7 +1383,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 
 	if (vehicle.IsBuilding)
 	{
-		TiXmlElement* element = addMainElement (unitNode, "Building");
+		XMLElement* element = addMainElement (unitNode, "Building");
 		element->SetAttribute ("type_id", vehicle.BuildingTyp.getText().c_str());
 		element->SetAttribute ("turns", iToStr (vehicle.BuildRounds).c_str());
 		element->SetAttribute ("costs", iToStr (vehicle.BuildCosts).c_str());
@@ -1400,7 +1404,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 	// write from which players this unit has been detected
 	if (vehicle.detectedByPlayerList.size() > 0)
 	{
-		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
+		XMLElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
 		for (unsigned int i = 0; i < vehicle.detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i),
@@ -1413,7 +1417,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 	for (unsigned int i = 0; i < vehicle.storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (server, *vehicle.storedUnits[i], unitnum);
+		XMLElement* storedNode = writeUnit (server, *vehicle.storedUnits[i], unitnum);
 		addAttributeElement (storedNode, "Stored_In", "id", iToStr (vehicle.iID), "is_vehicle", "1");
 	}
 	return unitNode;
@@ -1423,7 +1427,7 @@ TiXmlElement* cSavegame::writeUnit (const cServer& server, const cVehicle& vehic
 void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int* unitnum)
 {
 	// add units node if it doesn't exists
-	TiXmlElement* unitsNode;
+	XMLElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
@@ -1431,7 +1435,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	}
 
 	// add the unit node
-	TiXmlElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
+	XMLElement* unitNode = addMainElement (unitsNode, "Unit_" + iToStr (*unitnum));
 
 	// write main information
 	addAttributeElement (unitNode, "Type", "string", building.data.ID.getText());
@@ -1452,7 +1456,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 
 	if (building.data.canResearch)
 	{
-		TiXmlElement* researchNode = addMainElement (unitNode, "ResearchArea");
+		XMLElement* researchNode = addMainElement (unitNode, "ResearchArea");
 		researchNode->SetAttribute ("area", iToStr (building.researchArea).c_str());
 	}
 	if (building.data.canScore)
@@ -1466,12 +1470,12 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write the buildlist
 	if (building.BuildList && building.BuildList->size() > 0)
 	{
-		TiXmlElement* buildNode = addMainElement (unitNode, "Building");
+		XMLElement* buildNode = addMainElement (unitNode, "Building");
 		addAttributeElement (buildNode, "BuildSpeed", "num", iToStr (building.BuildSpeed));
 		addAttributeElement (buildNode, "MetalPerRound", "num", iToStr (building.MetalPerRound));
 		if (building.RepeatBuild) addMainElement (buildNode, "RepeatBuild");
 
-		TiXmlElement* buildlistNode = addMainElement (buildNode, "BuildList");
+		XMLElement* buildlistNode = addMainElement (buildNode, "BuildList");
 		for (unsigned int i = 0; i < building.BuildList->size(); i++)
 		{
 			addAttributeElement (buildlistNode, "Item_" + iToStr (i), "type_id", (*building.BuildList) [i]->type.getText(), "metall_remaining", iToStr ( (*building.BuildList) [i]->metall_remaining));
@@ -1481,7 +1485,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	// write from which players this unit has been detected
 	if (building.detectedByPlayerList.size() > 0)
 	{
-		TiXmlElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
+		XMLElement* detecedByNode = addMainElement (unitNode, "IsDetectedByPlayers");
 		for (unsigned int i = 0; i < building.detectedByPlayerList.size(); i++)
 		{
 			addAttributeElement (detecedByNode, "Player_" + iToStr (i), "nr", iToStr (building.detectedByPlayerList[i]->getNr()));
@@ -1492,7 +1496,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 	for (unsigned int i = 0; i < building.storedUnits.size(); i++)
 	{
 		(*unitnum) ++;
-		TiXmlElement* storedNode = writeUnit (server, *building.storedUnits[i], unitnum);
+		XMLElement* storedNode = writeUnit (server, *building.storedUnits[i], unitnum);
 		addAttributeElement (storedNode, "Stored_In", "id", iToStr (building.iID), "is_vehicle", "0");
 	}
 }
@@ -1501,7 +1505,7 @@ void cSavegame::writeUnit (const cServer& server, const cBuilding& building, int
 void cSavegame::writeRubble (const cServer& server, const cBuilding& building, int rubblenum)
 {
 	// add units node if it doesn't exists
-	TiXmlElement* unitsNode;
+	XMLElement* unitsNode;
 	if (! (unitsNode = SaveFile.RootElement()->FirstChildElement ("Units")))
 	{
 		unitsNode = addMainElement (SaveFile.RootElement(), "Units");
@@ -1509,7 +1513,7 @@ void cSavegame::writeRubble (const cServer& server, const cBuilding& building, i
 	}
 
 	// add the rubble node
-	TiXmlElement* rubbleNode = addMainElement (unitsNode, "Rubble_" + iToStr (rubblenum));
+	XMLElement* rubbleNode = addMainElement (unitsNode, "Rubble_" + iToStr (rubblenum));
 
 	addAttributeElement (rubbleNode, "Position", "x", iToStr (building.PosX), "y", iToStr (building.PosY));
 	addAttributeElement (rubbleNode, "RubbleValue", "num", iToStr (building.RubbleValue));
@@ -1517,7 +1521,7 @@ void cSavegame::writeRubble (const cServer& server, const cBuilding& building, i
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::writeUnitValues (TiXmlElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData)
+void cSavegame::writeUnitValues (XMLElement* unitNode, const sUnitData* Data, const sUnitData* OwnerData)
 {
 	// write the standard status values
 	if (Data->hitpointsCur != Data->hitpointsMax) addAttributeElement (unitNode, "Hitpoints", "num", iToStr (Data->hitpointsCur));
@@ -1549,13 +1553,13 @@ void cSavegame::writeUnitValues (TiXmlElement* unitNode, const sUnitData* Data, 
 void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 {
 	// add the main node if it doesn't exists
-	TiXmlElement* unitValuesNode;
+	XMLElement* unitValuesNode;
 	if (! (unitValuesNode = SaveFile.RootElement()->FirstChildElement ("UnitValues")))
 	{
 		unitValuesNode = addMainElement (SaveFile.RootElement(), "UnitValues");
 	}
 	// add the unit node
-	TiXmlElement* unitNode = addMainElement (unitValuesNode, "UnitVal_" + iToStr (unitnum));
+	XMLElement* unitNode = addMainElement (unitValuesNode, "UnitVal_" + iToStr (unitnum));
 	addAttributeElement (unitNode, "ID", "string", Data->ID.getText());
 	addAttributeElement (unitNode, "Name", "string", Data->name);
 
@@ -1644,26 +1648,28 @@ void cSavegame::writeStandardUnitValues (const sUnitData* Data, int unitnum)
 //--------------------------------------------------------------------------
 void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sSavedReportMessage>& list, const cPlayer* player)
 {
-	if (!SaveFile.LoadFile ( (cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml").c_str())) return;
+	string fileName = cSettings::getInstance().getSavesPath() + PATH_DELIMITER + "Save" + numberstr + ".xml"; //TODO: private method load()
+	if (SaveFile.LoadFile (fileName.c_str()) != 0) return;
 	if (!SaveFile.RootElement()) return;
+	loadedXMLFileName = fileName;
 
 	// first get the players node
-	TiXmlElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
+	XMLElement* playersNode = SaveFile.RootElement()->FirstChildElement ("Players");
 	int playernum = 0;
-	TiXmlElement* playerNode = NULL;
+	XMLElement* playerNode = NULL;
 	do
 	{
 		playerNode = playersNode->FirstChildElement ( ("Player_" + iToStr (playernum)).c_str());
 		if (!playerNode) return;
 		int number;
-		playerNode->FirstChildElement ("Number")->Attribute ("num", &number);
+		playerNode->FirstChildElement ("Number")->QueryIntAttribute ("num", &number);
 		if (number == player->getNr()) break;
 		playernum++;
 	}
 	while (playerNode != NULL);
 
 	// write the hud settings
-	TiXmlElement* hudNode = addMainElement (playerNode, "Hud");
+	XMLElement* hudNode = addMainElement (playerNode, "Hud");
 	addAttributeElement (hudNode, "SelectedUnit", "num", iToStr (hudState.selUnitID));
 	addAttributeElement (hudNode, "Offset", "x", iToStr (hudState.offX), "y", iToStr (hudState.offY));
 	addAttributeElement (hudNode, "Zoom", "num", dToStr (hudState.zoom));
@@ -1681,11 +1687,11 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 	if (hudState.tntChecked) addMainElement (hudNode, "TNT");
 
 	// add reports
-	TiXmlElement* reportsNode = addMainElement (playerNode, "Reports");
+	XMLElement* reportsNode = addMainElement (playerNode, "Reports");
 
 	for (size_t i = 0; i != list.size(); ++i)
 	{
-		TiXmlElement* reportElement = addMainElement (reportsNode, "Report");
+		XMLElement* reportElement = addMainElement (reportsNode, "Report");
 		reportElement->SetAttribute ("msg", list[i].message.c_str());
 		reportElement->SetAttribute ("type", iToStr (list[i].type).c_str());
 		reportElement->SetAttribute ("xPos", iToStr (list[i].xPos).c_str());
@@ -1705,17 +1711,17 @@ void cSavegame::writeAdditionalInfo (sHudStateContainer hudState, std::vector<sS
 }
 
 //--------------------------------------------------------------------------
-void cSavegame::addAttributeElement (TiXmlElement* node, const string& nodename, const string& attributename, const string& value, const string& attributename2, const string& value2)
+void cSavegame::addAttributeElement (XMLElement* node, const string& nodename, const string& attributename, const string& value, const string& attributename2, const string& value2)
 {
-	TiXmlElement* element = addMainElement (node, nodename);
+	XMLElement* element = addMainElement (node, nodename);
 	element->SetAttribute (attributename.c_str(), value.c_str());
 	if (attributename2.compare ("")) element->SetAttribute (attributename2.c_str(), value2.c_str());
 }
 
 //--------------------------------------------------------------------------
-TiXmlElement* cSavegame::addMainElement (TiXmlElement* node, const string& nodename)
+XMLElement* cSavegame::addMainElement (XMLElement* node, const string& nodename)
 {
-	TiXmlElement* element = new TiXmlElement (nodename.c_str());
+	XMLElement* element = node->GetDocument()->NewElement(nodename.c_str());
 	node->LinkEndChild (element);
 	return element;
 }

@@ -25,7 +25,10 @@
 #include <vector>
 
 class cNetMessage;
-class TiXmlElement;
+namespace tinyxml2
+{
+	class XMLElement;
+}
 
 //-------------------------------------------------------------------------------
 class cCasualtiesTracker : public cNotificationSender
@@ -33,8 +36,8 @@ class cCasualtiesTracker : public cNotificationSender
 public:
 	cCasualtiesTracker() {}
 
-	void initFromXML (TiXmlElement* casualtiesNode);
-	void storeToXML (TiXmlElement* casualtiesNode) const;
+	void initFromXML (tinyxml2::XMLElement* casualtiesNode);
+	void storeToXML (tinyxml2::XMLElement* casualtiesNode) const;
 
 	void logCasualty (sID unitType, int playerNr);
 	int getCasualtiesOfUnitType (sID unitType, int playerNr);

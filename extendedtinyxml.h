@@ -73,7 +73,6 @@ public:
 	ExTiXmlNode* XmlGetNextNodeSibling();
 
 	/// Retrieve data from a node
-	ExTiXmlNode* XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType);
 	ExTiXmlNode* XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType, const char* pszAttributeName);
 	int XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode);
 
