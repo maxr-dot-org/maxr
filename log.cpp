@@ -22,6 +22,7 @@
 #include "log.h"
 #include "cmutex.h"
 #include "settings.h"
+#include "files.h"
 
 #define LOGFILE cSettings::getInstance().getLogPath().c_str()
 #define NETLOGFILE cSettings::getInstance().getNetLogPath().c_str()
@@ -59,11 +60,9 @@ bool cLog::open (int TYPE)
 		tm* tmTime = localtime (&tTime);
 #endif
 		char timestr[25];
-		strftime (timestr, 21, "-%d.%m.%y-%H%M.log", tmTime);
+		strftime (timestr, 21, "%Y-%m-%d-%H%M_", tmTime);
 		std::string sTime = timestr;
-		std::string netLogPath = cSettings::getInstance().getNetLogPath();
-		netLogPath.erase (netLogPath.size() - 4, netLogPath.size());
-		cSettings::getInstance().setNetLogPath ( (netLogPath + sTime).c_str());
+		cSettings::getInstance().setNetLogPath ( (getUserLogDir() + sTime + MAX_NET_LOG).c_str());
 		bFirstRun = false;
 	}
 

@@ -39,13 +39,18 @@ static std::string TakeScreenShot()
 {
 	time_t tTime;
 	tm* tmTime;
-	char timestr[16];
+	char timestr[18];
 	tTime = time (NULL);
 	tmTime = localtime (&tTime);
-	strftime (timestr, 16, "%d.%m.%y-%H%M%S", tmTime);
-
-	std::string screenshotfile = getUserScreenshotsDir();
-	screenshotfile.append ( (std::string) "Screen_" + timestr + ".bmp");
+	strftime (timestr, sizeof(timestr), "%Y-%m-%d_%H%M%S", tmTime);
+	std::string screenshotfile;
+	short int counter=0;
+	do
+	{
+		counter += 1;
+		screenshotfile = getUserScreenshotsDir() + "screenie_" + timestr + "_" + iToStr(counter) + ".bmp";
+	}
+	while (FileExists (screenshotfile.c_str()));
 	Log.write ("Screenshot saved to " + screenshotfile, cLog::eLOG_TYPE_INFO);
 	SDL_SaveBMP (screen, screenshotfile.c_str());
 	return screenshotfile;

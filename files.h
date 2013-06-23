@@ -71,6 +71,9 @@ std::string getUserMapsDir();
  */
 std::string getUserScreenshotsDir();
 
+std::string getUserLogDir();
+void copyFile( std::string source, std::string dest );
+
 /**
 * @author pagra
 * @return a checksum of all bytes in the given data chunk

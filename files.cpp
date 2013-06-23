@@ -171,10 +171,65 @@ std::string getUserScreenshotsDir()
 #endif
 	if (cSettings::getInstance().getHomeDir().empty())
 		return "";
-	screenshotsFolder = cSettings::getInstance().getHomeDir() + PATH_DELIMITER;
-	return screenshotsFolder;
+		screenshotsFolder = cSettings::getInstance().getHomeDir() + "screenies";
+#ifdef WIN32
+	if (!DirExists (screenshotsFolder))
+	{
+		if (_mkdir (screenshotsFolder.c_str()) == 0)
+			return screenshotsFolder + PATH_DELIMITER;
+		return "";
+	}
+#else
+	if (!FileExists (screenshotsFolder.c_str()))
+	{
+		if (mkdir (screenshotsFolder.c_str(), 0755) == 0)
+			return screenshotsFolder + PATH_DELIMITER;
+		return "";
+	}
+#endif
+	return screenshotsFolder + PATH_DELIMITER;
+}
+//--------------------------------------------------------------
+std::string getUserLogDir()
+{
+#ifdef __amigaos4__
+	return "";
+#endif
+
+	std::string LogDir = "";
+#ifdef MAC
+	char* cHome = getenv ("HOME");  //get $HOME on mac
+	if (cHome == NULL)
+		return "";
+	std::string homeFolder = cHome;
+	if (homeFolder.empty())
+		return "";
+	// store Log directly on the desktop of the user
+	LogDir = homeFolder + PATH_DELIMITER "Desktop" PATH_DELIMITER;
+	return LogDir;
+#endif
+	if (cSettings::getInstance().getHomeDir().empty())
+		return "";
+	LogDir = cSettings::getInstance().getHomeDir() + MAX_LOG_DIR;
+#ifdef WIN32
+	if (!DirExists (LogDir))
+	{
+		if (_mkdir (LogDir.c_str()) == 0)
+			return LogDir + PATH_DELIMITER;
+		return "";
+	}
+#else
+	if (!FileExists (LogDir.c_str()))
+	{
+		if (mkdir (LogDir.c_str(), 0755) == 0)
+			return LogDir + PATH_DELIMITER;
+		return "";
+	}
+#endif
+	return LogDir + PATH_DELIMITER;
 }
 
+//--------------------------------------------------------------
 Uint32 calcCheckSum (Uint32 data, Uint32 checksum)
 {
 	data = SDL_SwapLE32 (data);// The calculation must be endian safe.
@@ -189,4 +244,42 @@ Uint32 calcCheckSum (const char* data, size_t dataSize, Uint32 checksum)
 		checksum += *i;
 	}
 	return checksum;
+}
+
+void copyFile( std::string source, std::string dest )
+{
+	long int size;
+	unsigned char* buffer;
+	SDL_RWops *sourceFile = NULL;
+	SDL_RWops *destFile = NULL;
+	sourceFile = SDL_RWFromFile ( source.c_str(), "rb" );
+	
+
+	destFile = SDL_RWFromFile ( dest.c_str(), "wb" );
+	if ( destFile == NULL )
+	{
+		return;
+	}
+
+	SDL_RWseek( sourceFile, 0, SEEK_END );
+	size = SDL_RWtell( sourceFile );
+
+	buffer = (unsigned char*) malloc( size );
+	if ( buffer == NULL )
+	{
+		std::cout << "Out of memory\n";
+		exit (-1);
+	}
+
+	SDL_RWseek( sourceFile, 0, SEEK_SET);
+	SDL_RWread( sourceFile, buffer, 1, size );
+
+	SDL_RWwrite( destFile, buffer, 1, size );
+
+	free ( buffer );
+
+
+	if (sourceFile) SDL_RWclose( sourceFile );
+	if (destFile)   SDL_RWclose( destFile );
+
 }

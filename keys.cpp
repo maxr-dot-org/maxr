@@ -16,6 +16,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "files.h"
 #include "extendedtinyxml.h"
 #include "keys.h"
@@ -44,21 +48,29 @@ static void LoadSingleKey (TiXmlDocument& KeysXml, const char* keyString, SDLKey
 	}
 }
 
-
-
 int LoadKeys()
 {
 	Log.write ("Loading Keys", LOG_TYPE_INFO);
+	if (!FileExists (KEYS_XMLUsers) && !FileExists (KEYS_XMLGame))
+	{
+		Log.write ("generating new keys-file", LOG_TYPE_WARNING);
+		GenerateKeysXml();
+	}
+	else if (!FileExists (KEYS_XMLUsers))
+	{
+		copyFile (KEYS_XMLGame, KEYS_XMLUsers);
+		Log.write ("Key-file copied from gamedir to userdir", LOG_TYPE_INFO);
+	}
+	else // => (FileExists (KEYS_XMLUsers))
+	{
+		Log.write ("User key-file in use", LOG_TYPE_INFO);
+	}
+	
 	TiXmlDocument KeysXml;
 	ExTiXmlNode* pXmlNode = NULL;
 	string sTmpString;
 
-	if (!FileExists (KEYS_XML))
-	{
-		Log.write ("generating new file", LOG_TYPE_WARNING);
-		GenerateKeysXml();
-	}
-	if (!KeysXml.LoadFile (KEYS_XML))
+	if (!KeysXml.LoadFile (KEYS_XMLUsers))
 	{
 		Log.write ("cannot load keys.xml\ngenerating new file", LOG_TYPE_WARNING);
 		GenerateKeysXml();

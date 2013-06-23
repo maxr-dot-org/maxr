@@ -65,7 +65,7 @@ void cSettings::setPaths()
 {
 	//init absolutly needed paths
 	logPath = MAX_LOG;
-	netLogPath = MAX_NET_LOG;
+	netLogPath = getUserLogDir();
 	exePath = ""; //FIXME: I don't know how this is handled on win/mac/amiga -- beko
 	homeDir = "";
 
@@ -139,7 +139,7 @@ void cSettings::setPaths()
 
 	//set new place for logs
 	logPath = homeDir + logPath;
-	netLogPath = homeDir + netLogPath;
+	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath;
 #elif __amigaos4__
 	//this is where amigausers should set their %HOME%
@@ -189,7 +189,7 @@ void cSettings::setPaths()
 
 	//set new place for logs
 	logPath = homeDir + logPath;
-	netLogPath = homeDir + netLogPath;
+	netLogPath = getUserLogDir();
 	std::cout << "\n(II): Starting logging to: " << logPath;
 
 	//determine full path to application

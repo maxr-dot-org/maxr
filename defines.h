@@ -124,8 +124,10 @@
 #define MAX_XML			"max.xml"
 #define MAX_LOG			"maxr.log"
 #define MAX_NET_LOG		"net.log"
+#define MAX_LOG_DIR		"log_files"
 #define CLANS_XML		(cSettings::getInstance().getDataDir() + "clans.xml").c_str()
-#define KEYS_XML		(cSettings::getInstance().getDataDir() + "keys.xml").c_str()
+#define KEYS_XMLGame		(cSettings::getInstance().getDataDir() + "keys.xml").c_str()
+#define KEYS_XMLUsers		(cSettings::getInstance().getHomeDir() + "keys.xml").c_str()
 #define SPLASH_BACKGROUND	(cSettings::getInstance().getDataDir() + "init.pcx")
 #ifdef MAC
 # define MAXR_ICON  (cSettings::getInstance().getDataDir() + "maxr_mac.bmp").c_str()
