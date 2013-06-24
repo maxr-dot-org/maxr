@@ -38,7 +38,6 @@
 #include "autosurface.h"
 #include "buildings.h"
 #include "clans.h"
-#include "extendedtinyxml.h"
 #include "files.h"
 #include "keys.h"
 #include "log.h"
@@ -49,6 +48,7 @@
 #include "unifonts.h"
 #include "vehicles.h"
 #include "video.h"
+#include "tinyxml2.h"
 
 #ifdef WIN32
 # include <shlobj.h>
@@ -56,8 +56,9 @@
 #endif
 
 using namespace std;
+using namespace tinyxml2;
 
-TiXmlDocument LanguageFile;
+tinyxml2::XMLDocument LanguageFile;
 
 /**
  * Writes a Logmessage on the SplashScreen
@@ -1373,28 +1374,28 @@ static void translateClanData (int num)
 		Log.write ("Can't find clan id " + iToStr (num) + " for translation", LOG_TYPE_WARNING);
 		return;
 	}
-	TiXmlNode* pXmlNode = LanguageFile.FirstChild ("MAX_Language_File")->FirstChildElement ("Clans");
-	if (!pXmlNode)
+	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Clans");
+	if (!xmlElement)
 	{
 		Log.write ("Can't find clan node in language file. Please report this to your translation team!", LOG_TYPE_WARNING);
 		return;
 	}
 
-	for (pXmlNode = pXmlNode->FirstChildElement(); pXmlNode; pXmlNode = pXmlNode->NextSibling())
+	for (xmlElement = xmlElement->FirstChildElement(); xmlElement; xmlElement = xmlElement->NextSiblingElement())
 	{
-		if (atoi (pXmlNode->ToElement()->Attribute ("ID")) != num)
+		if (xmlElement->IntAttribute("ID") != num)
 			continue;
 
 		Log.write ("Found clan translation for clan id " + iToStr (num), LOG_TYPE_DEBUG);
-		if (cSettings::getInstance().getLanguage().compare ("ENG") != 0)
+		if (cSettings::getInstance().getLanguage() != "ENG")
 		{
-			clan->setName (pXmlNode->ToElement()->Attribute ("localized"));
+			clan->setName (xmlElement->Attribute ("localized"));
 		}
 		else
 		{
-			clan->setName (pXmlNode->ToElement()->Attribute ("ENG"));
+			clan->setName (xmlElement->Attribute ("ENG"));
 		}
-		clan->setDescription (pXmlNode->ToElement()->GetText());
+		clan->setDescription (xmlElement->GetText());
 	}
 }
 
@@ -1404,67 +1405,48 @@ static void translateClanData (int num)
 */
 static bool translateUnitData (sID ID, bool vehicle)
 {
-	sUnitData* Data = NULL;
-	TiXmlNode* pXmlNode = NULL;
-	string sTmpString;
-	const char* TmpCharPtr;
-
-	if (vehicle)
-	{
-		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i)
-		{
-			if (UnitsData.vehicle[i].data.ID == ID)
-			{
-				Data = &UnitsData.vehicle[i].data;
-				break;
-			}
-		}
-	}
-	else
-	{
-		for (size_t i = 0; i != UnitsData.building.size(); ++i)
-		{
-			if (UnitsData.building[i].data.ID == ID)
-			{
-				Data = &UnitsData.building[i].data;
-				break;
-			}
-		}
-	}
+	sUnitData* Data = ID.getUnitDataOriginalVersion();
 	if (Data == NULL) return false;
 
-	pXmlNode = LanguageFile.FirstChild ("MAX_Language_File")->FirstChildElement ("Units");
-	if (pXmlNode == NULL) return false;
-	pXmlNode = pXmlNode->FirstChildElement();
-	while (pXmlNode != NULL)
+	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Units");
+	if (xmlElement == NULL) return false;
+
+	xmlElement = xmlElement->FirstChildElement();
+	while (xmlElement != NULL)
 	{
-		TmpCharPtr = pXmlNode->ToElement()->Attribute ("ID");
-		if (TmpCharPtr == NULL) return false;
-		sTmpString = TmpCharPtr;
+		const char* value = xmlElement->Attribute ("ID");
+		if (value == NULL) return false;
 
-		if (atoi (sTmpString.substr (0, sTmpString.find (" ", 0)).c_str()) == ID.iFirstPart && atoi (sTmpString.substr (sTmpString.find (" ", 0), sTmpString.length()).c_str()) == ID.iSecondPart)
+		int idFirst = atoi(value);
+		string idString = value;
+		int idSecond = atoi(idString.substr(idString.find(" ")).c_str());
+
+		if (idFirst == ID.iFirstPart && idSecond == ID.iSecondPart)
 		{
-			if (cSettings::getInstance().getLanguage().compare ("ENG") != 0) TmpCharPtr = pXmlNode->ToElement()->Attribute ("localized");
-			else TmpCharPtr = pXmlNode->ToElement()->Attribute ("ENG");
-			if (TmpCharPtr == NULL) return false;
-			Data->name = TmpCharPtr;
+			const char* value;
+			if (cSettings::getInstance().getLanguage() != "ENG")
+				value = xmlElement->Attribute ("localized");
+			else
+				value = xmlElement->Attribute ("ENG");
+			if (value == NULL) return false;
 
-			TmpCharPtr =  pXmlNode->ToElement()->GetText();
-			if (TmpCharPtr == NULL) return false;
-			sTmpString = TmpCharPtr;
+			Data->name = value;
 
-			size_t iPosition = sTmpString.find ("\\n", 0);
-			while (iPosition != string::npos)
+			value =  xmlElement->GetText();
+			if (value  == NULL) return false;
+			
+			Data->description = value;
+			size_t pos;
+			while ( (pos = Data->description.find("\\n")) != string::npos)
 			{
-				sTmpString.replace (iPosition, 2, "\n");
-				iPosition = sTmpString.find ("\\n", iPosition);
+				Data->description.replace(pos, 2, "\n");
 			}
-			Data->description =  sTmpString;
+			return true;
 		}
-		pXmlNode = pXmlNode->NextSibling();
+		xmlElement = xmlElement->NextSiblingElement();
 	}
 
-	return true;
+	return false;
 }
 
 static int LoadBuildings()
