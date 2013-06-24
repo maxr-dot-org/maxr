@@ -34,7 +34,7 @@
 #endif
 
 #include "loaddata.h"
-
+#include "extendedtinyxml.h"
 #include "autosurface.h"
 #include "buildings.h"
 #include "clans.h"
