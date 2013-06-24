@@ -33,9 +33,12 @@
 #include "settings.h"
 #include "main.h"
 #include "log.h"
+#include "tinyxml2.h"
 #include "extendedtinyxml.h"
 #include "files.h"
 #include "video.h"
+
+using namespace tinyxml2;
 
 //------------------------------------------------------------------------------
 cSettings cSettings::instance;
@@ -341,11 +344,11 @@ std::string cSettings::searchDataDir (const std::string& sDataDirFromConf)
 //------------------------------------------------------------------------------
 bool cSettings::createConfigFile()
 {
-	TiXmlDocument configFile;
-	TiXmlElement* rootnode = new TiXmlElement ("Options");
-	configFile.LinkEndChild (rootnode);
+	configFile.Clear();
 
-	if (!configFile.SaveFile (configPath.c_str()))    //create new empty config
+	configFile.LinkEndChild (configFile.NewElement ("Options"));
+
+	if (configFile.SaveFile (configPath.c_str()) != XML_NO_ERROR)    //create new empty config
 	{
 		Log.write ("Could not write new config to " + configPath, cLog::eLOG_TYPE_ERROR);
 		return false; // Generate fails
@@ -356,8 +359,10 @@ bool cSettings::createConfigFile()
 //------------------------------------------------------------------------------
 void cSettings::initialize()
 {
+	cMutex::Lock lock (xmlDocMutex);
 	initializing = true;
-	TiXmlDocument configFile;
+
+	if (initialized) return;
 
 	setPaths();
 
@@ -366,22 +371,21 @@ void cSettings::initialize()
 		Log.write ("configPath not set!", cLog::eLOG_TYPE_WARNING);
 		configPath = MAX_XML;
 	}
-	if (!configFile.LoadFile (configPath.c_str()))
+	if (configFile.LoadFile (configPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't read max.xml\n", LOG_TYPE_WARNING);
 		if (!createConfigFile()) return;
 	}
 
-	ExTiXmlNode* xmlNode = NULL;
-	std::string temp;
+	XMLElement* xmlElement = NULL;
 
 	//START
 
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "Resolution", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Resolution", NULL);
+		if (!xmlElement || !xmlElement->Attribute("Text"))
 		{
 			Log.write ("Can't load resolution from config file: using default value", LOG_TYPE_WARNING);
 			Video.setResolution (Video.getMinW(), Video.getMinH());
@@ -389,345 +393,439 @@ void cSettings::initialize()
 		}
 		else
 		{
+			std::string temp = xmlElement->Attribute("Text");
 			int wTmp = atoi (temp.substr (0, temp.find (".", 0)).c_str());
 			int hTmp = atoi (temp.substr (temp.find (".", 0) + 1, temp.length()).c_str());
 			Video.setResolution (wTmp, hTmp);
 		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "ColourDepth", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "ColourDepth", NULL);
+		if (!xmlElement || !xmlElement->Attribute("Num"))
 		{
 			Log.write ("Can't load color depth from config file: using default value", LOG_TYPE_WARNING);
-			Video.setColDepth (atoi (temp.c_str()));
+			Video.setColDepth (32);
 			saveColorDepth();
 		}
-		else Video.setColDepth (32);
+		else 
+		{
+			Video.setColDepth (xmlElement->IntAttribute("Num"));
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "Intro", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Intro", NULL);
+		if (!xmlElement || !xmlElement->Attribute("YN"))
 		{
 			Log.write ("Can't load intro from config file: using default value", LOG_TYPE_WARNING);
 			setShowIntro (true);
 		}
-		else showIntro = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			showIntro = xmlElement->BoolAttribute("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "Windowmode", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Windowmode", NULL);
+		if (!xmlElement || !xmlElement->Attribute("YN"))
 		{
 			Log.write ("Can't load window mode from config file: using default value", LOG_TYPE_WARNING);
 			Video.setWindowMode (true);
 			saveWindowMode();
 		}
-		else Video.setWindowMode (xmlNode->XmlDataToBool (temp));
+		else 
+		{
+			Video.setWindowMode (xmlElement->BoolAttribute("YN"));
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "Fastmode", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Fastmode", NULL);
+		if (!xmlElement || !xmlElement->Attribute("YN"))
 		{
 			Log.write ("Can't load fast mode from config file: using default value", LOG_TYPE_WARNING);
 			setFastMode (false);
 		}
-		else fastMode = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			fastMode = xmlElement->BoolAttribute("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "PreScale", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "PreScale", NULL);
+		if (!xmlElement || !xmlElement->Attribute("YN"))
 		{
 			Log.write ("Can't load pre scale from config file: using default value", LOG_TYPE_WARNING);
 			setDoPrescale (false);
 		}
-		else preScale = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			preScale = xmlElement->BoolAttribute ("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "CacheSize", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "CacheSize", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load cache size from config file: using default value", LOG_TYPE_WARNING);
 			setCacheSize (400);
 		}
-		else cacheSize = atoi (temp.c_str());
+		else 
+		{
+			cacheSize = xmlElement->IntAttribute("Num");
+		}
 	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "Language", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "Language", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language from config file: using default value", LOG_TYPE_WARNING);
 		setLanguage ("ENG");
 	}
 	else
 	{
-		for (std::string::iterator i = temp.begin(), end = temp.end(); i != end; ++i)
+		language = xmlElement->Attribute ("Text");
+		for (std::string::iterator i = language.begin(), end = language.end(); i != end; ++i)
 			*i = std::toupper ( (unsigned char) * i);
-		language = temp.c_str();
 	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Start", "VoiceLanguage", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Start", "VoiceLanguage", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language from config file: using default value", LOG_TYPE_WARNING);
 		setVoiceLanguage ("");
 	}
 	else
 	{
-		for (std::string::iterator i = temp.begin(), end = temp.end(); i != end; ++i)
+		voiceLanguage = xmlElement->Attribute ("Text");
+		for (std::string::iterator i = voiceLanguage.begin(), end = voiceLanguage.end(); i != end; ++i)
 			*i = std::tolower ( (unsigned char) * i);
-		voiceLanguage = temp.c_str();
 	}
 
 	//GAME
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableAutosave", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAutosave", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load autosave from config file: using default value", LOG_TYPE_WARNING);
 		setAutosave (true);
 	}
-	else autosave = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		autosave = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableDebug", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDebug", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load debug from config file: using default value", LOG_TYPE_WARNING);
 		setDebug (true);
 	}
 	else
 	{
-		debug = xmlNode->XmlDataToBool (temp);
+		debug = xmlElement->BoolAttribute ("YN");
 		if (!debug) Log.write ("Debugmode disabled - for verbose output please enable Debug in max.xml", cLog::eLOG_TYPE_WARNING);
 		else Log.write ("Debugmode enabled", cLog::eLOG_TYPE_INFO);
 	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableAnimations", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAnimations", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load animations from config file: using default value", LOG_TYPE_WARNING);
 		setAnimations (true);
 	}
-	else animations = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		animations = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableShadows", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableShadows", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load shadows from config file: using default value", LOG_TYPE_WARNING);
 		setShadows (true);
 	}
-	else shadows = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		shadows = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableAlphaEffects", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableAlphaEffects", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load alpha effects from config file: using default value", LOG_TYPE_WARNING);
 		setAlphaEffects (true);
 	}
-	else alphaEffects = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		alphaEffects = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableDescribtions", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDescribtions", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load descriptions from config file: using default value", LOG_TYPE_WARNING);
 		setShowDescription (true);
 	}
-	else showDescription = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		showDescription = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableDamageEffects", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffects", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load damage effects from config file: using default value", LOG_TYPE_WARNING);
 		setDamageEffects (true);
 	}
-	else damageEffects = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		damageEffects = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableDamageEffectsVehicles", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableDamageEffectsVehicles", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load damaga effects vehicles from config file: using default value", LOG_TYPE_WARNING);
 		setDamageEffectsVehicles (true);
 	}
-	else damageEffectsVehicles = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		damageEffectsVehicles = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "EnableMakeTracks", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "EnableMakeTracks", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("YN"))
 	{
 		Log.write ("Can't load make tracks from config file: using default value", LOG_TYPE_WARNING);
 		setMakeTracks (true);
 	}
-	else makeTracks = xmlNode->XmlDataToBool (temp);
+	else 
+	{
+		makeTracks = xmlElement->BoolAttribute ("YN");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "ScrollSpeed", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "ScrollSpeed", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load scroll speed from config file: using default value", LOG_TYPE_WARNING);
 		setScrollSpeed (32);
 	}
-	else scrollSpeed = atoi (temp.c_str());
+	else 
+	{
+		scrollSpeed = xmlElement->IntAttribute ("Num");
+	}
 
 	//GAME-SOUND
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "Enabled", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Enabled", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load sound enabled from config file: using default value", LOG_TYPE_WARNING);
 			setSoundEnabled (true);
 		}
-		else soundEnabled = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			soundEnabled = xmlElement->BoolAttribute ("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "MusicMute", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicMute", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load music mute from config file: using default value", LOG_TYPE_WARNING);
 			setMusicMute (false);
 		}
-		else musicMute = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			musicMute = xmlElement->BoolAttribute ("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "SoundMute", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundMute", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load sound mute from config file: using default value", LOG_TYPE_WARNING);
 			setSoundMute (false);
 		}
-		else soundMute = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			soundMute = xmlElement->BoolAttribute ("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "VoiceMute", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceMute", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("YN"))
 		{
 			Log.write ("Can't load voice mute from config file: using default value", LOG_TYPE_WARNING);
 			setVoiceMute (false);
 		}
-		else voiceMute = xmlNode->XmlDataToBool (temp);
+		else 
+		{
+			voiceMute = xmlElement->BoolAttribute ("YN");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "MusicVol", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "MusicVol", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
 			setMusicVol (128);
 		}
-		else musicVol = atoi (temp.c_str());
+		else 
+		{
+			musicVol = xmlElement->IntAttribute ("Num");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "SoundVol", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "SoundVol", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
 			setSoundVol (128);
 		}
-		else soundVol = atoi (temp.c_str());
+		else 
+		{
+			soundVol = xmlElement->IntAttribute ("Num");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "VoiceVol", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "VoiceVol", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
 			setVoiceVol (128);
 		}
-		else voiceVol = atoi (temp.c_str());
+		else 
+		{
+			voiceVol = xmlElement->IntAttribute ("Num");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "ChunkSize", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "ChunkSize", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
 			setChunkSize (2048);
 		}
-		else chunkSize = atoi (temp.c_str());
-
+		else 
+		{
+			chunkSize = xmlElement->IntAttribute ("Num");
+		}
+		
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Sound", "Frequency", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Sound", "Frequency", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Num"))
 		{
 			Log.write ("Can't load music volume from config file: using default value", LOG_TYPE_WARNING);
 			setFrequence (44100);
 		}
-		else frequency = atoi (temp.c_str());
+		else 
+		{
+			frequency = xmlElement->IntAttribute ("Num");
+		}
 	}
 
 	//PATHS
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Gamedata", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Gamedata", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load gamedata from config file: using default value", LOG_TYPE_WARNING);
 		setDataDir (searchDataDir().c_str(), true);
 	}
-	else setDataDir (searchDataDir (temp).c_str(), false);
+	else 
+	{
+		setDataDir (searchDataDir (xmlElement->Attribute ("Text")).c_str(), false);
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Languages", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Languages", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load language path from config file: using default value", LOG_TYPE_WARNING);
 		setLangPath ("languages");
 		langPath = dataDir + "languages";
 	}
-	else langPath = dataDir + temp;
+	else 
+	{
+		langPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Fonts", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Fonts", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load fonts path from config file: using default value", LOG_TYPE_WARNING);
 		setFontPath ("fonts");
 		fontPath = dataDir + "fonts";
 	}
-	else fontPath = dataDir + temp;
+	else 
+	{
+		fontPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "FX", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "FX", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load fx path from config file: using default value", LOG_TYPE_WARNING);
 		setFxPath ("fx");
 		fxPath = dataDir + "fx";
 	}
-	else fxPath = dataDir + temp;
+	else 
+	{
+		fxPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "GFX", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "GFX", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load gfx path from config file: using default value", LOG_TYPE_WARNING);
 		setGfxPath ("gfx");
 		gfxPath = dataDir + "gfx";
 	}
-	else gfxPath = dataDir + temp;
+	else 
+	{
+		gfxPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Maps", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Maps", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load maps path from config file: using default value", LOG_TYPE_WARNING);
 		setMapsPath ("maps");
 		mapsPath = dataDir + "maps";
 	}
-	else mapsPath = dataDir + temp;
+	else 
+	{
+		mapsPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Saves", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Saves", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load saves path from config file: using default value", LOG_TYPE_WARNING);
 		setSavesPath ( (homeDir + "saves").c_str());
 	}
-	else savesPath = temp; //use absolut paths for saves - do not add dataDir or homeDir
+	else 
+	{
+		savesPath = xmlElement->Attribute ("Text"); //use absolut paths for saves - do not add dataDir or homeDir
+	}
 #if MAC
 	// Create saves directory, if it doesn't exist, yet. Creating it during setPaths is too early, because it was not read yet.
 	if (!FileExists (getSavesPath().c_str()))
@@ -742,90 +840,115 @@ void cSettings::initialize()
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Sounds", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Sounds", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load sounds path from config file: using default value", LOG_TYPE_WARNING);
 			setSoundsPath ("sounds");
 			soundsPath = dataDir + "sounds";
 		}
-		else soundsPath = dataDir + temp;
+		else 
+		{
+			soundsPath = dataDir + xmlElement->Attribute ("Text");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Voices", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Voices", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load voices path from config file: using default value", LOG_TYPE_WARNING);
 			setVoicesPath ("voices");
 			voicesPath = dataDir + "voices";
 		}
-		else voicesPath = dataDir + temp;
+		else 
+		{
+			voicesPath = dataDir + xmlElement->Attribute ("Text");
+		}
 
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Music", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Music", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load music path from config file: using default value", LOG_TYPE_WARNING);
 			setMusicPath ("music");
 			musicPath = dataDir + "music";
 		}
-		else musicPath = dataDir + temp;
+		else 
+		{
+			musicPath = dataDir + xmlElement->Attribute ("Text");
+		}
 	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Vehicles", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Vehicles", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load vehicles path from config file: using default value", LOG_TYPE_WARNING);
 		setVehiclesPath ("vehicles");
 		vehiclesPath = dataDir + "vehicles";
 	}
-	else vehiclesPath = dataDir + temp;
+	else 
+	{
+		vehiclesPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "Buildings", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "Buildings", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load buildings path from config file: using default value", LOG_TYPE_WARNING);
 		setBuildingsPath ("buildings");
 		buildingsPath = dataDir + "buildings";
 	}
-	else buildingsPath = dataDir + temp;
+	else 
+	{
+		buildingsPath = dataDir + xmlElement->Attribute ("Text");
+	}
 
 	if (!DEDICATED_SERVER)
 	{
 		// =============================================================================
-		xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Paths", "MVEs", NULL);
-		if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Paths", "MVEs", NULL);
+		if (!xmlElement || !xmlElement->Attribute ("Text"))
 		{
 			Log.write ("Can't load language path from config file: using default value", LOG_TYPE_WARNING);
 			setMvePath ("mve");
 			mvePath = dataDir + "mve";
 		}
-		else mvePath = dataDir + temp;
+		else 
+		{
+			mvePath = dataDir + xmlElement->Attribute ("Text");
+		}
 	}
 
 	//GAME-NET
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Net", "IP", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (ip, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "IP", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Text"))
 	{
 		Log.write ("Can't load IP from config file: using default value", LOG_TYPE_WARNING);
 		setIP ("127.0.0.1");
 	}
+	else
+	{
+		setIP(xmlElement->Attribute ("Text"));
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Net", "Port", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "Port", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load Port config file: using default value", LOG_TYPE_WARNING);
 		setPort (DEFAULTPORT);
 	}
-	else port = atoi (temp.c_str());
+	else 
+	{
+		port = xmlElement->IntAttribute ("Num");
+	}
 
 	// =============================================================================
-	xmlNode = ExTiXmlNode::XmlGetFirstNode (configFile, "Options", "Game", "Net", "PlayerName", NULL);
-	if (!xmlNode || !xmlNode->XmlReadNodeData (playerName, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+	xmlElement = XmlGetFirstElement (configFile, "Options", "Game", "Net", "PlayerName", NULL);
+	if (!xmlElement || !xmlElement->Attribute("Text"))
 	{
 		Log.write ("Can't load player name from config file: using default value", LOG_TYPE_WARNING);
 
@@ -842,48 +965,25 @@ void cSettings::initialize()
 		if (user != NULL) setPlayerName (user);
 		else setPlayerName ("Commander");
 	}
+	else
+	{
+		setPlayerName (xmlElement->Attribute ("Text"));
+	}
 
 	// =============================================================================
-	if (!xmlNode || !xmlNode->XmlReadNodeData (temp, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't load player color from config file: using default value", LOG_TYPE_WARNING);
 		setPlayerColor (0);
 	}
-	else playerColor = atoi (temp.c_str());
+	else 
+
+	{
+		playerColor = xmlElement->IntAttribute ("Num");
+	}
 
 	initialized = true;
 	initializing = false;
-}
-
-//------------------------------------------------------------------------------
-TiXmlNode* cSettings::getXmlNode (const std::string& path, TiXmlDocument& configFile)
-{
-	if (!configFile.LoadFile (configPath.c_str()))
-	{
-		if (!createConfigFile()) return NULL;
-	}
-
-	std::vector<std::string> parts;
-	size_t i = 0, j;
-	do
-	{
-		j = path.find ('~', i);
-		if (j == std::string::npos) j = path.length();
-		parts.push_back (path.substr (i, j - i));
-		i = j + 1;
-	}
-	while (j != path.length());
-
-	TiXmlNode* xmlNode = NULL;
-	TiXmlNode* lastNode = &configFile;
-	for (std::vector<std::string>::const_iterator i = parts.begin(); i != parts.end(); ++i)
-	{
-		xmlNode = lastNode->FirstChild ( (*i).c_str());
-		if (xmlNode == NULL) xmlNode = lastNode->LinkEndChild (new TiXmlElement ( (*i).c_str()));
-		lastNode = xmlNode;
-	}
-
-	return xmlNode;
 }
 
 //------------------------------------------------------------------------------
@@ -915,12 +1015,12 @@ void cSettings::saveSetting (const std::string& path, bool value)
 template<typename T>
 void cSettings::saveSetting (const std::string& path, T value, const char* valueName)
 {
-	TiXmlDocument configFile;
+	cMutex::Lock lock (xmlDocMutex);
 
-	TiXmlNode* xmlNode = getXmlNode (path, configFile);
-	if (xmlNode == NULL) return;
+	XMLElement* xmlElement = getOrCreateXmlElement (configFile, path);
+	if (xmlElement == NULL) return;
 
-	xmlNode->ToElement()->SetAttribute (valueName, value);
+	xmlElement->SetAttribute (valueName, value);
 
 	if (!configFile.SaveFile (configPath.c_str()))
 	{

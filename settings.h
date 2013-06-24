@@ -21,9 +21,8 @@
 
 #include <string>
 #include <SDL.h>
-
-class TiXmlNode;
-class TiXmlDocument;
+#include "tinyxml2.h"
+#include "cmutex.h"
 
 /**
  * cSettings class stores all settings for the game and handles reading and writing them
@@ -227,6 +226,9 @@ private:
 	 */
 	bool initializing;
 
+	tinyxml2::XMLDocument configFile;
+	cMutex xmlDocMutex;
+
 	/**
 	 * The static instance of this object.
 	 */
@@ -352,17 +354,7 @@ private:
 	 */
 	bool createConfigFile();
 
-	/**
-	 * Tries to find a node from a path in a xml file.
-	 * If the node does not exist it (and all parent nodes that do not exist as well)
-	 * will be generated.
-	 * If the configuration file does not exist it tries to generate a new one.
-	 * @param path The path to the node to get. Nodes should be devided by '~'.
-	 *             e.g.: "Options~Game~Net~PlayerName"
-	 * @param configFile The XML file to search in.
-	 * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
-	 */
-	TiXmlNode* getXmlNode (const std::string& path, TiXmlDocument& configFile);
+
 
 	/**
 	 * Template function for saving a setting.

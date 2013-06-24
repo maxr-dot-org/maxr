@@ -30,6 +30,8 @@ distribution.
 #   include <cstddef>
 #endif
 
+#include <cctype>
+
 static const char LINE_FEED				= (char)0x0a;			// all line endings are normalized to LF
 static const char LF = LINE_FEED;
 static const char CARRIAGE_RETURN		= (char)0x0d;			// CR gets filtered out
@@ -458,11 +460,34 @@ bool XMLUtil::ToBool( const char* str, bool* value )
         *value = (ival==0) ? false : true;
         return true;
     }
-    if ( StringEqual( str, "true" ) ) {
+
+	char copy[20];
+	strncpy(copy, str, sizeof(copy));
+	copy[sizeof(copy)-1] = '\0';
+	for (char* s = copy; *s; s++)
+		*s = toupper(*s);
+
+    if ( StringEqual( copy, "TRUE" ) ) {
         *value = true;
         return true;
     }
-    else if ( StringEqual( str, "false" ) ) {
+    else if ( StringEqual( copy, "FALSE" ) ) {
+        *value = false;
+        return true;
+    }
+	else if ( StringEqual( copy, "y" ) ) {
+        *value = true;
+        return true;
+    }
+    else if ( StringEqual( copy, "N" ) ) {
+        *value = false;
+        return true;
+    }
+	else if ( StringEqual( copy, "YES" ) ) {
+        *value = true;
+        return true;
+    }
+    else if ( StringEqual( copy, "NO" ) ) {
         *value = false;
         return true;
     }

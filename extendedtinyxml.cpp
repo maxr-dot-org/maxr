@@ -31,7 +31,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#include <vector>
 #include "extendedtinyxml.h"
 #include "defines.h"
 #include "log.h"
@@ -237,5 +237,33 @@ XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* rootElement, ..
 	return xmlElement;
 }
 
+//------------------------------------------------------------------------------
+XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path) //TODO: bei allen aufrufen muss das document loaded sein. Evtl. member document.
+{
+	std::vector<std::string> parts;
+	size_t i = 0, j;
+	do
+	{
+		j = path.find ('~', i);
+		if (j == std::string::npos) j = path.length();
+		parts.push_back (path.substr (i, j - i));
+		i = j + 1;
+	}
+	while (j != path.length());
 
+	XMLElement* xmlElement = NULL;
+	XMLElement* lastElement = xmlDoc.FirstChildElement(parts[0].c_str());
+	if (lastElement == NULL)
+		lastElement = xmlDoc.LinkEndChild (xmlDoc.NewElement(parts[0].c_str()))->ToElement();
+
+	for (unsigned i = 1; i < parts.size(); ++i)
+	{
+		xmlElement = lastElement->FirstChildElement (parts[i].c_str());
+		if (xmlElement == NULL) 
+			xmlElement = lastElement->LinkEndChild (xmlDoc.NewElement (parts[i].c_str()))->ToElement();
+		lastElement = xmlElement;
+	}
+
+	return xmlElement;
+}
 
