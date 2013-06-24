@@ -238,7 +238,7 @@ XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* rootElement, ..
 }
 
 //------------------------------------------------------------------------------
-XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path) //TODO: bei allen aufrufen muss das document loaded sein. Evtl. member document.
+XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 {
 	std::vector<std::string> parts;
 	size_t i = 0, j;

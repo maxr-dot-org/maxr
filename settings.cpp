@@ -1022,7 +1022,7 @@ void cSettings::saveSetting (const std::string& path, T value, const char* value
 
 	xmlElement->SetAttribute (valueName, value);
 
-	if (!configFile.SaveFile (configPath.c_str()))
+	if (configFile.SaveFile (configPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Could not write new config to " + configPath, cLog::eLOG_TYPE_ERROR);
 	}

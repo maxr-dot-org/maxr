@@ -632,63 +632,60 @@ static int LoadEffects (const char* path)
 static int LoadMusic (const char* path)
 {
 	Log.write ("Loading music", LOG_TYPE_INFO);
-	char sztmp[32];
 
 	// Prepare music.xml for reading
-	TiXmlDocument MusicXml;
-	ExTiXmlNode* pXmlNode = NULL;
+	tinyxml2::XMLDocument MusicXml;
 	string sTmpString = path;
 	sTmpString += PATH_DELIMITER "music.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
 		return 0;
 	}
-	if (! (MusicXml.LoadFile (sTmpString.c_str())))
+	if (MusicXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Menus", "main", NULL);
-	if (! (pXmlNode->XmlReadNodeData (MainMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text")))
+	XMLElement* xmlElement;
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "main", NULL);
+	if (!xmlElement || !xmlElement->Attribute("Text"))
 	{
 		Log.write ("Can't find \"main\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Menus", "credits", NULL);
-	if (! (pXmlNode->XmlReadNodeData (CreditsMusicFile, ExTiXmlNode::eXML_ATTRIBUTE, "Text")))
+	MainMusicFile = xmlElement->Attribute ("Text");
+
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Menus", "credits", NULL);
+	if (!xmlElement || !xmlElement->Attribute("Text"))
 	{
 		Log.write ("Can't find \"credits\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
+	CreditsMusicFile = xmlElement->Attribute ("Text");
 
-	pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Game", "bkgcount", NULL);
-	if (!pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num"))
+	xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", "bkgcount", NULL);
+	if (!xmlElement || !xmlElement->Attribute ("Num"))
 	{
 		Log.write ("Can't find \"bkgcount\" in music.xml ", LOG_TYPE_ERROR);
 		return 0;
 	}
-	int const MusicAnz = atoi (sTmpString.c_str());
+	int const MusicAnz = xmlElement->IntAttribute("Num");
 	for (int i = 1; i <= MusicAnz; i++)
 	{
-		sprintf (sztmp, "%d", i);
-		sTmpString = "bkg"; sTmpString += sztmp;
-		pXmlNode = ExTiXmlNode::XmlGetFirstNode (MusicXml, "Music", "Game", sTmpString.c_str(), NULL);
-		if (pXmlNode->XmlReadNodeData (sTmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Text"))
+		std::string name = "bkg" + iToStr(i);
+		XMLElement* xmlElement = XmlGetFirstElement (MusicXml, "Music", "Game", name.c_str(), NULL);
+		if (xmlElement && xmlElement->Attribute("Text"))
 		{
-			sTmpString.insert (0, PATH_DELIMITER);
-			sTmpString.insert (0, path);
+			name = string(path) + PATH_DELIMITER + xmlElement->Attribute ("Text");
 		}
 		else
 		{
-			sTmpString = "Can't find \"bkg\" in music.xml";
-			sprintf (sztmp, "%d", i);
-			sTmpString.insert (16, sztmp);
-			Log.write (sTmpString.c_str(), LOG_TYPE_WARNING);
+			Log.write ("Can't find \"bkg" + iToStr(i) + "\" in music.xml", LOG_TYPE_WARNING);
 			continue;
 		}
-		if (!FileExists (sTmpString.c_str()))
+		if (!FileExists (name.c_str()))
 			continue;
-		MusicFiles.push_back (sTmpString);
+		MusicFiles.push_back (name);
 	}
 	return 1;
 }
