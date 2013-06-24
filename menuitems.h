@@ -830,22 +830,23 @@ public:
 		MENU_SYMBOLS_TRANS_AIR
 	};
 	static void drawNumber (int x, int y, int value, int maximalValue);
-	static void drawSymbols (eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2);
+	static void drawBigSymbols (eUnitDataSymbols symType, int x, int y, int value1, int value2);
+	static void drawSmallSymbols (eUnitDataSymbols symType, int x, int y, int maxX, int value1, int value2);
 
 	static SDL_Rect getBigSymbolPosition (eUnitDataSymbols symType);
 	static SDL_Rect getSmallSymbolPosition (eUnitDataSymbols symType);
 };
 
 /**
- * an item that displays the data-values (attack, range, scan, etc.) of unit with the corresponding symbols for the hud.
+ * an item that displays the data-values (attack, range, scan, etc.)
+ * of unit with the corresponding symbols for the hud.
  *@author alzi
  */
 class cMenuUnitDetails : public cMenuItem
 {
 protected:
 	const cClient* client;
-	cVehicle* vehicle;
-	cBuilding* building;
+	cUnit* unit;
 
 	cPlayer* owner;
 	bool drawLines;
@@ -855,11 +856,12 @@ public:
 	virtual void draw();
 
 	void setOwner (cPlayer* owner_);
-	void setSelection (const cClient &client_, cVehicle* vehicle_, cBuilding* building_);
+	void setSelection (const cClient &client_, cVehicle* vehicle, cBuilding* building);
 };
 
 /**
- * an item that displays the data-values (attack, range, scan, etc.) of a unit with the corresponding symbols.
+ * an item that displays the data-values (attack, range, scan, etc.)
+ * of a unit with the corresponding symbols.
  *@author alzi
  */
 class cMenuUnitDetailsBig : public cMenuItem

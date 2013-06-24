@@ -663,7 +663,7 @@ void cMenuButton::renewButtonSurface()
 			src.y = isClicked ? 0 : 132;
 			break;
 	}
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 	if (buttonType >= BUTTON_TYPE_HUD_HELP && buttonType <= BUTTON_TYPE_HUD_STOP) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
@@ -1009,7 +1009,7 @@ void cMenuCheckButton::renewButtonSurface()
 	}
 	if (src.w > 0)
 	{
-		surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+		surface = SDL_CreateRGBSurface (Video.getSurfaceType(), src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
 		if (buttonType >= CHECKBOX_HUD_INDEX_00 && buttonType <= CHECKBOX_HUD_PLAYERS) SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, surface, NULL);
 		else SDL_BlitSurface (GraphicsData.gfx_menu_stuff, &src, surface, NULL);
 	}
@@ -1060,7 +1060,7 @@ void cMenuCheckButton::draw()
 		case CHECKBOX_TYPE_STANDARD:
 		case RADIOBTN_TYPE_BTN_ROUND:
 			SDL_BlitSurface (surface, NULL, buffer, &position);
-			font->showText (textDestx , textDesty, text, fontType);
+			font->showText (textDestx, textDesty, text, fontType);
 			break;
 		case CHECKBOX_TYPE_TANK:
 		case CHECKBOX_TYPE_PLANE:
@@ -1630,32 +1630,64 @@ void cMenuUnitsList::setDisplayType (eMenuUnitListDisplayTypes displayType_)
 	displayType = displayType_;
 }
 
-void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y, int maxX, bool big, int value1, int value2)
+void cUnitDataSymbolHandler::drawBigSymbols (eUnitDataSymbols symType, int x, int y, int value1, int value2)
 {
-	SDL_Rect src;
+	int maxX = 160;
+	SDL_Rect src = getBigSymbolPosition (symType);
+	maxX -= src.w;
 
-	int toValue;
-
-	if (big)
+	if (value2 != value1) maxX -= src.w + 3;
+	else if (value2 < value1) std::swap (value1, value2);
+	int offX = src.w;
+	while (offX * value2 > maxX)
 	{
-		src = getBigSymbolPosition (symType);
-		maxX -= src.w;
-
-		if (value2 < value1) maxX -= src.w + 3;
-		toValue = value1;
-	}
-	else
-	{
-		src = getSmallSymbolPosition (symType);
-		toValue = value2;
-
-		if (symType == MENU_SYMBOLS_HITS)
+		--offX;
+		if (offX < 4)
 		{
-			if (value1 <= value2 / 4) src.x += src.w * 4;
-			else if (value1 <= value2 / 2) src.x += src.w * 2;
+			value1 /= 2;
+			value2 /= 2;
+			offX = src.w;
 		}
 	}
+	SDL_Rect dest = {Sint16 (x), Sint16 (y), 0, 0};
 
+	for (int i = 0; i != value1; ++i)
+	{
+		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
+
+		dest.x += offX;
+	}
+	if (value1 == value2) return;
+
+	dest.x += src.w + 3;
+	SDL_Rect mark = { Sint16 (dest.x - src.w / 2), dest.y, 1, src.h };
+
+	SDL_FillRect (buffer, &mark, 0xFC0000);
+
+	SDL_Surface* surface = GraphicsData.gfx_hud_stuff;
+#if 0 // TODO: get "black cost" symbol.
+	if (symType == MENU_SYMBOLS_METAL)
+	{
+	}
+#endif
+	for (int i = value1; i != value2; ++i)
+	{
+		SDL_BlitSurface (surface, &src, buffer, &dest);
+
+		dest.x += offX;
+	}
+}
+
+void cUnitDataSymbolHandler::drawSmallSymbols (eUnitDataSymbols symType, int x, int y, int maxX, int value1, int value2)
+{
+	SDL_Rect src = getSmallSymbolPosition (symType);
+	int toValue = value2;
+
+	if (symType == MENU_SYMBOLS_HITS)
+	{
+		if (value1 <= value2 / 4) src.x += src.w * 4;      // red
+		else if (value1 <= value2 / 2) src.x += src.w * 2; // orange
+	}
 	int offX = src.w;
 	int step = 1;
 
@@ -1666,7 +1698,6 @@ void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y
 		if (offX < 4)
 		{
 			toValue /= 2;
-			if (big) value2 /= 2;
 			step *= 2;
 			offX = src.w;
 		}
@@ -1677,18 +1708,7 @@ void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y
 	int oriSrcX = src.x;
 	for (int i = 0; i < toValue; i++)
 	{
-		if (big && i == value2)
-		{
-			SDL_Rect mark;
-			dest.x += src.w + 3;
-			mark.x = dest.x - src.w / 2;
-			mark.y = dest.y;
-			mark.w = 1;
-			mark.h = src.h;
-			SDL_FillRect (buffer, &mark, 0xFC0000);
-		}
-
-		if (!big && value1 <= 0) src.x = oriSrcX + src.w;
+		if (value1 <= 0) src.x = oriSrcX + src.w;
 
 		SDL_BlitSurface (GraphicsData.gfx_hud_stuff, &src, buffer, &dest);
 
@@ -1699,9 +1719,12 @@ void cUnitDataSymbolHandler::drawSymbols (eUnitDataSymbols symType, int x, int y
 
 void cUnitDataSymbolHandler::drawNumber (int x, int y, int value, int maximalValue)
 {
-	if (value > maximalValue / 2)	font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_GREEN, buffer);
-	else if (value > maximalValue / 4) font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_YELLOW, buffer);
-	else font->showTextCentered (x, y, iToStr (value) + "/" + iToStr (maximalValue), FONT_LATIN_SMALL_RED, buffer);
+	eUnicodeFontType efont;
+	if (value > maximalValue / 2) efont = FONT_LATIN_SMALL_GREEN;
+	else if (value > maximalValue / 4) efont = FONT_LATIN_SMALL_YELLOW;
+	else efont = FONT_LATIN_SMALL_RED;
+	const std::string text = iToStr (value) + "/" + iToStr (maximalValue);
+	font->showTextCentered (x, y, text, efont, buffer);
 }
 
 SDL_Rect cUnitDataSymbolHandler::getBigSymbolPosition (eUnitDataSymbols symType)
@@ -1854,13 +1877,12 @@ SDL_Rect cUnitDataSymbolHandler::getSmallSymbolPosition (eUnitDataSymbols symTyp
 cMenuUnitDetails::cMenuUnitDetails (int x, int y, bool drawLines_, cPlayer* owner_) :
 	cMenuItem (x, y),
 	client (NULL),
+	unit (NULL),
 	owner (owner_),
 	drawLines (drawLines_)
 {
 	position.w = 155;
 	position.h = 25;
-	vehicle = NULL;
-	building = NULL;
 }
 
 void cMenuUnitDetails::draw()
@@ -1868,56 +1890,46 @@ void cMenuUnitDetails::draw()
 	if (drawLines)
 	{
 		SDL_Rect lineRect = { Sint16 (position.x + 2), Sint16 (position.y + 14), 153, 1 };
-		SDL_FillRect (buffer , &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0x743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer , &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0x743904);
 		lineRect.y += 12;
-		SDL_FillRect (buffer , &lineRect, 0x743904);
+		SDL_FillRect (buffer, &lineRect, 0x743904);
 	}
-
-	sUnitData* data;
-	cPlayer* unitOwner;
-	if (vehicle)
-	{
-		data = &vehicle->data;
-		unitOwner = vehicle->owner;
-	}
-	else if (building)
-	{
-		data = &building->data;
-		unitOwner = building->owner;
-	}
-	else return;
+	if (unit == NULL) return;
+	const sUnitData* data = &unit->data;
+	const cPlayer* unitOwner = unit->owner;
+	const cBuilding* building = unit->isBuilding() ? static_cast<cBuilding*> (unit): NULL;
 
 	// Die Hitpoints anzeigen:
 	cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 6, data->hitpointsCur, data->hitpointsMax);
 	font->showText (position.x + 47, position.y + 6, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE, buffer);
-	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, false, data->hitpointsCur, data->hitpointsMax);
+	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 80, position.y + 3, 70, data->hitpointsCur, data->hitpointsMax);
 
 	// Den Speed anzeigen:
 	if (data->speedMax > 0)
 	{
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, data->speedCur / 4, data->speedMax / 4);
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Speed"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, false, data->speedCur / 4, data->speedMax / 4);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, position.x + 80, position.y + 28, 70, data->speedCur / 4, data->speedMax / 4);
 	}
 
 	// additional values
 	if (data->canScore)
 	{
 		int score = building->points;
-		int tot = building->owner->getScore (client->getTurn());
+		int tot = unit->owner->getScore (client->getTurn());
 		int turnLim, scoreLim;
 		client->getVictoryConditions (&turnLim, &scoreLim);
 		int lim = scoreLim ? scoreLim : tot;
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, score, score);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Score"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, score, score);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, score, score);
 
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, tot, lim);
 		font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, false, tot, lim);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 28, 70, tot, lim);
 	}
 	else if ( (data->storeResType != sUnitData::STORE_RES_NONE || data->storageUnitsMax > 0) && unitOwner == owner)
 	{
@@ -1934,19 +1946,19 @@ void cMenuUnitDetails::draw()
 				switch (data->storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Metal, building->SubBase->MaxMetal);
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, false, building->SubBase->Metal, building->SubBase->MaxMetal);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 27, 70, building->SubBase->Metal, building->SubBase->MaxMetal);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Oil, building->SubBase->MaxOil);
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, false, building->SubBase->Oil, building->SubBase->MaxOil);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 27, 70, building->SubBase->Oil, building->SubBase->MaxOil);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 16, 70, data->storageResCur, data->storageResMax);
 						cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->Gold, building->SubBase->MaxGold);
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80,  position.y + 28, 70, false, building->SubBase->Gold, building->SubBase->MaxGold);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80,  position.y + 28, 70, building->SubBase->Gold, building->SubBase->MaxGold);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1958,13 +1970,13 @@ void cMenuUnitDetails::draw()
 				switch (data->storeResType)
 				{
 					case sUnitData::STORE_RES_METAL:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_OIL:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_GOLD:
-						cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, false, data->storageResCur, data->storageResMax);
+						cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, position.x + 80, position.y + 15, 70, data->storageResCur, data->storageResMax);
 						break;
 					case sUnitData::STORE_RES_NONE:
 						break;
@@ -1979,13 +1991,13 @@ void cMenuUnitDetails::draw()
 			{
 				case sUnitData::STORE_UNIT_IMG_TANK:
 				case sUnitData::STORE_UNIT_IMG_SHIP:
-					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_TANK, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_PLANE:
-					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_TRANS_AIR, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_HUMAN:
-					cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, false, data->storageUnitsCur, data->storageUnitsMax);
+					cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 15, 70, data->storageUnitsCur, data->storageUnitsMax);
 					break;
 				case sUnitData::STORE_UNIT_IMG_NONE:
 					break;
@@ -1999,32 +2011,32 @@ void cMenuUnitDetails::draw()
 			// Munition:
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->ammoCur, data->ammoMax);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE, buffer);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, false, data->ammoCur, data->ammoMax);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 80, position.y + 16, 70, data->ammoCur, data->ammoMax);
 		}
 
 		// shots
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 41, data->shotsCur, data->shotsMax);
 		font->showText (position.x + 47, position.y + 41, lngPack.i18n ("Text~Hud~Shots"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, false, data->shotsCur, data->shotsMax);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, position.x + 80, position.y + 41, 70, data->shotsCur, data->shotsMax);
 	}
 	else if (data->produceEnergy && building)
 	{
 		// EnergieProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Energy"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, false, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80, position.y + 16, 70, (building->IsWorking ? data->produceEnergy : 0), data->produceEnergy);
 
 		if (unitOwner == owner)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, false, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 28, 70, building->SubBase->EnergyProd, building->SubBase->MaxEnergyProd);
 
 			// Verbrauch:
 			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, false, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, position.x + 80,  position.y + 41, 70, building->SubBase->EnergyNeed, building->SubBase->MaxEnergyNeed);
 		}
 	}
 	else if (data->produceHumans && building)
@@ -2032,19 +2044,19 @@ void cMenuUnitDetails::draw()
 		// HumanProduktion:
 		cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->produceHumans, data->produceHumans);
 		font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Teams"), FONT_LATIN_SMALL_WHITE, buffer);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->produceHumans, data->produceHumans);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->produceHumans, data->produceHumans);
 
 		if (unitOwner == owner)
 		{
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanProd, building->SubBase->HumanProd);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanProd, building->SubBase->HumanProd);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanProd, building->SubBase->HumanProd);
 
 			// Verbrauch:
 			font->showText (position.x + 47,  position.y + 41, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23,  position.y + 41, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 39, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
 	else if (data->needsHumans && building)
@@ -2054,13 +2066,13 @@ void cMenuUnitDetails::draw()
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, data->needsHumans, data->needsHumans);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, data->needsHumans, data->needsHumans);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, data->needsHumans, data->needsHumans);
 		}
 		else
 		{
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 18, 0, data->needsHumans);
 			font->showText (position.x + 47, position.y + 18, lngPack.i18n ("Text~Hud~Usage"), FONT_LATIN_SMALL_WHITE, buffer);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, false, 0, data->needsHumans);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80, position.y + 16, 70, 0, data->needsHumans);
 		}
 
 		if (unitOwner == owner)
@@ -2068,7 +2080,7 @@ void cMenuUnitDetails::draw()
 			// Gesammt:
 			font->showText (position.x + 47, position.y + 30, lngPack.i18n ("Text~Hud~Total"), FONT_LATIN_SMALL_WHITE, buffer);
 			cUnitDataSymbolHandler::drawNumber (position.x + 23, position.y + 30, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, false, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
+			cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, position.x + 80,  position.y + 28, 70, building->SubBase->HumanNeed, building->SubBase->MaxHumanNeed);
 		}
 	}
 }
@@ -2078,11 +2090,11 @@ void cMenuUnitDetails::setOwner (cPlayer* owner_)
 	owner = owner_;
 }
 
-void cMenuUnitDetails::setSelection (const cClient& client_, cVehicle* vehicle_, cBuilding* building_)
+void cMenuUnitDetails::setSelection (const cClient& client_, cVehicle* vehicle, cBuilding* building)
 {
 	client = &client_;
-	vehicle = vehicle_;
-	building = building_;
+	if (vehicle == NULL) unit = vehicle;
+	else unit = building;
 }
 
 cMenuUnitDetailsBig::cMenuUnitDetailsBig (int x, int y) : cMenuItem (x, y)
@@ -2095,21 +2107,18 @@ cMenuUnitDetailsBig::cMenuUnitDetailsBig (int x, int y) : cMenuItem (x, y)
 void cMenuUnitDetailsBig::draw()
 {
 	if (!selectedUnit) return;
-	sUnitData* data = selectedUnit->getUnitData();
-	if (data == 0)
-		data = selectedUnit->getOwner()->getUnitDataCurrentVersion (selectedUnit->getUnitID());
-	sUnitData* oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion (selectedUnit->getOwner());
-
-#define DETAIL_COLUMN_1 dest.x+27
-#define DETAIL_COLUMN_2 dest.x+42
-#define DETAIL_COLUMN_3 dest.x+95
-#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect ( buffer, &dest, 0xFC0000 ); y += 19;
-
+	const sUnitData* data = selectedUnit->getUnitData();
+	const sUnitData* currentVersionData = selectedUnit->getOwner()->getUnitDataCurrentVersion (selectedUnit->getUnitID());
+	if (data == NULL)
+		data = currentVersionData;
+	const sUnitData* oriData = selectedUnit->getUnitID().getUnitDataOriginalVersion (selectedUnit->getOwner());
 	SDL_Rect dest = { position.x, position.y, position.w, 1 };
-	int y;
-	y = dest.y;
-
-	sUnitUpgrade* upgrade = NULL;
+	int y = dest.y;
+	const sUnitUpgrade* upgrade = NULL;
+	const int DETAIL_COLUMN_1 = dest.x + 27;
+	const int DETAIL_COLUMN_2 = dest.x + 42;
+	const int DETAIL_COLUMN_3 = dest.x + 95;
+#define DETAIL_DOLINEBREAK dest.y = y + 14; SDL_FillRect ( buffer, &dest, 0xFC0000 ); y += 19;
 
 	if (data->canAttack)
 	{
@@ -2117,7 +2126,7 @@ void cMenuUnitDetailsBig::draw()
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_DAMAGE);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->damage));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Damage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3 , y - 3, 160, true, upgrade ? upgrade->curValue : data->damage, oriData->damage);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ATTACK, DETAIL_COLUMN_3, y - 3, upgrade ? upgrade->curValue : data->damage, oriData->damage);
 		DETAIL_DOLINEBREAK
 
 		if (!data->explodesOnContact)
@@ -2126,21 +2135,21 @@ void cMenuUnitDetailsBig::draw()
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SHOTS);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->shotsMax));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Shoots"));
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, 160, true, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SHOTS, DETAIL_COLUMN_3, y + 2, upgrade ? upgrade->curValue : data->shotsMax, oriData->shotsMax);
 			DETAIL_DOLINEBREAK
 
 			// Range:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_RANGE);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->range));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Range"));
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->range, oriData->range);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_RANGE, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->range, oriData->range);
 			DETAIL_DOLINEBREAK
 
 			// Ammo:
 			upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_AMMO);
 			font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->ammoMax));
 			font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Ammo"));
-			cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax);
+			cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->ammoMax, oriData->ammoMax);
 			DETAIL_DOLINEBREAK
 		}
 	}
@@ -2157,13 +2166,13 @@ void cMenuUnitDetailsBig::draw()
 		switch (transport)
 		{
 			case sUnitData::STORE_RES_METAL:
-				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
+				cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_OIL:
-				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
+				cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_GOLD:
-				cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3 , y - 2, 160, true, data->storageResMax, oriData->storageResMax);
+				cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, data->storageResMax, oriData->storageResMax);
 				break;
 			case sUnitData::STORE_RES_NONE:
 				break;
@@ -2177,13 +2186,13 @@ void cMenuUnitDetailsBig::draw()
 		// Eneryproduction:
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->produceEnergy));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->produceEnergy, oriData->produceEnergy);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, data->produceEnergy, oriData->produceEnergy);
 		DETAIL_DOLINEBREAK
 
 		// Oil consumption:
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsOil));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsOil, oriData->needsOil);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_OIL, DETAIL_COLUMN_3, y - 2, data->needsOil, oriData->needsOil);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2192,7 +2201,7 @@ void cMenuUnitDetailsBig::draw()
 		// Humanproduction:
 		font->showText (DETAIL_COLUMN_1, y, iToStr (data->produceHumans));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Produce"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->produceHumans, oriData->produceHumans);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, data->produceHumans, oriData->produceHumans);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2200,14 +2209,14 @@ void cMenuUnitDetailsBig::draw()
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_ARMOR);
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->armor));
 	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Armor"));
-	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, 160, true, upgrade ? upgrade->curValue : data->armor, oriData->armor);
+	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ARMOR, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->armor, oriData->armor);
 	DETAIL_DOLINEBREAK
 
 	// Hitpoints:
 	upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_HITS);
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->hitpointsMax));
 	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Hitpoints"));
-	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3 , y - 1, 160, true, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax);
+	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, DETAIL_COLUMN_3, y - 1, upgrade ? upgrade->curValue : data->hitpointsMax, oriData->hitpointsMax);
 	DETAIL_DOLINEBREAK
 
 	// Scan:
@@ -2216,7 +2225,7 @@ void cMenuUnitDetailsBig::draw()
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SCAN);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (upgrade ? upgrade->curValue : data->scan));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Scan"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3 , y - 2, 160, true, upgrade ? upgrade->curValue : data->scan, oriData->scan);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SCAN, DETAIL_COLUMN_3, y - 2, upgrade ? upgrade->curValue : data->scan, oriData->scan);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2226,7 +2235,7 @@ void cMenuUnitDetailsBig::draw()
 		upgrade = selectedUnit->getUpgrade (sUnitUpgrade::UPGRADE_TYPE_SPEED);
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr ( (upgrade ? upgrade->curValue : data->speedMax) / 4));    //FIXME: might crash if e.g. speedMax = 3
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Speed"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3 , y - 2, 160, true, (upgrade ? upgrade->curValue : data->speedMax) / 4, oriData->speedMax / 4);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_SPEED, DETAIL_COLUMN_3, y - 2, (upgrade ? upgrade->curValue : data->speedMax) / 4, oriData->speedMax / 4);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2235,7 +2244,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsEnergy));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, 160, true, data->needsEnergy, oriData->needsEnergy);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_ENERGY, DETAIL_COLUMN_3, y - 2, data->needsEnergy, oriData->needsEnergy);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2244,7 +2253,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsHumans));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, 160, true, data->needsHumans, oriData->needsHumans);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HUMAN, DETAIL_COLUMN_3, y - 2, data->needsHumans, oriData->needsHumans);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2253,7 +2262,7 @@ void cMenuUnitDetailsBig::draw()
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->needsMetal));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, 160, true, data->needsMetal, oriData->needsMetal);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, data->needsMetal, oriData->needsMetal);
 		DETAIL_DOLINEBREAK
 	}
 
@@ -2262,14 +2271,16 @@ void cMenuUnitDetailsBig::draw()
 	{
 		font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->convertsGold));
 		font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Usage"));
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, 160, true, data->convertsGold, oriData->convertsGold);
+		cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_GOLD, DETAIL_COLUMN_3, y - 2, data->convertsGold, oriData->convertsGold);
 		DETAIL_DOLINEBREAK
 	}
 
 	// Costs:
+	// Do not use unit data but currentVersion data
+	// since cost doesn't change unit version
 	font->showTextCentered (DETAIL_COLUMN_1, y, iToStr (data->buildCosts));
 	font->showText (DETAIL_COLUMN_2, y, lngPack.i18n ("Text~Vehicles~Costs"));
-	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3 , y - 2, 160, true, data->buildCosts, oriData->buildCosts);
+	cUnitDataSymbolHandler::drawBigSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_METAL, DETAIL_COLUMN_3, y - 2, currentVersionData->buildCosts, oriData->buildCosts);
 }
 
 void cMenuUnitDetailsBig::setSelection (cMenuUnitListItem* selectedUnit_)
@@ -2329,7 +2340,7 @@ void cMenuMaterialBar::setType (eMaterialBarTypes materialType_)
 void cMenuMaterialBar::generateSurface()
 {
 	SDL_Rect src = { 114, 336, position.w, position.h };
-	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h , Video.getColDepth(), 0, 0, 0, 0);
+	surface = SDL_CreateRGBSurface (Video.getSurfaceType() | SDL_SRCCOLORKEY, src.w, src.h, Video.getColDepth(), 0, 0, 0, 0);
 	SDL_SetColorKey (surface, SDL_SRCCOLORKEY, 0xFF00FF);
 	SDL_FillRect (surface, NULL, 0xFF00FF);
 
@@ -2425,7 +2436,7 @@ cMenuUpgradeHandler::cMenuUpgradeHandler (int x, int y, cUpgradeHangarMenu* pare
 {
 	for (int i = 0; i < 8; i++)
 	{
-		decreaseButtons[i] = new cMenuButton (position.x , position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
+		decreaseButtons[i] = new cMenuButton (position.x, position.y + 19 * i, "", cMenuButton::BUTTON_TYPE_ARROW_LEFT_SMALL, FONT_LATIN_NORMAL, SoundData.SNDObjectMenu);
 		decreaseButtons[i]->setLocked (true);
 		decreaseButtons[i]->setReleasedFunction (&buttonReleased);
 		addItem (decreaseButtons[i]);
@@ -3412,13 +3423,13 @@ void cMenuStoredUnitDetails::draw()
 
 	cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12, unitData->hitpointsCur, unitData->hitpointsMax);
 	font->showText (position.x + 30, position.y + 12, lngPack.i18n ("Text~Hud~Hitpoints"), FONT_LATIN_SMALL_WHITE);
-	cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, false, unitData->hitpointsCur, unitData->hitpointsMax);
+	cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_HITS, position.x + 63, position.y + 12, 58, unitData->hitpointsCur, unitData->hitpointsMax);
 
 	if (unitData->canAttack)
 	{
 		cUnitDataSymbolHandler::drawNumber (position.x + 16, position.y + 12 + 15, unitData->ammoCur, unitData->ammoMax);
 		font->showText (position.x + 30, position.y + 27, lngPack.i18n ("Text~Hud~AmmoShort"), FONT_LATIN_SMALL_WHITE);
-		cUnitDataSymbolHandler::drawSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, false, unitData->ammoCur, unitData->ammoMax);
+		cUnitDataSymbolHandler::drawSmallSymbols (cUnitDataSymbolHandler::MENU_SYMBOLS_AMMO, position.x + 63, position.y + 27, 58, unitData->ammoCur, unitData->ammoMax);
 	}
 }
 
@@ -3634,7 +3645,7 @@ void cMenuReportsScreen::drawUnitsScreen()
 
 		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x += 30;
-		SDL_FillRect (buffer, &selDest , 0xE0E0E0);
+		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.y += 38;
 		SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 		selDest.x -= 30;
@@ -3967,7 +3978,7 @@ void cMenuReportsScreen::drawReportsScreen()
 
 			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 			selDest.x += 450;
-			SDL_FillRect (buffer, &selDest , 0xE0E0E0);
+			SDL_FillRect (buffer, &selDest, 0xE0E0E0);
 			selDest.x -= 450;
 			selDest.w = 450;
 			selDest.h = 1;
