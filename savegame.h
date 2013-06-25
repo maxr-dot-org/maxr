@@ -19,7 +19,6 @@
 #ifndef savegameH
 #define savegameH
 #include "defines.h"
-#include "tinyxml.h"
 #include "tinyxml2.h"
 #include <vector>
 

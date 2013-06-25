@@ -52,7 +52,6 @@
 #include "savegame.h"
 #include "settings.h"
 #include "sound.h"
-#include "tinyxml.h"
 #include "unifonts.h"
 #include "vehicles.h"
 #include "video.h"

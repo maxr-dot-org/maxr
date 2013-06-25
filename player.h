@@ -21,6 +21,7 @@
 
 #include <SDL.h>
 #include <vector>
+#include <assert.h>
 #include "defines.h"
 #include "base.h"
 #include "main.h" // for sID

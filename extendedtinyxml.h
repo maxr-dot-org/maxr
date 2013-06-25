@@ -16,85 +16,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-////////////////////////////////////////////////////////////////////////////////
-//
-//  File:   extendedtinyxml.h
-//  Date:   07-10-01
-//  Author: JCK
-//
-////////////////////////////////////////////////////////////////////////////////
-//  Description:
-//  Improves the TinyXML family by adding ExTiXmlNode. This class is a bid more
-//  user-friendly.
-//
-//	Example for usage is added at the end of this file.
-//
-////////////////////////////////////////////////////////////////////////////////
 
 #ifndef EXTENDEDTINYXML_H
 #define EXTENDEDTINYXML_H
 
-#include "tinyxml.h"
 #include "tinyxml2.h"
 #include <stdarg.h>
 #include <string>
 
 
+tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* first, ...);
 
-class ExTiXmlNode : public TiXmlNode
-{
-	friend class TiXmlDocument;
-	friend class TiXmlBase;
-	friend class TiXmlNode;
-	friend class TiXmlParsingData;
-	friend class TiXmlElement;
-
-protected:
-	ExTiXmlNode();
-
-public:
-	enum XML_NODE_TYPE
-	{
-		eXML_DOCUMENT,
-		eXML_ELEMENT,
-		eXML_COMMENT,
-		eXML_UNKNOWN,
-		eXML_TEXT,
-		eXML_DECLARATION,
-		eXML_TYPECOUNT,
-		eXML_ATTRIBUTE
-	};
-
-	/// Get the first Node with a matching path
-	static ExTiXmlNode* XmlGetFirstNode (TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ...);
-
-	/// Navigate to a child node.
-	ExTiXmlNode* XmlGetFirstNodeChild();
-	/// Navigate to a sibling node.
-	ExTiXmlNode* XmlGetNextNodeSibling();
-
-	/// Retrieve data from a node
-	ExTiXmlNode* XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType, const char* pszAttributeName);
-	int XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode);
-
-	bool XmlDataToBool (std::string& rstrData);
-	inline long XmlDataToLong (std::string& rstrData) const { return atol (rstrData.c_str()); }
-	inline double XmlDataToDouble (std::string& rstrData) const { return atof (rstrData.c_str()); }
-	int CheckTimeStamp (std::string& rstrData);
-};
-
-
-tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* fist, ...);
-
-	/**
-	 * Tries to find a element from a path in a xml file.
-	 * If the element does not exist, it will be generated (and all parent nodes that do not exist as well).
-	 * If the configuration file does not exist it tries to generate a new one.
-	 * @param path The path to the node to get. Nodes should be devided by '~'.
-	 *             e.g.: "Options~Game~Net~PlayerName"
-	 * @param configFile The XML file to search in.
-	 * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
-	 */
+/**
+ * Tries to find a element from a path in a xml file.
+ * If the element does not exist, it will be generated (and all parent nodes that do not exist as well).
+ * If the configuration file does not exist it tries to generate a new one.
+ * @param path The path to the node to get. Nodes should be devided by '~'.
+ *             e.g.: "Options~Game~Net~PlayerName"
+ * @param configFile The XML file to search in.
+ * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
+ */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);
 
 int         getXMLAttributeInt    (tinyxml2::XMLDocument& document, const char* first, ...);
@@ -102,117 +43,5 @@ float       getXMLAttributeFloat  (tinyxml2::XMLDocument& document, const char* 
 std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...);
 bool        getXMLAttributeBool   (tinyxml2::XMLDocument& document, const char* first, ...);
 
-
-//};
-/*
-int _tmain(int argc, _TCHAR* argv[])
-{
-	int iRet;
-	std::string strResult;
-	std::string strConcat;
-
-	// Use a standard TinyXML Document. Do not use a Pointer!
-	TiXmlDocument XmlDoc;
-
-	// You have to use a pointer!
-	ExTiXmlNode * pXmlNode;
-
-	// Load a XML file using the standard TinyXML DocClass
-	if( !XmlDoc.LoadFile( "Language GER.xml", TIXML_DEFAULT_ENCODING ))
-	{
-		return 0;
-	}
-
-	// Initialize the pointer
-	pXmlNode = NULL;
-
-	// Get the first node with a matching path.
-	// NULL is the ending sign. Do not foget it!
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", NULL );
-	//pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", NULL );
-	if( pXmlNode != NULL )
-	{
-		// Get the data of the attribute "name"
-		if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "name" ) == NULL )
-		{
-			; // Attribute not found
-		}else
-		{
-			printf("%s\n", strResult.c_str());
-		}
-	}
-
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
-	while( pXmlNode != NULL )
-	{
-		// Get the TEXT data within the node
-		pXmlNode = pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_TEXT );
-		strConcat += strResult;
-		if( pXmlNode == NULL )
-		{
-			printf("%s\n",strConcat.c_str()); // No more text is found _OR_ the found text was the last within this level
-		}
-	}
-
-	strConcat = "";
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
-	while( pXmlNode != NULL )
-	{
-		// Get the COMMENT data within the node
-		pXmlNode = pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_COMMENT );
-		strConcat += strResult;
-		if( pXmlNode == NULL )
-		{
-			printf("%s\n",strConcat.c_str()); // No more comments are found _OR_ the found comment was the last within this level
-		}
-	}
-
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header","Author", "Editor", NULL );
-	if( pXmlNode != NULL )
-	{
-		// Get the data of the attribute "name"
-		do
-		{
-			if( pXmlNode->XmlReadNodeData( strResult, ExTiXmlNode::eXML_ATTRIBUTE, "name" ) == NULL )
-			{
-				printf("%s\n",strResult.c_str()); // Attribute not found
-			}else if( strResult != "Someone" )
-			{
-				printf("%s\n",strResult.c_str()); // Not the right value is found
-			}else
-			{
-				printf("Someone was found!\n"); // Node with the correct path and attribute is found
-			}
-			pXmlNode = pXmlNode->XmlGetNextNodeSibling();
-		}while( pXmlNode != NULL );
-	}
-
-	pXmlNode = pXmlNode->XmlGetFirstNode( XmlDoc, "MAX_Language_File", "Header", NULL );
-	while( pXmlNode != NULL )
-	{
-		pXmlNode = pXmlNode->XmlGetNextNodeSibling();
-		if( pXmlNode != NULL )
-		{
-			// Now let's use an inherited function
-			iRet = pXmlNode->Type();
-			switch( iRet )
-			{
-				case ExTiXmlNode::eXML_DOCUMENT:	printf("eXML_DOCUMENT\n") ;break;
-				case ExTiXmlNode::eXML_ELEMENT:		printf("eXML_ELEMENT\n");break;
-				case ExTiXmlNode::eXML_COMMENT:		printf("eXML_COMMENT\n");break;
-				case ExTiXmlNode::eXML_UNKNOWN:		printf("eXML_UNKNOWN\n");break;
-				case ExTiXmlNode::eXML_TEXT:		printf("eXML_TEXT\n");break;
-				case ExTiXmlNode::eXML_DECLARATION: printf("eXML_DECLARATION\n");break;
-				case ExTiXmlNode::eXML_TYPECOUNT:	printf("eXML_TYPECOUNT\n");break;
-				case ExTiXmlNode::eXML_ATTRIBUTE:	printf("eXML_ATTRIBUTE\n");break;
-				default:
-					printf("default");break;
-			}
-		}
-	}
-
-	return 0;
-}
-*/
 
 #endif

@@ -21,7 +21,6 @@
 
 #include "casualtiestracker.h"
 #include "netmessage.h"
-#include "tinyxml.h"
 #include "tinyxml2.h"
 
 using namespace std;

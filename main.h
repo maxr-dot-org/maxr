@@ -38,7 +38,6 @@
 #include <time.h>
 #include <SDL.h>
 #include "autosurface.h"
-#include "tinyxml.h"
 #include "defines.h"
 #include "language.h"
 

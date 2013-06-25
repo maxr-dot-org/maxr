@@ -24,6 +24,7 @@
 #include "vehicles.h"
 
 #include <algorithm>
+#include <assert.h>
 
 cJob::cJob (cVehicle& vehicle_) :
 	finished (false),

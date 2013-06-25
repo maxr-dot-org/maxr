@@ -16,193 +16,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-////////////////////////////////////////////////////////////////////////////////
-//
-//  File:   ExtendedTinyXml.cpp
-//  Date:   07-10-01
-//  Author: JCK
-//
-////////////////////////////////////////////////////////////////////////////////
-//  Description:
-//  Improves the TinyXML family by adding ExTiXmlNode. This class is a bid more
-//  user-friendly.
-//
-//	Example for usage is added in "ExtendedTinyXml.h"
-//
-////////////////////////////////////////////////////////////////////////////////
 
 #include <vector>
-#include "extendedtinyxml.h"
-#include "defines.h"
 #include "log.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
 using namespace std;
-
-#if 0
-void debugToLog (const std::string& szMsg);
-void debugToLog (void* pointer , const char* pname);
-#endif
-
-ExTiXmlNode* ExTiXmlNode::XmlGetFirstNode (TiXmlDocument& rTiXmlDoc, const char* pszCurrent, ...)
-{
-	va_list pvaArg;
-	va_start (pvaArg, pszCurrent);
-
-	TiXmlNode* pXmlNode;
-
-	if (rTiXmlDoc.Value() == NULL)
-	{
-		va_end (pvaArg);
-		return NULL;
-	}
-
-	pXmlNode = rTiXmlDoc.RootElement();
-	if (pXmlNode == NULL)
-	{
-		va_end (pvaArg);
-		return NULL;
-	}
-
-	if (strcmp (pXmlNode->Value(), pszCurrent) != 0)
-	{
-		va_end (pvaArg);
-		return NULL;
-	}
-
-	do
-	{
-		pszCurrent = va_arg (pvaArg, char*);
-		if (pszCurrent != NULL)
-		{
-			pXmlNode = pXmlNode->FirstChild (pszCurrent);
-			if (pXmlNode == NULL)
-			{
-				va_end (pvaArg);
-				return NULL;
-			}
-		}
-	}
-	while (pszCurrent != NULL);
-
-	return (ExTiXmlNode*) pXmlNode;
-}
-
-ExTiXmlNode* ExTiXmlNode::XmlGetFirstNodeChild()
-{
-	TiXmlNode* pXmlNode;
-	if (this == NULL)
-	{
-		return NULL;
-	}
-	pXmlNode = this;
-
-	pXmlNode = pXmlNode->FirstChild();
-
-	return (ExTiXmlNode*) pXmlNode;
-}
-
-ExTiXmlNode* ExTiXmlNode::XmlGetNextNodeSibling()
-{
-	TiXmlNode* pXmlNode;
-	if (this == NULL)
-	{
-		return NULL;
-	}
-	pXmlNode = this;
-
-	pXmlNode = pXmlNode->NextSibling();
-
-	return (ExTiXmlNode*) pXmlNode;
-}
-
-
-ExTiXmlNode* ExTiXmlNode::XmlReadNodeData (std::string& rstrData, XML_NODE_TYPE eType,  const char* pszAttributeName)
-{
-	TiXmlNode* pXmlNode = (TiXmlNode*) this;
-	TiXmlElement* pXmlElement;
-	const char* pszTemp;
-
-	rstrData = "";
-
-	if (this == NULL)
-	{
-		return NULL;
-	}
-	switch (eType)
-	{
-		case ExTiXmlNode::eXML_ATTRIBUTE :
-			if (pXmlNode->Type() != TiXmlNode::TINYXML_ELEMENT) return NULL;
-			pXmlElement = pXmlNode->ToElement();// FirstChildElement();
-			if (pXmlElement == NULL)
-			{
-				return NULL;
-			}
-			pszTemp =  pXmlElement->Attribute (pszAttributeName);
-			if (pszTemp == 0)
-			{
-				return NULL;
-			}
-			else
-			{
-				rstrData = pszTemp;
-			}
-			break;
-		case ExTiXmlNode::eXML_COMMENT :
-			return NULL;
-			break;
-		case ExTiXmlNode::eXML_TEXT :
-			return NULL;
-			break;
-		default :
-			return NULL;
-	}
-	return (ExTiXmlNode*) pXmlNode;
-}
-
-int ExTiXmlNode::XmlGetLastEditor (std::string& rstrData, ExTiXmlNode* pXmlAuthorNode)
-{
-	rstrData = "";
-
-	// ToDo - JCK: Find the last editor of the XML file
-	return 0;
-}
-
-bool ExTiXmlNode::XmlDataToBool (std::string& rstrData)
-{
-	// Default value = true !!!
-
-	// is it a number ?
-	if (rstrData.find_first_not_of (" 01234567890,.+-") == rstrData.npos)
-	{
-		if (atoi (rstrData.c_str()) == 0)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	else  // no number ! only first letter is important !
-	{
-		std::string szTemp = rstrData;
-		while (szTemp[0] == ' ')
-		{
-			szTemp.erase (0);
-		}
-		if (szTemp[0] == 'f' || szTemp[0] == 'F' || szTemp[0] == 'n' || szTemp[0] == 'N')
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-}
-
 
 XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_list vaList)
 {
@@ -231,7 +51,7 @@ XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_lis
 
 	return xmlElement;
 }
-
+//-------------------------------------------------------------------------------
 XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* first, ...)
 {
 	va_list list;

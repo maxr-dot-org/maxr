@@ -2006,18 +2006,18 @@ static int LoadClans()
 
 void reloadUnitValues()
 {
-	TiXmlDocument UnitsXml;
-	TiXmlElement* Element;
-	if (!FileExists ( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml").c_str())) return ;
-	if (!UnitsXml.LoadFile ( (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml").c_str())) return;
-	if (! (Element = UnitsXml.FirstChildElement ("VehicleData")->FirstChildElement ("Vehicles"))) return;
+	tinyxml2::XMLDocument UnitsXml;
+	XMLElement* Element;
+	string path = cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + "vehicles.xml";
+	if (!FileExists (path.c_str())) return ;
+	if (UnitsXml.LoadFile ( path.c_str()) != XML_NO_ERROR) return;
+	if (! (Element = XmlGetFirstElement(UnitsXml, "VehicleData", "Vehicles", NULL))) return;
 
 	Element = Element->FirstChildElement();
 	int i = 0;
 	while (Element != NULL)
 	{
-		int num;
-		Element->Attribute ("num", &num);
+		int num = Element->IntAttribute ("num");
 		LoadUnitData (&UnitsData.vehicle[i].data, (cSettings::getInstance().getVehiclesPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
 		translateUnitData (UnitsData.vehicle[i].data.ID, true);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
@@ -2025,16 +2025,16 @@ void reloadUnitValues()
 		i++;
 	}
 
-	if (!FileExists ( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml").c_str())) return ;
-	if (!UnitsXml.LoadFile ( (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml").c_str())) return;
-	if (! (Element = UnitsXml.FirstChildElement ("BuildingsData")->FirstChildElement ("Buildings"))) return;
+	path = cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + "buildings.xml";
+	if (!FileExists ( path.c_str())) return ;
+	if (UnitsXml.LoadFile ( path.c_str()) != XML_NO_ERROR) return;
+	if (! (Element = XmlGetFirstElement(UnitsXml, "BuildingsData", "Buildings", NULL))) return;
 
 	Element = Element->FirstChildElement();
 	i = 0;
 	while (Element != NULL)
 	{
-		int num;
-		Element->Attribute ("num", &num);
+		int num = Element->IntAttribute ("num");
 		LoadUnitData (&UnitsData.building[i].data, (cSettings::getInstance().getBuildingsPath() + PATH_DELIMITER + Element->Attribute ("directory") + PATH_DELIMITER).c_str(), num);
 		translateUnitData (UnitsData.building[i].data.ID, false);
 		if (Element->NextSibling()) Element = Element->NextSibling()->ToElement();
