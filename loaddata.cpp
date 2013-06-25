@@ -1402,7 +1402,29 @@ static void translateClanData (int num)
 */
 static bool translateUnitData (sID ID, bool vehicle)
 {
-	sUnitData* Data = ID.getUnitDataOriginalVersion();
+	sUnitData* Data = NULL;
+	if (vehicle) 
+	{ 
+		for (size_t i = 0; i != UnitsData.vehicle.size(); ++i) 
+		{ 
+			if (UnitsData.vehicle[i].data.ID == ID) 
+			{ 
+				Data = &UnitsData.vehicle[i].data; 
+				break; 
+			} 
+		} 
+	} 
+	else 
+	{ 
+		for (size_t i = 0; i != UnitsData.building.size(); ++i) 
+		{ 
+			if (UnitsData.building[i].data.ID == ID) 
+			{ 
+				Data = &UnitsData.building[i].data; 
+				break; 
+			} 
+		}
+	} 
 	if (Data == NULL) return false;
 
 	XMLElement* xmlElement = LanguageFile.RootElement()->FirstChildElement ("Units");
