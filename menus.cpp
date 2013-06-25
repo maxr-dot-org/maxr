@@ -4386,7 +4386,7 @@ cUpgradeHangarMenu::cUpgradeHangarMenu (cPlayer* owner) : cHangarMenu (LoadPCX (
 
 	goldBar = new cMenuMaterialBar (position.x + 372, position.y + 301, position.x + 381, position.y + 275, 0, cMenuMaterialBar::MAT_BAR_TYPE_GOLD);
 	menuItems.push_back (goldBar);
-	goldBarLabel = new cMenuLabel (position.x + 381, position.y + 285, lngPack.i18n ("Text~Title~Gold"));
+	goldBarLabel = new cMenuLabel (position.x + 381, position.y + 285, lngPack.i18n ("Text~Title~Credits"));
 	goldBarLabel->setCentered (true);
 	menuItems.push_back (goldBarLabel);
 
