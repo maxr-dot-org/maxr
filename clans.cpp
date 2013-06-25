@@ -52,7 +52,7 @@ string cClanUnitStat::getClanStatsDescription() const
 	unitID.iSecondPart = unitIdSecPart;
 	sUnitData* data = unitID.getUnitDataOriginalVersion();
 	string result = "Unknown";
-	//TODO: for positive values the › + " +" + ‹-construct should be added to the iToStr-value - if there are more mod's in future... else it is e.g. displayed: <xyz> +-16 attack -- nonsinn
+	//TODO: for positive values the › + " +" + ‹-construct should be added to the iToStr-value - if there are more mod's in future... else it is e.g. displayed: <xyz> +-<value> if you lower something -- nonsinn
 	if (data)
 	{
 		result = string (data->name) + ": ";
@@ -69,7 +69,7 @@ string cClanUnitStat::getClanStatsDescription() const
 		{
 			if (!first)
 				result += ", ";
-			result += lngPack.i18n ("Text~Vehicles~Range") + " +" + iToStr (getModificationValue ("Range") - data->range);
+			result += lngPack.i18n ("Text~Hud~Range")/*here ~Hud~ to avoid letter overlay in german - blutroter pfad - kanonenboot */ + " +" + iToStr (getModificationValue ("Range") - data->range);
 			first = false;
 		}
 		if (hasModification ("Armor"))
