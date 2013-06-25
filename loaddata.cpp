@@ -1466,119 +1466,107 @@ static int LoadBuildings()
 {
 	Log.write ("Loading Buildings", LOG_TYPE_INFO);
 
-	string sTmpString, sBuildingPath;
-	const char* pszTmp;
-	TiXmlDocument BuildingsXml;
-	TiXmlNode* pXmlNode;
-	TiXmlElement* pXmlElement;
-
 	// read buildings.xml
-	sTmpString = cSettings::getInstance().getBuildingsPath();
+	string sTmpString = cSettings::getInstance().getBuildingsPath();
 	sTmpString += PATH_DELIMITER "buildings.xml";
 	if (!FileExists (sTmpString.c_str()))
 	{
 		return 0;
 	}
-	if (!BuildingsXml.LoadFile (sTmpString.c_str()))
+
+	tinyxml2::XMLDocument BuildingsXml;
+	if (BuildingsXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load buildings.xml!", LOG_TYPE_ERROR);
 		return 0;
 	}
-	if (! (pXmlNode = BuildingsXml.FirstChildElement ("BuildingsData")->FirstChildElement ("Buildings")))
+	XMLElement* xmlElement = XmlGetFirstElement(BuildingsXml, "BuildingsData", "Buildings", NULL); 
+	if (xmlElement == NULL)
 	{
 		Log.write ("Can't read \"BuildingData->Building\" node!", LOG_TYPE_ERROR);
 		return 0;
 	}
 	std::vector<std::string> BuildingList;
-	std::vector<std::string> IDList;
-	pXmlNode = pXmlNode->FirstChildElement();
-	if (!pXmlNode)
+	std::vector<int> IDList;
+	xmlElement = xmlElement->FirstChildElement();
+	if (xmlElement == NULL)
 	{
 		Log.write ("There are no buildings in the buildings.xml defined", LOG_TYPE_ERROR);
 		return 1;
 	}
-	pXmlElement = pXmlNode->ToElement();
-	if (pXmlElement)
+	
+	const char* directory = xmlElement->Attribute ("directory");
+	if (directory != NULL)
+		BuildingList.push_back (directory);
+	else
 	{
-		pszTmp = pXmlElement->Attribute ("directory");
-		if (pszTmp != 0)
-			BuildingList.push_back (pszTmp);
+		string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node"; 
+		Log.write (msg, LOG_TYPE_WARNING);
+	}
+
+	if (xmlElement->Attribute ("num"))
+		IDList.push_back (xmlElement->IntAttribute ("num"));
+	else
+	{
+		string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node"; 
+		Log.write (msg, LOG_TYPE_WARNING);
+	}
+
+	const char* spezial = xmlElement->Attribute ("special");
+	if (spezial != NULL)
+	{
+		string specialString = spezial;
+		if      (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
+		else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
+		else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
+		else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
+		else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList[IDList.size() - 1];
+		else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList[IDList.size() - 1];
+		else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
+	}
+	
+	while (xmlElement != NULL)
+	{
+		xmlElement = xmlElement->NextSiblingElement();
+		if (xmlElement == NULL)
+			break;
+
+		const char* directory = xmlElement->Attribute ("directory");
+		if (directory != NULL)
+			BuildingList.push_back (directory);
 		else
 		{
-			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert (38, pXmlNode->Value());
-			Log.write (sTmpString.c_str(), LOG_TYPE_WARNING);
+			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
-		pszTmp = pXmlElement->Attribute ("num");
-		if (pszTmp != 0)
-			IDList.push_back (pszTmp);
+		
+		if (xmlElement->Attribute ("num"))
+			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert (32, pXmlNode->Value());
-			Log.write (sTmpString.c_str(), LOG_TYPE_WARNING);
+			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
 
-		pszTmp = pXmlNode->ToElement()->Attribute ("special");
-		if (pszTmp != 0)
+		const char* spezial = xmlElement->Attribute ("special");
+		if (spezial != NULL)
 		{
-			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) UnitsData.specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) UnitsData.specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) UnitsData.specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) UnitsData.specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) UnitsData.specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) UnitsData.specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
+			string specialString = spezial;
+			if      (specialString == "mine")       UnitsData.specialIDMine.iSecondPart       = IDList[IDList.size() - 1];
+			else if (specialString == "energy")     UnitsData.specialIDSmallGen.iSecondPart   = IDList[IDList.size() - 1];
+			else if (specialString == "connector")  UnitsData.specialIDConnector.iSecondPart  = IDList[IDList.size() - 1];
+			else if (specialString == "landmine")   UnitsData.specialIDLandMine.iSecondPart   = IDList[IDList.size() - 1];
+			else if (specialString == "seamine")    UnitsData.specialIDSeaMine.iSecondPart    = IDList[IDList.size() - 1];
+			else if (specialString == "smallBeton") UnitsData.specialIDSmallBeton.iSecondPart = IDList[IDList.size() - 1];
 			else Log.write ("Unknown spacial in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
 		}
 	}
-	else
-		Log.write ("No buildings defined in buildings.xml!", LOG_TYPE_WARNING);
-	while (pXmlNode != NULL)
-	{
-		pXmlNode = pXmlNode->NextSibling();
-		if (pXmlNode == NULL)
-			break;
-		if (pXmlNode->Type() != 1)
-			continue;
-		pszTmp = pXmlNode->ToElement()->Attribute ("directory");
-		if (pszTmp != 0)
-			BuildingList.push_back (pszTmp);
-		else
-		{
-			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert (38, pXmlNode->Value());
-			Log.write (sTmpString.c_str(), LOG_TYPE_WARNING);
-		}
-		pszTmp = pXmlNode->ToElement()->Attribute ("num");
-		if (pszTmp != 0)
-			IDList.push_back (pszTmp);
-		else
-		{
-			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert (32, pXmlNode->Value());
-			Log.write (sTmpString.c_str(), LOG_TYPE_WARNING);
-		}
 
-		pszTmp = pXmlNode->ToElement()->Attribute ("special");
-		if (pszTmp != 0)
-		{
-			string specialString = pszTmp;
-			if (specialString.compare ("mine") == 0) UnitsData.specialIDMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("energy") == 0) UnitsData.specialIDSmallGen.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("connector") == 0) UnitsData.specialIDConnector.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("landmine") == 0) UnitsData.specialIDLandMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("seamine") == 0) UnitsData.specialIDSeaMine.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else if (specialString.compare ("smallBeton") == 0) UnitsData.specialIDSmallBeton.iSecondPart = atoi (IDList[IDList.size() - 1].c_str());
-			else Log.write ("Unknown special in buildings.xml \"" + specialString + "\"", LOG_TYPE_WARNING);
-		}
-	}
-
-	if (UnitsData.specialIDMine.iSecondPart == 0) Log.write ("special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDSmallGen.iSecondPart == 0) Log.write ("special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDConnector.iSecondPart == 0) Log.write ("special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDLandMine.iSecondPart == 0) Log.write ("special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING);
-	if (UnitsData.specialIDSeaMine.iSecondPart == 0) Log.write ("special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDMine.iSecondPart       == 0) Log.write ("special \"mine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDSmallGen.iSecondPart   == 0) Log.write ("special \"energy\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDConnector.iSecondPart  == 0) Log.write ("special \"connector\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDLandMine.iSecondPart   == 0) Log.write ("special \"landmine\" missing in buildings.xml", LOG_TYPE_WARNING);
+	if (UnitsData.specialIDSeaMine.iSecondPart    == 0) Log.write ("special \"seamine\" missing in buildings.xml", LOG_TYPE_WARNING);
 	if (UnitsData.specialIDSmallBeton.iSecondPart == 0) Log.write ("special \"smallBeton\" missing in buildings.xml", LOG_TYPE_WARNING);
 
 	UnitsData.specialIDMine.iFirstPart = UnitsData.specialIDSmallGen.iFirstPart = UnitsData.specialIDConnector.iFirstPart = UnitsData.specialIDLandMine.iFirstPart = UnitsData.specialIDSeaMine.iFirstPart = UnitsData.specialIDSmallBeton.iFirstPart = 1;
@@ -1587,7 +1575,7 @@ static int LoadBuildings()
 	UnitsData.building.reserve (BuildingList.size());
 	for (unsigned int i = 0; i < BuildingList.size(); i++)
 	{
-		sBuildingPath = cSettings::getInstance().getBuildingsPath();
+		string sBuildingPath = cSettings::getInstance().getBuildingsPath();
 		sBuildingPath += PATH_DELIMITER;
 		sBuildingPath += BuildingList[i];
 		sBuildingPath += PATH_DELIMITER;
@@ -1596,7 +1584,7 @@ static int LoadBuildings()
 		UnitsData.building.push_back (sBuilding());
 
 		sBuilding& b = UnitsData.building.back();
-		LoadUnitData (&b.data, sBuildingPath.c_str(), atoi (IDList[i].c_str()));
+		LoadUnitData (&b.data, sBuildingPath.c_str(), IDList[i]);
 		translateUnitData (b.data.ID, false);
 
 		if (DEDICATED_SERVER) continue;
