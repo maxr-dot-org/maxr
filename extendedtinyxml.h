@@ -84,7 +84,7 @@ public:
 };
 
 
-tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* rootElement, ...);
+tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const char* fist, ...);
 
 	/**
 	 * Tries to find a element from a path in a xml file.
@@ -96,6 +96,12 @@ tinyxml2::XMLElement* XmlGetFirstElement (tinyxml2::XMLDocument& xmlDoc, const c
 	 * @return The found or generated node at the specific path or NULL if the config file could not be read and generated.
 	 */
 tinyxml2::XMLElement* getOrCreateXmlElement (tinyxml2::XMLDocument& xmlDoc, const std::string& path);
+
+int         getXMLAttributeInt    (tinyxml2::XMLDocument& document, const char* first, ...);
+float       getXMLAttributeFloat  (tinyxml2::XMLDocument& document, const char* first, ...);
+std::string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...);
+bool        getXMLAttributeBool   (tinyxml2::XMLDocument& document, const char* first, ...);
+
 
 //};
 /*

@@ -1697,133 +1697,28 @@ static int LoadBuildings()
 	return 1;
 }
 
-//------------------------------------------------------------------------------
-static int getXMLNodeInt (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
-{
-	string tmpString;
-	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
-
-	string pathText = "";
-	if (path0) pathText += (string) path0;
-	if (path1) pathText += (string) "~" + path1;
-	if (path2) pathText += (string) "~" + path2;
-
-	if (pExXmlNode == NULL)
-	{
-		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
-		return 0;
-	}
-	if (pExXmlNode->XmlReadNodeData (tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "Num")) return atoi (tmpString.c_str());
-	else
-	{
-		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
-		return 0;
-	}
-}
-
-//------------------------------------------------------------------------------
-static float getXMLNodeFloat (TiXmlDocument& document, const char* path0, const char* path1, const char* path2)
-{
-	string tmpString;
-	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
-
-	double tmpDouble;
-	string pathText = "";
-	if (path0) pathText += (string) path0;
-	if (path1) pathText += (string) "~" + path1;
-	if (path2) pathText += (string) "~" + path2;
-
-	if (pExXmlNode == NULL)
-	{
-		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
-		return 0;
-	}
-	if (pExXmlNode->ToElement()->Attribute ("Num", &tmpDouble)) return (float) (tmpDouble);
-	else
-	{
-		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
-		return 0;
-	}
-}
-
-//------------------------------------------------------------------------------
-static string getXMLNodeString (TiXmlDocument& document, const char* attribut, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL)
-{
-	string tmpString;
-	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, NULL);
-
-	string pathText = "";
-	if (path0) pathText += (string) path0;
-	if (path1) pathText += (string) "~" + path1;
-	if (path2) pathText += (string) "~" + path2;
-
-	if (pExXmlNode == NULL)
-	{
-		// if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
-		return "";
-	}
-	if (pExXmlNode->XmlReadNodeData (tmpString, ExTiXmlNode::eXML_ATTRIBUTE, attribut)) return tmpString;
-	else
-	{
-		Log.write ( ( (string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
-		return "";
-	}
-}
-
-//------------------------------------------------------------------------------
-static bool getXMLNodeBool (TiXmlDocument& document, const char* path0 = NULL, const char* path1 = NULL, const char* path2 = NULL, const char* path3 = NULL)
-{
-	string tmpString;
-	ExTiXmlNode* pExXmlNode = NULL;
-	pExXmlNode = ExTiXmlNode::XmlGetFirstNode (document, path0, path1, path2, path3, NULL);
-
-	string pathText = "";
-	if (path0) pathText += (string) path0;
-	if (path1) pathText += (string) "~" + path1;
-	if (path2) pathText += (string) "~" + path2;
-	if (path3) pathText += (string) "~" + path3;
-
-	if (pExXmlNode == NULL)
-	{
-		//if( cSettings::getInstance().bDebug ) Log.write( ((string)"Can't find \"") + pathText + "\" ", cLog::eLOG_TYPE_DEBUG);
-		return false;
-	}
-	if (pExXmlNode->XmlReadNodeData (tmpString, ExTiXmlNode::eXML_ATTRIBUTE, "YN"))
-	{
-		if (tmpString.compare ("Yes") == 0) return true;
-		else return false;
-	}
-	else
-	{
-		Log.write ( ( (string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
-		return false;
-	}
-}
 
 //------------------------------------------------------------------------------
 static void LoadUnitData (sUnitData* const Data, char const* const directory, int const iID)
 {
-	TiXmlDocument unitDataXml;
+	tinyxml2::XMLDocument unitDataXml;
 
 	string path = directory;
 	path += "data.xml";
 	if (!FileExists (path.c_str())) return ;
 
-	if (!unitDataXml.LoadFile (path.c_str()))
+	if (unitDataXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load " + path, LOG_TYPE_WARNING);
 		return ;
 	}
 	// Read minimal game version
-	string gameVersion = getXMLNodeString (unitDataXml, "text", "Unit", "Header", "Game_Version");
-
+	string gameVersion = getXMLAttributeString(unitDataXml, "text", "Unit", "Header", "Game_Version", NULL);
+	
 	//TODO check game version
 
 	//read id
-	string idString = getXMLNodeString (unitDataXml, "ID", "Unit");
+	string idString = getXMLAttributeString (unitDataXml, "ID", "Unit", NULL);
 	char szTmp[100];
 	// check whether the id exists twice
 	Data->ID.iFirstPart = atoi (idString.substr (0, idString.find (" ", 0)).c_str());
@@ -1866,21 +1761,20 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 		Log.write (szTmp, LOG_TYPE_DEBUG);
 	}
 	//read name
-	Data->name = getXMLNodeString (unitDataXml, "name", "Unit");
+	Data->name = getXMLAttributeString (unitDataXml, "name", "Unit", NULL);
 	//read description
-	if (ExTiXmlNode* const pExXmlNode = ExTiXmlNode::XmlGetFirstNode (unitDataXml, "Unit", "Description", NULL))
+	if (XMLElement* const XMLElement = XmlGetFirstElement (unitDataXml, "Unit", "Description", NULL))
 	{
-		Data->description = pExXmlNode->ToElement()->GetText();
-		size_t iPosition = Data->description.find ("\\n", 0);
-		while (iPosition != string::npos)
+		Data->description = XMLElement->GetText();
+		size_t pos;
+		while ( (pos = Data->description.find ("\\n")) != string::npos)
 		{
-			Data->description.replace (iPosition, 2, "\n");
-			iPosition = Data->description.find ("\\n", iPosition);
+			Data->description.replace (pos, 2, "\n");
 		}
 	}
 
 	// Weapon
-	string muzzleType = getXMLNodeString (unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type");
+	string muzzleType = getXMLAttributeString (unitDataXml, "Const", "Unit", "Weapon", "Muzzle_Type", NULL);
 	if (muzzleType.compare ("Big") == 0) Data->muzzleType = sUnitData::MUZZLE_TYPE_BIG;
 	else if (muzzleType.compare ("Rocket") == 0) Data->muzzleType = sUnitData::MUZZLE_TYPE_ROCKET;
 	else if (muzzleType.compare ("Small") == 0) Data->muzzleType = sUnitData::MUZZLE_TYPE_SMALL;
@@ -1891,67 +1785,67 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	else if (muzzleType.compare ("Sniper") == 0) Data->muzzleType = sUnitData:: MUZZLE_TYPE_SNIPER;
 	else Data->muzzleType = sUnitData::MUZZLE_TYPE_NONE;
 
-	Data->ammoMax = getXMLNodeInt (unitDataXml, "Unit", "Weapon", "Ammo_Quantity");
-	Data->shotsMax = getXMLNodeInt (unitDataXml, "Unit", "Weapon", "Shots");
-	Data->range = getXMLNodeInt (unitDataXml, "Unit", "Weapon", "Range");
-	Data->damage = getXMLNodeInt (unitDataXml, "Unit", "Weapon", "Damage");
-	Data->canAttack = getXMLNodeInt (unitDataXml, "Unit", "Weapon", "Can_Attack");
+	Data->ammoMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Ammo_Quantity", NULL);
+	Data->shotsMax = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Shots", NULL);
+	Data->range = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Range", NULL);
+	Data->damage = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Damage", NULL);
+	Data->canAttack = getXMLAttributeInt (unitDataXml, "Unit", "Weapon", "Can_Attack", NULL);
 
 	// TODO: make the code differ between attacking sea units and land units.
 	// until this is done being able to attack sea units means being able to attack ground units.
 	if (Data->canAttack & TERRAIN_SEA) Data->canAttack |= TERRAIN_GROUND;
 
-	Data->canDriveAndFire = getXMLNodeBool (unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire");
+	Data->canDriveAndFire = getXMLAttributeBool (unitDataXml, "Unit", "Weapon", "Can_Drive_And_Fire", NULL);
 
 	// Production
-	Data->buildCosts = getXMLNodeInt (unitDataXml, "Unit", "Production", "Built_Costs");
+	Data->buildCosts = getXMLAttributeInt (unitDataXml, "Unit", "Production", "Built_Costs", NULL);
 
-	Data->canBuild = getXMLNodeString (unitDataXml, "String", "Unit", "Production", "Can_Build");
-	Data->buildAs = getXMLNodeString (unitDataXml, "String", "Unit", "Production", "Build_As");
+	Data->canBuild = getXMLAttributeString (unitDataXml, "String", "Unit", "Production", "Can_Build", NULL);
+	Data->buildAs = getXMLAttributeString (unitDataXml, "String", "Unit", "Production", "Build_As", NULL);
 
-	Data->maxBuildFactor = getXMLNodeInt (unitDataXml, "Unit", "Production", "Max_Build_Factor");
+	Data->maxBuildFactor = getXMLAttributeInt (unitDataXml, "Unit", "Production", "Max_Build_Factor", NULL);
 
-	Data->canBuildPath = getXMLNodeBool (unitDataXml, "Unit", "Production", "Can_Build_Path");
-	Data->canBuildRepeat = getXMLNodeBool (unitDataXml, "Unit", "Production", "Can_Build_Repeat");
-	Data->buildIntern = getXMLNodeBool (unitDataXml, "Unit", "Production", "Builds_Intern");
+	Data->canBuildPath = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Can_Build_Path", NULL);
+	Data->canBuildRepeat = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Can_Build_Repeat", NULL);
+	Data->buildIntern = getXMLAttributeBool (unitDataXml, "Unit", "Production", "Builds_Intern", NULL);
 
 	// Movement
-	Data->speedMax = getXMLNodeInt (unitDataXml, "Unit", "Movement", "Movement_Sum");
+	Data->speedMax = getXMLAttributeInt (unitDataXml, "Unit", "Movement", "Movement_Sum", NULL);
 	Data->speedMax *= 4;
 
-	Data->factorGround = getXMLNodeFloat (unitDataXml, "Unit", "Movement", "Factor_Ground");
-	Data->factorSea = getXMLNodeFloat (unitDataXml, "Unit", "Movement", "Factor_Sea");
-	Data->factorAir = getXMLNodeFloat (unitDataXml, "Unit", "Movement", "Factor_Air");
-	Data->factorCoast = getXMLNodeFloat (unitDataXml, "Unit", "Movement", "Factor_Coast");
+	Data->factorGround = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Ground", NULL);
+	Data->factorSea = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Sea", NULL);
+	Data->factorAir = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Air", NULL);
+	Data->factorCoast = getXMLAttributeFloat (unitDataXml, "Unit", "Movement", "Factor_Coast", NULL);
 
 	// Abilities
-	Data->isBig = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Is_Big");
-	Data->connectsToBase = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Connects_To_Base");
-	Data->armor = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Armor");
-	Data->hitpointsMax = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Hitpoints");
-	Data->scan = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Scan_Range");
-	Data->modifiesSpeed = getXMLNodeFloat (unitDataXml, "Unit", "Abilities", "Modifies_Speed");
-	Data->canClearArea = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Clear_Area");
-	Data->canBeCaptured = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Captured");
-	Data->canBeDisabled = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Disabled");
-	Data->canCapture = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Capture");
-	Data->canDisable = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Disable");
-	Data->canRepair = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Repair");
-	Data->canRearm = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Rearm");
-	Data->canResearch = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Research");
-	Data->canPlaceMines = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Place_Mines");
-	Data->canSurvey = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Survey");
-	Data->doesSelfRepair = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Does_Self_Repair");
-	Data->convertsGold = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Converts_Gold");
-	Data->canSelfDestroy = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Self_Destroy");
-	Data->canScore = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Score");
+	Data->isBig = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Is_Big", NULL);
+	Data->connectsToBase = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Connects_To_Base", NULL);
+	Data->armor = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Armor", NULL);
+	Data->hitpointsMax = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Hitpoints", NULL);
+	Data->scan = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Scan_Range", NULL);
+	Data->modifiesSpeed = getXMLAttributeFloat (unitDataXml, "Unit", "Abilities", "Modifies_Speed", NULL);
+	Data->canClearArea = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Clear_Area", NULL);
+	Data->canBeCaptured = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Captured", NULL);
+	Data->canBeDisabled = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Disabled", NULL);
+	Data->canCapture = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Capture", NULL);
+	Data->canDisable = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Disable", NULL);
+	Data->canRepair = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Repair", NULL);
+	Data->canRearm = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Rearm", NULL);
+	Data->canResearch = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Research", NULL);
+	Data->canPlaceMines = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Place_Mines", NULL);
+	Data->canSurvey = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Survey", NULL);
+	Data->doesSelfRepair = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Does_Self_Repair", NULL);
+	Data->convertsGold = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Converts_Gold", NULL);
+	Data->canSelfDestroy = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Self_Destroy", NULL);
+	Data->canScore = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Score", NULL);
 
-	Data->canMineMaxRes = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource");
+	Data->canMineMaxRes = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Can_Mine_Max_Resource", NULL);
 
-	Data->needsMetal = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Needs_Metal");
-	Data->needsOil = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Needs_Oil");
-	Data->needsEnergy = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Needs_Energy");
-	Data->needsHumans = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Needs_Humans");
+	Data->needsMetal = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Needs_Metal", NULL);
+	Data->needsOil = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Needs_Oil", NULL);
+	Data->needsEnergy = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Needs_Energy", NULL);
+	Data->needsHumans = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Needs_Humans", NULL);
 	if (Data->needsEnergy < 0)
 	{
 		Data->produceEnergy = abs (Data->needsEnergy);
@@ -1965,10 +1859,10 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	}
 	else Data->produceHumans = 0;
 
-	Data->isStealthOn = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Is_Stealth_On");
-	Data->canDetectStealthOn = getXMLNodeInt (unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On");
+	Data->isStealthOn = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Is_Stealth_On", NULL);
+	Data->canDetectStealthOn = getXMLAttributeInt (unitDataXml, "Unit", "Abilities", "Can_Detect_Stealth_On", NULL);
 
-	string surfacePosString = getXMLNodeString (unitDataXml, "Const", "Unit", "Abilities", "Surface_Position");
+	string surfacePosString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Abilities", "Surface_Position", NULL);
 	if (surfacePosString.compare ("BeneathSea") == 0) Data->surfacePosition = sUnitData::SURFACE_POS_BENEATH_SEA;
 	else if (surfacePosString.compare ("AboveSea") == 0) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE_SEA;
 	else if (surfacePosString.compare ("Base") == 0) Data->surfacePosition = sUnitData::SURFACE_POS_BASE;
@@ -1976,38 +1870,38 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 	else if (surfacePosString.compare ("Above") == 0) Data->surfacePosition = sUnitData::SURFACE_POS_ABOVE;
 	else Data->surfacePosition = sUnitData::SURFACE_POS_GROUND;
 
-	string overbuildString = getXMLNodeString (unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild");
+	string overbuildString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Abilities", "Can_Be_Overbuild", NULL);
 	if (overbuildString.compare ("Yes") == 0) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YES;
 	else if (overbuildString.compare ("YesNRemove") == 0) Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_YESNREMOVE;
 	else Data->canBeOverbuild = sUnitData::OVERBUILD_TYPE_NO;
 
-	Data->canBeLandedOn = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On");
-	Data->canWork = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Is_Activatable");
-	Data->explodesOnContact = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Explodes_On_Contact");
-	Data->isHuman = getXMLNodeBool (unitDataXml, "Unit", "Abilities", "Is_Human");
+	Data->canBeLandedOn = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Can_Be_Landed_On", NULL);
+	Data->canWork = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Is_Activatable", NULL);
+	Data->explodesOnContact = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Explodes_On_Contact", NULL);
+	Data->isHuman = getXMLAttributeBool (unitDataXml, "Unit", "Abilities", "Is_Human", NULL);
 
 	// Storage
-	Data->storageResMax = getXMLNodeInt (unitDataXml, "Unit", "Storage", "Capacity_Resources");
+	Data->storageResMax = getXMLAttributeInt (unitDataXml, "Unit", "Storage", "Capacity_Resources", NULL);
 
-	string storeResString = getXMLNodeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type");
+	string storeResString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Res_Type", NULL);
 	if (storeResString.compare ("Metal") == 0) Data->storeResType = sUnitData::STORE_RES_METAL;
 	else if (storeResString.compare ("Oil") == 0) Data->storeResType = sUnitData::STORE_RES_OIL;
 	else if (storeResString.compare ("Gold") == 0) Data->storeResType = sUnitData::STORE_RES_GOLD;
 	else Data->storeResType = sUnitData::STORE_RES_NONE;
 
-	Data->storageUnitsMax = getXMLNodeInt (unitDataXml, "Unit", "Storage", "Capacity_Units");
+	Data->storageUnitsMax = getXMLAttributeInt (unitDataXml, "Unit", "Storage", "Capacity_Units", NULL);
 
-	string storeUnitImgString = getXMLNodeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type");
+	string storeUnitImgString = getXMLAttributeString (unitDataXml, "Const", "Unit", "Storage", "Capacity_Units_Image_Type", NULL);
 	if (storeUnitImgString.compare ("Plane") == 0) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_PLANE;
 	else if (storeUnitImgString.compare ("Human") == 0) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_HUMAN;
 	else if (storeUnitImgString.compare ("Tank") == 0) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
 	else if (storeUnitImgString.compare ("Ship") == 0) Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_SHIP;
 	else Data->storeUnitsImageType = sUnitData::STORE_UNIT_IMG_TANK;
 
-	string storeUnitsString = getXMLNodeString (unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type");
+	string storeUnitsString = getXMLAttributeString (unitDataXml, "String", "Unit", "Storage", "Capacity_Units_Type", NULL);
 	Split (storeUnitsString, "+", Data->storeUnitsTypes);
 
-	Data->isStorageType = getXMLNodeString (unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type");
+	Data->isStorageType = getXMLAttributeString (unitDataXml, "String", "Unit", "Storage", "Is_Storage_Type", NULL);
 
 	// load graphics.xml
 	LoadUnitGraphicData (Data, directory);
@@ -2021,30 +1915,30 @@ static void LoadUnitData (sUnitData* const Data, char const* const directory, in
 //------------------------------------------------------------------------------
 static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 {
-	TiXmlDocument unitGraphicsXml;
+	tinyxml2::XMLDocument unitGraphicsXml;
 
 	string path = directory;
 	path += "graphics.xml";
 	if (!FileExists (path.c_str())) return ;
 
-	if (!unitGraphicsXml.LoadFile (path.c_str()))
+	if (unitGraphicsXml.LoadFile (path.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load " + path, LOG_TYPE_WARNING);
 		return ;
 	}
 
-	Data->hasClanLogos = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos");
-	Data->hasCorpse = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Corpse");
-	Data->hasDamageEffect = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect");
-	Data->hasBetonUnderground = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground");
-	Data->hasPlayerColor = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color");
-	Data->hasOverlay = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Overlay");
+	Data->hasClanLogos = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Clan_Logos", NULL);
+	Data->hasCorpse = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Corpse", NULL);
+	Data->hasDamageEffect = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Damage_Effect", NULL);
+	Data->hasBetonUnderground = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Beton_Underground", NULL);
+	Data->hasPlayerColor = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Player_Color", NULL);
+	Data->hasOverlay = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Has_Overlay", NULL);
 
-	Data->buildUpGraphic = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up");
-	Data->animationMovement = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement");
-	Data->powerOnGraphic = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On");
-	Data->isAnimated = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated");
-	Data->makeTracks = getXMLNodeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks");
+	Data->buildUpGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Build_Up", NULL);
+	Data->animationMovement = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Movement", NULL);
+	Data->powerOnGraphic = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Power_On", NULL);
+	Data->isAnimated = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Is_Animated", NULL);
+	Data->makeTracks = getXMLAttributeBool (unitGraphicsXml, "Unit", "Graphic", "Animations", "Makes_Tracks", NULL);
 }
 
 //------------------------------------------------------------------------------

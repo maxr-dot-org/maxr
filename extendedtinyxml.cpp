@@ -38,6 +38,7 @@
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
+using namespace std;
 
 #if 0
 void debugToLog (const std::string& szMsg);
@@ -202,23 +203,19 @@ bool ExTiXmlNode::XmlDataToBool (std::string& rstrData)
 	}
 }
 
-XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* rootElement, ...)
-{
-	va_list vaList;
-	va_start (vaList, rootElement);
 
+XMLElement* XmlGetFirstElementVa (XMLDocument& xmlDoc, const char* first, va_list vaList)
+{
 	XMLElement* xmlElement;
 
 	xmlElement = xmlDoc.RootElement();
 	if (xmlElement == NULL)
 	{
-		va_end (vaList);
 		return NULL;
 	}
 
-	if (strcmp (xmlElement->Value(), rootElement) != 0)
+	if (strcmp (xmlElement->Value(), first) != 0)
 	{
-		va_end (vaList);
 		return NULL;
 	}
 
@@ -228,13 +225,22 @@ XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* rootElement, ..
 		xmlElement = xmlElement->FirstChildElement (elementName);
 		if (xmlElement == NULL)
 		{
-			va_end (vaList);
 			return NULL;
 		}
 	}
 
-	va_end (vaList);
 	return xmlElement;
+}
+
+XMLElement* XmlGetFirstElement (XMLDocument& xmlDoc, const char* first, ...)
+{
+	va_list list;
+	va_start (list, first);
+
+	XMLElement* element = XmlGetFirstElementVa (xmlDoc, first, list);
+	va_end (list);
+
+	return element;
 }
 
 //------------------------------------------------------------------------------
@@ -267,3 +273,116 @@ XMLElement* getOrCreateXmlElement (XMLDocument& xmlDoc, const std::string& path)
 	return xmlElement;
 }
 
+
+//------------------------------------------------------------------------------
+int getXMLAttributeInt (tinyxml2::XMLDocument& document, const char* first, ...)
+{
+	va_list list;
+	va_start (list, first);
+	XMLElement* element = XmlGetFirstElementVa (document, first, list);
+	va_end (list);
+
+	if (element == NULL) return 0;
+
+
+	if (element->Attribute ("Num")) 
+	{
+		return element->IntAttribute ("Num");
+	}
+	else
+	{
+		va_start (list, first);
+		string pathText = string(first);
+		char* elementName;
+		while ((elementName = va_arg (list, char*)) != NULL)
+			pathText += string("~") + elementName;
+		va_end (list);
+
+		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		return 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+float getXMLAttributeFloat (tinyxml2::XMLDocument& document, const char* first, ...)
+{
+	va_list list;
+	va_start (list, first);
+	XMLElement* element = XmlGetFirstElementVa (document, first, list);
+	va_end (list);
+
+	if (element == NULL) return 0;
+
+	if (element->Attribute ("Num")) 
+	{
+		return element->FloatAttribute ("Num");
+	}
+	else
+	{
+		va_start (list, first);
+		string pathText = string(first);
+		char* elementName;
+		while ((elementName = va_arg (list, char*)) != NULL)
+			pathText += string("~") + elementName;
+		va_end (list);
+
+		Log.write ( ( (string) "Can't read \"Num\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		return 0;
+	}
+}
+
+//------------------------------------------------------------------------------
+string getXMLAttributeString (tinyxml2::XMLDocument& document, const char* attribut, const char* first, ...)
+{
+	va_list list;
+	va_start (list, first);
+	XMLElement* element = XmlGetFirstElementVa (document, first, list);
+	va_end (list);
+
+	if (element == NULL) return "";
+
+	const char* text = element->Attribute (attribut);
+	if (text == NULL)
+	{
+		va_start (list, first);
+		string pathText = string(first);
+		char* elementName;
+		while ((elementName = va_arg (list, char*)) != NULL)
+			pathText += string("~") + elementName;
+		va_end (list);
+
+		Log.write ( ( (string) "Can't read \"") + attribut + "\" from \"" + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		return "";
+	}
+
+	return text;
+}
+
+//------------------------------------------------------------------------------
+bool getXMLAttributeBool (tinyxml2::XMLDocument& document, const char* first, ...)
+{
+	va_list list;
+	va_start (list, first);
+	XMLElement* element = XmlGetFirstElementVa (document, first, list);
+	va_end (list);
+
+	if (element == NULL) return false;
+
+	
+	if (element->Attribute ("YN")) 
+	{
+		return element->BoolAttribute ("YN");
+	}
+	else
+	{
+		va_start (list, first);
+		string pathText = string(first);
+		char* elementName;
+		while ((elementName = va_arg (list, char*)) != NULL)
+			pathText += string("~") + elementName;
+		va_end (list);
+
+		Log.write ( ( (string) "Can't read \"YN\" from \"") + pathText + "\"", cLog::eLOG_TYPE_WARNING);
+		return false;
+	}
+}
