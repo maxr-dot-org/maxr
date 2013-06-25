@@ -1944,73 +1944,59 @@ static void LoadUnitGraphicData (sUnitData* Data, char const* directory)
 //------------------------------------------------------------------------------
 static int LoadClans()
 {
-	TiXmlDocument clansXml;
+	tinyxml2::XMLDocument clansXml;
 
 	string clansXMLPath = CLANS_XML;
 	if (!FileExists (clansXMLPath.c_str()))
 		return 0;
-	if (!clansXml.LoadFile (clansXMLPath.c_str()))
+	if (clansXml.LoadFile (clansXMLPath.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load " + clansXMLPath, LOG_TYPE_ERROR);
 		return 0;
 	}
 
-	TiXmlNode* xmlNode = clansXml.FirstChildElement ("Clans");
-	if (xmlNode == 0)
+	XMLElement* xmlElement = clansXml.FirstChildElement ("Clans");
+	if (xmlElement == 0)
 	{
 		Log.write ("Can't read \"Clans\" node!", LOG_TYPE_ERROR);
 		return 0;
 	}
 
-	for (TiXmlNode* clanNode = 0; (clanNode = xmlNode->IterateChildren (clanNode));)
+	for (XMLElement* clanElement = xmlElement->FirstChildElement("Clan"); clanElement; clanElement = clanElement->NextSiblingElement ("Clan"))
 	{
-		TiXmlElement* clanElement = clanNode->ToElement();
-		if (clanElement)
+		cClan* newClan = cClanData::instance().addClan();
+		string nameAttr = clanElement->Attribute ("Name");
+		newClan->setName (nameAttr);
+
+		const XMLElement* descriptionNode = clanElement->FirstChildElement ("Description");
+		if (descriptionNode)
 		{
-			cClan* newClan = cClanData::instance().addClan();
-			string nameAttr = clanElement->Attribute ("Name");
-			newClan->setName (nameAttr);
+			string descriptionString = descriptionNode->GetText();
+			newClan->setDescription (descriptionString);
+		}
 
-			const TiXmlNode* descriptionNode = clanNode->FirstChild ("Description");
-			if (descriptionNode)
+		translateClanData (newClan->getClanID());
+
+		for (XMLElement* statsElement = clanElement->FirstChildElement("ChangedUnitStat"); statsElement; statsElement = statsElement->NextSiblingElement ("ChangedUnitStat"))
+		{
+			const char* idAttr = statsElement->Attribute ("UnitID");
+			if (idAttr == 0)
 			{
-				string descriptionString = descriptionNode->ToElement()->GetText();
-				newClan->setDescription (descriptionString);
+				Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR);
+				continue;
 			}
+			string idAttrStr (idAttr);
+			int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
+			int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
 
-			translateClanData (newClan->getClanID());
+			cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
 
-			for (TiXmlNode* changedUnitStatsNode = 0; (changedUnitStatsNode = clanNode->IterateChildren ("ChangedUnitStat", changedUnitStatsNode));)
+			for (XMLElement* modificationElement = statsElement->FirstChildElement(); modificationElement; modificationElement = modificationElement->NextSiblingElement())
 			{
-				TiXmlElement* statsElement = changedUnitStatsNode->ToElement();
-				if (statsElement)
+				string modName = modificationElement->Value();
+				if (modificationElement->Attribute ("Num"))
 				{
-					const char* idAttr = statsElement->Attribute ("UnitID");
-					if (idAttr == 0)
-					{
-						Log.write ("Couldn't read UnitID for ChangedUnitStat for clans", LOG_TYPE_ERROR);
-						continue;
-					}
-					string idAttrStr (idAttr);
-					int firstPart = atoi (idAttrStr.substr (0, idAttrStr.find (" ", 0)).c_str());
-					int secondPart = atoi (idAttrStr.substr (idAttrStr.find (" ", 0), idAttrStr.length()).c_str());
-
-					cClanUnitStat* newStat = newClan->addUnitStat (firstPart, secondPart);
-
-					for (TiXmlNode* modificationNode = 0; (modificationNode = changedUnitStatsNode->IterateChildren (modificationNode));)
-					{
-						string modName = modificationNode->Value();
-						TiXmlElement* modificationElement = modificationNode->ToElement();
-						if (modName != "" && modificationElement)
-						{
-							const char* numAttr = modificationElement->Attribute ("Num");
-							if (numAttr != 0)
-							{
-								int value = atoi (numAttr);
-								newStat->addModification (modName, value);
-							}
-						}
-					}
+					newStat->addModification (modName, modificationElement->IntAttribute ("Num"));
 				}
 			}
 		}
