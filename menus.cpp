@@ -4832,11 +4832,11 @@ void cStorageMenu::resetInfos()
 				unitInfo[pos]->setUnitData (&vehicle->data);
 
 				activateButtons[pos]->setLocked (false);
-				if (vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 2) reloadButtons[pos]->setLocked (false);
+				if (vehicle->data.ammoCur != vehicle->data.ammoMax && metalValue >= 1) reloadButtons[pos]->setLocked (false);
 				else reloadButtons[pos]->setLocked (true);
-				if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 2) repairButtons[pos]->setLocked (false);
+				if (vehicle->data.hitpointsCur != vehicle->data.hitpointsMax && metalValue >= 1) repairButtons[pos]->setLocked (false);
 				else repairButtons[pos]->setLocked (true);
-				if (vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 2) upgradeButtons[pos]->setLocked (false);
+				if (vehicle->data.version != vehicle->owner->VehicleData[ vehicle->typ->nr].version && metalValue >= 1) upgradeButtons[pos]->setLocked (false);
 				else upgradeButtons[pos]->setLocked (true);
 			}
 			else
@@ -4866,7 +4866,7 @@ void cStorageMenu::resetInfos()
 	reloadAllButton->setLocked (true);
 	repairAllButton->setLocked (true);
 	upgradeAllButton->setLocked (true);
-	if (canRepairReloadUpgrade && metalValue >= 2)
+	if (canRepairReloadUpgrade && metalValue >= 1)
 	{
 		for (unsigned int i = 0; i < storageList.size(); i++)
 		{

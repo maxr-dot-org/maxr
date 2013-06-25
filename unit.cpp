@@ -352,11 +352,11 @@ int cUnit::getNumberOfMenuEntries (const cClient& client) const
 		result++;
 
 	// Ammo
-	if (data.canRearm && data.storageResCur >= 2)
+	if (data.canRearm && data.storageResCur >= 1)
 		result++;
 
 	// Repair
-	if (data.canRepair && data.storageResCur >= 2)
+	if (data.canRepair && data.storageResCur >= 1)
 		result++;
 
 	// Lay Mines
@@ -551,7 +551,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	}
 
 	// Ammo:
-	if (data.canRearm && data.storageResCur >= 2 && owner == client.getActivePlayer())
+	if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
 	{
 		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == muniActive;
 		drawContextItem (lngPack.i18n ("Text~Context~Reload"), isMarked, dest.x, dest.y, buffer);
@@ -560,7 +560,7 @@ void cUnit::drawMenu (cGameGUI& gameGUI)
 	}
 
 	// Repair:
-	if (data.canRepair && data.storageResCur >= 2 && owner == client.getActivePlayer())
+	if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
 	{
 		bool isMarked = (markerPossible && selectedMenuButtonIndex == nr) || gameGUI.mouseInputMode == repairActive;
 		drawContextItem (lngPack.i18n ("Text~Context~Repair"), isMarked, dest.x, dest.y, buffer);
@@ -860,7 +860,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	}
 
 	// rearm:
-	if (data.canRearm && data.storageResCur >= 2 && owner == client.getActivePlayer())
+	if (data.canRearm && data.storageResCur >= 1 && owner == client.getActivePlayer())
 	{
 		if (exeNr == nr)
 		{
@@ -873,7 +873,7 @@ void cUnit::menuReleased (cGameGUI& gameGUI)
 	}
 
 	// repair:
-	if (data.canRepair && data.storageResCur >= 2 && owner == client.getActivePlayer())
+	if (data.canRepair && data.storageResCur >= 1 && owner == client.getActivePlayer())
 	{
 		if (exeNr == nr)
 		{
