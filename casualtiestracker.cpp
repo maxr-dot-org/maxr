@@ -36,16 +36,16 @@ void cCasualtiesTracker::initFromXML (XMLElement* casualtiesNode)
 	while (playerNode != 0)
 	{
 		int playerNr = 0;
-		if (playerNode->QueryIntAttribute ("PlayerNr", &playerNr) != 0)
+		if (playerNode->QueryIntAttribute ("PlayerNr", &playerNr) == XML_NO_ERROR)
 		{
 			XMLElement* casualtyNode = playerNode->FirstChildElement ("Casualty");
 			while (casualtyNode != 0)
 			{
 				sID unitID;
 				int losses;
-				if (casualtyNode->QueryIntAttribute ("ID_Fst", & (unitID.iFirstPart)) != 0
-					&& casualtyNode->QueryIntAttribute ("ID_Snd", & (unitID.iSecondPart)) != 0
-					&& casualtyNode->QueryIntAttribute ("Losses", & (losses)) != 0)
+				if (casualtyNode->QueryIntAttribute ("ID_Fst", & (unitID.iFirstPart)) == XML_NO_ERROR
+					&& casualtyNode->QueryIntAttribute ("ID_Snd", & (unitID.iSecondPart)) == XML_NO_ERROR
+					&& casualtyNode->QueryIntAttribute ("Losses", & (losses)) == XML_NO_ERROR)
 				{
 					setCasualty (unitID, losses, playerNr);
 				}

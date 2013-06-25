@@ -679,7 +679,7 @@ void cSavegame::loadVehicle (cServer& server, XMLElement* unitNode, sID& ID)
 			int playerNum;
 			element->QueryIntAttribute ("nr", &playerNum);
 			int wasDetectedThisTurnAttrib = 1;
-			if (element->QueryIntAttribute ("ThisTurn", &wasDetectedThisTurnAttrib) == 0)
+			if (element->QueryIntAttribute ("ThisTurn", &wasDetectedThisTurnAttrib) != XML_NO_ERROR)
 				wasDetectedThisTurnAttrib = 1; // for old savegames, that don't have this attribute, set it to "detected this turn"
 			bool wasDetectedThisTurn = (wasDetectedThisTurnAttrib != 0);
 			cPlayer* Player = server.getPlayerFromNumber (playerNum);
