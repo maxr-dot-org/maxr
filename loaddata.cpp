@@ -948,12 +948,8 @@ static int LoadVehicles()
 {
 	Log.write ("Loading Vehicles", LOG_TYPE_INFO);
 
-	string sVehiclePath;
-	char sztmp[16];
-	const char* pszTmp;
-	TiXmlDocument VehiclesXml;
-	TiXmlNode* pXmlNode;
-	TiXmlElement* pXmlElement;
+
+	tinyxml2::XMLDocument VehiclesXml;
 
 	string sTmpString = cSettings::getInstance().getVehiclesPath();
 	sTmpString += PATH_DELIMITER "vehicles.xml";
@@ -961,73 +957,69 @@ static int LoadVehicles()
 	{
 		return 0;
 	}
-	if (!VehiclesXml.LoadFile (sTmpString.c_str()))
+	if (VehiclesXml.LoadFile (sTmpString.c_str()) != XML_NO_ERROR)
 	{
 		Log.write ("Can't load vehicles.xml!", LOG_TYPE_ERROR);
 		return 0;
 	}
-	if (! (pXmlNode = VehiclesXml.FirstChildElement ("VehicleData")->FirstChildElement ("Vehicles")))
+	XMLElement* xmlElement = XmlGetFirstElement(VehiclesXml, "VehicleData", "Vehicles", NULL);
+	if (xmlElement == NULL)
 	{
 		Log.write ("Can't read \"VehicleData->Vehicles\" node!", LOG_TYPE_ERROR);
 		return 0;
 	}
 	// read vehicles.xml
 	std::vector<std::string> VehicleList;
-	std::vector<std::string> IDList;
-	pXmlNode = pXmlNode->FirstChildElement();
-	pXmlElement = pXmlNode->ToElement();
-	if (pXmlElement)
+	std::vector<int> IDList;
+	xmlElement = xmlElement->FirstChildElement();
+	if (xmlElement)
 	{
-		pszTmp = pXmlElement->Attribute ("directory");
-		if (pszTmp != 0)
-			VehicleList.push_back (pszTmp);
+		const char* directory = xmlElement->Attribute ("directory");
+		if (directory != NULL)
+			VehicleList.push_back (directory);
 		else
 		{
-			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert (38, pXmlNode->Value());
-			Log.write (sTmpString, LOG_TYPE_WARNING);
+			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
-		pszTmp = pXmlElement->Attribute ("num");
-		if (pszTmp != 0)
-			IDList.push_back (pszTmp);
+
+		if (xmlElement->Attribute ("num"))
+			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert (32, pXmlNode->Value());
-			Log.write (sTmpString, LOG_TYPE_WARNING);
+			string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
 	}
 	else
 		Log.write ("No vehicles defined in vehicles.xml!", LOG_TYPE_WARNING);
-	while (pXmlNode != NULL)
+	while (xmlElement != NULL)
 	{
-		pXmlNode = pXmlNode->NextSibling();
-		if (pXmlNode == NULL)
+		xmlElement = xmlElement->NextSiblingElement();
+		if (xmlElement == NULL)
 			break;
-		if (pXmlNode->Type() != 1)
-			continue;
-		pszTmp = pXmlNode->ToElement()->Attribute ("directory");
-		if (pszTmp != 0)
-			VehicleList.push_back (pszTmp);
+
+		const char* directory = xmlElement->Attribute ("directory");
+		if (directory != NULL)
+			VehicleList.push_back (directory);
 		else
 		{
-			sTmpString = "Can't read dierectory-attribute from \"\" - node";
-			sTmpString.insert (38, pXmlNode->Value());
-			Log.write (sTmpString, LOG_TYPE_WARNING);
+			string msg = string("Can't read directory-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
-		pszTmp = pXmlNode->ToElement()->Attribute ("num");
-		if (pszTmp != 0)
-			IDList.push_back (pszTmp);
+
+		if (xmlElement->Attribute ("num"))
+			IDList.push_back (xmlElement->IntAttribute ("num"));
 		else
 		{
-			sTmpString = "Can't read num-attribute from \"\" - node";
-			sTmpString.insert (32, pXmlNode->Value());
-			Log.write (sTmpString, LOG_TYPE_WARNING);
+			string msg = string("Can't read num-attribute from \"") + xmlElement->Value() + "\" - node";
+			Log.write (msg, LOG_TYPE_WARNING);
 		}
 	}
 	// load found units
 	UnitsData.vehicle.clear();
 	UnitsData.vehicle.reserve (VehicleList.size());
+	string sVehiclePath;
 	for (unsigned int i = 0; i < VehicleList.size(); i++)
 	{
 		sVehiclePath = cSettings::getInstance().getVehiclesPath();
@@ -1040,7 +1032,7 @@ static int LoadVehicles()
 		sVehicle& v = UnitsData.vehicle[i];
 
 		Log.write ("Reading values from XML", cLog::eLOG_TYPE_DEBUG);
-		LoadUnitData (&v.data, sVehiclePath.c_str(), atoi (IDList[i].c_str()));
+		LoadUnitData (&v.data, sVehiclePath.c_str(), IDList[i]);
 		if (!translateUnitData (v.data.ID, true))
 			Log.write ("Can not translate Unit data. Check your lang file!", cLog::eLOG_TYPE_WARNING);
 
@@ -1061,6 +1053,7 @@ static int LoadVehicles()
 				for (int j = 0; j < 13; j++)
 				{
 					sTmpString = sVehiclePath;
+					char sztmp[16];
 					sprintf (sztmp, "img%d_%.2d.pcx", n, j);
 					sTmpString += sztmp;
 
@@ -1116,6 +1109,7 @@ static int LoadVehicles()
 			{
 				// load image
 				sTmpString = sVehiclePath;
+				char sztmp[16];
 				sprintf (sztmp, "img%d.pcx", n);
 				sTmpString += sztmp;
 				Log.write (sTmpString, cLog::eLOG_TYPE_DEBUG);
