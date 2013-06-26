@@ -28,11 +28,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "language.h"
+
+#include "extendedtinyxml.h"
 #include "main.h"
 #include "log.h"
 #include "settings.h"
 #include "tinyxml2.h"
-#include "extendedtinyxml.h"
 
 using namespace tinyxml2;
 
@@ -48,12 +49,13 @@ const std::string& cLanguage::GetCurrentLanguage() const
 
 int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 {
-	//don't do this on constructor because language folder isn't known yet in programm start.
-	//since the first thinh we do with language files is setting our language we can init the master lang file here too -- beko
-	m_szLanguageFileMaster = LANGUAGE_FILE_FOLDER ;
+	// don't do this in constructor
+	// because language folder isn't known yet in programm start.
+	// since the first thing we do with language files is setting
+	// our language we can init the master lang file here too -- beko
+	m_szLanguageFileMaster = LANGUAGE_FILE_FOLDER;
 	m_szLanguageFileMaster += PATH_DELIMITER LANGUAGE_FILE_NAME "eng" LANGUAGE_FILE_EXT;
 
-	std::string szTemp;
 	if (szLanguageCode.length() != 3)
 	{
 		return -1;
@@ -65,7 +67,7 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 	}
 
 	m_szLanguage = szLanguageCode;
-	for (int i = 0 ; i <= 2 ; i++)
+	for (int i = 0; i <= 2; i++)
 	{
 		if (m_szLanguage[i] < 97)
 		{
@@ -73,7 +75,7 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 		}
 	}
 
-	m_szLanguageFile = LANGUAGE_FILE_FOLDER ;
+	m_szLanguageFile = LANGUAGE_FILE_FOLDER;
 	m_szLanguageFile += PATH_DELIMITER LANGUAGE_FILE_NAME;
 	m_szLanguageFile += m_szLanguage + LANGUAGE_FILE_EXT;
 	return 0;
@@ -81,14 +83,14 @@ int cLanguage::SetCurrentLanguage (const std::string& szLanguageCode)
 
 std::string cLanguage::i18n (const std::string& szInputText)
 {
-	StrStrMap :: const_iterator impTranslation;
+	StrStrMap::const_iterator impTranslation;
 	impTranslation = m_mpLanguage.find (szInputText);
 
 	if (impTranslation == m_mpLanguage.end())
 	{
 		if (m_bErrorMsgTranslationLoaded)
 		{
-			return i18n ("Text~Error_Messages~ERROR_Missing_Translation" , szInputText);
+			return i18n ("Text~Error_Messages~ERROR_Missing_Translation", szInputText);
 		}
 		else
 		{
@@ -98,7 +100,7 @@ std::string cLanguage::i18n (const std::string& szInputText)
 	else
 	{
 		if (impTranslation->second != "")
-			return impTranslation->second ;
+			return impTranslation->second;
 		else
 			return "";
 	}
@@ -125,12 +127,8 @@ std::string cLanguage::i18n (const std::string& szMainText, const std::string& s
 	}
 }
 
-
-
 int cLanguage::ReadLanguagePack()
 {
-	XMLElement* xmlStartingElement;
-
 	// First let's load the English language pack and use it as master
 	if (ReadLanguagePackHeader() != 0)
 	{
@@ -138,7 +136,7 @@ int cLanguage::ReadLanguagePack()
 	}
 
 	// Read the complete <Text> - section
-	xmlStartingElement = NULL;
+	XMLElement* xmlStartingElement = NULL;
 	try
 	{
 		xmlStartingElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE_TEXT);
@@ -146,14 +144,13 @@ int cLanguage::ReadLanguagePack()
 
 		xmlStartingElement = xmlStartingElement->FirstChildElement();
 		if (xmlStartingElement == NULL) throw std::string ("<Text> section is empty!");
-
 	}
-	catch (std::string strMsg)
+	catch (const std::string& strMsg)
 	{
 		Log.write ("Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
-	ReadRecursiveLanguagePack (xmlStartingElement , "Text");
+	ReadRecursiveLanguagePack (xmlStartingElement, "Text");
 
 	// Read the complete <Graphic> - section
 	xmlStartingElement = NULL;
@@ -163,16 +160,14 @@ int cLanguage::ReadLanguagePack()
 		if (xmlStartingElement == NULL) throw std::string ("No <Graphic> section found!");
 
 		xmlStartingElement = xmlStartingElement->FirstChildElement();
-		if (xmlStartingElement == NULL) throw std::string ("<Graphic> section is empty!") ;
-
+		if (xmlStartingElement == NULL) throw std::string ("<Graphic> section is empty!");
 	}
-	catch (std::string strMsg)
+	catch (const std::string& strMsg)
 	{
 		Log.write ("Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
-	ReadRecursiveLanguagePack (xmlStartingElement , "Graphic");
-
+	ReadRecursiveLanguagePack (xmlStartingElement, "Graphic");
 
 	// Read the complete <Speech> - section
 	xmlStartingElement = NULL;
@@ -183,19 +178,18 @@ int cLanguage::ReadLanguagePack()
 
 		xmlStartingElement = xmlStartingElement->FirstChildElement();
 		if (xmlStartingElement == NULL) throw std::string ("<Speech> section is empty!");
-
 	}
-	catch (std::string strMsg)
+	catch (const std::string& strMsg)
 	{
 		Log.write ("Language file (eng): " + strMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
-	ReadRecursiveLanguagePack (xmlStartingElement , "Speech");
+	ReadRecursiveLanguagePack (xmlStartingElement, "Speech");
 
 	// Second step: Load the selected language pack
 	if (m_szLanguage == "eng")
 	{
-		StrStrMap :: const_iterator impTranslation;
+		StrStrMap::const_iterator impTranslation;
 		impTranslation = m_mpLanguage.find ("Text~Error_Messages~ERROR_Missing_Translation");
 		if (impTranslation == m_mpLanguage.end())
 		{
@@ -214,22 +208,21 @@ int cLanguage::ReadLanguagePack()
 	{
 		m_bErrorMsgTranslationLoaded = true;
 	}
-	StrStrMap::iterator impPosition;
-	impPosition = m_mpLanguage.begin();
-	while (impPosition !=  m_mpLanguage.end())
+
+	for (StrStrMap::const_iterator impPosition = m_mpLanguage.begin();
+		 impPosition !=  m_mpLanguage.end();
+		 ++impPosition)
 	{
 		std::string strResult = ReadSingleTranslation (impPosition->first);
 		if (strResult != "")
 		{
-			m_mpLanguage[ impPosition->first ] = strResult;
+			m_mpLanguage[impPosition->first] = strResult;
 		}
 		else
 		{
 			// TODO: ?
 		}
-		impPosition++;
 	}
-
 
 	Log.write (this->i18n ("Text~Error_Messages~INFO_Language_initialised"), cLog::eLOG_TYPE_INFO);
 
@@ -246,7 +239,7 @@ int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 {
 	va_list pvaArg;
 	va_start (pvaArg, pszCurrent);
-	StrStrMap :: const_iterator impTranslation;
+	StrStrMap::const_iterator impTranslation;
 	std::string szErrorMsg;
 
 	XMLElement* xmlElement = NULL;
@@ -310,7 +303,7 @@ int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 		if (value != NULL)
 		{
 			m_mpLanguage[szXmlNodePath] = value;
-			szErrorMsg += std::string(value) + "< is missing";
+			szErrorMsg += std::string (value) + "< is missing";
 		}
 		else
 		{
@@ -329,7 +322,7 @@ int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 	{
 		if (m_bErrorMsgTranslationLoaded)
 		{
-			m_mpLanguage[szXmlNodePath] = i18n ("Text~Error_Messages~ERROR_Missing_Translation" , szXmlNodePath);
+			m_mpLanguage[szXmlNodePath] = i18n ("Text~Error_Messages~ERROR_Missing_Translation", szXmlNodePath);
 		}
 		else
 		{
@@ -343,11 +336,11 @@ int cLanguage::ReadSingleTranslation (const char* pszCurrent, ...)
 }
 
 /////////////
-//ExTiXmlNode * node;
-//node = XmlGetFirstNode(...);
-//while( node != NULL )
+//ExTiXmlNode* node;
+//node = XmlGetFirstNode (...);
+//while (node != NULL)
 //{
-//	data = node->XmlReadNodeData(...);
+//	data = node->XmlReadNodeData (...);
 //	node = node-XmlGetFirstNodeChild();
 //child = child->NextSibling() )
 /////////////
@@ -356,7 +349,6 @@ int cLanguage::ReadLanguagePackHeader()
 {
 	return ReadLanguagePackHeader ("");
 }
-
 
 int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 {
@@ -375,7 +367,6 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		strFileName = m_szLanguageFile;
 	}
 
-
 	// Load the file
 	if (m_XmlDoc.LoadFile (strFileName.c_str()) != XML_NO_ERROR)
 	{
@@ -384,7 +375,7 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		return -1;
 	}
 	// Is the main node correct ?
-	xmlElement = XmlGetFirstElement(m_XmlDoc, XNP_MAX_LANG_FILE);
+	xmlElement = XmlGetFirstElement (m_XmlDoc, XNP_MAX_LANG_FILE);
 	if (xmlElement == NULL)
 	{
 		strErrorMsg = "Language file (" + szLanguageCode + "): missing main node!";
@@ -413,15 +404,14 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
-	else if (szLanguageCode  != std::string(value))
+	else if (szLanguageCode  != std::string (value))
 	{
 		strErrorMsg = "Language file (" + szLanguageCode + "): language attribut mismatch file name!";
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_ERROR);
 		return -1;
 	}
 
-
-	// Writing is left-to-right oder vice versa ?
+	// Writing is left-to-right or vice versa ?
 	value = xmlElement->Attribute ("direction");
 	if (value == NULL)
 	{
@@ -429,11 +419,11 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		Log.write (strErrorMsg, cLog::eLOG_TYPE_WARNING);
 		m_bLeftToRight = true;
 	}
-	else if (std::string(value) == "left-to-right")
+	else if (std::string (value) == "left-to-right")
 	{
 		m_bLeftToRight = true;
 	}
-	else if (std::string(value) == "right-to-left")
+	else if (std::string (value) == "right-to-left")
 	{
 		m_bLeftToRight = false;
 	}
@@ -460,7 +450,7 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 		}
 		else
 		{
-			int iTestResult = checkTimeStamp (std::string(value));
+			int iTestResult = checkTimeStamp (value);
 			switch (iTestResult)
 			{
 				case -1 :
@@ -484,10 +474,10 @@ int cLanguage::ReadLanguagePackHeader (const std::string& strLanguageCode)
 	return 0;
 }
 
-int cLanguage::checkTimeStamp (std::string& rstrData)
+// not const string& since it is modified
+int cLanguage::checkTimeStamp (std::string rstrData)
 {
 	//JCK: Should be replaced by a faster and more secure function
-
 
 	// Index   : 0123456789012345678
 	// Example : 2007-09-30 13:04:00
@@ -542,7 +532,6 @@ int cLanguage::checkTimeStamp (std::string& rstrData)
 
 int cLanguage::ReadRecursiveLanguagePack (XMLElement* xmlElement, std::string strNodePath)
 {
-
 	if (xmlElement == NULL)
 	{
 		return -1;
@@ -563,23 +552,21 @@ int cLanguage::ReadRecursiveLanguagePack (XMLElement* xmlElement, std::string st
 	XMLElement* xmlElementTMP = xmlElement->FirstChildElement();
 	if (xmlElementTMP != NULL)
 	{
-		this->ReadRecursiveLanguagePack (xmlElementTMP , strNodePath + xmlElement->Value());
+		this->ReadRecursiveLanguagePack (xmlElementTMP, strNodePath + xmlElement->Value());
 	}
 
 	xmlElement = xmlElement->NextSiblingElement();
 	if (xmlElement != NULL)
 	{
-		this->ReadRecursiveLanguagePack (xmlElement , strNodePath);
+		this->ReadRecursiveLanguagePack (xmlElement, strNodePath);
 	}
 
 	return 0;
 }
+
 std::string cLanguage::ReadSingleTranslation (const std::string& strInput)
 {
-	std::string strPath, strCurrent, szErrorMsg;
-	std::size_t iPosBegin, iPosEnd;
-
-	strPath = strInput;
+	std::string strPath = strInput;
 	if (strPath == "") return "";
 
 	XMLElement* xmlElement = m_XmlDoc.RootElement();
@@ -588,30 +575,30 @@ std::string cLanguage::ReadSingleTranslation (const std::string& strInput)
 		if (xmlElement == NULL) throw std::string ("Can't excess root node");
 		if (strcmp (xmlElement->Value(), "MAX_Language_File") != 0) throw std::string ("Root node mismatch");
 	}
-	catch (std::string strMsg)
+	catch (const std::string& strMsg)
 	{
-		Log.write ("Language file (" + m_szLanguage + "): " + strMsg , cLog::eLOG_TYPE_WARNING);
+		Log.write ("Language file (" + m_szLanguage + "): " + strMsg, cLog::eLOG_TYPE_WARNING);
 		return "";
 	}
-	iPosBegin = 0;
+	std::size_t iPosBegin = 0;
 	try
 	{
 		do
 		{
-			iPosEnd = strPath.find ('~', iPosBegin + 1);
-			strCurrent = strPath.substr (iPosBegin , iPosEnd - iPosBegin);
+			std::size_t iPosEnd = strPath.find ('~', iPosBegin + 1);
+			std::string strCurrent = strPath.substr (iPosBegin, iPosEnd - iPosBegin);
 			if (strCurrent[0] == '~') strCurrent.erase (0, 1);
 			xmlElement = xmlElement->FirstChildElement (strCurrent.c_str());
 			if (xmlElement == NULL)
-				throw i18n ("Text~Error_Messages~ERROR_Missing_Translation" , m_mpLanguage[strInput]);
+				throw i18n ("Text~Error_Messages~ERROR_Missing_Translation", m_mpLanguage[strInput]);
 
 			iPosBegin = iPosEnd;
 		}
 		while (iPosBegin != std::string::npos);
 	}
-	catch (std::string strMsg)
+	catch (const std::string& strMsg)
 	{
-		Log.write ("Language file (" + m_szLanguage + "): " + strMsg , cLog::eLOG_TYPE_WARNING);
+		Log.write ("Language file (" + m_szLanguage + "): " + strMsg, cLog::eLOG_TYPE_WARNING);
 		return m_mpLanguage[strInput];
 	}
 
@@ -621,7 +608,7 @@ std::string cLanguage::ReadSingleTranslation (const std::string& strInput)
 		return translation;
 	}
 
-	szErrorMsg = "Language file: translation for >";
+	std::string szErrorMsg = "Language file: translation for >";
 	szErrorMsg += strInput + "< is missing";
 	Log.write (szErrorMsg, cLog::eLOG_TYPE_WARNING);
 

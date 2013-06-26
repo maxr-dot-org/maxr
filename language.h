@@ -83,7 +83,7 @@ private:
 	int         ReadLanguageMaster();
 	int         ReadRecursiveLanguagePack (tinyxml2::XMLElement* xmlElement, std::string strNodePath);
 
-	int         checkTimeStamp (std::string& rstrData);
+	int         checkTimeStamp (std::string rstrData);
 
 	tinyxml2::XMLDocument m_XmlDoc;
 	std::string   m_szLanguage; // Use ISO 639-2 codes to identify languages (http://www.loc.gov/standards/iso639-2/php/code_list.php)
